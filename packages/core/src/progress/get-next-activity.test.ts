@@ -53,6 +53,7 @@ describe("getNextActivity - course scope", () => {
     expect(result).toEqual({
       activityPosition: 0,
       brandSlug: organization.slug,
+      canPrefetch: true,
       chapterSlug: chapter.slug,
       completed: false,
       courseSlug: course.slug,
@@ -101,6 +102,56 @@ describe("getNextActivity - course scope", () => {
     expect(result).toEqual({
       activityPosition: 0,
       brandSlug: organization.slug,
+      canPrefetch: true,
+      chapterSlug: chapter.slug,
+      completed: false,
+      courseSlug: course.slug,
+      hasStarted: false,
+      lessonSlug: lesson.slug,
+    });
+  });
+
+  test("returns first activity with canPrefetch=false when it is not generated", async () => {
+    const course = await courseFixture({ isPublished: true, organizationId: organization.id });
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      isPublished: true,
+      organizationId: organization.id,
+      position: 0,
+    });
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      isPublished: true,
+      organizationId: organization.id,
+      position: 0,
+    });
+
+    await Promise.all([
+      activityFixture({
+        generationStatus: "pending",
+        isPublished: true,
+        lessonId: lesson.id,
+        organizationId: organization.id,
+        position: 0,
+      }),
+      activityFixture({
+        generationStatus: "completed",
+        isPublished: true,
+        lessonId: lesson.id,
+        organizationId: organization.id,
+        position: 1,
+      }),
+    ]);
+
+    const result = await getNextActivity({
+      headers: new Headers(),
+      scope: { courseId: course.id },
+    });
+
+    expect(result).toEqual({
+      activityPosition: 0,
+      brandSlug: organization.slug,
+      canPrefetch: false,
       chapterSlug: chapter.slug,
       completed: false,
       courseSlug: course.slug,
@@ -158,6 +209,7 @@ describe("getNextActivity - course scope", () => {
     expect(result).toEqual({
       activityPosition: 1,
       brandSlug: organization.slug,
+      canPrefetch: true,
       chapterSlug: chapter.slug,
       completed: false,
       courseSlug: course.slug,
@@ -256,6 +308,7 @@ describe("getNextActivity - course scope", () => {
     expect(result).toEqual({
       activityPosition: 1,
       brandSlug: organization.slug,
+      canPrefetch: true,
       chapterSlug: chapterB.slug,
       completed: false,
       courseSlug: course.slug,
@@ -319,6 +372,7 @@ describe("getNextActivity - course scope", () => {
     expect(result).toEqual({
       activityPosition: 0,
       brandSlug: organization.slug,
+      canPrefetch: true,
       chapterSlug: chapter.slug,
       completed: true,
       courseSlug: course.slug,
@@ -397,6 +451,7 @@ describe("getNextActivity - course scope", () => {
     expect(result).toEqual({
       activityPosition: 0,
       brandSlug: organization.slug,
+      canPrefetch: true,
       chapterSlug: publishedChapter.slug,
       completed: false,
       courseSlug: course.slug,
@@ -451,6 +506,7 @@ describe("getNextActivity - chapter scope", () => {
     expect(result).toEqual({
       activityPosition: 0,
       brandSlug: organization.slug,
+      canPrefetch: true,
       chapterSlug: chapter.slug,
       completed: false,
       courseSlug: course.slug,
@@ -508,6 +564,7 @@ describe("getNextActivity - chapter scope", () => {
     expect(result).toEqual({
       activityPosition: 1,
       brandSlug: organization.slug,
+      canPrefetch: true,
       chapterSlug: chapter.slug,
       completed: false,
       courseSlug: course.slug,
@@ -582,6 +639,7 @@ describe("getNextActivity - chapter scope", () => {
     expect(result).toEqual({
       activityPosition: 0,
       brandSlug: organization.slug,
+      canPrefetch: true,
       chapterSlug: chapter1.slug,
       completed: true,
       courseSlug: course.slug,
@@ -636,6 +694,7 @@ describe("getNextActivity - lesson scope", () => {
     expect(result).toEqual({
       activityPosition: 0,
       brandSlug: organization.slug,
+      canPrefetch: true,
       chapterSlug: chapter.slug,
       completed: false,
       courseSlug: course.slug,
@@ -693,6 +752,7 @@ describe("getNextActivity - lesson scope", () => {
     expect(result).toEqual({
       activityPosition: 1,
       brandSlug: organization.slug,
+      canPrefetch: true,
       chapterSlug: chapter.slug,
       completed: false,
       courseSlug: course.slug,
@@ -759,6 +819,7 @@ describe("getNextActivity - lesson scope", () => {
     expect(result).toEqual({
       activityPosition: 0,
       brandSlug: organization.slug,
+      canPrefetch: true,
       chapterSlug: chapter.slug,
       completed: true,
       courseSlug: course.slug,
