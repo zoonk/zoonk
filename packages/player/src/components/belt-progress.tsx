@@ -103,10 +103,13 @@ export function BeltProgressHint({
         aria-label={t("Level progress")}
         value={animationStarted ? displayPercent : previousPercent}
       >
-        <ProgressTrack className="h-1.5">
+        <ProgressTrack className="h-1.5 overflow-hidden">
           <ProgressIndicator
             className={cn(
               beltColorClasses[displayColor],
+              "rounded-full",
+              displayColor === "white" && "ring-1 ring-black/10 ring-inset dark:ring-0",
+              displayColor === "black" && "dark:ring-1 dark:ring-white/10 dark:ring-inset",
               skipTransition ? "duration-0" : "duration-600 ease-out",
               "motion-reduce:duration-0",
             )}
