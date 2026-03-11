@@ -55,9 +55,11 @@ msgid "Incorrect"
 msgstr "Incorrect"
 
 #: ../../packages/player/src/components/belt-progress.tsx
-msgctxt "erSdxr"
-msgid "Belt"
-msgstr "Belt"
+#: src/app/(catalog)/(home)/level.tsx
+#: src/app/(performance)/level/level-stats.tsx
+msgctxt "3UK8wh"
+msgid "{color} belt"
+msgstr "{color} belt"
 
 #: ../../packages/player/src/components/belt-progress.tsx
 msgctxt "IGs0wl"
@@ -70,12 +72,9 @@ msgid "{value} BP to level up"
 msgstr "{value} BP to level up"
 
 #: ../../packages/player/src/components/belt-progress.tsx
-#: src/app/(catalog)/(home)/level.tsx
-#: src/app/(performance)/_components/metric-pills.tsx
-#: src/app/(performance)/level/page.tsx
-msgctxt "y1Qr81"
-msgid "Level"
-msgstr "Level"
+msgctxt "xiSVL4"
+msgid "{color} Belt — Level {level}"
+msgstr "{color} Belt — Level {level}"
 
 #: ../../packages/player/src/components/challenge-completion.tsx
 #: ../../packages/player/src/components/completion-auth-branch.tsx
@@ -656,12 +655,6 @@ msgstr "Interactive courses built for you. Just tell us what you want to learn."
 
 #: src/app/(catalog)/(home)/level.tsx
 #: src/app/(performance)/level/level-stats.tsx
-msgctxt "3UK8wh"
-msgid "{color} belt"
-msgstr "{color} belt"
-
-#: src/app/(catalog)/(home)/level.tsx
-#: src/app/(performance)/level/level-stats.tsx
 msgctxt "8N9BRu"
 msgid "{value} BP to next level"
 msgstr "{value} BP to next level"
@@ -677,6 +670,13 @@ msgstr "Max level reached"
 msgctxt "uiwFZe"
 msgid "{color} Belt - Level {level}"
 msgstr "{color} Belt - Level {level}"
+
+#: src/app/(catalog)/(home)/level.tsx
+#: src/app/(performance)/_components/metric-pills.tsx
+#: src/app/(performance)/level/page.tsx
+msgctxt "y1Qr81"
+msgid "Level"
+msgstr "Level"
 
 #: src/app/(catalog)/(home)/page.tsx
 msgctxt "qsfeMJ"
