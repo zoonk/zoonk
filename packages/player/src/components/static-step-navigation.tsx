@@ -2,6 +2,10 @@
 
 import { useRef } from "react";
 
+const SWIPE_MIN_DISTANCE = 50;
+const SWIPE_MAX_VERTICAL_DRIFT = 75;
+const SWIPE_TAP_SUPPRESSION_MS = 400;
+
 export function StaticTapZones({
   isFirst,
   onNavigateNext,
@@ -32,35 +36,37 @@ export function StaticTapZones({
   );
 }
 
-const SWIPE_MIN_DISTANCE = 50;
-const SWIPE_MAX_VERTICAL_DRIFT = 75;
-
-export function useSwipeNavigation({
+export function useStaticStepNavigation({
+  isFirst,
   onNavigateNext,
   onNavigatePrev,
 }: {
+  isFirst: boolean;
   onNavigateNext: () => void;
   onNavigatePrev: () => void;
 }) {
+  const lastSwipeAt = useRef<number | null>(null);
   const touchStart = useRef<{ x: number; y: number } | null>(null);
 
-  const handleTouchStart = (event: React.TouchEvent) => {
+  const handleTouchStart = (event: React.TouchEvent<HTMLElement>) => {
     const touch = event.touches[0];
 
-    if (touch) {
-      touchStart.current = { x: touch.clientX, y: touch.clientY };
+    if (!touch) {
+      return;
     }
+
+    touchStart.current = { x: touch.clientX, y: touch.clientY };
   };
 
-  const handleTouchEnd = (event: React.TouchEvent) => {
+  const handleTouchEnd = (event: React.TouchEvent<HTMLElement>) => {
     const start = touchStart.current;
     const touch = event.changedTouches[0];
+
+    touchStart.current = null;
 
     if (!start || !touch) {
       return;
     }
-
-    touchStart.current = null;
 
     const deltaX = touch.clientX - start.x;
     const deltaY = Math.abs(touch.clientY - start.y);
@@ -69,12 +75,43 @@ export function useSwipeNavigation({
       return;
     }
 
+    lastSwipeAt.current = Date.now();
+
     if (deltaX < 0) {
       onNavigateNext();
-    } else {
+      return;
+    }
+
+    if (!isFirst) {
       onNavigatePrev();
     }
   };
 
-  return { onTouchEnd: handleTouchEnd, onTouchStart: handleTouchStart };
+  const shouldIgnoreTap = () =>
+    lastSwipeAt.current !== null && Date.now() - lastSwipeAt.current < SWIPE_TAP_SUPPRESSION_MS;
+
+  const handleNavigateNextTap = () => {
+    if (shouldIgnoreTap()) {
+      return;
+    }
+
+    onNavigateNext();
+  };
+
+  const handleNavigatePrevTap = () => {
+    if (shouldIgnoreTap()) {
+      return;
+    }
+
+    onNavigatePrev();
+  };
+
+  return {
+    onNavigateNextTap: handleNavigateNextTap,
+    onNavigatePrevTap: handleNavigatePrevTap,
+    swipeHandlers: {
+      onTouchEnd: handleTouchEnd,
+      onTouchStart: handleTouchStart,
+    },
+  };
 }
