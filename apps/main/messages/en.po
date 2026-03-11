@@ -2179,6 +2179,11 @@ msgid "Generating content with AI requires an active subscription."
 msgstr "Generating content with AI requires an active subscription."
 
 #: src/lib/activities.ts
+msgctxt "/WTXNi"
+msgid "Review everything you learned"
+msgstr "Review everything you learned"
+
+#: src/lib/activities.ts
 msgctxt "1TOMnj"
 msgid "Listening"
 msgstr "Listening"
@@ -2194,9 +2199,9 @@ msgid "Examples"
 msgstr "Examples"
 
 #: src/lib/activities.ts
-msgctxt "7Jwa/p"
-msgid "Shows HOW things work through practical demonstrations and WHERE they appear in real life."
-msgstr "Shows HOW things work through practical demonstrations and WHERE they appear in real life."
+msgctxt "7X/3vJ"
+msgid "Build your vocabulary"
+msgstr "Build your vocabulary"
 
 #: src/lib/activities.ts
 msgctxt "BB51/R"
@@ -2219,24 +2224,24 @@ msgid "Review everything you learned about {topic} with a comprehensive quiz."
 msgstr "Review everything you learned about {topic} with a comprehensive quiz."
 
 #: src/lib/activities.ts
+msgctxt "CaEilC"
+msgid "Make decisions with real trade-offs"
+msgstr "Make decisions with real trade-offs"
+
+#: src/lib/activities.ts
+msgctxt "cxvnSI"
+msgid "Apply the topic in a real scenario"
+msgstr "Apply the topic in a real scenario"
+
+#: src/lib/activities.ts
 msgctxt "E1bF/X"
 msgid "Explanation"
 msgstr "Explanation"
 
 #: src/lib/activities.ts
-msgctxt "EBP23n"
-msgid "Read sentences and translate them to practice reading comprehension."
-msgstr "Read sentences and translate them to practice reading comprehension."
-
-#: src/lib/activities.ts
-msgctxt "EUjQSf"
-msgid "A comprehensive quiz covering everything you learned in this lesson."
-msgstr "A comprehensive quiz covering everything you learned in this lesson."
-
-#: src/lib/activities.ts
-msgctxt "f9gZnh"
-msgid "Learn new words and their translations to build your vocabulary."
-msgstr "Learn new words and their translations to build your vocabulary."
+msgctxt "EhgTzV"
+msgid "Practice listening skills"
+msgstr "Practice listening skills"
 
 #: src/lib/activities.ts
 msgctxt "gAYlHX"
@@ -2244,19 +2249,9 @@ msgid "Sharpen your {topic} listening skills by translating audio sentences."
 msgstr "Sharpen your {topic} listening skills by translating audio sentences."
 
 #: src/lib/activities.ts
-msgctxt "gyZY3d"
-msgid "Tests analytical thinking through decisions with trade-offs. See how each choice impacts different outcomes."
-msgstr "Tests analytical thinking through decisions with trade-offs. See how each choice impacts different outcomes."
-
-#: src/lib/activities.ts
 msgctxt "h2acN8"
 msgid "Test your understanding of {topic} with questions designed to check real comprehension, not just memorization."
 msgstr "Test your understanding of {topic} with questions designed to check real comprehension, not just memorization."
-
-#: src/lib/activities.ts
-msgctxt "i09QqM"
-msgid "A dialogue-based story that helps you practice the language in a real-world context."
-msgstr "A dialogue-based story that helps you practice the language in a real-world context."
 
 #: src/lib/activities.ts
 msgctxt "ICIYNP"
@@ -2264,14 +2259,24 @@ msgid "Discover why {topic} matters — its origins, the problems it solved, and
 msgstr "Discover why {topic} matters — its origins, the problems it solved, and why it's important today."
 
 #: src/lib/activities.ts
-msgctxt "J9eZ8n"
-msgid "Listen to audio sentences and translate them to practice listening skills."
-msgstr "Listen to audio sentences and translate them to practice listening skills."
+msgctxt "iOvuhZ"
+msgid "Test your knowledge"
+msgstr "Test your knowledge"
 
 #: src/lib/activities.ts
-msgctxt "kmCCVm"
-msgid "Teaches grammar rules with practical exercises to help you remember and apply them."
-msgstr "Teaches grammar rules with practical exercises to help you remember and apply them."
+msgctxt "KQeUad"
+msgid "Practice grammar rules"
+msgstr "Practice grammar rules"
+
+#: src/lib/activities.ts
+msgctxt "liTyj7"
+msgid "Practice reading comprehension"
+msgstr "Practice reading comprehension"
+
+#: src/lib/activities.ts
+msgctxt "lLKXNA"
+msgid "See how it works in practice"
+msgstr "See how it works in practice"
 
 #: src/lib/activities.ts
 msgctxt "lqtP+R"
@@ -2287,6 +2292,11 @@ msgstr "{lesson} {activity}"
 msgctxt "MOK/yK"
 msgid "Reading"
 msgstr "Reading"
+
+#: src/lib/activities.ts
+msgctxt "mUgz2t"
+msgid "Core concepts and definitions"
+msgstr "Core concepts and definitions"
 
 #: src/lib/activities.ts
 msgctxt "olZHUk"
@@ -2309,6 +2319,11 @@ msgid "Learn about {topic} through an interactive activity."
 msgstr "Learn about {topic} through an interactive activity."
 
 #: src/lib/activities.ts
+msgctxt "S4v52l"
+msgid "Why this topic exists and why it matters"
+msgstr "Why this topic exists and why it matters"
+
+#: src/lib/activities.ts
 msgctxt "T24ZU7"
 msgid "Apply your knowledge of {topic} through analytical decisions with real trade-offs."
 msgstr "Apply your knowledge of {topic} through analytical decisions with real trade-offs."
@@ -2324,19 +2339,14 @@ msgid "Practice {topic} grammar rules with exercises designed to help you rememb
 msgstr "Practice {topic} grammar rules with exercises designed to help you remember and apply them."
 
 #: src/lib/activities.ts
-msgctxt "tzNRA/"
-msgid "Explains WHAT this topic is. Breaks down core concepts and definitions using metaphors and analogies."
-msgstr "Explains WHAT this topic is. Breaks down core concepts and definitions using metaphors and analogies."
-
-#: src/lib/activities.ts
 msgctxt "UDijXW"
 msgid "{activity} - {lesson}"
 msgstr "{activity} - {lesson}"
 
 #: src/lib/activities.ts
-msgctxt "WD76vM"
-msgid "Explains WHY this topic exists. Tells the origin story, the problems it solved, and why it matters today."
-msgstr "Explains WHY this topic exists. Tells the origin story, the problems it solved, and why it matters today."
+msgctxt "WlmsO/"
+msgid "Practice in a real-world dialogue"
+msgstr "Practice in a real-world dialogue"
 
 #: src/lib/activities.ts
 msgctxt "XQZA8e"
@@ -2347,16 +2357,6 @@ msgstr "Background"
 msgctxt "XzxpBZ"
 msgid "Improve your {topic} reading comprehension by translating sentences and passages."
 msgstr "Improve your {topic} reading comprehension by translating sentences and passages."
-
-#: src/lib/activities.ts
-msgctxt "y21Ybw"
-msgid "Shows WHEN to apply this topic. A dialogue with a colleague where you solve a real problem together."
-msgstr "Shows WHEN to apply this topic. A dialogue with a colleague where you solve a real problem together."
-
-#: src/lib/activities.ts
-msgctxt "ypy024"
-msgid "Tests your understanding with questions. Uses new scenarios to check if you grasped the concept, not just memorized it."
-msgstr "Tests your understanding with questions. Uses new scenarios to check if you grasped the concept, not just memorized it."
 
 #: src/lib/categories/category.ts
 msgctxt "4HKnmB"

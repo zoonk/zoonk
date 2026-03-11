@@ -2179,6 +2179,11 @@ msgid "Generating content with AI requires an active subscription."
 msgstr "Generar contenido con IA requiere una suscripción activa."
 
 #: src/lib/activities.ts
+msgctxt "/WTXNi"
+msgid "Review everything you learned"
+msgstr "Repasa todo lo que aprendiste"
+
+#: src/lib/activities.ts
 msgctxt "1TOMnj"
 msgid "Listening"
 msgstr "Escucha"
@@ -2194,9 +2199,9 @@ msgid "Examples"
 msgstr "Ejemplos"
 
 #: src/lib/activities.ts
-msgctxt "7Jwa/p"
-msgid "Shows HOW things work through practical demonstrations and WHERE they appear in real life."
-msgstr "Muestra CÓMO funcionan las cosas a través de demostraciones prácticas y DÓNDE aparecen en la vida real."
+msgctxt "7X/3vJ"
+msgid "Build your vocabulary"
+msgstr "Amplía tu vocabulario"
 
 #: src/lib/activities.ts
 msgctxt "BB51/R"
@@ -2219,24 +2224,24 @@ msgid "Review everything you learned about {topic} with a comprehensive quiz."
 msgstr "Repasa todo lo que aprendiste sobre {topic} con un cuestionario completo."
 
 #: src/lib/activities.ts
+msgctxt "CaEilC"
+msgid "Make decisions with real trade-offs"
+msgstr "Toma decisiones con consecuencias reales"
+
+#: src/lib/activities.ts
+msgctxt "cxvnSI"
+msgid "Apply the topic in a real scenario"
+msgstr "Aplica el tema en un escenario real"
+
+#: src/lib/activities.ts
 msgctxt "E1bF/X"
 msgid "Explanation"
 msgstr "Explicación"
 
 #: src/lib/activities.ts
-msgctxt "EBP23n"
-msgid "Read sentences and translate them to practice reading comprehension."
-msgstr "Lee oraciones y tradúcelas para practicar comprensión de lectura."
-
-#: src/lib/activities.ts
-msgctxt "EUjQSf"
-msgid "A comprehensive quiz covering everything you learned in this lesson."
-msgstr "Un cuestionario completo que cubre todo lo que aprendiste en esta lección."
-
-#: src/lib/activities.ts
-msgctxt "f9gZnh"
-msgid "Learn new words and their translations to build your vocabulary."
-msgstr "Aprende nuevas palabras y sus traducciones para ampliar tu vocabulario."
+msgctxt "EhgTzV"
+msgid "Practice listening skills"
+msgstr "Practica tus habilidades de escucha"
 
 #: src/lib/activities.ts
 msgctxt "gAYlHX"
@@ -2244,19 +2249,9 @@ msgid "Sharpen your {topic} listening skills by translating audio sentences."
 msgstr "Afina tus habilidades de escucha en {topic} traduciendo oraciones de audio."
 
 #: src/lib/activities.ts
-msgctxt "gyZY3d"
-msgid "Tests analytical thinking through decisions with trade-offs. See how each choice impacts different outcomes."
-msgstr "Evalúa el pensamiento analítico a través de decisiones con compensaciones. Ve cómo cada elección impacta diferentes resultados."
-
-#: src/lib/activities.ts
 msgctxt "h2acN8"
 msgid "Test your understanding of {topic} with questions designed to check real comprehension, not just memorization."
 msgstr "Pon a prueba tu comprensión de {topic} con preguntas diseñadas para verificar la comprensión real, no solo la memorización."
-
-#: src/lib/activities.ts
-msgctxt "i09QqM"
-msgid "A dialogue-based story that helps you practice the language in a real-world context."
-msgstr "Una historia basada en diálogos que te ayuda a practicar el idioma en un contexto del mundo real."
 
 #: src/lib/activities.ts
 msgctxt "ICIYNP"
@@ -2264,14 +2259,24 @@ msgid "Discover why {topic} matters — its origins, the problems it solved, and
 msgstr "Descubre por qué {topic} importa: sus orígenes, los problemas que resolvió y por qué es importante hoy."
 
 #: src/lib/activities.ts
-msgctxt "J9eZ8n"
-msgid "Listen to audio sentences and translate them to practice listening skills."
-msgstr "Escucha oraciones en audio y tradúcelas para practicar habilidades de escucha."
+msgctxt "iOvuhZ"
+msgid "Test your knowledge"
+msgstr "Pon a prueba tus conocimientos"
 
 #: src/lib/activities.ts
-msgctxt "kmCCVm"
-msgid "Teaches grammar rules with practical exercises to help you remember and apply them."
-msgstr "Enseña reglas gramaticales con ejercicios prácticos para ayudarte a recordarlas y aplicarlas."
+msgctxt "KQeUad"
+msgid "Practice grammar rules"
+msgstr "Practica las reglas gramaticales"
+
+#: src/lib/activities.ts
+msgctxt "liTyj7"
+msgid "Practice reading comprehension"
+msgstr "Practica la comprensión de lectura"
+
+#: src/lib/activities.ts
+msgctxt "lLKXNA"
+msgid "See how it works in practice"
+msgstr "Ve cómo funciona en la práctica"
 
 #: src/lib/activities.ts
 msgctxt "lqtP+R"
@@ -2287,6 +2292,11 @@ msgstr "{lesson} {activity}"
 msgctxt "MOK/yK"
 msgid "Reading"
 msgstr "Lectura"
+
+#: src/lib/activities.ts
+msgctxt "mUgz2t"
+msgid "Core concepts and definitions"
+msgstr "Conceptos básicos y definiciones"
 
 #: src/lib/activities.ts
 msgctxt "olZHUk"
@@ -2309,6 +2319,11 @@ msgid "Learn about {topic} through an interactive activity."
 msgstr "Aprende sobre {topic} a través de una actividad interactiva."
 
 #: src/lib/activities.ts
+msgctxt "S4v52l"
+msgid "Why this topic exists and why it matters"
+msgstr "Por qué existe este tema y por qué importa"
+
+#: src/lib/activities.ts
 msgctxt "T24ZU7"
 msgid "Apply your knowledge of {topic} through analytical decisions with real trade-offs."
 msgstr "Aplica tu conocimiento de {topic} a través de decisiones analíticas con compensaciones reales."
@@ -2324,19 +2339,14 @@ msgid "Practice {topic} grammar rules with exercises designed to help you rememb
 msgstr "Practica las reglas gramaticales de {topic} con ejercicios diseñados para ayudarte a recordarlas y aplicarlas."
 
 #: src/lib/activities.ts
-msgctxt "tzNRA/"
-msgid "Explains WHAT this topic is. Breaks down core concepts and definitions using metaphors and analogies."
-msgstr "Explica QUÉ es este tema. Desglosa conceptos centrales y definiciones usando metáforas y analogías."
-
-#: src/lib/activities.ts
 msgctxt "UDijXW"
 msgid "{activity} - {lesson}"
 msgstr "{activity} - {lesson}"
 
 #: src/lib/activities.ts
-msgctxt "WD76vM"
-msgid "Explains WHY this topic exists. Tells the origin story, the problems it solved, and why it matters today."
-msgstr "Explica POR QUÉ existe este tema. Cuenta la historia de origen, los problemas que resolvió y por qué importa hoy."
+msgctxt "WlmsO/"
+msgid "Practice in a real-world dialogue"
+msgstr "Practica en un diálogo del mundo real"
 
 #: src/lib/activities.ts
 msgctxt "XQZA8e"
@@ -2347,16 +2357,6 @@ msgstr "Contexto"
 msgctxt "XzxpBZ"
 msgid "Improve your {topic} reading comprehension by translating sentences and passages."
 msgstr "Mejora tu comprensión de lectura en {topic} traduciendo oraciones y pasajes."
-
-#: src/lib/activities.ts
-msgctxt "y21Ybw"
-msgid "Shows WHEN to apply this topic. A dialogue with a colleague where you solve a real problem together."
-msgstr "Muestra CUÁNDO aplicar este tema. Un diálogo con un colega donde resuelven juntos un problema real."
-
-#: src/lib/activities.ts
-msgctxt "ypy024"
-msgid "Tests your understanding with questions. Uses new scenarios to check if you grasped the concept, not just memorized it."
-msgstr "Evalúa tu comprensión con preguntas. Usa nuevos escenarios para verificar si captaste el concepto, no solo lo memorizaste."
 
 #: src/lib/categories/category.ts
 msgctxt "4HKnmB"

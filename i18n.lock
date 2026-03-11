@@ -203,10 +203,10 @@ checksums:
     Position%20%7Bposition%7D%3A%20%7Bitem%7D.%20Tap%20to%20remove./singular: a1b3d3e026bfff43bff3d3e85ccdb952
     Correct%20answer%3A%20%7Banswer%7D/singular: 7745b2664e841dffff4568203ee443b2
     Incorrect/singular: a86cfbe7b86f19dc8df14a67df073d22
-    Belt/singular: fa36e8e36732c223d2876c0337d372e9
+    "%7Bcolor%7D%20belt/singular": 5949446c9b4a223c04cc500fa17a1fe0
     Level%20progress/singular: 286f095acd17006787247db0b69270e3
     "%7Bvalue%7D%20BP%20to%20level%20up/singular": 755c2fe6e435645cb35b57bf92af09d3
-    Level/singular: 1e3bf31d5c6083e898dd3e3359fbb0c2
+    "%7Bcolor%7D%20Belt%20%E2%80%94%20Level%20%7Blevel%7D/singular": 367f2e902d39199c8507aaad09e8907a
     Back%20to%20Lesson/singular: e2dbef5a2fefae8f9cee708e53e61cb9
     Challenge%20Complete/singular: 7854472cc9245aaa8a13f54514968506
     Final%20dimension%20scores/singular: aa4efa7ecef99d375c1daf4c6585ba98
@@ -311,10 +311,10 @@ checksums:
     Learn%20anything%20with%20AI/singular: 0ee713125135f591c75af6e19f94f03a
     Explore%20courses/singular: 3a60fa1d4a1a6cfffcc0573e3366cd35
     Interactive%20courses%20built%20for%20you.%20Just%20tell%20us%20what%20you%20want%20to%20learn./singular: 30ce55333f2080aaf0681647cb26bfbb
-    "%7Bcolor%7D%20belt/singular": 5949446c9b4a223c04cc500fa17a1fe0
     "%7Bvalue%7D%20BP%20to%20next%20level/singular": dc80ce93407f21e5e909760ec2c9aaef
     Max%20level%20reached/singular: 5bfdf2d9ba3929b456dcf5c253315e92
     "%7Bcolor%7D%20Belt%20-%20Level%20%7Blevel%7D/singular": abb5a7600bd66f523906425beffbaff4
+    Level/singular: 1e3bf31d5c6083e898dd3e3359fbb0c2
     Zoonk%3A%20AI%20Learning%20Platform/singular: 4a2d25490f4a5e5cd4543f48fcec968d
     Zoonk%20is%20an%20AI-powered%20learning%20platform%20where%20you%20can%20learn%20anything%20through%20interactive%20courses%2C%20lessons%2C%20and%20activities./singular: e836899ce8100db55d5fa54fe6375970
     Performance/singular: 28b6d3a3d4a53afa0617a180e318ff4d
@@ -594,42 +594,42 @@ checksums:
     Upgrade/singular: 63c3b52882e0d779859307d672c178c2
     Upgrade%20to%20generate/singular: 9c4baffb6ff3a12a322dfe02735ac35c
     Generating%20content%20with%20AI%20requires%20an%20active%20subscription./singular: ee3e62a18f3437b719f6793dd01d66f8
+    Review%20everything%20you%20learned/singular: 43765847b62600b35e41399405799505
     Listening/singular: 9e680c44cd88a178b953349ed8881ef2
     Experience%20when%20to%20apply%20%7Btopic%7D%20through%20a%20real-world%20dialogue%20scenario./singular: d143d122b526618096d637288c66f50a
     Examples/singular: 9dacb7c56bc894e4bcad39f41265e3a0
-    Shows%20HOW%20things%20work%20through%20practical%20demonstrations%20and%20WHERE%20they%20appear%20in%20real%20life./singular: b165f936cd5dcecc05d9aa3144c1df1c
+    Build%20your%20vocabulary/singular: 577b45f6453f5461f7078c757d96beec
     Practice%20%7Btopic%7D%20in%20context%20through%20a%20dialogue-based%20story%20set%20in%20real-world%20situations./singular: e1b3079ec8c6a2c89d20e5c7c48bfc59
     Story/singular: fabac3f62af801d429e2cd7115bf14c9
     Build%20your%20%7Btopic%7D%20vocabulary%20with%20new%20words%2C%20translations%2C%20and%20pronunciation./singular: 2c0f84dadf5fcbfb5842260046bfa956
     Review%20everything%20you%20learned%20about%20%7Btopic%7D%20with%20a%20comprehensive%20quiz./singular: 8acf9006cabdcbaac217c7565943f068
+    Make%20decisions%20with%20real%20trade-offs/singular: ac5d6c3a0bbcc1ca93344dfd5b79f197
+    Apply%20the%20topic%20in%20a%20real%20scenario/singular: 65a73c601b8c332c525ccc19f96ba23d
     Explanation/singular: f6b595df4ffb1a5b0cbbe1dda5993522
-    Read%20sentences%20and%20translate%20them%20to%20practice%20reading%20comprehension./singular: b084920876df6266904d73e2ddfc6f19
-    A%20comprehensive%20quiz%20covering%20everything%20you%20learned%20in%20this%20lesson./singular: bd46bf5022b53951436d9facacacf673
-    Learn%20new%20words%20and%20their%20translations%20to%20build%20your%20vocabulary./singular: edf41f5213749b375ab5057e14707380
+    Practice%20listening%20skills/singular: 9c71545510620dd5ca2e71a6884a7991
     Sharpen%20your%20%7Btopic%7D%20listening%20skills%20by%20translating%20audio%20sentences./singular: b624ceffbbfc91a29cec43a0037b067f
-    Tests%20analytical%20thinking%20through%20decisions%20with%20trade-offs.%20See%20how%20each%20choice%20impacts%20different%20outcomes./singular: 6d49ad51d42b986411df06b5ceb48067
     Test%20your%20understanding%20of%20%7Btopic%7D%20with%20questions%20designed%20to%20check%20real%20comprehension%2C%20not%20just%20memorization./singular: d9f3e39d19b1c6969b481bc8aec8fc10
-    A%20dialogue-based%20story%20that%20helps%20you%20practice%20the%20language%20in%20a%20real-world%20context./singular: 1eb319ba42d87bf86a9ff6e17bddee5f
     Discover%20why%20%7Btopic%7D%20matters%20%E2%80%94%20its%20origins%2C%20the%20problems%20it%20solved%2C%20and%20why%20it's%20important%20today./singular: 4ab5d214b2548bd9399cbc3a8eef6284
-    Listen%20to%20audio%20sentences%20and%20translate%20them%20to%20practice%20listening%20skills./singular: c7f37f13c3e2d3cb1f23c9cc5eee4e1d
-    Teaches%20grammar%20rules%20with%20practical%20exercises%20to%20help%20you%20remember%20and%20apply%20them./singular: b1250dcf530d4320d730ad2744d37221
+    Test%20your%20knowledge/singular: 34eff98731fb7afc50a9db11237766d3
+    Practice%20grammar%20rules/singular: 569fcc41ef5320c1f9f8d2c9b465433b
+    Practice%20reading%20comprehension/singular: d930ea447a24f0084a9ec9a0fe0c06bb
+    See%20how%20it%20works%20in%20practice/singular: 150fd4dfc4af732e6821c63d76b0987a
     Vocabulary/singular: 2c8127af4c194fa05463e82d5e414c62
     "%7Blesson%7D%20%7Bactivity%7D/singular": d959fed1ee77dca493e8cf0a3b3129c0
     Reading/singular: 9d93f1dff4a01a9e1566f23b401b8868
+    Core%20concepts%20and%20definitions/singular: ca63fbf3fbf474f50c18ba15f3a4fa54
     See%20how%20%7Btopic%7D%20works%20through%20practical%20demonstrations%20and%20where%20it%20appears%20in%20real%20life./singular: 4229b8b2a33f8a182a1d436a4f7acea8
     Quiz/singular: 22bce287f7a90d3b41b418108eaab43b
     Grammar/singular: 1d97aca351a45df1d6eb27adbee04832
     Learn%20about%20%7Btopic%7D%20through%20an%20interactive%20activity./singular: 94f8ca153ea2ee6b539f507266548201
+    Why%20this%20topic%20exists%20and%20why%20it%20matters/singular: b9ceed8055b8917f6fbc67c4de20c710
     Apply%20your%20knowledge%20of%20%7Btopic%7D%20through%20analytical%20decisions%20with%20real%20trade-offs./singular: a45d6f6551b5ec5c1206d7886bff0437
     Understand%20what%20%7Btopic%7D%20is%20%E2%80%94%20core%20concepts%20and%20definitions%20explained%20with%20clear%20metaphors%20and%20analogies./singular: ec3b49a710ebac5f592523bdaa68ceff
     Practice%20%7Btopic%7D%20grammar%20rules%20with%20exercises%20designed%20to%20help%20you%20remember%20and%20apply%20them./singular: 107adae09992e8b4deb051afa38da3bd
-    Explains%20WHAT%20this%20topic%20is.%20Breaks%20down%20core%20concepts%20and%20definitions%20using%20metaphors%20and%20analogies./singular: 5eb6b1cd33e5c20af8423753d4368a81
     "%7Bactivity%7D%20-%20%7Blesson%7D/singular": 0aad8d82851f799d79c052a0f2b90d67
-    Explains%20WHY%20this%20topic%20exists.%20Tells%20the%20origin%20story%2C%20the%20problems%20it%20solved%2C%20and%20why%20it%20matters%20today./singular: 8bdce45d80e8a4cfcbc65d2bfe928c82
+    Practice%20in%20a%20real-world%20dialogue/singular: 35a3583ab576eb0a857b1956c27ba00a
     Background/singular: 0ceaed10d99ed4ad83cb0934ab970174
     Improve%20your%20%7Btopic%7D%20reading%20comprehension%20by%20translating%20sentences%20and%20passages./singular: 60baac4222f76009cc1eb1b6065b403b
-    Shows%20WHEN%20to%20apply%20this%20topic.%20A%20dialogue%20with%20a%20colleague%20where%20you%20solve%20a%20real%20problem%20together./singular: 3fb0934c1e0a5ba3e31b6cc5b897b509
-    Tests%20your%20understanding%20with%20questions.%20Uses%20new%20scenarios%20to%20check%20if%20you%20grasped%20the%20concept%2C%20not%20just%20memorized%20it./singular: feeb1e59f787035a964dd93290e180e7
     "%7Bcategory%7D%20Courses/singular": f82680a650c487992e1025b66f324d4c
     Math/singular: 0a604ffa5ef57408918fe98ef05eb05a
     Explore%20all%20%7Bcategory%7D%20courses/singular: b1f2775c67b4a61b3d92b4345b8b852e
