@@ -92,11 +92,11 @@ export function BeltProgressHint({
         <BeltIndicator
           className={didLevelUp ? "animate-dot-pulse motion-reduce:animate-none" : undefined}
           color={displayColor}
-          label={displayLabel}
+          label={t("{color} belt", { color: displayLabel })}
           size="sm"
         />
         <span className="text-foreground text-sm font-medium">
-          {displayLabel} {t("Belt")} — {t("Level")} {displayLevel}
+          {t("{color} Belt — Level {level}", { color: displayLabel, level: String(displayLevel) })}
         </span>
       </div>
       <ProgressRoot
