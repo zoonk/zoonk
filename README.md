@@ -99,7 +99,7 @@ We recommend using [mise](https://mise.jdx.dev/) to manage your Node.js and pnpm
 
 You can use [lingo.dev](https://lingo.dev/) to manage translations for this project. Run `pnpm i18n` from the root directory to translate missing keys.
 
-This is optional. If using `lingo.dev`, make sure to set the `LINGODOTDEV_API_KEY` environment variable in your local `.env` file.
+This is optional. If using `lingo.dev`, make sure to set the `LINGO_API_KEY` environment variable in your local `.env` file.
 
 ## Remote Caching
 
