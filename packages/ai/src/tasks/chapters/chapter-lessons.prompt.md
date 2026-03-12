@@ -60,8 +60,8 @@ This is the most critical aspect. Each concept must be **one single, specific id
 ## Lesson Unit Structure
 
 - Each lesson groups related concepts under a thematic title
-- Include **as many concepts as the theme naturally requires** — some themes need 4, others need 8. Don't force every lesson to the same size
-- **NEVER exceed 8 concepts per lesson** — if a group has more than 8, split it into two lessons with more specific themes. This is a hard limit
+- Include **as many concepts as the theme naturally requires** — some themes need 3, others need 6. Don't force every lesson to the same size
+- **NEVER exceed 6 concepts per lesson** — if a group has more than 6, split it into two lessons with more specific themes. This is a hard limit
 - If a group would have fewer than 3 concepts, merge it with a related group
 - Lessons should follow a logical progression from foundational to advanced
 - Don't add "applications", "integrated practice", or "putting it all together" lessons — every lesson should teach new concepts, not revisit previous ones
@@ -171,7 +171,7 @@ Before finalizing, verify:
 
 1. **Concept granularity**: Can EACH concept be explained in a single tweet? If any concept could have sub-items under it, break it down further.
 2. **No compound concepts**: Does any concept title contain "AND", "OR", or "VS"? If yes, split it.
-3. **Lesson sizes**: Does each lesson have 3-8 concepts? Do lesson sizes vary naturally, or are they all the same number? Split or merge as needed.
+3. **Lesson sizes**: Does each lesson have 3-6 concepts? Do lesson sizes vary naturally, or are they all the same number? Split or merge as needed.
 4. **Complete coverage**: Have you covered EVERYTHING from the chapter description?
 5. **Chapter scope**: Did you stay within the chapter's scope?
 6. **No neighboring overlap**: For each concept, if you moved it to a neighboring chapter's list, would it fit naturally there? If yes, remove it — it belongs there, not here.

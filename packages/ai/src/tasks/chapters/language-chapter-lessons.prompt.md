@@ -61,8 +61,8 @@ This is the most critical aspect. Each concept must be **one single, specific la
 ## Lesson Unit Structure
 
 - Each lesson groups related concepts under a thematic title
-- Include **as many concepts as the theme naturally requires** — some themes need 4, others need 8. Don't force every lesson to the same size
-- **NEVER exceed 8 concepts per lesson** — if a group has more than 8, split it into two lessons with more specific themes. This is a hard limit
+- Include **as many concepts as the theme naturally requires** — some themes need 3, others need 6. Don't force every lesson to the same size
+- **NEVER exceed 6 concepts per lesson** — if a group has more than 6, split it into two lessons with more specific themes. This is a hard limit
 - If a group would have fewer than 3 concepts, merge it with a related group
 - Lessons should follow a logical progression from foundational to advanced
 - Don't add "applications", "integrated practice", or "putting it all together" lessons — every lesson should teach new concepts, not revisit previous ones
@@ -171,7 +171,7 @@ Before finalizing, verify:
 2. **No false granularity**: Are any concepts just the same form repeated with different subjects or contexts? If yes, merge them into one concept.
 3. **No duplicates**: Does the same concept appear in multiple lessons? If yes, keep it only in the most relevant lesson.
 4. **No unrelated bundling**: Does any concept join genuinely unrelated topics? If yes, split it. Comparisons and contrasts between related items are fine.
-5. **Lesson sizes**: Does each lesson have 3-8 concepts? Do lesson sizes vary naturally, or are they all the same number? Split or merge as needed.
+5. **Lesson sizes**: Does each lesson have 3-6 concepts? Do lesson sizes vary naturally, or are they all the same number? Split or merge as needed.
 6. **Complete coverage**: Have you covered EVERYTHING from the chapter description?
 7. **Chapter scope and level**: Did you stay within the chapter's scope AND level? An advanced nuance chapter should not include basic grammar that belongs in earlier chapters.
 8. **Anchored in the target language**: Is every concept anchored in concrete target-language items the learner will produce or recognize? Remove culture, career, exam, or literature content.

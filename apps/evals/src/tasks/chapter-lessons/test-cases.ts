@@ -7,7 +7,7 @@ const SHARED_EXPECTATIONS = `
 
   Output is organized into LESSON UNITS (thematic groups) containing CONCEPTS (individual teachable items).
   - Each concept should be a single, specific idea — something a domain expert would consider one teachable unit
-  - Lesson sizes should be 3-8 concepts and should vary naturally across lessons
+  - Lesson sizes should be 3-6 concepts and should vary naturally across lessons
   - Total concept coverage should be exhaustive for the chapter's scope
 
   ## Evaluating concept quality
