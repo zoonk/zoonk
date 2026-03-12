@@ -18,7 +18,7 @@
     "workflow:web": "workflow web"
   },
   "dependencies": {
-    "@sentry/nextjs": "10.42.0",
+    "@sentry/nextjs": "10.43.0",
     "@tabler/icons-react": "3.40.0",
     "@zoonk/ai": "workspace:*",
     "@zoonk/core": "workspace:*",
@@ -33,15 +33,15 @@
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "server-only": "0.0.1",
-    "workflow": "4.2.0-beta.67",
+    "workflow": "4.2.0-beta.69",
     "zod": "4.3.6"
   },
   "devDependencies": {
-    "@scalar/nextjs-api-reference": "0.10.0",
+    "@scalar/nextjs-api-reference": "0.10.2",
     "@types/node": "^24",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
-    "@typescript/native-preview": "7.0.0-dev.20260307.1",
+    "@typescript/native-preview": "7.0.0-dev.20260312.1",
     "@zoonk/db": "workspace:*",
     "@zoonk/e2e": "workspace:*",
     "@zoonk/testing": "workspace:*",
