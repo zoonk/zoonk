@@ -167,7 +167,7 @@ test.describe("Lesson Detail Page", () => {
     await expect(activityList.getByText(/why this topic exists and why it matters/i)).toBeVisible();
 
     await expect(activityList.getByRole("link", { name: /explanation/i })).toBeVisible();
-    await expect(activityList.getByText(/core concepts and definitions/i)).toBeVisible();
+    await expect(activityList.getByText(/concepts and definitions/i)).toBeVisible();
 
     await expect(activityList.getByRole("link", { name: /quiz/i })).toBeVisible();
     await expect(activityList.getByText(/test your knowledge/i)).toBeVisible();

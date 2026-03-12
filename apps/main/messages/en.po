@@ -2304,14 +2304,14 @@ msgid "Reading"
 msgstr "Reading"
 
 #: src/lib/activities.ts
-msgctxt "mUgz2t"
-msgid "Core concepts and definitions"
-msgstr "Core concepts and definitions"
-
-#: src/lib/activities.ts
 msgctxt "olZHUk"
 msgid "See how {topic} works through practical demonstrations and where it appears in real life."
 msgstr "See how {topic} works through practical demonstrations and where it appears in real life."
+
+#: src/lib/activities.ts
+msgctxt "OQQjs9"
+msgid "Concepts and definitions"
+msgstr "Concepts and definitions"
 
 #: src/lib/activities.ts
 msgctxt "OuR/Ij"
