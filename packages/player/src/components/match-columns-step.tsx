@@ -16,17 +16,19 @@ type ItemVisualState = "correct" | "idle" | "incorrectFlash" | "selected";
 
 const FLASH_DURATION = 800;
 
+type Selection = { item: string; side: "left" | "right" };
+
 function getItemVisualState({
   correctPairs,
   flashingPair,
   item,
-  selectedLeft,
+  selected,
   side,
 }: {
   correctPairs: Pair[];
   flashingPair: Pair | null;
   item: string;
-  selectedLeft: string | null;
+  selected: Selection | null;
   side: "left" | "right";
 }): ItemVisualState {
   if (correctPairs.some((pair) => pair[side] === item)) {
@@ -37,7 +39,7 @@ function getItemVisualState({
     return "incorrectFlash";
   }
 
-  if (side === "left" && selectedLeft === item) {
+  if (selected && selected.side === side && selected.item === item) {
     return "selected";
   }
 
@@ -93,18 +95,16 @@ function MatchGrid({
   correctPairs,
   flashingPair,
   leftItems,
-  onTapLeft,
-  onTapRight,
+  onTap,
   rightItems,
-  selectedLeft,
+  selected,
 }: {
   correctPairs: Pair[];
   flashingPair: Pair | null;
   leftItems: string[];
-  onTapLeft: (item: string) => void;
-  onTapRight: (item: string) => void;
+  onTap: (side: "left" | "right", item: string) => void;
   rightItems: string[];
-  selectedLeft: string | null;
+  selected: Selection | null;
 }) {
   return (
     <div className="grid grid-cols-2 gap-2 sm:gap-3">
@@ -118,7 +118,7 @@ function MatchGrid({
           correctPairs,
           flashingPair,
           item: left,
-          selectedLeft,
+          selected,
           side: "left",
         });
 
@@ -126,14 +126,14 @@ function MatchGrid({
           correctPairs,
           flashingPair,
           item: right,
-          selectedLeft,
+          selected,
           side: "right",
         });
 
         return (
           <Fragment key={left}>
-            <MatchItem label={left} onTap={() => onTapLeft(left)} state={leftState} />
-            <MatchItem label={right} onTap={() => onTapRight(right)} state={rightState} />
+            <MatchItem label={left} onTap={() => onTap("left", left)} state={leftState} />
+            <MatchItem label={right} onTap={() => onTap("right", right)} state={rightState} />
           </Fragment>
         );
       })}
@@ -155,15 +155,15 @@ export function MatchColumnsStep({
 
   const leftItems = useMemo(() => content.pairs.map((pair) => pair.left), [content.pairs]);
 
-  const [selectedLeft, setSelectedLeft] = useState<string | null>(null);
+  const [selected, setSelected] = useState<Selection | null>(null);
   const [correctPairs, setCorrectPairs] = useState<Pair[]>([]);
   const [flashingPair, setFlashingPair] = useState<Pair | null>(null);
   const [mistakes, setMistakes] = useState(0);
   const flashTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const handleTapLeft = useCallback(
-    (item: string) => {
-      if (correctPairs.some((pair) => pair.left === item)) {
+  const handleTap = useCallback(
+    (side: "left" | "right", item: string) => {
+      if (correctPairs.some((pair) => pair[side] === item)) {
         return;
       }
 
@@ -171,32 +171,27 @@ export function MatchColumnsStep({
         return;
       }
 
-      setSelectedLeft(selectedLeft === item ? null : item);
-    },
-    [correctPairs, flashingPair, selectedLeft],
-  );
-
-  const handleTapRight = useCallback(
-    (item: string) => {
-      if (correctPairs.some((pair) => pair.right === item)) {
+      if (!selected) {
+        setSelected({ item, side });
         return;
       }
 
-      if (flashingPair) {
+      if (selected.side === side) {
+        setSelected(selected.item === item ? null : { item, side });
         return;
       }
 
-      if (!selectedLeft) {
-        return;
-      }
+      const pair: Pair =
+        side === "left"
+          ? { left: item, right: selected.item }
+          : { left: selected.item, right: item };
 
-      const pair: Pair = { left: selectedLeft, right: item };
       const isCorrectPair = checkSingleMatchPair(content, pair);
 
       if (isCorrectPair) {
         const nextCorrect = [...correctPairs, pair];
         setCorrectPairs(nextCorrect);
-        setSelectedLeft(null);
+        setSelected(null);
 
         if (nextCorrect.length === content.pairs.length) {
           onSelectAnswer(step.id, {
@@ -208,7 +203,7 @@ export function MatchColumnsStep({
       } else {
         setMistakes((prev) => prev + 1);
         setFlashingPair(pair);
-        setSelectedLeft(null);
+        setSelected(null);
 
         if (flashTimeoutRef.current) {
           clearTimeout(flashTimeoutRef.current);
@@ -220,7 +215,7 @@ export function MatchColumnsStep({
         }, FLASH_DURATION);
       }
     },
-    [content, correctPairs, flashingPair, mistakes, onSelectAnswer, selectedLeft, step.id],
+    [content, correctPairs, flashingPair, mistakes, onSelectAnswer, selected, step.id],
   );
 
   const allMatched = correctPairs.length === content.pairs.length;
@@ -233,10 +228,9 @@ export function MatchColumnsStep({
         correctPairs={correctPairs}
         flashingPair={flashingPair}
         leftItems={leftItems}
-        onTapLeft={handleTapLeft}
-        onTapRight={handleTapRight}
+        onTap={handleTap}
         rightItems={step.matchColumnsRightItems}
-        selectedLeft={selectedLeft}
+        selected={selected}
       />
 
       <div aria-live="polite" className="sr-only" role="status">
