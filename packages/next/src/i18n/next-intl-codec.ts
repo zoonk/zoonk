@@ -47,7 +47,7 @@ function localeCompare(a: string, b: string) {
   return a.localeCompare(b, "en");
 }
 
-function getUniqueReferences(references: Entry["references"]): Array<{ path: string }> | undefined {
+function getUniqueReferences(references: Entry["references"]): { path: string }[] | undefined {
   if (!references || references.length === 0) {
     return;
   }
