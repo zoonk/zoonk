@@ -20,7 +20,7 @@ describe("chapter generation phases", () => {
   test("keeps non-language tail phases for regular chapters", () => {
     const phases = getPhaseOrder({
       completedSteps: ["getLessonActivities"],
-      currentStep: "generateBackgroundContent",
+      currentStep: "generateExplanationContent",
       targetLanguage: null,
     });
 

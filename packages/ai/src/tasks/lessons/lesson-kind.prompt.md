@@ -16,7 +16,7 @@ You classify lessons into one of three kinds based on their content and learning
 
 ### core
 
-Use for lessons that require conceptual understanding with explanation, background, and theory. These lessons benefit from the structured activity sequence: Background → Explanation → Quiz → Mechanics → Examples → Story → Challenge → Review.
+Use for lessons that require conceptual understanding with explanation and theory. These lessons benefit from the structured activity sequence: Explanation → Practice → Quiz → Challenge → Review.
 
 Examples: "Introduction to Variables", "Understanding Photosynthesis", "The French Revolution", "Supply and Demand"
 

@@ -1,9 +1,8 @@
 import { type WorkflowErrorReason } from "@/workflows/_shared/stream-status";
 import { type StepVisualSchema, generateStepVisuals } from "@zoonk/ai/tasks/steps/visual";
-import { type ActivityKind, prisma } from "@zoonk/db";
+import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { streamError, streamStatus } from "../stream-status";
-import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { type ActivitySteps } from "./_utils/get-activity-steps";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
@@ -38,22 +37,6 @@ async function handleVisualsError(
   await streamError({ reason, step: "generateVisuals" });
   await handleActivityFailureStep({ activityId });
   return { visuals: [] };
-}
-
-export async function generateVisualsStep(
-  activities: LessonActivity[],
-  steps: ActivitySteps,
-  activityKind: ActivityKind,
-): Promise<{ visuals: StepVisual[] }> {
-  "use step";
-
-  const activity = findActivityByKind(activities, activityKind);
-
-  if (!activity || steps.length === 0) {
-    return { visuals: [] };
-  }
-
-  return generateVisualsForActivityStep(activity, steps);
 }
 
 export async function generateVisualsForActivityStep(

@@ -1,8 +1,6 @@
 import { type Task } from "@/lib/types";
-import { activityBackgroundTask } from "./activity-background/task";
 import { activityChallengeTask } from "./activity-challenge/task";
 import { activityCustomTask } from "./activity-custom/task";
-import { activityExamplesTask } from "./activity-examples/task";
 import { activityExplanationTask } from "./activity-explanation/task";
 import { activityGrammarTask } from "./activity-grammar/task";
 import { activityPracticeLanguageTask } from "./activity-practice-language/task";
@@ -24,10 +22,8 @@ import { lessonKindTask } from "./lesson-kind/task";
 import { stepVisualTask } from "./step-visual/task";
 
 export const TASKS: readonly Task[] = [
-  activityBackgroundTask,
   activityChallengeTask,
   activityCustomTask,
-  activityExamplesTask,
   activityQuizTask,
   activityExplanationTask,
   activityGrammarTask,

@@ -36,9 +36,9 @@ async function createTestLessonWithActivities() {
     title: `E2E Lesson ${uniqueId}`,
   });
 
-  const background = await activityFixture({
+  const practice = await activityFixture({
     isPublished: true,
-    kind: "background",
+    kind: "practice",
     lessonId: lesson.id,
     organizationId: org.id,
     position: 0,
@@ -69,7 +69,7 @@ async function createTestLessonWithActivities() {
   });
 
   return {
-    activities: { background, challenge, explanation, quiz },
+    activities: { challenge, explanation, practice, quiz },
     chapter,
     course,
     lesson,
@@ -137,8 +137,8 @@ test.describe("Lesson Detail Page", () => {
     // Scope to the activity list for precise queries
     const activityList = page.getByRole("list", { name: /activities/i });
 
-    await expect(activityList.getByRole("link", { name: /background/i })).toBeVisible();
-    await expect(activityList.getByText(/why this topic exists and why it matters/i)).toBeVisible();
+    await expect(activityList.getByRole("link", { name: /practice/i })).toBeVisible();
+    await expect(activityList.getByText(/apply the topic in a real scenario/i)).toBeVisible();
 
     await expect(activityList.getByRole("link", { name: /explanation/i })).toBeVisible();
     await expect(activityList.getByText(/concepts and definitions/i)).toBeVisible();
@@ -156,7 +156,7 @@ test.describe("Lesson Detail Page", () => {
 
     // Scope to the activity list for precise query
     const activityList = page.getByRole("list", { name: /activities/i });
-    const activityLink = activityList.getByRole("link", { name: /background/i });
+    const activityLink = activityList.getByRole("link", { name: /practice/i });
     await activityLink.click();
 
     await expect(page).toHaveURL(new RegExp(`/l/${lesson.slug}/a/0`));
@@ -209,7 +209,7 @@ test.describe("Lesson Detail Page", () => {
 
     await Promise.all([
       activityProgressFixture({
-        activityId: activities.background.id,
+        activityId: activities.practice.id,
         completedAt: new Date(),
         durationSeconds: 60,
         userId: withProgressUser.id,
@@ -251,7 +251,7 @@ test.describe("Lesson Detail Page", () => {
 
     await Promise.all([
       activityProgressFixture({
-        activityId: activities.background.id,
+        activityId: activities.practice.id,
         completedAt: new Date(),
         durationSeconds: 60,
         userId: withProgressUser.id,

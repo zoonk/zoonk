@@ -104,7 +104,7 @@ describe("admins", () => {
 
     await Promise.all([
       activityFixture({
-        kind: "background",
+        kind: "explanation",
         language: course.language,
         lessonId: newLesson.id,
         organizationId: organization.id,
@@ -133,7 +133,7 @@ describe("admins", () => {
     expect(result.data?.activities).toHaveLength(2);
     expect(result.data?.activities[0]?.title).toBe("Activity 1");
     expect(result.data?.activities[0]?.position).toBe(0);
-    expect(result.data?.activities[0]?.kind).toBe("background");
+    expect(result.data?.activities[0]?.kind).toBe("explanation");
     expect(result.data?.activities[1]?.title).toBe("Activity 2");
     expect(result.data?.activities[1]?.position).toBe(1);
     expect(result.data?.activities[1]?.kind).toBe("quiz");

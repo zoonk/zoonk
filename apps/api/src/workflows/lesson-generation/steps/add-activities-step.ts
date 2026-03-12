@@ -37,8 +37,6 @@ function getCoreActivities(concepts: string[]): ActivityEntry[] {
 
   const allExplanations = [...fallbackExplanation, ...explanations];
 
-  const background: ActivityEntry = { description: null, kind: "background", title: null };
-  const examples: ActivityEntry = { description: null, kind: "examples", title: null };
   const practice: ActivityEntry = { description: null, kind: "practice", title: null };
   const challenge: ActivityEntry = { description: null, kind: "challenge", title: null };
   const review: ActivityEntry = { description: null, kind: "review", title: null };
@@ -47,24 +45,14 @@ function getCoreActivities(concepts: string[]): ActivityEntry[] {
   const minConceptsForTwoPractices = 4;
 
   if (concepts.length < minConceptsForTwoPractices) {
-    return [background, ...allExplanations, practice, examples, quiz, challenge, review];
+    return [...allExplanations, practice, quiz, challenge, review];
   }
 
   const splitIndex = Math.floor(concepts.length / 2);
   const firstGroup = explanations.slice(0, splitIndex);
   const secondGroup = explanations.slice(splitIndex);
 
-  return [
-    background,
-    ...firstGroup,
-    practice,
-    ...secondGroup,
-    practice,
-    examples,
-    quiz,
-    challenge,
-    review,
-  ];
+  return [...firstGroup, practice, ...secondGroup, practice, quiz, challenge, review];
 }
 
 function getLanguageActivities(targetLanguage: string | null): ActivityKind[] {

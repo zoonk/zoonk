@@ -116,7 +116,7 @@ test.describe("Activity Generation Workflow API", () => {
       data: {
         description: "Test activity description",
         isPublished: true,
-        kind: "background",
+        kind: "explanation",
         language: "en",
         lessonId: lesson.id,
         organizationId: aiOrgId,
@@ -226,7 +226,7 @@ test.describe("Activity Generation Workflow API", () => {
       data: {
         description: "Test activity for workflow success",
         isPublished: true,
-        kind: "background",
+        kind: "explanation",
         language: "en",
         lessonId: lesson.id,
         organizationId: aiOrgId,

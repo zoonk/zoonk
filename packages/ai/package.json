@@ -4,9 +4,7 @@
   "type": "module",
   "exports": {
     "./gateway": "./src/gateway.ts",
-    "./tasks/activities/core/background": "./src/tasks/activities/core/activity-background.ts",
     "./tasks/activities/core/challenge": "./src/tasks/activities/core/activity-challenge.ts",
-    "./tasks/activities/core/examples": "./src/tasks/activities/core/activity-examples.ts",
     "./tasks/activities/core/explanation": "./src/tasks/activities/core/activity-explanation.ts",
     "./tasks/activities/core/quiz": "./src/tasks/activities/core/activity-quiz.ts",
     "./tasks/activities/core/practice": "./src/tasks/activities/core/activity-practice.ts",

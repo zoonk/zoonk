@@ -13,10 +13,8 @@ enum LessonKind {
 
 enum ActivityKind {
   custom
-  background
   explanation
   quiz
-  examples
   practice
   challenge
   vocabulary

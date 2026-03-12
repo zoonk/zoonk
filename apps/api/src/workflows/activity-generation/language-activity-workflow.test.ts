@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { generateActivityBackground } from "@zoonk/ai/tasks/activities/core/background";
+import { generateActivityExplanation } from "@zoonk/ai/tasks/activities/core/explanation";
 import { generateActivityGrammar } from "@zoonk/ai/tasks/activities/language/grammar";
 import { generateActivitySentences } from "@zoonk/ai/tasks/activities/language/sentences";
 import { generateActivityVocabulary } from "@zoonk/ai/tasks/activities/language/vocabulary";
@@ -164,18 +164,14 @@ vi.mock("@zoonk/core/audio/generate", () => ({
   }),
 }));
 
-vi.mock("@zoonk/ai/tasks/activities/core/background", () => ({
-  generateActivityBackground: vi.fn().mockResolvedValue({
-    data: { steps: [{ text: "Background step 1 text", title: "Background Step 1" }] },
+vi.mock("@zoonk/ai/tasks/activities/core/explanation", () => ({
+  generateActivityExplanation: vi.fn().mockResolvedValue({
+    data: { steps: [{ text: "Explanation step 1 text", title: "Explanation Step 1" }] },
   }),
 }));
 
 vi.mock("@zoonk/ai/tasks/activities/core/explanation", () => ({
   generateActivityExplanation: vi.fn().mockResolvedValue({ data: { steps: [] } }),
-}));
-
-vi.mock("@zoonk/ai/tasks/activities/core/examples", () => ({
-  generateActivityExamples: vi.fn().mockResolvedValue({ data: { steps: [] } }),
 }));
 
 vi.mock("@zoonk/ai/tasks/activities/core/practice", () => ({
@@ -285,16 +281,16 @@ describe("language activity generation", () => {
 
     await activityFixture({
       generationStatus: "pending",
-      kind: "background",
+      kind: "explanation",
       lessonId: testLesson.id,
       organizationId,
-      title: `Background ${randomUUID()}`,
+      title: `Explanation ${randomUUID()}`,
     });
 
     await activityGenerationWorkflow(testLesson.id);
 
     expect(generateActivityVocabulary).toHaveBeenCalled();
-    expect(generateActivityBackground).not.toHaveBeenCalled();
+    expect(generateActivityExplanation).not.toHaveBeenCalled();
   });
 
   test("generates grammar even when vocabulary generation fails", async () => {

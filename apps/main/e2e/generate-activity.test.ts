@@ -152,7 +152,7 @@ async function createPendingActivity() {
   const activity = await activityFixture({
     generationStatus: "pending",
     isPublished: true,
-    kind: "background",
+    kind: "explanation",
     lessonId: lesson.id,
     organizationId: org.id,
     title: activityTitle,
@@ -322,14 +322,14 @@ test.describe("Generate Activity Page - With Subscription", () => {
         { status: "completed", step: "getLessonActivities" },
         { status: "started", step: "setActivityAsRunning" },
         { status: "completed", step: "setActivityAsRunning" },
-        { status: "started", step: "generateBackgroundContent" },
-        { status: "completed", step: "generateBackgroundContent" },
+        { status: "started", step: "generateExplanationContent" },
+        { status: "completed", step: "generateExplanationContent" },
         { status: "started", step: "generateVisuals" },
         { status: "completed", step: "generateVisuals" },
         { status: "started", step: "generateImages" },
         { status: "completed", step: "generateImages" },
-        { status: "started", step: "setBackgroundAsCompleted" },
-        { status: "completed", step: "setBackgroundAsCompleted" },
+        { status: "started", step: "setExplanationAsCompleted" },
+        { status: "completed", step: "setExplanationAsCompleted" },
       ],
     });
 
@@ -349,99 +349,6 @@ test.describe("Generate Activity Page - With Subscription", () => {
     });
 
     // Should redirect to activity page
-    await userWithoutProgress.waitForURL(
-      new RegExp(
-        `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}/a/${activity.position}`,
-      ),
-      { timeout: 10_000 },
-    );
-  });
-
-  test("completes workflow for examples activity kind", async ({
-    userWithoutProgress,
-    noProgressUser,
-  }) => {
-    await createTestSubscription(noProgressUser.id);
-
-    const org = await getAiOrganization();
-
-    const uniqueId = randomUUID().slice(0, 8);
-    const courseTitle = `E2E Examples Course ${uniqueId}`;
-    const chapterTitle = `E2E Examples Chapter ${uniqueId}`;
-    const lessonTitle = `E2E Examples Lesson ${uniqueId}`;
-    const activityTitle = `E2E Examples Activity ${uniqueId}`;
-
-    const course = await courseFixture({
-      isPublished: true,
-      normalizedTitle: normalizeString(courseTitle),
-      organizationId: org.id,
-      slug: `e2e-examples-course-${uniqueId}`,
-      title: courseTitle,
-    });
-
-    const chapter = await chapterFixture({
-      courseId: course.id,
-      generationStatus: "completed",
-      isPublished: true,
-      normalizedTitle: normalizeString(chapterTitle),
-      organizationId: org.id,
-      slug: `e2e-examples-chapter-${uniqueId}`,
-      title: chapterTitle,
-    });
-
-    const lesson = await lessonFixture({
-      chapterId: chapter.id,
-      generationStatus: "completed",
-      isPublished: true,
-      normalizedTitle: normalizeString(lessonTitle),
-      organizationId: org.id,
-      slug: `e2e-examples-lesson-${uniqueId}`,
-      title: lessonTitle,
-    });
-
-    const activity = await activityFixture({
-      generationStatus: "pending",
-      isPublished: true,
-      kind: "examples",
-      lessonId: lesson.id,
-      organizationId: org.id,
-      title: activityTitle,
-    });
-
-    await setupMockApis(userWithoutProgress, {
-      streamMessages: [
-        { status: "started", step: "getLessonActivities" },
-        { status: "completed", step: "getLessonActivities" },
-        { status: "started", step: "setActivityAsRunning" },
-        { status: "completed", step: "setActivityAsRunning" },
-        { status: "started", step: "generateBackgroundContent" },
-        { status: "completed", step: "generateBackgroundContent" },
-        { status: "started", step: "generateExplanationContent" },
-        { status: "completed", step: "generateExplanationContent" },
-        { status: "started", step: "generateExamplesContent" },
-        { status: "completed", step: "generateExamplesContent" },
-        { status: "started", step: "generateVisuals" },
-        { status: "completed", step: "generateVisuals" },
-        { status: "started", step: "generateImages" },
-        { status: "completed", step: "generateImages" },
-        { status: "started", step: "setExamplesAsCompleted" },
-        { status: "completed", step: "setExamplesAsCompleted" },
-      ],
-    });
-
-    await userWithoutProgress.goto(`/generate/a/${activity.id}`);
-
-    await expect(userWithoutProgress.getByText(/your activity is ready/i)).toBeVisible({
-      timeout: 10_000,
-    });
-
-    await expect(userWithoutProgress.getByText(/taking you to your activity/i)).toBeVisible();
-
-    await prisma.activity.update({
-      data: { generationStatus: "completed" },
-      where: { id: activity.id },
-    });
-
     await userWithoutProgress.waitForURL(
       new RegExp(
         `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}/a/${activity.position}`,
@@ -507,8 +414,6 @@ test.describe("Generate Activity Page - With Subscription", () => {
         { status: "completed", step: "getLessonActivities" },
         { status: "started", step: "setActivityAsRunning" },
         { status: "completed", step: "setActivityAsRunning" },
-        { status: "started", step: "generateBackgroundContent" },
-        { status: "completed", step: "generateBackgroundContent" },
         { status: "started", step: "generateExplanationContent" },
         { status: "completed", step: "generateExplanationContent" },
         { status: "started", step: "generatePracticeContent" },
@@ -596,8 +501,6 @@ test.describe("Generate Activity Page - With Subscription", () => {
         { status: "completed", step: "getLessonActivities" },
         { status: "started", step: "setActivityAsRunning" },
         { status: "completed", step: "setActivityAsRunning" },
-        { status: "started", step: "generateBackgroundContent" },
-        { status: "completed", step: "generateBackgroundContent" },
         { status: "started", step: "generateExplanationContent" },
         { status: "completed", step: "generateExplanationContent" },
         { status: "started", step: "generateChallengeContent" },
@@ -1210,8 +1113,8 @@ test.describe("Generate Activity Page - With Subscription", () => {
       streamMessages: [
         { status: "started", step: "getLessonActivities" },
         { status: "completed", step: "getLessonActivities" },
-        { status: "started", step: "generateBackgroundContent" },
-        { status: "completed", step: "generateBackgroundContent" },
+        { status: "started", step: "generateExplanationContent" },
+        { status: "completed", step: "generateExplanationContent" },
       ],
     });
 
@@ -1296,7 +1199,7 @@ test.describe("Generate Activity Page - Running Generation Bypasses Auth", () =>
       generationRunId: `run-${uniqueId}`,
       generationStatus: "running",
       isPublished: true,
-      kind: "background",
+      kind: "explanation",
       lessonId: lesson.id,
       organizationId: org.id,
       title: `E2E Running Activity ${uniqueId}`,

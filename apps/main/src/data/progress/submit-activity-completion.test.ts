@@ -296,7 +296,7 @@ describe(submitActivityCompletion, () => {
     const userId = Number(user.id);
 
     const staticActivity = await activityFixture({
-      kind: "background",
+      kind: "explanation",
       lessonId: lesson.id,
       organizationId: org.id,
     });

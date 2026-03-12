@@ -27,14 +27,14 @@ describe(inferFirstActivityKind, () => {
     expect(kind).toBe("custom");
   });
 
-  test("falls back to background", () => {
+  test("falls back to explanation", () => {
     const kind = inferFirstActivityKind({
       completedSteps: ["getLessonActivities"],
       currentStep: "setActivityAsRunning",
       targetLanguage: null,
     });
 
-    expect(kind).toBe("background");
+    expect(kind).toBe("explanation");
   });
 });
 
@@ -50,8 +50,9 @@ describe(getPhaseOrder, () => {
   });
 
   test("keeps visual/image phases for non-language activities", () => {
-    expect(getPhaseOrder("background")).toEqual([
+    expect(getPhaseOrder("explanation")).toEqual([
       "gettingStarted",
+      "processingDependencies",
       "writingContent",
       "preparingVisuals",
       "creatingImages",

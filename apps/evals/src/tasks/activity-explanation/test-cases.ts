@@ -13,9 +13,7 @@ EVALUATION CRITERIA:
 
 6. FOCUS: Explains WHAT something IS, not history or origin stories.
 
-7. NO OVERLAP: Must not repeat content from the BACKGROUND_STEPS.
-
-8. SCOPE: Content matches the lesson scope exactly.
+7. SCOPE: Content matches the lesson scope exactly.
 
 ANTI-CHECKLIST GUIDANCE (CRITICAL):
 - Do NOT penalize for missing components, phases, or concepts you might expect
@@ -36,8 +34,6 @@ TOPIC-SPECIFIC GUIDANCE:
    - Encapsulation is confused with encryption (encapsulation wraps data with headers at each layer)
 
 2. DEPTH CHECK: Penalize if the explanation treats data movement as simply "data goes from A to B" without showing how encapsulation and forwarding constraints work together.
-
-3. DISTINCTION FROM BACKGROUND: The background covered WHY data needs layered packaging. This should explain WHAT encapsulation, protocol layers, and hop-by-hop forwarding actually are.
 
 ${SHARED_EXPECTATIONS}
     `,
@@ -71,8 +67,6 @@ TOPIC-SPECIFIC GUIDANCE:
 
 2. DEPTH CHECK: Penalize if the explanation treats floats and bools as simple "number types" without showing the structural relationship between bool and int, or the significance of floating-point representation.
 
-3. DISTINCTION FROM BACKGROUND: The background covered WHY different numeric types exist. This should explain WHAT floats and bools are, their literal syntax, and how bool relates structurally to int.
-
 ${SHARED_EXPECTATIONS}
     `,
     id: "pt-python-float-bool",
@@ -102,8 +96,6 @@ TOPIC-SPECIFIC GUIDANCE:
    - Unemployment is described as moving inversely with output without acknowledging lags (unemployment typically lags GDP changes)
 
 2. DEPTH CHECK: Penalize if the explanation treats labor markets during downturns as simply "people lose jobs" without showing the empirical regularities in employment, hours, and participation rates.
-
-3. DISTINCTION FROM BACKGROUND: The background covered WHY labor markets fluctuate with the business cycle. This should explain WHAT the specific empirical patterns are — how unemployment, hours worked, and labor force participation move during downturns.
 
 ${SHARED_EXPECTATIONS}
     `,
@@ -138,8 +130,6 @@ TOPIC-SPECIFIC GUIDANCE:
 
 2. DEPTH CHECK: Penalize if the explanation treats enolate formation as simply "removing a hydrogen" without showing why the α-position is specifically acidic and how the resulting enolate acts as a nucleophile.
 
-3. DISTINCTION FROM BACKGROUND: The background covered WHY carbon-carbon bond formation matters in organic chemistry. This should explain WHAT α-acidity is and how enolates form as key nucleophiles.
-
 ${SHARED_EXPECTATIONS}
     `,
     id: "es-quimica-acidez-enolatos",
@@ -172,8 +162,6 @@ TOPIC-SPECIFIC GUIDANCE:
 
 2. DEPTH CHECK: Penalize if the explanation treats automation monitoring as simply "checking if it works" without showing what specific metrics matter for document quality and safety.
 
-3. DISTINCTION FROM BACKGROUND: The background covered WHY monitoring legal document automation matters. This should explain WHAT operational metrics, quality indicators, and audit trails look like in practice.
-
 ${SHARED_EXPECTATIONS}
     `,
     id: "pt-direito-medicao-automacao",
@@ -204,8 +192,6 @@ TOPIC-SPECIFIC GUIDANCE:
    - Mental models are confused with specific tool outputs (the focus is on reasoning frameworks, not tool usage)
 
 2. DEPTH CHECK: Penalize if the explanation treats debugging as simply "check if it works" without showing how to systematically narrow a connectivity problem to a specific layer — host, subnet, gateway, path, or service.
-
-3. DISTINCTION FROM BACKGROUND: The background covered WHY systematic debugging approaches matter. This should explain WHAT the mental models are — how to reason about reachability at each layer to isolate where connectivity breaks.
 
 ${SHARED_EXPECTATIONS}
     `,

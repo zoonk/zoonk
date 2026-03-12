@@ -1,9 +1,8 @@
 import { generateVisualStepImage } from "@zoonk/core/steps/visual-image";
-import { type ActivityKind, prisma } from "@zoonk/db";
+import { prisma } from "@zoonk/db";
 import { getString, toRecord } from "@zoonk/utils/json";
 import { rejected } from "@zoonk/utils/settled";
 import { streamStatus } from "../stream-status";
-import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { type StepVisual } from "./generate-visuals-step";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
@@ -79,22 +78,6 @@ function buildVisualsWithUrls(
 
     return visual;
   });
-}
-
-export async function generateImagesStep(
-  activities: LessonActivity[],
-  visuals: StepVisual[],
-  activityKind: ActivityKind,
-): Promise<StepVisualWithUrl[]> {
-  "use step";
-
-  const activity = findActivityByKind(activities, activityKind);
-
-  if (!activity || visuals.length === 0) {
-    return [];
-  }
-
-  return generateImagesForActivityStep(activity, visuals);
 }
 
 export async function generateImagesForActivityStep(

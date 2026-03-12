@@ -19,11 +19,6 @@ const activitiesData: {
   {
     activities: [
       {
-        generationStatus: "completed",
-        isPublished: true,
-        kind: "background",
-      },
-      {
         generationStatus: "pending",
         isPublished: true,
         kind: "explanation",
@@ -32,11 +27,6 @@ const activitiesData: {
         generationStatus: "completed",
         isPublished: true,
         kind: "quiz",
-      },
-      {
-        generationStatus: "pending",
-        isPublished: true,
-        kind: "examples",
       },
       {
         generationStatus: "pending",
@@ -67,17 +57,7 @@ const activitiesData: {
       {
         generationStatus: "pending",
         isPublished: true,
-        kind: "background",
-      },
-      {
-        generationStatus: "pending",
-        isPublished: true,
         kind: "explanation",
-      },
-      {
-        generationStatus: "pending",
-        isPublished: false,
-        kind: "examples",
       },
     ],
     language: "en",
@@ -154,11 +134,6 @@ const activitiesData: {
       {
         generationStatus: "pending",
         isPublished: true,
-        kind: "background",
-      },
-      {
-        generationStatus: "pending",
-        isPublished: true,
         kind: "explanation",
       },
     ],
@@ -167,11 +142,6 @@ const activitiesData: {
   },
   {
     activities: [
-      {
-        generationStatus: "pending",
-        isPublished: true,
-        kind: "background",
-      },
       {
         generationStatus: "pending",
         isPublished: true,
@@ -186,11 +156,6 @@ const activitiesData: {
       {
         generationStatus: "pending",
         isPublished: true,
-        kind: "background",
-      },
-      {
-        generationStatus: "pending",
-        isPublished: true,
         kind: "explanation",
       },
     ],
@@ -199,11 +164,6 @@ const activitiesData: {
   },
   {
     activities: [
-      {
-        generationStatus: "pending",
-        isPublished: true,
-        kind: "background",
-      },
       {
         generationStatus: "pending",
         isPublished: true,

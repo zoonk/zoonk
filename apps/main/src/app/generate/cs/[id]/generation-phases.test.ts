@@ -20,7 +20,7 @@ describe("course generation phases", () => {
   test("keeps non-language tail phases for regular courses", () => {
     const phases = getPhaseOrder({
       completedSteps: ["getLessonActivities"],
-      currentStep: "generateBackgroundContent",
+      currentStep: "generateExplanationContent",
       targetLanguage: null,
     });
 

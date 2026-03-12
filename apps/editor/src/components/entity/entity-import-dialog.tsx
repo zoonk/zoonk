@@ -25,7 +25,7 @@ const FORMATS: Record<EntityType, object> = {
     activities: [
       {
         description: "Activity description",
-        kind: "background",
+        kind: "explanation",
         title: "Activity title",
       },
     ],

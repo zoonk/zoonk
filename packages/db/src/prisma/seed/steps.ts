@@ -18,7 +18,7 @@ const stepsData: {
   }[];
 }[] = [
   {
-    activityPosition: 0, // Background activity
+    activityPosition: 0,
     language: "en",
     lessonSlug: "what-is-machine-learning",
     steps: [

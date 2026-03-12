@@ -3,14 +3,14 @@ import { type LessonActivity } from "../get-lesson-activities-step";
 import { findActivitiesByKind } from "./find-activity-by-kind";
 
 function makeMockActivity(overrides: Partial<LessonActivity>): LessonActivity {
-  return { id: 1, kind: "background", ...overrides } as LessonActivity;
+  return { id: 1, kind: "explanation", ...overrides } as LessonActivity;
 }
 
 describe(findActivitiesByKind, () => {
   test("returns all activities matching the given kind", () => {
     const activities = [
       makeMockActivity({ id: 1, kind: "explanation" }),
-      makeMockActivity({ id: 2, kind: "background" }),
+      makeMockActivity({ id: 2, kind: "quiz" }),
       makeMockActivity({ id: 3, kind: "explanation" }),
     ];
 
@@ -23,8 +23,8 @@ describe(findActivitiesByKind, () => {
 
   test("returns empty array when no activities match", () => {
     const activities = [
-      makeMockActivity({ id: 1, kind: "background" }),
-      makeMockActivity({ id: 2, kind: "examples" }),
+      makeMockActivity({ id: 1, kind: "quiz" }),
+      makeMockActivity({ id: 2, kind: "practice" }),
     ];
 
     const result = findActivitiesByKind(activities, "explanation");
