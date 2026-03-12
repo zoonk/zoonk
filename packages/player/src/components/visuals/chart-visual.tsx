@@ -1,5 +1,6 @@
 "use client";
 
+import { type ChartVisualContent } from "@zoonk/core/steps/visual-content-contract";
 import { isValidChartPayload } from "@zoonk/utils/chart";
 import { useExtracted } from "next-intl";
 import { useId } from "react";
@@ -15,7 +16,6 @@ import {
   Tooltip,
   XAxis,
 } from "recharts";
-import  { type ChartVisualContent } from "@zoonk/core/steps/visual-content-contract";
 
 type ChartDataPoint = ChartVisualContent["data"][number];
 

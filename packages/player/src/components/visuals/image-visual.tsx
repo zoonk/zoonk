@@ -1,8 +1,8 @@
 "use client";
 
+import { type ImageVisualContent } from "@zoonk/core/steps/visual-content-contract";
 import Image from "next/image";
 import { useState } from "react";
-import  { type ImageVisualContent } from "@zoonk/core/steps/visual-content-contract";
 
 function ImageFallback({ prompt }: { prompt: string }) {
   return (

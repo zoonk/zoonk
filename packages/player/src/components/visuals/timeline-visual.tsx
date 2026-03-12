@@ -1,7 +1,7 @@
 "use client";
 
+import { type TimelineVisualContent } from "@zoonk/core/steps/visual-content-contract";
 import { useExtracted } from "next-intl";
-import  { type TimelineVisualContent } from "@zoonk/core/steps/visual-content-contract";
 
 function TimelineEvent({
   date,

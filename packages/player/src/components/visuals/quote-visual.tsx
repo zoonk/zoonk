@@ -1,6 +1,6 @@
 "use client";
 
-import  { type QuoteVisualContent } from "@zoonk/core/steps/visual-content-contract";
+import { type QuoteVisualContent } from "@zoonk/core/steps/visual-content-contract";
 
 function QuoteMark() {
   return (

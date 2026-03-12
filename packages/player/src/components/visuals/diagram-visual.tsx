@@ -1,5 +1,6 @@
 "use client";
 
+import { type DiagramVisualContent } from "@zoonk/core/steps/visual-content-contract";
 import { useExtracted } from "next-intl";
 import { useId, useMemo } from "react";
 import {
@@ -8,7 +9,6 @@ import {
   type PositionedNode,
   computeDiagramLayout,
 } from "../../diagram-layout";
-import  { type DiagramVisualContent } from "@zoonk/core/steps/visual-content-contract";
 
 const NODE_BORDER_RADIUS = 8;
 const EDGE_STROKE_WIDTH = 1.5;
