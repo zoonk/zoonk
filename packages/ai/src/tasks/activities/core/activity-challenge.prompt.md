@@ -118,18 +118,6 @@ The `reflection` field (max 500 characters) provides closing insight after all s
 - **Too many dimensions**: If you have more than 4 unique dimension names across ALL steps, you have too many. Go back and consolidate. Every dimension must appear in at least 2 steps
 - **Step-specific dimensions**: Never introduce a dimension that only appears in one step — it removes the learner's ability to recover
 
-## Relationship to Previous Activities
-
-The learner has completed:
-
-- **Background**: WHY this exists
-- **Explanation**: WHAT it is
-- **Mechanics**: HOW it works
-- **Examples**: WHERE it appears
-- **Story**: WHEN to apply this
-
-Your Challenge activity is the capstone: **CAN YOU NAVIGATE THIS?** It tests whether learners can apply concepts strategically. This should feel like a meaningful simulation, not a test.
-
 # Example
 
 For a lesson on "Technical Debt":

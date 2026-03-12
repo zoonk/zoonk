@@ -73,8 +73,8 @@ vi.mock("@zoonk/core/steps/visual-image", () => ({
   }),
 }));
 
-vi.mock("@zoonk/ai/tasks/activities/core/story", () => ({
-  generateActivityStory: vi.fn().mockResolvedValue({
+vi.mock("@zoonk/ai/tasks/activities/core/practice", () => ({
+  generateActivityPractice: vi.fn().mockResolvedValue({
     data: {
       steps: [
         {

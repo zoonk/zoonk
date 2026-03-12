@@ -13,11 +13,11 @@ const kindToStepName: Partial<Record<ActivityKind, ActivityStepName>> = {
   examples: "setExamplesAsCompleted",
   explanation: "setExplanationAsCompleted",
   grammar: "setGrammarAsCompleted",
-  languageStory: "setLanguageStoryAsCompleted",
+  languagePractice: "setLanguagePracticeAsCompleted",
   listening: "setListeningAsCompleted",
+  practice: "setPracticeAsCompleted",
   quiz: "setQuizAsCompleted",
   reading: "setReadingAsCompleted",
-  story: "setStoryAsCompleted",
   vocabulary: "setVocabularyAsCompleted",
 };
 

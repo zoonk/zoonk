@@ -25,7 +25,7 @@ export type FirstActivityKind = "background" | "custom" | "vocabulary";
 const CUSTOM_INFERENCE_STEPS = new Set(["generateCustomContent", "setCustomAsCompleted"]);
 const WRITING_ONLY_LANGUAGE_STEP_MAP: Partial<Record<ActivityKind, ActivityStepName>> = {
   grammar: "generateGrammarContent",
-  languageStory: "generateLanguageStoryContent",
+  languagePractice: "generateLanguagePracticeContent",
 };
 
 export function inferFirstActivityKind(params: {
@@ -74,7 +74,7 @@ export function getPhaseOrder(kind: ActivityKind): PhaseName[] {
     ];
   }
 
-  if (kind === "grammar" || kind === "languageStory") {
+  if (kind === "grammar" || kind === "languagePractice") {
     return ["gettingStarted", "writingContent", "finishing"];
   }
 
@@ -82,7 +82,7 @@ export function getPhaseOrder(kind: ActivityKind): PhaseName[] {
     return ["gettingStarted", "writingContent", "preparingVisuals", "creatingImages", "finishing"];
   }
 
-  if (kind === "story" || kind === "challenge") {
+  if (kind === "practice" || kind === "challenge") {
     return ["gettingStarted", "processingDependencies", "writingContent", "finishing"];
   }
 
@@ -238,8 +238,8 @@ export function getPhaseSteps(kind: ActivityKind): Record<PhaseName, ActivitySte
   const contentStepMap: Partial<Record<ActivityKind, ActivityStepName>> = {
     challenge: "generateChallengeContent",
     examples: "generateExamplesContent",
+    practice: "generatePracticeContent",
     quiz: "generateQuizContent",
-    story: "generateStoryContent",
   };
 
   const writingStep = contentStepMap[kind] ?? "generateQuizContent";
@@ -263,11 +263,11 @@ const SUPPORTED_KINDS: ActivityKind[] = [
   "examples",
   "explanation",
   "grammar",
-  "languageStory",
+  "languagePractice",
   "listening",
+  "practice",
   "quiz",
   "reading",
-  "story",
   "vocabulary",
 ];
 

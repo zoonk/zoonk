@@ -90,8 +90,8 @@ vi.mock("@zoonk/ai/tasks/activities/language/grammar", () => ({
   }),
 }));
 
-vi.mock("@zoonk/ai/tasks/activities/language/story", () => ({
-  generateActivityStoryLanguage: vi.fn().mockResolvedValue({
+vi.mock("@zoonk/ai/tasks/activities/language/practice", () => ({
+  generateActivityPracticeLanguage: vi.fn().mockResolvedValue({
     data: {
       scenario:
         "You're in a Madrid bakery and need to order politely while the clerk asks follow-up questions.",
@@ -178,8 +178,8 @@ vi.mock("@zoonk/ai/tasks/activities/core/examples", () => ({
   generateActivityExamples: vi.fn().mockResolvedValue({ data: { steps: [] } }),
 }));
 
-vi.mock("@zoonk/ai/tasks/activities/core/story", () => ({
-  generateActivityStory: vi.fn().mockResolvedValue({ data: { steps: [] } }),
+vi.mock("@zoonk/ai/tasks/activities/core/practice", () => ({
+  generateActivityPractice: vi.fn().mockResolvedValue({ data: { steps: [] } }),
 }));
 
 vi.mock("@zoonk/ai/tasks/activities/core/challenge", () => ({

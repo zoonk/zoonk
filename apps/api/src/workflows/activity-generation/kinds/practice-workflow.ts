@@ -1,48 +1,48 @@
 import { type ActivitySteps } from "../steps/_utils/get-activity-steps";
 import { completeActivityStep } from "../steps/complete-activity-step";
 import { type ExplanationResult } from "../steps/generate-explanation-content-step";
-import { generateStoryContentStep } from "../steps/generate-story-content-step";
+import { generatePracticeContentStep } from "../steps/generate-practice-content-step";
 import { type LessonActivity } from "../steps/get-lesson-activities-step";
 
-function getExplanationStepsForStory(
+function getExplanationStepsForPractice(
   explanationResults: ExplanationResult[],
-  storyIndex: number,
-  totalStories: number,
+  practiceIndex: number,
+  totalPractices: number,
 ): ActivitySteps {
-  if (totalStories <= 1) {
+  if (totalPractices <= 1) {
     return explanationResults.flatMap((result) => result.steps);
   }
 
   const splitIndex = Math.max(1, Math.floor(explanationResults.length / 2));
 
   const group =
-    storyIndex === 0
+    practiceIndex === 0
       ? explanationResults.slice(0, splitIndex)
       : explanationResults.slice(splitIndex);
 
   return group.flatMap((result) => result.steps);
 }
 
-export async function storyActivityWorkflow(
+export async function practiceActivityWorkflow(
   activities: LessonActivity[],
   workflowRunId: string,
   explanationResults: ExplanationResult[],
-  totalStories: number,
+  totalPractices: number,
 ): Promise<void> {
   "use workflow";
 
-  const storyIndices = Array.from({ length: totalStories }, (_, i) => i);
+  const practiceIndices = Array.from({ length: totalPractices }, (_, i) => i);
 
   await Promise.allSettled(
-    storyIndices.map((storyIndex) =>
-      generateStoryContentStep(
+    practiceIndices.map((practiceIndex) =>
+      generatePracticeContentStep(
         activities,
-        getExplanationStepsForStory(explanationResults, storyIndex, totalStories),
+        getExplanationStepsForPractice(explanationResults, practiceIndex, totalPractices),
         workflowRunId,
-        storyIndex,
+        practiceIndex,
       ),
     ),
   );
 
-  await completeActivityStep(activities, workflowRunId, "story");
+  await completeActivityStep(activities, workflowRunId, "practice");
 }

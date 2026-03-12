@@ -177,39 +177,39 @@ describe(lessonGenerationWorkflow, () => {
       expect(explanations.map((item) => item.title)).toEqual(["A", "B", "C"]);
     });
 
-    test("4 concepts → 2 explanation groups + 2 stories", async () => {
+    test("4 concepts → 2 explanation groups + 2 practices", async () => {
       const activities = await createCoreLesson(["A", "B", "C", "D"]);
       const explanations = activities.filter((a) => a.kind === "explanation");
-      const stories = activities.filter((a) => a.kind === "story");
+      const practices = activities.filter((a) => a.kind === "practice");
 
       expect(explanations).toHaveLength(4);
-      expect(stories).toHaveLength(2);
+      expect(practices).toHaveLength(2);
     });
 
-    test("5 concepts → split 2/3 with story between each group", async () => {
+    test("5 concepts → split 2/3 with practice between each group", async () => {
       const activities = await createCoreLesson(["A", "B", "C", "D", "E"]);
       const explanations = activities.filter((a) => a.kind === "explanation");
-      const stories = activities.filter((a) => a.kind === "story");
+      const practices = activities.filter((a) => a.kind === "practice");
 
       expect(explanations).toHaveLength(5);
-      expect(stories).toHaveLength(2);
+      expect(practices).toHaveLength(2);
 
       const kinds = activities.map((a) => a.kind);
-      const firstStoryIdx = kinds.indexOf("story");
-      const secondStoryIdx = kinds.indexOf("story", firstStoryIdx + 1);
+      const firstPracticeIdx = kinds.indexOf("practice");
+      const secondPracticeIdx = kinds.indexOf("practice", firstPracticeIdx + 1);
 
-      const explanationsBeforeFirstStory = activities
-        .slice(0, firstStoryIdx)
+      const explanationsBeforeFirstPractice = activities
+        .slice(0, firstPracticeIdx)
         .filter((a) => a.kind === "explanation");
-      const explanationsBetweenStories = activities
-        .slice(firstStoryIdx + 1, secondStoryIdx)
+      const explanationsBetweenPractices = activities
+        .slice(firstPracticeIdx + 1, secondPracticeIdx)
         .filter((a) => a.kind === "explanation");
 
-      expect(explanationsBeforeFirstStory).toHaveLength(2);
-      expect(explanationsBetweenStories).toHaveLength(3);
+      expect(explanationsBeforeFirstPractice).toHaveLength(2);
+      expect(explanationsBetweenPractices).toHaveLength(3);
     });
 
-    test("activity order: background, explanations, story(ies), examples, quiz, challenge, review", async () => {
+    test("activity order: background, explanations, practice(s), examples, quiz, challenge, review", async () => {
       const activities = await createCoreLesson(["A", "B"]);
       const kinds = activities.map((a) => a.kind);
 
@@ -217,7 +217,7 @@ describe(lessonGenerationWorkflow, () => {
         "background",
         "explanation",
         "explanation",
-        "story",
+        "practice",
         "examples",
         "quiz",
         "challenge",
@@ -268,7 +268,7 @@ describe(lessonGenerationWorkflow, () => {
         "grammar",
         "reading",
         "listening",
-        "languageStory",
+        "languagePractice",
         "review",
       ]);
 
@@ -323,7 +323,7 @@ describe(lessonGenerationWorkflow, () => {
         "vocabulary",
         "grammar",
         "reading",
-        "languageStory",
+        "languagePractice",
         "review",
       ]);
 

@@ -13,14 +13,14 @@ const validActivityKinds = new Set<ActivityKind>([
   "explanation",
   "quiz",
   "examples",
-  "story",
+  "practice",
   "challenge",
   "vocabulary",
   "grammar",
   "reading",
   "listening",
   "review",
-  "languageStory",
+  "languagePractice",
 ]);
 
 type ActivityImportData = {

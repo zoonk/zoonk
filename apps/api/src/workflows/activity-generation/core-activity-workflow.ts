@@ -3,8 +3,8 @@ import { backgroundActivityWorkflow } from "./kinds/background-workflow";
 import { challengeActivityWorkflow } from "./kinds/challenge-workflow";
 import { examplesActivityWorkflow } from "./kinds/examples-workflow";
 import { explanationActivityWorkflow } from "./kinds/explanation-workflow";
+import { practiceActivityWorkflow } from "./kinds/practice-workflow";
 import { quizActivityWorkflow } from "./kinds/quiz-workflow";
-import { storyActivityWorkflow } from "./kinds/story-workflow";
 import { findActivitiesByKind } from "./steps/_utils/find-activity-by-kind";
 import { type LessonActivity } from "./steps/get-lesson-activities-step";
 import { getNeighboringConceptsStep } from "./steps/get-neighboring-concepts-step";
@@ -14,7 +14,7 @@ export async function coreActivityWorkflow(
   workflowRunId: string,
 ): Promise<void> {
   const concepts = activities[0]?.lesson?.concepts ?? [];
-  const totalStories = findActivitiesByKind(activities, "story").length;
+  const totalPractices = findActivitiesByKind(activities, "practice").length;
   const neighboringConcepts = await getNeighboringConceptsStep(activities);
 
   const [, explanationResult] = await Promise.allSettled([
@@ -27,7 +27,7 @@ export async function coreActivityWorkflow(
   const { results } = settled(explanationResult, { results: [] });
 
   await Promise.allSettled([
-    storyActivityWorkflow(activities, workflowRunId, results, totalStories),
+    practiceActivityWorkflow(activities, workflowRunId, results, totalPractices),
     quizActivityWorkflow(activities, workflowRunId, results),
   ]);
 }
