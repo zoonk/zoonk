@@ -2067,9 +2067,9 @@ msgid "Terms of Use"
 msgstr "Termos de uso"
 
 #: src/components/catalog/ai-warning.tsx
-msgctxt "R1TAeT"
-msgid "This content was created by AI. It may contain errors or inaccuracies and should not be considered professional advice."
-msgstr "Este conteúdo foi criado por IA. Pode conter erros ou imprecisões e não deve ser considerado como orientação profissional."
+msgctxt "FYZlTZ"
+msgid "Created with AI"
+msgstr "Criado com IA"
 
 #: src/components/catalog/catalog-actions.tsx
 msgctxt "04tuTF"
