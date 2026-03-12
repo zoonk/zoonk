@@ -371,6 +371,177 @@ test.describe("Match Columns Step", () => {
     await expect(page.getByText("0/1")).toBeVisible();
   });
 
+  test("tapping right item first highlights it", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const { url } = await createMatchColumnsActivity({
+      steps: [
+        {
+          content: {
+            pairs: [
+              { left: `Left1 ${uniqueId}`, right: `Right1 ${uniqueId}` },
+              { left: `Left2 ${uniqueId}`, right: `Right2 ${uniqueId}` },
+            ],
+            question: `Match right-first ${uniqueId}`,
+          },
+          position: 0,
+        },
+      ],
+    });
+
+    await page.goto(url);
+
+    const rightButton = page.getByRole("button", { name: `Right1 ${uniqueId}` });
+
+    await expect(async () => {
+      if ((await rightButton.getAttribute("aria-pressed")) !== "true") {
+        await rightButton.click();
+      }
+      await expect(rightButton).toHaveAttribute("aria-pressed", "true", { timeout: 1000 });
+    }).toPass();
+  });
+
+  test("right-first correct match locks pair", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const { url } = await createMatchColumnsActivity({
+      steps: [
+        {
+          content: {
+            pairs: [
+              { left: `Alpha ${uniqueId}`, right: `One ${uniqueId}` },
+              { left: `Beta ${uniqueId}`, right: `Two ${uniqueId}` },
+            ],
+            question: `Match right-first lock ${uniqueId}`,
+          },
+          position: 0,
+        },
+      ],
+    });
+
+    await page.goto(url);
+
+    const rightButton = page.getByRole("button", { name: `One ${uniqueId}` });
+
+    await expect(async () => {
+      if ((await rightButton.getAttribute("aria-pressed")) !== "true") {
+        await rightButton.click();
+      }
+      await expect(rightButton).toHaveAttribute("aria-pressed", "true", { timeout: 1000 });
+    }).toPass();
+
+    await page.getByRole("button", { name: `Alpha ${uniqueId}` }).click();
+
+    await expect(rightButton).toBeDisabled();
+    await expect(page.getByRole("button", { name: `Alpha ${uniqueId}` })).toBeDisabled();
+  });
+
+  test("right-first incorrect match flashes and resets", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const { url } = await createMatchColumnsActivity({
+      steps: [
+        {
+          content: {
+            pairs: [
+              { left: `Rome ${uniqueId}`, right: `Italy ${uniqueId}` },
+              { left: `Berlin ${uniqueId}`, right: `Germany ${uniqueId}` },
+            ],
+            question: `Match right-first incorrect ${uniqueId}`,
+          },
+          position: 0,
+        },
+      ],
+    });
+
+    await page.goto(url);
+
+    const germanyButton = page.getByRole("button", { name: `Germany ${uniqueId}` });
+
+    await expect(async () => {
+      if ((await germanyButton.getAttribute("aria-pressed")) !== "true") {
+        await germanyButton.click();
+      }
+      await expect(germanyButton).toHaveAttribute("aria-pressed", "true", { timeout: 1000 });
+    }).toPass();
+
+    await page.getByRole("button", { name: `Rome ${uniqueId}` }).click();
+
+    // After flash timeout, items should be back to interactive
+    await expect(page.getByRole("button", { name: `Rome ${uniqueId}` })).toBeEnabled({
+      timeout: 2000,
+    });
+    await expect(germanyButton).toBeEnabled();
+  });
+
+  test("deselecting a right item", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const { url } = await createMatchColumnsActivity({
+      steps: [
+        {
+          content: {
+            pairs: [
+              { left: `Up ${uniqueId}`, right: `Down ${uniqueId}` },
+              { left: `In ${uniqueId}`, right: `Out ${uniqueId}` },
+            ],
+            question: `Match deselect-right ${uniqueId}`,
+          },
+          position: 0,
+        },
+      ],
+    });
+
+    await page.goto(url);
+
+    const downButton = page.getByRole("button", { name: `Down ${uniqueId}` });
+
+    await expect(async () => {
+      if ((await downButton.getAttribute("aria-pressed")) !== "true") {
+        await downButton.click();
+      }
+      await expect(downButton).toHaveAttribute("aria-pressed", "true", { timeout: 1000 });
+    }).toPass();
+
+    await downButton.click();
+    await expect(downButton).toHaveAttribute("aria-pressed", "false");
+  });
+
+  test("full flow right-first shows correct on completion", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const { url } = await createMatchColumnsActivity({
+      steps: [
+        {
+          content: {
+            pairs: [
+              { left: `Agua ${uniqueId}`, right: `Water ${uniqueId}` },
+              { left: `Fuego ${uniqueId}`, right: `Fire ${uniqueId}` },
+            ],
+            question: `Match right-first full ${uniqueId}`,
+          },
+          position: 0,
+        },
+      ],
+    });
+
+    await page.goto(url);
+
+    const waterButton = page.getByRole("button", { name: `Water ${uniqueId}` });
+
+    // First click: resilient to hydration timing
+    await expect(async () => {
+      if ((await waterButton.getAttribute("aria-pressed")) !== "true") {
+        await waterButton.click();
+      }
+      await expect(waterButton).toHaveAttribute("aria-pressed", "true", { timeout: 1000 });
+    }).toPass();
+
+    await page.getByRole("button", { name: `Agua ${uniqueId}` }).click();
+
+    await page.getByRole("button", { name: `Fire ${uniqueId}` }).click();
+    await page.getByRole("button", { name: `Fuego ${uniqueId}` }).click();
+
+    await page.getByRole("button", { name: /check/i }).click();
+    await expect(page.getByText("1/1")).toBeVisible();
+    await expect(page.getByText(/correct/i)).toBeVisible();
+  });
+
   test("full flow with no mistakes shows correct on completion", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const { url } = await createMatchColumnsActivity({
