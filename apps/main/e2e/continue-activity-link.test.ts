@@ -40,7 +40,7 @@ async function createTestCourseWithActivity() {
   const activity = await activityFixture({
     generationStatus: "completed",
     isPublished: true,
-    kind: "background",
+    kind: "explanation",
     lessonId: lesson.id,
     organizationId: org.id,
     position: 0,
@@ -83,7 +83,7 @@ async function createTestCourseWithoutPublishedActivities() {
   // Unpublished activity so getNextActivity returns null
   await activityFixture({
     isPublished: false,
-    kind: "background",
+    kind: "explanation",
     lessonId: lesson.id,
     organizationId: org.id,
     position: 0,

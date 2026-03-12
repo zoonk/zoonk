@@ -9,10 +9,8 @@ import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
 
 const validActivityKinds = new Set<ActivityKind>([
   "custom",
-  "background",
   "explanation",
   "quiz",
-  "examples",
   "practice",
   "challenge",
   "vocabulary",

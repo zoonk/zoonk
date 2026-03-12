@@ -16,7 +16,7 @@ export function getPhaseWeights(kind: ActivityKind): Record<PhaseName, number> {
     };
   }
 
-  if (kind === "background" || kind === "custom") {
+  if (kind === "custom") {
     return {
       addingPronunciation: 0,
       buildingWordList: 0,

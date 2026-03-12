@@ -42,7 +42,7 @@ async function createTestActivity(options?: {
   const activity = await activityFixture({
     generationStatus: options?.generationStatus ?? "completed",
     isPublished: true,
-    kind: "background",
+    kind: "explanation",
     lessonId: lesson.id,
     organizationId: org.id,
     position: 0,
@@ -255,7 +255,7 @@ test.describe("Activity Detail Page", () => {
     await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}/a/0`);
 
     await expect(page).toHaveTitle(new RegExp(lesson.title));
-    await expect(page).toHaveTitle(/background/i);
+    await expect(page).toHaveTitle(/explanation/i);
   });
 
   test("unpublished activity shows 404 page", async ({ page }) => {
@@ -285,7 +285,7 @@ test.describe("Activity Detail Page", () => {
 
     await activityFixture({
       isPublished: false,
-      kind: "background",
+      kind: "explanation",
       lessonId: lesson.id,
       organizationId: org.id,
       position: 0,

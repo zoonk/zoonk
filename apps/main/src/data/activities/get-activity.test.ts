@@ -45,7 +45,7 @@ describe(getActivity, () => {
       description: "Test activity description",
       generationStatus: "completed",
       isPublished: true,
-      kind: "background",
+      kind: "explanation",
       language: "en",
       lessonId: lesson.id,
       organizationId: org.id,
@@ -76,7 +76,7 @@ describe(getActivity, () => {
     expect(result?.id).toBe(activity.id);
     expect(result?.title).toBe("Test Activity");
     expect(result?.description).toBe("Test activity description");
-    expect(result?.kind).toBe("background");
+    expect(result?.kind).toBe("explanation");
     expect(result?.steps).toHaveLength(2);
   });
 
@@ -247,7 +247,7 @@ describe(getActivity, () => {
     const pubActivity = await activityFixture({
       generationStatus: "completed",
       isPublished: true,
-      kind: "background",
+      kind: "explanation",
       language: "en",
       lessonId: pubLesson.id,
       organizationId: org.id,
@@ -293,7 +293,7 @@ describe(getActivity, () => {
     const draftActivity = await activityFixture({
       generationStatus: "completed",
       isPublished: true,
-      kind: "background",
+      kind: "explanation",
       language: "en",
       lessonId: draftLesson.id,
       organizationId: org.id,

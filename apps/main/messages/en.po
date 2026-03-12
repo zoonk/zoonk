@@ -1589,9 +1589,9 @@ msgstr "Something went wrong. Please try again."
 #: src/app/generate/a/[id]/use-generation-phases.ts
 #: src/app/generate/ch/[id]/use-generation-phases.ts
 #: src/app/generate/cs/[id]/use-generation-phases.ts
-msgctxt "2hb6pr"
-msgid "Adding examples..."
-msgstr "Adding examples..."
+msgctxt "19fPwV"
+msgid "Making it clear..."
+msgstr "Making it clear..."
 
 #: src/app/generate/a/[id]/use-generation-phases.ts
 #: src/app/generate/ch/[id]/use-generation-phases.ts
@@ -2199,11 +2199,6 @@ msgid "Listening"
 msgstr "Listening"
 
 #: src/lib/activities.ts
-msgctxt "3GLH+d"
-msgid "Examples"
-msgstr "Examples"
-
-#: src/lib/activities.ts
 msgctxt "7X/3vJ"
 msgid "Build your vocabulary"
 msgstr "Build your vocabulary"
@@ -2254,11 +2249,6 @@ msgid "Test your understanding of {topic} with questions designed to check real 
 msgstr "Test your understanding of {topic} with questions designed to check real comprehension, not just memorization."
 
 #: src/lib/activities.ts
-msgctxt "ICIYNP"
-msgid "Discover why {topic} matters — its origins, the problems it solved, and why it's important today."
-msgstr "Discover why {topic} matters — its origins, the problems it solved, and why it's important today."
-
-#: src/lib/activities.ts
 msgctxt "iOvuhZ"
 msgid "Test your knowledge"
 msgstr "Test your knowledge"
@@ -2294,11 +2284,6 @@ msgid "Reading"
 msgstr "Reading"
 
 #: src/lib/activities.ts
-msgctxt "olZHUk"
-msgid "See how {topic} works through practical demonstrations and where it appears in real life."
-msgstr "See how {topic} works through practical demonstrations and where it appears in real life."
-
-#: src/lib/activities.ts
 msgctxt "OQQjs9"
 msgid "Concepts and definitions"
 msgstr "Concepts and definitions"
@@ -2317,11 +2302,6 @@ msgstr "Grammar"
 msgctxt "RtjVBh"
 msgid "Learn about {topic} through an interactive activity."
 msgstr "Learn about {topic} through an interactive activity."
-
-#: src/lib/activities.ts
-msgctxt "S4v52l"
-msgid "Why this topic exists and why it matters"
-msgstr "Why this topic exists and why it matters"
 
 #: src/lib/activities.ts
 msgctxt "T24ZU7"
@@ -2347,16 +2327,6 @@ msgstr "{activity} - {lesson}"
 msgctxt "WlmsO/"
 msgid "Practice in a real-world dialogue"
 msgstr "Practice in a real-world dialogue"
-
-#: src/lib/activities.ts
-msgctxt "X3MpW7"
-msgid "See it in action"
-msgstr "See it in action"
-
-#: src/lib/activities.ts
-msgctxt "XQZA8e"
-msgid "Background"
-msgstr "Background"
 
 #: src/lib/activities.ts
 msgctxt "XzxpBZ"

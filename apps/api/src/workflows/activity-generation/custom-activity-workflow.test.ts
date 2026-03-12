@@ -21,20 +21,10 @@ vi.mock("workflow", () => ({
   workflowStep: vi.fn().mockImplementation((_name: string, fn: unknown) => fn),
 }));
 
-vi.mock("@zoonk/ai/tasks/activities/core/background", () => ({
-  generateActivityBackground: vi.fn().mockResolvedValue({
-    data: { steps: [{ text: "Background step 1 text", title: "Background Step 1" }] },
-  }),
-}));
-
 vi.mock("@zoonk/ai/tasks/activities/core/explanation", () => ({
   generateActivityExplanation: vi.fn().mockResolvedValue({
     data: { steps: [{ text: "Explanation step 1 text", title: "Explanation Step 1" }] },
   }),
-}));
-
-vi.mock("@zoonk/ai/tasks/activities/core/examples", () => ({
-  generateActivityExamples: vi.fn().mockResolvedValue({ data: { steps: [] } }),
 }));
 
 vi.mock("@zoonk/ai/tasks/activities/core/practice", () => ({

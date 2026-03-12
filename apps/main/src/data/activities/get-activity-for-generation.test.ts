@@ -40,7 +40,7 @@ describe(getActivityForGeneration, () => {
       generationRunId: "test-run-id",
       generationStatus: "pending",
       isPublished: false,
-      kind: "background",
+      kind: "explanation",
       language: "en",
       lessonId: lesson.id,
       organizationId: org.id,
@@ -56,7 +56,7 @@ describe(getActivityForGeneration, () => {
     expect(result?.id).toBe(activity.id);
     expect(result?.generationStatus).toBe("pending");
     expect(result?.generationRunId).toBe("test-run-id");
-    expect(result?.kind).toBe("background");
+    expect(result?.kind).toBe("explanation");
     expect(result?.position).toBe(0);
     expect(result?.title).toBe("Activity for Generation");
   });

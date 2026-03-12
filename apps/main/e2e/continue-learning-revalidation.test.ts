@@ -40,7 +40,7 @@ async function createCourseWithThreeActivities() {
   const activity0 = await activityFixture({
     generationStatus: "completed",
     isPublished: true,
-    kind: "background",
+    kind: "explanation",
     lessonId: lesson.id,
     organizationId: org.id,
     position: 0,
@@ -51,7 +51,7 @@ async function createCourseWithThreeActivities() {
   const activity1 = await activityFixture({
     generationStatus: "completed",
     isPublished: true,
-    kind: "background",
+    kind: "explanation",
     lessonId: lesson.id,
     organizationId: org.id,
     position: 1,
@@ -62,7 +62,7 @@ async function createCourseWithThreeActivities() {
   const activity2 = await activityFixture({
     generationStatus: "completed",
     isPublished: true,
-    kind: "background",
+    kind: "explanation",
     lessonId: lesson.id,
     organizationId: org.id,
     position: 2,

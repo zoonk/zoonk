@@ -12,11 +12,6 @@ export async function getActivityKinds(): Promise<
 
   return [
     {
-      description: t("Why this topic exists and why it matters"),
-      key: "background",
-      label: t("Background"),
-    },
-    {
       description: t("Concepts and definitions"),
       key: "explanation",
       label: t("Explanation"),
@@ -25,11 +20,6 @@ export async function getActivityKinds(): Promise<
       description: t("Test your knowledge"),
       key: "quiz",
       label: t("Quiz"),
-    },
-    {
-      description: t("See it in action"),
-      key: "examples",
-      label: t("Examples"),
     },
     {
       description: t("Apply the topic in a real scenario"),
@@ -78,19 +68,11 @@ async function getSeoDescription(kind: ActivityKind, topic: string): Promise<str
   const t = await getExtracted();
 
   const descriptions: Record<ActivityKind, string> = {
-    background: t(
-      "Discover why {topic} matters — its origins, the problems it solved, and why it's important today.",
-      { topic },
-    ),
     challenge: t(
       "Apply your knowledge of {topic} through analytical decisions with real trade-offs.",
       { topic },
     ),
     custom: t("Learn about {topic} through an interactive activity.", { topic }),
-    examples: t(
-      "See how {topic} works through practical demonstrations and where it appears in real life.",
-      { topic },
-    ),
     explanation: t(
       "Understand what {topic} is — core concepts and definitions explained with clear metaphors and analogies.",
       { topic },

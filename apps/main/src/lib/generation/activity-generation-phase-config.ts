@@ -20,7 +20,7 @@ export type PhaseName =
   | "recordingAudio"
   | "finishing";
 
-export type FirstActivityKind = "background" | "custom" | "vocabulary";
+export type FirstActivityKind = "explanation" | "custom" | "vocabulary";
 
 const CUSTOM_INFERENCE_STEPS = new Set(["generateCustomContent", "setCustomAsCompleted"]);
 const WRITING_ONLY_LANGUAGE_STEP_MAP: Partial<Record<ActivityKind, ActivityStepName>> = {
@@ -45,7 +45,7 @@ export function inferFirstActivityKind(params: {
     return "custom";
   }
 
-  return "background";
+  return "explanation";
 }
 
 export function getPhaseOrder(kind: ActivityKind): PhaseName[] {
@@ -78,7 +78,7 @@ export function getPhaseOrder(kind: ActivityKind): PhaseName[] {
     return ["gettingStarted", "writingContent", "finishing"];
   }
 
-  if (kind === "background" || kind === "custom") {
+  if (kind === "custom") {
     return ["gettingStarted", "writingContent", "preparingVisuals", "creatingImages", "finishing"];
   }
 
@@ -208,15 +208,6 @@ export function getPhaseSteps(kind: ActivityKind): Record<PhaseName, ActivitySte
     return languagePhase;
   }
 
-  if (kind === "background") {
-    return {
-      ...SHARED_PHASE_STEPS,
-      finishing: getFinishingSteps(["generateBackgroundContent"]),
-      processingDependencies: [],
-      writingContent: ["setActivityAsRunning", "generateBackgroundContent"],
-    };
-  }
-
   if (kind === "custom") {
     return {
       ...SHARED_PHASE_STEPS,
@@ -229,15 +220,14 @@ export function getPhaseSteps(kind: ActivityKind): Record<PhaseName, ActivitySte
   if (kind === "explanation") {
     return {
       ...SHARED_PHASE_STEPS,
-      finishing: getFinishingSteps(["generateBackgroundContent", "generateExplanationContent"]),
-      processingDependencies: ["setActivityAsRunning", "generateBackgroundContent"],
-      writingContent: ["generateExplanationContent"],
+      finishing: getFinishingSteps(["generateExplanationContent"]),
+      processingDependencies: [],
+      writingContent: ["setActivityAsRunning", "generateExplanationContent"],
     };
   }
 
   const contentStepMap: Partial<Record<ActivityKind, ActivityStepName>> = {
     challenge: "generateChallengeContent",
-    examples: "generateExamplesContent",
     practice: "generatePracticeContent",
     quiz: "generateQuizContent",
   };
@@ -246,21 +236,15 @@ export function getPhaseSteps(kind: ActivityKind): Record<PhaseName, ActivitySte
 
   return {
     ...SHARED_PHASE_STEPS,
-    finishing: getFinishingSteps([
-      "generateBackgroundContent",
-      "generateExplanationContent",
-      writingStep,
-    ]),
+    finishing: getFinishingSteps(["generateExplanationContent", writingStep]),
     processingDependencies: EXPLANATION_DEPS,
     writingContent: [writingStep],
   };
 }
 
 const SUPPORTED_KINDS: ActivityKind[] = [
-  "background",
   "challenge",
   "custom",
-  "examples",
   "explanation",
   "grammar",
   "languagePractice",

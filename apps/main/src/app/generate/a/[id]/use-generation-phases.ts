@@ -95,7 +95,7 @@ export function useGenerationPhases(
       cycleMessage([t("Recording the audio..."), t("Getting the pronunciation right...")], index),
     writingContent: (index) =>
       cycleMessage(
-        [t("Researching the topic..."), t("Writing the explanation..."), t("Adding examples...")],
+        [t("Researching the topic..."), t("Writing the explanation..."), t("Making it clear...")],
         index,
       ),
   };

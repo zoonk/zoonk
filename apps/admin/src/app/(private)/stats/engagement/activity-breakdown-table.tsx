@@ -9,10 +9,8 @@ import {
 } from "@zoonk/ui/components/table";
 
 const activityKindLabels: Record<string, string> = {
-  background: "Background",
   challenge: "Challenge",
   custom: "Custom",
-  examples: "Examples",
   explanation: "Explanation",
   grammar: "Grammar",
   language_practice: "Language Practice",

@@ -1,10 +1,8 @@
 import { type ActivityStepName } from "@/lib/workflow/config";
 
 const ALL_CONTENT_STEPS: ActivityStepName[] = [
-  "generateBackgroundContent",
   "generateChallengeContent",
   "generateCustomContent",
-  "generateExamplesContent",
   "generateExplanationContent",
   "generateQuizContent",
   "generatePracticeContent",
@@ -29,10 +27,8 @@ const ALL_READING_STEPS: ActivityStepName[] = [
 ];
 
 const ALL_COMPLETION_STEPS: ActivityStepName[] = [
-  "setBackgroundAsCompleted",
   "setChallengeAsCompleted",
   "setCustomAsCompleted",
-  "setExamplesAsCompleted",
   "setExplanationAsCompleted",
   "setQuizAsCompleted",
   "setPracticeAsCompleted",
@@ -46,7 +42,6 @@ const ALL_COMPLETION_STEPS: ActivityStepName[] = [
 
 export const EXPLANATION_DEPS: ActivityStepName[] = [
   "setActivityAsRunning",
-  "generateBackgroundContent",
   "generateExplanationContent",
 ];
 

@@ -98,7 +98,7 @@ describe("admins", () => {
     const result = await createActivity({
       description: "Test description",
       headers,
-      kind: "background",
+      kind: "explanation",
       lessonId: lesson.id,
       position: 0,
       title: "Test Activity",
@@ -111,7 +111,7 @@ describe("admins", () => {
     expect(result.data?.organizationId).toBe(organization.id);
     expect(result.data?.lessonId).toBe(lesson.id);
     expect(result.data?.language).toBe(lesson.language);
-    expect(result.data?.kind).toBe("background");
+    expect(result.data?.kind).toBe("explanation");
   });
 
   test("creates activity with custom kind", async () => {

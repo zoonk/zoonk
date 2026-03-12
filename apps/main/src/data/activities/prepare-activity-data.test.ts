@@ -46,7 +46,7 @@ describe(prepareActivityData, () => {
     const activity = await activityFixture({
       generationStatus: "completed",
       isPublished: true,
-      kind: "background",
+      kind: "explanation",
       language: "en",
       lessonId: lesson.id,
       organizationId: org.id,
@@ -76,7 +76,7 @@ describe(prepareActivityData, () => {
     const activity = await activityFixture({
       generationStatus: "completed",
       isPublished: true,
-      kind: "background",
+      kind: "explanation",
       language: "en",
       lessonId: lesson.id,
       organizationId: org.id,
@@ -107,7 +107,7 @@ describe(prepareActivityData, () => {
     const activity = await activityFixture({
       generationStatus: "completed",
       isPublished: true,
-      kind: "background",
+      kind: "explanation",
       language: "en",
       lessonId: lesson.id,
       organizationId: org.id,
@@ -138,7 +138,7 @@ describe(prepareActivityData, () => {
     const activity = await activityFixture({
       generationStatus: "completed",
       isPublished: true,
-      kind: "background",
+      kind: "explanation",
       language: "en",
       lessonId: lesson.id,
       organizationId: org.id,
@@ -251,7 +251,7 @@ describe(prepareActivityData, () => {
     const activity = await activityFixture({
       generationStatus: "completed",
       isPublished: true,
-      kind: "background",
+      kind: "explanation",
       language: "en",
       lessonId: lesson.id,
       organizationId: org.id,
@@ -358,7 +358,7 @@ describe(prepareActivityData, () => {
     const activity = await activityFixture({
       generationStatus: "completed",
       isPublished: true,
-      kind: "background",
+      kind: "explanation",
       language: "en",
       lessonId: lesson.id,
       organizationId: org.id,
@@ -797,7 +797,7 @@ describe(prepareActivityData, () => {
     const activity = await activityFixture({
       generationStatus: "completed",
       isPublished: true,
-      kind: "background",
+      kind: "explanation",
       language: "en",
       lessonId: lesson.id,
       organizationId: org.id,
@@ -824,7 +824,7 @@ describe(prepareActivityData, () => {
       generationRunId: null,
       generationStatus: "completed",
       id: BigInt(50),
-      kind: "background",
+      kind: "explanation",
       language: "en",
       organizationId: 1,
       position: 0,
@@ -860,7 +860,7 @@ describe(prepareActivityData, () => {
       generationRunId: null,
       generationStatus: "completed",
       id: BigInt(52),
-      kind: "background",
+      kind: "explanation",
       language: "en",
       organizationId: 1,
       position: 0,
@@ -897,7 +897,7 @@ describe(prepareActivityData, () => {
       generationRunId: null,
       generationStatus: "completed",
       id: BigInt(54),
-      kind: "background",
+      kind: "explanation",
       language: "en",
       organizationId: 1,
       position: 0,
@@ -936,7 +936,7 @@ describe(prepareActivityData, () => {
       generationRunId: null,
       generationStatus: "completed",
       id: BigInt(56),
-      kind: "background",
+      kind: "explanation",
       language: "en",
       organizationId: 1,
       position: 0,
@@ -967,7 +967,7 @@ describe(prepareActivityData, () => {
     const activity = await activityFixture({
       generationStatus: "completed",
       isPublished: true,
-      kind: "background",
+      kind: "explanation",
       language: "en",
       lessonId: lesson.id,
       organizationId: org.id,
@@ -986,6 +986,6 @@ describe(prepareActivityData, () => {
 
     expect(result.language).toBe("en");
     expect(result.organizationId).toBe(org.id);
-    expect(result.kind).toBe("background");
+    expect(result.kind).toBe("explanation");
   });
 });

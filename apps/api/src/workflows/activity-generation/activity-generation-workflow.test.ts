@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { generateActivityBackground } from "@zoonk/ai/tasks/activities/core/background";
+import { generateActivityExplanation } from "@zoonk/ai/tasks/activities/core/explanation";
 import { generateActivityCustom } from "@zoonk/ai/tasks/activities/custom";
 import { prisma } from "@zoonk/db";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
@@ -22,34 +22,12 @@ vi.mock("workflow", () => ({
   workflowStep: vi.fn().mockImplementation((_name: string, fn: unknown) => fn),
 }));
 
-vi.mock("@zoonk/ai/tasks/activities/core/background", () => ({
-  generateActivityBackground: vi.fn().mockResolvedValue({
-    data: {
-      steps: [
-        { text: "Background step 1 text", title: "Background Step 1" },
-        { text: "Background step 2 text", title: "Background Step 2" },
-      ],
-    },
-  }),
-}));
-
 vi.mock("@zoonk/ai/tasks/activities/core/explanation", () => ({
   generateActivityExplanation: vi.fn().mockResolvedValue({
     data: {
       steps: [
         { text: "Explanation step 1 text", title: "Explanation Step 1" },
         { text: "Explanation step 2 text", title: "Explanation Step 2" },
-      ],
-    },
-  }),
-}));
-
-vi.mock("@zoonk/ai/tasks/activities/core/examples", () => ({
-  generateActivityExamples: vi.fn().mockResolvedValue({
-    data: {
-      steps: [
-        { text: "Examples step 1 text", title: "Examples Step 1" },
-        { text: "Examples step 2 text", title: "Examples Step 2" },
       ],
     },
   }),
@@ -200,7 +178,7 @@ describe(activityGenerationWorkflow, () => {
         "No activities found for lesson",
       );
 
-      expect(generateActivityBackground).not.toHaveBeenCalled();
+      expect(generateActivityExplanation).not.toHaveBeenCalled();
     });
   });
 
@@ -215,15 +193,15 @@ describe(activityGenerationWorkflow, () => {
 
       await activityFixture({
         generationStatus: "pending",
-        kind: "background",
+        kind: "explanation",
         lessonId: testLesson.id,
         organizationId,
-        title: `Background ${randomUUID()}`,
+        title: `Explanation ${randomUUID()}`,
       });
 
       await activityGenerationWorkflow(testLesson.id);
 
-      expect(generateActivityBackground).toHaveBeenCalledOnce();
+      expect(generateActivityExplanation).toHaveBeenCalledOnce();
       expect(generateActivityCustom).not.toHaveBeenCalled();
     });
 
@@ -246,7 +224,7 @@ describe(activityGenerationWorkflow, () => {
       await activityGenerationWorkflow(testLesson.id);
 
       expect(generateActivityCustom).toHaveBeenCalledOnce();
-      expect(generateActivityBackground).not.toHaveBeenCalled();
+      expect(generateActivityExplanation).not.toHaveBeenCalled();
     });
 
     test("routes language lessons to language workflow", async () => {
@@ -259,15 +237,15 @@ describe(activityGenerationWorkflow, () => {
 
       await activityFixture({
         generationStatus: "pending",
-        kind: "background",
+        kind: "explanation",
         lessonId: testLesson.id,
         organizationId,
-        title: `Background ${randomUUID()}`,
+        title: `Explanation ${randomUUID()}`,
       });
 
       await activityGenerationWorkflow(testLesson.id);
 
-      expect(generateActivityBackground).not.toHaveBeenCalled();
+      expect(generateActivityExplanation).not.toHaveBeenCalled();
       expect(generateActivityCustom).not.toHaveBeenCalled();
     });
   });
@@ -283,7 +261,7 @@ describe(activityGenerationWorkflow, () => {
       const runningActivity = await activityFixture({
         generationRunId: "test-run-id",
         generationStatus: "running",
-        kind: "background",
+        kind: "explanation",
         lessonId: testLesson.id,
         organizationId,
         title: `Running Activity ${randomUUID()}`,
@@ -292,7 +270,7 @@ describe(activityGenerationWorkflow, () => {
       const completedActivity = await activityFixture({
         generationRunId: "test-run-id",
         generationStatus: "completed",
-        kind: "explanation",
+        kind: "quiz",
         lessonId: testLesson.id,
         organizationId,
         title: `Completed Activity ${randomUUID()}`,
@@ -300,7 +278,7 @@ describe(activityGenerationWorkflow, () => {
 
       const pendingActivity = await activityFixture({
         generationStatus: "pending",
-        kind: "examples",
+        kind: "practice",
         lessonId: testLesson.id,
         organizationId,
         title: `Pending Activity ${randomUUID()}`,
@@ -344,7 +322,7 @@ describe(activityGenerationWorkflow, () => {
       const otherRunActivity = await activityFixture({
         generationRunId: "different-run-id",
         generationStatus: "running",
-        kind: "background",
+        kind: "explanation",
         lessonId: testLesson.id,
         organizationId,
         title: `Other Run Activity ${randomUUID()}`,

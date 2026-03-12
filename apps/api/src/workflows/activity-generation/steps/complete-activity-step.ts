@@ -8,9 +8,7 @@ import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
 
 const kindToStepName: Partial<Record<ActivityKind, ActivityStepName>> = {
-  background: "setBackgroundAsCompleted",
   challenge: "setChallengeAsCompleted",
-  examples: "setExamplesAsCompleted",
   explanation: "setExplanationAsCompleted",
   grammar: "setGrammarAsCompleted",
   languagePractice: "setLanguagePracticeAsCompleted",

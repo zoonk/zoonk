@@ -25,11 +25,9 @@ export const ACTIVITY_GENERATION_COMPLETION_STEP: ActivityStepName = "setActivit
 export const ACTIVITY_STEPS = [
   "getLessonActivities",
   "getNeighboringConcepts",
-  "generateBackgroundContent",
   "generateChallengeContent",
   "generateCustomContent",
   "generateExplanationContent",
-  "generateExamplesContent",
   "generateQuizContent",
   "generatePracticeContent",
   "generateGrammarContent",
@@ -39,10 +37,8 @@ export const ACTIVITY_STEPS = [
   "generateImages",
   "generateQuizImages",
   "setActivityAsRunning",
-  "setBackgroundAsCompleted",
   "setChallengeAsCompleted",
   "setCustomAsCompleted",
-  "setExamplesAsCompleted",
   "setExplanationAsCompleted",
   "setQuizAsCompleted",
   "setPracticeAsCompleted",
@@ -67,10 +63,8 @@ export const ACTIVITY_STEPS = [
 export type ActivityStepName = (typeof ACTIVITY_STEPS)[number];
 
 type ActivityCompletionStep =
-  | "setBackgroundAsCompleted"
   | "setChallengeAsCompleted"
   | "setCustomAsCompleted"
-  | "setExamplesAsCompleted"
   | "setExplanationAsCompleted"
   | "setQuizAsCompleted"
   | "setPracticeAsCompleted"
@@ -81,10 +75,8 @@ type ActivityCompletionStep =
   | "setListeningAsCompleted";
 
 const activityCompletionSteps: Partial<Record<string, ActivityCompletionStep>> = {
-  background: "setBackgroundAsCompleted",
   challenge: "setChallengeAsCompleted",
   custom: "setCustomAsCompleted",
-  examples: "setExamplesAsCompleted",
   explanation: "setExplanationAsCompleted",
   grammar: "setGrammarAsCompleted",
   languagePractice: "setLanguagePracticeAsCompleted",
@@ -104,7 +96,7 @@ const activityCompletionSteps: Partial<Record<string, ActivityCompletionStep>> =
  * the UI won't redirect until the correct step is emitted.
  */
 export function getActivityCompletionStep(kind: string): ActivityCompletionStep {
-  return activityCompletionSteps[kind] ?? "setBackgroundAsCompleted";
+  return activityCompletionSteps[kind] ?? "setExplanationAsCompleted";
 }
 
 export const COURSE_STEPS = [

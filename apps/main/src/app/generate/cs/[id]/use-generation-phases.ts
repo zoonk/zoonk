@@ -133,7 +133,7 @@ export function useGenerationPhases(
       cycleMessage([t("Designing practice exercises..."), t("Making it interactive...")], index),
     writingContent: (index) =>
       cycleMessage(
-        [t("Researching the topic..."), t("Writing the explanation..."), t("Adding examples...")],
+        [t("Researching the topic..."), t("Writing the explanation..."), t("Making it clear...")],
         index,
       ),
     writingDescription: (index) =>

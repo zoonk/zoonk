@@ -8,7 +8,7 @@ function activityAttrs(
     generationRunId: null,
     generationStatus: "completed",
     isPublished: false,
-    kind: "background",
+    kind: "explanation",
     language: "en",
     lessonId: 0,
     organizationId: 0,

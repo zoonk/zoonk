@@ -37,7 +37,7 @@ describe("unauthenticated users", () => {
       language: course.language,
       organizationId: organization.id,
     });
-    const file = createImportFile([{ kind: "background", title: "Test" }]);
+    const file = createImportFile([{ kind: "explanation", title: "Test" }]);
 
     const result = await importActivities({
       file,
@@ -69,7 +69,7 @@ describe("members", () => {
       }),
     ]);
 
-    const file = createImportFile([{ kind: "background", title: "Test" }]);
+    const file = createImportFile([{ kind: "explanation", title: "Test" }]);
 
     const result = await importActivities({
       file,
@@ -125,7 +125,7 @@ describe("admins", () => {
     const file = createImportFile([
       {
         description: "First Description",
-        kind: "background",
+        kind: "explanation",
         title: "First Activity",
       },
       {
@@ -144,7 +144,7 @@ describe("admins", () => {
     expect(result.error).toBeNull();
     expect(result.data).toHaveLength(2);
     expect(result.data?.[0]?.title).toBe("First Activity");
-    expect(result.data?.[0]?.kind).toBe("background");
+    expect(result.data?.[0]?.kind).toBe("explanation");
     expect(result.data?.[1]?.title).toBe("Second Activity");
     expect(result.data?.[1]?.kind).toBe("quiz");
 
@@ -160,7 +160,7 @@ describe("admins", () => {
   });
 
   test("returns Lesson not found for non-existent lesson", async () => {
-    const file = createImportFile([{ kind: "background", title: "Test" }]);
+    const file = createImportFile([{ kind: "explanation", title: "Test" }]);
 
     const result = await importActivities({
       file,
@@ -186,7 +186,7 @@ describe("admins", () => {
       organizationId: otherOrg.id,
     });
 
-    const file = createImportFile([{ kind: "background", title: "Test" }]);
+    const file = createImportFile([{ kind: "explanation", title: "Test" }]);
 
     const result = await importActivities({
       file,
@@ -219,7 +219,7 @@ describe("admins", () => {
       title: "Existing",
     });
 
-    const file = createImportFile([{ kind: "background", title: "Imported" }]);
+    const file = createImportFile([{ kind: "explanation", title: "Imported" }]);
 
     const result = await importActivities({
       file,
@@ -253,7 +253,7 @@ describe("admins", () => {
     });
 
     const file = createImportFile([
-      { kind: "background", title: "First" },
+      { kind: "explanation", title: "First" },
       { kind: "explanation", title: "Second" },
       { kind: "quiz", title: "Third" },
     ]);
@@ -302,7 +302,7 @@ describe("admins", () => {
         title: "Existing",
       });
 
-      const file = createImportFile([{ kind: "background", title: "New Activity" }]);
+      const file = createImportFile([{ kind: "explanation", title: "New Activity" }]);
 
       const result = await importActivities({
         file,
@@ -344,7 +344,7 @@ describe("admins", () => {
       });
 
       const file = createImportFile([
-        { kind: "background", title: "First" },
+        { kind: "explanation", title: "First" },
         { kind: "quiz", title: "Second" },
       ]);
 
@@ -380,7 +380,7 @@ describe("admins", () => {
         organizationId: organization.id,
       });
 
-      const file = createImportFile([{ kind: "background", title: "New Activity" }]);
+      const file = createImportFile([{ kind: "explanation", title: "New Activity" }]);
 
       const result = await importActivities({
         file,
@@ -494,7 +494,7 @@ describe("admins", () => {
       const file = new File(
         [
           JSON.stringify({
-            activities: [{ kind: "background", title: "Test" }],
+            activities: [{ kind: "explanation", title: "Test" }],
           }),
         ],
         "activities.json",
@@ -527,7 +527,7 @@ describe("admins", () => {
         organizationId: organization.id,
       });
 
-      const file = createImportFile([{ kind: "background", title: "Test Activity" }]);
+      const file = createImportFile([{ kind: "explanation", title: "Test Activity" }]);
 
       const result = await importActivities({
         file,
@@ -553,7 +553,7 @@ describe("admins", () => {
         organizationId: organization.id,
       });
 
-      const file = createImportFile([{ kind: "background", title: "Test Activity" }]);
+      const file = createImportFile([{ kind: "explanation", title: "Test Activity" }]);
 
       const result = await importActivities({
         file,
@@ -582,7 +582,7 @@ describe("admins", () => {
         organizationId: organization.id,
       });
 
-      const file = createImportFile([{ kind: "background", title: "Test Activity" }]);
+      const file = createImportFile([{ kind: "explanation", title: "Test Activity" }]);
 
       const result = await importActivities({
         file,

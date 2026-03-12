@@ -301,7 +301,7 @@ async function createE2EProgressData(userId: number): Promise<void> {
     activityFixture({
       generationStatus: "completed",
       isPublished: true,
-      kind: "background",
+      kind: "explanation",
       lessonId: lesson.id,
       organizationId: org.id,
       position: 0,

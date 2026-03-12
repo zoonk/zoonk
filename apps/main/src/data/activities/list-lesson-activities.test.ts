@@ -42,7 +42,7 @@ describe(listLessonActivities, () => {
       activityFixture({
         description: "First activity description",
         isPublished: true,
-        kind: "background",
+        kind: "explanation",
         language: "en",
         lessonId: lesson.id,
         organizationId: org.id,
@@ -99,7 +99,7 @@ describe(listLessonActivities, () => {
     const result = await listLessonActivities({ lessonId: lesson.id });
 
     const activity1 = result.find((a) => a.id === publishedActivity1.id);
-    expect(activity1?.kind).toBe("background");
+    expect(activity1?.kind).toBe("explanation");
 
     const activity2 = result.find((a) => a.id === publishedActivity2.id);
     expect(activity2?.kind).toBe("explanation");

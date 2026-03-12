@@ -266,7 +266,7 @@ test.describe("Activity List", () => {
       const importedTitle2 = `Imported ${prefix} 2`;
 
       const importFile = createImportFile([
-        { kind: "background", title: importedTitle1 },
+        { kind: "explanation", title: importedTitle1 },
         { kind: "quiz", title: importedTitle2 },
       ]);
 
@@ -307,7 +307,7 @@ test.describe("Activity List", () => {
       const importedTitle2 = `Replaced ${prefix} 2`;
 
       const importFile = createImportFile([
-        { kind: "background", title: importedTitle1 },
+        { kind: "explanation", title: importedTitle1 },
         { kind: "quiz", title: importedTitle2 },
       ]);
 

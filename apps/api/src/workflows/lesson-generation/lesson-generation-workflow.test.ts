@@ -209,16 +209,14 @@ describe(lessonGenerationWorkflow, () => {
       expect(explanationsBetweenPractices).toHaveLength(3);
     });
 
-    test("activity order: background, explanations, practice(s), examples, quiz, challenge, review", async () => {
+    test("activity order: explanations, practice, quiz, challenge, review", async () => {
       const activities = await createCoreLesson(["A", "B"]);
       const kinds = activities.map((a) => a.kind);
 
       expect(kinds).toEqual([
-        "background",
         "explanation",
         "explanation",
         "practice",
-        "examples",
         "quiz",
         "challenge",
         "review",

@@ -1,7 +1,5 @@
 import { settled } from "@zoonk/utils/settled";
-import { backgroundActivityWorkflow } from "./kinds/background-workflow";
 import { challengeActivityWorkflow } from "./kinds/challenge-workflow";
-import { examplesActivityWorkflow } from "./kinds/examples-workflow";
 import { explanationActivityWorkflow } from "./kinds/explanation-workflow";
 import { practiceActivityWorkflow } from "./kinds/practice-workflow";
 import { quizActivityWorkflow } from "./kinds/quiz-workflow";
@@ -17,10 +15,8 @@ export async function coreActivityWorkflow(
   const totalPractices = findActivitiesByKind(activities, "practice").length;
   const neighboringConcepts = await getNeighboringConceptsStep(activities);
 
-  const [, explanationResult] = await Promise.allSettled([
-    backgroundActivityWorkflow(activities, workflowRunId, concepts, neighboringConcepts),
+  const [explanationResult] = await Promise.allSettled([
     explanationActivityWorkflow(activities, workflowRunId, concepts, neighboringConcepts),
-    examplesActivityWorkflow(activities, workflowRunId, concepts, neighboringConcepts),
     challengeActivityWorkflow(activities, workflowRunId, concepts, neighboringConcepts),
   ]);
 

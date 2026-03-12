@@ -40,7 +40,7 @@ async function createTestCourseWithActivity() {
 
   await activityFixture({
     isPublished: true,
-    kind: "background",
+    kind: "explanation",
     lessonId: lesson.id,
     organizationId: org.id,
     position: 0,

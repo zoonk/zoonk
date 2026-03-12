@@ -91,7 +91,7 @@ test.describe("Next Activity API", () => {
     await prisma.activity.create({
       data: {
         isPublished: true,
-        kind: "background",
+        kind: "explanation",
         language: "en",
         lessonId: lesson.id,
         organizationId: brandOrgId,
@@ -162,7 +162,7 @@ test.describe("Next Activity API", () => {
     await prisma.activity.create({
       data: {
         isPublished: true,
-        kind: "background",
+        kind: "explanation",
         language: "en",
         lessonId: lesson.id,
         organizationId: brandOrgId,
@@ -229,7 +229,7 @@ test.describe("Next Activity API", () => {
     await prisma.activity.create({
       data: {
         isPublished: true,
-        kind: "background",
+        kind: "explanation",
         language: "en",
         lessonId: lesson.id,
         organizationId: brandOrgId,
