@@ -145,9 +145,10 @@ test.describe("Lesson Detail Page", () => {
     // Verify chapter link is visible
     await expect(page.getByRole("link", { name: chapter.title })).toBeVisible();
 
-    // Click the course link
+    // Close popover, then click the course link
     const courseLink = page.getByRole("link", { name: course.title });
-    await courseLink.click({ force: true });
+    await page.keyboard.press("Escape");
+    await courseLink.click();
 
     // Verify URL is correct
     await expect(page).toHaveURL(new RegExp(`/b/${AI_ORG_SLUG}/c/${course.slug}$`));

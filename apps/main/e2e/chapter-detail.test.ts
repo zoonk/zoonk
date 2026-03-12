@@ -233,7 +233,8 @@ test.describe("Chapter Detail Page", () => {
     const courseLink = page.getByRole("link", { exact: true, name: courseTitle });
     await expect(courseLink).toBeVisible();
 
-    await courseLink.click({ force: true });
+    await page.keyboard.press("Escape");
+    await courseLink.click();
 
     await expect(page).toHaveURL(new RegExp(`/b/${AI_ORG_SLUG}/c/${courseSlug}$`));
 
