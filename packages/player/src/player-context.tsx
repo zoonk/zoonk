@@ -29,7 +29,7 @@ export type PlayerContextValue<Href extends string> = {
   progressValue: number;
   results: Record<string, StepResult>;
   selectedAnswer: SelectedAnswer | undefined;
-  showActionBar: boolean;
+  showBottomBar: boolean;
   showHeader: boolean;
   totalSteps: number;
 

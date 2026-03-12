@@ -37,7 +37,7 @@ function deriveViewState(state: PlayerState) {
     isStaticStep,
     progressValue: isCompleted ? 100 : computeProgress(state.currentStepIndex, state.steps.length),
     selectedAnswer: currentStep ? state.selectedAnswers[currentStep.id] : undefined,
-    showActionBar: !isStaticStep && !isCompleted && !isIntro,
+    showBottomBar: !isCompleted && !isIntro,
     showHeader: !isCompleted && !isIntro,
     totalSteps: state.steps.length,
   };

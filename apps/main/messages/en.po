@@ -283,17 +283,17 @@ msgctxt "nJGJop"
 msgid "Someone says:"
 msgstr "Someone says:"
 
-#: ../../packages/player/src/components/player-header.tsx
+#: ../../packages/player/src/components/player-bottom-bar.tsx
 msgctxt "aNzy1T"
 msgid "Previous step"
 msgstr "Previous step"
 
-#: ../../packages/player/src/components/player-header.tsx
+#: ../../packages/player/src/components/player-bottom-bar.tsx
 msgctxt "d+qgix"
 msgid "Next step"
 msgstr "Next step"
 
-#: ../../packages/player/src/components/player-header.tsx
+#: ../../packages/player/src/components/player-bottom-bar.tsx
 msgctxt "kXUK98"
 msgid "Step navigation"
 msgstr "Step navigation"

@@ -433,22 +433,22 @@ test.describe("Static Step Navigation", () => {
     await expect(page.getByRole("button", { name: /send feedback/i })).toBeVisible();
   });
 
-  test("clicking on body text area navigates between steps", async ({ page }) => {
+  test("bottom nav buttons navigate between steps", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const { url } = await createStaticActivity({
       steps: [
         {
           content: {
-            text: `Click 1 body ${uniqueId}`,
-            title: `Click 1 ${uniqueId}`,
+            text: `Nav 1 body ${uniqueId}`,
+            title: `Nav 1 ${uniqueId}`,
             variant: "text",
           },
           position: 0,
         },
         {
           content: {
-            text: `Click 2 body ${uniqueId}`,
-            title: `Click 2 ${uniqueId}`,
+            text: `Nav 2 body ${uniqueId}`,
+            title: `Nav 2 ${uniqueId}`,
             variant: "text",
           },
           position: 1,
@@ -460,21 +460,19 @@ test.describe("Static Step Navigation", () => {
     await page.waitForLoadState("networkidle");
 
     await expect(
-      page.getByRole("heading", { name: new RegExp(`Click 1 ${uniqueId}`) }),
+      page.getByRole("heading", { name: new RegExp(`Nav 1 ${uniqueId}`) }),
     ).toBeVisible();
 
-    const bodyText = page.getByText(new RegExp(`Click 1 body ${uniqueId}`));
-    const bodyBox = await bodyText.boundingBox();
-    const viewport = page.viewportSize();
+    const nav = page.getByRole("navigation", { name: /step navigation/i });
 
-    if (!bodyBox || !viewport) {
-      throw new Error("Missing body text box or viewport");
-    }
-
-    await page.mouse.click(viewport.width / 2, bodyBox.y + bodyBox.height / 2);
-
+    await nav.getByRole("button", { name: /next step/i }).click();
     await expect(
-      page.getByRole("heading", { name: new RegExp(`Click 2 ${uniqueId}`) }),
+      page.getByRole("heading", { name: new RegExp(`Nav 2 ${uniqueId}`) }),
+    ).toBeVisible();
+
+    await nav.getByRole("button", { name: /previous step/i }).click();
+    await expect(
+      page.getByRole("heading", { name: new RegExp(`Nav 1 ${uniqueId}`) }),
     ).toBeVisible();
   });
 
@@ -529,48 +527,7 @@ test.describe("Static Step Navigation", () => {
     ).toBeVisible();
   });
 
-  test("header nav buttons navigate between steps", async ({ page }) => {
-    const uniqueId = randomUUID().slice(0, 8);
-    const { url } = await createStaticActivity({
-      steps: [
-        {
-          content: {
-            text: `Nav 1 body ${uniqueId}`,
-            title: `Nav 1 ${uniqueId}`,
-            variant: "text",
-          },
-          position: 0,
-        },
-        {
-          content: {
-            text: `Nav 2 body ${uniqueId}`,
-            title: `Nav 2 ${uniqueId}`,
-            variant: "text",
-          },
-          position: 1,
-        },
-      ],
-    });
-
-    await page.goto(url);
-    await page.waitForLoadState("networkidle");
-
-    const nav = page.getByRole("navigation", { name: /step navigation/i });
-
-    // Click next in header nav
-    await nav.getByRole("button", { name: /next step/i }).click();
-    await expect(
-      page.getByRole("heading", { name: new RegExp(`Nav 2 ${uniqueId}`) }),
-    ).toBeVisible();
-
-    // Click previous in header nav
-    await nav.getByRole("button", { name: /previous step/i }).click();
-    await expect(
-      page.getByRole("heading", { name: new RegExp(`Nav 1 ${uniqueId}`) }),
-    ).toBeVisible();
-  });
-
-  test("header prev button is disabled on first step", async ({ page }) => {
+  test("prev button is disabled on first step", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const { url } = await createStaticActivity({
       steps: [
@@ -601,7 +558,7 @@ test.describe("Static Step Navigation", () => {
     await expect(nav.getByRole("button", { name: /next step/i })).toBeEnabled();
   });
 
-  test("header next button navigates to completion on last step", async ({ page }) => {
+  test("next button navigates to completion on last step", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const { url } = await createStaticActivity({
       steps: [
@@ -664,10 +621,11 @@ test.describe("Completion Screen", () => {
     await page.goto(url);
     await page.waitForLoadState("networkidle");
 
-    // Header and progress bar visible before completion
+    // Header, progress bar, and bottom nav visible before completion
     await expect(page.getByRole("link", { name: /close/i })).toBeVisible();
     await expect(page.getByText(/1 \/ 1/)).toBeVisible();
     await expect(page.getByRole("progressbar", { name: /activity progress/i })).toBeVisible();
+    await expect(page.getByRole("navigation", { name: /step navigation/i })).toBeVisible();
 
     await page.keyboard.press("ArrowRight");
 
@@ -676,6 +634,7 @@ test.describe("Completion Screen", () => {
     await expect(page.getByRole("link", { name: /close/i })).not.toBeVisible();
     await expect(page.getByText(/1 \/ 1/)).not.toBeVisible();
     await expect(page.getByRole("progressbar", { name: /activity progress/i })).not.toBeVisible();
+    await expect(page.getByRole("navigation", { name: /step navigation/i })).not.toBeVisible();
   });
 
   test("shows Back to Lesson link and Restart button", async ({ page }) => {

@@ -3,7 +3,7 @@
 import { useExtracted } from "next-intl";
 import { usePlayer } from "../player-context";
 import { InPlayStickyHeader } from "./in-play-sticky-header";
-import { PlayerActionBar, PlayerActionButton } from "./player-action-bar";
+import { PlayerBottomBar, PlayerBottomBarAction, PlayerBottomBarNav } from "./player-bottom-bar";
 import { PlayerCloseLink, PlayerHeader } from "./player-header";
 import { PlayerStage } from "./player-stage";
 import { StageContent } from "./stage-content";
@@ -33,7 +33,7 @@ export function PlayerShell() {
     results,
     selectAnswer,
     selectedAnswer,
-    showActionBar,
+    showBottomBar,
     showHeader,
     startChallenge,
     totalSteps,
@@ -58,11 +58,7 @@ export function PlayerShell() {
           currentStepIndex={currentStepIndex}
           dimensions={dimensions}
           hasDimensions={hasDimensions}
-          isFirstStep={isFirstStep}
-          isStaticStep={isStaticStep}
           lessonHref={lessonHref}
-          onNavigateNext={navigateNext}
-          onNavigatePrev={navigatePrev}
           progressValue={progressValue}
           totalSteps={totalSteps}
         />
@@ -90,15 +86,23 @@ export function PlayerShell() {
         />
       </PlayerStage>
 
-      {showActionBar && (
-        <PlayerActionBar>
-          <PlayerActionButton
-            disabled={phase === "playing" && !hasAnswer}
-            onClick={phase === "feedback" ? handleContinue : check}
-          >
-            {buttonLabel}
-          </PlayerActionButton>
-        </PlayerActionBar>
+      {showBottomBar && (
+        <PlayerBottomBar>
+          {isStaticStep ? (
+            <PlayerBottomBarNav
+              isFirstStep={isFirstStep}
+              onNavigateNext={navigateNext}
+              onNavigatePrev={navigatePrev}
+            />
+          ) : (
+            <PlayerBottomBarAction
+              disabled={phase === "playing" && !hasAnswer}
+              onClick={phase === "feedback" ? handleContinue : check}
+            >
+              {buttonLabel}
+            </PlayerBottomBarAction>
+          )}
+        </PlayerBottomBar>
       )}
     </main>
   );

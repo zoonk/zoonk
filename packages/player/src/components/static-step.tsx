@@ -5,7 +5,7 @@ import { type SerializedStep } from "../prepare-activity-data";
 import { useReplaceName } from "../user-name-context";
 import { HighlightText } from "./highlight-text";
 import { ContextText, QuestionText } from "./question-text";
-import { StaticTapZones, useStaticStepNavigation } from "./static-step-navigation";
+import { useSwipeNavigation } from "./static-step-navigation";
 
 function TextVariant({ title, text }: { title: string; text: string }) {
   const replaceName = useReplaceName();
@@ -83,22 +83,13 @@ export function StaticStep({
   onNavigatePrev: () => void;
   step: SerializedStep;
 }) {
-  const { onNavigateNextTap, onNavigatePrevTap, swipeHandlers } = useStaticStepNavigation({
-    isFirst,
-    onNavigateNext,
-    onNavigatePrev,
-  });
+  const swipeHandlers = useSwipeNavigation({ isFirst, onNavigateNext, onNavigatePrev });
 
   return (
     <div
       className="relative flex min-h-0 w-full max-w-2xl flex-1 flex-col items-start justify-center gap-1 px-4 sm:px-6"
       {...swipeHandlers}
     >
-      <StaticTapZones
-        isFirst={isFirst}
-        onNavigateNext={onNavigateNextTap}
-        onNavigatePrev={onNavigatePrevTap}
-      />
       <StaticStepContent step={step} />
     </div>
   );
