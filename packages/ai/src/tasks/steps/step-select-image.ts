@@ -6,7 +6,7 @@ const DEFAULT_MODEL = "openai/gpt-image-1-mini";
 const DEFAULT_QUALITY = "low";
 
 function getSelectImageStepPrompt(prompt: string, language: string) {
-  return promptTemplate.replace("{{PROMPT}}", prompt).replace("{{LANGUAGE}}", language);
+  return promptTemplate.replace("{{PROMPT}}", () => prompt).replace("{{LANGUAGE}}", () => language);
 }
 
 export type SelectImageStepParams = {
