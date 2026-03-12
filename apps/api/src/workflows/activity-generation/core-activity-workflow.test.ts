@@ -522,7 +522,7 @@ describe("core activity workflow", () => {
   });
 
   describe("dependency cascade failures", () => {
-    test("explanation returns empty → quiz marked as failed (quiz depends on explanation)", async () => {
+    test("explanation returns empty → quiz and story marked as failed (both depend on explanation)", async () => {
       vi.mocked(generateActivityExplanation).mockResolvedValueOnce({
         data: { steps: [] },
         systemPrompt: "test",
@@ -536,7 +536,7 @@ describe("core activity workflow", () => {
         title: `Exp Empty Cascade Lesson ${randomUUID()}`,
       });
 
-      const [expActivity, quizActivity] = await Promise.all([
+      const [expActivity, quizActivity, storyActivity] = await Promise.all([
         activityFixture({
           generationStatus: "pending",
           kind: "explanation",
@@ -551,22 +551,32 @@ describe("core activity workflow", () => {
           organizationId,
           title: `Quiz ${randomUUID()}`,
         }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "story",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Story ${randomUUID()}`,
+        }),
       ]);
 
       await activityGenerationWorkflow(testLesson.id);
 
-      const [dbExp, dbQuiz] = await Promise.all([
+      const [dbExp, dbQuiz, dbStory] = await Promise.all([
         prisma.activity.findUnique({ where: { id: expActivity.id } }),
         prisma.activity.findUnique({ where: { id: quizActivity.id } }),
+        prisma.activity.findUnique({ where: { id: storyActivity.id } }),
       ]);
 
       expect(dbExp?.generationStatus).toBe("failed");
       expect(dbQuiz?.generationStatus).toBe("failed");
+      expect(dbStory?.generationStatus).toBe("failed");
 
       expect(generateActivityQuiz).not.toHaveBeenCalled();
+      expect(generateActivityStory).not.toHaveBeenCalled();
     });
 
-    test("empty concepts → examples, story, and challenge marked as failed", async () => {
+    test("empty concepts → examples and challenge marked as failed", async () => {
       const testLesson = await lessonFixture({
         chapterId: chapter.id,
         concepts: [],
@@ -574,20 +584,13 @@ describe("core activity workflow", () => {
         title: `Empty Concepts Cascade Lesson ${randomUUID()}`,
       });
 
-      const [examplesActivity, storyActivity, challengeActivity] = await Promise.all([
+      const [examplesActivity, challengeActivity] = await Promise.all([
         activityFixture({
           generationStatus: "pending",
           kind: "examples",
           lessonId: testLesson.id,
           organizationId,
           title: `Examples ${randomUUID()}`,
-        }),
-        activityFixture({
-          generationStatus: "pending",
-          kind: "story",
-          lessonId: testLesson.id,
-          organizationId,
-          title: `Story ${randomUUID()}`,
         }),
         activityFixture({
           generationStatus: "pending",
@@ -600,18 +603,15 @@ describe("core activity workflow", () => {
 
       await activityGenerationWorkflow(testLesson.id);
 
-      const [dbExamples, dbStory, dbChallenge] = await Promise.all([
+      const [dbExamples, dbChallenge] = await Promise.all([
         prisma.activity.findUnique({ where: { id: examplesActivity.id } }),
-        prisma.activity.findUnique({ where: { id: storyActivity.id } }),
         prisma.activity.findUnique({ where: { id: challengeActivity.id } }),
       ]);
 
       expect(dbExamples?.generationStatus).toBe("failed");
-      expect(dbStory?.generationStatus).toBe("failed");
       expect(dbChallenge?.generationStatus).toBe("failed");
 
       expect(generateActivityExamples).not.toHaveBeenCalled();
-      expect(generateActivityStory).not.toHaveBeenCalled();
       expect(generateActivityChallenge).not.toHaveBeenCalled();
     });
 
@@ -899,9 +899,6 @@ describe("core activity workflow", () => {
         expect.objectContaining({ neighboringConcepts: ["Neighbor A"] }),
       );
       expect(generateActivityExamples).toHaveBeenCalledWith(
-        expect.objectContaining({ neighboringConcepts: ["Neighbor A"] }),
-      );
-      expect(generateActivityStory).toHaveBeenCalledWith(
         expect.objectContaining({ neighboringConcepts: ["Neighbor A"] }),
       );
       expect(generateActivityChallenge).toHaveBeenCalledWith(

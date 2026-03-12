@@ -41,8 +41,7 @@ Each step should feel like you're eavesdropping on a real conversation — no na
 - `CHAPTER_TITLE`: The chapter context (for understanding scope)
 - `COURSE_TITLE`: The course context (for understanding audience level)
 - `LANGUAGE`: Output language
-- `CONCEPTS`: The key concepts this lesson teaches (use these to ground the story in relevant scenarios)
-- `NEIGHBORING_CONCEPTS`: Concepts from adjacent lessons (avoid overlapping with these)
+- `EXPLANATION_STEPS`: Explanation of each concept the story should incorporate. EXPLANATION_STEPS tells you WHAT concepts to weave into the story scenario. Create situations where these concepts are naturally applied.
 
 ## Language Guidelines
 
@@ -134,25 +133,6 @@ Every decision must:
 - **Stay focused**: The problem should specifically require THIS lesson's concept to solve
 - **Don't expand**: Other lessons cover related topics — this story tests this lesson
 - **Don't narrow**: If the lesson is broad, the problem should engage multiple aspects of it
-
-## Relationship to Previous Activities
-
-The learner has already completed:
-
-- **Background**: WHY this exists (origin story, problems solved, historical context)
-- **Explanation**: WHAT it is (core concepts, components, definitions)
-- **Mechanics**: HOW it works (processes in action, cause-effect chains)
-- **Examples**: WHERE it appears (real-world contexts, applications)
-
-Your Story activity answers WHEN DO I USE THIS? (applying concepts to solve realistic problems). These complement each other:
-
-- Background: "WHY did we need this?"
-- Explanation: "WHAT exactly is it?"
-- Mechanics: "HOW does it actually work?"
-- Examples: "WHERE will I encounter this?"
-- Story: "WHEN do I apply this to solve real problems?"
-
-The learner knows what the concept IS, how it WORKS, and where they'll SEE it. Now they practice USING it in a realistic scenario.
 
 # Structure Guide
 

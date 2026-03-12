@@ -8,6 +8,7 @@ import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { type ExplanationResult } from "../steps/generate-explanation-content-step";
 import { getLessonActivitiesStep } from "../steps/get-lesson-activities-step";
 import { storyActivityWorkflow } from "./story-workflow";
 
@@ -42,6 +43,19 @@ vi.mock("@zoonk/ai/tasks/activities/core/story", () => ({
   }),
 }));
 
+function buildExplanationResults(activityId: number): ExplanationResult[] {
+  return [
+    {
+      activityId,
+      concept: "Test Concept",
+      steps: [
+        { text: "Explanation step 1", title: "Step 1" },
+        { text: "Explanation step 2", title: "Step 2" },
+      ],
+    },
+  ];
+}
+
 describe("story activity workflow", () => {
   let organizationId: number;
   let course: Awaited<ReturnType<typeof courseFixture>>;
@@ -70,6 +84,14 @@ describe("story activity workflow", () => {
       title: `Story Content Lesson ${randomUUID()}`,
     });
 
+    const expActivity = await activityFixture({
+      generationStatus: "completed",
+      kind: "explanation",
+      lessonId: testLesson.id,
+      organizationId,
+      title: "Test Concept",
+    });
+
     const activity = await activityFixture({
       generationStatus: "pending",
       kind: "story",
@@ -79,9 +101,9 @@ describe("story activity workflow", () => {
     });
 
     const activities = await getLessonActivitiesStep(testLesson.id);
-    const concepts = activities[0]?.lesson?.concepts ?? [];
+    const explanationResults = buildExplanationResults(Number(expActivity.id));
 
-    await storyActivityWorkflow(activities, "test-run-id", concepts, []);
+    await storyActivityWorkflow(activities, "test-run-id", explanationResults, 1);
 
     const steps = await prisma.step.findMany({
       orderBy: { position: "asc" },
@@ -112,6 +134,14 @@ describe("story activity workflow", () => {
       title: `Story Completed Lesson ${randomUUID()}`,
     });
 
+    const expActivity = await activityFixture({
+      generationStatus: "completed",
+      kind: "explanation",
+      lessonId: testLesson.id,
+      organizationId,
+      title: "Test Concept",
+    });
+
     const activity = await activityFixture({
       generationStatus: "pending",
       kind: "story",
@@ -121,9 +151,9 @@ describe("story activity workflow", () => {
     });
 
     const activities = await getLessonActivitiesStep(testLesson.id);
-    const concepts = activities[0]?.lesson?.concepts ?? [];
+    const explanationResults = buildExplanationResults(Number(expActivity.id));
 
-    await storyActivityWorkflow(activities, "test-run-id", concepts, []);
+    await storyActivityWorkflow(activities, "test-run-id", explanationResults, 1);
 
     const dbActivity = await prisma.activity.findUnique({
       where: { id: activity.id },
@@ -142,7 +172,15 @@ describe("story activity workflow", () => {
       title: `Story Failed Lesson ${randomUUID()}`,
     });
 
-    const activity = await activityFixture({
+    const expActivity = await activityFixture({
+      generationStatus: "completed",
+      kind: "explanation",
+      lessonId: testLesson.id,
+      organizationId,
+      title: "Test Concept",
+    });
+
+    await activityFixture({
       generationStatus: "pending",
       kind: "story",
       lessonId: testLesson.id,
@@ -151,22 +189,22 @@ describe("story activity workflow", () => {
     });
 
     const activities = await getLessonActivitiesStep(testLesson.id);
-    const concepts = activities[0]?.lesson?.concepts ?? [];
+    const explanationResults = buildExplanationResults(Number(expActivity.id));
 
-    await storyActivityWorkflow(activities, "test-run-id", concepts, []);
+    await storyActivityWorkflow(activities, "test-run-id", explanationResults, 1);
 
-    const dbActivity = await prisma.activity.findUnique({
-      where: { id: activity.id },
+    const dbStory = await prisma.activity.findFirst({
+      where: { kind: "story", lessonId: testLesson.id },
     });
-    expect(dbActivity?.generationStatus).toBe("failed");
+    expect(dbStory?.generationStatus).toBe("failed");
   });
 
-  test("sets story status to 'failed' when concepts are empty", async () => {
+  test("sets story status to 'failed' when explanation results are empty", async () => {
     const testLesson = await lessonFixture({
       chapterId: chapter.id,
       concepts: [],
       organizationId,
-      title: `Story No Concepts Lesson ${randomUUID()}`,
+      title: `Story No Explanations Lesson ${randomUUID()}`,
     });
 
     const activity = await activityFixture({
@@ -179,7 +217,7 @@ describe("story activity workflow", () => {
 
     const activities = await getLessonActivitiesStep(testLesson.id);
 
-    await storyActivityWorkflow(activities, "test-run-id", [], []);
+    await storyActivityWorkflow(activities, "test-run-id", [], 1);
 
     const dbActivity = await prisma.activity.findUnique({
       where: { id: activity.id },
@@ -193,6 +231,14 @@ describe("story activity workflow", () => {
       concepts: ["Test Concept"],
       organizationId,
       title: `Story Skip Lesson ${randomUUID()}`,
+    });
+
+    const expActivity = await activityFixture({
+      generationStatus: "completed",
+      kind: "explanation",
+      lessonId: testLesson.id,
+      organizationId,
+      title: "Test Concept",
     });
 
     const activity = await activityFixture({
@@ -216,10 +262,414 @@ describe("story activity workflow", () => {
     });
 
     const activities = await getLessonActivitiesStep(testLesson.id);
-    const concepts = activities[0]?.lesson?.concepts ?? [];
+    const explanationResults = buildExplanationResults(Number(expActivity.id));
 
-    await storyActivityWorkflow(activities, "test-run-id", concepts, []);
+    await storyActivityWorkflow(activities, "test-run-id", explanationResults, 1);
 
     expect(generateActivityStory).not.toHaveBeenCalled();
+  });
+
+  describe("multi-story behavior", () => {
+    test("creates two stories when lesson has 4+ concepts", async () => {
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        concepts: ["S1", "S2", "S3", "S4"],
+        organizationId,
+        title: `Two Story Lesson ${randomUUID()}`,
+      });
+
+      const [expS1, expS2, expS3, expS4] = await Promise.all([
+        activityFixture({
+          generationStatus: "completed",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 1,
+          title: "S1",
+        }),
+        activityFixture({
+          generationStatus: "completed",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 2,
+          title: "S2",
+        }),
+        activityFixture({
+          generationStatus: "completed",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 3,
+          title: "S3",
+        }),
+        activityFixture({
+          generationStatus: "completed",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 4,
+          title: "S4",
+        }),
+      ]);
+
+      await Promise.all([
+        activityFixture({
+          generationStatus: "pending",
+          kind: "story",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 5,
+          title: `Story 1 ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "story",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 6,
+          title: `Story 2 ${randomUUID()}`,
+        }),
+      ]);
+
+      const activities = await getLessonActivitiesStep(testLesson.id);
+      const explanationResults: ExplanationResult[] = [
+        { activityId: Number(expS1.id), concept: "S1", steps: [{ text: "S1 text", title: "S1" }] },
+        { activityId: Number(expS2.id), concept: "S2", steps: [{ text: "S2 text", title: "S2" }] },
+        { activityId: Number(expS3.id), concept: "S3", steps: [{ text: "S3 text", title: "S3" }] },
+        { activityId: Number(expS4.id), concept: "S4", steps: [{ text: "S4 text", title: "S4" }] },
+      ];
+
+      await storyActivityWorkflow(activities, "test-run-id", explanationResults, 2);
+
+      expect(generateActivityStory).toHaveBeenCalledTimes(2);
+    });
+
+    test("story 1 gets first half of explanation steps, story 2 gets second half", async () => {
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        concepts: ["Half1A", "Half1B", "Half2A", "Half2B"],
+        organizationId,
+        title: `Story Split Lesson ${randomUUID()}`,
+      });
+
+      const [expH1A, expH1B, expH2A, expH2B] = await Promise.all([
+        activityFixture({
+          generationStatus: "completed",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 1,
+          title: "Half1A",
+        }),
+        activityFixture({
+          generationStatus: "completed",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 2,
+          title: "Half1B",
+        }),
+        activityFixture({
+          generationStatus: "completed",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 3,
+          title: "Half2A",
+        }),
+        activityFixture({
+          generationStatus: "completed",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 4,
+          title: "Half2B",
+        }),
+      ]);
+
+      await Promise.all([
+        activityFixture({
+          generationStatus: "pending",
+          kind: "story",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 5,
+          title: `Story 1 ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "story",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 6,
+          title: `Story 2 ${randomUUID()}`,
+        }),
+      ]);
+
+      const activities = await getLessonActivitiesStep(testLesson.id);
+      const explanationResults: ExplanationResult[] = [
+        {
+          activityId: Number(expH1A.id),
+          concept: "Half1A",
+          steps: [{ text: "H1A text", title: "H1A" }],
+        },
+        {
+          activityId: Number(expH1B.id),
+          concept: "Half1B",
+          steps: [{ text: "H1B text", title: "H1B" }],
+        },
+        {
+          activityId: Number(expH2A.id),
+          concept: "Half2A",
+          steps: [{ text: "H2A text", title: "H2A" }],
+        },
+        {
+          activityId: Number(expH2B.id),
+          concept: "Half2B",
+          steps: [{ text: "H2B text", title: "H2B" }],
+        },
+      ];
+
+      await storyActivityWorkflow(activities, "test-run-id", explanationResults, 2);
+
+      expect(generateActivityStory).toHaveBeenCalledTimes(2);
+
+      // Story 1 should get first half explanation steps (H1A, H1B)
+      expect(generateActivityStory).toHaveBeenCalledWith(
+        expect.objectContaining({
+          explanationSteps: [
+            { text: "H1A text", title: "H1A" },
+            { text: "H1B text", title: "H1B" },
+          ],
+        }),
+      );
+
+      // Story 2 should get second half explanation steps (H2A, H2B)
+      expect(generateActivityStory).toHaveBeenCalledWith(
+        expect.objectContaining({
+          explanationSteps: [
+            { text: "H2A text", title: "H2A" },
+            { text: "H2B text", title: "H2B" },
+          ],
+        }),
+      );
+    });
+
+    test("single story gets all explanation steps when < 4 concepts", async () => {
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        concepts: ["Single A", "Single B"],
+        organizationId,
+        title: `Single Story Lesson ${randomUUID()}`,
+      });
+
+      const [expSA, expSB] = await Promise.all([
+        activityFixture({
+          generationStatus: "completed",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 1,
+          title: "Single A",
+        }),
+        activityFixture({
+          generationStatus: "completed",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 2,
+          title: "Single B",
+        }),
+      ]);
+
+      await activityFixture({
+        generationStatus: "pending",
+        kind: "story",
+        lessonId: testLesson.id,
+        organizationId,
+        position: 3,
+        title: `Single Story ${randomUUID()}`,
+      });
+
+      const activities = await getLessonActivitiesStep(testLesson.id);
+      const explanationResults: ExplanationResult[] = [
+        {
+          activityId: Number(expSA.id),
+          concept: "Single A",
+          steps: [{ text: "SA text", title: "SA" }],
+        },
+        {
+          activityId: Number(expSB.id),
+          concept: "Single B",
+          steps: [{ text: "SB text", title: "SB" }],
+        },
+      ];
+
+      await storyActivityWorkflow(activities, "test-run-id", explanationResults, 1);
+
+      expect(generateActivityStory).toHaveBeenCalledOnce();
+      expect(generateActivityStory).toHaveBeenCalledWith(
+        expect.objectContaining({
+          explanationSteps: [
+            { text: "SA text", title: "SA" },
+            { text: "SB text", title: "SB" },
+          ],
+        }),
+      );
+    });
+
+    test("completes both story activities when lesson has two stories", async () => {
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        concepts: ["SC1", "SC2", "SC3", "SC4"],
+        organizationId,
+        title: `Both Stories Complete Lesson ${randomUUID()}`,
+      });
+
+      const [expSC1, expSC2, expSC3, expSC4] = await Promise.all([
+        activityFixture({
+          generationStatus: "completed",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 1,
+          title: "SC1",
+        }),
+        activityFixture({
+          generationStatus: "completed",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 2,
+          title: "SC2",
+        }),
+        activityFixture({
+          generationStatus: "completed",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 3,
+          title: "SC3",
+        }),
+        activityFixture({
+          generationStatus: "completed",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 4,
+          title: "SC4",
+        }),
+      ]);
+
+      const [story1, story2] = await Promise.all([
+        activityFixture({
+          generationStatus: "pending",
+          kind: "story",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 5,
+          title: `Story Complete 1 ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "story",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 6,
+          title: `Story Complete 2 ${randomUUID()}`,
+        }),
+      ]);
+
+      const activities = await getLessonActivitiesStep(testLesson.id);
+      const explanationResults: ExplanationResult[] = [
+        {
+          activityId: Number(expSC1.id),
+          concept: "SC1",
+          steps: [{ text: "SC1 text", title: "SC1" }],
+        },
+        {
+          activityId: Number(expSC2.id),
+          concept: "SC2",
+          steps: [{ text: "SC2 text", title: "SC2" }],
+        },
+        {
+          activityId: Number(expSC3.id),
+          concept: "SC3",
+          steps: [{ text: "SC3 text", title: "SC3" }],
+        },
+        {
+          activityId: Number(expSC4.id),
+          concept: "SC4",
+          steps: [{ text: "SC4 text", title: "SC4" }],
+        },
+      ];
+
+      await storyActivityWorkflow(activities, "test-run-id", explanationResults, 2);
+
+      const [dbStory1, dbStory2] = await Promise.all([
+        prisma.activity.findUnique({ where: { id: story1.id } }),
+        prisma.activity.findUnique({ where: { id: story2.id } }),
+      ]);
+
+      expect(dbStory1?.generationStatus).toBe("completed");
+      expect(dbStory2?.generationStatus).toBe("completed");
+    });
+
+    test("story 1 gets content when only one explanation result exists with two stories", async () => {
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        concepts: ["OnlyConcept"],
+        organizationId,
+        title: `Single Explanation Two Stories ${randomUUID()}`,
+      });
+
+      const expOnly = await activityFixture({
+        generationStatus: "completed",
+        kind: "explanation",
+        lessonId: testLesson.id,
+        organizationId,
+        position: 1,
+        title: "OnlyConcept",
+      });
+
+      await Promise.all([
+        activityFixture({
+          generationStatus: "pending",
+          kind: "story",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 2,
+          title: `Story 1 ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "story",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 3,
+          title: `Story 2 ${randomUUID()}`,
+        }),
+      ]);
+
+      const activities = await getLessonActivitiesStep(testLesson.id);
+      const explanationResults: ExplanationResult[] = [
+        {
+          activityId: Number(expOnly.id),
+          concept: "OnlyConcept",
+          steps: [{ text: "Only text", title: "Only" }],
+        },
+      ];
+
+      await storyActivityWorkflow(activities, "test-run-id", explanationResults, 2);
+
+      // Story 1 must get the single explanation result (not an empty array)
+      expect(generateActivityStory).toHaveBeenCalledOnce();
+      expect(generateActivityStory).toHaveBeenCalledWith(
+        expect.objectContaining({
+          explanationSteps: [{ text: "Only text", title: "Only" }],
+        }),
+      );
+    });
   });
 });

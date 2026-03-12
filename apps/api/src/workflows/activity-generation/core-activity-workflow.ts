@@ -14,18 +14,20 @@ export async function coreActivityWorkflow(
   workflowRunId: string,
 ): Promise<void> {
   const concepts = activities[0]?.lesson?.concepts ?? [];
-  const totalQuizzes = findActivitiesByKind(activities, "quiz").length;
+  const totalStories = findActivitiesByKind(activities, "story").length;
   const neighboringConcepts = await getNeighboringConceptsStep(activities);
 
   const [, explanationResult] = await Promise.allSettled([
     backgroundActivityWorkflow(activities, workflowRunId, concepts, neighboringConcepts),
     explanationActivityWorkflow(activities, workflowRunId, concepts, neighboringConcepts),
     examplesActivityWorkflow(activities, workflowRunId, concepts, neighboringConcepts),
-    storyActivityWorkflow(activities, workflowRunId, concepts, neighboringConcepts),
     challengeActivityWorkflow(activities, workflowRunId, concepts, neighboringConcepts),
   ]);
 
   const { results } = settled(explanationResult, { results: [] });
 
-  await quizActivityWorkflow(activities, workflowRunId, results, totalQuizzes);
+  await Promise.allSettled([
+    storyActivityWorkflow(activities, workflowRunId, results, totalStories),
+    quizActivityWorkflow(activities, workflowRunId, results),
+  ]);
 }
