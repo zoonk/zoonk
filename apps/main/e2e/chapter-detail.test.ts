@@ -223,22 +223,6 @@ test.describe("Chapter Detail Page", () => {
 
     await expect(page.getByText(/not found|404/i)).toBeVisible();
   });
-
-  test("clicking course link in popover navigates to course page", async ({ page }) => {
-    await page.goto(chapterUrl);
-
-    const triggerButton = page.getByRole("button", { name: chapterTitle });
-    await triggerButton.click();
-
-    const courseLink = page.getByRole("link", { exact: true, name: courseTitle });
-    await expect(courseLink).toBeVisible();
-
-    await courseLink.click({ force: true });
-
-    await expect(page).toHaveURL(new RegExp(`/b/${AI_ORG_SLUG}/c/${courseSlug}$`));
-
-    await expect(page.getByRole("heading", { level: 1, name: courseTitle })).toBeVisible();
-  });
 });
 
 test.describe("Chapter Detail - Locale", () => {

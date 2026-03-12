@@ -76,8 +76,8 @@ export async function LessonHeader({
       </MediaCardContent>
 
       <MediaCardPopover>
-        <AIWarning brandSlug={brandSlug} />
         <MediaCardPopoverText>{lesson.description}</MediaCardPopoverText>
+        <AIWarning brandSlug={brandSlug} />
       </MediaCardPopover>
     </MediaCard>
   );

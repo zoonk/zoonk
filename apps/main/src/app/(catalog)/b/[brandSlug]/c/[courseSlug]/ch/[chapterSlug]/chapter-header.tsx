@@ -56,8 +56,8 @@ export async function ChapterHeader({
       </MediaCardContent>
 
       <MediaCardPopover>
-        <AIWarning brandSlug={brandSlug} />
         <MediaCardPopoverText>{chapter.description}</MediaCardPopoverText>
+        <AIWarning brandSlug={brandSlug} />
       </MediaCardPopover>
     </MediaCard>
   );

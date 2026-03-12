@@ -64,8 +64,6 @@ export async function CourseHeader({
       </MediaCardContent>
 
       <MediaCardPopover>
-        <AIWarning brandSlug={brandSlug} />
-
         <MediaCardPopoverText>{course.description}</MediaCardPopoverText>
 
         <MediaCardPopoverMeta>
@@ -89,6 +87,8 @@ export async function CourseHeader({
             </MediaCardPopoverBadges>
           )}
         </MediaCardPopoverMeta>
+
+        <AIWarning brandSlug={brandSlug} />
       </MediaCardPopover>
     </MediaCard>
   );

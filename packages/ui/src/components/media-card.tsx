@@ -239,18 +239,15 @@ export function MediaCardPopoverBadges({ children, className }: React.ComponentP
   );
 }
 
-export function MediaCardPopoverAIWarning({ children, className }: React.ComponentProps<"p">) {
+export function MediaCardPopoverAILabel({ children, className }: React.ComponentProps<"span">) {
   return (
-    <p
-      className={cn(
-        "bg-muted/50 text-muted-foreground flex items-start gap-2 rounded-md p-2.5 text-xs leading-relaxed",
-        className,
-      )}
-      data-slot="media-card-popover-ai-warning"
+    <span
+      className={cn("text-muted-foreground flex items-center gap-1.5 text-xs", className)}
+      data-slot="media-card-popover-ai-label"
     >
-      <SparklesIcon aria-hidden="true" className="mt-0.5 size-3.5 shrink-0" />
-      <span>{children}</span>
-    </p>
+      <SparklesIcon aria-hidden="true" className="size-3 shrink-0" />
+      {children}
+    </span>
   );
 }
 

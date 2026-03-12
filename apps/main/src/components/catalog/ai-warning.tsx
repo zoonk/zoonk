@@ -1,4 +1,4 @@
-import { MediaCardPopoverAIWarning } from "@zoonk/ui/components/media-card";
+import { MediaCardPopoverAILabel, MediaCardPopoverMeta } from "@zoonk/ui/components/media-card";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { getExtracted } from "next-intl/server";
 
@@ -10,10 +10,8 @@ export async function AIWarning({ brandSlug }: { brandSlug: string }) {
   const t = await getExtracted();
 
   return (
-    <MediaCardPopoverAIWarning className="mb-3">
-      {t(
-        "This content was created by AI. It may contain errors or inaccuracies and should not be considered professional advice.",
-      )}
-    </MediaCardPopoverAIWarning>
+    <MediaCardPopoverMeta>
+      <MediaCardPopoverAILabel>{t("Created with AI")}</MediaCardPopoverAILabel>
+    </MediaCardPopoverMeta>
   );
 }

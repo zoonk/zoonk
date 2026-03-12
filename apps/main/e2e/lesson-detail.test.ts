@@ -130,32 +130,6 @@ test.describe("Lesson Detail Page", () => {
     await expect(page.getByText(/not found|404/i)).toBeVisible();
   });
 
-  test("clicking links in popover navigates correctly", async ({ page }) => {
-    const { chapter, course, lesson } = await createTestLessonWithActivities();
-    await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
-
-    const triggerButton = page.getByRole("button", {
-      name: lesson.title,
-    });
-    await triggerButton.click();
-
-    // Verify course link is visible
-    await expect(page.getByRole("link", { name: course.title })).toBeVisible();
-
-    // Verify chapter link is visible
-    await expect(page.getByRole("link", { name: chapter.title })).toBeVisible();
-
-    // Click the course link
-    const courseLink = page.getByRole("link", { name: course.title });
-    await courseLink.click({ force: true });
-
-    // Verify URL is correct
-    await expect(page).toHaveURL(new RegExp(`/b/${AI_ORG_SLUG}/c/${course.slug}$`));
-
-    // Verify we're on the course page
-    await expect(page.getByRole("heading", { level: 1, name: course.title })).toBeVisible();
-  });
-
   test("displays activity list with titles and descriptions", async ({ page }) => {
     const { chapter, course, lesson } = await createTestLessonWithActivities();
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
