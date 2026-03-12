@@ -29,6 +29,7 @@ describe(checkMultipleChoiceAnswer, () => {
 
     test("returns correct with feedback for correct index", () => {
       expect(checkMultipleChoiceAnswer(content, 0)).toEqual({
+        correctAnswer: "A",
         feedback: "Correct!",
         isCorrect: true,
       });
@@ -36,6 +37,7 @@ describe(checkMultipleChoiceAnswer, () => {
 
     test("returns incorrect with feedback for wrong index", () => {
       expect(checkMultipleChoiceAnswer(content, 1)).toEqual({
+        correctAnswer: "A",
         feedback: "Wrong.",
         isCorrect: false,
       });
@@ -43,6 +45,7 @@ describe(checkMultipleChoiceAnswer, () => {
 
     test("returns incorrect with null feedback for out-of-bounds index", () => {
       expect(checkMultipleChoiceAnswer(content, 5)).toEqual({
+        correctAnswer: "A",
         feedback: null,
         isCorrect: false,
       });
@@ -70,6 +73,7 @@ describe(checkMultipleChoiceAnswer, () => {
 
     test("always returns correct with consequence as feedback", () => {
       expect(checkMultipleChoiceAnswer(content, 0)).toEqual({
+        correctAnswer: null,
         feedback: "Good outcome",
         isCorrect: true,
       });
@@ -77,6 +81,7 @@ describe(checkMultipleChoiceAnswer, () => {
 
     test("returns correct for any valid index", () => {
       expect(checkMultipleChoiceAnswer(content, 1)).toEqual({
+        correctAnswer: null,
         feedback: "Bad outcome",
         isCorrect: true,
       });
@@ -84,6 +89,7 @@ describe(checkMultipleChoiceAnswer, () => {
 
     test("returns incorrect with null feedback for out-of-bounds index", () => {
       expect(checkMultipleChoiceAnswer(content, 10)).toEqual({
+        correctAnswer: null,
         feedback: null,
         isCorrect: false,
       });
@@ -104,6 +110,7 @@ describe(checkMultipleChoiceAnswer, () => {
 
     test("returns correct with feedback for correct index", () => {
       expect(checkMultipleChoiceAnswer(content, 0)).toEqual({
+        correctAnswer: "Buenos días",
         feedback: "Great!",
         isCorrect: true,
       });
@@ -111,6 +118,7 @@ describe(checkMultipleChoiceAnswer, () => {
 
     test("returns incorrect with feedback for wrong index", () => {
       expect(checkMultipleChoiceAnswer(content, 1)).toEqual({
+        correctAnswer: "Buenos días",
         feedback: "Not quite.",
         isCorrect: false,
       });
@@ -128,6 +136,7 @@ describe(checkFillBlankAnswer, () => {
 
   test("returns correct for exact match", () => {
     expect(checkFillBlankAnswer(content, ["hablo", "español"])).toEqual({
+      correctAnswer: null,
       feedback: "Use first person singular.",
       isCorrect: true,
     });
@@ -135,6 +144,7 @@ describe(checkFillBlankAnswer, () => {
 
   test("returns correct for case-insensitive match", () => {
     expect(checkFillBlankAnswer(content, ["HABLO", "ESPAÑOL"])).toEqual({
+      correctAnswer: null,
       feedback: "Use first person singular.",
       isCorrect: true,
     });
@@ -142,6 +152,7 @@ describe(checkFillBlankAnswer, () => {
 
   test("returns correct with trimmed whitespace", () => {
     expect(checkFillBlankAnswer(content, ["  hablo  ", " español "])).toEqual({
+      correctAnswer: null,
       feedback: "Use first person singular.",
       isCorrect: true,
     });
@@ -149,6 +160,7 @@ describe(checkFillBlankAnswer, () => {
 
   test("returns incorrect for wrong answer", () => {
     expect(checkFillBlankAnswer(content, ["habla", "español"])).toEqual({
+      correctAnswer: null,
       feedback: "Use first person singular.",
       isCorrect: false,
     });
@@ -156,6 +168,7 @@ describe(checkFillBlankAnswer, () => {
 
   test("returns incorrect when user provides extra answers", () => {
     expect(checkFillBlankAnswer(content, ["hablo", "español", "extra"])).toEqual({
+      correctAnswer: null,
       feedback: "Use first person singular.",
       isCorrect: false,
     });
@@ -196,6 +209,7 @@ describe(checkMatchColumnsAnswer, () => {
     ];
 
     expect(checkMatchColumnsAnswer(content, userPairs, 0)).toEqual({
+      correctAnswer: null,
       feedback: null,
       isCorrect: true,
     });
@@ -208,6 +222,7 @@ describe(checkMatchColumnsAnswer, () => {
     ];
 
     expect(checkMatchColumnsAnswer(content, userPairs, 0)).toEqual({
+      correctAnswer: null,
       feedback: null,
       isCorrect: true,
     });
@@ -220,6 +235,7 @@ describe(checkMatchColumnsAnswer, () => {
     ];
 
     expect(checkMatchColumnsAnswer(content, userPairs, 1)).toEqual({
+      correctAnswer: null,
       feedback: null,
       isCorrect: false,
     });
@@ -232,6 +248,7 @@ describe(checkMatchColumnsAnswer, () => {
     ];
 
     expect(checkMatchColumnsAnswer(content, userPairs, 0)).toEqual({
+      correctAnswer: null,
       feedback: null,
       isCorrect: false,
     });
@@ -241,6 +258,7 @@ describe(checkMatchColumnsAnswer, () => {
     const userPairs = [{ left: "A", right: "1" }];
 
     expect(checkMatchColumnsAnswer(content, userPairs, 0)).toEqual({
+      correctAnswer: null,
       feedback: null,
       isCorrect: false,
     });
@@ -256,6 +274,7 @@ describe(checkSortOrderAnswer, () => {
 
   test("returns correct for matching order", () => {
     expect(checkSortOrderAnswer(content, ["one", "two", "three"])).toEqual({
+      correctAnswer: null,
       feedback: "Correct order.",
       isCorrect: true,
     });
@@ -263,6 +282,7 @@ describe(checkSortOrderAnswer, () => {
 
   test("returns incorrect for wrong order", () => {
     expect(checkSortOrderAnswer(content, ["three", "two", "one"])).toEqual({
+      correctAnswer: null,
       feedback: "Correct order.",
       isCorrect: false,
     });
@@ -270,6 +290,7 @@ describe(checkSortOrderAnswer, () => {
 
   test("returns incorrect when user provides extra entries", () => {
     expect(checkSortOrderAnswer(content, ["one", "two", "three", "four"])).toEqual({
+      correctAnswer: null,
       feedback: "Correct order.",
       isCorrect: false,
     });
@@ -287,6 +308,7 @@ describe(checkSelectImageAnswer, () => {
 
   test("returns correct with feedback for correct index", () => {
     expect(checkSelectImageAnswer(content, 0)).toEqual({
+      correctAnswer: null,
       feedback: "Yes, a cat!",
       isCorrect: true,
     });
@@ -294,6 +316,7 @@ describe(checkSelectImageAnswer, () => {
 
   test("returns incorrect with feedback for wrong index", () => {
     expect(checkSelectImageAnswer(content, 1)).toEqual({
+      correctAnswer: null,
       feedback: "That's a dog.",
       isCorrect: false,
     });
@@ -301,6 +324,7 @@ describe(checkSelectImageAnswer, () => {
 
   test("returns incorrect with null feedback for out-of-bounds index", () => {
     expect(checkSelectImageAnswer(content, 99)).toEqual({
+      correctAnswer: null,
       feedback: null,
       isCorrect: false,
     });
@@ -310,6 +334,7 @@ describe(checkSelectImageAnswer, () => {
 describe(checkVocabularyAnswer, () => {
   test("returns correct for matching IDs", () => {
     expect(checkVocabularyAnswer("word-1", "word-1")).toEqual({
+      correctAnswer: null,
       feedback: null,
       isCorrect: true,
     });
@@ -317,6 +342,7 @@ describe(checkVocabularyAnswer, () => {
 
   test("returns incorrect for non-matching IDs", () => {
     expect(checkVocabularyAnswer("word-1", "word-2")).toEqual({
+      correctAnswer: null,
       feedback: null,
       isCorrect: false,
     });
@@ -326,6 +352,7 @@ describe(checkVocabularyAnswer, () => {
 describe(checkArrangeWordsAnswer, () => {
   test("returns correct for matching sequence", () => {
     expect(checkArrangeWordsAnswer(["I", "speak", "Spanish"], ["I", "speak", "Spanish"])).toEqual({
+      correctAnswer: null,
       feedback: null,
       isCorrect: true,
     });
@@ -333,6 +360,7 @@ describe(checkArrangeWordsAnswer, () => {
 
   test("returns incorrect for wrong sequence", () => {
     expect(checkArrangeWordsAnswer(["I", "speak", "Spanish"], ["Spanish", "I", "speak"])).toEqual({
+      correctAnswer: null,
       feedback: null,
       isCorrect: false,
     });
@@ -342,6 +370,7 @@ describe(checkArrangeWordsAnswer, () => {
     expect(
       checkArrangeWordsAnswer(["I", "speak", "Spanish"], ["I", "speak", "Spanish", "well"]),
     ).toEqual({
+      correctAnswer: null,
       feedback: null,
       isCorrect: false,
     });

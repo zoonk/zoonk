@@ -229,7 +229,9 @@ checksums:
     Current%20dimension%20scores/singular: b3a4b7edbd41132e6fb349a6df24a33d
     View%20stats/singular: 707f91e0ff65e7163c95900395dc0297
     Stats/singular: 5cf8b052c89fa1b05397a956ebec69b2
+    Your%20answer%3A/singular: 663abc310ccb6229c6325f8c857adce2
     Outcome/singular: 4cfc7a40e384ea8b6658e8da6e351bf0
+    Correct%20answer%3A/singular: a8b8cc0d5d0059cbfeee0ad4721540d5
     Dimension%20inventory/singular: a150bc3e032ae9e9202db1b375029aae
     Blank%20%7Bposition%7D/singular: 70a4795f65f91685071b6abb1c3a6bad
     Blank%20%7Bposition%7D%3A%20%7Bitem%7D.%20%7Bresult%7D./singular: c64e721cdd1e4cc48eff9f9690f1fc6b
@@ -336,13 +338,13 @@ checksums:
     Start%20learning%20something%20new%20today/singular: 727ed4b5249a54fc3975f77b91e96757
     Online%20Courses%20using%20AI/singular: 4e3c619f363cc66f3f2e604e372ca038
     Explore%20all%20Zoonk%20courses%20to%20learn%20anything%20using%20AI.%20Find%20interactive%20lessons%2C%20challenges%2C%20and%20activities%20to%20learn%20subjects%20like%20science%2C%20math%2C%20technology%2C%20and%20more./singular: c3f4a7dfd17b4523b5535f40170c7731
-    Generate/singular: 0345bf322c191e70d01fd6607ec5c2f8
+    Create/singular: 757ccd28dd533ff3a933355273c1e32a
     Cancel/singular: 2e2a849c2223911717de8caa2c71bade
     Cooking%20up%20some%20course%20ideas/singular: a42520f96dbac3580a2ccae4bd6ceb31
     We're%20putting%20together%20a%20few%20course%20suggestions%20for%20you.%20This%20may%20take%20a%20few%20seconds./singular: 8467af30434eb8bfb2f13e109b1d9334
     Course%20ideas%20for%20%7Bprompt%7D/singular: 23f94da8ce9272d654ff40bb80e6a352
     Change%20subject/singular: 8585bb703ba2d857dd9a7b36f97be507
-    Discover%20personalized%20courses%20and%20resources%20to%20learn%20%7Bprompt%7D.%20Zoonk%20uses%20AI%20to%20generate%20interactive%20lessons%20and%20activities%20tailored%20to%20you./singular: 7d54c62a9c8d49b713626fa25edff820
+    Discover%20personalized%20courses%20and%20resources%20to%20learn%20%7Bprompt%7D.%20Zoonk%20uses%20AI%20to%20create%20interactive%20lessons%20and%20activities%20tailored%20to%20you./singular: c6a0dc2a0e422036e1e25ad7589f5fb3
     Learn%20%7Bprompt%7D%20with%20AI/singular: 5a8a8ee7f52faf0cb790e0f0cfbcce7d
     Start/singular: dbe56303d9a6d3fad1a8d4cbcc97f365
     Enter%20a%20subject/singular: 4590e12cd42fdc491ab95457e66e13eb
@@ -351,7 +353,6 @@ checksums:
     Solar%20system/singular: 684faf696d526eec0e0cc796e4cab959
     UFOs/singular: 09df9f18916bd2d3b48768d415de2004
     Creative%20Writing/singular: 8777bd1ffa60ab1acea0ac053d7ddfc1
-    Tell%20Zoonk%20what%20you%20want%20to%20learn%20and%20get%20a%20course%20generated%20by%20AI.%20Start%20learning%20any%20subject%20with%20interactive%20lessons%20and%20activities./singular: bce6930e3cd7b20455ea7996a65cbe4f
     Harry%20Potter/singular: aec9665b12a8723b9946b20f40e4a141
     Black%20holes/singular: 91313be3a188e7f5307d420d44c1c635
     Artificial%20intelligence/singular: 9f816a13d925ef0d06d951f9c744ed48
@@ -363,6 +364,7 @@ checksums:
     Deep%20sea%20creatures/singular: f3c0a0f3b84d1be92fa3642a7a8fdf72
     Economics/singular: 3931d28200c67977f6ecdf9b2aa61014
     Computer%20Science/singular: fb0a00d8442f2429c8fab8e20d19ae03
+    Tell%20Zoonk%20what%20you%20want%20to%20learn%20and%20get%20a%20course%20created%20with%20AI.%20Start%20learning%20any%20subject%20with%20interactive%20lessons%20and%20activities./singular: af35303a9ef9ca17c39a0b977b97e9f7
     How%20volcanoes%20work/singular: fa35b6c9bdc18c39d17f0573e78a62be
     Molecular%20biology/singular: 5157b95a95d558b7848ceadcf83a9e8b
     Suggested%20subjects/singular: d2d996b64130d889f9be70a6193443c8
@@ -418,7 +420,7 @@ checksums:
     Level%20%7Bcurrent%7D%20of%2010%20in%20%7Bcolor%7D%20belt/singular: 2b6cc01675b41d1269ce8a1050728622
     Done/singular: ffd408fa29d5bc9039ef8ea1b9b699bb
     Belt%20Progression/singular: 7d421f5c2e2169fdeec9027d242bf4d2
-    "%7Bcolor%7D%20Belt%2C%20Level%20%7Blevel%7D%20of%2010.%20%7Bbp%7D%20brain%20power%20until%20next%20level./singular": e367a07e36f925916dfd40e71129786b
+    "%7Bcolor%7D%20Belt%2C%20Level%20%7Blevel%7D%20of%2010.%20%7Bbp%7D%20Brain%20Power%20until%20next%20level./singular": 4e7d88ce286e8fb592dbc68ddac7c702
     "%7Bcolor%7D%20Belt%2C%20Level%20%7Blevel%7D%20of%2010.%20Maximum%20level%20achieved./singular": f76961b35ae61781509ea9f0b5c19849
     "%7Bcurrent%7D%2F10/singular": ae23c13a041f3d7fe6e13ca4927ad01e
     "%7Bvalue%7D%20BP%20earned/singular": 583e121af4a624edef99166b4af272c0
@@ -476,11 +478,11 @@ checksums:
     Email%20us%20at%20hello%40zoonk.com/singular: f30da451e0bc14b7463bde402c876af9
     Follow%20us/singular: 778f7a4744f77dbcbd31a8c778cb5209
     Contact%20Support/singular: fcbd9e317c7286b3e08752eb73eb1a81
-    Generate%20activity/singular: 4fbbc27fc1d296a0414ed0d7f57e4ba0
+    Create%20activity/singular: 355e3245a3822ed6e0618137d52fcb50
+    This%20activity%20hasn't%20been%20created%20yet./singular: c1e71adf6ff4ecd34e0b5ba242110397
     Activity%20not%20available/singular: a76f6331aa0aad825903108429b132a0
-    This%20activity%20hasn't%20been%20generated%20yet./singular: 631d7c5e190d95c7697df1f6a4bb9a1c
-    Generate%20content%20for%20this%20activity/singular: 0ac20ea56d4391004d976cd8f377a645
-    Generate%20Activity/singular: e386c80be3da0ee0b54a940afc4de373
+    Create%20Activity/singular: ceaf06ac3cbfcfcf824b9e9acf66cfb9
+    Create%20content%20for%20this%20activity/singular: e48e26e5fc10415a118d5d6c9f6d032e
     Your%20activity%20is%20ready/singular: e7385c4096b843839bb9a96023f0eea9
     This%20usually%20takes%201-2%20minutes/singular: bd7260323fa4b3a50a0300ed136fcbd2
     Try%20again/singular: 33dd8820e743e35a66e6977f69e9d3b5
@@ -521,7 +523,7 @@ checksums:
     Mapping%20out%20the%20pronunciation.../singular: 6f8b9708ba6726ef8e471bbba8b38f8b
     Setting%20things%20up.../singular: 4696c8e1048ec21837f886410864dfe2
     Refining%20the%20details.../singular: eaf7a7ca135f8919dc93f80095040ab0
-    Generate%20Chapter/singular: 12160bab066da65413de4b511e402446
+    Create%20Chapter/singular: eff367b47e651ac3234f8b4655d5a078
     Your%20lessons%20are%20ready/singular: fe8d9df59ba42f451b249fd750813cba
     Taking%20you%20to%20your%20chapter.../singular: fc59b426c3d393ec40f534253309ee9f
     This%20usually%20takes%202-4%20minutes/singular: a5cf03e3d2ed405722955fde29b1fef0
@@ -561,7 +563,7 @@ checksums:
     Picking%20the%20right%20look.../singular: 697bdd3a4fa077ddd50c64d57775baf6
     Writing%20chapters/singular: b2e7e149ee761e4e5a45225e37e5441a
     Putting%20it%20all%20together.../singular: 12349256a2104ecf09b213ba1437c636
-    Generate%20Lesson/singular: 741a967eb90694565df5e9b44991f58e
+    Create%20Lesson/singular: af03c55d9ad5e6063bfad0ce8a35e385
     Your%20lesson%20is%20ready/singular: 3d745fd67b57e47ed10851f1e5404ccc
     Creating%20your%20activities/singular: 6651e663a48e18486f5f873e614cd512
     This%20usually%20takes%20about%20a%20minute/singular: 8b679d39d752ba8a57fbabd4eb745f28
@@ -570,7 +572,7 @@ checksums:
     Privacy%20Policy/singular: 7459744a63ef8af4e517a09024bd7c08
     Read%20Zoonk's%20terms%20of%20use%20to%20understand%20the%20rules%20and%20conditions%20for%20using%20our%20platform%20and%20services/singular: 4b82898d60691839a1999e4a17199895
     Terms%20of%20Use/singular: 9ac262b2eda552beeecd904c0b9f8fa2
-    This%20content%20was%20generated%20by%20AI.%20It%20may%20contain%20errors%20or%20inaccuracies%20and%20should%20not%20be%20considered%20professional%20advice./singular: 269e7c16a722903b9b434f28aa6cf617
+    This%20content%20was%20created%20by%20AI.%20It%20may%20contain%20errors%20or%20inaccuracies%20and%20should%20not%20be%20considered%20professional%20advice./singular: c5253a4fcd151a271ab77a7e7835e1ac
     Not%20helpful/singular: ceb8a457e7e4c62a465cd1dd2620990e
     Helpful/singular: 9a25a3e10315cf4a8c65996e31f6cda6
     Thanks%20for%20your%20feedback/singular: 05d6f70cdb81119bcf0ad7443438e82b
@@ -592,8 +594,8 @@ checksums:
     Feedback/singular: 6fac88806e0c269a30777b283988c61c
     Send%20feedback%2C%20questions%2C%20or%20suggestions%20to%20us.%20Fill%20in%20the%20form%20below%20or%20email%20us%20directly%20at%20hello%40zoonk.com./singular: 6ce5e55ddeeb7de9480b806358aa5b95
     Upgrade/singular: 63c3b52882e0d779859307d672c178c2
-    Upgrade%20to%20generate/singular: 9c4baffb6ff3a12a322dfe02735ac35c
-    Generating%20content%20with%20AI%20requires%20an%20active%20subscription./singular: ee3e62a18f3437b719f6793dd01d66f8
+    Upgrade%20to%20create/singular: d8be0e2d204b5a7601612cc44cca5cd5
+    Creating%20content%20with%20AI%20requires%20an%20active%20subscription./singular: 7a1e2747c5271495f525ae7360db6fe0
     Review%20everything%20you%20learned/singular: 43765847b62600b35e41399405799505
     Listening/singular: 9e680c44cd88a178b953349ed8881ef2
     Experience%20when%20to%20apply%20%7Btopic%7D%20through%20a%20real-world%20dialogue%20scenario./singular: d143d122b526618096d637288c66f50a

@@ -1,4 +1,3 @@
-import { parseStepContent } from "@zoonk/core/steps/content-contract";
 import { type Route } from "next";
 import { type CompletionResult } from "../completion-input-schema";
 import {
@@ -14,12 +13,7 @@ import { FeedbackScreenContent } from "./feedback-screen";
 import { StepRenderer } from "./step-renderer";
 
 function needsFeedbackScreen(step: SerializedStep): boolean {
-  if (step.kind === "multipleChoice") {
-    const content = parseStepContent("multipleChoice", step.content);
-    return content.kind === "challenge";
-  }
-
-  return false;
+  return step.kind === "multipleChoice";
 }
 
 export function StageContent({

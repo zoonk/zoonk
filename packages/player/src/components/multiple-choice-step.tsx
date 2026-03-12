@@ -4,15 +4,13 @@ import {
   type ChallengeMultipleChoiceContent,
   type CoreMultipleChoiceContent,
   type LanguageMultipleChoiceContent,
-  type MultipleChoiceStepContent,
   parseStepContent,
 } from "@zoonk/core/steps/content-contract";
 import { useExtracted } from "next-intl";
-import { type SelectedAnswer, type StepResult } from "../player-reducer";
+import { type SelectedAnswer } from "../player-reducer";
 import { type SerializedStep } from "../prepare-activity-data";
 import { useOptionKeyboard } from "../use-option-keyboard";
 import { useReplaceName } from "../user-name-context";
-import { InlineFeedback } from "./inline-feedback";
 import { OptionCard } from "./option-card";
 import { ContextText, QuestionText } from "./question-text";
 import { SectionLabel } from "./section-label";
@@ -24,26 +22,6 @@ function getSelectedIndex(selectedAnswer: SelectedAnswer | undefined): number | 
   }
 
   return selectedAnswer.selectedIndex;
-}
-
-function getOptionResultState(
-  index: number,
-  content: MultipleChoiceStepContent,
-  selectedIndex: number,
-): "correct" | "incorrect" | undefined {
-  if (content.kind === "challenge") {
-    return undefined;
-  }
-
-  if (content.options[index]?.isCorrect) {
-    return "correct";
-  }
-
-  if (index === selectedIndex) {
-    return "incorrect";
-  }
-
-  return undefined;
 }
 
 function StepTextGroup({ children }: { children: React.ReactNode }) {
@@ -61,14 +39,10 @@ function OptionContent({ romanization, text }: { romanization?: string | null; t
 }
 
 function OptionList({
-  content,
-  disabled,
   onSelect,
   options,
   selectedIndex,
 }: {
-  content: MultipleChoiceStepContent;
-  disabled: boolean;
   onSelect: (index: number) => void;
   options: readonly { text: string; textRomanization?: string | null }[];
   selectedIndex: number | null;
@@ -77,44 +51,30 @@ function OptionList({
 
   return (
     <div aria-label={t("Answer options")} className="flex flex-col gap-3" role="radiogroup">
-      {options.map((option, index) => {
-        const resultState =
-          disabled && selectedIndex !== null
-            ? getOptionResultState(index, content, selectedIndex)
-            : undefined;
-
-        return (
-          <OptionCard
-            disabled={disabled}
-            index={index}
-            isDimmed={disabled && selectedIndex !== null && !resultState}
-            isSelected={selectedIndex === index}
-            key={option.text}
-            onSelect={() => onSelect(index)}
-            resultState={resultState}
-          >
-            <OptionContent
-              romanization={"textRomanization" in option ? option.textRomanization : undefined}
-              text={option.text}
-            />
-          </OptionCard>
-        );
-      })}
+      {options.map((option, index) => (
+        <OptionCard
+          index={index}
+          isSelected={selectedIndex === index}
+          key={option.text}
+          onSelect={() => onSelect(index)}
+        >
+          <OptionContent
+            romanization={"textRomanization" in option ? option.textRomanization : undefined}
+            text={option.text}
+          />
+        </OptionCard>
+      ))}
     </div>
   );
 }
 
 function CoreVariant({
   content,
-  disabled,
   onSelect,
-  result,
   selectedIndex,
 }: {
   content: CoreMultipleChoiceContent;
-  disabled: boolean;
   onSelect: (index: number) => void;
-  result?: StepResult;
   selectedIndex: number | null;
 }) {
   const replaceName = useReplaceName();
@@ -126,15 +86,7 @@ function CoreVariant({
         {content.question && <QuestionText>{replaceName(content.question)}</QuestionText>}
       </StepTextGroup>
 
-      <OptionList
-        content={content}
-        disabled={disabled}
-        onSelect={onSelect}
-        options={content.options}
-        selectedIndex={selectedIndex}
-      />
-
-      {result && <InlineFeedback result={result} />}
+      <OptionList onSelect={onSelect} options={content.options} selectedIndex={selectedIndex} />
     </>
   );
 }
@@ -157,13 +109,7 @@ function ChallengeVariant({
         <QuestionText>{replaceName(content.question)}</QuestionText>
       </StepTextGroup>
 
-      <OptionList
-        content={content}
-        disabled={false}
-        onSelect={onSelect}
-        options={content.options}
-        selectedIndex={selectedIndex}
-      />
+      <OptionList onSelect={onSelect} options={content.options} selectedIndex={selectedIndex} />
     </>
   );
 }
@@ -174,15 +120,11 @@ function SpeechBubble({ children }: { children: React.ReactNode }) {
 
 function LanguageVariant({
   content,
-  disabled,
   onSelect,
-  result,
   selectedIndex,
 }: {
   content: LanguageMultipleChoiceContent;
-  disabled: boolean;
   onSelect: (index: number) => void;
-  result?: StepResult;
   selectedIndex: number | null;
 }) {
   const t = useExtracted();
@@ -206,46 +148,31 @@ function LanguageVariant({
 
       <div className="flex flex-col gap-3">
         <SectionLabel>{t("What do you say?")}</SectionLabel>
-        <OptionList
-          content={content}
-          disabled={disabled}
-          onSelect={onSelect}
-          options={content.options}
-          selectedIndex={selectedIndex}
-        />
+        <OptionList onSelect={onSelect} options={content.options} selectedIndex={selectedIndex} />
       </div>
-
-      {result && <InlineFeedback result={result} />}
     </>
   );
 }
 
 export function MultipleChoiceStep({
   onSelectAnswer,
-  result,
   selectedAnswer,
   step,
 }: {
   onSelectAnswer: (stepId: string, answer: SelectedAnswer) => void;
-  result?: StepResult;
   selectedAnswer: SelectedAnswer | undefined;
   step: SerializedStep;
 }) {
   const content = parseStepContent("multipleChoice", step.content);
   const selectedIndex = getSelectedIndex(selectedAnswer);
-  const hasResult = Boolean(result);
 
   const handleSelect = (index: number) => {
-    if (result) {
-      return;
-    }
-
     const selectedText = content.options[index]?.text ?? "";
     onSelectAnswer(step.id, { kind: "multipleChoice", selectedIndex: index, selectedText });
   };
 
   useOptionKeyboard({
-    enabled: !result && (selectedAnswer === undefined || selectedAnswer.kind === "multipleChoice"),
+    enabled: selectedAnswer === undefined || selectedAnswer.kind === "multipleChoice",
     onSelect: handleSelect,
     optionCount: content.options.length,
   });
@@ -257,23 +184,11 @@ export function MultipleChoiceStep({
       )}
 
       {content.kind === "core" && (
-        <CoreVariant
-          content={content}
-          disabled={hasResult}
-          onSelect={handleSelect}
-          result={result}
-          selectedIndex={selectedIndex}
-        />
+        <CoreVariant content={content} onSelect={handleSelect} selectedIndex={selectedIndex} />
       )}
 
       {content.kind === "language" && (
-        <LanguageVariant
-          content={content}
-          disabled={hasResult}
-          onSelect={handleSelect}
-          result={result}
-          selectedIndex={selectedIndex}
-        />
+        <LanguageVariant content={content} onSelect={handleSelect} selectedIndex={selectedIndex} />
       )}
     </InteractiveStepLayout>
   );

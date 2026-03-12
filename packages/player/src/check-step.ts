@@ -19,7 +19,7 @@ type CheckStepResult = {
 
 const MISMATCH_RESULT: CheckStepResult = {
   effects: [],
-  result: { feedback: null, isCorrect: false },
+  result: { correctAnswer: null, feedback: null, isCorrect: false },
 };
 
 function checkMultipleChoice(step: SerializedStep, answer: SelectedAnswer): CheckStepResult {
