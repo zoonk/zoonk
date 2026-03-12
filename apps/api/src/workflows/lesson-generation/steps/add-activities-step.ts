@@ -44,10 +44,10 @@ function getCoreActivities(concepts: string[]): ActivityEntry[] {
   const review: ActivityEntry = { description: null, kind: "review", title: null };
   const quiz: ActivityEntry = { description: null, kind: "quiz", title: null };
 
-  const minConceptsForTwoQuizzes = 4;
+  const minConceptsForTwoStories = 4;
 
-  if (concepts.length < minConceptsForTwoQuizzes) {
-    return [background, ...allExplanations, quiz, examples, story, challenge, review];
+  if (concepts.length < minConceptsForTwoStories) {
+    return [background, ...allExplanations, story, examples, quiz, challenge, review];
   }
 
   const splitIndex = Math.floor(concepts.length / 2);
@@ -57,11 +57,11 @@ function getCoreActivities(concepts: string[]): ActivityEntry[] {
   return [
     background,
     ...firstGroup,
-    quiz,
-    ...secondGroup,
-    quiz,
-    examples,
     story,
+    ...secondGroup,
+    story,
+    examples,
+    quiz,
     challenge,
     review,
   ];
