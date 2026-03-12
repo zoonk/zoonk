@@ -9,7 +9,7 @@ import { handleActivityFailureStep } from "./handle-failure-step";
 
 type StepVisualWithUrl = StepVisual & { url?: string };
 
-type ImageStep = { id: bigint | number; visualContent: unknown; visualKind: string | null };
+type ImageStep = { id: bigint | number; content: unknown };
 
 async function generateAndSaveImages({
   imageSteps,
@@ -25,7 +25,7 @@ async function generateAndSaveImages({
 }> {
   const results = await Promise.allSettled(
     imageSteps.map((step) => {
-      const prompt = getString(step.visualContent, "prompt");
+      const prompt = getString(step.content, "prompt");
       if (!prompt) {
         return Promise.reject(new Error("Missing prompt"));
       }
@@ -40,7 +40,7 @@ async function generateAndSaveImages({
         return Promise.resolve();
       }
       return prisma.step.update({
-        data: { visualContent: { ...toRecord(step.visualContent), url: result.value.data } },
+        data: { content: { ...toRecord(step.content), url: result.value.data } },
         where: { id: step.id },
       });
     }),
@@ -61,9 +61,7 @@ function buildVisualsWithUrls(
       return visual;
     }
 
-    const dbStep = imageSteps.find(
-      (step) => getString(step.visualContent, "prompt") === visual.prompt,
-    );
+    const dbStep = imageSteps.find((step) => getString(step.content, "prompt") === visual.prompt);
 
     if (!dbStep) {
       return visual;
@@ -96,11 +94,11 @@ export async function generateImagesForActivityStep(
 
   const dbSteps = await prisma.step.findMany({
     orderBy: { position: "asc" },
-    select: { id: true, visualContent: true, visualKind: true },
-    where: { activityId: activity.id },
+    select: { content: true, id: true },
+    where: { activityId: activity.id, kind: "visual" },
   });
 
-  const imageSteps = dbSteps.filter((step) => step.visualKind === "image");
+  const imageSteps = dbSteps.filter((step) => getString(step.content, "kind") === "image");
 
   if (imageSteps.length === 0) {
     return visuals;

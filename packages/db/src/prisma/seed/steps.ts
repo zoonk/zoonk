@@ -3,7 +3,6 @@ import {
   type Prisma,
   type PrismaClient,
   type StepKind,
-  type StepVisualKind,
 } from "../../generated/prisma/client";
 
 const stepsData: {
@@ -13,8 +12,6 @@ const stepsData: {
   steps: {
     kind: StepKind;
     content: Prisma.InputJsonValue;
-    visualKind?: StepVisualKind;
-    visualContent?: Prisma.InputJsonValue;
   }[];
 }[] = [
   {
@@ -29,7 +26,9 @@ const stepsData: {
           variant: "text",
         },
         kind: "static",
-        visualContent: {
+      },
+      {
+        content: {
           events: [
             {
               date: "1956",
@@ -47,8 +46,9 @@ const stepsData: {
               title: "Deep Learning Revolution",
             },
           ],
+          kind: "timeline",
         },
-        visualKind: "timeline",
+        kind: "visual",
       },
       {
         content: {
@@ -57,18 +57,21 @@ const stepsData: {
           variant: "text",
         },
         kind: "static",
-        visualContent: {
+      },
+      {
+        content: {
           edges: [
             { from: "input", to: "output" },
             { from: "rules", to: "output" },
           ],
+          kind: "diagram",
           nodes: [
             { id: "input", label: "Data", x: 0, y: 50 },
             { id: "rules", label: "Rules", x: 100, y: 0 },
             { id: "output", label: "Output", x: 200, y: 50 },
           ],
         },
-        visualKind: "diagram",
+        kind: "visual",
       },
       {
         content: {
@@ -77,11 +80,14 @@ const stepsData: {
           variant: "text",
         },
         kind: "static",
-        visualContent: {
+      },
+      {
+        content: {
           author: "Tom Mitchell, 1997",
+          kind: "quote",
           text: "A computer program is said to learn from experience E with respect to some task T and some performance measure P, if its performance on T, as measured by P, improves with experience E.",
         },
-        visualKind: "quote",
+        kind: "visual",
       },
       {
         content: {
@@ -90,16 +96,19 @@ const stepsData: {
           variant: "text",
         },
         kind: "static",
-        visualContent: {
+      },
+      {
+        content: {
           caption: "Key differences between the three main types of machine learning",
           columns: ["Type", "Data", "Goal", "Example"],
+          kind: "table",
           rows: [
             ["Supervised", "Labeled", "Predict outcomes", "Spam detection"],
             ["Unsupervised", "Unlabeled", "Find patterns", "Customer grouping"],
             ["Reinforcement", "Rewards", "Maximize score", "Game playing"],
           ],
         },
-        visualKind: "table",
+        kind: "visual",
       },
       {
         content: {
@@ -108,7 +117,9 @@ const stepsData: {
           variant: "text",
         },
         kind: "static",
-        visualContent: {
+      },
+      {
+        content: {
           chartType: "bar",
           data: [
             { name: "Supervised", value: 85 },
@@ -116,9 +127,10 @@ const stepsData: {
             { name: "Unsupervised", value: 5 },
             { name: "Reinforcement", value: 15 },
           ],
+          kind: "chart",
           title: "Labeled Data Required (%)",
         },
-        visualKind: "chart",
+        kind: "visual",
       },
     ],
   },
@@ -358,8 +370,6 @@ export async function seedSteps(prisma: PrismaClient, org: Organization): Promis
             isPublished: true,
             kind: stepData.kind,
             position,
-            visualContent: stepData.visualContent,
-            visualKind: stepData.visualKind,
           },
         }),
       ),

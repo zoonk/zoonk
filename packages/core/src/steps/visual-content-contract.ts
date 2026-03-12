@@ -88,51 +88,32 @@ export const timelineVisualContentSchema = z
   })
   .strict();
 
-const visualContentSchemas = {
-  chart: chartVisualContentSchema,
-  code: codeVisualContentSchema,
-  diagram: diagramVisualContentSchema,
-  image: imageVisualContentSchema,
-  quote: quoteVisualContentSchema,
-  table: tableVisualContentSchema,
-  timeline: timelineVisualContentSchema,
-} as const;
+const chartVisualStepSchema = chartVisualContentSchema.extend({ kind: z.literal("chart") });
+const codeVisualStepSchema = codeVisualContentSchema.extend({ kind: z.literal("code") });
+const diagramVisualStepSchema = diagramVisualContentSchema.extend({ kind: z.literal("diagram") });
+const imageVisualStepSchema = imageVisualContentSchema.extend({ kind: z.literal("image") });
+const quoteVisualStepSchema = quoteVisualContentSchema.extend({ kind: z.literal("quote") });
+const tableVisualStepSchema = tableVisualContentSchema.extend({ kind: z.literal("table") });
+const timelineVisualStepSchema = timelineVisualContentSchema.extend({
+  kind: z.literal("timeline"),
+});
 
-export type SupportedVisualKind = keyof typeof visualContentSchemas;
+export const visualStepContentSchema = z.discriminatedUnion("kind", [
+  chartVisualStepSchema,
+  codeVisualStepSchema,
+  diagramVisualStepSchema,
+  imageVisualStepSchema,
+  quoteVisualStepSchema,
+  tableVisualStepSchema,
+  timelineVisualStepSchema,
+]);
 
-export type CodeVisualContent = z.infer<typeof codeVisualContentSchema>;
+export type VisualStepContent = z.infer<typeof visualStepContentSchema>;
+
 export type ChartVisualContent = z.infer<typeof chartVisualContentSchema>;
+export type CodeVisualContent = z.infer<typeof codeVisualContentSchema>;
 export type DiagramVisualContent = z.infer<typeof diagramVisualContentSchema>;
 export type ImageVisualContent = z.infer<typeof imageVisualContentSchema>;
 export type QuoteVisualContent = z.infer<typeof quoteVisualContentSchema>;
 export type TableVisualContent = z.infer<typeof tableVisualContentSchema>;
 export type TimelineVisualContent = z.infer<typeof timelineVisualContentSchema>;
-
-export type VisualContentByKind = {
-  chart: ChartVisualContent;
-  code: CodeVisualContent;
-  diagram: DiagramVisualContent;
-  image: ImageVisualContent;
-  quote: QuoteVisualContent;
-  table: TableVisualContent;
-  timeline: TimelineVisualContent;
-};
-
-export function isSupportedVisualKind(kind: string): kind is SupportedVisualKind {
-  return Object.hasOwn(visualContentSchemas, kind);
-}
-
-export function parseVisualContent(kind: "chart", content: unknown): ChartVisualContent;
-export function parseVisualContent(kind: "code", content: unknown): CodeVisualContent;
-export function parseVisualContent(kind: "diagram", content: unknown): DiagramVisualContent;
-export function parseVisualContent(kind: "image", content: unknown): ImageVisualContent;
-export function parseVisualContent(kind: "quote", content: unknown): QuoteVisualContent;
-export function parseVisualContent(kind: "table", content: unknown): TableVisualContent;
-export function parseVisualContent(kind: "timeline", content: unknown): TimelineVisualContent;
-export function parseVisualContent(
-  kind: SupportedVisualKind,
-  content: unknown,
-): VisualContentByKind[SupportedVisualKind];
-export function parseVisualContent(kind: SupportedVisualKind, content: unknown) {
-  return visualContentSchemas[kind].parse(content);
-}

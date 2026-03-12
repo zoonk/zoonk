@@ -26,8 +26,6 @@ function buildStep(overrides: Partial<SerializedStep> = {}): SerializedStep {
     position: 0,
     sentence: null,
     sortOrderItems: [],
-    visualContent: null,
-    visualKind: null,
     vocabularyOptions: [],
     word: null,
     wordBankOptions: [],

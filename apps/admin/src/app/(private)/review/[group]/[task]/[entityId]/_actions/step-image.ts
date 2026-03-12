@@ -3,7 +3,6 @@
 import { isAdmin } from "@/lib/admin-guard";
 import { processAndUploadImage } from "@zoonk/core/images/process-and-upload";
 import { parseStepContent } from "@zoonk/core/steps/content-contract";
-import { parseVisualContent } from "@zoonk/core/steps/visual-content-contract";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { parseBigIntId } from "@zoonk/utils/number";
@@ -58,9 +57,9 @@ export async function uploadStepImageAction(
 
   const { error: updateError } = await safeAsync(() => {
     if (imageTarget === "visual") {
-      const visual = parseVisualContent("image", step.visualContent);
+      const visual = parseStepContent("visual", step.content);
       return prisma.step.update({
-        data: { visualContent: { ...visual, url: imageUrl } },
+        data: { content: { ...visual, url: imageUrl } },
         where: { id: stepId },
       });
     }

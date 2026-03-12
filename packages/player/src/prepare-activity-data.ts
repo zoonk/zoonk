@@ -5,12 +5,6 @@ import {
   isSupportedStepKind,
   parseStepContent,
 } from "@zoonk/core/steps/content-contract";
-import {
-  type SupportedVisualKind,
-  type VisualContentByKind,
-  isSupportedVisualKind,
-  parseVisualContent,
-} from "@zoonk/core/steps/visual-content-contract";
 import { shuffle } from "@zoonk/utils/shuffle";
 import { getDistractorWords } from "./get-distractor-words";
 
@@ -40,8 +34,6 @@ export type SerializedStep<Kind extends SupportedStepKind = SupportedStepKind> =
   kind: Kind;
   position: number;
   content: StepContentByKind[Kind];
-  visualKind: SupportedVisualKind | null;
-  visualContent: VisualContentByKind[SupportedVisualKind] | null;
   word: SerializedWord | null;
   sentence: SerializedSentence | null;
   vocabularyOptions: SerializedWord[];
@@ -68,8 +60,6 @@ type StepDataInput = {
   content: unknown;
   kind: string;
   position: number;
-  visualContent: unknown;
-  visualKind: string | null;
   word: WordDataInput | null;
   sentence: SentenceDataInput | null;
 };
@@ -112,28 +102,6 @@ function serializeSentence(sentence: SentenceDataInput): SerializedSentence {
     sentence: sentence.sentence,
     translation: sentence.translation,
   };
-}
-
-function parseVisualIfSupported(
-  visualKind: string | null,
-  visualContent: unknown,
-): { kind: SupportedVisualKind; content: SerializedStep["visualContent"] } | null {
-  if (!visualKind || !visualContent) {
-    return null;
-  }
-
-  if (!isSupportedVisualKind(visualKind)) {
-    return null;
-  }
-
-  try {
-    return {
-      content: parseVisualContent(visualKind, visualContent),
-      kind: visualKind,
-    };
-  } catch {
-    return null;
-  }
 }
 
 function shuffleMultipleChoiceContent(
@@ -255,8 +223,6 @@ function serializeStep(step: StepDataInput): SerializedStep | null {
         ? shuffleMultipleChoiceContent(parseStepContent("multipleChoice", step.content))
         : parseStepContent(step.kind, step.content);
 
-    const visual = parseVisualIfSupported(step.visualKind, step.visualContent);
-
     return {
       content,
       fillBlankOptions: [],
@@ -266,8 +232,6 @@ function serializeStep(step: StepDataInput): SerializedStep | null {
       position: step.position,
       sentence: step.sentence ? serializeSentence(step.sentence) : null,
       sortOrderItems: [],
-      visualContent: visual?.content ?? null,
-      visualKind: visual?.kind ?? null,
       vocabularyOptions: [],
       word: step.word ? serializeWord(step.word) : null,
       wordBankOptions: [],

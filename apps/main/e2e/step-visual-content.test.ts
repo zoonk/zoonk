@@ -7,12 +7,11 @@ import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { expect, test } from "./fixtures";
 
-async function createStaticActivityWithVisual(options: {
+async function createVisualActivity(options: {
   steps: {
     content: object;
+    kind?: "static" | "visual";
     position: number;
-    visualContent?: object;
-    visualKind?: "chart" | "code" | "diagram" | "image" | "quote" | "table" | "timeline";
   }[];
 }) {
   const org = await getAiOrganization();
@@ -59,9 +58,8 @@ async function createStaticActivityWithVisual(options: {
         activityId: activity.id,
         content: step.content,
         isPublished: true,
+        kind: step.kind ?? "static",
         position: step.position,
-        visualContent: step.visualContent,
-        visualKind: step.visualKind,
       }),
     ),
   );
@@ -71,23 +69,19 @@ async function createStaticActivityWithVisual(options: {
   return { url };
 }
 
-test.describe("Step Visual Content", () => {
-  test("static step with quote visual renders quote text and author", async ({ page }) => {
+test.describe("Visual Step Content", () => {
+  test("visual step renders quote text and author", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
-    const { url } = await createStaticActivityWithVisual({
+    const { url } = await createVisualActivity({
       steps: [
         {
           content: {
-            text: `Quote body ${uniqueId}`,
-            title: `Quote Title ${uniqueId}`,
-            variant: "text",
-          },
-          position: 0,
-          visualContent: {
             author: `Author ${uniqueId}`,
+            kind: "quote",
             text: `The only limit is your imagination ${uniqueId}`,
           },
-          visualKind: "quote",
+          kind: "visual",
+          position: 0,
         },
       ],
     });
@@ -98,27 +92,20 @@ test.describe("Step Visual Content", () => {
       page.getByText(new RegExp(`The only limit is your imagination ${uniqueId}`)),
     ).toBeVisible();
     await expect(page.getByText(new RegExp(`Author ${uniqueId}`))).toBeVisible();
-    await expect(
-      page.getByRole("heading", { name: new RegExp(`Quote Title ${uniqueId}`) }),
-    ).toBeVisible();
   });
 
-  test("static step with image visual renders the image", async ({ page }) => {
+  test("visual step renders an image", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
-    const { url } = await createStaticActivityWithVisual({
+    const { url } = await createVisualActivity({
       steps: [
         {
           content: {
-            text: `Image body ${uniqueId}`,
-            title: `Image Title ${uniqueId}`,
-            variant: "text",
-          },
-          position: 0,
-          visualContent: {
+            kind: "image",
             prompt: `A beautiful sunset ${uniqueId}`,
             url: "https://to3kaoi21m60hzgu.public.blob.vercel-storage.com/courses/machine_learning-jmaDwiS0MptNV2EGCZzYWU7RBJs3Qg.webp",
           },
-          visualKind: "image",
+          kind: "visual",
+          position: 0,
         },
       ],
     });
@@ -132,21 +119,17 @@ test.describe("Step Visual Content", () => {
     }).toPass();
   });
 
-  test("static step with image visual without URL shows fallback", async ({ page }) => {
+  test("visual step with image without URL shows fallback", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
-    const { url } = await createStaticActivityWithVisual({
+    const { url } = await createVisualActivity({
       steps: [
         {
           content: {
-            text: `Image fallback body ${uniqueId}`,
-            title: `Image Fallback Title ${uniqueId}`,
-            variant: "text",
-          },
-          position: 0,
-          visualContent: {
+            kind: "image",
             prompt: `A unique fallback text ${uniqueId}`,
           },
-          visualKind: "image",
+          kind: "visual",
+          position: 0,
         },
       ],
     });
@@ -158,7 +141,7 @@ test.describe("Step Visual Content", () => {
 
   test("static step without visual content renders text content normally", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
-    const { url } = await createStaticActivityWithVisual({
+    const { url } = await createVisualActivity({
       steps: [
         {
           content: {
@@ -179,29 +162,25 @@ test.describe("Step Visual Content", () => {
     await expect(page.getByText(new RegExp(`No visual body ${uniqueId}`))).toBeVisible();
   });
 
-  test("static step with diagram visual renders nodes and edge labels", async ({ page }) => {
+  test("visual step renders diagram nodes and edge labels", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
-    const { url } = await createStaticActivityWithVisual({
+    const { url } = await createVisualActivity({
       steps: [
         {
           content: {
-            text: `Diagram body ${uniqueId}`,
-            title: `Diagram Title ${uniqueId}`,
-            variant: "text",
-          },
-          position: 0,
-          visualContent: {
             edges: [
               { label: `transforms ${uniqueId}`, source: "input", target: "process" },
               { source: "process", target: "output" },
             ],
+            kind: "diagram",
             nodes: [
               { id: "input", label: `Input ${uniqueId}` },
               { id: "process", label: `Process ${uniqueId}` },
               { id: "output", label: `Output ${uniqueId}` },
             ],
           },
-          visualKind: "diagram",
+          kind: "visual",
+          position: 0,
         },
       ],
     });
@@ -221,30 +200,26 @@ test.describe("Step Visual Content", () => {
     await expect(diagram.getByText(`transforms ${uniqueId}`)).toBeVisible();
   });
 
-  test("clicking on a diagram visual does not navigate to the next step", async ({ page }) => {
+  test("clicking on a visual step with diagram navigates to next step", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
-    const { url } = await createStaticActivityWithVisual({
+    const { url } = await createVisualActivity({
       steps: [
         {
           content: {
-            text: `Click diagram body ${uniqueId}`,
-            title: `Click Diagram Step1 ${uniqueId}`,
-            variant: "text",
-          },
-          position: 0,
-          visualContent: {
             edges: [{ source: "a", target: "b" }],
+            kind: "diagram",
             nodes: [
               { id: "a", label: `Start ${uniqueId}` },
               { id: "b", label: `End ${uniqueId}` },
             ],
           },
-          visualKind: "diagram",
+          kind: "visual",
+          position: 0,
         },
         {
           content: {
             text: `Next step body ${uniqueId}`,
-            title: `Click Diagram Step2 ${uniqueId}`,
+            title: `Diagram Step2 ${uniqueId}`,
             variant: "text",
           },
           position: 1,
@@ -260,42 +235,28 @@ test.describe("Step Visual Content", () => {
 
     await expect(page.getByText(/1 \/ 2/)).toBeVisible();
 
-    // Click on the diagram — should NOT navigate
-    await page.getByRole("figure", { name: /diagram/i }).click();
-
-    // Still on step 1
-    await expect(
-      page.getByRole("heading", { name: new RegExp(`Click Diagram Step1 ${uniqueId}`) }),
-    ).toBeVisible();
-    await expect(page.getByText(/1 \/ 2/)).toBeVisible();
-
-    // Keyboard navigation still works
     await page.waitForLoadState("networkidle");
     await page.keyboard.press("ArrowRight");
 
     await expect(
-      page.getByRole("heading", { name: new RegExp(`Click Diagram Step2 ${uniqueId}`) }),
+      page.getByRole("heading", { name: new RegExp(`Diagram Step2 ${uniqueId}`) }),
     ).toBeVisible();
     await expect(page.getByText(/2 \/ 2/)).toBeVisible();
   });
 
-  test("static step with code visual renders code and language label", async ({ page }) => {
+  test("visual step renders code and language label", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const codeSnippet = `function greet_${uniqueId}() { return "hello"; }`;
-    const { url } = await createStaticActivityWithVisual({
+    const { url } = await createVisualActivity({
       steps: [
         {
           content: {
-            text: `Code body ${uniqueId}`,
-            title: `Code Title ${uniqueId}`,
-            variant: "text",
-          },
-          position: 0,
-          visualContent: {
             code: codeSnippet,
+            kind: "code",
             language: "javascript",
           },
-          visualKind: "code",
+          kind: "visual",
+          position: 0,
         },
       ],
     });
@@ -309,28 +270,24 @@ test.describe("Step Visual Content", () => {
     await expect(page.getByText(new RegExp(`greet_${uniqueId}`))).toBeVisible();
   });
 
-  test("clicking on a code visual does not navigate to the next step", async ({ page }) => {
+  test("clicking on a visual step with code navigates to next step", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const codeSnippet = `function stay_${uniqueId}() { return "no nav"; }`;
-    const { url } = await createStaticActivityWithVisual({
+    const { url } = await createVisualActivity({
       steps: [
         {
           content: {
-            text: `Click code body ${uniqueId}`,
-            title: `Click Code Step1 ${uniqueId}`,
-            variant: "text",
-          },
-          position: 0,
-          visualContent: {
             code: codeSnippet,
+            kind: "code",
             language: "typescript",
           },
-          visualKind: "code",
+          kind: "visual",
+          position: 0,
         },
         {
           content: {
             text: `Next step body ${uniqueId}`,
-            title: `Click Code Step2 ${uniqueId}`,
+            title: `Code Step2 ${uniqueId}`,
             variant: "text",
           },
           position: 1,
@@ -346,44 +303,30 @@ test.describe("Step Visual Content", () => {
 
     await expect(page.getByText(/1 \/ 2/)).toBeVisible();
 
-    // Click on the code visual — should NOT navigate
-    await page.getByRole("figure", { name: /typescript/i }).click();
-
-    // Still on step 1
-    await expect(
-      page.getByRole("heading", { name: new RegExp(`Click Code Step1 ${uniqueId}`) }),
-    ).toBeVisible();
-    await expect(page.getByText(/1 \/ 2/)).toBeVisible();
-
-    // Keyboard navigation still works
     await page.waitForLoadState("networkidle");
     await page.keyboard.press("ArrowRight");
 
     await expect(
-      page.getByRole("heading", { name: new RegExp(`Click Code Step2 ${uniqueId}`) }),
+      page.getByRole("heading", { name: new RegExp(`Code Step2 ${uniqueId}`) }),
     ).toBeVisible();
     await expect(page.getByText(/2 \/ 2/)).toBeVisible();
   });
 
-  test("static step with table visual renders headers and cell data", async ({ page }) => {
+  test("visual step renders table headers and cell data", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
-    const { url } = await createStaticActivityWithVisual({
+    const { url } = await createVisualActivity({
       steps: [
         {
           content: {
-            text: `Table body ${uniqueId}`,
-            title: `Table Title ${uniqueId}`,
-            variant: "text",
-          },
-          position: 0,
-          visualContent: {
             columns: [`Feature ${uniqueId}`, `Python ${uniqueId}`, `JavaScript ${uniqueId}`],
+            kind: "table",
             rows: [
               [`Typing ${uniqueId}`, `Dynamic ${uniqueId}`, `Dynamic ${uniqueId}`],
               [`Paradigm ${uniqueId}`, `Multi ${uniqueId}`, `Multi ${uniqueId}`],
             ],
           },
-          visualKind: "table",
+          kind: "visual",
+          position: 0,
         },
       ],
     });
@@ -409,24 +352,20 @@ test.describe("Step Visual Content", () => {
     ).toBeVisible();
   });
 
-  test("static step with table visual renders caption", async ({ page }) => {
+  test("visual step renders table caption", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const captionText = `Comparison of languages ${uniqueId}`;
-    const { url } = await createStaticActivityWithVisual({
+    const { url } = await createVisualActivity({
       steps: [
         {
           content: {
-            text: `Table caption body ${uniqueId}`,
-            title: `Table Caption Title ${uniqueId}`,
-            variant: "text",
-          },
-          position: 0,
-          visualContent: {
             caption: captionText,
             columns: [`Lang ${uniqueId}`, `Year ${uniqueId}`],
+            kind: "table",
             rows: [[`Python ${uniqueId}`, `1991 ${uniqueId}`]],
           },
-          visualKind: "table",
+          kind: "visual",
+          position: 0,
         },
       ],
     });
@@ -436,28 +375,24 @@ test.describe("Step Visual Content", () => {
     await expect(page.getByText(new RegExp(captionText))).toBeVisible();
   });
 
-  test("clicking on a table visual does not navigate to the next step", async ({ page }) => {
+  test("clicking on a visual step with table navigates to next step", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
-    const { url } = await createStaticActivityWithVisual({
+    const { url } = await createVisualActivity({
       steps: [
         {
           content: {
-            text: `Click table body ${uniqueId}`,
-            title: `Click Table Step1 ${uniqueId}`,
-            variant: "text",
-          },
-          position: 0,
-          visualContent: {
             caption: `Table caption ${uniqueId}`,
             columns: [`Col A ${uniqueId}`, `Col B ${uniqueId}`],
+            kind: "table",
             rows: [[`Cell 1 ${uniqueId}`, `Cell 2 ${uniqueId}`]],
           },
-          visualKind: "table",
+          kind: "visual",
+          position: 0,
         },
         {
           content: {
             text: `Next step body ${uniqueId}`,
-            title: `Click Table Step2 ${uniqueId}`,
+            title: `Table Step2 ${uniqueId}`,
             variant: "text",
           },
           position: 1,
@@ -472,39 +407,21 @@ test.describe("Step Visual Content", () => {
     ).toBeVisible();
     await expect(page.getByText(/1 \/ 2/)).toBeVisible();
 
-    // Click on the table — should NOT navigate
-    await page.getByRole("figure", { name: new RegExp(`Table caption ${uniqueId}`) }).click();
-
-    // Still on step 1
-    await expect(
-      page.getByRole("heading", { name: new RegExp(`Click Table Step1 ${uniqueId}`) }),
-    ).toBeVisible();
-    await expect(page.getByText(/1 \/ 2/)).toBeVisible();
-
-    // Keyboard navigation still works
     await page.waitForLoadState("networkidle");
     await page.keyboard.press("ArrowRight");
 
     await expect(
-      page.getByRole("heading", { name: new RegExp(`Click Table Step2 ${uniqueId}`) }),
+      page.getByRole("heading", { name: new RegExp(`Table Step2 ${uniqueId}`) }),
     ).toBeVisible();
     await expect(page.getByText(/2 \/ 2/)).toBeVisible();
   });
 
-  test("static step with timeline visual renders event dates, titles, and descriptions", async ({
-    page,
-  }) => {
+  test("visual step renders timeline event dates, titles, and descriptions", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
-    const { url } = await createStaticActivityWithVisual({
+    const { url } = await createVisualActivity({
       steps: [
         {
           content: {
-            text: `Timeline body ${uniqueId}`,
-            title: `Timeline Title ${uniqueId}`,
-            variant: "text",
-          },
-          position: 0,
-          visualContent: {
             events: [
               {
                 date: `1956 ${uniqueId}`,
@@ -522,8 +439,10 @@ test.describe("Step Visual Content", () => {
                 title: `Deep Learning Breakthrough ${uniqueId}`,
               },
             ],
+            kind: "timeline",
           },
-          visualKind: "timeline",
+          kind: "visual",
+          position: 0,
         },
       ],
     });
@@ -549,18 +468,12 @@ test.describe("Step Visual Content", () => {
     await expect(page.getByText(new RegExp(`AlexNet wins ImageNet ${uniqueId}`))).toBeVisible();
   });
 
-  test("clicking on a timeline visual does not navigate to the next step", async ({ page }) => {
+  test("clicking on a visual step with timeline navigates to next step", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
-    const { url } = await createStaticActivityWithVisual({
+    const { url } = await createVisualActivity({
       steps: [
         {
           content: {
-            text: `Click timeline body ${uniqueId}`,
-            title: `Click Timeline Step1 ${uniqueId}`,
-            variant: "text",
-          },
-          position: 0,
-          visualContent: {
             events: [
               {
                 date: `2000 ${uniqueId}`,
@@ -573,13 +486,15 @@ test.describe("Step Visual Content", () => {
                 title: `Second Event ${uniqueId}`,
               },
             ],
+            kind: "timeline",
           },
-          visualKind: "timeline",
+          kind: "visual",
+          position: 0,
         },
         {
           content: {
             text: `Next step body ${uniqueId}`,
-            title: `Click Timeline Step2 ${uniqueId}`,
+            title: `Timeline Step2 ${uniqueId}`,
             variant: "text",
           },
           position: 1,
@@ -592,47 +507,33 @@ test.describe("Step Visual Content", () => {
     await expect(page.getByRole("figure", { name: /timeline/i })).toBeVisible();
     await expect(page.getByText(/1 \/ 2/)).toBeVisible();
 
-    // Click on the timeline — should NOT navigate
-    await page.getByRole("figure", { name: /timeline/i }).click();
-
-    // Still on step 1
-    await expect(
-      page.getByRole("heading", { name: new RegExp(`Click Timeline Step1 ${uniqueId}`) }),
-    ).toBeVisible();
-    await expect(page.getByText(/1 \/ 2/)).toBeVisible();
-
-    // Keyboard navigation still works
     await page.waitForLoadState("networkidle");
     await page.keyboard.press("ArrowRight");
 
     await expect(
-      page.getByRole("heading", { name: new RegExp(`Click Timeline Step2 ${uniqueId}`) }),
+      page.getByRole("heading", { name: new RegExp(`Timeline Step2 ${uniqueId}`) }),
     ).toBeVisible();
     await expect(page.getByText(/2 \/ 2/)).toBeVisible();
   });
 
-  test("static step with bar chart visual renders title and category labels", async ({ page }) => {
+  test("visual step renders bar chart title and category labels", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const chartTitle = `Data Usage ${uniqueId}`;
-    const { url } = await createStaticActivityWithVisual({
+    const { url } = await createVisualActivity({
       steps: [
         {
           content: {
-            text: `Bar chart body ${uniqueId}`,
-            title: `Bar Chart Title ${uniqueId}`,
-            variant: "text",
-          },
-          position: 0,
-          visualContent: {
             chartType: "bar",
             data: [
               { name: `Alpha ${uniqueId}`, value: 70 },
               { name: `Beta ${uniqueId}`, value: 45 },
               { name: `Gamma ${uniqueId}`, value: 90 },
             ],
+            kind: "chart",
             title: chartTitle,
           },
-          visualKind: "chart",
+          kind: "visual",
+          position: 0,
         },
       ],
     });
@@ -650,28 +551,24 @@ test.describe("Step Visual Content", () => {
     await expect(chart.getByText(new RegExp(`Gamma ${uniqueId}`))).toBeVisible();
   });
 
-  test("static step with line chart visual renders title and category labels", async ({ page }) => {
+  test("visual step renders line chart title and category labels", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const chartTitle = `Trend Data ${uniqueId}`;
-    const { url } = await createStaticActivityWithVisual({
+    const { url } = await createVisualActivity({
       steps: [
         {
           content: {
-            text: `Line chart body ${uniqueId}`,
-            title: `Line Chart Title ${uniqueId}`,
-            variant: "text",
-          },
-          position: 0,
-          visualContent: {
             chartType: "line",
             data: [
               { name: `Jan ${uniqueId}`, value: 10 },
               { name: `Feb ${uniqueId}`, value: 25 },
               { name: `Mar ${uniqueId}`, value: 40 },
             ],
+            kind: "chart",
             title: chartTitle,
           },
-          visualKind: "chart",
+          kind: "visual",
+          position: 0,
         },
       ],
     });
@@ -689,28 +586,24 @@ test.describe("Step Visual Content", () => {
     await expect(chart.getByText(new RegExp(`Mar ${uniqueId}`))).toBeVisible();
   });
 
-  test("static step with pie chart visual renders title and legend", async ({ page }) => {
+  test("visual step renders pie chart title and legend", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const chartTitle = `Distribution ${uniqueId}`;
-    const { url } = await createStaticActivityWithVisual({
+    const { url } = await createVisualActivity({
       steps: [
         {
           content: {
-            text: `Pie chart body ${uniqueId}`,
-            title: `Pie Chart Title ${uniqueId}`,
-            variant: "text",
-          },
-          position: 0,
-          visualContent: {
             chartType: "pie",
             data: [
               { name: `Red ${uniqueId}`, value: 40 },
               { name: `Blue ${uniqueId}`, value: 35 },
               { name: `Green ${uniqueId}`, value: 25 },
             ],
+            kind: "chart",
             title: chartTitle,
           },
-          visualKind: "chart",
+          kind: "visual",
+          position: 0,
         },
       ],
     });
@@ -729,32 +622,28 @@ test.describe("Step Visual Content", () => {
     await expect(legend.getByText(new RegExp(`Green ${uniqueId}`))).toBeVisible();
   });
 
-  test("clicking on a chart visual does not navigate to the next step", async ({ page }) => {
+  test("clicking on a visual step with chart navigates to next step", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const chartTitle = `Click Chart ${uniqueId}`;
-    const { url } = await createStaticActivityWithVisual({
+    const { url } = await createVisualActivity({
       steps: [
         {
           content: {
-            text: `Click chart body ${uniqueId}`,
-            title: `Click Chart Step1 ${uniqueId}`,
-            variant: "text",
-          },
-          position: 0,
-          visualContent: {
             chartType: "bar",
             data: [
               { name: `ItemA ${uniqueId}`, value: 50 },
               { name: `ItemB ${uniqueId}`, value: 30 },
             ],
+            kind: "chart",
             title: chartTitle,
           },
-          visualKind: "chart",
+          kind: "visual",
+          position: 0,
         },
         {
           content: {
             text: `Next step body ${uniqueId}`,
-            title: `Click Chart Step2 ${uniqueId}`,
+            title: `Chart Step2 ${uniqueId}`,
             variant: "text",
           },
           position: 1,
@@ -770,43 +659,29 @@ test.describe("Step Visual Content", () => {
 
     await expect(page.getByText(/1 \/ 2/)).toBeVisible();
 
-    // Click on the chart — should NOT navigate
-    await page.getByRole("figure", { name: chartTitle }).click();
-
-    // Still on step 1
-    await expect(
-      page.getByRole("heading", { name: new RegExp(`Click Chart Step1 ${uniqueId}`) }),
-    ).toBeVisible();
-    await expect(page.getByText(/1 \/ 2/)).toBeVisible();
-
-    // Keyboard navigation still works
     await page.waitForLoadState("networkidle");
     await page.keyboard.press("ArrowRight");
 
     await expect(
-      page.getByRole("heading", { name: new RegExp(`Click Chart Step2 ${uniqueId}`) }),
+      page.getByRole("heading", { name: new RegExp(`Chart Step2 ${uniqueId}`) }),
     ).toBeVisible();
     await expect(page.getByText(/2 \/ 2/)).toBeVisible();
   });
 
-  test("static step with code visual renders annotations", async ({ page }) => {
+  test("visual step renders code annotations", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const annotationText = `This declares a variable ${uniqueId}`;
-    const { url } = await createStaticActivityWithVisual({
+    const { url } = await createVisualActivity({
       steps: [
         {
           content: {
-            text: `Annotated code body ${uniqueId}`,
-            title: `Annotated Code Title ${uniqueId}`,
-            variant: "text",
-          },
-          position: 0,
-          visualContent: {
             annotations: [{ line: 1, text: annotationText }],
             code: `const x_${uniqueId} = 42;\nconsole.log(x_${uniqueId});`,
+            kind: "code",
             language: "javascript",
           },
-          visualKind: "code",
+          kind: "visual",
+          position: 0,
         },
       ],
     });

@@ -1,9 +1,6 @@
 "use client";
 
-import {
-  type SupportedVisualKind,
-  type VisualContentByKind,
-} from "@zoonk/core/steps/visual-content-contract";
+import { type VisualStepContent } from "@zoonk/core/steps/visual-content-contract";
 import { ChartVisual } from "./visuals/chart-visual";
 import { CodeVisual } from "./visuals/code-visual";
 import { DiagramVisual } from "./visuals/diagram-visual";
@@ -12,43 +9,33 @@ import { QuoteVisual } from "./visuals/quote-visual";
 import { TableVisual } from "./visuals/table-visual";
 import { TimelineVisual } from "./visuals/timeline-visual";
 
-export function StepVisualRenderer({
-  visualContent,
-  visualKind,
-}: {
-  visualContent: VisualContentByKind[SupportedVisualKind] | null;
-  visualKind: SupportedVisualKind | null;
-}) {
-  if (!visualKind || !visualContent) {
-    return null;
+export function StepVisualRenderer({ content }: { content: VisualStepContent }) {
+  if (content.kind === "quote") {
+    return <QuoteVisual content={content} />;
   }
 
-  if (visualKind === "quote") {
-    return <QuoteVisual content={visualContent} />;
+  if (content.kind === "image") {
+    return <ImageVisual content={content} />;
   }
 
-  if (visualKind === "image") {
-    return <ImageVisual content={visualContent} />;
+  if (content.kind === "code") {
+    return <CodeVisual content={content} />;
   }
 
-  if (visualKind === "code") {
-    return <CodeVisual content={visualContent} />;
+  if (content.kind === "table") {
+    return <TableVisual content={content} />;
   }
 
-  if (visualKind === "table") {
-    return <TableVisual content={visualContent} />;
+  if (content.kind === "timeline") {
+    return <TimelineVisual content={content} />;
   }
 
-  if (visualKind === "timeline") {
-    return <TimelineVisual content={visualContent} />;
+  if (content.kind === "chart") {
+    return <ChartVisual content={content} />;
   }
 
-  if (visualKind === "chart") {
-    return <ChartVisual content={visualContent} />;
-  }
-
-  if (visualKind === "diagram") {
-    return <DiagramVisual content={visualContent} />;
+  if (content.kind === "diagram") {
+    return <DiagramVisual content={content} />;
   }
 
   return null;

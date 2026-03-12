@@ -10,7 +10,7 @@ import { ReadingStep } from "./reading-step";
 import { SelectImageStep } from "./select-image-step";
 import { SortOrderStep } from "./sort-order-step";
 import { StaticStep } from "./static-step";
-import { StaticStepLayout } from "./step-layouts";
+import { VisualStep } from "./visual-step";
 import { VocabularyStep } from "./vocabulary-step";
 
 export function StepRenderer({
@@ -31,18 +31,27 @@ export function StepRenderer({
   step: SerializedStep;
 }) {
   if (step.kind === "static") {
-    const hasVisual = Boolean(step.visualKind && step.visualContent);
-
     return (
       <div className="flex min-h-0 w-full flex-1 justify-center">
-        <StaticStepLayout className={hasVisual ? "xl:justify-center xl:gap-4" : "justify-center"}>
-          <StaticStep
-            isFirst={isFirst}
-            onNavigateNext={onNavigateNext}
-            onNavigatePrev={onNavigatePrev}
-            step={step}
-          />
-        </StaticStepLayout>
+        <StaticStep
+          isFirst={isFirst}
+          onNavigateNext={onNavigateNext}
+          onNavigatePrev={onNavigatePrev}
+          step={step}
+        />
+      </div>
+    );
+  }
+
+  if (step.kind === "visual") {
+    return (
+      <div className="flex min-h-0 w-full flex-1 justify-center">
+        <VisualStep
+          isFirst={isFirst}
+          onNavigateNext={onNavigateNext}
+          onNavigatePrev={onNavigatePrev}
+          step={step}
+        />
       </div>
     );
   }

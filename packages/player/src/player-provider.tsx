@@ -21,7 +21,7 @@ function computeProgress(currentIndex: number, total: number): number {
 
 function deriveViewState(state: PlayerState) {
   const currentStep = state.steps[state.currentStepIndex];
-  const isStaticStep = currentStep?.kind === "static";
+  const isStaticStep = currentStep?.kind === "static" || currentStep?.kind === "visual";
   const isCompleted = state.phase === "completed";
   const isIntro = state.phase === "intro";
   const hasDimensions = Object.keys(state.dimensions).length > 0;

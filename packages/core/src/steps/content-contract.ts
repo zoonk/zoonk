@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { type VisualStepContent, visualStepContentSchema } from "./visual-content-contract";
 
 const challengeEffectSchema = z
   .object({
@@ -161,6 +162,7 @@ const stepContentSchemas = {
   selectImage: selectImageContentSchema,
   sortOrder: sortOrderContentSchema,
   static: staticContentSchema,
+  visual: visualStepContentSchema,
   vocabulary: vocabularyContentSchema,
 } as const;
 
@@ -179,6 +181,8 @@ export type VocabularyStepContent = z.infer<typeof vocabularyContentSchema>;
 export type ReadingStepContent = z.infer<typeof readingContentSchema>;
 export type ListeningStepContent = z.infer<typeof listeningContentSchema>;
 
+export type { VisualStepContent };
+
 export type ChallengeEffect = z.infer<typeof challengeEffectSchema>;
 
 export type StepContentByKind = {
@@ -190,6 +194,7 @@ export type StepContentByKind = {
   selectImage: SelectImageStepContent;
   sortOrder: SortOrderStepContent;
   static: StaticStepContent;
+  visual: VisualStepContent;
   vocabulary: VocabularyStepContent;
 };
 
@@ -208,6 +213,7 @@ export function parseStepContent(kind: "reading", content: unknown): ReadingStep
 export function parseStepContent(kind: "selectImage", content: unknown): SelectImageStepContent;
 export function parseStepContent(kind: "sortOrder", content: unknown): SortOrderStepContent;
 export function parseStepContent(kind: "static", content: unknown): StaticStepContent;
+export function parseStepContent(kind: "visual", content: unknown): VisualStepContent;
 export function parseStepContent(kind: "vocabulary", content: unknown): VocabularyStepContent;
 export function parseStepContent(
   kind: SupportedStepKind,
@@ -228,6 +234,7 @@ export function assertStepContent(kind: "reading", content: unknown): ReadingSte
 export function assertStepContent(kind: "selectImage", content: unknown): SelectImageStepContent;
 export function assertStepContent(kind: "sortOrder", content: unknown): SortOrderStepContent;
 export function assertStepContent(kind: "static", content: unknown): StaticStepContent;
+export function assertStepContent(kind: "visual", content: unknown): VisualStepContent;
 export function assertStepContent(kind: "vocabulary", content: unknown): VocabularyStepContent;
 export function assertStepContent(
   kind: SupportedStepKind,

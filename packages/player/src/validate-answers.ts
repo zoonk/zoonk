@@ -153,6 +153,7 @@ const validators: Record<
   selectImage: validateSelectImage,
   sortOrder: validateSortOrder,
   static: () => null,
+  visual: () => null,
   vocabulary: validateVocabulary,
 };
 

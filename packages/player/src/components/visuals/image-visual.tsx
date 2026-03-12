@@ -1,12 +1,8 @@
 "use client";
 
-import {
-  type SupportedVisualKind,
-  type VisualContentByKind,
-  imageVisualContentSchema,
-} from "@zoonk/core/steps/visual-content-contract";
 import Image from "next/image";
 import { useState } from "react";
+import  { type ImageVisualContent } from "@zoonk/core/steps/visual-content-contract";
 
 function ImageFallback({ prompt }: { prompt: string }) {
   return (
@@ -16,22 +12,21 @@ function ImageFallback({ prompt }: { prompt: string }) {
   );
 }
 
-export function ImageVisual({ content }: { content: VisualContentByKind[SupportedVisualKind] }) {
-  const parsed = imageVisualContentSchema.parse(content);
+export function ImageVisual({ content }: { content: ImageVisualContent }) {
   const [errorUrl, setErrorUrl] = useState<string | null>(null);
 
-  if (!parsed.url || errorUrl === parsed.url) {
-    return <ImageFallback prompt={parsed.prompt} />;
+  if (!content.url || errorUrl === content.url) {
+    return <ImageFallback prompt={content.prompt} />;
   }
 
   return (
     <Image
-      alt={parsed.prompt}
+      alt={content.prompt}
       className="aspect-square w-full max-w-md rounded-2xl object-cover"
       height={1024}
-      onError={() => setErrorUrl(parsed.url ?? null)}
+      onError={() => setErrorUrl(content.url ?? null)}
       sizes="(max-width: 640px) calc(100vw - 2rem), 448px"
-      src={parsed.url}
+      src={content.url}
       width={1024}
     />
   );

@@ -11,23 +11,29 @@ export type StepVisual = StepVisualSchema["visuals"][number];
 
 async function saveVisualsToDB(
   visuals: StepVisual[],
-  dbSteps: { id: bigint | number }[],
+  dbSteps: { id: bigint | number; position: number }[],
+  activityId: bigint | number,
 ): Promise<{ error: Error | null }> {
-  return safeAsync(() =>
-    Promise.all(
-      visuals.map((visual) => {
-        const dbStep = dbSteps[visual.stepIndex];
-        if (!dbStep) {
-          return Promise.resolve();
-        }
-        const { stepIndex: _, kind: __, ...visualContent } = visual;
-        return prisma.step.update({
-          data: { visualContent, visualKind: visual.kind },
-          where: { id: dbStep.id },
-        });
-      }),
-    ),
-  );
+  const data = visuals.flatMap((visual) => {
+    const dbStep = dbSteps[visual.stepIndex];
+    if (!dbStep) {
+      return [];
+    }
+    const { stepIndex: _, ...content } = visual;
+    return {
+      activityId,
+      content,
+      isPublished: true,
+      kind: "visual" as const,
+      position: dbStep.position + 1,
+    };
+  });
+
+  if (data.length === 0) {
+    return { error: null };
+  }
+
+  return safeAsync(() => prisma.step.createMany({ data }));
 }
 
 async function handleVisualsError(
@@ -55,8 +61,8 @@ export async function generateVisualsForActivityStep(
 
   const dbSteps = await prisma.step.findMany({
     orderBy: { position: "asc" },
-    select: { id: true },
-    where: { activityId: activity.id },
+    select: { id: true, position: true },
+    where: { activityId: activity.id, kind: "static" },
   });
 
   if (dbSteps.length === 0) {
@@ -81,7 +87,7 @@ export async function generateVisualsForActivityStep(
     return handleVisualsError(activity.id, reason);
   }
 
-  const { error: saveError } = await saveVisualsToDB(result.data.visuals, dbSteps);
+  const { error: saveError } = await saveVisualsToDB(result.data.visuals, dbSteps, activity.id);
 
   if (saveError) {
     return handleVisualsError(activity.id, "dbSaveFailed");

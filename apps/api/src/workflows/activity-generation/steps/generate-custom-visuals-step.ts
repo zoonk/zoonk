@@ -28,8 +28,8 @@ async function generateVisualsForActivity(
 
   const dbSteps = await prisma.step.findMany({
     orderBy: { position: "asc" },
-    select: { id: true },
-    where: { activityId: activity.id },
+    select: { id: true, position: true },
+    where: { activityId: activity.id, kind: "static" },
   });
 
   if (dbSteps.length === 0) {
@@ -52,21 +52,25 @@ async function generateVisualsForActivity(
     throw error ?? new Error("Empty visual result");
   }
 
-  const { error: saveError } = await safeAsync(() =>
-    Promise.all(
-      result.data.visuals.map((visual) => {
-        const dbStep = dbSteps[visual.stepIndex];
-        if (!dbStep) {
-          return Promise.resolve();
-        }
-        const { stepIndex: _, kind: __, ...visualContent } = visual;
-        return prisma.step.update({
-          data: { visualContent, visualKind: visual.kind },
-          where: { id: dbStep.id },
-        });
-      }),
-    ),
-  );
+  const visualRows = result.data.visuals.flatMap((visual) => {
+    const dbStep = dbSteps[visual.stepIndex];
+    if (!dbStep) {
+      return [];
+    }
+    const { stepIndex: _, ...content } = visual;
+    return {
+      activityId: activity.id,
+      content,
+      isPublished: true,
+      kind: "visual" as const,
+      position: dbStep.position + 1,
+    };
+  });
+
+  const { error: saveError } =
+    visualRows.length > 0
+      ? await safeAsync(() => prisma.step.createMany({ data: visualRows }))
+      : { error: null };
 
   if (saveError) {
     await handleActivityFailureStep({ activityId: activity.id });

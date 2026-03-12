@@ -14,7 +14,7 @@ async function getExistingContentSteps(activityId: bigint | number): Promise<Act
     prisma.step.findMany({
       orderBy: { position: "asc" },
       select: { content: true },
-      where: { activityId },
+      where: { activityId, kind: "static" },
     }),
   );
 
@@ -84,7 +84,7 @@ export async function saveContentSteps(
         }),
         isPublished: true,
         kind: "static" as const,
-        position: index,
+        position: index * 2,
       })),
     }),
   );

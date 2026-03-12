@@ -1,9 +1,5 @@
 "use client";
 
-import {
-  type ChartVisualContent,
-  chartVisualContentSchema,
-} from "@zoonk/core/steps/visual-content-contract";
 import { isValidChartPayload } from "@zoonk/utils/chart";
 import { useExtracted } from "next-intl";
 import { useId } from "react";
@@ -19,6 +15,7 @@ import {
   Tooltip,
   XAxis,
 } from "recharts";
+import  { type ChartVisualContent } from "@zoonk/core/steps/visual-content-contract";
 
 type ChartDataPoint = ChartVisualContent["data"][number];
 
@@ -177,16 +174,14 @@ function ChartContent({ parsed }: { parsed: ChartVisualContent }) {
   return <PieChartVisual data={parsed.data} />;
 }
 
-export function ChartVisual({ content }: { content: unknown }) {
-  const parsed = chartVisualContentSchema.parse(content);
-
+export function ChartVisual({ content }: { content: ChartVisualContent }) {
   return (
-    <figure aria-label={parsed.title} className="w-full max-w-xl">
+    <figure aria-label={content.title} className="w-full max-w-xl">
       <figcaption className="text-muted-foreground mb-4 text-center text-sm font-medium">
-        {parsed.title}
+        {content.title}
       </figcaption>
 
-      <ChartContent parsed={parsed} />
+      <ChartContent parsed={content} />
     </figure>
   );
 }

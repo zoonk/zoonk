@@ -1,4 +1,4 @@
-import { type StepKind, type StepVisualKind, prisma } from "@zoonk/db";
+import { type StepKind, prisma } from "@zoonk/db";
 
 export async function stepFixture(attrs: {
   activityId: bigint;
@@ -7,8 +7,6 @@ export async function stepFixture(attrs: {
   kind?: StepKind;
   position?: number;
   sentenceId?: bigint;
-  visualContent?: object;
-  visualKind?: StepVisualKind;
   wordId?: bigint;
 }) {
   const step = await prisma.step.create({
@@ -19,8 +17,6 @@ export async function stepFixture(attrs: {
       kind: attrs.kind ?? "static",
       position: attrs.position ?? 0,
       sentenceId: attrs.sentenceId,
-      visualContent: attrs.visualContent,
-      visualKind: attrs.visualKind,
       wordId: attrs.wordId,
     },
   });

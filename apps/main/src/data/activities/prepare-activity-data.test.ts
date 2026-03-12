@@ -103,65 +103,6 @@ describe(prepareActivityData, () => {
     });
   });
 
-  test("parses visual content when present", async () => {
-    const activity = await activityFixture({
-      generationStatus: "completed",
-      isPublished: true,
-      kind: "explanation",
-      language: "en",
-      lessonId: lesson.id,
-      organizationId: org.id,
-      position: 102,
-    });
-
-    await stepFixture({
-      activityId: activity.id,
-      content: { text: "Code example", title: "Code", variant: "text" },
-      isPublished: true,
-      kind: "static",
-      position: 0,
-      visualContent: { code: "console.log('hi')", language: "javascript" },
-      visualKind: "code",
-    });
-
-    const raw = await getActivity({ lessonId: lesson.id, position: 102 });
-    const result = prepareActivityData(raw!, [], []);
-
-    expect(result.steps[0]?.visualKind).toBe("code");
-    expect(result.steps[0]?.visualContent).toEqual({
-      code: "console.log('hi')",
-      language: "javascript",
-    });
-  });
-
-  test("returns null visualContent for unsupported visual kinds", async () => {
-    const activity = await activityFixture({
-      generationStatus: "completed",
-      isPublished: true,
-      kind: "explanation",
-      language: "en",
-      lessonId: lesson.id,
-      organizationId: org.id,
-      position: 103,
-    });
-
-    await stepFixture({
-      activityId: activity.id,
-      content: { text: "Audio step", title: "Audio", variant: "text" },
-      isPublished: true,
-      kind: "static",
-      position: 0,
-      visualContent: { src: "audio.mp3" },
-      visualKind: "audio",
-    });
-
-    const raw = await getActivity({ lessonId: lesson.id, position: 103 });
-    const result = prepareActivityData(raw!, [], []);
-
-    expect(result.steps[0]?.visualKind).toBeNull();
-    expect(result.steps[0]?.visualContent).toBeNull();
-  });
-
   test("serializes word data on steps with word relations", async () => {
     const [word, activity] = await Promise.all([
       wordFixture({
@@ -437,8 +378,6 @@ describe(prepareActivityData, () => {
           kind: "vocabulary",
           position: 0,
           sentence: null,
-          visualContent: null,
-          visualKind: null,
           word: stepWord,
         },
       ],
@@ -630,8 +569,6 @@ describe(prepareActivityData, () => {
             sentence: "Hola mundo",
             translation: "Hello world",
           },
-          visualContent: null,
-          visualKind: null,
           word: null,
         },
       ],
@@ -691,8 +628,6 @@ describe(prepareActivityData, () => {
             sentence: "Sabes you?",
             translation: "Know you?",
           },
-          visualContent: null,
-          visualKind: null,
           word: null,
         },
       ],
@@ -752,8 +687,6 @@ describe(prepareActivityData, () => {
             sentence: "Hola amigos",
             translation: "Hello friends",
           },
-          visualContent: null,
-          visualKind: null,
           word: null,
         },
       ],
@@ -839,8 +772,6 @@ describe(prepareActivityData, () => {
           kind: "sortOrder",
           position: 0,
           sentence: null,
-          visualContent: null,
-          visualKind: null,
           word: null,
         },
       ],
@@ -876,8 +807,6 @@ describe(prepareActivityData, () => {
           kind: "fillBlank",
           position: 0,
           sentence: null,
-          visualContent: null,
-          visualKind: null,
           word: null,
         },
       ],
@@ -915,8 +844,6 @@ describe(prepareActivityData, () => {
           kind: "matchColumns",
           position: 0,
           sentence: null,
-          visualContent: null,
-          visualKind: null,
           word: null,
         },
       ],
@@ -947,8 +874,6 @@ describe(prepareActivityData, () => {
           kind: "static",
           position: 0,
           sentence: null,
-          visualContent: null,
-          visualKind: null,
           word: null,
         },
       ],

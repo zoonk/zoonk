@@ -37,7 +37,6 @@ export type {
   Organization,
   Sentence,
   StepKind,
-  StepVisualKind,
   Word,
 } from "./generated/prisma/client";
 

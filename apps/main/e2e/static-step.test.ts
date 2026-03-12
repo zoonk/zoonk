@@ -35,9 +35,8 @@ async function swipeHorizontally(
 async function createStaticActivity(options: {
   steps: {
     content: object;
+    kind?: "static" | "visual";
     position: number;
-    visualContent?: object;
-    visualKind?: "chart" | "code" | "diagram" | "image" | "quote" | "table" | "timeline";
   }[];
 }) {
   const org = await getAiOrganization();
@@ -84,9 +83,8 @@ async function createStaticActivity(options: {
         activityId: activity.id,
         content: step.content,
         isPublished: true,
+        kind: step.kind ?? "static",
         position: step.position,
-        visualContent: "visualContent" in step ? step.visualContent : undefined,
-        visualKind: "visualKind" in step ? step.visualKind : undefined,
       }),
     ),
   );
@@ -435,27 +433,22 @@ test.describe("Static Step Navigation", () => {
     await expect(page.getByRole("button", { name: /send feedback/i })).toBeVisible();
   });
 
-  test("only bottom content clicks navigate between steps", async ({ page }) => {
+  test("clicking on body text area navigates between steps", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const { url } = await createStaticActivity({
       steps: [
         {
           content: {
-            text: `Outside 1 body ${uniqueId}`,
-            title: `Outside 1 ${uniqueId}`,
+            text: `Click 1 body ${uniqueId}`,
+            title: `Click 1 ${uniqueId}`,
             variant: "text",
           },
           position: 0,
-          visualContent: {
-            prompt: `Outside visual ${uniqueId}`,
-            url: "https://to3kaoi21m60hzgu.public.blob.vercel-storage.com/courses/machine_learning-jmaDwiS0MptNV2EGCZzYWU7RBJs3Qg.webp",
-          },
-          visualKind: "image",
         },
         {
           content: {
-            text: `Outside 2 body ${uniqueId}`,
-            title: `Outside 2 ${uniqueId}`,
+            text: `Click 2 body ${uniqueId}`,
+            title: `Click 2 ${uniqueId}`,
             variant: "text",
           },
           position: 1,
@@ -467,22 +460,12 @@ test.describe("Static Step Navigation", () => {
     await page.waitForLoadState("networkidle");
 
     await expect(
-      page.getByRole("heading", { name: new RegExp(`Outside 1 ${uniqueId}`) }),
+      page.getByRole("heading", { name: new RegExp(`Click 1 ${uniqueId}`) }),
     ).toBeVisible();
 
-    await page.getByRole("img", { name: new RegExp(`Outside visual ${uniqueId}`) }).click();
-    await expect(
-      page.getByRole("heading", { name: new RegExp(`Outside 1 ${uniqueId}`) }),
-    ).toBeVisible();
-
-    const viewport = page.viewportSize();
-    await page.mouse.click(viewport!.width - 10, viewport!.height / 2);
-    await expect(
-      page.getByRole("heading", { name: new RegExp(`Outside 1 ${uniqueId}`) }),
-    ).toBeVisible();
-
-    const bodyText = page.getByText(new RegExp(`Outside 1 body ${uniqueId}`));
+    const bodyText = page.getByText(new RegExp(`Click 1 body ${uniqueId}`));
     const bodyBox = await bodyText.boundingBox();
+    const viewport = page.viewportSize();
 
     if (!bodyBox || !viewport) {
       throw new Error("Missing body text box or viewport");
@@ -491,11 +474,11 @@ test.describe("Static Step Navigation", () => {
     await page.mouse.click(viewport.width / 2, bodyBox.y + bodyBox.height / 2);
 
     await expect(
-      page.getByRole("heading", { name: new RegExp(`Outside 2 ${uniqueId}`) }),
+      page.getByRole("heading", { name: new RegExp(`Click 2 ${uniqueId}`) }),
     ).toBeVisible();
   });
 
-  test("only bottom content swipes navigate between steps", async ({ page }) => {
+  test("swiping on body text navigates between steps", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const { url } = await createStaticActivity({
       steps: [
@@ -506,11 +489,6 @@ test.describe("Static Step Navigation", () => {
             variant: "text",
           },
           position: 0,
-          visualContent: {
-            prompt: `Swipe visual ${uniqueId}`,
-            url: "https://to3kaoi21m60hzgu.public.blob.vercel-storage.com/courses/machine_learning-jmaDwiS0MptNV2EGCZzYWU7RBJs3Qg.webp",
-          },
-          visualKind: "image",
         },
         {
           content: {
@@ -530,27 +508,12 @@ test.describe("Static Step Navigation", () => {
       page.getByRole("heading", { name: new RegExp(`Swipe 1 ${uniqueId}`) }),
     ).toBeVisible();
 
-    await swipeHorizontally(
-      page.getByRole("img", { name: new RegExp(`Swipe visual ${uniqueId}`) }),
-      {
-        endX: 20,
-        startX: 140,
-        y: 40,
-      },
-    );
-
-    // still at this step when swiping on visual content
-    await expect(
-      page.getByRole("heading", { name: new RegExp(`Swipe 1 ${uniqueId}`) }),
-    ).toBeVisible();
-
     await swipeHorizontally(page.getByText(new RegExp(`Swipe 1 body ${uniqueId}`)), {
       endX: 20,
       startX: 140,
       y: 20,
     });
 
-    // now should be on step 2 after swiping on body text
     await expect(
       page.getByRole("heading", { name: new RegExp(`Swipe 2 ${uniqueId}`) }),
     ).toBeVisible();
@@ -561,7 +524,6 @@ test.describe("Static Step Navigation", () => {
       y: 20,
     });
 
-    // swiping back to step 1
     await expect(
       page.getByRole("heading", { name: new RegExp(`Swipe 1 ${uniqueId}`) }),
     ).toBeVisible();

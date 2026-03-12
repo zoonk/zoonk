@@ -1,10 +1,6 @@
 "use client";
 
-import {
-  type SupportedVisualKind,
-  type VisualContentByKind,
-  quoteVisualContentSchema,
-} from "@zoonk/core/steps/visual-content-contract";
+import  { type QuoteVisualContent } from "@zoonk/core/steps/visual-content-contract";
 
 function QuoteMark() {
   return (
@@ -17,21 +13,19 @@ function QuoteMark() {
   );
 }
 
-export function QuoteVisual({ content }: { content: VisualContentByKind[SupportedVisualKind] }) {
-  const parsed = quoteVisualContentSchema.parse(content);
-
+export function QuoteVisual({ content }: { content: QuoteVisualContent }) {
   return (
     <figure className="flex w-full max-w-xl flex-col items-center gap-4 px-2 text-center sm:gap-6">
       <QuoteMark />
 
       <blockquote>
         <p className="text-xl leading-relaxed font-medium tracking-tight sm:text-2xl sm:leading-relaxed">
-          {parsed.text}
+          {content.text}
         </p>
       </blockquote>
 
       <figcaption className="text-muted-foreground text-sm tracking-wide">
-        {parsed.author}
+        {content.author}
       </figcaption>
     </figure>
   );

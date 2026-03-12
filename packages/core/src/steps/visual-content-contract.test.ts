@@ -1,62 +1,71 @@
 import { describe, expect, test } from "vitest";
-import { isSupportedVisualKind, parseVisualContent } from "./visual-content-contract";
+import { visualStepContentSchema } from "./visual-content-contract";
 
 describe("visual content contracts", () => {
   test("parses code visual content", () => {
-    const content = parseVisualContent("code", {
+    const content = visualStepContentSchema.parse({
       code: "console.log('hello')",
+      kind: "code",
       language: "javascript",
     });
 
     expect(content).toEqual({
       code: "console.log('hello')",
+      kind: "code",
       language: "javascript",
     });
   });
 
   test("parses code visual content with annotations", () => {
-    const content = parseVisualContent("code", {
+    const content = visualStepContentSchema.parse({
       annotations: [{ line: 1, text: "Variable declaration" }],
       code: "const x = 1;",
+      kind: "code",
       language: "typescript",
     });
 
     expect(content).toEqual({
       annotations: [{ line: 1, text: "Variable declaration" }],
       code: "const x = 1;",
+      kind: "code",
       language: "typescript",
     });
   });
 
   test("parses chart visual content", () => {
-    const content = parseVisualContent("chart", {
+    const content = visualStepContentSchema.parse({
       chartType: "bar",
       data: [{ name: "Q1", value: 100 }],
+      kind: "chart",
       title: "Sales",
     });
 
     expect(content).toEqual({
       chartType: "bar",
       data: [{ name: "Q1", value: 100 }],
+      kind: "chart",
       title: "Sales",
     });
   });
 
   test("parses diagram visual content", () => {
-    const content = parseVisualContent("diagram", {
+    const content = visualStepContentSchema.parse({
       edges: [{ source: "a", target: "b" }],
+      kind: "diagram",
       nodes: [{ id: "a", label: "Start" }],
     });
 
     expect(content).toEqual({
       edges: [{ source: "a", target: "b" }],
+      kind: "diagram",
       nodes: [{ id: "a", label: "Start" }],
     });
   });
 
   test("parses diagram with edge labels", () => {
-    const content = parseVisualContent("diagram", {
+    const content = visualStepContentSchema.parse({
       edges: [{ label: "next", source: "a", target: "b" }],
+      kind: "diagram",
       nodes: [
         { id: "a", label: "Start" },
         { id: "b", label: "End" },
@@ -65,6 +74,7 @@ describe("visual content contracts", () => {
 
     expect(content).toEqual({
       edges: [{ label: "next", source: "a", target: "b" }],
+      kind: "diagram",
       nodes: [
         { id: "a", label: "Start" },
         { id: "b", label: "End" },
@@ -73,103 +83,109 @@ describe("visual content contracts", () => {
   });
 
   test("parses image visual content without url", () => {
-    const content = parseVisualContent("image", {
+    const content = visualStepContentSchema.parse({
+      kind: "image",
       prompt: "A cat sitting on a mat",
     });
 
     expect(content).toEqual({
+      kind: "image",
       prompt: "A cat sitting on a mat",
     });
   });
 
   test("parses image visual content with url", () => {
-    const content = parseVisualContent("image", {
+    const content = visualStepContentSchema.parse({
+      kind: "image",
       prompt: "A cat sitting on a mat",
       url: "https://example.com/cat.png",
     });
 
     expect(content).toEqual({
+      kind: "image",
       prompt: "A cat sitting on a mat",
       url: "https://example.com/cat.png",
     });
   });
 
   test("parses quote visual content", () => {
-    const content = parseVisualContent("quote", {
+    const content = visualStepContentSchema.parse({
       author: "Shakespeare",
+      kind: "quote",
       text: "To be or not to be",
     });
 
     expect(content).toEqual({
       author: "Shakespeare",
+      kind: "quote",
       text: "To be or not to be",
     });
   });
 
   test("parses table visual content", () => {
-    const content = parseVisualContent("table", {
+    const content = visualStepContentSchema.parse({
       columns: ["Name", "Age"],
+      kind: "table",
       rows: [["Alice", "30"]],
     });
 
     expect(content).toEqual({
       columns: ["Name", "Age"],
+      kind: "table",
       rows: [["Alice", "30"]],
     });
   });
 
   test("parses table visual content with caption", () => {
-    const content = parseVisualContent("table", {
+    const content = visualStepContentSchema.parse({
       caption: "User data",
       columns: ["Name", "Age"],
+      kind: "table",
       rows: [["Alice", "30"]],
     });
 
     expect(content).toEqual({
       caption: "User data",
       columns: ["Name", "Age"],
+      kind: "table",
       rows: [["Alice", "30"]],
     });
   });
 
   test("parses timeline visual content", () => {
-    const content = parseVisualContent("timeline", {
+    const content = visualStepContentSchema.parse({
       events: [{ date: "2020-01-01", description: "Company founded", title: "Founded" }],
+      kind: "timeline",
     });
 
     expect(content).toEqual({
       events: [{ date: "2020-01-01", description: "Company founded", title: "Founded" }],
+      kind: "timeline",
     });
   });
 
-  test("rejects extra fields (strict mode)", () => {
+  test("rejects missing kind discriminant", () => {
     expect(() =>
-      parseVisualContent("code", {
+      visualStepContentSchema.parse({
         code: "x",
-        extraField: "not allowed",
+        language: "js",
+      }),
+    ).toThrow();
+  });
+
+  test("rejects invalid kind discriminant", () => {
+    expect(() =>
+      visualStepContentSchema.parse({
+        code: "x",
+        kind: "unknown",
         language: "js",
       }),
     ).toThrow();
   });
 
   test("rejects missing required fields", () => {
-    expect(() => parseVisualContent("code", { code: "x" })).toThrow();
-    expect(() => parseVisualContent("chart", { chartType: "bar" })).toThrow();
-    expect(() => parseVisualContent("quote", { text: "hi" })).toThrow();
-  });
-
-  test("isSupportedVisualKind returns true for supported kinds", () => {
-    expect(isSupportedVisualKind("code")).toBeTruthy();
-    expect(isSupportedVisualKind("chart")).toBeTruthy();
-    expect(isSupportedVisualKind("diagram")).toBeTruthy();
-    expect(isSupportedVisualKind("image")).toBeTruthy();
-    expect(isSupportedVisualKind("quote")).toBeTruthy();
-    expect(isSupportedVisualKind("table")).toBeTruthy();
-    expect(isSupportedVisualKind("timeline")).toBeTruthy();
-  });
-
-  test("isSupportedVisualKind returns false for unsupported kinds", () => {
-    expect(isSupportedVisualKind("audio")).toBeFalsy();
-    expect(isSupportedVisualKind("video")).toBeFalsy();
+    expect(() => visualStepContentSchema.parse({ code: "x", kind: "code" })).toThrow();
+    expect(() => visualStepContentSchema.parse({ chartType: "bar", kind: "chart" })).toThrow();
+    expect(() => visualStepContentSchema.parse({ kind: "quote", text: "hi" })).toThrow();
   });
 });

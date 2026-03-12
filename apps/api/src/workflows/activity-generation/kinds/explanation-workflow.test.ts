@@ -8,6 +8,7 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
+import { getString } from "@zoonk/utils/json";
 import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { getLessonActivitiesStep } from "../steps/get-lesson-activities-step";
 import { explanationActivityWorkflow } from "./explanation-workflow";
@@ -107,22 +108,35 @@ describe("explanation activity workflow", () => {
       where: { activityId: activity.id },
     });
 
-    expect(steps).toHaveLength(2);
+    // 2 static steps + 2 visual steps (interleaved)
+    expect(steps).toHaveLength(4);
 
     for (const step of steps) {
       expect(step.isPublished).toBeTruthy();
     }
 
-    expect(steps[0]?.content).toEqual({
+    const staticSteps = steps.filter((step) => step.kind === "static");
+    const visualSteps = steps.filter((step) => step.kind === "visual");
+
+    expect(staticSteps).toHaveLength(2);
+    expect(visualSteps).toHaveLength(2);
+
+    expect(staticSteps[0]?.content).toEqual({
       text: "Explanation step 1 text",
       title: "Explanation Step 1",
       variant: "text",
     });
-    expect(steps[1]?.content).toEqual({
+    expect(staticSteps[1]?.content).toEqual({
       text: "Explanation step 2 text",
       title: "Explanation Step 2",
       variant: "text",
     });
+
+    // Static steps at even positions, visual steps at odd positions
+    expect(staticSteps[0]?.position).toBe(0);
+    expect(visualSteps[0]?.position).toBe(1);
+    expect(staticSteps[1]?.position).toBe(2);
+    expect(visualSteps[1]?.position).toBe(3);
   });
 
   test("sets explanation status to 'completed' after full pipeline", async () => {
@@ -486,11 +500,14 @@ describe("explanation activity workflow", () => {
         where: { activityId: expActivity.id },
       });
 
-      const imageStep = expSteps.find((step) => step.visualKind === "image");
+      const imageStep = expSteps.find(
+        (step) => step.kind === "visual" && getString(step.content, "kind") === "image",
+      );
 
       expect(imageStep).toBeDefined();
-      expect(imageStep?.visualContent).toEqual(
+      expect(imageStep?.content).toEqual(
         expect.objectContaining({
+          kind: "image",
           prompt: expect.any(String),
           url: "https://example.com/image.webp",
         }),

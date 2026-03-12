@@ -72,7 +72,7 @@ function applyEffects(
 }
 
 function isStaticStep(step: SerializedStep): boolean {
-  return step.kind === "static";
+  return step.kind === "static" || step.kind === "visual";
 }
 
 function getChallengeEffects(step: SerializedStep): ChallengeEffect[] {

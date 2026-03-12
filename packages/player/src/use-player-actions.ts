@@ -13,7 +13,7 @@ function willComplete(state: PlayerState): boolean {
   if (state.phase === "playing") {
     const currentStep = state.steps[state.currentStepIndex];
 
-    if (currentStep?.kind === "static") {
+    if (currentStep?.kind === "static" || currentStep?.kind === "visual") {
       return state.currentStepIndex + 1 >= state.steps.length;
     }
 

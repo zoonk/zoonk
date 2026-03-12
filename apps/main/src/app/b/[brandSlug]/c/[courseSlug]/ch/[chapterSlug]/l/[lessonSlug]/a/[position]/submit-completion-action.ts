@@ -52,7 +52,6 @@ export async function submitCompletion(rawInput: CompletionInput): Promise<Compl
         lesson: { include: { chapter: true } },
         steps: {
           include: { sentence: true, word: true },
-          omit: { visualContent: true },
           orderBy: { position: "asc" },
           where: { isPublished: true },
         },

@@ -1,14 +1,11 @@
 "use client";
 
 import { parseStepContent } from "@zoonk/core/steps/content-contract";
-import { cn } from "@zoonk/ui/lib/utils";
 import { type SerializedStep } from "../prepare-activity-data";
 import { useReplaceName } from "../user-name-context";
 import { HighlightText } from "./highlight-text";
 import { ContextText, QuestionText } from "./question-text";
 import { StaticTapZones, useStaticStepNavigation } from "./static-step-navigation";
-import { StaticStepText, StaticStepVisual } from "./step-layouts";
-import { StepVisualRenderer } from "./step-visual-renderer";
 
 function TextVariant({ title, text }: { title: string; text: string }) {
   const replaceName = useReplaceName();
@@ -86,8 +83,6 @@ export function StaticStep({
   onNavigatePrev: () => void;
   step: SerializedStep;
 }) {
-  const hasVisual = Boolean(step.visualKind && step.visualContent);
-
   const { onNavigateNextTap, onNavigatePrevTap, swipeHandlers } = useStaticStepNavigation({
     isFirst,
     onNavigateNext,
@@ -95,29 +90,16 @@ export function StaticStep({
   });
 
   return (
-    <>
-      {hasVisual && (
-        <StaticStepVisual>
-          <div className="my-auto flex w-full justify-center">
-            <StepVisualRenderer visualContent={step.visualContent} visualKind={step.visualKind} />
-          </div>
-        </StaticStepVisual>
-      )}
-
-      <StaticStepText
-        className={cn(
-          "relative mx-4 pt-4 pb-6 sm:mx-6 sm:pt-5 sm:pb-8",
-          hasVisual && "border-border/40 border-t xl:border-t-0",
-        )}
-        {...swipeHandlers}
-      >
-        <StaticTapZones
-          isFirst={isFirst}
-          onNavigateNext={onNavigateNextTap}
-          onNavigatePrev={onNavigatePrevTap}
-        />
-        <StaticStepContent step={step} />
-      </StaticStepText>
-    </>
+    <div
+      className="relative flex min-h-0 w-full max-w-2xl flex-1 flex-col items-start justify-center gap-1 px-4 sm:px-6"
+      {...swipeHandlers}
+    >
+      <StaticTapZones
+        isFirst={isFirst}
+        onNavigateNext={onNavigateNextTap}
+        onNavigatePrev={onNavigatePrevTap}
+      />
+      <StaticStepContent step={step} />
+    </div>
   );
 }

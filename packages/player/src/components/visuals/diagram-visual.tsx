@@ -1,9 +1,5 @@
 "use client";
 
-import {
-  type DiagramVisualContent,
-  diagramVisualContentSchema,
-} from "@zoonk/core/steps/visual-content-contract";
 import { useExtracted } from "next-intl";
 import { useId, useMemo } from "react";
 import {
@@ -12,6 +8,7 @@ import {
   type PositionedNode,
   computeDiagramLayout,
 } from "../../diagram-layout";
+import  { type DiagramVisualContent } from "@zoonk/core/steps/visual-content-contract";
 
 const NODE_BORDER_RADIUS = 8;
 const EDGE_STROKE_WIDTH = 1.5;
@@ -185,17 +182,16 @@ function DiagramSvg({ layout, markerId }: { layout: DiagramLayout; markerId: str
   );
 }
 
-export function DiagramVisual({ content }: { content: unknown }) {
+export function DiagramVisual({ content }: { content: DiagramVisualContent }) {
   const t = useExtracted();
   const markerId = useId();
-  const parsed = diagramVisualContentSchema.parse(content);
 
   const layout = useMemo(
-    () => computeDiagramLayout(parsed.nodes, parsed.edges),
-    [parsed.nodes, parsed.edges],
+    () => computeDiagramLayout(content.nodes, content.edges),
+    [content.nodes, content.edges],
   );
 
-  const description = useMemo(() => buildAccessibleDescription(parsed), [parsed]);
+  const description = useMemo(() => buildAccessibleDescription(content), [content]);
 
   return (
     <figure aria-label={t("Diagram")} className="mx-auto w-full max-w-xl">

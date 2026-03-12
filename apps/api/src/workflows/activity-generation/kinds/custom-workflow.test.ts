@@ -116,23 +116,31 @@ describe(customActivityWorkflow, () => {
       where: { activityId: activity.id },
     });
 
-    expect(steps).toHaveLength(2);
+    const staticSteps = steps.filter((step) => step.kind === "static");
+    const visualSteps = steps.filter((step) => step.kind === "visual");
 
-    expect(steps[0]?.kind).toBe("static");
-    expect(steps[0]?.content).toEqual({
+    expect(staticSteps).toHaveLength(2);
+    expect(visualSteps).toHaveLength(2);
+
+    expect(staticSteps[0]?.content).toEqual({
       text: "Custom step 1 text",
       title: "Custom Step 1",
       variant: "text",
     });
-    expect(steps[0]?.visualKind).toBe("image");
+    expect(staticSteps[0]?.position).toBe(0);
 
-    expect(steps[1]?.kind).toBe("static");
-    expect(steps[1]?.content).toEqual({
+    expect(staticSteps[1]?.content).toEqual({
       text: "Custom step 2 text",
       title: "Custom Step 2",
       variant: "text",
     });
-    expect(steps[1]?.visualKind).toBe("code");
+    expect(staticSteps[1]?.position).toBe(2);
+
+    expect(visualSteps[0]?.content).toEqual(expect.objectContaining({ kind: "image" }));
+    expect(visualSteps[0]?.position).toBe(1);
+
+    expect(visualSteps[1]?.content).toEqual(expect.objectContaining({ kind: "code" }));
+    expect(visualSteps[1]?.position).toBe(3);
   });
 
   test("sets custom status to 'completed' after saving", async () => {
