@@ -197,9 +197,19 @@ msgid "Stats"
 msgstr "Estadísticas"
 
 #: ../../packages/player/src/components/feedback-screen.tsx
+msgctxt "3nOd8f"
+msgid "Your answer:"
+msgstr "Tu respuesta:"
+
+#: ../../packages/player/src/components/feedback-screen.tsx
 msgctxt "iaHymw"
 msgid "Outcome"
 msgstr "Resultado"
+
+#: ../../packages/player/src/components/feedback-screen.tsx
+msgctxt "QAJ/Tl"
+msgid "Correct answer:"
+msgstr "Respuesta correcta:"
 
 #: ../../packages/player/src/components/feedback-screen.tsx
 msgctxt "zZGbEs"

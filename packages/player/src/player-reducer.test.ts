@@ -225,7 +225,7 @@ describe("CHECK_ANSWER", () => {
     const state = buildState({ steps: [step] });
     const next = playerReducer(state, {
       effects: [],
-      result: { feedback: "Correct!", isCorrect: true },
+      result: { correctAnswer: null, feedback: "Correct!", isCorrect: true },
       stepId: "mc-1",
       type: "CHECK_ANSWER",
     });
@@ -233,7 +233,7 @@ describe("CHECK_ANSWER", () => {
     expect(next.results["mc-1"]).toEqual({
       answer: undefined,
       effects: [],
-      result: { feedback: "Correct!", isCorrect: true },
+      result: { correctAnswer: null, feedback: "Correct!", isCorrect: true },
       stepId: "mc-1",
     });
   });
@@ -246,7 +246,7 @@ describe("CHECK_ANSWER", () => {
     });
     const next = playerReducer(state, {
       effects: [],
-      result: { feedback: "Correct!", isCorrect: true },
+      result: { correctAnswer: null, feedback: "Correct!", isCorrect: true },
       stepId: "mc-1",
       type: "CHECK_ANSWER",
     });
@@ -257,7 +257,7 @@ describe("CHECK_ANSWER", () => {
     const state = buildState();
     const next = playerReducer(state, {
       effects: [{ dimension: "Quality", impact: "positive" }],
-      result: { feedback: null, isCorrect: true },
+      result: { correctAnswer: null, feedback: null, isCorrect: true },
       stepId: "step-1",
       type: "CHECK_ANSWER",
     });
@@ -268,7 +268,7 @@ describe("CHECK_ANSWER", () => {
     const state = buildState();
     const next = playerReducer(state, {
       effects: [{ dimension: "Quality", impact: "negative" }],
-      result: { feedback: null, isCorrect: true },
+      result: { correctAnswer: null, feedback: null, isCorrect: true },
       stepId: "step-1",
       type: "CHECK_ANSWER",
     });
@@ -279,7 +279,7 @@ describe("CHECK_ANSWER", () => {
     const state = buildState();
     const next = playerReducer(state, {
       effects: [{ dimension: "Quality", impact: "neutral" }],
-      result: { feedback: null, isCorrect: true },
+      result: { correctAnswer: null, feedback: null, isCorrect: true },
       stepId: "step-1",
       type: "CHECK_ANSWER",
     });
@@ -294,7 +294,7 @@ describe("CHECK_ANSWER", () => {
     let state = buildState({ steps });
     state = playerReducer(state, {
       effects: [{ dimension: "Quality", impact: "positive" }],
-      result: { feedback: null, isCorrect: true },
+      result: { correctAnswer: null, feedback: null, isCorrect: true },
       stepId: "s1",
       type: "CHECK_ANSWER",
     });
@@ -302,7 +302,7 @@ describe("CHECK_ANSWER", () => {
     state = { ...state, currentStepIndex: 1, phase: "playing" };
     state = playerReducer(state, {
       effects: [{ dimension: "Quality", impact: "positive" }],
-      result: { feedback: null, isCorrect: true },
+      result: { correctAnswer: null, feedback: null, isCorrect: true },
       stepId: "s2",
       type: "CHECK_ANSWER",
     });
@@ -318,7 +318,7 @@ describe("CHECK_ANSWER", () => {
       const state = buildState({ steps });
       const next = playerReducer(state, {
         effects: [],
-        result: { feedback: null, isCorrect: true },
+        result: { correctAnswer: null, feedback: null, isCorrect: true },
         stepId: "mc-1",
         type: "CHECK_ANSWER",
       });
@@ -327,7 +327,7 @@ describe("CHECK_ANSWER", () => {
       expect(next.results["mc-1"]).toEqual({
         answer: undefined,
         effects: [],
-        result: { feedback: null, isCorrect: true },
+        result: { correctAnswer: null, feedback: null, isCorrect: true },
         stepId: "mc-1",
       });
     });
@@ -337,7 +337,7 @@ describe("CHECK_ANSWER", () => {
       const state = buildState({ steps });
       const next = playerReducer(state, {
         effects: [],
-        result: { feedback: null, isCorrect: true },
+        result: { correctAnswer: null, feedback: null, isCorrect: true },
         stepId: "mc-1",
         type: "CHECK_ANSWER",
       });
@@ -345,7 +345,7 @@ describe("CHECK_ANSWER", () => {
       expect(next.results["mc-1"]).toEqual({
         answer: undefined,
         effects: [],
-        result: { feedback: null, isCorrect: true },
+        result: { correctAnswer: null, feedback: null, isCorrect: true },
         stepId: "mc-1",
       });
     });
@@ -362,7 +362,7 @@ describe("CHECK_ANSWER", () => {
 
       const next = playerReducer(state, {
         effects: [],
-        result: { feedback: null, isCorrect: true },
+        result: { correctAnswer: null, feedback: null, isCorrect: true },
         stepId: "mc-1",
         type: "CHECK_ANSWER",
       });
@@ -383,7 +383,7 @@ describe("CHECK_ANSWER", () => {
     const state = buildState({ phase: "feedback" });
     const next = playerReducer(state, {
       effects: [],
-      result: { feedback: null, isCorrect: true },
+      result: { correctAnswer: null, feedback: null, isCorrect: true },
       stepId: "step-1",
       type: "CHECK_ANSWER",
     });
@@ -394,7 +394,7 @@ describe("CHECK_ANSWER", () => {
     const state = buildState({ phase: "completed" });
     const next = playerReducer(state, {
       effects: [],
-      result: { feedback: null, isCorrect: true },
+      result: { correctAnswer: null, feedback: null, isCorrect: true },
       stepId: "step-1",
       type: "CHECK_ANSWER",
     });
@@ -522,7 +522,7 @@ describe("RESTART", () => {
         s1: {
           answer: multipleChoiceAnswer,
           effects: [],
-          result: { feedback: null, isCorrect: true },
+          result: { correctAnswer: null, feedback: null, isCorrect: true },
           stepId: "s1",
         },
       },
@@ -544,7 +544,7 @@ describe("RESTART", () => {
         s1: {
           answer: multipleChoiceAnswer,
           effects: [{ dimension: "Quality", impact: "positive" }],
-          result: { feedback: null, isCorrect: true },
+          result: { correctAnswer: null, feedback: null, isCorrect: true },
           stepId: "s1",
         },
       },
@@ -666,7 +666,7 @@ describe("timing", () => {
     vi.setSystemTime(new Date("2026-03-15T14:30:05"));
     const next = playerReducer(state, {
       effects: [],
-      result: { feedback: "Correct!", isCorrect: true },
+      result: { correctAnswer: null, feedback: "Correct!", isCorrect: true },
       stepId: "mc-1",
       type: "CHECK_ANSWER",
     });
@@ -773,7 +773,7 @@ describe("edge cases", () => {
         { dimension: "Speed", impact: "negative" },
         { dimension: "Budget", impact: "neutral" },
       ],
-      result: { feedback: null, isCorrect: true },
+      result: { correctAnswer: null, feedback: null, isCorrect: true },
       stepId: "step-1",
       type: "CHECK_ANSWER",
     });
@@ -790,14 +790,14 @@ describe("edge cases", () => {
     const state = buildState({ selectedAnswers: { "mc-1": answer }, steps: [step] });
     const next = playerReducer(state, {
       effects: [{ dimension: "Quality", impact: "positive" }],
-      result: { feedback: "Good!", isCorrect: true },
+      result: { correctAnswer: null, feedback: "Good!", isCorrect: true },
       stepId: "mc-1",
       type: "CHECK_ANSWER",
     });
     const expected: StepResult = {
       answer,
       effects: [{ dimension: "Quality", impact: "positive" }],
-      result: { feedback: "Good!", isCorrect: true },
+      result: { correctAnswer: null, feedback: "Good!", isCorrect: true },
       stepId: "mc-1",
     };
     expect(next.results["mc-1"]).toEqual(expected);

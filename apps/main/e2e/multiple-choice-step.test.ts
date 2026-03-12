@@ -103,7 +103,7 @@ test.describe("Core Variant", () => {
     ).toBeVisible();
   });
 
-  test("correct answer shows inline Correct! feedback with question visible", async ({ page }) => {
+  test("correct answer shows feedback screen with user's answer highlighted", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const { url } = await createMultipleChoiceActivity({
       steps: [
@@ -111,8 +111,12 @@ test.describe("Core Variant", () => {
           content: {
             kind: "core",
             options: [
-              { feedback: `Wrong answer ${uniqueId}`, isCorrect: false, text: "Option A" },
-              { feedback: `Well done ${uniqueId}`, isCorrect: true, text: "Option B" },
+              {
+                feedback: `Wrong answer ${uniqueId}`,
+                isCorrect: false,
+                text: `Option A ${uniqueId}`,
+              },
+              { feedback: `Well done ${uniqueId}`, isCorrect: true, text: `Option B ${uniqueId}` },
             ],
             question: `Test question ${uniqueId}`,
           },
@@ -124,22 +128,22 @@ test.describe("Core Variant", () => {
     await page.goto(url);
     await page.waitForLoadState("networkidle");
 
-    await page.getByRole("radio", { name: /option b/i }).click();
+    await page.getByRole("radio", { name: new RegExp(`Option B ${uniqueId}`, "i") }).click();
     await page.getByRole("button", { name: /check/i }).click();
 
-    // Inline feedback visible
-    await expect(page.getByText(/correct!/i)).toBeVisible();
+    // Feedback screen shows the user's answer and feedback message
+    await expect(page.getByText(/your answer:/i)).toBeVisible();
+    await expect(page.getByText(new RegExp(`Option B ${uniqueId}`))).toBeVisible();
     await expect(page.getByText(new RegExp(`Well done ${uniqueId}`))).toBeVisible();
 
-    // Question and options remain visible
-    await expect(page.getByText(new RegExp(`Test question ${uniqueId}`))).toBeVisible();
-    await expect(page.getByRole("radio", { name: /option a/i })).toBeVisible();
-    await expect(page.getByRole("radio", { name: /option b/i })).toBeVisible();
+    // No "Correct answer:" line when the user got it right
+    await expect(page.getByText(/correct answer:/i)).not.toBeVisible();
+
+    // Question and options are NOT visible (replaced by feedback screen)
+    await expect(page.getByText(new RegExp(`Test question ${uniqueId}`))).not.toBeVisible();
   });
 
-  test("incorrect answer shows inline Not quite feedback with question visible", async ({
-    page,
-  }) => {
+  test("incorrect answer shows feedback screen with user and correct answers", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const { url } = await createMultipleChoiceActivity({
       steps: [
@@ -147,8 +151,8 @@ test.describe("Core Variant", () => {
           content: {
             kind: "core",
             options: [
-              { feedback: `Nope ${uniqueId}`, isCorrect: false, text: "Wrong choice" },
-              { feedback: "Good job", isCorrect: true, text: "Right choice" },
+              { feedback: `Nope ${uniqueId}`, isCorrect: false, text: `Wrong choice ${uniqueId}` },
+              { feedback: "Good job", isCorrect: true, text: `Right choice ${uniqueId}` },
             ],
             question: `Test question ${uniqueId}`,
           },
@@ -160,17 +164,17 @@ test.describe("Core Variant", () => {
     await page.goto(url);
     await page.waitForLoadState("networkidle");
 
-    await page.getByRole("radio", { name: /wrong choice/i }).click();
+    await page.getByRole("radio", { name: new RegExp(`Wrong choice ${uniqueId}`, "i") }).click();
     await page.getByRole("button", { name: /check/i }).click();
 
-    // Inline feedback visible
-    await expect(page.getByText(/not quite/i)).toBeVisible();
+    // Feedback screen shows answer lines and feedback message
+    await expect(page.getByText(/your answer:/i)).toBeVisible();
     await expect(page.getByText(new RegExp(`Nope ${uniqueId}`))).toBeVisible();
+    await expect(page.getByText(new RegExp(`Wrong choice ${uniqueId}`))).toBeVisible();
+    await expect(page.getByText(new RegExp(`Right choice ${uniqueId}`))).toBeVisible();
 
-    // Question and options remain visible
-    await expect(page.getByText(new RegExp(`Test question ${uniqueId}`))).toBeVisible();
-    await expect(page.getByRole("radio", { name: /wrong choice/i })).toBeVisible();
-    await expect(page.getByRole("radio", { name: /right choice/i })).toBeVisible();
+    // Question and options are NOT visible (replaced by feedback screen)
+    await expect(page.getByText(new RegExp(`Test question ${uniqueId}`))).not.toBeVisible();
   });
 
   test("renders without question when omitted", async ({ page }) => {
@@ -878,8 +882,12 @@ test.describe("Interaction Mechanics", () => {
     await page.getByRole("radio", { name: /answer a/i }).click();
     await page.keyboard.press("Enter");
 
-    await expect(page.getByText(/correct!/i)).toBeVisible();
+    // Feedback screen appears with answer and feedback
+    await expect(page.getByText(/your answer:/i)).toBeVisible();
     await expect(page.getByText(new RegExp(`Feedback ${uniqueId}`))).toBeVisible();
+
+    // Question no longer visible
+    await expect(page.getByText(new RegExp(`Enter key test ${uniqueId}`))).not.toBeVisible();
   });
 
   test("number key shortcuts select corresponding option", async ({ page }) => {
@@ -909,9 +917,12 @@ test.describe("Interaction Mechanics", () => {
     // Check button should now be enabled
     await expect(page.getByRole("button", { name: /check/i })).toBeEnabled();
 
-    // Verify pressing Enter submits and shows feedback (correct or incorrect)
+    // Verify pressing Enter submits and shows feedback screen
     await page.keyboard.press("Enter");
     await expect(page.getByText(new RegExp(`Feedback [AB] ${uniqueId}`))).toBeVisible();
+
+    // Question no longer visible (feedback screen)
+    await expect(page.getByText(new RegExp(`Shortcut test ${uniqueId}`))).not.toBeVisible();
   });
 
   test("changing selection before checking updates the highlighted option", async ({ page }) => {
@@ -957,7 +968,7 @@ test.describe("Interaction Mechanics", () => {
     );
   });
 
-  test("options are disabled after checking", async ({ page }) => {
+  test("feedback screen replaces step after checking", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const { url } = await createMultipleChoiceActivity({
       steps: [
@@ -981,18 +992,19 @@ test.describe("Interaction Mechanics", () => {
     await page.getByRole("radio", { name: new RegExp(`Opt A ${uniqueId}`, "i") }).click();
     await page.getByRole("button", { name: /check/i }).click();
 
-    await expect(page.getByText(/correct!/i)).toBeVisible();
+    // Feedback screen replaces the step
+    await expect(page.getByText(/your answer:/i)).toBeVisible();
 
-    // Options should be disabled
+    // Options are not visible (feedback screen replaces the step)
     await expect(
       page.getByRole("radio", { name: new RegExp(`Opt A ${uniqueId}`, "i") }),
-    ).toBeDisabled();
+    ).not.toBeVisible();
     await expect(
       page.getByRole("radio", { name: new RegExp(`Opt B ${uniqueId}`, "i") }),
-    ).toBeDisabled();
+    ).not.toBeVisible();
   });
 
-  test("correct option highlighted when user answers incorrectly", async ({ page }) => {
+  test("feedback screen shows both answers when user answers incorrectly", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const { url } = await createMultipleChoiceActivity({
       steps: [
@@ -1017,15 +1029,11 @@ test.describe("Interaction Mechanics", () => {
     await page.getByRole("radio", { name: new RegExp(`Wrong opt ${uniqueId}`, "i") }).click();
     await page.getByRole("button", { name: /check/i }).click();
 
-    await expect(page.getByText(/not quite/i)).toBeVisible();
-
-    // Both options should be disabled and visible
-    await expect(
-      page.getByRole("radio", { name: new RegExp(`Wrong opt ${uniqueId}`, "i") }),
-    ).toBeDisabled();
-    await expect(
-      page.getByRole("radio", { name: new RegExp(`Right opt ${uniqueId}`, "i") }),
-    ).toBeDisabled();
+    // Feedback screen shows both answers
+    await expect(page.getByText(/your answer:/i)).toBeVisible();
+    await expect(page.getByText(new RegExp(`Wrong opt ${uniqueId}`))).toBeVisible();
+    await expect(page.getByText(/correct answer:/i)).toBeVisible();
+    await expect(page.getByText(new RegExp(`Right opt ${uniqueId}`))).toBeVisible();
   });
 
   test("challenge variant still shows feedback screen with dimension inventory", async ({
@@ -1075,7 +1083,9 @@ test.describe("Interaction Mechanics", () => {
     await expect(inventory.getByText(new RegExp(dim))).toBeVisible();
   });
 
-  test("full flow: select -> check -> continue -> completion screen", async ({ page }) => {
+  test("full flow: select -> check -> feedback screen -> continue -> completion", async ({
+    page,
+  }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const { url } = await createMultipleChoiceActivity({
       steps: [
@@ -1099,10 +1109,11 @@ test.describe("Interaction Mechanics", () => {
     // Select answer
     await page.getByRole("radio", { name: /right/i }).click();
 
-    // Check - question stays visible with inline feedback
+    // Check - feedback screen replaces question
     await page.getByRole("button", { name: /check/i }).click();
-    await expect(page.getByText(/correct!/i)).toBeVisible();
-    await expect(page.getByText(new RegExp(`Full flow test ${uniqueId}`))).toBeVisible();
+    await expect(page.getByText(/your answer:/i)).toBeVisible();
+    await expect(page.getByText(new RegExp(`Good ${uniqueId}`))).toBeVisible();
+    await expect(page.getByText(new RegExp(`Full flow test ${uniqueId}`))).not.toBeVisible();
 
     // Continue
     await page.getByRole("button", { name: /continue/i }).click();

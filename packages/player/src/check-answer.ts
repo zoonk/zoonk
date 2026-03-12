@@ -7,6 +7,7 @@ import {
 } from "@zoonk/core/steps/content-contract";
 
 export type AnswerResult = {
+  correctAnswer: string | null;
   isCorrect: boolean;
   feedback: string | null;
 };
@@ -18,16 +19,17 @@ export function checkMultipleChoiceAnswer(
   if (content.kind === "challenge") {
     const option = content.options[selectedIndex];
     if (!option) {
-      return { feedback: null, isCorrect: false };
+      return { correctAnswer: null, feedback: null, isCorrect: false };
     }
-    return { feedback: option.consequence, isCorrect: true };
+    return { correctAnswer: null, feedback: option.consequence, isCorrect: true };
   }
 
+  const correctAnswer = content.options.find((opt) => opt.isCorrect)?.text ?? null;
   const option = content.options[selectedIndex];
   if (!option) {
-    return { feedback: null, isCorrect: false };
+    return { correctAnswer, feedback: null, isCorrect: false };
   }
-  return { feedback: option.feedback, isCorrect: option.isCorrect };
+  return { correctAnswer, feedback: option.feedback, isCorrect: option.isCorrect };
 }
 
 export function checkFillBlankAnswer(
@@ -40,7 +42,7 @@ export function checkFillBlankAnswer(
     content.answers.every(
       (answer, index) => answer.toLowerCase() === (userAnswers[index] ?? "").trim().toLowerCase(),
     );
-  return { feedback: content.feedback, isCorrect };
+  return { correctAnswer: null, feedback: content.feedback, isCorrect };
 }
 
 export function checkSingleMatchPair(
@@ -63,7 +65,7 @@ export function checkMatchColumnsAnswer(
       userPairs.some((userPair) => userPair.left === pair.left && userPair.right === pair.right),
     );
 
-  return { feedback: null, isCorrect: allPairsCorrect && mistakes === 0 };
+  return { correctAnswer: null, feedback: null, isCorrect: allPairsCorrect && mistakes === 0 };
 }
 
 export function checkSortOrderAnswer(
@@ -72,7 +74,7 @@ export function checkSortOrderAnswer(
 ): AnswerResult {
   const isSameLength = content.items.length === userOrder.length;
   const isCorrect = isSameLength && content.items.every((item, index) => item === userOrder[index]);
-  return { feedback: content.feedback, isCorrect };
+  return { correctAnswer: null, feedback: content.feedback, isCorrect };
 }
 
 export function checkSelectImageAnswer(
@@ -81,17 +83,17 @@ export function checkSelectImageAnswer(
 ): AnswerResult {
   const option = content.options[selectedIndex];
   if (!option) {
-    return { feedback: null, isCorrect: false };
+    return { correctAnswer: null, feedback: null, isCorrect: false };
   }
-  return { feedback: option.feedback, isCorrect: option.isCorrect };
+  return { correctAnswer: null, feedback: option.feedback, isCorrect: option.isCorrect };
 }
 
 export function checkVocabularyAnswer(correctWordId: string, selectedWordId: string): AnswerResult {
-  return { feedback: null, isCorrect: correctWordId === selectedWordId };
+  return { correctAnswer: null, feedback: null, isCorrect: correctWordId === selectedWordId };
 }
 
 export function checkArrangeWordsAnswer(correctWords: string[], userWords: string[]): AnswerResult {
   const isSameLength = correctWords.length === userWords.length;
   const isCorrect = isSameLength && correctWords.every((word, index) => word === userWords[index]);
-  return { feedback: null, isCorrect };
+  return { correctAnswer: null, feedback: null, isCorrect };
 }
