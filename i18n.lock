@@ -598,13 +598,11 @@ checksums:
     Creating%20content%20with%20AI%20requires%20an%20active%20subscription./singular: 7a1e2747c5271495f525ae7360db6fe0
     Review%20everything%20you%20learned/singular: 43765847b62600b35e41399405799505
     Listening/singular: 9e680c44cd88a178b953349ed8881ef2
-    Experience%20when%20to%20apply%20%7Btopic%7D%20through%20a%20real-world%20dialogue%20scenario./singular: d143d122b526618096d637288c66f50a
     Examples/singular: 9dacb7c56bc894e4bcad39f41265e3a0
     Build%20your%20vocabulary/singular: 577b45f6453f5461f7078c757d96beec
-    Practice%20%7Btopic%7D%20in%20context%20through%20a%20dialogue-based%20story%20set%20in%20real-world%20situations./singular: e1b3079ec8c6a2c89d20e5c7c48bfc59
-    Story/singular: fabac3f62af801d429e2cd7115bf14c9
     Build%20your%20%7Btopic%7D%20vocabulary%20with%20new%20words%2C%20translations%2C%20and%20pronunciation./singular: 2c0f84dadf5fcbfb5842260046bfa956
     Review%20everything%20you%20learned%20about%20%7Btopic%7D%20with%20a%20comprehensive%20quiz./singular: 8acf9006cabdcbaac217c7565943f068
+    Practice%20%7Btopic%7D%20in%20context%20through%20a%20dialogue-based%20scenario%20set%20in%20real-world%20situations./singular: 88083b8e3a748d956ab28a8bbaea5a87
     Make%20decisions%20with%20real%20trade-offs/singular: ac5d6c3a0bbcc1ca93344dfd5b79f197
     Apply%20the%20topic%20in%20a%20real%20scenario/singular: 65a73c601b8c332c525ccc19f96ba23d
     Explanation/singular: f6b595df4ffb1a5b0cbbe1dda5993522
@@ -614,8 +612,8 @@ checksums:
     Discover%20why%20%7Btopic%7D%20matters%20%E2%80%94%20its%20origins%2C%20the%20problems%20it%20solved%2C%20and%20why%20it's%20important%20today./singular: 4ab5d214b2548bd9399cbc3a8eef6284
     Test%20your%20knowledge/singular: 34eff98731fb7afc50a9db11237766d3
     Practice%20grammar%20rules/singular: 569fcc41ef5320c1f9f8d2c9b465433b
+    Practice/singular: ea10afa88a3687e6c40d1bfb3e0f4f20
     Practice%20reading%20comprehension/singular: d930ea447a24f0084a9ec9a0fe0c06bb
-    See%20how%20it%20works%20in%20practice/singular: 150fd4dfc4af732e6821c63d76b0987a
     Vocabulary/singular: 2c8127af4c194fa05463e82d5e414c62
     "%7Blesson%7D%20%7Bactivity%7D/singular": d959fed1ee77dca493e8cf0a3b3129c0
     Reading/singular: 9d93f1dff4a01a9e1566f23b401b8868
@@ -630,8 +628,10 @@ checksums:
     Practice%20%7Btopic%7D%20grammar%20rules%20with%20exercises%20designed%20to%20help%20you%20remember%20and%20apply%20them./singular: 107adae09992e8b4deb051afa38da3bd
     "%7Bactivity%7D%20-%20%7Blesson%7D/singular": 0aad8d82851f799d79c052a0f2b90d67
     Practice%20in%20a%20real-world%20dialogue/singular: 35a3583ab576eb0a857b1956c27ba00a
+    See%20it%20in%20action/singular: 36c8977bd205b79375a7fc5cd1454cf3
     Background/singular: 0ceaed10d99ed4ad83cb0934ab970174
     Improve%20your%20%7Btopic%7D%20reading%20comprehension%20by%20translating%20sentences%20and%20passages./singular: 60baac4222f76009cc1eb1b6065b403b
+    Apply%20%7Btopic%7D%20through%20a%20real-world%20dialogue%20scenario./singular: e170c3bd82d42f0972d0f447f10379f0
     "%7Bcategory%7D%20Courses/singular": f82680a650c487992e1025b66f324d4c
     Math/singular: 0a604ffa5ef57408918fe98ef05eb05a
     Explore%20all%20%7Bcategory%7D%20courses/singular: b1f2775c67b4a61b3d92b4345b8b852e

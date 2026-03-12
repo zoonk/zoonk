@@ -2199,11 +2199,6 @@ msgid "Listening"
 msgstr "Listening"
 
 #: src/lib/activities.ts
-msgctxt "3fwFEk"
-msgid "Experience when to apply {topic} through a real-world dialogue scenario."
-msgstr "Experience when to apply {topic} through a real-world dialogue scenario."
-
-#: src/lib/activities.ts
 msgctxt "3GLH+d"
 msgid "Examples"
 msgstr "Examples"
@@ -2214,16 +2209,6 @@ msgid "Build your vocabulary"
 msgstr "Build your vocabulary"
 
 #: src/lib/activities.ts
-msgctxt "BB51/R"
-msgid "Practice {topic} in context through a dialogue-based story set in real-world situations."
-msgstr "Practice {topic} in context through a dialogue-based story set in real-world situations."
-
-#: src/lib/activities.ts
-msgctxt "Bfq+7w"
-msgid "Story"
-msgstr "Story"
-
-#: src/lib/activities.ts
 msgctxt "Bpkt6m"
 msgid "Build your {topic} vocabulary with new words, translations, and pronunciation."
 msgstr "Build your {topic} vocabulary with new words, translations, and pronunciation."
@@ -2232,6 +2217,11 @@ msgstr "Build your {topic} vocabulary with new words, translations, and pronunci
 msgctxt "bzFQEy"
 msgid "Review everything you learned about {topic} with a comprehensive quiz."
 msgstr "Review everything you learned about {topic} with a comprehensive quiz."
+
+#: src/lib/activities.ts
+msgctxt "c1T097"
+msgid "Practice {topic} in context through a dialogue-based scenario set in real-world situations."
+msgstr "Practice {topic} in context through a dialogue-based scenario set in real-world situations."
 
 #: src/lib/activities.ts
 msgctxt "CaEilC"
@@ -2279,14 +2269,14 @@ msgid "Practice grammar rules"
 msgstr "Practice grammar rules"
 
 #: src/lib/activities.ts
+msgctxt "KV+O0y"
+msgid "Practice"
+msgstr "Practice"
+
+#: src/lib/activities.ts
 msgctxt "liTyj7"
 msgid "Practice reading comprehension"
 msgstr "Practice reading comprehension"
-
-#: src/lib/activities.ts
-msgctxt "lLKXNA"
-msgid "See how it works in practice"
-msgstr "See how it works in practice"
 
 #: src/lib/activities.ts
 msgctxt "lqtP+R"
@@ -2359,6 +2349,11 @@ msgid "Practice in a real-world dialogue"
 msgstr "Practice in a real-world dialogue"
 
 #: src/lib/activities.ts
+msgctxt "X3MpW7"
+msgid "See it in action"
+msgstr "See it in action"
+
+#: src/lib/activities.ts
 msgctxt "XQZA8e"
 msgid "Background"
 msgstr "Background"
@@ -2367,6 +2362,11 @@ msgstr "Background"
 msgctxt "XzxpBZ"
 msgid "Improve your {topic} reading comprehension by translating sentences and passages."
 msgstr "Improve your {topic} reading comprehension by translating sentences and passages."
+
+#: src/lib/activities.ts
+msgctxt "YfgUQS"
+msgid "Apply {topic} through a real-world dialogue scenario."
+msgstr "Apply {topic} through a real-world dialogue scenario."
 
 #: src/lib/categories/category.ts
 msgctxt "4HKnmB"

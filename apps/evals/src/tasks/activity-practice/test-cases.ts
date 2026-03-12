@@ -1,11 +1,11 @@
 const SHARED_EXPECTATIONS = `
 EVALUATION CRITERIA:
 
-1. STORY AUTHENTICITY: Dialogue must be pure conversation between colleagues with no narrator text, no character name prefixes (like "Sarah:"), and no action descriptions. The learner should feel immersed in a real workplace conversation.
+1. PRACTICE AUTHENTICITY: Dialogue must be pure conversation between colleagues with no narrator text, no character name prefixes (like "Sarah:"), and no action descriptions. The learner should feel immersed in a real workplace conversation.
 
 2. EDUCATIONAL ALIGNMENT: Every decision point must require applying lesson concepts through reasoning, not memorizing facts. Wrong options should be plausible but flawed for specific conceptual reasons.
 
-3. PLOT COHERENCE: Steps must flow naturally as a continuous story where each step builds from the previous dialogue. Near the end (within the final 2-3 steps), the story should introduce a fun, surprising twist that reframes the narrative — the best twists subvert an assumption the story has been building. The final step must resolve the problem AND reinforce the main learning takeaway. Do NOT penalize for exact twist placement (e.g., 2nd-to-last vs 3rd-to-last) as long as the narrative flow is good.
+3. PLOT COHERENCE: Steps must flow naturally as a continuous practice where each step builds from the previous dialogue. Near the end (within the final 2-3 steps), the practice should introduce a fun, surprising twist that reframes the narrative — the best twists subvert an assumption the practice has been building. The final step must resolve the problem AND reinforce the main learning takeaway. Do NOT penalize for exact twist placement (e.g., 2nd-to-last vs 3rd-to-last) as long as the narrative flow is good.
 
 4. FORMAT COMPLIANCE: Verify these constraints:
    - context: Maximum 500 characters of pure dialogue
@@ -18,19 +18,19 @@ EVALUATION CRITERIA:
 
 6. FEEDBACK QUALITY: Each option must have feedback explaining WHY it's right (with insight) or WHY it's wrong (and what would be correct). Feedback should help learners understand the reasoning, not just state correctness.
 
-7. STEP COUNT: Story must have between 7 and 20 steps. Let problem complexity dictate length.
+7. STEP COUNT: Practice must have between 7 and 20 steps. Let problem complexity dictate length.
 
 8. DISTRACTOR QUALITY: All wrong options must be plausible choices someone might consider. Penalize obviously silly or absurd options that no reasonable person would choose.
 
 ANTI-CHECKLIST GUIDANCE (CRITICAL):
 - Do NOT penalize for specific plot choices, character names, or scenario settings you might expect
-- Do NOT require specific steps like "investigation" or "resolution" by name - focus on whether the story has good flow
-- Do NOT check against an imagined "ideal" story structure
+- Do NOT require specific steps like "investigation" or "resolution" by name - focus on whether the practice has good flow
+- Do NOT check against an imagined "ideal" practice structure
 - Do NOT penalize for exact twist placement — if the twist occurs anywhere in the final third of the story, that's fine
 - Do NOT penalize for output being wrapped in {"steps": [...]} instead of a raw array
 - Do NOT penalize option text that is 55 characters or fewer — only penalize options clearly exceeding 55 characters
 - ONLY penalize for: format violations (option text over 55 chars, context over 500 chars, etc.), narrator/description text in dialogue, decisions that test memorization instead of reasoning, complete absence of any twist or surprise, poor distractor quality, or factually incorrect lesson application
-- Different valid story approaches exist - assess the quality of what IS provided
+- Different valid practice approaches exist - assess the quality of what IS provided
 `;
 
 export const TEST_CASES = [

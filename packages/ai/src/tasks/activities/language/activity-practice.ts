@@ -4,9 +4,10 @@ import { Output, generateText } from "ai";
 import { z } from "zod";
 import { ACTIVITY_OPTIONS_COUNT, formatConceptLines } from "../config";
 import { getLanguagePromptContext } from "./_utils/language-prompt-context";
-import systemPrompt from "./activity-story.prompt.md";
+import systemPrompt from "./activity-practice.prompt.md";
 
-const DEFAULT_MODEL = process.env.AI_MODEL_ACTIVITY_STORY_LANGUAGE ?? "anthropic/claude-opus-4.5";
+const DEFAULT_MODEL =
+  process.env.AI_MODEL_ACTIVITY_LANGUAGE_PRACTICE ?? "anthropic/claude-opus-4.5";
 
 const FALLBACK_MODELS = [
   "openai/gpt-5.2",
@@ -37,9 +38,9 @@ const schema = z.object({
   ),
 });
 
-export type ActivityStoryLanguageSchema = z.infer<typeof schema>;
+export type ActivityPracticeLanguageSchema = z.infer<typeof schema>;
 
-export type ActivityStoryLanguageParams = {
+export type ActivityPracticeLanguageParams = {
   chapterTitle: string;
   concepts?: string[];
   lessonDescription: string;
@@ -52,7 +53,7 @@ export type ActivityStoryLanguageParams = {
   useFallback?: boolean;
 };
 
-export async function generateActivityStoryLanguage({
+export async function generateActivityPracticeLanguage({
   chapterTitle,
   concepts = [],
   lessonDescription,
@@ -63,7 +64,7 @@ export async function generateActivityStoryLanguage({
   targetLanguage,
   userLanguage,
   useFallback = true,
-}: ActivityStoryLanguageParams) {
+}: ActivityPracticeLanguageParams) {
   const promptContext = getLanguagePromptContext({ targetLanguage, userLanguage });
 
   const userPrompt = `TARGET_LANGUAGE: ${promptContext.targetLanguageName}
@@ -73,7 +74,7 @@ LESSON_TITLE: ${lessonTitle}
 LESSON_DESCRIPTION: ${lessonDescription}
 ${formatConceptLines(concepts, neighboringConcepts)}
 
-Generate an immersive dialogue-driven story activity for this language lesson. Create a realistic everyday scenario where learners practice language production in situations they'd face in a foreign country.`;
+Generate an immersive dialogue-driven practice activity for this language lesson. Create a realistic everyday scenario where learners practice language production in situations they'd face in a foreign country.`;
 
   const providerOptions = buildProviderOptions({
     fallbackModels: FALLBACK_MODELS,

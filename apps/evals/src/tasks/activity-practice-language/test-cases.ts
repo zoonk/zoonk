@@ -1,8 +1,8 @@
 const SHARED_EXPECTATIONS = `
 EVALUATION CRITERIA:
 
-1. STRUCTURE - IMMERSIVE STORY FORMAT (CRITICAL):
-   The activity MUST follow the immersive story structure:
+1. STRUCTURE - IMMERSIVE PRACTICE FORMAT (CRITICAL):
+   The activity MUST follow the immersive practice structure:
    - A clear scenario description in the NATIVE language
    - 5-10 dialogue steps with natural progression
    - Each step has: context (TARGET), contextTranslation (NATIVE), contextRomanization, 4 options
@@ -47,13 +47,13 @@ EVALUATION CRITERIA:
    - Penalize SEVERELY if romanization is missing for non-Roman scripts
    - Penalize SEVERELY if romanization contains text for Roman scripts
 
-7. STORY ARC AND PROGRESSION:
+7. PRACTICE ARC AND PROGRESSION:
    - Steps should follow a natural conversation flow
-   - Story should have: opening, building, resolution, closing
-   - A fun twist or complication adds value (e.g., a surprising reveal, role reversal, misunderstanding payoff, item unavailable). Do NOT penalize for absence, but reward stories that include one
+   - Practice should have: opening, building, resolution, closing
+   - A fun twist or complication adds value (e.g., a surprising reveal, role reversal, misunderstanding payoff, item unavailable). Do NOT penalize for absence, but reward practices that include one
    - Each step should logically follow from the previous
    - The native speaker should acknowledge the learner's previous choice
-   - Story continuity issues (e.g., order forgotten between steps) are MINOR — only penalize severely if the issue makes the dialogue incomprehensible for language learning
+   - Practice continuity issues (e.g., order forgotten between steps) are MINOR — only penalize severely if the issue makes the dialogue incomprehensible for language learning
    Penalize if steps feel disconnected or conversation doesn't flow naturally.
 
 8. LINGUISTIC ACCURACY (CRITICAL):

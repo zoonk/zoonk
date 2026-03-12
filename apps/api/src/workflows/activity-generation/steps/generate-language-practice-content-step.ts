@@ -3,9 +3,9 @@ import {
   getAIResultErrorReason,
 } from "@/workflows/_shared/stream-status";
 import {
-  type ActivityStoryLanguageSchema,
-  generateActivityStoryLanguage,
-} from "@zoonk/ai/tasks/activities/language/story";
+  type ActivityPracticeLanguageSchema,
+  generateActivityPracticeLanguage,
+} from "@zoonk/ai/tasks/activities/language/practice";
 import { assertStepContent } from "@zoonk/core/steps/content-contract";
 import { prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
@@ -17,7 +17,7 @@ import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
 import { setActivityAsRunningStep } from "./set-activity-as-running-step";
 
-const minimumLanguageStoryContentSchema = z.object({
+const minimumLanguagePracticeContentSchema = z.object({
   scenario: z.string().trim().min(1),
   steps: z
     .array(
@@ -40,11 +40,14 @@ const minimumLanguageStoryContentSchema = z.object({
     .min(1),
 });
 
-function hasMinimumLanguageStoryContent(data: ActivityStoryLanguageSchema): boolean {
-  return minimumLanguageStoryContentSchema.safeParse(data).success;
+function hasMinimumLanguagePracticeContent(data: ActivityPracticeLanguageSchema): boolean {
+  return minimumLanguagePracticeContentSchema.safeParse(data).success;
 }
 
-function buildLanguageStorySteps(activityId: bigint | number, data: ActivityStoryLanguageSchema) {
+function buildLanguagePracticeSteps(
+  activityId: bigint | number,
+  data: ActivityPracticeLanguageSchema,
+) {
   const scenarioStep = {
     activityId,
     content: assertStepContent("static", {
@@ -57,7 +60,7 @@ function buildLanguageStorySteps(activityId: bigint | number, data: ActivityStor
     position: 0,
   };
 
-  const storySteps = data.steps.map((step, index) => ({
+  const practiceSteps = data.steps.map((step, index) => ({
     activityId,
     content: assertStepContent("multipleChoice", {
       context: step.context,
@@ -76,29 +79,29 @@ function buildLanguageStorySteps(activityId: bigint | number, data: ActivityStor
     position: index + 1,
   }));
 
-  return [scenarioStep, ...storySteps];
+  return [scenarioStep, ...practiceSteps];
 }
 
-async function handleLanguageStoryError(
+async function handleLanguagePracticeError(
   activityId: bigint | number,
   reason: WorkflowErrorReason,
 ): Promise<void> {
-  await streamError({ reason, step: "generateLanguageStoryContent" });
+  await streamError({ reason, step: "generateLanguagePracticeContent" });
   await handleActivityFailureStep({ activityId });
 }
 
-async function saveLanguageStorySteps(
+async function saveLanguagePracticeSteps(
   activityId: bigint | number,
-  data: ActivityStoryLanguageSchema,
+  data: ActivityPracticeLanguageSchema,
 ): Promise<{ error: Error | null }> {
   return safeAsync(() =>
     prisma.step.createMany({
-      data: buildLanguageStorySteps(activityId, data),
+      data: buildLanguagePracticeSteps(activityId, data),
     }),
   );
 }
 
-export async function generateLanguageStoryContentStep(
+export async function generateLanguagePracticeContentStep(
   activities: LessonActivity[],
   workflowRunId: string,
   concepts: string[] = [],
@@ -106,7 +109,7 @@ export async function generateLanguageStoryContentStep(
 ): Promise<{ generated: boolean }> {
   "use step";
 
-  const activity = findActivityByKind(activities, "languageStory");
+  const activity = findActivityByKind(activities, "languagePractice");
 
   if (!activity) {
     return { generated: false };
@@ -120,12 +123,12 @@ export async function generateLanguageStoryContentStep(
     await prisma.step.deleteMany({ where: { activityId: activity.id } });
   }
 
-  await streamStatus({ status: "started", step: "generateLanguageStoryContent" });
+  await streamStatus({ status: "started", step: "generateLanguagePracticeContent" });
   await setActivityAsRunningStep({ activityId: activity.id, workflowRunId });
 
-  const { data: result, error }: SafeReturn<{ data: ActivityStoryLanguageSchema }> =
+  const { data: result, error }: SafeReturn<{ data: ActivityPracticeLanguageSchema }> =
     await safeAsync(() =>
-      generateActivityStoryLanguage({
+      generateActivityPracticeLanguage({
         chapterTitle: activity.lesson.chapter.title,
         concepts,
         lessonDescription: activity.lesson.description ?? "",
@@ -137,19 +140,19 @@ export async function generateLanguageStoryContentStep(
       }),
     );
 
-  if (error || !result || !hasMinimumLanguageStoryContent(result.data)) {
+  if (error || !result || !hasMinimumLanguagePracticeContent(result.data)) {
     const reason = getAIResultErrorReason(error, result);
-    await handleLanguageStoryError(activity.id, reason);
+    await handleLanguagePracticeError(activity.id, reason);
     return { generated: false };
   }
 
-  const { error: saveError } = await saveLanguageStorySteps(activity.id, result.data);
+  const { error: saveError } = await saveLanguagePracticeSteps(activity.id, result.data);
 
   if (saveError) {
-    await handleLanguageStoryError(activity.id, "dbSaveFailed");
+    await handleLanguagePracticeError(activity.id, "dbSaveFailed");
     return { generated: false };
   }
 
-  await streamStatus({ status: "completed", step: "generateLanguageStoryContent" });
+  await streamStatus({ status: "completed", step: "generateLanguagePracticeContent" });
   return { generated: true };
 }

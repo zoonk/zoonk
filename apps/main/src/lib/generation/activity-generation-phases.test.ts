@@ -63,8 +63,8 @@ describe(getPhaseOrder, () => {
     expect(getPhaseOrder("grammar")).toEqual(["gettingStarted", "writingContent", "finishing"]);
   });
 
-  test("uses language story order without visual or audio phases", () => {
-    expect(getPhaseOrder("languageStory")).toEqual([
+  test("uses language practice order without visual or audio phases", () => {
+    expect(getPhaseOrder("languagePractice")).toEqual([
       "gettingStarted",
       "writingContent",
       "finishing",
@@ -127,23 +127,23 @@ describe("grammar phase status", () => {
   });
 });
 
-describe("language story phase status", () => {
-  test("activates writingContent for language story generation", () => {
+describe("language practice phase status", () => {
+  test("activates writingContent for language practice generation", () => {
     const status = getPhaseStatus(
       "writingContent",
       ["setActivityAsRunning"],
-      "generateLanguageStoryContent",
-      "languageStory",
+      "generateLanguagePracticeContent",
+      "languagePractice",
     );
 
     expect(status).toBe("active");
   });
 
-  test("calculates progress for language story flow", () => {
+  test("calculates progress for language practice flow", () => {
     const progress = calculateWeightedProgress(
-      ["setActivityAsRunning", "generateLanguageStoryContent"],
-      "setLanguageStoryAsCompleted",
-      "languageStory",
+      ["setActivityAsRunning", "generateLanguagePracticeContent"],
+      "setLanguagePracticeAsCompleted",
+      "languagePractice",
     );
 
     expect(progress).toBeGreaterThan(0);

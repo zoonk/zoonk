@@ -3,9 +3,9 @@ import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-o
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import { ACTIVITY_OPTIONS_COUNT } from "../config";
-import systemPrompt from "./activity-story.prompt.md";
+import systemPrompt from "./activity-practice.prompt.md";
 
-const DEFAULT_MODEL = process.env.AI_MODEL_ACTIVITY_STORY ?? "openai/gpt-5.2";
+const DEFAULT_MODEL = process.env.AI_MODEL_ACTIVITY_PRACTICE ?? "openai/gpt-5.2";
 
 const FALLBACK_MODELS = [
   "anthropic/claude-opus-4.5",
@@ -33,9 +33,9 @@ const schema = z.object({
   ),
 });
 
-export type ActivityStorySchema = z.infer<typeof schema>;
+export type ActivityPracticeSchema = z.infer<typeof schema>;
 
-export type ActivityStoryParams = {
+export type ActivityPracticeParams = {
   lessonTitle: string;
   lessonDescription: string;
   chapterTitle: string;
@@ -47,7 +47,7 @@ export type ActivityStoryParams = {
   reasoningEffort?: ReasoningEffort;
 };
 
-export async function generateActivityStory({
+export async function generateActivityPractice({
   lessonTitle,
   lessonDescription,
   chapterTitle,
@@ -57,7 +57,7 @@ export async function generateActivityStory({
   model = DEFAULT_MODEL,
   useFallback = true,
   reasoningEffort,
-}: ActivityStoryParams) {
+}: ActivityPracticeParams) {
   const formattedExplanationSteps = explanationSteps
     .map((step, index) => `${index + 1}. ${step.title}: ${step.text}`)
     .join("\n");

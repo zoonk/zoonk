@@ -31,9 +31,9 @@ export const ACTIVITY_STEPS = [
   "generateExplanationContent",
   "generateExamplesContent",
   "generateQuizContent",
-  "generateStoryContent",
+  "generatePracticeContent",
   "generateGrammarContent",
-  "generateLanguageStoryContent",
+  "generateLanguagePracticeContent",
   "generateSentences",
   "generateVisuals",
   "generateImages",
@@ -45,9 +45,9 @@ export const ACTIVITY_STEPS = [
   "setExamplesAsCompleted",
   "setExplanationAsCompleted",
   "setQuizAsCompleted",
-  "setStoryAsCompleted",
+  "setPracticeAsCompleted",
   "setGrammarAsCompleted",
-  "setLanguageStoryAsCompleted",
+  "setLanguagePracticeAsCompleted",
   "generateVocabularyContent",
   "saveVocabularyWords",
   "generateVocabularyPronunciation",
@@ -73,9 +73,9 @@ type ActivityCompletionStep =
   | "setExamplesAsCompleted"
   | "setExplanationAsCompleted"
   | "setQuizAsCompleted"
-  | "setStoryAsCompleted"
+  | "setPracticeAsCompleted"
   | "setGrammarAsCompleted"
-  | "setLanguageStoryAsCompleted"
+  | "setLanguagePracticeAsCompleted"
   | "setVocabularyAsCompleted"
   | "setReadingAsCompleted"
   | "setListeningAsCompleted";
@@ -87,11 +87,11 @@ const activityCompletionSteps: Partial<Record<string, ActivityCompletionStep>> =
   examples: "setExamplesAsCompleted",
   explanation: "setExplanationAsCompleted",
   grammar: "setGrammarAsCompleted",
-  languageStory: "setLanguageStoryAsCompleted",
+  languagePractice: "setLanguagePracticeAsCompleted",
   listening: "setListeningAsCompleted",
+  practice: "setPracticeAsCompleted",
   quiz: "setQuizAsCompleted",
   reading: "setReadingAsCompleted",
-  story: "setStoryAsCompleted",
   vocabulary: "setVocabularyAsCompleted",
 };
 

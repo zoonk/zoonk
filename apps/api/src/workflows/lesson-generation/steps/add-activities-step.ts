@@ -21,7 +21,7 @@ const LANGUAGE_ACTIVITY_KINDS: ActivityKind[] = [
   "grammar",
   "reading",
   "listening",
-  "languageStory",
+  "languagePractice",
   "review",
 ];
 
@@ -39,15 +39,15 @@ function getCoreActivities(concepts: string[]): ActivityEntry[] {
 
   const background: ActivityEntry = { description: null, kind: "background", title: null };
   const examples: ActivityEntry = { description: null, kind: "examples", title: null };
-  const story: ActivityEntry = { description: null, kind: "story", title: null };
+  const practice: ActivityEntry = { description: null, kind: "practice", title: null };
   const challenge: ActivityEntry = { description: null, kind: "challenge", title: null };
   const review: ActivityEntry = { description: null, kind: "review", title: null };
   const quiz: ActivityEntry = { description: null, kind: "quiz", title: null };
 
-  const minConceptsForTwoStories = 4;
+  const minConceptsForTwoPractices = 4;
 
-  if (concepts.length < minConceptsForTwoStories) {
-    return [background, ...allExplanations, story, examples, quiz, challenge, review];
+  if (concepts.length < minConceptsForTwoPractices) {
+    return [background, ...allExplanations, practice, examples, quiz, challenge, review];
   }
 
   const splitIndex = Math.floor(concepts.length / 2);
@@ -57,9 +57,9 @@ function getCoreActivities(concepts: string[]): ActivityEntry[] {
   return [
     background,
     ...firstGroup,
-    story,
+    practice,
     ...secondGroup,
-    story,
+    practice,
     examples,
     quiz,
     challenge,

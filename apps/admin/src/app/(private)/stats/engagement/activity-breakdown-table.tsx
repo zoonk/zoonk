@@ -15,12 +15,12 @@ const activityKindLabels: Record<string, string> = {
   examples: "Examples",
   explanation: "Explanation",
   grammar: "Grammar",
-  language_story: "Language Story",
+  language_practice: "Language Practice",
   listening: "Listening",
+  practice: "Practice",
   quiz: "Quiz",
   reading: "Reading",
   review: "Review",
-  story: "Story",
   vocabulary: "Vocabulary",
 };
 

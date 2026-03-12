@@ -212,20 +212,20 @@ async function createPendingReadingActivity() {
   return { activity, chapter, course, lesson };
 }
 
-async function createPendingLanguageStoryActivity() {
+async function createPendingLanguagePracticeActivity() {
   const org = await getAiOrganization();
 
   const uniqueId = randomUUID().slice(0, 8);
-  const courseTitle = `E2E LangStory Course ${uniqueId}`;
-  const chapterTitle = `E2E LangStory Chapter ${uniqueId}`;
-  const lessonTitle = `E2E LangStory Lesson ${uniqueId}`;
-  const activityTitle = `E2E LangStory Activity ${uniqueId}`;
+  const courseTitle = `E2E LangPractice Course ${uniqueId}`;
+  const chapterTitle = `E2E LangPractice Chapter ${uniqueId}`;
+  const lessonTitle = `E2E LangPractice Lesson ${uniqueId}`;
+  const activityTitle = `E2E LangPractice Activity ${uniqueId}`;
 
   const course = await courseFixture({
     isPublished: true,
     normalizedTitle: normalizeString(courseTitle),
     organizationId: org.id,
-    slug: `e2e-lang-story-course-${uniqueId}`,
+    slug: `e2e-lang-practice-course-${uniqueId}`,
     targetLanguage: "es",
     title: courseTitle,
   });
@@ -236,7 +236,7 @@ async function createPendingLanguageStoryActivity() {
     isPublished: true,
     normalizedTitle: normalizeString(chapterTitle),
     organizationId: org.id,
-    slug: `e2e-lang-story-chapter-${uniqueId}`,
+    slug: `e2e-lang-practice-chapter-${uniqueId}`,
     title: chapterTitle,
   });
 
@@ -247,14 +247,14 @@ async function createPendingLanguageStoryActivity() {
     kind: "language",
     normalizedTitle: normalizeString(lessonTitle),
     organizationId: org.id,
-    slug: `e2e-lang-story-lesson-${uniqueId}`,
+    slug: `e2e-lang-practice-lesson-${uniqueId}`,
     title: lessonTitle,
   });
 
   const activity = await activityFixture({
     generationStatus: "pending",
     isPublished: true,
-    kind: "languageStory",
+    kind: "languagePractice",
     lessonId: lesson.id,
     organizationId: org.id,
     title: activityTitle,
@@ -450,7 +450,7 @@ test.describe("Generate Activity Page - With Subscription", () => {
     );
   });
 
-  test("completes workflow for story activity kind", async ({
+  test("completes workflow for practice activity kind", async ({
     userWithoutProgress,
     noProgressUser,
   }) => {
@@ -459,16 +459,16 @@ test.describe("Generate Activity Page - With Subscription", () => {
     const org = await getAiOrganization();
 
     const uniqueId = randomUUID().slice(0, 8);
-    const courseTitle = `E2E Story Course ${uniqueId}`;
-    const chapterTitle = `E2E Story Chapter ${uniqueId}`;
-    const lessonTitle = `E2E Story Lesson ${uniqueId}`;
-    const activityTitle = `E2E Story Activity ${uniqueId}`;
+    const courseTitle = `E2E Practice Course ${uniqueId}`;
+    const chapterTitle = `E2E Practice Chapter ${uniqueId}`;
+    const lessonTitle = `E2E Practice Lesson ${uniqueId}`;
+    const activityTitle = `E2E Practice Activity ${uniqueId}`;
 
     const course = await courseFixture({
       isPublished: true,
       normalizedTitle: normalizeString(courseTitle),
       organizationId: org.id,
-      slug: `e2e-story-course-${uniqueId}`,
+      slug: `e2e-practice-course-${uniqueId}`,
       title: courseTitle,
     });
 
@@ -478,7 +478,7 @@ test.describe("Generate Activity Page - With Subscription", () => {
       isPublished: true,
       normalizedTitle: normalizeString(chapterTitle),
       organizationId: org.id,
-      slug: `e2e-story-chapter-${uniqueId}`,
+      slug: `e2e-practice-chapter-${uniqueId}`,
       title: chapterTitle,
     });
 
@@ -488,14 +488,14 @@ test.describe("Generate Activity Page - With Subscription", () => {
       isPublished: true,
       normalizedTitle: normalizeString(lessonTitle),
       organizationId: org.id,
-      slug: `e2e-story-lesson-${uniqueId}`,
+      slug: `e2e-practice-lesson-${uniqueId}`,
       title: lessonTitle,
     });
 
     const activity = await activityFixture({
       generationStatus: "pending",
       isPublished: true,
-      kind: "story",
+      kind: "practice",
       lessonId: lesson.id,
       organizationId: org.id,
       title: activityTitle,
@@ -511,10 +511,10 @@ test.describe("Generate Activity Page - With Subscription", () => {
         { status: "completed", step: "generateBackgroundContent" },
         { status: "started", step: "generateExplanationContent" },
         { status: "completed", step: "generateExplanationContent" },
-        { status: "started", step: "generateStoryContent" },
-        { status: "completed", step: "generateStoryContent" },
-        { status: "started", step: "setStoryAsCompleted" },
-        { status: "completed", step: "setStoryAsCompleted" },
+        { status: "started", step: "generatePracticeContent" },
+        { status: "completed", step: "generatePracticeContent" },
+        { status: "started", step: "setPracticeAsCompleted" },
+        { status: "completed", step: "setPracticeAsCompleted" },
       ],
     });
 
@@ -902,12 +902,12 @@ test.describe("Generate Activity Page - With Subscription", () => {
     );
   });
 
-  test("completes workflow for language story activity kind", async ({
+  test("completes workflow for language practice activity kind", async ({
     userWithoutProgress,
     noProgressUser,
   }) => {
     await createTestSubscription(noProgressUser.id);
-    const { activity, chapter, course, lesson } = await createPendingLanguageStoryActivity();
+    const { activity, chapter, course, lesson } = await createPendingLanguagePracticeActivity();
 
     await setupMockApis(userWithoutProgress, {
       streamMessages: [
@@ -915,10 +915,10 @@ test.describe("Generate Activity Page - With Subscription", () => {
         { status: "completed", step: "getLessonActivities" },
         { status: "started", step: "setActivityAsRunning" },
         { status: "completed", step: "setActivityAsRunning" },
-        { status: "started", step: "generateLanguageStoryContent" },
-        { status: "completed", step: "generateLanguageStoryContent" },
-        { status: "started", step: "setLanguageStoryAsCompleted" },
-        { status: "completed", step: "setLanguageStoryAsCompleted" },
+        { status: "started", step: "generateLanguagePracticeContent" },
+        { status: "completed", step: "generateLanguagePracticeContent" },
+        { status: "started", step: "setLanguagePracticeAsCompleted" },
+        { status: "completed", step: "setLanguagePracticeAsCompleted" },
         { status: "started", step: "setActivityAsCompleted" },
         { status: "completed", step: "setActivityAsCompleted" },
       ],

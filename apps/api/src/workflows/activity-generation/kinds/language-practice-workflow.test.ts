@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { generateActivityStoryLanguage } from "@zoonk/ai/tasks/activities/language/story";
+import { generateActivityPracticeLanguage } from "@zoonk/ai/tasks/activities/language/practice";
 import { prisma } from "@zoonk/db";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
@@ -8,7 +8,7 @@ import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { type LessonActivity } from "../steps/get-lesson-activities-step";
-import { languageStoryActivityWorkflow } from "./language-story-workflow";
+import { languagePracticeActivityWorkflow } from "./language-practice-workflow";
 
 vi.mock("workflow", () => ({
   FatalError: class FatalError extends Error {},
@@ -22,8 +22,8 @@ vi.mock("workflow", () => ({
   workflowStep: vi.fn().mockImplementation((_name: string, fn: unknown) => fn),
 }));
 
-vi.mock("@zoonk/ai/tasks/activities/language/story", () => ({
-  generateActivityStoryLanguage: vi.fn().mockResolvedValue({
+vi.mock("@zoonk/ai/tasks/activities/language/practice", () => ({
+  generateActivityPracticeLanguage: vi.fn().mockResolvedValue({
     data: {
       scenario: "You're in a Madrid bakery.",
       steps: [
@@ -72,7 +72,7 @@ async function fetchLessonActivities(lessonId: number): Promise<LessonActivity[]
   return activities.map((activity) => ({ ...activity, id: Number(activity.id) }));
 }
 
-describe(languageStoryActivityWorkflow, () => {
+describe(languagePracticeActivityWorkflow, () => {
   let organizationId: number;
   let course: Awaited<ReturnType<typeof courseFixture>>;
   let chapter: Awaited<ReturnType<typeof chapterFixture>>;
@@ -84,7 +84,7 @@ describe(languageStoryActivityWorkflow, () => {
     chapter = await chapterFixture({
       courseId: course.id,
       organizationId,
-      title: `LangStory Chapter ${randomUUID()}`,
+      title: `LangPractice Chapter ${randomUUID()}`,
     });
   });
 
@@ -92,25 +92,25 @@ describe(languageStoryActivityWorkflow, () => {
     vi.clearAllMocks();
   });
 
-  test("creates language story steps (scenario + multipleChoice) in database", async () => {
+  test("creates language practice steps (scenario + multipleChoice) in database", async () => {
     const lesson = await lessonFixture({
       chapterId: chapter.id,
       kind: "language",
       organizationId,
-      title: `LangStory Steps ${randomUUID()}`,
+      title: `LangPractice Steps ${randomUUID()}`,
     });
 
     const activity = await activityFixture({
       generationStatus: "pending",
-      kind: "languageStory",
+      kind: "languagePractice",
       language: "en",
       lessonId: lesson.id,
       organizationId,
-      title: `Language Story ${randomUUID()}`,
+      title: `Language Practice ${randomUUID()}`,
     });
 
     const activities = await fetchLessonActivities(lesson.id);
-    await languageStoryActivityWorkflow(activities, "test-run-id", [], []);
+    await languagePracticeActivityWorkflow(activities, "test-run-id", [], []);
 
     const steps = await prisma.step.findMany({
       orderBy: { position: "asc" },
@@ -138,58 +138,58 @@ describe(languageStoryActivityWorkflow, () => {
     expect(steps[1]?.position).toBe(1);
   });
 
-  test("sets language story status to 'completed' after saving", async () => {
+  test("sets language practice status to 'completed' after saving", async () => {
     const lesson = await lessonFixture({
       chapterId: chapter.id,
       kind: "language",
       organizationId,
-      title: `LangStory Complete ${randomUUID()}`,
+      title: `LangPractice Complete ${randomUUID()}`,
     });
 
     const activity = await activityFixture({
       generationStatus: "pending",
-      kind: "languageStory",
+      kind: "languagePractice",
       language: "en",
       lessonId: lesson.id,
       organizationId,
-      title: `Language Story ${randomUUID()}`,
+      title: `Language Practice ${randomUUID()}`,
     });
 
     const activities = await fetchLessonActivities(lesson.id);
-    await languageStoryActivityWorkflow(activities, "test-run-id", [], []);
+    await languagePracticeActivityWorkflow(activities, "test-run-id", [], []);
 
     const dbActivity = await prisma.activity.findUnique({ where: { id: activity.id } });
     expect(dbActivity?.generationStatus).toBe("completed");
   });
 
-  test("sets language story status to 'failed' when AI throws", async () => {
-    vi.mocked(generateActivityStoryLanguage).mockRejectedValueOnce(new Error("AI failed"));
+  test("sets language practice status to 'failed' when AI throws", async () => {
+    vi.mocked(generateActivityPracticeLanguage).mockRejectedValueOnce(new Error("AI failed"));
 
     const lesson = await lessonFixture({
       chapterId: chapter.id,
       kind: "language",
       organizationId,
-      title: `LangStory Fail ${randomUUID()}`,
+      title: `LangPractice Fail ${randomUUID()}`,
     });
 
     const activity = await activityFixture({
       generationStatus: "pending",
-      kind: "languageStory",
+      kind: "languagePractice",
       language: "en",
       lessonId: lesson.id,
       organizationId,
-      title: `Language Story ${randomUUID()}`,
+      title: `Language Practice ${randomUUID()}`,
     });
 
     const activities = await fetchLessonActivities(lesson.id);
-    await languageStoryActivityWorkflow(activities, "test-run-id", [], []);
+    await languagePracticeActivityWorkflow(activities, "test-run-id", [], []);
 
     const dbActivity = await prisma.activity.findUnique({ where: { id: activity.id } });
     expect(dbActivity?.generationStatus).toBe("failed");
   });
 
   test("converts empty romanization to null for Roman-script languages", async () => {
-    vi.mocked(generateActivityStoryLanguage).mockResolvedValueOnce({
+    vi.mocked(generateActivityPracticeLanguage).mockResolvedValueOnce({
       data: {
         scenario: "You're at a cafe in Madrid ordering breakfast.",
         steps: [
@@ -214,26 +214,26 @@ describe(languageStoryActivityWorkflow, () => {
           },
         ],
       },
-    } as Awaited<ReturnType<typeof generateActivityStoryLanguage>>);
+    } as Awaited<ReturnType<typeof generateActivityPracticeLanguage>>);
 
     const lesson = await lessonFixture({
       chapterId: chapter.id,
       kind: "language",
       organizationId,
-      title: `LangStory EmptyRoman ${randomUUID()}`,
+      title: `LangPractice EmptyRoman ${randomUUID()}`,
     });
 
     const activity = await activityFixture({
       generationStatus: "pending",
-      kind: "languageStory",
+      kind: "languagePractice",
       language: "en",
       lessonId: lesson.id,
       organizationId,
-      title: `Language Story ${randomUUID()}`,
+      title: `Language Practice ${randomUUID()}`,
     });
 
     const activities = await fetchLessonActivities(lesson.id);
-    await languageStoryActivityWorkflow(activities, "test-run-id", [], []);
+    await languagePracticeActivityWorkflow(activities, "test-run-id", [], []);
 
     const dbActivity = await prisma.activity.findUnique({ where: { id: activity.id } });
     expect(dbActivity?.generationStatus).toBe("completed");
@@ -255,21 +255,21 @@ describe(languageStoryActivityWorkflow, () => {
       chapterId: chapter.id,
       kind: "language",
       organizationId,
-      title: `LangStory Skip ${randomUUID()}`,
+      title: `LangPractice Skip ${randomUUID()}`,
     });
 
     await activityFixture({
       generationStatus: "completed",
-      kind: "languageStory",
+      kind: "languagePractice",
       language: "en",
       lessonId: lesson.id,
       organizationId,
-      title: `Language Story ${randomUUID()}`,
+      title: `Language Practice ${randomUUID()}`,
     });
 
     const activities = await fetchLessonActivities(lesson.id);
-    await languageStoryActivityWorkflow(activities, "test-run-id", [], []);
+    await languagePracticeActivityWorkflow(activities, "test-run-id", [], []);
 
-    expect(generateActivityStoryLanguage).not.toHaveBeenCalled();
+    expect(generateActivityPracticeLanguage).not.toHaveBeenCalled();
   });
 });

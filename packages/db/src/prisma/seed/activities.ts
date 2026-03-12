@@ -41,7 +41,7 @@ const activitiesData: {
       {
         generationStatus: "pending",
         isPublished: true,
-        kind: "story",
+        kind: "practice",
       },
       {
         generationStatus: "pending",
@@ -122,7 +122,7 @@ const activitiesData: {
       {
         generationStatus: "pending",
         isPublished: true,
-        kind: "languageStory",
+        kind: "languagePractice",
       },
       {
         generationStatus: "completed",

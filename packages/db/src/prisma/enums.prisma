@@ -17,14 +17,14 @@ enum ActivityKind {
   explanation
   quiz
   examples
-  story
+  practice
   challenge
   vocabulary
   grammar
   reading
   listening
   review
-  languageStory @map("language_story")
+  languagePractice @map("language_practice")
 }
 
 enum StepKind {

@@ -27,14 +27,14 @@ export async function getActivityKinds(): Promise<
       label: t("Quiz"),
     },
     {
-      description: t("See how it works in practice"),
+      description: t("See it in action"),
       key: "examples",
       label: t("Examples"),
     },
     {
       description: t("Apply the topic in a real scenario"),
-      key: "story",
-      label: t("Story"),
+      key: "practice",
+      label: t("Practice"),
     },
     {
       description: t("Make decisions with real trade-offs"),
@@ -68,8 +68,8 @@ export async function getActivityKinds(): Promise<
     },
     {
       description: t("Practice in a real-world dialogue"),
-      key: "languageStory",
-      label: t("Story"),
+      key: "languagePractice",
+      label: t("Practice"),
     },
   ];
 }
@@ -99,13 +99,14 @@ async function getSeoDescription(kind: ActivityKind, topic: string): Promise<str
       "Practice {topic} grammar rules with exercises designed to help you remember and apply them.",
       { topic },
     ),
-    languageStory: t(
-      "Practice {topic} in context through a dialogue-based story set in real-world situations.",
+    languagePractice: t(
+      "Practice {topic} in context through a dialogue-based scenario set in real-world situations.",
       { topic },
     ),
     listening: t("Sharpen your {topic} listening skills by translating audio sentences.", {
       topic,
     }),
+    practice: t("Apply {topic} through a real-world dialogue scenario.", { topic }),
     quiz: t(
       "Test your understanding of {topic} with questions designed to check real comprehension, not just memorization.",
       { topic },
@@ -115,7 +116,6 @@ async function getSeoDescription(kind: ActivityKind, topic: string): Promise<str
       { topic },
     ),
     review: t("Review everything you learned about {topic} with a comprehensive quiz.", { topic }),
-    story: t("Experience when to apply {topic} through a real-world dialogue scenario.", { topic }),
     vocabulary: t(
       "Build your {topic} vocabulary with new words, translations, and pronunciation.",
       { topic },
