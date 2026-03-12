@@ -5,7 +5,7 @@
 </picture>
 
 <p align="center">
-  Learn anything with step-by-step activities.
+  The open-source platform for interactive learning.
   <br />
   <br />
   <a href="https://forms.gle/jHeTqPUkw1vA7wLh8">Waitlist</a>
