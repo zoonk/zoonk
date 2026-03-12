@@ -17,7 +17,7 @@ export async function getActivityKinds(): Promise<
       label: t("Background"),
     },
     {
-      description: t("Core concepts and definitions"),
+      description: t("Concepts and definitions"),
       key: "explanation",
       label: t("Explanation"),
     },
