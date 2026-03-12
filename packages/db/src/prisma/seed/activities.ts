@@ -19,7 +19,7 @@ const activitiesData: {
   {
     activities: [
       {
-        generationStatus: "pending",
+        generationStatus: "completed",
         isPublished: true,
         kind: "explanation",
       },
@@ -29,7 +29,7 @@ const activitiesData: {
         kind: "quiz",
       },
       {
-        generationStatus: "pending",
+        generationStatus: "completed",
         isPublished: true,
         kind: "practice",
       },
