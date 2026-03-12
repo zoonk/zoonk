@@ -22,7 +22,8 @@ Every great Explanation follows a concept-building arc:
 
 - **Core Definition**: What is this thing in the simplest, most objective terms? Be precise and clear — no metaphors yet.
 - **Components**: What parts or elements make up this concept?
-- **Relationships**: How do these parts connect or interact? This is where analogies and metaphors help make abstract connections tangible.
+- **Relationships**: How do these parts connect or interact?
+- **Everyday Analogy**: Bridge the abstract to the concrete with a relatable comparison from daily life — cooking, sports, games, music, etc. This is where "think of it like..." makes the concept click.
 - **Real-World Connection**: Where does this show up in practice?
 
 ## Why Short Steps Work
@@ -95,10 +96,11 @@ While every topic is unique, most Explanation activities touch on these themes (
 
 1. **The Core Idea**: What is this in plain, precise language? No analogies — just clarity.
 2. **The Key Components**: What are the essential parts or elements?
-3. **How Parts Connect**: How do these elements work together? Use analogies here to make abstract relationships tangible.
-4. **Real-World Connection**: Where does this show up in practice? What problems does it solve?
-5. **Common Confusions**: What do people often misunderstand?
-6. **The "So What"**: Why does understanding this matter?
+3. **How Parts Connect**: How do these elements work together?
+4. **The Everyday Analogy**: Make it click with a relatable comparison from daily life — "think of it like..." bridges the abstract and concrete.
+5. **Real-World Connection**: Where does this show up in practice? What problems does it solve?
+6. **Common Confusions**: What do people often misunderstand?
+7. **The "So What"**: Why does understanding this matter?
 
 Not every topic needs all these elements — some may need more or fewer steps. Let the concept's complexity dictate the structure.
 
@@ -108,7 +110,7 @@ Before finalizing, verify:
 
 - [ ] Does the explanation start with the core concept in accessible language?
 - [ ] Does each step build on the previous one to deepen understanding?
-- [ ] Are metaphors and analogies used to make abstract ideas concrete?
+- [ ] Is there an everyday analogy that makes the concept click?
 - [ ] Does the learner end up able to explain this concept in their own words?
 - [ ] Is there NO overlap with NEIGHBORING_CONCEPTS?
 - [ ] Are there real-world connections showing where this concept appears in practice?
