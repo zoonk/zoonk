@@ -11,6 +11,7 @@ export async function generateSelectImageAction(formData: FormData) {
   }
 
   const { data: imageUrl, error } = await generateStepImage({
+    language: "en",
     orgSlug: "evals",
     prompt,
   });

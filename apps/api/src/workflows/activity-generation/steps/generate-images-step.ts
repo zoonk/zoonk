@@ -12,10 +12,15 @@ type StepVisualWithUrl = StepVisual & { url?: string };
 
 type ImageStep = { id: bigint | number; visualContent: unknown; visualKind: string | null };
 
-async function generateAndSaveImages(
-  imageSteps: ImageStep[],
-  orgSlug?: string,
-): Promise<{
+async function generateAndSaveImages({
+  imageSteps,
+  language,
+  orgSlug,
+}: {
+  imageSteps: ImageStep[];
+  language: string;
+  orgSlug?: string;
+}): Promise<{
   hadFailure: boolean;
   results: PromiseSettledResult<{ data: string | null; error: Error | null }>[];
 }> {
@@ -25,7 +30,7 @@ async function generateAndSaveImages(
       if (!prompt) {
         return Promise.reject(new Error("Missing prompt"));
       }
-      return generateVisualStepImage({ orgSlug, prompt });
+      return generateVisualStepImage({ language, orgSlug, prompt });
     }),
   );
 
@@ -120,10 +125,11 @@ export async function generateImagesForActivityStep(
 
   await streamStatus({ status: "started", step: "generateImages" });
 
-  const { hadFailure, results } = await generateAndSaveImages(
+  const { hadFailure, results } = await generateAndSaveImages({
     imageSteps,
-    activity.lesson.chapter.course.organization?.slug,
-  );
+    language: activity.language,
+    orgSlug: activity.lesson.chapter.course.organization?.slug,
+  });
 
   if (hadFailure) {
     await handleActivityFailureStep({ activityId: activity.id });

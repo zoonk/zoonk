@@ -45,12 +45,17 @@ function toQuizQuestion(step: { content: unknown; kind: string }): QuizQuestionW
   return { format: step.kind, ...toRecord(step.content) } as QuizQuestionWithUrls;
 }
 
-async function generateOptionImages(
-  options: SelectImageOption[],
-  orgSlug?: string,
-): Promise<{ hadFailure: boolean; updatedOptions: SelectImageOption[] }> {
+async function generateOptionImages({
+  options,
+  language,
+  orgSlug,
+}: {
+  options: SelectImageOption[];
+  language: string;
+  orgSlug?: string;
+}): Promise<{ hadFailure: boolean; updatedOptions: SelectImageOption[] }> {
   const results = await Promise.allSettled(
-    options.map(({ prompt }) => generateStepImage({ orgSlug, prompt })),
+    options.map(({ prompt }) => generateStepImage({ language, orgSlug, prompt })),
   );
 
   const updatedOptions = options.map((option, index) => {
@@ -103,10 +108,11 @@ export async function generateQuizImagesStep(
         return { imageFailed: false, updateFailed: false };
       }
 
-      const { hadFailure: imageFailed, updatedOptions } = await generateOptionImages(
+      const { hadFailure: imageFailed, updatedOptions } = await generateOptionImages({
+        language: activity.language,
         options,
         orgSlug,
-      );
+      });
 
       const stepContent = toRecord(step.content);
       const content = assertStepContent("selectImage", {

@@ -4,4 +4,6 @@ Style: Modern flat illustration with clean geometric shapes, a refined limited c
 
 The illustration should clearly communicate the educational concept while being visually engaging and easy to understand.
 
+LANGUAGE: **{{LANGUAGE}}**
+
 CONTENT TO ILLUSTRATE: **{{PROMPT}}**

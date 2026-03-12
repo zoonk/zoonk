@@ -5,18 +5,20 @@ import promptTemplate from "./step-visual-image.prompt.md";
 const DEFAULT_MODEL = "openai/gpt-image-1.5";
 const DEFAULT_QUALITY = "low";
 
-function getStepVisualImagePrompt(prompt: string) {
-  return promptTemplate.replace("{{PROMPT}}", () => prompt);
+function getStepVisualImagePrompt(prompt: string, language: string) {
+  return promptTemplate.replace("{{PROMPT}}", () => prompt).replace("{{LANGUAGE}}", () => language);
 }
 
 export type StepVisualImageParams = {
   prompt: string;
+  language: string;
   model?: ImageModel;
   quality?: "auto" | "low" | "medium" | "high";
 };
 
 export async function generateStepVisualImage({
   prompt,
+  language,
   model = DEFAULT_MODEL,
   quality = DEFAULT_QUALITY,
 }: StepVisualImageParams): Promise<SafeReturn<GeneratedFile>> {
@@ -24,7 +26,7 @@ export async function generateStepVisualImage({
     generateImage({
       maxImagesPerCall: 1,
       model,
-      prompt: getStepVisualImagePrompt(prompt),
+      prompt: getStepVisualImagePrompt(prompt, language),
       providerOptions: {
         openai: { output_format: "webp", quality },
       },

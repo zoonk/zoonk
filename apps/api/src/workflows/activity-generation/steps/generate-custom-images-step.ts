@@ -32,7 +32,7 @@ async function generateImagesForActivity(activity: LessonActivity): Promise<void
       if (!prompt) {
         return Promise.reject(new Error("Missing prompt"));
       }
-      return generateVisualStepImage({ orgSlug, prompt });
+      return generateVisualStepImage({ language: activity.language, orgSlug, prompt });
     }),
   );
 

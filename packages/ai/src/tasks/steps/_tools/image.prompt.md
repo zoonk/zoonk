@@ -9,4 +9,5 @@ Requirements:
 - Describe ONLY the content, not the style (style is handled by the image generator)
 - Focus on what should be depicted, not how
 - Be specific enough that the image supports the step's educational content
+- Write the prompt in the same language specified in the LANGUAGE field
 - NEVER reference copyrighted or trademarked characters (e.g., Mickey Mouse, Spider-Man, Mario, Pikachu). If the topic involves such characters, describe the concept abstractly or use generic, original characters instead
