@@ -288,6 +288,7 @@ describe("enforcePhaseProgression integration", () => {
     const finishing = enforced.find((item) => item.name === "finishing");
     const creatingImages = enforced.find((item) => item.name === "creatingImages");
 
+    expect(creatingImages).toBeDefined();
     expect(creatingImages?.status).not.toBe("completed");
     expect(finishing?.status).toBe("pending");
   });
