@@ -1,6 +1,6 @@
 "use client";
 
-import { type PhaseStatus } from "@/lib/generation-phases";
+import { type PhaseStatus, enforcePhaseProgression } from "@/lib/generation-phases";
 import { type CourseWorkflowStepName } from "@/lib/workflow/config";
 import {
   type ThinkingMessageGenerator,
@@ -45,7 +45,7 @@ export function useGenerationPhases(
 
   const phaseOrder = getPhaseOrder({ completedSteps, currentStep, targetLanguage });
 
-  const phases: {
+  const rawPhases: {
     name: PhaseName;
     label: string;
     status: PhaseStatus;
@@ -56,6 +56,8 @@ export function useGenerationPhases(
     name: phase,
     status: getPhaseStatus(phase, completedSteps, currentStep, targetLanguage, startedSteps),
   }));
+
+  const phases = enforcePhaseProgression(rawPhases);
 
   const progress = calculateWeightedProgress(
     completedSteps,

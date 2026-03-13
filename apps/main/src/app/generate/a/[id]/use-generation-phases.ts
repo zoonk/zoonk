@@ -1,6 +1,6 @@
 "use client";
 
-import { type PhaseStatus } from "@/lib/generation-phases";
+import { type PhaseStatus, enforcePhaseProgression } from "@/lib/generation-phases";
 import {
   PHASE_ICONS,
   type PhaseName,
@@ -35,7 +35,7 @@ export function useGenerationPhases(
 
   const phaseOrder = getPhaseOrder(activityKind);
 
-  const phases: {
+  const rawPhases: {
     name: PhaseName;
     label: string;
     status: PhaseStatus;
@@ -46,6 +46,8 @@ export function useGenerationPhases(
     name: phase,
     status: getPhaseStatus(phase, completedSteps, currentStep, activityKind, startedSteps),
   }));
+
+  const phases = enforcePhaseProgression(rawPhases);
 
   const progress = calculateWeightedProgress(
     completedSteps,

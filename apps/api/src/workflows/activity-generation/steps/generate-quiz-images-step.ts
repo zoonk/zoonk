@@ -93,6 +93,8 @@ export async function generateQuizImagesStep(
   });
 
   if (dbSteps.length === 0) {
+    await streamStatus({ status: "started", step: "generateQuizImages" });
+    await streamStatus({ status: "completed", step: "generateQuizImages" });
     // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- QuizQuestion is a subtype; url? is optional
     return questions as QuizQuestionWithUrls[];
   }
