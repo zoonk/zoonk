@@ -87,7 +87,7 @@ export function PlayerShell() {
       </PlayerStage>
 
       {showBottomBar && (
-        <PlayerBottomBar>
+        <PlayerBottomBar className={isStaticStep ? "lg:hidden" : undefined}>
           {isStaticStep ? (
             <PlayerBottomBarNav
               isFirstStep={isFirstStep}

@@ -10,6 +10,7 @@ import { ReadingStep } from "./reading-step";
 import { SelectImageStep } from "./select-image-step";
 import { SortOrderStep } from "./sort-order-step";
 import { StaticStep } from "./static-step";
+import { StepSideNav } from "./step-side-nav";
 import { VisualStep } from "./visual-step";
 import { VocabularyStep } from "./vocabulary-step";
 
@@ -32,7 +33,12 @@ export function StepRenderer({
 }) {
   if (step.kind === "static") {
     return (
-      <div className="flex min-h-0 w-full min-w-0 flex-1 justify-center">
+      <div className="relative flex min-h-0 w-full max-w-5xl min-w-0 flex-1 justify-center">
+        <StepSideNav
+          isFirst={isFirst}
+          onNavigateNext={onNavigateNext}
+          onNavigatePrev={onNavigatePrev}
+        />
         <StaticStep
           isFirst={isFirst}
           onNavigateNext={onNavigateNext}
@@ -45,7 +51,12 @@ export function StepRenderer({
 
   if (step.kind === "visual") {
     return (
-      <div className="flex min-h-0 w-full min-w-0 flex-1 justify-center">
+      <div className="relative flex min-h-0 w-full max-w-5xl min-w-0 flex-1 justify-center">
+        <StepSideNav
+          isFirst={isFirst}
+          onNavigateNext={onNavigateNext}
+          onNavigatePrev={onNavigatePrev}
+        />
         <VisualStep step={step} />
       </div>
     );
