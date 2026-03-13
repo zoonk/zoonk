@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { generateActivityExplanation } from "@zoonk/ai/tasks/activities/core/explanation";
 import { generateActivityCustom } from "@zoonk/ai/tasks/activities/custom";
+import { type generateStepVisuals } from "@zoonk/ai/tasks/steps/visual";
 import { prisma } from "@zoonk/db";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
@@ -9,6 +10,23 @@ import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { activityGenerationWorkflow } from "./activity-generation-workflow";
+
+function createStepVisualsResult(
+  steps: { title: string; text: string }[],
+): Awaited<ReturnType<typeof generateStepVisuals>> {
+  return {
+    data: {
+      visuals: steps.map((step, stepIndex) =>
+        stepIndex === 0
+          ? { kind: "image", prompt: `A visual prompt for ${step.title}`, stepIndex }
+          : { code: "const x = 1;", kind: "code", language: "typescript", stepIndex },
+      ),
+    },
+    systemPrompt: "test",
+    usage: {} as Awaited<ReturnType<typeof generateStepVisuals>>["usage"],
+    userPrompt: "test",
+  };
+}
 
 vi.mock("workflow", () => ({
   FatalError: class FatalError extends Error {},
@@ -34,14 +52,11 @@ vi.mock("@zoonk/ai/tasks/activities/core/explanation", () => ({
 }));
 
 vi.mock("@zoonk/ai/tasks/steps/visual", () => ({
-  generateStepVisuals: vi.fn().mockResolvedValue({
-    data: {
-      visuals: [
-        { kind: "image", prompt: "A visual prompt for step 1", stepIndex: 0 },
-        { code: "const x = 1;", kind: "code", language: "typescript", stepIndex: 1 },
-      ],
-    },
-  }),
+  generateStepVisuals: vi
+    .fn()
+    .mockImplementation(({ steps }: { steps: { title: string; text: string }[] }) =>
+      Promise.resolve(createStepVisualsResult(steps)),
+    ),
 }));
 
 vi.mock("@zoonk/core/steps/visual-image", () => ({

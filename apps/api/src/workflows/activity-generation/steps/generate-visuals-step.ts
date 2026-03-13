@@ -4,31 +4,21 @@ import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { streamError, streamStatus } from "../stream-status";
 import { type ActivitySteps } from "./_utils/get-activity-steps";
+import { buildVisualRows } from "./_utils/visual-rows";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
 
 export type StepVisual = StepVisualSchema["visuals"][number];
 
 async function saveVisualsToDB(
-  visuals: StepVisual[],
-  dbSteps: { id: bigint | number; position: number }[],
-  activityId: bigint | number,
+  data: {
+    activityId: bigint | number;
+    content: Omit<StepVisual, "stepIndex">;
+    isPublished: true;
+    kind: "visual";
+    position: number;
+  }[],
 ): Promise<{ error: Error | null }> {
-  const data = visuals.flatMap((visual) => {
-    const dbStep = dbSteps[visual.stepIndex];
-    if (!dbStep) {
-      return [];
-    }
-    const { stepIndex: _, ...content } = visual;
-    return {
-      activityId,
-      content,
-      isPublished: true,
-      kind: "visual" as const,
-      position: dbStep.position + 1,
-    };
-  });
-
   if (data.length === 0) {
     return { error: null };
   }
@@ -87,7 +77,17 @@ export async function generateVisualsForActivityStep(
     return handleVisualsError(activity.id, reason);
   }
 
-  const { error: saveError } = await saveVisualsToDB(result.data.visuals, dbSteps, activity.id);
+  const visualRows = buildVisualRows({
+    activityId: activity.id,
+    dbSteps,
+    visuals: result.data.visuals,
+  });
+
+  if (!visualRows) {
+    return handleVisualsError(activity.id, "contentValidationFailed");
+  }
+
+  const { error: saveError } = await saveVisualsToDB(visualRows);
 
   if (saveError) {
     return handleVisualsError(activity.id, "dbSaveFailed");

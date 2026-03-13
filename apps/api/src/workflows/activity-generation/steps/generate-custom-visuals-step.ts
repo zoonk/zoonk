@@ -3,6 +3,7 @@ import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { rejected, settledValues } from "@zoonk/utils/settled";
 import { streamStatus } from "../stream-status";
+import { buildVisualRows } from "./_utils/visual-rows";
 import { type CustomContentResult } from "./generate-custom-content-step";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
@@ -52,20 +53,16 @@ async function generateVisualsForActivity(
     throw error ?? new Error("Empty visual result");
   }
 
-  const visualRows = result.data.visuals.flatMap((visual) => {
-    const dbStep = dbSteps[visual.stepIndex];
-    if (!dbStep) {
-      return [];
-    }
-    const { stepIndex: _, ...content } = visual;
-    return {
-      activityId: activity.id,
-      content,
-      isPublished: true,
-      kind: "visual" as const,
-      position: dbStep.position + 1,
-    };
+  const visualRows = buildVisualRows({
+    activityId: activity.id,
+    dbSteps,
+    visuals: result.data.visuals,
   });
+
+  if (!visualRows) {
+    await handleActivityFailureStep({ activityId: activity.id });
+    throw new Error("Invalid visual coverage");
+  }
 
   const { error: saveError } =
     visualRows.length > 0

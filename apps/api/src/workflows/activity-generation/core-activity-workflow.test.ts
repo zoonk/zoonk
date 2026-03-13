@@ -23,6 +23,23 @@ vi.mock("./steps/get-neighboring-concepts-step", () => ({
 
 const mockStreamWrite = vi.hoisted(() => vi.fn().mockResolvedValue(null));
 
+function createStepVisualsResult(
+  steps: { title: string; text: string }[],
+): Awaited<ReturnType<typeof generateStepVisuals>> {
+  return {
+    data: {
+      visuals: steps.map((step, stepIndex) =>
+        stepIndex === 0
+          ? { kind: "image", prompt: `A visual prompt for ${step.title}`, stepIndex }
+          : { code: "const x = 1;", kind: "code", language: "typescript", stepIndex },
+      ),
+    },
+    systemPrompt: "test",
+    usage: {} as Awaited<ReturnType<typeof generateStepVisuals>>["usage"],
+    userPrompt: "test",
+  };
+}
+
 vi.mock("workflow", () => ({
   FatalError: class FatalError extends Error {},
   getWorkflowMetadata: vi.fn().mockReturnValue({ workflowRunId: "test-run-id" }),
@@ -47,14 +64,11 @@ vi.mock("@zoonk/ai/tasks/activities/core/explanation", () => ({
 }));
 
 vi.mock("@zoonk/ai/tasks/steps/visual", () => ({
-  generateStepVisuals: vi.fn().mockResolvedValue({
-    data: {
-      visuals: [
-        { kind: "image", prompt: "A visual prompt for step 1", stepIndex: 0 },
-        { code: "const x = 1;", kind: "code", language: "typescript", stepIndex: 1 },
-      ],
-    },
-  }),
+  generateStepVisuals: vi
+    .fn()
+    .mockImplementation(({ steps }: { steps: { title: string; text: string }[] }) =>
+      Promise.resolve(createStepVisualsResult(steps)),
+    ),
 }));
 
 vi.mock("@zoonk/core/steps/visual-image", () => ({
