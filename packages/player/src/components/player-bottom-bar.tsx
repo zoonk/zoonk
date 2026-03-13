@@ -36,14 +36,14 @@ export function PlayerBottomBarNav({
         aria-label={t("Previous step")}
         disabled={isFirstStep}
         onClick={onNavigatePrev}
-        size="icon"
-        variant="ghost"
+        size="icon-lg"
+        variant="outline"
       >
-        <ChevronLeft className="size-4" />
+        <ChevronLeft />
       </Button>
 
-      <Button aria-label={t("Next step")} onClick={onNavigateNext} size="icon" variant="ghost">
-        <ChevronRight className="size-4" />
+      <Button aria-label={t("Next step")} onClick={onNavigateNext} size="icon-lg" variant="outline">
+        <ChevronRight />
       </Button>
     </nav>
   );
