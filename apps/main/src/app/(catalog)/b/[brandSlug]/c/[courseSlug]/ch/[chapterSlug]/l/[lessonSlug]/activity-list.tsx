@@ -5,11 +5,12 @@ import {
   CatalogListItemContent,
   CatalogListItemDescription,
   CatalogListItemIndicator,
+  CatalogListItemPosition,
   CatalogListItemTitle,
 } from "@/components/catalog/catalog-list";
-import { getActivityKinds } from "@/lib/activities";
 import { getActivityProgress } from "@zoonk/core/progress/activities";
 import { type Activity } from "@zoonk/db";
+import { formatPosition } from "@zoonk/utils/number";
 import { getExtracted } from "next-intl/server";
 
 export async function ActivityList({
@@ -32,22 +33,12 @@ export async function ActivityList({
   }
 
   const t = await getExtracted();
-  const [activityKinds, completedIds] = await Promise.all([
-    getActivityKinds(),
-    getActivityProgress({ lessonId }),
-  ]);
-
-  const kindMeta = new Map(activityKinds.map((kind) => [kind.key, kind]));
+  const completedIds = await getActivityProgress({ lessonId });
 
   return (
     <CatalogList>
       <CatalogListContent aria-label={t("Activities")}>
         {activities.map((activity) => {
-          const meta = kindMeta.get(activity.kind);
-
-          const title = activity.title ?? meta?.label;
-          const description = activity.description ?? meta?.description;
-
           const completed = completedIds.includes(String(activity.id));
 
           return (
@@ -57,9 +48,13 @@ export async function ActivityList({
               key={String(activity.id)}
               prefetch={activity.generationStatus === "completed"}
             >
+              <CatalogListItemPosition>
+                {formatPosition(activity.position + 1)}
+              </CatalogListItemPosition>
+
               <CatalogListItemContent>
-                <CatalogListItemTitle>{title}</CatalogListItemTitle>
-                <CatalogListItemDescription>{description}</CatalogListItemDescription>
+                <CatalogListItemTitle>{activity.title}</CatalogListItemTitle>
+                <CatalogListItemDescription>{activity.description}</CatalogListItemDescription>
               </CatalogListItemContent>
 
               <CatalogListItemIndicator

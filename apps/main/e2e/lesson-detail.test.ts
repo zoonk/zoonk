@@ -130,24 +130,16 @@ test.describe("Lesson Detail Page", () => {
     await expect(page.getByText(/not found|404/i)).toBeVisible();
   });
 
-  test("displays activity list with titles and descriptions", async ({ page }) => {
+  test("displays activity path with kind labels for core lessons", async ({ page }) => {
     const { chapter, course, lesson } = await createTestLessonWithActivities();
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
 
-    // Scope to the activity list for precise queries
     const activityList = page.getByRole("list", { name: /activities/i });
 
     await expect(activityList.getByRole("link", { name: /practice/i })).toBeVisible();
-    await expect(activityList.getByText(/apply the topic in a real scenario/i)).toBeVisible();
-
     await expect(activityList.getByRole("link", { name: /explanation/i })).toBeVisible();
-    await expect(activityList.getByText(/concepts and definitions/i)).toBeVisible();
-
     await expect(activityList.getByRole("link", { name: /quiz/i })).toBeVisible();
-    await expect(activityList.getByText(/test your knowledge/i)).toBeVisible();
-
     await expect(activityList.getByRole("link", { name: /challenge/i })).toBeVisible();
-    await expect(activityList.getByText(/make decisions with real trade-offs/i)).toBeVisible();
   });
 
   test("clicking activity link navigates to activity page", async ({ page }) => {

@@ -1,4 +1,18 @@
 import { type ActivityKind } from "@zoonk/db";
+import {
+  BookOpenIcon,
+  BookTextIcon,
+  BracesIcon,
+  CircleHelpIcon,
+  FlameIcon,
+  HeadphonesIcon,
+  LanguagesIcon,
+  type LucideIcon,
+  MessageSquareIcon,
+  RotateCcwIcon,
+  SparklesIcon,
+  TargetIcon,
+} from "lucide-react";
 import { getExtracted } from "next-intl/server";
 
 export async function getActivityKinds(): Promise<
@@ -148,4 +162,22 @@ async function getSeoActivityDescription(
   }
 
   return getSeoDescription(activity.kind, lessonTitle);
+}
+
+const ACTIVITY_ICONS: Record<ActivityKind, LucideIcon> = {
+  challenge: FlameIcon,
+  custom: SparklesIcon,
+  explanation: BookOpenIcon,
+  grammar: BracesIcon,
+  languagePractice: MessageSquareIcon,
+  listening: HeadphonesIcon,
+  practice: TargetIcon,
+  quiz: CircleHelpIcon,
+  reading: BookTextIcon,
+  review: RotateCcwIcon,
+  vocabulary: LanguagesIcon,
+};
+
+export function getActivityIcon(kind: ActivityKind): LucideIcon {
+  return ACTIVITY_ICONS[kind];
 }
