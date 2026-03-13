@@ -8,6 +8,7 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { generateCustomContentStep } from "../steps/generate-custom-content-step";
 import { type LessonActivity } from "../steps/get-lesson-activities-step";
 import { customActivityWorkflow } from "./custom-workflow";
 
@@ -292,5 +293,41 @@ describe(customActivityWorkflow, () => {
 
     expect(dbActivity1?.generationStatus).toBe("completed");
     expect(dbActivity2?.generationStatus).toBe("completed");
+  });
+
+  test("reuses saved static content for completed custom activities", async () => {
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "custom",
+      organizationId,
+      title: `Custom Resume ${randomUUID()}`,
+    });
+
+    await activityFixture({
+      generationStatus: "pending",
+      kind: "custom",
+      lessonId: lesson.id,
+      organizationId,
+      title: `Custom ${randomUUID()}`,
+    });
+
+    const initialActivities = await fetchLessonActivities(lesson.id);
+    await customActivityWorkflow(initialActivities, "test-run-id");
+
+    vi.clearAllMocks();
+
+    const completedActivities = await fetchLessonActivities(lesson.id);
+    const contentResults = await generateCustomContentStep(completedActivities, "resume-run-id");
+
+    expect(contentResults).toEqual([
+      {
+        activityId: completedActivities[0]?.id,
+        steps: [
+          { text: "Custom step 1 text", title: "Custom Step 1" },
+          { text: "Custom step 2 text", title: "Custom Step 2" },
+        ],
+      },
+    ]);
+    expect(generateActivityCustom).not.toHaveBeenCalled();
   });
 });
