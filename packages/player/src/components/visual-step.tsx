@@ -13,7 +13,7 @@ export function VisualStep({ step }: { step: SerializedStep }) {
     <div className="flex min-h-0 w-full min-w-0 flex-1 flex-col overflow-hidden">
       <div
         aria-label={t("Visual content")}
-        className="min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain px-4 py-6 sm:px-6 sm:py-8"
+        className="min-h-0 min-w-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain px-6 py-6 sm:px-8 sm:py-8"
         role="region"
       >
         <div className="flex min-h-full w-full min-w-0 items-center justify-center">

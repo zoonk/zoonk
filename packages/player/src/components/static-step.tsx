@@ -45,7 +45,7 @@ function GrammarExampleVariant({
 function GrammarRuleVariant({ ruleName, ruleSummary }: { ruleName: string; ruleSummary: string }) {
   return (
     <>
-      <h2 className="text-base font-semibold tracking-tight">{ruleName}</h2>
+      <QuestionText>{ruleName}</QuestionText>
       <ContextText>{ruleSummary}</ContextText>
     </>
   );
@@ -87,7 +87,7 @@ export function StaticStep({
 
   return (
     <div
-      className="relative flex min-h-0 w-full max-w-2xl flex-1 flex-col items-start justify-center gap-1 px-4 sm:px-6"
+      className="relative flex min-h-0 w-full max-w-2xl flex-1 flex-col items-start justify-center gap-3 px-6 sm:px-8"
       {...swipeHandlers}
     >
       <StaticStepContent step={step} />
