@@ -296,6 +296,7 @@ msgid "Next step"
 msgstr "Próximo passo"
 
 #: ../../packages/player/src/components/player-bottom-bar.tsx
+#: ../../packages/player/src/components/step-side-nav.tsx
 msgctxt "kXUK98"
 msgid "Step navigation"
 msgstr "Navegação de etapas"

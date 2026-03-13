@@ -16,10 +16,13 @@ export function StepSideNav({
   const t = useExtracted();
 
   return (
-    <>
+    <nav
+      aria-label={t("Step navigation")}
+      className="pointer-events-none absolute inset-0 z-10 hidden lg:block"
+    >
       <Button
         aria-label={t("Previous step")}
-        className="absolute top-1/2 left-4 hidden -translate-y-1/2 lg:flex"
+        className="pointer-events-auto absolute top-1/2 left-4 flex -translate-y-1/2"
         disabled={isFirst}
         onClick={onNavigatePrev}
         size="icon-lg"
@@ -30,13 +33,13 @@ export function StepSideNav({
 
       <Button
         aria-label={t("Next step")}
-        className="absolute top-1/2 right-4 hidden -translate-y-1/2 lg:flex"
+        className="pointer-events-auto absolute top-1/2 right-4 flex -translate-y-1/2"
         onClick={onNavigateNext}
         size="icon-lg"
         variant="outline"
       >
         <ChevronRight />
       </Button>
-    </>
+    </nav>
   );
 }
