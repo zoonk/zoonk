@@ -353,6 +353,11 @@ msgctxt "VA8c/A"
 msgid "Correct order:"
 msgstr "Correct order:"
 
+#: ../../packages/player/src/components/visual-step.tsx
+msgctxt "9bIjWj"
+msgid "Visual content"
+msgstr "Visual content"
+
 #: ../../packages/player/src/components/visuals/chart-visual.tsx
 msgctxt "iZuO+L"
 msgid "Legend"

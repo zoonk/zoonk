@@ -1,11 +1,12 @@
 import { randomUUID } from "node:crypto";
+import { type Locator } from "@playwright/test";
 import { getAiOrganization } from "@zoonk/e2e/helpers";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
-import { expect, test } from "./fixtures";
+import { type Page, expect, test } from "./fixtures";
 
 async function createVisualActivity(options: {
   steps: {
@@ -67,6 +68,133 @@ async function createVisualActivity(options: {
   const url = `/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}/a/0`;
 
   return { url };
+}
+
+function buildLargeDiagram(uniqueId: string) {
+  const ranks = [
+    "collect",
+    "prepare",
+    "train",
+    "evaluate",
+    "validate",
+    "ship",
+    "monitor",
+    "improve",
+  ];
+  const nodes = ranks.flatMap((rank) =>
+    Array.from({ length: 6 }, (_, index) => ({
+      id: `${rank}-${index}`,
+      label: `${rank.toUpperCase()} ${index + 1} ${uniqueId} system`,
+    })),
+  );
+
+  const edges = ranks.flatMap((rank, rankIndex) => {
+    const nextRank = ranks[rankIndex + 1];
+
+    if (!nextRank) {
+      return [];
+    }
+
+    return Array.from({ length: 6 }, (_, index) => ({
+      label: `${rank} to ${nextRank} ${index + 1}`,
+      source: `${rank}-${index}`,
+      target: `${nextRank}-${index}`,
+    }));
+  });
+
+  return {
+    edges,
+    kind: "diagram" as const,
+    nodes,
+  };
+}
+
+function buildWideTable(uniqueId: string) {
+  const columns = Array.from({ length: 7 }, (_, index) => `Column ${index + 1} ${uniqueId}`);
+  const rows = Array.from({ length: 4 }, (_, rowIndex) =>
+    columns.map((column, columnIndex) => `${column} row ${rowIndex + 1} data ${columnIndex + 1}`),
+  );
+
+  return {
+    caption: `Wide comparison ${uniqueId}`,
+    columns,
+    kind: "table" as const,
+    rows,
+  };
+}
+
+async function getVisualContentMetrics(page: Page) {
+  return page.getByRole("region", { name: /visual content/i }).evaluate((element) => ({
+    clientHeight: element.clientHeight,
+    clientWidth: element.clientWidth,
+    scrollHeight: element.scrollHeight,
+    scrollLeft: element.scrollLeft,
+    scrollTop: element.scrollTop,
+    scrollWidth: element.scrollWidth,
+  }));
+}
+
+async function getVisualContentScrollLeft(page: Page) {
+  const metrics = await getVisualContentMetrics(page);
+  return metrics.scrollLeft;
+}
+
+async function getVisualContentScrollTop(page: Page) {
+  const metrics = await getVisualContentMetrics(page);
+  return metrics.scrollTop;
+}
+
+async function getHorizontalScrollMetrics(locator: Locator) {
+  return locator.evaluate((element) => {
+    let current: HTMLElement | null = element as HTMLElement;
+
+    while (current) {
+      const { overflowX } = globalThis.getComputedStyle(current);
+      const isScrollable =
+        (overflowX === "auto" || overflowX === "scroll") &&
+        current.scrollWidth > current.clientWidth;
+
+      if (isScrollable) {
+        return {
+          clientWidth: current.clientWidth,
+          scrollLeft: current.scrollLeft,
+          scrollWidth: current.scrollWidth,
+        };
+      }
+
+      current = current.parentElement;
+    }
+
+    throw new Error("Expected a horizontal scroll container");
+  });
+}
+
+async function getHorizontalScrollLeft(locator: Locator) {
+  const metrics = await getHorizontalScrollMetrics(locator);
+  return metrics.scrollLeft;
+}
+
+async function getVerticalSpacing(container: Locator, item: Locator) {
+  const [containerBox, itemBox] = await Promise.all([container.boundingBox(), item.boundingBox()]);
+
+  if (!containerBox || !itemBox) {
+    throw new Error("Expected elements to have bounding boxes");
+  }
+
+  return {
+    bottom: containerBox.y + containerBox.height - (itemBox.y + itemBox.height),
+    top: itemBox.y - containerBox.y,
+  };
+}
+
+async function getViewportTop(locator: ReturnType<Page["getByRole"]>) {
+  const box = await locator.boundingBox();
+
+  if (!box) {
+    throw new Error("Expected element to have a bounding box");
+  }
+
+  return box.y;
 }
 
 test.describe("Visual Step Content", () => {
@@ -200,6 +328,117 @@ test.describe("Visual Step Content", () => {
     await expect(diagram.getByText(`transforms ${uniqueId}`)).toBeVisible();
   });
 
+  test("small diagrams stay centered inside the visual region", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const { url } = await createVisualActivity({
+      steps: [
+        {
+          content: {
+            edges: [
+              { label: `transforms ${uniqueId}`, source: "input", target: "process" },
+              { source: "process", target: "output" },
+            ],
+            kind: "diagram",
+            nodes: [
+              { id: "input", label: `Input ${uniqueId}` },
+              { id: "process", label: `Process ${uniqueId}` },
+              { id: "output", label: `Output ${uniqueId}` },
+            ],
+          },
+          kind: "visual",
+          position: 0,
+        },
+      ],
+    });
+
+    await page.setViewportSize({ height: 900, width: 1280 });
+    await page.goto(url);
+
+    const figure = page.getByRole("figure", { name: /diagram/i });
+    const visualContent = page.getByRole("region", { name: /visual content/i });
+
+    await expect(figure).toBeVisible();
+    await expect(visualContent).toBeVisible();
+
+    await expect
+      .poll(async () => {
+        const spacing = await getVerticalSpacing(visualContent, figure);
+        return Math.abs(spacing.top - spacing.bottom);
+      })
+      .toBeLessThan(24);
+
+    const spacing = await getVerticalSpacing(visualContent, figure);
+
+    expect(spacing.top).toBeGreaterThan(40);
+    expect(spacing.bottom).toBeGreaterThan(40);
+  });
+
+  test("diagram scroll stays inside the player", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const { url } = await createVisualActivity({
+      steps: [
+        {
+          content: buildLargeDiagram(uniqueId),
+          kind: "visual",
+          position: 0,
+        },
+      ],
+    });
+
+    await page.setViewportSize({ height: 700, width: 390 });
+    await page.goto(url);
+
+    const figure = page.getByRole("figure", { name: /diagram/i });
+    const diagram = figure.getByRole("img");
+    const closeButton = page.getByRole("link", { name: /close/i });
+    const nextButton = page.getByRole("button", { name: /next step/i });
+    const visualContent = page.getByRole("region", { name: /visual content/i });
+
+    await expect(figure).toBeVisible();
+    await expect(closeButton).toBeVisible();
+    await expect(nextButton).toBeVisible();
+    await expect(visualContent).toBeVisible();
+
+    await expect
+      .poll(() => getVisualContentMetrics(page))
+      .toMatchObject({
+        scrollHeight: expect.any(Number),
+        scrollWidth: expect.any(Number),
+      });
+
+    const initialMetrics = await getVisualContentMetrics(page);
+    const initialDiagramMetrics = await getHorizontalScrollMetrics(diagram);
+
+    expect(initialMetrics.scrollHeight).toBeGreaterThan(initialMetrics.clientHeight);
+    expect(initialDiagramMetrics.scrollWidth).toBeGreaterThan(initialDiagramMetrics.clientWidth);
+
+    const initialWindowScrollY = await page.evaluate(() => window.scrollY);
+    const initialCloseTop = await getViewportTop(closeButton);
+    const initialNextTop = await getViewportTop(nextButton);
+    await visualContent.hover();
+    await page.mouse.wheel(0, 150);
+
+    await expect.poll(() => getVisualContentScrollTop(page)).toBeGreaterThan(0);
+
+    const scrollTopAfterVertical = await getVisualContentScrollTop(page);
+
+    await diagram.hover();
+    await page.mouse.wheel(500, 0);
+
+    await expect.poll(() => getHorizontalScrollLeft(diagram)).toBeGreaterThan(0);
+    await expect.poll(() => getVisualContentScrollLeft(page)).toBe(0);
+
+    await page.mouse.wheel(0, 150);
+
+    await expect
+      .poll(() => getVisualContentScrollTop(page))
+      .toBeGreaterThan(scrollTopAfterVertical);
+
+    expect(await page.evaluate(() => window.scrollY)).toBe(initialWindowScrollY);
+    expect(Math.abs((await getViewportTop(closeButton)) - initialCloseTop)).toBeLessThan(1);
+    expect(Math.abs((await getViewportTop(nextButton)) - initialNextTop)).toBeLessThan(1);
+  });
+
   test("clicking on a visual step with diagram navigates to next step", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const { url } = await createVisualActivity({
@@ -321,7 +560,11 @@ test.describe("Visual Step Content", () => {
             columns: [`Feature ${uniqueId}`, `Python ${uniqueId}`, `JavaScript ${uniqueId}`],
             kind: "table",
             rows: [
-              [`Typing ${uniqueId}`, `Dynamic ${uniqueId}`, `Dynamic ${uniqueId}`],
+              [
+                `Typing ${uniqueId}`,
+                `Dynamic Python ${uniqueId}`,
+                `Dynamic JavaScript ${uniqueId}`,
+              ],
               [`Paradigm ${uniqueId}`, `Multi ${uniqueId}`, `Multi ${uniqueId}`],
             ],
           },
@@ -345,11 +588,53 @@ test.describe("Visual Step Content", () => {
 
     await expect(page.getByRole("cell", { name: new RegExp(`Typing ${uniqueId}`) })).toBeVisible();
     await expect(
-      page.getByRole("cell", { name: new RegExp(`Dynamic ${uniqueId}`) }).first(),
+      page.getByRole("cell", { name: new RegExp(`Dynamic Python ${uniqueId}`) }),
     ).toBeVisible();
     await expect(
       page.getByRole("cell", { name: new RegExp(`Paradigm ${uniqueId}`) }),
     ).toBeVisible();
+  });
+
+  test("wide tables keep horizontal scroll on the table", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const { url } = await createVisualActivity({
+      steps: [
+        {
+          content: buildWideTable(uniqueId),
+          kind: "visual",
+          position: 0,
+        },
+      ],
+    });
+
+    await page.setViewportSize({ height: 700, width: 390 });
+    await page.goto(url);
+
+    const closeButton = page.getByRole("link", { name: /close/i });
+    const nextButton = page.getByRole("button", { name: /next step/i });
+    const table = page.getByRole("table");
+    const visualContent = page.getByRole("region", { name: /visual content/i });
+
+    await expect(table).toBeVisible();
+    await expect(visualContent).toBeVisible();
+
+    const initialTableMetrics = await getHorizontalScrollMetrics(table);
+
+    expect(initialTableMetrics.scrollWidth).toBeGreaterThan(initialTableMetrics.clientWidth);
+
+    const initialWindowScrollY = await page.evaluate(() => window.scrollY);
+    const initialCloseTop = await getViewportTop(closeButton);
+    const initialNextTop = await getViewportTop(nextButton);
+
+    await table.hover();
+    await page.mouse.wheel(500, 0);
+
+    await expect.poll(() => getHorizontalScrollLeft(table)).toBeGreaterThan(0);
+    await expect.poll(() => getVisualContentScrollLeft(page)).toBe(0);
+
+    expect(await page.evaluate(() => window.scrollY)).toBe(initialWindowScrollY);
+    expect(Math.abs((await getViewportTop(closeButton)) - initialCloseTop)).toBeLessThan(1);
+    expect(Math.abs((await getViewportTop(nextButton)) - initialNextTop)).toBeLessThan(1);
   });
 
   test("visual step renders table caption", async ({ page }) => {

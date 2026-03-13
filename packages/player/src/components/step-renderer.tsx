@@ -32,7 +32,7 @@ export function StepRenderer({
 }) {
   if (step.kind === "static") {
     return (
-      <div className="flex min-h-0 w-full flex-1 justify-center">
+      <div className="flex min-h-0 w-full min-w-0 flex-1 justify-center">
         <StaticStep
           isFirst={isFirst}
           onNavigateNext={onNavigateNext}
@@ -45,7 +45,7 @@ export function StepRenderer({
 
   if (step.kind === "visual") {
     return (
-      <div className="flex min-h-0 w-full flex-1 justify-center">
+      <div className="flex min-h-0 w-full min-w-0 flex-1 justify-center">
         <VisualStep step={step} />
       </div>
     );
