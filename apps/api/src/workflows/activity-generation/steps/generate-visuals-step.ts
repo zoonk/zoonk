@@ -42,6 +42,8 @@ export async function generateVisualsForActivityStep(
   "use step";
 
   if (steps.length === 0) {
+    await streamStatus({ status: "started", step: "generateVisuals" });
+    await streamStatus({ status: "completed", step: "generateVisuals" });
     return { visuals: [] };
   }
 
@@ -56,6 +58,8 @@ export async function generateVisualsForActivityStep(
   });
 
   if (dbSteps.length === 0) {
+    await streamStatus({ status: "started", step: "generateVisuals" });
+    await streamStatus({ status: "completed", step: "generateVisuals" });
     return { visuals: [] };
   }
 

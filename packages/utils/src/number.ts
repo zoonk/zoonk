@@ -27,3 +27,7 @@ export function parseBigIntId(value: string): bigint | null {
 export function formatPosition(position: number): string {
   return String(position + 1).padStart(2, "0");
 }
+
+export function sumOf(values: number[]): number {
+  return values.reduce((a, b) => a + b, 0);
+}

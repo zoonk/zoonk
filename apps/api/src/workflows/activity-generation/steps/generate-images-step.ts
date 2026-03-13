@@ -85,6 +85,8 @@ export async function generateImagesForActivityStep(
   "use step";
 
   if (visuals.length === 0) {
+    await streamStatus({ status: "started", step: "generateImages" });
+    await streamStatus({ status: "completed", step: "generateImages" });
     return [];
   }
 
@@ -101,6 +103,8 @@ export async function generateImagesForActivityStep(
   const imageSteps = dbSteps.filter((step) => getString(step.content, "kind") === "image");
 
   if (imageSteps.length === 0) {
+    await streamStatus({ status: "started", step: "generateImages" });
+    await streamStatus({ status: "completed", step: "generateImages" });
     return visuals;
   }
 

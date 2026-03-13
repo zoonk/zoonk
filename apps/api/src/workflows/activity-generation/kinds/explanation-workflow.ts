@@ -1,4 +1,3 @@
-import { settled } from "@zoonk/utils/settled";
 import { completeActivityStep } from "../steps/complete-activity-step";
 import {
   type ExplanationResult,
@@ -31,22 +30,13 @@ export async function explanationActivityWorkflow(
     return [{ activity, result }];
   });
 
-  const visualResults = await Promise.allSettled(
-    explanationEntries.map((entry) =>
-      generateVisualsForActivityStep(entry.activity, entry.result.steps),
-    ),
+  await Promise.allSettled(
+    explanationEntries.map(async (entry) => {
+      const visualResult = await generateVisualsForActivityStep(entry.activity, entry.result.steps);
+      await generateImagesForActivityStep(entry.activity, visualResult.visuals);
+    }),
   );
 
-  const imagePromises = explanationEntries.flatMap((entry, index) => {
-    const visualResult = visualResults[index];
-    const visuals = visualResult ? settled(visualResult, { visuals: [] }).visuals : [];
-    if (visuals.length === 0) {
-      return [];
-    }
-    return [generateImagesForActivityStep(entry.activity, visuals)];
-  });
-
-  await Promise.allSettled(imagePromises);
   await completeActivityStep(activities, workflowRunId, "explanation");
 
   return { results };

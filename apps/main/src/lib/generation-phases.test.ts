@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { calculateWeightedProgress, getPhaseStatus } from "./generation-phases";
+import {
+  type PhaseStatus,
+  calculateWeightedProgress,
+  enforcePhaseProgression,
+  getPhaseStatus,
+} from "./generation-phases";
 
 type TestStep = "stepA" | "stepB" | "stepC" | "stepD" | "stepE";
 
@@ -102,5 +107,83 @@ describe(calculateWeightedProgress, () => {
 
     // phase1 complete (10/50 = 20%) + phase2 complete (15/50 = 30%) = 50%
     expect(calculateWeightedProgress(["stepA", "stepB", "stepC"], null, config)).toBe(50);
+  });
+
+  it("clamps finishing phase progress when earlier phases are not completed", () => {
+    const phaseSteps: Record<"start" | "middle" | "finishing", TestStep[]> = {
+      finishing: ["stepE"],
+      middle: ["stepC"],
+      start: ["stepA", "stepB"],
+    };
+
+    const config = {
+      phaseOrder: ["start", "middle", "finishing"] as const,
+      phaseSteps,
+      phaseWeights: { finishing: 10, middle: 30, start: 20 },
+    };
+
+    // stepE is completed (finishing step), but middle is pending.
+    // Without clamping, finishing would add weight. With clamping, it stays pending.
+    const progress = calculateWeightedProgress(["stepA", "stepB", "stepE"], null, config);
+
+    // start: completed (20), middle: pending (0), finishing: clamped to pending (0)
+    // 20/60 * 100 = 33
+    expect(progress).toBe(33);
+  });
+});
+
+function makePhase(status: PhaseStatus) {
+  return { status };
+}
+
+describe(enforcePhaseProgression, () => {
+  it("does not change when all phases are pending", () => {
+    const input = [makePhase("pending"), makePhase("pending"), makePhase("pending")];
+    expect(enforcePhaseProgression(input)).toEqual(input);
+  });
+
+  it("does not change linear [completed, active, pending]", () => {
+    const input = [makePhase("completed"), makePhase("active"), makePhase("pending")];
+    expect(enforcePhaseProgression(input)).toEqual(input);
+  });
+
+  it("does not change when all phases are completed", () => {
+    const input = [makePhase("completed"), makePhase("completed"), makePhase("completed")];
+    expect(enforcePhaseProgression(input)).toEqual(input);
+  });
+
+  it("clamps last phase to pending when earlier phases are not all completed", () => {
+    const input = [makePhase("completed"), makePhase("pending"), makePhase("active")];
+    const result = enforcePhaseProgression(input);
+    expect(result.at(2)?.status).toBe("pending");
+  });
+
+  it("auto-promotes pending to active when previous phase is completed", () => {
+    const input = [makePhase("completed"), makePhase("pending"), makePhase("pending")];
+    const result = enforcePhaseProgression(input);
+    expect(result.at(0)?.status).toBe("completed");
+    expect(result.at(1)?.status).toBe("active");
+    expect(result.at(2)?.status).toBe("pending");
+  });
+
+  it("handles visuals scenario: promotes pending and clamps last", () => {
+    const input = [
+      makePhase("completed"),
+      makePhase("completed"),
+      makePhase("completed"),
+      makePhase("completed"),
+      makePhase("pending"),
+      makePhase("active"),
+    ];
+    const result = enforcePhaseProgression(input);
+    expect(result.at(4)?.status).toBe("active");
+    expect(result.at(5)?.status).toBe("pending");
+  });
+
+  it("preserves original objects when no changes needed", () => {
+    const original = makePhase("completed");
+    const input = [original, makePhase("completed"), makePhase("completed")];
+    const result = enforcePhaseProgression(input);
+    expect(result[0]).toBe(original);
   });
 });

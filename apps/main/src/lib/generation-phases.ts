@@ -1,3 +1,5 @@
+import { sumOf } from "@zoonk/utils/number";
+
 export type PhaseStatus = "pending" | "active" | "completed";
 
 /**
@@ -37,6 +39,62 @@ export function getPhaseStatus<TPhase extends string, TStep extends string>(
   return "pending";
 }
 
+function shouldPromote<T extends { status: PhaseStatus }>(phase: T, index: number, phases: T[]) {
+  if (index === 0 || phase.status !== "pending") {
+    return false;
+  }
+
+  return phases[index - 1]?.status === "completed";
+}
+
+function clampLastPhase<T extends { status: PhaseStatus }>(phases: T[]): T[] {
+  const allPredecessorsCompleted = phases.slice(0, -1).every((item) => item.status === "completed");
+
+  if (allPredecessorsCompleted) {
+    return phases;
+  }
+
+  const last = phases.at(-1);
+
+  if (!last || last.status === "pending") {
+    return phases;
+  }
+
+  return [...phases.slice(0, -1), { ...last, status: "pending" as const }];
+}
+
+export function enforcePhaseProgression<T extends { status: PhaseStatus }>(phases: T[]): T[] {
+  // Promotion doesn't cascade (pending -> active, not completed), so
+  // each element only needs the original previous element's status.
+  const promoted = phases.map((phase, index) =>
+    shouldPromote(phase, index, phases) ? { ...phase, status: "active" as const } : phase,
+  );
+
+  return clampLastPhase(promoted);
+}
+
+function getPhaseWeightContribution<TPhase extends string, TStep extends string>(
+  phase: TPhase,
+  status: PhaseStatus,
+  completedSteps: TStep[],
+  config: { phaseSteps: Record<TPhase, readonly TStep[]>; phaseWeights: Record<TPhase, number> },
+) {
+  if (status === "pending") {
+    return 0;
+  }
+
+  const weight = config.phaseWeights[phase];
+
+  if (status === "completed") {
+    return weight;
+  }
+
+  const steps = config.phaseSteps[phase];
+  const completedCount = steps.filter((step) => completedSteps.includes(step)).length;
+
+  return (completedCount / steps.length) * weight;
+}
+
 export function calculateWeightedProgress<TPhase extends string, TStep extends string>(
   completedSteps: TStep[],
   currentStep: TStep | null,
@@ -47,33 +105,30 @@ export function calculateWeightedProgress<TPhase extends string, TStep extends s
     startedSteps?: TStep[];
   },
 ): number {
-  const totalWeight = config.phaseOrder.reduce((sum, phase) => sum + config.phaseWeights[phase], 0);
+  const totalWeight = sumOf(config.phaseOrder.map((phase) => config.phaseWeights[phase]));
 
   if (totalWeight === 0) {
     return 0;
   }
 
-  let weightedSum = 0;
-
-  for (const phase of config.phaseOrder) {
-    const status = getPhaseStatus(
+  const rawStatuses = config.phaseOrder.map((phase) => ({
+    phase,
+    status: getPhaseStatus(
       phase,
       completedSteps,
       currentStep,
       config.phaseSteps,
       config.startedSteps,
-    );
-    const weight = config.phaseWeights[phase];
+    ),
+  }));
 
-    if (status === "completed") {
-      weightedSum += weight;
-    } else if (status === "active") {
-      const steps = config.phaseSteps[phase];
-      const completedCount = steps.filter((step) => completedSteps.includes(step)).length;
-      const partialProgress = (completedCount / steps.length) * weight;
-      weightedSum += partialProgress;
-    }
-  }
+  const enforced = enforcePhaseProgression(rawStatuses);
+
+  const weightedSum = sumOf(
+    enforced.map(({ phase, status }) =>
+      getPhaseWeightContribution(phase, status, completedSteps, config),
+    ),
+  );
 
   return Math.round((weightedSum / totalWeight) * 100);
 }

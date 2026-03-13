@@ -1,3 +1,4 @@
+import { enforcePhaseProgression } from "@/lib/generation-phases";
 import { describe, expect, test } from "vitest";
 import {
   calculateWeightedProgress,
@@ -258,5 +259,37 @@ describe("reading phase status", () => {
     );
 
     expect(progress).toBeGreaterThan(0);
+  });
+});
+
+describe("enforcePhaseProgression integration", () => {
+  test("clamps finishing to pending when creatingImages is still pending (explanation kind)", () => {
+    const phaseOrder = getPhaseOrder("explanation");
+
+    const rawPhases = phaseOrder.map((phase) => ({
+      name: phase,
+      status: getPhaseStatus(
+        phase,
+        [
+          "getLessonActivities",
+          "getNeighboringConcepts",
+          "setActivityAsRunning",
+          "generateExplanationContent",
+          "generateVisuals",
+          "setChallengeAsCompleted",
+        ],
+        null,
+        "explanation",
+      ),
+    }));
+
+    const enforced = enforcePhaseProgression(rawPhases);
+
+    const finishing = enforced.find((item) => item.name === "finishing");
+    const creatingImages = enforced.find((item) => item.name === "creatingImages");
+
+    expect(creatingImages).toBeDefined();
+    expect(creatingImages?.status).not.toBe("completed");
+    expect(finishing?.status).toBe("pending");
   });
 });
