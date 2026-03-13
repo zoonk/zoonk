@@ -418,7 +418,7 @@ const stepsData: {
         content: {
           annotations: [
             {
-              line: 4,
+              line: 13,
               text: "StandardScaler normalizes features to have zero mean and unit variance, preventing features with large ranges from dominating",
             },
           ],

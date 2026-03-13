@@ -111,7 +111,12 @@ async function seedStepAttempts(
   }
 
   const activity = await prisma.activity.findFirst({
-    where: { lessonId: lesson.id, position: 2 },
+    orderBy: { position: "asc" },
+    where: {
+      kind: "quiz",
+      lessonId: lesson.id,
+      steps: { some: {} },
+    },
   });
 
   if (!activity) {
