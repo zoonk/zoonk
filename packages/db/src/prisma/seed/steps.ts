@@ -431,7 +431,7 @@ const stepsData: {
     ],
   },
   {
-    activityPosition: 2, // Explanation_quiz activity
+    activityPosition: 1, // Quiz activity
     language: "en",
     lessonSlug: "what-is-machine-learning",
     steps: [
@@ -527,7 +527,7 @@ const stepsData: {
     ],
   },
   {
-    activityPosition: 6, // Challenge activity
+    activityPosition: 4, // Challenge activity
     language: "en",
     lessonSlug: "what-is-machine-learning",
     steps: [

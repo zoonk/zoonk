@@ -29,7 +29,7 @@ const activitiesData: {
         kind: "quiz",
       },
       {
-        generationStatus: "completed",
+        generationStatus: "pending",
         isPublished: true,
         kind: "practice",
       },
