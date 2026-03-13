@@ -5,11 +5,11 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useExtracted } from "next-intl";
 
 export function StepSideNav({
-  isFirst,
+  canNavigatePrev,
   onNavigateNext,
   onNavigatePrev,
 }: {
-  isFirst: boolean;
+  canNavigatePrev: boolean;
   onNavigateNext: () => void;
   onNavigatePrev: () => void;
 }) {
@@ -23,7 +23,7 @@ export function StepSideNav({
       <Button
         aria-label={t("Previous step")}
         className="pointer-events-auto absolute top-1/2 left-4 flex -translate-y-1/2"
-        disabled={isFirst}
+        disabled={!canNavigatePrev}
         onClick={onNavigatePrev}
         size="icon-lg"
         variant="outline"

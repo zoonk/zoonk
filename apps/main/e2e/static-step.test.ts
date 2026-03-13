@@ -33,9 +33,10 @@ async function swipeHorizontally(
 }
 
 async function createStaticActivity(options: {
+  activityKind?: "challenge" | "explanation";
   steps: {
     content: object;
-    kind?: "static" | "visual";
+    kind?: "multipleChoice" | "static" | "visual";
     position: number;
   }[];
 }) {
@@ -70,7 +71,7 @@ async function createStaticActivity(options: {
   const activity = await activityFixture({
     generationStatus: "completed",
     isPublished: true,
-    kind: "explanation",
+    kind: options.activityKind ?? "explanation",
     lessonId: lesson.id,
     organizationId: org.id,
     position: 0,
@@ -556,6 +557,65 @@ test.describe("Static Step Navigation", () => {
     const nav = page.getByRole("navigation", { name: /step navigation/i });
     await expect(nav.getByRole("button", { name: /previous step/i })).toBeDisabled();
     await expect(nav.getByRole("button", { name: /next step/i })).toBeEnabled();
+  });
+
+  test("prev button stays disabled when the previous step is interactive", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const { url } = await createStaticActivity({
+      activityKind: "challenge",
+      steps: [
+        {
+          content: {
+            context: `Challenge context ${uniqueId}`,
+            kind: "challenge",
+            options: [
+              {
+                consequence: `Safe outcome ${uniqueId}`,
+                effects: [{ dimension: `Courage ${uniqueId}`, impact: "positive" }],
+                text: `Safe choice ${uniqueId}`,
+              },
+              {
+                consequence: `Risky outcome ${uniqueId}`,
+                effects: [{ dimension: `Courage ${uniqueId}`, impact: "negative" }],
+                text: `Risky choice ${uniqueId}`,
+              },
+            ],
+            question: `Challenge question ${uniqueId}`,
+          },
+          kind: "multipleChoice",
+          position: 0,
+        },
+        {
+          content: {
+            text: `Static body ${uniqueId}`,
+            title: `Static recap ${uniqueId}`,
+            variant: "text",
+          },
+          kind: "static",
+          position: 1,
+        },
+      ],
+    });
+
+    await page.goto(url);
+    await page.getByRole("button", { name: /begin/i }).click();
+    await page.getByRole("radio", { name: new RegExp(`Safe choice ${uniqueId}`) }).click();
+    await page.getByRole("button", { name: /check/i }).click();
+    await page.getByRole("button", { name: /continue/i }).click();
+
+    await expect(
+      page.getByRole("heading", { name: new RegExp(`Static recap ${uniqueId}`) }),
+    ).toBeVisible();
+
+    const nav = page.getByRole("navigation", { name: /step navigation/i });
+    await expect(nav.getByRole("button", { name: /previous step/i })).toBeDisabled();
+
+    await page.keyboard.press("ArrowLeft");
+
+    await expect(
+      page.getByRole("heading", { name: new RegExp(`Static recap ${uniqueId}`) }),
+    ).toBeVisible();
+    await expect(page.getByText(new RegExp(`Challenge question ${uniqueId}`))).not.toBeVisible();
   });
 
   test("next button navigates to completion on last step", async ({ page }) => {

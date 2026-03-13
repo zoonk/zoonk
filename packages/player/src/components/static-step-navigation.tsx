@@ -6,11 +6,11 @@ const SWIPE_MIN_DISTANCE = 50;
 const SWIPE_MAX_VERTICAL_DRIFT = 75;
 
 export function useSwipeNavigation({
-  isFirst,
+  canNavigatePrev,
   onNavigateNext,
   onNavigatePrev,
 }: {
-  isFirst: boolean;
+  canNavigatePrev: boolean;
   onNavigateNext: () => void;
   onNavigatePrev: () => void;
 }) {
@@ -48,7 +48,7 @@ export function useSwipeNavigation({
       return;
     }
 
-    if (!isFirst) {
+    if (canNavigatePrev) {
       onNavigatePrev();
     }
   };

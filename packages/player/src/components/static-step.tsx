@@ -73,17 +73,17 @@ function StaticStepContent({ step }: { step: SerializedStep }) {
 }
 
 export function StaticStep({
-  isFirst,
+  canNavigatePrev,
   onNavigateNext,
   onNavigatePrev,
   step,
 }: {
-  isFirst: boolean;
+  canNavigatePrev: boolean;
   onNavigateNext: () => void;
   onNavigatePrev: () => void;
   step: SerializedStep;
 }) {
-  const swipeHandlers = useSwipeNavigation({ isFirst, onNavigateNext, onNavigatePrev });
+  const swipeHandlers = useSwipeNavigation({ canNavigatePrev, onNavigateNext, onNavigatePrev });
 
   return (
     <div

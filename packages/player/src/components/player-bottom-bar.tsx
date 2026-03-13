@@ -20,11 +20,11 @@ export function PlayerBottomBar({ className, ...props }: React.ComponentProps<"d
 }
 
 export function PlayerBottomBarNav({
-  isFirstStep,
+  canNavigatePrev,
   onNavigateNext,
   onNavigatePrev,
 }: {
-  isFirstStep: boolean;
+  canNavigatePrev: boolean;
   onNavigateNext: () => void;
   onNavigatePrev: () => void;
 }) {
@@ -34,7 +34,7 @@ export function PlayerBottomBarNav({
     <nav aria-label={t("Step navigation")} className="flex items-center justify-between">
       <Button
         aria-label={t("Previous step")}
-        disabled={isFirstStep}
+        disabled={!canNavigatePrev}
         onClick={onNavigatePrev}
         size="icon-lg"
         variant="outline"

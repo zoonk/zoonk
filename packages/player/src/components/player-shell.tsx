@@ -11,6 +11,7 @@ import { StageContent } from "./stage-content";
 export function PlayerShell() {
   const t = useExtracted();
   const {
+    canNavigatePrev,
     check,
     completionResult,
     continue: handleContinue,
@@ -20,7 +21,6 @@ export function PlayerShell() {
     dimensions,
     hasAnswer,
     isCompleted,
-    isFirstStep,
     isIntro,
     isStaticStep,
     lessonHref,
@@ -66,13 +66,13 @@ export function PlayerShell() {
 
       <PlayerStage isStatic={isStaticStep && phase === "playing"} phase={phase}>
         <StageContent
+          canNavigatePrev={canNavigatePrev}
           completionResult={completionResult}
           currentResult={currentResult}
           currentStep={currentStep}
           currentStepIndex={currentStepIndex}
           dimensions={dimensions}
           isCompleted={isCompleted}
-          isFirst={isFirstStep}
           lessonHref={lessonHref}
           nextActivityHref={nextActivityHref}
           onNavigateNext={navigateNext}
@@ -90,7 +90,7 @@ export function PlayerShell() {
         <PlayerBottomBar className={isStaticStep ? "lg:hidden" : undefined}>
           {isStaticStep ? (
             <PlayerBottomBarNav
-              isFirstStep={isFirstStep}
+              canNavigatePrev={canNavigatePrev}
               onNavigateNext={navigateNext}
               onNavigatePrev={navigatePrev}
             />

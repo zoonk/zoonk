@@ -13,6 +13,7 @@ import { type SerializedStep } from "./prepare-activity-data";
 
 export type PlayerContextValue<Href extends string> = {
   activityId: string;
+  canNavigatePrev: boolean;
   completionResult: CompletionResult | null;
   currentResult: StepResult | undefined;
   currentStep: SerializedStep | undefined;
@@ -21,7 +22,6 @@ export type PlayerContextValue<Href extends string> = {
   hasAnswer: boolean;
   isAuthenticated: boolean;
   isCompleted: boolean;
-  isFirstStep: boolean;
   isGameOver: boolean;
   isIntro: boolean;
   isStaticStep: boolean;

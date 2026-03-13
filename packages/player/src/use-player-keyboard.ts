@@ -4,6 +4,7 @@ import { useKeyboardCallback } from "@zoonk/ui/hooks/keyboard";
 import { type PlayerPhase } from "./player-reducer";
 
 type PlayerKeyboardParams = {
+  canNavigatePrev: boolean;
   hasAnswer: boolean;
   isStaticStep: boolean;
   onCheck: () => void;
@@ -49,6 +50,7 @@ function getEnterAction({
 }
 
 export function usePlayerKeyboard({
+  canNavigatePrev,
   hasAnswer,
   isStaticStep,
   onCheck,
@@ -107,7 +109,7 @@ export function usePlayerKeyboard({
   useKeyboardCallback(
     "ArrowLeft",
     () => {
-      if (phase !== "playing" || !isStaticStep) {
+      if (phase !== "playing" || !canNavigatePrev) {
         return false;
       }
       onNavigatePrev();

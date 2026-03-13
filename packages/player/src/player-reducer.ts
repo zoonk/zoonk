@@ -2,6 +2,7 @@ import { type ChallengeEffect, parseStepContent } from "@zoonk/core/steps/conten
 import { type AnswerResult } from "./check-answer";
 import { IMPACT_DELTA } from "./dimensions";
 import { type SerializedActivity, type SerializedStep } from "./prepare-activity-data";
+import { canNavigatePrev, isStaticNavigationStep } from "./step-navigation";
 
 export type PlayerPhase = "intro" | "playing" | "feedback" | "completed";
 
@@ -69,10 +70,6 @@ function applyEffects(
   }
 
   return next;
-}
-
-function isStaticStep(step: SerializedStep): boolean {
-  return step.kind === "static" || step.kind === "visual";
 }
 
 function getChallengeEffects(step: SerializedStep): ChallengeEffect[] {
@@ -225,16 +222,16 @@ function handleNavigateStep(
 
   const currentStep = state.steps[state.currentStepIndex];
 
-  if (!currentStep || !isStaticStep(currentStep)) {
+  if (!isStaticNavigationStep(currentStep)) {
     return state;
   }
 
   if (action.direction === "prev") {
-    const prevIndex = Math.max(0, state.currentStepIndex - 1);
-
-    if (prevIndex === state.currentStepIndex) {
+    if (!canNavigatePrev(state.steps, state.currentStepIndex)) {
       return state;
     }
+
+    const prevIndex = state.currentStepIndex - 1;
 
     return { ...state, currentStepIndex: prevIndex, stepStartedAt: Date.now() };
   }

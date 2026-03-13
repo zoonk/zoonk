@@ -15,7 +15,7 @@ import { VisualStep } from "./visual-step";
 import { VocabularyStep } from "./vocabulary-step";
 
 export function StepRenderer({
-  isFirst,
+  canNavigatePrev,
   onNavigateNext,
   onNavigatePrev,
   onSelectAnswer,
@@ -23,7 +23,7 @@ export function StepRenderer({
   selectedAnswer,
   step,
 }: {
-  isFirst: boolean;
+  canNavigatePrev: boolean;
   onNavigateNext: () => void;
   onNavigatePrev: () => void;
   onSelectAnswer: (stepId: string, answer: SelectedAnswer | null) => void;
@@ -35,12 +35,12 @@ export function StepRenderer({
     return (
       <div className="relative flex min-h-0 w-full max-w-5xl min-w-0 flex-1 justify-center">
         <StepSideNav
-          isFirst={isFirst}
+          canNavigatePrev={canNavigatePrev}
           onNavigateNext={onNavigateNext}
           onNavigatePrev={onNavigatePrev}
         />
         <StaticStep
-          isFirst={isFirst}
+          canNavigatePrev={canNavigatePrev}
           onNavigateNext={onNavigateNext}
           onNavigatePrev={onNavigatePrev}
           step={step}
@@ -53,7 +53,7 @@ export function StepRenderer({
     return (
       <div className="relative flex min-h-0 w-full max-w-5xl min-w-0 flex-1 justify-center">
         <StepSideNav
-          isFirst={isFirst}
+          canNavigatePrev={canNavigatePrev}
           onNavigateNext={onNavigateNext}
           onNavigatePrev={onNavigatePrev}
         />
