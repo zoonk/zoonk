@@ -283,17 +283,20 @@ msgctxt "nJGJop"
 msgid "Someone says:"
 msgstr "Alguém diz:"
 
-#: ../../packages/player/src/components/player-header.tsx
+#: ../../packages/player/src/components/player-bottom-bar.tsx
+#: ../../packages/player/src/components/step-side-nav.tsx
 msgctxt "aNzy1T"
 msgid "Previous step"
 msgstr "Passo anterior"
 
-#: ../../packages/player/src/components/player-header.tsx
+#: ../../packages/player/src/components/player-bottom-bar.tsx
+#: ../../packages/player/src/components/step-side-nav.tsx
 msgctxt "d+qgix"
 msgid "Next step"
 msgstr "Próximo passo"
 
-#: ../../packages/player/src/components/player-header.tsx
+#: ../../packages/player/src/components/player-bottom-bar.tsx
+#: ../../packages/player/src/components/step-side-nav.tsx
 msgctxt "kXUK98"
 msgid "Step navigation"
 msgstr "Navegação de etapas"
@@ -352,6 +355,11 @@ msgstr "Ordenar itens"
 msgctxt "VA8c/A"
 msgid "Correct order:"
 msgstr "Ordem correta:"
+
+#: ../../packages/player/src/components/visual-step.tsx
+msgctxt "9bIjWj"
+msgid "Visual content"
+msgstr "Conteúdo visual"
 
 #: ../../packages/player/src/components/visuals/chart-visual.tsx
 msgctxt "iZuO+L"

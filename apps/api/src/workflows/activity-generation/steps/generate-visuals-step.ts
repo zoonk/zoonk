@@ -4,30 +4,26 @@ import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { streamError, streamStatus } from "../stream-status";
 import { type ActivitySteps } from "./_utils/get-activity-steps";
+import { buildVisualRows } from "./_utils/visual-rows";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
 
 export type StepVisual = StepVisualSchema["visuals"][number];
 
 async function saveVisualsToDB(
-  visuals: StepVisual[],
-  dbSteps: { id: bigint | number }[],
+  data: {
+    activityId: bigint | number;
+    content: Omit<StepVisual, "stepIndex">;
+    isPublished: true;
+    kind: "visual";
+    position: number;
+  }[],
 ): Promise<{ error: Error | null }> {
-  return safeAsync(() =>
-    Promise.all(
-      visuals.map((visual) => {
-        const dbStep = dbSteps[visual.stepIndex];
-        if (!dbStep) {
-          return Promise.resolve();
-        }
-        const { stepIndex: _, kind: __, ...visualContent } = visual;
-        return prisma.step.update({
-          data: { visualContent, visualKind: visual.kind },
-          where: { id: dbStep.id },
-        });
-      }),
-    ),
-  );
+  if (data.length === 0) {
+    return { error: null };
+  }
+
+  return safeAsync(() => prisma.step.createMany({ data }));
 }
 
 async function handleVisualsError(
@@ -55,8 +51,8 @@ export async function generateVisualsForActivityStep(
 
   const dbSteps = await prisma.step.findMany({
     orderBy: { position: "asc" },
-    select: { id: true },
-    where: { activityId: activity.id },
+    select: { id: true, position: true },
+    where: { activityId: activity.id, kind: "static" },
   });
 
   if (dbSteps.length === 0) {
@@ -81,7 +77,17 @@ export async function generateVisualsForActivityStep(
     return handleVisualsError(activity.id, reason);
   }
 
-  const { error: saveError } = await saveVisualsToDB(result.data.visuals, dbSteps);
+  const visualRows = buildVisualRows({
+    activityId: activity.id,
+    dbSteps,
+    visuals: result.data.visuals,
+  });
+
+  if (!visualRows) {
+    return handleVisualsError(activity.id, "contentValidationFailed");
+  }
+
+  const { error: saveError } = await saveVisualsToDB(visualRows);
 
   if (saveError) {
     return handleVisualsError(activity.id, "dbSaveFailed");

@@ -143,6 +143,7 @@ export function checkStep(step: SerializedStep, answer: SelectedAnswer): CheckSt
       return checkListeningStep(step, answer);
 
     case "static":
+    case "visual":
       return MISMATCH_RESULT;
 
     default:

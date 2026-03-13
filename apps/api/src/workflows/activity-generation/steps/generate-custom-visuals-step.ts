@@ -3,6 +3,7 @@ import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { rejected, settledValues } from "@zoonk/utils/settled";
 import { streamStatus } from "../stream-status";
+import { buildVisualRows } from "./_utils/visual-rows";
 import { type CustomContentResult } from "./generate-custom-content-step";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
@@ -28,8 +29,8 @@ async function generateVisualsForActivity(
 
   const dbSteps = await prisma.step.findMany({
     orderBy: { position: "asc" },
-    select: { id: true },
-    where: { activityId: activity.id },
+    select: { id: true, position: true },
+    where: { activityId: activity.id, kind: "static" },
   });
 
   if (dbSteps.length === 0) {
@@ -52,21 +53,21 @@ async function generateVisualsForActivity(
     throw error ?? new Error("Empty visual result");
   }
 
-  const { error: saveError } = await safeAsync(() =>
-    Promise.all(
-      result.data.visuals.map((visual) => {
-        const dbStep = dbSteps[visual.stepIndex];
-        if (!dbStep) {
-          return Promise.resolve();
-        }
-        const { stepIndex: _, kind: __, ...visualContent } = visual;
-        return prisma.step.update({
-          data: { visualContent, visualKind: visual.kind },
-          where: { id: dbStep.id },
-        });
-      }),
-    ),
-  );
+  const visualRows = buildVisualRows({
+    activityId: activity.id,
+    dbSteps,
+    visuals: result.data.visuals,
+  });
+
+  if (!visualRows) {
+    await handleActivityFailureStep({ activityId: activity.id });
+    throw new Error("Invalid visual coverage");
+  }
+
+  const { error: saveError } =
+    visualRows.length > 0
+      ? await safeAsync(() => prisma.step.createMany({ data: visualRows }))
+      : { error: null };
 
   if (saveError) {
     await handleActivityFailureStep({ activityId: activity.id });

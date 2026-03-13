@@ -14,11 +14,11 @@ async function generateImagesForActivity(activity: LessonActivity): Promise<void
 
   const dbSteps = await prisma.step.findMany({
     orderBy: { position: "asc" },
-    select: { id: true, visualContent: true, visualKind: true },
-    where: { activityId: activity.id },
+    select: { content: true, id: true },
+    where: { activityId: activity.id, kind: "visual" },
   });
 
-  const imageSteps = dbSteps.filter((step) => step.visualKind === "image");
+  const imageSteps = dbSteps.filter((step) => getString(step.content, "kind") === "image");
 
   if (imageSteps.length === 0) {
     return;
@@ -28,7 +28,7 @@ async function generateImagesForActivity(activity: LessonActivity): Promise<void
 
   const results = await Promise.allSettled(
     imageSteps.map((step) => {
-      const prompt = getString(step.visualContent, "prompt");
+      const prompt = getString(step.content, "prompt");
       if (!prompt) {
         return Promise.reject(new Error("Missing prompt"));
       }
@@ -43,7 +43,7 @@ async function generateImagesForActivity(activity: LessonActivity): Promise<void
         return Promise.resolve();
       }
       return prisma.step.update({
-        data: { visualContent: { ...toRecord(step.visualContent), url: result.value.data } },
+        data: { content: { ...toRecord(step.content), url: result.value.data } },
         where: { id: step.id },
       });
     }),

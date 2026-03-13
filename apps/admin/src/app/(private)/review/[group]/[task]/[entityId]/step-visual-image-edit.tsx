@@ -20,7 +20,7 @@ export function StepVisualImageEdit({
 }: {
   item: {
     id: string;
-    visualContent: { prompt: string; url?: string };
+    content: { prompt: string; url?: string };
     activity: { title: string | null };
   };
 }) {
@@ -33,25 +33,25 @@ export function StepVisualImageEdit({
         <span className="text-muted-foreground text-sm">{item.activity.title}</span>
       </div>
 
-      <p className="text-muted-foreground font-mono text-sm">{item.visualContent.prompt}</p>
+      <p className="text-muted-foreground font-mono text-sm">{item.content.prompt}</p>
 
       <ImageUploadProvider
-        currentImageUrl={item.visualContent.url ?? null}
+        currentImageUrl={item.content.url ?? null}
         onRemove={noopRemove}
         onUpload={uploadStepImageAction.bind(null, params)}
       >
         <ImageUploadTrigger
-          aria-label={item.visualContent.url ? "Replace image" : "Upload image"}
+          aria-label={item.content.url ? "Replace image" : "Upload image"}
           className="h-96 w-full max-w-150"
           size={undefined}
         >
-          {item.visualContent.url ? (
+          {item.content.url ? (
             <Image
-              alt={item.visualContent.prompt}
+              alt={item.content.prompt}
               className="object-contain transition-opacity group-hover:opacity-80"
               fill
               sizes="600px"
-              src={item.visualContent.url}
+              src={item.content.url}
             />
           ) : (
             <ImageUploadPlaceholder>

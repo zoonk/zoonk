@@ -10,11 +10,12 @@ import { ReadingStep } from "./reading-step";
 import { SelectImageStep } from "./select-image-step";
 import { SortOrderStep } from "./sort-order-step";
 import { StaticStep } from "./static-step";
-import { StaticStepLayout } from "./step-layouts";
+import { StepSideNav } from "./step-side-nav";
+import { VisualStep } from "./visual-step";
 import { VocabularyStep } from "./vocabulary-step";
 
 export function StepRenderer({
-  isFirst,
+  canNavigatePrev,
   onNavigateNext,
   onNavigatePrev,
   onSelectAnswer,
@@ -22,7 +23,7 @@ export function StepRenderer({
   selectedAnswer,
   step,
 }: {
-  isFirst: boolean;
+  canNavigatePrev: boolean;
   onNavigateNext: () => void;
   onNavigatePrev: () => void;
   onSelectAnswer: (stepId: string, answer: SelectedAnswer | null) => void;
@@ -31,18 +32,32 @@ export function StepRenderer({
   step: SerializedStep;
 }) {
   if (step.kind === "static") {
-    const hasVisual = Boolean(step.visualKind && step.visualContent);
-
     return (
-      <div className="flex min-h-0 w-full flex-1 justify-center">
-        <StaticStepLayout className={hasVisual ? "xl:justify-center xl:gap-4" : "justify-center"}>
-          <StaticStep
-            isFirst={isFirst}
-            onNavigateNext={onNavigateNext}
-            onNavigatePrev={onNavigatePrev}
-            step={step}
-          />
-        </StaticStepLayout>
+      <div className="relative flex min-h-0 w-full max-w-5xl min-w-0 flex-1 justify-center">
+        <StepSideNav
+          canNavigatePrev={canNavigatePrev}
+          onNavigateNext={onNavigateNext}
+          onNavigatePrev={onNavigatePrev}
+        />
+        <StaticStep
+          canNavigatePrev={canNavigatePrev}
+          onNavigateNext={onNavigateNext}
+          onNavigatePrev={onNavigatePrev}
+          step={step}
+        />
+      </div>
+    );
+  }
+
+  if (step.kind === "visual") {
+    return (
+      <div className="relative flex min-h-0 w-full max-w-5xl min-w-0 flex-1 justify-center">
+        <StepSideNav
+          canNavigatePrev={canNavigatePrev}
+          onNavigateNext={onNavigateNext}
+          onNavigatePrev={onNavigatePrev}
+        />
+        <VisualStep step={step} />
       </div>
     );
   }

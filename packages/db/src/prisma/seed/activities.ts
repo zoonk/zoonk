@@ -19,7 +19,7 @@ const activitiesData: {
   {
     activities: [
       {
-        generationStatus: "pending",
+        generationStatus: "completed",
         isPublished: true,
         kind: "explanation",
       },

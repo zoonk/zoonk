@@ -1,7 +1,6 @@
 import { getCourseSuggestionReview, getStepVisualReview } from "@/data/review/get-review-item";
 import { type ReviewTaskType, getVisualKindFromTaskType } from "@/lib/review-utils";
 import { parseStepContent } from "@zoonk/core/steps/content-contract";
-import { parseVisualContent } from "@zoonk/core/steps/visual-content-contract";
 import { notFound } from "next/navigation";
 import { CourseSuggestionEdit } from "./course-suggestion-edit";
 import { StepSelectImageEdit } from "./step-select-image-edit";
@@ -23,10 +22,15 @@ export async function FlaggedItemContent({
       notFound();
     }
 
-    const visual = parseVisualContent("image", step.visualContent);
+    const visual = parseStepContent("visual", step.content);
+
+    if (visual.kind !== "image") {
+      notFound();
+    }
+
     return (
       <StepVisualImageEdit
-        item={{ activity: step.activity, id: step.id.toString(), visualContent: visual }}
+        item={{ activity: step.activity, content: visual, id: step.id.toString() }}
       />
     );
   }

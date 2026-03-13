@@ -10,8 +10,6 @@ model Step {
   position      Int
   isPublished   Boolean         @default(false) @map("is_published")
   content       Json
-  visualKind    StepVisualKind? @map("visual_kind")
-  visualContent Json?           @map("visual_content")
   createdAt     DateTime        @default(now()) @map("created_at")
   updatedAt     DateTime        @default(now()) @updatedAt @map("updated_at")
   attempts      StepAttempt[]

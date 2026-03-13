@@ -17,13 +17,13 @@ function needsFeedbackScreen(step: SerializedStep): boolean {
 }
 
 export function StageContent({
+  canNavigatePrev,
   completionResult,
   currentResult,
   currentStep,
   currentStepIndex,
   dimensions,
   isCompleted,
-  isFirst,
   lessonHref,
   nextActivityHref,
   onNavigateNext,
@@ -35,13 +35,13 @@ export function StageContent({
   phase,
   selectedAnswer,
 }: {
+  canNavigatePrev: boolean;
   completionResult: CompletionResult | null;
   currentResult: StepResult | undefined;
   currentStep: SerializedStep | undefined;
   currentStepIndex: number;
   dimensions: DimensionInventory;
   isCompleted: boolean;
-  isFirst: boolean;
   lessonHref: Route;
   nextActivityHref: Route | null;
   onNavigateNext: () => void;
@@ -77,11 +77,11 @@ export function StageContent({
   if ((phase === "playing" || phase === "feedback") && currentStep) {
     return (
       <div
-        className="animate-in fade-in flex min-h-0 w-full flex-1 flex-col items-center duration-150 ease-out motion-reduce:animate-none sm:justify-center"
+        className="animate-in fade-in flex min-h-0 w-full min-w-0 flex-1 flex-col items-center duration-150 ease-out motion-reduce:animate-none sm:justify-center"
         key={`step-${currentStepIndex}`}
       >
         <StepRenderer
-          isFirst={isFirst}
+          canNavigatePrev={canNavigatePrev}
           onNavigateNext={onNavigateNext}
           onNavigatePrev={onNavigatePrev}
           onSelectAnswer={onSelectAnswer}

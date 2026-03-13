@@ -1,5 +1,3 @@
-import { type StepVisualKind } from "@zoonk/db";
-
 type ReviewGroup = "text" | "image";
 
 type ReviewTaskType = "courseSuggestions" | "stepVisualImage" | "stepSelectImage";
@@ -62,7 +60,7 @@ function getTasksByGroup(group: ReviewGroup): ReviewTaskType[] {
   return REVIEW_TASK_TYPES.filter((taskType) => REVIEW_TASKS[taskType].group === group);
 }
 
-const VISUAL_KINDS: readonly StepVisualKind[] = [
+const VISUAL_KINDS: readonly string[] = [
   "code",
   "image",
   "table",
@@ -76,11 +74,11 @@ const VISUAL_KINDS: readonly StepVisualKind[] = [
 
 const VISUAL_KIND_SET: ReadonlySet<string> = new Set(VISUAL_KINDS);
 
-function isVisualKind(value: string): value is StepVisualKind {
+function isVisualKind(value: string): boolean {
   return VISUAL_KIND_SET.has(value);
 }
 
-function getVisualKindFromTaskType(taskType: string): StepVisualKind | null {
+function getVisualKindFromTaskType(taskType: string): string | null {
   const match = taskType.match(/^stepVisual(.+)$/);
   if (!match?.[1]) {
     return null;

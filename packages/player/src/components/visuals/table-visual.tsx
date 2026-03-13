@@ -1,10 +1,6 @@
 "use client";
 
-import {
-  type SupportedVisualKind,
-  type VisualContentByKind,
-  tableVisualContentSchema,
-} from "@zoonk/core/steps/visual-content-contract";
+import { type TableVisualContent } from "@zoonk/core/steps/visual-content-contract";
 import {
   Table,
   TableBody,
@@ -14,15 +10,13 @@ import {
   TableRow,
 } from "@zoonk/ui/components/table";
 
-export function TableVisual({ content }: { content: VisualContentByKind[SupportedVisualKind] }) {
-  const parsed = tableVisualContentSchema.parse(content);
-
+export function TableVisual({ content }: { content: TableVisualContent }) {
   return (
-    <figure aria-label={parsed.caption} className="w-full max-w-2xl">
+    <figure aria-label={content.caption} className="w-full max-w-2xl">
       <Table>
         <TableHeader>
           <TableRow>
-            {parsed.columns.map((column) => (
+            {content.columns.map((column) => (
               <TableHead key={column} scope="col">
                 {column}
               </TableHead>
@@ -31,9 +25,9 @@ export function TableVisual({ content }: { content: VisualContentByKind[Supporte
         </TableHeader>
 
         <TableBody>
-          {parsed.rows.map((row) => (
+          {content.rows.map((row) => (
             <TableRow key={row.join("-")}>
-              {parsed.columns.map((column, columnIndex) => (
+              {content.columns.map((column, columnIndex) => (
                 <TableCell className="whitespace-normal" key={column}>
                   {row[columnIndex]}
                 </TableCell>
@@ -43,9 +37,9 @@ export function TableVisual({ content }: { content: VisualContentByKind[Supporte
         </TableBody>
       </Table>
 
-      {parsed.caption && (
+      {content.caption && (
         <figcaption className="text-muted-foreground mt-3 px-1 text-center text-sm">
-          {parsed.caption}
+          {content.caption}
         </figcaption>
       )}
     </figure>

@@ -1,31 +1,14 @@
 import { generateActivityCustom } from "@zoonk/ai/tasks/activities/custom";
-import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { rejected, settledValues } from "@zoonk/utils/settled";
 import { streamStatus } from "../stream-status";
-import { saveContentSteps } from "./_utils/content-step-helpers";
-import { type ActivitySteps, parseActivitySteps } from "./_utils/get-activity-steps";
+import { resolveActivityForGeneration, saveContentSteps } from "./_utils/content-step-helpers";
+import { type ActivitySteps } from "./_utils/get-activity-steps";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
 import { setActivityAsRunningStep } from "./set-activity-as-running-step";
 
 export type CustomContentResult = { activityId: number; steps: ActivitySteps };
-
-async function getExistingSteps(activityId: number): Promise<ActivitySteps | null> {
-  const { data: existingSteps } = await safeAsync(() =>
-    prisma.step.findMany({
-      orderBy: { position: "asc" },
-      select: { content: true },
-      where: { activityId },
-    }),
-  );
-
-  if (existingSteps && existingSteps.length > 0) {
-    return parseActivitySteps(existingSteps);
-  }
-
-  return null;
-}
 
 async function generateAndSaveContent(activity: LessonActivity): Promise<ActivitySteps> {
   const { data: result, error } = await safeAsync(() =>
@@ -54,19 +37,10 @@ async function generateForActivity(
   activity: LessonActivity,
   workflowRunId: string,
 ): Promise<CustomContentResult> {
-  const empty: CustomContentResult = { activityId: activity.id, steps: [] };
+  const resolved = await resolveActivityForGeneration(activity);
 
-  if (activity.generationStatus === "completed") {
-    const existing = await getExistingSteps(activity.id);
-    return { activityId: activity.id, steps: existing ?? [] };
-  }
-
-  if (activity.generationStatus === "running") {
-    return empty;
-  }
-
-  if (activity.generationStatus === "failed") {
-    await prisma.step.deleteMany({ where: { activityId: activity.id } });
+  if (!resolved.shouldGenerate) {
+    return { activityId: activity.id, steps: resolved.existingSteps };
   }
 
   await setActivityAsRunningStep({ activityId: activity.id, workflowRunId });

@@ -5,7 +5,7 @@ import {
   type ReviewTaskType,
   getVisualKindFromTaskType,
 } from "@/lib/review-utils";
-import { type StepVisualKind, prisma } from "@zoonk/db";
+import { prisma } from "@zoonk/db";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { cache } from "react";
 
@@ -20,12 +20,13 @@ export const reviewedEntityIds = cache(async function reviewedEntityIds(
   return reviews.map((review) => review.entityId);
 });
 
-function countPendingStepVisual(kind: StepVisualKind, excludeIds: bigint[]): Promise<number> {
+function countPendingStepVisual(kind: string, excludeIds: bigint[]): Promise<number> {
   return prisma.step.count({
     where: {
       NOT: { id: { in: excludeIds } },
       activity: { organization: { slug: AI_ORG_SLUG } },
-      visualKind: kind,
+      content: { equals: kind, path: ["kind"] },
+      kind: "visual",
     },
   });
 }

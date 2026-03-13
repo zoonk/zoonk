@@ -13,7 +13,7 @@ export function PlayerStage({
   return (
     <section
       className={cn(
-        "flex min-h-0 flex-1 flex-col items-center overflow-y-auto",
+        "flex min-h-0 min-w-0 flex-1 flex-col items-center overflow-y-auto",
         isStatic ? "overflow-hidden p-0" : "justify-center p-4",
         "data-[phase=feedback]:px-6 data-[phase=feedback]:sm:px-8",
         className,

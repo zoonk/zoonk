@@ -7,6 +7,7 @@ import { hasNegativeDimension } from "./dimensions";
 import { PlayerContext, type PlayerContextValue } from "./player-context";
 import { type PlayerState, createInitialState, playerReducer } from "./player-reducer";
 import { type SerializedActivity } from "./prepare-activity-data";
+import { canNavigatePrev, isStaticNavigationStep } from "./step-navigation";
 import { usePlayerActions } from "./use-player-actions";
 import { usePlayerKeyboard } from "./use-player-keyboard";
 import { UserNameProvider } from "./user-name-context";
@@ -21,23 +22,23 @@ function computeProgress(currentIndex: number, total: number): number {
 
 function deriveViewState(state: PlayerState) {
   const currentStep = state.steps[state.currentStepIndex];
-  const isStaticStep = currentStep?.kind === "static";
+  const isStaticStep = isStaticNavigationStep(currentStep);
   const isCompleted = state.phase === "completed";
   const isIntro = state.phase === "intro";
   const hasDimensions = Object.keys(state.dimensions).length > 0;
 
   return {
+    canNavigatePrev: canNavigatePrev(state.steps, state.currentStepIndex),
     currentResult: currentStep ? state.results[currentStep.id] : undefined,
     currentStep,
     hasAnswer: currentStep ? Boolean(state.selectedAnswers[currentStep.id]) : false,
     isCompleted,
-    isFirstStep: state.currentStepIndex === 0,
     isGameOver: isCompleted && hasDimensions && hasNegativeDimension(state.dimensions),
     isIntro,
     isStaticStep,
     progressValue: isCompleted ? 100 : computeProgress(state.currentStepIndex, state.steps.length),
     selectedAnswer: currentStep ? state.selectedAnswers[currentStep.id] : undefined,
-    showActionBar: !isStaticStep && !isCompleted && !isIntro,
+    showBottomBar: !isCompleted && !isIntro,
     showHeader: !isCompleted && !isIntro,
     totalSteps: state.steps.length,
   };
@@ -79,6 +80,7 @@ export function PlayerProvider<Href extends string>({
   }, [onNext]);
 
   usePlayerKeyboard({
+    canNavigatePrev: view.canNavigatePrev,
     hasAnswer: view.hasAnswer,
     isStaticStep: view.isStaticStep,
     onCheck: actions.check,

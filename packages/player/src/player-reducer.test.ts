@@ -26,8 +26,6 @@ function buildStep(overrides: Partial<SerializedStep> = {}): SerializedStep {
     position: 0,
     sentence: null,
     sortOrderItems: [],
-    visualContent: null,
-    visualKind: null,
     vocabularyOptions: [],
     word: null,
     wordBankOptions: [],
@@ -467,6 +465,16 @@ describe("NAVIGATE_STEP", () => {
     const next = playerReducer(state, { direction: "prev", type: "NAVIGATE_STEP" });
     expect(next.currentStepIndex).toBe(1);
     expect(next.phase).toBe("playing");
+  });
+
+  test("prev no-ops when previous step is interactive", () => {
+    const steps = [
+      buildMultipleChoiceStep({ id: "mc-1", position: 0 }),
+      buildStep({ id: "s1", kind: "static", position: 1 }),
+    ];
+    const state = buildState({ currentStepIndex: 1, steps });
+    const next = playerReducer(state, { direction: "prev", type: "NAVIGATE_STEP" });
+    expect(next).toBe(state);
   });
 
   test("no-ops on interactive step", () => {

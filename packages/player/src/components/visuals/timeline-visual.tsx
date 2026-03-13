@@ -1,10 +1,6 @@
 "use client";
 
-import {
-  type SupportedVisualKind,
-  type VisualContentByKind,
-  timelineVisualContentSchema,
-} from "@zoonk/core/steps/visual-content-contract";
+import { type TimelineVisualContent } from "@zoonk/core/steps/visual-content-contract";
 import { useExtracted } from "next-intl";
 
 function TimelineEvent({
@@ -37,19 +33,18 @@ function TimelineEvent({
   );
 }
 
-export function TimelineVisual({ content }: { content: VisualContentByKind[SupportedVisualKind] }) {
+export function TimelineVisual({ content }: { content: TimelineVisualContent }) {
   const t = useExtracted();
-  const parsed = timelineVisualContentSchema.parse(content);
-  const hasMultipleEvents = parsed.events.length > 1;
+  const hasMultipleEvents = content.events.length > 1;
 
   return (
     <figure aria-label={t("Timeline")} className="w-full max-w-xl">
       <ol className="ml-3" role="list">
-        {parsed.events.map((event, index) => (
+        {content.events.map((event, index) => (
           <TimelineEvent
             date={event.date}
             description={event.description}
-            hasLine={hasMultipleEvents && index < parsed.events.length - 1}
+            hasLine={hasMultipleEvents && index < content.events.length - 1}
             key={event.date}
             title={event.title}
           />

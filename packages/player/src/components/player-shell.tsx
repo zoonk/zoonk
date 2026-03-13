@@ -3,7 +3,7 @@
 import { useExtracted } from "next-intl";
 import { usePlayer } from "../player-context";
 import { InPlayStickyHeader } from "./in-play-sticky-header";
-import { PlayerActionBar, PlayerActionButton } from "./player-action-bar";
+import { PlayerBottomBar, PlayerBottomBarAction, PlayerBottomBarNav } from "./player-bottom-bar";
 import { PlayerCloseLink, PlayerHeader } from "./player-header";
 import { PlayerStage } from "./player-stage";
 import { StageContent } from "./stage-content";
@@ -11,6 +11,7 @@ import { StageContent } from "./stage-content";
 export function PlayerShell() {
   const t = useExtracted();
   const {
+    canNavigatePrev,
     check,
     completionResult,
     continue: handleContinue,
@@ -20,7 +21,6 @@ export function PlayerShell() {
     dimensions,
     hasAnswer,
     isCompleted,
-    isFirstStep,
     isIntro,
     isStaticStep,
     lessonHref,
@@ -33,7 +33,7 @@ export function PlayerShell() {
     results,
     selectAnswer,
     selectedAnswer,
-    showActionBar,
+    showBottomBar,
     showHeader,
     startChallenge,
     totalSteps,
@@ -58,11 +58,7 @@ export function PlayerShell() {
           currentStepIndex={currentStepIndex}
           dimensions={dimensions}
           hasDimensions={hasDimensions}
-          isFirstStep={isFirstStep}
-          isStaticStep={isStaticStep}
           lessonHref={lessonHref}
-          onNavigateNext={navigateNext}
-          onNavigatePrev={navigatePrev}
           progressValue={progressValue}
           totalSteps={totalSteps}
         />
@@ -70,13 +66,13 @@ export function PlayerShell() {
 
       <PlayerStage isStatic={isStaticStep && phase === "playing"} phase={phase}>
         <StageContent
+          canNavigatePrev={canNavigatePrev}
           completionResult={completionResult}
           currentResult={currentResult}
           currentStep={currentStep}
           currentStepIndex={currentStepIndex}
           dimensions={dimensions}
           isCompleted={isCompleted}
-          isFirst={isFirstStep}
           lessonHref={lessonHref}
           nextActivityHref={nextActivityHref}
           onNavigateNext={navigateNext}
@@ -90,15 +86,23 @@ export function PlayerShell() {
         />
       </PlayerStage>
 
-      {showActionBar && (
-        <PlayerActionBar>
-          <PlayerActionButton
-            disabled={phase === "playing" && !hasAnswer}
-            onClick={phase === "feedback" ? handleContinue : check}
-          >
-            {buttonLabel}
-          </PlayerActionButton>
-        </PlayerActionBar>
+      {showBottomBar && (
+        <PlayerBottomBar className={isStaticStep ? "lg:hidden" : undefined}>
+          {isStaticStep ? (
+            <PlayerBottomBarNav
+              canNavigatePrev={canNavigatePrev}
+              onNavigateNext={navigateNext}
+              onNavigatePrev={navigatePrev}
+            />
+          ) : (
+            <PlayerBottomBarAction
+              disabled={phase === "playing" && !hasAnswer}
+              onClick={phase === "feedback" ? handleContinue : check}
+            >
+              {buttonLabel}
+            </PlayerBottomBarAction>
+          )}
+        </PlayerBottomBar>
       )}
     </main>
   );

@@ -12,6 +12,7 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
+import { getString } from "@zoonk/utils/json";
 import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { activityGenerationWorkflow } from "./activity-generation-workflow";
 import { getNeighboringConceptsStep } from "./steps/get-neighboring-concepts-step";
@@ -21,6 +22,23 @@ vi.mock("./steps/get-neighboring-concepts-step", () => ({
 }));
 
 const mockStreamWrite = vi.hoisted(() => vi.fn().mockResolvedValue(null));
+
+function createStepVisualsResult(
+  steps: { title: string; text: string }[],
+): Awaited<ReturnType<typeof generateStepVisuals>> {
+  return {
+    data: {
+      visuals: steps.map((step, stepIndex) =>
+        stepIndex === 0
+          ? { kind: "image", prompt: `A visual prompt for ${step.title}`, stepIndex }
+          : { code: "const x = 1;", kind: "code", language: "typescript", stepIndex },
+      ),
+    },
+    systemPrompt: "test",
+    usage: {} as Awaited<ReturnType<typeof generateStepVisuals>>["usage"],
+    userPrompt: "test",
+  };
+}
 
 vi.mock("workflow", () => ({
   FatalError: class FatalError extends Error {},
@@ -46,14 +64,11 @@ vi.mock("@zoonk/ai/tasks/activities/core/explanation", () => ({
 }));
 
 vi.mock("@zoonk/ai/tasks/steps/visual", () => ({
-  generateStepVisuals: vi.fn().mockResolvedValue({
-    data: {
-      visuals: [
-        { kind: "image", prompt: "A visual prompt for step 1", stepIndex: 0 },
-        { code: "const x = 1;", kind: "code", language: "typescript", stepIndex: 1 },
-      ],
-    },
-  }),
+  generateStepVisuals: vi
+    .fn()
+    .mockImplementation(({ steps }: { steps: { title: string; text: string }[] }) =>
+      Promise.resolve(createStepVisualsResult(steps)),
+    ),
 }));
 
 vi.mock("@zoonk/core/steps/visual-image", () => ({
@@ -259,13 +274,19 @@ describe("core activity workflow", () => {
         title: `Exp With Visuals ${randomUUID()}`,
       });
 
-      await stepFixture({
-        activityId: explanationActivity.id,
-        content: { text: "Step text", title: "Step", variant: "text" },
-        position: 0,
-        visualContent: { prompt: "A prompt", url: "https://example.com/existing.webp" },
-        visualKind: "image",
-      });
+      await Promise.all([
+        stepFixture({
+          activityId: explanationActivity.id,
+          content: { text: "Step text", title: "Step", variant: "text" },
+          position: 0,
+        }),
+        stepFixture({
+          activityId: explanationActivity.id,
+          content: { kind: "image", prompt: "A prompt", url: "https://example.com/existing.webp" },
+          kind: "visual",
+          position: 1,
+        }),
+      ]);
 
       await activityGenerationWorkflow(testLesson.id);
 
@@ -288,13 +309,19 @@ describe("core activity workflow", () => {
         title: `Exp With Images ${randomUUID()}`,
       });
 
-      await stepFixture({
-        activityId: explanationActivity.id,
-        content: { text: "Step text", title: "Step", variant: "text" },
-        position: 0,
-        visualContent: { prompt: "A prompt", url: "https://example.com/existing.webp" },
-        visualKind: "image",
-      });
+      await Promise.all([
+        stepFixture({
+          activityId: explanationActivity.id,
+          content: { text: "Step text", title: "Step", variant: "text" },
+          position: 0,
+        }),
+        stepFixture({
+          activityId: explanationActivity.id,
+          content: { kind: "image", prompt: "A prompt", url: "https://example.com/existing.webp" },
+          kind: "visual",
+          position: 1,
+        }),
+      ]);
 
       await activityGenerationWorkflow(testLesson.id);
 
@@ -750,11 +777,13 @@ describe("core activity workflow", () => {
       expect(challengeSteps.length).toBeGreaterThan(0);
 
       for (const steps of [expSteps]) {
-        const imageSteps = steps.filter((step) => step.visualKind === "image");
+        const imageSteps = steps.filter(
+          (step) => step.kind === "visual" && getString(step.content, "kind") === "image",
+        );
         expect(imageSteps.length).toBeGreaterThan(0);
 
         for (const step of imageSteps) {
-          expect(step.visualContent).toEqual(expect.objectContaining({ url: expect.any(String) }));
+          expect(step.content).toEqual(expect.objectContaining({ url: expect.any(String) }));
         }
       }
     });

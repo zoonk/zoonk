@@ -16,12 +16,12 @@ export function StepVisualImageReview({
 }: {
   item: {
     id: bigint;
-    visualContent: unknown;
+    content: unknown;
     activity: { title: string | null };
   };
 }) {
-  const prompt = getStringField(item.visualContent, "prompt");
-  const imageUrl = getStringField(item.visualContent, "url");
+  const prompt = getStringField(item.content, "prompt");
+  const imageUrl = getStringField(item.content, "url");
 
   return (
     <div className="flex flex-col gap-4">

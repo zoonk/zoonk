@@ -1,7 +1,7 @@
 import "server-only";
 import { isAdmin } from "@/lib/admin-guard";
 import { type ReviewTaskType, getVisualKindFromTaskType } from "@/lib/review-utils";
-import { type StepVisualKind, prisma } from "@zoonk/db";
+import { prisma } from "@zoonk/db";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { cache } from "react";
 import { reviewedEntityIds } from "./count-pending-reviews";
@@ -34,7 +34,7 @@ async function getNextCourseSuggestion(): Promise<ReviewQueueResult> {
 }
 
 async function getNextStepVisualByKind(
-  kind: StepVisualKind,
+  kind: string,
   taskType: ReviewTaskType,
 ): Promise<ReviewQueueResult> {
   const excludeIds = await reviewedEntityIds(taskType);
@@ -42,7 +42,8 @@ async function getNextStepVisualByKind(
   const where = {
     NOT: { id: { in: excludeIds } },
     activity: { organization: { slug: AI_ORG_SLUG } },
-    visualKind: kind,
+    content: { equals: kind, path: ["kind"] },
+    kind: "visual" as const,
   };
 
   const [next, remaining] = await Promise.all([

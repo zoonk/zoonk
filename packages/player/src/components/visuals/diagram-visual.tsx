@@ -1,9 +1,6 @@
 "use client";
 
-import {
-  type DiagramVisualContent,
-  diagramVisualContentSchema,
-} from "@zoonk/core/steps/visual-content-contract";
+import { type DiagramVisualContent } from "@zoonk/core/steps/visual-content-contract";
 import { useExtracted } from "next-intl";
 import { useId, useMemo } from "react";
 import {
@@ -173,10 +170,12 @@ function buildAccessibleDescription(content: DiagramVisualContent): string {
 function DiagramSvg({ layout, markerId }: { layout: DiagramLayout; markerId: string }) {
   return (
     <svg
-      className="w-full"
+      className="block max-w-none shrink-0"
+      height={layout.height}
       preserveAspectRatio="xMidYMid meet"
       role="img"
       viewBox={`0 0 ${layout.width} ${layout.height}`}
+      width={layout.width}
     >
       <ArrowMarker markerId={markerId} />
       <DiagramEdges edges={layout.edges} markerId={markerId} />
@@ -185,21 +184,25 @@ function DiagramSvg({ layout, markerId }: { layout: DiagramLayout; markerId: str
   );
 }
 
-export function DiagramVisual({ content }: { content: unknown }) {
+export function DiagramVisual({ content }: { content: DiagramVisualContent }) {
   const t = useExtracted();
   const markerId = useId();
-  const parsed = diagramVisualContentSchema.parse(content);
 
   const layout = useMemo(
-    () => computeDiagramLayout(parsed.nodes, parsed.edges),
-    [parsed.nodes, parsed.edges],
+    () => computeDiagramLayout(content.nodes, content.edges),
+    [content.nodes, content.edges],
   );
 
-  const description = useMemo(() => buildAccessibleDescription(parsed), [parsed]);
+  const description = useMemo(() => buildAccessibleDescription(content), [content]);
 
   return (
-    <figure aria-label={t("Diagram")} className="mx-auto w-full max-w-xl">
-      <DiagramSvg layout={layout} markerId={markerId} />
+    <figure aria-label={t("Diagram")} className="w-full max-w-full min-w-0">
+      <div className="w-full overflow-x-auto overflow-y-hidden overscroll-x-contain">
+        <div className="flex w-max min-w-full justify-center">
+          <DiagramSvg layout={layout} markerId={markerId} />
+        </div>
+      </div>
+
       <figcaption className="sr-only">{description}</figcaption>
     </figure>
   );

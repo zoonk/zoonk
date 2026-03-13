@@ -1,15 +1,16 @@
 import "server-only";
-import { type ActivityKind, prisma } from "@zoonk/db";
+import { type ActivityKind, type StepKind, prisma } from "@zoonk/db";
 import { shuffle } from "@zoonk/utils/shuffle";
 
 const REVIEW_TARGET_COUNT = 10;
 const EXCLUDED_ACTIVITY_KINDS: ActivityKind[] = ["review", "challenge"];
+const NON_REVIEWABLE_STEP_KINDS: StepKind[] = ["static", "visual"];
 
 function reviewableStepFilter(lessonId: number) {
   return {
     activity: { kind: { notIn: EXCLUDED_ACTIVITY_KINDS }, lessonId },
     isPublished: true,
-    kind: { not: "static" as const },
+    kind: { notIn: NON_REVIEWABLE_STEP_KINDS },
   };
 }
 
@@ -95,7 +96,6 @@ export async function getReviewSteps({
 export async function getReviewValidationSteps(lessonId: number, stepIds: bigint[]) {
   return prisma.step.findMany({
     include: { sentence: true, word: true },
-    omit: { visualContent: true },
     where: { ...reviewableStepFilter(lessonId), id: { in: stepIds } },
   });
 }

@@ -8,11 +8,29 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
+import { getString } from "@zoonk/utils/json";
 import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { getLessonActivitiesStep } from "../steps/get-lesson-activities-step";
 import { explanationActivityWorkflow } from "./explanation-workflow";
 
 const mockStreamWrite = vi.hoisted(() => vi.fn().mockResolvedValue(null));
+
+function createStepVisualsResult(
+  steps: { title: string; text: string }[],
+): Awaited<ReturnType<typeof generateStepVisuals>> {
+  return {
+    data: {
+      visuals: steps.map((step, stepIndex) =>
+        stepIndex === 0
+          ? { kind: "image", prompt: `A visual prompt for ${step.title}`, stepIndex }
+          : { code: "const x = 1;", kind: "code", language: "typescript", stepIndex },
+      ),
+    },
+    systemPrompt: "test",
+    usage: {} as Awaited<ReturnType<typeof generateStepVisuals>>["usage"],
+    userPrompt: "test",
+  };
+}
 
 function getStreamedMessages(): Record<string, string>[] {
   return mockStreamWrite.mock.calls.map(
@@ -44,14 +62,11 @@ vi.mock("@zoonk/ai/tasks/activities/core/explanation", () => ({
 }));
 
 vi.mock("@zoonk/ai/tasks/steps/visual", () => ({
-  generateStepVisuals: vi.fn().mockResolvedValue({
-    data: {
-      visuals: [
-        { kind: "image", prompt: "A visual prompt for step 1", stepIndex: 0 },
-        { code: "const x = 1;", kind: "code", language: "typescript", stepIndex: 1 },
-      ],
-    },
-  }),
+  generateStepVisuals: vi
+    .fn()
+    .mockImplementation(({ steps }: { steps: { title: string; text: string }[] }) =>
+      Promise.resolve(createStepVisualsResult(steps)),
+    ),
 }));
 
 vi.mock("@zoonk/core/steps/visual-image", () => ({
@@ -107,22 +122,35 @@ describe("explanation activity workflow", () => {
       where: { activityId: activity.id },
     });
 
-    expect(steps).toHaveLength(2);
+    // 2 static steps + 2 visual steps (interleaved)
+    expect(steps).toHaveLength(4);
 
     for (const step of steps) {
       expect(step.isPublished).toBeTruthy();
     }
 
-    expect(steps[0]?.content).toEqual({
+    const staticSteps = steps.filter((step) => step.kind === "static");
+    const visualSteps = steps.filter((step) => step.kind === "visual");
+
+    expect(staticSteps).toHaveLength(2);
+    expect(visualSteps).toHaveLength(2);
+
+    expect(staticSteps[0]?.content).toEqual({
       text: "Explanation step 1 text",
       title: "Explanation Step 1",
       variant: "text",
     });
-    expect(steps[1]?.content).toEqual({
+    expect(staticSteps[1]?.content).toEqual({
       text: "Explanation step 2 text",
       title: "Explanation Step 2",
       variant: "text",
     });
+
+    // Static steps at even positions, visual steps at odd positions
+    expect(staticSteps[0]?.position).toBe(0);
+    expect(visualSteps[0]?.position).toBe(1);
+    expect(staticSteps[1]?.position).toBe(2);
+    expect(visualSteps[1]?.position).toBe(3);
   });
 
   test("sets explanation status to 'completed' after full pipeline", async () => {
@@ -182,6 +210,62 @@ describe("explanation activity workflow", () => {
       where: { id: activity.id },
     });
     expect(dbActivity?.generationStatus).toBe("failed");
+  });
+
+  test("fails when visuals do not cover each step exactly once", async () => {
+    vi.mocked(generateStepVisuals).mockResolvedValueOnce({
+      ...createStepVisualsResult([
+        { text: "Explanation step 1 text", title: "Explanation Step 1" },
+        { text: "Explanation step 2 text", title: "Explanation Step 2" },
+      ]),
+      data: {
+        visuals: [
+          { kind: "image", prompt: "Duplicate visual", stepIndex: 0 },
+          { code: "const x = 1;", kind: "code", language: "typescript", stepIndex: 0 },
+        ],
+      },
+    });
+
+    const testLesson = await lessonFixture({
+      chapterId: chapter.id,
+      concepts: ["Concept Duplicate Visuals"],
+      organizationId,
+      title: `Exp Invalid Visuals Lesson ${randomUUID()}`,
+    });
+
+    const activity = await activityFixture({
+      generationStatus: "pending",
+      kind: "explanation",
+      lessonId: testLesson.id,
+      organizationId,
+      title: "Concept Duplicate Visuals",
+    });
+
+    const activities = await getLessonActivitiesStep(testLesson.id);
+    const concepts = activities[0]?.lesson?.concepts ?? [];
+
+    await explanationActivityWorkflow(activities, "test-run-id", concepts, []);
+
+    const [dbActivity, steps] = await Promise.all([
+      prisma.activity.findUnique({
+        where: { id: activity.id },
+      }),
+      prisma.step.findMany({
+        orderBy: { position: "asc" },
+        where: { activityId: activity.id },
+      }),
+    ]);
+
+    expect(dbActivity?.generationStatus).toBe("failed");
+    expect(steps.filter((step) => step.kind === "static")).toHaveLength(2);
+    expect(steps.filter((step) => step.kind === "visual")).toHaveLength(0);
+    expect(getStreamedMessages()).toContainEqual(
+      expect.objectContaining({
+        reason: "contentValidationFailed",
+        status: "error",
+        step: "generateVisuals",
+      }),
+    );
   });
 
   test("returns explanation results array", async () => {
@@ -486,11 +570,14 @@ describe("explanation activity workflow", () => {
         where: { activityId: expActivity.id },
       });
 
-      const imageStep = expSteps.find((step) => step.visualKind === "image");
+      const imageStep = expSteps.find(
+        (step) => step.kind === "visual" && getString(step.content, "kind") === "image",
+      );
 
       expect(imageStep).toBeDefined();
-      expect(imageStep?.visualContent).toEqual(
+      expect(imageStep?.content).toEqual(
         expect.objectContaining({
+          kind: "image",
           prompt: expect.any(String),
           url: "https://example.com/image.webp",
         }),

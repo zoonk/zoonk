@@ -6,6 +6,7 @@ import { usePlayerKeyboard } from "./use-player-keyboard";
 
 function buildOptions(overrides: Partial<Parameters<typeof usePlayerKeyboard>[0]> = {}) {
   return {
+    canNavigatePrev: false,
     hasAnswer: false,
     isStaticStep: false,
     onCheck: vi.fn(),
@@ -116,12 +117,21 @@ describe(usePlayerKeyboard, () => {
     });
 
     test("ArrowLeft calls onNavigatePrev when playing and static step", () => {
-      const opts = buildOptions({ isStaticStep: true, phase: "playing" });
+      const opts = buildOptions({ canNavigatePrev: true, isStaticStep: true, phase: "playing" });
       renderHook(() => usePlayerKeyboard(opts));
 
       fireKey("ArrowLeft");
 
       expect(opts.onNavigatePrev).toHaveBeenCalledOnce();
+    });
+
+    test("ArrowLeft no-ops when previous step is not navigable", () => {
+      const opts = buildOptions({ canNavigatePrev: false, isStaticStep: true, phase: "playing" });
+      renderHook(() => usePlayerKeyboard(opts));
+
+      fireKey("ArrowLeft");
+
+      expect(opts.onNavigatePrev).not.toHaveBeenCalled();
     });
 
     test("no-op for non-static steps", () => {

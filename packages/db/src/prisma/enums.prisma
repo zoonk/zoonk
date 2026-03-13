@@ -27,6 +27,7 @@ enum ActivityKind {
 
 enum StepKind {
   static
+  visual
   fillBlank      @map("fill_blank")
   matchColumns   @map("match_columns")
   multipleChoice @map("multiple_choice")
@@ -36,18 +37,6 @@ enum StepKind {
   vocabulary
   reading
   listening
-}
-
-enum StepVisualKind {
-  code
-  image
-  table
-  chart
-  diagram
-  timeline
-  quote
-  audio
-  video
 }
 
 enum CourseMode {

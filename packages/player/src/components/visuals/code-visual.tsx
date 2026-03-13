@@ -1,10 +1,6 @@
 "use client";
 
-import {
-  type SupportedVisualKind,
-  type VisualContentByKind,
-  codeVisualContentSchema,
-} from "@zoonk/core/steps/visual-content-contract";
+import { type CodeVisualContent } from "@zoonk/core/steps/visual-content-contract";
 import { Fragment, useEffect, useState } from "react";
 import { type BundledLanguage, type ThemedToken, codeToTokens } from "shiki";
 
@@ -97,19 +93,18 @@ function CodeAnnotationLine({ children }: { children: React.ReactNode }) {
   );
 }
 
-export function CodeVisual({ content }: { content: VisualContentByKind[SupportedVisualKind] }) {
-  const parsed = codeVisualContentSchema.parse(content);
-  const codeLines = parsed.code.split("\n");
-  const tokens = useHighlightedCode(parsed.code, parsed.language);
-  const annotationMap = buildAnnotationMap(parsed.annotations);
+export function CodeVisual({ content }: { content: CodeVisualContent }) {
+  const codeLines = content.code.split("\n");
+  const tokens = useHighlightedCode(content.code, content.language);
+  const annotationMap = buildAnnotationMap(content.annotations);
 
   return (
     <figure
       className="bg-muted relative w-full max-w-2xl overflow-x-auto rounded-xl p-4 sm:p-5"
       data-code-visual=""
     >
-      <figcaption className="sr-only">{parsed.language}</figcaption>
-      <CodeLanguageLabel language={parsed.language} />
+      <figcaption className="sr-only">{content.language}</figcaption>
+      <CodeLanguageLabel language={content.language} />
 
       <div role="presentation">
         {codeLines.map((line, index) => {
