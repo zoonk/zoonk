@@ -27,7 +27,7 @@
     "@types/node": "^24",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
-    "@typescript/native-preview": "7.0.0-dev.20260312.1",
+    "@typescript/native-preview": "7.0.0-dev.20260314.1",
     "@zoonk/tsconfig": "workspace:*",
     "babel-plugin-react-compiler": "1.0.0",
     "typescript": "^5.9.3"

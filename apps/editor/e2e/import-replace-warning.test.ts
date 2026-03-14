@@ -34,7 +34,7 @@ test.describe("Import Replace Warning", () => {
 
     const dialog = await openImportDialog(authenticatedPage);
 
-    await expect(dialog.getByLabel(/merge/i)).toBeChecked();
+    await expect(dialog.getByRole("radio", { name: /merge/i })).toBeChecked();
     await expect(dialog.getByRole("alert")).not.toBeVisible();
     await expect(dialog.getByRole("button", { name: /^import$/i })).toBeVisible();
   });

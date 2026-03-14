@@ -21,7 +21,7 @@
     "@dnd-kit/utilities": "3.2.2",
     "@sentry/nextjs": "10.43.0",
     "@tabler/icons-react": "3.40.0",
-    "@vercel/analytics": "2.0.0",
+    "@vercel/analytics": "2.0.1",
     "@zoonk/ai": "workspace:*",
     "@zoonk/core": "workspace:*",
     "@zoonk/db": "workspace:*",
@@ -51,7 +51,7 @@
     "@types/node": "^24",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
-    "@typescript/native-preview": "7.0.0-dev.20260312.1",
+    "@typescript/native-preview": "7.0.0-dev.20260314.1",
     "@zoonk/e2e": "workspace:*",
     "@zoonk/testing": "workspace:*",
     "@zoonk/tsconfig": "workspace:*",
@@ -61,6 +61,6 @@
     "tsx": "4.21.0",
     "typescript": "^5.9.3",
     "vite-tsconfig-paths": "6.1.1",
-    "vitest": "4.0.18"
+    "vitest": "4.1.0"
   }
 }
