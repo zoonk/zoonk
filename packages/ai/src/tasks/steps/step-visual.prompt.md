@@ -30,7 +30,7 @@ Choose the visual type that BEST fits each step's content:
 # Rules
 
 1. **One visual per step**: Generate exactly one visual for each step using the stepIndex field. This is mandatory
-2. **Language consistency**: All text in visuals must match the specified language
+2. **Language consistency**: If a visual includes text, every word must match the specified language
 3. **Content accuracy**: Visuals must accurately represent the educational content
 4. **Appropriate selection**: Choose the visual type that genuinely enhances understanding
 5. **Default to image**: When no specialized type fits, use the image tool with a descriptive prompt
@@ -79,6 +79,8 @@ Choose the visual type that BEST fits each step's content:
 - Use as fallback when no other type fits
 - Describe content only, not style
 - Be specific enough to convey the concept
+- Avoid text by default. Only include text in image visuals when it materially improves clarity
+- If text is necessary, keep it minimal and ensure spelling, accents, and other diacritics are exact in the requested language
 - NEVER reference copyrighted or trademarked characters (e.g., Mickey Mouse, Spider-Man, Mario, Pikachu). Describe concepts abstractly or use generic, original characters instead
 
 # Quality Checklist
@@ -90,4 +92,4 @@ Before finalizing, verify:
 3. **No duplicates**: No two visuals use the same `stepIndex`
 4. **No omissions**: No step is missing a visual
 5. **Best-fit visual**: Each step uses the most appropriate visual type
-6. **Language match**: All text in every visual matches the requested language
+6. **Language match**: Any text that appears in a visual matches the requested language exactly

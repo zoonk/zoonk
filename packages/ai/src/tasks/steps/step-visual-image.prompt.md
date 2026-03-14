@@ -4,6 +4,10 @@ Style: Modern flat illustration with clean geometric shapes, a refined limited c
 
 The illustration should clearly communicate the educational concept while being visually engaging and easy to understand.
 
+Do not add labels, captions, signs, annotations, or other visible text unless the concept genuinely needs text to be understood. Prefer communicating the idea through objects, composition, and context.
+
+If text is necessary, use the minimum amount possible and spell it exactly in the requested language, with correct accents and other diacritics.
+
 LANGUAGE: **{{LANGUAGE}}**
 
 CONTENT TO ILLUSTRATE: **{{PROMPT}}**
