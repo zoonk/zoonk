@@ -39,7 +39,7 @@
     "@ai-sdk/openai": "3.0.41",
     "@zoonk/utils": "workspace:*",
     "ai": "6.0.116",
-    "undici": "7.23.0"
+    "undici": "7.24.0"
   },
   "devDependencies": {
     "@types/node": "^24",
