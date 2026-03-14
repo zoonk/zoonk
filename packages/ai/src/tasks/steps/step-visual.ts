@@ -44,9 +44,7 @@ CHAPTER_TITLE: ${chapterTitle}
 COURSE_TITLE: ${courseTitle}
 LANGUAGE: ${language}
 STEPS:
-${formattedSteps}
-
-Generate one visual resource for each step. Use the stepIndex field to match each visual to its corresponding step (0-based index). Choose the most appropriate visual type for each step's content.`;
+${formattedSteps}`;
 
   const providerOptions = buildProviderOptions({
     fallbackModels: FALLBACK_MODELS,
