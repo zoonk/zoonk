@@ -5,14 +5,8 @@ import { z } from "zod";
 import { type ReasoningEffort, buildProviderOptions } from "../../provider-options";
 import systemPrompt from "./language-chapter-lessons.prompt.md";
 
-const DEFAULT_MODEL = process.env.AI_MODEL_LANGUAGE_CHAPTER_LESSONS ?? "openai/gpt-5.2";
-
-const FALLBACK_MODELS = [
-  "google/gemini-3.1-pro-preview",
-  "openai/gpt-5-mini",
-  "google/gemini-3-flash",
-  "anthropic/claude-sonnet-4.6",
-];
+const DEFAULT_MODEL = process.env.AI_MODEL_LANGUAGE_CHAPTER_LESSONS ?? "openai/gpt-5.4";
+const FALLBACK_MODELS = ["google/gemini-3.1-pro-preview", "anthropic/claude-sonnet-4.6"];
 
 const schema = z.object({
   lessons: z.array(

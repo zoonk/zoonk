@@ -6,14 +6,7 @@ import { type ReasoningEffort, buildProviderOptions } from "../../provider-optio
 import promptTemplate from "./course-categories.prompt.md";
 
 const DEFAULT_MODEL = process.env.AI_MODEL_COURSE_CATEGORIES ?? "google/gemini-3-flash";
-
-const FALLBACK_MODELS = [
-  "meta/llama-4-scout",
-  "google/gemini-2.5-flash-lite",
-  "xai/grok-4-fast-reasoning",
-  "google/gemini-2.5-flash",
-  "openai/gpt-4.1-mini",
-];
+const FALLBACK_MODELS = ["meta/llama-4-scout", "xai/grok-4-fast-reasoning", "openai/gpt-4.1-mini"];
 
 /**
  * Categories available for AI assignment.
