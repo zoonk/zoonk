@@ -76,6 +76,64 @@ async function createTestLessonWithActivities() {
   };
 }
 
+async function createTestCustomLessonWithActivities() {
+  const org = await getAiOrganization();
+
+  const uniqueId = randomUUID().slice(0, 8);
+
+  const course = await courseFixture({
+    isPublished: true,
+    organizationId: org.id,
+    slug: `e2e-custom-course-${uniqueId}`,
+    title: `E2E Custom Course ${uniqueId}`,
+  });
+
+  const chapter = await chapterFixture({
+    courseId: course.id,
+    isPublished: true,
+    organizationId: org.id,
+    slug: `e2e-custom-chapter-${uniqueId}`,
+    title: `E2E Custom Chapter ${uniqueId}`,
+  });
+
+  const lesson = await lessonFixture({
+    chapterId: chapter.id,
+    description: `E2E custom lesson description ${uniqueId}`,
+    isPublished: true,
+    kind: "custom",
+    organizationId: org.id,
+    slug: `e2e-custom-lesson-${uniqueId}`,
+    title: `E2E Custom Lesson ${uniqueId}`,
+  });
+
+  const firstActivity = await activityFixture({
+    description: `First custom activity ${uniqueId}`,
+    isPublished: true,
+    kind: "custom",
+    lessonId: lesson.id,
+    organizationId: org.id,
+    position: 0,
+    title: `First custom activity ${uniqueId}`,
+  });
+
+  const secondActivity = await activityFixture({
+    description: `Second custom activity ${uniqueId}`,
+    isPublished: true,
+    kind: "custom",
+    lessonId: lesson.id,
+    organizationId: org.id,
+    position: 1,
+    title: `Second custom activity ${uniqueId}`,
+  });
+
+  return {
+    activities: { firstActivity, secondActivity },
+    chapter,
+    course,
+    lesson,
+  };
+}
+
 test.describe("Lesson Detail Page", () => {
   test("shows lesson content with title, description, and position", async ({ page }) => {
     const { chapter, course, lesson } = await createTestLessonWithActivities();
@@ -140,6 +198,25 @@ test.describe("Lesson Detail Page", () => {
     await expect(activityList.getByRole("link", { name: /explanation/i })).toBeVisible();
     await expect(activityList.getByRole("link", { name: /quiz/i })).toBeVisible();
     await expect(activityList.getByRole("link", { name: /challenge/i })).toBeVisible();
+  });
+
+  test("displays custom activity numbers from zero-based positions", async ({ page }) => {
+    const { activities, chapter, course, lesson } = await createTestCustomLessonWithActivities();
+
+    await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
+
+    const activityList = page.getByRole("list", { name: /activities/i });
+    const firstActivityLink = activityList.getByRole("link", {
+      name: new RegExp(activities.firstActivity.title ?? "", "i"),
+    });
+    const secondActivityLink = activityList.getByRole("link", {
+      name: new RegExp(activities.secondActivity.title ?? "", "i"),
+    });
+
+    await expect(firstActivityLink).toContainText("01");
+    await expect(secondActivityLink).toContainText("02");
+    await expect(firstActivityLink).toHaveAttribute("href", /\/a\/0$/);
+    await expect(secondActivityLink).toHaveAttribute("href", /\/a\/1$/);
   });
 
   test("clicking activity link navigates to activity page", async ({ page }) => {

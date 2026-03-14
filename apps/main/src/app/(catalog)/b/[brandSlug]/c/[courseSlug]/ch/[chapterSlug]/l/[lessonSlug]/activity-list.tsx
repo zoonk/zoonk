@@ -48,9 +48,7 @@ export async function ActivityList({
               key={String(activity.id)}
               prefetch={activity.generationStatus === "completed"}
             >
-              <CatalogListItemPosition>
-                {formatPosition(activity.position + 1)}
-              </CatalogListItemPosition>
+              <CatalogListItemPosition>{formatPosition(activity.position)}</CatalogListItemPosition>
 
               <CatalogListItemContent>
                 <CatalogListItemTitle>{activity.title}</CatalogListItemTitle>
