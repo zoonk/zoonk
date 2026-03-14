@@ -1,16 +1,18 @@
 const SHARED_EXPECTATIONS = `
   - It should assume learners start with no prior knowledge of the subject
-  - Should create a progressive learning path going from basic/beginner to mastery of the subject
-  - By the end of this course, they should be able to lead very complex projects and tasks in this field
-  - They should be prepared for certifications or advanced studies in this subject like a master's degree or PhD
-  - Should include **EVERYTHING** a student needs to be at the top 1% of the field
+  - Should create a progressive learning path going from beginner foundations to deep mastery of the subject
+  - Should stay tightly focused on the course title instead of drifting into generic academic or professional content
+  - Early chapters should cover canonical topics learners would reasonably expect from the course title
+  - Should include the essential knowledge and practical skills needed to become highly capable in the field
   - Should follow the language specified by language parameter
   - Should follow title and description guidelines: no fluff, be concise, straight to the point
-  - Should cover latest trends in the field
+  - Should keep the curriculum modern and relevant without replacing canonical foundations with trends
+  - If supporting topics like research methods, communication, statistics, ethics, regulation, or career are included, they should be clearly scoped to the course title rather than generic
+  - Generic cross-disciplinary chapters that could be copied unchanged into many different courses are a major error unless they are explicitly the subject of the course
   - Prefer concept names over vendor names in chapter titles/descriptions (e.g., "Package management" instead of "npm"). Ecosystem-level tools (npm, yarn, Redux, Zustand) should be avoided in titles
     - Exception: foundational tools that ARE the course subject matter are allowed (e.g., "Git" in a programming course, "Node.js" in a web dev course, "Docker" in a DevOps course). The test: would a chapter about this subject be incomplete without mentioning this tool?
     - Vendor name usage is a minor issue — it affects title quality but not pedagogical content. Do NOT treat it as a major error
-  - This is an eval system for a learning platform, of course the definition of "ready for a job" doesn't mean they have the legal requirements to work in the field (eg. medical license, law license, etc.). That's not important here, we're assessing if the course prepares the student with the necessary knowledge and skills.
+  - For professional fields, practical readiness refers to knowledge and skills, not legal licenses or credentials. That's not important here
   - You don't need to evaluate the output format here, just focus on the chapter content quality.
   - Titles should be concise and straight to the point, no fluff/filler words. For example:
     - Just "HTML" is better than "HTML Structure and Semantics" (structure and semantics are implied if this is the only HTML chapter). Similarly, if we only have one CSS chapter, just "CSS" is better than "CSS Styling and Layout".
@@ -23,7 +25,7 @@ const SHARED_EXPECTATIONS = `
     - "Styling with CSS: Selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles." is better than "Master styling and layout with CSS, including selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles." - "Master" is fluff, and so are words like "learn", "understand", "explore", etc.
     - "Properties of matter, states, and phase transitions." is better than "Explore the definition of Chemistry, properties of matter, states, and phase transitions." - "Explore the definition of Chemistry" are filler/unnecessary words.
   - Don't add assessment-style chapters: no final projects, capstone assignments, exercises, quizzes, or "test your knowledge" chapters. A theoretical synthesis chapter (e.g., "Design Patterns in Architecture") is fine even if it synthesizes prior material — the rule targets assessment/project chapters, not synthesis of knowledge. If a chapter uses the word "capstone" but is theoretical (not an assignment), treat it as a minor issue at most, not a major error
-  - It shouldn't mention in title or description references to 1% or similar instructions about being top 1%
+  - It shouldn't mention in title or description prompt instructions or performance claims about the learner
 `;
 
 export const TEST_CASES = [
@@ -68,6 +70,17 @@ export const TEST_CASES = [
   },
   {
     expectations: `
+      - MUST be in Brazilian Portuguese
+      - The opening chapters should feel unmistakably like biology, with canonical foundations such as cells, biomolecules, genetics, evolution, physiology, ecology, or other core biology topics
+      - Generic titles like "Pensamento científico", "prática de pesquisa", "literatura científica", or "comunicação acadêmica" do not belong unless they are explicitly scoped to biology and are not the main opening focus
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-biologia",
+    userInput: { courseTitle: "Biologia", language: "pt" },
+  },
+  {
+    expectations: `
       - MUST be in US English
 
       ${SHARED_EXPECTATIONS}
@@ -83,6 +96,17 @@ export const TEST_CASES = [
     `,
     id: "pt-neurociencia",
     userInput: { courseTitle: "Neurociência", language: "pt" },
+  },
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese
+      - Should cover core computer science areas such as computation, programming, data structures, algorithms, systems, data, or AI
+      - Should stay focused on computer science itself rather than generic professional advice
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-ciencia-da-computacao",
+    userInput: { courseTitle: "Ciência da Computação", language: "pt" },
   },
   {
     expectations: `
