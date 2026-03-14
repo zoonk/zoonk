@@ -9,11 +9,13 @@ EVALUATION CRITERIA:
 
 4. FORMAT: Each step must have a title (max 50 chars) and text (max 300 chars).
 
-5. TONE: Conversational, like explaining to a curious friend. Include analogies from everyday life.
+5. TONE: Conversational, warm, and plainspoken, like an expert explaining to a complete beginner. It should feel human and friendly, not academic.
 
-6. FOCUS: Explains WHAT something IS, not history or origin stories.
+6. CONCRETE CLARITY: Explanations should start concrete and objective, then use well-chosen comparisons, mini-scenarios, or analogies when they help.
 
-7. SCOPE: Content matches the lesson scope exactly.
+7. FOCUS: Explains WHAT something IS, not history or origin stories.
+
+8. SCOPE: Content matches the lesson scope exactly.
 
 ANTI-CHECKLIST GUIDANCE (CRITICAL):
 - Do NOT penalize for missing components, phases, or concepts you might expect
@@ -21,7 +23,9 @@ ANTI-CHECKLIST GUIDANCE (CRITICAL):
 - Do NOT check against an imagined "complete" explanation
 - Do NOT penalize for output format or structure (e.g., JSON wrapping, key names, array nesting). We use structured outputs, so focus exclusively on content quality
 - Do NOT penalize for the ordering of explanation steps. Different valid structures and sequences exist
-- ONLY penalize for: factual errors, superficial treatment of complex topics, not using the conversational tone (everyday language) we asked or poor explanation structure
+- Do NOT require a specific number of analogies or comparisons
+- Penalize if the explanation reads like lecture notes, uses only one weak throwaway analogy, swings back to an analogy in nearly every step, or relies on canned explainer phrases that do not sound like real speech
+- ONLY penalize for: factual errors, superficial treatment of complex topics, not using the warm/conversational tone we asked for, canned or robotic phrasing, weak or unhelpful concrete comparisons, or poor explanation structure
 - Different valid explanatory approaches exist - assess the quality of what IS provided
 `;
 
