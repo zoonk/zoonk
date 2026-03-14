@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useReducer, useRef } from "react";
 
 export type ThinkingMessageGenerator = (index: number) => string;
 
@@ -54,6 +54,28 @@ function getRandomInterval(): number {
   return MIN_INTERVAL + Math.random() * (MAX_INTERVAL - MIN_INTERVAL);
 }
 
+type ThinkingState = {
+  tick: number;
+  indices: Record<string, number>;
+};
+
+type ThinkingAction = { type: "advance"; phases: readonly string[] } | { type: "reset" };
+
+const INITIAL_STATE: ThinkingState = { indices: {}, tick: 0 };
+
+function thinkingReducer(state: ThinkingState, action: ThinkingAction): ThinkingState {
+  if (action.type === "reset") {
+    return INITIAL_STATE;
+  }
+
+  return {
+    indices: Object.fromEntries(
+      action.phases.map((phase) => [phase, (state.indices[phase] ?? 0) + 1]),
+    ),
+    tick: state.tick + 1,
+  };
+}
+
 /**
  * Cycles through contextual "thinking" messages at randomized intervals.
  * Each active phase gets its own independent message counter.
@@ -66,23 +88,26 @@ export function useThinkingMessages<TPhase extends string>(
   generators: Record<TPhase, ThinkingMessageGenerator>,
   activePhases: TPhase[],
 ): Record<string, string> {
-  const [index, setIndex] = useState(0);
+  const [state, dispatch] = useReducer(thinkingReducer, INITIAL_STATE);
+  const activePhasesRef = useRef(activePhases);
+  activePhasesRef.current = activePhases;
+
   const hasActive = activePhases.length > 0;
 
   useEffect(() => {
     if (!hasActive) {
-      setIndex(0);
+      dispatch({ type: "reset" });
       return;
     }
 
     const timeout = setTimeout(() => {
-      setIndex((prev) => prev + 1);
+      dispatch({ phases: activePhasesRef.current, type: "advance" });
     }, getRandomInterval());
 
     return () => {
       clearTimeout(timeout);
     };
-  }, [hasActive, index]);
+  }, [hasActive, state.tick]);
 
   if (!hasActive) {
     return {};
@@ -90,7 +115,7 @@ export function useThinkingMessages<TPhase extends string>(
 
   return Object.fromEntries(
     activePhases
-      .map((phase) => [phase, generators[phase]?.(index)] as const)
+      .map((phase) => [phase, generators[phase]?.(state.indices[phase] ?? 0)] as const)
       .filter(([, message]) => message !== undefined),
   );
 }
