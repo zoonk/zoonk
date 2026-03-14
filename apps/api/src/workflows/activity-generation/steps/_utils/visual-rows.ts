@@ -13,6 +13,10 @@ function hasExpectedVisualCount(visuals: VisualWithStepIndex[], stepCount: numbe
   return visuals.length === stepCount;
 }
 
+function hasNoVisuals(visuals: VisualWithStepIndex[]): boolean {
+  return visuals.length === 0;
+}
+
 function hasValidStepIndex(stepIndex: number, stepCount: number): boolean {
   return Number.isInteger(stepIndex) && stepIndex >= 0 && stepIndex < stepCount;
 }
@@ -26,6 +30,10 @@ function hasUniqueStepIndexes(visuals: VisualWithStepIndex[]): boolean {
 }
 
 function hasValidVisualCoverage(visuals: VisualWithStepIndex[], stepCount: number): boolean {
+  if (hasNoVisuals(visuals)) {
+    return true;
+  }
+
   if (!hasExpectedVisualCount(visuals, stepCount)) {
     return false;
   }

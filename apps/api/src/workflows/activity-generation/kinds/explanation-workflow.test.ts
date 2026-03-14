@@ -268,6 +268,59 @@ describe("explanation activity workflow", () => {
     );
   });
 
+  test("completes when the model returns no visuals", async () => {
+    vi.mocked(generateStepVisuals).mockResolvedValueOnce({
+      ...createStepVisualsResult([
+        { text: "Explanation step 1 text", title: "Explanation Step 1" },
+        { text: "Explanation step 2 text", title: "Explanation Step 2" },
+      ]),
+      data: {
+        visuals: [],
+      },
+    });
+
+    const testLesson = await lessonFixture({
+      chapterId: chapter.id,
+      concepts: ["Concept Without Visuals"],
+      organizationId,
+      title: `Exp No Visuals Lesson ${randomUUID()}`,
+    });
+
+    const activity = await activityFixture({
+      generationStatus: "pending",
+      kind: "explanation",
+      lessonId: testLesson.id,
+      organizationId,
+      title: "Concept Without Visuals",
+    });
+
+    const activities = await getLessonActivitiesStep(testLesson.id);
+    const concepts = activities[0]?.lesson?.concepts ?? [];
+
+    await explanationActivityWorkflow(activities, "test-run-id", concepts, []);
+
+    const [dbActivity, steps] = await Promise.all([
+      prisma.activity.findUnique({
+        where: { id: activity.id },
+      }),
+      prisma.step.findMany({
+        orderBy: { position: "asc" },
+        where: { activityId: activity.id },
+      }),
+    ]);
+
+    expect(dbActivity?.generationStatus).toBe("completed");
+    expect(steps.filter((step) => step.kind === "static")).toHaveLength(2);
+    expect(steps.filter((step) => step.kind === "visual")).toHaveLength(0);
+    expect(getStreamedMessages()).not.toContainEqual(
+      expect.objectContaining({
+        reason: "contentValidationFailed",
+        status: "error",
+        step: "generateVisuals",
+      }),
+    );
+  });
+
   test("returns explanation results array", async () => {
     const testLesson = await lessonFixture({
       chapterId: chapter.id,
