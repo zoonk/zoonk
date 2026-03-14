@@ -103,14 +103,14 @@ When writing React components, use compound components. Always read this before 
 
 **VERY IMPORTANT**: **Default to TDD (Test-Driven Development) when the behavior is meaningfully testable**: Write a failing test first, **run the test to confirm it fails**, then write the code to make it pass. If the test passes before your fix, the test is wrong—never use workarounds like `.first()` or loose assertions to make tests pass. Use unique test data (e.g., UUIDs in titles) to ensure tests catch regressions.
 
-- **Use TDD when the behavior is clearly testable at the right level.** Don't force tests for framework/cache issues if the only option is testing internals. Similarly, no need to add tests for CSS/style changes only.
+- Don't take the TDD rule too literally. **Use TDD when the behavior is clearly testable at the right level.** You don't need to follow TDD for things like CSS/style changes, prompt, docs, etc. Ask yourself: Does it make sense to test this change? Don't write meaningless tests just to check a box. For example, tests like `expect(1 + 1).toBe(2)` or `expect(true).toBe(true)` are not useful.
 - **For UI changes, prefer Playwright E2E tests.** Avoid unit tests for React components, hooks, or wiring unless they contain real standalone business logic.
-- **Don't test implementation details.** If no new test is appropriate, say why and explain how you verified the change.
+- **Don't test implementation details.** Test expected behavior, not implementation details. If no new test is appropriate, say why and explain how you verified the change.
 
 - **Parallelize independent fixtures**: When test setup creates multiple entities that don't depend on each other (e.g., `user` + `course`, sibling chapters, multiple `activityProgressFixture` calls), use `Promise.all` instead of sequential awaits
 - **E2E tests**: For app/UI features, use Playwright (`apps/{app}/e2e/`)
 - **Integration tests**: For data functions with Prisma (`apps/{app}/src/data/`)
-- **Unit tests**: For utils, helpers, and UI component edge cases
+- **Unit tests**: For utils, helpers, and pure functions
 
 **E2E Query Rules (MANDATORY)**:
 
@@ -148,4 +148,4 @@ page.getByLabel(/email/i);
 
 ## Plan Mode
 
-- Before completing your plan, make sure you identified which tests need to be added or updated, looking for unit, integration, and e2e tests. A plan without tests is incomplete.
+- Before completing your plan, make sure you identified which tests need to be added or updated. A plan without tests is incomplete.
