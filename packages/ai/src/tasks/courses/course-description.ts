@@ -5,14 +5,7 @@ import { type ReasoningEffort, buildProviderOptions } from "../../provider-optio
 import systemPrompt from "./course-description.prompt.md";
 
 const DEFAULT_MODEL = process.env.AI_MODEL_COURSE_DESCRIPTION || "xai/grok-4-fast-reasoning";
-
-const FALLBACK_MODELS = [
-  "google/gemini-2.5-flash",
-  "google/gemini-3-flash",
-  "openai/gpt-4.1-nano",
-  "openai/gpt-oss-120b",
-  "meta/llama-4-scout",
-];
+const FALLBACK_MODELS = ["google/gemini-3-flash", "openai/gpt-4.1-nano", "meta/llama-4-scout"];
 
 const schema = z.object({
   description: z.string(),

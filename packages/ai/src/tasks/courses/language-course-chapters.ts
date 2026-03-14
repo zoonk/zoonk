@@ -6,13 +6,7 @@ import { type ReasoningEffort, buildProviderOptions } from "../../provider-optio
 import systemPrompt from "./language-course-chapters.prompt.md";
 
 const DEFAULT_MODEL = process.env.AI_MODEL_LANGUAGE_COURSE_CHAPTERS ?? "openai/gpt-5.2";
-
-const FALLBACK_MODELS = [
-  "google/gemini-3.1-pro-preview",
-  "anthropic/claude-sonnet-4.6",
-  "google/gemini-3-flash",
-  "anthropic/claude-opus-4.6",
-];
+const FALLBACK_MODELS = ["google/gemini-3.1-pro-preview", "anthropic/claude-sonnet-4.6"];
 
 const schema = z.object({
   chapters: z.array(
