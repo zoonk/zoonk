@@ -237,6 +237,7 @@ checksums:
     View%20scores/singular: 8089ad914ec6636a00fd58ed3c84f07b
     Your%20answer%3A/singular: 663abc310ccb6229c6325f8c857adce2
     "%7Bname%7D%20is%20negative.%20You%20need%20to%20bring%20this%20back%20up%20or%20you%20will%20lose./singular": c893d2d3c1bb15ea45614228ea9ddcac
+    Translate%3A/singular: 0a44ccd6c0e1dd4545fd00d059eaf0a5
     Outcome/singular: 4cfc7a40e384ea8b6658e8da6e351bf0
     Close%20call./singular: 7913cf61fc4e2fcd3eaf0d51bd86ba4d
     "%7Bname%7D%20is%20at%20zero.%20One%20more%20drop%20and%20you%20lose./singular": 4e48a2c335f69b412a58e4aef620caf1
@@ -251,12 +252,12 @@ checksums:
     Correct!/singular: dda1a98dc04fd9db252887ecf1765d41
     Translate%20this%20sentence%3A/singular: f69b2eec827b3a74bafca50e9058716f
     What%20do%20you%20hear%3F/singular: 9527d094d65c550a40108673bc67744f
-    Pause%20audio/singular: a18f2dcad1748fe33e5f8ab62bc49075
-    Play%20audio/singular: b144bc2118a0803bb8c05c58740c33ba
     All%20pairs%20matched.%20Press%20Check%20to%20continue./singular: 0663e33ba7db53b298c5f50a2f3c7ae8
     Answer%20options/singular: acb0b378cefcb8a8d50a7c43ce77ae39
     What%20do%20you%20say%3F/singular: 75887288b85fc19e67b7d20550d9205e
     Someone%20says%3A/singular: 09f34dce0528b57e89c8757b5745e6c5
+    Play%20pronunciation/singular: 623289cc3217c5404e3d48a78dd0456f
+    Pause%20pronunciation/singular: e24b23e108f8efb6f2eea709e5f540e9
     Previous%20step/singular: 96b31ec6dab003c2bbfbbca10a8a9826
     Next%20step/singular: 712c63650b5180cbc14d6246b5d558c2
     Step%20navigation/singular: ec328f28051577e1c0aab044c89b138c
@@ -275,10 +276,7 @@ checksums:
     Legend/singular: 3b588fbd2fe35ded6ca38334e15400c3
     Diagram/singular: e0bc1ef7782cb0d749c9582da6775175
     Timeline/singular: 342b1e646f0634e47112092db1a24f49
-    Translation/singular: 9276816e7bc1a6ff00f388faa0863986
     Vocabulary/singular: 2c8127af4c194fa05463e82d5e414c62
-    Play%20pronunciation/singular: 623289cc3217c5404e3d48a78dd0456f
-    Pause%20pronunciation/singular: e24b23e108f8efb6f2eea709e5f540e9
     Green/singular: 482ff383a4258357ba404f283682471d
     Yellow/singular: 15d533755d35af887dfa584975549fda
     Red/singular: bace0083b78cdb188523bc4abc7b55c6
@@ -612,6 +610,7 @@ checksums:
     Upgrade/singular: 63c3b52882e0d779859307d672c178c2
     Upgrade%20to%20create/singular: d8be0e2d204b5a7601612cc44cca5cd5
     Creating%20content%20with%20AI%20requires%20an%20active%20subscription./singular: 7a1e2747c5271495f525ae7360db6fe0
+    Translation/singular: 9276816e7bc1a6ff00f388faa0863986
     Review%20everything%20you%20learned/singular: 43765847b62600b35e41399405799505
     Listening/singular: 9e680c44cd88a178b953349ed8881ef2
     Learn%20new%20%7Btopic%7D%20words%20with%20flashcards%20%E2%80%94%20see%20each%20word%2C%20its%20translation%2C%20and%20pronunciation./singular: 923933ba274d61fc2ffb279cf64aceba

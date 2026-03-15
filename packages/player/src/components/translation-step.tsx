@@ -65,6 +65,7 @@ export function TranslationStep({
     play(word.audioUrl);
     onSelectAnswer(step.id, {
       kind: "translation",
+      questionText: correctWord?.translation ?? "",
       selectedText: word.word,
       selectedWordId: word.id,
     });

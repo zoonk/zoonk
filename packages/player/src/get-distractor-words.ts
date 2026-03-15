@@ -4,7 +4,15 @@ type DistractorWord = {
   alternativeTranslations: string[];
   id: string;
   translation: string;
+  word: string;
 };
+
+function normalizeWordText(text: string): string {
+  return text
+    .replaceAll(/[^\p{L}\p{N}\s]/gu, "")
+    .toLowerCase()
+    .trim();
+}
 
 function isSemanticMatch(correctWord: DistractorWord, candidate: DistractorWord): boolean {
   const correctTranslation = correctWord.translation.toLowerCase();
@@ -47,9 +55,18 @@ export function getDistractorWords<T extends DistractorWord>(
   lessonWords: T[],
   count: number,
 ): T[] {
+  const correctNormalized = normalizeWordText(correctWord.word);
+
   const validDistractors = lessonWords.filter(
-    (word) => word.id !== correctWord.id && !isSemanticMatch(correctWord, word),
+    (word) =>
+      word.id !== correctWord.id &&
+      !isSemanticMatch(correctWord, word) &&
+      normalizeWordText(word.word) !== correctNormalized,
   );
 
-  return shuffle(validDistractors).slice(0, count);
+  const uniqueDistractors = [
+    ...new Map(validDistractors.map((word) => [normalizeWordText(word.word), word])).values(),
+  ];
+
+  return shuffle(uniqueDistractors).slice(0, count);
 }

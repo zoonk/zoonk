@@ -238,6 +238,11 @@ msgid "{name} is negative. You need to bring this back up or you will lose."
 msgstr "{name} is negative. You need to bring this back up or you will lose."
 
 #: ../../packages/player/src/components/feedback-screen.tsx
+msgctxt "fpO9TK"
+msgid "Translate:"
+msgstr "Translate:"
+
+#: ../../packages/player/src/components/feedback-screen.tsx
 msgctxt "iaHymw"
 msgid "Outcome"
 msgstr "Outcome"

@@ -137,13 +137,16 @@ test.describe("Translation Step", () => {
     await expect(radiogroup.getByRole("radio", { name: new RegExp(word) })).toBeVisible();
   });
 
-  test("select correct option and check shows visible Correct! text", async ({ page }) => {
+  test("select correct option and check shows feedback with translate context and answer", async ({
+    page,
+  }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const correctWord = `gato-${uniqueId}`;
+    const translation = `cat-${uniqueId}`;
 
     const { url } = await createTranslationActivity({
       words: [
-        { translation: `cat-${uniqueId}`, word: correctWord },
+        { translation, word: correctWord },
         { translation: `dog-${uniqueId}`, word: `perro-${uniqueId}` },
         { translation: `bird-${uniqueId}`, word: `pájaro-${uniqueId}` },
         { translation: `fish-${uniqueId}`, word: `pez-${uniqueId}` },
@@ -167,19 +170,23 @@ test.describe("Translation Step", () => {
 
     await page.getByRole("button", { name: /check/i }).click();
 
-    // Visible "Correct!" text (not just screen-reader)
-    await expect(page.getByText(/correct!/i)).toBeVisible();
+    await expect(page.getByText(new RegExp(`Translate:.*${translation}`))).toBeVisible();
+    await expect(page.getByText(/your answer:/i)).toBeVisible();
+    await expect(page.getByText(correctWord)).toBeVisible();
     await expect(page.getByRole("button", { name: /continue/i })).toBeVisible();
   });
 
-  test("select wrong option shows visible Not quite text", async ({ page }) => {
+  test("select wrong option shows feedback with wrong answer and correct answer", async ({
+    page,
+  }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const correctWord = `rojo-${uniqueId}`;
     const wrongWord = `azul-${uniqueId}`;
+    const translation = `red-${uniqueId}`;
 
     const { url } = await createTranslationActivity({
       words: [
-        { translation: `red-${uniqueId}`, word: correctWord },
+        { translation, word: correctWord },
         { translation: `blue-${uniqueId}`, word: wrongWord },
         { translation: `green-${uniqueId}`, word: `verde-${uniqueId}` },
         { translation: `yellow-${uniqueId}`, word: `amarillo-${uniqueId}` },
@@ -203,10 +210,12 @@ test.describe("Translation Step", () => {
 
     await page.getByRole("button", { name: /check/i }).click();
 
-    // Visible "Not quite" text (not just screen-reader)
-    await expect(page.getByText(/not quite/i)).toBeVisible();
+    await expect(page.getByText(new RegExp(`Translate:.*${translation}`))).toBeVisible();
+    await expect(page.getByText(/your answer:/i)).toBeVisible();
+    await expect(page.getByText(wrongWord)).toBeVisible();
+    await expect(page.getByText(/correct answer:/i)).toBeVisible();
+    await expect(page.getByText(correctWord)).toBeVisible();
     await expect(page.getByRole("button", { name: /continue/i })).toBeVisible();
-    await expect(radiogroup.getByRole("radio", { name: new RegExp(correctWord) })).toBeVisible();
   });
 
   test("keyboard selection: pressing number key selects corresponding option", async ({ page }) => {
@@ -258,11 +267,9 @@ test.describe("Translation Step", () => {
     await expect(page.getByText(/correct/i)).toBeVisible();
   });
 
-  test("feedback preserves the same options shown during playing", async ({ page }) => {
+  test("feedback screen shows translate context and selected answer", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
 
-    // Use 10 words so the distractor pool is large (9 eligible, 3 chosen).
-    // If the component remounts, getDistractorWords picks different random words.
     const allWords = Array.from({ length: 10 }, (_, idx) => ({
       translation: `trans${idx}-${uniqueId}`,
       word: `word${idx}-${uniqueId}`,
@@ -275,22 +282,9 @@ test.describe("Translation Step", () => {
     const radiogroup = page.getByRole("radiogroup", { name: /answer options/i });
     await expect(radiogroup.getByRole("radio")).toHaveCount(4);
 
-    // Record which of the 10 words are shown as the 4 options
-    const visibility = await Promise.all(
-      allWords.map(async (item) => ({
-        isShown: await radiogroup
-          .getByText(item.word, { exact: true })
-          .isVisible()
-          .catch(() => false),
-        word: item.word,
-      })),
-    );
-
-    const shownWords = visibility.filter((item) => item.isShown).map((item) => item.word);
-    expect(shownWords).toHaveLength(4);
-
     // Select the correct word (first in the input list) and check
     const correctWord = `word0-${uniqueId}`;
+    const correctTranslation = `trans0-${uniqueId}`;
     const correctOption = radiogroup.getByRole("radio", { name: new RegExp(correctWord) });
 
     await expect(async () => {
@@ -304,14 +298,12 @@ test.describe("Translation Step", () => {
     }).toPass();
 
     await page.getByRole("button", { name: /check/i }).click();
-    await expect(page.getByRole("button", { name: /continue/i })).toBeVisible();
 
-    // After feedback, the same 4 words must still be visible
-    await Promise.all(
-      shownWords.map(async (wordText) => {
-        await expect(radiogroup.getByText(wordText, { exact: true })).toBeVisible();
-      }),
-    );
+    // Feedback screen shows the translate context and the user's answer
+    await expect(page.getByText(new RegExp(`Translate:.*${correctTranslation}`))).toBeVisible();
+    await expect(page.getByText(/your answer:/i)).toBeVisible();
+    await expect(page.getByText(correctWord)).toBeVisible();
+    await expect(page.getByRole("button", { name: /continue/i })).toBeVisible();
   });
 
   test("romanization is displayed below the word text", async ({ page }) => {

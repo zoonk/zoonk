@@ -1,8 +1,13 @@
 import { describe, expect, test } from "vitest";
 import { getDistractorWords } from "./get-distractor-words";
 
-function makeWord(id: string, translation: string, alternativeTranslations: string[] = []) {
-  return { alternativeTranslations, id, translation };
+function makeWord(
+  id: string,
+  translation: string,
+  alternativeTranslations: string[] = [],
+  word = `word-${id}`,
+) {
+  return { alternativeTranslations, id, translation, word };
 }
 
 describe(getDistractorWords, () => {
@@ -149,5 +154,32 @@ describe(getDistractorWords, () => {
 
     expect(result).toHaveLength(1);
     expect(result[0]?.id).toBe("3");
+  });
+
+  test("excludes distractors whose word text matches the correct word after stripping punctuation", () => {
+    const correct = makeWord("1", "how are you", [], "ça va ?");
+    const words = [correct, makeWord("2", "fine", [], "ça va."), makeWord("3", "cat", [], "chat")];
+    const result = getDistractorWords(correct, words, 5);
+
+    expect(result).toHaveLength(1);
+    expect(result[0]?.id).toBe("3");
+  });
+
+  test("deduplicates distractors that have the same normalized word text", () => {
+    const correct = makeWord("1", "hello", [], "bonjour");
+    const words = [
+      correct,
+      makeWord("2", "fine", [], "ça va."),
+      makeWord("3", "how are you", [], "ça va?"),
+      makeWord("4", "cat", [], "chat"),
+    ];
+    const result = getDistractorWords(correct, words, 5);
+
+    expect(result).toHaveLength(2);
+
+    const ids = result.map((word) => word.id);
+    expect(ids).toContain("4");
+    // Exactly one of the two punctuation variants survives (which one depends on shuffle)
+    expect(ids.filter((id) => id === "2" || id === "3")).toHaveLength(1);
   });
 });

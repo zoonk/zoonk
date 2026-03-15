@@ -249,6 +249,7 @@ describe(checkStep, () => {
     test("correct word", () => {
       const answer: SelectedAnswer = {
         kind: "translation",
+        questionText: "hola",
         selectedText: "hello",
         selectedWordId: "word-1",
       };
@@ -260,6 +261,7 @@ describe(checkStep, () => {
     test("incorrect word", () => {
       const answer: SelectedAnswer = {
         kind: "translation",
+        questionText: "hola",
         selectedText: "wrong",
         selectedWordId: "word-99",
       };
@@ -277,6 +279,7 @@ describe(checkStep, () => {
       });
       const answer: SelectedAnswer = {
         kind: "translation",
+        questionText: "hola",
         selectedText: "hello",
         selectedWordId: "word-1",
       };
