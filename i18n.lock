@@ -201,7 +201,6 @@ checksums:
     Word%20bank/singular: ceea720dd5fa3747c7f93ce165f77b2e
     "%7Bitem%7D.%20%7Bresult%7D./singular": 454dd5319c350f361652396801a1c30b
     Position%20%7Bposition%7D%3A%20%7Bitem%7D.%20Tap%20to%20remove./singular: a1b3d3e026bfff43bff3d3e85ccdb952
-    Correct%20answer%3A%20%7Banswer%7D/singular: 7745b2664e841dffff4568203ee443b2
     Incorrect/singular: a86cfbe7b86f19dc8df14a67df073d22
     "%7Bcolor%7D%20belt/singular": 5949446c9b4a223c04cc500fa17a1fe0
     Level%20progress/singular: 286f095acd17006787247db0b69270e3
@@ -246,7 +245,9 @@ checksums:
     Blank%20%7Bposition%7D/singular: 70a4795f65f91685071b6abb1c3a6bad
     Blank%20%7Bposition%7D%3A%20%7Bitem%7D.%20%7Bresult%7D./singular: c64e721cdd1e4cc48eff9f9690f1fc6b
     Blank%20%7Bposition%7D%3A%20%7Bitem%7D.%20Tap%20to%20remove./singular: d7ab9b86256fae5fbb5187fe718afe0b
+    Correct%20answer%3A%20%7Banswer%7D/singular: 7745b2664e841dffff4568203ee443b2
     Not%20quite/singular: e570085e69662802acf485c4565e3e3e
+    Answer%20feedback/singular: 9ec80a1e5b591c3d6c790b8d43266c0f
     Correct!/singular: dda1a98dc04fd9db252887ecf1765d41
     Translate%20this%20sentence%3A/singular: f69b2eec827b3a74bafca50e9058716f
     What%20do%20you%20hear%3F/singular: 9527d094d65c550a40108673bc67744f

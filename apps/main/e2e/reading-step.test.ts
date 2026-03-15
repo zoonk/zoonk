@@ -249,14 +249,15 @@ test.describe("Reading Step", () => {
     await expect(page.getByRole("button", { name: /continue/i })).toBeVisible();
   });
 
-  test("wrong arrangement shows correct sentence in feedback", async ({ page }) => {
+  test("wrong arrangement shows sentence and translation in feedback", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const word1 = `Buenos-${uniqueId}`;
     const word2 = `dias-${uniqueId}`;
     const sentence = `${word1} ${word2}`;
+    const translation = `Good-${uniqueId} morning-${uniqueId}`;
 
     const { url } = await createReadingActivity({
-      sentences: [{ sentence, translation: `Good-${uniqueId} morning-${uniqueId}` }],
+      sentences: [{ sentence, translation }],
       words: [{ translation: `night-${uniqueId}`, word: `noche-${uniqueId}` }],
     });
 
@@ -278,9 +279,10 @@ test.describe("Reading Step", () => {
 
     await page.getByRole("button", { name: /check/i }).click();
 
-    // Shows the correct answer
-    await expect(page.getByText(new RegExp(`Correct answer.*${word1}`))).toBeVisible();
-    await expect(page.getByRole("button", { name: /continue/i })).toBeVisible();
+    const feedback = page.getByRole("region", { name: /answer feedback/i });
+    await expect(feedback.getByText(/not quite/i)).toBeVisible();
+    await expect(feedback.getByText(sentence)).toBeVisible();
+    await expect(feedback.getByText(translation)).toBeVisible();
   });
 
   test("full flow: complete all reading steps to completion screen", async ({ page }) => {

@@ -19,7 +19,7 @@ export function InlineFeedback({
   const feedback = result.result.feedback ? replaceName(result.result.feedback) : null;
 
   return (
-    <div className="flex flex-col gap-3">
+    <div aria-label={t("Answer feedback")} className="flex flex-col gap-3" role="region">
       <div className="flex items-center gap-1.5 text-sm font-medium">
         {isCorrect ? (
           <>
