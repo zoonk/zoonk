@@ -207,7 +207,11 @@ function DimensionRow({
           )}
         >
           {isFeedback && staggered ? (
-            <AnimatedNumber from={entry.total - entry.delta} to={entry.total} />
+            <AnimatedNumber
+              delay={STAGGER_INITIAL_DELAY_MS + (staggerIndex ?? 0) * STAGGER_STEP_DELAY_MS}
+              from={entry.total - entry.delta}
+              to={entry.total}
+            />
           ) : (
             entry.total
           )}

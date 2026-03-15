@@ -95,7 +95,7 @@ msgstr "Desafío completado"
 #: ../../packages/player/src/components/challenge-completion.tsx
 msgctxt "BEjT3b"
 msgid "{names} dropped below zero."
-msgstr "{names} cayó por debajo de cero."
+msgstr "{names} cayeron por debajo de cero."
 
 #: ../../packages/player/src/components/challenge-completion.tsx
 msgctxt "EQISGX"

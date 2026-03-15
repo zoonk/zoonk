@@ -7,19 +7,20 @@ const ANIMATION_DURATION_MS = 300;
 
 export function AnimatedNumber({
   className,
+  delay = 0,
   from,
   to,
 }: {
   className?: string;
+  delay?: number;
   from: number;
   to: number;
 }) {
   const [display, setDisplay] = useState(from);
   const rafRef = useRef<number>(0);
+  const timerRef = useRef<ReturnType<typeof setTimeout>>(null);
 
   useEffect(() => {
-    const start = performance.now();
-    const duration = ANIMATION_DURATION_MS;
     const diff = to - from;
 
     if (diff === 0) {
@@ -27,22 +28,32 @@ export function AnimatedNumber({
       return;
     }
 
-    function tick(now: number) {
-      const elapsed = now - start;
-      const progress = Math.min(elapsed / duration, 1);
-      const eased = 1 - (1 - progress) ** EASE_OUT_CUBIC_EXPONENT;
+    timerRef.current = setTimeout(() => {
+      const start = performance.now();
 
-      setDisplay(Math.round(from + diff * eased));
+      function tick(now: number) {
+        const elapsed = now - start;
+        const progress = Math.min(elapsed / ANIMATION_DURATION_MS, 1);
+        const eased = 1 - (1 - progress) ** EASE_OUT_CUBIC_EXPONENT;
 
-      if (progress < 1) {
-        rafRef.current = requestAnimationFrame(tick);
+        setDisplay(Math.round(from + diff * eased));
+
+        if (progress < 1) {
+          rafRef.current = requestAnimationFrame(tick);
+        }
       }
-    }
 
-    rafRef.current = requestAnimationFrame(tick);
+      rafRef.current = requestAnimationFrame(tick);
+    }, delay);
 
-    return () => cancelAnimationFrame(rafRef.current);
-  }, [from, to]);
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+
+      cancelAnimationFrame(rafRef.current);
+    };
+  }, [delay, from, to]);
 
   return <span className={className}>{display}</span>;
 }
