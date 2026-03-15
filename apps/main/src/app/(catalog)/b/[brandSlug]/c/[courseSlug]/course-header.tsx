@@ -41,7 +41,7 @@ export async function CourseHeader({
         <MediaCardImage>
           <Image
             alt={course.title}
-            className="size-full object-cover"
+            className="size-full rounded-xl object-cover outline -outline-offset-1 outline-black/10 dark:outline-white/10"
             fill
             sizes="(max-width: 640px) 80px, 96px"
             src={course.imageUrl}
