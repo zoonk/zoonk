@@ -2271,11 +2271,6 @@ msgid "Translation"
 msgstr "Traducción"
 
 #: src/lib/activities.ts
-msgctxt "/WTXNi"
-msgid "Review everything you learned"
-msgstr "Repasa todo lo que aprendiste"
-
-#: src/lib/activities.ts
 msgctxt "1TOMnj"
 msgid "Listening"
 msgstr "Escucha"
@@ -2296,24 +2291,9 @@ msgid "Practice {topic} in context through a dialogue-based scenario set in real
 msgstr "Practica {topic} en contexto a través de un escenario de diálogo basado en situaciones del mundo real."
 
 #: src/lib/activities.ts
-msgctxt "CaEilC"
-msgid "Make decisions with real trade-offs"
-msgstr "Toma decisiones con consecuencias reales"
-
-#: src/lib/activities.ts
-msgctxt "cxvnSI"
-msgid "Apply the topic in a real scenario"
-msgstr "Aplica el tema en un escenario real"
-
-#: src/lib/activities.ts
 msgctxt "E1bF/X"
 msgid "Explanation"
 msgstr "Explicación"
-
-#: src/lib/activities.ts
-msgctxt "EhgTzV"
-msgid "Practice listening skills"
-msgstr "Practica tus habilidades de escucha"
 
 #: src/lib/activities.ts
 msgctxt "gAYlHX"
@@ -2321,39 +2301,14 @@ msgid "Sharpen your {topic} listening skills by translating audio sentences."
 msgstr "Afina tus habilidades de escucha en {topic} traduciendo oraciones de audio."
 
 #: src/lib/activities.ts
-msgctxt "GV+7mf"
-msgid "Translate words you've learned"
-msgstr "Traduce las palabras que aprendiste"
-
-#: src/lib/activities.ts
 msgctxt "h2acN8"
 msgid "Test your understanding of {topic} with questions designed to check real comprehension, not just memorization."
 msgstr "Pon a prueba tu comprensión de {topic} con preguntas diseñadas para verificar la comprensión real, no solo la memorización."
 
 #: src/lib/activities.ts
-msgctxt "iOvuhZ"
-msgid "Test your knowledge"
-msgstr "Pon a prueba tus conocimientos"
-
-#: src/lib/activities.ts
-msgctxt "Ixg0z3"
-msgid "Learn new words"
-msgstr "Aprende nuevas palabras"
-
-#: src/lib/activities.ts
-msgctxt "KQeUad"
-msgid "Practice grammar rules"
-msgstr "Practica las reglas gramaticales"
-
-#: src/lib/activities.ts
 msgctxt "KV+O0y"
 msgid "Practice"
 msgstr "Practica"
-
-#: src/lib/activities.ts
-msgctxt "liTyj7"
-msgid "Practice reading comprehension"
-msgstr "Practica la comprensión de lectura"
 
 #: src/lib/activities.ts
 msgctxt "MfGqY2"
@@ -2364,11 +2319,6 @@ msgstr "{lesson} {activity}"
 msgctxt "MOK/yK"
 msgid "Reading"
 msgstr "Lectura"
-
-#: src/lib/activities.ts
-msgctxt "OQQjs9"
-msgid "Concepts and definitions"
-msgstr "Conceptos y definiciones"
 
 #: src/lib/activities.ts
 msgctxt "OuR/Ij"
@@ -2409,11 +2359,6 @@ msgstr "Practica las reglas gramaticales de {topic} con ejercicios diseñados pa
 msgctxt "UDijXW"
 msgid "{activity} - {lesson}"
 msgstr "{activity} - {lesson}"
-
-#: src/lib/activities.ts
-msgctxt "WlmsO/"
-msgid "Practice in a real-world dialogue"
-msgstr "Practica en un diálogo del mundo real"
 
 #: src/lib/activities.ts
 msgctxt "XzxpBZ"
