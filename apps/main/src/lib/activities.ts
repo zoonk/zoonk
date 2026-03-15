@@ -16,71 +16,21 @@ import {
 } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 
-export async function getActivityKinds(): Promise<
-  {
-    key: ActivityKind;
-    label: string;
-    description: string;
-  }[]
-> {
+export async function getActivityKinds(): Promise<{ key: ActivityKind; label: string }[]> {
   const t = await getExtracted();
 
   return [
-    {
-      description: t("Concepts and definitions"),
-      key: "explanation",
-      label: t("Explanation"),
-    },
-    {
-      description: t("Test your knowledge"),
-      key: "quiz",
-      label: t("Quiz"),
-    },
-    {
-      description: t("Apply the topic in a real scenario"),
-      key: "practice",
-      label: t("Practice"),
-    },
-    {
-      description: t("Make decisions with real trade-offs"),
-      key: "challenge",
-      label: t("Challenge"),
-    },
-    {
-      description: t("Learn new words"),
-      key: "vocabulary",
-      label: t("Vocabulary"),
-    },
-    {
-      description: t("Translate words you've learned"),
-      key: "translation",
-      label: t("Translation"),
-    },
-    {
-      description: t("Practice grammar rules"),
-      key: "grammar",
-      label: t("Grammar"),
-    },
-    {
-      description: t("Practice reading comprehension"),
-      key: "reading",
-      label: t("Reading"),
-    },
-    {
-      description: t("Practice listening skills"),
-      key: "listening",
-      label: t("Listening"),
-    },
-    {
-      description: t("Review everything you learned"),
-      key: "review",
-      label: t("Review"),
-    },
-    {
-      description: t("Practice in a real-world dialogue"),
-      key: "languagePractice",
-      label: t("Practice"),
-    },
+    { key: "explanation", label: t("Explanation") },
+    { key: "quiz", label: t("Quiz") },
+    { key: "practice", label: t("Practice") },
+    { key: "challenge", label: t("Challenge") },
+    { key: "vocabulary", label: t("Vocabulary") },
+    { key: "translation", label: t("Translation") },
+    { key: "grammar", label: t("Grammar") },
+    { key: "reading", label: t("Reading") },
+    { key: "listening", label: t("Listening") },
+    { key: "review", label: t("Review") },
+    { key: "languagePractice", label: t("Practice") },
   ];
 }
 
