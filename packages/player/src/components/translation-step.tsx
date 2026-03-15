@@ -72,7 +72,7 @@ export function TranslationStep({
   };
 
   useOptionKeyboard({
-    enabled: !selectedAnswer,
+    enabled: !selectedAnswer || selectedAnswer.kind === "translation",
     onSelect: handleSelect,
     optionCount: options.length,
   });
