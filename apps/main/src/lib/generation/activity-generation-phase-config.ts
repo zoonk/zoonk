@@ -82,7 +82,7 @@ export function getPhaseOrder(kind: ActivityKind): PhaseName[] {
     return ["gettingStarted", "writingContent", "preparingVisuals", "creatingImages", "finishing"];
   }
 
-  if (kind === "practice" || kind === "challenge") {
+  if (kind === "practice" || kind === "challenge" || kind === "quiz") {
     return ["gettingStarted", "processingDependencies", "writingContent", "finishing"];
   }
 
@@ -211,7 +211,8 @@ export function getPhaseSteps(kind: ActivityKind): Record<PhaseName, ActivitySte
   if (kind === "custom") {
     return {
       ...SHARED_PHASE_STEPS,
-      finishing: getFinishingSteps(["generateCustomContent"]),
+      finishing: ["getNeighboringConcepts", ...getFinishingSteps(["generateCustomContent"])],
+      gettingStarted: ["getLessonActivities"],
       processingDependencies: [],
       writingContent: ["setActivityAsRunning", "generateCustomContent"],
     };
@@ -226,10 +227,22 @@ export function getPhaseSteps(kind: ActivityKind): Record<PhaseName, ActivitySte
     };
   }
 
+  if (kind === "quiz") {
+    return {
+      ...SHARED_PHASE_STEPS,
+      ...NO_VISUALS_OVERRIDE,
+      finishing: [
+        ...VISUALS_AS_FINISHING,
+        ...getFinishingSteps(["generateExplanationContent", "generateQuizContent"]),
+      ],
+      processingDependencies: EXPLANATION_DEPS,
+      writingContent: ["generateQuizContent"],
+    };
+  }
+
   const contentStepMap: Partial<Record<ActivityKind, ActivityStepName>> = {
     challenge: "generateChallengeContent",
     practice: "generatePracticeContent",
-    quiz: "generateQuizContent",
   };
 
   const writingStep = contentStepMap[kind] ?? "generateQuizContent";
