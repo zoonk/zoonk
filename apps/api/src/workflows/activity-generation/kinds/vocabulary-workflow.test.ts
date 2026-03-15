@@ -277,6 +277,51 @@ describe(vocabularyActivityWorkflow, () => {
     expect(result.words.map((record) => record.word).toSorted()).toEqual(["gato", "hola"]);
   });
 
+  test("marks translation as 'failed' when vocabulary save fails", async () => {
+    const upsertSpy = vi.spyOn(prisma.word, "upsert").mockRejectedValue(new Error("DB error"));
+
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `Vocab Save Fail ${randomUUID()}`,
+    });
+
+    const [vocabActivity, transActivity] = await Promise.all([
+      activityFixture({
+        generationStatus: "pending",
+        kind: "vocabulary",
+        language: "en",
+        lessonId: lesson.id,
+        organizationId,
+        position: 0,
+        title: `Vocabulary ${randomUUID()}`,
+      }),
+      activityFixture({
+        generationStatus: "pending",
+        kind: "translation",
+        language: "en",
+        lessonId: lesson.id,
+        organizationId,
+        position: 1,
+        title: `Translation ${randomUUID()}`,
+      }),
+    ]);
+
+    const activities = await fetchLessonActivities(lesson.id);
+    await vocabularyActivityWorkflow(activities, "test-run-id", [], []);
+
+    const [dbVocab, dbTrans] = await Promise.all([
+      prisma.activity.findUnique({ where: { id: vocabActivity.id } }),
+      prisma.activity.findUnique({ where: { id: transActivity.id } }),
+    ]);
+
+    expect(dbVocab?.generationStatus).toBe("failed");
+    expect(dbTrans?.generationStatus).toBe("failed");
+
+    upsertSpy.mockRestore();
+  });
+
   test("skips generation when activity is already completed", async () => {
     const lesson = await lessonFixture({
       chapterId: chapter.id,

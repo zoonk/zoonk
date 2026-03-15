@@ -136,7 +136,14 @@ export async function saveVocabularyWordsStep(
 
   if (error) {
     await streamError({ reason: "dbSaveFailed", step: "saveVocabularyWords" });
-    await handleActivityFailureStep({ activityId: vocabularyActivity.id });
+
+    await Promise.all([
+      handleActivityFailureStep({ activityId: vocabularyActivity.id }),
+      translationActivity
+        ? handleActivityFailureStep({ activityId: translationActivity.id })
+        : null,
+    ]);
+
     return { savedWords: [] };
   }
 
