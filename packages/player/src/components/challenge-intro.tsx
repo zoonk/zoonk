@@ -22,17 +22,15 @@ export function ChallengeIntro({
           {t("Challenge")}
         </span>
 
-        <h1 className="text-foreground text-2xl font-bold tracking-tight">
-          {t("Make choices.")}
-          <br />
-          {t("Balance the outcome.")}
-        </h1>
+        <h1 className="text-foreground text-xl font-semibold tracking-tight">{t("How to play")}</h1>
 
-        <p className="text-muted-foreground text-base leading-relaxed">
-          {t(
-            "You'll face a series of decisions. Each one shifts your scores. Don't let any go negative.",
-          )}
-        </p>
+        <ol className="text-muted-foreground list-inside list-decimal space-y-1.5 text-sm leading-relaxed text-pretty">
+          <li>{t("You start at 0 in every score.")}</li>
+          <li>{t("Each choice raises some scores and lowers others.")}</li>
+          <li>{t("If any score ends below zero, game over.")}</li>
+          <li>{t("No choice is right or wrong — every one has trade-offs.")}</li>
+          <li>{t("Choose carefully. You can't undo.")}</li>
+        </ol>
       </div>
 
       <div className="flex flex-col gap-2">

@@ -207,32 +207,42 @@ checksums:
     Level%20progress/singular: 286f095acd17006787247db0b69270e3
     "%7Bvalue%7D%20BP%20to%20level%20up/singular": 755c2fe6e435645cb35b57bf92af09d3
     "%7Bcolor%7D%20Belt%20%E2%80%94%20Level%20%7Blevel%7D/singular": 367f2e902d39199c8507aaad09e8907a
+    Game%20over./singular: 7f7c4f4404b868e6062363dfffd9adf7
     Back%20to%20Lesson/singular: e2dbef5a2fefae8f9cee708e53e61cb9
     Challenge%20Complete/singular: 7854472cc9245aaa8a13f54514968506
-    Final%20dimension%20scores/singular: aa4efa7ecef99d375c1daf4c6585ba98
-    Some%20of%20your%20stats%20went%20below%20zero./singular: bc281c87ae70abd076e3e73aa263ddc2
+    "%7Bnames%7D%20dropped%20below%20zero./singular": 36735509d5747d09d3519324aa0f1493
+    "%7Bname%7D%20dropped%20to%20%7Bvalue%7D./singular": 95e21895ac0d6fa49a9a2117ccd8fd6a
+    Final%20scores/singular: e772441fda83e82c2101876fee323481
     Try%20Again/singular: d65fad81c5f8f90405b26bf6e5d70ab9
-    Challenge%20Failed/singular: e9b1d1d02118f2e2ddc34907748955c4
-    Make%20choices./singular: 0861e9651cbff7146aee6cafb92128a8
-    Balance%20the%20outcome./singular: bce81c0b25b5ab019b5ce5dba5a12c3f
+    Total%20score/singular: 52bf3d9b021a715f5624d7c945d97eb6
+    If%20any%20score%20ends%20below%20zero%2C%20game%20over./singular: 1c5c2c71e421c428e792d3c1509b0276
+    No%20choice%20is%20right%20or%20wrong%20%E2%80%94%20every%20one%20has%20trade-offs./singular: 8a67c34645c8bfd8546261a977ace665
     Challenge/singular: 7f333a59ee7a3596e27a2f8c3401b764
-    You'll%20face%20a%20series%20of%20decisions.%20Each%20one%20shifts%20your%20scores.%20Don't%20let%20any%20go%20negative./singular: 026dc19377a9b04a9bfce46cf8bcfa16
+    How%20to%20play/singular: 2cfbb8fb4e6096dcd53c55ddbda9bdda
     Starting%20scores/singular: 6a21f8424cdc75e477c3d7857a97db6d
+    Choose%20carefully.%20You%20can't%20undo./singular: cf4e1fea906ef68f82c993072d02abf6
     Begin/singular: cc2a17a662cb60dd2d8335a2e8440997
+    Each%20choice%20raises%20some%20scores%20and%20lowers%20others./singular: f2fe298b9617dcbd9b1783eeb47acfcb
     Your%20scores/singular: 1700f65ead0647bc4876f4b3b6453a8b
+    You%20start%20at%200%20in%20every%20score./singular: ef7c9e35b5b066d492618fcaec8eef46
     Restart/singular: bab6232e89f24e3129f8e48268739d5b
     Next/singular: 89ddbcf710eba274963494f312bdc8a9
     Login/singular: f4f219abeb5a465ecb1c7efaf50246de
     Sign%20up%20to%20track%20your%20progress/singular: 554ed29d9b8a243362c3b3374222af08
     Completed/singular: 0e4bbce9985f25eb673d9a054c8d5334
     correct/singular: 0c2df4a764cea47295c0b550477e8e29
-    Current%20dimension%20scores/singular: b3a4b7edbd41132e6fb349a6df24a33d
-    View%20stats/singular: 707f91e0ff65e7163c95900395dc0297
-    Stats/singular: 5cf8b052c89fa1b05397a956ebec69b2
+    All%20clear/singular: ca7355395e213474da78c66783aefc0c
+    Current%20scores/singular: 9540e05ca834af8682ea93bdec677299
+    "%7Bcount%7D%20in%20danger/singular": 82145029fddd68fcd3b3b094a2be8eb1
+    "%7Bcount%7D%20at%20risk/singular": d0c6a90b2830b7b26e220ef1f7708d08
+    View%20scores/singular: 8089ad914ec6636a00fd58ed3c84f07b
     Your%20answer%3A/singular: 663abc310ccb6229c6325f8c857adce2
+    "%7Bname%7D%20is%20negative.%20You%20need%20to%20bring%20this%20back%20up%20or%20you%20will%20lose./singular": c893d2d3c1bb15ea45614228ea9ddcac
     Outcome/singular: 4cfc7a40e384ea8b6658e8da6e351bf0
+    Close%20call./singular: 7913cf61fc4e2fcd3eaf0d51bd86ba4d
+    "%7Bname%7D%20is%20at%20zero.%20One%20more%20drop%20and%20you%20lose./singular": 4e48a2c335f69b412a58e4aef620caf1
     Correct%20answer%3A/singular: a8b8cc0d5d0059cbfeee0ad4721540d5
-    Dimension%20inventory/singular: a150bc3e032ae9e9202db1b375029aae
+    Score%20changes/singular: ddf8ff300115aa23776dc4b3157581de
     Blank%20%7Bposition%7D/singular: 70a4795f65f91685071b6abb1c3a6bad
     Blank%20%7Bposition%7D%3A%20%7Bitem%7D.%20%7Bresult%7D./singular: c64e721cdd1e4cc48eff9f9690f1fc6b
     Blank%20%7Bposition%7D%3A%20%7Bitem%7D.%20Tap%20to%20remove./singular: d7ab9b86256fae5fbb5187fe718afe0b

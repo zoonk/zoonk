@@ -352,7 +352,7 @@ test.describe("Challenge Variant", () => {
     await page.goto(url);
 
     // Intro screen content
-    await expect(page.getByText(/make choices/i)).toBeVisible();
+    await expect(page.getByText(/how to play/i)).toBeVisible();
     await expect(page.getByText(new RegExp(`Courage ${uniqueId}`))).toBeVisible();
     await expect(page.getByRole("button", { name: /begin/i })).toBeVisible();
 
@@ -390,9 +390,9 @@ test.describe("Challenge Variant", () => {
     await page.goto(url);
     await page.getByRole("button", { name: /begin/i }).click();
 
-    // First step should now be visible
+    // First step should now be visible with dimension status in header (not step fraction)
     await expect(page.getByText(new RegExp(`Begin question ${uniqueId}`))).toBeVisible();
-    await expect(page.getByText(/1 \/ 1/)).toBeVisible();
+    await expect(page.getByRole("status")).toBeVisible();
   });
 
   test("enter key starts challenge from intro", async ({ page }) => {
@@ -423,7 +423,7 @@ test.describe("Challenge Variant", () => {
     });
 
     await page.goto(url);
-    await expect(page.getByText(/make choices/i)).toBeVisible();
+    await expect(page.getByText(/how to play/i)).toBeVisible();
 
     await expect(async () => {
       await page.keyboard.press("Enter");
@@ -519,13 +519,13 @@ test.describe("Challenge Variant", () => {
     await expect(page.getByText(/outcome/i)).toBeVisible();
     await expect(page.getByText(new RegExp(`Bold move ${uniqueId}`))).toBeVisible();
 
-    const inventory = page.getByRole("list", { name: /dimension inventory/i });
+    const inventory = page.getByRole("list", { name: /score changes/i });
     await expect(inventory).toBeVisible();
     await expect(inventory.getByText(new RegExp(`Wisdom ${uniqueId}`))).toBeVisible();
     await expect(inventory.getByText(new RegExp(`Courage ${uniqueId}`))).toBeVisible();
   });
 
-  test("stats button visible during challenge play", async ({ page }) => {
+  test("header shows status message with popover during challenge play", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const dim = `Morale ${uniqueId}`;
     const { url } = await createMultipleChoiceActivity({
@@ -556,14 +556,11 @@ test.describe("Challenge Variant", () => {
     await page.goto(url);
     await page.getByRole("button", { name: /begin/i }).click();
 
-    // Stats button should be visible
-    const statsButton = page.getByRole("button", { name: /view stats/i });
-    await expect(statsButton).toBeVisible();
+    // Dimensions start at 0, so header shows at-risk status
+    await expect(page.getByRole("status").getByText(/at risk/i)).toBeVisible();
 
-    // Click to open popover
-    await statsButton.click();
-
-    // Popover should show dimension names
+    // Click to open popover with full dimension details
+    await page.getByRole("button", { name: /view scores/i }).click();
     await expect(page.getByText(new RegExp(dim))).toBeVisible();
   });
 
@@ -624,10 +621,8 @@ test.describe("Challenge Variant", () => {
     await page.getByRole("button", { name: /check/i }).click();
     await page.getByRole("button", { name: /continue/i }).click();
 
-    // Open stats to verify updated total
-    await page.getByRole("button", { name: /view stats/i }).click();
-    const statsList = page.getByRole("list", { name: /current dimension scores/i });
-    await expect(statsList.getByText("1", { exact: true })).toBeVisible();
+    // After positive choice, all scores are positive — header shows "All clear"
+    await expect(page.getByRole("status").getByText(/all clear/i)).toBeVisible();
   });
 
   test("accumulated inventory across multiple steps", async ({ page }) => {
@@ -686,7 +681,7 @@ test.describe("Challenge Variant", () => {
     await page.getByRole("radio", { name: new RegExp(`Brave choice ${uniqueId}`) }).click();
     await page.getByRole("button", { name: /check/i }).click();
 
-    const inventory = page.getByRole("list", { name: /dimension inventory/i });
+    const inventory = page.getByRole("list", { name: /score changes/i });
     await expect(inventory).toBeVisible();
     await expect(inventory.getByText(new RegExp(dim))).toBeVisible();
 
@@ -741,11 +736,11 @@ test.describe("Challenge Variant", () => {
 
     await expect(authenticatedPage.getByText(/challenge complete/i)).toBeVisible();
 
-    const inventory = authenticatedPage.getByRole("list", { name: /final dimension scores/i });
+    const inventory = authenticatedPage.getByRole("list", { name: /final scores/i });
     await expect(inventory.getByText(new RegExp(dim))).toBeVisible();
   });
 
-  test("challenge completion game over shows Challenge Failed with Try Again", async ({ page }) => {
+  test("challenge completion game over shows Game over with Try Again", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const dim = `Economy ${uniqueId}`;
     const { url } = await createMultipleChoiceActivity({
@@ -782,10 +777,10 @@ test.describe("Challenge Variant", () => {
     await page.getByRole("button", { name: /check/i }).click();
     await page.getByRole("button", { name: /continue/i }).click();
 
-    await expect(page.getByText(/challenge failed/i)).toBeVisible();
-    await expect(page.getByText(/some of your stats went below zero/i)).toBeVisible();
+    await expect(page.getByText(/game over/i)).toBeVisible();
+    await expect(page.getByText(new RegExp(`${dim} dropped to -1`))).toBeVisible();
 
-    const inventory = page.getByRole("list", { name: /final dimension scores/i });
+    const inventory = page.getByRole("list", { name: /final scores/i });
     await expect(inventory.getByText(new RegExp(dim))).toBeVisible();
 
     // No "Next" button on game over
@@ -800,7 +795,7 @@ test.describe("Challenge Variant", () => {
 
     // After restart, we should see the question again (not intro)
     await expect(page.getByText(new RegExp(`Crisis ${uniqueId}`))).toBeVisible();
-    await expect(page.getByText(/make choices/i)).not.toBeVisible();
+    await expect(page.getByText(/how to play/i)).not.toBeVisible();
   });
 
   test("non-challenge activity skips intro", async ({ page }) => {
@@ -825,7 +820,7 @@ test.describe("Challenge Variant", () => {
 
     // Should see question immediately, no intro
     await expect(page.getByText(new RegExp(`Core question ${uniqueId}`))).toBeVisible();
-    await expect(page.getByText(/make choices/i)).not.toBeVisible();
+    await expect(page.getByText(/how to play/i)).not.toBeVisible();
     await expect(page.getByRole("button", { name: /begin/i })).not.toBeVisible();
   });
 });
@@ -1078,7 +1073,7 @@ test.describe("Interaction Mechanics", () => {
     await expect(page.getByText(new RegExp(`Honorable ${uniqueId}`))).toBeVisible();
 
     // Dimension inventory should be visible
-    const inventory = page.getByRole("list", { name: /dimension inventory/i });
+    const inventory = page.getByRole("list", { name: /score changes/i });
     await expect(inventory).toBeVisible();
     await expect(inventory.getByText(new RegExp(dim))).toBeVisible();
   });

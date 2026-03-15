@@ -37,6 +37,7 @@ export type PlayerState = {
   currentStepIndex: number;
   dimensions: DimensionInventory;
   phase: PlayerPhase;
+  previousDimensions: DimensionInventory;
   results: Record<string, StepResult>;
   selectedAnswers: Record<string, SelectedAnswer>;
   startedAt: number;
@@ -121,6 +122,7 @@ export function createInitialState(activity: SerializedActivity): PlayerState {
     currentStepIndex: 0,
     dimensions,
     phase: getInitialPhase(activity.steps, dimensions),
+    previousDimensions: { ...dimensions },
     results: {},
     selectedAnswers: buildInitialAnswers(activity.steps),
     startedAt: now,
@@ -184,6 +186,7 @@ function handleCheckAnswer(
     ...state,
     dimensions: applyEffects(state.dimensions, action.effects),
     phase: "feedback",
+    previousDimensions: state.dimensions,
     results: { ...state.results, [action.stepId]: stepResult },
     stepTimings: recordStepTiming(state, action.stepId),
   };
@@ -247,12 +250,14 @@ function handleNavigateStep(
 
 function handleRestart(state: PlayerState): PlayerState {
   const now = Date.now();
+  const dimensions = collectAllDimensions(state.steps);
 
   return {
     ...state,
     currentStepIndex: 0,
-    dimensions: collectAllDimensions(state.steps),
+    dimensions,
     phase: "playing",
+    previousDimensions: { ...dimensions },
     results: {},
     selectedAnswers: buildInitialAnswers(state.steps),
     startedAt: now,

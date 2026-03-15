@@ -58,6 +58,7 @@ function buildState(overrides: Partial<PlayerState> = {}): PlayerState {
     currentStepIndex: 0,
     dimensions: {},
     phase: "playing",
+    previousDimensions: {},
     results: {},
     selectedAnswers: {},
     startedAt: 1000,

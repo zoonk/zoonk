@@ -1,7 +1,7 @@
 "use client";
 
 import { type Route } from "next";
-import { useCallback, useReducer } from "react";
+import { useCallback, useMemo, useReducer } from "react";
 import { type CompletionInput, type CompletionResult } from "./completion-input-schema";
 import { hasNegativeDimension } from "./dimensions";
 import { PlayerContext, type PlayerContextValue } from "./player-context";
@@ -75,6 +75,20 @@ export function PlayerProvider<Href extends string>({
   const view = deriveViewState(state);
   const actions = usePlayerActions(state, dispatch, onComplete, isAuthenticated);
 
+  const changedDimensions = useMemo(() => {
+    const changed = new Set<string>();
+
+    for (const [name, value] of Object.entries(state.dimensions)) {
+      const previous: number | undefined = state.previousDimensions[name];
+
+      if (value !== previous) {
+        changed.add(name);
+      }
+    }
+
+    return changed;
+  }, [state.dimensions, state.previousDimensions]);
+
   const handleNext = useCallback(() => {
     onNext?.();
   }, [onNext]);
@@ -98,6 +112,7 @@ export function PlayerProvider<Href extends string>({
     ...actions,
     ...view,
     activityId: state.activityId,
+    changedDimensions,
     completionFooter,
     completionResult: actions.completionResult,
     currentStepIndex: state.currentStepIndex,

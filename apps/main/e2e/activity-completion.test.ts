@@ -210,7 +210,7 @@ test.describe("Activity Completion", () => {
     await browserContext.close();
   });
 
-  test("challenge failure shows Challenge Failed and +10 BP", async ({ baseURL, browser }) => {
+  test("challenge failure shows Game over and +10 BP", async ({ baseURL, browser }) => {
     const email = await createUniqueUser(baseURL!);
     const { browserContext, page } = await createAuthenticatedPage(browser, baseURL!, email);
     const { buildUrl, lesson, org, uniqueId } = await createTestHierarchy("chfail");
@@ -256,7 +256,7 @@ test.describe("Activity Completion", () => {
     await page.getByRole("button", { name: /check/i }).click();
     await page.getByRole("button", { name: /continue/i }).click();
 
-    await expect(page.getByText(/challenge failed/i)).toBeVisible();
+    await expect(page.getByText(/game over/i)).toBeVisible();
     await expect(page.getByText("+10 BP")).toBeVisible();
 
     await browserContext.close();
