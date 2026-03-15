@@ -1,15 +1,79 @@
 import "server-only";
 import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
-import { generateText, stepCountIs } from "ai";
-import { type QuizQuestion, type SelectImageQuestion, quizTools } from "../_tools/quiz";
+import { Output, generateText } from "ai";
+import { z } from "zod";
 import systemPrompt from "./activity-quiz.prompt.md";
 
 const DEFAULT_MODEL = process.env.AI_MODEL_ACTIVITY_QUIZ ?? "openai/gpt-5.4";
-const FALLBACK_MODELS = ["anthropic/claude-opus-4.5", "google/gemini-3-flash"];
+const FALLBACK_MODELS = ["anthropic/claude-opus-4.6"];
 
-export type ActivityQuizSchema = {
-  questions: QuizQuestion[];
-};
+const multipleChoiceSchema = z.object({
+  context: z.string(),
+  format: z.literal("multipleChoice"),
+  options: z.array(
+    z.object({
+      feedback: z.string(),
+      isCorrect: z.boolean(),
+      text: z.string(),
+    }),
+  ),
+  question: z.string(),
+});
+
+const fillBlankSchema = z.object({
+  answers: z.array(z.string()),
+  distractors: z.array(z.string()),
+  feedback: z.string(),
+  format: z.literal("fillBlank"),
+  question: z.string(),
+  template: z.string(),
+});
+
+const matchColumnsSchema = z.object({
+  format: z.literal("matchColumns"),
+  pairs: z.array(
+    z.object({
+      left: z.string(),
+      right: z.string(),
+    }),
+  ),
+  question: z.string(),
+});
+
+const sortOrderSchema = z.object({
+  feedback: z.string(),
+  format: z.literal("sortOrder"),
+  items: z.array(z.string()),
+  question: z.string(),
+});
+
+const selectImageSchema = z.object({
+  format: z.literal("selectImage"),
+  options: z.array(
+    z.object({
+      feedback: z.string(),
+      isCorrect: z.boolean(),
+      prompt: z.string(),
+    }),
+  ),
+  question: z.string(),
+});
+
+const quizQuestionSchema = z.discriminatedUnion("format", [
+  multipleChoiceSchema,
+  fillBlankSchema,
+  matchColumnsSchema,
+  sortOrderSchema,
+  selectImageSchema,
+]);
+
+const schema = z.object({
+  questions: z.array(quizQuestionSchema),
+});
+
+export type QuizQuestion = z.infer<typeof quizQuestionSchema>;
+export type SelectImageQuestion = z.infer<typeof selectImageSchema>;
+export type ActivityQuizSchema = z.infer<typeof schema>;
 
 export type ActivityQuizParams = {
   lessonTitle: string;
@@ -44,9 +108,7 @@ CHAPTER_TITLE: ${chapterTitle}
 COURSE_TITLE: ${courseTitle}
 LANGUAGE: ${language}
 EXPLANATION_STEPS:
-${formattedExplanationSteps}
-
-Generate quiz questions that test understanding of these concepts. Use the available tools to create questions in appropriate formats. You MUST generate at least 5 questions covering the key concepts.`;
+${formattedExplanationSteps}`;
 
   const providerOptions = buildProviderOptions({
     fallbackModels: FALLBACK_MODELS,
@@ -54,28 +116,13 @@ Generate quiz questions that test understanding of these concepts. Use the avail
     useFallback,
   });
 
-  const { steps, usage } = await generateText({
+  const { output, usage } = await generateText({
     model,
+    output: Output.object({ schema }),
     prompt: userPrompt,
     providerOptions,
-    stopWhen: stepCountIs(10),
     system: systemPrompt,
-    toolChoice: "required",
-    tools: quizTools,
   });
 
-  // Tool calls are typed by Vercel AI SDK but output structure matches QuizQuestion
-  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- AI tool outputs match expected schema
-  const questions = steps.flatMap((step) =>
-    step.toolCalls
-      .filter((call) => !call.dynamic)
-      .map((call) => ({
-        format: call.toolName,
-        ...call.input,
-      })),
-  ) as QuizQuestion[];
-
-  return { data: { questions }, systemPrompt, usage, userPrompt };
+  return { data: output, systemPrompt, usage, userPrompt };
 }
-
-export type { QuizQuestion, SelectImageQuestion };

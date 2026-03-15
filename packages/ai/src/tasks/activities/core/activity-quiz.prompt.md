@@ -55,18 +55,50 @@ Generate all content in the specified `LANGUAGE`:
 
 **Language Purity Rule**: Every word, character, and token in the output MUST be in the specified LANGUAGE. Never mix languages or scripts within a response. If the LANGUAGE is `en`, use only English words — no Chinese, Japanese, Korean, Arabic, or other script characters.
 
-# Format Selection
+# Question Formats
 
-Choose formats based on what genuinely tests understanding — not for variety's sake.
+Each question must include a `format` field. Choose formats based on what genuinely tests understanding — not for variety's sake.
 
-**Multiple choice is often the best format.** It excels at testing whether learners can apply concepts to novel scenarios, which is the core goal. Use it freely when it fits.
+## multipleChoice (DEFAULT — use freely)
 
-Other formats are available when they're genuinely better for specific content:
+The best format for testing whether learners can apply concepts to novel scenarios. Use it whenever it fits.
 
-- **matchColumns**: When the concept involves connecting observations to principles (e.g., matching symptoms to causes)
-- **fillBlank**: When completing a relationship or process tests understanding better than selecting from options
-- **sortOrder**: When the concept IS about sequence and order matters conceptually (e.g., steps in a biological process)
-- **selectImage**: Only when visual recognition genuinely tests the concept
+- `context`: A novel real-world scenario that sets up the question (max 300 chars). Write it as if describing a situation to a friend. For code-related topics, include short code snippets inline
+- `question`: Short question about the context (max 50 chars)
+- `options`: Exactly 4 options with 1 correct and 3 plausible distractors representing real misconceptions. Each option has `text`, `isCorrect`, and `feedback`
+
+## fillBlank
+
+Use when completing a relationship or process tests understanding better than selecting from options, or when precise terminology matters for comprehension.
+
+- `question`: Context for the fill-in-the-blank exercise
+- `template`: Sentence(s) with `[BLANK]` placeholders — use exactly `[BLANK]`
+- `answers`: Correct words in order (position 0 fills first blank)
+- `distractors`: Plausible but incorrect words to include as options
+- `feedback`: Explanation of why these concepts belong in these positions
+
+## matchColumns
+
+Use when the concept involves connecting observations to principles (e.g., matching symptoms to causes) or distinguishing between related concepts.
+
+- `question`: Context for the matching task
+- `pairs`: 3-5 pairs to match. Left column: real-world items, scenarios, or observable phenomena. Right column: concepts, principles, or outcomes they connect to
+
+## sortOrder
+
+Use when the concept IS about sequence and order matters conceptually (e.g., steps in a biological process, cause-effect chains, or hierarchies).
+
+- `question`: What needs to be ordered and why it matters
+- `items`: Items in the CORRECT order (4-6 items). Order should emerge from understanding, not memorization
+- `feedback`: Explanation of why this sequence is correct
+
+## selectImage
+
+Use SPARINGLY — only when visual recognition genuinely tests understanding better than text-based formats.
+
+- `question`: A scenario where visual identification demonstrates understanding
+- `options`: 2-4 image options. Each has `prompt` (image generation prompt describing content, not style), `isCorrect`, and `feedback`
+- NEVER reference copyrighted or trademarked characters (e.g., Mickey Mouse, Spider-Man, Mario, Pikachu). Describe concepts abstractly or use generic, original characters instead
 
 **Skip formats entirely if they don't fit.** Using several well-crafted multiple choice questions is far better than forcing variety with poorly-suited formats. Never use a format just because you haven't used it yet.
 

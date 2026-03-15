@@ -5,7 +5,7 @@ import { type StepVisualResource, visualTools } from "./_tools/visual";
 import systemPrompt from "./step-visual.prompt.md";
 
 const DEFAULT_MODEL = process.env.AI_MODEL_STEP_VISUAL ?? "openai/gpt-5.4";
-const FALLBACK_MODELS = ["anthropic/claude-opus-4.5"];
+const FALLBACK_MODELS = ["anthropic/claude-opus-4.6"];
 
 export type StepVisualSchema = {
   visuals: StepVisualResource[];
