@@ -275,6 +275,14 @@ describe("custom phase status", () => {
   });
 });
 
+describe("quiz phase status", () => {
+  test("does not include preparingVisuals or creatingImages phases", () => {
+    const phases = getPhaseOrder("quiz");
+    expect(phases).not.toContain("preparingVisuals");
+    expect(phases).not.toContain("creatingImages");
+  });
+});
+
 describe("enforcePhaseProgression integration", () => {
   test("clamps finishing to pending when creatingImages is still pending (explanation kind)", () => {
     const phaseOrder = getPhaseOrder("explanation");
