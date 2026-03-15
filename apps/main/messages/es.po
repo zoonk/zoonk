@@ -77,6 +77,11 @@ msgid "{color} Belt — Level {level}"
 msgstr "Cinturón {color} — Nivel {level}"
 
 #: ../../packages/player/src/components/challenge-completion.tsx
+msgctxt "1tm+gP"
+msgid "Game over."
+msgstr "Fin del juego."
+
+#: ../../packages/player/src/components/challenge-completion.tsx
 #: ../../packages/player/src/components/completion-auth-branch.tsx
 msgctxt "7tB7n/"
 msgid "Back to Lesson"
@@ -88,14 +93,19 @@ msgid "Challenge Complete"
 msgstr "Desafío completado"
 
 #: ../../packages/player/src/components/challenge-completion.tsx
-msgctxt "hOjzbw"
-msgid "Final dimension scores"
-msgstr "Puntuaciones finales de dimensión"
+msgctxt "BEjT3b"
+msgid "{names} dropped below zero."
+msgstr "{names} cayó por debajo de cero."
 
 #: ../../packages/player/src/components/challenge-completion.tsx
-msgctxt "JOTIo6"
-msgid "Some of your stats went below zero."
-msgstr "Algunas de tus estadísticas cayeron por debajo de cero."
+msgctxt "EQISGX"
+msgid "{name} dropped to {value}."
+msgstr "{name} cayó a {value}."
+
+#: ../../packages/player/src/components/challenge-completion.tsx
+msgctxt "gjP7K/"
+msgid "Final scores"
+msgstr "Puntuaciones finales"
 
 #: ../../packages/player/src/components/challenge-completion.tsx
 msgctxt "jsy7pk"
@@ -103,19 +113,9 @@ msgid "Try Again"
 msgstr "Intentar de nuevo"
 
 #: ../../packages/player/src/components/challenge-completion.tsx
-msgctxt "w48TcP"
-msgid "Challenge Failed"
-msgstr "Desafío fallido"
-
-#: ../../packages/player/src/components/challenge-intro.tsx
-msgctxt "/DZ4Fx"
-msgid "Make choices."
-msgstr "Toma decisiones."
-
-#: ../../packages/player/src/components/challenge-intro.tsx
-msgctxt "4vTq4b"
-msgid "Balance the outcome."
-msgstr "Equilibra el resultado."
+msgctxt "me6E3h"
+msgid "Total score"
+msgstr "Puntuación total"
 
 #: ../../packages/player/src/components/challenge-intro.tsx
 #: src/lib/activities.ts
@@ -124,9 +124,24 @@ msgid "Challenge"
 msgstr "Desafío"
 
 #: ../../packages/player/src/components/challenge-intro.tsx
-msgctxt "c+wn4p"
-msgid "You'll face a series of decisions. Each one shifts your scores. Don't let any go negative."
-msgstr "Enfrentarás una serie de decisiones. Cada una cambia tus puntajes. No dejes que ninguno sea negativo."
+msgctxt "eyYrQ7"
+msgid "How to play"
+msgstr "Cómo jugar"
+
+#: ../../packages/player/src/components/challenge-intro.tsx
+msgctxt "fphRl4"
+msgid "Think carefully. You cannot undo a choice."
+msgstr "Piensa bien. No puedes deshacer una decisión."
+
+#: ../../packages/player/src/components/challenge-intro.tsx
+msgctxt "J6ZV3r"
+msgid "If any score drops below zero, it's game over."
+msgstr "Si alguna puntuación cae por debajo de cero, se acabó el juego."
+
+#: ../../packages/player/src/components/challenge-intro.tsx
+msgctxt "JsNMCz"
+msgid "No option is \"right\" or \"wrong\" — every choice has trade-offs."
+msgstr "Ninguna opción es \"correcta\" o \"incorrecta\" — cada decisión tiene sus pros y contras."
 
 #: ../../packages/player/src/components/challenge-intro.tsx
 msgctxt "kKztdT"
@@ -134,9 +149,19 @@ msgid "Starting scores"
 msgstr "Puntajes iniciales"
 
 #: ../../packages/player/src/components/challenge-intro.tsx
+msgctxt "mXiq60"
+msgid "You start with 0 points in each score below."
+msgstr "Empiezas con 0 puntos en cada puntuación de abajo."
+
+#: ../../packages/player/src/components/challenge-intro.tsx
 msgctxt "PVe26p"
 msgid "Begin"
 msgstr "Comenzar"
+
+#: ../../packages/player/src/components/challenge-intro.tsx
+msgctxt "rOjwJe"
+msgid "Every choice raises some scores and lowers others."
+msgstr "Cada decisión sube unas puntuaciones y baja otras."
 
 #: ../../packages/player/src/components/challenge-intro.tsx
 msgctxt "SFKe0U"
@@ -182,20 +207,10 @@ msgctxt "P768k7"
 msgid "correct"
 msgstr "correcto"
 
-#: ../../packages/player/src/components/dimension-status-button.tsx
-msgctxt "ehV7Gg"
-msgid "Current dimension scores"
-msgstr "Puntajes de dimensión actuales"
-
-#: ../../packages/player/src/components/dimension-status-button.tsx
-msgctxt "EUdKC+"
-msgid "View stats"
-msgstr "Ver estadísticas"
-
-#: ../../packages/player/src/components/dimension-status-button.tsx
-msgctxt "U86B6w"
-msgid "Stats"
-msgstr "Estadísticas"
+#: ../../packages/player/src/components/dimension-score-bar.tsx
+msgctxt "eI59HZ"
+msgid "Current scores"
+msgstr "Puntuaciones actuales"
 
 #: ../../packages/player/src/components/feedback-screen.tsx
 msgctxt "3nOd8f"
@@ -203,9 +218,24 @@ msgid "Your answer:"
 msgstr "Tu respuesta:"
 
 #: ../../packages/player/src/components/feedback-screen.tsx
+msgctxt "eBxz+u"
+msgid "{name} is negative. You need to bring this back up or you will lose."
+msgstr "{name} está en negativo. Necesitas subirlo o perderás."
+
+#: ../../packages/player/src/components/feedback-screen.tsx
 msgctxt "iaHymw"
 msgid "Outcome"
 msgstr "Resultado"
+
+#: ../../packages/player/src/components/feedback-screen.tsx
+msgctxt "IkQdu5"
+msgid "Close call."
+msgstr "Estuvo cerca."
+
+#: ../../packages/player/src/components/feedback-screen.tsx
+msgctxt "ld7zgc"
+msgid "{name} is at zero. One more drop and you lose."
+msgstr "{name} está en cero. Una caída más y pierdes."
 
 #: ../../packages/player/src/components/feedback-screen.tsx
 msgctxt "QAJ/Tl"
@@ -213,9 +243,9 @@ msgid "Correct answer:"
 msgstr "Respuesta correcta:"
 
 #: ../../packages/player/src/components/feedback-screen.tsx
-msgctxt "zZGbEs"
-msgid "Dimension inventory"
-msgstr "Inventario de dimensión"
+msgctxt "vhpTgv"
+msgid "Score changes"
+msgstr "Cambios de puntuación"
 
 #: ../../packages/player/src/components/fill-blank-step.tsx
 msgctxt "FmmJ/j"

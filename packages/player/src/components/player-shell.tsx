@@ -12,6 +12,7 @@ export function PlayerShell() {
   const t = useExtracted();
   const {
     canNavigatePrev,
+    changedDimensions,
     check,
     completionResult,
     continue: handleContinue,
@@ -55,6 +56,7 @@ export function PlayerShell() {
 
       {showHeader && (
         <InPlayStickyHeader
+          changedDimensions={changedDimensions}
           currentStepIndex={currentStepIndex}
           dimensions={dimensions}
           hasDimensions={hasDimensions}

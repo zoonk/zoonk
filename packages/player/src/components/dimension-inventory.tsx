@@ -4,8 +4,17 @@ import { type ChallengeEffect } from "@zoonk/core/steps/content-contract";
 import { cn } from "@zoonk/ui/lib/utils";
 import { IMPACT_DELTA } from "../dimensions";
 import { type DimensionInventory as DimensionInventoryType } from "../player-reducer";
+import { AnimatedNumber } from "./animated-number";
 
-type DimensionEntry = {
+const STAGGER_INITIAL_DELAY_MS = 400;
+const STAGGER_STEP_DELAY_MS = 150;
+export const STAGGER_WARNING_EXTRA_MS = 200;
+
+export function getWarningDelay(entryCount: number): number {
+  return STAGGER_INITIAL_DELAY_MS + entryCount * STAGGER_STEP_DELAY_MS + STAGGER_WARNING_EXTRA_MS;
+}
+
+export type DimensionEntry = {
   delta: number;
   name: string;
   total: number;
@@ -15,16 +24,14 @@ function formatDelta(delta: number): string {
   return delta >= 0 ? `+${delta}` : `${delta}`;
 }
 
-function getStatusTotalColor(total: number): string {
+function getSortTier(total: number): number {
   if (total < 0) {
-    return "text-destructive";
+    return 0;
   }
-
   if (total === 0) {
-    return "text-warning";
+    return 1;
   }
-
-  return "text-foreground";
+  return 2;
 }
 
 export function buildDimensionEntries(
@@ -39,9 +46,19 @@ export function buildDimensionEntries(
 
   return Object.entries(dimensions)
     .map(([name, total]) => ({ delta: deltas[name] ?? 0, name, total }))
-    .toSorted(
-      (first, second) => second.total - first.total || first.name.localeCompare(second.name),
-    );
+    .toSorted((first, second) => {
+      const tierDiff = getSortTier(first.total) - getSortTier(second.total);
+      if (tierDiff !== 0) {
+        return tierDiff;
+      }
+
+      // Within negative tier, most negative first
+      if (first.total < 0) {
+        return first.total - second.total;
+      }
+
+      return first.name.localeCompare(second.name);
+    });
 }
 
 function DimensionInventoryRoot({
@@ -75,12 +92,16 @@ function DeltaPill({ delta, hidden }: { delta: number; hidden?: boolean }) {
 type DimensionVariant = "feedback" | "failure" | "intro" | "status" | "success";
 
 function getRowBackground(variant: DimensionVariant, entry: DimensionEntry): string | false {
-  if (variant === "feedback" && entry.delta > 0) {
-    return "bg-success/5";
+  if (variant === "feedback" && entry.total < 0) {
+    return "bg-destructive/10";
   }
 
-  if (variant === "feedback" && entry.delta < 0) {
-    return "bg-destructive/5";
+  if (variant === "feedback" && entry.delta < 0 && entry.total === 0) {
+    return "bg-warning/5";
+  }
+
+  if (variant === "feedback" && entry.delta > 0) {
+    return "bg-success/5";
   }
 
   if (variant === "failure" && entry.total < 0) {
@@ -95,8 +116,18 @@ function getTotalColor(variant: DimensionVariant, entry: DimensionEntry): string
     return "text-muted-foreground";
   }
 
+  if (variant === "feedback" && entry.total < 0) {
+    return "text-destructive text-base font-bold";
+  }
+
   if (variant === "status") {
-    return getStatusTotalColor(entry.total);
+    if (entry.total < 0) {
+      return "text-destructive";
+    }
+    if (entry.total === 0) {
+      return "text-warning";
+    }
+    return "text-foreground";
   }
 
   if (variant === "success") {
@@ -114,30 +145,57 @@ function getTotalColor(variant: DimensionVariant, entry: DimensionEntry): string
   return "text-foreground";
 }
 
+function getNameColor(isNegativeFeedback: boolean, isFailureHighlight: boolean): string {
+  if (isNegativeFeedback) {
+    return "text-destructive font-medium";
+  }
+  if (isFailureHighlight) {
+    return "text-destructive";
+  }
+  return "text-muted-foreground";
+}
+
 function DimensionRow({
   entry,
+  staggered,
+  staggerIndex,
   variant,
   className,
   ...props
-}: React.ComponentProps<"li"> & {
+}: Omit<React.ComponentProps<"li">, "style"> & {
   entry: DimensionEntry;
+  staggered?: boolean;
+  staggerIndex?: number;
   variant: DimensionVariant;
 }) {
   const isFailureHighlight = variant === "failure" && entry.total < 0;
+  const isNegativeFeedback = variant === "feedback" && entry.total < 0;
+  const isFeedback = variant === "feedback";
+  const isNegativeDelta = isFeedback && entry.delta < 0;
 
   return (
     <li
       className={cn(
         "-mx-2 flex items-center justify-between rounded-lg px-2 py-1.5",
         getRowBackground(variant, entry),
+        isNegativeFeedback && "border-destructive border-l-2 pl-1.5",
+        isFeedback &&
+          staggered &&
+          "animate-in fade-in slide-in-from-bottom-1 fill-mode-backwards duration-200 motion-reduce:animate-none",
+        isNegativeDelta && staggered && "animate-shake motion-reduce:animate-none",
         className,
       )}
       data-slot="dimension-row"
+      style={
+        staggered
+          ? {
+              animationDelay: `${STAGGER_INITIAL_DELAY_MS + (staggerIndex ?? 0) * STAGGER_STEP_DELAY_MS}ms`,
+            }
+          : undefined
+      }
       {...props}
     >
-      <span
-        className={cn("text-sm", isFailureHighlight ? "text-destructive" : "text-muted-foreground")}
-      >
+      <span className={cn("text-sm", getNameColor(isNegativeFeedback, isFailureHighlight))}>
         {entry.name}
       </span>
 
@@ -148,10 +206,14 @@ function DimensionRow({
             getTotalColor(variant, entry),
           )}
         >
-          {entry.total}
+          {isFeedback && staggered ? (
+            <AnimatedNumber from={entry.total - entry.delta} to={entry.total} />
+          ) : (
+            entry.total
+          )}
         </span>
 
-        {variant === "feedback" && <DeltaPill delta={entry.delta} hidden={entry.delta === 0} />}
+        {isFeedback && <DeltaPill delta={entry.delta} hidden={entry.delta === 0} />}
       </span>
     </li>
   );
@@ -160,10 +222,12 @@ function DimensionRow({
 export function DimensionList({
   "aria-label": ariaLabel,
   entries,
+  staggered,
   variant,
 }: {
   "aria-label": string;
   entries: DimensionEntry[];
+  staggered?: boolean;
   variant: DimensionVariant;
 }) {
   if (entries.length === 0) {
@@ -177,8 +241,14 @@ export function DimensionList({
         variant === "feedback" && "animate-in fade-in duration-150 motion-reduce:animate-none",
       )}
     >
-      {entries.map((entry) => (
-        <DimensionRow entry={entry} key={entry.name} variant={variant} />
+      {entries.map((entry, index) => (
+        <DimensionRow
+          entry={entry}
+          key={entry.name}
+          staggerIndex={index}
+          staggered={staggered}
+          variant={variant}
+        />
       ))}
     </DimensionInventoryRoot>
   );

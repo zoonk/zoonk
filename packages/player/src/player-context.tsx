@@ -18,6 +18,7 @@ export type PlayerContextValue<Href extends string> = {
   currentResult: StepResult | undefined;
   currentStep: SerializedStep | undefined;
   currentStepIndex: number;
+  changedDimensions: Set<string>;
   dimensions: DimensionInventory;
   hasAnswer: boolean;
   isAuthenticated: boolean;

@@ -19,7 +19,7 @@ export function PlayerProgressBar({
       value={value}
       {...props}
     >
-      <ProgressTrack className="h-0.5 rounded-none">
+      <ProgressTrack className="h-1 rounded-none">
         <ProgressIndicator />
       </ProgressTrack>
     </ProgressRoot>

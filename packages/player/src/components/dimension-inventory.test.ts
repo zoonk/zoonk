@@ -23,8 +23,8 @@ describe(buildDimensionEntries, () => {
 
     expect(buildDimensionEntries(dims, effects)).toEqual([
       { delta: 1, name: "Courage", total: 3 },
-      { delta: 0, name: "Morale", total: 2 },
       { delta: -1, name: "Diplomacy", total: 1 },
+      { delta: 0, name: "Morale", total: 2 },
     ]);
   });
 
@@ -38,11 +38,18 @@ describe(buildDimensionEntries, () => {
     expect(buildDimensionEntries(dims, effects)).toEqual([{ delta: 2, name: "Courage", total: 4 }]);
   });
 
-  test("returns entries sorted by total descending, then alphabetically", () => {
-    const dims: DimensionInventory = { Courage: 2, Diplomacy: 0, Morale: 1 };
+  test("sorts negative totals first, then zero, then positive", () => {
+    const dims: DimensionInventory = { Courage: 2, Diplomacy: -1, Morale: 0 };
     const result = buildDimensionEntries(dims, []);
 
-    expect(result.map((entry) => entry.name)).toEqual(["Courage", "Morale", "Diplomacy"]);
+    expect(result.map((entry) => entry.name)).toEqual(["Diplomacy", "Morale", "Courage"]);
+  });
+
+  test("sorts most negative first within negative tier", () => {
+    const dims: DimensionInventory = { Budget: -1, Courage: 2, Trust: -3 };
+    const result = buildDimensionEntries(dims, []);
+
+    expect(result.map((entry) => entry.name)).toEqual(["Trust", "Budget", "Courage"]);
   });
 
   test("uses alphabetical order as tiebreaker for equal totals", () => {
