@@ -10,6 +10,7 @@ import { ReadingStep } from "./reading-step";
 import { SelectImageStep } from "./select-image-step";
 import { SortOrderStep } from "./sort-order-step";
 import { StaticStep } from "./static-step";
+import { NavigableStepLayout } from "./step-layouts";
 import { StepSideNav } from "./step-side-nav";
 import { TranslationStep } from "./translation-step";
 import { VisualStep } from "./visual-step";
@@ -34,7 +35,7 @@ export function StepRenderer({
 }) {
   if (step.kind === "static") {
     return (
-      <div className="relative flex min-h-0 w-full max-w-5xl min-w-0 flex-1 justify-center">
+      <NavigableStepLayout>
         <StepSideNav
           canNavigatePrev={canNavigatePrev}
           onNavigateNext={onNavigateNext}
@@ -46,20 +47,20 @@ export function StepRenderer({
           onNavigatePrev={onNavigatePrev}
           step={step}
         />
-      </div>
+      </NavigableStepLayout>
     );
   }
 
   if (step.kind === "visual") {
     return (
-      <div className="relative flex min-h-0 w-full max-w-5xl min-w-0 flex-1 justify-center">
+      <NavigableStepLayout>
         <StepSideNav
           canNavigatePrev={canNavigatePrev}
           onNavigateNext={onNavigateNext}
           onNavigatePrev={onNavigatePrev}
         />
         <VisualStep step={step} />
-      </div>
+      </NavigableStepLayout>
     );
   }
 
@@ -118,7 +119,7 @@ export function StepRenderer({
 
   if (step.kind === "vocabulary") {
     return (
-      <div className="relative flex min-h-0 w-full max-w-5xl min-w-0 flex-1 justify-center">
+      <NavigableStepLayout>
         <StepSideNav
           canNavigatePrev={canNavigatePrev}
           onNavigateNext={onNavigateNext}
@@ -130,7 +131,7 @@ export function StepRenderer({
           onNavigatePrev={onNavigatePrev}
           step={step}
         />
-      </div>
+      </NavigableStepLayout>
     );
   }
 

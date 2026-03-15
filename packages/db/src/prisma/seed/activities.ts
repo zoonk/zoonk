@@ -121,17 +121,17 @@ const activitiesData: {
   {
     activities: [
       {
-        generationStatus: "completed",
+        generationStatus: "pending",
         isPublished: true,
         kind: "vocabulary",
       },
       {
-        generationStatus: "completed",
+        generationStatus: "pending",
         isPublished: true,
         kind: "translation",
       },
       {
-        generationStatus: "completed",
+        generationStatus: "pending",
         isPublished: true,
         kind: "reading",
       },
