@@ -50,6 +50,16 @@ describe(getPhaseOrder, () => {
     ]);
   });
 
+  test("uses same order for translation activities as vocabulary", () => {
+    expect(getPhaseOrder("translation")).toEqual([
+      "gettingStarted",
+      "buildingWordList",
+      "addingPronunciation",
+      "recordingAudio",
+      "finishing",
+    ]);
+  });
+
   test("keeps visual/image phases for non-language activities", () => {
     expect(getPhaseOrder("explanation")).toEqual([
       "gettingStarted",

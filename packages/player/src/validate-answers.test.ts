@@ -118,36 +118,36 @@ describe(validateAnswers, () => {
     expect(results[0]?.stepId).toBe(1n);
   });
 
-  test("validates vocabulary answer against word ID", () => {
+  test("validates translation answer against word ID", () => {
     const steps = [
       {
         content: {},
         id: 4n,
-        kind: "vocabulary",
+        kind: "translation",
         word: { id: 100n },
       },
     ];
 
     const results = validateAnswers(steps, {
-      "4": { kind: "vocabulary", selectedWordId: "100" },
+      "4": { kind: "translation", selectedWordId: "100" },
     });
 
     expect(results).toHaveLength(1);
     expect(results[0]?.isCorrect).toBeTruthy();
   });
 
-  test("vocabulary answer with wrong word ID is incorrect", () => {
+  test("translation answer with wrong word ID is incorrect", () => {
     const steps = [
       {
         content: {},
         id: 4n,
-        kind: "vocabulary",
+        kind: "translation",
         word: { id: 100n },
       },
     ];
 
     const results = validateAnswers(steps, {
-      "4": { kind: "vocabulary", selectedWordId: "999" },
+      "4": { kind: "translation", selectedWordId: "999" },
     });
 
     expect(results).toHaveLength(1);

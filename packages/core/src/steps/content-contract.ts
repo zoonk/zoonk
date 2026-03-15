@@ -150,6 +150,7 @@ const staticContentSchema = z.discriminatedUnion("variant", [
 ]);
 
 const vocabularyContentSchema = z.object({}).strict();
+const translationContentSchema = z.object({}).strict();
 const readingContentSchema = z.object({}).strict();
 const listeningContentSchema = z.object({}).strict();
 
@@ -162,6 +163,7 @@ const stepContentSchemas = {
   selectImage: selectImageContentSchema,
   sortOrder: sortOrderContentSchema,
   static: staticContentSchema,
+  translation: translationContentSchema,
   visual: visualStepContentSchema,
   vocabulary: vocabularyContentSchema,
 } as const;
@@ -178,6 +180,7 @@ export type SortOrderStepContent = z.infer<typeof sortOrderContentSchema>;
 export type SelectImageStepContent = z.infer<typeof selectImageContentSchema>;
 export type StaticStepContent = z.infer<typeof staticContentSchema>;
 export type VocabularyStepContent = z.infer<typeof vocabularyContentSchema>;
+export type TranslationStepContent = z.infer<typeof translationContentSchema>;
 export type ReadingStepContent = z.infer<typeof readingContentSchema>;
 export type ListeningStepContent = z.infer<typeof listeningContentSchema>;
 
@@ -194,6 +197,7 @@ export type StepContentByKind = {
   selectImage: SelectImageStepContent;
   sortOrder: SortOrderStepContent;
   static: StaticStepContent;
+  translation: TranslationStepContent;
   visual: VisualStepContent;
   vocabulary: VocabularyStepContent;
 };
@@ -213,6 +217,7 @@ export function parseStepContent(kind: "reading", content: unknown): ReadingStep
 export function parseStepContent(kind: "selectImage", content: unknown): SelectImageStepContent;
 export function parseStepContent(kind: "sortOrder", content: unknown): SortOrderStepContent;
 export function parseStepContent(kind: "static", content: unknown): StaticStepContent;
+export function parseStepContent(kind: "translation", content: unknown): TranslationStepContent;
 export function parseStepContent(kind: "visual", content: unknown): VisualStepContent;
 export function parseStepContent(kind: "vocabulary", content: unknown): VocabularyStepContent;
 export function parseStepContent(
@@ -234,6 +239,7 @@ export function assertStepContent(kind: "reading", content: unknown): ReadingSte
 export function assertStepContent(kind: "selectImage", content: unknown): SelectImageStepContent;
 export function assertStepContent(kind: "sortOrder", content: unknown): SortOrderStepContent;
 export function assertStepContent(kind: "static", content: unknown): StaticStepContent;
+export function assertStepContent(kind: "translation", content: unknown): TranslationStepContent;
 export function assertStepContent(kind: "visual", content: unknown): VisualStepContent;
 export function assertStepContent(kind: "vocabulary", content: unknown): VocabularyStepContent;
 export function assertStepContent(

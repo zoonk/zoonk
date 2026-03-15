@@ -21,6 +21,7 @@ enum ActivityKind {
   grammar
   reading
   listening
+  translation
   review
   languagePractice @map("language_practice")
 }
@@ -35,6 +36,7 @@ enum StepKind {
   sortOrder      @map("sort_order")
   arrangeWords   @map("arrange_words")
   vocabulary
+  translation
   reading
   listening
 }

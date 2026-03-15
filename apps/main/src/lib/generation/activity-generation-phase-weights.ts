@@ -2,7 +2,7 @@ import { type ActivityKind } from "@zoonk/db";
 import { type PhaseName } from "./activity-generation-phase-config";
 
 export function getPhaseWeights(kind: ActivityKind): Record<PhaseName, number> {
-  if (kind === "vocabulary") {
+  if (kind === "vocabulary" || kind === "translation") {
     return {
       addingPronunciation: 25,
       buildingWordList: 20,

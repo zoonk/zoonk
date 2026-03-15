@@ -1,138 +1,97 @@
 "use client";
 
-import { Volume2Icon } from "lucide-react";
+import { cn } from "@zoonk/ui/lib/utils";
+import { PauseIcon, Volume2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { type SelectedAnswer, type StepResult } from "../player-reducer";
-import { type SerializedStep, type SerializedWord } from "../prepare-activity-data";
-import { useOptionKeyboard } from "../use-option-keyboard";
+import { useEffect, useRef, useState } from "react";
+import { type SerializedStep } from "../prepare-activity-data";
 import { useWordAudio } from "../use-word-audio";
-import { InlineFeedback } from "./inline-feedback";
-import { OptionCard } from "./option-card";
 import { SectionLabel } from "./section-label";
 import { InteractiveStepLayout } from "./step-layouts";
 
-function getSelectedWordId(selectedAnswer: SelectedAnswer | undefined): string | null {
-  if (selectedAnswer?.kind !== "vocabulary") {
-    return null;
-  }
+const AUTO_PLAY_DELAY = 300;
 
-  return selectedAnswer.selectedWordId;
-}
+function AudioButton({ audioUrl }: { audioUrl: string }) {
+  const t = useExtracted();
+  const [isPlaying, setIsPlaying] = useState(false);
+  const { pause, play } = useWordAudio({ onEnded: () => setIsPlaying(false) });
 
-function getOptionResultState(
-  wordId: string,
-  correctWordId: string,
-  selectedWordId: string,
-): "correct" | "incorrect" | undefined {
-  if (wordId === correctWordId) {
-    return "correct";
-  }
+  const handleClick = () => {
+    if (isPlaying) {
+      pause();
+      setIsPlaying(false);
+    } else {
+      play(audioUrl);
+      setIsPlaying(true);
+    }
+  };
 
-  if (wordId === selectedWordId) {
-    return "incorrect";
-  }
+  const Icon = isPlaying ? PauseIcon : Volume2Icon;
+  const label = isPlaying ? t("Pause pronunciation") : t("Play pronunciation");
 
-  return undefined;
-}
-
-function VocabularyOptionContent({
-  isSelected,
-  word,
-}: {
-  isSelected: boolean;
-  word: SerializedWord;
-}) {
   return (
-    <>
-      <span className="text-base leading-6">{word.word}</span>
-
-      {word.romanization && (
-        <span className="text-muted-foreground text-sm italic">{word.romanization}</span>
+    <button
+      aria-label={label}
+      className={cn(
+        "bg-primary text-primary-foreground flex size-12 items-center justify-center rounded-full transition-all duration-150",
+        "hover:bg-primary/90 focus-visible:ring-ring/50 outline-none focus-visible:ring-[3px]",
       )}
-
-      {isSelected && word.pronunciation && (
-        <span className="text-muted-foreground flex items-center gap-1 text-sm">
-          <Volume2Icon aria-hidden="true" className="size-3.5" />
-          {word.pronunciation}
-        </span>
-      )}
-    </>
+      onClick={handleClick}
+      type="button"
+    >
+      <Icon className="size-5" />
+    </button>
   );
 }
 
-export function VocabularyStep({
-  onSelectAnswer,
-  result,
-  selectedAnswer,
-  step,
-}: {
-  onSelectAnswer: (stepId: string, answer: SelectedAnswer) => void;
-  result?: StepResult;
-  selectedAnswer: SelectedAnswer | undefined;
-  step: SerializedStep;
-}) {
+export function VocabularyStep({ step }: { step: SerializedStep }) {
   const t = useExtracted();
+  const word = step.word;
+  const hasAutoPlayed = useRef(false);
   const { play } = useWordAudio();
-  const correctWord = step.word;
-  const selectedWordId = getSelectedWordId(selectedAnswer);
-  const options = step.vocabularyOptions;
 
-  const handleSelect = (index: number) => {
-    if (result) {
+  useEffect(() => {
+    if (!word?.audioUrl || hasAutoPlayed.current) {
       return;
     }
 
-    const word = options[index];
+    hasAutoPlayed.current = true;
 
-    if (!word) {
-      return;
-    }
+    const timer = setTimeout(() => {
+      play(word.audioUrl);
+    }, AUTO_PLAY_DELAY);
 
-    play(word.audioUrl);
-    onSelectAnswer(step.id, { kind: "vocabulary", selectedWordId: word.id });
-  };
+    return () => clearTimeout(timer);
+  }, [word?.audioUrl, play]);
 
-  useOptionKeyboard({
-    enabled: !result,
-    onSelect: handleSelect,
-    optionCount: options.length,
-  });
-
-  if (!correctWord) {
+  if (!word) {
     return null;
   }
 
   return (
     <InteractiveStepLayout>
-      <div className="flex flex-col gap-2">
-        <SectionLabel>{t("Translate this word:")}</SectionLabel>
-        <p className="text-xl font-semibold">{correctWord.translation}</p>
+      <div
+        aria-label={`${t("Vocabulary")}: ${word.word}`}
+        className="flex flex-col items-center gap-6 py-8 text-center sm:py-12"
+        role="region"
+      >
+        <div className="flex flex-col items-center gap-3">
+          <p className="text-3xl font-semibold sm:text-4xl">{word.word}</p>
+
+          {word.romanization && (
+            <p className="text-muted-foreground text-sm italic">{word.romanization}</p>
+          )}
+
+          {word.audioUrl && <AudioButton audioUrl={word.audioUrl} />}
+        </div>
+
+        <hr className="border-border/50 w-16" />
+
+        <div className="flex flex-col items-center gap-2">
+          <SectionLabel>{t("Translation")}</SectionLabel>
+          <p className="text-muted-foreground text-lg sm:text-xl">{word.translation}</p>
+        </div>
       </div>
-
-      <div aria-label={t("Answer options")} className="flex flex-col gap-3" role="radiogroup">
-        {options.map((word, index) => {
-          const isSelected = selectedWordId === word.id;
-
-          return (
-            <OptionCard
-              disabled={Boolean(result)}
-              index={index}
-              isSelected={isSelected}
-              key={word.id}
-              onSelect={() => handleSelect(index)}
-              resultState={
-                result && selectedWordId
-                  ? getOptionResultState(word.id, correctWord.id, selectedWordId)
-                  : undefined
-              }
-            >
-              <VocabularyOptionContent isSelected={isSelected} word={word} />
-            </OptionCard>
-          );
-        })}
-      </div>
-
-      {result && <InlineFeedback result={result} />}
     </InteractiveStepLayout>
   );
 }

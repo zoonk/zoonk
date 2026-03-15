@@ -49,7 +49,7 @@ export function inferFirstActivityKind(params: {
 }
 
 export function getPhaseOrder(kind: ActivityKind): PhaseName[] {
-  if (kind === "vocabulary") {
+  if (kind === "vocabulary" || kind === "translation") {
     return [
       "gettingStarted",
       "buildingWordList",
@@ -117,7 +117,7 @@ const VISUALS_AS_FINISHING = [
 ] as const satisfies readonly ActivityStepName[];
 
 function getLanguagePhaseSteps(kind: ActivityKind): Record<PhaseName, ActivityStepName[]> | null {
-  if (kind === "vocabulary") {
+  if (kind === "vocabulary" || kind === "translation") {
     return {
       addingPronunciation: ["generateVocabularyPronunciation"],
       buildingWordList: [
@@ -265,6 +265,7 @@ const SUPPORTED_KINDS: ActivityKind[] = [
   "practice",
   "quiz",
   "reading",
+  "translation",
   "vocabulary",
 ];
 

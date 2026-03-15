@@ -270,11 +270,15 @@ checksums:
     Drag%20items%20into%20the%20correct%20order/singular: 8ccab82ee3ba645ac23da4ca14a0dd2a
     Sort%20items/singular: 3b1072a596203b5acdc5718d38161392
     Correct%20order%3A/singular: df3f446653ec8cde9c29d8d5912636ef
+    Translate%20this%20word%3A/singular: 05fede3c583e9ea39f27ac9fdf17fcc3
     Visual%20content/singular: 38b0261c39ebe4d775867363482225d8
     Legend/singular: 3b588fbd2fe35ded6ca38334e15400c3
     Diagram/singular: e0bc1ef7782cb0d749c9582da6775175
     Timeline/singular: 342b1e646f0634e47112092db1a24f49
-    Translate%20this%20word%3A/singular: 05fede3c583e9ea39f27ac9fdf17fcc3
+    Translation/singular: 9276816e7bc1a6ff00f388faa0863986
+    Vocabulary/singular: 2c8127af4c194fa05463e82d5e414c62
+    Play%20pronunciation/singular: 623289cc3217c5404e3d48a78dd0456f
+    Pause%20pronunciation/singular: e24b23e108f8efb6f2eea709e5f540e9
     Green/singular: 482ff383a4258357ba404f283682471d
     Yellow/singular: 15d533755d35af887dfa584975549fda
     Red/singular: bace0083b78cdb188523bc4abc7b55c6
@@ -610,8 +614,7 @@ checksums:
     Creating%20content%20with%20AI%20requires%20an%20active%20subscription./singular: 7a1e2747c5271495f525ae7360db6fe0
     Review%20everything%20you%20learned/singular: 43765847b62600b35e41399405799505
     Listening/singular: 9e680c44cd88a178b953349ed8881ef2
-    Build%20your%20vocabulary/singular: 577b45f6453f5461f7078c757d96beec
-    Build%20your%20%7Btopic%7D%20vocabulary%20with%20new%20words%2C%20translations%2C%20and%20pronunciation./singular: 2c0f84dadf5fcbfb5842260046bfa956
+    Learn%20new%20%7Btopic%7D%20words%20with%20flashcards%20%E2%80%94%20see%20each%20word%2C%20its%20translation%2C%20and%20pronunciation./singular: 923933ba274d61fc2ffb279cf64aceba
     Review%20everything%20you%20learned%20about%20%7Btopic%7D%20with%20a%20comprehensive%20quiz./singular: 8acf9006cabdcbaac217c7565943f068
     Practice%20%7Btopic%7D%20in%20context%20through%20a%20dialogue-based%20scenario%20set%20in%20real-world%20situations./singular: 88083b8e3a748d956ab28a8bbaea5a87
     Make%20decisions%20with%20real%20trade-offs/singular: ac5d6c3a0bbcc1ca93344dfd5b79f197
@@ -619,16 +622,18 @@ checksums:
     Explanation/singular: f6b595df4ffb1a5b0cbbe1dda5993522
     Practice%20listening%20skills/singular: 9c71545510620dd5ca2e71a6884a7991
     Sharpen%20your%20%7Btopic%7D%20listening%20skills%20by%20translating%20audio%20sentences./singular: b624ceffbbfc91a29cec43a0037b067f
+    Translate%20words%20you've%20learned/singular: fec00ac73da754ada1fb696683aa875e
     Test%20your%20understanding%20of%20%7Btopic%7D%20with%20questions%20designed%20to%20check%20real%20comprehension%2C%20not%20just%20memorization./singular: d9f3e39d19b1c6969b481bc8aec8fc10
     Test%20your%20knowledge/singular: 34eff98731fb7afc50a9db11237766d3
+    Learn%20new%20words/singular: 92a16282b3f26623cdf0eb2b344d671c
     Practice%20grammar%20rules/singular: 569fcc41ef5320c1f9f8d2c9b465433b
     Practice/singular: ea10afa88a3687e6c40d1bfb3e0f4f20
     Practice%20reading%20comprehension/singular: d930ea447a24f0084a9ec9a0fe0c06bb
-    Vocabulary/singular: 2c8127af4c194fa05463e82d5e414c62
     "%7Blesson%7D%20%7Bactivity%7D/singular": d959fed1ee77dca493e8cf0a3b3129c0
     Reading/singular: 9d93f1dff4a01a9e1566f23b401b8868
     Concepts%20and%20definitions/singular: 302098cdae7b66cef75f267486d893cf
     Quiz/singular: 22bce287f7a90d3b41b418108eaab43b
+    Test%20your%20%7Btopic%7D%20vocabulary%20by%20translating%20words%20you've%20learned./singular: d81da859633df4dd0b03711f48cc1cdd
     Grammar/singular: 1d97aca351a45df1d6eb27adbee04832
     Learn%20about%20%7Btopic%7D%20through%20an%20interactive%20activity./singular: 94f8ca153ea2ee6b539f507266548201
     Apply%20your%20knowledge%20of%20%7Btopic%7D%20through%20analytical%20decisions%20with%20real%20trade-offs./singular: a45d6f6551b5ec5c1206d7886bff0437

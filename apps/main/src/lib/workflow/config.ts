@@ -53,6 +53,7 @@ export const ACTIVITY_STEPS = [
   "generateAudio",
   "updateSentenceEnrichments",
   "copyListeningSteps",
+  "setTranslationAsCompleted",
   "setVocabularyAsCompleted",
   "setReadingAsCompleted",
   "setListeningAsCompleted",
@@ -70,6 +71,7 @@ type ActivityCompletionStep =
   | "setPracticeAsCompleted"
   | "setGrammarAsCompleted"
   | "setLanguagePracticeAsCompleted"
+  | "setTranslationAsCompleted"
   | "setVocabularyAsCompleted"
   | "setReadingAsCompleted"
   | "setListeningAsCompleted";
@@ -84,6 +86,7 @@ const activityCompletionSteps: Partial<Record<string, ActivityCompletionStep>> =
   practice: "setPracticeAsCompleted",
   quiz: "setQuizAsCompleted",
   reading: "setReadingAsCompleted",
+  translation: "setTranslationAsCompleted",
   vocabulary: "setVocabularyAsCompleted",
 };
 

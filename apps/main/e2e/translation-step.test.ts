@@ -9,7 +9,7 @@ import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { wordFixture } from "@zoonk/testing/fixtures/words";
 import { type Page, expect, test } from "./fixtures";
 
-async function createVocabularyActivity(options: {
+async function createTranslationActivity(options: {
   words: {
     word: string;
     translation: string;
@@ -24,25 +24,25 @@ async function createVocabularyActivity(options: {
   const course = await courseFixture({
     isPublished: true,
     organizationId: org.id,
-    slug: `e2e-vocab-course-${uniqueId}`,
-    title: `E2E Vocab Course ${uniqueId}`,
+    slug: `e2e-trans-course-${uniqueId}`,
+    title: `E2E Trans Course ${uniqueId}`,
   });
 
   const chapter = await chapterFixture({
     courseId: course.id,
     isPublished: true,
     organizationId: org.id,
-    slug: `e2e-vocab-chapter-${uniqueId}`,
-    title: `E2E Vocab Chapter ${uniqueId}`,
+    slug: `e2e-trans-chapter-${uniqueId}`,
+    title: `E2E Trans Chapter ${uniqueId}`,
   });
 
   const lesson = await lessonFixture({
     chapterId: chapter.id,
-    description: `E2E vocab lesson ${uniqueId}`,
+    description: `E2E trans lesson ${uniqueId}`,
     isPublished: true,
     organizationId: org.id,
-    slug: `e2e-vocab-lesson-${uniqueId}`,
-    title: `E2E Vocab Lesson ${uniqueId}`,
+    slug: `e2e-trans-lesson-${uniqueId}`,
+    title: `E2E Trans Lesson ${uniqueId}`,
   });
 
   const createdWords = await Promise.all(
@@ -64,11 +64,11 @@ async function createVocabularyActivity(options: {
   const activity = await activityFixture({
     generationStatus: "completed",
     isPublished: true,
-    kind: "vocabulary",
+    kind: "translation",
     lessonId: lesson.id,
     organizationId: org.id,
     position: 0,
-    title: `E2E Vocab Activity ${uniqueId}`,
+    title: `E2E Trans Activity ${uniqueId}`,
   });
 
   await Promise.all(
@@ -77,7 +77,7 @@ async function createVocabularyActivity(options: {
         activityId: activity.id,
         content: {},
         isPublished: true,
-        kind: "vocabulary",
+        kind: "translation",
         position: index,
         wordId: word.id,
       }),
@@ -89,7 +89,7 @@ async function createVocabularyActivity(options: {
   return { url };
 }
 
-async function answerVocabularyStep(page: Page, wordText: string, translation: string) {
+async function answerTranslationStep(page: Page, wordText: string, translation: string) {
   const radiogroup = page.getByRole("radiogroup", { name: /answer options/i });
   await expect(page.getByText(translation)).toBeVisible();
 
@@ -109,7 +109,7 @@ async function answerVocabularyStep(page: Page, wordText: string, translation: s
   await page.getByRole("button", { name: /continue/i }).click();
 }
 
-test.describe("Vocabulary Step", () => {
+test.describe("Translation Step", () => {
   test("renders translation prompt and 4 answer options with correct word among them", async ({
     page,
   }) => {
@@ -117,7 +117,7 @@ test.describe("Vocabulary Step", () => {
     const word = `hola-${uniqueId}`;
     const translation = `hello-${uniqueId}`;
 
-    const { url } = await createVocabularyActivity({
+    const { url } = await createTranslationActivity({
       words: [
         { translation, word },
         { translation: `goodbye-${uniqueId}`, word: `adiós-${uniqueId}` },
@@ -141,7 +141,7 @@ test.describe("Vocabulary Step", () => {
     const uniqueId = randomUUID().slice(0, 8);
     const correctWord = `gato-${uniqueId}`;
 
-    const { url } = await createVocabularyActivity({
+    const { url } = await createTranslationActivity({
       words: [
         { translation: `cat-${uniqueId}`, word: correctWord },
         { translation: `dog-${uniqueId}`, word: `perro-${uniqueId}` },
@@ -177,7 +177,7 @@ test.describe("Vocabulary Step", () => {
     const correctWord = `rojo-${uniqueId}`;
     const wrongWord = `azul-${uniqueId}`;
 
-    const { url } = await createVocabularyActivity({
+    const { url } = await createTranslationActivity({
       words: [
         { translation: `red-${uniqueId}`, word: correctWord },
         { translation: `blue-${uniqueId}`, word: wrongWord },
@@ -212,7 +212,7 @@ test.describe("Vocabulary Step", () => {
   test("keyboard selection: pressing number key selects corresponding option", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
 
-    const { url } = await createVocabularyActivity({
+    const { url } = await createTranslationActivity({
       words: [
         { translation: `one-${uniqueId}`, word: `uno-${uniqueId}` },
         { translation: `two-${uniqueId}`, word: `dos-${uniqueId}` },
@@ -237,7 +237,7 @@ test.describe("Vocabulary Step", () => {
 
   test("full flow: select, check, continue to completion", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
-    const { url } = await createVocabularyActivity({
+    const { url } = await createTranslationActivity({
       words: [
         { translation: `sun-${uniqueId}`, word: `sol-${uniqueId}` },
         { translation: `moon-${uniqueId}`, word: `luna-${uniqueId}` },
@@ -248,10 +248,10 @@ test.describe("Vocabulary Step", () => {
 
     await page.goto(url);
 
-    await answerVocabularyStep(page, `sol-${uniqueId}`, `sun-${uniqueId}`);
-    await answerVocabularyStep(page, `luna-${uniqueId}`, `moon-${uniqueId}`);
-    await answerVocabularyStep(page, `estrella-${uniqueId}`, `star-${uniqueId}`);
-    await answerVocabularyStep(page, `cielo-${uniqueId}`, `sky-${uniqueId}`);
+    await answerTranslationStep(page, `sol-${uniqueId}`, `sun-${uniqueId}`);
+    await answerTranslationStep(page, `luna-${uniqueId}`, `moon-${uniqueId}`);
+    await answerTranslationStep(page, `estrella-${uniqueId}`, `star-${uniqueId}`);
+    await answerTranslationStep(page, `cielo-${uniqueId}`, `sky-${uniqueId}`);
 
     // Completion screen
     await expect(page.getByText("4/4")).toBeVisible();
@@ -268,7 +268,7 @@ test.describe("Vocabulary Step", () => {
       word: `word${idx}-${uniqueId}`,
     }));
 
-    const { url } = await createVocabularyActivity({ words: allWords });
+    const { url } = await createTranslationActivity({ words: allWords });
 
     await page.goto(url);
 
@@ -317,7 +317,7 @@ test.describe("Vocabulary Step", () => {
   test("romanization is displayed below the word text", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
 
-    const { url } = await createVocabularyActivity({
+    const { url } = await createTranslationActivity({
       words: [
         {
           romanization: `konnichiwa-${uniqueId}`,
@@ -351,7 +351,7 @@ test.describe("Vocabulary Step", () => {
     const word = `hola-${uniqueId}`;
     const pronunciation = `pron-hola-${uniqueId}`;
 
-    const { url } = await createVocabularyActivity({
+    const { url } = await createTranslationActivity({
       words: [
         { pronunciation, translation: `hello-${uniqueId}`, word },
         {

@@ -138,6 +138,71 @@ describe(vocabularyActivityWorkflow, () => {
     }
   });
 
+  test("creates translation steps when translation activity exists", async () => {
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `Vocab+Trans ${randomUUID()}`,
+    });
+
+    const [vocabActivity, transActivity] = await Promise.all([
+      activityFixture({
+        generationStatus: "pending",
+        kind: "vocabulary",
+        language: "en",
+        lessonId: lesson.id,
+        organizationId,
+        position: 0,
+        title: `Vocabulary ${randomUUID()}`,
+      }),
+      activityFixture({
+        generationStatus: "pending",
+        kind: "translation",
+        language: "en",
+        lessonId: lesson.id,
+        organizationId,
+        position: 1,
+        title: `Translation ${randomUUID()}`,
+      }),
+    ]);
+
+    const activities = await fetchLessonActivities(lesson.id);
+    await vocabularyActivityWorkflow(activities, "test-run-id", [], []);
+
+    const [vocabSteps, transSteps] = await Promise.all([
+      prisma.step.findMany({
+        orderBy: { position: "asc" },
+        where: { activityId: vocabActivity.id },
+      }),
+      prisma.step.findMany({
+        orderBy: { position: "asc" },
+        where: { activityId: transActivity.id },
+      }),
+    ]);
+
+    expect(vocabSteps).toHaveLength(2);
+    expect(transSteps).toHaveLength(2);
+
+    for (const step of vocabSteps) {
+      expect(step.kind).toBe("vocabulary");
+      expect(step.wordId).not.toBeNull();
+    }
+
+    for (const step of transSteps) {
+      expect(step.kind).toBe("translation");
+      expect(step.wordId).not.toBeNull();
+    }
+
+    const [dbVocab, dbTrans] = await Promise.all([
+      prisma.activity.findUnique({ where: { id: vocabActivity.id } }),
+      prisma.activity.findUnique({ where: { id: transActivity.id } }),
+    ]);
+
+    expect(dbVocab?.generationStatus).toBe("completed");
+    expect(dbTrans?.generationStatus).toBe("completed");
+  });
+
   test("sets vocabulary status to 'completed' after full pipeline", async () => {
     const lesson = await lessonFixture({
       chapterId: chapter.id,

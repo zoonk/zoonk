@@ -341,7 +341,7 @@ describe(prepareActivityData, () => {
     expect(optionTexts).toEqual(["Alpha", "Beta", "Delta", "Gamma"]);
   });
 
-  test("copies alternativeTranslations arrays for vocabulary options", () => {
+  test("copies alternativeTranslations arrays for translation options", () => {
     const stepWord = {
       alternativeTranslations: ["hello"],
       audioUrl: null,
@@ -367,7 +367,7 @@ describe(prepareActivityData, () => {
       generationRunId: null,
       generationStatus: "completed",
       id: BigInt(9),
-      kind: "vocabulary",
+      kind: "translation",
       language: "en",
       organizationId: 1,
       position: 0,
@@ -375,20 +375,20 @@ describe(prepareActivityData, () => {
         {
           content: {},
           id: BigInt(10),
-          kind: "vocabulary",
+          kind: "translation",
           position: 0,
           sentence: null,
           word: stepWord,
         },
       ],
-      title: "Vocabulary",
+      title: "Translation",
     };
 
     const lessonWords = [stepWord, lessonWord];
     const result = prepareActivityData(activity, lessonWords, []);
-    const vocabularyStep = result.steps[0];
-    const vocabularyOptions = vocabularyStep?.vocabularyOptions ?? [];
-    const serializedStepWord = vocabularyOptions.find((word) => word.id === String(stepWord.id));
+    const translationStep = result.steps[0];
+    const translationOptions = translationStep?.translationOptions ?? [];
+    const serializedStepWord = translationOptions.find((word) => word.id === String(stepWord.id));
 
     expect(serializedStepWord).toBeDefined();
     expect(serializedStepWord?.alternativeTranslations).toEqual(stepWord.alternativeTranslations);

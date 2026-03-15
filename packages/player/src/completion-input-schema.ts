@@ -41,8 +41,8 @@ const sortOrderAnswerSchema = z.object({
   userOrder: z.array(z.string()),
 });
 
-const vocabularyAnswerSchema = z.object({
-  kind: z.literal("vocabulary"),
+const translationAnswerSchema = z.object({
+  kind: z.literal("translation"),
   selectedWordId: z.string(),
 });
 
@@ -54,7 +54,7 @@ const selectedAnswerSchema = z.discriminatedUnion("kind", [
   readingAnswerSchema,
   selectImageAnswerSchema,
   sortOrderAnswerSchema,
-  vocabularyAnswerSchema,
+  translationAnswerSchema,
 ]);
 
 const stepTimingSchema = z.object({

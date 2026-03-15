@@ -11,6 +11,7 @@ import { SelectImageStep } from "./select-image-step";
 import { SortOrderStep } from "./sort-order-step";
 import { StaticStep } from "./static-step";
 import { StepSideNav } from "./step-side-nav";
+import { TranslationStep } from "./translation-step";
 import { VisualStep } from "./visual-step";
 import { VocabularyStep } from "./vocabulary-step";
 
@@ -117,7 +118,20 @@ export function StepRenderer({
 
   if (step.kind === "vocabulary") {
     return (
-      <VocabularyStep
+      <div className="relative flex min-h-0 w-full max-w-5xl min-w-0 flex-1 justify-center">
+        <StepSideNav
+          canNavigatePrev={canNavigatePrev}
+          onNavigateNext={onNavigateNext}
+          onNavigatePrev={onNavigatePrev}
+        />
+        <VocabularyStep step={step} />
+      </div>
+    );
+  }
+
+  if (step.kind === "translation") {
+    return (
+      <TranslationStep
         onSelectAnswer={onSelectAnswer}
         result={result}
         selectedAnswer={selectedAnswer}
