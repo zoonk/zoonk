@@ -28,15 +28,20 @@ export function InPlayStickyHeader({
       <PlayerHeader>
         <PlayerCloseLink href={lessonHref} />
 
-        {hasDimensions ? (
-          <DimensionHeaderStatus changedDimensions={changedDimensions} dimensions={dimensions} />
-        ) : (
-          <PlayerStepFraction>
-            {currentStepIndex + 1} / {totalSteps}
-          </PlayerStepFraction>
-        )}
-
-        <div className="size-9" aria-hidden="true" />
+        <div className="pointer-events-none absolute inset-x-0 flex justify-center">
+          <div className="pointer-events-auto">
+            {hasDimensions ? (
+              <DimensionHeaderStatus
+                changedDimensions={changedDimensions}
+                dimensions={dimensions}
+              />
+            ) : (
+              <PlayerStepFraction>
+                {currentStepIndex + 1} / {totalSteps}
+              </PlayerStepFraction>
+            )}
+          </div>
+        </div>
       </PlayerHeader>
 
       <PlayerProgressBar value={progressValue} />

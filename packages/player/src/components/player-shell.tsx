@@ -49,7 +49,6 @@ export function PlayerShell() {
         <div className="bg-background/95 sticky top-0 z-30 backdrop-blur-sm">
           <PlayerHeader>
             <PlayerCloseLink href={lessonHref} />
-            <div className="size-9" aria-hidden="true" />
           </PlayerHeader>
         </div>
       )}
