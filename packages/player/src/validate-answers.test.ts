@@ -129,7 +129,7 @@ describe(validateAnswers, () => {
     ];
 
     const results = validateAnswers(steps, {
-      "4": { kind: "translation", selectedWordId: "100" },
+      "4": { kind: "translation", selectedText: "word", selectedWordId: "100" },
     });
 
     expect(results).toHaveLength(1);
@@ -147,7 +147,7 @@ describe(validateAnswers, () => {
     ];
 
     const results = validateAnswers(steps, {
-      "4": { kind: "translation", selectedWordId: "999" },
+      "4": { kind: "translation", selectedText: "wrong", selectedWordId: "999" },
     });
 
     expect(results).toHaveLength(1);

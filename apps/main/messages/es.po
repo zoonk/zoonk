@@ -308,16 +308,6 @@ msgctxt "aAmWaS"
 msgid "What do you hear?"
 msgstr "¿Qué escuchas?"
 
-#: ../../packages/player/src/components/listening-step.tsx
-msgctxt "P7p52A"
-msgid "Pause audio"
-msgstr "Pausar audio"
-
-#: ../../packages/player/src/components/listening-step.tsx
-msgctxt "vUZhim"
-msgid "Play audio"
-msgstr "Reproducir audio"
-
 #: ../../packages/player/src/components/match-columns-step.tsx
 msgctxt "ja1JDt"
 msgid "All pairs matched. Press Check to continue."
@@ -338,6 +328,16 @@ msgstr "¿Qué dices?"
 msgctxt "nJGJop"
 msgid "Someone says:"
 msgstr "Alguien dice:"
+
+#: ../../packages/player/src/components/play-audio-button.tsx
+msgctxt "lYWSeP"
+msgid "Play pronunciation"
+msgstr "Reproducir pronunciación"
+
+#: ../../packages/player/src/components/play-audio-button.tsx
+msgctxt "WGft2H"
+msgid "Pause pronunciation"
+msgstr "Pausar pronunciación"
 
 #: ../../packages/player/src/components/player-bottom-bar.tsx
 #: ../../packages/player/src/components/step-side-nav.tsx
@@ -439,25 +439,9 @@ msgstr "Línea de tiempo"
 
 #: ../../packages/player/src/components/vocabulary-step.tsx
 #: src/lib/activities.ts
-msgctxt "/vCXIP"
-msgid "Translation"
-msgstr "Traducción"
-
-#: ../../packages/player/src/components/vocabulary-step.tsx
-#: src/lib/activities.ts
 msgctxt "lqtP+R"
 msgid "Vocabulary"
 msgstr "Vocabulario"
-
-#: ../../packages/player/src/components/vocabulary-step.tsx
-msgctxt "lYWSeP"
-msgid "Play pronunciation"
-msgstr "Reproducir pronunciación"
-
-#: ../../packages/player/src/components/vocabulary-step.tsx
-msgctxt "WGft2H"
-msgid "Pause pronunciation"
-msgstr "Pausar pronunciación"
 
 #: ../../packages/player/src/use-belt-color-label.ts
 #: src/lib/belt-colors.ts
@@ -2275,6 +2259,11 @@ msgstr "Suscríbete para crear"
 msgctxt "jxZJ5k"
 msgid "Creating content with AI requires an active subscription."
 msgstr "Crear contenido con IA requiere una suscripción activa."
+
+#: src/lib/activities.ts
+msgctxt "/vCXIP"
+msgid "Translation"
+msgstr "Traducción"
 
 #: src/lib/activities.ts
 msgctxt "/WTXNi"

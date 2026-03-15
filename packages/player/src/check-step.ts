@@ -83,7 +83,10 @@ function checkTranslationStep(step: SerializedStep, answer: SelectedAnswer): Che
     return MISMATCH_RESULT;
   }
 
-  return { effects: [], result: checkTranslationAnswer(step.word.id, answer.selectedWordId) };
+  return {
+    effects: [],
+    result: checkTranslationAnswer(step.word.id, answer.selectedWordId, step.word.word),
+  };
 }
 
 function checkArrangeWords(step: SerializedStep, arrangedWords: string[]): CheckStepResult {

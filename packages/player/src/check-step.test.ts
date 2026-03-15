@@ -247,14 +247,22 @@ describe(checkStep, () => {
     });
 
     test("correct word", () => {
-      const answer: SelectedAnswer = { kind: "translation", selectedWordId: "word-1" };
+      const answer: SelectedAnswer = {
+        kind: "translation",
+        selectedText: "hello",
+        selectedWordId: "word-1",
+      };
       const { effects, result } = checkStep(step, answer);
       expect(result.isCorrect).toBeTruthy();
       expect(effects).toEqual([]);
     });
 
     test("incorrect word", () => {
-      const answer: SelectedAnswer = { kind: "translation", selectedWordId: "word-99" };
+      const answer: SelectedAnswer = {
+        kind: "translation",
+        selectedText: "wrong",
+        selectedWordId: "word-99",
+      };
       const { result } = checkStep(step, answer);
       expect(result.isCorrect).toBeFalsy();
     });
@@ -267,7 +275,11 @@ describe(checkStep, () => {
         id: "vocab-1",
         kind: "vocabulary",
       });
-      const answer: SelectedAnswer = { kind: "translation", selectedWordId: "word-1" };
+      const answer: SelectedAnswer = {
+        kind: "translation",
+        selectedText: "hello",
+        selectedWordId: "word-1",
+      };
       const { effects, result } = checkStep(step, answer);
       expect(result.isCorrect).toBeFalsy();
       expect(result.feedback).toBeNull();

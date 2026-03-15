@@ -1,13 +1,12 @@
 "use client";
 
-import { Volume2Icon } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { type SelectedAnswer, type StepResult } from "../player-reducer";
+import { type SelectedAnswer } from "../player-reducer";
 import { type SerializedStep, type SerializedWord } from "../prepare-activity-data";
 import { useOptionKeyboard } from "../use-option-keyboard";
 import { useWordAudio } from "../use-word-audio";
-import { InlineFeedback } from "./inline-feedback";
 import { OptionCard } from "./option-card";
+import { QuestionText } from "./question-text";
 import { SectionLabel } from "./section-label";
 import { InteractiveStepLayout } from "./step-layouts";
 
@@ -17,22 +16,6 @@ function getSelectedWordId(selectedAnswer: SelectedAnswer | undefined): string |
   }
 
   return selectedAnswer.selectedWordId;
-}
-
-function getOptionResultState(
-  wordId: string,
-  correctWordId: string,
-  selectedWordId: string,
-): "correct" | "incorrect" | undefined {
-  if (wordId === correctWordId) {
-    return "correct";
-  }
-
-  if (wordId === selectedWordId) {
-    return "incorrect";
-  }
-
-  return undefined;
 }
 
 function TranslationOptionContent({
@@ -51,10 +34,7 @@ function TranslationOptionContent({
       )}
 
       {isSelected && word.pronunciation && (
-        <span className="text-muted-foreground flex items-center gap-1 text-sm">
-          <Volume2Icon aria-hidden="true" className="size-3.5" />
-          {word.pronunciation}
-        </span>
+        <span className="text-muted-foreground text-sm">{word.pronunciation}</span>
       )}
     </>
   );
@@ -62,12 +42,10 @@ function TranslationOptionContent({
 
 export function TranslationStep({
   onSelectAnswer,
-  result,
   selectedAnswer,
   step,
 }: {
   onSelectAnswer: (stepId: string, answer: SelectedAnswer) => void;
-  result?: StepResult;
   selectedAnswer: SelectedAnswer | undefined;
   step: SerializedStep;
 }) {
@@ -78,10 +56,6 @@ export function TranslationStep({
   const options = step.translationOptions;
 
   const handleSelect = (index: number) => {
-    if (result) {
-      return;
-    }
-
     const word = options[index];
 
     if (!word) {
@@ -89,11 +63,15 @@ export function TranslationStep({
     }
 
     play(word.audioUrl);
-    onSelectAnswer(step.id, { kind: "translation", selectedWordId: word.id });
+    onSelectAnswer(step.id, {
+      kind: "translation",
+      selectedText: word.word,
+      selectedWordId: word.id,
+    });
   };
 
   useOptionKeyboard({
-    enabled: !result,
+    enabled: !selectedAnswer,
     onSelect: handleSelect,
     optionCount: options.length,
   });
@@ -106,33 +84,21 @@ export function TranslationStep({
     <InteractiveStepLayout>
       <div className="flex flex-col gap-2">
         <SectionLabel>{t("Translate this word:")}</SectionLabel>
-        <p className="text-xl font-semibold">{correctWord.translation}</p>
+        <QuestionText>{correctWord.translation}</QuestionText>
       </div>
 
       <div aria-label={t("Answer options")} className="flex flex-col gap-3" role="radiogroup">
-        {options.map((word, index) => {
-          const isSelected = selectedWordId === word.id;
-
-          return (
-            <OptionCard
-              disabled={Boolean(result)}
-              index={index}
-              isSelected={isSelected}
-              key={word.id}
-              onSelect={() => handleSelect(index)}
-              resultState={
-                result && selectedWordId
-                  ? getOptionResultState(word.id, correctWord.id, selectedWordId)
-                  : undefined
-              }
-            >
-              <TranslationOptionContent isSelected={isSelected} word={word} />
-            </OptionCard>
-          );
-        })}
+        {options.map((word, index) => (
+          <OptionCard
+            index={index}
+            isSelected={selectedWordId === word.id}
+            key={word.id}
+            onSelect={() => handleSelect(index)}
+          >
+            <TranslationOptionContent isSelected={selectedWordId === word.id} word={word} />
+          </OptionCard>
+        ))}
       </div>
-
-      {result && <InlineFeedback result={result} />}
     </InteractiveStepLayout>
   );
 }

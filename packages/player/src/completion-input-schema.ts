@@ -43,6 +43,7 @@ const sortOrderAnswerSchema = z.object({
 
 const translationAnswerSchema = z.object({
   kind: z.literal("translation"),
+  selectedText: z.string(),
   selectedWordId: z.string(),
 });
 

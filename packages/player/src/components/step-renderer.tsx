@@ -124,7 +124,12 @@ export function StepRenderer({
           onNavigateNext={onNavigateNext}
           onNavigatePrev={onNavigatePrev}
         />
-        <VocabularyStep step={step} />
+        <VocabularyStep
+          canNavigatePrev={canNavigatePrev}
+          onNavigateNext={onNavigateNext}
+          onNavigatePrev={onNavigatePrev}
+          step={step}
+        />
       </div>
     );
   }
@@ -133,7 +138,6 @@ export function StepRenderer({
     return (
       <TranslationStep
         onSelectAnswer={onSelectAnswer}
-        result={result}
         selectedAnswer={selectedAnswer}
         step={step}
       />

@@ -91,8 +91,13 @@ export function checkSelectImageAnswer(
 export function checkTranslationAnswer(
   correctWordId: string,
   selectedWordId: string,
+  correctWord?: string,
 ): AnswerResult {
-  return { correctAnswer: null, feedback: null, isCorrect: correctWordId === selectedWordId };
+  return {
+    correctAnswer: correctWord ?? null,
+    feedback: null,
+    isCorrect: correctWordId === selectedWordId,
+  };
 }
 
 export function checkArrangeWordsAnswer(correctWords: string[], userWords: string[]): AnswerResult {

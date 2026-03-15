@@ -173,7 +173,10 @@ function CoreFeedback({ result }: { result: StepResult }) {
   const replaceName = useReplaceName();
   const { isCorrect, feedback: rawFeedback, correctAnswer } = result.result;
   const feedback = rawFeedback ? replaceName(rawFeedback) : null;
-  const selectedText = result.answer?.kind === "multipleChoice" ? result.answer.selectedText : null;
+  const selectedText =
+    result.answer?.kind === "multipleChoice" || result.answer?.kind === "translation"
+      ? result.answer.selectedText
+      : null;
 
   return (
     <FeedbackScreen>

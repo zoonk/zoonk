@@ -13,7 +13,7 @@ import { FeedbackScreenContent } from "./feedback-screen";
 import { StepRenderer } from "./step-renderer";
 
 function needsFeedbackScreen(step: SerializedStep): boolean {
-  return step.kind === "multipleChoice";
+  return step.kind === "multipleChoice" || step.kind === "translation";
 }
 
 export function StageContent({
