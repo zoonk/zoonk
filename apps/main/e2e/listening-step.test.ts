@@ -126,7 +126,7 @@ test.describe("Listening Step", () => {
     await page.goto(url);
 
     await expect(page.getByText(/what do you hear/i)).toBeVisible();
-    await expect(page.getByRole("button", { name: /play audio/i })).toBeVisible();
+    await expect(page.getByRole("button", { name: /play pronunciation/i })).toBeVisible();
   });
 
   test("falls back to text when audioUrl is null", async ({ page }) => {

@@ -4,6 +4,7 @@ import { type Dispatch, useCallback, useState } from "react";
 import { checkStep } from "./check-step";
 import { type CompletionInput, type CompletionResult } from "./completion-input-schema";
 import { type PlayerState, type SelectedAnswer, playerReducer } from "./player-reducer";
+import { isStaticNavigationStep } from "./step-navigation";
 
 function willComplete(state: PlayerState): boolean {
   if (state.phase === "feedback") {
@@ -13,11 +14,7 @@ function willComplete(state: PlayerState): boolean {
   if (state.phase === "playing") {
     const currentStep = state.steps[state.currentStepIndex];
 
-    if (currentStep?.kind === "static" || currentStep?.kind === "visual") {
-      return state.currentStepIndex + 1 >= state.steps.length;
-    }
-
-    if (currentStep?.kind === "matchColumns") {
+    if (isStaticNavigationStep(currentStep) || currentStep?.kind === "matchColumns") {
       return state.currentStepIndex + 1 >= state.steps.length;
     }
   }

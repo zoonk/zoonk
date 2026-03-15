@@ -87,6 +87,11 @@ const activitiesData: {
       {
         generationStatus: "pending",
         isPublished: true,
+        kind: "translation",
+      },
+      {
+        generationStatus: "pending",
+        isPublished: true,
         kind: "grammar",
       },
       {
@@ -116,12 +121,17 @@ const activitiesData: {
   {
     activities: [
       {
-        generationStatus: "completed",
+        generationStatus: "pending",
         isPublished: true,
         kind: "vocabulary",
       },
       {
-        generationStatus: "completed",
+        generationStatus: "pending",
+        isPublished: true,
+        kind: "translation",
+      },
+      {
+        generationStatus: "pending",
         isPublished: true,
         kind: "reading",
       },

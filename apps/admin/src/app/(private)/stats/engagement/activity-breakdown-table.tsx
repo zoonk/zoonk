@@ -19,6 +19,7 @@ const activityKindLabels: Record<string, string> = {
   quiz: "Quiz",
   reading: "Reading",
   review: "Review",
+  translation: "Translation",
   vocabulary: "Vocabulary",
 };
 

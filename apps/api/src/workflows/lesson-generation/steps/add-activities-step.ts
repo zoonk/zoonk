@@ -18,6 +18,7 @@ type ActivityEntry = {
 
 const LANGUAGE_ACTIVITY_KINDS: ActivityKind[] = [
   "vocabulary",
+  "translation",
   "grammar",
   "reading",
   "listening",

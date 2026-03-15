@@ -7,6 +7,7 @@ import { streamError, streamStatus } from "../stream-status";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
+import { setActivityAsRunningStep } from "./set-activity-as-running-step";
 
 export type SavedWord = {
   word: string;
@@ -14,13 +15,21 @@ export type SavedWord = {
 };
 
 function buildSaveOneWord(params: {
-  activityId: number;
+  vocabularyActivityId: number;
+  translationActivityId: number | null;
   lessonId: number;
   organizationId: number;
   targetLanguage: string;
   userLanguage: string;
 }) {
-  const { activityId, lessonId, organizationId, targetLanguage, userLanguage } = params;
+  const {
+    vocabularyActivityId,
+    translationActivityId,
+    lessonId,
+    organizationId,
+    targetLanguage,
+    userLanguage,
+  } = params;
 
   return async (vocabWord: VocabularyWord, position: number): Promise<SavedWord> => {
     const record = await prisma.word.upsert({
@@ -53,7 +62,7 @@ function buildSaveOneWord(params: {
 
     await prisma.step.create({
       data: {
-        activityId,
+        activityId: vocabularyActivityId,
         content: assertStepContent("vocabulary", {}),
         isPublished: true,
         kind: "vocabulary",
@@ -62,6 +71,19 @@ function buildSaveOneWord(params: {
       },
     });
 
+    if (translationActivityId) {
+      await prisma.step.create({
+        data: {
+          activityId: translationActivityId,
+          content: assertStepContent("translation", {}),
+          isPublished: true,
+          kind: "translation",
+          position,
+          wordId,
+        },
+      });
+    }
+
     return { word: vocabWord.word, wordId: Number(wordId) };
   };
 }
@@ -69,33 +91,43 @@ function buildSaveOneWord(params: {
 export async function saveVocabularyWordsStep(
   activities: LessonActivity[],
   words: VocabularyWord[],
+  workflowRunId: string,
 ): Promise<{ savedWords: SavedWord[] }> {
   "use step";
 
-  const activity = findActivityByKind(activities, "vocabulary");
+  const vocabularyActivity = findActivityByKind(activities, "vocabulary");
 
-  if (!activity || words.length === 0) {
+  if (!vocabularyActivity || words.length === 0) {
     return { savedWords: [] };
   }
 
   await streamStatus({ status: "started", step: "saveVocabularyWords" });
 
-  const course = activity.lesson.chapter.course;
+  const course = vocabularyActivity.lesson.chapter.course;
 
   if (!course.organization) {
     return { savedWords: [] };
   }
 
+  const translationActivity = findActivityByKind(activities, "translation");
+
+  if (translationActivity) {
+    await setActivityAsRunningStep({
+      activityId: translationActivity.id,
+      workflowRunId,
+    });
+  }
   const targetLanguage = course.targetLanguage ?? "";
-  const userLanguage = activity.language;
+  const userLanguage = vocabularyActivity.language;
   const organizationId = course.organization.id;
 
   const saveOneWord = buildSaveOneWord({
-    activityId: activity.id,
-    lessonId: activity.lessonId,
+    lessonId: vocabularyActivity.lessonId,
     organizationId,
     targetLanguage,
+    translationActivityId: translationActivity?.id ?? null,
     userLanguage,
+    vocabularyActivityId: vocabularyActivity.id,
   });
 
   const { data: savedWords, error } = await safeAsync(() =>
@@ -104,7 +136,14 @@ export async function saveVocabularyWordsStep(
 
   if (error) {
     await streamError({ reason: "dbSaveFailed", step: "saveVocabularyWords" });
-    await handleActivityFailureStep({ activityId: activity.id });
+
+    await Promise.all([
+      handleActivityFailureStep({ activityId: vocabularyActivity.id }),
+      translationActivity
+        ? handleActivityFailureStep({ activityId: translationActivity.id })
+        : null,
+    ]);
+
     return { savedWords: [] };
   }
 

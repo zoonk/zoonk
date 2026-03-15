@@ -9,7 +9,7 @@ import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { wordFixture } from "@zoonk/testing/fixtures/words";
 import { type Page, expect, test } from "./fixtures";
 
-async function createVocabularyActivity(options: {
+async function createTranslationActivity(options: {
   words: {
     word: string;
     translation: string;
@@ -24,25 +24,25 @@ async function createVocabularyActivity(options: {
   const course = await courseFixture({
     isPublished: true,
     organizationId: org.id,
-    slug: `e2e-vocab-course-${uniqueId}`,
-    title: `E2E Vocab Course ${uniqueId}`,
+    slug: `e2e-trans-course-${uniqueId}`,
+    title: `E2E Trans Course ${uniqueId}`,
   });
 
   const chapter = await chapterFixture({
     courseId: course.id,
     isPublished: true,
     organizationId: org.id,
-    slug: `e2e-vocab-chapter-${uniqueId}`,
-    title: `E2E Vocab Chapter ${uniqueId}`,
+    slug: `e2e-trans-chapter-${uniqueId}`,
+    title: `E2E Trans Chapter ${uniqueId}`,
   });
 
   const lesson = await lessonFixture({
     chapterId: chapter.id,
-    description: `E2E vocab lesson ${uniqueId}`,
+    description: `E2E trans lesson ${uniqueId}`,
     isPublished: true,
     organizationId: org.id,
-    slug: `e2e-vocab-lesson-${uniqueId}`,
-    title: `E2E Vocab Lesson ${uniqueId}`,
+    slug: `e2e-trans-lesson-${uniqueId}`,
+    title: `E2E Trans Lesson ${uniqueId}`,
   });
 
   const createdWords = await Promise.all(
@@ -64,11 +64,11 @@ async function createVocabularyActivity(options: {
   const activity = await activityFixture({
     generationStatus: "completed",
     isPublished: true,
-    kind: "vocabulary",
+    kind: "translation",
     lessonId: lesson.id,
     organizationId: org.id,
     position: 0,
-    title: `E2E Vocab Activity ${uniqueId}`,
+    title: `E2E Trans Activity ${uniqueId}`,
   });
 
   await Promise.all(
@@ -77,7 +77,7 @@ async function createVocabularyActivity(options: {
         activityId: activity.id,
         content: {},
         isPublished: true,
-        kind: "vocabulary",
+        kind: "translation",
         position: index,
         wordId: word.id,
       }),
@@ -89,7 +89,7 @@ async function createVocabularyActivity(options: {
   return { url };
 }
 
-async function answerVocabularyStep(page: Page, wordText: string, translation: string) {
+async function answerTranslationStep(page: Page, wordText: string, translation: string) {
   const radiogroup = page.getByRole("radiogroup", { name: /answer options/i });
   await expect(page.getByText(translation)).toBeVisible();
 
@@ -109,7 +109,7 @@ async function answerVocabularyStep(page: Page, wordText: string, translation: s
   await page.getByRole("button", { name: /continue/i }).click();
 }
 
-test.describe("Vocabulary Step", () => {
+test.describe("Translation Step", () => {
   test("renders translation prompt and 4 answer options with correct word among them", async ({
     page,
   }) => {
@@ -117,7 +117,7 @@ test.describe("Vocabulary Step", () => {
     const word = `hola-${uniqueId}`;
     const translation = `hello-${uniqueId}`;
 
-    const { url } = await createVocabularyActivity({
+    const { url } = await createTranslationActivity({
       words: [
         { translation, word },
         { translation: `goodbye-${uniqueId}`, word: `adiós-${uniqueId}` },
@@ -137,13 +137,16 @@ test.describe("Vocabulary Step", () => {
     await expect(radiogroup.getByRole("radio", { name: new RegExp(word) })).toBeVisible();
   });
 
-  test("select correct option and check shows visible Correct! text", async ({ page }) => {
+  test("select correct option and check shows feedback with translate context and answer", async ({
+    page,
+  }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const correctWord = `gato-${uniqueId}`;
+    const translation = `cat-${uniqueId}`;
 
-    const { url } = await createVocabularyActivity({
+    const { url } = await createTranslationActivity({
       words: [
-        { translation: `cat-${uniqueId}`, word: correctWord },
+        { translation, word: correctWord },
         { translation: `dog-${uniqueId}`, word: `perro-${uniqueId}` },
         { translation: `bird-${uniqueId}`, word: `pájaro-${uniqueId}` },
         { translation: `fish-${uniqueId}`, word: `pez-${uniqueId}` },
@@ -167,19 +170,23 @@ test.describe("Vocabulary Step", () => {
 
     await page.getByRole("button", { name: /check/i }).click();
 
-    // Visible "Correct!" text (not just screen-reader)
-    await expect(page.getByText(/correct!/i)).toBeVisible();
+    await expect(page.getByText(new RegExp(`Translate:.*${translation}`))).toBeVisible();
+    await expect(page.getByText(/your answer:/i)).toBeVisible();
+    await expect(page.getByText(correctWord)).toBeVisible();
     await expect(page.getByRole("button", { name: /continue/i })).toBeVisible();
   });
 
-  test("select wrong option shows visible Not quite text", async ({ page }) => {
+  test("select wrong option shows feedback with wrong answer and correct answer", async ({
+    page,
+  }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const correctWord = `rojo-${uniqueId}`;
     const wrongWord = `azul-${uniqueId}`;
+    const translation = `red-${uniqueId}`;
 
-    const { url } = await createVocabularyActivity({
+    const { url } = await createTranslationActivity({
       words: [
-        { translation: `red-${uniqueId}`, word: correctWord },
+        { translation, word: correctWord },
         { translation: `blue-${uniqueId}`, word: wrongWord },
         { translation: `green-${uniqueId}`, word: `verde-${uniqueId}` },
         { translation: `yellow-${uniqueId}`, word: `amarillo-${uniqueId}` },
@@ -203,16 +210,18 @@ test.describe("Vocabulary Step", () => {
 
     await page.getByRole("button", { name: /check/i }).click();
 
-    // Visible "Not quite" text (not just screen-reader)
-    await expect(page.getByText(/not quite/i)).toBeVisible();
+    await expect(page.getByText(new RegExp(`Translate:.*${translation}`))).toBeVisible();
+    await expect(page.getByText(/your answer:/i)).toBeVisible();
+    await expect(page.getByText(wrongWord)).toBeVisible();
+    await expect(page.getByText(/correct answer:/i)).toBeVisible();
+    await expect(page.getByText(correctWord)).toBeVisible();
     await expect(page.getByRole("button", { name: /continue/i })).toBeVisible();
-    await expect(radiogroup.getByRole("radio", { name: new RegExp(correctWord) })).toBeVisible();
   });
 
   test("keyboard selection: pressing number key selects corresponding option", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
 
-    const { url } = await createVocabularyActivity({
+    const { url } = await createTranslationActivity({
       words: [
         { translation: `one-${uniqueId}`, word: `uno-${uniqueId}` },
         { translation: `two-${uniqueId}`, word: `dos-${uniqueId}` },
@@ -237,7 +246,7 @@ test.describe("Vocabulary Step", () => {
 
   test("full flow: select, check, continue to completion", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
-    const { url } = await createVocabularyActivity({
+    const { url } = await createTranslationActivity({
       words: [
         { translation: `sun-${uniqueId}`, word: `sol-${uniqueId}` },
         { translation: `moon-${uniqueId}`, word: `luna-${uniqueId}` },
@@ -248,49 +257,34 @@ test.describe("Vocabulary Step", () => {
 
     await page.goto(url);
 
-    await answerVocabularyStep(page, `sol-${uniqueId}`, `sun-${uniqueId}`);
-    await answerVocabularyStep(page, `luna-${uniqueId}`, `moon-${uniqueId}`);
-    await answerVocabularyStep(page, `estrella-${uniqueId}`, `star-${uniqueId}`);
-    await answerVocabularyStep(page, `cielo-${uniqueId}`, `sky-${uniqueId}`);
+    await answerTranslationStep(page, `sol-${uniqueId}`, `sun-${uniqueId}`);
+    await answerTranslationStep(page, `luna-${uniqueId}`, `moon-${uniqueId}`);
+    await answerTranslationStep(page, `estrella-${uniqueId}`, `star-${uniqueId}`);
+    await answerTranslationStep(page, `cielo-${uniqueId}`, `sky-${uniqueId}`);
 
     // Completion screen
     await expect(page.getByText("4/4")).toBeVisible();
     await expect(page.getByText(/correct/i)).toBeVisible();
   });
 
-  test("feedback preserves the same options shown during playing", async ({ page }) => {
+  test("feedback screen shows translate context and selected answer", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
 
-    // Use 10 words so the distractor pool is large (9 eligible, 3 chosen).
-    // If the component remounts, getDistractorWords picks different random words.
     const allWords = Array.from({ length: 10 }, (_, idx) => ({
       translation: `trans${idx}-${uniqueId}`,
       word: `word${idx}-${uniqueId}`,
     }));
 
-    const { url } = await createVocabularyActivity({ words: allWords });
+    const { url } = await createTranslationActivity({ words: allWords });
 
     await page.goto(url);
 
     const radiogroup = page.getByRole("radiogroup", { name: /answer options/i });
     await expect(radiogroup.getByRole("radio")).toHaveCount(4);
 
-    // Record which of the 10 words are shown as the 4 options
-    const visibility = await Promise.all(
-      allWords.map(async (item) => ({
-        isShown: await radiogroup
-          .getByText(item.word, { exact: true })
-          .isVisible()
-          .catch(() => false),
-        word: item.word,
-      })),
-    );
-
-    const shownWords = visibility.filter((item) => item.isShown).map((item) => item.word);
-    expect(shownWords).toHaveLength(4);
-
     // Select the correct word (first in the input list) and check
     const correctWord = `word0-${uniqueId}`;
+    const correctTranslation = `trans0-${uniqueId}`;
     const correctOption = radiogroup.getByRole("radio", { name: new RegExp(correctWord) });
 
     await expect(async () => {
@@ -304,20 +298,18 @@ test.describe("Vocabulary Step", () => {
     }).toPass();
 
     await page.getByRole("button", { name: /check/i }).click();
-    await expect(page.getByRole("button", { name: /continue/i })).toBeVisible();
 
-    // After feedback, the same 4 words must still be visible
-    await Promise.all(
-      shownWords.map(async (wordText) => {
-        await expect(radiogroup.getByText(wordText, { exact: true })).toBeVisible();
-      }),
-    );
+    // Feedback screen shows the translate context and the user's answer
+    await expect(page.getByText(new RegExp(`Translate:.*${correctTranslation}`))).toBeVisible();
+    await expect(page.getByText(/your answer:/i)).toBeVisible();
+    await expect(page.getByText(correctWord)).toBeVisible();
+    await expect(page.getByRole("button", { name: /continue/i })).toBeVisible();
   });
 
   test("romanization is displayed below the word text", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
 
-    const { url } = await createVocabularyActivity({
+    const { url } = await createTranslationActivity({
       words: [
         {
           romanization: `konnichiwa-${uniqueId}`,
@@ -351,7 +343,7 @@ test.describe("Vocabulary Step", () => {
     const word = `hola-${uniqueId}`;
     const pronunciation = `pron-hola-${uniqueId}`;
 
-    const { url } = await createVocabularyActivity({
+    const { url } = await createTranslationActivity({
       words: [
         { pronunciation, translation: `hello-${uniqueId}`, word },
         {

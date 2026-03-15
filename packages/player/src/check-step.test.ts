@@ -13,6 +13,7 @@ function buildStep(overrides: Partial<SerializedStep> = {}): SerializedStep {
     position: 0,
     sentence: null,
     sortOrderItems: [],
+    translationOptions: [],
     vocabularyOptions: [],
     word: null,
     wordBankOptions: [],
@@ -229,11 +230,11 @@ describe(checkStep, () => {
     });
   });
 
-  describe("vocabulary", () => {
+  describe("translation", () => {
     const step = buildStep({
       content: {},
-      id: "vocab-1",
-      kind: "vocabulary",
+      id: "translation-1",
+      kind: "translation",
       word: {
         alternativeTranslations: [],
         audioUrl: null,
@@ -246,16 +247,46 @@ describe(checkStep, () => {
     });
 
     test("correct word", () => {
-      const answer: SelectedAnswer = { kind: "vocabulary", selectedWordId: "word-1" };
+      const answer: SelectedAnswer = {
+        kind: "translation",
+        questionText: "hola",
+        selectedText: "hello",
+        selectedWordId: "word-1",
+      };
       const { effects, result } = checkStep(step, answer);
       expect(result.isCorrect).toBeTruthy();
       expect(effects).toEqual([]);
     });
 
     test("incorrect word", () => {
-      const answer: SelectedAnswer = { kind: "vocabulary", selectedWordId: "word-99" };
+      const answer: SelectedAnswer = {
+        kind: "translation",
+        questionText: "hola",
+        selectedText: "wrong",
+        selectedWordId: "word-99",
+      };
       const { result } = checkStep(step, answer);
       expect(result.isCorrect).toBeFalsy();
+    });
+  });
+
+  describe("vocabulary flashcard", () => {
+    test("returns mismatch result for flashcard step", () => {
+      const step = buildStep({
+        content: {},
+        id: "vocab-1",
+        kind: "vocabulary",
+      });
+      const answer: SelectedAnswer = {
+        kind: "translation",
+        questionText: "hola",
+        selectedText: "hello",
+        selectedWordId: "word-1",
+      };
+      const { effects, result } = checkStep(step, answer);
+      expect(result.isCorrect).toBeFalsy();
+      expect(result.feedback).toBeNull();
+      expect(effects).toEqual([]);
     });
   });
 

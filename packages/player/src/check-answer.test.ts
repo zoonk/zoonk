@@ -14,7 +14,7 @@ import {
   checkSelectImageAnswer,
   checkSingleMatchPair,
   checkSortOrderAnswer,
-  checkVocabularyAnswer,
+  checkTranslationAnswer,
 } from "./check-answer";
 
 describe(checkMultipleChoiceAnswer, () => {
@@ -331,9 +331,9 @@ describe(checkSelectImageAnswer, () => {
   });
 });
 
-describe(checkVocabularyAnswer, () => {
+describe(checkTranslationAnswer, () => {
   test("returns correct for matching IDs", () => {
-    expect(checkVocabularyAnswer("word-1", "word-1")).toEqual({
+    expect(checkTranslationAnswer("word-1", "word-1")).toEqual({
       correctAnswer: null,
       feedback: null,
       isCorrect: true,
@@ -341,7 +341,7 @@ describe(checkVocabularyAnswer, () => {
   });
 
   test("returns incorrect for non-matching IDs", () => {
-    expect(checkVocabularyAnswer("word-1", "word-2")).toEqual({
+    expect(checkTranslationAnswer("word-1", "word-2")).toEqual({
       correctAnswer: null,
       feedback: null,
       isCorrect: false,

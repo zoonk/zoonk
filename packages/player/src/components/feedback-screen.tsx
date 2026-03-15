@@ -173,11 +173,21 @@ function CoreFeedback({ result }: { result: StepResult }) {
   const replaceName = useReplaceName();
   const { isCorrect, feedback: rawFeedback, correctAnswer } = result.result;
   const feedback = rawFeedback ? replaceName(rawFeedback) : null;
-  const selectedText = result.answer?.kind === "multipleChoice" ? result.answer.selectedText : null;
+  const selectedText =
+    result.answer?.kind === "multipleChoice" || result.answer?.kind === "translation"
+      ? result.answer.selectedText
+      : null;
+  const questionText = result.answer?.kind === "translation" ? result.answer.questionText : null;
 
   return (
     <FeedbackScreen>
       <div className="flex flex-col gap-2">
+        {questionText && (
+          <p className="text-muted-foreground text-sm">
+            {t("Translate:")} <span className="text-foreground font-medium">{questionText}</span>
+          </p>
+        )}
+
         {isCorrect ? (
           selectedText && (
             <AnswerLine

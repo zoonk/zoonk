@@ -11,7 +11,7 @@ import {
   checkMultipleChoiceAnswer,
   checkSelectImageAnswer,
   checkSortOrderAnswer,
-  checkVocabularyAnswer,
+  checkTranslationAnswer,
 } from "./check-answer";
 
 type SelectedAnswer =
@@ -22,7 +22,7 @@ type SelectedAnswer =
   | { kind: "reading"; arrangedWords: string[] }
   | { kind: "selectImage"; selectedIndex: number }
   | { kind: "sortOrder"; userOrder: string[] }
-  | { kind: "vocabulary"; selectedWordId: string };
+  | { kind: "translation"; selectedWordId: string; selectedText: string; questionText: string };
 
 type StepData = {
   id: bigint;
@@ -100,8 +100,8 @@ function validateSelectImage(step: StepData, answer: SelectedAnswer): ValidatedS
   return { answer, effects: [], isCorrect: result.isCorrect, stepId: step.id };
 }
 
-function validateVocabulary(step: StepData, answer: SelectedAnswer): ValidatedStepResult | null {
-  if (answer.kind !== "vocabulary") {
+function validateTranslation(step: StepData, answer: SelectedAnswer): ValidatedStepResult | null {
+  if (answer.kind !== "translation") {
     return null;
   }
 
@@ -109,7 +109,7 @@ function validateVocabulary(step: StepData, answer: SelectedAnswer): ValidatedSt
     return null;
   }
 
-  const result = checkVocabularyAnswer(String(step.word.id), answer.selectedWordId);
+  const result = checkTranslationAnswer(String(step.word.id), answer.selectedWordId);
   return { answer, effects: [], isCorrect: result.isCorrect, stepId: step.id };
 }
 
@@ -153,8 +153,9 @@ const validators: Record<
   selectImage: validateSelectImage,
   sortOrder: validateSortOrder,
   static: () => null,
+  translation: validateTranslation,
   visual: () => null,
-  vocabulary: validateVocabulary,
+  vocabulary: () => null,
 };
 
 export function validateAnswers(

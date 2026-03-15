@@ -238,6 +238,11 @@ msgid "{name} is negative. You need to bring this back up or you will lose."
 msgstr "{name} está negativo. Você precisa aumentar isso ou vai perder."
 
 #: ../../packages/player/src/components/feedback-screen.tsx
+msgctxt "fpO9TK"
+msgid "Translate:"
+msgstr "Traduzir:"
+
+#: ../../packages/player/src/components/feedback-screen.tsx
 msgctxt "iaHymw"
 msgid "Outcome"
 msgstr "Resultado"
@@ -308,23 +313,13 @@ msgctxt "aAmWaS"
 msgid "What do you hear?"
 msgstr "O que você ouve?"
 
-#: ../../packages/player/src/components/listening-step.tsx
-msgctxt "P7p52A"
-msgid "Pause audio"
-msgstr "Pausar áudio"
-
-#: ../../packages/player/src/components/listening-step.tsx
-msgctxt "vUZhim"
-msgid "Play audio"
-msgstr "Reproduzir áudio"
-
 #: ../../packages/player/src/components/match-columns-step.tsx
 msgctxt "ja1JDt"
 msgid "All pairs matched. Press Check to continue."
 msgstr "Todos os pares combinados. Pressione Verificar para continuar."
 
 #: ../../packages/player/src/components/multiple-choice-step.tsx
-#: ../../packages/player/src/components/vocabulary-step.tsx
+#: ../../packages/player/src/components/translation-step.tsx
 msgctxt "akd+cv"
 msgid "Answer options"
 msgstr "Opções de resposta"
@@ -338,6 +333,16 @@ msgstr "O que você diz?"
 msgctxt "nJGJop"
 msgid "Someone says:"
 msgstr "Alguém diz:"
+
+#: ../../packages/player/src/components/play-audio-button.tsx
+msgctxt "lYWSeP"
+msgid "Play pronunciation"
+msgstr "Reproduzir pronúncia"
+
+#: ../../packages/player/src/components/play-audio-button.tsx
+msgctxt "WGft2H"
+msgid "Pause pronunciation"
+msgstr "Pausar pronúncia"
 
 #: ../../packages/player/src/components/player-bottom-bar.tsx
 #: ../../packages/player/src/components/step-side-nav.tsx
@@ -412,6 +417,11 @@ msgctxt "VA8c/A"
 msgid "Correct order:"
 msgstr "Ordem correta:"
 
+#: ../../packages/player/src/components/translation-step.tsx
+msgctxt "MxLxkr"
+msgid "Translate this word:"
+msgstr "Traduza esta palavra:"
+
 #: ../../packages/player/src/components/visual-step.tsx
 msgctxt "9bIjWj"
 msgid "Visual content"
@@ -433,9 +443,10 @@ msgid "Timeline"
 msgstr "Linha do tempo"
 
 #: ../../packages/player/src/components/vocabulary-step.tsx
-msgctxt "MxLxkr"
-msgid "Translate this word:"
-msgstr "Traduza esta palavra:"
+#: src/lib/activities.ts
+msgctxt "lqtP+R"
+msgid "Vocabulary"
+msgstr "Vocabulário"
 
 #: ../../packages/player/src/use-belt-color-label.ts
 #: src/lib/belt-colors.ts
@@ -2255,6 +2266,11 @@ msgid "Creating content with AI requires an active subscription."
 msgstr "Criar conteúdo com IA requer uma assinatura ativa."
 
 #: src/lib/activities.ts
+msgctxt "/vCXIP"
+msgid "Translation"
+msgstr "Tradução"
+
+#: src/lib/activities.ts
 msgctxt "/WTXNi"
 msgid "Review everything you learned"
 msgstr "Revise tudo que você aprendeu"
@@ -2265,14 +2281,9 @@ msgid "Listening"
 msgstr "Escuta"
 
 #: src/lib/activities.ts
-msgctxt "7X/3vJ"
-msgid "Build your vocabulary"
-msgstr "Construa seu vocabulário"
-
-#: src/lib/activities.ts
-msgctxt "Bpkt6m"
-msgid "Build your {topic} vocabulary with new words, translations, and pronunciation."
-msgstr "Construa seu vocabulário de {topic} com novas palavras, traduções e pronúncia."
+msgctxt "3198Ew"
+msgid "Learn new {topic} words with flashcards — see each word, its translation, and pronunciation."
+msgstr "Aprenda novas palavras de {topic} com flashcards — veja cada palavra, sua tradução e pronúncia."
 
 #: src/lib/activities.ts
 msgctxt "bzFQEy"
@@ -2310,6 +2321,11 @@ msgid "Sharpen your {topic} listening skills by translating audio sentences."
 msgstr "Aprimore suas habilidades de escuta em {topic} traduzindo frases de áudio."
 
 #: src/lib/activities.ts
+msgctxt "GV+7mf"
+msgid "Translate words you've learned"
+msgstr "Traduza palavras que você aprendeu"
+
+#: src/lib/activities.ts
 msgctxt "h2acN8"
 msgid "Test your understanding of {topic} with questions designed to check real comprehension, not just memorization."
 msgstr "Teste sua compreensão de {topic} com perguntas projetadas para verificar compreensão real, não apenas memorização."
@@ -2318,6 +2334,11 @@ msgstr "Teste sua compreensão de {topic} com perguntas projetadas para verifica
 msgctxt "iOvuhZ"
 msgid "Test your knowledge"
 msgstr "Teste seu conhecimento"
+
+#: src/lib/activities.ts
+msgctxt "Ixg0z3"
+msgid "Learn new words"
+msgstr "Aprenda novas palavras"
 
 #: src/lib/activities.ts
 msgctxt "KQeUad"
@@ -2333,11 +2354,6 @@ msgstr "Praticar"
 msgctxt "liTyj7"
 msgid "Practice reading comprehension"
 msgstr "Pratique compreensão de leitura"
-
-#: src/lib/activities.ts
-msgctxt "lqtP+R"
-msgid "Vocabulary"
-msgstr "Vocabulário"
 
 #: src/lib/activities.ts
 msgctxt "MfGqY2"
@@ -2358,6 +2374,11 @@ msgstr "Conceitos e definições"
 msgctxt "OuR/Ij"
 msgid "Quiz"
 msgstr "Quiz"
+
+#: src/lib/activities.ts
+msgctxt "pDtxFt"
+msgid "Test your {topic} vocabulary by translating words you've learned."
+msgstr "Teste seu vocabulário de {topic} traduzindo palavras que você aprendeu."
 
 #: src/lib/activities.ts
 msgctxt "QzTY8x"

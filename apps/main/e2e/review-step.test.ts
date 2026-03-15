@@ -76,7 +76,7 @@ async function createReviewActivity(options: {
   const sourceActivity = await activityFixture({
     generationStatus: "completed",
     isPublished: true,
-    kind: "vocabulary",
+    kind: "translation",
     lessonId: lesson.id,
     organizationId: org.id,
     position: 0,
@@ -91,7 +91,7 @@ async function createReviewActivity(options: {
         activityId: sourceActivity.id,
         content: {},
         isPublished: true,
-        kind: "vocabulary",
+        kind: "translation",
         position: index,
         wordId: word.id,
       }),

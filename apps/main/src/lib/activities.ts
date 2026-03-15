@@ -7,6 +7,7 @@ import {
   FlameIcon,
   HeadphonesIcon,
   LanguagesIcon,
+  LayersIcon,
   type LucideIcon,
   MessageSquareIcon,
   RotateCcwIcon,
@@ -46,9 +47,14 @@ export async function getActivityKinds(): Promise<
       label: t("Challenge"),
     },
     {
-      description: t("Build your vocabulary"),
+      description: t("Learn new words"),
       key: "vocabulary",
       label: t("Vocabulary"),
+    },
+    {
+      description: t("Translate words you've learned"),
+      key: "translation",
+      label: t("Translation"),
     },
     {
       description: t("Practice grammar rules"),
@@ -112,8 +118,9 @@ async function getSeoDescription(kind: ActivityKind, topic: string): Promise<str
       { topic },
     ),
     review: t("Review everything you learned about {topic} with a comprehensive quiz.", { topic }),
+    translation: t("Test your {topic} vocabulary by translating words you've learned.", { topic }),
     vocabulary: t(
-      "Build your {topic} vocabulary with new words, translations, and pronunciation.",
+      "Learn new {topic} words with flashcards — see each word, its translation, and pronunciation.",
       { topic },
     ),
   };
@@ -175,7 +182,8 @@ const ACTIVITY_ICONS: Record<ActivityKind, LucideIcon> = {
   quiz: CircleHelpIcon,
   reading: BookTextIcon,
   review: RotateCcwIcon,
-  vocabulary: LanguagesIcon,
+  translation: LanguagesIcon,
+  vocabulary: LayersIcon,
 };
 
 export function getActivityIcon(kind: ActivityKind): LucideIcon {

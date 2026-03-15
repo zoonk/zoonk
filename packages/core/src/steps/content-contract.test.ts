@@ -246,6 +246,11 @@ describe("step content contracts", () => {
     expect(content).toEqual({});
   });
 
+  test("parses translation step content", () => {
+    const content = parseStepContent("translation", {});
+    expect(content).toEqual({});
+  });
+
   test("parses reading step content", () => {
     const content = parseStepContent("reading", {});
     expect(content).toEqual({});

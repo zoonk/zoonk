@@ -7,7 +7,7 @@ import {
   checkMultipleChoiceAnswer,
   checkSelectImageAnswer,
   checkSortOrderAnswer,
-  checkVocabularyAnswer,
+  checkTranslationAnswer,
 } from "./check-answer";
 import { type SelectedAnswer } from "./player-reducer";
 import { type SerializedStep } from "./prepare-activity-data";
@@ -74,8 +74,8 @@ function checkSelectImage(step: SerializedStep, answer: SelectedAnswer): CheckSt
   return { effects: [], result: checkSelectImageAnswer(content, answer.selectedIndex) };
 }
 
-function checkVocabularyStep(step: SerializedStep, answer: SelectedAnswer): CheckStepResult {
-  if (answer.kind !== "vocabulary") {
+function checkTranslationStep(step: SerializedStep, answer: SelectedAnswer): CheckStepResult {
+  if (answer.kind !== "translation") {
     return MISMATCH_RESULT;
   }
 
@@ -83,7 +83,10 @@ function checkVocabularyStep(step: SerializedStep, answer: SelectedAnswer): Chec
     return MISMATCH_RESULT;
   }
 
-  return { effects: [], result: checkVocabularyAnswer(step.word.id, answer.selectedWordId) };
+  return {
+    effects: [],
+    result: checkTranslationAnswer(step.word.id, answer.selectedWordId, step.word.word),
+  };
 }
 
 function checkArrangeWords(step: SerializedStep, arrangedWords: string[]): CheckStepResult {
@@ -133,8 +136,8 @@ export function checkStep(step: SerializedStep, answer: SelectedAnswer): CheckSt
     case "selectImage":
       return checkSelectImage(step, answer);
 
-    case "vocabulary":
-      return checkVocabularyStep(step, answer);
+    case "translation":
+      return checkTranslationStep(step, answer);
 
     case "reading":
       return checkReadingStep(step, answer);
@@ -144,6 +147,7 @@ export function checkStep(step: SerializedStep, answer: SelectedAnswer): CheckSt
 
     case "static":
     case "visual":
+    case "vocabulary":
       return MISMATCH_RESULT;
 
     default:

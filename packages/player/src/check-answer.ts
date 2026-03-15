@@ -88,8 +88,16 @@ export function checkSelectImageAnswer(
   return { correctAnswer: null, feedback: option.feedback, isCorrect: option.isCorrect };
 }
 
-export function checkVocabularyAnswer(correctWordId: string, selectedWordId: string): AnswerResult {
-  return { correctAnswer: null, feedback: null, isCorrect: correctWordId === selectedWordId };
+export function checkTranslationAnswer(
+  correctWordId: string,
+  selectedWordId: string,
+  correctWord?: string,
+): AnswerResult {
+  return {
+    correctAnswer: correctWord ?? null,
+    feedback: null,
+    isCorrect: correctWordId === selectedWordId,
+  };
 }
 
 export function checkArrangeWordsAnswer(correctWords: string[], userWords: string[]): AnswerResult {

@@ -238,6 +238,11 @@ msgid "{name} is negative. You need to bring this back up or you will lose."
 msgstr "{name} is negative. You need to bring this back up or you will lose."
 
 #: ../../packages/player/src/components/feedback-screen.tsx
+msgctxt "fpO9TK"
+msgid "Translate:"
+msgstr "Translate:"
+
+#: ../../packages/player/src/components/feedback-screen.tsx
 msgctxt "iaHymw"
 msgid "Outcome"
 msgstr "Outcome"
@@ -308,23 +313,13 @@ msgctxt "aAmWaS"
 msgid "What do you hear?"
 msgstr "What do you hear?"
 
-#: ../../packages/player/src/components/listening-step.tsx
-msgctxt "P7p52A"
-msgid "Pause audio"
-msgstr "Pause audio"
-
-#: ../../packages/player/src/components/listening-step.tsx
-msgctxt "vUZhim"
-msgid "Play audio"
-msgstr "Play audio"
-
 #: ../../packages/player/src/components/match-columns-step.tsx
 msgctxt "ja1JDt"
 msgid "All pairs matched. Press Check to continue."
 msgstr "All pairs matched. Press Check to continue."
 
 #: ../../packages/player/src/components/multiple-choice-step.tsx
-#: ../../packages/player/src/components/vocabulary-step.tsx
+#: ../../packages/player/src/components/translation-step.tsx
 msgctxt "akd+cv"
 msgid "Answer options"
 msgstr "Answer options"
@@ -338,6 +333,16 @@ msgstr "What do you say?"
 msgctxt "nJGJop"
 msgid "Someone says:"
 msgstr "Someone says:"
+
+#: ../../packages/player/src/components/play-audio-button.tsx
+msgctxt "lYWSeP"
+msgid "Play pronunciation"
+msgstr "Play pronunciation"
+
+#: ../../packages/player/src/components/play-audio-button.tsx
+msgctxt "WGft2H"
+msgid "Pause pronunciation"
+msgstr "Pause pronunciation"
 
 #: ../../packages/player/src/components/player-bottom-bar.tsx
 #: ../../packages/player/src/components/step-side-nav.tsx
@@ -412,6 +417,11 @@ msgctxt "VA8c/A"
 msgid "Correct order:"
 msgstr "Correct order:"
 
+#: ../../packages/player/src/components/translation-step.tsx
+msgctxt "MxLxkr"
+msgid "Translate this word:"
+msgstr "Translate this word:"
+
 #: ../../packages/player/src/components/visual-step.tsx
 msgctxt "9bIjWj"
 msgid "Visual content"
@@ -433,9 +443,10 @@ msgid "Timeline"
 msgstr "Timeline"
 
 #: ../../packages/player/src/components/vocabulary-step.tsx
-msgctxt "MxLxkr"
-msgid "Translate this word:"
-msgstr "Translate this word:"
+#: src/lib/activities.ts
+msgctxt "lqtP+R"
+msgid "Vocabulary"
+msgstr "Vocabulary"
 
 #: ../../packages/player/src/use-belt-color-label.ts
 #: src/lib/belt-colors.ts
@@ -2255,6 +2266,11 @@ msgid "Creating content with AI requires an active subscription."
 msgstr "Creating content with AI requires an active subscription."
 
 #: src/lib/activities.ts
+msgctxt "/vCXIP"
+msgid "Translation"
+msgstr "Translation"
+
+#: src/lib/activities.ts
 msgctxt "/WTXNi"
 msgid "Review everything you learned"
 msgstr "Review everything you learned"
@@ -2265,14 +2281,9 @@ msgid "Listening"
 msgstr "Listening"
 
 #: src/lib/activities.ts
-msgctxt "7X/3vJ"
-msgid "Build your vocabulary"
-msgstr "Build your vocabulary"
-
-#: src/lib/activities.ts
-msgctxt "Bpkt6m"
-msgid "Build your {topic} vocabulary with new words, translations, and pronunciation."
-msgstr "Build your {topic} vocabulary with new words, translations, and pronunciation."
+msgctxt "3198Ew"
+msgid "Learn new {topic} words with flashcards — see each word, its translation, and pronunciation."
+msgstr "Learn new {topic} words with flashcards — see each word, its translation, and pronunciation."
 
 #: src/lib/activities.ts
 msgctxt "bzFQEy"
@@ -2310,6 +2321,11 @@ msgid "Sharpen your {topic} listening skills by translating audio sentences."
 msgstr "Sharpen your {topic} listening skills by translating audio sentences."
 
 #: src/lib/activities.ts
+msgctxt "GV+7mf"
+msgid "Translate words you've learned"
+msgstr "Translate words you've learned"
+
+#: src/lib/activities.ts
 msgctxt "h2acN8"
 msgid "Test your understanding of {topic} with questions designed to check real comprehension, not just memorization."
 msgstr "Test your understanding of {topic} with questions designed to check real comprehension, not just memorization."
@@ -2318,6 +2334,11 @@ msgstr "Test your understanding of {topic} with questions designed to check real
 msgctxt "iOvuhZ"
 msgid "Test your knowledge"
 msgstr "Test your knowledge"
+
+#: src/lib/activities.ts
+msgctxt "Ixg0z3"
+msgid "Learn new words"
+msgstr "Learn new words"
 
 #: src/lib/activities.ts
 msgctxt "KQeUad"
@@ -2333,11 +2354,6 @@ msgstr "Practice"
 msgctxt "liTyj7"
 msgid "Practice reading comprehension"
 msgstr "Practice reading comprehension"
-
-#: src/lib/activities.ts
-msgctxt "lqtP+R"
-msgid "Vocabulary"
-msgstr "Vocabulary"
 
 #: src/lib/activities.ts
 msgctxt "MfGqY2"
@@ -2358,6 +2374,11 @@ msgstr "Concepts and definitions"
 msgctxt "OuR/Ij"
 msgid "Quiz"
 msgstr "Quiz"
+
+#: src/lib/activities.ts
+msgctxt "pDtxFt"
+msgid "Test your {topic} vocabulary by translating words you've learned."
+msgstr "Test your {topic} vocabulary by translating words you've learned."
 
 #: src/lib/activities.ts
 msgctxt "QzTY8x"

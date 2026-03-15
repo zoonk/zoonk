@@ -52,6 +52,7 @@ const ACTIVITY_STEPS = [
   "generateAudio",
   "updateSentenceEnrichments",
   "copyListeningSteps",
+  "setTranslationAsCompleted",
   "setVocabularyAsCompleted",
   "setReadingAsCompleted",
   "setListeningAsCompleted",
