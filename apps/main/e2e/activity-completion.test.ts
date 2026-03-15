@@ -5,8 +5,10 @@ import { getAiOrganization } from "@zoonk/e2e/helpers";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { lessonWordFixture } from "@zoonk/testing/fixtures/lesson-words";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
+import { wordFixture } from "@zoonk/testing/fixtures/words";
 import { expect, test } from "./fixtures";
 
 async function createUniqueUser(baseURL: string) {
@@ -312,5 +314,51 @@ test.describe("Activity Completion", () => {
     await expect(page.getByText(/sign up to track your progress/i)).toBeVisible();
     await expect(page.getByRole("progressbar", { name: /level progress/i })).not.toBeVisible();
     await expect(page.getByText(/\+\d+ BP/)).not.toBeVisible();
+  });
+
+  test("authenticated user sees BP and belt progress on flashcard vocabulary completion", async ({
+    baseURL,
+    browser,
+  }) => {
+    const email = await createUniqueUser(baseURL!);
+    const { browserContext, page } = await createAuthenticatedPage(browser, baseURL!, email);
+    const { buildUrl, lesson, org, uniqueId } = await createTestHierarchy("flash");
+
+    const word = await wordFixture({
+      organizationId: org.id,
+      translation: `cat-${uniqueId}`,
+      word: `gato-${uniqueId}`,
+    });
+
+    await lessonWordFixture({ lessonId: lesson.id, wordId: word.id });
+
+    const activity = await activityFixture({
+      generationStatus: "completed",
+      isPublished: true,
+      kind: "vocabulary",
+      lessonId: lesson.id,
+      organizationId: org.id,
+      position: 0,
+    });
+
+    await stepFixture({
+      activityId: activity.id,
+      content: {},
+      isPublished: true,
+      kind: "vocabulary",
+      position: 0,
+      wordId: word.id,
+    });
+
+    await page.goto(buildUrl());
+    await page.waitForLoadState("networkidle");
+
+    await page.getByRole("button", { name: /next/i }).click();
+
+    await expect(page.getByText(/completed/i)).toBeVisible();
+    await expect(page.getByText(/\+\d+ BP/)).toBeVisible();
+    await expect(page.getByRole("progressbar", { name: /level progress/i })).toBeVisible();
+
+    await browserContext.close();
   });
 });
