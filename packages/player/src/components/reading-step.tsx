@@ -27,8 +27,11 @@ export function ReadingStep({
   return (
     <ArrangeWordsInteraction
       answerKind="reading"
-      correctSentence={step.sentence.sentence}
       correctWords={step.sentence.sentence.split(" ")}
+      feedbackDetails={{
+        sentence: step.sentence.sentence,
+        translation: step.sentence.translation,
+      }}
       onSelectAnswer={onSelectAnswer}
       result={result}
       selectedAnswer={selectedAnswer}

@@ -42,12 +42,6 @@ msgstr "Position {position}: {item}. Tap to remove."
 
 #: ../../packages/player/src/components/arrange-words.tsx
 #: ../../packages/player/src/components/fill-blank-step.tsx
-msgctxt "xvWuPP"
-msgid "Correct answer: {answer}"
-msgstr "Correct answer: {answer}"
-
-#: ../../packages/player/src/components/arrange-words.tsx
-#: ../../packages/player/src/components/fill-blank-step.tsx
 #: ../../packages/player/src/components/result-announcement.tsx
 #: ../../packages/player/src/components/sort-order-step.tsx
 msgctxt "Ypr9T5"
@@ -283,10 +277,20 @@ msgctxt "wUEGVH"
 msgid "Blank {position}: {item}. Tap to remove."
 msgstr "Blank {position}: {item}. Tap to remove."
 
+#: ../../packages/player/src/components/fill-blank-step.tsx
+msgctxt "xvWuPP"
+msgid "Correct answer: {answer}"
+msgstr "Correct answer: {answer}"
+
 #: ../../packages/player/src/components/inline-feedback.tsx
 msgctxt "++l7ni"
 msgid "Not quite"
 msgstr "Not quite"
+
+#: ../../packages/player/src/components/inline-feedback.tsx
+msgctxt "HvLGEN"
+msgid "Answer feedback"
+msgstr "Answer feedback"
 
 #: ../../packages/player/src/components/inline-feedback.tsx
 msgctxt "xmF49T"

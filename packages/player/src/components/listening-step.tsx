@@ -77,8 +77,11 @@ export function ListeningStep({
   return (
     <ArrangeWordsInteraction
       answerKind="listening"
-      correctSentence={step.sentence.translation}
       correctWords={step.sentence.translation.split(" ")}
+      feedbackDetails={{
+        sentence: step.sentence.sentence,
+        translation: step.sentence.translation,
+      }}
       onSelectAnswer={onSelectAnswer}
       result={result}
       selectedAnswer={selectedAnswer}

@@ -161,8 +161,8 @@ function WordBank({
 export function ArrangeWordsInteraction({
   answerKind,
   children,
-  correctSentence,
   correctWords,
+  feedbackDetails,
   onSelectAnswer,
   result,
   selectedAnswer,
@@ -171,16 +171,14 @@ export function ArrangeWordsInteraction({
 }: {
   answerKind: "reading" | "listening";
   children: React.ReactNode;
-  correctSentence: string;
   correctWords: string[];
+  feedbackDetails?: { sentence: string; translation: string };
   onSelectAnswer: (stepId: string, answer: SelectedAnswer | null) => void;
   result?: StepResult;
   selectedAnswer: SelectedAnswer | undefined;
   stepId: string;
   wordBankOptions: string[];
 }) {
-  const t = useExtracted();
-
   const [placedWords, setPlacedWords] = useState<string[]>(() => {
     if (result?.answer?.kind === answerKind && "arrangedWords" in result.answer) {
       return result.answer.arrangedWords;
@@ -217,8 +215,6 @@ export function ArrangeWordsInteraction({
     [onSelectAnswer, placedWords, selectedAnswer, stepId],
   );
 
-  const isIncorrect = result && !result.result.isCorrect;
-
   return (
     <InteractiveStepLayout>
       {children}
@@ -234,10 +230,11 @@ export function ArrangeWordsInteraction({
 
       {result && (
         <InlineFeedback result={result}>
-          {isIncorrect && (
-            <p className="text-muted-foreground text-sm">
-              {t("Correct answer: {answer}", { answer: correctSentence })}
-            </p>
+          {feedbackDetails && (
+            <div className="border-border/40 flex flex-col gap-1.5 border-t pt-3">
+              <p className="text-sm font-medium">{feedbackDetails.sentence}</p>
+              <p className="text-muted-foreground text-sm">{feedbackDetails.translation}</p>
+            </div>
           )}
         </InlineFeedback>
       )}

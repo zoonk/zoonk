@@ -144,18 +144,17 @@ test.describe("Listening Step", () => {
     await expect(page.getByText(sentence)).toBeVisible();
   });
 
-  test("correct translation arrangement shows success feedback", async ({ page }) => {
+  test("correct translation arrangement shows success feedback with sentence and translation", async ({
+    page,
+  }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const transWord1 = `Hello-${uniqueId}`;
     const transWord2 = `world-${uniqueId}`;
+    const sentence = `Hola-${uniqueId} mundo-${uniqueId}`;
+    const translation = `${transWord1} ${transWord2}`;
 
     const { url } = await createListeningActivity({
-      sentences: [
-        {
-          sentence: `Hola-${uniqueId} mundo-${uniqueId}`,
-          translation: `${transWord1} ${transWord2}`,
-        },
-      ],
+      sentences: [{ audioUrl: "https://example.com/audio.mp3", sentence, translation }],
       words: [{ translation: `cat-${uniqueId}`, word: `gato-${uniqueId}` }],
     });
 
@@ -175,22 +174,22 @@ test.describe("Listening Step", () => {
     await wordBank.getByRole("button", { exact: true, name: transWord2 }).click();
 
     await page.getByRole("button", { name: /check/i }).click();
-    await expect(page.getByRole("button", { name: /continue/i })).toBeVisible();
+
+    const feedback = page.getByRole("region", { name: /answer feedback/i });
+    await expect(feedback.getByText(/correct!/i)).toBeVisible();
+    await expect(feedback.getByText(sentence)).toBeVisible();
+    await expect(feedback.getByText(translation)).toBeVisible();
   });
 
-  test("wrong arrangement shows correct translation in feedback", async ({ page }) => {
+  test("wrong arrangement shows sentence and translation in feedback", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const transWord1 = `Hello-${uniqueId}`;
     const transWord2 = `world-${uniqueId}`;
+    const sentence = `Hola-${uniqueId} mundo-${uniqueId}`;
     const translation = `${transWord1} ${transWord2}`;
 
     const { url } = await createListeningActivity({
-      sentences: [
-        {
-          sentence: `Hola-${uniqueId} mundo-${uniqueId}`,
-          translation,
-        },
-      ],
+      sentences: [{ audioUrl: "https://example.com/audio.mp3", sentence, translation }],
       words: [{ translation: `cat-${uniqueId}`, word: `gato-${uniqueId}` }],
     });
 
@@ -212,8 +211,10 @@ test.describe("Listening Step", () => {
 
     await page.getByRole("button", { name: /check/i }).click();
 
-    await expect(page.getByText(new RegExp(`Correct answer.*${transWord1}`))).toBeVisible();
-    await expect(page.getByRole("button", { name: /continue/i })).toBeVisible();
+    const feedback = page.getByRole("region", { name: /answer feedback/i });
+    await expect(feedback.getByText(/not quite/i)).toBeVisible();
+    await expect(feedback.getByText(sentence)).toBeVisible();
+    await expect(feedback.getByText(translation)).toBeVisible();
   });
 
   test("full flow: complete all listening steps to completion screen", async ({ page }) => {

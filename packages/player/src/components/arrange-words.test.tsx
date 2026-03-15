@@ -26,7 +26,6 @@ describe(ArrangeWordsInteraction, () => {
     render(
       <ArrangeWordsInteraction
         answerKind="reading"
-        correctSentence="Hola mundo"
         correctWords={["Hola", "mundo"]}
         onSelectAnswer={onSelectAnswer}
         selectedAnswer={undefined}
