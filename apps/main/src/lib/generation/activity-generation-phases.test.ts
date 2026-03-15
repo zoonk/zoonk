@@ -262,6 +262,19 @@ describe("reading phase status", () => {
   });
 });
 
+describe("custom phase status", () => {
+  test("completes gettingStarted after getLessonActivities (getNeighboringConcepts is not used)", () => {
+    const status = getPhaseStatus(
+      "gettingStarted",
+      ["getLessonActivities"],
+      "setActivityAsRunning",
+      "custom",
+    );
+
+    expect(status).toBe("completed");
+  });
+});
+
 describe("enforcePhaseProgression integration", () => {
   test("clamps finishing to pending when creatingImages is still pending (explanation kind)", () => {
     const phaseOrder = getPhaseOrder("explanation");

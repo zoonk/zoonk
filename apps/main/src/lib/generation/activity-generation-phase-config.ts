@@ -211,7 +211,8 @@ export function getPhaseSteps(kind: ActivityKind): Record<PhaseName, ActivitySte
   if (kind === "custom") {
     return {
       ...SHARED_PHASE_STEPS,
-      finishing: getFinishingSteps(["generateCustomContent"]),
+      finishing: ["getNeighboringConcepts", ...getFinishingSteps(["generateCustomContent"])],
+      gettingStarted: ["getLessonActivities"],
       processingDependencies: [],
       writingContent: ["setActivityAsRunning", "generateCustomContent"],
     };
