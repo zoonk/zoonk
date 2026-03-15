@@ -215,23 +215,27 @@ checksums:
     Final%20scores/singular: e772441fda83e82c2101876fee323481
     Try%20Again/singular: d65fad81c5f8f90405b26bf6e5d70ab9
     Total%20score/singular: 52bf3d9b021a715f5624d7c945d97eb6
+    If%20any%20score%20ends%20below%20zero%2C%20game%20over./singular: 1c5c2c71e421c428e792d3c1509b0276
+    No%20choice%20is%20right%20or%20wrong%20%E2%80%94%20every%20one%20has%20trade-offs./singular: 8a67c34645c8bfd8546261a977ace665
     Challenge/singular: 7f333a59ee7a3596e27a2f8c3401b764
     How%20to%20play/singular: 2cfbb8fb4e6096dcd53c55ddbda9bdda
-    Think%20carefully.%20You%20cannot%20undo%20a%20choice./singular: c78a6da157c9c50951b5170c28e65333
-    If%20any%20score%20drops%20below%20zero%2C%20it's%20game%20over./singular: 6ac97bc5de8e300832b6492f4feaca80
-    No%20option%20is%20%22right%22%20or%20%22wrong%22%20%E2%80%94%20every%20choice%20has%20trade-offs./singular: 83c650dfc39b72a9506824db1248ab0a
     Starting%20scores/singular: 6a21f8424cdc75e477c3d7857a97db6d
-    You%20start%20with%200%20points%20in%20each%20score%20below./singular: 42ff07dc70fe724abafdad05dd93e11c
+    Choose%20carefully.%20You%20can't%20undo./singular: cf4e1fea906ef68f82c993072d02abf6
     Begin/singular: cc2a17a662cb60dd2d8335a2e8440997
-    Every%20choice%20raises%20some%20scores%20and%20lowers%20others./singular: 4c6afe02764dd7aa360232ec7298a09d
+    Each%20choice%20raises%20some%20scores%20and%20lowers%20others./singular: f2fe298b9617dcbd9b1783eeb47acfcb
     Your%20scores/singular: 1700f65ead0647bc4876f4b3b6453a8b
+    You%20start%20at%200%20in%20every%20score./singular: ef7c9e35b5b066d492618fcaec8eef46
     Restart/singular: bab6232e89f24e3129f8e48268739d5b
     Next/singular: 89ddbcf710eba274963494f312bdc8a9
     Login/singular: f4f219abeb5a465ecb1c7efaf50246de
     Sign%20up%20to%20track%20your%20progress/singular: 554ed29d9b8a243362c3b3374222af08
     Completed/singular: 0e4bbce9985f25eb673d9a054c8d5334
     correct/singular: 0c2df4a764cea47295c0b550477e8e29
+    All%20clear/singular: ca7355395e213474da78c66783aefc0c
     Current%20scores/singular: 9540e05ca834af8682ea93bdec677299
+    "%7Bcount%7D%20in%20danger/singular": 82145029fddd68fcd3b3b094a2be8eb1
+    "%7Bcount%7D%20at%20risk/singular": d0c6a90b2830b7b26e220ef1f7708d08
+    View%20scores/singular: 8089ad914ec6636a00fd58ed3c84f07b
     Your%20answer%3A/singular: 663abc310ccb6229c6325f8c857adce2
     "%7Bname%7D%20is%20negative.%20You%20need%20to%20bring%20this%20back%20up%20or%20you%20will%20lose./singular": c893d2d3c1bb15ea45614228ea9ddcac
     Outcome/singular: 4cfc7a40e384ea8b6658e8da6e351bf0

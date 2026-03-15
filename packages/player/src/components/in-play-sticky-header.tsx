@@ -2,7 +2,7 @@
 
 import { type Route } from "next";
 import { type DimensionInventory } from "../player-reducer";
-import { DimensionScoreBar } from "./dimension-score-bar";
+import { DimensionHeaderStatus } from "./dimension-header-status";
 import { PlayerCloseLink, PlayerHeader, PlayerStepFraction } from "./player-header";
 import { PlayerProgressBar } from "./player-progress-bar";
 
@@ -28,18 +28,18 @@ export function InPlayStickyHeader({
       <PlayerHeader>
         <PlayerCloseLink href={lessonHref} />
 
-        <PlayerStepFraction>
-          {currentStepIndex + 1} / {totalSteps}
-        </PlayerStepFraction>
+        {hasDimensions ? (
+          <DimensionHeaderStatus changedDimensions={changedDimensions} dimensions={dimensions} />
+        ) : (
+          <PlayerStepFraction>
+            {currentStepIndex + 1} / {totalSteps}
+          </PlayerStepFraction>
+        )}
 
         <div className="size-9" aria-hidden="true" />
       </PlayerHeader>
 
       <PlayerProgressBar value={progressValue} />
-
-      {hasDimensions && (
-        <DimensionScoreBar changedDimensions={changedDimensions} dimensions={dimensions} />
-      )}
     </div>
   );
 }

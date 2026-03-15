@@ -79,7 +79,9 @@ export function PlayerProvider<Href extends string>({
     const changed = new Set<string>();
 
     for (const [name, value] of Object.entries(state.dimensions)) {
-      if (value !== state.previousDimensions[name]) {
+      const previous: number | undefined = state.previousDimensions[name];
+
+      if (value !== previous) {
         changed.add(name);
       }
     }

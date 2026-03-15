@@ -390,9 +390,9 @@ test.describe("Challenge Variant", () => {
     await page.goto(url);
     await page.getByRole("button", { name: /begin/i }).click();
 
-    // First step should now be visible
+    // First step should now be visible with dimension status in header (not step fraction)
     await expect(page.getByText(new RegExp(`Begin question ${uniqueId}`))).toBeVisible();
-    await expect(page.getByText(/1 \/ 1/)).toBeVisible();
+    await expect(page.getByRole("status")).toBeVisible();
   });
 
   test("enter key starts challenge from intro", async ({ page }) => {
@@ -525,7 +525,7 @@ test.describe("Challenge Variant", () => {
     await expect(inventory.getByText(new RegExp(`Courage ${uniqueId}`))).toBeVisible();
   });
 
-  test("score bar visible during challenge play", async ({ page }) => {
+  test("header shows status message with popover during challenge play", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const dim = `Morale ${uniqueId}`;
     const { url } = await createMultipleChoiceActivity({
@@ -556,10 +556,12 @@ test.describe("Challenge Variant", () => {
     await page.goto(url);
     await page.getByRole("button", { name: /begin/i }).click();
 
-    // Score bar should be visible with dimension names
-    const scoreBar = page.getByRole("status", { name: /current scores/i });
-    await expect(scoreBar).toBeVisible();
-    await expect(scoreBar.getByText(new RegExp(dim))).toBeVisible();
+    // Dimensions start at 0, so header shows at-risk status
+    await expect(page.getByRole("status").getByText(/at risk/i)).toBeVisible();
+
+    // Click to open popover with full dimension details
+    await page.getByRole("button", { name: /view scores/i }).click();
+    await expect(page.getByText(new RegExp(dim))).toBeVisible();
   });
 
   test("stats reflect accumulated changes", async ({ page }) => {
@@ -619,9 +621,8 @@ test.describe("Challenge Variant", () => {
     await page.getByRole("button", { name: /check/i }).click();
     await page.getByRole("button", { name: /continue/i }).click();
 
-    // Score bar should show updated total
-    const scoreBar = page.getByRole("status", { name: /current scores/i });
-    await expect(scoreBar.getByText("1", { exact: true })).toBeVisible();
+    // After positive choice, all scores are positive — header shows "All clear"
+    await expect(page.getByRole("status").getByText(/all clear/i)).toBeVisible();
   });
 
   test("accumulated inventory across multiple steps", async ({ page }) => {

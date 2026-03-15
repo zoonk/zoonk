@@ -118,6 +118,16 @@ msgid "Total score"
 msgstr "Total score"
 
 #: ../../packages/player/src/components/challenge-intro.tsx
+msgctxt "+jQyoM"
+msgid "If any score ends below zero, game over."
+msgstr "If any score ends below zero, game over."
+
+#: ../../packages/player/src/components/challenge-intro.tsx
+msgctxt "5lbATl"
+msgid "No choice is right or wrong — every one has trade-offs."
+msgstr "No choice is right or wrong — every one has trade-offs."
+
+#: ../../packages/player/src/components/challenge-intro.tsx
 #: src/lib/activities.ts
 msgctxt "9MidH4"
 msgid "Challenge"
@@ -129,29 +139,14 @@ msgid "How to play"
 msgstr "How to play"
 
 #: ../../packages/player/src/components/challenge-intro.tsx
-msgctxt "fphRl4"
-msgid "Think carefully. You cannot undo a choice."
-msgstr "Think carefully. You cannot undo a choice."
-
-#: ../../packages/player/src/components/challenge-intro.tsx
-msgctxt "J6ZV3r"
-msgid "If any score drops below zero, it's game over."
-msgstr "If any score drops below zero, it's game over."
-
-#: ../../packages/player/src/components/challenge-intro.tsx
-msgctxt "JsNMCz"
-msgid "No option is \"right\" or \"wrong\" — every choice has trade-offs."
-msgstr "No option is \"right\" or \"wrong\" — every choice has trade-offs."
-
-#: ../../packages/player/src/components/challenge-intro.tsx
 msgctxt "kKztdT"
 msgid "Starting scores"
 msgstr "Starting scores"
 
 #: ../../packages/player/src/components/challenge-intro.tsx
-msgctxt "mXiq60"
-msgid "You start with 0 points in each score below."
-msgstr "You start with 0 points in each score below."
+msgctxt "m40JR0"
+msgid "Choose carefully. You can't undo."
+msgstr "Choose carefully. You can't undo."
 
 #: ../../packages/player/src/components/challenge-intro.tsx
 msgctxt "PVe26p"
@@ -159,14 +154,20 @@ msgid "Begin"
 msgstr "Begin"
 
 #: ../../packages/player/src/components/challenge-intro.tsx
-msgctxt "rOjwJe"
-msgid "Every choice raises some scores and lowers others."
-msgstr "Every choice raises some scores and lowers others."
+msgctxt "QUvM0O"
+msgid "Each choice raises some scores and lowers others."
+msgstr "Each choice raises some scores and lowers others."
 
 #: ../../packages/player/src/components/challenge-intro.tsx
+#: ../../packages/player/src/components/dimension-header-status.tsx
 msgctxt "SFKe0U"
 msgid "Your scores"
 msgstr "Your scores"
+
+#: ../../packages/player/src/components/challenge-intro.tsx
+msgctxt "WPIaw8"
+msgid "You start at 0 in every score."
+msgstr "You start at 0 in every score."
 
 #: ../../packages/player/src/components/completion-auth-branch.tsx
 msgctxt "5kK+j9"
@@ -207,10 +208,30 @@ msgctxt "P768k7"
 msgid "correct"
 msgstr "correct"
 
-#: ../../packages/player/src/components/dimension-score-bar.tsx
+#: ../../packages/player/src/components/dimension-header-status.tsx
+msgctxt "BX5BGP"
+msgid "All clear"
+msgstr "All clear"
+
+#: ../../packages/player/src/components/dimension-header-status.tsx
 msgctxt "eI59HZ"
 msgid "Current scores"
 msgstr "Current scores"
+
+#: ../../packages/player/src/components/dimension-header-status.tsx
+msgctxt "Inhyu/"
+msgid "{count} in danger"
+msgstr "{count} in danger"
+
+#: ../../packages/player/src/components/dimension-header-status.tsx
+msgctxt "KFC6d7"
+msgid "{count} at risk"
+msgstr "{count} at risk"
+
+#: ../../packages/player/src/components/dimension-header-status.tsx
+msgctxt "qymjuq"
+msgid "View scores"
+msgstr "View scores"
 
 #: ../../packages/player/src/components/feedback-screen.tsx
 msgctxt "3nOd8f"
