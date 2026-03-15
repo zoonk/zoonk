@@ -5,7 +5,7 @@ import { type QuizQuestion, type SelectImageQuestion, quizTools } from "../_tool
 import systemPrompt from "./activity-quiz.prompt.md";
 
 const DEFAULT_MODEL = process.env.AI_MODEL_ACTIVITY_QUIZ ?? "openai/gpt-5.4";
-const FALLBACK_MODELS = ["anthropic/claude-opus-4.5", "google/gemini-3-flash"];
+const FALLBACK_MODELS = ["anthropic/claude-opus-4.6", "google/gemini-3-flash"];
 
 export type ActivityQuizSchema = {
   questions: QuizQuestion[];
