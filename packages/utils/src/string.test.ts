@@ -7,6 +7,7 @@ import {
   removeAccents,
   removeLocaleSuffix,
   replaceNamePlaceholder,
+  segmentWords,
   stripPunctuation,
   toSlug,
 } from "./string";
@@ -146,6 +147,35 @@ describe(toSlug, () => {
   });
 });
 
+describe(segmentWords, () => {
+  test("splits space-delimited text by spaces", () => {
+    expect(segmentWords("Hola mundo")).toEqual(["Hola", "mundo"]);
+    expect(segmentWords("Yo veo un gato.")).toEqual(["Yo", "veo", "un", "gato."]);
+  });
+
+  test("segments Japanese text into individual words", () => {
+    const result = segmentWords("あのやまはきれいです");
+    expect(result.length).toBeGreaterThan(1);
+    expect(result).toContain("あの");
+    expect(result).toContain("きれい");
+    expect(result).toContain("です");
+  });
+
+  test("segments Chinese text into individual words", () => {
+    const result = segmentWords("猫吃鱼");
+    expect(result.length).toBeGreaterThan(1);
+  });
+
+  test("handles single word", () => {
+    expect(segmentWords("hello")).toEqual(["hello"]);
+    expect(segmentWords("猫")).toEqual(["猫"]);
+  });
+
+  test("handles empty string", () => {
+    expect(segmentWords("")).toEqual([]);
+  });
+});
+
 describe(stripPunctuation, () => {
   test("removes punctuation from text", () => {
     expect(stripPunctuation("hello!")).toBe("hello");
@@ -197,9 +227,11 @@ describe(extractUniqueSentenceWords, () => {
     expect(extractUniqueSentenceWords([])).toEqual([]);
   });
 
-  test("handles unicode words", () => {
+  test("handles non-space-delimited text via Intl.Segmenter", () => {
     const result = extractUniqueSentenceWords(["猫は食べる"]);
-    expect(result).toContain("猫は食べる");
+    expect(result.length).toBeGreaterThan(1);
+    expect(result).toContain("猫");
+    expect(result).toContain("食べる");
   });
 });
 

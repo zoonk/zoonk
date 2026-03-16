@@ -1,5 +1,6 @@
 "use client";
 
+import { segmentWords } from "@zoonk/utils/string";
 import { useExtracted } from "next-intl";
 import { type SelectedAnswer, type StepResult } from "../player-reducer";
 import { type SerializedStep } from "../prepare-activity-data";
@@ -27,7 +28,7 @@ export function ReadingStep({
   return (
     <ArrangeWordsInteraction
       answerKind="reading"
-      correctWords={step.sentence.sentence.split(" ")}
+      correctWords={segmentWords(step.sentence.sentence)}
       feedbackDetails={{
         sentence: step.sentence.sentence,
         translation: step.sentence.translation,

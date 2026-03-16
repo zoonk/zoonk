@@ -1,4 +1,5 @@
 import { type ChallengeEffect, parseStepContent } from "@zoonk/core/steps/content-contract";
+import { segmentWords } from "@zoonk/utils/string";
 import {
   type AnswerResult,
   checkArrangeWordsAnswer,
@@ -94,7 +95,7 @@ function checkArrangeWords(step: SerializedStep, arrangedWords: string[]): Check
     return MISMATCH_RESULT;
   }
 
-  const words = step.sentence.sentence.split(" ");
+  const words = segmentWords(step.sentence.sentence);
   return { effects: [], result: checkArrangeWordsAnswer(words, arrangedWords) };
 }
 
@@ -115,7 +116,7 @@ function checkListeningStep(step: SerializedStep, answer: SelectedAnswer): Check
     return MISMATCH_RESULT;
   }
 
-  const words = step.sentence.translation.split(" ");
+  const words = segmentWords(step.sentence.translation);
   return { effects: [], result: checkArrangeWordsAnswer(words, answer.arrangedWords) };
 }
 

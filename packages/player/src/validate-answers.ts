@@ -4,6 +4,7 @@ import {
   isSupportedStepKind,
   parseStepContent,
 } from "@zoonk/core/steps/content-contract";
+import { segmentWords } from "@zoonk/utils/string";
 import {
   checkArrangeWordsAnswer,
   checkFillBlankAnswer,
@@ -122,7 +123,7 @@ function validateReading(step: StepData, answer: SelectedAnswer): ValidatedStepR
     return null;
   }
 
-  const words = step.sentence.sentence.split(" ");
+  const words = segmentWords(step.sentence.sentence);
   const result = checkArrangeWordsAnswer(words, answer.arrangedWords);
   return { answer, effects: [], isCorrect: result.isCorrect, stepId: step.id };
 }
@@ -136,7 +137,7 @@ function validateListening(step: StepData, answer: SelectedAnswer): ValidatedSte
     return null;
   }
 
-  const words = step.sentence.translation.split(" ");
+  const words = segmentWords(step.sentence.translation);
   const result = checkArrangeWordsAnswer(words, answer.arrangedWords);
   return { answer, effects: [], isCorrect: result.isCorrect, stepId: step.id };
 }

@@ -6,11 +6,10 @@ import {
   parseStepContent,
 } from "@zoonk/core/steps/content-contract";
 import { shuffle } from "@zoonk/utils/shuffle";
-import { stripPunctuation } from "@zoonk/utils/string";
+import { buildWordBankOptions } from "./build-word-bank-options";
 import { getDistractorWords } from "./get-distractor-words";
 
 const VOCABULARY_DISTRACTOR_COUNT = 3;
-const WORD_BANK_DISTRACTOR_COUNT = 8;
 
 export type SerializedWord = {
   id: string;
@@ -145,83 +144,6 @@ function buildTranslationOptions(
     ...word,
     alternativeTranslations: [...word.alternativeTranslations],
   }));
-}
-
-function getWordBankConfig(
-  step: SerializedStep,
-): { correctWords: string[]; distractorField: "word" | "translation" } | null {
-  if (step.kind === "reading" && step.sentence) {
-    return { correctWords: step.sentence.sentence.split(" "), distractorField: "word" };
-  }
-
-  if (step.kind === "listening" && step.sentence) {
-    return { correctWords: step.sentence.translation.split(" "), distractorField: "translation" };
-  }
-
-  return null;
-}
-
-function buildWordBankOptions(
-  step: SerializedStep,
-  serializedLessonWords: SerializedWord[],
-  sentenceWordMap: Map<string, WordDataInput>,
-): WordBankOption[] {
-  const config = getWordBankConfig(step);
-
-  if (!config) {
-    return [];
-  }
-
-  const { correctWords, distractorField } = config;
-  const isReading = step.kind === "reading";
-  const correctSet = new Set(correctWords.map((word) => stripPunctuation(word).toLowerCase()));
-
-  const correctOptions: WordBankOption[] = correctWords.map((word) => {
-    if (!isReading) {
-      return { audioUrl: null, romanization: null, translation: null, word };
-    }
-
-    const lookup = sentenceWordMap.get(stripPunctuation(word).toLowerCase());
-
-    return {
-      audioUrl: lookup?.audioUrl ?? null,
-      romanization: lookup?.romanization ?? null,
-      translation: lookup?.translation ?? null,
-      word,
-    };
-  });
-
-  const allDistractorWords = serializedLessonWords.flatMap((lessonWord) =>
-    lessonWord[distractorField].split(" "),
-  );
-
-  const uniqueDistractors = [
-    ...new Map(
-      allDistractorWords
-        .filter((word) => !correctSet.has(stripPunctuation(word).toLowerCase()))
-        .map((word) => [stripPunctuation(word).toLowerCase(), word] as const),
-    ).values(),
-  ];
-
-  const distractorOptions: WordBankOption[] = shuffle(uniqueDistractors)
-    .slice(0, WORD_BANK_DISTRACTOR_COUNT)
-    .map((word) => {
-      if (!isReading) {
-        return { audioUrl: null, romanization: null, translation: null, word };
-      }
-
-      const lessonWord = serializedLessonWords.find(
-        (lw) => stripPunctuation(lw.word).toLowerCase() === stripPunctuation(word).toLowerCase(),
-      );
-      return {
-        audioUrl: lessonWord?.audioUrl ?? null,
-        romanization: lessonWord?.romanization ?? null,
-        translation: lessonWord?.translation ?? null,
-        word,
-      };
-    });
-
-  return shuffle([...correctOptions, ...distractorOptions]);
 }
 
 function buildSortOrderItems(step: SerializedStep): string[] {
