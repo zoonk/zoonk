@@ -31,8 +31,8 @@ export async function readingActivityWorkflow(
 
   const { savedSentences } = await saveReadingSentencesStep(activities, sentences);
 
-  const { audioUrls } = await generateReadingAudioStep(activities, savedSentences);
-  await updateReadingEnrichmentsStep(activities, savedSentences, audioUrls);
+  const { sentenceAudioIds } = await generateReadingAudioStep(activities, savedSentences);
+  await updateReadingEnrichmentsStep(activities, savedSentences, sentenceAudioIds);
 
   const { wordMetadata } = await generateSentenceWordMetadataStep(activities, savedSentences);
 
@@ -42,8 +42,8 @@ export async function readingActivityWorkflow(
     wordMetadata,
   );
 
-  const { wordAudioUrls } = await generateSentenceWordAudioStep(activities, savedSentenceWords);
-  await updateSentenceWordEnrichmentsStep(activities, savedSentenceWords, wordAudioUrls);
+  const { wordAudioIds } = await generateSentenceWordAudioStep(activities, savedSentenceWords);
+  await updateSentenceWordEnrichmentsStep(activities, savedSentenceWords, wordAudioIds);
 
   await completeActivityStep(activities, workflowRunId, "reading");
 }

@@ -102,7 +102,9 @@ model Organization {
   dailyProgress    DailyProgress[]
   stripeCustomerId String?         @map("stripe_customer_id")
   words            Word[]
+  wordAudios       WordAudio[]
   sentences        Sentence[]
+  sentenceAudios   SentenceAudio[]
 
   @@unique([slug])
   @@map("organizations")

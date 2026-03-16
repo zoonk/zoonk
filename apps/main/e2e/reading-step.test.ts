@@ -6,7 +6,7 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonSentenceFixture } from "@zoonk/testing/fixtures/lesson-sentences";
 import { lessonWordFixture } from "@zoonk/testing/fixtures/lesson-words";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
-import { sentenceFixture } from "@zoonk/testing/fixtures/sentences";
+import { sentenceAudioFixture, sentenceFixture } from "@zoonk/testing/fixtures/sentences";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { wordFixture } from "@zoonk/testing/fixtures/words";
 import { type Page, expect, test } from "./fixtures";
@@ -48,29 +48,38 @@ async function createReadingActivity(options: {
     title: `E2E Reading Lesson ${uniqueId}`,
   });
 
-  const [createdWords, createdSentences] = await Promise.all([
-    Promise.all(
-      options.words.map((wordData) =>
-        wordFixture({
-          organizationId: org.id,
-          romanization: wordData.romanization ?? null,
-          translation: wordData.translation,
-          word: wordData.word,
-        }),
-      ),
+  const createdWords = await Promise.all(
+    options.words.map((wordData) =>
+      wordFixture({
+        organizationId: org.id,
+        romanization: wordData.romanization ?? null,
+        translation: wordData.translation,
+        word: wordData.word,
+      }),
     ),
-    Promise.all(
-      options.sentences.map((sentenceData) =>
-        sentenceFixture({
-          audioUrl: sentenceData.audioUrl ?? null,
+  );
+
+  const createdSentences = await Promise.all(
+    options.sentences.map(async (sentenceData) => {
+      let sentenceAudioId: bigint | null = null;
+
+      if (sentenceData.audioUrl) {
+        const audio = await sentenceAudioFixture({
+          audioUrl: sentenceData.audioUrl,
           organizationId: org.id,
-          romanization: sentenceData.romanization ?? null,
-          sentence: sentenceData.sentence,
-          translation: sentenceData.translation,
-        }),
-      ),
-    ),
-  ]);
+        });
+        sentenceAudioId = audio.id;
+      }
+
+      return sentenceFixture({
+        organizationId: org.id,
+        romanization: sentenceData.romanization ?? null,
+        sentence: sentenceData.sentence,
+        sentenceAudioId,
+        translation: sentenceData.translation,
+      });
+    }),
+  );
 
   await Promise.all([
     ...createdWords.map((word) => lessonWordFixture({ lessonId: lesson.id, wordId: word.id })),

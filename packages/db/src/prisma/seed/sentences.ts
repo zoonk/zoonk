@@ -6,7 +6,6 @@ type SentenceSeedData = {
   sentence: string;
   translation: string;
   romanization?: string;
-  audioUrl?: string;
   lessonSlugs: string[];
 };
 
@@ -55,7 +54,6 @@ async function seedSentence(
 ): Promise<void> {
   const sentence = await prisma.sentence.upsert({
     create: {
-      audioUrl: data.audioUrl,
       organizationId: org.id,
       romanization: data.romanization,
       sentence: data.sentence,

@@ -14,7 +14,6 @@ async function createFlashcardActivity(options: {
     word: string;
     translation: string;
     romanization?: string | null;
-    audioUrl?: string | null;
   }[];
 }) {
   const org = await getAiOrganization();
@@ -48,7 +47,6 @@ async function createFlashcardActivity(options: {
   const createdWords = await Promise.all(
     options.words.map((wordData) =>
       wordFixture({
-        audioUrl: wordData.audioUrl ?? null,
         organizationId: org.id,
         romanization: wordData.romanization ?? null,
         translation: wordData.translation,

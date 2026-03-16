@@ -3,7 +3,7 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonWordFixture } from "@zoonk/testing/fixtures/lesson-words";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { wordFixture } from "@zoonk/testing/fixtures/words";
+import { wordAudioFixture, wordFixture } from "@zoonk/testing/fixtures/words";
 import { beforeAll, describe, expect, test } from "vitest";
 import { getLessonWords } from "./get-lesson-words";
 
@@ -77,14 +77,20 @@ describe(getLessonWords, () => {
       organizationId: org.id,
     });
 
-    const word = await wordFixture({
+    const wordAudio = await wordAudioFixture({
       audioUrl: "https://example.com/perro.mp3",
+      organizationId: org.id,
+      targetLanguage: "es",
+    });
+
+    const word = await wordFixture({
       organizationId: org.id,
       pronunciation: "peh-roh",
       romanization: null,
       targetLanguage: "es",
       translation: "dog",
       word: `perro-${crypto.randomUUID()}`,
+      wordAudioId: wordAudio.id,
     });
 
     await lessonWordFixture({ lessonId: newLesson.id, wordId: word.id });
@@ -94,12 +100,12 @@ describe(getLessonWords, () => {
     expect(result).toHaveLength(1);
     expect(result[0]).toMatchObject({
       alternativeTranslations: [],
-      audioUrl: "https://example.com/perro.mp3",
       id: word.id,
       pronunciation: "peh-roh",
       romanization: null,
       translation: "dog",
       word: word.word,
+      wordAudio: { audioUrl: "https://example.com/perro.mp3" },
     });
   });
 

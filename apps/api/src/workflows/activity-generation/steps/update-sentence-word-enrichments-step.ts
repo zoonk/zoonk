@@ -9,7 +9,7 @@ import { type SavedSentenceWord } from "./save-sentence-words-step";
 export async function updateSentenceWordEnrichmentsStep(
   activities: LessonActivity[],
   savedSentenceWords: SavedSentenceWord[],
-  wordAudioUrls: Record<string, string>,
+  wordAudioIds: Record<string, bigint>,
 ): Promise<void> {
   "use step";
 
@@ -22,10 +22,10 @@ export async function updateSentenceWordEnrichmentsStep(
   await streamStatus({ status: "started", step: "updateSentenceWordEnrichments" });
 
   const updates = savedSentenceWords
-    .filter((saved) => wordAudioUrls[saved.word])
+    .filter((saved) => wordAudioIds[saved.word])
     .map((saved) =>
       prisma.word.update({
-        data: { audioUrl: wordAudioUrls[saved.word] },
+        data: { wordAudioId: wordAudioIds[saved.word] },
         where: { id: saved.wordId },
       }),
     );

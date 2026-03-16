@@ -384,19 +384,28 @@ describe(readingActivityWorkflow, () => {
     expect(allVariants[0]!.word).toBe(capitalizedWord);
   });
 
-  test("skips TTS for sentence words that already have an audioUrl", async () => {
+  test("skips TTS for sentence words that already have a WordAudio record", async () => {
     const id = randomUUID().replaceAll("-", "").slice(0, 8);
     const existingWord = `zexist${id}`;
     const newWord = `znew${id}`;
 
-    await prisma.word.create({
+    const wordAudio = await prisma.wordAudio.create({
       data: {
         audioUrl: "https://example.com/existing-audio.mp3",
+        organizationId,
+        targetLanguage: "es",
+        word: existingWord,
+      },
+    });
+
+    await prisma.word.create({
+      data: {
         organizationId,
         targetLanguage: "es",
         translation: "existing",
         userLanguage: "en",
         word: existingWord,
+        wordAudioId: wordAudio.id,
       },
     });
 

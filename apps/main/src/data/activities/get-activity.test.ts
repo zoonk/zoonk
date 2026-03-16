@@ -3,9 +3,9 @@ import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { sentenceFixture } from "@zoonk/testing/fixtures/sentences";
+import { sentenceAudioFixture, sentenceFixture } from "@zoonk/testing/fixtures/sentences";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
-import { wordFixture } from "@zoonk/testing/fixtures/words";
+import { wordAudioFixture, wordFixture } from "@zoonk/testing/fixtures/words";
 import { beforeAll, describe, expect, test } from "vitest";
 import { getActivity } from "./get-activity";
 
@@ -144,6 +144,11 @@ describe(getActivity, () => {
       organizationId: org.id,
     });
 
+    const wordAudio = await wordAudioFixture({
+      audioUrl: "https://example.com/audio.mp3",
+      organizationId: org.id,
+    });
+
     const [wordActivity, word] = await Promise.all([
       activityFixture({
         generationStatus: "completed",
@@ -155,12 +160,12 @@ describe(getActivity, () => {
         position: 0,
       }),
       wordFixture({
-        audioUrl: "https://example.com/audio.mp3",
         organizationId: org.id,
         pronunciation: "test-pron",
         romanization: "test-roman",
         translation: "test-translation",
         word: `test-word-${crypto.randomUUID()}`,
+        wordAudioId: wordAudio.id,
       }),
     ]);
 
@@ -175,12 +180,12 @@ describe(getActivity, () => {
 
     expect(result?.steps[0]?.word).toMatchObject({
       alternativeTranslations: [],
-      audioUrl: "https://example.com/audio.mp3",
       id: word.id,
       pronunciation: "test-pron",
       romanization: "test-roman",
       translation: "test-translation",
       word: word.word,
+      wordAudio: { audioUrl: "https://example.com/audio.mp3" },
     });
   });
 
@@ -189,6 +194,11 @@ describe(getActivity, () => {
       chapterId: chapter.id,
       isPublished: true,
       language: "en",
+      organizationId: org.id,
+    });
+
+    const sentAudio = await sentenceAudioFixture({
+      audioUrl: "https://example.com/sent-audio.mp3",
       organizationId: org.id,
     });
 
@@ -203,10 +213,10 @@ describe(getActivity, () => {
         position: 0,
       }),
       sentenceFixture({
-        audioUrl: "https://example.com/sent-audio.mp3",
         organizationId: org.id,
         romanization: "test-sent-roman",
         sentence: `test-sentence-${crypto.randomUUID()}`,
+        sentenceAudioId: sentAudio.id,
         translation: "test-sent-translation",
       }),
     ]);
@@ -221,10 +231,10 @@ describe(getActivity, () => {
     const result = await getActivity({ lessonId: sentLesson.id, position: 0 });
 
     expect(result?.steps[0]?.sentence).toMatchObject({
-      audioUrl: "https://example.com/sent-audio.mp3",
       id: sentence.id,
       romanization: "test-sent-roman",
       sentence: sentence.sentence,
+      sentenceAudio: { audioUrl: "https://example.com/sent-audio.mp3" },
       translation: "test-sent-translation",
     });
   });

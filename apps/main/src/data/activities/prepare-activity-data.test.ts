@@ -6,9 +6,9 @@ import { lessonSentenceFixture } from "@zoonk/testing/fixtures/lesson-sentences"
 import { lessonWordFixture } from "@zoonk/testing/fixtures/lesson-words";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { sentenceFixture } from "@zoonk/testing/fixtures/sentences";
+import { sentenceAudioFixture, sentenceFixture } from "@zoonk/testing/fixtures/sentences";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
-import { wordFixture } from "@zoonk/testing/fixtures/words";
+import { wordAudioFixture, wordFixture } from "@zoonk/testing/fixtures/words";
 import { beforeAll, describe, expect, expectTypeOf, test } from "vitest";
 import { getActivity } from "./get-activity";
 
@@ -104,14 +104,19 @@ describe(prepareActivityData, () => {
   });
 
   test("serializes word data on steps with word relations", async () => {
+    const wordAudio = await wordAudioFixture({
+      audioUrl: "https://example.com/word.mp3",
+      organizationId: org.id,
+    });
+
     const [word, activity] = await Promise.all([
       wordFixture({
-        audioUrl: "https://example.com/word.mp3",
         organizationId: org.id,
         pronunciation: "hola",
         romanization: null,
         translation: "hello",
         word: `hola-${crypto.randomUUID()}`,
+        wordAudioId: wordAudio.id,
       }),
       activityFixture({
         generationStatus: "completed",
@@ -148,12 +153,17 @@ describe(prepareActivityData, () => {
   });
 
   test("serializes sentence data on steps with sentence relations", async () => {
+    const sentAudio = await sentenceAudioFixture({
+      audioUrl: "https://example.com/sent.mp3",
+      organizationId: org.id,
+    });
+
     const [sentence, activity] = await Promise.all([
       sentenceFixture({
-        audioUrl: "https://example.com/sent.mp3",
         organizationId: org.id,
         romanization: "konnichiwa",
         sentence: `konnichiwa-${crypto.randomUUID()}`,
+        sentenceAudioId: sentAudio.id,
         translation: "hello",
       }),
       activityFixture({
@@ -239,30 +249,30 @@ describe(prepareActivityData, () => {
     const lessonWords = [
       {
         alternativeTranslations: word1.alternativeTranslations,
-        audioUrl: word1.audioUrl,
         id: word1.id,
         pronunciation: word1.pronunciation,
         romanization: word1.romanization,
         translation: word1.translation,
         word: word1.word,
+        wordAudio: word1.wordAudio,
       },
       {
         alternativeTranslations: word2.alternativeTranslations,
-        audioUrl: word2.audioUrl,
         id: word2.id,
         pronunciation: word2.pronunciation,
         romanization: word2.romanization,
         translation: word2.translation,
         word: word2.word,
+        wordAudio: word2.wordAudio,
       },
     ];
 
     const lessonSentences = [
       {
-        audioUrl: sentence1.audioUrl,
         id: sentence1.id,
         romanization: sentence1.romanization,
         sentence: sentence1.sentence,
+        sentenceAudio: sentence1.sentenceAudio,
         translation: sentence1.translation,
       },
     ];
@@ -344,22 +354,22 @@ describe(prepareActivityData, () => {
   test("copies alternativeTranslations arrays for translation options", () => {
     const stepWord = {
       alternativeTranslations: ["hello"],
-      audioUrl: null,
       id: BigInt(1),
       pronunciation: null,
       romanization: null,
       translation: "hello",
       word: "hola",
+      wordAudio: null,
     };
 
     const lessonWord = {
       alternativeTranslations: ["cat"],
-      audioUrl: null,
       id: BigInt(2),
       pronunciation: null,
       romanization: null,
       translation: "cat",
       word: "gato",
+      wordAudio: null,
     };
 
     const activity = {
@@ -440,21 +450,21 @@ describe(prepareActivityData, () => {
     const lessonWords = [
       {
         alternativeTranslations: [],
-        audioUrl: null,
         id: word1.id,
         pronunciation: null,
         romanization: null,
         translation: word1.translation,
         word: word1.word,
+        wordAudio: null,
       },
       {
         alternativeTranslations: [],
-        audioUrl: null,
         id: word2.id,
         pronunciation: null,
         romanization: null,
         translation: word2.translation,
         word: word2.word,
+        wordAudio: null,
       },
     ];
 
@@ -514,21 +524,21 @@ describe(prepareActivityData, () => {
     const lessonWords = [
       {
         alternativeTranslations: [],
-        audioUrl: null,
         id: word1.id,
         pronunciation: null,
         romanization: null,
         translation: word1.translation,
         word: word1.word,
+        wordAudio: null,
       },
       {
         alternativeTranslations: [],
-        audioUrl: null,
         id: word2.id,
         pronunciation: null,
         romanization: null,
         translation: word2.translation,
         word: word2.word,
+        wordAudio: null,
       },
     ];
 
@@ -563,10 +573,10 @@ describe(prepareActivityData, () => {
           kind: "reading",
           position: 0,
           sentence: {
-            audioUrl: null,
             id: BigInt(72),
             romanization: null,
             sentence: "gato bonito",
+            sentenceAudio: null,
             translation: "pretty cat",
           },
           word: null,
@@ -578,12 +588,12 @@ describe(prepareActivityData, () => {
     const lessonWords = [
       {
         alternativeTranslations: [],
-        audioUrl: "https://example.com/gato.mp3",
         id: BigInt(73),
         pronunciation: null,
         romanization: "ga-to",
         translation: "cat",
         word: "gato",
+        wordAudio: { audioUrl: "https://example.com/gato.mp3" },
       },
     ];
 
@@ -615,10 +625,10 @@ describe(prepareActivityData, () => {
           kind: "reading",
           position: 0,
           sentence: {
-            audioUrl: null,
             id: BigInt(76),
             romanization: null,
             sentence: "gato bonito",
+            sentenceAudio: null,
             translation: "pretty cat",
           },
           word: null,
@@ -630,24 +640,24 @@ describe(prepareActivityData, () => {
     const lessonWords = [
       {
         alternativeTranslations: [],
-        audioUrl: "https://example.com/lesson-gato.mp3",
         id: BigInt(77),
         pronunciation: null,
         romanization: null,
         translation: "cat (lesson)",
         word: "gato",
+        wordAudio: { audioUrl: "https://example.com/lesson-gato.mp3" },
       },
     ];
 
     const sentenceWords = [
       {
         alternativeTranslations: [],
-        audioUrl: "https://example.com/sentence-gato.mp3",
         id: BigInt(78),
         pronunciation: null,
         romanization: "ga-to",
         translation: "cat (sentence)",
         word: "gato",
+        wordAudio: { audioUrl: "https://example.com/sentence-gato.mp3" },
       },
     ];
 
@@ -678,10 +688,10 @@ describe(prepareActivityData, () => {
           kind: "reading",
           position: 0,
           sentence: {
-            audioUrl: null,
             id: BigInt(22),
             romanization: null,
             sentence: "Hola mundo",
+            sentenceAudio: null,
             translation: "Hello world",
           },
           word: null,
@@ -694,21 +704,21 @@ describe(prepareActivityData, () => {
     const lessonWords = [
       {
         alternativeTranslations: [],
-        audioUrl: null,
         id: BigInt(23),
         pronunciation: null,
         romanization: null,
         translation: "hello",
         word: "hola",
+        wordAudio: null,
       },
       {
         alternativeTranslations: [],
-        audioUrl: null,
         id: BigInt(24),
         pronunciation: null,
         romanization: null,
         translation: "cat",
         word: "gato",
+        wordAudio: null,
       },
     ];
 
@@ -737,10 +747,10 @@ describe(prepareActivityData, () => {
           kind: "reading",
           position: 0,
           sentence: {
-            audioUrl: null,
             id: BigInt(32),
             romanization: null,
             sentence: "Sabes you?",
+            sentenceAudio: null,
             translation: "Know you?",
           },
           word: null,
@@ -753,21 +763,21 @@ describe(prepareActivityData, () => {
     const lessonWords = [
       {
         alternativeTranslations: [],
-        audioUrl: null,
         id: BigInt(33),
         pronunciation: null,
         romanization: null,
         translation: "you",
         word: "you",
+        wordAudio: null,
       },
       {
         alternativeTranslations: [],
-        audioUrl: null,
         id: BigInt(34),
         pronunciation: null,
         romanization: null,
         translation: "cat",
         word: "gato",
+        wordAudio: null,
       },
     ];
 
@@ -796,10 +806,10 @@ describe(prepareActivityData, () => {
           kind: "reading",
           position: 0,
           sentence: {
-            audioUrl: null,
             id: BigInt(42),
             romanization: null,
             sentence: "Hola amigos",
+            sentenceAudio: null,
             translation: "Hello friends",
           },
           word: null,
@@ -812,21 +822,21 @@ describe(prepareActivityData, () => {
     const lessonWords = [
       {
         alternativeTranslations: [],
-        audioUrl: null,
         id: BigInt(43),
         pronunciation: null,
         romanization: null,
         translation: "you",
         word: "tu",
+        wordAudio: null,
       },
       {
         alternativeTranslations: [],
-        audioUrl: null,
         id: BigInt(44),
         pronunciation: null,
         romanization: null,
         translation: "you?",
         word: "tu?",
+        wordAudio: null,
       },
     ];
 
@@ -883,10 +893,10 @@ describe(prepareActivityData, () => {
           kind: "reading",
           position: 0,
           sentence: {
-            audioUrl: null,
             id: BigInt(92),
             romanization: null,
             sentence: "gato bonito",
+            sentenceAudio: null,
             translation: "pretty cat",
           },
           word: null,
@@ -898,12 +908,12 @@ describe(prepareActivityData, () => {
     const lessonWords = [
       {
         alternativeTranslations: [],
-        audioUrl: "https://example.com/gato.mp3",
         id: BigInt(93),
         pronunciation: null,
         romanization: "ga-to",
         translation: "cat",
         word: "gato",
+        wordAudio: { audioUrl: "https://example.com/gato.mp3" },
       },
     ];
 
@@ -942,10 +952,10 @@ describe(prepareActivityData, () => {
           kind: "listening",
           position: 0,
           sentence: {
-            audioUrl: null,
             id: BigInt(96),
             romanization: null,
             sentence: "gato bonito",
+            sentenceAudio: null,
             translation: "pretty cat",
           },
           word: null,
@@ -957,12 +967,12 @@ describe(prepareActivityData, () => {
     const sentenceWords = [
       {
         alternativeTranslations: [],
-        audioUrl: "https://example.com/sw-gato.mp3",
         id: BigInt(97),
         pronunciation: null,
         romanization: "ga-to-sw",
         translation: "cat (sw)",
         word: "gato",
+        wordAudio: { audioUrl: "https://example.com/sw-gato.mp3" },
       },
     ];
 

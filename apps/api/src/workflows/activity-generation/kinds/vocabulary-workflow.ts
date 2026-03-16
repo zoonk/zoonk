@@ -31,9 +31,9 @@ export async function vocabularyActivityWorkflow(
 
   const { savedWords } = settled(saveWordsResult, { savedWords: [] });
   const { pronunciations } = settled(pronunciationResult, { pronunciations: {} });
-  const { audioUrls } = settled(audioResult, { audioUrls: {} });
+  const { wordAudioIds } = settled(audioResult, { wordAudioIds: {} });
 
-  await updateVocabularyEnrichmentsStep(activities, savedWords, pronunciations, audioUrls);
+  await updateVocabularyEnrichmentsStep(activities, savedWords, pronunciations, wordAudioIds);
   await completeActivityStep(activities, workflowRunId, "vocabulary");
   await completeActivityStep(activities, workflowRunId, "translation");
 

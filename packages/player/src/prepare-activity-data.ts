@@ -80,7 +80,7 @@ type WordDataInput = {
   alternativeTranslations: string[];
   pronunciation: string | null;
   romanization: string | null;
-  audioUrl: string | null;
+  wordAudio: { audioUrl: string } | null;
 };
 
 type SentenceDataInput = {
@@ -88,13 +88,13 @@ type SentenceDataInput = {
   sentence: string;
   translation: string;
   romanization: string | null;
-  audioUrl: string | null;
+  sentenceAudio: { audioUrl: string } | null;
 };
 
 function serializeWord(word: WordDataInput): SerializedWord {
   return {
     alternativeTranslations: [...word.alternativeTranslations],
-    audioUrl: word.audioUrl,
+    audioUrl: word.wordAudio?.audioUrl ?? null,
     id: String(word.id),
     pronunciation: word.pronunciation,
     romanization: word.romanization,
@@ -105,7 +105,7 @@ function serializeWord(word: WordDataInput): SerializedWord {
 
 function serializeSentence(sentence: SentenceDataInput): SerializedSentence {
   return {
-    audioUrl: sentence.audioUrl,
+    audioUrl: sentence.sentenceAudio?.audioUrl ?? null,
     id: String(sentence.id),
     romanization: sentence.romanization,
     sentence: sentence.sentence,
@@ -221,7 +221,7 @@ export function prepareActivityData(
 ): SerializedActivity {
   const serializedLessonWords = lessonWords.map((word) => ({
     alternativeTranslations: [...word.alternativeTranslations],
-    audioUrl: word.audioUrl,
+    audioUrl: word.wordAudio?.audioUrl ?? null,
     id: String(word.id),
     pronunciation: word.pronunciation,
     romanization: word.romanization,
@@ -252,7 +252,7 @@ export function prepareActivityData(
     kind: activity.kind,
     language: activity.language,
     lessonSentences: lessonSentences.map((sentence) => ({
-      audioUrl: sentence.audioUrl,
+      audioUrl: sentence.sentenceAudio?.audioUrl ?? null,
       id: String(sentence.id),
       romanization: sentence.romanization,
       sentence: sentence.sentence,

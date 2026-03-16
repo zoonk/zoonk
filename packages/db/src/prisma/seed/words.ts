@@ -7,7 +7,6 @@ type WordSeedData = {
   translation: string;
   pronunciation: string;
   romanization?: string;
-  audioUrl?: string;
   lessonSlugs: string[];
 };
 
@@ -61,7 +60,6 @@ async function seedWord(
 ): Promise<void> {
   const word = await prisma.word.upsert({
     create: {
-      audioUrl: data.audioUrl,
       organizationId: org.id,
       pronunciation: data.pronunciation,
       romanization: data.romanization,
