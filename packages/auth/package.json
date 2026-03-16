@@ -33,7 +33,6 @@
     "@types/react": "^19.2.14",
     "@typescript/native-preview": "7.0.0-dev.20260314.1",
     "@zoonk/tsconfig": "workspace:*",
-    "vite-tsconfig-paths": "6.1.1",
     "vitest": "4.1.0"
   },
   "peerDependencies": {

@@ -1,10 +1,8 @@
 import { resolve } from "node:path";
-import tsconfigPaths from "vite-tsconfig-paths";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   assetsInclude: ["**/*.md"],
-  plugins: [tsconfigPaths()],
   resolve: {
     alias: [
       {
@@ -18,6 +16,7 @@ export default defineConfig({
         replacement: resolve(import.meta.dirname, "./mocks/server-only.ts"),
       },
     ],
+    tsconfigPaths: true,
   },
   test: {
     env: {
