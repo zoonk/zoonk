@@ -272,6 +272,6 @@ test.describe("Chapter - No Lessons", () => {
   test("chapter with no lessons redirects to generate page", async ({ page }) => {
     await page.goto(noLessonsChapterUrl);
 
-    await expect(page).toHaveURL(new RegExp(`/generate/ch/${noLessonsChapterId}`));
+    await page.waitForURL(new RegExp(`/generate/ch/${noLessonsChapterId}`));
   });
 });

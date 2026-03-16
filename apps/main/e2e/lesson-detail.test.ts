@@ -257,7 +257,7 @@ test.describe("Lesson Detail Page", () => {
 
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
 
-    await expect(page).toHaveURL(new RegExp(`/generate/l/${lesson.id}`));
+    await page.waitForURL(new RegExp(`/generate/l/${lesson.id}`));
   });
 
   test("shows not-completed indicators for unauthenticated user", async ({ page }) => {

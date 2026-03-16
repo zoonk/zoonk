@@ -15,9 +15,11 @@ test.describe("Language settings page", () => {
     await page.goto("/language");
 
     const selector = page.getByRole("combobox", { name: /update language/i });
-    await selector.selectOption("es");
 
-    await page.waitForURL("**/language");
+    // Start listening for the reload before triggering it
+    const reloadPromise = page.waitForEvent("load");
+    await selector.selectOption("es");
+    await reloadPromise;
 
     await expect(page.getByRole("heading", { level: 1, name: /^idioma$/i })).toBeVisible();
   });
@@ -26,9 +28,11 @@ test.describe("Language settings page", () => {
     await page.goto("/language");
 
     const selector = page.getByRole("combobox", { name: /update language/i });
-    await selector.selectOption("pt");
 
-    await page.waitForURL("**/language");
+    // Start listening for the reload before triggering it
+    const reloadPromise = page.waitForEvent("load");
+    await selector.selectOption("pt");
+    await reloadPromise;
 
     await expect(page.getByRole("heading", { level: 1, name: /^idioma$/i })).toBeVisible();
 
