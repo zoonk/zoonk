@@ -18,7 +18,7 @@ async function createReadingActivity(options: {
     sentence: string;
     translation: string;
   }[];
-  words: { translation: string; word: string }[];
+  words: { romanization?: string | null; translation: string; word: string }[];
 }) {
   const org = await getAiOrganization();
 
@@ -53,6 +53,7 @@ async function createReadingActivity(options: {
       options.words.map((wordData) =>
         wordFixture({
           organizationId: org.id,
+          romanization: wordData.romanization ?? null,
           translation: wordData.translation,
           word: wordData.word,
         }),
@@ -299,6 +300,7 @@ test.describe("Reading Step", () => {
     const uniqueId = randomUUID().replaceAll("-", "").slice(0, 8);
     const word1 = `hola${uniqueId}`;
     const word2 = `mundo${uniqueId}`;
+    const romanization1 = `oh-la${uniqueId}`;
 
     const { url } = await createReadingActivity({
       sentences: [
@@ -309,6 +311,7 @@ test.describe("Reading Step", () => {
       ],
       words: [
         {
+          romanization: romanization1,
           translation: `hello${uniqueId}`,
           word: word1,
         },
@@ -319,9 +322,9 @@ test.describe("Reading Step", () => {
 
     const wordBank = page.getByRole("group", { name: /word bank/i });
 
-    // Arrange correctly
+    // Arrange correctly (word1 button includes romanization text, so use regex)
     await expect(async () => {
-      await wordBank.getByRole("button", { exact: true, name: word1 }).click();
+      await wordBank.getByRole("button", { name: new RegExp(word1) }).click();
       await expect(
         page
           .getByRole("group", { name: /your answer/i })
@@ -340,7 +343,8 @@ test.describe("Reading Step", () => {
     await expect(correctAnswer.getByText(word1)).toBeVisible();
     await expect(correctAnswer.getByText(word2)).toBeVisible();
 
-    // Word with matching lesson word shows its translation
+    // Word with matching lesson word shows its romanization and translation
+    await expect(correctAnswer.getByText(romanization1)).toBeVisible();
     await expect(correctAnswer.getByText(`hello${uniqueId}`)).toBeVisible();
   });
 
