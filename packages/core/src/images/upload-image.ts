@@ -1,6 +1,7 @@
 import "server-only";
 import { put } from "@vercel/blob";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
+import { logError } from "@zoonk/utils/logger";
 
 export async function uploadImage({
   fileName,
@@ -18,7 +19,7 @@ export async function uploadImage({
   );
 
   if (error) {
-    console.error("Error uploading image:", error);
+    logError("Error uploading image:", error);
     return { data: null, error };
   }
 

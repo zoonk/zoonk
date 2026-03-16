@@ -1,4 +1,5 @@
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
+import { logError } from "@zoonk/utils/logger";
 import { type GeneratedFile, type ImageModel, generateImage } from "ai";
 import promptTemplate from "./course-thumbnail.prompt.md";
 
@@ -33,7 +34,7 @@ export async function generateCourseThumbnail({
   );
 
   if (error) {
-    console.error("Error generating course thumbnail:", error);
+    logError("Error generating course thumbnail:", error);
     return { data: null, error };
   }
 

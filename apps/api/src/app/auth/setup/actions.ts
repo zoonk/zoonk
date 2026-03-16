@@ -3,6 +3,7 @@
 import { auth } from "@zoonk/core/auth";
 import { safeAsync } from "@zoonk/utils/error";
 import { parseFormField } from "@zoonk/utils/form";
+import { logError } from "@zoonk/utils/logger";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
@@ -28,7 +29,7 @@ export async function setupProfileAction(
   );
 
   if (error) {
-    console.error("Error setting up profile:", error);
+    logError("Error setting up profile:", error);
     return { status: "error" };
   }
 
