@@ -32,7 +32,7 @@ export async function generateLanguageCourseChapters({
   targetLanguage,
   model = DEFAULT_MODEL,
   useFallback = true,
-  reasoningEffort = "high",
+  reasoningEffort,
 }: LanguageCourseChaptersParams) {
   const targetLanguageName = getLanguageName({ targetLanguage, userLanguage });
 
