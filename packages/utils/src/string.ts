@@ -1,6 +1,4 @@
-import slug from "slug";
-
-export const SLUG_MAX_LENGTH = 50;
+const SLUG_MAX_LENGTH = 50;
 const NAME_PLACEHOLDER = "{{NAME}}";
 
 export function removeAccents(str: string): string {
@@ -12,7 +10,40 @@ export function normalizeString(str: string): string {
 }
 
 export function toSlug(str: string): string {
-  return slug(str.trim());
+  return removeAccents(str.trim())
+    .normalize("NFC")
+    .toLowerCase()
+    .replaceAll(/[^\p{L}\p{N}\p{M}\s-]/gu, "")
+    .replaceAll(/\s+/g, "-")
+    .replaceAll(/-+/g, "-")
+    .replaceAll(/^-|-$/g, "")
+    .slice(0, SLUG_MAX_LENGTH);
+}
+
+function nextAvailableSlug(base: string, taken: Set<string>): string {
+  let counter = 1;
+
+  while (taken.has(`${base}-${counter}`)) {
+    counter += 1;
+  }
+
+  return `${base}-${counter}`;
+}
+
+export function deduplicateSlugs<T extends { slug: string }>(items: T[]): T[] {
+  const taken = new Set<string>(items.map((item) => item.slug));
+  const seen = new Set<string>();
+
+  return items.map((item) => {
+    if (!seen.has(item.slug)) {
+      seen.add(item.slug);
+      return item;
+    }
+
+    const candidate = nextAvailableSlug(item.slug, taken);
+    taken.add(candidate);
+    return { ...item, slug: candidate };
+  });
 }
 
 export function emptyToNull(value?: string | null): string | null {

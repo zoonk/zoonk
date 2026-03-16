@@ -1,5 +1,6 @@
 import { describe, expect, test } from "vitest";
 import {
+  deduplicateSlugs,
   emptyToNull,
   ensureLocaleSuffix,
   extractUniqueSentenceWords,
@@ -141,9 +142,128 @@ describe(removeLocaleSuffix, () => {
 });
 
 describe(toSlug, () => {
-  test("strips dots from input", () => {
+  test("basic slug behavior", () => {
+    expect(toSlug("Hello World")).toBe("hello-world");
+    expect(toSlug("  Hello   World  ")).toBe("hello-world");
+    expect(toSlug("hello-world")).toBe("hello-world");
+    expect(toSlug("---hello---world---")).toBe("hello-world");
+    expect(toSlug("hello\tworld\nfoo")).toBe("hello-world-foo");
+    expect(toSlug("UPPERCASE")).toBe("uppercase");
+    expect(toSlug("a")).toBe("a");
+  });
+
+  test("strips Latin accents", () => {
+    expect(toSlug("Café")).toBe("cafe");
+    expect(toSlug("São Paulo")).toBe("sao-paulo");
+    expect(toSlug("El Niño")).toBe("el-nino");
+    expect(toSlug("Über")).toBe("uber");
+    expect(toSlug("Façade")).toBe("facade");
+    expect(toSlug("Français Español Português")).toBe("francais-espanol-portugues");
+  });
+
+  test("preserves special Latin characters as Unicode", () => {
+    expect(toSlug("Straße")).toBe("straße");
+    expect(toSlug("Ærø")).toBe("ærø");
+  });
+
+  test("preserves CJK characters", () => {
+    expect(toSlug("わけはずもの")).toBe("わけはずもの");
+    expect(toSlug("日本語が話せます")).toBe("日本語が話せます");
+    expect(toSlug("你好世界")).toBe("你好世界");
+    expect(toSlug("당근마켓")).toBe("당근마켓");
+  });
+
+  test("handles mixed Latin and CJK (the bug fix)", () => {
+    expect(toSlug("Estruturas com わけ・はず・もの")).toBe("estruturas-com-わけはずもの");
+    expect(toSlug("Estruturas com よう・みたい・らしい")).toBe("estruturas-com-ようみたいらしい");
+    expect(toSlug("Condicional com と")).toBe("condicional-com-と");
+    expect(toSlug("Condicional com たら")).toBe("condicional-com-たら");
+
+    const slugs = [
+      toSlug("Estruturas com わけ・はず・もの"),
+      toSlug("Estruturas com よう・みたい・らしい"),
+      toSlug("Condicional com と"),
+      toSlug("Condicional com たら"),
+    ];
+
+    expect(new Set(slugs).size).toBe(slugs.length);
+  });
+
+  test("preserves other Unicode scripts", () => {
+    expect(toSlug("สวัสดี")).toBe("สวัสดี");
+    expect(toSlug("हिन्दी")).toBe("हिन्दी");
+    expect(toSlug("مرحبا")).toBe("مرحبا");
+    expect(toSlug("αλφα βήτα")).toBe("αλφα-βητα");
+    expect(toSlug("москва")).toBe("москва");
+    expect(toSlug("שלום")).toBe("שלום");
+    expect(toSlug("თბილისი")).toBe("თბილისი");
+  });
+
+  test("removes punctuation and symbols", () => {
     expect(toSlug("dev.ops")).toBe("devops");
     expect(toSlug("john.doe.smith")).toBe("johndoesmith");
+    expect(toSlug("Hello (World) [Test]")).toBe("hello-world-test");
+    expect(toSlug("Rock & Roll")).toBe("rock-roll");
+    expect(toSlug("Hello! @World #1")).toBe("hello-world-1");
+    expect(toSlug("5★ stars")).toBe("5-stars");
+    expect(toSlug("Hello 😀 World")).toBe("hello-world");
+    expect(toSlug("わけ・はず")).toBe("わけはず");
+  });
+
+  test("edge cases", () => {
+    expect(toSlug("")).toBe("");
+    expect(toSlug("   ")).toBe("");
+    expect(toSlug("...!!!")).toBe("");
+    expect(toSlug("123")).toBe("123");
+    expect(toSlug("Test 123 Foo")).toBe("test-123-foo");
+  });
+
+  test("truncates to SLUG_MAX_LENGTH", () => {
+    const long = "a".repeat(100);
+    expect(toSlug(long)).toBe("a".repeat(50));
+    expect(
+      toSlug("Introduction to Conditional Probability and Bayesian Inference Methods"),
+    ).toHaveLength(50);
+  });
+});
+
+describe(deduplicateSlugs, () => {
+  test("leaves unique slugs unchanged", () => {
+    const items = [{ slug: "a" }, { slug: "b" }];
+    expect(deduplicateSlugs(items)).toEqual([{ slug: "a" }, { slug: "b" }]);
+  });
+
+  test("appends counter suffix to duplicate slugs", () => {
+    const items = [{ slug: "x" }, { slug: "x" }, { slug: "x" }];
+    expect(deduplicateSlugs(items)).toEqual([{ slug: "x" }, { slug: "x-1" }, { slug: "x-2" }]);
+  });
+
+  test("uses 1-based counter regardless of array position", () => {
+    const items = [{ slug: "a" }, { slug: "x" }, { slug: "x" }];
+    expect(deduplicateSlugs(items)).toEqual([{ slug: "a" }, { slug: "x" }, { slug: "x-1" }]);
+  });
+
+  test("avoids collision with pre-existing slugs", () => {
+    const items = [{ slug: "x" }, { slug: "x" }, { slug: "x-1" }];
+    expect(deduplicateSlugs(items)).toEqual([{ slug: "x" }, { slug: "x-2" }, { slug: "x-1" }]);
+  });
+
+  test("preserves extra properties", () => {
+    const items = [
+      { slug: "a", title: "A" },
+      { slug: "a", title: "B" },
+    ];
+    const result = deduplicateSlugs(items);
+    expect(result[0]).toEqual({ slug: "a", title: "A" });
+    expect(result[1]).toEqual({ slug: "a-1", title: "B" });
+  });
+
+  test("handles empty array", () => {
+    expect(deduplicateSlugs([])).toEqual([]);
+  });
+
+  test("handles single item", () => {
+    expect(deduplicateSlugs([{ slug: "a" }])).toEqual([{ slug: "a" }]);
   });
 });
 
