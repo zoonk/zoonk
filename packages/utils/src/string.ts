@@ -16,8 +16,8 @@ export function toSlug(str: string): string {
     .replaceAll(/[^\p{L}\p{N}\p{M}\s-]/gu, "")
     .replaceAll(/\s+/g, "-")
     .replaceAll(/-+/g, "-")
-    .replaceAll(/^-|-$/g, "")
-    .slice(0, SLUG_MAX_LENGTH);
+    .slice(0, SLUG_MAX_LENGTH)
+    .replaceAll(/^-|-$/g, "");
 }
 
 function nextAvailableSlug(base: string, taken: Set<string>): string {

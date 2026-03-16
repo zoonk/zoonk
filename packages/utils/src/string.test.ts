@@ -225,6 +225,12 @@ describe(toSlug, () => {
       toSlug("Introduction to Conditional Probability and Bayesian Inference Methods"),
     ).toHaveLength(50);
   });
+
+  test("strips trailing hyphen left by truncation", () => {
+    expect(toSlug("Existing Completed Course 7cf0f58c-c844-4e77-b93d-862b088c72e0")).toBe(
+      "existing-completed-course-7cf0f58c-c844-4e77-b93d",
+    );
+  });
 });
 
 describe(deduplicateSlugs, () => {

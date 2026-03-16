@@ -34,7 +34,7 @@ describe(findExistingCourse, () => {
   });
 
   test("returns course when found by slug + language in courses table (AI org)", async () => {
-    const uniqueSlug = `ai-course-slug-${randomUUID()}`;
+    const uniqueSlug = `ai-${randomUUID()}`;
 
     const course = await courseFixture({
       generationStatus: "completed",
@@ -65,8 +65,8 @@ describe(findExistingCourse, () => {
   });
 
   test("returns course when found by slug + language in alternative titles table", async () => {
-    const uniqueSlug = `original-course-slug-${randomUUID()}`;
-    const altSlug = `alternative-slug-${randomUUID()}`;
+    const uniqueSlug = `orig-${randomUUID()}`;
+    const altSlug = `alt-${randomUUID()}`;
 
     const course = await courseFixture({
       generationStatus: "completed",
@@ -103,7 +103,7 @@ describe(findExistingCourse, () => {
   });
 
   test("returns null for courses from non-AI organizations", async () => {
-    const uniqueSlug = `non-ai-course-${randomUUID()}`;
+    const uniqueSlug = `nonai-${randomUUID()}`;
 
     await courseFixture({
       language: "en",
@@ -121,7 +121,7 @@ describe(findExistingCourse, () => {
   });
 
   test("prioritizes direct course match over alternative title match", async () => {
-    const uniqueSlug = `priority-test-slug-${randomUUID()}`;
+    const uniqueSlug = `prio-${randomUUID()}`;
 
     const directCourse = await courseFixture({
       generationStatus: "completed",
@@ -134,7 +134,7 @@ describe(findExistingCourse, () => {
       generationStatus: "pending",
       language: "en",
       organizationId: aiOrg.id,
-      slug: `alt-course-for-priority-${randomUUID()}`,
+      slug: `altprio-${randomUUID()}`,
     });
 
     await courseAlternativeTitleFixture({
@@ -172,7 +172,7 @@ describe(findExistingCourse, () => {
   });
 
   test("handles different languages correctly", async () => {
-    const uniqueSlug = `language-test-course-${randomUUID()}`;
+    const uniqueSlug = `lang-${randomUUID()}`;
 
     const [enCourse, ptCourse] = await Promise.all([
       courseFixture({
