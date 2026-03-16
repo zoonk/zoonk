@@ -53,7 +53,7 @@ export function stripPunctuation(text: string): string {
  */
 export function segmentWords(text: string): string[] {
   if (text.includes(" ")) {
-    return text.split(" ");
+    return text.split(" ").filter(Boolean);
   }
 
   const segmenter = new Intl.Segmenter(undefined, { granularity: "word" });

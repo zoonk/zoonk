@@ -174,6 +174,11 @@ describe(segmentWords, () => {
   test("handles empty string", () => {
     expect(segmentWords("")).toEqual([]);
   });
+
+  test("filters empty tokens from consecutive spaces", () => {
+    expect(segmentWords("hello  world")).toEqual(["hello", "world"]);
+    expect(segmentWords("a  b  c")).toEqual(["a", "b", "c"]);
+  });
 });
 
 describe(stripPunctuation, () => {
