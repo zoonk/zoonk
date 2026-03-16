@@ -7,6 +7,7 @@ import { useCallback, useState } from "react";
 import { type SelectedAnswer, type StepResult } from "../player-reducer";
 import { type WordBankOption } from "../prepare-activity-data";
 import { useWordAudio } from "../use-word-audio";
+import { ArrangeWordsFeedback } from "./arrange-words-feedback";
 import { InlineFeedback } from "./inline-feedback";
 import { InteractiveStepLayout } from "./step-layouts";
 
@@ -281,10 +282,11 @@ export function ArrangeWordsInteraction({
       {result && (
         <InlineFeedback result={result}>
           {feedbackDetails && (
-            <div className="border-border/40 flex flex-col gap-1.5 border-t pt-3">
-              <p className="text-sm font-medium">{feedbackDetails.sentence}</p>
-              <p className="text-muted-foreground text-sm">{feedbackDetails.translation}</p>
-            </div>
+            <ArrangeWordsFeedback
+              correctWords={correctWords}
+              translation={feedbackDetails.translation}
+              wordBankOptions={wordBankOptions}
+            />
           )}
         </InlineFeedback>
       )}
