@@ -177,6 +177,11 @@ test.describe("Listening Step", () => {
 
     const feedback = page.getByRole("region", { name: /answer feedback/i });
     await expect(feedback.getByText(/correct!/i)).toBeVisible();
+
+    // Correct answer shows individual word cards (translation words for listening)
+    const correctAnswer = feedback.getByRole("group", { name: /correct answer/i });
+    await expect(correctAnswer.getByText(transWord1)).toBeVisible();
+    await expect(correctAnswer.getByText(transWord2)).toBeVisible();
     await expect(feedback.getByText(sentence)).toBeVisible();
     await expect(feedback.getByText(translation)).toBeVisible();
   });
@@ -213,6 +218,11 @@ test.describe("Listening Step", () => {
 
     const feedback = page.getByRole("region", { name: /answer feedback/i });
     await expect(feedback.getByText(/not quite/i)).toBeVisible();
+
+    // Correct answer shows individual word cards (translation words for listening)
+    const correctAnswer = feedback.getByRole("group", { name: /correct answer/i });
+    await expect(correctAnswer.getByText(transWord1)).toBeVisible();
+    await expect(correctAnswer.getByText(transWord2)).toBeVisible();
     await expect(feedback.getByText(sentence)).toBeVisible();
     await expect(feedback.getByText(translation)).toBeVisible();
   });

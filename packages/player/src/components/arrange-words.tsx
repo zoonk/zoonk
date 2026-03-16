@@ -284,6 +284,7 @@ export function ArrangeWordsInteraction({
           {feedbackDetails && (
             <ArrangeWordsFeedback
               correctWords={correctWords}
+              sentence={feedbackDetails.sentence}
               translation={feedbackDetails.translation}
               wordBankOptions={wordBankOptions}
             />

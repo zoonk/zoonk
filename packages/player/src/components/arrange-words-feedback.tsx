@@ -40,10 +40,12 @@ function FeedbackWordCard({ option }: { option: WordBankOption }) {
 
 export function ArrangeWordsFeedback({
   correctWords,
+  sentence,
   translation,
   wordBankOptions,
 }: {
   correctWords: string[];
+  sentence: string;
   translation: string;
   wordBankOptions: WordBankOption[];
 }) {
@@ -61,6 +63,7 @@ export function ArrangeWordsFeedback({
         ))}
       </div>
 
+      <p className="text-sm font-medium">{sentence}</p>
       <p className="text-muted-foreground text-sm">{translation}</p>
     </div>
   );
