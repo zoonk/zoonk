@@ -866,6 +866,151 @@ describe(prepareActivityData, () => {
     expect(result.steps[0]?.wordBankOptions).toEqual([]);
   });
 
+  test("sentenceWordOptions contains enriched target-language words for reading steps", () => {
+    const activity = {
+      description: null,
+      generationRunId: null,
+      generationStatus: "completed",
+      id: BigInt(90),
+      kind: "reading",
+      language: "en",
+      organizationId: 1,
+      position: 0,
+      steps: [
+        {
+          content: {},
+          id: BigInt(91),
+          kind: "reading",
+          position: 0,
+          sentence: {
+            audioUrl: null,
+            id: BigInt(92),
+            romanization: null,
+            sentence: "gato bonito",
+            translation: "pretty cat",
+          },
+          word: null,
+        },
+      ],
+      title: "Sentence Word Options Reading",
+    };
+
+    const lessonWords = [
+      {
+        alternativeTranslations: [],
+        audioUrl: "https://example.com/gato.mp3",
+        id: BigInt(93),
+        pronunciation: null,
+        romanization: "ga-to",
+        translation: "cat",
+        word: "gato",
+      },
+    ];
+
+    const result = prepareActivityData(activity, lessonWords, []);
+    const sentenceWordOptions = result.steps[0]?.sentenceWordOptions ?? [];
+
+    expect(sentenceWordOptions).toHaveLength(2);
+    expect(sentenceWordOptions[0]).toEqual({
+      audioUrl: "https://example.com/gato.mp3",
+      romanization: "ga-to",
+      translation: "cat",
+      word: "gato",
+    });
+    expect(sentenceWordOptions[1]).toEqual({
+      audioUrl: null,
+      romanization: null,
+      translation: null,
+      word: "bonito",
+    });
+  });
+
+  test("sentenceWordOptions contains enriched target-language words for listening steps", () => {
+    const activity = {
+      description: null,
+      generationRunId: null,
+      generationStatus: "completed",
+      id: BigInt(94),
+      kind: "listening",
+      language: "en",
+      organizationId: 1,
+      position: 0,
+      steps: [
+        {
+          content: {},
+          id: BigInt(95),
+          kind: "listening",
+          position: 0,
+          sentence: {
+            audioUrl: null,
+            id: BigInt(96),
+            romanization: null,
+            sentence: "gato bonito",
+            translation: "pretty cat",
+          },
+          word: null,
+        },
+      ],
+      title: "Sentence Word Options Listening",
+    };
+
+    const sentenceWords = [
+      {
+        alternativeTranslations: [],
+        audioUrl: "https://example.com/sw-gato.mp3",
+        id: BigInt(97),
+        pronunciation: null,
+        romanization: "ga-to-sw",
+        translation: "cat (sw)",
+        word: "gato",
+      },
+    ];
+
+    const result = prepareActivityData(activity, [], [], sentenceWords);
+    const sentenceWordOptions = result.steps[0]?.sentenceWordOptions ?? [];
+
+    expect(sentenceWordOptions).toHaveLength(2);
+    expect(sentenceWordOptions[0]).toEqual({
+      audioUrl: "https://example.com/sw-gato.mp3",
+      romanization: "ga-to-sw",
+      translation: "cat (sw)",
+      word: "gato",
+    });
+    expect(sentenceWordOptions[1]).toEqual({
+      audioUrl: null,
+      romanization: null,
+      translation: null,
+      word: "bonito",
+    });
+  });
+
+  test("sentenceWordOptions is empty for non-sentence steps", () => {
+    const activity = {
+      description: null,
+      generationRunId: null,
+      generationStatus: "completed",
+      id: BigInt(98),
+      kind: "explanation",
+      language: "en",
+      organizationId: 1,
+      position: 0,
+      steps: [
+        {
+          content: { text: "test", title: "Test", variant: "text" },
+          id: BigInt(99),
+          kind: "static",
+          position: 0,
+          sentence: null,
+          word: null,
+        },
+      ],
+      title: "No Sentence",
+    };
+
+    const result = prepareActivityData(activity, [], []);
+    expect(result.steps[0]?.sentenceWordOptions).toEqual([]);
+  });
+
   test("sortOrder step populates sortOrderItems with all items", () => {
     const activity = {
       description: null,

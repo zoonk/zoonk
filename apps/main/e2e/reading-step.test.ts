@@ -256,7 +256,9 @@ test.describe("Reading Step", () => {
     await expect(page.getByRole("button", { name: /continue/i })).toBeVisible();
   });
 
-  test("wrong arrangement shows sentence and translation in feedback", async ({ page }) => {
+  test("wrong arrangement shows correct word cards in feedback without redundant text", async ({
+    page,
+  }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const word1 = `Buenos-${uniqueId}`;
     const word2 = `dias-${uniqueId}`;
@@ -293,7 +295,11 @@ test.describe("Reading Step", () => {
     const correctAnswer = feedback.getByRole("group", { name: /correct answer/i });
     await expect(correctAnswer.getByText(word1)).toBeVisible();
     await expect(correctAnswer.getByText(word2)).toBeVisible();
-    await expect(feedback.getByText(translation)).toBeVisible();
+
+    // Reading feedback should NOT show redundant sentence/translation text below word cards
+    // (the word cards already show per-word translations, and the question prompt shows the translation)
+    await expect(feedback.getByText(sentence, { exact: true })).toBeHidden();
+    await expect(feedback.getByText(translation, { exact: true })).toBeHidden();
   });
 
   test("feedback shows per-word romanization and translation in word cards", async ({ page }) => {

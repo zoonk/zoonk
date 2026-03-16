@@ -15,6 +15,29 @@ type WordDataInput = {
   word: string;
 };
 
+function enrichWord(
+  word: string,
+  serializedLessonWords: SerializedWord[],
+  sentenceWordMap: Map<string, WordDataInput>,
+): WordBankOption {
+  const key = stripPunctuation(word).toLowerCase();
+  const fromSentenceWords = sentenceWordMap.get(key);
+  const fromLessonWords = serializedLessonWords.find(
+    (lw) => stripPunctuation(lw.word).toLowerCase() === key,
+  );
+
+  return {
+    audioUrl: fromSentenceWords?.audioUrl ?? fromLessonWords?.audioUrl ?? null,
+    romanization: fromSentenceWords?.romanization ?? fromLessonWords?.romanization ?? null,
+    translation: fromSentenceWords?.translation ?? fromLessonWords?.translation ?? null,
+    word,
+  };
+}
+
+function emptyWordOption(word: string): WordBankOption {
+  return { audioUrl: null, romanization: null, translation: null, word };
+}
+
 function getWordBankConfig(
   step: SerializedStep,
 ): { correctWords: string[]; distractorField: "word" | "translation" } | null {
@@ -32,6 +55,14 @@ function getWordBankConfig(
   return null;
 }
 
+export function buildSentenceWordOptions(
+  sentence: string,
+  serializedLessonWords: SerializedWord[],
+  sentenceWordMap: Map<string, WordDataInput>,
+): WordBankOption[] {
+  return segmentWords(sentence).map((word) => enrichWord(word, serializedLessonWords, sentenceWordMap));
+}
+
 export function buildWordBankOptions(
   step: SerializedStep,
   serializedLessonWords: SerializedWord[],
@@ -47,24 +78,9 @@ export function buildWordBankOptions(
   const isReading = step.kind === "reading";
   const correctSet = new Set(correctWords.map((word) => stripPunctuation(word).toLowerCase()));
 
-  const correctOptions: WordBankOption[] = correctWords.map((word) => {
-    if (!isReading) {
-      return { audioUrl: null, romanization: null, translation: null, word };
-    }
-
-    const key = stripPunctuation(word).toLowerCase();
-    const fromSentenceWords = sentenceWordMap.get(key);
-    const fromLessonWords = serializedLessonWords.find(
-      (lw) => stripPunctuation(lw.word).toLowerCase() === key,
-    );
-
-    return {
-      audioUrl: fromSentenceWords?.audioUrl ?? fromLessonWords?.audioUrl ?? null,
-      romanization: fromSentenceWords?.romanization ?? fromLessonWords?.romanization ?? null,
-      translation: fromSentenceWords?.translation ?? fromLessonWords?.translation ?? null,
-      word,
-    };
-  });
+  const correctOptions: WordBankOption[] = correctWords.map((word) =>
+    isReading ? enrichWord(word, serializedLessonWords, sentenceWordMap) : emptyWordOption(word),
+  );
 
   const allDistractorWords = serializedLessonWords.flatMap((lessonWord) =>
     lessonWord[distractorField].split(" "),
@@ -82,7 +98,7 @@ export function buildWordBankOptions(
     .slice(0, WORD_BANK_DISTRACTOR_COUNT)
     .map((word) => {
       if (!isReading) {
-        return { audioUrl: null, romanization: null, translation: null, word };
+        return emptyWordOption(word);
       }
 
       const lessonWord = serializedLessonWords.find(

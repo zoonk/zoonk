@@ -1,27 +1,6 @@
 import { useExtracted } from "next-intl";
 import { type WordBankOption } from "../prepare-activity-data";
 
-function emptyWordOption(word: string): WordBankOption {
-  return { audioUrl: null, romanization: null, translation: null, word };
-}
-
-function getCorrectWordOptions(
-  correctWords: string[],
-  wordBankOptions: WordBankOption[],
-): WordBankOption[] {
-  const remaining = [...wordBankOptions];
-
-  return correctWords.map((word) => {
-    const index = remaining.findIndex((option) => option.word === word);
-
-    if (index === -1) {
-      return emptyWordOption(word);
-    }
-
-    return remaining.splice(index, 1)[0] ?? emptyWordOption(word);
-  });
-}
-
 function FeedbackWordCard({ option }: { option: WordBankOption }) {
   return (
     <span className="bg-muted/50 flex flex-col items-center rounded-md px-3 py-1.5">
@@ -38,33 +17,73 @@ function FeedbackWordCard({ option }: { option: WordBankOption }) {
   );
 }
 
-export function ArrangeWordsFeedback({
-  correctWords,
-  sentence,
-  translation,
-  wordBankOptions,
-}: {
+function getCorrectWordOptions(
+  correctWords: string[],
+  wordBankOptions: WordBankOption[],
+): WordBankOption[] {
+  const remaining = [...wordBankOptions];
+
+  return correctWords.map((word) => {
+    const index = remaining.findIndex((option) => option.word === word);
+
+    if (index === -1) {
+      return { audioUrl: null, romanization: null, translation: null, word };
+    }
+
+    return (
+      remaining.splice(index, 1)[0] ?? {
+        audioUrl: null,
+        romanization: null,
+        translation: null,
+        word,
+      }
+    );
+  });
+}
+
+type ReadingFeedbackProps = {
+  kind: "reading";
   correctWords: string[];
-  sentence: string;
-  translation: string;
   wordBankOptions: WordBankOption[];
-}) {
+};
+
+type ListeningFeedbackProps = {
+  kind: "listening";
+  sentenceWordOptions: WordBankOption[];
+  translation: string;
+};
+
+export type ArrangeWordsFeedbackProps = ReadingFeedbackProps | ListeningFeedbackProps;
+
+function WordCards({ options }: { options: WordBankOption[] }) {
   const t = useExtracted();
 
   return (
-    <div className="border-border/40 flex flex-col gap-3 border-t pt-3">
-      <div aria-label={t("Correct answer")} className="flex flex-wrap gap-2" role="group">
-        {getCorrectWordOptions(correctWords, wordBankOptions).map((option, index) => (
-          <FeedbackWordCard
-            // oxlint-disable-next-line react/no-array-index-key -- Words can repeat, no unique ID
-            key={`feedback-${option.word}-${index}`}
-            option={option}
-          />
-        ))}
-      </div>
+    <div aria-label={t("Correct answer")} className="flex flex-wrap gap-2" role="group">
+      {options.map((option, index) => (
+        <FeedbackWordCard
+          // oxlint-disable-next-line react/no-array-index-key -- Words can repeat, no unique ID
+          key={`feedback-${option.word}-${index}`}
+          option={option}
+        />
+      ))}
+    </div>
+  );
+}
 
-      <p className="text-sm font-medium">{sentence}</p>
-      <p className="text-muted-foreground text-sm">{translation}</p>
+export function ArrangeWordsFeedback(props: ArrangeWordsFeedbackProps) {
+  if (props.kind === "reading") {
+    return (
+      <div className="border-border/40 flex flex-col gap-3 border-t pt-3">
+        <WordCards options={getCorrectWordOptions(props.correctWords, props.wordBankOptions)} />
+      </div>
+    );
+  }
+
+  return (
+    <div className="border-border/40 flex flex-col gap-3 border-t pt-3">
+      <WordCards options={props.sentenceWordOptions} />
+      <p className="text-muted-foreground text-sm italic">{props.translation}</p>
     </div>
   );
 }

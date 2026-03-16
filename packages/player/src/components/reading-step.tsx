@@ -30,8 +30,9 @@ export function ReadingStep({
       answerKind="reading"
       correctWords={segmentWords(step.sentence.sentence)}
       feedbackDetails={{
-        sentence: step.sentence.sentence,
-        translation: step.sentence.translation,
+        correctWords: segmentWords(step.sentence.sentence),
+        kind: "reading",
+        wordBankOptions: step.wordBankOptions,
       }}
       onSelectAnswer={onSelectAnswer}
       result={result}

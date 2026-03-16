@@ -27,6 +27,7 @@ function buildFillBlankStep(overrides: Record<string, unknown> = {}) {
     matchColumnsRightItems: [],
     position: 0,
     sentence: null,
+    sentenceWordOptions: [],
     sortOrderItems: [],
     translationOptions: [],
     vocabularyOptions: [],

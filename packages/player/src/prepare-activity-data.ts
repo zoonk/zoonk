@@ -6,7 +6,7 @@ import {
   parseStepContent,
 } from "@zoonk/core/steps/content-contract";
 import { shuffle } from "@zoonk/utils/shuffle";
-import { buildWordBankOptions } from "./build-word-bank-options";
+import { buildSentenceWordOptions, buildWordBankOptions } from "./build-word-bank-options";
 import { getDistractorWords } from "./get-distractor-words";
 
 const VOCABULARY_DISTRACTOR_COUNT = 3;
@@ -46,6 +46,7 @@ export type SerializedStep<Kind extends SupportedStepKind = SupportedStepKind> =
   translationOptions: SerializedWord[];
   vocabularyOptions: SerializedWord[];
   wordBankOptions: WordBankOption[];
+  sentenceWordOptions: WordBankOption[];
   sortOrderItems: string[];
   fillBlankOptions: string[];
   matchColumnsRightItems: string[];
@@ -192,6 +193,7 @@ function serializeStep(step: StepDataInput): SerializedStep | null {
       matchColumnsRightItems: [],
       position: step.position,
       sentence: step.sentence ? serializeSentence(step.sentence) : null,
+      sentenceWordOptions: [],
       sortOrderItems: [],
       translationOptions: [],
       vocabularyOptions: [],
@@ -236,6 +238,9 @@ export function prepareActivityData(
       ...step,
       fillBlankOptions: buildFillBlankOptions(step),
       matchColumnsRightItems: buildMatchColumnsRightItems(step),
+      sentenceWordOptions: step.sentence
+        ? buildSentenceWordOptions(step.sentence.sentence, serializedLessonWords, sentenceWordMap)
+        : [],
       sortOrderItems: buildSortOrderItems(step),
       translationOptions: buildTranslationOptions(step, serializedLessonWords),
       wordBankOptions: buildWordBankOptions(step, serializedLessonWords, sentenceWordMap),

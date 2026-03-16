@@ -12,6 +12,7 @@ function buildStep(overrides: Partial<SerializedStep> = {}): SerializedStep {
     matchColumnsRightItems: [],
     position: 0,
     sentence: null,
+    sentenceWordOptions: [],
     sortOrderItems: [],
     translationOptions: [],
     vocabularyOptions: [],

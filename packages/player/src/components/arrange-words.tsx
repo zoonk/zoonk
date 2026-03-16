@@ -7,7 +7,7 @@ import { useCallback, useState } from "react";
 import { type SelectedAnswer, type StepResult } from "../player-reducer";
 import { type WordBankOption } from "../prepare-activity-data";
 import { useWordAudio } from "../use-word-audio";
-import { ArrangeWordsFeedback } from "./arrange-words-feedback";
+import { ArrangeWordsFeedback, type ArrangeWordsFeedbackProps } from "./arrange-words-feedback";
 import { InlineFeedback } from "./inline-feedback";
 import { InteractiveStepLayout } from "./step-layouts";
 
@@ -212,7 +212,7 @@ export function ArrangeWordsInteraction({
   answerKind: "reading" | "listening";
   children: React.ReactNode;
   correctWords: string[];
-  feedbackDetails?: { sentence: string; translation: string };
+  feedbackDetails?: ArrangeWordsFeedbackProps;
   onSelectAnswer: (stepId: string, answer: SelectedAnswer | null) => void;
   result?: StepResult;
   selectedAnswer: SelectedAnswer | undefined;
@@ -281,14 +281,7 @@ export function ArrangeWordsInteraction({
 
       {result && (
         <InlineFeedback result={result}>
-          {feedbackDetails && (
-            <ArrangeWordsFeedback
-              correctWords={correctWords}
-              sentence={feedbackDetails.sentence}
-              translation={feedbackDetails.translation}
-              wordBankOptions={wordBankOptions}
-            />
-          )}
+          {feedbackDetails && <ArrangeWordsFeedback {...feedbackDetails} />}
         </InlineFeedback>
       )}
     </InteractiveStepLayout>
