@@ -13,6 +13,7 @@ import { useOptionKeyboard } from "../use-option-keyboard";
 import { useReplaceName } from "../user-name-context";
 import { OptionCard } from "./option-card";
 import { ContextText, QuestionText } from "./question-text";
+import { RomanizationText } from "./romanization-text";
 import { SectionLabel } from "./section-label";
 import { InteractiveStepLayout } from "./step-layouts";
 
@@ -32,8 +33,7 @@ function OptionContent({ romanization, text }: { romanization?: string | null; t
   return (
     <>
       <span className="text-base leading-6">{text}</span>
-
-      {romanization && <span className="text-muted-foreground text-sm italic">{romanization}</span>}
+      <RomanizationText>{romanization}</RomanizationText>
     </>
   );
 }
@@ -138,9 +138,7 @@ function LanguageVariant({
         <SpeechBubble>
           <p className="text-base font-semibold">{replaceName(content.context)}</p>
 
-          {content.contextRomanization && (
-            <p className="text-muted-foreground text-sm italic">{content.contextRomanization}</p>
-          )}
+          <RomanizationText>{content.contextRomanization}</RomanizationText>
 
           <p className="text-muted-foreground text-sm">{replaceName(content.contextTranslation)}</p>
         </SpeechBubble>

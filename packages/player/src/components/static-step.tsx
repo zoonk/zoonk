@@ -5,6 +5,7 @@ import { type SerializedStep } from "../prepare-activity-data";
 import { useReplaceName } from "../user-name-context";
 import { HighlightText } from "./highlight-text";
 import { ContextText, QuestionText } from "./question-text";
+import { RomanizationText } from "./romanization-text";
 import { useSwipeNavigation } from "./static-step-navigation";
 
 function TextVariant({ title, text }: { title: string; text: string }) {
@@ -35,7 +36,7 @@ function GrammarExampleVariant({
         <HighlightText highlight={highlight} text={sentence} />
       </p>
 
-      {romanization && <p className="text-muted-foreground text-sm italic">{romanization}</p>}
+      <RomanizationText>{romanization}</RomanizationText>
 
       <ContextText>{translation}</ContextText>
     </>

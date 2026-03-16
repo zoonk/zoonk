@@ -7,6 +7,7 @@ import { useOptionKeyboard } from "../use-option-keyboard";
 import { useWordAudio } from "../use-word-audio";
 import { OptionCard } from "./option-card";
 import { QuestionText } from "./question-text";
+import { RomanizationText } from "./romanization-text";
 import { SectionLabel } from "./section-label";
 import { InteractiveStepLayout } from "./step-layouts";
 
@@ -29,9 +30,7 @@ function TranslationOptionContent({
     <>
       <span className="text-base leading-6">{word.word}</span>
 
-      {word.romanization && (
-        <span className="text-muted-foreground text-sm italic">{word.romanization}</span>
-      )}
+      <RomanizationText>{word.romanization}</RomanizationText>
 
       {isSelected && word.pronunciation && (
         <span className="text-muted-foreground text-sm">{word.pronunciation}</span>
