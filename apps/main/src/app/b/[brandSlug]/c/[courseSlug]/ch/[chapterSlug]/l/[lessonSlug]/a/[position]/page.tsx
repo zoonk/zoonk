@@ -2,6 +2,7 @@ import { getActivity } from "@/data/activities/get-activity";
 import { getLessonSentences } from "@/data/activities/get-lesson-sentences";
 import { getLessonWords } from "@/data/activities/get-lesson-words";
 import { getReviewSteps } from "@/data/activities/get-review-steps";
+import { getSentenceWords } from "@/data/activities/get-sentence-words";
 import { getLesson } from "@/data/lessons/get-lesson";
 import { startActivity } from "@/data/progress/start-activity";
 import { getActivitySeoMeta } from "@/lib/activities";
@@ -56,20 +57,22 @@ export default async function ActivityPage({ params }: Props) {
     notFound();
   }
 
-  const [activity, lessonWords, lessonSentences, nextActivity, session] = await Promise.all([
-    getActivity({ lessonId: lesson.id, position: activityPosition }),
-    getLessonWords({ lessonId: lesson.id }),
-    getLessonSentences({ lessonId: lesson.id }),
-    getNextActivityInCourse({
-      activityPosition,
-      chapterId: lesson.chapter.id,
-      chapterPosition: lesson.chapter.position,
-      courseId: lesson.chapter.course.id,
-      lessonId: lesson.id,
-      lessonPosition: lesson.position,
-    }),
-    getSession(),
-  ]);
+  const [activity, lessonWords, lessonSentences, sentenceWords, nextActivity, session] =
+    await Promise.all([
+      getActivity({ lessonId: lesson.id, position: activityPosition }),
+      getLessonWords({ lessonId: lesson.id }),
+      getLessonSentences({ lessonId: lesson.id }),
+      getSentenceWords({ lessonId: lesson.id }),
+      getNextActivityInCourse({
+        activityPosition,
+        chapterId: lesson.chapter.id,
+        chapterPosition: lesson.chapter.position,
+        courseId: lesson.chapter.course.id,
+        lessonId: lesson.id,
+        lessonPosition: lesson.position,
+      }),
+      getSession(),
+    ]);
 
   if (!activity) {
     notFound();
@@ -95,6 +98,7 @@ export default async function ActivityPage({ params }: Props) {
     reviewSteps ? { ...activity, steps: reviewSteps } : activity,
     lessonWords,
     lessonSentences,
+    sentenceWords,
   );
 
   if (session) {

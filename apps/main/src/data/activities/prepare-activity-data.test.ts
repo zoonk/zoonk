@@ -460,16 +460,16 @@ describe(prepareActivityData, () => {
 
     const raw = await getActivity({ lessonId: lesson.id, position: 110 });
     const result = prepareActivityData(raw!, lessonWords, []);
-    const wordBank = result.steps[0]?.wordBankOptions ?? [];
+    const wordBankWords = (result.steps[0]?.wordBankOptions ?? []).map((option) => option.word);
 
     // Should contain the correct sentence words
     for (const word of sentenceText.split(" ")) {
-      expect(wordBank).toContain(word);
+      expect(wordBankWords).toContain(word);
     }
 
     // Should contain distractor words from lesson word .word field (for reading)
-    expect(wordBank).toContain(`gato-${uniqueId}`);
-    expect(wordBank).toContain(`perro-${uniqueId}`);
+    expect(wordBankWords).toContain(`gato-${uniqueId}`);
+    expect(wordBankWords).toContain(`perro-${uniqueId}`);
   });
 
   test("listening step gets word bank with translation words and distractors from lesson word translation fields", async () => {
@@ -534,16 +534,16 @@ describe(prepareActivityData, () => {
 
     const raw = await getActivity({ lessonId: lesson.id, position: 111 });
     const result = prepareActivityData(raw!, lessonWords, []);
-    const wordBank = result.steps[0]?.wordBankOptions ?? [];
+    const wordBankWords = (result.steps[0]?.wordBankOptions ?? []).map((option) => option.word);
 
     // Should contain the correct translation words
     for (const word of translationText.split(" ")) {
-      expect(wordBank).toContain(word);
+      expect(wordBankWords).toContain(word);
     }
 
     // Should contain distractor words from lesson word .translation field (for listening)
-    expect(wordBank).toContain(`cat-${uniqueId}`);
-    expect(wordBank).toContain(`dog-${uniqueId}`);
+    expect(wordBankWords).toContain(`cat-${uniqueId}`);
+    expect(wordBankWords).toContain(`dog-${uniqueId}`);
   });
 
   test("word bank removes duplicates between correct and distractor words", () => {
@@ -601,7 +601,7 @@ describe(prepareActivityData, () => {
     const wordBank = result.steps[0]?.wordBankOptions ?? [];
 
     // "hola" should be excluded because it duplicates "Hola" (case-insensitive)
-    const holaCount = wordBank.filter((word) => word.toLowerCase() === "hola").length;
+    const holaCount = wordBank.filter((option) => option.word.toLowerCase() === "hola").length;
     expect(holaCount).toBe(1); // Only the correct "Hola"
   });
 
@@ -657,11 +657,11 @@ describe(prepareActivityData, () => {
     ];
 
     const result = prepareActivityData(activity, lessonWords, []);
-    const wordBank = result.steps[0]?.wordBankOptions ?? [];
+    const wordBankWords = (result.steps[0]?.wordBankOptions ?? []).map((option) => option.word);
 
     // "you" distractor should be excluded because "you?" is already a correct word
-    expect(wordBank).toContain("you?");
-    expect(wordBank).not.toContain("you");
+    expect(wordBankWords).toContain("you?");
+    expect(wordBankWords).not.toContain("you");
   });
 
   test("deduplicates distractors that differ only by punctuation", () => {
@@ -720,7 +720,7 @@ describe(prepareActivityData, () => {
 
     // Only one variant of "tu" should appear, not both "tu" and "tu?"
     const tuVariants = wordBank.filter(
-      (word) => word.toLowerCase().replaceAll(/[^\p{L}\p{N}\s]/gu, "") === "tu",
+      (option) => option.word.toLowerCase().replaceAll(/[^\p{L}\p{N}\s]/gu, "") === "tu",
     );
 
     expect(tuVariants).toHaveLength(1);

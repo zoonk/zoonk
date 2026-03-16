@@ -41,6 +41,12 @@ vi.mock("@zoonk/ai/tasks/activities/language/sentences", () => ({
   }),
 }));
 
+vi.mock("@zoonk/ai/tasks/activities/language/sentence-word-translation", () => ({
+  generateSentenceWordTranslation: vi.fn().mockResolvedValue({
+    data: { romanization: null, translation: "mocked" },
+  }),
+}));
+
 vi.mock("@zoonk/core/audio/generate", () => ({
   generateLanguageAudio: vi.fn().mockResolvedValue({
     data: "https://example.com/audio.mp3",
@@ -161,6 +167,46 @@ describe(readingActivityWorkflow, () => {
 
     const dbActivity = await prisma.activity.findUnique({ where: { id: activity.id } });
     expect(dbActivity?.generationStatus).toBe("completed");
+  });
+
+  test("creates Word records for sentence words without creating LessonWord entries", async () => {
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `Reading Words ${randomUUID()}`,
+    });
+
+    await activityFixture({
+      generationStatus: "pending",
+      kind: "reading",
+      language: "en",
+      lessonId: lesson.id,
+      organizationId,
+      title: `Reading ${randomUUID()}`,
+    });
+
+    const activities = await fetchLessonActivities(lesson.id);
+    await readingActivityWorkflow(activities, "test-run-id", words, [], []);
+
+    // Sentence words should be saved as Word records
+    const savedWords = await prisma.word.findMany({
+      where: {
+        organizationId,
+        targetLanguage: "es",
+        userLanguage: "en",
+        word: { in: ["yo", "veo", "un", "gato", "hola", "como", "estas"] },
+      },
+    });
+
+    expect(savedWords.length).toBeGreaterThan(0);
+
+    // Sentence words should NOT be linked as LessonWord entries
+    const lessonWords = await prisma.lessonWord.findMany({
+      where: { lessonId: lesson.id },
+    });
+
+    expect(lessonWords).toHaveLength(0);
   });
 
   test("sets reading status to 'failed' when no source words available", async () => {

@@ -43,6 +43,21 @@ export function removeLocaleSuffix(value: string, language: string): string {
   return value.endsWith(suffix) ? value.slice(0, -suffix.length) : value;
 }
 
+export function stripPunctuation(text: string): string {
+  return text.replaceAll(/[^\p{L}\p{N}\s]/gu, "");
+}
+
+export function extractUniqueSentenceWords(sentences: string[]): string[] {
+  const words = sentences.flatMap((sentence) =>
+    sentence
+      .split(" ")
+      .map((token) => stripPunctuation(token).toLowerCase())
+      .filter((token) => token.length > 0),
+  );
+
+  return [...new Set(words)];
+}
+
 export function replaceNamePlaceholder(text: string, name: string | null): string {
   if (!text.includes(NAME_PLACEHOLDER)) {
     return text;

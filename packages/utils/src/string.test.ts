@@ -2,10 +2,12 @@ import { describe, expect, test } from "vitest";
 import {
   emptyToNull,
   ensureLocaleSuffix,
+  extractUniqueSentenceWords,
   normalizeString,
   removeAccents,
   removeLocaleSuffix,
   replaceNamePlaceholder,
+  stripPunctuation,
   toSlug,
 } from "./string";
 
@@ -141,6 +143,63 @@ describe(toSlug, () => {
   test("strips dots from input", () => {
     expect(toSlug("dev.ops")).toBe("devops");
     expect(toSlug("john.doe.smith")).toBe("johndoesmith");
+  });
+});
+
+describe(stripPunctuation, () => {
+  test("removes punctuation from text", () => {
+    expect(stripPunctuation("hello!")).toBe("hello");
+    expect(stripPunctuation("world?")).toBe("world");
+    expect(stripPunctuation("a,b.c")).toBe("abc");
+  });
+
+  test("preserves letters, numbers, and spaces", () => {
+    expect(stripPunctuation("hello world 123")).toBe("hello world 123");
+  });
+
+  test("preserves unicode letters", () => {
+    expect(stripPunctuation("café")).toBe("café");
+    expect(stripPunctuation("猫")).toBe("猫");
+    expect(stripPunctuation("고양이")).toBe("고양이");
+  });
+
+  test("handles empty string", () => {
+    expect(stripPunctuation("")).toBe("");
+  });
+});
+
+describe(extractUniqueSentenceWords, () => {
+  test("extracts unique lowercase words from sentences", () => {
+    const result = extractUniqueSentenceWords(["Hola mundo", "Buenos dias"]);
+    expect(result).toEqual(["hola", "mundo", "buenos", "dias"]);
+  });
+
+  test("deduplicates words across sentences", () => {
+    const result = extractUniqueSentenceWords(["gato bonito", "gato grande"]);
+    expect(result).toContain("gato");
+    expect(result.filter((word) => word === "gato")).toHaveLength(1);
+  });
+
+  test("strips punctuation from words", () => {
+    const result = extractUniqueSentenceWords(["Hola, como estas?"]);
+    expect(result).toContain("hola");
+    expect(result).toContain("como");
+    expect(result).toContain("estas");
+    expect(result).not.toContain("estas?");
+  });
+
+  test("filters out empty tokens", () => {
+    const result = extractUniqueSentenceWords(["hello  world"]);
+    expect(result).not.toContain("");
+  });
+
+  test("returns empty array for empty input", () => {
+    expect(extractUniqueSentenceWords([])).toEqual([]);
+  });
+
+  test("handles unicode words", () => {
+    const result = extractUniqueSentenceWords(["猫は食べる"]);
+    expect(result).toContain("猫は食べる");
   });
 });
 
