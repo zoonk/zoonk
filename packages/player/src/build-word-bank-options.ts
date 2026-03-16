@@ -60,7 +60,9 @@ export function buildSentenceWordOptions(
   serializedLessonWords: SerializedWord[],
   sentenceWordMap: Map<string, WordDataInput>,
 ): WordBankOption[] {
-  return segmentWords(sentence).map((word) => enrichWord(word, serializedLessonWords, sentenceWordMap));
+  return segmentWords(sentence).map((word) =>
+    enrichWord(word, serializedLessonWords, sentenceWordMap),
+  );
 }
 
 export function buildWordBankOptions(
