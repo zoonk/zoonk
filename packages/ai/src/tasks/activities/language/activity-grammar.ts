@@ -64,7 +64,7 @@ export async function generateActivityGrammar({
   lessonTitle,
   model = DEFAULT_MODEL,
   neighboringConcepts = [],
-  reasoningEffort = "high",
+  reasoningEffort,
   targetLanguage,
   userLanguage,
   useFallback = true,

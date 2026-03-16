@@ -7,8 +7,6 @@ import systemPrompt from "./course-chapters.prompt.md";
 const DEFAULT_MODEL = process.env.AI_MODEL_COURSE_CHAPTERS ?? "openai/gpt-5.4";
 const FALLBACK_MODELS = ["anthropic/claude-opus-4.6", "google/gemini-3.1-pro-preview"];
 
-const DEFAULT_REASONING_EFFORT: ReasoningEffort = "high";
-
 const schema = z.object({
   chapters: z.array(
     z.object({
@@ -34,7 +32,7 @@ export async function generateCourseChapters({
   courseTitle,
   model = DEFAULT_MODEL,
   useFallback = true,
-  reasoningEffort = DEFAULT_REASONING_EFFORT,
+  reasoningEffort,
 }: CourseChaptersParams) {
   const userPrompt = `
     LANGUAGE: ${language}

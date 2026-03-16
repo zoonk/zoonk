@@ -53,7 +53,7 @@ export async function generateActivityPracticeLanguage({
   lessonTitle,
   model = DEFAULT_MODEL,
   neighboringConcepts = [],
-  reasoningEffort = "high",
+  reasoningEffort,
   targetLanguage,
   userLanguage,
   useFallback = true,
