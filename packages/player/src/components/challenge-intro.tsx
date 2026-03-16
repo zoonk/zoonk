@@ -4,6 +4,7 @@ import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
 import { type DimensionInventory } from "../player-reducer";
 import { DimensionList, buildDimensionEntries } from "./dimension-inventory";
+import { SectionLabel } from "./section-label";
 
 export function ChallengeIntro({
   dimensions,
@@ -18,9 +19,7 @@ export function ChallengeIntro({
   return (
     <div className="mx-auto flex w-full max-w-lg flex-col gap-6 text-left">
       <div className="flex flex-col gap-4">
-        <span className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
-          {t("Challenge")}
-        </span>
+        <SectionLabel>{t("Challenge")}</SectionLabel>
 
         <h1 className="text-foreground text-xl font-semibold tracking-tight">{t("How to play")}</h1>
 
@@ -34,9 +33,7 @@ export function ChallengeIntro({
       </div>
 
       <div className="flex flex-col gap-2">
-        <span className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
-          {t("Your scores")}
-        </span>
+        <SectionLabel>{t("Your scores")}</SectionLabel>
 
         <DimensionList aria-label={t("Starting scores")} entries={entries} variant="intro" />
       </div>

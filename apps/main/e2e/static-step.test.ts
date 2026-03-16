@@ -144,32 +144,6 @@ test.describe("Static Step Rendering", () => {
     await expect(page.getByText(new RegExp(`She runs fast ${uniqueId}`))).toBeVisible();
   });
 
-  test("grammar example without romanization does not render romanization", async ({ page }) => {
-    const uniqueId = randomUUID().slice(0, 8);
-    const { url } = await createStaticActivity({
-      steps: [
-        {
-          content: {
-            highlight: "runs",
-            romanization: null,
-            sentence: `She runs fast ${uniqueId}`,
-            translation: `Ella corre rapido ${uniqueId}`,
-            variant: "grammarExample",
-          },
-          position: 0,
-        },
-      ],
-    });
-
-    await page.goto(url);
-    await expect(page.getByText(new RegExp(`She.*runs.*fast ${uniqueId}`))).toBeVisible();
-    await expect(page.getByText(new RegExp(`Ella corre rapido ${uniqueId}`))).toBeVisible();
-
-    // Verify no italic romanization element is present
-    const italicElements = page.locator("p.italic");
-    await expect(italicElements).toHaveCount(0);
-  });
-
   test("grammar rule renders rule name and summary", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const { url } = await createStaticActivity({

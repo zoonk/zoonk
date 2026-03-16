@@ -1,14 +1,13 @@
 import { useExtracted } from "next-intl";
 import { type WordBankOption } from "../prepare-activity-data";
+import { RomanizationText } from "./romanization-text";
 
 function FeedbackWordCard({ option }: { option: WordBankOption }) {
   return (
     <span className="bg-muted/50 flex flex-col items-center rounded-md px-3 py-1.5">
       <span className="text-sm font-medium">{option.word}</span>
 
-      {option.romanization && (
-        <span className="text-muted-foreground text-[11px]">{option.romanization}</span>
-      )}
+      <RomanizationText>{option.romanization}</RomanizationText>
 
       {option.translation && (
         <span className="text-muted-foreground text-xs">{option.translation}</span>

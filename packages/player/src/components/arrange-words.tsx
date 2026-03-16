@@ -9,6 +9,7 @@ import { type WordBankOption } from "../prepare-activity-data";
 import { useWordAudio } from "../use-word-audio";
 import { ArrangeWordsFeedback, type ArrangeWordsFeedbackProps } from "./arrange-words-feedback";
 import { InlineFeedback } from "./inline-feedback";
+import { RomanizationText } from "./romanization-text";
 import { InteractiveStepLayout } from "./step-layouts";
 
 function getWordResultState(
@@ -63,9 +64,7 @@ function PlacedWordTile({
     >
       <span>{option.word}</span>
 
-      {option.romanization && (
-        <span className="text-muted-foreground text-xs">{option.romanization}</span>
-      )}
+      <RomanizationText>{option.romanization}</RomanizationText>
     </button>
   );
 }
@@ -112,9 +111,7 @@ function BankTileContent({ option }: { option: WordBankOption }) {
     <>
       <span>{option.word}</span>
 
-      {option.romanization && (
-        <span className="text-muted-foreground text-xs">{option.romanization}</span>
-      )}
+      <RomanizationText>{option.romanization}</RomanizationText>
     </>
   );
 }
