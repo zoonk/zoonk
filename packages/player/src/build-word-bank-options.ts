@@ -52,12 +52,16 @@ export function buildWordBankOptions(
       return { audioUrl: null, romanization: null, translation: null, word };
     }
 
-    const lookup = sentenceWordMap.get(stripPunctuation(word).toLowerCase());
+    const key = stripPunctuation(word).toLowerCase();
+    const fromSentenceWords = sentenceWordMap.get(key);
+    const fromLessonWords = serializedLessonWords.find(
+      (lw) => stripPunctuation(lw.word).toLowerCase() === key,
+    );
 
     return {
-      audioUrl: lookup?.audioUrl ?? null,
-      romanization: lookup?.romanization ?? null,
-      translation: lookup?.translation ?? null,
+      audioUrl: fromSentenceWords?.audioUrl ?? fromLessonWords?.audioUrl ?? null,
+      romanization: fromSentenceWords?.romanization ?? fromLessonWords?.romanization ?? null,
+      translation: fromSentenceWords?.translation ?? fromLessonWords?.translation ?? null,
       word,
     };
   });

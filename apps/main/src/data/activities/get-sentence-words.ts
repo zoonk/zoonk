@@ -33,7 +33,7 @@ const cachedGetSentenceWords = cache(async (lessonId: number): Promise<Word[]> =
       organizationId,
       targetLanguage,
       userLanguage,
-      word: { in: uniqueWords },
+      word: { in: uniqueWords, mode: "insensitive" },
     },
   });
 });

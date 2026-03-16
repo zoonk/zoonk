@@ -546,6 +546,121 @@ describe(prepareActivityData, () => {
     expect(wordBankWords).toContain(`dog-${uniqueId}`);
   });
 
+  test("correct words get metadata from lesson words when no sentence words provided", () => {
+    const activity = {
+      description: null,
+      generationRunId: null,
+      generationStatus: "completed",
+      id: BigInt(70),
+      kind: "reading",
+      language: "en",
+      organizationId: 1,
+      position: 0,
+      steps: [
+        {
+          content: {},
+          id: BigInt(71),
+          kind: "reading",
+          position: 0,
+          sentence: {
+            audioUrl: null,
+            id: BigInt(72),
+            romanization: null,
+            sentence: "gato bonito",
+            translation: "pretty cat",
+          },
+          word: null,
+        },
+      ],
+      title: "Reading Fallback",
+    };
+
+    const lessonWords = [
+      {
+        alternativeTranslations: [],
+        audioUrl: "https://example.com/gato.mp3",
+        id: BigInt(73),
+        pronunciation: null,
+        romanization: "ga-to",
+        translation: "cat",
+        word: "gato",
+      },
+    ];
+
+    // No sentenceWords passed — fallback to lesson words for metadata
+    const result = prepareActivityData(activity, lessonWords, []);
+    const wordBank = result.steps[0]?.wordBankOptions ?? [];
+
+    const gatoOption = wordBank.find((option) => option.word === "gato");
+    expect(gatoOption).toBeDefined();
+    expect(gatoOption?.translation).toBe("cat");
+    expect(gatoOption?.romanization).toBe("ga-to");
+    expect(gatoOption?.audioUrl).toBe("https://example.com/gato.mp3");
+  });
+
+  test("sentence words take priority over lesson words for correct word metadata", () => {
+    const activity = {
+      description: null,
+      generationRunId: null,
+      generationStatus: "completed",
+      id: BigInt(74),
+      kind: "reading",
+      language: "en",
+      organizationId: 1,
+      position: 0,
+      steps: [
+        {
+          content: {},
+          id: BigInt(75),
+          kind: "reading",
+          position: 0,
+          sentence: {
+            audioUrl: null,
+            id: BigInt(76),
+            romanization: null,
+            sentence: "gato bonito",
+            translation: "pretty cat",
+          },
+          word: null,
+        },
+      ],
+      title: "Reading Priority",
+    };
+
+    const lessonWords = [
+      {
+        alternativeTranslations: [],
+        audioUrl: "https://example.com/lesson-gato.mp3",
+        id: BigInt(77),
+        pronunciation: null,
+        romanization: null,
+        translation: "cat (lesson)",
+        word: "gato",
+      },
+    ];
+
+    const sentenceWords = [
+      {
+        alternativeTranslations: [],
+        audioUrl: "https://example.com/sentence-gato.mp3",
+        id: BigInt(78),
+        pronunciation: null,
+        romanization: "ga-to",
+        translation: "cat (sentence)",
+        word: "gato",
+      },
+    ];
+
+    const result = prepareActivityData(activity, lessonWords, [], sentenceWords);
+    const wordBank = result.steps[0]?.wordBankOptions ?? [];
+
+    const gatoOption = wordBank.find((option) => option.word === "gato");
+    expect(gatoOption).toBeDefined();
+    expect(gatoOption?.translation).toBe("cat (sentence)");
+    expect(gatoOption?.audioUrl).toBe("https://example.com/sentence-gato.mp3");
+    expect(gatoOption?.romanization).toBe("ga-to");
+  });
+
   test("word bank removes duplicates between correct and distractor words", () => {
     const activity = {
       description: null,

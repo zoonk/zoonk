@@ -145,6 +145,43 @@ describe(getSentenceWords, () => {
     expect(result[0]?.word).toBe(word.word);
   });
 
+  test("matches Word records case-insensitively", async () => {
+    const uniqueId = crypto.randomUUID().replaceAll("-", "").slice(0, 8);
+    const newLesson = await lessonFixture({
+      chapterId: chapter.id,
+      isPublished: true,
+      language: "es",
+      organizationId: org.id,
+    });
+
+    const wordText = `Hola${uniqueId}`;
+
+    const [sentence] = await Promise.all([
+      sentenceFixture({
+        organizationId: org.id,
+        sentence: `${wordText} mundo`,
+        targetLanguage: "es",
+        translation: "hello world",
+      }),
+      // Word stored with uppercase (as AI might generate)
+      wordFixture({
+        organizationId: org.id,
+        targetLanguage: "es",
+        translation: "hello",
+        word: wordText,
+      }),
+    ]);
+
+    await lessonSentenceFixture({ lessonId: newLesson.id, sentenceId: sentence.id });
+
+    // extractUniqueSentenceWords lowercases to "hola...", but Word record has "Hola..."
+    const result = await getSentenceWords({ lessonId: newLesson.id });
+
+    const match = result.find((item) => item.word.toLowerCase() === wordText.toLowerCase());
+    expect(match).toBeDefined();
+    expect(match?.translation).toBe("hello");
+  });
+
   test("deduplicates words across multiple sentences", async () => {
     const uniqueId = crypto.randomUUID().replaceAll("-", "").slice(0, 8);
     const wordText = `gato${uniqueId}`;
