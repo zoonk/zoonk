@@ -199,7 +199,7 @@ describe(readingActivityWorkflow, () => {
       },
     });
 
-    expect(savedWords.length).toBeGreaterThan(0);
+    expect(savedWords).toHaveLength(7);
 
     // Sentence words should NOT be linked as LessonWord entries
     const lessonWords = await prisma.lessonWord.findMany({
