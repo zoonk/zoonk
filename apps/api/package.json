@@ -49,7 +49,6 @@
     "babel-plugin-react-compiler": "1.0.0",
     "raw-loader": "4.0.2",
     "typescript": "^5.9.3",
-    "vite-tsconfig-paths": "6.1.1",
     "vitest": "4.1.0",
     "zod-openapi": "5.4.6"
   }

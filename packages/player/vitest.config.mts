@@ -1,11 +1,10 @@
-import tsconfigPaths from "vite-tsconfig-paths";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   esbuild: {
     jsx: "automatic",
   },
-  plugins: [tsconfigPaths()],
+  resolve: { tsconfigPaths: true },
   test: {
     deps: {
       optimizer: { ssr: { include: ["next"] } },

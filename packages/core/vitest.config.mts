@@ -1,9 +1,7 @@
 import { resolve } from "node:path";
-import tsconfigPaths from "vite-tsconfig-paths";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
-  plugins: [tsconfigPaths()],
   resolve: {
     alias: [
       {
@@ -12,6 +10,7 @@ export default defineConfig({
         replacement: resolve(import.meta.dirname, "../auth/src/testing.ts"),
       },
     ],
+    tsconfigPaths: true,
   },
   test: {
     deps: {
