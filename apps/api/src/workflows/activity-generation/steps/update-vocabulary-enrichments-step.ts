@@ -28,7 +28,7 @@ export async function updateVocabularyEnrichmentsStep(
       prisma.word.update({
         data: {
           pronunciation: pronunciations[saved.word],
-          wordAudioId: wordAudioIds[saved.word] ?? null,
+          wordAudioId: wordAudioIds[saved.word],
         },
         where: { id: saved.wordId },
       }),

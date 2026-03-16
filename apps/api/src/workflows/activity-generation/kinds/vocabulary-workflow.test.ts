@@ -350,6 +350,74 @@ describe(vocabularyActivityWorkflow, () => {
     expect(result.words).toHaveLength(0);
   });
 
+  test("preserves existing wordAudioId when audio step fails but pronunciation succeeds", async () => {
+    const id = randomUUID().replaceAll("-", "").slice(0, 8);
+    const existingWord = `zkeep${id}`;
+    const newWord = `znew${id}`;
+
+    const wordAudio = await prisma.wordAudio.create({
+      data: {
+        audioUrl: "https://example.com/keep-audio.mp3",
+        organizationId,
+        targetLanguage: "es",
+        word: existingWord,
+      },
+    });
+
+    await prisma.word.create({
+      data: {
+        organizationId,
+        targetLanguage: "es",
+        translation: "existing",
+        userLanguage: "en",
+        word: existingWord,
+        wordAudioId: wordAudio.id,
+      },
+    });
+
+    const mockWords: VocabularyWord[] = [
+      {
+        alternativeTranslations: [],
+        romanization: "r1",
+        translation: "existing",
+        word: existingWord,
+      },
+      { alternativeTranslations: [], romanization: "r2", translation: "new", word: newWord },
+    ];
+
+    vi.mocked(generateActivityVocabulary).mockResolvedValueOnce({
+      data: { words: mockWords },
+    } as Awaited<ReturnType<typeof generateActivityVocabulary>>);
+
+    // Audio rejects for the new word → audio step throws → settled returns {}
+    vi.mocked(generateLanguageAudio).mockRejectedValueOnce(new Error("TTS failed"));
+
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `Vocab KeepAudio ${randomUUID()}`,
+    });
+
+    await activityFixture({
+      generationStatus: "pending",
+      kind: "vocabulary",
+      language: "en",
+      lessonId: lesson.id,
+      organizationId,
+      title: `Vocabulary ${randomUUID()}`,
+    });
+
+    const activities = await fetchLessonActivities(lesson.id);
+    await vocabularyActivityWorkflow(activities, "test-run-id", [], []);
+
+    const updatedWord = await prisma.word.findFirst({
+      where: { organizationId, targetLanguage: "es", word: existingWord },
+    });
+
+    expect(updatedWord?.wordAudioId).toBe(wordAudio.id);
+  });
+
   test("skips TTS for vocabulary words that already have a WordAudio record", async () => {
     const id = randomUUID().replaceAll("-", "").slice(0, 8);
     const existingWord = `zexist${id}`;

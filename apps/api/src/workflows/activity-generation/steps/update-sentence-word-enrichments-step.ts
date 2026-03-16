@@ -25,7 +25,7 @@ export async function updateSentenceWordEnrichmentsStep(
     .filter((saved) => wordAudioIds[saved.word])
     .map((saved) =>
       prisma.word.update({
-        data: { wordAudioId: wordAudioIds[saved.word] ?? null },
+        data: { wordAudioId: wordAudioIds[saved.word] },
         where: { id: saved.wordId },
       }),
     );
