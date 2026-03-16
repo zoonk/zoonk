@@ -28,18 +28,14 @@ async function fetchExistingWordMetadata(params: {
     },
   });
 
-  const result: Record<string, WordMetadataEntry> = {};
-
-  for (const record of existing) {
-    if (record.translation) {
-      result[record.word] = {
-        romanization: record.romanization,
-        translation: record.translation,
-      };
-    }
-  }
-
-  return result;
+  return Object.fromEntries(
+    existing
+      .filter((record) => record.translation)
+      .map((record) => [
+        record.word,
+        { romanization: record.romanization, translation: record.translation },
+      ]),
+  );
 }
 
 async function generateTranslation(
@@ -73,15 +69,15 @@ async function generateMissingTranslations(
     wordsNeedingTranslation.map((word) => generateTranslation(word, userLanguage, targetLanguage)),
   );
 
-  const generated: Record<string, WordMetadataEntry> = {};
+  return Object.fromEntries(
+    results.flatMap((result) => {
+      if (result.status !== "fulfilled" || !result.value) {
+        return [];
+      }
 
-  for (const result of results) {
-    if (result.status === "fulfilled" && result.value) {
-      generated[result.value.word] = result.value.data;
-    }
-  }
-
-  return generated;
+      return [[result.value.word, result.value.data]];
+    }),
+  );
 }
 
 async function buildWordMetadata(params: {
@@ -119,7 +115,7 @@ async function buildWordMetadata(params: {
   );
 
   const wordMetadata = { ...existingMetadata, ...generated };
-  const isComplete = Object.keys(generated).length >= wordsNeedingTranslation.length;
+  const isComplete = Object.keys(generated).length === wordsNeedingTranslation.length;
 
   return { isComplete, wordMetadata };
 }
