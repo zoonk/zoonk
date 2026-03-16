@@ -9,10 +9,10 @@ import {
 const WORD_BANK_DISTRACTOR_COUNT = 8;
 
 type WordDataInput = {
-  audioUrl: string | null;
   romanization: string | null;
   translation: string;
   word: string;
+  wordAudio: { audioUrl: string } | null;
 };
 
 function enrichWord(
@@ -27,7 +27,7 @@ function enrichWord(
   );
 
   return {
-    audioUrl: fromSentenceWords?.audioUrl ?? fromLessonWords?.audioUrl ?? null,
+    audioUrl: fromSentenceWords?.wordAudio?.audioUrl ?? fromLessonWords?.audioUrl ?? null,
     romanization: fromSentenceWords?.romanization ?? fromLessonWords?.romanization ?? null,
     translation: fromSentenceWords?.translation ?? fromLessonWords?.translation ?? null,
     word,

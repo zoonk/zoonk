@@ -10,7 +10,7 @@ export async function updateVocabularyEnrichmentsStep(
   activities: LessonActivity[],
   savedWords: SavedWord[],
   pronunciations: Record<string, string>,
-  audioUrls: Record<string, string>,
+  wordAudioIds: Record<string, bigint>,
 ): Promise<void> {
   "use step";
 
@@ -23,10 +23,13 @@ export async function updateVocabularyEnrichmentsStep(
   await streamStatus({ status: "started", step: "updateVocabularyEnrichments" });
 
   const updates = savedWords
-    .filter((saved) => pronunciations[saved.word] || audioUrls[saved.word])
+    .filter((saved) => pronunciations[saved.word] || wordAudioIds[saved.word])
     .map((saved) =>
       prisma.word.update({
-        data: { audioUrl: audioUrls[saved.word], pronunciation: pronunciations[saved.word] },
+        data: {
+          pronunciation: pronunciations[saved.word],
+          wordAudioId: wordAudioIds[saved.word] ?? null,
+        },
         where: { id: saved.wordId },
       }),
     );

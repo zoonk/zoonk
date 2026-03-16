@@ -350,18 +350,16 @@ describe(vocabularyActivityWorkflow, () => {
     expect(result.words).toHaveLength(0);
   });
 
-  test("skips TTS for vocabulary words that already have an audioUrl", async () => {
+  test("skips TTS for vocabulary words that already have a WordAudio record", async () => {
     const id = randomUUID().replaceAll("-", "").slice(0, 8);
     const existingWord = `zexist${id}`;
     const newWord = `znew${id}`;
 
-    await prisma.word.create({
+    await prisma.wordAudio.create({
       data: {
         audioUrl: "https://example.com/existing-audio.mp3",
         organizationId,
         targetLanguage: "es",
-        translation: "existing",
-        userLanguage: "en",
         word: existingWord,
       },
     });

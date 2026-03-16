@@ -1,9 +1,9 @@
 import "server-only";
-import { type Word, prisma } from "@zoonk/db";
+import { prisma } from "@zoonk/db";
 import { extractUniqueSentenceWords } from "@zoonk/utils/string";
 import { cache } from "react";
 
-const cachedGetSentenceWords = cache(async (lessonId: number): Promise<Word[]> => {
+const cachedGetSentenceWords = cache(async (lessonId: number) => {
   const lessonSentences = await prisma.lessonSentence.findMany({
     include: { sentence: true },
     where: { lessonId },
@@ -29,6 +29,7 @@ const cachedGetSentenceWords = cache(async (lessonId: number): Promise<Word[]> =
   const { organizationId, targetLanguage, userLanguage } = firstSentence;
 
   return prisma.word.findMany({
+    include: { wordAudio: true },
     where: {
       organizationId,
       targetLanguage,
@@ -38,6 +39,6 @@ const cachedGetSentenceWords = cache(async (lessonId: number): Promise<Word[]> =
   });
 });
 
-export function getSentenceWords(params: { lessonId: number }): Promise<Word[]> {
+export function getSentenceWords(params: { lessonId: number }) {
   return cachedGetSentenceWords(params.lessonId);
 }

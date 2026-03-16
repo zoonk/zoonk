@@ -7,8 +7,8 @@ const cachedGetActivity = cache(async (lessonId: number, position: number) =>
     include: {
       steps: {
         include: {
-          sentence: true,
-          word: true,
+          sentence: { include: { sentenceAudio: true } },
+          word: { include: { wordAudio: true } },
         },
         orderBy: { position: "asc" },
         where: { isPublished: true },

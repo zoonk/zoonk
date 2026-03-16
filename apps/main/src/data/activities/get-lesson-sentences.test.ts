@@ -3,7 +3,7 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonSentenceFixture } from "@zoonk/testing/fixtures/lesson-sentences";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { sentenceFixture } from "@zoonk/testing/fixtures/sentences";
+import { sentenceAudioFixture, sentenceFixture } from "@zoonk/testing/fixtures/sentences";
 import { beforeAll, describe, expect, test } from "vitest";
 import { getLessonSentences } from "./get-lesson-sentences";
 
@@ -75,11 +75,17 @@ describe(getLessonSentences, () => {
       organizationId: org.id,
     });
 
-    const sentence = await sentenceFixture({
+    const sentAudio = await sentenceAudioFixture({
       audioUrl: "https://example.com/megusta.mp3",
+      organizationId: org.id,
+      targetLanguage: "es",
+    });
+
+    const sentence = await sentenceFixture({
       organizationId: org.id,
       romanization: null,
       sentence: `Me gusta ${crypto.randomUUID()}`,
+      sentenceAudioId: sentAudio.id,
       targetLanguage: "es",
       translation: "I like",
     });
@@ -90,10 +96,10 @@ describe(getLessonSentences, () => {
 
     expect(result).toHaveLength(1);
     expect(result[0]).toMatchObject({
-      audioUrl: "https://example.com/megusta.mp3",
       id: sentence.id,
       romanization: null,
       sentence: sentence.sentence,
+      sentenceAudio: { audioUrl: "https://example.com/megusta.mp3" },
       translation: "I like",
     });
   });
