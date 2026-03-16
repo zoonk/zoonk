@@ -3,6 +3,7 @@
 import { auth } from "@zoonk/core/auth";
 import { safeAsync } from "@zoonk/utils/error";
 import { parseFormField } from "@zoonk/utils/form";
+import { logError } from "@zoonk/utils/logger";
 import { headers } from "next/headers";
 
 export async function profileFormAction(_prevState: unknown, formData: FormData) {
@@ -31,7 +32,7 @@ export async function profileFormAction(_prevState: unknown, formData: FormData)
   );
 
   if (error) {
-    console.error("Error updating profile:", error);
+    logError("Error updating profile:", error);
     return { name, status: "error" as const, username };
   }
 

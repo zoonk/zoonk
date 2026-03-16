@@ -1,6 +1,7 @@
 import "server-only";
 import { put } from "@vercel/blob";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
+import { logError } from "@zoonk/utils/logger";
 
 export async function uploadAudio({
   fileName,
@@ -20,7 +21,7 @@ export async function uploadAudio({
   );
 
   if (error) {
-    console.error("Error uploading audio:", error);
+    logError("Error uploading audio:", error);
     return { data: null, error };
   }
 

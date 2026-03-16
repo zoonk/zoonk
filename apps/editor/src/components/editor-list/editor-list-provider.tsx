@@ -2,6 +2,7 @@
 
 import { toast } from "@zoonk/ui/components/sonner";
 import { isNextRedirectError } from "@zoonk/utils/error";
+import { logError } from "@zoonk/utils/logger";
 import { useCallback, useMemo, useTransition } from "react";
 import { EditorListContext, type EditorListContextValue } from "./editor-list-context";
 
@@ -21,7 +22,7 @@ export function EditorListProvider({
           await onInsert(position);
         } catch (error) {
           if (!isNextRedirectError(error)) {
-            console.error(`Failed to insert item at position ${position}:`, error);
+            logError(`Failed to insert item at position ${position}:`, error);
 
             toast.error(error instanceof Error ? error.message : String(error));
           }

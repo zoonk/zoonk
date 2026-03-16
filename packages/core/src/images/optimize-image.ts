@@ -1,4 +1,5 @@
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
+import { logError } from "@zoonk/utils/logger";
 import { DEFAULT_IMAGE_QUALITY } from "@zoonk/utils/upload";
 import sharp from "sharp";
 
@@ -27,7 +28,7 @@ export async function optimizeImage({
   });
 
   if (error) {
-    console.error("Error optimizing image:", error);
+    logError("Error optimizing image:", error);
     return { data: null, error };
   }
 

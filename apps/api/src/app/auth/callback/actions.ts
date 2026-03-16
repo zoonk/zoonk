@@ -2,6 +2,7 @@
 
 import { auth } from "@zoonk/core/auth";
 import { safeAsync } from "@zoonk/utils/error";
+import { logError } from "@zoonk/utils/logger";
 import { headers } from "next/headers";
 
 const TRAILING_SLASHES = /\/+$/;
@@ -32,7 +33,7 @@ export async function createOneTimeTokenAction(
   );
 
   if (validationError) {
-    console.error("Untrusted origin:", JSON.stringify(redirectTo));
+    logError("Untrusted origin:", JSON.stringify(redirectTo));
     return { error: "UNTRUSTED_ORIGIN", success: false };
   }
 
@@ -43,7 +44,7 @@ export async function createOneTimeTokenAction(
   );
 
   if (error) {
-    console.error("Error generating one-time token:", error);
+    logError("Error generating one-time token:", error);
     return { error: "UNTRUSTED_ORIGIN", success: false };
   }
 

@@ -1,4 +1,5 @@
 import { chapterGenerationWorkflow } from "@/workflows/chapter-generation/chapter-generation-workflow";
+import { logError } from "@zoonk/utils/logger";
 import { FatalError, getWorkflowMetadata } from "workflow";
 import { getOrCreateCourse } from "./_internal/get-or-create-course";
 import { setupCourse } from "./_internal/setup-course";
@@ -38,7 +39,7 @@ export async function courseGenerationWorkflow(courseSuggestionId: number): Prom
       courseSuggestionId,
     });
 
-    console.error(`[workflow ${workflowRunId}] Course initialization failed`, error);
+    logError(`[workflow ${workflowRunId}] Course initialization failed`, error);
 
     throw FatalError;
   });
@@ -50,7 +51,7 @@ export async function courseGenerationWorkflow(courseSuggestionId: number): Prom
         courseSuggestionId,
       });
 
-      console.error(`[workflow ${workflowRunId}] Course generation failed`, error);
+      logError(`[workflow ${workflowRunId}] Course generation failed`, error);
 
       throw FatalError;
     },

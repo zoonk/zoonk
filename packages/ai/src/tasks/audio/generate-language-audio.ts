@@ -2,6 +2,7 @@ import "server-only";
 import { openai } from "@ai-sdk/openai";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { type TTSVoice } from "@zoonk/utils/languages";
+import { logError } from "@zoonk/utils/logger";
 import { experimental_generateSpeech as generateSpeech } from "ai";
 
 const DEFAULT_MODEL = openai.speech("gpt-4o-mini-tts");
@@ -32,7 +33,7 @@ export async function generateLanguageAudio({
   });
 
   if (error) {
-    console.error("Error generating language audio:", error);
+    logError("Error generating language audio:", error);
     return { data: null, error };
   }
 

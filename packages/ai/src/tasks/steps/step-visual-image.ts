@@ -1,4 +1,5 @@
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
+import { logError } from "@zoonk/utils/logger";
 import { type GeneratedFile, type ImageModel, generateImage } from "ai";
 import promptTemplate from "./step-visual-image.prompt.md";
 
@@ -35,7 +36,7 @@ export async function generateStepVisualImage({
   );
 
   if (error) {
-    console.error("Error generating step visual image:", error);
+    logError("Error generating step visual image:", error);
     return { data: null, error };
   }
 

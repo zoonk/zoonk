@@ -19,6 +19,7 @@
     "./form": "./src/form.ts",
     "./json": "./src/json.ts",
     "./languages": "./src/languages.ts",
+    "./logger": "./src/logger.ts",
     "./locale": "./src/locale.ts",
     "./number": "./src/number.ts",
     "./org": "./src/org.ts",

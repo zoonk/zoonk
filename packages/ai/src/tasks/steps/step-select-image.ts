@@ -1,4 +1,5 @@
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
+import { logError } from "@zoonk/utils/logger";
 import { type GeneratedFile, type ImageModel, generateImage } from "ai";
 import promptTemplate from "./step-select-image.prompt.md";
 
@@ -35,7 +36,7 @@ export async function generateSelectImageStep({
   );
 
   if (error) {
-    console.error("Error generating select image step:", error);
+    logError("Error generating select image step:", error);
     return { data: null, error };
   }
 

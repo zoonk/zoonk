@@ -2,6 +2,7 @@
 
 import { LoginError, LoginSocial, LoginWithApple, LoginWithGoogle } from "@/components/login";
 import { authClient } from "@zoonk/core/auth/client";
+import { logError } from "@zoonk/utils/logger";
 import { useExtracted } from "next-intl";
 import { useState } from "react";
 
@@ -28,7 +29,7 @@ export function SocialLogin({ redirectTo }: { redirectTo?: string }) {
     });
 
     if (error) {
-      console.error("Social login error:", error);
+      logError("Social login error:", error);
       setState("error");
     }
   };

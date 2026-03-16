@@ -1,4 +1,5 @@
 import { type SafeReturn, toError } from "@zoonk/utils/error";
+import { logError, logInfo } from "@zoonk/utils/logger";
 
 const apiUrl = "https://api.zeptomail.com/v1.1/email";
 const apiKey = process.env.MAILER_API_KEY;
@@ -14,8 +15,8 @@ export async function sendEmail({
   text: string;
 }): Promise<SafeReturn<Response>> {
   if (sendEmailDisabled) {
-    console.info("Email sending is disabled.");
-    console.info({ subject, text, to });
+    logInfo("Email sending is disabled.");
+    logInfo({ subject, text, to });
     return { data: Response.json({ ok: true }), error: null };
   }
 
@@ -36,7 +37,7 @@ export async function sendEmail({
     });
 
     if (!response.ok) {
-      console.error("Email send failed", await response.text());
+      logError("Email send failed", await response.text());
 
       return {
         data: null,
