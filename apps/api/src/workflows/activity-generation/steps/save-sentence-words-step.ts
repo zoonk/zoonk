@@ -18,18 +18,39 @@ type WordMetadataEntry = {
   translation: string;
 };
 
+async function fetchExistingWordCasing(params: {
+  organizationId: number;
+  targetLanguage: string;
+  userLanguage: string;
+  words: string[];
+}): Promise<Record<string, string>> {
+  const existing = await prisma.word.findMany({
+    select: { word: true },
+    where: {
+      organizationId: params.organizationId,
+      targetLanguage: params.targetLanguage,
+      userLanguage: params.userLanguage,
+      word: { in: params.words, mode: "insensitive" },
+    },
+  });
+
+  return Object.fromEntries(existing.map((record) => [record.word.toLowerCase(), record.word]));
+}
+
 function buildSaveOneWord(params: {
+  existingCasing: Record<string, string>;
   organizationId: number;
   targetLanguage: string;
   userLanguage: string;
   wordMetadata: Record<string, WordMetadataEntry>;
 }) {
-  const { organizationId, targetLanguage, userLanguage, wordMetadata } = params;
+  const { existingCasing, organizationId, targetLanguage, userLanguage, wordMetadata } = params;
 
   return async (word: string): Promise<SavedSentenceWord> => {
     const metadata = wordMetadata[word];
     const translation = metadata?.translation ?? "";
     const romanization = emptyToNull(metadata?.romanization ?? null);
+    const dbWord = existingCasing[word] ?? word;
 
     const record = await prisma.word.upsert({
       create: {
@@ -38,14 +59,14 @@ function buildSaveOneWord(params: {
         targetLanguage,
         translation,
         userLanguage,
-        word,
+        word: dbWord,
       },
       update: {
         romanization,
         translation,
       },
       where: {
-        orgWord: { organizationId, targetLanguage, userLanguage, word },
+        orgWord: { organizationId, targetLanguage, userLanguage, word: dbWord },
       },
     });
 
@@ -87,7 +108,15 @@ export async function saveSentenceWordsStep(
     return { savedSentenceWords: [] };
   }
 
+  const existingCasing = await fetchExistingWordCasing({
+    organizationId,
+    targetLanguage,
+    userLanguage,
+    words: uniqueWords,
+  });
+
   const saveOneWord = buildSaveOneWord({
+    existingCasing,
     organizationId,
     targetLanguage,
     userLanguage,

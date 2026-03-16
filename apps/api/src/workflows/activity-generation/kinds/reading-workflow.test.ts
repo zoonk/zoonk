@@ -318,6 +318,72 @@ describe(readingActivityWorkflow, () => {
     expect(emptyTranslationWords).toHaveLength(0);
   });
 
+  test("reuses existing Word metadata with different casing (case-insensitive lookup)", async () => {
+    const id = randomUUID().replaceAll("-", "").slice(0, 8);
+    const capitalizedWord = `Zcap${id}`;
+    const lowercaseWord = capitalizedWord.toLowerCase();
+
+    await prisma.word.create({
+      data: {
+        organizationId,
+        romanization: "existing-rom",
+        targetLanguage: "es",
+        translation: "existing-translation",
+        userLanguage: "en",
+        word: capitalizedWord,
+      },
+    });
+
+    vi.mocked(generateActivitySentences).mockResolvedValueOnce({
+      data: {
+        sentences: [
+          {
+            romanization: "r1",
+            sentence: `${capitalizedWord} test`,
+            translation: "cap test",
+          },
+        ],
+      },
+    } as Awaited<ReturnType<typeof generateActivitySentences>>);
+
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `Reading CaseInsensitive ${randomUUID()}`,
+    });
+
+    await activityFixture({
+      generationStatus: "pending",
+      kind: "reading",
+      language: "en",
+      lessonId: lesson.id,
+      organizationId,
+      title: `Reading ${randomUUID()}`,
+    });
+
+    const activities = await fetchLessonActivities(lesson.id);
+    await readingActivityWorkflow(activities, "test-run-id", words, [], []);
+
+    // Should NOT call AI for the word since it already exists (just with different casing)
+    expect(generateSentenceWordTranslation).not.toHaveBeenCalledWith(
+      expect.objectContaining({ word: lowercaseWord }),
+    );
+
+    // Should not create a duplicate lowercase Word record
+    const allVariants = await prisma.word.findMany({
+      where: {
+        organizationId,
+        targetLanguage: "es",
+        userLanguage: "en",
+        word: { in: [capitalizedWord, lowercaseWord] },
+      },
+    });
+
+    expect(allVariants).toHaveLength(1);
+    expect(allVariants[0]!.word).toBe(capitalizedWord);
+  });
+
   test("skips TTS for sentence words that already have an audioUrl", async () => {
     const id = randomUUID().replaceAll("-", "").slice(0, 8);
     const existingWord = `zexist${id}`;

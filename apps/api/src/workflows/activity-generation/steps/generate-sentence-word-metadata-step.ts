@@ -24,7 +24,7 @@ async function fetchExistingWordMetadata(params: {
       organizationId: params.organizationId,
       targetLanguage: params.targetLanguage,
       userLanguage: params.userLanguage,
-      word: { in: params.words },
+      word: { in: params.words, mode: "insensitive" },
     },
   });
 
@@ -32,7 +32,7 @@ async function fetchExistingWordMetadata(params: {
     existing
       .filter((record) => record.translation)
       .map((record) => [
-        record.word,
+        record.word.toLowerCase(),
         { romanization: record.romanization, translation: record.translation },
       ]),
   );
