@@ -4,7 +4,7 @@ import {
 } from "@zoonk/ai/tasks/steps/visual-image";
 import { type SafeReturn } from "@zoonk/utils/error";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
-import { SLUG_MAX_LENGTH, toSlug } from "@zoonk/utils/string";
+import { toSlug } from "@zoonk/utils/string";
 import { optimizeImage } from "../images/optimize-image";
 import { uploadImage } from "../images/upload-image";
 
@@ -32,7 +32,7 @@ export async function generateVisualStepImage({
     return { data: null, error: optimizeError };
   }
 
-  const slug = toSlug(prompt.slice(0, SLUG_MAX_LENGTH));
+  const slug = toSlug(prompt);
   const org = orgSlug ?? AI_ORG_SLUG;
   const fileName = `steps/${org}/visual-${slug}.webp`;
 

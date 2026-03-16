@@ -38,12 +38,10 @@
   },
   "dependencies": {
     "@formatjs/intl-localematcher": "0.8.1",
-    "negotiator": "1.0.0",
-    "slug": "11.0.1"
+    "negotiator": "1.0.0"
   },
   "devDependencies": {
     "@types/negotiator": "0.6.4",
-    "@types/slug": "5.0.9",
     "@typescript/native-preview": "7.0.0-dev.20260314.1",
     "@zoonk/tsconfig": "workspace:*",
     "vitest": "4.1.0"
