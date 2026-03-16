@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { generateSentenceWordTranslation } from "@zoonk/ai/tasks/activities/language/sentence-word-translation";
 import { generateActivitySentences } from "@zoonk/ai/tasks/activities/language/sentences";
 import { prisma } from "@zoonk/db";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
@@ -255,5 +256,64 @@ describe(readingActivityWorkflow, () => {
     await readingActivityWorkflow(activities, "test-run-id", words, [], []);
 
     expect(generateActivitySentences).not.toHaveBeenCalled();
+  });
+
+  test("does not save words with empty translation when metadata generation partially fails", async () => {
+    const id = randomUUID().replaceAll("-", "").slice(0, 8);
+    const failWord = `zfail${id}`;
+    const passWord = `zpass${id}`;
+
+    vi.mocked(generateActivitySentences).mockResolvedValueOnce({
+      data: {
+        sentences: [
+          {
+            romanization: "r1",
+            sentence: `${passWord} ${failWord}`,
+            translation: "pass fail",
+          },
+        ],
+      },
+    } as Awaited<ReturnType<typeof generateActivitySentences>>);
+
+    vi.mocked(generateSentenceWordTranslation).mockImplementation(async ({ word }) => {
+      if (word === failWord) {
+        throw new Error("AI translation failure");
+      }
+
+      return {
+        data: { romanization: null, translation: `translated-${word}` },
+      } as Awaited<ReturnType<typeof generateSentenceWordTranslation>>;
+    });
+
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `Reading PartialFail ${randomUUID()}`,
+    });
+
+    await activityFixture({
+      generationStatus: "pending",
+      kind: "reading",
+      language: "en",
+      lessonId: lesson.id,
+      organizationId,
+      title: `Reading ${randomUUID()}`,
+    });
+
+    const activities = await fetchLessonActivities(lesson.id);
+    await readingActivityWorkflow(activities, "test-run-id", words, [], []);
+
+    const failWordInDb = await prisma.word.findMany({
+      where: {
+        organizationId,
+        targetLanguage: "es",
+        userLanguage: "en",
+        word: failWord,
+      },
+    });
+
+    const emptyTranslationWords = failWordInDb.filter((word) => word.translation === "");
+    expect(emptyTranslationWords).toHaveLength(0);
   });
 });

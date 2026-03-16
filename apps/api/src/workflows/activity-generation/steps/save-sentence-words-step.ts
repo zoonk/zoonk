@@ -77,7 +77,9 @@ export async function saveSentenceWordsStep(
   const userLanguage = activity.language;
   const organizationId = course.organization.id;
 
-  const uniqueWords = extractUniqueSentenceWords(savedSentences.map((saved) => saved.sentence));
+  const uniqueWords = extractUniqueSentenceWords(
+    savedSentences.map((saved) => saved.sentence),
+  ).filter((word) => wordMetadata[word]);
 
   if (uniqueWords.length === 0) {
     await streamStatus({ status: "completed", step: "saveSentenceWords" });
