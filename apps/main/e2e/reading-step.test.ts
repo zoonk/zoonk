@@ -12,8 +12,13 @@ import { wordFixture } from "@zoonk/testing/fixtures/words";
 import { type Page, expect, test } from "./fixtures";
 
 async function createReadingActivity(options: {
-  sentences: { audioUrl?: string | null; sentence: string; translation: string }[];
-  words: { translation: string; word: string }[];
+  sentences: {
+    audioUrl?: string | null;
+    romanization?: string | null;
+    sentence: string;
+    translation: string;
+  }[];
+  words: { romanization?: string | null; translation: string; word: string }[];
 }) {
   const org = await getAiOrganization();
 
@@ -48,6 +53,7 @@ async function createReadingActivity(options: {
       options.words.map((wordData) =>
         wordFixture({
           organizationId: org.id,
+          romanization: wordData.romanization ?? null,
           translation: wordData.translation,
           word: wordData.word,
         }),
@@ -58,6 +64,7 @@ async function createReadingActivity(options: {
         sentenceFixture({
           audioUrl: sentenceData.audioUrl ?? null,
           organizationId: org.id,
+          romanization: sentenceData.romanization ?? null,
           sentence: sentenceData.sentence,
           translation: sentenceData.translation,
         }),
@@ -249,7 +256,9 @@ test.describe("Reading Step", () => {
     await expect(page.getByRole("button", { name: /continue/i })).toBeVisible();
   });
 
-  test("wrong arrangement shows sentence and translation in feedback", async ({ page }) => {
+  test("wrong arrangement shows correct word cards in feedback without redundant text", async ({
+    page,
+  }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const word1 = `Buenos-${uniqueId}`;
     const word2 = `dias-${uniqueId}`;
@@ -281,8 +290,68 @@ test.describe("Reading Step", () => {
 
     const feedback = page.getByRole("region", { name: /answer feedback/i });
     await expect(feedback.getByText(/not quite/i)).toBeVisible();
-    await expect(feedback.getByText(sentence)).toBeVisible();
-    await expect(feedback.getByText(translation)).toBeVisible();
+
+    // Correct answer shows individual word cards
+    const correctAnswer = feedback.getByRole("group", { name: /correct answer/i });
+    await expect(correctAnswer.getByText(word1)).toBeVisible();
+    await expect(correctAnswer.getByText(word2)).toBeVisible();
+
+    // Reading feedback should NOT show redundant sentence/translation text below word cards
+    // (the word cards already show per-word translations, and the question prompt shows the translation)
+    await expect(feedback.getByText(sentence, { exact: true })).toBeHidden();
+    await expect(feedback.getByText(translation, { exact: true })).toBeHidden();
+  });
+
+  test("feedback shows per-word romanization and translation in word cards", async ({ page }) => {
+    const uniqueId = randomUUID().replaceAll("-", "").slice(0, 8);
+    const word1 = `hola${uniqueId}`;
+    const word2 = `mundo${uniqueId}`;
+    const romanization1 = `oh-la${uniqueId}`;
+
+    const { url } = await createReadingActivity({
+      sentences: [
+        {
+          sentence: `${word1} ${word2}`,
+          translation: `hello${uniqueId} world${uniqueId}`,
+        },
+      ],
+      words: [
+        {
+          romanization: romanization1,
+          translation: `hello${uniqueId}`,
+          word: word1,
+        },
+      ],
+    });
+
+    await page.goto(url);
+
+    const wordBank = page.getByRole("group", { name: /word bank/i });
+
+    // Arrange correctly (word1 button includes romanization text, so use regex)
+    await expect(async () => {
+      await wordBank.getByRole("button", { name: new RegExp(word1) }).click();
+      await expect(
+        page
+          .getByRole("group", { name: /your answer/i })
+          .getByRole("button", { name: new RegExp(word1) }),
+      ).toBeVisible({ timeout: 1000 });
+    }).toPass();
+
+    await wordBank.getByRole("button", { exact: true, name: word2 }).click();
+
+    await page.getByRole("button", { name: /check/i }).click();
+
+    const feedback = page.getByRole("region", { name: /answer feedback/i });
+    const correctAnswer = feedback.getByRole("group", { name: /correct answer/i });
+
+    // Word cards show individual words
+    await expect(correctAnswer.getByText(word1)).toBeVisible();
+    await expect(correctAnswer.getByText(word2)).toBeVisible();
+
+    // Word with matching lesson word shows its romanization and translation
+    await expect(correctAnswer.getByText(romanization1)).toBeVisible();
+    await expect(correctAnswer.getByText(`hello${uniqueId}`)).toBeVisible();
   });
 
   test("full flow: complete all reading steps to completion screen", async ({ page }) => {

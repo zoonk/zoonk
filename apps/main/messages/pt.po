@@ -5,6 +5,11 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "X-Generator: next-intl\n"
 
+#: ../../packages/player/src/components/arrange-words-feedback.tsx
+msgctxt "mhiTW7"
+msgid "Correct answer"
+msgstr "Resposta correta"
+
 #: ../../packages/player/src/components/arrange-words.tsx
 msgctxt "1nJY2/"
 msgid "Your answer"

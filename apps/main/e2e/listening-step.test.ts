@@ -14,6 +14,7 @@ import { type Page, expect, test } from "./fixtures";
 async function createListeningActivity(options: {
   sentences: { audioUrl?: string | null; sentence: string; translation: string }[];
   words: { translation: string; word: string }[];
+  sentenceWords?: { romanization?: string | null; translation: string; word: string }[];
 }) {
   const org = await getAiOrganization();
 
@@ -71,6 +72,20 @@ async function createListeningActivity(options: {
       lessonSentenceFixture({ lessonId: lesson.id, sentenceId: sentence.id }),
     ),
   ]);
+
+  // Create sentence word records for target-language enrichment in feedback
+  if (options.sentenceWords) {
+    await Promise.all(
+      options.sentenceWords.map((sw) =>
+        wordFixture({
+          organizationId: org.id,
+          romanization: sw.romanization ?? null,
+          translation: sw.translation,
+          word: sw.word,
+        }),
+      ),
+    );
+  }
 
   const activity = await activityFixture({
     generationStatus: "completed",
@@ -144,24 +159,36 @@ test.describe("Listening Step", () => {
     await expect(page.getByText(sentence)).toBeVisible();
   });
 
-  test("correct translation arrangement shows success feedback with sentence and translation", async ({
+  test("feedback shows target-language word cards with enrichment and translation below", async ({
     page,
   }) => {
-    const uniqueId = randomUUID().slice(0, 8);
-    const transWord1 = `Hello-${uniqueId}`;
-    const transWord2 = `world-${uniqueId}`;
-    const sentence = `Hola-${uniqueId} mundo-${uniqueId}`;
+    const uniqueId = randomUUID().replaceAll("-", "").slice(0, 8);
+    const sentWord1 = `hola${uniqueId}`;
+    const sentWord2 = `mundo${uniqueId}`;
+    const transWord1 = `hello${uniqueId}`;
+    const transWord2 = `world${uniqueId}`;
+    const sentence = `${sentWord1} ${sentWord2}`;
     const translation = `${transWord1} ${transWord2}`;
+    const romanization1 = `oh-la${uniqueId}`;
 
     const { url } = await createListeningActivity({
+      sentenceWords: [
+        { romanization: romanization1, translation: transWord1, word: sentWord1 },
+        { translation: transWord2, word: sentWord2 },
+      ],
       sentences: [{ audioUrl: "https://example.com/audio.mp3", sentence, translation }],
-      words: [{ translation: `cat-${uniqueId}`, word: `gato-${uniqueId}` }],
+      words: [{ translation: `cat${uniqueId}`, word: `gato${uniqueId}` }],
     });
 
     await page.goto(url);
 
     const wordBank = page.getByRole("group", { name: /word bank/i });
 
+    // Word bank still shows translation-language words for interaction
+    await expect(wordBank.getByRole("button", { exact: true, name: transWord1 })).toBeVisible();
+    await expect(wordBank.getByRole("button", { exact: true, name: transWord2 })).toBeVisible();
+
+    // Arrange correctly
     await expect(async () => {
       await wordBank.getByRole("button", { exact: true, name: transWord1 }).click();
       await expect(
@@ -177,18 +204,34 @@ test.describe("Listening Step", () => {
 
     const feedback = page.getByRole("region", { name: /answer feedback/i });
     await expect(feedback.getByText(/correct!/i)).toBeVisible();
-    await expect(feedback.getByText(sentence)).toBeVisible();
+
+    // Feedback word cards show TARGET-LANGUAGE words with enrichment
+    const correctAnswer = feedback.getByRole("group", { name: /correct answer/i });
+    await expect(correctAnswer.getByText(sentWord1)).toBeVisible();
+    await expect(correctAnswer.getByText(sentWord2)).toBeVisible();
+    await expect(correctAnswer.getByText(romanization1)).toBeVisible();
+    await expect(correctAnswer.getByText(transWord1)).toBeVisible();
+
+    // Translation shown below the word cards
     await expect(feedback.getByText(translation)).toBeVisible();
   });
 
-  test("wrong arrangement shows sentence and translation in feedback", async ({ page }) => {
+  test("wrong arrangement shows target-language word cards and translation in feedback", async ({
+    page,
+  }) => {
     const uniqueId = randomUUID().slice(0, 8);
+    const sentWord1 = `Hola-${uniqueId}`;
+    const sentWord2 = `mundo-${uniqueId}`;
     const transWord1 = `Hello-${uniqueId}`;
     const transWord2 = `world-${uniqueId}`;
-    const sentence = `Hola-${uniqueId} mundo-${uniqueId}`;
+    const sentence = `${sentWord1} ${sentWord2}`;
     const translation = `${transWord1} ${transWord2}`;
 
     const { url } = await createListeningActivity({
+      sentenceWords: [
+        { translation: transWord1, word: sentWord1 },
+        { translation: transWord2, word: sentWord2 },
+      ],
       sentences: [{ audioUrl: "https://example.com/audio.mp3", sentence, translation }],
       words: [{ translation: `cat-${uniqueId}`, word: `gato-${uniqueId}` }],
     });
@@ -213,7 +256,13 @@ test.describe("Listening Step", () => {
 
     const feedback = page.getByRole("region", { name: /answer feedback/i });
     await expect(feedback.getByText(/not quite/i)).toBeVisible();
-    await expect(feedback.getByText(sentence)).toBeVisible();
+
+    // Feedback word cards show TARGET-LANGUAGE words
+    const correctAnswer = feedback.getByRole("group", { name: /correct answer/i });
+    await expect(correctAnswer.getByText(sentWord1)).toBeVisible();
+    await expect(correctAnswer.getByText(sentWord2)).toBeVisible();
+
+    // Translation shown below the word cards
     await expect(feedback.getByText(translation)).toBeVisible();
   });
 

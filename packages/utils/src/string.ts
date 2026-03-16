@@ -43,6 +43,36 @@ export function removeLocaleSuffix(value: string, language: string): string {
   return value.endsWith(suffix) ? value.slice(0, -suffix.length) : value;
 }
 
+export function stripPunctuation(text: string): string {
+  return text.replaceAll(/[^\p{L}\p{N}\s]/gu, "");
+}
+
+/**
+ * Segments text into words, handling both space-delimited languages (English, Spanish)
+ * and non-space-delimited languages (Japanese, Chinese, Thai) via Intl.Segmenter.
+ */
+export function segmentWords(text: string): string[] {
+  if (text.includes(" ")) {
+    return text.split(" ").filter(Boolean);
+  }
+
+  const segmenter = new Intl.Segmenter(undefined, { granularity: "word" });
+
+  return [...segmenter.segment(text)]
+    .filter((segment) => segment.isWordLike)
+    .map((segment) => segment.segment);
+}
+
+export function extractUniqueSentenceWords(sentences: string[]): string[] {
+  const words = sentences.flatMap((sentence) =>
+    segmentWords(sentence)
+      .map((token) => stripPunctuation(token).toLowerCase())
+      .filter((token) => token.length > 0),
+  );
+
+  return [...new Set(words)];
+}
+
 export function replaceNamePlaceholder(text: string, name: string | null): string {
   if (!text.includes(NAME_PLACEHOLDER)) {
     return text;

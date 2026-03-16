@@ -25,7 +25,9 @@ export function useWordAudio(options?: { onEnded?: () => void }): {
     const audio = audioRef.current;
     audio.pause();
     audio.src = url;
-    void audio.play();
+    // Browser rejects play() when rapid clicks lose the user-gesture association.
+    // oxlint-disable-next-line no-empty-function -- intentional no-op for rejected play()
+    audio.play().catch(() => {});
   }, []);
 
   const pause = useCallback(() => {

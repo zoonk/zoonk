@@ -6,10 +6,10 @@ import {
   parseStepContent,
 } from "@zoonk/core/steps/content-contract";
 import { shuffle } from "@zoonk/utils/shuffle";
+import { buildSentenceWordOptions, buildWordBankOptions } from "./build-word-bank-options";
 import { getDistractorWords } from "./get-distractor-words";
 
 const VOCABULARY_DISTRACTOR_COUNT = 3;
-const WORD_BANK_DISTRACTOR_COUNT = 8;
 
 export type SerializedWord = {
   id: string;
@@ -29,6 +29,13 @@ export type SerializedSentence = {
   audioUrl: string | null;
 };
 
+export type WordBankOption = {
+  word: string;
+  translation: string | null;
+  romanization: string | null;
+  audioUrl: string | null;
+};
+
 export type SerializedStep<Kind extends SupportedStepKind = SupportedStepKind> = {
   id: string;
   kind: Kind;
@@ -38,7 +45,8 @@ export type SerializedStep<Kind extends SupportedStepKind = SupportedStepKind> =
   sentence: SerializedSentence | null;
   translationOptions: SerializedWord[];
   vocabularyOptions: SerializedWord[];
-  wordBankOptions: string[];
+  wordBankOptions: WordBankOption[];
+  sentenceWordOptions: WordBankOption[];
   sortOrderItems: string[];
   fillBlankOptions: string[];
   matchColumnsRightItems: string[];
@@ -139,53 +147,6 @@ function buildTranslationOptions(
   }));
 }
 
-function getWordBankConfig(
-  step: SerializedStep,
-): { correctWords: string[]; distractorField: "word" | "translation" } | null {
-  if (step.kind === "reading" && step.sentence) {
-    return { correctWords: step.sentence.sentence.split(" "), distractorField: "word" };
-  }
-
-  if (step.kind === "listening" && step.sentence) {
-    return { correctWords: step.sentence.translation.split(" "), distractorField: "translation" };
-  }
-
-  return null;
-}
-
-function stripPunctuation(text: string): string {
-  return text.replaceAll(/[^\p{L}\p{N}\s]/gu, "");
-}
-
-function buildWordBankOptions(
-  step: SerializedStep,
-  serializedLessonWords: SerializedWord[],
-): string[] {
-  const config = getWordBankConfig(step);
-
-  if (!config) {
-    return [];
-  }
-
-  const { correctWords, distractorField } = config;
-  const correctSet = new Set(correctWords.map((word) => stripPunctuation(word).toLowerCase()));
-
-  const allDistractorWords = serializedLessonWords.flatMap((lessonWord) =>
-    lessonWord[distractorField].split(" "),
-  );
-
-  const uniqueDistractors = [
-    ...new Map(
-      allDistractorWords
-        .filter((word) => !correctSet.has(stripPunctuation(word).toLowerCase()))
-        .map((word) => [stripPunctuation(word).toLowerCase(), word] as const),
-    ).values(),
-  ];
-
-  const selected = shuffle(uniqueDistractors).slice(0, WORD_BANK_DISTRACTOR_COUNT);
-  return shuffle([...correctWords, ...selected]);
-}
-
 function buildSortOrderItems(step: SerializedStep): string[] {
   if (step.kind !== "sortOrder") {
     return [];
@@ -232,6 +193,7 @@ function serializeStep(step: StepDataInput): SerializedStep | null {
       matchColumnsRightItems: [],
       position: step.position,
       sentence: step.sentence ? serializeSentence(step.sentence) : null,
+      sentenceWordOptions: [],
       sortOrderItems: [],
       translationOptions: [],
       vocabularyOptions: [],
@@ -255,6 +217,7 @@ export function prepareActivityData(
   },
   lessonWords: WordDataInput[],
   lessonSentences: SentenceDataInput[],
+  sentenceWords: WordDataInput[] = [],
 ): SerializedActivity {
   const serializedLessonWords = lessonWords.map((word) => ({
     alternativeTranslations: [...word.alternativeTranslations],
@@ -266,6 +229,8 @@ export function prepareActivityData(
     word: word.word,
   }));
 
+  const sentenceWordMap = new Map(sentenceWords.map((sw) => [sw.word.toLowerCase(), sw]));
+
   const steps = activity.steps
     .map((step) => serializeStep(step))
     .filter((step): step is SerializedStep => step !== null)
@@ -273,9 +238,12 @@ export function prepareActivityData(
       ...step,
       fillBlankOptions: buildFillBlankOptions(step),
       matchColumnsRightItems: buildMatchColumnsRightItems(step),
+      sentenceWordOptions: step.sentence
+        ? buildSentenceWordOptions(step.sentence.sentence, serializedLessonWords, sentenceWordMap)
+        : [],
       sortOrderItems: buildSortOrderItems(step),
       translationOptions: buildTranslationOptions(step, serializedLessonWords),
-      wordBankOptions: buildWordBankOptions(step, serializedLessonWords),
+      wordBankOptions: buildWordBankOptions(step, serializedLessonWords, sentenceWordMap),
     }));
 
   return {

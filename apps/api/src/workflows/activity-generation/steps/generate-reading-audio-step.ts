@@ -1,28 +1,10 @@
-import { generateLanguageAudio } from "@zoonk/core/audio/generate";
 import { isTTSSupportedLanguage } from "@zoonk/utils/languages";
 import { streamError, streamStatus } from "../stream-status";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
+import { generateAudioForText } from "./_utils/generate-audio-for-text";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
 import { type SavedSentence } from "./save-reading-sentences-step";
-
-async function generateAudioForSentence(
-  sentence: string,
-  language: string,
-  orgSlug?: string,
-): Promise<{ audioUrl: string; sentence: string } | null> {
-  const { data, error } = await generateLanguageAudio({
-    language,
-    orgSlug,
-    text: sentence,
-  });
-
-  if (error || !data) {
-    return null;
-  }
-
-  return { audioUrl: data, sentence };
-}
 
 export async function generateReadingAudioStep(
   activities: LessonActivity[],
@@ -47,15 +29,15 @@ export async function generateReadingAudioStep(
   }
 
   const results = await Promise.all(
-    savedSentences.map((savedSentence) =>
-      generateAudioForSentence(savedSentence.sentence, targetLanguage, course.organization?.slug),
+    savedSentences.map((saved) =>
+      generateAudioForText(saved.sentence, targetLanguage, course.organization?.slug),
     ),
   );
 
   const fulfilled = results.filter((result) => result !== null);
 
   const audioUrls: Record<string, string> = Object.fromEntries(
-    fulfilled.map(({ sentence, audioUrl }) => [sentence, audioUrl]),
+    fulfilled.map(({ text, audioUrl }) => [text, audioUrl]),
   );
 
   if (fulfilled.length < savedSentences.length) {

@@ -460,16 +460,16 @@ describe(prepareActivityData, () => {
 
     const raw = await getActivity({ lessonId: lesson.id, position: 110 });
     const result = prepareActivityData(raw!, lessonWords, []);
-    const wordBank = result.steps[0]?.wordBankOptions ?? [];
+    const wordBankWords = (result.steps[0]?.wordBankOptions ?? []).map((option) => option.word);
 
     // Should contain the correct sentence words
     for (const word of sentenceText.split(" ")) {
-      expect(wordBank).toContain(word);
+      expect(wordBankWords).toContain(word);
     }
 
     // Should contain distractor words from lesson word .word field (for reading)
-    expect(wordBank).toContain(`gato-${uniqueId}`);
-    expect(wordBank).toContain(`perro-${uniqueId}`);
+    expect(wordBankWords).toContain(`gato-${uniqueId}`);
+    expect(wordBankWords).toContain(`perro-${uniqueId}`);
   });
 
   test("listening step gets word bank with translation words and distractors from lesson word translation fields", async () => {
@@ -534,16 +534,131 @@ describe(prepareActivityData, () => {
 
     const raw = await getActivity({ lessonId: lesson.id, position: 111 });
     const result = prepareActivityData(raw!, lessonWords, []);
-    const wordBank = result.steps[0]?.wordBankOptions ?? [];
+    const wordBankWords = (result.steps[0]?.wordBankOptions ?? []).map((option) => option.word);
 
     // Should contain the correct translation words
     for (const word of translationText.split(" ")) {
-      expect(wordBank).toContain(word);
+      expect(wordBankWords).toContain(word);
     }
 
     // Should contain distractor words from lesson word .translation field (for listening)
-    expect(wordBank).toContain(`cat-${uniqueId}`);
-    expect(wordBank).toContain(`dog-${uniqueId}`);
+    expect(wordBankWords).toContain(`cat-${uniqueId}`);
+    expect(wordBankWords).toContain(`dog-${uniqueId}`);
+  });
+
+  test("correct words get metadata from lesson words when no sentence words provided", () => {
+    const activity = {
+      description: null,
+      generationRunId: null,
+      generationStatus: "completed",
+      id: BigInt(70),
+      kind: "reading",
+      language: "en",
+      organizationId: 1,
+      position: 0,
+      steps: [
+        {
+          content: {},
+          id: BigInt(71),
+          kind: "reading",
+          position: 0,
+          sentence: {
+            audioUrl: null,
+            id: BigInt(72),
+            romanization: null,
+            sentence: "gato bonito",
+            translation: "pretty cat",
+          },
+          word: null,
+        },
+      ],
+      title: "Reading Fallback",
+    };
+
+    const lessonWords = [
+      {
+        alternativeTranslations: [],
+        audioUrl: "https://example.com/gato.mp3",
+        id: BigInt(73),
+        pronunciation: null,
+        romanization: "ga-to",
+        translation: "cat",
+        word: "gato",
+      },
+    ];
+
+    // No sentenceWords passed — fallback to lesson words for metadata
+    const result = prepareActivityData(activity, lessonWords, []);
+    const wordBank = result.steps[0]?.wordBankOptions ?? [];
+
+    const gatoOption = wordBank.find((option) => option.word === "gato");
+    expect(gatoOption).toBeDefined();
+    expect(gatoOption?.translation).toBe("cat");
+    expect(gatoOption?.romanization).toBe("ga-to");
+    expect(gatoOption?.audioUrl).toBe("https://example.com/gato.mp3");
+  });
+
+  test("sentence words take priority over lesson words for correct word metadata", () => {
+    const activity = {
+      description: null,
+      generationRunId: null,
+      generationStatus: "completed",
+      id: BigInt(74),
+      kind: "reading",
+      language: "en",
+      organizationId: 1,
+      position: 0,
+      steps: [
+        {
+          content: {},
+          id: BigInt(75),
+          kind: "reading",
+          position: 0,
+          sentence: {
+            audioUrl: null,
+            id: BigInt(76),
+            romanization: null,
+            sentence: "gato bonito",
+            translation: "pretty cat",
+          },
+          word: null,
+        },
+      ],
+      title: "Reading Priority",
+    };
+
+    const lessonWords = [
+      {
+        alternativeTranslations: [],
+        audioUrl: "https://example.com/lesson-gato.mp3",
+        id: BigInt(77),
+        pronunciation: null,
+        romanization: null,
+        translation: "cat (lesson)",
+        word: "gato",
+      },
+    ];
+
+    const sentenceWords = [
+      {
+        alternativeTranslations: [],
+        audioUrl: "https://example.com/sentence-gato.mp3",
+        id: BigInt(78),
+        pronunciation: null,
+        romanization: "ga-to",
+        translation: "cat (sentence)",
+        word: "gato",
+      },
+    ];
+
+    const result = prepareActivityData(activity, lessonWords, [], sentenceWords);
+    const wordBank = result.steps[0]?.wordBankOptions ?? [];
+
+    const gatoOption = wordBank.find((option) => option.word === "gato");
+    expect(gatoOption).toBeDefined();
+    expect(gatoOption?.translation).toBe("cat (sentence)");
+    expect(gatoOption?.audioUrl).toBe("https://example.com/sentence-gato.mp3");
+    expect(gatoOption?.romanization).toBe("ga-to");
   });
 
   test("word bank removes duplicates between correct and distractor words", () => {
@@ -601,7 +716,7 @@ describe(prepareActivityData, () => {
     const wordBank = result.steps[0]?.wordBankOptions ?? [];
 
     // "hola" should be excluded because it duplicates "Hola" (case-insensitive)
-    const holaCount = wordBank.filter((word) => word.toLowerCase() === "hola").length;
+    const holaCount = wordBank.filter((option) => option.word.toLowerCase() === "hola").length;
     expect(holaCount).toBe(1); // Only the correct "Hola"
   });
 
@@ -657,11 +772,11 @@ describe(prepareActivityData, () => {
     ];
 
     const result = prepareActivityData(activity, lessonWords, []);
-    const wordBank = result.steps[0]?.wordBankOptions ?? [];
+    const wordBankWords = (result.steps[0]?.wordBankOptions ?? []).map((option) => option.word);
 
     // "you" distractor should be excluded because "you?" is already a correct word
-    expect(wordBank).toContain("you?");
-    expect(wordBank).not.toContain("you");
+    expect(wordBankWords).toContain("you?");
+    expect(wordBankWords).not.toContain("you");
   });
 
   test("deduplicates distractors that differ only by punctuation", () => {
@@ -720,7 +835,7 @@ describe(prepareActivityData, () => {
 
     // Only one variant of "tu" should appear, not both "tu" and "tu?"
     const tuVariants = wordBank.filter(
-      (word) => word.toLowerCase().replaceAll(/[^\p{L}\p{N}\s]/gu, "") === "tu",
+      (option) => option.word.toLowerCase().replaceAll(/[^\p{L}\p{N}\s]/gu, "") === "tu",
     );
 
     expect(tuVariants).toHaveLength(1);
@@ -749,6 +864,151 @@ describe(prepareActivityData, () => {
     const result = prepareActivityData(raw!, [], []);
 
     expect(result.steps[0]?.wordBankOptions).toEqual([]);
+  });
+
+  test("sentenceWordOptions contains enriched target-language words for reading steps", () => {
+    const activity = {
+      description: null,
+      generationRunId: null,
+      generationStatus: "completed",
+      id: BigInt(90),
+      kind: "reading",
+      language: "en",
+      organizationId: 1,
+      position: 0,
+      steps: [
+        {
+          content: {},
+          id: BigInt(91),
+          kind: "reading",
+          position: 0,
+          sentence: {
+            audioUrl: null,
+            id: BigInt(92),
+            romanization: null,
+            sentence: "gato bonito",
+            translation: "pretty cat",
+          },
+          word: null,
+        },
+      ],
+      title: "Sentence Word Options Reading",
+    };
+
+    const lessonWords = [
+      {
+        alternativeTranslations: [],
+        audioUrl: "https://example.com/gato.mp3",
+        id: BigInt(93),
+        pronunciation: null,
+        romanization: "ga-to",
+        translation: "cat",
+        word: "gato",
+      },
+    ];
+
+    const result = prepareActivityData(activity, lessonWords, []);
+    const sentenceWordOptions = result.steps[0]?.sentenceWordOptions ?? [];
+
+    expect(sentenceWordOptions).toHaveLength(2);
+    expect(sentenceWordOptions[0]).toEqual({
+      audioUrl: "https://example.com/gato.mp3",
+      romanization: "ga-to",
+      translation: "cat",
+      word: "gato",
+    });
+    expect(sentenceWordOptions[1]).toEqual({
+      audioUrl: null,
+      romanization: null,
+      translation: null,
+      word: "bonito",
+    });
+  });
+
+  test("sentenceWordOptions contains enriched target-language words for listening steps", () => {
+    const activity = {
+      description: null,
+      generationRunId: null,
+      generationStatus: "completed",
+      id: BigInt(94),
+      kind: "listening",
+      language: "en",
+      organizationId: 1,
+      position: 0,
+      steps: [
+        {
+          content: {},
+          id: BigInt(95),
+          kind: "listening",
+          position: 0,
+          sentence: {
+            audioUrl: null,
+            id: BigInt(96),
+            romanization: null,
+            sentence: "gato bonito",
+            translation: "pretty cat",
+          },
+          word: null,
+        },
+      ],
+      title: "Sentence Word Options Listening",
+    };
+
+    const sentenceWords = [
+      {
+        alternativeTranslations: [],
+        audioUrl: "https://example.com/sw-gato.mp3",
+        id: BigInt(97),
+        pronunciation: null,
+        romanization: "ga-to-sw",
+        translation: "cat (sw)",
+        word: "gato",
+      },
+    ];
+
+    const result = prepareActivityData(activity, [], [], sentenceWords);
+    const sentenceWordOptions = result.steps[0]?.sentenceWordOptions ?? [];
+
+    expect(sentenceWordOptions).toHaveLength(2);
+    expect(sentenceWordOptions[0]).toEqual({
+      audioUrl: "https://example.com/sw-gato.mp3",
+      romanization: "ga-to-sw",
+      translation: "cat (sw)",
+      word: "gato",
+    });
+    expect(sentenceWordOptions[1]).toEqual({
+      audioUrl: null,
+      romanization: null,
+      translation: null,
+      word: "bonito",
+    });
+  });
+
+  test("sentenceWordOptions is empty for non-sentence steps", () => {
+    const activity = {
+      description: null,
+      generationRunId: null,
+      generationStatus: "completed",
+      id: BigInt(98),
+      kind: "explanation",
+      language: "en",
+      organizationId: 1,
+      position: 0,
+      steps: [
+        {
+          content: { text: "test", title: "Test", variant: "text" },
+          id: BigInt(99),
+          kind: "static",
+          position: 0,
+          sentence: null,
+          word: null,
+        },
+      ],
+      title: "No Sentence",
+    };
+
+    const result = prepareActivityData(activity, [], []);
+    expect(result.steps[0]?.sentenceWordOptions).toEqual([]);
   });
 
   test("sortOrder step populates sortOrderItems with all items", () => {

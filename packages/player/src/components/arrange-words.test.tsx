@@ -11,6 +11,10 @@ vi.mock("@zoonk/utils/shuffle", () => ({
   shuffle: <T,>(array: readonly T[]): T[] => [...array],
 }));
 
+vi.mock("../use-word-audio", () => ({
+  useWordAudio: () => ({ pause: vi.fn(), play: vi.fn() }),
+}));
+
 vi.mock("./result-announcement", () => ({
   ResultAnnouncement: () => null,
 }));
@@ -30,7 +34,11 @@ describe(ArrangeWordsInteraction, () => {
         onSelectAnswer={onSelectAnswer}
         selectedAnswer={undefined}
         stepId="step-1"
-        wordBankOptions={["Hola", "mundo", "gato"]}
+        wordBankOptions={[
+          { audioUrl: null, romanization: null, translation: null, word: "Hola" },
+          { audioUrl: null, romanization: null, translation: null, word: "mundo" },
+          { audioUrl: null, romanization: null, translation: null, word: "gato" },
+        ]}
       >
         <p>Prompt</p>
       </ArrangeWordsInteraction>,

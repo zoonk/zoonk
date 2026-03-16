@@ -1,9 +1,13 @@
 "use client";
 
+import { Tooltip, TooltipContent, TooltipTrigger } from "@zoonk/ui/components/tooltip";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useCallback, useState } from "react";
 import { type SelectedAnswer, type StepResult } from "../player-reducer";
+import { type WordBankOption } from "../prepare-activity-data";
+import { useWordAudio } from "../use-word-audio";
+import { ArrangeWordsFeedback, type ArrangeWordsFeedbackProps } from "./arrange-words-feedback";
 import { InlineFeedback } from "./inline-feedback";
 import { InteractiveStepLayout } from "./step-layouts";
 
@@ -17,14 +21,14 @@ function getWordResultState(
 
 function PlacedWordTile({
   onClick,
+  option,
   position,
   resultState,
-  word,
 }: {
   onClick: () => void;
+  option: WordBankOption;
   position: number;
   resultState?: "correct" | "incorrect";
-  word: string;
 }) {
   const t = useExtracted();
   const hasResult = resultState !== undefined;
@@ -32,11 +36,11 @@ function PlacedWordTile({
   const ariaLabel = (() => {
     if (hasResult) {
       const result = resultState === "correct" ? t("Correct") : t("Incorrect");
-      return t("{item}. {result}.", { item: word, result });
+      return t("{item}. {result}.", { item: option.word, result });
     }
 
     return t("Position {position}: {item}. Tap to remove.", {
-      item: word,
+      item: option.word,
       position: String(position + 1),
     });
   })();
@@ -45,7 +49,7 @@ function PlacedWordTile({
     <button
       aria-label={ariaLabel}
       className={cn(
-        "border-border min-h-11 rounded-lg border px-4 py-2.5 text-base transition-all duration-150",
+        "border-border flex min-h-11 flex-col items-center rounded-lg border px-4 py-2.5 text-base transition-all duration-150",
         hasResult && "pointer-events-none",
         !hasResult &&
           "hover:bg-accent focus-visible:border-ring focus-visible:ring-ring/50 outline-none focus-visible:ring-[3px]",
@@ -57,7 +61,11 @@ function PlacedWordTile({
       onClick={onClick}
       type="button"
     >
-      {word}
+      <span>{option.word}</span>
+
+      {option.romanization && (
+        <span className="text-muted-foreground text-xs">{option.romanization}</span>
+      )}
     </button>
   );
 }
@@ -70,7 +78,7 @@ function AnswerArea({
 }: {
   correctWords: string[];
   onRemove: (index: number) => void;
-  placedWords: string[];
+  placedWords: WordBankOption[];
   result?: StepResult;
 }) {
   const t = useExtracted();
@@ -84,14 +92,14 @@ function AnswerArea({
       {placedWords.length === 0 ? (
         <p className="text-muted-foreground/60 text-sm">{t("Tap words to build your answer")}</p>
       ) : (
-        placedWords.map((word, index) => (
+        placedWords.map((option, index) => (
           <PlacedWordTile
             // oxlint-disable-next-line react/no-array-index-key -- Words can repeat, no unique ID
-            key={`placed-${word}-${index}`}
+            key={`placed-${option.word}-${index}`}
             onClick={() => onRemove(index)}
+            option={option}
             position={index}
-            resultState={result ? getWordResultState(word, index, correctWords) : undefined}
-            word={word}
+            resultState={result ? getWordResultState(option.word, index, correctWords) : undefined}
           />
         ))
       )}
@@ -99,29 +107,59 @@ function AnswerArea({
   );
 }
 
+function BankTileContent({ option }: { option: WordBankOption }) {
+  return (
+    <>
+      <span>{option.word}</span>
+
+      {option.romanization && (
+        <span className="text-muted-foreground text-xs">{option.romanization}</span>
+      )}
+    </>
+  );
+}
+
 function BankTile({
   isUsed,
   onPlace,
-  word,
+  option,
 }: {
   isUsed: boolean;
   onPlace: () => void;
-  word: string;
+  option: WordBankOption;
 }) {
+  const buttonClassName = cn(
+    "border-border flex min-h-11 flex-col items-center rounded-lg border px-4 py-2.5 transition-all duration-150",
+    isUsed
+      ? "pointer-events-none opacity-30"
+      : "hover:bg-accent focus-visible:border-ring focus-visible:ring-ring/50 outline-none focus-visible:ring-[3px]",
+  );
+
+  if (option.translation) {
+    return (
+      <Tooltip>
+        <TooltipTrigger
+          aria-disabled={isUsed}
+          className={buttonClassName}
+          onClick={onPlace}
+          tabIndex={isUsed ? -1 : 0}
+        >
+          <BankTileContent option={option} />
+        </TooltipTrigger>
+        <TooltipContent>{option.translation}</TooltipContent>
+      </Tooltip>
+    );
+  }
+
   return (
     <button
       aria-disabled={isUsed}
-      className={cn(
-        "border-border min-h-11 rounded-lg border px-4 py-2.5 transition-all duration-150",
-        isUsed
-          ? "pointer-events-none opacity-30"
-          : "hover:bg-accent focus-visible:border-ring focus-visible:ring-ring/50 outline-none focus-visible:ring-[3px]",
-      )}
+      className={buttonClassName}
       onClick={onPlace}
       tabIndex={isUsed ? -1 : 0}
       type="button"
     >
-      {word}
+      <BankTileContent option={option} />
     </button>
   );
 }
@@ -131,26 +169,28 @@ function WordBank({
   placedWords,
   words,
 }: {
-  onPlace: (word: string) => void;
-  placedWords: string[];
-  words: string[];
+  onPlace: (option: WordBankOption) => void;
+  placedWords: WordBankOption[];
+  words: WordBankOption[];
 }) {
   const t = useExtracted();
 
   return (
     <div aria-label={t("Word bank")} className="flex flex-wrap gap-2.5" role="group">
-      {words.map((word, index) => {
-        const usedCount = placedWords.filter((placed) => placed === word).length;
-        const totalCount = words.slice(0, index + 1).filter((item) => item === word).length;
+      {words.map((option, index) => {
+        const usedCount = placedWords.filter((placed) => placed.word === option.word).length;
+        const totalCount = words
+          .slice(0, index + 1)
+          .filter((item) => item.word === option.word).length;
         const isUsed = usedCount >= totalCount;
 
         return (
           <BankTile
             isUsed={isUsed}
             // oxlint-disable-next-line react/no-array-index-key -- Words can repeat in word bank, no unique ID
-            key={`bank-${word}-${index}`}
-            onPlace={() => onPlace(word)}
-            word={word}
+            key={`bank-${option.word}-${index}`}
+            onPlace={() => onPlace(option)}
+            option={option}
           />
         );
       })}
@@ -172,35 +212,46 @@ export function ArrangeWordsInteraction({
   answerKind: "reading" | "listening";
   children: React.ReactNode;
   correctWords: string[];
-  feedbackDetails?: { sentence: string; translation: string };
+  feedbackDetails?: ArrangeWordsFeedbackProps;
   onSelectAnswer: (stepId: string, answer: SelectedAnswer | null) => void;
   result?: StepResult;
   selectedAnswer: SelectedAnswer | undefined;
   stepId: string;
-  wordBankOptions: string[];
+  wordBankOptions: WordBankOption[];
 }) {
-  const [placedWords, setPlacedWords] = useState<string[]>(() => {
+  const [placedWords, setPlacedWords] = useState<WordBankOption[]>(() => {
     if (result?.answer?.kind === answerKind && "arrangedWords" in result.answer) {
-      return result.answer.arrangedWords;
+      return result.answer.arrangedWords.map((word) => ({
+        audioUrl: null,
+        romanization: null,
+        translation: null,
+        word,
+      }));
     }
 
     return [];
   });
 
+  const { play } = useWordAudio();
+
   const handlePlace = useCallback(
-    (word: string) => {
+    (option: WordBankOption) => {
       if (placedWords.length >= correctWords.length) {
         return;
       }
 
-      const next = [...placedWords, word];
+      play(option.audioUrl);
+      const next = [...placedWords, option];
       setPlacedWords(next);
 
       if (next.length === correctWords.length) {
-        onSelectAnswer(stepId, { arrangedWords: next, kind: answerKind });
+        onSelectAnswer(stepId, {
+          arrangedWords: next.map((placed) => placed.word),
+          kind: answerKind,
+        });
       }
     },
-    [answerKind, correctWords.length, onSelectAnswer, placedWords, stepId],
+    [answerKind, correctWords.length, onSelectAnswer, placedWords, play, stepId],
   );
 
   const handleRemove = useCallback(
@@ -230,12 +281,7 @@ export function ArrangeWordsInteraction({
 
       {result && (
         <InlineFeedback result={result}>
-          {feedbackDetails && (
-            <div className="border-border/40 flex flex-col gap-1.5 border-t pt-3">
-              <p className="text-sm font-medium">{feedbackDetails.sentence}</p>
-              <p className="text-muted-foreground text-sm">{feedbackDetails.translation}</p>
-            </div>
-          )}
+          {feedbackDetails && <ArrangeWordsFeedback {...feedbackDetails} />}
         </InlineFeedback>
       )}
     </InteractiveStepLayout>
