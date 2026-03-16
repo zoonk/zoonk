@@ -1,28 +1,10 @@
-import { generateLanguageAudio } from "@zoonk/core/audio/generate";
 import { isTTSSupportedLanguage } from "@zoonk/utils/languages";
 import { streamError, streamStatus } from "../stream-status";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
+import { generateAudioForText } from "./_utils/generate-audio-for-text";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
 import { type SavedSentenceWord } from "./save-sentence-words-step";
-
-async function generateAudioForWord(
-  word: string,
-  language: string,
-  orgSlug?: string,
-): Promise<{ audioUrl: string; word: string } | null> {
-  const { data, error } = await generateLanguageAudio({
-    language,
-    orgSlug,
-    text: word,
-  });
-
-  if (error || !data) {
-    return null;
-  }
-
-  return { audioUrl: data, word };
-}
 
 export async function generateSentenceWordAudioStep(
   activities: LessonActivity[],
@@ -48,17 +30,23 @@ export async function generateSentenceWordAudioStep(
 
   const orgSlug = course.organization?.slug;
 
+  const wordsNeedingAudio = savedSentenceWords.filter((saved) => !saved.audioUrl);
+  const existingAudioUrls: Record<string, string> = Object.fromEntries(
+    savedSentenceWords.flatMap((saved) => (saved.audioUrl ? [[saved.word, saved.audioUrl]] : [])),
+  );
+
   const results = await Promise.all(
-    savedSentenceWords.map((saved) => generateAudioForWord(saved.word, targetLanguage, orgSlug)),
+    wordsNeedingAudio.map((saved) => generateAudioForText(saved.word, targetLanguage, orgSlug)),
   );
 
   const fulfilled = results.filter((result) => result !== null);
 
-  const wordAudioUrls: Record<string, string> = Object.fromEntries(
-    fulfilled.map(({ word, audioUrl }) => [word, audioUrl]),
-  );
+  const wordAudioUrls: Record<string, string> = {
+    ...existingAudioUrls,
+    ...Object.fromEntries(fulfilled.map(({ text, audioUrl }) => [text, audioUrl])),
+  };
 
-  if (fulfilled.length < savedSentenceWords.length) {
+  if (fulfilled.length < wordsNeedingAudio.length) {
     await streamError({ reason: "enrichmentFailed", step: "generateSentenceWordAudio" });
     await handleActivityFailureStep({ activityId: activity.id });
     return { wordAudioUrls };

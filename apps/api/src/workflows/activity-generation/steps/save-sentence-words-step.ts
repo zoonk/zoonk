@@ -8,6 +8,7 @@ import { handleActivityFailureStep } from "./handle-failure-step";
 import { type SavedSentence } from "./save-reading-sentences-step";
 
 export type SavedSentenceWord = {
+  audioUrl: string | null;
   word: string;
   wordId: number;
 };
@@ -48,7 +49,7 @@ function buildSaveOneWord(params: {
       },
     });
 
-    return { word, wordId: Number(record.id) };
+    return { audioUrl: record.audioUrl, word, wordId: Number(record.id) };
   };
 }
 

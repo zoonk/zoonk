@@ -1,5 +1,9 @@
 import { randomUUID } from "node:crypto";
-import { generateActivityVocabulary } from "@zoonk/ai/tasks/activities/language/vocabulary";
+import {
+  type VocabularyWord,
+  generateActivityVocabulary,
+} from "@zoonk/ai/tasks/activities/language/vocabulary";
+import { generateLanguageAudio } from "@zoonk/core/audio/generate";
 import { prisma } from "@zoonk/db";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
@@ -344,5 +348,60 @@ describe(vocabularyActivityWorkflow, () => {
 
     expect(generateActivityVocabulary).not.toHaveBeenCalled();
     expect(result.words).toHaveLength(0);
+  });
+
+  test("skips TTS for vocabulary words that already have an audioUrl", async () => {
+    const id = randomUUID().replaceAll("-", "").slice(0, 8);
+    const existingWord = `zexist${id}`;
+    const newWord = `znew${id}`;
+
+    await prisma.word.create({
+      data: {
+        audioUrl: "https://example.com/existing-audio.mp3",
+        organizationId,
+        targetLanguage: "es",
+        translation: "existing",
+        userLanguage: "en",
+        word: existingWord,
+      },
+    });
+
+    const mockWords: VocabularyWord[] = [
+      {
+        alternativeTranslations: [],
+        romanization: "r1",
+        translation: "existing",
+        word: existingWord,
+      },
+      { alternativeTranslations: [], romanization: "r2", translation: "new", word: newWord },
+    ];
+
+    vi.mocked(generateActivityVocabulary).mockResolvedValueOnce({
+      data: { words: mockWords },
+    } as Awaited<ReturnType<typeof generateActivityVocabulary>>);
+
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `Vocab SkipTTS ${randomUUID()}`,
+    });
+
+    await activityFixture({
+      generationStatus: "pending",
+      kind: "vocabulary",
+      language: "en",
+      lessonId: lesson.id,
+      organizationId,
+      title: `Vocabulary ${randomUUID()}`,
+    });
+
+    const activities = await fetchLessonActivities(lesson.id);
+    await vocabularyActivityWorkflow(activities, "test-run-id", [], []);
+
+    expect(generateLanguageAudio).not.toHaveBeenCalledWith(
+      expect.objectContaining({ text: existingWord }),
+    );
+    expect(generateLanguageAudio).toHaveBeenCalledWith(expect.objectContaining({ text: newWord }));
   });
 });

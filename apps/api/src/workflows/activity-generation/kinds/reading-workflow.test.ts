@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { generateSentenceWordTranslation } from "@zoonk/ai/tasks/activities/language/sentence-word-translation";
 import { generateActivitySentences } from "@zoonk/ai/tasks/activities/language/sentences";
+import { generateLanguageAudio } from "@zoonk/core/audio/generate";
 import { prisma } from "@zoonk/db";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
@@ -315,5 +316,58 @@ describe(readingActivityWorkflow, () => {
 
     const emptyTranslationWords = failWordInDb.filter((word) => word.translation === "");
     expect(emptyTranslationWords).toHaveLength(0);
+  });
+
+  test("skips TTS for sentence words that already have an audioUrl", async () => {
+    const id = randomUUID().replaceAll("-", "").slice(0, 8);
+    const existingWord = `zexist${id}`;
+    const newWord = `znew${id}`;
+
+    await prisma.word.create({
+      data: {
+        audioUrl: "https://example.com/existing-audio.mp3",
+        organizationId,
+        targetLanguage: "es",
+        translation: "existing",
+        userLanguage: "en",
+        word: existingWord,
+      },
+    });
+
+    vi.mocked(generateActivitySentences).mockResolvedValueOnce({
+      data: {
+        sentences: [
+          {
+            romanization: "r1",
+            sentence: `${existingWord} ${newWord}`,
+            translation: "existing new",
+          },
+        ],
+      },
+    } as Awaited<ReturnType<typeof generateActivitySentences>>);
+
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `Reading SkipTTS ${randomUUID()}`,
+    });
+
+    await activityFixture({
+      generationStatus: "pending",
+      kind: "reading",
+      language: "en",
+      lessonId: lesson.id,
+      organizationId,
+      title: `Reading ${randomUUID()}`,
+    });
+
+    const activities = await fetchLessonActivities(lesson.id);
+    await readingActivityWorkflow(activities, "test-run-id", words, [], []);
+
+    expect(generateLanguageAudio).not.toHaveBeenCalledWith(
+      expect.objectContaining({ text: existingWord }),
+    );
+    expect(generateLanguageAudio).toHaveBeenCalledWith(expect.objectContaining({ text: newWord }));
   });
 });
