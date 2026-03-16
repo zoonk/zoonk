@@ -82,7 +82,7 @@ export function ArrangeWordsFeedback(props: ArrangeWordsFeedbackProps) {
   return (
     <div className="border-border/40 flex flex-col gap-3 border-t pt-3">
       <WordCards options={props.sentenceWordOptions} />
-      <RomanizationText>{props.translation}</RomanizationText>
+      <p className="text-muted-foreground text-sm italic">{props.translation}</p>
     </div>
   );
 }
