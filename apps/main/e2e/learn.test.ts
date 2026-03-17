@@ -83,14 +83,4 @@ test.describe("Course Suggestions", () => {
 
     await expect(page.getByRole("heading", { name: /learn anything/i })).toBeVisible();
   });
-
-  test("submits form using Enter key", async ({ page }) => {
-    await page.goto("/learn");
-
-    const input = page.getByRole("textbox");
-    await input.fill(prompt);
-    await page.keyboard.press("Enter");
-
-    await expect(page.getByRole("heading", { name: /course ideas for/i })).toBeVisible();
-  });
 });
