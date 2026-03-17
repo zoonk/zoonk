@@ -53,7 +53,7 @@
   },
   "devDependencies": {
     "@types/react": "^19.2.14",
-    "@typescript/native-preview": "7.0.0-dev.20260314.1",
+    "@typescript/native-preview": "7.0.0-dev.20260317.1",
     "@zoonk/testing": "workspace:*",
     "@zoonk/tsconfig": "workspace:*",
     "vitest": "4.1.0"
