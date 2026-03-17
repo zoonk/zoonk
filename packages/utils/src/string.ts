@@ -105,7 +105,7 @@ export function extractUniqueSentenceWords(sentences: string[]): string[] {
 }
 
 export function normalizePunctuation(text: string): string {
-  return text.replaceAll(/\s+([!?.,;:!?。、！？؟])/g, "$1");
+  return text.replaceAll(/(?<!\s)\s+([!?.,;:!?。、！？؟])/g, "$1");
 }
 
 export function replaceNamePlaceholder(text: string, name: string | null): string {
