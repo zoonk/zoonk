@@ -52,6 +52,7 @@ function ImageWithFallback({ alt, url }: { alt: string; url: string | undefined 
       alt={alt}
       className="aspect-square object-cover"
       height={336}
+      loading="eager"
       onError={() => setHasError(true)}
       sizes="(max-width: 672px) 50vw, 336px"
       src={url}

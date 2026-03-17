@@ -76,7 +76,13 @@ export async function ContinueLearningCard({
           <FeatureCardThumbnail size="lg">
             {course.imageUrl ? (
               <FeatureCardThumbnailImage>
-                <Image alt={course.title} height={96} src={course.imageUrl} width={96} />
+                <Image
+                  alt={course.title}
+                  height={96}
+                  loading="eager"
+                  src={course.imageUrl}
+                  width={96}
+                />
               </FeatureCardThumbnailImage>
             ) : (
               <FeatureCardThumbnailPlaceholder>
