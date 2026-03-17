@@ -418,6 +418,134 @@ describe(vocabularyActivityWorkflow, () => {
     expect(updatedWord?.wordAudioId).toBe(wordAudio.id);
   });
 
+  test("reuses existing Word record when casing differs", async () => {
+    const id = randomUUID().replaceAll("-", "").slice(0, 8);
+    const existingWord = `Hola${id}`;
+
+    const wordAudio = await prisma.wordAudio.create({
+      data: {
+        audioUrl: "https://example.com/hola-audio.mp3",
+        organizationId,
+        targetLanguage: "es",
+        word: existingWord,
+      },
+    });
+
+    const existingRecord = await prisma.word.create({
+      data: {
+        organizationId,
+        targetLanguage: "es",
+        translation: "hello",
+        userLanguage: "en",
+        word: existingWord,
+        wordAudioId: wordAudio.id,
+      },
+    });
+
+    const mockWords: VocabularyWord[] = [
+      {
+        alternativeTranslations: ["hi"],
+        romanization: "o-la",
+        translation: "hello",
+        word: existingWord.toLowerCase(),
+      },
+      { alternativeTranslations: [], romanization: "ga-to", translation: "cat", word: `gato${id}` },
+    ];
+
+    vi.mocked(generateActivityVocabulary).mockResolvedValueOnce({
+      data: { words: mockWords },
+    } as Awaited<ReturnType<typeof generateActivityVocabulary>>);
+
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `Vocab CaseDedup ${randomUUID()}`,
+    });
+
+    await activityFixture({
+      generationStatus: "pending",
+      kind: "vocabulary",
+      language: "en",
+      lessonId: lesson.id,
+      organizationId,
+      title: `Vocabulary ${randomUUID()}`,
+    });
+
+    const activities = await fetchLessonActivities(lesson.id);
+    await vocabularyActivityWorkflow(activities, "test-run-id", [], []);
+
+    const words = await prisma.word.findMany({
+      where: {
+        organizationId,
+        targetLanguage: "es",
+        userLanguage: "en",
+        word: { in: [existingWord, existingWord.toLowerCase()], mode: "insensitive" },
+      },
+    });
+
+    // Should reuse the existing "Hola..." record, not create a new "hola..." one
+    expect(words).toHaveLength(1);
+    expect(words[0]!.word).toBe(existingWord);
+    expect(words[0]!.id).toBe(existingRecord.id);
+  });
+
+  test("reuses existing WordAudio when casing differs", async () => {
+    const id = randomUUID().replaceAll("-", "").slice(0, 8);
+    const existingWord = `Gato${id}`;
+
+    const wordAudio = await prisma.wordAudio.create({
+      data: {
+        audioUrl: "https://example.com/gato-audio.mp3",
+        organizationId,
+        targetLanguage: "es",
+        word: existingWord,
+      },
+    });
+
+    const mockWords: VocabularyWord[] = [
+      {
+        alternativeTranslations: [],
+        romanization: "ga-to",
+        translation: "cat",
+        word: existingWord.toLowerCase(),
+      },
+    ];
+
+    vi.mocked(generateActivityVocabulary).mockResolvedValueOnce({
+      data: { words: mockWords },
+    } as Awaited<ReturnType<typeof generateActivityVocabulary>>);
+
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `Vocab AudioCase ${randomUUID()}`,
+    });
+
+    await activityFixture({
+      generationStatus: "pending",
+      kind: "vocabulary",
+      language: "en",
+      lessonId: lesson.id,
+      organizationId,
+      title: `Vocabulary ${randomUUID()}`,
+    });
+
+    const activities = await fetchLessonActivities(lesson.id);
+    await vocabularyActivityWorkflow(activities, "test-run-id", [], []);
+
+    // Should not call TTS since WordAudio for "Gato..." already exists
+    expect(generateLanguageAudio).not.toHaveBeenCalled();
+
+    // The Word record should be linked to the existing WordAudio
+    const word = await prisma.word.findFirst({
+      where: { organizationId, targetLanguage: "es", word: existingWord.toLowerCase() },
+    });
+
+    expect(word?.wordAudioId).toBe(wordAudio.id);
+  });
+
   test("skips TTS for vocabulary words that already have a WordAudio record", async () => {
     const id = randomUUID().replaceAll("-", "").slice(0, 8);
     const existingWord = `zexist${id}`;

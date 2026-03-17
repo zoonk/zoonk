@@ -2,6 +2,7 @@ import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { emptyToNull, extractUniqueSentenceWords } from "@zoonk/utils/string";
 import { streamError, streamStatus } from "../stream-status";
+import { fetchExistingWordCasing } from "./_utils/fetch-existing-word-casing";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
@@ -17,25 +18,6 @@ type WordMetadataEntry = {
   romanization: string | null;
   translation: string;
 };
-
-async function fetchExistingWordCasing(params: {
-  organizationId: number;
-  targetLanguage: string;
-  userLanguage: string;
-  words: string[];
-}): Promise<Record<string, string>> {
-  const existing = await prisma.word.findMany({
-    select: { word: true },
-    where: {
-      organizationId: params.organizationId,
-      targetLanguage: params.targetLanguage,
-      userLanguage: params.userLanguage,
-      word: { in: params.words, mode: "insensitive" },
-    },
-  });
-
-  return Object.fromEntries(existing.map((record) => [record.word.toLowerCase(), record.word]));
-}
 
 function buildSaveOneWord(params: {
   existingCasing: Record<string, string>;

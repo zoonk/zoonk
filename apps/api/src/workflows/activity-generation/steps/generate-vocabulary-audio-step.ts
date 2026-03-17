@@ -37,15 +37,24 @@ export async function generateVocabularyAudioStep(
     where: {
       organizationId,
       targetLanguage,
-      word: { in: words.map((vocab) => vocab.word) },
+      word: { in: words.map((vocab) => vocab.word), mode: "insensitive" },
     },
   });
 
-  const existingAudioIds: Record<string, bigint> = Object.fromEntries(
-    existingAudios.map((record) => [record.word, record.id]),
+  const existingAudioByLower: Record<string, bigint> = Object.fromEntries(
+    existingAudios.map((record) => [record.word.toLowerCase(), record.id]),
   );
 
-  const wordsNeedingAudio = words.filter((vocab) => !existingAudioIds[vocab.word]);
+  const existingAudioIds: Record<string, bigint> = Object.fromEntries(
+    words.flatMap((vocab) => {
+      const audioId = existingAudioByLower[vocab.word.toLowerCase()];
+      return audioId ? [[vocab.word, audioId]] : [];
+    }),
+  );
+
+  const wordsNeedingAudio = words.filter(
+    (vocab) => !existingAudioByLower[vocab.word.toLowerCase()],
+  );
 
   const results = await Promise.all(
     wordsNeedingAudio.map((vocabWord) =>
