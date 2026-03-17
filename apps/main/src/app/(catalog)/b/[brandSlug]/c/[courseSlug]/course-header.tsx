@@ -43,6 +43,7 @@ export async function CourseHeader({
             alt={course.title}
             className="size-full rounded-xl object-cover outline -outline-offset-1 outline-black/10 dark:outline-white/10"
             fill
+            loading="eager"
             sizes="(max-width: 640px) 80px, 96px"
             src={course.imageUrl}
           />

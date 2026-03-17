@@ -24,6 +24,7 @@ export function ImageVisual({ content }: { content: ImageVisualContent }) {
       alt={content.prompt}
       className="aspect-square w-full max-w-md rounded-2xl object-cover"
       height={1024}
+      loading="eager"
       onError={() => setErrorUrl(content.url ?? null)}
       sizes="(max-width: 640px) calc(100vw - 2rem), 448px"
       src={content.url}
