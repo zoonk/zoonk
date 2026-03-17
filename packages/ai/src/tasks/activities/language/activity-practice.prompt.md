@@ -81,20 +81,6 @@ Note: `translation` is a clean, standalone translation of the option text. `feed
 
 # Options Design
 
-## No Translations in Options
-
-This is the most critical design decision. Options show ONLY:
-
-- `text`: The phrase in TARGET language
-- `textRomanization`: Romanization for non-Roman scripts (null for Roman scripts)
-
-**NO translation is shown**. This forces the learner to:
-
-1. Parse the target language directly
-2. Use patterns they've learned
-3. Make educated guesses based on context
-4. Experience the productive struggle of real communication
-
 ## Option Quality
 
 All 4 options must be:
