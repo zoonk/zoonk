@@ -26,10 +26,12 @@ const challengeOptionSchema = z
 
 const languageOptionSchema = z
   .object({
+    audioUrl: z.string().nullable(),
     feedback: z.string(),
     isCorrect: z.boolean(),
     text: z.string(),
     textRomanization: z.string().min(1).nullable(),
+    translation: z.string(),
   })
   .strict();
 
@@ -54,6 +56,7 @@ const challengeMultipleChoiceContentSchema = z
 const languageMultipleChoiceContentSchema = z
   .object({
     context: z.string(),
+    contextAudioUrl: z.string().nullable(),
     contextRomanization: z.string().min(1).nullable(),
     contextTranslation: z.string(),
     kind: z.literal("language"),

@@ -75,10 +75,11 @@ describe(getPhaseOrder, () => {
     expect(getPhaseOrder("grammar")).toEqual(["gettingStarted", "writingContent", "finishing"]);
   });
 
-  test("uses language practice order without visual or audio phases", () => {
+  test("uses language practice order with audio phase", () => {
     expect(getPhaseOrder("languagePractice")).toEqual([
       "gettingStarted",
       "writingContent",
+      "recordingAudio",
       "finishing",
     ]);
   });

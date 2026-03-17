@@ -74,7 +74,10 @@ The character in the story is a friendly native speaker who:
 | `contextRomanization`        | Romanization | null (for Roman scripts)                                  |
 | `options[].text`             | TARGET       | "Un cafe con leche, por favor."                           |
 | `options[].textRomanization` | Romanization | null (for Roman scripts)                                  |
-| `options[].feedback`         | NATIVE       | "A coffee with milk, please - Perfect! Polite and clear." |
+| `options[].translation`      | NATIVE       | "A coffee with milk, please."                             |
+| `options[].feedback`         | NATIVE       | "Perfect! Polite and clearly communicates what you want." |
+
+Note: `translation` is a clean, standalone translation of the option text. `feedback` is the explanation only — why the choice is correct or incorrect. Do NOT repeat the translation in feedback since it's already shown separately.
 
 # Options Design
 
@@ -156,28 +159,21 @@ Wrong options should be **clearly wrong** because they:
 
 # Feedback Design
 
-Feedback appears AFTER the learner selects an option. Every feedback message MUST include:
-
-1. **Translation**: What the option actually means in the native language
-2. **Explanation**: Why this choice is correct or incorrect for the situation
+Feedback appears AFTER the learner selects an option. The translation is shown separately via `options[].translation`, so `feedback` contains **only the explanation** — why the choice is correct or incorrect. Do NOT include the translation in feedback.
 
 ## Feedback Structure
 
-For **correct** options:
+For **correct** options — explain why it works:
 
 ```
-"[Translation of what they said] - [Why this works in context]"
+"Perfect! This is polite and clearly communicates what you want."
 ```
 
-Example: "A coffee with milk, please - Perfect! This is polite and clearly communicates what you want."
-
-For **incorrect** options:
+For **incorrect** options — explain why it doesn't work and what would be better:
 
 ```
-"[Translation of what they said] - [Why this doesn't work and what would be better]"
+"You're trying to order coffee, not find the restroom. Tell the barista what you'd like to drink."
 ```
-
-Example: "Where is the bathroom? - You're trying to order coffee, not find the restroom. Tell the barista what you'd like to drink."
 
 # Romanization Requirements
 
@@ -256,14 +252,16 @@ Return an object with this structure (abbreviated examples shown):
         {
           "text": "京都までお願いします。",
           "textRomanization": "Kyouto made onegaishimasu.",
+          "translation": "To Kyoto, please.",
           "isCorrect": true,
-          "feedback": "To Kyoto, please - Perfect!"
+          "feedback": "Perfect! Clear and polite."
         },
         {
           "text": "京都は遠いですか？",
           "textRomanization": "Kyouto wa tooi desu ka?",
+          "translation": "Is Kyoto far?",
           "isCorrect": false,
-          "feedback": "Is Kyoto far? - This asks about distance, not for a ticket."
+          "feedback": "This asks about distance, not for a ticket."
         }
       ]
     }
@@ -285,14 +283,16 @@ Return an object with this structure (abbreviated examples shown):
         {
           "text": "Si, me gustaria la paella, por favor.",
           "textRomanization": null,
+          "translation": "Yes, I would like the paella, please.",
           "isCorrect": true,
-          "feedback": "Yes, I would like the paella, please - Perfect!"
+          "feedback": "Perfect! Natural and polite."
         },
         {
           "text": "La cuenta, por favor.",
           "textRomanization": null,
+          "translation": "The check, please.",
           "isCorrect": false,
-          "feedback": "The check, please - You haven't eaten yet!"
+          "feedback": "You haven't eaten yet!"
         }
       ]
     }
@@ -312,7 +312,7 @@ Before finalizing, verify:
 4. **Cultural accuracy**: Interactions reflect how things work in that culture
 5. **Clear progression**: Steps follow a logical narrative arc
 6. **Distinct options**: Each option represents a meaningfully different choice
-7. **Helpful feedback**: Translations and explanations clarify meaning and context
+7. **Helpful feedback**: Explanations clarify why the choice is correct/incorrect (translations are in a separate field)
 8. **Correct romanization**: Follows standard systems for non-Roman scripts, null for Roman scripts
 9. **Scenario relevance**: The story matches the lesson topic
 10. **Appropriate difficulty**: Language complexity matches learner level
@@ -325,5 +325,5 @@ Before finalizing, verify:
 4. **Unnatural responses**: Things a native speaker would never actually say
 5. **Missing romanization**: Forgetting to add romanization for non-Roman scripts
 6. **Adding romanization to Roman scripts**: Spanish, French, etc. should have null
-7. **Feedback without translation**: Always include what the option means
+7. **Translation in feedback**: Do NOT repeat the translation in feedback — it's already in the `translation` field
 8. **Disconnected steps**: Each step should follow logically from the previous one

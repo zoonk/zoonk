@@ -24,6 +24,7 @@ const ALL_READING_STEPS: ActivityStepName[] = [
   "saveSentences",
   "generateAudio",
   "updateSentenceEnrichments",
+  "generateLanguagePracticeAudio",
 ];
 
 const ALL_COMPLETION_STEPS: ActivityStepName[] = [

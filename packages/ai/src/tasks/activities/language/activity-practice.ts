@@ -24,6 +24,7 @@ const schema = z.object({
             isCorrect: z.boolean(),
             text: z.string(),
             textRomanization: z.string().nullable(),
+            translation: z.string(),
           }),
         )
         .length(ACTIVITY_OPTIONS_COUNT),

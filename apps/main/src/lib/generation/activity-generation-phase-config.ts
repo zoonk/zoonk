@@ -25,7 +25,6 @@ export type FirstActivityKind = "explanation" | "custom" | "vocabulary";
 const CUSTOM_INFERENCE_STEPS = new Set(["generateCustomContent", "setCustomAsCompleted"]);
 const WRITING_ONLY_LANGUAGE_STEP_MAP: Partial<Record<ActivityKind, ActivityStepName>> = {
   grammar: "generateGrammarContent",
-  languagePractice: "generateLanguagePracticeContent",
 };
 
 export function inferFirstActivityKind(params: {
@@ -74,8 +73,12 @@ export function getPhaseOrder(kind: ActivityKind): PhaseName[] {
     ];
   }
 
-  if (kind === "grammar" || kind === "languagePractice") {
+  if (kind === "grammar") {
     return ["gettingStarted", "writingContent", "finishing"];
+  }
+
+  if (kind === "languagePractice") {
+    return ["gettingStarted", "writingContent", "recordingAudio", "finishing"];
   }
 
   if (kind === "custom") {
@@ -139,6 +142,20 @@ function getLanguagePhaseSteps(kind: ActivityKind): Record<PhaseName, ActivitySt
       processingDependencies: [],
       recordingAudio: ["generateVocabularyAudio"],
       writingContent: [],
+    };
+  }
+
+  if (kind === "languagePractice") {
+    return {
+      ...SHARED_PHASE_STEPS,
+      ...NO_VISUALS_OVERRIDE,
+      finishing: [
+        ...VISUALS_AS_FINISHING,
+        ...getFinishingSteps(["generateLanguagePracticeContent", "generateLanguagePracticeAudio"]),
+      ],
+      processingDependencies: [],
+      recordingAudio: ["generateLanguagePracticeAudio"],
+      writingContent: ["setActivityAsRunning", "generateLanguagePracticeContent"],
     };
   }
 

@@ -32,6 +32,7 @@ export const ACTIVITY_STEPS = [
   "generatePracticeContent",
   "generateGrammarContent",
   "generateLanguagePracticeContent",
+  "generateLanguagePracticeAudio",
   "generateSentences",
   "generateVisuals",
   "generateImages",

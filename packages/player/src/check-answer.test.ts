@@ -99,12 +99,27 @@ describe(checkMultipleChoiceAnswer, () => {
   describe("language kind", () => {
     const content: MultipleChoiceStepContent = {
       context: "You enter a bakery.",
+      contextAudioUrl: null,
       contextRomanization: null,
       contextTranslation: "You enter a bakery.",
       kind: "language",
       options: [
-        { feedback: "Great!", isCorrect: true, text: "Buenos días", textRomanization: null },
-        { feedback: "Not quite.", isCorrect: false, text: "Adiós", textRomanization: null },
+        {
+          audioUrl: null,
+          feedback: "Great!",
+          isCorrect: true,
+          text: "Buenos días",
+          textRomanization: null,
+          translation: "Good morning",
+        },
+        {
+          audioUrl: null,
+          feedback: "Not quite.",
+          isCorrect: false,
+          text: "Adiós",
+          textRomanization: null,
+          translation: "Goodbye",
+        },
       ],
     };
 

@@ -28,15 +28,16 @@ EVALUATION CRITERIA:
    - All 4 options MUST be grammatically correct in TARGET language
    - Options should represent meaningfully different responses
    - textRomanization provided for non-Roman scripts, null for Roman scripts
+   - Each option MUST have a 'translation' field with a clean standalone translation in NATIVE language
    - Penalize SEVERELY if options include translations or hints in NATIVE language
    - Penalize if options are grammatically incorrect or nonsensical
 
 5. FEEDBACK DESIGN (CRITICAL):
-   - Every feedback MUST include the translation of what the learner said
-   - Feedback MUST explain why the choice is correct or incorrect
+   - Feedback contains ONLY the explanation — why the choice is correct or incorrect
    - For incorrect options: explain what would be better
    - Feedback is in NATIVE language
-   - Penalize SEVERELY if feedback is missing translation
+   - Do NOT include the translation in feedback (it's in the separate 'translation' field)
+   - Penalize if feedback repeats the translation instead of providing explanation
    - Penalize if feedback doesn't explain the reasoning
 
 6. ROMANIZATION (CRITICAL):
@@ -94,7 +95,7 @@ ANTI-CHECKLIST GUIDANCE (CRITICAL):
 - Do NOT require specific phrases or sentence structures
 - Do NOT penalize for different valid cultural approaches
 - Do NOT penalize distractors for being "too obviously wrong" or "too nonsensical" — off-topic distractors are valid by design (asking about haircuts at a pharmacy, asking for directions at a cafe). Only penalize if a distractor is grammatically incorrect or breaks immersion
-- Do NOT require a specific feedback format order. The translation can appear anywhere in the feedback (beginning, inline, quoted). Only penalize if the translation is completely absent
+- Do NOT penalize for specific feedback wording — focus on whether it explains why the choice is correct/incorrect
 - Do NOT penalize for output being wrapped in {"scenario": ..., "steps": [...]} vs other valid structures
 - FOCUS ON: structural correctness, immersion principle (no translations in options), feedback quality, romanization correctness
 - The eval model should judge whether the activity creates an immersive language experience, not whether it matches predetermined answers
@@ -116,13 +117,13 @@ KEY REQUIREMENTS:
 - Native speaker (barista/server) speaks natural French
 - Learner must choose appropriate French phrases for ordering
 - Options show ONLY French text, NO English translations
-- Feedback reveals English translation + explanation
+- Feedback contains explanation only (translation is in the separate 'translation' field)
 
 ACCURACY PITFALLS - Penalize SEVERELY if:
 - Options include English translations or hints
 - French dialogue is unnatural or overly formal for a cafe
 - Romanization fields contain any text (must be null)
-- Feedback doesn't include translation of what the learner said
+- Feedback repeats the translation instead of explaining reasoning
 - Steps don't follow a logical cafe interaction flow
 
 ${SHARED_EXPECTATIONS}
@@ -152,7 +153,7 @@ KEY REQUIREMENTS:
 - Receptionist speaks polite Japanese (formal register appropriate for service)
 - Learner must choose appropriate Japanese phrases for check-in
 - Options show ONLY Japanese text with romanization, NO English
-- Feedback reveals English translation + explanation
+- Feedback contains explanation only (translation is in the separate 'translation' field)
 
 ROMANIZATION REQUIREMENTS:
 - MUST include romaji for all Japanese text in context and options
@@ -163,7 +164,7 @@ ACCURACY PITFALLS - Penalize SEVERELY if:
 - Options include English translations
 - Japanese is too casual for a hotel setting (should use です/ます forms)
 - Romanization is missing or incorrect
-- Feedback doesn't include translation
+- Feedback repeats translation instead of explaining reasoning
 - Steps don't follow a logical hotel check-in sequence
 
 ${SHARED_EXPECTATIONS}
@@ -200,7 +201,7 @@ ACCURACY PITFALLS - Penalize SEVERELY if:
 - Options include Portuguese translations
 - German dialogue is unnatural or uses overly formal register for a market
 - Romanization fields contain any text (must be null)
-- Feedback (in Portuguese) doesn't include German translation
+- Feedback (in Portuguese) repeats translation instead of explaining reasoning
 - Steps don't follow a logical shopping interaction
 
 ${SHARED_EXPECTATIONS}
@@ -241,7 +242,7 @@ ACCURACY PITFALLS - Penalize SEVERELY if:
 - Options include Spanish translations
 - Korean is inappropriate register (should use polite 요 forms for strangers)
 - Romanization is missing or uses non-standard system
-- Feedback (in Spanish) doesn't include Korean translation
+- Feedback (in Spanish) repeats translation instead of explaining reasoning
 - Steps don't follow a logical interaction for asking directions
 
 ${SHARED_EXPECTATIONS}
@@ -270,13 +271,13 @@ KEY REQUIREMENTS:
 - Pharmacist speaks natural Spanish
 - Learner must describe symptoms and ask for recommendations
 - Options show ONLY Spanish text, NO English translations
-- Feedback reveals English translation + explanation
+- Feedback contains explanation only (translation is in the separate 'translation' field)
 
 ACCURACY PITFALLS - Penalize SEVERELY if:
 - Options include English translations
 - Spanish dialogue is unnatural
 - Romanization fields contain any text (must be null)
-- Feedback doesn't include translation
+- Feedback repeats translation instead of explaining reasoning
 
 ${SHARED_EXPECTATIONS}
     `,

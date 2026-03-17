@@ -11,7 +11,7 @@ export function PlayAudioButton({
   size = "md",
 }: {
   audioUrl: string;
-  size?: "sm" | "md";
+  size?: "xs" | "sm" | "md";
 }) {
   const t = useExtracted();
   const [isPlaying, setIsPlaying] = useState(false);
@@ -36,12 +36,20 @@ export function PlayAudioButton({
       className={cn(
         "bg-primary text-primary-foreground flex items-center justify-center rounded-full transition-all duration-150",
         "hover:bg-primary/90 focus-visible:ring-ring/50 outline-none hover:scale-105 focus-visible:ring-[3px] active:scale-95",
-        size === "md" ? "size-14" : "size-12",
+        size === "md" && "size-14",
+        size === "sm" && "size-12",
+        size === "xs" && "size-8",
       )}
       onClick={handleClick}
       type="button"
     >
-      <Icon className={size === "md" ? "size-6" : "size-5"} />
+      <Icon
+        className={cn(
+          size === "md" && "size-6",
+          size === "sm" && "size-5",
+          size === "xs" && "size-4",
+        )}
+      />
     </button>
   );
 }

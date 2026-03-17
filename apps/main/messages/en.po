@@ -233,6 +233,7 @@ msgid "View scores"
 msgstr "View scores"
 
 #: ../../packages/player/src/components/feedback-screen.tsx
+#: ../../packages/player/src/components/language-practice-feedback.tsx
 msgctxt "3nOd8f"
 msgid "Your answer:"
 msgstr "Your answer:"
@@ -263,6 +264,7 @@ msgid "{name} is at zero. One more drop and you lose."
 msgstr "{name} is at zero. One more drop and you lose."
 
 #: ../../packages/player/src/components/feedback-screen.tsx
+#: ../../packages/player/src/components/language-practice-feedback.tsx
 msgctxt "QAJ/Tl"
 msgid "Correct answer:"
 msgstr "Correct answer:"

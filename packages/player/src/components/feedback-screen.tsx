@@ -1,9 +1,11 @@
 "use client";
 
+import { parseStepContent } from "@zoonk/core/steps/content-contract";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CircleAlert, CircleCheck, CircleX, TriangleAlert } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type DimensionInventory, type StepResult } from "../player-reducer";
+import { type SerializedStep } from "../prepare-activity-data";
 import { useReplaceName } from "../user-name-context";
 import {
   type DimensionEntry,
@@ -12,6 +14,7 @@ import {
   buildDimensionEntries,
   getWarningDelay,
 } from "./dimension-inventory";
+import { LanguagePracticeFeedback } from "./language-practice-feedback";
 import { ResultAnnouncement } from "./result-announcement";
 
 function FeedbackScreen({ className, ...props }: React.ComponentProps<"div">) {
@@ -229,17 +232,32 @@ function CoreFeedback({ result }: { result: StepResult }) {
   );
 }
 
+function isLanguageMultipleChoice(step: SerializedStep | undefined): boolean {
+  if (!step || step.kind !== "multipleChoice") {
+    return false;
+  }
+
+  const content = parseStepContent("multipleChoice", step.content);
+  return content.kind === "language";
+}
+
 export function FeedbackScreenContent({
   dimensions,
   result,
+  step,
 }: {
   dimensions?: DimensionInventory;
   result: StepResult;
+  step?: SerializedStep;
 }) {
   const hasEffects = result.effects.length > 0;
 
   if (hasEffects && dimensions) {
     return <ChallengeFeedback dimensions={dimensions} result={result} />;
+  }
+
+  if (step && isLanguageMultipleChoice(step)) {
+    return <LanguagePracticeFeedback result={result} step={step} />;
   }
 
   return <CoreFeedback result={result} />;

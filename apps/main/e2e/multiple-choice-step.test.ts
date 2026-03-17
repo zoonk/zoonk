@@ -242,21 +242,26 @@ test.describe("Language Variant", () => {
         {
           content: {
             context: `Bonjour ${uniqueId}`,
+            contextAudioUrl: null,
             contextRomanization: `bon-zhoor ${uniqueId}`,
             contextTranslation: `Hello ${uniqueId}`,
             kind: "language",
             options: [
               {
+                audioUrl: null,
                 feedback: "Correct!",
                 isCorrect: true,
                 text: `Salut ${uniqueId}`,
                 textRomanization: `sa-loo ${uniqueId}`,
+                translation: `Hi ${uniqueId}`,
               },
               {
+                audioUrl: null,
                 feedback: "Not quite",
                 isCorrect: false,
                 text: `Au revoir ${uniqueId}`,
                 textRomanization: `oh reh-vwar ${uniqueId}`,
+                translation: `Goodbye ${uniqueId}`,
               },
             ],
           },
@@ -288,21 +293,26 @@ test.describe("Language Variant", () => {
         {
           content: {
             context: `Hola ${uniqueId}`,
+            contextAudioUrl: null,
             contextRomanization: null,
             contextTranslation: `Hello ${uniqueId}`,
             kind: "language",
             options: [
               {
+                audioUrl: null,
                 feedback: "Yes",
                 isCorrect: true,
                 text: `Buenos dias ${uniqueId}`,
                 textRomanization: null,
+                translation: `Good morning ${uniqueId}`,
               },
               {
+                audioUrl: null,
                 feedback: "No",
                 isCorrect: false,
                 text: `Adios ${uniqueId}`,
                 textRomanization: null,
+                translation: `Goodbye ${uniqueId}`,
               },
             ],
           },
@@ -318,6 +328,238 @@ test.describe("Language Variant", () => {
 
     await expect(page.getByText(new RegExp(`Hola ${uniqueId}`))).toBeVisible();
     await expect(page.getByText(new RegExp(`Hello ${uniqueId}`))).toBeVisible();
+  });
+
+  test("correct answer feedback shows romanization and translation", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const { url } = await createMultipleChoiceActivity({
+      steps: [
+        {
+          content: {
+            context: `こんにちは ${uniqueId}`,
+            contextAudioUrl: null,
+            contextRomanization: `konnichiwa ${uniqueId}`,
+            contextTranslation: `Hello ${uniqueId}`,
+            kind: "language",
+            options: [
+              {
+                audioUrl: null,
+                feedback: `Good job ${uniqueId}`,
+                isCorrect: true,
+                text: `はい ${uniqueId}`,
+                textRomanization: `hai ${uniqueId}`,
+                translation: `Yes ${uniqueId}`,
+              },
+              {
+                audioUrl: null,
+                feedback: "Not quite",
+                isCorrect: false,
+                text: `いいえ ${uniqueId}`,
+                textRomanization: `iie ${uniqueId}`,
+                translation: `No ${uniqueId}`,
+              },
+            ],
+          },
+          position: 0,
+        },
+      ],
+    });
+
+    await page.goto(url);
+    await page.waitForLoadState("networkidle");
+
+    await page.getByRole("radio", { name: new RegExp(`はい ${uniqueId}`) }).click();
+    await page.getByRole("button", { name: /check/i }).click();
+
+    await expect(page.getByText(/your answer:/i)).toBeVisible();
+    await expect(page.getByText(new RegExp(`はい ${uniqueId}`))).toBeVisible();
+    await expect(page.getByText(new RegExp(`hai ${uniqueId}`))).toBeVisible();
+    await expect(page.getByText(new RegExp(`Yes ${uniqueId}`))).toBeVisible();
+    await expect(page.getByText(new RegExp(`Good job ${uniqueId}`))).toBeVisible();
+  });
+
+  test("incorrect answer feedback shows both answers with romanization and translation", async ({
+    page,
+  }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const { url } = await createMultipleChoiceActivity({
+      steps: [
+        {
+          content: {
+            context: `こんにちは ${uniqueId}`,
+            contextAudioUrl: null,
+            contextRomanization: `konnichiwa ${uniqueId}`,
+            contextTranslation: `Hello ${uniqueId}`,
+            kind: "language",
+            options: [
+              {
+                audioUrl: null,
+                feedback: "Good job",
+                isCorrect: true,
+                text: `はい ${uniqueId}`,
+                textRomanization: `hai ${uniqueId}`,
+                translation: `Yes ${uniqueId}`,
+              },
+              {
+                audioUrl: null,
+                feedback: `Wrong choice ${uniqueId}`,
+                isCorrect: false,
+                text: `いいえ ${uniqueId}`,
+                textRomanization: `iie ${uniqueId}`,
+                translation: `No ${uniqueId}`,
+              },
+            ],
+          },
+          position: 0,
+        },
+      ],
+    });
+
+    await page.goto(url);
+    await page.waitForLoadState("networkidle");
+
+    await page.getByRole("radio", { name: new RegExp(`いいえ ${uniqueId}`) }).click();
+    await page.getByRole("button", { name: /check/i }).click();
+
+    // User's incorrect answer with romanization and translation
+    await expect(page.getByText(/your answer:/i)).toBeVisible();
+    await expect(page.getByText(new RegExp(`いいえ ${uniqueId}`))).toBeVisible();
+    await expect(page.getByText(new RegExp(`iie ${uniqueId}`))).toBeVisible();
+    await expect(page.getByText(new RegExp(`No ${uniqueId}`))).toBeVisible();
+
+    // Correct answer with romanization and translation
+    await expect(page.getByText(/correct answer:/i)).toBeVisible();
+    await expect(page.getByText(new RegExp(`はい ${uniqueId}`))).toBeVisible();
+    await expect(page.getByText(new RegExp(`hai ${uniqueId}`))).toBeVisible();
+    await expect(page.getByText(new RegExp(`Yes ${uniqueId}`))).toBeVisible();
+  });
+
+  test("feedback works without romanization (Roman scripts)", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const { url } = await createMultipleChoiceActivity({
+      steps: [
+        {
+          content: {
+            context: `Bonjour ${uniqueId}`,
+            contextAudioUrl: null,
+            contextRomanization: null,
+            contextTranslation: `Hello ${uniqueId}`,
+            kind: "language",
+            options: [
+              {
+                audioUrl: null,
+                feedback: `Correct ${uniqueId}`,
+                isCorrect: true,
+                text: `Salut ${uniqueId}`,
+                textRomanization: null,
+                translation: `Hi ${uniqueId}`,
+              },
+              {
+                audioUrl: null,
+                feedback: "Not quite",
+                isCorrect: false,
+                text: `Au revoir ${uniqueId}`,
+                textRomanization: null,
+                translation: `Goodbye ${uniqueId}`,
+              },
+            ],
+          },
+          position: 0,
+        },
+      ],
+    });
+
+    await page.goto(url);
+    await page.waitForLoadState("networkidle");
+
+    await page.getByRole("radio", { name: new RegExp(`Salut ${uniqueId}`) }).click();
+    await page.getByRole("button", { name: /check/i }).click();
+
+    await expect(page.getByText(/your answer:/i)).toBeVisible();
+    await expect(page.getByText(new RegExp(`Salut ${uniqueId}`))).toBeVisible();
+    await expect(page.getByText(new RegExp(`Hi ${uniqueId}`))).toBeVisible();
+    await expect(page.getByText(new RegExp(`Correct ${uniqueId}`))).toBeVisible();
+  });
+
+  test("context audio button is visible when contextAudioUrl present", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const { url } = await createMultipleChoiceActivity({
+      steps: [
+        {
+          content: {
+            context: `Bonjour ${uniqueId}`,
+            contextAudioUrl: "https://example.com/audio.mp3",
+            contextRomanization: null,
+            contextTranslation: `Hello ${uniqueId}`,
+            kind: "language",
+            options: [
+              {
+                audioUrl: null,
+                feedback: "Good",
+                isCorrect: true,
+                text: `Salut ${uniqueId}`,
+                textRomanization: null,
+                translation: `Hi ${uniqueId}`,
+              },
+              {
+                audioUrl: null,
+                feedback: "Bad",
+                isCorrect: false,
+                text: `Au revoir ${uniqueId}`,
+                textRomanization: null,
+                translation: `Goodbye ${uniqueId}`,
+              },
+            ],
+          },
+          position: 0,
+        },
+      ],
+    });
+
+    await page.goto(url);
+
+    await expect(page.getByRole("button", { name: /play pronunciation/i })).toBeVisible();
+  });
+
+  test("context audio button is absent when contextAudioUrl is null", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const { url } = await createMultipleChoiceActivity({
+      steps: [
+        {
+          content: {
+            context: `Hola ${uniqueId}`,
+            contextAudioUrl: null,
+            contextRomanization: null,
+            contextTranslation: `Hello ${uniqueId}`,
+            kind: "language",
+            options: [
+              {
+                audioUrl: null,
+                feedback: "Good",
+                isCorrect: true,
+                text: `Buenos dias ${uniqueId}`,
+                textRomanization: null,
+                translation: `Good morning ${uniqueId}`,
+              },
+              {
+                audioUrl: null,
+                feedback: "Bad",
+                isCorrect: false,
+                text: `Adios ${uniqueId}`,
+                textRomanization: null,
+                translation: `Goodbye ${uniqueId}`,
+              },
+            ],
+          },
+          position: 0,
+        },
+      ],
+    });
+
+    await page.goto(url);
+
+    await expect(page.getByText(new RegExp(`Hola ${uniqueId}`))).toBeVisible();
+    await expect(page.getByRole("button", { name: /play pronunciation/i })).not.toBeVisible();
   });
 });
 

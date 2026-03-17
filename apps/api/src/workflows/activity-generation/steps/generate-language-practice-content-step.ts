@@ -9,7 +9,7 @@ import {
 import { assertStepContent } from "@zoonk/core/steps/content-contract";
 import { prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
-import { emptyToNull } from "@zoonk/utils/string";
+import { emptyToNull, normalizePunctuation } from "@zoonk/utils/string";
 import { z } from "zod";
 import { streamError, streamStatus } from "../stream-status";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
@@ -32,6 +32,7 @@ const minimumLanguagePracticeContentSchema = z.object({
               isCorrect: z.boolean(),
               text: z.string().trim().min(1),
               textRomanization: z.string().nullable(),
+              translation: z.string().trim().min(1),
             }),
           )
           .min(1),
@@ -63,15 +64,18 @@ function buildLanguagePracticeSteps(
   const practiceSteps = data.steps.map((step, index) => ({
     activityId,
     content: assertStepContent("multipleChoice", {
-      context: step.context,
+      context: normalizePunctuation(step.context),
+      contextAudioUrl: null,
       contextRomanization: emptyToNull(step.contextRomanization),
-      contextTranslation: step.contextTranslation,
+      contextTranslation: normalizePunctuation(step.contextTranslation),
       kind: "language",
       options: step.options.map((option) => ({
-        feedback: option.feedback,
+        audioUrl: null,
+        feedback: normalizePunctuation(option.feedback),
         isCorrect: option.isCorrect,
-        text: option.text,
+        text: normalizePunctuation(option.text),
         textRomanization: emptyToNull(option.textRomanization),
+        translation: normalizePunctuation(option.translation),
       })),
     }),
     isPublished: true,

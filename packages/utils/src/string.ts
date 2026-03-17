@@ -104,6 +104,10 @@ export function extractUniqueSentenceWords(sentences: string[]): string[] {
   return [...new Set(words)];
 }
 
+export function normalizePunctuation(text: string): string {
+  return text.replaceAll(/\s+([!?.,;:!?。、！？؟])/g, "$1");
+}
+
 export function replaceNamePlaceholder(text: string, name: string | null): string {
   if (!text.includes(NAME_PLACEHOLDER)) {
     return text;

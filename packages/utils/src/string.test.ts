@@ -4,6 +4,7 @@ import {
   emptyToNull,
   ensureLocaleSuffix,
   extractUniqueSentenceWords,
+  normalizePunctuation,
   normalizeString,
   removeAccents,
   removeLocaleSuffix,
@@ -363,6 +364,40 @@ describe(extractUniqueSentenceWords, () => {
     expect(result.length).toBeGreaterThan(1);
     expect(result).toContain("猫");
     expect(result).toContain("食べる");
+  });
+});
+
+describe(normalizePunctuation, () => {
+  test("removes space before exclamation mark", () => {
+    expect(normalizePunctuation("Hello !")).toBe("Hello!");
+  });
+
+  test("removes space before question mark", () => {
+    expect(normalizePunctuation("Bonjour , comment allez-vous ?")).toBe(
+      "Bonjour, comment allez-vous?",
+    );
+  });
+
+  test("leaves already-correct text unchanged", () => {
+    expect(normalizePunctuation("Hello, world!")).toBe("Hello, world!");
+  });
+
+  test("handles CJK punctuation", () => {
+    expect(normalizePunctuation("これは何 ？")).toBe("これは何？");
+    expect(normalizePunctuation("はい 。")).toBe("はい。");
+    expect(normalizePunctuation("すごい ！")).toBe("すごい！");
+  });
+
+  test("handles Arabic question mark", () => {
+    expect(normalizePunctuation("مرحبا ؟")).toBe("مرحبا؟");
+  });
+
+  test("handles multiple spaces before punctuation", () => {
+    expect(normalizePunctuation("Hello   !")).toBe("Hello!");
+  });
+
+  test("handles empty string", () => {
+    expect(normalizePunctuation("")).toBe("");
   });
 });
 

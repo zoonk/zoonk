@@ -67,30 +67,36 @@ describe("step content contracts", () => {
   test("parses language multipleChoice", () => {
     const content = parseStepContent("multipleChoice", {
       context: "You enter a bakery in Madrid.",
+      contextAudioUrl: null,
       contextRomanization: "You enter a bakery in Madrid.",
       contextTranslation: "You enter a bakery in Madrid.",
       kind: "language",
       options: [
         {
+          audioUrl: null,
           feedback: "Great response.",
           isCorrect: true,
           text: "Buenos días, quisiera un café.",
           textRomanization: "bwen-os dee-as kee-sye-ra oon ka-fe",
+          translation: "Good morning, I would like a coffee.",
         },
       ],
     });
 
     expect(content).toEqual({
       context: "You enter a bakery in Madrid.",
+      contextAudioUrl: null,
       contextRomanization: "You enter a bakery in Madrid.",
       contextTranslation: "You enter a bakery in Madrid.",
       kind: "language",
       options: [
         {
+          audioUrl: null,
           feedback: "Great response.",
           isCorrect: true,
           text: "Buenos días, quisiera un café.",
           textRomanization: "bwen-os dee-as kee-sye-ra oon ka-fe",
+          translation: "Good morning, I would like a coffee.",
         },
       ],
     });
@@ -133,18 +139,38 @@ describe("step content contracts", () => {
   test("parses language with null romanization fields", () => {
     const content = parseStepContent("multipleChoice", {
       context: "Context",
+      contextAudioUrl: null,
       contextRomanization: null,
       contextTranslation: "Translation",
       kind: "language",
-      options: [{ feedback: "Great", isCorrect: true, text: "A", textRomanization: null }],
+      options: [
+        {
+          audioUrl: null,
+          feedback: "Great",
+          isCorrect: true,
+          text: "A",
+          textRomanization: null,
+          translation: "A translation",
+        },
+      ],
     });
 
     expect(content).toEqual({
       context: "Context",
+      contextAudioUrl: null,
       contextRomanization: null,
       contextTranslation: "Translation",
       kind: "language",
-      options: [{ feedback: "Great", isCorrect: true, text: "A", textRomanization: null }],
+      options: [
+        {
+          audioUrl: null,
+          feedback: "Great",
+          isCorrect: true,
+          text: "A",
+          textRomanization: null,
+          translation: "A translation",
+        },
+      ],
     });
   });
 

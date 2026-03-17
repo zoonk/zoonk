@@ -10,8 +10,10 @@ import { useExtracted } from "next-intl";
 import { type SelectedAnswer } from "../player-reducer";
 import { type SerializedStep } from "../prepare-activity-data";
 import { useOptionKeyboard } from "../use-option-keyboard";
+import { useWordAudio } from "../use-word-audio";
 import { useReplaceName } from "../user-name-context";
 import { OptionCard } from "./option-card";
+import { PlayAudioButton } from "./play-audio-button";
 import { ContextText, QuestionText } from "./question-text";
 import { RomanizationText } from "./romanization-text";
 import { SectionLabel } from "./section-label";
@@ -129,6 +131,12 @@ function LanguageVariant({
 }) {
   const t = useExtracted();
   const replaceName = useReplaceName();
+  const { play } = useWordAudio();
+
+  const handleSelect = (index: number) => {
+    play(content.options[index]?.audioUrl ?? null);
+    onSelect(index);
+  };
 
   return (
     <>
@@ -136,7 +144,13 @@ function LanguageVariant({
         <SectionLabel>{t("Someone says:")}</SectionLabel>
 
         <SpeechBubble>
-          <p className="text-base font-semibold">{replaceName(content.context)}</p>
+          <div className="flex items-start gap-2">
+            <p className="text-base font-semibold">{replaceName(content.context)}</p>
+
+            {content.contextAudioUrl && (
+              <PlayAudioButton audioUrl={content.contextAudioUrl} size="xs" />
+            )}
+          </div>
 
           <RomanizationText>{content.contextRomanization}</RomanizationText>
 
@@ -146,7 +160,11 @@ function LanguageVariant({
 
       <div className="flex flex-col gap-3">
         <SectionLabel>{t("What do you say?")}</SectionLabel>
-        <OptionList onSelect={onSelect} options={content.options} selectedIndex={selectedIndex} />
+        <OptionList
+          onSelect={handleSelect}
+          options={content.options}
+          selectedIndex={selectedIndex}
+        />
       </div>
     </>
   );

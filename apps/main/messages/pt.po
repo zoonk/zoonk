@@ -233,6 +233,7 @@ msgid "View scores"
 msgstr "Ver pontuações"
 
 #: ../../packages/player/src/components/feedback-screen.tsx
+#: ../../packages/player/src/components/language-practice-feedback.tsx
 msgctxt "3nOd8f"
 msgid "Your answer:"
 msgstr "Sua resposta:"
@@ -263,6 +264,7 @@ msgid "{name} is at zero. One more drop and you lose."
 msgstr "{name} está em zero. Mais uma queda e você perde."
 
 #: ../../packages/player/src/components/feedback-screen.tsx
+#: ../../packages/player/src/components/language-practice-feedback.tsx
 msgctxt "QAJ/Tl"
 msgid "Correct answer:"
 msgstr "Resposta correta:"

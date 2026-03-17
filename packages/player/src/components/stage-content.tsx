@@ -71,7 +71,9 @@ export function StageContent({
   }
 
   if (phase === "feedback" && currentResult && (!currentStep || needsFeedbackScreen(currentStep))) {
-    return <FeedbackScreenContent dimensions={dimensions} result={currentResult} />;
+    return (
+      <FeedbackScreenContent dimensions={dimensions} result={currentResult} step={currentStep} />
+    );
   }
 
   if ((phase === "playing" || phase === "feedback") && currentStep) {
