@@ -1,7 +1,4 @@
-import {
-  type WorkflowErrorReason,
-  getAIResultErrorReason,
-} from "@/workflows/_shared/stream-status";
+import { type WorkflowErrorReason } from "@/workflows/_shared/stream-status";
 import {
   type ActivityPracticeLanguageSchema,
   generateActivityPracticeLanguage,
@@ -9,6 +6,7 @@ import {
 import { assertStepContent } from "@zoonk/core/steps/content-contract";
 import { prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
+import { logError, logInfo } from "@zoonk/utils/logger";
 import { emptyToNull, normalizePunctuation } from "@zoonk/utils/string";
 import { z } from "zod";
 import { streamError, streamStatus } from "../stream-status";
@@ -42,7 +40,16 @@ const minimumLanguagePracticeContentSchema = z.object({
 });
 
 function hasMinimumLanguagePracticeContent(data: ActivityPracticeLanguageSchema): boolean {
-  return minimumLanguagePracticeContentSchema.safeParse(data).success;
+  const result = minimumLanguagePracticeContentSchema.safeParse(data);
+
+  if (!result.success) {
+    logError(
+      "[Language Practice] Content validation failed:",
+      JSON.stringify(result.error.issues, null, 2),
+    );
+  }
+
+  return result.success;
 }
 
 function buildLanguagePracticeSteps(
@@ -144,15 +151,37 @@ export async function generateLanguagePracticeContentStep(
       }),
     );
 
-  if (error || !result || !hasMinimumLanguagePracticeContent(result.data)) {
-    const reason = getAIResultErrorReason(error, result);
-    await handleLanguagePracticeError(activity.id, reason);
+  if (error) {
+    logError("[Language Practice] AI generation error:", error.message);
+    await handleLanguagePracticeError(activity.id, "aiGenerationFailed");
     return { generated: false };
   }
+
+  if (!result) {
+    logError("[Language Practice] AI returned empty result");
+    await handleLanguagePracticeError(activity.id, "aiEmptyResult");
+    return { generated: false };
+  }
+
+  if (!hasMinimumLanguagePracticeContent(result.data)) {
+    logError(
+      "[Language Practice] Content validation failed. Step count:",
+      result.data.steps.length,
+      "| First step options:",
+      result.data.steps[0]?.options.length,
+      "| Has translation:",
+      result.data.steps[0]?.options[0] && "translation" in result.data.steps[0].options[0],
+    );
+    await handleLanguagePracticeError(activity.id, "contentValidationFailed");
+    return { generated: false };
+  }
+
+  logInfo("[Language Practice] Content validated, saving steps for activity", activity.id);
 
   const { error: saveError } = await saveLanguagePracticeSteps(activity.id, result.data);
 
   if (saveError) {
+    logError("[Language Practice] DB save error:", saveError.message);
     await handleLanguagePracticeError(activity.id, "dbSaveFailed");
     return { generated: false };
   }
