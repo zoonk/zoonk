@@ -1622,11 +1622,6 @@ msgid "Your activity is ready"
 msgstr "Your activity is ready"
 
 #: src/app/generate/a/[id]/generation-client.tsx
-msgctxt "3vY0Zu"
-msgid "This usually takes 1-2 minutes"
-msgstr "This usually takes 1-2 minutes"
-
-#: src/app/generate/a/[id]/generation-client.tsx
 #: src/app/generate/ch/[id]/generation-client.tsx
 #: src/app/generate/cs/[id]/generation-client.tsx
 #: src/app/generate/l/[id]/generation-client.tsx
@@ -1641,6 +1636,11 @@ msgstr "Try again"
 msgctxt "JqiqNj"
 msgid "Something went wrong"
 msgstr "Something went wrong"
+
+#: src/app/generate/a/[id]/generation-client.tsx
+msgctxt "kiZUDf"
+msgid "This usually takes about a minute"
+msgstr "This usually takes about a minute"
 
 #: src/app/generate/a/[id]/generation-client.tsx
 msgctxt "KWLxEA"
@@ -1893,6 +1893,11 @@ msgid "Create Chapter"
 msgstr "Create Chapter"
 
 #: src/app/generate/ch/[id]/generation-client.tsx
+msgctxt "3vY0Zu"
+msgid "This usually takes 1-2 minutes"
+msgstr "This usually takes 1-2 minutes"
+
+#: src/app/generate/ch/[id]/generation-client.tsx
 msgctxt "45uo73"
 msgid "Your lessons are ready"
 msgstr "Your lessons are ready"
@@ -1901,11 +1906,6 @@ msgstr "Your lessons are ready"
 msgctxt "5c2xtK"
 msgid "Taking you to your chapter..."
 msgstr "Taking you to your chapter..."
-
-#: src/app/generate/ch/[id]/generation-client.tsx
-msgctxt "Tp34ZM"
-msgid "This usually takes 2-4 minutes"
-msgstr "This usually takes 2-4 minutes"
 
 #: src/app/generate/ch/[id]/generation-client.tsx
 msgctxt "ViO6Dt"
@@ -1994,14 +1994,14 @@ msgid "Your course is ready"
 msgstr "Your course is ready"
 
 #: src/app/generate/cs/[id]/generation-client.tsx
-msgctxt "bXKvjZ"
-msgid "This usually takes 4-6 minutes"
-msgstr "This usually takes 4-6 minutes"
-
-#: src/app/generate/cs/[id]/generation-client.tsx
 msgctxt "DFlapX"
 msgid "Creating your course"
 msgstr "Creating your course"
+
+#: src/app/generate/cs/[id]/generation-client.tsx
+msgctxt "ux13iV"
+msgid "This usually takes 2-3 minutes"
+msgstr "This usually takes 2-3 minutes"
 
 #: src/app/generate/cs/[id]/use-generation-phases.ts
 msgctxt "4uQ1Ek"
@@ -2119,14 +2119,14 @@ msgid "Creating your activities"
 msgstr "Creating your activities"
 
 #: src/app/generate/l/[id]/generation-client.tsx
-msgctxt "kiZUDf"
-msgid "This usually takes about a minute"
-msgstr "This usually takes about a minute"
-
-#: src/app/generate/l/[id]/generation-client.tsx
 msgctxt "T2TGxR"
 msgid "Taking you to your lesson..."
 msgstr "Taking you to your lesson..."
+
+#: src/app/generate/l/[id]/generation-client.tsx
+msgctxt "THvPMp"
+msgid "This usually takes a few seconds"
+msgstr "This usually takes a few seconds"
 
 #: src/app/privacy/page.tsx
 msgctxt "iql85X"

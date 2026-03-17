@@ -1622,11 +1622,6 @@ msgid "Your activity is ready"
 msgstr "Sua atividade está pronta"
 
 #: src/app/generate/a/[id]/generation-client.tsx
-msgctxt "3vY0Zu"
-msgid "This usually takes 1-2 minutes"
-msgstr "Isso geralmente leva 1-2 minutos"
-
-#: src/app/generate/a/[id]/generation-client.tsx
 #: src/app/generate/ch/[id]/generation-client.tsx
 #: src/app/generate/cs/[id]/generation-client.tsx
 #: src/app/generate/l/[id]/generation-client.tsx
@@ -1641,6 +1636,11 @@ msgstr "Tentar novamente"
 msgctxt "JqiqNj"
 msgid "Something went wrong"
 msgstr "Algo deu errado"
+
+#: src/app/generate/a/[id]/generation-client.tsx
+msgctxt "kiZUDf"
+msgid "This usually takes about a minute"
+msgstr "Isso geralmente leva cerca de um minuto"
 
 #: src/app/generate/a/[id]/generation-client.tsx
 msgctxt "KWLxEA"
@@ -1893,6 +1893,11 @@ msgid "Create Chapter"
 msgstr "Criar Capítulo"
 
 #: src/app/generate/ch/[id]/generation-client.tsx
+msgctxt "3vY0Zu"
+msgid "This usually takes 1-2 minutes"
+msgstr "Isso geralmente leva 1-2 minutos"
+
+#: src/app/generate/ch/[id]/generation-client.tsx
 msgctxt "45uo73"
 msgid "Your lessons are ready"
 msgstr "Suas aulas estão prontas"
@@ -1901,11 +1906,6 @@ msgstr "Suas aulas estão prontas"
 msgctxt "5c2xtK"
 msgid "Taking you to your chapter..."
 msgstr "Levando você para seu capítulo..."
-
-#: src/app/generate/ch/[id]/generation-client.tsx
-msgctxt "Tp34ZM"
-msgid "This usually takes 2-4 minutes"
-msgstr "Isso geralmente leva 2-4 minutos"
 
 #: src/app/generate/ch/[id]/generation-client.tsx
 msgctxt "ViO6Dt"
@@ -1994,14 +1994,14 @@ msgid "Your course is ready"
 msgstr "Seu curso está pronto"
 
 #: src/app/generate/cs/[id]/generation-client.tsx
-msgctxt "bXKvjZ"
-msgid "This usually takes 4-6 minutes"
-msgstr "Isso geralmente leva de 4 a 6 minutos"
-
-#: src/app/generate/cs/[id]/generation-client.tsx
 msgctxt "DFlapX"
 msgid "Creating your course"
 msgstr "Criando seu curso"
+
+#: src/app/generate/cs/[id]/generation-client.tsx
+msgctxt "ux13iV"
+msgid "This usually takes 2-3 minutes"
+msgstr "Isso geralmente leva de 2 a 3 minutos"
 
 #: src/app/generate/cs/[id]/use-generation-phases.ts
 msgctxt "4uQ1Ek"
@@ -2119,14 +2119,14 @@ msgid "Creating your activities"
 msgstr "Criando suas atividades"
 
 #: src/app/generate/l/[id]/generation-client.tsx
-msgctxt "kiZUDf"
-msgid "This usually takes about a minute"
-msgstr "Isso geralmente leva cerca de um minuto"
-
-#: src/app/generate/l/[id]/generation-client.tsx
 msgctxt "T2TGxR"
 msgid "Taking you to your lesson..."
 msgstr "Levando você para sua aula..."
+
+#: src/app/generate/l/[id]/generation-client.tsx
+msgctxt "THvPMp"
+msgid "This usually takes a few seconds"
+msgstr "Isso geralmente leva alguns segundos"
 
 #: src/app/privacy/page.tsx
 msgctxt "iql85X"

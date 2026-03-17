@@ -79,7 +79,7 @@ export function GenerationClient({
         <GenerationTimelineHeader>
           <GenerationTimelineTitle>{t("Creating your activity")}</GenerationTimelineTitle>
           <GenerationTimelineSubtitle>
-            {t("This usually takes 1-2 minutes")}
+            {t("This usually takes about a minute")}
           </GenerationTimelineSubtitle>
           <GenerationTimelineProgress label={t("Progress")} value={displayProgress} />
         </GenerationTimelineHeader>

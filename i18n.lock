@@ -499,9 +499,9 @@ checksums:
     Create%20Activity/singular: ceaf06ac3cbfcfcf824b9e9acf66cfb9
     Create%20content%20for%20this%20activity/singular: e48e26e5fc10415a118d5d6c9f6d032e
     Your%20activity%20is%20ready/singular: e7385c4096b843839bb9a96023f0eea9
-    This%20usually%20takes%201-2%20minutes/singular: bd7260323fa4b3a50a0300ed136fcbd2
     Try%20again/singular: 33dd8820e743e35a66e6977f69e9d3b5
     Something%20went%20wrong/singular: a3cd2f01c073f1f5ff436d4b132d39cf
+    This%20usually%20takes%20about%20a%20minute/singular: 8b679d39d752ba8a57fbabd4eb745f28
     Taking%20you%20to%20your%20activity.../singular: c6714da27762cce70a0e2465878abaed
     Creating%20your%20activity/singular: cac8f88defaeee245484bd91660d32d6
     Progress/singular: dd0200d5849ebb7d64c15098ae91d229
@@ -539,9 +539,9 @@ checksums:
     Setting%20things%20up.../singular: 4696c8e1048ec21837f886410864dfe2
     Refining%20the%20details.../singular: eaf7a7ca135f8919dc93f80095040ab0
     Create%20Chapter/singular: eff367b47e651ac3234f8b4655d5a078
+    This%20usually%20takes%201-2%20minutes/singular: bd7260323fa4b3a50a0300ed136fcbd2
     Your%20lessons%20are%20ready/singular: fe8d9df59ba42f451b249fd750813cba
     Taking%20you%20to%20your%20chapter.../singular: fc59b426c3d393ec40f534253309ee9f
-    This%20usually%20takes%202-4%20minutes/singular: a5cf03e3d2ed405722955fde29b1fef0
     Creating%20your%20lessons/singular: 93571965dc04dcef0bf92f212b3b34d3
     Designing%20practice%20exercises.../singular: 9f1ddddd3324e1586eb427a2c96ee399
     Thinking%20about%20how%20to%20teach%20this.../singular: e71e60276db8c3d5ddb63542b0c7251e
@@ -556,8 +556,8 @@ checksums:
     Writing%20lesson%20%7Bnumber%7D.../singular: 9a81f245c815438ea4e925777f711894
     Taking%20you%20to%20your%20course.../singular: f1522561681357abdaad3936d36fdfe7
     Your%20course%20is%20ready/singular: b54659084218a9b9bcf7b5f1cfcf3fbf
-    This%20usually%20takes%204-6%20minutes/singular: bd0d37fe2b4aaa9dd8f1a6ffae3824c5
     Creating%20your%20course/singular: 02c33db1106e7478e5cbd00fa5f20532
+    This%20usually%20takes%202-3%20minutes/singular: c7d31ba5ff2bf3b6ec27d5fd9590d034
     Writing%20the%20lesson%20content/singular: 2b3243b19b65a83cfe355bef089b7ce8
     Writing%20the%20overview.../singular: 14d71db32539c19803e72da8a4553a0f
     Summarizing%20what%20you'll%20learn.../singular: bb6b58ff4b46ee6e8c59789464e9bced
@@ -581,8 +581,8 @@ checksums:
     Create%20Lesson/singular: af03c55d9ad5e6063bfad0ce8a35e385
     Your%20lesson%20is%20ready/singular: 3d745fd67b57e47ed10851f1e5404ccc
     Creating%20your%20activities/singular: 6651e663a48e18486f5f873e614cd512
-    This%20usually%20takes%20about%20a%20minute/singular: 8b679d39d752ba8a57fbabd4eb745f28
     Taking%20you%20to%20your%20lesson.../singular: 7a47c8664a900646ef51c9f27e2886e0
+    This%20usually%20takes%20a%20few%20seconds/singular: d95f1b6378326c1aeb3792bd9cd643e7
     Read%20Zoonk's%20privacy%20policy%20to%20understand%20how%20we%20collect%2C%20use%2C%20and%20protect%20your%20personal%20information./singular: 044f3586abe7d9915820a6629cef08e4
     Privacy%20Policy/singular: 7459744a63ef8af4e517a09024bd7c08
     Read%20Zoonk's%20terms%20of%20use%20to%20understand%20the%20rules%20and%20conditions%20for%20using%20our%20platform%20and%20services/singular: 4b82898d60691839a1999e4a17199895
