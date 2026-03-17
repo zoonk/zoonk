@@ -446,6 +446,15 @@ test.describe("Reading Step", () => {
     await page.keyboard.press("Enter");
 
     await expect(answerArea.getByText(/tap words to build your answer/i)).toBeVisible();
+
+    // Place again and verify Space also removes
+    await wordBank.getByRole("button", { exact: true, name: word1 }).click();
+    await expect(answerArea.getByRole("button", { name: new RegExp(word1) })).toBeVisible();
+
+    await answerArea.getByRole("button", { name: new RegExp(word1) }).focus();
+    await page.keyboard.press("Space");
+
+    await expect(answerArea.getByText(/tap words to build your answer/i)).toBeVisible();
   });
 
   test("full flow: complete all reading steps to completion screen", async ({ page }) => {
