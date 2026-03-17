@@ -229,20 +229,27 @@ export function prepareActivityData(
 
   const sentenceWordMap = new Map(sentenceWords.map((sw) => [sw.word.toLowerCase(), sw]));
 
-  const steps = activity.steps
-    .map((step) => serializeStep(step))
-    .filter((step): step is SerializedStep => step !== null)
-    .map((step) => ({
-      ...step,
-      fillBlankOptions: buildFillBlankOptions(step),
-      matchColumnsRightItems: buildMatchColumnsRightItems(step),
-      sentenceWordOptions: step.sentence
-        ? buildSentenceWordOptions(step.sentence.sentence, serializedLessonWords, sentenceWordMap)
-        : [],
-      sortOrderItems: buildSortOrderItems(step),
-      translationOptions: buildTranslationOptions(step, serializedLessonWords),
-      wordBankOptions: buildWordBankOptions(step, serializedLessonWords, sentenceWordMap),
-    }));
+  const steps = activity.steps.flatMap((raw) => {
+    const step = serializeStep(raw);
+
+    if (!step) {
+      return [];
+    }
+
+    return [
+      {
+        ...step,
+        fillBlankOptions: buildFillBlankOptions(step),
+        matchColumnsRightItems: buildMatchColumnsRightItems(step),
+        sentenceWordOptions: step.sentence
+          ? buildSentenceWordOptions(step.sentence.sentence, serializedLessonWords, sentenceWordMap)
+          : [],
+        sortOrderItems: buildSortOrderItems(step),
+        translationOptions: buildTranslationOptions(step, serializedLessonWords),
+        wordBankOptions: buildWordBankOptions(step, serializedLessonWords, sentenceWordMap),
+      },
+    ];
+  });
 
   return {
     description: activity.description,

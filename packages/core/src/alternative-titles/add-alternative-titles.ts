@@ -8,8 +8,14 @@ export async function addAlternativeTitles(params: {
   titles: string[];
   language: string;
 }): Promise<SafeReturn<BatchPayload | null>> {
-  const slugs = params.titles.map((title) => toSlug(title));
-  const uniqueSlugs = [...new Set(slugs)].filter(Boolean);
+  const uniqueSlugs = [
+    ...new Set(
+      params.titles.flatMap((title) => {
+        const slug = toSlug(title);
+        return slug ? [slug] : [];
+      }),
+    ),
+  ];
 
   if (uniqueSlugs.length === 0) {
     return { data: null, error: null };
