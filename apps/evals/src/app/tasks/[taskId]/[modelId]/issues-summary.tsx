@@ -25,7 +25,7 @@ function getIssuesByKind(results: EvalResult[], kind: ScoreStep["kind"]): Issue[
   return results
     .flatMap((result) =>
       result.steps
-        .filter((step) => step.kind === kind && step.conclusion !== "None")
+        .filter((step) => step.kind === kind && !step.conclusion.startsWith("None"))
         .map((step) => ({
           conclusion: step.conclusion,
           score: step.score,

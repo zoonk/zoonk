@@ -1,163 +1,199 @@
 {
-  "expectations": "\nLANGUAGE: English output required for translations.\n\nTOPIC: Spanish sentences for greetings and introductions - using basic greeting vocabulary.\n\nSCRIPT: Roman (romanization should be empty string \"\")\n\nVOCABULARY WORDS PROVIDED: hola, buenos dias, buenas noches, adios, gracias\nThese words MUST appear in the generated sentences.\n\nACCURACY PITFALLS - Penalize SEVERELY if:\n- Any sentence doesn't use at least one of the provided vocabulary words\n- Greetings are used incorrectly (e.g., \"buenas noches\" used for morning)\n- Translations don't match the Spanish sentences\n- Romanization contains any text (should be empty string)\n\nCONTEXT EXPECTATIONS:\n- Sentences should demonstrate natural use of greetings\n- Various social situations (meeting someone, saying goodbye, thanking)\n- Different times of day where appropriate\n\n\nEVALUATION CRITERIA:\n\n1. VOCABULARY WORD USAGE (CRITICAL - highest priority):\n   - Each generated sentence MUST use at least one of the provided vocabulary words\n   - The words should be used in their natural form (conjugated verbs, declined nouns are acceptable)\n   - Penalize SEVERELY if sentences don't incorporate the provided vocabulary\n   - Penalize if words are used incorrectly or out of context\n\n2. TRANSLATION ACCURACY (CRITICAL):\n   - Each sentence-translation pair MUST be linguistically accurate\n   - The translation must convey the same meaning as the original sentence\n   - Consider regional variations (Brazilian Portuguese vs European, Latin American Spanish vs Castilian)\n   - Penalize SEVERELY if translations are incorrect, incomplete, or misleading\n   - Grammatical structures should be appropriately adapted between languages\n\n3. ROMANIZATION (required field):\n   - For Japanese, Chinese, Korean, Arabic, Russian, Greek, Thai, Hindi, etc.: romanization MUST contain the Roman letter representation of the sentence\n   - Use standard romanization systems (romaji for Japanese, pinyin for Chinese, etc.)\n   - For Roman-script languages (Spanish, French, German, etc.): romanization MUST be an empty string \"\"\n   - Penalize if romanization is missing for non-Roman scripts or contains text for Roman scripts\n\n4. GRAMMATICAL CORRECTNESS:\n   - Sentences must be grammatically correct in the target language\n   - Verb conjugations must match the subject\n   - Gender agreement must be correct where applicable\n   - Word order should follow natural patterns of the target language\n   - Penalize for grammar errors, incorrect conjugations, or unnatural constructions\n\n5. SENTENCE NATURALNESS:\n   - Sentences should sound natural to native speakers\n   - Avoid overly literal translations or awkward phrasing\n   - Use appropriate register (formal/informal) for the context\n   - Penalize if sentences sound robotic, unnatural, or like machine translation\n\n6. CONTEXT DIVERSITY:\n   - Sentences should present different contexts or situations\n   - Avoid repetitive sentence structures\n   - Use variety in sentence types (statements, questions, commands where appropriate)\n   - Do NOT penalize for covering similar themes if vocabulary words naturally relate to each other\n\n7. LESSON RELEVANCE:\n   - Sentences should relate to the lesson topic\n   - The contexts should be appropriate for the lesson's educational goals\n   - Avoid straying into unrelated topics\n   - Do NOT require every sentence to explicitly reference the lesson topic - implicit relevance is fine\n\n8. APPROPRIATE DIFFICULTY:\n   - Sentences should be appropriate for language learners\n   - Avoid overly complex grammatical structures unless the lesson specifically targets advanced learners\n   - Vocabulary beyond the provided words should be at a similar or simpler level\n   - Penalize if sentences are incomprehensible to learners or use excessive advanced vocabulary\n\n9. NO DUPLICATES:\n   - Each sentence should be unique\n   - Avoid near-duplicates (same sentence with minor word changes)\n   - Penalize if essentially the same sentence appears multiple times\n\n10. LANGUAGE CORRECTNESS:\n    - Sentences should be in the TARGET language (courseTitle)\n    - Translations should be in the NATIVE language (language code)\n    - Penalize if languages are swapped or mixed incorrectly\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific sentence choices - accept ANY valid sentences that use the vocabulary\n- Do NOT penalize for not including specific contexts you might expect\n- Do NOT require a specific number of sentences\n- Do NOT expect sentences to follow any particular template or pattern\n- Different valid sentence constructions exist - assess the quality of what IS provided\n- FOCUS ON: vocabulary usage, translation accuracy, romanization correctness, grammatical correctness, naturalness\n\n    ",
-  "judgedAt": "2026-01-21T17:29:51.392Z",
+  "expectations": "\nLANGUAGE: English output required for translations.\n\nTOPIC: Spanish sentences for greetings and introductions - using basic greeting vocabulary.\n\nSCRIPT: Roman (romanization should be null)\n\nVOCABULARY WORDS PROVIDED: hola, buenos dias, buenas noches, adios, gracias\nThese words MUST appear in the generated sentences.\n\nACCURACY PITFALLS - Penalize SEVERELY if:\n- Any sentence doesn't use at least one of the provided vocabulary words\n- Greetings are used incorrectly (e.g., \"buenas noches\" used for morning)\n- Translations don't match the Spanish sentences\n- Romanization contains any text (should be null)\n\nCONTEXT EXPECTATIONS:\n- Sentences should demonstrate natural use of greetings\n- Various social situations (meeting someone, saying goodbye, thanking)\n- Different times of day where appropriate\n\n\nEVALUATION CRITERIA:\n\n1. VOCABULARY WORD USAGE (CRITICAL - highest priority):\n   - Each generated sentence MUST use at least one of the provided vocabulary words\n   - The words should be used in their natural form (conjugated verbs, declined nouns are acceptable)\n   - Penalize SEVERELY if sentences don't incorporate the provided vocabulary\n   - Penalize if words are used incorrectly or out of context\n\n2. TRANSLATION ACCURACY (CRITICAL):\n   - Each sentence-translation pair MUST be linguistically accurate\n   - The translation must convey the same meaning as the original sentence\n   - Consider regional variations (Brazilian Portuguese vs European, Latin American Spanish vs Castilian)\n   - Penalize SEVERELY if translations are incorrect, incomplete, or misleading\n   - Grammatical structures should be appropriately adapted between languages\n\n3. ROMANIZATION (required field):\n   - For Japanese, Chinese, Korean, Arabic, Russian, Greek, Thai, Hindi, etc.: romanization MUST contain the Roman letter representation of the FULL sentence (not just keywords)\n   - Use standard romanization systems (romaji for Japanese, pinyin for Chinese, etc.)\n   - For Roman-script languages (Spanish, French, German, etc.): romanization MUST be null\n   - Penalize if romanization is missing for non-Roman scripts or contains text for Roman scripts\n   - Romanization MUST use Latin/Roman characters only - penalize SEVERELY if it copies the original script (e.g., Cyrillic, Hangul, Kana) instead of transliterating\n   - Both lowercase and sentence-case romanization are acceptable - do NOT penalize for capitalization style alone\n\n4. GRAMMATICAL CORRECTNESS:\n   - Sentences must be grammatically correct in the target language\n   - Verb conjugations must match the subject\n   - Gender agreement must be correct where applicable\n   - Word order should follow natural patterns of the target language\n   - Penalize for grammar errors, incorrect conjugations, or unnatural constructions\n\n5. SENTENCE NATURALNESS:\n   - Sentences should sound natural to native speakers\n   - Avoid overly literal translations or awkward phrasing\n   - Use appropriate register (formal/informal) for the context\n   - Penalize if sentences sound robotic, unnatural, or like machine translation\n\n6. CONTEXT DIVERSITY:\n   - Sentences should present different contexts or situations\n   - Avoid repetitive sentence structures\n   - Use variety in sentence types (statements, questions, commands where appropriate)\n   - Do NOT penalize for covering similar themes if vocabulary words naturally relate to each other\n\n7. LESSON RELEVANCE:\n   - Sentences should relate to the lesson topic\n   - The contexts should be appropriate for the lesson's educational goals\n   - Avoid straying into unrelated topics\n   - Do NOT require every sentence to explicitly reference the lesson topic - implicit relevance is fine\n\n8. APPROPRIATE DIFFICULTY:\n   - Sentences should be appropriate for language learners\n   - Avoid overly complex grammatical structures unless the lesson specifically targets advanced learners\n   - Vocabulary beyond the provided words should be at a similar or simpler level\n   - Penalize if sentences are incomprehensible to learners or use excessive advanced vocabulary\n\n9. NO DUPLICATES:\n   - Each sentence should be unique\n   - Avoid near-duplicates (same sentence with minor word changes)\n   - Penalize if essentially the same sentence appears multiple times\n\n10. LANGUAGE CORRECTNESS:\n    - Sentences should be in the TARGET language (courseTitle)\n    - Translations should be in the NATIVE language (language code)\n    - Penalize if languages are swapped or mixed incorrectly\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific sentence choices - accept ANY valid sentences that use the vocabulary\n- Do NOT penalize for not including specific contexts you might expect\n- Do NOT require a specific number of sentences\n- Do NOT expect sentences to follow any particular template or pattern\n- Different valid sentence constructions exist - assess the quality of what IS provided\n- FOCUS ON: vocabulary usage, translation accuracy, romanization correctness, grammatical correctness, naturalness\n\n    ",
+  "judgedAt": "2026-03-17T21:53:19.657Z",
   "judgments": [
     {
-      "judgeId": "anthropic/claude-opus-4.5",
+      "judgeId": "anthropic/claude-opus-4.6",
       "rankings": [
         {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "20 sentences with excellent variety and naturalness. All 5 vocabulary words are well-covered with multiple uses each. Romanization is null (acceptable per the prompt's schema - the task expectations say 'should be null'). Translations are accurate throughout. Sentences demonstrate diverse contexts: café, office, moving, party, bus station, office greetings, farewell, family. Good mix of sentence types including embedded uses ('Le dije hola', 'Mi abuela siempre dice buenos días', 'Me despedí sin decir adiós'). Grammar is correct. Natural variety in structure. 'Mil gracias' is a nice natural variation. Very strong output overall.",
+          "score": 9.2
+        },
+        {
           "anonymousId": "Model G",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Excellent output with 20 sentences covering all 5 vocabulary words multiple times. All romanizations are correctly empty strings. Translations are accurate and natural. Good variety of contexts (restaurants, neighbors, doctor appointments, moving help, birthday parties). Sentences are grammatically correct and appropriate for learners. Uses 'muchas gracias', 'mil gracias', and 'gracias' variations naturally. 'Buenas noches' is used appropriately for evening/night contexts. Excellent diversity in social situations and sentence structures. Minor note: 'How did you wake up?' for '¿Cómo amaneció?' is a literal but acceptable translation.",
-          "score": 9.3
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "10 sentences, all grammatically correct with accurate translations. All 5 vocabulary words are covered. Good variety of contexts (office, store, hotel, family dinner, meeting). Nice embedded uses of vocabulary ('siempre digo hola al vendedor', 'les dijimos adiós', 'Le mandé un mensaje que decía buenas noches'). Romanization is null (acceptable). Sentences feel natural and diverse in structure. Slightly fewer sentences than some others but quality is consistently high.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "10 sentences, all well-constructed and natural. All 5 vocabulary words covered. Good variety of contexts (office, restaurant, introductions, travel). Translations are accurate. 'Gracias por venir tan rápido; me sacaste de un apuro' is a nice natural sentence, though 'me sacaste de un apuro' might be slightly advanced for beginners. 'Bueno, ya me voy: adiós a todos' is very natural. Romanization is empty string (acceptable per prompt instructions). All grammar is correct.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "9 sentences, all grammatically correct with accurate translations. All 5 vocabulary words are covered. Nice variety including embedded uses ('Le dije buenos días al vecino', 'todos dijeron adiós rápidamente', 'les dije buenas noches a mis hijos'). Romanization is null (acceptable). Good mix of direct greeting usage and narrative usage. Slightly fewer sentences but quality is solid. One minor issue: only 9 sentences is on the lower end, but the anti-checklist guidance says not to penalize for number of sentences.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "10 sentences with good quality. All 5 vocabulary words covered. Romanization is null (acceptable). Translations are accurate. Nice variety of contexts (travel, restaurant, classroom, train station). Sentence 1 combines 'hola' and 'buenos días' which is fine. Sentence 10 ('Hola, quería pedir un café con leche, por favor, gracias') combines hola and gracias naturally. 'Buenas noches' in sentence 6 is translated as 'Good evening' which is a valid translation for a restaurant context. Good overall quality. Some sentences are a bit long for beginners but still appropriate.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "10 sentences, all grammatically correct. All 5 vocabulary words covered. Translations are accurate. Some interesting constructions like 'Antes de dormir siempre digo buenas noches a mis hijos' and 'No olvides decir adiós antes de colgar el teléfono'. The sentence 'Cuando llegues al hotel dile al recepcionista \"buenas noches\" si es tarde' is creative but uses quotes within the sentence which could be slightly awkward for TTS. Romanization is empty string (acceptable). Good diversity of contexts. Solid output overall.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "10 sentences, all grammatically correct with accurate translations. All 5 vocabulary words covered. Romanization is empty string (acceptable). Good variety of contexts. Sentences are natural and appropriate for learners. 'No, gracias, ya terminé de comer' is a nice natural usage. 'Es muy tarde, así que buenas noches a todos' is good. Some sentences are somewhat simple but appropriate for a greetings lesson. Solid overall quality.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "25 sentences covering all 5 vocabulary words extensively. Translations are generally accurate. Grammar is correct throughout. However, with 25 sentences, there's some repetitiveness - 5 sentences each for the 5 words creates a somewhat formulaic distribution. Some near-duplicate structures emerge (e.g., multiple 'Adiós, [farewell phrase]' patterns). 'Buenos días, ¿cómo amaneció?' translated as 'Good morning, how did you wake up?' is acceptable but slightly stiff - 'How did you sleep?' might be more natural in English. 'Buenas noches, señor Ramírez' translated as 'Good night, Mr. Ramírez' is fine but 'Good evening' could also apply depending on context. Romanization is empty string (acceptable). The sheer volume leads to some quality dilution with repetitive patterns, but no serious errors.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "15 sentences covering all 5 vocabulary words. Grammar is mostly correct. However, there's a notable issue: 'Buenas noches a mi familia antes de salir de casa' (sentence 11) is not a complete sentence - it's a fragment. The translation 'I say good evening to my family before leaving the house' adds 'I say' which isn't in the Spanish. This is a translation accuracy issue. Also, 'Buenas noches, es hora de acostarse' translated as 'Good evening, it's time to go to bed' - this is fine but slightly unusual; 'good night' might be more natural here. The fragment issue in sentence 11 is a meaningful error. Other sentences are good. Three 'adiós' sentences in a row (3, 4, and the proximity creates repetitiveness). Overall decent but the incomplete sentence with mismatched translation is a notable flaw.",
+          "score": 7.5
         },
         {
           "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Only 5 sentences - one per vocabulary word. While the anti-checklist says not to penalize for number of sentences, 5 is quite minimal and limits context diversity and structural variety. Each sentence is grammatically correct with accurate translations. Romanization is empty string (acceptable). Sentences are natural but very basic in structure. The output feels like the bare minimum effort. Quality of individual sentences is fine but the set lacks depth and variety that would help learners see vocabulary in different contexts.",
+          "score": 6.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model D provides exceptional practice sentences that perfectly blend the target vocabulary with highly natural, idiomatic phrasing (e.g., 'me sacaste de un apuro', '¿todavía está abierta la cocina?'). The contexts are perfectly suited for language learners, the grammar and translations are flawless, and it fully adheres to all prompt instructions.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model C provides extremely natural and practically relevant sentences. The use of phrases like 'te debo una' and practical contexts like speaking to a hotel receptionist or doctor make it an outstanding resource for learners. Translations and grammar are perfectly accurate, and all constraints were followed.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model F goes above and beyond by providing 20 diverse, highly natural sentences. It includes a great mix of direct addresses and reported speech ('Le dije hola a mi vecina', 'Mil gracias'). The phrasing is universally practical and the grammar/translations are flawless.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
           "modelId": "anthropic/claude-sonnet-4.5",
-          "reasoning": "Strong output with 25 sentences covering all vocabulary words extensively. All romanizations are empty strings. Translations are accurate and natural. Good variety of contexts and sentence structures. Sentences are grammatically correct and appropriate for beginners. Some sentences are simpler/shorter but still effective for learners. All greetings used appropriately for their contexts. 'Buenas noches' used correctly for evening/night. The quantity and quality make this a very good set, though some sentences are quite basic.",
+          "reasoning": "Model A provides a generous 25 sentences, offering an excellent variety of contexts and sentence structures. It incorporates highly natural expressions (e.g., '¿cómo amaneció?') and covers many everyday situations. All translations and grammar are completely accurate.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model B offers very strong, realistic contexts for the vocabulary words (e.g., restaurants, train stations, meeting a teacher). The phrasing is natural and the translations are highly accurate. An excellent set of sentences with no flaws.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Model G provides a solid set of sentences with good context diversity. It relies slightly more on reported speech ('digo hola al vendedor', 'dice buenos días'), but the sentences remain highly useful and natural. The grammar and translations are completely accurate.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model I delivers clear, accurate, and useful sentences for beginners and intermediate learners. The contexts are practical and well-translated, making it a highly effective output.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Model E provides grammatically correct and accurately translated sentences. However, it relies heavily on repetitive reporting structures ('Le dije buenos días...', 'les dije buenas noches...', 'todos dijeron adiós...'), which slightly limits the variety of sentence constructions requested in the prompt.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model H followed the basic instructions and provided accurate translations, but it only generated 5 very simplistic sentences. It misses the mark on the instruction to include a 'range of complexity' and 'diverse contexts' compared to the other models.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Model J contains a significant grammatical/translation error in sentence 11: 'Buenas noches a mi familia antes de salir de casa' is translated as 'I say good evening to my family...', but the Spanish sentence is entirely missing the verb ('Digo'). Additionally, translating 'es hora de acostarse' as 'good evening' instead of 'good night' is contextually unnatural in English.",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Strong overall: every sentence includes at least one required vocabulary word, usage is natural, grammar is solid, translations are accurate, and contexts are varied and practical. It covers all target greetings multiple times without duplicates. Main issue: romanization should be null per task expectations and Model F does use null correctly, so no penalty there. One slight weakness is that some sentences are a bit beyond pure greetings/intros, but still clearly relevant.",
+          "score": 9.6
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Excellent adherence to the prompt. All sentences use the required vocabulary naturally, translations are accurate, grammar is good, contexts are diverse, and romanization is correctly null. Sentences feel authentic and useful for learners. Slightly less coverage breadth than F due to fewer sentences, but still very strong.",
+          "score": 9.4
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Very good output with accurate Spanish, natural usage, correct English translations, and correct null romanization. It distributes the vocabulary well and includes useful real-life contexts. Slightly less variety than the best outputs and only 9 sentences, but quality is high throughout.",
+          "score": 9.1
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Very solid. All sentences use required vocabulary appropriately, translations are accurate, and contexts are varied and natural. Romanization is correctly null. Slightly less polished than the top tier only because some translations are a touch less idiomatic ('at the office'), but still fully acceptable.",
           "score": 9
         },
         {
           "anonymousId": "Model D",
           "modelId": "openai/gpt-5.2",
-          "reasoning": "Very good output with 10 sentences covering all 5 vocabulary words. All romanizations are correctly empty. Translations are accurate and idiomatic ('me sacaste de un apuro' = 'you got me out of a bind' is natural). Good variety of realistic contexts (hotel reservations, asking for directions, meeting rooms). 'Buenas noches' used appropriately in both contexts (nighttime farewell and evening at restaurant). Grammatically correct throughout. Natural language that would help learners.",
-          "score": 8.8
-        },
-        {
-          "anonymousId": "Model B",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Good output with 10 sentences covering all 5 vocabulary words. All romanizations are correctly empty. Translations are generally accurate. Good variety of contexts. One minor issue: translating 'buenas noches' as 'good evening' in sentence 7 is acceptable but the Spanish sentence uses 'buenas noches' which covers both 'good evening' and 'good night'. All sentences grammatically correct. Natural usage of vocabulary. Sentence 3 uses 'buenas noches' creatively in a descriptive context which is nice variety.",
+          "reasoning": "High-quality sentences with natural Spanish, accurate translations, and good context diversity. Every sentence includes a target vocabulary item. However, it uses empty strings for romanization instead of null, which contradicts the task expectations and should be penalized. Otherwise excellent.",
           "score": 8.5
         },
         {
-          "anonymousId": "Model E",
+          "anonymousId": "Model I",
           "modelId": "google/gemini-3-flash",
-          "reasoning": "Good output with 10 sentences covering all 5 vocabulary words. All romanizations are correctly empty. Translations are accurate. Grammatically correct sentences. 'Buenas noches' used appropriately for late evening/night contexts. Good variety of situations (offering coffee, introductions, declining offers). Uses 'muchas gracias' variation naturally. Solid learner-appropriate content. Slightly less variety in complexity compared to top outputs.",
-          "score": 8.3
-        },
-        {
-          "anonymousId": "Model F",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "Solid output with 10 sentences covering all 5 vocabulary words. All romanizations are correctly empty. Translations are accurate. Grammatically correct. Good variety of basic contexts. Uses both 'gracias' and 'muchas gracias'. 'Buenas noches' used appropriately for night and evening hotel check-in. Sentences are simpler overall, which is appropriate for beginners but provides less variety. All requirements met competently.",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model A",
-          "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "Adequate output with only 5 sentences, one for each vocabulary word. All romanizations correctly empty. Translations are accurate. Grammatically correct. 'Buenas noches' used appropriately for nighttime rest. 'Adios' in sentence 4 is written 'Adiós' (with accent) which is correct. While all sentences are well-formed and natural, the limited quantity (5 sentences) provides less variety and learning opportunities compared to other models. Each vocabulary word used only once.",
-          "score": 7.5
-        },
-        {
-          "anonymousId": "Model C",
-          "modelId": "anthropic/claude-haiku-4.5",
-          "reasoning": "Good variety with 15 sentences covering all vocabulary words. All romanizations empty. However, there are some issues: Sentence 5 translates 'Buenas noches' as 'Good evening' when the context ('it's time to go to bed') suggests 'Good night' would be more appropriate. Sentence 11 'Buenas noches a mi familia antes de salir de casa' is grammatically incomplete - it's missing a verb like 'digo' (I say), yet the translation adds 'I say' which isn't in the Spanish. This is a translation accuracy issue. Sentence 11 also has 'buenas noches' used before leaving the house which is contextually odd. Most other sentences are well-formed.",
-          "score": 7.2
-        }
-      ]
-    },
-    {
-      "judgeId": "google/gemini-3-pro-preview",
-      "rankings": [
-        {
-          "anonymousId": "Model G",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "This model provided the best output. It generated a high volume of sentences (20) with excellent variety in contexts (neighbor, travel, supermarket, medical, social). The sentences are grammatically correct and sound very natural (e.g., 'Mil gracias por esperarme, el tráfico estaba horrible'). The formatting is perfect, and it strictly adhered to all constraints.",
-          "score": 9.8
-        },
-        {
-          "anonymousId": "Model D",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "Model D produced highly natural, conversational sentences that sound like authentic speech (e.g., 'me sacaste de un apuro', 'tal vez la próxima semana'). The translation accuracy is perfect, and the formatting is correct. It is ranked slightly below Model G only because it provided fewer examples (10 vs 20), but the quality is top-tier.",
-          "score": 9.5
-        },
-        {
-          "anonymousId": "Model H",
-          "modelId": "anthropic/claude-sonnet-4.5",
-          "reasoning": "This model provided the highest volume of sentences (25). While the structure is somewhat repetitive (looping through the 5 vocabulary words in the same order), the sentences themselves are accurate, varied in difficulty, and provide excellent drill material for a learner. It followed all negative constraints well.",
-          "score": 8.5
-        },
-        {
-          "anonymousId": "Model B",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Model B provided good sentences with varied contexts. However, a couple of the sentences were instructions *about* using the words (e.g., 'tell the receptionist good evening') rather than direct dialogue using the greeting itself. While not a violation, it is slightly less direct for learning the usage than the examples in higher-ranked models. Formatting and accuracy were otherwise good.",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model E",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Model E provided 10 correct sentences that met all requirements. The sentences are standard and functional, though they lack the conversational flair of Model D or the volume of Model G. It is a solid, average performance.",
-          "score": 7.5
-        },
-        {
-          "anonymousId": "Model F",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "Model F provided 10 sentences that are grammatically correct but very simple and basic (e.g., 'Hello, my name is Juan'). It meets the requirements but offers less educational value compared to the richer contexts provided by other models.",
-          "score": 7
-        },
-        {
-          "anonymousId": "Model A",
-          "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "Model A generated excellent, natural sentences, but provided only 5 examples. While the quality is high, the low volume makes it less comprehensive as a lesson resource compared to models providing 10-25 examples.",
-          "score": 6.5
-        },
-        {
-          "anonymousId": "Model C",
-          "modelId": "anthropic/claude-haiku-4.5",
-          "reasoning": "Model C contains a significant translation accuracy error. The sentence 'Buenas noches a mi familia antes de salir de casa' is translated as 'I say good evening to my family...', but the Spanish sentence lacks the verb 'say' (digo), making it a sentence fragment or caption rather than a complete sentence matching the English translation. This could confuse learners about grammatical structure.",
-          "score": 5.5
-        }
-      ]
-    },
-    {
-      "judgeId": "openai/gpt-5.2",
-      "rankings": [
-        {
-          "anonymousId": "Model D",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "All sentences contain at least one required vocab word; greetings used appropriately (buenos días in daytime contexts, buenas noches for night/evening). Translations are accurate and natural. Romanization correctly empty. Good variety (meeting someone, asking for help, restaurant/hotel, goodbye, thanks) with no duplicates and learner-appropriate complexity.",
-          "score": 9.6
-        },
-        {
-          "anonymousId": "Model E",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Meets critical constraints: every sentence includes a required word (including “No, gracias…”), romanization empty, and translations match well. Contexts are varied (introductions, service situations, goodbye, thanks). Minor repetitiveness and slightly less rich variety than top set, but still very strong.",
-          "score": 9.3
-        },
-        {
-          "anonymousId": "Model F",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "All sentences use required vocabulary; translations are accurate; romanization empty. Natural beginner-level examples with varied situations (hotel, coffee, change, introductions). Slightly more repetitive/short and less context-diverse than D/E.",
-          "score": 9.1
-        },
-        {
-          "anonymousId": "Model B",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "All sentences contain at least one required vocab item; romanization empty. Good range of scenarios and generally accurate translations. Minor nuance issues (e.g., translating “buenas noches” as “good evening” is acceptable in the ‘late’ context, but could be interpreted as ‘good night’), and some sentences are a bit longer/less beginner-focused.",
-          "score": 8.8
-        },
-        {
-          "anonymousId": "Model G",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Strong coverage and diversity; all sentences include required vocab (including ‘mil gracias’). Romanization empty; Spanish is natural. Main drawback is a translation error: “¿Cómo amaneció?” rendered as “How did you wake up?” is not the natural meaning (should be closer to “How are you this morning?/How did you wake up (feel)?”). That translation inaccuracy is a critical hit; otherwise excellent.",
+          "reasoning": "Good set of natural and accurate sentences, with all required vocabulary used across the output and good translation quality. No obvious grammar issues or duplicates. Main weakness: romanization is empty string rather than null, against the user expectation. Also somewhat less diverse than stronger models.",
           "score": 8.2
         },
         {
-          "anonymousId": "Model H",
-          "modelId": "anthropic/claude-sonnet-4.5",
-          "reasoning": "All sentences include required vocab and romanization is empty. However, it repeats a problematic translation: “¿cómo amaneció?” -> “how did you wake up?” (unnatural/meaning mismatch). Otherwise translations are fine and contexts are varied, but also somewhat repetitive across many similar greeting lines.",
-          "score": 7.9
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Good naturalness and strong translation accuracy overall. All sentences contain at least one target vocabulary item, and contexts are useful. However, romanization is empty string instead of null, which is a notable format violation under the task expectations. One sentence with embedded quoted 'buenas noches' is a bit more meta/instructional than ideal, though still valid.",
+          "score": 8
         },
         {
-          "anonymousId": "Model A",
+          "anonymousId": "Model H",
           "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "Meets core constraints: each sentence uses one required word, romanization empty, translations accurate. Only 5 sentences (allowed) but less context diversity than others, and “Buenas noches, voy a descansar un rato” is understandable but slightly less typical than other options; overall still solid.",
+          "reasoning": "Accurate, natural, and clean output with no translation issues, and each sentence uses a required vocabulary word. However, it is quite minimal with only 5 sentences, limiting variety and vocabulary distribution compared with stronger outputs. Also uses empty string instead of null for romanization, which hurts adherence.",
           "score": 7.8
         },
         {
-          "anonymousId": "Model C",
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Content quality is generally good: grammatical Spanish, accurate translations, and strong variety. All sentences include target vocabulary, and greetings are used appropriately. However, it has a major prompt-adherence problem: romanization is empty string instead of null. It is also somewhat repetitive because of the large number of sentences cycling through the same greeting patterns.",
+          "score": 7.7
+        },
+        {
+          "anonymousId": "Model J",
           "modelId": "anthropic/claude-haiku-4.5",
-          "reasoning": "All sentences include required vocab and romanization is empty. But there are notable issues: “Buenas noches, es hora de acostarse.” is translated as “Good evening…” (mismatch; should be “Good night” in this bedtime context). Also one Spanish sentence is awkward/likely incorrect: “Buenas noches a mi familia antes de salir de casa.” (odd scenario for ‘buenas noches’ and missing a verb; translation adds meaning not present). These translation/naturalness issues are critical.",
-          "score": 6.4
+          "reasoning": "Mixed quality. Many sentences are natural and translations are mostly accurate, but there are some notable issues. Romanization is empty string instead of null. More importantly, 'Buenas noches a mi familia antes de salir de casa.' is not a natural standalone sentence as written and the translation adds meaning ('I say...') not present in the Spanish. 'Buenas noches, es hora de acostarse.' is translated as 'Good evening' instead of 'Good night,' a meaning mismatch. These errors materially lower the score.",
+          "score": 6.8
         }
       ]
     }

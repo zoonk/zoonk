@@ -5,7 +5,7 @@ import { z } from "zod";
 import { getLanguagePromptContext } from "./_utils/language-prompt-context";
 import systemPrompt from "./activity-sentence-word-translation.prompt.md";
 
-const DEFAULT_MODEL = process.env.AI_MODEL_SENTENCE_WORD_TRANSLATION ?? "openai/gpt-5.1-instant";
+const DEFAULT_MODEL = process.env.AI_MODEL_SENTENCE_WORD_TRANSLATION ?? "openai/gpt-5.4-mini";
 const FALLBACK_MODELS = ["google/gemini-3-flash", "anthropic/claude-opus-4.6"];
 
 const schema = z.object({

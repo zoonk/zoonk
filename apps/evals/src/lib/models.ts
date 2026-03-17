@@ -32,6 +32,12 @@ export const EVAL_MODELS: ModelConfig[] = [
     outputCost: 12,
   },
   {
+    id: "google/gemini-3.1-flash-lite-preview",
+    inputCost: 0.25,
+    name: "gemini-3-flash-lite",
+    outputCost: 1.5,
+  },
+  {
     id: "google/gemini-3-flash",
     inputCost: 0.5,
     name: "gemini-3-flash",
@@ -43,6 +49,18 @@ export const EVAL_MODELS: ModelConfig[] = [
     name: "gpt-5.4",
     outputCost: 14,
     reasoningEffort: "auto",
+  },
+  {
+    id: "openai/gpt-5.4-mini",
+    inputCost: 0.75,
+    name: "gpt-5.4-mini",
+    outputCost: 4.5,
+  },
+  {
+    id: "openai/gpt-5.4-nano",
+    inputCost: 0.2,
+    name: "gpt-5.4-nano",
+    outputCost: 1.25,
   },
   {
     id: "openai/gpt-5.2:high",

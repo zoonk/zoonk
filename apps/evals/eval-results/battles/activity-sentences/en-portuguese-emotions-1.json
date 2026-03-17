@@ -1,163 +1,199 @@
 {
-  "expectations": "\nLANGUAGE: English output required for translations.\n\nTOPIC: Portuguese sentences for emotions and feelings - using emotion vocabulary.\n\nSCRIPT: Roman (romanization should be empty string \"\")\n\nVOCABULARY WORDS PROVIDED: feliz, triste, cansado, com fome, com sede\nThese words/expressions MUST appear in the generated sentences.\n\nACCURACY PITFALLS - Penalize SEVERELY if:\n- Any sentence doesn't use at least one of the provided vocabulary words\n- Estar vs ser usage is incorrect for states (estar feliz, not ser feliz for temporary states)\n- Gender agreement is wrong (cansado/cansada)\n- Translations don't match the Portuguese sentences\n- Romanization contains any text (should be empty string)\n\nCONTEXT EXPECTATIONS:\n- Sentences expressing how someone feels\n- Various situations causing different emotions\n- Natural emotional expressions in Portuguese\n\n\nEVALUATION CRITERIA:\n\n1. VOCABULARY WORD USAGE (CRITICAL - highest priority):\n   - Each generated sentence MUST use at least one of the provided vocabulary words\n   - The words should be used in their natural form (conjugated verbs, declined nouns are acceptable)\n   - Penalize SEVERELY if sentences don't incorporate the provided vocabulary\n   - Penalize if words are used incorrectly or out of context\n\n2. TRANSLATION ACCURACY (CRITICAL):\n   - Each sentence-translation pair MUST be linguistically accurate\n   - The translation must convey the same meaning as the original sentence\n   - Consider regional variations (Brazilian Portuguese vs European, Latin American Spanish vs Castilian)\n   - Penalize SEVERELY if translations are incorrect, incomplete, or misleading\n   - Grammatical structures should be appropriately adapted between languages\n\n3. ROMANIZATION (required field):\n   - For Japanese, Chinese, Korean, Arabic, Russian, Greek, Thai, Hindi, etc.: romanization MUST contain the Roman letter representation of the sentence\n   - Use standard romanization systems (romaji for Japanese, pinyin for Chinese, etc.)\n   - For Roman-script languages (Spanish, French, German, etc.): romanization MUST be an empty string \"\"\n   - Penalize if romanization is missing for non-Roman scripts or contains text for Roman scripts\n\n4. GRAMMATICAL CORRECTNESS:\n   - Sentences must be grammatically correct in the target language\n   - Verb conjugations must match the subject\n   - Gender agreement must be correct where applicable\n   - Word order should follow natural patterns of the target language\n   - Penalize for grammar errors, incorrect conjugations, or unnatural constructions\n\n5. SENTENCE NATURALNESS:\n   - Sentences should sound natural to native speakers\n   - Avoid overly literal translations or awkward phrasing\n   - Use appropriate register (formal/informal) for the context\n   - Penalize if sentences sound robotic, unnatural, or like machine translation\n\n6. CONTEXT DIVERSITY:\n   - Sentences should present different contexts or situations\n   - Avoid repetitive sentence structures\n   - Use variety in sentence types (statements, questions, commands where appropriate)\n   - Do NOT penalize for covering similar themes if vocabulary words naturally relate to each other\n\n7. LESSON RELEVANCE:\n   - Sentences should relate to the lesson topic\n   - The contexts should be appropriate for the lesson's educational goals\n   - Avoid straying into unrelated topics\n   - Do NOT require every sentence to explicitly reference the lesson topic - implicit relevance is fine\n\n8. APPROPRIATE DIFFICULTY:\n   - Sentences should be appropriate for language learners\n   - Avoid overly complex grammatical structures unless the lesson specifically targets advanced learners\n   - Vocabulary beyond the provided words should be at a similar or simpler level\n   - Penalize if sentences are incomprehensible to learners or use excessive advanced vocabulary\n\n9. NO DUPLICATES:\n   - Each sentence should be unique\n   - Avoid near-duplicates (same sentence with minor word changes)\n   - Penalize if essentially the same sentence appears multiple times\n\n10. LANGUAGE CORRECTNESS:\n    - Sentences should be in the TARGET language (courseTitle)\n    - Translations should be in the NATIVE language (language code)\n    - Penalize if languages are swapped or mixed incorrectly\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific sentence choices - accept ANY valid sentences that use the vocabulary\n- Do NOT penalize for not including specific contexts you might expect\n- Do NOT require a specific number of sentences\n- Do NOT expect sentences to follow any particular template or pattern\n- Different valid sentence constructions exist - assess the quality of what IS provided\n- FOCUS ON: vocabulary usage, translation accuracy, romanization correctness, grammatical correctness, naturalness\n\n    ",
-  "judgedAt": "2026-01-21T17:29:59.678Z",
+  "expectations": "\nLANGUAGE: English output required for translations.\n\nTOPIC: Portuguese sentences for emotions and feelings - using emotion vocabulary.\n\nSCRIPT: Roman (romanization should be null)\n\nVOCABULARY WORDS PROVIDED: feliz, triste, cansado, com fome, com sede\nThese words/expressions MUST appear in the generated sentences.\n\nACCURACY PITFALLS - Penalize SEVERELY if:\n- Any sentence doesn't use at least one of the provided vocabulary words\n- Estar vs ser usage is incorrect for states (estar feliz, not ser feliz for temporary states)\n- Gender agreement is wrong (cansado/cansada)\n- Translations don't match the Portuguese sentences\n- Romanization contains any text (should be null)\n\nCONTEXT EXPECTATIONS:\n- Sentences expressing how someone feels\n- Various situations causing different emotions\n- Natural emotional expressions in Portuguese\n\n\nEVALUATION CRITERIA:\n\n1. VOCABULARY WORD USAGE (CRITICAL - highest priority):\n   - Each generated sentence MUST use at least one of the provided vocabulary words\n   - The words should be used in their natural form (conjugated verbs, declined nouns are acceptable)\n   - Penalize SEVERELY if sentences don't incorporate the provided vocabulary\n   - Penalize if words are used incorrectly or out of context\n\n2. TRANSLATION ACCURACY (CRITICAL):\n   - Each sentence-translation pair MUST be linguistically accurate\n   - The translation must convey the same meaning as the original sentence\n   - Consider regional variations (Brazilian Portuguese vs European, Latin American Spanish vs Castilian)\n   - Penalize SEVERELY if translations are incorrect, incomplete, or misleading\n   - Grammatical structures should be appropriately adapted between languages\n\n3. ROMANIZATION (required field):\n   - For Japanese, Chinese, Korean, Arabic, Russian, Greek, Thai, Hindi, etc.: romanization MUST contain the Roman letter representation of the FULL sentence (not just keywords)\n   - Use standard romanization systems (romaji for Japanese, pinyin for Chinese, etc.)\n   - For Roman-script languages (Spanish, French, German, etc.): romanization MUST be null\n   - Penalize if romanization is missing for non-Roman scripts or contains text for Roman scripts\n   - Romanization MUST use Latin/Roman characters only - penalize SEVERELY if it copies the original script (e.g., Cyrillic, Hangul, Kana) instead of transliterating\n   - Both lowercase and sentence-case romanization are acceptable - do NOT penalize for capitalization style alone\n\n4. GRAMMATICAL CORRECTNESS:\n   - Sentences must be grammatically correct in the target language\n   - Verb conjugations must match the subject\n   - Gender agreement must be correct where applicable\n   - Word order should follow natural patterns of the target language\n   - Penalize for grammar errors, incorrect conjugations, or unnatural constructions\n\n5. SENTENCE NATURALNESS:\n   - Sentences should sound natural to native speakers\n   - Avoid overly literal translations or awkward phrasing\n   - Use appropriate register (formal/informal) for the context\n   - Penalize if sentences sound robotic, unnatural, or like machine translation\n\n6. CONTEXT DIVERSITY:\n   - Sentences should present different contexts or situations\n   - Avoid repetitive sentence structures\n   - Use variety in sentence types (statements, questions, commands where appropriate)\n   - Do NOT penalize for covering similar themes if vocabulary words naturally relate to each other\n\n7. LESSON RELEVANCE:\n   - Sentences should relate to the lesson topic\n   - The contexts should be appropriate for the lesson's educational goals\n   - Avoid straying into unrelated topics\n   - Do NOT require every sentence to explicitly reference the lesson topic - implicit relevance is fine\n\n8. APPROPRIATE DIFFICULTY:\n   - Sentences should be appropriate for language learners\n   - Avoid overly complex grammatical structures unless the lesson specifically targets advanced learners\n   - Vocabulary beyond the provided words should be at a similar or simpler level\n   - Penalize if sentences are incomprehensible to learners or use excessive advanced vocabulary\n\n9. NO DUPLICATES:\n   - Each sentence should be unique\n   - Avoid near-duplicates (same sentence with minor word changes)\n   - Penalize if essentially the same sentence appears multiple times\n\n10. LANGUAGE CORRECTNESS:\n    - Sentences should be in the TARGET language (courseTitle)\n    - Translations should be in the NATIVE language (language code)\n    - Penalize if languages are swapped or mixed incorrectly\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific sentence choices - accept ANY valid sentences that use the vocabulary\n- Do NOT penalize for not including specific contexts you might expect\n- Do NOT require a specific number of sentences\n- Do NOT expect sentences to follow any particular template or pattern\n- Different valid sentence constructions exist - assess the quality of what IS provided\n- FOCUS ON: vocabulary usage, translation accuracy, romanization correctness, grammatical correctness, naturalness\n\n    ",
+  "judgedAt": "2026-03-17T21:52:54.807Z",
   "judgments": [
     {
-      "judgeId": "anthropic/claude-opus-4.5",
+      "judgeId": "anthropic/claude-opus-4.6",
       "rankings": [
         {
           "anonymousId": "Model G",
-          "modelId": "anthropic/claude-sonnet-4.5",
-          "reasoning": "Excellent output with 20 sentences covering all 5 vocabulary words multiple times. All sentences use correct estar/ficar for temporary states. Grammar is correct throughout, including proper gender agreement. Romanization is correctly empty for all entries. Translations are accurate and natural. Good variety in sentence structures (statements, questions, exclamations). Appropriate difficulty level for learners. No duplicates. Minor issue: 'desde de manhã' should be 'desde manhã', but this is a minor error.",
-          "score": 9.2
-        },
-        {
-          "anonymousId": "Model F",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Very strong output with 15 well-constructed sentences. All vocabulary words are used correctly multiple times. Correct use of estar/ficar for temporary emotional states. Grammar is correct with proper gender agreement. Romanization correctly empty. Translations are accurate. Good variety of contexts and sentence structures. No duplicates. Natural-sounding sentences appropriate for learners.",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "18 sentences with excellent vocabulary coverage - all 5 words used multiple times. Grammar is correct throughout, including proper estar/ser usage and gender agreement (e.g., sentence 14 uses 'cansados' correctly for plural). Translations are accurate and natural. Great variety of contexts (sports, work, family, food, weather, social situations) and sentence types (questions, exclamations, statements). Uses null for romanization which matches the evaluation criteria preference. Natural Brazilian Portuguese throughout. One sentence combines two vocabulary words ('com sede e com fome') which is creative. Sentence structures are diverse - different subjects, tenses, and constructions. Minor note: 'I get very happy' in translation of sentence 1 is slightly unnatural in English but acceptable.",
           "score": 9
         },
         {
-          "anonymousId": "Model D",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Solid output with 12 sentences using all vocabulary words. Correct grammar and estar/ficar usage throughout. One slightly awkward sentence: 'O bebê chorou até ficar com fome novamente' is semantically unusual (babies don't usually cry until they become hungry - they cry because they're hungry). All other sentences are natural and well-formed. Romanization correctly empty. Good variety and appropriate difficulty.",
-          "score": 8.7
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "10 sentences, all grammatically correct with proper vocabulary usage. Each of the 5 vocabulary words appears in at least 2 sentences. Translations are accurate and natural. Good variety of contexts (work, transportation, gym, summer, birthday, meetings). Sentence structures are diverse (questions, statements, conditionals). Uses null for romanization as expected. Natural Brazilian Portuguese - 'chego em casa cansado' and 'Vamos almoçar logo?' are very authentic. Gender agreement correct. All translations accurately convey meaning. Excellent quality throughout with no errors detected.",
+          "score": 8.9
         },
         {
-          "anonymousId": "Model B",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "Good output with 10 sentences covering all vocabulary words. Correct estar/ficar usage for temporary states. Gender agreement is correct (note sentence 8 uses 'cansada' appropriately for female subject). Romanization correctly empty. Translations accurate. Sentence 3 uses 'estava' (past tense of estar) correctly. Good variety of contexts. Natural sentences appropriate for learners.",
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "10 sentences with all 5 vocabulary words covered, each appearing twice. Grammar is correct throughout. Translations are accurate and natural. Good variety of contexts (work, social, home, park, cooking). Uses null for romanization correctly. Very natural Brazilian Portuguese - 'sem vontade de cozinhar', 'tanta correria' are authentic expressions. Sentence types include questions, statements. 'Fiquei triste' correctly uses ficar for becoming sad. All translations are well-done. The sentence about the dog getting thirsty is a nice creative touch. Solid quality throughout.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "10 sentences, all vocabulary words covered with good distribution. Grammar is correct - notably 'cansada' with feminine agreement in sentence 6 showing gender awareness, and 'A gente' used correctly with singular verb in sentence 4. Translations are accurate. Good use of colloquial Brazilian Portuguese ('A gente', 'num quiosque'). Diverse contexts (work, travel, dinner, home). Sentence 10's translation 'the ready food made me happy' is slightly awkward in English - 'having food ready made me happy' would be more natural, but it's not incorrect. Uses empty string for romanization which is acceptable per the prompt. Very natural and authentic feel throughout.",
           "score": 8.6
         },
         {
-          "anonymousId": "Model A",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Good output with 10 sentences using all vocabulary words. Correct grammar and verb usage. Romanization correctly empty. Translations are accurate. Sentence 6 effectively combines two vocabulary words (triste, cansado). Good variety of sentence structures including questions, conditionals, and statements. All sentences sound natural.",
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "12 sentences with good vocabulary coverage and variety. Grammar is mostly correct. Translations are accurate. Good diversity of contexts and sentence types. Sentence 9 ('O bebê chorou até ficar com fome novamente') is slightly odd semantically - a baby crying until becoming hungry again is an unusual causal relationship; typically babies cry because they're hungry, not the reverse. However, it's not grammatically wrong. Sentence 12 combines two vocabulary words nicely. Uses empty string for romanization (acceptable). Some sentences use more advanced structures (subjunctive in sentence 10 'ficará') which is good for variety. Overall very solid quality with good range of difficulty levels.",
           "score": 8.5
         },
         {
-          "anonymousId": "Model H",
-          "modelId": "anthropic/claude-haiku-4.5",
-          "reasoning": "Good output with 10 sentences covering all vocabulary words. Correct grammar and estar/ficar usage. Romanization correctly empty. Translations are accurate. Some sentences are slightly more complex which may be challenging for beginners but still appropriate. Sentence 10 correctly uses 'estamos com sede'. Good variety overall.",
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "20 sentences - the largest set. All 5 vocabulary words are well-covered with 4 sentences each. Grammar is correct throughout. Translations are accurate. Good variety of contexts. However, with 20 sentences there's some structural repetition - several sentences follow the 'Estou [word]' pattern. Sentence 4 has 'desde de manhã' which could arguably be 'desde manhã' or 'desde cedo', though 'desde de manhã' is used colloquially. The sheer volume means some sentences feel somewhat formulaic despite being correct. Uses empty string for romanization (acceptable). No major errors detected. The large number of sentences provides extensive practice but at the cost of some repetitiveness.",
           "score": 8.4
         },
         {
           "anonymousId": "Model C",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "Good output with 10 sentences covering all vocabulary words. Grammar is generally correct. Romanization correctly empty. Translations are accurate. Sentence 4 uses 'A gente' which is colloquial Brazilian Portuguese - this is valid but might confuse some learners. Sentence 10 translation 'the ready food made me happy' is slightly awkward in English (should be 'the ready meal' or 'having food ready'). Good use of combining vocabulary words in some sentences.",
-          "score": 8.2
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "10 sentences with all 5 vocabulary words covered. Grammar is correct throughout. Translations are accurate and natural. Good variety including a question, a conditional, and combined vocabulary words in sentence 6 ('triste' + 'cansado'). Natural Brazilian Portuguese. Sentence structures vary well. Uses empty string for romanization (acceptable). All sentences feel authentic. One minor point: sentence 1 'por você ter vindo' is a slightly more complex construction but appropriate. Overall solid quality with good naturalness.",
+          "score": 8.4
         },
         {
           "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "8 sentences - the smallest set. All 5 vocabulary words are covered. Grammar is correct throughout. Translations are accurate. Uses null for romanization correctly. Natural Brazilian Portuguese. Good variety of subjects (children, dog, we). However, with only 8 sentences, the coverage is thinner - some words only appear once. Sentence 6 uses 'cansadas' with feminine plural for 'crianças' which is correct. The dog sentence is creative. Overall good quality but slightly limited in scope compared to other models.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "10 sentences with all 5 vocabulary words covered. Grammar is mostly correct. Translations are generally accurate. Sentence 10 'todos estamos com sede' mixes 'todos' (everyone/all) with first person plural 'estamos' which, while grammatically possible (meaning 'all of us'), is slightly unusual - 'todos estão' or 'todos nós estamos' would be more natural. Sentence 9 'pedimos a comida mais rápido possível' - 'o mais rápido possível' would be more standard. These are minor issues. Good variety of contexts. Uses empty string for romanization (acceptable). Overall solid but with a couple of slightly unnatural constructions.",
+          "score": 8.1
+        },
+        {
+          "anonymousId": "Model A",
           "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "Adequate output but only 5 sentences provided. While all sentences are grammatically correct, use vocabulary words appropriately, and have accurate translations with correct empty romanization, the limited quantity means less variety and coverage. All 5 vocabulary words are covered, but with minimal context diversity. The sentences that are provided are well-constructed.",
-          "score": 7
+          "reasoning": "Only 5 sentences - one per vocabulary word. While all sentences are grammatically correct and translations are accurate, the minimal number means limited practice value. Each vocabulary word appears exactly once. Sentences are well-constructed and natural. Uses empty string for romanization (acceptable). The quality of individual sentences is good, but the limited quantity is a notable weakness compared to other models that provide 8-20 sentences. No errors detected in what's provided.",
+          "score": 7.5
         }
       ]
     },
     {
-      "judgeId": "google/gemini-3-pro-preview",
+      "judgeId": "google/gemini-3.1-pro-preview",
       "rankings": [
         {
-          "anonymousId": "Model C",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "This model provides the most natural and native-sounding sentences. It effectively uses distinct Portuguese structures (e.g., 'A gente' with correct singular agreement, 'Mesmo cansada', 'me deixou feliz') that show a deep understanding of the language beyond literal translation. The grammar is flawless, the contexts are varied, and the romanization is correctly omitted.",
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "This model perfectly follows all instructions, including the explicit user prompt requirement that romanization MUST be `null`. The Portuguese sentences are natural, cover all the required vocabulary natively, appropriately use temporary state verbs (estar/ficar) instead of 'ser', and maintain perfect gender agreement. The translations capture the nuances flawlessly.",
           "score": 10
         },
         {
-          "anonymousId": "Model F",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Model F offers a high volume of content (15 sentences) with excellent accuracy. The sentences are grammatically correct and cover a wide range of subjects and contexts. While slightly simpler in structure than Model C, the quantity and consistency make it an outstanding output.",
-          "score": 9.8
-        },
-        {
-          "anonymousId": "Model D",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Model D provides 12 high-quality sentences with good variety in tenses and moods (including future tense and imperatives). The sentences are natural and the translations are accurate. It is slightly better than Models A and B due to the higher sentence count and variety.",
-          "score": 9.5
-        },
-        {
-          "anonymousId": "Model A",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Model A produces 10 solid, grammatically perfect sentences. It demonstrates good command of grammar (e.g., using the subjunctive 'por você ter vindo'). It is a very strong output, lacking only the volume of F/G or the idiomatic flair of C.",
-          "score": 9
-        },
-        {
-          "anonymousId": "Model B",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "Model B is nearly equivalent to Model A, offering 10 grammatically correct and natural sentences. The translations are accurate and vocabulary is well-used. It ranks just below A due to slightly simpler sentence structures.",
-          "score": 9
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "This model flawlessly executes the task. It correctly uses `null` for the romanization field as requested in the user prompt. The sentence contexts are realistic and conversational, successfully navigating Portuguese emotional states and accurately using verbs like 'estar', 'parecer', and 'ficar'.",
+          "score": 10
         },
         {
           "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "This model provides a robust selection of sentences and strictly follows the negative constraint to use `null` for romanization. The vocabulary usage is highly authentic, displaying excellent mastery of Portuguese grammar regarding temporary states (estar/ficar) and gender/number agreement.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "This model produces excellent, error-free output. It successfully complies with the strict user prompt rule to use `null` for the romanization field. The contexts are clear, the translations are precise, and the use of the target vocabulary correctly reflects temporary emotional states.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "The sentences generated are exceptionally natural, contextually diverse, and perfectly translated. However, it used an empty string `\"\"` for romanization instead of `null`. While the system prompt suggested an empty string, the user prompt explicitly stated 'romanization MUST be null', leading to a minor deduction for instruction hierarchy adherence.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "The model provides excellent Portuguese sentences with proper state verbs (estar/ficar) and completely accurate translations. It receives a minor penalty because it used an empty string `\"\"` for romanization instead of following the user prompt's explicit requirement to use `null`.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "The model generates outstanding practice sentences with highly conversational contexts and accurate translations. The minor deduction is strictly due to formatting: using an empty string `\"\"` for romanization instead of the strictly mandated `null` from the user prompt.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
           "modelId": "anthropic/claude-sonnet-4.5",
-          "reasoning": "Model G provides the highest volume (20 sentences), which is excellent for a dataset. However, it includes a minor colloquial error/typo ('desde de manhã' instead of 'desde manhã' or 'desde a manhã') which keeps it out of the top tier regarding grammatical precision.",
-          "score": 8.5
+          "reasoning": "This model provides a large, excellent variety of well-crafted sentences. The grammar and translations are perfect. However, it misses the user prompt's specific formatting constraint to output `null` for the romanization field, opting for an empty string instead.",
+          "score": 9
         },
         {
           "anonymousId": "Model H",
           "modelId": "anthropic/claude-haiku-4.5",
-          "reasoning": "Model H provides good sentences but suffers from minor grammatical or stylistic issues, such as missing the article in the superlative structure ('mais rápido possível' instead of 'o mais rápido possível') and slightly awkward phrasing ('todos estamos').",
-          "score": 7
+          "reasoning": "The output contains completely natural sentences, flawless translations, and highly effective vocabulary usage. It receives a minor deduction for using an empty string `\"\"` for romanization instead of `null` as explicitly demanded by the user prompt.",
+          "score": 9
         },
         {
-          "anonymousId": "Model E",
+          "anonymousId": "Model A",
           "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "Model E follows the instructions and is accurate, but it only provides 5 sentences. While no specific number was requested, this low volume limits the context diversity compared to all other models.",
-          "score": 5
+          "reasoning": "The generated sentences are highly accurate, and the vocabulary is effectively showcased in natural Portuguese phrasing. Like several others, it receives a slight deduction for prioritizing the system prompt's empty string `\"\"` format over the user prompt's explicit `null` constraint for romanization.",
+          "score": 9
         }
       ]
     },
     {
-      "judgeId": "openai/gpt-5.2",
+      "judgeId": "openai/gpt-5.4",
       "rankings": [
         {
-          "anonymousId": "Model B",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "All sentences use at least one required vocabulary item; consistent and correct use of estar/ficar for temporary states; correct gender agreement (cansado/cansada); translations closely match the Portuguese; romanization correctly empty. Natural, varied contexts with no notable awkwardness.",
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Strong overall. Every sentence uses at least one required vocabulary item, grammar is natural and accurate, translations are faithful, contexts are varied, and there are no duplicates. It also follows the user-level requirement that romanization should be null for this Roman-script language. Slightly less broad than the very largest sets, but excellent quality and adherence.",
+          "score": 9.7
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Excellent adherence: all sentences include target vocabulary, Portuguese is natural, translations are accurate, and romanization is correctly null. Good variety across contexts and sentence types, with no duplication. Very slightly less varied than the absolute top entry, but still excellent.",
           "score": 9.6
         },
         {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Very strong set with broad variety, natural Portuguese, accurate translations, and all sentences tied clearly to the vocabulary/theme. Romanization is correctly null. Minor stylistic quibble only: a few English translations use slightly casual phrasing like 'get happy,' which is understandable but a bit less idiomatic than 'feel happy' or 'be happy.'",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "High-quality output that follows the important constraint of romanization being null. All sentences are grammatical, natural, and accurately translated, and every sentence contains at least one target expression. It has fewer sentences and a bit less diversity than the top-ranked outputs, but it is very compliant and clean.",
+          "score": 9.3
+        },
+        {
           "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Very good content quality: natural Portuguese, accurate translations, no duplicates, and strong vocabulary integration in every sentence. The main issue is prompt adherence on romanization: it uses an empty string rather than null, which conflicts with the task expectations and should be penalized. Otherwise excellent.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model D",
           "modelId": "openai/gpt-5.2",
-          "reasoning": "Meets all critical requirements: every sentence includes a target word, romanization empty, translations accurate. Good variety and very natural phrasing. Minor nit: first sentence uses “acordei feliz” (acceptable elliptical state, but slightly less explicit than “estou feliz”). Otherwise excellent.",
-          "score": 9.4
+          "reasoning": "Good, natural Portuguese with accurate translations and solid context variety. Every sentence uses at least one required vocabulary word. Main weakness is prompt-rule adherence: romanization is given as an empty string instead of null. Also one translation, 'the ready food,' is a bit awkward in English; 'the food being ready' or 'the ready-made food' would be better.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Comprehensive and mostly strong. All sentences use the vocabulary naturally, grammar is good, and translations are largely accurate. However, romanization is incorrect per task expectations because it should be null, not an empty string. Also, 'O bebê chorou até ficar com fome novamente' is somewhat less natural semantically/contextually than the rest.",
+          "score": 8.1
         },
         {
           "anonymousId": "Model A",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "All critical constraints satisfied (vocab present in every sentence; empty romanization; translations accurate; correct estar usage). Natural and varied. Minor style redundancy (multiple similar hunger/thirst conditionals) and one translation nuance (“Sempre fico com sede…” = “I always get thirsty” is fine).",
-          "score": 9.2
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Clean, accurate, and natural set. All five required vocabulary items are covered, and translations are strong. The main penalty is format adherence: romanization should be null, not an empty string. It also offers only the minimum coverage with less variety than stronger submissions.",
+          "score": 8
         },
         {
           "anonymousId": "Model H",
           "modelId": "anthropic/claude-haiku-4.5",
-          "reasoning": "All sentences include required vocabulary; grammar and gender agreement correct; translations accurate; romanization empty. Generally natural. Slight awkwardness in a couple places (e.g., “seu cachorro não apareceu em casa” for “didn’t show up at home”), but still acceptable.",
-          "score": 8.9
-        },
-        {
-          "anonymousId": "Model F",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Fully compliant on vocab usage, estar/ficar, gender agreement, and empty romanization. Translations are accurate and contexts relevant. Some repetitiveness (several near-duplicate patterns like ‘Estou muito feliz…’, ‘Por que você está tão triste…’, multiple hunger/thirst lines) but still good quality overall.",
-          "score": 8.7
-        },
-        {
-          "anonymousId": "Model D",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Generally strong: required words appear, romanization empty, translations accurate, and grammar mostly correct/natural. Notable issue: “O bebê chorou até ficar com fome novamente.” is less natural/semantically odd (babies usually cry because they are hungry; ‘until becoming hungry again’ is awkward). Everything else is solid.",
-          "score": 8.2
-        },
-        {
-          "anonymousId": "Model G",
-          "modelId": "anthropic/claude-sonnet-4.5",
-          "reasoning": "Meets critical requirements (vocab in every sentence, empty romanization, translations accurate, estar usage fine). Main drawback is a clear grammar/typo issue: “desde de manhã” should be “desde manhã”. Some repetition across many similar structures, but otherwise natural.",
+          "reasoning": "Generally good Portuguese and accurate translations, with each sentence including target vocabulary. But there are two notable weaknesses: romanization uses empty strings instead of null, and 'As crianças estão com fome e pedem para lanchar antes do almoço' is a bit awkward/unusual in context. Still usable overall.",
           "score": 7.8
         },
         {
-          "anonymousId": "Model E",
-          "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "All 5 sentences are correct and natural, with accurate translations and empty romanization. However, it fails the critical vocabulary-coverage expectation: it never uses the provided expression “com sede” (uses “com sede” only? actually it uses ‘com sede’ in sentence 5? No—sentence 5 is ‘estavam com sede’, yes it does). Remaining issue: it does not include the specific word ‘triste’/‘com fome’/etc? It includes triste, cansado, com fome, feliz, but missing ‘com sede’ is not missing—present. Main weakness is limited set/less diversity due to only 5 sentences (not required, but reduces overall quality vs others).",
-          "score": 7.5
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Large and varied set with generally good vocabulary coverage and natural Portuguese. However, it violates the romanization expectation by using empty strings instead of null. There is also a grammatical issue in 'desde de manhã' (should be 'desde manhã' or 'desde a manhã' depending on phrasing), plus some translations are slightly awkward, e.g. 'buy a juice.' These errors lower it more than other otherwise-strong entries.",
+          "score": 7.4
         }
       ]
     }

@@ -116,7 +116,7 @@ ${SHARED_EXPECTATIONS}
       lessonDescription:
         "The topic marker particle は (wa) and how it indicates what the sentence is about",
       lessonTitle: "Topic Marker は",
-      targetLanguage: "Japanese",
+      targetLanguage: "ja",
       userLanguage: "en",
     },
   },
@@ -155,7 +155,7 @@ ${SHARED_EXPECTATIONS}
       lessonDescription:
         "How to conjugate regular -ar verbs in the present tense, matching verb endings to subjects",
       lessonTitle: "Regular -ar Verbs",
-      targetLanguage: "Spanish",
+      targetLanguage: "es",
       userLanguage: "en",
     },
   },
@@ -185,7 +185,7 @@ ${SHARED_EXPECTATIONS}
       lessonDescription:
         "Understanding German verb-second word order in main clauses and how it differs from English",
       lessonTitle: "Verb Second Word Order",
-      targetLanguage: "German",
+      targetLanguage: "de",
       userLanguage: "en",
     },
   },
@@ -216,7 +216,7 @@ ${SHARED_EXPECTATIONS}
       lessonDescription:
         "Como os adjetivos em frances concordam em genero com os substantivos que modificam",
       lessonTitle: "Concordancia de Genero",
-      targetLanguage: "French",
+      targetLanguage: "fr",
       userLanguage: "pt",
     },
   },
@@ -257,7 +257,7 @@ ${SHARED_EXPECTATIONS}
       lessonDescription:
         "Los marcadores de sujeto coreanos 이 y 가 y como elegir cual usar segun la palabra",
       lessonTitle: "Marcadores de Sujeto",
-      targetLanguage: "Korean",
+      targetLanguage: "ko",
       userLanguage: "es",
     },
   },

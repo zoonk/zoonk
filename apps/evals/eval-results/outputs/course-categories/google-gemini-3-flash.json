@@ -1,51 +1,42 @@
 {
-  "generatedAt": "2026-01-15T19:15:16.521Z",
+  "generatedAt": "2026-03-17T20:49:03.874Z",
   "modelId": "google/gemini-3-flash",
   "outputs": [
     {
-      "duration": 2231.2156249999534,
-      "inputTokens": 210,
+      "duration": 2339.183916000009,
+      "inputTokens": 121,
       "output": "{\n  \"categories\": [\n    \"math\"\n  ]\n}",
-      "outputTokens": 6,
-      "systemPrompt": "",
+      "outputTokens": 204,
+      "systemPrompt": "You assign one or more categories to a course\n\n## Inputs\n\n- **COURSE_TITLE:** The course title\n\n## Allowed Categories (fixed set)\n\n`arts, business, communication, culture, economics, engineering, geography, health, history, law, math, science, society, tech`\n\n## Decision Rules\n\n1. **Anchor on learning goals** (what learners will do/know) over surface terms\n2. **Primary vs secondary**: pick the _primary functional domain_ first; add a secondary only if it's central (not peripheral)\n",
       "testCaseId": "en-calculus-1",
-      "userPrompt": ""
+      "userPrompt": "COURSE_TITLE: Calculus"
     },
     {
-      "duration": 2184.6585000000196,
-      "inputTokens": 210,
-      "output": "{\n  \"categories\": [\n    \"languages\"\n  ]\n}",
-      "outputTokens": 5,
-      "systemPrompt": "",
-      "testCaseId": "pt-ingles-1",
-      "userPrompt": ""
-    },
-    {
-      "duration": 2305.1442919999827,
-      "inputTokens": 212,
+      "duration": 2943.661374999996,
+      "inputTokens": 123,
       "output": "{\n  \"categories\": [\n    \"history\"\n  ]\n}",
-      "outputTokens": 5,
-      "systemPrompt": "",
+      "outputTokens": 180,
+      "systemPrompt": "You assign one or more categories to a course\n\n## Inputs\n\n- **COURSE_TITLE:** The course title\n\n## Allowed Categories (fixed set)\n\n`arts, business, communication, culture, economics, engineering, geography, health, history, law, math, science, society, tech`\n\n## Decision Rules\n\n1. **Anchor on learning goals** (what learners will do/know) over surface terms\n2. **Primary vs secondary**: pick the _primary functional domain_ first; add a secondary only if it's central (not peripheral)\n",
       "testCaseId": "es-historia-de-roma-1",
-      "userPrompt": ""
+      "userPrompt": "COURSE_TITLE: Historia de Roma"
     },
     {
-      "duration": 2595.037707999989,
-      "inputTokens": 211,
+      "duration": 2850.1762499999895,
+      "inputTokens": 122,
       "output": "{\n  \"categories\": [\n    \"arts\",\n    \"culture\"\n  ]\n}",
-      "outputTokens": 7,
-      "systemPrompt": "",
+      "outputTokens": 298,
+      "systemPrompt": "You assign one or more categories to a course\n\n## Inputs\n\n- **COURSE_TITLE:** The course title\n\n## Allowed Categories (fixed set)\n\n`arts, business, communication, culture, economics, engineering, geography, health, history, law, math, science, society, tech`\n\n## Decision Rules\n\n1. **Anchor on learning goals** (what learners will do/know) over surface terms\n2. **Primary vs secondary**: pick the _primary functional domain_ first; add a secondary only if it's central (not peripheral)\n",
       "testCaseId": "en-spanish-literature-strict-rule-1",
-      "userPrompt": ""
+      "userPrompt": "COURSE_TITLE: Spanish Literature"
     },
     {
-      "duration": 12161.421832999971,
-      "inputTokens": 210,
-      "output": "{\n  \"categories\": [\n    \"science\",\n    \"society\"\n  ]\n}",
-      "outputTokens": 7,
-      "systemPrompt": "",
+      "duration": 5900.834582999989,
+      "inputTokens": 121,
+      "output": "{\n  \"categories\": [\n    \"communication\",\n    \"science\"\n  ]\n}",
+      "outputTokens": 822,
+      "systemPrompt": "You assign one or more categories to a course\n\n## Inputs\n\n- **COURSE_TITLE:** The course title\n\n## Allowed Categories (fixed set)\n\n`arts, business, communication, culture, economics, engineering, geography, health, history, law, math, science, society, tech`\n\n## Decision Rules\n\n1. **Anchor on learning goals** (what learners will do/know) over surface terms\n2. **Primary vs secondary**: pick the _primary functional domain_ first; add a secondary only if it's central (not peripheral)\n",
       "testCaseId": "en-linguistics-1",
-      "userPrompt": ""
+      "userPrompt": "COURSE_TITLE: Linguistics"
     }
   ],
   "taskId": "course-categories"

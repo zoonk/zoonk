@@ -1,0 +1,143 @@
+{
+  "expectations": "\nLANGUAGE: English output required.\n\nTOPIC: Portuguese vocabulary for greetings and farewells - focused specifically on common ways to say hello, goodbye, and related social phrases.\n\nSCRIPT: Roman (romanization should be null)\n\nTOPIC SCOPE: This lesson specifically tests overlapping translations. Valid vocabulary categories include greetings, farewells, and related social phrases.\n- Do NOT expect general conversation vocabulary beyond greetings and farewells\n- Do NOT penalize for omitting any specific terms - assess only what IS provided\n\nALTERNATIVE TRANSLATIONS (CRITICAL FOR THIS TEST):\n- This test specifically validates that overlapping translations are captured in alternativeTranslations\n- \"oi\" and \"olá\" should cross-reference each other as alternatives (both mean \"hi\"/\"hello\")\n- \"boa noite\" should have alternatives covering both \"good evening\" and \"good night\"\n- \"tchau\" and \"adeus\" should reference each other as farewell alternatives\n- Penalize SEVERELY if words with obvious overlapping translations have empty alternativeTranslations arrays\n\nACCURACY PITFALLS - Penalize SEVERELY if:\n- Greeting/farewell terms are mistranslated\n- Vocabulary drifts to general conversation terms unrelated to greetings\n- Romanization contains any text (should be null)\n- Words with multiple valid translations have empty alternativeTranslations arrays\n\n\nEVALUATION CRITERIA:\n\n1. TOPIC-APPROPRIATE COVERAGE: The vocabulary list should cover the narrow lesson topic appropriately.\n   - Include words directly relevant to the specific lesson focus\n   - A narrow topic (like \"Ordering Coffee\") needs fewer words than a broad one\n   - Do NOT penalize for vocabulary count - focus on relevance and quality\n   - Do NOT expect exhaustive coverage of the broader domain (e.g., don't expect all food words for a coffee-ordering lesson)\n\n2. TRANSLATION ACCURACY (CRITICAL - highest priority):\n   - Each word-translation pair MUST be linguistically accurate\n   - Consider regional variations (Brazilian Portuguese vs European, Latin American Spanish vs Castilian)\n   - The translation must match the EXACT meaning - not a broader category or related concept\n   - If a translation is incorrect or semantically imprecise, this is a SEVERE error\n   - Grammatical gender must be correct (masculine nouns with masculine articles, feminine with feminine)\n\n3. ROMANIZATION (required field):\n   - For Japanese, Chinese, Korean, Arabic, Russian, Greek, Thai, Hindi, etc.: romanization MUST contain the Roman letter representation\n   - Use standard romanization (romaji for Japanese, pinyin for Chinese, etc.)\n   - For Roman-script languages (Spanish, French, German, etc.): romanization MUST be null\n   - Penalize if romanization is missing for non-Roman scripts or contains text for Roman scripts\n\n4. TOPIC FOCUS (STRICT BOUNDARY ENFORCEMENT): Words must be INSIDE the lesson's specific scope. Penalize SEVERELY if:\n   - Vocabulary includes words from adjacent but separate topics (e.g., adjectives when the lesson is about nouns)\n   - Words drift to related but out-of-scope categories (e.g., wild animals for a pets lesson)\n   - The output includes vocabulary that belongs in a DIFFERENT lesson on a related topic\n   - Words are \"helpful additions\" that expand beyond the defined lesson boundary\n\n5. VOCABULARY QUALITY: Words should be practical and commonly used. Penalize if:\n   - Words are obscure, archaic, or rarely used in everyday speech\n   - Words include profanity, slurs, or offensive content\n   - Words use non-standard loanwords that are not common in the target language\n\n6. LANGUAGE CORRECTNESS: Output language must match NATIVE_LANGUAGE code.\n   - Translations should be in the learner's native language\n   - Words being tested should be in the target language\n   - Penalize if languages are mixed incorrectly\n\n7. GRAMMATICAL GENDER AND ARTICLES:\n   - For languages with grammatical gender, nouns MUST include articles\n   - German: \"die Mutter\", \"der Vater\", \"das Kind\" (not \"Mutter\", \"Vater\", \"Kind\")\n   - French: \"le pain\", \"la maison\" (not \"pain\", \"maison\")\n   - Spanish: \"el gato\", \"la casa\" (not \"gato\", \"casa\")\n   - Portuguese: \"o livro\", \"a mesa\" (not \"livro\", \"mesa\")\n   - Italian: \"il gatto\", \"la casa\" (not \"gatto\", \"casa\")\n   - Penalize if nouns are shown without their articles in gendered languages\n   - Penalize if the grammatical gender is WRONG (e.g., masculine article with feminine noun)\n\n8. NO DUPLICATES: The `word` field is the unique identifier - duplicates are determined by the word field ONLY, not translations. Penalize if:\n   - The same word appears multiple times in the `word` field (even with different translations)\n   - Near-duplicates exist (same word with minor formatting differences)\n   - Semantic duplicates exist (same concept repeated with different phrasing)\n   - A word appears twice because it has multiple valid translations (should appear once with most common translation)\n\n9. CLEAN WORD FIELD - NO PARENTHETICAL CONTENT: The word field must contain ONLY the vocabulary word. Penalize SEVERELY if:\n   - The word field contains parenthetical disambiguation like \"el cafe (la bebida)\"\n   - The word field contains usage notes, alternative meanings, or pronunciation hints in parentheses\n   - Any text in parentheses appears in the word field (this breaks text-to-speech)\n\n10. NO OVER-ENUMERATION OF VARIANTS: Vocabulary should be representative, not exhaustive. Penalize if:\n   - Multiple variants of the same base item are listed when 1-2 would suffice\n   - The list appears inflated with excessive sub-types of a single category\n   - A base concept is represented by 5+ specific variants instead of the base term plus 1-2 examples\n   - The vocabulary count seems artificially high due to listing every possible variant\n   NOTE: This does NOT mean penalize for having many words - penalize only when those words are redundant variants of the same concept. Distinct vocabulary items are fine.\n   NOTE: Distinct practical choices within a category are NOT over-enumeration. For example, different milk types (whole, skim, almond, oat) are genuinely different menu options a learner needs to know - not redundant variants of \"milk.\"\n\n11. ALTERNATIVE TRANSLATIONS: Each word should include alternativeTranslations with other valid translations in the learner's language.\n   - Words with multiple common translations MUST list alternatives (e.g., \"boa noite\" should include [\"good night\"] when the main translation is \"good evening\")\n   - Words with only one clear translation should have an empty array\n   - Alternatives must be genuinely equivalent translations, not loosely related words\n   - Consider bidirectional synonyms (e.g., if user language is Italian and \"bye\" = \"ciao\", then \"hello\" should be an alternative since it also means \"ciao\")\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific word choices - accept ANY valid vocabulary relevant to the topic\n- Do NOT penalize for not including words you might expect - only penalize for actual errors\n- Do NOT require specific vocabulary items by name\n- Do NOT expect a specific number of words - narrow topics naturally have fewer words\n- FOCUS ON: translation accuracy, romanization correctness (when applicable), topic relevance, no duplicates, clean word fields, alternative translations\n- Different valid vocabulary selections exist - assess the quality of what IS provided\n\n    ",
+  "judgedAt": "2026-03-17T22:15:41.498Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model C provides a well-focused vocabulary list covering greetings, farewells, and related social phrases. All translations are accurate. Romanization is correctly null throughout. Alternative translations are handled well: 'olá' has 'hi' as alternative, 'oi' has 'hello' and 'hey', 'boa noite' has 'good night', 'tchau' has 'goodbye', 'see ya', 'bye bye', 'adeus' has 'farewell'. The cross-referencing between overlapping translations is solid. It includes 'boa tarde' which is important. 'Bem-vindo' (Welcome) is a reasonable greeting-adjacent word. 'E aí?' is a nice informal addition. 'Muito prazer' is included with good alternatives. Topic focus is tight - no drift to 'thank you', 'excuse me', 'please' which are arguably general social phrases rather than greetings/farewells (though the lesson description says 'social phrases' so including them isn't wrong, but it's also fine to exclude them). Minor issues: Words are capitalized which is slightly non-standard for Portuguese vocabulary presentation (though not technically wrong). 'Bom dia' has empty alternativeTranslations - it could arguably include 'good day' as an alternative. Overall very strong.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Model A has a solid list of 15 words covering greetings, farewells, and social phrases. Translations are accurate. Romanization is correctly null. Key alternative translations are handled well: 'oi' and 'olá' both have 'hi'/'hey' alternatives, 'boa noite' has 'good night'. However, there are some issues: (1) 'tchau' and 'adeus' should cross-reference each other - 'tchau' translates as 'see you later' with 'bye'/'see you' as alternatives but doesn't mention 'goodbye', and 'adeus' has empty alternativeTranslations which is a problem since 'bye' is a valid alternative. The prompt specifically calls out that tchau and adeus should reference each other. (2) 'bom dia' is translated as 'good day' with 'good morning' as alternative - while 'good day' is valid, 'good morning' is the more common/standard translation for Brazilian Portuguese usage. (3) Missing 'boa tarde'. (4) Includes 'obrigado', 'de nada', 'com licença' which are social phrases - acceptable given the lesson description mentions 'social phrases'. (5) 'tchau' translated as 'see you later' is not the most common translation; 'bye' would be more standard. Overall good but the empty alternativeTranslations for 'adeus' and some translation choices hold it back slightly.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model B provides 20 words - the largest list. Coverage is comprehensive with greetings, farewells, social phrases, and polite expressions. Translations are generally accurate. Romanization correctly null. Good alternative translations handling: 'oi'/'olá' cross-reference, 'boa noite' includes 'good night', 'adeus' has 'goodbye' as alternative. However, there are issues: (1) Some over-enumeration - having both 'prazer em conhecê-lo' and 'muito prazer' is borderline; also 'com licença' and 'desculpe' are both included. (2) 'prazer em conhecê-lo' is gendered (masculine) - in a vocabulary list this could be confusing without the feminine variant, and the word itself is quite long/formal. (3) Including 'por favor' (please) drifts slightly from greetings/farewells territory, though the lesson says 'social phrases'. (4) 'de nada' has 'welcome' as alternative - should be 'you're welcome' not just 'welcome' (though 'welcome' could be interpreted as shorthand). (5) 'desculpe' translated as 'excuse me' with 'sorry' alternative - reasonable but 'desculpe' more commonly means 'sorry' in Brazilian Portuguese, with 'com licença' being 'excuse me'. The list is slightly inflated but most items are defensible.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model E has 17 words with good coverage. Translations are mostly accurate. Romanization correctly null. Some strong points: includes both 'obrigado' and 'obrigada' (masculine/feminine forms), which teaches an important Portuguese concept but could be seen as near-duplicate since they're the same word with gender variation. Issues: (1) 'boa noite' is translated as 'good night' with 'good evening' as alternative - while both are valid, 'good evening' is typically the primary greeting translation and 'good night' the farewell translation. Making 'good night' primary is slightly less standard. (2) 'olá' only has 'hi' as alternative but is missing 'hey' - not a major issue but slightly less thorough than other models. (3) 'até logo' has empty alternativeTranslations - 'see you soon' would be a valid alternative. (4) 'bom dia' has empty alternativeTranslations - 'good day' could be an alternative. (5) Including 'por favor', 'obrigado/a', 'de nada', 'com licença', 'desculpe' pushes into general social phrases territory - acceptable per lesson description. (6) Having both 'obrigado' and 'obrigada' is borderline over-enumeration of a gender variant. (7) 'tchau' and 'adeus' don't strongly cross-reference each other in alternatives (tchau only has 'goodbye', adeus has 'farewell'). Several empty alternativeTranslations arrays where alternatives exist is a noticeable weakness.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Model D has 12 words. Several significant issues: (1) Missing 'olá' entirely - one of the most fundamental Portuguese greetings, and the prompt specifically calls out that 'oi' and 'olá' should cross-reference each other. (2) 'bom dia' has 'good morning' as both translation AND alternativeTranslation - this is redundant/erroneous. Similarly, 'boa tarde' has 'good afternoon' as both translation and alternative, and 'boa noite' has 'good evening' as both translation and alternative (translated as 'good evening' with 'good evening' as alternative instead of having 'good night' as the alternative or vice versa). This is a significant accuracy issue - the alternatives should be DIFFERENT from the main translation, and 'boa noite' specifically should cross-reference both 'good evening' and 'good night'. (3) 'prazer em conhecê-lo' and 'prazer em conhecê-la' are near-duplicates (masculine/feminine forms of the same phrase) - this is over-enumeration. (4) 'até logo' translated as 'see you soon' - while acceptable, 'see you later' is the more standard translation. (5) 'tudo bem?' and 'como vai?' have weak alternatives. The duplicate-in-alternatives issue is a significant error that shows carelessness.",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model C followed all instructions perfectly, especially the critical requirements regarding overlapping alternative translations. 'Oi' and 'Olá' cross-reference 'Hi' and 'Hello' perfectly. 'Tchau' and 'Adeus' successfully link to each other through 'Goodbye'. 'Boa noite' includes the expected alternatives. The vocabulary is highly relevant, linguistically accurate, includes necessary punctuation (question marks for question-based greetings), and avoids duplicates or over-enumeration.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model B did a very good job capturing the required overlapping translations and keeping the list focused. However, it misses the question marks on question-based greetings like 'como vai' and 'tudo bem', which is a minor linguistic inaccuracy since the punctuation distinguishes them from statements. 'Oi' and 'Olá' map to the exact same strings, which is acceptable but less elegant than Model C's approach.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model E successfully handled the overlapping translation requirements (Oi/Olá, Tchau/Adeus, Boa noite). However, it receives a penalty for over-enumeration and semantic duplication by including both 'obrigado' and 'obrigada'. The prompt explicitly warns against listing semantic duplicates and variants when one representative example suffices.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Model A incurs severe penalties for two reasons. First, it mistranslates 'tchau' as 'see you later' (it should be 'bye' or 'goodbye'). Second, it fails a critical test requirement: 'adeus' has an empty alternative translations array, completely missing the requested overlap with 'tchau'.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Model D performs poorly and fails multiple critical checks. It completely omits 'olá', failing the specific cross-referencing test. It includes illogical, duplicate alternative translations by placing the main translation inside the alternatives array (e.g., 'good morning' as an alternative to 'good morning'). It also over-enumerates gendered variants ('prazer em conhecê-lo' / 'prazer em conhecê-la').",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Best overall balance of coverage, formatting, and accuracy. It stays within the greetings/farewells/social-phrases scope, uses correct JSON structure, and keeps romanization null throughout. It includes the key overlapping item boa noite with the required alternative. It also captures overlap for oi/olá and gives adeus/tchau related farewell mappings. Weaknesses: it misses the explicit cross-reference expectation that tchau and adeus should reference each other directly in alternativeTranslations; some alternatives are a bit loose or awkward (e.g. bom dia ↔ good day, como vai/how are you without question mark, prazer em conhecê-lo having the same phrase as main translation in alternatives, por favor alternatives redundant). Still, compared with the others, it has the fewest serious issues.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Strong topic adherence and generally accurate, with solid coverage of greetings, farewells, and related social phrases. Romanization is correctly null, there are no duplicates, and boa noite correctly includes the overlapping alternative good night. Oi and olá also include overlapping English equivalents. Main weaknesses are prompt-specific: adeus has an empty alternativeTranslations array despite the test explicitly expecting overlap with tchau; several farewell translations are semantically imprecise or slightly unnatural (até mais as until later instead of see you later/see you, até amanhã as until tomorrow instead of see you tomorrow); and a few entries drift slightly from the strongest greeting/farewell focus (obrigado, de nada, com licença). Good, but the missed overlapping-alternatives requirement is a notable penalty.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Mostly accurate and well-formatted, with good topic fit and correct null romanization. It handles boa noite correctly by giving good night with good evening as an alternative, and includes several useful social phrases. However, it has a major duplicate/near-duplicate problem for this task: obrigado and obrigada are essentially gender variants of the same expression, which the prompt warns against via near-duplicates/semantic duplicates. It also misses critical overlapping alternatives in several places: oi and olá do not fully cross-reference each other as expected, tchau and adeus do not reference each other bidirectionally, and até logo has an empty alternatives array despite obvious equivalents. Still, its translations are mostly accurate and it avoids the more severe mistranslations seen in lower-ranked outputs.",
+          "score": 7.1
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Good topical focus and clean structure with null romanization throughout. Many translations are accurate, and boa noite correctly includes Good night as an alternative. However, it falls short on the test’s overlapping-translation requirement: Olá and Oi do not properly cross-reference one another as alternatives, and Tchau/Adeus also do not reference each other. It also includes Bem-vindo (welcome), which is social but less squarely a greeting/farewell than the core lesson focus, and many fields are capitalized inconsistently compared with the other outputs. Overall usable, but weaker compliance with the prompt’s critical alternativeTranslations expectations.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Reasonably focused and concise, with correct null romanization and generally accurate translations. But it has several notable prompt failures. Most importantly, boa noite is mistranslated/functionally incomplete: it is given as good evening with alternative good evening, omitting the crucial overlapping good night required by the prompt. It also omits olá entirely, so the expected oi/olá overlap is not captured. The inclusion of both prazer em conhecê-lo and prazer em conhecê-la is an over-enumerated gendered variant pair rather than representative vocabulary, which the prompt discourages. Adeus/tchau alternatives are also too generic and not the explicit cross-reference expected. Adequate content, but multiple important compliance misses.",
+          "score": 6.1
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "duplicate placeholder",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "duplicate placeholder",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "duplicate placeholder",
+          "score": 7.1
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "duplicate placeholder",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "duplicate placeholder",
+          "score": 6.1
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-vocabulary",
+  "testCaseId": "en-portuguese-greetings-farewells-1"
+}

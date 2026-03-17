@@ -74,7 +74,7 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "pt-english-beautiful",
     userInput: {
-      targetLanguage: "English",
+      targetLanguage: "en",
       userLanguage: "pt",
       word: "beautiful",
     },
@@ -106,7 +106,7 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "pt-english-through",
     userInput: {
-      targetLanguage: "English",
+      targetLanguage: "en",
       userLanguage: "pt",
       word: "through",
     },
@@ -139,7 +139,7 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "pt-english-squirrel",
     userInput: {
-      targetLanguage: "English",
+      targetLanguage: "en",
       userLanguage: "pt",
       word: "squirrel",
     },
@@ -171,7 +171,7 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "es-english-comfortable",
     userInput: {
-      targetLanguage: "English",
+      targetLanguage: "en",
       userLanguage: "es",
       word: "comfortable",
     },
@@ -204,7 +204,7 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "es-english-vegetable",
     userInput: {
-      targetLanguage: "English",
+      targetLanguage: "en",
       userLanguage: "es",
       word: "vegetable",
     },
@@ -238,7 +238,7 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "es-english-rhythm",
     userInput: {
-      targetLanguage: "English",
+      targetLanguage: "en",
       userLanguage: "es",
       word: "rhythm",
     },
@@ -271,7 +271,7 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "en-portuguese-desenvolvimento",
     userInput: {
-      targetLanguage: "Portuguese",
+      targetLanguage: "pt",
       userLanguage: "en",
       word: "desenvolvimento",
     },
@@ -304,7 +304,7 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "en-portuguese-parabens",
     userInput: {
-      targetLanguage: "Portuguese",
+      targetLanguage: "pt",
       userLanguage: "en",
       word: "parabens",
     },
@@ -337,7 +337,7 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "en-spanish-ferrocarril",
     userInput: {
-      targetLanguage: "Spanish",
+      targetLanguage: "es",
       userLanguage: "en",
       word: "ferrocarril",
     },
@@ -370,7 +370,7 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "en-spanish-murcielago",
     userInput: {
-      targetLanguage: "Spanish",
+      targetLanguage: "es",
       userLanguage: "en",
       word: "murciélago",
     },
@@ -401,7 +401,7 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "pt-english-cat",
     userInput: {
-      targetLanguage: "English",
+      targetLanguage: "en",
       userLanguage: "pt",
       word: "cat",
     },
@@ -432,7 +432,7 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "es-english-go",
     userInput: {
-      targetLanguage: "English",
+      targetLanguage: "en",
       userLanguage: "es",
       word: "go",
     },

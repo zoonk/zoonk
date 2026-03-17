@@ -1,0 +1,43 @@
+{
+  "generatedAt": "2026-03-17T20:54:26.061Z",
+  "modelId": "google/gemini-3.1-flash-lite-preview",
+  "outputs": [
+    {
+      "duration": 2218.6916250000004,
+      "inputTokens": 121,
+      "output": "{\n  \"categories\": [\n    \"math\"\n  ]\n}",
+      "outputTokens": 11,
+      "systemPrompt": "You assign one or more categories to a course\n\n## Inputs\n\n- **COURSE_TITLE:** The course title\n\n## Allowed Categories (fixed set)\n\n`arts, business, communication, culture, economics, engineering, geography, health, history, law, math, science, society, tech`\n\n## Decision Rules\n\n1. **Anchor on learning goals** (what learners will do/know) over surface terms\n2. **Primary vs secondary**: pick the _primary functional domain_ first; add a secondary only if it's central (not peripheral)\n",
+      "testCaseId": "en-calculus-1",
+      "userPrompt": "COURSE_TITLE: Calculus"
+    },
+    {
+      "duration": 1428.3837909999993,
+      "inputTokens": 123,
+      "output": "{\n  \"categories\": [\n    \"history\"\n  ]\n}",
+      "outputTokens": 17,
+      "systemPrompt": "You assign one or more categories to a course\n\n## Inputs\n\n- **COURSE_TITLE:** The course title\n\n## Allowed Categories (fixed set)\n\n`arts, business, communication, culture, economics, engineering, geography, health, history, law, math, science, society, tech`\n\n## Decision Rules\n\n1. **Anchor on learning goals** (what learners will do/know) over surface terms\n2. **Primary vs secondary**: pick the _primary functional domain_ first; add a secondary only if it's central (not peripheral)\n",
+      "testCaseId": "es-historia-de-roma-1",
+      "userPrompt": "COURSE_TITLE: Historia de Roma"
+    },
+    {
+      "duration": 1429.1829589999998,
+      "inputTokens": 122,
+      "output": "{\n  \"categories\": [\n    \"arts\",\n    \"culture\"\n  ]\n}",
+      "outputTokens": 22,
+      "systemPrompt": "You assign one or more categories to a course\n\n## Inputs\n\n- **COURSE_TITLE:** The course title\n\n## Allowed Categories (fixed set)\n\n`arts, business, communication, culture, economics, engineering, geography, health, history, law, math, science, society, tech`\n\n## Decision Rules\n\n1. **Anchor on learning goals** (what learners will do/know) over surface terms\n2. **Primary vs secondary**: pick the _primary functional domain_ first; add a secondary only if it's central (not peripheral)\n",
+      "testCaseId": "en-spanish-literature-strict-rule-1",
+      "userPrompt": "COURSE_TITLE: Spanish Literature"
+    },
+    {
+      "duration": 1429.1808329999994,
+      "inputTokens": 121,
+      "output": "{\n  \"categories\": [\n    \"communication\",\n    \"society\"\n  ]\n}",
+      "outputTokens": 22,
+      "systemPrompt": "You assign one or more categories to a course\n\n## Inputs\n\n- **COURSE_TITLE:** The course title\n\n## Allowed Categories (fixed set)\n\n`arts, business, communication, culture, economics, engineering, geography, health, history, law, math, science, society, tech`\n\n## Decision Rules\n\n1. **Anchor on learning goals** (what learners will do/know) over surface terms\n2. **Primary vs secondary**: pick the _primary functional domain_ first; add a secondary only if it's central (not peripheral)\n",
+      "testCaseId": "en-linguistics-1",
+      "userPrompt": "COURSE_TITLE: Linguistics"
+    }
+  ],
+  "taskId": "course-categories"
+}

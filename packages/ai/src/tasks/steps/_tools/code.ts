@@ -8,7 +8,7 @@ export const codeInputSchema = z.object({
         text: z.string().describe("Explanation (max 100 chars)"),
       }),
     )
-    .optional()
+    .nullable()
     .describe("Optional annotations for specific lines"),
   code: z.string().describe("The code snippet (max 500 chars)"),
   language: z.string().describe("Programming language: 'python', 'javascript', 'typescript', etc."),

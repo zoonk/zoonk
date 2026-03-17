@@ -20,7 +20,13 @@ function createStepVisualsResult(
       visuals: steps.map((step, stepIndex) =>
         stepIndex === 0
           ? { kind: "image", prompt: `A visual prompt for ${step.title}`, stepIndex }
-          : { code: "const x = 1;", kind: "code", language: "typescript", stepIndex },
+          : {
+              annotations: null,
+              code: "const x = 1;",
+              kind: "code",
+              language: "typescript",
+              stepIndex,
+            },
       ),
     },
     systemPrompt: "test",
@@ -216,7 +222,13 @@ describe(customActivityWorkflow, () => {
       data: {
         visuals: [
           { kind: "image", prompt: "A visual prompt", stepIndex: 0 },
-          { code: "const x = 1;", kind: "code", language: "typescript", stepIndex: 2 },
+          {
+            annotations: null,
+            code: "const x = 1;",
+            kind: "code",
+            language: "typescript",
+            stepIndex: 2,
+          },
         ],
       },
     });

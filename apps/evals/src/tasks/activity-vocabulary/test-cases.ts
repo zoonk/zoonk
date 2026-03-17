@@ -107,7 +107,7 @@ ${SHARED_EXPECTATIONS}
       lessonDescription:
         "Words and phrases for ordering coffee drinks, specifying sizes, and requesting milk options at a cafe",
       lessonTitle: "Ordering Coffee",
-      targetLanguage: "Spanish",
+      targetLanguage: "es",
       userLanguage: "en",
     },
   },
@@ -137,7 +137,7 @@ ${SHARED_EXPECTATIONS}
       lessonDescription:
         "Names of breads, pastries, and baked goods commonly found in French bakeries",
       lessonTitle: "Breads and Pastries",
-      targetLanguage: "French",
+      targetLanguage: "fr",
       userLanguage: "en",
     },
   },
@@ -167,7 +167,7 @@ ${SHARED_EXPECTATIONS}
       lessonDescription:
         "Words for parents, siblings, and immediate family relationships in German",
       lessonTitle: "Parents and Siblings",
-      targetLanguage: "German",
+      targetLanguage: "de",
       userLanguage: "en",
     },
   },
@@ -201,7 +201,7 @@ ${SHARED_EXPECTATIONS}
       lessonDescription:
         "Nomes de animais de estimacao comuns e termos basicos relacionados a cuidados com pets",
       lessonTitle: "Animais de Estimacao",
-      targetLanguage: "Italian",
+      targetLanguage: "it",
       userLanguage: "pt",
     },
   },
@@ -238,7 +238,7 @@ ${SHARED_EXPECTATIONS}
       lessonDescription:
         "Common greetings, farewells, and social phrases in Portuguese including formal and informal variants",
       lessonTitle: "Greetings and Farewells",
-      targetLanguage: "Portuguese",
+      targetLanguage: "pt",
       userLanguage: "en",
     },
   },
@@ -278,7 +278,7 @@ ${SHARED_EXPECTATIONS}
       lessonDescription:
         "Los colores basicos en japones - rojo, azul, verde, amarillo, y otros colores comunes",
       lessonTitle: "Colores Basicos",
-      targetLanguage: "Japanese",
+      targetLanguage: "ja",
       userLanguage: "es",
     },
   },

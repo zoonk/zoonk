@@ -1,163 +1,199 @@
 {
-  "expectations": "\nLANGUAGE: English output required for translations.\n\nTOPIC: Mandarin Chinese sentences for common verbs - using action verbs.\n\nSCRIPT: Non-Roman (romanization MUST be included)\n\nVOCABULARY WORDS PROVIDED: 吃, 喝, 看, 听, 说\nThese verbs MUST appear in the generated sentences.\n\nROMANIZATION REQUIREMENTS:\n- MUST include pinyin for all Chinese sentences\n- Include tone marks or numbers\n- Verbs: 吃 (chī), 喝 (hē), 看 (kàn), 听 (tīng), 说 (shuō)\n- Penalize if romanization is missing or doesn't include tones\n\nACCURACY PITFALLS - Penalize SEVERELY if:\n- Any sentence doesn't use at least one of the provided verbs\n- Chinese word order is incorrect\n- Aspect markers are used incorrectly (了, 着, 过)\n- Translations don't match the Chinese sentences\n- Romanization is missing or doesn't include tones\n\nCONTEXT EXPECTATIONS:\n- Sentences demonstrating various uses of these common verbs\n- Daily life activities (eating, drinking, watching, listening, speaking)\n- Natural Chinese sentence structures\n\n\nEVALUATION CRITERIA:\n\n1. VOCABULARY WORD USAGE (CRITICAL - highest priority):\n   - Each generated sentence MUST use at least one of the provided vocabulary words\n   - The words should be used in their natural form (conjugated verbs, declined nouns are acceptable)\n   - Penalize SEVERELY if sentences don't incorporate the provided vocabulary\n   - Penalize if words are used incorrectly or out of context\n\n2. TRANSLATION ACCURACY (CRITICAL):\n   - Each sentence-translation pair MUST be linguistically accurate\n   - The translation must convey the same meaning as the original sentence\n   - Consider regional variations (Brazilian Portuguese vs European, Latin American Spanish vs Castilian)\n   - Penalize SEVERELY if translations are incorrect, incomplete, or misleading\n   - Grammatical structures should be appropriately adapted between languages\n\n3. ROMANIZATION (required field):\n   - For Japanese, Chinese, Korean, Arabic, Russian, Greek, Thai, Hindi, etc.: romanization MUST contain the Roman letter representation of the sentence\n   - Use standard romanization systems (romaji for Japanese, pinyin for Chinese, etc.)\n   - For Roman-script languages (Spanish, French, German, etc.): romanization MUST be an empty string \"\"\n   - Penalize if romanization is missing for non-Roman scripts or contains text for Roman scripts\n\n4. GRAMMATICAL CORRECTNESS:\n   - Sentences must be grammatically correct in the target language\n   - Verb conjugations must match the subject\n   - Gender agreement must be correct where applicable\n   - Word order should follow natural patterns of the target language\n   - Penalize for grammar errors, incorrect conjugations, or unnatural constructions\n\n5. SENTENCE NATURALNESS:\n   - Sentences should sound natural to native speakers\n   - Avoid overly literal translations or awkward phrasing\n   - Use appropriate register (formal/informal) for the context\n   - Penalize if sentences sound robotic, unnatural, or like machine translation\n\n6. CONTEXT DIVERSITY:\n   - Sentences should present different contexts or situations\n   - Avoid repetitive sentence structures\n   - Use variety in sentence types (statements, questions, commands where appropriate)\n   - Do NOT penalize for covering similar themes if vocabulary words naturally relate to each other\n\n7. LESSON RELEVANCE:\n   - Sentences should relate to the lesson topic\n   - The contexts should be appropriate for the lesson's educational goals\n   - Avoid straying into unrelated topics\n   - Do NOT require every sentence to explicitly reference the lesson topic - implicit relevance is fine\n\n8. APPROPRIATE DIFFICULTY:\n   - Sentences should be appropriate for language learners\n   - Avoid overly complex grammatical structures unless the lesson specifically targets advanced learners\n   - Vocabulary beyond the provided words should be at a similar or simpler level\n   - Penalize if sentences are incomprehensible to learners or use excessive advanced vocabulary\n\n9. NO DUPLICATES:\n   - Each sentence should be unique\n   - Avoid near-duplicates (same sentence with minor word changes)\n   - Penalize if essentially the same sentence appears multiple times\n\n10. LANGUAGE CORRECTNESS:\n    - Sentences should be in the TARGET language (courseTitle)\n    - Translations should be in the NATIVE language (language code)\n    - Penalize if languages are swapped or mixed incorrectly\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific sentence choices - accept ANY valid sentences that use the vocabulary\n- Do NOT penalize for not including specific contexts you might expect\n- Do NOT require a specific number of sentences\n- Do NOT expect sentences to follow any particular template or pattern\n- Different valid sentence constructions exist - assess the quality of what IS provided\n- FOCUS ON: vocabulary usage, translation accuracy, romanization correctness, grammatical correctness, naturalness\n\n    ",
-  "judgedAt": "2026-01-21T17:29:50.445Z",
+  "expectations": "\nLANGUAGE: English output required for translations.\n\nTOPIC: Mandarin Chinese sentences for common verbs - using action verbs.\n\nSCRIPT: Non-Roman (romanization MUST be included)\n\nVOCABULARY WORDS PROVIDED: 吃, 喝, 看, 听, 说\nThese verbs MUST appear in the generated sentences.\n\nROMANIZATION REQUIREMENTS:\n- MUST include pinyin for all Chinese sentences\n- Include tone marks or numbers\n- Verbs: 吃 (chī), 喝 (hē), 看 (kàn), 听 (tīng), 说 (shuō)\n- Penalize if romanization is missing or doesn't include tones\n\nACCURACY PITFALLS - Penalize SEVERELY if:\n- Any sentence doesn't use at least one of the provided verbs\n- Chinese word order is incorrect\n- Aspect markers are used incorrectly (了, 着, 过)\n- Translations don't match the Chinese sentences\n- Romanization is missing or doesn't include tones\n\nCONTEXT EXPECTATIONS:\n- Sentences demonstrating various uses of these common verbs\n- Daily life activities (eating, drinking, watching, listening, speaking)\n- Natural Chinese sentence structures\n\n\nEVALUATION CRITERIA:\n\n1. VOCABULARY WORD USAGE (CRITICAL - highest priority):\n   - Each generated sentence MUST use at least one of the provided vocabulary words\n   - The words should be used in their natural form (conjugated verbs, declined nouns are acceptable)\n   - Penalize SEVERELY if sentences don't incorporate the provided vocabulary\n   - Penalize if words are used incorrectly or out of context\n\n2. TRANSLATION ACCURACY (CRITICAL):\n   - Each sentence-translation pair MUST be linguistically accurate\n   - The translation must convey the same meaning as the original sentence\n   - Consider regional variations (Brazilian Portuguese vs European, Latin American Spanish vs Castilian)\n   - Penalize SEVERELY if translations are incorrect, incomplete, or misleading\n   - Grammatical structures should be appropriately adapted between languages\n\n3. ROMANIZATION (required field):\n   - For Japanese, Chinese, Korean, Arabic, Russian, Greek, Thai, Hindi, etc.: romanization MUST contain the Roman letter representation of the FULL sentence (not just keywords)\n   - Use standard romanization systems (romaji for Japanese, pinyin for Chinese, etc.)\n   - For Roman-script languages (Spanish, French, German, etc.): romanization MUST be null\n   - Penalize if romanization is missing for non-Roman scripts or contains text for Roman scripts\n   - Romanization MUST use Latin/Roman characters only - penalize SEVERELY if it copies the original script (e.g., Cyrillic, Hangul, Kana) instead of transliterating\n   - Both lowercase and sentence-case romanization are acceptable - do NOT penalize for capitalization style alone\n\n4. GRAMMATICAL CORRECTNESS:\n   - Sentences must be grammatically correct in the target language\n   - Verb conjugations must match the subject\n   - Gender agreement must be correct where applicable\n   - Word order should follow natural patterns of the target language\n   - Penalize for grammar errors, incorrect conjugations, or unnatural constructions\n\n5. SENTENCE NATURALNESS:\n   - Sentences should sound natural to native speakers\n   - Avoid overly literal translations or awkward phrasing\n   - Use appropriate register (formal/informal) for the context\n   - Penalize if sentences sound robotic, unnatural, or like machine translation\n\n6. CONTEXT DIVERSITY:\n   - Sentences should present different contexts or situations\n   - Avoid repetitive sentence structures\n   - Use variety in sentence types (statements, questions, commands where appropriate)\n   - Do NOT penalize for covering similar themes if vocabulary words naturally relate to each other\n\n7. LESSON RELEVANCE:\n   - Sentences should relate to the lesson topic\n   - The contexts should be appropriate for the lesson's educational goals\n   - Avoid straying into unrelated topics\n   - Do NOT require every sentence to explicitly reference the lesson topic - implicit relevance is fine\n\n8. APPROPRIATE DIFFICULTY:\n   - Sentences should be appropriate for language learners\n   - Avoid overly complex grammatical structures unless the lesson specifically targets advanced learners\n   - Vocabulary beyond the provided words should be at a similar or simpler level\n   - Penalize if sentences are incomprehensible to learners or use excessive advanced vocabulary\n\n9. NO DUPLICATES:\n   - Each sentence should be unique\n   - Avoid near-duplicates (same sentence with minor word changes)\n   - Penalize if essentially the same sentence appears multiple times\n\n10. LANGUAGE CORRECTNESS:\n    - Sentences should be in the TARGET language (courseTitle)\n    - Translations should be in the NATIVE language (language code)\n    - Penalize if languages are swapped or mixed incorrectly\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific sentence choices - accept ANY valid sentences that use the vocabulary\n- Do NOT penalize for not including specific contexts you might expect\n- Do NOT require a specific number of sentences\n- Do NOT expect sentences to follow any particular template or pattern\n- Different valid sentence constructions exist - assess the quality of what IS provided\n- FOCUS ON: vocabulary usage, translation accuracy, romanization correctness, grammatical correctness, naturalness\n\n    ",
+  "judgedAt": "2026-03-17T21:53:47.274Z",
   "judgments": [
     {
-      "judgeId": "anthropic/claude-opus-4.5",
+      "judgeId": "anthropic/claude-opus-4.6",
       "rankings": [
         {
-          "anonymousId": "Model B",
-          "modelId": "anthropic/claude-sonnet-4.5",
-          "reasoning": "Model B provides 25 sentences, all using the required vocabulary words correctly. The romanization is consistent with proper tone marks. Grammar is correct throughout with natural Chinese word order. Sentences cover all five verbs well with good variety: questions, statements, negatives, progressive aspect, resultative compounds (看不懂, 听不见). The translations are accurate. Examples like '老师说得太快了' and '他看不懂这本书' show correct use of resultative complements. No significant errors detected. Excellent diversity and naturalness.",
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "20 sentences with excellent vocabulary coverage - all 5 verbs well represented across multiple sentences. Every sentence is grammatically correct with natural Chinese. Romanization is accurate with proper tone marks throughout (lowercase style, which is acceptable). Translations are accurate and natural. Good diversity of contexts (daily life, weather, sports, school, family) and sentence types (statements, questions, commands, exclamations). Multiple vocab words combined naturally in some sentences (e.g., 一边吃饭一边听播客, 我没听清楚你能再说一遍吗). Appropriate difficulty for learners. No duplicates or near-duplicates. Minor note: lowercase romanization is fine per instructions.",
           "score": 9.2
         },
         {
           "anonymousId": "Model H",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "Model H provides 12 sentences with excellent grammar and natural constructions. All required verbs are used correctly. The sentences show sophisticated patterns like 一边...一边, 把 construction, and complex sentence structures. Romanization includes proper tone marks. However, sentence 11 '你要不要尝尝这个面包' uses 尝 (to taste) instead of 吃, though 吃 appears earlier. Translations are accurate and natural. Good variety with daily life contexts. Very high quality overall.",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "10 well-crafted sentences with all 5 vocabulary words covered. Excellent naturalness - sentences like 我喜欢一边吃早餐一边看新闻 and 老师说得太快了我有点听不懂 feel very authentic. Grammar is correct throughout. Romanization includes proper tone marks. Translations are accurate and natural. Good variety of contexts (home, transportation, social, school). Several sentences naturally combine multiple vocab words. Very clean output with no errors. Slightly fewer sentences than some competitors but quality is consistently high.",
           "score": 9
         },
         {
-          "anonymousId": "Model G",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Model G provides 10 sentences with correct grammar and natural expressions. All five verbs are used appropriately. Romanization is correct with tone marks. Sentences like '那个学生在听老师说话' cleverly combine 听 and 说. Good variety including suggestions (吧), questions, and commands (别...了). Translations are accurate. The sentence '请你说慢一点儿' correctly uses the erhua. All sentences are grammatically sound with appropriate difficulty level for learners.",
-          "score": 8.8
-        },
-        {
-          "anonymousId": "Model C",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "Model C provides 10 sentences covering all five required verbs. Grammar is correct throughout. The sentence '请仔细听我说' nicely combines both 听 and 说. Good use of 一边...一边 structure in '她喜欢一边跑步一边听音乐'. Romanization includes tone marks consistently. Translations are accurate. Sentences are natural and appropriate for learners. Good variety of sentence types. Solid quality with no errors.",
-          "score": 8.7
-        },
-        {
-          "anonymousId": "Model F",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Model F provides 20 sentences with all required verbs well-represented. Grammar is mostly correct. Romanization has tone marks but starts sentences with lowercase (minor inconsistency). Good variety including 一边...一边 constructions. Sentence '这个餐厅的菜很好吃' uses 好吃 as an adjective rather than the verb 吃 directly, but this is acceptable. Translations are accurate. Some sentences are simpler but appropriate for learners. Minor issue: lowercase romanization at sentence starts is unconventional.",
-          "score": 8.5
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "10 sentences, all grammatically correct with natural Chinese. All 5 vocabulary words are covered with 2 sentences each, providing good balance. Romanization is accurate with proper tone marks. Translations are accurate and natural. Good variety of contexts and sentence types (questions, statements, commands). Sentences like 刚才你在和谁说话 and 他开车的时候总是听音乐 demonstrate authentic usage patterns. Clean output with no errors.",
+          "score": 8.9
         },
         {
           "anonymousId": "Model D",
           "modelId": "openai/gpt-5-mini",
-          "reasoning": "Model D provides 12 sentences with correct usage of all required verbs. Grammar is generally good. The sentence '咖啡太烫，你慢慢喝' uses 烫 correctly (should be tàng, but romanization shows 'tàng' - correct). Sentence 7 '我在地铁里听到你的信息' is slightly unnatural (信息 for 'message' in this context could be 留言). Sentence 9's translation 'say one Chinese self-introduction sentence' is slightly awkward. Romanization is correct with tones. Good variety of contexts. Some sentences are more complex, which is appropriate.",
+          "reasoning": "12 sentences with all 5 vocabulary words well covered. Strong quality overall with natural sentences. Grammar is correct. Some sentences combine multiple vocab words naturally (小孩子一边吃一边看动画片, 我在公交车上听音乐看书). Romanization is mostly accurate with tone marks. One minor issue: 我在地铁里听到你的信息 - 'heard your message on the subway' is a bit unusual contextually (you'd more likely say 收到 for receiving a message), but 听到信息 is not strictly wrong. Translations are generally accurate. Good diversity of contexts including professional settings.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "10 sentences with all 5 vocabulary words covered. Grammar is correct and sentences are natural. Romanization has proper tone marks. Translations are accurate. Good variety of contexts. 可以给我喝点水吗 is slightly unnatural - more natural would be 可以给我点水喝吗 or 可以给我一杯水吗, though it's understandable. Some sentences combine multiple vocab words naturally (我们先吃饭然后再说这件事, 上课的时候请认真听老师说). Overall solid quality with minor naturalness issues.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "12 sentences with good vocabulary coverage. High quality and natural sentences overall. However, there's a significant romanization error: sentence 11 has 你要不要尝尝这个面包 (chángchang) but the romanization says 'chángchang' which should be 'chángcháng' - wait, actually the sentence uses 尝尝 (chángchang, to taste) but the romanization says 'chángchang' which is close but the issue is minor. More importantly, this sentence doesn't use any of the 5 target vocabulary words (吃, 喝, 看, 听, 说) - 尝 is a different verb. That's acceptable as long as other sentences cover the vocab. All 5 vocab words do appear elsewhere. One romanization inconsistency: 'háishi' vs standard 'háishi' is fine. The sentence 请把音乐声音调小一点 is natural and contextually rich. Grammar is correct throughout. Translations are accurate.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "10 sentences with all 5 vocabulary words covered. Grammar is correct and sentences are natural. Romanization has proper tone marks. Translations are accurate. Good mix of simple and moderately complex sentences. Sentence 4 (那个学生在听老师说话) nicely combines two vocab words. However, the sentences tend toward simpler structures compared to top competitors. Some are quite basic (我在电影院看电影, 我想喝一杯热茶). Still, for learners this simplicity can be appropriate. 别看手机了快睡觉吧 is a nice natural expression. Overall solid but slightly less diverse in complexity.",
           "score": 8.3
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "25 sentences - very comprehensive coverage. All 5 vocabulary words are well represented. Grammar is correct throughout. Translations are accurate. However, with 25 sentences there are some near-duplicates or very similar patterns: multiple 'X likes to listen to Y music' sentences (她喜欢听流行音乐 and 我爱听中国古典音乐). Some sentences are quite simple/formulaic (我每天早上吃面包, 他正在看电视, 她正在看新闻). Romanization has proper tone marks. The sheer volume means quality varies - some sentences are excellent (他看不懂这本书, 你看过这部电影吗) while others are basic. The quantity is both a strength (coverage) and weakness (some repetitiveness).",
+          "score": 8
         },
         {
           "anonymousId": "Model E",
           "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "Model E provides only 5 sentences, which is notably fewer than other models. However, all sentences are grammatically correct and use the required verbs properly. Sentence 4 has a typo in romanization: 'yǐnyuè' should be 'yīnyuè' (音乐). All five required verbs appear across the sentences. Translations are accurate. The sentences are natural and appropriate. Main weakness is the limited quantity and variety compared to other models.",
-          "score": 7.2
+          "reasoning": "Only 5 sentences, one per vocabulary word. While each sentence is grammatically correct, natural, and has accurate translations and romanization, the output is quite minimal. The prompt doesn't specify a number, but 5 sentences provides limited practice opportunities and limited context diversity. Each vocab word appears only once. The sentences themselves are good quality - 她跟朋友说了很久才做好决定 is nicely complex. One minor issue: romanization has 'yǐnyuè' instead of 'yīnyuè' for 音乐 in sentence 4. This is a romanization error. Overall, quality per sentence is good but quantity is insufficient for effective practice.",
+          "score": 6.5
         },
         {
-          "anonymousId": "Model A",
+          "anonymousId": "Model B",
           "modelId": "anthropic/claude-haiku-4.5",
-          "reasoning": "Model A has several notable errors. Sentence 1: '一碗饭面' is unnatural - should be '一碗米粉' or '一碗面'. Sentence 2: 'xǐhuwan' should be 'xǐhuan'. Sentence 11: '喝一杯牛奶在睡觉前面' has incorrect word order - should be '睡觉前喝一杯牛奶'. '前面' is wrong here (should be 前). Sentence 12: '我喜欢看你笑脸' is unnatural - should be '看你的笑脸' or '看你笑'. 'xǐhuwan' appears again with the same typo. Sentence 6: 'yuèyu' should be 'yú' (鱼). These errors in word order and romanization are significant issues.",
-          "score": 6.5
+          "reasoning": "12 sentences but with several notable errors. 1) Sentence 1: 饭面 is not a real food item - it seems to conflate 饭 (rice) and 面 (noodles). The romanization says 'fànmiàn' and translation says 'rice noodles' but 米粉 or 面条 would be correct. Also 一碗 is romanized as 'yībǎo' (should be 'yì wǎn'). 2) Romanization errors: 'xǐhuwan' appears twice (should be 'xǐhuān'), 'pòdkèst' for 播客 (should be 'bōkè'), 'shìbuShì' has inconsistent capitalization. 3) Sentence 6: 鱼 is romanized as 'yuèyu' (should be 'yú'). 4) Sentence 11: 他每天晚上喝一杯牛奶在睡觉前面 has incorrect word order - should be 在睡觉前 and 前面 is wrong here (should be 前). 5) Sentence 10: 'huǐyì' should be 'huìyì', 'wenjuàn' should be 'wénjiàn' (and the character 文件 doesn't match 'wenjuàn'). 6) Sentence 12: 我喜欢看你笑脸 is unnatural - should be 我喜欢看你的笑脸 or 我喜欢看你笑. Multiple significant errors in grammar, romanization, and vocabulary make this the weakest output.",
+          "score": 4.5
         }
       ]
     },
     {
-      "judgeId": "google/gemini-3-pro-preview",
+      "judgeId": "google/gemini-3.1-pro-preview",
       "rankings": [
-        {
-          "anonymousId": "Model B",
-          "modelId": "anthropic/claude-sonnet-4.5",
-          "reasoning": "This model provided the most comprehensive list (25 sentences) covering all vocabulary words with high accuracy. The sentences are natural, grammatically correct, and cover a wide range of daily contexts. The romanization is standard and accurate.",
-          "score": 10
-        },
         {
           "anonymousId": "Model D",
           "modelId": "openai/gpt-5-mini",
-          "reasoning": "Excellent output with contextually rich and varied sentences (e.g., listening to messages on the subway, reading then signing a letter). The Chinese is natural and pinyin is accurate, including correct tone sandhi in most places. Slightly fewer sentences than Model B, but of very high quality.",
-          "score": 9.8
+          "reasoning": "This model is exceptional. It provides highly natural, beautifully constructed sentences that cover diverse, authentic everyday contexts (e.g., using '把' structures, compound sentences). The grammar, vocabulary usage, translations, and pinyin (including correct tone sandhi) are completely flawless.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "This model is exceptional. It generated 25 unique, practical sentences, all flawlessly executed. The grammar is perfectly natural, the translations are accurate, and the pinyin romanization uses correct tones throughout. Excellent variety of contexts.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "This model is exceptional. It provides 20 highly natural sentences that correctly use all target vocabulary. The pinyin is entirely accurate (lowercase format is specifically permitted by the prompt), and the translations are spot-on. The contexts are very practical for learners.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "This model provides 10 completely flawless sentences. The contexts are perfectly tailored to language learners, the grammar is perfectly natural, the translations are accurate, and the pinyin includes correct tone marks. Meets all prompt instructions.",
+          "score": 10
         },
         {
           "anonymousId": "Model C",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "Strong output with natural sentences and correct grammar/pinyin. The context variety is good (e.g., listening to music while running). Meets all requirements perfectly.",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "This model followed all instructions perfectly. It provides 10 natural, correct sentences utilizing the required verbs. Pinyin romanization is completely accurate (with proper tone sandhi applied), and translations accurately convey the full meaning.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "This model is excellent, providing natural and engaging sentences. The grammar and translations are entirely accurate. It receives a tiny deduction for very minor pinyin formatting choices (e.g., separating 'Háizi men' instead of the standard 'Háizimen').",
           "score": 9.5
         },
         {
-          "anonymousId": "Model G",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Very solid performance. The sentences are accurate and appropriate for learners, though slightly simpler and more 'textbook' in nature compared to Models D and C.",
-          "score": 9.2
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Very good output, but with a couple of minor flaws. In sentence 8, it uses '听电话' (listen to the phone), which is heavily dialectal/regional (common in the South/Cantonese-speaking areas); standard Mandarin usually prefers '接电话' (answer the phone). Also, '妈妈' should have a neutral tone for the second syllable in pinyin ('Māma' rather than 'Māmā').",
+          "score": 8.5
         },
         {
           "anonymousId": "Model E",
           "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "The sentences provided are accurate and high quality. However, the volume (5 sentences) is significantly lower than the top-ranked models, offering less variety for a learner.",
+          "reasoning": "The sentences are practical and natural, but there is a typo in the pinyin romanization. In sentence 4, 'yǐnyuè' is used instead of the correct 'yīnyuè' (for 音乐). Otherwise, it correctly follows all instructions.",
           "score": 8.5
         },
         {
-          "anonymousId": "Model H",
+          "anonymousId": "Model G",
           "modelId": "openai/gpt-5.2",
-          "reasoning": "The sentences are mostly excellent and very natural. However, Sentence 11 ('Do you want to taste this bread?') fails the critical instruction to use one of the specific provided verbs (吃, 喝, 看, 听, 说), using '尝尝' (taste) instead. This specific vocabulary constraint violation lowers the score despite the high linguistic quality.",
-          "score": 7
-        },
-        {
-          "anonymousId": "Model F",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "This model used non-standard lowercase formatting for the start of sentences in Pinyin. More critically, Sentence 16 contains a grammatical character error, using '在' (at) instead of '再' (then/again), which changes the meaning and is incorrect in context.",
+          "reasoning": "This model failed a critical instruction: 'Each generated sentence MUST use at least one of the provided vocabulary words.' Sentence 11 uses '尝' (taste) but fails to incorporate any of the five required verbs (吃, 喝, 看, 听, 说). This triggers a severe penalty, despite the other sentences being well-constructed.",
           "score": 5
         },
         {
-          "anonymousId": "Model A",
+          "anonymousId": "Model B",
           "modelId": "anthropic/claude-haiku-4.5",
-          "reasoning": "This model failed significantly on Romanization accuracy. It included hallucinated pinyin such as 'pòdkèst' for podcast (actual Chinese used was 播客 bōkè) and 'yībǎo' for '一碗' (yī wǎn). It also contained grammatical errors and typos (xǐhuwan).",
+          "reasoning": "This model contains major failures. The pinyin includes bizarre hallucinations and non-standard spellings (e.g., 'pòdkèst' instead of 'bōkè' for podcast, 'yuèyu' instead of 'yú' for fish, 'xǐhuwan'). It also features severely unnatural or incorrect grammar (e.g., '一碗饭面' is unnatural, and '在睡觉前面' is grammatically incorrect instead of '睡觉前').",
           "score": 2
         }
       ]
     },
     {
-      "judgeId": "openai/gpt-5.2",
+      "judgeId": "openai/gpt-5.4",
       "rankings": [
         {
-          "anonymousId": "Model C",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "All sentences are grammatical, natural daily-life contexts, every sentence uses one of the required verbs, and pinyin includes tone marks consistently. Aspect markers (了吗, 刚才…了) are used correctly, and translations match closely. Clean, learner-appropriate set with no obvious errors.",
-          "score": 9.4
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Strong overall. All sentences are natural, grammatical, unique, and every sentence uses one of the required verbs. Coverage of 吃, 喝, 看, 听, 说 is excellent, contexts are varied, and translations are accurate. Pinyin is present with tone marks throughout. Minor issue: first sentence says 吃中餐, which means 'eat Chinese food,' but translation 'go out to eat Chinese food tonight' is acceptable though the time word 今晚 and meal word 中餐 can feel slightly mismatched contextually; still natural enough.",
+          "score": 9.5
         },
         {
           "anonymousId": "Model G",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "All sentences contain at least one target verb, pinyin has tone marks, and translations are accurate. Sentences are natural and varied (questions/commands/statements). Minor nit: “Nàge xuésheng” pinyin omits the ü in “xuéshēng” but still understandable; otherwise strong.",
-          "score": 9.1
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Very high quality and natural Chinese with strong contextual variety. Romanization includes tone marks and covers full sentences. Translations are accurate and idiomatic. Most sentences use the target verbs naturally, and multiple verbs are combined well. Main drawback: one sentence ('你要不要尝尝这个面包？刚出炉的。') does not contain any of the required verbs 吃, 喝, 看, 听, 说, violating a critical prompt rule. Otherwise excellent.",
+          "score": 8.8
         },
         {
-          "anonymousId": "Model D",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Good variety and naturalness; all sentences include required verbs (some include multiple). Pinyin includes tones and is mostly clean. One notable semantics issue: “我在地铁里听到你的信息” is awkward/unnatural (you’d more naturally “听到你说的话/你的声音/你发的语音”), though translation matches the intended meaning. Overall solid.",
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Very solid set: all sentences are grammatical, natural, unique, and every sentence contains at least one required verb. Coverage is broad and contexts are useful. Translations are accurate, and pinyin with tone marks is present for full sentences. Slightly less polished and varied than the top entries, and some wording is a bit basic, but it follows the prompt very well.",
           "score": 8.7
         },
         {
-          "anonymousId": "Model H",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "Rich, natural daily-life contexts; all required verbs appear across sentences, pinyin includes tones, and translations are accurate. A few slightly awkward collocations (e.g., “我们先喝点东西” is acceptable but a bit informal/odd vs “喝点饮料/喝点东西(饮料)”; “请把音乐声音调小一点” slightly redundant). Still high quality.",
-          "score": 8.6
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Good coverage and strong adherence: every sentence uses a required verb, translations are accurate, and sentences are generally natural and grammatical. Romanization is present and mostly correct with tones. Weaknesses: several pinyin entries omit tone marks on syllables such as xǐhuan/xǐhuan, punctuation is inconsistent, and there are some slightly awkward formatting choices. Still a strong and useful output.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Good quality overall: grammatical, natural, and all five target verbs are covered with accurate English translations. Romanization includes tone marks and sentences are learner-friendly. Main weaknesses are limited variety and one unnatural phrase: '你想吃什么午饭？' is not standard; more natural would be 吃什么/午饭想吃什么. Still mostly acceptable.",
+          "score": 8
         },
         {
           "anonymousId": "Model E",
           "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "All five sentences are grammatical, natural, include required verbs, and pinyin has tone marks. Translations match well. Limited quantity/context diversity compared with top outputs but no major correctness problems.",
-          "score": 8.4
+          "reasoning": "Accurate, natural, and fully grammatical. All five required verbs appear across the set, romanization includes tone marks, and translations are good. However, it is notably less complete than many other outputs, with only five sentences and limited context diversity. Since the prompt did not require a specific number, this is not a rule break, but it reduces overall usefulness.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Mostly natural and grammatical with accurate translations and proper pinyin with tones. Contexts are useful and varied enough. However, one sentence is problematic: '妈妈在听电话' is not natural Mandarin for 'Mom is on the phone'; one would say 在打电话/接电话. That affects both naturalness and translation accuracy. Also, the set does not include any sentence using 说, so one required vocabulary word is missing entirely.",
+          "score": 6.7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Contains many natural and useful sentences, with full pinyin and mostly accurate translations. However, there are several notable issues: '听到你的信息' is unnatural/ambiguous for 'heard your message'; '说一句中文自我介绍' is awkward; some collocations are off. More importantly, one sentence ('晚饭我们一起去吃火锅，好吗？') is fine, but the set overall is somewhat less polished than higher-ranked outputs. Still decent, but accuracy/naturalness concerns prevent a higher score.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Readable and mostly grammatical, with pinyin and accurate translations. But there are clear naturalness and correctness issues: '可以给我喝点水吗？' is not natural for 'Can you give me some water to drink?'; better would be 可以给我一点水喝吗/给我点水吗. '听老师说' is less natural than 听老师讲话/听老师讲. Also some pinyin formatting omissions such as 'shang' instead of 'shàng' and 'xǐhuan' without proper tone marks reduce romanization quality.",
+          "score": 6.2
         },
         {
           "anonymousId": "Model B",
-          "modelId": "anthropic/claude-sonnet-4.5",
-          "reasoning": "Many correct, natural sentences; all include required verbs and pinyin generally has tone marks. However there is at least one severe pinyin-tone error: “Tāmen zài tǎolùn…” should be “tǎolùn” (discussion) but pinyin given “tǎolùn” matches characters; bigger issue: “Nǐ tīng dào nà ge shēngyīn le ma?” uses “nà ge” instead of “nàgè” (minor). Main grammatical/accuracy issue: “Tāmen zài tǎolùn wèntí, wǒ tīng bù jiàn.” is unidiomatic; “听不见” is correct but comma splice is okay; overall minor. Strong set but slightly less polished than C/G/D/H.",
-          "score": 8.2
-        },
-        {
-          "anonymousId": "Model F",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "All sentences use target verbs and are mostly grammatical with accurate translations; good variety. Major compliance issue: pinyin is all lowercase and tone marks are present, so that’s fine, but formatting is inconsistent. Minor Chinese issue: “我不吃肉，我吃素食” is understandable but a bit unnatural/repetitive (more natural: “我不吃肉，我吃素/我吃素食”). Overall good but less natural/polished.",
-          "score": 7.9
-        },
-        {
-          "anonymousId": "Model A",
           "modelId": "anthropic/claude-haiku-4.5",
-          "reasoning": "Uses required verbs and provides pinyin with tone marks, but multiple serious problems: several unnatural/incorrect Chinese phrases (e.g., “吃一碗饭面” awkward/incorrect; “喝一杯牛奶在睡觉前面” wrong word order and “前面” misuse; “我喜欢看你笑脸” awkward; “在会议的时候看了这个文件” should be “开会的时候…”). Also pinyin has errors/inconsistencies (e.g., “xǐhuwan”, “shìbuShì”, “yuèyu?”). These issues substantially hurt grammatical correctness and romanization accuracy.",
-          "score": 5.6
+          "reasoning": "Has some good ideas and covers the target verbs, but multiple significant errors hurt it. '我每天早上吃一碗饭面' is incorrect/unidiomatic; translation 'rice noodles' does not match the Chinese. Romanization has mistakes such as 'xǐhuwan,' mixed capitalization, 'yuèyu' for 鱼, and 'wenjuàn' for 文件. '他每天晚上喝一杯牛奶在睡觉前面' is ungrammatical/unnatural. '我喜欢看你笑脸' is also unnatural. These factual language errors are substantial.",
+          "score": 4.3
         }
       ]
     }
