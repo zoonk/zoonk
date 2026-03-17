@@ -413,6 +413,41 @@ test.describe("Reading Step", () => {
     }).toPass({ timeout: 10_000 });
   });
 
+  test("keyboard Enter/Space removes a placed word instead of starting drag", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const word1 = `Alfa-${uniqueId}`;
+    const word2 = `Beta-${uniqueId}`;
+
+    const { url } = await createReadingActivity({
+      sentences: [
+        {
+          sentence: `${word1} ${word2}`,
+          translation: `Alpha-${uniqueId} Bravo-${uniqueId}`,
+        },
+      ],
+      words: [{ translation: `cat-${uniqueId}`, word: `gato-${uniqueId}` }],
+    });
+
+    await page.goto(url);
+
+    const wordBank = page.getByRole("group", { name: /word bank/i });
+    const answerArea = page.getByRole("group", { name: /your answer/i });
+
+    // Place a word
+    await expect(async () => {
+      await wordBank.getByRole("button", { exact: true, name: word1 }).click();
+      await expect(answerArea.getByRole("button", { name: new RegExp(word1) })).toBeVisible({
+        timeout: 1000,
+      });
+    }).toPass();
+
+    // Focus the placed word and press Enter — should remove it, not start a drag
+    await answerArea.getByRole("button", { name: new RegExp(word1) }).focus();
+    await page.keyboard.press("Enter");
+
+    await expect(answerArea.getByText(/tap words to build your answer/i)).toBeVisible();
+  });
+
   test("full flow: complete all reading steps to completion screen", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const word1a = `Hola-${uniqueId}`;
