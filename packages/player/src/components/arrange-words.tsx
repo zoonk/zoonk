@@ -1,110 +1,19 @@
 "use client";
 
+import { type DragEndEvent } from "@dnd-kit/core";
+import { arrayMove } from "@dnd-kit/sortable";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@zoonk/ui/components/tooltip";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { useCallback, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { type SelectedAnswer, type StepResult } from "../player-reducer";
 import { type WordBankOption } from "../prepare-activity-data";
 import { useWordAudio } from "../use-word-audio";
+import { ArrangeWordsAnswerArea, type PlacedWord } from "./arrange-words-answer-area";
 import { ArrangeWordsFeedback, type ArrangeWordsFeedbackProps } from "./arrange-words-feedback";
 import { InlineFeedback } from "./inline-feedback";
 import { RomanizationText } from "./romanization-text";
 import { InteractiveStepLayout } from "./step-layouts";
-
-function getWordResultState(
-  word: string,
-  position: number,
-  correctWords: string[],
-): "correct" | "incorrect" {
-  return correctWords[position] === word ? "correct" : "incorrect";
-}
-
-function PlacedWordTile({
-  onClick,
-  option,
-  position,
-  resultState,
-}: {
-  onClick: () => void;
-  option: WordBankOption;
-  position: number;
-  resultState?: "correct" | "incorrect";
-}) {
-  const t = useExtracted();
-  const hasResult = resultState !== undefined;
-
-  const ariaLabel = (() => {
-    if (hasResult) {
-      const result = resultState === "correct" ? t("Correct") : t("Incorrect");
-      return t("{item}. {result}.", { item: option.word, result });
-    }
-
-    return t("Position {position}: {item}. Tap to remove.", {
-      item: option.word,
-      position: String(position + 1),
-    });
-  })();
-
-  return (
-    <button
-      aria-label={ariaLabel}
-      className={cn(
-        "border-border flex min-h-11 flex-col items-center rounded-lg border px-4 py-2.5 text-base transition-all duration-150",
-        hasResult && "pointer-events-none",
-        !hasResult &&
-          "hover:bg-accent focus-visible:border-ring focus-visible:ring-ring/50 outline-none focus-visible:ring-[3px]",
-        resultState === "correct" && "bg-success/5 text-success border-transparent opacity-75",
-        resultState === "incorrect" &&
-          "bg-destructive/5 text-destructive border-transparent opacity-75",
-      )}
-      disabled={hasResult}
-      onClick={onClick}
-      type="button"
-    >
-      <span>{option.word}</span>
-
-      <RomanizationText>{option.romanization}</RomanizationText>
-    </button>
-  );
-}
-
-function AnswerArea({
-  correctWords,
-  onRemove,
-  placedWords,
-  result,
-}: {
-  correctWords: string[];
-  onRemove: (index: number) => void;
-  placedWords: WordBankOption[];
-  result?: StepResult;
-}) {
-  const t = useExtracted();
-
-  return (
-    <div
-      aria-label={t("Your answer")}
-      className="border-border/40 flex min-h-16 flex-wrap gap-2 border-b pb-3"
-      role="group"
-    >
-      {placedWords.length === 0 ? (
-        <p className="text-muted-foreground/60 text-sm">{t("Tap words to build your answer")}</p>
-      ) : (
-        placedWords.map((option, index) => (
-          <PlacedWordTile
-            // oxlint-disable-next-line react/no-array-index-key -- Words can repeat, no unique ID
-            key={`placed-${option.word}-${index}`}
-            onClick={() => onRemove(index)}
-            option={option}
-            position={index}
-            resultState={result ? getWordResultState(option.word, index, correctWords) : undefined}
-          />
-        ))
-      )}
-    </div>
-  );
-}
 
 function BankTileContent({ option }: { option: WordBankOption }) {
   return (
@@ -216,14 +125,15 @@ export function ArrangeWordsInteraction({
   stepId: string;
   wordBankOptions: WordBankOption[];
 }) {
-  const [placedWords, setPlacedWords] = useState<WordBankOption[]>(() => {
+  const idCounter = useRef(0);
+
+  const [placedWords, setPlacedWords] = useState<PlacedWord[]>(() => {
     if (result?.answer?.kind === answerKind && "arrangedWords" in result.answer) {
-      return result.answer.arrangedWords.map((word) => ({
-        audioUrl: null,
-        romanization: null,
-        translation: null,
-        word,
-      }));
+      return result.answer.arrangedWords.map((word) => {
+        const id = String(idCounter.current);
+        idCounter.current += 1;
+        return { audioUrl: null, id, romanization: null, translation: null, word };
+      });
     }
 
     return [];
@@ -238,12 +148,14 @@ export function ArrangeWordsInteraction({
       }
 
       play(option.audioUrl);
-      const next = [...placedWords, option];
+      const placed: PlacedWord = { ...option, id: String(idCounter.current) };
+      idCounter.current += 1;
+      const next = [...placedWords, placed];
       setPlacedWords(next);
 
       if (next.length === correctWords.length) {
         onSelectAnswer(stepId, {
-          arrangedWords: next.map((placed) => placed.word),
+          arrangedWords: next.map((pw) => pw.word),
           kind: answerKind,
         });
       }
@@ -263,12 +175,48 @@ export function ArrangeWordsInteraction({
     [onSelectAnswer, placedWords, selectedAnswer, stepId],
   );
 
+  const handleDragStart = useCallback(() => {
+    if (typeof navigator !== "undefined" && navigator.vibrate) {
+      navigator.vibrate(10);
+    }
+  }, []);
+
+  const handleDragEnd = useCallback(
+    (event: DragEndEvent) => {
+      const { active, over } = event;
+
+      if (!over || active.id === over.id) {
+        return;
+      }
+
+      const oldIndex = placedWords.findIndex((pw) => pw.id === String(active.id));
+      const newIndex = placedWords.findIndex((pw) => pw.id === String(over.id));
+
+      if (oldIndex === -1 || newIndex === -1) {
+        return;
+      }
+
+      const reordered = arrayMove(placedWords, oldIndex, newIndex);
+      setPlacedWords(reordered);
+
+      if (reordered.length === correctWords.length) {
+        onSelectAnswer(stepId, {
+          arrangedWords: reordered.map((pw) => pw.word),
+          kind: answerKind,
+        });
+      }
+    },
+    [answerKind, correctWords.length, onSelectAnswer, placedWords, stepId],
+  );
+
   return (
     <InteractiveStepLayout>
       {children}
 
-      <AnswerArea
+      <ArrangeWordsAnswerArea
         correctWords={correctWords}
+        onDragEnd={handleDragEnd}
+        onDragStart={handleDragStart}
         onRemove={handleRemove}
         placedWords={placedWords}
         result={result}

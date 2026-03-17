@@ -5,17 +5,12 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "X-Generator: next-intl\n"
 
-#: ../../packages/player/src/components/arrange-words-feedback.tsx
-msgctxt "mhiTW7"
-msgid "Correct answer"
-msgstr "Correct answer"
-
-#: ../../packages/player/src/components/arrange-words.tsx
+#: ../../packages/player/src/components/arrange-words-answer-area.tsx
 msgctxt "1nJY2/"
 msgid "Your answer"
 msgstr "Your answer"
 
-#: ../../packages/player/src/components/arrange-words.tsx
+#: ../../packages/player/src/components/arrange-words-answer-area.tsx
 #: ../../packages/player/src/components/fill-blank-step.tsx
 #: ../../packages/player/src/components/result-announcement.tsx
 #: ../../packages/player/src/components/sort-order-step.tsx
@@ -23,35 +18,40 @@ msgctxt "6NoIUl"
 msgid "Correct"
 msgstr "Correct"
 
-#: ../../packages/player/src/components/arrange-words.tsx
+#: ../../packages/player/src/components/arrange-words-answer-area.tsx
 msgctxt "7R/rOB"
 msgid "Tap words to build your answer"
 msgstr "Tap words to build your answer"
 
-#: ../../packages/player/src/components/arrange-words.tsx
-#: ../../packages/player/src/components/fill-blank-step.tsx
-msgctxt "e7WNdK"
-msgid "Word bank"
-msgstr "Word bank"
-
-#: ../../packages/player/src/components/arrange-words.tsx
+#: ../../packages/player/src/components/arrange-words-answer-area.tsx
 #: ../../packages/player/src/components/sort-order-step.tsx
 msgctxt "hFFOe+"
 msgid "{item}. {result}."
 msgstr "{item}. {result}."
 
-#: ../../packages/player/src/components/arrange-words.tsx
+#: ../../packages/player/src/components/arrange-words-answer-area.tsx
 msgctxt "vPyO9S"
 msgid "Position {position}: {item}. Tap to remove."
 msgstr "Position {position}: {item}. Tap to remove."
 
-#: ../../packages/player/src/components/arrange-words.tsx
+#: ../../packages/player/src/components/arrange-words-answer-area.tsx
 #: ../../packages/player/src/components/fill-blank-step.tsx
 #: ../../packages/player/src/components/result-announcement.tsx
 #: ../../packages/player/src/components/sort-order-step.tsx
 msgctxt "Ypr9T5"
 msgid "Incorrect"
 msgstr "Incorrect"
+
+#: ../../packages/player/src/components/arrange-words-feedback.tsx
+msgctxt "mhiTW7"
+msgid "Correct answer"
+msgstr "Correct answer"
+
+#: ../../packages/player/src/components/arrange-words.tsx
+#: ../../packages/player/src/components/fill-blank-step.tsx
+msgctxt "e7WNdK"
+msgid "Word bank"
+msgstr "Word bank"
 
 #: ../../packages/player/src/components/belt-progress.tsx
 #: src/app/(catalog)/(home)/level.tsx

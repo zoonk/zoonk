@@ -363,6 +363,100 @@ test.describe("Reading Step", () => {
     await expect(correctAnswer.getByText(`hello${uniqueId}`)).toBeVisible();
   });
 
+  test("dragging a placed word reorders it in the answer area", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const word1 = `Uno-${uniqueId}`;
+    const word2 = `Dos-${uniqueId}`;
+    const word3 = `Tres-${uniqueId}`;
+
+    const { url } = await createReadingActivity({
+      sentences: [
+        {
+          sentence: `${word1} ${word2} ${word3}`,
+          translation: `One-${uniqueId} Two-${uniqueId} Three-${uniqueId}`,
+        },
+      ],
+      words: [{ translation: `cat-${uniqueId}`, word: `gato-${uniqueId}` }],
+    });
+
+    await page.goto(url);
+
+    const wordBank = page.getByRole("group", { name: /word bank/i });
+    const answerArea = page.getByRole("group", { name: /your answer/i });
+
+    // Place all 3 words in order: word3, word1, word2 (wrong order)
+    await expect(async () => {
+      await wordBank.getByRole("button", { exact: true, name: word3 }).click();
+      await expect(answerArea.getByRole("button", { name: new RegExp(word3) })).toBeVisible({
+        timeout: 1000,
+      });
+    }).toPass();
+
+    await wordBank.getByRole("button", { exact: true, name: word1 }).click();
+    await wordBank.getByRole("button", { exact: true, name: word2 }).click();
+
+    // Verify initial order: word3 is in position 1
+    await expect(
+      answerArea.getByRole("button", { name: new RegExp(`Position 1.*${word3}`, "i") }),
+    ).toBeVisible();
+
+    const buttons = answerArea.getByRole("button");
+
+    // Get initial first button text
+    const initialFirstText = await buttons.nth(0).textContent();
+
+    // Drag second button to first position — retry for drag reliability
+    await expect(async () => {
+      await buttons.nth(1).dragTo(buttons.nth(0), { steps: 20 });
+      const newFirstText = await buttons.nth(0).textContent();
+      expect(newFirstText).not.toBe(initialFirstText);
+    }).toPass({ timeout: 10_000 });
+  });
+
+  test("keyboard Enter/Space removes a placed word instead of starting drag", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const word1 = `Alfa-${uniqueId}`;
+    const word2 = `Beta-${uniqueId}`;
+
+    const { url } = await createReadingActivity({
+      sentences: [
+        {
+          sentence: `${word1} ${word2}`,
+          translation: `Alpha-${uniqueId} Bravo-${uniqueId}`,
+        },
+      ],
+      words: [{ translation: `cat-${uniqueId}`, word: `gato-${uniqueId}` }],
+    });
+
+    await page.goto(url);
+
+    const wordBank = page.getByRole("group", { name: /word bank/i });
+    const answerArea = page.getByRole("group", { name: /your answer/i });
+
+    // Place a word
+    await expect(async () => {
+      await wordBank.getByRole("button", { exact: true, name: word1 }).click();
+      await expect(answerArea.getByRole("button", { name: new RegExp(word1) })).toBeVisible({
+        timeout: 1000,
+      });
+    }).toPass();
+
+    // Focus the placed word and press Enter — should remove it, not start a drag
+    await answerArea.getByRole("button", { name: new RegExp(word1) }).focus();
+    await page.keyboard.press("Enter");
+
+    await expect(answerArea.getByText(/tap words to build your answer/i)).toBeVisible();
+
+    // Place again and verify Space also removes
+    await wordBank.getByRole("button", { exact: true, name: word1 }).click();
+    await expect(answerArea.getByRole("button", { name: new RegExp(word1) })).toBeVisible();
+
+    await answerArea.getByRole("button", { name: new RegExp(word1) }).focus();
+    await page.keyboard.press("Space");
+
+    await expect(answerArea.getByText(/tap words to build your answer/i)).toBeVisible();
+  });
+
   test("full flow: complete all reading steps to completion screen", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const word1a = `Hola-${uniqueId}`;
