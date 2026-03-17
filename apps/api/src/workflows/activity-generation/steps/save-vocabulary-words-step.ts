@@ -2,7 +2,7 @@ import { type VocabularyWord } from "@zoonk/ai/tasks/activities/language/vocabul
 import { assertStepContent } from "@zoonk/core/steps/content-contract";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
-import { emptyToNull } from "@zoonk/utils/string";
+import { emptyToNull, normalizePunctuation } from "@zoonk/utils/string";
 import { streamError, streamStatus } from "../stream-status";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { type LessonActivity } from "./get-lesson-activities-step";
@@ -32,20 +32,22 @@ function buildSaveOneWord(params: {
   } = params;
 
   return async (vocabWord: VocabularyWord, position: number): Promise<SavedWord> => {
+    const translation = normalizePunctuation(vocabWord.translation);
+
     const record = await prisma.word.upsert({
       create: {
         alternativeTranslations: vocabWord.alternativeTranslations,
         organizationId,
         romanization: emptyToNull(vocabWord.romanization),
         targetLanguage,
-        translation: vocabWord.translation,
+        translation,
         userLanguage,
         word: vocabWord.word,
       },
       update: {
         alternativeTranslations: vocabWord.alternativeTranslations,
         romanization: emptyToNull(vocabWord.romanization),
-        translation: vocabWord.translation,
+        translation,
       },
       where: {
         orgWord: { organizationId, targetLanguage, userLanguage, word: vocabWord.word },
