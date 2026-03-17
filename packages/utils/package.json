@@ -38,12 +38,12 @@
     "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
-    "@formatjs/intl-localematcher": "0.8.1",
+    "@formatjs/intl-localematcher": "0.8.2",
     "negotiator": "1.0.0"
   },
   "devDependencies": {
     "@types/negotiator": "0.6.4",
-    "@typescript/native-preview": "7.0.0-dev.20260314.1",
+    "@typescript/native-preview": "7.0.0-dev.20260317.1",
     "@zoonk/tsconfig": "workspace:*",
     "vitest": "4.1.0"
   }
