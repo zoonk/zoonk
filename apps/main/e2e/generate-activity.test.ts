@@ -1055,7 +1055,7 @@ test.describe("Generate Activity Page - With Subscription", () => {
       timeout: 10_000,
     });
 
-    await expect(userWithoutProgress.getByText(/this usually takes 1-2 minutes/i)).toBeVisible();
+    await expect(userWithoutProgress.getByText(/this usually takes about a minute/i)).toBeVisible();
   });
 
   test("shows practice-content phase and skips pronunciation phase for reading", async ({
