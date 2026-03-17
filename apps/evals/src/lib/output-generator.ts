@@ -63,17 +63,17 @@ function collectTestCaseRuns(testCases: TestCase[], existingEntries: OutputEntry
 }
 
 function extractSuccessfulOutputs(results: PromiseSettledResult<OutputEntry>[]): OutputEntry[] {
-  return results
-    .map((result) => {
-      if (result.status === "fulfilled") {
-        return result.value;
-      }
-      console.error(
-        `Error generating output: ${result.reason instanceof Error ? result.reason.message : String(result.reason)}`,
-      );
-      return null;
-    })
-    .filter((res): res is OutputEntry => res !== null);
+  return results.flatMap((result) => {
+    if (result.status === "fulfilled") {
+      return [result.value];
+    }
+
+    console.error(
+      `Error generating output: ${result.reason instanceof Error ? result.reason.message : String(result.reason)}`,
+    );
+
+    return [];
+  });
 }
 
 function createModelOutputs(taskId: string, modelId: string, outputs: OutputEntry[]): ModelOutputs {

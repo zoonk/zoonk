@@ -38,26 +38,26 @@ export type SortDirection = "asc" | "desc";
  * Filters out results whose model cannot be resolved.
  */
 export function getLeaderboardEntries(results: TaskEvalResults[]): LeaderboardEntry[] {
-  return results
-    .map((result) => {
-      const model = getModelById(result.modelId);
+  return results.flatMap((result) => {
+    const model = getModelById(result.modelId);
 
-      if (!model) {
-        return null;
-      }
+    if (!model) {
+      return [];
+    }
 
-      const stats = getStatsFromResults(result);
+    const stats = getStatsFromResults(result);
 
-      return {
+    return [
+      {
         averageDuration: stats.averageDuration,
         averageScore: calculateAverageScore(result),
         modelId: result.modelId,
         modelName: getModelDisplayName(model),
         provider: result.modelId.split("/")[0] ?? result.modelId,
         totalCost: stats.totalCost,
-      } satisfies LeaderboardEntry;
-    })
-    .filter(Boolean) as LeaderboardEntry[];
+      } satisfies LeaderboardEntry,
+    ];
+  });
 }
 
 export function getDefaultSortDirection(key: SortKey): SortDirection {

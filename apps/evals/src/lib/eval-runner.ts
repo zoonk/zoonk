@@ -122,17 +122,17 @@ export async function runEval(task: Task, modelId: string): Promise<TaskEvalResu
     }),
   );
 
-  const newResults: ScoredResult[] = results
-    .map((result) => {
-      if (result.status === "fulfilled") {
-        return result.value;
-      }
-      console.error(
-        `Error scoring output: ${result.reason instanceof Error ? result.reason.message : String(result.reason)}`,
-      );
-      return null;
-    })
-    .filter((res): res is ScoredResult => res !== null);
+  const newResults: ScoredResult[] = results.flatMap((result) => {
+    if (result.status === "fulfilled") {
+      return [result.value];
+    }
+
+    console.error(
+      `Error scoring output: ${result.reason instanceof Error ? result.reason.message : String(result.reason)}`,
+    );
+
+    return [];
+  });
 
   const allScoredResults = [...existingResults, ...newResults];
 

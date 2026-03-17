@@ -163,20 +163,15 @@ export function validateAnswers(
   steps: StepData[],
   clientAnswers: Record<string, SelectedAnswer>,
 ): ValidatedStepResult[] {
-  return steps
-    .map((step) => {
-      const answer = clientAnswers[String(step.id)];
+  return steps.flatMap((step) => {
+    const answer = clientAnswers[String(step.id)];
 
-      if (!answer) {
-        return null;
-      }
+    if (!answer || !isSupportedStepKind(step.kind)) {
+      return [];
+    }
 
-      if (!isSupportedStepKind(step.kind)) {
-        return null;
-      }
-
-      const validator = validators[step.kind];
-      return validator(step, answer);
-    })
-    .filter((result): result is ValidatedStepResult => result !== null);
+    const validator = validators[step.kind];
+    const result = validator(step, answer);
+    return result ? [result] : [];
+  });
 }

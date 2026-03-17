@@ -34,9 +34,10 @@ export async function getStripePrices(
       lookup_keys: lookupKeys,
     });
 
-    const entries = prices.data
-      .map((price) => extractPrice(price, currency.toLowerCase()))
-      .filter((entry): entry is [string, PriceInfo] => entry !== null);
+    const entries = prices.data.flatMap((price) => {
+      const entry = extractPrice(price, currency.toLowerCase());
+      return entry ? [entry] : [];
+    });
 
     return new Map(entries);
   } catch {
