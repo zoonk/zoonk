@@ -259,7 +259,7 @@ describe(lessonGenerationWorkflow, () => {
         where: { lessonId: lesson.id },
       });
 
-      expect(activities).toHaveLength(7);
+      expect(activities).toHaveLength(6);
 
       expect(activities.map((act) => act.kind)).toEqual([
         "vocabulary",
@@ -267,7 +267,6 @@ describe(lessonGenerationWorkflow, () => {
         "grammar",
         "reading",
         "listening",
-        "languagePractice",
         "review",
       ]);
 
@@ -316,14 +315,13 @@ describe(lessonGenerationWorkflow, () => {
         where: { lessonId: lesson.id },
       });
 
-      expect(activities).toHaveLength(6);
+      expect(activities).toHaveLength(5);
 
       expect(activities.map((act) => act.kind)).toEqual([
         "vocabulary",
         "translation",
         "grammar",
         "reading",
-        "languagePractice",
         "review",
       ]);
 

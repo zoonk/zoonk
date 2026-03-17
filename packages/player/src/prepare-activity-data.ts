@@ -121,8 +121,6 @@ function shuffleMultipleChoiceContent(
       return { ...content, options: shuffle(content.options) };
     case "challenge":
       return content;
-    case "language":
-      return { ...content, options: shuffle(content.options) };
     default:
       return content;
   }

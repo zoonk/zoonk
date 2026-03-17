@@ -13,7 +13,6 @@
     "./tasks/activities/language/pronunciation": "./src/tasks/activities/language/activity-pronunciation.ts",
     "./tasks/activities/language/sentence-word-translation": "./src/tasks/activities/language/activity-sentence-word-translation.ts",
     "./tasks/activities/language/sentences": "./src/tasks/activities/language/activity-sentences.ts",
-    "./tasks/activities/language/practice": "./src/tasks/activities/language/activity-practice.ts",
     "./tasks/activities/language/vocabulary": "./src/tasks/activities/language/activity-vocabulary.ts",
     "./tasks/audio": "./src/tasks/audio/generate-language-audio.ts",
     "./tasks/chapters/language-lessons": "./src/tasks/chapters/language-chapter-lessons.ts",

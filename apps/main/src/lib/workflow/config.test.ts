@@ -6,10 +6,6 @@ describe(getActivityCompletionStep, () => {
     expect(getActivityCompletionStep("grammar")).toBe("setGrammarAsCompleted");
   });
 
-  test("returns language practice completion step for language practice activity kind", () => {
-    expect(getActivityCompletionStep("languagePractice")).toBe("setLanguagePracticeAsCompleted");
-  });
-
   test("returns reading completion step for reading activity kind", () => {
     expect(getActivityCompletionStep("reading")).toBe("setReadingAsCompleted");
   });

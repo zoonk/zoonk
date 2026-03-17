@@ -25,7 +25,6 @@ export type FirstActivityKind = "explanation" | "custom" | "vocabulary";
 const CUSTOM_INFERENCE_STEPS = new Set(["generateCustomContent", "setCustomAsCompleted"]);
 const WRITING_ONLY_LANGUAGE_STEP_MAP: Partial<Record<ActivityKind, ActivityStepName>> = {
   grammar: "generateGrammarContent",
-  languagePractice: "generateLanguagePracticeContent",
 };
 
 export function inferFirstActivityKind(params: {
@@ -74,7 +73,7 @@ export function getPhaseOrder(kind: ActivityKind): PhaseName[] {
     ];
   }
 
-  if (kind === "grammar" || kind === "languagePractice") {
+  if (kind === "grammar") {
     return ["gettingStarted", "writingContent", "finishing"];
   }
 
@@ -260,7 +259,6 @@ const SUPPORTED_KINDS: ActivityKind[] = [
   "custom",
   "explanation",
   "grammar",
-  "languagePractice",
   "listening",
   "practice",
   "quiz",

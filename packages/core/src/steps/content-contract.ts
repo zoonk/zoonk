@@ -24,15 +24,6 @@ const challengeOptionSchema = z
   })
   .strict();
 
-const languageOptionSchema = z
-  .object({
-    feedback: z.string(),
-    isCorrect: z.boolean(),
-    text: z.string(),
-    textRomanization: z.string().min(1).nullable(),
-  })
-  .strict();
-
 const coreMultipleChoiceContentSchema = z
   .object({
     context: z.string().optional(),
@@ -51,20 +42,9 @@ const challengeMultipleChoiceContentSchema = z
   })
   .strict();
 
-const languageMultipleChoiceContentSchema = z
-  .object({
-    context: z.string(),
-    contextRomanization: z.string().min(1).nullable(),
-    contextTranslation: z.string(),
-    kind: z.literal("language"),
-    options: z.array(languageOptionSchema).min(1),
-  })
-  .strict();
-
 export const multipleChoiceContentSchema = z.discriminatedUnion("kind", [
   coreMultipleChoiceContentSchema,
   challengeMultipleChoiceContentSchema,
-  languageMultipleChoiceContentSchema,
 ]);
 
 const fillBlankChoiceSchema = z.string();
@@ -172,7 +152,7 @@ export type SupportedStepKind = keyof typeof stepContentSchemas;
 
 export type CoreMultipleChoiceContent = z.infer<typeof coreMultipleChoiceContentSchema>;
 export type ChallengeMultipleChoiceContent = z.infer<typeof challengeMultipleChoiceContentSchema>;
-export type LanguageMultipleChoiceContent = z.infer<typeof languageMultipleChoiceContentSchema>;
+
 export type MultipleChoiceStepContent = z.infer<typeof multipleChoiceContentSchema>;
 export type FillBlankStepContent = z.infer<typeof fillBlankContentSchema>;
 export type MatchColumnsStepContent = z.infer<typeof matchColumnsContentSchema>;

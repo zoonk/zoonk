@@ -3,7 +3,6 @@
 import {
   type ChallengeMultipleChoiceContent,
   type CoreMultipleChoiceContent,
-  type LanguageMultipleChoiceContent,
   parseStepContent,
 } from "@zoonk/core/steps/content-contract";
 import { useExtracted } from "next-intl";
@@ -13,8 +12,6 @@ import { useOptionKeyboard } from "../use-option-keyboard";
 import { useReplaceName } from "../user-name-context";
 import { OptionCard } from "./option-card";
 import { ContextText, QuestionText } from "./question-text";
-import { RomanizationText } from "./romanization-text";
-import { SectionLabel } from "./section-label";
 import { InteractiveStepLayout } from "./step-layouts";
 
 function getSelectedIndex(selectedAnswer: SelectedAnswer | undefined): number | null {
@@ -29,22 +26,13 @@ function StepTextGroup({ children }: { children: React.ReactNode }) {
   return <div className="flex flex-col gap-2 sm:gap-6">{children}</div>;
 }
 
-function OptionContent({ romanization, text }: { romanization?: string | null; text: string }) {
-  return (
-    <>
-      <span className="text-base leading-6">{text}</span>
-      <RomanizationText>{romanization}</RomanizationText>
-    </>
-  );
-}
-
 function OptionList({
   onSelect,
   options,
   selectedIndex,
 }: {
   onSelect: (index: number) => void;
-  options: readonly { text: string; textRomanization?: string | null }[];
+  options: readonly { text: string }[];
   selectedIndex: number | null;
 }) {
   const t = useExtracted();
@@ -58,10 +46,7 @@ function OptionList({
           key={option.text}
           onSelect={() => onSelect(index)}
         >
-          <OptionContent
-            romanization={"textRomanization" in option ? option.textRomanization : undefined}
-            text={option.text}
-          />
+          <span className="text-base leading-6">{option.text}</span>
         </OptionCard>
       ))}
     </div>
@@ -114,44 +99,6 @@ function ChallengeVariant({
   );
 }
 
-function SpeechBubble({ children }: { children: React.ReactNode }) {
-  return <div className="bg-muted flex flex-col gap-1 rounded-2xl px-4 py-3">{children}</div>;
-}
-
-function LanguageVariant({
-  content,
-  onSelect,
-  selectedIndex,
-}: {
-  content: LanguageMultipleChoiceContent;
-  onSelect: (index: number) => void;
-  selectedIndex: number | null;
-}) {
-  const t = useExtracted();
-  const replaceName = useReplaceName();
-
-  return (
-    <>
-      <div className="flex flex-col gap-2">
-        <SectionLabel>{t("Someone says:")}</SectionLabel>
-
-        <SpeechBubble>
-          <p className="text-base font-semibold">{replaceName(content.context)}</p>
-
-          <RomanizationText>{content.contextRomanization}</RomanizationText>
-
-          <p className="text-muted-foreground text-sm">{replaceName(content.contextTranslation)}</p>
-        </SpeechBubble>
-      </div>
-
-      <div className="flex flex-col gap-3">
-        <SectionLabel>{t("What do you say?")}</SectionLabel>
-        <OptionList onSelect={onSelect} options={content.options} selectedIndex={selectedIndex} />
-      </div>
-    </>
-  );
-}
-
 export function MultipleChoiceStep({
   onSelectAnswer,
   selectedAnswer,
@@ -183,10 +130,6 @@ export function MultipleChoiceStep({
 
       {content.kind === "core" && (
         <CoreVariant content={content} onSelect={handleSelect} selectedIndex={selectedIndex} />
-      )}
-
-      {content.kind === "language" && (
-        <LanguageVariant content={content} onSelect={handleSelect} selectedIndex={selectedIndex} />
       )}
     </InteractiveStepLayout>
   );

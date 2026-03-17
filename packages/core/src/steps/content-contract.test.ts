@@ -64,38 +64,6 @@ describe("step content contracts", () => {
     });
   });
 
-  test("parses language multipleChoice", () => {
-    const content = parseStepContent("multipleChoice", {
-      context: "You enter a bakery in Madrid.",
-      contextRomanization: "You enter a bakery in Madrid.",
-      contextTranslation: "You enter a bakery in Madrid.",
-      kind: "language",
-      options: [
-        {
-          feedback: "Great response.",
-          isCorrect: true,
-          text: "Buenos días, quisiera un café.",
-          textRomanization: "bwen-os dee-as kee-sye-ra oon ka-fe",
-        },
-      ],
-    });
-
-    expect(content).toEqual({
-      context: "You enter a bakery in Madrid.",
-      contextRomanization: "You enter a bakery in Madrid.",
-      contextTranslation: "You enter a bakery in Madrid.",
-      kind: "language",
-      options: [
-        {
-          feedback: "Great response.",
-          isCorrect: true,
-          text: "Buenos días, quisiera un café.",
-          textRomanization: "bwen-os dee-as kee-sye-ra oon ka-fe",
-        },
-      ],
-    });
-  });
-
   test("rejects multipleChoice without kind", () => {
     expect(() =>
       parseStepContent("multipleChoice", {
@@ -126,46 +94,6 @@ describe("step content contracts", () => {
         kind: "challenge",
         options: [{ feedback: "Great", isCorrect: true, text: "A" }],
         question: "Q?",
-      }),
-    ).toThrow();
-  });
-
-  test("parses language with null romanization fields", () => {
-    const content = parseStepContent("multipleChoice", {
-      context: "Context",
-      contextRomanization: null,
-      contextTranslation: "Translation",
-      kind: "language",
-      options: [{ feedback: "Great", isCorrect: true, text: "A", textRomanization: null }],
-    });
-
-    expect(content).toEqual({
-      context: "Context",
-      contextRomanization: null,
-      contextTranslation: "Translation",
-      kind: "language",
-      options: [{ feedback: "Great", isCorrect: true, text: "A", textRomanization: null }],
-    });
-  });
-
-  test("rejects empty string contextRomanization in language kind", () => {
-    expect(() =>
-      parseStepContent("multipleChoice", {
-        context: "Context",
-        contextRomanization: "",
-        contextTranslation: "Translation",
-        kind: "language",
-        options: [{ feedback: "Great", isCorrect: true, text: "A" }],
-      }),
-    ).toThrow();
-  });
-
-  test("rejects language without required contextTranslation", () => {
-    expect(() =>
-      parseStepContent("multipleChoice", {
-        context: "Context",
-        kind: "language",
-        options: [{ feedback: "Great", isCorrect: true, text: "A" }],
       }),
     ).toThrow();
   });

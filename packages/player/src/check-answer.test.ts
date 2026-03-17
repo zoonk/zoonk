@@ -95,35 +95,6 @@ describe(checkMultipleChoiceAnswer, () => {
       });
     });
   });
-
-  describe("language kind", () => {
-    const content: MultipleChoiceStepContent = {
-      context: "You enter a bakery.",
-      contextRomanization: null,
-      contextTranslation: "You enter a bakery.",
-      kind: "language",
-      options: [
-        { feedback: "Great!", isCorrect: true, text: "Buenos días", textRomanization: null },
-        { feedback: "Not quite.", isCorrect: false, text: "Adiós", textRomanization: null },
-      ],
-    };
-
-    test("returns correct with feedback for correct index", () => {
-      expect(checkMultipleChoiceAnswer(content, 0)).toEqual({
-        correctAnswer: "Buenos días",
-        feedback: "Great!",
-        isCorrect: true,
-      });
-    });
-
-    test("returns incorrect with feedback for wrong index", () => {
-      expect(checkMultipleChoiceAnswer(content, 1)).toEqual({
-        correctAnswer: "Buenos días",
-        feedback: "Not quite.",
-        isCorrect: false,
-      });
-    });
-  });
 });
 
 describe(checkFillBlankAnswer, () => {

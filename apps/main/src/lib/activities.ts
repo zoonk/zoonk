@@ -9,7 +9,6 @@ import {
   LanguagesIcon,
   LayersIcon,
   type LucideIcon,
-  MessageSquareIcon,
   RotateCcwIcon,
   SparklesIcon,
   TargetIcon,
@@ -30,7 +29,6 @@ export async function getActivityKinds(): Promise<{ key: ActivityKind; label: st
     { key: "reading", label: t("Reading") },
     { key: "listening", label: t("Listening") },
     { key: "review", label: t("Review") },
-    { key: "languagePractice", label: t("Practice") },
   ];
 }
 
@@ -51,10 +49,7 @@ async function getSeoDescription(kind: ActivityKind, topic: string): Promise<str
       "Practice {topic} grammar rules with exercises designed to help you remember and apply them.",
       { topic },
     ),
-    languagePractice: t(
-      "Practice {topic} in context through a dialogue-based scenario set in real-world situations.",
-      { topic },
-    ),
+
     listening: t("Sharpen your {topic} listening skills by translating audio sentences.", {
       topic,
     }),
@@ -126,7 +121,7 @@ const ACTIVITY_ICONS: Record<ActivityKind, LucideIcon> = {
   custom: SparklesIcon,
   explanation: BookOpenIcon,
   grammar: BracesIcon,
-  languagePractice: MessageSquareIcon,
+
   listening: HeadphonesIcon,
   practice: TargetIcon,
   quiz: CircleHelpIcon,
