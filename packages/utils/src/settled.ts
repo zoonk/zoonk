@@ -27,7 +27,5 @@ function hasValueError(value: unknown): boolean {
  * Extracts the fulfilled values from a Promise.allSettled array, dropping rejections.
  */
 export function settledValues<T>(results: PromiseSettledResult<T>[]): T[] {
-  return results
-    .filter((result): result is PromiseFulfilledResult<T> => result.status === "fulfilled")
-    .map((result) => result.value);
+  return results.flatMap((result) => (result.status === "fulfilled" ? [result.value] : []));
 }

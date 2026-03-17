@@ -65,12 +65,9 @@ ${formattedSteps}`;
   // Tool calls are typed by Vercel AI SDK but output structure matches StepVisualResource
   // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- AI tool outputs match expected schema
   const visuals = generationSteps.flatMap((step) =>
-    step.toolCalls
-      .filter((call) => !call.dynamic)
-      .map((call) => ({
-        kind: call.toolName,
-        ...call.input,
-      })),
+    step.toolCalls.flatMap((call) =>
+      call.dynamic ? [] : [{ kind: call.toolName, ...call.input }],
+    ),
   ) as StepVisualResource[];
 
   return { data: { visuals }, systemPrompt, usage, userPrompt };

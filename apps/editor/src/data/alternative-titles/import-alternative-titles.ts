@@ -57,8 +57,14 @@ export async function importAlternativeTitles(params: {
     return { data: null, error: new AppError(ErrorCode.courseNotFound) };
   }
 
-  const slugs = importData.alternativeTitles.map((title) => toSlug(title));
-  const uniqueSlugs = [...new Set(slugs)].filter(Boolean);
+  const uniqueSlugs = [
+    ...new Set(
+      importData.alternativeTitles.flatMap((title) => {
+        const slug = toSlug(title);
+        return slug ? [slug] : [];
+      }),
+    ),
+  ];
 
   if (uniqueSlugs.length === 0) {
     return { data: [], error: null };

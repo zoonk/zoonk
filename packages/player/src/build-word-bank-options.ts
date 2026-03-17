@@ -90,9 +90,10 @@ export function buildWordBankOptions(
 
   const uniqueDistractors = [
     ...new Map(
-      allDistractorWords
-        .filter((word) => !correctSet.has(stripPunctuation(word).toLowerCase()))
-        .map((word) => [stripPunctuation(word).toLowerCase(), word] as const),
+      allDistractorWords.flatMap((word) => {
+        const key = stripPunctuation(word).toLowerCase();
+        return correctSet.has(key) ? [] : [[key, word] as const];
+      }),
     ).values(),
   ];
 
