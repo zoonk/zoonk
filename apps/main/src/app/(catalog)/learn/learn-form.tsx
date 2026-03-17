@@ -1,52 +1,37 @@
 "use client";
 
-import {
-  InputGroup,
-  InputGroupAddon,
-  InputGroupButton,
-  InputGroupInput,
-} from "@zoonk/ui/components/input-group";
+import { InputGroup, InputGroupInput } from "@zoonk/ui/components/input-group";
 import { Label } from "@zoonk/ui/components/label";
-import { Spinner } from "@zoonk/ui/components/spinner";
 import { cn } from "@zoonk/ui/lib/utils";
-import { ArrowUp } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { useId } from "react";
-import { useFormStatus } from "react-dom";
-import { learnFormAction } from "./actions";
+import { useRouter } from "next/navigation";
+import { useId, useTransition } from "react";
 
 const PROMPT_MAX_LENGTH = 128;
 const CYCLE_DURATION_MS = 3200;
 
-function SubmitForm() {
-  const { pending } = useFormStatus();
-  const t = useExtracted();
-
-  return (
-    <InputGroupAddon
-      align="inline-end"
-      className="scale-90 opacity-0 transition-all duration-200 ease-in-out peer-not-placeholder-shown:scale-100 peer-not-placeholder-shown:opacity-100"
-    >
-      <InputGroupButton
-        aria-label={t("Start")}
-        className="rounded-full"
-        disabled={pending}
-        size="icon-sm"
-        type="submit"
-        variant="default"
-      >
-        {pending ? <Spinner /> : <ArrowUp aria-hidden="true" />}
-      </InputGroupButton>
-    </InputGroupAddon>
-  );
-}
-
 export function LearnForm({ placeholders }: { placeholders: string[] }) {
   const t = useExtracted();
   const queryId = useId();
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+
+  function handleSubmit(event: React.SubmitEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const value = new FormData(event.currentTarget).get("query");
+    const query = typeof value === "string" ? value : "";
+
+    if (!query.trim()) {
+      return;
+    }
+
+    startTransition(() => {
+      router.push(`/learn/${encodeURIComponent(query.trim())}`);
+    });
+  }
 
   return (
-    <form action={learnFormAction} aria-labelledby="learn-title" className="w-full">
+    <form aria-labelledby="learn-title" className="w-full" onSubmit={handleSubmit}>
       <Label className="sr-only" htmlFor={queryId}>
         {t("Enter a subject")}
       </Label>
@@ -64,6 +49,7 @@ export function LearnForm({ placeholders }: { placeholders: string[] }) {
           <InputGroupInput
             autoFocus
             className="peer"
+            disabled={isPending}
             id={queryId}
             maxLength={PROMPT_MAX_LENGTH}
             name="query"
@@ -86,8 +72,6 @@ export function LearnForm({ placeholders }: { placeholders: string[] }) {
             ))}
           </div>
         </div>
-
-        <SubmitForm />
       </InputGroup>
     </form>
   );

@@ -920,12 +920,6 @@ msgid "Learn {prompt} with AI"
 msgstr "Aprende {prompt} con IA"
 
 #: src/app/(catalog)/learn/learn-form.tsx
-#: src/components/catalog/continue-activity-link.tsx
-msgctxt "mOFG3K"
-msgid "Start"
-msgstr "Comenzar"
-
-#: src/app/(catalog)/learn/learn-form.tsx
 msgctxt "uCb1nG"
 msgid "Enter a subject"
 msgstr "Ingresa un tema"
@@ -2178,6 +2172,11 @@ msgstr "Enviar comentarios"
 msgctxt "IzCVhG"
 msgid "More options"
 msgstr "Más opciones"
+
+#: src/components/catalog/continue-activity-link.tsx
+msgctxt "mOFG3K"
+msgid "Start"
+msgstr "Comenzar"
 
 #: src/components/catalog/continue-activity-link.tsx
 #: src/lib/activities.ts
