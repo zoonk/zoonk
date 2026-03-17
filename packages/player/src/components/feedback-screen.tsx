@@ -2,11 +2,12 @@
 
 import { parseStepContent } from "@zoonk/core/steps/content-contract";
 import { cn } from "@zoonk/ui/lib/utils";
-import { CircleAlert, CircleCheck, CircleX, TriangleAlert } from "lucide-react";
+import { CircleAlert, TriangleAlert } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type DimensionInventory, type StepResult } from "../player-reducer";
 import { type SerializedStep } from "../prepare-activity-data";
 import { useReplaceName } from "../user-name-context";
+import { AnswerLine } from "./answer-line";
 import {
   type DimensionEntry,
   DimensionList,
@@ -14,23 +15,9 @@ import {
   buildDimensionEntries,
   getWarningDelay,
 } from "./dimension-inventory";
+import { FeedbackMessage, FeedbackScreen } from "./feedback-layout";
 import { LanguagePracticeFeedback } from "./language-practice-feedback";
 import { ResultAnnouncement } from "./result-announcement";
-
-function FeedbackScreen({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      aria-live="polite"
-      className={cn(
-        "animate-in fade-in slide-in-from-bottom-1 mx-auto flex w-full max-w-lg flex-col gap-6 duration-200 ease-out motion-reduce:animate-none",
-        className,
-      )}
-      data-slot="feedback-screen"
-      role="status"
-      {...props}
-    />
-  );
-}
 
 function FeedbackIndicator({ className, ...props }: React.ComponentProps<"div">) {
   return (
@@ -39,50 +26,6 @@ function FeedbackIndicator({ className, ...props }: React.ComponentProps<"div">)
       data-slot="feedback-indicator"
       {...props}
     />
-  );
-}
-
-function FeedbackMessage({ className, ...props }: React.ComponentProps<"p">) {
-  return (
-    <p
-      className={cn("text-foreground max-w-md text-lg leading-relaxed", className)}
-      data-slot="feedback-message"
-      {...props}
-    />
-  );
-}
-
-function AnswerLine({
-  children,
-  icon,
-  label,
-  variant,
-}: {
-  children: React.ReactNode;
-  icon: React.ReactNode;
-  label: string;
-  variant: "correct" | "incorrect";
-}) {
-  return (
-    <div
-      className={cn(
-        "flex items-start gap-2 rounded-lg px-3 py-2 text-sm",
-        variant === "correct" ? "bg-success/10" : "bg-destructive/10",
-      )}
-    >
-      <span
-        className={cn(
-          "mt-0.5 shrink-0",
-          variant === "correct" ? "text-success" : "text-destructive",
-        )}
-      >
-        {icon}
-      </span>
-      <div>
-        <span className="text-muted-foreground">{label}</span>{" "}
-        <span className="font-medium">{children}</span>
-      </div>
-    </div>
   );
 }
 
@@ -193,33 +136,15 @@ function CoreFeedback({ result }: { result: StepResult }) {
 
         {isCorrect ? (
           selectedText && (
-            <AnswerLine
-              icon={<CircleCheck aria-hidden="true" className="size-4" />}
-              label={t("Your answer:")}
-              variant="correct"
-            >
-              {selectedText}
-            </AnswerLine>
+            <AnswerLine label={t("Your answer:")} text={selectedText} variant="correct" />
           )
         ) : (
           <>
             {selectedText && (
-              <AnswerLine
-                icon={<CircleX aria-hidden="true" className="size-4" />}
-                label={t("Your answer:")}
-                variant="incorrect"
-              >
-                {selectedText}
-              </AnswerLine>
+              <AnswerLine label={t("Your answer:")} text={selectedText} variant="incorrect" />
             )}
             {correctAnswer && (
-              <AnswerLine
-                icon={<CircleCheck aria-hidden="true" className="size-4" />}
-                label={t("Correct answer:")}
-                variant="correct"
-              >
-                {correctAnswer}
-              </AnswerLine>
+              <AnswerLine label={t("Correct answer:")} text={correctAnswer} variant="correct" />
             )}
           </>
         )}
