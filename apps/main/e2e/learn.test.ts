@@ -19,16 +19,13 @@ test.beforeAll(async () => {
 });
 
 test.describe("Learn Form", () => {
-  test("shows form with auto-focused input and reveals button on typing", async ({ page }) => {
+  test("shows form with auto-focused input", async ({ page }) => {
     await page.goto("/learn");
 
     await expect(page.getByRole("heading", { name: /learn anything/i })).toBeVisible();
 
     const input = page.getByRole("textbox");
     await expect(input).toBeFocused();
-
-    await input.fill("test");
-    await expect(page.getByRole("button", { name: /start/i })).toBeVisible();
   });
 
   test("clicking a suggestion link navigates to the subject page", async ({ page }) => {
@@ -45,7 +42,7 @@ test.describe("Learn Form", () => {
     await page.goto("/learn");
 
     await page.getByRole("textbox").fill(prompt);
-    await page.getByRole("button", { name: /start/i }).click();
+    await page.keyboard.press("Enter");
 
     await expect(page.getByRole("heading", { name: /course ideas for/i })).toBeVisible();
   });
