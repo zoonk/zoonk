@@ -4,23 +4,23 @@
     {
       "steps": [
         {
-          "conclusion": "None. The model correctly identified 'Calculus' as belonging to the 'math' category.",
+          "conclusion": "None",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "None. The output follows the allowed set and format constraints perfectly.",
+          "conclusion": "None",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "None. The categorization is precise. Adding other categories like 'science' or 'engineering' would be inappropriate for a generic 'Calculus' title without further context implying a specific application focus.",
+          "conclusion": "None",
           "kind": "potentialImprovements",
           "score": 10
         }
       ],
       "testCase": {
-        "expectations": "\n      - MUST include 'math'.\n      - SHOULD NOT include 'languages'.\n\n      \n  - Choose from the fixed set only\n  - Pick the primary functional domain first; add a secondary ONLY if it is central to the course goals\n  - Anchor on learning outcomes, not surface keywords\n  - Languages strict/important rule: Use 'languages' only when the course is about learning a language (e.g., Spanish, English, JLPT prep). Do NOT use 'languages' for literature, linguistics, or cultural studies\n\n    ",
+        "expectations": "\n      - MUST include 'math'.\n\n      \n  - Choose from the fixed set only\n  - Pick the primary functional domain first; add a secondary ONLY if it is central to the course goals\n  - Anchor on learning outcomes, not surface keywords\n\n    ",
         "id": "en-calculus-1",
         "userInput": {
           "courseTitle": "Calculus"
@@ -30,49 +30,23 @@
     {
       "steps": [
         {
-          "conclusion": "None. The model correctly identified 'Inglês' (English) as a language learning course and followed the strict rule to assign ONLY the 'languages' category.",
+          "conclusion": "None",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "None. The output format is correct and adheres to all constraints.",
+          "conclusion": "None",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "None. The response is perfect given the instructions.",
+          "conclusion": "None",
           "kind": "potentialImprovements",
           "score": 10
         }
       ],
       "testCase": {
-        "expectations": "\n      - MUST include 'languages'.\n      - SHOULD NOT include other categories\n\n      \n  - Choose from the fixed set only\n  - Pick the primary functional domain first; add a secondary ONLY if it is central to the course goals\n  - Anchor on learning outcomes, not surface keywords\n  - Languages strict/important rule: Use 'languages' only when the course is about learning a language (e.g., Spanish, English, JLPT prep). Do NOT use 'languages' for literature, linguistics, or cultural studies\n\n    ",
-        "id": "pt-ingles-1",
-        "userInput": {
-          "courseTitle": "Inglês"
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "The model correctly identified the primary category for 'Historia de Roma' (History of Rome) as 'history'. It successfully avoided the 'languages' category, adhering to the strict rule that 'languages' is only for language learning courses, not courses taught in a specific language.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "No minor errors found. The selected category is from the allowed fixed set.",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "The response is concise and accurate. No improvements needed.",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expectations": "\n      - MUST include 'history'.\n      - SHOULD NOT include 'languages'.\n\n      \n  - Choose from the fixed set only\n  - Pick the primary functional domain first; add a secondary ONLY if it is central to the course goals\n  - Anchor on learning outcomes, not surface keywords\n  - Languages strict/important rule: Use 'languages' only when the course is about learning a language (e.g., Spanish, English, JLPT prep). Do NOT use 'languages' for literature, linguistics, or cultural studies\n\n    ",
+        "expectations": "\n      - MUST include 'history'.\n\n      \n  - Choose from the fixed set only\n  - Pick the primary functional domain first; add a secondary ONLY if it is central to the course goals\n  - Anchor on learning outcomes, not surface keywords\n\n    ",
         "id": "es-historia-de-roma-1",
         "userInput": {
           "courseTitle": "Historia de Roma"
@@ -82,23 +56,23 @@
     {
       "steps": [
         {
-          "conclusion": "No major errors found. The model correctly identified that the course belongs to 'arts' and 'culture' and adhered to the strict rule excluding 'languages' for literature courses.",
+          "conclusion": "None",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "No minor errors found. The selected categories are from the allowed fixed set and accurately represent the domain of Spanish Literature.",
+          "conclusion": "None",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "None. The classification is optimal based on the provided rules.",
+          "conclusion": "The output follows the fixed category set, includes the expected relevant categories ('arts' and 'culture'), and orders them with a plausible primary then secondary domain. A small possible improvement would be to justify why both are central versus selecting only one, but the result itself is fully acceptable.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 9.5
         }
       ],
       "testCase": {
-        "expectations": "\n      - MUST NOT include 'languages' (strict rule: literature is not language learning).\n      - SHOULD include 'arts' and/or 'culture'.\n\n      \n  - Choose from the fixed set only\n  - Pick the primary functional domain first; add a secondary ONLY if it is central to the course goals\n  - Anchor on learning outcomes, not surface keywords\n  - Languages strict/important rule: Use 'languages' only when the course is about learning a language (e.g., Spanish, English, JLPT prep). Do NOT use 'languages' for literature, linguistics, or cultural studies\n\n    ",
+        "expectations": "\n      - SHOULD include 'arts' and/or 'culture'.\n\n      \n  - Choose from the fixed set only\n  - Pick the primary functional domain first; add a secondary ONLY if it is central to the course goals\n  - Anchor on learning outcomes, not surface keywords\n\n    ",
         "id": "en-spanish-literature-strict-rule-1",
         "userInput": {
           "courseTitle": "Spanish Literature"
@@ -108,23 +82,23 @@
     {
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "The response assigns categories from the allowed fixed set and provides a plausible primary domain ('communication') for a course titled 'Linguistics'. However, it misses the explicit expectation that the result should include 'culture' and/or 'society'. Given the prompt's emphasis on anchoring on learning goals and the expectation note, omitting either of those expected categories is a significant mismatch with likely intended labeling.",
           "kind": "majorErrors",
-          "score": 10
+          "score": 7
         },
         {
-          "conclusion": "None. The model correctly adhered to the strict rule excluding 'languages' for linguistics courses. It also met the expectation to include 'society' or 'culture'. The inclusion of 'science' is defensible as linguistics is the scientific study of language.",
+          "conclusion": "The choice of 'science' as a secondary category is arguable, but for a generic course title 'Linguistics' it is less aligned with the provided expectation than 'society' or possibly 'culture'. Also, with only the title available, the ordering and selection are insufficiently justified against the rule to add a secondary only if central.",
           "kind": "minorErrors",
-          "score": 10
+          "score": 8
         },
         {
-          "conclusion": "None",
+          "conclusion": "A better answer would likely include 'society' as a category, potentially as the secondary label (e.g., 'communication', 'society') or even consider 'science' only if the course is clearly framed as scientific linguistics. The response could better reflect the expectation while still staying within the allowed set and prioritizing the primary functional domain.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 8.5
         }
       ],
       "testCase": {
-        "expectations": "\n      - MUST NOT include 'languages' (strict rule: linguistics is not language learning).\n      - SHOULD include 'culture' and/or 'society'.\n\n      \n  - Choose from the fixed set only\n  - Pick the primary functional domain first; add a secondary ONLY if it is central to the course goals\n  - Anchor on learning outcomes, not surface keywords\n  - Languages strict/important rule: Use 'languages' only when the course is about learning a language (e.g., Spanish, English, JLPT prep). Do NOT use 'languages' for literature, linguistics, or cultural studies\n\n    ",
+        "expectations": "\n      - SHOULD include 'culture' and/or 'society'.\n\n      \n  - Choose from the fixed set only\n  - Pick the primary functional domain first; add a secondary ONLY if it is central to the course goals\n  - Anchor on learning outcomes, not surface keywords\n\n    ",
         "id": "en-linguistics-1",
         "userInput": {
           "courseTitle": "Linguistics"

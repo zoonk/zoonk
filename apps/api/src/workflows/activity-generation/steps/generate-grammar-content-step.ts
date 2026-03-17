@@ -39,7 +39,7 @@ function hasMinimumGrammarContent(data: ActivityGrammarSchema): boolean {
   return minimumGrammarContentSchema.safeParse(data).success;
 }
 
-function optionalNonEmpty(value: string | undefined): string | undefined {
+function nullableNonEmpty(value: string | null): string | undefined {
   if (!value || value.trim().length === 0) {
     return undefined;
   }
@@ -64,8 +64,8 @@ function buildGrammarSteps(activityId: bigint | number, data: ActivityGrammarSch
     };
   });
 
-  const discoveryQuestion = optionalNonEmpty(data.discovery.question);
-  const discoveryContext = optionalNonEmpty(data.discovery.context);
+  const discoveryQuestion = nullableNonEmpty(data.discovery.question);
+  const discoveryContext = nullableNonEmpty(data.discovery.context);
 
   const discoveryStep = {
     activityId,
@@ -89,7 +89,7 @@ function buildGrammarSteps(activityId: bigint | number, data: ActivityGrammarSch
   };
 
   const practiceSteps = data.exercises.map((exercise) => {
-    const exerciseQuestion = optionalNonEmpty(exercise.question);
+    const exerciseQuestion = nullableNonEmpty(exercise.question);
 
     return {
       activityId,

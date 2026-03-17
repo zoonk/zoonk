@@ -7,11 +7,11 @@ import { getLanguagePromptContext } from "./_utils/language-prompt-context";
 import systemPrompt from "./activity-grammar.prompt.md";
 
 const DEFAULT_MODEL = process.env.AI_MODEL_ACTIVITY_GRAMMAR ?? "google/gemini-3-flash";
-const FALLBACK_MODELS = ["openai/gpt-5.4", "anthropic/claude-sonnet-4.6"];
+const FALLBACK_MODELS = ["anthropic/claude-sonnet-4.6", "openai/gpt-5.4"];
 
 const schema = z.object({
   discovery: z.object({
-    context: z.string().optional(),
+    context: z.string().nullable(),
     options: z.array(
       z.object({
         feedback: z.string(),
@@ -19,7 +19,7 @@ const schema = z.object({
         text: z.string(),
       }),
     ),
-    question: z.string().optional(),
+    question: z.string().nullable(),
   }),
   examples: z.array(
     z.object({
@@ -34,7 +34,7 @@ const schema = z.object({
       answers: z.array(z.string()),
       distractors: z.array(z.string()),
       feedback: z.string(),
-      question: z.string().optional(),
+      question: z.string().nullable(),
       template: z.string(),
     }),
   ),

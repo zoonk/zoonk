@@ -4,19 +4,19 @@
     {
       "steps": [
         {
-          "conclusion": "None. The model correctly identified the broad intent ('I want to code') and provided appropriate broad canonical titles ('Ciência da Computação', 'Engenharia de Software', 'Desenvolvimento Web'). All titles and descriptions are in Brazilian Portuguese as requested, and `targetLanguageCode` is correctly set to null. No forbidden level or joiner words were used in the titles.",
+          "conclusion": "None",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "None. The descriptions are exactly one sentence long, highlight why the course is useful without using forbidden prefixes, and correctly use the target language. The titles follow all formatting constraints perfectly.",
+          "conclusion": "None",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "None. The generated courses are highly relevant to the vague input and flawlessly follow all instructions and expectations.",
+          "conclusion": "The response is strong and aligns well with the prompt: titles are in Brazilian Portuguese, avoid banned level markers and joiner constructions, include broad relevant coding topics, and all targetLanguageCode values are null. Small improvements are possible: the set could include an even more directly broad title like \"Programação\" to mirror the expectation more explicitly, and \"Programação Python\" is slightly narrower than the other broad-topic suggestions, though still relevant and valid.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 9.3
         }
       ],
       "testCase": {
@@ -31,19 +31,19 @@
     {
       "steps": [
         {
-          "conclusion": "No major errors found. The response correctly generates the title 'Black Holes' as the first result, includes broader topics like 'Astrophysics', sets the targetLanguageCode to null, and uses English for both titles and descriptions. The titles are clear and follow the rules (no levels, no joiners like 'and', no 'course' word).",
+          "conclusion": "None",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "No minor errors found. The titles perfectly adhere to the guidelines and provide an excellent variety of relevant subjects without violating any constraints.",
+          "conclusion": "None",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "The response perfectly satisfies the user's instructions and expectations. No improvements are necessary.",
+          "conclusion": "Could be slightly improved by making the first description more directly learner-oriented, but this does not affect the title-focused requirements and all descriptions are in the correct language.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 9.6
         }
       ],
       "testCase": {
@@ -68,9 +68,9 @@
           "score": 10
         },
         {
-          "conclusion": "None",
+          "conclusion": "The response is strong and follows the title-focused requirements well: it includes the exact requested topic \"Derecho Penal\" as the first suggestion, all titles are in Spanish, there are no prohibited level markers or course words in titles, and targetLanguageCode is null for all non-language courses. Possible improvements are limited: some related titles are slightly narrower or more specialized, but they remain relevant and valid for the input.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 9.5
         }
       ],
       "testCase": {
@@ -85,19 +85,19 @@
     {
       "steps": [
         {
-          "conclusion": "No major errors found. The response includes the exact requested topic 'Derecho Chileno' as the first suggestion and correctly provides related topics specific to Chilean law. The targetLanguageCode is properly set to null for all non-language courses, and all titles omit level markers and joiner words.",
+          "conclusion": "None",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "No minor errors found. The language used in titles and descriptions is Spanish, following the instructions correctly. Descriptions are exactly one sentence and explain the usefulness without unnecessary prefixes.",
+          "conclusion": "Descriptions are in neutral/standard Spanish rather than clearly Chilean Spanish, but this is explicitly deprioritized by the expectations unless the language is wrong; titles themselves are fully compliant. No other concrete minor issues found in the titles or targetLanguageCode fields.",
           "kind": "minorErrors",
-          "score": 10
+          "score": 9.5
         },
         {
-          "conclusion": "No improvements needed. The response strictly adheres to all constraints and expectations.",
+          "conclusion": "Could further tailor related suggestions to additional Chile-specific legal areas such as Derecho Tributario Chileno or Derecho de Minería Chileno, but the current set is already relevant and jurisdiction-specific. Because the prompt asks to focus on titles, this is only a small improvement opportunity.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 9.4
         }
       ],
       "testCase": {
@@ -122,9 +122,9 @@
           "score": 10
         },
         {
-          "conclusion": "None",
+          "conclusion": "The response fully matches the key requirements: it returns exactly one suggestion, the title is the correct language-learning course name in Brazilian Portuguese ('Inglês'), and the targetLanguageCode is correctly set to 'en'. The description is also in Portuguese, so there is no language mismatch. No meaningful improvements are needed for the evaluated criteria.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 9.8
         }
       ],
       "testCase": {
@@ -149,9 +149,9 @@
           "score": 10
         },
         {
-          "conclusion": "None",
+          "conclusion": "The response could be slightly improved by making the third suggestion more clearly canonical for broad user intent, but this is not required and does not violate the instructions. Titles correctly include both Física and Química separately, avoid forbidden joiners/levels, stay in Brazilian Portuguese, and all targetLanguageCode values are null.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 9.5
         }
       ],
       "testCase": {
@@ -176,9 +176,9 @@
           "score": 10
         },
         {
-          "conclusion": "None",
+          "conclusion": "The response satisfies the key title requirements: it includes \"Chemistry\" as the first suggestion, avoids forbidden level words such as \"Intro\" or \"Introduction\" in titles, keeps all titles in US English, and correctly sets targetLanguageCode to null for all non-language courses. A small improvement would be to make the first description less mastery-oriented given the user's phrasing, but descriptions were explicitly deprioritized for scoring here.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 9.5
         }
       ],
       "testCase": {
@@ -193,19 +193,19 @@
     {
       "steps": [
         {
-          "conclusion": "No major errors found. The AI successfully fixed the typo 'dragon bals' to 'Dragon Ball' and included it as the first suggestion. It also provided highly relevant alternative suggestions such as 'Mangá', 'Shonen', 'Animação Japonesa', and 'Akira Toriyama'. All titles adhere to the strict title rules without any level markers or forbidden joiners, and 'targetLanguageCode' is correctly set to null for all courses.",
+          "conclusion": "None",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "No minor errors found. All titles and descriptions are correctly written in Brazilian Portuguese, and the descriptions successfully explain the utility of the courses in a single sentence without unnecessary prefixes.",
+          "conclusion": "None",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "No potential improvements needed. The response perfectly follows all instructions, formatting rules, and expectations.",
+          "conclusion": "The output fully satisfies the title-focused requirements: it corrects the typo to 'Dragon Ball' as the first suggestion, keeps all titles in Brazilian Portuguese context where applicable, avoids forbidden level markers and joiner constructions, and correctly sets targetLanguageCode to null for all non-language courses. Only minimal improvement is possible, such as making every related title even more directly tied to the specific IP, but this is optional under the expectations.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 9.5
         }
       ],
       "testCase": {
@@ -230,9 +230,9 @@
           "score": 10
         },
         {
-          "conclusion": "None",
+          "conclusion": "The response strongly follows the title-focused requirements: it includes 'The Beatles' as the first suggestion, all titles are in US English, avoids forbidden level markers and the word 'course', and sets targetLanguageCode to null for all non-language suggestions. Possible improvements are limited: some related titles like 'Music History' could also have been included, but the provided alternatives are already relevant and acceptable.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 9.5
         }
       ],
       "testCase": {
@@ -247,19 +247,19 @@
     {
       "steps": [
         {
-          "conclusion": "None. The model correctly identifies the user input 'f1' as 'Formule 1' and sets it as the first course title. All titles follow the rules, contain no banned words or joiners, and correctly set targetLanguageCode to null. The language used is French as requested.",
+          "conclusion": "None",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "None. The generated titles are formatted perfectly, look like real courses, and contain no minor formatting errors.",
+          "conclusion": "One minor issue: several related titles are quite generic and not explicitly tied to Formula 1 despite the user input including a very specific topic/jurisdiction-like domain; however, the first suggestion correctly includes the exact topic \"Formule 1\", all titles are in French, avoid forbidden level markers/joiners, and all targetLanguageCode values are correctly null.",
           "kind": "minorErrors",
-          "score": 10
+          "score": 8.8
         },
         {
-          "conclusion": "None. The response provides excellent and highly relevant course suggestions related to Formula 1, such as racing aerodynamics, strategy, and motorsport management.",
+          "conclusion": "Could improve by making more of the additional titles more explicitly connected to Formula 1, such as \"Aérodynamique en Formule 1\" or \"Stratégie en Formule 1\", to better align every suggestion with the highly specific input while still keeping realistic course names.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 8.7
         }
       ],
       "testCase": {
@@ -311,9 +311,9 @@
           "score": 10
         },
         {
-          "conclusion": "None",
+          "conclusion": "Description mentions IELTS exam preparation rather than purely the language, which is slightly off the strict edge-case rule, but expectations explicitly say to focus only on the title unless the description is in the wrong language; the description is in Brazilian Portuguese, so this does not materially reduce utility. No meaningful title-level improvements are needed.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 9.5
         }
       ],
       "testCase": {
@@ -328,19 +328,19 @@
     {
       "steps": [
         {
-          "conclusion": "None. The model correctly generated relevant course suggestions for the vague input 'how do computers work', including expected titles like 'Computer Science' and 'Computer Architecture'. All titles follow the negative constraints (no levels, no joiners like 'and', 'or', etc.). The target language code is correctly set to null for all suggestions, and descriptions are in US English as required.",
+          "conclusion": "None",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "None. Descriptions are exactly one sentence long and effectively state why the courses are useful without using prohibited prefixes.",
+          "conclusion": "None",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "None. The output is perfect and strictly adheres to all user instructions and expectations.",
+          "conclusion": "The response strongly matches the request and expectations: titles are in US English, relevant to 'how do computers work,' include broad canonical options like 'Computer Science' and 'Computer Architecture,' avoid forbidden level markers and joiner constructions, and all targetLanguageCode values are correctly null. Possible improvement: it could have included another broad adjacent title such as 'Computer Engineering' or 'Hardware Systems,' but the instructions say extra related topics are optional, so this is only a very small opportunity for expansion rather than a defect.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 9.5
         }
       ],
       "testCase": {
@@ -355,19 +355,19 @@
     {
       "steps": [
         {
-          "conclusion": "No major errors found. The response includes the specific topic 'Tabela Periódica' as the first suggestion, without articles or level indicators. All `targetLanguageCode` fields are correctly set to `null` since these are not language learning courses.",
+          "conclusion": "None",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "No minor errors found. The titles and descriptions are all accurately written in Brazilian Portuguese, and the titles avoid any restricted joiner words like 'and', 'or', etc. The generated courses are highly relevant to the periodic table.",
+          "conclusion": "None",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "No potential improvements needed. The output perfectly adheres to all rules, suggestions are logical and properly formatted.",
+          "conclusion": "Could be improved slightly by ensuring every title looks maximally like a standalone course catalog entry tied to the prompt; however, the current titles already satisfy the stated expectations well.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 9.5
         }
       ],
       "testCase": {
@@ -382,19 +382,19 @@
     {
       "steps": [
         {
-          "conclusion": "None. The AI followed all instructions flawlessly. The first result is the official movie title ('The Matrix'), and the other titles are relevant to the film's themes and genres. There are no forbidden words (like 'basics', 'intro', or 'course') or joiners in the titles, and 'targetLanguageCode' is correctly set to null.",
+          "conclusion": "None. The first suggestion correctly uses the exact movie title \"The Matrix\" as required, all titles are in English, none include forbidden level markers or the word \"course,\" and targetLanguageCode is null for every non-language suggestion. The additional suggestions are relevant to the movie and broader sci-fi/film context.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "None. The descriptions are exactly one sentence long, highlight why the course is useful, do not use the prohibited prefix, and are written in US English as requested.",
+          "conclusion": "None. Title quality is strong throughout, with realistic course-like titles and no obvious violations of the title rules. There are no language mismatches, and the output appropriately provides multiple relevant suggestions for a non-language query.",
           "kind": "minorErrors",
           "score": 10
         },
         {
-          "conclusion": "None. The response perfectly captures the user's intent with a highly relevant, creative, and accurately formatted list of suggestions.",
+          "conclusion": "A small improvement would be to keep related titles even more tightly centered on the film itself before branching into broader adjacent topics, but this is optional and does not meaningfully reduce utility. Descriptions appear acceptable and in the correct language, though description quality is not a scoring focus here.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 9.5
         }
       ],
       "testCase": {
@@ -419,9 +419,9 @@
           "score": 10
         },
         {
-          "conclusion": "None",
+          "conclusion": "Could be improved slightly by including one or two additional broad adjacent suggestions such as Deep Learning or Data Science, but this is optional because the current set already includes the required canonical title and several relevant AI-related topics in correct US English with null targetLanguageCode.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 9.6
         }
       ],
       "testCase": {
@@ -446,9 +446,9 @@
           "score": 10
         },
         {
-          "conclusion": "None. The response perfectly followed all instructions. The official book title 'The Wealth of Nations' was successfully capitalized and placed as the first suggestion. Excellent related topics were generated without using forbidden words or joined topics. The descriptions are perfectly formatted and 'targetLanguageCode' is null for all suggestions.",
+          "conclusion": "A small improvement would be to ensure every title is maximally tied to the specific book request; while the first suggestion correctly uses the exact official title 'The Wealth of Nations' and the rest are relevant broader topics, one could argue for including an even closer related title such as 'Adam Smith' or 'Free Market Economics' instead of a broader 'Macroeconomics'. This does not violate the instructions and only slightly affects topical precision.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 9.4
         }
       ],
       "testCase": {

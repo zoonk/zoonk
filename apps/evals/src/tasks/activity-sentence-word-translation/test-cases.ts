@@ -61,7 +61,7 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "es-en-el",
     userInput: {
-      targetLanguage: "Spanish",
+      targetLanguage: "es",
       userLanguage: "en",
       word: "el",
     },
@@ -89,7 +89,7 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "es-en-gato",
     userInput: {
-      targetLanguage: "Spanish",
+      targetLanguage: "es",
       userLanguage: "en",
       word: "gato",
     },
@@ -117,7 +117,7 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "es-en-come",
     userInput: {
-      targetLanguage: "Spanish",
+      targetLanguage: "es",
       userLanguage: "en",
       word: "come",
     },
@@ -147,7 +147,7 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "ja-en-neko",
     userInput: {
-      targetLanguage: "Japanese",
+      targetLanguage: "ja",
       userLanguage: "en",
       word: "猫",
     },
@@ -177,7 +177,7 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "ja-en-taberu",
     userInput: {
-      targetLanguage: "Japanese",
+      targetLanguage: "ja",
       userLanguage: "en",
       word: "食べる",
     },
@@ -208,7 +208,7 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "ja-en-wa",
     userInput: {
-      targetLanguage: "Japanese",
+      targetLanguage: "ja",
       userLanguage: "en",
       word: "は",
     },
@@ -236,7 +236,7 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "de-en-der",
     userInput: {
-      targetLanguage: "German",
+      targetLanguage: "de",
       userLanguage: "en",
       word: "der",
     },
@@ -264,7 +264,7 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "de-en-hund",
     userInput: {
-      targetLanguage: "German",
+      targetLanguage: "de",
       userLanguage: "en",
       word: "Hund",
     },
@@ -293,7 +293,7 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "de-en-laeuft",
     userInput: {
-      targetLanguage: "German",
+      targetLanguage: "de",
       userLanguage: "en",
       word: "läuft",
     },
@@ -323,7 +323,7 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "ko-pt-goyangi",
     userInput: {
-      targetLanguage: "Korean",
+      targetLanguage: "ko",
       userLanguage: "pt",
       word: "고양이",
     },
@@ -354,7 +354,7 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "ko-pt-neun",
     userInput: {
-      targetLanguage: "Korean",
+      targetLanguage: "ko",
       userLanguage: "pt",
       word: "는",
     },
@@ -384,7 +384,7 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "ko-pt-meokda",
     userInput: {
-      targetLanguage: "Korean",
+      targetLanguage: "ko",
       userLanguage: "pt",
       word: "먹다",
     },
@@ -414,7 +414,7 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "ar-es-qitta",
     userInput: {
-      targetLanguage: "Arabic",
+      targetLanguage: "ar",
       userLanguage: "es",
       word: "قطة",
     },
@@ -443,7 +443,7 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "ar-es-fi",
     userInput: {
-      targetLanguage: "Arabic",
+      targetLanguage: "ar",
       userLanguage: "es",
       word: "في",
     },
@@ -473,7 +473,7 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "ar-es-albayt",
     userInput: {
-      targetLanguage: "Arabic",
+      targetLanguage: "ar",
       userLanguage: "es",
       word: "البيت",
     },

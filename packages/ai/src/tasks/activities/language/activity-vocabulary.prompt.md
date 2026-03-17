@@ -133,7 +133,7 @@ Use the standard romanization system for each language:
 Return an object with a `words` array. Each word object must include:
 
 - `word`: The word in the target language (with article for gendered nouns)
-- `translation`: The translation in the native language
+- `translation`: The translation in `USER_LANGUAGE` (with article if applicable)
 - `romanization`: Roman letter representation for non-Roman scripts, or `null` for Roman scripts
 - `alternativeTranslations`: Array of other valid translations in the learner's language, or `[]` if none
 
@@ -165,13 +165,13 @@ Return an object with a `words` array. Each word object must include:
   "words": [
     {
       "word": "猫",
-      "translation": "the cat",
+      "translation": "o gato",
       "alternativeTranslations": [],
       "romanization": "neko"
     },
     {
       "word": "犬",
-      "translation": "the dog",
+      "translation": "o cachorro",
       "alternativeTranslations": [],
       "romanization": "inu"
     }

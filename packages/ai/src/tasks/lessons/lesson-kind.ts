@@ -4,12 +4,12 @@ import { z } from "zod";
 import { type ReasoningEffort, buildProviderOptions } from "../../provider-options";
 import systemPrompt from "./lesson-kind.prompt.md";
 
-const DEFAULT_MODEL = process.env.AI_MODEL_LESSON_KIND ?? "google/gemini-2.5-flash-lite";
+const DEFAULT_MODEL = process.env.AI_MODEL_LESSON_KIND ?? "openai/gpt-5.4-nano";
 
 const FALLBACK_MODELS = [
+  "google/gemini-3.1-flash-lite-preview",
   "meta/llama-4-scout",
-  "xai/grok-4-fast-non-reasoning",
-  "openai/gpt-4.1-nano",
+  "anthropic/claude-haiku-4.5",
 ];
 
 const schema = z.object({

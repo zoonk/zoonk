@@ -1,0 +1,110 @@
+{
+  "modelId": "openai/gpt-5.4-nano",
+  "results": [
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST include 'math'.\n\n      \n  - Choose from the fixed set only\n  - Pick the primary functional domain first; add a secondary ONLY if it is central to the course goals\n  - Anchor on learning outcomes, not surface keywords\n\n    ",
+        "id": "en-calculus-1",
+        "userInput": {
+          "courseTitle": "Calculus"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The result includes extra secondary categories ('culture', 'society') without evidence from the title alone that they are central to the course goals. The instructions say to add a secondary only if central, and the title 'Historia de Roma' strongly supports 'history' but does not justify multiple additional categories.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "A better answer would likely assign only 'history', since that category is clearly required and directly supported by the course title. If a secondary category were added, it should be justified by clear evidence of centrality to the learning goals, which is absent here.",
+          "kind": "potentialImprovements",
+          "score": 8.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST include 'history'.\n\n      \n  - Choose from the fixed set only\n  - Pick the primary functional domain first; add a secondary ONLY if it is central to the course goals\n  - Anchor on learning outcomes, not surface keywords\n\n    ",
+        "id": "es-historia-de-roma-1",
+        "userInput": {
+          "courseTitle": "Historia de Roma"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None. The assigned categories use only the allowed fixed set, and the response includes the expected core domains for 'Spanish Literature'—especially 'arts' and 'culture'. There is no clear major factual or instruction-following failure. While 'history' may be debatable, it is not a major error because literature study can centrally involve historical context depending on course framing.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response likely over-assigned categories by adding 'history' without evidence from the title alone that history is central to the learning goals. The instructions say to add a secondary only if it is central, and to anchor on learning outcomes rather than surface associations. For a title as broad as 'Spanish Literature,' 'arts' and possibly 'culture' are well supported, but 'history' is less clearly justified.",
+          "kind": "minorErrors",
+          "score": 8.4
+        },
+        {
+          "conclusion": "A better answer would likely be more conservative, such as ['arts', 'culture'] or possibly just ['arts'] if forced to minimize secondary categories. The model could improve by explaining the rationale internally more strictly: literature is primarily an arts domain, with culture as a plausible central secondary domain, whereas history should be included only when the course explicitly foregrounds historical development or context.",
+          "kind": "potentialImprovements",
+          "score": 8.6
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - SHOULD include 'arts' and/or 'culture'.\n\n      \n  - Choose from the fixed set only\n  - Pick the primary functional domain first; add a secondary ONLY if it is central to the course goals\n  - Anchor on learning outcomes, not surface keywords\n\n    ",
+        "id": "en-spanish-literature-strict-rule-1",
+        "userInput": {
+          "courseTitle": "Spanish Literature"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "No major errors found. The selected categories are from the allowed fixed set, and the response includes culture as expected. 'Communication' is a plausible primary domain for Linguistics, and adding secondary categories is defensible given the subject matter.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response may slightly over-assign categories. For a course titled 'Linguistics', including both 'culture' and 'science' alongside 'communication' could be broader than necessary, and the instructions say to add a secondary only if central. Without more course-goal detail, three categories risks diluting the primary functional domain.",
+          "kind": "minorErrors",
+          "score": 8.4
+        },
+        {
+          "conclusion": "It could be improved by being more conservative—e.g., selecting 'communication' plus one central secondary such as 'culture' or 'science', rather than three categories. If forced to infer from title alone, a tighter mapping would better match the primary/secondary rule.",
+          "kind": "potentialImprovements",
+          "score": 8.3
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - SHOULD include 'culture' and/or 'society'.\n\n      \n  - Choose from the fixed set only\n  - Pick the primary functional domain first; add a secondary ONLY if it is central to the course goals\n  - Anchor on learning outcomes, not surface keywords\n\n    ",
+        "id": "en-linguistics-1",
+        "userInput": {
+          "courseTitle": "Linguistics"
+        }
+      }
+    }
+  ],
+  "taskId": "course-categories"
+}

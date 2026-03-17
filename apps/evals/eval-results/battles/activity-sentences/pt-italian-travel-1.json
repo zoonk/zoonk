@@ -1,163 +1,199 @@
 {
-  "expectations": "\nLANGUAGE: Brazilian Portuguese output required for translations (NOT English).\n\nTOPIC: Italian sentences for travel and transportation - using travel vocabulary.\n\nSCRIPT: Roman (romanization should be empty string \"\")\n\nVOCABULARY WORDS PROVIDED: il treno, l'aereo, la macchina, il biglietto, la stazione\nThese words MUST appear in the generated sentences.\n\nACCURACY PITFALLS - Penalize SEVERELY if:\n- Any sentence doesn't use at least one of the provided vocabulary words\n- Article contractions are incorrect (e.g., l'aereo not la aereo)\n- Translations are in English instead of Portuguese\n- Gender agreement is incorrect\n- Romanization contains any text (should be empty string)\n\nCONTEXT EXPECTATIONS:\n- Sentences about traveling, booking tickets, transportation\n- Natural travel-related conversations\n- Various modes of transportation\n\n\nEVALUATION CRITERIA:\n\n1. VOCABULARY WORD USAGE (CRITICAL - highest priority):\n   - Each generated sentence MUST use at least one of the provided vocabulary words\n   - The words should be used in their natural form (conjugated verbs, declined nouns are acceptable)\n   - Penalize SEVERELY if sentences don't incorporate the provided vocabulary\n   - Penalize if words are used incorrectly or out of context\n\n2. TRANSLATION ACCURACY (CRITICAL):\n   - Each sentence-translation pair MUST be linguistically accurate\n   - The translation must convey the same meaning as the original sentence\n   - Consider regional variations (Brazilian Portuguese vs European, Latin American Spanish vs Castilian)\n   - Penalize SEVERELY if translations are incorrect, incomplete, or misleading\n   - Grammatical structures should be appropriately adapted between languages\n\n3. ROMANIZATION (required field):\n   - For Japanese, Chinese, Korean, Arabic, Russian, Greek, Thai, Hindi, etc.: romanization MUST contain the Roman letter representation of the sentence\n   - Use standard romanization systems (romaji for Japanese, pinyin for Chinese, etc.)\n   - For Roman-script languages (Spanish, French, German, etc.): romanization MUST be an empty string \"\"\n   - Penalize if romanization is missing for non-Roman scripts or contains text for Roman scripts\n\n4. GRAMMATICAL CORRECTNESS:\n   - Sentences must be grammatically correct in the target language\n   - Verb conjugations must match the subject\n   - Gender agreement must be correct where applicable\n   - Word order should follow natural patterns of the target language\n   - Penalize for grammar errors, incorrect conjugations, or unnatural constructions\n\n5. SENTENCE NATURALNESS:\n   - Sentences should sound natural to native speakers\n   - Avoid overly literal translations or awkward phrasing\n   - Use appropriate register (formal/informal) for the context\n   - Penalize if sentences sound robotic, unnatural, or like machine translation\n\n6. CONTEXT DIVERSITY:\n   - Sentences should present different contexts or situations\n   - Avoid repetitive sentence structures\n   - Use variety in sentence types (statements, questions, commands where appropriate)\n   - Do NOT penalize for covering similar themes if vocabulary words naturally relate to each other\n\n7. LESSON RELEVANCE:\n   - Sentences should relate to the lesson topic\n   - The contexts should be appropriate for the lesson's educational goals\n   - Avoid straying into unrelated topics\n   - Do NOT require every sentence to explicitly reference the lesson topic - implicit relevance is fine\n\n8. APPROPRIATE DIFFICULTY:\n   - Sentences should be appropriate for language learners\n   - Avoid overly complex grammatical structures unless the lesson specifically targets advanced learners\n   - Vocabulary beyond the provided words should be at a similar or simpler level\n   - Penalize if sentences are incomprehensible to learners or use excessive advanced vocabulary\n\n9. NO DUPLICATES:\n   - Each sentence should be unique\n   - Avoid near-duplicates (same sentence with minor word changes)\n   - Penalize if essentially the same sentence appears multiple times\n\n10. LANGUAGE CORRECTNESS:\n    - Sentences should be in the TARGET language (courseTitle)\n    - Translations should be in the NATIVE language (language code)\n    - Penalize if languages are swapped or mixed incorrectly\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific sentence choices - accept ANY valid sentences that use the vocabulary\n- Do NOT penalize for not including specific contexts you might expect\n- Do NOT require a specific number of sentences\n- Do NOT expect sentences to follow any particular template or pattern\n- Different valid sentence constructions exist - assess the quality of what IS provided\n- FOCUS ON: vocabulary usage, translation accuracy, romanization correctness, grammatical correctness, naturalness\n\n    ",
-  "judgedAt": "2026-01-21T17:30:12.822Z",
+  "expectations": "\nLANGUAGE: Brazilian Portuguese output required for translations (NOT English).\n\nTOPIC: Italian sentences for travel and transportation - using travel vocabulary.\n\nSCRIPT: Roman (romanization should be null)\n\nVOCABULARY WORDS PROVIDED: il treno, l'aereo, la macchina, il biglietto, la stazione\nThese words MUST appear in the generated sentences.\n\nACCURACY PITFALLS - Penalize SEVERELY if:\n- Any sentence doesn't use at least one of the provided vocabulary words\n- Article contractions are incorrect (e.g., l'aereo not la aereo)\n- Translations are in English instead of Portuguese\n- Gender agreement is incorrect\n- Romanization contains any text (should be null)\n\nCONTEXT EXPECTATIONS:\n- Sentences about traveling, booking tickets, transportation\n- Natural travel-related conversations\n- Various modes of transportation\n\n\nEVALUATION CRITERIA:\n\n1. VOCABULARY WORD USAGE (CRITICAL - highest priority):\n   - Each generated sentence MUST use at least one of the provided vocabulary words\n   - The words should be used in their natural form (conjugated verbs, declined nouns are acceptable)\n   - Penalize SEVERELY if sentences don't incorporate the provided vocabulary\n   - Penalize if words are used incorrectly or out of context\n\n2. TRANSLATION ACCURACY (CRITICAL):\n   - Each sentence-translation pair MUST be linguistically accurate\n   - The translation must convey the same meaning as the original sentence\n   - Consider regional variations (Brazilian Portuguese vs European, Latin American Spanish vs Castilian)\n   - Penalize SEVERELY if translations are incorrect, incomplete, or misleading\n   - Grammatical structures should be appropriately adapted between languages\n\n3. ROMANIZATION (required field):\n   - For Japanese, Chinese, Korean, Arabic, Russian, Greek, Thai, Hindi, etc.: romanization MUST contain the Roman letter representation of the FULL sentence (not just keywords)\n   - Use standard romanization systems (romaji for Japanese, pinyin for Chinese, etc.)\n   - For Roman-script languages (Spanish, French, German, etc.): romanization MUST be null\n   - Penalize if romanization is missing for non-Roman scripts or contains text for Roman scripts\n   - Romanization MUST use Latin/Roman characters only - penalize SEVERELY if it copies the original script (e.g., Cyrillic, Hangul, Kana) instead of transliterating\n   - Both lowercase and sentence-case romanization are acceptable - do NOT penalize for capitalization style alone\n\n4. GRAMMATICAL CORRECTNESS:\n   - Sentences must be grammatically correct in the target language\n   - Verb conjugations must match the subject\n   - Gender agreement must be correct where applicable\n   - Word order should follow natural patterns of the target language\n   - Penalize for grammar errors, incorrect conjugations, or unnatural constructions\n\n5. SENTENCE NATURALNESS:\n   - Sentences should sound natural to native speakers\n   - Avoid overly literal translations or awkward phrasing\n   - Use appropriate register (formal/informal) for the context\n   - Penalize if sentences sound robotic, unnatural, or like machine translation\n\n6. CONTEXT DIVERSITY:\n   - Sentences should present different contexts or situations\n   - Avoid repetitive sentence structures\n   - Use variety in sentence types (statements, questions, commands where appropriate)\n   - Do NOT penalize for covering similar themes if vocabulary words naturally relate to each other\n\n7. LESSON RELEVANCE:\n   - Sentences should relate to the lesson topic\n   - The contexts should be appropriate for the lesson's educational goals\n   - Avoid straying into unrelated topics\n   - Do NOT require every sentence to explicitly reference the lesson topic - implicit relevance is fine\n\n8. APPROPRIATE DIFFICULTY:\n   - Sentences should be appropriate for language learners\n   - Avoid overly complex grammatical structures unless the lesson specifically targets advanced learners\n   - Vocabulary beyond the provided words should be at a similar or simpler level\n   - Penalize if sentences are incomprehensible to learners or use excessive advanced vocabulary\n\n9. NO DUPLICATES:\n   - Each sentence should be unique\n   - Avoid near-duplicates (same sentence with minor word changes)\n   - Penalize if essentially the same sentence appears multiple times\n\n10. LANGUAGE CORRECTNESS:\n    - Sentences should be in the TARGET language (courseTitle)\n    - Translations should be in the NATIVE language (language code)\n    - Penalize if languages are swapped or mixed incorrectly\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific sentence choices - accept ANY valid sentences that use the vocabulary\n- Do NOT penalize for not including specific contexts you might expect\n- Do NOT require a specific number of sentences\n- Do NOT expect sentences to follow any particular template or pattern\n- Different valid sentence constructions exist - assess the quality of what IS provided\n- FOCUS ON: vocabulary usage, translation accuracy, romanization correctness, grammatical correctness, naturalness\n\n    ",
+  "judgedAt": "2026-03-17T21:53:27.406Z",
   "judgments": [
     {
-      "judgeId": "anthropic/claude-opus-4.5",
+      "judgeId": "anthropic/claude-opus-4.6",
       "rankings": [
         {
-          "anonymousId": "Model G",
-          "modelId": "anthropic/claude-sonnet-4.5",
-          "reasoning": "Excellent output with 20 diverse sentences. All vocabulary words used correctly and naturally (il treno, l'aereo, la macchina, il biglietto, la stazione). Translations are accurate Brazilian Portuguese. All romanization fields correctly empty. Grammar is correct in both Italian and Portuguese. Good variety of sentence structures (statements, questions). Natural-sounding sentences appropriate for learners. Minor issues: Some sentences are simpler than others, but this is actually good for learners.",
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "20 sentences with excellent vocabulary coverage — all 5 words appear multiple times across diverse contexts. Romanization is null (correct for Roman script). Italian grammar is consistently correct throughout. Translations to Brazilian Portuguese are accurate and natural. Good variety of sentence structures (statements, questions, compound sentences). Contexts are diverse: commuting, travel, family, weather delays, high-speed trains, first-time flyer. One minor note: 'Hai già comprato il biglietto per il concerto di domani?' uses biglietto in a concert context rather than transportation, but this still demonstrates authentic usage and the lesson topic is broadly covered. Very slight concern with 'all'estero' spelling — actually correct. Overall exceptional quality.",
           "score": 9.2
         },
         {
-          "anonymousId": "Model C",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "Very good output with 12 sentences using all vocabulary words naturally. Excellent variety with questions, statements, and contextual scenarios. Translations are natural Brazilian Portuguese with appropriate colloquial expressions like 'a gente'. All romanization empty as required. Grammar correct throughout. Strong context diversity with real travel situations. Minor issue: Sentence 7 uses 'il mio aereo' but translates to 'meu voo' - while acceptable, the direct translation loses 'aereo'. One minor grammatical note in sentence 12 with mixed subject consistency, but still natural.",
-          "score": 9
-        },
-        {
-          "anonymousId": "Model A",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Solid output with 10 sentences covering all vocabulary words. Translations are accurate Brazilian Portuguese. All romanization fields correctly empty. Good grammar in both languages. Nice variety of contexts (train schedules, airport delays, car keys, station location). Minor weakness: Sentence 8 about car keys in the kitchen is less directly travel-related, though still uses vocabulary correctly. Overall very natural and appropriate for learners.",
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "10 sentences, all using vocabulary words naturally. Romanization is null (correct). Italian grammar is accurate — nice use of 'obliterare il biglietto' which is culturally authentic for Italy. Translations are accurate and natural in Brazilian Portuguese. Good variety of contexts and sentence complexity. All 5 vocabulary words are well-represented. 'Quest'estate andiamo in vacanza nel sud Italia con la macchina' — natural and correct. The sentence about obliterating the ticket is culturally rich. Minor: some sentences are moderately complex but appropriate for learners. Strong output overall.",
           "score": 8.8
         },
         {
-          "anonymousId": "Model E",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Good output with 15 sentences using all vocabulary words. Translations are generally accurate Brazilian Portuguese. All romanization empty. Good variety. However, there are issues: Sentence 11 ends with a period instead of question mark in Portuguese despite being a question ('Quanto custa...'). Sentence 12 has awkward logic ('troppo traffico per il treno' doesn't quite make sense - traffic doesn't affect trains). Sentence 13 'Te espero' should be 'Espero você' in Brazilian Portuguese. These errors impact the score.",
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "10 sentences, all incorporating vocabulary words. Romanization is null (correct). Italian grammar is correct throughout. Translations are natural and accurate in Brazilian Portuguese. Good variety: meeting a friend at the station, choosing car vs train based on weather, trip planning. All 5 vocabulary words appear. 'Per questo viaggio abbiamo scelto l'aereo, ma il biglietto non era economico' — nice compound sentence combining multiple vocab words. The translation 'portão de embarque' for 'gate' is a good natural adaptation. Solid output with no errors detected.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "12 sentences with good vocabulary coverage. Romanization is empty string (acceptable per the prompt's examples, though null was preferred in task expectations). Italian grammar is correct. Translations are natural Brazilian Portuguese with colloquial touches like 'A gente se vê' and 'A gente entrou'. All 5 vocabulary words appear. 'Il mio aereo' — note the vocabulary word is 'l'aereo' but it appears as 'il mio aereo' which is a natural grammatical variation. One potential issue: 'Se perdiamo il treno, prendiamo la macchina' — 'perdiamo' in conditional context is acceptable in spoken Italian. 'Per il check-in dell'aereo' — uses 'dell'aereo' which is fine. Good variety of contexts. Minor concern: romanization as empty string vs null — the task expectations say 'should be null' but the prompt examples show empty string, so this is ambiguous and shouldn't be penalized heavily.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "10 sentences with good vocabulary coverage. Romanization is empty string (acceptable). Italian grammar is correct. All 5 vocabulary words appear multiple times. 'Preferirei prendere l'aereo' — conditional is grammatically correct and natural. Translations are accurate Brazilian Portuguese. 'Convalidare il biglietto' is culturally authentic. One minor issue: the translation uses 'bilhete' in some places and context is fine but 'passagem' is more common in Brazilian Portuguese for transport tickets — though 'bilhete' is also used. 'Ho perso il biglietto dell'aereo e ho chiamato la compagnia per chiedere informazioni' — natural and correct. Good variety of contexts and structures.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "8 sentences, all using vocabulary words. Romanization is null (correct). Italian grammar is correct throughout. Translations are natural Brazilian Portuguese. All 5 vocabulary words appear. Good variety of contexts. 'Se perdiamo il treno, possiamo sempre prendere l'autobus' — correct and natural. 'La mia macchina è in officina' — great everyday context. Slightly fewer sentences than some other models but quality is consistent. 'All'aeroporto ho mostrato il biglietto e il passaporto al controllo' — natural. One very minor point: 'fiscalização' as translation for 'controllo' at the airport — this works but 'controle' might be more natural in Brazilian Portuguese. Overall solid but fewer sentences.",
           "score": 8.3
         },
         {
-          "anonymousId": "Model F",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Good output with 10 sentences. All vocabulary words used correctly. Translations are mostly accurate Portuguese. All romanization empty. Strong sentence complexity and variety. However, some translations use 'bilhete' which is more European Portuguese - 'passagem' is more common in Brazilian Portuguese. Sentence 6 'Perdi o bilhete' - the verb form is correct but 'bilhete' instead of 'passagem' is notable. Overall grammatically sound but with regional variation inconsistency.",
-          "score": 8.2
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "20 sentences with excellent vocabulary coverage. Romanization is empty string (acceptable). Italian grammar is correct throughout. All 5 vocabulary words appear multiple times. Translations are accurate Brazilian Portuguese. Good variety of contexts. However, some sentences are quite simple ('Il treno per Roma parte alle otto', 'Ho perso il biglietto del treno', 'La macchina di mio padre è nuova') — they border on textbook-style 'The X is Y' patterns that the prompt says to avoid. 'Dove posso prendere l'aereo per Venezia?' is slightly unnatural — you don't really 'prendere l'aereo' at a specific location you ask about; you'd ask about flights to Venice. Some sentences feel more like drill exercises than natural communication. Still, no grammatical errors and translations are accurate.",
+          "score": 8.1
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "10 sentences with good vocabulary coverage. Romanization is empty string (acceptable). Italian grammar is correct. All 5 vocabulary words appear. Translations are accurate. 'Ho lasciato le chiavi della macchina sul tavolo in cucina' — nice everyday context beyond just travel. 'L'aereo atterrerà con dieci minuti di ritardo' — future tense is correct and natural. One minor issue: 'Quanto costa un biglietto di sola andata per Roma?' — correct Italian. Good variety overall. Solid output but not exceptional.",
+          "score": 8.1
         },
         {
           "anonymousId": "Model D",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "Solid output with 10 sentences covering all vocabulary. Translations are mostly accurate. All romanization empty. However, there are issues: Sentence 1 'A que horas parte' uses 'parte' which is more European Portuguese - Brazilian Portuguese would more naturally use 'sai'. Sentence 6 uses 'bilhete' instead of 'passagem' (more Brazilian). Sentence 5 'aterrissa' is acceptable but 'pousa' is more common in Brazil. Overall good but with some European Portuguese influence.",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model B",
           "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "Decent output with 7 sentences - fewer than most other models. All vocabulary words are used. Translations are accurate Brazilian Portuguese. All romanization empty. Good grammar. However, only 7 sentences limits context diversity. Sentence 6 'Perdi' should be 'Eu perdi' or the reflexive form for past tense in Brazilian Portuguese is slightly awkward here. Sentence 7 is good but 'trajeto' could be 'viagem'. The limited number of sentences and slightly lower variety impacts the score.",
+          "reasoning": "Only 7 sentences, which is fewer than most other models. All sentences use vocabulary words and are grammatically correct. Romanization is empty string (acceptable). Translations are accurate Brazilian Portuguese. All 5 vocabulary words appear at least once. However, l'aereo only appears in one sentence, which is minimal coverage. The sentences are well-constructed and natural. 'La macchina di Marco si è fermata in mezzo al traffico' — nice specific context. But the limited number of sentences means less practice material and less diversity of contexts.",
           "score": 7.5
         },
         {
-          "anonymousId": "Model H",
+          "anonymousId": "Model F",
           "modelId": "anthropic/claude-haiku-4.5",
-          "reasoning": "Adequate output with 12 sentences. All vocabulary used. However, several issues: Sentence 6 'Dove posso trovare il biglietto della stazione?' is awkward Italian - 'biglietteria' would be more natural for 'ticket office'. The translation correctly interprets it as 'bilheteria' but the Italian sentence itself is unnatural. Sentence 2 'un biglietto per l'aereo' is slightly awkward - 'un biglietto aereo' is more natural. Sentence 8 'un volo in aereo' is redundant (volo already means flight by air). These grammatical awkwardnesses in the Italian lower the score.",
-          "score": 7.2
+          "reasoning": "12 sentences with vocabulary coverage. Romanization is empty string (acceptable). Some issues: 'Dove posso trovare il biglietto della stazione?' is awkward/unnatural Italian — this seems to mean 'Where can I find the ticket office of the station?' but 'il biglietto della stazione' literally means 'the ticket of the station' which doesn't make clear sense. The translation 'a bilheteria da estação' interprets it as 'ticket office' but the Italian says 'ticket.' This is a translation accuracy issue — the Italian sentence is ambiguous/unnatural and the translation doesn't match the literal Italian. 'Ho prenotato un volo in aereo' — 'un volo in aereo' is redundant since 'volo' already implies airplane. 'Quando faccio brevi distanze' — slightly unnatural; 'quando faccio tragitti brevi' or 'quando viaggio per brevi distanze' would be more natural. 'Quanto costa il biglietto del treno a Milano?' — 'a Milano' should be 'per Milano' to indicate destination. These grammatical/naturalness issues bring the score down.",
+          "score": 7
         }
       ]
     },
     {
-      "judgeId": "google/gemini-3-pro-preview",
+      "judgeId": "google/gemini-3.1-pro-preview",
       "rankings": [
         {
-          "anonymousId": "Model C",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "This model provides the highest quality output. It excels in 'Sentence Naturalness' for Brazilian Portuguese, using idiomatic expressions like 'vale mais a pena' (conviene) and 'a gente' (noi), which makes the translations sound authentic rather than robotic. The contexts are modern and diverse (mentioning QR codes, check-ins, cancellations). It strictly follows all vocabulary and negative constraint rules.",
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "This model perfectly follows all instructions, including the strict user prompt rule to use `null` for romanization. The Italian sentences are exceptionally natural, incorporating excellent travel vocabulary like 'obliterare il biglietto' and 'parcheggio a lungo termine'. The Brazilian Portuguese translations are completely accurate and natural.",
           "score": 10
         },
         {
-          "anonymousId": "Model A",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Excellent output with natural sentences and perfect vocabulary usage. The translations are accurate and flow well in Brazilian Portuguese (e.g., translating future tense 'atterrerà' as 'vai pousar', which is very natural). It misses the top spot only because Model C offered slightly more sophisticated/localized conversational contexts.",
-          "score": 9.5
-        },
-        {
-          "anonymousId": "Model G",
-          "modelId": "anthropic/claude-sonnet-4.5",
-          "reasoning": "This model provided the highest volume of sentences (20), which is great for practice. The sentences are simpler in structure (SVO) compared to A and C, but they are grammatically perfect and the translations are accurate and natural (e.g., 'Vamos alugar' for 'Noleggiamo'). A very strong performer for beginner-level learners.",
-          "score": 9
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Model H also flawlessly follows all instructions, including the `null` romanization requirement. The sentences represent a great variety of everyday travel contexts, and both the Italian grammar and the Brazilian Portuguese translations are perfectly executed and highly idiomatic.",
+          "score": 10
         },
         {
           "anonymousId": "Model B",
-          "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "Flawless execution. It follows all constraints, uses the vocabulary correctly, and provides accurate translations. It is ranked lower than G and A simply due to the lower volume of content (7 sentences vs 10 or 20), offering less variety, though the quality is equivalent.",
-          "score": 8.5
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model B provides incredibly natural sentences. The Brazilian Portuguese translations are beautifully adapted to conversational speech (e.g., using 'A gente se vê' and 'vale mais a pena'), matching the everyday tone of the Italian sentences perfectly. It used an empty string `\"\"` for romanization—which matches the system prompt example but slightly misses the user prompt's specific request for `null`. Nonetheless, the linguistic quality is outstanding.",
+          "score": 9.8
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Model J strictly adheres to the prompt, including the `null` romanization rule. The grammar is flawless, and the sentences are highly practical for language learners. It provides slightly fewer sentences (8) than the top models, but the quality is excellent.",
+          "score": 9.7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model G provides 10 highly accurate, practical sentences with flawless translations. It uses an empty string `\"\"` instead of `null` for romanization, but perfectly incorporates all target vocabulary without any grammatical issues.",
+          "score": 9.5
         },
         {
           "anonymousId": "Model D",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "Good output with no grammatical errors. It consistently translates 'biglietto' as 'bilhete' (technically correct but 'passagem' is often more natural for travel contexts in Brazilian Portuguese, whereas European Portuguese prefers 'bilhete'). The sentences are otherwise accurate and meet all criteria.",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model F",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Adequate performance. It meets vocabulary requirements but contains minor stylistic awkwardness in the target language (e.g., 'estação de trens' is less idiomatic than 'estação de trem' or 'ferroviária'). The sentence structures are good, but slightly less polished than the top models.",
-          "score": 7.5
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model D provides excellent, natural sentences that perfectly demonstrate the target vocabulary. It is slightly shorter (7 sentences) and uses `\"\"` for romanization, but the linguistic quality is impeccable.",
+          "score": 9.5
         },
         {
           "anonymousId": "Model E",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Generally good, but contains noticeable flaws. In Italian, sentence 8 ('vicina alla mia casa') is slightly unnatural compared to standard phrasing ('vicina a casa mia'). In Portuguese, sentence 11 is a question ending with a period instead of a question mark. Sentence 12 is slightly ambiguous regarding the context of 'traffic'.",
-          "score": 7
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model E provides a great variety of 20 sentences and correctly uses `null` for romanization. However, there is a very minor colloquialism/omission in one sentence ('quello solo andata' instead of the standard 'quello di sola andata'). Overall, it remains highly effective for learners.",
+          "score": 9
         },
         {
-          "anonymousId": "Model H",
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Model C successfully incorporates all vocabulary words and provides accurate translations. However, the sentence structures are somewhat repetitive and overly simplistic (e.g., 'The X is Y'), which violates the negative constraint against artificial, textbook-style constructions.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model A has a significant grammatical error in sentence 7: 'Preferirei prendere l'aereo se il viaggio dura...'. It mixes the conditional mood ('Preferirei') with the present indicative ('dura') in a hypothetical clause, which is grammatically incorrect in Italian. Grammatical accuracy is a critical grading criterion.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model F",
           "modelId": "anthropic/claude-haiku-4.5",
-          "reasoning": "This model failed on critical accuracy criteria. Sentence 6 hallucinates the meaning: it asks 'Where can I find the ticket (biglietto) of the station?' but translates it as 'ticket office' (bilheteria), which is a different word. Sentence 10 uses the incorrect preposition in Italian ('biglietto ... a Milano' instead of 'per Milano'). These errors can confuse learners.",
-          "score": 4
+          "reasoning": "Model F commits a severe vocabulary and translation error. In sentence 6, it uses 'il biglietto della stazione' and translates it as 'a bilheteria da estação'. 'Il biglietto' means 'ticket', not 'ticket office' (which is 'la biglietteria'). Teaching a learner the wrong meaning of a target vocabulary word results in a heavy penalty.",
+          "score": 3
         }
       ]
     },
     {
-      "judgeId": "openai/gpt-5.2",
+      "judgeId": "openai/gpt-5.4",
       "rankings": [
         {
-          "anonymousId": "Model C",
+          "anonymousId": "Model B",
           "modelId": "openai/gpt-5.2",
-          "reasoning": "Cumpre todos os requisitos críticos: romanization vazio em todas, todas as frases incluem ao menos uma das palavras-alvo (il treno / l'aereo / la macchina / il biglietto / la stazione), uso correto de contrações (l'aereo, all'ingresso, sull'aereo etc.) e traduções naturais em PT-BR (“a gente…”, “vale mais a pena…”, “remarcar”). Boa diversidade (perguntas, instruções, atraso/cancelamento, check-in, estacionamento).",
-          "score": 9.6
-        },
-        {
-          "anonymousId": "Model A",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Muito bom: todas as frases contêm vocabulário-alvo e as contrações/artigos estão corretos (l'aereo). Traduções em PT-BR são fiéis e naturais. Leve perda de foco em viagem em 1–2 frases (ex.: chaves da máquina na cozinha), mas ainda aceitável e não viola critérios críticos.",
+          "reasoning": "Best overall balance of accuracy, naturalness, travel relevance, and vocabulary coverage. Every sentence uses at least one required vocabulary item, translations are consistently in natural Brazilian Portuguese, grammar is strong, and the contexts are varied and practical. Minor issue: romanization is \"\" instead of null, which conflicts with the user prompt’s explicit script expectation, but content quality is otherwise excellent.",
           "score": 9.2
         },
         {
-          "anonymousId": "Model F",
+          "anonymousId": "Model A",
           "modelId": "openai/gpt-5-mini",
-          "reasoning": "Tudo correto nos pontos críticos (romanization vazio; cada frase usa pelo menos um termo-alvo; contrações ok). Traduções boas em PT-BR. Pequenas escolhas menos “viagem” (ir ao trabalho, bateria do carro), mas ainda dentro de transporte; variedade boa.",
+          "reasoning": "Excellent set with strong natural Italian, good travel-focused contexts, and full coverage of all required vocabulary. Translations are accurate and natural in Portuguese. No duplicates and good variety. Main drawback is the romanization field uses \"\" instead of null, which violates the explicit user expectation. One translation choice ('explorar o campo') is slightly less precise than 'campagna' = countryside, but still acceptable.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Very strong output with natural Italian, accurate Brazilian Portuguese translations, and solid travel/transport contexts. Every sentence includes required vocabulary, and coverage is good. Romanization is correctly null per the task expectation. Slightly less varied stylistically than the top two, but still high quality.",
           "score": 8.9
         },
         {
-          "anonymousId": "Model E",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Cobertura ampla e correta do vocabulário (todas as frases têm termo-alvo; l'aereo e outras contrações ok). Traduções geralmente boas. Pequeno problema de pontuação na tradução 11: falta ponto de interrogação (“Quanto custa…”) e leve naturalidade em “havia muito trânsito para o trem” (compreensível, mas um pouco estranho).",
-          "score": 8.6
-        },
-        {
-          "anonymousId": "Model G",
-          "modelId": "anthropic/claude-sonnet-4.5",
-          "reasoning": "Muito consistente: todas as frases usam vocabulário-alvo, traduções corretas em PT-BR e romanization vazio. Porém há repetição/monotonia por ter muitas frases semelhantes (múltiplas sobre atrasos/horários) e algumas são bem simples; ainda assim atende plenamente os requisitos.",
-          "score": 8.5
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Strong and natural Italian with accurate Portuguese translations and correct null romanization. All sentences contain at least one target vocabulary item and remain relevant to travel/transport. Slightly shorter and less comprehensive than the strongest entries, but clean and well-executed.",
+          "score": 8.7
         },
         {
           "anonymousId": "Model D",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "Cumpre requisitos críticos (todas as frases com vocabulário, romanization vazio, artigos/contrações corretos). Traduções boas. Menos diversidade e uma tradução um pouco menos natural (“ligeiro atraso” é compreensível, mas soa mais PT-PT do que PT-BR).",
-          "score": 8.2
-        },
-        {
-          "anonymousId": "Model B",
           "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "Correto nos itens críticos (todas as frases contêm vocabulário; l'aereo ok; romanization vazio; traduções em PT-BR). Conjunto é curto e com menor diversidade contextual, mas a qualidade linguística é boa.",
-          "score": 8
+          "reasoning": "Good quality overall: natural Italian, accurate translations, all sentences use required vocabulary, and contexts are travel-relevant. Main weakness is limited coverage depth and fewer sentences than many other strong candidates. Also uses \"\" instead of null for romanization, which is a prompt-format issue.",
+          "score": 8.4
         },
         {
           "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Generally good content with correct null romanization, accurate Portuguese translations, and all sentences using the required vocabulary. However, there is a notable grammar issue: 'La stazione è vicino al centro' should be 'vicina'. That grammatical error lowers the score. Otherwise natural and relevant.",
+          "score": 8.1
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Good grammatical quality and natural translations, with correct null romanization. However, it breaks a critical task expectation: not every sentence is clearly in travel/transport context. For example, 'il biglietto per il concerto' and some generic 'macchina' sentences are less aligned with the lesson and provided travel-focused constraints, though they do include vocabulary words. Still strong linguistically.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Accurate and mostly natural, but weaker on context control and diversity. Several sentences are too generic or only loosely tied to travel/transport ('La macchina di mio padre è nuova', 'Il biglietto include anche il pranzo'). Also uses \"\" instead of null for romanization. Still meets the core vocabulary-usage requirement well.",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Decent Italian and Portuguese overall, but there are notable relevance issues. Some sentences are off-topic for travel/transport, especially 'Ho lasciato le chiavi della macchina sul tavolo in cucina.' It also uses 'biglietto per l'autobus' rather than keeping contexts centered on the listed travel words more directly, though it still includes a required word. Romanization is \"\" instead of null.",
+          "score": 7.1
+        },
+        {
+          "anonymousId": "Model F",
           "modelId": "anthropic/claude-haiku-4.5",
-          "reasoning": "Maior problema: uma frase tem uso incorreto do vocabulário em italiano — “Dove posso trovare il biglietto della stazione?” (soaria como “o bilhete da estação”, quando o esperado seria “la biglietteria”/“un biglietto”; a própria tradução vira “bilheteria”, mudando o sentido). Além disso, a última frase em italiano (“Quanto costa il biglietto del treno a Milano?”) é ambígua/estranha (parece ‘em Milão’ em vez de ‘para Milão’) e a tradução muda para “para Milão”, afetando fidelidade. Apesar de romanization vazio e presença dos termos, os desvios de tradução/adequação reduzem bastante a nota.",
-          "score": 6.7
+          "reasoning": "Mixed quality. Most sentences are understandable and use the vocabulary, but there is a significant accuracy/naturalness problem in 'Dove posso trovare il biglietto della stazione?', which is unnatural/incorrect for asking for a ticket office and is mistranslated as 'bilheteria da estação.' Also uses \"\" instead of null for romanization. Some phrasing is awkward ('vado in aereo' style redundancies like 'un volo in aereo').",
+          "score": 6.2
         }
       ]
     }

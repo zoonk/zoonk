@@ -1,0 +1,110 @@
+{
+  "modelId": "openai/gpt-5.4-mini",
+  "results": [
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST include 'math'.\n\n      \n  - Choose from the fixed set only\n  - Pick the primary functional domain first; add a secondary ONLY if it is central to the course goals\n  - Anchor on learning outcomes, not surface keywords\n\n    ",
+        "id": "en-calculus-1",
+        "userInput": {
+          "courseTitle": "Calculus"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST include 'history'.\n\n      \n  - Choose from the fixed set only\n  - Pick the primary functional domain first; add a secondary ONLY if it is central to the course goals\n  - Anchor on learning outcomes, not surface keywords\n\n    ",
+        "id": "es-historia-de-roma-1",
+        "userInput": {
+          "courseTitle": "Historia de Roma"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response follows the fixed category set, includes the expected relevant categories ('arts' and 'culture'), and orders them with a plausible primary-first choice. A small possible improvement would be to clarify whether both categories are truly central versus whether only one should be chosen, but this is not a concrete error given the course title and expectations.",
+          "kind": "potentialImprovements",
+          "score": 9.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - SHOULD include 'arts' and/or 'culture'.\n\n      \n  - Choose from the fixed set only\n  - Pick the primary functional domain first; add a secondary ONLY if it is central to the course goals\n  - Anchor on learning outcomes, not surface keywords\n\n    ",
+        "id": "en-spanish-literature-strict-rule-1",
+        "userInput": {
+          "courseTitle": "Spanish Literature"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "The response assigns categories from the allowed fixed set and does not include any disallowed labels. However, it appears to miss the strongest expected categorization: for a course titled 'Linguistics,' the provided expectations explicitly note it SHOULD include 'culture' and/or 'society'. Returning only 'science' and 'communication' likely misclassifies the primary domain relative to the stated expectations and decision rules, making this a significant error in label selection.",
+          "kind": "majorErrors",
+          "score": 6.8
+        },
+        {
+          "conclusion": "The answer gives two categories but offers no justification, so it is hard to verify alignment with the instruction to anchor on learning goals rather than surface terms. 'Communication' is plausible in some contexts, but for a generic course title 'Linguistics' it may be less central than 'society' or 'culture.' This reduces confidence and suggests over-selection of a secondary category without evidence it is central.",
+          "kind": "minorErrors",
+          "score": 7.6
+        },
+        {
+          "conclusion": "A better answer would prioritize a category aligned with the expectations, such as including 'society' and/or 'culture,' and be more conservative about adding a secondary label unless clearly central. For example, 'society' alone, or 'society' plus 'communication' if justified by course goals, would better match the prompt's guidance.",
+          "kind": "potentialImprovements",
+          "score": 7.4
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - SHOULD include 'culture' and/or 'society'.\n\n      \n  - Choose from the fixed set only\n  - Pick the primary functional domain first; add a secondary ONLY if it is central to the course goals\n  - Anchor on learning outcomes, not surface keywords\n\n    ",
+        "id": "en-linguistics-1",
+        "userInput": {
+          "courseTitle": "Linguistics"
+        }
+      }
+    }
+  ],
+  "taskId": "course-categories"
+}

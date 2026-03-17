@@ -1,163 +1,199 @@
 {
-  "expectations": "\nLANGUAGE: Brazilian Portuguese output required for translations (NOT English).\n\nTOPIC: Spanish sentences for shopping - using shopping vocabulary.\n\nSCRIPT: Roman (romanization should be empty string \"\")\n\nVOCABULARY WORDS PROVIDED: comprar, la tienda, el precio, caro, barato\nThese words MUST appear in the generated sentences.\n\nACCURACY PITFALLS - Penalize SEVERELY if:\n- Any sentence doesn't use at least one of the provided vocabulary words\n- Verb conjugation is incorrect (comprar conjugated forms)\n- Adjective gender agreement is wrong (caro/cara, barato/barata)\n- Translations are in English instead of Portuguese\n- Romanization contains any text (should be empty string)\n\nCONTEXT EXPECTATIONS:\n- Sentences about buying, prices, stores\n- Shopping conversations and situations\n- Natural commercial interactions\n\n\nEVALUATION CRITERIA:\n\n1. VOCABULARY WORD USAGE (CRITICAL - highest priority):\n   - Each generated sentence MUST use at least one of the provided vocabulary words\n   - The words should be used in their natural form (conjugated verbs, declined nouns are acceptable)\n   - Penalize SEVERELY if sentences don't incorporate the provided vocabulary\n   - Penalize if words are used incorrectly or out of context\n\n2. TRANSLATION ACCURACY (CRITICAL):\n   - Each sentence-translation pair MUST be linguistically accurate\n   - The translation must convey the same meaning as the original sentence\n   - Consider regional variations (Brazilian Portuguese vs European, Latin American Spanish vs Castilian)\n   - Penalize SEVERELY if translations are incorrect, incomplete, or misleading\n   - Grammatical structures should be appropriately adapted between languages\n\n3. ROMANIZATION (required field):\n   - For Japanese, Chinese, Korean, Arabic, Russian, Greek, Thai, Hindi, etc.: romanization MUST contain the Roman letter representation of the sentence\n   - Use standard romanization systems (romaji for Japanese, pinyin for Chinese, etc.)\n   - For Roman-script languages (Spanish, French, German, etc.): romanization MUST be an empty string \"\"\n   - Penalize if romanization is missing for non-Roman scripts or contains text for Roman scripts\n\n4. GRAMMATICAL CORRECTNESS:\n   - Sentences must be grammatically correct in the target language\n   - Verb conjugations must match the subject\n   - Gender agreement must be correct where applicable\n   - Word order should follow natural patterns of the target language\n   - Penalize for grammar errors, incorrect conjugations, or unnatural constructions\n\n5. SENTENCE NATURALNESS:\n   - Sentences should sound natural to native speakers\n   - Avoid overly literal translations or awkward phrasing\n   - Use appropriate register (formal/informal) for the context\n   - Penalize if sentences sound robotic, unnatural, or like machine translation\n\n6. CONTEXT DIVERSITY:\n   - Sentences should present different contexts or situations\n   - Avoid repetitive sentence structures\n   - Use variety in sentence types (statements, questions, commands where appropriate)\n   - Do NOT penalize for covering similar themes if vocabulary words naturally relate to each other\n\n7. LESSON RELEVANCE:\n   - Sentences should relate to the lesson topic\n   - The contexts should be appropriate for the lesson's educational goals\n   - Avoid straying into unrelated topics\n   - Do NOT require every sentence to explicitly reference the lesson topic - implicit relevance is fine\n\n8. APPROPRIATE DIFFICULTY:\n   - Sentences should be appropriate for language learners\n   - Avoid overly complex grammatical structures unless the lesson specifically targets advanced learners\n   - Vocabulary beyond the provided words should be at a similar or simpler level\n   - Penalize if sentences are incomprehensible to learners or use excessive advanced vocabulary\n\n9. NO DUPLICATES:\n   - Each sentence should be unique\n   - Avoid near-duplicates (same sentence with minor word changes)\n   - Penalize if essentially the same sentence appears multiple times\n\n10. LANGUAGE CORRECTNESS:\n    - Sentences should be in the TARGET language (courseTitle)\n    - Translations should be in the NATIVE language (language code)\n    - Penalize if languages are swapped or mixed incorrectly\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific sentence choices - accept ANY valid sentences that use the vocabulary\n- Do NOT penalize for not including specific contexts you might expect\n- Do NOT require a specific number of sentences\n- Do NOT expect sentences to follow any particular template or pattern\n- Different valid sentence constructions exist - assess the quality of what IS provided\n- FOCUS ON: vocabulary usage, translation accuracy, romanization correctness, grammatical correctness, naturalness\n\n    ",
-  "judgedAt": "2026-01-21T17:30:02.123Z",
+  "expectations": "\nLANGUAGE: Brazilian Portuguese output required for translations (NOT English).\n\nTOPIC: Spanish sentences for shopping - using shopping vocabulary.\n\nSCRIPT: Roman (romanization should be null)\n\nVOCABULARY WORDS PROVIDED: comprar, la tienda, el precio, caro, barato\nThese words MUST appear in the generated sentences.\n\nACCURACY PITFALLS - Penalize SEVERELY if:\n- Any sentence doesn't use at least one of the provided vocabulary words\n- Verb conjugation is incorrect (comprar conjugated forms)\n- Adjective gender agreement is wrong (caro/cara, barato/barata)\n- Translations are in English instead of Portuguese\n- Romanization contains any text (should be null)\n\nCONTEXT EXPECTATIONS:\n- Sentences about buying, prices, stores\n- Shopping conversations and situations\n- Natural commercial interactions\n\n\nEVALUATION CRITERIA:\n\n1. VOCABULARY WORD USAGE (CRITICAL - highest priority):\n   - Each generated sentence MUST use at least one of the provided vocabulary words\n   - The words should be used in their natural form (conjugated verbs, declined nouns are acceptable)\n   - Penalize SEVERELY if sentences don't incorporate the provided vocabulary\n   - Penalize if words are used incorrectly or out of context\n\n2. TRANSLATION ACCURACY (CRITICAL):\n   - Each sentence-translation pair MUST be linguistically accurate\n   - The translation must convey the same meaning as the original sentence\n   - Consider regional variations (Brazilian Portuguese vs European, Latin American Spanish vs Castilian)\n   - Penalize SEVERELY if translations are incorrect, incomplete, or misleading\n   - Grammatical structures should be appropriately adapted between languages\n\n3. ROMANIZATION (required field):\n   - For Japanese, Chinese, Korean, Arabic, Russian, Greek, Thai, Hindi, etc.: romanization MUST contain the Roman letter representation of the FULL sentence (not just keywords)\n   - Use standard romanization systems (romaji for Japanese, pinyin for Chinese, etc.)\n   - For Roman-script languages (Spanish, French, German, etc.): romanization MUST be null\n   - Penalize if romanization is missing for non-Roman scripts or contains text for Roman scripts\n   - Romanization MUST use Latin/Roman characters only - penalize SEVERELY if it copies the original script (e.g., Cyrillic, Hangul, Kana) instead of transliterating\n   - Both lowercase and sentence-case romanization are acceptable - do NOT penalize for capitalization style alone\n\n4. GRAMMATICAL CORRECTNESS:\n   - Sentences must be grammatically correct in the target language\n   - Verb conjugations must match the subject\n   - Gender agreement must be correct where applicable\n   - Word order should follow natural patterns of the target language\n   - Penalize for grammar errors, incorrect conjugations, or unnatural constructions\n\n5. SENTENCE NATURALNESS:\n   - Sentences should sound natural to native speakers\n   - Avoid overly literal translations or awkward phrasing\n   - Use appropriate register (formal/informal) for the context\n   - Penalize if sentences sound robotic, unnatural, or like machine translation\n\n6. CONTEXT DIVERSITY:\n   - Sentences should present different contexts or situations\n   - Avoid repetitive sentence structures\n   - Use variety in sentence types (statements, questions, commands where appropriate)\n   - Do NOT penalize for covering similar themes if vocabulary words naturally relate to each other\n\n7. LESSON RELEVANCE:\n   - Sentences should relate to the lesson topic\n   - The contexts should be appropriate for the lesson's educational goals\n   - Avoid straying into unrelated topics\n   - Do NOT require every sentence to explicitly reference the lesson topic - implicit relevance is fine\n\n8. APPROPRIATE DIFFICULTY:\n   - Sentences should be appropriate for language learners\n   - Avoid overly complex grammatical structures unless the lesson specifically targets advanced learners\n   - Vocabulary beyond the provided words should be at a similar or simpler level\n   - Penalize if sentences are incomprehensible to learners or use excessive advanced vocabulary\n\n9. NO DUPLICATES:\n   - Each sentence should be unique\n   - Avoid near-duplicates (same sentence with minor word changes)\n   - Penalize if essentially the same sentence appears multiple times\n\n10. LANGUAGE CORRECTNESS:\n    - Sentences should be in the TARGET language (courseTitle)\n    - Translations should be in the NATIVE language (language code)\n    - Penalize if languages are swapped or mixed incorrectly\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific sentence choices - accept ANY valid sentences that use the vocabulary\n- Do NOT penalize for not including specific contexts you might expect\n- Do NOT require a specific number of sentences\n- Do NOT expect sentences to follow any particular template or pattern\n- Different valid sentence constructions exist - assess the quality of what IS provided\n- FOCUS ON: vocabulary usage, translation accuracy, romanization correctness, grammatical correctness, naturalness\n\n    ",
+  "judgedAt": "2026-03-17T21:53:37.367Z",
   "judgments": [
     {
-      "judgeId": "anthropic/claude-opus-4.5",
+      "judgeId": "anthropic/claude-opus-4.6",
       "rankings": [
         {
-          "anonymousId": "Model C",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "Excellent output with 12 sentences. All vocabulary words are used correctly and naturally (comprar in various conjugations, la tienda, el precio, caro, barato). Translations to Brazilian Portuguese are accurate and natural. Gender agreement is correct throughout (mochila barata, etc.). Romanization is correctly empty. Great variety of contexts (online shopping, physical stores, checking prices, deciding based on cost). Sentences are natural and appropriate for learners. Minor note: sentence 5 uses 'caro' (invariable in predicate use) correctly.",
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "18 sentences with excellent vocabulary coverage — all 5 words appear multiple times across diverse contexts. Romanization is correctly null. Grammar is accurate throughout. Translations are natural Brazilian Portuguese and accurately convey meaning. Good variety of sentence structures (questions, statements, compound sentences). Contexts are diverse: groceries, shoes, restaurant, hotel, gas prices, university, electronics, Christmas shopping, etc. Difficulty is well-balanced. No duplicates. Very natural Spanish constructions throughout.",
           "score": 9.2
         },
         {
-          "anonymousId": "Model D",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Strong output with 10 well-constructed sentences. All vocabulary words are used correctly. Translations are accurate Brazilian Portuguese. Grammar is correct, including gender agreement (ropa barata, regalo caro). Romanization correctly empty. Good variety of shopping contexts. One minor issue: sentence 8 'costuma vender-se rápido' uses European Portuguese mesoclisis style rather than Brazilian 'costuma se vender rápido', but still acceptable.",
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "12 sentences with strong vocabulary coverage — all 5 words appear multiple times. Grammar is correct throughout. Translations are accurate and natural Brazilian Portuguese. Good variety of contexts and sentence structures. Romanization is empty string rather than null (the prompt says null for Roman scripts in the evaluation criteria, but the system prompt says empty string — this is a minor ambiguity, not a significant error). Sentences feel very natural and conversational. The sentence 'Si lo compras en línea, suele salir más barato que en la tienda' is particularly authentic. No duplicates or near-duplicates.",
           "score": 9
         },
         {
-          "anonymousId": "Model G",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Very good output with 15 sentences covering all vocabulary words well. Translations are accurate Brazilian Portuguese. Romanization correctly empty. Grammar is correct throughout. Good variety of contexts. Sentence 9 'roupas baratas' correctly shows plural agreement. Natural sentence constructions appropriate for learners. Solid quality throughout with no significant errors.",
-          "score": 8.9
-        },
-        {
-          "anonymousId": "Model F",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "Good output with 10 sentences. All vocabulary words used correctly. Translations are accurate Brazilian Portuguese. Romanization correctly empty. Grammar is correct. Sentence 8 uses imperative 'No compres' correctly translated. Good variety including formal register in sentence 3 ('Podría'). All sentences are natural and contextually appropriate.",
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "8 sentences with good vocabulary coverage — all 5 words appear. Romanization is correctly null. Grammar is accurate. Translations are natural and correct Brazilian Portuguese. Good variety of contexts and structures. The second sentence cleverly combines three vocabulary words naturally. Sentences feel authentic. Minor note: 'En esa tienda venden fruta fresca y bastante barata' — the translation uses plural 'frutas frescas e bem baratas' while Spanish uses singular 'fruta fresca y bastante barata'. This is a minor translation discrepancy but acceptable as Brazilian Portuguese naturally uses the plural here. Slightly fewer sentences than top models but quality is consistently high.",
           "score": 8.8
         },
         {
-          "anonymousId": "Model A",
+          "anonymousId": "Model F",
           "modelId": "google/gemini-3-flash",
-          "reasoning": "Good output with 15 sentences using all vocabulary words. Translations are generally accurate. However, some sentences stray from shopping context (restaurant being expensive for dining, traveling by bus vs airplane, concert tickets). Sentence 9 has a minor translation issue: 'caro' in Spanish becomes 'cara' in Portuguese to agree with 'televisão' (feminine), which is correct in the translation. Overall good quality with correct romanization.",
-          "score": 8.6
-        },
-        {
-          "anonymousId": "Model H",
-          "modelId": "anthropic/claude-sonnet-4.5",
-          "reasoning": "Good output with 20 sentences, all using vocabulary words correctly. Translations are accurate. Romanization correctly empty. Grammar is mostly correct. However, the large number of sentences leads to some repetitiveness in structure. Sentences are appropriate for learners. All vocabulary words are well represented across the sentences.",
-          "score": 8.5
-        },
-        {
-          "anonymousId": "Model E",
-          "modelId": "anthropic/claude-haiku-4.5",
-          "reasoning": "Mostly good output with 10 sentences. However, there is a CRITICAL grammar error in sentence 6: '¿Dónde puedo comprar zapatos barato?' - 'barato' should be 'baratos' to agree with plural 'zapatos'. This is specifically listed as a severe penalty criterion. The translation correctly shows 'baratos' which highlights the Spanish error. Other sentences are good with accurate translations and correct romanization.",
-          "score": 7.2
+          "reasoning": "15 sentences with good vocabulary coverage — all 5 words appear multiple times. Grammar is correct. Translations are accurate Brazilian Portuguese. Good variety of contexts. One minor issue: 'Ese televisor es demasiado caro' translated as 'Aquela televisão é cara demais' — the Spanish uses masculine 'caro' agreeing with 'televisor', while the Portuguese correctly uses feminine 'cara' agreeing with 'televisão'. This is actually correct translation behavior. 'verduras' translated as 'vegetais' is acceptable though 'verduras' would also work in PT. Romanization is empty string (acceptable). Overall high quality with diverse contexts.",
+          "score": 8.7
         },
         {
           "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "7 sentences with good vocabulary coverage — all 5 words appear. Romanization is correctly null. Grammar is correct throughout. Translations are accurate and natural Brazilian Portuguese. Good sentence variety. The last sentence 'En esa tienda venden frutas frescas a buen precio' is very natural. However, with only 7 sentences, coverage is relatively limited. Quality is high but quantity is lower than many competitors. 'precios' (plural) appears in sentence 6 which is a natural form of 'el precio'. No issues found.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "9 sentences with good vocabulary coverage — all 5 words appear. Romanization is correctly null. Grammar is correct. Translations are natural Brazilian Portuguese. Good variety of sentence types including an imperative ('Pregunta el precio...'). Sentences are clear and appropriate for learners. Some sentences are slightly simpler but that's fine for balanced difficulty. 'Buscaré una opción más barata en internet' is a nice use of future tense. No significant issues found.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "10 sentences with good vocabulary coverage — all 5 words appear. Grammar is correct. Translations are mostly accurate Brazilian Portuguese. One minor concern: 'suele venderse rápido' translated as 'costuma vender-se rápido' — while grammatically correct, Brazilian Portuguese would more naturally say 'costuma vender rápido' or 'costuma ser vendido rápido'. The use of 'vender-se' is more European Portuguese. Romanization is empty string (acceptable). Good variety of contexts and structures. The sentence with 'comparar el precio y la talla' is a nice practical shopping scenario.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "20 sentences with extensive vocabulary coverage — all 5 words appear multiple times. Grammar is mostly correct. Translations are accurate Brazilian Portuguese. Good variety of contexts. However, with 20 sentences, some feel simpler and more textbook-like than others ('Voy a comprar frutas en el mercado', 'Necesito comprar leche y pan', 'Quiero comprar un coche usado'). Some sentences lean toward the 'The X is Y' pattern the prompt warns against. One potential issue: 'Me gusta comprar en esta tienda porque es barato' — 'barato' here functions as an adverb/predicate adjective referring to the general experience, which is acceptable. Overall solid but the large quantity leads to some repetitive feel and simpler constructions.",
+          "score": 8.1
+        },
+        {
+          "anonymousId": "Model E",
           "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "Adequate output but only 5 sentences provided, which is fewer than other models. All vocabulary words are used, translations are accurate Brazilian Portuguese, romanization correctly empty. However, sentence 5 has a gender agreement issue: 'un bolso muy barato' in Spanish is masculine, but translation 'uma bolsa muito barata' uses feminine in Portuguese - this is actually acceptable as 'bolso'/'bolsa' differ between languages. Still, limited variety with only 5 sentences.",
-          "score": 7
+          "reasoning": "Only 5 sentences — one per vocabulary word. While each sentence is well-constructed, grammatically correct, and has accurate translations, the minimal quantity limits vocabulary distribution and context diversity. Each word appears only once, providing limited practice. The sentences themselves are high quality and natural, but the output feels insufficient for a comprehensive practice set. Romanization is empty string (acceptable).",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "10 sentences with all 5 vocabulary words covered. However, there is a significant grammatical error: '¿Dónde puedo comprar zapatos barato en esta ciudad?' — 'barato' should be 'baratos' to agree with the plural masculine noun 'zapatos'. The translation correctly uses 'baratos' which makes the mismatch more obvious. This is exactly the kind of adjective agreement error the prompt says to penalize severely. Additionally, the last sentence '¿Cuánto cuesta? El precio parece muy alto para un producto barato' feels somewhat contrived — calling something a 'producto barato' while saying the price is too high is semantically odd. Other sentences are well-constructed with good translations. Romanization is empty string (acceptable).",
+          "score": 7.3
         }
       ]
     },
     {
-      "judgeId": "google/gemini-3-pro-preview",
+      "judgeId": "google/gemini-3.1-pro-preview",
       "rankings": [
         {
           "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Model A perfectly executes the prompt. It provides a rich variety of sentences with natural phrasing, conversational elements, and excellent Spanish grammar. The translations into Brazilian Portuguese are flawless and capture the exact meaning and tone. The empty string for romanization correctly follows the system prompt instructions.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model G delivers exceptional output with a great variety of compound and complex sentences. The contexts are highly natural and practical for language learners. All vocabulary words are seamlessly integrated, and the Portuguese translations are perfectly accurate.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
           "modelId": "google/gemini-3-flash",
-          "reasoning": "This model produces the best output. It provides a high volume (15) of complex, natural-sounding sentences that fit the shopping context perfectly. The translations into Brazilian Portuguese are excellent, demonstrating great localization (e.g., translating 'entradas' as 'ingressos' for a concert, 'autobús' as 'ônibus'). It strictly adheres to all constraints, including vocabulary usage and empty romanization strings.",
+          "reasoning": "Model F generates excellent, real-world shopping scenarios that sound completely natural to native speakers. The grammar is flawless, the sentence structures are pleasantly varied, and the Portuguese translations are perfectly aligned with the original Spanish meaning.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model J strictly adheres to all instructions, providing high-quality practice sentences with a good mix of questions, statements, and conditional phrasing. The integration of the target vocabulary is highly organic, and the Portuguese translations are excellent.",
           "score": 10
         },
         {
           "anonymousId": "Model C",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "This model is nearly as good as Model A. It offers very natural, conversational sentences (e.g., 'no hay sorpresas al pagar', 'lo que ofrece') which are great for learning context. The Brazilian Portuguese translations are idiomatic and accurate. It is ranked slightly lower only because Model A provided slightly more volume and situational variety.",
-          "score": 9.5
-        },
-        {
-          "anonymousId": "Model F",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "Model F provides a solid list of 10 sentences with no errors. The translations are accurate and natural. It follows all instructions well. It is ranked below A and C simply because the sentences are slightly less varied or complex than the top two, but it is still a very strong output.",
-          "score": 9
-        },
-        {
-          "anonymousId": "Model D",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "This model produced good sentences and followed all instructions. However, one translation ('costuma vender-se rápido') uses a reflexive passive structure with enclisis that is grammatically correct but sounds slightly formal or less natural in everyday Brazilian Portuguese compared to the other models. Otherwise, it is a high-quality response.",
-          "score": 8.5
-        },
-        {
-          "anonymousId": "Model H",
-          "modelId": "anthropic/claude-sonnet-4.5",
-          "reasoning": "Model H provides the highest volume of sentences (20). While the sentences are grammatically correct and follow the vocabulary constraints, they are generally simpler and more repetitive in structure (Subject-Verb-Object) compared to the top models. It correctly handles false cognates like 'boletos/passagens', which is a plus.",
-          "score": 7.5
-        },
-        {
-          "anonymousId": "Model G",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Model G is very similar to Model H in style, offering simple, textbook-like sentences. It follows all instructions and vocabulary requirements correctly. It is ranked slightly lower than H because it provides fewer sentences (15 vs 20) with similar complexity.",
-          "score": 7
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Model C provides a highly natural and practical set of sentences. It correctly incorporates all vocabulary words in authentic contexts, uses appropriate regional Spanish, and pairs them with completely accurate Brazilian Portuguese translations.",
+          "score": 10
         },
         {
           "anonymousId": "Model B",
-          "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "Model B provides high-quality sentences and translations, but it only generates 5 sentences. While the prompt did not specify a minimum, this low volume limits the context diversity compared to other models providing 10-20 sentences. The quality is good, but the output is less useful due to its brevity.",
-          "score": 6
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Model B meets all criteria flawlessly. The sentences are well-constructed and useful for learners. The grammar, vocabulary usage, and translations into Brazilian Portuguese are completely accurate. Setting romanization to null strictly follows the user prompt.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model H provides accurate, natural, and highly useful sentences for a shopping lesson. The grammar is flawless, and the translations capture the exact meaning in authentic Brazilian Portuguese.",
+          "score": 10
         },
         {
           "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model E perfectly adheres to all constraints. Although it generated fewer sentences than some other models, the prompt explicitly forbids penalizing based on the number of sentences. The provided sentences are perfectly natural, correctly grammatical, and feature highly accurate translations.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Model D provides a large number of correct sentences and follows all negative constraints. However, it leans very heavily on simplistic sentence structures (Subject + Verb + Adjective), which slightly misses the system prompt's instruction to include a 'range of complexity' and 'compound sentences'.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model I",
           "modelId": "anthropic/claude-haiku-4.5",
-          "reasoning": "Model E contains a probable grammar error in Spanish: '¿Dónde puedo comprar zapatos barato...?' (Sentence 6). The adjective 'barato' should agree with 'zapatos' (baratos), or the syntax should be different to use it as an adverb. In a language learning context, this is confusing and incorrect. It adheres to other constraints.",
-          "score": 4.5
+          "reasoning": "Model I completely fails a critical grammatical requirement. In sentence 6, it uses 'zapatos barato' (plural noun with singular adjective). The prompt explicitly states to penalize SEVERELY if adjective agreement is wrong. This is a significant inaccuracy for a language learning context.",
+          "score": 3
         }
       ]
     },
     {
-      "judgeId": "openai/gpt-5.2",
+      "judgeId": "openai/gpt-5.4",
       "rankings": [
         {
           "anonymousId": "Model C",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "Todas as frases têm pelo menos um dos vocábulos exigidos (comprar/tienda/precio/caro/barato). Espanhol e português (BR) estão bem naturais e fiéis; boa variedade de contextos de compra (loja, online, imposto, etiqueta). Concordância e conjugação corretas (\"voy a comprar\", \"lo compras\", \"compro\"). Romanization corretamente vazio em todas.",
-          "score": 9.6
-        },
-        {
-          "anonymousId": "Model D",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Cumpre vocabulário em todas as frases e mantém contexto de compras/preços/loja. Traduções para PT-BR são boas e naturais. Conjugação/imperativo corretos (\"Voy a comprar\", \"Prefiero comprar\", \"apúrate\", \"¿Puedes ayudarme...?\"). Romanization vazio. Leve perda só por menor diversidade/quantidade vs. os melhores.",
-          "score": 9.3
-        },
-        {
-          "anonymousId": "Model F",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "Todas as frases usam ao menos um vocábulo-alvo e são contextualizadas em compras/preços. Traduções em PT-BR corretas e naturais. Gramática e concordância ok (inclui imperativo \"No compres\"). Romanization vazio. Pequenas escolhas fora de “shopping” estrito (cozinhar/comer fora) mas ainda dentro de “barato/caro”.",
-          "score": 9.2
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Strong overall: all sentences are natural, grammatical, shopping-relevant, and translations are accurate in Brazilian Portuguese. Every sentence uses at least one required vocabulary item, and coverage across comprar, la tienda, el precio, caro, and barato is complete. Good variety without duplication. Main issue: the prompt expectation says romanization should be null for Spanish, and this model complies. Slight minor awkwardness in 'El precio me parece un poco caro,' but still understandable and acceptable.",
+          "score": 9.4
         },
         {
           "anonymousId": "Model B",
-          "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "Conjunto curto, mas todas as frases incluem vocabulário obrigatório e estão no tema (comprar/tienda/precio/caro/barato). Traduções em português brasileiro corretas; concordância ok (\"bolso... barata\"). Romanization vazio. Perde pontos principalmente por pouca diversidade/quantidade.",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Very good and clean output. Sentences are natural, grammatical, and on-topic; translations are accurate and in Portuguese; romanization is correctly null. All sentences contain at least one vocabulary word, and all required words are covered across the set. Good diversity. Slightly less varied and rich than the top entry, but fully acceptable.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "High-quality output with accurate Portuguese translations, correct null romanization, and solid shopping contexts. Every sentence contains at least one target vocabulary word and all vocabulary is covered. Sentences are natural and learner-friendly. Slightly repetitive around clothing/price contexts, but still strong.",
           "score": 9
         },
         {
           "anonymousId": "Model G",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Bom uso consistente de comprar/tienda/precio/caro/barato em todas as frases, com traduções PT-BR adequadas. Romanization vazio. Leves quedas por algumas traduções um pouco mais “literais” e repetição de padrões (muitas frases bem similares), mas ainda correto e natural no geral.",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Very strong grammatical quality, natural Spanish, accurate Portuguese translations, and correct null romanization. Vocabulary coverage is complete and each sentence includes at least one target word. Good variety and no duplicates. Slight weakness: several sentences drift a bit from direct shopping situations into broader 'expensive' contexts like university or living in the city, which are less aligned with the shopping lesson.",
           "score": 8.8
         },
         {
-          "anonymousId": "Model A",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Todas as frases contêm pelo menos um vocábulo exigido e romanization está correto (vazio). Traduções em PT-BR são majoritariamente boas. Porém, várias frases fogem do foco de “shopping” (restaurante, hotel, viajar, combustível) apesar de ainda usarem caro/barato/preço; também há pequenos pontos de naturalidade (ex.: \"No compro esa marca\" → em PT-BR ok, mas poderia ser mais idiomático).",
-          "score": 8.6
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Good, natural Spanish with accurate Portuguese translations and full vocabulary coverage. Each sentence includes at least one required word and the shopping theme is maintained well. Main drawback: romanization is an empty string rather than null, which conflicts with the task expectation. Also one Portuguese translation ('costuma vender-se rápido') sounds slightly less natural in Brazilian Portuguese than alternatives.",
+          "score": 8.4
         },
         {
-          "anonymousId": "Model H",
-          "modelId": "anthropic/claude-sonnet-4.5",
-          "reasoning": "Quase todas as frases atendem bem (vocabulário presente e traduções corretas). Romanization vazio. Contudo, há uma violação crítica: \"Esta tienda vende ropa muy bonita.\" não usa nenhum dos vocábulos fornecidos (não contém comprar/la tienda/el precio/caro/barato). Isso derruba bastante a nota apesar do restante estar bom.",
-          "score": 6.2
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Excellent sentence quality, variety, and accurate translations. All sentences use required vocabulary naturally, and the set is highly relevant to shopping contexts. However, a major instruction-following issue: romanization is given as an empty string instead of null, despite the task expectation explicitly stating null for Roman-script Spanish. Also one sentence about a restaurant is somewhat less central to shopping. Content quality is otherwise among the best.",
+          "score": 8.3
         },
         {
           "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Clean, accurate, natural, and fully on-topic. All five required vocabulary words appear across the set, translations are good Brazilian Portuguese, and there are no duplicates. Main issue is format compliance: romanization is empty string instead of null. Also the set is short and less diverse than stronger outputs.",
+          "score": 8.1
+        },
+        {
+          "anonymousId": "Model I",
           "modelId": "anthropic/claude-haiku-4.5",
-          "reasoning": "Maioria das frases usa vocabulário e está no contexto, com traduções PT-BR ok. Problema gramatical importante no espanhol: \"¿Dónde puedo comprar zapatos barato en esta ciudad?\" deveria ser \"zapatos baratos\" (concordância). Além disso, uma frase usa \"los precios\" (plural) em vez de \"el precio\"; ainda é aceitável como uso do vocábulo base, mas combinado com o erro de concordância fica abaixo dos demais.",
-          "score": 5.8
+          "reasoning": "Generally good vocabulary coverage and mostly natural, with accurate Portuguese translations in most cases. However, there is a notable grammatical error in Spanish: '¿Dónde puedo comprar zapatos barato...?' should agree as 'baratos' or be rephrased. Romanization also uses empty strings instead of null. Because grammatical accuracy is critical, this lowers the score substantially.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Mostly grammatical and translations are accurate, but it has a critical prompt-following problem: not every sentence contains one of the provided vocabulary words. For example, sentences about waiting outside the store and a hotel being cheap do not use the exact required vocabulary items. Romanization also uses empty strings instead of null. Some contexts stray from shopping vocabulary focus.",
+          "score": 6.6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Many sentences are grammatical and translations are fine, but there are significant adherence issues. Several sentences do not include any of the provided vocabulary words exactly, such as 'mercado' instead of 'la tienda' and 'Encontré un hotel barato...' which is off-topic relative to shopping. Romanization is empty string instead of null. The large number of sentences does not compensate for weaker compliance.",
+          "score": 6.2
         }
       ]
     }

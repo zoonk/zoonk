@@ -1,0 +1,110 @@
+{
+  "modelId": "google/gemini-3.1-flash-lite-preview",
+  "results": [
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST include 'math'.\n\n      \n  - Choose from the fixed set only\n  - Pick the primary functional domain first; add a secondary ONLY if it is central to the course goals\n  - Anchor on learning outcomes, not surface keywords\n\n    ",
+        "id": "en-calculus-1",
+        "userInput": {
+          "courseTitle": "Calculus"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST include 'history'.\n\n      \n  - Choose from the fixed set only\n  - Pick the primary functional domain first; add a secondary ONLY if it is central to the course goals\n  - Anchor on learning outcomes, not surface keywords\n\n    ",
+        "id": "es-historia-de-roma-1",
+        "userInput": {
+          "courseTitle": "Historia de Roma"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response correctly uses only allowed categories and aligns well with the expectation to include 'arts' and/or 'culture'. 'Arts' is a strong primary fit for literature, and 'culture' is a reasonable secondary since Spanish literature is centrally tied to cultural context. A small possible improvement would be to make the primary/secondary ordering rationale explicit, but the chosen order already appears appropriate.",
+          "kind": "potentialImprovements",
+          "score": 9.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - SHOULD include 'arts' and/or 'culture'.\n\n      \n  - Choose from the fixed set only\n  - Pick the primary functional domain first; add a secondary ONLY if it is central to the course goals\n  - Anchor on learning outcomes, not surface keywords\n\n    ",
+        "id": "en-spanish-literature-strict-rule-1",
+        "userInput": {
+          "courseTitle": "Spanish Literature"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None. The selected categories are from the allowed fixed set and there is no clear major rule violation. For a course titled 'Linguistics', choosing 'communication' as primary is defensible because the field studies language structure and use, and adding 'society' is also plausible given the social dimensions of language. It also aligns with the expectation that the answer should include 'culture' and/or 'society'.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "A likely minor issue is category prioritization: for 'Linguistics', 'society' or 'culture' may fit the expectation more directly than 'communication' as the primary domain, depending on the intended learning goals. However, since only the title is provided and no syllabus details exist, this remains a mild ambiguity rather than a concrete mistake.",
+          "kind": "minorErrors",
+          "score": 8.7
+        },
+        {
+          "conclusion": "It could be improved by choosing just one category if the evaluator interprets the title as too broad to justify a central secondary domain, or by preferring 'society' as primary if emphasizing linguistics as a social science. Still, the current answer is concise, valid, and reasonably aligned with the expectations.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - SHOULD include 'culture' and/or 'society'.\n\n      \n  - Choose from the fixed set only\n  - Pick the primary functional domain first; add a secondary ONLY if it is central to the course goals\n  - Anchor on learning outcomes, not surface keywords\n\n    ",
+        "id": "en-linguistics-1",
+        "userInput": {
+          "courseTitle": "Linguistics"
+        }
+      }
+    }
+  ],
+  "taskId": "course-categories"
+}

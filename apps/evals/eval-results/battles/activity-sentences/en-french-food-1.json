@@ -1,163 +1,199 @@
 {
-  "expectations": "\nLANGUAGE: English output required for translations.\n\nTOPIC: French sentences for food and dining - using food-related vocabulary.\n\nSCRIPT: Roman (romanization should be empty string \"\")\n\nVOCABULARY WORDS PROVIDED: le pain, le fromage, le vin, la soupe, le dessert\nThese words MUST appear in the generated sentences.\n\nACCURACY PITFALLS - Penalize SEVERELY if:\n- Any sentence doesn't use at least one of the provided vocabulary words\n- Food items are used in unrealistic contexts\n- Gender agreement is incorrect (le/la must match the noun)\n- Translations don't accurately convey the French meaning\n- Romanization contains any text (should be empty string)\n\nCONTEXT EXPECTATIONS:\n- Sentences about ordering, eating, or discussing food\n- Restaurant or home dining situations\n- Natural food-related conversations\n\n\nEVALUATION CRITERIA:\n\n1. VOCABULARY WORD USAGE (CRITICAL - highest priority):\n   - Each generated sentence MUST use at least one of the provided vocabulary words\n   - The words should be used in their natural form (conjugated verbs, declined nouns are acceptable)\n   - Penalize SEVERELY if sentences don't incorporate the provided vocabulary\n   - Penalize if words are used incorrectly or out of context\n\n2. TRANSLATION ACCURACY (CRITICAL):\n   - Each sentence-translation pair MUST be linguistically accurate\n   - The translation must convey the same meaning as the original sentence\n   - Consider regional variations (Brazilian Portuguese vs European, Latin American Spanish vs Castilian)\n   - Penalize SEVERELY if translations are incorrect, incomplete, or misleading\n   - Grammatical structures should be appropriately adapted between languages\n\n3. ROMANIZATION (required field):\n   - For Japanese, Chinese, Korean, Arabic, Russian, Greek, Thai, Hindi, etc.: romanization MUST contain the Roman letter representation of the sentence\n   - Use standard romanization systems (romaji for Japanese, pinyin for Chinese, etc.)\n   - For Roman-script languages (Spanish, French, German, etc.): romanization MUST be an empty string \"\"\n   - Penalize if romanization is missing for non-Roman scripts or contains text for Roman scripts\n\n4. GRAMMATICAL CORRECTNESS:\n   - Sentences must be grammatically correct in the target language\n   - Verb conjugations must match the subject\n   - Gender agreement must be correct where applicable\n   - Word order should follow natural patterns of the target language\n   - Penalize for grammar errors, incorrect conjugations, or unnatural constructions\n\n5. SENTENCE NATURALNESS:\n   - Sentences should sound natural to native speakers\n   - Avoid overly literal translations or awkward phrasing\n   - Use appropriate register (formal/informal) for the context\n   - Penalize if sentences sound robotic, unnatural, or like machine translation\n\n6. CONTEXT DIVERSITY:\n   - Sentences should present different contexts or situations\n   - Avoid repetitive sentence structures\n   - Use variety in sentence types (statements, questions, commands where appropriate)\n   - Do NOT penalize for covering similar themes if vocabulary words naturally relate to each other\n\n7. LESSON RELEVANCE:\n   - Sentences should relate to the lesson topic\n   - The contexts should be appropriate for the lesson's educational goals\n   - Avoid straying into unrelated topics\n   - Do NOT require every sentence to explicitly reference the lesson topic - implicit relevance is fine\n\n8. APPROPRIATE DIFFICULTY:\n   - Sentences should be appropriate for language learners\n   - Avoid overly complex grammatical structures unless the lesson specifically targets advanced learners\n   - Vocabulary beyond the provided words should be at a similar or simpler level\n   - Penalize if sentences are incomprehensible to learners or use excessive advanced vocabulary\n\n9. NO DUPLICATES:\n   - Each sentence should be unique\n   - Avoid near-duplicates (same sentence with minor word changes)\n   - Penalize if essentially the same sentence appears multiple times\n\n10. LANGUAGE CORRECTNESS:\n    - Sentences should be in the TARGET language (courseTitle)\n    - Translations should be in the NATIVE language (language code)\n    - Penalize if languages are swapped or mixed incorrectly\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific sentence choices - accept ANY valid sentences that use the vocabulary\n- Do NOT penalize for not including specific contexts you might expect\n- Do NOT require a specific number of sentences\n- Do NOT expect sentences to follow any particular template or pattern\n- Different valid sentence constructions exist - assess the quality of what IS provided\n- FOCUS ON: vocabulary usage, translation accuracy, romanization correctness, grammatical correctness, naturalness\n\n    ",
-  "judgedAt": "2026-01-21T17:29:47.984Z",
+  "expectations": "\nLANGUAGE: English output required for translations.\n\nTOPIC: French sentences for food and dining - using food-related vocabulary.\n\nSCRIPT: Roman (romanization should be null)\n\nVOCABULARY WORDS PROVIDED: le pain, le fromage, le vin, la soupe, le dessert\nThese words MUST appear in the generated sentences.\n\nACCURACY PITFALLS - Penalize SEVERELY if:\n- Any sentence doesn't use at least one of the provided vocabulary words\n- Food items are used in unrealistic contexts\n- Gender agreement is incorrect (le/la must match the noun)\n- Translations don't accurately convey the French meaning\n- Romanization contains any text (should be null)\n\nCONTEXT EXPECTATIONS:\n- Sentences about ordering, eating, or discussing food\n- Restaurant or home dining situations\n- Natural food-related conversations\n\n\nEVALUATION CRITERIA:\n\n1. VOCABULARY WORD USAGE (CRITICAL - highest priority):\n   - Each generated sentence MUST use at least one of the provided vocabulary words\n   - The words should be used in their natural form (conjugated verbs, declined nouns are acceptable)\n   - Penalize SEVERELY if sentences don't incorporate the provided vocabulary\n   - Penalize if words are used incorrectly or out of context\n\n2. TRANSLATION ACCURACY (CRITICAL):\n   - Each sentence-translation pair MUST be linguistically accurate\n   - The translation must convey the same meaning as the original sentence\n   - Consider regional variations (Brazilian Portuguese vs European, Latin American Spanish vs Castilian)\n   - Penalize SEVERELY if translations are incorrect, incomplete, or misleading\n   - Grammatical structures should be appropriately adapted between languages\n\n3. ROMANIZATION (required field):\n   - For Japanese, Chinese, Korean, Arabic, Russian, Greek, Thai, Hindi, etc.: romanization MUST contain the Roman letter representation of the FULL sentence (not just keywords)\n   - Use standard romanization systems (romaji for Japanese, pinyin for Chinese, etc.)\n   - For Roman-script languages (Spanish, French, German, etc.): romanization MUST be null\n   - Penalize if romanization is missing for non-Roman scripts or contains text for Roman scripts\n   - Romanization MUST use Latin/Roman characters only - penalize SEVERELY if it copies the original script (e.g., Cyrillic, Hangul, Kana) instead of transliterating\n   - Both lowercase and sentence-case romanization are acceptable - do NOT penalize for capitalization style alone\n\n4. GRAMMATICAL CORRECTNESS:\n   - Sentences must be grammatically correct in the target language\n   - Verb conjugations must match the subject\n   - Gender agreement must be correct where applicable\n   - Word order should follow natural patterns of the target language\n   - Penalize for grammar errors, incorrect conjugations, or unnatural constructions\n\n5. SENTENCE NATURALNESS:\n   - Sentences should sound natural to native speakers\n   - Avoid overly literal translations or awkward phrasing\n   - Use appropriate register (formal/informal) for the context\n   - Penalize if sentences sound robotic, unnatural, or like machine translation\n\n6. CONTEXT DIVERSITY:\n   - Sentences should present different contexts or situations\n   - Avoid repetitive sentence structures\n   - Use variety in sentence types (statements, questions, commands where appropriate)\n   - Do NOT penalize for covering similar themes if vocabulary words naturally relate to each other\n\n7. LESSON RELEVANCE:\n   - Sentences should relate to the lesson topic\n   - The contexts should be appropriate for the lesson's educational goals\n   - Avoid straying into unrelated topics\n   - Do NOT require every sentence to explicitly reference the lesson topic - implicit relevance is fine\n\n8. APPROPRIATE DIFFICULTY:\n   - Sentences should be appropriate for language learners\n   - Avoid overly complex grammatical structures unless the lesson specifically targets advanced learners\n   - Vocabulary beyond the provided words should be at a similar or simpler level\n   - Penalize if sentences are incomprehensible to learners or use excessive advanced vocabulary\n\n9. NO DUPLICATES:\n   - Each sentence should be unique\n   - Avoid near-duplicates (same sentence with minor word changes)\n   - Penalize if essentially the same sentence appears multiple times\n\n10. LANGUAGE CORRECTNESS:\n    - Sentences should be in the TARGET language (courseTitle)\n    - Translations should be in the NATIVE language (language code)\n    - Penalize if languages are swapped or mixed incorrectly\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific sentence choices - accept ANY valid sentences that use the vocabulary\n- Do NOT penalize for not including specific contexts you might expect\n- Do NOT require a specific number of sentences\n- Do NOT expect sentences to follow any particular template or pattern\n- Different valid sentence constructions exist - assess the quality of what IS provided\n- FOCUS ON: vocabulary usage, translation accuracy, romanization correctness, grammatical correctness, naturalness\n\n    ",
+  "judgedAt": "2026-03-17T21:52:52.792Z",
   "judgments": [
     {
-      "judgeId": "anthropic/claude-opus-4.5",
+      "judgeId": "anthropic/claude-opus-4.6",
       "rankings": [
         {
           "anonymousId": "Model A",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Model A provides 15 sentences with excellent coverage of all 5 vocabulary words (le pain, le fromage, le vin, la soupe, le dessert). Each sentence uses vocabulary correctly with proper gender agreement. Translations are accurate and natural. Romanization is correctly empty. The sentences show good variety in context (restaurants, home dining, cultural facts about French cuisine). Grammar is correct throughout. Natural phrasing like 'Je voudrais du pain' and 'Qu'est-ce que vous avez comme dessert' demonstrate authentic French. No duplicates. The only minor issue is sentence 6 uses 'Ce pain' (demonstrative) rather than 'le pain' but it's still using the vocabulary appropriately.",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "18 sentences, all using vocabulary words correctly. Excellent naturalness - sentences sound like real French conversations (e.g., 'Il reste du pain d'hier, tu veux que je fasse des tartines?'). All translations are accurate. Grammar is correct throughout. Good variety of contexts (home, restaurant, travel, family). Mix of sentence types (questions, statements). Multiple vocabulary words per sentence in several cases ('Ce fromage sent très fort, mais il est délicieux avec du vin rouge'). Romanization is null, which is technically not matching the prompt spec of empty string '', but the evaluation criteria say null is acceptable for Roman scripts. One minor note: 'soupe à l'oignon' translated as 'French onion soup' adds 'French' not in the original, but this is a natural English convention. Excellent overall quality.",
           "score": 9.2
         },
         {
-          "anonymousId": "Model H",
+          "anonymousId": "Model J",
           "modelId": "openai/gpt-5.2",
-          "reasoning": "Model H provides 15 sentences with all vocabulary words used correctly. The sentences are particularly natural and conversational, with excellent variety in register (informal 'tu' and formal situations). Translations are accurate. Romanization is correctly empty. Grammar is correct. Sentences like 'On a oublié le fromage sur la table' and 'Je garde toujours un morceau de fromage' show authentic, colloquial French. The contexts are realistic and diverse. Sentence 6 cleverly uses both pain and fromage together naturally. Very strong overall with excellent naturalness.",
-          "score": 9.1
-        },
-        {
-          "anonymousId": "Model G",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Model G provides 10 sentences with all vocabulary words covered. Grammar is correct and translations are accurate. Romanization is correctly empty. Good variety in contexts (market, terrace, restaurant). Sentences are natural and appropriate for learners. Sentence 7 nicely combines pain and fromage. The only minor point is fewer sentences than some other models, but quality is consistently high throughout. Natural constructions like 'Quelle délicieuse soupe' show authentic French exclamatory patterns.",
-          "score": 8.9
-        },
-        {
-          "anonymousId": "Model B",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "Model B provides 10 sentences using all vocabulary words correctly. Translations are accurate and romanization is correctly empty. Grammar is correct throughout. Good naturalness in sentences like 'Ce fromage sent fort, mais il est excellent.' Sentence 6 cleverly combines fromage and pain. Nice variety in contexts. The sentences sound authentic and are appropriate for learners. Slightly fewer sentences than top models but quality is consistent.",
-          "score": 8.8
-        },
-        {
-          "anonymousId": "Model F",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Model F provides 10 sentences with all vocabulary words covered correctly. Grammar is correct, translations are accurate, and romanization is correctly empty. Sentences are natural and appropriate for learners. Good variety in contexts (bakery, dinner, restaurant). The sentences are perhaps slightly simpler/more basic than other models but this is appropriate for learners. All sentences are grammatically sound and translations accurately convey meaning.",
-          "score": 8.6
-        },
-        {
-          "anonymousId": "Model C",
-          "modelId": "anthropic/claude-haiku-4.5",
-          "reasoning": "Model C provides 10 sentences with all vocabulary words covered. Grammar is correct and translations are accurate. Romanization is correctly empty. Good variety of contexts. However, a couple sentences are slightly less natural: 'Ce fromage vient de France et il a un goût délicieux' is a bit awkward (would more naturally be 'a un goût délicieux' or 'est délicieux'). 'Ma recette de dessert préférée' is also slightly awkward phrasing. Overall solid but slightly less natural than top performers.",
-          "score": 8.4
-        },
-        {
-          "anonymousId": "Model D",
-          "modelId": "anthropic/claude-sonnet-4.5",
-          "reasoning": "Model D provides 20 sentences, the most of any model, covering all vocabulary words multiple times. However, there's a spelling error in sentence 1: 'petit-déeuner' should be 'petit-déjeuner'. This is a notable grammar/spelling error that should be penalized. Otherwise, translations are accurate, romanization is correctly empty, and sentences show good variety. The error prevents a higher score despite good overall coverage and natural sentences.",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model E",
-          "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "Model E provides only 5 sentences, which is fewer than other models. While each sentence does use vocabulary correctly, translations are accurate, romanization is correctly empty, and grammar is good, the limited number of sentences means less demonstration of context diversity and vocabulary coverage. Each vocabulary word is used once, which meets minimum requirements but doesn't show the depth of coverage other models provide. The sentences that are provided are natural and well-constructed.",
-          "score": 7.5
-        }
-      ]
-    },
-    {
-      "judgeId": "google/gemini-3-pro-preview",
-      "rankings": [
-        {
-          "anonymousId": "Model H",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "This model produced the highest quality output. The sentences are exceptionally natural and conversational, using authentic phrasing like 'du coin' (around the corner), 'tout mou' (all soft), and 'à l'improviste' (unexpectedly). It provided a high volume of sentences (15) with perfect vocabulary usage and distinct, varied contexts ranging from casual home dining to restaurant situations. The use of typographic apostrophes also adds a polished feel.",
-          "score": 10
-        },
-        {
-          "anonymousId": "Model A",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Model A provided a large set of sentences (15) that were accurate, varied, and linguistically correct. While the sentences were slightly more 'textbook' in style compared to Model H (e.g., 'Le fromage français est célèbre...'), they were perfectly constructed and suitable for learners. Adherence to all constraints was perfect.",
-          "score": 9.5
-        },
-        {
-          "anonymousId": "Model G",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "This model generated 10 high-quality sentences with good cultural context (mentioning a 'terrasse', 'marché', and 'crème brûlée'). The grammar was advanced yet appropriate (correct usage of 'en' in 'j'en voudrais encore'). It follows all instructions perfectly.",
+          "reasoning": "15 sentences, all using vocabulary words naturally. Excellent naturalness - very conversational French (e.g., 'On a oublié le fromage sur la table, et maintenant il est tout mou', 'Pour l'apéro, ils ont servi du fromage avec du pain et quelques olives'). Translations are accurate and natural. Grammar is correct. Great variety of contexts and sentence structures. Multiple vocabulary words combined naturally in several sentences. Romanization is empty string as expected. The sentence 'je me suis couchée tôt' assumes a female speaker, which is fine contextually. Very high quality output.",
           "score": 9
         },
         {
-          "anonymousId": "Model B",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "Model B produced natural-sounding sentences with excellent translations that captured the nuance of the French phrasing (e.g., translating 'en rentrant' as 'on your way home'). The contexts were realistic and the vocabulary was used correctly.",
-          "score": 8.8
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "10 sentences, all using vocabulary words correctly. Good naturalness overall. Translations are accurate. Grammar is correct. Decent variety of contexts. Romanization is null (acceptable per criteria). Sentences are well-constructed and natural-sounding. Each vocabulary word appears at least twice. Good mix of complexity levels. Slightly less diverse and creative than Models A and J, but solid quality throughout.",
+          "score": 8.2
         },
         {
-          "anonymousId": "Model C",
-          "modelId": "anthropic/claude-haiku-4.5",
-          "reasoning": "This model provided solid, accurate sentences. The contexts were appropriate (picnic, tasting board, dinner). It is a very good output, though slightly less conversational in tone than the higher-ranked models.",
-          "score": 8.5
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "10 sentences, all using vocabulary words correctly. Each word appears exactly twice. Good naturalness. Translations are accurate. Grammar is correct. Nice variety including questions, exclamations, and statements. Romanization is null (acceptable). Good mix of formal and informal register. Sentences like 'Fais attention, la soupe est encore très chaude!' add variety. Solid quality but slightly more textbook-feeling than top models.",
+          "score": 8.1
         },
         {
-          "anonymousId": "Model E",
-          "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "Model E provided excellent, complex, and natural sentences. However, it only generated 5 sentences. While the prompt explicitly states not to require a specific number, the lower volume reduces the diversity of contexts compared to models providing 10-15 sentences. The quality per sentence is very high, placing it above the more robotic Model F.",
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "7 sentences, all using vocabulary words correctly. Good naturalness - several sentences combine multiple vocabulary words naturally (e.g., 'Je prends du pain et de la soupe quand je veux un dîner léger'). Translations are accurate. Grammar is correct. Romanization is null (acceptable). Good variety of contexts. The smaller number of sentences provides less practice material, but quality is high. Each word is well-represented across the sentences.",
           "score": 8
         },
         {
-          "anonymousId": "Model F",
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "10 sentences, all using vocabulary words correctly. Good naturalness overall. Translations are accurate. Grammar is correct. Romanization is empty string as expected. Nice variety of contexts (market, restaurant, home, terrace). The exclamation 'Quelle délicieuse soupe, j'en voudrais encore!' adds variety. Minor note: 'tarte aux pommes' translated as 'apple pie' rather than 'apple tart' - a minor inaccuracy as tarte is a tart, not a pie, though commonly used interchangeably in casual English. Solid but slightly less creative and diverse than top models.",
+          "score": 7.9
+        },
+        {
+          "anonymousId": "Model E",
           "modelId": "google/gemini-3-flash",
-          "reasoning": "Model F followed all instructions and provided accurate sentences. However, the sentences were quite simple and occasionally sounded a bit robotic or purely functional (e.g., 'The cheese platter is magnificent', 'Is this cheese strong?'). It is a safe but basic output.",
-          "score": 7.5
+          "reasoning": "10 sentences, all using vocabulary words correctly. Good grammar and accurate translations. Romanization is empty string as expected. Decent variety. However, some sentences lean toward the simpler/more textbook side ('Le plateau de fromage est magnifique', 'Cette soupe est parfaite pour l'hiver'). Still natural enough but less conversational flair than top models. All vocabulary words are covered. Translation quality is good throughout.",
+          "score": 7.7
         },
         {
           "anonymousId": "Model D",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "10 sentences, all using vocabulary words correctly. Translations are accurate. Grammar is correct. Romanization is empty string as expected. However, several sentences feel somewhat textbook-like ('Le pain et le fromage sont parfaits pour un pique-nique', 'La soupe est chaude et réconfortante par une journée froide', 'Le vin rouge s'accorde bien avec ce plat de viande'). While grammatically correct, they have a more instructional feel. 'Ma recette de dessert préférée inclut du chocolat et des fraises' sounds slightly unnatural - 'inclut' is a bit formal/written for this context. Decent variety but somewhat repetitive in structure (many simple declarative statements).",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model F",
           "modelId": "anthropic/claude-sonnet-4.5",
-          "reasoning": "Model D provided the highest volume of sentences (20), but it included a significant spelling error in the very first sentence ('petit-déeuner' instead of 'petit-déjeuner'). In the context of language learning materials, typos in target vocabulary or common nouns are a critical accuracy failure.",
-          "score": 4
+          "reasoning": "20 sentences covering all vocabulary words well. Good variety of contexts. Translations are generally accurate. Romanization is empty string as expected. However, there's a spelling error: 'petit-déeuner' should be 'petit-déjeuner' - this is a notable grammatical/spelling error. Some sentences lean toward the simpler/textbook side ('Le pain est dans la corbeille sur la table'). 'Le dessert du jour' translated as 'today's dessert special' - adding 'special' is a slight embellishment but acceptable in context. The sheer quantity provides good coverage but the spelling error is a significant issue for a language learning tool.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Only 5 sentences, which is quite sparse for practice material. All use vocabulary words correctly. Grammar is correct. Translations are accurate. Romanization is empty string as expected. The sentences are natural and well-constructed. However, the very small number means limited practice opportunity and less context diversity. Each vocabulary word appears only once, providing minimal exposure. Quality is good but quantity is insufficient for effective practice.",
+          "score": 6.8
         }
       ]
     },
     {
-      "judgeId": "openai/gpt-5.2",
+      "judgeId": "google/gemini-3.1-pro-preview",
       "rankings": [
         {
           "anonymousId": "Model A",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "All sentences include at least one required vocab item, with correct gender/article usage (le pain/le fromage/le vin/la soupe/le dessert), natural dining contexts, accurate English translations, and empty romanization. High variety and no notable grammar issues.",
-          "score": 9.6
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model A provides an excellent variety of practice sentences that are highly idiomatic, natural, and practically useful for a language learner. The grammar, vocabulary usage, and translations are perfectly executed, and the contexts range suitably from everyday family dining to restaurant settings. It perfectly followed the instruction to make romanization null.",
+          "score": 10
         },
         {
-          "anonymousId": "Model H",
+          "anonymousId": "Model J",
           "modelId": "openai/gpt-5.2",
-          "reasoning": "Every sentence contains at least one required word, romanization correctly empty, very natural conversational restaurant/home contexts, and accurate translations. Good diversity. Minor style nit: “tout mou” is informal but still natural; otherwise excellent.",
-          "score": 9.4
+          "reasoning": "Model J also generates exceptional, highly natural sentences. It uses great conversational French (e.g., 'tout mou', 'apéro', 'nouveau boulot', 'à l'improviste') that introduces learners to authentic native phrasing while flawlessly incorporating the target vocabulary. The translations properly convey the casual register.",
+          "score": 10
         },
         {
           "anonymousId": "Model G",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "All sentences use required vocabulary appropriately, contexts are food/dining related, grammar and gender are correct, translations accurate, romanization empty. Slightly less varied/interesting than top two but still very strong.",
-          "score": 9.1
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Model G provides a very strong set of sentences. The vocabulary words are seamlessly integrated into natural, everyday contexts with completely accurate translations. It perfectly followed the instruction to make romanization null.",
+          "score": 9.5
         },
         {
-          "anonymousId": "Model F",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Meets all critical requirements: each sentence includes a provided vocab word, empty romanization, accurate translations, and natural restaurant/home usage. Minor awkwardness: “Ma grand-mère prépare…” translated as “prepares” (acceptable), otherwise solid.",
-          "score": 8.9
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Model H offers excellent, grammatically perfect sentences with very accurate translations. The phrasing is natural and well-suited for the topic of food and dining. Null romanization is correctly applied.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model I delivers highly practical sentences that learners would realistically use in France (such as asking for more bread or referencing the order of cheese and dessert). The translations and grammar are flawless.",
+          "score": 9.5
         },
         {
           "anonymousId": "Model B",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "All sentences contain required vocab words, with correct articles and realistic contexts. Translations are accurate and romanization empty. Slightly more repetitive/simple set and less contextual variety than higher-ranked sets.",
-          "score": 8.7
-        },
-        {
-          "anonymousId": "Model C",
-          "modelId": "anthropic/claude-haiku-4.5",
-          "reasoning": "All sentences include at least one target word; grammar and translations are accurate; romanization empty. A couple of phrasings are a bit less idiomatic (“par une journée froide” is understandable but slightly stiff), but overall good.",
-          "score": 8.4
-        },
-        {
-          "anonymousId": "Model E",
-          "modelId": "openai/gpt-5.1-instant",
-          "reasoning": "All five sentences include required vocabulary words and are natural with accurate translations and empty romanization. Lower score mainly due to limited number of sentences/less diversity compared with others (not a requirement, but impacts overall quality comparison).",
-          "score": 8.2
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Model B provides excellent, highly relevant sentences that cover diverse dining situations. The French phrasing is natural and the grammar is completely accurate. It successfully followed the fallback instruction to use an empty string for Roman scripts.",
+          "score": 9.5
         },
         {
           "anonymousId": "Model D",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Model D offers another very strong set of sentences with completely correct grammar and natural translations. The contexts are perfectly tailored to the food and dining lesson.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model E provides grammatically correct sentences that properly utilize the vocabulary. The sentences are slightly more basic and have a bit less contextual variety than the top models, but still serve as very good foundational practice.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Model C generates correct, natural sentences with good vocabulary usage. However, it only provides 5 sentences, which offers less variety and practice material compared to the other models.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
           "modelId": "anthropic/claude-sonnet-4.5",
-          "reasoning": "Uses required vocabulary throughout with generally accurate translations and empty romanization. Notable issue: spelling error “petit-déeuner” (should be “petit-déjeuner”), which hurts grammatical correctness. Otherwise contexts and gender agreement are fine.",
-          "score": 7.6
+          "reasoning": "Model F includes a noticeable spelling error in the target language in its first sentence ('petit-déeuner' instead of 'petit-déjeuner'). In a language learning context, target language spelling must be completely accurate, resulting in a penalty.",
+          "score": 7
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Best overall. All sentences are natural, grammatically correct, relevant to food/dining, and every sentence includes at least one required vocabulary item. Coverage of all five target words is strong and distributed naturally across varied contexts. Translations are accurate and idiomatic. Only notable issue: the prompt’s user section says romanization should be null for French, while the system prompt said empty string for Roman scripts; this output uses null, which matches the task expectations section and avoids text, so this is at most a minor schema inconsistency concern.",
+          "score": 9.7
+        },
+        {
+          "anonymousId": "Model J",
+          "modelId": "openai/gpt-5.2",
+          "reasoning": "Excellent set with strong naturalness, variety, and accurate translations. Every sentence uses one or more of the required vocabulary words in realistic food-related contexts. Grammar is solid and the sentences feel conversational. The main drawback is format adherence: it uses romanization as an empty string rather than null, which conflicts with the task expectations section saying it should be null for Roman script languages. Content quality is otherwise outstanding.",
+          "score": 9.3
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5-mini",
+          "reasoning": "Very strong output. All sentences are grammatical, natural, and clearly tied to food/dining. Every sentence contains at least one required vocabulary word, and all five are covered. Translations are accurate. Slightly less varied and expansive than the top entries. Also uses empty-string romanization instead of the expected null from the task expectations, which is a format miss.",
+          "score": 8.9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Good, accurate, and natural set of sentences with all required vocabulary covered and no clear grammatical problems. Contexts are appropriate and diverse enough. Translations are accurate. Slightly more generic than the best outputs, and romanization is given as empty string instead of null per the user task expectations.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "High-quality content: natural French, accurate translations, strong relevance, and every sentence uses one of the required words. Good variety and no duplication issues. Slightly less rich than the very top responses. Uses null for romanization, which aligns with the task expectations section.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Strong and accurate overall. Grammar and translations are good, all vocabulary items are covered, and every sentence includes at least one required term. The contexts are practical and on-topic. It is a bit formulaic and restaurant-heavy, but still useful. Romanization as null aligns with the task expectations.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Solid output with natural, relevant sentences and accurate translations. All sentences include required vocabulary, and several combine multiple target words effectively. However, it provides only seven sentences and less overall coverage breadth than stronger submissions. One translation nuance is slightly off: “Pour l'apéritif” is better rendered as “For drinks/before the meal” rather than “For the appetizer.” Still acceptable overall. Romanization null matches the task expectations.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Adequate to good. All required vocabulary appears, grammar is correct, and translations are mostly accurate. Sentences are clear and relevant, though somewhat plain and repetitive. One issue: “Voulez-vous voir la carte des desserts ?” is translated as “Would you like to see the dessert menu?” which is understandable but not the cleanest rendering of the French plural phrasing. Also uses empty-string romanization instead of expected null.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.1-instant",
+          "reasoning": "Content quality is good: natural French, accurate translations, and all five required vocabulary words are covered. However, it only provides five sentences, limiting diversity and practice value compared with stronger outputs. There is also a grammar error: “La soupe sent tellement bon” should be “sent tellement bonne” because “soupe” is feminine in this construction. Romanization is empty string instead of expected null.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.5",
+          "reasoning": "Mixed quality. It has good coverage, many relevant examples, and generally accurate translations. However, there is a significant spelling/orthography error in the very first sentence: “petit-déeuner” instead of “petit-déjeuner,” which is a clear accuracy problem. There are also a few slightly less natural choices, such as “inclus dans le menu” being more idiomatically “compris dans le menu” in many contexts. Romanization is empty string rather than null. The typo and format issue meaningfully lower the score.",
+          "score": 6.8
         }
       ]
     }

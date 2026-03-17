@@ -1,145 +1,127 @@
 {
-  "expectations": "\nLANGUAGE: Latin American Spanish output required (NOT English).\n\nTOPIC: Korean subject markers 이 (i) and 가 (ga) - particles that mark the subject of a sentence.\n\nSCRIPT: Non-Roman (romanization MUST be included)\n\nGRAMMAR PATTERN: Korean uses 이 after consonant-ending nouns and 가 after vowel-ending nouns to mark the grammatical subject. The choice depends on the final sound of the noun.\n\nROMANIZATION REQUIREMENTS:\n- MUST include romanization for all Korean text\n- Standard romanization system (Revised Romanization or similar)\n\nACCURACY PITFALLS - Penalize SEVERELY if:\n- Output is in English instead of Spanish\n- 이/가 usage does not match the consonant/vowel rule\n- Examples do not clearly demonstrate when to use each marker\n- Romanization is missing or incorrect\n- Discovery question tests vocabulary instead of subject marker selection\n- Exercises have markers that do not follow the consonant/vowel pattern\n\nEXERCISE TEMPLATE FORMAT - Penalize SEVERELY if:\n- Exercise templates include romanization in parentheses after the Korean text\n  BAD: \"학생[BLANK]공부해요. (haksaeng [BLANK] gongbuhaeyo.)\"\n  GOOD: \"학생[BLANK]공부해요.\"\n- Templates should contain ONLY Korean script and the [BLANK] placeholder\n- Romanization belongs in the romanization field of examples, NOT in exercise templates\n\n\nEVALUATION CRITERIA:\n\n1. STRUCTURE - PATTERN DISCOVERY FORMAT (CRITICAL):\n   The activity MUST follow the Pattern Discovery structure:\n   - 3-4 examples demonstrating the grammar pattern\n   - 1 discovery question with exactly 4 options (exactly 1 correct)\n   - Brief rule summary (maximum 2 sentences)\n   - 2-3 fill-in-the-blank exercises\n   Penalize SEVERELY if any structural element is missing or malformed.\n\n2. EXAMPLES QUALITY:\n   - Each example MUST demonstrate the target grammar pattern\n   - The highlight field MUST isolate the grammar element being taught\n   - Examples should make the pattern discoverable WITHOUT explicit explanation\n   - Translations MUST be accurate and natural in the output language\n   - Sentences should be simple enough for learners to focus on the pattern\n   - Penalize if examples are unrelated to the grammar pattern or too complex\n\n3. DISCOVERY QUESTION:\n   - MUST test pattern recognition, NOT memorization\n   - MUST have exactly 4 options\n   - MUST have exactly 1 correct option (isCorrect: true)\n   - ALL options MUST have feedback explaining why they are correct/incorrect\n   - Distractors should be plausible observations a learner might make\n   - Penalize if the question tests vocabulary instead of grammar understanding\n\n4. RULE SUMMARY:\n   - MUST be maximum 2 sentences\n   - MUST confirm what was discoverable from the examples\n   - Use clear, simple language accessible to learners\n   - Should NOT introduce new information not demonstrated in examples\n   - Penalize if verbose, unclear, or contradicts the examples\n\n5. EXERCISES - FILL-IN-THE-BLANK:\n   - Each exercise MUST have exactly one [BLANK] placeholder\n   - MUST test the same grammar pattern taught in examples\n   - The answers array MUST contain the correct answer(s)\n   - Distractors MUST be plausible wrong answers testing common mistakes\n   - Feedback MUST explain why the correct answer fits the pattern\n   - Penalize if exercises test different grammar or have unclear blanks\n   - **CRITICAL**: Exercise templates must contain ONLY target language text and [BLANK].\n     Do NOT include romanization/transliteration in parentheses after templates.\n     BAD: \"さくらさん[BLANK]先生です。(Sakura-san [BLANK] sensei desu.)\"\n     GOOD: \"さくらさん[BLANK]先生です。\"\n     Penalize SEVERELY if templates include romanization in any form.\n\n6. ROMANIZATION (CRITICAL):\n   - For non-Roman scripts (Japanese, Korean, Chinese, Arabic, Russian, Greek, Thai, Hindi, etc.):\n     romanization MUST be included and accurate using standard systems (romaji, romanization, pinyin, etc.)\n   - For Roman-script languages (Spanish, French, German, Portuguese, Italian, etc.):\n     romanization MUST be empty string \"\"\n   - Penalize SEVERELY if romanization is missing for non-Roman scripts\n   - Penalize SEVERELY if romanization contains text for Roman scripts\n\n7. LINGUISTIC ACCURACY (CRITICAL - highest priority):\n   - ALL sentences must be grammatically correct in the target language\n   - ALL translations must be accurate and natural in the output language\n   - Grammar explanations must be linguistically correct\n   - The grammar pattern described must match what is actually demonstrated\n   - Penalize SEVERELY for incorrect grammar or mistranslations\n\n8. PEDAGOGICAL QUALITY:\n   - Examples should progress from simple to slightly more complex\n   - The discovery question should lead learners to the correct insight\n   - Exercises should reinforce the discovered pattern\n   - Content should be appropriate for language learners\n   - Penalize if content is confusing, misleading, or pedagogically unsound\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific example sentences - accept ANY valid sentences demonstrating the pattern\n- Do NOT penalize for specific vocabulary choices\n- Do NOT require specific phrases or sentence structures\n- Do NOT penalize for different valid approaches to explaining the grammar point\n- FOCUS ON: structural correctness, linguistic accuracy, pattern clarity, romanization correctness\n- Different valid teaching approaches exist - assess the quality of what IS provided\n- The eval model should judge whether the output teaches the pattern effectively, not whether it matches a predetermined answer\n\n    ",
-  "judgedAt": "2026-01-21T20:08:40.283Z",
+  "expectations": "\nLANGUAGE: Latin American Spanish output required (NOT English).\n\nTOPIC: Korean subject markers 이 (i) and 가 (ga) - particles that mark the subject of a sentence.\n\nSCRIPT: Non-Roman (romanization MUST be included)\n\nGRAMMAR PATTERN: Korean uses 이 after consonant-ending nouns and 가 after vowel-ending nouns to mark the grammatical subject. The choice depends on the final sound of the noun.\n\nROMANIZATION REQUIREMENTS:\n- MUST include romanization for all Korean text\n- Standard romanization system (Revised Romanization or similar)\n\nACCURACY PITFALLS - Penalize SEVERELY if:\n- Output is in English instead of Spanish\n- 이/가 usage does not match the consonant/vowel rule\n- Examples do not clearly demonstrate when to use each marker\n- Romanization is missing or incorrect\n- Discovery question tests vocabulary instead of subject marker selection\n- Exercises have markers that do not follow the consonant/vowel pattern\n\nEXERCISE TEMPLATE FORMAT - Penalize SEVERELY if:\n- Exercise templates include romanization in parentheses after the Korean text\n  BAD: \"학생[BLANK]공부해요. (haksaeng [BLANK] gongbuhaeyo.)\"\n  GOOD: \"학생[BLANK]공부해요.\"\n- Templates should contain ONLY Korean script and the [BLANK] placeholder\n- Romanization belongs in the romanization field of examples, NOT in exercise templates\n\n\nEVALUATION CRITERIA:\n\n1. STRUCTURE - PATTERN DISCOVERY FORMAT (CRITICAL):\n   The activity MUST follow the Pattern Discovery structure:\n   - 3-4 examples demonstrating the grammar pattern\n   - 1 discovery question with exactly 4 options (exactly 1 correct)\n   - Brief rule summary (maximum 2 sentences)\n   - 2-3 fill-in-the-blank exercises\n   Penalize SEVERELY if any structural element is missing or malformed.\n\n2. EXAMPLES QUALITY:\n   - Each example MUST demonstrate the target grammar pattern\n   - The highlight field MUST isolate the grammar element being taught\n   - Examples should make the pattern discoverable WITHOUT explicit explanation\n   - Translations MUST be accurate and natural in the output language\n   - Sentences should be simple enough for learners to focus on the pattern\n   - Penalize if examples are unrelated to the grammar pattern or too complex\n\n3. DISCOVERY QUESTION:\n   - MUST test pattern recognition, NOT memorization\n   - MUST have exactly 4 options\n   - MUST have exactly 1 correct option (isCorrect: true)\n   - ALL options MUST have feedback explaining why they are correct/incorrect\n   - Distractors should be plausible observations a learner might make\n   - Penalize if the question tests vocabulary instead of grammar understanding\n\n4. RULE SUMMARY:\n   - MUST be maximum 2 sentences\n   - MUST confirm what was discoverable from the examples\n   - Use clear, simple language accessible to learners\n   - Should NOT introduce new information not demonstrated in examples\n   - Penalize if verbose, unclear, or contradicts the examples\n\n5. EXERCISES - FILL-IN-THE-BLANK:\n   - Each exercise MUST have exactly one [BLANK] placeholder\n   - MUST test the same grammar pattern taught in examples\n   - The answers array MUST contain the correct answer(s)\n   - Distractors MUST be plausible wrong answers testing common mistakes\n   - Feedback MUST explain why the correct answer fits the pattern\n   - Penalize if exercises test different grammar or have unclear blanks\n   - **CRITICAL**: Exercise templates must contain ONLY target language text and [BLANK].\n     Do NOT include romanization/transliteration in parentheses after templates.\n     BAD: \"さくらさん[BLANK]先生です。(Sakura-san [BLANK] sensei desu.)\"\n     GOOD: \"さくらさん[BLANK]先生です。\"\n     Penalize SEVERELY if templates include romanization in any form.\n\n6. ROMANIZATION (CRITICAL):\n   - For non-Roman scripts (Japanese, Korean, Chinese, Arabic, Russian, Greek, Thai, Hindi, etc.):\n     romanization MUST be included and accurate using standard systems (romaji, romanization, pinyin, etc.)\n   - For Roman-script languages (Spanish, French, German, Portuguese, Italian, etc.):\n     romanization MUST be null\n   - Penalize SEVERELY if romanization is missing for non-Roman scripts\n   - Penalize SEVERELY if romanization contains text for Roman scripts\n\n7. LINGUISTIC ACCURACY (CRITICAL - highest priority):\n   - ALL sentences must be grammatically correct in the target language\n   - ALL translations must be accurate and natural in the output language\n   - Grammar explanations must be linguistically correct\n   - The grammar pattern described must match what is actually demonstrated\n   - Penalize SEVERELY for incorrect grammar or mistranslations\n\n8. PEDAGOGICAL QUALITY:\n   - Examples should progress from simple to slightly more complex\n   - The discovery question should lead learners to the correct insight\n   - Exercises should reinforce the discovered pattern\n   - Content should be appropriate for language learners\n   - Penalize if content is confusing, misleading, or pedagogically unsound\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific example sentences - accept ANY valid sentences demonstrating the pattern\n- Do NOT penalize for specific vocabulary choices\n- Do NOT require specific phrases or sentence structures\n- Do NOT penalize for different valid approaches to explaining the grammar point\n- FOCUS ON: structural correctness, linguistic accuracy, pattern clarity, romanization correctness\n- Different valid teaching approaches exist - assess the quality of what IS provided\n- The eval model should judge whether the output teaches the pattern effectively, not whether it matches a predetermined answer\n\n    ",
+  "judgedAt": "2026-03-17T22:31:31.505Z",
   "judgments": [
     {
-      "judgeId": "anthropic/claude-opus-4.5",
+      "judgeId": "anthropic/claude-opus-4.6",
       "rankings": [
         {
           "anonymousId": "Model B",
-          "modelId": "openai/gpt-5.2:high",
-          "reasoning": "Excellent output in every respect. (1) Structure: 4 examples, discovery question with 4 options (1 correct), concise rule summary, and 3 exercises—fully meets the Pattern Discovery format. (2) Language: Entirely in Latin American Spanish. (3) Examples quality: All examples correctly demonstrate the consonant/vowel rule (학생이, 책이, 사과가, 친구가) with proper highlights and accurate translations. (4) Discovery question: Tests pattern recognition, all feedback explains the reasoning well. (5) Rule summary: 2 sentences, accurate and clear. (6) Exercises: 3 exercises, templates have only Korean script and [BLANK], no romanization in templates. Each exercise correctly tests the pattern with proper distractors and feedback. (7) Romanization: Present and accurate for all examples using standard hyphen convention (haksaeng-i, etc.). Minor issue: uses **bold** markdown in feedback which may or may not render, but this is very minor. Overall, this is a very strong submission.",
-          "score": 9.3
-        },
-        {
-          "anonymousId": "Model C",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "Very good output. (1) Structure: 4 examples, discovery question with 4 options (1 correct), rule summary, 3 exercises—complete structure. (2) Language: All in Spanish. (3) Examples: All correctly demonstrate the pattern (학생이, 사과가, 책이, 친구가) with proper highlights. (4) Discovery question: Tests pattern recognition well with good feedback on all options. (5) Rule summary: Clear and accurate, though it references the examples directly which is slightly redundant. (6) Exercises: 3 exercises testing 집이, 엄마가, 물이—all correct applications of the rule. Templates are clean (no romanization). (7) Romanization: Present and accurate. Very similar quality to Model B, just slightly less polished in feedback explanations.",
-          "score": 9.1
-        },
-        {
-          "anonymousId": "Model D",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Very good output. (1) Structure: Complete with 4 examples, discovery question with 4 options, rule summary, 3 exercises. (2) Language: Spanish throughout. (3) Examples: Correctly demonstrate the pattern with good variety (사과가, 책이, 학생이, 친구가). (4) Discovery question: Tests pattern recognition with thorough feedback. (5) Rule summary: Clear and accurate in 2 sentences. (6) Exercises: 3 exercises (집이, 나무가, 바나나가) all correctly applying the rule. Templates are clean. (7) Romanization: Present and accurate. Minor issue: The highlight field only contains the particle (가, 이) rather than the full noun+particle combination, which is less pedagogically clear for learners to see the pattern. This is a notable weakness but the overall quality is still high.",
-          "score": 8.7
-        },
-        {
-          "anonymousId": "Model F",
-          "modelId": "anthropic/claude-sonnet-4.5",
-          "reasoning": "Good output with solid fundamentals. (1) Structure: 4 examples, discovery question, rule summary, 3 exercises—complete. (2) Language: Spanish throughout. (3) Examples: Correct demonstrations (학생이, 이모가, 책이, 날씨가) with proper translations. (4) Discovery question: Tests pattern recognition, though feedback could be more detailed. (5) Rule summary: Clear and accurate. (6) Exercises: 3 exercises correctly testing the pattern. (7) Romanization: Present but slightly inconsistent (missing periods at end of romanizations). Minor issue: Highlights only contain the particle, not noun+particle. Overall good but slightly less polished than top models.",
-          "score": 8.4
-        },
-        {
-          "anonymousId": "Model A",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Good output but with only 2 exercises instead of the required 2-3 (closer to minimum). (1) Structure: 4 examples, discovery question, rule summary, 2 exercises—meets minimum but barely. (2) Language: Spanish throughout. (3) Examples: All correct (학생이, 선생님이, 사과가, 바다가) with good variety showing both consonant and vowel endings. Highlights include full noun+particle which is pedagogically clearer. (4) Discovery question: Good pattern recognition test with helpful feedback. (5) Rule summary: Clear and accurate. (6) Exercises: Only 2 exercises, though both are correct. (7) Romanization: Present but uses a less standard format without hyphens (haksaengi vs haksaeng-i), making it slightly less clear where the particle begins. Overall solid but fewer exercises and less standard romanization format.",
-          "score": 8
-        },
-        {
-          "anonymousId": "Model E",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "Good output but with structural shortcoming. (1) Structure: 4 examples, discovery question, rule summary, but only 2 exercises (minimum). (2) Language: Spanish throughout. (3) Examples: Correct demonstrations of the pattern. (4) Discovery question: Good pattern test with varied distractors. (5) Rule summary: Clear and concise. (6) Exercises: Only 2 exercises. (7) Romanization: Present and uses standard format. Minor issue: Highlights only contain the particle. The feedback mentions 'monja' (hat) but uses proper Korean term. Overall solid but minimum exercises.",
-          "score": 7.9
-        },
-        {
-          "anonymousId": "Model G",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Output has a CRITICAL error. (1) Structure: Appears complete with 4 examples, discovery, summary, 3 exercises. (2) Language: Spanish throughout. (3) Examples: Correct demonstrations. (4) Discovery question: Good pattern test. (5) CRITICAL FLAW in Exercise 1: The answer is listed as '가' but 물 (mul) ends in consonant ㄹ, so the correct answer should be 이. The feedback even acknowledges this error mid-sentence ('¡Corrección! 물 termina en ㄹ (consonante), así que usa 이: 물이. La respuesta correcta es 이.') but the 'answers' field still incorrectly lists '가'. This is a severe error that directly contradicts the grammar rule being taught. (6) Minor romanization inconsistency: 'mashisseoyo' vs 'masisseoyo', 'nalssiga' missing hyphen. This critical error in exercise construction significantly undermines the pedagogical quality.",
-          "score": 5.5
-        }
-      ]
-    },
-    {
-      "judgeId": "google/gemini-3-pro-preview",
-      "rankings": [
-        {
-          "anonymousId": "Model E",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "This is a flawless output. It correctly isolates just the grammar particle (이/가) in the highlights, which is the most effective way to teach the pattern. The romanization includes hyphens (e.g., 'haksaeng-i') to clearly show the boundary between noun and particle. The discovery question distractors are pedagogically excellent for Spanish speakers (addressing gender and number). Linguistic accuracy is perfect.",
-          "score": 10
-        },
-        {
-          "anonymousId": "Model D",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Excellent quality, nearly identical to Model E. It highlights only the particles and provides clear, hyphenated romanization. The exercises are accurate and the feedback is helpful. It is ranked slightly lower only because Model E's discovery distractors were marginally more comprehensive regarding grammatical concepts.",
-          "score": 9.5
-        },
-        {
-          "anonymousId": "Model F",
-          "modelId": "anthropic/claude-sonnet-4.5",
-          "reasoning": "Very strong output. It correctly highlights the specific particles and provides accurate exercises and consistent romanization. It ranks just below D and E because the distractors in the discovery question (e.g., position in sentence) were slightly less effective at targeting probable learner misconceptions than the top two models.",
-          "score": 9
-        },
-        {
-          "anonymousId": "Model B",
-          "modelId": "openai/gpt-5.2:high",
-          "reasoning": "Good output with high linguistic accuracy. It uses hyphens in romanization, which is a plus. However, it highlights the entire 'Noun + Particle' block (e.g., '학생이') rather than isolating the particle itself. While acceptable, this makes the specific grammar element slightly less obvious during the discovery phase compared to the top models.",
-          "score": 7.5
-        },
-        {
-          "anonymousId": "Model C",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "Solid output that follows all rules. Like Model B, it highlights the whole noun phrase rather than isolating the particle. The romanization is good (using hyphens). It is ranked slightly below Model B because Model B provided slightly more detailed feedback in the discovery section referencing specific Hangul characters.",
-          "score": 7
-        },
-        {
-          "anonymousId": "Model A",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Acceptable but less pedagogically effective. It highlights the noun phrase instead of the particle, and crucially, it omits hyphens in the romanization (e.g., 'haksaengi'). For a beginner trying to discover a pattern, seeing the particle blended into the noun makes it difficult to identify the grammatical boundary.",
-          "score": 6
-        },
-        {
-          "anonymousId": "Model G",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Critical failure in Exercise 1. The programmatic answer key expects '가' for the word '물' (Water), which is linguistically incorrect (it ends in a consonant). The feedback text confusingly argues with itself, stating 'Correction! The correct answer is 이' while the system marks '가' as correct. This creates a broken user experience.",
-          "score": 2
-        }
-      ]
-    },
-    {
-      "judgeId": "openai/gpt-5.2",
-      "rankings": [
-        {
-          "anonymousId": "Model B",
-          "modelId": "openai/gpt-5.2:high",
-          "reasoning": "Cumple perfectamente la estructura (4 ejemplos, pregunta con 4 opciones y 1 correcta, resumen ≤2 oraciones, 3 ejercicios). Buenas oraciones simples, traducciones naturales, y todas las plantillas de ejercicios están solo en coreano con [BLANK]. Romanización presente en todos los ejemplos y coherente. Regla consonante/vocal aplicada correctamente en ejemplos y ejercicios.",
-          "score": 9.6
-        },
-        {
-          "anonymousId": "Model D",
-          "modelId": "openai/gpt-5-mini",
-          "reasoning": "Estructura completa y muy clara; ejemplos y ejercicios aplican bien la regla consonante/vocal. Romanización incluida y razonablemente correcta. Único detalle: en ejemplos el campo highlight aísla solo “이/가” en vez del sintagma completo (p. ej., 책이), lo que reduce un poco la claridad del “elemento enseñado”, aunque sigue siendo aceptable.",
-          "score": 9.1
-        },
-        {
-          "anonymousId": "Model A",
-          "modelId": "google/gemini-3-flash",
-          "reasoning": "Estructura correcta (4 ejemplos, pregunta 4 opciones, resumen ≤2, 2 ejercicios). Buen contraste consonante/vocal y plantillas sin romanización. Romanización presente. Puntos menores: algunas romanizaciones no separan claramente la partícula (p. ej., “haksaengi” sin guion/espacio) y el highlight incluye el sustantivo+partícula (bien), pero la consistencia de romanización podría mejorar.",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "**Structure**: Complete - 4 examples, 4-option discovery question (1 correct), 2-sentence rule summary, 3 exercises. All structural requirements met.\n\n**Examples**: Good variety - two consonant-ending words (학생, 선생님) and two vowel-ending words (고양이, 친구). Highlights include the noun+particle phrase (학생이, 고양이가, etc.), which is appropriate for showing the agreement relationship. Romanization is included for full sentences, which is excellent. Translations are accurate and natural in Spanish.\n\n**Discovery Question**: Tests pattern recognition well. 4 options, exactly 1 correct. Feedback is detailed and helpful, referencing specific examples. The correct option feedback mentions pronunciation flowing naturally, which is a nice pedagogical touch. Distractors are plausible.\n\n**Rule Summary**: 2 sentences, confirms the pattern without introducing new information. Clean and clear.\n\n**Exercises**: 3 exercises, each with exactly one [BLANK]. Templates contain ONLY Korean text and [BLANK] - no romanization in templates. All particle choices are correct (학생→이, 오빠→가, 컵→이). Feedback correctly identifies the final consonant/vowel. The feedback for exercise 3 says 컵 (keop) - the romanization should be 'keop' or 'keob' but 'keop' is acceptable as a simplified form.\n\n**Linguistic Accuracy**: All Korean sentences are grammatically correct. 고양이가 자요 is correct. The romanization 'goyang-i-ga' correctly shows the word ending and particle. One minor note: '잡니다' in Model C for 'sleeps' would be wrong, but Model B uses '자요' which is correct.\n\n**Minor issues**: The 'context' field is extra but harmless. Overall very strong output.",
           "score": 8.8
         },
         {
-          "anonymousId": "Model F",
-          "modelId": "anthropic/claude-sonnet-4.5",
-          "reasoning": "Estructura completa (4 ejemplos, pregunta válida, resumen ≤2, 3 ejercicios). Regla aplicada correctamente en ejemplos y ejercicios; plantillas OK. Romanización incluida, pero falta consistencia de puntuación/estilo (varias sin punto final y sin guiones) y hay cierta repetición (ejercicio con 학생 nuevamente) que baja un poco la calidad pedagógica.",
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "**Structure**: Complete - 4 examples, 4-option discovery question (1 correct), 2-sentence rule summary, 3 exercises. All structural requirements met.\n\n**Examples**: Good variety with 2 consonant-ending (학생, 책) and 2 vowel-ending (사과, 고양이) nouns. Highlights include noun+particle. Full sentence romanization is provided. Translations are accurate Spanish.\n\n**Discovery Question**: Tests the right pattern. 4 options, 1 correct. Feedback is adequate though slightly less detailed than Model B. The distractor about '이 y 가 significan exactamente cosas diferentes' is a reasonable distractor.\n\n**Rule Summary**: Clean 2 sentences confirming the pattern.\n\n**Exercises**: 3 exercises, correct format. Templates are clean Korean+[BLANK] only. All particle assignments correct (집→이, 우유→가, 문→이). Feedback correctly identifies final sounds.\n\n**Linguistic Accuracy**: All Korean is correct. Romanization is accurate. '열려 있어요' is a good natural expression.\n\n**Minor issues**: Has a 'context' field that duplicates the example sentences which is slightly odd but not a violation. Has 'question' fields in exercises which aren't part of the schema but are harmless. Overall very solid.",
           "score": 8.5
         },
         {
           "anonymousId": "Model C",
-          "modelId": "openai/gpt-5.2",
-          "reasoning": "En general cumple estructura y la regla en ejemplos/ejercicios; plantillas correctas. Problema crítico de precisión en el resumen: afirma que 친구 termina en vocal, pero 친구 termina en consonante (ㄱ, batchim) y por eso lleva 가; el motivo no es “termina en vocal”. Esa contradicción reduce la confianza y la claridad del patrón.",
-          "score": 7.4
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "**Structure**: Complete - 4 examples, 4-option discovery question (1 correct), rule summary (1 sentence), 3 exercises.\n\n**Examples**: Good variety with consonant-ending (학생, 선생님) and vowel-ending (고양이, 어머니). Highlights include noun+particle. Romanization included.\n\n**Discovery Question**: Good pattern recognition question. Feedback is helpful and specific, referencing the examples.\n\n**Rule Summary**: 1 sentence, clear and accurate.\n\n**Exercises**: 3 exercises, clean templates. All particle assignments correct (물→이, 아기→가, 음식→이). Feedback correctly identifies final consonants/vowels.\n\n**Linguistic Accuracy Issues**: \n- **CRITICAL**: '고양이가 잡니다' - '잡니다' means 'to catch/grab', NOT 'to sleep'. The correct formal form of 자다 (to sleep) is '잡니다' — wait, actually 자다 in formal polite is 잡니다. Let me reconsider... Actually, 자다 → 잡니다 is correct in formal speech (ㄷ irregular... no, 자다 is not irregular). Actually 자다 conjugates to 잡니다 in formal polite? No — 자다 → 자 + ㅂ니다 → 잡니다. Hmm, this is actually the correct formal conjugation. But wait — 잡다 means 'to catch'. 자다 (to sleep) → 잡니다 could be confused. Actually the formal conjugation of 자다 should be: 자 + ㅂ니다 → 잡니다. This IS correct Korean, though potentially confusing since 잡다 also exists. So this is actually correct.\n\n- Romanization issues: 'gongbuhaemnida' should be 'gongbuhabnida' or 'gongbuhamnida' for 공부합니다. The romanization says 'gongbuhaemnida' which is incorrect — the correct romanization of 합니다 is 'hamnida'. This is a romanization error.\n- 'gareuchimnida' for 가르칩니다 - should be 'gareuchimn ida' which is close enough.\n- 'goyang-iga' — should be 'goyangi-ga' for clarity.\n\n**Other issues**: Has 'question' and 'context' extra fields. The romanization errors are notable.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "**Structure**: Complete - 4 examples, 4-option discovery question (1 correct), 1-sentence rule summary, 3 exercises.\n\n**Examples**: Good variety - 학생(consonant)→이, 학교(vowel)→가, 책(consonant)→이, 친구(vowel)→가. Well balanced.\n\n**CRITICAL ISSUE - Highlights**: The highlights are just '이' and '가' alone, NOT the noun+particle phrase. The prompt says for agreement patterns to highlight both elements showing the relationship. While subject markers aren't exactly 'agreement', the prompt's guidance about highlighting suggests showing the relationship. However, one could argue that for particle selection, highlighting just the particle is valid (the prompt says 'For particles: highlight the particle'). So this follows the prompt's particle guidance. This is acceptable.\n\n**Discovery Question**: The question 'What determines if we should use...' slightly reveals the rule direction more than 'What pattern do you notice?' but still tests observation. Feedback is good.\n\n**Rule Summary**: 1 sentence, clear and accurate. Mentions batchim which is a helpful technical term.\n\n**Exercises**: 3 exercises, clean templates (no romanization in templates). All correct: 바나나→가, 물→이, 커피→가. Feedback correctly identifies final sounds.\n\n**Romanization**: Uses hyphenated syllable-by-syllable romanization (hak-saeng-i, hak-gyo-ga) which is non-standard but readable. Not using standard Revised Romanization format. Also only romanizes to match words rather than being fully natural.\n\n**Linguistic Accuracy**: All Korean is correct. All particle assignments are correct.\n\n**Minor issues**: Romanization style is non-standard with excessive hyphenation. The highlight being just the particle rather than noun+particle could be debated but follows the 'particle' instruction in the prompt.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "**Structure**: Complete - 4 examples, 4-option discovery question (1 correct), 2-sentence rule summary, 2 exercises.\n\n**Examples**: Good variety with consonant-ending (선생님, 가방) and vowel-ending (친구, 사과). Translations are natural Spanish.\n\n**CRITICAL ISSUE - Highlights**: Highlights are just '이' and '가' alone, not the noun+particle phrase. As discussed for Model F, this follows the 'for particles: highlight the particle' instruction.\n\n**Discovery Question**: Good question testing pattern recognition. Feedback is helpful. However, the correct option's feedback says '선생님 (m)' — this is somewhat confusing notation for indicating ㅁ as the final consonant.\n\n**Rule Summary**: 2 sentences, accurate and clear.\n\n**Exercises**: Only 2 exercises (minimum met). Templates are clean. Both correct: 학생→이, 의사→가. Feedback is accurate.\n\n**Romanization**: Only provided for full sentences, which is correct. However, the romanization only covers the sentence pronunciation, which is good.\n\n**Linguistic Accuracy**: All Korean is correct. All particle assignments correct.\n\n**Minor issues**: Only 2 exercises (minimum). The '(m)' and '(ng)' notation in the correct option's feedback is a bit informal/confusing. The highlight being just the particle is debatable but acceptable.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "**Structure**: Complete - 4 examples, 4-option discovery question (1 correct), 2-sentence rule summary, 3 exercises.\n\n**CRITICAL ISSUES**:\n\n1. **Discovery context field**: Contains explanatory text that reveals the pattern before the learner discovers it: 'observa cómo cambian según la última consonante o vocal de la palabra.' This violates the inductive learning principle — the whole point is for learners to discover this themselves.\n\n2. **Romanization**: Examples only have romanization for the highlighted phrase (e.g., 'haksaeng-i'), NOT the full sentence. This is incomplete.\n\n3. **Exercise 1 is deeply flawed**: The template is '의사가 바빠요. 의사[BLANK] 바빠요.' — this shows the answer (의사가) in the first sentence and then asks the student to fill in the blank in what appears to be the same sentence repeated! This is pedagogically terrible. Also, the correct answer should be 가 (의사 ends in vowel ㅏ), but the answer is listed as 이. This is **factually incorrect** — 의사 ends in a vowel, so it should take 가, not 이.\n\n4. **Exercise 2 has the same problem**: Template is '의자가 작아요. 의자[BLANK] 작아요.' — again shows the answer first. At least the answer (가) is correct since 의자 ends in a vowel.\n\n5. **Exercise 1 feedback**: Mixes Korean and Spanish confusingly: '학생 끝에 받침이 있어서 sujetado con 이.' Also references 학생 when the exercise uses 의사. This is a significant error.\n\n6. **Translation for 친구가 있어요**: 'Tengo un amigo / Hay un amigo' — while 있어요 can mean both, in the context of subject marker teaching, this ambiguity may confuse learners. Not a major issue but worth noting.\n\nThe factual error in exercise 1 (의사 taking 이 instead of 가) is a critical linguistic accuracy failure. The exercise template design showing the answer is a major pedagogical flaw.",
+          "score": 3.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model A followed all instructions perfectly. It strictly adhered to the highlighting rule ('For particles: highlight the particle'), isolating exactly '이' and '가'. The romanization is standard and accurate, the examples are clear, the Spanish translations are natural, and the exercises are flawlessly constructed with excellent distractors and feedback. The JSON structure is also exceptionally clean.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model F also correctly followed the strict highlighting rule, isolating only the particle as requested. The pedagogy, examples, and exercises are of excellent quality. The only minor flaw is that the romanization uses syllable-by-syllable hyphenation (e.g., hak-saeng-i gong-bu-hae-yo) which is slightly less standard than Model A's Revised Romanization, but still acceptable for beginners.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model B provides strong pedagogical content, accurate explanations, and clean exercise templates. However, it failed the specific highlighting rule for particles by highlighting the entire noun+particle combination (e.g., '학생이') instead of just the particle ('이'). Otherwise, it is a very solid output.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model C failed the highlighting rule by including the noun with the particle. Additionally, it included empty strings for 'context' and 'question' fields within the JSON, which clutters the structure slightly. The linguistic accuracy and pedagogical flow are otherwise good.",
+          "score": 7.5
         },
         {
           "anonymousId": "Model E",
-          "modelId": "google/gemini-3-pro-preview",
-          "reasoning": "Estructura correcta (4 ejemplos, pregunta con 4 opciones, resumen breve, 2 ejercicios), y la regla se aplica bien. Sin embargo, el campo highlight en ejemplos solo muestra “이/가” en vez de la forma completa (학생이/사과가), lo que dificulta ver inmediatamente a qué palabra se adjunta en cada ejemplo; aun así es recuperable mirando la oración. Romanización presente.",
-          "score": 7.2
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Model E also failed the highlighting rule by highlighting the noun+particle combination. It also unnecessarily populated a 'context' field in the discovery section with raw sentences from the examples, which wasn't requested. The exercises and linguistic accuracy are correct, but the formatting adherence is slightly lower.",
+          "score": 7.5
         },
         {
-          "anonymousId": "Model G",
-          "modelId": "anthropic/claude-opus-4.5",
-          "reasoning": "Falla críticamente en ejercicios: en el primer ejercicio el campo answers indica “가”, pero el propio feedback se corrige y dice que debe ser “이” (porque 물 termina en ㄹ). Esto rompe la evaluación (respuesta/feedback inconsistentes) y además confunde la regla. Aunque la estructura general y romanización existen, este error es severo.",
-          "score": 3.2
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Model D contains a critical pedagogical failure in its exercises. For example, Exercise 1's template is '의사가 바빠요. 의사[BLANK] 바빠요.' By providing the fully solved sentence directly before the blank, the learner does not have to apply the grammar rule at all, defeating the entire purpose of the assessment. Additionally, it failed the highlighting rule by highlighting the noun+particle instead of just the particle.",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Mejor equilibrio entre estructura, claridad pedagógica y precisión. Está completamente en español, incluye 4 ejemplos, 1 pregunta de descubrimiento con exactamente 4 opciones y 1 correcta, un resumen breve, y 3 ejercicios válidos. Los ejemplos muestran claramente ambos casos de 이/가 y las romanizaciones están presentes y en general correctas. El resumen confirma solo lo mostrado en los ejemplos y no se extiende demasiado. Pequeños puntos menores: añade campos extra como context/question vacío en algunos lugares, y la romanización de 고양이가 como 'goyang-iga' no es la segmentación más elegante, pero sigue siendo entendible y no compromete la enseñanza.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Muy sólido y bien alineado con la tarea. Cumple la estructura completa, está en español, usa ejemplos simples y claros, y las opciones del descubrimiento son plausibles con retroalimentación para todas. Los ejercicios tienen exactamente un [BLANK] y prueban correctamente la selección de partícula. Sin embargo, introduce un campo 'context' con ejemplos duplicados, lo cual no era necesario, y la romanización 'goyang-i-ga' para 고양이가 es algo torpe/segmentada de forma poco natural. También agrega un campo 'question' dentro de ejercicios, fuera del formato esperado. Aun así, el contenido principal es correcto y útil.",
+          "score": 8.9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Buen contenido general: claro, correcto en español, con 4 ejemplos, descubrimiento adecuado, resumen breve y 3 ejercicios bien diseñados. Los ejemplos muestran tanto consonante como vocal final y los ejercicios respetan el patrón. Las retroalimentaciones son útiles. Debilidades: incluye un campo extra 'context', el resumen añade una afirmación adicional ('los dos tienen la misma función gramatical') que no se desprende directamente solo de los ejemplos, y la romanización 'goyang-i-ga' es menos natural. Aun así, es bastante fuerte.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Buen diseño pedagógico y estructura correcta: 4 ejemplos, pregunta de descubrimiento bien enfocada, resumen breve y 3 ejercicios adecuados. Los ejercicios están bien hechos y las explicaciones son útiles. Las principales debilidades son de formato/romanización: resalta solo la partícula ('이', '가') en vez de aislar el elemento completo relacionado con la selección, lo cual hace menos visible la relación con el sustantivo anterior; además, la romanización con guiones y separación silábica ('hak-saeng-i gong-bu-hae-yo') no es el estándar más natural solicitado. También el resumen menciona 'batchim', término no visible en los ejemplos. Sigue siendo bueno, pero menos ajustado que los mejores.",
+          "score": 8.1
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Cumple bastante bien la estructura y está en español, con ejemplos claros, descubrimiento correcto, resumen breve y 2 ejercicios válidos. Las elecciones de 이/가 son correctas y las explicaciones son comprensibles. La principal debilidad pedagógica es el highlight: marca solo la partícula y no la unidad relevante con el sustantivo, lo que hace menos evidente la relación con la terminación de la palabra anterior. Además, en ejemplos y feedback hay algunas romanizaciones/abreviaciones menos estándar o simplificadas. Sigue siendo una respuesta útil, pero algo menos fuerte que otras.",
+          "score": 7.9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Tiene la estructura básica completa, pero presenta problemas importantes de precisión y seguimiento del prompt. El campo 'discovery.context' explica explícitamente la regla antes de la pregunta, lo cual rompe el enfoque inductivo de descubrimiento. Las romanizaciones de los ejemplos son incompletas: solo romanizan el sujeto resaltado y no toda la oración coreana, incumpliendo el requisito de incluir romanización para todo el texto coreano en ejemplos. Hay además un error grave en ejercicios: en '의사[BLANK] 바빠요.' la respuesta correcta marcada es '이', pero 의사 termina en vocal y debería llevar '가'. También hay feedback mezclado y poco natural ('sujetado con 이'). Estas fallas pesan mucho.",
+          "score": 4.1
         }
       ]
     }

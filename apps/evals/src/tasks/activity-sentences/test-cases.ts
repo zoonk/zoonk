@@ -100,7 +100,7 @@ ${SHARED_EXPECTATIONS}
     id: "en-spanish-greetings",
     userInput: {
       lessonTitle: "Greetings and Introductions",
-      targetLanguage: "Spanish",
+      targetLanguage: "es",
       userLanguage: "en",
       words: ["hola", "buenos dias", "buenas noches", "adios", "gracias"],
     },
@@ -133,7 +133,7 @@ ${SHARED_EXPECTATIONS}
     id: "en-french-food",
     userInput: {
       lessonTitle: "Food and Dining",
-      targetLanguage: "French",
+      targetLanguage: "fr",
       userLanguage: "en",
       words: ["le pain", "le fromage", "le vin", "la soupe", "le dessert"],
     },
@@ -166,7 +166,7 @@ ${SHARED_EXPECTATIONS}
     id: "en-german-family",
     userInput: {
       lessonTitle: "Family Members",
-      targetLanguage: "German",
+      targetLanguage: "de",
       userLanguage: "en",
       words: ["die Mutter", "der Vater", "die Schwester", "der Bruder", "die Familie"],
     },
@@ -205,7 +205,7 @@ ${SHARED_EXPECTATIONS}
     id: "en-japanese-numbers",
     userInput: {
       lessonTitle: "Numbers and Counting",
-      targetLanguage: "Japanese",
+      targetLanguage: "ja",
       userLanguage: "en",
       words: ["一", "二", "三", "五", "十"],
     },
@@ -243,7 +243,7 @@ ${SHARED_EXPECTATIONS}
     id: "en-korean-colors",
     userInput: {
       lessonTitle: "Colors",
-      targetLanguage: "Korean",
+      targetLanguage: "ko",
       userLanguage: "en",
       words: ["빨간색", "파란색", "노란색", "초록색", "검은색"],
     },
@@ -276,7 +276,7 @@ ${SHARED_EXPECTATIONS}
     id: "pt-italian-travel",
     userInput: {
       lessonTitle: "Viagens e Transporte",
-      targetLanguage: "Italian",
+      targetLanguage: "it",
       userLanguage: "pt",
       words: ["il treno", "l'aereo", "la macchina", "il biglietto", "la stazione"],
     },
@@ -309,7 +309,7 @@ ${SHARED_EXPECTATIONS}
     id: "pt-spanish-shopping",
     userInput: {
       lessonTitle: "Compras",
-      targetLanguage: "Spanish",
+      targetLanguage: "es",
       userLanguage: "pt",
       words: ["comprar", "la tienda", "el precio", "caro", "barato"],
     },
@@ -341,7 +341,7 @@ ${SHARED_EXPECTATIONS}
     id: "es-french-weather",
     userInput: {
       lessonTitle: "El Clima",
-      targetLanguage: "French",
+      targetLanguage: "fr",
       userLanguage: "es",
       words: ["le soleil", "la pluie", "le vent", "il fait chaud", "il fait froid"],
     },
@@ -379,7 +379,7 @@ ${SHARED_EXPECTATIONS}
     id: "es-japanese-time",
     userInput: {
       lessonTitle: "Expresiones de Tiempo",
-      targetLanguage: "Japanese",
+      targetLanguage: "ja",
       userLanguage: "es",
       words: ["今日", "明日", "昨日", "朝", "夜"],
     },
@@ -418,7 +418,7 @@ ${SHARED_EXPECTATIONS}
     id: "en-chinese-verbs",
     userInput: {
       lessonTitle: "Common Verbs",
-      targetLanguage: "Mandarin Chinese",
+      targetLanguage: "zh",
       userLanguage: "en",
       words: ["吃", "喝", "看", "听", "说"],
     },
@@ -457,7 +457,7 @@ ${SHARED_EXPECTATIONS}
     id: "en-russian-places",
     userInput: {
       lessonTitle: "Places in the City",
-      targetLanguage: "Russian",
+      targetLanguage: "ru",
       userLanguage: "en",
       words: ["магазин", "ресторан", "парк", "школа", "библиотека"],
     },
@@ -496,7 +496,7 @@ ${SHARED_EXPECTATIONS}
     id: "en-arabic-adjectives",
     userInput: {
       lessonTitle: "Common Adjectives",
-      targetLanguage: "Arabic",
+      targetLanguage: "ar",
       userLanguage: "en",
       words: ["كبير", "صغير", "جميل", "جديد", "قديم"],
     },
@@ -529,7 +529,7 @@ ${SHARED_EXPECTATIONS}
     id: "en-portuguese-emotions",
     userInput: {
       lessonTitle: "Emotions and Feelings",
-      targetLanguage: "Portuguese",
+      targetLanguage: "pt",
       userLanguage: "en",
       words: ["feliz", "triste", "cansado", "com fome", "com sede"],
     },
@@ -562,7 +562,7 @@ ${SHARED_EXPECTATIONS}
     id: "pt-german-routines",
     userInput: {
       lessonTitle: "Rotinas Diarias",
-      targetLanguage: "German",
+      targetLanguage: "de",
       userLanguage: "pt",
       words: ["aufstehen", "fruhstucken", "arbeiten", "schlafen", "essen"],
     },
@@ -605,7 +605,7 @@ ${SHARED_EXPECTATIONS}
     id: "en-thai-politeness",
     userInput: {
       lessonTitle: "Polite Expressions",
-      targetLanguage: "Thai",
+      targetLanguage: "th",
       userLanguage: "en",
       words: ["ขอบคุณ", "ขอโทษ", "ได้โปรด", "สวัสดี", "ลาก่อน"],
     },

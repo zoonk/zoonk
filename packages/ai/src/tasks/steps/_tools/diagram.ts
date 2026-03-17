@@ -4,7 +4,7 @@ export const diagramInputSchema = z.object({
   edges: z
     .array(
       z.object({
-        label: z.string().optional().describe("Optional edge label"),
+        label: z.string().nullable().describe("Optional edge label"),
         source: z.string().describe("Source node id (react-flow convention)"),
         target: z.string().describe("Target node id"),
       }),
