@@ -4,6 +4,7 @@ import {
   emptyToNull,
   ensureLocaleSuffix,
   extractUniqueSentenceWords,
+  normalizePunctuation,
   normalizeString,
   removeAccents,
   removeLocaleSuffix,
@@ -273,6 +274,46 @@ describe(deduplicateSlugs, () => {
   });
 });
 
+describe(normalizePunctuation, () => {
+  test("removes space before exclamation mark", () => {
+    expect(normalizePunctuation("Hello !")).toBe("Hello!");
+  });
+
+  test("removes space before question mark", () => {
+    expect(normalizePunctuation("Comment ?")).toBe("Comment?");
+  });
+
+  test("removes space before period", () => {
+    expect(normalizePunctuation("Fin .")).toBe("Fin.");
+  });
+
+  test("removes multiple spaces before punctuation", () => {
+    expect(normalizePunctuation("Hello  !")).toBe("Hello!");
+  });
+
+  test("leaves already-correct text unchanged", () => {
+    expect(normalizePunctuation("Hello!")).toBe("Hello!");
+  });
+
+  test("handles CJK punctuation", () => {
+    expect(normalizePunctuation("これは何 ？")).toBe("これは何？");
+  });
+
+  test("handles Arabic question mark", () => {
+    expect(normalizePunctuation("مرحبا ؟")).toBe("مرحبا؟");
+  });
+
+  test("handles empty string", () => {
+    expect(normalizePunctuation("")).toBe("");
+  });
+
+  test("handles multiple punctuation in one sentence", () => {
+    expect(normalizePunctuation("Bonjour , comment allez-vous ?")).toBe(
+      "Bonjour, comment allez-vous?",
+    );
+  });
+});
+
 describe(segmentWords, () => {
   test("splits space-delimited text by spaces", () => {
     expect(segmentWords("Hola mundo")).toEqual(["Hola", "mundo"]);
@@ -304,6 +345,15 @@ describe(segmentWords, () => {
   test("filters empty tokens from consecutive spaces", () => {
     expect(segmentWords("hello  world")).toEqual(["hello", "world"]);
     expect(segmentWords("a  b  c")).toEqual(["a", "b", "c"]);
+  });
+
+  test("attaches French-style punctuation to preceding word", () => {
+    expect(segmentWords("Comment allez-vous ?")).toEqual(["Comment", "allez-vous?"]);
+    expect(segmentWords("Bonjour !")).toEqual(["Bonjour!"]);
+  });
+
+  test("handles multiple French-style punctuation in one sentence", () => {
+    expect(segmentWords("Oui , je suis là !")).toEqual(["Oui,", "je", "suis", "là!"]);
   });
 });
 

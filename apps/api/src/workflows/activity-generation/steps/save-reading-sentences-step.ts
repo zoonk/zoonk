@@ -1,7 +1,7 @@
 import { assertStepContent } from "@zoonk/core/steps/content-contract";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
-import { emptyToNull } from "@zoonk/utils/string";
+import { emptyToNull, normalizePunctuation } from "@zoonk/utils/string";
 import { streamError, streamStatus } from "../stream-status";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { type ReadingSentence } from "./generate-reading-content-step";
@@ -23,23 +23,26 @@ function buildSaveOneSentence(params: {
   const { activityId, lessonId, organizationId, targetLanguage, userLanguage } = params;
 
   return async (readingSentence: ReadingSentence, position: number): Promise<SavedSentence> => {
+    const sentence = normalizePunctuation(readingSentence.sentence);
+    const translation = normalizePunctuation(readingSentence.translation);
+
     const record = await prisma.sentence.upsert({
       create: {
         organizationId,
         romanization: emptyToNull(readingSentence.romanization),
-        sentence: readingSentence.sentence,
+        sentence,
         targetLanguage,
-        translation: readingSentence.translation,
+        translation,
         userLanguage,
       },
       update: {
         romanization: emptyToNull(readingSentence.romanization),
-        translation: readingSentence.translation,
+        translation,
       },
       where: {
         orgSentence: {
           organizationId,
-          sentence: readingSentence.sentence,
+          sentence,
           targetLanguage,
           userLanguage,
         },
@@ -65,7 +68,7 @@ function buildSaveOneSentence(params: {
       },
     });
 
-    return { sentence: readingSentence.sentence, sentenceId: Number(sentenceId) };
+    return { sentence, sentenceId: Number(sentenceId) };
   };
 }
 

@@ -74,6 +74,10 @@ export function removeLocaleSuffix(value: string, language: string): string {
   return value.endsWith(suffix) ? value.slice(0, -suffix.length) : value;
 }
 
+export function normalizePunctuation(text: string): string {
+  return text.replaceAll(/(?<!\s)\s+([!?.,;:!?。、！？؟])/g, "$1");
+}
+
 export function stripPunctuation(text: string): string {
   return text.replaceAll(/[^\p{L}\p{N}\s]/gu, "");
 }
@@ -84,7 +88,7 @@ export function stripPunctuation(text: string): string {
  */
 export function segmentWords(text: string): string[] {
   if (text.includes(" ")) {
-    return text.split(" ").filter(Boolean);
+    return normalizePunctuation(text).split(" ").filter(Boolean);
   }
 
   const segmenter = new Intl.Segmenter(undefined, { granularity: "word" });
