@@ -4,6 +4,7 @@ import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { emptyToNull, normalizePunctuation } from "@zoonk/utils/string";
 import { streamError, streamStatus } from "../stream-status";
+import { fetchExistingWordCasing } from "./_utils/fetch-existing-word-casing";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
@@ -15,6 +16,7 @@ export type SavedWord = {
 };
 
 function buildSaveOneWord(params: {
+  existingCasing: Record<string, string>;
   vocabularyActivityId: number;
   translationActivityId: number | null;
   lessonId: number;
@@ -23,6 +25,7 @@ function buildSaveOneWord(params: {
   userLanguage: string;
 }) {
   const {
+    existingCasing,
     vocabularyActivityId,
     translationActivityId,
     lessonId,
@@ -33,6 +36,7 @@ function buildSaveOneWord(params: {
 
   return async (vocabWord: VocabularyWord, position: number): Promise<SavedWord> => {
     const translation = normalizePunctuation(vocabWord.translation);
+    const dbWord = existingCasing[vocabWord.word.toLowerCase()] ?? vocabWord.word;
 
     const record = await prisma.word.upsert({
       create: {
@@ -42,7 +46,7 @@ function buildSaveOneWord(params: {
         targetLanguage,
         translation,
         userLanguage,
-        word: vocabWord.word,
+        word: dbWord,
       },
       update: {
         alternativeTranslations: vocabWord.alternativeTranslations,
@@ -50,7 +54,7 @@ function buildSaveOneWord(params: {
         translation,
       },
       where: {
-        orgWord: { organizationId, targetLanguage, userLanguage, word: vocabWord.word },
+        orgWord: { organizationId, targetLanguage, userLanguage, word: dbWord },
       },
     });
 
@@ -123,7 +127,15 @@ export async function saveVocabularyWordsStep(
   const userLanguage = vocabularyActivity.language;
   const organizationId = course.organization.id;
 
+  const existingCasing = await fetchExistingWordCasing({
+    organizationId,
+    targetLanguage,
+    userLanguage,
+    words: words.map((vocab) => vocab.word),
+  });
+
   const saveOneWord = buildSaveOneWord({
+    existingCasing,
     lessonId: vocabularyActivity.lessonId,
     organizationId,
     targetLanguage,
