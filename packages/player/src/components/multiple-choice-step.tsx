@@ -131,12 +131,6 @@ function LanguageVariant({
 }) {
   const t = useExtracted();
   const replaceName = useReplaceName();
-  const { play } = useWordAudio();
-
-  const handleSelect = (index: number) => {
-    play(content.options[index]?.audioUrl ?? null);
-    onSelect(index);
-  };
 
   return (
     <>
@@ -160,11 +154,7 @@ function LanguageVariant({
 
       <div className="flex flex-col gap-3">
         <SectionLabel>{t("What do you say?")}</SectionLabel>
-        <OptionList
-          onSelect={handleSelect}
-          options={content.options}
-          selectedIndex={selectedIndex}
-        />
+        <OptionList onSelect={onSelect} options={content.options} selectedIndex={selectedIndex} />
       </div>
     </>
   );
@@ -181,9 +171,15 @@ export function MultipleChoiceStep({
 }) {
   const content = parseStepContent("multipleChoice", step.content);
   const selectedIndex = getSelectedIndex(selectedAnswer);
+  const { play } = useWordAudio();
 
   const handleSelect = (index: number) => {
     const selectedText = content.options[index]?.text ?? "";
+
+    if (content.kind === "language") {
+      play(content.options[index]?.audioUrl ?? null);
+    }
+
     onSelectAnswer(step.id, { kind: "multipleChoice", selectedIndex: index, selectedText });
   };
 
