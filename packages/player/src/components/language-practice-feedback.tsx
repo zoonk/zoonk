@@ -75,11 +75,15 @@ function LanguageAnswerLine({
       </span>
       <div className="flex flex-1 flex-col gap-0.5">
         <div className="flex items-center gap-2">
-          <div>
+          <div className="min-w-0">
             <span className="text-muted-foreground">{label}</span>{" "}
             <span className="font-medium">{text}</span>
           </div>
-          {audioUrl && <PlayAudioButton audioUrl={audioUrl} size="xs" />}
+          {audioUrl && (
+            <span className="shrink-0">
+              <PlayAudioButton audioUrl={audioUrl} size="xs" />
+            </span>
+          )}
         </div>
         <RomanizationText>{romanization}</RomanizationText>
         <span className="text-muted-foreground text-xs">{translation}</span>

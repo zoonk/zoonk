@@ -139,10 +139,12 @@ function LanguageVariant({
 
         <SpeechBubble>
           <div className="flex items-start gap-2">
-            <p className="text-base font-semibold">{replaceName(content.context)}</p>
+            <p className="min-w-0 text-base font-semibold">{replaceName(content.context)}</p>
 
             {content.contextAudioUrl && (
-              <PlayAudioButton audioUrl={content.contextAudioUrl} size="xs" />
+              <span className="shrink-0">
+                <PlayAudioButton audioUrl={content.contextAudioUrl} size="xs" />
+              </span>
             )}
           </div>
 
