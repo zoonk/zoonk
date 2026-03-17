@@ -109,7 +109,8 @@
     "zoonk/no-get-extracted-in-promise": "error",
     "zoonk/no-object-params-in-cache": ["error", { "exceptions": ["headers"] }],
     "zoonk/no-hardcoded-aria-label": "off",
-    "zoonk/no-t-function-as-argument": "error"
+    "zoonk/no-t-function-as-argument": "error",
+    "zoonk/prefer-flatmap": "error"
   },
   "overrides": [
     {

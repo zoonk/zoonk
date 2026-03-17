@@ -114,8 +114,9 @@ export function useThinkingMessages<TPhase extends string>(
   }
 
   return Object.fromEntries(
-    activePhases
-      .map((phase) => [phase, generators[phase]?.(state.indices[phase] ?? 0)] as const)
-      .filter(([, message]) => message !== undefined),
+    activePhases.flatMap((phase) => {
+      const message = generators[phase]?.(state.indices[phase] ?? 0);
+      return message === undefined ? [] : [[phase, message] as const];
+    }),
   );
 }

@@ -100,9 +100,10 @@ export function segmentWords(text: string): string[] {
 
 export function extractUniqueSentenceWords(sentences: string[]): string[] {
   const words = sentences.flatMap((sentence) =>
-    segmentWords(sentence)
-      .map((token) => stripPunctuation(token).toLowerCase())
-      .filter((token) => token.length > 0),
+    segmentWords(sentence).flatMap((token) => {
+      const stripped = stripPunctuation(token).toLowerCase();
+      return stripped.length > 0 ? [stripped] : [];
+    }),
   );
 
   return [...new Set(words)];
