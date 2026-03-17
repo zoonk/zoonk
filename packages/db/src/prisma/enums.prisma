@@ -23,7 +23,6 @@ enum ActivityKind {
   listening
   translation
   review
-  languagePractice @map("language_practice")
 }
 
 enum StepKind {

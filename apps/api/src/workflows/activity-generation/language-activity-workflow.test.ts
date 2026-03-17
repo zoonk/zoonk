@@ -90,48 +90,6 @@ vi.mock("@zoonk/ai/tasks/activities/language/grammar", () => ({
   }),
 }));
 
-vi.mock("@zoonk/ai/tasks/activities/language/practice", () => ({
-  generateActivityPracticeLanguage: vi.fn().mockResolvedValue({
-    data: {
-      scenario:
-        "You're in a Madrid bakery and need to order politely while the clerk asks follow-up questions.",
-      steps: [
-        {
-          context: "The clerk smiles and asks what you'd like to drink.",
-          contextRomanization: "The clerk smiles and asks what you'd like to drink.",
-          contextTranslation: "The clerk smiles and asks what you'd like to drink.",
-          options: [
-            {
-              feedback: "Perfectly polite and natural.",
-              isCorrect: true,
-              text: "Buenos días, quisiera un café con leche, por favor.",
-              textRomanization: "bweh-nos dee-as kee-sye-ra oon ka-fe kon leh-che por fa-bor",
-            },
-            {
-              feedback: "Understandable, but too abrupt.",
-              isCorrect: false,
-              text: "Dame café.",
-              textRomanization: "da-me ka-fe",
-            },
-            {
-              feedback: "This asks for tea, not coffee.",
-              isCorrect: false,
-              text: "Quiero té.",
-              textRomanization: "kye-ro te",
-            },
-            {
-              feedback: "Wrong context and meaning.",
-              isCorrect: false,
-              text: "¿Dónde está el baño?",
-              textRomanization: "don-de es-ta el ba-nyo",
-            },
-          ],
-        },
-      ],
-    },
-  }),
-}));
-
 vi.mock("@zoonk/ai/tasks/activities/language/sentences", () => ({
   generateActivitySentences: vi.fn().mockResolvedValue({
     data: {

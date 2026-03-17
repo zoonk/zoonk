@@ -329,16 +329,6 @@ msgctxt "akd+cv"
 msgid "Answer options"
 msgstr "Opções de resposta"
 
-#: ../../packages/player/src/components/multiple-choice-step.tsx
-msgctxt "HHBtl4"
-msgid "What do you say?"
-msgstr "O que você diz?"
-
-#: ../../packages/player/src/components/multiple-choice-step.tsx
-msgctxt "nJGJop"
-msgid "Someone says:"
-msgstr "Alguém diz:"
-
 #: ../../packages/player/src/components/play-audio-button.tsx
 msgctxt "lYWSeP"
 msgid "Play pronunciation"
@@ -2288,11 +2278,6 @@ msgstr "Aprenda novas palavras de {topic} com flashcards — veja cada palavra, 
 msgctxt "bzFQEy"
 msgid "Review everything you learned about {topic} with a comprehensive quiz."
 msgstr "Revise tudo que você aprendeu sobre {topic} com um quiz abrangente."
-
-#: src/lib/activities.ts
-msgctxt "c1T097"
-msgid "Practice {topic} in context through a dialogue-based scenario set in real-world situations."
-msgstr "Pratique {topic} no contexto através de um cenário de diálogo baseado em situações do mundo real."
 
 #: src/lib/activities.ts
 msgctxt "E1bF/X"

@@ -105,11 +105,6 @@ const activitiesData: {
         kind: "listening",
       },
       {
-        generationStatus: "pending",
-        isPublished: true,
-        kind: "languagePractice",
-      },
-      {
         generationStatus: "completed",
         isPublished: true,
         kind: "review",

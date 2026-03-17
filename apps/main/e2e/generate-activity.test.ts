@@ -212,57 +212,6 @@ async function createPendingReadingActivity() {
   return { activity, chapter, course, lesson };
 }
 
-async function createPendingLanguagePracticeActivity() {
-  const org = await getAiOrganization();
-
-  const uniqueId = randomUUID().slice(0, 8);
-  const courseTitle = `E2E LangPractice Course ${uniqueId}`;
-  const chapterTitle = `E2E LangPractice Chapter ${uniqueId}`;
-  const lessonTitle = `E2E LangPractice Lesson ${uniqueId}`;
-  const activityTitle = `E2E LangPractice Activity ${uniqueId}`;
-
-  const course = await courseFixture({
-    isPublished: true,
-    normalizedTitle: normalizeString(courseTitle),
-    organizationId: org.id,
-    slug: `e2e-lang-practice-course-${uniqueId}`,
-    targetLanguage: "es",
-    title: courseTitle,
-  });
-
-  const chapter = await chapterFixture({
-    courseId: course.id,
-    generationStatus: "completed",
-    isPublished: true,
-    normalizedTitle: normalizeString(chapterTitle),
-    organizationId: org.id,
-    slug: `e2e-lang-practice-chapter-${uniqueId}`,
-    title: chapterTitle,
-  });
-
-  const lesson = await lessonFixture({
-    chapterId: chapter.id,
-    generationStatus: "completed",
-    isPublished: true,
-    kind: "language",
-    normalizedTitle: normalizeString(lessonTitle),
-    organizationId: org.id,
-    slug: `e2e-lang-practice-lesson-${uniqueId}`,
-    title: lessonTitle,
-  });
-
-  const activity = await activityFixture({
-    generationStatus: "pending",
-    isPublished: true,
-    kind: "languagePractice",
-    lessonId: lesson.id,
-    organizationId: org.id,
-    title: activityTitle,
-  });
-
-  return { activity, chapter, course, lesson };
-}
-
 /**
  * Creates a test subscription for the given user.
  */
@@ -779,49 +728,6 @@ test.describe("Generate Activity Page - With Subscription", () => {
         { status: "completed", step: "generateGrammarContent" },
         { status: "started", step: "setGrammarAsCompleted" },
         { status: "completed", step: "setGrammarAsCompleted" },
-        { status: "started", step: "setActivityAsCompleted" },
-        { status: "completed", step: "setActivityAsCompleted" },
-      ],
-    });
-
-    await userWithoutProgress.goto(`/generate/a/${activity.id}`);
-
-    await expect(userWithoutProgress.getByText(/your activity is ready/i)).toBeVisible({
-      timeout: 10_000,
-    });
-
-    await expect(userWithoutProgress.getByText(/taking you to your activity/i)).toBeVisible();
-
-    await prisma.activity.update({
-      data: { generationStatus: "completed" },
-      where: { id: activity.id },
-    });
-
-    await userWithoutProgress.waitForURL(
-      new RegExp(
-        `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}/a/${activity.position}`,
-      ),
-      { timeout: 10_000 },
-    );
-  });
-
-  test("completes workflow for language practice activity kind", async ({
-    userWithoutProgress,
-    noProgressUser,
-  }) => {
-    await createTestSubscription(noProgressUser.id);
-    const { activity, chapter, course, lesson } = await createPendingLanguagePracticeActivity();
-
-    await setupMockApis(userWithoutProgress, {
-      streamMessages: [
-        { status: "started", step: "getLessonActivities" },
-        { status: "completed", step: "getLessonActivities" },
-        { status: "started", step: "setActivityAsRunning" },
-        { status: "completed", step: "setActivityAsRunning" },
-        { status: "started", step: "generateLanguagePracticeContent" },
-        { status: "completed", step: "generateLanguagePracticeContent" },
-        { status: "started", step: "setLanguagePracticeAsCompleted" },
-        { status: "completed", step: "setLanguagePracticeAsCompleted" },
         { status: "started", step: "setActivityAsCompleted" },
         { status: "completed", step: "setActivityAsCompleted" },
       ],

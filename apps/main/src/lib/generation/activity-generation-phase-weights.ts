@@ -30,7 +30,7 @@ export function getPhaseWeights(kind: ActivityKind): Record<PhaseName, number> {
     };
   }
 
-  if (kind === "grammar" || kind === "languagePractice") {
+  if (kind === "grammar") {
     return {
       addingPronunciation: 0,
       buildingWordList: 0,

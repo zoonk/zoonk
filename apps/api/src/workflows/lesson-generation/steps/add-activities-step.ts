@@ -22,7 +22,6 @@ const LANGUAGE_ACTIVITY_KINDS: ActivityKind[] = [
   "grammar",
   "reading",
   "listening",
-  "languagePractice",
   "review",
 ];
 

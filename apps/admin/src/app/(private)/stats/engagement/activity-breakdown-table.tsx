@@ -13,7 +13,7 @@ const activityKindLabels: Record<string, string> = {
   custom: "Custom",
   explanation: "Explanation",
   grammar: "Grammar",
-  language_practice: "Language Practice",
+
   listening: "Listening",
   practice: "Practice",
   quiz: "Quiz",
