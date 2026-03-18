@@ -50,15 +50,21 @@ function CompletionSignal() {
 
 function MilestoneHeading() {
   const t = useExtracted();
-  const { isNextChapter } = usePlayer();
+  const { isCourseComplete, isNextChapter } = usePlayer();
 
-  const heading = isNextChapter ? t("Chapter Complete") : t("Lesson Complete");
+  function getHeading() {
+    if (isCourseComplete) {
+      return t("Course Complete");
+    }
 
-  return (
-    <h2 className="animate-in fade-in slide-in-from-bottom-2 text-2xl font-semibold tracking-tight duration-300 ease-out motion-reduce:animate-none sm:text-3xl">
-      {heading}
-    </h2>
-  );
+    if (isNextChapter) {
+      return t("Chapter Complete");
+    }
+
+    return t("Lesson Complete");
+  }
+
+  return <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">{getHeading()}</h2>;
 }
 
 function getCompletionScore(results: Record<string, StepResult>) {
@@ -124,7 +130,7 @@ export function CompletionScreenContent({
       <CompletionScreen className="min-h-[60vh] max-w-sm justify-center gap-10 px-6 sm:gap-12">
         <MilestoneHeading />
 
-        <div className="animate-in fade-in flex w-full flex-col gap-3 delay-150 duration-300 ease-out motion-reduce:animate-none">
+        <div className="flex w-full flex-col gap-3">
           <AuthBranch
             completionResult={completionResult}
             lessonHref={lessonHref}

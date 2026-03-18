@@ -179,6 +179,7 @@ msgid "Next"
 msgstr "Próxima"
 
 #: ../../packages/player/src/components/completion-auth-branch.tsx
+#: ../../packages/player/src/components/completion-milestone-actions.tsx
 #: src/app/(catalog)/_components/command-palette.tsx
 #: src/app/(catalog)/_components/logout-dropdown-item.tsx
 #: src/app/(performance)/_components/performance-empty-state.tsx
@@ -189,24 +190,40 @@ msgid "Login"
 msgstr "Entrar"
 
 #: ../../packages/player/src/components/completion-auth-branch.tsx
-msgctxt "DiIkZH"
-msgid "Next Chapter"
-msgstr "Próximo Capítulo"
-
-#: ../../packages/player/src/components/completion-auth-branch.tsx
+#: ../../packages/player/src/components/completion-milestone-actions.tsx
 msgctxt "e1M39C"
 msgid "Sign up to track your progress"
 msgstr "Cadastre-se para acompanhar seu progresso"
 
-#: ../../packages/player/src/components/completion-auth-branch.tsx
+#: ../../packages/player/src/components/completion-milestone-actions.tsx
+msgctxt "DiIkZH"
+msgid "Next Chapter"
+msgstr "Próximo Capítulo"
+
+#: ../../packages/player/src/components/completion-milestone-actions.tsx
 msgctxt "J+7NRc"
 msgid "Next Lesson"
 msgstr "Próxima Aula"
 
-#: ../../packages/player/src/components/completion-auth-branch.tsx
+#: ../../packages/player/src/components/completion-milestone-actions.tsx
 msgctxt "sE4AEw"
 msgid "Review Lesson"
 msgstr "Revisar Aula"
+
+#: ../../packages/player/src/components/completion-milestone-actions.tsx
+msgctxt "w0D7HC"
+msgid "Review Course"
+msgstr "Revisar Curso"
+
+#: ../../packages/player/src/components/completion-milestone-actions.tsx
+msgctxt "wm/M34"
+msgid "Review Chapter"
+msgstr "Revisar Capítulo"
+
+#: ../../packages/player/src/components/completion-screen.tsx
+msgctxt "2wDWd0"
+msgid "Course Complete"
+msgstr "Curso Concluído"
 
 #: ../../packages/player/src/components/completion-screen.tsx
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/activity-list.tsx

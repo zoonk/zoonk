@@ -9,6 +9,7 @@ import Link from "next/link";
 import { type CompletionResult } from "../completion-input-schema";
 import { usePlayer } from "../player-context";
 import { BeltProgressHint, BeltProgressSkeleton } from "./belt-progress";
+import { MilestoneActions, UnauthenticatedMilestoneActions } from "./completion-milestone-actions";
 import { RewardBadges, RewardBadgesSkeleton } from "./reward-badges";
 
 function CompletionActions({ className, ...props }: React.ComponentProps<"div">) {
@@ -86,100 +87,6 @@ function SecondaryActions({
   );
 }
 
-function NextButtonLabel() {
-  const t = useExtracted();
-  const { isNextChapter } = usePlayer();
-
-  return <span>{isNextChapter ? t("Next Chapter") : t("Next Lesson")}</span>;
-}
-
-function LessonCompleteActions({
-  lessonHref,
-  nextActivityHref,
-}: {
-  lessonHref: Route;
-  nextActivityHref: Route | null;
-}) {
-  const t = useExtracted();
-  const { nextLessonHref } = usePlayer();
-
-  const nextHref = nextActivityHref ?? nextLessonHref;
-
-  if (nextHref) {
-    return (
-      <>
-        <Link
-          className={cn(buttonVariants({ size: "lg" }), "w-full lg:justify-between")}
-          href={nextHref}
-        >
-          <NextButtonLabel />
-          <Kbd className="bg-primary-foreground/15 text-primary-foreground hidden opacity-70 lg:inline-flex">
-            Enter
-          </Kbd>
-        </Link>
-
-        <Link
-          className={cn(buttonVariants({ variant: "outline" }), "w-full lg:justify-between")}
-          href={lessonHref}
-        >
-          {t("Review Lesson")}
-          <Kbd className="hidden opacity-60 lg:inline-flex">Esc</Kbd>
-        </Link>
-      </>
-    );
-  }
-
-  return (
-    <Link
-      className={cn(buttonVariants({ size: "lg" }), "w-full lg:justify-between")}
-      href={lessonHref}
-    >
-      {t("Review Lesson")}
-      <Kbd className="bg-primary-foreground/15 text-primary-foreground hidden opacity-70 lg:inline-flex">
-        Esc
-      </Kbd>
-    </Link>
-  );
-}
-
-function AuthenticatedActions({
-  isLastInLesson,
-  lessonHref,
-  nextActivityHref,
-  onRestart,
-}: {
-  isLastInLesson: boolean;
-  lessonHref: Route;
-  nextActivityHref: Route | null;
-  onRestart: () => void;
-}) {
-  const t = useExtracted();
-
-  if (isLastInLesson) {
-    return <LessonCompleteActions lessonHref={lessonHref} nextActivityHref={nextActivityHref} />;
-  }
-
-  if (nextActivityHref) {
-    return (
-      <>
-        <Link
-          className={cn(buttonVariants({ size: "lg" }), "w-full lg:justify-between")}
-          href={nextActivityHref}
-        >
-          {t("Next")}
-          <Kbd className="bg-primary-foreground/15 text-primary-foreground hidden opacity-70 lg:inline-flex">
-            Enter
-          </Kbd>
-        </Link>
-
-        <SecondaryActions lessonHref={lessonHref} onRestart={onRestart} variant="inline" />
-      </>
-    );
-  }
-
-  return <SecondaryActions lessonHref={lessonHref} onRestart={onRestart} variant="stacked" />;
-}
-
 function AuthenticatedContent({
   completionResult,
   lessonHref,
@@ -193,9 +100,18 @@ function AuthenticatedContent({
   onRestart: () => void;
   showRewards: boolean;
 }) {
+  const t = useExtracted();
   const { isLastInLesson } = usePlayer();
 
   const isLoading = !completionResult || completionResult.status !== "success";
+
+  if (isLastInLesson) {
+    return (
+      <CompletionActions>
+        <MilestoneActions lessonHref={lessonHref} />
+      </CompletionActions>
+    );
+  }
 
   return (
     <>
@@ -220,42 +136,23 @@ function AuthenticatedContent({
         ))}
 
       <CompletionActions>
-        <AuthenticatedActions
-          isLastInLesson={isLastInLesson}
-          lessonHref={lessonHref}
-          nextActivityHref={nextActivityHref}
-          onRestart={onRestart}
-        />
-      </CompletionActions>
-    </>
-  );
-}
+        {nextActivityHref ? (
+          <>
+            <Link
+              className={cn(buttonVariants({ size: "lg" }), "w-full lg:justify-between")}
+              href={nextActivityHref}
+            >
+              {t("Next")}
+              <Kbd className="bg-primary-foreground/15 text-primary-foreground hidden opacity-70 lg:inline-flex">
+                Enter
+              </Kbd>
+            </Link>
 
-function UnauthenticatedLessonComplete({
-  lessonHref,
-  loginHref,
-}: {
-  lessonHref: Route;
-  loginHref: Route;
-}) {
-  const t = useExtracted();
-
-  return (
-    <>
-      <p className="text-muted-foreground text-sm">{t("Sign up to track your progress")}</p>
-
-      <CompletionActions>
-        <Link className={cn(buttonVariants(), "w-full")} href={loginHref}>
-          {t("Login")}
-        </Link>
-
-        <Link
-          className={cn(buttonVariants({ variant: "outline" }), "w-full lg:justify-between")}
-          href={lessonHref}
-        >
-          {t("Review Lesson")}
-          <Kbd className="hidden opacity-60 lg:inline-flex">Esc</Kbd>
-        </Link>
+            <SecondaryActions lessonHref={lessonHref} onRestart={onRestart} variant="inline" />
+          </>
+        ) : (
+          <SecondaryActions lessonHref={lessonHref} onRestart={onRestart} variant="stacked" />
+        )}
       </CompletionActions>
     </>
   );
@@ -274,7 +171,7 @@ function UnauthenticatedContent({
   const { isLastInLesson } = usePlayer();
 
   if (isLastInLesson) {
-    return <UnauthenticatedLessonComplete lessonHref={lessonHref} loginHref={loginHref} />;
+    return <UnauthenticatedMilestoneActions lessonHref={lessonHref} loginHref={loginHref} />;
   }
 
   return (

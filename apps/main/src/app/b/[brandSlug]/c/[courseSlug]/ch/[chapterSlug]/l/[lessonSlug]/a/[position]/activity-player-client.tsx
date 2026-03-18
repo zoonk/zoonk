@@ -97,6 +97,26 @@ export function ActivityPlayerClient({
     return null;
   })();
 
+  const chapterHref = `/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}` as const;
+  const courseHref = `/b/${brandSlug}/c/${courseSlug}` as const;
+  const isCourseComplete = isLastInLesson && !nextActivity && !nextSibling;
+
+  const nextChapterHref = (() => {
+    if (!isNextChapter) {
+      return null;
+    }
+
+    if (nextActivity) {
+      return `/b/${brandSlug}/c/${courseSlug}/ch/${nextActivity.chapterSlug}` as const;
+    }
+
+    if (nextSibling) {
+      return `/b/${nextSibling.brandSlug}/c/${nextSibling.courseSlug}/ch/${nextSibling.chapterSlug}` as const;
+    }
+
+    return null;
+  })();
+
   const onNextHref = nextActivityHref ?? nextLessonHref;
 
   return (
@@ -104,7 +124,10 @@ export function ActivityPlayerClient({
       activity={activity}
       isAuthenticated={isAuthenticated}
       isLastInLesson={isLastInLesson}
+      isCourseComplete={isCourseComplete}
       isNextChapter={isNextChapter}
+      chapterHref={chapterHref}
+      courseHref={courseHref}
       completionFooter={
         <ContentFeedback
           className="pt-8"
@@ -119,6 +142,7 @@ export function ActivityPlayerClient({
       levelHref="/level"
       loginHref="/login"
       nextActivityHref={nextActivityHref}
+      nextChapterHref={nextChapterHref}
       nextLessonHref={nextLessonHref}
       nextLessonTitle={nextLessonTitle}
       onComplete={submitCompletion}

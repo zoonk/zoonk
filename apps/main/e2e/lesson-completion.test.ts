@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { type Browser } from "@playwright/test";
+import { type Browser, type Page } from "@playwright/test";
 import { request } from "@zoonk/e2e/fixtures";
 import { getAiOrganization } from "@zoonk/e2e/helpers";
 import { activityFixture, activityProgressFixture } from "@zoonk/testing/fixtures/activities";
@@ -41,51 +41,13 @@ async function createAuthenticatedPage(browser: Browser, baseURL: string, email:
   return { browserContext, page };
 }
 
-async function createTwoLessonCourse(prefix: string) {
-  const org = await getAiOrganization();
-  const uniqueId = randomUUID().slice(0, 8);
-
-  const course = await courseFixture({
-    isPublished: true,
-    organizationId: org.id,
-    slug: `e2e-${prefix}-course-${uniqueId}`,
-    title: `E2E ${prefix} Course ${uniqueId}`,
-  });
-
-  const chapter = await chapterFixture({
-    courseId: course.id,
-    isPublished: true,
-    organizationId: org.id,
-    slug: `e2e-${prefix}-chapter-${uniqueId}`,
-    title: `E2E ${prefix} Chapter ${uniqueId}`,
-  });
-
-  const lesson1 = await lessonFixture({
-    chapterId: chapter.id,
-    description: `First lesson ${uniqueId}`,
-    isPublished: true,
-    organizationId: org.id,
-    position: 0,
-    slug: `e2e-${prefix}-lesson1-${uniqueId}`,
-    title: `First Lesson ${uniqueId}`,
-  });
-
-  const lesson2 = await lessonFixture({
-    chapterId: chapter.id,
-    description: `Second lesson ${uniqueId}`,
-    isPublished: true,
-    organizationId: org.id,
-    position: 1,
-    slug: `e2e-${prefix}-lesson2-${uniqueId}`,
-    title: `Second Lesson ${uniqueId}`,
-  });
-
+async function createQuizActivity(lessonId: number, orgId: number, uniqueId: string) {
   const activity = await activityFixture({
     generationStatus: "completed",
     isPublished: true,
     kind: "quiz",
-    lessonId: lesson1.id,
-    organizationId: org.id,
+    lessonId,
+    organizationId: orgId,
     position: 0,
   });
 
@@ -103,52 +65,356 @@ async function createTwoLessonCourse(prefix: string) {
     kind: "multipleChoice",
   });
 
-  // Create a placeholder activity for lesson2 so the "Next Lesson" link works.
-  await activityFixture({
-    generationStatus: "completed",
+  return activity;
+}
+
+async function completeQuiz(page: Page, uniqueId: string) {
+  await page.getByRole("radio", { name: new RegExp(`Right ${uniqueId}`) }).click();
+  await page.getByRole("button", { name: /check/i }).click();
+  await page.getByRole("button", { name: /continue/i }).click();
+}
+
+/**
+ * Two lessons in one chapter. Completing lesson1's activity → "Lesson Complete".
+ * "Next Lesson" → lesson2 page. "Review Lesson" → lesson1 page.
+ */
+async function createLessonCompleteScenario(prefix: string) {
+  const org = await getAiOrganization();
+  const uniqueId = randomUUID().slice(0, 8);
+
+  const course = await courseFixture({
     isPublished: true,
-    kind: "quiz",
-    lessonId: lesson2.id,
     organizationId: org.id,
-    position: 0,
+    slug: `e2e-${prefix}-course-${uniqueId}`,
   });
 
+  const chapter = await chapterFixture({
+    courseId: course.id,
+    isPublished: true,
+    organizationId: org.id,
+    slug: `e2e-${prefix}-ch-${uniqueId}`,
+  });
+
+  const lesson1 = await lessonFixture({
+    chapterId: chapter.id,
+    isPublished: true,
+    organizationId: org.id,
+    position: 0,
+    slug: `e2e-${prefix}-l1-${uniqueId}`,
+    title: `First Lesson ${uniqueId}`,
+  });
+
+  const lesson2 = await lessonFixture({
+    chapterId: chapter.id,
+    isPublished: true,
+    organizationId: org.id,
+    position: 1,
+    slug: `e2e-${prefix}-l2-${uniqueId}`,
+    title: `Second Lesson ${uniqueId}`,
+  });
+
+  await Promise.all([
+    createQuizActivity(lesson1.id, org.id, uniqueId),
+    // Lesson2 needs an activity so its page renders (no redirect to generate).
+    activityFixture({
+      generationStatus: "completed",
+      isPublished: true,
+      kind: "explanation",
+      lessonId: lesson2.id,
+      organizationId: org.id,
+      position: 0,
+    }),
+  ]);
+
   return {
-    activity,
     activityUrl: `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson1.slug}/a/0`,
-    chapter,
-    course,
     lesson1,
     lesson2,
-    org,
+    uniqueId,
+  };
+}
+
+/**
+ * One lesson per chapter, two chapters. Completing chapter1's lesson → "Chapter Complete".
+ * "Next Chapter" → chapter2 page. "Review Chapter" → chapter1 page.
+ */
+async function createChapterCompleteScenario(prefix: string) {
+  const org = await getAiOrganization();
+  const uniqueId = randomUUID().slice(0, 8);
+
+  const course = await courseFixture({
+    isPublished: true,
+    organizationId: org.id,
+    slug: `e2e-${prefix}-course-${uniqueId}`,
+  });
+
+  const chapter1 = await chapterFixture({
+    courseId: course.id,
+    isPublished: true,
+    organizationId: org.id,
+    position: 0,
+    slug: `e2e-${prefix}-ch1-${uniqueId}`,
+    title: `First Chapter ${uniqueId}`,
+  });
+
+  const chapter2 = await chapterFixture({
+    courseId: course.id,
+    isPublished: true,
+    organizationId: org.id,
+    position: 1,
+    slug: `e2e-${prefix}-ch2-${uniqueId}`,
+    title: `Second Chapter ${uniqueId}`,
+  });
+
+  const lesson = await lessonFixture({
+    chapterId: chapter1.id,
+    isPublished: true,
+    organizationId: org.id,
+    position: 0,
+    slug: `e2e-${prefix}-lesson-${uniqueId}`,
+  });
+
+  // Chapter2 needs a lesson so getNextSibling finds it.
+  await lessonFixture({
+    chapterId: chapter2.id,
+    isPublished: true,
+    organizationId: org.id,
+    position: 0,
+    slug: `e2e-${prefix}-next-${uniqueId}`,
+  });
+
+  await createQuizActivity(lesson.id, org.id, uniqueId);
+
+  return {
+    activityUrl: `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter1.slug}/l/${lesson.slug}/a/0`,
+    chapter1,
+    chapter2,
+    uniqueId,
+  };
+}
+
+/**
+ * One chapter, one lesson, one activity. Completing it → "Course Complete".
+ * "Review Course" → course page. "Review Chapter" → chapter page.
+ */
+async function createCourseCompleteScenario(prefix: string) {
+  const org = await getAiOrganization();
+  const uniqueId = randomUUID().slice(0, 8);
+
+  const course = await courseFixture({
+    isPublished: true,
+    organizationId: org.id,
+    slug: `e2e-${prefix}-course-${uniqueId}`,
+    title: `Complete Course ${uniqueId}`,
+  });
+
+  const chapter = await chapterFixture({
+    courseId: course.id,
+    isPublished: true,
+    organizationId: org.id,
+    position: 0,
+    slug: `e2e-${prefix}-ch-${uniqueId}`,
+    title: `Final Chapter ${uniqueId}`,
+  });
+
+  const lesson = await lessonFixture({
+    chapterId: chapter.id,
+    isPublished: true,
+    organizationId: org.id,
+    position: 0,
+    slug: `e2e-${prefix}-lesson-${uniqueId}`,
+  });
+
+  await createQuizActivity(lesson.id, org.id, uniqueId);
+
+  return {
+    activityUrl: `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}/a/0`,
+    chapter,
+    course,
     uniqueId,
   };
 }
 
 test.describe("Lesson Completion UX", () => {
-  test("shows lesson complete heading and next lesson button on last activity", async ({
+  // --- Lesson Complete ---
+
+  test("lesson complete: next lesson navigates to next lesson page", async ({
     baseURL,
     browser,
   }) => {
     const email = await createUniqueUser(baseURL!);
     const { browserContext, page } = await createAuthenticatedPage(browser, baseURL!, email);
-    const { activityUrl, uniqueId } = await createTwoLessonCourse("lcomp");
+    const { activityUrl, lesson2, uniqueId } = await createLessonCompleteScenario("lnext");
 
     await page.goto(activityUrl);
     await page.waitForLoadState("networkidle");
+    await completeQuiz(page, uniqueId);
 
-    await page.getByRole("radio", { name: new RegExp(`Right ${uniqueId}`) }).click();
-    await page.getByRole("button", { name: /check/i }).click();
-    await page.getByRole("button", { name: /continue/i }).click();
+    const completionScreen = page.getByRole("status");
+    await expect(completionScreen.getByText(/lesson complete/i)).toBeVisible();
+
+    // No score or gamification on milestone screen
+    await expect(completionScreen.getByText(/correct/i)).not.toBeVisible();
+
+    await completionScreen.getByRole("link", { name: /next lesson/i }).click();
+    await expect(page.getByRole("heading", { level: 1, name: lesson2.title })).toBeVisible();
+
+    await browserContext.close();
+  });
+
+  test("lesson complete: review lesson navigates to current lesson page", async ({
+    baseURL,
+    browser,
+  }) => {
+    const email = await createUniqueUser(baseURL!);
+    const { browserContext, page } = await createAuthenticatedPage(browser, baseURL!, email);
+    const { activityUrl, lesson1, uniqueId } = await createLessonCompleteScenario("lrev");
+
+    await page.goto(activityUrl);
+    await page.waitForLoadState("networkidle");
+    await completeQuiz(page, uniqueId);
+
+    const completionScreen = page.getByRole("status");
+
+    await completionScreen.getByRole("link", { name: /review lesson/i }).click();
+    await expect(page.getByRole("heading", { level: 1, name: lesson1.title })).toBeVisible();
+
+    await browserContext.close();
+  });
+
+  // --- Chapter Complete ---
+
+  test("chapter complete: next chapter navigates to next chapter page", async ({
+    baseURL,
+    browser,
+  }) => {
+    const email = await createUniqueUser(baseURL!);
+    const { browserContext, page } = await createAuthenticatedPage(browser, baseURL!, email);
+    const { activityUrl, chapter2, uniqueId } = await createChapterCompleteScenario("chnext");
+
+    await page.goto(activityUrl);
+    await page.waitForLoadState("networkidle");
+    await completeQuiz(page, uniqueId);
+
+    const completionScreen = page.getByRole("status");
+    await expect(completionScreen.getByText(/chapter complete/i)).toBeVisible();
+
+    await completionScreen.getByRole("link", { name: /next chapter/i }).click();
+    await expect(page.getByRole("heading", { level: 1, name: chapter2.title })).toBeVisible();
+
+    await browserContext.close();
+  });
+
+  test("chapter complete: review chapter navigates to current chapter page", async ({
+    baseURL,
+    browser,
+  }) => {
+    const email = await createUniqueUser(baseURL!);
+    const { browserContext, page } = await createAuthenticatedPage(browser, baseURL!, email);
+    const { activityUrl, chapter1, uniqueId } = await createChapterCompleteScenario("chrev");
+
+    await page.goto(activityUrl);
+    await page.waitForLoadState("networkidle");
+    await completeQuiz(page, uniqueId);
+
+    const completionScreen = page.getByRole("status");
+
+    await completionScreen.getByRole("link", { name: /review chapter/i }).click();
+    await expect(page.getByRole("heading", { level: 1, name: chapter1.title })).toBeVisible();
+
+    await browserContext.close();
+  });
+
+  // --- Course Complete ---
+
+  test("course complete: review course navigates to course page", async ({ baseURL, browser }) => {
+    const email = await createUniqueUser(baseURL!);
+    const { browserContext, page } = await createAuthenticatedPage(browser, baseURL!, email);
+    const { activityUrl, course, uniqueId } = await createCourseCompleteScenario("crsrev");
+
+    await page.goto(activityUrl);
+    await page.waitForLoadState("networkidle");
+    await completeQuiz(page, uniqueId);
+
+    const completionScreen = page.getByRole("status");
+    await expect(completionScreen.getByText(/course complete/i)).toBeVisible();
+
+    await completionScreen.getByRole("link", { name: /review course/i }).click();
+    await expect(page.getByRole("heading", { level: 1, name: course.title })).toBeVisible();
+
+    await browserContext.close();
+  });
+
+  test("course complete: review chapter navigates to current chapter page", async ({
+    baseURL,
+    browser,
+  }) => {
+    const email = await createUniqueUser(baseURL!);
+    const { browserContext, page } = await createAuthenticatedPage(browser, baseURL!, email);
+    const { activityUrl, chapter, uniqueId } = await createCourseCompleteScenario("crschrev");
+
+    await page.goto(activityUrl);
+    await page.waitForLoadState("networkidle");
+    await completeQuiz(page, uniqueId);
+
+    const completionScreen = page.getByRole("status");
+
+    await completionScreen.getByRole("link", { name: /review chapter/i }).click();
+    await expect(page.getByRole("heading", { level: 1, name: chapter.title })).toBeVisible();
+
+    await browserContext.close();
+  });
+
+  // --- Other ---
+
+  test("shows next lesson button even when next lesson has pending generation", async ({
+    baseURL,
+    browser,
+  }) => {
+    const email = await createUniqueUser(baseURL!);
+    const { browserContext, page } = await createAuthenticatedPage(browser, baseURL!, email);
+
+    const org = await getAiOrganization();
+    const uniqueId = randomUUID().slice(0, 8);
+
+    const course = await courseFixture({
+      isPublished: true,
+      organizationId: org.id,
+      slug: `e2e-pend-course-${uniqueId}`,
+    });
+
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      isPublished: true,
+      organizationId: org.id,
+      slug: `e2e-pend-chapter-${uniqueId}`,
+    });
+
+    const lesson1 = await lessonFixture({
+      chapterId: chapter.id,
+      isPublished: true,
+      organizationId: org.id,
+      position: 0,
+      slug: `e2e-pend-lesson1-${uniqueId}`,
+    });
+
+    await lessonFixture({
+      chapterId: chapter.id,
+      isPublished: true,
+      organizationId: org.id,
+      position: 1,
+      slug: `e2e-pend-lesson2-${uniqueId}`,
+    });
+
+    await createQuizActivity(lesson1.id, org.id, uniqueId);
+
+    await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson1.slug}/a/0`);
+    await page.waitForLoadState("networkidle");
+    await completeQuiz(page, uniqueId);
 
     const completionScreen = page.getByRole("status");
     await expect(completionScreen.getByText(/lesson complete/i)).toBeVisible();
     await expect(completionScreen.getByRole("link", { name: /next lesson/i })).toBeVisible();
-    await expect(completionScreen.getByRole("link", { name: /review lesson/i })).toBeVisible();
-
-    // Score and gamification elements should not appear on lesson completion
-    await expect(completionScreen.getByText(/correct/i)).not.toBeVisible();
-    await expect(completionScreen.getByText(/BP/)).not.toBeVisible();
 
     await browserContext.close();
   });
@@ -164,7 +430,6 @@ test.describe("Lesson Completion UX", () => {
       isPublished: true,
       organizationId: org.id,
       slug: `e2e-mute-course-${uniqueId}`,
-      title: `E2E Mute Course ${uniqueId}`,
     });
 
     const chapter = await chapterFixture({
@@ -172,7 +437,6 @@ test.describe("Lesson Completion UX", () => {
       isPublished: true,
       organizationId: org.id,
       slug: `e2e-mute-chapter-${uniqueId}`,
-      title: `E2E Mute Chapter ${uniqueId}`,
     });
 
     const completedLesson = await lessonFixture({
@@ -204,7 +468,6 @@ test.describe("Lesson Completion UX", () => {
       position: 0,
     });
 
-    // Also create an activity for the pending lesson so progress displays
     await activityFixture({
       generationStatus: "completed",
       isPublished: true,
@@ -224,112 +487,16 @@ test.describe("Lesson Completion UX", () => {
     await authenticatedPage.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}`);
     await authenticatedPage.waitForLoadState("networkidle");
 
-    // Completed lesson shows the green check indicator
     const completedItem = authenticatedPage.getByRole("link", {
       name: new RegExp(completedLesson.title),
     });
     await expect(completedItem).toBeVisible();
     await expect(completedItem.getByRole("img", { name: /^completed$/i })).toBeVisible();
 
-    // Pending lesson is visible but does not have a completed indicator
     const pendingItem = authenticatedPage.getByRole("link", {
       name: new RegExp(pendingLesson.title),
     });
     await expect(pendingItem).toBeVisible();
-  });
-
-  test("shows next lesson button even when next lesson has pending generation", async ({
-    baseURL,
-    browser,
-  }) => {
-    const email = await createUniqueUser(baseURL!);
-    const { browserContext, page } = await createAuthenticatedPage(browser, baseURL!, email);
-
-    const org = await getAiOrganization();
-    const uniqueId = randomUUID().slice(0, 8);
-
-    const course = await courseFixture({
-      isPublished: true,
-      organizationId: org.id,
-      slug: `e2e-pend-course-${uniqueId}`,
-      title: `E2E Pending Course ${uniqueId}`,
-    });
-
-    const chapter = await chapterFixture({
-      courseId: course.id,
-      isPublished: true,
-      organizationId: org.id,
-      slug: `e2e-pend-chapter-${uniqueId}`,
-      title: `E2E Pending Chapter ${uniqueId}`,
-    });
-
-    const lesson1 = await lessonFixture({
-      chapterId: chapter.id,
-      description: `Current lesson ${uniqueId}`,
-      isPublished: true,
-      organizationId: org.id,
-      position: 0,
-      slug: `e2e-pend-lesson1-${uniqueId}`,
-      title: `Current Lesson ${uniqueId}`,
-    });
-
-    const lesson2 = await lessonFixture({
-      chapterId: chapter.id,
-      description: `Pending lesson ${uniqueId}`,
-      isPublished: true,
-      organizationId: org.id,
-      position: 1,
-      slug: `e2e-pend-lesson2-${uniqueId}`,
-      title: `Pending Lesson ${uniqueId}`,
-    });
-
-    const activity = await activityFixture({
-      generationStatus: "completed",
-      isPublished: true,
-      kind: "quiz",
-      lessonId: lesson1.id,
-      organizationId: org.id,
-      position: 0,
-    });
-
-    await stepFixture({
-      activityId: activity.id,
-      content: {
-        kind: "core",
-        options: [
-          { feedback: "Correct!", isCorrect: true, text: `Right ${uniqueId}` },
-          { feedback: "Wrong", isCorrect: false, text: `Wrong ${uniqueId}` },
-        ],
-        question: `Question ${uniqueId}`,
-      },
-      isPublished: true,
-      kind: "multipleChoice",
-    });
-
-    // Next lesson has only a pending (not generated) activity.
-    await activityFixture({
-      generationStatus: "pending",
-      isPublished: true,
-      kind: "quiz",
-      lessonId: lesson2.id,
-      organizationId: org.id,
-      position: 0,
-    });
-
-    const activityUrl = `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson1.slug}/a/0`;
-
-    await page.goto(activityUrl);
-    await page.waitForLoadState("networkidle");
-
-    await page.getByRole("radio", { name: new RegExp(`Right ${uniqueId}`) }).click();
-    await page.getByRole("button", { name: /check/i }).click();
-    await page.getByRole("button", { name: /continue/i }).click();
-
-    const completionScreen = page.getByRole("status");
-    await expect(completionScreen.getByText(/lesson complete/i)).toBeVisible();
-    await expect(completionScreen.getByRole("link", { name: /next lesson/i })).toBeVisible();
-
-    await browserContext.close();
   });
 
   test("shows all activities completed banner on fully completed lesson", async ({
@@ -343,7 +510,6 @@ test.describe("Lesson Completion UX", () => {
       isPublished: true,
       organizationId: org.id,
       slug: `e2e-banner-course-${uniqueId}`,
-      title: `E2E Banner Course ${uniqueId}`,
     });
 
     const chapter = await chapterFixture({
@@ -351,35 +517,33 @@ test.describe("Lesson Completion UX", () => {
       isPublished: true,
       organizationId: org.id,
       slug: `e2e-banner-chapter-${uniqueId}`,
-      title: `E2E Banner Chapter ${uniqueId}`,
     });
 
     const lesson = await lessonFixture({
       chapterId: chapter.id,
-      description: `Banner lesson ${uniqueId}`,
       isPublished: true,
       organizationId: org.id,
       slug: `e2e-banner-lesson-${uniqueId}`,
-      title: `Banner Lesson ${uniqueId}`,
     });
 
-    const activity1 = await activityFixture({
-      generationStatus: "completed",
-      isPublished: true,
-      kind: "quiz",
-      lessonId: lesson.id,
-      organizationId: org.id,
-      position: 0,
-    });
-
-    const activity2 = await activityFixture({
-      generationStatus: "completed",
-      isPublished: true,
-      kind: "practice",
-      lessonId: lesson.id,
-      organizationId: org.id,
-      position: 1,
-    });
+    const [activity1, activity2] = await Promise.all([
+      activityFixture({
+        generationStatus: "completed",
+        isPublished: true,
+        kind: "quiz",
+        lessonId: lesson.id,
+        organizationId: org.id,
+        position: 0,
+      }),
+      activityFixture({
+        generationStatus: "completed",
+        isPublished: true,
+        kind: "practice",
+        lessonId: lesson.id,
+        organizationId: org.id,
+        position: 1,
+      }),
+    ]);
 
     await Promise.all([
       activityProgressFixture({

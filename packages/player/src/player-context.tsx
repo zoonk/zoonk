@@ -23,6 +23,7 @@ export type PlayerContextValue<Href extends string> = {
   hasAnswer: boolean;
   isAuthenticated: boolean;
   isCompleted: boolean;
+  isCourseComplete: boolean;
   isGameOver: boolean;
   isIntro: boolean;
   isLastInLesson: boolean;
@@ -48,11 +49,14 @@ export type PlayerContextValue<Href extends string> = {
   selectAnswer: (stepId: string, answer: SelectedAnswer | null) => void;
   startChallenge: () => void;
 
+  chapterHref: Route<Href>;
   completionFooter?: React.ReactNode;
+  courseHref: Route<Href>;
   lessonHref: Route<Href>;
   levelHref?: Route<Href>;
   loginHref?: Route<Href>;
   nextActivityHref: Route<Href> | null;
+  nextChapterHref: Route<Href> | null;
   nextLessonHref: Route<Href> | null;
 };
 
