@@ -298,6 +298,7 @@ describe(checkStep, () => {
       kind: "reading",
       sentence: {
         audioUrl: null,
+        explanation: null,
         id: "sent-1",
         romanization: null,
         sentence: "Hello world",
@@ -309,13 +310,34 @@ describe(checkStep, () => {
       const answer: SelectedAnswer = { arrangedWords: ["Hello", "world"], kind: "reading" };
       const { effects, result } = checkStep(step, answer);
       expect(result.isCorrect).toBeTruthy();
+      expect(result.correctAnswer).toBe("Hello world");
       expect(effects).toEqual([]);
     });
 
-    test("incorrect word arrangement", () => {
+    test("incorrect word arrangement returns correct answer", () => {
       const answer: SelectedAnswer = { arrangedWords: ["world", "Hello"], kind: "reading" };
       const { result } = checkStep(step, answer);
       expect(result.isCorrect).toBeFalsy();
+      expect(result.correctAnswer).toBe("Hello world");
+    });
+
+    test("returns explanation as feedback", () => {
+      const stepWithExplanation = buildStep({
+        content: {},
+        id: "reading-2",
+        kind: "reading",
+        sentence: {
+          audioUrl: null,
+          explanation: "Word order matters in this language.",
+          id: "sent-3",
+          romanization: null,
+          sentence: "Hello world",
+          translation: "Hola mundo",
+        },
+      });
+      const answer: SelectedAnswer = { arrangedWords: ["world", "Hello"], kind: "reading" };
+      const { result } = checkStep(stepWithExplanation, answer);
+      expect(result.feedback).toBe("Word order matters in this language.");
     });
   });
 
@@ -326,6 +348,7 @@ describe(checkStep, () => {
       kind: "listening",
       sentence: {
         audioUrl: null,
+        explanation: null,
         id: "sent-2",
         romanization: null,
         sentence: "Good morning",
@@ -337,13 +360,34 @@ describe(checkStep, () => {
       const answer: SelectedAnswer = { arrangedWords: ["Buenos", "dias"], kind: "listening" };
       const { effects, result } = checkStep(step, answer);
       expect(result.isCorrect).toBeTruthy();
+      expect(result.correctAnswer).toBe("Buenos dias");
       expect(effects).toEqual([]);
     });
 
-    test("incorrect word arrangement", () => {
+    test("incorrect word arrangement returns correct answer", () => {
       const answer: SelectedAnswer = { arrangedWords: ["dias", "Buenos"], kind: "listening" };
       const { result } = checkStep(step, answer);
       expect(result.isCorrect).toBeFalsy();
+      expect(result.correctAnswer).toBe("Buenos dias");
+    });
+
+    test("returns explanation as feedback", () => {
+      const stepWithExplanation = buildStep({
+        content: {},
+        id: "listening-2",
+        kind: "listening",
+        sentence: {
+          audioUrl: null,
+          explanation: "Pay attention to accent marks.",
+          id: "sent-4",
+          romanization: null,
+          sentence: "Good morning",
+          translation: "Buenos dias",
+        },
+      });
+      const answer: SelectedAnswer = { arrangedWords: ["dias", "Buenos"], kind: "listening" };
+      const { result } = checkStep(stepWithExplanation, answer);
+      expect(result.feedback).toBe("Pay attention to accent marks.");
     });
   });
 

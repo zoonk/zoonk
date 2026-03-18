@@ -47,11 +47,13 @@ EVALUATION CRITERIA:
    - Avoid straying into unrelated topics
    - Do NOT require every sentence to explicitly reference the lesson topic - implicit relevance is fine
 
-8. APPROPRIATE DIFFICULTY:
-   - Sentences should be appropriate for language learners
-   - Avoid overly complex grammatical structures unless the lesson specifically targets advanced learners
-   - Vocabulary beyond the provided words should be at a similar or simpler level
-   - Penalize if sentences are incomprehensible to learners or use excessive advanced vocabulary
+8. APPROPRIATE DIFFICULTY (CRITICAL):
+   - The model MUST infer difficulty from the chapter title, lesson title, lesson description, and vocabulary
+   - Beginner context (basic topics + simple vocabulary) → simple sentences (2-5 words)
+   - Intermediate context → medium sentences (4-8 words)
+   - Advanced context (complex topics + advanced vocabulary) → complex sentences allowed
+   - Penalize SEVERELY if beginner-level context produces complex sentences (compound sentences, subordinate clauses, long constructions)
+   - Penalize if advanced-level context produces only trivially simple sentences
 
 9. NO DUPLICATES:
    - Each sentence should be unique
@@ -63,13 +65,20 @@ EVALUATION CRITERIA:
     - Translations should be in the NATIVE language (language code)
     - Penalize if languages are swapped or mixed incorrectly
 
+11. EXPLANATION QUALITY:
+    - Each sentence should have an "explanation" field (string or null)
+    - Explanations must be written in USER_LANGUAGE (the learner's native language)
+    - Explanations should focus on grammar or word-order patterns, especially those that differ from the learner's native language
+    - Null is acceptable for trivially simple sentences (single-word greetings, very basic structures)
+    - Penalize if explanations are in the wrong language or describe vocabulary meaning instead of grammar patterns
+
 ANTI-CHECKLIST GUIDANCE (CRITICAL):
 - Do NOT penalize for specific sentence choices - accept ANY valid sentences that use the vocabulary
 - Do NOT penalize for not including specific contexts you might expect
 - Do NOT require a specific number of sentences
 - Do NOT expect sentences to follow any particular template or pattern
 - Different valid sentence constructions exist - assess the quality of what IS provided
-- FOCUS ON: vocabulary usage, translation accuracy, romanization correctness, grammatical correctness, naturalness
+- FOCUS ON: vocabulary usage, translation accuracy, romanization correctness, grammatical correctness, naturalness, difficulty appropriateness
 `;
 
 export const TEST_CASES = [
@@ -83,6 +92,13 @@ SCRIPT: Roman (romanization should be null)
 
 VOCABULARY WORDS PROVIDED: hola, buenos dias, buenas noches, adios, gracias
 These words MUST appear in the generated sentences.
+
+DIFFICULTY: This is clearly a BEGINNER-level lesson. Chapter "Basic Greetings and Introductions" + Lesson "Greetings and Introductions" + simple greeting vocabulary = absolute beginner.
+- Sentences MUST be very simple (2-5 words max)
+- No compound sentences, no subordinate clauses
+- Examples of acceptable complexity: "¡Hola!", "Buenos días, María.", "¡Gracias!"
+- Examples of UNACCEPTABLE complexity: "As she entered the coffee shop, she immediately said good afternoon"
+- Penalize SEVERELY if any sentence has more than 5-6 words or uses complex structures
 
 ACCURACY PITFALLS - Penalize SEVERELY if:
 - Any sentence doesn't use at least one of the provided vocabulary words
@@ -99,6 +115,9 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "en-spanish-greetings",
     userInput: {
+      chapterTitle: "Basic Greetings and Introductions",
+      lessonDescription:
+        "Learn the most common Spanish greetings and how to introduce yourself in everyday situations.",
       lessonTitle: "Greetings and Introductions",
       targetLanguage: "es",
       userLanguage: "en",
@@ -116,6 +135,8 @@ SCRIPT: Roman (romanization should be null)
 VOCABULARY WORDS PROVIDED: le pain, le fromage, le vin, la soupe, le dessert
 These words MUST appear in the generated sentences.
 
+DIFFICULTY: Beginner-to-intermediate level. Chapter "Food and Meals" + common food nouns = beginner vocabulary, but dining contexts allow slightly longer sentences.
+
 ACCURACY PITFALLS - Penalize SEVERELY if:
 - Any sentence doesn't use at least one of the provided vocabulary words
 - Food items are used in unrealistic contexts
@@ -132,6 +153,8 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "en-french-food",
     userInput: {
+      chapterTitle: "Food and Meals",
+      lessonDescription: "Learn to name common foods and order at a restaurant.",
       lessonTitle: "Food and Dining",
       targetLanguage: "fr",
       userLanguage: "en",
@@ -149,6 +172,8 @@ SCRIPT: Roman (romanization should be null)
 VOCABULARY WORDS PROVIDED: die Mutter, der Vater, die Schwester, der Bruder, die Familie
 These words MUST appear in the generated sentences.
 
+DIFFICULTY: Beginner level. Chapter "Family and Relationships" + basic family nouns = foundational vocabulary.
+
 ACCURACY PITFALLS - Penalize SEVERELY if:
 - Any sentence doesn't use at least one of the provided vocabulary words
 - Case endings are incorrect (nominative, accusative, dative contexts)
@@ -165,6 +190,8 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "en-german-family",
     userInput: {
+      chapterTitle: "Family and Relationships",
+      lessonDescription: "Learn to talk about your family members in German.",
       lessonTitle: "Family Members",
       targetLanguage: "de",
       userLanguage: "en",
@@ -181,6 +208,8 @@ SCRIPT: Non-Roman (romanization MUST be included)
 
 VOCABULARY WORDS PROVIDED: 一, 二, 三, 五, 十
 These number kanji MUST appear in the generated sentences.
+
+DIFFICULTY: Beginner level. Chapter "Numbers and Basics" + basic number kanji = foundational vocabulary.
 
 ROMANIZATION REQUIREMENTS:
 - MUST include romaji for all Japanese sentences
@@ -204,6 +233,8 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "en-japanese-numbers",
     userInput: {
+      chapterTitle: "Numbers and Basics",
+      lessonDescription: "Learn to count and use numbers in everyday Japanese.",
       lessonTitle: "Numbers and Counting",
       targetLanguage: "ja",
       userLanguage: "en",
@@ -220,6 +251,8 @@ SCRIPT: Non-Roman (romanization MUST be included)
 
 VOCABULARY WORDS PROVIDED: 빨간색, 파란색, 노란색, 초록색, 검은색
 These color words MUST appear in the generated sentences.
+
+DIFFICULTY: Beginner level. Chapter "Colors and Descriptions" + basic color words = foundational vocabulary.
 
 ROMANIZATION REQUIREMENTS:
 - MUST include romanized Korean for all sentences
@@ -242,6 +275,8 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "en-korean-colors",
     userInput: {
+      chapterTitle: "Colors and Descriptions",
+      lessonDescription: "Learn the basic color words in Korean and how to describe objects.",
       lessonTitle: "Colors",
       targetLanguage: "ko",
       userLanguage: "en",
@@ -259,6 +294,8 @@ SCRIPT: Roman (romanization should be null)
 VOCABULARY WORDS PROVIDED: il treno, l'aereo, la macchina, il biglietto, la stazione
 These words MUST appear in the generated sentences.
 
+DIFFICULTY: Intermediate level. Chapter "Getting Around" + travel/transport vocabulary = practical intermediate topic.
+
 ACCURACY PITFALLS - Penalize SEVERELY if:
 - Any sentence doesn't use at least one of the provided vocabulary words
 - Article contractions are incorrect (e.g., l'aereo not la aereo)
@@ -275,6 +312,9 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "pt-italian-travel",
     userInput: {
+      chapterTitle: "Getting Around",
+      lessonDescription:
+        "Learn vocabulary for transportation and traveling in Italian-speaking countries.",
       lessonTitle: "Viagens e Transporte",
       targetLanguage: "it",
       userLanguage: "pt",
@@ -292,6 +332,8 @@ SCRIPT: Roman (romanization should be null)
 VOCABULARY WORDS PROVIDED: comprar, la tienda, el precio, caro, barato
 These words MUST appear in the generated sentences.
 
+DIFFICULTY: Intermediate level. Chapter "Shopping and Commerce" + verbs and adjectives = intermediate vocabulary.
+
 ACCURACY PITFALLS - Penalize SEVERELY if:
 - Any sentence doesn't use at least one of the provided vocabulary words
 - Verb conjugation is incorrect (comprar conjugated forms)
@@ -308,6 +350,8 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "pt-spanish-shopping",
     userInput: {
+      chapterTitle: "Shopping and Commerce",
+      lessonDescription: "Learn to talk about prices, compare costs, and shop in Spanish.",
       lessonTitle: "Compras",
       targetLanguage: "es",
       userLanguage: "pt",
@@ -325,6 +369,8 @@ SCRIPT: Roman (romanization should be null)
 VOCABULARY WORDS PROVIDED: le soleil, la pluie, le vent, il fait chaud, il fait froid
 These words/expressions MUST appear in the generated sentences.
 
+DIFFICULTY: Intermediate level. Chapter "Weather and Seasons" + weather expressions (including impersonal "il fait" constructions) = intermediate.
+
 ACCURACY PITFALLS - Penalize SEVERELY if:
 - Any sentence doesn't use at least one of the provided vocabulary words/expressions
 - Weather expressions are used incorrectly
@@ -340,6 +386,9 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "es-french-weather",
     userInput: {
+      chapterTitle: "Weather and Seasons",
+      lessonDescription:
+        "Learn to describe the weather and talk about seasonal activities in French.",
       lessonTitle: "El Clima",
       targetLanguage: "fr",
       userLanguage: "es",
@@ -356,6 +405,8 @@ SCRIPT: Non-Roman (romanization MUST be included)
 
 VOCABULARY WORDS PROVIDED: 今日, 明日, 昨日, 朝, 夜
 These time words MUST appear in the generated sentences.
+
+DIFFICULTY: Beginner-to-intermediate level. Chapter "Time and Daily Life" + basic time words = foundational vocabulary but with context for short sentences.
 
 ROMANIZATION REQUIREMENTS:
 - MUST include romaji for all Japanese sentences
@@ -378,6 +429,9 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "es-japanese-time",
     userInput: {
+      chapterTitle: "Time and Daily Life",
+      lessonDescription:
+        "Learn basic time expressions to talk about your daily schedule in Japanese.",
       lessonTitle: "Expresiones de Tiempo",
       targetLanguage: "ja",
       userLanguage: "es",
@@ -394,6 +448,8 @@ SCRIPT: Non-Roman (romanization MUST be included)
 
 VOCABULARY WORDS PROVIDED: 吃, 喝, 看, 听, 说
 These verbs MUST appear in the generated sentences.
+
+DIFFICULTY: Beginner level. Chapter "Essential Verbs" + basic action verbs = foundational vocabulary.
 
 ROMANIZATION REQUIREMENTS:
 - MUST include pinyin for all Chinese sentences
@@ -417,6 +473,8 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "en-chinese-verbs",
     userInput: {
+      chapterTitle: "Essential Verbs",
+      lessonDescription: "Learn the most common action verbs used in daily Mandarin Chinese.",
       lessonTitle: "Common Verbs",
       targetLanguage: "zh",
       userLanguage: "en",
@@ -433,6 +491,8 @@ SCRIPT: Non-Roman (romanization MUST be included)
 
 VOCABULARY WORDS PROVIDED: магазин, ресторан, парк, школа, библиотека
 These place words MUST appear in the generated sentences.
+
+DIFFICULTY: Beginner-to-intermediate level. Chapter "Around Town" + common location nouns = practical vocabulary that requires preposition usage.
 
 ROMANIZATION REQUIREMENTS:
 - MUST include romanized Russian for all sentences
@@ -456,6 +516,8 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "en-russian-places",
     userInput: {
+      chapterTitle: "Around Town",
+      lessonDescription: "Learn to name and navigate common places in your city in Russian.",
       lessonTitle: "Places in the City",
       targetLanguage: "ru",
       userLanguage: "en",
@@ -472,6 +534,8 @@ SCRIPT: Non-Roman (romanization MUST be included)
 
 VOCABULARY WORDS PROVIDED: كبير, صغير, جميل, جديد, قديم
 These adjectives MUST appear in the generated sentences.
+
+DIFFICULTY: Beginner-to-intermediate level. Chapter "Describing Things" + basic adjectives = foundational vocabulary, but Arabic adjective agreement requires some complexity.
 
 ROMANIZATION REQUIREMENTS:
 - MUST include romanized Arabic for all sentences
@@ -495,6 +559,9 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "en-arabic-adjectives",
     userInput: {
+      chapterTitle: "Describing Things",
+      lessonDescription:
+        "Learn common adjectives to describe objects, people, and places in Arabic.",
       lessonTitle: "Common Adjectives",
       targetLanguage: "ar",
       userLanguage: "en",
@@ -512,6 +579,8 @@ SCRIPT: Roman (romanization should be null)
 VOCABULARY WORDS PROVIDED: feliz, triste, cansado, com fome, com sede
 These words/expressions MUST appear in the generated sentences.
 
+DIFFICULTY: Beginner level. Chapter "How Are You Feeling?" + basic emotion/state vocabulary = foundational topic.
+
 ACCURACY PITFALLS - Penalize SEVERELY if:
 - Any sentence doesn't use at least one of the provided vocabulary words
 - Estar vs ser usage is incorrect for states (estar feliz, not ser feliz for temporary states)
@@ -528,6 +597,8 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "en-portuguese-emotions",
     userInput: {
+      chapterTitle: "How Are You Feeling?",
+      lessonDescription: "Learn to express emotions and physical states in Brazilian Portuguese.",
       lessonTitle: "Emotions and Feelings",
       targetLanguage: "pt",
       userLanguage: "en",
@@ -545,6 +616,8 @@ SCRIPT: Roman (romanization should be null)
 VOCABULARY WORDS PROVIDED: aufstehen, fruhstucken, arbeiten, schlafen, essen
 These verbs MUST appear in the generated sentences.
 
+DIFFICULTY: Intermediate level. Chapter "Daily Routines" + separable prefix verbs and verb conjugation = intermediate grammar required.
+
 ACCURACY PITFALLS - Penalize SEVERELY if:
 - Any sentence doesn't use at least one of the provided verbs
 - Separable prefix verbs are handled incorrectly (aufstehen -> ich stehe auf)
@@ -561,6 +634,8 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "pt-german-routines",
     userInput: {
+      chapterTitle: "Daily Routines",
+      lessonDescription: "Learn to describe your daily routine using common German verbs.",
       lessonTitle: "Rotinas Diarias",
       targetLanguage: "de",
       userLanguage: "pt",
@@ -577,6 +652,8 @@ SCRIPT: Non-Roman (romanization MUST be included)
 
 VOCABULARY WORDS PROVIDED: ขอบคุณ, ขอโทษ, ได้โปรด, สวัสดี, ลาก่อน
 These polite expressions MUST appear in the generated sentences.
+
+DIFFICULTY: Beginner level. Chapter "Basic Politeness" + common polite expressions = foundational vocabulary.
 
 ROMANIZATION REQUIREMENTS:
 - MUST include romanized Thai for all sentences
@@ -604,10 +681,60 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "en-thai-politeness",
     userInput: {
+      chapterTitle: "Basic Politeness",
+      lessonDescription: "Learn essential polite expressions for everyday interactions in Thai.",
       lessonTitle: "Polite Expressions",
       targetLanguage: "th",
       userLanguage: "en",
       words: ["ขอบคุณ", "ขอโทษ", "ได้โปรด", "สวัสดี", "ลาก่อน"],
+    },
+  },
+  {
+    expectations: `
+LANGUAGE: English output required for translations.
+
+TOPIC: Spanish sentences for advanced grammar - subjunctive mood with complex verb forms and abstract concepts.
+
+SCRIPT: Roman (romanization should be null)
+
+VOCABULARY WORDS PROVIDED: hubiera sabido, a pesar de que, no obstante, en caso de que, siempre y cuando
+These expressions MUST appear in the generated sentences.
+
+DIFFICULTY: This is clearly an ADVANCED-level lesson. Chapter "Advanced Grammar" + Lesson "Subjunctive Mood in Complex Clauses" + advanced grammar constructions = advanced level.
+- Sentences SHOULD use complex structures (subordinate clauses, conditional constructions, compound-complex sentences)
+- Longer sentences (8+ words) are expected and appropriate
+- Penalize if sentences are overly simplistic given the advanced vocabulary
+- Advanced grammatical accuracy is critical (subjunctive mood usage must be correct)
+
+ACCURACY PITFALLS - Penalize SEVERELY if:
+- Any sentence doesn't use at least one of the provided expressions
+- Subjunctive mood is used incorrectly
+- Conditional/hypothetical structures are grammatically wrong
+- Translations don't accurately convey the nuanced meaning
+- Romanization contains any text (should be null)
+
+CONTEXT EXPECTATIONS:
+- Sentences demonstrating complex hypothetical scenarios
+- Professional, academic, or sophisticated conversational contexts
+- Proper use of subjunctive triggers (doubt, emotion, hypothetical, concession)
+
+${SHARED_EXPECTATIONS}
+    `,
+    id: "en-spanish-advanced-grammar",
+    userInput: {
+      chapterTitle: "Advanced Grammar",
+      lessonDescription:
+        "Master the subjunctive mood in complex clause structures, including conditional, concessive, and hypothetical expressions.",
+      lessonTitle: "Subjunctive Mood in Complex Clauses",
+      targetLanguage: "es",
+      userLanguage: "en",
+      words: [
+        "hubiera sabido",
+        "a pesar de que",
+        "no obstante",
+        "en caso de que",
+        "siempre y cuando",
+      ],
     },
   },
 ];

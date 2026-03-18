@@ -4,6 +4,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { CircleAlert, CircleCheck, CircleX, TriangleAlert } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type DimensionInventory, type StepResult } from "../player-reducer";
+import { type SerializedStep } from "../prepare-activity-data";
 import { useReplaceName } from "../user-name-context";
 import {
   type DimensionEntry,
@@ -168,7 +169,31 @@ function ChallengeFeedback({
   );
 }
 
-function CoreFeedback({ result }: { result: StepResult }) {
+function getArrangeWordsSelectedText(result: StepResult): string | null {
+  if (result.answer?.kind === "reading" || result.answer?.kind === "listening") {
+    return result.answer.arrangedWords.join(" ");
+  }
+
+  return null;
+}
+
+function getQuestionText(result: StepResult, step?: SerializedStep): string | null {
+  if (result.answer?.kind === "translation") {
+    return result.answer.questionText;
+  }
+
+  if (result.answer?.kind === "reading" && step?.sentence) {
+    return step.sentence.translation;
+  }
+
+  if (result.answer?.kind === "listening" && step?.sentence) {
+    return step.sentence.sentence;
+  }
+
+  return null;
+}
+
+function CoreFeedback({ result, step }: { result: StepResult; step?: SerializedStep }) {
   const t = useExtracted();
   const replaceName = useReplaceName();
   const { isCorrect, feedback: rawFeedback, correctAnswer } = result.result;
@@ -176,8 +201,8 @@ function CoreFeedback({ result }: { result: StepResult }) {
   const selectedText =
     result.answer?.kind === "multipleChoice" || result.answer?.kind === "translation"
       ? result.answer.selectedText
-      : null;
-  const questionText = result.answer?.kind === "translation" ? result.answer.questionText : null;
+      : getArrangeWordsSelectedText(result);
+  const questionText = getQuestionText(result, step);
 
   return (
     <FeedbackScreen>
@@ -215,7 +240,14 @@ function CoreFeedback({ result }: { result: StepResult }) {
                 label={t("Correct answer:")}
                 variant="correct"
               >
-                {correctAnswer}
+                <span className="flex flex-col">
+                  <span>{correctAnswer}</span>
+                  {step?.sentence?.romanization && (
+                    <span className="text-muted-foreground text-xs font-normal">
+                      {step.sentence.romanization}
+                    </span>
+                  )}
+                </span>
               </AnswerLine>
             )}
           </>
@@ -232,9 +264,11 @@ function CoreFeedback({ result }: { result: StepResult }) {
 export function FeedbackScreenContent({
   dimensions,
   result,
+  step,
 }: {
   dimensions?: DimensionInventory;
   result: StepResult;
+  step?: SerializedStep;
 }) {
   const hasEffects = result.effects.length > 0;
 
@@ -242,5 +276,5 @@ export function FeedbackScreenContent({
     return <ChallengeFeedback dimensions={dimensions} result={result} />;
   }
 
-  return <CoreFeedback result={result} />;
+  return <CoreFeedback result={result} step={step} />;
 }

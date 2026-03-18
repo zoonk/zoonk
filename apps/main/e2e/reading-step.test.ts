@@ -275,7 +275,7 @@ test.describe("Reading Step", () => {
     await expect(page.getByRole("button", { name: /continue/i })).toBeVisible();
   });
 
-  test("wrong arrangement shows correct word cards in feedback without redundant text", async ({
+  test("wrong arrangement shows feedback screen with your answer and correct answer", async ({
     page,
   }) => {
     const uniqueId = randomUUID().slice(0, 8);
@@ -307,70 +307,17 @@ test.describe("Reading Step", () => {
 
     await page.getByRole("button", { name: /check/i }).click();
 
-    const feedback = page.getByRole("region", { name: /answer feedback/i });
-    await expect(feedback.getByText(/not quite/i)).toBeVisible();
+    // Feedback screen shows the translation as context
+    await expect(page.getByText(/translate/i)).toBeVisible();
+    await expect(page.getByText(translation)).toBeVisible();
 
-    // Correct answer shows individual word cards
-    const correctAnswer = feedback.getByRole("group", { name: /correct answer/i });
-    await expect(correctAnswer.getByText(word1)).toBeVisible();
-    await expect(correctAnswer.getByText(word2)).toBeVisible();
+    // Shows user's wrong arrangement
+    await expect(page.getByText(/your answer/i)).toBeVisible();
+    await expect(page.getByText(`${word2} ${word1}`)).toBeVisible();
 
-    // Reading feedback should NOT show redundant sentence/translation text below word cards
-    // (the word cards already show per-word translations, and the question prompt shows the translation)
-    await expect(feedback.getByText(sentence, { exact: true })).toBeHidden();
-    await expect(feedback.getByText(translation, { exact: true })).toBeHidden();
-  });
-
-  test("feedback shows per-word romanization and translation in word cards", async ({ page }) => {
-    const uniqueId = randomUUID().replaceAll("-", "").slice(0, 8);
-    const word1 = `hola${uniqueId}`;
-    const word2 = `mundo${uniqueId}`;
-    const romanization1 = `oh-la${uniqueId}`;
-
-    const { url } = await createReadingActivity({
-      sentences: [
-        {
-          sentence: `${word1} ${word2}`,
-          translation: `hello${uniqueId} world${uniqueId}`,
-        },
-      ],
-      words: [
-        {
-          romanization: romanization1,
-          translation: `hello${uniqueId}`,
-          word: word1,
-        },
-      ],
-    });
-
-    await page.goto(url);
-
-    const wordBank = page.getByRole("group", { name: /word bank/i });
-
-    // Arrange correctly (word1 button includes romanization text, so use regex)
-    await expect(async () => {
-      await wordBank.getByRole("button", { name: new RegExp(word1) }).click();
-      await expect(
-        page
-          .getByRole("group", { name: /your answer/i })
-          .getByRole("button", { name: new RegExp(word1) }),
-      ).toBeVisible({ timeout: 1000 });
-    }).toPass();
-
-    await wordBank.getByRole("button", { exact: true, name: word2 }).click();
-
-    await page.getByRole("button", { name: /check/i }).click();
-
-    const feedback = page.getByRole("region", { name: /answer feedback/i });
-    const correctAnswer = feedback.getByRole("group", { name: /correct answer/i });
-
-    // Word cards show individual words
-    await expect(correctAnswer.getByText(word1)).toBeVisible();
-    await expect(correctAnswer.getByText(word2)).toBeVisible();
-
-    // Word with matching lesson word shows its romanization and translation
-    await expect(correctAnswer.getByText(romanization1)).toBeVisible();
-    await expect(correctAnswer.getByText(`hello${uniqueId}`)).toBeVisible();
+    // Shows the correct answer
+    await expect(page.getByText(/correct answer/i)).toBeVisible();
+    await expect(page.getByText(sentence)).toBeVisible();
   });
 
   test("dragging a placed word reorders it in the answer area", async ({ page }) => {

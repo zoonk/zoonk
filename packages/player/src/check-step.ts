@@ -90,21 +90,26 @@ function checkTranslationStep(step: SerializedStep, answer: SelectedAnswer): Che
   };
 }
 
-function checkArrangeWords(step: SerializedStep, arrangedWords: string[]): CheckStepResult {
-  if (!step.sentence) {
-    return MISMATCH_RESULT;
-  }
-
-  const words = segmentWords(step.sentence.sentence);
-  return { effects: [], result: checkArrangeWordsAnswer(words, arrangedWords) };
-}
-
 function checkReadingStep(step: SerializedStep, answer: SelectedAnswer): CheckStepResult {
   if (answer.kind !== "reading") {
     return MISMATCH_RESULT;
   }
 
-  return checkArrangeWords(step, answer.arrangedWords);
+  if (!step.sentence) {
+    return MISMATCH_RESULT;
+  }
+
+  const words = segmentWords(step.sentence.sentence);
+  const result = checkArrangeWordsAnswer(words, answer.arrangedWords);
+
+  return {
+    effects: [],
+    result: {
+      ...result,
+      correctAnswer: words.join(" "),
+      feedback: step.sentence.explanation ?? null,
+    },
+  };
 }
 
 function checkListeningStep(step: SerializedStep, answer: SelectedAnswer): CheckStepResult {
@@ -117,7 +122,16 @@ function checkListeningStep(step: SerializedStep, answer: SelectedAnswer): Check
   }
 
   const words = segmentWords(step.sentence.translation);
-  return { effects: [], result: checkArrangeWordsAnswer(words, answer.arrangedWords) };
+  const result = checkArrangeWordsAnswer(words, answer.arrangedWords);
+
+  return {
+    effects: [],
+    result: {
+      ...result,
+      correctAnswer: words.join(" "),
+      feedback: step.sentence.explanation ?? null,
+    },
+  };
 }
 
 export function checkStep(step: SerializedStep, answer: SelectedAnswer): CheckStepResult {

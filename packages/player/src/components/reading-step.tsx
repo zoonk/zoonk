@@ -29,11 +29,6 @@ export function ReadingStep({
     <ArrangeWordsInteraction
       answerKind="reading"
       correctWords={segmentWords(step.sentence.sentence)}
-      feedbackDetails={{
-        correctWords: segmentWords(step.sentence.sentence),
-        kind: "reading",
-        wordBankOptions: step.wordBankOptions,
-      }}
       onSelectAnswer={onSelectAnswer}
       result={result}
       selectedAnswer={selectedAnswer}

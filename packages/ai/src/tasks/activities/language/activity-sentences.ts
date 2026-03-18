@@ -12,6 +12,7 @@ const FALLBACK_MODELS = ["google/gemini-3.1-pro-preview", "anthropic/claude-opus
 const schema = z.object({
   sentences: z.array(
     z.object({
+      explanation: z.string().nullable(),
       romanization: z.string().nullable(),
       sentence: z.string(),
       translation: z.string(),
@@ -22,7 +23,9 @@ const schema = z.object({
 export type ActivitySentencesSchema = z.infer<typeof schema>;
 
 export type ActivitySentencesParams = {
+  chapterTitle?: string;
   concepts?: string[];
+  lessonDescription?: string;
   lessonTitle: string;
   model?: string;
   neighboringConcepts?: string[];
@@ -34,7 +37,9 @@ export type ActivitySentencesParams = {
 };
 
 export async function generateActivitySentences({
+  chapterTitle,
   concepts = [],
+  lessonDescription,
   lessonTitle,
   model = DEFAULT_MODEL,
   neighboringConcepts = [],
@@ -48,8 +53,8 @@ export async function generateActivitySentences({
 
   const userPrompt = `TARGET_LANGUAGE: ${promptContext.targetLanguageName}
 USER_LANGUAGE: ${promptContext.userLanguage}
-LESSON_TITLE: ${lessonTitle}
-VOCABULARY_WORDS: ${words.join(", ")}
+${chapterTitle ? `CHAPTER_TITLE: ${chapterTitle}\n` : ""}LESSON_TITLE: ${lessonTitle}
+${lessonDescription ? `LESSON_DESCRIPTION: ${lessonDescription}\n` : ""}VOCABULARY_WORDS: ${words.join(", ")}
 ${formatConceptLines(concepts, neighboringConcepts)}
 
 Generate practice sentences using these vocabulary words in everyday situations.`;

@@ -191,6 +191,7 @@ describe(prepareActivityData, () => {
 
     expect(result.steps[0]?.sentence).toEqual({
       audioUrl: "https://example.com/sent.mp3",
+      explanation: null,
       id: String(sentence.id),
       romanization: "konnichiwa",
       sentence: sentence.sentence,
@@ -269,6 +270,7 @@ describe(prepareActivityData, () => {
 
     const lessonSentences = [
       {
+        explanation: sentence1.explanation,
         id: sentence1.id,
         romanization: sentence1.romanization,
         sentence: sentence1.sentence,
@@ -573,6 +575,7 @@ describe(prepareActivityData, () => {
           kind: "reading",
           position: 0,
           sentence: {
+            explanation: null,
             id: BigInt(72),
             romanization: null,
             sentence: "gato bonito",
@@ -625,6 +628,7 @@ describe(prepareActivityData, () => {
           kind: "reading",
           position: 0,
           sentence: {
+            explanation: null,
             id: BigInt(76),
             romanization: null,
             sentence: "gato bonito",
@@ -688,6 +692,7 @@ describe(prepareActivityData, () => {
           kind: "reading",
           position: 0,
           sentence: {
+            explanation: null,
             id: BigInt(22),
             romanization: null,
             sentence: "Hola mundo",
@@ -747,6 +752,7 @@ describe(prepareActivityData, () => {
           kind: "reading",
           position: 0,
           sentence: {
+            explanation: null,
             id: BigInt(32),
             romanization: null,
             sentence: "Sabes you?",
@@ -806,6 +812,7 @@ describe(prepareActivityData, () => {
           kind: "reading",
           position: 0,
           sentence: {
+            explanation: null,
             id: BigInt(42),
             romanization: null,
             sentence: "Hola amigos",
@@ -893,6 +900,7 @@ describe(prepareActivityData, () => {
           kind: "reading",
           position: 0,
           sentence: {
+            explanation: null,
             id: BigInt(92),
             romanization: null,
             sentence: "gato bonito",
@@ -952,6 +960,7 @@ describe(prepareActivityData, () => {
           kind: "listening",
           position: 0,
           sentence: {
+            explanation: null,
             id: BigInt(96),
             romanization: null,
             sentence: "gato bonito",

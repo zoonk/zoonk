@@ -50,11 +50,6 @@ export function ListeningStep({
     <ArrangeWordsInteraction
       answerKind="listening"
       correctWords={segmentWords(step.sentence.translation)}
-      feedbackDetails={{
-        kind: "listening",
-        sentenceWordOptions: step.sentenceWordOptions,
-        translation: step.sentence.translation,
-      }}
       onSelectAnswer={onSelectAnswer}
       result={result}
       selectedAnswer={selectedAnswer}

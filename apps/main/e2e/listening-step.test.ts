@@ -178,23 +178,14 @@ test.describe("Listening Step", () => {
     await expect(page.getByText(sentence)).toBeVisible();
   });
 
-  test("feedback shows target-language word cards with enrichment and translation below", async ({
-    page,
-  }) => {
+  test("correct arrangement shows feedback screen with your answer", async ({ page }) => {
     const uniqueId = randomUUID().replaceAll("-", "").slice(0, 8);
-    const sentWord1 = `hola${uniqueId}`;
-    const sentWord2 = `mundo${uniqueId}`;
     const transWord1 = `hello${uniqueId}`;
     const transWord2 = `world${uniqueId}`;
-    const sentence = `${sentWord1} ${sentWord2}`;
+    const sentence = `hola${uniqueId} mundo${uniqueId}`;
     const translation = `${transWord1} ${transWord2}`;
-    const romanization1 = `oh-la${uniqueId}`;
 
     const { url } = await createListeningActivity({
-      sentenceWords: [
-        { romanization: romanization1, translation: transWord1, word: sentWord1 },
-        { translation: transWord2, word: sentWord2 },
-      ],
       sentences: [{ audioUrl: "https://example.com/audio.mp3", sentence, translation }],
       words: [{ translation: `cat${uniqueId}`, word: `gato${uniqueId}` }],
     });
@@ -202,10 +193,6 @@ test.describe("Listening Step", () => {
     await page.goto(url);
 
     const wordBank = page.getByRole("group", { name: /word bank/i });
-
-    // Word bank still shows translation-language words for interaction
-    await expect(wordBank.getByRole("button", { exact: true, name: transWord1 })).toBeVisible();
-    await expect(wordBank.getByRole("button", { exact: true, name: transWord2 })).toBeVisible();
 
     // Arrange correctly
     await expect(async () => {
@@ -221,36 +208,21 @@ test.describe("Listening Step", () => {
 
     await page.getByRole("button", { name: /check/i }).click();
 
-    const feedback = page.getByRole("region", { name: /answer feedback/i });
-    await expect(feedback.getByText(/correct!/i)).toBeVisible();
-
-    // Feedback word cards show TARGET-LANGUAGE words with enrichment
-    const correctAnswer = feedback.getByRole("group", { name: /correct answer/i });
-    await expect(correctAnswer.getByText(sentWord1)).toBeVisible();
-    await expect(correctAnswer.getByText(sentWord2)).toBeVisible();
-    await expect(correctAnswer.getByText(romanization1)).toBeVisible();
-    await expect(correctAnswer.getByText(transWord1)).toBeVisible();
-
-    // Translation shown below the word cards
-    await expect(feedback.getByText(translation)).toBeVisible();
+    // Feedback screen shows the user's correct answer
+    await expect(page.getByText(/your answer/i)).toBeVisible();
+    await expect(page.getByText(translation)).toBeVisible();
   });
 
-  test("wrong arrangement shows target-language word cards and translation in feedback", async ({
+  test("wrong arrangement shows feedback screen with your answer and correct answer", async ({
     page,
   }) => {
     const uniqueId = randomUUID().slice(0, 8);
-    const sentWord1 = `Hola-${uniqueId}`;
-    const sentWord2 = `mundo-${uniqueId}`;
     const transWord1 = `Hello-${uniqueId}`;
     const transWord2 = `world-${uniqueId}`;
-    const sentence = `${sentWord1} ${sentWord2}`;
+    const sentence = `Hola-${uniqueId} mundo-${uniqueId}`;
     const translation = `${transWord1} ${transWord2}`;
 
     const { url } = await createListeningActivity({
-      sentenceWords: [
-        { translation: transWord1, word: sentWord1 },
-        { translation: transWord2, word: sentWord2 },
-      ],
       sentences: [{ audioUrl: "https://example.com/audio.mp3", sentence, translation }],
       words: [{ translation: `cat-${uniqueId}`, word: `gato-${uniqueId}` }],
     });
@@ -273,16 +245,17 @@ test.describe("Listening Step", () => {
 
     await page.getByRole("button", { name: /check/i }).click();
 
-    const feedback = page.getByRole("region", { name: /answer feedback/i });
-    await expect(feedback.getByText(/not quite/i)).toBeVisible();
+    // Feedback screen shows context (target language sentence)
+    await expect(page.getByText(/translate/i)).toBeVisible();
+    await expect(page.getByText(sentence)).toBeVisible();
 
-    // Feedback word cards show TARGET-LANGUAGE words
-    const correctAnswer = feedback.getByRole("group", { name: /correct answer/i });
-    await expect(correctAnswer.getByText(sentWord1)).toBeVisible();
-    await expect(correctAnswer.getByText(sentWord2)).toBeVisible();
+    // Shows user's wrong arrangement
+    await expect(page.getByText(/your answer/i)).toBeVisible();
+    await expect(page.getByText(`${transWord2} ${transWord1}`)).toBeVisible();
 
-    // Translation shown below the word cards
-    await expect(feedback.getByText(translation)).toBeVisible();
+    // Shows the correct answer
+    await expect(page.getByText(/correct answer/i)).toBeVisible();
+    await expect(page.getByText(translation)).toBeVisible();
   });
 
   test("full flow: complete all listening steps to completion screen", async ({ page }) => {

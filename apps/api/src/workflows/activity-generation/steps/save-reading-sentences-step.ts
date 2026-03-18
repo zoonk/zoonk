@@ -28,6 +28,7 @@ function buildSaveOneSentence(params: {
 
     const record = await prisma.sentence.upsert({
       create: {
+        explanation: emptyToNull(readingSentence.explanation),
         organizationId,
         romanization: emptyToNull(readingSentence.romanization),
         sentence,
@@ -36,6 +37,7 @@ function buildSaveOneSentence(params: {
         userLanguage,
       },
       update: {
+        explanation: emptyToNull(readingSentence.explanation),
         romanization: emptyToNull(readingSentence.romanization),
         translation,
       },
