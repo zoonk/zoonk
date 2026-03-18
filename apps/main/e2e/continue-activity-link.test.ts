@@ -158,6 +158,41 @@ test.describe("Continue Activity Link", () => {
     );
   });
 
+  test("shows Continue linking to lesson page when next lesson is ungenerated", async ({
+    authenticatedPage,
+    withProgressUser,
+  }) => {
+    const { activity, chapter, course, org } = await createTestCourseWithActivity();
+
+    const uniqueId = randomUUID().slice(0, 8);
+
+    const pendingLesson = await lessonFixture({
+      chapterId: chapter.id,
+      generationStatus: "pending",
+      isPublished: true,
+      organizationId: org.id,
+      position: 1,
+      slug: `e2e-cal-pending-l-${uniqueId}`,
+      title: `E2E CAL Pending Lesson ${uniqueId}`,
+    });
+
+    await activityProgressFixture({
+      activityId: activity.id,
+      completedAt: new Date(),
+      durationSeconds: 60,
+      userId: withProgressUser.id,
+    });
+
+    await authenticatedPage.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
+
+    const continueLink = authenticatedPage.getByRole("link", { name: /^continue$/i });
+    await expect(continueLink).toBeVisible();
+    await expect(continueLink).toHaveAttribute(
+      "href",
+      `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${pendingLesson.slug}`,
+    );
+  });
+
   test("authenticated user with progress sees Continue on course page", async ({
     authenticatedPage,
     withProgressUser,

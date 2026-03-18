@@ -62,7 +62,11 @@ export async function ContinueActivityLink<Href extends string>({
   return (
     <Link
       className={cn(buttonVariants(), "min-w-0 flex-1 gap-2")}
-      href={`/b/${data.brandSlug}/c/${data.courseSlug}/ch/${data.chapterSlug}/l/${data.lessonSlug}/a/${data.activityPosition}`}
+      href={
+        data.canPrefetch
+          ? `/b/${data.brandSlug}/c/${data.courseSlug}/ch/${data.chapterSlug}/l/${data.lessonSlug}/a/${data.activityPosition}`
+          : `/b/${data.brandSlug}/c/${data.courseSlug}/ch/${data.chapterSlug}/l/${data.lessonSlug}`
+      }
       prefetch={data.canPrefetch}
     >
       {getLabel()}
