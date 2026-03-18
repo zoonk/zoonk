@@ -221,4 +221,156 @@ test.describe("Continue Activity Link", () => {
     const continueLink = authenticatedPage.getByRole("link", { name: /^continue$/i });
     await expect(continueLink).toBeVisible();
   });
+
+  test("lesson page shows Continue linking to next lesson when completed", async ({
+    authenticatedPage,
+    withProgressUser,
+  }) => {
+    const { activity, chapter, course, lesson, org } = await createTestCourseWithActivity();
+
+    const uniqueId = randomUUID().slice(0, 8);
+
+    const nextLesson = await lessonFixture({
+      chapterId: chapter.id,
+      isPublished: true,
+      organizationId: org.id,
+      position: 1,
+      slug: `e2e-cal-next-l-${uniqueId}`,
+      title: `E2E CAL Next Lesson ${uniqueId}`,
+    });
+
+    await activityFixture({
+      generationStatus: "completed",
+      isPublished: true,
+      kind: "explanation",
+      lessonId: nextLesson.id,
+      organizationId: org.id,
+      position: 0,
+    });
+
+    await activityProgressFixture({
+      activityId: activity.id,
+      completedAt: new Date(),
+      durationSeconds: 60,
+      userId: withProgressUser.id,
+    });
+
+    await authenticatedPage.goto(
+      `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`,
+    );
+
+    const continueLink = authenticatedPage.getByRole("link", { name: /^continue$/i });
+    await expect(continueLink).toBeVisible();
+    await expect(continueLink).toHaveAttribute(
+      "href",
+      `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${nextLesson.slug}`,
+    );
+  });
+
+  test("chapter page shows Continue linking to next chapter when completed", async ({
+    authenticatedPage,
+    withProgressUser,
+  }) => {
+    const org = await getAiOrganization();
+    const uniqueId = randomUUID().slice(0, 8);
+
+    const course = await courseFixture({
+      isPublished: true,
+      organizationId: org.id,
+      slug: `e2e-cal-chcomp-${uniqueId}`,
+      title: `E2E CAL ChComp ${uniqueId}`,
+    });
+
+    const [chapter1, chapter2] = await Promise.all([
+      chapterFixture({
+        courseId: course.id,
+        isPublished: true,
+        organizationId: org.id,
+        position: 0,
+        slug: `e2e-cal-chcomp-ch1-${uniqueId}`,
+        title: `E2E CAL ChComp Ch1 ${uniqueId}`,
+      }),
+      chapterFixture({
+        courseId: course.id,
+        isPublished: true,
+        organizationId: org.id,
+        position: 1,
+        slug: `e2e-cal-chcomp-ch2-${uniqueId}`,
+        title: `E2E CAL ChComp Ch2 ${uniqueId}`,
+      }),
+    ]);
+
+    const [lesson1, lesson2] = await Promise.all([
+      lessonFixture({
+        chapterId: chapter1.id,
+        isPublished: true,
+        organizationId: org.id,
+        position: 0,
+        slug: `e2e-cal-chcomp-l1-${uniqueId}`,
+        title: `E2E CAL ChComp L1 ${uniqueId}`,
+      }),
+      lessonFixture({
+        chapterId: chapter2.id,
+        isPublished: true,
+        organizationId: org.id,
+        position: 0,
+        slug: `e2e-cal-chcomp-l2-${uniqueId}`,
+        title: `E2E CAL ChComp L2 ${uniqueId}`,
+      }),
+    ]);
+
+    const [activity1] = await Promise.all([
+      activityFixture({
+        generationStatus: "completed",
+        isPublished: true,
+        kind: "explanation",
+        lessonId: lesson1.id,
+        organizationId: org.id,
+        position: 0,
+      }),
+      activityFixture({
+        generationStatus: "completed",
+        isPublished: true,
+        kind: "explanation",
+        lessonId: lesson2.id,
+        organizationId: org.id,
+        position: 0,
+      }),
+    ]);
+
+    await activityProgressFixture({
+      activityId: activity1.id,
+      completedAt: new Date(),
+      durationSeconds: 60,
+      userId: withProgressUser.id,
+    });
+
+    await authenticatedPage.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter1.slug}`);
+
+    const continueLink = authenticatedPage.getByRole("link", { name: /^continue$/i });
+    await expect(continueLink).toBeVisible();
+    await expect(continueLink).toHaveAttribute(
+      "href",
+      `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter2.slug}`,
+    );
+  });
+
+  test("course page shows Review when all activities completed", async ({
+    authenticatedPage,
+    withProgressUser,
+  }) => {
+    const { activity, course } = await createTestCourseWithActivity();
+
+    await activityProgressFixture({
+      activityId: activity.id,
+      completedAt: new Date(),
+      durationSeconds: 60,
+      userId: withProgressUser.id,
+    });
+
+    await authenticatedPage.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}`);
+
+    const reviewLink = authenticatedPage.getByRole("link", { name: /^review$/i });
+    await expect(reviewLink).toBeVisible();
+  });
 });
