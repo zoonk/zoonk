@@ -1,12 +1,12 @@
 "use client";
 
 import { buttonVariants } from "@zoonk/ui/components/button";
-import { Kbd } from "@zoonk/ui/components/kbd";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type Route } from "next";
 import { useExtracted } from "next-intl";
 import Link from "next/link";
 import { usePlayer } from "../player-context";
+import { PrimaryActionLink, SecondaryActionLink } from "./completion-action-link";
 
 function NextButtonLabel() {
   const t = useExtracted();
@@ -40,23 +40,13 @@ function CourseCompleteActions({ lessonHref }: { lessonHref: Route }) {
 
   return (
     <>
-      <Link
-        className={cn(buttonVariants({ size: "lg" }), "w-full lg:justify-between")}
-        href={courseHref}
-      >
+      <PrimaryActionLink href={courseHref} shortcut="Enter">
         {t("Review Course")}
-        <Kbd className="bg-primary-foreground/15 text-primary-foreground hidden opacity-70 lg:inline-flex">
-          Enter
-        </Kbd>
-      </Link>
+      </PrimaryActionLink>
 
-      <Link
-        className={cn(buttonVariants({ variant: "outline" }), "w-full lg:justify-between")}
-        href={chapterHref ?? lessonHref}
-      >
+      <SecondaryActionLink href={chapterHref ?? lessonHref} shortcut="Esc">
         {t("Review Chapter")}
-        <Kbd className="hidden opacity-60 lg:inline-flex">Esc</Kbd>
-      </Link>
+      </SecondaryActionLink>
     </>
   );
 }
@@ -75,37 +65,21 @@ export function MilestoneActions({ lessonHref }: { lessonHref: Route }) {
   if (nextHref) {
     return (
       <>
-        <Link
-          className={cn(buttonVariants({ size: "lg" }), "w-full lg:justify-between")}
-          href={nextHref}
-        >
+        <PrimaryActionLink href={nextHref} shortcut="Enter">
           <NextButtonLabel />
-          <Kbd className="bg-primary-foreground/15 text-primary-foreground hidden opacity-70 lg:inline-flex">
-            Enter
-          </Kbd>
-        </Link>
+        </PrimaryActionLink>
 
-        <Link
-          className={cn(buttonVariants({ variant: "outline" }), "w-full lg:justify-between")}
-          href={reviewHref}
-        >
+        <SecondaryActionLink href={reviewHref} shortcut="Esc">
           <ReviewLabel />
-          <Kbd className="hidden opacity-60 lg:inline-flex">Esc</Kbd>
-        </Link>
+        </SecondaryActionLink>
       </>
     );
   }
 
   return (
-    <Link
-      className={cn(buttonVariants({ size: "lg" }), "w-full lg:justify-between")}
-      href={reviewHref}
-    >
+    <PrimaryActionLink href={reviewHref} shortcut="Esc">
       <ReviewLabel />
-      <Kbd className="bg-primary-foreground/15 text-primary-foreground hidden opacity-70 lg:inline-flex">
-        Esc
-      </Kbd>
-    </Link>
+    </PrimaryActionLink>
   );
 }
 
@@ -138,13 +112,9 @@ export function UnauthenticatedMilestoneActions({
           {t("Login")}
         </Link>
 
-        <Link
-          className={cn(buttonVariants({ variant: "outline" }), "w-full lg:justify-between")}
-          href={getReviewHref()}
-        >
+        <SecondaryActionLink href={getReviewHref()} shortcut="Esc">
           <ReviewLabel />
-          <Kbd className="hidden opacity-60 lg:inline-flex">Esc</Kbd>
-        </Link>
+        </SecondaryActionLink>
       </div>
     </>
   );
