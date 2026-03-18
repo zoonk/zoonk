@@ -59,7 +59,7 @@
       "dependsOn": ["//#lint:fix", "//#format:fix"]
     },
     "build": {
-      "dependsOn": ["^db:generate", "^build"],
+      "dependsOn": ["^db:generate", "^db:deploy", "^build"],
       "outputs": [".next/**", "!.next/cache/**"]
     },
     "build:e2e": {
