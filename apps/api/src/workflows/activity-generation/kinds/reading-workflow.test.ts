@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { generateActivitySentenceVariants } from "@zoonk/ai/tasks/activities/language/sentence-variants";
 import { generateSentenceWordTranslation } from "@zoonk/ai/tasks/activities/language/sentence-word-translation";
 import { generateActivitySentences } from "@zoonk/ai/tasks/activities/language/sentences";
 import { generateLanguageAudio } from "@zoonk/core/audio/generate";
@@ -29,21 +30,28 @@ vi.mock("@zoonk/ai/tasks/activities/language/sentences", () => ({
     data: {
       sentences: [
         {
-          alternativeSentences: [],
-          alternativeTranslations: [],
           explanation: "Basic sentence with verb 'ver' (to see) conjugated for 'yo'.",
           romanization: "yo see-o un ga-to",
           sentence: "Yo veo un gato.",
           translation: "I see a cat.",
         },
         {
-          alternativeSentences: [],
-          alternativeTranslations: [],
           explanation: null,
           romanization: "o-la, ko-mo es-tas",
           sentence: "Hola, como estas?",
           translation: "Hello, how are you?",
         },
+      ],
+    },
+  }),
+}));
+
+vi.mock("@zoonk/ai/tasks/activities/language/sentence-variants", () => ({
+  generateActivitySentenceVariants: vi.fn().mockResolvedValue({
+    data: {
+      sentences: [
+        { alternativeSentences: [], alternativeTranslations: [], id: "0" },
+        { alternativeSentences: [], alternativeTranslations: [], id: "1" },
       ],
     },
   }),
@@ -74,6 +82,17 @@ function createSentenceGenerationResult(
     data: { sentences },
     systemPrompt: "",
     usage: {} as Awaited<ReturnType<typeof generateActivitySentences>>["usage"],
+    userPrompt: "",
+  };
+}
+
+function createSentenceVariantResult(
+  sentences: Awaited<ReturnType<typeof generateActivitySentenceVariants>>["data"]["sentences"],
+): Awaited<ReturnType<typeof generateActivitySentenceVariants>> {
+  return {
+    data: { sentences },
+    systemPrompt: "",
+    usage: {} as Awaited<ReturnType<typeof generateActivitySentenceVariants>>["usage"],
     userPrompt: "",
   };
 }
@@ -164,7 +183,7 @@ describe(readingActivityWorkflow, () => {
     }
   });
 
-  test("persists accepted sentence variants returned by AI generation", async () => {
+  test("persists accepted sentence variants returned by AI audit", async () => {
     const id = randomUUID().replaceAll("-", "").slice(0, 8);
     const sentenceText = `Guten Tag Lara ${id}`;
     const translationText = `Good day I am Lara ${id}`;
@@ -174,12 +193,19 @@ describe(readingActivityWorkflow, () => {
     vi.mocked(generateActivitySentences).mockResolvedValueOnce(
       createSentenceGenerationResult([
         {
-          alternativeSentences: [alternativeSentence],
-          alternativeTranslations: [alternativeTranslation],
           explanation: "Greeting variant",
           romanization: null,
           sentence: sentenceText,
           translation: translationText,
+        },
+      ]),
+    );
+    vi.mocked(generateActivitySentenceVariants).mockResolvedValueOnce(
+      createSentenceVariantResult([
+        {
+          alternativeSentences: [alternativeSentence],
+          alternativeTranslations: [alternativeTranslation],
+          id: "0",
         },
       ]),
     );
@@ -225,21 +251,23 @@ describe(readingActivityWorkflow, () => {
     vi.mocked(generateActivitySentences).mockResolvedValueOnce(
       createSentenceGenerationResult([
         {
-          alternativeSentences: [],
-          alternativeTranslations: [],
           explanation: null,
           romanization: null,
           sentence: "Guten Morgen, Anna!",
           translation: "Bom dia, Anna!",
         },
         {
-          alternativeSentences: [],
-          alternativeTranslations: [],
           explanation: null,
           romanization: null,
           sentence: "Gute Nacht, Mama.",
           translation: "Boa noite, mãe.",
         },
+      ]),
+    );
+    vi.mocked(generateActivitySentenceVariants).mockResolvedValueOnce(
+      createSentenceVariantResult([
+        { alternativeSentences: [], alternativeTranslations: [], id: "0" },
+        { alternativeSentences: [], alternativeTranslations: [], id: "1" },
       ]),
     );
 
@@ -319,6 +347,73 @@ describe(readingActivityWorkflow, () => {
         }),
       ]),
     );
+  });
+
+  test("falls back to vocabulary-derived variants when variant audit fails", async () => {
+    vi.mocked(generateActivitySentences).mockResolvedValueOnce(
+      createSentenceGenerationResult([
+        {
+          explanation: null,
+          romanization: null,
+          sentence: "Guten Morgen, Anna!",
+          translation: "Bom dia, Anna!",
+        },
+      ]),
+    );
+    vi.mocked(generateActivitySentenceVariants).mockRejectedValueOnce(
+      new Error("Sentence variants AI failed"),
+    );
+
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `Reading Variant Fallback ${randomUUID()}`,
+    });
+
+    await activityFixture({
+      generationStatus: "pending",
+      kind: "reading",
+      language: "pt",
+      lessonId: lesson.id,
+      organizationId,
+      title: `Reading ${randomUUID()}`,
+    });
+
+    const greetingWords = [
+      {
+        alternativeTranslations: [],
+        romanization: null,
+        translation: "Bom dia",
+        word: "Guten Morgen",
+      },
+      {
+        alternativeTranslations: ["Bom dia"],
+        romanization: null,
+        translation: "Boa tarde",
+        word: "Guten Tag",
+      },
+    ];
+
+    const activities = await fetchLessonActivities(lesson.id);
+    await readingActivityWorkflow(activities, "test-run-id", greetingWords, [], []);
+
+    const savedSentence = await prisma.sentence.findFirst({
+      where: {
+        organizationId,
+        sentence: "Guten Morgen, Anna!",
+        steps: { some: { activity: { lessonId: lesson.id } } },
+        targetLanguage: "es",
+        translation: "Bom dia, Anna!",
+        userLanguage: "pt",
+      },
+    });
+
+    expect(savedSentence).toMatchObject({
+      alternativeSentences: ["Guten Tag, Anna!"],
+      sentence: "Guten Morgen, Anna!",
+      translation: "Bom dia, Anna!",
+    });
   });
 
   test("sets reading status to 'completed' after full pipeline", async () => {
@@ -408,6 +503,7 @@ describe(readingActivityWorkflow, () => {
     const dbActivity = await prisma.activity.findUnique({ where: { id: activity.id } });
     expect(dbActivity?.generationStatus).toBe("failed");
     expect(generateActivitySentences).not.toHaveBeenCalled();
+    expect(generateActivitySentenceVariants).not.toHaveBeenCalled();
   });
 
   test("skips generation when activity is already completed", async () => {
@@ -431,6 +527,7 @@ describe(readingActivityWorkflow, () => {
     await readingActivityWorkflow(activities, "test-run-id", words, [], []);
 
     expect(generateActivitySentences).not.toHaveBeenCalled();
+    expect(generateActivitySentenceVariants).not.toHaveBeenCalled();
   });
 
   test("does not save words with empty translation when metadata generation partially fails", async () => {
@@ -441,8 +538,6 @@ describe(readingActivityWorkflow, () => {
     vi.mocked(generateActivitySentences).mockResolvedValueOnce(
       createSentenceGenerationResult([
         {
-          alternativeSentences: [],
-          alternativeTranslations: [],
           explanation: null,
           romanization: "r1",
           sentence: `${passWord} ${failWord}`,
@@ -512,8 +607,6 @@ describe(readingActivityWorkflow, () => {
     vi.mocked(generateActivitySentences).mockResolvedValueOnce(
       createSentenceGenerationResult([
         {
-          alternativeSentences: [],
-          alternativeTranslations: [],
           explanation: null,
           romanization: "r1",
           sentence: `${capitalizedWord} test`,
@@ -588,8 +681,6 @@ describe(readingActivityWorkflow, () => {
     vi.mocked(generateActivitySentences).mockResolvedValueOnce(
       createSentenceGenerationResult([
         {
-          alternativeSentences: [],
-          alternativeTranslations: [],
           explanation: null,
           romanization: "r1",
           sentence: `${existingWord} ${newWord}`,

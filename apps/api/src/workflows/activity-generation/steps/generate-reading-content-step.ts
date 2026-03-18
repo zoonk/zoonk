@@ -3,6 +3,11 @@ import {
   getAIResultErrorReason,
 } from "@/workflows/_shared/stream-status";
 import {
+  type ActivitySentenceVariantInput,
+  type ActivitySentenceVariantsSchema,
+  generateActivitySentenceVariants,
+} from "@zoonk/ai/tasks/activities/language/sentence-variants";
+import {
   type ActivitySentencesSchema,
   generateActivitySentences,
 } from "@zoonk/ai/tasks/activities/language/sentences";
@@ -16,7 +21,13 @@ import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
 import { setActivityAsRunningStep } from "./set-activity-as-running-step";
 
-export type ReadingSentence = ActivitySentencesSchema["sentences"][number];
+type GeneratedReadingSentence = ActivitySentencesSchema["sentences"][number];
+type AuditedReadingSentence = ActivitySentenceVariantsSchema["sentences"][number];
+
+export type ReadingSentence = GeneratedReadingSentence & {
+  alternativeSentences: string[];
+  alternativeTranslations: string[];
+};
 
 async function getFallbackLessonWords(params: {
   lessonId: number;
@@ -57,6 +68,33 @@ function hasValidSentences(sentences: ReadingSentence[]): boolean {
   return sentences.every(
     (sentence) => sentence.sentence.trim().length > 0 && sentence.translation.trim().length > 0,
   );
+}
+
+function createSentenceVariantInputs(
+  sentences: GeneratedReadingSentence[],
+): ActivitySentenceVariantInput[] {
+  return sentences.map((sentence, index) => ({
+    id: String(index),
+    sentence: sentence.sentence,
+    translation: sentence.translation,
+  }));
+}
+
+function mergeSentenceVariants(
+  sentences: GeneratedReadingSentence[],
+  variants: AuditedReadingSentence[] | undefined,
+): ReadingSentence[] {
+  const variantsById = new Map(variants?.map((variant) => [variant.id, variant]));
+
+  return sentences.map((sentence, index) => {
+    const variant = variantsById.get(String(index));
+
+    return {
+      ...sentence,
+      alternativeSentences: variant?.alternativeSentences ?? [],
+      alternativeTranslations: variant?.alternativeTranslations ?? [],
+    };
+  });
 }
 
 async function resolveSourceWords(input: {
@@ -145,9 +183,27 @@ export async function generateReadingContentStep(
     }),
   );
 
-  const sentences = result
-    ? enrichReadingSentenceVariants(result.data.sentences, sourceWords.words)
-    : [];
+  const generatedSentences = result?.data.sentences ?? [];
+
+  const { data: sentenceVariantsResult } =
+    generatedSentences.length > 0
+      ? await safeAsync(() =>
+          generateActivitySentenceVariants({
+            chapterTitle: activity.lesson.chapter.title,
+            lessonDescription: activity.lesson.description ?? undefined,
+            lessonTitle: activity.lesson.title,
+            sentences: createSentenceVariantInputs(generatedSentences),
+            targetLanguage: course.targetLanguage ?? course.title,
+            userLanguage,
+            words: sourceWords.words,
+          }),
+        )
+      : { data: null };
+
+  const sentences = enrichReadingSentenceVariants(
+    mergeSentenceVariants(generatedSentences, sentenceVariantsResult?.data.sentences),
+    sourceWords.words,
+  );
 
   if (error || !result || sentences.length === 0 || !hasValidSentences(sentences)) {
     const reason = getAIResultErrorReason(error, result);
