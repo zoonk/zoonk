@@ -88,7 +88,7 @@ export function StaticStep({
 
   return (
     <div
-      className="relative flex min-h-0 w-full max-w-2xl flex-1 flex-col items-start justify-center gap-3 px-6 sm:px-8"
+      className="relative flex min-h-0 w-full max-w-2xl flex-1 flex-col items-start justify-center gap-3 px-8 sm:px-10"
       {...swipeHandlers}
     >
       <StaticStepContent step={step} />

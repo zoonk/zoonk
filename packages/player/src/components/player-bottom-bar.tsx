@@ -10,7 +10,7 @@ export function PlayerBottomBar({ className, ...props }: React.ComponentProps<"d
     <div
       className={cn(
         "bg-background/95 sticky bottom-0 z-30 backdrop-blur-sm",
-        "mx-auto w-full max-w-2xl px-6 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]",
+        "mx-auto w-full max-w-2xl p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]",
         className,
       )}
       data-slot="player-bottom-bar"
