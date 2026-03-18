@@ -300,7 +300,7 @@ msgstr "Não exatamente"
 #: ../../packages/player/src/components/inline-feedback.tsx
 msgctxt "HvLGEN"
 msgid "Answer feedback"
-msgstr "Feedback da resposta"
+msgstr "Resultado da resposta"
 
 #: ../../packages/player/src/components/inline-feedback.tsx
 msgctxt "xmF49T"
@@ -1168,7 +1168,7 @@ msgstr "Comece a aprender para acompanhar seu progresso"
 #: src/app/(performance)/_components/performance-empty-state.tsx
 msgctxt "Y1zzQt"
 msgid "Log in to track your progress"
-msgstr "Faça login para acompanhar seu progresso"
+msgstr "Entre para acompanhar seu progresso"
 
 #: src/app/(performance)/_components/period-navigation.tsx
 msgctxt "hCCWuZ"
@@ -1445,7 +1445,7 @@ msgstr "Compare planos e gerencie sua assinatura do Zoonk. Veja preços, troque 
 #: src/app/(settings)/subscription/plan-list.tsx
 msgctxt "/gko4g"
 msgid "Upgrade to {plan}"
-msgstr "Fazer upgrade para {plan}"
+msgstr "Assinar o plano {plan}"
 
 #: src/app/(settings)/subscription/plan-list.tsx
 msgctxt "0Azlrb"
@@ -1692,7 +1692,7 @@ msgstr "Esboçando ideias..."
 #: src/app/generate/cs/[id]/use-generation-phases.ts
 msgctxt "abtOR3"
 msgid "Planning the layout..."
-msgstr "Planejando o layout..."
+msgstr "Planejando a estrutura..."
 
 #: src/app/generate/a/[id]/use-generation-phases.ts
 #: src/app/generate/ch/[id]/use-generation-phases.ts
@@ -2150,13 +2150,13 @@ msgstr "Foi útil"
 #: src/components/catalog/catalog-actions.tsx
 msgctxt "F0tnKc"
 msgid "Thanks for your feedback"
-msgstr "Obrigado pelo seu feedback"
+msgstr "Obrigado pela sua opinião"
 
 #: src/components/catalog/catalog-actions.tsx
 #: src/components/feedback/content-feedback.tsx
 msgctxt "G5YSJR"
 msgid "Send feedback"
-msgstr "Enviar feedback"
+msgstr "Enviar opinião"
 
 #: src/components/catalog/catalog-actions.tsx
 msgctxt "IzCVhG"
@@ -2237,17 +2237,17 @@ msgstr "Gostei"
 #: src/components/feedback/feedback-dialog.tsx
 msgctxt "Ejhdi4"
 msgid "Feedback"
-msgstr "Feedback"
+msgstr "Opinião"
 
 #: src/components/feedback/feedback-dialog.tsx
 msgctxt "eUzs3M"
 msgid "Send feedback, questions, or suggestions to us. Fill in the form below or email us directly at hello@zoonk.com."
-msgstr "Envie feedback, perguntas ou sugestões para a gente. Preencha o formulário abaixo ou envie um email diretamente para contato@zoonk.com."
+msgstr "Envie sua opinião, perguntas ou sugestões para a gente. Preencha o formulário abaixo ou envie um email diretamente para contato@zoonk.com."
 
 #: src/components/subscription/upgrade-cta.tsx
 msgctxt "0h/lPM"
 msgid "Upgrade"
-msgstr "Upgrade"
+msgstr "Assinar"
 
 #: src/components/subscription/upgrade-cta.tsx
 msgctxt "IS/YjO"

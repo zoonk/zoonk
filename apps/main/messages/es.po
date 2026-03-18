@@ -1445,7 +1445,7 @@ msgstr "Compara planes y gestiona tu suscripción de Zoonk. Consulta precios, ca
 #: src/app/(settings)/subscription/plan-list.tsx
 msgctxt "/gko4g"
 msgid "Upgrade to {plan}"
-msgstr "Actualizar a {plan}"
+msgstr "Suscribirse a {plan}"
 
 #: src/app/(settings)/subscription/plan-list.tsx
 msgctxt "0Azlrb"
@@ -2247,7 +2247,7 @@ msgstr "Envíanos comentarios, preguntas o sugerencias. Completa el formulario a
 #: src/components/subscription/upgrade-cta.tsx
 msgctxt "0h/lPM"
 msgid "Upgrade"
-msgstr "Mejorar"
+msgstr "Suscribirse"
 
 #: src/components/subscription/upgrade-cta.tsx
 msgctxt "IS/YjO"
