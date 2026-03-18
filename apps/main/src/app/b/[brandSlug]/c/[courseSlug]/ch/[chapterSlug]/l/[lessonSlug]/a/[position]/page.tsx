@@ -1,10 +1,8 @@
 import { getActivity } from "@/data/activities/get-activity";
 import { getLessonSentences } from "@/data/activities/get-lesson-sentences";
 import { getLessonWords } from "@/data/activities/get-lesson-words";
-import { getReviewSteps } from "@/data/activities/get-review-steps";
 import { getSentenceWords } from "@/data/activities/get-sentence-words";
 import { getLesson } from "@/data/lessons/get-lesson";
-import { getNextSibling } from "@/data/progress/get-next-sibling";
 import { startActivity } from "@/data/progress/start-activity";
 import { getActivitySeoMeta } from "@/lib/activities";
 import { getNextActivityInCourse } from "@zoonk/core/activities/next-in-course";
@@ -14,6 +12,7 @@ import { parseNumericId } from "@zoonk/utils/number";
 import { type Metadata } from "next";
 import { notFound } from "next/navigation";
 import { after } from "next/server";
+import { fetchNextSibling, fetchReviewSteps } from "./activity-data-loaders";
 import { ActivityNotGenerated } from "./activity-not-generated";
 import { ActivityPlayerClient } from "./activity-player-client";
 
@@ -58,22 +57,32 @@ export default async function ActivityPage({ params }: Props) {
     notFound();
   }
 
-  const [activity, lessonWords, lessonSentences, sentenceWords, nextActivity, session] =
-    await Promise.all([
-      getActivity({ lessonId: lesson.id, position: activityPosition }),
-      getLessonWords({ lessonId: lesson.id }),
-      getLessonSentences({ lessonId: lesson.id }),
-      getSentenceWords({ lessonId: lesson.id }),
-      getNextActivityInCourse({
-        activityPosition,
-        chapterId: lesson.chapter.id,
-        chapterPosition: lesson.chapter.position,
-        courseId: lesson.chapter.course.id,
-        lessonId: lesson.id,
-        lessonPosition: lesson.position,
-      }),
-      getSession(),
-    ]);
+  const [
+    activity,
+    lessonWords,
+    lessonSentences,
+    sentenceWords,
+    nextActivity,
+    session,
+    reviewSteps,
+    nextSibling,
+  ] = await Promise.all([
+    getActivity({ lessonId: lesson.id, position: activityPosition }),
+    getLessonWords({ lessonId: lesson.id }),
+    getLessonSentences({ lessonId: lesson.id }),
+    getSentenceWords({ lessonId: lesson.id }),
+    getNextActivityInCourse({
+      activityPosition,
+      chapterId: lesson.chapter.id,
+      chapterPosition: lesson.chapter.position,
+      courseId: lesson.chapter.course.id,
+      lessonId: lesson.id,
+      lessonPosition: lesson.position,
+    }),
+    getSession(),
+    fetchReviewSteps(lesson.id, activityPosition),
+    fetchNextSibling(lesson.id, activityPosition, lessonSlug, lesson.chapter, lesson.position),
+  ]);
 
   if (!activity) {
     notFound();
@@ -86,26 +95,6 @@ export default async function ActivityPage({ params }: Props) {
       </main>
     );
   }
-
-  const isLastInLesson = !nextActivity || nextActivity.lessonSlug !== lessonSlug;
-
-  const [reviewSteps, nextSibling] = await Promise.all([
-    activity.kind === "review"
-      ? getReviewSteps({
-          lessonId: lesson.id,
-          userId: session ? Number(session.user.id) : null,
-        })
-      : null,
-    isLastInLesson
-      ? getNextSibling({
-          chapterId: lesson.chapter.id,
-          chapterPosition: lesson.chapter.position,
-          courseId: lesson.chapter.course.id,
-          lessonPosition: lesson.position,
-          level: "lesson",
-        })
-      : null,
-  ]);
 
   const serialized = prepareActivityData(
     reviewSteps ? { ...activity, steps: reviewSteps } : activity,
