@@ -29,7 +29,7 @@ export function VocabularyStep({
   return (
     <div
       aria-label={`${t("Vocabulary")}: ${word.word}`}
-      className="flex w-full max-w-2xl flex-1 flex-col items-start justify-center px-10 sm:px-16"
+      className="flex w-full max-w-2xl flex-1 flex-col items-start justify-center px-8 sm:px-10"
       role="region"
       {...swipeHandlers}
     >
