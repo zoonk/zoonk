@@ -56,7 +56,9 @@ model Sentence {
   targetLanguage  String           @map("target_language") @db.VarChar(10)
   userLanguage    String           @map("user_language") @db.VarChar(10)
   sentence        String
+  alternativeSentences String[]    @default([]) @map("alternative_sentences")
   translation     String
+  alternativeTranslations String[] @default([]) @map("alternative_translations")
   romanization    String?
   explanation     String?
   sentenceAudioId BigInt?          @map("sentence_audio_id")

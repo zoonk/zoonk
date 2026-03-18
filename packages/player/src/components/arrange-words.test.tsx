@@ -29,6 +29,7 @@ describe(ArrangeWordsInteraction, () => {
 
     render(
       <ArrangeWordsInteraction
+        acceptedWordLengths={[2]}
         answerKind="reading"
         correctWords={["Hola", "mundo"]}
         onSelectAnswer={onSelectAnswer}

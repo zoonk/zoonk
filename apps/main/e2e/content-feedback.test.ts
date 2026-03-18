@@ -57,7 +57,9 @@ test.describe("Content Feedback", () => {
     await expect(emailInput).toBeEnabled();
     await expect(messageInput).toBeEnabled();
 
+    await emailInput.click();
     await emailInput.fill("test@example.com");
+    await messageInput.click();
     await messageInput.fill("This is test feedback");
     await dialog.getByRole("button", { name: /send message/i }).click();
 
@@ -76,7 +78,9 @@ test.describe("Content Feedback", () => {
     await expect(emailInput).toBeEnabled();
     await expect(messageInput).toBeEnabled();
 
+    await emailInput.click();
     await emailInput.fill("invalid-email");
+    await messageInput.click();
     await messageInput.fill("This is test feedback");
     await dialog.getByRole("button", { name: /send message/i }).click();
 
@@ -100,9 +104,11 @@ test.describe("Content Feedback", () => {
     await expect(emailInput).toBeEnabled();
     await expect(messageInput).toBeEnabled();
 
+    await emailInput.click();
     await emailInput.fill("test@example.com");
 
     // Whitespace passes HTML5 "required" but fails server-side when trimmed
+    await messageInput.click();
     await messageInput.fill("   ");
     await dialog.getByRole("button", { name: /send message/i }).click();
 

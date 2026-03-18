@@ -14,6 +14,8 @@ import { type Page, expect, test } from "./fixtures";
 async function createReadingActivity(options: {
   sentences: {
     audioUrl?: string | null;
+    alternativeSentences?: string[];
+    alternativeTranslations?: string[];
     romanization?: string | null;
     sentence: string;
     translation: string;
@@ -72,6 +74,8 @@ async function createReadingActivity(options: {
       }
 
       return sentenceFixture({
+        alternativeSentences: sentenceData.alternativeSentences ?? [],
+        alternativeTranslations: sentenceData.alternativeTranslations ?? [],
         organizationId: org.id,
         romanization: sentenceData.romanization ?? null,
         sentence: sentenceData.sentence,
@@ -318,6 +322,42 @@ test.describe("Reading Step", () => {
     // Shows the correct answer
     await expect(page.getByText(/correct answer/i)).toBeVisible();
     await expect(page.getByText(sentence)).toBeVisible();
+  });
+
+  test("accepts an alternative valid reading answer", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const guten = `Guten-${uniqueId}`;
+    const tag = `Tag-${uniqueId}`;
+    const morgen = `Morgen-${uniqueId}`;
+    const lara = `Lara-${uniqueId}`;
+
+    const { url } = await createReadingActivity({
+      sentences: [
+        {
+          alternativeSentences: [`${guten} ${morgen} ${lara}`],
+          sentence: `${guten} ${tag} ${lara}`,
+          translation: `Bom-dia-${uniqueId}`,
+        },
+      ],
+      words: [{ translation: `night-${uniqueId}`, word: `Abend-${uniqueId}` }],
+    });
+
+    await page.goto(url);
+
+    const wordBank = page.getByRole("group", { name: /word bank/i });
+
+    await expect(wordBank.getByRole("button", { exact: true, name: guten })).toBeVisible();
+    await expect(wordBank.getByRole("button", { exact: true, name: tag })).toBeVisible();
+    await expect(wordBank.getByRole("button", { exact: true, name: morgen })).toBeVisible();
+
+    await wordBank.getByRole("button", { exact: true, name: guten }).click();
+    await wordBank.getByRole("button", { exact: true, name: morgen }).click();
+    await wordBank.getByRole("button", { exact: true, name: lara }).click();
+    await page.getByRole("button", { name: /check/i }).click();
+
+    await expect(page.getByText(/your answer/i)).toBeVisible();
+    await expect(page.getByText(`${guten} ${morgen} ${lara}`)).toBeVisible();
+    await expect(page.getByRole("button", { name: /continue/i })).toBeVisible();
   });
 
   test("dragging a placed word reorders it in the answer area", async ({ page }) => {

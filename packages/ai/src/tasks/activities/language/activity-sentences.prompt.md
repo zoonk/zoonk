@@ -118,12 +118,76 @@ For each sentence, provide a brief explanation (1-2 sentences) of the key gramma
 - Set to `null` for very simple sentences where the structure is obvious (e.g., single-word greetings, basic "Hello!" sentences)
 - Keep explanations concise and practical — highlight the one thing a learner should notice
 
+# Accepted Variants
+
+Some sentence pairs have more than one natural translation. Language learners should not be marked wrong for a genuinely correct equivalent answer.
+
+For each sentence, include:
+
+- `alternativeSentences`: other target-language sentences that would also be a correct answer for the same reading prompt
+- `alternativeTranslations`: other user-language translations that would also be a correct answer for the same listening prompt
+
+Rules:
+
+- Prefer sentence pairs with one obvious translation whenever possible
+- If you can rewrite a sentence to remove ambiguity without hurting the lesson, rewrite it instead of forcing variants
+- If ambiguity remains, accepted variants are required, not optional
+- Use alternatives only when multiple common equivalents are genuinely natural
+- Alternatives must keep the same meaning and register as the canonical sentence
+- Alternatives must be full-sentence equivalents, not partial phrases or explanations
+- Do NOT repeat the canonical `sentence` or `translation` in the alternative arrays
+- Do NOT include loose paraphrases, regional oddities, or variants that change nuance
+- Prefer alternatives that fit the same short tile-based exercise format
+- Empty alternative arrays mean you have checked that the sentence pair is unambiguous in both directions
+- Before finalizing each sentence, ask: "Could a native teacher reasonably accept more than one translation here without extra context?" If yes, either regenerate a less ambiguous sentence or include all common accepted variants
+- Never force a single interpretation for a context-free sentence when another common equivalent would also be accepted in a learner app
+- Be especially careful with greetings, farewells, time-of-day expressions, contractions, optional pronouns, and formality differences
+- When a high-frequency lesson word already has multiple accepted translations, assume the sentence likely needs variants unless the surrounding context clearly removes the ambiguity
+
+Checklist before you return each sentence:
+
+1. Could the USER_LANGUAGE prompt naturally map to more than one TARGET_LANGUAGE sentence?
+2. Could the TARGET_LANGUAGE sentence naturally map to more than one USER_LANGUAGE translation?
+3. Does the surrounding context clearly remove that ambiguity?
+4. If not, either include every common accepted variant or rewrite the sentence so there is one obvious answer.
+
+Examples:
+
+- Portuguese prompt/translation: `Bom dia, Anna!`
+  - Canonical German sentence: `Guten Morgen, Anna!`
+  - Valid `alternativeSentences`: `["Guten Tag, Anna!"]`
+  - Invalid output: `alternativeSentences: []`
+
+- Portuguese prompt/translation: `Boa noite, mãe.`
+  - Canonical German sentence: `Gute Nacht, Mama.`
+  - Valid `alternativeSentences`: `["Guten Abend, Mama."]`
+  - Invalid output: `alternativeSentences: []`
+
+- Target sentence: `Yo estoy en casa.`
+  - Valid `alternativeSentences`: `["Estoy en casa."]`
+  - Canonical translation: `I am at home.`
+  - Valid `alternativeTranslations`: `["I'm at home."]`
+  - Invalid alternatives: anything that changes tense, emphasis, or meaning, such as `["I stay home."]`
+
+- Target sentence: `Yo soy Lara.`
+  - Valid `alternativeSentences`: `["Soy Lara."]`
+  - Canonical translation: `I am Lara.`
+  - Valid `alternativeTranslations`: `["I'm Lara."]`
+  - Invalid alternatives: wording that changes the structure or nuance, such as `["My name is Lara."]`
+
+- Target sentence: `Guten Tag, ich bin Lara.`
+  - Canonical translation: `Bom dia, eu sou Lara.`
+  - Invalid `alternativeTranslations`: `["Oi, eu sou Lara."]`
+  - Reason: the greeting and register changed, so it is not a strict equivalent
+
 # Output Format
 
 Return an object with a `sentences` array. Each sentence object must include:
 
 - `sentence`: The complete sentence in the target language
+- `alternativeSentences`: Other accepted target-language variants, or `[]` if none
 - `translation`: The translation in the native language
+- `alternativeTranslations`: Other accepted native-language variants, or `[]` if none
 - `romanization`: Roman letter representation for non-Roman scripts, or `null` for Roman scripts
 - `explanation`: Brief grammar/structure explanation in USER_LANGUAGE, or `null` for trivially simple sentences
 
@@ -133,12 +197,16 @@ Return an object with a `sentences` array. Each sentence object must include:
 {
   "sentences": [
     {
+      "alternativeSentences": [],
+      "alternativeTranslations": [],
       "sentence": "Mi hermana trabaja en un hospital.",
       "translation": "My sister works at a hospital.",
       "romanization": null,
       "explanation": "In Spanish, possessive adjectives like 'mi' (my) come before the noun, just like in English."
     },
     {
+      "alternativeSentences": [],
+      "alternativeTranslations": [],
       "sentence": "¿Dónde está la estación de tren?",
       "translation": "Where is the train station?",
       "romanization": null,
@@ -154,12 +222,16 @@ Return an object with a `sentences` array. Each sentence object must include:
 {
   "sentences": [
     {
+      "alternativeSentences": [],
+      "alternativeTranslations": [],
       "sentence": "私の姉は病院で働いています。",
       "translation": "My older sister works at a hospital.",
       "romanization": "Watashi no ane wa byouin de hataraite imasu.",
       "explanation": "Japanese uses the particle 'de' (で) to indicate where an action takes place, similar to 'at' or 'in' in English."
     },
     {
+      "alternativeSentences": [],
+      "alternativeTranslations": [],
       "sentence": "駅はどこですか？",
       "translation": "Where is the station?",
       "romanization": "Eki wa doko desu ka?",
@@ -189,3 +261,5 @@ Return an object with a `sentences` array. Each sentence object must include:
 4. **Vocabulary coverage**: Ensure the provided vocabulary words are naturally distributed across the sentences. Each vocabulary word should appear in at least one sentence.
 
 5. **Difficulty-appropriate complexity**: Match sentence complexity to the inferred level from the lesson context. Beginner lessons should have simple sentences; advanced lessons can have complex ones.
+
+6. **Accepted variants must be strict**: Only include alternatives when they are genuinely interchangeable answers for the learner. If there is only one clear answer, both alternative arrays must be empty.

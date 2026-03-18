@@ -5,6 +5,7 @@ import {
   type SelectImageStepContent,
   type SortOrderStepContent,
 } from "@zoonk/core/steps/content-contract";
+import { matchesAcceptedArrangeWords } from "./arrange-words-answers";
 
 export type AnswerResult = {
   correctAnswer: string | null;
@@ -100,8 +101,19 @@ export function checkTranslationAnswer(
   };
 }
 
-export function checkArrangeWordsAnswer(correctWords: string[], userWords: string[]): AnswerResult {
-  const isSameLength = correctWords.length === userWords.length;
-  const isCorrect = isSameLength && correctWords.every((word, index) => word === userWords[index]);
+function isAcceptedArrangeWordList(
+  correctWords: string[] | string[][],
+): correctWords is string[][] {
+  return Array.isArray(correctWords[0]);
+}
+
+export function checkArrangeWordsAnswer(
+  correctWords: string[] | string[][],
+  userWords: string[],
+): AnswerResult {
+  const acceptedWordSequences = isAcceptedArrangeWordList(correctWords)
+    ? correctWords
+    : [correctWords];
+  const isCorrect = matchesAcceptedArrangeWords(acceptedWordSequences, userWords);
   return { correctAnswer: null, feedback: null, isCorrect };
 }

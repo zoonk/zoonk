@@ -346,4 +346,28 @@ describe(checkArrangeWordsAnswer, () => {
       isCorrect: false,
     });
   });
+
+  test("accepts an alternative valid sequence", () => {
+    expect(
+      checkArrangeWordsAnswer(
+        [
+          ["Guten", "Tag"],
+          ["Guten", "Morgen"],
+        ],
+        ["Guten", "Morgen"],
+      ),
+    ).toEqual({
+      correctAnswer: null,
+      feedback: null,
+      isCorrect: true,
+    });
+  });
+
+  test("matches case and punctuation insensitively", () => {
+    expect(checkArrangeWordsAnswer(["Hello,", "Lara!"], ["hello", "lara"])).toEqual({
+      correctAnswer: null,
+      feedback: null,
+      isCorrect: true,
+    });
+  });
 });

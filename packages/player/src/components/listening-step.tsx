@@ -1,7 +1,10 @@
 "use client";
 
-import { segmentWords } from "@zoonk/utils/string";
 import { useExtracted } from "next-intl";
+import {
+  buildAcceptedArrangeWordSequences,
+  getAcceptedArrangeWordLengths,
+} from "../arrange-words-answers";
 import { type SelectedAnswer, type StepResult } from "../player-reducer";
 import { type SerializedStep } from "../prepare-activity-data";
 import { ArrangeWordsInteraction } from "./arrange-words";
@@ -46,10 +49,18 @@ export function ListeningStep({
     return null;
   }
 
+  const acceptedWordSequences = buildAcceptedArrangeWordSequences(
+    step.sentence.translation,
+    step.sentence.alternativeTranslations,
+  );
+  const correctWords = acceptedWordSequences[0] ?? [];
+  const acceptedWordLengths = getAcceptedArrangeWordLengths(acceptedWordSequences);
+
   return (
     <ArrangeWordsInteraction
+      acceptedWordLengths={acceptedWordLengths}
       answerKind="listening"
-      correctWords={segmentWords(step.sentence.translation)}
+      correctWords={correctWords}
       onSelectAnswer={onSelectAnswer}
       result={result}
       selectedAnswer={selectedAnswer}

@@ -24,7 +24,9 @@ export type SerializedWord = {
 export type SerializedSentence = {
   id: string;
   sentence: string;
+  alternativeSentences: string[];
   translation: string;
+  alternativeTranslations: string[];
   romanization: string | null;
   explanation: string | null;
   audioUrl: string | null;
@@ -87,7 +89,9 @@ type WordDataInput = {
 type SentenceDataInput = {
   id: bigint;
   sentence: string;
+  alternativeSentences: string[];
   translation: string;
+  alternativeTranslations: string[];
   romanization: string | null;
   explanation: string | null;
   sentenceAudio: { audioUrl: string } | null;
@@ -107,6 +111,8 @@ function serializeWord(word: WordDataInput): SerializedWord {
 
 function serializeSentence(sentence: SentenceDataInput): SerializedSentence {
   return {
+    alternativeSentences: [...sentence.alternativeSentences],
+    alternativeTranslations: [...sentence.alternativeTranslations],
     audioUrl: sentence.sentenceAudio?.audioUrl ?? null,
     explanation: sentence.explanation,
     id: String(sentence.id),
@@ -260,6 +266,8 @@ export function prepareActivityData(
     kind: activity.kind,
     language: activity.language,
     lessonSentences: lessonSentences.map((sentence) => ({
+      alternativeSentences: [...sentence.alternativeSentences],
+      alternativeTranslations: [...sentence.alternativeTranslations],
       audioUrl: sentence.sentenceAudio?.audioUrl ?? null,
       explanation: sentence.explanation,
       id: String(sentence.id),

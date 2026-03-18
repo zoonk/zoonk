@@ -12,7 +12,13 @@ import { wordFixture } from "@zoonk/testing/fixtures/words";
 import { type Page, expect, test } from "./fixtures";
 
 async function createListeningActivity(options: {
-  sentences: { audioUrl?: string | null; sentence: string; translation: string }[];
+  sentences: {
+    audioUrl?: string | null;
+    alternativeSentences?: string[];
+    alternativeTranslations?: string[];
+    sentence: string;
+    translation: string;
+  }[];
   words: { translation: string; word: string }[];
   sentenceWords?: { romanization?: string | null; translation: string; word: string }[];
 }) {
@@ -67,6 +73,8 @@ async function createListeningActivity(options: {
       }
 
       return sentenceFixture({
+        alternativeSentences: sentenceData.alternativeSentences ?? [],
+        alternativeTranslations: sentenceData.alternativeTranslations ?? [],
         organizationId: org.id,
         sentence: sentenceData.sentence,
         sentenceAudioId,
@@ -256,6 +264,44 @@ test.describe("Listening Step", () => {
     // Shows the correct answer
     await expect(page.getByText(/correct answer/i)).toBeVisible();
     await expect(page.getByText(translation)).toBeVisible();
+  });
+
+  test("accepts an alternative valid listening answer", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const bom = `bom-${uniqueId}`;
+    const dia = `dia-${uniqueId}`;
+    const guten = `guten-${uniqueId}`;
+    const tag = `tag-${uniqueId}`;
+    const morgen = `morgen-${uniqueId}`;
+    const lara = `lara-${uniqueId}`;
+
+    const { url } = await createListeningActivity({
+      sentences: [
+        {
+          alternativeTranslations: [`${guten} ${morgen} ${lara}`],
+          sentence: `${bom} ${dia} ${lara}`,
+          translation: `${guten} ${tag} ${lara}`,
+        },
+      ],
+      words: [{ translation: `night-${uniqueId}`, word: `abend-${uniqueId}` }],
+    });
+
+    await page.goto(url);
+
+    const wordBank = page.getByRole("group", { name: /word bank/i });
+
+    await expect(wordBank.getByRole("button", { exact: true, name: guten })).toBeVisible();
+    await expect(wordBank.getByRole("button", { exact: true, name: tag })).toBeVisible();
+    await expect(wordBank.getByRole("button", { exact: true, name: morgen })).toBeVisible();
+
+    await wordBank.getByRole("button", { exact: true, name: guten }).click();
+    await wordBank.getByRole("button", { exact: true, name: morgen }).click();
+    await wordBank.getByRole("button", { exact: true, name: lara }).click();
+    await page.getByRole("button", { name: /check/i }).click();
+
+    await expect(page.getByText(/your answer/i)).toBeVisible();
+    await expect(page.getByText(`${guten} ${morgen} ${lara}`)).toBeVisible();
+    await expect(page.getByRole("button", { name: /continue/i })).toBeVisible();
   });
 
   test("full flow: complete all listening steps to completion screen", async ({ page }) => {

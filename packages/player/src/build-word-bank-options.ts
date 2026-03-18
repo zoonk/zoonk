@@ -1,6 +1,11 @@
 import { shuffle } from "@zoonk/utils/shuffle";
 import { segmentWords, stripPunctuation } from "@zoonk/utils/string";
 import {
+  buildAcceptedArrangeWordSequences,
+  buildAcceptedWordBankWords,
+  getAcceptedArrangeWordSet,
+} from "./arrange-words-answers";
+import {
   type SerializedStep,
   type SerializedWord,
   type WordBankOption,
@@ -40,14 +45,23 @@ function emptyWordOption(word: string): WordBankOption {
 
 function getWordBankConfig(
   step: SerializedStep,
-): { correctWords: string[]; distractorField: "word" | "translation" } | null {
+): { acceptedWordSequences: string[][]; distractorField: "word" | "translation" } | null {
   if (step.kind === "reading" && step.sentence) {
-    return { correctWords: segmentWords(step.sentence.sentence), distractorField: "word" };
+    return {
+      acceptedWordSequences: buildAcceptedArrangeWordSequences(
+        step.sentence.sentence,
+        step.sentence.alternativeSentences,
+      ),
+      distractorField: "word",
+    };
   }
 
   if (step.kind === "listening" && step.sentence) {
     return {
-      correctWords: segmentWords(step.sentence.translation),
+      acceptedWordSequences: buildAcceptedArrangeWordSequences(
+        step.sentence.translation,
+        step.sentence.alternativeTranslations,
+      ),
       distractorField: "translation",
     };
   }
@@ -76,11 +90,12 @@ export function buildWordBankOptions(
     return [];
   }
 
-  const { correctWords, distractorField } = config;
+  const { acceptedWordSequences, distractorField } = config;
   const isReading = step.kind === "reading";
-  const correctSet = new Set(correctWords.map((word) => stripPunctuation(word).toLowerCase()));
+  const acceptedWords = buildAcceptedWordBankWords(acceptedWordSequences);
+  const acceptedWordSet = getAcceptedArrangeWordSet(acceptedWordSequences);
 
-  const correctOptions: WordBankOption[] = correctWords.map((word) =>
+  const correctOptions: WordBankOption[] = acceptedWords.map((word) =>
     isReading ? enrichWord(word, serializedLessonWords, sentenceWordMap) : emptyWordOption(word),
   );
 
@@ -92,7 +107,7 @@ export function buildWordBankOptions(
     ...new Map(
       allDistractorWords.flatMap((word) => {
         const key = stripPunctuation(word).toLowerCase();
-        return correctSet.has(key) ? [] : [[key, word] as const];
+        return acceptedWordSet.has(key) ? [] : [[key, word] as const];
       }),
     ).values(),
   ];

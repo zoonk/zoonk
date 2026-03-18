@@ -19,12 +19,10 @@ export async function readingActivityWorkflow(
 ): Promise<void> {
   "use workflow";
 
-  const currentRunWords = words.map((word) => word.word);
-
   const { sentences } = await generateReadingContentStep(
     activities,
     workflowRunId,
-    currentRunWords,
+    words,
     concepts,
     neighboringConcepts,
   );

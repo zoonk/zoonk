@@ -213,6 +213,8 @@ describe(getActivity, () => {
         position: 0,
       }),
       sentenceFixture({
+        alternativeSentences: ["test-sentence-alt"],
+        alternativeTranslations: ["test-sent-translation-alt"],
         organizationId: org.id,
         romanization: "test-sent-roman",
         sentence: `test-sentence-${crypto.randomUUID()}`,
@@ -231,6 +233,8 @@ describe(getActivity, () => {
     const result = await getActivity({ lessonId: sentLesson.id, position: 0 });
 
     expect(result?.steps[0]?.sentence).toMatchObject({
+      alternativeSentences: ["test-sentence-alt"],
+      alternativeTranslations: ["test-sent-translation-alt"],
       id: sentence.id,
       romanization: "test-sent-roman",
       sentence: sentence.sentence,

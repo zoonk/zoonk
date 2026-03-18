@@ -17,6 +17,8 @@ export async function sentenceAudioFixture(attrs: {
 }
 
 export async function sentenceFixture(attrs: {
+  alternativeSentences?: string[];
+  alternativeTranslations?: string[];
   organizationId: number;
   sentence?: string;
   translation?: string;
@@ -27,6 +29,8 @@ export async function sentenceFixture(attrs: {
 }) {
   return prisma.sentence.create({
     data: {
+      alternativeSentences: attrs.alternativeSentences ?? [],
+      alternativeTranslations: attrs.alternativeTranslations ?? [],
       organizationId: attrs.organizationId,
       romanization: attrs.romanization ?? null,
       sentence: attrs.sentence ?? `sentence-${crypto.randomUUID()}`,

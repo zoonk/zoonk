@@ -13,6 +13,22 @@ export type SavedSentence = {
   sentenceId: number;
 };
 
+function normalizeAlternativeTexts(primaryText: string, alternatives: string[]): string[] {
+  return [
+    ...new Map(
+      alternatives.flatMap((text) => {
+        const normalized = normalizePunctuation(text).trim();
+
+        if (!normalized || normalized.toLowerCase() === primaryText.toLowerCase()) {
+          return [];
+        }
+
+        return [[normalized.toLowerCase(), normalized] as const];
+      }),
+    ).values(),
+  ];
+}
+
 function buildSaveOneSentence(params: {
   activityId: number;
   lessonId: number;
@@ -24,10 +40,20 @@ function buildSaveOneSentence(params: {
 
   return async (readingSentence: ReadingSentence, position: number): Promise<SavedSentence> => {
     const sentence = normalizePunctuation(readingSentence.sentence);
+    const alternativeSentences = normalizeAlternativeTexts(
+      sentence,
+      readingSentence.alternativeSentences,
+    );
     const translation = normalizePunctuation(readingSentence.translation);
+    const alternativeTranslations = normalizeAlternativeTexts(
+      translation,
+      readingSentence.alternativeTranslations,
+    );
 
     const record = await prisma.sentence.upsert({
       create: {
+        alternativeSentences,
+        alternativeTranslations,
         explanation: emptyToNull(readingSentence.explanation),
         organizationId,
         romanization: emptyToNull(readingSentence.romanization),
@@ -37,6 +63,8 @@ function buildSaveOneSentence(params: {
         userLanguage,
       },
       update: {
+        alternativeSentences,
+        alternativeTranslations,
         explanation: emptyToNull(readingSentence.explanation),
         romanization: emptyToNull(readingSentence.romanization),
         translation,
