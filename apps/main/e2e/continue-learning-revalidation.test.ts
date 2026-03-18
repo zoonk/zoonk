@@ -5,6 +5,7 @@ import { activityFixture, activityProgressFixture } from "@zoonk/testing/fixture
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
+import { userProgressFixture } from "@zoonk/testing/fixtures/progress";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { expect, test } from "./fixtures";
 
@@ -100,6 +101,7 @@ test.describe("Continue Learning Revalidation", () => {
         durationSeconds: 60,
         userId: user.id,
       }),
+      userProgressFixture({ totalBrainPower: 100n, userId: user.id }),
       prisma.courseUser.create({ data: { courseId: course.id, userId: user.id } }),
       prisma.course.update({
         data: { userCount: { increment: 1 } },

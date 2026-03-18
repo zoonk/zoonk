@@ -88,10 +88,13 @@ describe("authenticated users", () => {
     const result = await getContinueLearning(headers);
 
     expect(result).toHaveLength(1);
-    expect(result[0]?.course.id).toBe(course.id);
-    expect(result[0]?.chapter.id).toBe(chapter.id);
-    expect(result[0]?.lesson.id).toBe(lesson.id);
-    expect(result[0]?.activity.id).toBe(activity2.id);
+    expect(result[0]).toMatchObject({
+      activity: { id: activity2.id },
+      chapter: { id: chapter.id },
+      course: { id: course.id },
+      lesson: { id: lesson.id },
+      status: "completed",
+    });
   });
 
   test("orders by most recent completion", async () => {
@@ -121,8 +124,8 @@ describe("authenticated users", () => {
     const result = await getContinueLearning(headers);
 
     expect(result).toHaveLength(2);
-    expect(result[0]?.course.id).toBe(data2.course.id);
-    expect(result[1]?.course.id).toBe(data1.course.id);
+    expect(result[0]).toMatchObject({ course: { id: data2.course.id }, status: "completed" });
+    expect(result[1]).toMatchObject({ course: { id: data1.course.id }, status: "completed" });
   });
 
   test("limits to max items", async () => {
@@ -245,8 +248,11 @@ describe("authenticated users", () => {
     const result = await getContinueLearning(headers);
 
     expect(result).toHaveLength(1);
-    expect(result[0]?.activity.id).toBe(activity2.id);
-    expect(result[0]?.chapter.id).toBe(chapter2.id);
+    expect(result[0]).toMatchObject({
+      activity: { id: activity2.id },
+      chapter: { id: chapter2.id },
+      status: "completed",
+    });
   });
 
   test("excludes courses from non-brand organizations", async () => {
@@ -328,8 +334,123 @@ describe("authenticated users", () => {
     const result = await getContinueLearning(headers);
 
     expect(result).toHaveLength(1);
-    expect(result[0]?.course.id).toBe(course.id);
-    expect(result[0]?.course.organization).toBeNull();
-    expect(result[0]?.activity.id).toBe(activity2.id);
+    expect(result[0]).toMatchObject({
+      activity: { id: activity2.id },
+      course: { id: course.id, organization: null },
+      status: "completed",
+    });
+  });
+
+  test("returns pending item when next lesson has no generated activities", async () => {
+    const user = await userFixture();
+    const headers = await signInAs(user.email, user.password);
+
+    const course = await courseFixture({
+      isPublished: true,
+      organizationId: organization.id,
+    });
+
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      isPublished: true,
+      organizationId: organization.id,
+      position: 0,
+    });
+
+    const lesson1 = await lessonFixture({
+      chapterId: chapter.id,
+      isPublished: true,
+      organizationId: organization.id,
+      position: 0,
+    });
+
+    const lesson2 = await lessonFixture({
+      chapterId: chapter.id,
+      generationStatus: "pending",
+      isPublished: true,
+      organizationId: organization.id,
+      position: 1,
+    });
+
+    const activity = await activityFixture({
+      generationStatus: "completed",
+      isPublished: true,
+      lessonId: lesson1.id,
+      organizationId: organization.id,
+      position: 0,
+    });
+
+    await activityProgressFixture({
+      activityId: activity.id,
+      completedAt: new Date(),
+      durationSeconds: 60,
+      userId: Number(user.id),
+    });
+
+    const result = await getContinueLearning(headers);
+
+    expect(result).toHaveLength(1);
+    expect(result[0]).toMatchObject({
+      chapter: { id: chapter.id, slug: chapter.slug },
+      course: { id: course.id },
+      lesson: { id: lesson2.id, slug: lesson2.slug, title: lesson2.title },
+      status: "pending",
+    });
+  });
+
+  test("returns pending item linking to chapter when no next published lesson", async () => {
+    const user = await userFixture();
+    const headers = await signInAs(user.email, user.password);
+
+    const course = await courseFixture({
+      isPublished: true,
+      organizationId: organization.id,
+    });
+
+    const chapter1 = await chapterFixture({
+      courseId: course.id,
+      isPublished: true,
+      organizationId: organization.id,
+      position: 0,
+    });
+
+    const chapter2 = await chapterFixture({
+      courseId: course.id,
+      isPublished: true,
+      organizationId: organization.id,
+      position: 1,
+    });
+
+    const lesson = await lessonFixture({
+      chapterId: chapter1.id,
+      isPublished: true,
+      organizationId: organization.id,
+      position: 0,
+    });
+
+    const activity = await activityFixture({
+      generationStatus: "completed",
+      isPublished: true,
+      lessonId: lesson.id,
+      organizationId: organization.id,
+      position: 0,
+    });
+
+    await activityProgressFixture({
+      activityId: activity.id,
+      completedAt: new Date(),
+      durationSeconds: 60,
+      userId: Number(user.id),
+    });
+
+    const result = await getContinueLearning(headers);
+
+    expect(result).toHaveLength(1);
+    expect(result[0]).toMatchObject({
+      chapter: { id: chapter2.id, slug: chapter2.slug },
+      course: { id: course.id },
+      lesson: null,
+      status: "pending",
+    });
   });
 });

@@ -1,3 +1,11 @@
+import { randomUUID } from "node:crypto";
+import { prisma } from "@zoonk/db";
+import { createE2EUser, getAiOrganization } from "@zoonk/e2e/helpers";
+import { activityFixture, activityProgressFixture } from "@zoonk/testing/fixtures/activities";
+import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
+import { userProgressFixture } from "@zoonk/testing/fixtures/progress";
 import { expect, test } from "./fixtures";
 
 test.describe("Home Page - Unauthenticated", () => {
@@ -51,6 +59,80 @@ test.describe("Home Page - Authenticated", () => {
         name: /learn anything with ai/i,
       }),
     ).toBeVisible();
+  });
+
+  test("shows pending course when next lesson has no generated activities", async ({
+    baseURL,
+    browser,
+  }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const org = await getAiOrganization();
+    const user = await createE2EUser(baseURL!);
+
+    const course = await courseFixture({
+      isPublished: true,
+      organizationId: org.id,
+      slug: `e2e-pending-course-${uniqueId}`,
+      title: `E2E Pending Course ${uniqueId}`,
+    });
+
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      isPublished: true,
+      organizationId: org.id,
+      position: 0,
+    });
+
+    const lesson1 = await lessonFixture({
+      chapterId: chapter.id,
+      isPublished: true,
+      organizationId: org.id,
+      position: 0,
+    });
+
+    await lessonFixture({
+      chapterId: chapter.id,
+      description: `E2E Pending Lesson Description ${uniqueId}`,
+      generationStatus: "pending",
+      isPublished: true,
+      organizationId: org.id,
+      position: 1,
+      title: `E2E Pending Lesson ${uniqueId}`,
+    });
+
+    const activity = await activityFixture({
+      generationStatus: "completed",
+      isPublished: true,
+      lessonId: lesson1.id,
+      organizationId: org.id,
+      position: 0,
+    });
+
+    await Promise.all([
+      activityProgressFixture({
+        activityId: activity.id,
+        completedAt: new Date(),
+        durationSeconds: 60,
+        userId: user.id,
+      }),
+      userProgressFixture({ totalBrainPower: 100n, userId: user.id }),
+      prisma.courseUser.create({ data: { courseId: course.id, userId: user.id } }),
+    ]);
+
+    const ctx = await browser.newContext({ storageState: user.storageState });
+    const page = await ctx.newPage();
+
+    await page.goto("/");
+
+    await expect(page.getByRole("heading", { name: /continue learning/i }).first()).toBeVisible();
+
+    await expect(page.getByRole("heading", { name: /learn anything with ai/i })).not.toBeVisible();
+
+    await expect(page.getByRole("link", { name: /continue/i }).first()).toBeVisible();
+    await expect(page.getByText(new RegExp(`E2E Pending Course ${uniqueId}`))).toBeVisible();
+    await expect(page.getByText(new RegExp(`E2E Pending Lesson ${uniqueId}`))).toBeVisible();
+
+    await ctx.close();
   });
 });
 
