@@ -69,7 +69,7 @@ const withNextIntl = createNextIntlPlugin({
 export default withSentryConfig(withNextIntl(nextConfig), {
   org: "zoonk",
   project: "zoonk-editor",
-  silent: !process.env.CI,
+  silent: true,
   webpack: {
     treeshake: {
       removeDebugLogging: true,
