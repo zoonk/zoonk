@@ -7,7 +7,7 @@ export async function handleLessonFailureStep(input: { lessonId: number }): Prom
 
   await safeAsync(() =>
     prisma.lesson.update({
-      data: { generationStatus: "failed" },
+      data: { generationRunId: null, generationStatus: "failed" },
       where: { id: input.lessonId },
     }),
   );

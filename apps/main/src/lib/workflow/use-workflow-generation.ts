@@ -26,12 +26,14 @@ export function useWorkflowGeneration<TStep extends string = string>(config: {
   const hasTriggeredRef = useRef(false);
 
   // Wrapper preserves the TStep generic that useReducer would otherwise widen to string.
+  const resolvedStatus = config.initialStatus ?? "idle";
+
   const [state, dispatch] = useReducer(
     (prev: GenerationState<TStep>, action: GenerationAction<TStep>) =>
       generationReducer(prev, action),
     initialGenerationState<TStep>({
-      runId: config.initialRunId ?? null,
-      status: config.initialRunId ? "streaming" : (config.initialStatus ?? "idle"),
+      runId: resolvedStatus === "streaming" ? (config.initialRunId ?? null) : null,
+      status: resolvedStatus,
     }),
   );
 

@@ -410,6 +410,7 @@ describe(lessonGenerationWorkflow, () => {
       });
 
       expect(dbLesson?.generationStatus).toBe("failed");
+      expect(dbLesson?.generationRunId).toBeNull();
 
       const errorCall = writeMock.mock.calls.find(
         (call: string[]) =>

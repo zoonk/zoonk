@@ -15,7 +15,7 @@ export async function handleWorkflowFailureStep(
 
   await safeAsync(() =>
     prisma.activity.updateMany({
-      data: { generationStatus: "failed" },
+      data: { generationRunId: null, generationStatus: "failed" },
       where: {
         generationRunId: workflowRunId,
         generationStatus: "running",
