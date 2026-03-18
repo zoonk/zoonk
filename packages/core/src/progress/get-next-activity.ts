@@ -71,6 +71,64 @@ async function findFirstActivity(scope: ActivityScope): Promise<{
   };
 }
 
+async function findFirstPendingLesson(scope: ActivityScope) {
+  const chapterFilter = (() => {
+    if ("courseId" in scope) {
+      return { courseId: scope.courseId, isPublished: true };
+    }
+
+    if ("chapterId" in scope) {
+      return { id: scope.chapterId, isPublished: true };
+    }
+
+    return { isPublished: true };
+  })();
+
+  const lessonIdFilter = "lessonId" in scope ? { id: scope.lessonId } : {};
+
+  const { data: lesson, error } = await safeAsync(() =>
+    prisma.lesson.findFirst({
+      include: {
+        chapter: {
+          include: {
+            course: { include: { organization: true } },
+          },
+        },
+      },
+      orderBy: [{ chapter: { position: "asc" } }, { position: "asc" }],
+      where: {
+        ...lessonIdFilter,
+        OR: [
+          { generationStatus: { not: "completed" } },
+          {
+            activities: {
+              some: {
+                generationStatus: { not: "completed" },
+                isPublished: true,
+              },
+            },
+          },
+        ],
+        chapter: chapterFilter,
+        isPublished: true,
+      },
+    }),
+  );
+
+  if (error || !lesson) {
+    return null;
+  }
+
+  return {
+    activityPosition: 0,
+    brandSlug: lesson.chapter.course.organization?.slug ?? null,
+    canPrefetch: false,
+    chapterSlug: lesson.chapter.slug,
+    courseSlug: lesson.chapter.course.slug,
+    lessonSlug: lesson.slug,
+  };
+}
+
 function isWithinScope(
   next: { chapterSlug: string; lessonSlug: string },
   scope: ActivityScope,
@@ -138,6 +196,12 @@ export async function getNextActivity({
       hasStarted: true,
       lessonSlug: next.lessonSlug,
     };
+  }
+
+  const pending = await findFirstPendingLesson(scope);
+
+  if (pending) {
+    return { ...pending, completed: false, hasStarted: true };
   }
 
   const first = await findFirstActivity(scope);
