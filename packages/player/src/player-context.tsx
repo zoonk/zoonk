@@ -25,7 +25,11 @@ export type PlayerContextValue<Href extends string> = {
   isCompleted: boolean;
   isGameOver: boolean;
   isIntro: boolean;
+  isLastInLesson: boolean;
+  isNextChapter: boolean;
   isStaticStep: boolean;
+  lessonTitle: string;
+  nextLessonTitle: string | null;
   phase: PlayerPhase;
   progressValue: number;
   results: Record<string, StepResult>;
@@ -49,6 +53,7 @@ export type PlayerContextValue<Href extends string> = {
   levelHref?: Route<Href>;
   loginHref?: Route<Href>;
   nextActivityHref: Route<Href> | null;
+  nextLessonHref: Route<Href> | null;
 };
 
 const PlayerContext = createContext<PlayerContextValue<string> | null>(null);

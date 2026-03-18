@@ -78,8 +78,10 @@ async function createStaticActivity(options: {
     title: `E2E Static Activity ${uniqueId}`,
   });
 
-  await Promise.all(
-    options.steps.map((step) =>
+  // Create a second activity so the tested one is not the last in the lesson.
+  // This ensures tests see mid-lesson completion behavior (not lesson-complete).
+  const [, nextActivity] = await Promise.all([
+    ...options.steps.map((step) =>
       stepFixture({
         activityId: activity.id,
         content: step.content,
@@ -88,11 +90,19 @@ async function createStaticActivity(options: {
         position: step.position,
       }),
     ),
-  );
+    activityFixture({
+      generationStatus: "completed",
+      isPublished: true,
+      kind: "explanation",
+      lessonId: lesson.id,
+      organizationId: org.id,
+      position: 1,
+    }),
+  ]);
 
   const url = `/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}/a/0`;
 
-  return { activity, chapter, course, lesson, uniqueId, url };
+  return { activity, chapter, course, lesson, nextActivity, uniqueId, url };
 }
 
 test.describe("Static Step Rendering", () => {

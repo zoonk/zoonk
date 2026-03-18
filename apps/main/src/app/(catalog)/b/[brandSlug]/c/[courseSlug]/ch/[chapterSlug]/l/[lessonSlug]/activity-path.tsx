@@ -1,10 +1,29 @@
 import { CatalogListItemIndicator } from "@/components/catalog/catalog-list";
+import { LessonCompletionBanner } from "@/components/catalog/lesson-completion-banner";
 import { getActivityIcon, getActivityKinds } from "@/lib/activities";
 import { getActivityProgress } from "@zoonk/core/progress/activities";
 import { type Activity } from "@zoonk/db";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { type LucideIcon } from "lucide-react";
 import { getExtracted } from "next-intl/server";
 import Link from "next/link";
+
+function ActivityPathIcon({ Icon, isLast }: { Icon: LucideIcon; isLast: boolean }) {
+  return (
+    <div className="relative flex flex-col items-center self-stretch">
+      <div className="text-muted-foreground/50 flex size-6 shrink-0 items-center justify-center">
+        <Icon aria-hidden="true" className="size-4" />
+      </div>
+
+      {!isLast && (
+        <div
+          className="bg-border/30 absolute top-6 w-px flex-1 self-center"
+          style={{ bottom: "-10px" }}
+        />
+      )}
+    </div>
+  );
+}
 
 export async function ActivityPath({
   activities,
@@ -32,50 +51,43 @@ export async function ActivityPath({
   ]);
 
   const kindMeta = new Map(activityKinds.map((kind) => [kind.key, kind]));
+  const allCompleted = activities.length > 0 && completedIds.length >= activities.length;
 
   return (
-    <ul aria-label={t("Activities")} className="flex flex-col" role="list">
-      {activities.map((activity, index) => {
-        const meta = kindMeta.get(activity.kind);
-        const Icon = getActivityIcon(activity.kind);
-        const completed = completedIds.includes(String(activity.id));
-        const isLast = index === activities.length - 1;
-        const title = activity.title ?? meta?.label;
+    <>
+      {allCompleted && <LessonCompletionBanner />}
+      <ul aria-label={t("Activities")} className="flex flex-col" role="list">
+        {activities.map((activity, index) => {
+          const meta = kindMeta.get(activity.kind);
+          const Icon = getActivityIcon(activity.kind);
+          const completed = completedIds.includes(String(activity.id));
+          const isLast = index === activities.length - 1;
+          const title = activity.title ?? meta?.label;
 
-        return (
-          <li key={String(activity.id)}>
-            <Link
-              className="hover:bg-muted/30 -mx-3 flex items-center gap-3 rounded-lg px-3 py-2.5 transition-colors"
-              href={`/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}/a/${activity.position}`}
-              prefetch={activity.generationStatus === "completed"}
-            >
-              <div className="relative flex flex-col items-center self-stretch">
-                <div className="text-muted-foreground/50 flex size-6 shrink-0 items-center justify-center">
-                  <Icon aria-hidden="true" className="size-4" />
-                </div>
+          return (
+            <li key={String(activity.id)}>
+              <Link
+                className="hover:bg-muted/30 -mx-3 flex items-center gap-3 rounded-lg px-3 py-2.5 transition-colors"
+                href={`/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}/a/${activity.position}`}
+                prefetch={activity.generationStatus === "completed"}
+              >
+                <ActivityPathIcon Icon={Icon} isLast={isLast} />
 
-                {!isLast && (
-                  <div
-                    className="bg-border/30 absolute top-6 w-px flex-1 self-center"
-                    style={{ bottom: "-10px" }}
-                  />
-                )}
-              </div>
+                <span className="text-foreground/90 min-w-0 flex-1 text-sm leading-snug font-medium">
+                  {title}
+                </span>
 
-              <span className="text-foreground/90 min-w-0 flex-1 text-sm leading-snug font-medium">
-                {title}
-              </span>
-
-              <CatalogListItemIndicator
-                completed={completed}
-                completedLabel={t("Completed")}
-                notCompletedLabel={t("Not completed")}
-              />
-            </Link>
-          </li>
-        );
-      })}
-    </ul>
+                <CatalogListItemIndicator
+                  completed={completed}
+                  completedLabel={t("Completed")}
+                  notCompletedLabel={t("Not completed")}
+                />
+              </Link>
+            </li>
+          );
+        })}
+      </ul>
+    </>
   );
 }
 

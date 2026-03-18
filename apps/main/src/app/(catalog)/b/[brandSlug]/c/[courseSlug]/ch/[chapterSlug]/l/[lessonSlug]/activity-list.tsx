@@ -8,6 +8,7 @@ import {
   CatalogListItemPosition,
   CatalogListItemTitle,
 } from "@/components/catalog/catalog-list";
+import { LessonCompletionBanner } from "@/components/catalog/lesson-completion-banner";
 import { getActivityProgress } from "@zoonk/core/progress/activities";
 import { type Activity } from "@zoonk/db";
 import { formatPosition } from "@zoonk/utils/number";
@@ -34,9 +35,11 @@ export async function ActivityList({
 
   const t = await getExtracted();
   const completedIds = await getActivityProgress({ lessonId });
+  const allCompleted = activities.length > 0 && completedIds.length >= activities.length;
 
   return (
     <CatalogList>
+      {allCompleted && <LessonCompletionBanner />}
       <CatalogListContent aria-label={t("Activities")}>
         {activities.map((activity) => {
           const completed = completedIds.includes(String(activity.id));

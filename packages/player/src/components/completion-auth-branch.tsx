@@ -86,6 +86,111 @@ function SecondaryActions({
   );
 }
 
+function NextButtonLabel() {
+  const t = useExtracted();
+  const { isNextChapter, nextLessonTitle } = usePlayer();
+
+  const label = isNextChapter ? t("Next Chapter") : t("Next Lesson");
+
+  if (!nextLessonTitle) {
+    return <span>{label}</span>;
+  }
+
+  return (
+    <span className="flex flex-col items-start gap-0.5">
+      <span>{label}</span>
+      <span className="text-primary-foreground/70 text-xs font-normal">{nextLessonTitle}</span>
+    </span>
+  );
+}
+
+function LessonCompleteActions({
+  lessonHref,
+  nextActivityHref,
+}: {
+  lessonHref: Route;
+  nextActivityHref: Route | null;
+}) {
+  const t = useExtracted();
+  const { nextLessonHref } = usePlayer();
+
+  const nextHref = nextActivityHref ?? nextLessonHref;
+
+  if (nextHref) {
+    return (
+      <>
+        <Link
+          className={cn(buttonVariants({ size: "lg" }), "w-full lg:justify-between")}
+          href={nextHref}
+        >
+          <NextButtonLabel />
+          <Kbd className="bg-primary-foreground/15 text-primary-foreground hidden opacity-70 lg:inline-flex">
+            Enter
+          </Kbd>
+        </Link>
+
+        <Link
+          className={cn(buttonVariants({ variant: "outline" }), "w-full lg:justify-between")}
+          href={lessonHref}
+        >
+          {t("Review Lesson")}
+          <Kbd className="hidden opacity-60 lg:inline-flex">Esc</Kbd>
+        </Link>
+      </>
+    );
+  }
+
+  return (
+    <Link
+      className={cn(buttonVariants({ size: "lg" }), "w-full lg:justify-between")}
+      href={lessonHref}
+    >
+      {t("Review Lesson")}
+      <Kbd className="bg-primary-foreground/15 text-primary-foreground hidden opacity-70 lg:inline-flex">
+        Esc
+      </Kbd>
+    </Link>
+  );
+}
+
+function AuthenticatedActions({
+  isLastInLesson,
+  lessonHref,
+  nextActivityHref,
+  onRestart,
+}: {
+  isLastInLesson: boolean;
+  lessonHref: Route;
+  nextActivityHref: Route | null;
+  onRestart: () => void;
+}) {
+  const t = useExtracted();
+
+  if (isLastInLesson) {
+    return <LessonCompleteActions lessonHref={lessonHref} nextActivityHref={nextActivityHref} />;
+  }
+
+  if (nextActivityHref) {
+    return (
+      <>
+        <Link
+          className={cn(buttonVariants({ size: "lg" }), "w-full lg:justify-between")}
+          href={nextActivityHref}
+        >
+          {t("Next")}
+          <Kbd className="bg-primary-foreground/15 text-primary-foreground hidden opacity-70 lg:inline-flex">
+            Enter
+          </Kbd>
+        </Link>
+
+        <SecondaryActions lessonHref={lessonHref} onRestart={onRestart} variant="inline" />
+      </>
+    );
+  }
+
+  return <SecondaryActions lessonHref={lessonHref} onRestart={onRestart} variant="stacked" />;
+}
+
 function AuthenticatedContent({
   completionResult,
   lessonHref,
@@ -99,7 +204,7 @@ function AuthenticatedContent({
   onRestart: () => void;
   showRewards: boolean;
 }) {
-  const t = useExtracted();
+  const { isLastInLesson } = usePlayer();
 
   const isLoading = !completionResult || completionResult.status !== "success";
 
@@ -126,23 +231,12 @@ function AuthenticatedContent({
         ))}
 
       <CompletionActions>
-        {nextActivityHref ? (
-          <>
-            <Link
-              className={cn(buttonVariants({ size: "lg" }), "w-full lg:justify-between")}
-              href={nextActivityHref}
-            >
-              {t("Next")}
-              <Kbd className="bg-primary-foreground/15 text-primary-foreground hidden opacity-70 lg:inline-flex">
-                Enter
-              </Kbd>
-            </Link>
-
-            <SecondaryActions lessonHref={lessonHref} onRestart={onRestart} variant="inline" />
-          </>
-        ) : (
-          <SecondaryActions lessonHref={lessonHref} onRestart={onRestart} variant="stacked" />
-        )}
+        <AuthenticatedActions
+          isLastInLesson={isLastInLesson}
+          lessonHref={lessonHref}
+          nextActivityHref={nextActivityHref}
+          onRestart={onRestart}
+        />
       </CompletionActions>
     </>
   );
@@ -158,6 +252,7 @@ function UnauthenticatedContent({
   onRestart: () => void;
 }) {
   const t = useExtracted();
+  const { isLastInLesson } = usePlayer();
 
   return (
     <>
@@ -168,7 +263,17 @@ function UnauthenticatedContent({
           {t("Login")}
         </Link>
 
-        <SecondaryActions lessonHref={lessonHref} onRestart={onRestart} variant="inline" />
+        {isLastInLesson ? (
+          <Link
+            className={cn(buttonVariants({ variant: "outline" }), "w-full lg:justify-between")}
+            href={lessonHref}
+          >
+            {t("Review Lesson")}
+            <Kbd className="hidden opacity-60 lg:inline-flex">Esc</Kbd>
+          </Link>
+        ) : (
+          <SecondaryActions lessonHref={lessonHref} onRestart={onRestart} variant="inline" />
+        )}
       </CompletionActions>
     </>
   );

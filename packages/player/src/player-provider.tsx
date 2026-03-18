@@ -49,10 +49,15 @@ export function PlayerProvider<Href extends string>({
   children,
   completionFooter,
   isAuthenticated,
+  isLastInLesson = false,
+  isNextChapter = false,
   lessonHref,
+  lessonTitle = "",
   levelHref,
   loginHref,
   nextActivityHref,
+  nextLessonHref = null,
+  nextLessonTitle = null,
   onComplete,
   onEscape,
   onNext,
@@ -62,10 +67,15 @@ export function PlayerProvider<Href extends string>({
   children: React.ReactNode;
   completionFooter?: React.ReactNode;
   isAuthenticated: boolean;
+  isLastInLesson?: boolean;
+  isNextChapter?: boolean;
   lessonHref: Route<Href>;
+  lessonTitle?: string;
   levelHref?: Route<Href>;
   loginHref?: Route<Href>;
   nextActivityHref: Route<Href> | null;
+  nextLessonHref?: Route<Href> | null;
+  nextLessonTitle?: string | null;
   onComplete: (input: CompletionInput) => Promise<CompletionResult>;
   onEscape: () => void;
   onNext?: () => void;
@@ -119,11 +129,16 @@ export function PlayerProvider<Href extends string>({
     dimensions: state.dimensions,
     escape: onEscape,
     isAuthenticated,
+    isLastInLesson,
+    isNextChapter,
     lessonHref,
+    lessonTitle,
     levelHref,
     loginHref,
     next: handleNext,
     nextActivityHref,
+    nextLessonHref,
+    nextLessonTitle,
     phase: state.phase,
     results: state.results,
   };

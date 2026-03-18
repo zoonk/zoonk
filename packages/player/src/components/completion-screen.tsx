@@ -48,6 +48,20 @@ function CompletionSignal() {
   );
 }
 
+function LessonCompleteSignal({ lessonTitle }: { lessonTitle: string }) {
+  const t = useExtracted();
+
+  return (
+    <div className="flex flex-col items-center gap-2">
+      <CircleCheck className="text-foreground size-12" />
+      <div className="flex flex-col items-center gap-1">
+        <p className="text-lg font-medium">{t("Lesson Complete")}</p>
+        <p className="text-muted-foreground text-sm">{lessonTitle}</p>
+      </div>
+    </div>
+  );
+}
+
 function getCompletionScore(results: Record<string, StepResult>) {
   const resultList = Object.values(results);
 
@@ -78,7 +92,7 @@ export function CompletionScreenContent({
   results: Record<string, StepResult>;
 }) {
   const t = useExtracted();
-  const { completionFooter } = usePlayer();
+  const { completionFooter, isLastInLesson, lessonTitle } = usePlayer();
   const isChallenge = Object.keys(dimensions).length > 0;
 
   if (isChallenge && hasNegativeDimension(dimensions)) {
@@ -110,6 +124,8 @@ export function CompletionScreenContent({
 
   return (
     <CompletionScreen>
+      {isLastInLesson && <LessonCompleteSignal lessonTitle={lessonTitle} />}
+
       {score ? (
         <CompletionScore>
           <p className="text-5xl font-bold tracking-tight tabular-nums">
@@ -118,7 +134,7 @@ export function CompletionScreenContent({
           <p className="text-muted-foreground text-sm">{t("correct")}</p>
         </CompletionScore>
       ) : (
-        <CompletionSignal />
+        !isLastInLesson && <CompletionSignal />
       )}
 
       <AuthBranch

@@ -4,6 +4,7 @@ import { getLessonWords } from "@/data/activities/get-lesson-words";
 import { getReviewSteps } from "@/data/activities/get-review-steps";
 import { getSentenceWords } from "@/data/activities/get-sentence-words";
 import { getLesson } from "@/data/lessons/get-lesson";
+import { getNextSibling } from "@/data/progress/get-next-sibling";
 import { startActivity } from "@/data/progress/start-activity";
 import { getActivitySeoMeta } from "@/lib/activities";
 import { getNextActivityInCourse } from "@zoonk/core/activities/next-in-course";
@@ -86,13 +87,25 @@ export default async function ActivityPage({ params }: Props) {
     );
   }
 
-  const reviewSteps =
+  const isLastInLesson = !nextActivity || nextActivity.lessonSlug !== lessonSlug;
+
+  const [reviewSteps, nextSibling] = await Promise.all([
     activity.kind === "review"
-      ? await getReviewSteps({
+      ? getReviewSteps({
           lessonId: lesson.id,
           userId: session ? Number(session.user.id) : null,
         })
-      : null;
+      : null,
+    isLastInLesson
+      ? getNextSibling({
+          chapterId: lesson.chapter.id,
+          chapterPosition: lesson.chapter.position,
+          courseId: lesson.chapter.course.id,
+          lessonPosition: lesson.position,
+          level: "lesson",
+        })
+      : null,
+  ]);
 
   const serialized = prepareActivityData(
     reviewSteps ? { ...activity, steps: reviewSteps } : activity,
@@ -113,7 +126,9 @@ export default async function ActivityPage({ params }: Props) {
       chapterSlug={chapterSlug}
       isAuthenticated={Boolean(session)}
       lessonSlug={lessonSlug}
+      lessonTitle={lesson.title}
       nextActivity={nextActivity}
+      nextSibling={nextSibling}
       userEmail={session?.user.email}
       userName={session?.user.name ?? null}
     />

@@ -189,9 +189,24 @@ msgid "Login"
 msgstr "Entrar"
 
 #: ../../packages/player/src/components/completion-auth-branch.tsx
+msgctxt "DiIkZH"
+msgid "Next Chapter"
+msgstr "Próximo Capítulo"
+
+#: ../../packages/player/src/components/completion-auth-branch.tsx
 msgctxt "e1M39C"
 msgid "Sign up to track your progress"
 msgstr "Cadastre-se para acompanhar seu progresso"
+
+#: ../../packages/player/src/components/completion-auth-branch.tsx
+msgctxt "J+7NRc"
+msgid "Next Lesson"
+msgstr "Próxima Aula"
+
+#: ../../packages/player/src/components/completion-auth-branch.tsx
+msgctxt "sE4AEw"
+msgid "Review Lesson"
+msgstr "Revisar Aula"
 
 #: ../../packages/player/src/components/completion-screen.tsx
 #: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/activity-list.tsx
@@ -201,6 +216,11 @@ msgstr "Cadastre-se para acompanhar seu progresso"
 msgctxt "95stPq"
 msgid "Completed"
 msgstr "Concluída"
+
+#: ../../packages/player/src/components/completion-screen.tsx
+msgctxt "DL04lo"
+msgid "Lesson Complete"
+msgstr "Aula Concluída"
 
 #: ../../packages/player/src/components/completion-screen.tsx
 msgctxt "P768k7"
@@ -2166,6 +2186,11 @@ msgstr "Começar"
 msgctxt "R+J5ox"
 msgid "Review"
 msgstr "Revisão"
+
+#: src/components/catalog/lesson-completion-banner.tsx
+msgctxt "LFJ7du"
+msgid "All activities completed"
+msgstr "Todas as atividades concluídas"
 
 #: src/components/feedback/contact-form.tsx
 msgctxt "+5vOOu"
