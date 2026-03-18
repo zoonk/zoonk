@@ -54,7 +54,9 @@ export function ActivityPlayerClient({
   const isLastInLesson = !nextActivity || nextActivity.lessonSlug !== lessonSlug;
 
   const nextLessonHref = (() => {
-    if (!isLastInLesson) {return null;}
+    if (!isLastInLesson) {
+      return null;
+    }
 
     if (nextActivity) {
       return `/b/${brandSlug}/c/${courseSlug}/ch/${nextActivity.chapterSlug}/l/${nextActivity.lessonSlug}` as const;
@@ -68,15 +70,30 @@ export function ActivityPlayerClient({
   })();
 
   const isNextChapter = (() => {
-    if (nextActivity) {return nextActivity.chapterSlug !== chapterSlug;}
-    if (nextSibling) {return nextSibling.chapterSlug !== chapterSlug;}
+    if (nextActivity) {
+      return nextActivity.chapterSlug !== chapterSlug;
+    }
+
+    if (nextSibling) {
+      return nextSibling.chapterSlug !== chapterSlug;
+    }
+
     return false;
   })();
 
   const nextLessonTitle = (() => {
-    if (!isLastInLesson) {return null;}
-    if (nextActivity) {return nextActivity.lessonTitle;}
-    if (nextSibling) {return nextSibling.lessonTitle;}
+    if (!isLastInLesson) {
+      return null;
+    }
+
+    if (nextActivity) {
+      return nextActivity.lessonTitle;
+    }
+
+    if (nextSibling) {
+      return nextSibling.lessonTitle;
+    }
+
     return null;
   })();
 
