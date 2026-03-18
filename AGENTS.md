@@ -101,28 +101,12 @@ When writing React components, use compound components. Always read this before 
 
 ## Testing
 
-**VERY IMPORTANT**: **Default to TDD (Test-Driven Development) when the behavior is meaningfully testable**: Write a failing test first, **run the test to confirm it fails**, then write the code to make it pass. If the test passes before your fix, the test is wrong—never use workarounds like `.first()` or loose assertions to make tests pass. Use unique test data (e.g., UUIDs in titles) to ensure tests catch regressions.
-
-- **Use this decision rule before writing any test**:
-  1. What behavior changed for the user or the system?
-  2. Can that behavior be verified with a deterministic assertion?
-  3. Is there a test at the right boundary that would fail for a real regression and pass for a real fix?
-  4. Would the test validate behavior instead of wording, implementation details, or framework internals?
-     If the answer to any of these is "no", do **not** force TDD. Explain briefly why a test is not appropriate and how you verified the change instead.
-- Don't take the TDD rule too literally. **Use TDD when the behavior is clearly testable at the right level.** You don't need to follow TDD for things like CSS/style changes, prompt wording, docs, or other changes where tests would only assert copy or implementation details. Don't write meaningless tests just to check a box. For example, tests like `expect(1 + 1).toBe(2)` or `expect(true).toBe(true)` are not useful.
-- **AI/prompt-specific rule**: Do **not** write tests that only assert exact prompt strings, exact prompt files, or other brittle wording-level details. For AI changes, add tests only when there is a deterministic contract to verify, such as parsing, schema validation, tool selection constraints, fallback behavior, retries, error handling, or post-processing logic. For prompt-quality changes, prefer evals, manual output review, or stronger guardrails in the prompt itself.
-- **If you're unsure whether to use TDD, stop and classify the change first**:
-  - Deterministic behavior change: use TDD
-  - Non-deterministic AI output quality change: usually no TDD
-  - Copy, docs, prompt wording, or visual polish change: usually no TDD
-  - Refactor with unchanged behavior: add or update tests only if there is a real regression risk or missing coverage at the correct boundary
-- **For UI changes, prefer Playwright E2E tests.** Avoid unit tests for React components, hooks, or wiring unless they contain real standalone business logic.
-- **Don't test implementation details.** Test expected behavior, not implementation details. If no new test is appropriate, say why and explain how you verified the change.
-
-- **Parallelize independent fixtures**: When test setup creates multiple entities that don't depend on each other (e.g., `user` + `course`, sibling chapters, multiple `activityProgressFixture` calls), use `Promise.all` instead of sequential awaits
-- **E2E tests**: For app/UI features, use Playwright (`apps/{app}/e2e/`)
-- **Integration tests**: For data functions with Prisma (`apps/{app}/src/data/`)
-- **Unit tests**: For utils, helpers, and pure functions
+- Default to TDD: write a failing test first, run it to confirm it fails for the right reason, then write the code to make it pass
+- Don't write unit tests for React components, prefer E2E tests. React unit tests require mocking and test implementation details, making tests fail if we change implementation
+- Add unit tests for pure functions, helpers, and utils
+- Add integration tests for data functions, business logic, and workflows with Prisma
+- Don't add tests for CSS, style changes, prompt wording, zod schemas or other things where tests would only assert copy, external library internals, or implementation details
+- Parallelize independent fixtures: When test setup creates multiple entities that don't depend on each other (e.g., `user` + `course`, sibling chapters, multiple `activityProgressFixture` calls), use `Promise.all` instead of sequential awaits
 
 **E2E Query Rules (MANDATORY)**:
 
