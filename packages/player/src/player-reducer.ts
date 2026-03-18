@@ -1,7 +1,16 @@
-import { type ChallengeEffect, parseStepContent } from "@zoonk/core/steps/content-contract";
+import { type ChallengeEffect } from "@zoonk/core/steps/content-contract";
 import { type AnswerResult } from "./check-answer";
+import { type CompletionResult } from "./completion-input-schema";
 import { IMPACT_DELTA } from "./dimensions";
-import { type SerializedActivity, type SerializedStep } from "./prepare-activity-data";
+import {
+  type PlayerCompletionState,
+  createIdleCompletionState,
+  handleRejectCompletion,
+  handleResolveCompletion,
+  handleSubmitCompletion,
+} from "./player-completion";
+import { buildInitialAnswers, collectAllDimensions } from "./player-initial-state";
+import { type SerializedStep } from "./prepare-activity-data";
 import { canNavigatePrev, isStaticNavigationStep } from "./step-navigation";
 
 export type PlayerPhase = "intro" | "playing" | "feedback" | "completed";
@@ -34,6 +43,8 @@ export type StepTiming = {
 
 export type PlayerState = {
   activityId: string;
+  completion: PlayerCompletionState;
+  completionRequestId: number;
   currentStepIndex: number;
   dimensions: DimensionInventory;
   phase: PlayerPhase;
@@ -46,7 +57,7 @@ export type PlayerState = {
   stepTimings: Record<string, StepTiming>;
 };
 
-type PlayerAction =
+export type PlayerAction =
   | { type: "SELECT_ANSWER"; stepId: string; answer: SelectedAnswer }
   | { type: "CLEAR_ANSWER"; stepId: string }
   | { type: "CHECK_ANSWER"; stepId: string; result: AnswerResult; effects: ChallengeEffect[] }
@@ -54,6 +65,9 @@ type PlayerAction =
   | { type: "COMPLETE" }
   | { type: "NAVIGATE_STEP"; direction: "next" | "prev" }
   | { type: "RESTART" }
+  | { type: "SUBMIT_COMPLETION"; requestId: number }
+  | { type: "RESOLVE_COMPLETION"; requestId: number; result: CompletionResult }
+  | { type: "REJECT_COMPLETION"; requestId: number }
   | { type: "START_CHALLENGE" };
 
 function applyEffects(
@@ -73,64 +87,7 @@ function applyEffects(
   return next;
 }
 
-function getChallengeEffects(step: SerializedStep): ChallengeEffect[] {
-  if (step.kind !== "multipleChoice") {
-    return [];
-  }
-
-  const content = parseStepContent("multipleChoice", step.content);
-
-  if (content.kind !== "challenge") {
-    return [];
-  }
-
-  return content.options.flatMap((option) => option.effects);
-}
-
-function collectAllDimensions(steps: SerializedStep[]): DimensionInventory {
-  const effects = steps.flatMap((step) => getChallengeEffects(step));
-
-  return Object.fromEntries(effects.map((effect) => [effect.dimension, 0]));
-}
-
-function buildInitialAnswers(steps: SerializedStep[]): Record<string, SelectedAnswer> {
-  return Object.fromEntries(
-    steps
-      .filter((step) => step.kind === "sortOrder" && step.sortOrderItems.length > 0)
-      .map((step) => [step.id, { kind: "sortOrder" as const, userOrder: step.sortOrderItems }]),
-  );
-}
-
-function getInitialPhase(steps: SerializedStep[], dimensions: DimensionInventory): PlayerPhase {
-  if (steps.length === 0) {
-    return "completed";
-  }
-
-  if (Object.keys(dimensions).length > 0) {
-    return "intro";
-  }
-
-  return "playing";
-}
-
-export function createInitialState(activity: SerializedActivity): PlayerState {
-  const dimensions = collectAllDimensions(activity.steps);
-  const now = Date.now();
-
-  return {
-    activityId: activity.id,
-    currentStepIndex: 0,
-    dimensions,
-    phase: getInitialPhase(activity.steps, dimensions),
-    previousDimensions: { ...dimensions },
-    results: {},
-    selectedAnswers: buildInitialAnswers(activity.steps),
-    startedAt: now,
-    stepStartedAt: now,
-    stepTimings: {},
-    steps: activity.steps,
-  };
-}
+export { createInitialState } from "./player-initial-state";
 
 function handleSelectAnswer(
   state: PlayerState,
@@ -254,6 +211,8 @@ function handleRestart(state: PlayerState): PlayerState {
 
   return {
     ...state,
+    completion: createIdleCompletionState(),
+    completionRequestId: state.completionRequestId + 1,
     currentStepIndex: 0,
     dimensions,
     phase: "playing",
@@ -304,6 +263,15 @@ export function playerReducer(state: PlayerState, action: PlayerAction): PlayerS
 
     case "RESTART":
       return handleRestart(state);
+
+    case "SUBMIT_COMPLETION":
+      return handleSubmitCompletion(state, action.requestId);
+
+    case "RESOLVE_COMPLETION":
+      return handleResolveCompletion(state, action.requestId, action.result);
+
+    case "REJECT_COMPLETION":
+      return handleRejectCompletion(state, action.requestId);
 
     case "START_CHALLENGE":
       return handleStartChallenge(state);

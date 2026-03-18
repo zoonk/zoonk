@@ -2,11 +2,15 @@
 
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
-import { type Route } from "next";
 import { useExtracted } from "next-intl";
-import Link from "next/link";
 import { type CompletionResult } from "../completion-input-schema";
-import { usePlayer } from "../player-context";
+import {
+  type PlayerRoute,
+  usePlayerMilestone,
+  usePlayerNavigation,
+  usePlayerViewer,
+} from "../player-context";
+import { PlayerLink } from "../player-link";
 import { BeltProgressHint, BeltProgressSkeleton } from "./belt-progress";
 import { PrimaryActionLink, PrimaryKbd, SecondaryKbd } from "./completion-action-link";
 import { MilestoneActions, UnauthenticatedMilestoneActions } from "./completion-milestone-actions";
@@ -31,7 +35,7 @@ function SecondaryActions({
   onRestart,
   variant,
 }: {
-  lessonHref: Route;
+  lessonHref: PlayerRoute;
   onRestart: () => void;
   variant: "inline" | "stacked";
 }) {
@@ -40,7 +44,7 @@ function SecondaryActions({
   const isInline = variant === "inline";
 
   const backLink = (
-    <Link
+    <PlayerLink
       className={cn(
         buttonVariants({ variant: isInline ? "outline" : "default" }),
         isInline ? "flex-1 lg:justify-between" : "w-full lg:justify-between",
@@ -49,7 +53,7 @@ function SecondaryActions({
     >
       {t("All Activities")}
       {isInline ? <SecondaryKbd>Esc</SecondaryKbd> : <PrimaryKbd>Esc</PrimaryKbd>}
-    </Link>
+    </PlayerLink>
   );
 
   const restartButton = (
@@ -88,20 +92,20 @@ function AuthenticatedContent({
   showRewards,
 }: {
   completionResult: CompletionResult | null;
-  lessonHref: Route;
-  nextActivityHref: Route | null;
+  lessonHref: PlayerRoute;
+  nextActivityHref: PlayerRoute | null;
   onRestart: () => void;
   showRewards: boolean;
 }) {
   const t = useExtracted();
-  const { isLastInLesson } = usePlayer();
+  const milestone = usePlayerMilestone();
 
   const isLoading = !completionResult || completionResult.status !== "success";
 
-  if (isLastInLesson) {
+  if (milestone.kind !== "activity") {
     return (
       <CompletionActions>
-        <MilestoneActions lessonHref={lessonHref} />
+        <MilestoneActions />
       </CompletionActions>
     );
   }
@@ -150,15 +154,15 @@ function UnauthenticatedContent({
   loginHref,
   onRestart,
 }: {
-  lessonHref: Route;
-  loginHref: Route;
+  lessonHref: PlayerRoute;
+  loginHref: PlayerRoute;
   onRestart: () => void;
 }) {
   const t = useExtracted();
-  const { isLastInLesson } = usePlayer();
+  const milestone = usePlayerMilestone();
 
-  if (isLastInLesson) {
-    return <UnauthenticatedMilestoneActions lessonHref={lessonHref} loginHref={loginHref} />;
+  if (milestone.kind !== "activity") {
+    return <UnauthenticatedMilestoneActions loginHref={loginHref} />;
   }
 
   return (
@@ -166,9 +170,9 @@ function UnauthenticatedContent({
       <p className="text-muted-foreground text-sm">{t("Sign up to track your progress")}</p>
 
       <CompletionActions>
-        <Link className={cn(buttonVariants(), "w-full")} href={loginHref}>
+        <PlayerLink className={cn(buttonVariants(), "w-full")} href={loginHref}>
           {t("Login")}
-        </Link>
+        </PlayerLink>
 
         <SecondaryActions lessonHref={lessonHref} onRestart={onRestart} variant="inline" />
       </CompletionActions>
@@ -184,12 +188,13 @@ export function AuthBranch({
   showRewards = true,
 }: {
   completionResult: CompletionResult | null;
-  lessonHref: Route;
-  nextActivityHref: Route | null;
+  lessonHref: PlayerRoute;
+  nextActivityHref: PlayerRoute | null;
   onRestart: () => void;
   showRewards?: boolean;
 }) {
-  const { isAuthenticated, loginHref } = usePlayer();
+  const { loginHref } = usePlayerNavigation();
+  const { isAuthenticated } = usePlayerViewer();
 
   if (!isAuthenticated) {
     return (

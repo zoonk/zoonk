@@ -115,7 +115,6 @@ export default async function ActivityPage({ params }: Props) {
       chapterSlug={chapterSlug}
       isAuthenticated={Boolean(session)}
       lessonSlug={lessonSlug}
-      lessonTitle={lesson.title}
       nextActivity={nextActivity}
       nextSibling={nextSibling}
       userEmail={session?.user.email}

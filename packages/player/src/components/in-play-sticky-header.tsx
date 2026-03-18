@@ -1,6 +1,6 @@
 "use client";
 
-import { type Route } from "next";
+import { type PlayerRoute } from "../player-context";
 import { type DimensionInventory } from "../player-reducer";
 import { DimensionHeaderStatus } from "./dimension-header-status";
 import { PlayerCloseLink, PlayerHeader, PlayerStepFraction } from "./player-header";
@@ -19,7 +19,7 @@ export function InPlayStickyHeader({
   currentStepIndex: number;
   dimensions: DimensionInventory;
   hasDimensions: boolean;
-  lessonHref: Route;
+  lessonHref: PlayerRoute;
   progressValue: number;
   totalSteps: number;
 }) {

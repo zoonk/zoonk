@@ -2,12 +2,11 @@
 
 import { cn } from "@zoonk/ui/lib/utils";
 import { CircleCheck } from "lucide-react";
-import { type Route } from "next";
 import { useExtracted } from "next-intl";
 import { type CompletionResult } from "../completion-input-schema";
 import { computeScore } from "../compute-score";
 import { hasNegativeDimension } from "../dimensions";
-import { usePlayer } from "../player-context";
+import { type PlayerRoute, usePlayerMilestone, usePlayerViewer } from "../player-context";
 import { type DimensionInventory, type StepResult } from "../player-reducer";
 import { ChallengeFailureContent, ChallengeSuccessContent } from "./challenge-completion";
 import { AuthBranch } from "./completion-auth-branch";
@@ -50,14 +49,14 @@ function CompletionSignal() {
 
 function MilestoneHeading() {
   const t = useExtracted();
-  const { isCourseComplete, isNextChapter } = usePlayer();
+  const milestone = usePlayerMilestone();
 
   function getHeading() {
-    if (isCourseComplete) {
+    if (milestone.kind === "course") {
       return t("Course Complete");
     }
 
-    if (isNextChapter) {
+    if (milestone.kind === "chapter") {
       return t("Chapter Complete");
     }
 
@@ -91,13 +90,14 @@ export function CompletionScreenContent({
 }: {
   completionResult: CompletionResult | null;
   dimensions: DimensionInventory;
-  lessonHref: Route;
-  nextActivityHref: Route | null;
+  lessonHref: PlayerRoute;
+  nextActivityHref: PlayerRoute | null;
   onRestart: () => void;
   results: Record<string, StepResult>;
 }) {
   const t = useExtracted();
-  const { completionFooter, isLastInLesson } = usePlayer();
+  const milestone = usePlayerMilestone();
+  const { completionFooter } = usePlayerViewer();
   const isChallenge = Object.keys(dimensions).length > 0;
 
   if (isChallenge && hasNegativeDimension(dimensions)) {
@@ -125,7 +125,7 @@ export function CompletionScreenContent({
     );
   }
 
-  if (isLastInLesson) {
+  if (milestone.kind !== "activity") {
     return (
       <CompletionScreen className="min-h-[60vh] max-w-sm justify-center gap-10 px-6 sm:gap-12">
         <MilestoneHeading />

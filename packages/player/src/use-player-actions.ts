@@ -1,26 +1,34 @@
 "use client";
 
-import { type Dispatch, useCallback, useState } from "react";
+import { type Dispatch, useCallback } from "react";
 import { checkStep } from "./check-step";
 import { type CompletionInput, type CompletionResult } from "./completion-input-schema";
-import { type PlayerState, type SelectedAnswer, playerReducer } from "./player-reducer";
-import { isStaticNavigationStep } from "./step-navigation";
+import {
+  buildCompletionInput,
+  getPlayerTransition,
+  getSubmitCompletionRequestId,
+} from "./player-controller";
+import {
+  type PlayerAction,
+  type PlayerState,
+  type SelectedAnswer,
+  type playerReducer,
+} from "./player-reducer";
 
-function willComplete(state: PlayerState): boolean {
-  if (state.phase === "feedback") {
-    return state.currentStepIndex + 1 >= state.steps.length;
-  }
+type SyncPlayerAction = Exclude<
+  PlayerAction,
+  { type: "REJECT_COMPLETION" | "RESOLVE_COMPLETION" | "SUBMIT_COMPLETION" }
+>;
 
-  if (state.phase === "playing") {
-    const currentStep = state.steps[state.currentStepIndex];
-
-    if (isStaticNavigationStep(currentStep) || currentStep?.kind === "matchColumns") {
-      return state.currentStepIndex + 1 >= state.steps.length;
-    }
-  }
-
-  return false;
-}
+export type PlayerActions = {
+  check: () => void;
+  continue: () => void;
+  navigateNext: () => void;
+  navigatePrev: () => void;
+  restart: () => void;
+  selectAnswer: (stepId: string, answer: SelectedAnswer | null) => void;
+  startChallenge: () => void;
+};
 
 export function usePlayerActions(
   state: PlayerState,
@@ -28,41 +36,46 @@ export function usePlayerActions(
   onComplete: (input: CompletionInput) => Promise<CompletionResult>,
   isAuthenticated: boolean,
 ) {
-  const [completionResult, setCompletionResult] = useState<CompletionResult | null>(null);
   const currentStep = state.steps[state.currentStepIndex];
 
-  const fireCompletion = useCallback(
+  const submitCompletion = useCallback(
     (completionState: PlayerState) => {
-      const now = new Date();
-      const localDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+      const requestId = getSubmitCompletionRequestId(state);
+      dispatch({ requestId, type: "SUBMIT_COMPLETION" });
 
-      void onComplete({
-        activityId: completionState.activityId,
-        answers: completionState.selectedAnswers,
-        dimensions: completionState.dimensions,
-        localDate,
-        startedAt: completionState.startedAt,
-        stepTimings: completionState.stepTimings,
-      })
+      void onComplete(buildCompletionInput(completionState))
         .then((result) => {
-          setCompletionResult(result);
+          dispatch({ requestId, result, type: "RESOLVE_COMPLETION" });
         })
         .catch(() => {
-          setCompletionResult({ status: "error" });
+          dispatch({ requestId, type: "REJECT_COMPLETION" });
         });
     },
-    [onComplete],
+    [dispatch, onComplete, state],
+  );
+
+  const dispatchTransition = useCallback(
+    (action: SyncPlayerAction) => {
+      const transition = getPlayerTransition(state, action);
+      dispatch(action);
+
+      if (transition.shouldSubmitCompletion && isAuthenticated) {
+        submitCompletion(transition.nextState);
+      }
+    },
+    [dispatch, isAuthenticated, state, submitCompletion],
   );
 
   const selectAnswer = useCallback(
     (stepId: string, answer: SelectedAnswer | null) => {
       if (answer) {
-        dispatch({ answer, stepId, type: "SELECT_ANSWER" });
-      } else {
-        dispatch({ stepId, type: "CLEAR_ANSWER" });
+        dispatchTransition({ answer, stepId, type: "SELECT_ANSWER" });
+        return;
       }
+
+      dispatchTransition({ stepId, type: "CLEAR_ANSWER" });
     },
-    [dispatch],
+    [dispatchTransition],
   );
 
   const check = useCallback(() => {
@@ -77,50 +90,31 @@ export function usePlayerActions(
     }
 
     const { effects, result } = checkStep(currentStep, answer);
-    const matchColumnsWillComplete = currentStep.kind === "matchColumns" && willComplete(state);
-
-    const action = { effects, result, stepId: currentStep.id, type: "CHECK_ANSWER" as const };
-    dispatch(action);
-
-    if (matchColumnsWillComplete && isAuthenticated) {
-      fireCompletion(playerReducer(state, action));
-    }
-  }, [currentStep, state, dispatch, isAuthenticated, fireCompletion]);
+    dispatchTransition({ effects, result, stepId: currentStep.id, type: "CHECK_ANSWER" });
+  }, [currentStep, dispatchTransition, state.selectedAnswers]);
 
   const handleContinue = useCallback(() => {
-    const completing = willComplete(state);
-    dispatch({ type: "CONTINUE" });
-
-    if (completing && isAuthenticated) {
-      fireCompletion(state);
-    }
-  }, [state, dispatch, isAuthenticated, fireCompletion]);
+    dispatchTransition({ type: "CONTINUE" });
+  }, [dispatchTransition]);
 
   const navigateNext = useCallback(() => {
-    const completing = willComplete(state);
-    dispatch({ direction: "next", type: "NAVIGATE_STEP" });
-
-    if (completing && isAuthenticated) {
-      fireCompletion(state);
-    }
-  }, [state, dispatch, isAuthenticated, fireCompletion]);
+    dispatchTransition({ direction: "next", type: "NAVIGATE_STEP" });
+  }, [dispatchTransition]);
 
   const navigatePrev = useCallback(() => {
-    dispatch({ direction: "prev", type: "NAVIGATE_STEP" });
-  }, [dispatch]);
+    dispatchTransition({ direction: "prev", type: "NAVIGATE_STEP" });
+  }, [dispatchTransition]);
 
   const restart = useCallback(() => {
-    setCompletionResult(null);
-    dispatch({ type: "RESTART" });
-  }, [dispatch]);
+    dispatchTransition({ type: "RESTART" });
+  }, [dispatchTransition]);
 
   const startChallenge = useCallback(() => {
-    dispatch({ type: "START_CHALLENGE" });
-  }, [dispatch]);
+    dispatchTransition({ type: "START_CHALLENGE" });
+  }, [dispatchTransition]);
 
   return {
     check,
-    completionResult,
     continue: handleContinue,
     navigateNext,
     navigatePrev,
