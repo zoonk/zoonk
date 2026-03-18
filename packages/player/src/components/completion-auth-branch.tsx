@@ -46,7 +46,7 @@ function SecondaryActions({
       )}
       href={lessonHref}
     >
-      {t("Back to Lesson")}
+      {t("All Activities")}
       <Kbd
         className={cn(
           "hidden lg:inline-flex",
@@ -64,7 +64,7 @@ function SecondaryActions({
       onClick={onRestart}
       variant="outline"
     >
-      {t("Restart")}
+      {t("Try again")}
       <Kbd className="hidden opacity-60 lg:inline-flex">R</Kbd>
     </Button>
   );

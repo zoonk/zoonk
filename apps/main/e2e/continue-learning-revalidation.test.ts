@@ -137,8 +137,8 @@ test.describe("Continue Learning Revalidation", () => {
     // Wait for the server action response (includes the revalidatePath signal for Router Cache)
     await serverActionResponse;
 
-    // 4. Click "Back to Lesson" (client-side navigation)
-    await page.getByRole("link", { name: /back to lesson/i }).click();
+    // 4. Click "All Activities" (client-side navigation)
+    await page.getByRole("link", { name: /all activities/i }).click();
     await page.waitForURL(new RegExp(`e2e-cl-reval-lesson-${uniqueId}`));
 
     // 5. Click the Home link in the navbar (client-side navigation — Router Cache)
