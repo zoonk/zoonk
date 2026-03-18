@@ -12,6 +12,7 @@ export async function contactFormAction(_prevState: unknown, formData: FormData)
   }
 
   const { error } = await sendEmail({
+    replyTo: email,
     subject: "Zoonk Request",
     text: `
         <p><strong>From:</strong> ${email}</p>
