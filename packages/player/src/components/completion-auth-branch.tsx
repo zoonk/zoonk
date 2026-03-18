@@ -1,7 +1,6 @@
 "use client";
 
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
-import { Kbd } from "@zoonk/ui/components/kbd";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type Route } from "next";
 import { useExtracted } from "next-intl";
@@ -9,6 +8,8 @@ import Link from "next/link";
 import { type CompletionResult } from "../completion-input-schema";
 import { usePlayer } from "../player-context";
 import { BeltProgressHint, BeltProgressSkeleton } from "./belt-progress";
+import { PrimaryActionLink, PrimaryKbd, SecondaryKbd } from "./completion-action-link";
+import { MilestoneActions, UnauthenticatedMilestoneActions } from "./completion-milestone-actions";
 import { RewardBadges, RewardBadgesSkeleton } from "./reward-badges";
 
 function CompletionActions({ className, ...props }: React.ComponentProps<"div">) {
@@ -47,14 +48,7 @@ function SecondaryActions({
       href={lessonHref}
     >
       {t("All Activities")}
-      <Kbd
-        className={cn(
-          "hidden lg:inline-flex",
-          isInline ? "opacity-60" : "bg-primary-foreground/15 text-primary-foreground opacity-70",
-        )}
-      >
-        Esc
-      </Kbd>
+      {isInline ? <SecondaryKbd>Esc</SecondaryKbd> : <PrimaryKbd>Esc</PrimaryKbd>}
     </Link>
   );
 
@@ -65,7 +59,7 @@ function SecondaryActions({
       variant="outline"
     >
       {t("Try again")}
-      <Kbd className="hidden opacity-60 lg:inline-flex">R</Kbd>
+      <SecondaryKbd>R</SecondaryKbd>
     </Button>
   );
 
@@ -100,8 +94,17 @@ function AuthenticatedContent({
   showRewards: boolean;
 }) {
   const t = useExtracted();
+  const { isLastInLesson } = usePlayer();
 
   const isLoading = !completionResult || completionResult.status !== "success";
+
+  if (isLastInLesson) {
+    return (
+      <CompletionActions>
+        <MilestoneActions lessonHref={lessonHref} />
+      </CompletionActions>
+    );
+  }
 
   return (
     <>
@@ -128,15 +131,9 @@ function AuthenticatedContent({
       <CompletionActions>
         {nextActivityHref ? (
           <>
-            <Link
-              className={cn(buttonVariants({ size: "lg" }), "w-full lg:justify-between")}
-              href={nextActivityHref}
-            >
+            <PrimaryActionLink href={nextActivityHref} shortcut="Enter">
               {t("Next")}
-              <Kbd className="bg-primary-foreground/15 text-primary-foreground hidden opacity-70 lg:inline-flex">
-                Enter
-              </Kbd>
-            </Link>
+            </PrimaryActionLink>
 
             <SecondaryActions lessonHref={lessonHref} onRestart={onRestart} variant="inline" />
           </>
@@ -158,6 +155,11 @@ function UnauthenticatedContent({
   onRestart: () => void;
 }) {
   const t = useExtracted();
+  const { isLastInLesson } = usePlayer();
+
+  if (isLastInLesson) {
+    return <UnauthenticatedMilestoneActions lessonHref={lessonHref} loginHref={loginHref} />;
+  }
 
   return (
     <>

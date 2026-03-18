@@ -47,25 +47,43 @@ function deriveViewState(state: PlayerState) {
 export function PlayerProvider<Href extends string>({
   activity,
   children,
+  chapterHref,
   completionFooter,
+  courseHref,
   isAuthenticated,
+  isCourseComplete = false,
+  isLastInLesson = false,
+  isNextChapter = false,
   lessonHref,
+  lessonTitle = "",
   levelHref,
   loginHref,
   nextActivityHref,
+  nextChapterHref = null,
+  nextLessonHref = null,
+  nextLessonTitle = null,
   onComplete,
   onEscape,
   onNext,
   userName,
 }: {
   activity: SerializedActivity;
+  chapterHref?: Route<Href>;
   children: React.ReactNode;
   completionFooter?: React.ReactNode;
+  courseHref?: Route<Href>;
   isAuthenticated: boolean;
+  isCourseComplete?: boolean;
+  isLastInLesson?: boolean;
+  isNextChapter?: boolean;
   lessonHref: Route<Href>;
+  lessonTitle?: string;
   levelHref?: Route<Href>;
   loginHref?: Route<Href>;
   nextActivityHref: Route<Href> | null;
+  nextChapterHref?: Route<Href> | null;
+  nextLessonHref?: Route<Href> | null;
+  nextLessonTitle?: string | null;
   onComplete: (input: CompletionInput) => Promise<CompletionResult>;
   onEscape: () => void;
   onNext?: () => void;
@@ -113,17 +131,26 @@ export function PlayerProvider<Href extends string>({
     ...view,
     activityId: state.activityId,
     changedDimensions,
+    chapterHref: chapterHref ?? lessonHref,
     completionFooter,
     completionResult: actions.completionResult,
+    courseHref: courseHref ?? lessonHref,
     currentStepIndex: state.currentStepIndex,
     dimensions: state.dimensions,
     escape: onEscape,
     isAuthenticated,
+    isCourseComplete,
+    isLastInLesson,
+    isNextChapter,
     lessonHref,
+    lessonTitle,
     levelHref,
     loginHref,
     next: handleNext,
     nextActivityHref,
+    nextChapterHref,
+    nextLessonHref,
+    nextLessonTitle,
     phase: state.phase,
     results: state.results,
   };

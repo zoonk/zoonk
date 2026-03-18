@@ -212,8 +212,8 @@ checksums:
     "%7Bnames%7D%20dropped%20below%20zero./singular": 36735509d5747d09d3519324aa0f1493
     All%20Activities/singular: 9eee26b7ca58444c6d0db6bcd7ea7eda
     "%7Bname%7D%20dropped%20to%20%7Bvalue%7D./singular": 95e21895ac0d6fa49a9a2117ccd8fd6a
+    Try%20again/singular: 33dd8820e743e35a66e6977f69e9d3b5
     Final%20scores/singular: e772441fda83e82c2101876fee323481
-    Try%20Again/singular: d65fad81c5f8f90405b26bf6e5d70ab9
     Total%20score/singular: 52bf3d9b021a715f5624d7c945d97eb6
     If%20any%20score%20ends%20below%20zero%2C%20game%20over./singular: 1c5c2c71e421c428e792d3c1509b0276
     No%20choice%20is%20right%20or%20wrong%20%E2%80%94%20every%20one%20has%20trade-offs./singular: 8a67c34645c8bfd8546261a977ace665
@@ -228,8 +228,16 @@ checksums:
     Next/singular: 89ddbcf710eba274963494f312bdc8a9
     Login/singular: f4f219abeb5a465ecb1c7efaf50246de
     Sign%20up%20to%20track%20your%20progress/singular: 554ed29d9b8a243362c3b3374222af08
+    Next%20Chapter/singular: 88bd2a8dbe3d1ba13dc3441da4eb83bc
+    Next%20Lesson/singular: d8f3c6027310c4e0becf70b1e0738b05
+    Review%20Lesson/singular: f7660f36b45eef40711a96beb3d5c41a
+    Review%20Course/singular: e50326ebe53fd39b73f670513b7fcff5
+    Review%20Chapter/singular: cd4ad3b3a0382feedb17bd24ce882f2b
+    Course%20Complete/singular: 324f36f75d7bcba42a2723097a7c989d
     Completed/singular: 0e4bbce9985f25eb673d9a054c8d5334
+    Lesson%20Complete/singular: c2353c93f81c6ff8aab8825a73bcbb6a
     correct/singular: 0c2df4a764cea47295c0b550477e8e29
+    Chapter%20Complete/singular: 93c49bef3b2cfd1305e910cd79381afd
     All%20clear/singular: ca7355395e213474da78c66783aefc0c
     Current%20scores/singular: 9540e05ca834af8682ea93bdec677299
     "%7Bcount%7D%20in%20danger/singular": 82145029fddd68fcd3b3b094a2be8eb1
@@ -495,7 +503,6 @@ checksums:
     Create%20Activity/singular: ceaf06ac3cbfcfcf824b9e9acf66cfb9
     Create%20content%20for%20this%20activity/singular: e48e26e5fc10415a118d5d6c9f6d032e
     Your%20activity%20is%20ready/singular: e7385c4096b843839bb9a96023f0eea9
-    Try%20again/singular: 33dd8820e743e35a66e6977f69e9d3b5
     Something%20went%20wrong/singular: a3cd2f01c073f1f5ff436d4b132d39cf
     This%20usually%20takes%20about%20a%20minute/singular: 8b679d39d752ba8a57fbabd4eb745f28
     Taking%20you%20to%20your%20activity.../singular: c6714da27762cce70a0e2465878abaed
@@ -591,6 +598,7 @@ checksums:
     More%20options/singular: 53d90eae6a9b0243b5bc043b3d9de169
     Start/singular: dbe56303d9a6d3fad1a8d4cbcc97f365
     Review/singular: 299f75db25382980b2895622d7712927
+    All%20activities%20completed/singular: 7a287338649cba271ade32d7008a9231
     Please%20provide%20as%20much%20detail%20as%20possible./singular: 3c8b231283c751d4beae059a6ffc3643
     Failed%20to%20send%20message.%20Please%20try%20again%20or%20email%20us%20directly%20at%20hello%40zoonk.com/singular: 7f36bcd5ba5dad4b9981f85488ff794c
     Email%20address/singular: 3ba3f099b1b9be6c35ad797da660cb9f

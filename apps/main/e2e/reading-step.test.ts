@@ -98,8 +98,10 @@ async function createReadingActivity(options: {
     title: `E2E Reading Activity ${uniqueId}`,
   });
 
-  await Promise.all(
-    createdSentences.map((sentence, index) =>
+  // Create a second activity so the tested one is not the last in the lesson.
+  // This ensures tests see mid-lesson completion behavior (not lesson-complete).
+  await Promise.all([
+    ...createdSentences.map((sentence, index) =>
       stepFixture({
         activityId: activity.id,
         content: {},
@@ -109,7 +111,15 @@ async function createReadingActivity(options: {
         sentenceId: sentence.id,
       }),
     ),
-  );
+    activityFixture({
+      generationStatus: "completed",
+      isPublished: true,
+      kind: "explanation",
+      lessonId: lesson.id,
+      organizationId: org.id,
+      position: 1,
+    }),
+  ]);
 
   const url = `/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}/a/0`;
 

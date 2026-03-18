@@ -43,6 +43,10 @@ export async function LessonList({
         <CatalogListContent>
           {lessons.map((lesson) => {
             const completion = completionMap.get(lesson.id);
+            const isCompleted =
+              completion !== undefined &&
+              completion.totalActivities > 0 &&
+              completion.completedActivities >= completion.totalActivities;
 
             return (
               <CatalogListItem
@@ -54,7 +58,9 @@ export async function LessonList({
                 <CatalogListItemPosition>{formatPosition(lesson.position)}</CatalogListItemPosition>
 
                 <CatalogListItemContent>
-                  <CatalogListItemTitle>{lesson.title}</CatalogListItemTitle>
+                  <CatalogListItemTitle completed={isCompleted}>
+                    {lesson.title}
+                  </CatalogListItemTitle>
                   <CatalogListItemDescription>{lesson.description}</CatalogListItemDescription>
                 </CatalogListItemContent>
 

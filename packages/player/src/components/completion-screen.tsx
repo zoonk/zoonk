@@ -48,6 +48,25 @@ function CompletionSignal() {
   );
 }
 
+function MilestoneHeading() {
+  const t = useExtracted();
+  const { isCourseComplete, isNextChapter } = usePlayer();
+
+  function getHeading() {
+    if (isCourseComplete) {
+      return t("Course Complete");
+    }
+
+    if (isNextChapter) {
+      return t("Chapter Complete");
+    }
+
+    return t("Lesson Complete");
+  }
+
+  return <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">{getHeading()}</h2>;
+}
+
 function getCompletionScore(results: Record<string, StepResult>) {
   const resultList = Object.values(results);
 
@@ -78,7 +97,7 @@ export function CompletionScreenContent({
   results: Record<string, StepResult>;
 }) {
   const t = useExtracted();
-  const { completionFooter } = usePlayer();
+  const { completionFooter, isLastInLesson } = usePlayer();
   const isChallenge = Object.keys(dimensions).length > 0;
 
   if (isChallenge && hasNegativeDimension(dimensions)) {
@@ -103,6 +122,24 @@ export function CompletionScreenContent({
           showRewards={false}
         />
       </ChallengeSuccessContent>
+    );
+  }
+
+  if (isLastInLesson) {
+    return (
+      <CompletionScreen className="min-h-[60vh] max-w-sm justify-center gap-10 px-6 sm:gap-12">
+        <MilestoneHeading />
+
+        <div className="flex w-full flex-col gap-3">
+          <AuthBranch
+            completionResult={completionResult}
+            lessonHref={lessonHref}
+            nextActivityHref={nextActivityHref}
+            onRestart={onRestart}
+            showRewards={false}
+          />
+        </div>
+      </CompletionScreen>
     );
   }
 

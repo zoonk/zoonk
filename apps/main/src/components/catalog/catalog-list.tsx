@@ -215,11 +215,19 @@ export function CatalogListItemContent({ className, ...props }: React.ComponentP
   );
 }
 
-export function CatalogListItemTitle({ className, ...props }: React.ComponentProps<"span">) {
+export function CatalogListItemTitle({
+  className,
+  completed,
+  ...props
+}: React.ComponentProps<"span"> & { completed?: boolean }) {
   return (
     <span
       {...props}
-      className={cn("text-foreground/90 text-sm leading-snug font-medium", className)}
+      className={cn(
+        "text-sm leading-snug font-medium",
+        completed ? "text-muted-foreground" : "text-foreground/90",
+        className,
+      )}
       data-slot="catalog-list-item-title"
     />
   );

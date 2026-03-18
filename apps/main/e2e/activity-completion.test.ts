@@ -70,6 +70,17 @@ async function createTestHierarchy(prefix: string) {
     title: `E2E ${prefix} Lesson ${uniqueId}`,
   });
 
+  // Create a second activity so the tested one is not the last in the lesson.
+  // This ensures tests see mid-lesson completion behavior (not lesson-complete).
+  await activityFixture({
+    generationStatus: "completed",
+    isPublished: true,
+    kind: "explanation",
+    lessonId: lesson.id,
+    organizationId: org.id,
+    position: 1,
+  });
+
   const buildUrl = () => `/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}/a/0`;
 
   return { buildUrl, lesson, org, uniqueId };

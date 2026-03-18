@@ -23,9 +23,14 @@ export type PlayerContextValue<Href extends string> = {
   hasAnswer: boolean;
   isAuthenticated: boolean;
   isCompleted: boolean;
+  isCourseComplete: boolean;
   isGameOver: boolean;
   isIntro: boolean;
+  isLastInLesson: boolean;
+  isNextChapter: boolean;
   isStaticStep: boolean;
+  lessonTitle: string;
+  nextLessonTitle: string | null;
   phase: PlayerPhase;
   progressValue: number;
   results: Record<string, StepResult>;
@@ -44,11 +49,15 @@ export type PlayerContextValue<Href extends string> = {
   selectAnswer: (stepId: string, answer: SelectedAnswer | null) => void;
   startChallenge: () => void;
 
+  chapterHref: Route<Href>;
   completionFooter?: React.ReactNode;
+  courseHref: Route<Href>;
   lessonHref: Route<Href>;
   levelHref?: Route<Href>;
   loginHref?: Route<Href>;
   nextActivityHref: Route<Href> | null;
+  nextChapterHref: Route<Href> | null;
+  nextLessonHref: Route<Href> | null;
 };
 
 const PlayerContext = createContext<PlayerContextValue<string> | null>(null);

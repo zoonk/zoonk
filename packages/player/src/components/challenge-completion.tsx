@@ -1,15 +1,14 @@
 "use client";
 
-import { Button, buttonVariants } from "@zoonk/ui/components/button";
-import { Kbd } from "@zoonk/ui/components/kbd";
+import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { type Route } from "next";
 import { useExtracted } from "next-intl";
-import Link from "next/link";
 import { type CompletionResult } from "../completion-input-schema";
 import { usePlayer } from "../player-context";
 import { type DimensionInventory } from "../player-reducer";
 import { BeltProgressHint, BeltProgressSkeleton } from "./belt-progress";
+import { PrimaryKbd, SecondaryActionLink } from "./completion-action-link";
 import { DimensionList, buildDimensionEntries } from "./dimension-inventory";
 import { RewardBadges, RewardBadgesSkeleton } from "./reward-badges";
 
@@ -168,18 +167,12 @@ export function ChallengeFailureContent({
       <ChallengeActions>
         <Button className="w-full lg:justify-between" onClick={onRestart} size="lg">
           {t("Try again")}
-          <Kbd className="bg-primary-foreground/15 text-primary-foreground hidden opacity-70 lg:inline-flex">
-            R
-          </Kbd>
+          <PrimaryKbd>R</PrimaryKbd>
         </Button>
 
-        <Link
-          className={cn(buttonVariants({ variant: "outline" }), "w-full lg:justify-between")}
-          href={lessonHref}
-        >
+        <SecondaryActionLink href={lessonHref} shortcut="Esc">
           {t("All Activities")}
-          <Kbd className="hidden opacity-60 lg:inline-flex">Esc</Kbd>
-        </Link>
+        </SecondaryActionLink>
       </ChallengeActions>
 
       {completionFooter}
