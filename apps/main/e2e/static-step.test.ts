@@ -80,7 +80,7 @@ async function createStaticActivity(options: {
 
   // Create a second activity so the tested one is not the last in the lesson.
   // This ensures tests see mid-lesson completion behavior (not lesson-complete).
-  const [, nextActivity] = await Promise.all([
+  await Promise.all([
     ...options.steps.map((step) =>
       stepFixture({
         activityId: activity.id,
@@ -102,7 +102,7 @@ async function createStaticActivity(options: {
 
   const url = `/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}/a/0`;
 
-  return { activity, chapter, course, lesson, nextActivity, uniqueId, url };
+  return { activity, chapter, course, lesson, uniqueId, url };
 }
 
 test.describe("Static Step Rendering", () => {

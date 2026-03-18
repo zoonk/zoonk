@@ -51,7 +51,10 @@ export function ActivityPlayerClient({
     ? (`/b/${brandSlug}/c/${courseSlug}/ch/${nextActivity.chapterSlug}/l/${nextActivity.lessonSlug}/a/${String(nextActivity.activityPosition)}` as const)
     : null;
 
-  const isLastInLesson = !nextActivity || nextActivity.lessonSlug !== lessonSlug;
+  const isLastInLesson =
+    !nextActivity ||
+    nextActivity.lessonSlug !== lessonSlug ||
+    nextActivity.chapterSlug !== chapterSlug;
 
   const nextLessonHref = (() => {
     if (!isLastInLesson) {
