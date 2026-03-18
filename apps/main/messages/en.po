@@ -42,11 +42,6 @@ msgctxt "Ypr9T5"
 msgid "Incorrect"
 msgstr "Incorrect"
 
-#: ../../packages/player/src/components/arrange-words-feedback.tsx
-msgctxt "mhiTW7"
-msgid "Correct answer"
-msgstr "Correct answer"
-
 #: ../../packages/player/src/components/arrange-words.tsx
 #: ../../packages/player/src/components/fill-blank-step.tsx
 msgctxt "e7WNdK"

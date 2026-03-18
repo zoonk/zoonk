@@ -122,7 +122,9 @@ export async function generateReadingContentStep(
 
   const { data: result, error } = await safeAsync(() =>
     generateActivitySentences({
+      chapterTitle: activity.lesson.chapter.title,
       concepts,
+      lessonDescription: activity.lesson.description ?? undefined,
       lessonTitle: activity.lesson.title,
       neighboringConcepts,
       targetLanguage: course.targetLanguage ?? course.title,

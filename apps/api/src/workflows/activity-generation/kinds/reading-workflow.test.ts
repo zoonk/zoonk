@@ -29,11 +29,13 @@ vi.mock("@zoonk/ai/tasks/activities/language/sentences", () => ({
     data: {
       sentences: [
         {
+          explanation: "Basic sentence with verb 'ver' (to see) conjugated for 'yo'.",
           romanization: "yo see-o un ga-to",
           sentence: "Yo veo un gato.",
           translation: "I see a cat.",
         },
         {
+          explanation: null,
           romanization: "o-la, ko-mo es-tas",
           sentence: "Hola, como estas?",
           translation: "Hello, how are you?",

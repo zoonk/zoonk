@@ -10,8 +10,6 @@ import { type SelectedAnswer, type StepResult } from "../player-reducer";
 import { type WordBankOption } from "../prepare-activity-data";
 import { useWordAudio } from "../use-word-audio";
 import { ArrangeWordsAnswerArea, type PlacedWord } from "./arrange-words-answer-area";
-import { ArrangeWordsFeedback, type ArrangeWordsFeedbackProps } from "./arrange-words-feedback";
-import { InlineFeedback } from "./inline-feedback";
 import { RomanizationText } from "./romanization-text";
 import { InteractiveStepLayout } from "./step-layouts";
 
@@ -108,7 +106,6 @@ export function ArrangeWordsInteraction({
   answerKind,
   children,
   correctWords,
-  feedbackDetails,
   onSelectAnswer,
   result,
   selectedAnswer,
@@ -118,7 +115,6 @@ export function ArrangeWordsInteraction({
   answerKind: "reading" | "listening";
   children: React.ReactNode;
   correctWords: string[];
-  feedbackDetails?: ArrangeWordsFeedbackProps;
   onSelectAnswer: (stepId: string, answer: SelectedAnswer | null) => void;
   result?: StepResult;
   selectedAnswer: SelectedAnswer | undefined;
@@ -223,12 +219,6 @@ export function ArrangeWordsInteraction({
       />
 
       <WordBank onPlace={handlePlace} placedWords={placedWords} words={wordBankOptions} />
-
-      {result && (
-        <InlineFeedback result={result}>
-          {feedbackDetails && <ArrangeWordsFeedback {...feedbackDetails} />}
-        </InlineFeedback>
-      )}
     </InteractiveStepLayout>
   );
 }

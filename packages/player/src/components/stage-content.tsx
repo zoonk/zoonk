@@ -13,7 +13,12 @@ import { FeedbackScreenContent } from "./feedback-screen";
 import { StepRenderer } from "./step-renderer";
 
 function needsFeedbackScreen(step: SerializedStep): boolean {
-  return step.kind === "multipleChoice" || step.kind === "translation";
+  return (
+    step.kind === "multipleChoice" ||
+    step.kind === "translation" ||
+    step.kind === "reading" ||
+    step.kind === "listening"
+  );
 }
 
 export function StageContent({
@@ -71,7 +76,9 @@ export function StageContent({
   }
 
   if (phase === "feedback" && currentResult && (!currentStep || needsFeedbackScreen(currentStep))) {
-    return <FeedbackScreenContent dimensions={dimensions} result={currentResult} />;
+    return (
+      <FeedbackScreenContent dimensions={dimensions} result={currentResult} step={currentStep} />
+    );
   }
 
   if ((phase === "playing" || phase === "feedback") && currentStep) {

@@ -19,6 +19,24 @@ Focus on creating sentences that demonstrate authentic usage patterns native spe
 - `pt`: Brazilian Portuguese
 - `es`: Latin American Spanish
 
+# Difficulty Scaling
+
+Analyze CHAPTER_TITLE, LESSON_TITLE, LESSON_DESCRIPTION, VOCABULARY_WORDS, and CONCEPTS to infer the learner's level. Match sentence complexity to the inferred level.
+
+## Level indicators
+
+- **Beginner**: basic vocabulary (greetings, numbers, colors, family), simple/common words, foundational topics
+- **Intermediate**: verbs with conjugation, abstract concepts, compound vocabulary
+- **Advanced**: idioms, nuanced expressions, professional/technical vocabulary, complex grammar concepts
+
+## Sentence complexity by level
+
+- **Beginner**: very short sentences (2-5 words), simple structures (greetings, basic statements), only provided vocabulary
+- **Intermediate**: medium sentences (4-8 words), simple + compound, some additional common vocabulary
+- **Advanced**: longer/complex sentences, subordinate clauses, broader vocabulary
+
+Example: A lesson on "Greetings" with vocabulary ["hola", "buenos días"] should produce "¡Buenos días!" — NOT "As she entered the coffee shop, she immediately said good afternoon."
+
 # Sentence Generation Principles
 
 ## What Makes Good Practice Sentences
@@ -33,10 +51,6 @@ Focus on creating sentences that demonstrate authentic usage patterns native spe
   - Hobbies and leisure activities
   - Food and dining
   - Health and daily routines
-- **Range of complexity**: Include a mix of sentence structures:
-  - Simple sentences for foundational practice
-  - Compound sentences with conjunctions
-  - Sentences with common phrases and expressions
 - **Practical relevance**: Sentences learners will actually encounter or need to produce
 - **Cultural appropriateness**: Reflect how native speakers naturally communicate
 
@@ -52,10 +66,10 @@ Focus on creating sentences that demonstrate authentic usage patterns native spe
 
 - **Artificial or contrived sentences**: Sentences that feel like they exist only to showcase a word
 - **Repetitive structures**: Using the same sentence pattern repeatedly
-- **Overly simplistic sentences**: "The X is Y" patterns that don't demonstrate real usage
 - **Complex or rare grammatical constructions**: Focus on common, useful patterns
 - **Sentences requiring advanced cultural knowledge**: Keep contexts universally accessible
 - **Inappropriate content**: Profanity, offensive language, or embarrassing scenarios
+- **Complexity mismatch**: Do not produce complex sentences for beginner-level lessons
 
 # Grammatical Accuracy: CRITICAL
 
@@ -96,6 +110,14 @@ Use the standard romanization system for each language:
 
 **For languages using Roman letters** (Spanish, French, German, Portuguese, Italian, etc.), set `romanization` to `null`.
 
+# Explanation
+
+For each sentence, provide a brief explanation (1-2 sentences) of the key grammar or word-order pattern demonstrated. Write the explanation in USER_LANGUAGE (the learner's native language).
+
+- Focus on patterns that differ from the user's native language (e.g., adjective placement, verb conjugation rules, word order differences)
+- Set to `null` for very simple sentences where the structure is obvious (e.g., single-word greetings, basic "Hello!" sentences)
+- Keep explanations concise and practical — highlight the one thing a learner should notice
+
 # Output Format
 
 Return an object with a `sentences` array. Each sentence object must include:
@@ -103,8 +125,9 @@ Return an object with a `sentences` array. Each sentence object must include:
 - `sentence`: The complete sentence in the target language
 - `translation`: The translation in the native language
 - `romanization`: Roman letter representation for non-Roman scripts, or `null` for Roman scripts
+- `explanation`: Brief grammar/structure explanation in USER_LANGUAGE, or `null` for trivially simple sentences
 
-**Example for Spanish (Roman script) - romanization is null:**
+**Example for Spanish (Roman script):**
 
 ```json
 {
@@ -112,18 +135,20 @@ Return an object with a `sentences` array. Each sentence object must include:
     {
       "sentence": "Mi hermana trabaja en un hospital.",
       "translation": "My sister works at a hospital.",
-      "romanization": null
+      "romanization": null,
+      "explanation": "In Spanish, possessive adjectives like 'mi' (my) come before the noun, just like in English."
     },
     {
       "sentence": "¿Dónde está la estación de tren?",
       "translation": "Where is the train station?",
-      "romanization": null
+      "romanization": null,
+      "explanation": "'Estar' is used for location. Questions in Spanish are framed with ¿...? and the verb often comes before the subject."
     }
   ]
 }
 ```
 
-**Example for Japanese (non-Roman script) - romanization included:**
+**Example for Japanese (non-Roman script):**
 
 ```json
 {
@@ -131,12 +156,14 @@ Return an object with a `sentences` array. Each sentence object must include:
     {
       "sentence": "私の姉は病院で働いています。",
       "translation": "My older sister works at a hospital.",
-      "romanization": "Watashi no ane wa byouin de hataraite imasu."
+      "romanization": "Watashi no ane wa byouin de hataraite imasu.",
+      "explanation": "Japanese uses the particle 'de' (で) to indicate where an action takes place, similar to 'at' or 'in' in English."
     },
     {
       "sentence": "駅はどこですか？",
       "translation": "Where is the station?",
-      "romanization": "Eki wa doko desu ka?"
+      "romanization": "Eki wa doko desu ka?",
+      "explanation": "In Japanese, the question word 'doko' (where) comes after the topic, and 'ka' at the end marks it as a question."
     }
   ]
 }
@@ -161,4 +188,4 @@ Return an object with a `sentences` array. Each sentence object must include:
 
 4. **Vocabulary coverage**: Ensure the provided vocabulary words are naturally distributed across the sentences. Each vocabulary word should appear in at least one sentence.
 
-5. **Balanced difficulty**: Include a mix of simpler and more complex sentences to accommodate different learning stages.
+5. **Difficulty-appropriate complexity**: Match sentence complexity to the inferred level from the lesson context. Beginner lessons should have simple sentences; advanced lessons can have complex ones.

@@ -58,6 +58,7 @@ model Sentence {
   sentence        String
   translation     String
   romanization    String?
+  explanation     String?
   sentenceAudioId BigInt?          @map("sentence_audio_id")
   sentenceAudio   SentenceAudio?   @relation(fields: [sentenceAudioId], references: [id], onDelete: SetNull)
   createdAt       DateTime         @default(now()) @map("created_at")

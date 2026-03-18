@@ -26,6 +26,7 @@ export type SerializedSentence = {
   sentence: string;
   translation: string;
   romanization: string | null;
+  explanation: string | null;
   audioUrl: string | null;
 };
 
@@ -88,6 +89,7 @@ type SentenceDataInput = {
   sentence: string;
   translation: string;
   romanization: string | null;
+  explanation: string | null;
   sentenceAudio: { audioUrl: string } | null;
 };
 
@@ -106,6 +108,7 @@ function serializeWord(word: WordDataInput): SerializedWord {
 function serializeSentence(sentence: SentenceDataInput): SerializedSentence {
   return {
     audioUrl: sentence.sentenceAudio?.audioUrl ?? null,
+    explanation: sentence.explanation,
     id: String(sentence.id),
     romanization: sentence.romanization,
     sentence: sentence.sentence,
@@ -258,6 +261,7 @@ export function prepareActivityData(
     language: activity.language,
     lessonSentences: lessonSentences.map((sentence) => ({
       audioUrl: sentence.sentenceAudio?.audioUrl ?? null,
+      explanation: sentence.explanation,
       id: String(sentence.id),
       romanization: sentence.romanization,
       sentence: sentence.sentence,
