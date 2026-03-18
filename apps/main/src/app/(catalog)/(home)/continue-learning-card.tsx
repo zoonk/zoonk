@@ -20,25 +20,43 @@ import { getExtracted } from "next-intl/server";
 import Image from "next/image";
 import Link from "next/link";
 
-function getCourseHrefs(item: ContinueLearningItem) {
-  const { activity, chapter, course, lesson } = item;
+async function getHeaderLabel(item: ContinueLearningItem, kindLabels: Map<string, string>) {
+  const t = await getExtracted();
 
-  if (course.organization) {
-    const lessonHref =
-      `/b/${course.organization.slug}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}` as const;
+  if (item.status === "pending") {
+    return t("Continue");
+  }
 
+  const defaultLabel = t("Activity");
+  const activityLabel = item.activity.title ?? kindLabels.get(item.activity.kind) ?? defaultLabel;
+
+  return t("Next: {activity}", { activity: activityLabel });
+}
+
+function getHrefs(item: ContinueLearningItem) {
+  const { chapter, course, lesson } = item;
+
+  if (!course.organization) {
+    const href = `/p/${course.id}` as const;
+    return { courseHref: href, headerHref: href, lessonHref: href, prefetch: false };
+  }
+
+  const courseHref = `/b/${course.organization.slug}/c/${course.slug}` as const;
+
+  const lessonHref = lesson
+    ? (`/b/${course.organization.slug}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}` as const)
+    : (`/b/${course.organization.slug}/c/${course.slug}/ch/${chapter.slug}` as const);
+
+  if (item.status === "completed") {
     return {
-      activityHref: `${lessonHref}/a/${activity.position}` as const,
-      courseHref: `/b/${course.organization.slug}/c/${course.slug}` as const,
+      courseHref,
+      headerHref: `${lessonHref}/a/${item.activity.position}` as const,
       lessonHref,
+      prefetch: true,
     };
   }
 
-  return {
-    activityHref: `/p/${course.id}` as const,
-    courseHref: `/p/${course.id}` as const,
-    lessonHref: `/p/${course.id}` as const,
-  };
+  return { courseHref, headerHref: lessonHref, lessonHref, prefetch: false };
 }
 
 export async function ContinueLearningCard({
@@ -48,31 +66,26 @@ export async function ContinueLearningCard({
   item: ContinueLearningItem;
   kindLabels: Map<string, string>;
 }) {
-  const t = await getExtracted();
-  const { activity, course, lesson } = item;
-
-  const defaultLabel = t("Activity");
-  const activityLabel = activity.title ?? kindLabels.get(activity.kind) ?? defaultLabel;
-  const nextLabel = t("Next: {activity}", { activity: activityLabel });
-
-  const { activityHref, courseHref, lessonHref } = getCourseHrefs(item);
+  const { course, lesson } = item;
+  const headerLabel = await getHeaderLabel(item, kindLabels);
+  const { courseHref, headerHref, lessonHref, prefetch } = getHrefs(item);
 
   return (
     <FeatureCard>
-      <Link href={activityHref} prefetch>
+      <Link href={headerHref} prefetch={prefetch}>
         <FeatureCardHeader>
           <FeatureCardHeaderContent>
             <FeatureCardIcon>
               <PlayCircleIcon />
             </FeatureCardIcon>
-            <FeatureCardLabel>{nextLabel}</FeatureCardLabel>
+            <FeatureCardLabel>{headerLabel}</FeatureCardLabel>
           </FeatureCardHeaderContent>
           <FeatureCardIndicator />
         </FeatureCardHeader>
       </Link>
 
       <FeatureCardContent>
-        <Link href={activityHref} prefetch>
+        <Link href={headerHref} prefetch={prefetch}>
           <FeatureCardThumbnail size="lg">
             {course.imageUrl ? (
               <FeatureCardThumbnailImage>
@@ -93,19 +106,29 @@ export async function ContinueLearningCard({
         </Link>
 
         <FeatureCardBody>
-          <FeatureCardTitle>
-            <Link href={lessonHref} prefetch>
-              {lesson.title}
-            </Link>
-          </FeatureCardTitle>
+          {lesson ? (
+            <>
+              <FeatureCardTitle>
+                <Link href={lessonHref} prefetch={prefetch}>
+                  {lesson.title}
+                </Link>
+              </FeatureCardTitle>
 
-          <FeatureCardSubtitle>
-            <Link href={courseHref} prefetch>
-              {course.title}
-            </Link>
-          </FeatureCardSubtitle>
+              <FeatureCardSubtitle>
+                <Link href={courseHref} prefetch>
+                  {course.title}
+                </Link>
+              </FeatureCardSubtitle>
 
-          <FeatureCardDescription>{lesson.description}</FeatureCardDescription>
+              <FeatureCardDescription>{lesson.description}</FeatureCardDescription>
+            </>
+          ) : (
+            <FeatureCardTitle>
+              <Link href={courseHref} prefetch>
+                {course.title}
+              </Link>
+            </FeatureCardTitle>
+          )}
         </FeatureCardBody>
       </FeatureCardContent>
     </FeatureCard>

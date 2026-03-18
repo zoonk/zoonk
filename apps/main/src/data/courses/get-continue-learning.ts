@@ -14,6 +14,7 @@ import {
 } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
+import { getNextSibling } from "../progress/get-next-sibling";
 
 export const MAX_CONTINUE_LEARNING_ITEMS = 4;
 
@@ -35,24 +36,47 @@ type ContinueLearningRow = {
   chapterPosition: number;
 };
 
-export type ContinueLearningActivity = Pick<Activity, "id" | "kind" | "title" | "position">;
+type ContinueLearningActivity = Pick<Activity, "id" | "kind" | "title" | "position">;
 
-export type ContinueLearningLesson = Pick<Lesson, "id" | "slug" | "title" | "description">;
+type ContinueLearningLesson = Pick<Lesson, "id" | "slug" | "title" | "description">;
 
-export type ContinueLearningChapter = Pick<Chapter, "id" | "slug">;
+type ContinueLearningChapter = Pick<Chapter, "id" | "slug">;
 
-export type ContinueLearningCourse = Pick<Course, "id" | "slug" | "title" | "imageUrl"> & {
+type ContinueLearningCourse = Pick<Course, "id" | "slug" | "title" | "imageUrl"> & {
   organization: Pick<Organization, "slug"> | null;
 };
 
-export type ContinueLearningItem = {
-  course: ContinueLearningCourse;
-  chapter: ContinueLearningChapter;
-  lesson: ContinueLearningLesson;
+export type ContinueLearningCompletedItem = {
+  status: "completed";
   activity: ContinueLearningActivity;
+  chapter: ContinueLearningChapter;
+  course: ContinueLearningCourse;
+  lesson: ContinueLearningLesson;
 };
 
-function toItem(row: ContinueLearningRow, next: NextActivityInCourse): ContinueLearningItem {
+export type ContinueLearningPendingItem = {
+  status: "pending";
+  chapter: ContinueLearningChapter;
+  course: ContinueLearningCourse;
+  lesson: ContinueLearningLesson | null;
+};
+
+export type ContinueLearningItem = ContinueLearningCompletedItem | ContinueLearningPendingItem;
+
+function toCourse(row: ContinueLearningRow): ContinueLearningCourse {
+  return {
+    id: row.courseId,
+    imageUrl: row.courseImageUrl,
+    organization: row.orgSlug ? { slug: row.orgSlug } : null,
+    slug: row.courseSlug,
+    title: row.courseTitle,
+  };
+}
+
+function toCompletedItem(
+  row: ContinueLearningRow,
+  next: NextActivityInCourse,
+): ContinueLearningCompletedItem {
   return {
     activity: {
       id: next.activityId,
@@ -64,20 +88,57 @@ function toItem(row: ContinueLearningRow, next: NextActivityInCourse): ContinueL
       id: next.chapterId,
       slug: next.chapterSlug,
     },
-    course: {
-      id: row.courseId,
-      imageUrl: row.courseImageUrl,
-      organization: row.orgSlug ? { slug: row.orgSlug } : null,
-      slug: row.courseSlug,
-      title: row.courseTitle,
-    },
+    course: toCourse(row),
     lesson: {
       description: next.lessonDescription,
       id: next.lessonId,
       slug: next.lessonSlug,
       title: next.lessonTitle,
     },
+    status: "completed",
   };
+}
+
+type PendingTarget = {
+  chapter: ContinueLearningChapter;
+  lesson: ContinueLearningLesson | null;
+};
+
+async function findPendingTarget(row: ContinueLearningRow): Promise<PendingTarget | null> {
+  const nextLesson = await getNextSibling({
+    chapterId: row.chapterId,
+    chapterPosition: row.chapterPosition,
+    courseId: row.courseId,
+    lessonPosition: row.lessonPosition,
+    level: "lesson",
+  });
+
+  if (nextLesson) {
+    return {
+      chapter: { id: nextLesson.chapterId, slug: nextLesson.chapterSlug },
+      lesson: {
+        description: nextLesson.lessonDescription,
+        id: nextLesson.lessonId,
+        slug: nextLesson.lessonSlug,
+        title: nextLesson.lessonTitle,
+      },
+    };
+  }
+
+  const nextChapter = await getNextSibling({
+    chapterPosition: row.chapterPosition,
+    courseId: row.courseId,
+    level: "chapter",
+  });
+
+  if (nextChapter) {
+    return {
+      chapter: { id: nextChapter.chapterId, slug: nextChapter.chapterSlug },
+      lesson: null,
+    };
+  }
+
+  return null;
 }
 
 export const getContinueLearning = cache(
@@ -149,10 +210,27 @@ export const getContinueLearning = cache(
       ),
     );
 
+    const pendingTargets = await Promise.all(
+      rows.map((row, idx) =>
+        nextActivities[idx] ? Promise.resolve(null) : findPendingTarget(row),
+      ),
+    );
+
     return rows
-      .flatMap((row, idx) => {
+      .flatMap<ContinueLearningItem>((row, idx) => {
         const next = nextActivities[idx];
-        return next ? [toItem(row, next)] : [];
+
+        if (next) {
+          return [toCompletedItem(row, next)];
+        }
+
+        const target = pendingTargets[idx];
+
+        if (!target) {
+          return [];
+        }
+
+        return [{ ...target, course: toCourse(row), status: "pending" as const }];
       })
       .slice(0, MAX_CONTINUE_LEARNING_ITEMS);
   },

@@ -368,6 +368,7 @@ msgid "Activity progress"
 msgstr "Progresso da atividade"
 
 #: ../../packages/player/src/components/player-shell.tsx
+#: src/app/(catalog)/(home)/continue-learning-card.tsx
 #: src/components/catalog/continue-activity-link.tsx
 msgctxt "acrOoz"
 msgid "Continue"

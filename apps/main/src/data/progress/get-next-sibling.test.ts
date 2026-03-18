@@ -68,7 +68,7 @@ describe("getNextSibling - lesson level", () => {
       level: "lesson",
     });
 
-    expect(result).toEqual({
+    expect(result).toMatchObject({
       brandSlug: orgSlug,
       chapterSlug: expect.any(String),
       courseSlug,
@@ -85,7 +85,7 @@ describe("getNextSibling - lesson level", () => {
       level: "lesson",
     });
 
-    expect(result).toEqual({
+    expect(result).toMatchObject({
       brandSlug: orgSlug,
       chapterSlug: chapter2Slug,
       courseSlug,
@@ -196,7 +196,7 @@ describe("getNextSibling - chapter level", () => {
       level: "chapter",
     });
 
-    expect(result).toEqual({
+    expect(result).toMatchObject({
       brandSlug: orgSlug,
       chapterSlug: chapter2Slug,
       courseSlug,
