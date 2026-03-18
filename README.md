@@ -24,6 +24,8 @@
 | Learn Anything (Catalog) |             |  :hammer:   |      |        |
 | Personalized Lessons     | :calendar:  |             |      |        |
 | Editor                   |             |  :hammer:   |      |        |
+| Brands                   | :calendar:  |             |      |        |
+| Public Profiles          | :calendar:  |             |      |        |
 | Teams                    | :calendar:  |             |      |        |
 | Schools                  | :calendar:  |             |      |        |
 | White-Label (Creators)   | :calendar:  |             |      |        |
