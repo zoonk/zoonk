@@ -1,5 +1,5 @@
-import { type Route } from "next";
 import { type CompletionResult } from "../completion-input-schema";
+import { type PlayerRoute } from "../player-context";
 import {
   type DimensionInventory,
   type PlayerPhase,
@@ -28,7 +28,6 @@ export function StageContent({
   currentStep,
   currentStepIndex,
   dimensions,
-  isCompleted,
   lessonHref,
   nextActivityHref,
   onNavigateNext,
@@ -46,9 +45,8 @@ export function StageContent({
   currentStep: SerializedStep | undefined;
   currentStepIndex: number;
   dimensions: DimensionInventory;
-  isCompleted: boolean;
-  lessonHref: Route;
-  nextActivityHref: Route | null;
+  lessonHref: PlayerRoute;
+  nextActivityHref: PlayerRoute | null;
   onNavigateNext: () => void;
   onNavigatePrev: () => void;
   onRestart: () => void;
@@ -62,7 +60,7 @@ export function StageContent({
     return <ChallengeIntro dimensions={dimensions} onStart={onStartChallenge} />;
   }
 
-  if (isCompleted) {
+  if (phase === "completed") {
     return (
       <CompletionScreenContent
         completionResult={completionResult}

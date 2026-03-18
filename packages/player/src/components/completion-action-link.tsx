@@ -3,8 +3,8 @@
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { Kbd } from "@zoonk/ui/components/kbd";
 import { cn } from "@zoonk/ui/lib/utils";
-import { type Route } from "next";
-import Link from "next/link";
+import { type PlayerRoute } from "../player-context";
+import { PlayerLink } from "../player-link";
 
 export function PrimaryKbd({ children }: { children: React.ReactNode }) {
   return (
@@ -18,7 +18,7 @@ export function SecondaryKbd({ children }: { children: React.ReactNode }) {
   return <Kbd className="hidden opacity-60 lg:inline-flex">{children}</Kbd>;
 }
 
-export function PrimaryActionLink<T extends string>({
+export function PrimaryActionLink({
   children,
   className,
   href,
@@ -26,21 +26,21 @@ export function PrimaryActionLink<T extends string>({
 }: {
   children: React.ReactNode;
   className?: string;
-  href: Route<T>;
+  href: PlayerRoute;
   shortcut: string;
 }) {
   return (
-    <Link
+    <PlayerLink
       className={cn(buttonVariants({ size: "lg" }), "w-full lg:justify-between", className)}
       href={href}
     >
       {children}
       <PrimaryKbd>{shortcut}</PrimaryKbd>
-    </Link>
+    </PlayerLink>
   );
 }
 
-export function SecondaryActionLink<T extends string>({
+export function SecondaryActionLink({
   children,
   className,
   href,
@@ -48,16 +48,16 @@ export function SecondaryActionLink<T extends string>({
 }: {
   children: React.ReactNode;
   className?: string;
-  href: Route<T>;
+  href: PlayerRoute;
   shortcut: string;
 }) {
   return (
-    <Link
+    <PlayerLink
       className={cn(buttonVariants({ variant: "outline" }), "w-full lg:justify-between", className)}
       href={href}
     >
       {children}
       <SecondaryKbd>{shortcut}</SecondaryKbd>
-    </Link>
+    </PlayerLink>
   );
 }

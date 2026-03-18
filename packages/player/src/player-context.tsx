@@ -1,75 +1,86 @@
 "use client";
 
-import { type Route } from "next";
 import { createContext, useContext } from "react";
-import { type CompletionResult } from "./completion-input-schema";
-import {
-  type DimensionInventory,
-  type PlayerPhase,
-  type SelectedAnswer,
-  type StepResult,
-} from "./player-reducer";
-import { type SerializedStep } from "./prepare-activity-data";
+import { type PlayerState } from "./player-reducer";
+import { type PlayerActions } from "./use-player-actions";
 
-export type PlayerContextValue<Href extends string> = {
-  activityId: string;
-  canNavigatePrev: boolean;
-  completionResult: CompletionResult | null;
-  currentResult: StepResult | undefined;
-  currentStep: SerializedStep | undefined;
-  currentStepIndex: number;
-  changedDimensions: Set<string>;
-  dimensions: DimensionInventory;
-  hasAnswer: boolean;
-  isAuthenticated: boolean;
-  isCompleted: boolean;
-  isCourseComplete: boolean;
-  isGameOver: boolean;
-  isIntro: boolean;
-  isLastInLesson: boolean;
-  isNextChapter: boolean;
-  isStaticStep: boolean;
-  lessonTitle: string;
-  nextLessonTitle: string | null;
-  phase: PlayerPhase;
-  progressValue: number;
-  results: Record<string, StepResult>;
-  selectedAnswer: SelectedAnswer | undefined;
-  showBottomBar: boolean;
-  showHeader: boolean;
-  totalSteps: number;
+export type PlayerRoute = string | URL;
 
-  check: () => void;
-  continue: () => void;
-  escape: () => void;
-  navigateNext: () => void;
-  navigatePrev: () => void;
-  next: () => void;
-  restart: () => void;
-  selectAnswer: (stepId: string, answer: SelectedAnswer | null) => void;
-  startChallenge: () => void;
-
-  chapterHref: Route<Href>;
+export type PlayerViewer = {
   completionFooter?: React.ReactNode;
-  courseHref: Route<Href>;
-  lessonHref: Route<Href>;
-  levelHref?: Route<Href>;
-  loginHref?: Route<Href>;
-  nextActivityHref: Route<Href> | null;
-  nextChapterHref: Route<Href> | null;
-  nextLessonHref: Route<Href> | null;
+  isAuthenticated: boolean;
+  userName?: string | null;
 };
 
-const PlayerContext = createContext<PlayerContextValue<string> | null>(null);
+export type PlayerNavigation = {
+  chapterHref: PlayerRoute;
+  courseHref: PlayerRoute;
+  lessonHref: PlayerRoute;
+  levelHref?: PlayerRoute;
+  loginHref?: PlayerRoute;
+  nextActivityHref: PlayerRoute | null;
+};
 
-export function usePlayer<Href extends string = string>(): PlayerContextValue<Href> {
-  const context = useContext(PlayerContext);
+type ReviewMilestone = {
+  kind: "chapter" | "lesson";
+  nextHref: PlayerRoute | null;
+  reviewHref: PlayerRoute;
+};
+
+type CourseMilestone = {
+  kind: "course";
+  reviewHref: PlayerRoute;
+  secondaryReviewHref: PlayerRoute;
+};
+
+export type PlayerMilestone = { kind: "activity" } | ReviewMilestone | CourseMilestone;
+
+type PlayerRuntimeContextValue = {
+  actions: PlayerActions;
+  state: PlayerState;
+};
+
+type PlayerConfigContextValue = {
+  escape: () => void;
+  milestone: PlayerMilestone;
+  navigation: PlayerNavigation;
+  next: () => void;
+  viewer: PlayerViewer;
+};
+
+const PlayerConfigContext = createContext<PlayerConfigContextValue | null>(null);
+const PlayerRuntimeContext = createContext<PlayerRuntimeContextValue | null>(null);
+
+function usePlayerConfig(): PlayerConfigContextValue {
+  const context = useContext(PlayerConfigContext);
 
   if (!context) {
-    throw new Error("usePlayer must be used within a PlayerProvider");
+    throw new Error("usePlayerConfig must be used within a PlayerProvider");
   }
 
-  return context as PlayerContextValue<Href>;
+  return context;
 }
 
-export { PlayerContext };
+export function usePlayerMilestone(): PlayerMilestone {
+  return usePlayerConfig().milestone;
+}
+
+export function usePlayerNavigation(): PlayerNavigation {
+  return usePlayerConfig().navigation;
+}
+
+export function usePlayerRuntime(): PlayerRuntimeContextValue {
+  const context = useContext(PlayerRuntimeContext);
+
+  if (!context) {
+    throw new Error("usePlayerRuntime must be used within a PlayerProvider");
+  }
+
+  return context;
+}
+
+export function usePlayerViewer(): PlayerViewer {
+  return usePlayerConfig().viewer;
+}
+
+export { PlayerConfigContext, PlayerRuntimeContext };

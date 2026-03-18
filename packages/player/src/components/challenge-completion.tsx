@@ -2,10 +2,9 @@
 
 import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
-import { type Route } from "next";
 import { useExtracted } from "next-intl";
 import { type CompletionResult } from "../completion-input-schema";
-import { usePlayer } from "../player-context";
+import { type PlayerRoute, usePlayerViewer } from "../player-context";
 import { type DimensionInventory } from "../player-reducer";
 import { BeltProgressHint, BeltProgressSkeleton } from "./belt-progress";
 import { PrimaryKbd, SecondaryActionLink } from "./completion-action-link";
@@ -110,7 +109,7 @@ export function ChallengeSuccessContent({
   dimensions: DimensionInventory;
 }) {
   const t = useExtracted();
-  const { completionFooter, isAuthenticated } = usePlayer();
+  const { completionFooter, isAuthenticated } = usePlayerViewer();
   const entries = buildDimensionEntries(dimensions, []);
 
   return (
@@ -139,11 +138,11 @@ export function ChallengeFailureContent({
 }: {
   completionResult: CompletionResult | null;
   dimensions: DimensionInventory;
-  lessonHref: Route;
+  lessonHref: PlayerRoute;
   onRestart: () => void;
 }) {
   const t = useExtracted();
-  const { completionFooter, isAuthenticated } = usePlayer();
+  const { completionFooter, isAuthenticated } = usePlayerViewer();
   const entries = buildDimensionEntries(dimensions, []);
   const { names, single } = getFailureSubtitle(dimensions);
 

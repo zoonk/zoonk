@@ -57,6 +57,8 @@ function buildActivity(overrides: Partial<SerializedActivity> = {}): SerializedA
 function buildState(overrides: Partial<PlayerState> = {}): PlayerState {
   return {
     activityId: "activity-1",
+    completion: { status: "idle" },
+    completionRequestId: 0,
     currentStepIndex: 0,
     dimensions: {},
     phase: "playing",
@@ -517,6 +519,74 @@ describe("COMPLETE", () => {
     const state = buildState({ phase: "completed" });
     const next = playerReducer(state, { type: "COMPLETE" });
     expect(next).toBe(state);
+  });
+});
+
+describe("completion submission state", () => {
+  test("tracks the current submission request id while submitting", () => {
+    const next = playerReducer(buildState(), {
+      requestId: 7,
+      type: "SUBMIT_COMPLETION",
+    });
+
+    expect(next.completion).toEqual({ status: "submitting" });
+    expect(next.completionRequestId).toBe(7);
+  });
+
+  test("stores the latest resolved completion result", () => {
+    const next = playerReducer(
+      buildState({ completion: { status: "submitting" }, completionRequestId: 2 }),
+      {
+        requestId: 2,
+        result: {
+          belt: {
+            bpPerLevel: 250,
+            bpToNextLevel: 240,
+            color: "white",
+            isMaxLevel: false,
+            level: 1,
+            progressInLevel: 10,
+          },
+          brainPower: 5,
+          energyDelta: 2,
+          newTotalBp: 25,
+          status: "success",
+        },
+        type: "RESOLVE_COMPLETION",
+      },
+    );
+
+    expect(next.completion).toEqual({
+      belt: {
+        bpPerLevel: 250,
+        bpToNextLevel: 240,
+        color: "white",
+        isMaxLevel: false,
+        level: 1,
+        progressInLevel: 10,
+      },
+      brainPower: 5,
+      energyDelta: 2,
+      newTotalBp: 25,
+      status: "success",
+    });
+  });
+
+  test("ignores stale completion responses", () => {
+    const state = buildState({
+      completion: { status: "submitting" },
+      completionRequestId: 3,
+    });
+
+    const resolved = playerReducer(state, {
+      requestId: 2,
+      result: { status: "unauthenticated" },
+      type: "RESOLVE_COMPLETION",
+    });
+    const rejected = playerReducer(state, { requestId: 2, type: "REJECT_COMPLETION" });
+
+    expect(resolved).toBe(state);
+    expect(rejected).toBe(state);
   });
 });
 

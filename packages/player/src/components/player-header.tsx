@@ -3,9 +3,9 @@
 import { buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { XIcon } from "lucide-react";
-import { type Route } from "next";
 import { useExtracted } from "next-intl";
-import Link from "next/link";
+import { type PlayerRoute } from "../player-context";
+import { PlayerLink } from "../player-link";
 
 export function PlayerHeader({ className, ...props }: React.ComponentProps<"header">) {
   return (
@@ -20,20 +20,17 @@ export function PlayerHeader({ className, ...props }: React.ComponentProps<"head
   );
 }
 
-export function PlayerCloseLink<T extends string>({
-  className,
-  href,
-}: {
-  className?: string;
-  href: Route<T>;
-}) {
+export function PlayerCloseLink({ className, href }: { className?: string; href: PlayerRoute }) {
   const t = useExtracted();
 
   return (
-    <Link className={cn(buttonVariants({ size: "icon", variant: "ghost" }), className)} href={href}>
+    <PlayerLink
+      className={cn(buttonVariants({ size: "icon", variant: "ghost" }), className)}
+      href={href}
+    >
       <XIcon />
       <span className="sr-only">{t("Close")}</span>
-    </Link>
+    </PlayerLink>
   );
 }
 
