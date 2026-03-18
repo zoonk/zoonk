@@ -27,7 +27,7 @@ export async function sendEmail({
       body: JSON.stringify({
         from: { address: "hello@zoonk.com", name: "Zoonk" },
         htmlBody: text,
-        ...(replyTo && { reply_to: { address: replyTo } }),
+        ...(replyTo && { reply_to: [{ address: replyTo }] }),
         subject,
         to: [{ email_address: { address: to } }],
       }),
