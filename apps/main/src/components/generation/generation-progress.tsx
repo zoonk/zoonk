@@ -5,7 +5,7 @@ import { Button } from "@zoonk/ui/components/button";
 import { Progress, ProgressLabel, ProgressValue } from "@zoonk/ui/components/progress";
 import { cn } from "@zoonk/ui/lib/utils";
 import { AlertCircleIcon, CheckIcon, type LucideIcon } from "lucide-react";
-import { type ReactNode } from "react";
+import { type ReactNode, useEffect, useRef } from "react";
 
 type PhaseStatus = "pending" | "active" | "completed";
 
@@ -122,8 +122,23 @@ function GenerationTimelineStep({
   isLast?: boolean;
   status: PhaseStatus;
 }) {
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (status !== "active" || !ref.current) {
+      return;
+    }
+
+    const prefersReducedMotion = globalThis.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    ref.current.scrollIntoView({
+      behavior: prefersReducedMotion ? "instant" : "smooth",
+      block: "nearest",
+    });
+  }, [status]);
+
   return (
-    <div className="flex items-start gap-3" data-slot="generation-timeline-step">
+    <div ref={ref} className="flex items-start gap-3" data-slot="generation-timeline-step">
       <div className="flex flex-col items-center">
         <GenerationTimelineStepIndicator icon={icon} status={status} />
         {!isLast && (
