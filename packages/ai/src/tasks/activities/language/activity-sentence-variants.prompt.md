@@ -26,8 +26,8 @@ For each sentence pair, decide:
 
 - Optional pronouns that native speakers naturally omit
 - Standard contractions that keep the same meaning and register
-- Common context-free greeting variants when native teachers would accept both
-- Time-of-day expressions that are genuinely ambiguous without context
+- Common context-free lexical variants when native teachers would genuinely accept both
+- Small sentence-form changes that keep the same meaning
 
 # What Does NOT Count
 
@@ -35,6 +35,7 @@ For each sentence pair, decide:
 - Variants that shift formality or social tone
 - Different speech acts with similar intent
 - Punctuation-only differences
+- Variants justified only by transitive overlap
 
 # Use Vocabulary Hints Carefully
 
@@ -42,7 +43,9 @@ You will receive lesson vocabulary with canonical and alternative translations.
 
 - Use these words as clues for likely ambiguity
 - Do NOT force a variant just because two vocabulary words are related
-- Only include a variant if the full sentence still works naturally and precisely
+- Translation overlap is NOT transitive:
+  if A can mean X and Y, and B can mean X, that does NOT make B valid for Y
+- Lexical variants are allowed only when the full sentence still works naturally and precisely in that direction
 
 # Examples
 
@@ -66,6 +69,13 @@ You will receive lesson vocabulary with canonical and alternative translations.
   Valid `alternativeSentences`: `["Estoy en casa."]`
   Valid `alternativeTranslations`: `["I'm at home."]`
   Invalid `alternativeTranslations`: `["I stay home."]`
+
+- Canonical sentence: `Guten Tag, Herr Weber.`
+  Canonical translation: `Boa tarde, senhor Weber.`
+  Valid `alternativeSentences`: `[]`
+  Valid `alternativeTranslations`: `["Bom dia, senhor Weber."]`
+  Invalid `alternativeSentences`: `["Guten Morgen, Herr Weber."]`
+  Reason: `Guten Tag` can translate to `Bom dia` or `Boa tarde`, but that does NOT make `Guten Morgen` valid for `Boa tarde`
 
 - Canonical sentence: `Guten Tag, ich bin Lara.`
   Canonical translation: `Bom dia, eu sou Lara.`

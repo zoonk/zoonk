@@ -747,7 +747,7 @@ describe(prepareActivityData, () => {
     expect(holaCount).toBe(1); // Only the correct "Hola"
   });
 
-  test("reading word bank excludes distractor duplicates from accepted sentence variants", () => {
+  test("reading word bank uses accepted sentence variants only to suppress distractors", () => {
     const activity = {
       description: null,
       generationRunId: null,
@@ -805,12 +805,11 @@ describe(prepareActivityData, () => {
     const wordBankWords = wordBank.map((option) => option.word);
 
     expect(wordBankWords).toContain("Tag");
-    expect(wordBankWords).toContain("Morgen");
     expect(wordBankWords).toContain("Abend");
-    expect(wordBankWords.filter((word) => word.toLowerCase() === "morgen")).toHaveLength(1);
+    expect(wordBankWords).not.toContain("Morgen");
   });
 
-  test("listening word bank excludes distractor duplicates from accepted translation variants", () => {
+  test("listening word bank uses accepted translation variants only to suppress distractors", () => {
     const activity = {
       description: null,
       generationRunId: null,
@@ -877,9 +876,8 @@ describe(prepareActivityData, () => {
     const wordBankWords = wordBank.map((option) => option.word);
 
     expect(wordBankWords).toContain("day");
-    expect(wordBankWords).toContain("morning");
     expect(wordBankWords).toContain("evening");
-    expect(wordBankWords.filter((word) => word.toLowerCase() === "morning")).toHaveLength(1);
+    expect(wordBankWords).not.toContain("morning");
   });
 
   test("excludes distractors that match correct words when ignoring punctuation", () => {

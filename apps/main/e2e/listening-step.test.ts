@@ -19,7 +19,7 @@ async function createListeningActivity(options: {
     sentence: string;
     translation: string;
   }[];
-  words: { translation: string; word: string }[];
+  words: { alternativeTranslations?: string[]; translation: string; word: string }[];
   sentenceWords?: { romanization?: string | null; translation: string; word: string }[];
 }) {
   const org = await getAiOrganization();
@@ -53,6 +53,7 @@ async function createListeningActivity(options: {
   const createdWords = await Promise.all(
     options.words.map((wordData) =>
       wordFixture({
+        alternativeTranslations: wordData.alternativeTranslations ?? [],
         organizationId: org.id,
         translation: wordData.translation,
         word: wordData.word,
@@ -266,42 +267,47 @@ test.describe("Listening Step", () => {
     await expect(page.getByText(translation)).toBeVisible();
   });
 
-  test("accepts an alternative valid listening answer", async ({ page }) => {
+  test("hides alternative lexical listening words from the word bank", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const bom = `bom-${uniqueId}`;
     const dia = `dia-${uniqueId}`;
+    const boa = `boa-${uniqueId}`;
+    const tarde = `tarde-${uniqueId}`;
     const guten = `guten-${uniqueId}`;
     const tag = `tag-${uniqueId}`;
     const morgen = `morgen-${uniqueId}`;
     const lara = `lara-${uniqueId}`;
+    const noite = `noite-${uniqueId}`;
 
     const { url } = await createListeningActivity({
       sentences: [
         {
-          alternativeTranslations: [`${guten} ${morgen} ${lara}`],
-          sentence: `${bom} ${dia} ${lara}`,
-          translation: `${guten} ${tag} ${lara}`,
+          alternativeTranslations: [`${bom} ${dia} ${lara}`],
+          sentence: `${guten} ${tag} ${lara}`,
+          translation: `${boa} ${tarde} ${lara}`,
         },
       ],
-      words: [{ translation: `night-${uniqueId}`, word: `abend-${uniqueId}` }],
+      words: [
+        { translation: `${bom} ${dia}`, word: `${guten} ${morgen}` },
+        {
+          alternativeTranslations: [`${bom} ${dia}`],
+          translation: `${boa} ${tarde}`,
+          word: `${guten} ${tag}`,
+        },
+        { translation: noite, word: `abend-${uniqueId}` },
+      ],
     });
 
     await page.goto(url);
 
     const wordBank = page.getByRole("group", { name: /word bank/i });
 
-    await expect(wordBank.getByRole("button", { exact: true, name: guten })).toBeVisible();
-    await expect(wordBank.getByRole("button", { exact: true, name: tag })).toBeVisible();
-    await expect(wordBank.getByRole("button", { exact: true, name: morgen })).toBeVisible();
-
-    await wordBank.getByRole("button", { exact: true, name: guten }).click();
-    await wordBank.getByRole("button", { exact: true, name: morgen }).click();
-    await wordBank.getByRole("button", { exact: true, name: lara }).click();
-    await page.getByRole("button", { name: /check/i }).click();
-
-    await expect(page.getByText(/your answer/i)).toBeVisible();
-    await expect(page.getByText(`${guten} ${morgen} ${lara}`)).toBeVisible();
-    await expect(page.getByRole("button", { name: /continue/i })).toBeVisible();
+    await expect(wordBank.getByRole("button", { exact: true, name: boa })).toBeVisible();
+    await expect(wordBank.getByRole("button", { exact: true, name: tarde })).toBeVisible();
+    await expect(wordBank.getByRole("button", { exact: true, name: lara })).toBeVisible();
+    await expect(wordBank.getByRole("button", { exact: true, name: noite })).toBeVisible();
+    await expect(wordBank.getByRole("button", { exact: true, name: bom })).toHaveCount(0);
+    await expect(wordBank.getByRole("button", { exact: true, name: dia })).toHaveCount(0);
   });
 
   test("full flow: complete all listening steps to completion screen", async ({ page }) => {

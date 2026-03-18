@@ -20,7 +20,12 @@ async function createReadingActivity(options: {
     sentence: string;
     translation: string;
   }[];
-  words: { romanization?: string | null; translation: string; word: string }[];
+  words: {
+    alternativeTranslations?: string[];
+    romanization?: string | null;
+    translation: string;
+    word: string;
+  }[];
 }) {
   const org = await getAiOrganization();
 
@@ -53,6 +58,7 @@ async function createReadingActivity(options: {
   const createdWords = await Promise.all(
     options.words.map((wordData) =>
       wordFixture({
+        alternativeTranslations: wordData.alternativeTranslations ?? [],
         organizationId: org.id,
         romanization: wordData.romanization ?? null,
         translation: wordData.translation,
@@ -324,22 +330,31 @@ test.describe("Reading Step", () => {
     await expect(page.getByText(sentence)).toBeVisible();
   });
 
-  test("accepts an alternative valid reading answer", async ({ page }) => {
+  test("hides alternative lexical reading words from the word bank", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const guten = `Guten-${uniqueId}`;
     const tag = `Tag-${uniqueId}`;
     const morgen = `Morgen-${uniqueId}`;
     const lara = `Lara-${uniqueId}`;
+    const abend = `Abend-${uniqueId}`;
 
     const { url } = await createReadingActivity({
       sentences: [
         {
-          alternativeSentences: [`${guten} ${morgen} ${lara}`],
-          sentence: `${guten} ${tag} ${lara}`,
+          alternativeSentences: [`${guten} ${tag} ${lara}`],
+          sentence: `${guten} ${morgen} ${lara}`,
           translation: `Bom-dia-${uniqueId}`,
         },
       ],
-      words: [{ translation: `night-${uniqueId}`, word: `Abend-${uniqueId}` }],
+      words: [
+        { translation: `Bom-dia-${uniqueId}`, word: `${guten} ${morgen}` },
+        {
+          alternativeTranslations: [`Bom-dia-${uniqueId}`],
+          translation: `Boa-tarde-${uniqueId}`,
+          word: `${guten} ${tag}`,
+        },
+        { translation: `night-${uniqueId}`, word: abend },
+      ],
     });
 
     await page.goto(url);
@@ -347,17 +362,10 @@ test.describe("Reading Step", () => {
     const wordBank = page.getByRole("group", { name: /word bank/i });
 
     await expect(wordBank.getByRole("button", { exact: true, name: guten })).toBeVisible();
-    await expect(wordBank.getByRole("button", { exact: true, name: tag })).toBeVisible();
     await expect(wordBank.getByRole("button", { exact: true, name: morgen })).toBeVisible();
-
-    await wordBank.getByRole("button", { exact: true, name: guten }).click();
-    await wordBank.getByRole("button", { exact: true, name: morgen }).click();
-    await wordBank.getByRole("button", { exact: true, name: lara }).click();
-    await page.getByRole("button", { name: /check/i }).click();
-
-    await expect(page.getByText(/your answer/i)).toBeVisible();
-    await expect(page.getByText(`${guten} ${morgen} ${lara}`)).toBeVisible();
-    await expect(page.getByRole("button", { name: /continue/i })).toBeVisible();
+    await expect(wordBank.getByRole("button", { exact: true, name: lara })).toBeVisible();
+    await expect(wordBank.getByRole("button", { exact: true, name: abend })).toBeVisible();
+    await expect(wordBank.getByRole("button", { exact: true, name: tag })).toHaveCount(0);
   });
 
   test("dragging a placed word reorders it in the answer area", async ({ page }) => {

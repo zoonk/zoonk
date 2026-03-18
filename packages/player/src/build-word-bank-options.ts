@@ -1,10 +1,10 @@
 import { shuffle } from "@zoonk/utils/shuffle";
-import { segmentWords, stripPunctuation } from "@zoonk/utils/string";
+import { normalizePunctuation, segmentWords, stripPunctuation } from "@zoonk/utils/string";
 import {
   buildAcceptedArrangeWordSequences,
-  buildAcceptedWordBankWords,
   getAcceptedArrangeWordSet,
 } from "./arrange-words-answers";
+import { isSemanticMatch } from "./get-distractor-words";
 import {
   type SerializedStep,
   type SerializedWord,
@@ -19,6 +19,21 @@ type WordDataInput = {
   word: string;
   wordAudio: { audioUrl: string } | null;
 };
+
+function escapeRegExp(text: string): string {
+  return text.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
+}
+
+function createPhrasePattern(phrase: string): RegExp {
+  const normalizedPhrase = normalizePunctuation(phrase).trim();
+  const escapedPhrase = escapeRegExp(normalizedPhrase).replaceAll(String.raw`\ `, String.raw`\s+`);
+
+  return new RegExp(`(^|[^\\p{L}\\p{N}])(${escapedPhrase})(?=$|[^\\p{L}\\p{N}])`, "iu");
+}
+
+function hasPhrase(text: string, phrase: string): boolean {
+  return createPhrasePattern(phrase).test(normalizePunctuation(text));
+}
 
 function enrichWord(
   word: string,
@@ -43,30 +58,77 @@ function emptyWordOption(word: string): WordBankOption {
   return { audioUrl: null, romanization: null, translation: null, word };
 }
 
-function getWordBankConfig(
-  step: SerializedStep,
-): { acceptedWordSequences: string[][]; distractorField: "word" | "translation" } | null {
+function getWordBankConfig(step: SerializedStep): {
+  acceptedTexts: string[];
+  acceptedWordSequences: string[][];
+  primaryText: string;
+  distractorField: "word" | "translation";
+} | null {
   if (step.kind === "reading" && step.sentence) {
     return {
+      acceptedTexts: [step.sentence.sentence, ...step.sentence.alternativeSentences],
       acceptedWordSequences: buildAcceptedArrangeWordSequences(
         step.sentence.sentence,
         step.sentence.alternativeSentences,
       ),
       distractorField: "word",
+      primaryText: step.sentence.sentence,
     };
   }
 
   if (step.kind === "listening" && step.sentence) {
     return {
+      acceptedTexts: [step.sentence.translation, ...step.sentence.alternativeTranslations],
       acceptedWordSequences: buildAcceptedArrangeWordSequences(
         step.sentence.translation,
         step.sentence.alternativeTranslations,
       ),
       distractorField: "translation",
+      primaryText: step.sentence.translation,
     };
   }
 
   return null;
+}
+
+function getAcceptedLessonWords(
+  serializedLessonWords: SerializedWord[],
+  acceptedTexts: string[],
+  distractorField: "word" | "translation",
+): SerializedWord[] {
+  return serializedLessonWords.filter((lessonWord) => {
+    const candidatePhrases =
+      distractorField === "word"
+        ? [lessonWord.word]
+        : [lessonWord.translation, ...lessonWord.alternativeTranslations];
+
+    return candidatePhrases.some(
+      (phrase) => phrase && acceptedTexts.some((acceptedText) => hasPhrase(acceptedText, phrase)),
+    );
+  });
+}
+
+function filterEquivalentLessonWords(
+  serializedLessonWords: SerializedWord[],
+  acceptedTexts: string[],
+  distractorField: "word" | "translation",
+): SerializedWord[] {
+  const acceptedLessonWords = getAcceptedLessonWords(
+    serializedLessonWords,
+    acceptedTexts,
+    distractorField,
+  );
+
+  if (acceptedLessonWords.length === 0) {
+    return serializedLessonWords;
+  }
+
+  return serializedLessonWords.filter(
+    (lessonWord) =>
+      !acceptedLessonWords.some((acceptedLessonWord) =>
+        isSemanticMatch(acceptedLessonWord, lessonWord),
+      ),
+  );
 }
 
 export function buildSentenceWordOptions(
@@ -90,16 +152,20 @@ export function buildWordBankOptions(
     return [];
   }
 
-  const { acceptedWordSequences, distractorField } = config;
+  const { acceptedTexts, acceptedWordSequences, distractorField, primaryText } = config;
   const isReading = step.kind === "reading";
-  const acceptedWords = buildAcceptedWordBankWords(acceptedWordSequences);
   const acceptedWordSet = getAcceptedArrangeWordSet(acceptedWordSequences);
+  const distractorLessonWords = filterEquivalentLessonWords(
+    serializedLessonWords,
+    acceptedTexts,
+    distractorField,
+  );
 
-  const correctOptions: WordBankOption[] = acceptedWords.map((word) =>
+  const correctOptions: WordBankOption[] = segmentWords(primaryText).map((word) =>
     isReading ? enrichWord(word, serializedLessonWords, sentenceWordMap) : emptyWordOption(word),
   );
 
-  const allDistractorWords = serializedLessonWords.flatMap((lessonWord) =>
+  const allDistractorWords = distractorLessonWords.flatMap((lessonWord) =>
     lessonWord[distractorField].split(" "),
   );
 

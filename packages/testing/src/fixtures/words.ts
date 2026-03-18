@@ -17,6 +17,7 @@ export async function wordAudioFixture(attrs: {
 }
 
 export async function wordFixture(attrs: {
+  alternativeTranslations?: string[];
   organizationId: number;
   word?: string;
   translation?: string;
@@ -28,6 +29,7 @@ export async function wordFixture(attrs: {
 }) {
   return prisma.word.create({
     data: {
+      alternativeTranslations: attrs.alternativeTranslations ?? [],
       organizationId: attrs.organizationId,
       pronunciation: attrs.pronunciation ?? "test-pronunciation",
       romanization: attrs.romanization ?? null,

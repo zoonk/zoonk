@@ -72,6 +72,49 @@ function mergeAlternativeTexts(primaryText: string, texts: string[]): string[] {
   ];
 }
 
+function getPhraseKeys(text: string, phrases: string[]): Set<string> {
+  return new Set(
+    phrases.flatMap((phrase) => {
+      const normalizedPhrase = normalizePunctuation(phrase).trim();
+
+      if (!normalizedPhrase || !hasPhrase(text, normalizedPhrase)) {
+        return [];
+      }
+
+      return [normalizeVariantKey(normalizedPhrase)];
+    }),
+  );
+}
+
+function filterLexicalVariants(params: {
+  canonicalText: string;
+  candidateTexts: string[];
+  licensedVariantTexts: string[];
+  phrases: string[];
+}): string[] {
+  const canonicalPhraseKeys = getPhraseKeys(params.canonicalText, params.phrases);
+  const licensedVariantKeys = new Set(
+    params.licensedVariantTexts.flatMap((text) => {
+      const normalized = normalizePunctuation(text).trim();
+      return normalized ? [normalizeVariantKey(normalized)] : [];
+    }),
+  );
+
+  return params.candidateTexts.filter((candidateText) => {
+    const candidatePhraseKeys = getPhraseKeys(candidateText, params.phrases);
+    const introducesLessonPhrase = [...candidatePhraseKeys].some(
+      (phraseKey) => !canonicalPhraseKeys.has(phraseKey),
+    );
+
+    if (!introducesLessonPhrase) {
+      return true;
+    }
+
+    const normalizedCandidate = normalizePunctuation(candidateText).trim();
+    return licensedVariantKeys.has(normalizeVariantKey(normalizedCandidate));
+  });
+}
+
 function buildTargetWordsByTranslation(words: VocabularyVariantWord[]): Map<string, string[]> {
   const targetWordsByTranslation = new Map<string, string[]>();
 
@@ -159,16 +202,45 @@ export function enrichReadingSentenceVariants<T extends SentenceWithVariants>(
   words: VocabularyVariantWord[],
 ): T[] {
   const targetWordsByTranslation = buildTargetWordsByTranslation(words);
+  const translationPhrases = [
+    ...new Map(
+      words.flatMap((word) =>
+        getWordTranslations(word).flatMap((translation) => {
+          const normalized = normalizePunctuation(translation).trim();
+          return normalized ? [[normalizeVariantKey(normalized), normalized] as const] : [];
+        }),
+      ),
+    ).values(),
+  ];
 
-  return sentences.map((sentence) => ({
-    ...sentence,
-    alternativeSentences: mergeAlternativeTexts(sentence.sentence, [
-      ...sentence.alternativeSentences,
-      ...getDerivedAlternativeSentences(sentence, words, targetWordsByTranslation),
-    ]),
-    alternativeTranslations: mergeAlternativeTexts(sentence.translation, [
-      ...sentence.alternativeTranslations,
-      ...getDerivedAlternativeTranslations(sentence, words),
-    ]),
-  }));
+  return sentences.map((sentence) => {
+    const derivedAlternativeSentences = getDerivedAlternativeSentences(
+      sentence,
+      words,
+      targetWordsByTranslation,
+    );
+    const derivedAlternativeTranslations = getDerivedAlternativeTranslations(sentence, words);
+
+    return {
+      ...sentence,
+      alternativeSentences: mergeAlternativeTexts(sentence.sentence, [
+        ...filterLexicalVariants({
+          candidateTexts: sentence.alternativeSentences,
+          canonicalText: sentence.sentence,
+          licensedVariantTexts: derivedAlternativeSentences,
+          phrases: words.map((word) => word.word),
+        }),
+        ...derivedAlternativeSentences,
+      ]),
+      alternativeTranslations: mergeAlternativeTexts(sentence.translation, [
+        ...filterLexicalVariants({
+          candidateTexts: sentence.alternativeTranslations,
+          canonicalText: sentence.translation,
+          licensedVariantTexts: derivedAlternativeTranslations,
+          phrases: translationPhrases,
+        }),
+        ...derivedAlternativeTranslations,
+      ]),
+    };
+  });
 }

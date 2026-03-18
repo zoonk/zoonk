@@ -185,10 +185,10 @@ describe(readingActivityWorkflow, () => {
 
   test("persists accepted sentence variants returned by AI audit", async () => {
     const id = randomUUID().replaceAll("-", "").slice(0, 8);
-    const sentenceText = `Guten Tag Lara ${id}`;
-    const translationText = `Good day I am Lara ${id}`;
-    const alternativeSentence = `Guten Morgen Lara ${id}`;
-    const alternativeTranslation = `Good morning I am Lara ${id}`;
+    const sentenceText = `Yo soy Lara ${id}.`;
+    const translationText = `I am Lara ${id}.`;
+    const alternativeSentence = `Soy Lara ${id}.`;
+    const alternativeTranslation = `I'm Lara ${id}.`;
 
     vi.mocked(generateActivitySentences).mockResolvedValueOnce(
       createSentenceGenerationResult([
@@ -414,6 +414,86 @@ describe(readingActivityWorkflow, () => {
       sentence: "Guten Morgen, Anna!",
       translation: "Bom dia, Anna!",
     });
+  });
+
+  test("filters lexical sentence variants returned by AI audit when lesson vocabulary does not license them", async () => {
+    vi.mocked(generateActivitySentences).mockResolvedValueOnce(
+      createSentenceGenerationResult([
+        {
+          explanation: null,
+          romanization: null,
+          sentence: "Guten Tag, Herr Weber.",
+          translation: "Boa tarde, senhor Weber.",
+        },
+      ]),
+    );
+    vi.mocked(generateActivitySentenceVariants).mockResolvedValueOnce(
+      createSentenceVariantResult([
+        {
+          alternativeSentences: ["Guten Morgen, Herr Weber."],
+          alternativeTranslations: [],
+          id: "0",
+        },
+      ]),
+    );
+
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `Reading Filtered Variants ${randomUUID()}`,
+    });
+
+    await activityFixture({
+      generationStatus: "pending",
+      kind: "reading",
+      language: "pt",
+      lessonId: lesson.id,
+      organizationId,
+      title: `Reading ${randomUUID()}`,
+    });
+
+    const greetingWords = [
+      {
+        alternativeTranslations: [],
+        romanization: null,
+        translation: "Bom dia",
+        word: "Guten Morgen",
+      },
+      {
+        alternativeTranslations: ["Bom dia"],
+        romanization: null,
+        translation: "Boa tarde",
+        word: "Guten Tag",
+      },
+      {
+        alternativeTranslations: [],
+        romanization: null,
+        translation: "senhor",
+        word: "Herr",
+      },
+    ];
+
+    const activities = await fetchLessonActivities(lesson.id);
+    await readingActivityWorkflow(activities, "test-run-id", greetingWords, [], []);
+
+    const savedSentence = await prisma.sentence.findFirst({
+      where: {
+        organizationId,
+        sentence: "Guten Tag, Herr Weber.",
+        steps: { some: { activity: { lessonId: lesson.id } } },
+        targetLanguage: "es",
+        translation: "Boa tarde, senhor Weber.",
+        userLanguage: "pt",
+      },
+    });
+
+    expect(savedSentence).toMatchObject({
+      alternativeSentences: [],
+      sentence: "Guten Tag, Herr Weber.",
+      translation: "Boa tarde, senhor Weber.",
+    });
+    expect(savedSentence?.alternativeSentences).not.toContain("Guten Morgen, Herr Weber.");
   });
 
   test("sets reading status to 'completed' after full pipeline", async () => {

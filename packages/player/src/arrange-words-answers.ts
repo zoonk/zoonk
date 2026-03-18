@@ -22,38 +22,6 @@ export function buildAcceptedArrangeWordSequences(
   return [...new Map(sequences.map((words) => [getSequenceKey(words), words] as const)).values()];
 }
 
-export function buildAcceptedWordBankWords(acceptedWordSequences: string[][]): string[] {
-  const maxCounts = new Map<string, { count: number; word: string }>();
-
-  for (const words of acceptedWordSequences) {
-    const sequenceCounts = new Map<string, { count: number; word: string }>();
-
-    for (const word of words) {
-      const key = normalizeArrangeWord(word);
-
-      if (key) {
-        const current = sequenceCounts.get(key);
-        sequenceCounts.set(key, {
-          count: (current?.count ?? 0) + 1,
-          word: current?.word ?? word,
-        });
-      }
-    }
-
-    for (const [key, value] of sequenceCounts) {
-      const current = maxCounts.get(key);
-
-      if (!current || value.count > current.count) {
-        maxCounts.set(key, value);
-      }
-    }
-  }
-
-  return [...maxCounts.values()].flatMap(({ count, word }) =>
-    Array.from({ length: count }, () => word),
-  );
-}
-
 export function getAcceptedArrangeWordLengths(acceptedWordSequences: string[][]): number[] {
   return [
     ...new Set(acceptedWordSequences.flatMap((words) => (words.length > 0 ? [words.length] : []))),

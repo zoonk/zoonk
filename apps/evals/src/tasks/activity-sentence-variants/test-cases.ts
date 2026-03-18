@@ -28,6 +28,11 @@ EVALUATION CRITERIA:
    - Penalize if the model ignores obvious ambiguity that the vocabulary hints make clear
    - Penalize if it overuses vocabulary hints to justify unnatural sentence-level variants
 
+7. NON-TRANSITIVE OVERLAP:
+   - Penalize if the model uses vocabulary overlap transitively
+   - Accept directional asymmetry when only one side has a valid alternative
+   - Penalize invalid target-language swaps like turning "Boa tarde" into "Guten Morgen"
+
 ANTI-CHECKLIST GUIDANCE (CRITICAL):
 - Do NOT require exact wording if a variant is genuinely equivalent
 - Do NOT penalize for choosing one acceptable canonical answer over another
@@ -132,6 +137,55 @@ ${SHARED_EXPECTATIONS}
           alternativeTranslations: [],
           translation: "mãe",
           word: "Mama",
+        },
+      ],
+    },
+  },
+  {
+    expectations: `
+TARGET LANGUAGE: German
+USER LANGUAGE: Brazilian Portuguese
+
+CANONICAL PAIR:
+- sentence: "Guten Tag, Herr Weber."
+- translation: "Boa tarde, senhor Weber."
+
+VOCABULARY HINTS:
+- "Guten Morgen" -> "Bom dia"
+- "Guten Tag" -> "Boa tarde", alternative translation: "Bom dia"
+
+EXPECTED BEHAVIOR:
+- \`alternativeSentences\` should stay empty
+- \`alternativeTranslations\` should include "Bom dia, senhor Weber."
+- Do NOT include "Guten Morgen, Herr Weber."
+- Penalize if the model treats translation overlap transitively
+
+${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-de-boa-tarde-nontransitive-overlap",
+    userInput: {
+      chapterTitle: "Cumprimentos iniciais",
+      lessonDescription: "Cumprimente pessoas em momentos diferentes do dia.",
+      lessonTitle: "Saudações formais",
+      sentences: [
+        {
+          id: "0",
+          sentence: "Guten Tag, Herr Weber.",
+          translation: "Boa tarde, senhor Weber.",
+        },
+      ],
+      targetLanguage: "de",
+      userLanguage: "pt",
+      words: [
+        {
+          alternativeTranslations: [],
+          translation: "Bom dia",
+          word: "Guten Morgen",
+        },
+        {
+          alternativeTranslations: ["Bom dia"],
+          translation: "Boa tarde",
+          word: "Guten Tag",
         },
       ],
     },
