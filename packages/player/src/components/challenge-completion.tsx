@@ -167,7 +167,7 @@ export function ChallengeFailureContent({
 
       <ChallengeActions>
         <Button className="w-full lg:justify-between" onClick={onRestart} size="lg">
-          {t("Try Again")}
+          {t("Try again")}
           <Kbd className="bg-primary-foreground/15 text-primary-foreground hidden opacity-70 lg:inline-flex">
             R
           </Kbd>
@@ -177,7 +177,7 @@ export function ChallengeFailureContent({
           className={cn(buttonVariants({ variant: "outline" }), "w-full lg:justify-between")}
           href={lessonHref}
         >
-          {t("Back to Lesson")}
+          {t("All Activities")}
           <Kbd className="hidden opacity-60 lg:inline-flex">Esc</Kbd>
         </Link>
       </ChallengeActions>

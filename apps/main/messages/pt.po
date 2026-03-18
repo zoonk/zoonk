@@ -81,12 +81,6 @@ msgid "Game over."
 msgstr "Fim de jogo."
 
 #: ../../packages/player/src/components/challenge-completion.tsx
-#: ../../packages/player/src/components/completion-auth-branch.tsx
-msgctxt "7tB7n/"
-msgid "Back to Lesson"
-msgstr "Voltar para a aula"
-
-#: ../../packages/player/src/components/challenge-completion.tsx
 msgctxt "a0e1mh"
 msgid "Challenge Complete"
 msgstr "Desafio Completo"
@@ -97,19 +91,30 @@ msgid "{names} dropped below zero."
 msgstr "{names} caíram abaixo de zero."
 
 #: ../../packages/player/src/components/challenge-completion.tsx
+#: ../../packages/player/src/components/completion-auth-branch.tsx
+msgctxt "CC/yEt"
+msgid "All Activities"
+msgstr "Todas as Atividades"
+
+#: ../../packages/player/src/components/challenge-completion.tsx
 msgctxt "EQISGX"
 msgid "{name} dropped to {value}."
 msgstr "{name} caiu para {value}."
 
 #: ../../packages/player/src/components/challenge-completion.tsx
+#: ../../packages/player/src/components/completion-auth-branch.tsx
+#: src/app/generate/a/[id]/generation-client.tsx
+#: src/app/generate/ch/[id]/generation-client.tsx
+#: src/app/generate/cs/[id]/generation-client.tsx
+#: src/app/generate/l/[id]/generation-client.tsx
+msgctxt "FazwRl"
+msgid "Try again"
+msgstr "Tentar de novo"
+
+#: ../../packages/player/src/components/challenge-completion.tsx
 msgctxt "gjP7K/"
 msgid "Final scores"
 msgstr "Pontuações finais"
-
-#: ../../packages/player/src/components/challenge-completion.tsx
-msgctxt "jsy7pk"
-msgid "Try Again"
-msgstr "Tentar novamente"
 
 #: ../../packages/player/src/components/challenge-completion.tsx
 msgctxt "me6E3h"
@@ -167,11 +172,6 @@ msgstr "Suas pontuações"
 msgctxt "WPIaw8"
 msgid "You start at 0 in every score."
 msgstr "A gente começa em 0 em cada pontuação."
-
-#: ../../packages/player/src/components/completion-auth-branch.tsx
-msgctxt "5kK+j9"
-msgid "Restart"
-msgstr "Reiniciar"
 
 #: ../../packages/player/src/components/completion-auth-branch.tsx
 msgctxt "9+Ddtu"
@@ -1604,14 +1604,6 @@ msgstr "Criar conteúdo para esta atividade"
 msgctxt "0LAuA1"
 msgid "Your activity is ready"
 msgstr "Sua atividade está pronta"
-
-#: src/app/generate/a/[id]/generation-client.tsx
-#: src/app/generate/ch/[id]/generation-client.tsx
-#: src/app/generate/cs/[id]/generation-client.tsx
-#: src/app/generate/l/[id]/generation-client.tsx
-msgctxt "FazwRl"
-msgid "Try again"
-msgstr "Tentar novamente"
 
 #: src/app/generate/a/[id]/generation-client.tsx
 #: src/app/generate/ch/[id]/generation-client.tsx

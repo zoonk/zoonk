@@ -671,7 +671,7 @@ test.describe("Completion Screen", () => {
     await expect(page.getByRole("navigation", { name: /step navigation/i })).not.toBeVisible();
   });
 
-  test("shows Back to Lesson link and Restart button", async ({ page }) => {
+  test("shows All Activities link and Try Again button", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const { url } = await createStaticActivity({
       steps: [
@@ -691,8 +691,8 @@ test.describe("Completion Screen", () => {
     await page.keyboard.press("ArrowRight");
 
     await expect(page.getByRole("status")).toBeVisible();
-    await expect(page.getByRole("link", { name: /back to lesson/i })).toBeVisible();
-    await expect(page.getByRole("button", { name: /restart/i })).toBeVisible();
+    await expect(page.getByRole("link", { name: /all activities/i })).toBeVisible();
+    await expect(page.getByRole("button", { name: /try again/i })).toBeVisible();
   });
 
   test("pressing R on completion screen restarts activity", async ({ page }) => {
@@ -765,7 +765,7 @@ test.describe("Completion Screen", () => {
     await page.waitForURL(new RegExp(lesson.slug));
   });
 
-  test("clicking Restart resets to first step", async ({ page }) => {
+  test("clicking Try Again resets to first step", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const { url } = await createStaticActivity({
       steps: [
@@ -796,8 +796,8 @@ test.describe("Completion Screen", () => {
     await page.keyboard.press("ArrowRight");
     await expect(page.getByRole("status")).toBeVisible();
 
-    // Click Restart
-    await page.getByRole("button", { name: /restart/i }).click();
+    // Click Try Again
+    await page.getByRole("button", { name: /try again/i }).click();
 
     // Should be back at step 1
     await expect(

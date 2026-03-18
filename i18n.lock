@@ -208,9 +208,9 @@ checksums:
     "%7Bvalue%7D%20BP%20to%20level%20up/singular": 755c2fe6e435645cb35b57bf92af09d3
     "%7Bcolor%7D%20Belt%20%E2%80%94%20Level%20%7Blevel%7D/singular": 367f2e902d39199c8507aaad09e8907a
     Game%20over./singular: 7f7c4f4404b868e6062363dfffd9adf7
-    Back%20to%20Lesson/singular: e2dbef5a2fefae8f9cee708e53e61cb9
     Challenge%20Complete/singular: 7854472cc9245aaa8a13f54514968506
     "%7Bnames%7D%20dropped%20below%20zero./singular": 36735509d5747d09d3519324aa0f1493
+    All%20Activities/singular: 9eee26b7ca58444c6d0db6bcd7ea7eda
     "%7Bname%7D%20dropped%20to%20%7Bvalue%7D./singular": 95e21895ac0d6fa49a9a2117ccd8fd6a
     Final%20scores/singular: e772441fda83e82c2101876fee323481
     Try%20Again/singular: d65fad81c5f8f90405b26bf6e5d70ab9
@@ -225,7 +225,6 @@ checksums:
     Each%20choice%20raises%20some%20scores%20and%20lowers%20others./singular: f2fe298b9617dcbd9b1783eeb47acfcb
     Your%20scores/singular: 1700f65ead0647bc4876f4b3b6453a8b
     You%20start%20at%200%20in%20every%20score./singular: ef7c9e35b5b066d492618fcaec8eef46
-    Restart/singular: bab6232e89f24e3129f8e48268739d5b
     Next/singular: 89ddbcf710eba274963494f312bdc8a9
     Login/singular: f4f219abeb5a465ecb1c7efaf50246de
     Sign%20up%20to%20track%20your%20progress/singular: 554ed29d9b8a243362c3b3374222af08
