@@ -7,6 +7,7 @@ import {
 } from "@/components/catalog/continue-activity-link";
 import { getChapter } from "@/data/chapters/get-chapter";
 import { listChapterLessons } from "@/data/lessons/list-chapter-lessons";
+import { getNextSibling } from "@/data/progress/get-next-sibling";
 import { getSession } from "@zoonk/core/users/session/get";
 import { type Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
@@ -49,11 +50,22 @@ export default async function ChapterPage({
     notFound();
   }
 
-  const lessons = await listChapterLessons({ chapterId: chapter.id });
+  const [lessons, nextSibling] = await Promise.all([
+    listChapterLessons({ chapterId: chapter.id }),
+    getNextSibling({
+      chapterPosition: chapter.position,
+      courseId: chapter.courseId,
+      level: "chapter",
+    }),
+  ]);
 
   if (lessons.length === 0) {
     redirect(`/generate/ch/${chapter.id}`);
   }
+
+  const completedHref = nextSibling
+    ? (`/b/${nextSibling.brandSlug}/c/${nextSibling.courseSlug}/ch/${nextSibling.chapterSlug}` as const)
+    : undefined;
 
   return (
     <main className="flex flex-1 flex-col">
@@ -64,6 +76,7 @@ export default async function ChapterPage({
           <Suspense fallback={<ContinueActivityLinkSkeleton />}>
             <ContinueActivityLink
               chapterId={chapter.id}
+              completedHref={completedHref}
               fallbackHref={`/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}/l/${lessons[0]?.slug}`}
             />
           </Suspense>

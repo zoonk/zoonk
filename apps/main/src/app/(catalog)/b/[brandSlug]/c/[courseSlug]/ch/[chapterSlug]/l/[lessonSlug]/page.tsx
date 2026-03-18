@@ -7,6 +7,7 @@ import {
 } from "@/components/catalog/continue-activity-link";
 import { listLessonActivities } from "@/data/activities/list-lesson-activities";
 import { getLesson } from "@/data/lessons/get-lesson";
+import { getNextSibling } from "@/data/progress/get-next-sibling";
 import { getSession } from "@zoonk/core/users/session/get";
 import { type Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
@@ -51,11 +52,24 @@ export default async function LessonPage({
     notFound();
   }
 
-  const activities = await listLessonActivities({ lessonId: lesson.id });
+  const [activities, nextSibling] = await Promise.all([
+    listLessonActivities({ lessonId: lesson.id }),
+    getNextSibling({
+      chapterId: lesson.chapter.id,
+      chapterPosition: lesson.chapter.position,
+      courseId: lesson.chapter.courseId,
+      lessonPosition: lesson.position,
+      level: "lesson",
+    }),
+  ]);
 
   if (activities.length === 0) {
     redirect(`/generate/l/${lesson.id}`);
   }
+
+  const completedHref = nextSibling
+    ? (`/b/${nextSibling.brandSlug}/c/${nextSibling.courseSlug}/ch/${nextSibling.chapterSlug}/l/${nextSibling.lessonSlug}` as const)
+    : undefined;
 
   return (
     <main className="flex flex-1 flex-col">
@@ -70,6 +84,7 @@ export default async function LessonPage({
         <CatalogToolbar>
           <Suspense fallback={<ContinueActivityLinkSkeleton />}>
             <ContinueActivityLink
+              completedHref={completedHref}
               fallbackHref={`/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}/a/${activities[0]?.position}`}
               lessonId={lesson.id}
             />

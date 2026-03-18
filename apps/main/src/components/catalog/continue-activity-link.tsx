@@ -23,13 +23,15 @@ function getScope(props: {
   return { lessonId: props.lessonId ?? 0 };
 }
 
-export async function ContinueActivityLink<Href extends string>({
+export async function ContinueActivityLink<Href extends string, CompletedHref extends string>({
   chapterId,
+  completedHref,
   courseId,
   fallbackHref,
   lessonId,
 }: {
   chapterId?: number;
+  completedHref?: Route<CompletedHref>;
   courseId?: number;
   fallbackHref: Route<Href>;
   lessonId?: number;
@@ -49,7 +51,7 @@ export async function ContinueActivityLink<Href extends string>({
 
   const getLabel = () => {
     if (data.completed) {
-      return t("Review");
+      return completedHref ? t("Continue") : t("Review");
     }
 
     if (data.hasStarted) {
@@ -58,6 +60,15 @@ export async function ContinueActivityLink<Href extends string>({
 
     return t("Start");
   };
+
+  if (data.completed && completedHref) {
+    return (
+      <Link className={cn(buttonVariants(), "min-w-0 flex-1 gap-2")} href={completedHref}>
+        {getLabel()}
+        <ChevronRightIcon aria-hidden="true" />
+      </Link>
+    );
+  }
 
   return (
     <Link
