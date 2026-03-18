@@ -227,6 +227,11 @@ msgctxt "P768k7"
 msgid "correct"
 msgstr "correcto"
 
+#: ../../packages/player/src/components/completion-screen.tsx
+msgctxt "t2VOpl"
+msgid "Chapter Complete"
+msgstr "Capítulo completado"
+
 #: ../../packages/player/src/components/dimension-header-status.tsx
 msgctxt "BX5BGP"
 msgid "All clear"

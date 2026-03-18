@@ -88,20 +88,9 @@ function SecondaryActions({
 
 function NextButtonLabel() {
   const t = useExtracted();
-  const { isNextChapter, nextLessonTitle } = usePlayer();
+  const { isNextChapter } = usePlayer();
 
-  const label = isNextChapter ? t("Next Chapter") : t("Next Lesson");
-
-  if (!nextLessonTitle) {
-    return <span>{label}</span>;
-  }
-
-  return (
-    <span className="flex flex-col items-start gap-0.5">
-      <span>{label}</span>
-      <span className="text-primary-foreground/70 text-xs font-normal">{nextLessonTitle}</span>
-    </span>
-  );
+  return <span>{isNextChapter ? t("Next Chapter") : t("Next Lesson")}</span>;
 }
 
 function LessonCompleteActions({
@@ -242,6 +231,36 @@ function AuthenticatedContent({
   );
 }
 
+function UnauthenticatedLessonComplete({
+  lessonHref,
+  loginHref,
+}: {
+  lessonHref: Route;
+  loginHref: Route;
+}) {
+  const t = useExtracted();
+
+  return (
+    <>
+      <p className="text-muted-foreground text-sm">{t("Sign up to track your progress")}</p>
+
+      <CompletionActions>
+        <Link className={cn(buttonVariants(), "w-full")} href={loginHref}>
+          {t("Login")}
+        </Link>
+
+        <Link
+          className={cn(buttonVariants({ variant: "outline" }), "w-full lg:justify-between")}
+          href={lessonHref}
+        >
+          {t("Review Lesson")}
+          <Kbd className="hidden opacity-60 lg:inline-flex">Esc</Kbd>
+        </Link>
+      </CompletionActions>
+    </>
+  );
+}
+
 function UnauthenticatedContent({
   lessonHref,
   loginHref,
@@ -254,6 +273,10 @@ function UnauthenticatedContent({
   const t = useExtracted();
   const { isLastInLesson } = usePlayer();
 
+  if (isLastInLesson) {
+    return <UnauthenticatedLessonComplete lessonHref={lessonHref} loginHref={loginHref} />;
+  }
+
   return (
     <>
       <p className="text-muted-foreground text-sm">{t("Sign up to track your progress")}</p>
@@ -263,17 +286,7 @@ function UnauthenticatedContent({
           {t("Login")}
         </Link>
 
-        {isLastInLesson ? (
-          <Link
-            className={cn(buttonVariants({ variant: "outline" }), "w-full lg:justify-between")}
-            href={lessonHref}
-          >
-            {t("Review Lesson")}
-            <Kbd className="hidden opacity-60 lg:inline-flex">Esc</Kbd>
-          </Link>
-        ) : (
-          <SecondaryActions lessonHref={lessonHref} onRestart={onRestart} variant="inline" />
-        )}
+        <SecondaryActions lessonHref={lessonHref} onRestart={onRestart} variant="inline" />
       </CompletionActions>
     </>
   );

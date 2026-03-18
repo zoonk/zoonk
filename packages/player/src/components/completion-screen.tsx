@@ -48,17 +48,16 @@ function CompletionSignal() {
   );
 }
 
-function LessonCompleteSignal({ lessonTitle }: { lessonTitle: string }) {
+function MilestoneHeading() {
   const t = useExtracted();
+  const { isNextChapter } = usePlayer();
+
+  const heading = isNextChapter ? t("Chapter Complete") : t("Lesson Complete");
 
   return (
-    <div className="flex flex-col items-center gap-2">
-      <CircleCheck className="text-foreground size-12" />
-      <div className="flex flex-col items-center gap-1">
-        <p className="text-lg font-medium">{t("Lesson Complete")}</p>
-        <p className="text-muted-foreground text-sm">{lessonTitle}</p>
-      </div>
-    </div>
+    <h2 className="animate-in fade-in slide-in-from-bottom-2 text-2xl font-semibold tracking-tight duration-300 ease-out motion-reduce:animate-none sm:text-3xl">
+      {heading}
+    </h2>
   );
 }
 
@@ -92,7 +91,7 @@ export function CompletionScreenContent({
   results: Record<string, StepResult>;
 }) {
   const t = useExtracted();
-  const { completionFooter, isLastInLesson, lessonTitle } = usePlayer();
+  const { completionFooter, isLastInLesson } = usePlayer();
   const isChallenge = Object.keys(dimensions).length > 0;
 
   if (isChallenge && hasNegativeDimension(dimensions)) {
@@ -120,12 +119,28 @@ export function CompletionScreenContent({
     );
   }
 
+  if (isLastInLesson) {
+    return (
+      <CompletionScreen className="min-h-[60vh] max-w-sm justify-center gap-10 px-6 sm:gap-12">
+        <MilestoneHeading />
+
+        <div className="animate-in fade-in flex w-full flex-col gap-3 delay-150 duration-300 ease-out motion-reduce:animate-none">
+          <AuthBranch
+            completionResult={completionResult}
+            lessonHref={lessonHref}
+            nextActivityHref={nextActivityHref}
+            onRestart={onRestart}
+            showRewards={false}
+          />
+        </div>
+      </CompletionScreen>
+    );
+  }
+
   const score = getCompletionScore(results);
 
   return (
     <CompletionScreen>
-      {isLastInLesson && <LessonCompleteSignal lessonTitle={lessonTitle} />}
-
       {score ? (
         <CompletionScore>
           <p className="text-5xl font-bold tracking-tight tabular-nums">
@@ -134,7 +149,7 @@ export function CompletionScreenContent({
           <p className="text-muted-foreground text-sm">{t("correct")}</p>
         </CompletionScore>
       ) : (
-        !isLastInLesson && <CompletionSignal />
+        <CompletionSignal />
       )}
 
       <AuthBranch

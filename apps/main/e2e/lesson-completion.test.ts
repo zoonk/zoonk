@@ -132,7 +132,7 @@ test.describe("Lesson Completion UX", () => {
   }) => {
     const email = await createUniqueUser(baseURL!);
     const { browserContext, page } = await createAuthenticatedPage(browser, baseURL!, email);
-    const { activityUrl, lesson1, lesson2, uniqueId } = await createTwoLessonCourse("lcomp");
+    const { activityUrl, uniqueId } = await createTwoLessonCourse("lcomp");
 
     await page.goto(activityUrl);
     await page.waitForLoadState("networkidle");
@@ -143,10 +143,12 @@ test.describe("Lesson Completion UX", () => {
 
     const completionScreen = page.getByRole("status");
     await expect(completionScreen.getByText(/lesson complete/i)).toBeVisible();
-    await expect(completionScreen.getByText(lesson1.title)).toBeVisible();
     await expect(completionScreen.getByRole("link", { name: /next lesson/i })).toBeVisible();
-    await expect(completionScreen.getByText(lesson2.title)).toBeVisible();
     await expect(completionScreen.getByRole("link", { name: /review lesson/i })).toBeVisible();
+
+    // Score and gamification elements should not appear on lesson completion
+    await expect(completionScreen.getByText(/correct/i)).not.toBeVisible();
+    await expect(completionScreen.getByText(/BP/)).not.toBeVisible();
 
     await browserContext.close();
   });
@@ -326,7 +328,6 @@ test.describe("Lesson Completion UX", () => {
     const completionScreen = page.getByRole("status");
     await expect(completionScreen.getByText(/lesson complete/i)).toBeVisible();
     await expect(completionScreen.getByRole("link", { name: /next lesson/i })).toBeVisible();
-    await expect(completionScreen.getByText(lesson2.title)).toBeVisible();
 
     await browserContext.close();
   });
