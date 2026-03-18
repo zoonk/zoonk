@@ -195,14 +195,14 @@ checksums:
     Business/singular: 7682c7966c6e718836388561e7e68cab
     Geography/singular: fd93fe516c40f1f2dd96f53a507ce95d
   9270df1bc9e10fdb8026bb4ab67061d4:
-    Correct%20answer/singular: b7b440a054a86a05c601276b1a308507
     Your%20answer/singular: 016cfa0eceeaa32f8ed699a0668a278b
     Correct/singular: c643eeb0a615de2032eca68722c31177
     Tap%20words%20to%20build%20your%20answer/singular: 025315562266cdfc630efa8b5de74961
-    Word%20bank/singular: ceea720dd5fa3747c7f93ce165f77b2e
     "%7Bitem%7D.%20%7Bresult%7D./singular": 454dd5319c350f361652396801a1c30b
     Position%20%7Bposition%7D%3A%20%7Bitem%7D.%20Tap%20to%20remove./singular: a1b3d3e026bfff43bff3d3e85ccdb952
     Incorrect/singular: a86cfbe7b86f19dc8df14a67df073d22
+    Correct%20answer/singular: b7b440a054a86a05c601276b1a308507
+    Word%20bank/singular: ceea720dd5fa3747c7f93ce165f77b2e
     "%7Bcolor%7D%20belt/singular": 5949446c9b4a223c04cc500fa17a1fe0
     Level%20progress/singular: 286f095acd17006787247db0b69270e3
     "%7Bvalue%7D%20BP%20to%20level%20up/singular": 755c2fe6e435645cb35b57bf92af09d3
@@ -255,8 +255,6 @@ checksums:
     What%20do%20you%20hear%3F/singular: 9527d094d65c550a40108673bc67744f
     All%20pairs%20matched.%20Press%20Check%20to%20continue./singular: 0663e33ba7db53b298c5f50a2f3c7ae8
     Answer%20options/singular: acb0b378cefcb8a8d50a7c43ce77ae39
-    What%20do%20you%20say%3F/singular: 75887288b85fc19e67b7d20550d9205e
-    Someone%20says%3A/singular: 09f34dce0528b57e89c8757b5745e6c5
     Play%20pronunciation/singular: 623289cc3217c5404e3d48a78dd0456f
     Pause%20pronunciation/singular: e24b23e108f8efb6f2eea709e5f540e9
     Previous%20step/singular: 96b31ec6dab003c2bbfbbca10a8a9826
@@ -361,7 +359,6 @@ checksums:
     Change%20subject/singular: 8585bb703ba2d857dd9a7b36f97be507
     Discover%20personalized%20courses%20and%20resources%20to%20learn%20%7Bprompt%7D.%20Zoonk%20uses%20AI%20to%20create%20interactive%20lessons%20and%20activities%20tailored%20to%20you./singular: c6a0dc2a0e422036e1e25ad7589f5fb3
     Learn%20%7Bprompt%7D%20with%20AI/singular: 5a8a8ee7f52faf0cb790e0f0cfbcce7d
-    Start/singular: dbe56303d9a6d3fad1a8d4cbcc97f365
     Enter%20a%20subject/singular: 4590e12cd42fdc491ab95457e66e13eb
     Learn%20anything./singular: 6a1858e1c15518444a10d3e3e95b23f6
     Organic%20chemistry/singular: fcecba9c1b5912b7f7e6cdd1a1d2198c
@@ -557,7 +554,7 @@ checksums:
     Taking%20you%20to%20your%20course.../singular: f1522561681357abdaad3936d36fdfe7
     Your%20course%20is%20ready/singular: b54659084218a9b9bcf7b5f1cfcf3fbf
     Creating%20your%20course/singular: 02c33db1106e7478e5cbd00fa5f20532
-    This%20usually%20takes%202-3%20minutes/singular: c7d31ba5ff2bf3b6ec27d5fd9590d034
+    This%20usually%20takes%201-3%20minutes/singular: a68f9814da3adf4933de2ceee3b1f0fc
     Writing%20the%20lesson%20content/singular: 2b3243b19b65a83cfe355bef089b7ce8
     Writing%20the%20overview.../singular: 14d71db32539c19803e72da8a4553a0f
     Summarizing%20what%20you'll%20learn.../singular: bb6b58ff4b46ee6e8c59789464e9bced
@@ -593,6 +590,7 @@ checksums:
     Thanks%20for%20your%20feedback/singular: 05d6f70cdb81119bcf0ad7443438e82b
     Send%20feedback/singular: 9631cc08d49da04475b30a0d320ce97c
     More%20options/singular: 53d90eae6a9b0243b5bc043b3d9de169
+    Start/singular: dbe56303d9a6d3fad1a8d4cbcc97f365
     Review/singular: 299f75db25382980b2895622d7712927
     Please%20provide%20as%20much%20detail%20as%20possible./singular: 3c8b231283c751d4beae059a6ffc3643
     Failed%20to%20send%20message.%20Please%20try%20again%20or%20email%20us%20directly%20at%20hello%40zoonk.com/singular: 7f36bcd5ba5dad4b9981f85488ff794c
@@ -615,7 +613,6 @@ checksums:
     Listening/singular: 9e680c44cd88a178b953349ed8881ef2
     Learn%20new%20%7Btopic%7D%20words%20with%20flashcards%20%E2%80%94%20see%20each%20word%2C%20its%20translation%2C%20and%20pronunciation./singular: 923933ba274d61fc2ffb279cf64aceba
     Review%20everything%20you%20learned%20about%20%7Btopic%7D%20with%20a%20comprehensive%20quiz./singular: 8acf9006cabdcbaac217c7565943f068
-    Practice%20%7Btopic%7D%20in%20context%20through%20a%20dialogue-based%20scenario%20set%20in%20real-world%20situations./singular: 88083b8e3a748d956ab28a8bbaea5a87
     Explanation/singular: f6b595df4ffb1a5b0cbbe1dda5993522
     Sharpen%20your%20%7Btopic%7D%20listening%20skills%20by%20translating%20audio%20sentences./singular: b624ceffbbfc91a29cec43a0037b067f
     Test%20your%20understanding%20of%20%7Btopic%7D%20with%20questions%20designed%20to%20check%20real%20comprehension%2C%20not%20just%20memorization./singular: d9f3e39d19b1c6969b481bc8aec8fc10

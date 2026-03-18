@@ -1983,9 +1983,9 @@ msgid "Creating your course"
 msgstr "Criando seu curso"
 
 #: src/app/generate/cs/[id]/generation-client.tsx
-msgctxt "ux13iV"
-msgid "This usually takes 2-3 minutes"
-msgstr "Isso geralmente leva de 2 a 3 minutos"
+msgctxt "wj9q4k"
+msgid "This usually takes 1-3 minutes"
+msgstr "Isso geralmente leva de 1 a 3 minutos"
 
 #: src/app/generate/cs/[id]/use-generation-phases.ts
 msgctxt "4uQ1Ek"
