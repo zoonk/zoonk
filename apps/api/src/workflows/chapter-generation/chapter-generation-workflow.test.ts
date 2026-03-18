@@ -326,6 +326,7 @@ describe(chapterGenerationWorkflow, () => {
       });
 
       expect(dbChapter?.generationStatus).toBe("failed");
+      expect(dbChapter?.generationRunId).toBeNull();
 
       const errorCall = writeMock.mock.calls.find(
         (call: string[]) =>

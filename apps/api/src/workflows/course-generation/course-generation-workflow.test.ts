@@ -476,7 +476,9 @@ describe(courseGenerationWorkflow, () => {
       });
 
       expect(course?.generationStatus).toBe("failed");
+      expect(course?.generationRunId).toBeNull();
       expect(dbSuggestion?.generationStatus).toBe("failed");
+      expect(dbSuggestion?.generationRunId).toBeNull();
 
       const errorCall = writeMock.mock.calls.find(
         (call: string[]) =>

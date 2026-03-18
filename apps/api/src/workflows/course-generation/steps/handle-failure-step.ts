@@ -13,17 +13,17 @@ export async function handleCourseFailureStep(input: {
   if (courseId) {
     await Promise.allSettled([
       prisma.course.update({
-        data: { generationStatus: "failed" },
+        data: { generationRunId: null, generationStatus: "failed" },
         where: { id: courseId },
       }),
       prisma.courseSuggestion.update({
-        data: { generationStatus: "failed" },
+        data: { generationRunId: null, generationStatus: "failed" },
         where: { id: courseSuggestionId },
       }),
     ]);
   } else {
     await prisma.courseSuggestion.update({
-      data: { generationStatus: "failed" },
+      data: { generationRunId: null, generationStatus: "failed" },
       where: { id: courseSuggestionId },
     });
   }
@@ -36,7 +36,7 @@ export async function handleChapterFailureStep(input: { chapterId: number }): Pr
 
   await safeAsync(() =>
     prisma.chapter.update({
-      data: { generationStatus: "failed" },
+      data: { generationRunId: null, generationStatus: "failed" },
       where: { id: input.chapterId },
     }),
   );
