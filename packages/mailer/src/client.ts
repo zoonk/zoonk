@@ -9,10 +9,12 @@ export async function sendEmail({
   to,
   subject,
   text,
+  replyTo,
 }: {
   to: string;
   subject: string;
   text: string;
+  replyTo?: string;
 }): Promise<SafeReturn<Response>> {
   if (sendEmailDisabled) {
     logInfo("Email sending is disabled.");
@@ -25,6 +27,7 @@ export async function sendEmail({
       body: JSON.stringify({
         from: { address: "hello@zoonk.com", name: "Zoonk" },
         htmlBody: text,
+        ...(replyTo && { reply_to: [{ address: replyTo }] }),
         subject,
         to: [{ email_address: { address: to } }],
       }),
