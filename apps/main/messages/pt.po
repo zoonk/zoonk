@@ -2209,11 +2209,6 @@ msgctxt "R+J5ox"
 msgid "Review"
 msgstr "Revisão"
 
-#: src/components/catalog/lesson-completion-banner.tsx
-msgctxt "LFJ7du"
-msgid "All activities completed"
-msgstr "Todas as atividades concluídas"
-
 #: src/components/feedback/contact-form.tsx
 msgctxt "+5vOOu"
 msgid "Please provide as much detail as possible."
