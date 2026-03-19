@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@zoonk/ui/lib/utils";
-import { CircleAlert, CircleCheck, CircleX, TriangleAlert } from "lucide-react";
+import { CircleAlert, TriangleAlert } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type DimensionInventory, type StepResult } from "../player-reducer";
 import { type SerializedStep } from "../prepare-activity-data";
@@ -13,7 +13,14 @@ import {
   buildDimensionEntries,
   getWarningDelay,
 } from "./dimension-inventory";
+import {
+  CorrectAnswerBlock,
+  IncorrectAnswerBlock,
+  getFeedbackRomanization,
+} from "./feedback-answer-blocks";
+import { PlayAudioButton } from "./play-audio-button";
 import { ResultAnnouncement } from "./result-announcement";
+import { RomanizationText } from "./romanization-text";
 
 function FeedbackScreen({ className, ...props }: React.ComponentProps<"div">) {
   return (
@@ -47,40 +54,6 @@ function FeedbackMessage({ className, ...props }: React.ComponentProps<"p">) {
       data-slot="feedback-message"
       {...props}
     />
-  );
-}
-
-function AnswerLine({
-  children,
-  icon,
-  label,
-  variant,
-}: {
-  children: React.ReactNode;
-  icon: React.ReactNode;
-  label: string;
-  variant: "correct" | "incorrect";
-}) {
-  return (
-    <div
-      className={cn(
-        "flex items-start gap-2 rounded-lg px-3 py-2 text-sm",
-        variant === "correct" ? "bg-success/10" : "bg-destructive/10",
-      )}
-    >
-      <span
-        className={cn(
-          "mt-0.5 shrink-0",
-          variant === "correct" ? "text-success" : "text-destructive",
-        )}
-      >
-        {icon}
-      </span>
-      <div>
-        <span className="text-muted-foreground">{label}</span>{" "}
-        <span className="font-medium">{children}</span>
-      </div>
-    </div>
   );
 }
 
@@ -203,56 +176,36 @@ function CoreFeedback({ result, step }: { result: StepResult; step?: SerializedS
       ? result.answer.selectedText
       : getArrangeWordsSelectedText(result);
   const questionText = getQuestionText(result, step);
+  const rom = getFeedbackRomanization(result, step, selectedText, correctAnswer, questionText);
 
   return (
     <FeedbackScreen>
       <div className="flex flex-col gap-2">
         {questionText && (
-          <p className="text-muted-foreground text-sm">
-            {t("Translate:")} <span className="text-foreground font-medium">{questionText}</span>
-          </p>
+          <div className="text-muted-foreground text-sm">
+            <p>
+              {t("Translate:")} <span className="text-foreground font-medium">{questionText}</span>
+            </p>
+            <RomanizationText>{rom.translate}</RomanizationText>
+          </div>
         )}
 
         {isCorrect ? (
           selectedText && (
-            <AnswerLine
-              icon={<CircleCheck aria-hidden="true" className="size-4" />}
-              label={t("Your answer:")}
-              variant="correct"
-            >
-              {selectedText}
-            </AnswerLine>
+            <CorrectAnswerBlock romanization={rom.correctReading} selectedText={selectedText} />
           )
         ) : (
-          <>
-            {selectedText && (
-              <AnswerLine
-                icon={<CircleX aria-hidden="true" className="size-4" />}
-                label={t("Your answer:")}
-                variant="incorrect"
-              >
-                {selectedText}
-              </AnswerLine>
-            )}
-            {correctAnswer && (
-              <AnswerLine
-                icon={<CircleCheck aria-hidden="true" className="size-4" />}
-                label={t("Correct answer:")}
-                variant="correct"
-              >
-                <span className="flex flex-col">
-                  <span>{correctAnswer}</span>
-                  {step?.sentence?.romanization && (
-                    <span className="text-muted-foreground text-xs font-normal">
-                      {step.sentence.romanization}
-                    </span>
-                  )}
-                </span>
-              </AnswerLine>
-            )}
-          </>
+          <IncorrectAnswerBlock
+            correctAnswer={correctAnswer}
+            romanization={rom.wrongReading}
+            selectedText={selectedText}
+          />
         )}
       </div>
+
+      {step?.sentence?.audioUrl && (
+        <PlayAudioButton audioUrl={step.sentence.audioUrl} variant="text" />
+      )}
 
       {feedback && <FeedbackMessage>{feedback}</FeedbackMessage>}
 

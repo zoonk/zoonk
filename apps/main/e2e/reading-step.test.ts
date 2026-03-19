@@ -462,6 +462,161 @@ test.describe("Reading Step", () => {
     await expect(answerArea.getByText(/tap words to build your answer/i)).toBeVisible();
   });
 
+  test("romanization shows on correct answer feedback", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const word1 = `Konnichiwa-${uniqueId}`;
+    const word2 = `sekai-${uniqueId}`;
+    const romanization = `romaji-${uniqueId} test-${uniqueId}`;
+
+    const { url } = await createReadingActivity({
+      sentences: [
+        {
+          romanization,
+          sentence: `${word1} ${word2}`,
+          translation: `Hello-${uniqueId} world-${uniqueId}`,
+        },
+      ],
+      words: [{ translation: `cat-${uniqueId}`, word: `neko-${uniqueId}` }],
+    });
+
+    await page.goto(url);
+
+    const wordBank = page.getByRole("group", { name: /word bank/i });
+
+    await expect(async () => {
+      await wordBank.getByRole("button", { exact: true, name: word1 }).click();
+      await expect(
+        page
+          .getByRole("group", { name: /your answer/i })
+          .getByRole("button", { name: new RegExp(word1) }),
+      ).toBeVisible({ timeout: 1000 });
+    }).toPass();
+
+    await wordBank.getByRole("button", { exact: true, name: word2 }).click();
+
+    await page.getByRole("button", { name: /check/i }).click();
+
+    await expect(page.getByText(romanization)).toBeVisible();
+  });
+
+  test("romanization shows on incorrect answer feedback", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const word1 = `Konnichiwa-${uniqueId}`;
+    const word2 = `sekai-${uniqueId}`;
+    const romanization = `romaji-${uniqueId} test-${uniqueId}`;
+
+    const { url } = await createReadingActivity({
+      sentences: [
+        {
+          romanization,
+          sentence: `${word1} ${word2}`,
+          translation: `Hello-${uniqueId} world-${uniqueId}`,
+        },
+      ],
+      words: [{ translation: `cat-${uniqueId}`, word: `neko-${uniqueId}` }],
+    });
+
+    await page.goto(url);
+
+    const wordBank = page.getByRole("group", { name: /word bank/i });
+
+    // Arrange in wrong order
+    await expect(async () => {
+      await wordBank.getByRole("button", { exact: true, name: word2 }).click();
+      await expect(
+        page
+          .getByRole("group", { name: /your answer/i })
+          .getByRole("button", { name: new RegExp(word2) }),
+      ).toBeVisible({ timeout: 1000 });
+    }).toPass();
+
+    await wordBank.getByRole("button", { exact: true, name: word1 }).click();
+
+    await page.getByRole("button", { name: /check/i }).click();
+
+    await expect(page.getByText(romanization)).toBeVisible();
+  });
+
+  test("audio button shows when audioUrl exists", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const word1 = `Buenos-${uniqueId}`;
+    const word2 = `dias-${uniqueId}`;
+
+    const { url } = await createReadingActivity({
+      sentences: [
+        {
+          audioUrl: "https://example.com/audio.mp3",
+          sentence: `${word1} ${word2}`,
+          translation: `Good-${uniqueId} morning-${uniqueId}`,
+        },
+      ],
+      words: [{ translation: `night-${uniqueId}`, word: `noche-${uniqueId}` }],
+    });
+
+    await page.goto(url);
+
+    const wordBank = page.getByRole("group", { name: /word bank/i });
+
+    await expect(async () => {
+      await wordBank.getByRole("button", { exact: true, name: word1 }).click();
+      await expect(
+        page
+          .getByRole("group", { name: /your answer/i })
+          .getByRole("button", { name: new RegExp(word1) }),
+      ).toBeVisible({ timeout: 1000 });
+    }).toPass();
+
+    await wordBank.getByRole("button", { exact: true, name: word2 }).click();
+
+    await page.getByRole("button", { name: /check/i }).click();
+
+    await expect(page.getByRole("button", { name: /play pronunciation/i })).toBeVisible();
+  });
+
+  test("romanization dedup: not shown when equals sentence", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const word1 = `Buenos-${uniqueId}`;
+    const word2 = `dias-${uniqueId}`;
+    const sentence = `${word1} ${word2}`;
+
+    const { url } = await createReadingActivity({
+      sentences: [
+        {
+          // Simulate bad AI data: romanization equals the sentence
+          romanization: sentence,
+          sentence,
+          translation: `Good-${uniqueId} morning-${uniqueId}`,
+        },
+      ],
+      words: [{ translation: `night-${uniqueId}`, word: `noche-${uniqueId}` }],
+    });
+
+    await page.goto(url);
+
+    const wordBank = page.getByRole("group", { name: /word bank/i });
+
+    await expect(async () => {
+      await wordBank.getByRole("button", { exact: true, name: word1 }).click();
+      await expect(
+        page
+          .getByRole("group", { name: /your answer/i })
+          .getByRole("button", { name: new RegExp(word1) }),
+      ).toBeVisible({ timeout: 1000 });
+    }).toPass();
+
+    await wordBank.getByRole("button", { exact: true, name: word2 }).click();
+
+    await page.getByRole("button", { name: /check/i }).click();
+
+    // Feedback shows "Your answer:" with the sentence text
+    await expect(page.getByText(/your answer/i)).toBeVisible();
+    await expect(page.getByText(sentence)).toBeVisible();
+
+    // Romanization should NOT appear as a separate element since it equals the sentence.
+    // The sentence text appears once in the answer, not duplicated as romanization below it.
+    await expect(page.getByText(sentence, { exact: true })).toHaveCount(1);
+  });
+
   test("full flow: complete all reading steps to completion screen", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const word1a = `Hola-${uniqueId}`;
