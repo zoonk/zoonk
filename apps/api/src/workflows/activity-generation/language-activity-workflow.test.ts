@@ -349,20 +349,6 @@ describe("language activity generation", () => {
       ],
       targetLanguage: "es",
       userLanguage: "en",
-      words: [
-        {
-          alternativeTranslations: [],
-          romanization: "ga-to",
-          translation: "cat",
-          word: expectedWords[0],
-        },
-        {
-          alternativeTranslations: [],
-          romanization: "o-la",
-          translation: "hello",
-          word: expectedWords[1],
-        },
-      ],
     });
   });
 

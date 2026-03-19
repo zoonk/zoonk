@@ -195,7 +195,6 @@ export async function generateReadingContentStep(
             sentences: createSentenceVariantInputs(generatedSentences),
             targetLanguage: course.targetLanguage ?? course.title,
             userLanguage,
-            words: sourceWords.words,
           }),
         )
       : { data: null };

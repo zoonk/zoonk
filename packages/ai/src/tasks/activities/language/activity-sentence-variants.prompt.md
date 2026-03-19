@@ -28,6 +28,8 @@ For each sentence pair, decide:
 - Standard contractions that keep the same meaning and register
 - Common context-free lexical variants when native teachers would genuinely accept both
 - Small sentence-form changes that keep the same meaning
+- Grammatically equivalent verb forms when both map to the same target-language verb (e.g., "sleeps" and "is sleeping" are both valid for Spanish "duerme")
+- Common kinship synonyms that refer to the same person (e.g., "Mom", "Momma", "Mommy" for "Mama")
 
 # What Does NOT Count
 
@@ -37,55 +39,49 @@ For each sentence pair, decide:
 - Punctuation-only differences
 - Variants justified only by transitive overlap
 
-# Use Vocabulary Hints Carefully
-
-You will receive lesson vocabulary with canonical and alternative translations.
-
-- Use these words as clues for likely ambiguity
-- Do NOT force a variant just because two vocabulary words are related
-- Translation overlap is NOT transitive:
-  if A can mean X and Y, and B can mean X, that does NOT make B valid for Y
-- Lexical variants are allowed only when the full sentence still works naturally and precisely in that direction
-
 # Examples
 
-- Canonical sentence: `Guten Morgen, Anna!`
-  Canonical translation: `Bom dia, Anna!`
-  Valid `alternativeSentences`: `["Guten Tag, Anna!"]`
-  Valid `alternativeTranslations`: `[]`
-
-- Canonical sentence: `Gute Nacht, Mama.`
-  Canonical translation: `Boa noite, mãe.`
-  Valid `alternativeSentences`: `["Guten Abend, Mama."]`
-  Valid `alternativeTranslations`: `[]`
-
-- Canonical sentence: `Yo soy Lara.`
-  Canonical translation: `I am Lara.`
-  Valid `alternativeSentences`: `["Soy Lara."]`
-  Valid `alternativeTranslations`: `["I'm Lara."]`
-
-- Canonical sentence: `Yo estoy en casa.`
-  Canonical translation: `I am at home.`
-  Valid `alternativeSentences`: `["Estoy en casa."]`
-  Valid `alternativeTranslations`: `["I'm at home."]`
-  Invalid `alternativeTranslations`: `["I stay home."]`
-
-- Canonical sentence: `Guten Tag, Herr Weber.`
-  Canonical translation: `Boa tarde, senhor Weber.`
+- Canonical sentence: `Buenas noches, señor Martín.`
+  Canonical translation: `Good night, Mr. Martín.`
   Valid `alternativeSentences`: `[]`
-  Valid `alternativeTranslations`: `["Bom dia, senhor Weber."]`
-  Invalid `alternativeSentences`: `["Guten Morgen, Herr Weber."]`
-  Reason: `Guten Tag` can translate to `Bom dia` or `Boa tarde`, but that does NOT make `Guten Morgen` valid for `Boa tarde`
+  Valid `alternativeTranslations`: `["Good evening, Mr. Martín."]`
+  Reason: Spanish "Buenas noches" maps to both "Good night" and "Good evening" in English
 
-- Canonical sentence: `Guten Tag, ich bin Lara.`
-  Canonical translation: `Bom dia, eu sou Lara.`
-  Invalid `alternativeTranslations`: `["Oi, eu sou Lara."]`
+- Canonical sentence: `Tú eres María.`
+  Canonical translation: `You are María.`
+  Valid `alternativeSentences`: `["Eres María."]`
+  Valid `alternativeTranslations`: `["You're María."]`
+
+- Canonical sentence: `Nosotros estamos en la escuela.`
+  Canonical translation: `We are at the school.`
+  Valid `alternativeSentences`: `["Estamos en la escuela."]`
+  Valid `alternativeTranslations`: `["We're at the school."]`
+  Invalid `alternativeTranslations`: `["We attend the school."]`
+
+- Canonical sentence: `Buenas tardes, profesor García.`
+  Canonical translation: `Good afternoon, Professor García.`
+  Valid `alternativeSentences`: `[]`
+  Valid `alternativeTranslations`: `["Good day, Professor García."]`
+  Invalid `alternativeSentences`: `["Buenos días, profesor García."]`
+  Reason: `Buenas tardes` can also translate to `Good day`, but that does NOT make `Buenos días` valid for `Good afternoon`
+
+- Canonical sentence: `Bonjour, je suis Claire.`
+  Canonical translation: `Hello, I am Claire.`
+  Invalid `alternativeTranslations`: `["Hey, I am Claire."]`
   Reason: the greeting and register changed
 
-- Canonical sentence: `Gute Nacht, Mama.`
-  Canonical translation: `Good night, Mom.`
-  Invalid `alternativeSentences`: `["Gute Nacht Mama."]`
-  Reason: punctuation-only differences must not be included
+- Canonical sentence: `El niño corre.`
+  Canonical translation: `The boy runs.`
+  Valid `alternativeTranslations`: `["The boy is running."]`
+  Valid `alternativeSentences`: `[]`
+  Reason: both "runs" and "is running" are valid English translations of the present-tense Spanish verb "corre"
+
+- Canonical sentence: `Buenos días, papá.`
+  Canonical translation: `Good morning, Dad.`
+  Valid `alternativeTranslations`: `["Good morning, Daddy.", "Good morning, Papa."]`
+  Invalid `alternativeSentences`: `["Buenos días papá."]`
+  Reason for valid: common kinship synonyms referring to the same person
+  Reason for invalid: punctuation-only differences must not be included
 
 # Output Format
 

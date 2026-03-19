@@ -23,13 +23,8 @@ EVALUATION CRITERIA:
    - If the pair is clearly unambiguous, both arrays should be empty
    - Penalize if the model invents unnecessary variants
 
-6. VOCABULARY HINT USAGE:
-   - Use lesson vocabulary as a clue for likely ambiguity
-   - Penalize if the model ignores obvious ambiguity that the vocabulary hints make clear
-   - Penalize if it overuses vocabulary hints to justify unnatural sentence-level variants
-
-7. NON-TRANSITIVE OVERLAP:
-   - Penalize if the model uses vocabulary overlap transitively
+6. NO TRANSITIVE OVERLAP:
+   - Penalize if the model uses translation overlap transitively
    - Accept directional asymmetry when only one side has a valid alternative
    - Penalize invalid target-language swaps like turning "Boa tarde" into "Guten Morgen"
 
@@ -49,14 +44,10 @@ CANONICAL PAIR:
 - sentence: "Guten Morgen, Anna!"
 - translation: "Bom dia, Anna!"
 
-VOCABULARY HINTS:
-- "Guten Morgen" -> "Bom dia"
-- "Guten Tag" -> "Boa tarde", alternative translation: "Bom dia"
-
 EXPECTED BEHAVIOR:
-- \`alternativeSentences\` should include "Guten Tag, Anna!"
+- The model may include "Guten Tag, Anna!" in \`alternativeSentences\` from general linguistic knowledge (both "Guten Morgen" and "Guten Tag" can mean "Bom dia"). Do NOT penalize for including or omitting it.
 - \`alternativeTranslations\` should stay empty
-- Penalize if the model misses the accepted German greeting variant
+- Penalize if the model includes invalid variants (e.g., register shifts, punctuation-only changes)
 
 ${SHARED_EXPECTATIONS}
     `,
@@ -74,18 +65,6 @@ ${SHARED_EXPECTATIONS}
       ],
       targetLanguage: "de",
       userLanguage: "pt",
-      words: [
-        {
-          alternativeTranslations: [],
-          translation: "Bom dia",
-          word: "Guten Morgen",
-        },
-        {
-          alternativeTranslations: ["Bom dia"],
-          translation: "Boa tarde",
-          word: "Guten Tag",
-        },
-      ],
     },
   },
   {
@@ -97,14 +76,10 @@ CANONICAL PAIR:
 - sentence: "Gute Nacht, Mama."
 - translation: "Boa noite, mãe."
 
-VOCABULARY HINTS:
-- "Guten Abend" -> "Boa noite"
-- "Gute Nacht" -> "Boa noite"
-
 EXPECTED BEHAVIOR:
-- \`alternativeSentences\` should include "Guten Abend, Mama."
+- The model may include "Guten Abend, Mama." in \`alternativeSentences\` from general linguistic knowledge (both "Gute Nacht" and "Guten Abend" can mean "Boa noite"). Do NOT penalize for including or omitting it.
 - \`alternativeTranslations\` should stay empty
-- Penalize if the model forces only one German interpretation for a context-free "Boa noite" prompt
+- Penalize if the model includes invalid variants
 
 ${SHARED_EXPECTATIONS}
     `,
@@ -122,23 +97,6 @@ ${SHARED_EXPECTATIONS}
       ],
       targetLanguage: "de",
       userLanguage: "pt",
-      words: [
-        {
-          alternativeTranslations: [],
-          translation: "Boa noite",
-          word: "Guten Abend",
-        },
-        {
-          alternativeTranslations: [],
-          translation: "Boa noite",
-          word: "Gute Nacht",
-        },
-        {
-          alternativeTranslations: [],
-          translation: "mãe",
-          word: "Mama",
-        },
-      ],
     },
   },
   {
@@ -150,15 +108,10 @@ CANONICAL PAIR:
 - sentence: "Guten Tag, Herr Weber."
 - translation: "Boa tarde, senhor Weber."
 
-VOCABULARY HINTS:
-- "Guten Morgen" -> "Bom dia"
-- "Guten Tag" -> "Boa tarde", alternative translation: "Bom dia"
-
 EXPECTED BEHAVIOR:
-- \`alternativeSentences\` should stay empty
-- \`alternativeTranslations\` should include "Bom dia, senhor Weber."
-- Do NOT include "Guten Morgen, Herr Weber."
-- Penalize if the model treats translation overlap transitively
+- \`alternativeSentences\` should stay empty — do NOT include "Guten Morgen, Herr Weber." (transitive overlap is invalid)
+- The model may include "Bom dia, senhor Weber." in \`alternativeTranslations\` from general linguistic knowledge ("Guten Tag" can also mean "Bom dia"). Do NOT penalize for including or omitting it.
+- Penalize if the model treats translation overlap transitively (e.g., because "Guten Tag" can mean "Bom dia" and "Guten Morgen" also means "Bom dia", incorrectly concluding "Guten Morgen" is valid for "Boa tarde")
 
 ${SHARED_EXPECTATIONS}
     `,
@@ -176,18 +129,6 @@ ${SHARED_EXPECTATIONS}
       ],
       targetLanguage: "de",
       userLanguage: "pt",
-      words: [
-        {
-          alternativeTranslations: [],
-          translation: "Bom dia",
-          word: "Guten Morgen",
-        },
-        {
-          alternativeTranslations: ["Bom dia"],
-          translation: "Boa tarde",
-          word: "Guten Tag",
-        },
-      ],
     },
   },
   {
@@ -220,18 +161,6 @@ ${SHARED_EXPECTATIONS}
       ],
       targetLanguage: "es",
       userLanguage: "en",
-      words: [
-        {
-          alternativeTranslations: [],
-          translation: "I",
-          word: "yo",
-        },
-        {
-          alternativeTranslations: [],
-          translation: "am",
-          word: "soy",
-        },
-      ],
     },
   },
   {
@@ -244,12 +173,14 @@ CANONICAL PAIR:
 - translation: "The cat sleeps."
 
 EXPECTED BEHAVIOR:
-- Both alternative arrays should be empty
-- Penalize if the model invents extra variants for this unambiguous sentence
+- \`alternativeSentences\` should stay empty
+- \`alternativeTranslations\` should include "The cat is sleeping." — both "sleeps" and "is sleeping" are valid English translations of the present-tense Spanish verb "duerme"
+- Do NOT penalize the model for including this aspect-equivalent variant
+- Penalize if the model includes unrelated paraphrases beyond aspect-equivalent forms
 
 ${SHARED_EXPECTATIONS}
     `,
-    id: "en-es-unambiguous-sentence",
+    id: "en-es-aspect-variant",
     userInput: {
       chapterTitle: "Animals",
       lessonDescription: "Learn simple animal sentences.",
@@ -263,18 +194,6 @@ ${SHARED_EXPECTATIONS}
       ],
       targetLanguage: "es",
       userLanguage: "en",
-      words: [
-        {
-          alternativeTranslations: [],
-          translation: "the cat",
-          word: "el gato",
-        },
-        {
-          alternativeTranslations: [],
-          translation: "sleeps",
-          word: "duerme",
-        },
-      ],
     },
   },
   {
@@ -307,18 +226,6 @@ ${SHARED_EXPECTATIONS}
       ],
       targetLanguage: "de",
       userLanguage: "pt",
-      words: [
-        {
-          alternativeTranslations: [],
-          translation: "Bom dia",
-          word: "Guten Tag",
-        },
-        {
-          alternativeTranslations: ["Oi"],
-          translation: "Olá",
-          word: "Hallo",
-        },
-      ],
     },
   },
   {
@@ -331,13 +238,14 @@ CANONICAL PAIR:
 - translation: "Good night, Mom."
 
 EXPECTED BEHAVIOR:
-- Do NOT include "Gute Nacht Mama." as an alternative sentence
+- Do NOT include "Gute Nacht Mama." as an alternative sentence (punctuation-only variant)
 - Do NOT include punctuation-only variants in either array
-- Empty arrays are acceptable if no other strict variants are justified
+- \`alternativeTranslations\` may include common kinship synonyms like "Good night, Momma." or "Good night, Mommy." — these are valid because "Momma" and "Mommy" are common synonyms for "Mom" that a native teacher would accept
+- Do NOT penalize the model for including these kinship-synonym variants
 
 ${SHARED_EXPECTATIONS}
     `,
-    id: "en-de-punctuation-only-variant",
+    id: "en-de-kinship-and-punctuation-variant",
     userInput: {
       chapterTitle: "Family greetings",
       lessonDescription: "Short bedtime and family expressions.",
@@ -351,18 +259,6 @@ ${SHARED_EXPECTATIONS}
       ],
       targetLanguage: "de",
       userLanguage: "en",
-      words: [
-        {
-          alternativeTranslations: [],
-          translation: "good night",
-          word: "Gute Nacht",
-        },
-        {
-          alternativeTranslations: [],
-          translation: "Mom",
-          word: "Mama",
-        },
-      ],
     },
   },
 ];
