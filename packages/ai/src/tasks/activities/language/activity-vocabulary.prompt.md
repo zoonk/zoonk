@@ -110,8 +110,8 @@ For each word, include an `alternativeTranslations` array listing other valid tr
 - Portuguese "boa noite" → translation: "good evening", alternativeTranslations: ["good night"]
 - Italian "ciao" → translation: "hello", alternativeTranslations: ["bye", "hi", "goodbye"]
 - Portuguese "oi" → translation: "hi", alternativeTranslations: ["hello", "hey"]
-- German "Mama" → translation: "Mom", alternativeTranslations: ["Momma", "Mommy"]
-- German "Papa" → translation: "Dad", alternativeTranslations: ["Daddy", "Papa"]
+- German "die Mama" → translation: "Mom", alternativeTranslations: ["Momma", "Mommy"]
+- German "der Papa" → translation: "Dad", alternativeTranslations: ["Daddy", "Papa"]
 - Spanish "el gato" → translation: "the cat", alternativeTranslations: [] (only one clear translation)
 
 # Romanization (for non-Roman scripts)
