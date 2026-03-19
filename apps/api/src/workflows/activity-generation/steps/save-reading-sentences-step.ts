@@ -1,7 +1,12 @@
 import { assertStepContent } from "@zoonk/core/steps/content-contract";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
-import { emptyToNull, normalizePunctuation } from "@zoonk/utils/string";
+import {
+  deduplicateNormalizedTexts,
+  emptyToNull,
+  normalizePunctuation,
+  normalizeString,
+} from "@zoonk/utils/string";
 import { streamError, streamStatus } from "../stream-status";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { type ReadingSentence } from "./generate-reading-content-step";
@@ -13,6 +18,19 @@ export type SavedSentence = {
   sentenceId: number;
 };
 
+// Save one clean copy of each alternative so the database does not store duplicates that
+// only differ by formatting.
+// Example: keep "Bonjour!" once instead of saving both "Bonjour!" and " Bonjour ! ".
+function normalizeAlternativeTexts(primaryText: string, alternatives: string[]): string[] {
+  const primaryKey = normalizeString(normalizePunctuation(primaryText).trim());
+
+  return deduplicateNormalizedTexts(alternatives).filter(
+    (text) => normalizeString(text) !== primaryKey,
+  );
+}
+
+// Capture the lesson and activity ids once so the save loop only has to provide the
+// sentence being saved and its position.
 function buildSaveOneSentence(params: {
   activityId: number;
   lessonId: number;
@@ -24,10 +42,20 @@ function buildSaveOneSentence(params: {
 
   return async (readingSentence: ReadingSentence, position: number): Promise<SavedSentence> => {
     const sentence = normalizePunctuation(readingSentence.sentence);
+    const alternativeSentences = normalizeAlternativeTexts(
+      sentence,
+      readingSentence.alternativeSentences,
+    );
     const translation = normalizePunctuation(readingSentence.translation);
+    const alternativeTranslations = normalizeAlternativeTexts(
+      translation,
+      readingSentence.alternativeTranslations,
+    );
 
     const record = await prisma.sentence.upsert({
       create: {
+        alternativeSentences,
+        alternativeTranslations,
         explanation: emptyToNull(readingSentence.explanation),
         organizationId,
         romanization: emptyToNull(readingSentence.romanization),
@@ -37,6 +65,8 @@ function buildSaveOneSentence(params: {
         userLanguage,
       },
       update: {
+        alternativeSentences,
+        alternativeTranslations,
         explanation: emptyToNull(readingSentence.explanation),
         romanization: emptyToNull(readingSentence.romanization),
         translation,
@@ -74,6 +104,8 @@ function buildSaveOneSentence(params: {
   };
 }
 
+// Save each reading sentence, link it to the lesson, and create the reading steps that
+// point to those saved sentences.
 export async function saveReadingSentencesStep(
   activities: LessonActivity[],
   sentences: ReadingSentence[],

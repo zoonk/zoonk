@@ -160,6 +160,8 @@ describe(prepareActivityData, () => {
 
     const [sentence, activity] = await Promise.all([
       sentenceFixture({
+        alternativeSentences: ["ohayo"],
+        alternativeTranslations: ["hi"],
         organizationId: org.id,
         romanization: "konnichiwa",
         sentence: `konnichiwa-${crypto.randomUUID()}`,
@@ -190,6 +192,8 @@ describe(prepareActivityData, () => {
     const result = prepareActivityData(raw!, [], []);
 
     expect(result.steps[0]?.sentence).toEqual({
+      alternativeSentences: ["ohayo"],
+      alternativeTranslations: ["hi"],
       audioUrl: "https://example.com/sent.mp3",
       explanation: null,
       id: String(sentence.id),
@@ -270,6 +274,8 @@ describe(prepareActivityData, () => {
 
     const lessonSentences = [
       {
+        alternativeSentences: sentence1.alternativeSentences,
+        alternativeTranslations: sentence1.alternativeTranslations,
         explanation: sentence1.explanation,
         id: sentence1.id,
         romanization: sentence1.romanization,
@@ -575,6 +581,8 @@ describe(prepareActivityData, () => {
           kind: "reading",
           position: 0,
           sentence: {
+            alternativeSentences: [],
+            alternativeTranslations: [],
             explanation: null,
             id: BigInt(72),
             romanization: null,
@@ -628,6 +636,8 @@ describe(prepareActivityData, () => {
           kind: "reading",
           position: 0,
           sentence: {
+            alternativeSentences: [],
+            alternativeTranslations: [],
             explanation: null,
             id: BigInt(76),
             romanization: null,
@@ -692,6 +702,8 @@ describe(prepareActivityData, () => {
           kind: "reading",
           position: 0,
           sentence: {
+            alternativeSentences: [],
+            alternativeTranslations: [],
             explanation: null,
             id: BigInt(22),
             romanization: null,
@@ -735,6 +747,139 @@ describe(prepareActivityData, () => {
     expect(holaCount).toBe(1); // Only the correct "Hola"
   });
 
+  test("reading word bank uses accepted sentence variants only to suppress distractors", () => {
+    const activity = {
+      description: null,
+      generationRunId: null,
+      generationStatus: "completed",
+      id: BigInt(25),
+      kind: "reading",
+      language: "en",
+      organizationId: 1,
+      position: 0,
+      steps: [
+        {
+          content: {},
+          id: BigInt(26),
+          kind: "reading",
+          position: 0,
+          sentence: {
+            alternativeSentences: ["Guten Morgen Lara"],
+            alternativeTranslations: [],
+            explanation: null,
+            id: BigInt(27),
+            romanization: null,
+            sentence: "Guten Tag Lara",
+            sentenceAudio: null,
+            translation: "Good day Lara",
+          },
+          word: null,
+        },
+      ],
+      title: "Reading Variants",
+    };
+
+    const lessonWords = [
+      {
+        alternativeTranslations: [],
+        id: BigInt(28),
+        pronunciation: null,
+        romanization: null,
+        translation: "morning",
+        word: "Morgen",
+        wordAudio: null,
+      },
+      {
+        alternativeTranslations: [],
+        id: BigInt(29),
+        pronunciation: null,
+        romanization: null,
+        translation: "evening",
+        word: "Abend",
+        wordAudio: null,
+      },
+    ];
+
+    const result = prepareActivityData(activity, lessonWords, []);
+    const wordBank = result.steps[0]?.wordBankOptions ?? [];
+    const wordBankWords = wordBank.map((option) => option.word);
+
+    expect(wordBankWords).toContain("Tag");
+    expect(wordBankWords).toContain("Abend");
+    expect(wordBankWords).not.toContain("Morgen");
+  });
+
+  test("listening word bank uses accepted translation variants only to suppress distractors", () => {
+    const activity = {
+      description: null,
+      generationRunId: null,
+      generationStatus: "completed",
+      id: BigInt(35),
+      kind: "listening",
+      language: "en",
+      organizationId: 1,
+      position: 0,
+      steps: [
+        {
+          content: {},
+          id: BigInt(36),
+          kind: "listening",
+          position: 0,
+          sentence: {
+            alternativeSentences: [],
+            alternativeTranslations: ["Good morning I am Lara"],
+            explanation: null,
+            id: BigInt(37),
+            romanization: null,
+            sentence: "Bom dia eu sou Lara",
+            sentenceAudio: null,
+            translation: "Good day I am Lara",
+          },
+          word: null,
+        },
+      ],
+      title: "Listening Variants",
+    };
+
+    const lessonWords = [
+      {
+        alternativeTranslations: [],
+        id: BigInt(38),
+        pronunciation: null,
+        romanization: null,
+        translation: "morning",
+        word: "Morgen",
+        wordAudio: null,
+      },
+      {
+        alternativeTranslations: [],
+        id: BigInt(39),
+        pronunciation: null,
+        romanization: null,
+        translation: "morning",
+        word: "morning",
+        wordAudio: null,
+      },
+      {
+        alternativeTranslations: [],
+        id: BigInt(40),
+        pronunciation: null,
+        romanization: null,
+        translation: "evening",
+        word: "evening",
+        wordAudio: null,
+      },
+    ];
+
+    const result = prepareActivityData(activity, lessonWords, []);
+    const wordBank = result.steps[0]?.wordBankOptions ?? [];
+    const wordBankWords = wordBank.map((option) => option.word);
+
+    expect(wordBankWords).toContain("day");
+    expect(wordBankWords).toContain("evening");
+    expect(wordBankWords).not.toContain("morning");
+  });
+
   test("excludes distractors that match correct words when ignoring punctuation", () => {
     const activity = {
       description: null,
@@ -752,6 +897,8 @@ describe(prepareActivityData, () => {
           kind: "reading",
           position: 0,
           sentence: {
+            alternativeSentences: [],
+            alternativeTranslations: [],
             explanation: null,
             id: BigInt(32),
             romanization: null,
@@ -812,6 +959,8 @@ describe(prepareActivityData, () => {
           kind: "reading",
           position: 0,
           sentence: {
+            alternativeSentences: [],
+            alternativeTranslations: [],
             explanation: null,
             id: BigInt(42),
             romanization: null,
@@ -900,6 +1049,8 @@ describe(prepareActivityData, () => {
           kind: "reading",
           position: 0,
           sentence: {
+            alternativeSentences: [],
+            alternativeTranslations: [],
             explanation: null,
             id: BigInt(92),
             romanization: null,
@@ -960,6 +1111,8 @@ describe(prepareActivityData, () => {
           kind: "listening",
           position: 0,
           sentence: {
+            alternativeSentences: [],
+            alternativeTranslations: [],
             explanation: null,
             id: BigInt(96),
             romanization: null,

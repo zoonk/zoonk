@@ -14,7 +14,7 @@ function normalizeWordText(text: string): string {
     .trim();
 }
 
-function isSemanticMatch(correctWord: DistractorWord, candidate: DistractorWord): boolean {
+export function isSemanticMatch(correctWord: DistractorWord, candidate: DistractorWord): boolean {
   const correctTranslation = correctWord.translation.toLowerCase();
   const candidateTranslation = candidate.translation.toLowerCase();
   const correctAlternatives = correctWord.alternativeTranslations.map((alt) => alt.toLowerCase());

@@ -1,14 +1,17 @@
 import { describe, expect, test } from "vitest";
 import {
+  deduplicateNormalizedTexts,
   deduplicateSlugs,
   emptyToNull,
   ensureLocaleSuffix,
   extractUniqueSentenceWords,
+  hasWholePhrase,
   normalizePunctuation,
   normalizeString,
   removeAccents,
   removeLocaleSuffix,
   replaceNamePlaceholder,
+  replaceWholePhrase,
   segmentWords,
   stripPunctuation,
   toSlug,
@@ -274,6 +277,19 @@ describe(deduplicateSlugs, () => {
   });
 });
 
+describe(deduplicateNormalizedTexts, () => {
+  test("deduplicates text after punctuation and string normalization", () => {
+    expect(deduplicateNormalizedTexts([" Bonjour ! ", "Bonjour!", "Oi", "oi "])).toEqual([
+      "Bonjour!",
+      "oi",
+    ]);
+  });
+
+  test("keeps the first key order while preserving the latest display text", () => {
+    expect(deduplicateNormalizedTexts(["Olá", "Oi", "Ola"])).toEqual(["Ola", "Oi"]);
+  });
+});
+
 describe(normalizePunctuation, () => {
   test("removes space before exclamation mark", () => {
     expect(normalizePunctuation("Hello !")).toBe("Hello!");
@@ -311,6 +327,44 @@ describe(normalizePunctuation, () => {
     expect(normalizePunctuation("Bonjour , comment allez-vous ?")).toBe(
       "Bonjour, comment allez-vous?",
     );
+  });
+});
+
+describe(hasWholePhrase, () => {
+  test("matches a full phrase without matching inside another word", () => {
+    expect(hasWholePhrase("the cat sleeps", "he")).toBeFalsy();
+    expect(hasWholePhrase("he sleeps", "he")).toBeTruthy();
+  });
+
+  test("matches phrases even when the text uses extra spaces", () => {
+    expect(hasWholePhrase("Guten   Tag, Anna!", "Guten Tag")).toBeTruthy();
+  });
+
+  test("matches Unicode words using Unicode-aware boundaries", () => {
+    expect(hasWholePhrase("Olá, Lara!", "Olá")).toBeTruthy();
+    expect(hasWholePhrase("猫、犬", "猫")).toBeTruthy();
+    expect(hasWholePhrase("猫です", "猫")).toBeFalsy();
+  });
+
+  test("returns false for an empty phrase", () => {
+    expect(hasWholePhrase("hello world", "")).toBeFalsy();
+    expect(hasWholePhrase("", "")).toBeFalsy();
+  });
+});
+
+describe(replaceWholePhrase, () => {
+  test("replaces only the matched whole phrase", () => {
+    expect(replaceWholePhrase("he said hello", "he", "she")).toBe("she said hello");
+    expect(replaceWholePhrase("the hero arrived", "he", "she")).toBeNull();
+  });
+
+  test("keeps normalized punctuation when it replaces a phrase", () => {
+    expect(replaceWholePhrase("Bonjour !", "Bonjour", "Salut")).toBe("Salut!");
+  });
+
+  test("returns null for an empty search phrase", () => {
+    expect(replaceWholePhrase("hello world", "", "goodbye")).toBeNull();
+    expect(replaceWholePhrase("", "", "goodbye")).toBeNull();
   });
 });
 
@@ -354,6 +408,16 @@ describe(segmentWords, () => {
 
   test("handles multiple French-style punctuation in one sentence", () => {
     expect(segmentWords("Oui , je suis là !")).toEqual(["Oui,", "je", "suis", "là!"]);
+  });
+
+  test("keeps connector-linked tokens intact without spaces", () => {
+    expect(segmentWords("gato-prueba")).toEqual(["gato-prueba"]);
+    expect(segmentWords("l'heure")).toEqual(["l'heure"]);
+    expect(segmentWords("allez-vous?")).toEqual(["allez-vous?"]);
+  });
+
+  test("keeps surrounding punctuation on non-space tokens", () => {
+    expect(segmentWords("¿Hola?")).toEqual(["¿Hola?"]);
   });
 });
 

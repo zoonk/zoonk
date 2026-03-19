@@ -170,7 +170,13 @@ describe(validateAnswers, () => {
         content: {},
         id: 5n,
         kind: "reading",
-        sentence: { id: 1n, sentence: "hello world", translation: "olá mundo" },
+        sentence: {
+          alternativeSentences: [],
+          alternativeTranslations: [],
+          id: 1n,
+          sentence: "hello world",
+          translation: "olá mundo",
+        },
       },
     ];
 
@@ -188,12 +194,66 @@ describe(validateAnswers, () => {
         content: {},
         id: 6n,
         kind: "listening",
-        sentence: { id: 1n, sentence: "hello world", translation: "olá mundo" },
+        sentence: {
+          alternativeSentences: [],
+          alternativeTranslations: [],
+          id: 1n,
+          sentence: "hello world",
+          translation: "olá mundo",
+        },
       },
     ];
 
     const results = validateAnswers(steps, {
       "6": { arrangedWords: ["olá", "mundo"], kind: "listening" },
+    });
+
+    expect(results).toHaveLength(1);
+    expect(results[0]?.isCorrect).toBeTruthy();
+  });
+
+  test("accepts an alternative reading answer", () => {
+    const steps = [
+      {
+        content: {},
+        id: 7n,
+        kind: "reading",
+        sentence: {
+          alternativeSentences: ["guten morgen lara"],
+          alternativeTranslations: [],
+          id: 1n,
+          sentence: "guten tag lara",
+          translation: "bom dia lara",
+        },
+      },
+    ];
+
+    const results = validateAnswers(steps, {
+      "7": { arrangedWords: ["guten", "morgen", "lara"], kind: "reading" },
+    });
+
+    expect(results).toHaveLength(1);
+    expect(results[0]?.isCorrect).toBeTruthy();
+  });
+
+  test("accepts punctuation-insensitive listening answers", () => {
+    const steps = [
+      {
+        content: {},
+        id: 8n,
+        kind: "listening",
+        sentence: {
+          alternativeSentences: [],
+          alternativeTranslations: [],
+          id: 1n,
+          sentence: "hello lara",
+          translation: "bom dia, lara!",
+        },
+      },
+    ];
+
+    const results = validateAnswers(steps, {
+      "8": { arrangedWords: ["bom", "dia", "lara"], kind: "listening" },
     });
 
     expect(results).toHaveLength(1);

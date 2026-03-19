@@ -3,6 +3,7 @@ import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
+import { sentenceFixture } from "@zoonk/testing/fixtures/sentences";
 import { stepAttemptFixture } from "@zoonk/testing/fixtures/step-attempts";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { userFixture } from "@zoonk/testing/fixtures/users";
@@ -646,6 +647,7 @@ describe(getReviewSteps, () => {
 
 describe(getReviewValidationSteps, () => {
   let lesson: Awaited<ReturnType<typeof lessonFixture>>;
+  let organizationId: number;
   let quizStep: Awaited<ReturnType<typeof stepFixture>>;
   let challengeStep: Awaited<ReturnType<typeof stepFixture>>;
   let reviewStep: Awaited<ReturnType<typeof stepFixture>>;
@@ -653,6 +655,7 @@ describe(getReviewValidationSteps, () => {
 
   beforeAll(async () => {
     const org = await organizationFixture();
+    organizationId = org.id;
     const course = await courseFixture({ organizationId: org.id });
     const chapter = await chapterFixture({ courseId: course.id, organizationId: org.id });
     lesson = await lessonFixture({ chapterId: chapter.id, organizationId: org.id });
@@ -720,6 +723,37 @@ describe(getReviewValidationSteps, () => {
 
     expect(stepIds).toContain(quizStep.id);
     expect(stepIds).not.toContain(staticStep.id);
+  });
+
+  test("includes sentence variants for review validation", async () => {
+    const sentence = await sentenceFixture({
+      alternativeSentences: ["Guten Morgen, ich bin Lara."],
+      alternativeTranslations: ["Good morning, I am Lara."],
+      organizationId,
+    });
+
+    const readingActivity = await activityFixture({
+      kind: "reading",
+      lessonId: lesson.id,
+      organizationId,
+    });
+
+    const readingStep = await stepFixture({
+      activityId: readingActivity.id,
+      content: {},
+      isPublished: true,
+      kind: "reading",
+      sentenceId: sentence.id,
+    });
+
+    const steps = await getReviewValidationSteps(lesson.id, [readingStep.id]);
+
+    expect(steps[0]?.sentence).toMatchObject({
+      alternativeSentences: ["Guten Morgen, ich bin Lara."],
+      alternativeTranslations: ["Good morning, I am Lara."],
+      sentence: sentence.sentence,
+      translation: sentence.translation,
+    });
   });
 });
 

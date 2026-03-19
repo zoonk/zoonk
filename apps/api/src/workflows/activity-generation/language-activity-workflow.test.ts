@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { generateActivityExplanation } from "@zoonk/ai/tasks/activities/core/explanation";
 import { generateActivityGrammar } from "@zoonk/ai/tasks/activities/language/grammar";
+import { generateActivitySentenceVariants } from "@zoonk/ai/tasks/activities/language/sentence-variants";
 import { generateActivitySentences } from "@zoonk/ai/tasks/activities/language/sentences";
 import { generateActivityVocabulary } from "@zoonk/ai/tasks/activities/language/vocabulary";
 import { generateLanguageAudio } from "@zoonk/core/audio/generate";
@@ -106,6 +107,17 @@ vi.mock("@zoonk/ai/tasks/activities/language/sentences", () => ({
           sentence: "Hola, ¿cómo estás?",
           translation: "Hello, how are you?",
         },
+      ],
+    },
+  }),
+}));
+
+vi.mock("@zoonk/ai/tasks/activities/language/sentence-variants", () => ({
+  generateActivitySentenceVariants: vi.fn().mockResolvedValue({
+    data: {
+      sentences: [
+        { alternativeSentences: [], alternativeTranslations: [], id: "0" },
+        { alternativeSentences: [], alternativeTranslations: [], id: "1" },
       ],
     },
   }),
@@ -319,6 +331,25 @@ describe("language activity generation", () => {
       userLanguage: "en",
       words: expectedWords,
     });
+    expect(generateActivitySentenceVariants).toHaveBeenCalledWith({
+      chapterTitle: chapter.title,
+      lessonDescription: testLesson.description ?? undefined,
+      lessonTitle: testLesson.title,
+      sentences: [
+        {
+          id: "0",
+          sentence: "Yo veo un gato.",
+          translation: "I see a cat.",
+        },
+        {
+          id: "1",
+          sentence: "Hola, ¿cómo estás?",
+          translation: "Hello, how are you?",
+        },
+      ],
+      targetLanguage: "es",
+      userLanguage: "en",
+    });
   });
 
   test("creates listening steps that mirror reading steps", async () => {
@@ -465,6 +496,7 @@ describe("language activity generation", () => {
     });
 
     expect(dbActivity?.generationStatus).toBe("failed");
+    expect(generateActivitySentenceVariants).not.toHaveBeenCalled();
   });
 
   test("reading audio failure causes both reading and listening to fail", async () => {
@@ -597,6 +629,7 @@ describe("language activity generation", () => {
     await activityGenerationWorkflow(testLesson.id);
 
     expect(generateActivitySentences).not.toHaveBeenCalled();
+    expect(generateActivitySentenceVariants).not.toHaveBeenCalled();
 
     const listeningSteps = await prisma.step.findMany({
       orderBy: { position: "asc" },

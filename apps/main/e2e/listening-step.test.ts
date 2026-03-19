@@ -12,8 +12,14 @@ import { wordFixture } from "@zoonk/testing/fixtures/words";
 import { type Page, expect, test } from "./fixtures";
 
 async function createListeningActivity(options: {
-  sentences: { audioUrl?: string | null; sentence: string; translation: string }[];
-  words: { translation: string; word: string }[];
+  sentences: {
+    audioUrl?: string | null;
+    alternativeSentences?: string[];
+    alternativeTranslations?: string[];
+    sentence: string;
+    translation: string;
+  }[];
+  words: { alternativeTranslations?: string[]; translation: string; word: string }[];
   sentenceWords?: { romanization?: string | null; translation: string; word: string }[];
 }) {
   const org = await getAiOrganization();
@@ -47,6 +53,7 @@ async function createListeningActivity(options: {
   const createdWords = await Promise.all(
     options.words.map((wordData) =>
       wordFixture({
+        alternativeTranslations: wordData.alternativeTranslations ?? [],
         organizationId: org.id,
         translation: wordData.translation,
         word: wordData.word,
@@ -67,6 +74,8 @@ async function createListeningActivity(options: {
       }
 
       return sentenceFixture({
+        alternativeSentences: sentenceData.alternativeSentences ?? [],
+        alternativeTranslations: sentenceData.alternativeTranslations ?? [],
         organizationId: org.id,
         sentence: sentenceData.sentence,
         sentenceAudioId,
@@ -256,6 +265,49 @@ test.describe("Listening Step", () => {
     // Shows the correct answer
     await expect(page.getByText(/correct answer/i)).toBeVisible();
     await expect(page.getByText(translation)).toBeVisible();
+  });
+
+  test("hides alternative lexical listening words from the word bank", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const bom = `bom-${uniqueId}`;
+    const dia = `dia-${uniqueId}`;
+    const boa = `boa-${uniqueId}`;
+    const tarde = `tarde-${uniqueId}`;
+    const guten = `guten-${uniqueId}`;
+    const tag = `tag-${uniqueId}`;
+    const morgen = `morgen-${uniqueId}`;
+    const lara = `lara-${uniqueId}`;
+    const noite = `noite-${uniqueId}`;
+
+    const { url } = await createListeningActivity({
+      sentences: [
+        {
+          alternativeTranslations: [`${bom} ${dia} ${lara}`],
+          sentence: `${guten} ${tag} ${lara}`,
+          translation: `${boa} ${tarde} ${lara}`,
+        },
+      ],
+      words: [
+        { translation: `${bom} ${dia}`, word: `${guten} ${morgen}` },
+        {
+          alternativeTranslations: [`${bom} ${dia}`],
+          translation: `${boa} ${tarde}`,
+          word: `${guten} ${tag}`,
+        },
+        { translation: noite, word: `abend-${uniqueId}` },
+      ],
+    });
+
+    await page.goto(url);
+
+    const wordBank = page.getByRole("group", { name: /word bank/i });
+
+    await expect(wordBank.getByRole("button", { exact: true, name: boa })).toBeVisible();
+    await expect(wordBank.getByRole("button", { exact: true, name: tarde })).toBeVisible();
+    await expect(wordBank.getByRole("button", { exact: true, name: lara })).toBeVisible();
+    await expect(wordBank.getByRole("button", { exact: true, name: noite })).toBeVisible();
+    await expect(wordBank.getByRole("button", { exact: true, name: bom })).toHaveCount(0);
+    await expect(wordBank.getByRole("button", { exact: true, name: dia })).toHaveCount(0);
   });
 
   test("full flow: complete all listening steps to completion screen", async ({ page }) => {

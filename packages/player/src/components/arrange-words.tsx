@@ -103,6 +103,7 @@ function WordBank({
 }
 
 export function ArrangeWordsInteraction({
+  acceptedWordLengths,
   answerKind,
   children,
   correctWords,
@@ -112,6 +113,7 @@ export function ArrangeWordsInteraction({
   stepId,
   wordBankOptions,
 }: {
+  acceptedWordLengths: number[];
   answerKind: "reading" | "listening";
   children: React.ReactNode;
   correctWords: string[];
@@ -136,10 +138,27 @@ export function ArrangeWordsInteraction({
   });
 
   const { play } = useWordAudio();
+  const maxAnswerLength = Math.max(...acceptedWordLengths, correctWords.length);
+
+  const syncSelectedAnswer = useCallback(
+    (next: PlacedWord[]) => {
+      const arrangedWords = next.map((placedWord) => placedWord.word);
+
+      if (acceptedWordLengths.includes(next.length)) {
+        onSelectAnswer(stepId, { arrangedWords, kind: answerKind });
+        return;
+      }
+
+      if (selectedAnswer) {
+        onSelectAnswer(stepId, null);
+      }
+    },
+    [acceptedWordLengths, answerKind, onSelectAnswer, selectedAnswer, stepId],
+  );
 
   const handlePlace = useCallback(
     (option: WordBankOption) => {
-      if (placedWords.length >= correctWords.length) {
+      if (placedWords.length >= maxAnswerLength) {
         return;
       }
 
@@ -149,26 +168,18 @@ export function ArrangeWordsInteraction({
       const next = [...placedWords, placed];
       setPlacedWords(next);
 
-      if (next.length === correctWords.length) {
-        onSelectAnswer(stepId, {
-          arrangedWords: next.map((pw) => pw.word),
-          kind: answerKind,
-        });
-      }
+      syncSelectedAnswer(next);
     },
-    [answerKind, correctWords.length, onSelectAnswer, placedWords, play, stepId],
+    [maxAnswerLength, placedWords, play, syncSelectedAnswer],
   );
 
   const handleRemove = useCallback(
     (index: number) => {
       const next = placedWords.filter((_, idx) => idx !== index);
       setPlacedWords(next);
-
-      if (selectedAnswer) {
-        onSelectAnswer(stepId, null);
-      }
+      syncSelectedAnswer(next);
     },
-    [onSelectAnswer, placedWords, selectedAnswer, stepId],
+    [placedWords, syncSelectedAnswer],
   );
 
   const handleDragStart = useCallback(() => {
@@ -195,14 +206,9 @@ export function ArrangeWordsInteraction({
       const reordered = arrayMove(placedWords, oldIndex, newIndex);
       setPlacedWords(reordered);
 
-      if (reordered.length === correctWords.length) {
-        onSelectAnswer(stepId, {
-          arrangedWords: reordered.map((pw) => pw.word),
-          kind: answerKind,
-        });
-      }
+      syncSelectedAnswer(reordered);
     },
-    [answerKind, correctWords.length, onSelectAnswer, placedWords, stepId],
+    [placedWords, syncSelectedAnswer],
   );
 
   return (

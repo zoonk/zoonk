@@ -4,7 +4,7 @@ import {
   isSupportedStepKind,
   parseStepContent,
 } from "@zoonk/core/steps/content-contract";
-import { segmentWords } from "@zoonk/utils/string";
+import { buildAcceptedArrangeWordSequences } from "./arrange-words-answers";
 import {
   checkArrangeWordsAnswer,
   checkFillBlankAnswer,
@@ -30,7 +30,13 @@ type StepData = {
   kind: string;
   content: unknown;
   word?: { id: bigint } | null;
-  sentence?: { id: bigint; sentence: string; translation: string } | null;
+  sentence?: {
+    id: bigint;
+    sentence: string;
+    alternativeSentences?: string[];
+    translation: string;
+    alternativeTranslations?: string[];
+  } | null;
 };
 
 type ValidatedStepResult = {
@@ -123,8 +129,11 @@ function validateReading(step: StepData, answer: SelectedAnswer): ValidatedStepR
     return null;
   }
 
-  const words = segmentWords(step.sentence.sentence);
-  const result = checkArrangeWordsAnswer(words, answer.arrangedWords);
+  const acceptedWordSequences = buildAcceptedArrangeWordSequences(
+    step.sentence.sentence,
+    step.sentence.alternativeSentences ?? [],
+  );
+  const result = checkArrangeWordsAnswer(acceptedWordSequences, answer.arrangedWords);
   return { answer, effects: [], isCorrect: result.isCorrect, stepId: step.id };
 }
 
@@ -137,8 +146,11 @@ function validateListening(step: StepData, answer: SelectedAnswer): ValidatedSte
     return null;
   }
 
-  const words = segmentWords(step.sentence.translation);
-  const result = checkArrangeWordsAnswer(words, answer.arrangedWords);
+  const acceptedWordSequences = buildAcceptedArrangeWordSequences(
+    step.sentence.translation,
+    step.sentence.alternativeTranslations ?? [],
+  );
+  const result = checkArrangeWordsAnswer(acceptedWordSequences, answer.arrangedWords);
   return { answer, effects: [], isCorrect: result.isCorrect, stepId: step.id };
 }
 

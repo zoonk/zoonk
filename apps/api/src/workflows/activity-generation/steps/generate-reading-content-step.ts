@@ -3,31 +3,54 @@ import {
   getAIResultErrorReason,
 } from "@/workflows/_shared/stream-status";
 import {
+  type ActivitySentenceVariantInput,
+  type ActivitySentenceVariantsSchema,
+  generateActivitySentenceVariants,
+} from "@zoonk/ai/tasks/activities/language/sentence-variants";
+import {
   type ActivitySentencesSchema,
   generateActivitySentences,
 } from "@zoonk/ai/tasks/activities/language/sentences";
+import { type VocabularyWord } from "@zoonk/ai/tasks/activities/language/vocabulary";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { streamError, streamStatus } from "../stream-status";
 import { resolveActivityForGeneration } from "./_utils/content-step-helpers";
+import { enrichReadingSentenceVariants } from "./_utils/enrich-reading-sentence-variants";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
 import { setActivityAsRunningStep } from "./set-activity-as-running-step";
 
-export type ReadingSentence = ActivitySentencesSchema["sentences"][number];
+type GeneratedReadingSentence = ActivitySentencesSchema["sentences"][number];
+type AuditedReadingSentence = ActivitySentenceVariantsSchema["sentences"][number];
+
+export type ReadingSentence = GeneratedReadingSentence & {
+  alternativeSentences: string[];
+  alternativeTranslations: string[];
+};
+
 async function getFallbackLessonWords(params: {
   lessonId: number;
   organizationId: number | null;
   targetLanguage: string;
   userLanguage: string;
-}): Promise<string[]> {
+}): Promise<VocabularyWord[]> {
   if (!params.organizationId) {
     return [];
   }
 
   const words = await prisma.lessonWord.findMany({
     orderBy: { id: "asc" },
-    select: { word: { select: { word: true } } },
+    select: {
+      word: {
+        select: {
+          alternativeTranslations: true,
+          romanization: true,
+          translation: true,
+          word: true,
+        },
+      },
+    },
     where: {
       lessonId: params.lessonId,
       word: {
@@ -38,7 +61,7 @@ async function getFallbackLessonWords(params: {
     },
   });
 
-  return words.map((record) => record.word.word);
+  return words.map((record) => record.word);
 }
 
 function hasValidSentences(sentences: ReadingSentence[]): boolean {
@@ -47,13 +70,40 @@ function hasValidSentences(sentences: ReadingSentence[]): boolean {
   );
 }
 
+function createSentenceVariantInputs(
+  sentences: GeneratedReadingSentence[],
+): ActivitySentenceVariantInput[] {
+  return sentences.map((sentence, index) => ({
+    id: String(index),
+    sentence: sentence.sentence,
+    translation: sentence.translation,
+  }));
+}
+
+function mergeSentenceVariants(
+  sentences: GeneratedReadingSentence[],
+  variants: AuditedReadingSentence[] | undefined,
+): ReadingSentence[] {
+  const variantsById = new Map(variants?.map((variant) => [variant.id, variant]));
+
+  return sentences.map((sentence, index) => {
+    const variant = variantsById.get(String(index));
+
+    return {
+      ...sentence,
+      alternativeSentences: variant?.alternativeSentences ?? [],
+      alternativeTranslations: variant?.alternativeTranslations ?? [],
+    };
+  });
+}
+
 async function resolveSourceWords(input: {
-  currentRunWords: string[];
+  currentRunWords: VocabularyWord[];
   lessonId: number;
   organizationId: number | null;
   targetLanguage: string;
   userLanguage: string;
-}): Promise<{ error: Error; words: [] } | { error: null; words: string[] }> {
+}): Promise<{ error: Error; words: [] } | { error: null; words: VocabularyWord[] }> {
   if (input.currentRunWords.length > 0) {
     return { error: null, words: input.currentRunWords };
   }
@@ -86,7 +136,7 @@ async function handleReadingGenerationFailure(
 export async function generateReadingContentStep(
   activities: LessonActivity[],
   workflowRunId: string,
-  currentRunWords: string[],
+  currentRunWords: VocabularyWord[],
   concepts: string[] = [],
   neighboringConcepts: string[] = [],
 ): Promise<{ sentences: ReadingSentence[] }> {
@@ -129,20 +179,36 @@ export async function generateReadingContentStep(
       neighboringConcepts,
       targetLanguage: course.targetLanguage ?? course.title,
       userLanguage,
-      words: sourceWords.words,
+      words: sourceWords.words.map((word) => word.word),
     }),
   );
 
-  if (
-    error ||
-    !result ||
-    result.data.sentences.length === 0 ||
-    !hasValidSentences(result.data.sentences)
-  ) {
+  const generatedSentences = result?.data.sentences ?? [];
+
+  const { data: sentenceVariantsResult } =
+    generatedSentences.length > 0
+      ? await safeAsync(() =>
+          generateActivitySentenceVariants({
+            chapterTitle: activity.lesson.chapter.title,
+            lessonDescription: activity.lesson.description ?? undefined,
+            lessonTitle: activity.lesson.title,
+            sentences: createSentenceVariantInputs(generatedSentences),
+            targetLanguage: course.targetLanguage ?? course.title,
+            userLanguage,
+          }),
+        )
+      : { data: null };
+
+  const sentences = enrichReadingSentenceVariants(
+    mergeSentenceVariants(generatedSentences, sentenceVariantsResult?.data.sentences),
+    sourceWords.words,
+  );
+
+  if (error || !result || sentences.length === 0 || !hasValidSentences(sentences)) {
     const reason = getAIResultErrorReason(error, result);
     return handleReadingGenerationFailure(activity.id, reason);
   }
 
   await streamStatus({ status: "completed", step: "generateSentences" });
-  return { sentences: result.data.sentences };
+  return { sentences };
 }

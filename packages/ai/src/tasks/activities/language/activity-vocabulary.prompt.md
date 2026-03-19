@@ -102,6 +102,7 @@ For each word, include an `alternativeTranslations` array listing other valid tr
 
 - List genuinely equivalent translations only — not loosely related words
 - Include alternatives from BOTH directions: if the user's language has synonyms that map to the same target word, list them
+- Include common kinship synonyms that refer to the same person (e.g., "Mom", "Momma", "Mommy" for "Mama")
 - Set to an empty array `[]` when the word has only one clear translation
 
 **Examples:**
@@ -109,6 +110,8 @@ For each word, include an `alternativeTranslations` array listing other valid tr
 - Portuguese "boa noite" → translation: "good evening", alternativeTranslations: ["good night"]
 - Italian "ciao" → translation: "hello", alternativeTranslations: ["bye", "hi", "goodbye"]
 - Portuguese "oi" → translation: "hi", alternativeTranslations: ["hello", "hey"]
+- German "die Mama" → translation: "Mom", alternativeTranslations: ["Momma", "Mommy"]
+- German "der Papa" → translation: "Dad", alternativeTranslations: ["Daddy", "Papa"]
 - Spanish "el gato" → translation: "the cat", alternativeTranslations: [] (only one clear translation)
 
 # Romanization (for non-Roman scripts)

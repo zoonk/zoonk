@@ -297,6 +297,8 @@ describe(checkStep, () => {
       id: "reading-1",
       kind: "reading",
       sentence: {
+        alternativeSentences: [],
+        alternativeTranslations: [],
         audioUrl: null,
         explanation: null,
         id: "sent-1",
@@ -327,6 +329,8 @@ describe(checkStep, () => {
         id: "reading-2",
         kind: "reading",
         sentence: {
+          alternativeSentences: [],
+          alternativeTranslations: [],
           audioUrl: null,
           explanation: "Word order matters in this language.",
           id: "sent-3",
@@ -347,6 +351,8 @@ describe(checkStep, () => {
       id: "listening-1",
       kind: "listening",
       sentence: {
+        alternativeSentences: [],
+        alternativeTranslations: [],
         audioUrl: null,
         explanation: null,
         id: "sent-2",
@@ -377,6 +383,8 @@ describe(checkStep, () => {
         id: "listening-2",
         kind: "listening",
         sentence: {
+          alternativeSentences: [],
+          alternativeTranslations: [],
           audioUrl: null,
           explanation: "Pay attention to accent marks.",
           id: "sent-4",

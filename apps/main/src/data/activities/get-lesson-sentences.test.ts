@@ -82,6 +82,8 @@ describe(getLessonSentences, () => {
     });
 
     const sentence = await sentenceFixture({
+      alternativeSentences: ["Adoro"],
+      alternativeTranslations: ["I enjoy"],
       organizationId: org.id,
       romanization: null,
       sentence: `Me gusta ${crypto.randomUUID()}`,
@@ -96,6 +98,8 @@ describe(getLessonSentences, () => {
 
     expect(result).toHaveLength(1);
     expect(result[0]).toMatchObject({
+      alternativeSentences: ["Adoro"],
+      alternativeTranslations: ["I enjoy"],
       id: sentence.id,
       romanization: null,
       sentence: sentence.sentence,

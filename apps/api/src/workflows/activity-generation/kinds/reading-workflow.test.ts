@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { generateActivitySentenceVariants } from "@zoonk/ai/tasks/activities/language/sentence-variants";
 import { generateSentenceWordTranslation } from "@zoonk/ai/tasks/activities/language/sentence-word-translation";
 import { generateActivitySentences } from "@zoonk/ai/tasks/activities/language/sentences";
 import { generateLanguageAudio } from "@zoonk/core/audio/generate";
@@ -45,6 +46,17 @@ vi.mock("@zoonk/ai/tasks/activities/language/sentences", () => ({
   }),
 }));
 
+vi.mock("@zoonk/ai/tasks/activities/language/sentence-variants", () => ({
+  generateActivitySentenceVariants: vi.fn().mockResolvedValue({
+    data: {
+      sentences: [
+        { alternativeSentences: [], alternativeTranslations: [], id: "0" },
+        { alternativeSentences: [], alternativeTranslations: [], id: "1" },
+      ],
+    },
+  }),
+}));
+
 vi.mock("@zoonk/ai/tasks/activities/language/sentence-word-translation", () => ({
   generateSentenceWordTranslation: vi.fn().mockResolvedValue({
     data: { romanization: null, translation: "mocked" },
@@ -62,6 +74,28 @@ const words = [
   { alternativeTranslations: [], romanization: "ga-to", translation: "cat", word: "gato" },
   { alternativeTranslations: [], romanization: "o-la", translation: "hello", word: "hola" },
 ];
+
+function createSentenceGenerationResult(
+  sentences: Awaited<ReturnType<typeof generateActivitySentences>>["data"]["sentences"],
+): Awaited<ReturnType<typeof generateActivitySentences>> {
+  return {
+    data: { sentences },
+    systemPrompt: "",
+    usage: {} as Awaited<ReturnType<typeof generateActivitySentences>>["usage"],
+    userPrompt: "",
+  };
+}
+
+function createSentenceVariantResult(
+  sentences: Awaited<ReturnType<typeof generateActivitySentenceVariants>>["data"]["sentences"],
+): Awaited<ReturnType<typeof generateActivitySentenceVariants>> {
+  return {
+    data: { sentences },
+    systemPrompt: "",
+    usage: {} as Awaited<ReturnType<typeof generateActivitySentenceVariants>>["usage"],
+    userPrompt: "",
+  };
+}
 
 async function fetchLessonActivities(lessonId: number): Promise<LessonActivity[]> {
   const activities = await prisma.activity.findMany({
@@ -147,6 +181,318 @@ describe(readingActivityWorkflow, () => {
       expect(step.sentenceId).not.toBeNull();
       expect(step.isPublished).toBeTruthy();
     }
+  });
+
+  test("persists accepted sentence variants returned by AI audit", async () => {
+    const id = randomUUID().replaceAll("-", "").slice(0, 8);
+    const sentenceText = `Yo soy Lara ${id}.`;
+    const translationText = `I am Lara ${id}.`;
+    const alternativeSentence = `Soy Lara ${id}.`;
+    const alternativeTranslation = `I'm Lara ${id}.`;
+
+    vi.mocked(generateActivitySentences).mockResolvedValueOnce(
+      createSentenceGenerationResult([
+        {
+          explanation: "Greeting variant",
+          romanization: null,
+          sentence: sentenceText,
+          translation: translationText,
+        },
+      ]),
+    );
+    vi.mocked(generateActivitySentenceVariants).mockResolvedValueOnce(
+      createSentenceVariantResult([
+        {
+          alternativeSentences: [alternativeSentence],
+          alternativeTranslations: [alternativeTranslation],
+          id: "0",
+        },
+      ]),
+    );
+
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `Reading Variants ${randomUUID()}`,
+    });
+
+    await activityFixture({
+      generationStatus: "pending",
+      kind: "reading",
+      language: "en",
+      lessonId: lesson.id,
+      organizationId,
+      title: `Reading ${randomUUID()}`,
+    });
+
+    const activities = await fetchLessonActivities(lesson.id);
+    await readingActivityWorkflow(activities, "test-run-id", words, [], []);
+
+    const savedSentence = await prisma.sentence.findFirst({
+      where: {
+        organizationId,
+        sentence: sentenceText,
+        targetLanguage: "es",
+        translation: translationText,
+        userLanguage: "en",
+      },
+    });
+
+    expect(savedSentence).toMatchObject({
+      alternativeSentences: [alternativeSentence],
+      alternativeTranslations: [alternativeTranslation],
+      sentence: sentenceText,
+      translation: translationText,
+    });
+  });
+
+  test("derives accepted sentence variants from lesson vocabulary when generation omits them", async () => {
+    vi.mocked(generateActivitySentences).mockResolvedValueOnce(
+      createSentenceGenerationResult([
+        {
+          explanation: null,
+          romanization: null,
+          sentence: "Guten Morgen, Anna!",
+          translation: "Bom dia, Anna!",
+        },
+        {
+          explanation: null,
+          romanization: null,
+          sentence: "Gute Nacht, Mama.",
+          translation: "Boa noite, mãe.",
+        },
+      ]),
+    );
+    vi.mocked(generateActivitySentenceVariants).mockResolvedValueOnce(
+      createSentenceVariantResult([
+        { alternativeSentences: [], alternativeTranslations: [], id: "0" },
+        { alternativeSentences: [], alternativeTranslations: [], id: "1" },
+      ]),
+    );
+
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `Reading Derived Variants ${randomUUID()}`,
+    });
+
+    await activityFixture({
+      generationStatus: "pending",
+      kind: "reading",
+      language: "pt",
+      lessonId: lesson.id,
+      organizationId,
+      title: `Reading ${randomUUID()}`,
+    });
+
+    const greetingWords = [
+      {
+        alternativeTranslations: [],
+        romanization: null,
+        translation: "Bom dia",
+        word: "Guten Morgen",
+      },
+      {
+        alternativeTranslations: ["Bom dia"],
+        romanization: null,
+        translation: "Boa tarde",
+        word: "Guten Tag",
+      },
+      {
+        alternativeTranslations: [],
+        romanization: null,
+        translation: "Boa noite",
+        word: "Guten Abend",
+      },
+      {
+        alternativeTranslations: [],
+        romanization: null,
+        translation: "Boa noite",
+        word: "Gute Nacht",
+      },
+      {
+        alternativeTranslations: [],
+        romanization: null,
+        translation: "mãe",
+        word: "Mama",
+      },
+    ];
+
+    const activities = await fetchLessonActivities(lesson.id);
+    await readingActivityWorkflow(activities, "test-run-id", greetingWords, [], []);
+
+    const savedSentences = await prisma.sentence.findMany({
+      orderBy: { sentence: "asc" },
+      where: {
+        organizationId,
+        steps: { some: { activity: { lessonId: lesson.id } } },
+        targetLanguage: "es",
+        userLanguage: "pt",
+      },
+    });
+
+    expect(savedSentences).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          alternativeSentences: ["Guten Abend, Mama."],
+          sentence: "Gute Nacht, Mama.",
+          translation: "Boa noite, mãe.",
+        }),
+        expect.objectContaining({
+          alternativeSentences: ["Guten Tag, Anna!"],
+          sentence: "Guten Morgen, Anna!",
+          translation: "Bom dia, Anna!",
+        }),
+      ]),
+    );
+  });
+
+  test("falls back to vocabulary-derived variants when variant audit fails", async () => {
+    vi.mocked(generateActivitySentences).mockResolvedValueOnce(
+      createSentenceGenerationResult([
+        {
+          explanation: null,
+          romanization: null,
+          sentence: "Guten Morgen, Anna!",
+          translation: "Bom dia, Anna!",
+        },
+      ]),
+    );
+    vi.mocked(generateActivitySentenceVariants).mockRejectedValueOnce(
+      new Error("Sentence variants AI failed"),
+    );
+
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `Reading Variant Fallback ${randomUUID()}`,
+    });
+
+    await activityFixture({
+      generationStatus: "pending",
+      kind: "reading",
+      language: "pt",
+      lessonId: lesson.id,
+      organizationId,
+      title: `Reading ${randomUUID()}`,
+    });
+
+    const greetingWords = [
+      {
+        alternativeTranslations: [],
+        romanization: null,
+        translation: "Bom dia",
+        word: "Guten Morgen",
+      },
+      {
+        alternativeTranslations: ["Bom dia"],
+        romanization: null,
+        translation: "Boa tarde",
+        word: "Guten Tag",
+      },
+    ];
+
+    const activities = await fetchLessonActivities(lesson.id);
+    await readingActivityWorkflow(activities, "test-run-id", greetingWords, [], []);
+
+    const savedSentence = await prisma.sentence.findFirst({
+      where: {
+        organizationId,
+        sentence: "Guten Morgen, Anna!",
+        steps: { some: { activity: { lessonId: lesson.id } } },
+        targetLanguage: "es",
+        translation: "Bom dia, Anna!",
+        userLanguage: "pt",
+      },
+    });
+
+    expect(savedSentence).toMatchObject({
+      alternativeSentences: ["Guten Tag, Anna!"],
+      sentence: "Guten Morgen, Anna!",
+      translation: "Bom dia, Anna!",
+    });
+  });
+
+  test("keeps AI sentence variants even when they introduce a different lesson phrase", async () => {
+    vi.mocked(generateActivitySentences).mockResolvedValueOnce(
+      createSentenceGenerationResult([
+        {
+          explanation: null,
+          romanization: null,
+          sentence: "Guten Tag, Herr Weber.",
+          translation: "Boa tarde, senhor Weber.",
+        },
+      ]),
+    );
+    vi.mocked(generateActivitySentenceVariants).mockResolvedValueOnce(
+      createSentenceVariantResult([
+        {
+          alternativeSentences: ["Guten Morgen, Herr Weber."],
+          alternativeTranslations: [],
+          id: "0",
+        },
+      ]),
+    );
+
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `Reading Kept Variants ${randomUUID()}`,
+    });
+
+    await activityFixture({
+      generationStatus: "pending",
+      kind: "reading",
+      language: "pt",
+      lessonId: lesson.id,
+      organizationId,
+      title: `Reading ${randomUUID()}`,
+    });
+
+    const greetingWords = [
+      {
+        alternativeTranslations: [],
+        romanization: null,
+        translation: "Bom dia",
+        word: "Guten Morgen",
+      },
+      {
+        alternativeTranslations: ["Bom dia"],
+        romanization: null,
+        translation: "Boa tarde",
+        word: "Guten Tag",
+      },
+      {
+        alternativeTranslations: [],
+        romanization: null,
+        translation: "senhor",
+        word: "Herr",
+      },
+    ];
+
+    const activities = await fetchLessonActivities(lesson.id);
+    await readingActivityWorkflow(activities, "test-run-id", greetingWords, [], []);
+
+    const savedSentence = await prisma.sentence.findFirst({
+      where: {
+        organizationId,
+        sentence: "Guten Tag, Herr Weber.",
+        steps: { some: { activity: { lessonId: lesson.id } } },
+        targetLanguage: "es",
+        translation: "Boa tarde, senhor Weber.",
+        userLanguage: "pt",
+      },
+    });
+
+    expect(savedSentence).toMatchObject({
+      alternativeSentences: ["Guten Morgen, Herr Weber."],
+      sentence: "Guten Tag, Herr Weber.",
+      translation: "Boa tarde, senhor Weber.",
+    });
   });
 
   test("sets reading status to 'completed' after full pipeline", async () => {
@@ -236,6 +582,7 @@ describe(readingActivityWorkflow, () => {
     const dbActivity = await prisma.activity.findUnique({ where: { id: activity.id } });
     expect(dbActivity?.generationStatus).toBe("failed");
     expect(generateActivitySentences).not.toHaveBeenCalled();
+    expect(generateActivitySentenceVariants).not.toHaveBeenCalled();
   });
 
   test("skips generation when activity is already completed", async () => {
@@ -259,6 +606,7 @@ describe(readingActivityWorkflow, () => {
     await readingActivityWorkflow(activities, "test-run-id", words, [], []);
 
     expect(generateActivitySentences).not.toHaveBeenCalled();
+    expect(generateActivitySentenceVariants).not.toHaveBeenCalled();
   });
 
   test("does not save words with empty translation when metadata generation partially fails", async () => {
@@ -266,17 +614,16 @@ describe(readingActivityWorkflow, () => {
     const failWord = `zfail${id}`;
     const passWord = `zpass${id}`;
 
-    vi.mocked(generateActivitySentences).mockResolvedValueOnce({
-      data: {
-        sentences: [
-          {
-            romanization: "r1",
-            sentence: `${passWord} ${failWord}`,
-            translation: "pass fail",
-          },
-        ],
-      },
-    } as Awaited<ReturnType<typeof generateActivitySentences>>);
+    vi.mocked(generateActivitySentences).mockResolvedValueOnce(
+      createSentenceGenerationResult([
+        {
+          explanation: null,
+          romanization: "r1",
+          sentence: `${passWord} ${failWord}`,
+          translation: "pass fail",
+        },
+      ]),
+    );
 
     vi.mocked(generateSentenceWordTranslation).mockImplementation(async ({ word }) => {
       if (word === failWord) {
@@ -336,17 +683,16 @@ describe(readingActivityWorkflow, () => {
       },
     });
 
-    vi.mocked(generateActivitySentences).mockResolvedValueOnce({
-      data: {
-        sentences: [
-          {
-            romanization: "r1",
-            sentence: `${capitalizedWord} test`,
-            translation: "cap test",
-          },
-        ],
-      },
-    } as Awaited<ReturnType<typeof generateActivitySentences>>);
+    vi.mocked(generateActivitySentences).mockResolvedValueOnce(
+      createSentenceGenerationResult([
+        {
+          explanation: null,
+          romanization: "r1",
+          sentence: `${capitalizedWord} test`,
+          translation: "cap test",
+        },
+      ]),
+    );
 
     const lesson = await lessonFixture({
       chapterId: chapter.id,
@@ -411,17 +757,16 @@ describe(readingActivityWorkflow, () => {
       },
     });
 
-    vi.mocked(generateActivitySentences).mockResolvedValueOnce({
-      data: {
-        sentences: [
-          {
-            romanization: "r1",
-            sentence: `${existingWord} ${newWord}`,
-            translation: "existing new",
-          },
-        ],
-      },
-    } as Awaited<ReturnType<typeof generateActivitySentences>>);
+    vi.mocked(generateActivitySentences).mockResolvedValueOnce(
+      createSentenceGenerationResult([
+        {
+          explanation: null,
+          romanization: "r1",
+          sentence: `${existingWord} ${newWord}`,
+          translation: "existing new",
+        },
+      ]),
+    );
 
     const lesson = await lessonFixture({
       chapterId: chapter.id,

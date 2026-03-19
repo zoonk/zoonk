@@ -322,28 +322,56 @@ describe(checkTranslationAnswer, () => {
 
 describe(checkArrangeWordsAnswer, () => {
   test("returns correct for matching sequence", () => {
-    expect(checkArrangeWordsAnswer(["I", "speak", "Spanish"], ["I", "speak", "Spanish"])).toEqual({
+    expect(checkArrangeWordsAnswer([["I", "speak", "Spanish"]], ["I", "speak", "Spanish"])).toEqual(
+      {
+        correctAnswer: null,
+        feedback: null,
+        isCorrect: true,
+      },
+    );
+  });
+
+  test("returns incorrect for wrong sequence", () => {
+    expect(checkArrangeWordsAnswer([["I", "speak", "Spanish"]], ["Spanish", "I", "speak"])).toEqual(
+      {
+        correctAnswer: null,
+        feedback: null,
+        isCorrect: false,
+      },
+    );
+  });
+
+  test("returns incorrect when user provides extra words", () => {
+    expect(
+      checkArrangeWordsAnswer([["I", "speak", "Spanish"]], ["I", "speak", "Spanish", "well"]),
+    ).toEqual({
+      correctAnswer: null,
+      feedback: null,
+      isCorrect: false,
+    });
+  });
+
+  test("accepts an alternative valid sequence", () => {
+    expect(
+      checkArrangeWordsAnswer(
+        [
+          ["Guten", "Tag"],
+          ["Guten", "Morgen"],
+        ],
+        ["Guten", "Morgen"],
+      ),
+    ).toEqual({
       correctAnswer: null,
       feedback: null,
       isCorrect: true,
     });
   });
 
-  test("returns incorrect for wrong sequence", () => {
-    expect(checkArrangeWordsAnswer(["I", "speak", "Spanish"], ["Spanish", "I", "speak"])).toEqual({
+  test("matches case and punctuation insensitively", () => {
+    expect(checkArrangeWordsAnswer([["Hello,", "Lara!"]], ["hello", "lara"])).toEqual({
       correctAnswer: null,
       feedback: null,
-      isCorrect: false,
-    });
-  });
-
-  test("returns incorrect when user provides extra words", () => {
-    expect(
-      checkArrangeWordsAnswer(["I", "speak", "Spanish"], ["I", "speak", "Spanish", "well"]),
-    ).toEqual({
-      correctAnswer: null,
-      feedback: null,
-      isCorrect: false,
+      isCorrect: true,
     });
   });
 });

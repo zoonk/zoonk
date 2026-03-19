@@ -14,11 +14,18 @@ import { type Page, expect, test } from "./fixtures";
 async function createReadingActivity(options: {
   sentences: {
     audioUrl?: string | null;
+    alternativeSentences?: string[];
+    alternativeTranslations?: string[];
     romanization?: string | null;
     sentence: string;
     translation: string;
   }[];
-  words: { romanization?: string | null; translation: string; word: string }[];
+  words: {
+    alternativeTranslations?: string[];
+    romanization?: string | null;
+    translation: string;
+    word: string;
+  }[];
 }) {
   const org = await getAiOrganization();
 
@@ -51,6 +58,7 @@ async function createReadingActivity(options: {
   const createdWords = await Promise.all(
     options.words.map((wordData) =>
       wordFixture({
+        alternativeTranslations: wordData.alternativeTranslations ?? [],
         organizationId: org.id,
         romanization: wordData.romanization ?? null,
         translation: wordData.translation,
@@ -72,6 +80,8 @@ async function createReadingActivity(options: {
       }
 
       return sentenceFixture({
+        alternativeSentences: sentenceData.alternativeSentences ?? [],
+        alternativeTranslations: sentenceData.alternativeTranslations ?? [],
         organizationId: org.id,
         romanization: sentenceData.romanization ?? null,
         sentence: sentenceData.sentence,
@@ -318,6 +328,44 @@ test.describe("Reading Step", () => {
     // Shows the correct answer
     await expect(page.getByText(/correct answer/i)).toBeVisible();
     await expect(page.getByText(sentence)).toBeVisible();
+  });
+
+  test("hides alternative lexical reading words from the word bank", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const guten = `Guten-${uniqueId}`;
+    const tag = `Tag-${uniqueId}`;
+    const morgen = `Morgen-${uniqueId}`;
+    const lara = `Lara-${uniqueId}`;
+    const abend = `Abend-${uniqueId}`;
+
+    const { url } = await createReadingActivity({
+      sentences: [
+        {
+          alternativeSentences: [`${guten} ${tag} ${lara}`],
+          sentence: `${guten} ${morgen} ${lara}`,
+          translation: `Bom-dia-${uniqueId}`,
+        },
+      ],
+      words: [
+        { translation: `Bom-dia-${uniqueId}`, word: `${guten} ${morgen}` },
+        {
+          alternativeTranslations: [`Bom-dia-${uniqueId}`],
+          translation: `Boa-tarde-${uniqueId}`,
+          word: `${guten} ${tag}`,
+        },
+        { translation: `night-${uniqueId}`, word: abend },
+      ],
+    });
+
+    await page.goto(url);
+
+    const wordBank = page.getByRole("group", { name: /word bank/i });
+
+    await expect(wordBank.getByRole("button", { exact: true, name: guten })).toBeVisible();
+    await expect(wordBank.getByRole("button", { exact: true, name: morgen })).toBeVisible();
+    await expect(wordBank.getByRole("button", { exact: true, name: lara })).toBeVisible();
+    await expect(wordBank.getByRole("button", { exact: true, name: abend })).toBeVisible();
+    await expect(wordBank.getByRole("button", { exact: true, name: tag })).toHaveCount(0);
   });
 
   test("dragging a placed word reorders it in the answer area", async ({ page }) => {
