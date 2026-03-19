@@ -1,7 +1,12 @@
 import { assertStepContent } from "@zoonk/core/steps/content-contract";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
-import { emptyToNull, normalizePunctuation } from "@zoonk/utils/string";
+import {
+  deduplicateNormalizedTexts,
+  emptyToNull,
+  normalizePunctuation,
+  normalizeString,
+} from "@zoonk/utils/string";
 import { streamError, streamStatus } from "../stream-status";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { type ReadingSentence } from "./generate-reading-content-step";
@@ -13,22 +18,19 @@ export type SavedSentence = {
   sentenceId: number;
 };
 
+// Save one clean copy of each alternative so the database does not store duplicates that
+// only differ by formatting.
+// Example: keep "Bonjour!" once instead of saving both "Bonjour!" and " Bonjour ! ".
 function normalizeAlternativeTexts(primaryText: string, alternatives: string[]): string[] {
-  return [
-    ...new Map(
-      alternatives.flatMap((text) => {
-        const normalized = normalizePunctuation(text).trim();
+  const primaryKey = normalizeString(normalizePunctuation(primaryText).trim());
 
-        if (!normalized || normalized.toLowerCase() === primaryText.toLowerCase()) {
-          return [];
-        }
-
-        return [[normalized.toLowerCase(), normalized] as const];
-      }),
-    ).values(),
-  ];
+  return deduplicateNormalizedTexts(alternatives).filter(
+    (text) => normalizeString(text) !== primaryKey,
+  );
 }
 
+// Capture the lesson and activity ids once so the save loop only has to provide the
+// sentence being saved and its position.
 function buildSaveOneSentence(params: {
   activityId: number;
   lessonId: number;
@@ -102,6 +104,8 @@ function buildSaveOneSentence(params: {
   };
 }
 
+// Save each reading sentence, link it to the lesson, and create the reading steps that
+// point to those saved sentences.
 export async function saveReadingSentencesStep(
   activities: LessonActivity[],
   sentences: ReadingSentence[],

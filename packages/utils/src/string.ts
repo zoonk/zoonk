@@ -46,6 +46,24 @@ export function deduplicateSlugs<T extends { slug: string }>(items: T[]): T[] {
   });
 }
 
+/**
+ * Different parts of the app can send the same text with tiny formatting differences,
+ * such as extra spaces, accents, or a space before punctuation.
+ * Return one stable copy of each text so we do not compare or save duplicates like
+ * "Bonjour !" and "Bonjour!".
+ */
+export function deduplicateNormalizedTexts(texts: string[]): string[] {
+  return [
+    ...new Map(
+      texts.flatMap((text) => {
+        const normalizedText = normalizePunctuation(text).trim();
+
+        return normalizedText ? [[normalizeString(normalizedText), normalizedText]] : [];
+      }),
+    ).values(),
+  ];
+}
+
 export function emptyToNull(value?: string | null): string | null {
   return value?.trim() || null;
 }

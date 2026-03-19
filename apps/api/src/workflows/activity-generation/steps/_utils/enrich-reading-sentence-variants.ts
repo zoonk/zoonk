@@ -1,5 +1,10 @@
 import { type VocabularyWord } from "@zoonk/ai/tasks/activities/language/vocabulary";
-import { escapeRegExp, normalizePunctuation, normalizeString } from "@zoonk/utils/string";
+import {
+  deduplicateNormalizedTexts,
+  escapeRegExp,
+  normalizePunctuation,
+  normalizeString,
+} from "@zoonk/utils/string";
 
 type SentenceWithVariants = {
   alternativeSentences: string[];
@@ -13,18 +18,16 @@ type VocabularyVariantWord = Pick<
   "alternativeTranslations" | "translation" | "word"
 >;
 
+// The same accepted translation can arrive with tiny formatting differences, such as
+// "Bonjour !" vs "Bonjour!". Clean and deduplicate that list once here so the rest
+// of this file compares one stable set of translations.
 function getWordTranslations(word: VocabularyVariantWord): string[] {
-  return [
-    ...new Map(
-      [word.translation, ...word.alternativeTranslations].flatMap((translation) => {
-        const normalized = normalizePunctuation(translation).trim();
-
-        return normalized ? [[normalizeString(normalized), normalized] as const] : [];
-      }),
-    ).values(),
-  ];
+  return deduplicateNormalizedTexts([word.translation, ...word.alternativeTranslations]);
 }
 
+// Only match a full lesson expression, never a piece inside another word.
+// Example: searching for "he" should not match "the", and searching for
+// "Guten Tag" should still work if the sentence has extra spaces.
 function createPhrasePattern(phrase: string): RegExp {
   const normalizedPhrase = normalizePunctuation(phrase).trim();
   const escapedPhrase = escapeRegExp(normalizedPhrase).replaceAll(String.raw`\ `, String.raw`\s+`);
@@ -32,10 +35,14 @@ function createPhrasePattern(phrase: string): RegExp {
   return new RegExp(`(^|[^\\p{L}\\p{N}])(${escapedPhrase})(?=$|[^\\p{L}\\p{N}])`, "iu");
 }
 
+// Keep one shared rule for "does this exact expression appear in this text?" so every
+// caller makes the same decision.
 function hasPhrase(text: string, phrase: string): boolean {
   return createPhrasePattern(phrase).test(normalizePunctuation(text));
 }
 
+// When we build a new variant, replace only the exact expression we matched above.
+// This avoids changing unrelated text by accident.
 function replacePhrase(text: string, search: string, replacement: string): string | null {
   const pattern = createPhrasePattern(search);
   const normalizedText = normalizePunctuation(text);
@@ -47,23 +54,18 @@ function replacePhrase(text: string, search: string, replacement: string): strin
   return normalizedText.replace(pattern, (_match, prefix: string) => `${prefix}${replacement}`);
 }
 
+// We can receive alternatives from the AI and from our own lesson-word rules.
+// Merge them into one clean list, remove duplicates like "Bom dia !" vs "Bom dia!",
+// and drop anything that is just a copy of the main sentence.
 function mergeAlternativeTexts(primaryText: string, texts: string[]): string[] {
-  return [
-    ...new Map(
-      texts.flatMap((text) => {
-        const normalized = normalizePunctuation(text).trim();
-        const key = normalizeString(normalized);
+  const primaryKey = normalizeString(normalizePunctuation(primaryText).trim());
 
-        if (!normalized || key === normalizeString(primaryText)) {
-          return [];
-        }
-
-        return [[key, normalized] as const];
-      }),
-    ).values(),
-  ];
+  return deduplicateNormalizedTexts(texts).filter((text) => normalizeString(text) !== primaryKey);
 }
 
+// Turn a sentence into the set of lesson expressions it actually uses.
+// That lets us answer questions like "did this variant introduce a different lesson term?"
+// without depending on the full raw sentence text.
 function getPhraseKeys(text: string, phrases: string[]): Set<string> {
   return new Set(
     phrases.flatMap((phrase) => {
@@ -78,6 +80,11 @@ function getPhraseKeys(text: string, phrases: string[]): Set<string> {
   );
 }
 
+// Keep AI rewrites that do not introduce a different taught expression, but reject rewrites
+// that swap in a new lesson term unless our lesson-word data says that swap is allowed.
+// Example: "Yo soy Lara." -> "Soy Lara." is fine because it does not introduce a new term.
+// Example: "Guten Tag" -> "Guten Morgen" is only allowed when the lesson data says both are
+// accepted ways to express the same translation here.
 function filterLexicalVariants(params: {
   canonicalText: string;
   candidateTexts: string[];
@@ -85,6 +92,7 @@ function filterLexicalVariants(params: {
   phrases: string[];
 }): string[] {
   const canonicalPhraseKeys = getPhraseKeys(params.canonicalText, params.phrases);
+
   const licensedVariantKeys = new Set(
     params.licensedVariantTexts.flatMap((text) => {
       const normalized = normalizePunctuation(text).trim();
@@ -94,6 +102,7 @@ function filterLexicalVariants(params: {
 
   return params.candidateTexts.filter((candidateText) => {
     const candidatePhraseKeys = getPhraseKeys(candidateText, params.phrases);
+
     const introducesLessonPhrase = [...candidatePhraseKeys].some(
       (phraseKey) => !canonicalPhraseKeys.has(phraseKey),
     );
@@ -103,10 +112,14 @@ function filterLexicalVariants(params: {
     }
 
     const normalizedCandidate = normalizePunctuation(candidateText).trim();
+
     return licensedVariantKeys.has(normalizeString(normalizedCandidate));
   });
 }
 
+// Build a lookup from a translation to every source-language word that can mean the same thing.
+// Example: "Bom dia" can point to both "Guten Morgen" and "Guten Tag".
+// We use that later to create allowed extra sentence variants without repeatedly scanning all words.
 function buildTargetWordsByTranslation(words: VocabularyVariantWord[]): Map<string, string[]> {
   const targetWordsByTranslation = new Map<string, string[]>();
 
@@ -116,19 +129,21 @@ function buildTargetWordsByTranslation(words: VocabularyVariantWord[]): Map<stri
     for (const translation of getWordTranslations(word)) {
       const key = normalizeString(translation);
       const currentWords = targetWordsByTranslation.get(key) ?? [];
-      const nextWords = currentWords.some(
-        (currentWord) => normalizeString(currentWord) === normalizeString(normalizedWord),
-      )
-        ? currentWords
-        : [...currentWords, normalizedWord];
 
-      targetWordsByTranslation.set(key, nextWords);
+      targetWordsByTranslation.set(
+        key,
+        deduplicateNormalizedTexts([...currentWords, normalizedWord]),
+      );
     }
   }
 
   return targetWordsByTranslation;
 }
 
+// Create extra source-language sentences by swapping one lesson word for another word
+// that has the same translation.
+// Example: if both "Guten Morgen" and "Guten Tag" map to "Bom dia", then
+// "Guten Morgen, Anna!" can also accept "Guten Tag, Anna!".
 function getDerivedAlternativeSentences(
   sentence: SentenceWithVariants,
   words: VocabularyVariantWord[],
@@ -158,6 +173,9 @@ function getDerivedAlternativeSentences(
   });
 }
 
+// Create extra translation variants from the accepted translations attached to the matched word.
+// Example: if "Hallo" accepts both "Olá" and "Oi", then "Olá, Lara!" can also accept
+// "Oi, Lara!".
 function getDerivedAlternativeTranslations(
   sentence: SentenceWithVariants,
   words: VocabularyVariantWord[],
@@ -189,21 +207,20 @@ function getDerivedAlternativeTranslations(
   });
 }
 
+// Final pass: combine the AI's suggestions with the alternatives we can prove from lesson data.
+// Then drop anything that introduces a different taught expression unless we can prove that
+// the new expression is an accepted equivalent for this lesson.
+// Example: keep "Guten Tag, Anna!" as an alternative for "Guten Morgen, Anna!" when both map
+// to "Bom dia". Drop an AI variant like "Guten Abend, Anna!" if the lesson never says that it
+// is another accepted way to express that same translation here.
 export function enrichReadingSentenceVariants<T extends SentenceWithVariants>(
   sentences: T[],
   words: VocabularyVariantWord[],
 ): T[] {
   const targetWordsByTranslation = buildTargetWordsByTranslation(words);
-  const translationPhrases = [
-    ...new Map(
-      words.flatMap((word) =>
-        getWordTranslations(word).flatMap((translation) => {
-          const normalized = normalizePunctuation(translation).trim();
-          return normalized ? [[normalizeString(normalized), normalized] as const] : [];
-        }),
-      ),
-    ).values(),
-  ];
+  const translationPhrases = deduplicateNormalizedTexts(
+    words.flatMap((word) => getWordTranslations(word)),
+  );
 
   return sentences.map((sentence) => {
     const derivedAlternativeSentences = getDerivedAlternativeSentences(
@@ -211,6 +228,7 @@ export function enrichReadingSentenceVariants<T extends SentenceWithVariants>(
       words,
       targetWordsByTranslation,
     );
+
     const derivedAlternativeTranslations = getDerivedAlternativeTranslations(sentence, words);
 
     return {

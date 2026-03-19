@@ -73,7 +73,6 @@ For detailed UX guidelines (interactions, animation, layout, accessibility), see
 - Avoid `useEffect` and `useState` unless absolutely required
 - **Required**: Every time you use `useEffect` you **MUST** read the [vercel-react-best-practices skill](.agents/skills/vercel-react-best-practices/SKILL.md) AND these docs: https://react.dev/learn/you-might-not-need-an-effect
 - Fetch data on the server whenever possible and use `Suspense` with a fallback for loading states, [see docs for streaming data](https://nextjs.org/docs/app/getting-started/fetching-data#streaming)
-- Keep comments minimal—explain **why**, not **what**
 - Use `safeAsync` when using `await` to better handle errors
 - When creating a skeleton, use the `Skeleton` component from `@zoonk/ui/components/skeleton`
 - Always build skeleton components when using `Suspense` for loading states
@@ -84,6 +83,7 @@ For detailed UX guidelines (interactions, animation, layout, accessibility), see
 - When adding a new endpoint, add docs for it in `document.ts`
 - When adding e2e tests, use `*Fixture()` functions to create unique test data per test - do not modify seed files
 - Avoid inline imports like `await import()`, only do it when dynamic imports are absolutely necessary
+- Always add comments to functions explaining why that function exists. Use clear language, assume the reader has no context, be verbose if needed and add examples to illustrate it. Use plain language, no jargon. Comments should be meaningful and explain the "why" behind the code (eg why did we need to create this function, why is this logic necessary, etc.). Avoid vague statements. For example, "remove anything we don't support" is vague. What we don't support?
 
 ## Prisma Queries
 

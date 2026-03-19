@@ -1,5 +1,6 @@
 import { describe, expect, test } from "vitest";
 import {
+  deduplicateNormalizedTexts,
   deduplicateSlugs,
   emptyToNull,
   ensureLocaleSuffix,
@@ -272,6 +273,19 @@ describe(deduplicateSlugs, () => {
 
   test("handles single item", () => {
     expect(deduplicateSlugs([{ slug: "a" }])).toEqual([{ slug: "a" }]);
+  });
+});
+
+describe(deduplicateNormalizedTexts, () => {
+  test("deduplicates text after punctuation and string normalization", () => {
+    expect(deduplicateNormalizedTexts([" Bonjour ! ", "Bonjour!", "Oi", "oi "])).toEqual([
+      "Bonjour!",
+      "oi",
+    ]);
+  });
+
+  test("keeps the first key order while preserving the latest display text", () => {
+    expect(deduplicateNormalizedTexts(["Olá", "Oi", "Ola"])).toEqual(["Ola", "Oi"]);
   });
 });
 
