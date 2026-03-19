@@ -4,13 +4,14 @@ import {
   deduplicateSlugs,
   emptyToNull,
   ensureLocaleSuffix,
-  escapeRegExp,
   extractUniqueSentenceWords,
+  hasWholePhrase,
   normalizePunctuation,
   normalizeString,
   removeAccents,
   removeLocaleSuffix,
   replaceNamePlaceholder,
+  replaceWholePhrase,
   segmentWords,
   stripPunctuation,
   toSlug,
@@ -329,13 +330,41 @@ describe(normalizePunctuation, () => {
   });
 });
 
-describe(escapeRegExp, () => {
-  test("escapes regular expression syntax so text is matched literally", () => {
-    expect(escapeRegExp("a+b? (test).")).toBe(String.raw`a\+b\? \(test\)\.`);
+describe(hasWholePhrase, () => {
+  test("matches a full phrase without matching inside another word", () => {
+    expect(hasWholePhrase("the cat sleeps", "he")).toBeFalsy();
+    expect(hasWholePhrase("he sleeps", "he")).toBeTruthy();
   });
 
-  test("leaves plain text unchanged", () => {
-    expect(escapeRegExp("hello world")).toBe("hello world");
+  test("matches phrases even when the text uses extra spaces", () => {
+    expect(hasWholePhrase("Guten   Tag, Anna!", "Guten Tag")).toBeTruthy();
+  });
+
+  test("matches Unicode words using Unicode-aware boundaries", () => {
+    expect(hasWholePhrase("Olá, Lara!", "Olá")).toBeTruthy();
+    expect(hasWholePhrase("猫、犬", "猫")).toBeTruthy();
+    expect(hasWholePhrase("猫です", "猫")).toBeFalsy();
+  });
+
+  test("returns false for an empty phrase", () => {
+    expect(hasWholePhrase("hello world", "")).toBeFalsy();
+    expect(hasWholePhrase("", "")).toBeFalsy();
+  });
+});
+
+describe(replaceWholePhrase, () => {
+  test("replaces only the matched whole phrase", () => {
+    expect(replaceWholePhrase("he said hello", "he", "she")).toBe("she said hello");
+    expect(replaceWholePhrase("the hero arrived", "he", "she")).toBeNull();
+  });
+
+  test("keeps normalized punctuation when it replaces a phrase", () => {
+    expect(replaceWholePhrase("Bonjour !", "Bonjour", "Salut")).toBe("Salut!");
+  });
+
+  test("returns null for an empty search phrase", () => {
+    expect(replaceWholePhrase("hello world", "", "goodbye")).toBeNull();
+    expect(replaceWholePhrase("", "", "goodbye")).toBeNull();
   });
 });
 

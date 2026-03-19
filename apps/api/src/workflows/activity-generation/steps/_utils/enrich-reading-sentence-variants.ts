@@ -1,9 +1,10 @@
 import { type VocabularyWord } from "@zoonk/ai/tasks/activities/language/vocabulary";
 import {
   deduplicateNormalizedTexts,
-  escapeRegExp,
+  hasWholePhrase,
   normalizePunctuation,
   normalizeString,
+  replaceWholePhrase,
 } from "@zoonk/utils/string";
 
 type SentenceWithVariants = {
@@ -25,33 +26,16 @@ function getWordTranslations(word: VocabularyVariantWord): string[] {
   return deduplicateNormalizedTexts([word.translation, ...word.alternativeTranslations]);
 }
 
-// Only match a full lesson expression, never a piece inside another word.
-// Example: searching for "he" should not match "the", and searching for
-// "Guten Tag" should still work if the sentence has extra spaces.
-function createPhrasePattern(phrase: string): RegExp {
-  const normalizedPhrase = normalizePunctuation(phrase).trim();
-  const escapedPhrase = escapeRegExp(normalizedPhrase).replaceAll(String.raw`\ `, String.raw`\s+`);
-
-  return new RegExp(`(^|[^\\p{L}\\p{N}])(${escapedPhrase})(?=$|[^\\p{L}\\p{N}])`, "iu");
-}
-
 // Keep one shared rule for "does this exact expression appear in this text?" so every
 // caller makes the same decision.
 function hasPhrase(text: string, phrase: string): boolean {
-  return createPhrasePattern(phrase).test(normalizePunctuation(text));
+  return hasWholePhrase(text, phrase);
 }
 
 // When we build a new variant, replace only the exact expression we matched above.
 // This avoids changing unrelated text by accident.
 function replacePhrase(text: string, search: string, replacement: string): string | null {
-  const pattern = createPhrasePattern(search);
-  const normalizedText = normalizePunctuation(text);
-
-  if (!pattern.test(normalizedText)) {
-    return null;
-  }
-
-  return normalizedText.replace(pattern, (_match, prefix: string) => `${prefix}${replacement}`);
+  return replaceWholePhrase(text, search, replacement);
 }
 
 // We can receive alternatives from the AI and from our own lesson-word rules.

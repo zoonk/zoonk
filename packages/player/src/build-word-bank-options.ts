@@ -1,10 +1,5 @@
 import { shuffle } from "@zoonk/utils/shuffle";
-import {
-  escapeRegExp,
-  normalizePunctuation,
-  segmentWords,
-  stripPunctuation,
-} from "@zoonk/utils/string";
+import { hasWholePhrase, segmentWords, stripPunctuation } from "@zoonk/utils/string";
 import {
   buildAcceptedArrangeWordSequences,
   getAcceptedArrangeWordSet,
@@ -24,17 +19,6 @@ type WordDataInput = {
   word: string;
   wordAudio: { audioUrl: string } | null;
 };
-
-function createPhrasePattern(phrase: string): RegExp {
-  const normalizedPhrase = normalizePunctuation(phrase).trim();
-  const escapedPhrase = escapeRegExp(normalizedPhrase).replaceAll(String.raw`\ `, String.raw`\s+`);
-
-  return new RegExp(`(^|[^\\p{L}\\p{N}])(${escapedPhrase})(?=$|[^\\p{L}\\p{N}])`, "iu");
-}
-
-function hasPhrase(text: string, phrase: string): boolean {
-  return createPhrasePattern(phrase).test(normalizePunctuation(text));
-}
 
 function enrichWord(
   word: string,
@@ -104,7 +88,8 @@ function getAcceptedLessonWords(
         : [lessonWord.translation, ...lessonWord.alternativeTranslations];
 
     return candidatePhrases.some(
-      (phrase) => phrase && acceptedTexts.some((acceptedText) => hasPhrase(acceptedText, phrase)),
+      (phrase) =>
+        phrase && acceptedTexts.some((acceptedText) => hasWholePhrase(acceptedText, phrase)),
     );
   });
 }
