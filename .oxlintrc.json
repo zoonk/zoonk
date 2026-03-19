@@ -5,7 +5,7 @@
   "env": {
     "browser": true,
     "es2024": true,
-    "node": true
+    "node": true,
   },
   "categories": {
     "correctness": "error",
@@ -13,23 +13,23 @@
     "perf": "error",
     "restriction": "error",
     "style": "error",
-    "suspicious": "error"
+    "suspicious": "error",
   },
   "options": {
-    "typeAware": true
+    "typeAware": true,
   },
   "rules": {
     "eslint/capitalized-comments": "off",
     "eslint/func-style": ["error", "declaration", { "allowArrowFunctions": true }],
     "eslint/id-length": [
       "error",
-      { "min": 2, "exceptions": ["i", "j", "x", "y", "z", "_", "a", "b", "t", "T"] }
+      { "min": 2, "exceptions": ["i", "j", "x", "y", "z", "_", "a", "b", "t", "T"] },
     ],
     "eslint/init-declarations": "off",
     "eslint/max-lines": ["error", { "skipComments": true, "skipBlankLines": true, "max": 300 }],
     "eslint/max-lines-per-function": [
       "error",
-      { "skipComments": true, "skipBlankLines": true, "max": 150 }
+      { "skipComments": true, "skipBlankLines": true, "max": 150 },
     ],
     "eslint/max-params": "off",
     "eslint/max-statements": ["error", { "ignoreTopLevelFunctions": true, "max": 30 }],
@@ -39,8 +39,8 @@
       "error",
       {
         "ignoreArrayIndexes": true,
-        "ignore": [-1, 0, 1, 2, 7, 10, 12, 24, 30, 60, 100, 365, 1000, 1024, 3600, 86400]
-      }
+        "ignore": [-1, 0, 1, 2, 7, 10, 12, 24, 30, 60, 100, 365, 1000, 1024, 3600, 86400],
+      },
     ],
     "eslint/no-ternary": "off",
     "eslint/no-undefined": "off",
@@ -59,7 +59,7 @@
     "import/no-relative-parent-imports": "off",
     "import/no-unassigned-import": [
       "error",
-      { "allow": ["**/*.css", "server-only", "dotenv/config"] }
+      { "allow": ["**/*.css", "server-only", "dotenv/config"] },
     ],
     "import/prefer-default-export": "off",
     "jest/no-untyped-mock-factory": "off",
@@ -110,7 +110,6 @@
     "zoonk/no-object-params-in-cache": ["error", { "exceptions": ["headers"] }],
     "zoonk/no-hardcoded-aria-label": "off",
     "zoonk/no-t-function-as-argument": "error",
-    "zoonk/prefer-flatmap": "error"
   },
   "overrides": [
     {
@@ -118,16 +117,16 @@
       "rules": {
         "eslint/max-lines": "off",
         "eslint/no-magic-numbers": "off",
-        "typescript/no-unsafe-type-assertion": "off"
-      }
+        "typescript/no-unsafe-type-assertion": "off",
+      },
     },
     {
       "files": ["**/i18n/request.ts"],
       "rules": {
         "typescript/no-unsafe-assignment": "off",
         "typescript/no-unsafe-member-access": "off",
-        "typescript/no-unsafe-type-assertion": "off"
-      }
+        "typescript/no-unsafe-type-assertion": "off",
+      },
     },
     {
       "files": ["**/seed/**", "**/seed.ts"],
@@ -137,14 +136,14 @@
         "eslint/no-magic-numbers": "off",
         "import/no-namespace": "off",
         "unicorn/no-process-exit": "off",
-        "unicorn/prefer-top-level-await": "off"
-      }
+        "unicorn/prefer-top-level-await": "off",
+      },
     },
     {
       "files": ["**/e2e/**"],
       "rules": {
-        "react/rules-of-hooks": "off"
-      }
+        "react/rules-of-hooks": "off",
+      },
     },
     {
       "files": ["*.test.ts", "*.test.tsx"],
@@ -164,8 +163,8 @@
         "typescript/no-unsafe-type-assertion": "off",
         "unicorn/prefer-dom-node-text-content": "off",
         "vitest/require-hook": "error",
-        "vitest/require-top-level-describe": "error"
-      }
+        "vitest/require-top-level-describe": "error",
+      },
     },
     {
       "files": ["packages/ui/src/components/**/*.tsx"],
@@ -173,22 +172,22 @@
         "eslint/max-lines": "off",
         "eslint/no-magic-numbers": "off",
         "import/no-namespace": "off",
-        "react/no-array-index-key": "off"
-      }
+        "react/no-array-index-key": "off",
+      },
     },
     {
       "files": ["**/*skeleton*", "**/*-skeleton*"],
       "rules": {
-        "react/no-array-index-key": "off"
-      }
+        "react/no-array-index-key": "off",
+      },
     },
     {
       "files": ["packages/oxlint-plugin/**/*.js"],
       "rules": {
         "eslint/max-statements": "off",
         "eslint/no-magic-numbers": "off",
-        "eslint/sort-keys": "off"
-      }
+        "eslint/sort-keys": "off",
+      },
     },
     {
       "files": ["**/*.js"],
@@ -197,20 +196,20 @@
         "typescript/no-unsafe-call": "off",
         "typescript/no-unsafe-member-access": "off",
         "typescript/no-unsafe-return": "off",
-        "typescript/no-unsafe-assignment": "off"
-      }
+        "typescript/no-unsafe-assignment": "off",
+      },
     },
     {
       "files": ["**/error-messages.ts"],
       "rules": {
-        "eslint/max-statements": "off"
-      }
+        "eslint/max-statements": "off",
+      },
     },
     {
       "files": ["**/proxy.ts"],
       "rules": {
-        "unicorn/prefer-string-raw": "off"
-      }
+        "unicorn/prefer-string-raw": "off",
+      },
     },
     {
       "files": [
@@ -229,24 +228,24 @@
         "**/*.mjs",
         "**/*.mts",
         "**/*.js",
-        "**/e2e/**/*.ts"
+        "**/e2e/**/*.ts",
       ],
       "rules": {
-        "import/no-default-export": "off"
-      }
+        "import/no-default-export": "off",
+      },
     },
     {
       "files": ["**/*.d.ts"],
       "rules": {
-        "import/unambiguous": "off"
-      }
+        "import/unambiguous": "off",
+      },
     },
     {
       "files": ["apps/main/**/*.tsx", "apps/editor/**/*.tsx", "apps/api/**/*.tsx"],
       "rules": {
-        "zoonk/no-hardcoded-aria-label": "error"
-      }
-    }
+        "zoonk/no-hardcoded-aria-label": "error",
+      },
+    },
   ],
   "ignorePatterns": [
     "node_modules",
@@ -261,6 +260,6 @@
     "**/generated/**",
     "**/messages/**",
     ".turbo",
-    "pnpm-lock.yaml"
-  ]
+    "pnpm-lock.yaml",
+  ],
 }

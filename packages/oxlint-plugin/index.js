@@ -4,7 +4,6 @@ import noGetExtractedInPromise from "./rules/no-get-extracted-in-promise.js";
 import noHardcodedAriaLabel from "./rules/no-hardcoded-aria-label.js";
 import noObjectParamsInCache from "./rules/no-object-params-in-cache.js";
 import noTFunctionAsArgument from "./rules/no-t-function-as-argument.js";
-import preferFlatMap from "./rules/prefer-flatmap.js";
 
 /** @public */
 export default eslintCompatPlugin({
@@ -17,6 +16,5 @@ export default eslintCompatPlugin({
     "no-hardcoded-aria-label": noHardcodedAriaLabel,
     "no-object-params-in-cache": noObjectParamsInCache,
     "no-t-function-as-argument": noTFunctionAsArgument,
-    "prefer-flatmap": preferFlatMap,
   },
 });
