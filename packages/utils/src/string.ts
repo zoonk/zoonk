@@ -78,6 +78,14 @@ export function normalizePunctuation(text: string): string {
   return text.replaceAll(/(?<!\s)\s+([!?.,;:!?。、！？؟])/g, "$1");
 }
 
+/**
+ * User text can contain regex operators like "." or "*".
+ * Escape them before building a RegExp so phrase matching stays literal.
+ */
+export function escapeRegExp(text: string): string {
+  return text.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
+}
+
 export function stripPunctuation(text: string): string {
   return text.replaceAll(/[^\p{L}\p{N}\s]/gu, "");
 }

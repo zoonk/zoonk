@@ -1,5 +1,10 @@
 import { shuffle } from "@zoonk/utils/shuffle";
-import { normalizePunctuation, segmentWords, stripPunctuation } from "@zoonk/utils/string";
+import {
+  escapeRegExp,
+  normalizePunctuation,
+  segmentWords,
+  stripPunctuation,
+} from "@zoonk/utils/string";
 import {
   buildAcceptedArrangeWordSequences,
   getAcceptedArrangeWordSet,
@@ -19,10 +24,6 @@ type WordDataInput = {
   word: string;
   wordAudio: { audioUrl: string } | null;
 };
-
-function escapeRegExp(text: string): string {
-  return text.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
-}
 
 function createPhrasePattern(phrase: string): RegExp {
   const normalizedPhrase = normalizePunctuation(phrase).trim();

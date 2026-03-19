@@ -1,5 +1,5 @@
 import { type VocabularyWord } from "@zoonk/ai/tasks/activities/language/vocabulary";
-import { normalizePunctuation, normalizeString } from "@zoonk/utils/string";
+import { escapeRegExp, normalizePunctuation, normalizeString } from "@zoonk/utils/string";
 
 type SentenceWithVariants = {
   alternativeSentences: string[];
@@ -12,10 +12,6 @@ type VocabularyVariantWord = Pick<
   VocabularyWord,
   "alternativeTranslations" | "translation" | "word"
 >;
-
-function escapeRegExp(text: string): string {
-  return text.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
-}
 
 function getWordTranslations(word: VocabularyVariantWord): string[] {
   return [

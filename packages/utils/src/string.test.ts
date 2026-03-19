@@ -3,6 +3,7 @@ import {
   deduplicateSlugs,
   emptyToNull,
   ensureLocaleSuffix,
+  escapeRegExp,
   extractUniqueSentenceWords,
   normalizePunctuation,
   normalizeString,
@@ -311,6 +312,16 @@ describe(normalizePunctuation, () => {
     expect(normalizePunctuation("Bonjour , comment allez-vous ?")).toBe(
       "Bonjour, comment allez-vous?",
     );
+  });
+});
+
+describe(escapeRegExp, () => {
+  test("escapes regular expression syntax so text is matched literally", () => {
+    expect(escapeRegExp("a+b? (test).")).toBe(String.raw`a\+b\? \(test\)\.`);
+  });
+
+  test("leaves plain text unchanged", () => {
+    expect(escapeRegExp("hello world")).toBe("hello world");
   });
 });
 
