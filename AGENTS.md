@@ -7,6 +7,11 @@
 - Code must be modular, following SOLID and DRY principles
 - Avoid nested conditionals and complex logic
 - Prefer short and composable functions
+- Avoid nested business logic inside `map`, `filter`, `flatMap`, and `reduce`. If an array callback needs branching, multiple steps, or non-trivial normalization, extract it into a named helper
+- Prefer top-level functions that read like pipelines of named domain operations. The main function should describe the flow; helpers should describe the rules
+- If a condition or transformation is important enough to think about, it is important enough to name
+- Keep inline callbacks trivial. Simple property access or a one-line predicate is fine; anything more should become a helper
+- When logic feels nested, split it by responsibility: matching, normalization, filtering, transformation, and merging should usually be separate functions
 - **Split files with multiple concerns.** If a file has distinct responsibilities (e.g., utils, validation, parsing, main logic), extract them into a `_utils/` folder (if internal) or separate files. A file should have one clear purpose, avoid doing too many things in a single file
 - Prefer functional programming over OOP
 - Avoid mutations: return new values instead of modifying existing data or state
@@ -84,6 +89,7 @@ For detailed UX guidelines (interactions, animation, layout, accessibility), see
 - When adding e2e tests, use `*Fixture()` functions to create unique test data per test - do not modify seed files
 - Avoid inline imports like `await import()`, only do it when dynamic imports are absolutely necessary
 - Always add comments to functions explaining why that function exists. Use clear language, assume the reader has no context, be verbose if needed and add examples to illustrate it. Use plain language, no jargon. Comments should be meaningful and explain the "why" behind the code (eg why did we need to create this function, why is this logic necessary, etc.). Avoid vague statements. For example, "remove anything we don't support" is vague. What we don't support?
+- When writing comments, use `/** ... */` for functions, so we can get JSDoc tooltips
 
 ## Prisma Queries
 
