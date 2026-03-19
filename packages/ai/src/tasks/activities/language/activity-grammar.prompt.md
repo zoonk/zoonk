@@ -190,6 +190,8 @@ Use the standard romanization system for each language:
 
 **For languages using Roman letters** (Spanish, French, German, Portuguese, Italian, etc.), set `romanization` to `null`.
 
+**IMPORTANT**: The `romanization` field must ONLY contain Roman/Latin letters — never characters from the original script. If the sentence is "私は学生です。", the romanization must be "watashi wa gakusei desu." — never the original Japanese text.
+
 # Linguistic Accuracy Requirements
 
 ## Factual Correctness in Explanations

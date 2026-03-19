@@ -16,6 +16,7 @@ async function createListeningActivity(options: {
     audioUrl?: string | null;
     alternativeSentences?: string[];
     alternativeTranslations?: string[];
+    romanization?: string | null;
     sentence: string;
     translation: string;
   }[];
@@ -77,6 +78,7 @@ async function createListeningActivity(options: {
         alternativeSentences: sentenceData.alternativeSentences ?? [],
         alternativeTranslations: sentenceData.alternativeTranslations ?? [],
         organizationId: org.id,
+        romanization: sentenceData.romanization ?? null,
         sentence: sentenceData.sentence,
         sentenceAudioId,
         translation: sentenceData.translation,
@@ -308,6 +310,121 @@ test.describe("Listening Step", () => {
     await expect(wordBank.getByRole("button", { exact: true, name: noite })).toBeVisible();
     await expect(wordBank.getByRole("button", { exact: true, name: bom })).toHaveCount(0);
     await expect(wordBank.getByRole("button", { exact: true, name: dia })).toHaveCount(0);
+  });
+
+  test("romanization shows on 'Translate:' line when correct", async ({ page }) => {
+    const uniqueId = randomUUID().replaceAll("-", "").slice(0, 8);
+    const transWord1 = `hello${uniqueId}`;
+    const transWord2 = `world${uniqueId}`;
+    const sentence = `konnichiwa${uniqueId} sekai${uniqueId}`;
+    const romanization = `romaji${uniqueId} test${uniqueId}`;
+
+    const { url } = await createListeningActivity({
+      sentences: [
+        {
+          audioUrl: "https://example.com/audio.mp3",
+          romanization,
+          sentence,
+          translation: `${transWord1} ${transWord2}`,
+        },
+      ],
+      words: [{ translation: `cat${uniqueId}`, word: `neko${uniqueId}` }],
+    });
+
+    await page.goto(url);
+
+    const wordBank = page.getByRole("group", { name: /word bank/i });
+
+    await expect(async () => {
+      await wordBank.getByRole("button", { exact: true, name: transWord1 }).click();
+      await expect(
+        page
+          .getByRole("group", { name: /your answer/i })
+          .getByRole("button", { name: new RegExp(transWord1) }),
+      ).toBeVisible({ timeout: 1000 });
+    }).toPass();
+
+    await wordBank.getByRole("button", { exact: true, name: transWord2 }).click();
+
+    await page.getByRole("button", { name: /check/i }).click();
+
+    await expect(page.getByText(romanization)).toBeVisible();
+  });
+
+  test("romanization shows on 'Translate:' line when incorrect", async ({ page }) => {
+    const uniqueId = randomUUID().replaceAll("-", "").slice(0, 8);
+    const transWord1 = `hello${uniqueId}`;
+    const transWord2 = `world${uniqueId}`;
+    const sentence = `konnichiwa${uniqueId} sekai${uniqueId}`;
+    const romanization = `romaji${uniqueId} test${uniqueId}`;
+
+    const { url } = await createListeningActivity({
+      sentences: [
+        {
+          audioUrl: "https://example.com/audio.mp3",
+          romanization,
+          sentence,
+          translation: `${transWord1} ${transWord2}`,
+        },
+      ],
+      words: [{ translation: `cat${uniqueId}`, word: `neko${uniqueId}` }],
+    });
+
+    await page.goto(url);
+
+    const wordBank = page.getByRole("group", { name: /word bank/i });
+
+    // Arrange in wrong order
+    await expect(async () => {
+      await wordBank.getByRole("button", { exact: true, name: transWord2 }).click();
+      await expect(
+        page
+          .getByRole("group", { name: /your answer/i })
+          .getByRole("button", { name: new RegExp(transWord2) }),
+      ).toBeVisible({ timeout: 1000 });
+    }).toPass();
+
+    await wordBank.getByRole("button", { exact: true, name: transWord1 }).click();
+
+    await page.getByRole("button", { name: /check/i }).click();
+
+    await expect(page.getByText(romanization)).toBeVisible();
+  });
+
+  test("audio button shows on listening feedback", async ({ page }) => {
+    const uniqueId = randomUUID().replaceAll("-", "").slice(0, 8);
+    const transWord1 = `hello${uniqueId}`;
+    const transWord2 = `world${uniqueId}`;
+
+    const { url } = await createListeningActivity({
+      sentences: [
+        {
+          audioUrl: "https://example.com/audio.mp3",
+          sentence: `hola${uniqueId} mundo${uniqueId}`,
+          translation: `${transWord1} ${transWord2}`,
+        },
+      ],
+      words: [{ translation: `cat${uniqueId}`, word: `gato${uniqueId}` }],
+    });
+
+    await page.goto(url);
+
+    const wordBank = page.getByRole("group", { name: /word bank/i });
+
+    await expect(async () => {
+      await wordBank.getByRole("button", { exact: true, name: transWord1 }).click();
+      await expect(
+        page
+          .getByRole("group", { name: /your answer/i })
+          .getByRole("button", { name: new RegExp(transWord1) }),
+      ).toBeVisible({ timeout: 1000 });
+    }).toPass();
+
+    await wordBank.getByRole("button", { exact: true, name: transWord2 }).click();
+
+    await page.getByRole("button", { name: /check/i }).click();
+
+    await expect(page.getByRole("button", { name: /play pronunciation/i })).toBeVisible();
   });
 
   test("full flow: complete all listening steps to completion screen", async ({ page }) => {

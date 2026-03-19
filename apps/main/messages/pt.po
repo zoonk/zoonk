@@ -269,10 +269,15 @@ msgctxt "qymjuq"
 msgid "View scores"
 msgstr "Ver pontuações"
 
-#: ../../packages/player/src/components/feedback-screen.tsx
+#: ../../packages/player/src/components/feedback-answer-blocks.tsx
 msgctxt "3nOd8f"
 msgid "Your answer:"
 msgstr "Sua resposta:"
+
+#: ../../packages/player/src/components/feedback-answer-blocks.tsx
+msgctxt "QAJ/Tl"
+msgid "Correct answer:"
+msgstr "Resposta correta:"
 
 #: ../../packages/player/src/components/feedback-screen.tsx
 msgctxt "eBxz+u"
@@ -298,11 +303,6 @@ msgstr "Por pouco."
 msgctxt "ld7zgc"
 msgid "{name} is at zero. One more drop and you lose."
 msgstr "{name} está em zero. Mais uma queda e você perde."
-
-#: ../../packages/player/src/components/feedback-screen.tsx
-msgctxt "QAJ/Tl"
-msgid "Correct answer:"
-msgstr "Resposta correta:"
 
 #: ../../packages/player/src/components/feedback-screen.tsx
 msgctxt "vhpTgv"

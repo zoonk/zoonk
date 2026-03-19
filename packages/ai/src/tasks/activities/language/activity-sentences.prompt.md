@@ -110,6 +110,8 @@ Use the standard romanization system for each language:
 
 **For languages using Roman letters** (Spanish, French, German, Portuguese, Italian, etc.), set `romanization` to `null`.
 
+**IMPORTANT**: The `romanization` field must ONLY contain Roman/Latin letters — never characters from the original script. If the sentence is "先生、おはようございます。", the romanization must be "Sensei, ohayō gozaimasu." — never the original Japanese text.
+
 # Explanation
 
 For each sentence, provide a brief explanation (1-2 sentences) of the key grammar or word-order pattern demonstrated. Write the explanation in USER_LANGUAGE (the learner's native language).

@@ -131,6 +131,8 @@ Use the standard romanization system for each language:
 
 **For languages using Roman letters** (Spanish, French, German, Portuguese, Italian, etc.), set `romanization` to `null`.
 
+**IMPORTANT**: The `romanization` field must ONLY contain Roman/Latin letters — never characters from the original script. If the word is "猫", the romanization must be "neko" — never the original Japanese text.
+
 # Output Format
 
 Return an object with a `words` array. Each word object must include:

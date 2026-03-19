@@ -9,9 +9,11 @@ import { useWordAudio } from "../use-word-audio";
 export function PlayAudioButton({
   audioUrl,
   size = "md",
+  variant = "filled",
 }: {
   audioUrl: string;
   size?: "sm" | "md";
+  variant?: "filled" | "text";
 }) {
   const t = useExtracted();
   const [isPlaying, setIsPlaying] = useState(false);
@@ -29,6 +31,19 @@ export function PlayAudioButton({
 
   const Icon = isPlaying ? PauseIcon : Volume2Icon;
   const label = isPlaying ? t("Pause pronunciation") : t("Play pronunciation");
+
+  if (variant === "text") {
+    return (
+      <button
+        className="text-muted-foreground hover:text-foreground flex items-center gap-1.5 text-sm transition-colors"
+        onClick={handleClick}
+        type="button"
+      >
+        <Icon aria-hidden className="size-4" />
+        {label}
+      </button>
+    );
+  }
 
   return (
     <button
