@@ -101,19 +101,10 @@ export function checkTranslationAnswer(
   };
 }
 
-function isAcceptedArrangeWordList(
-  correctWords: string[] | string[][],
-): correctWords is string[][] {
-  return Array.isArray(correctWords[0]);
-}
-
 export function checkArrangeWordsAnswer(
-  correctWords: string[] | string[][],
+  correctWords: string[][],
   userWords: string[],
 ): AnswerResult {
-  const acceptedWordSequences = isAcceptedArrangeWordList(correctWords)
-    ? correctWords
-    : [correctWords];
-  const isCorrect = matchesAcceptedArrangeWords(acceptedWordSequences, userWords);
+  const isCorrect = matchesAcceptedArrangeWords(correctWords, userWords);
   return { correctAnswer: null, feedback: null, isCorrect };
 }

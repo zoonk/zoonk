@@ -322,24 +322,28 @@ describe(checkTranslationAnswer, () => {
 
 describe(checkArrangeWordsAnswer, () => {
   test("returns correct for matching sequence", () => {
-    expect(checkArrangeWordsAnswer(["I", "speak", "Spanish"], ["I", "speak", "Spanish"])).toEqual({
-      correctAnswer: null,
-      feedback: null,
-      isCorrect: true,
-    });
+    expect(checkArrangeWordsAnswer([["I", "speak", "Spanish"]], ["I", "speak", "Spanish"])).toEqual(
+      {
+        correctAnswer: null,
+        feedback: null,
+        isCorrect: true,
+      },
+    );
   });
 
   test("returns incorrect for wrong sequence", () => {
-    expect(checkArrangeWordsAnswer(["I", "speak", "Spanish"], ["Spanish", "I", "speak"])).toEqual({
-      correctAnswer: null,
-      feedback: null,
-      isCorrect: false,
-    });
+    expect(checkArrangeWordsAnswer([["I", "speak", "Spanish"]], ["Spanish", "I", "speak"])).toEqual(
+      {
+        correctAnswer: null,
+        feedback: null,
+        isCorrect: false,
+      },
+    );
   });
 
   test("returns incorrect when user provides extra words", () => {
     expect(
-      checkArrangeWordsAnswer(["I", "speak", "Spanish"], ["I", "speak", "Spanish", "well"]),
+      checkArrangeWordsAnswer([["I", "speak", "Spanish"]], ["I", "speak", "Spanish", "well"]),
     ).toEqual({
       correctAnswer: null,
       feedback: null,
@@ -364,7 +368,7 @@ describe(checkArrangeWordsAnswer, () => {
   });
 
   test("matches case and punctuation insensitively", () => {
-    expect(checkArrangeWordsAnswer(["Hello,", "Lara!"], ["hello", "lara"])).toEqual({
+    expect(checkArrangeWordsAnswer([["Hello,", "Lara!"]], ["hello", "lara"])).toEqual({
       correctAnswer: null,
       feedback: null,
       isCorrect: true,
