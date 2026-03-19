@@ -17,17 +17,13 @@ function escapeRegExp(text: string): string {
   return text.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
 }
 
-function normalizeVariantKey(text: string): string {
-  return normalizeString(text);
-}
-
 function getWordTranslations(word: VocabularyVariantWord): string[] {
   return [
     ...new Map(
       [word.translation, ...word.alternativeTranslations].flatMap((translation) => {
         const normalized = normalizePunctuation(translation).trim();
 
-        return normalized ? [[normalizeVariantKey(normalized), normalized] as const] : [];
+        return normalized ? [[normalizeString(normalized), normalized] as const] : [];
       }),
     ).values(),
   ];
@@ -60,9 +56,9 @@ function mergeAlternativeTexts(primaryText: string, texts: string[]): string[] {
     ...new Map(
       texts.flatMap((text) => {
         const normalized = normalizePunctuation(text).trim();
-        const key = normalizeVariantKey(normalized);
+        const key = normalizeString(normalized);
 
-        if (!normalized || key === normalizeVariantKey(primaryText)) {
+        if (!normalized || key === normalizeString(primaryText)) {
           return [];
         }
 
@@ -81,7 +77,7 @@ function getPhraseKeys(text: string, phrases: string[]): Set<string> {
         return [];
       }
 
-      return [normalizeVariantKey(normalizedPhrase)];
+      return [normalizeString(normalizedPhrase)];
     }),
   );
 }
@@ -96,7 +92,7 @@ function filterLexicalVariants(params: {
   const licensedVariantKeys = new Set(
     params.licensedVariantTexts.flatMap((text) => {
       const normalized = normalizePunctuation(text).trim();
-      return normalized ? [normalizeVariantKey(normalized)] : [];
+      return normalized ? [normalizeString(normalized)] : [];
     }),
   );
 
@@ -111,7 +107,7 @@ function filterLexicalVariants(params: {
     }
 
     const normalizedCandidate = normalizePunctuation(candidateText).trim();
-    return licensedVariantKeys.has(normalizeVariantKey(normalizedCandidate));
+    return licensedVariantKeys.has(normalizeString(normalizedCandidate));
   });
 }
 
@@ -122,10 +118,10 @@ function buildTargetWordsByTranslation(words: VocabularyVariantWord[]): Map<stri
     const normalizedWord = normalizePunctuation(word.word).trim();
 
     for (const translation of getWordTranslations(word)) {
-      const key = normalizeVariantKey(translation);
+      const key = normalizeString(translation);
       const currentWords = targetWordsByTranslation.get(key) ?? [];
       const nextWords = currentWords.some(
-        (currentWord) => normalizeVariantKey(currentWord) === normalizeVariantKey(normalizedWord),
+        (currentWord) => normalizeString(currentWord) === normalizeString(normalizedWord),
       )
         ? currentWords
         : [...currentWords, normalizedWord];
@@ -152,10 +148,10 @@ function getDerivedAlternativeSentences(
     );
 
     return translationsInSentence.flatMap((translation) => {
-      const equivalentWords = targetWordsByTranslation.get(normalizeVariantKey(translation)) ?? [];
+      const equivalentWords = targetWordsByTranslation.get(normalizeString(translation)) ?? [];
 
       return equivalentWords.flatMap((equivalentWord) => {
-        if (normalizeVariantKey(equivalentWord) === normalizeVariantKey(word.word)) {
+        if (normalizeString(equivalentWord) === normalizeString(word.word)) {
           return [];
         }
 
@@ -181,7 +177,7 @@ function getDerivedAlternativeTranslations(
 
     return translationsInSentence.flatMap((translation) =>
       getWordTranslations(word).flatMap((equivalentTranslation) => {
-        if (normalizeVariantKey(equivalentTranslation) === normalizeVariantKey(translation)) {
+        if (normalizeString(equivalentTranslation) === normalizeString(translation)) {
           return [];
         }
 
@@ -207,7 +203,7 @@ export function enrichReadingSentenceVariants<T extends SentenceWithVariants>(
       words.flatMap((word) =>
         getWordTranslations(word).flatMap((translation) => {
           const normalized = normalizePunctuation(translation).trim();
-          return normalized ? [[normalizeVariantKey(normalized), normalized] as const] : [];
+          return normalized ? [[normalizeString(normalized), normalized] as const] : [];
         }),
       ),
     ).values(),
