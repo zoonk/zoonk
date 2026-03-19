@@ -178,6 +178,16 @@ export function stripPunctuation(text: string): string {
 }
 
 /**
+ * Check whether the last character of a token is a word connector
+ * (hyphen, apostrophe, or similar). Used to decide if the next
+ * word-like segment should merge into the current token.
+ */
+function endsWithConnector(token: string): boolean {
+  const lastChar = token.at(-1);
+  return lastChar !== undefined && WORD_CONNECTOR_PATTERN.test(lastChar);
+}
+
+/**
  * Intl.Segmenter is good at finding word boundaries in scripts like Japanese or Chinese,
  * but it also splits connector-linked tokens such as "gato-123", "l'heure", or
  * "allez-vous?" into pieces. Rebuild those runs into one token so the player, answer
@@ -185,32 +195,26 @@ export function stripPunctuation(text: string): string {
  */
 function segmentNonSpaceText(text: string): string[] {
   const tokens: string[] = [];
-  let currentToken = "";
-  let pendingPrefix = "";
-  let canContinueCurrentToken = false;
+  let prefix = "";
 
   for (const segment of wordSegmenter.segment(text)) {
-    if (segment.isWordLike) {
-      if (currentToken.length === 0) {
-        currentToken = `${pendingPrefix}${segment.segment}`;
-      } else if (canContinueCurrentToken) {
-        currentToken += segment.segment;
-      } else {
-        tokens.push(currentToken);
-        currentToken = `${pendingPrefix}${segment.segment}`;
-      }
+    const lastToken = tokens.at(-1);
 
-      pendingPrefix = "";
-      canContinueCurrentToken = false;
-    } else if (currentToken.length === 0) {
-      pendingPrefix += segment.segment;
+    if (segment.isWordLike) {
+      if (lastToken !== undefined && endsWithConnector(lastToken)) {
+        tokens[tokens.length - 1] += segment.segment;
+      } else {
+        tokens.push(prefix + segment.segment);
+        prefix = "";
+      }
+    } else if (lastToken === undefined) {
+      prefix += segment.segment;
     } else {
-      currentToken += segment.segment;
-      canContinueCurrentToken = WORD_CONNECTOR_PATTERN.test(segment.segment);
+      tokens[tokens.length - 1] += segment.segment;
     }
   }
 
-  return currentToken.length > 0 ? [...tokens, currentToken] : tokens;
+  return tokens;
 }
 
 /**
