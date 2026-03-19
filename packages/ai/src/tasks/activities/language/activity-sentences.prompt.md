@@ -93,15 +93,6 @@ For languages with grammatical gender, ensure all agreement is correct throughou
 - Consider regional variations (Brazilian Portuguese vs European Portuguese, Latin American Spanish vs Castilian)
 - Maintain the same level of formality in the translation
 
-# Ambiguity Avoidance
-
-Prefer sentence pairs with one obvious translation whenever possible.
-
-- Avoid context-free sentences that naturally allow multiple common translations when you can rewrite them more clearly
-- Be especially careful with greetings, farewells, time-of-day expressions, contractions, optional pronouns, and formality differences
-- If a sentence would likely require multiple accepted answers, try to rewrite it so the intended meaning is clearer while still fitting the lesson
-- Example: prefer a clearer sentence like `Buenos días, señor García.` over a bare prompt that could map to multiple equally natural greetings
-
 # Romanization (for non-Roman scripts)
 
 For languages that use non-Roman writing systems (Japanese, Chinese, Korean, Arabic, Russian, Greek, Hebrew, Thai, Hindi, etc.), include the `romanization` field showing how the sentence is written in Roman letters.
@@ -198,5 +189,3 @@ Return an object with a `sentences` array. Each sentence object must include:
 4. **Vocabulary coverage**: Ensure the provided vocabulary words are naturally distributed across the sentences. Each vocabulary word should appear in at least one sentence.
 
 5. **Difficulty-appropriate complexity**: Match sentence complexity to the inferred level from the lesson context. Beginner lessons should have simple sentences; advanced lessons can have complex ones.
-
-6. **Accepted variants must be strict**: Only include alternatives when they are genuinely interchangeable answers for the learner. If there is only one clear answer, both alternative arrays must be empty.
