@@ -59,16 +59,6 @@ function getTextKey(text: string): string | null {
 }
 
 /**
- * Build a reusable set of lookup keys from a list of texts so callers can ask
- * membership questions without repeating null checks and normalization.
- */
-function getTextKeys(texts: string[]): Set<string> {
-  return new Set(
-    texts.map((text) => getTextKey(text)).filter((textKey): textKey is string => textKey !== null),
-  );
-}
-
-/**
  * When we build a new variant, replace only the exact expression we matched above.
  * This avoids changing unrelated text by accident.
  */
@@ -109,100 +99,6 @@ function mergeAlternativeTexts(primaryText: string, texts: string[]): string[] {
   const primaryKey = getTextKey(primaryText);
 
   return deduplicateNormalizedTexts(texts).filter((text) => getTextKey(text) !== primaryKey);
-}
-
-/**
- * Match one lesson phrase against a sentence and return its lookup key only when that
- * exact phrase is present. This keeps getPhraseKeys as a simple collection pipeline.
- */
-function getMatchedPhraseKey(text: string, phrase: string): string | null {
-  const normalizedPhrase = getNormalizedText(phrase);
-
-  if (!normalizedPhrase || !hasPhrase(text, normalizedPhrase)) {
-    return null;
-  }
-
-  return normalizeString(normalizedPhrase);
-}
-
-/**
- * Turn a sentence into the set of lesson expressions it actually uses.
- * That lets us answer questions like "did this variant introduce a different lesson term?"
- * without depending on the full raw sentence text.
- */
-function getPhraseKeys(text: string, phrases: string[]): Set<string> {
-  return new Set(
-    phrases
-      .map((phrase) => getMatchedPhraseKey(text, phrase))
-      .filter((phraseKey): phraseKey is string => phraseKey !== null),
-  );
-}
-
-/**
- * Decide whether a candidate sentence introduces a taught phrase that the canonical
- * version does not use. That lets the higher-level filter focus on policy, not matching.
- */
-function introducesLessonPhrase(
-  candidateText: string,
-  canonicalPhraseKeys: Set<string>,
-  phrases: string[],
-): boolean {
-  const candidatePhraseKeys = getPhraseKeys(candidateText, phrases);
-
-  return [...candidatePhraseKeys].some((phraseKey) => !canonicalPhraseKeys.has(phraseKey));
-}
-
-/**
- * Check whether a candidate text is one of the variants explicitly licensed by lesson-word
- * data after normalization.
- */
-function isLicensedVariant(candidateText: string, licensedVariantKeys: Set<string>): boolean {
-  const candidateKey = getTextKey(candidateText);
-
-  return candidateKey ? licensedVariantKeys.has(candidateKey) : false;
-}
-
-/**
- * Keep candidates that either stay within the canonical lesson phrases or match a
- * lesson-approved equivalent we derived from the vocabulary data.
- */
-function canKeepLexicalVariant(params: {
-  candidateText: string;
-  canonicalPhraseKeys: Set<string>;
-  licensedVariantKeys: Set<string>;
-  phrases: string[];
-}): boolean {
-  if (!introducesLessonPhrase(params.candidateText, params.canonicalPhraseKeys, params.phrases)) {
-    return true;
-  }
-
-  return isLicensedVariant(params.candidateText, params.licensedVariantKeys);
-}
-
-/**
- * Keep AI rewrites that do not introduce a different taught expression, but reject rewrites
- * that swap in a new lesson term unless our lesson-word data says that swap is allowed.
- * Example: "Yo soy Lara." -> "Soy Lara." is fine because it does not introduce a new term.
- * Example: "Guten Tag" -> "Guten Morgen" is only allowed when the lesson data says both are
- * accepted ways to express the same translation here.
- */
-function filterLexicalVariants(params: {
-  canonicalText: string;
-  candidateTexts: string[];
-  licensedVariantTexts: string[];
-  phrases: string[];
-}): string[] {
-  const canonicalPhraseKeys = getPhraseKeys(params.canonicalText, params.phrases);
-  const licensedVariantKeys = getTextKeys(params.licensedVariantTexts);
-
-  return params.candidateTexts.filter((candidateText) =>
-    canKeepLexicalVariant({
-      candidateText,
-      canonicalPhraseKeys,
-      licensedVariantKeys,
-      phrases: params.phrases,
-    }),
-  );
 }
 
 /**
@@ -338,42 +234,30 @@ function getDerivedAlternativeTranslations(
 }
 
 /**
- * Merge AI-proposed variants with the lesson-backed variants we can prove are allowed,
- * then run the shared dedupe rules once at the end.
+ * Merge AI-proposed variants with the lesson-backed variants we derived from vocabulary data,
+ * then deduplicate and drop anything that is just a copy of the canonical text.
  */
 function getAcceptedAlternativeTexts(params: {
   canonicalText: string;
   candidateTexts: string[];
   derivedTexts: string[];
-  phrases: string[];
 }): string[] {
   return mergeAlternativeTexts(params.canonicalText, [
-    ...filterLexicalVariants({
-      candidateTexts: params.candidateTexts,
-      canonicalText: params.canonicalText,
-      licensedVariantTexts: params.derivedTexts,
-      phrases: params.phrases,
-    }),
+    ...params.candidateTexts,
     ...params.derivedTexts,
   ]);
 }
 
 /**
- * Final pass: combine the AI's suggestions with the alternatives we can prove from lesson data.
- * Then drop anything that introduces a different taught expression unless we can prove that
- * the new expression is an accepted equivalent for this lesson.
- * Example: keep "Guten Tag, Anna!" as an alternative for "Guten Morgen, Anna!" when both map
- * to "Bom dia". Drop an AI variant like "Guten Abend, Anna!" if the lesson never says that it
- * is another accepted way to express that same translation here.
+ * Combine AI-generated sentence variants with deterministic variants derived from lesson
+ * vocabulary data, then deduplicate. AI variants are trusted as-is — the prompt already
+ * constrains what counts as a valid variant.
  */
 export function enrichReadingSentenceVariants<T extends SentenceWithVariants>(
   sentences: T[],
   words: VocabularyVariantWord[],
 ): T[] {
   const targetWordsByTranslation = buildTargetWordsByTranslation(words);
-  const translationPhrases = deduplicateNormalizedTexts(
-    words.flatMap((word) => getWordTranslations(word)),
-  );
 
   return sentences.map((sentence) => {
     const derivedAlternativeSentences = getDerivedAlternativeSentences(
@@ -390,13 +274,11 @@ export function enrichReadingSentenceVariants<T extends SentenceWithVariants>(
         candidateTexts: sentence.alternativeSentences,
         canonicalText: sentence.sentence,
         derivedTexts: derivedAlternativeSentences,
-        phrases: words.map((word) => word.word),
       }),
       alternativeTranslations: getAcceptedAlternativeTexts({
         candidateTexts: sentence.alternativeTranslations,
         canonicalText: sentence.translation,
         derivedTexts: derivedAlternativeTranslations,
-        phrases: translationPhrases,
       }),
     };
   });

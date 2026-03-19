@@ -81,7 +81,7 @@ describe(enrichReadingSentenceVariants, () => {
     });
   });
 
-  test("filters AI sentence variants that introduce an unlicensed lesson phrase", () => {
+  test("keeps AI sentence variants even when they introduce a different lesson phrase", () => {
     const [sentence] = enrichReadingSentenceVariants(
       [
         {
@@ -113,14 +113,14 @@ describe(enrichReadingSentenceVariants, () => {
     );
 
     expect(sentence).toMatchObject({
-      alternativeSentences: [],
+      alternativeSentences: ["Guten Morgen, Herr Weber."],
       alternativeTranslations: ["Bom dia, senhor Weber."],
       sentence: "Guten Tag, Herr Weber.",
       translation: "Boa tarde, senhor Weber.",
     });
   });
 
-  test("filters AI translation variants that introduce an unlicensed lesson phrase", () => {
+  test("keeps AI translation variants even when they introduce a different lesson phrase", () => {
     const [sentence] = enrichReadingSentenceVariants(
       [
         {
@@ -148,7 +148,7 @@ describe(enrichReadingSentenceVariants, () => {
 
     expect(sentence).toMatchObject({
       alternativeSentences: ["Guten Tag, Anna!"],
-      alternativeTranslations: [],
+      alternativeTranslations: ["Boa tarde, Anna!"],
       sentence: "Guten Morgen, Anna!",
       translation: "Bom dia, Anna!",
     });

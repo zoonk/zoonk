@@ -416,7 +416,7 @@ describe(readingActivityWorkflow, () => {
     });
   });
 
-  test("filters lexical sentence variants returned by AI audit when lesson vocabulary does not license them", async () => {
+  test("keeps AI sentence variants even when they introduce a different lesson phrase", async () => {
     vi.mocked(generateActivitySentences).mockResolvedValueOnce(
       createSentenceGenerationResult([
         {
@@ -441,7 +441,7 @@ describe(readingActivityWorkflow, () => {
       chapterId: chapter.id,
       kind: "language",
       organizationId,
-      title: `Reading Filtered Variants ${randomUUID()}`,
+      title: `Reading Kept Variants ${randomUUID()}`,
     });
 
     await activityFixture({
@@ -489,11 +489,10 @@ describe(readingActivityWorkflow, () => {
     });
 
     expect(savedSentence).toMatchObject({
-      alternativeSentences: [],
+      alternativeSentences: ["Guten Morgen, Herr Weber."],
       sentence: "Guten Tag, Herr Weber.",
       translation: "Boa tarde, senhor Weber.",
     });
-    expect(savedSentence?.alternativeSentences).not.toContain("Guten Morgen, Herr Weber.");
   });
 
   test("sets reading status to 'completed' after full pipeline", async () => {
