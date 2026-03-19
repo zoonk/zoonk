@@ -6,7 +6,7 @@ import { getLanguagePromptContext } from "./_utils/language-prompt-context";
 import systemPrompt from "./activity-sentence-variants.prompt.md";
 
 const DEFAULT_MODEL = process.env.AI_MODEL_ACTIVITY_SENTENCE_VARIANTS ?? "openai/gpt-5.4";
-const FALLBACK_MODELS = ["google/gemini-3.1-pro-preview", "anthropic/claude-opus-4.6"];
+const FALLBACK_MODELS = ["google/gemini-3.1-flash-lite-preview", "anthropic/claude-sonnet-4.6"];
 
 const schema = z.object({
   sentences: z.array(
