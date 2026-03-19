@@ -409,6 +409,16 @@ describe(segmentWords, () => {
   test("handles multiple French-style punctuation in one sentence", () => {
     expect(segmentWords("Oui , je suis là !")).toEqual(["Oui,", "je", "suis", "là!"]);
   });
+
+  test("keeps connector-linked tokens intact without spaces", () => {
+    expect(segmentWords("gato-prueba")).toEqual(["gato-prueba"]);
+    expect(segmentWords("l'heure")).toEqual(["l'heure"]);
+    expect(segmentWords("allez-vous?")).toEqual(["allez-vous?"]);
+  });
+
+  test("keeps surrounding punctuation on non-space tokens", () => {
+    expect(segmentWords("¿Hola?")).toEqual(["¿Hola?"]);
+  });
 });
 
 describe(stripPunctuation, () => {

@@ -1,5 +1,5 @@
 import { describe, expect, test, vi } from "vitest";
-import { buildWordBankOptions } from "./build-word-bank-options";
+import { buildSentenceWordOptions, buildWordBankOptions } from "./build-word-bank-options";
 import { type SerializedStep, type SerializedWord } from "./prepare-activity-data";
 
 vi.mock("@zoonk/utils/shuffle", () => ({
@@ -191,5 +191,59 @@ describe(buildWordBankOptions, () => {
 
     expect(words).not.toContain("Oi");
     expect(words).toContain("gato");
+  });
+
+  test("segments distractor phrases with the same tokenizer as correct options", () => {
+    const options = buildWordBankOptions(
+      makeReadingStep("猫です"),
+      [makeLessonWord("1", "猫", "cat"), makeLessonWord("2", "犬です", "dog")],
+      new Map(),
+    );
+
+    const words = options.map((option) => option.word);
+
+    expect(words).toContain("犬");
+    expect(words).not.toContain("犬です");
+  });
+
+  test("keeps standalone hyphenated distractor tokens intact", () => {
+    const options = buildWordBankOptions(
+      makeReadingStep("Hola mundo"),
+      [makeLessonWord("1", "Hola", "hello"), makeLessonWord("2", "gato-prueba", "cat")],
+      new Map(),
+    );
+
+    const words = options.map((option) => option.word);
+
+    expect(words).toContain("gato-prueba");
+    expect(words).not.toContain("gato");
+    expect(words).not.toContain("prueba");
+  });
+});
+
+describe(buildSentenceWordOptions, () => {
+  test("prefers sentence metadata for tokens that include punctuation", () => {
+    const options = buildSentenceWordOptions(
+      "Guten Morgen!",
+      [makeLessonWord("1", "Morgen", "morning (lesson)")],
+      new Map([
+        [
+          "morgen",
+          {
+            romanization: "mor-gen",
+            translation: "morning (sentence)",
+            word: "morgen",
+            wordAudio: { audioUrl: "https://example.com/morgen.mp3" },
+          },
+        ],
+      ]),
+    );
+
+    expect(options[1]).toEqual({
+      audioUrl: "https://example.com/morgen.mp3",
+      romanization: "mor-gen",
+      translation: "morning (sentence)",
+      word: "Morgen!",
+    });
   });
 });

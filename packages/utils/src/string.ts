@@ -1,5 +1,7 @@
 const SLUG_MAX_LENGTH = 50;
 const NAME_PLACEHOLDER = "{{NAME}}";
+const WORD_CONNECTOR_PATTERN = /^[-'’‐‑‒–]$/u;
+const wordSegmenter = new Intl.Segmenter(undefined, { granularity: "word" });
 
 export function removeAccents(str: string): string {
   return str.normalize("NFD").replaceAll(/[\u0300-\u036F]/g, "");
@@ -176,19 +178,54 @@ export function stripPunctuation(text: string): string {
 }
 
 /**
- * Segments text into words, handling both space-delimited languages (English, Spanish)
- * and non-space-delimited languages (Japanese, Chinese, Thai) via Intl.Segmenter.
+ * Intl.Segmenter is good at finding word boundaries in scripts like Japanese or Chinese,
+ * but it also splits connector-linked tokens such as "gato-123", "l'heure", or
+ * "allez-vous?" into pieces. Rebuild those runs into one token so the player, answer
+ * checker, and other consumers keep one shared tokenization rule.
  */
-export function segmentWords(text: string): string[] {
-  if (text.includes(" ")) {
-    return normalizePunctuation(text).split(" ").filter(Boolean);
+function segmentNonSpaceText(text: string): string[] {
+  const tokens: string[] = [];
+  let currentToken = "";
+  let pendingPrefix = "";
+  let canContinueCurrentToken = false;
+
+  for (const segment of wordSegmenter.segment(text)) {
+    if (segment.isWordLike) {
+      if (currentToken.length === 0) {
+        currentToken = `${pendingPrefix}${segment.segment}`;
+      } else if (canContinueCurrentToken) {
+        currentToken += segment.segment;
+      } else {
+        tokens.push(currentToken);
+        currentToken = `${pendingPrefix}${segment.segment}`;
+      }
+
+      pendingPrefix = "";
+      canContinueCurrentToken = false;
+    } else if (currentToken.length === 0) {
+      pendingPrefix += segment.segment;
+    } else {
+      currentToken += segment.segment;
+      canContinueCurrentToken = WORD_CONNECTOR_PATTERN.test(segment.segment);
+    }
   }
 
-  const segmenter = new Intl.Segmenter(undefined, { granularity: "word" });
+  return currentToken.length > 0 ? [...tokens, currentToken] : tokens;
+}
 
-  return [...segmenter.segment(text)]
-    .filter((segment) => segment.isWordLike)
-    .map((segment) => segment.segment);
+/**
+ * Segments text into display tokens for word-based activities. Space-delimited text
+ * keeps punctuation attached to the preceding word, while non-space text uses
+ * `Intl.Segmenter` and then merges connector-linked runs back together.
+ */
+export function segmentWords(text: string): string[] {
+  const normalizedText = normalizePunctuation(text);
+
+  if (normalizedText.includes(" ")) {
+    return normalizedText.split(" ").filter(Boolean);
+  }
+
+  return segmentNonSpaceText(normalizedText);
 }
 
 export function extractUniqueSentenceWords(sentences: string[]): string[] {
