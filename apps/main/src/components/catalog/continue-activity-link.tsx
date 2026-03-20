@@ -39,10 +39,17 @@ export async function ContinueActivityLink<Href extends string, CompletedHref ex
   const t = await getExtracted();
   const scope = getScope({ chapterId, courseId, lessonId });
   const data = await getNextActivity({ scope });
+  const className = cn(buttonVariants(), "min-w-0 flex-1 gap-2");
 
+  /**
+   * When we cannot compute a next activity at all, the parent page already has
+   * the safest fallback for its own level: first chapter, first lesson, or
+   * first activity. Reusing that fallback avoids duplicating page-specific
+   * routing rules here.
+   */
   if (!data) {
     return (
-      <Link className={cn(buttonVariants(), "min-w-0 flex-1 gap-2")} href={fallbackHref} prefetch>
+      <Link className={className} href={fallbackHref} prefetch>
         {t("Start")}
         <ChevronRightIcon aria-hidden="true" />
       </Link>
@@ -61,26 +68,78 @@ export async function ContinueActivityLink<Href extends string, CompletedHref ex
     return t("Start");
   };
 
+  const label = getLabel();
+
+  /**
+   * Once the current scope is fully completed, the parent can provide the next
+   * lesson/chapter route. We prefer that explicit sibling destination over
+   * sending users back into a finished activity.
+   */
   if (data.completed && completedHref) {
     return (
-      <Link className={cn(buttonVariants(), "min-w-0 flex-1 gap-2")} href={completedHref}>
-        {getLabel()}
+      <Link className={className} href={completedHref}>
+        {label}
         <ChevronRightIcon aria-hidden="true" />
       </Link>
     );
   }
 
+  /**
+   * Catalog pages always live under a brand URL. If progress data cannot give
+   * us that slug, the safest option is to stay with the route the parent page
+   * already knows is valid.
+   */
+  if (!data.brandSlug) {
+    return (
+      <Link className={className} href={fallbackHref} prefetch={false}>
+        {label}
+        <ChevronRightIcon aria-hidden="true" />
+      </Link>
+    );
+  }
+
+  /**
+   * Generated activities are safe to deep-link to directly, so we send users
+   * straight into the activity route and allow prefetching.
+   */
+  if (data.canPrefetch) {
+    return (
+      <Link
+        className={className}
+        href={`/b/${data.brandSlug}/c/${data.courseSlug}/ch/${data.chapterSlug}/l/${data.lessonSlug}/a/${data.activityPosition}`}
+        prefetch
+      >
+        {label}
+        <ChevronRightIcon aria-hidden="true" />
+      </Link>
+    );
+  }
+
+  /**
+   * Lesson pages already loaded the activity list and passed a concrete first
+   * activity href as the fallback. Reusing that href avoids the no-op
+   * self-link that happens when the first activity exists but is still pending.
+   */
+  if (lessonId) {
+    return (
+      <Link className={className} href={fallbackHref} prefetch={false}>
+        {label}
+        <ChevronRightIcon aria-hidden="true" />
+      </Link>
+    );
+  }
+
+  /**
+   * Course and chapter pages may only know the lesson-level destination when
+   * the activity is still pending, so we fall back to the lesson shell there.
+   */
   return (
     <Link
-      className={cn(buttonVariants(), "min-w-0 flex-1 gap-2")}
-      href={
-        data.canPrefetch
-          ? `/b/${data.brandSlug}/c/${data.courseSlug}/ch/${data.chapterSlug}/l/${data.lessonSlug}/a/${data.activityPosition}`
-          : `/b/${data.brandSlug}/c/${data.courseSlug}/ch/${data.chapterSlug}/l/${data.lessonSlug}`
-      }
-      prefetch={data.canPrefetch}
+      className={className}
+      href={`/b/${data.brandSlug}/c/${data.courseSlug}/ch/${data.chapterSlug}/l/${data.lessonSlug}`}
+      prefetch={false}
     >
-      {getLabel()}
+      {label}
       <ChevronRightIcon aria-hidden="true" />
     </Link>
   );

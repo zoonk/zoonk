@@ -92,6 +92,48 @@ async function createTestCourseWithoutPublishedActivities() {
   return { chapter, course, lesson };
 }
 
+async function createTestCourseWithPendingFirstActivity() {
+  const org = await getAiOrganization();
+  const uniqueId = randomUUID().slice(0, 8);
+
+  const course = await courseFixture({
+    isPublished: true,
+    organizationId: org.id,
+    slug: `e2e-cal-pending-course-${uniqueId}`,
+    title: `E2E CAL Pending Course ${uniqueId}`,
+  });
+
+  const chapter = await chapterFixture({
+    courseId: course.id,
+    isPublished: true,
+    organizationId: org.id,
+    position: 0,
+    slug: `e2e-cal-pending-ch-${uniqueId}`,
+    title: `E2E CAL Pending Chapter ${uniqueId}`,
+  });
+
+  const lesson = await lessonFixture({
+    chapterId: chapter.id,
+    isPublished: true,
+    organizationId: org.id,
+    position: 0,
+    slug: `e2e-cal-pending-l-${uniqueId}`,
+    title: `E2E CAL Pending Lesson ${uniqueId}`,
+  });
+
+  await activityFixture({
+    generationStatus: "pending",
+    isPublished: true,
+    kind: "explanation",
+    lessonId: lesson.id,
+    organizationId: org.id,
+    position: 0,
+    title: `E2E CAL Pending Activity ${uniqueId}`,
+  });
+
+  return { chapter, course, lesson };
+}
+
 test.describe("Continue Activity Link", () => {
   test("course page shows Start link for unauthenticated user", async ({ page }) => {
     const { course } = await createTestCourseWithActivity();
@@ -130,6 +172,25 @@ test.describe("Continue Activity Link", () => {
 
     const startLink = page.getByRole("link", { name: /^start$/i });
     await expect(startLink).toBeVisible();
+  });
+
+  test("lesson page Start link opens the pending activity instead of self-linking", async ({
+    page,
+  }) => {
+    const { chapter, course, lesson } = await createTestCourseWithPendingFirstActivity();
+
+    await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
+
+    const startLink = page.getByRole("link", { name: /^start$/i });
+
+    await expect(startLink).toHaveAttribute(
+      "href",
+      `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}/a/0`,
+    );
+
+    await startLink.click();
+
+    await expect(page.getByRole("link", { name: /create activity/i })).toBeVisible();
   });
 
   test("course page falls back to first chapter when no activity data", async ({ page }) => {
