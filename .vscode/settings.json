@@ -36,5 +36,5 @@
     "**/tsconfig.tsbuildinfo": true,
     "**/turbo-*": true
   },
-  "typescript.experimental.useTsgo": true
+  "js/ts.experimental.useTsgo": true
 }
