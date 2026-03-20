@@ -69,4 +69,10 @@ export async function completeActivityStep(
 
   await streamStatus({ status, step: stepName });
   await streamStatus({ status, step: "setActivityAsCompleted" });
+
+  const hasFirstActivity = matchingActivities.some((a) => a.position === 0);
+
+  if (hasFirstActivity) {
+    await streamStatus({ status, step: "setFirstActivityAsCompleted" });
+  }
 }

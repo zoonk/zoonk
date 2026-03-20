@@ -37,12 +37,23 @@ export async function saveCustomActivitiesStep(
     customActivities.map((act) => saveActivity(act, workflowRunId)),
   );
 
+  const hasFirstActivity = customActivities.some((a) => a.position === 0);
+
   if (rejected(results)) {
     await streamError({ reason: "dbSaveFailed", step: "setCustomAsCompleted" });
     await streamStatus({ status: "error", step: "setActivityAsCompleted" });
+
+    if (hasFirstActivity) {
+      await streamStatus({ status: "error", step: "setFirstActivityAsCompleted" });
+    }
+
     return;
   }
 
   await streamStatus({ status: "completed", step: "setCustomAsCompleted" });
   await streamStatus({ status: "completed", step: "setActivityAsCompleted" });
+
+  if (hasFirstActivity) {
+    await streamStatus({ status: "completed", step: "setFirstActivityAsCompleted" });
+  }
 }

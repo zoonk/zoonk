@@ -265,8 +265,8 @@ test.describe("Generate Chapter Page - With Subscription", () => {
         { status: "completed", step: "setChapterAsCompleted" },
         { status: "started", step: "setLessonAsCompleted" },
         { status: "completed", step: "setLessonAsCompleted" },
-        { status: "started", step: "setActivityAsCompleted" },
-        { status: "completed", step: "setActivityAsCompleted" },
+        { status: "started", step: "setFirstActivityAsCompleted" },
+        { status: "completed", step: "setFirstActivityAsCompleted" },
       ],
     });
 
@@ -355,7 +355,7 @@ test.describe("Generate Chapter Page - With Subscription", () => {
     await expect(userWithoutProgress).toHaveURL(new RegExp(`/generate/ch/${chapter.id}$`));
   });
 
-  test("redirects language chapters after vocabulary completion", async ({
+  test("redirects after first activity completion", async ({
     userWithoutProgress,
     noProgressUser,
   }) => {
@@ -407,8 +407,8 @@ test.describe("Generate Chapter Page - With Subscription", () => {
         { status: "completed", step: "setChapterAsCompleted" },
         { status: "started", step: "setLessonAsCompleted" },
         { status: "completed", step: "setLessonAsCompleted" },
-        { status: "started", step: "setVocabularyAsCompleted" },
-        { status: "completed", step: "setVocabularyAsCompleted" },
+        { status: "started", step: "setFirstActivityAsCompleted" },
+        { status: "completed", step: "setFirstActivityAsCompleted" },
       ],
     });
 

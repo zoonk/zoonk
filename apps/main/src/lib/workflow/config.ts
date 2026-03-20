@@ -20,7 +20,6 @@ export const LESSON_STEPS = [
 
 export type LessonStepName = (typeof LESSON_STEPS)[number];
 export const LESSON_COMPLETION_STEP: LessonStepName = "setLessonAsCompleted";
-const ACTIVITY_GENERATION_COMPLETION_STEP: ActivityStepName = "setActivityAsCompleted";
 
 export const ACTIVITY_STEPS = [
   "getLessonActivities",
@@ -56,6 +55,7 @@ export const ACTIVITY_STEPS = [
   "setReadingAsCompleted",
   "setListeningAsCompleted",
   "setActivityAsCompleted",
+  "setFirstActivityAsCompleted",
   "workflowError",
 ] as const;
 
@@ -99,24 +99,11 @@ export function getActivityCompletionStep(kind: string): ActivityCompletionStep 
 }
 
 /**
- * Course and chapter generation should redirect as soon as the first generated
- * activity in the first lesson is playable.
- *
- * Language lessons always start with a vocabulary activity at position 0.
- * The generic "setActivityAsCompleted" event is too broad there because
- * grammar can finish first while vocabulary is still saving pronunciations
- * and audio. For non-language lessons we keep using the generic event because
- * the first generated activity kind is not fixed ahead of time.
+ * The step the frontend listens for to trigger redirect during course/chapter
+ * generation. The API emits this only when the activity at position 0 finishes,
+ * so it works universally for all lesson kinds without language-specific checks.
  */
-export function getFirstGeneratedActivityCompletionStep(
-  targetLanguage: string | null,
-): ActivityStepName {
-  if (targetLanguage) {
-    return "setVocabularyAsCompleted";
-  }
-
-  return ACTIVITY_GENERATION_COMPLETION_STEP;
-}
+export const FIRST_ACTIVITY_COMPLETION_STEP: ActivityStepName = "setFirstActivityAsCompleted";
 
 export const COURSE_STEPS = [
   "getCourseSuggestion",

@@ -37,6 +37,7 @@ const ALL_COMPLETION_STEPS: ActivityStepName[] = [
   "setReadingAsCompleted",
   "setListeningAsCompleted",
   "setActivityAsCompleted",
+  "setFirstActivityAsCompleted",
 ];
 
 export const EXPLANATION_DEPS: ActivityStepName[] = [
