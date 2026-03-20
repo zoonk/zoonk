@@ -166,6 +166,60 @@ async function createTestCourseWithChapters(userId: number) {
   };
 }
 
+/**
+ * This creates the exact regression case from the catalog page:
+ * one lesson is fully completed, while another published lesson still has no
+ * activities yet. The course page should keep the chapter in progress and show
+ * a fraction instead of a completed checkmark.
+ */
+async function createCourseWithChapterWaitingOnAnotherLesson(userId: number) {
+  const org = await getAiOrganization();
+  const uniqueId = randomUUID().slice(0, 8);
+
+  const course = await courseFixture({
+    isPublished: true,
+    organizationId: org.id,
+    slug: `e2e-progress-edge-course-${uniqueId}`,
+    title: `E2E Progress Edge Course ${uniqueId}`,
+  });
+
+  const chapter = await chapterFixture({
+    courseId: course.id,
+    description: `Edge chapter ${uniqueId}`,
+    isPublished: true,
+    organizationId: org.id,
+    position: 0,
+    slug: `e2e-progress-edge-ch-${uniqueId}`,
+    title: `E2E Edge Chapter ${uniqueId}`,
+  });
+
+  const [completedLesson] = await Promise.all([
+    lessonFixture({
+      chapterId: chapter.id,
+      isPublished: true,
+      organizationId: org.id,
+      position: 0,
+      title: `Completed Lesson ${uniqueId}`,
+    }),
+    lessonFixture({
+      chapterId: chapter.id,
+      isPublished: true,
+      organizationId: org.id,
+      position: 1,
+      title: `Pending Lesson ${uniqueId}`,
+    }),
+  ]);
+
+  const activity = await activityFixture({
+    isPublished: true,
+    lessonId: completedLesson.id,
+    organizationId: org.id,
+    position: 0,
+  });
+
+  return { activity, chapter, course, userId };
+}
+
 test.describe("Course Progress Indicators", () => {
   test("shows no indicators when user has no progress", async ({
     authenticatedPage,
@@ -327,5 +381,31 @@ test.describe("Course Progress Indicators", () => {
 
     // Chapter 2: partially completed -> fraction
     await expect(authenticatedPage.getByLabel("1 of 2 completed")).toBeVisible();
+  });
+
+  test("keeps a chapter in progress when another published lesson has no activities", async ({
+    authenticatedPage,
+    withProgressUser,
+  }) => {
+    const { activity, chapter, course } = await createCourseWithChapterWaitingOnAnotherLesson(
+      withProgressUser.id,
+    );
+
+    await activityProgressFixture({
+      activityId: activity.id,
+      completedAt: new Date(),
+      durationSeconds: 60,
+      userId: withProgressUser.id,
+    });
+
+    await authenticatedPage.goto(`/b/ai/c/${course.slug}`);
+
+    const chapterLink = authenticatedPage.getByRole("link", {
+      name: new RegExp(chapter.title),
+    });
+
+    await expect(chapterLink).toBeVisible();
+    await expect(chapterLink.getByLabel("1 of 2 completed")).toBeVisible();
+    await expect(chapterLink.getByRole("img", { name: /^completed$/i })).toHaveCount(0);
   });
 });
