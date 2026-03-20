@@ -69,7 +69,7 @@ function PlacedWordTile({
       {...listeners}
       aria-label={ariaLabel}
       className={cn(
-        "border-border flex min-h-11 flex-col items-center rounded-lg border px-4 py-2.5 text-base transition-all duration-150",
+        "border-border flex min-h-11 flex-col items-center justify-center rounded-lg border px-4 py-2.5 text-base transition-all duration-150",
         hasResult && "pointer-events-none",
         !hasResult &&
           "hover:bg-accent focus-visible:border-ring focus-visible:ring-ring/50 outline-none focus-visible:ring-[3px]",
@@ -97,7 +97,7 @@ function PlacedWordTile({
 
 function DragOverlayWord({ option }: { option: WordBankOption }) {
   return (
-    <div className="bg-background border-border flex min-h-11 flex-col items-center rounded-lg border px-4 py-2.5 text-base shadow-md">
+    <div className="bg-background border-border flex min-h-11 flex-col items-center justify-center rounded-lg border px-4 py-2.5 text-base shadow-md">
       <span>{option.word}</span>
       <RomanizationText>{option.romanization}</RomanizationText>
     </div>
