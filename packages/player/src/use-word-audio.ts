@@ -53,10 +53,29 @@ export function useWordAudio(options?: UseWordAudioOptions): {
   const audioCacheRef = useRef<Map<string, HTMLAudioElement>>(new Map());
   const preloadKey = getUniqueAudioUrls(options?.preloadUrls).join("\n");
 
-  const handleEnded = useEffectEvent((audio: HTMLAudioElement) => {
-    if (activeAudioRef.current === audio) {
-      activeAudioRef.current = null;
+  const handleEnded = useEffectEvent((audio: HTMLAudioElement, url: string) => {
+    // Ignore events from stale audio elements that were already replaced in the
+    // cache — Safari can re-fire `ended` on elements it previously marked as ended.
+    if (activeAudioRef.current !== audio) {
+      return;
     }
+
+    activeAudioRef.current = null;
+
+    // Safari doesn't reliably replay an audio element after it ends — it re-fires
+    // `ended` instead of restarting playback. Replace the cache entry with a fresh
+    // element (which starts loading from browser cache immediately) so the next
+    // play() call works on all browsers.
+    const fresh = createAudioElement(url, () => handleEnded(fresh, url));
+    fresh.load();
+    audioCacheRef.current.set(url, fresh);
+
+    // Force Safari to release the old element's audio resource. Without this,
+    // Safari can hold onto stale internal state and re-fire events on the old
+    // element. This follows the same pattern howler.js uses for cleanup.
+    audio.pause();
+    audio.removeAttribute("src");
+    audio.load();
 
     options?.onEnded?.();
   });
@@ -68,7 +87,7 @@ export function useWordAudio(options?: UseWordAudioOptions): {
       return cachedAudio;
     }
 
-    const audio = createAudioElement(url, () => handleEnded(audio));
+    const audio = createAudioElement(url, () => handleEnded(audio, url));
 
     audioCacheRef.current.set(url, audio);
 
@@ -90,10 +109,6 @@ export function useWordAudio(options?: UseWordAudioOptions): {
 
       activeAudioRef.current = nextAudio;
       nextAudio.currentTime = 0;
-
-      if (nextAudio.readyState === 0) {
-        nextAudio.load();
-      }
 
       // Browser rejects play() when rapid clicks lose the user-gesture association.
       // oxlint-disable-next-line no-empty-function -- intentional no-op for rejected play()
