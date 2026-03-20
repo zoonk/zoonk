@@ -11,6 +11,7 @@ import {
   type WordBankOption,
 } from "./prepare-activity-data";
 
+const MIN_WORD_BANK_DISTRACTOR_COUNT = 4;
 const WORD_BANK_DISTRACTOR_COUNT = 8;
 
 type WordDataInput = {
@@ -39,6 +40,18 @@ function buildLessonWordLookup(
   return new Map(
     serializedLessonWords.map((lessonWord) => [normalizeWordKey(lessonWord.word), lessonWord]),
   );
+}
+
+/**
+ * Fallback distractors should render with the same metadata as lesson distractors.
+ * We merge both sources into one lookup and keep lesson words last so the visible
+ * lesson payload stays the source of truth if both pools contain the same token.
+ */
+function buildWordMetadataLookup(
+  serializedLessonWords: SerializedWord[],
+  fallbackLessonWords: SerializedWord[],
+): Map<string, SerializedWord> {
+  return buildLessonWordLookup([...fallbackLessonWords, ...serializedLessonWords]);
 }
 
 /**
@@ -83,9 +96,10 @@ function getWordMetadata(
  */
 function createEnrichedWordOptionBuilder(
   serializedLessonWords: SerializedWord[],
+  fallbackLessonWords: SerializedWord[],
   sentenceWordMap: Map<string, WordDataInput>,
 ): (word: string) => WordBankOption {
-  const lessonWordLookup = buildLessonWordLookup(serializedLessonWords);
+  const lessonWordLookup = buildWordMetadataLookup(serializedLessonWords, fallbackLessonWords);
   const sentenceWordLookup = buildSentenceWordLookup(sentenceWordMap);
 
   return (word) => ({
@@ -195,22 +209,19 @@ function isEquivalentToAcceptedLessonWord(
   );
 }
 
+/**
+ * We compare every distractor candidate against the lesson words that appear in
+ * accepted answers so fallback pools follow the same ambiguity rules as lesson words.
+ */
 function filterEquivalentLessonWords(
-  serializedLessonWords: SerializedWord[],
-  acceptedTexts: string[],
-  distractorField: "word" | "translation",
+  candidateLessonWords: SerializedWord[],
+  acceptedLessonWords: SerializedWord[],
 ): SerializedWord[] {
-  const acceptedLessonWords = getAcceptedLessonWords(
-    serializedLessonWords,
-    acceptedTexts,
-    distractorField,
-  );
-
   if (acceptedLessonWords.length === 0) {
-    return serializedLessonWords;
+    return candidateLessonWords;
   }
 
-  return serializedLessonWords.filter(
+  return candidateLessonWords.filter(
     (lessonWord) => !isEquivalentToAcceptedLessonWord(lessonWord, acceptedLessonWords),
   );
 }
@@ -224,7 +235,7 @@ export function buildSentenceWordOptions(
   serializedLessonWords: SerializedWord[],
   sentenceWordMap: Map<string, WordDataInput>,
 ): WordBankOption[] {
-  const buildOption = createEnrichedWordOptionBuilder(serializedLessonWords, sentenceWordMap);
+  const buildOption = createEnrichedWordOptionBuilder(serializedLessonWords, [], sentenceWordMap);
 
   return segmentWords(sentence).map((word) => buildOption(word));
 }
@@ -238,6 +249,7 @@ function getUniqueDistractorWords(
   lessonWords: SerializedWord[],
   distractorField: "word" | "translation",
   acceptedWordSet: Set<string>,
+  excludedWordKeys = new Set<string>(),
 ): string[] {
   return [
     ...new Map(
@@ -246,10 +258,47 @@ function getUniqueDistractorWords(
         .flatMap((word) => {
           const key = normalizeWordKey(word);
 
-          return key.length > 0 && !acceptedWordSet.has(key) ? [[key, word] as const] : [];
+          return key.length > 0 && !acceptedWordSet.has(key) && !excludedWordKeys.has(key)
+            ? [[key, word] as const]
+            : [];
         }),
     ).values(),
   ];
+}
+
+/**
+ * Lesson distractors should stay primary, while fallback words only fill genuine
+ * gaps when semantic filtering leaves fewer than four visible distractors.
+ */
+function buildDistractorWords(
+  lessonWords: SerializedWord[],
+  fallbackLessonWords: SerializedWord[],
+  acceptedLessonWords: SerializedWord[],
+  acceptedWordSet: Set<string>,
+  distractorField: "word" | "translation",
+): string[] {
+  const lessonDistractorWords = shuffle(
+    getUniqueDistractorWords(
+      filterEquivalentLessonWords(lessonWords, acceptedLessonWords),
+      distractorField,
+      acceptedWordSet,
+    ),
+  ).slice(0, WORD_BANK_DISTRACTOR_COUNT);
+
+  if (lessonDistractorWords.length >= MIN_WORD_BANK_DISTRACTOR_COUNT) {
+    return lessonDistractorWords;
+  }
+
+  const fallbackDistractorWords = shuffle(
+    getUniqueDistractorWords(
+      filterEquivalentLessonWords(fallbackLessonWords, acceptedLessonWords),
+      distractorField,
+      acceptedWordSet,
+      new Set(lessonDistractorWords.map((word) => normalizeWordKey(word))),
+    ),
+  ).slice(0, MIN_WORD_BANK_DISTRACTOR_COUNT - lessonDistractorWords.length);
+
+  return [...lessonDistractorWords, ...fallbackDistractorWords];
 }
 
 /**
@@ -260,18 +309,24 @@ function createWordBankOptionBuilder(
   stepKind: SerializedStep["kind"],
   serializedLessonWords: SerializedWord[],
   sentenceWordMap: Map<string, WordDataInput>,
+  fallbackLessonWords: SerializedWord[],
 ): (word: string) => WordBankOption {
   if (stepKind !== "reading") {
     return emptyWordOption;
   }
 
-  return createEnrichedWordOptionBuilder(serializedLessonWords, sentenceWordMap);
+  return createEnrichedWordOptionBuilder(
+    serializedLessonWords,
+    fallbackLessonWords,
+    sentenceWordMap,
+  );
 }
 
 export function buildWordBankOptions(
   step: SerializedStep,
   serializedLessonWords: SerializedWord[],
   sentenceWordMap: Map<string, WordDataInput>,
+  fallbackLessonWords: SerializedWord[] = [],
 ): WordBankOption[] {
   const config = getWordBankConfig(step);
 
@@ -285,21 +340,23 @@ export function buildWordBankOptions(
     step.kind,
     serializedLessonWords,
     sentenceWordMap,
+    fallbackLessonWords,
   );
 
   const acceptedWordSet = getAcceptedArrangeWordSet(acceptedWordSequences);
-
-  const distractorLessonWords = filterEquivalentLessonWords(
+  const acceptedLessonWords = getAcceptedLessonWords(
     serializedLessonWords,
     acceptedTexts,
     distractorField,
   );
   const correctOptions = segmentWords(primaryText).map((word) => buildOption(word));
-  const distractorOptions = shuffle(
-    getUniqueDistractorWords(distractorLessonWords, distractorField, acceptedWordSet),
-  )
-    .slice(0, WORD_BANK_DISTRACTOR_COUNT)
-    .map((word) => buildOption(word));
+  const distractorOptions = buildDistractorWords(
+    serializedLessonWords,
+    fallbackLessonWords,
+    acceptedLessonWords,
+    acceptedWordSet,
+    distractorField,
+  ).map((word) => buildOption(word));
 
   return shuffle([...correctOptions, ...distractorOptions]);
 }

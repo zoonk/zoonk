@@ -14,6 +14,44 @@ function normalizeWordText(text: string): string {
     .trim();
 }
 
+/**
+ * Vocabulary distractors must stay unambiguous for the learner, so this helper
+ * centralizes the rule for when a word is safe to show as a wrong answer.
+ */
+function isValidDistractor<T extends DistractorWord>(correctWord: T, candidate: T): boolean {
+  const correctNormalized = normalizeWordText(correctWord.word);
+
+  return (
+    candidate.id !== correctWord.id &&
+    !isSemanticMatch(correctWord, candidate) &&
+    normalizeWordText(candidate.word) !== correctNormalized
+  );
+}
+
+/**
+ * We deduplicate on normalized word text so punctuation variants such as
+ * "ca va." and "ca va?" never consume multiple answer slots.
+ */
+function getUniqueDistractors<T extends DistractorWord>(
+  correctWord: T,
+  lessonWords: T[],
+  excludedWordKeys = new Set<string>(),
+): T[] {
+  return [
+    ...new Map(
+      lessonWords.flatMap((word) => {
+        const normalizedWord = normalizeWordText(word.word);
+
+        if (excludedWordKeys.has(normalizedWord) || !isValidDistractor(correctWord, word)) {
+          return [];
+        }
+
+        return [[normalizedWord, word] as const];
+      }),
+    ).values(),
+  ];
+}
+
 export function isSemanticMatch(correctWord: DistractorWord, candidate: DistractorWord): boolean {
   const correctTranslation = correctWord.translation.toLowerCase();
   const candidateTranslation = candidate.translation.toLowerCase();
@@ -47,26 +85,28 @@ export function isSemanticMatch(correctWord: DistractorWord, candidate: Distract
 
 /**
  * Filters lesson words to produce valid distractors for vocabulary exercises.
- * Excludes semantically equivalent words (same translation, alternative translations)
- * and returns a shuffled subset of the requested count.
+ * Excludes semantically equivalent words first from the lesson pool, then uses a
+ * small fallback pool only when the lesson does not have enough safe options.
  */
 export function getDistractorWords<T extends DistractorWord>(
   correctWord: T,
   lessonWords: T[],
   count: number,
+  fallbackWords: T[] = [],
 ): T[] {
-  const correctNormalized = normalizeWordText(correctWord.word);
+  const lessonDistractors = shuffle(getUniqueDistractors(correctWord, lessonWords)).slice(0, count);
 
-  const validDistractors = lessonWords.filter(
-    (word) =>
-      word.id !== correctWord.id &&
-      !isSemanticMatch(correctWord, word) &&
-      normalizeWordText(word.word) !== correctNormalized,
-  );
+  if (lessonDistractors.length >= count || fallbackWords.length === 0) {
+    return lessonDistractors;
+  }
 
-  const uniqueDistractors = [
-    ...new Map(validDistractors.map((word) => [normalizeWordText(word.word), word])).values(),
-  ];
+  const fallbackDistractors = shuffle(
+    getUniqueDistractors(
+      correctWord,
+      fallbackWords,
+      new Set(lessonDistractors.map((word) => normalizeWordText(word.word))),
+    ),
+  ).slice(0, count - lessonDistractors.length);
 
-  return shuffle(uniqueDistractors).slice(0, count);
+  return [...lessonDistractors, ...fallbackDistractors];
 }

@@ -92,6 +92,26 @@ describe(getDistractorWords, () => {
     expect(result).toHaveLength(0);
   });
 
+  test("uses fallback words when lesson words cannot reach the requested count", () => {
+    const correct = makeWord("1", "hello", ["hi"], "hola");
+    const words = [correct, makeWord("2", "hi", [], "oi"), makeWord("3", "cat", [], "gato")];
+    const fallbackWords = [makeWord("4", "dog", [], "perro"), makeWord("5", "bird", [], "pajaro")];
+    const result = getDistractorWords(correct, words, 3, fallbackWords);
+
+    expect(result).toHaveLength(3);
+    expect(result.map((word) => word.id).toSorted()).toEqual(["3", "4", "5"]);
+  });
+
+  test("keeps only safe distractors when fallback words still cannot satisfy the count", () => {
+    const correct = makeWord("1", "hello", ["hi"], "hola");
+    const words = [correct, makeWord("2", "cat", [], "gato")];
+    const fallbackWords = [makeWord("3", "hi", [], "oi"), makeWord("4", "dog", [], "perro")];
+    const result = getDistractorWords(correct, words, 3, fallbackWords);
+
+    expect(result).toHaveLength(2);
+    expect(result.map((word) => word.id).toSorted()).toEqual(["2", "4"]);
+  });
+
   test("returns empty array when all words are alternatives", () => {
     const correct = makeWord("1", "hello", ["hi", "hey"]);
     const words = [correct, makeWord("2", "hello"), makeWord("3", "hi"), makeWord("4", "hey")];
