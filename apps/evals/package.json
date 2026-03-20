@@ -17,7 +17,7 @@
     "@zoonk/utils": "workspace:*",
     "ai": "6.0.116",
     "lucide-react": "0.577.0",
-    "next": "16.1.7",
+    "next": "16.2.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "zod": "4.3.6"
@@ -26,7 +26,7 @@
     "@types/node": "^24",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
-    "@typescript/native-preview": "7.0.0-dev.20260317.1",
+    "@typescript/native-preview": "7.0.0-dev.20260320.1",
     "@zoonk/tsconfig": "workspace:*",
     "babel-plugin-react-compiler": "1.0.0",
     "raw-loader": "4.0.2",

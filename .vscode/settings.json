@@ -2,9 +2,6 @@
   "[javascript]": {
     "editor.defaultFormatter": "oxc.oxc-vscode"
   },
-  "[json]": {
-    "editor.defaultFormatter": "oxc.oxc-vscode"
-  },
   "[prisma]": {
     "editor.defaultFormatter": "Prisma.prisma"
   },
@@ -36,5 +33,5 @@
     "**/tsconfig.tsbuildinfo": true,
     "**/turbo-*": true
   },
-  "typescript.experimental.useTsgo": true
+  "js/ts.experimental.useTsgo": true
 }
