@@ -2,7 +2,6 @@
 
 import { type DragEndEvent } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@zoonk/ui/components/tooltip";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useCallback, useRef, useState } from "react";
@@ -32,33 +31,15 @@ function BankTile({
   onPlace: () => void;
   option: WordBankOption;
 }) {
-  const buttonClassName = cn(
-    "border-border flex min-h-11 flex-col items-center rounded-lg border px-4 py-2.5 transition-all duration-150",
-    isUsed
-      ? "pointer-events-none opacity-30"
-      : "hover:bg-accent focus-visible:border-ring focus-visible:ring-ring/50 outline-none focus-visible:ring-[3px]",
-  );
-
-  if (option.translation) {
-    return (
-      <Tooltip>
-        <TooltipTrigger
-          aria-disabled={isUsed}
-          className={buttonClassName}
-          onClick={onPlace}
-          tabIndex={isUsed ? -1 : 0}
-        >
-          <BankTileContent option={option} />
-        </TooltipTrigger>
-        <TooltipContent>{option.translation}</TooltipContent>
-      </Tooltip>
-    );
-  }
-
   return (
     <button
       aria-disabled={isUsed}
-      className={buttonClassName}
+      className={cn(
+        "border-border flex min-h-11 flex-col items-center rounded-lg border px-4 py-2.5 transition-all duration-150",
+        isUsed
+          ? "pointer-events-none opacity-30"
+          : "hover:bg-accent focus-visible:border-ring focus-visible:ring-ring/50 outline-none focus-visible:ring-[3px]",
+      )}
       onClick={onPlace}
       tabIndex={isUsed ? -1 : 0}
       type="button"
