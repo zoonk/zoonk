@@ -1,4 +1,3 @@
-import { cn } from "@zoonk/ui/lib/utils";
 import { type CompletionResult } from "../completion-input-schema";
 import { type PlayerRoute } from "../player-context";
 import {
@@ -20,16 +19,6 @@ function needsFeedbackScreen(step: SerializedStep): boolean {
     step.kind === "reading" ||
     step.kind === "listening"
   );
-}
-
-/**
- * Arrange-word steps (reading/listening) have compact content
- * that looks better centered on the screen, while other
- * interactive steps (e.g. multiple choice) work better
- * top-aligned.
- */
-function shouldCenterStep(step: SerializedStep): boolean {
-  return step.kind === "reading" || step.kind === "listening";
 }
 
 export function StageContent({
@@ -93,10 +82,7 @@ export function StageContent({
   if ((phase === "playing" || phase === "feedback") && currentStep) {
     return (
       <div
-        className={cn(
-          "animate-in fade-in flex min-h-0 w-full min-w-0 flex-1 flex-col items-center duration-150 ease-out motion-reduce:animate-none",
-          shouldCenterStep(currentStep) && "justify-center",
-        )}
+        className="animate-in fade-in flex min-h-0 w-full min-w-0 flex-1 flex-col items-center justify-center duration-150 ease-out motion-reduce:animate-none"
         key={`step-${currentStepIndex}`}
       >
         <StepRenderer
