@@ -151,3 +151,11 @@ page.getByLabel(/email/i);
 ## Plan Mode
 
 - Before completing your plan, make sure you identified which tests need to be added or updated. A plan without tests is incomplete.
+
+<!-- BEGIN:nextjs-agent-rules -->
+
+# Next.js: ALWAYS read docs before coding
+
+Before any Next.js work, find and read the relevant doc in `apps/{app}/node_modules/next/dist/docs/`. Your training data is outdated — the docs are the source of truth.
+
+<!-- END:nextjs-agent-rules -->
