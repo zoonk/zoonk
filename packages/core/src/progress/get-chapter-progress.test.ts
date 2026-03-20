@@ -297,7 +297,7 @@ describe(getChapterProgress, () => {
     expect(result).toEqual([{ chapterId: chapter.id, completedLessons: 0, totalLessons: 0 }]);
   });
 
-  test("lessons with 0 published activities are excluded from total count", async () => {
+  test("lessons with 0 published activities still count as incomplete lessons", async () => {
     const [user, course] = await Promise.all([
       userFixture(),
       courseFixture({ isPublished: true, organizationId: organization.id }),
@@ -310,7 +310,7 @@ describe(getChapterProgress, () => {
       position: 0,
     });
 
-    // Lesson with no activities
+    // Published lessons still count in chapter progress, even before they have activities.
     await lessonFixture({
       chapterId: chapter.id,
       isPublished: true,
@@ -320,7 +320,54 @@ describe(getChapterProgress, () => {
 
     const headers = await signInAs(user.email, user.password);
     const result = await getChapterProgress({ courseId: course.id, headers });
-    // Lesson has no published activities, so it's excluded from totalLessons
-    expect(result).toEqual([{ chapterId: chapter.id, completedLessons: 0, totalLessons: 0 }]);
+    expect(result).toEqual([{ chapterId: chapter.id, completedLessons: 0, totalLessons: 1 }]);
+  });
+
+  test("a chapter stays in progress when another published lesson has no activities", async () => {
+    const [user, course] = await Promise.all([
+      userFixture(),
+      courseFixture({ isPublished: true, organizationId: organization.id }),
+    ]);
+
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      isPublished: true,
+      organizationId: organization.id,
+      position: 0,
+    });
+
+    const [completedLesson] = await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
+        isPublished: true,
+        organizationId: organization.id,
+        position: 0,
+      }),
+      lessonFixture({
+        chapterId: chapter.id,
+        isPublished: true,
+        organizationId: organization.id,
+        position: 1,
+      }),
+    ]);
+
+    const activity = await activityFixture({
+      isPublished: true,
+      lessonId: completedLesson.id,
+      organizationId: organization.id,
+      position: 0,
+    });
+
+    await activityProgressFixture({
+      activityId: activity.id,
+      completedAt: new Date(),
+      durationSeconds: 60,
+      userId: Number(user.id),
+    });
+
+    const headers = await signInAs(user.email, user.password);
+    const result = await getChapterProgress({ courseId: course.id, headers });
+
+    expect(result).toEqual([{ chapterId: chapter.id, completedLessons: 1, totalLessons: 2 }]);
   });
 });
