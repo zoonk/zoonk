@@ -43,6 +43,18 @@ function buildLessonWordLookup(
 }
 
 /**
+ * Fallback distractors should render with the same metadata as lesson distractors.
+ * We merge both sources into one lookup and keep lesson words last so the visible
+ * lesson payload stays the source of truth if both pools contain the same token.
+ */
+function buildWordMetadataLookup(
+  serializedLessonWords: SerializedWord[],
+  fallbackLessonWords: SerializedWord[],
+): Map<string, SerializedWord> {
+  return buildLessonWordLookup([...fallbackLessonWords, ...serializedLessonWords]);
+}
+
+/**
  * The incoming map can be keyed with raw words, but the player resolves options with
  * normalized tokens. Re-key the values here so callers do not need to care which form
  * the original map used.
@@ -84,9 +96,10 @@ function getWordMetadata(
  */
 function createEnrichedWordOptionBuilder(
   serializedLessonWords: SerializedWord[],
+  fallbackLessonWords: SerializedWord[],
   sentenceWordMap: Map<string, WordDataInput>,
 ): (word: string) => WordBankOption {
-  const lessonWordLookup = buildLessonWordLookup(serializedLessonWords);
+  const lessonWordLookup = buildWordMetadataLookup(serializedLessonWords, fallbackLessonWords);
   const sentenceWordLookup = buildSentenceWordLookup(sentenceWordMap);
 
   return (word) => ({
@@ -222,7 +235,7 @@ export function buildSentenceWordOptions(
   serializedLessonWords: SerializedWord[],
   sentenceWordMap: Map<string, WordDataInput>,
 ): WordBankOption[] {
-  const buildOption = createEnrichedWordOptionBuilder(serializedLessonWords, sentenceWordMap);
+  const buildOption = createEnrichedWordOptionBuilder(serializedLessonWords, [], sentenceWordMap);
 
   return segmentWords(sentence).map((word) => buildOption(word));
 }
@@ -296,12 +309,17 @@ function createWordBankOptionBuilder(
   stepKind: SerializedStep["kind"],
   serializedLessonWords: SerializedWord[],
   sentenceWordMap: Map<string, WordDataInput>,
+  fallbackLessonWords: SerializedWord[],
 ): (word: string) => WordBankOption {
   if (stepKind !== "reading") {
     return emptyWordOption;
   }
 
-  return createEnrichedWordOptionBuilder(serializedLessonWords, sentenceWordMap);
+  return createEnrichedWordOptionBuilder(
+    serializedLessonWords,
+    fallbackLessonWords,
+    sentenceWordMap,
+  );
 }
 
 export function buildWordBankOptions(
@@ -322,6 +340,7 @@ export function buildWordBankOptions(
     step.kind,
     serializedLessonWords,
     sentenceWordMap,
+    fallbackLessonWords,
   );
 
   const acceptedWordSet = getAcceptedArrangeWordSet(acceptedWordSequences);

@@ -23,6 +23,27 @@ function makeLessonWord(
   };
 }
 
+function makeWordWithMetadata(
+  id: string,
+  word: string,
+  translation: string,
+  metadata: {
+    audioUrl: string | null;
+    romanization: string | null;
+  },
+  alternativeTranslations: string[] = [],
+): SerializedWord {
+  return {
+    alternativeTranslations,
+    audioUrl: metadata.audioUrl,
+    id,
+    pronunciation: null,
+    romanization: metadata.romanization,
+    translation,
+    word,
+  };
+}
+
 function makeReadingStep(sentence: string): SerializedStep<"reading"> {
   return {
     content: {},
@@ -241,6 +262,31 @@ describe(buildWordBankOptions, () => {
     expect(words).toHaveLength(6);
     expect(words).toEqual(["Hola", "mundo", "gato", "perro", "pajaro", "pez"]);
     expect(words).not.toContain("Salut");
+  });
+
+  test("preserves metadata for fallback reading distractors", () => {
+    const options = buildWordBankOptions(
+      makeReadingStep("Hola mundo"),
+      [
+        makeLessonWord("1", "Hola", "hello", ["hi"]),
+        makeLessonWord("2", "Salut", "hi", ["hello"]),
+        makeLessonWord("3", "gato", "cat"),
+      ],
+      new Map(),
+      [
+        makeWordWithMetadata("4", "perro", "dog", {
+          audioUrl: "https://example.com/perro.mp3",
+          romanization: "pe-rro",
+        }),
+      ],
+    );
+
+    expect(options).toContainEqual({
+      audioUrl: "https://example.com/perro.mp3",
+      romanization: "pe-rro",
+      translation: "dog",
+      word: "perro",
+    });
   });
 
   test("tops up listening distractors from fallback words until there are four visible distractors", () => {
