@@ -204,7 +204,7 @@ function CoreFeedback({ result, step }: { result: StepResult; step?: SerializedS
       </div>
 
       {step?.sentence?.audioUrl && (
-        <PlayAudioButton audioUrl={step.sentence.audioUrl} variant="text" />
+        <PlayAudioButton audioUrl={step.sentence.audioUrl} preload={false} variant="text" />
       )}
 
       {feedback && <FeedbackMessage>{feedback}</FeedbackMessage>}

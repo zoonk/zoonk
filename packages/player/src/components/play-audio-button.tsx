@@ -8,16 +8,22 @@ import { useWordAudio } from "../use-word-audio";
 
 export function PlayAudioButton({
   audioUrl,
+  preload = true,
   size = "md",
   variant = "filled",
 }: {
   audioUrl: string;
+  preload?: boolean;
   size?: "sm" | "md";
   variant?: "filled" | "text";
 }) {
   const t = useExtracted();
   const [isPlaying, setIsPlaying] = useState(false);
-  const { pause, play } = useWordAudio({ onEnded: () => setIsPlaying(false) });
+
+  const { pause, play } = useWordAudio({
+    onEnded: () => setIsPlaying(false),
+    preloadUrls: preload ? [audioUrl] : undefined,
+  });
 
   const handleClick = () => {
     if (isPlaying) {

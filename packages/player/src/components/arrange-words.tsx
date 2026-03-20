@@ -118,7 +118,10 @@ export function ArrangeWordsInteraction({
     return [];
   });
 
-  const { play } = useWordAudio();
+  const { play } = useWordAudio({
+    preloadUrls: wordBankOptions.map((option) => option.audioUrl),
+  });
+
   const maxAnswerLength = Math.max(...acceptedWordLengths, correctWords.length);
 
   const syncSelectedAnswer = useCallback(

@@ -49,10 +49,13 @@ export function TranslationStep({
   step: SerializedStep;
 }) {
   const t = useExtracted();
-  const { play } = useWordAudio();
   const correctWord = step.word;
   const selectedWordId = getSelectedWordId(selectedAnswer);
   const options = step.translationOptions;
+
+  const { play } = useWordAudio({
+    preloadUrls: options.map((word) => word.audioUrl),
+  });
 
   const handleSelect = (index: number) => {
     const word = options[index];
