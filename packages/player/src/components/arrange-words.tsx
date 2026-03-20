@@ -35,7 +35,7 @@ function BankTile({
     <button
       aria-disabled={isUsed}
       className={cn(
-        "border-border flex min-h-11 flex-col items-center rounded-lg border px-4 py-2.5 transition-all duration-150",
+        "border-border flex min-h-11 flex-col items-center justify-center rounded-lg border px-4 py-2.5 transition-all duration-150",
         isUsed
           ? "pointer-events-none opacity-30"
           : "hover:bg-accent focus-visible:border-ring focus-visible:ring-ring/50 outline-none focus-visible:ring-[3px]",
