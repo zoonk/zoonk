@@ -24,14 +24,14 @@
     "@zoonk/mailer": "workspace:*",
     "@zoonk/utils": "workspace:*",
     "better-auth": "1.5.5",
-    "jose": "6.2.1",
+    "jose": "6.2.2",
     "stripe": "20.4.1",
     "zod": "4.3.6"
   },
   "devDependencies": {
     "@types/node": "^24",
     "@types/react": "^19.2.14",
-    "@typescript/native-preview": "7.0.0-dev.20260317.1",
+    "@typescript/native-preview": "7.0.0-dev.20260320.1",
     "@zoonk/tsconfig": "workspace:*",
     "vitest": "4.1.0"
   },
