@@ -16,7 +16,7 @@ function AudioPrompt({ audioUrl }: { audioUrl: string }) {
   const t = useExtracted();
 
   return (
-    <div className="flex flex-col items-center gap-3">
+    <div className="flex flex-col gap-3">
       <SectionLabel>{t("What do you hear?")}</SectionLabel>
       <PlayAudioButton audioUrl={audioUrl} />
     </div>
