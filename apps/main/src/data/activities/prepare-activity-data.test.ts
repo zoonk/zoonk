@@ -416,6 +416,198 @@ describe(prepareActivityData, () => {
     );
   });
 
+  test("translation options use fallback words without leaking them into lessonWords", () => {
+    const stepWord = {
+      alternativeTranslations: ["hi"],
+      id: BigInt(11),
+      pronunciation: null,
+      romanization: null,
+      translation: "hello",
+      word: "hola",
+      wordAudio: null,
+    };
+
+    const lessonWords = [
+      stepWord,
+      {
+        alternativeTranslations: ["hello"],
+        id: BigInt(12),
+        pronunciation: null,
+        romanization: null,
+        translation: "hi",
+        word: "oi",
+        wordAudio: null,
+      },
+      {
+        alternativeTranslations: [],
+        id: BigInt(13),
+        pronunciation: null,
+        romanization: null,
+        translation: "cat",
+        word: "gato",
+        wordAudio: null,
+      },
+    ];
+
+    const fallbackWords = [
+      {
+        alternativeTranslations: [],
+        id: BigInt(14),
+        pronunciation: null,
+        romanization: null,
+        translation: "dog",
+        word: "perro",
+        wordAudio: null,
+      },
+      {
+        alternativeTranslations: [],
+        id: BigInt(15),
+        pronunciation: null,
+        romanization: null,
+        translation: "bird",
+        word: "pajaro",
+        wordAudio: null,
+      },
+    ];
+
+    const activity = {
+      description: null,
+      generationRunId: null,
+      generationStatus: "completed",
+      id: BigInt(16),
+      kind: "translation",
+      language: "en",
+      organizationId: 1,
+      position: 0,
+      steps: [
+        {
+          content: {},
+          id: BigInt(17),
+          kind: "translation",
+          position: 0,
+          sentence: null,
+          word: stepWord,
+        },
+      ],
+      title: "Translation Fallback",
+    };
+
+    const result = prepareActivityData(activity, lessonWords, [], [], fallbackWords);
+    const translationOptions = result.steps[0]?.translationOptions ?? [];
+
+    expect(translationOptions.map((word) => word.word).toSorted()).toEqual([
+      "gato",
+      "hola",
+      "pajaro",
+      "perro",
+    ]);
+    expect(result.lessonWords.map((word) => word.word).toSorted()).toEqual(["gato", "hola", "oi"]);
+  });
+
+  test("reading word bank uses fallback words to reach four visible distractors without leaking them into lessonWords", () => {
+    const lessonWords = [
+      {
+        alternativeTranslations: ["hi"],
+        id: BigInt(18),
+        pronunciation: null,
+        romanization: null,
+        translation: "hello",
+        word: "Hola",
+        wordAudio: null,
+      },
+      {
+        alternativeTranslations: ["hello"],
+        id: BigInt(19),
+        pronunciation: null,
+        romanization: null,
+        translation: "hi",
+        word: "Salut",
+        wordAudio: null,
+      },
+      {
+        alternativeTranslations: [],
+        id: BigInt(20),
+        pronunciation: null,
+        romanization: null,
+        translation: "cat",
+        word: "gato",
+        wordAudio: null,
+      },
+    ];
+
+    const fallbackWords = [
+      {
+        alternativeTranslations: [],
+        id: BigInt(21),
+        pronunciation: null,
+        romanization: null,
+        translation: "dog",
+        word: "perro",
+        wordAudio: null,
+      },
+      {
+        alternativeTranslations: [],
+        id: BigInt(22),
+        pronunciation: null,
+        romanization: null,
+        translation: "bird",
+        word: "pajaro",
+        wordAudio: null,
+      },
+      {
+        alternativeTranslations: [],
+        id: BigInt(23),
+        pronunciation: null,
+        romanization: null,
+        translation: "fish",
+        word: "pez",
+        wordAudio: null,
+      },
+    ];
+
+    const activity = {
+      description: null,
+      generationRunId: null,
+      generationStatus: "completed",
+      id: BigInt(24),
+      kind: "reading",
+      language: "en",
+      organizationId: 1,
+      position: 0,
+      steps: [
+        {
+          content: {},
+          id: BigInt(25),
+          kind: "reading",
+          position: 0,
+          sentence: {
+            alternativeSentences: [],
+            alternativeTranslations: [],
+            explanation: null,
+            id: BigInt(26),
+            romanization: null,
+            sentence: "Hola mundo",
+            sentenceAudio: null,
+            translation: "Hello world",
+          },
+          word: null,
+        },
+      ],
+      title: "Reading Fallback",
+    };
+
+    const result = prepareActivityData(activity, lessonWords, [], [], fallbackWords);
+    const wordBankWords = (result.steps[0]?.wordBankOptions ?? []).map((option) => option.word);
+
+    expect(wordBankWords).toHaveLength(6);
+    expect(wordBankWords.toSorted()).toEqual(["Hola", "gato", "mundo", "pajaro", "perro", "pez"]);
+    expect(result.lessonWords.map((word) => word.word).toSorted()).toEqual([
+      "Hola",
+      "Salut",
+      "gato",
+    ]);
+  });
+
   test("reading step gets word bank with sentence words and distractors from lesson word fields", async () => {
     const uniqueId = crypto.randomUUID().slice(0, 8);
     const sentenceText = `Hola mundo ${uniqueId}`;

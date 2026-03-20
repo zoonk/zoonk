@@ -11,6 +11,14 @@ import { type Page, expect, test } from "./fixtures";
 
 async function createTranslationActivity(options: {
   words: {
+    alternativeTranslations?: string[];
+    word: string;
+    translation: string;
+    pronunciation?: string | null;
+    romanization?: string | null;
+  }[];
+  fallbackWords?: {
+    alternativeTranslations?: string[];
     word: string;
     translation: string;
     pronunciation?: string | null;
@@ -48,6 +56,20 @@ async function createTranslationActivity(options: {
   const createdWords = await Promise.all(
     options.words.map((wordData) =>
       wordFixture({
+        alternativeTranslations: wordData.alternativeTranslations ?? [],
+        organizationId: org.id,
+        pronunciation: wordData.pronunciation ?? null,
+        romanization: wordData.romanization ?? null,
+        translation: wordData.translation,
+        word: wordData.word,
+      }),
+    ),
+  );
+
+  await Promise.all(
+    (options.fallbackWords ?? []).map((wordData) =>
+      wordFixture({
+        alternativeTranslations: wordData.alternativeTranslations ?? [],
         organizationId: org.id,
         pronunciation: wordData.pronunciation ?? null,
         romanization: wordData.romanization ?? null,
@@ -145,6 +167,43 @@ test.describe("Translation Step", () => {
     await expect(radiogroup).toBeVisible();
     await expect(radiogroup.getByRole("radio")).toHaveCount(4);
     await expect(radiogroup.getByRole("radio", { name: new RegExp(word) })).toBeVisible();
+  });
+
+  test("uses fallback words to keep four safe options when lesson words overlap in meaning", async ({
+    page,
+  }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const correctWord = `hola-${uniqueId}`;
+    const ambiguousWord = `oi-${uniqueId}`;
+
+    const { url } = await createTranslationActivity({
+      fallbackWords: [
+        { translation: `dog-${uniqueId}`, word: `perro-${uniqueId}` },
+        { translation: `bird-${uniqueId}`, word: `pajaro-${uniqueId}` },
+      ],
+      words: [
+        {
+          alternativeTranslations: [`hi-${uniqueId}`],
+          translation: `hello-${uniqueId}`,
+          word: correctWord,
+        },
+        {
+          alternativeTranslations: [`hello-${uniqueId}`],
+          translation: `hi-${uniqueId}`,
+          word: ambiguousWord,
+        },
+        { translation: `cat-${uniqueId}`, word: `gato-${uniqueId}` },
+      ],
+    });
+
+    await page.goto(url);
+
+    const radiogroup = page.getByRole("radiogroup", { name: /answer options/i });
+
+    await expect(radiogroup.getByRole("radio")).toHaveCount(4);
+    await expect(radiogroup.getByRole("radio", { name: correctWord })).toBeVisible();
+    await expect(radiogroup.getByRole("radio", { name: `gato-${uniqueId}` })).toBeVisible();
+    await expect(radiogroup.getByRole("radio", { name: ambiguousWord })).toHaveCount(0);
   });
 
   test("select correct option and check shows feedback with translate context and answer", async ({

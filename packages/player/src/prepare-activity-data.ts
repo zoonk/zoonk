@@ -109,6 +109,14 @@ function serializeWord(word: WordDataInput): SerializedWord {
   };
 }
 
+/**
+ * The player consumes serialized words from multiple sources, so this helper keeps
+ * lesson words and fallback distractor words aligned on one serialization rule.
+ */
+function serializeWords(words: WordDataInput[]): SerializedWord[] {
+  return words.map((word) => serializeWord(word));
+}
+
 function serializeSentence(sentence: SentenceDataInput): SerializedSentence {
   return {
     alternativeSentences: [...sentence.alternativeSentences],
@@ -138,6 +146,7 @@ function shuffleMultipleChoiceContent(
 function buildTranslationOptions(
   step: SerializedStep,
   serializedLessonWords: SerializedWord[],
+  serializedFallbackWords: SerializedWord[],
 ): SerializedWord[] {
   if (step.kind !== "translation" || !step.word) {
     return [];
@@ -147,6 +156,7 @@ function buildTranslationOptions(
     step.word,
     serializedLessonWords,
     VOCABULARY_DISTRACTOR_COUNT,
+    serializedFallbackWords,
   );
   return shuffle([step.word, ...distractors]).map((word) => ({
     ...word,
@@ -225,16 +235,10 @@ export function prepareActivityData(
   lessonWords: WordDataInput[],
   lessonSentences: SentenceDataInput[],
   sentenceWords: WordDataInput[] = [],
+  fallbackDistractorWords: WordDataInput[] = [],
 ): SerializedActivity {
-  const serializedLessonWords = lessonWords.map((word) => ({
-    alternativeTranslations: [...word.alternativeTranslations],
-    audioUrl: word.wordAudio?.audioUrl ?? null,
-    id: String(word.id),
-    pronunciation: word.pronunciation,
-    romanization: word.romanization,
-    translation: word.translation,
-    word: word.word,
-  }));
+  const serializedLessonWords = serializeWords(lessonWords);
+  const serializedFallbackWords = serializeWords(fallbackDistractorWords);
 
   const sentenceWordMap = new Map(sentenceWords.map((sw) => [sw.word.toLowerCase(), sw]));
 
@@ -254,8 +258,17 @@ export function prepareActivityData(
           ? buildSentenceWordOptions(step.sentence.sentence, serializedLessonWords, sentenceWordMap)
           : [],
         sortOrderItems: buildSortOrderItems(step),
-        translationOptions: buildTranslationOptions(step, serializedLessonWords),
-        wordBankOptions: buildWordBankOptions(step, serializedLessonWords, sentenceWordMap),
+        translationOptions: buildTranslationOptions(
+          step,
+          serializedLessonWords,
+          serializedFallbackWords,
+        ),
+        wordBankOptions: buildWordBankOptions(
+          step,
+          serializedLessonWords,
+          sentenceWordMap,
+          serializedFallbackWords,
+        ),
       },
     ];
   });

@@ -219,6 +219,52 @@ describe(buildWordBankOptions, () => {
     expect(words).not.toContain("gato");
     expect(words).not.toContain("prueba");
   });
+
+  test("tops up reading distractors from fallback words until there are four visible distractors", () => {
+    const options = buildWordBankOptions(
+      makeReadingStep("Hola mundo"),
+      [
+        makeLessonWord("1", "Hola", "hello", ["hi"]),
+        makeLessonWord("2", "Salut", "hi", ["hello"]),
+        makeLessonWord("3", "gato", "cat"),
+      ],
+      new Map(),
+      [
+        makeLessonWord("4", "perro", "dog"),
+        makeLessonWord("5", "pajaro", "bird"),
+        makeLessonWord("6", "pez", "fish"),
+      ],
+    );
+
+    const words = options.map((option) => option.word);
+
+    expect(words).toHaveLength(6);
+    expect(words).toEqual(["Hola", "mundo", "gato", "perro", "pajaro", "pez"]);
+    expect(words).not.toContain("Salut");
+  });
+
+  test("tops up listening distractors from fallback words until there are four visible distractors", () => {
+    const options = buildWordBankOptions(
+      makeListeningStep("hello world"),
+      [
+        makeLessonWord("1", "bonjour", "hello", ["hi"]),
+        makeLessonWord("2", "salut", "hi", ["hello"]),
+        makeLessonWord("3", "chat", "cat"),
+      ],
+      new Map(),
+      [
+        makeLessonWord("4", "chien", "dog"),
+        makeLessonWord("5", "oiseau", "bird"),
+        makeLessonWord("6", "poisson", "fish"),
+      ],
+    );
+
+    const words = options.map((option) => option.word);
+
+    expect(words).toHaveLength(6);
+    expect(words).toEqual(["hello", "world", "cat", "dog", "bird", "fish"]);
+    expect(words).not.toContain("hi");
+  });
 });
 
 describe(buildSentenceWordOptions, () => {

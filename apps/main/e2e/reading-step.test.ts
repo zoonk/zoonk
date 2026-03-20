@@ -12,6 +12,12 @@ import { wordFixture } from "@zoonk/testing/fixtures/words";
 import { type Page, expect, test } from "./fixtures";
 
 async function createReadingActivity(options: {
+  fallbackWords?: {
+    alternativeTranslations?: string[];
+    romanization?: string | null;
+    translation: string;
+    word: string;
+  }[];
   sentences: {
     audioUrl?: string | null;
     alternativeSentences?: string[];
@@ -57,6 +63,18 @@ async function createReadingActivity(options: {
 
   const createdWords = await Promise.all(
     options.words.map((wordData) =>
+      wordFixture({
+        alternativeTranslations: wordData.alternativeTranslations ?? [],
+        organizationId: org.id,
+        romanization: wordData.romanization ?? null,
+        translation: wordData.translation,
+        word: wordData.word,
+      }),
+    ),
+  );
+
+  await Promise.all(
+    (options.fallbackWords ?? []).map((wordData) =>
       wordFixture({
         alternativeTranslations: wordData.alternativeTranslations ?? [],
         organizationId: org.id,
@@ -183,6 +201,54 @@ test.describe("Reading Step", () => {
     await expect(
       wordBank.getByRole("button", { exact: true, name: `perro-${uniqueId}` }),
     ).toBeVisible();
+  });
+
+  test("uses fallback words to keep four visible distractors for short reading steps", async ({
+    page,
+  }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const helloWord = `Hola-${uniqueId}`;
+    const ambiguousWord = `Salut-${uniqueId}`;
+    const worldWord = `mundo-${uniqueId}`;
+
+    const { url } = await createReadingActivity({
+      fallbackWords: [
+        { translation: `dog-${uniqueId}`, word: `perro-${uniqueId}` },
+        { translation: `bird-${uniqueId}`, word: `pajaro-${uniqueId}` },
+        { translation: `fish-${uniqueId}`, word: `pez-${uniqueId}` },
+      ],
+      sentences: [
+        {
+          sentence: `${helloWord} ${worldWord}`,
+          translation: `hello-${uniqueId} world-${uniqueId}`,
+        },
+      ],
+      words: [
+        {
+          alternativeTranslations: [`hi-${uniqueId}`],
+          translation: `hello-${uniqueId}`,
+          word: helloWord,
+        },
+        {
+          alternativeTranslations: [`hello-${uniqueId}`],
+          translation: `hi-${uniqueId}`,
+          word: ambiguousWord,
+        },
+        { translation: `cat-${uniqueId}`, word: `gato-${uniqueId}` },
+      ],
+    });
+
+    await page.goto(url);
+
+    const wordBank = page.getByRole("group", { name: /word bank/i });
+
+    await expect(wordBank.getByRole("button")).toHaveCount(6);
+    await expect(wordBank.getByRole("button", { exact: true, name: helloWord })).toBeVisible();
+    await expect(wordBank.getByRole("button", { exact: true, name: worldWord })).toBeVisible();
+    await expect(
+      wordBank.getByRole("button", { exact: true, name: `gato-${uniqueId}` }),
+    ).toBeVisible();
+    await expect(wordBank.getByRole("button", { exact: true, name: ambiguousWord })).toHaveCount(0);
   });
 
   test("tapping words adds them to the answer area in order", async ({ page }) => {

@@ -1,4 +1,5 @@
 import { getActivity } from "@/data/activities/get-activity";
+import { getFallbackDistractorWords } from "@/data/activities/get-fallback-distractor-words";
 import { getLessonSentences } from "@/data/activities/get-lesson-sentences";
 import { getLessonWords } from "@/data/activities/get-lesson-words";
 import { getSentenceWords } from "@/data/activities/get-sentence-words";
@@ -62,6 +63,7 @@ export default async function ActivityPage({ params }: Props) {
     lessonWords,
     lessonSentences,
     sentenceWords,
+    fallbackDistractorWords,
     nextActivity,
     session,
     reviewSteps,
@@ -71,6 +73,7 @@ export default async function ActivityPage({ params }: Props) {
     getLessonWords({ lessonId: lesson.id }),
     getLessonSentences({ lessonId: lesson.id }),
     getSentenceWords({ lessonId: lesson.id }),
+    getFallbackDistractorWords({ lessonId: lesson.id }),
     getNextActivityInCourse({
       activityPosition,
       chapterId: lesson.chapter.id,
@@ -101,6 +104,7 @@ export default async function ActivityPage({ params }: Props) {
     lessonWords,
     lessonSentences,
     sentenceWords,
+    fallbackDistractorWords,
   );
 
   if (session) {
