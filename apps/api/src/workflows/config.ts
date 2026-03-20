@@ -59,6 +59,7 @@ const ACTIVITY_STEPS = [
   "setReadingAsCompleted",
   "setListeningAsCompleted",
   "setActivityAsCompleted",
+  "setFirstActivityAsCompleted",
   "workflowError",
 ] as const;
 

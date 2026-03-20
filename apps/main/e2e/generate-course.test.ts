@@ -213,8 +213,8 @@ test.describe("Generate Course Page", () => {
           { status: "completed", step: "addLessons" },
           { status: "started", step: "setLessonAsCompleted" },
           { status: "completed", step: "setLessonAsCompleted" },
-          { status: "started", step: "setActivityAsCompleted" },
-          { status: "completed", step: "setActivityAsCompleted" },
+          { status: "started", step: "setFirstActivityAsCompleted" },
+          { status: "completed", step: "setFirstActivityAsCompleted" },
         ],
       });
 
@@ -267,8 +267,8 @@ test.describe("Generate Course Page", () => {
           { status: "completed", step: "addLessons" },
           { status: "started", step: "setLessonAsCompleted" },
           { status: "completed", step: "setLessonAsCompleted" },
-          { status: "started", step: "setActivityAsCompleted" },
-          { status: "completed", step: "setActivityAsCompleted" },
+          { status: "started", step: "setFirstActivityAsCompleted" },
+          { status: "completed", step: "setFirstActivityAsCompleted" },
         ],
       });
 
@@ -335,7 +335,7 @@ test.describe("Generate Course Page", () => {
       await expect(page).toHaveURL(new RegExp(`/generate/cs/${suggestion.id}$`));
     });
 
-    test("redirects language courses after vocabulary completion", async ({ page }) => {
+    test("redirects language courses after first activity completion", async ({ page }) => {
       const slug = `e2e-language-completion-${randomUUID().slice(0, 8)}`;
       const org = await getAiOrganization();
 
@@ -376,8 +376,8 @@ test.describe("Generate Course Page", () => {
           { status: "completed", step: "addLessons" },
           { status: "started", step: "setLessonAsCompleted" },
           { status: "completed", step: "setLessonAsCompleted" },
-          { status: "started", step: "setVocabularyAsCompleted" },
-          { status: "completed", step: "setVocabularyAsCompleted" },
+          { status: "started", step: "setFirstActivityAsCompleted" },
+          { status: "completed", step: "setFirstActivityAsCompleted" },
         ],
       });
 

@@ -13,7 +13,7 @@ import {
 } from "@/components/generation/generation-progress";
 import {
   type ChapterWorkflowStepName,
-  getFirstGeneratedActivityCompletionStep,
+  FIRST_ACTIVITY_COMPLETION_STEP,
 } from "@/lib/workflow/config";
 import { useAnimatedProgress } from "@/lib/workflow/use-animated-progress";
 import { useCompletionRedirect } from "@/lib/workflow/use-completion-redirect";
@@ -41,10 +41,9 @@ export function GenerationClient({
   targetLanguage: string | null;
 }) {
   const t = useExtracted();
-  const completionStep = getFirstGeneratedActivityCompletionStep(targetLanguage);
 
   const generation = useWorkflowGeneration<ChapterWorkflowStepName>({
-    completionStep,
+    completionStep: FIRST_ACTIVITY_COMPLETION_STEP,
     initialRunId: generationRunId,
     initialStatus: generationStatus === "running" ? "streaming" : "idle",
     statusUrl: `${API_URL}/v1/workflows/chapter-generation/status`,
