@@ -1,5 +1,3 @@
-import { type Route } from "next";
-
 type NextActivity = {
   activityPosition: number;
   chapterSlug: string;
@@ -14,10 +12,6 @@ type NextSibling = {
   lessonSlug: string;
   lessonTitle: string;
 };
-
-function route<Href extends string>(href: Route<Href>): Route<Href> {
-  return href;
-}
 
 export function buildActivityPlayerModel({
   brandSlug,
@@ -34,14 +28,12 @@ export function buildActivityPlayerModel({
   nextActivity: NextActivity | null;
   nextSibling: NextSibling | null;
 }) {
-  const lessonHref = route(`/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}`);
-  const chapterHref = route(`/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}`);
-  const courseHref = route(`/b/${brandSlug}/c/${courseSlug}`);
+  const lessonHref = `/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}` as const;
+  const chapterHref = `/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}`;
+  const courseHref = `/b/${brandSlug}/c/${courseSlug}`;
 
   const nextActivityHref = nextActivity
-    ? route(
-        `/b/${brandSlug}/c/${courseSlug}/ch/${nextActivity.chapterSlug}/l/${nextActivity.lessonSlug}/a/${String(nextActivity.activityPosition)}`,
-      )
+    ? (`/b/${brandSlug}/c/${courseSlug}/ch/${nextActivity.chapterSlug}/l/${nextActivity.lessonSlug}/a/${String(nextActivity.activityPosition)}` as const)
     : null;
 
   const isLastInLesson =
@@ -55,15 +47,11 @@ export function buildActivityPlayerModel({
     }
 
     if (nextActivity) {
-      return route(
-        `/b/${brandSlug}/c/${courseSlug}/ch/${nextActivity.chapterSlug}/l/${nextActivity.lessonSlug}`,
-      );
+      return `/b/${brandSlug}/c/${courseSlug}/ch/${nextActivity.chapterSlug}/l/${nextActivity.lessonSlug}` as const;
     }
 
     if (nextSibling) {
-      return route(
-        `/b/${nextSibling.brandSlug}/c/${nextSibling.courseSlug}/ch/${nextSibling.chapterSlug}/l/${nextSibling.lessonSlug}`,
-      );
+      return `/b/${nextSibling.brandSlug}/c/${nextSibling.courseSlug}/ch/${nextSibling.chapterSlug}/l/${nextSibling.lessonSlug}` as const;
     }
 
     return null;
@@ -71,13 +59,11 @@ export function buildActivityPlayerModel({
 
   const nextChapterHref = (() => {
     if (nextActivity && nextActivity.chapterSlug !== chapterSlug) {
-      return route(`/b/${brandSlug}/c/${courseSlug}/ch/${nextActivity.chapterSlug}`);
+      return `/b/${brandSlug}/c/${courseSlug}/ch/${nextActivity.chapterSlug}`;
     }
 
     if (nextSibling && nextSibling.chapterSlug !== chapterSlug) {
-      return route(
-        `/b/${nextSibling.brandSlug}/c/${nextSibling.courseSlug}/ch/${nextSibling.chapterSlug}`,
-      );
+      return `/b/${nextSibling.brandSlug}/c/${nextSibling.courseSlug}/ch/${nextSibling.chapterSlug}`;
     }
 
     return null;
@@ -117,8 +103,8 @@ export function buildActivityPlayerModel({
       chapterHref,
       courseHref,
       lessonHref,
-      levelHref: route("/level"),
-      loginHref: route("/login"),
+      levelHref: "/level",
+      loginHref: "/login",
       nextActivityHref,
     },
     onNextHref: nextActivityHref ?? nextLessonHref,

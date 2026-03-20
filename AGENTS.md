@@ -148,6 +148,57 @@ page.getByLabel(/email/i);
 - When using `render` prop with base-ui components (e.g., `useRender`), use `ClientLink` instead of `Link` since the render prop requires a client component
 - i18n functions like `getExtracted` can't be called inside `Promise.all`
 
+## Next.js links
+
+We're using Next.js `typedRoutes` feature. Next.js can statically type links to prevent typos and other errors when using `next/link`. These types are generated when we run `pnpm typecheck` or `pnpm build`.
+
+This works out of the box if you pass a string literal to `href`. However, for variables, you may need to use `as const` to preserve literal types. **NEVER** cast them as `Route` because this defeats the purpose of type safety:
+
+```tsx
+// BAD - casting as Route defeats type safety
+const lessonHref = `/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}` as Route;
+
+// ALSO BAD - Creating wrapper functions instead of using `as const`
+function route<Href extends string>(href: Route<Href>): Route<Href> {
+  return href;
+}
+
+// GOOD - string literal as const
+const lessonHref = `/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}` as const;
+```
+
+To accept href in a custom component wrapping next/link, use a generic:
+
+```tsx
+import type { Route } from "next";
+import Link from "next/link";
+
+function Card<T extends string>({ href }: { href: Route<T> | URL }) {
+  return (
+    <Link href={href}>
+      <div>My Card</div>
+    </Link>
+  );
+}
+```
+
+You can also type a simple data structure and iterate to render links:
+
+```tsx
+import type { Route } from "next";
+
+type NavItem<T extends string = string> = {
+  href: T;
+  label: string;
+};
+
+export const navItems: NavItem<Route>[] = [
+  { href: "/", label: "Home" },
+  { href: "/about", label: "About" },
+  { href: "/blog", label: "Blog" },
+];
+```
+
 ## Plan Mode
 
 - Before completing your plan, make sure you identified which tests need to be added or updated. A plan without tests is incomplete.
@@ -159,3 +210,7 @@ page.getByLabel(/email/i);
 Before any Next.js work, find and read the relevant doc in `apps/{app}/node_modules/next/dist/docs/`. Your training data is outdated — the docs are the source of truth.
 
 <!-- END:nextjs-agent-rules -->
+
+```
+
+```
