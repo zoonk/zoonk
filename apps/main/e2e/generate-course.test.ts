@@ -19,7 +19,7 @@ import { expect, test } from "./fixtures";
  * - Shows "Creating your course" while triggering/streaming
  * - Shows current step label + spinner while streaming
  * - Shows completed steps with checkmarks
- * - Workflow completes when the SSE stream ends
+ * - Workflow completes when the configured completion step is received
  * - Redirects to course page when workflow completes
  *
  * NOTE: Some error handling tests (trigger API failures) are not included because
@@ -280,9 +280,62 @@ test.describe("Generate Course Page", () => {
       });
     });
 
-    test("waits for vocabulary completion before redirecting language courses", async ({
-      page,
-    }) => {
+    test("does not redirect language courses on generic activity completion", async ({ page }) => {
+      const slug = `e2e-language-completion-${randomUUID().slice(0, 8)}`;
+      const org = await getAiOrganization();
+
+      const suggestion = await courseSuggestionFixture({
+        generationStatus: "pending",
+        language: "en",
+        slug,
+        targetLanguage: "es",
+        title: "E2E Language Completion Test",
+      });
+
+      await courseFixture({
+        generationStatus: "running",
+        isPublished: true,
+        organizationId: org.id,
+        slug,
+        targetLanguage: "es",
+        title: "E2E Language Completion Test",
+      }).then(async (course) => {
+        const chapter = await chapterFixture({
+          courseId: course.id,
+          isPublished: true,
+          organizationId: org.id,
+        });
+
+        await lessonFixture({
+          chapterId: chapter.id,
+          isPublished: true,
+          organizationId: org.id,
+        });
+      });
+
+      await setupMockApis(page, {
+        streamMessages: [
+          { status: "started", step: "getCourseSuggestion" },
+          { status: "completed", step: "getCourseSuggestion" },
+          { status: "started", step: "addLessons" },
+          { status: "completed", step: "addLessons" },
+          { status: "started", step: "setLessonAsCompleted" },
+          { status: "completed", step: "setLessonAsCompleted" },
+          { status: "started", step: "setActivityAsCompleted" },
+          { status: "completed", step: "setActivityAsCompleted" },
+        ],
+      });
+
+      await page.goto(`/generate/cs/${suggestion.id}`);
+
+      await expect(page.getByText(/generation ended unexpectedly/i)).toBeVisible({
+        timeout: 10_000,
+      });
+
+      await expect(page).toHaveURL(new RegExp(`/generate/cs/${suggestion.id}$`));
+    });
+
+    test("redirects language courses after vocabulary completion", async ({ page }) => {
       const slug = `e2e-language-completion-${randomUUID().slice(0, 8)}`;
       const org = await getAiOrganization();
 
