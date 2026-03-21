@@ -52,6 +52,13 @@ export const diagramVisualContentSchema = z
   })
   .strict();
 
+export const formulaVisualContentSchema = z
+  .object({
+    description: z.string(),
+    formula: z.string(),
+  })
+  .strict();
+
 export const imageVisualContentSchema = z
   .object({
     prompt: z.string(),
@@ -91,6 +98,7 @@ export const timelineVisualContentSchema = z
 const chartVisualStepSchema = chartVisualContentSchema.extend({ kind: z.literal("chart") });
 const codeVisualStepSchema = codeVisualContentSchema.extend({ kind: z.literal("code") });
 const diagramVisualStepSchema = diagramVisualContentSchema.extend({ kind: z.literal("diagram") });
+const formulaVisualStepSchema = formulaVisualContentSchema.extend({ kind: z.literal("formula") });
 const imageVisualStepSchema = imageVisualContentSchema.extend({ kind: z.literal("image") });
 const quoteVisualStepSchema = quoteVisualContentSchema.extend({ kind: z.literal("quote") });
 const tableVisualStepSchema = tableVisualContentSchema.extend({ kind: z.literal("table") });
@@ -102,6 +110,7 @@ export const visualStepContentSchema = z.discriminatedUnion("kind", [
   chartVisualStepSchema,
   codeVisualStepSchema,
   diagramVisualStepSchema,
+  formulaVisualStepSchema,
   imageVisualStepSchema,
   quoteVisualStepSchema,
   tableVisualStepSchema,
@@ -113,6 +122,7 @@ export type VisualStepContent = z.infer<typeof visualStepContentSchema>;
 export type ChartVisualContent = z.infer<typeof chartVisualContentSchema>;
 export type CodeVisualContent = z.infer<typeof codeVisualContentSchema>;
 export type DiagramVisualContent = z.infer<typeof diagramVisualContentSchema>;
+export type FormulaVisualContent = z.infer<typeof formulaVisualContentSchema>;
 export type ImageVisualContent = z.infer<typeof imageVisualContentSchema>;
 export type QuoteVisualContent = z.infer<typeof quoteVisualContentSchema>;
 export type TableVisualContent = z.infer<typeof tableVisualContentSchema>;

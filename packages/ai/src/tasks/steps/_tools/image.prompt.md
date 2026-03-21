@@ -12,4 +12,5 @@ Requirements:
 - Avoid text by default. Only include text when it is necessary to make the image clearer
 - If text is necessary, keep it minimal and spell it exactly in the requested language, with correct accents and other diacritics
 - Write the prompt in the same language specified in the LANGUAGE field
+- **Vary your metaphors.** Don't repeat the same analogy across multiple steps in a lesson (e.g., don't show "people in a line" for 5 different queue steps). Each image should use a distinct visual metaphor or show a different aspect of the concept
 - NEVER reference copyrighted or trademarked characters (e.g., Mickey Mouse, Spider-Man, Mario, Pikachu). If the topic involves such characters, describe the concept abstractly or use generic, original characters instead

@@ -82,6 +82,20 @@ describe("visual content contracts", () => {
     });
   });
 
+  test("parses formula visual content", () => {
+    const content = visualStepContentSchema.parse({
+      description: "Euler's identity",
+      formula: "e^{i\\pi} + 1 = 0",
+      kind: "formula",
+    });
+
+    expect(content).toEqual({
+      description: "Euler's identity",
+      formula: "e^{i\\pi} + 1 = 0",
+      kind: "formula",
+    });
+  });
+
   test("parses image visual content without url", () => {
     const content = visualStepContentSchema.parse({
       kind: "image",
@@ -187,5 +201,7 @@ describe("visual content contracts", () => {
     expect(() => visualStepContentSchema.parse({ code: "x", kind: "code" })).toThrow();
     expect(() => visualStepContentSchema.parse({ chartType: "bar", kind: "chart" })).toThrow();
     expect(() => visualStepContentSchema.parse({ kind: "quote", text: "hi" })).toThrow();
+    expect(() => visualStepContentSchema.parse({ formula: "x^2", kind: "formula" })).toThrow();
+    expect(() => visualStepContentSchema.parse({ description: "desc", kind: "formula" })).toThrow();
   });
 });

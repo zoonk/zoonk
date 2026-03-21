@@ -162,6 +162,24 @@ const stepsData: {
         kind: "visual",
       },
 
+      // --- Formula visual ---
+      {
+        content: {
+          text: "The loss function measures how far the model's predictions are from the actual values. Mean Squared Error is one of the most common choices for regression tasks.",
+          title: "Loss Function",
+          variant: "text",
+        },
+        kind: "static",
+      },
+      {
+        content: {
+          description: "Mean Squared Error (MSE)",
+          formula: "\\text{MSE} = \\frac{1}{n} \\sum_{i=1}^{n} (y_i - \\hat{y}_i)^2",
+          kind: "formula",
+        },
+        kind: "visual",
+      },
+
       // --- Image visual ---
       {
         content: {

@@ -4,6 +4,7 @@ import { type VisualStepContent } from "@zoonk/core/steps/visual-content-contrac
 import { ChartVisual } from "./visuals/chart-visual";
 import { CodeVisual } from "./visuals/code-visual";
 import { DiagramVisual } from "./visuals/diagram-visual";
+import { FormulaVisual } from "./visuals/formula-visual";
 import { ImageVisual } from "./visuals/image-visual";
 import { QuoteVisual } from "./visuals/quote-visual";
 import { TableVisual } from "./visuals/table-visual";
@@ -36,6 +37,10 @@ export function StepVisualRenderer({ content }: { content: VisualStepContent }) 
 
   if (content.kind === "diagram") {
     return <DiagramVisual content={content} />;
+  }
+
+  if (content.kind === "formula") {
+    return <FormulaVisual content={content} />;
   }
 
   return null;

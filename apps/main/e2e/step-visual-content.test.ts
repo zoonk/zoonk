@@ -979,4 +979,72 @@ test.describe("Visual Step Content", () => {
 
     await expect(page.getByRole("note")).toContainText(annotationText);
   });
+
+  test("visual step renders formula description and math content", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const description = `Pythagorean theorem ${uniqueId}`;
+    const { url } = await createVisualActivity({
+      steps: [
+        {
+          content: {
+            description,
+            formula: "a^2 + b^2 = c^2",
+            kind: "formula",
+          },
+          kind: "visual",
+          position: 0,
+        },
+      ],
+    });
+
+    await page.goto(url);
+
+    await expect(async () => {
+      await expect(page.getByRole("figure", { name: description })).toBeVisible();
+    }).toPass();
+
+    await expect(page.getByText(description)).toBeVisible();
+  });
+
+  test("clicking on a visual step with formula navigates to next step", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const description = `Formula description ${uniqueId}`;
+    const { url } = await createVisualActivity({
+      steps: [
+        {
+          content: {
+            description,
+            formula: "E = mc^2",
+            kind: "formula",
+          },
+          kind: "visual",
+          position: 0,
+        },
+        {
+          content: {
+            text: `Next step body ${uniqueId}`,
+            title: `Formula Next ${uniqueId}`,
+            variant: "text",
+          },
+          position: 1,
+        },
+      ],
+    });
+
+    await page.goto(url);
+
+    await expect(async () => {
+      await expect(page.getByRole("figure", { name: description })).toBeVisible();
+    }).toPass();
+
+    await expect(page.getByText(/1 \/ 2/)).toBeVisible();
+
+    await page.waitForLoadState("networkidle");
+    await page.keyboard.press("ArrowRight");
+
+    await expect(
+      page.getByRole("heading", { name: new RegExp(`Formula Next ${uniqueId}`) }),
+    ).toBeVisible();
+    await expect(page.getByText(/2 \/ 2/)).toBeVisible();
+  });
 });
