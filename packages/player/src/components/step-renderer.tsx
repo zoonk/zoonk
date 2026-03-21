@@ -41,12 +41,7 @@ export function StepRenderer({
           onNavigateNext={onNavigateNext}
           onNavigatePrev={onNavigatePrev}
         />
-        <StaticStep
-          canNavigatePrev={canNavigatePrev}
-          onNavigateNext={onNavigateNext}
-          onNavigatePrev={onNavigatePrev}
-          step={step}
-        />
+        <StaticStep step={step} />
       </NavigableStepLayout>
     );
   }
@@ -125,12 +120,7 @@ export function StepRenderer({
           onNavigateNext={onNavigateNext}
           onNavigatePrev={onNavigatePrev}
         />
-        <VocabularyStep
-          canNavigatePrev={canNavigatePrev}
-          onNavigateNext={onNavigateNext}
-          onNavigatePrev={onNavigatePrev}
-          step={step}
-        />
+        <VocabularyStep step={step} />
       </NavigableStepLayout>
     );
   }

@@ -6,7 +6,6 @@ import { useReplaceName } from "../user-name-context";
 import { HighlightText } from "./highlight-text";
 import { ContextText, QuestionText } from "./question-text";
 import { RomanizationText } from "./romanization-text";
-import { useSwipeNavigation } from "./static-step-navigation";
 
 function TextVariant({ title, text }: { title: string; text: string }) {
   const replaceName = useReplaceName();
@@ -73,24 +72,9 @@ function StaticStepContent({ step }: { step: SerializedStep }) {
   return <TextVariant text={content.text} title={content.title} />;
 }
 
-export function StaticStep({
-  canNavigatePrev,
-  onNavigateNext,
-  onNavigatePrev,
-  step,
-}: {
-  canNavigatePrev: boolean;
-  onNavigateNext: () => void;
-  onNavigatePrev: () => void;
-  step: SerializedStep;
-}) {
-  const swipeHandlers = useSwipeNavigation({ canNavigatePrev, onNavigateNext, onNavigatePrev });
-
+export function StaticStep({ step }: { step: SerializedStep }) {
   return (
-    <div
-      className="relative flex min-h-0 w-full max-w-2xl flex-1 flex-col items-start justify-center gap-3 px-8 sm:px-10"
-      {...swipeHandlers}
-    >
+    <div className="relative flex min-h-0 w-full max-w-2xl flex-1 flex-col items-start justify-center gap-3 px-8 sm:px-10">
       <StaticStepContent step={step} />
     </div>
   );
