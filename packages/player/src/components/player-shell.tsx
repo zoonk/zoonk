@@ -12,12 +12,14 @@ import {
   getIsStaticStep,
   getProgressValue,
   getSelectedAnswer,
+  getUpcomingImages,
 } from "../player-selectors";
 import { InPlayStickyHeader } from "./in-play-sticky-header";
 import { PlayerBottomBar, PlayerBottomBarAction, PlayerBottomBarNav } from "./player-bottom-bar";
 import { PlayerCloseLink, PlayerHeader } from "./player-header";
 import { PlayerStage } from "./player-stage";
 import { StageContent } from "./stage-content";
+import { StepImagePreloader } from "./step-image-preloader";
 
 export function PlayerShell() {
   const t = useExtracted();
@@ -33,6 +35,7 @@ export function PlayerShell() {
   const isStaticStep = getIsStaticStep(state);
   const progressValue = getProgressValue(state);
   const selectedAnswer = getSelectedAnswer(state);
+  const upcomingImages = getUpcomingImages(state);
 
   const hasDimensions = Object.keys(state.dimensions).length > 0;
   const isIntro = state.phase === "intro";
@@ -100,6 +103,8 @@ export function PlayerShell() {
           )}
         </PlayerBottomBar>
       )}
+
+      <StepImagePreloader images={upcomingImages} />
     </main>
   );
 }
