@@ -14,7 +14,6 @@ import { computeChallengeScore, computeScore } from "@zoonk/player/compute-score
 import { computeDimensions, hasNegativeDimension } from "@zoonk/player/dimensions";
 import { validateAnswers } from "@zoonk/player/validate-answers";
 import { safeAsync } from "@zoonk/utils/error";
-import { getLocale } from "next-intl/server";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { after } from "next/server";
@@ -119,8 +118,7 @@ export async function submitCompletion(rawInput: CompletionInput): Promise<Compl
     return { status: "error" };
   }
 
-  const locale = await getLocale();
-  revalidatePath(`/${locale}`);
+  revalidatePath("/");
 
   after(() => preloadNextLesson(activityId, reqHeaders.get("cookie") ?? ""));
 
