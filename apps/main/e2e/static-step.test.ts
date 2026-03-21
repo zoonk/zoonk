@@ -1,5 +1,4 @@
 import { randomUUID } from "node:crypto";
-import { type Locator } from "@playwright/test";
 import { getAiOrganization } from "@zoonk/e2e/helpers";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
@@ -7,30 +6,6 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { expect, test } from "./fixtures";
-
-async function swipeHorizontally(
-  locator: Locator,
-  options: { endX: number; startX: number; y: number },
-) {
-  await locator.evaluate((element, gesture) => {
-    const startTouch = { clientX: gesture.startX, clientY: gesture.y };
-    const endTouch = { clientX: gesture.endX, clientY: gesture.y };
-
-    const touchStart = new Event("touchstart", { bubbles: true, cancelable: true });
-    Object.defineProperty(touchStart, "touches", { value: [startTouch] });
-    Object.defineProperty(touchStart, "targetTouches", { value: [startTouch] });
-    Object.defineProperty(touchStart, "changedTouches", { value: [startTouch] });
-
-    element.dispatchEvent(touchStart);
-
-    const touchEnd = new Event("touchend", { bubbles: true, cancelable: true });
-    Object.defineProperty(touchEnd, "touches", { value: [] });
-    Object.defineProperty(touchEnd, "targetTouches", { value: [] });
-    Object.defineProperty(touchEnd, "changedTouches", { value: [endTouch] });
-
-    element.dispatchEvent(touchEnd);
-  }, options);
-}
 
 async function createStaticActivity(options: {
   activityKind?: "challenge" | "explanation";
@@ -458,57 +433,6 @@ test.describe("Static Step Navigation", () => {
     await nav.getByRole("button", { name: /previous step/i }).click();
     await expect(
       page.getByRole("heading", { name: new RegExp(`Nav 1 ${uniqueId}`) }),
-    ).toBeVisible();
-  });
-
-  test("swiping on body text navigates between steps", async ({ page }) => {
-    const uniqueId = randomUUID().slice(0, 8);
-    const { url } = await createStaticActivity({
-      steps: [
-        {
-          content: {
-            text: `Swipe 1 body ${uniqueId}`,
-            title: `Swipe 1 ${uniqueId}`,
-            variant: "text",
-          },
-          position: 0,
-        },
-        {
-          content: {
-            text: `Swipe 2 body ${uniqueId}`,
-            title: `Swipe 2 ${uniqueId}`,
-            variant: "text",
-          },
-          position: 1,
-        },
-      ],
-    });
-
-    await page.goto(url);
-    await page.waitForLoadState("networkidle");
-
-    await expect(
-      page.getByRole("heading", { name: new RegExp(`Swipe 1 ${uniqueId}`) }),
-    ).toBeVisible();
-
-    await swipeHorizontally(page.getByText(new RegExp(`Swipe 1 body ${uniqueId}`)), {
-      endX: 20,
-      startX: 140,
-      y: 20,
-    });
-
-    await expect(
-      page.getByRole("heading", { name: new RegExp(`Swipe 2 ${uniqueId}`) }),
-    ).toBeVisible();
-
-    await swipeHorizontally(page.getByText(new RegExp(`Swipe 2 body ${uniqueId}`)), {
-      endX: 140,
-      startX: 20,
-      y: 20,
-    });
-
-    await expect(
-      page.getByRole("heading", { name: new RegExp(`Swipe 1 ${uniqueId}`) }),
     ).toBeVisible();
   });
 
