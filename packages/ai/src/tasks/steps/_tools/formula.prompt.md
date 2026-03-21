@@ -4,6 +4,8 @@ Use when: The step introduces or explains a **specific formula, equation, or for
 
 ## When NOT to use formula
 
+- **Never use for single values or simple numbers.** "109.5°" or "60°" alone is not a formula — it's just a number that belongs in the text. A formula must contain an actual mathematical expression with operators, variables, or notation that benefits from LaTeX rendering (fractions, subscripts, summations, etc.).
+- **Never use for simple comparisons.** "90° < 109.5°" is a trivial inequality that adds nothing over plain text. Use formula only when the expression has structure that LaTeX makes clearer than prose.
 - **The step discusses a concept without a specific formula.** If the step talks about math or science qualitatively (e.g., "calculus helps us find rates of change") without referencing a concrete equation, use a different visual type.
 - **The step is about code or algorithms.** Even if the step involves a mathematical operation, if the focus is on implementation, use the code visual instead.
 - **The step is about data or statistics.** If the focus is on numerical results or comparisons, use a chart or table.

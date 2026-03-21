@@ -6,6 +6,7 @@ Use when: The step's content describes something that can be concretely demonstr
 
 - **The step talks ABOUT programming conceptually** but doesn't describe specific operations, syntax, or logic. For example, "data structures affect performance" is conceptual — use a table or diagram. But "a hash table resolves collisions by probing the next slot" can be shown in code.
 - **The step is about a non-programming topic.** Design principles, biology, history, etc. should never have code visuals, even if you could technically write a metaphorical program about them.
+- **Never use code for mathematical notation.** If the content is a mathematical expression (derivatives, integrals, equations like `dy/dx`), use the **formula** visual instead. Code visuals are for executable programs, not for displaying math in a monospace font.
 
 ## When to use code
 
