@@ -1,8 +1,20 @@
 Create a code snippet visual with optional line annotations.
 
-Use when: The step explains programming concepts, algorithms, syntax, APIs, or any technical content where code examples clarify understanding.
+Use when: The step's content describes something that can be concretely demonstrated with code — algorithms, data structure operations, syntax, APIs, or logic that becomes clearer when you see it running.
 
-Requirements:
+## When NOT to use code
+
+- **The step talks ABOUT programming conceptually** but doesn't describe specific operations, syntax, or logic. For example, "data structures affect performance" is conceptual — use a table or diagram. But "a hash table resolves collisions by probing the next slot" can be shown in code.
+- **The step is about a non-programming topic.** Design principles, biology, history, etc. should never have code visuals, even if you could technically write a metaphorical program about them.
+
+## When to use code
+
+- The step explains an algorithm or procedure that has concrete steps (sorting, searching, hashing, traversal)
+- The step describes a data structure operation (insert, delete, lookup) and showing the code makes the mechanics clear
+- The step discusses syntax, APIs, or language features
+- The step describes logic (conditionals, loops, recursion) where seeing the code is more precise than prose
+
+## Requirements
 
 - Specify the programming language (python, javascript, typescript, etc.)
 - Code should be concise (max 500 chars) and demonstrate the concept clearly
