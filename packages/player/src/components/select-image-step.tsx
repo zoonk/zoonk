@@ -5,6 +5,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import Image from "next/image";
 import { useState } from "react";
+import { SELECT_IMAGE_PROPS } from "../image-config";
 import { type SelectedAnswer, type StepResult } from "../player-reducer";
 import { type SerializedStep } from "../prepare-activity-data";
 import { useOptionKeyboard } from "../use-option-keyboard";
@@ -51,12 +52,10 @@ function ImageWithFallback({ alt, url }: { alt: string; url: string | undefined 
     <Image
       alt={alt}
       className="aspect-square object-cover"
-      height={336}
       loading="eager"
       onError={() => setHasError(true)}
-      sizes="(max-width: 672px) 50vw, 336px"
       src={url}
-      width={336}
+      {...SELECT_IMAGE_PROPS}
     />
   );
 }

@@ -3,6 +3,7 @@
 import { type ImageVisualContent } from "@zoonk/core/steps/visual-content-contract";
 import Image from "next/image";
 import { useState } from "react";
+import { VISUAL_IMAGE_PROPS } from "../../image-config";
 
 function ImageFallback({ prompt }: { prompt: string }) {
   return (
@@ -23,12 +24,10 @@ export function ImageVisual({ content }: { content: ImageVisualContent }) {
     <Image
       alt={content.prompt}
       className="aspect-square w-full max-w-md rounded-2xl object-cover"
-      height={1024}
       loading="eager"
       onError={() => setErrorUrl(content.url ?? null)}
-      sizes="(max-width: 640px) calc(100vw - 2rem), 448px"
       src={content.url}
-      width={1024}
+      {...VISUAL_IMAGE_PROPS}
     />
   );
 }
