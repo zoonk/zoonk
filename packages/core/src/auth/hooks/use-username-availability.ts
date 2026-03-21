@@ -45,23 +45,28 @@ export function useUsernameAvailability(currentUsername?: string | null) {
 
       setStatus("checking");
 
-      const { data, error } = await authClient.isUsernameAvailable({
-        fetchOptions: { signal: controller.signal },
-        username: value,
-      });
+      try {
+        const { data, error } = await authClient.isUsernameAvailable({
+          fetchOptions: { signal: controller.signal },
+          username: value,
+        });
 
-      // Check abort before error — an aborted request surfaces as
-      // an error, and we don't want to show "taken" for a cancelled check.
-      if (controller.signal.aborted) {
-        return;
+        if (error) {
+          setStatus("taken");
+          return;
+        }
+
+        setStatus(data?.available ? "available" : "taken");
+      } catch {
+        // When abort() is called, better-fetch throws an AbortError
+        // instead of returning { error }. Silently ignore it — the
+        // newer request will handle the result.
+        if (controller.signal.aborted) {
+          return;
+        }
+
+        setStatus("idle");
       }
-
-      if (error) {
-        setStatus("taken");
-        return;
-      }
-
-      setStatus(data?.available ? "available" : "taken");
     },
     [currentUsername],
   );
