@@ -256,6 +256,7 @@ REDUNDANCY CHECKS - PENALIZE if:
 
 VISUAL-CONTENT FIT - PENALIZE if:
 - Code visual is used (no programming content)
+- Music visual is used (no musical notation content)
 - Timeline is used (mindfulness is not a historical topic)
 - Chart is used without meaningful data (IMPORTANT: Step 2 "Benefits of Practice" contains ONLY qualitative descriptions like "reduce stress" and "improve focus" with NO numerical data. If a chart is used for this step, the model MUST fabricate numbers to populate it. This is ALWAYS a MAJOR error because it presents made-up statistics as educational facts. Score it under majorErrors, not minorErrors.)
 
@@ -286,6 +287,61 @@ ${SHARED_EXPECTATIONS}
         {
           text: "Regular mindfulness practice has been shown to reduce stress, improve focus, and help people respond rather than react to difficult situations.",
           title: "Benefits of Practice",
+        },
+      ],
+    },
+  },
+  {
+    expectations: `
+TOPIC-SPECIFIC GUIDANCE:
+
+This test covers music theory - the major scale pattern.
+
+ACCURACY CHECKS - PENALIZE if:
+- ABC notation has syntax errors (missing required headers like X:, K:, M:, L:)
+- Musical content is incorrect (wrong notes in scales, wrong key signatures)
+- Notation doesn't match the described concept (e.g., shows a minor scale when the text describes a major scale)
+
+REDUNDANCY CHECKS - PENALIZE if:
+- Multiple visuals show the same scale or pattern
+- The same notes appear across different visuals without adding new information
+
+VISUAL-CONTENT FIT:
+- Music visual is the ideal type for steps with specific scales, intervals, or melodies
+- Table is acceptable for comparing scale degrees or intervals
+- Image is acceptable as fallback
+
+PENALIZE if:
+- Code visual is used (no programming content)
+- Chart is used without numerical data
+- Timeline is used (not a historical topic)
+
+Do NOT PENALIZE if:
+- Not all steps use music visuals (table or image can supplement)
+- Music visual is used for all steps (if each shows distinct notation)
+
+${SHARED_EXPECTATIONS}
+    `,
+    id: "en-music-major-scale",
+    userInput: {
+      chapterTitle: "Scales and Keys",
+      courseTitle: "Music Theory Fundamentals",
+      language: "en",
+      lessonDescription:
+        "Understanding the major scale pattern and how it forms the foundation of Western music",
+      lessonTitle: "The Major Scale",
+      steps: [
+        {
+          text: "The major scale follows a specific pattern of whole and half steps: W-W-H-W-W-W-H. Starting from C, this gives us C-D-E-F-G-A-B-C with no sharps or flats.",
+          title: "The Pattern",
+        },
+        {
+          text: "When we start the same whole-half pattern from G, we need one sharp (F#) to maintain the intervals. This gives us the G major scale: G-A-B-C-D-E-F#-G.",
+          title: "Transposing to G",
+        },
+        {
+          text: "The distance between any two adjacent notes is called an interval. In a major scale, the interval from the first to the fifth note (like C to G) is called a perfect fifth.",
+          title: "Intervals in the Scale",
         },
       ],
     },
