@@ -10,7 +10,7 @@ Use when: The step's content describes something that can be concretely demonstr
 ## When to use code
 
 - The step explains an algorithm or procedure that has concrete steps (sorting, searching, hashing, traversal)
-- The step describes a data structure operation (insert, delete, lookup) and showing the code makes the mechanics clear
+- The step describes a data structure operation (insert, delete, lookup, push, pop, enqueue, dequeue) and showing the code makes the mechanics clear — **prefer code over a diagram** for these, the concrete implementation is more educational than abstract boxes
 - The step discusses syntax, APIs, or language features
 - The step describes logic (conditionals, loops, recursion) where seeing the code is more precise than prose
 

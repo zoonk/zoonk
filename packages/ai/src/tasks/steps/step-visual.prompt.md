@@ -23,6 +23,7 @@ Choose the visual type that BEST fits each step's content:
 | **diagram**  | Concrete structural relationships: processes, dependencies, cycles, hierarchies            |
 | **quote**    | Famous definitions, authoritative statements, foundational principles                      |
 | **code**     | Algorithms, data structure operations, syntax, APIs — only for programming content         |
+| **formula**  | Specific equations, formulas, or formal expressions from any field (math, physics, etc.)   |
 | **chart**    | Real statistics, measured data, or values from known formulas — NEVER fabricated numbers   |
 | **table**    | Comparisons, examples with attributes, conceptual contrasts — prefer over generic diagrams |
 | **image**    | DEFAULT fallback when no other type fits the content                                       |
@@ -48,6 +49,7 @@ Choose the visual type that BEST fits each step's content:
 
 - Use for showing **concrete structural relationships** — processes with branching, dependencies, cycles, hierarchies
 - **Don't restate the text as boxes with generic arrows.** If the diagram just mirrors what the text says with nodes like "Concept" → "leads to" → "Result", it adds no value. Use a table instead.
+- **Prefer code over diagrams for programming operations.** If the step describes a concrete data structure operation (push, pop, enqueue, dequeue, insert, delete) and the lesson is about programming, a code snippet is more educational than an abstract diagram.
 - Keep focused: 3-7 nodes maximum for clarity
 - Use meaningful node labels (max 30 chars)
 - Do NOT specify positions - layout is computed automatically
@@ -65,6 +67,14 @@ Choose the visual type that BEST fits each step's content:
 - Code must be syntactically correct
 - Use annotations to highlight key concepts
 - Keep snippets concise and focused
+
+## Formula
+
+- Use when the step introduces or explains a **specific equation or formal expression** — from any field (math, physics, chemistry, biology, economics, etc.)
+- Not for code or algorithms (use code visual), not for qualitative discussions without a concrete formula
+- Use valid LaTeX syntax
+- Description should explain what the formula represents in plain language
+- One main equation per visual; use LaTeX `aligned` or `cases` environments for multi-line expressions
 
 ## Chart
 

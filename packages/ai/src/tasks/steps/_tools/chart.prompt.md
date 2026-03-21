@@ -7,6 +7,7 @@ Use when: The step discusses **real numerical data** — actual statistics, meas
 - **Never invent data.** If the step describes a concept qualitatively (e.g., "rehashing reduces conflicts") but gives no specific numbers, do NOT fabricate values to fill a chart. Use a table or diagram instead.
 - **Never use charts for conceptual comparisons.** "Before vs. after", "fast vs. slow", "good vs. bad" — these are qualitative and belong in a **table** (for structured comparison) or a **diagram** (for showing relationships).
 - **Never use charts when the numbers have no units or meaning.** Every value in a chart must represent something concrete that the reader can interpret (e.g., "milliseconds", "% of capacity", "number of probes"). If you can't explain what the y-axis measures, don't use a chart.
+- **Never chart a tautology.** If the data points simply restate the axis labels in a different format (e.g., plotting "200% enlargement = 2x factor"), the chart adds no information. Use a table instead.
 
 ## When to use charts
 

@@ -6,6 +6,8 @@ import { codeInputSchema } from "./code";
 import codePrompt from "./code.prompt.md";
 import { diagramInputSchema } from "./diagram";
 import diagramPrompt from "./diagram.prompt.md";
+import { formulaInputSchema } from "./formula";
+import formulaPrompt from "./formula.prompt.md";
 import { imageInputSchema } from "./image";
 import imagePrompt from "./image.prompt.md";
 import { quoteInputSchema } from "./quote";
@@ -27,6 +29,10 @@ export const visualTools = {
   diagram: tool({
     description: diagramPrompt,
     inputSchema: diagramInputSchema,
+  }),
+  formula: tool({
+    description: formulaPrompt,
+    inputSchema: formulaInputSchema,
   }),
   image: tool({
     description: imagePrompt,
@@ -58,6 +64,10 @@ export type DiagramVisual = {
   kind: "diagram";
 } & z.infer<typeof diagramInputSchema>;
 
+export type FormulaVisual = {
+  kind: "formula";
+} & z.infer<typeof formulaInputSchema>;
+
 export type ImageVisual = {
   kind: "image";
 } & z.infer<typeof imageInputSchema>;
@@ -78,6 +88,7 @@ export type StepVisualResource =
   | ChartVisual
   | CodeVisual
   | DiagramVisual
+  | FormulaVisual
   | ImageVisual
   | QuoteVisual
   | TableVisual

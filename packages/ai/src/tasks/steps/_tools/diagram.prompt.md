@@ -15,6 +15,8 @@ Use when: The step explains how components connect, system architecture, process
 - The structure itself is the concept (e.g., tree hierarchies, graph connections, system architecture)
 - Multiple components interact in ways that are hard to follow linearly in text
 
+**Note:** If the step describes a concrete data structure operation (push, pop, enqueue, dequeue, insert, delete) and the lesson is about programming, prefer a **code** snippet over a diagram — the concrete implementation is more educational than abstract boxes.
+
 ## Requirements
 
 - Nodes represent concepts, components, or entities (max 30 chars each)
