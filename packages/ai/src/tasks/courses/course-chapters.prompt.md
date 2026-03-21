@@ -35,6 +35,7 @@ The curriculum should make the learner highly capable in the subject itself. For
 - Avoid generic cross-disciplinary chapters that are not specific to the course title, such as "Scientific Thinking", "Academic Writing", "Literature Review", "Communication Skills", or "Career Development".
 - If supporting topics like research methods, statistics, ethics, regulation, tools, or career paths are truly important, scope them explicitly to `COURSE_TITLE` in both the title and description.
 - For broad academic subjects such as biology, chemistry, economics, history, or psychology, primarily teach the field itself rather than how academics study the field.
+- **No overlapping chapters.** Each chapter must cover a distinct domain. If two chapter titles could reasonably share the same lessons, merge them or sharpen their scopes so they don't overlap. For example, a course should NOT have both "Cells" and "Cell and Tissue Biology" — the second clearly overlaps with the first.
 - Write **clear, concise** text in the specified `LANGUAGE` input.
 - Avoid fluff/fillers/unnecessary words.
 - Keep the curriculum **modern and relevant**, but do not sacrifice canonical foundations for trends.
@@ -42,6 +43,27 @@ The curriculum should make the learner highly capable in the subject itself. For
 - For hobbies, pop culture, or non-professional topics, you don't need to focus on job readiness. Instead, focus on comprehensive coverage of the topic.
 - Career chapters are optional. Include them only when they are genuinely useful and can be clearly specific to `COURSE_TITLE`.
 - Don't mention prompt instructions such as "mastery" in the chapter titles or descriptions.
+
+## Foundations Must Be Concrete
+
+The first chapters are where learners decide if they can do this. Many learners come from backgrounds where they don't believe they can become engineers or scientists — the opening chapters must prove them wrong by being **concrete, achievable, and immediately engaging**.
+
+The first chapter must dive straight into the subject's core content — the actual things people learn this subject TO learn. Do NOT start with meta-chapters that describe the field, its history, its methodology, or its subfields. Those are academic lectures, not learning.
+
+**BAD first chapters** (meta — describe the field instead of teaching it):
+
+- ❌ "Foundations of Biology" with lessons like "Biology as the Study of Life", "Crosscutting Themes"
+- ❌ "Fundamentos da Ciência da Computação" with lessons like "Natureza da Ciência da Computação", "Subcampos da área"
+- ❌ "What is Chemistry" or "The Nature of Chemistry"
+
+**GOOD first chapters** (concrete — teach the actual subject):
+
+- ✅ A Biology course starting with "Cells" or "Biological Chemistry"
+- ✅ A Computer Science course starting with "Representation of Information" or "Programming"
+- ✅ A Chemistry course starting with "Atoms and Elements" or "Chemical Bonding"
+- ✅ A Python course starting with "Getting Started with Python" (practical setup + first code)
+
+If foundational concepts like measurement, notation, or terminology are genuinely needed before diving into the subject, keep them minimal and concrete — teach them as tools the learner needs, not as a lecture about the field.
 
 ## Hobbies, Pop Culture, Non-Professional Topics
 
@@ -94,6 +116,11 @@ Good chapter titles include:
 
 Avoid generic titles that could belong to many unrelated courses unless they are explicitly the course subject. For example, "Scientific Thinking", "Academic Communication", or "Career Development" are usually too generic for a course about biology, chemistry, or psychology.
 
+**NEVER use numbered suffixes** like "I", "II", "III" (or "Part 1", "Part 2") in chapter titles. This is a university catalog convention that tells the learner nothing about what's inside. Instead, use specific titles that describe the actual content of each chapter.
+
+- ❌ "Organic Chemistry I", "Organic Chemistry II" → ✅ "Organic Structure and Reactivity", "Organic Reactions and Synthesis"
+- ❌ "Calculus I", "Calculus II" → ✅ "Calculus of One Variable", "Multivariable Calculus"
+
 **TIP:** Go straight to the point. Avoid verbose titles. If necessary, add details in the description instead.
 
 ### Description
@@ -115,5 +142,7 @@ Before finishing this course, review the entire content and ask yourself:
 - "Am I adding generic chapters that could fit many unrelated courses unchanged?" If the answer is "yes," remove them or scope them specifically to `COURSE_TITLE`.
 - "Am I missing any important chapters or topics?" If the answer is "yes," add them.
 - "Does this curriculum have enough depth for real mastery of the subject?" If the answer is "no," add more depth to the chapters or add new chapters as needed.
+- "Does the first chapter dive into concrete subject content, or does it describe/overview the field?" If it describes the field, replace it with a chapter that teaches actual content.
+- "Do any two chapters overlap significantly in scope?" If the answer is "yes," merge them or sharpen their scopes so each chapter covers a distinct domain.
 
 Make sure this is a focused, complete, and high-quality curriculum for this subject.

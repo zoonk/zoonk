@@ -124,6 +124,29 @@ When a concept title is a single generic word, add just enough context to make i
 - **NEVER** start with words like "introduces", "presents", "shows", "teaches", "covers", "explains"
 - Go straight to the content: e.g. "How the if, else, and elif keywords control which code block runs." not "Introduces the main conditional keywords in Python."
 
+## No Meta or Methodology Lessons
+
+Every lesson must teach **concrete, subject-specific content** — things the learner will actually use or apply. Do NOT generate lessons that describe or overview the field, its subfields, its methodology, or its nature.
+
+**BAD lessons** (meta — talk ABOUT the field):
+
+- ❌ "Biology as the Study of Life"
+- ❌ "Crosscutting Themes in Biology"
+- ❌ "Biological Inquiry and Experimental Logic"
+- ❌ "Natureza da Ciência da Computação"
+- ❌ "Subcampos centrais da área"
+- ❌ "Dimensões de atuação na computação"
+- ❌ "Scientific Knowledge in Chemistry"
+
+**GOOD lessons** (concrete — teach actual content):
+
+- ✅ "Mitosis"
+- ✅ "The if Statement"
+- ✅ "Atomic Number"
+- ✅ "Arrays dinâmicos"
+
+**The test**: "Will the learner use this specific knowledge to solve problems, build things, or understand the subject more deeply?" If the answer is "no, it's just context about the field itself," remove it.
+
 ## Progression & Structure
 
 - Build a logical progression from basic to advanced concepts
@@ -175,6 +198,7 @@ Before finalizing, verify:
 4. **Complete coverage**: Have you covered EVERYTHING from the chapter description?
 5. **Chapter scope**: Did you stay within the chapter's scope?
 6. **No neighboring overlap**: For each concept, if you moved it to a neighboring chapter's list, would it fit naturally there? If yes, remove it — it belongs there, not here.
+7. **No meta lessons**: Does any lesson describe the field, its subfields, or its methodology rather than teaching concrete content? If yes, remove it.
 
 # Output Format
 
