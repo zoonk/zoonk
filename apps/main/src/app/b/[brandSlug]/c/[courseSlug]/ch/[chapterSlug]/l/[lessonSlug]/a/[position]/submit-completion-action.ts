@@ -13,6 +13,7 @@ import {
 import { computeChallengeScore, computeScore } from "@zoonk/player/compute-score";
 import { computeDimensions, hasNegativeDimension } from "@zoonk/player/dimensions";
 import { validateAnswers } from "@zoonk/player/validate-answers";
+import { calculateBeltLevel } from "@zoonk/utils/belt-level";
 import { safeAsync } from "@zoonk/utils/error";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
@@ -46,17 +47,20 @@ export async function submitCompletion(rawInput: CompletionInput): Promise<Compl
   const activityId = BigInt(input.activityId);
 
   const { data, error } = await safeAsync(async () => {
-    const activity = await prisma.activity.findUnique({
-      include: {
-        lesson: { include: { chapter: true } },
-        steps: {
-          include: { sentence: true, word: true },
-          orderBy: { position: "asc" },
-          where: { isPublished: true },
+    const [activity, userProgress] = await Promise.all([
+      prisma.activity.findUnique({
+        include: {
+          lesson: { include: { chapter: true } },
+          steps: {
+            include: { sentence: true, word: true },
+            orderBy: { position: "asc" },
+            where: { isPublished: true },
+          },
         },
-      },
-      where: { id: activityId },
-    });
+        where: { id: activityId },
+      }),
+      prisma.userProgress.findUnique({ where: { userId } }),
+    ]);
 
     if (!activity) {
       return null;
@@ -100,27 +104,39 @@ export async function submitCompletion(rawInput: CompletionInput): Promise<Compl
       };
     });
 
-    return submitActivityCompletion({
-      activityId: activity.id,
-      courseId: activity.lesson.chapter.courseId,
-      durationSeconds,
-      isChallenge,
-      localDate: input.localDate,
-      organizationId: activity.organizationId,
-      score,
-      startedAt: new Date(input.startedAt),
-      stepResults: mergedStepResults,
-      userId,
+    const newTotalBp = Number(userProgress?.totalBrainPower ?? 0) + score.brainPower;
+
+    // Persist progress in the background so the user sees results instantly
+    // instead of waiting for the DB transaction to complete.
+    after(async () => {
+      await submitActivityCompletion({
+        activityId: activity.id,
+        courseId: activity.lesson.chapter.courseId,
+        durationSeconds,
+        isChallenge,
+        localDate: input.localDate,
+        organizationId: activity.organizationId,
+        score,
+        startedAt: new Date(input.startedAt),
+        stepResults: mergedStepResults,
+        userId,
+      });
+
+      revalidatePath("/");
+      await preloadNextLesson(activityId, reqHeaders.get("cookie") ?? "");
     });
+
+    return {
+      belt: calculateBeltLevel(newTotalBp),
+      brainPower: score.brainPower,
+      energyDelta: score.energyDelta,
+      newTotalBp,
+    };
   });
 
   if (error || !data) {
     return { status: "error" };
   }
-
-  revalidatePath("/");
-
-  after(() => preloadNextLesson(activityId, reqHeaders.get("cookie") ?? ""));
 
   return {
     belt: data.belt,
