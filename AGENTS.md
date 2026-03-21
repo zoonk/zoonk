@@ -173,7 +173,7 @@ To accept href in a custom component wrapping next/link, use a generic:
 import type { Route } from "next";
 import Link from "next/link";
 
-function Card<T extends string>({ href }: { href: Route<T> | URL }) {
+function Card<Href extends string>({ href }: { href: Route<Href> | URL }) {
   return (
     <Link href={href}>
       <div>My Card</div>
@@ -187,8 +187,8 @@ You can also type a simple data structure and iterate to render links:
 ```tsx
 import type { Route } from "next";
 
-type NavItem<T extends string = string> = {
-  href: T;
+type NavItem<Href extends string = string> = {
+  href: Href;
   label: string;
 };
 

@@ -8,10 +8,19 @@ import {
 } from "@zoonk/ui/components/container";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ProtectedSection } from "@zoonk/ui/patterns/auth/protected";
+import { type Route } from "next";
 import { getExtracted } from "next-intl/server";
 import Link from "next/link";
 
-export async function LoginRequired({ title }: { title: string }) {
+export async function LoginRequired<Href extends string>({
+  backHref,
+  backLabel,
+  title,
+}: {
+  backHref: Route<Href>;
+  backLabel: string;
+  title: string;
+}) {
   const t = await getExtracted();
 
   return (
@@ -25,9 +34,19 @@ export async function LoginRequired({ title }: { title: string }) {
       <ContainerBody>
         <ProtectedSection
           actions={
-            <Link className={cn(buttonVariants(), "w-max")} href="/login">
-              {t("Login")}
-            </Link>
+            <>
+              <Link
+                className={cn(buttonVariants({ variant: "outline" }), "w-max")}
+                href={backHref}
+                prefetch
+              >
+                {backLabel}
+              </Link>
+
+              <Link className={cn(buttonVariants(), "w-max")} href="/login" prefetch>
+                {t("Login")}
+              </Link>
+            </>
           }
           alertTitle={t("You need to be logged in to access this page.")}
           centered

@@ -34,8 +34,13 @@ export async function GenerateLessonContent({ params }: { params: Promise<{ id: 
   const hasStarted = lesson.generationStatus !== "pending";
   const t = await getExtracted();
 
+  const backHref =
+    `/b/${AI_ORG_SLUG}/c/${lesson.chapter.course.slug}/ch/${lesson.chapter.slug}` as const;
+
+  const backLabel = t("Back to chapter");
+
   if (!session && !hasStarted) {
-    return <LoginRequired title={t("Create Lesson")} />;
+    return <LoginRequired backHref={backHref} backLabel={backLabel} title={t("Create Lesson")} />;
   }
 
   if (lesson.generationStatus === "completed") {
@@ -54,7 +59,7 @@ export async function GenerateLessonContent({ params }: { params: Promise<{ id: 
       </ContainerHeader>
 
       <ContainerBody>
-        <SubscriptionGate bypass={hasStarted}>
+        <SubscriptionGate backHref={backHref} backLabel={backLabel} bypass={hasStarted}>
           <GenerationClient
             chapterSlug={lesson.chapter.slug}
             courseSlug={lesson.chapter.course.slug}
