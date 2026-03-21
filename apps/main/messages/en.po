@@ -1634,6 +1634,11 @@ msgid "Create Activity"
 msgstr "Create Activity"
 
 #: src/app/generate/a/[id]/generate-activity-content.tsx
+msgctxt "lqM5Zj"
+msgid "Back to lesson"
+msgstr "Back to lesson"
+
+#: src/app/generate/a/[id]/generate-activity-content.tsx
 msgctxt "YQINXG"
 msgid "Create content for this activity"
 msgstr "Create content for this activity"
@@ -1906,6 +1911,11 @@ msgctxt "qNiSDe"
 msgid "Create Chapter"
 msgstr "Create Chapter"
 
+#: src/app/generate/ch/[id]/generate-chapter-content.tsx
+msgctxt "qrEiLa"
+msgid "Back to course"
+msgstr "Back to course"
+
 #: src/app/generate/ch/[id]/generation-client.tsx
 msgctxt "3vY0Zu"
 msgid "This usually takes 1-2 minutes"
@@ -2116,6 +2126,11 @@ msgstr "Writing chapters"
 msgctxt "XxZuJi"
 msgid "Putting it all together..."
 msgstr "Putting it all together..."
+
+#: src/app/generate/l/[id]/generate-lesson-content.tsx
+msgctxt "/N8rYN"
+msgid "Back to chapter"
+msgstr "Back to chapter"
 
 #: src/app/generate/l/[id]/generate-lesson-content.tsx
 msgctxt "kXZ7ZI"

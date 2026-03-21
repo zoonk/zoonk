@@ -201,7 +201,6 @@ checksums:
     "%7Bitem%7D.%20%7Bresult%7D./singular": 454dd5319c350f361652396801a1c30b
     Position%20%7Bposition%7D%3A%20%7Bitem%7D.%20Tap%20to%20remove./singular: a1b3d3e026bfff43bff3d3e85ccdb952
     Incorrect/singular: a86cfbe7b86f19dc8df14a67df073d22
-    Correct%20answer/singular: b7b440a054a86a05c601276b1a308507
     Word%20bank/singular: ceea720dd5fa3747c7f93ce165f77b2e
     "%7Bcolor%7D%20belt/singular": 5949446c9b4a223c04cc500fa17a1fe0
     Level%20progress/singular: 286f095acd17006787247db0b69270e3
@@ -244,12 +243,12 @@ checksums:
     "%7Bcount%7D%20at%20risk/singular": d0c6a90b2830b7b26e220ef1f7708d08
     View%20scores/singular: 8089ad914ec6636a00fd58ed3c84f07b
     Your%20answer%3A/singular: 663abc310ccb6229c6325f8c857adce2
+    Correct%20answer%3A/singular: a8b8cc0d5d0059cbfeee0ad4721540d5
     "%7Bname%7D%20is%20negative.%20You%20need%20to%20bring%20this%20back%20up%20or%20you%20will%20lose./singular": c893d2d3c1bb15ea45614228ea9ddcac
     Translate%3A/singular: 0a44ccd6c0e1dd4545fd00d059eaf0a5
     Outcome/singular: 4cfc7a40e384ea8b6658e8da6e351bf0
     Close%20call./singular: 7913cf61fc4e2fcd3eaf0d51bd86ba4d
     "%7Bname%7D%20is%20at%20zero.%20One%20more%20drop%20and%20you%20lose./singular": 4e48a2c335f69b412a58e4aef620caf1
-    Correct%20answer%3A/singular: a8b8cc0d5d0059cbfeee0ad4721540d5
     Score%20changes/singular: ddf8ff300115aa23776dc4b3157581de
     Blank%20%7Bposition%7D/singular: 70a4795f65f91685071b6abb1c3a6bad
     Blank%20%7Bposition%7D%3A%20%7Bitem%7D.%20%7Bresult%7D./singular: c64e721cdd1e4cc48eff9f9690f1fc6b
@@ -501,6 +500,7 @@ checksums:
     This%20activity%20hasn't%20been%20created%20yet./singular: c1e71adf6ff4ecd34e0b5ba242110397
     Activity%20not%20available/singular: a76f6331aa0aad825903108429b132a0
     Create%20Activity/singular: ceaf06ac3cbfcfcf824b9e9acf66cfb9
+    Back%20to%20lesson/singular: c393a48d88c80baa6217836b373f908f
     Create%20content%20for%20this%20activity/singular: e48e26e5fc10415a118d5d6c9f6d032e
     Your%20activity%20is%20ready/singular: e7385c4096b843839bb9a96023f0eea9
     Something%20went%20wrong/singular: a3cd2f01c073f1f5ff436d4b132d39cf
@@ -542,6 +542,7 @@ checksums:
     Setting%20things%20up.../singular: 4696c8e1048ec21837f886410864dfe2
     Refining%20the%20details.../singular: eaf7a7ca135f8919dc93f80095040ab0
     Create%20Chapter/singular: eff367b47e651ac3234f8b4655d5a078
+    Back%20to%20course/singular: 605eb294c4cd0dbfee151a369d28fe36
     This%20usually%20takes%201-2%20minutes/singular: bd7260323fa4b3a50a0300ed136fcbd2
     Your%20lessons%20are%20ready/singular: fe8d9df59ba42f451b249fd750813cba
     Taking%20you%20to%20your%20chapter.../singular: fc59b426c3d393ec40f534253309ee9f
@@ -581,6 +582,7 @@ checksums:
     Picking%20the%20right%20look.../singular: 697bdd3a4fa077ddd50c64d57775baf6
     Writing%20chapters/singular: b2e7e149ee761e4e5a45225e37e5441a
     Putting%20it%20all%20together.../singular: 12349256a2104ecf09b213ba1437c636
+    Back%20to%20chapter/singular: ed886de66b9c8ec08ec55860cdebc6a7
     Create%20Lesson/singular: af03c55d9ad5e6063bfad0ce8a35e385
     Your%20lesson%20is%20ready/singular: 3d745fd67b57e47ed10851f1e5404ccc
     Creating%20your%20activities/singular: 6651e663a48e18486f5f873e614cd512
@@ -598,7 +600,6 @@ checksums:
     More%20options/singular: 53d90eae6a9b0243b5bc043b3d9de169
     Start/singular: dbe56303d9a6d3fad1a8d4cbcc97f365
     Review/singular: 299f75db25382980b2895622d7712927
-    All%20activities%20completed/singular: 7a287338649cba271ade32d7008a9231
     Please%20provide%20as%20much%20detail%20as%20possible./singular: 3c8b231283c751d4beae059a6ffc3643
     Failed%20to%20send%20message.%20Please%20try%20again%20or%20email%20us%20directly%20at%20hello%40zoonk.com/singular: 7f36bcd5ba5dad4b9981f85488ff794c
     Email%20address/singular: 3ba3f099b1b9be6c35ad797da660cb9f

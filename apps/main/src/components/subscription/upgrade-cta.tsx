@@ -9,10 +9,17 @@ import {
 } from "@zoonk/ui/components/empty";
 import { cn } from "@zoonk/ui/lib/utils";
 import { SparklesIcon } from "lucide-react";
+import { type Route } from "next";
 import { getExtracted } from "next-intl/server";
 import Link from "next/link";
 
-export async function UpgradeCTA() {
+export async function UpgradeCTA<Href extends string>({
+  backHref,
+  backLabel,
+}: {
+  backHref: Route<Href>;
+  backLabel: string;
+}) {
   const t = await getExtracted();
 
   return (
@@ -30,7 +37,15 @@ export async function UpgradeCTA() {
       </EmptyHeader>
 
       <EmptyContent>
-        <Link className={cn(buttonVariants(), "w-max")} href="/subscription">
+        <Link
+          className={cn(buttonVariants({ variant: "outline" }), "w-max")}
+          href={backHref}
+          prefetch
+        >
+          {backLabel}
+        </Link>
+
+        <Link className={cn(buttonVariants(), "w-max")} href="/subscription" prefetch>
           {t("Upgrade")}
         </Link>
       </EmptyContent>
