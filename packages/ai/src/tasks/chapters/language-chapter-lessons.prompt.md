@@ -84,6 +84,7 @@ This is the most critical aspect. Each concept must be **one single, specific la
 
 - Describe the thematic group: e.g. "Formal Greetings", "Present Tense: Regular -ar Verbs", "Nasal Vowels"
 - **NEVER** use words like "learn", "understand", "explore", "introduction to", "basics of"
+- Avoid numbered suffixes like `I`, `II`, `III`, `Part 1`, `Part 2`. If a topic needs multiple lessons, add a specific subtitle that describes what each one covers — e.g., "Ser: Singular Conjugation" and "Ser: Plural Conjugation" instead of "Ser I" and "Ser II"
 - Go straight to the point
 
 ### Concept Titles
