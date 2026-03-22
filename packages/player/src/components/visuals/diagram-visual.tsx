@@ -102,8 +102,9 @@ function DiagramEdgeLabel({ edge }: { edge: PositionedEdge }) {
 function DiagramEdges({ edges, markerId }: { edges: PositionedEdge[]; markerId: string }) {
   return (
     <g>
-      {edges.map((edge) => (
-        <g key={`${edge.source}-${edge.target}`}>
+      {edges.map((edge, index) => (
+        // oxlint-disable-next-line react/no-array-index-key -- Multiple edges can share the same source-target pair, no unique ID on edges
+        <g key={`${edge.source}-${edge.target}-${index}`}>
           <DiagramEdgeLine edge={edge} markerId={markerId} />
           <DiagramEdgeLabel edge={edge} />
         </g>
