@@ -10,6 +10,8 @@ import { formulaInputSchema } from "./formula";
 import formulaPrompt from "./formula.prompt.md";
 import { imageInputSchema } from "./image";
 import imagePrompt from "./image.prompt.md";
+import { musicInputSchema } from "./music";
+import musicPrompt from "./music.prompt.md";
 import { quoteInputSchema } from "./quote";
 import quotePrompt from "./quote.prompt.md";
 import { tableInputSchema } from "./table";
@@ -37,6 +39,10 @@ export const visualTools = {
   image: tool({
     description: imagePrompt,
     inputSchema: imageInputSchema,
+  }),
+  music: tool({
+    description: musicPrompt,
+    inputSchema: musicInputSchema,
   }),
   quote: tool({
     description: quotePrompt,
@@ -72,6 +78,10 @@ export type ImageVisual = {
   kind: "image";
 } & z.infer<typeof imageInputSchema>;
 
+export type MusicVisual = {
+  kind: "music";
+} & z.infer<typeof musicInputSchema>;
+
 export type QuoteVisual = {
   kind: "quote";
 } & z.infer<typeof quoteInputSchema>;
@@ -90,6 +100,7 @@ export type StepVisualResource =
   | DiagramVisual
   | FormulaVisual
   | ImageVisual
+  | MusicVisual
   | QuoteVisual
   | TableVisual
   | TimelineVisual;

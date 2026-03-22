@@ -6,6 +6,7 @@ import { CodeVisual } from "./visuals/code-visual";
 import { DiagramVisual } from "./visuals/diagram-visual";
 import { FormulaVisual } from "./visuals/formula-visual";
 import { ImageVisual } from "./visuals/image-visual";
+import { MusicVisual } from "./visuals/music-visual";
 import { QuoteVisual } from "./visuals/quote-visual";
 import { TableVisual } from "./visuals/table-visual";
 import { TimelineVisual } from "./visuals/timeline-visual";
@@ -41,6 +42,10 @@ export function StepVisualRenderer({ content }: { content: VisualStepContent }) 
 
   if (content.kind === "formula") {
     return <FormulaVisual content={content} />;
+  }
+
+  if (content.kind === "music") {
+    return <MusicVisual content={content} />;
   }
 
   return null;

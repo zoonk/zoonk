@@ -96,6 +96,20 @@ describe("visual content contracts", () => {
     });
   });
 
+  test("parses music visual content", () => {
+    const content = visualStepContentSchema.parse({
+      abc: "X:1\nM:4/4\nL:1/4\nK:C\nC D E F | G A B c |",
+      description: "C major scale ascending over one octave",
+      kind: "music",
+    });
+
+    expect(content).toEqual({
+      abc: "X:1\nM:4/4\nL:1/4\nK:C\nC D E F | G A B c |",
+      description: "C major scale ascending over one octave",
+      kind: "music",
+    });
+  });
+
   test("parses image visual content without url", () => {
     const content = visualStepContentSchema.parse({
       kind: "image",
@@ -203,5 +217,9 @@ describe("visual content contracts", () => {
     expect(() => visualStepContentSchema.parse({ kind: "quote", text: "hi" })).toThrow();
     expect(() => visualStepContentSchema.parse({ formula: "x^2", kind: "formula" })).toThrow();
     expect(() => visualStepContentSchema.parse({ description: "desc", kind: "formula" })).toThrow();
+    expect(() =>
+      visualStepContentSchema.parse({ abc: "X:1\nK:C\nC D E", kind: "music" }),
+    ).toThrow();
+    expect(() => visualStepContentSchema.parse({ description: "scale", kind: "music" })).toThrow();
   });
 });

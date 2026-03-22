@@ -17,16 +17,17 @@ Generate ONE appropriate visual resource for EACH step provided. Each visual sho
 
 Choose the visual type that BEST fits each step's content:
 
-| Visual Type  | When to Use                                                                                |
-| ------------ | ------------------------------------------------------------------------------------------ |
-| **timeline** | Historical progression, evolution of concepts, sequence of discoveries                     |
-| **diagram**  | Concrete structural relationships: processes, dependencies, cycles, hierarchies            |
-| **quote**    | Famous definitions, authoritative statements, foundational principles                      |
-| **code**     | Algorithms, data structure operations, syntax, APIs — only for programming content         |
-| **formula**  | Specific equations, formulas, or formal expressions from any field (math, physics, etc.)   |
-| **chart**    | Real statistics, measured data, or values from known formulas — NEVER fabricated numbers   |
-| **table**    | Comparisons, examples with attributes, conceptual contrasts — prefer over generic diagrams |
-| **image**    | DEFAULT fallback when no other type fits the content                                       |
+| Visual Type  | When to Use                                                                                 |
+| ------------ | ------------------------------------------------------------------------------------------- |
+| **timeline** | Historical progression, evolution of concepts, sequence of discoveries                      |
+| **diagram**  | Concrete structural relationships: processes, dependencies, cycles, hierarchies             |
+| **quote**    | Famous definitions, authoritative statements, foundational principles                       |
+| **code**     | Algorithms, data structure operations, syntax, APIs — only for programming content          |
+| **formula**  | Specific equations, formulas, or formal expressions from any field (math, physics, etc.)    |
+| **music**    | Scales, chords, intervals, rhythms, melodies — only when there are specific notes to notate |
+| **chart**    | Real statistics, measured data, or values from known formulas — NEVER fabricated numbers    |
+| **table**    | Comparisons, examples with attributes, conceptual contrasts — prefer over generic diagrams  |
+| **image**    | DEFAULT fallback when no other type fits the content                                        |
 
 # Rules
 
@@ -76,6 +77,16 @@ Choose the visual type that BEST fits each step's content:
 - Description should explain what the formula represents in plain language
 - One main equation per visual; use LaTeX `aligned` or `cases` environments for multi-line expressions
 
+## Music
+
+- Use when the step introduces or explains a **specific musical element** that is clearer as notation than as text — scales, intervals, chords, rhythms, melodies, key signatures, time signatures
+- **Prefer music over image for anything that belongs on a staff.** If a step introduces a note value (whole note, half note, quarter note, etc.), a rhythmic figure, a rest, or any musical symbol — show it as real rendered notation, not as an AI-generated image of notation. Real notation is always more accurate and educational than a picture of notation
+- **Only for content with specific notes to notate.** Never use music for steps that merely mention music as a metaphor, analogy, or historical context without actual notation to show
+- Not for music production, sound design, audio engineering, acoustics, or audio waveforms
+- Not for conceptual music discussions without a concrete passage or pattern (e.g., "music helps with memory" or "jazz originated in New Orleans" — use image or timeline instead)
+- Use valid ABC notation with required headers (`X:1`, `M:`, `L:`, `K:`)
+- Keep notation concise (1-4 lines of notes), single voice only
+
 ## Chart
 
 - **Only use when the step contains or implies real numerical data** — actual measurements, known formulas, or established relationships
@@ -96,6 +107,7 @@ Choose the visual type that BEST fits each step's content:
 ## Image
 
 - Use as fallback when no other type fits
+- **Never generate an image of something another visual type can render directly.** Don't generate images of musical notation, sheet music, or notes on a staff — use the music visual instead. Don't generate images of code — use the code visual. Don't generate images of formulas — use the formula visual
 - Describe content only, not style
 - Be specific enough to convey the concept
 - Avoid text by default. Only include text in image visuals when it materially improves clarity

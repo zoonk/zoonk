@@ -8,7 +8,7 @@ import { TEST_CASES } from "./test-cases";
 
 export const stepVisualTask: Task<StepVisualParams, StepVisualSchema> = {
   description:
-    "Generate visual resources (timelines, diagrams, quotes, code, charts, tables, images) for learning steps",
+    "Generate visual resources (timelines, diagrams, quotes, code, charts, tables, images, formulas, music) for learning steps",
   generate: generateStepVisuals,
   id: "step-visual",
   name: "Step Visual Resources",
