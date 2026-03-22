@@ -81,6 +81,7 @@ This is the most critical aspect. Each concept must be **one single, specific id
 
 - Describe the thematic group: e.g. "Phases of Mitosis", "DNA Replication Machinery"
 - **NEVER** use words like "learn", "understand", "explore", "introduction to", "basics of"
+- Avoid numbered suffixes like `I`, `II`, `III`, `Part 1`, `Part 2`. If a topic needs multiple lessons, add a specific subtitle that describes what each one covers — e.g., "Cell Division: Mitosis" and "Cell Division: Meiosis" instead of "Cell Division I" and "Cell Division II"
 - Go straight to the point
 
 ### Concept Titles

@@ -81,8 +81,9 @@ Each chapter must include **exactly two fields**:
 Good chapter titles include:
 
 - "Basic Greetings", "Present Tense", "Food & Dining", "Past Tense", "Travel & Directions", "Subjunctive Mood"
-- Just "Present Tense" is better than "Present Tense Conjugation: Regular and Irregular Verbs" (too verbose)
+- Just "Present Tense" is better than "Present Tense Conjugation: Regular and Irregular Verbs" (too verbose — if one chapter covers the whole topic, keep the title simple)
 - "Numbers & Counting" is better than "An Introduction to Numbers and Counting Systems" (too verbose)
+- Avoid numbered suffixes like `I`, `II`, `III`, `Part 1`, `Part 2`. If a topic needs multiple chapters, add a specific subtitle that describes what each one covers — e.g., "Past Tense: Regular Verbs" and "Past Tense: Irregular Verbs" instead of "Past Tense I" and "Past Tense II"
 
 Bad chapter titles:
 

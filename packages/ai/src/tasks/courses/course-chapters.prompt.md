@@ -258,7 +258,7 @@ That means:
 
 - Short, specific, and concrete
 - Avoid rhetorical or bird's-eye-view titles that talk about the field from outside
-- Avoid numbered suffixes like `I`, `II`, `III`, `Part 1`, `Part 2`
+- Avoid numbered suffixes like `I`, `II`, `III`, `Part 1`, `Part 2`. If a topic needs multiple chapters, add a specific subtitle that describes what each one covers — e.g., "Organic Chemistry: Functional Groups" and "Organic Chemistry: Reaction Mechanisms" instead of "Organic Chemistry I" and "Organic Chemistry II"
 - If a shorter title is clear enough, prefer the shorter title
 
 ## Description
