@@ -80,6 +80,7 @@ Choose the visual type that BEST fits each step's content:
 ## Music
 
 - Use when the step introduces or explains a **specific musical element** that is clearer as notation than as text — scales, intervals, chords, rhythms, melodies, key signatures, time signatures
+- **Prefer music over image for anything that belongs on a staff.** If a step introduces a note value (whole note, half note, quarter note, etc.), a rhythmic figure, a rest, or any musical symbol — show it as real rendered notation, not as an AI-generated image of notation. Real notation is always more accurate and educational than a picture of notation
 - **Only for content with specific notes to notate.** Never use music for steps that merely mention music as a metaphor, analogy, or historical context without actual notation to show
 - Not for music production, sound design, audio engineering, acoustics, or audio waveforms
 - Not for conceptual music discussions without a concrete passage or pattern (e.g., "music helps with memory" or "jazz originated in New Orleans" — use image or timeline instead)
@@ -106,6 +107,7 @@ Choose the visual type that BEST fits each step's content:
 ## Image
 
 - Use as fallback when no other type fits
+- **Never generate an image of something another visual type can render directly.** Don't generate images of musical notation, sheet music, or notes on a staff — use the music visual instead. Don't generate images of code — use the code visual. Don't generate images of formulas — use the formula visual
 - Describe content only, not style
 - Be specific enough to convey the concept
 - Avoid text by default. Only include text in image visuals when it materially improves clarity

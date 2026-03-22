@@ -16,6 +16,8 @@ Use when: The step introduces or explains a **specific musical concept that can 
 - The step explains rhythm, time signatures, or note values with concrete examples
 - The step shows a melody or motif as a teaching point
 - The step compares musical structures (e.g., major vs. minor scale) and the comparison is clearer as notation
+- **The step introduces or describes a specific musical figure or note value** (e.g., whole note, half note, quarter note, eighth note, sixteenth note). Real rendered notation is always better than an AI-generated image of notation. If a step says "the half note has an open note head and a stem", show an actual half note in ABC notation — don't generate an image of one
+- The step describes what a note, rest, or rhythmic figure looks like on a staff — use music notation to show the real thing
 
 ## Requirements
 
