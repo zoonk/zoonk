@@ -17,7 +17,7 @@ export function ChallengeIntro({
   const entries = buildDimensionEntries(dimensions, []);
 
   return (
-    <div className="mx-auto flex w-full max-w-lg flex-col gap-6 text-left">
+    <div className="mx-auto my-auto flex w-full max-w-lg flex-col gap-6 text-left">
       <div className="flex flex-col gap-4">
         <SectionLabel>{t("Challenge")}</SectionLabel>
 
