@@ -2,27 +2,26 @@
 
 import { type MusicVisualContent } from "@zoonk/core/steps/visual-content-contract";
 import abcjs from "abcjs";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 
 /**
  * Renders ABC music notation as SVG using ABCJS.
  *
- * ABCJS imperatively renders SVG into the target DOM element, matching
- * the same useEffect + useRef pattern used by formula-visual.tsx (KaTeX)
- * and code-visual.tsx (shiki). The `description` field provides both an
- * aria-label for screen readers and a visible caption explaining the notation.
+ * `staffwidth` controls how wide ABCJS draws the staff and spaces
+ * notes within it. `responsive: "resize"` then scales the SVG to
+ * fill the container. With larger staffwidth values (e.g., 200+),
+ * short phrases only use a fraction of the staff, leaving empty
+ * space on the right that makes the notation look left-aligned.
+ * A small staffwidth (50) forces ABCJS to pack notes tightly so
+ * they fill the staff, and responsive scaling enlarges everything
+ * to fit the container — keeping notation centered and properly
+ * sized regardless of how many notes there are.
  *
- * We use `responsive: "resize"` so ABCJS reflows measures to new lines
- * when the container is narrow (e.g., on mobile), rather than requiring
- * horizontal scrolling which breaks the spatial relationship between notes.
- *
- * Dark mode is handled by reading the current foreground color from CSS
- * and passing it to ABCJS as `foregroundColor`, so the SVG renders with
- * the correct theme color from the start.
+ * Dark mode is handled by reading the current foreground
+ * color from CSS and passing it to ABCJS as `foregroundColor`.
  */
 export function MusicVisual({ content }: { content: MusicVisualContent }) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const [rendered, setRendered] = useState(false);
 
   useEffect(() => {
     if (!containerRef.current) {
@@ -34,18 +33,17 @@ export function MusicVisual({ content }: { content: MusicVisualContent }) {
     abcjs.renderAbc(containerRef.current, content.abc, {
       foregroundColor: foreground,
       responsive: "resize",
+      staffwidth: 50,
     });
-
-    setRendered(true);
   }, [content.abc]);
 
   return (
     <figure
       aria-label={content.description}
-      className="flex w-full min-w-0 flex-col items-center gap-4 sm:gap-5"
+      className="flex w-full max-w-xl flex-col items-center gap-4 px-6 sm:gap-5 sm:px-8"
     >
       <div
-        className={`text-foreground w-full min-w-0 transition-opacity duration-300 ${rendered ? "opacity-100" : "opacity-0"}`}
+        className="text-foreground w-full min-w-0 overflow-x-auto"
         ref={containerRef}
         role="img"
       />
