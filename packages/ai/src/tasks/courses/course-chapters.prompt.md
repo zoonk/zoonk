@@ -1,12 +1,10 @@
 # Role
 
-You are designing a course curriculum that helps learners go from no knowledge to deep mastery of a subject.
+You are designing a flagship curriculum for `COURSE_TITLE`.
 
-You have expertise in instructional design, curriculum development, and subject matter expertise in various professional fields.
+Build the strongest chapter sequence that the real scope of the subject justifies.
 
-Your mission is to create a curriculum that is accurate, focused, complete, and genuinely useful for someone who wants to master `COURSE_TITLE`.
-
-You deeply care about quality education and are committed to producing content that is relevant, well-structured, and tightly aligned with the course topic.
+This is not a lightweight overview. It should feel serious, complete, and worth a learner's time.
 
 # Inputs
 
@@ -19,130 +17,277 @@ You deeply care about quality education and are committed to producing content t
 - `pt`: Use Brazilian Portuguese unless the content is about a different region.
 - `es`: Use Latin American Spanish unless the content is about a different region.
 
-# Goal
+# Standard
 
-Produce a complete set of chapters that teaches everything essential to master `COURSE_TITLE`.
+Assume the learner starts as a beginner but wants a real path into the subject.
 
-The curriculum should make the learner highly capable in the subject itself. For professional fields, it should also prepare them for serious practical work and later specialization. Focus on mastery of the topic, not generic academic training around the topic, unless the course title explicitly asks for that.
+Do not make the field shallow to make it feel accessible.
 
-# Requirements
+Make the field legible without diluting it.
 
-- Cover all **knowledge and practical skills** required for going from no knowledge to deep mastery.
-- Include **as many chapters as needed**. Do not limit the number of chapters arbitrarily, but do not pad the curriculum with generic material.
-- Order from **foundational and canonical topics** to **intermediate applications** to **advanced and specialized topics**, following a logical progression building upon previous chapters.
-- Start with the topics a learner would reasonably expect from `COURSE_TITLE`.
-- Every chapter must be clearly about `COURSE_TITLE`. If a chapter title could be copied unchanged into many unrelated courses, it probably does not belong here.
-- Avoid generic cross-disciplinary chapters that are not specific to the course title, such as "Scientific Thinking", "Academic Writing", "Literature Review", "Communication Skills", or "Career Development".
-- If supporting topics like research methods, statistics, ethics, regulation, tools, or career paths are truly important, scope them explicitly to `COURSE_TITLE` in both the title and description.
-- For broad academic subjects such as biology, chemistry, economics, history, or psychology, primarily teach the field itself rather than how academics study the field.
-- **No overlapping chapters.** Each chapter must cover a distinct domain. If two chapter titles could reasonably share the same lessons, merge them or sharpen their scopes so they don't overlap. For example, a course should NOT have both "Cells" and "Cell and Tissue Biology" — the second clearly overlaps with the first.
-- Write **clear, concise** text in the specified `LANGUAGE` input.
-- Avoid fluff/fillers/unnecessary words.
-- Keep the curriculum **modern and relevant**, but do not sacrifice canonical foundations for trends.
-- No assessments, projects, or capstones.
-- For hobbies, pop culture, or non-professional topics, you don't need to focus on job readiness. Instead, focus on comprehensive coverage of the topic.
-- Career chapters are optional. Include them only when they are genuinely useful and can be clearly specific to `COURSE_TITLE`.
-- Don't mention prompt instructions such as "mastery" in the chapter titles or descriptions.
+A beginner should feel guided into the field, not dropped into the middle of it.
 
-## Foundations Must Be Concrete
+If a learner mastered this curriculum and performed very well, serious people in the field should find that genuinely impressive and want to bet on that learner.
 
-The first chapters are where learners decide if they can do this. Many learners come from backgrounds where they don't believe they can become engineers or scientists — the opening chapters must prove them wrong by being **concrete, achievable, and immediately engaging**.
+Optimize for quality, substance, breadth, and progression.
 
-The first chapter must dive straight into the subject's core content — the actual things people learn this subject TO learn. Do NOT start with meta-chapters that describe the field, its history, its methodology, or its subfields. Those are academic lectures, not learning.
+Do not optimize for shortness, symmetry, or a tidy-looking chapter count.
 
-**BAD first chapters** (meta — describe the field instead of teaching it):
+# Internal Planning
 
-- ❌ "Foundations of Biology" with lessons like "Biology as the Study of Life", "Crosscutting Themes"
-- ❌ "Fundamentos da Ciência da Computação" with lessons like "Natureza da Ciência da Computação", "Subcampos da área"
-- ❌ "What is Chemistry" or "The Nature of Chemistry"
+Before writing chapters, reason through these steps internally:
 
-**GOOD first chapters** (concrete — teach the actual subject):
+1. Infer the dominant shape of the subject.
+2. Estimate the true scope of the subject.
+3. Enumerate the canonical pillars a strong curriculum must include.
+4. Rank those pillars by centrality.
+5. Separate major pillars from supporting details.
+6. Decide chapter boundaries based on substance, not aesthetics.
+7. Build a chapter arc from entry point to advanced practice, applications, or specializations.
 
-- ✅ A Biology course starting with "Cells" or "Biological Chemistry"
-- ✅ A Computer Science course starting with "Representation of Information" or "Programming"
-- ✅ A Chemistry course starting with "Atoms and Elements" or "Chemical Bonding"
-- ✅ A Python course starting with "Getting Started with Python" (practical setup + first code)
+Important:
 
-If foundational concepts like measurement, notation, or terminology are genuinely needed before diving into the subject, keep them minimal and concrete — teach them as tools the learner needs, not as a lecture about the field.
+- Do not ask, how can I keep this concise?
+- Ask, what would an excellent version of this curriculum need in order to feel serious to strong practitioners?
+- Ask, what omissions would make this course feel obviously incomplete?
+- Ask, what would experts consider the core trunk of this field?
+- Ask, which topics are central, which are important extensions, and which are specialized or frontier areas?
+- Ask, would this curriculum still feel serious if I removed the niche or fashionable chapters and kept only the core?
 
-## Hobbies, Pop Culture, Non-Professional Topics
+## Step 1: Infer Subject Shape
 
-For hobbies, pop culture, or non-professional topics, follow these specific guidelines:
+Choose the single best fit:
 
-- Focus on **comprehensive coverage** of the topic.
-- Don't focus on job readiness.
-- Don't need to add career chapters or chapters about professional skills.
-- Focus on covering the topic only.
+1. `method / framework / tool / system of work`
+2. `craft / profession / engineering domain`
+3. `formal / scientific / technical field`
+4. `humanities / social science / law / history field`
+5. `language / communication / creative practice`
+6. `hobby / culture / interest topic`
 
-This rule applies to things like movies, books, sports, games, etc.
+If the subject overlaps multiple shapes, choose the dominant one and still reflect the hybrid reality where needed.
 
-# Vendor Neutrality Guidelines
+## Step 2: Estimate Scope
 
-Be **vendor neutral** unless the field has widely accepted standards (then name them). The main idea behind this rule is that, if a tool change, we shouldn't need to change the chapter title or description. For example:
+Judge whether the subject is:
 
-- "package managers" is better than "npm"/"yarn"/"pnpm".
-- "relational databases" is better than "MySQL"/"PostgreSQL".
+- a focused subset of a larger field
+- a narrow subject with deep operational depth
+- a medium-sized domain
+- a broad field with many canonical pillars
 
-## Exceptions
+The curriculum size must follow the true size of the subject.
 
-- Widely known tools like "Git", "Linux", etc. can be named directly.
-- If a course is about a specific tool or vendor, then of course name it directly.
-- A course about "Agile Methodologies", for example, can name things like "Scrum", "Kanban", etc. directly.
-- This doesn't mean you shouldn't teach those topics. For example, you could have chapters like "Cloud Computing", "Relational Databases", "Data Analysis", etc. without naming specific vendors/tools.
+Do not try to keep different subjects at similar lengths.
 
-# Scope & Granularity Guidelines
+Broad fields should often be much larger than narrower methods or tools.
 
-- Prefer **concrete, course-linked** chapter scopes (e.g., "Forms & Validation" rather than "Advanced Miscellaneous").
-- Where the field spans multiple modalities (e.g., theory + tools + ops), make that explicit with separate chapters.
-- Where safety or compliance applies, include a dedicated chapter.
-- Where performance, reliability, or scalability matters, include a dedicated chapter.
+As a rough guide:
+
+- focused subset: often `10-18` chapters
+- narrow but operationally deep subject: often `12-20` chapters
+- medium-sized domain: often `15-25` chapters
+- broad field with many canonical pillars: often `22-35` chapters or more
+
+These are guide rails, not quotas.
+
+## Step 3: Enumerate Canonical Pillars
+
+Identify the major areas that a serious learner would be expected to know.
+
+Examples of canonical pillars:
+
+- foundational ideas
+- core systems
+- major mechanisms
+- central subfields
+- formal foundations
+- essential methods
+- production, clinical, institutional, or operational realities
+- applications or specializations that complete the picture
+
+Do not confuse supporting details with pillars.
+
+## Step 4: Rank Pillars by Centrality
+
+Classify the canonical pillars into three buckets:
+
+- `core trunk`
+- `important extension`
+- `specialized or frontier`
+
+Definitions:
+
+- `core trunk`: pillars that serious experts would expect in any strong curriculum and whose absence would make the course feel obviously incomplete
+- `important extension`: substantial areas that deepen the field, broaden practice, or connect it to real contexts, but are not the absolute center of the discipline
+- `specialized or frontier`: niche, emerging, prestige, or advanced areas that matter only after the core trunk is secure
+
+Rules:
+
+- The curriculum must fully cover the `core trunk` before it spends chapter budget on `specialized or frontier` areas.
+- For broad fields, most chapters should belong to the `core trunk`.
+- If experts would notice a missing central pillar and immediately doubt the seriousness of the course, that pillar belongs in the `core trunk`.
+- Do not let fashionable, impressive-sounding, or peripheral topics displace the foundations that most shape real expertise.
+- If you must choose what to cut, cut `specialized or frontier` topics before cutting the `core trunk`.
+
+## Step 5: Decide Chapter Boundaries
+
+Create chapter boundaries based on substance.
+
+Rules:
+
+- If a canonical pillar is central and large, it deserves its own chapter.
+- Do not merge major pillars just because the course looks cleaner that way.
+- If a chapter title bundles several major ideas that could each support a substantial lesson set, split it.
+- Closely coupled topics can share a chapter when they naturally belong together.
+- Supporting details should live inside the right pillar instead of becoming their own thin chapter.
+- Avoid catch-all chapters like `Advanced Topics`, `Special Topics`, or `Areas and Specializations` when they simply bundle unrelated domains.
+- For broad fields, prefer separating central pillars over bundling them into elegant survey chapters.
+- If a chapter combines one core pillar with one extension or frontier pillar, split them unless they are inseparable in practice.
+
+# Subject-Shape Guidance
+
+## 1. Method / framework / tool / system of work
+
+- The opening must explain why this exists, what pain or constraint created it, and what problem it was designed to solve.
+- Include origin or history when it helps explain purpose, tradeoffs, or design choices.
+- Move from origin and purpose into mechanics, operation, metrics, decision-making, implementation, failure modes, adaptation, and evolution.
+- Operational depth matters more than forced brevity.
+
+## 2. Craft / profession / engineering domain
+
+- Show what practitioners actually build, operate, diagnose, design, or improve.
+- Preserve the field's major technical pillars as visible chapters.
+- Include the realities of production, reliability, scale, quality, tradeoffs, and maintenance when they are part of serious practice.
+- Cover the full professional chain from foundations to building systems to operating, debugging, improving, and scaling them in real environments.
+- End with concrete advanced areas, specializations, or contexts of practice that complete the field.
+
+## 3. Formal / scientific / technical field
+
+- Preserve the field's real breadth instead of compressing it into a smart survey.
+- Cover foundations, mechanisms, systems or domains, methods, analysis, and real applied or translational paths.
+- The opening should connect the field to real phenomena, systems, or problems, not just taxonomy.
+- A strong learner should come out looking serious to researchers, engineers, clinicians, or other experts in the field.
+- When relevant, cover the full chain from small-scale foundations to larger systems, behavior or function, methods of inquiry, pathology or failure, and intervention or application.
+
+## 4. Humanities / social science / law / history field
+
+- Cover core concepts, major periods, schools, structures, institutions, texts, or debates that define the field.
+- Include the field's methods of interpretation, analysis, or inquiry when they are part of serious mastery.
+- Connect the subject to real social, political, legal, cultural, or historical consequences.
+
+## 5. Language / communication / creative practice
+
+- Cover foundations, structure, expression, interpretation, technique, and real usage or performance contexts.
+- Build from essential building blocks toward fluent, persuasive, or professional practice.
+- Include advanced styles, domains, or forms when they materially complete the course.
+
+## 6. Hobby / culture / interest topic
+
+- Build a complete course for serious mastery of the topic itself.
+- Preserve a real beginning, middle, and end.
+- Do not force career framing where it does not belong.
+
+# Shared Rules
+
+- Cover the major knowledge and skills a learner would genuinely need to become strong in `COURSE_TITLE`.
+- Prefer a richer serious curriculum over a compressed elegant survey.
+- Keep every chapter clearly tied to `COURSE_TITLE`.
+- Avoid generic chapters that could be copied into many unrelated courses.
+- Avoid overlap. If two chapters would naturally contain many of the same lessons, merge them or sharpen their scopes.
+- Keep the curriculum modern and relevant, but do not replace canonical foundations with trends.
+- Be vendor neutral unless a vendor, platform, or branded method is the subject itself.
+- No capstones, projects, portfolios, quizzes, study-skills chapters, or generic professional-development chapters.
+- Prefer the central reality of the field over prestige, novelty, or trendiness.
+- If a field has a strong practical spine, do not underweight it in favor of abstract overview or niche topics.
+- Context and history are not filler when they help the learner understand why the field exists, what pressures shaped it, and why its pillars matter.
+
+## Opening
+
+The opening chapters matter most.
+
+They should make the learner feel oriented, curious, and capable without making the field softer than it really is.
+
+The opening should clarify:
+
+- what this subject is really about
+- why it matters
+- how it emerged, when that context helps explain the field
+- what real problems, systems, phenomena, or practices define it
+- what mental map the learner needs for the rest of the course
+
+Rules for the opening:
+
+- Start with the real subject, not detached generic meta.
+- Do not open a broad field with a vague chapter like `What is X` or `What X solves`.
+- If historical context helps a beginner stop feeling lost, include it early.
+- When relevant, explain how the subject emerged, what problems or constraints gave rise to it, and which turning points shaped its current form.
+- Treat history as part of orientation when it explains the present structure of the field, not as a detached chronology lesson.
+- Reach actual subject matter immediately.
+- By chapter 2, the learner should already be inside the field's real mechanics, systems, or practice.
+- Do not turn chapter 1 into an encyclopedia of the whole field.
+- For methods, frameworks, and systems of work, explain origin and purpose early when they are part of understanding the method.
+- For broad fields, the opening can use concrete historical context to make the field legible before diving deeper into foundations.
+
+## Progression
+
+The course should feel like a real arc:
+
+- orientation and entry point
+- foundational building blocks
+- core pillars of the field
+- deeper systems, mechanisms, methods, or practice
+- advanced domains
+- applications, contexts, or specializations that make the course feel complete
+
+Each chapter should make the next chapter feel natural.
+
+## Scope
+
+Teach the subject itself, not generic academic or professional filler around it.
+
+That means:
+
+- avoid generic chapters like scientific thinking, academic writing, soft skills, career advice, or generic productivity
+- if methods, ethics, regulation, institutions, tools, or careers matter, scope them specifically to `COURSE_TITLE`
+- include later chapters about applied contexts or next paths when they are genuinely part of mastering the subject
+
+# Writing Rules
+
+## Title
+
+- Short, specific, and concrete
+- Avoid rhetorical or bird's-eye-view titles that talk about the field from outside
+- Avoid numbered suffixes like `I`, `II`, `III`, `Part 1`, `Part 2`
+- If a shorter title is clear enough, prefer the shorter title
+
+## Description
+
+- `1-2` sentences
+- Straight to the point
+- Describe what the chapter covers, not what the learner will do
+- Do not use filler like `learn`, `understand`, `explore`, `introduction to`, `basics of`, `comprehensive guide to`
+- If the chapter is broad, use the description to narrow it
+
+# Final Check
+
+Before finishing, verify:
+
+- Does this course cover the real breadth of `COURSE_TITLE`?
+- Does the chapter count match the true scope of the subject instead of an arbitrary target?
+- Will a beginner feel oriented after the first one or two chapters?
+- Does the opening give context without becoming generic meta or a taxonomy dump?
+- Have I fully covered the `core trunk` of the field before spending chapters on extensions or frontier areas?
+- Would serious experts see any obvious missing core pillar?
+- Have I preserved major canonical pillars instead of merging them for convenience?
+- Does each chapter have a distinct job in the curriculum?
+- Does the curriculum feel serious rather than shallow?
+- Does the course have a real beginning, middle, and end?
+- If a strong learner mastered this curriculum, would serious people in the field be impressed?
 
 # Output Format
 
-Each chapter must include **exactly two fields**:
+Each chapter must include exactly two fields:
 
-- **Title** — short, specific, and professional (see "Examples" section).
-- **Description** — 1–2 sentences describing what topics the chapter will cover. Go straight to the point (see "Examples" section).
-
-## Examples
-
-### Title
-
-Good chapter titles include:
-
-- "How the web works", "HTML", "CSS", "Responsive Design", "JavaScript", etc.
-- Just "HTML" is better than "HTML Structure and Semantics" (structure and semantics are implied if this is the only HTML chapter).
-- "Lean Startup" is better than "The Lean Startup Methodology: An Overview" (too verbose)
-
-Avoid generic titles that could belong to many unrelated courses unless they are explicitly the course subject. For example, "Scientific Thinking", "Academic Communication", or "Career Development" are usually too generic for a course about biology, chemistry, or psychology.
-
-**NEVER use numbered suffixes** like "I", "II", "III" (or "Part 1", "Part 2") in chapter titles. This is a university catalog convention that tells the learner nothing about what's inside. Instead, use specific titles that describe the actual content of each chapter.
-
-- ❌ "Organic Chemistry I", "Organic Chemistry II" → ✅ "Organic Structure and Reactivity", "Organic Reactions and Synthesis"
-- ❌ "Calculus I", "Calculus II" → ✅ "Calculus of One Variable", "Multivariable Calculus"
-
-**TIP:** Go straight to the point. Avoid verbose titles. If necessary, add details in the description instead.
-
-### Description
-
-- NEVER use fluff/fillers/unnecessary words like "learn", "understand", "explore", "introduction to", "basics of", "comprehensive guide to", etc.
-
-Good chapter descriptions:
-
-- "Structure and semantics of web content using HTML: Elements, attributes, forms, multimedia, and accessibility."
-- "Types of telescopes and optical systems: Refractors, reflectors, and advanced designs like adaptive optics."
-- "Properties of matter, states, and phase transitions." is better than "Explore the definition of Chemistry, properties of matter, states, and phase transitions." - "Explore the definition of Chemistry" are filler/unnecessary words.
-
-# Last Check
-
-Before finishing this course, review the entire content and ask yourself:
-
-- "Does this curriculum stay tightly focused on `COURSE_TITLE`?" If the answer is "no," remove or rewrite the off-topic chapters.
-- "Do the opening chapters cover the canonical topics learners expect from `COURSE_TITLE`?" If the answer is "no," fix the order and coverage.
-- "Am I adding generic chapters that could fit many unrelated courses unchanged?" If the answer is "yes," remove them or scope them specifically to `COURSE_TITLE`.
-- "Am I missing any important chapters or topics?" If the answer is "yes," add them.
-- "Does this curriculum have enough depth for real mastery of the subject?" If the answer is "no," add more depth to the chapters or add new chapters as needed.
-- "Does the first chapter dive into concrete subject content, or does it describe/overview the field?" If it describes the field, replace it with a chapter that teaches actual content.
-- "Do any two chapters overlap significantly in scope?" If the answer is "yes," merge them or sharpen their scopes so each chapter covers a distinct domain.
-
-Make sure this is a focused, complete, and high-quality curriculum for this subject.
+- `title`
+- `description`
