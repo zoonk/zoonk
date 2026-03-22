@@ -243,6 +243,22 @@ export function extractUniqueSentenceWords(sentences: string[]): string[] {
   return [...new Set(words)];
 }
 
+/**
+ * Capitalize the first letter of a string without mutating the rest.
+ * Needed after stripping a leading `{{NAME}}` placeholder so the
+ * remaining sentence still starts with an uppercase letter.
+ */
+function capitalizeFirst(text: string): string {
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
+/**
+ * Replace `{{NAME}}` placeholders with the user's display name.
+ * When the user is unauthenticated (`name` is null), strip the
+ * placeholder and any surrounding comma-space punctuation, then
+ * capitalize the result so sentences that started with `{{NAME}}`
+ * still begin with an uppercase letter.
+ */
 export function replaceNamePlaceholder(text: string, name: string | null): string {
   if (!text.includes(NAME_PLACEHOLDER)) {
     return text;
@@ -252,9 +268,11 @@ export function replaceNamePlaceholder(text: string, name: string | null): strin
     return text.replaceAll(NAME_PLACEHOLDER, name);
   }
 
-  return text
+  const stripped = text
     .replaceAll(/\{\{NAME\}\},\s*/g, "")
     .replaceAll(/,\s*\{\{NAME\}\}/g, "")
     .replaceAll(NAME_PLACEHOLDER, "")
     .trim();
+
+  return capitalizeFirst(stripped);
 }

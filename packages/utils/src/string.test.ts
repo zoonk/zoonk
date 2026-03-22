@@ -500,7 +500,17 @@ describe(replaceNamePlaceholder, () => {
   });
 
   test("strips standalone {{NAME}} when name is null", () => {
-    expect(replaceNamePlaceholder("{{NAME}} welcome back", null)).toBe("welcome back");
+    expect(replaceNamePlaceholder("{{NAME}} welcome back", null)).toBe("Welcome back");
+  });
+
+  test("capitalizes first letter after stripping leading {{NAME}} with comma", () => {
+    expect(replaceNamePlaceholder("{{NAME}}, welcome back!", null)).toBe("Welcome back!");
+  });
+
+  test("does not double-capitalize when remainder already starts uppercase", () => {
+    expect(replaceNamePlaceholder("{{NAME}}, I think we have a problem.", null)).toBe(
+      "I think we have a problem.",
+    );
   });
 
   test("returns original text when no placeholder present", () => {
