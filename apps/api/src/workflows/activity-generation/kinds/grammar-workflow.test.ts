@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
-import { generateActivityGrammar } from "@zoonk/ai/tasks/activities/language/grammar";
+import { generateActivityGrammarContent } from "@zoonk/ai/tasks/activities/language/grammar-content";
+import { generateActivityGrammarEnrichment } from "@zoonk/ai/tasks/activities/language/grammar-enrichment";
 import { prisma } from "@zoonk/db";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
@@ -22,34 +23,50 @@ vi.mock("workflow", () => ({
   workflowStep: vi.fn().mockImplementation((_name: string, fn: unknown) => fn),
 }));
 
-vi.mock("@zoonk/ai/tasks/activities/language/grammar", () => ({
-  generateActivityGrammar: vi.fn().mockResolvedValue({
+vi.mock("@zoonk/ai/tasks/activities/language/grammar-content", () => ({
+  generateActivityGrammarContent: vi.fn().mockResolvedValue({
     data: {
-      discovery: {
-        options: [
-          { feedback: "Correct", isCorrect: true, text: "Pattern A" },
-          { feedback: "Try again", isCorrect: false, text: "Pattern B" },
-        ],
-      },
       examples: [
         {
           highlight: "hablo",
-          romanization: "ha-blo",
           sentence: "Yo hablo espanol.",
-          translation: "I speak Spanish.",
         },
       ],
       exercises: [
         {
           answers: ["hablo"],
           distractors: ["hablas"],
-          feedback: "First person singular ends with -o.",
           template: "Yo [BLANK] espanol.",
         },
       ],
+    },
+  }),
+}));
+
+vi.mock("@zoonk/ai/tasks/activities/language/grammar-enrichment", () => ({
+  generateActivityGrammarEnrichment: vi.fn().mockResolvedValue({
+    data: {
+      discovery: {
+        context: null,
+        options: [
+          { feedback: "Correct", isCorrect: true, text: "Pattern A" },
+          { feedback: "Try again", isCorrect: false, text: "Pattern B" },
+        ],
+        question: null,
+      },
+      exampleTranslations: ["I speak Spanish."],
+      exerciseFeedback: ["First person singular ends with -o."],
+      exerciseQuestions: [null],
+      exerciseTranslations: ["I [BLANK] Spanish."],
       ruleName: "Present tense endings",
       ruleSummary: "Use -o for yo.",
     },
+  }),
+}));
+
+vi.mock("@zoonk/ai/tasks/activities/language/romanization", () => ({
+  generateActivityRomanization: vi.fn().mockResolvedValue({
+    data: { romanizations: [] },
   }),
 }));
 
@@ -165,8 +182,8 @@ describe(grammarActivityWorkflow, () => {
     expect(dbActivity?.generationStatus).toBe("completed");
   });
 
-  test("sets grammar status to 'failed' when AI throws", async () => {
-    vi.mocked(generateActivityGrammar).mockRejectedValueOnce(new Error("AI failed"));
+  test("sets grammar status to 'failed' when content AI throws", async () => {
+    vi.mocked(generateActivityGrammarContent).mockRejectedValueOnce(new Error("AI failed"));
 
     const lesson = await lessonFixture({
       chapterId: chapter.id,
@@ -191,22 +208,47 @@ describe(grammarActivityWorkflow, () => {
     expect(dbActivity?.generationStatus).toBe("failed");
   });
 
-  test("sets grammar status to 'failed' when grammar payload is empty", async () => {
-    vi.mocked(generateActivityGrammar).mockResolvedValueOnce({
+  test("sets grammar status to 'failed' when content payload is empty", async () => {
+    vi.mocked(generateActivityGrammarContent).mockResolvedValueOnce({
       data: {
-        discovery: { options: [] },
         examples: [],
         exercises: [],
-        ruleName: "",
-        ruleSummary: "",
       },
-    } as unknown as Awaited<ReturnType<typeof generateActivityGrammar>>);
+    } as unknown as Awaited<ReturnType<typeof generateActivityGrammarContent>>);
 
     const lesson = await lessonFixture({
       chapterId: chapter.id,
       kind: "language",
       organizationId,
       title: `Grammar Empty ${randomUUID()}`,
+    });
+
+    const activity = await activityFixture({
+      generationStatus: "pending",
+      kind: "grammar",
+      language: "en",
+      lessonId: lesson.id,
+      organizationId,
+      title: `Grammar ${randomUUID()}`,
+    });
+
+    const activities = await fetchLessonActivities(lesson.id);
+    await grammarActivityWorkflow(activities, "test-run-id", [], []);
+
+    const dbActivity = await prisma.activity.findUnique({ where: { id: activity.id } });
+    expect(dbActivity?.generationStatus).toBe("failed");
+  });
+
+  test("sets grammar status to 'failed' when enrichment AI throws", async () => {
+    vi.mocked(generateActivityGrammarEnrichment).mockRejectedValueOnce(
+      new Error("Enrichment failed"),
+    );
+
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `Grammar EnrichFail ${randomUUID()}`,
     });
 
     const activity = await activityFixture({
@@ -245,6 +287,6 @@ describe(grammarActivityWorkflow, () => {
     const activities = await fetchLessonActivities(lesson.id);
     await grammarActivityWorkflow(activities, "test-run-id", [], []);
 
-    expect(generateActivityGrammar).not.toHaveBeenCalled();
+    expect(generateActivityGrammarContent).not.toHaveBeenCalled();
   });
 });

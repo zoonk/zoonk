@@ -1,7 +1,9 @@
 import { type VocabularyWord } from "@zoonk/ai/tasks/activities/language/vocabulary";
+import { settled } from "@zoonk/utils/settled";
 import { completeActivityStep } from "../steps/complete-activity-step";
 import { generateReadingAudioStep } from "../steps/generate-reading-audio-step";
 import { generateReadingContentStep } from "../steps/generate-reading-content-step";
+import { generateReadingRomanizationStep } from "../steps/generate-reading-romanization-step";
 import { generateSentenceWordAudioStep } from "../steps/generate-sentence-word-audio-step";
 import { generateSentenceWordMetadataStep } from "../steps/generate-sentence-word-metadata-step";
 import { type LessonActivity } from "../steps/get-lesson-activities-step";
@@ -29,8 +31,15 @@ export async function readingActivityWorkflow(
 
   const { savedSentences } = await saveReadingSentencesStep(activities, sentences);
 
-  const { sentenceAudioIds } = await generateReadingAudioStep(activities, savedSentences);
-  await updateReadingEnrichmentsStep(activities, savedSentences, sentenceAudioIds);
+  const [audioResult, romanizationResult] = await Promise.allSettled([
+    generateReadingAudioStep(activities, savedSentences),
+    generateReadingRomanizationStep(activities, savedSentences),
+  ]);
+
+  const { sentenceAudioIds } = settled(audioResult, { sentenceAudioIds: {} });
+  const { romanizations } = settled(romanizationResult, { romanizations: {} });
+
+  await updateReadingEnrichmentsStep(activities, savedSentences, sentenceAudioIds, romanizations);
 
   const { wordMetadata } = await generateSentenceWordMetadataStep(activities, savedSentences);
 

@@ -4,6 +4,7 @@ import { completeActivityStep } from "../steps/complete-activity-step";
 import { generateVocabularyAudioStep } from "../steps/generate-vocabulary-audio-step";
 import { generateVocabularyContentStep } from "../steps/generate-vocabulary-content-step";
 import { generateVocabularyPronunciationStep } from "../steps/generate-vocabulary-pronunciation-step";
+import { generateVocabularyRomanizationStep } from "../steps/generate-vocabulary-romanization-step";
 import { type LessonActivity } from "../steps/get-lesson-activities-step";
 import { saveVocabularyWordsStep } from "../steps/save-vocabulary-words-step";
 import { updateVocabularyEnrichmentsStep } from "../steps/update-vocabulary-enrichments-step";
@@ -23,17 +24,26 @@ export async function vocabularyActivityWorkflow(
     neighboringConcepts,
   );
 
-  const [saveWordsResult, pronunciationResult, audioResult] = await Promise.allSettled([
-    saveVocabularyWordsStep(activities, words, workflowRunId),
-    generateVocabularyPronunciationStep(activities, words),
-    generateVocabularyAudioStep(activities, words),
-  ]);
+  const [saveWordsResult, pronunciationResult, audioResult, romanizationResult] =
+    await Promise.allSettled([
+      saveVocabularyWordsStep(activities, words, workflowRunId),
+      generateVocabularyPronunciationStep(activities, words),
+      generateVocabularyAudioStep(activities, words),
+      generateVocabularyRomanizationStep(activities, words),
+    ]);
 
   const { savedWords } = settled(saveWordsResult, { savedWords: [] });
   const { pronunciations } = settled(pronunciationResult, { pronunciations: {} });
   const { wordAudioIds } = settled(audioResult, { wordAudioIds: {} });
+  const { romanizations } = settled(romanizationResult, { romanizations: {} });
 
-  await updateVocabularyEnrichmentsStep(activities, savedWords, pronunciations, wordAudioIds);
+  await updateVocabularyEnrichmentsStep(
+    activities,
+    savedWords,
+    pronunciations,
+    wordAudioIds,
+    romanizations,
+  );
   await completeActivityStep(activities, workflowRunId, "vocabulary");
   await completeActivityStep(activities, workflowRunId, "translation");
 

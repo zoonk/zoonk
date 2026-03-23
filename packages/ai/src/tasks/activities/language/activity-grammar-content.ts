@@ -1,50 +1,33 @@
 import "server-only";
 import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
+import { getLanguageName } from "@zoonk/utils/languages";
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import { formatConceptLines } from "../config";
-import { getLanguagePromptContext } from "./_utils/language-prompt-context";
-import systemPrompt from "./activity-grammar.prompt.md";
+import systemPrompt from "./activity-grammar-content.prompt.md";
 
 const DEFAULT_MODEL = process.env.AI_MODEL_ACTIVITY_GRAMMAR ?? "google/gemini-3-flash";
 const FALLBACK_MODELS = ["anthropic/claude-sonnet-4.6", "openai/gpt-5.4"];
 
 const schema = z.object({
-  discovery: z.object({
-    context: z.string().nullable(),
-    options: z.array(
-      z.object({
-        feedback: z.string(),
-        isCorrect: z.boolean(),
-        text: z.string(),
-      }),
-    ),
-    question: z.string().nullable(),
-  }),
   examples: z.array(
     z.object({
       highlight: z.string(),
-      romanization: z.string().nullable(),
       sentence: z.string(),
-      translation: z.string(),
     }),
   ),
   exercises: z.array(
     z.object({
       answers: z.array(z.string()),
       distractors: z.array(z.string()),
-      feedback: z.string(),
-      question: z.string().nullable(),
       template: z.string(),
     }),
   ),
-  ruleName: z.string(),
-  ruleSummary: z.string(),
 });
 
-export type ActivityGrammarSchema = z.infer<typeof schema>;
+export type ActivityGrammarContentSchema = z.infer<typeof schema>;
 
-export type ActivityGrammarParams = {
+export type ActivityGrammarContentParams = {
   chapterTitle: string;
   concepts?: string[];
   lessonDescription: string;
@@ -53,11 +36,17 @@ export type ActivityGrammarParams = {
   neighboringConcepts?: string[];
   reasoningEffort?: ReasoningEffort;
   targetLanguage: string;
-  userLanguage: string;
   useFallback?: boolean;
 };
 
-export async function generateActivityGrammar({
+/**
+ * Generates the monolingual (TARGET_LANGUAGE only) portion of a grammar activity.
+ * Produces example sentences with highlights and fill-in-the-blank exercises
+ * without any translations, romanization, or user-language explanations.
+ * Those are added by a separate enrichment task so the two concerns
+ * can run on different models and be cached independently.
+ */
+export async function generateActivityGrammarContent({
   chapterTitle,
   concepts = [],
   lessonDescription,
@@ -66,19 +55,17 @@ export async function generateActivityGrammar({
   neighboringConcepts = [],
   reasoningEffort,
   targetLanguage,
-  userLanguage,
   useFallback = true,
-}: ActivityGrammarParams) {
-  const promptContext = getLanguagePromptContext({ targetLanguage, userLanguage });
+}: ActivityGrammarContentParams) {
+  const targetLanguageName = getLanguageName({ targetLanguage });
 
-  const userPrompt = `TARGET_LANGUAGE: ${promptContext.targetLanguageName}
-USER_LANGUAGE: ${promptContext.userLanguage}
+  const userPrompt = `TARGET_LANGUAGE: ${targetLanguageName}
 CHAPTER_TITLE: ${chapterTitle}
 LESSON_TITLE: ${lessonTitle}
 LESSON_DESCRIPTION: ${lessonDescription}
 ${formatConceptLines(concepts, neighboringConcepts)}
 
-Generate a Pattern Discovery grammar activity for this lesson. Include 3-4 examples demonstrating the grammar pattern, one discovery task, a brief rule summary, and 2-3 fill-in-the-blank practice exercises.`;
+Generate grammar examples and fill-in-the-blank exercises for this lesson. Include 3-4 examples demonstrating the grammar pattern and 2-3 practice exercises.`;
 
   const providerOptions = buildProviderOptions({
     fallbackModels: FALLBACK_MODELS,

@@ -10,6 +10,7 @@ export async function updateReadingEnrichmentsStep(
   activities: LessonActivity[],
   savedSentences: SavedSentence[],
   sentenceAudioIds: Record<string, bigint>,
+  romanizations: Record<string, string>,
 ): Promise<void> {
   "use step";
 
@@ -22,10 +23,13 @@ export async function updateReadingEnrichmentsStep(
   await streamStatus({ status: "started", step: "updateSentenceEnrichments" });
 
   const updates = savedSentences
-    .filter((saved) => sentenceAudioIds[saved.sentence])
+    .filter((saved) => sentenceAudioIds[saved.sentence] || romanizations[saved.sentence])
     .map((saved) =>
       prisma.sentence.update({
-        data: { sentenceAudioId: sentenceAudioIds[saved.sentence] ?? null },
+        data: {
+          romanization: romanizations[saved.sentence],
+          sentenceAudioId: sentenceAudioIds[saved.sentence] ?? null,
+        },
         where: { id: saved.sentenceId },
       }),
     );

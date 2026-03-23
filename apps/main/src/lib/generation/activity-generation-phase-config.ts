@@ -23,9 +23,6 @@ export type PhaseName =
 export type FirstActivityKind = "explanation" | "custom" | "vocabulary";
 
 const CUSTOM_INFERENCE_STEPS = new Set(["generateCustomContent", "setCustomAsCompleted"]);
-const WRITING_ONLY_LANGUAGE_STEP_MAP: Partial<Record<ActivityKind, ActivityStepName>> = {
-  grammar: "generateGrammarContent",
-};
 
 export function inferFirstActivityKind(params: {
   completedSteps: readonly string[];
@@ -118,7 +115,7 @@ const VISUALS_AS_FINISHING = [
 function getLanguagePhaseSteps(kind: ActivityKind): Record<PhaseName, ActivityStepName[]> | null {
   if (kind === "vocabulary" || kind === "translation") {
     return {
-      addingPronunciation: ["generateVocabularyPronunciation"],
+      addingPronunciation: ["generateVocabularyPronunciation", "generateVocabularyRomanization"],
       buildingWordList: [
         "setActivityAsRunning",
         "generateVocabularyContent",
@@ -131,6 +128,7 @@ function getLanguagePhaseSteps(kind: ActivityKind): Record<PhaseName, ActivitySt
           "generateVocabularyContent",
           "saveVocabularyWords",
           "generateVocabularyPronunciation",
+          "generateVocabularyRomanization",
           "generateVocabularyAudio",
         ]),
       ],
@@ -141,15 +139,27 @@ function getLanguagePhaseSteps(kind: ActivityKind): Record<PhaseName, ActivitySt
     };
   }
 
-  const writingOnlyStep = WRITING_ONLY_LANGUAGE_STEP_MAP[kind];
-
-  if (writingOnlyStep) {
+  if (kind === "grammar") {
     return {
       ...SHARED_PHASE_STEPS,
       ...NO_VISUALS_OVERRIDE,
-      finishing: [...VISUALS_AS_FINISHING, ...getFinishingSteps([writingOnlyStep])],
+      finishing: [
+        ...VISUALS_AS_FINISHING,
+        ...getFinishingSteps([
+          "generateGrammarContent",
+          "generateGrammarEnrichment",
+          "generateGrammarRomanization",
+          "saveGrammarSteps",
+        ]),
+      ],
       processingDependencies: [],
-      writingContent: ["setActivityAsRunning", writingOnlyStep],
+      writingContent: [
+        "setActivityAsRunning",
+        "generateGrammarContent",
+        "generateGrammarEnrichment",
+        "generateGrammarRomanization",
+        "saveGrammarSteps",
+      ],
     };
   }
 
@@ -165,10 +175,11 @@ function getLanguagePhaseSteps(kind: ActivityKind): Record<PhaseName, ActivitySt
           "saveSentences",
           "generateAudio",
           "updateSentenceEnrichments",
+          "generateReadingRomanization",
         ]),
       ],
       processingDependencies: [],
-      recordingAudio: ["generateAudio", "updateSentenceEnrichments"],
+      recordingAudio: ["generateAudio", "updateSentenceEnrichments", "generateReadingRomanization"],
       writingContent: [],
     };
   }
@@ -187,12 +198,13 @@ function getLanguagePhaseSteps(kind: ActivityKind): Record<PhaseName, ActivitySt
           "saveSentences",
           "generateAudio",
           "updateSentenceEnrichments",
+          "generateReadingRomanization",
           "setListeningAsCompleted",
         ]),
         "setListeningAsCompleted",
       ],
       processingDependencies: LISTENING_DEPENDENCY_STEPS,
-      recordingAudio: ["generateAudio", "updateSentenceEnrichments"],
+      recordingAudio: ["generateAudio", "updateSentenceEnrichments", "generateReadingRomanization"],
       writingContent: LISTENING_WRITING_STEPS,
     };
   }

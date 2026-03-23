@@ -3,13 +3,11 @@ import {
   getAIResultErrorReason,
 } from "@/workflows/_shared/stream-status";
 import {
-  type ActivityGrammarSchema,
-  generateActivityGrammar,
-} from "@zoonk/ai/tasks/activities/language/grammar";
-import { assertStepContent } from "@zoonk/core/steps/content-contract";
+  type ActivityGrammarContentSchema,
+  generateActivityGrammarContent,
+} from "@zoonk/ai/tasks/activities/language/grammar-content";
 import { prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
-import { emptyToNull } from "@zoonk/utils/string";
 import { z } from "zod";
 import { streamError, streamStatus } from "../stream-status";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
@@ -18,134 +16,41 @@ import { handleActivityFailureStep } from "./handle-failure-step";
 import { setActivityAsRunningStep } from "./set-activity-as-running-step";
 
 const minimumGrammarContentSchema = z.object({
-  discovery: z.object({
-    options: z.array(z.unknown()).min(1),
-  }),
   examples: z.array(z.unknown()).min(1),
   exercises: z
     .array(
       z.object({
         answers: z.array(z.string()).min(1),
-        feedback: z.string().trim().min(1),
-        template: z.string().trim().min(1),
       }),
     )
     .min(1),
-  ruleName: z.string().trim().min(1),
-  ruleSummary: z.string().trim().min(1),
 });
 
-function hasMinimumGrammarContent(data: ActivityGrammarSchema): boolean {
+function hasMinimumGrammarContent(data: ActivityGrammarContentSchema): boolean {
   return minimumGrammarContentSchema.safeParse(data).success;
 }
 
-function nullableNonEmpty(value: string | null): string | undefined {
-  if (!value || value.trim().length === 0) {
-    return undefined;
-  }
-
-  return value;
-}
-
-function buildGrammarSteps(activityId: bigint | number, data: ActivityGrammarSchema) {
-  const exampleSteps = data.examples.map((example) => {
-    const content = assertStepContent("static", {
-      highlight: example.highlight,
-      romanization: emptyToNull(example.romanization),
-      sentence: example.sentence,
-      translation: example.translation,
-      variant: "grammarExample",
-    });
-
-    return {
-      activityId,
-      content,
-      kind: "static" as const,
-    };
-  });
-
-  const discoveryQuestion = nullableNonEmpty(data.discovery.question);
-  const discoveryContext = nullableNonEmpty(data.discovery.context);
-
-  const discoveryStep = {
-    activityId,
-    content: assertStepContent("multipleChoice", {
-      ...(discoveryContext ? { context: discoveryContext } : {}),
-      kind: "core",
-      options: data.discovery.options,
-      ...(discoveryQuestion ? { question: discoveryQuestion } : {}),
-    }),
-    kind: "multipleChoice" as const,
-  };
-
-  const ruleStep = {
-    activityId,
-    content: assertStepContent("static", {
-      ruleName: data.ruleName,
-      ruleSummary: data.ruleSummary,
-      variant: "grammarRule",
-    }),
-    kind: "static" as const,
-  };
-
-  const practiceSteps = data.exercises.map((exercise) => {
-    const exerciseQuestion = nullableNonEmpty(exercise.question);
-
-    return {
-      activityId,
-      content: assertStepContent("fillBlank", {
-        answers: exercise.answers,
-        distractors: exercise.distractors,
-        feedback: exercise.feedback,
-        ...(exerciseQuestion ? { question: exerciseQuestion } : {}),
-        template: exercise.template,
-      }),
-      kind: "fillBlank" as const,
-    };
-  });
-
-  return [...exampleSteps, discoveryStep, ruleStep, ...practiceSteps].map((step, position) => ({
-    ...step,
-    isPublished: true,
-    position,
-  }));
-}
-
-async function handleGrammarError(
-  activityId: bigint | number,
-  reason: WorkflowErrorReason,
-): Promise<void> {
-  await streamError({ reason, step: "generateGrammarContent" });
-  await handleActivityFailureStep({ activityId });
-}
-
-async function saveGrammarSteps(
-  activityId: bigint | number,
-  data: ActivityGrammarSchema,
-): Promise<{ error: Error | null }> {
-  return safeAsync(() =>
-    prisma.step.createMany({
-      data: buildGrammarSteps(activityId, data),
-    }),
-  );
-}
-
+/**
+ * Generates the TARGET_LANGUAGE portion of grammar content (examples + exercises)
+ * without saving to the database. Returns the raw AI output so downstream steps
+ * can enrich it with translations and romanization before persisting.
+ */
 export async function generateGrammarContentStep(
   activities: LessonActivity[],
   workflowRunId: string,
   concepts: string[] = [],
   neighboringConcepts: string[] = [],
-): Promise<{ generated: boolean }> {
+): Promise<{ generated: boolean; grammarContent: ActivityGrammarContentSchema | null }> {
   "use step";
 
   const activity = findActivityByKind(activities, "grammar");
 
   if (!activity) {
-    return { generated: false };
+    return { generated: false, grammarContent: null };
   }
 
   if (activity.generationStatus === "completed" || activity.generationStatus === "running") {
-    return { generated: false };
+    return { generated: false, grammarContent: null };
   }
 
   if (activity.generationStatus === "failed") {
@@ -155,32 +60,26 @@ export async function generateGrammarContentStep(
   await streamStatus({ status: "started", step: "generateGrammarContent" });
   await setActivityAsRunningStep({ activityId: activity.id, workflowRunId });
 
-  const { data: result, error }: SafeReturn<{ data: ActivityGrammarSchema }> = await safeAsync(() =>
-    generateActivityGrammar({
-      chapterTitle: activity.lesson.chapter.title,
-      concepts,
-      lessonDescription: activity.lesson.description ?? "",
-      lessonTitle: activity.lesson.title,
-      neighboringConcepts,
-      targetLanguage:
-        activity.lesson.chapter.course.targetLanguage ?? activity.lesson.chapter.course.title,
-      userLanguage: activity.language,
-    }),
-  );
+  const { data: result, error }: SafeReturn<{ data: ActivityGrammarContentSchema }> =
+    await safeAsync(() =>
+      generateActivityGrammarContent({
+        chapterTitle: activity.lesson.chapter.title,
+        concepts,
+        lessonDescription: activity.lesson.description ?? "",
+        lessonTitle: activity.lesson.title,
+        neighboringConcepts,
+        targetLanguage:
+          activity.lesson.chapter.course.targetLanguage ?? activity.lesson.chapter.course.title,
+      }),
+    );
 
   if (error || !result || !hasMinimumGrammarContent(result.data)) {
-    const reason = getAIResultErrorReason(error, result);
-    await handleGrammarError(activity.id, reason);
-    return { generated: false };
-  }
-
-  const { error: saveError } = await saveGrammarSteps(activity.id, result.data);
-
-  if (saveError) {
-    await handleGrammarError(activity.id, "dbSaveFailed");
-    return { generated: false };
+    const reason: WorkflowErrorReason = getAIResultErrorReason(error, result);
+    await streamError({ reason, step: "generateGrammarContent" });
+    await handleActivityFailureStep({ activityId: activity.id });
+    return { generated: false, grammarContent: null };
   }
 
   await streamStatus({ status: "completed", step: "generateGrammarContent" });
-  return { generated: true };
+  return { generated: true, grammarContent: result.data };
 }

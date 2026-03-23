@@ -114,35 +114,15 @@ For each word, include an `alternativeTranslations` array listing other valid tr
 - German "der Papa" → translation: "Dad", alternativeTranslations: ["Daddy", "Papa"]
 - Spanish "el gato" → translation: "the cat", alternativeTranslations: [] (only one clear translation)
 
-# Romanization (for non-Roman scripts)
-
-For languages that use non-Roman writing systems (Japanese, Chinese, Korean, Arabic, Russian, Greek, Hebrew, Thai, Hindi, etc.), include the `romanization` field showing how the word is written in Roman letters.
-
-Use the standard romanization system for each language:
-
-- **Japanese**: Romaji (e.g., 猫 → "neko", ありがとう → "arigatou")
-- **Chinese**: Pinyin with tone marks (e.g., 你好 → "nǐ hǎo", 猫 → "māo")
-- **Korean**: Revised Romanization (e.g., 안녕하세요 → "annyeonghaseyo", 고양이 → "goyangi")
-- **Russian**: ISO 9 or BGN/PCGN (e.g., привет → "privet", кошка → "koshka")
-- **Arabic**: Standard romanization (e.g., مرحبا → "marhaba", قطة → "qitta")
-- **Greek**: Standard transliteration (e.g., γάτα → "gata", γεια σου → "geia sou")
-- **Thai**: Royal Thai General System (e.g., สวัสดี → "sawatdi", แมว → "maeo")
-- **Hindi**: IAST or Hunterian (e.g., नमस्ते → "namaste", बिल्ली → "billi")
-
-**For languages using Roman letters** (Spanish, French, German, Portuguese, Italian, etc.), set `romanization` to `null`.
-
-**IMPORTANT**: The `romanization` field must ONLY contain Roman/Latin letters — never characters from the original script. If the word is "猫", the romanization must be "neko" — never the original Japanese text.
-
 # Output Format
 
 Return an object with a `words` array. Each word object must include:
 
 - `word`: The word in the target language (with article for gendered nouns)
 - `translation`: The translation in `USER_LANGUAGE` (with article if applicable)
-- `romanization`: Roman letter representation for non-Roman scripts, or `null` for Roman scripts
 - `alternativeTranslations`: Array of other valid translations in the learner's language, or `[]` if none
 
-**Example for Spanish (Roman script) - romanization is null:**
+**Example for Spanish:**
 
 ```json
 {
@@ -150,20 +130,18 @@ Return an object with a `words` array. Each word object must include:
     {
       "word": "la casa",
       "translation": "the house",
-      "alternativeTranslations": ["the home"],
-      "romanization": null
+      "alternativeTranslations": ["the home"]
     },
     {
       "word": "el gato",
       "translation": "the cat",
-      "alternativeTranslations": [],
-      "romanization": null
+      "alternativeTranslations": []
     }
   ]
 }
 ```
 
-**Example for Japanese (non-Roman script) - romanization included:**
+**Example for Japanese:**
 
 ```json
 {
@@ -171,14 +149,12 @@ Return an object with a `words` array. Each word object must include:
     {
       "word": "猫",
       "translation": "o gato",
-      "alternativeTranslations": [],
-      "romanization": "neko"
+      "alternativeTranslations": []
     },
     {
       "word": "犬",
       "translation": "o cachorro",
-      "alternativeTranslations": [],
-      "romanization": "inu"
+      "alternativeTranslations": []
     }
   ]
 }

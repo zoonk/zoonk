@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { generateActivityExplanation } from "@zoonk/ai/tasks/activities/core/explanation";
-import { generateActivityGrammar } from "@zoonk/ai/tasks/activities/language/grammar";
+import { generateActivityGrammarContent } from "@zoonk/ai/tasks/activities/language/grammar-content";
 import { generateActivitySentenceVariants } from "@zoonk/ai/tasks/activities/language/sentence-variants";
 import { generateActivitySentences } from "@zoonk/ai/tasks/activities/language/sentences";
 import { generateActivityVocabulary } from "@zoonk/ai/tasks/activities/language/vocabulary";
@@ -48,46 +48,62 @@ vi.mock("@zoonk/ai/tasks/activities/language/vocabulary", () => ({
   }),
 }));
 
-vi.mock("@zoonk/ai/tasks/activities/language/grammar", () => ({
-  generateActivityGrammar: vi.fn().mockResolvedValue({
+vi.mock("@zoonk/ai/tasks/activities/language/grammar-content", () => ({
+  generateActivityGrammarContent: vi.fn().mockResolvedValue({
     data: {
-      discovery: {
-        options: [
-          { feedback: "Correct", isCorrect: true, text: "Pattern A" },
-          { feedback: "Try again", isCorrect: false, text: "Pattern B" },
-        ],
-      },
       examples: [
         {
           highlight: "hablo",
-          romanization: "ha-blo",
           sentence: "Yo hablo español.",
-          translation: "I speak Spanish.",
         },
         {
           highlight: "comes",
-          romanization: "co-mes",
           sentence: "Tú comes pan.",
-          translation: "You eat bread.",
         },
       ],
       exercises: [
         {
           answers: ["hablo"],
           distractors: ["hablas", "habla"],
-          feedback: "First person singular ends with -o.",
           template: "Yo [BLANK] español.",
         },
         {
           answers: ["comes"],
           distractors: ["como", "come"],
-          feedback: "Second person singular ends with -es.",
           template: "Tú [BLANK] pan.",
         },
       ],
+    },
+  }),
+}));
+
+vi.mock("@zoonk/ai/tasks/activities/language/grammar-enrichment", () => ({
+  generateActivityGrammarEnrichment: vi.fn().mockResolvedValue({
+    data: {
+      discovery: {
+        context: null,
+        options: [
+          { feedback: "Correct", isCorrect: true, text: "Pattern A" },
+          { feedback: "Try again", isCorrect: false, text: "Pattern B" },
+        ],
+        question: null,
+      },
+      exampleTranslations: ["I speak Spanish.", "You eat bread."],
+      exerciseFeedback: [
+        "First person singular ends with -o.",
+        "Second person singular ends with -es.",
+      ],
+      exerciseQuestions: [null, null],
+      exerciseTranslations: ["I [BLANK] Spanish.", "You [BLANK] bread."],
       ruleName: "Present tense endings",
       ruleSummary: "Use -o for yo and -es for tú in regular -er verbs.",
     },
+  }),
+}));
+
+vi.mock("@zoonk/ai/tasks/activities/language/romanization", () => ({
+  generateActivityRomanization: vi.fn().mockResolvedValue({
+    data: { romanizations: [] },
   }),
 }));
 
@@ -289,7 +305,7 @@ describe("language activity generation", () => {
 
     await activityGenerationWorkflow(testLesson.id);
 
-    expect(generateActivityGrammar).toHaveBeenCalledOnce();
+    expect(generateActivityGrammarContent).toHaveBeenCalledOnce();
 
     const dbGrammarActivity = await prisma.activity.findUnique({
       where: { id: grammarActivity.id },

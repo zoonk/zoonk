@@ -2,7 +2,7 @@ import { type VocabularyWord } from "@zoonk/ai/tasks/activities/language/vocabul
 import { assertStepContent } from "@zoonk/core/steps/content-contract";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
-import { emptyToNull, normalizePunctuation } from "@zoonk/utils/string";
+import { normalizePunctuation } from "@zoonk/utils/string";
 import { streamError, streamStatus } from "../stream-status";
 import { fetchExistingWordCasing } from "./_utils/fetch-existing-word-casing";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
@@ -42,7 +42,6 @@ function buildSaveOneWord(params: {
       create: {
         alternativeTranslations: vocabWord.alternativeTranslations,
         organizationId,
-        romanization: emptyToNull(vocabWord.romanization),
         targetLanguage,
         translation,
         userLanguage,
@@ -50,7 +49,6 @@ function buildSaveOneWord(params: {
       },
       update: {
         alternativeTranslations: vocabWord.alternativeTranslations,
-        romanization: emptyToNull(vocabWord.romanization),
         translation,
       },
       where: {
