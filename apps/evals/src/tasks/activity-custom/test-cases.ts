@@ -290,14 +290,14 @@ ${SHARED_EXPECTATIONS}
     id: "pt-cooking-preparar-massa",
     userInput: {
       activityDescription:
-        "Prepare a massa do pao, incluindo ativacao do fermento, mistura dos ingredientes e sova",
+        "Prepare a massa do pão, incluindo ativação do fermento, mistura dos ingredientes e sova",
       activityTitle: "Preparar a Massa",
-      chapterTitle: "Paes Caseiros",
-      courseTitle: "Panificacao em Casa",
+      chapterTitle: "Pães Caseiros",
+      courseTitle: "Panificação em Casa",
       language: "pt",
       lessonDescription:
-        "Aprenda a fazer pao caseiro do zero, desde a preparacao da massa ate o cozimento",
-      lessonTitle: "Fazendo Pao Caseiro",
+        "Aprenda a fazer pão caseiro do zero, desde a preparação da massa até o cozimento",
+      lessonTitle: "Fazendo Pão Caseiro",
     },
   },
   {
@@ -321,12 +321,12 @@ ${SHARED_EXPECTATIONS}
     id: "es-home-repair-fix-faucet",
     userInput: {
       activityDescription:
-        "Repara un grifo que gotea, desde cerrar el agua hasta reemplazar las piezas danadas",
+        "Repara un grifo que gotea, desde cerrar el agua hasta reemplazar las piezas dañadas",
       activityTitle: "Reparar el Grifo",
-      chapterTitle: "Reparaciones de Plomeria",
+      chapterTitle: "Reparaciones de Plomería",
       courseTitle: "Mantenimiento del Hogar",
       language: "es",
-      lessonDescription: "Guia paso a paso para reparar fugas de agua comunes en tu hogar",
+      lessonDescription: "Guía paso a paso para reparar fugas de agua comunes en tu hogar",
       lessonTitle: "Arreglar una Fuga de Agua",
     },
   },

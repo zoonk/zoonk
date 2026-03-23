@@ -281,7 +281,7 @@ ${SHARED_EXPECTATIONS}
 NATIVE LANGUAGE: English (US)
 TARGET LANGUAGE: Portuguese
 
-WORD: "parabens"
+WORD: "parabéns"
 
 This Portuguese word (congratulations) features:
 - Three syllables
@@ -306,7 +306,7 @@ ${SHARED_EXPECTATIONS}
     userInput: {
       targetLanguage: "pt",
       userLanguage: "en",
-      word: "parabens",
+      word: "parabéns",
     },
   },
   {

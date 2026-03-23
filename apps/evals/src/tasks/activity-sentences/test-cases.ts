@@ -90,7 +90,7 @@ TOPIC: Spanish sentences for greetings and introductions - using basic greeting 
 
 SCRIPT: Roman (romanization should be null)
 
-VOCABULARY WORDS PROVIDED: hola, buenos dias, buenas noches, adios, gracias
+VOCABULARY WORDS PROVIDED: hola, buenos días, buenas noches, adiós, gracias
 These words MUST appear in the generated sentences.
 
 DIFFICULTY: This is clearly a BEGINNER-level lesson. Chapter "Basic Greetings and Introductions" + Lesson "Greetings and Introductions" + simple greeting vocabulary = absolute beginner.
@@ -121,7 +121,7 @@ ${SHARED_EXPECTATIONS}
       lessonTitle: "Greetings and Introductions",
       targetLanguage: "es",
       userLanguage: "en",
-      words: ["hola", "buenos dias", "buenas noches", "adios", "gracias"],
+      words: ["hola", "buenos días", "buenas noches", "adiós", "gracias"],
     },
   },
   {
@@ -613,7 +613,7 @@ TOPIC: German sentences for daily routines - using routine action vocabulary.
 
 SCRIPT: Roman (romanization should be null)
 
-VOCABULARY WORDS PROVIDED: aufstehen, fruhstucken, arbeiten, schlafen, essen
+VOCABULARY WORDS PROVIDED: aufstehen, frühstücken, arbeiten, schlafen, essen
 These verbs MUST appear in the generated sentences.
 
 DIFFICULTY: Intermediate level. Chapter "Daily Routines" + separable prefix verbs and verb conjugation = intermediate grammar required.
@@ -636,10 +636,10 @@ ${SHARED_EXPECTATIONS}
     userInput: {
       chapterTitle: "Daily Routines",
       lessonDescription: "Learn to describe your daily routine using common German verbs.",
-      lessonTitle: "Rotinas Diarias",
+      lessonTitle: "Rotinas Diárias",
       targetLanguage: "de",
       userLanguage: "pt",
-      words: ["aufstehen", "fruhstucken", "arbeiten", "schlafen", "essen"],
+      words: ["aufstehen", "frühstücken", "arbeiten", "schlafen", "essen"],
     },
   },
   {

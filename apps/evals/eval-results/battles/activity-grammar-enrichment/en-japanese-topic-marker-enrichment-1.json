@@ -1,0 +1,131 @@
+{
+  "expectations": "\nUSER LANGUAGE: English\nTARGET LANGUAGE: Japanese\nTOPIC: Topic marker particle (は) — how it marks the topic of a sentence\n\nTOPIC-SPECIFIC CHECKS:\n- Discovery question should target topic-marking function, not vocabulary knowledge\n- Rule summary should describe what は does in the given sentences\n\n\nEVALUATION CRITERIA:\n\n1. USER-LANGUAGE OUTPUT (CRITICAL - highest priority):\n   - ALL enrichment content MUST be in the USER language\n   - Translations, discovery question, rule summary, and feedback must be in the user's language\n   - Penalize SEVERELY if enrichment content is in the target language instead of the user language\n\n2. EXAMPLE TRANSLATIONS:\n   - Must provide one translation per example in the same order\n   - Translations must be accurate and natural in the user language\n   - Number of translations must match number of examples provided\n   - Penalize if translations are inaccurate or missing\n\n3. DISCOVERY QUESTION:\n   - Must include a question testing pattern recognition, NOT memorization\n   - Must have exactly 4 options\n   - Must have exactly 1 correct option (isCorrect: true)\n   - ALL options must have feedback explaining why they are correct/incorrect\n   - Distractors should be plausible observations a learner might make\n   - Penalize if the question tests vocabulary instead of grammar understanding\n\n4. RULE NAME AND SUMMARY:\n   - Rule name should clearly identify the grammar pattern\n   - Rule summary must be maximum 2 sentences\n   - Must confirm what was discoverable from the examples\n   - Must use clear, simple language in the user's language\n   - Penalize if verbose, unclear, or introduces new concepts\n\n5. EXERCISE ENRICHMENT:\n   - exerciseFeedback: one feedback string per exercise explaining the correct answer\n   - exerciseQuestions: one question per exercise (can be null)\n   - exerciseTranslations: one translation per exercise template\n   - Array lengths must match the number of exercises provided\n   - Penalize if feedback doesn't explain why the correct answer fits the pattern\n\n6. LINGUISTIC ACCURACY (CRITICAL):\n   - All translations must be accurate\n   - Grammar explanations must be correct\n   - Feedback must be pedagogically sound\n   - Penalize SEVERELY for mistranslations or incorrect grammar explanations\n\nVALID TRANSLATION CHOICES (do NOT penalize for these):\n- Present tense vs present progressive when both are valid translations of the source tense (e.g., German/Korean present tense → English \"I go\" or \"I'm going\" are both correct)\n- Regional vocabulary preferences (e.g., \"math\" vs \"mathematics\", \"movies\" vs \"cinema\")\n- Natural idiomatic phrasing that preserves meaning without mirroring source structure word-for-word\n\nVALID EXPLANATION CHOICES (do NOT penalize for these):\n- Rule summaries using full conjugated forms (hablo, hablas) vs isolated endings (-o, -as) — both are accurate descriptions\n- General descriptions (\"depends on how the word ends\") vs specific descriptions (\"consonant vs vowel\") — both are valid if accurate\n- Different but correct grammatical terminology for the same concept\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific phrasing - accept ANY valid translations and explanations\n- Do NOT require specific vocabulary in explanations\n- FOCUS ON: user-language correctness, translation accuracy, pedagogical quality, structural completeness\n\n    ",
+  "judgedAt": "2026-03-23T22:51:47.357Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Excellent output across all dimensions. Translations are accurate ('I am a student.', 'Tanaka is a teacher.', 'Tokyo is big.' — though missing the honorific Mr./Ms. for 田中さん, which is a minor accuracy issue). Discovery question is well-framed, targets the topic-marking function, has exactly 4 options with 1 correct, and all feedback is pedagogically strong with specific redirections. The correct option feedback is particularly good, naming the specific nouns. Distractor about は being a subject marker is a very common misconception — excellent choice. Rule summary is clear, 2 sentences, mentions pronunciation, and accurately describes the pattern. Exercise feedback is detailed and explains *why* は is correct. Exercise questions are provided and helpful. Exercise translations are accurate. All content is in English. The only minor issue is omitting the honorific in 田中さん translation.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Very good output. Translations are accurate and natural ('Mr. Tanaka is a teacher.' correctly renders the honorific). Discovery question targets the right pattern. The correct option ('は shows what the sentence is about (the topic)') is accurate. Distractor about は marking the subject is a common misconception — good choice. The 'permanent facts' distractor is a bit unusual but plausible. Rule summary is 2 sentences and accurate. Exercise feedback is clear and includes the full completed sentence. Exercise questions are helpful ('Fill in the particle to make the sentence mean...'). Exercise translations are accurate. All content in English. Minor issue: the exercise feedback uses curly quotes around 'I' which suggests a formatting inconsistency, but content is solid. The discovery question's correct option feedback could be slightly more detailed.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Very good output. Translations are accurate ('Mr./Ms. Tanaka' appropriately hedges the honorific). Discovery question is well-constructed. The correct option mentions 'main subject/topic' which slightly conflates subject and topic — a minor issue since the lesson is specifically about distinguishing these concepts. Including the pronunciation (wa) in feedback and rule name is helpful but also adds information beyond what examples show (the examples don't demonstrate pronunciation). Rule summary is clear and accurate, 2 sentences. Exercise feedback is detailed and specific. Exercise questions ('Mark the topic of the sentence:') are somewhat repetitive but functional. All content in English. The 'subject/topic' wording in the correct discovery option is a slight concern pedagogically since distinguishing は (topic) from が (subject) is important.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Good, clean output. Translations are accurate. Discovery question is well-structured with good distractors (direct object misconception is excellent). Rule summary is concise — just 2 short sentences. Exercise feedback uses the 'As for...' framing which is pedagogically helpful for understanding は. Exercise questions are null, which is acceptable. All content in English. The output is perhaps slightly less detailed in its exercise feedback compared to top models, but everything is accurate and well-structured. Discovery correct option feedback is a bit brief but adequate.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Good output overall. Translations are accurate ('Tanaka is a teacher' — missing honorific for 田中さん is a minor issue). Discovery question is well-framed. The correct option ('It follows the person or place that the sentence is about') is accurate. Distractors are reasonable — the 'translates to am/is/are' misconception is a good one. Rule summary is clear, 2 sentences, and uses the 'as for...' analogy which is helpful. Exercise feedback is functional but slightly less specific — it explains that は marks the topic but doesn't explain why the distractors are wrong. Exercise questions are both null, which is acceptable. Exercise translation for 猫はかわいいです as 'Cats are cute' (generic) vs 'The cat is cute' — both are valid. All content in English.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Good output with some minor issues. Translations are accurate. Discovery question works but the distractors are somewhat weak — 'changes its form based on the word after it' and 'only used when talking about yourself' are less plausible to a real learner than misconceptions about subject marking. The correct option is accurate. Rule summary is 2 sentences and mentions pronunciation, which is helpful but goes slightly beyond what the examples show. Exercise feedback is adequate but less specific — saying 'you use the particle は to mark them as the topic' without explaining why distractors are wrong. The exercise questions are inconsistent (one null, one provided) which is acceptable per spec. Exercise translation inconsistency: first exercise translates 猫 as 'Cats' (generic) while feedback says 'cats' — consistent at least. All content in English. Overall solid but slightly less pedagogically strong than the top outputs.",
+          "score": 7.8
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "This model executed the prompt perfectly. It provided an excellent set of distractors for the discovery question that strictly adhered to the required strategies (e.g., 'Every sentence ends with です' is a perfect true but superficial observation). Furthermore, it uniquely utilized the `exerciseQuestions` field to provide highly pedagogical and natural scenario framings ('Say that the cat is cute:'), which aligns perfectly with the prompt's example. The exercise feedback clearly names the conditioning environment.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "An exceptionally strong output. The distractors are perfectly structured, and Distractor 2 ('It translates directly to the English words am, is, or are') is a brilliant, highly realistic misconception for English speakers learning Japanese. The feedback is excellent, and it properly utilizes `null` for the exercise questions as permitted. It misses a perfect score only because Model E provided slightly richer pedagogical scenario framings.",
+          "score": 9.8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "A flawless and highly compliant output. It accurately follows the distractor strategies, explicitly names the grammar conditions in the feedback ('it marks [Noun] as the topic'), and adheres strictly to the maximum two-sentence constraint for the rule summary without introducing any outside concepts. It uses `null` for the exercise questions correctly.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "A very good output that meets all major requirements. The distractors are correctly formulated according to the prompt's constraints. However, it uses the `exerciseQuestions` array to provide explicit instructions ('Fill in the particle to make the sentence mean...') rather than the requested 'optional scenario framing' (e.g., 'Say that...'). Still, the content is accurate and pedagogically sound.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Similar to Model B, this model provides a highly accurate and useful output but slightly misunderstands the `exerciseQuestions` field by providing repetitive instructions ('Mark the topic of the sentence:') instead of a scenario framing or `null`. The distractors and feedback are well-written and effective.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "This model is heavily penalized for failing to follow the discovery question formatting rules. The prompt explicitly requires Distractor 1 to be 'A true but superficial observation', but Model F provides a completely false statement ('It is only used after names of people', contradicting the 'Tokyo' example). Furthermore, the rule summary becomes slightly verbose and introduces the reading rules of the hiragana character 'ha', which goes a bit beyond what is discoverable from the examples alone.",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Best overall balance of accuracy, completeness, and prompt adherence. All required fields are present and in English, array lengths match, discovery question targets the topic-marking function, and there are exactly 4 options with 1 correct answer and feedback for each. Example and exercise translations are natural and accurate; using “Mr. Tanaka” is a strong choice. Exercise feedback is concise and focused on why は fits. Minor weakness: the rule summary adds examples not strictly necessary and the distractor 'These sentences are all describing permanent facts' is a bit weak, but still acceptable.",
+          "score": 9.4
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Very strong and highly compliant. Clear, accurate rule name and concise 2-sentence rule summary that stays within scope. Discovery question is well-formed with plausible options and good feedback. Translations are accurate and natural. Exercise feedback is concise and focused on the rule. Slightly behind Model B because the exercise questions are both null, which is allowed, but B’s optional prompts add a bit more instructional value without hurting compliance.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Accurate, complete, and pedagogically solid. Discovery question correctly focuses on topic marking, all structural requirements are met, and the explanations are strong. Exercise questions are helpful and natural. Rule summary is clear, though slightly more expansive than necessary. Small deduction because 'Tanaka is a teacher' is a bit less natural/specific than 'Mr. Tanaka is a teacher,' and some feedback is a touch wordier than the prompt’s preference for concise exercise feedback.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Good output with strong compliance overall. Discovery question is appropriate, options are plausible, and feedback is useful. Rule summary is accurate, though 'acting like “as for...” in English' is acceptable but slightly interpretive. Main weakness is translation naturalness: 'Tanaka is a teacher' is less complete than 'Mr. Tanaka' or 'Ms. Tanaka,' and 'Cats are cute' for 猫はかわいいです is valid but less straightforward than singular in this exercise context. Exercise feedback is concise but could be a little more explanatory.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Generally accurate and complete, with a good discovery question and solid rule name/summary. However, there are several small issues: 'Cats are cute' again introduces a number choice that is less direct for the exercise, the first exercise feedback says '猫' (cats), which is slightly awkward/inconsistent, and the second exercise question 'State your nationality:' adds a scenario that is not as directly tied to the sentence-building task. Still acceptable overall, but weaker pedagogically than the top entries.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Mostly strong, but it has notable prompt-adherence and clarity issues. The discovery content is good and the translations are mostly accurate. However, 'Mr./Ms. Tanaka' is awkward in a final learner-facing translation; 'Mr. Tanaka' or just 'Tanaka' would be more natural. More importantly, the rule summary goes beyond the examples with 'Everything that follows describes or says something about that topic,' which is broadly true but slightly more expansive than needed. The exercise questions 'Mark the topic of the sentence:' are not ideal for a fill-in-the-blank particle exercise. Also, the correct discovery option says 'main subject/topic,' which blurs the important topic-vs-subject distinction.",
+          "score": 7.8
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-grammar-enrichment",
+  "testCaseId": "en-japanese-topic-marker-enrichment-1"
+}

@@ -72,14 +72,14 @@ TARGET LANGUAGE: Spanish
 
 TOPIC: Present tense conjugation of regular -ar verbs.
 
-GRAMMAR PATTERN: Regular -ar verbs in Spanish follow a consistent conjugation pattern in present tense. The -ar ending is replaced with: -o (yo), -as (tu), -a (el/ella), -amos (nosotros), -an (ellos/ellas).
+GRAMMAR PATTERN: Regular -ar verbs in Spanish follow a consistent conjugation pattern in present tense. The -ar ending is replaced with: -o (yo), -as (tú), -a (él/ella), -amos (nosotros), -an (ellos/ellas).
 
 ${SHARED_EXPECTATIONS}
     `,
     id: "es-ar-verb-conjugation",
     userInput: {
       chapterTitle: "Verbos en Presente",
-      lessonDescription: "Como conjugar verbos regulares terminados en -ar en el tiempo presente",
+      lessonDescription: "Cómo conjugar verbos regulares terminados en -ar en el tiempo presente",
       lessonTitle: "Verbos Regulares -ar",
       targetLanguage: "es",
     },
@@ -147,7 +147,7 @@ ${SHARED_EXPECTATIONS}
     userInput: {
       chapterTitle: "Les adjectifs",
       lessonDescription:
-        "Comment les adjectifs en francais s'accordent en genre avec les noms qu'ils modifient",
+        "Comment les adjectifs en français s'accordent en genre avec les noms qu'ils modifient",
       lessonTitle: "Accord en genre",
       targetLanguage: "fr",
     },

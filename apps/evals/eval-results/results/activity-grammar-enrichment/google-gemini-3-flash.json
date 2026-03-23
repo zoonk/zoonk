@@ -1,0 +1,294 @@
+{
+  "modelId": "google/gemini-3-flash",
+  "results": [
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response is strong and largely correct, but there are a few minor issues. The discovery question says 'use of the character は' rather than explicitly framing it as a grammar pattern, which is slightly less ideal pedagogically. One exercise question ('State your nationality:') adds scenario framing that is acceptable but somewhat more interpretive than necessary. Also, the rule summary includes the pronunciation note ('written with the character ha, pronounced wa'), which is accurate but goes slightly beyond the narrow function-focused pattern requested by the topic-specific checks.",
+          "kind": "minorErrors",
+          "score": 8.9
+        },
+        {
+          "conclusion": "Could be improved by making the discovery prompt more explicitly about the role/function of は rather than the 'character は', and by keeping the rule summary strictly focused on what は does in these examples without the extra pronunciation note. Exercise feedback could be slightly more specific by explicitly tying the answer to the template sentence in each case.",
+          "kind": "potentialImprovements",
+          "score": 8.8
+        }
+      ],
+      "testCase": {
+        "expectations": "\nUSER LANGUAGE: English\nTARGET LANGUAGE: Japanese\nTOPIC: Topic marker particle (は) — how it marks the topic of a sentence\n\nTOPIC-SPECIFIC CHECKS:\n- Discovery question should target topic-marking function, not vocabulary knowledge\n- Rule summary should describe what は does in the given sentences\n\n\nEVALUATION CRITERIA:\n\n1. USER-LANGUAGE OUTPUT (CRITICAL - highest priority):\n   - ALL enrichment content MUST be in the USER language\n   - Translations, discovery question, rule summary, and feedback must be in the user's language\n   - Penalize SEVERELY if enrichment content is in the target language instead of the user language\n\n2. EXAMPLE TRANSLATIONS:\n   - Must provide one translation per example in the same order\n   - Translations must be accurate and natural in the user language\n   - Number of translations must match number of examples provided\n   - Penalize if translations are inaccurate or missing\n\n3. DISCOVERY QUESTION:\n   - Must include a question testing pattern recognition, NOT memorization\n   - Must have exactly 4 options\n   - Must have exactly 1 correct option (isCorrect: true)\n   - ALL options must have feedback explaining why they are correct/incorrect\n   - Distractors should be plausible observations a learner might make\n   - Penalize if the question tests vocabulary instead of grammar understanding\n\n4. RULE NAME AND SUMMARY:\n   - Rule name should clearly identify the grammar pattern\n   - Rule summary must be maximum 2 sentences\n   - Must confirm what was discoverable from the examples\n   - Must use clear, simple language in the user's language\n   - Penalize if verbose, unclear, or introduces new concepts\n\n5. EXERCISE ENRICHMENT:\n   - exerciseFeedback: one feedback string per exercise explaining the correct answer\n   - exerciseQuestions: one question per exercise (can be null)\n   - exerciseTranslations: one translation per exercise template\n   - Array lengths must match the number of exercises provided\n   - Penalize if feedback doesn't explain why the correct answer fits the pattern\n\n6. LINGUISTIC ACCURACY (CRITICAL):\n   - All translations must be accurate\n   - Grammar explanations must be correct\n   - Feedback must be pedagogically sound\n   - Penalize SEVERELY for mistranslations or incorrect grammar explanations\n\nVALID TRANSLATION CHOICES (do NOT penalize for these):\n- Present tense vs present progressive when both are valid translations of the source tense (e.g., German/Korean present tense → English \"I go\" or \"I'm going\" are both correct)\n- Regional vocabulary preferences (e.g., \"math\" vs \"mathematics\", \"movies\" vs \"cinema\")\n- Natural idiomatic phrasing that preserves meaning without mirroring source structure word-for-word\n\nVALID EXPLANATION CHOICES (do NOT penalize for these):\n- Rule summaries using full conjugated forms (hablo, hablas) vs isolated endings (-o, -as) — both are accurate descriptions\n- General descriptions (\"depends on how the word ends\") vs specific descriptions (\"consonant vs vowel\") — both are valid if accurate\n- Different but correct grammatical terminology for the same concept\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific phrasing - accept ANY valid translations and explanations\n- Do NOT require specific vocabulary in explanations\n- FOCUS ON: user-language correctness, translation accuracy, pedagogical quality, structural completeness\n\n    ",
+        "id": "en-japanese-topic-marker-enrichment-1",
+        "userInput": {
+          "chapterTitle": "Basic Particles",
+          "examples": [
+            {
+              "highlight": "は",
+              "sentence": "私は学生です。"
+            },
+            {
+              "highlight": "は",
+              "sentence": "田中さんは先生です。"
+            },
+            {
+              "highlight": "は",
+              "sentence": "東京は大きいです。"
+            }
+          ],
+          "exercises": [
+            {
+              "answers": ["は"],
+              "distractors": ["が", "を", "に"],
+              "template": "猫[BLANK]かわいいです。"
+            },
+            {
+              "answers": ["は"],
+              "distractors": ["が", "を", "で"],
+              "template": "私[BLANK]日本人です。"
+            }
+          ],
+          "lessonDescription": "The topic marker particle and how it indicates what the sentence is about",
+          "lessonTitle": "Topic Marker",
+          "targetLanguage": "ja",
+          "userLanguage": "en"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response is largely accurate and complete, but there is one concrete minor issue: the ruleSummary exceeds the stated maximum of 2 sentences only if counted by punctuation? Here it is a single sentence, so that is fine. The actual minor issue is that the rule summary introduces endings '-an (ellos/ellas)' which are not directly shown in the examples, even though they are relevant to the exercises; the instructions said not to introduce concepts beyond what the examples show for the rule summary. This is a small scope overreach rather than a factual error. Also, one exercise question says 'Say that you walk to the park:' for a sentence with 'Yo', which could momentarily suggest 'you' rather than 'I', though the translation and exercise itself make the target clear enough.",
+          "kind": "minorErrors",
+          "score": 8.7
+        },
+        {
+          "conclusion": "The output could be improved by keeping the ruleSummary strictly limited to the pattern visible in the examples, e.g. only mentioning the shown present-tense -ar changes rather than listing additional subject endings not demonstrated there. The first exerciseQuestion could also be framed more precisely as 'Say that I walk to the park:' or simply set to null, since the exercise is already self-explanatory. Otherwise, the response follows the structure well, keeps all content in English, provides exactly four discovery options with one correct answer, and gives concise pedagogically sound feedback.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\nUSER LANGUAGE: English\nTARGET LANGUAGE: Spanish\nTOPIC: Present tense -ar verb conjugation — regular verb endings that change based on the subject\n\nTOPIC-SPECIFIC CHECKS:\n- Discovery question should target conjugation patterns (how endings change), not vocabulary\n- Rule summary should describe the -ar verb pattern shown in the examples\n\n\nEVALUATION CRITERIA:\n\n1. USER-LANGUAGE OUTPUT (CRITICAL - highest priority):\n   - ALL enrichment content MUST be in the USER language\n   - Translations, discovery question, rule summary, and feedback must be in the user's language\n   - Penalize SEVERELY if enrichment content is in the target language instead of the user language\n\n2. EXAMPLE TRANSLATIONS:\n   - Must provide one translation per example in the same order\n   - Translations must be accurate and natural in the user language\n   - Number of translations must match number of examples provided\n   - Penalize if translations are inaccurate or missing\n\n3. DISCOVERY QUESTION:\n   - Must include a question testing pattern recognition, NOT memorization\n   - Must have exactly 4 options\n   - Must have exactly 1 correct option (isCorrect: true)\n   - ALL options must have feedback explaining why they are correct/incorrect\n   - Distractors should be plausible observations a learner might make\n   - Penalize if the question tests vocabulary instead of grammar understanding\n\n4. RULE NAME AND SUMMARY:\n   - Rule name should clearly identify the grammar pattern\n   - Rule summary must be maximum 2 sentences\n   - Must confirm what was discoverable from the examples\n   - Must use clear, simple language in the user's language\n   - Penalize if verbose, unclear, or introduces new concepts\n\n5. EXERCISE ENRICHMENT:\n   - exerciseFeedback: one feedback string per exercise explaining the correct answer\n   - exerciseQuestions: one question per exercise (can be null)\n   - exerciseTranslations: one translation per exercise template\n   - Array lengths must match the number of exercises provided\n   - Penalize if feedback doesn't explain why the correct answer fits the pattern\n\n6. LINGUISTIC ACCURACY (CRITICAL):\n   - All translations must be accurate\n   - Grammar explanations must be correct\n   - Feedback must be pedagogically sound\n   - Penalize SEVERELY for mistranslations or incorrect grammar explanations\n\nVALID TRANSLATION CHOICES (do NOT penalize for these):\n- Present tense vs present progressive when both are valid translations of the source tense (e.g., German/Korean present tense → English \"I go\" or \"I'm going\" are both correct)\n- Regional vocabulary preferences (e.g., \"math\" vs \"mathematics\", \"movies\" vs \"cinema\")\n- Natural idiomatic phrasing that preserves meaning without mirroring source structure word-for-word\n\nVALID EXPLANATION CHOICES (do NOT penalize for these):\n- Rule summaries using full conjugated forms (hablo, hablas) vs isolated endings (-o, -as) — both are accurate descriptions\n- General descriptions (\"depends on how the word ends\") vs specific descriptions (\"consonant vs vowel\") — both are valid if accurate\n- Different but correct grammatical terminology for the same concept\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific phrasing - accept ANY valid translations and explanations\n- Do NOT require specific vocabulary in explanations\n- FOCUS ON: user-language correctness, translation accuracy, pedagogical quality, structural completeness\n\n    ",
+        "id": "en-spanish-ar-verb-enrichment-1",
+        "userInput": {
+          "chapterTitle": "Present Tense Verbs",
+          "examples": [
+            {
+              "highlight": "hablo",
+              "sentence": "Yo hablo español."
+            },
+            {
+              "highlight": "hablas",
+              "sentence": "Tú hablas inglés."
+            },
+            {
+              "highlight": "habla",
+              "sentence": "Ella habla francés."
+            },
+            {
+              "highlight": "hablamos",
+              "sentence": "Nosotros hablamos italiano."
+            }
+          ],
+          "exercises": [
+            {
+              "answers": ["camino"],
+              "distractors": ["caminas", "camina", "caminamos"],
+              "template": "Yo [BLANK] al parque."
+            },
+            {
+              "answers": ["estudian"],
+              "distractors": ["estudio", "estudias", "estudia"],
+              "template": "Ellos [BLANK] matemáticas."
+            }
+          ],
+          "lessonDescription": "How to conjugate regular -ar verbs in the present tense, matching verb endings to subjects",
+          "lessonTitle": "Regular -ar Verbs",
+          "targetLanguage": "es",
+          "userLanguage": "en"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "There is a small linguistic imprecision in one feedback item: it says the choice depends 'inteiramente' on whether the previous word ends in a consonant or vowel. For this lesson/topic this is acceptable and matches the target pattern, but 'inteiramente' is slightly stronger than necessary pedagogically because particle choice can involve discourse nuance in broader Korean usage. This does not materially harm the exercise. Also, one exercise question is not null even though the exercise is fairly self-explanatory, but optional framing is allowed.",
+          "kind": "minorErrors",
+          "score": 9.3
+        },
+        {
+          "conclusion": "The response could be improved slightly by making the correct discovery-option feedback a bit more learner-friendly, e.g. saying 'depende de a palavra anterior terminar em consoante ou vogal' without 'inteiramente', and by keeping terminology fully simple for beginners if desired. Otherwise it is structurally complete, accurate, and well aligned with the prompt.",
+          "kind": "potentialImprovements",
+          "score": 9.4
+        }
+      ],
+      "testCase": {
+        "expectations": "\nUSER LANGUAGE: Brazilian Portuguese\nTARGET LANGUAGE: Korean\nTOPIC: Subject markers (이/가) — particles whose form depends on whether the preceding word ends in a consonant or vowel\n\nTOPIC-SPECIFIC CHECKS:\n- Discovery question should target the consonant/vowel alternation pattern\n- Rule summary should explain which marker appears in which phonological context\n\n\nEVALUATION CRITERIA:\n\n1. USER-LANGUAGE OUTPUT (CRITICAL - highest priority):\n   - ALL enrichment content MUST be in the USER language\n   - Translations, discovery question, rule summary, and feedback must be in the user's language\n   - Penalize SEVERELY if enrichment content is in the target language instead of the user language\n\n2. EXAMPLE TRANSLATIONS:\n   - Must provide one translation per example in the same order\n   - Translations must be accurate and natural in the user language\n   - Number of translations must match number of examples provided\n   - Penalize if translations are inaccurate or missing\n\n3. DISCOVERY QUESTION:\n   - Must include a question testing pattern recognition, NOT memorization\n   - Must have exactly 4 options\n   - Must have exactly 1 correct option (isCorrect: true)\n   - ALL options must have feedback explaining why they are correct/incorrect\n   - Distractors should be plausible observations a learner might make\n   - Penalize if the question tests vocabulary instead of grammar understanding\n\n4. RULE NAME AND SUMMARY:\n   - Rule name should clearly identify the grammar pattern\n   - Rule summary must be maximum 2 sentences\n   - Must confirm what was discoverable from the examples\n   - Must use clear, simple language in the user's language\n   - Penalize if verbose, unclear, or introduces new concepts\n\n5. EXERCISE ENRICHMENT:\n   - exerciseFeedback: one feedback string per exercise explaining the correct answer\n   - exerciseQuestions: one question per exercise (can be null)\n   - exerciseTranslations: one translation per exercise template\n   - Array lengths must match the number of exercises provided\n   - Penalize if feedback doesn't explain why the correct answer fits the pattern\n\n6. LINGUISTIC ACCURACY (CRITICAL):\n   - All translations must be accurate\n   - Grammar explanations must be correct\n   - Feedback must be pedagogically sound\n   - Penalize SEVERELY for mistranslations or incorrect grammar explanations\n\nVALID TRANSLATION CHOICES (do NOT penalize for these):\n- Present tense vs present progressive when both are valid translations of the source tense (e.g., German/Korean present tense → English \"I go\" or \"I'm going\" are both correct)\n- Regional vocabulary preferences (e.g., \"math\" vs \"mathematics\", \"movies\" vs \"cinema\")\n- Natural idiomatic phrasing that preserves meaning without mirroring source structure word-for-word\n\nVALID EXPLANATION CHOICES (do NOT penalize for these):\n- Rule summaries using full conjugated forms (hablo, hablas) vs isolated endings (-o, -as) — both are accurate descriptions\n- General descriptions (\"depends on how the word ends\") vs specific descriptions (\"consonant vs vowel\") — both are valid if accurate\n- Different but correct grammatical terminology for the same concept\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific phrasing - accept ANY valid translations and explanations\n- Do NOT require specific vocabulary in explanations\n- FOCUS ON: user-language correctness, translation accuracy, pedagogical quality, structural completeness\n\n    ",
+        "id": "pt-korean-subject-marker-enrichment-1",
+        "userInput": {
+          "chapterTitle": "Partículas Básicas",
+          "examples": [
+            {
+              "highlight": "이",
+              "sentence": "학생이 공부해요."
+            },
+            {
+              "highlight": "가",
+              "sentence": "고양이가 자요."
+            },
+            {
+              "highlight": "이",
+              "sentence": "선생님이 가르쳐요."
+            }
+          ],
+          "exercises": [
+            {
+              "answers": ["가"],
+              "distractors": ["이", "을", "는"],
+              "template": "아이[BLANK] 놀아요."
+            },
+            {
+              "answers": ["이"],
+              "distractors": ["가", "를", "은"],
+              "template": "음식[BLANK] 맛있어요."
+            }
+          ],
+          "lessonDescription": "Os marcadores de sujeito coreanos e como escolher qual usar de acordo com a palavra",
+          "lessonTitle": "Marcadores de Sujeito",
+          "targetLanguage": "ko",
+          "userLanguage": "pt"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The rule summary slightly extends beyond the exact evidence shown in the examples by mentioning place as a possible first element, even though the examples only show subject and time expressions. This is a minor pedagogical overreach, not a factual error. Also, the exercise translations use slightly different English aspect choices ('I am going') than the simple present used elsewhere, which is still valid but a bit less parallel.",
+          "kind": "minorErrors",
+          "score": 9.2
+        },
+        {
+          "conclusion": "Could be improved by keeping the rule summary even tighter to the examples shown (subject vs time expression only) and by making translation style slightly more consistent across items. Otherwise it is structurally complete, accurate, and well aligned with the prompt and topic-specific checks.",
+          "kind": "potentialImprovements",
+          "score": 9.4
+        }
+      ],
+      "testCase": {
+        "expectations": "\nUSER LANGUAGE: English\nTARGET LANGUAGE: German\nTOPIC: Verb-second (V2) word order — the conjugated verb must occupy the second position in German main clauses\n\nTOPIC-SPECIFIC CHECKS:\n- Discovery question should target verb placement, not vocabulary\n- Rule summary should explain the V2 word order rule\n- Exercise feedback should explain why the verb goes in second position\n\n\nEVALUATION CRITERIA:\n\n1. USER-LANGUAGE OUTPUT (CRITICAL - highest priority):\n   - ALL enrichment content MUST be in the USER language\n   - Translations, discovery question, rule summary, and feedback must be in the user's language\n   - Penalize SEVERELY if enrichment content is in the target language instead of the user language\n\n2. EXAMPLE TRANSLATIONS:\n   - Must provide one translation per example in the same order\n   - Translations must be accurate and natural in the user language\n   - Number of translations must match number of examples provided\n   - Penalize if translations are inaccurate or missing\n\n3. DISCOVERY QUESTION:\n   - Must include a question testing pattern recognition, NOT memorization\n   - Must have exactly 4 options\n   - Must have exactly 1 correct option (isCorrect: true)\n   - ALL options must have feedback explaining why they are correct/incorrect\n   - Distractors should be plausible observations a learner might make\n   - Penalize if the question tests vocabulary instead of grammar understanding\n\n4. RULE NAME AND SUMMARY:\n   - Rule name should clearly identify the grammar pattern\n   - Rule summary must be maximum 2 sentences\n   - Must confirm what was discoverable from the examples\n   - Must use clear, simple language in the user's language\n   - Penalize if verbose, unclear, or introduces new concepts\n\n5. EXERCISE ENRICHMENT:\n   - exerciseFeedback: one feedback string per exercise explaining the correct answer\n   - exerciseQuestions: one question per exercise (can be null)\n   - exerciseTranslations: one translation per exercise template\n   - Array lengths must match the number of exercises provided\n   - Penalize if feedback doesn't explain why the correct answer fits the pattern\n\n6. LINGUISTIC ACCURACY (CRITICAL):\n   - All translations must be accurate\n   - Grammar explanations must be correct\n   - Feedback must be pedagogically sound\n   - Penalize SEVERELY for mistranslations or incorrect grammar explanations\n\nVALID TRANSLATION CHOICES (do NOT penalize for these):\n- Present tense vs present progressive when both are valid translations of the source tense (e.g., German/Korean present tense → English \"I go\" or \"I'm going\" are both correct)\n- Regional vocabulary preferences (e.g., \"math\" vs \"mathematics\", \"movies\" vs \"cinema\")\n- Natural idiomatic phrasing that preserves meaning without mirroring source structure word-for-word\n\nVALID EXPLANATION CHOICES (do NOT penalize for these):\n- Rule summaries using full conjugated forms (hablo, hablas) vs isolated endings (-o, -as) — both are accurate descriptions\n- General descriptions (\"depends on how the word ends\") vs specific descriptions (\"consonant vs vowel\") — both are valid if accurate\n- Different but correct grammatical terminology for the same concept\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific phrasing - accept ANY valid translations and explanations\n- Do NOT require specific vocabulary in explanations\n- FOCUS ON: user-language correctness, translation accuracy, pedagogical quality, structural completeness\n\n    ",
+        "id": "en-german-v2-enrichment-1",
+        "userInput": {
+          "chapterTitle": "Sentence Structure",
+          "examples": [
+            {
+              "highlight": "spiele",
+              "sentence": "Ich spiele Fußball."
+            },
+            {
+              "highlight": "spielt",
+              "sentence": "Heute spielt er Tennis."
+            },
+            {
+              "highlight": "liest",
+              "sentence": "Am Abend liest sie ein Buch."
+            }
+          ],
+          "exercises": [
+            {
+              "answers": ["gehe"],
+              "distractors": ["ich gehe", "gehe ich", "gehen"],
+              "template": "Morgen [BLANK] ich ins Kino."
+            },
+            {
+              "answers": ["trinkt"],
+              "distractors": ["er trinkt", "trinkt er", "trinken"],
+              "template": "Am Morgen [BLANK] er Kaffee."
+            }
+          ],
+          "lessonDescription": "Understanding German verb-second word order in main clauses and how it differs from English",
+          "lessonTitle": "Verb Second Word Order",
+          "targetLanguage": "de",
+          "userLanguage": "en"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The output is structurally complete and entirely in Spanish, with correct array lengths and a discovery question focused on gender agreement. Minor issue: the question wording and correct option narrow the pattern to adding \"e\" for feminine forms, which matches these examples but slightly underrepresents the broader agreement concept named in the topic. Also, \"Le professeur\" can refer to a woman in French, so the feedback's claim that it is masculine because of the noun is a bit oversimplified pedagogically, though acceptable in the exercise context given the expected answer set.",
+          "kind": "minorErrors",
+          "score": 8.7
+        },
+        {
+          "conclusion": "Could be improved by making the discovery prompt a bit more general (e.g. what changes between masculine and feminine nouns) rather than centering only feminine forms, and by phrasing the first exercise feedback in terms of the required adjective form in this sentence rather than implying the noun is inherently masculine. Otherwise, translations, rule summary, and feedback are accurate and useful.",
+          "kind": "potentialImprovements",
+          "score": 9.1
+        }
+      ],
+      "testCase": {
+        "expectations": "\nUSER LANGUAGE: Spanish (Latin American)\nTARGET LANGUAGE: French\nTOPIC: Adjective gender agreement — French adjectives change form to agree with the noun's gender\n\nTOPIC-SPECIFIC CHECKS:\n- Discovery question should target gender agreement patterns, not vocabulary\n- Rule summary should describe the masculine/feminine adjective pattern shown in the examples\n\n\nEVALUATION CRITERIA:\n\n1. USER-LANGUAGE OUTPUT (CRITICAL - highest priority):\n   - ALL enrichment content MUST be in the USER language\n   - Translations, discovery question, rule summary, and feedback must be in the user's language\n   - Penalize SEVERELY if enrichment content is in the target language instead of the user language\n\n2. EXAMPLE TRANSLATIONS:\n   - Must provide one translation per example in the same order\n   - Translations must be accurate and natural in the user language\n   - Number of translations must match number of examples provided\n   - Penalize if translations are inaccurate or missing\n\n3. DISCOVERY QUESTION:\n   - Must include a question testing pattern recognition, NOT memorization\n   - Must have exactly 4 options\n   - Must have exactly 1 correct option (isCorrect: true)\n   - ALL options must have feedback explaining why they are correct/incorrect\n   - Distractors should be plausible observations a learner might make\n   - Penalize if the question tests vocabulary instead of grammar understanding\n\n4. RULE NAME AND SUMMARY:\n   - Rule name should clearly identify the grammar pattern\n   - Rule summary must be maximum 2 sentences\n   - Must confirm what was discoverable from the examples\n   - Must use clear, simple language in the user's language\n   - Penalize if verbose, unclear, or introduces new concepts\n\n5. EXERCISE ENRICHMENT:\n   - exerciseFeedback: one feedback string per exercise explaining the correct answer\n   - exerciseQuestions: one question per exercise (can be null)\n   - exerciseTranslations: one translation per exercise template\n   - Array lengths must match the number of exercises provided\n   - Penalize if feedback doesn't explain why the correct answer fits the pattern\n\n6. LINGUISTIC ACCURACY (CRITICAL):\n   - All translations must be accurate\n   - Grammar explanations must be correct\n   - Feedback must be pedagogically sound\n   - Penalize SEVERELY for mistranslations or incorrect grammar explanations\n\nVALID TRANSLATION CHOICES (do NOT penalize for these):\n- Present tense vs present progressive when both are valid translations of the source tense (e.g., German/Korean present tense → English \"I go\" or \"I'm going\" are both correct)\n- Regional vocabulary preferences (e.g., \"math\" vs \"mathematics\", \"movies\" vs \"cinema\")\n- Natural idiomatic phrasing that preserves meaning without mirroring source structure word-for-word\n\nVALID EXPLANATION CHOICES (do NOT penalize for these):\n- Rule summaries using full conjugated forms (hablo, hablas) vs isolated endings (-o, -as) — both are accurate descriptions\n- General descriptions (\"depends on how the word ends\") vs specific descriptions (\"consonant vs vowel\") — both are valid if accurate\n- Different but correct grammatical terminology for the same concept\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific phrasing - accept ANY valid translations and explanations\n- Do NOT require specific vocabulary in explanations\n- FOCUS ON: user-language correctness, translation accuracy, pedagogical quality, structural completeness\n\n    ",
+        "id": "es-french-gender-agreement-enrichment-1",
+        "userInput": {
+          "chapterTitle": "Adjetivos",
+          "examples": [
+            {
+              "highlight": "grand",
+              "sentence": "Le garçon est grand."
+            },
+            {
+              "highlight": "grande",
+              "sentence": "La fille est grande."
+            },
+            {
+              "highlight": "petit",
+              "sentence": "Le chat est petit."
+            },
+            {
+              "highlight": "petite",
+              "sentence": "La maison est petite."
+            }
+          ],
+          "exercises": [
+            {
+              "answers": ["intelligent"],
+              "distractors": ["intelligente", "intelligents", "intelligentes"],
+              "template": "Le professeur est [BLANK]."
+            },
+            {
+              "answers": ["contente"],
+              "distractors": ["content", "contents", "contentes"],
+              "template": "La femme est [BLANK]."
+            }
+          ],
+          "lessonDescription": "Cómo los adjetivos en francés se ajustan al género del sustantivo que modifican",
+          "lessonTitle": "Concordancia de Género",
+          "targetLanguage": "fr",
+          "userLanguage": "es"
+        }
+      }
+    }
+  ],
+  "taskId": "activity-grammar-enrichment"
+}

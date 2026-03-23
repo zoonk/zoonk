@@ -185,7 +185,7 @@ Return an object with a `words` array. Each word object must include:
    Pick the most common translation and use it. If you find any duplicate `word` value, remove it.
 
 2. **Clean word field - NO PARENTHETICAL CONTENT**: The `word` field must contain ONLY the vocabulary word itself (with article if applicable). NEVER add:
-   - Parenthetical disambiguation like "el cafe (la bebida)" or "bank (financial)"
+   - Parenthetical disambiguation like "el café (la bebida)" or "bank (financial)"
    - Usage notes in parentheses
    - Alternative meanings in parentheses
    - Pronunciation hints in parentheses
