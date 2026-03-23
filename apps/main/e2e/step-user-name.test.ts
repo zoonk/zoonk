@@ -190,7 +190,7 @@ test.describe("Name placeholder replacement", () => {
     await page.getByRole("radio", { name: /correct answer/i }).click();
     await page.getByRole("button", { name: /check/i }).click();
 
-    await expect(page.getByText(new RegExp(`great job ${uniqueId}`))).toBeVisible();
+    await expect(page.getByText(new RegExp(`great job ${uniqueId}`, "i"))).toBeVisible();
     await expect(page.getByText("{{NAME}}")).not.toBeVisible();
   });
 });

@@ -10,16 +10,16 @@ Given an array of texts in a target language, produce a romanization for each te
 
 Use the following romanization systems based on the target language:
 
-| Language | System                                                    | Notes                                                                  |
-| -------- | --------------------------------------------------------- | ---------------------------------------------------------------------- |
-| Japanese | Hepburn Romanization (Romaji)                             | Use macrons for long vowels (ō, ū). Particle は → "wa" as topic marker |
-| Chinese  | Hanyu Pinyin with tone marks                              | Use diacritical tone marks (ā, á, ǎ, à), not tone numbers              |
-| Korean   | Revised Romanization of Korean                            | No diacritics; follow South Korean government standard                 |
-| Russian  | BGN/PCGN romanization                                     | Preferred for readability by English speakers                          |
-| Arabic   | Standard romanization                                     | Use common scholarly conventions                                       |
-| Greek    | Standard transliteration                                  | Use common scholarly conventions                                       |
-| Thai     | Royal Thai General System (RTGS)                          | No tone marks in output                                                |
-| Hindi    | IAST (International Alphabet of Sanskrit Transliteration) | Use standard diacritics (ā, ī, ū, etc.)                                |
+| Language | System                                                    | Notes                                                                                                                                                                                    |
+| -------- | --------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Japanese | Hepburn Romanization (Romaji)                             | Use macrons for long vowels (ō, ū). Particle は → "wa" as topic marker                                                                                                                   |
+| Chinese  | Hanyu Pinyin with tone marks                              | Use diacritical tone marks (ā, á, ǎ, à), not tone numbers                                                                                                                                |
+| Korean   | Revised Romanization of Korean                            | No diacritics; follow South Korean government standard. Compound proper nouns are one word (e.g., 부산광역시 → "Busangwangyeoksi")                                                       |
+| Russian  | BGN/PCGN romanization                                     | Preferred for readability by English speakers                                                                                                                                            |
+| Arabic   | Standard romanization                                     | Use common scholarly conventions                                                                                                                                                         |
+| Greek    | Standard transliteration                                  | Use common scholarly conventions                                                                                                                                                         |
+| Thai     | Royal Thai General System (RTGS)                          | No tone marks in output                                                                                                                                                                  |
+| Hindi    | IAST (International Alphabet of Sanskrit Transliteration) | Use standard diacritics (ā, ī, ū, etc.). Apply Hindi schwa deletion — drop the inherent final 'a' where modern Hindi pronunciation does (e.g., "rām" not "rāma", "sundar" not "sundara") |
 
 For languages not listed, use the most widely accepted romanization standard.
 
@@ -52,6 +52,13 @@ If a text contains both Roman and non-Roman characters, romanize only the non-Ro
 ## 4. Preserve Sentence Structure
 
 Maintain punctuation, capitalization at sentence beginnings, and spacing conventions appropriate for the romanized form.
+
+## 5. Capitalization
+
+- Capitalize the first word of full sentences
+- Capitalize proper nouns (place names, personal names)
+- For standalone words or short phrases that are not full sentences, use lowercase unless the word is a proper noun (e.g., 日本語 → "nihongo", 大阪 → "Ōsaka")
+- Language names, nationalities, and common nouns stay lowercase even when they derive from proper nouns (e.g., "rén" not "Rén" for 人)
 
 # Language-Specific Notes
 
