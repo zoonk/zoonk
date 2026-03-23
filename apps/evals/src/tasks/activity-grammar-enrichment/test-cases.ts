@@ -112,9 +112,9 @@ ${SHARED_EXPECTATIONS}
     userInput: {
       chapterTitle: "Present Tense Verbs",
       examples: [
-        { highlight: "hablo", sentence: "Yo hablo espanol." },
-        { highlight: "hablas", sentence: "Tu hablas ingles." },
-        { highlight: "habla", sentence: "Ella habla frances." },
+        { highlight: "hablo", sentence: "Yo hablo español." },
+        { highlight: "hablas", sentence: "Tú hablas inglés." },
+        { highlight: "habla", sentence: "Ella habla francés." },
         { highlight: "hablamos", sentence: "Nosotros hablamos italiano." },
       ],
       exercises: [
@@ -155,7 +155,7 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "pt-korean-subject-marker-enrichment",
     userInput: {
-      chapterTitle: "Particulas Basicas",
+      chapterTitle: "Partículas Básicas",
       examples: [
         { highlight: "이", sentence: "학생이 공부해요." },
         { highlight: "가", sentence: "고양이가 자요." },
@@ -174,7 +174,7 @@ ${SHARED_EXPECTATIONS}
         },
       ],
       lessonDescription:
-        "Los marcadores de sujeto coreanos y como elegir cual usar segun la palabra",
+        "Los marcadores de sujeto coreanos y cómo elegir cuál usar según la palabra",
       lessonTitle: "Marcadores de Sujeto",
       targetLanguage: "ko",
       userLanguage: "pt",
@@ -263,8 +263,8 @@ ${SHARED_EXPECTATIONS}
         },
       ],
       lessonDescription:
-        "Como los adjetivos en frances se ajustan al genero del sustantivo que modifican",
-      lessonTitle: "Concordancia de Genero",
+        "Como los adjetivos en francés se ajustan al género del sustantivo que modifican",
+      lessonTitle: "Concordancia de Género",
       targetLanguage: "fr",
       userLanguage: "es",
     },

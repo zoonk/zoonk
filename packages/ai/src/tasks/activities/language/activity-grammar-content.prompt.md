@@ -77,7 +77,7 @@ Ask yourself: "What error would a learner make without knowing this rule?" The b
 **Examples of correct blank design:**
 
 - **Conjugation patterns**: Blank replaces the verb form. Options test different conjugations.
-  - Template: "Yo [BLANK] espanol." Options: "hablo", "habla", "hablan"
+  - Template: "Yo [BLANK] español." Options: "hablo", "habla", "hablan"
   - This works because learners must choose the correct conjugation.
 
 - **Word order patterns** (e.g., German V2): Blank must encompass BOTH the verb AND adjacent element to test their relative order.
