@@ -34,7 +34,7 @@ vi.mock("@zoonk/ai/tasks/activities/language/grammar-content", () => ({
       ],
       exercises: [
         {
-          answers: ["hablo"],
+          answer: "hablo",
           distractors: ["hablas"],
           template: "Yo [BLANK] espanol.",
         },

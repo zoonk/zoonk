@@ -9,15 +9,15 @@ EVALUATION CRITERIA:
    - Format tokens ([BLANK] placeholder, JSON keys) are part of the required output structure, NOT language-mixing issues
 
 2. EXAMPLES QUALITY:
-   - Must include 3-4 example sentences demonstrating the grammar pattern
+   - Must include 2-4 example sentences demonstrating the grammar pattern
    - Each example MUST have a "highlight" field isolating the grammar element
    - Examples should make the pattern discoverable without explanation
    - Sentences should be simple enough for learners to focus on the pattern
 
 3. EXERCISES - FILL-IN-THE-BLANK:
-   - Must include 2-3 fill-in-the-blank exercises
+   - Must include 1-3 fill-in-the-blank exercises
    - Each exercise MUST have exactly one [BLANK] placeholder in the template
-   - The answers array MUST contain the correct answer(s)
+   - The answer field MUST contain exactly one correct answer (a single string, not an array)
    - Distractors MUST be plausible wrong answers testing common mistakes
    - Penalize SEVERELY if exercises test different grammar than the examples
 

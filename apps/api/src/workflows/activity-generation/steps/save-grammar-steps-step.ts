@@ -76,7 +76,7 @@ function buildGrammarSteps(
     return {
       activityId,
       content: assertStepContent("fillBlank", {
-        answers: exercise.answers,
+        answers: [exercise.answer],
         distractors: exercise.distractors,
         feedback: enrichment.exerciseFeedback[index] ?? "",
         ...(exerciseQuestion ? { question: exerciseQuestion } : {}),

@@ -79,12 +79,12 @@ ${SHARED_EXPECTATIONS}
       ],
       exercises: [
         {
-          answers: ["は"],
+          answer: "は",
           distractors: ["が", "を", "に"],
           template: "猫[BLANK]かわいいです。",
         },
         {
-          answers: ["は"],
+          answer: "は",
           distractors: ["が", "を", "で"],
           template: "私[BLANK]日本人です。",
         },
@@ -119,12 +119,12 @@ ${SHARED_EXPECTATIONS}
       ],
       exercises: [
         {
-          answers: ["camino"],
+          answer: "camino",
           distractors: ["caminas", "camina", "caminamos"],
           template: "Yo [BLANK] al parque.",
         },
         {
-          answers: ["estudian"],
+          answer: "estudian",
           distractors: ["estudio", "estudias", "estudia"],
           template: "Ellos [BLANK] matemáticas.",
         },
@@ -158,12 +158,12 @@ ${SHARED_EXPECTATIONS}
       ],
       exercises: [
         {
-          answers: ["가"],
+          answer: "가",
           distractors: ["이", "을", "는"],
           template: "아이[BLANK] 놀아요.",
         },
         {
-          answers: ["이"],
+          answer: "이",
           distractors: ["가", "를", "은"],
           template: "음식[BLANK] 맛있어요.",
         },
@@ -198,12 +198,12 @@ ${SHARED_EXPECTATIONS}
       ],
       exercises: [
         {
-          answers: ["gehe"],
+          answer: "gehe",
           distractors: ["ich gehe", "gehe ich", "gehen"],
           template: "Morgen [BLANK] ich ins Kino.",
         },
         {
-          answers: ["trinkt"],
+          answer: "trinkt",
           distractors: ["er trinkt", "trinkt er", "trinken"],
           template: "Am Morgen [BLANK] er Kaffee.",
         },
@@ -238,12 +238,12 @@ ${SHARED_EXPECTATIONS}
       ],
       exercises: [
         {
-          answers: ["intelligent"],
+          answer: "intelligent",
           distractors: ["intelligente", "intelligents", "intelligentes"],
           template: "Le professeur est [BLANK].",
         },
         {
-          answers: ["contente"],
+          answer: "contente",
           distractors: ["content", "contents", "contentes"],
           template: "La femme est [BLANK].",
         },

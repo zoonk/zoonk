@@ -18,7 +18,7 @@ const schema = z.object({
   ),
   exercises: z.array(
     z.object({
-      answers: z.array(z.string()),
+      answer: z.string(),
       distractors: z.array(z.string()),
       template: z.string(),
     }),
@@ -63,9 +63,7 @@ export async function generateActivityGrammarContent({
 CHAPTER_TITLE: ${chapterTitle}
 LESSON_TITLE: ${lessonTitle}
 LESSON_DESCRIPTION: ${lessonDescription}
-${formatConceptLines(concepts, neighboringConcepts)}
-
-Generate grammar examples and fill-in-the-blank exercises for this lesson. Include 3-4 examples demonstrating the grammar pattern and 2-3 practice exercises.`;
+${formatConceptLines(concepts, neighboringConcepts)}`;
 
   const providerOptions = buildProviderOptions({
     fallbackModels: FALLBACK_MODELS,

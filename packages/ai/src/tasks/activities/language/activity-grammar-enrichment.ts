@@ -33,7 +33,7 @@ export type ActivityGrammarEnrichmentSchema = z.infer<typeof schema>;
 export type ActivityGrammarEnrichmentParams = {
   chapterTitle: string;
   examples: { highlight: string; sentence: string }[];
-  exercises: { answers: string[]; distractors: string[]; template: string }[];
+  exercises: { answer: string; distractors: string[]; template: string }[];
   lessonDescription: string;
   lessonTitle: string;
   model?: string;
@@ -76,9 +76,7 @@ EXAMPLES:
 ${JSON.stringify(examples, null, 2)}
 
 EXERCISES:
-${JSON.stringify(exercises, null, 2)}
-
-Generate all USER_LANGUAGE enrichment content for this grammar activity: translations for examples and exercises, a discovery question with options, a rule name and summary, exercise questions and feedback.`;
+${JSON.stringify(exercises, null, 2)}`;
 
   const providerOptions = buildProviderOptions({
     fallbackModels: FALLBACK_MODELS,

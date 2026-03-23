@@ -10,6 +10,7 @@ You enrich existing content. Do NOT create new examples or exercises.
 - When quoting TARGET_LANGUAGE words in explanations or feedback, keep them in their original script. Never mix scripts within a single quoted word.
 - Every output array must match the length and order of its corresponding input array.
 - Translations must be natural and idiomatic in USER_LANGUAGE, not word-for-word.
+- When a TARGET_LANGUAGE term has no exact 1:1 equivalent in USER_LANGUAGE (e.g., it covers a broader or narrower scope than any single translation), choose the closest natural equivalent for the context. If the scope difference matters for the lesson (e.g., a greeting used all day vs. one used only in the morning), convey that distinction — either by picking the right equivalent for the situation shown in the sentence, or by adding a brief parenthetical clarification.
 - For `pt` output, use Brazilian Portuguese. For `es` output, use Latin American Spanish. For `en` output, use US English.
 
 # Output Fields

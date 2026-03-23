@@ -6,7 +6,7 @@ Focus on a single grammar point. The examples should make the pattern discoverab
 
 # Output Format
 
-Return an object with `examples` (3-4 sentences with highlights) and `exercises` (2-3 fill-in-the-blank items):
+Return an object with `examples` (2-4 sentences with highlights) and `exercises` (1-3 fill-in-the-blank items):
 
 ```json
 {
@@ -27,12 +27,12 @@ Return an object with `examples` (3-4 sentences with highlights) and `exercises`
   "exercises": [
     {
       "template": "Tú [BLANK] muy bien.",
-      "answers": ["hablas"],
+      "answer": "hablas",
       "distractors": ["habla", "hablo", "hablar"]
     },
     {
       "template": "Ellos [BLANK] en la oficina.",
-      "answers": ["trabajan"],
+      "answer": "trabajan",
       "distractors": ["trabaja", "trabajo", "trabajar"]
     }
   ]
@@ -51,12 +51,12 @@ Return an object with `examples` (3-4 sentences with highlights) and `exercises`
   "exercises": [
     {
       "template": "猫[BLANK]かわいいです。",
-      "answers": ["は"],
+      "answer": "は",
       "distractors": ["が", "を", "に"]
     },
     {
       "template": "あなた[BLANK]だれですか。",
-      "answers": ["は"],
+      "answer": "は",
       "distractors": ["が", "を", "の"]
     }
   ]
@@ -65,7 +65,7 @@ Return an object with `examples` (3-4 sentences with highlights) and `exercises`
 
 # Examples
 
-Provide 3-4 sentences that clearly demonstrate the grammar pattern.
+Provide 2-4 sentences that clearly demonstrate the grammar pattern.
 
 ## Design Rules
 
@@ -92,14 +92,23 @@ The `highlight` field isolates the grammatical element being taught. Use a phras
 
 # Exercises
 
-Provide 2-3 fill-in-the-blank exercises testing the same pattern with new sentences (not copies of examples).
+Provide 1-3 fill-in-the-blank exercises testing the same pattern with new sentences (not copies of examples).
 
 ## Exercise Rules
 
-- Each exercise has exactly ONE `[BLANK]` — verify every template contains it before finalizing
-- Include 1-3 correct answers. Every answer must be correct for the EXACT SAME blank — spelling alternatives, acceptable synonyms, or equivalent forms that fit the same grammatical context. NEVER list conjugations for different persons as alternatives
+- **Each exercise must have exactly ONE `[BLANK]` and exactly ONE correct answer.** Verify every template contains exactly one `[BLANK]` before finalizing. The `answer` field is a single string — the one correct answer. Do NOT provide multiple alternatives or synonyms; design the sentence so only one answer is correct. If multiple words could fill the blank, restructure the sentence to disambiguate (e.g., add context that makes only one particle/form valid)
+- **Verify the answer fits the template.** Mentally substitute it into the `[BLANK]` and read the full sentence. If it produces an ungrammatical or unnatural sentence (e.g., because surrounding words already contain part of the expression), redesign the template
 - Include 2-4 distractors (plausible wrong options). Distractors must never include a correct answer
 - All sentences, templates, answers, and distractors must be 100% TARGET_LANGUAGE
+
+## CRITICAL: Vary the Correct Answer Across Exercises
+
+**Each exercise must have a different correct answer.** If all blanks produce the same word, the exercises test recognition once and then become trivial repetition.
+
+- For prepositions with gender/case variants (e.g., German "zum" vs "zur"), design sentences that require different forms
+- For verb conjugation, use different subjects so the conjugated form changes
+- For particles, vary the conditioning environment so the particle choice differs
+- If the pattern genuinely has only one invariable form (e.g., a fixed particle), vary what the blank covers — expand it to include surrounding context, or test the pattern in contrasting structures where a different element changes
 
 ## CRITICAL: The Blank Must Test the Actual Grammar Concept
 
@@ -133,6 +142,8 @@ Good distractors test common mistakes:
 - Wrong word order placement
 - Wrong particle or preposition
 - Base form instead of conjugated form
+
+**Every distractor must be a form a real learner would plausibly produce.** Distractors should represent actual mistakes — things learners say or write because of L1 interference, overgeneralization, or incomplete knowledge. Do not invent forms that no speaker would naturally construct (e.g., "zu das" in German — no learner would split a contraction into an ungrammatical phrase they've never encountered).
 
 # Linguistic Accuracy
 

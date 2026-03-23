@@ -20,7 +20,7 @@ const minimumGrammarContentSchema = z.object({
   exercises: z
     .array(
       z.object({
-        answers: z.array(z.string()).min(1),
+        answer: z.string().min(1),
       }),
     )
     .min(1),

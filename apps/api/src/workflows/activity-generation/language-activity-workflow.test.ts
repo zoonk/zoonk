@@ -63,12 +63,12 @@ vi.mock("@zoonk/ai/tasks/activities/language/grammar-content", () => ({
       ],
       exercises: [
         {
-          answers: ["hablo"],
+          answer: "hablo",
           distractors: ["hablas", "habla"],
           template: "Yo [BLANK] español.",
         },
         {
-          answers: ["comes"],
+          answer: "comes",
           distractors: ["como", "come"],
           template: "Tú [BLANK] pan.",
         },
