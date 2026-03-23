@@ -1,0 +1,131 @@
+{
+  "expectations": "\nTARGET LANGUAGE: Japanese\n\nTOPIC: Topic marker particle (wa) - how it marks the topic of a sentence.\n\nGRAMMAR PATTERN: The particle marks the topic of a sentence, indicating what the sentence is about. It attaches to nouns to establish them as the topic of discussion.\n\n\nEVALUATION CRITERIA:\n\n1. MONOLINGUAL OUTPUT (CRITICAL - highest priority):\n   - ALL text MUST be in the TARGET language ONLY\n   - There should be NO translations, NO user-language text, NO romanization\n   - This task produces raw grammar content; enrichment is done separately\n   - Penalize SEVERELY if any non-target-language text appears in examples or exercises\n   - Format tokens ([BLANK] placeholder, JSON keys) are part of the required output structure, NOT language-mixing issues\n\n2. EXAMPLES QUALITY:\n   - Must include 3-4 example sentences demonstrating the grammar pattern\n   - Each example MUST have a \"highlight\" field isolating the grammar element\n   - Examples should make the pattern discoverable without explanation\n   - Sentences should be simple enough for learners to focus on the pattern\n\n3. EXERCISES - FILL-IN-THE-BLANK:\n   - Must include 2-3 fill-in-the-blank exercises\n   - Each exercise MUST have exactly one [BLANK] placeholder in the template\n   - The answers array MUST contain the correct answer(s)\n   - Distractors MUST be plausible wrong answers testing common mistakes\n   - Penalize SEVERELY if exercises test different grammar than the examples\n\n4. LINGUISTIC ACCURACY (CRITICAL):\n   - ALL sentences must be grammatically correct in the target language\n   - The grammar pattern described must match what is actually demonstrated\n   - Penalize SEVERELY for incorrect grammar\n\n5. HIGHLIGHT SCOPE:\n   - Highlights that include slightly more context than the minimum (e.g., noun+particle, subject+verb, noun+adjective+article) are acceptable as long as the target grammar element is clearly visible\n   - Only penalize if the highlight is so broad that the grammar element is buried or unclear\n\n6. PARADIGM AND FORM COVERAGE:\n   - For conjugation patterns, evaluate coverage across examples AND exercises combined as a single set\n   - For agreement patterns, prefer forms where the contrast is visible (e.g., adjectives with clearly different masculine/feminine forms over invariable ones)\n\n7. SCRIPT CONSISTENCY (for non-Roman scripts):\n   - Only penalize if the SAME word is written in different scripts across examples and exercises\n   - Different words using different scripts is normal and not a consistency issue\n\nSCORING DISCIPLINE (CRITICAL — read before assigning a score):\n- If something is explicitly marked as acceptable in the criteria above, do NOT deduct points for it. Acknowledging a rule then still penalizing violates these instructions.\n- Only deduct for CONCRETE errors: wrong grammar, wrong answers, missing structural requirements, or target language violations.\n- Do NOT deduct for pedagogical preferences like \"could have been broader\", \"slightly less canonical\", or \"would have been clearer with X\". These are suggestions, not errors.\n- Do NOT deduct for specific vocabulary choices, sentence structures, or sentence variety.\n- FOCUS ON: monolingual correctness, structural completeness, linguistic accuracy, pattern clarity.\n\n    ",
+  "judgedAt": "2026-03-23T22:10:37.695Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "All content is monolingual Japanese. 4 examples with correct highlights (は only, which is appropriate for particle highlighting per the rules). Examples are varied: 私, これ, 田中さん, 今日 — good range of topic types. All sentences are grammatically correct and natural. 3 exercises with proper [BLANK] placement, correct answers, and plausible distractors. The distractors include が, を, に, の, で, も — all common particles that learners might confuse. Exercise sentences are distinct from examples. 東京は大きい都市です is natural and correct. No issues found.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "All content is monolingual Japanese. 4 examples with correct highlights. Good variety: 私, 田中さん, これ, 猫. All grammatically correct. 3 exercises with correct structure. However, the distractors in exercises 2 and 3 are somewhat less plausible — の, へ, と for 今日[BLANK]いい天気です and を, も, か for これ[BLANK]日本語の本です. While か is not really a plausible distractor here (it's a question particle, not a topic/case marker), this is a minor issue. Overall solid quality.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "All content is monolingual Japanese. 4 examples with correct highlights. Good variety of topics. All grammatically correct. 3 exercises, all correct. However, exercise 3 uses 私[BLANK]日本人です which is very similar to the example 私は学生です — the structure is nearly identical (私は[noun]です), just swapping the predicate noun. This slightly reduces the exercise's value as a test of new application. Distractors are reasonable. Overall good quality.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "All content is monolingual Japanese. 4 examples with correct highlights. Good variety. All grammatically correct. 3 exercises, all correct. 明日[BLANK]休みです is natural. あの人[BLANK]だれですか is good. 日本語のクラス[BLANK]面白いです is grammatically correct and natural. Distractors are reasonable though exercise 3 uses へ which is less plausible as a distractor for this context. Overall solid quality, very comparable to Models B, C, D.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "All content is monolingual Japanese. 4 examples, all grammatically correct. 3 exercises, all correct. The highlight approach is different — it includes the noun + particle (e.g., 私は, 今日は, この本は, 田中さんは). Per the prompt rules, for particles the highlight should be just the particle (は). The prompt explicitly says: 'For particles: highlight the particle (e.g., \"wa\", \"ga\", \"ni\" in Japanese)'. The system prompt example also shows は as the highlight. Including the noun broadens the highlight beyond what's specified. However, the evaluation criteria say: 'Highlights that include slightly more context than the minimum are acceptable as long as the target grammar element is clearly visible. Only penalize if the highlight is so broad that the grammar element is buried or unclear.' The grammar element は is still visible, so this is acceptable per the scoring discipline. Exercises are good — 私[BLANK]コーヒーが好きです is a nice example showing は in a more complex sentence. Overall good quality but the highlight choice is less ideal than just は.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "All content is monolingual Japanese. 4 examples with correct highlights (は). All grammatically correct. 3 exercises, all correct. However, there's a script consistency issue: the examples use 猫 (kanji) in other models, and this model doesn't use 猫 in examples, but in exercise 1 writes ねこ in hiragana. The prompt says 'If examples use kanji for a word, exercises should too' — but since this model doesn't use 猫 in examples, there's no direct inconsistency within this model's own output. Actually, looking at just this model's output in isolation, 水 is used in an example (kanji), and ねこ in hiragana in exercises — these are different words so no inconsistency issue. The use of hiragana ねこ instead of kanji 猫 is a valid choice for beginners. Distractors are reasonable. Overall solid but exercise 3 distractors (を, に, と) are slightly less plausible for その本[BLANK]おもしろいです.",
+          "score": 8.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model A followed all instructions perfectly. It correctly isolated the grammar element in its highlights, provided grammatically accurate sentences, and importantly, generated entirely original exercise templates (avoiding the ones from the prompt's JSON example). Furthermore, its distractors are robust—avoiding particles like 'も' which would be grammatically valid answers in a fill-in-the-blank format.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Model F is excellent and generated robust distractors that do not inadvertently create correct sentences. However, it slightly loses a fraction of a point because its first exercise ('ねこ[BLANK]かわいいです。') is an almost exact copy of the exercise provided in the prompt's system example. Otherwise, it is structurally and linguistically perfect.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model C generated good, original exercises and valid examples. However, in Exercise 2 ('東京[BLANK]大きいです。'), it includes 'も' as a distractor. Without context, '東京も大きいです' (Tokyo is also big) is a perfectly correct and natural sentence, violating the rule that distractors must never include a correct answer. ",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model B correctly formulated the JSON and demonstrated the target grammar. However, it copied one of the prompt's example exercises verbatim. Additionally, in Exercise 3 ('東京[BLANK]大きい都市です。'), it used 'も' as a distractor, which is a grammatically valid answer ('Tokyo is also a big city'), violating the strict distractor rule.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model D has the same minor flaws as Model B. It copied the 'あなた[BLANK]だれですか。' exercise directly from the prompt's example block. It also included 'も' as a distractor in Exercise 3 ('これ[BLANK]日本語の本です。'), which is grammatically correct ('This is also a Japanese book'), violating the distractor constraints.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Model E used broader highlights (noun + particle), which is technically permitted by the evaluation criteria but less precise than other models. It also copied one of the prompt's exercises. More importantly, in Exercise 2 ('私[BLANK]コーヒーが好きです。'), it included 'の' as a distractor, which creates the grammatically valid sentence '私のコーヒーが好きです' (I like my coffee), thus violating the rule that distractors must not be correct answers.",
+          "score": 7.5
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Best overall. Fully monolingual, valid JSON structure, 4 examples and 3 exercises, and all exercises clearly test the topic marker は. Linguistically accurate and natural. Its highlights are especially strong because they isolate noun+は (e.g., 「私は」「今日は」), which is explicitly acceptable and arguably clearer for a particle lesson than highlighting only 「は」. No concrete errors.",
+          "score": 9.7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Excellent. Fully follows the required format, stays monolingual, and all examples/exercises are grammatical and clearly about the topic marker は. Distractors are plausible. Minor limitation: highlighting only 「は」 is acceptable but slightly less informative than noun+particle highlighting for this lesson. Otherwise very solid.",
+          "score": 9.4
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Very strong and fully compliant: monolingual, correct structure, grammatical examples, and exercises target the same particle pattern. Sentences are simple and appropriate. Like Model B, the highlight is minimal but acceptable. Slightly less strong than B because some exercise sentences are a bit more generic/less contrastive pedagogically, but there are no concrete errors.",
+          "score": 9.3
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Good quality overall: correct JSON structure, monolingual Japanese, grammatical examples, and exercises focused on は. The content is natural and level-appropriate. Slightly weaker than the top group because one distractor set is a bit less targeted/plausible for particle confusion (e.g., 「へ」「と」 in some contexts), though still acceptable, and highlighting only 「は」 is less clear than noun+は.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Mostly correct and compliant. Examples and exercises are grammatical and consistently test は. However, it has a script consistency issue: the same common word appears as 「これは…」 / 「その本…」 with kanji elsewhere but 「ねこ[BLANK]かわいいです。」 in hiragana, and the prompt specifically says to use consistent script choices for the same word across an activity. This is a minor but concrete issue. Otherwise solid.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Adequate but weaker. It is monolingual, correctly structured, and most content is grammatical. However, the first exercise 「明日[BLANK]休みです。」 is not a strong or fully natural test of the topic marker in beginner Japanese; 「明日は休みです」 can work, but as an isolated exercise it is less clear than the alternatives in other models. Overall still acceptable, but slightly less natural and precise than the stronger outputs.",
+          "score": 8.2
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-grammar-content",
+  "testCaseId": "ja-topic-marker-wa-1"
+}

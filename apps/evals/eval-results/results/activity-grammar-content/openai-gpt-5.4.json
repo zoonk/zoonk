@@ -1,0 +1,151 @@
+{
+  "modelId": "openai/gpt-5.4",
+  "results": [
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "One minor issue: the output is mostly monolingual and structurally correct, but one example uses the highlighted particle alone (\"は\") rather than noun+particle context. This is still acceptable under the stated criteria, since highlights may include minimal context and the grammar element remains clear, so the utility impact is small. Also, the reading/pronunciation note about は being pronounced 'wa' is not relevant here because no romanization was requested or included.",
+          "kind": "minorErrors",
+          "score": 9.4
+        },
+        {
+          "conclusion": "Could be slightly improved by highlighting the full topic phrase (e.g., \"私は\", \"これは\", \"田中さんは\") instead of only \"は\", which would make the attachment to the noun even more visually obvious for pattern discovery. Otherwise, the response satisfies the requested structure well: 4 examples, 3 exercises, exactly one [BLANK] per template, plausible distractors, correct Japanese, and consistent focus on the topic marker particle は.",
+          "kind": "potentialImprovements",
+          "score": 9.2
+        }
+      ],
+      "testCase": {
+        "expectations": "\nTARGET LANGUAGE: Japanese\n\nTOPIC: Topic marker particle (wa) - how it marks the topic of a sentence.\n\nGRAMMAR PATTERN: The particle marks the topic of a sentence, indicating what the sentence is about. It attaches to nouns to establish them as the topic of discussion.\n\n\nEVALUATION CRITERIA:\n\n1. MONOLINGUAL OUTPUT (CRITICAL - highest priority):\n   - ALL text MUST be in the TARGET language ONLY\n   - There should be NO translations, NO user-language text, NO romanization\n   - This task produces raw grammar content; enrichment is done separately\n   - Penalize SEVERELY if any non-target-language text appears in examples or exercises\n   - Format tokens ([BLANK] placeholder, JSON keys) are part of the required output structure, NOT language-mixing issues\n\n2. EXAMPLES QUALITY:\n   - Must include 3-4 example sentences demonstrating the grammar pattern\n   - Each example MUST have a \"highlight\" field isolating the grammar element\n   - Examples should make the pattern discoverable without explanation\n   - Sentences should be simple enough for learners to focus on the pattern\n\n3. EXERCISES - FILL-IN-THE-BLANK:\n   - Must include 2-3 fill-in-the-blank exercises\n   - Each exercise MUST have exactly one [BLANK] placeholder in the template\n   - The answers array MUST contain the correct answer(s)\n   - Distractors MUST be plausible wrong answers testing common mistakes\n   - Penalize SEVERELY if exercises test different grammar than the examples\n\n4. LINGUISTIC ACCURACY (CRITICAL):\n   - ALL sentences must be grammatically correct in the target language\n   - The grammar pattern described must match what is actually demonstrated\n   - Penalize SEVERELY for incorrect grammar\n\n5. HIGHLIGHT SCOPE:\n   - Highlights that include slightly more context than the minimum (e.g., noun+particle, subject+verb, noun+adjective+article) are acceptable as long as the target grammar element is clearly visible\n   - Only penalize if the highlight is so broad that the grammar element is buried or unclear\n\n6. PARADIGM AND FORM COVERAGE:\n   - For conjugation patterns, evaluate coverage across examples AND exercises combined as a single set\n   - For agreement patterns, prefer forms where the contrast is visible (e.g., adjectives with clearly different masculine/feminine forms over invariable ones)\n\n7. SCRIPT CONSISTENCY (for non-Roman scripts):\n   - Only penalize if the SAME word is written in different scripts across examples and exercises\n   - Different words using different scripts is normal and not a consistency issue\n\nSCORING DISCIPLINE (CRITICAL — read before assigning a score):\n- If something is explicitly marked as acceptable in the criteria above, do NOT deduct points for it. Acknowledging a rule then still penalizing violates these instructions.\n- Only deduct for CONCRETE errors: wrong grammar, wrong answers, missing structural requirements, or target language violations.\n- Do NOT deduct for pedagogical preferences like \"could have been broader\", \"slightly less canonical\", or \"would have been clearer with X\". These are suggestions, not errors.\n- Do NOT deduct for specific vocabulary choices, sentence structures, or sentence variety.\n- FOCUS ON: monolingual correctness, structural completeness, linguistic accuracy, pattern clarity.\n\n    ",
+        "id": "ja-topic-marker-wa-1",
+        "userInput": {
+          "chapterTitle": "Basic Particles",
+          "lessonDescription": "The topic marker particle and how it indicates what the sentence is about",
+          "lessonTitle": "Topic Marker",
+          "targetLanguage": "ja"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The output omits the nosotros form from the examples, though coverage across examples and exercises combined is acceptable because 'bailamos' appears in an exercise. It also uses 'Ustedes' in an exercise while the stated pattern summary mentions ellos/ellas rather than ustedes, but this is still a valid present-tense regular -ar conjugation and does not conflict with the lesson. No concrete structural or linguistic mistakes were found.",
+          "kind": "minorErrors",
+          "score": 9.4
+        },
+        {
+          "conclusion": "A small improvement would be to include all core paradigm forms more explicitly in the examples themselves, especially 'nosotros', to make the pattern even more discoverable without relying on exercises. Otherwise the response is fully monolingual, structurally complete, and linguistically accurate.",
+          "kind": "potentialImprovements",
+          "score": 9.2
+        }
+      ],
+      "testCase": {
+        "expectations": "\nTARGET LANGUAGE: Spanish\n\nTOPIC: Present tense conjugation of regular -ar verbs.\n\nGRAMMAR PATTERN: Regular -ar verbs in Spanish follow a consistent conjugation pattern in present tense. The -ar ending is replaced with: -o (yo), -as (tu), -a (el/ella), -amos (nosotros), -an (ellos/ellas).\n\n\nEVALUATION CRITERIA:\n\n1. MONOLINGUAL OUTPUT (CRITICAL - highest priority):\n   - ALL text MUST be in the TARGET language ONLY\n   - There should be NO translations, NO user-language text, NO romanization\n   - This task produces raw grammar content; enrichment is done separately\n   - Penalize SEVERELY if any non-target-language text appears in examples or exercises\n   - Format tokens ([BLANK] placeholder, JSON keys) are part of the required output structure, NOT language-mixing issues\n\n2. EXAMPLES QUALITY:\n   - Must include 3-4 example sentences demonstrating the grammar pattern\n   - Each example MUST have a \"highlight\" field isolating the grammar element\n   - Examples should make the pattern discoverable without explanation\n   - Sentences should be simple enough for learners to focus on the pattern\n\n3. EXERCISES - FILL-IN-THE-BLANK:\n   - Must include 2-3 fill-in-the-blank exercises\n   - Each exercise MUST have exactly one [BLANK] placeholder in the template\n   - The answers array MUST contain the correct answer(s)\n   - Distractors MUST be plausible wrong answers testing common mistakes\n   - Penalize SEVERELY if exercises test different grammar than the examples\n\n4. LINGUISTIC ACCURACY (CRITICAL):\n   - ALL sentences must be grammatically correct in the target language\n   - The grammar pattern described must match what is actually demonstrated\n   - Penalize SEVERELY for incorrect grammar\n\n5. HIGHLIGHT SCOPE:\n   - Highlights that include slightly more context than the minimum (e.g., noun+particle, subject+verb, noun+adjective+article) are acceptable as long as the target grammar element is clearly visible\n   - Only penalize if the highlight is so broad that the grammar element is buried or unclear\n\n6. PARADIGM AND FORM COVERAGE:\n   - For conjugation patterns, evaluate coverage across examples AND exercises combined as a single set\n   - For agreement patterns, prefer forms where the contrast is visible (e.g., adjectives with clearly different masculine/feminine forms over invariable ones)\n\n7. SCRIPT CONSISTENCY (for non-Roman scripts):\n   - Only penalize if the SAME word is written in different scripts across examples and exercises\n   - Different words using different scripts is normal and not a consistency issue\n\nSCORING DISCIPLINE (CRITICAL — read before assigning a score):\n- If something is explicitly marked as acceptable in the criteria above, do NOT deduct points for it. Acknowledging a rule then still penalizing violates these instructions.\n- Only deduct for CONCRETE errors: wrong grammar, wrong answers, missing structural requirements, or target language violations.\n- Do NOT deduct for pedagogical preferences like \"could have been broader\", \"slightly less canonical\", or \"would have been clearer with X\". These are suggestions, not errors.\n- Do NOT deduct for specific vocabulary choices, sentence structures, or sentence variety.\n- FOCUS ON: monolingual correctness, structural completeness, linguistic accuracy, pattern clarity.\n\n    ",
+        "id": "es-ar-verb-conjugation-1",
+        "userInput": {
+          "chapterTitle": "Verbos en Presente",
+          "lessonDescription": "Como conjugar verbos regulares terminados en -ar en el tiempo presente",
+          "lessonTitle": "Verbos Regulares -ar",
+          "targetLanguage": "es"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None. The output is fully monolingual in German apart from the required JSON keys and [BLANK] token. It uses 4 examples and 3 exercises as requested. All example sentences are correct German main clauses with clear V2 order: the sentence-initial adverbial occupies position 1 and the conjugated verb is in position 2. No subordinate clauses are used. The exercises also correctly test V2 by making the blank span both the verb and following subject (e.g., \"liest Anna\"), which aligns with the instruction that word-order blanks must include enough material to test the relationship. Answers and distractors are appropriately constructed, and no exercise tests a different grammar point than the examples.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None. Highlights are appropriate and not overly broad: they isolate the verb+subject sequence that makes V2 visible. Sentences are simple and natural enough for learners. Distractors are plausible wrong options reflecting common errors (subject-first English-like order, wrong agreement, malformed noun form).",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "A small improvement would be to include a bit more variation in first-position elements across examples/exercises (for instance, a direct object or prepositional phrase alongside time adverbials), but this is not required and does not reduce correctness. Overall the response already satisfies the stated criteria very well.",
+          "kind": "potentialImprovements",
+          "score": 9.7
+        }
+      ],
+      "testCase": {
+        "expectations": "\nTARGET LANGUAGE: German\n\nTOPIC: Verb-second (V2) word order in main clauses.\n\nGRAMMAR PATTERN: In German declarative sentences, the conjugated verb MUST occupy the second position. The first position can be filled by the subject, an adverb, or another element, but the verb always comes second.\n\nACCURACY PITFALLS:\n- Penalize if examples show verb in positions other than second\n- Penalize if examples use subordinate clauses (which have different word order)\n\n\nEVALUATION CRITERIA:\n\n1. MONOLINGUAL OUTPUT (CRITICAL - highest priority):\n   - ALL text MUST be in the TARGET language ONLY\n   - There should be NO translations, NO user-language text, NO romanization\n   - This task produces raw grammar content; enrichment is done separately\n   - Penalize SEVERELY if any non-target-language text appears in examples or exercises\n   - Format tokens ([BLANK] placeholder, JSON keys) are part of the required output structure, NOT language-mixing issues\n\n2. EXAMPLES QUALITY:\n   - Must include 3-4 example sentences demonstrating the grammar pattern\n   - Each example MUST have a \"highlight\" field isolating the grammar element\n   - Examples should make the pattern discoverable without explanation\n   - Sentences should be simple enough for learners to focus on the pattern\n\n3. EXERCISES - FILL-IN-THE-BLANK:\n   - Must include 2-3 fill-in-the-blank exercises\n   - Each exercise MUST have exactly one [BLANK] placeholder in the template\n   - The answers array MUST contain the correct answer(s)\n   - Distractors MUST be plausible wrong answers testing common mistakes\n   - Penalize SEVERELY if exercises test different grammar than the examples\n\n4. LINGUISTIC ACCURACY (CRITICAL):\n   - ALL sentences must be grammatically correct in the target language\n   - The grammar pattern described must match what is actually demonstrated\n   - Penalize SEVERELY for incorrect grammar\n\n5. HIGHLIGHT SCOPE:\n   - Highlights that include slightly more context than the minimum (e.g., noun+particle, subject+verb, noun+adjective+article) are acceptable as long as the target grammar element is clearly visible\n   - Only penalize if the highlight is so broad that the grammar element is buried or unclear\n\n6. PARADIGM AND FORM COVERAGE:\n   - For conjugation patterns, evaluate coverage across examples AND exercises combined as a single set\n   - For agreement patterns, prefer forms where the contrast is visible (e.g., adjectives with clearly different masculine/feminine forms over invariable ones)\n\n7. SCRIPT CONSISTENCY (for non-Roman scripts):\n   - Only penalize if the SAME word is written in different scripts across examples and exercises\n   - Different words using different scripts is normal and not a consistency issue\n\nSCORING DISCIPLINE (CRITICAL — read before assigning a score):\n- If something is explicitly marked as acceptable in the criteria above, do NOT deduct points for it. Acknowledging a rule then still penalizing violates these instructions.\n- Only deduct for CONCRETE errors: wrong grammar, wrong answers, missing structural requirements, or target language violations.\n- Do NOT deduct for pedagogical preferences like \"could have been broader\", \"slightly less canonical\", or \"would have been clearer with X\". These are suggestions, not errors.\n- Do NOT deduct for specific vocabulary choices, sentence structures, or sentence variety.\n- FOCUS ON: monolingual correctness, structural completeness, linguistic accuracy, pattern clarity.\n\n    ",
+        "id": "de-verb-second-1",
+        "userInput": {
+          "chapterTitle": "Satzstruktur",
+          "lessonDescription": "Die Verbzweitstellung im deutschen Hauptsatz und wie sie sich vom Englischen unterscheidet",
+          "lessonTitle": "Verbzweitstellung",
+          "targetLanguage": "de"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Could be slightly improved by showing an even more explicit mix of consonant-ending and vowel-ending nouns across examples and exercises together, but the current set already demonstrates both forms clearly and correctly. No concrete requirement is missed.",
+          "kind": "potentialImprovements",
+          "score": 9.6
+        }
+      ],
+      "testCase": {
+        "expectations": "\nTARGET LANGUAGE: Korean\n\nTOPIC: Subject markers (i) and (ga) - particles that mark the grammatical subject.\n\nGRAMMAR PATTERN: Korean uses one marker after consonant-ending nouns and another after vowel-ending nouns to mark the grammatical subject.\n\nACCURACY PITFALLS:\n- Marker usage must match the consonant/vowel ending of the noun\n- Penalize if the wrong marker is used for the noun ending\n\n\nEVALUATION CRITERIA:\n\n1. MONOLINGUAL OUTPUT (CRITICAL - highest priority):\n   - ALL text MUST be in the TARGET language ONLY\n   - There should be NO translations, NO user-language text, NO romanization\n   - This task produces raw grammar content; enrichment is done separately\n   - Penalize SEVERELY if any non-target-language text appears in examples or exercises\n   - Format tokens ([BLANK] placeholder, JSON keys) are part of the required output structure, NOT language-mixing issues\n\n2. EXAMPLES QUALITY:\n   - Must include 3-4 example sentences demonstrating the grammar pattern\n   - Each example MUST have a \"highlight\" field isolating the grammar element\n   - Examples should make the pattern discoverable without explanation\n   - Sentences should be simple enough for learners to focus on the pattern\n\n3. EXERCISES - FILL-IN-THE-BLANK:\n   - Must include 2-3 fill-in-the-blank exercises\n   - Each exercise MUST have exactly one [BLANK] placeholder in the template\n   - The answers array MUST contain the correct answer(s)\n   - Distractors MUST be plausible wrong answers testing common mistakes\n   - Penalize SEVERELY if exercises test different grammar than the examples\n\n4. LINGUISTIC ACCURACY (CRITICAL):\n   - ALL sentences must be grammatically correct in the target language\n   - The grammar pattern described must match what is actually demonstrated\n   - Penalize SEVERELY for incorrect grammar\n\n5. HIGHLIGHT SCOPE:\n   - Highlights that include slightly more context than the minimum (e.g., noun+particle, subject+verb, noun+adjective+article) are acceptable as long as the target grammar element is clearly visible\n   - Only penalize if the highlight is so broad that the grammar element is buried or unclear\n\n6. PARADIGM AND FORM COVERAGE:\n   - For conjugation patterns, evaluate coverage across examples AND exercises combined as a single set\n   - For agreement patterns, prefer forms where the contrast is visible (e.g., adjectives with clearly different masculine/feminine forms over invariable ones)\n\n7. SCRIPT CONSISTENCY (for non-Roman scripts):\n   - Only penalize if the SAME word is written in different scripts across examples and exercises\n   - Different words using different scripts is normal and not a consistency issue\n\nSCORING DISCIPLINE (CRITICAL — read before assigning a score):\n- If something is explicitly marked as acceptable in the criteria above, do NOT deduct points for it. Acknowledging a rule then still penalizing violates these instructions.\n- Only deduct for CONCRETE errors: wrong grammar, wrong answers, missing structural requirements, or target language violations.\n- Do NOT deduct for pedagogical preferences like \"could have been broader\", \"slightly less canonical\", or \"would have been clearer with X\". These are suggestions, not errors.\n- Do NOT deduct for specific vocabulary choices, sentence structures, or sentence variety.\n- FOCUS ON: monolingual correctness, structural completeness, linguistic accuracy, pattern clarity.\n\n    ",
+        "id": "ko-subject-markers-1",
+        "userInput": {
+          "chapterTitle": "기본 조사",
+          "lessonDescription": "주격 조사 이/가의 사용법과 받침에 따른 선택 규칙",
+          "lessonTitle": "주격 조사 이/가",
+          "targetLanguage": "ko"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "One minor issue: the examples correctly show gender agreement and use visible masculine/feminine contrasts, but the exercise set mostly blanks only the adjective rather than the full agreeing phrase. This is acceptable for agreement exercises per the prompt, yet one exercise ('J’aime la chemise [BLANK].') is slightly less natural/pedagogically neat than predicate-adjective patterns because adjective position after the noun is more restricted in French and depends on the adjective; however, 'chemise blanche' is still grammatical. No structural violations were found.",
+          "kind": "minorErrors",
+          "score": 9.4
+        },
+        {
+          "conclusion": "Small improvements are possible: make all exercises parallel in structure and perhaps align highlights/examples even more tightly with the exact exercise pattern, but the current output already satisfies the task well. It is fully monolingual, correctly formatted, linguistically accurate, and clearly demonstrates adjective-noun gender agreement with variable adjectives.",
+          "kind": "potentialImprovements",
+          "score": 9.3
+        }
+      ],
+      "testCase": {
+        "expectations": "\nTARGET LANGUAGE: French\n\nTOPIC: Adjective-noun gender agreement.\n\nGRAMMAR PATTERN: In French, adjectives must agree in gender with the noun they modify. Masculine nouns take masculine adjectives; feminine nouns take feminine adjectives. Most adjectives add -e for feminine form.\n\nACCURACY PITFALLS:\n- Penalize if adjective forms do not match noun gender\n- Penalize if examples or exercises use invariable adjectives (identical masculine/feminine forms) — these fail to demonstrate visible gender contrast\n\n\nEVALUATION CRITERIA:\n\n1. MONOLINGUAL OUTPUT (CRITICAL - highest priority):\n   - ALL text MUST be in the TARGET language ONLY\n   - There should be NO translations, NO user-language text, NO romanization\n   - This task produces raw grammar content; enrichment is done separately\n   - Penalize SEVERELY if any non-target-language text appears in examples or exercises\n   - Format tokens ([BLANK] placeholder, JSON keys) are part of the required output structure, NOT language-mixing issues\n\n2. EXAMPLES QUALITY:\n   - Must include 3-4 example sentences demonstrating the grammar pattern\n   - Each example MUST have a \"highlight\" field isolating the grammar element\n   - Examples should make the pattern discoverable without explanation\n   - Sentences should be simple enough for learners to focus on the pattern\n\n3. EXERCISES - FILL-IN-THE-BLANK:\n   - Must include 2-3 fill-in-the-blank exercises\n   - Each exercise MUST have exactly one [BLANK] placeholder in the template\n   - The answers array MUST contain the correct answer(s)\n   - Distractors MUST be plausible wrong answers testing common mistakes\n   - Penalize SEVERELY if exercises test different grammar than the examples\n\n4. LINGUISTIC ACCURACY (CRITICAL):\n   - ALL sentences must be grammatically correct in the target language\n   - The grammar pattern described must match what is actually demonstrated\n   - Penalize SEVERELY for incorrect grammar\n\n5. HIGHLIGHT SCOPE:\n   - Highlights that include slightly more context than the minimum (e.g., noun+particle, subject+verb, noun+adjective+article) are acceptable as long as the target grammar element is clearly visible\n   - Only penalize if the highlight is so broad that the grammar element is buried or unclear\n\n6. PARADIGM AND FORM COVERAGE:\n   - For conjugation patterns, evaluate coverage across examples AND exercises combined as a single set\n   - For agreement patterns, prefer forms where the contrast is visible (e.g., adjectives with clearly different masculine/feminine forms over invariable ones)\n\n7. SCRIPT CONSISTENCY (for non-Roman scripts):\n   - Only penalize if the SAME word is written in different scripts across examples and exercises\n   - Different words using different scripts is normal and not a consistency issue\n\nSCORING DISCIPLINE (CRITICAL — read before assigning a score):\n- If something is explicitly marked as acceptable in the criteria above, do NOT deduct points for it. Acknowledging a rule then still penalizing violates these instructions.\n- Only deduct for CONCRETE errors: wrong grammar, wrong answers, missing structural requirements, or target language violations.\n- Do NOT deduct for pedagogical preferences like \"could have been broader\", \"slightly less canonical\", or \"would have been clearer with X\". These are suggestions, not errors.\n- Do NOT deduct for specific vocabulary choices, sentence structures, or sentence variety.\n- FOCUS ON: monolingual correctness, structural completeness, linguistic accuracy, pattern clarity.\n\n    ",
+        "id": "fr-gender-agreement-1",
+        "userInput": {
+          "chapterTitle": "Les adjectifs",
+          "lessonDescription": "Comment les adjectifs en francais s'accordent en genre avec les noms qu'ils modifient",
+          "lessonTitle": "Accord en genre",
+          "targetLanguage": "fr"
+        }
+      }
+    }
+  ],
+  "taskId": "activity-grammar-content"
+}

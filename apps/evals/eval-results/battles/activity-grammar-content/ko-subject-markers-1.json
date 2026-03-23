@@ -1,0 +1,131 @@
+{
+  "expectations": "\nTARGET LANGUAGE: Korean\n\nTOPIC: Subject markers (i) and (ga) - particles that mark the grammatical subject.\n\nGRAMMAR PATTERN: Korean uses one marker after consonant-ending nouns and another after vowel-ending nouns to mark the grammatical subject.\n\nACCURACY PITFALLS:\n- Marker usage must match the consonant/vowel ending of the noun\n- Penalize if the wrong marker is used for the noun ending\n\n\nEVALUATION CRITERIA:\n\n1. MONOLINGUAL OUTPUT (CRITICAL - highest priority):\n   - ALL text MUST be in the TARGET language ONLY\n   - There should be NO translations, NO user-language text, NO romanization\n   - This task produces raw grammar content; enrichment is done separately\n   - Penalize SEVERELY if any non-target-language text appears in examples or exercises\n   - Format tokens ([BLANK] placeholder, JSON keys) are part of the required output structure, NOT language-mixing issues\n\n2. EXAMPLES QUALITY:\n   - Must include 3-4 example sentences demonstrating the grammar pattern\n   - Each example MUST have a \"highlight\" field isolating the grammar element\n   - Examples should make the pattern discoverable without explanation\n   - Sentences should be simple enough for learners to focus on the pattern\n\n3. EXERCISES - FILL-IN-THE-BLANK:\n   - Must include 2-3 fill-in-the-blank exercises\n   - Each exercise MUST have exactly one [BLANK] placeholder in the template\n   - The answers array MUST contain the correct answer(s)\n   - Distractors MUST be plausible wrong answers testing common mistakes\n   - Penalize SEVERELY if exercises test different grammar than the examples\n\n4. LINGUISTIC ACCURACY (CRITICAL):\n   - ALL sentences must be grammatically correct in the target language\n   - The grammar pattern described must match what is actually demonstrated\n   - Penalize SEVERELY for incorrect grammar\n\n5. HIGHLIGHT SCOPE:\n   - Highlights that include slightly more context than the minimum (e.g., noun+particle, subject+verb, noun+adjective+article) are acceptable as long as the target grammar element is clearly visible\n   - Only penalize if the highlight is so broad that the grammar element is buried or unclear\n\n6. PARADIGM AND FORM COVERAGE:\n   - For conjugation patterns, evaluate coverage across examples AND exercises combined as a single set\n   - For agreement patterns, prefer forms where the contrast is visible (e.g., adjectives with clearly different masculine/feminine forms over invariable ones)\n\n7. SCRIPT CONSISTENCY (for non-Roman scripts):\n   - Only penalize if the SAME word is written in different scripts across examples and exercises\n   - Different words using different scripts is normal and not a consistency issue\n\nSCORING DISCIPLINE (CRITICAL — read before assigning a score):\n- If something is explicitly marked as acceptable in the criteria above, do NOT deduct points for it. Acknowledging a rule then still penalizing violates these instructions.\n- Only deduct for CONCRETE errors: wrong grammar, wrong answers, missing structural requirements, or target language violations.\n- Do NOT deduct for pedagogical preferences like \"could have been broader\", \"slightly less canonical\", or \"would have been clearer with X\". These are suggestions, not errors.\n- Do NOT deduct for specific vocabulary choices, sentence structures, or sentence variety.\n- FOCUS ON: monolingual correctness, structural completeness, linguistic accuracy, pattern clarity.\n\n    ",
+  "judgedAt": "2026-03-23T22:09:42.733Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "LINGUISTIC ACCURACY: Let me verify each noun's batchim. Examples: 고양이 → last syllable 이 (ㅇ+ㅣ, no batchim) → 가 ✓; 친구 → last syllable 구 (ㄱ+ㅜ, no batchim) → 가 ✓; 책 → last syllable 책 (ㅊ+ㅐ+ㄱ, has batchim) → 이 ✓; 물 → last syllable 물 (ㅁ+ㅜ+ㄹ, has batchim) → 이 ✓. All correct. Exercises: 선생님 → 님 (ㄴ+ㅣ+ㅁ, has batchim) → 이 ✓; 아이 → 이 (ㅇ+ㅣ, no batchim) → 가 ✓; 음식 → 식 (ㅅ+ㅣ+ㄱ, has batchim) → 이 ✓. All correct. HIGHLIGHTS: Highlights include noun+particle (e.g., 고양이가, 친구가, 책이, 물이). This is acceptable per the criteria — it shows what the particle attaches to. The examples show both 이 and 가 clearly. PATTERN DISCOVERY: The examples show two 가 forms (vowel-ending nouns) and two 이 forms (consonant-ending nouns), making the pattern discoverable. MONOLINGUAL: All content is in Korean. STRUCTURE: 4 examples, 3 exercises, all with [BLANK], correct answers, and plausible distractors. Sentences are natural and simple. Good coverage across examples and exercises combined. Very solid output.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "LINGUISTIC ACCURACY: Examples: 책 (batchim ㄱ) → 이 ✓; 친구 (no batchim) → 가 ✓; 학생 (batchim ㅇ) → 이 ✓; 사과 (no batchim) → 가 ✓. Exercises: 버스 → 스 (ㅅ+ㅡ, no batchim) → 가 ✓; 동생 → 생 (ㅅ+ㅐ+ㅇ, has batchim) → 이 ✓. All correct. HIGHLIGHTS: Highlights are just the particle (이 or 가), not the noun+particle. Per the prompt's particle highlighting rule, 'For particles: highlight the particle', this is acceptable. The criteria say highlights including slightly more context are acceptable, but highlighting just the particle is also fine per the explicit rule. PATTERN DISCOVERY: Four examples showing alternating 이/가 patterns clearly. Good contrast. MONOLINGUAL: All Korean. STRUCTURE: 4 examples, 2 exercises. Meets minimum requirements. Sentences are natural and simple. Only 2 exercises (minimum acceptable), and sentences are straightforward. Solid output overall.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "LINGUISTIC ACCURACY: Examples: 선생님 → 님 (batchim ㅁ) → 이 ✓; 학교 → 교 (no batchim) → 가 ✓; 이름 → 름 (batchim ㅁ) → 이 ✓; 사과 → 과 (no batchim) → 가 ✓. Exercises: 학생 → 생 (batchim ㅇ) → 이 ✓; 아이 → 이 (no batchim) → 가 ✓; 가방 → 방 (batchim ㅇ) → 이 ✓. All correct. HIGHLIGHTS: Just the particle (이 or 가). Acceptable per particle highlighting rules. MONOLINGUAL: All Korean. STRUCTURE: 4 examples, 3 exercises, all properly formatted. Uses formal/합니다 style consistently, which is fine. Sentences are slightly longer than ideal (e.g., '학생이 도서관에서 공부합니다') but within acceptable range. '놉니다' — this is the formal form of 놀다. The ㄹ drops before ㅂ니다, giving 놉니다. This is correct. Good output overall with good coverage.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "LINGUISTIC ACCURACY: Examples: 철수 → 수 (no batchim) → 가 ✓; 사과 → 과 (no batchim) → 가 ✓; 선생님 → 님 (batchim ㅁ) → 이 ✓; 비 → 비 (no batchim) → 가 ✓. Exercises: 학교 → 교 (no batchim) → 가 ✓; 책 → (batchim ㄱ) → 이 ✓; 친구 → 구 (no batchim) → 가 ✓. All correct. HIGHLIGHTS: Noun+particle format (철수가, 사과가, 선생님이, 비가). Acceptable and good for showing the relationship. PATTERN DISCOVERY: However, in the examples, there are 3 instances of 가 and only 1 of 이. The balance is skewed — ideally 2 and 2 for a 4-example set to make the contrast maximally clear. Also, 철수 is a proper name which is fine but slightly less transparent for pattern discovery. MONOLINGUAL: All Korean. STRUCTURE: 4 examples, 3 exercises. '기다려요' with 친구가 is natural. The exercises have good variety. Slight imbalance in example coverage (3가 vs 1이) is a minor issue for pattern discoverability.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "LINGUISTIC ACCURACY: Examples: 학생 → 생 (batchim ㅇ) → 이 ✓; 고양이 → 이 (no batchim) → 가 ✓; 선생님 → 님 (batchim ㅁ) → 이 ✓; 아기 → 기 (no batchim) → 가 ✓. All correct. Exercises: 친구 → 구 (no batchim) → 가, but the answer is 이. ERROR! 친구 ends in 구 which has no batchim, so it should be 가, not 이. This is a CRITICAL linguistic error — the wrong marker is given as the correct answer in the first exercise. This directly contradicts the grammar rule being taught. Exercise 2: 의자 → 자 (no batchim) → 가 ✓. Exercise 3: 집 → (batchim ㅂ) → 이 ✓. The error in exercise 1 is a severe accuracy issue that would mislead learners. HIGHLIGHTS: Noun+particle format, which is acceptable. MONOLINGUAL: All Korean. STRUCTURE: Otherwise well-formatted. But the critical error drops this significantly.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "LINGUISTIC ACCURACY: Let me check. Examples 1 and 2 are BOTH the same sentence '고양이가 잠을 자요' but with different highlights — first highlights '이' and second highlights '가'. This is confusing and problematic — the first example highlights '이' in the sentence '고양이가 잠을 자요', but the 이 being highlighted is part of 고양이 (the noun itself), NOT the particle 이. The particle here is actually 가. This is a CRITICAL error — it misidentifies which character is the particle, potentially teaching learners that 이 in 고양이 is the subject marker. This fundamentally undermines the lesson. Also, there are 5 examples instead of the requested 3-4. The exercises: 사과 → 과 (no batchim) should take 가, but the answer is 이. ERROR! 사과 ends in vowel, so it needs 가. This is a critical linguistic error. 토끼 → 끼 (no batchim) → 가 ✓. 눈 → (batchim ㄴ) → 이 ✓. The combination of the confusing/incorrect example highlighting and the critical exercise error makes this output quite poor.",
+          "score": 2
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "This model provides a perfect output. It follows all instructions carefully, providing flawless Korean sentences that correctly demonstrate the grammar rules. The examples are perfectly balanced between consonant and vowel endings, and it precisely highlights just the particle, matching the explicit instruction for particles.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "This model also provides a perfect output. It correctly applies the grammar rules, balancing vowel and consonant endings across both examples and exercises. The highlighting correctly isolates the exact particle, and the distractor options are well-chosen.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "This is an excellent output with completely accurate grammar, perfectly balanced examples, and strong distractor choices. It highlights the noun + particle together; while highlighting just the particle is the primary instruction, the prompt explicitly states that including slightly more context (like noun+particle) is acceptable, making this a minor stylistic difference rather than an error.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "This is a very good output with accurate grammar and solid distractors. It also utilizes the acceptable noun+particle highlight style. It scores slightly lower than Model A simply because its examples are less balanced across the paradigm (it provides 3 vowel-ending examples and only 1 consonant-ending example).",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "This model fails on a critical linguistic accuracy rule. In the first exercise, the noun '친구' (chingu) ends in a vowel and must take the particle '가' (ga). However, the model incorrectly lists '이' (i) as the correct answer. This directly contradicts the grammar point being taught.",
+          "score": 1
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "This model fails on multiple critical instructions. First, it contains a major linguistic error in the exercises: '사과' ends in a vowel and requires '가', but the model lists '이' as the answer. Second, in the first example ('고양이가...'), it incorrectly highlights '이'—which is a syllable belonging to the noun 'cat' (goyangi) itself, not the subject particle. Finally, it provides 5 examples, ignoring the constraint of 3-4.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "가장 강합니다. JSON 구조가 정확하고, 한국어만 사용했으며, 예문 4개와 연습 3개를 모두 충족합니다. 특히 highlight를 명사+조사(예: 고양이가, 책이)로 제시해 목표 문법이 매우 선명합니다. exercises도 정확히 한 개의 [BLANK]를 포함하고, 받침 유무에 따른 정답 선택이 모두 맞습니다: 선생님→이, 아이→가, 음식→이. 예문도 가/이 양쪽을 모두 보여 줍니다. 큰 오류가 없습니다.",
+          "score": 9.7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "전반적으로 매우 우수합니다. 구조, 한국어 단일 언어 사용, 예문 수, 연습 수 모두 적절합니다. highlight를 명사+조사로 제시한 점도 좋습니다. exercises의 정답도 학교→가, 책→이, 친구→가로 모두 정확합니다. 다만 예문에서 가 형태(철수가, 사과가, 비가)가 많고 이 형태는 선생님이 하나뿐이라 대비가 A보다 약간 덜 균형적입니다. 그래도 명확하고 정확합니다.",
+          "score": 9.4
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "형식과 정확성 면에서 좋습니다. 예문 4개, 연습 3개, 모두 한국어, 각 exercise에 [BLANK] 하나가 정확히 있습니다. highlight를 명사+조사로 제공해 패턴 식별이 쉽습니다. exercises 정답도 친구→이, 의자→가, 집→이로 모두 맞습니다. 다만 예문이 학생이/선생님이처럼 이 쪽에 치우치고 가 예시는 고양이가, 아기가 두 개뿐이라 대비가 아주 최적은 아닙니다. 그래도 오류는 없습니다.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "내용은 정확하고 구조도 완전합니다. 예문 4개와 연습 3개가 있고, exercises 정답도 학생→이, 아이→가, 가방→이로 모두 맞습니다. 문장은 자연스럽고 문법적으로 정확합니다. 다만 highlight가 조사만 단독으로 제시되어 있어(이/가) 학습자가 어떤 명사 끝소리와 연결되는지 즉시 보기 어렵습니다. 평가 기준상 허용 가능하나, 명사+조사를 함께 보여 주는 답변보다 패턴 발견성이 떨어집니다.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "전반적으로 정확하고 간결합니다. 예문 4개, 연습 2개로 최소 요구 조건을 충족하고, 정답도 버스→가, 동생→이로 맞습니다. 하지만 highlight가 조사만 단독으로 되어 있어 패턴이 덜 드러납니다. 또한 exercises가 2개뿐이라 허용 범위 안이지만 다른 더 강한 답변들보다 연습량이 적습니다. 큰 문법 오류는 없습니다.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "문제점이 분명합니다. 우선 예문이 5개로, 요구된 3-4개를 초과하여 형식 규칙 위반입니다. 또 첫 두 예문이 동일한 문장(고양이가 잠을 자요.)을 반복하면서 highlight만 각각 이, 가로 나누어 제시했는데, 이는 문법 요소를 isolate한다는 취지에 맞지 않고 매우 부자연스럽습니다. 더 심각하게 exercise 1은 사과가 맛있어요가 맞는데 정답을 이로 제시해 핵심 문법 오류가 있습니다. monolingual과 JSON 형식은 맞지만, 정확성 위반이 커서 큰 감점이 필요합니다.",
+          "score": 4.2
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-grammar-content",
+  "testCaseId": "ko-subject-markers-1"
+}

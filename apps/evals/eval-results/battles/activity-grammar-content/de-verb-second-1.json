@@ -1,0 +1,131 @@
+{
+  "expectations": "\nTARGET LANGUAGE: German\n\nTOPIC: Verb-second (V2) word order in main clauses.\n\nGRAMMAR PATTERN: In German declarative sentences, the conjugated verb MUST occupy the second position. The first position can be filled by the subject, an adverb, or another element, but the verb always comes second.\n\nACCURACY PITFALLS:\n- Penalize if examples show verb in positions other than second\n- Penalize if examples use subordinate clauses (which have different word order)\n\n\nEVALUATION CRITERIA:\n\n1. MONOLINGUAL OUTPUT (CRITICAL - highest priority):\n   - ALL text MUST be in the TARGET language ONLY\n   - There should be NO translations, NO user-language text, NO romanization\n   - This task produces raw grammar content; enrichment is done separately\n   - Penalize SEVERELY if any non-target-language text appears in examples or exercises\n   - Format tokens ([BLANK] placeholder, JSON keys) are part of the required output structure, NOT language-mixing issues\n\n2. EXAMPLES QUALITY:\n   - Must include 3-4 example sentences demonstrating the grammar pattern\n   - Each example MUST have a \"highlight\" field isolating the grammar element\n   - Examples should make the pattern discoverable without explanation\n   - Sentences should be simple enough for learners to focus on the pattern\n\n3. EXERCISES - FILL-IN-THE-BLANK:\n   - Must include 2-3 fill-in-the-blank exercises\n   - Each exercise MUST have exactly one [BLANK] placeholder in the template\n   - The answers array MUST contain the correct answer(s)\n   - Distractors MUST be plausible wrong answers testing common mistakes\n   - Penalize SEVERELY if exercises test different grammar than the examples\n\n4. LINGUISTIC ACCURACY (CRITICAL):\n   - ALL sentences must be grammatically correct in the target language\n   - The grammar pattern described must match what is actually demonstrated\n   - Penalize SEVERELY for incorrect grammar\n\n5. HIGHLIGHT SCOPE:\n   - Highlights that include slightly more context than the minimum (e.g., noun+particle, subject+verb, noun+adjective+article) are acceptable as long as the target grammar element is clearly visible\n   - Only penalize if the highlight is so broad that the grammar element is buried or unclear\n\n6. PARADIGM AND FORM COVERAGE:\n   - For conjugation patterns, evaluate coverage across examples AND exercises combined as a single set\n   - For agreement patterns, prefer forms where the contrast is visible (e.g., adjectives with clearly different masculine/feminine forms over invariable ones)\n\n7. SCRIPT CONSISTENCY (for non-Roman scripts):\n   - Only penalize if the SAME word is written in different scripts across examples and exercises\n   - Different words using different scripts is normal and not a consistency issue\n\nSCORING DISCIPLINE (CRITICAL — read before assigning a score):\n- If something is explicitly marked as acceptable in the criteria above, do NOT deduct points for it. Acknowledging a rule then still penalizing violates these instructions.\n- Only deduct for CONCRETE errors: wrong grammar, wrong answers, missing structural requirements, or target language violations.\n- Do NOT deduct for pedagogical preferences like \"could have been broader\", \"slightly less canonical\", or \"would have been clearer with X\". These are suggestions, not errors.\n- Do NOT deduct for specific vocabulary choices, sentence structures, or sentence variety.\n- FOCUS ON: monolingual correctness, structural completeness, linguistic accuracy, pattern clarity.\n\n    ",
+  "judgedAt": "2026-03-23T22:10:24.115Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "**Examples:** All 4 examples correctly demonstrate V2 word order with a fronted adverbial in position 1 and verb in position 2, followed by the subject. The highlights correctly capture the verb+subject inversion (e.g., 'trinke ich', 'spielt er', 'gehen wir', 'liest sie'). Good variety of subjects (ich, er, wir, sie) and time adverbials. All sentences are natural, grammatically correct German. All monolingual.\n\n**Exercises:** All 3 exercises correctly test word order by having the blank encompass both verb and subject, which is exactly what the prompt demands for word order testing. Distractors are well-designed — they offer the wrong order (e.g., 'sie kauft' vs 'kauft sie'), wrong conjugation ('kaufen sie'), and wrong agreement ('sie kaufen'). Each template has exactly one [BLANK]. All grammatically correct.\n\n**Minor issues:** 'Nach der Arbeit [BLANK] Brot' — 'kauft sie Brot' is natural. 'Im Sommer [BLANK] nach Italien' — 'fahren wir nach Italien' is correct. 'Am Abend [BLANK] das Essen' — 'kocht er das Essen' is correct and natural. No issues found. Excellent overall execution.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "**Examples:** All 4 examples correctly show V2 with fronted adverbials and verb-subject inversion. Highlights correctly capture verb+subject pairs. Good variety of subjects and contexts. All grammatically correct and natural.\n\n**Exercises:** Well-designed — blanks encompass verb+subject to test word order. Exercise 1: 'Im Park [BLANK] ein Buch' with answer 'liest Anna' — good use of a proper name. Exercise 2: 'Jeden Tag [BLANK] mit dem Zug' with answer 'fahre ich' — correct. Exercise 3: 'Am Sonntag [BLANK] zusammen' with answer 'kochen meine Freunde' — correct, and tests a longer subject phrase.\n\nDistractors are well-designed: wrong word order, wrong conjugation, wrong case ('meinen Freunde' is a plausible error). One minor note: 'liest Annas' as a distractor is a bit odd — it's not a typical learner error — but it's still plausible enough as a distractor.\n\nAll monolingual. Excellent quality overall.",
+          "score": 9.3
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "**Examples:** All 4 examples correctly demonstrate V2 with fronted adverbials. Highlights correctly capture verb+subject inversion. Good variety. All grammatically correct and natural.\n\n**Exercises:** All 3 correctly test word order with verb+subject in the blank. Distractors include wrong order and missing elements. However, some distractors could be slightly better — e.g., 'gehen' alone and 'liest' alone as distractors are less about word order errors and more about incomplete answers, though they're still plausible. 'wir geht' and 'ich spielst' test conjugation errors, which is reasonable.\n\nAll monolingual. Structurally complete. One small concern: 'Oft [BLANK] Fußball' with answer 'spiele ich' — while grammatically fine, 'Oft spiele ich Fußball' is natural. No real issues.\n\nVery good overall, just slightly less refined distractors compared to the top entries.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "**Examples:** All 4 correctly demonstrate V2. Highlights are correct verb+subject pairs. All grammatically correct. 'In Berlin wohne ich' is a bit short/unusual as a standalone sentence (sounds slightly incomplete or emphatic), but it's grammatically correct and demonstrates the pattern.\n\n**Exercises:** All 3 test word order correctly with verb+subject blanks. However, some distractors are weaker: 'liest du' and 'lesen wir' in exercise 2 test completely different subjects rather than word order of the same elements, which slightly dilutes the word-order focus. Similarly, 'fahren sie' and 'fährt sie' in exercise 3 introduce different subjects. These distractors test something other than the core V2 inversion pattern. They're not wrong per se, but they don't optimally test the grammar concept.\n\nAll monolingual. Structurally complete. Good but slightly less focused distractor design.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "**Examples:** The approach is interesting — showing both subject-first (example 1: 'Ich esse heute einen Apfel') and adverbial-first (example 2: 'Heute esse ich einen Apfel') to contrast. This could help learners discover V2. However, the highlights are inconsistent and sometimes too broad:\n- Example 1: highlight is 'Ich esse' — this is the subject+verb, fine for showing V2 with subject in position 1.\n- Example 2: highlight is 'Heute esse ich' — this includes three elements, which is broader than needed. The grammar element (verb in 2nd position) gets somewhat buried.\n- Example 4: highlight is 'Dort spielt der Junge' — very broad (4 words), making the pattern less clear.\n\nThe prompt says: 'Only penalize if the highlight is so broad that the grammar element is buried or unclear.' The highlight in example 4 spanning 4 words does start to bury the pattern.\n\n**Exercises:** Well-structured — blanks test verb+subject order. However, some distractors are weak: 'er liestst' and 'sie fahrtst' are not real German forms and are implausible — learners wouldn't produce these forms. 'sie fahrt' is also not a real conjugation. Bad distractors reduce exercise quality. The prompt says distractors should be 'plausible wrong answers testing common mistakes.' Non-existent verb forms fail this criterion.\n\nAll monolingual. Structurally complete.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "**Examples:** The examples show V2 with fronted adverbials, but the highlights are problematic. Looking at the prompt's critical instruction for word order: 'Blank encompasses BOTH the verb AND adjacent element to test relative order.' And for highlights with word order: 'highlight the phrase showing position (e.g., \"geht er\" to show verb-subject inversion).' \n\nModel A's highlights are inconsistent: Example 1 highlights 'Geht er' (correct — verb+subject), but Example 4 highlights 'Jetzt kommt der Bus' (the entire sentence!). Examples 2 and 3 highlight 'Morgen fährt sie' and 'Am Abend lesen wir' — these include the fronted adverbial along with verb+subject, which makes the highlight overly broad (3+ elements). The core V2 pattern (verb in second position after inversion) is harder to see when the highlight includes the first-position element too.\n\nMore critically, **the exercises test CONJUGATION, not word order.** The blanks replace only the verb ('fährt', 'lese', 'spielt'), and the distractors are different conjugation forms ('fahren', 'fahrt', 'fuhr'). The prompt explicitly warns: 'BAD: \"Morgen [BLANK] er nach Hause.\" with options \"geht/gehen\" — this only tests conjugation, not word order!' Model A's exercises match this exact anti-pattern. This is a severe violation of the prompt's rules.\n\nAll monolingual. Structurally complete. But exercises fundamentally fail to test the target grammar concept.",
+          "score": 4.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Perfect execution. The model followed all instructions flawlessly, including the specific requirement for testing word order by having the blank encompass both the verb and the subject. The distractors are excellent and test highly plausible mistakes (wrong V2 order, wrong agreement, and wrong case), and none of the distractors can be used to form a correct sentence.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Excellent execution. Like Model D, it perfectly followed the word-order exercise constraint by keeping the verb and subject together in the blank. The distractors are solid and ensure that no alternative correct sentences can be formed. The highlights accurately isolate the inverted verb-subject pairs.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Good examples, but fails a critical rule in the exercises. In the first exercise ('Nach der Arbeit [BLANK] Brot.'), the distractors include 'kaufen sie'. If inserted, this forms 'Nach der Arbeit kaufen sie Brot.', which is a perfectly grammatical and correct V2 sentence. Distractors must never include a valid correct answer.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Poor execution due to factual inaccuracies in the target language. The model hallucinated non-existent German verb forms in the distractors ('fahrtst' and 'liestst'). Additionally, the highlights in the examples are too broad and do not cleanly isolate the target grammar element.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Fails a critical rule across all exercises: almost all distractors are actually valid correct answers. For example, 'Heute [BLANK] spät nach Hause.' has 'kommen sie' and 'kommt ihr' as distractors, both of which create perfectly correct sentences. A learner would be penalized for inputting grammatically correct German.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Unacceptable execution. The model explicitly violated the core instruction on how to test word order. The prompt specifically warned against testing only conjugation by placing the subject outside the blank (giving the 'BAD' example: 'Morgen [BLANK] er nach Hause'). Model A ignored this completely and used exactly that forbidden format ('Morgen [BLANK] er nach Hamburg.').",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Best overall. Fully monolingual, valid JSON structure, 4 examples and 3 exercises. The examples consistently show V2 main clauses with a fronted adverbial and the conjugated verb in second position. Highlights isolate the relevant verb+subject sequence clearly for this word-order lesson. The exercises correctly test the actual V2 relationship by blanking the verb+subject chunk (e.g. \"kauft sie\" vs distractor \"sie kauft\"), matching the prompt’s critical blank-design rule for word order. Grammar is accurate throughout.",
+          "score": 9.8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Excellent and very close to Model C. Fully monolingual, structurally complete, and linguistically accurate. Examples clearly demonstrate V2 in main clauses. Exercises also correctly test V2 by requiring verb+subject order in the blank. Minor weakness only relative to the top entry: one exercise uses a lexical subject (\"liest Anna\"), which is fine, and overall clarity remains high. No substantive errors.",
+          "score": 9.7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Strong output. It correctly focuses on V2 word order and, importantly, the exercises blank the verb+subject phrase, which is exactly what the prompt requires for word-order testing. Examples are all main clauses with correct V2 structure. Main issue: one example has \"essen sie\" in lowercase within the highlight while the sentence begins with \"Jetzt essen sie Pizza.\" This is a minor form inconsistency rather than a grammatical error. Otherwise very solid.",
+          "score": 9.3
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Good quality. Monolingual, complete, and all examples/exercises are grammatical main clauses showing V2. The exercises correctly test word order by using verb+subject in the blank. Slightly weaker than the top group because one example (\"In Berlin wohne ich.\") is somewhat marked stylistically, though still grammatical and still demonstrates V2 correctly. No major prompt violations.",
+          "score": 8.9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Mixed quality. It is monolingual, complete, and several examples/exercises do demonstrate V2 correctly. However, one example highlights \"Ich esse\" in \"Ich esse heute einen Apfel.\" This sentence is grammatical and does have the verb in second position, but it does not foreground the contrastive V2 pattern as clearly as adverb-first examples, and the lesson prompt specifically emphasizes V2 in a way that should remain discoverable. More importantly, distractors include clearly malformed non-words like \"sie fahrtst\" and \"er liestst,\" which are implausible and reduce exercise quality. Also \"fahren sie\" in an exercise could be read as formal \"Sie fahren\" if capitalization were considered, though here it is lowercase and intended as plural. Acceptable but notably weaker.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Notable prompt adherence issue in the examples. While the sentences themselves are grammatical main clauses and the exercises are fine, the highlights are inconsistent with the target grammar element. For a V2 word-order lesson, the highlight should isolate the phrase showing position/order, typically the verb+subject chunk. Here several highlights include the sentence-initial adverb as well (e.g. \"Morgen fährt sie\", \"Am Abend lesen wir\", \"Jetzt kommt der Bus\"), which makes the target element less precise and does not match the stated highlighting guidance as well as other outputs. The first example also uses \"Geht er\" as the highlight, which does not appear contiguously in \"Heute geht er nach Hause.\" Stronger outputs handled this much better.",
+          "score": 6.6
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-grammar-content",
+  "testCaseId": "de-verb-second-1"
+}
