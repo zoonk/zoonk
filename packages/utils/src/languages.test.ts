@@ -24,12 +24,28 @@ describe(isTTSSupportedLanguage, () => {
 });
 
 describe(needsRomanization, () => {
-  test.each(["ja", "zh", "ko", "ar", "ru", "el", "he", "hi", "th"])(
-    "returns true for non-Roman script language: %s",
-    (code) => {
-      expect(needsRomanization(code)).toBeTruthy();
-    },
-  );
+  test.each([
+    "ja",
+    "zh",
+    "ko",
+    "ar",
+    "ru",
+    "el",
+    "he",
+    "hi",
+    "th",
+    "fa",
+    "bn",
+    "ka",
+    "km",
+    "my",
+    "am",
+    "pa",
+    "te",
+    "ml",
+  ])("returns true for non-Roman script language: %s", (code) => {
+    expect(needsRomanization(code)).toBeTruthy();
+  });
 
   test.each(["en", "es", "fr", "de", "pt", "it"])(
     "returns false for Roman script language: %s",

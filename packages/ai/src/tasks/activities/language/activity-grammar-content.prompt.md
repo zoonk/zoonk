@@ -138,7 +138,7 @@ Return an object with this structure:
 {
   "examples": [
     {
-      "sentence": "Yo hablo espanol.",
+      "sentence": "Yo hablo español.",
       "highlight": "hablo"
     },
     {
@@ -152,7 +152,7 @@ Return an object with this structure:
   ],
   "exercises": [
     {
-      "template": "Tu [BLANK] muy bien.",
+      "template": "Tú [BLANK] muy bien.",
       "answers": ["hablas"],
       "distractors": ["habla", "hablo", "hablar"]
     },

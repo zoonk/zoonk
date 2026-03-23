@@ -28,7 +28,7 @@ export async function updateReadingEnrichmentsStep(
       prisma.sentence.update({
         data: {
           romanization: romanizations[saved.sentence],
-          sentenceAudioId: sentenceAudioIds[saved.sentence] ?? null,
+          sentenceAudioId: sentenceAudioIds[saved.sentence],
         },
         where: { id: saved.sentenceId },
       }),
