@@ -4,6 +4,7 @@ import { getLessonSentences } from "@/data/activities/get-lesson-sentences";
 import { getLessonWords } from "@/data/activities/get-lesson-words";
 import { getSentenceWords } from "@/data/activities/get-sentence-words";
 import { getLesson } from "@/data/lessons/get-lesson";
+import { getTotalBrainPower } from "@/data/progress/get-total-brain-power";
 import { startActivity } from "@/data/progress/start-activity";
 import { getActivitySeoMeta } from "@/lib/activities";
 import { getNextActivityInCourse } from "@zoonk/core/activities/next-in-course";
@@ -68,6 +69,7 @@ export default async function ActivityPage({ params }: Props) {
     session,
     reviewSteps,
     nextSibling,
+    totalBrainPower,
   ] = await Promise.all([
     getActivity({ lessonId: lesson.id, position: activityPosition }),
     getLessonWords({ lessonId: lesson.id }),
@@ -85,6 +87,7 @@ export default async function ActivityPage({ params }: Props) {
     getSession(),
     fetchReviewSteps(lesson.id, activityPosition),
     fetchNextSibling(lesson.id, activityPosition, lessonSlug, lesson.chapter, lesson.position),
+    getTotalBrainPower(),
   ]);
 
   if (!activity) {
@@ -121,6 +124,7 @@ export default async function ActivityPage({ params }: Props) {
       lessonSlug={lessonSlug}
       nextActivity={nextActivity}
       nextSibling={nextSibling}
+      totalBrainPower={totalBrainPower}
       userEmail={session?.user.email}
       userName={session?.user.name ?? null}
     />

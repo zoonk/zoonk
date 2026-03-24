@@ -11,10 +11,10 @@ import {
   usePlayerViewer,
 } from "../player-context";
 import { PlayerLink } from "../player-link";
-import { BeltProgressHint, BeltProgressSkeleton } from "./belt-progress";
+import { BeltProgressHint } from "./belt-progress";
 import { PrimaryActionLink, PrimaryKbd, SecondaryKbd } from "./completion-action-link";
 import { MilestoneActions, UnauthenticatedMilestoneActions } from "./completion-milestone-actions";
-import { RewardBadges, RewardBadgesSkeleton } from "./reward-badges";
+import { RewardBadges } from "./reward-badges";
 
 function CompletionActions({ className, ...props }: React.ComponentProps<"div">) {
   return (
@@ -100,8 +100,6 @@ function AuthenticatedContent({
   const t = useExtracted();
   const milestone = usePlayerMilestone();
 
-  const isLoading = !completionResult || completionResult.status !== "success";
-
   if (milestone.kind !== "activity") {
     return (
       <CompletionActions>
@@ -112,25 +110,19 @@ function AuthenticatedContent({
 
   return (
     <>
-      {showRewards &&
-        (isLoading ? (
-          <>
-            <RewardBadgesSkeleton />
-            <BeltProgressSkeleton />
-          </>
-        ) : (
-          <>
-            <RewardBadges
-              brainPower={completionResult.brainPower}
-              energyDelta={completionResult.energyDelta}
-              isChallenge={false}
-            />
-            <BeltProgressHint
-              brainPower={completionResult.brainPower}
-              newTotalBp={completionResult.newTotalBp}
-            />
-          </>
-        ))}
+      {showRewards && completionResult && (
+        <>
+          <RewardBadges
+            brainPower={completionResult.brainPower}
+            energyDelta={completionResult.energyDelta}
+            isChallenge={false}
+          />
+          <BeltProgressHint
+            brainPower={completionResult.brainPower}
+            newTotalBp={completionResult.newTotalBp}
+          />
+        </>
+      )}
 
       <CompletionActions>
         {nextActivityHref ? (

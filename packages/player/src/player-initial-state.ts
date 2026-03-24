@@ -1,5 +1,4 @@
 import { type ChallengeEffect, parseStepContent } from "@zoonk/core/steps/content-contract";
-import { createIdleCompletionState } from "./player-completion";
 import {
   type DimensionInventory,
   type PlayerPhase,
@@ -48,14 +47,18 @@ function getInitialPhase(steps: SerializedStep[], dimensions: DimensionInventory
   return "playing";
 }
 
-export function createInitialState(activity: SerializedActivity): PlayerState {
+export type InitialStateInput = {
+  activity: SerializedActivity;
+  totalBrainPower: number;
+};
+
+export function createInitialState({ activity, totalBrainPower }: InitialStateInput): PlayerState {
   const dimensions = collectAllDimensions(activity.steps);
   const now = Date.now();
 
   return {
     activityId: activity.id,
-    completion: createIdleCompletionState(),
-    completionRequestId: 0,
+    completion: null,
     currentStepIndex: 0,
     dimensions,
     phase: getInitialPhase(activity.steps, dimensions),
@@ -66,5 +69,6 @@ export function createInitialState(activity: SerializedActivity): PlayerState {
     stepStartedAt: now,
     stepTimings: {},
     steps: activity.steps,
+    totalBrainPower,
   };
 }

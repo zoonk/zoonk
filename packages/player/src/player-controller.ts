@@ -16,18 +16,11 @@ export function buildCompletionInput(state: PlayerState, now: Date = new Date())
   };
 }
 
-export function getSubmitCompletionRequestId(state: PlayerState): number {
-  return state.completionRequestId + 1;
-}
-
 export function getPlayerTransition(state: PlayerState, action: PlayerAction) {
   const nextState = playerReducer(state, action);
 
   return {
     nextState,
-    shouldSubmitCompletion:
-      state.phase !== "completed" &&
-      nextState.phase === "completed" &&
-      state.completion.status === "idle",
+    shouldPersistCompletion: state.phase !== "completed" && nextState.phase === "completed",
   };
 }

@@ -6,10 +6,10 @@ import { useExtracted } from "next-intl";
 import { type CompletionResult } from "../completion-input-schema";
 import { type PlayerRoute, usePlayerViewer } from "../player-context";
 import { type DimensionInventory } from "../player-reducer";
-import { BeltProgressHint, BeltProgressSkeleton } from "./belt-progress";
+import { BeltProgressHint } from "./belt-progress";
 import { PrimaryKbd, SecondaryActionLink } from "./completion-action-link";
 import { DimensionList, buildDimensionEntries } from "./dimension-inventory";
-import { RewardBadges, RewardBadgesSkeleton } from "./reward-badges";
+import { RewardBadges } from "./reward-badges";
 
 function ChallengeScreen({ className, ...props }: React.ComponentProps<"div">) {
   return (
@@ -33,39 +33,6 @@ function ChallengeActions({ className, ...props }: React.ComponentProps<"div">) 
       data-slot="completion-actions"
       {...props}
     />
-  );
-}
-
-function ChallengeRewardBadges({
-  completionResult,
-  isSuccess,
-}: {
-  completionResult: CompletionResult | null;
-  isSuccess: boolean;
-}) {
-  if (!completionResult || completionResult.status !== "success") {
-    return (
-      <>
-        <RewardBadgesSkeleton />
-        {isSuccess && <BeltProgressSkeleton />}
-      </>
-    );
-  }
-
-  return (
-    <>
-      <RewardBadges
-        brainPower={completionResult.brainPower}
-        energyDelta={completionResult.energyDelta}
-        isChallenge={isSuccess}
-      />
-      {isSuccess && (
-        <BeltProgressHint
-          brainPower={completionResult.brainPower}
-          newTotalBp={completionResult.newTotalBp}
-        />
-      )}
-    </>
   );
 }
 
@@ -121,7 +88,19 @@ export function ChallengeSuccessContent({
 
       <DimensionList aria-label={t("Final scores")} entries={entries} variant="success" />
 
-      {isAuthenticated && <ChallengeRewardBadges completionResult={completionResult} isSuccess />}
+      {isAuthenticated && completionResult && (
+        <>
+          <RewardBadges
+            brainPower={completionResult.brainPower}
+            energyDelta={completionResult.energyDelta}
+            isChallenge
+          />
+          <BeltProgressHint
+            brainPower={completionResult.brainPower}
+            newTotalBp={completionResult.newTotalBp}
+          />
+        </>
+      )}
 
       {children}
 
@@ -159,8 +138,12 @@ export function ChallengeFailureContent({
 
       <DimensionList aria-label={t("Final scores")} entries={entries} variant="failure" />
 
-      {isAuthenticated && (
-        <ChallengeRewardBadges completionResult={completionResult} isSuccess={false} />
+      {isAuthenticated && completionResult && (
+        <RewardBadges
+          brainPower={completionResult.brainPower}
+          energyDelta={completionResult.energyDelta}
+          isChallenge={false}
+        />
       )}
 
       <ChallengeActions>

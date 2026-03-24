@@ -77,13 +77,9 @@ export const completionInputSchema = z.object({
 
 export type CompletionInput = z.infer<typeof completionInputSchema>;
 
-export type CompletionResult =
-  | {
-      status: "success";
-      belt: BeltLevelResult;
-      brainPower: number;
-      energyDelta: number;
-      newTotalBp: number;
-    }
-  | { status: "error" }
-  | { status: "unauthenticated" };
+export type CompletionResult = {
+  belt: BeltLevelResult;
+  brainPower: number;
+  energyDelta: number;
+  newTotalBp: number;
+};

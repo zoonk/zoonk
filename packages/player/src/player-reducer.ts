@@ -2,13 +2,7 @@ import { type ChallengeEffect } from "@zoonk/core/steps/content-contract";
 import { type AnswerResult } from "./check-answer";
 import { type CompletionResult } from "./completion-input-schema";
 import { IMPACT_DELTA } from "./dimensions";
-import {
-  type PlayerCompletionState,
-  createIdleCompletionState,
-  handleRejectCompletion,
-  handleResolveCompletion,
-  handleSubmitCompletion,
-} from "./player-completion";
+import { computeLocalCompletion } from "./player-completion";
 import { buildInitialAnswers, collectAllDimensions } from "./player-initial-state";
 import { type SerializedStep } from "./prepare-activity-data";
 import { canNavigatePrev, isStaticNavigationStep } from "./step-navigation";
@@ -43,8 +37,7 @@ export type StepTiming = {
 
 export type PlayerState = {
   activityId: string;
-  completion: PlayerCompletionState;
-  completionRequestId: number;
+  completion: CompletionResult | null;
   currentStepIndex: number;
   dimensions: DimensionInventory;
   phase: PlayerPhase;
@@ -55,6 +48,7 @@ export type PlayerState = {
   stepStartedAt: number;
   steps: SerializedStep[];
   stepTimings: Record<string, StepTiming>;
+  totalBrainPower: number;
 };
 
 export type PlayerAction =
@@ -65,9 +59,6 @@ export type PlayerAction =
   | { type: "COMPLETE" }
   | { type: "NAVIGATE_STEP"; direction: "next" | "prev" }
   | { type: "RESTART" }
-  | { type: "SUBMIT_COMPLETION"; requestId: number }
-  | { type: "RESOLVE_COMPLETION"; requestId: number; result: CompletionResult }
-  | { type: "REJECT_COMPLETION"; requestId: number }
   | { type: "START_CHALLENGE" };
 
 function applyEffects(
@@ -156,6 +147,11 @@ function handleCheckAnswer(
   return checked;
 }
 
+function completeWith(state: PlayerState): PlayerState {
+  const completed: PlayerState = { ...state, phase: "completed" };
+  return { ...completed, completion: computeLocalCompletion(completed) };
+}
+
 function handleContinue(state: PlayerState): PlayerState {
   if (state.phase !== "feedback") {
     return state;
@@ -164,11 +160,15 @@ function handleContinue(state: PlayerState): PlayerState {
   const nextIndex = state.currentStepIndex + 1;
   const isLast = nextIndex >= state.steps.length;
 
+  if (isLast) {
+    return completeWith(state);
+  }
+
   return {
     ...state,
-    currentStepIndex: isLast ? state.currentStepIndex : nextIndex,
-    phase: isLast ? "completed" : "playing",
-    stepStartedAt: isLast ? state.stepStartedAt : Date.now(),
+    currentStepIndex: nextIndex,
+    phase: "playing",
+    stepStartedAt: Date.now(),
   };
 }
 
@@ -199,7 +199,7 @@ function handleNavigateStep(
   const nextIndex = state.currentStepIndex + 1;
 
   if (nextIndex >= state.steps.length) {
-    return { ...state, phase: "completed" };
+    return completeWith(state);
   }
 
   return { ...state, currentStepIndex: nextIndex, stepStartedAt: Date.now() };
@@ -211,8 +211,7 @@ function handleRestart(state: PlayerState): PlayerState {
 
   return {
     ...state,
-    completion: createIdleCompletionState(),
-    completionRequestId: state.completionRequestId + 1,
+    completion: null,
     currentStepIndex: 0,
     dimensions,
     phase: "playing",
@@ -238,7 +237,7 @@ function handleComplete(state: PlayerState): PlayerState {
     return state;
   }
 
-  return { ...state, phase: "completed" };
+  return completeWith(state);
 }
 
 export function playerReducer(state: PlayerState, action: PlayerAction): PlayerState {
@@ -263,15 +262,6 @@ export function playerReducer(state: PlayerState, action: PlayerAction): PlayerS
 
     case "RESTART":
       return handleRestart(state);
-
-    case "SUBMIT_COMPLETION":
-      return handleSubmitCompletion(state, action.requestId);
-
-    case "RESOLVE_COMPLETION":
-      return handleResolveCompletion(state, action.requestId, action.result);
-
-    case "REJECT_COMPLETION":
-      return handleRejectCompletion(state, action.requestId);
 
     case "START_CHALLENGE":
       return handleStartChallenge(state);

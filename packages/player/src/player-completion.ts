@@ -1,45 +1,35 @@
+import { calculateBeltLevel } from "@zoonk/utils/belt-level";
 import { type CompletionResult } from "./completion-input-schema";
+import { computeChallengeScore, computeScore } from "./compute-score";
+import { hasNegativeDimension } from "./dimensions";
 import { type PlayerState } from "./player-reducer";
 
-export type PlayerCompletionState =
-  | { status: "idle" }
-  | { status: "submitting" }
-  | CompletionResult;
+/**
+ * Computes the completion result from local player state.
+ *
+ * All inputs (correct/incorrect answers, dimensions, totalBrainPower) are
+ * already available on the client, so we can show metrics instantly without
+ * waiting for a server round-trip. The server still validates and persists
+ * in the background via `after()`.
+ */
+export function computeLocalCompletion(state: PlayerState): CompletionResult {
+  const isChallenge = Object.keys(state.dimensions).length > 0;
+  const isSuccessful = !hasNegativeDimension(state.dimensions);
 
-export function createIdleCompletionState(): PlayerCompletionState {
-  return { status: "idle" };
-}
+  const score = isChallenge
+    ? computeChallengeScore({ dimensions: state.dimensions, isSuccessful })
+    : computeScore({
+        results: Object.values(state.results).map((stepResult) => ({
+          isCorrect: stepResult.result.isCorrect,
+        })),
+      });
 
-export function handleSubmitCompletion(state: PlayerState, requestId: number): PlayerState {
-  return {
-    ...state,
-    completion: { status: "submitting" },
-    completionRequestId: requestId,
-  };
-}
-
-export function handleResolveCompletion(
-  state: PlayerState,
-  requestId: number,
-  result: CompletionResult,
-): PlayerState {
-  if (requestId !== state.completionRequestId) {
-    return state;
-  }
+  const newTotalBp = state.totalBrainPower + score.brainPower;
 
   return {
-    ...state,
-    completion: result,
-  };
-}
-
-export function handleRejectCompletion(state: PlayerState, requestId: number): PlayerState {
-  if (requestId !== state.completionRequestId) {
-    return state;
-  }
-
-  return {
-    ...state,
-    completion: { status: "error" },
+    belt: calculateBeltLevel(newTotalBp),
+    brainPower: score.brainPower,
+    energyDelta: score.energyDelta,
+    newTotalBp,
   };
 }

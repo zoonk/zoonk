@@ -57,8 +57,7 @@ function buildActivity(overrides: Partial<SerializedActivity> = {}): SerializedA
 function buildState(overrides: Partial<PlayerState> = {}): PlayerState {
   return {
     activityId: "activity-1",
-    completion: { status: "idle" },
-    completionRequestId: 0,
+    completion: null,
     currentStepIndex: 0,
     dimensions: {},
     phase: "playing",
@@ -69,6 +68,7 @@ function buildState(overrides: Partial<PlayerState> = {}): PlayerState {
     stepStartedAt: 1000,
     stepTimings: {},
     steps: [buildStep()],
+    totalBrainPower: 0,
     ...overrides,
   };
 }
@@ -109,40 +109,45 @@ function buildChallengeActivity(): SerializedActivity {
 describe(createInitialState, () => {
   test("sets phase to playing and index to 0 for non-challenge", () => {
     const activity = buildActivity();
-    const state = createInitialState(activity);
+    const state = createInitialState({ activity, totalBrainPower: 0 });
     expect(state.phase).toBe("playing");
     expect(state.currentStepIndex).toBe(0);
   });
 
   test("sets phase to intro for challenge activity", () => {
-    const state = createInitialState(buildChallengeActivity());
+    const state = createInitialState({ activity: buildChallengeActivity(), totalBrainPower: 0 });
     expect(state.phase).toBe("intro");
   });
 
   test("copies activityId and steps", () => {
     const steps = [buildStep({ id: "s1" }), buildStep({ id: "s2", position: 1 })];
     const activity = buildActivity({ steps });
-    const state = createInitialState(activity);
+    const state = createInitialState({ activity, totalBrainPower: 0 });
     expect(state.activityId).toBe("activity-1");
     expect(state.steps).toEqual(steps);
   });
 
   test("initializes empty maps for non-challenge activity", () => {
-    const state = createInitialState(buildActivity());
+    const state = createInitialState({ activity: buildActivity(), totalBrainPower: 0 });
     expect(state.selectedAnswers).toEqual({});
     expect(state.results).toEqual({});
     expect(state.dimensions).toEqual({});
   });
 
   test("collects all dimensions from challenge steps at init", () => {
-    const state = createInitialState(buildChallengeActivity());
+    const state = createInitialState({ activity: buildChallengeActivity(), totalBrainPower: 0 });
     expect(state.dimensions).toEqual({ Courage: 0, Diplomacy: 0 });
+  });
+
+  test("stores totalBrainPower from input", () => {
+    const state = createInitialState({ activity: buildActivity(), totalBrainPower: 500 });
+    expect(state.totalBrainPower).toBe(500);
   });
 
   test("pre-populates selectedAnswers for sortOrder steps", () => {
     const sortItems = ["Banana", "Apple", "Cherry"];
     const steps = [buildStep({ id: "sort-1", kind: "sortOrder", sortOrderItems: sortItems })];
-    const state = createInitialState(buildActivity({ steps }));
+    const state = createInitialState({ activity: buildActivity({ steps }), totalBrainPower: 0 });
     expect(state.selectedAnswers["sort-1"]).toEqual({
       kind: "sortOrder",
       userOrder: sortItems,
@@ -154,7 +159,7 @@ describe(createInitialState, () => {
       buildStep({ id: "s1", kind: "static" }),
       buildMultipleChoiceStep({ id: "mc-1" }),
     ];
-    const state = createInitialState(buildActivity({ steps }));
+    const state = createInitialState({ activity: buildActivity({ steps }), totalBrainPower: 0 });
     expect(state.selectedAnswers).toEqual({});
   });
 });
@@ -522,71 +527,110 @@ describe("COMPLETE", () => {
   });
 });
 
-describe("completion submission state", () => {
-  test("tracks the current submission request id while submitting", () => {
-    const next = playerReducer(buildState(), {
-      requestId: 7,
-      type: "SUBMIT_COMPLETION",
-    });
-
-    expect(next.completion).toEqual({ status: "submitting" });
-    expect(next.completionRequestId).toBe(7);
-  });
-
-  test("stores the latest resolved completion result", () => {
-    const next = playerReducer(
-      buildState({ completion: { status: "submitting" }, completionRequestId: 2 }),
-      {
-        requestId: 2,
-        result: {
-          belt: {
-            bpPerLevel: 250,
-            bpToNextLevel: 240,
-            color: "white",
-            isMaxLevel: false,
-            level: 1,
-            progressInLevel: 10,
-          },
-          brainPower: 5,
-          energyDelta: 2,
-          newTotalBp: 25,
-          status: "success",
-        },
-        type: "RESOLVE_COMPLETION",
-      },
-    );
-
-    expect(next.completion).toEqual({
-      belt: {
-        bpPerLevel: 250,
-        bpToNextLevel: 240,
-        color: "white",
-        isMaxLevel: false,
-        level: 1,
-        progressInLevel: 10,
-      },
-      brainPower: 5,
-      energyDelta: 2,
-      newTotalBp: 25,
-      status: "success",
-    });
-  });
-
-  test("ignores stale completion responses", () => {
+describe("local completion computation", () => {
+  test("computes completion result when CONTINUE transitions to completed", () => {
     const state = buildState({
-      completion: { status: "submitting" },
-      completionRequestId: 3,
+      currentStepIndex: 0,
+      phase: "feedback",
+      results: {
+        "step-1": {
+          answer: multipleChoiceAnswer,
+          effects: [],
+          result: { correctAnswer: null, feedback: "Yes", isCorrect: true },
+          stepId: "step-1",
+        },
+      },
+      steps: [buildMultipleChoiceStep()],
+      totalBrainPower: 100,
     });
 
-    const resolved = playerReducer(state, {
-      requestId: 2,
-      result: { status: "unauthenticated" },
-      type: "RESOLVE_COMPLETION",
-    });
-    const rejected = playerReducer(state, { requestId: 2, type: "REJECT_COMPLETION" });
+    const next = playerReducer(state, { type: "CONTINUE" });
 
-    expect(resolved).toBe(state);
-    expect(rejected).toBe(state);
+    expect(next.phase).toBe("completed");
+    expect(next.completion).not.toBeNull();
+    expect(next.completion?.brainPower).toBe(10);
+    expect(next.completion?.newTotalBp).toBe(110);
+    expect(next.completion?.belt).toBeDefined();
+  });
+
+  test("computes completion result when NAVIGATE_STEP passes last step", () => {
+    const steps = [buildStep({ id: "s1", kind: "static" })];
+    const state = buildState({ currentStepIndex: 0, steps, totalBrainPower: 50 });
+
+    const next = playerReducer(state, { direction: "next", type: "NAVIGATE_STEP" });
+
+    expect(next.phase).toBe("completed");
+    expect(next.completion).not.toBeNull();
+    expect(next.completion?.brainPower).toBe(10);
+    expect(next.completion?.newTotalBp).toBe(60);
+  });
+
+  test("computes challenge completion with 100 BP for successful challenge", () => {
+    const state = buildState({
+      currentStepIndex: 0,
+      dimensions: { Courage: 2 },
+      phase: "feedback",
+      results: {
+        "step-1": {
+          answer: multipleChoiceAnswer,
+          effects: [{ dimension: "Courage", impact: "positive" }],
+          result: { correctAnswer: null, feedback: null, isCorrect: true },
+          stepId: "step-1",
+        },
+      },
+      steps: [buildMultipleChoiceStep()],
+      totalBrainPower: 0,
+    });
+
+    const next = playerReducer(state, { type: "CONTINUE" });
+
+    expect(next.completion?.brainPower).toBe(100);
+    expect(next.completion?.newTotalBp).toBe(100);
+  });
+
+  test("computes challenge completion with 10 BP for failed challenge", () => {
+    const state = buildState({
+      currentStepIndex: 0,
+      dimensions: { Courage: -1 },
+      phase: "feedback",
+      results: {
+        "step-1": {
+          answer: multipleChoiceAnswer,
+          effects: [{ dimension: "Courage", impact: "negative" }],
+          result: { correctAnswer: null, feedback: null, isCorrect: false },
+          stepId: "step-1",
+        },
+      },
+      steps: [buildMultipleChoiceStep()],
+      totalBrainPower: 0,
+    });
+
+    const next = playerReducer(state, { type: "CONTINUE" });
+
+    expect(next.completion?.brainPower).toBe(10);
+  });
+
+  test("resets completion to null on RESTART", () => {
+    const state = buildState({
+      completion: {
+        belt: {
+          bpPerLevel: 250,
+          bpToNextLevel: 240,
+          color: "white",
+          isMaxLevel: false,
+          level: 1,
+          progressInLevel: 10,
+        },
+        brainPower: 10,
+        energyDelta: 0.2,
+        newTotalBp: 10,
+      },
+      phase: "completed",
+    });
+
+    const next = playerReducer(state, { type: "RESTART" });
+
+    expect(next.completion).toBeNull();
   });
 });
 
@@ -732,7 +776,7 @@ describe("timing", () => {
 
   test("createInitialState sets startedAt and stepStartedAt", () => {
     vi.setSystemTime(new Date("2026-03-15T10:00:00"));
-    const state = createInitialState(buildActivity());
+    const state = createInitialState({ activity: buildActivity(), totalBrainPower: 0 });
     expect(state.startedAt).toBe(Date.now());
     expect(state.stepStartedAt).toBe(Date.now());
     expect(state.stepTimings).toEqual({});
@@ -840,7 +884,7 @@ describe("edge cases", () => {
 
   test("empty steps array sets phase to completed", () => {
     const activity = buildActivity({ steps: [] });
-    const state = createInitialState(activity);
+    const state = createInitialState({ activity, totalBrainPower: 0 });
     expect(state.steps).toEqual([]);
     expect(state.currentStepIndex).toBe(0);
     expect(state.phase).toBe("completed");

@@ -1,9 +1,5 @@
 import { describe, expect, test } from "vitest";
-import {
-  buildCompletionInput,
-  getPlayerTransition,
-  getSubmitCompletionRequestId,
-} from "./player-controller";
+import { buildCompletionInput, getPlayerTransition } from "./player-controller";
 import { type PlayerAction, type PlayerState } from "./player-reducer";
 import { type SerializedStep } from "./prepare-activity-data";
 
@@ -29,8 +25,7 @@ function buildStep(overrides: Partial<SerializedStep> = {}): SerializedStep {
 function buildState(overrides: Partial<PlayerState> = {}): PlayerState {
   return {
     activityId: "activity-1",
-    completion: { status: "idle" },
-    completionRequestId: 0,
+    completion: null,
     currentStepIndex: 0,
     dimensions: {},
     phase: "playing",
@@ -41,12 +36,13 @@ function buildState(overrides: Partial<PlayerState> = {}): PlayerState {
     stepStartedAt: 2000,
     stepTimings: {},
     steps: [buildStep()],
+    totalBrainPower: 0,
     ...overrides,
   };
 }
 
 describe(getPlayerTransition, () => {
-  test("marks completion submission when feedback continues into completion", () => {
+  test("marks persistence when feedback continues into completion", () => {
     const state = buildState({
       phase: "feedback",
       steps: [buildStep()],
@@ -55,10 +51,10 @@ describe(getPlayerTransition, () => {
     const transition = getPlayerTransition(state, { type: "CONTINUE" });
 
     expect(transition.nextState.phase).toBe("completed");
-    expect(transition.shouldSubmitCompletion).toBe(true);
+    expect(transition.shouldPersistCompletion).toBe(true);
   });
 
-  test("marks completion submission when static navigation reaches the last step", () => {
+  test("marks persistence when static navigation reaches the last step", () => {
     const steps = [buildStep({ id: "step-1" }), buildStep({ id: "step-2", position: 1 })];
     const state = buildState({
       currentStepIndex: 1,
@@ -71,10 +67,10 @@ describe(getPlayerTransition, () => {
     });
 
     expect(transition.nextState.phase).toBe("completed");
-    expect(transition.shouldSubmitCompletion).toBe(true);
+    expect(transition.shouldPersistCompletion).toBe(true);
   });
 
-  test("does not submit completion for non-terminal actions", () => {
+  test("does not persist completion for non-terminal actions", () => {
     const action: PlayerAction = {
       answer: { kind: "multipleChoice", selectedIndex: 0, selectedText: "A" },
       stepId: "step-1",
@@ -83,7 +79,7 @@ describe(getPlayerTransition, () => {
 
     const transition = getPlayerTransition(buildState(), action);
 
-    expect(transition.shouldSubmitCompletion).toBe(false);
+    expect(transition.shouldPersistCompletion).toBe(false);
   });
 });
 
@@ -123,11 +119,5 @@ describe(buildCompletionInput, () => {
         },
       },
     });
-  });
-});
-
-describe(getSubmitCompletionRequestId, () => {
-  test("increments the request id for the next submission", () => {
-    expect(getSubmitCompletionRequestId(buildState({ completionRequestId: 4 }))).toBe(5);
   });
 });

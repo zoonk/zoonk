@@ -25,8 +25,7 @@ function buildStep(overrides: Partial<SerializedStep> = {}): SerializedStep {
 function buildState(overrides: Partial<PlayerState> = {}): PlayerState {
   return {
     activityId: "activity-1",
-    completion: { status: "idle" },
-    completionRequestId: 0,
+    completion: null,
     currentStepIndex: 0,
     dimensions: {},
     phase: "playing",
@@ -37,6 +36,7 @@ function buildState(overrides: Partial<PlayerState> = {}): PlayerState {
     stepStartedAt: 1000,
     stepTimings: {},
     steps: [buildStep()],
+    totalBrainPower: 0,
     ...overrides,
   };
 }
