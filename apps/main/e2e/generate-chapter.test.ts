@@ -426,6 +426,81 @@ test.describe("Generate Chapter Page - With Subscription", () => {
     await userWithoutProgress.waitForURL(/\/b\/ai\/c\//, { timeout: 10_000 });
   });
 
+  test("reconnects and completes when stream is cut off before completion step", async ({
+    userWithoutProgress,
+    noProgressUser,
+  }) => {
+    await createTestSubscription(noProgressUser.id);
+    const { chapter, organizationId } = await createPendingChapter();
+
+    const uniqueId = randomUUID().slice(0, 8);
+    await lessonFixture({
+      chapterId: chapter.id,
+      isPublished: true,
+      organizationId,
+      slug: `e2e-reconnect-lesson-${uniqueId}`,
+      title: `E2E Reconnect Lesson ${uniqueId}`,
+    });
+
+    const partialMessages = [
+      { status: "started", step: "getChapter" },
+      { status: "completed", step: "getChapter" },
+      { status: "started", step: "generateLessons" },
+      { status: "completed", step: "generateLessons" },
+    ];
+
+    const remainingMessages = [
+      { status: "started", step: "setFirstActivityAsCompleted" },
+      { status: "completed", step: "setFirstActivityAsCompleted" },
+    ];
+
+    /**
+     * Simulate a stream cutoff by serving partial messages on the first request
+     * and the remaining messages (including the completion step) on reconnection.
+     * The client uses `startIndex` to resume from where it left off.
+     */
+    let statusRequestCount = 0;
+    await userWithoutProgress.route("**/v1/workflows/chapter-generation/**", async (route) => {
+      const url = route.request().url();
+      const method = route.request().method();
+
+      if (url.includes("/trigger") && method === "POST") {
+        await route.fulfill({
+          body: JSON.stringify({ message: "Workflow started", runId: TEST_RUN_ID }),
+          contentType: "application/json",
+          status: 200,
+        });
+        return;
+      }
+
+      if (url.includes("/status")) {
+        statusRequestCount += 1;
+        const messages = statusRequestCount === 1 ? partialMessages : remainingMessages;
+        await route.fulfill({
+          body: createSSEStream(messages),
+          contentType: "text/event-stream",
+          status: 200,
+        });
+        return;
+      }
+
+      await route.continue();
+    });
+
+    await userWithoutProgress.goto(`/generate/ch/${chapter.id}`);
+
+    await expect(userWithoutProgress.getByText(/your lessons are ready/i)).toBeVisible({
+      timeout: 15_000,
+    });
+
+    await prisma.chapter.update({
+      data: { generationStatus: "completed" },
+      where: { id: chapter.id },
+    });
+
+    await userWithoutProgress.waitForURL(/\/b\/ai\/c\//, { timeout: 10_000 });
+  });
+
   test("shows error when stream returns error status", async ({
     userWithoutProgress,
     noProgressUser,

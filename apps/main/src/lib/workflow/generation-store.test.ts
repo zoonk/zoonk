@@ -54,6 +54,33 @@ describe(generationReducer, () => {
     });
   });
 
+  describe("reconnect", () => {
+    it("increments reconnectCount", () => {
+      const state = generationReducer(initialGenerationState({ status: "streaming" }), {
+        type: "reconnect",
+      });
+      expect(state.reconnectCount).toBe(1);
+    });
+
+    it("accumulates across multiple dispatches", () => {
+      const first = generationReducer(initialGenerationState({ status: "streaming" }), {
+        type: "reconnect",
+      });
+      const second = generationReducer(first, { type: "reconnect" });
+      expect(second.reconnectCount).toBe(2);
+    });
+  });
+
+  describe("reset", () => {
+    it("resets reconnectCount to 0", () => {
+      const state = generationReducer(
+        initialGenerationState({ reconnectCount: 3, status: "streaming" }),
+        { type: "reset" },
+      );
+      expect(state.reconnectCount).toBe(0);
+    });
+  });
+
   describe("streamEnded", () => {
     it("does not transition from error state", () => {
       const state = generationReducer(

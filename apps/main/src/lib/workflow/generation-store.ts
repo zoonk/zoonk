@@ -11,12 +11,14 @@ export type GenerationState<TStep extends string = string> = {
   completedSteps: TStep[];
   currentStep: TStep | null;
   error: string | null;
+  reconnectCount: number;
   runId: string | null;
   startedSteps: TStep[];
   status: GenerationStatus;
 };
 
 export type GenerationAction<TStep extends string = string> =
+  | { type: "reconnect" }
   | { type: "reset" }
   | { type: "setError"; error: string }
   | { type: "stepCompleted"; step: TStep }
@@ -32,6 +34,7 @@ export function initialGenerationState<TStep extends string = string>(
     completedSteps: [] as TStep[],
     currentStep: null,
     error: null,
+    reconnectCount: 0,
     runId: null,
     startedSteps: [] as TStep[],
     status: "idle",
@@ -44,6 +47,8 @@ export function generationReducer<TStep extends string>(
   action: GenerationAction<TStep>,
 ): GenerationState<TStep> {
   switch (action.type) {
+    case "reconnect":
+      return { ...state, reconnectCount: state.reconnectCount + 1 };
     case "reset":
       return initialGenerationState<TStep>();
     case "setError":

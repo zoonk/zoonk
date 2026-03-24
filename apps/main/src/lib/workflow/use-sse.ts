@@ -62,6 +62,9 @@ export function useSSE<T>(
         }
         /* eslint-enable no-await-in-loop */
 
+        // Flush any bytes the decoder held back while waiting for more chunks
+        parser.feed(decoder.decode());
+
         onCompleteEvent();
       } catch (error) {
         if (error instanceof Error && error.name !== "AbortError") {
