@@ -51,7 +51,7 @@ export type SerializedStep<Kind extends SupportedStepKind = SupportedStepKind> =
   wordBankOptions: WordBankOption[];
   sentenceWordOptions: WordBankOption[];
   sortOrderItems: string[];
-  fillBlankOptions: string[];
+  fillBlankOptions: WordBankOption[];
   matchColumnsRightItems: string[];
 };
 
@@ -173,13 +173,20 @@ function buildSortOrderItems(step: SerializedStep): string[] {
   return shuffle(content.items);
 }
 
-function buildFillBlankOptions(step: SerializedStep): string[] {
+function buildFillBlankOptions(step: SerializedStep): WordBankOption[] {
   if (step.kind !== "fillBlank") {
     return [];
   }
 
   const content = parseStepContent("fillBlank", step.content);
-  return shuffle([...content.answers, ...content.distractors]);
+  const words = shuffle([...content.answers, ...content.distractors]);
+
+  return words.map((word) => ({
+    audioUrl: null,
+    romanization: content.romanizations?.[word] ?? null,
+    translation: null,
+    word,
+  }));
 }
 
 function buildMatchColumnsRightItems(step: SerializedStep): string[] {

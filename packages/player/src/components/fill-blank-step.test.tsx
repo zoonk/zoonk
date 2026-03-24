@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { type ReactNode, StrictMode, useCallback, useState } from "react";
 import { type Mock, afterEach, describe, expect, it, vi } from "vitest";
 import { type SelectedAnswer } from "../player-reducer";
@@ -21,7 +21,11 @@ function buildFillBlankStep(overrides: Record<string, unknown> = {}) {
       feedback: "Good",
       template: "Say [BLANK] then [BLANK]",
     },
-    fillBlankOptions: ["alpha", "beta", "gamma"],
+    fillBlankOptions: [
+      { audioUrl: null, romanization: null, translation: null, word: "alpha" },
+      { audioUrl: null, romanization: null, translation: null, word: "beta" },
+      { audioUrl: null, romanization: null, translation: null, word: "gamma" },
+    ],
     id: "step-fb",
     kind: "fillBlank" as const,
     matchColumnsRightItems: [],
@@ -66,10 +70,19 @@ function ParentWithState({
   );
 }
 
+/**
+ * Builds a romanization lookup map from [text, romanization] pairs.
+ * Avoids lint warnings for single-character Japanese keys like に, は, を.
+ */
+function buildRomanizationMap(pairs: [string, string][]): Record<string, string> {
+  return Object.fromEntries(pairs);
+}
+
 describe("fill in the blank step", () => {
   let consoleErrorSpy: Mock;
 
   afterEach(() => {
+    cleanup();
     consoleErrorSpy.mockRestore();
   });
 
@@ -104,5 +117,118 @@ describe("fill in the blank step", () => {
     );
 
     expect(renderWarnings).toStrictEqual([]);
+  });
+
+  it("renders romanization on word bank tiles when romanizations map is provided", () => {
+    consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    const step = buildFillBlankStep({
+      content: {
+        answers: ["を"],
+        distractors: ["は", "に"],
+        feedback: "Correct",
+        romanizations: buildRomanizationMap([
+          ["お金をお願いします。", "okane o onegai shimasu."],
+          ["に", "ni"],
+          ["は", "wa"],
+          ["を", "o"],
+        ]),
+        template: "お金[BLANK]お願いします。",
+      },
+      fillBlankOptions: [
+        { audioUrl: null, romanization: "o", translation: null, word: "を" },
+        { audioUrl: null, romanization: "wa", translation: null, word: "は" },
+        { audioUrl: null, romanization: "ni", translation: null, word: "に" },
+      ],
+    });
+
+    render(
+      <ParentWithState>
+        {({ onSelectAnswer, selectedAnswer }) => (
+          <FillBlankStep
+            onSelectAnswer={onSelectAnswer}
+            selectedAnswer={selectedAnswer}
+            step={step}
+          />
+        )}
+      </ParentWithState>,
+    );
+
+    expect(screen.getByText("o")).toBeTruthy();
+    expect(screen.getByText("wa")).toBeTruthy();
+    expect(screen.getByText("ni")).toBeTruthy();
+  });
+
+  it("shows template romanization with answer replaced by blank placeholder", () => {
+    consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    const step = buildFillBlankStep({
+      content: {
+        answers: ["を"],
+        distractors: ["は"],
+        feedback: "Correct",
+        romanizations: buildRomanizationMap([
+          ["お金をお願いします。", "okane o onegai shimasu."],
+          ["は", "wa"],
+          ["を", "o"],
+        ]),
+        template: "お金[BLANK]お願いします。",
+      },
+      fillBlankOptions: [
+        { audioUrl: null, romanization: "o", translation: null, word: "を" },
+        { audioUrl: null, romanization: "wa", translation: null, word: "は" },
+      ],
+    });
+
+    render(
+      <ParentWithState>
+        {({ onSelectAnswer, selectedAnswer }) => (
+          <FillBlankStep
+            onSelectAnswer={onSelectAnswer}
+            selectedAnswer={selectedAnswer}
+            step={step}
+          />
+        )}
+      </ParentWithState>,
+    );
+
+    expect(screen.getByText("okane ____ onegai shimasu.")).toBeTruthy();
+  });
+
+  it("handles multi-word answers with spaces in romanization map", () => {
+    consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    const step = buildFillBlankStep({
+      content: {
+        answers: ["Guten Morgen"],
+        distractors: ["Guten Tag"],
+        feedback: "Correct",
+        romanizations: null,
+        template: "[BLANK], wie geht's?",
+      },
+      fillBlankOptions: [
+        { audioUrl: null, romanization: null, translation: null, word: "Guten Morgen" },
+        { audioUrl: null, romanization: null, translation: null, word: "Guten Tag" },
+      ],
+    });
+
+    render(
+      <ParentWithState>
+        {({ onSelectAnswer, selectedAnswer }) => (
+          <FillBlankStep
+            onSelectAnswer={onSelectAnswer}
+            selectedAnswer={selectedAnswer}
+            step={step}
+          />
+        )}
+      </ParentWithState>,
+    );
+
+    const wordBank = screen.getByRole("group", { name: /word bank/i });
+    const buttons = [...wordBank.querySelectorAll("button")];
+
+    expect(buttons).toHaveLength(2);
+    expect(buttons.some((btn) => btn.textContent === "Guten Morgen")).toBeTruthy();
+    expect(buttons.some((btn) => btn.textContent === "Guten Tag")).toBeTruthy();
   });
 });

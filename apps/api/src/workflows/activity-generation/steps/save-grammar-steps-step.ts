@@ -17,6 +17,25 @@ function nullableNonEmpty(value: string | null | undefined): string | undefined 
 }
 
 /**
+ * Builds a lookup map from each answer/distractor word to its romanization.
+ * Returns null when no romanizations are available (Roman-script languages).
+ */
+function buildOptionRomanizations(
+  options: string[],
+  romanizations: Record<string, string> | null,
+): Record<string, string> | null {
+  if (!romanizations) {
+    return null;
+  }
+
+  const entries = options
+    .map((option) => [option, romanizations[option]] as const)
+    .filter((entry): entry is [string, string] => Boolean(entry[1]));
+
+  return entries.length > 0 ? Object.fromEntries(entries) : null;
+}
+
+/**
  * Merges the raw grammar content (TARGET_LANGUAGE examples + exercises)
  * with the enrichment data (USER_LANGUAGE translations, rule, discovery, feedback)
  * and optional romanizations into the final step records for the database.
@@ -72,6 +91,9 @@ function buildGrammarSteps(
 
   const practiceSteps = content.exercises.map((exercise, index) => {
     const exerciseQuestion = nullableNonEmpty(enrichment.exerciseQuestions[index]);
+    const fullSentence = exercise.template.replace("[BLANK]", exercise.answer);
+    const allOptionKeys = [fullSentence, exercise.answer, ...exercise.distractors];
+    const exerciseRomanizations = buildOptionRomanizations(allOptionKeys, romanizations);
 
     return {
       activityId,
@@ -80,6 +102,7 @@ function buildGrammarSteps(
         distractors: exercise.distractors,
         feedback: enrichment.exerciseFeedback[index] ?? "",
         ...(exerciseQuestion ? { question: exerciseQuestion } : {}),
+        ...(exerciseRomanizations ? { romanizations: exerciseRomanizations } : {}),
         template: exercise.template,
       }),
       kind: "fillBlank" as const,

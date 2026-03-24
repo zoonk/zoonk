@@ -5,10 +5,12 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useCallback, useMemo, useState } from "react";
 import { type SelectedAnswer, type StepResult } from "../player-reducer";
-import { type SerializedStep } from "../prepare-activity-data";
+import { type SerializedStep, type WordBankOption } from "../prepare-activity-data";
 import { useReplaceName } from "../user-name-context";
+import { getTemplateRomanization } from "./_utils/template-romanization";
 import { InlineFeedback } from "./inline-feedback";
 import { QuestionText } from "./question-text";
+import { RomanizationText } from "./romanization-text";
 import { InteractiveStepLayout } from "./step-layouts";
 
 function getBlankResultState(
@@ -118,17 +120,17 @@ function TemplateText({
 function WordTile({
   isUsed,
   onPlace,
-  word,
+  option,
 }: {
   isUsed: boolean;
   onPlace: () => void;
-  word: string;
+  option: WordBankOption;
 }) {
   return (
     <button
       aria-disabled={isUsed}
       className={cn(
-        "border-border min-h-11 rounded-lg border px-4 py-2.5 transition-all duration-150",
+        "border-border flex min-h-11 flex-col items-center justify-center rounded-lg border px-4 py-2.5 transition-all duration-150",
         isUsed
           ? "pointer-events-none opacity-50"
           : "hover:bg-accent focus-visible:border-ring focus-visible:ring-ring/50 outline-none focus-visible:ring-[3px]",
@@ -137,7 +139,9 @@ function WordTile({
       tabIndex={isUsed ? -1 : 0}
       type="button"
     >
-      {word}
+      <span>{option.word}</span>
+
+      <RomanizationText>{option.romanization}</RomanizationText>
     </button>
   );
 }
@@ -146,12 +150,12 @@ function WordBank({
   blanks,
   disabled,
   onPlaceWord,
-  words,
+  options,
 }: {
   blanks: (string | null)[];
   disabled: boolean;
   onPlaceWord: (word: string) => void;
-  words: string[];
+  options: WordBankOption[];
 }) {
   const t = useExtracted();
   const usedWords = blanks.filter(Boolean);
@@ -162,18 +166,20 @@ function WordBank({
       className={cn("flex flex-wrap gap-2.5", disabled && "pointer-events-none opacity-50")}
       role="group"
     >
-      {words.map((word, index) => {
-        const usedCount = usedWords.filter((used) => used === word).length;
-        const totalCount = words.slice(0, index + 1).filter((item) => item === word).length;
+      {options.map((option, index) => {
+        const usedCount = usedWords.filter((used) => used === option.word).length;
+        const totalCount = options
+          .slice(0, index + 1)
+          .filter((item) => item.word === option.word).length;
         const isUsed = usedCount >= totalCount;
 
         return (
           <WordTile
             isUsed={isUsed}
             // oxlint-disable-next-line react/no-array-index-key -- Words can repeat in word bank, no unique ID
-            key={`${word}-${index}`}
-            onPlace={() => onPlaceWord(word)}
-            word={word}
+            key={`${option.word}-${index}`}
+            onPlace={() => onPlaceWord(option.word)}
+            option={option}
           />
         );
       })}
@@ -207,6 +213,18 @@ export function FillBlankStep({
   const replaceName = useReplaceName();
   const blankCount = content.answers.length;
   const hasResult = result !== undefined;
+
+  const templateRomanization = useMemo(() => {
+    const firstAnswer = content.answers[0] ?? "";
+    const fullSentence = content.template.replace("[BLANK]", firstAnswer);
+    const fullSentenceRomanization = content.romanizations?.[fullSentence];
+    const answerRomanization = content.romanizations?.[firstAnswer];
+
+    return getTemplateRomanization({
+      answer: answerRomanization,
+      sentence: fullSentenceRomanization,
+    });
+  }, [content.romanizations, content.answers, content.template]);
 
   const [blanks, setBlanks] = useState<(string | null)[]>(() => {
     if (result?.answer?.kind === "fillBlank") {
@@ -266,11 +284,13 @@ export function FillBlankStep({
         template={content.template}
       />
 
+      <RomanizationText>{templateRomanization}</RomanizationText>
+
       <WordBank
         blanks={blanks}
         disabled={hasResult}
         onPlaceWord={handlePlaceWord}
-        words={step.fillBlankOptions}
+        options={step.fillBlankOptions}
       />
 
       {result && (

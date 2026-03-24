@@ -8,10 +8,36 @@ import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
 
 /**
- * Generates romanized (Latin-script) versions of grammar example sentences
+ * Builds the full sentence by replacing [BLANK] with the correct answer.
+ * We romanize the complete sentence so the player can show template-level
+ * romanization with the answer portion swapped back to a blank at display time.
+ */
+function buildFullSentence(template: string, answer: string): string {
+  return template.replace("[BLANK]", answer);
+}
+
+/**
+ * Collects all unique texts that need romanization for grammar activities:
+ * example sentences, full exercise sentences (template + answer merged),
+ * and individual answer/distractor words for the word bank tiles.
+ */
+function collectTextsForRomanization(grammarContent: ActivityGrammarContentSchema): string[] {
+  const exampleSentences = grammarContent.examples.map((example) => example.sentence);
+
+  const exerciseTexts = grammarContent.exercises.flatMap((exercise) => {
+    const fullSentence = buildFullSentence(exercise.template, exercise.answer);
+    return [fullSentence, exercise.answer, ...exercise.distractors];
+  });
+
+  return [...new Set([...exampleSentences, ...exerciseTexts])];
+}
+
+/**
+ * Generates romanized (Latin-script) versions of all grammar text content
  * for languages that use non-Roman writing systems (e.g., Japanese, Chinese).
- * Skips the AI call entirely for Roman-script languages since romanization
- * would be redundant.
+ * This includes example sentences, exercise sentences (with answer filled in),
+ * and individual answer/distractor words for the word bank.
+ * Skips the AI call entirely for Roman-script languages.
  */
 export async function generateGrammarRomanizationStep(
   activities: LessonActivity[],
@@ -33,10 +59,10 @@ export async function generateGrammarRomanizationStep(
 
   await streamStatus({ status: "started", step: "generateGrammarRomanization" });
 
-  const sentences = grammarContent.examples.map((example) => example.sentence);
+  const allTexts = collectTextsForRomanization(grammarContent);
 
   const { data: result, error } = await safeAsync(() =>
-    generateActivityRomanization({ targetLanguage, texts: sentences }),
+    generateActivityRomanization({ targetLanguage, texts: allTexts }),
   );
 
   if (error || !result?.data) {
@@ -46,7 +72,7 @@ export async function generateGrammarRomanizationStep(
   }
 
   const romanizations: Record<string, string> = Object.fromEntries(
-    sentences.map((sentence, index) => [sentence, result.data.romanizations[index] ?? ""]),
+    allTexts.map((text, index) => [text, result.data.romanizations[index] ?? ""]),
   );
 
   await streamStatus({ status: "completed", step: "generateGrammarRomanization" });
