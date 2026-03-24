@@ -11,5 +11,5 @@ type PlayerLinkProps = Omit<ComponentProps<typeof Link>, "href"> & {
 export function PlayerLink({ href, ...props }: PlayerLinkProps) {
   // Concrete route validation happens in the consuming app before href values
   // cross into the shared player package.
-  return <Link {...props} href={href as ComponentProps<typeof Link>["href"]} />;
+  return <Link prefetch {...props} href={href as ComponentProps<typeof Link>["href"]} />;
 }
