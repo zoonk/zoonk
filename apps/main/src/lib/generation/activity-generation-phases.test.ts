@@ -1,43 +1,7 @@
 import { enforcePhaseProgression } from "@/lib/generation-phases";
+import { getPhaseOrder } from "@/lib/generation/activity-generation-phase-config";
 import { describe, expect, test } from "vitest";
-import {
-  calculateWeightedProgress,
-  getPhaseOrder,
-  getPhaseStatus,
-  inferFirstActivityKind,
-} from "./activity-generation-phases";
-
-describe(inferFirstActivityKind, () => {
-  test("returns vocabulary when targetLanguage exists", () => {
-    const kind = inferFirstActivityKind({
-      completedSteps: ["generateCustomContent"],
-      currentStep: null,
-      targetLanguage: "es",
-    });
-
-    expect(kind).toBe("vocabulary");
-  });
-
-  test("returns custom when custom steps are observed", () => {
-    const kind = inferFirstActivityKind({
-      completedSteps: ["generateCustomContent"],
-      currentStep: null,
-      targetLanguage: null,
-    });
-
-    expect(kind).toBe("custom");
-  });
-
-  test("falls back to explanation", () => {
-    const kind = inferFirstActivityKind({
-      completedSteps: ["getLessonActivities"],
-      currentStep: "setActivityAsRunning",
-      targetLanguage: null,
-    });
-
-    expect(kind).toBe("explanation");
-  });
-});
+import { calculateWeightedProgress, getPhaseStatus } from "./activity-generation-phases";
 
 describe(getPhaseOrder, () => {
   test("uses vocabulary-first order for vocabulary activities", () => {

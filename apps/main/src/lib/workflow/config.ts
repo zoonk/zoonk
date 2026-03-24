@@ -103,13 +103,6 @@ export function getActivityCompletionStep(kind: string): ActivityCompletionStep 
   return activityCompletionSteps[kind] ?? "setExplanationAsCompleted";
 }
 
-/**
- * The step the frontend listens for to trigger redirect during course/chapter
- * generation. The API emits this only when the activity at position 0 finishes,
- * so it works universally for all lesson kinds without language-specific checks.
- */
-export const FIRST_ACTIVITY_COMPLETION_STEP: ActivityStepName = "setFirstActivityAsCompleted";
-
 export const COURSE_STEPS = [
   "getCourseSuggestion",
   "checkExistingCourse",
@@ -130,9 +123,16 @@ export const COURSE_STEPS = [
 
 export type CourseStepName = (typeof COURSE_STEPS)[number];
 
-// Chapter workflow includes lesson steps since we generate the first lesson
+/**
+ * All step names the SSE stream can emit during chapter generation.
+ * The chapter workflow also generates the first lesson and activity,
+ * so the stream includes lesson and activity step events.
+ */
 export type ChapterWorkflowStepName = ChapterStepName | LessonStepName | ActivityStepName;
 
-// We also generate the first chapter as part of the course workflow
-// So the course generation is only complete after chapter and lesson workflow is done
+/**
+ * All step names the SSE stream can emit during course generation.
+ * The course workflow also generates the first chapter, lesson, and activity,
+ * so the stream includes all downstream step events.
+ */
 export type CourseWorkflowStepName = CourseStepName | ChapterWorkflowStepName;

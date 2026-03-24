@@ -66,7 +66,6 @@ export async function GenerateChapterContent({ params }: { params: Promise<{ id:
             courseSlug={chapter.course.slug}
             generationRunId={chapter.generationRunId}
             generationStatus={chapter.generationStatus}
-            targetLanguage={chapter.course.targetLanguage}
           />
         </SubscriptionGate>
       </ContainerBody>

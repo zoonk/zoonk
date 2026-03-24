@@ -141,35 +141,7 @@ test.describe("Generate Course Page", () => {
         timeout: 10_000,
       });
 
-      await expect(page.getByText(/this usually takes 1-3 minutes/i)).toBeVisible();
-    });
-
-    test("shows vocabulary-specific activity phases for language courses", async ({ page }) => {
-      const slug = `e2e-language-status-${randomUUID().slice(0, 8)}`;
-      const suggestion = await courseSuggestionFixture({
-        generationStatus: "running",
-        language: "en",
-        slug,
-        targetLanguage: "es",
-        title: "E2E Language Course Status",
-      });
-
-      await setupMockApis(page, {
-        statusDelayMs: 2500,
-        streamMessages: [{ status: "started", step: "getCourseSuggestion" }],
-      });
-
-      await page.goto(`/generate/cs/${suggestion.id}`);
-
-      await expect(page.getByText(/preparing practice content/i)).toBeVisible({
-        timeout: 10_000,
-      });
-
-      await expect(page.getByText(/adding pronunciation/i)).toBeVisible();
-      await expect(page.getByText(/recording audio/i)).toBeVisible();
-      await expect(page.getByText(/writing the lesson content/i)).toHaveCount(0);
-      await expect(page.getByText(/preparing illustrations/i)).toHaveCount(0);
-      await expect(page.getByText(/creating images/i)).toHaveCount(0);
+      await expect(page.getByText(/this usually takes about a minute/i)).toBeVisible();
     });
   });
 
@@ -209,12 +181,8 @@ test.describe("Generate Course Page", () => {
         streamMessages: [
           { status: "started", step: "getCourseSuggestion" },
           { status: "completed", step: "getCourseSuggestion" },
-          { status: "started", step: "addLessons" },
-          { status: "completed", step: "addLessons" },
-          { status: "started", step: "setLessonAsCompleted" },
-          { status: "completed", step: "setLessonAsCompleted" },
-          { status: "started", step: "setFirstActivityAsCompleted" },
-          { status: "completed", step: "setFirstActivityAsCompleted" },
+          { status: "started", step: "completeCourseSetup" },
+          { status: "completed", step: "completeCourseSetup" },
         ],
       });
 
@@ -263,12 +231,8 @@ test.describe("Generate Course Page", () => {
         streamMessages: [
           { status: "started", step: "getCourseSuggestion" },
           { status: "completed", step: "getCourseSuggestion" },
-          { status: "started", step: "addLessons" },
-          { status: "completed", step: "addLessons" },
-          { status: "started", step: "setLessonAsCompleted" },
-          { status: "completed", step: "setLessonAsCompleted" },
-          { status: "started", step: "setFirstActivityAsCompleted" },
-          { status: "completed", step: "setFirstActivityAsCompleted" },
+          { status: "started", step: "completeCourseSetup" },
+          { status: "completed", step: "completeCourseSetup" },
         ],
       });
 
@@ -276,118 +240,6 @@ test.describe("Generate Course Page", () => {
 
       // Should redirect to the suffixed slug, not the raw suggestion slug
       await page.waitForURL(new RegExp(`/b/ai/c/${suffixedSlug}`), {
-        timeout: 10_000,
-      });
-    });
-
-    test("does not redirect language courses on generic activity completion", async ({ page }) => {
-      const slug = `e2e-language-completion-${randomUUID().slice(0, 8)}`;
-      const org = await getAiOrganization();
-
-      const suggestion = await courseSuggestionFixture({
-        generationStatus: "pending",
-        language: "en",
-        slug,
-        targetLanguage: "es",
-        title: "E2E Language Completion Test",
-      });
-
-      await courseFixture({
-        generationStatus: "running",
-        isPublished: true,
-        organizationId: org.id,
-        slug,
-        targetLanguage: "es",
-        title: "E2E Language Completion Test",
-      }).then(async (course) => {
-        const chapter = await chapterFixture({
-          courseId: course.id,
-          isPublished: true,
-          organizationId: org.id,
-        });
-
-        await lessonFixture({
-          chapterId: chapter.id,
-          isPublished: true,
-          organizationId: org.id,
-        });
-      });
-
-      await setupMockApis(page, {
-        streamMessages: [
-          { status: "started", step: "getCourseSuggestion" },
-          { status: "completed", step: "getCourseSuggestion" },
-          { status: "started", step: "addLessons" },
-          { status: "completed", step: "addLessons" },
-          { status: "started", step: "setLessonAsCompleted" },
-          { status: "completed", step: "setLessonAsCompleted" },
-          { status: "started", step: "setActivityAsCompleted" },
-          { status: "completed", step: "setActivityAsCompleted" },
-        ],
-      });
-
-      await page.goto(`/generate/cs/${suggestion.id}`);
-
-      await expect(page.getByText(/generation ended unexpectedly/i)).toBeVisible({
-        timeout: 10_000,
-      });
-
-      await expect(page).toHaveURL(new RegExp(`/generate/cs/${suggestion.id}$`));
-    });
-
-    test("redirects language courses after first activity completion", async ({ page }) => {
-      const slug = `e2e-language-completion-${randomUUID().slice(0, 8)}`;
-      const org = await getAiOrganization();
-
-      const suggestion = await courseSuggestionFixture({
-        generationStatus: "pending",
-        language: "en",
-        slug,
-        targetLanguage: "es",
-        title: "E2E Language Completion Test",
-      });
-
-      await courseFixture({
-        generationStatus: "running",
-        isPublished: true,
-        organizationId: org.id,
-        slug,
-        targetLanguage: "es",
-        title: "E2E Language Completion Test",
-      }).then(async (course) => {
-        const chapter = await chapterFixture({
-          courseId: course.id,
-          isPublished: true,
-          organizationId: org.id,
-        });
-
-        await lessonFixture({
-          chapterId: chapter.id,
-          isPublished: true,
-          organizationId: org.id,
-        });
-      });
-
-      await setupMockApis(page, {
-        streamMessages: [
-          { status: "started", step: "getCourseSuggestion" },
-          { status: "completed", step: "getCourseSuggestion" },
-          { status: "started", step: "addLessons" },
-          { status: "completed", step: "addLessons" },
-          { status: "started", step: "setLessonAsCompleted" },
-          { status: "completed", step: "setLessonAsCompleted" },
-          { status: "started", step: "setFirstActivityAsCompleted" },
-          { status: "completed", step: "setFirstActivityAsCompleted" },
-        ],
-      });
-
-      await page.goto(`/generate/cs/${suggestion.id}`);
-
-      await expect(page.getByText(/your course is ready/i)).toBeVisible({
-        timeout: 10_000,
-      });
-
-      await page.waitForURL(new RegExp(`/b/ai/c/${slug}`), {
         timeout: 10_000,
       });
     });

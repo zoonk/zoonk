@@ -184,56 +184,6 @@ test.describe("Generate Chapter Page - No Subscription", () => {
 });
 
 test.describe("Generate Chapter Page - With Subscription", () => {
-  test("shows vocabulary-specific activity phases for language courses", async ({
-    userWithoutProgress,
-    noProgressUser,
-  }) => {
-    await createTestSubscription(noProgressUser.id);
-
-    const org = await getAiOrganization();
-
-    const uniqueId = randomUUID().slice(0, 8);
-    const courseTitle = `E2E Language Chapter Course ${uniqueId}`;
-    const chapterTitle = `E2E Language Chapter ${uniqueId}`;
-
-    const course = await courseFixture({
-      isPublished: true,
-      normalizedTitle: normalizeString(courseTitle),
-      organizationId: org.id,
-      slug: `e2e-language-ch-course-${uniqueId}`,
-      targetLanguage: "es",
-      title: courseTitle,
-    });
-
-    const chapter = await chapterFixture({
-      courseId: course.id,
-      generationStatus: "pending",
-      isPublished: true,
-      normalizedTitle: normalizeString(chapterTitle),
-      organizationId: org.id,
-      slug: `e2e-language-chapter-${uniqueId}`,
-      title: chapterTitle,
-    });
-
-    await setupMockApis(userWithoutProgress, {
-      statusDelayMs: 2500,
-      streamMessages: [{ status: "started", step: "getChapter" }],
-    });
-
-    await userWithoutProgress.goto(`/generate/ch/${chapter.id}`);
-
-    await expect(userWithoutProgress.getByText(/preparing practice content/i)).toBeVisible({
-      timeout: 10_000,
-    });
-
-    await expect(userWithoutProgress.getByText(/this usually takes 1-2 minutes/i)).toBeVisible();
-    await expect(userWithoutProgress.getByText(/adding pronunciation/i)).toBeVisible();
-    await expect(userWithoutProgress.getByText(/recording audio/i)).toBeVisible();
-    await expect(userWithoutProgress.getByText(/writing the content/i)).toHaveCount(0);
-    await expect(userWithoutProgress.getByText(/preparing illustrations/i)).toHaveCount(0);
-    await expect(userWithoutProgress.getByText(/creating images/i)).toHaveCount(0);
-  });
-
   test("shows generation UI and completes workflow", async ({
     userWithoutProgress,
     noProgressUser,
@@ -263,10 +213,6 @@ test.describe("Generate Chapter Page - With Subscription", () => {
         { status: "completed", step: "addLessons" },
         { status: "started", step: "setChapterAsCompleted" },
         { status: "completed", step: "setChapterAsCompleted" },
-        { status: "started", step: "setLessonAsCompleted" },
-        { status: "completed", step: "setLessonAsCompleted" },
-        { status: "started", step: "setFirstActivityAsCompleted" },
-        { status: "completed", step: "setFirstActivityAsCompleted" },
       ],
     });
 
@@ -286,143 +232,6 @@ test.describe("Generate Chapter Page - With Subscription", () => {
     });
 
     // Should redirect to chapter page
-    await userWithoutProgress.waitForURL(/\/b\/ai\/c\//, { timeout: 10_000 });
-  });
-
-  test("does not redirect language chapters on generic activity completion", async ({
-    userWithoutProgress,
-    noProgressUser,
-  }) => {
-    await createTestSubscription(noProgressUser.id);
-
-    const org = await getAiOrganization();
-    const uniqueId = randomUUID().slice(0, 8);
-    const courseTitle = `E2E Language Redirect Course ${uniqueId}`;
-    const chapterTitle = `E2E Language Redirect Chapter ${uniqueId}`;
-
-    const course = await courseFixture({
-      isPublished: true,
-      normalizedTitle: normalizeString(courseTitle),
-      organizationId: org.id,
-      slug: `e2e-language-redirect-course-${uniqueId}`,
-      targetLanguage: "es",
-      title: courseTitle,
-    });
-
-    const chapter = await chapterFixture({
-      courseId: course.id,
-      generationStatus: "pending",
-      isPublished: true,
-      normalizedTitle: normalizeString(chapterTitle),
-      organizationId: org.id,
-      slug: `e2e-language-redirect-chapter-${uniqueId}`,
-      title: chapterTitle,
-    });
-
-    await lessonFixture({
-      chapterId: chapter.id,
-      isPublished: true,
-      organizationId: org.id,
-      slug: `e2e-language-redirect-lesson-${uniqueId}`,
-      title: `E2E Language Redirect Lesson ${uniqueId}`,
-    });
-
-    await setupMockApis(userWithoutProgress, {
-      streamMessages: [
-        { status: "started", step: "getChapter" },
-        { status: "completed", step: "getChapter" },
-        { status: "started", step: "setChapterAsRunning" },
-        { status: "completed", step: "setChapterAsRunning" },
-        { status: "started", step: "generateLessons" },
-        { status: "completed", step: "generateLessons" },
-        { status: "started", step: "addLessons" },
-        { status: "completed", step: "addLessons" },
-        { status: "started", step: "setChapterAsCompleted" },
-        { status: "completed", step: "setChapterAsCompleted" },
-        { status: "started", step: "setLessonAsCompleted" },
-        { status: "completed", step: "setLessonAsCompleted" },
-        { status: "started", step: "setActivityAsCompleted" },
-        { status: "completed", step: "setActivityAsCompleted" },
-      ],
-    });
-
-    await userWithoutProgress.goto(`/generate/ch/${chapter.id}`);
-
-    await expect(userWithoutProgress.getByText(/generation ended unexpectedly/i)).toBeVisible({
-      timeout: 10_000,
-    });
-
-    await expect(userWithoutProgress).toHaveURL(new RegExp(`/generate/ch/${chapter.id}$`));
-  });
-
-  test("redirects after first activity completion", async ({
-    userWithoutProgress,
-    noProgressUser,
-  }) => {
-    await createTestSubscription(noProgressUser.id);
-
-    const org = await getAiOrganization();
-    const uniqueId = randomUUID().slice(0, 8);
-    const courseTitle = `E2E Language Redirect Course ${uniqueId}`;
-    const chapterTitle = `E2E Language Redirect Chapter ${uniqueId}`;
-
-    const course = await courseFixture({
-      isPublished: true,
-      normalizedTitle: normalizeString(courseTitle),
-      organizationId: org.id,
-      slug: `e2e-language-redirect-course-${uniqueId}`,
-      targetLanguage: "es",
-      title: courseTitle,
-    });
-
-    const chapter = await chapterFixture({
-      courseId: course.id,
-      generationStatus: "pending",
-      isPublished: true,
-      normalizedTitle: normalizeString(chapterTitle),
-      organizationId: org.id,
-      slug: `e2e-language-redirect-chapter-${uniqueId}`,
-      title: chapterTitle,
-    });
-
-    await lessonFixture({
-      chapterId: chapter.id,
-      isPublished: true,
-      organizationId: org.id,
-      slug: `e2e-language-redirect-lesson-${uniqueId}`,
-      title: `E2E Language Redirect Lesson ${uniqueId}`,
-    });
-
-    await setupMockApis(userWithoutProgress, {
-      streamMessages: [
-        { status: "started", step: "getChapter" },
-        { status: "completed", step: "getChapter" },
-        { status: "started", step: "setChapterAsRunning" },
-        { status: "completed", step: "setChapterAsRunning" },
-        { status: "started", step: "generateLessons" },
-        { status: "completed", step: "generateLessons" },
-        { status: "started", step: "addLessons" },
-        { status: "completed", step: "addLessons" },
-        { status: "started", step: "setChapterAsCompleted" },
-        { status: "completed", step: "setChapterAsCompleted" },
-        { status: "started", step: "setLessonAsCompleted" },
-        { status: "completed", step: "setLessonAsCompleted" },
-        { status: "started", step: "setFirstActivityAsCompleted" },
-        { status: "completed", step: "setFirstActivityAsCompleted" },
-      ],
-    });
-
-    await userWithoutProgress.goto(`/generate/ch/${chapter.id}`);
-
-    await expect(userWithoutProgress.getByText(/your lessons are ready/i)).toBeVisible({
-      timeout: 10_000,
-    });
-
-    await prisma.chapter.update({
-      data: { generationStatus: "completed" },
-      where: { id: chapter.id },
-    });
-
     await userWithoutProgress.waitForURL(/\/b\/ai\/c\//, { timeout: 10_000 });
   });
 
@@ -450,8 +259,8 @@ test.describe("Generate Chapter Page - With Subscription", () => {
     ];
 
     const remainingMessages = [
-      { status: "started", step: "setFirstActivityAsCompleted" },
-      { status: "completed", step: "setFirstActivityAsCompleted" },
+      { status: "started", step: "setChapterAsCompleted" },
+      { status: "completed", step: "setChapterAsCompleted" },
     ];
 
     /**
