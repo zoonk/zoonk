@@ -53,6 +53,7 @@ i18n.cache
 # AI
 debug.log
 .claude/agent-memory
+.claude/plans
 
 # Tasks for AI agents
 /tasks/

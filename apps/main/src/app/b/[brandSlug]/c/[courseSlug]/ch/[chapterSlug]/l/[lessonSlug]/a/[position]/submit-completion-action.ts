@@ -5,16 +5,11 @@ import { preloadNextLesson } from "@/data/progress/preload-next-lesson";
 import { submitActivityCompletion } from "@/data/progress/submit-activity-completion";
 import { auth } from "@zoonk/core/auth";
 import { prisma } from "@zoonk/db";
-import {
-  type CompletionInput,
-  type CompletionResult,
-  completionInputSchema,
-} from "@zoonk/player/completion-input-schema";
+import { type CompletionInput, completionInputSchema } from "@zoonk/player/completion-input-schema";
 import { computeChallengeScore, computeScore } from "@zoonk/player/compute-score";
 import { computeDimensions, hasNegativeDimension } from "@zoonk/player/dimensions";
 import { validateAnswers } from "@zoonk/player/validate-answers";
-import { calculateBeltLevel } from "@zoonk/utils/belt-level";
-import { safeAsync } from "@zoonk/utils/error";
+import { logError } from "@zoonk/utils/logger";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
 import { after } from "next/server";
@@ -26,11 +21,18 @@ function clampDuration(startedAt: number): number {
   return Math.max(0, Math.min(raw, MAX_DURATION_SECONDS));
 }
 
-export async function submitCompletion(rawInput: CompletionInput): Promise<CompletionResult> {
+/**
+ * Validates and persists an activity completion in the background.
+ *
+ * The client computes metrics (BP, energy, belt) locally for instant display.
+ * This server action handles the authoritative validation and DB persistence
+ * via `after()`, so the response returns immediately after the auth check.
+ */
+export async function submitCompletion(rawInput: CompletionInput): Promise<void> {
   const parsed = completionInputSchema.safeParse(rawInput);
 
   if (!parsed.success) {
-    return { status: "error" };
+    return;
   }
 
   const input = parsed.data;
@@ -39,16 +41,15 @@ export async function submitCompletion(rawInput: CompletionInput): Promise<Compl
   const session = await auth.api.getSession({ headers: reqHeaders });
 
   if (!session) {
-    return { status: "unauthenticated" };
+    return;
   }
 
   const userId = Number(session.user.id);
-
   const activityId = BigInt(input.activityId);
 
-  const { data, error } = await safeAsync(async () => {
-    const [activity, userProgress] = await Promise.all([
-      prisma.activity.findUnique({
+  after(async () => {
+    try {
+      const activity = await prisma.activity.findUnique({
         include: {
           lesson: { include: { chapter: true } },
           steps: {
@@ -58,57 +59,54 @@ export async function submitCompletion(rawInput: CompletionInput): Promise<Compl
           },
         },
         where: { id: activityId },
-      }),
-      prisma.userProgress.findUnique({ where: { userId } }),
-    ]);
+      });
 
-    if (!activity) {
-      return null;
-    }
+      if (!activity) {
+        logError(`[submitCompletion] Activity ${activityId} not found`);
+        return;
+      }
 
-    const stepsForValidation =
-      activity.kind === "review"
-        ? await getReviewValidationSteps(activity.lessonId, Object.keys(input.answers).map(BigInt))
-        : activity.steps;
+      const stepsForValidation =
+        activity.kind === "review"
+          ? await getReviewValidationSteps(
+              activity.lessonId,
+              Object.keys(input.answers).map(BigInt),
+            )
+          : activity.steps;
 
-    const stepResults = validateAnswers(stepsForValidation, input.answers);
-    const isChallenge = activity.kind === "challenge";
+      const stepResults = validateAnswers(stepsForValidation, input.answers);
+      const isChallenge = activity.kind === "challenge";
 
-    const dimensions = isChallenge
-      ? computeDimensions(stepResults.map((result) => result.effects))
-      : {};
+      const dimensions = isChallenge
+        ? computeDimensions(stepResults.map((result) => result.effects))
+        : {};
 
-    const isSuccessful = !hasNegativeDimension(dimensions);
+      const isSuccessful = !hasNegativeDimension(dimensions);
 
-    const score = isChallenge
-      ? computeChallengeScore({ dimensions, isSuccessful })
-      : computeScore({
-          results: stepResults.map((step) => ({ isCorrect: step.isCorrect })),
-        });
+      const score = isChallenge
+        ? computeChallengeScore({ dimensions, isSuccessful })
+        : computeScore({
+            results: stepResults.map((step) => ({ isCorrect: step.isCorrect })),
+          });
 
-    const durationSeconds = clampDuration(input.startedAt);
+      const durationSeconds = clampDuration(input.startedAt);
 
-    const mergedStepResults = stepResults.map((validated) => {
-      const stepId = String(validated.stepId);
-      const timing = input.stepTimings[stepId];
+      const mergedStepResults = stepResults.map((validated) => {
+        const stepId = String(validated.stepId);
+        const timing = input.stepTimings[stepId];
 
-      return {
-        answer: validated.answer,
-        answeredAt: timing ? new Date(timing.answeredAt) : new Date(),
-        dayOfWeek: timing?.dayOfWeek ?? new Date().getDay(),
-        durationSeconds: timing?.durationSeconds ?? 0,
-        effects: validated.effects,
-        hourOfDay: timing?.hourOfDay ?? new Date().getHours(),
-        isCorrect: validated.isCorrect,
-        stepId: validated.stepId,
-      };
-    });
+        return {
+          answer: validated.answer,
+          answeredAt: timing ? new Date(timing.answeredAt) : new Date(),
+          dayOfWeek: timing?.dayOfWeek ?? new Date().getDay(),
+          durationSeconds: timing?.durationSeconds ?? 0,
+          effects: validated.effects,
+          hourOfDay: timing?.hourOfDay ?? new Date().getHours(),
+          isCorrect: validated.isCorrect,
+          stepId: validated.stepId,
+        };
+      });
 
-    const newTotalBp = Number(userProgress?.totalBrainPower ?? 0) + score.brainPower;
-
-    // Persist progress in the background so the user sees results instantly
-    // instead of waiting for the DB transaction to complete.
-    after(async () => {
       await submitActivityCompletion({
         activityId: activity.id,
         courseId: activity.lesson.chapter.courseId,
@@ -124,25 +122,8 @@ export async function submitCompletion(rawInput: CompletionInput): Promise<Compl
 
       revalidatePath("/");
       await preloadNextLesson(activityId, reqHeaders.get("cookie") ?? "");
-    });
-
-    return {
-      belt: calculateBeltLevel(newTotalBp),
-      brainPower: score.brainPower,
-      energyDelta: score.energyDelta,
-      newTotalBp,
-    };
+    } catch (error) {
+      logError("[submitCompletion] Failed to persist activity completion:", error);
+    }
   });
-
-  if (error || !data) {
-    return { status: "error" };
-  }
-
-  return {
-    belt: data.belt,
-    brainPower: data.brainPower,
-    energyDelta: data.energyDelta,
-    newTotalBp: data.newTotalBp,
-    status: "success",
-  };
 }

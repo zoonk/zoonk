@@ -1,7 +1,6 @@
 "use client";
 
 import { Badge } from "@zoonk/ui/components/badge";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
 import { BrainIcon, ZapIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
@@ -40,15 +39,6 @@ export function RewardBadges({
         </span>
         <span className="sr-only">{t("Energy")}</span>
       </Badge>
-    </div>
-  );
-}
-
-export function RewardBadgesSkeleton() {
-  return (
-    <div className="flex gap-2">
-      <Skeleton className="h-5 w-20" />
-      <Skeleton className="h-5 w-16" />
     </div>
   );
 }

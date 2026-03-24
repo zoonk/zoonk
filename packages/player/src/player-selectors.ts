@@ -26,10 +26,6 @@ export function getChangedDimensions(state: PlayerState): Set<string> {
 }
 
 export function getCompletionResult(state: PlayerState): CompletionResult | null {
-  if (state.completion.status === "idle" || state.completion.status === "submitting") {
-    return null;
-  }
-
   return state.completion;
 }
 

@@ -2,7 +2,6 @@
 
 import { BeltIndicator, beltColorClasses } from "@zoonk/ui/components/belt-indicator";
 import { ProgressIndicator, ProgressRoot, ProgressTrack } from "@zoonk/ui/components/progress";
-import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { cn } from "@zoonk/ui/lib/utils";
 import { calculateBeltLevel, getBeltProgressPercent } from "@zoonk/utils/belt-level";
 import { useExtracted } from "next-intl";
@@ -121,18 +120,5 @@ export function BeltProgressHint({
         {t("{value} BP to level up", { value: String(currentBelt.bpToNextLevel) })}
       </span>
     </PlayerLink>
-  );
-}
-
-export function BeltProgressSkeleton() {
-  return (
-    <div className="flex flex-col gap-1.5">
-      <div className="flex items-center gap-1.5">
-        <Skeleton className="size-3 rounded-full" />
-        <Skeleton className="h-4 w-36" />
-      </div>
-      <Skeleton className="h-1.5 w-full rounded-4xl" />
-      <Skeleton className="h-3 w-16" />
-    </div>
   );
 }

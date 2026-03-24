@@ -2,23 +2,14 @@
 
 import { type Dispatch, useCallback } from "react";
 import { checkStep } from "./check-step";
-import { type CompletionInput, type CompletionResult } from "./completion-input-schema";
-import {
-  buildCompletionInput,
-  getPlayerTransition,
-  getSubmitCompletionRequestId,
-} from "./player-controller";
+import { type CompletionInput } from "./completion-input-schema";
+import { buildCompletionInput, getPlayerTransition } from "./player-controller";
 import {
   type PlayerAction,
   type PlayerState,
   type SelectedAnswer,
   type playerReducer,
 } from "./player-reducer";
-
-type SyncPlayerAction = Exclude<
-  PlayerAction,
-  { type: "REJECT_COMPLETION" | "RESOLVE_COMPLETION" | "SUBMIT_COMPLETION" }
->;
 
 export type PlayerActions = {
   check: () => void;
@@ -33,37 +24,21 @@ export type PlayerActions = {
 export function usePlayerActions(
   state: PlayerState,
   dispatch: Dispatch<Parameters<typeof playerReducer>[1]>,
-  onComplete: (input: CompletionInput) => Promise<CompletionResult>,
+  onComplete: (input: CompletionInput) => void,
   isAuthenticated: boolean,
 ) {
   const currentStep = state.steps[state.currentStepIndex];
 
-  const submitCompletion = useCallback(
-    (completionState: PlayerState) => {
-      const requestId = getSubmitCompletionRequestId(state);
-      dispatch({ requestId, type: "SUBMIT_COMPLETION" });
-
-      void onComplete(buildCompletionInput(completionState))
-        .then((result) => {
-          dispatch({ requestId, result, type: "RESOLVE_COMPLETION" });
-        })
-        .catch(() => {
-          dispatch({ requestId, type: "REJECT_COMPLETION" });
-        });
-    },
-    [dispatch, onComplete, state],
-  );
-
   const dispatchTransition = useCallback(
-    (action: SyncPlayerAction) => {
+    (action: PlayerAction) => {
       const transition = getPlayerTransition(state, action);
       dispatch(action);
 
-      if (transition.shouldSubmitCompletion && isAuthenticated) {
-        submitCompletion(transition.nextState);
+      if (transition.shouldPersistCompletion && isAuthenticated) {
+        onComplete(buildCompletionInput(transition.nextState));
       }
     },
-    [dispatch, isAuthenticated, state, submitCompletion],
+    [dispatch, isAuthenticated, onComplete, state],
   );
 
   const selectAnswer = useCallback(

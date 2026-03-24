@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useMemo, useReducer } from "react";
-import { type CompletionInput, type CompletionResult } from "./completion-input-schema";
+import { type CompletionInput } from "./completion-input-schema";
 import {
   PlayerConfigContext,
   type PlayerMilestone,
@@ -9,6 +9,7 @@ import {
   PlayerRuntimeContext,
   type PlayerViewer,
 } from "./player-context";
+import { type InitialStateInput } from "./player-initial-state";
 import { createInitialState, playerReducer } from "./player-reducer";
 import {
   getCanNavigatePrev,
@@ -29,18 +30,24 @@ export function PlayerProvider({
   onComplete,
   onEscape,
   onNext,
+  totalBrainPower,
   viewer,
 }: {
   activity: SerializedActivity;
   children: React.ReactNode;
   milestone: PlayerMilestone;
   navigation: PlayerNavigation;
-  onComplete: (input: CompletionInput) => Promise<CompletionResult>;
+  onComplete: (input: CompletionInput) => void;
   onEscape: () => void;
   onNext?: () => void;
+  totalBrainPower: number;
   viewer: PlayerViewer;
 }) {
-  const [state, dispatch] = useReducer(playerReducer, activity, createInitialState);
+  const initInput: InitialStateInput = useMemo(
+    () => ({ activity, totalBrainPower }),
+    [activity, totalBrainPower],
+  );
+  const [state, dispatch] = useReducer(playerReducer, initInput, createInitialState);
   const actions = usePlayerActions(state, dispatch, onComplete, viewer.isAuthenticated);
 
   const handleNext = useCallback(() => {
