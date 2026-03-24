@@ -2,6 +2,7 @@
 
 import { generateCourseImage } from "@zoonk/core/courses/image";
 import { parseFormField } from "@zoonk/utils/form";
+import { logError } from "@zoonk/utils/logger";
 
 export async function generateThumbnailAction(formData: FormData) {
   const title = parseFormField(formData, "title");
@@ -16,7 +17,7 @@ export async function generateThumbnailAction(formData: FormData) {
   });
 
   if (error) {
-    console.error("Error generating thumbnail:", error);
+    logError("Error generating thumbnail:", error);
     return { error: error.message };
   }
 

@@ -1,5 +1,6 @@
 import fs from "node:fs/promises";
 import path from "node:path";
+import { logError, logInfo } from "@zoonk/utils/logger";
 import { cache } from "react";
 import { loadModelOutputs } from "./output-loader";
 import { generateScore } from "./score";
@@ -57,7 +58,7 @@ function findTestCaseForOutput(task: Task, testCaseId: string): TestCase | undef
 }
 
 async function scoreOutput(output: OutputEntry, testCase: TestCase): Promise<ScoredResult> {
-  console.info(`Scoring output: ${output.testCaseId}`);
+  logInfo(`Scoring output: ${output.testCaseId}`);
 
   const scoreResult = await generateScore({
     expectations: testCase.expectations,
@@ -66,7 +67,7 @@ async function scoreOutput(output: OutputEntry, testCase: TestCase): Promise<Sco
     system: output.systemPrompt,
   });
 
-  console.info(`Score: ${scoreResult.score}`);
+  logInfo(`Score: ${scoreResult.score}`);
 
   const testCaseWithRun: TestCase = {
     ...testCase,
@@ -86,7 +87,7 @@ function isAlreadyScored(existingResults: ScoredResult[], testCaseId: string): b
 export async function runEval(task: Task, modelId: string): Promise<TaskEvalResults> {
   const safeModelId = String(modelId).replaceAll(/[\r\n]/g, "");
 
-  console.info(`\nStarting eval for task: ${task.name}, model: [${safeModelId}]`);
+  logInfo(`\nStarting eval for task: ${task.name}, model: [${safeModelId}]`);
 
   // Load pre-generated outputs
   const modelOutputs = await loadModelOutputs(task.id, modelId);
@@ -94,21 +95,21 @@ export async function runEval(task: Task, modelId: string): Promise<TaskEvalResu
     throw new Error(`No outputs found for model ${modelId}. Generate outputs first.`);
   }
 
-  console.info(`Found ${modelOutputs.outputs.length} outputs to score`);
+  logInfo(`Found ${modelOutputs.outputs.length} outputs to score`);
 
   // Load existing scored results
   const existingResults = await loadExistingScoredResults(task.id, modelId);
-  console.info(`Found ${existingResults.length} existing scored results`);
+  logInfo(`Found ${existingResults.length} existing scored results`);
 
   // Find outputs that haven't been scored yet
   const outputsToScore = modelOutputs.outputs.filter(
     (output) => !isAlreadyScored(existingResults, output.testCaseId),
   );
 
-  console.info(`Scoring ${outputsToScore.length} outputs`);
+  logInfo(`Scoring ${outputsToScore.length} outputs`);
 
   if (outputsToScore.length === 0) {
-    console.info("All outputs already scored");
+    logInfo("All outputs already scored");
     return combineOutputsAndResults(task.id, modelId, modelOutputs.outputs, existingResults);
   }
 
@@ -127,7 +128,7 @@ export async function runEval(task: Task, modelId: string): Promise<TaskEvalResu
       return [result.value];
     }
 
-    console.error(
+    logError(
       `Error scoring output: ${result.reason instanceof Error ? result.reason.message : String(result.reason)}`,
     );
 
@@ -137,7 +138,7 @@ export async function runEval(task: Task, modelId: string): Promise<TaskEvalResu
   const allScoredResults = [...existingResults, ...newResults];
 
   await saveScoredResults(task.id, modelId, allScoredResults);
-  console.info(`Saved ${allScoredResults.length} total scored results`);
+  logInfo(`Saved ${allScoredResults.length} total scored results`);
 
   return combineOutputsAndResults(task.id, modelId, modelOutputs.outputs, allScoredResults);
 }

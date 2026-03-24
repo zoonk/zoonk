@@ -1,5 +1,6 @@
 import fs from "node:fs/promises";
 import path from "node:path";
+import { logInfo } from "@zoonk/utils/logger";
 import { getBattleLeaderboard } from "./battle-loader";
 import { generateBattleRankings } from "./battle-score";
 import {
@@ -198,7 +199,7 @@ async function runBattleForTestCase(
   const currentModelIds = modelOutputs.map((item) => item.modelId);
   const newModelsDetected = existingMatchup && hasNewModels(existingMatchup, currentModelIds);
   if (newModelsDetected) {
-    console.info(`New models detected for ${testCaseId}, re-running all judges`);
+    logInfo(`New models detected for ${testCaseId}, re-running all judges`);
   }
 
   const effectiveExisting = newModelsDetected ? null : existingMatchup;
@@ -236,7 +237,7 @@ async function runBattleForTestCase(
 }
 
 export async function runBattleMode(task: Task): Promise<void> {
-  console.info(`\n=== Starting Battle Mode for task: ${task.name} ===\n`);
+  logInfo(`\n=== Starting Battle Mode for task: ${task.name} ===\n`);
 
   const totalTestCases = task.testCases.length;
 
@@ -249,7 +250,7 @@ export async function runBattleMode(task: Task): Promise<void> {
     );
   }
 
-  console.info(`Found ${completeModels.length} models with complete outputs`);
+  logInfo(`Found ${completeModels.length} models with complete outputs`);
 
   // Load all outputs
   const allOutputs = await getAllOutputsForTask(task.id);
@@ -275,7 +276,7 @@ export async function runBattleMode(task: Task): Promise<void> {
 
       completedBattles += 1;
       const remaining = totalBattles - completedBattles;
-      console.info(`Battle complete for ${testCaseId}, ${remaining} remaining`);
+      logInfo(`Battle complete for ${testCaseId}, ${remaining} remaining`);
 
       return result;
     }),
@@ -283,9 +284,9 @@ export async function runBattleMode(task: Task): Promise<void> {
 
   const leaderboard = await getBattleLeaderboard(task.id);
 
-  console.info("\n=== Battle Mode Complete ===");
-  console.info("Top 3 models:");
+  logInfo("\n=== Battle Mode Complete ===");
+  logInfo("Top 3 models:");
   leaderboard.slice(0, 3).forEach((entry, i) => {
-    console.info(`  ${i + 1}. ${entry.modelName}: ${entry.totalScore} points`);
+    logInfo(`  ${i + 1}. ${entry.modelName}: ${entry.totalScore} points`);
   });
 }
