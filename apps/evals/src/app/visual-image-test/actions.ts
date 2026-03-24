@@ -2,6 +2,7 @@
 
 import { generateVisualStepImage } from "@zoonk/core/steps/visual-image";
 import { parseFormField } from "@zoonk/utils/form";
+import { logError } from "@zoonk/utils/logger";
 
 export async function generateVisualImageAction(formData: FormData) {
   const prompt = parseFormField(formData, "prompt");
@@ -17,7 +18,7 @@ export async function generateVisualImageAction(formData: FormData) {
   });
 
   if (error) {
-    console.error("Error generating visual image:", error);
+    logError("Error generating visual image:", error);
     return { error: error.message };
   }
 

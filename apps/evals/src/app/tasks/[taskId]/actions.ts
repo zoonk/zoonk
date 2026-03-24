@@ -3,6 +3,7 @@
 import { runBattleMode } from "@/lib/battle-runner";
 import { TASKS } from "@/tasks";
 import { parseFormField } from "@zoonk/utils/form";
+import { logError } from "@zoonk/utils/logger";
 import { revalidatePath } from "next/cache";
 
 export async function runBattleModeAction(formData: FormData) {
@@ -18,7 +19,7 @@ export async function runBattleModeAction(formData: FormData) {
     await runBattleMode(task);
     revalidatePath(`/tasks/${taskId}`);
   } catch (error) {
-    console.error("Error running battle mode:", error);
+    logError("Error running battle mode:", error);
     throw error;
   }
 }

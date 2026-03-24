@@ -33,7 +33,6 @@
     ],
     "eslint/max-params": "off",
     "eslint/max-statements": ["error", { "ignoreTopLevelFunctions": true, "max": 30 }],
-    "eslint/no-console": ["error", { "allow": ["error", "info"] }],
     "eslint/no-inline-comments": "off",
     "eslint/no-magic-numbers": [
       "error",

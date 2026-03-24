@@ -2,6 +2,7 @@
 
 import { generateStepImage } from "@zoonk/core/steps/image";
 import { parseFormField } from "@zoonk/utils/form";
+import { logError } from "@zoonk/utils/logger";
 
 export async function generateSelectImageAction(formData: FormData) {
   const prompt = parseFormField(formData, "prompt");
@@ -17,7 +18,7 @@ export async function generateSelectImageAction(formData: FormData) {
   });
 
   if (error) {
-    console.error("Error generating select image:", error);
+    logError("Error generating select image:", error);
     return { error: error.message };
   }
 

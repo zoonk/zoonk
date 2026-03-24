@@ -1,3 +1,4 @@
+import { logError } from "@zoonk/utils/logger";
 import { prisma } from "../index";
 import { seedAccounts } from "./seed/accounts";
 import { seedActivities } from "./seed/activities";
@@ -41,7 +42,7 @@ main()
     process.exit(0);
   })
   .catch(async (error: unknown) => {
-    console.error(error);
+    logError(error);
     await prisma.$disconnect();
     process.exit(1);
   });

@@ -4,6 +4,7 @@ import { runEval } from "@/lib/eval-runner";
 import { generateOutputs } from "@/lib/output-generator";
 import { TASKS } from "@/tasks";
 import { parseFormField } from "@zoonk/utils/form";
+import { logError } from "@zoonk/utils/logger";
 import { revalidatePath } from "next/cache";
 
 export async function generateOutputsAction(formData: FormData) {
@@ -25,7 +26,7 @@ export async function generateOutputsAction(formData: FormData) {
     revalidatePath(`/tasks/${taskId}/${modelId}`);
     revalidatePath(`/tasks/${taskId}`);
   } catch (error) {
-    console.error("Error generating outputs:", error);
+    logError("Error generating outputs:", error);
   }
 }
 
@@ -47,6 +48,6 @@ export async function runEvalAction(formData: FormData) {
     await runEval(task, modelId);
     revalidatePath(`/tasks/${taskId}/${modelId}`);
   } catch (error) {
-    console.error("Error running eval:", error);
+    logError("Error running eval:", error);
   }
 }

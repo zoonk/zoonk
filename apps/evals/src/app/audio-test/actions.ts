@@ -3,6 +3,7 @@
 import { generateLanguageAudio } from "@zoonk/core/audio/generate";
 import { parseFormField } from "@zoonk/utils/form";
 import { type TTSVoice } from "@zoonk/utils/languages";
+import { logError } from "@zoonk/utils/logger";
 
 export async function generateAudioAction(formData: FormData) {
   const text = parseFormField(formData, "text");
@@ -21,7 +22,7 @@ export async function generateAudioAction(formData: FormData) {
   });
 
   if (error) {
-    console.error("Error generating audio:", error);
+    logError("Error generating audio:", error);
     return { error: error.message };
   }
 

@@ -1,4 +1,5 @@
 import { RUNS_PER_TEST_CASE } from "@/tasks";
+import { logError, logInfo } from "@zoonk/utils/logger";
 import { getGatewayModelId, getModelById } from "./models";
 import { loadModelOutputs, saveModelOutputs } from "./output-loader";
 import { type ModelOutputs, type OutputEntry, type Task, type TestCase } from "./types";
@@ -13,7 +14,7 @@ async function generateOutputForTestCase(
     .map(([key, value]) => `${key}=${String(value)}`)
     .join(", ");
 
-  console.info(`Generating output for: ${inputSummary} (run ${runNumber})`);
+  logInfo(`Generating output for: ${inputSummary} (run ${runNumber})`);
 
   const model = getModelById(modelId);
   const gatewayModelId = getGatewayModelId(modelId);
@@ -68,7 +69,7 @@ function extractSuccessfulOutputs(results: PromiseSettledResult<OutputEntry>[]):
       return [result.value];
     }
 
-    console.error(
+    logError(
       `Error generating output: ${result.reason instanceof Error ? result.reason.message : String(result.reason)}`,
     );
 
@@ -82,20 +83,20 @@ function createModelOutputs(taskId: string, modelId: string, outputs: OutputEntr
 
 export async function generateOutputs(task: Task, modelId: string): Promise<ModelOutputs> {
   const safeModelId = String(modelId).replaceAll(/[\r\n]/g, "");
-  console.info(`\nGenerating outputs for task: ${task.name}, model: [${safeModelId}]`);
-  console.info(
+  logInfo(`\nGenerating outputs for task: ${task.name}, model: [${safeModelId}]`);
+  logInfo(
     `Total test cases: ${task.testCases.length} (${task.testCases.length * RUNS_PER_TEST_CASE} runs)`,
   );
 
   const existingOutputs = await loadModelOutputs(task.id, modelId);
   const existingEntries = existingOutputs?.outputs ?? [];
-  console.info(`Found ${existingEntries.length} existing outputs`);
+  logInfo(`Found ${existingEntries.length} existing outputs`);
 
   const runsToExecute = collectTestCaseRuns(task.testCases, existingEntries);
-  console.info(`Generating ${runsToExecute.length} new outputs`);
+  logInfo(`Generating ${runsToExecute.length} new outputs`);
 
   if (runsToExecute.length === 0) {
-    console.info("All outputs already generated");
+    logInfo("All outputs already generated");
     return existingOutputs ?? createModelOutputs(task.id, modelId, []);
   }
 
@@ -109,7 +110,7 @@ export async function generateOutputs(task: Task, modelId: string): Promise<Mode
   const modelOutputs = createModelOutputs(task.id, modelId, allOutputs);
 
   await saveModelOutputs(task.id, modelId, modelOutputs);
-  console.info(`Saved ${allOutputs.length} total outputs`);
+  logInfo(`Saved ${allOutputs.length} total outputs`);
 
   return modelOutputs;
 }
