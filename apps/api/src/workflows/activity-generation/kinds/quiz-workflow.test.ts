@@ -128,7 +128,7 @@ describe("quiz activity workflow", () => {
     expect(steps).toHaveLength(2);
 
     for (const step of steps) {
-      expect(step.isPublished).toBeTruthy();
+      expect(step.isPublished).toBe(true);
     }
 
     expect(steps[0]?.kind).toBe("multipleChoice");

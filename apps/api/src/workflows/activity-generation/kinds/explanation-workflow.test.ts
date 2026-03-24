@@ -132,7 +132,7 @@ describe("explanation activity workflow", () => {
     expect(steps).toHaveLength(4);
 
     for (const step of steps) {
-      expect(step.isPublished).toBeTruthy();
+      expect(step.isPublished).toBe(true);
     }
 
     const staticSteps = steps.filter((step) => step.kind === "static");

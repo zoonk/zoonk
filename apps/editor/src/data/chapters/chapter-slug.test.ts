@@ -25,7 +25,7 @@ describe("chapterSlugExists()", () => {
       slug: chapter.slug,
     });
 
-    expect(exists).toBeTruthy();
+    expect(exists).toBe(true);
   });
 
   test("returns false when slug does not exist", async () => {
@@ -34,7 +34,7 @@ describe("chapterSlugExists()", () => {
       slug: "non-existent-slug",
     });
 
-    expect(exists).toBeFalsy();
+    expect(exists).toBe(false);
   });
 
   test("returns false when slug exists but in a different course", async () => {
@@ -53,6 +53,6 @@ describe("chapterSlugExists()", () => {
       slug: chapter.slug,
     });
 
-    expect(exists).toBeFalsy();
+    expect(exists).toBe(false);
   });
 });

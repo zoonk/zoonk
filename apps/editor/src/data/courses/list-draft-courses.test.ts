@@ -96,7 +96,7 @@ describe("org admins", () => {
     expect(result.error).toBeNull();
     expect(result.data).toHaveLength(1);
     expect(result.data[0]?.id).toBe(draftCourse.id);
-    expect(result.data.every((course) => !course.isPublished)).toBeTruthy();
+    expect(result.data.every((course) => !course.isPublished)).toBe(true);
   });
 
   test("does not return published courses", async () => {
@@ -125,7 +125,7 @@ describe("org admins", () => {
     const hasPtCourse = result.data.some((course) => course.language === "pt");
 
     expect(result.error).toBeNull();
-    expect(hasPtCourse).toBeFalsy();
+    expect(hasPtCourse).toBe(false);
   });
 
   test("returns all draft courses without limit", async () => {

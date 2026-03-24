@@ -69,9 +69,9 @@ describe(getFallbackDistractorWords, () => {
 
     expect(result).toHaveLength(4);
     expect(result.map((word) => word.id)).not.toContain(lessonWord.id);
-    expect(
-      result.every((word) => extraWords.some((extraWord) => extraWord.id === word.id)),
-    ).toBeTruthy();
+    expect(result.every((word) => extraWords.some((extraWord) => extraWord.id === word.id))).toBe(
+      true,
+    );
   });
 
   test("uses sentence language scope when there are no lesson words", async () => {

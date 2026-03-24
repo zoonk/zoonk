@@ -52,7 +52,7 @@ describe("authenticated users", () => {
 
     expect(result.error).toBeNull();
     expect(result.data).toBeDefined();
-    expect(result.data?.some((item) => item.id === course.id)).toBeTruthy();
+    expect(result.data?.some((item) => item.id === course.id)).toBe(true);
   });
 
   test("includes the organization in the response", async () => {
@@ -146,8 +146,8 @@ describe("authenticated users", () => {
     const result = await listUserCourses(testHeaders);
 
     expect(result.error).toBeNull();
-    expect(result.data?.some((item) => item.id === brandCourse.id)).toBeTruthy();
-    expect(result.data?.some((item) => item.id === schoolCourse.id)).toBeFalsy();
+    expect(result.data?.some((item) => item.id === brandCourse.id)).toBe(true);
+    expect(result.data?.some((item) => item.id === schoolCourse.id)).toBe(false);
   });
 
   test("includes personal courses with null organization", async () => {
@@ -168,7 +168,7 @@ describe("authenticated users", () => {
     const result = await listUserCourses(testHeaders);
 
     expect(result.error).toBeNull();
-    expect(result.data?.some((item) => item.id === personalCourse.id)).toBeTruthy();
+    expect(result.data?.some((item) => item.id === personalCourse.id)).toBe(true);
   });
 
   test("does not return other users courses", async () => {
@@ -195,7 +195,7 @@ describe("authenticated users", () => {
     const result = await listUserCourses(testHeaders);
 
     expect(result.error).toBeNull();
-    expect(result.data?.some((item) => item.id === testUserCourse.id)).toBeTruthy();
-    expect(result.data?.some((item) => item.id === otherUserCourse.id)).toBeFalsy();
+    expect(result.data?.some((item) => item.id === testUserCourse.id)).toBe(true);
+    expect(result.data?.some((item) => item.id === otherUserCourse.id)).toBe(false);
   });
 });

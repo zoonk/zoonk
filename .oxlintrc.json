@@ -101,6 +101,9 @@
     "vitest/no-importing-vitest-globals": "off",
     "vitest/prefer-called-times": "off",
     "vitest/prefer-import-in-mock": "off",
+    "vitest/prefer-strict-boolean-matchers": "off",
+    "vitest/prefer-to-be-falsy": "off",
+    "vitest/prefer-to-be-truthy": "off",
     "vitest/require-hook": "off",
     "vitest/require-top-level-describe": "off",
 
@@ -161,6 +164,7 @@
         "typescript/no-unsafe-call": "off",
         "typescript/no-unsafe-member-access": "off",
         "typescript/no-unsafe-type-assertion": "off",
+        "unicorn/custom-error-definition": "off",
         "unicorn/prefer-dom-node-text-content": "off",
         "vitest/require-hook": "error",
         "vitest/require-top-level-describe": "error"

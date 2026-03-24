@@ -42,7 +42,7 @@ describe(matchesAcceptedArrangeWords, () => {
   test("matches user answers with the same normalized sequence key", () => {
     const acceptedSequences = [["Hallo,", "Lara!"]];
 
-    expect(matchesAcceptedArrangeWords(acceptedSequences, ["hallo", "lara"])).toBeTruthy();
-    expect(matchesAcceptedArrangeWords(acceptedSequences, ["lara", "hallo"])).toBeFalsy();
+    expect(matchesAcceptedArrangeWords(acceptedSequences, ["hallo", "lara"])).toBe(true);
+    expect(matchesAcceptedArrangeWords(acceptedSequences, ["lara", "hallo"])).toBe(false);
   });
 });

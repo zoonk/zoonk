@@ -43,8 +43,8 @@
   },
   "devDependencies": {
     "@types/negotiator": "0.6.4",
-    "@typescript/native-preview": "7.0.0-dev.20260320.1",
+    "@typescript/native-preview": "7.0.0-dev.20260324.1",
     "@zoonk/tsconfig": "workspace:*",
-    "vitest": "4.1.0"
+    "vitest": "4.1.1"
   }
 }

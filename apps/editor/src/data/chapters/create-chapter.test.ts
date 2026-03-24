@@ -425,7 +425,7 @@ describe("admins", () => {
       });
 
       expect(result.error).toBeNull();
-      expect(result.data?.isPublished).toBeTruthy();
+      expect(result.data?.isPublished).toBe(true);
     });
 
     test("chapter is unpublished when course is published", async () => {
@@ -445,7 +445,7 @@ describe("admins", () => {
       });
 
       expect(result.error).toBeNull();
-      expect(result.data?.isPublished).toBeFalsy();
+      expect(result.data?.isPublished).toBe(false);
     });
   });
 });

@@ -3,23 +3,23 @@ import { getLanguageName, isTTSSupportedLanguage, needsRomanization } from "./la
 
 describe(isTTSSupportedLanguage, () => {
   test("returns true for a valid language code", () => {
-    expect(isTTSSupportedLanguage("es")).toBeTruthy();
+    expect(isTTSSupportedLanguage("es")).toBe(true);
   });
 
   test("returns true for another valid language code", () => {
-    expect(isTTSSupportedLanguage("ja")).toBeTruthy();
+    expect(isTTSSupportedLanguage("ja")).toBe(true);
   });
 
   test("returns false for an invalid language code", () => {
-    expect(isTTSSupportedLanguage("xx")).toBeFalsy();
+    expect(isTTSSupportedLanguage("xx")).toBe(false);
   });
 
   test("returns false for null", () => {
-    expect(isTTSSupportedLanguage(null)).toBeFalsy();
+    expect(isTTSSupportedLanguage(null)).toBe(false);
   });
 
   test("returns false for a number", () => {
-    expect(isTTSSupportedLanguage(42)).toBeFalsy();
+    expect(isTTSSupportedLanguage(42)).toBe(false);
   });
 });
 
@@ -44,18 +44,18 @@ describe(needsRomanization, () => {
     "te",
     "ml",
   ])("returns true for non-Roman script language: %s", (code) => {
-    expect(needsRomanization(code)).toBeTruthy();
+    expect(needsRomanization(code)).toBe(true);
   });
 
   test.each(["en", "es", "fr", "de", "pt", "it"])(
     "returns false for Roman script language: %s",
     (code) => {
-      expect(needsRomanization(code)).toBeFalsy();
+      expect(needsRomanization(code)).toBe(false);
     },
   );
 
   test("returns false for unknown language codes", () => {
-    expect(needsRomanization("xyz")).toBeFalsy();
+    expect(needsRomanization("xyz")).toBe(false);
   });
 });
 

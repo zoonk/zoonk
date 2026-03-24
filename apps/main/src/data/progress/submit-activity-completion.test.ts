@@ -83,7 +83,7 @@ describe(submitActivityCompletion, () => {
     });
 
     expect(attempts).toHaveLength(1);
-    expect(attempts[0]?.isCorrect).toBeTruthy();
+    expect(attempts[0]?.isCorrect).toBe(true);
     expect(attempts[0]?.durationSeconds).toBe(5);
     expect(attempts[0]?.hourOfDay).toBe(14);
     expect(attempts[0]?.dayOfWeek).toBe(1);

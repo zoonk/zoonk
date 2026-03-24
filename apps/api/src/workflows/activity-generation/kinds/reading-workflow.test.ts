@@ -177,7 +177,7 @@ describe(readingActivityWorkflow, () => {
     for (const step of steps) {
       expect(step.kind).toBe("reading");
       expect(step.sentenceId).not.toBeNull();
-      expect(step.isPublished).toBeTruthy();
+      expect(step.isPublished).toBe(true);
     }
   });
 

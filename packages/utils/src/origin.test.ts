@@ -86,98 +86,98 @@ describe(isCorsAllowedOrigin, () => {
 
   describe("zoonk domains", () => {
     it("allows https://zoonk.com", () => {
-      expect(isCorsAllowedOrigin("https://zoonk.com")).toBeTruthy();
+      expect(isCorsAllowedOrigin("https://zoonk.com")).toBe(true);
     });
 
     it("allows subdomains of zoonk.com", () => {
-      expect(isCorsAllowedOrigin("https://api.zoonk.com")).toBeTruthy();
-      expect(isCorsAllowedOrigin("https://www.zoonk.com")).toBeTruthy();
-      expect(isCorsAllowedOrigin("https://app.zoonk.com")).toBeTruthy();
+      expect(isCorsAllowedOrigin("https://api.zoonk.com")).toBe(true);
+      expect(isCorsAllowedOrigin("https://www.zoonk.com")).toBe(true);
+      expect(isCorsAllowedOrigin("https://app.zoonk.com")).toBe(true);
     });
 
     it("allows zoonk.dev and subdomains", () => {
-      expect(isCorsAllowedOrigin("https://zoonk.dev")).toBeTruthy();
-      expect(isCorsAllowedOrigin("https://api.zoonk.dev")).toBeTruthy();
+      expect(isCorsAllowedOrigin("https://zoonk.dev")).toBe(true);
+      expect(isCorsAllowedOrigin("https://api.zoonk.dev")).toBe(true);
     });
 
     it("rejects non-zoonk domains", () => {
-      expect(isCorsAllowedOrigin("https://evil.com")).toBeFalsy();
-      expect(isCorsAllowedOrigin("https://notzoonk.com")).toBeFalsy();
-      expect(isCorsAllowedOrigin("https://zoonk.com.evil.com")).toBeFalsy();
+      expect(isCorsAllowedOrigin("https://evil.com")).toBe(false);
+      expect(isCorsAllowedOrigin("https://notzoonk.com")).toBe(false);
+      expect(isCorsAllowedOrigin("https://zoonk.com.evil.com")).toBe(false);
     });
 
     it("rejects http for zoonk domains", () => {
-      expect(isCorsAllowedOrigin("http://zoonk.com")).toBeFalsy();
-      expect(isCorsAllowedOrigin("http://api.zoonk.com")).toBeFalsy();
+      expect(isCorsAllowedOrigin("http://zoonk.com")).toBe(false);
+      expect(isCorsAllowedOrigin("http://api.zoonk.com")).toBe(false);
     });
   });
 
   describe("localhost", () => {
     it("allows valid localhost ports in dev", () => {
-      expect(isCorsAllowedOrigin("http://localhost:3000")).toBeTruthy();
-      expect(isCorsAllowedOrigin("http://localhost:4000")).toBeTruthy();
-      expect(isCorsAllowedOrigin("http://localhost:8080")).toBeTruthy();
-      expect(isCorsAllowedOrigin("http://localhost:65535")).toBeTruthy();
+      expect(isCorsAllowedOrigin("http://localhost:3000")).toBe(true);
+      expect(isCorsAllowedOrigin("http://localhost:4000")).toBe(true);
+      expect(isCorsAllowedOrigin("http://localhost:8080")).toBe(true);
+      expect(isCorsAllowedOrigin("http://localhost:65535")).toBe(true);
     });
 
     it("rejects https localhost", () => {
-      expect(isCorsAllowedOrigin("https://localhost:3000")).toBeFalsy();
+      expect(isCorsAllowedOrigin("https://localhost:3000")).toBe(false);
     });
 
     it("rejects localhost without port", () => {
-      expect(isCorsAllowedOrigin("http://localhost")).toBeFalsy();
+      expect(isCorsAllowedOrigin("http://localhost")).toBe(false);
     });
 
     it("rejects invalid port values", () => {
-      expect(isCorsAllowedOrigin("http://localhost:")).toBeFalsy();
-      expect(isCorsAllowedOrigin("http://localhost:abc")).toBeFalsy();
-      expect(isCorsAllowedOrigin("http://localhost:3000/path")).toBeFalsy();
-      expect(isCorsAllowedOrigin("http://localhost:3000@evil.com")).toBeFalsy();
+      expect(isCorsAllowedOrigin("http://localhost:")).toBe(false);
+      expect(isCorsAllowedOrigin("http://localhost:abc")).toBe(false);
+      expect(isCorsAllowedOrigin("http://localhost:3000/path")).toBe(false);
+      expect(isCorsAllowedOrigin("http://localhost:3000@evil.com")).toBe(false);
     });
 
     it("rejects localhost in production (non-e2e)", () => {
       vi.stubEnv("NODE_ENV", "production");
       vi.stubEnv("E2E_TESTING", "false");
-      expect(isCorsAllowedOrigin("http://localhost:3000")).toBeFalsy();
+      expect(isCorsAllowedOrigin("http://localhost:3000")).toBe(false);
     });
 
     it("allows localhost in production when E2E_TESTING is true", () => {
       vi.stubEnv("NODE_ENV", "production");
       vi.stubEnv("E2E_TESTING", "true");
-      expect(isCorsAllowedOrigin("http://localhost:3000")).toBeTruthy();
+      expect(isCorsAllowedOrigin("http://localhost:3000")).toBe(true);
     });
   });
 
   describe("vercel previews", () => {
     it("allows vercel preview deployments when not in production", () => {
-      expect(isCorsAllowedOrigin("https://my-branch-zoonk.vercel.app")).toBeTruthy();
-      expect(isCorsAllowedOrigin("https://feature-123-zoonk.vercel.app")).toBeTruthy();
+      expect(isCorsAllowedOrigin("https://my-branch-zoonk.vercel.app")).toBe(true);
+      expect(isCorsAllowedOrigin("https://feature-123-zoonk.vercel.app")).toBe(true);
     });
 
     it("rejects vercel apps that don't end with -zoonk", () => {
-      expect(isCorsAllowedOrigin("https://other-project.vercel.app")).toBeFalsy();
-      expect(isCorsAllowedOrigin("https://zoonk.vercel.app")).toBeFalsy();
+      expect(isCorsAllowedOrigin("https://other-project.vercel.app")).toBe(false);
+      expect(isCorsAllowedOrigin("https://zoonk.vercel.app")).toBe(false);
     });
 
     it("rejects http vercel preview deployments", () => {
-      expect(isCorsAllowedOrigin("http://my-branch-zoonk.vercel.app")).toBeFalsy();
+      expect(isCorsAllowedOrigin("http://my-branch-zoonk.vercel.app")).toBe(false);
     });
 
     it("rejects vercel preview deployments in production", () => {
       vi.stubEnv("VERCEL_ENV", "production");
-      expect(isCorsAllowedOrigin("https://my-branch-zoonk.vercel.app")).toBeFalsy();
+      expect(isCorsAllowedOrigin("https://my-branch-zoonk.vercel.app")).toBe(false);
     });
   });
 
   describe("rejected origins", () => {
     it("rejects random external domains", () => {
-      expect(isCorsAllowedOrigin("https://google.com")).toBeFalsy();
-      expect(isCorsAllowedOrigin("https://evil-site.com")).toBeFalsy();
+      expect(isCorsAllowedOrigin("https://google.com")).toBe(false);
+      expect(isCorsAllowedOrigin("https://evil-site.com")).toBe(false);
     });
 
     it("rejects domains that look similar but are not zoonk", () => {
-      expect(isCorsAllowedOrigin("https://fakezoonk.com")).toBeFalsy();
-      expect(isCorsAllowedOrigin("https://zoonk-fake.com")).toBeFalsy();
+      expect(isCorsAllowedOrigin("https://fakezoonk.com")).toBe(false);
+      expect(isCorsAllowedOrigin("https://zoonk-fake.com")).toBe(false);
     });
   });
 });

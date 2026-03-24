@@ -43,7 +43,7 @@ describe(validateAnswers, () => {
     });
 
     expect(results).toHaveLength(1);
-    expect(results[0]?.isCorrect).toBeTruthy();
+    expect(results[0]?.isCorrect).toBe(true);
     expect(results[0]?.stepId).toBe(1n);
     expect(results[0]?.effects).toEqual([]);
   });
@@ -56,7 +56,7 @@ describe(validateAnswers, () => {
     });
 
     expect(results).toHaveLength(1);
-    expect(results[0]?.isCorrect).toBeFalsy();
+    expect(results[0]?.isCorrect).toBe(false);
   });
 
   test("validates fillBlank answer", () => {
@@ -67,7 +67,7 @@ describe(validateAnswers, () => {
     });
 
     expect(results).toHaveLength(1);
-    expect(results[0]?.isCorrect).toBeFalsy();
+    expect(results[0]?.isCorrect).toBe(false);
   });
 
   test("challenge multipleChoice returns effects", () => {
@@ -100,7 +100,7 @@ describe(validateAnswers, () => {
     });
 
     expect(results).toHaveLength(1);
-    expect(results[0]?.isCorrect).toBeFalsy();
+    expect(results[0]?.isCorrect).toBe(false);
     expect(results[0]?.effects).toEqual([]);
   });
 
@@ -138,7 +138,7 @@ describe(validateAnswers, () => {
     });
 
     expect(results).toHaveLength(1);
-    expect(results[0]?.isCorrect).toBeTruthy();
+    expect(results[0]?.isCorrect).toBe(true);
   });
 
   test("translation answer with wrong word ID is incorrect", () => {
@@ -161,7 +161,7 @@ describe(validateAnswers, () => {
     });
 
     expect(results).toHaveLength(1);
-    expect(results[0]?.isCorrect).toBeFalsy();
+    expect(results[0]?.isCorrect).toBe(false);
   });
 
   test("validates reading answer against sentence words", () => {
@@ -185,7 +185,7 @@ describe(validateAnswers, () => {
     });
 
     expect(results).toHaveLength(1);
-    expect(results[0]?.isCorrect).toBeTruthy();
+    expect(results[0]?.isCorrect).toBe(true);
   });
 
   test("validates listening answer against translation words", () => {
@@ -209,7 +209,7 @@ describe(validateAnswers, () => {
     });
 
     expect(results).toHaveLength(1);
-    expect(results[0]?.isCorrect).toBeTruthy();
+    expect(results[0]?.isCorrect).toBe(true);
   });
 
   test("accepts an alternative reading answer", () => {
@@ -233,7 +233,7 @@ describe(validateAnswers, () => {
     });
 
     expect(results).toHaveLength(1);
-    expect(results[0]?.isCorrect).toBeTruthy();
+    expect(results[0]?.isCorrect).toBe(true);
   });
 
   test("accepts punctuation-insensitive listening answers", () => {
@@ -257,7 +257,7 @@ describe(validateAnswers, () => {
     });
 
     expect(results).toHaveLength(1);
-    expect(results[0]?.isCorrect).toBeTruthy();
+    expect(results[0]?.isCorrect).toBe(true);
   });
 
   test("skips unsupported step kinds", () => {

@@ -79,7 +79,7 @@ describe("admins", () => {
     });
 
     expect(result.error).toBeNull();
-    expect(result.data?.isPublished).toBeTruthy();
+    expect(result.data?.isPublished).toBe(true);
   });
 
   test("unpublishes chapter successfully", async () => {
@@ -97,7 +97,7 @@ describe("admins", () => {
     });
 
     expect(result.error).toBeNull();
-    expect(result.data?.isPublished).toBeFalsy();
+    expect(result.data?.isPublished).toBe(false);
   });
 
   test("returns Chapter not found", async () => {

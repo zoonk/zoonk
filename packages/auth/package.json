@@ -18,12 +18,12 @@
     "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
-    "@better-auth/prisma-adapter": "1.5.5",
-    "@better-auth/stripe": "1.5.5",
+    "@better-auth/prisma-adapter": "1.5.6",
+    "@better-auth/stripe": "1.5.6",
     "@zoonk/db": "workspace:*",
     "@zoonk/mailer": "workspace:*",
     "@zoonk/utils": "workspace:*",
-    "better-auth": "1.5.5",
+    "better-auth": "1.5.6",
     "jose": "6.2.2",
     "stripe": "20.4.1",
     "zod": "4.3.6"
@@ -31,9 +31,9 @@
   "devDependencies": {
     "@types/node": "^24",
     "@types/react": "^19.2.14",
-    "@typescript/native-preview": "7.0.0-dev.20260320.1",
+    "@typescript/native-preview": "7.0.0-dev.20260324.1",
     "@zoonk/tsconfig": "workspace:*",
-    "vitest": "4.1.0"
+    "vitest": "4.1.1"
   },
   "peerDependencies": {
     "next": ">=16",

@@ -55,7 +55,7 @@ describe(getPlayerTransition, () => {
     const transition = getPlayerTransition(state, { type: "CONTINUE" });
 
     expect(transition.nextState.phase).toBe("completed");
-    expect(transition.shouldSubmitCompletion).toBeTruthy();
+    expect(transition.shouldSubmitCompletion).toBe(true);
   });
 
   test("marks completion submission when static navigation reaches the last step", () => {
@@ -71,7 +71,7 @@ describe(getPlayerTransition, () => {
     });
 
     expect(transition.nextState.phase).toBe("completed");
-    expect(transition.shouldSubmitCompletion).toBeTruthy();
+    expect(transition.shouldSubmitCompletion).toBe(true);
   });
 
   test("does not submit completion for non-terminal actions", () => {
@@ -83,7 +83,7 @@ describe(getPlayerTransition, () => {
 
     const transition = getPlayerTransition(buildState(), action);
 
-    expect(transition.shouldSubmitCompletion).toBeFalsy();
+    expect(transition.shouldSubmitCompletion).toBe(false);
   });
 });
 

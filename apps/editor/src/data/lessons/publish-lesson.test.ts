@@ -96,7 +96,7 @@ describe("admins", () => {
     });
 
     expect(result.error).toBeNull();
-    expect(result.data?.isPublished).toBeTruthy();
+    expect(result.data?.isPublished).toBe(true);
   });
 
   test("unpublishes lesson successfully", async () => {
@@ -114,7 +114,7 @@ describe("admins", () => {
     });
 
     expect(result.error).toBeNull();
-    expect(result.data?.isPublished).toBeFalsy();
+    expect(result.data?.isPublished).toBe(false);
   });
 
   test("returns Lesson not found", async () => {

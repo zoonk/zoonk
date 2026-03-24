@@ -332,23 +332,23 @@ describe(normalizePunctuation, () => {
 
 describe(hasWholePhrase, () => {
   test("matches a full phrase without matching inside another word", () => {
-    expect(hasWholePhrase("the cat sleeps", "he")).toBeFalsy();
-    expect(hasWholePhrase("he sleeps", "he")).toBeTruthy();
+    expect(hasWholePhrase("the cat sleeps", "he")).toBe(false);
+    expect(hasWholePhrase("he sleeps", "he")).toBe(true);
   });
 
   test("matches phrases even when the text uses extra spaces", () => {
-    expect(hasWholePhrase("Guten   Tag, Anna!", "Guten Tag")).toBeTruthy();
+    expect(hasWholePhrase("Guten   Tag, Anna!", "Guten Tag")).toBe(true);
   });
 
   test("matches Unicode words using Unicode-aware boundaries", () => {
-    expect(hasWholePhrase("Olá, Lara!", "Olá")).toBeTruthy();
-    expect(hasWholePhrase("猫、犬", "猫")).toBeTruthy();
-    expect(hasWholePhrase("猫です", "猫")).toBeFalsy();
+    expect(hasWholePhrase("Olá, Lara!", "Olá")).toBe(true);
+    expect(hasWholePhrase("猫、犬", "猫")).toBe(true);
+    expect(hasWholePhrase("猫です", "猫")).toBe(false);
   });
 
   test("returns false for an empty phrase", () => {
-    expect(hasWholePhrase("hello world", "")).toBeFalsy();
-    expect(hasWholePhrase("", "")).toBeFalsy();
+    expect(hasWholePhrase("hello world", "")).toBe(false);
+    expect(hasWholePhrase("", "")).toBe(false);
   });
 });
 

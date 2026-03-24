@@ -28,7 +28,7 @@ describe(rejected, () => {
       { reason: new Error("fail"), status: "rejected" },
     ];
 
-    expect(rejected(results)).toBeTruthy();
+    expect(rejected(results)).toBe(true);
   });
 
   test("returns true when a fulfilled value has a truthy error property", () => {
@@ -36,7 +36,7 @@ describe(rejected, () => {
       { status: "fulfilled", value: { data: null, error: new Error("fail") } },
     ];
 
-    expect(rejected(results)).toBeTruthy();
+    expect(rejected(results)).toBe(true);
   });
 
   test("returns false when a fulfilled value has a falsy error property", () => {
@@ -44,7 +44,7 @@ describe(rejected, () => {
       { status: "fulfilled", value: { data: "ok", error: null } },
     ];
 
-    expect(rejected(results)).toBeFalsy();
+    expect(rejected(results)).toBe(false);
   });
 
   test("returns false when all results are fulfilled without errors", () => {
@@ -53,11 +53,11 @@ describe(rejected, () => {
       { status: "fulfilled", value: "b" },
     ];
 
-    expect(rejected(results)).toBeFalsy();
+    expect(rejected(results)).toBe(false);
   });
 
   test("returns false for an empty array", () => {
-    expect(rejected([])).toBeFalsy();
+    expect(rejected([])).toBe(false);
   });
 });
 

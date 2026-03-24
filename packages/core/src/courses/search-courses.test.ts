@@ -406,6 +406,6 @@ describe(searchCourses, () => {
     const ids = result.map((course) => course.id);
 
     expect(ids).toContain(withOrg.id);
-    expect(result.every((course) => course.organization !== null)).toBeTruthy();
+    expect(result.every((course) => course.organization !== null)).toBe(true);
   });
 });
