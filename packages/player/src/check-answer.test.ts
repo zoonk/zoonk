@@ -156,11 +156,11 @@ describe(checkSingleMatchPair, () => {
   };
 
   test("returns true for a correct pair", () => {
-    expect(checkSingleMatchPair(content, { left: "A", right: "1" })).toBeTruthy();
+    expect(checkSingleMatchPair(content, { left: "A", right: "1" })).toBe(true);
   });
 
   test("returns false for an incorrect pair", () => {
-    expect(checkSingleMatchPair(content, { left: "A", right: "2" })).toBeFalsy();
+    expect(checkSingleMatchPair(content, { left: "A", right: "2" })).toBe(false);
   });
 });
 

@@ -420,7 +420,7 @@ describe("language activity generation", () => {
     expect(listeningSteps).toHaveLength(readingSteps.length);
 
     listeningSteps.forEach((listeningStep, idx) => {
-      expect(listeningStep.isPublished).toBeTruthy();
+      expect(listeningStep.isPublished).toBe(true);
       expect(listeningStep.sentenceId).toBe(readingSteps[idx]?.sentenceId);
       expect(listeningStep.position).toBe(readingSteps[idx]?.position);
       expect(listeningStep.kind).toBe("listening");

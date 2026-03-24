@@ -273,7 +273,7 @@ describe(lessonGenerationWorkflow, () => {
       for (const activity of activities) {
         const expectedStatus = activity.kind === "review" ? "completed" : "pending";
         expect(activity.generationStatus).toBe(expectedStatus);
-        expect(activity.isPublished).toBeTruthy();
+        expect(activity.isPublished).toBe(true);
         expect(activity.title).toBeNull();
         expect(activity.description).toBeNull();
       }
@@ -328,7 +328,7 @@ describe(lessonGenerationWorkflow, () => {
       for (const activity of activities) {
         const expectedStatus = activity.kind === "review" ? "completed" : "pending";
         expect(activity.generationStatus).toBe(expectedStatus);
-        expect(activity.isPublished).toBeTruthy();
+        expect(activity.isPublished).toBe(true);
         expect(activity.title).toBeNull();
         expect(activity.description).toBeNull();
       }
@@ -384,7 +384,7 @@ describe(lessonGenerationWorkflow, () => {
 
       for (const activity of activities) {
         expect(activity.generationStatus).toBe("pending");
-        expect(activity.isPublished).toBeTruthy();
+        expect(activity.isPublished).toBe(true);
       }
 
       expect(generateLessonActivities).toHaveBeenCalledOnce();

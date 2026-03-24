@@ -16,7 +16,7 @@ describe(getDistractorWords, () => {
     const words = [correct, makeWord("2", "cat"), makeWord("3", "dog")];
     const result = getDistractorWords(correct, words, 5);
 
-    expect(result.every((word) => word.id !== "1")).toBeTruthy();
+    expect(result.every((word) => word.id !== "1")).toBe(true);
   });
 
   test("excludes words with the same translation", () => {
@@ -146,7 +146,7 @@ describe(getDistractorWords, () => {
       (result) => JSON.stringify(result) === JSON.stringify(results[0]),
     );
 
-    expect(allSame).toBeFalsy();
+    expect(allSame).toBe(false);
   });
 
   test("excludes words whose alternativeTranslations overlap with correct word's alternatives", () => {

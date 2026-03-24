@@ -614,7 +614,7 @@ describe("admins", () => {
       });
 
       expect(result.error).toBeNull();
-      expect(result.data?.[0]?.isPublished).toBeTruthy();
+      expect(result.data?.[0]?.isPublished).toBe(true);
     });
 
     test("imported chapters are unpublished when course is published", async () => {
@@ -632,7 +632,7 @@ describe("admins", () => {
       });
 
       expect(result.error).toBeNull();
-      expect(result.data?.[0]?.isPublished).toBeFalsy();
+      expect(result.data?.[0]?.isPublished).toBe(false);
     });
 
     test("existing chapter becomes published when imported to unpublished course", async () => {
@@ -666,7 +666,7 @@ describe("admins", () => {
         where: { id: existingChapter.id },
       });
 
-      expect(updatedChapter?.isPublished).toBeTruthy();
+      expect(updatedChapter?.isPublished).toBe(true);
     });
   });
 });

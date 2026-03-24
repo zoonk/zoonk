@@ -103,9 +103,7 @@ describe("admins", () => {
 
     expect(result.error).toBeNull();
     expect(result.data.length).toBeGreaterThanOrEqual(1);
-    expect(
-      result.data.some((chapter) => chapter.title === "Introdução à Programação"),
-    ).toBeTruthy();
+    expect(result.data.some((chapter) => chapter.title === "Introdução à Programação")).toBe(true);
   });
 
   test("returns empty array when no matches", async () => {
@@ -151,7 +149,7 @@ describe("admins", () => {
 
     expect(result.error).toBeNull();
     expect(result.data.length).toBeGreaterThanOrEqual(1);
-    expect(result.data.some((chapter) => chapter.title === "UPPERCASE TITLE")).toBeTruthy();
+    expect(result.data.some((chapter) => chapter.title === "UPPERCASE TITLE")).toBe(true);
   });
 
   test("partial match search", async () => {
@@ -175,7 +173,7 @@ describe("admins", () => {
     expect(result.data.length).toBeGreaterThanOrEqual(1);
     expect(
       result.data.some((chapter) => chapter.title === "Very Long Chapter Title For Testing"),
-    ).toBeTruthy();
+    ).toBe(true);
   });
 
   test("includes course info in results", async () => {

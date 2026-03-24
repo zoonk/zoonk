@@ -128,7 +128,7 @@ describe(listeningActivityWorkflow, () => {
     for (const step of listeningSteps) {
       expect(step.kind).toBe("listening");
       expect(step.sentenceId).not.toBeNull();
-      expect(step.isPublished).toBeTruthy();
+      expect(step.isPublished).toBe(true);
     }
   });
 

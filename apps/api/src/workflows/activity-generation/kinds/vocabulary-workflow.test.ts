@@ -137,7 +137,7 @@ describe(vocabularyActivityWorkflow, () => {
     for (const step of steps) {
       expect(step.kind).toBe("vocabulary");
       expect(step.wordId).not.toBeNull();
-      expect(step.isPublished).toBeTruthy();
+      expect(step.isPublished).toBe(true);
     }
   });
 

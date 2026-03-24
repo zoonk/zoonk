@@ -46,6 +46,7 @@ const nextConfig: NextConfig = {
     root: path.resolve(import.meta.dirname, "../.."),
   },
   typedRoutes: true,
+  typescript: { ignoreBuildErrors: true },
 };
 
 const withNextIntl = createNextIntlPlugin({

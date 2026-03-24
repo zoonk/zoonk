@@ -48,18 +48,18 @@ describe(computeDimensions, () => {
 
 describe(hasNegativeDimension, () => {
   it("returns true when any dimension is negative", () => {
-    expect(hasNegativeDimension({ Courage: 2, Diplomacy: -1, Speed: 0 })).toBeTruthy();
+    expect(hasNegativeDimension({ Courage: 2, Diplomacy: -1, Speed: 0 })).toBe(true);
   });
 
   it("returns false when all dimensions are non-negative", () => {
-    expect(hasNegativeDimension({ Courage: 2, Diplomacy: 0, Speed: 1 })).toBeFalsy();
+    expect(hasNegativeDimension({ Courage: 2, Diplomacy: 0, Speed: 1 })).toBe(false);
   });
 
   it("returns false for empty dimensions", () => {
-    expect(hasNegativeDimension({})).toBeFalsy();
+    expect(hasNegativeDimension({})).toBe(false);
   });
 
   it("returns true when all dimensions are negative", () => {
-    expect(hasNegativeDimension({ Courage: -1, Diplomacy: -2 })).toBeTruthy();
+    expect(hasNegativeDimension({ Courage: -1, Diplomacy: -2 })).toBe(true);
   });
 });

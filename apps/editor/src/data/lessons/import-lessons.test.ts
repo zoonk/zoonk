@@ -581,7 +581,7 @@ describe("admins", () => {
       });
 
       expect(result.error).toBeNull();
-      expect(result.data?.[0]?.isPublished).toBeTruthy();
+      expect(result.data?.[0]?.isPublished).toBe(true);
     });
 
     test("imported lessons are unpublished when chapter is published", async () => {
@@ -602,7 +602,7 @@ describe("admins", () => {
       });
 
       expect(result.error).toBeNull();
-      expect(result.data?.[0]?.isPublished).toBeFalsy();
+      expect(result.data?.[0]?.isPublished).toBe(false);
     });
 
     test("existing lesson becomes published when imported to unpublished chapter", async () => {
@@ -639,7 +639,7 @@ describe("admins", () => {
         where: { id: existingLesson.id },
       });
 
-      expect(updatedLesson?.isPublished).toBeTruthy();
+      expect(updatedLesson?.isPublished).toBe(true);
     });
   });
 

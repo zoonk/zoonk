@@ -29,7 +29,7 @@ describe("courseSlugExists()", () => {
       slug: course.slug,
     });
 
-    expect(exists).toBeTruthy();
+    expect(exists).toBe(true);
   });
 
   test("returns false when slug does not exist", async () => {
@@ -39,7 +39,7 @@ describe("courseSlugExists()", () => {
       slug: "non-existent-slug",
     });
 
-    expect(exists).toBeFalsy();
+    expect(exists).toBe(false);
   });
 
   test("returns true when slug exists regardless of language", async () => {
@@ -54,7 +54,7 @@ describe("courseSlugExists()", () => {
       slug: course.slug,
     });
 
-    expect(exists).toBeTruthy();
+    expect(exists).toBe(true);
   });
 
   test("returns false when slug exists but organization differs", async () => {
@@ -67,7 +67,7 @@ describe("courseSlugExists()", () => {
       slug: course.slug,
     });
 
-    expect(exists).toBeFalsy();
+    expect(exists).toBe(false);
   });
 
   describe("alternative titles (AI org)", () => {
@@ -91,7 +91,7 @@ describe("courseSlugExists()", () => {
         slug: `${altTitle.slug}-pt`,
       });
 
-      expect(exists).toBeTruthy();
+      expect(exists).toBe(true);
     });
 
     test("returns false when slug matches an alternative title in a different language", async () => {
@@ -108,7 +108,7 @@ describe("courseSlugExists()", () => {
         slug: `alt-diff-lang-${course.id}-es`,
       });
 
-      expect(exists).toBeFalsy();
+      expect(exists).toBe(false);
     });
 
     test("returns false when checking alternative titles for a non-AI org", async () => {
@@ -126,7 +126,7 @@ describe("courseSlugExists()", () => {
         slug: `${altTitle.slug}-pt`,
       });
 
-      expect(exists).toBeFalsy();
+      expect(exists).toBe(false);
     });
   });
 });

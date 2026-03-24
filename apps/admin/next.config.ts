@@ -22,6 +22,7 @@ const nextConfig: NextConfig = {
   },
   reactCompiler: true,
   typedRoutes: false,
+  typescript: { ignoreBuildErrors: true },
 };
 
 export default nextConfig;

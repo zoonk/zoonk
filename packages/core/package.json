@@ -53,10 +53,10 @@
   },
   "devDependencies": {
     "@types/react": "^19.2.14",
-    "@typescript/native-preview": "7.0.0-dev.20260320.1",
+    "@typescript/native-preview": "7.0.0-dev.20260324.1",
     "@zoonk/testing": "workspace:*",
     "@zoonk/tsconfig": "workspace:*",
-    "vitest": "4.1.0"
+    "vitest": "4.1.1"
   },
   "peerDependencies": {
     "next": ">=16",

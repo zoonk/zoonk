@@ -191,7 +191,7 @@ describe("authenticated users", () => {
 
       expect(result).not.toBeNull();
       expect(result?.periodTotal).toBe(150);
-      expect(result?.hasNextPeriod).toBeTruthy();
+      expect(result?.hasNextPeriod).toBe(true);
     });
   });
 
@@ -320,7 +320,7 @@ describe("authenticated users", () => {
       const result = await getBpHistory({ headers, period: "month" });
 
       expect(result).not.toBeNull();
-      expect(result?.hasPreviousPeriod).toBeTruthy();
+      expect(result?.hasPreviousPeriod).toBe(true);
     });
 
     test("hasNextPeriod is false when on current period (offset=0)", async () => {
@@ -341,7 +341,7 @@ describe("authenticated users", () => {
       const result = await getBpHistory({ headers, period: "month" });
 
       expect(result).not.toBeNull();
-      expect(result?.hasNextPeriod).toBeFalsy();
+      expect(result?.hasNextPeriod).toBe(false);
     });
 
     test("hasNextPeriod is true when offset > 0", async () => {
@@ -367,7 +367,7 @@ describe("authenticated users", () => {
       });
 
       expect(result).not.toBeNull();
-      expect(result?.hasNextPeriod).toBeTruthy();
+      expect(result?.hasNextPeriod).toBe(true);
     });
   });
 });

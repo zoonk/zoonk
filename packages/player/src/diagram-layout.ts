@@ -1,4 +1,4 @@
-import dagre from "@dagrejs/dagre";
+import { type EdgeLabel, Graph, type GraphLabel, type NodeLabel, layout } from "@dagrejs/dagre";
 
 export type PositionedNode = {
   height: number;
@@ -36,12 +36,10 @@ function estimateNodeWidth(label: string): number {
   return Math.max(MIN_NODE_WIDTH, label.length * CHAR_WIDTH + NODE_PADDING);
 }
 
-/* oxlint-disable no-unsafe-member-access -- dagre node properties are untyped after layout */
 function readNodePosition(
-  graph: dagre.graphlib.Graph,
+  graph: Graph<GraphLabel, NodeLabel, EdgeLabel>,
   id: string,
 ): { height: number; width: number; x: number; y: number } {
-  // oxlint-disable-next-line no-unsafe-assignment -- dagre layout mutates nodes in place
   const node = graph.node(id);
 
   return {
@@ -51,23 +49,21 @@ function readNodePosition(
     y: Number(node.y),
   };
 }
-/* oxlint-enable no-unsafe-member-access */
 
 function readEdgePoints(
-  graph: dagre.graphlib.Graph,
+  graph: Graph<GraphLabel, NodeLabel, EdgeLabel>,
   source: string,
   target: string,
 ): { x: number; y: number }[] {
-  // oxlint-disable-next-line no-unsafe-assignment -- dagre edge data is untyped after layout
   const edge = graph.edge(source, target);
-  // oxlint-disable-next-line no-unsafe-member-access, no-unsafe-type-assertion -- dagre edge points array is untyped
-  return (edge.points ?? []) as { x: number; y: number }[];
+  return edge.points ?? [];
 }
 
-function readGraphDimensions(graph: dagre.graphlib.Graph): { height: number; width: number } {
-  // oxlint-disable-next-line no-unsafe-assignment -- dagre graph dimensions are untyped
+function readGraphDimensions(graph: Graph<GraphLabel, NodeLabel, EdgeLabel>): {
+  height: number;
+  width: number;
+} {
   const info = graph.graph();
-  // oxlint-disable-next-line no-unsafe-member-access -- dagre graph info properties are untyped
   return { height: Number(info.height ?? 0), width: Number(info.width ?? 0) };
 }
 
@@ -82,7 +78,7 @@ export function computeDiagramLayout(
     target: string;
   }[],
 ): DiagramLayout {
-  const graph = new dagre.graphlib.Graph();
+  const graph = new Graph<GraphLabel, NodeLabel, EdgeLabel>();
 
   graph.setGraph({ nodesep: NODE_SEP, rankdir: "TB", ranksep: RANK_SEP });
   graph.setDefaultEdgeLabel(() => ({}));
@@ -99,7 +95,7 @@ export function computeDiagramLayout(
     graph.setEdge(edge.source, edge.target, { label: edge.label });
   }
 
-  dagre.layout(graph);
+  layout(graph);
 
   const positionedNodes = nodes.map((node) => ({
     ...translateNode(readNodePosition(graph, node.id)),

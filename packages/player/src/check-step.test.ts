@@ -44,7 +44,7 @@ describe(checkStep, () => {
         selectedText: "4",
       };
       const { effects, result } = checkStep(step, answer);
-      expect(result.isCorrect).toBeTruthy();
+      expect(result.isCorrect).toBe(true);
       expect(result.feedback).toBe("Correct!");
       expect(effects).toEqual([]);
     });
@@ -56,7 +56,7 @@ describe(checkStep, () => {
         selectedText: "3",
       };
       const { result } = checkStep(step, answer);
-      expect(result.isCorrect).toBeFalsy();
+      expect(result.isCorrect).toBe(false);
       expect(result.feedback).toBe("Wrong!");
     });
   });
@@ -91,7 +91,7 @@ describe(checkStep, () => {
         selectedText: "Option A",
       };
       const { effects, result } = checkStep(step, answer);
-      expect(result.isCorrect).toBeTruthy();
+      expect(result.isCorrect).toBe(true);
       expect(effects).toEqual([{ dimension: "Quality", impact: "positive" }]);
     });
 
@@ -121,14 +121,14 @@ describe(checkStep, () => {
     test("correct answer", () => {
       const answer: SelectedAnswer = { kind: "fillBlank", userAnswers: ["sky"] };
       const { effects, result } = checkStep(step, answer);
-      expect(result.isCorrect).toBeTruthy();
+      expect(result.isCorrect).toBe(true);
       expect(effects).toEqual([]);
     });
 
     test("incorrect answer", () => {
       const answer: SelectedAnswer = { kind: "fillBlank", userAnswers: ["ground"] };
       const { result } = checkStep(step, answer);
-      expect(result.isCorrect).toBeFalsy();
+      expect(result.isCorrect).toBe(false);
     });
   });
 
@@ -155,7 +155,7 @@ describe(checkStep, () => {
         ],
       };
       const { effects, result } = checkStep(step, answer);
-      expect(result.isCorrect).toBeTruthy();
+      expect(result.isCorrect).toBe(true);
       expect(effects).toEqual([]);
     });
 
@@ -169,7 +169,7 @@ describe(checkStep, () => {
         ],
       };
       const { result } = checkStep(step, answer);
-      expect(result.isCorrect).toBeFalsy();
+      expect(result.isCorrect).toBe(false);
     });
   });
 
@@ -190,7 +190,7 @@ describe(checkStep, () => {
         userOrder: ["first", "second", "third"],
       };
       const { effects, result } = checkStep(step, answer);
-      expect(result.isCorrect).toBeTruthy();
+      expect(result.isCorrect).toBe(true);
       expect(effects).toEqual([]);
     });
 
@@ -200,7 +200,7 @@ describe(checkStep, () => {
         userOrder: ["third", "first", "second"],
       };
       const { result } = checkStep(step, answer);
-      expect(result.isCorrect).toBeFalsy();
+      expect(result.isCorrect).toBe(false);
     });
   });
 
@@ -220,14 +220,14 @@ describe(checkStep, () => {
     test("correct selection", () => {
       const answer: SelectedAnswer = { kind: "selectImage", selectedIndex: 0 };
       const { effects, result } = checkStep(step, answer);
-      expect(result.isCorrect).toBeTruthy();
+      expect(result.isCorrect).toBe(true);
       expect(effects).toEqual([]);
     });
 
     test("incorrect selection", () => {
       const answer: SelectedAnswer = { kind: "selectImage", selectedIndex: 1 };
       const { result } = checkStep(step, answer);
-      expect(result.isCorrect).toBeFalsy();
+      expect(result.isCorrect).toBe(false);
     });
   });
 
@@ -255,7 +255,7 @@ describe(checkStep, () => {
         selectedWordId: "word-1",
       };
       const { effects, result } = checkStep(step, answer);
-      expect(result.isCorrect).toBeTruthy();
+      expect(result.isCorrect).toBe(true);
       expect(effects).toEqual([]);
     });
 
@@ -267,7 +267,7 @@ describe(checkStep, () => {
         selectedWordId: "word-99",
       };
       const { result } = checkStep(step, answer);
-      expect(result.isCorrect).toBeFalsy();
+      expect(result.isCorrect).toBe(false);
     });
   });
 
@@ -285,7 +285,7 @@ describe(checkStep, () => {
         selectedWordId: "word-1",
       };
       const { effects, result } = checkStep(step, answer);
-      expect(result.isCorrect).toBeFalsy();
+      expect(result.isCorrect).toBe(false);
       expect(result.feedback).toBeNull();
       expect(effects).toEqual([]);
     });
@@ -311,7 +311,7 @@ describe(checkStep, () => {
     test("correct word arrangement", () => {
       const answer: SelectedAnswer = { arrangedWords: ["Hello", "world"], kind: "reading" };
       const { effects, result } = checkStep(step, answer);
-      expect(result.isCorrect).toBeTruthy();
+      expect(result.isCorrect).toBe(true);
       expect(result.correctAnswer).toBe("Hello world");
       expect(effects).toEqual([]);
     });
@@ -319,7 +319,7 @@ describe(checkStep, () => {
     test("incorrect word arrangement returns correct answer", () => {
       const answer: SelectedAnswer = { arrangedWords: ["world", "Hello"], kind: "reading" };
       const { result } = checkStep(step, answer);
-      expect(result.isCorrect).toBeFalsy();
+      expect(result.isCorrect).toBe(false);
       expect(result.correctAnswer).toBe("Hello world");
     });
 
@@ -365,7 +365,7 @@ describe(checkStep, () => {
     test("correct word arrangement uses translation", () => {
       const answer: SelectedAnswer = { arrangedWords: ["Buenos", "dias"], kind: "listening" };
       const { effects, result } = checkStep(step, answer);
-      expect(result.isCorrect).toBeTruthy();
+      expect(result.isCorrect).toBe(true);
       expect(result.correctAnswer).toBe("Buenos dias");
       expect(effects).toEqual([]);
     });
@@ -373,7 +373,7 @@ describe(checkStep, () => {
     test("incorrect word arrangement returns correct answer", () => {
       const answer: SelectedAnswer = { arrangedWords: ["dias", "Buenos"], kind: "listening" };
       const { result } = checkStep(step, answer);
-      expect(result.isCorrect).toBeFalsy();
+      expect(result.isCorrect).toBe(false);
       expect(result.correctAnswer).toBe("Buenos dias");
     });
 
@@ -411,7 +411,7 @@ describe(checkStep, () => {
       });
       const answer: SelectedAnswer = { kind: "fillBlank", userAnswers: ["test"] };
       const { effects, result } = checkStep(step, answer);
-      expect(result.isCorrect).toBeFalsy();
+      expect(result.isCorrect).toBe(false);
       expect(result.feedback).toBeNull();
       expect(effects).toEqual([]);
     });
@@ -420,7 +420,7 @@ describe(checkStep, () => {
       const step = buildStep();
       const answer: SelectedAnswer = { kind: "multipleChoice", selectedIndex: 0, selectedText: "" };
       const { effects, result } = checkStep(step, answer);
-      expect(result.isCorrect).toBeFalsy();
+      expect(result.isCorrect).toBe(false);
       expect(result.feedback).toBeNull();
       expect(effects).toEqual([]);
     });

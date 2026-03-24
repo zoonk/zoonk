@@ -111,7 +111,7 @@ describe("practice activity workflow", () => {
     });
 
     expect(steps).toHaveLength(1);
-    expect(steps[0]?.isPublished).toBeTruthy();
+    expect(steps[0]?.isPublished).toBe(true);
     expect(steps[0]?.kind).toBe("multipleChoice");
     expect(steps[0]?.content).toEqual({
       context: "Your colleague turns to you during a meeting...",

@@ -110,7 +110,7 @@ describe(listCourses, () => {
     // No overlap between pages
     const firstPageIds = new Set(firstPage.map((course) => course.id));
     const hasOverlap = secondPage.some((course) => firstPageIds.has(course.id));
-    expect(hasOverlap).toBeFalsy();
+    expect(hasOverlap).toBe(false);
   });
 
   test("sorts by popularity (higher userCount first)", async () => {

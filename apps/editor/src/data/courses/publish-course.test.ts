@@ -83,7 +83,7 @@ describe("admins", () => {
     });
 
     expect(result.error).toBeNull();
-    expect(result.data?.isPublished).toBeTruthy();
+    expect(result.data?.isPublished).toBe(true);
   });
 
   test("unpublishes a published course", async () => {
@@ -99,7 +99,7 @@ describe("admins", () => {
     });
 
     expect(result.error).toBeNull();
-    expect(result.data?.isPublished).toBeFalsy();
+    expect(result.data?.isPublished).toBe(false);
   });
 
   test("publishes all child content when publishing a course", async () => {
@@ -138,7 +138,7 @@ describe("admins", () => {
     });
 
     expect(result.error).toBeNull();
-    expect(result.data?.isPublished).toBeTruthy();
+    expect(result.data?.isPublished).toBe(true);
 
     const [updatedChapter, updatedLesson, updatedActivity, updatedStep] = await Promise.all([
       prisma.chapter.findUniqueOrThrow({ where: { id: chapter.id } }),
@@ -147,10 +147,10 @@ describe("admins", () => {
       prisma.step.findUniqueOrThrow({ where: { id: step.id } }),
     ]);
 
-    expect(updatedChapter.isPublished).toBeTruthy();
-    expect(updatedLesson.isPublished).toBeTruthy();
-    expect(updatedActivity.isPublished).toBeTruthy();
-    expect(updatedStep.isPublished).toBeTruthy();
+    expect(updatedChapter.isPublished).toBe(true);
+    expect(updatedLesson.isPublished).toBe(true);
+    expect(updatedActivity.isPublished).toBe(true);
+    expect(updatedStep.isPublished).toBe(true);
   });
 
   test("does not cascade unpublish to child content", async () => {
@@ -189,7 +189,7 @@ describe("admins", () => {
     });
 
     expect(result.error).toBeNull();
-    expect(result.data?.isPublished).toBeFalsy();
+    expect(result.data?.isPublished).toBe(false);
 
     const [updatedChapter, updatedLesson, updatedActivity, updatedStep] = await Promise.all([
       prisma.chapter.findUniqueOrThrow({ where: { id: chapter.id } }),
@@ -198,10 +198,10 @@ describe("admins", () => {
       prisma.step.findUniqueOrThrow({ where: { id: step.id } }),
     ]);
 
-    expect(updatedChapter.isPublished).toBeTruthy();
-    expect(updatedLesson.isPublished).toBeTruthy();
-    expect(updatedActivity.isPublished).toBeTruthy();
-    expect(updatedStep.isPublished).toBeTruthy();
+    expect(updatedChapter.isPublished).toBe(true);
+    expect(updatedLesson.isPublished).toBe(true);
+    expect(updatedActivity.isPublished).toBe(true);
+    expect(updatedStep.isPublished).toBe(true);
   });
 
   test("returns Forbidden for course in different organization", async () => {
@@ -225,6 +225,6 @@ describe("admins", () => {
       where: { id: course.id },
     });
 
-    expect(unchangedCourse?.isPublished).toBeFalsy();
+    expect(unchangedCourse?.isPublished).toBe(false);
   });
 });
