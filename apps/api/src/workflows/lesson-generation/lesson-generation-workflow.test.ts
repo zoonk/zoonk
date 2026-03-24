@@ -79,7 +79,7 @@ describe(lessonGenerationWorkflow, () => {
       expect(generateLessonKind).not.toHaveBeenCalled();
     });
 
-    test("returns early when generationStatus is 'completed' and has activities", async () => {
+    test("streams completion when generationStatus is 'completed' and has activities", async () => {
       const lesson = await lessonFixture({
         chapterId: chapter.id,
         generationStatus: "completed",
@@ -101,6 +101,13 @@ describe(lessonGenerationWorkflow, () => {
 
       expect(dbLesson?.generationStatus).toBe("completed");
       expect(generateLessonKind).not.toHaveBeenCalled();
+
+      const completionCall = writeMock.mock.calls.find(
+        (call: string[]) =>
+          call[0]?.includes('"step":"setLessonAsCompleted"') &&
+          call[0]?.includes('"status":"completed"'),
+      );
+      expect(completionCall).toBeDefined();
     });
 
     test("sets as completed and returns when lesson has existing activities but status not completed", async () => {

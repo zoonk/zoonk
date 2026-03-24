@@ -76,7 +76,7 @@ describe(chapterGenerationWorkflow, () => {
   });
 
   describe("early returns", () => {
-    test("returns early when generationStatus is 'running'", async () => {
+    test("returns early when generationStatus is 'running' without streaming completion", async () => {
       const chapter = await chapterFixture({
         courseId: course.id,
         generationStatus: "running",
@@ -92,9 +92,16 @@ describe(chapterGenerationWorkflow, () => {
 
       expect(dbChapter?.generationStatus).toBe("running");
       expect(generateChapterLessons).not.toHaveBeenCalled();
+
+      const completionCall = writeMock.mock.calls.find(
+        (call: string[]) =>
+          call[0]?.includes('"step":"setFirstActivityAsCompleted"') &&
+          call[0]?.includes('"status":"completed"'),
+      );
+      expect(completionCall).toBeUndefined();
     });
 
-    test("returns early when generationStatus is 'completed'", async () => {
+    test("streams completion when generationStatus is 'completed'", async () => {
       const chapter = await chapterFixture({
         courseId: course.id,
         generationStatus: "completed",
@@ -110,6 +117,13 @@ describe(chapterGenerationWorkflow, () => {
 
       expect(dbChapter?.generationStatus).toBe("completed");
       expect(generateChapterLessons).not.toHaveBeenCalled();
+
+      const completionCall = writeMock.mock.calls.find(
+        (call: string[]) =>
+          call[0]?.includes('"step":"setFirstActivityAsCompleted"') &&
+          call[0]?.includes('"status":"completed"'),
+      );
+      expect(completionCall).toBeDefined();
     });
 
     test("sets as completed and returns when chapter has existing lessons", async () => {

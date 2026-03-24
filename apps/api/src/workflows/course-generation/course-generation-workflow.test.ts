@@ -149,7 +149,7 @@ describe(courseGenerationWorkflow, () => {
       expect(generateCourseDescription).not.toHaveBeenCalled();
     });
 
-    test("returns when suggestion status is 'running'", async () => {
+    test("returns when suggestion status is 'running' without streaming completion", async () => {
       const suggestion = await courseSuggestionFixture({
         generationStatus: "running",
         title: `Running Suggestion ${randomUUID()}`,
@@ -163,9 +163,16 @@ describe(courseGenerationWorkflow, () => {
 
       expect(dbSuggestion?.generationStatus).toBe("running");
       expect(generateCourseDescription).not.toHaveBeenCalled();
+
+      const completionCall = writeMock.mock.calls.find(
+        (call: string[]) =>
+          call[0]?.includes('"step":"setFirstActivityAsCompleted"') &&
+          call[0]?.includes('"status":"completed"'),
+      );
+      expect(completionCall).toBeUndefined();
     });
 
-    test("returns when suggestion status is 'completed'", async () => {
+    test("streams completion when suggestion status is 'completed'", async () => {
       const suggestion = await courseSuggestionFixture({
         generationStatus: "completed",
         title: `Completed Suggestion ${randomUUID()}`,
@@ -179,9 +186,16 @@ describe(courseGenerationWorkflow, () => {
 
       expect(dbSuggestion?.generationStatus).toBe("completed");
       expect(generateCourseDescription).not.toHaveBeenCalled();
+
+      const completionCall = writeMock.mock.calls.find(
+        (call: string[]) =>
+          call[0]?.includes('"step":"setFirstActivityAsCompleted"') &&
+          call[0]?.includes('"status":"completed"'),
+      );
+      expect(completionCall).toBeDefined();
     });
 
-    test("returns when existing course status is 'running'", async () => {
+    test("returns when existing course status is 'running' without streaming completion", async () => {
       const title = `Existing Running Course ${randomUUID()}`;
       const slug = toSlug(title);
 
@@ -206,9 +220,16 @@ describe(courseGenerationWorkflow, () => {
 
       expect(dbSuggestion?.generationStatus).toBe("pending");
       expect(generateCourseDescription).not.toHaveBeenCalled();
+
+      const completionCall = writeMock.mock.calls.find(
+        (call: string[]) =>
+          call[0]?.includes('"step":"setFirstActivityAsCompleted"') &&
+          call[0]?.includes('"status":"completed"'),
+      );
+      expect(completionCall).toBeUndefined();
     });
 
-    test("returns when existing course status is 'completed'", async () => {
+    test("streams completion when existing course status is 'completed'", async () => {
       const title = `Existing Completed Course ${randomUUID()}`;
       const slug = toSlug(title);
 
@@ -233,6 +254,13 @@ describe(courseGenerationWorkflow, () => {
 
       expect(dbSuggestion?.generationStatus).toBe("pending");
       expect(generateCourseDescription).not.toHaveBeenCalled();
+
+      const completionCall = writeMock.mock.calls.find(
+        (call: string[]) =>
+          call[0]?.includes('"step":"setFirstActivityAsCompleted"') &&
+          call[0]?.includes('"status":"completed"'),
+      );
+      expect(completionCall).toBeDefined();
     });
   });
 

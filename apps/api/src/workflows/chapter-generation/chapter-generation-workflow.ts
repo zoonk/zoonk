@@ -1,3 +1,4 @@
+import { streamStatus as sharedStreamStatus } from "@/workflows/_shared/stream-status";
 import { activityGenerationWorkflow } from "@/workflows/activity-generation/activity-generation-workflow";
 import { handleChapterFailureStep } from "@/workflows/course-generation/steps/handle-failure-step";
 import { lessonGenerationWorkflow } from "@/workflows/lesson-generation/lesson-generation-workflow";
@@ -21,8 +22,14 @@ export async function chapterGenerationWorkflow(chapterId: number): Promise<void
   // Fetch chapter data (throws FatalError if not found)
   const context = await getChapterStep(chapterId);
 
-  // Skip if already running or completed
-  if (context.generationStatus === "running" || context.generationStatus === "completed") {
+  // Skip if actively running to avoid conflicts with another workflow instance.
+  if (context.generationStatus === "running") {
+    return;
+  }
+
+  // Already completed — stream the completion step so the client can redirect.
+  if (context.generationStatus === "completed") {
+    await sharedStreamStatus({ status: "completed", step: "setFirstActivityAsCompleted" });
     return;
   }
 
