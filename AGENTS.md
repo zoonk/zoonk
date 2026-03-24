@@ -18,6 +18,7 @@
 - Use `[condition && value, ...].filter(Boolean)` instead of `let` + `.push()` for conditional arrays
 - **Never use `let` + reassignment to compute a value.** Extract a helper function with early returns instead (e.g., `function getLabel() { if (x) return a; return b; }`). For objects, use helper functions that return the result (e.g., `const { a, b } = await getOrCreate(...)`). See `getComparisonLabel` in `metric-comparison.tsx` for the pattern
 - Use meaningful variable names and avoid abbreviations
+- When defining functions with two or more parameters, use a single object parameter with named fields instead of positional arguments. Named fields are self-documenting at the call site, order-independent, and safer against accidental swaps. Positional params are fine for single-argument functions, framework callbacks with well-known signatures (e.g., `map(item, index)`), and functions wrapped with React `cache` (object params create a new identity on every call, breaking memoization)
 - For workflow orchestration, prefer linear wave-based flows (core-workflow style) with `Promise.allSettled` over branching orchestration unless branching is strictly required
 - Use linear, declarative code over nested conditionals and imperative code
 - Don't be afraid to refactor existing code to improve quality, clarity, or simplicity. Always leave the codebase better than you found it
@@ -110,6 +111,7 @@ When writing React components, use compound components. Always read this before 
 - Default to TDD: write a failing test first, run it to confirm it fails for the right reason, then write the code to make it pass
 - Don't write unit tests for React components, prefer E2E tests. React unit tests require mocking and test implementation details, making tests fail if we change implementation
 - Add unit tests for pure functions, helpers, and utils
+- Extract pure functions with non-trivial logic (validation, transformation, regex) from component files into their own file (e.g., `_utils/`). This follows the single-concern principle and enables direct unit testing without exporting internals from component files
 - Add integration tests for data functions, business logic, and workflows with Prisma
 - Don't add tests for CSS, style changes, prompt wording, zod schemas or other things where tests would only assert copy, external library internals, or implementation details
 - Parallelize independent fixtures: When test setup creates multiple entities that don't depend on each other (e.g., `user` + `course`, sibling chapters, multiple `activityProgressFixture` calls), use `Promise.all` instead of sequential awaits

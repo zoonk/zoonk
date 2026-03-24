@@ -58,7 +58,6 @@ function buildSaveOneSentence(params: {
         alternativeTranslations,
         explanation: emptyToNull(readingSentence.explanation),
         organizationId,
-        romanization: emptyToNull(readingSentence.romanization),
         sentence,
         targetLanguage,
         translation,
@@ -68,7 +67,6 @@ function buildSaveOneSentence(params: {
         alternativeSentences,
         alternativeTranslations,
         explanation: emptyToNull(readingSentence.explanation),
-        romanization: emptyToNull(readingSentence.romanization),
         translation,
       },
       where: {

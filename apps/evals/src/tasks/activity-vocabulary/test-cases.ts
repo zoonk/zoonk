@@ -53,7 +53,7 @@ EVALUATION CRITERIA:
    - A word appears twice because it has multiple valid translations (should appear once with most common translation)
 
 9. CLEAN WORD FIELD - NO PARENTHETICAL CONTENT: The word field must contain ONLY the vocabulary word. Penalize SEVERELY if:
-   - The word field contains parenthetical disambiguation like "el cafe (la bebida)"
+   - The word field contains parenthetical disambiguation like "el café (la bebida)"
    - The word field contains usage notes, alternative meanings, or pronunciation hints in parentheses
    - Any text in parentheses appears in the word field (this breaks text-to-speech)
 
@@ -97,7 +97,7 @@ ACCURACY PITFALLS - Penalize SEVERELY if:
 - Coffee-specific terms are mistranslated
 - Vocabulary drifts to general food/restaurant terms unrelated to coffee ordering
 - Romanization contains any text (should be null)
-- Articles are missing from nouns (el cafe, la leche, not cafe, leche)
+- Articles are missing from nouns (el café, la leche, not café, leche)
 
 ${SHARED_EXPECTATIONS}
     `,
@@ -199,8 +199,8 @@ ${SHARED_EXPECTATIONS}
     userInput: {
       chapterTitle: "Animais",
       lessonDescription:
-        "Nomes de animais de estimacao comuns e termos basicos relacionados a cuidados com pets",
-      lessonTitle: "Animais de Estimacao",
+        "Nomes de animais de estimação comuns e termos básicos relacionados a cuidados com pets",
+      lessonTitle: "Animais de Estimação",
       targetLanguage: "it",
       userLanguage: "pt",
     },
@@ -276,8 +276,8 @@ ${SHARED_EXPECTATIONS}
     userInput: {
       chapterTitle: "Describir Cosas",
       lessonDescription:
-        "Los colores basicos en japones - rojo, azul, verde, amarillo, y otros colores comunes",
-      lessonTitle: "Colores Basicos",
+        "Los colores básicos en japonés - rojo, azul, verde, amarillo, y otros colores comunes",
+      lessonTitle: "Colores Básicos",
       targetLanguage: "ja",
       userLanguage: "es",
     },

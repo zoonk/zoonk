@@ -13,7 +13,6 @@ const schema = z.object({
   sentences: z.array(
     z.object({
       explanation: z.string().nullable(),
-      romanization: z.string().nullable(),
       sentence: z.string(),
       translation: z.string(),
     }),

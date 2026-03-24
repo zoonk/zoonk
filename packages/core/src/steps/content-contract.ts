@@ -55,6 +55,7 @@ export const fillBlankContentSchema = z
     distractors: z.array(fillBlankChoiceSchema),
     feedback: z.string(),
     question: z.string().optional(),
+    romanizations: z.record(z.string(), z.string()).nullable().optional(),
     template: z.string(),
   })
   .strict();

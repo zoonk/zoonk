@@ -2,12 +2,11 @@ import "server-only";
 import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
 import { Output, generateText } from "ai";
 import { z } from "zod";
-import { formatConceptLines } from "../config";
 import { getLanguagePromptContext } from "./_utils/language-prompt-context";
-import systemPrompt from "./activity-grammar.prompt.md";
+import systemPrompt from "./activity-grammar-enrichment.prompt.md";
 
-const DEFAULT_MODEL = process.env.AI_MODEL_ACTIVITY_GRAMMAR ?? "google/gemini-3-flash";
-const FALLBACK_MODELS = ["anthropic/claude-sonnet-4.6", "openai/gpt-5.4"];
+const DEFAULT_MODEL = process.env.AI_MODEL_ACTIVITY_GRAMMAR_ENRICHMENT ?? "openai/gpt-5.4";
+const FALLBACK_MODELS = ["anthropic/claude-opus-4.6", "google/gemini-3-flash"];
 
 const schema = z.object({
   discovery: z.object({
@@ -21,54 +20,50 @@ const schema = z.object({
     ),
     question: z.string().nullable(),
   }),
-  examples: z.array(
-    z.object({
-      highlight: z.string(),
-      romanization: z.string().nullable(),
-      sentence: z.string(),
-      translation: z.string(),
-    }),
-  ),
-  exercises: z.array(
-    z.object({
-      answers: z.array(z.string()),
-      distractors: z.array(z.string()),
-      feedback: z.string(),
-      question: z.string().nullable(),
-      template: z.string(),
-    }),
-  ),
+  exampleTranslations: z.array(z.string()),
+  exerciseFeedback: z.array(z.string()),
+  exerciseQuestions: z.array(z.string().nullable()),
+  exerciseTranslations: z.array(z.string()),
   ruleName: z.string(),
   ruleSummary: z.string(),
 });
 
-export type ActivityGrammarSchema = z.infer<typeof schema>;
+export type ActivityGrammarEnrichmentSchema = z.infer<typeof schema>;
 
-export type ActivityGrammarParams = {
+export type ActivityGrammarEnrichmentParams = {
   chapterTitle: string;
-  concepts?: string[];
+  examples: { highlight: string; sentence: string }[];
+  exercises: { answer: string; distractors: string[]; template: string }[];
   lessonDescription: string;
   lessonTitle: string;
   model?: string;
-  neighboringConcepts?: string[];
   reasoningEffort?: ReasoningEffort;
   targetLanguage: string;
-  userLanguage: string;
   useFallback?: boolean;
+  userLanguage: string;
 };
 
-export async function generateActivityGrammar({
+/**
+ * Generates USER_LANGUAGE enrichment content for a grammar activity.
+ *
+ * The grammar content task produces TARGET_LANGUAGE examples and exercises.
+ * This enrichment task takes that output as read-only context and generates
+ * all USER_LANGUAGE content: translations, discovery question, rule summary,
+ * and exercise feedback. Splitting generation this way keeps each AI call
+ * focused on one language, which reduces language mixing errors.
+ */
+export async function generateActivityGrammarEnrichment({
   chapterTitle,
-  concepts = [],
+  examples,
+  exercises,
   lessonDescription,
   lessonTitle,
   model = DEFAULT_MODEL,
-  neighboringConcepts = [],
   reasoningEffort,
   targetLanguage,
-  userLanguage,
   useFallback = true,
-}: ActivityGrammarParams) {
+  userLanguage,
+}: ActivityGrammarEnrichmentParams) {
   const promptContext = getLanguagePromptContext({ targetLanguage, userLanguage });
 
   const userPrompt = `TARGET_LANGUAGE: ${promptContext.targetLanguageName}
@@ -76,9 +71,12 @@ USER_LANGUAGE: ${promptContext.userLanguage}
 CHAPTER_TITLE: ${chapterTitle}
 LESSON_TITLE: ${lessonTitle}
 LESSON_DESCRIPTION: ${lessonDescription}
-${formatConceptLines(concepts, neighboringConcepts)}
 
-Generate a Pattern Discovery grammar activity for this lesson. Include 3-4 examples demonstrating the grammar pattern, one discovery task, a brief rule summary, and 2-3 fill-in-the-blank practice exercises.`;
+EXAMPLES:
+${JSON.stringify(examples, null, 2)}
+
+EXERCISES:
+${JSON.stringify(exercises, null, 2)}`;
 
   const providerOptions = buildProviderOptions({
     fallbackModels: FALLBACK_MODELS,

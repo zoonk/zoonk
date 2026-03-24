@@ -39,4 +39,6 @@ These two criteria should have the heaviest impact on scores. Either one alone c
 
 ## Response Format
 
-Return rankings for each model, ordered from highest to lowest score. Include reasoning for each score.
+Return rankings for each model, ordered from highest to lowest score.
+
+Keep each model's reasoning to 2-3 concise sentences. Focus on the most impactful strengths and weaknesses — do not enumerate every criterion. Brevity is critical for reliable structured output.

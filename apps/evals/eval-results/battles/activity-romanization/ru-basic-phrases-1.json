@@ -1,0 +1,131 @@
+{
+  "expectations": "\nTARGET LANGUAGE: Russian\n\nTEXTS:\n1. \"Здравствуйте\" (hello/formal)\n2. \"Спасибо\" (thank you)\n3. \"Москва\" (Moscow)\n\nEXPECTED ROMANIZATION SYSTEM: ISO 9 or BGN/PCGN\n\nACCURACY PITFALLS:\n- \"Здравствуйте\" = \"Zdravstvuyte\" or \"Zdravstvujte\"\n- \"Спасибо\" = \"Spasibo\"\n- \"Москва\" = \"Moskva\"\n- The \"в\" in \"Здравствуйте\" is silent in speech but should still be romanized\n- Accept common transliteration variants (e.g., \"j\" vs \"y\" for \"й\")\n\n\nEVALUATION CRITERIA:\n\n1. ROMANIZATION ACCURACY (CRITICAL - highest priority):\n   - Each romanization must use the standard system for the target language\n   - Japanese: Hepburn romaji\n   - Chinese: Pinyin (with tone marks or numbers)\n   - Korean: Revised Romanization\n   - Arabic: ISO or common scholarly romanization\n   - Russian/Ukrainian/Bulgarian: ISO 9 or BGN/PCGN\n   - Thai: RTGS (Royal Thai General System)\n   - Hindi/Kannada/Tamil/Nepali/Marathi: IAST or Hunterian\n   - Penalize SEVERELY for incorrect romanization or wrong system\n\n2. COMPLETENESS:\n   - Must return exactly one romanization per input text\n   - Number of romanizations must match number of input texts\n   - No texts should be skipped or merged\n   - Penalize if count does not match\n\n3. ORDER PRESERVATION:\n   - Romanizations must be in the same order as input texts\n   - The romanization at index N must correspond to the text at index N\n   - Penalize if order is scrambled\n\n4. READABILITY:\n   - Romanization should be readable by someone familiar with the Latin alphabet\n   - Word boundaries should be preserved\n   - Penalize if romanization is unreadable or omits significant sounds\n\n5. NO TRANSLATION:\n   - Romanizations must be transliterations, NOT translations\n   - The output should represent the sounds of the original text, not its meaning\n   - Penalize SEVERELY if the output is a translation instead of a romanization\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT require exact character-by-character matches\n- Accept minor stylistic variations (e.g., macrons vs. doubled vowels in Japanese)\n- FOCUS ON: system correctness, phonetic accuracy, completeness, order\n\n    ",
+  "judgedAt": "2026-03-23T21:09:25.711Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "All three romanizations are correct BGN/PCGN transliterations: 'Zdravstvuyte', 'Spasibo', 'Moskva'. Capitalization is correct — standalone words that are not proper nouns could arguably be lowercase, but capitalizing the first letter of each standalone item is also reasonable. Count matches (3), order preserved, no original script characters, no translations. Fully accurate.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Identical output to Model A. All romanizations correct, proper format, correct count and order. No issues.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Identical output to Models A and B. All romanizations correct, proper format, correct count and order. No issues.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Identical output to Models A, B, and C. All romanizations correct, proper format, correct count and order. No issues.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Identical output to Models A, B, C, and E. All romanizations correct, proper format, correct count and order. No issues.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Romanizations are phonetically correct: 'zdravstvuyte', 'spasibo', 'Moskva'. However, the capitalization rules in the prompt state: 'For standalone words or short phrases that are not full sentences, use lowercase unless the word is a proper noun.' Under this rule, 'zdravstvuyte' and 'spasibo' being lowercase is actually MORE correct than the other models capitalizing them, since they are standalone non-proper-noun words. 'Moskva' is correctly capitalized as a proper noun. However, the prompt also says 'Capitalize the first word of full sentences' — these are standalone words, not sentences, so lowercase is appropriate. That said, comparing against the expected outputs in the evaluation criteria which show 'Zdravstvuyte' and 'Spasibo' capitalized, Model D diverges from expected conventions. This is a borderline case. Strictly following the prompt's capitalization rules, Model D is arguably more correct for the first two words. But the expected outputs suggest capitalization. I'll score this very close to the others, with a very minor deduction for the ambiguity.",
+          "score": 8.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model D provides perfectly accurate BGN/PCGN romanizations and strictly adheres to all constraints, including the highly specific capitalization rules. By correctly identifying that 'Здравствуйте' and 'Спасибо' are standalone words/short phrases (not full sentences) and formatting them in lowercase, while correctly capitalizing the proper noun 'Moskva', it demonstrates exceptional attention to the prompt's formatting instructions.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "The model provides accurate BGN/PCGN romanizations and follows the JSON formatting requirements perfectly. However, it copies the capitalization from the source text for the standalone words 'Здравствуйте' and 'Спасибо', missing the specific system prompt instruction to use lowercase for standalone words/short phrases that are not proper nouns.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "The model provides accurate BGN/PCGN romanizations and follows the JSON formatting requirements perfectly. However, it copies the capitalization from the source text for the standalone words 'Здравствуйте' and 'Спасибо', missing the specific system prompt instruction to use lowercase for standalone words/short phrases that are not proper nouns.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "The model provides accurate BGN/PCGN romanizations and follows the JSON formatting requirements perfectly. However, it copies the capitalization from the source text for the standalone words 'Здравствуйте' and 'Спасибо', missing the specific system prompt instruction to use lowercase for standalone words/short phrases that are not proper nouns.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "The model provides accurate BGN/PCGN romanizations and follows the JSON formatting requirements perfectly. However, it copies the capitalization from the source text for the standalone words 'Здравствуйте' and 'Спасибо', missing the specific system prompt instruction to use lowercase for standalone words/short phrases that are not proper nouns.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "The model provides accurate BGN/PCGN romanizations and follows the JSON formatting requirements perfectly. However, it copies the capitalization from the source text for the standalone words 'Здравствуйте' and 'Спасибо', missing the specific system prompt instruction to use lowercase for standalone words/short phrases that are not proper nouns.",
+          "score": 9
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Fully correct JSON format with exactly three romanizations in the correct order. Uses acceptable Russian romanizations: \"Zdravstvuyte,\" \"Spasibo,\" and \"Moskva.\" Capitalization is appropriate for standalone items, including proper noun capitalization for Moscow. No original script copied, no translation, no factual issues.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Identical to the strongest outputs. Correct JSON structure, correct count and order, and accurate BGN/PCGN-style romanizations. Capitalization and transliteration choices are appropriate.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Also fully correct. Provides all three items in order, in valid JSON, with accurate and standard romanizations. No noticeable weaknesses.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Equivalent to the top outputs. Accurate transliterations, proper ordering, correct count, and compliant formatting. No errors or omissions.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Matches the best responses exactly in substance: correct romanizations, correct order, valid JSON, and adherence to the prompt’s constraints.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Romanizations themselves are accurate and the JSON/count/order are correct, but it does not follow the capitalization rule as well as the others: standalone non-proper words/phrases are given in lowercase while the prompt examples and output expectations favor capitalization for sentence-like greetings such as \"Здравствуйте\" and \"Спасибо.\" \"Moskva\" is correctly capitalized. This is a minor adherence issue rather than a romanization error.",
+          "score": 8.5
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-romanization",
+  "testCaseId": "ru-basic-phrases-1"
+}

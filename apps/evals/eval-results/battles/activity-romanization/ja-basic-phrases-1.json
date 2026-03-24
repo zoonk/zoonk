@@ -1,0 +1,131 @@
+{
+  "expectations": "\nTARGET LANGUAGE: Japanese\n\nTEXTS:\n1. \"こんにちは\" (a common greeting)\n2. \"東京タワー\" (Tokyo Tower)\n3. \"お元気ですか\" (How are you?)\n\nEXPECTED ROMANIZATION SYSTEM: Hepburn romaji\n\nACCURACY PITFALLS:\n- \"は\" as a particle should be romanized as \"wa\" (not \"ha\")\n- Long vowels should be properly represented (e.g., \"tou\" or \"tō\" for 東)\n- \"ん\" before certain consonants may vary but should be \"n\"\n- \"タワー\" is katakana and should be romanized as \"tawaa\" or \"tawā\"\n\n\nEVALUATION CRITERIA:\n\n1. ROMANIZATION ACCURACY (CRITICAL - highest priority):\n   - Each romanization must use the standard system for the target language\n   - Japanese: Hepburn romaji\n   - Chinese: Pinyin (with tone marks or numbers)\n   - Korean: Revised Romanization\n   - Arabic: ISO or common scholarly romanization\n   - Russian/Ukrainian/Bulgarian: ISO 9 or BGN/PCGN\n   - Thai: RTGS (Royal Thai General System)\n   - Hindi/Kannada/Tamil/Nepali/Marathi: IAST or Hunterian\n   - Penalize SEVERELY for incorrect romanization or wrong system\n\n2. COMPLETENESS:\n   - Must return exactly one romanization per input text\n   - Number of romanizations must match number of input texts\n   - No texts should be skipped or merged\n   - Penalize if count does not match\n\n3. ORDER PRESERVATION:\n   - Romanizations must be in the same order as input texts\n   - The romanization at index N must correspond to the text at index N\n   - Penalize if order is scrambled\n\n4. READABILITY:\n   - Romanization should be readable by someone familiar with the Latin alphabet\n   - Word boundaries should be preserved\n   - Penalize if romanization is unreadable or omits significant sounds\n\n5. NO TRANSLATION:\n   - Romanizations must be transliterations, NOT translations\n   - The output should represent the sounds of the original text, not its meaning\n   - Penalize SEVERELY if the output is a translation instead of a romanization\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT require exact character-by-character matches\n- Accept minor stylistic variations (e.g., macrons vs. doubled vowels in Japanese)\n- FOCUS ON: system correctness, phonetic accuracy, completeness, order\n\n    ",
+  "judgedAt": "2026-03-23T21:09:24.303Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "All three romanizations are accurate Hepburn romaji. 'Konnichiwa' correctly handles は as 'wa'. 'Tōkyō Tawā' uses proper macrons for long vowels and capitalizes 'Tawā' appropriately since it's part of a proper noun name (Tokyo Tower). 'Ogenki desu ka' is correct. The capitalization of 'Tawā' is justifiable since 東京タワー is a proper noun (the name of a landmark), so capitalizing both words makes sense. Correct count, order, and format.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Identical output to Model B. All romanizations are accurate. Proper use of macrons, correct handling of は particle, proper capitalization. No issues.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Identical output to Models B and C. All romanizations are accurate. Proper use of macrons, correct handling of は particle, proper capitalization. No issues.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "All romanizations are accurate. The hyphen in 'O-genki' is a valid convention in Hepburn romanization to indicate the honorific prefix お (o-), which can aid readability. 'Tōkyō Tawā' is properly capitalized as a proper noun. Macrons are correctly used. This is a minor stylistic choice that is acceptable but slightly deviates from the more common unhyphenated form. Still very good.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Identical to Model E. The hyphen in 'O-genki' is acceptable but a stylistic variation. All other romanizations are correct with proper macrons and capitalization.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Two of three romanizations are correct. However, 'tawā' is lowercase in 'Tōkyō tawā'. Since 東京タワー (Tokyo Tower) is a proper noun - the name of a specific landmark - 'Tawā' should be capitalized as part of the proper noun. The prompt says to capitalize proper nouns (place names), and Tokyo Tower is a named landmark. This is a minor capitalization error but still a valid concern.",
+          "score": 8
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "The model followed all instructions perfectly. It used Hepburn romanization correctly, appropriately applied macrons to long vowels ('Tōkyō Tawā'), romanized the particle correctly ('Konnichiwa'), and capitalized the proper noun and sentence beginnings accurately.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "The model followed all instructions perfectly. It used Hepburn romanization correctly, appropriately applied macrons to long vowels ('Tōkyō Tawā'), romanized the particle correctly ('Konnichiwa'), and capitalized the proper noun and sentence beginnings accurately.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "The model followed all instructions perfectly. It used Hepburn romanization correctly, appropriately applied macrons to long vowels ('Tōkyō Tawā'), romanized the particle correctly ('Konnichiwa'), and capitalized the proper noun and sentence beginnings accurately.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "The model is highly accurate and correctly applies Hepburn romanization, macrons, and capitalization rules. It uses a hyphen for the honorific prefix in 'O-genki', which is an acceptable stylistic variation, though attaching it directly ('Ogenki') is more standard in typical Hepburn.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "The model is highly accurate and correctly applies Hepburn romanization, macrons, and capitalization rules. It uses a hyphen for the honorific prefix in 'O-genki', which is an acceptable stylistic variation, though attaching it directly ('Ogenki') is more standard in typical Hepburn.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "The model correctly romanizes the text and uses macrons appropriately. However, it fails to capitalize 'tawā' in 'Tōkyō tawā', missing the instruction to capitalize all parts of proper nouns (Tokyo Tower).",
+          "score": 9
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Accurate Hepburn-style romanizations for all three items, preserves order and count, uses proper long vowels with macrons, and capitalizes the proper noun phrase appropriately. 'Konnichiwa' correctly reflects the greeting pronunciation despite historical spelling. Strong adherence to the prompt.",
+          "score": 9.7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Equivalent in quality to Model B. All three romanizations are accurate, complete, and in order. Uses macrons correctly and capitalizes the proper noun 'Tōkyō Tawā' appropriately.",
+          "score": 9.7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Also equivalent to Models B and C. Correct Hepburn romanization, correct count/order, proper handling of long vowels, and appropriate capitalization for the place name.",
+          "score": 9.7
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Very good overall: all three romanizations are accurate, complete, and in the correct order. Minor weakness: 'Tōkyō tawā' leaves the second word of the proper noun phrase uncapitalized, whereas 'Tokyo Tower' as a named landmark is better rendered with both words capitalized. Still highly acceptable.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Mostly accurate and complete, but 'O-genki desu ka' is less standard than 'Ogenki desu ka' in Hepburn-style presentation here. The hyphen is unnecessary and slightly hurts readability/standardness. Otherwise correct, with proper long vowels and capitalization for the proper noun.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Same strengths and same issue as Model E. Accurate overall, correct count/order, but the hyphen in 'O-genki desu ka' is nonstandard in this context and reduces adherence to the expected romanization style.",
+          "score": 8.6
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-romanization",
+  "testCaseId": "ja-basic-phrases-1"
+}

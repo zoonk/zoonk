@@ -1441,7 +1441,12 @@ describe(prepareActivityData, () => {
     const step = result.steps[0];
 
     expect(step?.fillBlankOptions).toHaveLength(4);
-    expect(step?.fillBlankOptions.toSorted()).toEqual(["alpha", "beta", "delta", "gamma"]);
+    expect(step?.fillBlankOptions.map((option) => option.word).toSorted()).toEqual([
+      "alpha",
+      "beta",
+      "delta",
+      "gamma",
+    ]);
   });
 
   test("matchColumns step populates matchColumnsRightItems with right-column values", () => {

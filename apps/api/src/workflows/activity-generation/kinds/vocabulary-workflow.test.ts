@@ -32,11 +32,10 @@ vi.mock("@zoonk/ai/tasks/activities/language/vocabulary", () => ({
       words: [
         {
           alternativeTranslations: ["hi"],
-          romanization: "o-la",
           translation: "hello",
           word: "hola",
         },
-        { alternativeTranslations: [], romanization: "ga-to", translation: "cat", word: "gato" },
+        { alternativeTranslations: [], translation: "cat", word: "gato" },
       ],
     },
   }),
@@ -378,11 +377,10 @@ describe(vocabularyActivityWorkflow, () => {
     const mockWords: VocabularyWord[] = [
       {
         alternativeTranslations: [],
-        romanization: "r1",
         translation: "existing",
         word: existingWord,
       },
-      { alternativeTranslations: [], romanization: "r2", translation: "new", word: newWord },
+      { alternativeTranslations: [], translation: "new", word: newWord },
     ];
 
     vi.mocked(generateActivityVocabulary).mockResolvedValueOnce({
@@ -445,11 +443,10 @@ describe(vocabularyActivityWorkflow, () => {
     const mockWords: VocabularyWord[] = [
       {
         alternativeTranslations: ["hi"],
-        romanization: "o-la",
         translation: "hello",
         word: existingWord.toLowerCase(),
       },
-      { alternativeTranslations: [], romanization: "ga-to", translation: "cat", word: `gato${id}` },
+      { alternativeTranslations: [], translation: "cat", word: `gato${id}` },
     ];
 
     vi.mocked(generateActivityVocabulary).mockResolvedValueOnce({
@@ -506,7 +503,6 @@ describe(vocabularyActivityWorkflow, () => {
     const mockWords: VocabularyWord[] = [
       {
         alternativeTranslations: [],
-        romanization: "ga-to",
         translation: "cat",
         word: existingWord.toLowerCase(),
       },
@@ -563,11 +559,10 @@ describe(vocabularyActivityWorkflow, () => {
     const mockWords: VocabularyWord[] = [
       {
         alternativeTranslations: [],
-        romanization: "r1",
         translation: "existing",
         word: existingWord,
       },
-      { alternativeTranslations: [], romanization: "r2", translation: "new", word: newWord },
+      { alternativeTranslations: [], translation: "new", word: newWord },
     ];
 
     vi.mocked(generateActivityVocabulary).mockResolvedValueOnce({

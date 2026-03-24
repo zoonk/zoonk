@@ -1,0 +1,131 @@
+{
+  "expectations": "\nTARGET LANGUAGE: Arabic\n\nTEXTS:\n1. \"مرحبا\" (hello)\n2. \"شكرا\" (thank you)\n3. \"كتاب\" (book)\n\nEXPECTED ROMANIZATION SYSTEM: Standard scholarly or ISO romanization\n\nACCURACY PITFALLS:\n- \"مرحبا\" = \"marhaba\" or \"marḥabā\"\n- \"شكرا\" = \"shukran\" or \"shukrān\"\n- \"كتاب\" = \"kitab\" or \"kitāb\"\n- Arabic has emphatic consonants that may or may not be marked\n- Accept variations in vowel length marking\n\n\nEVALUATION CRITERIA:\n\n1. ROMANIZATION ACCURACY (CRITICAL - highest priority):\n   - Each romanization must use the standard system for the target language\n   - Japanese: Hepburn romaji\n   - Chinese: Pinyin (with tone marks or numbers)\n   - Korean: Revised Romanization\n   - Arabic: ISO or common scholarly romanization\n   - Russian/Ukrainian/Bulgarian: ISO 9 or BGN/PCGN\n   - Thai: RTGS (Royal Thai General System)\n   - Hindi/Kannada/Tamil/Nepali/Marathi: IAST or Hunterian\n   - Penalize SEVERELY for incorrect romanization or wrong system\n\n2. COMPLETENESS:\n   - Must return exactly one romanization per input text\n   - Number of romanizations must match number of input texts\n   - No texts should be skipped or merged\n   - Penalize if count does not match\n\n3. ORDER PRESERVATION:\n   - Romanizations must be in the same order as input texts\n   - The romanization at index N must correspond to the text at index N\n   - Penalize if order is scrambled\n\n4. READABILITY:\n   - Romanization should be readable by someone familiar with the Latin alphabet\n   - Word boundaries should be preserved\n   - Penalize if romanization is unreadable or omits significant sounds\n\n5. NO TRANSLATION:\n   - Romanizations must be transliterations, NOT translations\n   - The output should represent the sounds of the original text, not its meaning\n   - Penalize SEVERELY if the output is a translation instead of a romanization\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT require exact character-by-character matches\n- Accept minor stylistic variations (e.g., macrons vs. doubled vowels in Japanese)\n- FOCUS ON: system correctness, phonetic accuracy, completeness, order\n\n    ",
+  "judgedAt": "2026-03-23T21:09:19.313Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "All three romanizations are accurate using standard scholarly Arabic romanization. 'marḥabā' correctly marks the emphatic ḥ and long final vowel, 'shukran' is correct, and 'kitāb' correctly marks the long ā. Output format is correct JSON with proper array, count matches (3), order is preserved, and no original script characters are present.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Identical output to Model A. All three romanizations are accurate: 'marḥabā', 'shukran', 'kitāb'. Correct format, count, and order. No issues.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Identical output to Models A and B. All three romanizations are accurate: 'marḥabā', 'shukran', 'kitāb'. Correct format, count, and order. No issues.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Identical output to Models A, B, and C. All three romanizations are accurate: 'marḥabā', 'shukran', 'kitāb'. Correct format, count, and order. No issues.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Uses 'marḥaban' instead of 'marḥabā'. The Arabic text 'مرحبا' with alif at the end represents a tanwīn fatḥa (accusative indefinite), so 'marḥaban' is actually a valid and arguably more precise scholarly romanization showing the tanwīn. However, the alif in 'مرحبا' could also be read as 'marḥabā' depending on whether one reads it as مرحباً (with tanwin) or مرحبا (with long ā). Both are acceptable scholarly conventions. 'shukran' and 'kitāb' are correct. Output format, count, and order are all correct.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Identical to Model D. Uses 'marḥaban' which is a valid scholarly romanization reflecting tanwīn. 'shukran' and 'kitāb' are correct. Format, count, and order are correct. Same quality as Model D.",
+          "score": 8.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "The model perfectly followed all instructions, returning a valid JSON with the correct romanization in lowercase for standalone words. 'marḥabā', 'shukran', and 'kitāb' are accurate and use standard scholarly conventions.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "The model perfectly followed all instructions, returning a valid JSON with the correct romanization in lowercase for standalone words. 'marḥabā', 'shukran', and 'kitāb' are accurate and use standard scholarly conventions.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "The model perfectly followed all instructions, returning a valid JSON with the correct romanization in lowercase for standalone words. 'marḥabā', 'shukran', and 'kitāb' are accurate and use standard scholarly conventions.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "The model perfectly followed all instructions. Transliterating 'مرحبا' as 'marḥaban' is highly accurate for Modern Standard Arabic (accounting for the tanwin, just like in 'shukran'). The output format and capitalization rules were strictly followed.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "The model perfectly followed all instructions. Transliterating 'مرحبا' as 'marḥaban' is highly accurate for Modern Standard Arabic (accounting for the tanwin, just like in 'shukran'). The output format and capitalization rules were strictly followed.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "The model perfectly followed all instructions, returning a valid JSON with the correct romanization in lowercase for standalone words. 'marḥabā', 'shukran', and 'kitāb' are accurate and use standard scholarly conventions.",
+          "score": 10
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Perfectly follows the required JSON format with exactly three romanizations in the correct order. Uses valid scholarly Arabic romanization with diacritics, and all three items are accurate. \"marḥabā\" is explicitly acceptable per the task guidance, as are \"shukran\" and \"kitāb\".",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Equivalent to Model A. Correct JSON structure, correct count and order, no original-script characters, and accurate scholarly romanizations. \"marḥabā\", \"shukran\", and \"kitāb\" are all acceptable and well-formed.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Equivalent to Models A and B. Fully compliant with the prompt and output format, with accurate and standard romanizations for all three Arabic words.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Equivalent to the other top outputs. It preserves order and count, uses only Latin script with appropriate diacritics, and provides accurate Arabic romanizations throughout.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Very strong output with correct JSON format, count, and order. \"shukran\" and \"kitāb\" are clearly correct. \"marḥaban\" is also a plausible scholarly romanization of مرحبا, though the task guidance more specifically listed acceptable variants as \"marhaba\" or \"marḥabā\". This is a minor acceptability/normalization issue rather than a clear error, so only a slight penalty.",
+          "score": 9.3
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Same quality as Model D. Output format and ordering are correct, and the romanizations are standard overall. \"marḥaban\" is defensible, but slightly less aligned with the task’s listed acceptable variants than \"marḥabā\", so it ranks just below the best answers.",
+          "score": 9.3
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-romanization",
+  "testCaseId": "ar-basic-words-1"
+}

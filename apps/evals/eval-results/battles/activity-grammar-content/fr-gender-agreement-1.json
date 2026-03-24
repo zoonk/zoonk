@@ -1,0 +1,131 @@
+{
+  "expectations": "\nTARGET LANGUAGE: French\n\nTOPIC: Adjective-noun gender agreement.\n\nGRAMMAR PATTERN: In French, adjectives must agree in gender with the noun they modify. Masculine nouns take masculine adjectives; feminine nouns take feminine adjectives. Most adjectives add -e for feminine form.\n\nACCURACY PITFALLS:\n- Penalize if adjective forms do not match noun gender\n- Penalize if examples or exercises use invariable adjectives (identical masculine/feminine forms) — these fail to demonstrate visible gender contrast\n\n\nEVALUATION CRITERIA:\n\n1. MONOLINGUAL OUTPUT (CRITICAL - highest priority):\n   - ALL text MUST be in the TARGET language ONLY\n   - There should be NO translations, NO user-language text, NO romanization\n   - This task produces raw grammar content; enrichment is done separately\n   - Penalize SEVERELY if any non-target-language text appears in examples or exercises\n   - Format tokens ([BLANK] placeholder, JSON keys) are part of the required output structure, NOT language-mixing issues\n\n2. EXAMPLES QUALITY:\n   - Must include 3-4 example sentences demonstrating the grammar pattern\n   - Each example MUST have a \"highlight\" field isolating the grammar element\n   - Examples should make the pattern discoverable without explanation\n   - Sentences should be simple enough for learners to focus on the pattern\n\n3. EXERCISES - FILL-IN-THE-BLANK:\n   - Must include 2-3 fill-in-the-blank exercises\n   - Each exercise MUST have exactly one [BLANK] placeholder in the template\n   - The answers array MUST contain the correct answer(s)\n   - Distractors MUST be plausible wrong answers testing common mistakes\n   - Penalize SEVERELY if exercises test different grammar than the examples\n\n4. LINGUISTIC ACCURACY (CRITICAL):\n   - ALL sentences must be grammatically correct in the target language\n   - The grammar pattern described must match what is actually demonstrated\n   - Penalize SEVERELY for incorrect grammar\n\n5. HIGHLIGHT SCOPE:\n   - Highlights that include slightly more context than the minimum (e.g., noun+particle, subject+verb, noun+adjective+article) are acceptable as long as the target grammar element is clearly visible\n   - Only penalize if the highlight is so broad that the grammar element is buried or unclear\n\n6. PARADIGM AND FORM COVERAGE:\n   - For conjugation patterns, evaluate coverage across examples AND exercises combined as a single set\n   - For agreement patterns, prefer forms where the contrast is visible (e.g., adjectives with clearly different masculine/feminine forms over invariable ones)\n\n7. SCRIPT CONSISTENCY (for non-Roman scripts):\n   - Only penalize if the SAME word is written in different scripts across examples and exercises\n   - Different words using different scripts is normal and not a consistency issue\n\nSCORING DISCIPLINE (CRITICAL — read before assigning a score):\n- If something is explicitly marked as acceptable in the criteria above, do NOT deduct points for it. Acknowledging a rule then still penalizing violates these instructions.\n- Only deduct for CONCRETE errors: wrong grammar, wrong answers, missing structural requirements, or target language violations.\n- Do NOT deduct for pedagogical preferences like \"could have been broader\", \"slightly less canonical\", or \"would have been clearer with X\". These are suggestions, not errors.\n- Do NOT deduct for specific vocabulary choices, sentence structures, or sentence variety.\n- FOCUS ON: monolingual correctness, structural completeness, linguistic accuracy, pattern clarity.\n\n    ",
+  "judgedAt": "2026-03-23T22:10:05.738Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "**Examples**: 4 examples showing two adjective pairs (vert/verte, grand/grande) with clear masculine/feminine contrast. Highlights include article+noun+adjective or article+adjective+noun, correctly showing agreement relationships. All sentences are grammatically correct, natural, and monolingual. Good progressive structure with varied vocabulary.\n\n**Exercises**: 3 exercises, all grammatically correct. 'bleue' for feminine jupe, 'petit' for masculine chien, 'froide' for feminine boisson. Each has exactly one [BLANK], correct answers, and plausible distractors (wrong gender, wrong number). All distractors are real French words. No errors found.\n\n**Pattern clarity**: The pairing of masculine/feminine in examples makes the pattern highly discoverable. Exercises test the same pattern with new adjectives.\n\nNo issues with monolingual requirement, linguistic accuracy, or structural requirements.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "**Examples**: 4 examples showing two adjective pairs (noir/noire, intéressant/intéressante) with clear masculine/feminine contrast. Highlights correctly include article+noun+adjective. All grammatically correct and natural. Good variety in sentence structure.\n\n**Exercises**: 3 exercises testing the pattern. 'petit' for masculine frère, 'grande' for feminine sœur, 'beau' for masculine jardin. All correct. However, 'beau' before a consonant-starting noun is the standard form — this is correct. But note: 'beau' is an irregular adjective (beau/bel/belle), which is slightly more complex for a basic gender agreement lesson. The exercise is still valid though. Distractors are appropriate.\n\n**Pattern clarity**: Very clear pairing in examples. Exercises are well-designed.\n\nMinor note: Using 'beau' introduces irregular agreement which could slightly confuse the basic -e pattern, but it's not an error per se.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "**Examples**: 4 examples with two pairs (grand/grande, noir/noire). Clear masculine/feminine contrast. All grammatically correct. Highlights are quite broad — 'Le garçon est grand' and 'La fille est grande' highlight nearly the entire sentence. The prompt says highlights that include more context are acceptable as long as the grammar element is visible, but these are very broad (the entire predicate structure). For the second pair, 'Un livre noir' and 'Une voiture noire' are better scoped. The grammar element is still visible in all cases.\n\n**Exercises**: 3 exercises, all correct. 'fort' for masculine homme, 'bleue' for feminine table, 'petite' for feminine maison. All grammatically correct with appropriate distractors.\n\n**Pattern clarity**: Good pairing makes the pattern discoverable.\n\nThe overly broad highlights on the first two examples are a minor weakness but per the scoring rules, not heavily penalized since the grammar element remains visible.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "**Examples**: 4 examples with two pairs (noir/noire, petit/petite). Clear masculine/feminine contrast. All grammatically correct and natural. Highlights are well-scoped (article+noun+adjective).\n\n**Exercises**: 3 exercises. 'verte' for feminine porte — correct. 'blanche' for feminine chemise — correct. 'bonne' for feminine idée — correct. All answers are linguistically accurate.\n\nHowever, the distractors include some odd choices: 'verdir' (infinitive verb 'to become green'), 'blancher' (not a standard word — 'blanchir' would be correct), and 'bonté' (a noun meaning 'goodness'). The prompt says distractors should test common mistakes like wrong gender/number/form. Including non-adjective forms as distractors is less pedagogically ideal and 'blancher' is not a real French word — this is a factual/linguistic error. 'Blanchir' exists but 'blancher' does not.\n\n**Deduction**: 'blancher' is a fabricated word, which constitutes a linguistic accuracy error. This is a concrete error that warrants a deduction.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "**Examples**: 4 examples with two pairs (noir/noire, intéressant/intéressante). Clear contrast. All grammatically correct. Highlights are well-scoped.\n\nHowever, 'une chatte noire' is a valid but unusual construction — 'chatte' is the feminine of 'chat' (meaning female cat), which is correct but introduces a noun gender change alongside the adjective change. This slightly muddies the pattern: is the learner supposed to notice the noun changing (chat→chatte) or the adjective changing (noir→noire)? The second pair (livre/histoire) is cleaner since the nouns are different words entirely.\n\n**Exercises**: 3 exercises. 'petit' for masculine garçon — correct. 'grande' for feminine maison — correct. 'vieux' for masculine monsieur — correct.\n\nCRITICAL ERROR: The distractor 'vieuxs' is NOT a real French word. The plural of 'vieux' is 'vieux' (invariable in masculine plural). This is a significant linguistic accuracy error — a fabricated French form that doesn't exist.\n\nAlso, 'vieux/vieille' is an irregular adjective that doesn't follow the basic -e pattern, which slightly undermines pattern consistency, though this alone wouldn't be penalized.\n\n**Deduction**: The fabricated word 'vieuxs' is a concrete linguistic error.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "**Examples**: 4 examples showing two adjective pairs (petit/petite, grand/grande). Clear contrast with article+adjective+noun highlights. All grammatically correct and natural.\n\n**Exercises**: 3 exercises.\n1. 'contente' for feminine Marie — correct.\n2. 'français' for masculine livre — correct answer, BUT the distractor list contains 'français' which is ALSO the correct answer. The prompt explicitly states: 'Distractors must never include a correct answer.' This is a structural violation.\n3. 'belle' for feminine robe — correct, though 'belle' is irregular (beau/belle).\n\n**CRITICAL ERROR**: Exercise 2 has the correct answer 'français' appearing in the distractors list as well. This directly violates a critical rule: 'Distractors must never include a correct answer.' This is a significant structural error.\n\nAdditionally, 'français' as an adjective doesn't clearly demonstrate the basic -e pattern since its feminine form is 'française' (adding -e but also changing pronunciation), and having it in both answers and distractors makes the exercise fundamentally broken.",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model D provides a flawless output. The examples perfectly contrast masculine and feminine forms, both for adjectives that come after the noun (vert/verte) and before the noun (grand/grande). The highlights are exact substring matches. The exercises target the correct grammar concept, use accurate vocabulary, and provide excellent distractors that strictly test the gender/number paradigm.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model E is exceptionally strong and follows all instructions perfectly. Highlights are exact substring matches, and the examples clearly show the gender contrast. The only extremely minor pedagogical point is that it introduces an irregular adjective ('beau/belle') in the exercises without showing it in the examples, whereas the examples only use regular '+e' adjectives. However, it is fully accurate and completely adheres to the prompt.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Model F follows most of the core instructions, and its highlights accurately match the casing in the sentences. However, the distractors in the exercises include a non-existent French word ('blancher' instead of 'blanchir') and mix in a verb ('verdir') and a noun ('bonté'). While distractors just need to be plausible wrong answers, using fake words or shifting parts of speech is far less effective than using the wrong gender/number forms to test an agreement paradigm.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model A has a technical flaw in its highlights. In examples 3 and 4, the highlight field uses a capital 'Un/Une' while the sentence contains a lowercase 'un/une' (\"C'est un livre...\"). This exact-string mismatch will break UI highlighting systems. Additionally, examples 1 and 2 highlight the entire sentence including the copula verb, which is slightly too broad. The exercises, however, are solid and provide good distractors.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Model B suffers from the same case-sensitivity issue in its highlights as Model A. In examples 1 and 2, the sentence starts with a capital 'Un/Une' but the highlight provides a lowercase 'un/une', which breaks string matching. Additionally, one of the distractors is a misspelled word ('vieuxs'), although this represents a plausible learner mistake. It is otherwise a solid output.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model C commits a critical violation of the negative constraints. The prompt explicitly states: 'Distractors must never include a correct answer.' In Exercise 2, the correct answer 'français' is also listed in the distractors array. This would make the exercise unplayable or buggy in a real application. This major failure warrants a heavy penalty.",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Best overall balance of correctness and prompt adherence. Fully monolingual, valid JSON structure, 4 examples and 3 exercises. The examples clearly show visible masculine/feminine adjective contrast with highlights that include the full agreeing phrase, exactly as required for agreement patterns. Exercises each contain exactly one [BLANK] and test the same concept with plausible distractors. No grammatical errors found.",
+          "score": 9.6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Very strong and fully on-topic. Monolingual, structurally complete, and highlights properly include noun + adjective phrase. Most examples and exercises clearly demonstrate gender agreement with visible contrast. Slightly weaker than Model E because one example pair uses different adjective sets across pairs rather than a consistently paired contrast, but this is still fully acceptable and accurate. No concrete errors.",
+          "score": 9.4
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Accurate and structurally complete. Good visible agreement contrasts in examples and exercises, and highlights include the agreeing phrase. Exercises are well formed and target the intended grammar. Slightly less clean pedagogically because two highlights are full copular clauses while two are noun phrases, but this is acceptable under the criteria and does not create an error.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Good overall: monolingual, correct structure, clear examples with visible gender agreement, and valid fill-in-the-blank exercises. Main weakness is distractor quality: using infinitives/nouns like 'verdir', 'blancher', and 'bonté' is less aligned with common agreement mistakes than adjective-form distractors, though still not invalid. Otherwise accurate and on prompt.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Mostly strong, with clear examples and proper highlight scope showing noun + adjective together. However, the second exercise has a concrete structural/content flaw: the distractors include 'français', which is identical to the correct answer, violating the rule that distractors must never include a correct answer. Aside from that, the output is accurate and on-topic.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Mixed quality. It is monolingual and structurally complete, and most content is accurate. However, one example pair uses 'intéressant/intéressante', which is fine, but the third exercise contains the incorrect distractor 'vieuxs', a non-existent French form. Since linguistic accuracy is critical, this significantly hurts the score. Highlights and exercise design are otherwise acceptable.",
+          "score": 6.8
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-grammar-content",
+  "testCaseId": "fr-gender-agreement-1"
+}

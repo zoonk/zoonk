@@ -1,0 +1,222 @@
+{
+  "modelId": "anthropic/claude-opus-4.6",
+  "results": [
+    {
+      "steps": [
+        {
+          "conclusion": "None. The response uses appropriate Japanese Hepburn-style romanization for all three items, avoids copying original-script characters, preserves order and count, and does not translate. \"Konnichiwa\" is acceptable for the greeting because the phrase is conventionally romanized with pronunciation reflected; \"Tōkyō Tawā\" correctly uses macrons for long vowels; \"O-genki desu ka\" is an acceptable readable romanization of お元気ですか.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "There is a small consistency/style issue: \"O-genki desu ka\" includes a hyphen after the honorific prefix \"o-\", whereas many Hepburn outputs would more commonly write \"Ogenki desu ka\" without the hyphen in a simple romanization list. This does not materially reduce correctness. Also, capitalization of \"O-genki\" may be slightly unnecessary if treated as a phrase rather than a full sentence fragment, but this is minor.",
+          "kind": "minorErrors",
+          "score": 9.4
+        },
+        {
+          "conclusion": "Could be improved by making formatting more stylistically consistent across entries: either use or avoid hyphenation for prefixes consistently, and optionally include sentence-final punctuation if treating the third item as a sentence. Otherwise, the output already satisfies the task well.",
+          "kind": "potentialImprovements",
+          "score": 9.3
+        }
+      ],
+      "testCase": {
+        "expectations": "\nTARGET LANGUAGE: Japanese\n\nTEXTS:\n1. \"こんにちは\" (a common greeting)\n2. \"東京タワー\" (Tokyo Tower)\n3. \"お元気ですか\" (How are you?)\n\nEXPECTED ROMANIZATION SYSTEM: Hepburn romaji\n\nACCURACY PITFALLS:\n- \"は\" as a particle should be romanized as \"wa\" (not \"ha\")\n- Long vowels should be properly represented (e.g., \"tou\" or \"tō\" for 東)\n- \"ん\" before certain consonants may vary but should be \"n\"\n- \"タワー\" is katakana and should be romanized as \"tawaa\" or \"tawā\"\n\n\nEVALUATION CRITERIA:\n\n1. ROMANIZATION ACCURACY (CRITICAL - highest priority):\n   - Each romanization must use the standard system for the target language\n   - Japanese: Hepburn romaji\n   - Chinese: Pinyin (with tone marks or numbers)\n   - Korean: Revised Romanization\n   - Arabic: ISO or common scholarly romanization\n   - Russian/Ukrainian/Bulgarian: ISO 9 or BGN/PCGN\n   - Thai: RTGS (Royal Thai General System)\n   - Hindi/Kannada/Tamil/Nepali/Marathi: IAST or Hunterian\n   - Penalize SEVERELY for incorrect romanization or wrong system\n\n2. COMPLETENESS:\n   - Must return exactly one romanization per input text\n   - Number of romanizations must match number of input texts\n   - No texts should be skipped or merged\n   - Penalize if count does not match\n\n3. ORDER PRESERVATION:\n   - Romanizations must be in the same order as input texts\n   - The romanization at index N must correspond to the text at index N\n   - Penalize if order is scrambled\n\n4. READABILITY:\n   - Romanization should be readable by someone familiar with the Latin alphabet\n   - Word boundaries should be preserved\n   - Penalize if romanization is unreadable or omits significant sounds\n\n5. NO TRANSLATION:\n   - Romanizations must be transliterations, NOT translations\n   - The output should represent the sounds of the original text, not its meaning\n   - Penalize SEVERELY if the output is a translation instead of a romanization\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT require exact character-by-character matches\n- Accept minor stylistic variations (e.g., macrons vs. doubled vowels in Japanese)\n- FOCUS ON: system correctness, phonetic accuracy, completeness, order\n\n    ",
+        "id": "ja-basic-phrases-1",
+        "userInput": {
+          "targetLanguage": "ja",
+          "texts": ["こんにちは", "東京タワー", "お元気ですか"]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "There is a minor readability/segmentation issue in the third item: standard Hanyu Pinyin word segmentation would normally write \"zhōngguó rén\" with a space, not \"zhōngguórén\" concatenated. The romanization itself and tone marks are correct, and the count/order are correct.",
+          "kind": "minorErrors",
+          "score": 8.8
+        },
+        {
+          "conclusion": "Improve adherence to standard Pinyin spacing by separating the noun phrase in item 3 as \"zhōngguó rén\". Otherwise the response is accurate, complete, in order, and uses tone marks correctly.",
+          "kind": "potentialImprovements",
+          "score": 9.2
+        }
+      ],
+      "testCase": {
+        "expectations": "\nTARGET LANGUAGE: Chinese (Mandarin)\n\nTEXTS:\n1. \"你好\" (hello)\n2. \"谢谢\" (thank you)\n3. \"中国人\" (Chinese person)\n\nEXPECTED ROMANIZATION SYSTEM: Pinyin\n\nACCURACY PITFALLS:\n- Tone marks or tone numbers should be included\n- \"你好\" = \"nǐ hǎo\" (tones 3, 3)\n- \"谢谢\" = \"xièxie\" or \"xièxiè\" (tone 4, neutral/4)\n- \"中国人\" = \"zhōngguó rén\" (tones 1, 2, 2)\n- Penalize if tones are completely omitted\n\n\nEVALUATION CRITERIA:\n\n1. ROMANIZATION ACCURACY (CRITICAL - highest priority):\n   - Each romanization must use the standard system for the target language\n   - Japanese: Hepburn romaji\n   - Chinese: Pinyin (with tone marks or numbers)\n   - Korean: Revised Romanization\n   - Arabic: ISO or common scholarly romanization\n   - Russian/Ukrainian/Bulgarian: ISO 9 or BGN/PCGN\n   - Thai: RTGS (Royal Thai General System)\n   - Hindi/Kannada/Tamil/Nepali/Marathi: IAST or Hunterian\n   - Penalize SEVERELY for incorrect romanization or wrong system\n\n2. COMPLETENESS:\n   - Must return exactly one romanization per input text\n   - Number of romanizations must match number of input texts\n   - No texts should be skipped or merged\n   - Penalize if count does not match\n\n3. ORDER PRESERVATION:\n   - Romanizations must be in the same order as input texts\n   - The romanization at index N must correspond to the text at index N\n   - Penalize if order is scrambled\n\n4. READABILITY:\n   - Romanization should be readable by someone familiar with the Latin alphabet\n   - Word boundaries should be preserved\n   - Penalize if romanization is unreadable or omits significant sounds\n\n5. NO TRANSLATION:\n   - Romanizations must be transliterations, NOT translations\n   - The output should represent the sounds of the original text, not its meaning\n   - Penalize SEVERELY if the output is a translation instead of a romanization\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT require exact character-by-character matches\n- Accept minor stylistic variations (e.g., macrons vs. doubled vowels in Japanese)\n- FOCUS ON: system correctness, phonetic accuracy, completeness, order\n\n    ",
+        "id": "zh-basic-phrases-1",
+        "userInput": {
+          "targetLanguage": "zh",
+          "texts": ["你好", "谢谢", "中国人"]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Minor capitalization inconsistency: for a standalone proper noun, \"Daehanminguk\" is appropriately capitalized, while the other two common expressions are lowercase, so this is acceptable overall. No concrete minor error materially reducing utility is present.",
+          "kind": "minorErrors",
+          "score": 9.8
+        },
+        {
+          "conclusion": "Could be improved slightly by matching the requested JSON style exactly and maintaining fully consistent capitalization rationale across entries, but the romanizations themselves are accurate, complete, in order, and use Revised Romanization correctly, including assimilation in \"gamsahamnida\" and \"Daehanminguk.\"",
+          "kind": "potentialImprovements",
+          "score": 9.6
+        }
+      ],
+      "testCase": {
+        "expectations": "\nTARGET LANGUAGE: Korean\n\nTEXTS:\n1. \"안녕하세요\" (hello/polite greeting)\n2. \"감사합니다\" (thank you)\n3. \"대한민국\" (Republic of Korea)\n\nEXPECTED ROMANIZATION SYSTEM: Revised Romanization of Korean\n\nACCURACY PITFALLS:\n- \"안녕하세요\" = \"annyeonghaseyo\"\n- \"감사합니다\" = \"gamsahamnida\"\n- \"대한민국\" = \"daehanminguk\"\n- Korean romanization has specific rules for consonant assimilation\n- Penalize if consonant assimilation rules are ignored\n\n\nEVALUATION CRITERIA:\n\n1. ROMANIZATION ACCURACY (CRITICAL - highest priority):\n   - Each romanization must use the standard system for the target language\n   - Japanese: Hepburn romaji\n   - Chinese: Pinyin (with tone marks or numbers)\n   - Korean: Revised Romanization\n   - Arabic: ISO or common scholarly romanization\n   - Russian/Ukrainian/Bulgarian: ISO 9 or BGN/PCGN\n   - Thai: RTGS (Royal Thai General System)\n   - Hindi/Kannada/Tamil/Nepali/Marathi: IAST or Hunterian\n   - Penalize SEVERELY for incorrect romanization or wrong system\n\n2. COMPLETENESS:\n   - Must return exactly one romanization per input text\n   - Number of romanizations must match number of input texts\n   - No texts should be skipped or merged\n   - Penalize if count does not match\n\n3. ORDER PRESERVATION:\n   - Romanizations must be in the same order as input texts\n   - The romanization at index N must correspond to the text at index N\n   - Penalize if order is scrambled\n\n4. READABILITY:\n   - Romanization should be readable by someone familiar with the Latin alphabet\n   - Word boundaries should be preserved\n   - Penalize if romanization is unreadable or omits significant sounds\n\n5. NO TRANSLATION:\n   - Romanizations must be transliterations, NOT translations\n   - The output should represent the sounds of the original text, not its meaning\n   - Penalize SEVERELY if the output is a translation instead of a romanization\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT require exact character-by-character matches\n- Accept minor stylistic variations (e.g., macrons vs. doubled vowels in Japanese)\n- FOCUS ON: system correctness, phonetic accuracy, completeness, order\n\n    ",
+        "id": "ko-basic-phrases-1",
+        "userInput": {
+          "targetLanguage": "ko",
+          "texts": ["안녕하세요", "감사합니다", "대한민국"]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Very strong response. It follows the required JSON structure, returns exactly three romanizations in the correct order, uses only Latin characters with acceptable scholarly diacritics, and provides accurate Arabic romanizations. A small possible improvement would be consistency in marking long vowels across all items depending on the chosen scholarly standard (e.g., using shukrān instead of shukran), but the prompt explicitly allows such variation.",
+          "kind": "potentialImprovements",
+          "score": 9.7
+        }
+      ],
+      "testCase": {
+        "expectations": "\nTARGET LANGUAGE: Arabic\n\nTEXTS:\n1. \"مرحبا\" (hello)\n2. \"شكرا\" (thank you)\n3. \"كتاب\" (book)\n\nEXPECTED ROMANIZATION SYSTEM: Standard scholarly or ISO romanization\n\nACCURACY PITFALLS:\n- \"مرحبا\" = \"marhaba\" or \"marḥabā\"\n- \"شكرا\" = \"shukran\" or \"shukrān\"\n- \"كتاب\" = \"kitab\" or \"kitāb\"\n- Arabic has emphatic consonants that may or may not be marked\n- Accept variations in vowel length marking\n\n\nEVALUATION CRITERIA:\n\n1. ROMANIZATION ACCURACY (CRITICAL - highest priority):\n   - Each romanization must use the standard system for the target language\n   - Japanese: Hepburn romaji\n   - Chinese: Pinyin (with tone marks or numbers)\n   - Korean: Revised Romanization\n   - Arabic: ISO or common scholarly romanization\n   - Russian/Ukrainian/Bulgarian: ISO 9 or BGN/PCGN\n   - Thai: RTGS (Royal Thai General System)\n   - Hindi/Kannada/Tamil/Nepali/Marathi: IAST or Hunterian\n   - Penalize SEVERELY for incorrect romanization or wrong system\n\n2. COMPLETENESS:\n   - Must return exactly one romanization per input text\n   - Number of romanizations must match number of input texts\n   - No texts should be skipped or merged\n   - Penalize if count does not match\n\n3. ORDER PRESERVATION:\n   - Romanizations must be in the same order as input texts\n   - The romanization at index N must correspond to the text at index N\n   - Penalize if order is scrambled\n\n4. READABILITY:\n   - Romanization should be readable by someone familiar with the Latin alphabet\n   - Word boundaries should be preserved\n   - Penalize if romanization is unreadable or omits significant sounds\n\n5. NO TRANSLATION:\n   - Romanizations must be transliterations, NOT translations\n   - The output should represent the sounds of the original text, not its meaning\n   - Penalize SEVERELY if the output is a translation instead of a romanization\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT require exact character-by-character matches\n- Accept minor stylistic variations (e.g., macrons vs. doubled vowels in Japanese)\n- FOCUS ON: system correctness, phonetic accuracy, completeness, order\n\n    ",
+        "id": "ar-basic-words-1",
+        "userInput": {
+          "targetLanguage": "ar",
+          "texts": ["مرحبا", "شكرا", "كتاب"]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Could optionally note which Russian romanization standard variant is being followed (the output aligns with an acceptable BGN/PCGN-style variant), but this is not required by the prompt. Otherwise the response is complete, accurate, in order, and contains only romanized text.",
+          "kind": "potentialImprovements",
+          "score": 9.8
+        }
+      ],
+      "testCase": {
+        "expectations": "\nTARGET LANGUAGE: Russian\n\nTEXTS:\n1. \"Здравствуйте\" (hello/formal)\n2. \"Спасибо\" (thank you)\n3. \"Москва\" (Moscow)\n\nEXPECTED ROMANIZATION SYSTEM: ISO 9 or BGN/PCGN\n\nACCURACY PITFALLS:\n- \"Здравствуйте\" = \"Zdravstvuyte\" or \"Zdravstvujte\"\n- \"Спасибо\" = \"Spasibo\"\n- \"Москва\" = \"Moskva\"\n- The \"в\" in \"Здравствуйте\" is silent in speech but should still be romanized\n- Accept common transliteration variants (e.g., \"j\" vs \"y\" for \"й\")\n\n\nEVALUATION CRITERIA:\n\n1. ROMANIZATION ACCURACY (CRITICAL - highest priority):\n   - Each romanization must use the standard system for the target language\n   - Japanese: Hepburn romaji\n   - Chinese: Pinyin (with tone marks or numbers)\n   - Korean: Revised Romanization\n   - Arabic: ISO or common scholarly romanization\n   - Russian/Ukrainian/Bulgarian: ISO 9 or BGN/PCGN\n   - Thai: RTGS (Royal Thai General System)\n   - Hindi/Kannada/Tamil/Nepali/Marathi: IAST or Hunterian\n   - Penalize SEVERELY for incorrect romanization or wrong system\n\n2. COMPLETENESS:\n   - Must return exactly one romanization per input text\n   - Number of romanizations must match number of input texts\n   - No texts should be skipped or merged\n   - Penalize if count does not match\n\n3. ORDER PRESERVATION:\n   - Romanizations must be in the same order as input texts\n   - The romanization at index N must correspond to the text at index N\n   - Penalize if order is scrambled\n\n4. READABILITY:\n   - Romanization should be readable by someone familiar with the Latin alphabet\n   - Word boundaries should be preserved\n   - Penalize if romanization is unreadable or omits significant sounds\n\n5. NO TRANSLATION:\n   - Romanizations must be transliterations, NOT translations\n   - The output should represent the sounds of the original text, not its meaning\n   - Penalize SEVERELY if the output is a translation instead of a romanization\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT require exact character-by-character matches\n- Accept minor stylistic variations (e.g., macrons vs. doubled vowels in Japanese)\n- FOCUS ON: system correctness, phonetic accuracy, completeness, order\n\n    ",
+        "id": "ru-basic-phrases-1",
+        "userInput": {
+          "targetLanguage": "ru",
+          "texts": ["Здравствуйте", "Спасибо", "Москва"]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Minor issue: the third item is capitalized as \"Krungthep\" even though it is a standalone proper noun; this is arguably acceptable under the capitalization rules, but RTGS commonly uses \"Krung Thep\" or lowercase in list contexts. Also, spacing conventions for Thai romanization can vary, and the response chose the concatenated form. These do not materially harm correctness. The core romanizations are accurate and not translations.",
+          "kind": "minorErrors",
+          "score": 9.4
+        },
+        {
+          "conclusion": "Could be improved by using the most standard RTGS formatting for Bangkok as \"Krung Thep\" rather than the concatenated \"Krungthep,\" depending on convention. Otherwise, the response fully preserves count and order, uses acceptable Thai romanization variants, and avoids original-script characters.",
+          "kind": "potentialImprovements",
+          "score": 9.2
+        }
+      ],
+      "testCase": {
+        "expectations": "\nTARGET LANGUAGE: Thai\n\nTEXTS:\n1. \"สวัสดี\" (hello)\n2. \"ขอบคุณ\" (thank you)\n3. \"กรุงเทพ\" (Bangkok)\n\nEXPECTED ROMANIZATION SYSTEM: RTGS (Royal Thai General System)\n\nACCURACY PITFALLS:\n- \"สวัสดี\" = \"sawatdi\" or \"sawasdee\"\n- \"ขอบคุณ\" = \"khopkhun\" or \"khob khun\"\n- \"กรุงเทพ\" = \"krungthep\" or \"krung thep\"\n- Thai tones are typically NOT marked in RTGS\n- Accept common romanization variants\n\n\nEVALUATION CRITERIA:\n\n1. ROMANIZATION ACCURACY (CRITICAL - highest priority):\n   - Each romanization must use the standard system for the target language\n   - Japanese: Hepburn romaji\n   - Chinese: Pinyin (with tone marks or numbers)\n   - Korean: Revised Romanization\n   - Arabic: ISO or common scholarly romanization\n   - Russian/Ukrainian/Bulgarian: ISO 9 or BGN/PCGN\n   - Thai: RTGS (Royal Thai General System)\n   - Hindi/Kannada/Tamil/Nepali/Marathi: IAST or Hunterian\n   - Penalize SEVERELY for incorrect romanization or wrong system\n\n2. COMPLETENESS:\n   - Must return exactly one romanization per input text\n   - Number of romanizations must match number of input texts\n   - No texts should be skipped or merged\n   - Penalize if count does not match\n\n3. ORDER PRESERVATION:\n   - Romanizations must be in the same order as input texts\n   - The romanization at index N must correspond to the text at index N\n   - Penalize if order is scrambled\n\n4. READABILITY:\n   - Romanization should be readable by someone familiar with the Latin alphabet\n   - Word boundaries should be preserved\n   - Penalize if romanization is unreadable or omits significant sounds\n\n5. NO TRANSLATION:\n   - Romanizations must be transliterations, NOT translations\n   - The output should represent the sounds of the original text, not its meaning\n   - Penalize SEVERELY if the output is a translation instead of a romanization\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT require exact character-by-character matches\n- Accept minor stylistic variations (e.g., macrons vs. doubled vowels in Japanese)\n- FOCUS ON: system correctness, phonetic accuracy, completeness, order\n\n    ",
+        "id": "th-basic-phrases-1",
+        "userInput": {
+          "targetLanguage": "th",
+          "texts": ["สวัสดี", "ขอบคุณ", "กรุงเทพ"]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "No concrete minor errors found. The response uses appropriate Hepburn-style romanization, correctly renders the topic particle は as 'wa', renders を as 'o', preserves order and count, and does not translate instead of romanizing. Omitting final punctuation is not a meaningful error here because the inputs also lacked punctuation, and spacing such as 'shite imasu' is acceptable per the expectations.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Very strong answer overall. A small possible improvement would be to choose the more tightly joined form 'shiteimasu' instead of 'shite imasu' for consistency with common modern presentation, but the prompt explicitly allows either. Another optional improvement would be to ensure consistency about macron usage style across all long vowels, which the response already does correctly. No meaningful improvements are needed.",
+          "kind": "potentialImprovements",
+          "score": 9.8
+        }
+      ],
+      "testCase": {
+        "expectations": "\nTARGET LANGUAGE: Japanese\n\nTEXTS:\n1. \"私は学生です\" (I am a student)\n2. \"東京は大きい都市です\" (Tokyo is a big city)\n3. \"毎日日本語を勉強しています\" (I study Japanese every day)\n\nEXPECTED ROMANIZATION SYSTEM: Hepburn romaji\n\nThis tests longer sentences rather than short phrases.\n\nACCURACY PITFALLS:\n- Particle \"は\" when topic marker = \"wa\"\n- Particle \"を\" = \"o\" (not \"wo\" in modern Hepburn, though \"wo\" is also acceptable)\n- \"です\" = \"desu\"\n- \"しています\" = \"shiteimasu\" or \"shite imasu\"\n- Word boundaries should be preserved in the romanization\n\n\nEVALUATION CRITERIA:\n\n1. ROMANIZATION ACCURACY (CRITICAL - highest priority):\n   - Each romanization must use the standard system for the target language\n   - Japanese: Hepburn romaji\n   - Chinese: Pinyin (with tone marks or numbers)\n   - Korean: Revised Romanization\n   - Arabic: ISO or common scholarly romanization\n   - Russian/Ukrainian/Bulgarian: ISO 9 or BGN/PCGN\n   - Thai: RTGS (Royal Thai General System)\n   - Hindi/Kannada/Tamil/Nepali/Marathi: IAST or Hunterian\n   - Penalize SEVERELY for incorrect romanization or wrong system\n\n2. COMPLETENESS:\n   - Must return exactly one romanization per input text\n   - Number of romanizations must match number of input texts\n   - No texts should be skipped or merged\n   - Penalize if count does not match\n\n3. ORDER PRESERVATION:\n   - Romanizations must be in the same order as input texts\n   - The romanization at index N must correspond to the text at index N\n   - Penalize if order is scrambled\n\n4. READABILITY:\n   - Romanization should be readable by someone familiar with the Latin alphabet\n   - Word boundaries should be preserved\n   - Penalize if romanization is unreadable or omits significant sounds\n\n5. NO TRANSLATION:\n   - Romanizations must be transliterations, NOT translations\n   - The output should represent the sounds of the original text, not its meaning\n   - Penalize SEVERELY if the output is a translation instead of a romanization\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT require exact character-by-character matches\n- Accept minor stylistic variations (e.g., macrons vs. doubled vowels in Japanese)\n- FOCUS ON: system correctness, phonetic accuracy, completeness, order\n\n    ",
+        "id": "ja-full-sentences-1",
+        "userInput": {
+          "targetLanguage": "ja",
+          "texts": ["私は学生です", "東京は大きい都市です", "毎日日本語を勉強しています"]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The third item is capitalized as \"Bhārat\" even though the prompt's capitalization rule says standalone words should be lowercase unless the word is a proper noun; however, the same prompt gives \"大阪 → Ōsaka\" as a proper noun example, and India is a proper noun, so this is not actually an error. No concrete minor errors found.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Could optionally have used a consistent scheme across all three items with either full IAST-style diacritics throughout or a plainer Hunterian style throughout, but the current output is already acceptable under the stated criteria. No meaningful improvements required.",
+          "kind": "potentialImprovements",
+          "score": 9.7
+        }
+      ],
+      "testCase": {
+        "expectations": "\nTARGET LANGUAGE: Hindi\n\nTEXTS:\n1. \"नमस्ते\" (hello)\n2. \"धन्यवाद\" (thank you)\n3. \"भारत\" (India)\n\nEXPECTED ROMANIZATION SYSTEM: IAST or Hunterian\n\nACCURACY PITFALLS:\n- \"नमस्ते\" = \"namaste\" or \"namastē\"\n- \"धन्यवाद\" = \"dhanyavaad\" or \"dhanyavād\"\n- \"भारत\" = \"bhaarat\" or \"bhārat\"\n- Aspirated consonants (bh, dh) must be preserved\n- Retroflex consonants may or may not be specially marked\n\n\nEVALUATION CRITERIA:\n\n1. ROMANIZATION ACCURACY (CRITICAL - highest priority):\n   - Each romanization must use the standard system for the target language\n   - Japanese: Hepburn romaji\n   - Chinese: Pinyin (with tone marks or numbers)\n   - Korean: Revised Romanization\n   - Arabic: ISO or common scholarly romanization\n   - Russian/Ukrainian/Bulgarian: ISO 9 or BGN/PCGN\n   - Thai: RTGS (Royal Thai General System)\n   - Hindi/Kannada/Tamil/Nepali/Marathi: IAST or Hunterian\n   - Penalize SEVERELY for incorrect romanization or wrong system\n\n2. COMPLETENESS:\n   - Must return exactly one romanization per input text\n   - Number of romanizations must match number of input texts\n   - No texts should be skipped or merged\n   - Penalize if count does not match\n\n3. ORDER PRESERVATION:\n   - Romanizations must be in the same order as input texts\n   - The romanization at index N must correspond to the text at index N\n   - Penalize if order is scrambled\n\n4. READABILITY:\n   - Romanization should be readable by someone familiar with the Latin alphabet\n   - Word boundaries should be preserved\n   - Penalize if romanization is unreadable or omits significant sounds\n\n5. NO TRANSLATION:\n   - Romanizations must be transliterations, NOT translations\n   - The output should represent the sounds of the original text, not its meaning\n   - Penalize SEVERELY if the output is a translation instead of a romanization\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT require exact character-by-character matches\n- Accept minor stylistic variations (e.g., macrons vs. doubled vowels in Japanese)\n- FOCUS ON: system correctness, phonetic accuracy, completeness, order\n\n    ",
+        "id": "hi-basic-words-1",
+        "userInput": {
+          "targetLanguage": "hi",
+          "texts": ["नमस्ते", "धन्यवाद", "भारत"]
+        }
+      }
+    }
+  ],
+  "taskId": "activity-romanization"
+}

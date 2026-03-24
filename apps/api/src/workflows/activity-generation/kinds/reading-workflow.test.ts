@@ -31,13 +31,11 @@ vi.mock("@zoonk/ai/tasks/activities/language/sentences", () => ({
       sentences: [
         {
           explanation: "Basic sentence with verb 'ver' (to see) conjugated for 'yo'.",
-          romanization: "yo see-o un ga-to",
           sentence: "Yo veo un gato.",
           translation: "I see a cat.",
         },
         {
           explanation: null,
-          romanization: "o-la, ko-mo es-tas",
           sentence: "Hola, como estas?",
           translation: "Hello, how are you?",
         },
@@ -71,8 +69,8 @@ vi.mock("@zoonk/core/audio/generate", () => ({
 }));
 
 const words = [
-  { alternativeTranslations: [], romanization: "ga-to", translation: "cat", word: "gato" },
-  { alternativeTranslations: [], romanization: "o-la", translation: "hello", word: "hola" },
+  { alternativeTranslations: [], translation: "cat", word: "gato" },
+  { alternativeTranslations: [], translation: "hello", word: "hola" },
 ];
 
 function createSentenceGenerationResult(
@@ -194,7 +192,6 @@ describe(readingActivityWorkflow, () => {
       createSentenceGenerationResult([
         {
           explanation: "Greeting variant",
-          romanization: null,
           sentence: sentenceText,
           translation: translationText,
         },
@@ -252,13 +249,11 @@ describe(readingActivityWorkflow, () => {
       createSentenceGenerationResult([
         {
           explanation: null,
-          romanization: null,
           sentence: "Guten Morgen, Anna!",
           translation: "Bom dia, Anna!",
         },
         {
           explanation: null,
-          romanization: null,
           sentence: "Gute Nacht, Mama.",
           translation: "Boa noite, mãe.",
         },
@@ -290,31 +285,26 @@ describe(readingActivityWorkflow, () => {
     const greetingWords = [
       {
         alternativeTranslations: [],
-        romanization: null,
         translation: "Bom dia",
         word: "Guten Morgen",
       },
       {
         alternativeTranslations: ["Bom dia"],
-        romanization: null,
         translation: "Boa tarde",
         word: "Guten Tag",
       },
       {
         alternativeTranslations: [],
-        romanization: null,
         translation: "Boa noite",
         word: "Guten Abend",
       },
       {
         alternativeTranslations: [],
-        romanization: null,
         translation: "Boa noite",
         word: "Gute Nacht",
       },
       {
         alternativeTranslations: [],
-        romanization: null,
         translation: "mãe",
         word: "Mama",
       },
@@ -354,7 +344,6 @@ describe(readingActivityWorkflow, () => {
       createSentenceGenerationResult([
         {
           explanation: null,
-          romanization: null,
           sentence: "Guten Morgen, Anna!",
           translation: "Bom dia, Anna!",
         },
@@ -383,13 +372,11 @@ describe(readingActivityWorkflow, () => {
     const greetingWords = [
       {
         alternativeTranslations: [],
-        romanization: null,
         translation: "Bom dia",
         word: "Guten Morgen",
       },
       {
         alternativeTranslations: ["Bom dia"],
-        romanization: null,
         translation: "Boa tarde",
         word: "Guten Tag",
       },
@@ -421,7 +408,6 @@ describe(readingActivityWorkflow, () => {
       createSentenceGenerationResult([
         {
           explanation: null,
-          romanization: null,
           sentence: "Guten Tag, Herr Weber.",
           translation: "Boa tarde, senhor Weber.",
         },
@@ -456,19 +442,16 @@ describe(readingActivityWorkflow, () => {
     const greetingWords = [
       {
         alternativeTranslations: [],
-        romanization: null,
         translation: "Bom dia",
         word: "Guten Morgen",
       },
       {
         alternativeTranslations: ["Bom dia"],
-        romanization: null,
         translation: "Boa tarde",
         word: "Guten Tag",
       },
       {
         alternativeTranslations: [],
-        romanization: null,
         translation: "senhor",
         word: "Herr",
       },
@@ -618,7 +601,6 @@ describe(readingActivityWorkflow, () => {
       createSentenceGenerationResult([
         {
           explanation: null,
-          romanization: "r1",
           sentence: `${passWord} ${failWord}`,
           translation: "pass fail",
         },
@@ -687,7 +669,6 @@ describe(readingActivityWorkflow, () => {
       createSentenceGenerationResult([
         {
           explanation: null,
-          romanization: "r1",
           sentence: `${capitalizedWord} test`,
           translation: "cap test",
         },
@@ -761,7 +742,6 @@ describe(readingActivityWorkflow, () => {
       createSentenceGenerationResult([
         {
           explanation: null,
-          romanization: "r1",
           sentence: `${existingWord} ${newWord}`,
           translation: "existing new",
         },

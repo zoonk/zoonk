@@ -11,6 +11,7 @@ export async function updateVocabularyEnrichmentsStep(
   savedWords: SavedWord[],
   pronunciations: Record<string, string>,
   wordAudioIds: Record<string, bigint>,
+  romanizations: Record<string, string>,
 ): Promise<void> {
   "use step";
 
@@ -23,11 +24,15 @@ export async function updateVocabularyEnrichmentsStep(
   await streamStatus({ status: "started", step: "updateVocabularyEnrichments" });
 
   const updates = savedWords
-    .filter((saved) => pronunciations[saved.word] || wordAudioIds[saved.word])
+    .filter(
+      (saved) =>
+        pronunciations[saved.word] || wordAudioIds[saved.word] || romanizations[saved.word],
+    )
     .map((saved) =>
       prisma.word.update({
         data: {
           pronunciation: pronunciations[saved.word],
+          romanization: romanizations[saved.word],
           wordAudioId: wordAudioIds[saved.word],
         },
         where: { id: saved.wordId },

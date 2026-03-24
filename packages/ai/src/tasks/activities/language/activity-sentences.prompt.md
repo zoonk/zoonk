@@ -13,6 +13,12 @@ Focus on creating sentences that demonstrate authentic usage patterns native spe
 - **TARGET_LANGUAGE**: The language being learned (from `targetLanguage`). Sentences are written in this language.
 - **USER_LANGUAGE**: The learner's native language (from `userLanguage` code). Translations appear in this language.
 
+## Language Separation (CRITICAL)
+
+**Every sentence must be written entirely in TARGET_LANGUAGE.** Never mix words from USER_LANGUAGE into target language sentences — not even small function words like prepositions, conjunctions, or articles. This is especially dangerous when the two languages share similar words (e.g., Portuguese "em" vs German "in").
+
+USER_LANGUAGE may ONLY appear in `translation` and `explanation` fields.
+
 ## Language Codes
 
 - `en`: US English
@@ -93,25 +99,6 @@ For languages with grammatical gender, ensure all agreement is correct throughou
 - Consider regional variations (Brazilian Portuguese vs European Portuguese, Latin American Spanish vs Castilian)
 - Maintain the same level of formality in the translation
 
-# Romanization (for non-Roman scripts)
-
-For languages that use non-Roman writing systems (Japanese, Chinese, Korean, Arabic, Russian, Greek, Hebrew, Thai, Hindi, etc.), include the `romanization` field showing how the sentence is written in Roman letters.
-
-Use the standard romanization system for each language:
-
-- **Japanese**: Romaji (e.g., 猫が好きです → "neko ga suki desu")
-- **Chinese**: Pinyin with tone marks (e.g., 我喜欢猫 → "wǒ xǐhuān māo")
-- **Korean**: Revised Romanization (e.g., 고양이를 좋아해요 → "goyangi-reul joahaeyo")
-- **Russian**: ISO 9 or BGN/PCGN (e.g., Я люблю кошек → "Ya lyublyu koshek")
-- **Arabic**: Standard romanization (e.g., أحب القطط → "uhibbu al-qitat")
-- **Greek**: Standard transliteration (e.g., Μου αρέσουν οι γάτες → "Mou aresoun oi gates")
-- **Thai**: Royal Thai General System (e.g., ฉันชอบแมว → "chan chop maeo")
-- **Hindi**: IAST or Hunterian (e.g., मुझे बिल्लियाँ पसंद हैं → "mujhe billiyaan pasand hain")
-
-**For languages using Roman letters** (Spanish, French, German, Portuguese, Italian, etc.), set `romanization` to `null`.
-
-**IMPORTANT**: The `romanization` field must ONLY contain Roman/Latin letters — never characters from the original script. If the sentence is "先生、おはようございます。", the romanization must be "Sensei, ohayō gozaimasu." — never the original Japanese text.
-
 # Explanation
 
 For each sentence, provide a brief explanation (1-2 sentences) of the key grammar or word-order pattern demonstrated. Write the explanation in USER_LANGUAGE (the learner's native language).
@@ -120,16 +107,31 @@ For each sentence, provide a brief explanation (1-2 sentences) of the key gramma
 - Set to `null` for very simple sentences where the structure is obvious (e.g., single-word greetings, basic "Hello!" sentences)
 - Keep explanations concise and practical — highlight the one thing a learner should notice
 
+## Explanation Accuracy (CRITICAL)
+
+When explaining grammar elements (particles, prepositions, verb forms, etc.), describe the function they serve **in this specific sentence**, not a different function they can have in other contexts.
+
+Many grammar elements have multiple functions. Picking the wrong one teaches incorrect rules. Before writing an explanation, verify: "Is this the actual grammatical role of this element in THIS sentence?"
+
+**Common mistakes to avoid:**
+
+- **Japanese に (ni)**: Has different functions — location of existence (with いる/ある), destination (with 行く/来る), time marker, indirect object. Do not call it a "destination marker" when it marks location of existence, or vice versa.
+- **Japanese が (ga)**: Marks the subject — of existence (with いる/ある), of ability (with できる), of preference (with 好き), or introduces new information. Do not describe it as marking "preference" when it marks the subject of existence.
+- **Japanese で (de)**: Marks location of action, means/instrument, or cause/reason. Do not confuse these usages.
+- **German prepositions**: Many take different cases depending on meaning (e.g., "in" + accusative for direction vs "in" + dative for location). Identify the correct case and meaning for the sentence.
+- **Korean particles**: 을/를 (object), 이/가 (subject), 은/는 (topic) serve distinct roles. Do not conflate them.
+
+**General principle**: If a grammar element has multiple functions, identify which function applies in this specific sentence. A wrong explanation is worse than no explanation — set the field to `null` if you are unsure.
+
 # Output Format
 
 Return an object with a `sentences` array. Each sentence object must include:
 
 - `sentence`: The complete sentence in the target language
 - `translation`: The translation in the native language
-- `romanization`: Roman letter representation for non-Roman scripts, or `null` for Roman scripts
 - `explanation`: Brief grammar/structure explanation in USER_LANGUAGE, or `null` for trivially simple sentences
 
-**Example for Spanish (Roman script):**
+**Example for Spanish:**
 
 ```json
 {
@@ -137,20 +139,18 @@ Return an object with a `sentences` array. Each sentence object must include:
     {
       "sentence": "Mi hermana trabaja en un hospital.",
       "translation": "My sister works at a hospital.",
-      "romanization": null,
       "explanation": "In Spanish, possessive adjectives like 'mi' (my) come before the noun, just like in English."
     },
     {
       "sentence": "¿Dónde está la estación de tren?",
       "translation": "Where is the train station?",
-      "romanization": null,
       "explanation": "'Estar' is used for location. Questions in Spanish are framed with ¿...? and the verb often comes before the subject."
     }
   ]
 }
 ```
 
-**Example for Japanese (non-Roman script):**
+**Example for Japanese:**
 
 ```json
 {
@@ -158,13 +158,11 @@ Return an object with a `sentences` array. Each sentence object must include:
     {
       "sentence": "私の姉は病院で働いています。",
       "translation": "My older sister works at a hospital.",
-      "romanization": "Watashi no ane wa byouin de hataraite imasu.",
       "explanation": "Japanese uses the particle 'de' (で) to indicate where an action takes place, similar to 'at' or 'in' in English."
     },
     {
       "sentence": "駅はどこですか？",
       "translation": "Where is the station?",
-      "romanization": "Eki wa doko desu ka?",
       "explanation": "In Japanese, the question word 'doko' (where) comes after the topic, and 'ka' at the end marks it as a question."
     }
   ]
@@ -191,3 +189,5 @@ Return an object with a `sentences` array. Each sentence object must include:
 4. **Vocabulary coverage**: Ensure the provided vocabulary words are naturally distributed across the sentences. Each vocabulary word should appear in at least one sentence.
 
 5. **Difficulty-appropriate complexity**: Match sentence complexity to the inferred level from the lesson context. Beginner lessons should have simple sentences; advanced lessons can have complex ones.
+
+6. **No language mixing**: Every sentence must be 100% in TARGET_LANGUAGE. Double-check that no USER_LANGUAGE words slipped in — especially small function words (prepositions, conjunctions, articles) that may look similar across languages.
