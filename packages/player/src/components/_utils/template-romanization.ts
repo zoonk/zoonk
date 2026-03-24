@@ -20,7 +20,11 @@ export function getTemplateRomanization({
   }
 
   const escaped = answer.replaceAll(/[.*+?^${}()|[\]\\]/g, String.raw`\$&`);
-  const wordBoundaryPattern = new RegExp(`(?<=\\s|^)${escaped}(?=\\s|[.,!?;:]|$)`);
+
+  const wordBoundaryPattern = new RegExp(
+    `(?<=\\s|^|["'«「])${escaped}(?=\\s|[.,!?;:)"'»」]|$)`,
+    "i",
+  );
 
   return sentence.replace(wordBoundaryPattern, "____");
 }

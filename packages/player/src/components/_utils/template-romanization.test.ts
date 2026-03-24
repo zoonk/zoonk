@@ -99,4 +99,19 @@ describe(getTemplateRomanization, () => {
       "tōkyō wa ____ desu.",
     );
   });
+
+  it("handles case differences between answer and sentence", () => {
+    expect(
+      getTemplateRomanization({
+        answer: "ohayō gozaimasu",
+        sentence: 'Asa hachi-ji desu. "Ohayō gozaimasu."',
+      }),
+    ).toBe('Asa hachi-ji desu. "____."');
+  });
+
+  it("handles answer inside quotes", () => {
+    expect(
+      getTemplateRomanization({ answer: "konbanwa", sentence: 'Yoru shichi-ji desu. "Konbanwa."' }),
+    ).toBe('Yoru shichi-ji desu. "____."');
+  });
 });
