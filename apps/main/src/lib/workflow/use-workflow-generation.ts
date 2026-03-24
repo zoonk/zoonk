@@ -13,6 +13,8 @@ import {
 } from "./generation-store";
 import { useSSE } from "./use-sse";
 
+const MAX_STREAM_RECONNECTS = 5;
+
 export function useWorkflowGeneration<TStep extends string = string>(config: {
   autoTrigger?: boolean;
   completionStep?: TStep;
@@ -41,22 +43,47 @@ export function useWorkflowGeneration<TStep extends string = string>(config: {
     handleStreamMessage(msg, dispatch, completionStep),
   );
 
+  /**
+   * When the SSE stream closes, check whether we received the expected completion
+   * step. If not, the stream was likely cut off (e.g., Vercel function timeout)
+   * while the workflow is still running. In that case, schedule a reconnection
+   * instead of showing an error — the workflow library supports resumable streaming
+   * via `startIndex`, so the next connection picks up where the previous one ended.
+   */
   const handleComplete = useEffectEvent(() => {
-    dispatch({ completionStep, type: "streamEnded" });
+    const isComplete = !completionStep || state.completedSteps.includes(completionStep);
+
+    if (isComplete || state.reconnectCount >= MAX_STREAM_RECONNECTS) {
+      dispatch({ completionStep, type: "streamEnded" });
+      return;
+    }
+
+    setTimeout(() => {
+      dispatch({ type: "reconnect" });
+    }, 1000);
   });
 
   const handleError = useEffectEvent((err: Error) =>
     dispatch({ error: err.message, type: "setError" }),
   );
 
-  const { resetIndex } = useSSE<StreamMessage<TStep>>(
-    state.status === "streaming" && state.runId ? `${statusUrl}?runId=${state.runId}` : null,
-    {
-      onComplete: handleComplete,
-      onError: handleError,
-      onMessage: handleMessage,
-    },
-  );
+  /**
+   * Include `_rc` (reconnect count) in the URL so that when `reconnectCount`
+   * changes, React re-triggers the `useSSE` effect with a fresh connection.
+   * The server ignores this parameter (Zod strips unknown keys).
+   * `indexRef` inside `useSSE` persists across effect cycles, so the new
+   * connection resumes from the last received message index.
+   */
+  const sseUrl =
+    state.status === "streaming" && state.runId
+      ? `${statusUrl}?runId=${state.runId}&_rc=${state.reconnectCount}`
+      : null;
+
+  const { resetIndex } = useSSE<StreamMessage<TStep>>(sseUrl, {
+    onComplete: handleComplete,
+    onError: handleError,
+    onMessage: handleMessage,
+  });
 
   const startTrigger = useEffectEvent(async () => {
     dispatch({ type: "triggerStart" });
