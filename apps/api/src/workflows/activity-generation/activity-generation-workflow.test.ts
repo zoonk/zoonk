@@ -269,6 +269,128 @@ describe(activityGenerationWorkflow, () => {
       expect(generateActivityExplanation).not.toHaveBeenCalled();
       expect(generateActivityCustom).not.toHaveBeenCalled();
     });
+
+    test("returns early when all activities are completed", async () => {
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        kind: "core",
+        organizationId,
+        title: `All Completed Lesson ${randomUUID()}`,
+      });
+
+      await Promise.all([
+        activityFixture({
+          generationStatus: "completed",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Completed Explanation ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "completed",
+          kind: "quiz",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Completed Quiz ${randomUUID()}`,
+        }),
+      ]);
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      expect(generateActivityExplanation).not.toHaveBeenCalled();
+      expect(generateActivityCustom).not.toHaveBeenCalled();
+    });
+
+    test("returns early when all activities are completed or running", async () => {
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        kind: "core",
+        organizationId,
+        title: `Mixed Done Lesson ${randomUUID()}`,
+      });
+
+      await Promise.all([
+        activityFixture({
+          generationStatus: "completed",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Completed ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "running",
+          kind: "quiz",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Running ${randomUUID()}`,
+        }),
+      ]);
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      expect(generateActivityExplanation).not.toHaveBeenCalled();
+      expect(generateActivityCustom).not.toHaveBeenCalled();
+    });
+
+    test("does not skip when some activities are pending", async () => {
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        kind: "core",
+        organizationId,
+        title: `Has Pending Lesson ${randomUUID()}`,
+      });
+
+      await Promise.all([
+        activityFixture({
+          generationStatus: "completed",
+          kind: "quiz",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Completed ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Pending ${randomUUID()}`,
+        }),
+      ]);
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      expect(generateActivityExplanation).toHaveBeenCalled();
+    });
+
+    test("does not skip when some activities are failed", async () => {
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        kind: "core",
+        organizationId,
+        title: `Has Failed Lesson ${randomUUID()}`,
+      });
+
+      await Promise.all([
+        activityFixture({
+          generationStatus: "completed",
+          kind: "quiz",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Completed ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "failed",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Failed ${randomUUID()}`,
+        }),
+      ]);
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      expect(generateActivityExplanation).toHaveBeenCalled();
+    });
   });
 
   describe("workflow failure handling", () => {

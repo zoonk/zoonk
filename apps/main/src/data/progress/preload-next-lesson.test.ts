@@ -1,10 +1,10 @@
 import { API_URL } from "@zoonk/utils/url";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
-import { getNextLessonId } from "./get-next-lesson-id";
+import { getNextLesson } from "./get-next-lesson";
 import { preloadNextLesson } from "./preload-next-lesson";
 
-vi.mock("./get-next-lesson-id", () => ({
-  getNextLessonId: vi.fn(),
+vi.mock("./get-next-lesson", () => ({
+  getNextLesson: vi.fn(),
 }));
 
 describe(preloadNextLesson, () => {
@@ -19,8 +19,8 @@ describe(preloadNextLesson, () => {
     vi.unstubAllGlobals();
   });
 
-  test("calls API with correct lessonId and cookie when next lesson exists", async () => {
-    vi.mocked(getNextLessonId).mockResolvedValue(42);
+  test("calls API with correct lessonId and cookie when next lesson needs generation", async () => {
+    vi.mocked(getNextLesson).mockResolvedValue({ id: 42, needsGeneration: true });
 
     await preloadNextLesson(BigInt(1), "session=abc123");
 
@@ -35,7 +35,15 @@ describe(preloadNextLesson, () => {
   });
 
   test("does not call API when no next lesson exists", async () => {
-    vi.mocked(getNextLessonId).mockResolvedValue(null);
+    vi.mocked(getNextLesson).mockResolvedValue(null);
+
+    await preloadNextLesson(BigInt(1), "session=abc123");
+
+    expect(mockFetch).not.toHaveBeenCalled();
+  });
+
+  test("does not call API when next lesson does not need generation", async () => {
+    vi.mocked(getNextLesson).mockResolvedValue({ id: 42, needsGeneration: false });
 
     await preloadNextLesson(BigInt(1), "session=abc123");
 
@@ -43,7 +51,7 @@ describe(preloadNextLesson, () => {
   });
 
   test("silently handles fetch errors without throwing", async () => {
-    vi.mocked(getNextLessonId).mockResolvedValue(42);
+    vi.mocked(getNextLesson).mockResolvedValue({ id: 42, needsGeneration: true });
     mockFetch.mockRejectedValue(new Error("network error"));
 
     await expect(preloadNextLesson(BigInt(1), "session=abc123")).resolves.toBeUndefined();

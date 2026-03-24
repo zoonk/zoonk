@@ -23,6 +23,20 @@ export async function activityGenerationWorkflow(lessonId: number): Promise<void
       throw new FatalError("No activities found for lesson");
     }
 
+    /**
+     * Skip the entire workflow when every activity is already handled.
+     * "completed" means generation finished; "running" means another workflow
+     * run is actively generating it. We only need to proceed when at least
+     * one activity is "pending" or "failed".
+     */
+    const allDone = activities.every(
+      (a) => a.generationStatus === "completed" || a.generationStatus === "running",
+    );
+
+    if (allDone) {
+      return;
+    }
+
     const lessonKind = firstActivity.lesson.kind;
 
     if (lessonKind === "language") {
