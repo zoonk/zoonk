@@ -2157,6 +2157,11 @@ msgctxt "THvPMp"
 msgid "This usually takes a few seconds"
 msgstr "Isso geralmente leva alguns segundos"
 
+#: src/app/generate/layout.tsx
+msgctxt "/tq5fR"
+msgid "Creating content"
+msgstr "Criando conteúdo"
+
 #: src/app/privacy/page.tsx
 msgctxt "iql85X"
 msgid "Read Zoonk's privacy policy to understand how we collect, use, and protect your personal information."

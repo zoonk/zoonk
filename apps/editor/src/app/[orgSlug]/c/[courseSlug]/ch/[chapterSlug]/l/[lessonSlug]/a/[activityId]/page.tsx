@@ -2,6 +2,7 @@ import { BackLink, BackLinkSkeleton } from "@/components/back-link";
 import { getLesson } from "@/data/lessons/get-lesson";
 import { Container, ContainerBody } from "@zoonk/ui/components/container";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
+import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { Suspense } from "react";
 
@@ -43,6 +44,17 @@ function ActivityPlaceholderSkeleton() {
       <Skeleton className="mx-auto h-5 w-48" />
     </div>
   );
+}
+
+export async function generateMetadata({ params }: ActivityPageProps): Promise<Metadata> {
+  const { chapterSlug, courseSlug, lessonSlug, orgSlug } = await params;
+  const { data: lesson } = await getLesson({ chapterSlug, courseSlug, lessonSlug, orgSlug });
+
+  if (!lesson) {
+    return {};
+  }
+
+  return { title: lesson.title };
 }
 
 export default function ActivityPage(props: ActivityPageProps) {

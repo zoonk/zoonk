@@ -11,7 +11,7 @@ import "@zoonk/ui/globals.css";
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "",
+    default: "Zoonk",
     template: "%s | Zoonk",
   },
 };
