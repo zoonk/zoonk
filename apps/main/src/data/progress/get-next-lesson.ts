@@ -1,11 +1,19 @@
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 
+type NextLesson = { id: number; needsGeneration: boolean };
+
 /**
  * Given an activityId, finds the next lesson in course order.
- * Returns the lessonId or null if no next lesson exists.
+ * Returns the lesson id and whether it still needs generation,
+ * or null if no next lesson exists.
+ *
+ * `needsGeneration` is true when the lesson itself is pending/failed
+ * or when any of its activities are pending/failed. This allows
+ * callers to skip triggering the preload workflow when generation
+ * is already complete or in progress.
  */
-export async function getNextLessonId(activityId: bigint): Promise<number | null> {
+export async function getNextLesson(activityId: bigint): Promise<NextLesson | null> {
   const { data: activity, error } = await safeAsync(() =>
     prisma.activity.findUnique({
       include: {
@@ -26,6 +34,15 @@ export async function getNextLessonId(activityId: bigint): Promise<number | null
 
   const { data: nextLesson } = await safeAsync(() =>
     prisma.lesson.findFirst({
+      include: {
+        _count: {
+          select: {
+            activities: {
+              where: { generationStatus: { in: ["pending", "failed"] } },
+            },
+          },
+        },
+      },
       orderBy: [{ chapter: { position: "asc" } }, { position: "asc" }],
       where: {
         OR: [
@@ -46,5 +63,14 @@ export async function getNextLessonId(activityId: bigint): Promise<number | null
     }),
   );
 
-  return nextLesson?.id ?? null;
+  if (!nextLesson) {
+    return null;
+  }
+
+  const needsGeneration =
+    nextLesson.generationStatus === "pending" ||
+    nextLesson.generationStatus === "failed" ||
+    nextLesson._count.activities > 0;
+
+  return { id: nextLesson.id, needsGeneration };
 }
