@@ -58,7 +58,6 @@ export async function GenerateCourseSuggestionContent({
           generationRunId={suggestion.generationRunId}
           generationStatus={suggestion.generationStatus}
           suggestionId={suggestionId}
-          targetLanguage={suggestion.targetLanguage}
         />
       </ContainerBody>
     </Container>

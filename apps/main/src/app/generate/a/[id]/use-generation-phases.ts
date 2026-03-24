@@ -1,11 +1,10 @@
 "use client";
 
 import { type PhaseStatus, enforcePhaseProgression } from "@/lib/generation-phases";
+import { type PhaseName, getPhaseOrder } from "@/lib/generation/activity-generation-phase-config";
 import {
   PHASE_ICONS,
-  type PhaseName,
   calculateWeightedProgress,
-  getPhaseOrder,
   getPhaseStatus,
 } from "@/lib/generation/activity-generation-phases";
 import { type ActivityStepName } from "@/lib/workflow/config";

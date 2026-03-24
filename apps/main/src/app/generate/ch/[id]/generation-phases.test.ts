@@ -1,45 +1,59 @@
 import { describe, expect, test } from "vitest";
-import { getPhaseOrder, getPhaseStatus } from "./generation-phases";
+import { calculateWeightedProgress, getPhaseOrder, getPhaseStatus } from "./generation-phases";
 
 describe("chapter generation phases", () => {
-  test("uses vocabulary-specific tail phases for language courses", () => {
-    const phases = getPhaseOrder({
-      completedSteps: ["getLessonActivities"],
-      currentStep: "generateVocabularyContent",
-      targetLanguage: "fr",
-    });
+  test("returns all 3 chapter phases in order", () => {
+    const phases = getPhaseOrder();
 
-    expect(phases).toContain("buildingWordList");
-    expect(phases).toContain("addingPronunciation");
-    expect(phases).toContain("recordingAudio");
-    expect(phases).not.toContain("writingContent");
-    expect(phases).not.toContain("preparingVisuals");
-    expect(phases).not.toContain("creatingImages");
+    expect(phases).toEqual(["gettingReady", "preparingLessons", "savingLessons"]);
   });
 
-  test("keeps non-language tail phases for regular chapters", () => {
-    const phases = getPhaseOrder({
-      completedSteps: ["getLessonActivities"],
-      currentStep: "generateExplanationContent",
-      targetLanguage: null,
-    });
-
-    expect(phases).toContain("writingContent");
-    expect(phases).toContain("preparingVisuals");
-    expect(phases).toContain("creatingImages");
-    expect(phases).not.toContain("buildingWordList");
-    expect(phases).not.toContain("addingPronunciation");
-    expect(phases).not.toContain("recordingAudio");
+  test("marks gettingReady as active when its step is the current step", () => {
+    const status = getPhaseStatus("gettingReady", [], "getChapter");
+    expect(status).toBe("active");
   });
 
-  test("marks buildingWordList as active for vocabulary steps", () => {
+  test("marks preparingLessons as active when generateLessons is in progress", () => {
     const status = getPhaseStatus(
-      "buildingWordList",
-      ["setActivityAsRunning"],
-      "generateVocabularyContent",
-      "fr",
+      "preparingLessons",
+      ["getChapter", "setChapterAsRunning"],
+      "generateLessons",
     );
 
     expect(status).toBe("active");
+  });
+
+  test("marks savingLessons as completed when all its steps are done", () => {
+    const status = getPhaseStatus(
+      "savingLessons",
+      [
+        "getChapter",
+        "setChapterAsRunning",
+        "generateLessons",
+        "addLessons",
+        "setChapterAsCompleted",
+      ],
+      null,
+    );
+
+    expect(status).toBe("completed");
+  });
+
+  test("returns 0 progress at start", () => {
+    const progress = calculateWeightedProgress([], null);
+    expect(progress).toBe(0);
+  });
+
+  test("returns 100 progress when all steps are complete", () => {
+    const allSteps = [
+      "getChapter",
+      "setChapterAsRunning",
+      "generateLessons",
+      "addLessons",
+      "setChapterAsCompleted",
+    ] as const;
+
+    const progress = calculateWeightedProgress([...allSteps], null);
+    expect(progress).toBe(100);
   });
 });

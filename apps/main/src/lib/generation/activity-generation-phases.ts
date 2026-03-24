@@ -4,12 +4,10 @@ import {
   getPhaseStatus as getStatus,
 } from "@/lib/generation-phases";
 import {
-  type FirstActivityKind,
   type PhaseName,
   getPhaseOrder,
   getPhaseSteps,
   getPhaseWeights,
-  inferFirstActivityKind,
 } from "@/lib/generation/activity-generation-phase-config";
 import { type ActivityStepName } from "@/lib/workflow/config";
 import { type ActivityKind } from "@zoonk/db";
@@ -25,9 +23,6 @@ import {
   PaletteIcon,
   PenLineIcon,
 } from "lucide-react";
-
-export type { FirstActivityKind, PhaseName };
-export { getPhaseOrder, getPhaseSteps, inferFirstActivityKind };
 
 export const PHASE_ICONS: Record<PhaseName, LucideIcon> = {
   addingPronunciation: MicIcon,

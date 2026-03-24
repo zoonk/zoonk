@@ -20,30 +20,6 @@ export type PhaseName =
   | "recordingAudio"
   | "finishing";
 
-export type FirstActivityKind = "explanation" | "custom" | "vocabulary";
-
-const CUSTOM_INFERENCE_STEPS = new Set(["generateCustomContent", "setCustomAsCompleted"]);
-
-export function inferFirstActivityKind(params: {
-  completedSteps: readonly string[];
-  currentStep: string | null;
-  targetLanguage: string | null;
-}): FirstActivityKind {
-  if (params.targetLanguage !== null) {
-    return "vocabulary";
-  }
-
-  const seenSteps = params.currentStep
-    ? [...params.completedSteps, params.currentStep]
-    : params.completedSteps;
-
-  if (seenSteps.some((step) => CUSTOM_INFERENCE_STEPS.has(step))) {
-    return "custom";
-  }
-
-  return "explanation";
-}
-
 export function getPhaseOrder(kind: ActivityKind): PhaseName[] {
   if (kind === "vocabulary" || kind === "translation") {
     return [

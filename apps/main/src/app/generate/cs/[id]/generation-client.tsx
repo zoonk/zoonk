@@ -11,7 +11,7 @@ import {
   GenerationTimelineSubtitle,
   GenerationTimelineTitle,
 } from "@/components/generation/generation-progress";
-import { type CourseWorkflowStepName, FIRST_ACTIVITY_COMPLETION_STEP } from "@/lib/workflow/config";
+import { type CourseWorkflowStepName } from "@/lib/workflow/config";
 import { useAnimatedProgress } from "@/lib/workflow/use-animated-progress";
 import { useCompletionRedirect } from "@/lib/workflow/use-completion-redirect";
 import { useThinkingMessages } from "@/lib/workflow/use-thinking-messages";
@@ -27,18 +27,16 @@ export function GenerationClient({
   generationRunId,
   generationStatus,
   suggestionId,
-  targetLanguage,
 }: {
   courseSlug: string;
   generationRunId: string | null;
   generationStatus: GenerationStatus;
   suggestionId: number;
-  targetLanguage: string | null;
 }) {
   const t = useExtracted();
 
   const generation = useWorkflowGeneration<CourseWorkflowStepName>({
-    completionStep: FIRST_ACTIVITY_COMPLETION_STEP,
+    completionStep: "completeCourseSetup",
     initialRunId: generationRunId,
     initialStatus: generationStatus === "running" ? "streaming" : "idle",
     statusUrl: `${API_URL}/v1/workflows/course-generation/status`,
@@ -49,7 +47,6 @@ export function GenerationClient({
   const { activePhaseNames, phases, progress, thinkingGenerators } = useGenerationPhases(
     generation.completedSteps,
     generation.currentStep,
-    targetLanguage,
     generation.startedSteps,
   );
 
@@ -71,7 +68,7 @@ export function GenerationClient({
         <GenerationTimelineHeader>
           <GenerationTimelineTitle>{t("Creating your course")}</GenerationTimelineTitle>
           <GenerationTimelineSubtitle>
-            {t("This usually takes 1-3 minutes")}
+            {t("This usually takes about a minute")}
           </GenerationTimelineSubtitle>
           <GenerationTimelineProgress label={t("Progress")} value={displayProgress} />
         </GenerationTimelineHeader>
