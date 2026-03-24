@@ -1,7 +1,9 @@
+import { type ActivityKind } from "@zoonk/db";
 import { FatalError, getWorkflowMetadata } from "workflow";
 import { coreActivityWorkflow } from "./core-activity-workflow";
 import { customActivityWorkflow } from "./custom-activity-workflow";
 import { languageActivityWorkflow } from "./language-activity-workflow";
+import { completeActivityStep } from "./steps/complete-activity-step";
 import { getLessonActivitiesStep } from "./steps/get-lesson-activities-step";
 import { handleWorkflowFailureStep } from "./steps/handle-workflow-failure-step";
 
@@ -23,17 +25,32 @@ export async function activityGenerationWorkflow(lessonId: number): Promise<void
       throw new FatalError("No activities found for lesson");
     }
 
+    const allCompleted = activities.every((a) => a.generationStatus === "completed");
+
     /**
-     * Skip the entire workflow when every activity is already handled.
-     * "completed" means generation finished; "running" means another workflow
-     * run is actively generating it. We only need to proceed when at least
-     * one activity is "pending" or "failed".
+     * All activities are already completed — stream the completion events
+     * so the client can detect this and redirect to the activity page.
      */
-    const allDone = activities.every(
+    if (allCompleted) {
+      const uniqueKinds = [...new Set(activities.map((a) => a.kind))] as ActivityKind[];
+
+      await Promise.allSettled(
+        uniqueKinds.map((kind) => completeActivityStep(activities, workflowRunId, kind)),
+      );
+
+      return;
+    }
+
+    /**
+     * Skip if all remaining activities are either completed or actively running.
+     * "running" means another workflow instance is generating them — we skip
+     * to avoid conflicts. We only proceed when at least one is "pending" or "failed".
+     */
+    const allHandled = activities.every(
       (a) => a.generationStatus === "completed" || a.generationStatus === "running",
     );
 
-    if (allDone) {
+    if (allHandled) {
       return;
     }
 

@@ -34,13 +34,15 @@ function createStepVisualsResult(
   };
 }
 
+const writeMock = vi.fn().mockResolvedValue(null);
+
 vi.mock("workflow", () => ({
   FatalError: class FatalError extends Error {},
   getWorkflowMetadata: vi.fn().mockReturnValue({ workflowRunId: "test-run-id" }),
   getWritable: vi.fn().mockReturnValue({
     getWriter: () => ({
       releaseLock: vi.fn(),
-      write: vi.fn().mockResolvedValue(null),
+      write: writeMock,
     }),
   }),
   workflowStep: vi.fn().mockImplementation((_name: string, fn: unknown) => fn),
@@ -270,7 +272,7 @@ describe(activityGenerationWorkflow, () => {
       expect(generateActivityCustom).not.toHaveBeenCalled();
     });
 
-    test("returns early when all activities are completed", async () => {
+    test("streams completion events when all activities are completed", async () => {
       const testLesson = await lessonFixture({
         chapterId: chapter.id,
         kind: "core",
@@ -284,6 +286,7 @@ describe(activityGenerationWorkflow, () => {
           kind: "explanation",
           lessonId: testLesson.id,
           organizationId,
+          position: 0,
           title: `Completed Explanation ${randomUUID()}`,
         }),
         activityFixture({
@@ -291,6 +294,7 @@ describe(activityGenerationWorkflow, () => {
           kind: "quiz",
           lessonId: testLesson.id,
           organizationId,
+          position: 1,
           title: `Completed Quiz ${randomUUID()}`,
         }),
       ]);
@@ -299,9 +303,16 @@ describe(activityGenerationWorkflow, () => {
 
       expect(generateActivityExplanation).not.toHaveBeenCalled();
       expect(generateActivityCustom).not.toHaveBeenCalled();
+
+      const completionCall = writeMock.mock.calls.find(
+        (call: string[]) =>
+          call[0]?.includes('"step":"setActivityAsCompleted"') &&
+          call[0]?.includes('"status":"completed"'),
+      );
+      expect(completionCall).toBeDefined();
     });
 
-    test("returns early when all activities are completed or running", async () => {
+    test("returns early without streaming completion when activities are completed or running", async () => {
       const testLesson = await lessonFixture({
         chapterId: chapter.id,
         kind: "core",
@@ -330,6 +341,13 @@ describe(activityGenerationWorkflow, () => {
 
       expect(generateActivityExplanation).not.toHaveBeenCalled();
       expect(generateActivityCustom).not.toHaveBeenCalled();
+
+      const completionCall = writeMock.mock.calls.find(
+        (call: string[]) =>
+          call[0]?.includes('"step":"setActivityAsCompleted"') &&
+          call[0]?.includes('"status":"completed"'),
+      );
+      expect(completionCall).toBeUndefined();
     });
 
     test("does not skip when some activities are pending", async () => {

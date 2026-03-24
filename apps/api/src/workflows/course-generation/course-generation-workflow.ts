@@ -6,6 +6,7 @@ import { setupCourse } from "./_internal/setup-course";
 import { checkExistingCourseStep } from "./steps/check-existing-course-step";
 import { getCourseSuggestionStep } from "./steps/get-course-suggestion-step";
 import { handleCourseFailureStep } from "./steps/handle-failure-step";
+import { streamStatus } from "./stream-status";
 
 export async function courseGenerationWorkflow(courseSuggestionId: number): Promise<void> {
   "use workflow";
@@ -14,17 +15,27 @@ export async function courseGenerationWorkflow(courseSuggestionId: number): Prom
 
   const suggestion = await getCourseSuggestionStep(courseSuggestionId);
 
-  if (!suggestion) {
+  // Skip if actively running to avoid conflicts with another workflow instance.
+  if (suggestion.generationStatus === "running") {
+    return;
+  }
+
+  // Already completed — stream the completion step so the client can redirect.
+  if (suggestion.generationStatus === "completed") {
+    await streamStatus({ status: "completed", step: "setFirstActivityAsCompleted" });
     return;
   }
 
   const existingCourse = await checkExistingCourseStep(suggestion);
 
-  // Skip completed courses (nothing to do) and running courses (avoid conflicts)
-  if (
-    existingCourse?.generationStatus === "completed" ||
-    existingCourse?.generationStatus === "running"
-  ) {
+  // Skip running courses to avoid conflicts with another workflow instance.
+  if (existingCourse?.generationStatus === "running") {
+    return;
+  }
+
+  // Already completed — stream the completion step so the client can redirect.
+  if (existingCourse?.generationStatus === "completed") {
+    await streamStatus({ status: "completed", step: "setFirstActivityAsCompleted" });
     return;
   }
 

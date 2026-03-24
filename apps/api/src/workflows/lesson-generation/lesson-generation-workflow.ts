@@ -58,11 +58,14 @@ export async function lessonGenerationWorkflow(lessonId: number): Promise<void> 
   const { workflowRunId } = getWorkflowMetadata();
   const context = await getLessonStep(lessonId);
 
+  // Skip if actively running to avoid conflicts with another workflow instance.
   if (context.generationStatus === "running") {
     return;
   }
 
+  // Already completed with activities — stream the completion step so the client can redirect.
   if (context.generationStatus === "completed" && context._count.activities > 0) {
+    await streamStatus({ status: "completed", step: "setLessonAsCompleted" });
     return;
   }
 
