@@ -17,6 +17,7 @@
     "./tasks/activities/language/translation": "./src/tasks/activities/language/activity-translation.ts",
     "./tasks/activities/language/sentences": "./src/tasks/activities/language/activity-sentences.ts",
     "./tasks/activities/language/vocabulary": "./src/tasks/activities/language/activity-vocabulary.ts",
+    "./tasks/activities/language/word-alternative-translations": "./src/tasks/activities/language/activity-word-alternative-translations.ts",
     "./tasks/audio": "./src/tasks/audio/generate-language-audio.ts",
     "./tasks/chapters/language-lessons": "./src/tasks/chapters/language-chapter-lessons.ts",
     "./tasks/chapters/lessons": "./src/tasks/chapters/chapter-lessons.ts",

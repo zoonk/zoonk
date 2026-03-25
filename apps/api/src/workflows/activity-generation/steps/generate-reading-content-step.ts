@@ -18,7 +18,10 @@ import { type VocabularyWord } from "@zoonk/ai/tasks/activities/language/vocabul
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { resolveActivityForGeneration } from "./_utils/content-step-helpers";
-import { enrichReadingSentenceVariants } from "./_utils/enrich-reading-sentence-variants";
+import {
+  type VocabularyVariantWord,
+  enrichReadingSentenceVariants,
+} from "./_utils/enrich-reading-sentence-variants";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
 import { setActivityAsRunningStep } from "./set-activity-as-running-step";
@@ -32,16 +35,18 @@ export type ReadingSentence = GeneratedReadingSentence & {
 };
 
 /**
- * Fetches lesson words with their translation for the given user language.
- * Used as a fallback when the current vocabulary workflow run produced no words,
- * so that the reading workflow can still generate sentences from existing data.
+ * Fetches lesson words with their translation and alternativeTranslations
+ * from the database. Used both as the source for sentence generation when
+ * the current vocabulary run produced no words, and for sentence variant
+ * derivation which needs the enriched alternativeTranslations that the
+ * vocabulary enrichment step already wrote to the DB.
  */
-async function getFallbackLessonWords(params: {
+async function getLessonWords(params: {
   lessonId: number;
   organizationId: number | null;
   targetLanguage: string;
   userLanguage: string;
-}): Promise<VocabularyWord[]> {
+}): Promise<VocabularyVariantWord[]> {
   if (!params.organizationId) {
     return [];
   }
@@ -133,7 +138,7 @@ async function resolveSourceWords(input: {
   }
 
   const { data: fallbackWords, error } = await safeAsync(() =>
-    getFallbackLessonWords({
+    getLessonWords({
       lessonId: input.lessonId,
       organizationId: input.organizationId,
       targetLanguage: input.targetLanguage,
@@ -226,9 +231,20 @@ export async function generateReadingContentStep(
         )
       : { data: null };
 
+  // Fetch enriched words from DB for variant derivation. The in-memory
+  // sourceWords may not have alternativeTranslations since the vocabulary
+  // AI task no longer generates them — they're filled by the enrichment
+  // step which has already written them to the database by this point.
+  const enrichedWords = await getLessonWords({
+    lessonId: activity.lessonId,
+    organizationId: course.organization?.id ?? null,
+    targetLanguage,
+    userLanguage,
+  });
+
   const sentences = enrichReadingSentenceVariants(
     mergeSentenceVariants(generatedSentences, sentenceVariantsResult?.data.sentences),
-    sourceWords.words,
+    enrichedWords,
   );
 
   if (error || !result || sentences.length === 0 || !hasValidSentences(sentences)) {

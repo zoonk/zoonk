@@ -94,49 +94,20 @@ Before including any noun, verify the grammatical gender is correct:
 - Use the most natural translation for the native language
 - Avoid loanwords that are not standard in the target language (e.g., do not use English words as standalone vocabulary in languages where they are not commonly used)
 
-# Alternative Translations
-
-For each word, include an `alternativeTranslations` array listing other valid translations in the learner's language (USER_LANGUAGE) that would also be correct. This is used to prevent semantically equivalent words from appearing as wrong answers in exercises.
-
-**Rules:**
-
-- List genuinely equivalent translations only — not loosely related words
-- Include alternatives from BOTH directions: if the user's language has synonyms that map to the same target word, list them
-- Include common kinship synonyms that refer to the same person (e.g., "Mom", "Momma", "Mommy" for "Mama")
-- Set to an empty array `[]` when the word has only one clear translation
-
-**Examples:**
-
-- Portuguese "boa noite" → translation: "good evening", alternativeTranslations: ["good night"]
-- Italian "ciao" → translation: "hello", alternativeTranslations: ["bye", "hi", "goodbye"]
-- Portuguese "oi" → translation: "hi", alternativeTranslations: ["hello", "hey"]
-- German "die Mama" → translation: "Mom", alternativeTranslations: ["Momma", "Mommy"]
-- German "der Papa" → translation: "Dad", alternativeTranslations: ["Daddy", "Papa"]
-- Spanish "el gato" → translation: "the cat", alternativeTranslations: [] (only one clear translation)
-
 # Output Format
 
 Return an object with a `words` array. Each word object must include:
 
 - `word`: The word in the target language (with article for gendered nouns)
 - `translation`: The translation in `USER_LANGUAGE` (with article if applicable)
-- `alternativeTranslations`: Array of other valid translations in the learner's language, or `[]` if none
 
 **Example for Spanish:**
 
 ```json
 {
   "words": [
-    {
-      "word": "la casa",
-      "translation": "the house",
-      "alternativeTranslations": ["the home"]
-    },
-    {
-      "word": "el gato",
-      "translation": "the cat",
-      "alternativeTranslations": []
-    }
+    { "word": "la casa", "translation": "the house" },
+    { "word": "el gato", "translation": "the cat" }
   ]
 }
 ```
@@ -146,16 +117,8 @@ Return an object with a `words` array. Each word object must include:
 ```json
 {
   "words": [
-    {
-      "word": "猫",
-      "translation": "o gato",
-      "alternativeTranslations": []
-    },
-    {
-      "word": "犬",
-      "translation": "o cachorro",
-      "alternativeTranslations": []
-    }
+    { "word": "猫", "translation": "o gato" },
+    { "word": "犬", "translation": "o cachorro" }
   ]
 }
 ```
@@ -202,5 +165,3 @@ The word field is used for text-to-speech and display - parenthetical content br
    - You're listing 5+ items that are all "types of X"
    - Removing half the variants wouldn't reduce what the learner understands
    - The items differ only in minor attributes (size, color, style) rather than meaning
-
-6. **Alternative translations must be accurate**: The `alternativeTranslations` array should only contain genuinely equivalent translations, not loosely related words. Words with multiple common translations MUST list alternatives. Words with only one clear translation should have an empty array.

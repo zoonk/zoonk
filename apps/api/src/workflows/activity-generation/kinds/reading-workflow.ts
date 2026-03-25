@@ -1,6 +1,7 @@
 import { type VocabularyWord } from "@zoonk/ai/tasks/activities/language/vocabulary";
 import { settled } from "@zoonk/utils/settled";
 import { completeActivityStep } from "../steps/complete-activity-step";
+import { enrichSentenceWordTranslationsStep } from "../steps/enrich-sentence-word-translations-step";
 import { generateReadingAudioStep } from "../steps/generate-reading-audio-step";
 import { generateReadingContentStep } from "../steps/generate-reading-content-step";
 import { generateReadingRomanizationStep } from "../steps/generate-reading-romanization-step";
@@ -49,7 +50,12 @@ export async function readingActivityWorkflow(
     wordMetadata,
   );
 
-  const { wordAudioUrls } = await generateSentenceWordAudioStep(activities, savedSentenceWords);
+  const [wordAudioResult] = await Promise.allSettled([
+    generateSentenceWordAudioStep(activities, savedSentenceWords),
+    enrichSentenceWordTranslationsStep(activities, savedSentenceWords),
+  ]);
+
+  const { wordAudioUrls } = settled(wordAudioResult, { wordAudioUrls: {} });
   await updateSentenceWordEnrichmentsStep(activities, savedSentenceWords, wordAudioUrls);
 
   await completeActivityStep(activities, workflowRunId, "reading");

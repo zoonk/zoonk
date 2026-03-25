@@ -30,12 +30,8 @@ vi.mock("@zoonk/ai/tasks/activities/language/vocabulary", () => ({
   generateActivityVocabulary: vi.fn().mockResolvedValue({
     data: {
       words: [
-        {
-          alternativeTranslations: ["hi"],
-          translation: "hello",
-          word: "hola",
-        },
-        { alternativeTranslations: [], translation: "cat", word: "gato" },
+        { translation: "hello", word: "hola" },
+        { translation: "cat", word: "gato" },
       ],
     },
   }),
@@ -44,6 +40,12 @@ vi.mock("@zoonk/ai/tasks/activities/language/vocabulary", () => ({
 vi.mock("@zoonk/ai/tasks/activities/language/pronunciation", () => ({
   generateActivityPronunciation: vi.fn().mockResolvedValue({
     data: { pronunciation: "OH-lah" },
+  }),
+}));
+
+vi.mock("@zoonk/ai/tasks/activities/language/word-alternative-translations", () => ({
+  generateWordAlternativeTranslations: vi.fn().mockResolvedValue({
+    data: { alternativeTranslations: [] },
   }),
 }));
 
@@ -348,7 +350,7 @@ describe(vocabularyActivityWorkflow, () => {
     expect(result.words).toHaveLength(0);
   });
 
-  test("preserves existing audioUrl when audio step fails but pronunciation succeeds", async () => {
+  test("preserves existing audioUrl when audio step fails but enrichment succeeds", async () => {
     const id = randomUUID().replaceAll("-", "").slice(0, 8);
     const existingWord = `zkeep${id}`;
     const newWord = `znew${id}`;
@@ -364,11 +366,10 @@ describe(vocabularyActivityWorkflow, () => {
 
     const mockWords: VocabularyWord[] = [
       {
-        alternativeTranslations: [],
         translation: "existing",
         word: existingWord,
       },
-      { alternativeTranslations: [], translation: "new", word: newWord },
+      { translation: "new", word: newWord },
     ];
 
     vi.mocked(generateActivityVocabulary).mockResolvedValueOnce({
@@ -419,11 +420,10 @@ describe(vocabularyActivityWorkflow, () => {
 
     const mockWords: VocabularyWord[] = [
       {
-        alternativeTranslations: ["hi"],
         translation: "hello",
         word: existingWord.toLowerCase(),
       },
-      { alternativeTranslations: [], translation: "cat", word: `gato${id}` },
+      { translation: "cat", word: `gato${id}` },
     ];
 
     vi.mocked(generateActivityVocabulary).mockResolvedValueOnce({
@@ -478,7 +478,6 @@ describe(vocabularyActivityWorkflow, () => {
 
     const mockWords: VocabularyWord[] = [
       {
-        alternativeTranslations: [],
         translation: "cat",
         word: existingWord.toLowerCase(),
       },
@@ -534,11 +533,10 @@ describe(vocabularyActivityWorkflow, () => {
 
     const mockWords: VocabularyWord[] = [
       {
-        alternativeTranslations: [],
         translation: "existing",
         word: existingWord,
       },
-      { alternativeTranslations: [], translation: "new", word: newWord },
+      { translation: "new", word: newWord },
     ];
 
     vi.mocked(generateActivityVocabulary).mockResolvedValueOnce({

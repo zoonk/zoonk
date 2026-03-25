@@ -75,9 +75,21 @@ vi.mock("@zoonk/core/audio/generate", () => ({
   }),
 }));
 
+vi.mock("@zoonk/ai/tasks/activities/language/pronunciation", () => ({
+  generateActivityPronunciation: vi.fn().mockResolvedValue({
+    data: { pronunciation: "mocked-pron" },
+  }),
+}));
+
+vi.mock("@zoonk/ai/tasks/activities/language/word-alternative-translations", () => ({
+  generateWordAlternativeTranslations: vi.fn().mockResolvedValue({
+    data: { alternativeTranslations: [] },
+  }),
+}));
+
 const words = [
-  { alternativeTranslations: [], translation: "cat", word: "gato" },
-  { alternativeTranslations: [], translation: "hello", word: "hola" },
+  { translation: "cat", word: "gato" },
+  { translation: "hello", word: "hola" },
 ];
 
 function createSentenceGenerationResult(
@@ -121,6 +133,64 @@ async function fetchLessonActivities(lessonId: number): Promise<LessonActivity[]
   });
 
   return activities.map((activity) => ({ ...activity, id: Number(activity.id) }));
+}
+
+/**
+ * Creates Word, WordTranslation, and LessonWord records in the DB so that
+ * getLessonWords returns enriched words (with alternativeTranslations) for
+ * sentence variant derivation. Each entry maps a word to its translation
+ * and optional alternativeTranslations for the given user language.
+ */
+async function seedLessonWordsInDb(params: {
+  lessonId: number;
+  organizationId: number;
+  targetLanguage: string;
+  userLanguage: string;
+  words: { alternativeTranslations?: string[]; translation: string; word: string }[];
+}): Promise<void> {
+  await Promise.all(
+    params.words.map(async (entry) => {
+      const wordRecord = await prisma.word.upsert({
+        create: {
+          organizationId: params.organizationId,
+          targetLanguage: params.targetLanguage,
+          word: entry.word,
+        },
+        update: {},
+        where: {
+          orgWord: {
+            organizationId: params.organizationId,
+            targetLanguage: params.targetLanguage,
+            word: entry.word,
+          },
+        },
+      });
+
+      await prisma.wordTranslation.upsert({
+        create: {
+          alternativeTranslations: entry.alternativeTranslations ?? [],
+          translation: entry.translation,
+          userLanguage: params.userLanguage,
+          wordId: wordRecord.id,
+        },
+        update: {
+          alternativeTranslations: entry.alternativeTranslations ?? [],
+          translation: entry.translation,
+        },
+        where: {
+          wordTranslation: { userLanguage: params.userLanguage, wordId: wordRecord.id },
+        },
+      });
+
+      await prisma.lessonWord.upsert({
+        create: { lessonId: params.lessonId, wordId: wordRecord.id },
+        update: {},
+        where: {
+          lessonWord: { lessonId: params.lessonId, wordId: wordRecord.id },
+        },
+      });
+    }),
+  );
 }
 
 describe(readingActivityWorkflow, () => {
@@ -292,32 +362,20 @@ describe(readingActivityWorkflow, () => {
     });
 
     const greetingWords = [
-      {
-        alternativeTranslations: [],
-        translation: "Bom dia",
-        word: "Guten Morgen",
-      },
-      {
-        alternativeTranslations: ["Bom dia"],
-        translation: "Boa tarde",
-        word: "Guten Tag",
-      },
-      {
-        alternativeTranslations: [],
-        translation: "Boa noite",
-        word: "Guten Abend",
-      },
-      {
-        alternativeTranslations: [],
-        translation: "Boa noite",
-        word: "Gute Nacht",
-      },
-      {
-        alternativeTranslations: [],
-        translation: "mãe",
-        word: "Mama",
-      },
+      { translation: "Bom dia", word: "Guten Morgen" },
+      { alternativeTranslations: ["Bom dia"], translation: "Boa tarde", word: "Guten Tag" },
+      { translation: "Boa noite", word: "Guten Abend" },
+      { translation: "Boa noite", word: "Gute Nacht" },
+      { translation: "mãe", word: "Mama" },
     ];
+
+    await seedLessonWordsInDb({
+      lessonId: lesson.id,
+      organizationId,
+      targetLanguage: "es",
+      userLanguage: "pt",
+      words: greetingWords,
+    });
 
     const activities = await fetchLessonActivities(lesson.id);
     await readingActivityWorkflow(activities, "test-run-id", greetingWords, [], []);
@@ -383,17 +441,17 @@ describe(readingActivityWorkflow, () => {
     });
 
     const greetingWords = [
-      {
-        alternativeTranslations: [],
-        translation: "Bom dia",
-        word: "Guten Morgen",
-      },
-      {
-        alternativeTranslations: ["Bom dia"],
-        translation: "Boa tarde",
-        word: "Guten Tag",
-      },
+      { translation: "Bom dia", word: "Guten Morgen" },
+      { alternativeTranslations: ["Bom dia"], translation: "Boa tarde", word: "Guten Tag" },
     ];
+
+    await seedLessonWordsInDb({
+      lessonId: lesson.id,
+      organizationId,
+      targetLanguage: "es",
+      userLanguage: "pt",
+      words: greetingWords,
+    });
 
     const activities = await fetchLessonActivities(lesson.id);
     await readingActivityWorkflow(activities, "test-run-id", greetingWords, [], []);
@@ -454,22 +512,18 @@ describe(readingActivityWorkflow, () => {
     });
 
     const greetingWords = [
-      {
-        alternativeTranslations: [],
-        translation: "Bom dia",
-        word: "Guten Morgen",
-      },
-      {
-        alternativeTranslations: ["Bom dia"],
-        translation: "Boa tarde",
-        word: "Guten Tag",
-      },
-      {
-        alternativeTranslations: [],
-        translation: "senhor",
-        word: "Herr",
-      },
+      { translation: "Bom dia", word: "Guten Morgen" },
+      { alternativeTranslations: ["Bom dia"], translation: "Boa tarde", word: "Guten Tag" },
+      { translation: "senhor", word: "Herr" },
     ];
+
+    await seedLessonWordsInDb({
+      lessonId: lesson.id,
+      organizationId,
+      targetLanguage: "es",
+      userLanguage: "pt",
+      words: greetingWords,
+    });
 
     const activities = await fetchLessonActivities(lesson.id);
     await readingActivityWorkflow(activities, "test-run-id", greetingWords, [], []);
@@ -831,8 +885,8 @@ describe(readingActivityWorkflow, () => {
     });
 
     const japaneseWords = [
-      { alternativeTranslations: [], translation: "cat", word: word1 },
-      { alternativeTranslations: [], translation: "dog", word: word2 },
+      { translation: "cat", word: word1 },
+      { translation: "dog", word: word2 },
     ];
 
     const activities = await fetchLessonActivities(lesson.id);

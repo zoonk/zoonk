@@ -12,7 +12,6 @@ const FALLBACK_MODELS = ["google/gemini-3.1-pro-preview", "openai/gpt-5.4"];
 const schema = z.object({
   words: z.array(
     z.object({
-      alternativeTranslations: z.array(z.string()),
       translation: z.string(),
       word: z.string(),
     }),

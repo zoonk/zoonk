@@ -1,9 +1,9 @@
 import { type VocabularyWord } from "@zoonk/ai/tasks/activities/language/vocabulary";
 import { settled } from "@zoonk/utils/settled";
 import { completeActivityStep } from "../steps/complete-activity-step";
+import { enrichVocabularyWordTranslationsStep } from "../steps/enrich-vocabulary-word-translations-step";
 import { generateVocabularyAudioStep } from "../steps/generate-vocabulary-audio-step";
 import { generateVocabularyContentStep } from "../steps/generate-vocabulary-content-step";
-import { generateVocabularyPronunciationStep } from "../steps/generate-vocabulary-pronunciation-step";
 import { generateVocabularyRomanizationStep } from "../steps/generate-vocabulary-romanization-step";
 import { type LessonActivity } from "../steps/get-lesson-activities-step";
 import { saveVocabularyWordsStep } from "../steps/save-vocabulary-words-step";
@@ -26,23 +26,16 @@ export async function vocabularyActivityWorkflow(
 
   const { savedWords } = await saveVocabularyWordsStep(activities, words, workflowRunId);
 
-  const [pronunciationResult, audioResult, romanizationResult] = await Promise.allSettled([
-    generateVocabularyPronunciationStep(activities, words),
+  const [_enrichmentResult, audioResult, romanizationResult] = await Promise.allSettled([
+    enrichVocabularyWordTranslationsStep(activities, savedWords),
     generateVocabularyAudioStep(activities, words),
     generateVocabularyRomanizationStep(activities, words),
   ]);
 
-  const { pronunciations } = settled(pronunciationResult, { pronunciations: {} });
   const { wordAudioUrls } = settled(audioResult, { wordAudioUrls: {} });
   const { romanizations } = settled(romanizationResult, { romanizations: {} });
 
-  await updateVocabularyEnrichmentsStep(
-    activities,
-    savedWords,
-    pronunciations,
-    wordAudioUrls,
-    romanizations,
-  );
+  await updateVocabularyEnrichmentsStep(activities, savedWords, wordAudioUrls, romanizations);
   await completeActivityStep(activities, workflowRunId, "vocabulary");
   await completeActivityStep(activities, workflowRunId, "translation");
 

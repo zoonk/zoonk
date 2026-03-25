@@ -36,13 +36,8 @@ vi.mock("@zoonk/ai/tasks/activities/language/vocabulary", () => ({
   generateActivityVocabulary: vi.fn().mockResolvedValue({
     data: {
       words: [
-        {
-          alternativeTranslations: ["hi"],
-          romanization: "o-la",
-          translation: "hello",
-          word: "hola",
-        },
-        { alternativeTranslations: [], romanization: "ga-to", translation: "cat", word: "gato" },
+        { translation: "hello", word: "hola" },
+        { translation: "cat", word: "gato" },
       ],
     },
   }),
@@ -142,6 +137,12 @@ vi.mock("@zoonk/ai/tasks/activities/language/sentence-variants", () => ({
 vi.mock("@zoonk/ai/tasks/activities/language/pronunciation", () => ({
   generateActivityPronunciation: vi.fn().mockResolvedValue({
     data: { pronunciation: "OH-lah" },
+  }),
+}));
+
+vi.mock("@zoonk/ai/tasks/activities/language/word-alternative-translations", () => ({
+  generateWordAlternativeTranslations: vi.fn().mockResolvedValue({
+    data: { alternativeTranslations: [] },
   }),
 }));
 
