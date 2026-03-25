@@ -1,6 +1,7 @@
+import { createStepStream } from "@/workflows/_shared/stream-status";
+import { type ActivityStepName } from "@/workflows/config";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
-import { streamError, streamStatus } from "../stream-status";
 import { type LessonActivity } from "./get-lesson-activities-step";
 
 const NEIGHBOR_RANGE = 3;
@@ -31,18 +32,20 @@ export async function getNeighboringConceptsStep(activities: LessonActivity[]): 
     return [];
   }
 
-  await streamStatus({ status: "started", step: "getNeighboringConcepts" });
+  await using stream = createStepStream<ActivityStepName>();
+
+  await stream.status({ status: "started", step: "getNeighboringConcepts" });
 
   const { data: concepts, error } = await safeAsync(() =>
     getNeighboringConcepts(activity.lesson.chapterId, activity.lesson.position),
   );
 
   if (error) {
-    await streamError({ reason: "dbFetchFailed", step: "getNeighboringConcepts" });
+    await stream.error({ reason: "dbFetchFailed", step: "getNeighboringConcepts" });
     return [];
   }
 
-  await streamStatus({ status: "completed", step: "getNeighboringConcepts" });
+  await stream.status({ status: "completed", step: "getNeighboringConcepts" });
 
   return concepts;
 }

@@ -1,7 +1,8 @@
+import { createStepStream } from "@/workflows/_shared/stream-status";
+import { type ActivityStepName } from "@/workflows/config";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { emptyToNull, extractUniqueSentenceWords } from "@zoonk/utils/string";
-import { streamError, streamStatus } from "../stream-status";
 import { fetchExistingWordCasing } from "./_utils/fetch-existing-word-casing";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { type LessonActivity } from "./get-lesson-activities-step";
@@ -69,7 +70,9 @@ export async function saveSentenceWordsStep(
     return { savedSentenceWords: [] };
   }
 
-  await streamStatus({ status: "started", step: "saveSentenceWords" });
+  await using stream = createStepStream<ActivityStepName>();
+
+  await stream.status({ status: "started", step: "saveSentenceWords" });
 
   const course = activity.lesson.chapter.course;
 
@@ -86,7 +89,7 @@ export async function saveSentenceWordsStep(
   ).filter((word) => wordMetadata[word]);
 
   if (uniqueWords.length === 0) {
-    await streamStatus({ status: "completed", step: "saveSentenceWords" });
+    await stream.status({ status: "completed", step: "saveSentenceWords" });
     return { savedSentenceWords: [] };
   }
 
@@ -110,11 +113,11 @@ export async function saveSentenceWordsStep(
   );
 
   if (error) {
-    await streamError({ reason: "dbSaveFailed", step: "saveSentenceWords" });
+    await stream.error({ reason: "dbSaveFailed", step: "saveSentenceWords" });
     await handleActivityFailureStep({ activityId: activity.id });
     return { savedSentenceWords: [] };
   }
 
-  await streamStatus({ status: "completed", step: "saveSentenceWords" });
+  await stream.status({ status: "completed", step: "saveSentenceWords" });
   return { savedSentenceWords };
 }

@@ -1,10 +1,11 @@
+import { createStepStream } from "@/workflows/_shared/stream-status";
+import { type ActivityStepName } from "@/workflows/config";
 import { generateActivityRomanization } from "@zoonk/ai/tasks/activities/language/romanization";
 import { generateTranslation } from "@zoonk/ai/tasks/activities/language/translation";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { needsRomanization } from "@zoonk/utils/languages";
 import { extractUniqueSentenceWords } from "@zoonk/utils/string";
-import { streamError, streamStatus } from "../stream-status";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
@@ -177,7 +178,9 @@ export async function generateSentenceWordMetadataStep(
     return { wordMetadata: {} };
   }
 
-  await streamStatus({ status: "started", step: "generateSentenceWordMetadata" });
+  await using stream = createStepStream<ActivityStepName>();
+
+  await stream.status({ status: "started", step: "generateSentenceWordMetadata" });
 
   const { isComplete, wordMetadata } = await buildWordMetadata({
     organizationId: course.organization.id,
@@ -187,11 +190,11 @@ export async function generateSentenceWordMetadataStep(
   });
 
   if (!isComplete) {
-    await streamError({ reason: "enrichmentFailed", step: "generateSentenceWordMetadata" });
+    await stream.error({ reason: "enrichmentFailed", step: "generateSentenceWordMetadata" });
     await handleActivityFailureStep({ activityId: activity.id });
     return { wordMetadata };
   }
 
-  await streamStatus({ status: "completed", step: "generateSentenceWordMetadata" });
+  await stream.status({ status: "completed", step: "generateSentenceWordMetadata" });
   return { wordMetadata };
 }

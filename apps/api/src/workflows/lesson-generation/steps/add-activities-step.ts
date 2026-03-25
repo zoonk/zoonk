@@ -1,3 +1,5 @@
+import { createStepStream } from "@/workflows/_shared/stream-status";
+import { type LessonStepName } from "@/workflows/config";
 import { type GeneratedActivity } from "@zoonk/ai/tasks/lessons/activities";
 import {
   type ActivityCreateManyInput,
@@ -7,7 +9,6 @@ import {
 } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { isTTSSupportedLanguage } from "@zoonk/utils/languages";
-import { streamError, streamStatus } from "../stream-status";
 import { type LessonContext } from "./get-lesson-step";
 
 type ActivityEntry = {
@@ -97,7 +98,9 @@ export async function addActivitiesStep(input: {
 }): Promise<void> {
   "use step";
 
-  await streamStatus({ status: "started", step: "addActivities" });
+  await using stream = createStepStream<LessonStepName>();
+
+  await stream.status({ status: "started", step: "addActivities" });
 
   const activitiesToCreate = getActivitiesForKind(
     input.lessonKind,
@@ -121,9 +124,9 @@ export async function addActivitiesStep(input: {
   const { error } = await safeAsync(() => prisma.activity.createMany({ data: activitiesData }));
 
   if (error) {
-    await streamError({ reason: "dbSaveFailed", step: "addActivities" });
+    await stream.error({ reason: "dbSaveFailed", step: "addActivities" });
     throw error;
   }
 
-  await streamStatus({ status: "completed", step: "addActivities" });
+  await stream.status({ status: "completed", step: "addActivities" });
 }

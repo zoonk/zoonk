@@ -1,10 +1,11 @@
+import { createStepStream } from "@/workflows/_shared/stream-status";
+import { type ActivityStepName } from "@/workflows/config";
 import { type ActivityGrammarContentSchema } from "@zoonk/ai/tasks/activities/language/grammar-content";
 import {
   type ActivityGrammarEnrichmentSchema,
   generateActivityGrammarEnrichment,
 } from "@zoonk/ai/tasks/activities/language/grammar-enrichment";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
-import { streamError, streamStatus } from "../stream-status";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
@@ -26,7 +27,9 @@ export async function generateGrammarEnrichmentStep(
     return { enrichment: null };
   }
 
-  await streamStatus({ status: "started", step: "generateGrammarEnrichment" });
+  await using stream = createStepStream<ActivityStepName>();
+
+  await stream.status({ status: "started", step: "generateGrammarEnrichment" });
 
   const course = activity.lesson.chapter.course;
   const targetLanguage = course.targetLanguage ?? course.title;
@@ -47,11 +50,11 @@ export async function generateGrammarEnrichmentStep(
 
   if (error || !result) {
     const reason = error ? "aiGenerationFailed" : "aiEmptyResult";
-    await streamError({ reason, step: "generateGrammarEnrichment" });
+    await stream.error({ reason, step: "generateGrammarEnrichment" });
     await handleActivityFailureStep({ activityId: activity.id });
     return { enrichment: null };
   }
 
-  await streamStatus({ status: "completed", step: "generateGrammarEnrichment" });
+  await stream.status({ status: "completed", step: "generateGrammarEnrichment" });
   return { enrichment: result.data };
 }

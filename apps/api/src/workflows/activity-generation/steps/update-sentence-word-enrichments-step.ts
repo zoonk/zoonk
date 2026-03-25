@@ -1,6 +1,7 @@
+import { createStepStream } from "@/workflows/_shared/stream-status";
+import { type ActivityStepName } from "@/workflows/config";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
-import { streamError, streamStatus } from "../stream-status";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
@@ -19,7 +20,9 @@ export async function updateSentenceWordEnrichmentsStep(
     return;
   }
 
-  await streamStatus({ status: "started", step: "updateSentenceWordEnrichments" });
+  await using stream = createStepStream<ActivityStepName>();
+
+  await stream.status({ status: "started", step: "updateSentenceWordEnrichments" });
 
   const updates = savedSentenceWords
     .filter((saved) => wordAudioIds[saved.word])
@@ -33,10 +36,10 @@ export async function updateSentenceWordEnrichmentsStep(
   const { error } = await safeAsync(() => prisma.$transaction(updates));
 
   if (error) {
-    await streamError({ reason: "dbSaveFailed", step: "updateSentenceWordEnrichments" });
+    await stream.error({ reason: "dbSaveFailed", step: "updateSentenceWordEnrichments" });
     await handleActivityFailureStep({ activityId: activity.id });
     return;
   }
 
-  await streamStatus({ status: "completed", step: "updateSentenceWordEnrichments" });
+  await stream.status({ status: "completed", step: "updateSentenceWordEnrichments" });
 }

@@ -1,6 +1,7 @@
+import { createStepStream } from "@/workflows/_shared/stream-status";
+import { type LessonStepName } from "@/workflows/config";
 import { prisma } from "@zoonk/db";
 import { FatalError } from "workflow";
-import { streamError, streamStatus } from "../stream-status";
 
 async function getLessonForGeneration(lessonId: number) {
   return prisma.lesson.findUnique({
@@ -17,16 +18,18 @@ export type LessonContext = NonNullable<Awaited<ReturnType<typeof getLessonForGe
 export async function getLessonStep(lessonId: number): Promise<LessonContext> {
   "use step";
 
-  await streamStatus({ status: "started", step: "getLesson" });
+  await using stream = createStepStream<LessonStepName>();
+
+  await stream.status({ status: "started", step: "getLesson" });
 
   const lesson = await getLessonForGeneration(lessonId);
 
   if (!lesson) {
-    await streamError({ reason: "notFound", step: "getLesson" });
+    await stream.error({ reason: "notFound", step: "getLesson" });
     throw new FatalError("Lesson not found");
   }
 
-  await streamStatus({ status: "completed", step: "getLesson" });
+  await stream.status({ status: "completed", step: "getLesson" });
 
   return lesson;
 }

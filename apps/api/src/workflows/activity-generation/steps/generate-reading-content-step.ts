@@ -1,7 +1,10 @@
 import {
+  type StepStream,
   type WorkflowErrorReason,
+  createStepStream,
   getAIResultErrorReason,
 } from "@/workflows/_shared/stream-status";
+import { type ActivityStepName } from "@/workflows/config";
 import {
   type ActivitySentenceVariantInput,
   type ActivitySentenceVariantsSchema,
@@ -14,7 +17,6 @@ import {
 import { type VocabularyWord } from "@zoonk/ai/tasks/activities/language/vocabulary";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
-import { streamError, streamStatus } from "../stream-status";
 import { resolveActivityForGeneration } from "./_utils/content-step-helpers";
 import { enrichReadingSentenceVariants } from "./_utils/enrich-reading-sentence-variants";
 import { type LessonActivity } from "./get-lesson-activities-step";
@@ -125,10 +127,11 @@ async function resolveSourceWords(input: {
 }
 
 async function handleReadingGenerationFailure(
+  stream: StepStream<ActivityStepName>,
   activityId: number,
   reason: WorkflowErrorReason,
 ): Promise<{ sentences: ReadingSentence[] }> {
-  await streamError({ reason, step: "generateSentences" });
+  await stream.error({ reason, step: "generateSentences" });
   await handleActivityFailureStep({ activityId });
   return { sentences: [] };
 }
@@ -151,7 +154,9 @@ export async function generateReadingContentStep(
   const { activity } = resolved;
   const course = activity.lesson.chapter.course;
 
-  await streamStatus({ status: "started", step: "generateSentences" });
+  await using stream = createStepStream<ActivityStepName>();
+
+  await stream.status({ status: "started", step: "generateSentences" });
   await setActivityAsRunningStep({ activityId: activity.id, workflowRunId });
 
   const targetLanguage = course.targetLanguage ?? "";
@@ -167,7 +172,7 @@ export async function generateReadingContentStep(
 
   if (sourceWords.error || sourceWords.words.length === 0) {
     const reason = sourceWords.error ? "dbFetchFailed" : "noSourceData";
-    return handleReadingGenerationFailure(activity.id, reason);
+    return await handleReadingGenerationFailure(stream, activity.id, reason);
   }
 
   const { data: result, error } = await safeAsync(() =>
@@ -206,9 +211,9 @@ export async function generateReadingContentStep(
 
   if (error || !result || sentences.length === 0 || !hasValidSentences(sentences)) {
     const reason = getAIResultErrorReason(error, result);
-    return handleReadingGenerationFailure(activity.id, reason);
+    return await handleReadingGenerationFailure(stream, activity.id, reason);
   }
 
-  await streamStatus({ status: "completed", step: "generateSentences" });
+  await stream.status({ status: "completed", step: "generateSentences" });
   return { sentences };
 }

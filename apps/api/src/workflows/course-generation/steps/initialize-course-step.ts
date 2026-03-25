@@ -1,8 +1,9 @@
+import { createStepStream } from "@/workflows/_shared/stream-status";
+import { type CourseWorkflowStepName } from "@/workflows/config";
 import { type CourseSuggestion, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { ensureLocaleSuffix, normalizeString, toSlug } from "@zoonk/utils/string";
-import { streamError, streamStatus } from "../stream-status";
 
 export type CourseContext = {
   courseId: number;
@@ -19,7 +20,9 @@ export async function initializeCourseStep(input: {
 }): Promise<CourseContext> {
   "use step";
 
-  await streamStatus({ status: "started", step: "initializeCourse" });
+  await using stream = createStepStream<CourseWorkflowStepName>();
+
+  await stream.status({ status: "started", step: "initializeCourse" });
 
   const { suggestion, workflowRunId } = input;
 
@@ -30,7 +33,7 @@ export async function initializeCourseStep(input: {
   );
 
   if (orgError || !aiOrg) {
-    await streamError({ reason: "dbFetchFailed", step: "initializeCourse" });
+    await stream.error({ reason: "dbFetchFailed", step: "initializeCourse" });
     throw orgError ?? new Error("AI organization not found");
   }
 
@@ -46,7 +49,7 @@ export async function initializeCourseStep(input: {
   );
 
   if (updateError) {
-    await streamError({ reason: "dbSaveFailed", step: "initializeCourse" });
+    await stream.error({ reason: "dbSaveFailed", step: "initializeCourse" });
     throw updateError;
   }
 
@@ -71,11 +74,11 @@ export async function initializeCourseStep(input: {
   );
 
   if (createError || !course) {
-    await streamError({ reason: "dbSaveFailed", step: "initializeCourse" });
+    await stream.error({ reason: "dbSaveFailed", step: "initializeCourse" });
     throw createError ?? new Error("Failed to create course");
   }
 
-  await streamStatus({ status: "completed", step: "initializeCourse" });
+  await stream.status({ status: "completed", step: "initializeCourse" });
 
   return {
     courseId: course.id,

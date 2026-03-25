@@ -1,6 +1,7 @@
+import { createStepStream } from "@/workflows/_shared/stream-status";
+import { type ActivityStepName } from "@/workflows/config";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
-import { streamError, streamStatus } from "../stream-status";
 
 export async function setActivityAsRunningStep(input: {
   activityId: bigint | number;
@@ -8,7 +9,9 @@ export async function setActivityAsRunningStep(input: {
 }): Promise<void> {
   "use step";
 
-  await streamStatus({ status: "started", step: "setActivityAsRunning" });
+  await using stream = createStepStream<ActivityStepName>();
+
+  await stream.status({ status: "started", step: "setActivityAsRunning" });
 
   const { error } = await safeAsync(() =>
     prisma.activity.update({
@@ -21,9 +24,9 @@ export async function setActivityAsRunningStep(input: {
   );
 
   if (error) {
-    await streamError({ reason: "dbSaveFailed", step: "setActivityAsRunning" });
+    await stream.error({ reason: "dbSaveFailed", step: "setActivityAsRunning" });
     throw error;
   }
 
-  await streamStatus({ status: "completed", step: "setActivityAsRunning" });
+  await stream.status({ status: "completed", step: "setActivityAsRunning" });
 }

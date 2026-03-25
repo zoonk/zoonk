@@ -1,8 +1,12 @@
-import { type WorkflowErrorReason } from "@/workflows/_shared/stream-status";
+import {
+  type StepStream,
+  type WorkflowErrorReason,
+  createStepStream,
+} from "@/workflows/_shared/stream-status";
+import { type ActivityStepName } from "@/workflows/config";
 import { type StepVisualSchema, generateStepVisuals } from "@zoonk/ai/tasks/steps/visual";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
-import { streamError, streamStatus } from "../stream-status";
 import { type ActivitySteps } from "./_utils/get-activity-steps";
 import { buildVisualRows } from "./_utils/visual-rows";
 import { type LessonActivity } from "./get-lesson-activities-step";
@@ -27,10 +31,11 @@ async function saveVisualsToDB(
 }
 
 async function handleVisualsError(
+  stream: StepStream<ActivityStepName>,
   activityId: bigint | number,
   reason: WorkflowErrorReason,
 ): Promise<{ visuals: StepVisual[] }> {
-  await streamError({ reason, step: "generateVisuals" });
+  await stream.error({ reason, step: "generateVisuals" });
   await handleActivityFailureStep({ activityId });
   return { visuals: [] };
 }
@@ -41,9 +46,11 @@ export async function generateVisualsForActivityStep(
 ): Promise<{ visuals: StepVisual[] }> {
   "use step";
 
+  await using stream = createStepStream<ActivityStepName>();
+
   if (steps.length === 0) {
-    await streamStatus({ status: "started", step: "generateVisuals" });
-    await streamStatus({ status: "completed", step: "generateVisuals" });
+    await stream.status({ status: "started", step: "generateVisuals" });
+    await stream.status({ status: "completed", step: "generateVisuals" });
     return { visuals: [] };
   }
 
@@ -58,12 +65,12 @@ export async function generateVisualsForActivityStep(
   });
 
   if (dbSteps.length === 0) {
-    await streamStatus({ status: "started", step: "generateVisuals" });
-    await streamStatus({ status: "completed", step: "generateVisuals" });
+    await stream.status({ status: "started", step: "generateVisuals" });
+    await stream.status({ status: "completed", step: "generateVisuals" });
     return { visuals: [] };
   }
 
-  await streamStatus({ status: "started", step: "generateVisuals" });
+  await stream.status({ status: "started", step: "generateVisuals" });
 
   const { data: result, error } = await safeAsync(() =>
     generateStepVisuals({
@@ -78,7 +85,7 @@ export async function generateVisualsForActivityStep(
 
   if (error || !result) {
     const reason = error ? "aiGenerationFailed" : "aiEmptyResult";
-    return handleVisualsError(activity.id, reason);
+    return await handleVisualsError(stream, activity.id, reason);
   }
 
   const visualRows = buildVisualRows({
@@ -88,16 +95,16 @@ export async function generateVisualsForActivityStep(
   });
 
   if (!visualRows) {
-    return handleVisualsError(activity.id, "contentValidationFailed");
+    return await handleVisualsError(stream, activity.id, "contentValidationFailed");
   }
 
   const { error: saveError } = await saveVisualsToDB(visualRows);
 
   if (saveError) {
-    return handleVisualsError(activity.id, "dbSaveFailed");
+    return await handleVisualsError(stream, activity.id, "dbSaveFailed");
   }
 
-  await streamStatus({ status: "completed", step: "generateVisuals" });
+  await stream.status({ status: "completed", step: "generateVisuals" });
 
   return { visuals: result.data.visuals };
 }

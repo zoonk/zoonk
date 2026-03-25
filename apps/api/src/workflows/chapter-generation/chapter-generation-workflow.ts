@@ -1,4 +1,4 @@
-import { streamStatus as sharedStreamStatus } from "@/workflows/_shared/stream-status";
+import { streamSkipStep } from "@/workflows/_shared/stream-skip-step";
 import { activityGenerationWorkflow } from "@/workflows/activity-generation/activity-generation-workflow";
 import { handleChapterFailureStep } from "@/workflows/course-generation/steps/handle-failure-step";
 import { lessonGenerationWorkflow } from "@/workflows/lesson-generation/lesson-generation-workflow";
@@ -29,7 +29,7 @@ export async function chapterGenerationWorkflow(chapterId: number): Promise<void
 
   // Already completed — stream the completion step so the client can redirect.
   if (context.generationStatus === "completed") {
-    await sharedStreamStatus({ status: "completed", step: "setFirstActivityAsCompleted" });
+    await streamSkipStep("setFirstActivityAsCompleted");
     return;
   }
 

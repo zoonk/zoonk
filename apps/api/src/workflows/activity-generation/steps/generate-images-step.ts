@@ -1,8 +1,9 @@
+import { createStepStream } from "@/workflows/_shared/stream-status";
+import { type ActivityStepName } from "@/workflows/config";
 import { generateVisualStepImage } from "@zoonk/core/steps/visual-image";
 import { prisma } from "@zoonk/db";
 import { getString, toRecord } from "@zoonk/utils/json";
 import { rejected } from "@zoonk/utils/settled";
-import { streamStatus } from "../stream-status";
 import { type StepVisual } from "./generate-visuals-step";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
@@ -84,9 +85,11 @@ export async function generateImagesForActivityStep(
 ): Promise<StepVisualWithUrl[]> {
   "use step";
 
+  await using stream = createStepStream<ActivityStepName>();
+
   if (visuals.length === 0) {
-    await streamStatus({ status: "started", step: "generateImages" });
-    await streamStatus({ status: "completed", step: "generateImages" });
+    await stream.status({ status: "started", step: "generateImages" });
+    await stream.status({ status: "completed", step: "generateImages" });
     return [];
   }
 
@@ -103,12 +106,12 @@ export async function generateImagesForActivityStep(
   const imageSteps = dbSteps.filter((step) => getString(step.content, "kind") === "image");
 
   if (imageSteps.length === 0) {
-    await streamStatus({ status: "started", step: "generateImages" });
-    await streamStatus({ status: "completed", step: "generateImages" });
+    await stream.status({ status: "started", step: "generateImages" });
+    await stream.status({ status: "completed", step: "generateImages" });
     return visuals;
   }
 
-  await streamStatus({ status: "started", step: "generateImages" });
+  await stream.status({ status: "started", step: "generateImages" });
 
   const { hadFailure, results } = await generateAndSaveImages({
     imageSteps,
@@ -120,7 +123,7 @@ export async function generateImagesForActivityStep(
     await handleActivityFailureStep({ activityId: activity.id });
   }
 
-  await streamStatus({ status: "completed", step: "generateImages" });
+  await stream.status({ status: "completed", step: "generateImages" });
 
   return buildVisualsWithUrls(visuals, imageSteps, results);
 }

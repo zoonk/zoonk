@@ -1,9 +1,10 @@
+import { createStepStream } from "@/workflows/_shared/stream-status";
+import { type ActivityStepName } from "@/workflows/config";
 import { type ActivityGrammarContentSchema } from "@zoonk/ai/tasks/activities/language/grammar-content";
 import { type ActivityGrammarEnrichmentSchema } from "@zoonk/ai/tasks/activities/language/grammar-enrichment";
 import { assertStepContent } from "@zoonk/core/steps/content-contract";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
-import { streamError, streamStatus } from "../stream-status";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
@@ -136,17 +137,19 @@ export async function saveGrammarStepsStep(
     return;
   }
 
-  await streamStatus({ status: "started", step: "saveGrammarSteps" });
+  await using stream = createStepStream<ActivityStepName>();
+
+  await stream.status({ status: "started", step: "saveGrammarSteps" });
 
   const steps = buildGrammarSteps(activity.id, content, enrichment, romanizations);
 
   const { error } = await safeAsync(() => prisma.step.createMany({ data: steps }));
 
   if (error) {
-    await streamError({ reason: "dbSaveFailed", step: "saveGrammarSteps" });
+    await stream.error({ reason: "dbSaveFailed", step: "saveGrammarSteps" });
     await handleActivityFailureStep({ activityId: activity.id });
     return;
   }
 
-  await streamStatus({ status: "completed", step: "saveGrammarSteps" });
+  await stream.status({ status: "completed", step: "saveGrammarSteps" });
 }

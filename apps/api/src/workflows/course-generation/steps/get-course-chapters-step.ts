@@ -1,11 +1,14 @@
+import { createStepStream } from "@/workflows/_shared/stream-status";
+import { type CourseWorkflowStepName } from "@/workflows/config";
 import { type Chapter, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
-import { streamError, streamStatus } from "../stream-status";
 
 export async function getCourseChaptersStep(courseId: number): Promise<Chapter[]> {
   "use step";
 
-  await streamStatus({ status: "started", step: "getExistingChapters" });
+  await using stream = createStepStream<CourseWorkflowStepName>();
+
+  await stream.status({ status: "started", step: "getExistingChapters" });
 
   const { data: chapters, error } = await safeAsync(() =>
     prisma.chapter.findMany({
@@ -15,11 +18,11 @@ export async function getCourseChaptersStep(courseId: number): Promise<Chapter[]
   );
 
   if (error || !chapters) {
-    await streamError({ reason: "dbFetchFailed", step: "getExistingChapters" });
+    await stream.error({ reason: "dbFetchFailed", step: "getExistingChapters" });
     throw error ?? new Error("Failed to fetch existing chapters");
   }
 
-  await streamStatus({ status: "completed", step: "getExistingChapters" });
+  await stream.status({ status: "completed", step: "getExistingChapters" });
 
   return chapters;
 }

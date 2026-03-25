@@ -1,3 +1,4 @@
+import { streamSkipStep } from "@/workflows/_shared/stream-skip-step";
 import { chapterGenerationWorkflow } from "@/workflows/chapter-generation/chapter-generation-workflow";
 import { logError } from "@zoonk/utils/logger";
 import { FatalError, getWorkflowMetadata } from "workflow";
@@ -6,7 +7,6 @@ import { setupCourse } from "./_internal/setup-course";
 import { checkExistingCourseStep } from "./steps/check-existing-course-step";
 import { getCourseSuggestionStep } from "./steps/get-course-suggestion-step";
 import { handleCourseFailureStep } from "./steps/handle-failure-step";
-import { streamStatus } from "./stream-status";
 
 export async function courseGenerationWorkflow(courseSuggestionId: number): Promise<void> {
   "use workflow";
@@ -22,7 +22,7 @@ export async function courseGenerationWorkflow(courseSuggestionId: number): Prom
 
   // Already completed — stream the completion step so the client can redirect.
   if (suggestion.generationStatus === "completed") {
-    await streamStatus({ status: "completed", step: "setFirstActivityAsCompleted" });
+    await streamSkipStep("setFirstActivityAsCompleted");
     return;
   }
 
@@ -35,7 +35,7 @@ export async function courseGenerationWorkflow(courseSuggestionId: number): Prom
 
   // Already completed — stream the completion step so the client can redirect.
   if (existingCourse?.generationStatus === "completed") {
-    await streamStatus({ status: "completed", step: "setFirstActivityAsCompleted" });
+    await streamSkipStep("setFirstActivityAsCompleted");
     return;
   }
 

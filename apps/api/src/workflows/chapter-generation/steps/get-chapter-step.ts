@@ -1,6 +1,7 @@
+import { createStepStream } from "@/workflows/_shared/stream-status";
+import { type ChapterStepName } from "@/workflows/config";
 import { prisma } from "@zoonk/db";
 import { FatalError } from "workflow";
-import { streamError, streamStatus } from "../stream-status";
 
 async function getChapterForGeneration(chapterId: number) {
   return prisma.chapter.findUnique({
@@ -36,18 +37,19 @@ export type ChapterContext = NonNullable<Awaited<ReturnType<typeof getChapterFor
 export async function getChapterStep(chapterId: number): Promise<ChapterContext> {
   "use step";
 
-  await streamStatus({ status: "started", step: "getChapter" });
+  await using stream = createStepStream<ChapterStepName>();
+  await stream.status({ status: "started", step: "getChapter" });
 
   const chapter = await getChapterForGeneration(chapterId);
 
   if (!chapter) {
-    await streamError({ reason: "notFound", step: "getChapter" });
+    await stream.error({ reason: "notFound", step: "getChapter" });
     throw new FatalError("Chapter not found");
   }
 
   const neighboringChapters = await getNeighboringChapters(chapter.courseId, chapter.position);
 
-  await streamStatus({ status: "completed", step: "getChapter" });
+  await stream.status({ status: "completed", step: "getChapter" });
 
   return { ...chapter, neighboringChapters };
 }

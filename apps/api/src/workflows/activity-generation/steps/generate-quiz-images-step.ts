@@ -1,3 +1,5 @@
+import { createStepStream } from "@/workflows/_shared/stream-status";
+import { type ActivityStepName } from "@/workflows/config";
 import { type QuizQuestion, type SelectImageQuestion } from "@zoonk/ai/tasks/activities/core/quiz";
 import { assertStepContent } from "@zoonk/core/steps/content-contract";
 import { generateStepImage } from "@zoonk/core/steps/image";
@@ -5,7 +7,6 @@ import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { isJsonObject, toRecord } from "@zoonk/utils/json";
 import { rejected } from "@zoonk/utils/settled";
-import { streamStatus } from "../stream-status";
 import { findActivitiesByKind } from "./_utils/find-activity-by-kind";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
@@ -86,6 +87,8 @@ export async function generateQuizImagesStep(
     return [];
   }
 
+  await using stream = createStepStream<ActivityStepName>();
+
   const dbSteps = await prisma.step.findMany({
     orderBy: { position: "asc" },
     select: { content: true, id: true },
@@ -93,13 +96,13 @@ export async function generateQuizImagesStep(
   });
 
   if (dbSteps.length === 0) {
-    await streamStatus({ status: "started", step: "generateQuizImages" });
-    await streamStatus({ status: "completed", step: "generateQuizImages" });
+    await stream.status({ status: "started", step: "generateQuizImages" });
+    await stream.status({ status: "completed", step: "generateQuizImages" });
     // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- QuizQuestion is a subtype; url? is optional
     return questions as QuizQuestionWithUrls[];
   }
 
-  await streamStatus({ status: "started", step: "generateQuizImages" });
+  await stream.status({ status: "started", step: "generateQuizImages" });
 
   const orgSlug = activity.lesson.chapter.course.organization?.slug;
 
@@ -143,7 +146,7 @@ export async function generateQuizImagesStep(
     await handleActivityFailureStep({ activityId: activity.id });
   }
 
-  await streamStatus({ status: "completed", step: "generateQuizImages" });
+  await stream.status({ status: "completed", step: "generateQuizImages" });
 
   const updatedSteps = await prisma.step.findMany({
     orderBy: { position: "asc" },

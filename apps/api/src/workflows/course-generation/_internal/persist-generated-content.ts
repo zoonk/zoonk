@@ -1,10 +1,10 @@
+import { streamSkipStep } from "@/workflows/_shared/stream-skip-step";
 import { type Chapter } from "@zoonk/db";
 import { addAlternativeTitlesStep } from "../steps/add-alternative-titles-step";
 import { addCategoriesStep } from "../steps/add-categories-step";
 import { addChaptersStep } from "../steps/add-chapters-step";
 import { type CourseContext } from "../steps/initialize-course-step";
 import { updateCourseStep } from "../steps/update-course-step";
-import { streamStatus } from "../stream-status";
 import { type GeneratedContent } from "./generate-missing-content";
 import { type ExistingCourseContent } from "./get-or-create-course";
 
@@ -15,16 +15,16 @@ async function emitSkippedPersistSteps(
   needsChapters: boolean,
 ) {
   if (!needsCourseUpdate) {
-    await streamStatus({ status: "completed", step: "updateCourse" });
+    await streamSkipStep("updateCourse");
   }
   if (!needsAlternativeTitles) {
-    await streamStatus({ status: "completed", step: "addAlternativeTitles" });
+    await streamSkipStep("addAlternativeTitles");
   }
   if (!needsCategories) {
-    await streamStatus({ status: "completed", step: "addCategories" });
+    await streamSkipStep("addCategories");
   }
   if (!needsChapters) {
-    await streamStatus({ status: "completed", step: "addChapters" });
+    await streamSkipStep("addChapters");
   }
 }
 

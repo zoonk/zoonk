@@ -1,8 +1,9 @@
+import { createStepStream } from "@/workflows/_shared/stream-status";
+import { type CourseWorkflowStepName } from "@/workflows/config";
 import { type CourseSuggestion, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { ensureLocaleSuffix, toSlug } from "@zoonk/utils/string";
-import { streamError, streamStatus } from "../stream-status";
 
 const courseInclude = {
   _count: {
@@ -23,7 +24,9 @@ export async function checkExistingCourseStep(
 ): Promise<ExistingCourse | null> {
   "use step";
 
-  await streamStatus({ status: "started", step: "checkExistingCourse" });
+  await using stream = createStepStream<CourseWorkflowStepName>();
+
+  await stream.status({ status: "started", step: "checkExistingCourse" });
 
   const normalizedSlug = toSlug(suggestion.slug);
 
@@ -48,13 +51,13 @@ export async function checkExistingCourseStep(
   );
 
   if (error) {
-    await streamError({ reason: "dbFetchFailed", step: "checkExistingCourse" });
+    await stream.error({ reason: "dbFetchFailed", step: "checkExistingCourse" });
     throw error;
   }
 
   const [courseMatch, alternativeTitleMatch] = data;
 
-  await streamStatus({ status: "completed", step: "checkExistingCourse" });
+  await stream.status({ status: "completed", step: "checkExistingCourse" });
 
   if (courseMatch) {
     return courseMatch;

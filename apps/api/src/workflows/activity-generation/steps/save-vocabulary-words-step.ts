@@ -1,9 +1,10 @@
+import { createStepStream } from "@/workflows/_shared/stream-status";
+import { type ActivityStepName } from "@/workflows/config";
 import { type VocabularyWord } from "@zoonk/ai/tasks/activities/language/vocabulary";
 import { assertStepContent } from "@zoonk/core/steps/content-contract";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { normalizePunctuation } from "@zoonk/utils/string";
-import { streamError, streamStatus } from "../stream-status";
 import { fetchExistingWordCasing } from "./_utils/fetch-existing-word-casing";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { type LessonActivity } from "./get-lesson-activities-step";
@@ -105,7 +106,9 @@ export async function saveVocabularyWordsStep(
     return { savedWords: [] };
   }
 
-  await streamStatus({ status: "started", step: "saveVocabularyWords" });
+  await using stream = createStepStream<ActivityStepName>();
+
+  await stream.status({ status: "started", step: "saveVocabularyWords" });
 
   const course = vocabularyActivity.lesson.chapter.course;
 
@@ -147,7 +150,7 @@ export async function saveVocabularyWordsStep(
   );
 
   if (error) {
-    await streamError({ reason: "dbSaveFailed", step: "saveVocabularyWords" });
+    await stream.error({ reason: "dbSaveFailed", step: "saveVocabularyWords" });
 
     await Promise.all([
       handleActivityFailureStep({ activityId: vocabularyActivity.id }),
@@ -159,6 +162,6 @@ export async function saveVocabularyWordsStep(
     return { savedWords: [] };
   }
 
-  await streamStatus({ status: "completed", step: "saveVocabularyWords" });
+  await stream.status({ status: "completed", step: "saveVocabularyWords" });
   return { savedWords };
 }

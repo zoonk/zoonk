@@ -1,6 +1,7 @@
+import { createStepStream } from "@/workflows/_shared/stream-status";
+import { type CourseWorkflowStepName } from "@/workflows/config";
 import { prisma } from "@zoonk/db";
 import { rejected } from "@zoonk/utils/settled";
-import { streamError, streamStatus } from "../stream-status";
 
 export async function completeCourseSetupStep(input: {
   courseSuggestionId: number;
@@ -8,7 +9,9 @@ export async function completeCourseSetupStep(input: {
 }): Promise<void> {
   "use step";
 
-  await streamStatus({ status: "started", step: "completeCourseSetup" });
+  await using stream = createStepStream<CourseWorkflowStepName>();
+
+  await stream.status({ status: "started", step: "completeCourseSetup" });
 
   const results = await Promise.allSettled([
     prisma.course.update({
@@ -22,9 +25,9 @@ export async function completeCourseSetupStep(input: {
   ]);
 
   if (rejected(results)) {
-    await streamError({ reason: "dbSaveFailed", step: "completeCourseSetup" });
+    await stream.error({ reason: "dbSaveFailed", step: "completeCourseSetup" });
     throw new Error("DB save failed in completeCourseSetup");
   }
 
-  await streamStatus({ status: "completed", step: "completeCourseSetup" });
+  await stream.status({ status: "completed", step: "completeCourseSetup" });
 }

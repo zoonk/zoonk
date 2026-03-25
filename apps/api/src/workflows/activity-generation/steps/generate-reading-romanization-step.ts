@@ -1,7 +1,8 @@
+import { createStepStream } from "@/workflows/_shared/stream-status";
+import { type ActivityStepName } from "@/workflows/config";
 import { generateActivityRomanization } from "@zoonk/ai/tasks/activities/language/romanization";
 import { safeAsync } from "@zoonk/utils/error";
 import { needsRomanization } from "@zoonk/utils/languages";
-import { streamError, streamStatus } from "../stream-status";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
@@ -32,7 +33,9 @@ export async function generateReadingRomanizationStep(
     return { romanizations: {} };
   }
 
-  await streamStatus({ status: "started", step: "generateReadingRomanization" });
+  await using stream = createStepStream<ActivityStepName>();
+
+  await stream.status({ status: "started", step: "generateReadingRomanization" });
 
   const sentenceStrings = savedSentences.map((saved) => saved.sentence);
 
@@ -41,7 +44,7 @@ export async function generateReadingRomanizationStep(
   );
 
   if (error || !result?.data) {
-    await streamError({ reason: "enrichmentFailed", step: "generateReadingRomanization" });
+    await stream.error({ reason: "enrichmentFailed", step: "generateReadingRomanization" });
     await handleActivityFailureStep({ activityId: activity.id });
     return { romanizations: {} };
   }
@@ -53,11 +56,11 @@ export async function generateReadingRomanizationStep(
   );
 
   if (Object.keys(romanizations).length < savedSentences.length) {
-    await streamError({ reason: "enrichmentFailed", step: "generateReadingRomanization" });
+    await stream.error({ reason: "enrichmentFailed", step: "generateReadingRomanization" });
     await handleActivityFailureStep({ activityId: activity.id });
     return { romanizations };
   }
 
-  await streamStatus({ status: "completed", step: "generateReadingRomanization" });
+  await stream.status({ status: "completed", step: "generateReadingRomanization" });
   return { romanizations };
 }

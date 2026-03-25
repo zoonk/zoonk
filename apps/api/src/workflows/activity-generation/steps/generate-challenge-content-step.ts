@@ -1,7 +1,10 @@
 import {
+  type StepStream,
   type WorkflowErrorReason,
+  createStepStream,
   getAIResultErrorReason,
 } from "@/workflows/_shared/stream-status";
+import { type ActivityStepName } from "@/workflows/config";
 import {
   type ActivityChallengeSchema,
   generateActivityChallenge,
@@ -9,7 +12,6 @@ import {
 import { assertStepContent } from "@zoonk/core/steps/content-contract";
 import { prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
-import { streamError, streamStatus } from "../stream-status";
 import { resolveActivityForGeneration } from "./_utils/content-step-helpers";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
@@ -56,25 +58,27 @@ async function saveChallengeSteps(
 }
 
 async function handleChallengeError(
+  stream: StepStream<ActivityStepName>,
   activityId: bigint | number,
   reason: WorkflowErrorReason,
 ): Promise<void> {
-  await streamError({ reason, step: "generateChallengeContent" });
+  await stream.error({ reason, step: "generateChallengeContent" });
   await handleActivityFailureStep({ activityId });
 }
 
 async function saveAndCompleteChallenge(
+  stream: StepStream<ActivityStepName>,
   activityId: bigint | number,
   data: ActivityChallengeSchema,
 ): Promise<void> {
   const { error } = await saveChallengeSteps(activityId, data);
 
   if (error) {
-    await handleChallengeError(activityId, "dbSaveFailed");
+    await handleChallengeError(stream, activityId, "dbSaveFailed");
     return;
   }
 
-  await streamStatus({ status: "completed", step: "generateChallengeContent" });
+  await stream.status({ status: "completed", step: "generateChallengeContent" });
 }
 
 export async function generateChallengeContentStep(
@@ -98,7 +102,9 @@ export async function generateChallengeContentStep(
     return;
   }
 
-  await streamStatus({ status: "started", step: "generateChallengeContent" });
+  await using stream = createStepStream<ActivityStepName>();
+
+  await stream.status({ status: "started", step: "generateChallengeContent" });
   await setActivityAsRunningStep({ activityId: activity.id, workflowRunId });
 
   const { data: result, error }: SafeReturn<{ data: ActivityChallengeSchema }> = await safeAsync(
@@ -116,9 +122,9 @@ export async function generateChallengeContentStep(
 
   if (error || !result || result.data.steps.length === 0) {
     const reason = getAIResultErrorReason(error, result);
-    await handleChallengeError(activity.id, reason);
+    await handleChallengeError(stream, activity.id, reason);
     return;
   }
 
-  await saveAndCompleteChallenge(activity.id, result.data);
+  await saveAndCompleteChallenge(stream, activity.id, result.data);
 }

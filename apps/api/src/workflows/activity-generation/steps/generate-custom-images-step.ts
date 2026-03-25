@@ -1,8 +1,9 @@
+import { createStepStream } from "@/workflows/_shared/stream-status";
+import { type ActivityStepName } from "@/workflows/config";
 import { generateVisualStepImage } from "@zoonk/core/steps/visual-image";
 import { prisma } from "@zoonk/db";
 import { getString, toRecord } from "@zoonk/utils/json";
 import { rejected } from "@zoonk/utils/settled";
-import { streamStatus } from "../stream-status";
 import { type CustomVisualResult } from "./generate-custom-visuals-step";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
@@ -66,12 +67,14 @@ export async function generateCustomImagesStep(
     return;
   }
 
-  await streamStatus({ status: "started", step: "generateImages" });
+  await using stream = createStepStream<ActivityStepName>();
+
+  await stream.status({ status: "started", step: "generateImages" });
 
   const activityIds = new Set(customVisualResults.map((result) => result.activityId));
   const customActivities = activities.filter((act) => activityIds.has(act.id));
 
   await Promise.allSettled(customActivities.map((act) => generateImagesForActivity(act)));
 
-  await streamStatus({ status: "completed", step: "generateImages" });
+  await stream.status({ status: "completed", step: "generateImages" });
 }

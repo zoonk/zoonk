@@ -1,7 +1,10 @@
 import {
+  type StepStream,
   type WorkflowErrorReason,
+  createStepStream,
   getAIResultErrorReason,
 } from "@/workflows/_shared/stream-status";
+import { type ActivityStepName } from "@/workflows/config";
 import {
   type ActivityPracticeSchema,
   generateActivityPractice,
@@ -9,7 +12,6 @@ import {
 import { assertStepContent } from "@zoonk/core/steps/content-contract";
 import { prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
-import { streamError, streamStatus } from "../stream-status";
 import { resolveActivityForGeneration } from "./_utils/content-step-helpers";
 import { findActivitiesByKind } from "./_utils/find-activity-by-kind";
 import { type ActivitySteps } from "./_utils/get-activity-steps";
@@ -46,25 +48,27 @@ async function savePracticeSteps(
 }
 
 async function handlePracticeError(
+  stream: StepStream<ActivityStepName>,
   activityId: bigint | number,
   reason: WorkflowErrorReason,
 ): Promise<void> {
-  await streamError({ reason, step: "generatePracticeContent" });
+  await stream.error({ reason, step: "generatePracticeContent" });
   await handleActivityFailureStep({ activityId });
 }
 
 async function saveAndCompletePractice(
+  stream: StepStream<ActivityStepName>,
   activityId: bigint | number,
   steps: PracticeStep[],
 ): Promise<void> {
   const { error } = await savePracticeSteps(activityId, steps);
 
   if (error) {
-    await handlePracticeError(activityId, "dbSaveFailed");
+    await handlePracticeError(stream, activityId, "dbSaveFailed");
     return;
   }
 
-  await streamStatus({ status: "completed", step: "generatePracticeContent" });
+  await stream.status({ status: "completed", step: "generatePracticeContent" });
 }
 
 export async function generatePracticeContentStep(
@@ -94,7 +98,9 @@ export async function generatePracticeContentStep(
     return;
   }
 
-  await streamStatus({ status: "started", step: "generatePracticeContent" });
+  await using stream = createStepStream<ActivityStepName>();
+
+  await stream.status({ status: "started", step: "generatePracticeContent" });
   await setActivityAsRunningStep({ activityId: activity.id, workflowRunId });
 
   const { data: result, error }: SafeReturn<{ data: ActivityPracticeSchema }> = await safeAsync(
@@ -111,9 +117,9 @@ export async function generatePracticeContentStep(
 
   if (error || !result || result.data.steps.length === 0) {
     const reason = getAIResultErrorReason(error, result);
-    await handlePracticeError(activity.id, reason);
+    await handlePracticeError(stream, activity.id, reason);
     return;
   }
 
-  await saveAndCompletePractice(activity.id, result.data.steps);
+  await saveAndCompletePractice(stream, activity.id, result.data.steps);
 }

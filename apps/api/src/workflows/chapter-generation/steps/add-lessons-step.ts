@@ -1,8 +1,9 @@
+import { createStepStream } from "@/workflows/_shared/stream-status";
+import { type ChapterStepName } from "@/workflows/config";
 import { type ChapterLesson } from "@zoonk/ai/tasks/chapters/lessons";
 import { type Lesson, type LessonCreateManyInput, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { deduplicateSlugs, normalizeString, toSlug } from "@zoonk/utils/string";
-import { streamError, streamStatus } from "../stream-status";
 import { type ChapterContext } from "./get-chapter-step";
 
 export async function addLessonsStep(input: {
@@ -11,7 +12,8 @@ export async function addLessonsStep(input: {
 }): Promise<Lesson[]> {
   "use step";
 
-  await streamStatus({ status: "started", step: "addLessons" });
+  await using stream = createStepStream<ChapterStepName>();
+  await stream.status({ status: "started", step: "addLessons" });
 
   const lessonsData: LessonCreateManyInput[] = deduplicateSlugs(
     input.lessons.map((lesson, index) => ({
@@ -36,11 +38,11 @@ export async function addLessonsStep(input: {
   );
 
   if (error) {
-    await streamError({ reason: "dbSaveFailed", step: "addLessons" });
+    await stream.error({ reason: "dbSaveFailed", step: "addLessons" });
     throw error;
   }
 
-  await streamStatus({ status: "completed", step: "addLessons" });
+  await stream.status({ status: "completed", step: "addLessons" });
 
   return createdLessons;
 }

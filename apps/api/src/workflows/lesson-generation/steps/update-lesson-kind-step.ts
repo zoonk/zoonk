@@ -1,6 +1,7 @@
+import { createStepStream } from "@/workflows/_shared/stream-status";
+import { type LessonStepName } from "@/workflows/config";
 import { type LessonKind, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
-import { streamError, streamStatus } from "../stream-status";
 
 export async function updateLessonKindStep(input: {
   lessonId: number;
@@ -8,7 +9,9 @@ export async function updateLessonKindStep(input: {
 }): Promise<void> {
   "use step";
 
-  await streamStatus({ status: "started", step: "updateLessonKind" });
+  await using stream = createStepStream<LessonStepName>();
+
+  await stream.status({ status: "started", step: "updateLessonKind" });
 
   const { error } = await safeAsync(() =>
     prisma.lesson.update({
@@ -18,9 +21,9 @@ export async function updateLessonKindStep(input: {
   );
 
   if (error) {
-    await streamError({ reason: "dbSaveFailed", step: "updateLessonKind" });
+    await stream.error({ reason: "dbSaveFailed", step: "updateLessonKind" });
     throw error;
   }
 
-  await streamStatus({ status: "completed", step: "updateLessonKind" });
+  await stream.status({ status: "completed", step: "updateLessonKind" });
 }

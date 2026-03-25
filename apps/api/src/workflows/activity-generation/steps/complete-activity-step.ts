@@ -1,8 +1,8 @@
+import { createStepStream } from "@/workflows/_shared/stream-status";
 import { type ActivityStepName } from "@/workflows/config";
 import { type ActivityKind, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { rejected } from "@zoonk/utils/settled";
-import { streamStatus } from "../stream-status";
 import { findActivitiesByKind } from "./_utils/find-activity-by-kind";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
@@ -58,8 +58,10 @@ export async function completeActivityStep(
     return;
   }
 
-  await streamStatus({ status: "started", step: stepName });
-  await streamStatus({ status: "started", step: "setActivityAsCompleted" });
+  await using stream = createStepStream<ActivityStepName>();
+
+  await stream.status({ status: "started", step: stepName });
+  await stream.status({ status: "started", step: "setActivityAsCompleted" });
 
   const allSettled = await Promise.allSettled(
     matchingActivities.map((activity) => completeSingleActivity(activity, workflowRunId)),
@@ -67,12 +69,12 @@ export async function completeActivityStep(
 
   const status = rejected(allSettled) ? "error" : "completed";
 
-  await streamStatus({ status, step: stepName });
-  await streamStatus({ status, step: "setActivityAsCompleted" });
+  await stream.status({ status, step: stepName });
+  await stream.status({ status, step: "setActivityAsCompleted" });
 
   const hasFirstActivity = matchingActivities.some((a) => a.position === 0);
 
   if (hasFirstActivity) {
-    await streamStatus({ status, step: "setFirstActivityAsCompleted" });
+    await stream.status({ status, step: "setFirstActivityAsCompleted" });
   }
 }
