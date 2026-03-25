@@ -35,7 +35,7 @@ type AlternativeEntry = {
  * Both the vocabulary and reading workflows call this after saving words,
  * so adding a new enrichment here automatically covers all word sources.
  */
-export async function enrichWordTranslations(params: {
+export async function generateWordPronunciationAndAlternatives(params: {
   targetLanguage: string;
   userLanguage: string;
   words: WordReference[];

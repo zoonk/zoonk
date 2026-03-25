@@ -1,8 +1,8 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
 import { type ActivityStepName } from "@/workflows/config";
 import { safeAsync } from "@zoonk/utils/error";
-import { enrichWordTranslations } from "./_utils/enrich-word-translations";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
+import { generateWordPronunciationAndAlternatives } from "./_utils/generate-word-pronunciation-and-alternatives";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
 import { type SavedSentenceWord } from "./save-sentence-words-step";
@@ -12,10 +12,10 @@ import { type SavedSentenceWord } from "./save-sentence-words-step";
  * words that are missing them. Alternative translations prevent semantically
  * equivalent words from appearing as distractors in exercises.
  *
- * Thin wrapper around the shared enrichWordTranslations utility, scoped
- * to the reading activity for stream status reporting.
+ * Thin wrapper around the shared generateWordPronunciationAndAlternatives
+ * utility, scoped to the reading activity for stream status reporting.
  */
-export async function enrichSentenceWordTranslationsStep(
+export async function generateSentencePronunciationAndAlternativesStep(
   activities: LessonActivity[],
   savedSentenceWords: SavedSentenceWord[],
 ): Promise<void> {
@@ -29,20 +29,27 @@ export async function enrichSentenceWordTranslationsStep(
 
   await using stream = createStepStream<ActivityStepName>();
 
-  await stream.status({ status: "started", step: "enrichSentenceWordTranslations" });
+  await stream.status({
+    status: "started",
+    step: "generateSentencePronunciationAndAlternatives",
+  });
 
   const course = activity.lesson.chapter.course;
   const targetLanguage = course.targetLanguage ?? "";
   const userLanguage = activity.language;
 
   const { error } = await safeAsync(() =>
-    enrichWordTranslations({ targetLanguage, userLanguage, words: savedSentenceWords }),
+    generateWordPronunciationAndAlternatives({
+      targetLanguage,
+      userLanguage,
+      words: savedSentenceWords,
+    }),
   );
 
   if (error) {
     await stream.error({
       reason: "enrichmentFailed",
-      step: "enrichSentenceWordTranslations",
+      step: "generateSentencePronunciationAndAlternatives",
     });
     await handleActivityFailureStep({ activityId: activity.id });
     return;
@@ -50,6 +57,6 @@ export async function enrichSentenceWordTranslationsStep(
 
   await stream.status({
     status: "completed",
-    step: "enrichSentenceWordTranslations",
+    step: "generateSentencePronunciationAndAlternatives",
   });
 }

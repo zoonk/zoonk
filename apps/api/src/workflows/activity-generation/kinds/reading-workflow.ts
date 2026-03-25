@@ -1,10 +1,10 @@
 import { type VocabularyWord } from "@zoonk/ai/tasks/activities/language/vocabulary";
 import { settled } from "@zoonk/utils/settled";
 import { completeActivityStep } from "../steps/complete-activity-step";
-import { enrichSentenceWordTranslationsStep } from "../steps/enrich-sentence-word-translations-step";
 import { generateReadingAudioStep } from "../steps/generate-reading-audio-step";
 import { generateReadingContentStep } from "../steps/generate-reading-content-step";
 import { generateReadingRomanizationStep } from "../steps/generate-reading-romanization-step";
+import { generateSentencePronunciationAndAlternativesStep } from "../steps/generate-sentence-pronunciation-and-alternatives-step";
 import { generateSentenceWordAudioStep } from "../steps/generate-sentence-word-audio-step";
 import { generateSentenceWordMetadataStep } from "../steps/generate-sentence-word-metadata-step";
 import { type LessonActivity } from "../steps/get-lesson-activities-step";
@@ -52,7 +52,7 @@ export async function readingActivityWorkflow(
 
   const [wordAudioResult] = await Promise.allSettled([
     generateSentenceWordAudioStep(activities, savedSentenceWords),
-    enrichSentenceWordTranslationsStep(activities, savedSentenceWords),
+    generateSentencePronunciationAndAlternativesStep(activities, savedSentenceWords),
   ]);
 
   const { wordAudioUrls } = settled(wordAudioResult, { wordAudioUrls: {} });

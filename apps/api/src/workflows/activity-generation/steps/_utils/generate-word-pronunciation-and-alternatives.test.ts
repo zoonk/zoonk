@@ -4,7 +4,7 @@ import { prisma } from "@zoonk/db";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { wordFixture } from "@zoonk/testing/fixtures/words";
 import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
-import { enrichWordTranslations } from "./enrich-word-translations";
+import { generateWordPronunciationAndAlternatives } from "./generate-word-pronunciation-and-alternatives";
 
 vi.mock("@zoonk/ai/tasks/activities/language/pronunciation", () => ({
   generateActivityPronunciation: vi.fn().mockResolvedValue({
@@ -41,7 +41,7 @@ async function createWordTranslation(attrs: {
   });
 }
 
-describe(enrichWordTranslations, () => {
+describe(generateWordPronunciationAndAlternatives, () => {
   let organizationId: number;
 
   beforeAll(async () => {
@@ -54,7 +54,7 @@ describe(enrichWordTranslations, () => {
   });
 
   test("returns empty results when words array is empty", async () => {
-    const result = await enrichWordTranslations({
+    const result = await generateWordPronunciationAndAlternatives({
       targetLanguage: "es",
       userLanguage: "en",
       words: [],
@@ -69,7 +69,7 @@ describe(enrichWordTranslations, () => {
     const word = await wordFixture({ organizationId });
     await createWordTranslation({ translation: "hello", wordId: word.id });
 
-    await enrichWordTranslations({
+    await generateWordPronunciationAndAlternatives({
       targetLanguage: "es",
       userLanguage: "en",
       words: [{ word: word.word, wordId: Number(word.id) }],
@@ -89,7 +89,7 @@ describe(enrichWordTranslations, () => {
     const word = await wordFixture({ organizationId });
     await createWordTranslation({ translation: "hello", wordId: word.id });
 
-    await enrichWordTranslations({
+    await generateWordPronunciationAndAlternatives({
       targetLanguage: "es",
       userLanguage: "en",
       words: [{ word: word.word, wordId: Number(word.id) }],
@@ -118,7 +118,7 @@ describe(enrichWordTranslations, () => {
       wordId: word.id,
     });
 
-    await enrichWordTranslations({
+    await generateWordPronunciationAndAlternatives({
       targetLanguage: "es",
       userLanguage: "en",
       words: [{ word: word.word, wordId: Number(word.id) }],
@@ -141,7 +141,7 @@ describe(enrichWordTranslations, () => {
       wordId: word.id,
     });
 
-    await enrichWordTranslations({
+    await generateWordPronunciationAndAlternatives({
       targetLanguage: "es",
       userLanguage: "en",
       words: [{ word: word.word, wordId: Number(word.id) }],
@@ -165,7 +165,7 @@ describe(enrichWordTranslations, () => {
       wordId: word.id,
     });
 
-    const result = await enrichWordTranslations({
+    const result = await generateWordPronunciationAndAlternatives({
       targetLanguage: "es",
       userLanguage: "en",
       words: [{ word: word.word, wordId: Number(word.id) }],
@@ -184,7 +184,7 @@ describe(enrichWordTranslations, () => {
     const word = await wordFixture({ organizationId });
     await createWordTranslation({ translation: "hello", wordId: word.id });
 
-    await enrichWordTranslations({
+    await generateWordPronunciationAndAlternatives({
       targetLanguage: "es",
       userLanguage: "en",
       words: [{ word: word.word, wordId: Number(word.id) }],
@@ -206,7 +206,7 @@ describe(enrichWordTranslations, () => {
     const word = await wordFixture({ organizationId });
     await createWordTranslation({ translation: "hello", wordId: word.id });
 
-    await enrichWordTranslations({
+    await generateWordPronunciationAndAlternatives({
       targetLanguage: "es",
       userLanguage: "en",
       words: [{ word: word.word, wordId: Number(word.id) }],
@@ -224,7 +224,7 @@ describe(enrichWordTranslations, () => {
     const word = await wordFixture({ organizationId });
     await createWordTranslation({ translation: "hello", wordId: word.id });
 
-    const result = await enrichWordTranslations({
+    const result = await generateWordPronunciationAndAlternatives({
       targetLanguage: "es",
       userLanguage: "en",
       words: [{ word: word.word, wordId: Number(word.id) }],
@@ -242,7 +242,7 @@ describe(enrichWordTranslations, () => {
     const word = await wordFixture({ organizationId });
     await createWordTranslation({ translation: "cat", wordId: word.id });
 
-    await enrichWordTranslations({
+    await generateWordPronunciationAndAlternatives({
       targetLanguage: "es",
       userLanguage: "en",
       words: [{ word: word.word, wordId: Number(word.id) }],
@@ -268,7 +268,7 @@ describe(enrichWordTranslations, () => {
       createWordTranslation({ translation: "cat", wordId: word2.id }),
     ]);
 
-    const result = await enrichWordTranslations({
+    const result = await generateWordPronunciationAndAlternatives({
       targetLanguage: "es",
       userLanguage: "en",
       words: [
@@ -318,7 +318,7 @@ describe(enrichWordTranslations, () => {
       }),
     ]);
 
-    await enrichWordTranslations({
+    await generateWordPronunciationAndAlternatives({
       targetLanguage: "es",
       userLanguage: "en",
       words: [
