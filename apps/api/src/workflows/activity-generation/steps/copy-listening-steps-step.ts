@@ -1,7 +1,8 @@
+import { createStepStream } from "@/workflows/_shared/stream-status";
+import { type ActivityStepName } from "@/workflows/config";
 import { assertStepContent } from "@zoonk/core/steps/content-contract";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
-import { streamError, streamStatus } from "../stream-status";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
@@ -33,8 +34,10 @@ export async function copyListeningStepsStep(
 
   const reading = findActivityByKind(activities, "reading");
 
+  await using stream = createStepStream<ActivityStepName>();
+
   if (!reading) {
-    await streamError({ reason: "noSourceData", step: "copyListeningSteps" });
+    await stream.error({ reason: "noSourceData", step: "copyListeningSteps" });
     await handleActivityFailureStep({ activityId: listening.id });
     return;
   }
@@ -45,10 +48,10 @@ export async function copyListeningStepsStep(
     where: { activityId: reading.id, kind: "reading" },
   });
 
-  await streamStatus({ status: "started", step: "copyListeningSteps" });
+  await stream.status({ status: "started", step: "copyListeningSteps" });
 
   if (readingSteps.length === 0) {
-    await streamError({ reason: "noSourceData", step: "copyListeningSteps" });
+    await stream.error({ reason: "noSourceData", step: "copyListeningSteps" });
     await handleActivityFailureStep({ activityId: listening.id });
     return;
   }
@@ -72,10 +75,10 @@ export async function copyListeningStepsStep(
   );
 
   if (error) {
-    await streamError({ reason: "dbSaveFailed", step: "copyListeningSteps" });
+    await stream.error({ reason: "dbSaveFailed", step: "copyListeningSteps" });
     await handleActivityFailureStep({ activityId: listening.id });
     return;
   }
 
-  await streamStatus({ status: "completed", step: "copyListeningSteps" });
+  await stream.status({ status: "completed", step: "copyListeningSteps" });
 }

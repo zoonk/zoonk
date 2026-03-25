@@ -1,8 +1,9 @@
+import { createStepStream } from "@/workflows/_shared/stream-status";
+import { type ActivityStepName } from "@/workflows/config";
 import { type StepVisualSchema, generateStepVisuals } from "@zoonk/ai/tasks/steps/visual";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { rejected, settledValues } from "@zoonk/utils/settled";
-import { streamStatus } from "../stream-status";
 import { buildVisualRows } from "./_utils/visual-rows";
 import { type CustomContentResult } from "./generate-custom-content-step";
 import { type LessonActivity } from "./get-lesson-activities-step";
@@ -87,7 +88,9 @@ export async function generateCustomVisualsStep(
     return [];
   }
 
-  await streamStatus({ status: "started", step: "generateVisuals" });
+  await using stream = createStepStream<ActivityStepName>();
+
+  await stream.status({ status: "started", step: "generateVisuals" });
 
   const allSettled = await Promise.allSettled(
     customContentResults.map((contentResult) => {
@@ -99,7 +102,7 @@ export async function generateCustomVisualsStep(
     }),
   );
 
-  await streamStatus({
+  await stream.status({
     status: rejected(allSettled) ? "error" : "completed",
     step: "generateVisuals",
   });

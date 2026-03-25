@@ -1,5 +1,6 @@
+import { createStepStream } from "@/workflows/_shared/stream-status";
+import { type CourseWorkflowStepName } from "@/workflows/config";
 import { addAlternativeTitles } from "@zoonk/core/alternative-titles/add";
-import { streamError, streamStatus } from "../stream-status";
 import { type CourseContext } from "./initialize-course-step";
 
 export async function addAlternativeTitlesStep(input: {
@@ -8,7 +9,9 @@ export async function addAlternativeTitlesStep(input: {
 }): Promise<void> {
   "use step";
 
-  await streamStatus({ status: "started", step: "addAlternativeTitles" });
+  await using stream = createStepStream<CourseWorkflowStepName>();
+
+  await stream.status({ status: "started", step: "addAlternativeTitles" });
 
   const { error } = await addAlternativeTitles({
     courseId: input.course.courseId,
@@ -17,9 +20,9 @@ export async function addAlternativeTitlesStep(input: {
   });
 
   if (error) {
-    await streamError({ reason: "dbSaveFailed", step: "addAlternativeTitles" });
+    await stream.error({ reason: "dbSaveFailed", step: "addAlternativeTitles" });
     throw error;
   }
 
-  await streamStatus({ status: "completed", step: "addAlternativeTitles" });
+  await stream.status({ status: "completed", step: "addAlternativeTitles" });
 }

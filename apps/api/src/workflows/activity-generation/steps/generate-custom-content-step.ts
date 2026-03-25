@@ -1,7 +1,8 @@
+import { createStepStream } from "@/workflows/_shared/stream-status";
+import { type ActivityStepName } from "@/workflows/config";
 import { generateActivityCustom } from "@zoonk/ai/tasks/activities/custom";
 import { safeAsync } from "@zoonk/utils/error";
 import { rejected, settledValues } from "@zoonk/utils/settled";
-import { streamStatus } from "../stream-status";
 import { resolveActivityForGeneration, saveContentSteps } from "./_utils/content-step-helpers";
 import { type ActivitySteps } from "./_utils/get-activity-steps";
 import { type LessonActivity } from "./get-lesson-activities-step";
@@ -67,13 +68,15 @@ export async function generateCustomContentStep(
     return [];
   }
 
-  await streamStatus({ status: "started", step: "generateCustomContent" });
+  await using stream = createStepStream<ActivityStepName>();
+
+  await stream.status({ status: "started", step: "generateCustomContent" });
 
   const allSettled = await Promise.allSettled(
     customActivities.map((act) => generateForActivity(act, workflowRunId)),
   );
 
-  await streamStatus({
+  await stream.status({
     status: rejected(allSettled) ? "error" : "completed",
     step: "generateCustomContent",
   });

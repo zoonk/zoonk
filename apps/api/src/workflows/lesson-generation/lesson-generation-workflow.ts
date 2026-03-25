@@ -1,3 +1,4 @@
+import { streamSkipStep } from "@/workflows/_shared/stream-skip-step";
 import { getWorkflowMetadata } from "workflow";
 import { addActivitiesStep } from "./steps/add-activities-step";
 import { determineLessonKindStep } from "./steps/determine-lesson-kind-step";
@@ -8,7 +9,6 @@ import { removeNonLanguageLessonStep } from "./steps/remove-non-language-lesson-
 import { setLessonAsCompletedStep } from "./steps/set-lesson-as-completed-step";
 import { setLessonAsRunningStep } from "./steps/set-lesson-as-running-step";
 import { updateLessonKindStep } from "./steps/update-lesson-kind-step";
-import { streamStatus } from "./stream-status";
 
 function isNonLanguageLesson(targetLanguage: string | null, lessonKind: string): boolean {
   return targetLanguage !== null && lessonKind !== "language";
@@ -22,7 +22,7 @@ async function getCustomActivities(
     return generateCustomActivitiesStep(context);
   }
 
-  await streamStatus({ status: "completed", step: "generateCustomActivities" });
+  await streamSkipStep("generateCustomActivities");
   return [];
 }
 
@@ -65,7 +65,7 @@ export async function lessonGenerationWorkflow(lessonId: number): Promise<void> 
 
   // Already completed with activities — stream the completion step so the client can redirect.
   if (context.generationStatus === "completed" && context._count.activities > 0) {
-    await streamStatus({ status: "completed", step: "setLessonAsCompleted" });
+    await streamSkipStep("setLessonAsCompleted");
     return;
   }
 

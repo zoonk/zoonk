@@ -1,8 +1,9 @@
+import { createStepStream } from "@/workflows/_shared/stream-status";
+import { type ActivityStepName } from "@/workflows/config";
 import { generateActivityRomanization } from "@zoonk/ai/tasks/activities/language/romanization";
 import { type VocabularyWord } from "@zoonk/ai/tasks/activities/language/vocabulary";
 import { safeAsync } from "@zoonk/utils/error";
 import { needsRomanization } from "@zoonk/utils/languages";
-import { streamError, streamStatus } from "../stream-status";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
@@ -32,7 +33,9 @@ export async function generateVocabularyRomanizationStep(
     return { romanizations: {} };
   }
 
-  await streamStatus({ status: "started", step: "generateVocabularyRomanization" });
+  await using stream = createStepStream<ActivityStepName>();
+
+  await stream.status({ status: "started", step: "generateVocabularyRomanization" });
 
   const wordStrings = words.map((vocabWord) => vocabWord.word);
 
@@ -41,7 +44,7 @@ export async function generateVocabularyRomanizationStep(
   );
 
   if (error || !result?.data) {
-    await streamError({ reason: "enrichmentFailed", step: "generateVocabularyRomanization" });
+    await stream.error({ reason: "enrichmentFailed", step: "generateVocabularyRomanization" });
     await handleActivityFailureStep({ activityId: activity.id });
     return { romanizations: {} };
   }
@@ -53,11 +56,11 @@ export async function generateVocabularyRomanizationStep(
   );
 
   if (Object.keys(romanizations).length < words.length) {
-    await streamError({ reason: "enrichmentFailed", step: "generateVocabularyRomanization" });
+    await stream.error({ reason: "enrichmentFailed", step: "generateVocabularyRomanization" });
     await handleActivityFailureStep({ activityId: activity.id });
     return { romanizations };
   }
 
-  await streamStatus({ status: "completed", step: "generateVocabularyRomanization" });
+  await stream.status({ status: "completed", step: "generateVocabularyRomanization" });
   return { romanizations };
 }

@@ -1,11 +1,14 @@
+import { createStepStream } from "@/workflows/_shared/stream-status";
+import { type CourseWorkflowStepName } from "@/workflows/config";
 import { generateCourseImage } from "@zoonk/core/courses/image";
-import { streamStatus } from "../stream-status";
 import { type CourseContext } from "./initialize-course-step";
 
 export async function generateImageStep(course: CourseContext): Promise<string | null> {
   "use step";
 
-  await streamStatus({ status: "started", step: "generateImage" });
+  await using stream = createStepStream<CourseWorkflowStepName>();
+
+  await stream.status({ status: "started", step: "generateImage" });
 
   const { data: imageUrl, error } = await generateCourseImage({
     title: course.courseTitle,
@@ -13,11 +16,11 @@ export async function generateImageStep(course: CourseContext): Promise<string |
 
   if (error) {
     // Image generation failure is not critical, continue without image
-    await streamStatus({ status: "completed", step: "generateImage" });
+    await stream.status({ status: "completed", step: "generateImage" });
     return null;
   }
 
-  await streamStatus({ status: "completed", step: "generateImage" });
+  await stream.status({ status: "completed", step: "generateImage" });
 
   return imageUrl;
 }

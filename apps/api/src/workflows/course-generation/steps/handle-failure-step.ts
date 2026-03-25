@@ -1,4 +1,5 @@
-import { streamError } from "@/workflows/_shared/stream-error";
+import { createStepStream } from "@/workflows/_shared/stream-status";
+import { type CourseWorkflowStepName } from "@/workflows/config";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 
@@ -28,7 +29,8 @@ export async function handleCourseFailureStep(input: {
     });
   }
 
-  await streamError({ reason: "aiGenerationFailed", step: "workflowError" });
+  await using stream = createStepStream<CourseWorkflowStepName>();
+  await stream.error({ reason: "aiGenerationFailed", step: "workflowError" });
 }
 
 export async function handleChapterFailureStep(input: { chapterId: number }): Promise<void> {
@@ -41,5 +43,6 @@ export async function handleChapterFailureStep(input: { chapterId: number }): Pr
     }),
   );
 
-  await streamError({ reason: "aiGenerationFailed", step: "workflowError" });
+  await using stream = createStepStream<CourseWorkflowStepName>();
+  await stream.error({ reason: "aiGenerationFailed", step: "workflowError" });
 }

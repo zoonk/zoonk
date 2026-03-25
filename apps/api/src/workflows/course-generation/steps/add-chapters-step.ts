@@ -1,8 +1,9 @@
+import { createStepStream } from "@/workflows/_shared/stream-status";
+import { type CourseWorkflowStepName } from "@/workflows/config";
 import { type CourseChapter } from "@zoonk/ai/tasks/courses/chapters";
 import { type Chapter, type ChapterCreateManyInput, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { deduplicateSlugs, normalizeString, toSlug } from "@zoonk/utils/string";
-import { streamError, streamStatus } from "../stream-status";
 import { type CourseContext } from "./initialize-course-step";
 
 export async function addChaptersStep(input: {
@@ -11,7 +12,9 @@ export async function addChaptersStep(input: {
 }): Promise<Chapter[]> {
   "use step";
 
-  await streamStatus({ status: "started", step: "addChapters" });
+  await using stream = createStepStream<CourseWorkflowStepName>();
+
+  await stream.status({ status: "started", step: "addChapters" });
 
   const chaptersData: ChapterCreateManyInput[] = deduplicateSlugs(
     input.chapters.map((chapter, index) => ({
@@ -35,11 +38,11 @@ export async function addChaptersStep(input: {
   );
 
   if (error || !createdChapters) {
-    await streamError({ reason: "dbSaveFailed", step: "addChapters" });
+    await stream.error({ reason: "dbSaveFailed", step: "addChapters" });
     throw error ?? new Error("Failed to create chapters");
   }
 
-  await streamStatus({ status: "completed", step: "addChapters" });
+  await stream.status({ status: "completed", step: "addChapters" });
 
   return createdChapters;
 }

@@ -1,7 +1,8 @@
+import { createStepStream } from "@/workflows/_shared/stream-status";
+import { type ActivityStepName } from "@/workflows/config";
 import { generateActivityPronunciation } from "@zoonk/ai/tasks/activities/language/pronunciation";
 import { type VocabularyWord } from "@zoonk/ai/tasks/activities/language/vocabulary";
 import { safeAsync } from "@zoonk/utils/error";
-import { streamError, streamStatus } from "../stream-status";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
@@ -34,7 +35,9 @@ export async function generateVocabularyPronunciationStep(
     return { pronunciations: {} };
   }
 
-  await streamStatus({ status: "started", step: "generateVocabularyPronunciation" });
+  await using stream = createStepStream<ActivityStepName>();
+
+  await stream.status({ status: "started", step: "generateVocabularyPronunciation" });
 
   const course = activity.lesson.chapter.course;
   const targetLanguage = course.targetLanguage ?? "";
@@ -51,11 +54,11 @@ export async function generateVocabularyPronunciationStep(
   );
 
   if (fulfilled.length < words.length) {
-    await streamError({ reason: "enrichmentFailed", step: "generateVocabularyPronunciation" });
+    await stream.error({ reason: "enrichmentFailed", step: "generateVocabularyPronunciation" });
     await handleActivityFailureStep({ activityId: activity.id });
     return { pronunciations };
   }
 
-  await streamStatus({ status: "completed", step: "generateVocabularyPronunciation" });
+  await stream.status({ status: "completed", step: "generateVocabularyPronunciation" });
   return { pronunciations };
 }

@@ -1,6 +1,7 @@
+import { createStepStream } from "@/workflows/_shared/stream-status";
+import { type CourseWorkflowStepName } from "@/workflows/config";
 import { type CourseSuggestion, prisma } from "@zoonk/db";
 import { FatalError } from "workflow";
-import { streamError, streamStatus } from "../stream-status";
 
 /**
  * Fetches the course suggestion from the database.
@@ -12,18 +13,20 @@ export async function getCourseSuggestionStep(
 ): Promise<CourseSuggestion> {
   "use step";
 
-  await streamStatus({ status: "started", step: "getCourseSuggestion" });
+  await using stream = createStepStream<CourseWorkflowStepName>();
+
+  await stream.status({ status: "started", step: "getCourseSuggestion" });
 
   const suggestion = await prisma.courseSuggestion.findUnique({
     where: { id: courseSuggestionId },
   });
 
   if (!suggestion) {
-    await streamError({ reason: "notFound", step: "getCourseSuggestion" });
+    await stream.error({ reason: "notFound", step: "getCourseSuggestion" });
     throw new FatalError("Course suggestion not found");
   }
 
-  await streamStatus({ status: "completed", step: "getCourseSuggestion" });
+  await stream.status({ status: "completed", step: "getCourseSuggestion" });
 
   return suggestion;
 }

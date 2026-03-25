@@ -1,7 +1,8 @@
+import { createStepStream } from "@/workflows/_shared/stream-status";
+import { type ActivityStepName } from "@/workflows/config";
 import { generateActivityExplanation } from "@zoonk/ai/tasks/activities/core/explanation";
 import { safeAsync } from "@zoonk/utils/error";
 import { rejected, settledValues } from "@zoonk/utils/settled";
-import { streamStatus } from "../stream-status";
 import { resolveActivityForGeneration, saveContentSteps } from "./_utils/content-step-helpers";
 import { findActivitiesByKind } from "./_utils/find-activity-by-kind";
 import { type ActivitySteps } from "./_utils/get-activity-steps";
@@ -70,7 +71,9 @@ export async function generateExplanationContentStep(
     return { results: [] };
   }
 
-  await streamStatus({ status: "started", step: "generateExplanationContent" });
+  await using stream = createStepStream<ActivityStepName>();
+
+  await stream.status({ status: "started", step: "generateExplanationContent" });
 
   const allSettled = await Promise.allSettled(
     explanationActivities.map((activity) => {
@@ -86,7 +89,7 @@ export async function generateExplanationContentStep(
     }),
   );
 
-  await streamStatus({
+  await stream.status({
     status: rejected(allSettled) ? "error" : "completed",
     step: "generateExplanationContent",
   });

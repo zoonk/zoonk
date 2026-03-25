@@ -1,7 +1,9 @@
 import {
   type WorkflowErrorReason,
+  createStepStream,
   getAIResultErrorReason,
 } from "@/workflows/_shared/stream-status";
+import { type ActivityStepName } from "@/workflows/config";
 import {
   type ActivityGrammarContentSchema,
   generateActivityGrammarContent,
@@ -9,7 +11,6 @@ import {
 import { prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { z } from "zod";
-import { streamError, streamStatus } from "../stream-status";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
@@ -57,7 +58,9 @@ export async function generateGrammarContentStep(
     await prisma.step.deleteMany({ where: { activityId: activity.id } });
   }
 
-  await streamStatus({ status: "started", step: "generateGrammarContent" });
+  await using stream = createStepStream<ActivityStepName>();
+
+  await stream.status({ status: "started", step: "generateGrammarContent" });
   await setActivityAsRunningStep({ activityId: activity.id, workflowRunId });
 
   const { data: result, error }: SafeReturn<{ data: ActivityGrammarContentSchema }> =
@@ -75,11 +78,11 @@ export async function generateGrammarContentStep(
 
   if (error || !result || !hasMinimumGrammarContent(result.data)) {
     const reason: WorkflowErrorReason = getAIResultErrorReason(error, result);
-    await streamError({ reason, step: "generateGrammarContent" });
+    await stream.error({ reason, step: "generateGrammarContent" });
     await handleActivityFailureStep({ activityId: activity.id });
     return { generated: false, grammarContent: null };
   }
 
-  await streamStatus({ status: "completed", step: "generateGrammarContent" });
+  await stream.status({ status: "completed", step: "generateGrammarContent" });
   return { generated: true, grammarContent: result.data };
 }

@@ -1,12 +1,15 @@
+import { createStepStream } from "@/workflows/_shared/stream-status";
+import { type CourseWorkflowStepName } from "@/workflows/config";
 import { generateCourseCategories } from "@zoonk/ai/tasks/courses/categories";
 import { safeAsync } from "@zoonk/utils/error";
-import { streamError, streamStatus } from "../stream-status";
 import { type CourseContext } from "./initialize-course-step";
 
 export async function generateCategoriesStep(course: CourseContext): Promise<string[]> {
   "use step";
 
-  await streamStatus({ status: "started", step: "generateCategories" });
+  await using stream = createStepStream<CourseWorkflowStepName>();
+
+  await stream.status({ status: "started", step: "generateCategories" });
 
   const { data: result, error } = await safeAsync(() =>
     generateCourseCategories({
@@ -15,11 +18,11 @@ export async function generateCategoriesStep(course: CourseContext): Promise<str
   );
 
   if (error) {
-    await streamError({ reason: "aiGenerationFailed", step: "generateCategories" });
+    await stream.error({ reason: "aiGenerationFailed", step: "generateCategories" });
     throw error;
   }
 
-  await streamStatus({ status: "completed", step: "generateCategories" });
+  await stream.status({ status: "completed", step: "generateCategories" });
 
   return result.data.categories;
 }

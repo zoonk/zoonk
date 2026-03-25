@@ -1,3 +1,5 @@
+import { createStepStream } from "@/workflows/_shared/stream-status";
+import { type ActivityStepName } from "@/workflows/config";
 import { assertStepContent } from "@zoonk/core/steps/content-contract";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
@@ -7,7 +9,6 @@ import {
   normalizePunctuation,
   normalizeString,
 } from "@zoonk/utils/string";
-import { streamError, streamStatus } from "../stream-status";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { type ReadingSentence } from "./generate-reading-content-step";
 import { type LessonActivity } from "./get-lesson-activities-step";
@@ -116,7 +117,9 @@ export async function saveReadingSentencesStep(
     return { savedSentences: [] };
   }
 
-  await streamStatus({ status: "started", step: "saveSentences" });
+  await using stream = createStepStream<ActivityStepName>();
+
+  await stream.status({ status: "started", step: "saveSentences" });
 
   const course = activity.lesson.chapter.course;
 
@@ -141,11 +144,11 @@ export async function saveReadingSentencesStep(
   );
 
   if (error) {
-    await streamError({ reason: "dbSaveFailed", step: "saveSentences" });
+    await stream.error({ reason: "dbSaveFailed", step: "saveSentences" });
     await handleActivityFailureStep({ activityId: activity.id });
     return { savedSentences: [] };
   }
 
-  await streamStatus({ status: "completed", step: "saveSentences" });
+  await stream.status({ status: "completed", step: "saveSentences" });
   return { savedSentences };
 }

@@ -1,5 +1,6 @@
+import { createStepStream } from "@/workflows/_shared/stream-status";
+import { type ActivityStepName } from "@/workflows/config";
 import { prisma } from "@zoonk/db";
-import { streamError } from "../stream-status";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { completeActivityStep } from "./complete-activity-step";
 import { type LessonActivity } from "./get-lesson-activities-step";
@@ -17,10 +18,12 @@ export async function completeListeningActivityStep(
     return;
   }
 
+  await using stream = createStepStream<ActivityStepName>();
+
   const reading = findActivityByKind(activities, "reading");
 
   if (!reading) {
-    await streamError({ reason: "noSourceData", step: "setListeningAsCompleted" });
+    await stream.error({ reason: "noSourceData", step: "setListeningAsCompleted" });
     await handleActivityFailureStep({ activityId: listening.id });
     return;
   }
@@ -34,6 +37,6 @@ export async function completeListeningActivityStep(
     return;
   }
 
-  await streamError({ reason: "noSourceData", step: "setListeningAsCompleted" });
+  await stream.error({ reason: "noSourceData", step: "setListeningAsCompleted" });
   await handleActivityFailureStep({ activityId: listening.id });
 }

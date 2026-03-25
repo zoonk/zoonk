@@ -1,6 +1,7 @@
+import { createStepStream } from "@/workflows/_shared/stream-status";
+import { type ChapterStepName } from "@/workflows/config";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
-import { streamError, streamStatus } from "../stream-status";
 
 export async function setChapterAsRunningStep(input: {
   chapterId: number;
@@ -8,7 +9,8 @@ export async function setChapterAsRunningStep(input: {
 }): Promise<void> {
   "use step";
 
-  await streamStatus({ status: "started", step: "setChapterAsRunning" });
+  await using stream = createStepStream<ChapterStepName>();
+  await stream.status({ status: "started", step: "setChapterAsRunning" });
 
   const { error } = await safeAsync(() =>
     prisma.chapter.update({
@@ -21,9 +23,9 @@ export async function setChapterAsRunningStep(input: {
   );
 
   if (error) {
-    await streamError({ reason: "dbSaveFailed", step: "setChapterAsRunning" });
+    await stream.error({ reason: "dbSaveFailed", step: "setChapterAsRunning" });
     throw error;
   }
 
-  await streamStatus({ status: "completed", step: "setChapterAsRunning" });
+  await stream.status({ status: "completed", step: "setChapterAsRunning" });
 }

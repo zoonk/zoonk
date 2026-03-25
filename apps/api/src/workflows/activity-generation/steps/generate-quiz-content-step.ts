@@ -1,7 +1,10 @@
 import {
+  type StepStream,
   type WorkflowErrorReason,
+  createStepStream,
   getAIResultErrorReason,
 } from "@/workflows/_shared/stream-status";
+import { type ActivityStepName } from "@/workflows/config";
 import {
   type ActivityQuizSchema,
   type QuizQuestion,
@@ -10,7 +13,6 @@ import {
 import { assertStepContent } from "@zoonk/core/steps/content-contract";
 import { prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
-import { streamError, streamStatus } from "../stream-status";
 import { resolveActivityForGeneration } from "./_utils/content-step-helpers";
 import { findActivitiesByKind } from "./_utils/find-activity-by-kind";
 import { type ActivitySteps } from "./_utils/get-activity-steps";
@@ -44,25 +46,27 @@ async function saveQuizSteps(
 }
 
 async function handleQuizError(
+  stream: StepStream<ActivityStepName>,
   activityId: bigint | number,
   reason: WorkflowErrorReason,
 ): Promise<{ questions: [] }> {
-  await streamError({ reason, step: "generateQuizContent" });
+  await stream.error({ reason, step: "generateQuizContent" });
   await handleActivityFailureStep({ activityId });
   return { questions: [] };
 }
 
 async function saveAndCompleteQuiz(
+  stream: StepStream<ActivityStepName>,
   activityId: bigint | number,
   questions: QuizQuestion[],
 ): Promise<{ questions: QuizQuestion[] }> {
   const { error } = await saveQuizSteps(activityId, questions);
 
   if (error) {
-    return handleQuizError(activityId, "dbSaveFailed");
+    return handleQuizError(stream, activityId, "dbSaveFailed");
   }
 
-  await streamStatus({ status: "completed", step: "generateQuizContent" });
+  await stream.status({ status: "completed", step: "generateQuizContent" });
   return { questions };
 }
 
@@ -93,7 +97,9 @@ export async function generateQuizContentStep(
     return { questions: [] };
   }
 
-  await streamStatus({ status: "started", step: "generateQuizContent" });
+  await using stream = createStepStream<ActivityStepName>();
+
+  await stream.status({ status: "started", step: "generateQuizContent" });
   await setActivityAsRunningStep({ activityId: activity.id, workflowRunId });
 
   const { data: result, error }: SafeReturn<{ data: ActivityQuizSchema }> = await safeAsync(() =>
@@ -109,8 +115,8 @@ export async function generateQuizContentStep(
 
   if (error || !result || result.data.questions.length === 0) {
     const reason = getAIResultErrorReason(error, result);
-    return handleQuizError(activity.id, reason);
+    return await handleQuizError(stream, activity.id, reason);
   }
 
-  return saveAndCompleteQuiz(activity.id, result.data.questions);
+  return await saveAndCompleteQuiz(stream, activity.id, result.data.questions);
 }

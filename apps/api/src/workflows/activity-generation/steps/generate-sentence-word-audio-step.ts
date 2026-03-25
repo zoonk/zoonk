@@ -1,6 +1,7 @@
+import { createStepStream } from "@/workflows/_shared/stream-status";
+import { type ActivityStepName } from "@/workflows/config";
 import { prisma } from "@zoonk/db";
 import { isTTSSupportedLanguage } from "@zoonk/utils/languages";
-import { streamError, streamStatus } from "../stream-status";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { generateAudioForText } from "./_utils/generate-audio-for-text";
 import { type LessonActivity } from "./get-lesson-activities-step";
@@ -22,10 +23,12 @@ export async function generateSentenceWordAudioStep(
   const course = activity.lesson.chapter.course;
   const targetLanguage = course.targetLanguage;
 
-  await streamStatus({ status: "started", step: "generateSentenceWordAudio" });
+  await using stream = createStepStream<ActivityStepName>();
+
+  await stream.status({ status: "started", step: "generateSentenceWordAudio" });
 
   if (!isTTSSupportedLanguage(targetLanguage) || !course.organization) {
-    await streamStatus({ status: "completed", step: "generateSentenceWordAudio" });
+    await stream.status({ status: "completed", step: "generateSentenceWordAudio" });
     return { wordAudioIds: {} };
   }
 
@@ -82,11 +85,11 @@ export async function generateSentenceWordAudioStep(
   };
 
   if (fulfilled.length < wordsNeedingAudio.length) {
-    await streamError({ reason: "enrichmentFailed", step: "generateSentenceWordAudio" });
+    await stream.error({ reason: "enrichmentFailed", step: "generateSentenceWordAudio" });
     await handleActivityFailureStep({ activityId: activity.id });
     return { wordAudioIds };
   }
 
-  await streamStatus({ status: "completed", step: "generateSentenceWordAudio" });
+  await stream.status({ status: "completed", step: "generateSentenceWordAudio" });
   return { wordAudioIds };
 }

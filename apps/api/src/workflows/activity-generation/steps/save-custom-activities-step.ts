@@ -1,6 +1,7 @@
+import { createStepStream } from "@/workflows/_shared/stream-status";
+import { type ActivityStepName } from "@/workflows/config";
 import { prisma } from "@zoonk/db";
 import { rejected } from "@zoonk/utils/settled";
-import { streamError, streamStatus } from "../stream-status";
 import { type LessonActivity } from "./get-lesson-activities-step";
 
 async function saveActivity(activity: LessonActivity, workflowRunId: string): Promise<void> {
@@ -30,8 +31,10 @@ export async function saveCustomActivitiesStep(
     return;
   }
 
-  await streamStatus({ status: "started", step: "setCustomAsCompleted" });
-  await streamStatus({ status: "started", step: "setActivityAsCompleted" });
+  await using stream = createStepStream<ActivityStepName>();
+
+  await stream.status({ status: "started", step: "setCustomAsCompleted" });
+  await stream.status({ status: "started", step: "setActivityAsCompleted" });
 
   const results = await Promise.allSettled(
     customActivities.map((act) => saveActivity(act, workflowRunId)),
@@ -40,20 +43,20 @@ export async function saveCustomActivitiesStep(
   const hasFirstActivity = customActivities.some((a) => a.position === 0);
 
   if (rejected(results)) {
-    await streamError({ reason: "dbSaveFailed", step: "setCustomAsCompleted" });
-    await streamStatus({ status: "error", step: "setActivityAsCompleted" });
+    await stream.error({ reason: "dbSaveFailed", step: "setCustomAsCompleted" });
+    await stream.status({ status: "error", step: "setActivityAsCompleted" });
 
     if (hasFirstActivity) {
-      await streamStatus({ status: "error", step: "setFirstActivityAsCompleted" });
+      await stream.status({ status: "error", step: "setFirstActivityAsCompleted" });
     }
 
     return;
   }
 
-  await streamStatus({ status: "completed", step: "setCustomAsCompleted" });
-  await streamStatus({ status: "completed", step: "setActivityAsCompleted" });
+  await stream.status({ status: "completed", step: "setCustomAsCompleted" });
+  await stream.status({ status: "completed", step: "setActivityAsCompleted" });
 
   if (hasFirstActivity) {
-    await streamStatus({ status: "completed", step: "setFirstActivityAsCompleted" });
+    await stream.status({ status: "completed", step: "setFirstActivityAsCompleted" });
   }
 }

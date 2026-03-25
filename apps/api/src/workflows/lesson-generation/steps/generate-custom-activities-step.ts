@@ -1,9 +1,10 @@
+import { createStepStream } from "@/workflows/_shared/stream-status";
+import { type LessonStepName } from "@/workflows/config";
 import {
   type GeneratedActivity,
   generateLessonActivities,
 } from "@zoonk/ai/tasks/lessons/activities";
 import { safeAsync } from "@zoonk/utils/error";
-import { streamError, streamStatus } from "../stream-status";
 import { type LessonContext } from "./get-lesson-step";
 
 export async function generateCustomActivitiesStep(
@@ -11,7 +12,9 @@ export async function generateCustomActivitiesStep(
 ): Promise<GeneratedActivity[]> {
   "use step";
 
-  await streamStatus({ status: "started", step: "generateCustomActivities" });
+  await using stream = createStepStream<LessonStepName>();
+
+  await stream.status({ status: "started", step: "generateCustomActivities" });
 
   const { data: result, error } = await safeAsync(() =>
     generateLessonActivities({
@@ -24,11 +27,11 @@ export async function generateCustomActivitiesStep(
   );
 
   if (error) {
-    await streamError({ reason: "aiGenerationFailed", step: "generateCustomActivities" });
+    await stream.error({ reason: "aiGenerationFailed", step: "generateCustomActivities" });
     throw error;
   }
 
-  await streamStatus({ status: "completed", step: "generateCustomActivities" });
+  await stream.status({ status: "completed", step: "generateCustomActivities" });
 
   return result.data.activities;
 }

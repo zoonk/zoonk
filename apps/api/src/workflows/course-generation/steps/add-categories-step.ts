@@ -1,6 +1,7 @@
+import { createStepStream } from "@/workflows/_shared/stream-status";
+import { type CourseWorkflowStepName } from "@/workflows/config";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
-import { streamError, streamStatus } from "../stream-status";
 import { type CourseContext } from "./initialize-course-step";
 
 export async function addCategoriesStep(input: {
@@ -9,7 +10,9 @@ export async function addCategoriesStep(input: {
 }): Promise<void> {
   "use step";
 
-  await streamStatus({ status: "started", step: "addCategories" });
+  await using stream = createStepStream<CourseWorkflowStepName>();
+
+  await stream.status({ status: "started", step: "addCategories" });
 
   const categories = input.categories.map((category) => ({
     category,
@@ -24,9 +27,9 @@ export async function addCategoriesStep(input: {
   );
 
   if (error) {
-    await streamError({ reason: "dbSaveFailed", step: "addCategories" });
+    await stream.error({ reason: "dbSaveFailed", step: "addCategories" });
     throw error;
   }
 
-  await streamStatus({ status: "completed", step: "addCategories" });
+  await stream.status({ status: "completed", step: "addCategories" });
 }

@@ -1,3 +1,4 @@
+import { streamSkipStep } from "@/workflows/_shared/stream-skip-step";
 import { type CourseChapter } from "@zoonk/ai/tasks/courses/chapters";
 import { generateAlternativeTitlesStep } from "../steps/generate-alternative-titles-step";
 import { generateCategoriesStep } from "../steps/generate-categories-step";
@@ -5,7 +6,6 @@ import { generateChaptersStep } from "../steps/generate-chapters-step";
 import { generateDescriptionStep } from "../steps/generate-description-step";
 import { generateImageStep } from "../steps/generate-image-step";
 import { type CourseContext } from "../steps/initialize-course-step";
-import { streamStatus } from "../stream-status";
 import { type ExistingCourseContent } from "./get-or-create-course";
 
 export type GeneratedContent = {
@@ -21,7 +21,7 @@ async function descriptionOrSkip(
   existing: ExistingCourseContent,
 ): Promise<string | null> {
   if (existing.description) {
-    await streamStatus({ status: "completed", step: "generateDescription" });
+    await streamSkipStep("generateDescription");
     return null;
   }
   return generateDescriptionStep(course);
@@ -32,7 +32,7 @@ async function imageOrSkip(
   existing: ExistingCourseContent,
 ): Promise<string | null> {
   if (existing.imageUrl) {
-    await streamStatus({ status: "completed", step: "generateImage" });
+    await streamSkipStep("generateImage");
     return null;
   }
   return generateImageStep(course);
@@ -43,7 +43,7 @@ async function altTitlesOrSkip(
   existing: ExistingCourseContent,
 ): Promise<string[]> {
   if (existing.hasAlternativeTitles) {
-    await streamStatus({ status: "completed", step: "generateAlternativeTitles" });
+    await streamSkipStep("generateAlternativeTitles");
     return [];
   }
   return generateAlternativeTitlesStep(course);
@@ -54,12 +54,12 @@ async function categoriesOrSkip(
   existing: ExistingCourseContent,
 ): Promise<string[]> {
   if (existing.hasCategories) {
-    await streamStatus({ status: "completed", step: "generateCategories" });
+    await streamSkipStep("generateCategories");
     return [];
   }
 
   if (course.targetLanguage) {
-    await streamStatus({ status: "completed", step: "generateCategories" });
+    await streamSkipStep("generateCategories");
     return ["languages"];
   }
 
@@ -73,7 +73,7 @@ async function chaptersOrSkip(
   existing: ExistingCourseContent,
 ): Promise<CourseChapter[]> {
   if (existing.hasChapters) {
-    await streamStatus({ status: "completed", step: "generateChapters" });
+    await streamSkipStep("generateChapters");
     return [];
   }
   return generateChaptersStep(course);

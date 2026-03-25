@@ -1,9 +1,10 @@
+import { createStepStream } from "@/workflows/_shared/stream-status";
+import { type ActivityStepName } from "@/workflows/config";
 import {
   type VocabularyWord,
   generateActivityVocabulary,
 } from "@zoonk/ai/tasks/activities/language/vocabulary";
 import { safeAsync } from "@zoonk/utils/error";
-import { streamError, streamStatus } from "../stream-status";
 import { resolveActivityForGeneration } from "./_utils/content-step-helpers";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
@@ -25,7 +26,9 @@ export async function generateVocabularyContentStep(
 
   const { activity } = resolved;
 
-  await streamStatus({ status: "started", step: "generateVocabularyContent" });
+  await using stream = createStepStream<ActivityStepName>();
+
+  await stream.status({ status: "started", step: "generateVocabularyContent" });
   await setActivityAsRunningStep({ activityId: activity.id, workflowRunId });
 
   const { data: result, error } = await safeAsync(() =>
@@ -43,17 +46,17 @@ export async function generateVocabularyContentStep(
 
   if (error || !result) {
     const reason = error ? "aiGenerationFailed" : "aiEmptyResult";
-    await streamError({ reason, step: "generateVocabularyContent" });
+    await stream.error({ reason, step: "generateVocabularyContent" });
     await handleActivityFailureStep({ activityId: activity.id });
     return { words: [] };
   }
 
   if (result.data.words.length === 0) {
-    await streamError({ reason: "contentValidationFailed", step: "generateVocabularyContent" });
+    await stream.error({ reason: "contentValidationFailed", step: "generateVocabularyContent" });
     await handleActivityFailureStep({ activityId: activity.id });
     return { words: [] };
   }
 
-  await streamStatus({ status: "completed", step: "generateVocabularyContent" });
+  await stream.status({ status: "completed", step: "generateVocabularyContent" });
   return { words: result.data.words };
 }

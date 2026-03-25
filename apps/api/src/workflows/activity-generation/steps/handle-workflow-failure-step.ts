@@ -1,4 +1,5 @@
-import { streamError } from "@/workflows/_shared/stream-error";
+import { createStepStream } from "@/workflows/_shared/stream-status";
+import { type ActivityStepName } from "@/workflows/config";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 
@@ -24,5 +25,6 @@ export async function handleWorkflowFailureStep(
     }),
   );
 
-  await streamError({ reason: "aiGenerationFailed", step: "workflowError" });
+  await using stream = createStepStream<ActivityStepName>();
+  await stream.error({ reason: "aiGenerationFailed", step: "workflowError" });
 }

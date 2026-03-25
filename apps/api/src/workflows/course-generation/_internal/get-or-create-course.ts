@@ -1,9 +1,9 @@
+import { streamSkipStep } from "@/workflows/_shared/stream-skip-step";
 import { type CourseSuggestion } from "@zoonk/db";
 import { type ExistingCourse } from "../steps/check-existing-course-step";
 import { getAIOrganizationStep } from "../steps/get-ai-organization-step";
 import { type CourseContext, initializeCourseStep } from "../steps/initialize-course-step";
 import { setCourseAsRunningStep } from "../steps/set-course-as-running-step";
-import { streamStatus } from "../stream-status";
 
 export type ExistingCourseContent = {
   description: string | null;
@@ -32,11 +32,11 @@ export async function getOrCreateCourse(
 }> {
   if (!existingCourse) {
     const course = await initializeCourseStep({ suggestion, workflowRunId });
-    await streamStatus({ status: "completed", step: "setCourseAsRunning" });
+    await streamSkipStep("setCourseAsRunning");
     return { course, existing: DEFAULT_EXISTING_CONTENT };
   }
 
-  await streamStatus({ status: "completed", step: "initializeCourse" });
+  await streamSkipStep("initializeCourse");
   const aiOrg = await getAIOrganizationStep();
 
   const course: CourseContext = {

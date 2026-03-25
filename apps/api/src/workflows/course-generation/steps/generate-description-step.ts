@@ -1,12 +1,15 @@
+import { createStepStream } from "@/workflows/_shared/stream-status";
+import { type CourseWorkflowStepName } from "@/workflows/config";
 import { generateCourseDescription } from "@zoonk/ai/tasks/courses/description";
 import { safeAsync } from "@zoonk/utils/error";
-import { streamError, streamStatus } from "../stream-status";
 import { type CourseContext } from "./initialize-course-step";
 
 export async function generateDescriptionStep(course: CourseContext): Promise<string> {
   "use step";
 
-  await streamStatus({ status: "started", step: "generateDescription" });
+  await using stream = createStepStream<CourseWorkflowStepName>();
+
+  await stream.status({ status: "started", step: "generateDescription" });
 
   const { data: result, error } = await safeAsync(() =>
     generateCourseDescription({
@@ -16,11 +19,11 @@ export async function generateDescriptionStep(course: CourseContext): Promise<st
   );
 
   if (error) {
-    await streamError({ reason: "aiGenerationFailed", step: "generateDescription" });
+    await stream.error({ reason: "aiGenerationFailed", step: "generateDescription" });
     throw error;
   }
 
-  await streamStatus({ status: "completed", step: "generateDescription" });
+  await stream.status({ status: "completed", step: "generateDescription" });
 
   return result.data.description;
 }
