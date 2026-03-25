@@ -23,6 +23,7 @@ import { languageCourseChaptersTask } from "./language-course-chapters/task";
 import { lessonActivitiesTask } from "./lesson-activities/task";
 import { lessonKindTask } from "./lesson-kind/task";
 import { stepVisualTask } from "./step-visual/task";
+import { wordAlternativeTranslationsTask } from "./word-alternative-translations/task";
 
 export const TASKS: readonly Task[] = [
   activityChallengeTask,
@@ -50,6 +51,7 @@ export const TASKS: readonly Task[] = [
   languageCourseChaptersTask,
   lessonKindTask,
   stepVisualTask,
+  wordAlternativeTranslationsTask,
 ];
 
 // Number of times each test case should be run for more reliable results
