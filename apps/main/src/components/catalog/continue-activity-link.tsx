@@ -49,7 +49,7 @@ export async function ContinueActivityLink<Href extends string, CompletedHref ex
    */
   if (!data) {
     return (
-      <Link className={className} href={fallbackHref} prefetch>
+      <Link className={className} href={fallbackHref} prefetch={false}>
         {t("Start")}
         <ChevronRightIcon aria-hidden="true" />
       </Link>
