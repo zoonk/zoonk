@@ -43,7 +43,15 @@ export async function GenerateLessonContent({ params }: { params: Promise<{ id: 
     return <LoginRequired backHref={backHref} backLabel={backLabel} title={t("Create Lesson")} />;
   }
 
-  if (lesson.generationStatus === "completed") {
+  /**
+   * Only redirect when the lesson has actually generated its activities.
+   * Without the activity count check, a redirect loop can occur: the lesson
+   * page redirects here when `activities.length === 0`, and this page redirects
+   * back when `generationStatus === "completed"`. This happens when Next.js
+   * serves a stale prefetched RSC payload for the lesson page that still
+   * shows zero activities even though they were created in the background.
+   */
+  if (lesson.generationStatus === "completed" && lesson._count.activities > 0) {
     redirect(
       `/b/${AI_ORG_SLUG}/c/${lesson.chapter.course.slug}/ch/${lesson.chapter.slug}/l/${lesson.slug}`,
     );

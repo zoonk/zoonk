@@ -43,7 +43,15 @@ export async function GenerateChapterContent({ params }: { params: Promise<{ id:
     return <LoginRequired backHref={backHref} backLabel={backLabel} title={t("Create Chapter")} />;
   }
 
-  if (chapter.generationStatus === "completed") {
+  /**
+   * Only redirect when the chapter has actually generated its lessons.
+   * Without the lesson count check, a redirect loop can occur: the chapter
+   * page redirects here when `lessons.length === 0`, and this page redirects
+   * back when `generationStatus === "completed"`. This happens when Next.js
+   * serves a stale prefetched RSC payload for the chapter page that still
+   * shows zero lessons even though they were created in the background.
+   */
+  if (chapter.generationStatus === "completed" && chapter._count.lessons > 0) {
     redirect(`/b/${AI_ORG_SLUG}/c/${chapter.course.slug}/ch/${chapter.slug}`);
   }
 
