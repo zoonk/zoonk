@@ -85,75 +85,6 @@ ${SHARED_EXPECTATIONS}
   {
     expectations: `
 TARGET LANGUAGE: German
-USER LANGUAGE: English
-WORD: "die Mama" (translation: "Mom")
-
-This is a kinship term with common informal variants.
-
-EXPECTED BEHAVIOR:
-- Should include variants like "Momma", "Mommy", "Mama"
-- These are genuinely interchangeable kinship synonyms
-- Penalize if no alternatives are provided
-
-${SHARED_EXPECTATIONS}
-    `,
-    id: "de-en-mama",
-    userInput: {
-      targetLanguage: "de",
-      translation: "Mom",
-      userLanguage: "en",
-      word: "die Mama",
-    },
-  },
-  {
-    expectations: `
-TARGET LANGUAGE: Spanish
-USER LANGUAGE: English
-WORD: "el gato" (translation: "the cat")
-
-This is an unambiguous word with one clear translation.
-
-EXPECTED BEHAVIOR:
-- alternativeTranslations should be an empty array
-- "the cat" is the only valid translation
-- Penalize if loosely related words are included (e.g., "kitten", "feline")
-
-${SHARED_EXPECTATIONS}
-    `,
-    id: "es-en-gato",
-    userInput: {
-      targetLanguage: "es",
-      translation: "the cat",
-      userLanguage: "en",
-      word: "el gato",
-    },
-  },
-  {
-    expectations: `
-TARGET LANGUAGE: Portuguese
-USER LANGUAGE: English
-WORD: "oi" (translation: "hi")
-
-This is a common informal Portuguese greeting.
-
-EXPECTED BEHAVIOR:
-- Should include "hello" and possibly "hey" as alternatives
-- These are genuinely equivalent greetings
-- Penalize if empty (obvious overlapping translations exist)
-
-${SHARED_EXPECTATIONS}
-    `,
-    id: "pt-en-oi",
-    userInput: {
-      targetLanguage: "pt",
-      translation: "hi",
-      userLanguage: "en",
-      word: "oi",
-    },
-  },
-  {
-    expectations: `
-TARGET LANGUAGE: German
 USER LANGUAGE: Portuguese
 WORD: "der Papa" (translation: "o papai")
 
@@ -200,24 +131,127 @@ ${SHARED_EXPECTATIONS}
   {
     expectations: `
 TARGET LANGUAGE: Spanish
-USER LANGUAGE: Portuguese
-WORD: "buenas noches" (translation: "boa noite")
+USER LANGUAGE: English
+WORD: "banco" (translation: "bank")
 
-Spanish "buenas noches" maps to both "boa noite" (as evening greeting and goodnight farewell) in Portuguese. Since Portuguese uses the same phrase for both, alternatives might be empty or include subtle variants.
+"banco" in Spanish is polysemous — it means both "bank" (financial institution) and "bench" (furniture). The translation "bank" constrains the meaning to the financial sense.
 
 EXPECTED BEHAVIOR:
-- May have an empty array since Portuguese uses "boa noite" for both meanings
-- Tests non-English user language with overlapping translations
-- Do NOT penalize for empty array here since the primary translation already covers both senses
+- alternativeTranslations should be an empty array
+- "bank" is unambiguous in English for the financial sense
+- MUST NOT include "bench" — that is a different meaning of "banco", not an alternative translation of the same meaning
+- Penalize SEVERELY if "bench" appears in alternatives
+- Tests whether the model respects translation context for disambiguation rather than dumping all possible translations of the word
 
 ${SHARED_EXPECTATIONS}
     `,
-    id: "es-pt-buenas-noches",
+    id: "es-en-banco",
     userInput: {
       targetLanguage: "es",
-      translation: "boa noite",
-      userLanguage: "pt",
-      word: "buenas noches",
+      translation: "bank",
+      userLanguage: "en",
+      word: "banco",
+    },
+  },
+  {
+    expectations: `
+TARGET LANGUAGE: Portuguese
+USER LANGUAGE: English
+WORD: "fazer" (translation: "to do")
+
+Portuguese "fazer" maps to both "to do" and "to make" in English. Both are genuinely equivalent core translations ("fazer um bolo" = "to make a cake", "fazer a tarefa" = "to do the homework").
+
+EXPECTED BEHAVIOR:
+- MUST include "to make" as an alternative
+- Penalize SEVERELY if "to make" is missing — this is the most obvious alternative
+- Should NOT include loosely related verbs like "to create", "to build", "to perform", "to produce"
+- Tests verb handling (original cases were all nouns or greetings)
+
+${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-en-fazer",
+    userInput: {
+      targetLanguage: "pt",
+      translation: "to do",
+      userLanguage: "en",
+      word: "fazer",
+    },
+  },
+  {
+    expectations: `
+TARGET LANGUAGE: French
+USER LANGUAGE: English
+WORD: "petit" (translation: "small")
+
+French "petit" translates to both "small" and "little" in English. These are genuinely interchangeable in most contexts.
+
+EXPECTED BEHAVIOR:
+- MUST include "little" as an alternative
+- Should NOT include "tiny" (that maps to "minuscule" — different intensity)
+- Should NOT include "short" (that is a different meaning of "petit" when referring to height, not size)
+- Should NOT include "minor" or "slight" (paraphrases, not equivalent translations)
+- Tests generalization to a language NOT present in the system prompt examples (French is held out from all examples)
+
+${SHARED_EXPECTATIONS}
+    `,
+    id: "fr-en-petit",
+    userInput: {
+      targetLanguage: "fr",
+      translation: "small",
+      userLanguage: "en",
+      word: "petit",
+    },
+  },
+  {
+    expectations: `
+TARGET LANGUAGE: German
+USER LANGUAGE: English
+WORD: "die Wohnung" (translation: "apartment")
+
+"Wohnung" specifically means an apartment/flat — a unit within a larger building. It does NOT mean "house" (Haus) or "home" (Zuhause/Heim).
+
+EXPECTED BEHAVIOR:
+- Should include "flat" as an alternative (British English equivalent of "apartment")
+- MUST NOT include "house" (that is "Haus" — a completely different word and concept)
+- MUST NOT include "home" (that is "Zuhause/Heim" — too broad)
+- Should NOT include "dwelling", "residence", "unit", or "condo" (paraphrases or different concepts)
+- Tests precision: model must include the one valid alternative while resisting the temptation to pad with related-but-not-equivalent terms
+
+${SHARED_EXPECTATIONS}
+    `,
+    id: "de-en-wohnung",
+    userInput: {
+      targetLanguage: "de",
+      translation: "apartment",
+      userLanguage: "en",
+      word: "die Wohnung",
+    },
+  },
+  {
+    expectations: `
+TARGET LANGUAGE: Portuguese
+USER LANGUAGE: English
+WORD: "bonito" (translation: "pretty")
+
+Portuguese "bonito" is a versatile adjective that can translate to multiple English words depending on context. It applies to both masculine and feminine subjects.
+
+EXPECTED BEHAVIOR:
+- MUST include "beautiful" as an alternative (the most common equivalent)
+- MAY include "lovely" or "good-looking" — these are arguably equivalent, accept if present but do not require
+- "handsome" is debatable — "bonito" can describe men ("ele é bonito" = "he is handsome"), accept if present but do not require
+- Should NOT include "cute" (that maps to "fofo" in Portuguese — a different word)
+- Should NOT include "gorgeous" (that is "lindo/maravilhoso" — much stronger intensity)
+- Should NOT include "attractive" (that is "atraente" — a different word)
+- Tests the nuanced boundary of "genuinely interchangeable" for adjectives with overlapping semantic fields
+
+${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-en-bonito",
+    userInput: {
+      targetLanguage: "pt",
+      translation: "pretty",
+      userLanguage: "en",
+      word: "bonito",
     },
   },
 ];
