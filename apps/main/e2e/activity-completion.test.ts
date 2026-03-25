@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { type Browser } from "@playwright/test";
+import { prisma } from "@zoonk/db";
 import { request } from "@zoonk/e2e/fixtures";
 import { getAiOrganization } from "@zoonk/e2e/helpers";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
@@ -7,6 +8,7 @@ import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonWordFixture } from "@zoonk/testing/fixtures/lesson-words";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
+import { userProgressFixture } from "@zoonk/testing/fixtures/progress";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { wordFixture } from "@zoonk/testing/fixtures/words";
 import { expect, test } from "./fixtures";
@@ -325,6 +327,55 @@ test.describe("Activity Completion", () => {
     await expect(page.getByText(/sign up to track your progress/i)).toBeVisible();
     await expect(page.getByRole("progressbar", { name: /level progress/i })).not.toBeVisible();
     await expect(page.getByText(/\+\d+ BP/)).not.toBeVisible();
+  });
+
+  test("completion screen shows updated belt level after level-up", async ({
+    baseURL,
+    browser,
+  }) => {
+    const email = await createUniqueUser(baseURL!);
+    const { browserContext, page } = await createAuthenticatedPage(browser, baseURL!, email);
+    const { buildUrl, lesson, org, uniqueId } = await createTestHierarchy("lvlup");
+
+    // Set user to 240 BP (White Belt Level 1). Completing a quiz earns 10 BP,
+    // reaching 250 BP which crosses into White Belt Level 2.
+    const user = await prisma.user.findUniqueOrThrow({ where: { email } });
+    await userProgressFixture({ totalBrainPower: 240n, userId: user.id });
+
+    const activity = await activityFixture({
+      generationStatus: "completed",
+      isPublished: true,
+      kind: "quiz",
+      lessonId: lesson.id,
+      organizationId: org.id,
+      position: 0,
+    });
+
+    await stepFixture({
+      activityId: activity.id,
+      content: {
+        kind: "core",
+        options: [
+          { feedback: "Correct!", isCorrect: true, text: `Right ${uniqueId}` },
+          { feedback: "Wrong", isCorrect: false, text: `Wrong ${uniqueId}` },
+        ],
+        question: `Level up Q ${uniqueId}`,
+      },
+      isPublished: true,
+      kind: "multipleChoice",
+    });
+
+    await page.goto(buildUrl());
+    await page.waitForLoadState("networkidle");
+
+    await page.getByRole("radio", { name: new RegExp(`Right ${uniqueId}`) }).click();
+    await page.getByRole("button", { name: /check/i }).click();
+    await page.getByRole("button", { name: /continue/i }).click();
+
+    await expect(page.getByText(/White Belt — Level 2/i)).toBeVisible();
+    await expect(page.getByRole("progressbar", { name: /level progress/i })).toBeVisible();
+
+    await browserContext.close();
   });
 
   test("authenticated user sees BP and belt progress on flashcard vocabulary completion", async ({
