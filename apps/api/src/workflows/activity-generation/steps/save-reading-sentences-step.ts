@@ -56,31 +56,41 @@ function buildSaveOneSentence(params: {
     const record = await prisma.sentence.upsert({
       create: {
         alternativeSentences,
-        alternativeTranslations,
-        explanation: emptyToNull(readingSentence.explanation),
         organizationId,
         sentence,
         targetLanguage,
-        translation,
-        userLanguage,
       },
       update: {
         alternativeSentences,
-        alternativeTranslations,
-        explanation: emptyToNull(readingSentence.explanation),
-        translation,
       },
       where: {
         orgSentence: {
           organizationId,
           sentence,
           targetLanguage,
-          userLanguage,
         },
       },
     });
 
     const sentenceId = record.id;
+
+    await prisma.sentenceTranslation.upsert({
+      create: {
+        alternativeTranslations,
+        explanation: emptyToNull(readingSentence.explanation),
+        sentenceId,
+        translation,
+        userLanguage,
+      },
+      update: {
+        alternativeTranslations,
+        explanation: emptyToNull(readingSentence.explanation),
+        translation,
+      },
+      where: {
+        sentenceTranslation: { sentenceId, userLanguage },
+      },
+    });
 
     await prisma.lessonSentence.upsert({
       create: { lessonId, sentenceId },

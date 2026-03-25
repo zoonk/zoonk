@@ -120,7 +120,6 @@ describe(vocabularyActivityWorkflow, () => {
         organizationId,
         steps: { some: { activityId: activity.id } },
         targetLanguage: "es",
-        userLanguage: "en",
       },
     });
 
@@ -349,28 +348,17 @@ describe(vocabularyActivityWorkflow, () => {
     expect(result.words).toHaveLength(0);
   });
 
-  test("preserves existing wordAudioId when audio step fails but pronunciation succeeds", async () => {
+  test("preserves existing audioUrl when audio step fails but pronunciation succeeds", async () => {
     const id = randomUUID().replaceAll("-", "").slice(0, 8);
     const existingWord = `zkeep${id}`;
     const newWord = `znew${id}`;
 
-    const wordAudio = await prisma.wordAudio.create({
+    await prisma.word.create({
       data: {
         audioUrl: "https://example.com/keep-audio.mp3",
         organizationId,
         targetLanguage: "es",
         word: existingWord,
-      },
-    });
-
-    await prisma.word.create({
-      data: {
-        organizationId,
-        targetLanguage: "es",
-        translation: "existing",
-        userLanguage: "en",
-        word: existingWord,
-        wordAudioId: wordAudio.id,
       },
     });
 
@@ -413,30 +401,19 @@ describe(vocabularyActivityWorkflow, () => {
       where: { organizationId, targetLanguage: "es", word: existingWord },
     });
 
-    expect(updatedWord?.wordAudioId).toBe(wordAudio.id);
+    expect(updatedWord?.audioUrl).toBe("https://example.com/keep-audio.mp3");
   });
 
   test("reuses existing Word record when casing differs", async () => {
     const id = randomUUID().replaceAll("-", "").slice(0, 8);
     const existingWord = `Hola${id}`;
 
-    const wordAudio = await prisma.wordAudio.create({
+    const existingRecord = await prisma.word.create({
       data: {
         audioUrl: "https://example.com/hola-audio.mp3",
         organizationId,
         targetLanguage: "es",
         word: existingWord,
-      },
-    });
-
-    const existingRecord = await prisma.word.create({
-      data: {
-        organizationId,
-        targetLanguage: "es",
-        translation: "hello",
-        userLanguage: "en",
-        word: existingWord,
-        wordAudioId: wordAudio.id,
       },
     });
 
@@ -476,7 +453,6 @@ describe(vocabularyActivityWorkflow, () => {
       where: {
         organizationId,
         targetLanguage: "es",
-        userLanguage: "en",
         word: { in: [existingWord, existingWord.toLowerCase()], mode: "insensitive" },
       },
     });
@@ -487,11 +463,11 @@ describe(vocabularyActivityWorkflow, () => {
     expect(words[0]!.id).toBe(existingRecord.id);
   });
 
-  test("reuses existing WordAudio when casing differs", async () => {
+  test("reuses existing audio when casing differs", async () => {
     const id = randomUUID().replaceAll("-", "").slice(0, 8);
     const existingWord = `Gato${id}`;
 
-    const wordAudio = await prisma.wordAudio.create({
+    await prisma.word.create({
       data: {
         audioUrl: "https://example.com/gato-audio.mp3",
         organizationId,
@@ -531,23 +507,23 @@ describe(vocabularyActivityWorkflow, () => {
     const activities = await fetchLessonActivities(lesson.id);
     await vocabularyActivityWorkflow(activities, "test-run-id", [], []);
 
-    // Should not call TTS since WordAudio for "Gato..." already exists
+    // Should not call TTS since audio for "Gato..." already exists on the Word record
     expect(generateLanguageAudio).not.toHaveBeenCalled();
 
-    // The Word record should be linked to the existing WordAudio
+    // The Word record should have the existing audioUrl preserved
     const word = await prisma.word.findFirst({
-      where: { organizationId, targetLanguage: "es", word: existingWord.toLowerCase() },
+      where: { organizationId, targetLanguage: "es", word: existingWord },
     });
 
-    expect(word?.wordAudioId).toBe(wordAudio.id);
+    expect(word?.audioUrl).toBe("https://example.com/gato-audio.mp3");
   });
 
-  test("skips TTS for vocabulary words that already have a WordAudio record", async () => {
+  test("skips TTS for vocabulary words that already have an audioUrl", async () => {
     const id = randomUUID().replaceAll("-", "").slice(0, 8);
     const existingWord = `zexist${id}`;
     const newWord = `znew${id}`;
 
-    await prisma.wordAudio.create({
+    await prisma.word.create({
       data: {
         audioUrl: "https://example.com/existing-audio.mp3",
         organizationId,

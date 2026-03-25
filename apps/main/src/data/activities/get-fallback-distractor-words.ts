@@ -6,17 +6,9 @@ import { getLessonWords } from "./get-lesson-words";
 
 const FALLBACK_DISTRACTOR_WORD_LIMIT = 4;
 
-type LessonWordScope = {
-  id: bigint;
+type LanguageScope = {
   organizationId: number;
   targetLanguage: string;
-  userLanguage: string;
-};
-
-type LessonSentenceScope = {
-  organizationId: number;
-  targetLanguage: string;
-  userLanguage: string;
 };
 
 /**
@@ -24,9 +16,9 @@ type LessonSentenceScope = {
  * the player can fill rare underflow cases without building a larger scope system.
  */
 function getFallbackWordScope(
-  lessonWords: LessonWordScope[],
-  lessonSentences: LessonSentenceScope[],
-): LessonSentenceScope | LessonWordScope | null {
+  lessonWords: LanguageScope[],
+  lessonSentences: LanguageScope[],
+): LanguageScope | null {
   return lessonWords[0] ?? lessonSentences[0] ?? null;
 }
 
@@ -49,14 +41,13 @@ const cachedGetFallbackDistractorWords = cache(async (lessonId: number, limit: n
   }
 
   return prisma.word.findMany({
-    include: { wordAudio: true },
+    include: { translations: true },
     orderBy: { id: "desc" },
     take: limit,
     where: {
       id: { notIn: lessonWords.map((word) => word.id) },
       organizationId: scope.organizationId,
       targetLanguage: scope.targetLanguage,
-      userLanguage: scope.userLanguage,
     },
   });
 });

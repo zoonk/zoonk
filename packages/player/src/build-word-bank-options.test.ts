@@ -322,10 +322,9 @@ describe(buildSentenceWordOptions, () => {
         [
           "morgen",
           {
+            audioUrl: "https://example.com/morgen.mp3",
             romanization: "mor-gen",
-            translation: "morning (sentence)",
             word: "morgen",
-            wordAudio: { audioUrl: "https://example.com/morgen.mp3" },
           },
         ],
       ]),
@@ -334,7 +333,7 @@ describe(buildSentenceWordOptions, () => {
     expect(options[1]).toEqual({
       audioUrl: "https://example.com/morgen.mp3",
       romanization: "mor-gen",
-      translation: "morning (sentence)",
+      translation: "morning (lesson)",
       word: "Morgen!",
     });
   });

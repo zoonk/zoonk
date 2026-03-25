@@ -31,6 +31,11 @@ export type ReadingSentence = GeneratedReadingSentence & {
   alternativeTranslations: string[];
 };
 
+/**
+ * Fetches lesson words with their translation for the given user language.
+ * Used as a fallback when the current vocabulary workflow run produced no words,
+ * so that the reading workflow can still generate sentences from existing data.
+ */
 async function getFallbackLessonWords(params: {
   lessonId: number;
   organizationId: number | null;
@@ -46,9 +51,13 @@ async function getFallbackLessonWords(params: {
     select: {
       word: {
         select: {
-          alternativeTranslations: true,
-          romanization: true,
-          translation: true,
+          translations: {
+            select: {
+              alternativeTranslations: true,
+              translation: true,
+            },
+            where: { userLanguage: params.userLanguage },
+          },
           word: true,
         },
       },
@@ -58,12 +67,25 @@ async function getFallbackLessonWords(params: {
       word: {
         organizationId: params.organizationId,
         targetLanguage: params.targetLanguage,
-        userLanguage: params.userLanguage,
       },
     },
   });
 
-  return words.map((record) => record.word);
+  return words.flatMap((record) => {
+    const translation = record.word.translations[0];
+
+    if (!translation) {
+      return [];
+    }
+
+    return [
+      {
+        alternativeTranslations: translation.alternativeTranslations,
+        translation: translation.translation,
+        word: record.word.word,
+      },
+    ];
+  });
 }
 
 function hasValidSentences(sentences: ReadingSentence[]): boolean {

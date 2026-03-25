@@ -41,23 +41,33 @@ function buildSaveOneWord(params: {
 
     const record = await prisma.word.upsert({
       create: {
-        alternativeTranslations: vocabWord.alternativeTranslations,
         organizationId,
         targetLanguage,
+        word: dbWord,
+      },
+      update: {},
+      where: {
+        orgWord: { organizationId, targetLanguage, word: dbWord },
+      },
+    });
+
+    const wordId = record.id;
+
+    await prisma.wordTranslation.upsert({
+      create: {
+        alternativeTranslations: vocabWord.alternativeTranslations,
         translation,
         userLanguage,
-        word: dbWord,
+        wordId,
       },
       update: {
         alternativeTranslations: vocabWord.alternativeTranslations,
         translation,
       },
       where: {
-        orgWord: { organizationId, targetLanguage, userLanguage, word: dbWord },
+        wordTranslation: { userLanguage, wordId },
       },
     });
-
-    const wordId = record.id;
 
     await prisma.lessonWord.upsert({
       create: { lessonId, wordId },
@@ -131,7 +141,6 @@ export async function saveVocabularyWordsStep(
   const existingCasing = await fetchExistingWordCasing({
     organizationId,
     targetLanguage,
-    userLanguage,
     words: words.map((vocab) => vocab.word),
   });
 

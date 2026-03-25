@@ -168,7 +168,6 @@ describe(readingActivityWorkflow, () => {
         organizationId,
         steps: { some: { activityId: activity.id } },
         targetLanguage: "es",
-        userLanguage: "en",
       },
     });
 
@@ -234,19 +233,22 @@ describe(readingActivityWorkflow, () => {
     await readingActivityWorkflow(activities, "test-run-id", words, [], []);
 
     const savedSentence = await prisma.sentence.findFirst({
+      include: { translations: true },
       where: {
         organizationId,
         sentence: sentenceText,
         targetLanguage: "es",
-        translation: translationText,
-        userLanguage: "en",
       },
     });
 
     expect(savedSentence).toMatchObject({
       alternativeSentences: [alternativeSentence],
-      alternativeTranslations: [alternativeTranslation],
       sentence: sentenceText,
+    });
+
+    const translation = savedSentence?.translations.find((t) => t.userLanguage === "en");
+    expect(translation).toMatchObject({
+      alternativeTranslations: [alternativeTranslation],
       translation: translationText,
     });
   });
@@ -321,12 +323,12 @@ describe(readingActivityWorkflow, () => {
     await readingActivityWorkflow(activities, "test-run-id", greetingWords, [], []);
 
     const savedSentences = await prisma.sentence.findMany({
+      include: { translations: true },
       orderBy: { sentence: "asc" },
       where: {
         organizationId,
         steps: { some: { activity: { lessonId: lesson.id } } },
         targetLanguage: "es",
-        userLanguage: "pt",
       },
     });
 
@@ -335,12 +337,16 @@ describe(readingActivityWorkflow, () => {
         expect.objectContaining({
           alternativeSentences: ["Guten Abend, Mama."],
           sentence: "Gute Nacht, Mama.",
-          translation: "Boa noite, mãe.",
+          translations: expect.arrayContaining([
+            expect.objectContaining({ translation: "Boa noite, mãe.", userLanguage: "pt" }),
+          ]) as unknown,
         }),
         expect.objectContaining({
           alternativeSentences: ["Guten Tag, Anna!"],
           sentence: "Guten Morgen, Anna!",
-          translation: "Bom dia, Anna!",
+          translations: expect.arrayContaining([
+            expect.objectContaining({ translation: "Bom dia, Anna!", userLanguage: "pt" }),
+          ]) as unknown,
         }),
       ]),
     );
@@ -393,21 +399,22 @@ describe(readingActivityWorkflow, () => {
     await readingActivityWorkflow(activities, "test-run-id", greetingWords, [], []);
 
     const savedSentence = await prisma.sentence.findFirst({
+      include: { translations: true },
       where: {
         organizationId,
         sentence: "Guten Morgen, Anna!",
         steps: { some: { activity: { lessonId: lesson.id } } },
         targetLanguage: "es",
-        translation: "Bom dia, Anna!",
-        userLanguage: "pt",
       },
     });
 
     expect(savedSentence).toMatchObject({
       alternativeSentences: ["Guten Tag, Anna!"],
       sentence: "Guten Morgen, Anna!",
-      translation: "Bom dia, Anna!",
     });
+
+    const translation = savedSentence?.translations.find((t) => t.userLanguage === "pt");
+    expect(translation).toMatchObject({ translation: "Bom dia, Anna!" });
   });
 
   test("keeps AI sentence variants even when they introduce a different lesson phrase", async () => {
@@ -468,21 +475,22 @@ describe(readingActivityWorkflow, () => {
     await readingActivityWorkflow(activities, "test-run-id", greetingWords, [], []);
 
     const savedSentence = await prisma.sentence.findFirst({
+      include: { translations: true },
       where: {
         organizationId,
         sentence: "Guten Tag, Herr Weber.",
         steps: { some: { activity: { lessonId: lesson.id } } },
         targetLanguage: "es",
-        translation: "Boa tarde, senhor Weber.",
-        userLanguage: "pt",
       },
     });
 
     expect(savedSentence).toMatchObject({
       alternativeSentences: ["Guten Morgen, Herr Weber."],
       sentence: "Guten Tag, Herr Weber.",
-      translation: "Boa tarde, senhor Weber.",
     });
+
+    const translation = savedSentence?.translations.find((t) => t.userLanguage === "pt");
+    expect(translation).toMatchObject({ translation: "Boa tarde, senhor Weber." });
   });
 
   test("sets reading status to 'completed' after full pipeline", async () => {
@@ -534,7 +542,6 @@ describe(readingActivityWorkflow, () => {
       where: {
         organizationId,
         targetLanguage: "es",
-        userLanguage: "en",
         word: { in: ["yo", "veo", "un", "gato", "hola", "como", "estas"] },
       },
     });
@@ -644,15 +651,18 @@ describe(readingActivityWorkflow, () => {
     await readingActivityWorkflow(activities, "test-run-id", words, [], []);
 
     const failWordInDb = await prisma.word.findMany({
+      include: { translations: true },
       where: {
         organizationId,
         targetLanguage: "es",
-        userLanguage: "en",
         word: failWord,
       },
     });
 
-    const emptyTranslationWords = failWordInDb.filter((word) => word.translation === "");
+    // Either no Word record at all, or no translation with empty string
+    const emptyTranslationWords = failWordInDb.filter((word) =>
+      word.translations.some((t) => t.translation === ""),
+    );
     expect(emptyTranslationWords).toHaveLength(0);
   });
 
@@ -661,14 +671,20 @@ describe(readingActivityWorkflow, () => {
     const capitalizedWord = `Zcap${id}`;
     const lowercaseWord = capitalizedWord.toLowerCase();
 
-    await prisma.word.create({
+    const existingWord = await prisma.word.create({
       data: {
         organizationId,
         romanization: "existing-rom",
         targetLanguage: "es",
+        word: capitalizedWord,
+      },
+    });
+
+    await prisma.wordTranslation.create({
+      data: {
         translation: "existing-translation",
         userLanguage: "en",
-        word: capitalizedWord,
+        wordId: existingWord.id,
       },
     });
 
@@ -711,7 +727,6 @@ describe(readingActivityWorkflow, () => {
       where: {
         organizationId,
         targetLanguage: "es",
-        userLanguage: "en",
         word: { in: [capitalizedWord, lowercaseWord] },
       },
     });
@@ -759,7 +774,6 @@ describe(readingActivityWorkflow, () => {
       where: {
         organizationId,
         targetLanguage: "es",
-        userLanguage: "en",
         word: testWord,
       },
     });
@@ -835,7 +849,6 @@ describe(readingActivityWorkflow, () => {
       where: {
         organizationId,
         targetLanguage: "ja",
-        userLanguage: "en",
         word: { in: [word1, word2] },
       },
     });
@@ -847,28 +860,17 @@ describe(readingActivityWorkflow, () => {
     }
   });
 
-  test("skips TTS for sentence words that already have a WordAudio record", async () => {
+  test("skips TTS for sentence words that already have an audioUrl", async () => {
     const id = randomUUID().replaceAll("-", "").slice(0, 8);
     const existingWord = `zexist${id}`;
     const newWord = `znew${id}`;
 
-    const wordAudio = await prisma.wordAudio.create({
+    await prisma.word.create({
       data: {
         audioUrl: "https://example.com/existing-audio.mp3",
         organizationId,
         targetLanguage: "es",
         word: existingWord,
-      },
-    });
-
-    await prisma.word.create({
-      data: {
-        organizationId,
-        targetLanguage: "es",
-        translation: "existing",
-        userLanguage: "en",
-        word: existingWord,
-        wordAudioId: wordAudio.id,
       },
     });
 

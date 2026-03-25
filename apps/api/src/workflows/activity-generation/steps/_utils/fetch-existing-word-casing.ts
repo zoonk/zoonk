@@ -3,7 +3,6 @@ import { prisma } from "@zoonk/db";
 export async function fetchExistingWordCasing(params: {
   organizationId: number;
   targetLanguage: string;
-  userLanguage: string;
   words: string[];
 }): Promise<Record<string, string>> {
   const existing = await prisma.word.findMany({
@@ -11,7 +10,6 @@ export async function fetchExistingWordCasing(params: {
     where: {
       organizationId: params.organizationId,
       targetLanguage: params.targetLanguage,
-      userLanguage: params.userLanguage,
       word: { in: params.words, mode: "insensitive" },
     },
   });

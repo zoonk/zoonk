@@ -3,7 +3,7 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonSentenceFixture } from "@zoonk/testing/fixtures/lesson-sentences";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { sentenceAudioFixture, sentenceFixture } from "@zoonk/testing/fixtures/sentences";
+import { sentenceFixture, sentenceTranslationFixture } from "@zoonk/testing/fixtures/sentences";
 import { beforeAll, describe, expect, test } from "vitest";
 import { getLessonSentences } from "./get-lesson-sentences";
 
@@ -43,13 +43,11 @@ describe(getLessonSentences, () => {
         organizationId: org.id,
         sentence: `Hola mundo ${crypto.randomUUID()}`,
         targetLanguage: "es",
-        translation: "Hello world",
       }),
       sentenceFixture({
         organizationId: org.id,
         sentence: `Buenos días ${crypto.randomUUID()}`,
         targetLanguage: "es",
-        translation: "Good morning",
       }),
     ]);
 
@@ -75,21 +73,20 @@ describe(getLessonSentences, () => {
       organizationId: org.id,
     });
 
-    const sentAudio = await sentenceAudioFixture({
-      audioUrl: "https://example.com/megusta.mp3",
-      organizationId: org.id,
-      targetLanguage: "es",
-    });
-
     const sentence = await sentenceFixture({
       alternativeSentences: ["Adoro"],
-      alternativeTranslations: ["I enjoy"],
+      audioUrl: "https://example.com/megusta.mp3",
       organizationId: org.id,
       romanization: null,
       sentence: `Me gusta ${crypto.randomUUID()}`,
-      sentenceAudioId: sentAudio.id,
       targetLanguage: "es",
+    });
+
+    await sentenceTranslationFixture({
+      alternativeTranslations: ["I enjoy"],
+      sentenceId: sentence.id,
       translation: "I like",
+      userLanguage: "en",
     });
 
     await lessonSentenceFixture({ lessonId: newLesson.id, sentenceId: sentence.id });
@@ -99,12 +96,16 @@ describe(getLessonSentences, () => {
     expect(result).toHaveLength(1);
     expect(result[0]).toMatchObject({
       alternativeSentences: ["Adoro"],
-      alternativeTranslations: ["I enjoy"],
+      audioUrl: "https://example.com/megusta.mp3",
       id: sentence.id,
       romanization: null,
       sentence: sentence.sentence,
-      sentenceAudio: { audioUrl: "https://example.com/megusta.mp3" },
-      translation: "I like",
+      translations: expect.arrayContaining([
+        expect.objectContaining({
+          alternativeTranslations: ["I enjoy"],
+          translation: "I like",
+        }),
+      ]) as unknown,
     });
   });
 

@@ -34,14 +34,14 @@ export async function vocabularyActivityWorkflow(
 
   const { savedWords } = settled(saveWordsResult, { savedWords: [] });
   const { pronunciations } = settled(pronunciationResult, { pronunciations: {} });
-  const { wordAudioIds } = settled(audioResult, { wordAudioIds: {} });
+  const { wordAudioUrls } = settled(audioResult, { wordAudioUrls: {} });
   const { romanizations } = settled(romanizationResult, { romanizations: {} });
 
   await updateVocabularyEnrichmentsStep(
     activities,
     savedWords,
     pronunciations,
-    wordAudioIds,
+    wordAudioUrls,
     romanizations,
   );
   await completeActivityStep(activities, workflowRunId, "vocabulary");

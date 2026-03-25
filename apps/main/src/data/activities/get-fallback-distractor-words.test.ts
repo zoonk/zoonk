@@ -38,8 +38,6 @@ describe(getFallbackDistractorWords, () => {
     const lessonWord = await wordFixture({
       organizationId: org.id,
       targetLanguage: "es",
-      translation: `hello-${crypto.randomUUID()}`,
-      userLanguage: "en",
       word: `hola-${crypto.randomUUID()}`,
     });
     await lessonWordFixture({ lessonId: lesson.id, wordId: lessonWord.id });
@@ -49,8 +47,6 @@ describe(getFallbackDistractorWords, () => {
         wordFixture({
           organizationId: org.id,
           targetLanguage: "es",
-          translation: `extra-${index}-${crypto.randomUUID()}`,
-          userLanguage: "en",
           word: `word-${index}-${crypto.randomUUID()}`,
         }),
       ),
@@ -60,8 +56,6 @@ describe(getFallbackDistractorWords, () => {
     await wordFixture({
       organizationId: otherOrg.id,
       targetLanguage: "es",
-      translation: `other-org-${crypto.randomUUID()}`,
-      userLanguage: "en",
       word: `otro-${crypto.randomUUID()}`,
     });
 
@@ -84,24 +78,18 @@ describe(getFallbackDistractorWords, () => {
       organizationId: org.id,
       sentence: `hola-${crypto.randomUUID()} mundo-${crypto.randomUUID()}`,
       targetLanguage: "es",
-      translation: `hello-${crypto.randomUUID()} world-${crypto.randomUUID()}`,
-      userLanguage: "en",
     });
     await lessonSentenceFixture({ lessonId: lesson.id, sentenceId: sentence.id });
 
     const scopedWord = await wordFixture({
       organizationId: org.id,
       targetLanguage: "es",
-      translation: `cat-${crypto.randomUUID()}`,
-      userLanguage: "en",
       word: `gato-${crypto.randomUUID()}`,
     });
 
     await wordFixture({
       organizationId: org.id,
       targetLanguage: "fr",
-      translation: `cat-${crypto.randomUUID()}`,
-      userLanguage: "en",
       word: `chat-${crypto.randomUUID()}`,
     });
 

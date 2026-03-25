@@ -7,9 +7,9 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonSentenceFixture } from "@zoonk/testing/fixtures/lesson-sentences";
 import { lessonWordFixture } from "@zoonk/testing/fixtures/lesson-words";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
-import { sentenceFixture } from "@zoonk/testing/fixtures/sentences";
+import { sentenceFixture, sentenceTranslationFixture } from "@zoonk/testing/fixtures/sentences";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
-import { wordFixture } from "@zoonk/testing/fixtures/words";
+import { wordFixture, wordTranslationFixture } from "@zoonk/testing/fixtures/words";
 import { expect, test } from "./fixtures";
 
 async function createReviewActivity(options: {
@@ -46,22 +46,34 @@ async function createReviewActivity(options: {
 
   const [createdWords, createdSentences] = await Promise.all([
     Promise.all(
-      options.words.map((wordData) =>
-        wordFixture({
+      options.words.map(async (wordData) => {
+        const word = await wordFixture({
           organizationId: org.id,
-          translation: wordData.translation,
           word: wordData.word,
-        }),
-      ),
+        });
+
+        await wordTranslationFixture({
+          translation: wordData.translation,
+          wordId: word.id,
+        });
+
+        return word;
+      }),
     ),
     Promise.all(
-      options.sentences.map((sentenceData) =>
-        sentenceFixture({
+      options.sentences.map(async (sentenceData) => {
+        const sentence = await sentenceFixture({
           organizationId: org.id,
           sentence: sentenceData.sentence,
+        });
+
+        await sentenceTranslationFixture({
+          sentenceId: sentence.id,
           translation: sentenceData.translation,
-        }),
-      ),
+        });
+
+        return sentence;
+      }),
     ),
   ]);
 

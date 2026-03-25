@@ -6,7 +6,7 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonWordFixture } from "@zoonk/testing/fixtures/lesson-words";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
-import { wordFixture } from "@zoonk/testing/fixtures/words";
+import { wordFixture, wordTranslationFixture } from "@zoonk/testing/fixtures/words";
 import { expect, test } from "./fixtures";
 
 async function createFlashcardActivity(options: {
@@ -45,14 +45,20 @@ async function createFlashcardActivity(options: {
   });
 
   const createdWords = await Promise.all(
-    options.words.map((wordData) =>
-      wordFixture({
+    options.words.map(async (wordData) => {
+      const word = await wordFixture({
         organizationId: org.id,
         romanization: wordData.romanization ?? null,
-        translation: wordData.translation,
         word: wordData.word,
-      }),
-    ),
+      });
+
+      await wordTranslationFixture({
+        translation: wordData.translation,
+        wordId: word.id,
+      });
+
+      return word;
+    }),
   );
 
   await Promise.all(

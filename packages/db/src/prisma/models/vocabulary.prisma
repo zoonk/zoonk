@@ -1,76 +1,72 @@
-model WordAudio {
-  id             BigInt       @id @default(autoincrement())
-  organizationId Int          @map("organization_id")
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  targetLanguage String       @map("target_language") @db.VarChar(10)
-  word           String
-  audioUrl       String       @map("audio_url")
-  createdAt      DateTime     @default(now()) @map("created_at")
-  words          Word[]
-
-  @@unique([organizationId, targetLanguage, word], name: "orgWordAudio")
-  @@map("word_audio")
-}
-
-model SentenceAudio {
-  id             BigInt       @id @default(autoincrement())
-  organizationId Int          @map("organization_id")
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  targetLanguage String       @map("target_language") @db.VarChar(10)
-  sentence       String
-  audioUrl       String       @map("audio_url")
-  createdAt      DateTime     @default(now()) @map("created_at")
-  sentences      Sentence[]
-
-  @@unique([organizationId, targetLanguage, sentence], name: "orgSentenceAudio")
-  @@map("sentence_audio")
-}
-
 model Word {
-  id                      BigInt       @id @default(autoincrement())
-  organizationId          Int          @map("organization_id")
-  organization            Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  targetLanguage          String       @map("target_language") @db.VarChar(10)
-  userLanguage            String       @map("user_language") @db.VarChar(10)
-  word                    String
-  translation             String
-  alternativeTranslations String[]     @default([]) @map("alternative_translations")
-  pronunciation           String?
-  romanization            String?
-  wordAudioId             BigInt?      @map("word_audio_id")
-  wordAudio               WordAudio?   @relation(fields: [wordAudioId], references: [id], onDelete: SetNull)
-  createdAt               DateTime     @default(now()) @map("created_at")
-  updatedAt               DateTime     @default(now()) @updatedAt @map("updated_at")
-  lessons                 LessonWord[]
-  steps                   Step[]
+  id             BigInt            @id @default(autoincrement())
+  organizationId Int               @map("organization_id")
+  organization   Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  targetLanguage String            @map("target_language") @db.VarChar(10)
+  word           String
+  romanization   String?
+  audioUrl       String?           @map("audio_url")
+  createdAt      DateTime          @default(now()) @map("created_at")
+  updatedAt      DateTime          @default(now()) @updatedAt @map("updated_at")
+  translations   WordTranslation[]
+  lessons        LessonWord[]
+  steps          Step[]
 
-  @@unique([organizationId, targetLanguage, userLanguage, word], name: "orgWord")
-  @@index([organizationId, targetLanguage, userLanguage])
+  @@unique([organizationId, targetLanguage, word], name: "orgWord")
+  @@index([organizationId, targetLanguage])
   @@map("words")
 }
 
-model Sentence {
-  id                      BigInt           @id @default(autoincrement())
-  organizationId          Int              @map("organization_id")
-  organization            Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  targetLanguage          String           @map("target_language") @db.VarChar(10)
-  userLanguage            String           @map("user_language") @db.VarChar(10)
-  sentence                String
-  alternativeSentences    String[]         @default([]) @map("alternative_sentences")
+model WordTranslation {
+  id                      BigInt   @id @default(autoincrement())
+  wordId                  BigInt   @map("word_id")
+  word                    Word     @relation(fields: [wordId], references: [id], onDelete: Cascade)
+  userLanguage            String   @map("user_language") @db.VarChar(10)
   translation             String
-  alternativeTranslations String[]         @default([]) @map("alternative_translations")
-  romanization            String?
-  explanation             String?
-  sentenceAudioId         BigInt?          @map("sentence_audio_id")
-  sentenceAudio           SentenceAudio?   @relation(fields: [sentenceAudioId], references: [id], onDelete: SetNull)
-  createdAt               DateTime         @default(now()) @map("created_at")
-  updatedAt               DateTime         @default(now()) @updatedAt @map("updated_at")
-  lessons                 LessonSentence[]
-  steps                   Step[]
+  alternativeTranslations String[] @default([]) @map("alternative_translations")
+  pronunciation           String?
+  createdAt               DateTime @default(now()) @map("created_at")
+  updatedAt               DateTime @default(now()) @updatedAt @map("updated_at")
 
-  @@unique([organizationId, targetLanguage, userLanguage, sentence], name: "orgSentence")
-  @@index([organizationId, targetLanguage, userLanguage])
+  @@unique([wordId, userLanguage], name: "wordTranslation")
+  @@index([wordId])
+  @@map("word_translations")
+}
+
+model Sentence {
+  id                   BigInt                @id @default(autoincrement())
+  organizationId       Int                   @map("organization_id")
+  organization         Organization          @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  targetLanguage       String                @map("target_language") @db.VarChar(10)
+  sentence             String
+  alternativeSentences String[]              @default([]) @map("alternative_sentences")
+  romanization         String?
+  audioUrl             String?               @map("audio_url")
+  createdAt            DateTime              @default(now()) @map("created_at")
+  updatedAt            DateTime              @default(now()) @updatedAt @map("updated_at")
+  translations         SentenceTranslation[]
+  lessons              LessonSentence[]
+  steps                Step[]
+
+  @@unique([organizationId, targetLanguage, sentence], name: "orgSentence")
+  @@index([organizationId, targetLanguage])
   @@map("sentences")
+}
+
+model SentenceTranslation {
+  id                      BigInt   @id @default(autoincrement())
+  sentenceId              BigInt   @map("sentence_id")
+  sentence                Sentence @relation(fields: [sentenceId], references: [id], onDelete: Cascade)
+  userLanguage            String   @map("user_language") @db.VarChar(10)
+  translation             String
+  alternativeTranslations String[] @default([]) @map("alternative_translations")
+  explanation             String?
+  createdAt               DateTime @default(now()) @map("created_at")
+  updatedAt               DateTime @default(now()) @updatedAt @map("updated_at")
+
+  @@unique([sentenceId, userLanguage], name: "sentenceTranslation")
+  @@index([sentenceId])
+  @@map("sentence_translations")
 }
 
 model LessonWord {

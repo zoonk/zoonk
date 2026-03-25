@@ -58,8 +58,6 @@ async function seedSentence(
       romanization: data.romanization,
       sentence: data.sentence,
       targetLanguage: data.targetLanguage,
-      translation: data.translation,
-      userLanguage: data.userLanguage,
     },
     update: {},
     where: {
@@ -67,6 +65,20 @@ async function seedSentence(
         organizationId: org.id,
         sentence: data.sentence,
         targetLanguage: data.targetLanguage,
+      },
+    },
+  });
+
+  await prisma.sentenceTranslation.upsert({
+    create: {
+      sentenceId: sentence.id,
+      translation: data.translation,
+      userLanguage: data.userLanguage,
+    },
+    update: {},
+    where: {
+      sentenceTranslation: {
+        sentenceId: sentence.id,
         userLanguage: data.userLanguage,
       },
     },

@@ -16,6 +16,10 @@ type WordMetadataEntry = {
   translation: string;
 };
 
+/**
+ * Fetches existing word metadata by joining Word and WordTranslation tables.
+ * Translations now live in WordTranslation, while romanization stays on Word.
+ */
 async function fetchExistingWordMetadata(params: {
   organizationId: number;
   targetLanguage: string;
@@ -23,20 +27,27 @@ async function fetchExistingWordMetadata(params: {
   words: string[];
 }): Promise<Record<string, WordMetadataEntry>> {
   const existing = await prisma.word.findMany({
+    include: {
+      translations: {
+        where: { userLanguage: params.userLanguage },
+      },
+    },
     where: {
       organizationId: params.organizationId,
       targetLanguage: params.targetLanguage,
-      userLanguage: params.userLanguage,
       word: { in: params.words, mode: "insensitive" },
     },
   });
 
   return Object.fromEntries(
     existing
-      .filter((record) => record.translation)
+      .filter((record) => record.translations[0]?.translation)
       .map((record) => [
         record.word.toLowerCase(),
-        { romanization: record.romanization, translation: record.translation },
+        {
+          romanization: record.romanization,
+          translation: record.translations[0]?.translation ?? "",
+        },
       ]),
   );
 }

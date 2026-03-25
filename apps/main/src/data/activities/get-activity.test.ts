@@ -3,9 +3,9 @@ import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { sentenceAudioFixture, sentenceFixture } from "@zoonk/testing/fixtures/sentences";
+import { sentenceFixture, sentenceTranslationFixture } from "@zoonk/testing/fixtures/sentences";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
-import { wordAudioFixture, wordFixture } from "@zoonk/testing/fixtures/words";
+import { wordFixture, wordTranslationFixture } from "@zoonk/testing/fixtures/words";
 import { beforeAll, describe, expect, test } from "vitest";
 import { getActivity } from "./get-activity";
 
@@ -144,11 +144,6 @@ describe(getActivity, () => {
       organizationId: org.id,
     });
 
-    const wordAudio = await wordAudioFixture({
-      audioUrl: "https://example.com/audio.mp3",
-      organizationId: org.id,
-    });
-
     const [wordActivity, word] = await Promise.all([
       activityFixture({
         generationStatus: "completed",
@@ -160,14 +155,20 @@ describe(getActivity, () => {
         position: 0,
       }),
       wordFixture({
+        audioUrl: "https://example.com/audio.mp3",
         organizationId: org.id,
-        pronunciation: "test-pron",
         romanization: "test-roman",
-        translation: "test-translation",
         word: `test-word-${crypto.randomUUID()}`,
-        wordAudioId: wordAudio.id,
       }),
     ]);
+
+    await wordTranslationFixture({
+      alternativeTranslations: [],
+      pronunciation: "test-pron",
+      translation: "test-translation",
+      userLanguage: "en",
+      wordId: word.id,
+    });
 
     await stepFixture({
       activityId: wordActivity.id,
@@ -179,13 +180,17 @@ describe(getActivity, () => {
     const result = await getActivity({ lessonId: wordLesson.id, position: 0 });
 
     expect(result?.steps[0]?.word).toMatchObject({
-      alternativeTranslations: [],
+      audioUrl: "https://example.com/audio.mp3",
       id: word.id,
-      pronunciation: "test-pron",
       romanization: "test-roman",
-      translation: "test-translation",
+      translations: expect.arrayContaining([
+        expect.objectContaining({
+          alternativeTranslations: [],
+          pronunciation: "test-pron",
+          translation: "test-translation",
+        }),
+      ]) as unknown,
       word: word.word,
-      wordAudio: { audioUrl: "https://example.com/audio.mp3" },
     });
   });
 
@@ -194,11 +199,6 @@ describe(getActivity, () => {
       chapterId: chapter.id,
       isPublished: true,
       language: "en",
-      organizationId: org.id,
-    });
-
-    const sentAudio = await sentenceAudioFixture({
-      audioUrl: "https://example.com/sent-audio.mp3",
       organizationId: org.id,
     });
 
@@ -214,14 +214,19 @@ describe(getActivity, () => {
       }),
       sentenceFixture({
         alternativeSentences: ["test-sentence-alt"],
-        alternativeTranslations: ["test-sent-translation-alt"],
+        audioUrl: "https://example.com/sent-audio.mp3",
         organizationId: org.id,
         romanization: "test-sent-roman",
         sentence: `test-sentence-${crypto.randomUUID()}`,
-        sentenceAudioId: sentAudio.id,
-        translation: "test-sent-translation",
       }),
     ]);
+
+    await sentenceTranslationFixture({
+      alternativeTranslations: ["test-sent-translation-alt"],
+      sentenceId: sentence.id,
+      translation: "test-sent-translation",
+      userLanguage: "en",
+    });
 
     await stepFixture({
       activityId: sentActivity.id,
@@ -234,12 +239,16 @@ describe(getActivity, () => {
 
     expect(result?.steps[0]?.sentence).toMatchObject({
       alternativeSentences: ["test-sentence-alt"],
-      alternativeTranslations: ["test-sent-translation-alt"],
+      audioUrl: "https://example.com/sent-audio.mp3",
       id: sentence.id,
       romanization: "test-sent-roman",
       sentence: sentence.sentence,
-      sentenceAudio: { audioUrl: "https://example.com/sent-audio.mp3" },
-      translation: "test-sent-translation",
+      translations: expect.arrayContaining([
+        expect.objectContaining({
+          alternativeTranslations: ["test-sent-translation-alt"],
+          translation: "test-sent-translation",
+        }),
+      ]) as unknown,
     });
   });
 
