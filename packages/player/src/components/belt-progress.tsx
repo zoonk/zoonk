@@ -5,35 +5,9 @@ import { ProgressIndicator, ProgressRoot, ProgressTrack } from "@zoonk/ui/compon
 import { cn } from "@zoonk/ui/lib/utils";
 import { calculateBeltLevel, getBeltProgressPercent } from "@zoonk/utils/belt-level";
 import { useExtracted } from "next-intl";
-import { useEffect, useState } from "react";
 import { usePlayerNavigation } from "../player-context";
 import { PlayerLink } from "../player-link";
 import { useBeltColorLabel } from "../use-belt-color-label";
-
-type LevelUpPhase = "filling" | "resetting" | "done";
-
-/**
- * Triggers animation start after first paint.
- *
- * This is a legitimate useEffect: we need the browser to paint the
- * initial state (previousPercent) before transitioning to the target.
- * No event handler exists for "component finished painting."
- */
-function useAnimationStarted(): boolean {
-  const [started, setStarted] = useState(false);
-  useEffect(() => setStarted(true), []);
-  return started;
-}
-
-function getDisplayPercent(phase: LevelUpPhase, currentPercent: number): number {
-  if (phase === "filling") {
-    return 100;
-  }
-  if (phase === "resetting") {
-    return 0;
-  }
-  return currentPercent;
-}
 
 export function BeltProgressHint({
   brainPower,
@@ -48,38 +22,8 @@ export function BeltProgressHint({
   const previousBelt = calculateBeltLevel(newTotalBp - brainPower);
   const didLevelUp =
     currentBelt.color !== previousBelt.color || currentBelt.level !== previousBelt.level;
-  const currentColorLabel = useBeltColorLabel(currentBelt.color);
-  const previousColorLabel = useBeltColorLabel(previousBelt.color);
-
+  const colorLabel = useBeltColorLabel(currentBelt.color);
   const currentPercent = getBeltProgressPercent(currentBelt);
-  const previousPercent = getBeltProgressPercent(previousBelt);
-
-  const animationStarted = useAnimationStarted();
-  const [levelUpPhase, setLevelUpPhase] = useState<LevelUpPhase>("filling");
-
-  const showCurrentBelt = !didLevelUp || levelUpPhase !== "filling";
-  const displayColor = showCurrentBelt ? currentBelt.color : previousBelt.color;
-  const displayLabel = showCurrentBelt ? currentColorLabel : previousColorLabel;
-  const displayLevel = showCurrentBelt ? currentBelt.level : previousBelt.level;
-
-  const displayPercent = getDisplayPercent(
-    animationStarted && didLevelUp ? levelUpPhase : "done",
-    currentPercent,
-  );
-
-  const skipTransition = levelUpPhase === "resetting";
-
-  function handleTransitionEnd() {
-    if (!didLevelUp || levelUpPhase !== "filling") {
-      return;
-    }
-    // Two-frame sequence: first frame paints 0% with no transition,
-    // second frame starts the transition to currentPercent.
-    setLevelUpPhase("resetting");
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => setLevelUpPhase("done"));
-    });
-  }
 
   if (currentBelt.isMaxLevel || !levelHref) {
     return null;
@@ -90,29 +34,28 @@ export function BeltProgressHint({
       <div className="flex items-center gap-1.5">
         <BeltIndicator
           className={didLevelUp ? "animate-dot-pulse motion-reduce:animate-none" : undefined}
-          color={displayColor}
-          label={t("{color} belt", { color: displayLabel })}
+          color={currentBelt.color}
+          label={t("{color} belt", { color: colorLabel })}
           size="sm"
         />
         <span className="text-foreground text-sm font-medium">
-          {t("{color} Belt — Level {level}", { color: displayLabel, level: String(displayLevel) })}
+          {t("{color} Belt — Level {level}", {
+            color: colorLabel,
+            level: String(currentBelt.level),
+          })}
         </span>
       </div>
-      <ProgressRoot
-        aria-label={t("Level progress")}
-        value={animationStarted ? displayPercent : previousPercent}
-      >
+      <ProgressRoot aria-label={t("Level progress")} value={currentPercent}>
         <ProgressTrack className="h-1.5 overflow-hidden">
           <ProgressIndicator
             className={cn(
-              beltColorClasses[displayColor],
+              beltColorClasses[currentBelt.color],
               "rounded-full",
-              displayColor === "white" && "ring-1 ring-black/10 ring-inset dark:ring-0",
-              displayColor === "black" && "dark:ring-1 dark:ring-white/10 dark:ring-inset",
-              skipTransition ? "duration-0" : "duration-600 ease-out",
+              currentBelt.color === "white" && "ring-1 ring-black/10 ring-inset dark:ring-0",
+              currentBelt.color === "black" && "dark:ring-1 dark:ring-white/10 dark:ring-inset",
+              "duration-600 ease-out",
               "motion-reduce:duration-0",
             )}
-            onTransitionEnd={handleTransitionEnd}
           />
         </ProgressTrack>
       </ProgressRoot>
