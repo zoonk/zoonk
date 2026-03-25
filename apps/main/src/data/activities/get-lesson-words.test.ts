@@ -3,7 +3,7 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonWordFixture } from "@zoonk/testing/fixtures/lesson-words";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { wordAudioFixture, wordFixture } from "@zoonk/testing/fixtures/words";
+import { wordFixture, wordTranslationFixture } from "@zoonk/testing/fixtures/words";
 import { beforeAll, describe, expect, test } from "vitest";
 import { getLessonWords } from "./get-lesson-words";
 
@@ -41,16 +41,12 @@ describe(getLessonWords, () => {
     const [word1, word2] = await Promise.all([
       wordFixture({
         organizationId: org.id,
-        pronunciation: "oh-lah",
         targetLanguage: "es",
-        translation: "hello",
         word: `hola-${crypto.randomUUID()}`,
       }),
       wordFixture({
         organizationId: org.id,
-        pronunciation: "grah-see-ahs",
         targetLanguage: "es",
-        translation: "thank you",
         word: `gracias-${crypto.randomUUID()}`,
       }),
     ]);
@@ -77,20 +73,20 @@ describe(getLessonWords, () => {
       organizationId: org.id,
     });
 
-    const wordAudio = await wordAudioFixture({
+    const word = await wordFixture({
       audioUrl: "https://example.com/perro.mp3",
       organizationId: org.id,
-      targetLanguage: "es",
-    });
-
-    const word = await wordFixture({
-      organizationId: org.id,
-      pronunciation: "peh-roh",
       romanization: null,
       targetLanguage: "es",
-      translation: "dog",
       word: `perro-${crypto.randomUUID()}`,
-      wordAudioId: wordAudio.id,
+    });
+
+    await wordTranslationFixture({
+      alternativeTranslations: [],
+      pronunciation: "peh-roh",
+      translation: "dog",
+      userLanguage: "en",
+      wordId: word.id,
     });
 
     await lessonWordFixture({ lessonId: newLesson.id, wordId: word.id });
@@ -99,13 +95,17 @@ describe(getLessonWords, () => {
 
     expect(result).toHaveLength(1);
     expect(result[0]).toMatchObject({
-      alternativeTranslations: [],
+      audioUrl: "https://example.com/perro.mp3",
       id: word.id,
-      pronunciation: "peh-roh",
       romanization: null,
-      translation: "dog",
+      translations: expect.arrayContaining([
+        expect.objectContaining({
+          alternativeTranslations: [],
+          pronunciation: "peh-roh",
+          translation: "dog",
+        }),
+      ]) as unknown,
       word: word.word,
-      wordAudio: { audioUrl: "https://example.com/perro.mp3" },
     });
   });
 

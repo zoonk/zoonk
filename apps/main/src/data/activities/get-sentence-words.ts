@@ -26,14 +26,13 @@ const cachedGetSentenceWords = cache(async (lessonId: number) => {
     return [];
   }
 
-  const { organizationId, targetLanguage, userLanguage } = firstSentence;
+  const { organizationId, targetLanguage } = firstSentence;
 
   return prisma.word.findMany({
-    include: { wordAudio: true },
+    include: { translations: true },
     where: {
       organizationId,
       targetLanguage,
-      userLanguage,
       word: { in: uniqueWords, mode: "insensitive" },
     },
   });

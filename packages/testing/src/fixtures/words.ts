@@ -1,44 +1,37 @@
 import { prisma } from "@zoonk/db";
 
-export async function wordAudioFixture(attrs: {
+export async function wordFixture(attrs: {
   organizationId: number;
-  targetLanguage?: string;
   word?: string;
-  audioUrl?: string;
+  targetLanguage?: string;
+  romanization?: string | null;
+  audioUrl?: string | null;
 }) {
-  return prisma.wordAudio.create({
+  return prisma.word.create({
     data: {
-      audioUrl: attrs.audioUrl ?? `https://example.com/${crypto.randomUUID()}.mp3`,
+      audioUrl: attrs.audioUrl ?? null,
       organizationId: attrs.organizationId,
+      romanization: attrs.romanization ?? null,
       targetLanguage: attrs.targetLanguage ?? "es",
       word: attrs.word ?? `word-${crypto.randomUUID()}`,
     },
   });
 }
 
-export async function wordFixture(attrs: {
-  alternativeTranslations?: string[];
-  organizationId: number;
-  word?: string;
-  translation?: string;
-  targetLanguage?: string;
+export async function wordTranslationFixture(attrs: {
+  wordId: bigint;
   userLanguage?: string;
+  translation?: string;
+  alternativeTranslations?: string[];
   pronunciation?: string | null;
-  romanization?: string | null;
-  wordAudioId?: bigint | null;
 }) {
-  return prisma.word.create({
+  return prisma.wordTranslation.create({
     data: {
       alternativeTranslations: attrs.alternativeTranslations ?? [],
-      organizationId: attrs.organizationId,
       pronunciation: attrs.pronunciation ?? "test-pronunciation",
-      romanization: attrs.romanization ?? null,
-      targetLanguage: attrs.targetLanguage ?? "es",
       translation: attrs.translation ?? `translation-${crypto.randomUUID()}`,
       userLanguage: attrs.userLanguage ?? "en",
-      word: attrs.word ?? `word-${crypto.randomUUID()}`,
-      wordAudioId: attrs.wordAudioId ?? null,
+      wordId: attrs.wordId,
     },
-    include: { wordAudio: true },
   });
 }

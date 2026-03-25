@@ -220,9 +220,15 @@ describe("language activity generation", () => {
         organizationId,
         romanization: "ga-to",
         targetLanguage,
+        word: `gato-${randomUUID().slice(0, 8)}`,
+      },
+    });
+
+    await prisma.wordTranslation.create({
+      data: {
         translation: "cat",
         userLanguage,
-        word: `gato-${randomUUID().slice(0, 8)}`,
+        wordId: word1.id,
       },
     });
 
@@ -231,9 +237,15 @@ describe("language activity generation", () => {
         organizationId,
         romanization: "o-la",
         targetLanguage,
+        word: `hola-${randomUUID().slice(0, 8)}`,
+      },
+    });
+
+    await prisma.wordTranslation.create({
+      data: {
         translation: "hello",
         userLanguage,
-        word: `hola-${randomUUID().slice(0, 8)}`,
+        wordId: word2.id,
       },
     });
 
@@ -600,6 +612,12 @@ describe("language activity generation", () => {
         organizationId,
         sentence: `pre-complete-sentence-1-${randomUUID().slice(0, 8)}`,
         targetLanguage: "es",
+      },
+    });
+
+    await prisma.sentenceTranslation.create({
+      data: {
+        sentenceId: sentence1.id,
         translation: "Pre-complete sentence 1",
         userLanguage: "en",
       },
@@ -610,6 +628,12 @@ describe("language activity generation", () => {
         organizationId,
         sentence: `pre-complete-sentence-2-${randomUUID().slice(0, 8)}`,
         targetLanguage: "es",
+      },
+    });
+
+    await prisma.sentenceTranslation.create({
+      data: {
+        sentenceId: sentence2.id,
         translation: "Pre-complete sentence 2",
         userLanguage: "en",
       },

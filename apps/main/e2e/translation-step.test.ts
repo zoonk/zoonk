@@ -6,7 +6,7 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonWordFixture } from "@zoonk/testing/fixtures/lesson-words";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
-import { wordFixture } from "@zoonk/testing/fixtures/words";
+import { wordFixture, wordTranslationFixture } from "@zoonk/testing/fixtures/words";
 import { type Page, expect, test } from "./fixtures";
 
 async function createTranslationActivity(options: {
@@ -54,29 +54,41 @@ async function createTranslationActivity(options: {
   });
 
   const createdWords = await Promise.all(
-    options.words.map((wordData) =>
-      wordFixture({
-        alternativeTranslations: wordData.alternativeTranslations ?? [],
+    options.words.map(async (wordData) => {
+      const word = await wordFixture({
         organizationId: org.id,
-        pronunciation: wordData.pronunciation ?? null,
         romanization: wordData.romanization ?? null,
-        translation: wordData.translation,
         word: wordData.word,
-      }),
-    ),
+      });
+
+      await wordTranslationFixture({
+        alternativeTranslations: wordData.alternativeTranslations ?? [],
+        pronunciation: wordData.pronunciation ?? null,
+        translation: wordData.translation,
+        wordId: word.id,
+      });
+
+      return word;
+    }),
   );
 
   await Promise.all(
-    (options.fallbackWords ?? []).map((wordData) =>
-      wordFixture({
-        alternativeTranslations: wordData.alternativeTranslations ?? [],
+    (options.fallbackWords ?? []).map(async (wordData) => {
+      const word = await wordFixture({
         organizationId: org.id,
-        pronunciation: wordData.pronunciation ?? null,
         romanization: wordData.romanization ?? null,
-        translation: wordData.translation,
         word: wordData.word,
-      }),
-    ),
+      });
+
+      await wordTranslationFixture({
+        alternativeTranslations: wordData.alternativeTranslations ?? [],
+        pronunciation: wordData.pronunciation ?? null,
+        translation: wordData.translation,
+        wordId: word.id,
+      });
+
+      return word;
+    }),
   );
 
   await Promise.all(

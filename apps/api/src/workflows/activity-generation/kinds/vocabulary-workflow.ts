@@ -24,24 +24,23 @@ export async function vocabularyActivityWorkflow(
     neighboringConcepts,
   );
 
-  const [saveWordsResult, pronunciationResult, audioResult, romanizationResult] =
-    await Promise.allSettled([
-      saveVocabularyWordsStep(activities, words, workflowRunId),
-      generateVocabularyPronunciationStep(activities, words),
-      generateVocabularyAudioStep(activities, words),
-      generateVocabularyRomanizationStep(activities, words),
-    ]);
+  const { savedWords } = await saveVocabularyWordsStep(activities, words, workflowRunId);
 
-  const { savedWords } = settled(saveWordsResult, { savedWords: [] });
+  const [pronunciationResult, audioResult, romanizationResult] = await Promise.allSettled([
+    generateVocabularyPronunciationStep(activities, words),
+    generateVocabularyAudioStep(activities, words),
+    generateVocabularyRomanizationStep(activities, words),
+  ]);
+
   const { pronunciations } = settled(pronunciationResult, { pronunciations: {} });
-  const { wordAudioIds } = settled(audioResult, { wordAudioIds: {} });
+  const { wordAudioUrls } = settled(audioResult, { wordAudioUrls: {} });
   const { romanizations } = settled(romanizationResult, { romanizations: {} });
 
   await updateVocabularyEnrichmentsStep(
     activities,
     savedWords,
     pronunciations,
-    wordAudioIds,
+    wordAudioUrls,
     romanizations,
   );
   await completeActivityStep(activities, workflowRunId, "vocabulary");

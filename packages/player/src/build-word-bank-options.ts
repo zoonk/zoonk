@@ -16,9 +16,8 @@ const WORD_BANK_DISTRACTOR_COUNT = 8;
 
 type WordDataInput = {
   romanization: string | null;
-  translation: string;
+  audioUrl: string | null;
   word: string;
-  wordAudio: { audioUrl: string } | null;
 };
 
 /**
@@ -84,9 +83,9 @@ function getWordMetadata(
   const lessonWord = lessonWordLookup.get(key);
 
   return {
-    audioUrl: sentenceWord?.wordAudio?.audioUrl ?? lessonWord?.audioUrl ?? null,
+    audioUrl: sentenceWord?.audioUrl ?? lessonWord?.audioUrl ?? null,
     romanization: sentenceWord?.romanization ?? lessonWord?.romanization ?? null,
-    translation: sentenceWord?.translation ?? lessonWord?.translation ?? null,
+    translation: lessonWord?.translation ?? null,
   };
 }
 

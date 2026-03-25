@@ -4,7 +4,7 @@ import { cache } from "react";
 
 const cachedGetLessonWords = cache(async (lessonId: number) => {
   const lessonWords = await prisma.lessonWord.findMany({
-    include: { word: { include: { wordAudio: true } } },
+    include: { word: { include: { translations: true } } },
     where: { lessonId },
   });
 

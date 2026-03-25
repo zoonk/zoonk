@@ -25,6 +25,16 @@ type SelectedAnswer =
   | { kind: "sortOrder"; userOrder: string[] }
   | { kind: "translation"; selectedWordId: string; selectedText: string; questionText: string };
 
+type SentenceTranslationData = {
+  translation: string;
+  alternativeTranslations?: string[];
+};
+
+/**
+ * Step data for server-side validation. Sentences now carry translations in a
+ * separate array rather than flat on the model, so we accept both the raw DB
+ * shape (translations[]) and let a helper extract the first match.
+ */
 type StepData = {
   id: bigint;
   kind: string;
@@ -34,10 +44,25 @@ type StepData = {
     id: bigint;
     sentence: string;
     alternativeSentences?: string[];
-    translation: string;
-    alternativeTranslations?: string[];
+    translations?: SentenceTranslationData[];
   } | null;
 };
+
+/**
+ * Extracts the first translation entry from a sentence's translations array.
+ * Falls back to an empty translation when the array is missing or empty so
+ * callers always get a safe object.
+ */
+function getSentenceTranslation(sentence: NonNullable<StepData["sentence"]>): {
+  translation: string;
+  alternativeTranslations: string[];
+} {
+  const first = sentence.translations?.[0];
+  return {
+    alternativeTranslations: first?.alternativeTranslations ?? [],
+    translation: first?.translation ?? "",
+  };
+}
 
 type ValidatedStepResult = {
   answer: object;
@@ -146,9 +171,10 @@ function validateListening(step: StepData, answer: SelectedAnswer): ValidatedSte
     return null;
   }
 
+  const { alternativeTranslations, translation } = getSentenceTranslation(step.sentence);
   const acceptedWordSequences = buildAcceptedArrangeWordSequences(
-    step.sentence.translation,
-    step.sentence.alternativeTranslations ?? [],
+    translation,
+    alternativeTranslations,
   );
   const result = checkArrangeWordsAnswer(acceptedWordSequences, answer.arrangedWords);
   return { answer, effects: [], isCorrect: result.isCorrect, stepId: step.id };

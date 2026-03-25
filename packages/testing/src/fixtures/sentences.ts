@@ -1,44 +1,39 @@
 import { prisma } from "@zoonk/db";
 
-export async function sentenceAudioFixture(attrs: {
+export async function sentenceFixture(attrs: {
   organizationId: number;
-  targetLanguage?: string;
   sentence?: string;
-  audioUrl?: string;
+  targetLanguage?: string;
+  alternativeSentences?: string[];
+  romanization?: string | null;
+  audioUrl?: string | null;
 }) {
-  return prisma.sentenceAudio.create({
+  return prisma.sentence.create({
     data: {
-      audioUrl: attrs.audioUrl ?? `https://example.com/${crypto.randomUUID()}.mp3`,
+      alternativeSentences: attrs.alternativeSentences ?? [],
+      audioUrl: attrs.audioUrl ?? null,
       organizationId: attrs.organizationId,
+      romanization: attrs.romanization ?? null,
       sentence: attrs.sentence ?? `sentence-${crypto.randomUUID()}`,
       targetLanguage: attrs.targetLanguage ?? "es",
     },
   });
 }
 
-export async function sentenceFixture(attrs: {
-  alternativeSentences?: string[];
-  alternativeTranslations?: string[];
-  organizationId: number;
-  sentence?: string;
-  translation?: string;
-  targetLanguage?: string;
+export async function sentenceTranslationFixture(attrs: {
+  sentenceId: bigint;
   userLanguage?: string;
-  romanization?: string | null;
-  sentenceAudioId?: bigint | null;
+  translation?: string;
+  alternativeTranslations?: string[];
+  explanation?: string | null;
 }) {
-  return prisma.sentence.create({
+  return prisma.sentenceTranslation.create({
     data: {
-      alternativeSentences: attrs.alternativeSentences ?? [],
       alternativeTranslations: attrs.alternativeTranslations ?? [],
-      organizationId: attrs.organizationId,
-      romanization: attrs.romanization ?? null,
-      sentence: attrs.sentence ?? `sentence-${crypto.randomUUID()}`,
-      sentenceAudioId: attrs.sentenceAudioId ?? null,
-      targetLanguage: attrs.targetLanguage ?? "es",
+      explanation: attrs.explanation ?? null,
+      sentenceId: attrs.sentenceId,
       translation: attrs.translation ?? `translation-${crypto.randomUUID()}`,
       userLanguage: attrs.userLanguage ?? "en",
     },
-    include: { sentenceAudio: true },
   });
 }

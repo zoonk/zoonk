@@ -4,7 +4,7 @@ import { lessonSentenceFixture } from "@zoonk/testing/fixtures/lesson-sentences"
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { sentenceFixture } from "@zoonk/testing/fixtures/sentences";
-import { wordFixture } from "@zoonk/testing/fixtures/words";
+import { wordFixture, wordTranslationFixture } from "@zoonk/testing/fixtures/words";
 import { beforeAll, describe, expect, test } from "vitest";
 import { getSentenceWords } from "./get-sentence-words";
 
@@ -46,18 +46,15 @@ describe(getSentenceWords, () => {
         organizationId: org.id,
         sentence: `${wordText1} ${wordText2}`,
         targetLanguage: "es",
-        translation: "hello world",
       }),
       wordFixture({
         organizationId: org.id,
         targetLanguage: "es",
-        translation: "hello",
         word: wordText1,
       }),
       wordFixture({
         organizationId: org.id,
         targetLanguage: "es",
-        translation: "world",
         word: wordText2,
       }),
     ]);
@@ -103,7 +100,6 @@ describe(getSentenceWords, () => {
       organizationId: org.id,
       sentence: `noexiste${uniqueId} tampoco${uniqueId}`,
       targetLanguage: "es",
-      translation: "doesn't exist either",
     });
 
     await lessonSentenceFixture({ lessonId: newLesson.id, sentenceId: sentence.id });
@@ -127,12 +123,10 @@ describe(getSentenceWords, () => {
         organizationId: org.id,
         sentence: `${wordText}?`,
         targetLanguage: "es",
-        translation: "you know?",
       }),
       wordFixture({
         organizationId: org.id,
         targetLanguage: "es",
-        translation: "you know",
         word: wordText,
       }),
     ]);
@@ -156,21 +150,24 @@ describe(getSentenceWords, () => {
 
     const wordText = `Hola${uniqueId}`;
 
-    const [sentence] = await Promise.all([
+    const [sentence, word] = await Promise.all([
       sentenceFixture({
         organizationId: org.id,
         sentence: `${wordText} mundo`,
         targetLanguage: "es",
-        translation: "hello world",
       }),
-      // Word stored with uppercase (as AI might generate)
       wordFixture({
         organizationId: org.id,
         targetLanguage: "es",
-        translation: "hello",
         word: wordText,
       }),
     ]);
+
+    await wordTranslationFixture({
+      translation: "hello",
+      userLanguage: "en",
+      wordId: word.id,
+    });
 
     await lessonSentenceFixture({ lessonId: newLesson.id, sentenceId: sentence.id });
 
@@ -179,7 +176,8 @@ describe(getSentenceWords, () => {
 
     const match = result.find((item) => item.word.toLowerCase() === wordText.toLowerCase());
     expect(match).toBeDefined();
-    expect(match?.translation).toBe("hello");
+    const matchTranslation = match?.translations.find((t) => t.userLanguage === "en");
+    expect(matchTranslation?.translation).toBe("hello");
   });
 
   test("deduplicates words across multiple sentences", async () => {
@@ -197,18 +195,15 @@ describe(getSentenceWords, () => {
         organizationId: org.id,
         sentence: `${wordText} bonito`,
         targetLanguage: "es",
-        translation: "pretty cat",
       }),
       sentenceFixture({
         organizationId: org.id,
         sentence: `${wordText} grande`,
         targetLanguage: "es",
-        translation: "big cat",
       }),
       wordFixture({
         organizationId: org.id,
         targetLanguage: "es",
-        translation: "cat",
         word: wordText,
       }),
     ]);

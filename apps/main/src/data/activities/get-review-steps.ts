@@ -38,8 +38,8 @@ export async function getReviewSteps({
   if (!userId) {
     const allSteps = await prisma.step.findMany({
       include: {
-        sentence: { include: { sentenceAudio: true } },
-        word: { include: { wordAudio: true } },
+        sentence: { include: { translations: true } },
+        word: { include: { translations: true } },
       },
       where: lessonStepFilter,
     });
@@ -53,8 +53,8 @@ export async function getReviewSteps({
   const [allSteps, incorrectAttempts, correctAttempts] = await Promise.all([
     prisma.step.findMany({
       include: {
-        sentence: { include: { sentenceAudio: true } },
-        word: { include: { wordAudio: true } },
+        sentence: { include: { translations: true } },
+        word: { include: { translations: true } },
       },
       where: lessonStepFilter,
     }),
@@ -102,8 +102,8 @@ export async function getReviewSteps({
 export async function getReviewValidationSteps(lessonId: number, stepIds: bigint[]) {
   return prisma.step.findMany({
     include: {
-      sentence: { include: { sentenceAudio: true } },
-      word: { include: { wordAudio: true } },
+      sentence: { include: { translations: true } },
+      word: { include: { translations: true } },
     },
     where: { ...reviewableStepFilter(lessonId), id: { in: stepIds } },
   });

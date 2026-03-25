@@ -61,11 +61,8 @@ async function seedWord(
   const word = await prisma.word.upsert({
     create: {
       organizationId: org.id,
-      pronunciation: data.pronunciation,
       romanization: data.romanization,
       targetLanguage: data.targetLanguage,
-      translation: data.translation,
-      userLanguage: data.userLanguage,
       word: data.word,
     },
     update: {},
@@ -73,8 +70,23 @@ async function seedWord(
       orgWord: {
         organizationId: org.id,
         targetLanguage: data.targetLanguage,
-        userLanguage: data.userLanguage,
         word: data.word,
+      },
+    },
+  });
+
+  await prisma.wordTranslation.upsert({
+    create: {
+      pronunciation: data.pronunciation,
+      translation: data.translation,
+      userLanguage: data.userLanguage,
+      wordId: word.id,
+    },
+    update: {},
+    where: {
+      wordTranslation: {
+        userLanguage: data.userLanguage,
+        wordId: word.id,
       },
     },
   });

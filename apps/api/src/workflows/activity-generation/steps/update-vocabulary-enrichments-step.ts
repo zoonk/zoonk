@@ -11,7 +11,7 @@ export async function updateVocabularyEnrichmentsStep(
   activities: LessonActivity[],
   savedWords: SavedWord[],
   pronunciations: Record<string, string>,
-  wordAudioIds: Record<string, bigint>,
+  wordAudioUrls: Record<string, string>,
   romanizations: Record<string, string>,
 ): Promise<void> {
   "use step";
@@ -26,23 +26,32 @@ export async function updateVocabularyEnrichmentsStep(
 
   await stream.status({ status: "started", step: "updateVocabularyEnrichments" });
 
-  const updates = savedWords
-    .filter(
-      (saved) =>
-        pronunciations[saved.word] || wordAudioIds[saved.word] || romanizations[saved.word],
-    )
+  const userLanguage = activity.language;
+
+  const wordUpdates = savedWords
+    .filter((saved) => wordAudioUrls[saved.word] || romanizations[saved.word])
     .map((saved) =>
       prisma.word.update({
         data: {
-          pronunciation: pronunciations[saved.word],
+          audioUrl: wordAudioUrls[saved.word],
           romanization: romanizations[saved.word],
-          wordAudioId: wordAudioIds[saved.word],
         },
         where: { id: saved.wordId },
       }),
     );
 
-  const { error } = await safeAsync(() => prisma.$transaction(updates));
+  const translationUpdates = savedWords
+    .filter((saved) => pronunciations[saved.word])
+    .map((saved) =>
+      prisma.wordTranslation.update({
+        data: { pronunciation: pronunciations[saved.word] },
+        where: { wordTranslation: { userLanguage, wordId: BigInt(saved.wordId) } },
+      }),
+    );
+
+  const { error } = await safeAsync(() =>
+    prisma.$transaction([...wordUpdates, ...translationUpdates]),
+  );
 
   if (error) {
     await stream.error({ reason: "dbSaveFailed", step: "updateVocabularyEnrichments" });

@@ -11,13 +11,13 @@ import { handleActivityFailureStep } from "./handle-failure-step";
 export async function generateVocabularyAudioStep(
   activities: LessonActivity[],
   words: VocabularyWord[],
-): Promise<{ wordAudioIds: Record<string, bigint> }> {
+): Promise<{ wordAudioUrls: Record<string, string> }> {
   "use step";
 
   const activity = findActivityByKind(activities, "vocabulary");
 
   if (!activity || words.length === 0) {
-    return { wordAudioIds: {} };
+    return { wordAudioUrls: {} };
   }
 
   const course = activity.lesson.chapter.course;
@@ -29,29 +29,32 @@ export async function generateVocabularyAudioStep(
 
   if (!isTTSSupportedLanguage(targetLanguage) || !course.organization) {
     await stream.status({ status: "completed", step: "generateVocabularyAudio" });
-    return { wordAudioIds: {} };
+    return { wordAudioUrls: {} };
   }
 
   const orgSlug = course.organization.slug;
   const organizationId = course.organization.id;
 
-  const existingAudios = await prisma.wordAudio.findMany({
-    select: { id: true, word: true },
+  const existingAudios = await prisma.word.findMany({
+    select: { audioUrl: true, word: true },
     where: {
+      audioUrl: { not: null },
       organizationId,
       targetLanguage,
       word: { in: words.map((vocab) => vocab.word), mode: "insensitive" },
     },
   });
 
-  const existingAudioByLower: Record<string, bigint> = Object.fromEntries(
-    existingAudios.map((record) => [record.word.toLowerCase(), record.id]),
+  const existingAudioByLower: Record<string, string> = Object.fromEntries(
+    existingAudios.flatMap((record) =>
+      record.audioUrl ? [[record.word.toLowerCase(), record.audioUrl]] : [],
+    ),
   );
 
-  const existingAudioIds: Record<string, bigint> = Object.fromEntries(
+  const existingAudioUrls: Record<string, string> = Object.fromEntries(
     words.flatMap((vocab) => {
-      const audioId = existingAudioByLower[vocab.word.toLowerCase()];
-      return audioId ? [[vocab.word, audioId]] : [];
+      const audioUrl = existingAudioByLower[vocab.word.toLowerCase()];
+      return audioUrl ? [[vocab.word, audioUrl]] : [];
     }),
   );
 
@@ -69,31 +72,29 @@ export async function generateVocabularyAudioStep(
 
   const newAudioRecords = await Promise.all(
     fulfilled.map((result) =>
-      prisma.wordAudio.upsert({
-        create: {
-          audioUrl: result.audioUrl,
-          organizationId,
-          targetLanguage,
-          word: result.text,
-        },
-        select: { id: true, word: true },
-        update: { audioUrl: result.audioUrl },
-        where: { orgWordAudio: { organizationId, targetLanguage, word: result.text } },
+      prisma.word.update({
+        data: { audioUrl: result.audioUrl },
+        select: { audioUrl: true, word: true },
+        where: { orgWord: { organizationId, targetLanguage, word: result.text } },
       }),
     ),
   );
 
-  const wordAudioIds: Record<string, bigint> = {
-    ...existingAudioIds,
-    ...Object.fromEntries(newAudioRecords.map((record) => [record.word, record.id])),
+  const wordAudioUrls: Record<string, string> = {
+    ...existingAudioUrls,
+    ...Object.fromEntries(
+      newAudioRecords.flatMap((record) =>
+        record.audioUrl ? [[record.word, record.audioUrl]] : [],
+      ),
+    ),
   };
 
   if (fulfilled.length < wordsNeedingAudio.length) {
     await stream.error({ reason: "enrichmentFailed", step: "generateVocabularyAudio" });
     await handleActivityFailureStep({ activityId: activity.id });
-    return { wordAudioIds };
+    return { wordAudioUrls };
   }
 
   await stream.status({ status: "completed", step: "generateVocabularyAudio" });
-  return { wordAudioIds };
+  return { wordAudioUrls };
 }

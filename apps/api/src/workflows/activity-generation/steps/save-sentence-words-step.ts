@@ -11,7 +11,7 @@ import { type SavedSentence } from "./save-reading-sentences-step";
 
 export type SavedSentenceWord = {
   word: string;
-  wordAudioId: bigint | null;
+  wordAudioUrl: string | null;
   wordId: number;
 };
 
@@ -40,20 +40,31 @@ function buildSaveOneWord(params: {
         organizationId,
         romanization,
         targetLanguage,
-        translation,
-        userLanguage,
         word: dbWord,
       },
       update: {
         romanization,
-        translation,
       },
       where: {
-        orgWord: { organizationId, targetLanguage, userLanguage, word: dbWord },
+        orgWord: { organizationId, targetLanguage, word: dbWord },
       },
     });
 
-    return { word, wordAudioId: record.wordAudioId, wordId: Number(record.id) };
+    await prisma.wordTranslation.upsert({
+      create: {
+        translation,
+        userLanguage,
+        wordId: record.id,
+      },
+      update: {
+        translation,
+      },
+      where: {
+        wordTranslation: { userLanguage, wordId: record.id },
+      },
+    });
+
+    return { word: dbWord, wordAudioUrl: record.audioUrl, wordId: Number(record.id) };
   };
 }
 
@@ -96,7 +107,6 @@ export async function saveSentenceWordsStep(
   const existingCasing = await fetchExistingWordCasing({
     organizationId,
     targetLanguage,
-    userLanguage,
     words: uniqueWords,
   });
 

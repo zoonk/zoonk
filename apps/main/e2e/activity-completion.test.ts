@@ -10,7 +10,7 @@ import { lessonWordFixture } from "@zoonk/testing/fixtures/lesson-words";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { userProgressFixture } from "@zoonk/testing/fixtures/progress";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
-import { wordFixture } from "@zoonk/testing/fixtures/words";
+import { wordFixture, wordTranslationFixture } from "@zoonk/testing/fixtures/words";
 import { expect, test } from "./fixtures";
 
 async function createUniqueUser(baseURL: string) {
@@ -388,8 +388,12 @@ test.describe("Activity Completion", () => {
 
     const word = await wordFixture({
       organizationId: org.id,
-      translation: `cat-${uniqueId}`,
       word: `gato-${uniqueId}`,
+    });
+
+    await wordTranslationFixture({
+      translation: `cat-${uniqueId}`,
+      wordId: word.id,
     });
 
     await lessonWordFixture({ lessonId: lesson.id, wordId: word.id });

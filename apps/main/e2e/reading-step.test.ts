@@ -6,9 +6,9 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonSentenceFixture } from "@zoonk/testing/fixtures/lesson-sentences";
 import { lessonWordFixture } from "@zoonk/testing/fixtures/lesson-words";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
-import { sentenceAudioFixture, sentenceFixture } from "@zoonk/testing/fixtures/sentences";
+import { sentenceFixture, sentenceTranslationFixture } from "@zoonk/testing/fixtures/sentences";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
-import { wordFixture } from "@zoonk/testing/fixtures/words";
+import { wordFixture, wordTranslationFixture } from "@zoonk/testing/fixtures/words";
 import { type Page, expect, test } from "./fixtures";
 
 async function createReadingActivity(options: {
@@ -62,50 +62,58 @@ async function createReadingActivity(options: {
   });
 
   const createdWords = await Promise.all(
-    options.words.map((wordData) =>
-      wordFixture({
-        alternativeTranslations: wordData.alternativeTranslations ?? [],
+    options.words.map(async (wordData) => {
+      const word = await wordFixture({
         organizationId: org.id,
         romanization: wordData.romanization ?? null,
-        translation: wordData.translation,
         word: wordData.word,
-      }),
-    ),
+      });
+
+      await wordTranslationFixture({
+        alternativeTranslations: wordData.alternativeTranslations ?? [],
+        translation: wordData.translation,
+        wordId: word.id,
+      });
+
+      return word;
+    }),
   );
 
   await Promise.all(
-    (options.fallbackWords ?? []).map((wordData) =>
-      wordFixture({
-        alternativeTranslations: wordData.alternativeTranslations ?? [],
+    (options.fallbackWords ?? []).map(async (wordData) => {
+      const word = await wordFixture({
         organizationId: org.id,
         romanization: wordData.romanization ?? null,
-        translation: wordData.translation,
         word: wordData.word,
-      }),
-    ),
+      });
+
+      await wordTranslationFixture({
+        alternativeTranslations: wordData.alternativeTranslations ?? [],
+        translation: wordData.translation,
+        wordId: word.id,
+      });
+
+      return word;
+    }),
   );
 
   const createdSentences = await Promise.all(
     options.sentences.map(async (sentenceData) => {
-      let sentenceAudioId: bigint | null = null;
-
-      if (sentenceData.audioUrl) {
-        const audio = await sentenceAudioFixture({
-          audioUrl: sentenceData.audioUrl,
-          organizationId: org.id,
-        });
-        sentenceAudioId = audio.id;
-      }
-
-      return sentenceFixture({
+      const sentence = await sentenceFixture({
         alternativeSentences: sentenceData.alternativeSentences ?? [],
-        alternativeTranslations: sentenceData.alternativeTranslations ?? [],
+        audioUrl: sentenceData.audioUrl ?? null,
         organizationId: org.id,
         romanization: sentenceData.romanization ?? null,
         sentence: sentenceData.sentence,
-        sentenceAudioId,
+      });
+
+      await sentenceTranslationFixture({
+        alternativeTranslations: sentenceData.alternativeTranslations ?? [],
+        sentenceId: sentence.id,
         translation: sentenceData.translation,
       });
+
+      return sentence;
     }),
   );
 

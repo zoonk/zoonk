@@ -11,13 +11,13 @@ import { type SavedSentenceWord } from "./save-sentence-words-step";
 export async function generateSentenceWordAudioStep(
   activities: LessonActivity[],
   savedSentenceWords: SavedSentenceWord[],
-): Promise<{ wordAudioIds: Record<string, bigint> }> {
+): Promise<{ wordAudioUrls: Record<string, string> }> {
   "use step";
 
   const activity = findActivityByKind(activities, "reading");
 
   if (!activity || savedSentenceWords.length === 0) {
-    return { wordAudioIds: {} };
+    return { wordAudioUrls: {} };
   }
 
   const course = activity.lesson.chapter.course;
@@ -29,27 +29,28 @@ export async function generateSentenceWordAudioStep(
 
   if (!isTTSSupportedLanguage(targetLanguage) || !course.organization) {
     await stream.status({ status: "completed", step: "generateSentenceWordAudio" });
-    return { wordAudioIds: {} };
+    return { wordAudioUrls: {} };
   }
 
   const orgSlug = course.organization.slug;
   const organizationId = course.organization.id;
 
-  const existingAudios = await prisma.wordAudio.findMany({
-    select: { id: true, word: true },
+  const existingAudios = await prisma.word.findMany({
+    select: { audioUrl: true, word: true },
     where: {
+      audioUrl: { not: null },
       organizationId,
       targetLanguage,
       word: { in: savedSentenceWords.map((saved) => saved.word) },
     },
   });
 
-  const existingAudioIds: Record<string, bigint> = Object.fromEntries(
-    existingAudios.map((record) => [record.word, record.id]),
+  const existingAudioUrls: Record<string, string> = Object.fromEntries(
+    existingAudios.flatMap((record) => (record.audioUrl ? [[record.word, record.audioUrl]] : [])),
   );
 
   const wordsNeedingAudio = savedSentenceWords.filter(
-    (saved) => !saved.wordAudioId && !existingAudioIds[saved.word],
+    (saved) => !saved.wordAudioUrl && !existingAudioUrls[saved.word],
   );
 
   const results = await Promise.all(
@@ -60,36 +61,34 @@ export async function generateSentenceWordAudioStep(
 
   const newAudioRecords = await Promise.all(
     fulfilled.map((result) =>
-      prisma.wordAudio.upsert({
-        create: {
-          audioUrl: result.audioUrl,
-          organizationId,
-          targetLanguage,
-          word: result.text,
-        },
-        select: { id: true, word: true },
-        update: { audioUrl: result.audioUrl },
-        where: { orgWordAudio: { organizationId, targetLanguage, word: result.text } },
+      prisma.word.update({
+        data: { audioUrl: result.audioUrl },
+        select: { audioUrl: true, word: true },
+        where: { orgWord: { organizationId, targetLanguage, word: result.text } },
       }),
     ),
   );
 
-  const wordAudioIds: Record<string, bigint> = {
-    ...existingAudioIds,
+  const wordAudioUrls: Record<string, string> = {
+    ...existingAudioUrls,
     ...Object.fromEntries(
       savedSentenceWords.flatMap((saved) =>
-        saved.wordAudioId ? [[saved.word, saved.wordAudioId]] : [],
+        saved.wordAudioUrl ? [[saved.word, saved.wordAudioUrl]] : [],
       ),
     ),
-    ...Object.fromEntries(newAudioRecords.map((record) => [record.word, record.id])),
+    ...Object.fromEntries(
+      newAudioRecords.flatMap((record) =>
+        record.audioUrl ? [[record.word, record.audioUrl]] : [],
+      ),
+    ),
   };
 
   if (fulfilled.length < wordsNeedingAudio.length) {
     await stream.error({ reason: "enrichmentFailed", step: "generateSentenceWordAudio" });
     await handleActivityFailureStep({ activityId: activity.id });
-    return { wordAudioIds };
+    return { wordAudioUrls };
   }
 
   await stream.status({ status: "completed", step: "generateSentenceWordAudio" });
-  return { wordAudioIds };
+  return { wordAudioUrls };
 }
