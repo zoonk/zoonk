@@ -217,5 +217,5 @@ async function persistGeneratedFields(params: {
     });
   });
 
-  await safeAsync(() => prisma.$transaction(updates));
+  await prisma.$transaction(updates);
 }

@@ -353,4 +353,23 @@ describe(generateWordPronunciationAndAlternatives, () => {
     expect(updatedAltsOnly?.pronunciation).toBe("existing-pron");
     expect(updatedAltsOnly?.alternativeTranslations).toEqual(["hi", "hey"]);
   });
+
+  test("propagates database write failures instead of swallowing them", async () => {
+    const word = await wordFixture({ organizationId });
+    await createWordTranslation({ translation: "hello", wordId: word.id });
+
+    const transactionSpy = vi
+      .spyOn(prisma, "$transaction")
+      .mockRejectedValueOnce(new Error("DB transaction failed"));
+
+    await expect(
+      generateWordPronunciationAndAlternatives({
+        targetLanguage: "es",
+        userLanguage: "en",
+        words: [{ word: word.word, wordId: Number(word.id) }],
+      }),
+    ).rejects.toThrow("DB transaction failed");
+
+    transactionSpy.mockRestore();
+  });
 });

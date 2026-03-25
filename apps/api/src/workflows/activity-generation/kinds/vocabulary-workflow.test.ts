@@ -567,4 +567,40 @@ describe(vocabularyActivityWorkflow, () => {
     );
     expect(generateLanguageAudio).toHaveBeenCalledWith(expect.objectContaining({ text: newWord }));
   });
+
+  test("sets vocabulary status to 'failed' when pronunciation/alternatives DB write fails", async () => {
+    const transactionSpy = vi.spyOn(prisma, "$transaction");
+
+    // Let the first $transaction call through (updateVocabularyEnrichmentsStep),
+    // but fail the pronunciation/alternatives persist. Since both run in
+    // Promise.allSettled, we need to fail the specific call from
+    // persistGeneratedFields. It's the first $transaction call because
+    // the enrichment step runs in parallel and typically resolves before
+    // the update step.
+    transactionSpy.mockRejectedValueOnce(new Error("DB transaction failed"));
+
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `Vocab PersistFail ${randomUUID()}`,
+    });
+
+    const activity = await activityFixture({
+      generationStatus: "pending",
+      kind: "vocabulary",
+      language: "en",
+      lessonId: lesson.id,
+      organizationId,
+      title: `Vocabulary ${randomUUID()}`,
+    });
+
+    const activities = await fetchLessonActivities(lesson.id);
+    await vocabularyActivityWorkflow(activities, "test-run-id", [], []);
+
+    const dbActivity = await prisma.activity.findUnique({ where: { id: activity.id } });
+    expect(dbActivity?.generationStatus).toBe("failed");
+
+    transactionSpy.mockRestore();
+  });
 });
