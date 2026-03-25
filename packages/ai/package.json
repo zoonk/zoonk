@@ -14,7 +14,7 @@
     "./tasks/activities/language/pronunciation": "./src/tasks/activities/language/activity-pronunciation.ts",
     "./tasks/activities/language/romanization": "./src/tasks/activities/language/activity-romanization.ts",
     "./tasks/activities/language/sentence-variants": "./src/tasks/activities/language/activity-sentence-variants.ts",
-    "./tasks/activities/language/sentence-word-translation": "./src/tasks/activities/language/activity-sentence-word-translation.ts",
+    "./tasks/activities/language/translation": "./src/tasks/activities/language/activity-translation.ts",
     "./tasks/activities/language/sentences": "./src/tasks/activities/language/activity-sentences.ts",
     "./tasks/activities/language/vocabulary": "./src/tasks/activities/language/activity-vocabulary.ts",
     "./tasks/audio": "./src/tasks/audio/generate-language-audio.ts",
