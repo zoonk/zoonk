@@ -9,8 +9,11 @@ import { type SavedWord } from "./save-vocabulary-words-step";
 
 /**
  * Generates pronunciation and alternativeTranslations for vocabulary words
- * that are missing them. Thin wrapper around the shared enrichWordTranslations
- * utility, scoped to the vocabulary activity for stream status reporting.
+ * that are missing them. Alternative translations prevent semantically
+ * equivalent words from appearing as distractors in exercises.
+ *
+ * Thin wrapper around the shared enrichWordTranslations utility, scoped
+ * to the vocabulary activity for stream status reporting.
  */
 export async function enrichVocabularyWordTranslationsStep(
   activities: LessonActivity[],

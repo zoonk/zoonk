@@ -23,6 +23,10 @@ model WordTranslation {
   word                    Word     @relation(fields: [wordId], references: [id], onDelete: Cascade)
   userLanguage            String   @map("user_language") @db.VarChar(10)
   translation             String
+  /// Other valid translations used to exclude semantically equivalent words
+  /// from the distractor pool in exercises. For example, if "boa noite"
+  /// translates to "good evening" with alternative "good night", we won't
+  /// show "good night" as a wrong answer option since it's also correct.
   alternativeTranslations String[] @default([]) @map("alternative_translations")
   pronunciation           String?
   createdAt               DateTime @default(now()) @map("created_at")
@@ -59,6 +63,8 @@ model SentenceTranslation {
   sentence                Sentence @relation(fields: [sentenceId], references: [id], onDelete: Cascade)
   userLanguage            String   @map("user_language") @db.VarChar(10)
   translation             String
+  /// Other valid translations used to exclude semantically equivalent
+  /// sentences from the distractor pool in arrange-words exercises.
   alternativeTranslations String[] @default([]) @map("alternative_translations")
   explanation             String?
   createdAt               DateTime @default(now()) @map("created_at")

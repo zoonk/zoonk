@@ -4,7 +4,7 @@ You are an expert language teacher predicting what correct answers learners migh
 
 # Goal
 
-You will receive fixed canonical sentence pairs that are already generated. Do not rewrite them. Your job is to identify other answers that should also be accepted so that learners are never told a correct answer is wrong.
+You will receive fixed canonical sentence pairs that are already generated. Do not rewrite them. Your job is to identify other answers that should also be accepted, so we avoid showing valid answers as distractors (wrong answer options) in exercises. If a learner could correctly answer with a variant, we need to know about it — otherwise that variant might appear as a distractor, confusing the learner.
 
 For each sentence pair, decide:
 

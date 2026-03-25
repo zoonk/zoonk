@@ -33,6 +33,11 @@ type AlternativeEntry = {
  * alternativeTranslations, generates them via AI, and writes the results
  * to the database. Returns the generated enrichments for downstream use.
  *
+ * Alternative translations prevent semantically equivalent words from
+ * appearing as distractors (wrong answer options) in exercises — e.g.
+ * not showing "good night" as a distractor when testing "boa noite"
+ * since both translations are correct.
+ *
  * This is the single source of truth for WordTranslation-level enrichments.
  * Both the vocabulary and reading workflows call this after saving words,
  * so adding a new enrichment here automatically covers all word sources.

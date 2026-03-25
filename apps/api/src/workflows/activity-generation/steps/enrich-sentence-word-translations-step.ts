@@ -9,8 +9,11 @@ import { type SavedSentenceWord } from "./save-sentence-words-step";
 
 /**
  * Generates pronunciation and alternativeTranslations for sentence-extracted
- * words that are missing them. Thin wrapper around the shared enrichWordTranslations
- * utility, scoped to the reading activity for stream status reporting.
+ * words that are missing them. Alternative translations prevent semantically
+ * equivalent words from appearing as distractors in exercises.
+ *
+ * Thin wrapper around the shared enrichWordTranslations utility, scoped
+ * to the reading activity for stream status reporting.
  */
 export async function enrichSentenceWordTranslationsStep(
   activities: LessonActivity[],

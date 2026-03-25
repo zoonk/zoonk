@@ -1,4 +1,6 @@
 const SHARED_EXPECTATIONS = `
+CONTEXT: Alternative translations are used to prevent semantically equivalent words from appearing as distractors (wrong answer options) in exercises. For example, in an arrange-words activity where the learner translates "oi, boa noite" ("hi, good evening"), we show individual word tokens alongside distractor words. Without alternatives, "good night" could appear as a distractor — but it's a valid translation of "boa noite". Marking it as an alternative excludes it from the distractor pool so learners never see a correct answer presented as wrong.
+
 EVALUATION CRITERIA:
 
 1. GENUINE EQUIVALENCE (CRITICAL - highest priority):

@@ -26,9 +26,15 @@ export type WordAlternativeTranslationsParams = {
 
 /**
  * Generates alternative translations for a single word.
- * This is the canonical source of truth for word-level alternative translation rules.
- * Used by the shared word enrichment step to fill in alternatives for any word
- * (vocabulary or sentence-extracted) that doesn't have them yet.
+ *
+ * Alternative translations prevent semantically equivalent words from
+ * appearing as distractors (wrong answer options) in exercises. For example,
+ * if "boa noite" translates to "good evening", we mark "good night" as an
+ * alternative so it's never shown as a distractor — since it's also correct.
+ *
+ * This is the canonical source of truth for word-level alternative
+ * translation rules. Used by the shared word enrichment step to fill in
+ * alternatives for any word (vocabulary or sentence-extracted).
  */
 export async function generateWordAlternativeTranslations({
   model = DEFAULT_MODEL,
