@@ -26,7 +26,7 @@ export async function vocabularyActivityWorkflow(
 
   const { savedWords } = await saveVocabularyWordsStep(activities, words, workflowRunId);
 
-  const [_enrichmentResult, audioResult, romanizationResult] = await Promise.allSettled([
+  const [_pronunciationAndAltsResult, audioResult, romanizationResult] = await Promise.allSettled([
     generateVocabularyPronunciationAndAlternativesStep(activities, savedWords),
     generateVocabularyAudioStep(activities, words),
     generateVocabularyRomanizationStep(activities, words),

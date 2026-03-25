@@ -38,8 +38,8 @@ export type ReadingSentence = GeneratedReadingSentence & {
  * Fetches lesson words with their translation and alternativeTranslations
  * from the database. Used both as the source for sentence generation when
  * the current vocabulary run produced no words, and for sentence variant
- * derivation which needs the enriched alternativeTranslations that the
- * vocabulary enrichment step already wrote to the DB.
+ * derivation which needs the alternativeTranslations that the vocabulary
+ * pronunciation-and-alternatives step already wrote to the DB.
  */
 async function getLessonWords(params: {
   lessonId: number;
@@ -231,11 +231,11 @@ export async function generateReadingContentStep(
         )
       : { data: null };
 
-  // Fetch enriched words from DB for variant derivation. The in-memory
-  // sourceWords may not have alternativeTranslations since the vocabulary
-  // AI task no longer generates them — they're filled by the enrichment
-  // step which has already written them to the database by this point.
-  const enrichedWords = await getLessonWords({
+  // Fetch words with alternativeTranslations from DB for variant derivation.
+  // The in-memory sourceWords don't have alternativeTranslations since the
+  // vocabulary AI task no longer generates them — they're produced by a
+  // separate step which has already written them to the database by this point.
+  const wordsWithAlternatives = await getLessonWords({
     lessonId: activity.lessonId,
     organizationId: course.organization?.id ?? null,
     targetLanguage,
@@ -244,7 +244,7 @@ export async function generateReadingContentStep(
 
   const sentences = enrichReadingSentenceVariants(
     mergeSentenceVariants(generatedSentences, sentenceVariantsResult?.data.sentences),
-    enrichedWords,
+    wordsWithAlternatives,
   );
 
   if (error || !result || sentences.length === 0 || !hasValidSentences(sentences)) {

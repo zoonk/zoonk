@@ -137,7 +137,7 @@ async function fetchLessonActivities(lessonId: number): Promise<LessonActivity[]
 
 /**
  * Creates Word, WordTranslation, and LessonWord records in the DB so that
- * getLessonWords returns enriched words (with alternativeTranslations) for
+ * getLessonWords returns words with alternativeTranslations for
  * sentence variant derivation. Each entry maps a word to its translation
  * and optional alternativeTranslations for the given user language.
  */

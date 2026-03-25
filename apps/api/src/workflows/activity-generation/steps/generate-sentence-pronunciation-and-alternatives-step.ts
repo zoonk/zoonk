@@ -12,8 +12,8 @@ import { type SavedSentenceWord } from "./save-sentence-words-step";
  * words that are missing them. Alternative translations prevent semantically
  * equivalent words from appearing as distractors in exercises.
  *
- * Thin wrapper around the shared generateWordPronunciationAndAlternatives
- * utility, scoped to the reading activity for stream status reporting.
+ * Thin wrapper around generateWordPronunciationAndAlternatives, scoped to
+ * the reading activity for stream status reporting.
  */
 export async function generateSentencePronunciationAndAlternativesStep(
   activities: LessonActivity[],
@@ -48,7 +48,7 @@ export async function generateSentencePronunciationAndAlternativesStep(
 
   if (error) {
     await stream.error({
-      reason: "enrichmentFailed",
+      reason: "aiGenerationFailed",
       step: "generateSentencePronunciationAndAlternatives",
     });
     await handleActivityFailureStep({ activityId: activity.id });

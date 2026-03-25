@@ -8,10 +8,11 @@ import { handleActivityFailureStep } from "./handle-failure-step";
 import { type SavedWord } from "./save-vocabulary-words-step";
 
 /**
- * Updates Word-level enrichments (audioUrl and romanization) after parallel
- * generation. WordTranslation-level enrichments (pronunciation,
- * alternativeTranslations) are handled by the shared enrichWordTranslations
- * utility, so this step only writes to the Word table.
+ * Updates Word-level fields (audioUrl and romanization) after parallel
+ * generation. WordTranslation-level fields (pronunciation,
+ * alternativeTranslations) are handled by
+ * generateWordPronunciationAndAlternatives, so this step only writes
+ * to the Word table.
  */
 export async function updateVocabularyEnrichmentsStep(
   activities: LessonActivity[],

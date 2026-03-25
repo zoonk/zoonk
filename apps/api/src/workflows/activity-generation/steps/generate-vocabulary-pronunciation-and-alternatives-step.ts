@@ -12,8 +12,8 @@ import { type SavedWord } from "./save-vocabulary-words-step";
  * that are missing them. Alternative translations prevent semantically
  * equivalent words from appearing as distractors in exercises.
  *
- * Thin wrapper around the shared generateWordPronunciationAndAlternatives
- * utility, scoped to the vocabulary activity for stream status reporting.
+ * Thin wrapper around generateWordPronunciationAndAlternatives, scoped to
+ * the vocabulary activity for stream status reporting.
  */
 export async function generateVocabularyPronunciationAndAlternativesStep(
   activities: LessonActivity[],
@@ -44,7 +44,7 @@ export async function generateVocabularyPronunciationAndAlternativesStep(
 
   if (error) {
     await stream.error({
-      reason: "enrichmentFailed",
+      reason: "aiGenerationFailed",
       step: "generateVocabularyPronunciationAndAlternatives",
     });
     await handleActivityFailureStep({ activityId: activity.id });

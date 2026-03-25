@@ -350,7 +350,7 @@ describe(vocabularyActivityWorkflow, () => {
     expect(result.words).toHaveLength(0);
   });
 
-  test("preserves existing audioUrl when audio step fails but enrichment succeeds", async () => {
+  test("preserves existing audioUrl when audio step fails but pronunciation and alternatives succeed", async () => {
     const id = randomUUID().replaceAll("-", "").slice(0, 8);
     const existingWord = `zkeep${id}`;
     const newWord = `znew${id}`;

@@ -8,7 +8,7 @@ type WordReference = {
   wordId: number;
 };
 
-type EnrichmentResult = {
+type GeneratedWordTranslationFields = {
   alternatives: Record<string, string[]>;
   pronunciations: Record<string, string>;
 };
@@ -24,22 +24,23 @@ type AlternativeEntry = {
 /**
  * Checks which WordTranslation records are missing pronunciation or
  * alternativeTranslations, generates them via AI, and writes the results
- * to the database. Returns the generated enrichments for downstream use.
+ * to the database. Returns the generated fields for downstream use.
  *
  * Alternative translations prevent semantically equivalent words from
  * appearing as distractors (wrong answer options) in exercises — e.g.
  * not showing "good night" as a distractor when testing "boa noite"
  * since both translations are correct.
  *
- * This is the single source of truth for WordTranslation-level enrichments.
- * Both the vocabulary and reading workflows call this after saving words,
- * so adding a new enrichment here automatically covers all word sources.
+ * This is the single source of truth for generating WordTranslation
+ * fields that require AI (pronunciation and alternativeTranslations).
+ * Both the vocabulary and reading workflows call this after saving
+ * words, so adding a new field here automatically covers all sources.
  */
 export async function generateWordPronunciationAndAlternatives(params: {
   targetLanguage: string;
   userLanguage: string;
   words: WordReference[];
-}): Promise<EnrichmentResult> {
+}): Promise<GeneratedWordTranslationFields> {
   const { targetLanguage, userLanguage, words } = params;
 
   if (words.length === 0) {
@@ -77,7 +78,7 @@ export async function generateWordPronunciationAndAlternatives(params: {
     }),
   ]);
 
-  await persistEnrichments({ alternativeResults, pronunciationResults, userLanguage });
+  await persistGeneratedFields({ alternativeResults, pronunciationResults, userLanguage });
 
   return {
     alternatives: Object.fromEntries(
@@ -171,7 +172,7 @@ async function generateMissingAlternatives(params: {
  * Writes generated pronunciation and alternativeTranslations to the
  * corresponding WordTranslation records in a single transaction.
  */
-async function persistEnrichments(params: {
+async function persistGeneratedFields(params: {
   alternativeResults: AlternativeEntry[];
   pronunciationResults: PronunciationEntry[];
   userLanguage: string;
