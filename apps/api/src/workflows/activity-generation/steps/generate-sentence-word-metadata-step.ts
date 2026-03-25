@@ -1,6 +1,8 @@
-import { generateSentenceWordTranslation } from "@zoonk/ai/tasks/activities/language/sentence-word-translation";
+import { generateActivityRomanization } from "@zoonk/ai/tasks/activities/language/romanization";
+import { generateTranslation } from "@zoonk/ai/tasks/activities/language/translation";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
+import { needsRomanization } from "@zoonk/utils/languages";
 import { extractUniqueSentenceWords } from "@zoonk/utils/string";
 import { streamError, streamStatus } from "../stream-status";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
@@ -38,35 +40,29 @@ async function fetchExistingWordMetadata(params: {
   );
 }
 
-async function generateTranslation(
+async function translateWord(
   word: string,
   userLanguage: string,
   targetLanguage: string,
-): Promise<{ data: WordMetadataEntry; word: string } | null> {
+): Promise<{ translation: string; word: string } | null> {
   const { data: result, error } = await safeAsync(() =>
-    generateSentenceWordTranslation({ targetLanguage, userLanguage, word }),
+    generateTranslation({ targetLanguage, userLanguage, word }),
   );
 
   if (error || !result?.data) {
     return null;
   }
 
-  return {
-    data: {
-      romanization: result.data.romanization,
-      translation: result.data.translation,
-    },
-    word,
-  };
+  return { translation: result.data.translation, word };
 }
 
 async function generateMissingTranslations(
   wordsNeedingTranslation: string[],
   userLanguage: string,
   targetLanguage: string,
-): Promise<Record<string, WordMetadataEntry>> {
+): Promise<Record<string, string>> {
   const results = await Promise.allSettled(
-    wordsNeedingTranslation.map((word) => generateTranslation(word, userLanguage, targetLanguage)),
+    wordsNeedingTranslation.map((word) => translateWord(word, userLanguage, targetLanguage)),
   );
 
   return Object.fromEntries(
@@ -75,13 +71,44 @@ async function generateMissingTranslations(
         return [];
       }
 
-      return [[result.value.word, result.value.data]];
+      return [[result.value.word, result.value.translation]];
     }),
   );
 }
 
+/**
+ * Generates romanized (Latin-script) representations for a batch of words
+ * using the existing romanization AI task. Returns early for Roman-script
+ * languages (e.g., Spanish, German) since they don't need romanization.
+ */
+async function generateWordRomanizations(
+  words: string[],
+  targetLanguage: string,
+): Promise<Record<string, string>> {
+  if (!needsRomanization(targetLanguage)) {
+    return {};
+  }
+
+  const { data: result, error } = await safeAsync(() =>
+    generateActivityRomanization({ targetLanguage, texts: words }),
+  );
+
+  if (error || !result?.data) {
+    return {};
+  }
+
+  return Object.fromEntries(
+    words
+      .map((word, index) => [word, result.data.romanizations[index]] as const)
+      .filter((entry): entry is [string, string] => Boolean(entry[1])),
+  );
+}
+
+/**
+ * Merges translations and romanizations into a single metadata map.
+ * Romanizations are only generated for non-Roman script languages.
+ */
 async function buildWordMetadata(params: {
-  activityId: number;
   organizationId: number;
   savedSentences: SavedSentence[];
   targetLanguage: string;
@@ -108,16 +135,28 @@ async function buildWordMetadata(params: {
     return { isComplete: true, wordMetadata: existingMetadata };
   }
 
-  const generated = await generateMissingTranslations(
-    wordsNeedingTranslation,
-    params.userLanguage,
-    params.targetLanguage,
+  const [translationResult, romanizationResult] = await Promise.allSettled([
+    generateMissingTranslations(
+      wordsNeedingTranslation,
+      params.userLanguage,
+      params.targetLanguage,
+    ),
+    generateWordRomanizations(wordsNeedingTranslation, params.targetLanguage),
+  ]);
+
+  const translations = translationResult.status === "fulfilled" ? translationResult.value : {};
+  const romanizations = romanizationResult.status === "fulfilled" ? romanizationResult.value : {};
+
+  const isComplete = Object.keys(translations).length === wordsNeedingTranslation.length;
+
+  const generatedMetadata: Record<string, WordMetadataEntry> = Object.fromEntries(
+    Object.entries(translations).map(([word, translation]) => [
+      word,
+      { romanization: romanizations[word] ?? null, translation },
+    ]),
   );
 
-  const wordMetadata = { ...existingMetadata, ...generated };
-  const isComplete = Object.keys(generated).length === wordsNeedingTranslation.length;
-
-  return { isComplete, wordMetadata };
+  return { isComplete, wordMetadata: { ...existingMetadata, ...generatedMetadata } };
 }
 
 export async function generateSentenceWordMetadataStep(
@@ -141,7 +180,6 @@ export async function generateSentenceWordMetadataStep(
   await streamStatus({ status: "started", step: "generateSentenceWordMetadata" });
 
   const { isComplete, wordMetadata } = await buildWordMetadata({
-    activityId: activity.id,
     organizationId: course.organization.id,
     savedSentences,
     targetLanguage: course.targetLanguage ?? "",

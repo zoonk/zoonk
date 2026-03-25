@@ -9,8 +9,8 @@ import { activityPronunciationTask } from "./activity-pronunciation/task";
 import { activityQuizTask } from "./activity-quiz/task";
 import { activityRomanizationTask } from "./activity-romanization/task";
 import { activitySentenceVariantsTask } from "./activity-sentence-variants/task";
-import { activitySentenceWordTranslationTask } from "./activity-sentence-word-translation/task";
 import { activitySentencesTask } from "./activity-sentences/task";
+import { activityTranslationTask } from "./activity-translation/task";
 import { activityVocabularyTask } from "./activity-vocabulary/task";
 import { alternativeTitlesTask } from "./alternative-titles/task";
 import { chapterLessonsTask } from "./chapter-lessons/task";
@@ -33,7 +33,7 @@ export const TASKS: readonly Task[] = [
   activityGrammarEnrichmentTask,
   activityPronunciationTask,
   activitySentenceVariantsTask,
-  activitySentenceWordTranslationTask,
+  activityTranslationTask,
   activitySentencesTask,
   activityPracticeTask,
 

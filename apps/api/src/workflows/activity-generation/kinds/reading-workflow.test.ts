@@ -1,7 +1,8 @@
 import { randomUUID } from "node:crypto";
+import { generateActivityRomanization } from "@zoonk/ai/tasks/activities/language/romanization";
 import { generateActivitySentenceVariants } from "@zoonk/ai/tasks/activities/language/sentence-variants";
-import { generateSentenceWordTranslation } from "@zoonk/ai/tasks/activities/language/sentence-word-translation";
 import { generateActivitySentences } from "@zoonk/ai/tasks/activities/language/sentences";
+import { generateTranslation } from "@zoonk/ai/tasks/activities/language/translation";
 import { generateLanguageAudio } from "@zoonk/core/audio/generate";
 import { prisma } from "@zoonk/db";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
@@ -55,9 +56,15 @@ vi.mock("@zoonk/ai/tasks/activities/language/sentence-variants", () => ({
   }),
 }));
 
-vi.mock("@zoonk/ai/tasks/activities/language/sentence-word-translation", () => ({
-  generateSentenceWordTranslation: vi.fn().mockResolvedValue({
-    data: { romanization: null, translation: "mocked" },
+vi.mock("@zoonk/ai/tasks/activities/language/translation", () => ({
+  generateTranslation: vi.fn().mockResolvedValue({
+    data: { translation: "mocked" },
+  }),
+}));
+
+vi.mock("@zoonk/ai/tasks/activities/language/romanization", () => ({
+  generateActivityRomanization: vi.fn().mockResolvedValue({
+    data: { romanizations: [] },
   }),
 }));
 
@@ -607,14 +614,14 @@ describe(readingActivityWorkflow, () => {
       ]),
     );
 
-    vi.mocked(generateSentenceWordTranslation).mockImplementation(async ({ word }) => {
+    vi.mocked(generateTranslation).mockImplementation(async ({ word }) => {
       if (word === failWord) {
         throw new Error("AI translation failure");
       }
 
       return {
-        data: { romanization: null, translation: `translated-${word}` },
-      } as Awaited<ReturnType<typeof generateSentenceWordTranslation>>;
+        data: { translation: `translated-${word}` },
+      } as Awaited<ReturnType<typeof generateTranslation>>;
     });
 
     const lesson = await lessonFixture({
@@ -695,7 +702,7 @@ describe(readingActivityWorkflow, () => {
     await readingActivityWorkflow(activities, "test-run-id", words, [], []);
 
     // Should NOT call AI for the word since it already exists (just with different casing)
-    expect(generateSentenceWordTranslation).not.toHaveBeenCalledWith(
+    expect(generateTranslation).not.toHaveBeenCalledWith(
       expect.objectContaining({ word: lowercaseWord }),
     );
 
@@ -711,6 +718,133 @@ describe(readingActivityWorkflow, () => {
 
     expect(allVariants).toHaveLength(1);
     expect(allVariants[0]!.word).toBe(capitalizedWord);
+  });
+
+  test("does not call romanization for Roman-script languages", async () => {
+    const id = randomUUID().replaceAll("-", "").slice(0, 8);
+    const testWord = `zguten${id}`;
+
+    vi.mocked(generateActivitySentences).mockResolvedValueOnce(
+      createSentenceGenerationResult([
+        {
+          explanation: null,
+          sentence: `${testWord} morgen`,
+          translation: "good morning",
+        },
+      ]),
+    );
+
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `Reading RomanScript ${randomUUID()}`,
+    });
+
+    await activityFixture({
+      generationStatus: "pending",
+      kind: "reading",
+      language: "en",
+      lessonId: lesson.id,
+      organizationId,
+      title: `Reading ${randomUUID()}`,
+    });
+
+    const activities = await fetchLessonActivities(lesson.id);
+    await readingActivityWorkflow(activities, "test-run-id", words, [], []);
+
+    expect(generateActivityRomanization).not.toHaveBeenCalled();
+
+    const savedWord = await prisma.word.findFirst({
+      where: {
+        organizationId,
+        targetLanguage: "es",
+        userLanguage: "en",
+        word: testWord,
+      },
+    });
+
+    expect(savedWord).not.toBeNull();
+    expect(savedWord!.romanization).toBeNull();
+  });
+
+  test("generates romanization for non-Roman-script languages", async () => {
+    const japaneseCourse = await courseFixture({ organizationId, targetLanguage: "ja" });
+    const japaneseChapter = await chapterFixture({
+      courseId: japaneseCourse.id,
+      organizationId,
+      title: `Japanese Chapter ${randomUUID()}`,
+    });
+
+    const id = randomUUID().replaceAll("-", "").slice(0, 8);
+    const word1 = `猫${id}`;
+    const word2 = `犬${id}`;
+
+    vi.mocked(generateActivitySentences).mockResolvedValueOnce(
+      createSentenceGenerationResult([
+        {
+          explanation: null,
+          sentence: `${word1} ${word2}`,
+          translation: "cat dog",
+        },
+      ]),
+    );
+
+    // First call: generateReadingRomanizationStep (for sentences)
+    // Second call: generateSentenceWordMetadataStep (for individual words)
+    vi.mocked(generateActivityRomanization)
+      .mockResolvedValueOnce({
+        data: { romanizations: [] },
+      } as unknown as Awaited<ReturnType<typeof generateActivityRomanization>>)
+      .mockResolvedValueOnce({
+        data: { romanizations: ["neko", "inu"] },
+      } as unknown as Awaited<ReturnType<typeof generateActivityRomanization>>);
+
+    const lesson = await lessonFixture({
+      chapterId: japaneseChapter.id,
+      kind: "language",
+      organizationId,
+      title: `Reading NonRoman ${randomUUID()}`,
+    });
+
+    await activityFixture({
+      generationStatus: "pending",
+      kind: "reading",
+      language: "en",
+      lessonId: lesson.id,
+      organizationId,
+      title: `Reading ${randomUUID()}`,
+    });
+
+    const japaneseWords = [
+      { alternativeTranslations: [], translation: "cat", word: word1 },
+      { alternativeTranslations: [], translation: "dog", word: word2 },
+    ];
+
+    const activities = await fetchLessonActivities(lesson.id);
+    await readingActivityWorkflow(activities, "test-run-id", japaneseWords, [], []);
+
+    expect(generateActivityRomanization).toHaveBeenCalledWith(
+      expect.objectContaining({
+        targetLanguage: "ja",
+        texts: expect.arrayContaining([word1, word2]) as string[],
+      }),
+    );
+
+    const savedWords = await prisma.word.findMany({
+      where: {
+        organizationId,
+        targetLanguage: "ja",
+        userLanguage: "en",
+        word: { in: [word1, word2] },
+      },
+    });
+
+    expect(savedWords).toHaveLength(2);
+
+    for (const saved of savedWords) {
+      expect(saved.romanization).not.toBeNull();
+    }
   });
 
   test("skips TTS for sentence words that already have a WordAudio record", async () => {

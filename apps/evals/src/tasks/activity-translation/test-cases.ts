@@ -8,32 +8,25 @@ EVALUATION CRITERIA:
    - Accept multiple valid translations (e.g., "eat" or "eats" for a verb)
    - Do NOT require exact wording - accept synonyms that convey the same meaning
 
-2. ROMANIZATION CORRECTNESS (CRITICAL):
-   - For Roman script languages (Spanish, German, English, Portuguese, French, Italian, etc.): romanization MUST be null
-   - For non-Roman script languages (Japanese, Korean, Arabic, Chinese, Russian, Hindi, Thai, etc.): romanization MUST NOT be null
-   - Romanization should follow standard systems (Hepburn for Japanese, Revised Romanization for Korean, etc.)
-   - Penalize SEVERELY if romanization is provided for Roman script words or missing for non-Roman script words
-
-3. FUNCTION WORD HANDLING:
+2. FUNCTION WORD HANDLING:
    - Articles (the, a), prepositions (in, on), conjunctions (and, but), and particles MUST still receive translations
    - Do NOT penalize for translating function words as function words (e.g., "el" → "the" is correct)
    - Function words may have multiple valid translations depending on context
 
-4. BREVITY:
+3. BREVITY:
    - Translations should be concise: one or two words maximum
    - Do NOT provide full definitions or explanations
    - Penalize if the translation is a sentence or long phrase instead of a word
 
-5. NO HALLUCINATION:
-   - The output should contain only the two required fields: translation and romanization
+4. NO HALLUCINATION:
+   - The output should contain only the translation field
    - The translation must correspond to the actual input word, not a related or similar word
    - Do NOT penalize for minor formatting differences
 
 ANTI-CHECKLIST GUIDANCE (CRITICAL):
 - Do NOT require exact translations - accept any valid dictionary meaning
 - Do NOT penalize for choosing one valid translation over another
-- Different valid romanization styles exist - assess whether the chosen one is reasonable
-- FOCUS ON: translation accuracy, romanization correctness (null vs non-null), brevity
+- FOCUS ON: translation accuracy, brevity
 `;
 
 export const TEST_CASES = [
@@ -47,10 +40,6 @@ WORD: "el"
 This is a Spanish definite article (masculine singular):
 - Most common translation: "the"
 - This is a function word that must still receive a translation
-
-ROMANIZATION CHECK:
-- Spanish uses Roman script
-- Romanization MUST be null
 
 QUALITY CHECK:
 - Should translate to "the" or equivalent
@@ -77,10 +66,6 @@ This is a common Spanish noun meaning "cat":
 - Clear, unambiguous translation
 - Simple content word
 
-ROMANIZATION CHECK:
-- Spanish uses Roman script
-- Romanization MUST be null
-
 QUALITY CHECK:
 - Should translate to "cat"
 - Tests basic noun translation
@@ -104,10 +89,6 @@ WORD: "come"
 This is a Spanish verb meaning "eats" or "eat" (third person singular present):
 - Valid translations: "eats", "eat", "he/she eats"
 - Accept any of these forms
-
-ROMANIZATION CHECK:
-- Spanish uses Roman script
-- Romanization MUST be null
 
 QUALITY CHECK:
 - Should translate to "eats" or "eat"
@@ -133,15 +114,9 @@ This is a Japanese word meaning "cat":
 - Clear, unambiguous translation
 - Uses kanji (non-Roman script)
 
-ROMANIZATION CHECK:
-- Japanese uses non-Roman script (kanji/hiragana/katakana)
-- Romanization MUST NOT be null
-- Expected romanization: "neko" (Hepburn system)
-
 QUALITY CHECK:
 - Should translate to "cat"
-- Romanization should be "neko" or a reasonable variant
-- Tests non-Roman script handling with romanization
+- Tests non-Roman script word translation
 
 ${SHARED_EXPECTATIONS}
     `,
@@ -163,15 +138,9 @@ This is a Japanese verb meaning "to eat":
 - Valid translations: "eat", "to eat"
 - Uses hiragana and kanji (non-Roman script)
 
-ROMANIZATION CHECK:
-- Japanese uses non-Roman script
-- Romanization MUST NOT be null
-- Expected romanization: "taberu" (Hepburn system)
-
 QUALITY CHECK:
 - Should translate to "eat" or "to eat"
-- Romanization should be "taberu" or a reasonable variant
-- Tests verb translation with romanization
+- Tests verb translation from non-Roman script
 
 ${SHARED_EXPECTATIONS}
     `,
@@ -194,14 +163,8 @@ This is a Japanese particle used as a topic marker:
 - This is a function word that must still receive a translation
 - Accept any reasonable translation that conveys its grammatical role
 
-ROMANIZATION CHECK:
-- Japanese uses non-Roman script
-- Romanization MUST NOT be null
-- Expected romanization: "wa" (when used as particle, pronounced "wa" not "ha")
-
 QUALITY CHECK:
 - Should provide some translation (even if approximate like "as for" or "topic marker")
-- Romanization should be "wa" (particle pronunciation)
 - Tests function word handling in non-Roman scripts
 
 ${SHARED_EXPECTATIONS}
@@ -223,10 +186,6 @@ WORD: "der"
 This is a German definite article (masculine nominative):
 - Most common translation: "the"
 - This is a function word that must still receive a translation
-
-ROMANIZATION CHECK:
-- German uses Roman script
-- Romanization MUST be null
 
 QUALITY CHECK:
 - Should translate to "the"
@@ -252,10 +211,6 @@ This is a common German noun meaning "dog":
 - Clear, unambiguous translation
 - Simple content word
 
-ROMANIZATION CHECK:
-- German uses Roman script
-- Romanization MUST be null
-
 QUALITY CHECK:
 - Should translate to "dog"
 - Tests basic noun translation from German
@@ -279,10 +234,6 @@ WORD: "läuft"
 This is a German verb meaning "runs" or "walks" (third person singular present of "laufen"):
 - Valid translations: "runs", "walks", "is running", "is walking"
 - Contains umlaut (ä) which is standard in German Roman script
-
-ROMANIZATION CHECK:
-- German uses Roman script (umlauts are part of German alphabet)
-- Romanization MUST be null
 
 QUALITY CHECK:
 - Should translate to "runs" or "walks" (or similar valid form)
@@ -309,15 +260,9 @@ This is a Korean word meaning "cat" (gato in Portuguese):
 - Uses Hangul (non-Roman script)
 - Output should be in Portuguese, not English
 
-ROMANIZATION CHECK:
-- Korean uses non-Roman script (Hangul)
-- Romanization MUST NOT be null
-- Expected romanization: "goyangi" (Revised Romanization of Korean)
-
 QUALITY CHECK:
 - Should translate to "gato" (Portuguese for "cat")
-- Romanization should be "goyangi" or a reasonable variant
-- Tests non-English output language with romanization
+- Tests non-English output language
 
 ${SHARED_EXPECTATIONS}
     `,
@@ -340,14 +285,8 @@ This is a Korean topic-marking particle:
 - Output should be in Portuguese
 - Accept any reasonable translation of this grammatical particle
 
-ROMANIZATION CHECK:
-- Korean uses non-Roman script (Hangul)
-- Romanization MUST NOT be null
-- Expected romanization: "neun" (Revised Romanization)
-
 QUALITY CHECK:
 - Should provide a Portuguese translation or grammatical description
-- Romanization should be "neun" or a reasonable variant
 - Tests function word handling with non-English output
 
 ${SHARED_EXPECTATIONS}
@@ -370,14 +309,8 @@ This is a Korean verb meaning "to eat" (comer in Portuguese):
 - Basic verb in dictionary form
 - Output should be in Portuguese
 
-ROMANIZATION CHECK:
-- Korean uses non-Roman script (Hangul)
-- Romanization MUST NOT be null
-- Expected romanization: "meokda" or "meoktta" (Revised Romanization)
-
 QUALITY CHECK:
 - Should translate to "comer" (Portuguese for "to eat")
-- Romanization should follow Revised Romanization system
 - Tests verb translation with non-English output
 
 ${SHARED_EXPECTATIONS}
@@ -400,14 +333,8 @@ This is an Arabic word meaning "cat" (gato/gata in Spanish):
 - Uses Arabic script (RTL, non-Roman)
 - Output should be in Spanish
 
-ROMANIZATION CHECK:
-- Arabic uses non-Roman script
-- Romanization MUST NOT be null
-- Expected romanization: "qitta" or "qittah" or similar
-
 QUALITY CHECK:
 - Should translate to "gato" or "gata" (Spanish for "cat")
-- Romanization should be a reasonable Arabic romanization
 - Tests RTL script with Spanish output
 
 ${SHARED_EXPECTATIONS}
@@ -429,11 +356,6 @@ WORD: "في"
 This is an Arabic preposition meaning "in" (en in Spanish):
 - Common function word (preposition)
 - Output should be in Spanish
-
-ROMANIZATION CHECK:
-- Arabic uses non-Roman script
-- Romanization MUST NOT be null
-- Expected romanization: "fi" or "fii"
 
 QUALITY CHECK:
 - Should translate to "en" (Spanish for "in")
@@ -459,14 +381,8 @@ This is an Arabic word meaning "the house" (la casa in Spanish):
 - Contains the definite article "ال" (al-) attached to the noun
 - Output should be in Spanish
 
-ROMANIZATION CHECK:
-- Arabic uses non-Roman script
-- Romanization MUST NOT be null
-- Expected romanization: "al-bayt" or "albayt" or similar
-
 QUALITY CHECK:
 - Should translate to "la casa" or "casa" or "el hogar" (Spanish for "the house" or "house")
-- Romanization should include the "al-" prefix
 - Tests handling of attached articles in Arabic with Spanish output
 
 ${SHARED_EXPECTATIONS}
