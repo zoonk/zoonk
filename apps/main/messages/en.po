@@ -865,6 +865,16 @@ msgctxt "8udPa+"
 msgid "No chapters found"
 msgstr "No chapters found"
 
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/page.tsx
+msgctxt "gyGolN"
+msgid "Learn {course}"
+msgstr "Learn {course}"
+
+#: src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/page.tsx
+msgctxt "wPdQ13"
+msgid "Online and interactive course on {course}. Learn everything about {course} using real-life examples and everyday language. {description}"
+msgstr "Online and interactive course on {course}. Learn everything about {course} using real-life examples and everyday language. {description}"
+
 #: src/app/(catalog)/courses/category-pills.tsx
 msgctxt "tuZsq+"
 msgid "Course categories"

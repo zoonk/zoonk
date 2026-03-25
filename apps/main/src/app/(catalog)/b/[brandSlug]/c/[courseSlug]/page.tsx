@@ -9,6 +9,7 @@ import { listCourseChapters } from "@/data/chapters/list-course-chapters";
 import { getCourse } from "@/data/courses/get-course";
 import { getSession } from "@zoonk/core/users/session/get";
 import { type Metadata } from "next";
+import { getExtracted } from "next-intl/server";
 import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
 import { ChapterList } from "./chapter-list";
@@ -24,9 +25,17 @@ export async function generateMetadata({
     return {};
   }
 
+  const t = await getExtracted({ locale: course.language });
+
   return {
-    description: course.description,
-    title: course.title,
+    description: t(
+      "Online and interactive course on {course}. Learn everything about {course} using real-life examples and everyday language. {description}",
+      {
+        course: course.title,
+        description: course.description ?? "",
+      },
+    ),
+    title: t("Learn {course}", { course: course.title }),
   };
 }
 
