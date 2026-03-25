@@ -1,6 +1,6 @@
 import { generateActivityPronunciation } from "@zoonk/ai/tasks/activities/language/pronunciation";
 import { generateWordAlternativeTranslations } from "@zoonk/ai/tasks/activities/language/word-alternative-translations";
-import { prisma } from "@zoonk/db";
+import { type WordTranslation, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 
 type WordReference = {
@@ -11,13 +11,6 @@ type WordReference = {
 type EnrichmentResult = {
   alternatives: Record<string, string[]>;
   pronunciations: Record<string, string>;
-};
-
-type ExistingTranslation = {
-  alternativeTranslations: string[];
-  pronunciation: string | null;
-  translation: string;
-  wordId: bigint;
 };
 
 type PronunciationEntry = { pronunciation: string; word: string; wordId: number };
@@ -56,12 +49,6 @@ export async function enrichWordTranslations(params: {
   const wordIds = words.map((saved) => BigInt(saved.wordId));
 
   const existing = await prisma.wordTranslation.findMany({
-    select: {
-      alternativeTranslations: true,
-      pronunciation: true,
-      translation: true,
-      wordId: true,
-    },
     where: {
       userLanguage,
       wordId: { in: wordIds },
@@ -106,7 +93,7 @@ export async function enrichWordTranslations(params: {
 }
 
 async function generateMissingPronunciations(params: {
-  records: ExistingTranslation[];
+  records: WordTranslation[];
   targetLanguage: string;
   userLanguage: string;
   wordById: Map<number, string>;
@@ -141,7 +128,7 @@ async function generateMissingPronunciations(params: {
 }
 
 async function generateMissingAlternatives(params: {
-  records: ExistingTranslation[];
+  records: WordTranslation[];
   targetLanguage: string;
   userLanguage: string;
   wordById: Map<number, string>;
