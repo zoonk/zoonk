@@ -1,129 +1,139 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
 import { type ActivityStepName } from "@/workflows/config";
 import { generateVisualStepImage } from "@zoonk/core/steps/visual-image";
-import { prisma } from "@zoonk/db";
-import { getString, toRecord } from "@zoonk/utils/json";
 import { rejected } from "@zoonk/utils/settled";
-import { type StepVisual } from "./generate-visuals-step";
+import { type StepVisual, type VisualRow } from "./generate-visuals-step";
 import { type LessonActivity } from "./get-lesson-activities-step";
-import { handleActivityFailureStep } from "./handle-failure-step";
 
 type StepVisualWithUrl = StepVisual & { url?: string };
 
-type ImageStep = { id: bigint | number; content: unknown };
-
-async function generateAndSaveImages({
-  imageSteps,
+/**
+ * Generates images for visual rows that have kind "image" and a prompt.
+ * Returns the visual rows with image URLs injected into the content.
+ * No DB writes — the completed rows are passed to the save step.
+ */
+async function generateImagesForVisualRows({
   language,
   orgSlug,
+  visualRows,
 }: {
-  imageSteps: ImageStep[];
   language: string;
   orgSlug?: string;
-}): Promise<{
-  hadFailure: boolean;
-  results: PromiseSettledResult<{ data: string | null; error: Error | null }>[];
-}> {
-  const results = await Promise.allSettled(
-    imageSteps.map((step) => {
-      const prompt = getString(step.content, "prompt");
-      if (!prompt) {
-        return Promise.reject(new Error("Missing prompt"));
+  visualRows: VisualRow[];
+}): Promise<{ completedRows: VisualRow[]; hadFailure: boolean }> {
+  const imageRowIndexes: number[] = [];
+  const imagePromises: Promise<{ data: string | null; error: Error | null }>[] = [];
+
+  for (let i = 0; i < visualRows.length; i += 1) {
+    const row = visualRows[i];
+    const content = row?.content as Record<string, unknown> | undefined;
+
+    if (content?.kind === "image" && typeof content.prompt === "string") {
+      imageRowIndexes.push(i);
+      imagePromises.push(generateVisualStepImage({ language, orgSlug, prompt: content.prompt }));
+    }
+  }
+
+  if (imagePromises.length === 0) {
+    return { completedRows: visualRows, hadFailure: false };
+  }
+
+  const results = await Promise.allSettled(imagePromises);
+
+  const completedRows = [...visualRows];
+
+  for (let j = 0; j < imageRowIndexes.length; j += 1) {
+    const rowIndex = imageRowIndexes[j];
+    const result = results[j];
+
+    if (
+      rowIndex !== undefined &&
+      result?.status === "fulfilled" &&
+      !result.value.error &&
+      result.value.data
+    ) {
+      const originalRow = completedRows[rowIndex];
+
+      if (originalRow) {
+        completedRows[rowIndex] = {
+          ...originalRow,
+          content: { ...originalRow.content, url: result.value.data },
+        };
       }
-      return generateVisualStepImage({ language, orgSlug, prompt });
-    }),
-  );
+    }
+  }
 
-  const updateResults = await Promise.allSettled(
-    imageSteps.map((step, idx) => {
-      const result = results[idx];
-      if (result?.status !== "fulfilled" || result.value.error) {
-        return Promise.resolve();
-      }
-      return prisma.step.update({
-        data: { content: { ...toRecord(step.content), url: result.value.data } },
-        where: { id: step.id },
-      });
-    }),
-  );
-
-  const hadFailure = rejected(results) || rejected(updateResults);
-
-  return { hadFailure, results };
+  const hadFailure = rejected(results);
+  return { completedRows, hadFailure };
 }
 
+/**
+ * Builds visuals-with-urls by matching the original AI visuals
+ * with the completed rows that now have image URLs injected.
+ */
 function buildVisualsWithUrls(
   visuals: StepVisual[],
-  imageSteps: ImageStep[],
-  results: PromiseSettledResult<{ data: string | null; error: Error | null }>[],
+  completedRows: VisualRow[],
 ): StepVisualWithUrl[] {
   return visuals.map((visual) => {
     if (visual.kind !== "image") {
       return visual;
     }
 
-    const dbStep = imageSteps.find((step) => getString(step.content, "prompt") === visual.prompt);
+    const matchingRow = completedRows.find((row) => {
+      const content = row.content as Record<string, unknown>;
+      return content.kind === "image" && content.prompt === visual.prompt;
+    });
 
-    if (!dbStep) {
-      return visual;
-    }
-
-    const idx = imageSteps.indexOf(dbStep);
-    const result = results[idx];
-
-    if (result?.status === "fulfilled" && !result.value.error && result.value.data) {
-      return { ...visual, url: result.value.data };
+    if (matchingRow) {
+      const url = (matchingRow.content as Record<string, unknown>).url;
+      if (typeof url === "string") {
+        return { ...visual, url };
+      }
     }
 
     return visual;
   });
 }
 
+/**
+ * Generates images for visual steps of an explanation activity.
+ * Receives visual data directly (no DB reads needed).
+ * Returns the visual rows with image URLs injected and the visuals with URLs.
+ * No DB writes — the save step handles persistence.
+ */
 export async function generateImagesForActivityStep(
   activity: LessonActivity,
   visuals: StepVisual[],
-): Promise<StepVisualWithUrl[]> {
+  visualRows: VisualRow[],
+): Promise<{ completedRows: VisualRow[]; visuals: StepVisualWithUrl[] }> {
   "use step";
 
   await using stream = createStepStream<ActivityStepName>();
 
-  if (visuals.length === 0) {
+  if (visuals.length === 0 || visualRows.length === 0) {
     await stream.status({ status: "started", step: "generateImages" });
     await stream.status({ status: "completed", step: "generateImages" });
-    return [];
+    return { completedRows: visualRows, visuals: [] };
   }
 
   if (activity.generationStatus === "completed" || activity.generationStatus === "running") {
-    return [];
-  }
-
-  const dbSteps = await prisma.step.findMany({
-    orderBy: { position: "asc" },
-    select: { content: true, id: true },
-    where: { activityId: activity.id, kind: "visual" },
-  });
-
-  const imageSteps = dbSteps.filter((step) => getString(step.content, "kind") === "image");
-
-  if (imageSteps.length === 0) {
-    await stream.status({ status: "started", step: "generateImages" });
-    await stream.status({ status: "completed", step: "generateImages" });
-    return visuals;
+    return { completedRows: visualRows, visuals: [] };
   }
 
   await stream.status({ status: "started", step: "generateImages" });
 
-  const { hadFailure, results } = await generateAndSaveImages({
-    imageSteps,
+  const { completedRows, hadFailure } = await generateImagesForVisualRows({
     language: activity.language,
     orgSlug: activity.lesson.chapter.course.organization?.slug,
+    visualRows,
   });
 
   if (hadFailure) {
-    await handleActivityFailureStep({ activityId: activity.id });
+    await stream.status({ status: "error", step: "generateImages" });
   }
 
   await stream.status({ status: "completed", step: "generateImages" });
 
-  return buildVisualsWithUrls(visuals, imageSteps, results);
+  return { completedRows, visuals: buildVisualsWithUrls(visuals, completedRows) };
 }

@@ -1,30 +1,42 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
 import { type ActivityStepName } from "@/workflows/config";
-import { safeAsync } from "@zoonk/utils/error";
+import { type VocabularyWord } from "@zoonk/ai/tasks/activities/language/vocabulary";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { generateWordPronunciationAndAlternatives } from "./_utils/generate-word-pronunciation-and-alternatives";
 import { type LessonActivity } from "./get-lesson-activities-step";
-import { handleActivityFailureStep } from "./handle-failure-step";
-import { type SavedWord } from "./save-vocabulary-words-step";
+
+type PronunciationAndAlternativesResult = {
+  alternatives: Record<string, string[]>;
+  pronunciations: Record<string, string>;
+};
 
 /**
  * Generates pronunciation and alternativeTranslations for vocabulary words
  * that are missing them. Alternative translations prevent semantically
  * equivalent words from appearing as distractors in exercises.
  *
+ * Returns the generated data without writing to the database — the save step
+ * persists the results.
+ *
  * Thin wrapper around generateWordPronunciationAndAlternatives, scoped to
  * the vocabulary activity for stream status reporting.
  */
 export async function generateVocabularyPronunciationAndAlternativesStep(
   activities: LessonActivity[],
-  savedWords: SavedWord[],
-): Promise<void> {
+  words: VocabularyWord[],
+): Promise<PronunciationAndAlternativesResult> {
   "use step";
 
   const activity = findActivityByKind(activities, "vocabulary");
 
-  if (!activity || savedWords.length === 0) {
-    return;
+  if (!activity || words.length === 0) {
+    return { alternatives: {}, pronunciations: {} };
+  }
+
+  const course = activity.lesson.chapter.course;
+
+  if (!course.organization) {
+    return { alternatives: {}, pronunciations: {} };
   }
 
   await using stream = createStepStream<ActivityStepName>();
@@ -34,25 +46,20 @@ export async function generateVocabularyPronunciationAndAlternativesStep(
     step: "generateVocabularyPronunciationAndAlternatives",
   });
 
-  const course = activity.lesson.chapter.course;
   const targetLanguage = course.targetLanguage ?? "";
   const userLanguage = activity.language;
 
-  const { error } = await safeAsync(() =>
-    generateWordPronunciationAndAlternatives({ targetLanguage, userLanguage, words: savedWords }),
-  );
-
-  if (error) {
-    await stream.error({
-      reason: "aiGenerationFailed",
-      step: "generateVocabularyPronunciationAndAlternatives",
-    });
-    await handleActivityFailureStep({ activityId: activity.id });
-    return;
-  }
+  const result = await generateWordPronunciationAndAlternatives({
+    organizationId: course.organization.id,
+    targetLanguage,
+    userLanguage,
+    words: words.map((entry) => ({ word: entry.word })),
+  });
 
   await stream.status({
     status: "completed",
     step: "generateVocabularyPronunciationAndAlternatives",
   });
+
+  return result;
 }

@@ -1,4 +1,3 @@
-import { assertStepContent } from "@zoonk/core/steps/content-contract";
 import { type ActivityKind, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { type LessonActivity } from "../get-lesson-activities-step";
@@ -63,29 +62,4 @@ export async function resolveActivityForGeneration(
   }
 
   return resolveActivity(activity);
-}
-
-export async function saveContentSteps(
-  activityId: bigint | number,
-  steps: ActivitySteps,
-): Promise<{ error: Error | null }> {
-  if (steps.length === 0) {
-    return { error: new Error("No steps to save") };
-  }
-
-  return safeAsync(() =>
-    prisma.step.createMany({
-      data: steps.map((step, index) => ({
-        activityId,
-        content: assertStepContent("static", {
-          text: step.text,
-          title: step.title,
-          variant: "text",
-        }),
-        isPublished: true,
-        kind: "static" as const,
-        position: index * 2,
-      })),
-    }),
-  );
 }

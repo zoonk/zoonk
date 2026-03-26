@@ -20,7 +20,7 @@ export type PhaseName =
   | "finishing";
 
 const PHASE_STEPS = {
-  figuringOutApproach: ["determineLessonKind", "updateLessonKind"],
+  figuringOutApproach: ["determineLessonKind", "updateLessonKind", "removeNonLanguageLesson"],
   finishing: ["setLessonAsCompleted"],
   gettingStarted: ["getLesson", "setLessonAsRunning"],
   settingUpActivities: ["generateCustomActivities", "addActivities"],

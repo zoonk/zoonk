@@ -1,8 +1,8 @@
 import { type ActivitySteps } from "../steps/_utils/get-activity-steps";
-import { completeActivityStep } from "../steps/complete-activity-step";
 import { type ExplanationResult } from "../steps/generate-explanation-content-step";
 import { generatePracticeContentStep } from "../steps/generate-practice-content-step";
 import { type LessonActivity } from "../steps/get-lesson-activities-step";
+import { savePracticeActivityStep } from "../steps/save-practice-activity-step";
 
 function getExplanationStepsForPractice(
   explanationResults: ExplanationResult[],
@@ -23,6 +23,13 @@ function getExplanationStepsForPractice(
   return group.flatMap((result) => result.steps);
 }
 
+/**
+ * Orchestrates practice activity generation.
+ *
+ * Flow per practice: generateContent → save.
+ * Each practice is independent — if one fails, others continue.
+ * The save step writes steps and marks the activity as completed.
+ */
 export async function practiceActivityWorkflow(
   activities: LessonActivity[],
   workflowRunId: string,
@@ -34,15 +41,23 @@ export async function practiceActivityWorkflow(
   const practiceIndices = Array.from({ length: totalPractices }, (_, i) => i);
 
   await Promise.allSettled(
-    practiceIndices.map((practiceIndex) =>
-      generatePracticeContentStep(
+    practiceIndices.map(async (practiceIndex) => {
+      const { activityId, steps } = await generatePracticeContentStep(
         activities,
         getExplanationStepsForPractice(explanationResults, practiceIndex, totalPractices),
         workflowRunId,
         practiceIndex,
-      ),
-    ),
-  );
+      );
 
-  await completeActivityStep(activities, workflowRunId, "practice");
+      if (!activityId || steps.length === 0) {
+        return;
+      }
+
+      await savePracticeActivityStep({
+        activityId,
+        steps,
+        workflowRunId,
+      });
+    }),
+  );
 }

@@ -118,11 +118,11 @@ function buildGrammarSteps(
 }
 
 /**
- * Merges content, user content, and romanization data into grammar step records
- * and saves them to the database in a single batch insert.
- * This is the final step of the grammar workflow before marking the activity as completed.
+ * Merges content, user content, and romanization data into grammar step records,
+ * saves them to the database in a single batch insert, and marks the activity
+ * as completed. This is the single save+complete point for the grammar entity.
  */
-export async function saveGrammarStepsStep(
+export async function saveGrammarActivityStep(
   activities: LessonActivity[],
   workflowRunId: string,
   content: ActivityGrammarContentSchema,
@@ -139,17 +139,30 @@ export async function saveGrammarStepsStep(
 
   await using stream = createStepStream<ActivityStepName>();
 
-  await stream.status({ status: "started", step: "saveGrammarSteps" });
+  await stream.status({ status: "started", step: "saveGrammarActivity" });
 
   const steps = buildGrammarSteps(activity.id, content, userContent, romanizations);
 
-  const { error } = await safeAsync(() => prisma.step.createMany({ data: steps }));
+  const { error: saveError } = await safeAsync(() => prisma.step.createMany({ data: steps }));
 
-  if (error) {
-    await stream.error({ reason: "dbSaveFailed", step: "saveGrammarSteps" });
+  if (saveError) {
+    await stream.error({ reason: "dbSaveFailed", step: "saveGrammarActivity" });
     await handleActivityFailureStep({ activityId: activity.id });
     return;
   }
 
-  await stream.status({ status: "completed", step: "saveGrammarSteps" });
+  const { error: completeError } = await safeAsync(() =>
+    prisma.activity.update({
+      data: { generationRunId: workflowRunId, generationStatus: "completed" },
+      where: { id: activity.id },
+    }),
+  );
+
+  if (completeError) {
+    await stream.error({ reason: "dbSaveFailed", step: "saveGrammarActivity" });
+    await handleActivityFailureStep({ activityId: activity.id });
+    return;
+  }
+
+  await stream.status({ status: "completed", step: "saveGrammarActivity" });
 }

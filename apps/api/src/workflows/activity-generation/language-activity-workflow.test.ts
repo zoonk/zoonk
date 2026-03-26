@@ -13,8 +13,8 @@ import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { activityGenerationWorkflow } from "./activity-generation-workflow";
-import { completeListeningActivityStep } from "./steps/complete-listening-activity-step";
 import { getLessonActivitiesStep } from "./steps/get-lesson-activities-step";
+import { saveListeningActivityStep } from "./steps/save-listening-activity-step";
 
 vi.mock("./steps/get-neighboring-concepts-step", () => ({
   getNeighboringConceptsStep: vi.fn().mockResolvedValue([]),
@@ -131,6 +131,12 @@ vi.mock("@zoonk/ai/tasks/activities/language/sentence-variants", () => ({
         { alternativeSentences: [], alternativeTranslations: [], id: "1" },
       ],
     },
+  }),
+}));
+
+vi.mock("@zoonk/ai/tasks/activities/language/translation", () => ({
+  generateTranslation: vi.fn().mockResolvedValue({
+    data: { translation: "mocked" },
   }),
 }));
 
@@ -457,8 +463,29 @@ describe("language activity generation", () => {
       title: `Reading ${randomUUID()}`,
     });
 
+    // Create a reading step so the listening step has source data to copy
+    const sentence = await prisma.sentence.create({
+      data: {
+        organizationId,
+        sentence: `listen-running-${randomUUID().slice(0, 8)}`,
+        targetLanguage: "es",
+      },
+    });
+
+    await prisma.step.create({
+      data: {
+        activityId: readingActivity.id,
+        content: {},
+        kind: "reading",
+        position: 0,
+        sentenceId: sentence.id,
+      },
+    });
+
+    // Listening must be "pending" (not "running") because saveListeningActivityStep
+    // skips activities that are already "running" or "completed".
     const listeningActivity = await activityFixture({
-      generationStatus: "running",
+      generationStatus: "pending",
       kind: "listening",
       lessonId: testLesson.id,
       organizationId,
@@ -467,7 +494,7 @@ describe("language activity generation", () => {
 
     const activities = await getLessonActivitiesStep(testLesson.id);
 
-    await completeListeningActivityStep(activities, "test-run-id");
+    await saveListeningActivityStep(activities, "test-run-id");
 
     const [dbReading, dbListening] = await Promise.all([
       prisma.activity.findUnique({ where: { id: readingActivity.id } }),
@@ -528,7 +555,7 @@ describe("language activity generation", () => {
     expect(generateActivitySentenceVariants).not.toHaveBeenCalled();
   });
 
-  test("reading audio failure causes both reading and listening to fail", async () => {
+  test("reading completes without audio when audio generation fails", async () => {
     vi.mocked(generateLanguageAudio).mockResolvedValue({
       data: null,
       error: new Error("Audio failed"),
@@ -587,8 +614,10 @@ describe("language activity generation", () => {
       where: { id: listeningActivity.id },
     });
 
-    expect(dbReading?.generationStatus).toBe("failed");
-    expect(dbListening?.generationStatus).toBe("failed");
+    // Audio failure is graceful: the audio step returns empty URLs,
+    // the save step persists sentences without audio, and both activities complete.
+    expect(dbReading?.generationStatus).toBe("completed");
+    expect(dbListening?.generationStatus).toBe("completed");
   });
 
   test("copies listening from pre-completed reading without calling AI", async () => {

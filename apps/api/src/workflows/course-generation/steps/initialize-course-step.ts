@@ -1,4 +1,4 @@
-import { createStepStream } from "@/workflows/_shared/stream-status";
+import { type WorkflowErrorReason, createStepStream } from "@/workflows/_shared/stream-status";
 import { type CourseWorkflowStepName } from "@/workflows/config";
 import { type CourseSuggestion, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
@@ -14,6 +14,101 @@ export type CourseContext = {
   targetLanguage: string | null;
 };
 
+/**
+ * Updates the course suggestion status to "running" so other workflow
+ * instances know this suggestion is being processed.
+ * This is a pure save step — one DB operation.
+ */
+async function updateCourseSuggestionToRunning({
+  stream,
+  suggestionId,
+  workflowRunId,
+}: {
+  stream: {
+    error: (params: { reason: WorkflowErrorReason; step: CourseWorkflowStepName }) => Promise<void>;
+  };
+  suggestionId: number;
+  workflowRunId: string;
+}): Promise<{ error: Error | null }> {
+  const { error } = await safeAsync(() =>
+    prisma.courseSuggestion.update({
+      data: {
+        generationRunId: workflowRunId,
+        generationStatus: "running",
+      },
+      where: { id: suggestionId },
+    }),
+  );
+
+  if (error) {
+    await stream.error({ reason: "dbSaveFailed", step: "initializeCourse" });
+  }
+
+  return { error };
+}
+
+/**
+ * Creates the course entity in the database.
+ * This is a pure save step — one DB operation.
+ */
+async function createCourseEntity({
+  organizationId,
+  stream,
+  suggestion,
+  workflowRunId,
+}: {
+  organizationId: number;
+  stream: {
+    error: (params: { reason: WorkflowErrorReason; step: CourseWorkflowStepName }) => Promise<void>;
+  };
+  suggestion: CourseSuggestion;
+  workflowRunId: string;
+}): Promise<{ course: CourseContext | null; error: Error | null }> {
+  const slug = ensureLocaleSuffix(toSlug(suggestion.title), suggestion.language);
+  const normalizedTitle = normalizeString(suggestion.title);
+
+  const { data: course, error } = await safeAsync(() =>
+    prisma.course.create({
+      data: {
+        generationRunId: workflowRunId,
+        generationStatus: "running",
+        isPublished: true,
+        language: suggestion.language,
+        normalizedTitle,
+        organizationId,
+        slug,
+        targetLanguage: suggestion.targetLanguage,
+        title: suggestion.title,
+      },
+    }),
+  );
+
+  if (error || !course) {
+    await stream.error({ reason: "dbSaveFailed", step: "initializeCourse" });
+    return { course: null, error: error ?? new Error("Failed to create course") };
+  }
+
+  return {
+    course: {
+      courseId: course.id,
+      courseSlug: course.slug,
+      courseTitle: suggestion.title,
+      language: suggestion.language,
+      organizationId,
+      targetLanguage: suggestion.targetLanguage,
+    },
+    error: null,
+  };
+}
+
+/**
+ * Initializes a new course from a suggestion.
+ * Split into two DB operations:
+ * 1. Mark the course suggestion as "running"
+ * 2. Create the course entity
+ *
+ * Each operation is isolated so failures are attributable to a specific action.
+ */
 export async function initializeCourseStep(input: {
   suggestion: CourseSuggestion;
   workflowRunId: string;
@@ -37,55 +132,28 @@ export async function initializeCourseStep(input: {
     throw orgError ?? new Error("AI organization not found");
   }
 
-  // Update course suggestion status to running
-  const { error: updateError } = await safeAsync(() =>
-    prisma.courseSuggestion.update({
-      data: {
-        generationRunId: workflowRunId,
-        generationStatus: "running",
-      },
-      where: { id: suggestion.id },
-    }),
-  );
+  const { error: suggestionError } = await updateCourseSuggestionToRunning({
+    stream,
+    suggestionId: suggestion.id,
+    workflowRunId,
+  });
 
-  if (updateError) {
-    await stream.error({ reason: "dbSaveFailed", step: "initializeCourse" });
-    throw updateError;
+  if (suggestionError) {
+    throw suggestionError;
   }
 
-  // Create the course
-  const slug = ensureLocaleSuffix(toSlug(suggestion.title), suggestion.language);
-  const normalizedTitle = normalizeString(suggestion.title);
-
-  const { data: course, error: createError } = await safeAsync(() =>
-    prisma.course.create({
-      data: {
-        generationRunId: workflowRunId,
-        generationStatus: "running",
-        isPublished: true,
-        language: suggestion.language,
-        normalizedTitle,
-        organizationId: aiOrg.id,
-        slug,
-        targetLanguage: suggestion.targetLanguage,
-        title: suggestion.title,
-      },
-    }),
-  );
+  const { course, error: createError } = await createCourseEntity({
+    organizationId: aiOrg.id,
+    stream,
+    suggestion,
+    workflowRunId,
+  });
 
   if (createError || !course) {
-    await stream.error({ reason: "dbSaveFailed", step: "initializeCourse" });
     throw createError ?? new Error("Failed to create course");
   }
 
   await stream.status({ status: "completed", step: "initializeCourse" });
 
-  return {
-    courseId: course.id,
-    courseSlug: course.slug,
-    courseTitle: suggestion.title,
-    language: suggestion.language,
-    organizationId: aiOrg.id,
-    targetLanguage: suggestion.targetLanguage,
-  };
+  return course;
 }

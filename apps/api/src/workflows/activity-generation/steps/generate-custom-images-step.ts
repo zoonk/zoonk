@@ -1,80 +1,112 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
 import { type ActivityStepName } from "@/workflows/config";
 import { generateVisualStepImage } from "@zoonk/core/steps/visual-image";
-import { prisma } from "@zoonk/db";
-import { getString, toRecord } from "@zoonk/utils/json";
-import { rejected } from "@zoonk/utils/settled";
+import { rejected, settledValues } from "@zoonk/utils/settled";
 import { type CustomVisualResult } from "./generate-custom-visuals-step";
+import { type VisualRow } from "./generate-visuals-step";
 import { type LessonActivity } from "./get-lesson-activities-step";
-import { handleActivityFailureStep } from "./handle-failure-step";
 
-async function generateImagesForActivity(activity: LessonActivity): Promise<void> {
+type CustomImageResult = {
+  activityId: number;
+  completedRows: VisualRow[];
+};
+
+/**
+ * Generates images for a single custom activity's visual rows.
+ * Returns the visual rows with image URLs injected into the content.
+ * No DB writes — the save step handles persistence.
+ */
+async function generateImagesForActivity(
+  activity: LessonActivity,
+  visualResult: CustomVisualResult,
+): Promise<CustomImageResult> {
   if (activity.generationStatus === "completed" || activity.generationStatus === "running") {
-    return;
-  }
-
-  const dbSteps = await prisma.step.findMany({
-    orderBy: { position: "asc" },
-    select: { content: true, id: true },
-    where: { activityId: activity.id, kind: "visual" },
-  });
-
-  const imageSteps = dbSteps.filter((step) => getString(step.content, "kind") === "image");
-
-  if (imageSteps.length === 0) {
-    return;
+    return { activityId: activity.id, completedRows: visualResult.visualRows };
   }
 
   const orgSlug = activity.lesson.chapter.course.organization?.slug;
+  const completedRows = [...visualResult.visualRows];
 
-  const results = await Promise.allSettled(
-    imageSteps.map((step) => {
-      const prompt = getString(step.content, "prompt");
-      if (!prompt) {
-        return Promise.reject(new Error("Missing prompt"));
-      }
-      return generateVisualStepImage({ language: activity.language, orgSlug, prompt });
-    }),
-  );
+  const imageRowIndexes: number[] = [];
+  const imagePromises: Promise<{ data: string | null; error: Error | null }>[] = [];
 
-  const updateResults = await Promise.allSettled(
-    imageSteps.map((step, idx) => {
-      const result = results[idx];
-      if (result?.status !== "fulfilled" || result.value.error) {
-        return Promise.resolve();
-      }
-      return prisma.step.update({
-        data: { content: { ...toRecord(step.content), url: result.value.data } },
-        where: { id: step.id },
-      });
-    }),
-  );
+  for (let i = 0; i < completedRows.length; i += 1) {
+    const row = completedRows[i];
+    const content = row?.content as Record<string, unknown> | undefined;
 
-  const hadFailure = rejected(results) || rejected(updateResults);
-
-  if (hadFailure) {
-    await handleActivityFailureStep({ activityId: activity.id });
+    if (content?.kind === "image" && typeof content.prompt === "string") {
+      imageRowIndexes.push(i);
+      imagePromises.push(
+        generateVisualStepImage({ language: activity.language, orgSlug, prompt: content.prompt }),
+      );
+    }
   }
+
+  if (imagePromises.length === 0) {
+    return { activityId: activity.id, completedRows };
+  }
+
+  const results = await Promise.allSettled(imagePromises);
+
+  for (let j = 0; j < imageRowIndexes.length; j += 1) {
+    const rowIndex = imageRowIndexes[j];
+    const result = results[j];
+
+    if (
+      rowIndex !== undefined &&
+      result?.status === "fulfilled" &&
+      !result.value.error &&
+      result.value.data
+    ) {
+      const originalRow = completedRows[rowIndex];
+
+      if (originalRow) {
+        completedRows[rowIndex] = {
+          ...originalRow,
+          content: { ...originalRow.content, url: result.value.data },
+        };
+      }
+    }
+  }
+
+  return { activityId: activity.id, completedRows };
 }
 
+/**
+ * Generates images for all custom activities' visual rows in parallel.
+ * Receives visual data directly from the visuals step (no DB reads).
+ * Returns completed rows with image URLs injected.
+ * No DB writes — the save step handles persistence.
+ */
 export async function generateCustomImagesStep(
   activities: LessonActivity[],
   customVisualResults: CustomVisualResult[],
-): Promise<void> {
+): Promise<CustomImageResult[]> {
   "use step";
 
   if (customVisualResults.length === 0) {
-    return;
+    return [];
   }
 
   await using stream = createStepStream<ActivityStepName>();
 
   await stream.status({ status: "started", step: "generateImages" });
 
-  const activityIds = new Set(customVisualResults.map((result) => result.activityId));
-  const customActivities = activities.filter((act) => activityIds.has(act.id));
+  const allSettled = await Promise.allSettled(
+    customVisualResults.map((visualResult) => {
+      const activity = activities.find((act) => act.id === visualResult.activityId);
+      if (!activity) {
+        return Promise.resolve({
+          activityId: visualResult.activityId,
+          completedRows: visualResult.visualRows,
+        });
+      }
+      return generateImagesForActivity(activity, visualResult);
+    }),
+  );
 
-  await Promise.allSettled(customActivities.map((act) => generateImagesForActivity(act)));
+  const status = rejected(allSettled) ? "error" : "completed";
+  await stream.status({ status, step: "generateImages" });
 
-  await stream.status({ status: "completed", step: "generateImages" });
+  return settledValues(allSettled);
 }

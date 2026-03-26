@@ -1,6 +1,6 @@
 import { type VocabularyWord } from "@zoonk/ai/tasks/activities/language/vocabulary";
 import { settled } from "@zoonk/utils/settled";
-import { completeActivityStep } from "../steps/complete-activity-step";
+import { extractUniqueSentenceWords } from "@zoonk/utils/string";
 import { generateReadingAudioStep } from "../steps/generate-reading-audio-step";
 import { generateReadingContentStep } from "../steps/generate-reading-content-step";
 import { generateReadingRomanizationStep } from "../steps/generate-reading-romanization-step";
@@ -8,10 +8,7 @@ import { generateSentencePronunciationAndAlternativesStep } from "../steps/gener
 import { generateSentenceWordAudioStep } from "../steps/generate-sentence-word-audio-step";
 import { generateSentenceWordMetadataStep } from "../steps/generate-sentence-word-metadata-step";
 import { type LessonActivity } from "../steps/get-lesson-activities-step";
-import { saveReadingSentencesStep } from "../steps/save-reading-sentences-step";
-import { saveSentenceAudioAndRomanizationStep } from "../steps/save-sentence-audio-and-romanization-step";
-import { saveSentenceWordAudioStep } from "../steps/save-sentence-word-audio-step";
-import { saveSentenceWordsStep } from "../steps/save-sentence-words-step";
+import { saveReadingActivityStep } from "../steps/save-reading-activity-step";
 
 export async function readingActivityWorkflow(
   activities: LessonActivity[],
@@ -30,38 +27,42 @@ export async function readingActivityWorkflow(
     neighboringConcepts,
   );
 
-  const { savedSentences } = await saveReadingSentencesStep(activities, sentences);
-
   const [audioResult, romanizationResult] = await Promise.allSettled([
-    generateReadingAudioStep(activities, savedSentences),
-    generateReadingRomanizationStep(activities, savedSentences),
+    generateReadingAudioStep(activities, sentences),
+    generateReadingRomanizationStep(activities, sentences),
   ]);
 
   const { sentenceAudioUrls } = settled(audioResult, { sentenceAudioUrls: {} });
-  const { romanizations } = settled(romanizationResult, { romanizations: {} });
+  const { romanizations: sentenceRomanizations } = settled(romanizationResult, {
+    romanizations: {},
+  });
 
-  await saveSentenceAudioAndRomanizationStep(
-    activities,
-    savedSentences,
-    sentenceAudioUrls,
-    romanizations,
+  const { wordMetadata } = await generateSentenceWordMetadataStep(activities, sentences);
+
+  const sentenceWords = extractUniqueSentenceWords(sentences.map((entry) => entry.sentence)).filter(
+    (word) => wordMetadata[word],
   );
 
-  const { wordMetadata } = await generateSentenceWordMetadataStep(activities, savedSentences);
-
-  const { savedSentenceWords } = await saveSentenceWordsStep(
-    activities,
-    savedSentences,
-    wordMetadata,
-  );
-
-  const [wordAudioResult] = await Promise.allSettled([
-    generateSentenceWordAudioStep(activities, savedSentenceWords),
-    generateSentencePronunciationAndAlternativesStep(activities, savedSentenceWords),
+  const [wordAudioResult, wordPronunciationResult] = await Promise.allSettled([
+    generateSentenceWordAudioStep(activities, sentenceWords),
+    generateSentencePronunciationAndAlternativesStep(activities, sentenceWords),
   ]);
 
   const { wordAudioUrls } = settled(wordAudioResult, { wordAudioUrls: {} });
-  await saveSentenceWordAudioStep(activities, savedSentenceWords, wordAudioUrls);
+  const { alternatives, pronunciations } = settled(wordPronunciationResult, {
+    alternatives: {},
+    pronunciations: {},
+  });
 
-  await completeActivityStep(activities, workflowRunId, "reading");
+  await saveReadingActivityStep({
+    activities,
+    alternatives,
+    pronunciations,
+    sentenceAudioUrls,
+    sentenceRomanizations,
+    sentences,
+    wordAudioUrls,
+    wordMetadata,
+    workflowRunId,
+  });
 }

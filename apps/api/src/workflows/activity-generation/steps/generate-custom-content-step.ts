@@ -1,64 +1,61 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
 import { type ActivityStepName } from "@/workflows/config";
 import { generateActivityCustom } from "@zoonk/ai/tasks/activities/custom";
-import { safeAsync } from "@zoonk/utils/error";
 import { rejected, settledValues } from "@zoonk/utils/settled";
-import { resolveActivityForGeneration, saveContentSteps } from "./_utils/content-step-helpers";
+import { resolveActivityForGeneration } from "./_utils/content-step-helpers";
 import { type ActivitySteps } from "./_utils/get-activity-steps";
 import { type LessonActivity } from "./get-lesson-activities-step";
-import { handleActivityFailureStep } from "./handle-failure-step";
-import { setActivityAsRunningStep } from "./set-activity-as-running-step";
 
 export type CustomContentResult = { activityId: number; steps: ActivitySteps };
 
-async function generateAndSaveContent(activity: LessonActivity): Promise<ActivitySteps> {
-  const { data: result, error } = await safeAsync(() =>
-    generateActivityCustom({
-      activityDescription: activity.description ?? "",
-      activityTitle: activity.title ?? "",
-      chapterTitle: activity.lesson.chapter.title,
-      courseTitle: activity.lesson.chapter.course.title,
-      language: activity.language,
-      lessonDescription: activity.lesson.description ?? "",
-      lessonTitle: activity.lesson.title,
-    }),
-  );
+/**
+ * Calls AI to generate custom activity content.
+ * Pure data producer: no DB writes. Throws on failure
+ * to let the workflow framework retry.
+ */
+async function generateContent(activity: LessonActivity): Promise<ActivitySteps> {
+  const result = await generateActivityCustom({
+    activityDescription: activity.description ?? "",
+    activityTitle: activity.title ?? "",
+    chapterTitle: activity.lesson.chapter.title,
+    courseTitle: activity.lesson.chapter.course.title,
+    language: activity.language,
+    lessonDescription: activity.lesson.description ?? "",
+    lessonTitle: activity.lesson.title,
+  });
 
-  const steps: ActivitySteps = (!error && result?.data?.steps) || [];
+  const steps: ActivitySteps = result?.data?.steps ?? [];
 
   if (steps.length === 0) {
-    return [];
+    throw new Error("Empty AI result for custom content");
   }
 
-  const { error: saveError } = await saveContentSteps(activity.id, steps);
-  return saveError ? [] : steps;
+  return steps;
 }
 
-async function generateForActivity(
-  activity: LessonActivity,
-  workflowRunId: string,
-): Promise<CustomContentResult> {
+/**
+ * Generates content for a single custom activity.
+ * Checks if generation is needed, then calls AI.
+ * Returns data only — no DB writes.
+ */
+async function generateForActivity(activity: LessonActivity): Promise<CustomContentResult> {
   const resolved = await resolveActivityForGeneration(activity);
 
   if (!resolved.shouldGenerate) {
     return { activityId: activity.id, steps: resolved.existingSteps };
   }
 
-  await setActivityAsRunningStep({ activityId: activity.id, workflowRunId });
-
-  const steps = await generateAndSaveContent(activity);
-
-  if (steps.length === 0) {
-    await handleActivityFailureStep({ activityId: activity.id });
-    throw new Error("Content generation failed");
-  }
-
+  const steps = await generateContent(activity);
   return { activityId: activity.id, steps };
 }
 
+/**
+ * Generates custom content for all custom activities in parallel.
+ * Returns the raw content data without saving to the database.
+ * Each activity's content will be persisted later by `saveCustomActivityStep`.
+ */
 export async function generateCustomContentStep(
   activities: LessonActivity[],
-  workflowRunId: string,
 ): Promise<CustomContentResult[]> {
   "use step";
 
@@ -73,7 +70,7 @@ export async function generateCustomContentStep(
   await stream.status({ status: "started", step: "generateCustomContent" });
 
   const allSettled = await Promise.allSettled(
-    customActivities.map((act) => generateForActivity(act, workflowRunId)),
+    customActivities.map((act) => generateForActivity(act)),
   );
 
   await stream.status({

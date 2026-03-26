@@ -53,7 +53,7 @@ describe("vocabulary phase status", () => {
   test("activates buildingWordList for vocabulary content steps", () => {
     const status = getPhaseStatus(
       "buildingWordList",
-      ["setActivityAsRunning"],
+      ["getLessonActivities"],
       "generateVocabularyContent",
       "vocabulary",
     );
@@ -63,8 +63,8 @@ describe("vocabulary phase status", () => {
 
   test("calculates progress for vocabulary flow", () => {
     const progress = calculateWeightedProgress(
-      ["setActivityAsRunning", "generateVocabularyContent", "saveVocabularyWords"],
-      "generateVocabularyPronunciation",
+      ["getLessonActivities", "generateVocabularyContent"],
+      "generateVocabularyPronunciationAndAlternatives",
       "vocabulary",
     );
 
@@ -76,7 +76,7 @@ describe("grammar phase status", () => {
   test("activates writingContent for grammar generation", () => {
     const status = getPhaseStatus(
       "writingContent",
-      ["setActivityAsRunning"],
+      ["getLessonActivities"],
       "generateGrammarContent",
       "grammar",
     );
@@ -86,8 +86,8 @@ describe("grammar phase status", () => {
 
   test("calculates progress for grammar flow", () => {
     const progress = calculateWeightedProgress(
-      ["setActivityAsRunning", "generateGrammarContent"],
-      "setGrammarAsCompleted",
+      ["getLessonActivities", "generateGrammarContent"],
+      "saveGrammarActivity",
       "grammar",
     );
 
@@ -110,7 +110,7 @@ describe("listening phase status", () => {
   test("activates processingDependencies for generateSentences", () => {
     const status = getPhaseStatus(
       "processingDependencies",
-      ["setActivityAsRunning"],
+      ["getLessonActivities"],
       "generateSentences",
       "listening",
     );
@@ -121,7 +121,7 @@ describe("listening phase status", () => {
   test("keeps finishing pending during early dependency processing", () => {
     const status = getPhaseStatus(
       "finishing",
-      ["setActivityAsRunning", "generateVocabularyContent", "setActivityAsCompleted"],
+      ["getLessonActivities", "generateVocabularyContent"],
       "generateGrammarContent",
       "listening",
     );
@@ -132,13 +132,7 @@ describe("listening phase status", () => {
   test("activates writingContent for copyListeningSteps", () => {
     const status = getPhaseStatus(
       "writingContent",
-      [
-        "setActivityAsRunning",
-        "generateSentences",
-        "saveSentences",
-        "generateAudio",
-        "saveSentenceAudioAndRomanization",
-      ],
+      ["getLessonActivities", "generateSentences", "generateAudio"],
       "copyListeningSteps",
       "listening",
     );
@@ -150,21 +144,19 @@ describe("listening phase status", () => {
     const status = getPhaseStatus(
       "finishing",
       [
-        "setActivityAsRunning",
+        "getLessonActivities",
         "generateVocabularyContent",
-        "saveVocabularyWords",
-        "generateVocabularyPronunciation",
+        "generateVocabularyPronunciationAndAlternatives",
         "generateVocabularyAudio",
+        "saveVocabularyActivity",
         "generateGrammarContent",
         "generateSentences",
-        "saveSentences",
         "generateAudio",
-        "saveSentenceAudioAndRomanization",
+        "generateReadingRomanization",
         "copyListeningSteps",
-        "setVocabularyAsCompleted",
-        "setReadingAsCompleted",
+        "saveListeningActivity",
       ],
-      "setListeningAsCompleted",
+      null,
       "listening",
     );
 
@@ -173,7 +165,7 @@ describe("listening phase status", () => {
 
   test("calculates progress for listening flow", () => {
     const progress = calculateWeightedProgress(
-      ["setActivityAsRunning", "generateSentences", "saveSentences"],
+      ["getLessonActivities", "generateSentences"],
       "generateAudio",
       "listening",
     );
@@ -186,7 +178,7 @@ describe("reading phase status", () => {
   test("activates buildingWordList for sentence generation", () => {
     const status = getPhaseStatus(
       "buildingWordList",
-      ["setActivityAsRunning"],
+      ["getLessonActivities"],
       "generateSentences",
       "reading",
     );
@@ -196,7 +188,7 @@ describe("reading phase status", () => {
 
   test("calculates progress for reading flow", () => {
     const progress = calculateWeightedProgress(
-      ["setActivityAsRunning", "generateSentences", "saveSentences"],
+      ["getLessonActivities", "generateSentences"],
       "generateAudio",
       "reading",
     );
@@ -206,11 +198,11 @@ describe("reading phase status", () => {
 });
 
 describe("custom phase status", () => {
-  test("completes gettingStarted after getLessonActivities (getNeighboringConcepts is not used)", () => {
+  test("completes gettingStarted after getLessonActivities and setActivityAsRunning", () => {
     const status = getPhaseStatus(
       "gettingStarted",
-      ["getLessonActivities"],
-      "setActivityAsRunning",
+      ["getLessonActivities", "setActivityAsRunning"],
+      "generateCustomContent",
       "custom",
     );
 
@@ -237,10 +229,8 @@ describe("enforcePhaseProgression integration", () => {
         [
           "getLessonActivities",
           "getNeighboringConcepts",
-          "setActivityAsRunning",
           "generateExplanationContent",
           "generateVisuals",
-          "setChallengeAsCompleted",
         ],
         null,
         "explanation",

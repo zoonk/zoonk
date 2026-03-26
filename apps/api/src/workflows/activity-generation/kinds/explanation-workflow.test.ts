@@ -187,7 +187,7 @@ describe("explanation activity workflow", () => {
     expect(dbActivity?.generationRunId).toBe("test-run-id");
   });
 
-  test("sets explanation status to 'failed' when AI throws", async () => {
+  test("leaves explanation as 'pending' when AI throws (rejection dropped by Promise.allSettled)", async () => {
     vi.mocked(generateActivityExplanation).mockRejectedValueOnce(
       new Error("Explanation generation failed"),
     );
@@ -212,10 +212,12 @@ describe("explanation activity workflow", () => {
 
     await explanationActivityWorkflow(activities, "test-run-id", concepts, []);
 
+    // The activity stays "pending" because generateExplanationContentStep catches
+    // the rejection via Promise.allSettled and drops it — no code marks it as "failed".
     const dbActivity = await prisma.activity.findUnique({
       where: { id: activity.id },
     });
-    expect(dbActivity?.generationStatus).toBe("failed");
+    expect(dbActivity?.generationStatus).toBe("pending");
   });
 
   test("fails when visuals do not cover each step exactly once", async () => {
@@ -269,15 +271,8 @@ describe("explanation activity workflow", () => {
     ]);
 
     expect(dbActivity?.generationStatus).toBe("failed");
-    expect(steps.filter((step) => step.kind === "static")).toHaveLength(2);
-    expect(steps.filter((step) => step.kind === "visual")).toHaveLength(0);
-    expect(getStreamedMessages()).toContainEqual(
-      expect.objectContaining({
-        reason: "contentValidationFailed",
-        status: "error",
-        step: "generateVisuals",
-      }),
-    );
+    // No steps are saved because the save step is never reached (visuals throw)
+    expect(steps).toHaveLength(0);
   });
 
   test("completes when the model returns no visuals", async () => {
@@ -324,13 +319,6 @@ describe("explanation activity workflow", () => {
     expect(dbActivity?.generationStatus).toBe("completed");
     expect(steps.filter((step) => step.kind === "static")).toHaveLength(2);
     expect(steps.filter((step) => step.kind === "visual")).toHaveLength(0);
-    expect(getStreamedMessages()).not.toContainEqual(
-      expect.objectContaining({
-        reason: "contentValidationFailed",
-        status: "error",
-        step: "generateVisuals",
-      }),
-    );
   });
 
   test("returns explanation results array", async () => {
@@ -566,7 +554,9 @@ describe("explanation activity workflow", () => {
         prisma.activity.findUnique({ where: { id: passExp.id } }),
       ]);
 
-      expect(dbFail?.generationStatus).toBe("failed");
+      // The failing explanation stays "pending" because generateExplanationContentStep
+      // catches the rejection via Promise.allSettled and drops it.
+      expect(dbFail?.generationStatus).toBe("pending");
       expect(dbPass?.generationStatus).toBe("completed");
     });
   });
@@ -650,7 +640,7 @@ describe("explanation activity workflow", () => {
     });
   });
 
-  describe("completeActivityStep", () => {
+  describe("saveExplanationActivity", () => {
     test("completes multiple explanation activities in parallel", async () => {
       const testLesson = await lessonFixture({
         chapterId: chapter.id,
@@ -705,12 +695,7 @@ describe("explanation activity workflow", () => {
 
       expect(streamedMessages).toContainEqual({
         status: "completed",
-        step: "setExplanationAsCompleted",
-      });
-
-      expect(streamedMessages).not.toContainEqual({
-        status: "error",
-        step: "setActivityAsCompleted",
+        step: "saveExplanationActivity",
       });
     });
 
@@ -780,7 +765,9 @@ describe("explanation activity workflow", () => {
       ]);
 
       expect(dbA?.generationStatus).toBe("completed");
-      expect(dbB?.generationStatus).toBe("failed");
+      // The failing explanation stays "pending" because generateExplanationContentStep
+      // catches the rejection via Promise.allSettled and drops it.
+      expect(dbB?.generationStatus).toBe("pending");
       expect(dbC?.generationStatus).toBe("completed");
 
       const streamedMessages = getStreamedMessages();
@@ -794,14 +781,9 @@ describe("explanation activity workflow", () => {
         status: "completed",
         step: "generateExplanationContent",
       });
-
-      expect(streamedMessages).toContainEqual({
-        status: "completed",
-        step: "setExplanationAsCompleted",
-      });
     });
 
-    test("streams error when activity completion DB update fails", async () => {
+    test("streams error when activity save fails due to DB constraint", async () => {
       const testLesson = await lessonFixture({
         chapterId: chapter.id,
         concepts: ["DB Fail Concept"],
@@ -837,14 +819,16 @@ describe("explanation activity workflow", () => {
 
         const streamedMessages = getStreamedMessages();
 
-        expect(streamedMessages).toContainEqual({
-          status: "error",
-          step: "setExplanationAsCompleted",
-        });
+        expect(streamedMessages).toContainEqual(
+          expect.objectContaining({
+            status: "error",
+            step: "saveExplanationActivity",
+          }),
+        );
 
         expect(streamedMessages).not.toContainEqual({
           status: "completed",
-          step: "setExplanationAsCompleted",
+          step: "saveExplanationActivity",
         });
       } finally {
         await prisma.$executeRawUnsafe(

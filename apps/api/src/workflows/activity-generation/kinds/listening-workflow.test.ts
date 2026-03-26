@@ -141,7 +141,7 @@ describe(listeningActivityWorkflow, () => {
     });
 
     const readingActivity = await activityFixture({
-      generationStatus: "running",
+      generationStatus: "completed",
       kind: "reading",
       language: "en",
       lessonId: lesson.id,
@@ -158,12 +158,6 @@ describe(listeningActivityWorkflow, () => {
       kind: "reading",
       position: 0,
       sentenceId: sentence.id,
-    });
-
-    // Mark reading as completed so completeListeningActivityStep succeeds
-    await prisma.activity.update({
-      data: { generationStatus: "completed" },
-      where: { id: readingActivity.id },
     });
 
     const listeningActivity = await activityFixture({

@@ -7,9 +7,9 @@ import { safeAsync } from "@zoonk/utils/error";
 import { needsRomanization } from "@zoonk/utils/languages";
 import { extractUniqueSentenceWords } from "@zoonk/utils/string";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
+import { type ReadingSentence } from "./generate-reading-content-step";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
-import { type SavedSentence } from "./save-reading-sentences-step";
 
 type WordMetadataEntry = {
   romanization: string | null;
@@ -122,13 +122,11 @@ async function generateWordRomanizations(
  */
 async function buildWordMetadata(params: {
   organizationId: number;
-  savedSentences: SavedSentence[];
+  sentences: ReadingSentence[];
   targetLanguage: string;
   userLanguage: string;
 }): Promise<{ isComplete: boolean; wordMetadata: Record<string, WordMetadataEntry> }> {
-  const uniqueWords = extractUniqueSentenceWords(
-    params.savedSentences.map((saved) => saved.sentence),
-  );
+  const uniqueWords = extractUniqueSentenceWords(params.sentences.map((entry) => entry.sentence));
 
   if (uniqueWords.length === 0) {
     return { isComplete: true, wordMetadata: {} };
@@ -173,13 +171,13 @@ async function buildWordMetadata(params: {
 
 export async function generateSentenceWordMetadataStep(
   activities: LessonActivity[],
-  savedSentences: SavedSentence[],
+  sentences: ReadingSentence[],
 ): Promise<{ wordMetadata: Record<string, WordMetadataEntry> }> {
   "use step";
 
   const activity = findActivityByKind(activities, "reading");
 
-  if (!activity || savedSentences.length === 0) {
+  if (!activity || sentences.length === 0) {
     return { wordMetadata: {} };
   }
 
@@ -195,7 +193,7 @@ export async function generateSentenceWordMetadataStep(
 
   const { isComplete, wordMetadata } = await buildWordMetadata({
     organizationId: course.organization.id,
-    savedSentences,
+    sentences,
     targetLanguage: course.targetLanguage ?? "",
     userLanguage: activity.language,
   });
