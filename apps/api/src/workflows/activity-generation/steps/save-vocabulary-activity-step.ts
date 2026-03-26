@@ -234,15 +234,13 @@ async function saveOneVocabularyWord(params: {
 
 /**
  * Marks the activity as completed after all data has been saved.
- * Uses a conditional update (only if NOT already completed) to make the
- * operation idempotent without a separate read. This avoids a race condition
- * where the status could change between the read and the update.
+ * Uses updateMany so "no matching row" (already completed) returns count=0
+ * instead of throwing. Real DB errors (connection, constraints) still throw
+ * and propagate to the caller for proper failure handling.
  */
 async function markActivityAsCompleted(activityId: number, workflowRunId: string): Promise<void> {
-  await safeAsync(() =>
-    prisma.activity.update({
-      data: { generationRunId: workflowRunId, generationStatus: "completed" },
-      where: { generationStatus: { not: "completed" }, id: activityId },
-    }),
-  );
+  await prisma.activity.updateMany({
+    data: { generationRunId: workflowRunId, generationStatus: "completed" },
+    where: { generationStatus: { not: "completed" }, id: activityId },
+  });
 }
