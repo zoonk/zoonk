@@ -45,6 +45,8 @@ export const CHAPTER_STEPS = [
 
 export type ChapterStepName = (typeof CHAPTER_STEPS)[number];
 
+export const CHAPTER_COMPLETION_STEP: ChapterStepName = "setChapterAsCompleted";
+
 export const LESSON_STEPS = [
   "getLesson",
   "setLessonAsRunning",
@@ -165,6 +167,8 @@ export const COURSE_STEPS = [
 ] as const;
 
 export type CourseStepName = (typeof COURSE_STEPS)[number];
+
+export const COURSE_COMPLETION_STEP: CourseStepName = "completeCourseSetup";
 
 /**
  * All step names the SSE stream can emit during chapter generation.

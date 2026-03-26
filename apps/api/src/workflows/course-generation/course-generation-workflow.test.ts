@@ -7,6 +7,7 @@ import { generateCourseDescription } from "@zoonk/ai/tasks/courses/description";
 import { generateLanguageCourseChapters } from "@zoonk/ai/tasks/courses/language-chapters";
 import { generateLessonKind } from "@zoonk/ai/tasks/lessons/kind";
 import { generateCourseImage } from "@zoonk/core/courses/image";
+import { COURSE_COMPLETION_STEP } from "@zoonk/core/workflows/steps";
 import { prisma } from "@zoonk/db";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseSuggestionFixture } from "@zoonk/testing/fixtures/course-suggestions";
@@ -166,7 +167,7 @@ describe(courseGenerationWorkflow, () => {
 
       const completionCall = writeMock.mock.calls.find(
         (call: string[]) =>
-          call[0]?.includes('"step":"setFirstActivityAsCompleted"') &&
+          call[0]?.includes(`"step":"${COURSE_COMPLETION_STEP}"`) &&
           call[0]?.includes('"status":"completed"'),
       );
       expect(completionCall).toBeUndefined();
@@ -189,7 +190,7 @@ describe(courseGenerationWorkflow, () => {
 
       const completionCall = writeMock.mock.calls.find(
         (call: string[]) =>
-          call[0]?.includes('"step":"setFirstActivityAsCompleted"') &&
+          call[0]?.includes(`"step":"${COURSE_COMPLETION_STEP}"`) &&
           call[0]?.includes('"status":"completed"'),
       );
       expect(completionCall).toBeDefined();
@@ -223,7 +224,7 @@ describe(courseGenerationWorkflow, () => {
 
       const completionCall = writeMock.mock.calls.find(
         (call: string[]) =>
-          call[0]?.includes('"step":"setFirstActivityAsCompleted"') &&
+          call[0]?.includes(`"step":"${COURSE_COMPLETION_STEP}"`) &&
           call[0]?.includes('"status":"completed"'),
       );
       expect(completionCall).toBeUndefined();
@@ -257,7 +258,7 @@ describe(courseGenerationWorkflow, () => {
 
       const completionCall = writeMock.mock.calls.find(
         (call: string[]) =>
-          call[0]?.includes('"step":"setFirstActivityAsCompleted"') &&
+          call[0]?.includes(`"step":"${COURSE_COMPLETION_STEP}"`) &&
           call[0]?.includes('"status":"completed"'),
       );
       expect(completionCall).toBeDefined();

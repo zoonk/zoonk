@@ -2,6 +2,7 @@ import { streamSkipStep } from "@/workflows/_shared/stream-skip-step";
 import { activityGenerationWorkflow } from "@/workflows/activity-generation/activity-generation-workflow";
 import { handleChapterFailureStep } from "@/workflows/course-generation/steps/handle-failure-step";
 import { lessonGenerationWorkflow } from "@/workflows/lesson-generation/lesson-generation-workflow";
+import { CHAPTER_COMPLETION_STEP } from "@zoonk/core/workflows/steps";
 import { getWorkflowMetadata } from "workflow";
 import { addLessonsStep } from "./steps/add-lessons-step";
 import { generateLessonsStep } from "./steps/generate-lessons-step";
@@ -29,7 +30,7 @@ export async function chapterGenerationWorkflow(chapterId: number): Promise<void
 
   // Already completed — stream the completion step so the client can redirect.
   if (context.generationStatus === "completed") {
-    await streamSkipStep("setFirstActivityAsCompleted");
+    await streamSkipStep(CHAPTER_COMPLETION_STEP);
     return;
   }
 
