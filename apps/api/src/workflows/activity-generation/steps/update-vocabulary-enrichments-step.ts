@@ -7,10 +7,16 @@ import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
 import { type SavedWord } from "./save-vocabulary-words-step";
 
+/**
+ * Updates Word-level fields (audioUrl and romanization) after parallel
+ * generation. WordTranslation-level fields (pronunciation,
+ * alternativeTranslations) are handled by
+ * generateWordPronunciationAndAlternatives, so this step only writes
+ * to the Word table.
+ */
 export async function updateVocabularyEnrichmentsStep(
   activities: LessonActivity[],
   savedWords: SavedWord[],
-  pronunciations: Record<string, string>,
   wordAudioUrls: Record<string, string>,
   romanizations: Record<string, string>,
 ): Promise<void> {
@@ -26,8 +32,6 @@ export async function updateVocabularyEnrichmentsStep(
 
   await stream.status({ status: "started", step: "updateVocabularyEnrichments" });
 
-  const userLanguage = activity.language;
-
   const wordUpdates = savedWords
     .filter((saved) => wordAudioUrls[saved.word] || romanizations[saved.word])
     .map((saved) =>
@@ -40,18 +44,7 @@ export async function updateVocabularyEnrichmentsStep(
       }),
     );
 
-  const translationUpdates = savedWords
-    .filter((saved) => pronunciations[saved.word])
-    .map((saved) =>
-      prisma.wordTranslation.update({
-        data: { pronunciation: pronunciations[saved.word] },
-        where: { wordTranslation: { userLanguage, wordId: BigInt(saved.wordId) } },
-      }),
-    );
-
-  const { error } = await safeAsync(() =>
-    prisma.$transaction([...wordUpdates, ...translationUpdates]),
-  );
+  const { error } = await safeAsync(() => prisma.$transaction(wordUpdates));
 
   if (error) {
     await stream.error({ reason: "dbSaveFailed", step: "updateVocabularyEnrichments" });

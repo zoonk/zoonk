@@ -4,6 +4,7 @@ import { completeActivityStep } from "../steps/complete-activity-step";
 import { generateReadingAudioStep } from "../steps/generate-reading-audio-step";
 import { generateReadingContentStep } from "../steps/generate-reading-content-step";
 import { generateReadingRomanizationStep } from "../steps/generate-reading-romanization-step";
+import { generateSentencePronunciationAndAlternativesStep } from "../steps/generate-sentence-pronunciation-and-alternatives-step";
 import { generateSentenceWordAudioStep } from "../steps/generate-sentence-word-audio-step";
 import { generateSentenceWordMetadataStep } from "../steps/generate-sentence-word-metadata-step";
 import { type LessonActivity } from "../steps/get-lesson-activities-step";
@@ -49,7 +50,12 @@ export async function readingActivityWorkflow(
     wordMetadata,
   );
 
-  const { wordAudioUrls } = await generateSentenceWordAudioStep(activities, savedSentenceWords);
+  const [wordAudioResult] = await Promise.allSettled([
+    generateSentenceWordAudioStep(activities, savedSentenceWords),
+    generateSentencePronunciationAndAlternativesStep(activities, savedSentenceWords),
+  ]);
+
+  const { wordAudioUrls } = settled(wordAudioResult, { wordAudioUrls: {} });
   await updateSentenceWordEnrichmentsStep(activities, savedSentenceWords, wordAudioUrls);
 
   await completeActivityStep(activities, workflowRunId, "reading");

@@ -15,8 +15,11 @@ function normalizeWordText(text: string): string {
 }
 
 /**
- * Vocabulary distractors must stay unambiguous for the learner, so this helper
- * centralizes the rule for when a word is safe to show as a wrong answer.
+ * Checks whether a candidate word is safe to show as a distractor (wrong
+ * answer option). A word is NOT safe if it's semantically equivalent to the
+ * correct word — meaning its translation or alternativeTranslations overlap.
+ * Showing a semantically equivalent word as a distractor would confuse the
+ * learner because it's actually a valid answer.
  */
 function isValidDistractor<T extends DistractorWord>(correctWord: T, candidate: T): boolean {
   const correctNormalized = normalizeWordText(correctWord.word);
@@ -52,6 +55,17 @@ function getUniqueDistractors<T extends DistractorWord>(
   ];
 }
 
+/**
+ * Two words are a semantic match when their translations or
+ * alternativeTranslations overlap — meaning they could both be correct
+ * answers for the same prompt. We use this to exclude semantically
+ * equivalent words from the distractor pool so learners never see a
+ * valid answer presented as a wrong option.
+ *
+ * Example: "boa noite" (translation: "good evening", alternatives:
+ * ["good night"]) is a semantic match with any word whose translation
+ * is "good night", so neither would appear as a distractor for the other.
+ */
 export function isSemanticMatch(correctWord: DistractorWord, candidate: DistractorWord): boolean {
   const correctTranslation = correctWord.translation.toLowerCase();
   const candidateTranslation = candidate.translation.toLowerCase();

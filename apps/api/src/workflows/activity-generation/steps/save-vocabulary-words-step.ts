@@ -55,13 +55,11 @@ function buildSaveOneWord(params: {
 
     await prisma.wordTranslation.upsert({
       create: {
-        alternativeTranslations: vocabWord.alternativeTranslations,
         translation,
         userLanguage,
         wordId,
       },
       update: {
-        alternativeTranslations: vocabWord.alternativeTranslations,
         translation,
       },
       where: {

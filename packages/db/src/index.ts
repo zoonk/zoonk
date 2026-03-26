@@ -38,6 +38,7 @@ export type {
   Sentence,
   StepKind,
   Word,
+  WordTranslation,
 } from "./generated/prisma/client";
 
 export type { ActivityCreateManyInput } from "./generated/prisma/models/Activity";

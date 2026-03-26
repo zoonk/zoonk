@@ -3,7 +3,7 @@ import { settled } from "@zoonk/utils/settled";
 import { completeActivityStep } from "../steps/complete-activity-step";
 import { generateVocabularyAudioStep } from "../steps/generate-vocabulary-audio-step";
 import { generateVocabularyContentStep } from "../steps/generate-vocabulary-content-step";
-import { generateVocabularyPronunciationStep } from "../steps/generate-vocabulary-pronunciation-step";
+import { generateVocabularyPronunciationAndAlternativesStep } from "../steps/generate-vocabulary-pronunciation-and-alternatives-step";
 import { generateVocabularyRomanizationStep } from "../steps/generate-vocabulary-romanization-step";
 import { type LessonActivity } from "../steps/get-lesson-activities-step";
 import { saveVocabularyWordsStep } from "../steps/save-vocabulary-words-step";
@@ -26,23 +26,16 @@ export async function vocabularyActivityWorkflow(
 
   const { savedWords } = await saveVocabularyWordsStep(activities, words, workflowRunId);
 
-  const [pronunciationResult, audioResult, romanizationResult] = await Promise.allSettled([
-    generateVocabularyPronunciationStep(activities, words),
+  const [_pronunciationAndAltsResult, audioResult, romanizationResult] = await Promise.allSettled([
+    generateVocabularyPronunciationAndAlternativesStep(activities, savedWords),
     generateVocabularyAudioStep(activities, words),
     generateVocabularyRomanizationStep(activities, words),
   ]);
 
-  const { pronunciations } = settled(pronunciationResult, { pronunciations: {} });
   const { wordAudioUrls } = settled(audioResult, { wordAudioUrls: {} });
   const { romanizations } = settled(romanizationResult, { romanizations: {} });
 
-  await updateVocabularyEnrichmentsStep(
-    activities,
-    savedWords,
-    pronunciations,
-    wordAudioUrls,
-    romanizations,
-  );
+  await updateVocabularyEnrichmentsStep(activities, savedWords, wordAudioUrls, romanizations);
   await completeActivityStep(activities, workflowRunId, "vocabulary");
   await completeActivityStep(activities, workflowRunId, "translation");
 

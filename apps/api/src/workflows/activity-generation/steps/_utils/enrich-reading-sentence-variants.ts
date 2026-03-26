@@ -1,4 +1,3 @@
-import { type VocabularyWord } from "@zoonk/ai/tasks/activities/language/vocabulary";
 import {
   deduplicateNormalizedTexts,
   hasWholePhrase,
@@ -14,10 +13,21 @@ type SentenceWithVariants = {
   translation: string;
 };
 
-type VocabularyVariantWord = Pick<
-  VocabularyWord,
-  "alternativeTranslations" | "translation" | "word"
->;
+/**
+ * A word with its translation and alternative translations, used to derive
+ * sentence-level variants from vocabulary data. Alternative translations
+ * indicate semantically equivalent words that should not appear as
+ * distractors in exercises — e.g. "good night" for "boa noite" when the
+ * primary translation is "good evening". Here they're used to detect when
+ * two vocabulary words share a translation, enabling sentence-level variant
+ * derivation (e.g. "Guten Morgen, Anna!" also accepts "Guten Tag, Anna!"
+ * because both map to "Bom dia").
+ */
+export type VocabularyVariantWord = {
+  alternativeTranslations: string[];
+  translation: string;
+  word: string;
+};
 
 /**
  * The same accepted translation can arrive with tiny formatting differences, such as

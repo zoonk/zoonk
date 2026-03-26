@@ -30,12 +30,8 @@ vi.mock("@zoonk/ai/tasks/activities/language/vocabulary", () => ({
   generateActivityVocabulary: vi.fn().mockResolvedValue({
     data: {
       words: [
-        {
-          alternativeTranslations: ["hi"],
-          translation: "hello",
-          word: "hola",
-        },
-        { alternativeTranslations: [], translation: "cat", word: "gato" },
+        { translation: "hello", word: "hola" },
+        { translation: "cat", word: "gato" },
       ],
     },
   }),
@@ -44,6 +40,12 @@ vi.mock("@zoonk/ai/tasks/activities/language/vocabulary", () => ({
 vi.mock("@zoonk/ai/tasks/activities/language/pronunciation", () => ({
   generateActivityPronunciation: vi.fn().mockResolvedValue({
     data: { pronunciation: "OH-lah" },
+  }),
+}));
+
+vi.mock("@zoonk/ai/tasks/activities/language/word-alternative-translations", () => ({
+  generateWordAlternativeTranslations: vi.fn().mockResolvedValue({
+    data: { alternativeTranslations: [] },
   }),
 }));
 
@@ -348,7 +350,7 @@ describe(vocabularyActivityWorkflow, () => {
     expect(result.words).toHaveLength(0);
   });
 
-  test("preserves existing audioUrl when audio step fails but pronunciation succeeds", async () => {
+  test("preserves existing audioUrl when audio step fails but pronunciation and alternatives succeed", async () => {
     const id = randomUUID().replaceAll("-", "").slice(0, 8);
     const existingWord = `zkeep${id}`;
     const newWord = `znew${id}`;
@@ -364,11 +366,10 @@ describe(vocabularyActivityWorkflow, () => {
 
     const mockWords: VocabularyWord[] = [
       {
-        alternativeTranslations: [],
         translation: "existing",
         word: existingWord,
       },
-      { alternativeTranslations: [], translation: "new", word: newWord },
+      { translation: "new", word: newWord },
     ];
 
     vi.mocked(generateActivityVocabulary).mockResolvedValueOnce({
@@ -419,11 +420,10 @@ describe(vocabularyActivityWorkflow, () => {
 
     const mockWords: VocabularyWord[] = [
       {
-        alternativeTranslations: ["hi"],
         translation: "hello",
         word: existingWord.toLowerCase(),
       },
-      { alternativeTranslations: [], translation: "cat", word: `gato${id}` },
+      { translation: "cat", word: `gato${id}` },
     ];
 
     vi.mocked(generateActivityVocabulary).mockResolvedValueOnce({
@@ -478,7 +478,6 @@ describe(vocabularyActivityWorkflow, () => {
 
     const mockWords: VocabularyWord[] = [
       {
-        alternativeTranslations: [],
         translation: "cat",
         word: existingWord.toLowerCase(),
       },
@@ -534,11 +533,10 @@ describe(vocabularyActivityWorkflow, () => {
 
     const mockWords: VocabularyWord[] = [
       {
-        alternativeTranslations: [],
         translation: "existing",
         word: existingWord,
       },
-      { alternativeTranslations: [], translation: "new", word: newWord },
+      { translation: "new", word: newWord },
     ];
 
     vi.mocked(generateActivityVocabulary).mockResolvedValueOnce({
@@ -568,5 +566,41 @@ describe(vocabularyActivityWorkflow, () => {
       expect.objectContaining({ text: existingWord }),
     );
     expect(generateLanguageAudio).toHaveBeenCalledWith(expect.objectContaining({ text: newWord }));
+  });
+
+  test("sets vocabulary status to 'failed' when pronunciation/alternatives DB write fails", async () => {
+    const transactionSpy = vi.spyOn(prisma, "$transaction");
+
+    // Let the first $transaction call through (updateVocabularyEnrichmentsStep),
+    // but fail the pronunciation/alternatives persist. Since both run in
+    // Promise.allSettled, we need to fail the specific call from
+    // persistGeneratedFields. It's the first $transaction call because
+    // the enrichment step runs in parallel and typically resolves before
+    // the update step.
+    transactionSpy.mockRejectedValueOnce(new Error("DB transaction failed"));
+
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `Vocab PersistFail ${randomUUID()}`,
+    });
+
+    const activity = await activityFixture({
+      generationStatus: "pending",
+      kind: "vocabulary",
+      language: "en",
+      lessonId: lesson.id,
+      organizationId,
+      title: `Vocabulary ${randomUUID()}`,
+    });
+
+    const activities = await fetchLessonActivities(lesson.id);
+    await vocabularyActivityWorkflow(activities, "test-run-id", [], []);
+
+    const dbActivity = await prisma.activity.findUnique({ where: { id: activity.id } });
+    expect(dbActivity?.generationStatus).toBe("failed");
+
+    transactionSpy.mockRestore();
   });
 });

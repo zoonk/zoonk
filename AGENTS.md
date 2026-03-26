@@ -97,7 +97,7 @@ For detailed UX guidelines (interactions, animation, layout, accessibility), see
 - **Don't use `select` by default.** Return the full model — most models have only small columns and `select` adds maintenance cost (manual types, updating selects when adding fields) with negligible performance benefit
 - **Use `omit`** only for models with large columns (`Step.content`, `Step.visualContent`, `StepAttempt.answer`, `StepAttempt.effects`) when you don't need those fields
 - **Use `include`** to load relations. Use `select` on included relations when you only need specific fields from the related model
-- **Don't define manual types** that mirror Prisma query shapes. Use Prisma's generated types (`Course`, `Chapter`, etc.) or derive types from queries using `NonNullable<Awaited<ReturnType<typeof myQueryFn>>>`
+- **Don't define manual types** that mirror Prisma query shapes. Use Prisma's generated types (`Course`, `Chapter`, etc.) or derive types from queries using `NonNullable<Awaited<ReturnType<typeof myQueryFn>>>`. If the type you need isn't exported from `@zoonk/db`, add it to the export list in `packages/db/src/index.ts` — don't work around it with complex derived types or local redefinitions
 
 ## Compound Components
 
