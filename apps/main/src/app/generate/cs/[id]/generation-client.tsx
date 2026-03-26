@@ -15,7 +15,7 @@ import { useAnimatedProgress } from "@/lib/workflow/use-animated-progress";
 import { useCompletionRedirect } from "@/lib/workflow/use-completion-redirect";
 import { useThinkingMessages } from "@/lib/workflow/use-thinking-messages";
 import { useWorkflowGeneration } from "@/lib/workflow/use-workflow-generation";
-import { type CourseWorkflowStepName } from "@zoonk/core/workflows/steps";
+import { COURSE_COMPLETION_STEP, type CourseWorkflowStepName } from "@zoonk/core/workflows/steps";
 import { type GenerationStatus } from "@zoonk/db";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { API_URL } from "@zoonk/utils/url";
@@ -36,7 +36,7 @@ export function GenerationClient({
   const t = useExtracted();
 
   const generation = useWorkflowGeneration<CourseWorkflowStepName>({
-    completionStep: "completeCourseSetup",
+    completionStep: COURSE_COMPLETION_STEP,
     initialRunId: generationRunId,
     initialStatus: generationStatus === "running" ? "streaming" : "idle",
     statusUrl: `${API_URL}/v1/workflows/course-generation/status`,

@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { activityGenerationWorkflow } from "@/workflows/activity-generation/activity-generation-workflow";
 import { generateLanguageChapterLessons } from "@zoonk/ai/tasks/chapters/language-lessons";
 import { generateChapterLessons } from "@zoonk/ai/tasks/chapters/lessons";
+import { CHAPTER_COMPLETION_STEP } from "@zoonk/core/workflows/steps";
 import { prisma } from "@zoonk/db";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
@@ -95,7 +96,7 @@ describe(chapterGenerationWorkflow, () => {
 
       const completionCall = writeMock.mock.calls.find(
         (call: string[]) =>
-          call[0]?.includes('"step":"setFirstActivityAsCompleted"') &&
+          call[0]?.includes(`"step":"${CHAPTER_COMPLETION_STEP}"`) &&
           call[0]?.includes('"status":"completed"'),
       );
       expect(completionCall).toBeUndefined();
@@ -120,7 +121,7 @@ describe(chapterGenerationWorkflow, () => {
 
       const completionCall = writeMock.mock.calls.find(
         (call: string[]) =>
-          call[0]?.includes('"step":"setFirstActivityAsCompleted"') &&
+          call[0]?.includes(`"step":"${CHAPTER_COMPLETION_STEP}"`) &&
           call[0]?.includes('"status":"completed"'),
       );
       expect(completionCall).toBeDefined();
