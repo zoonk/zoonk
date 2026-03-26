@@ -5,7 +5,7 @@ test.describe("Support page", () => {
   test.beforeEach(async ({ page }) => {
     await page.goto("/support");
 
-    await expect(page.getByRole("heading", { name: /help & support/i })).toBeVisible();
+    await expect(page.getByRole("heading", { name: /feedback & support/i })).toBeVisible();
   });
 
   test("shows page content with support options", async ({ page }) => {

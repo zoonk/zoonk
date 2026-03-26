@@ -107,12 +107,12 @@ test.describe("Command Palette - Unauthenticated", () => {
     await expect(dialog.getByText(/manage subscription/i)).not.toBeVisible();
   });
 
-  test("shows Contact us group with Help and support", async ({ page }) => {
+  test("shows Help group with Feedback & Support", async ({ page }) => {
     await openCommandPalette(page);
 
     const dialog = page.getByRole("dialog");
-    await expect(dialog.getByText("Contact us")).toBeVisible();
-    await expect(dialog.getByText(/help and support/i)).toBeVisible();
+    await expect(dialog.getByText("Help")).toBeVisible();
+    await expect(dialog.getByText(/feedback & support/i)).toBeVisible();
   });
 
   test("selecting Home shows home content", async ({ page }) => {

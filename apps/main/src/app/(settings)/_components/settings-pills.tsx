@@ -14,7 +14,7 @@ export function SettingsPillLinks() {
     { label: t("Profile"), segment: "profile", ...getMenu("profile") },
     { label: t("Subscription"), segment: "subscription", ...getMenu("subscription") },
     { label: t("Language"), segment: "language", ...getMenu("language") },
-    { label: t("Support"), segment: "support", ...getMenu("support") },
+    { label: t("Feedback & Support"), segment: "support", ...getMenu("support") },
   ];
 
   return items.map((item) => (

@@ -32,11 +32,9 @@ export async function SupportContent() {
     <Container>
       <ContainerHeader>
         <ContainerHeaderGroup>
-          <ContainerTitle>{t("Help & Support")}</ContainerTitle>
+          <ContainerTitle>{t("Feedback & Support")}</ContainerTitle>
           <ContainerDescription>
-            {t(
-              "Get help with your account, courses, or any technical issues. Our support team is here to assist you.",
-            )}
+            {t("Share feedback, ask questions, or get help with your account and courses.")}
           </ContainerDescription>
         </ContainerHeaderGroup>
       </ContainerHeader>

@@ -42,7 +42,9 @@ test.describe("Settings Navbar", () => {
     await page.goto("/subscription");
     await page.getByRole("link", { name: /support/i }).click();
 
-    await expect(page.getByRole("heading", { level: 1, name: /help.*support/i })).toBeVisible();
+    await expect(
+      page.getByRole("heading", { level: 1, name: /feedback & support/i }),
+    ).toBeVisible();
   });
 
   test("logout button logs user out", async ({ logoutPage }) => {

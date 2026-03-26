@@ -107,7 +107,7 @@ test.describe("Navbar - Authenticated", () => {
     await authenticatedPage.getByRole("menuitem", { name: /support/i }).click();
 
     await expect(
-      authenticatedPage.getByRole("heading", { level: 1, name: /help.*support/i }),
+      authenticatedPage.getByRole("heading", { level: 1, name: /feedback & support/i }),
     ).toBeVisible();
   });
 });
