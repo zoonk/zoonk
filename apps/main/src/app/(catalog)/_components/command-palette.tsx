@@ -66,7 +66,7 @@ export function CommandPalette({ isLoggedIn }: { isLoggedIn: boolean }) {
     { key: t("Update profile"), ...getMenu("profile") },
   ];
 
-  const contactUs = [{ key: t("Help and support"), ...getMenu("support") }];
+  const contactUs = [{ key: t("Feedback & Support"), ...getMenu("support") }];
 
   const hasCourses = courses.length > 0;
 
@@ -133,7 +133,7 @@ export function CommandPalette({ isLoggedIn }: { isLoggedIn: boolean }) {
             )}
           </CommandGroup>
 
-          <CommandGroup heading={t("Contact us")}>
+          <CommandGroup heading={t("Help")}>
             {contactUs.map((item) => (
               <CommandItem key={item.key} onSelect={() => handleSelect(item.url)}>
                 <item.icon aria-hidden="true" />
