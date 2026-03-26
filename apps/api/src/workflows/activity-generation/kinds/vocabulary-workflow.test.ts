@@ -14,17 +14,26 @@ import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { type LessonActivity } from "../steps/get-lesson-activities-step";
 import { vocabularyActivityWorkflow } from "./vocabulary-workflow";
 
+const mockStreamWrite = vi.fn().mockResolvedValue(null);
+
 vi.mock("workflow", () => ({
   FatalError: class FatalError extends Error {},
   getWorkflowMetadata: vi.fn().mockReturnValue({ workflowRunId: "test-run-id" }),
   getWritable: vi.fn().mockReturnValue({
     getWriter: () => ({
       releaseLock: vi.fn(),
-      write: vi.fn().mockResolvedValue(null),
+      write: mockStreamWrite,
     }),
   }),
   workflowStep: vi.fn().mockImplementation((_name: string, fn: unknown) => fn),
 }));
+
+function getStreamedMessages(): Record<string, unknown>[] {
+  return mockStreamWrite.mock.calls.map(
+    (call: string[]) =>
+      JSON.parse(call[0]!.replace("data: ", "").trim()) as Record<string, unknown>,
+  );
+}
 
 vi.mock("@zoonk/ai/tasks/activities/language/vocabulary", () => ({
   generateActivityVocabulary: vi.fn().mockResolvedValue({
@@ -221,6 +230,24 @@ describe(vocabularyActivityWorkflow, () => {
 
     expect(dbVocab?.generationStatus).toBe("completed");
     expect(dbTrans?.generationStatus).toBe("completed");
+
+    const streamedMessages = getStreamedMessages();
+
+    expect(streamedMessages).toContainEqual(
+      expect.objectContaining({
+        entityId: Number(vocabActivity.id),
+        status: "completed",
+        step: "saveVocabularyActivity",
+      }),
+    );
+
+    expect(streamedMessages).toContainEqual(
+      expect.objectContaining({
+        entityId: Number(transActivity.id),
+        status: "completed",
+        step: "saveVocabularyActivity",
+      }),
+    );
   });
 
   test("creates translation steps when translation activity exists", async () => {

@@ -59,7 +59,13 @@ export function useWorkflowGeneration<TStep extends string = string>(config: {
    * via `startIndex`, so the next connection picks up where the previous one ended.
    */
   const handleComplete = useEffectEvent(() => {
-    const isComplete = !completionStep || state.completedSteps.includes(completionStep);
+    /**
+     * If status is already "completed", handleStepStreamMessage already confirmed
+     * both the completion step AND the entityId matched. No need to re-check
+     * completedSteps (which doesn't track entityId and could match a different
+     * activity of the same kind).
+     */
+    const isComplete = state.status === "completed" || !completionStep;
 
     if (isComplete || state.reconnectCount >= MAX_STREAM_RECONNECTS) {
       dispatch({ completionStep, type: "streamEnded" });

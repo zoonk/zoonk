@@ -120,6 +120,14 @@ export async function saveVocabularyActivityStep(params: {
     status: "completed",
     step: "saveVocabularyActivity",
   });
+
+  if (translationActivity) {
+    await stream.status({
+      entityId: translationActivity.id,
+      status: "completed",
+      step: "saveVocabularyActivity",
+    });
+  }
 }
 
 /**
