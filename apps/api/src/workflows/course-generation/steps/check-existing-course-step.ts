@@ -1,6 +1,6 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
 import { type CourseWorkflowStepName } from "@zoonk/core/workflows/steps";
-import { type CourseSuggestion, prisma } from "@zoonk/db";
+import { type CourseGetPayload, type CourseSuggestion, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { ensureLocaleSuffix, toSlug } from "@zoonk/utils/string";
@@ -15,9 +15,7 @@ const courseInclude = {
   },
 } as const;
 
-export type ExistingCourse = NonNullable<
-  Awaited<ReturnType<typeof prisma.course.findFirst<{ include: typeof courseInclude }>>>
->;
+export type ExistingCourse = CourseGetPayload<{ include: typeof courseInclude }>;
 
 export async function checkExistingCourseStep(
   suggestion: CourseSuggestion,
