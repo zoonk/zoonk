@@ -2,10 +2,10 @@ import { FatalError, getWorkflowMetadata } from "workflow";
 import { coreActivityWorkflow } from "./core-activity-workflow";
 import { customActivityWorkflow } from "./custom-activity-workflow";
 import { languageActivityWorkflow } from "./language-activity-workflow";
-import { completeActivityStep } from "./steps/complete-activity-step";
 import { getLessonActivitiesStep } from "./steps/get-lesson-activities-step";
 import { handleWorkflowFailureStep } from "./steps/handle-workflow-failure-step";
 import { markAllActivitiesAsRunningStep } from "./steps/mark-all-activities-as-running-step";
+import { streamCompletionEventsStep } from "./steps/stream-completion-events-step";
 
 /**
  * Activity generation workflow.
@@ -37,7 +37,7 @@ export async function activityGenerationWorkflow(lessonId: number): Promise<void
       const uniqueKinds = [...new Set(activities.map((a) => a.kind))];
 
       await Promise.allSettled(
-        uniqueKinds.map((kind) => completeActivityStep(activities, workflowRunId, kind)),
+        uniqueKinds.map((kind) => streamCompletionEventsStep(activities, kind)),
       );
 
       return;
