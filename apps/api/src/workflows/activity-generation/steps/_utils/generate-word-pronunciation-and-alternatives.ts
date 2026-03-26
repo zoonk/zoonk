@@ -198,24 +198,30 @@ async function persistGeneratedFields(params: {
     return;
   }
 
-  const updates = allWordIds.map((wordId) => {
-    const data: { alternativeTranslations?: string[]; pronunciation?: string } = {};
+  const updates = allWordIds.flatMap((wordId) => {
     const pronunciation = pronunciationByWordId.get(wordId);
     const alternatives = alternativesByWordId.get(wordId);
 
-    if (pronunciation) {
-      data.pronunciation = pronunciation;
+    const data = {
+      ...(pronunciation ? { pronunciation } : {}),
+      ...(alternatives ? { alternativeTranslations: alternatives } : {}),
+    };
+
+    if (Object.keys(data).length === 0) {
+      return [];
     }
 
-    if (alternatives && alternatives.length > 0) {
-      data.alternativeTranslations = alternatives;
-    }
-
-    return prisma.wordTranslation.update({
-      data,
-      where: { wordTranslation: { userLanguage, wordId: BigInt(wordId) } },
-    });
+    return [
+      prisma.wordTranslation.update({
+        data,
+        where: { wordTranslation: { userLanguage, wordId: BigInt(wordId) } },
+      }),
+    ];
   });
+
+  if (updates.length === 0) {
+    return;
+  }
 
   await prisma.$transaction(updates);
 }
