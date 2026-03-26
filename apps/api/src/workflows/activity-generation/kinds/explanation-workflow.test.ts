@@ -764,10 +764,12 @@ describe("explanation activity workflow", () => {
 
       const streamedMessages = getStreamedMessages();
 
-      expect(streamedMessages).toContainEqual({
-        status: "completed",
-        step: "saveExplanationActivity",
-      });
+      expect(streamedMessages).toContainEqual(
+        expect.objectContaining({
+          status: "completed",
+          step: "saveExplanationActivity",
+        }),
+      );
     });
 
     test("sets explanation to 'failed' when generateActivityExplanation rejects for one of multiple explanations", async () => {

@@ -56,7 +56,11 @@ export async function saveVocabularyActivityStep(params: {
 
   await using stream = createStepStream<ActivityStepName>();
 
-  await stream.status({ status: "started", step: "saveVocabularyActivity" });
+  await stream.status({
+    entityId: vocabularyActivity.id,
+    status: "started",
+    step: "saveVocabularyActivity",
+  });
 
   const translationActivity = findActivityByKind(activities, "translation");
 
@@ -111,7 +115,11 @@ export async function saveVocabularyActivityStep(params: {
     await markActivityAsCompleted(translationActivity.id, workflowRunId);
   }
 
-  await stream.status({ status: "completed", step: "saveVocabularyActivity" });
+  await stream.status({
+    entityId: vocabularyActivity.id,
+    status: "completed",
+    step: "saveVocabularyActivity",
+  });
 }
 
 /**

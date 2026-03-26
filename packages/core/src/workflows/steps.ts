@@ -1,3 +1,28 @@
+export type StepStatus = "started" | "completed" | "error";
+
+export type WorkflowErrorReason =
+  | "aiEmptyResult"
+  | "aiGenerationFailed"
+  | "audioGenerationFailed"
+  | "contentValidationFailed"
+  | "dbFetchFailed"
+  | "dbSaveFailed"
+  | "noSourceData"
+  | "notFound"
+  | "romanizationFailed"
+  | "translationGenerationFailed";
+
+/**
+ * The SSE message shape sent from the API and consumed by the UI.
+ * This is the contract between the workflow streaming layer and the client.
+ */
+export type StepStreamMessage<TStep extends string = string> = {
+  entityId?: number;
+  reason?: WorkflowErrorReason;
+  status: StepStatus;
+  step: TStep;
+};
+
 /**
  * Canonical step name definitions shared between the API (which emits SSE events)
  * and the main app (which tracks progress in the UI). Both apps import from here

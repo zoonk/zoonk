@@ -1,11 +1,6 @@
-export type StepStatus = "started" | "completed" | "error";
-export type GenerationStatus = "idle" | "triggering" | "streaming" | "completed" | "error";
+import { type StepStreamMessage } from "@zoonk/core/workflows/steps";
 
-export type StreamMessage<TStep extends string = string> = {
-  reason?: string;
-  step: TStep;
-  status: StepStatus;
-};
+export type GenerationStatus = "idle" | "triggering" | "streaming" | "completed" | "error";
 
 export type GenerationState<TStep extends string = string> = {
   completedSteps: TStep[];
@@ -93,11 +88,14 @@ export function generationReducer<TStep extends string>(
   }
 }
 
-export function handleStreamMessage<TStep extends string>(
-  message: StreamMessage<TStep>,
-  dispatch: (action: GenerationAction<TStep>) => void,
-  completionStep?: TStep,
-) {
+export function handleStepStreamMessage<TStep extends string>(params: {
+  completionStep?: TStep;
+  dispatch: (action: GenerationAction<TStep>) => void;
+  entityId?: number;
+  message: StepStreamMessage<TStep>;
+}) {
+  const { completionStep, dispatch, entityId, message } = params;
+
   switch (message.status) {
     case "started":
       dispatch({ step: message.step, type: "stepStarted" });
@@ -105,7 +103,11 @@ export function handleStreamMessage<TStep extends string>(
     case "completed":
       dispatch({ step: message.step, type: "stepCompleted" });
       if (completionStep && message.step === completionStep) {
-        dispatch({ completionStep, type: "streamEnded" });
+        const entityMatches = entityId === undefined || message.entityId === entityId;
+
+        if (entityMatches) {
+          dispatch({ completionStep, type: "streamEnded" });
+        }
       }
       break;
     case "error": {

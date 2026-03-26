@@ -1,13 +1,9 @@
-import {
-  type WorkflowErrorReason,
-  createStepStream,
-  getAIResultErrorReason,
-} from "@/workflows/_shared/stream-status";
+import { createStepStream, getAIResultErrorReason } from "@/workflows/_shared/stream-status";
 import {
   type ActivityGrammarContentSchema,
   generateActivityGrammarContent,
 } from "@zoonk/ai/tasks/activities/language/grammar-content";
-import { type ActivityStepName } from "@zoonk/core/workflows/steps";
+import { type ActivityStepName, type WorkflowErrorReason } from "@zoonk/core/workflows/steps";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { z } from "zod";
 import { type LessonActivity } from "./get-lesson-activities-step";

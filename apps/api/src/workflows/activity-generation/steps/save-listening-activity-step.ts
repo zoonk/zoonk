@@ -117,7 +117,7 @@ export async function saveListeningActivityStep(
     return;
   }
 
-  await stream.status({ status: "started", step: "saveListeningActivity" });
+  await stream.status({ entityId: listening.id, status: "started", step: "saveListeningActivity" });
 
   const success = await createListeningStepsAndComplete({
     listeningId: listening.id,
@@ -131,5 +131,9 @@ export async function saveListeningActivityStep(
     return;
   }
 
-  await stream.status({ status: "completed", step: "saveListeningActivity" });
+  await stream.status({
+    entityId: listening.id,
+    status: "completed",
+    step: "saveListeningActivity",
+  });
 }

@@ -9,6 +9,9 @@ import { type LessonActivity } from "./get-lesson-activities-step";
  * Used when the workflow starts and finds all activities already done —
  * the UI needs the SSE events to detect completion and redirect.
  *
+ * Emits one event per activity (with entityId) so the UI can match
+ * the specific activity it's waiting for.
+ *
  * No DB writes. This is purely for the client-side SSE protocol.
  * For the normal generation flow, each save step handles its own
  * completion events.
@@ -28,5 +31,9 @@ export async function streamCompletionEventsStep(
 
   await using stream = createStepStream<ActivityStepName>();
 
-  await stream.status({ status: "completed", step: stepName });
+  await Promise.all(
+    matchingActivities.map((activity) =>
+      stream.status({ entityId: activity.id, status: "completed", step: stepName }),
+    ),
+  );
 }

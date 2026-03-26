@@ -31,9 +31,10 @@
 
 **IMPORTANT**: Before completing a task, make sure to run the following commands:
 
-- `pnpm turbo quality:fix`
+- `pnpm format:fix`
 - `pnpm db:generate` (always run this from the root of the monorepo)
 - `pnpm typecheck`
+- `pnpm lint:fix` (only run linting AFTER `typecheck`)
 - `pnpm knip --production`
 - `pnpm test`
 - `pnpm --filter {app} build` (eg `pnpm --filter main build`)
@@ -89,6 +90,7 @@ For detailed UX guidelines (interactions, animation, layout, accessibility), see
 - When adding a new endpoint, add docs for it in `document.ts`
 - When adding e2e tests, use `*Fixture()` functions to create unique test data per test - do not modify seed files
 - Avoid inline imports like `await import()`, only do it when dynamic imports are absolutely necessary
+- When moving a type or function to a different file, update all references to import from the new location. Never re-export from the old file — re-exports create unnecessary indirection and drift
 - Always add comments to functions explaining why that function exists. Use clear language, assume the reader has no context, be verbose if needed and add examples to illustrate it. Use plain language, no jargon. Comments should be meaningful and explain the "why" behind the code (eg why did we need to create this function, why is this logic necessary, etc.). Avoid vague statements. For example, "remove anything we don't support" is vague. What we don't support?
 - When writing comments, use `/** ... */` for functions, so we can get JSDoc tooltips
 

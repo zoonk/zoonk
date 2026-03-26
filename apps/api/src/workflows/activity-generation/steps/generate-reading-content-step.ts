@@ -1,6 +1,5 @@
 import {
   type StepStream,
-  type WorkflowErrorReason,
   createStepStream,
   getAIResultErrorReason,
 } from "@/workflows/_shared/stream-status";
@@ -14,7 +13,7 @@ import {
   generateActivitySentences,
 } from "@zoonk/ai/tasks/activities/language/sentences";
 import { type VocabularyWord } from "@zoonk/ai/tasks/activities/language/vocabulary";
-import { type ActivityStepName } from "@zoonk/core/workflows/steps";
+import { type ActivityStepName, type WorkflowErrorReason } from "@zoonk/core/workflows/steps";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import {

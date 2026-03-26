@@ -64,7 +64,7 @@ export async function saveChallengeActivityStep({
 
   await using stream = createStepStream<ActivityStepName>();
 
-  await stream.status({ status: "started", step: "saveChallengeActivity" });
+  await stream.status({ entityId: activityId, status: "started", step: "saveChallengeActivity" });
 
   const stepRecords = buildChallengeStepRecords(activityId, data);
 
@@ -89,5 +89,5 @@ export async function saveChallengeActivityStep({
     return;
   }
 
-  await stream.status({ status: "completed", step: "saveChallengeActivity" });
+  await stream.status({ entityId: activityId, status: "completed", step: "saveChallengeActivity" });
 }

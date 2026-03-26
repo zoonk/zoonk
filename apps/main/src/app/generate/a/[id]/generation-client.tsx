@@ -23,6 +23,7 @@ import { useExtracted } from "next-intl";
 import { useGenerationPhases } from "./use-generation-phases";
 
 export function GenerationClient({
+  activityId,
   activityKind,
   chapterSlug,
   courseSlug,
@@ -32,6 +33,7 @@ export function GenerationClient({
   lessonSlug,
   position,
 }: {
+  activityId: number;
   activityKind: ActivityKind;
   chapterSlug: string;
   courseSlug: string;
@@ -47,6 +49,7 @@ export function GenerationClient({
 
   const generation = useWorkflowGeneration<ActivityStepName>({
     completionStep,
+    entityId: activityId,
     initialRunId: generationRunId,
     initialStatus: generationStatus === "running" ? "streaming" : "idle",
     statusUrl: `${API_URL}/v1/workflows/activity-generation/status`,

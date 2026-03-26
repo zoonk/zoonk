@@ -72,7 +72,7 @@ export async function saveReadingActivityStep(params: {
 
   await using stream = createStepStream<ActivityStepName>();
 
-  await stream.status({ status: "started", step: "saveReadingActivity" });
+  await stream.status({ entityId: activity.id, status: "started", step: "saveReadingActivity" });
 
   const targetLanguage = course.targetLanguage ?? "";
   const userLanguage = activity.language;
@@ -140,7 +140,7 @@ export async function saveReadingActivityStep(params: {
 
   await markActivityAsCompleted(activity.id, workflowRunId);
 
-  await stream.status({ status: "completed", step: "saveReadingActivity" });
+  await stream.status({ entityId: activity.id, status: "completed", step: "saveReadingActivity" });
 }
 
 /**

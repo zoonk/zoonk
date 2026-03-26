@@ -139,7 +139,7 @@ export async function saveGrammarActivityStep(
 
   await using stream = createStepStream<ActivityStepName>();
 
-  await stream.status({ status: "started", step: "saveGrammarActivity" });
+  await stream.status({ entityId: activity.id, status: "started", step: "saveGrammarActivity" });
 
   const steps = buildGrammarSteps(activity.id, content, userContent, romanizations);
 
@@ -164,5 +164,5 @@ export async function saveGrammarActivityStep(
     return;
   }
 
-  await stream.status({ status: "completed", step: "saveGrammarActivity" });
+  await stream.status({ entityId: activity.id, status: "completed", step: "saveGrammarActivity" });
 }

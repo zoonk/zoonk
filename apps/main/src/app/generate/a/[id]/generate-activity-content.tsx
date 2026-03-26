@@ -64,6 +64,7 @@ export async function GenerateActivityContent({ params }: { params: Promise<{ id
       <ContainerBody>
         <SubscriptionGate backHref={backHref} backLabel={backLabel} bypass={hasStarted}>
           <GenerationClient
+            activityId={Number(activityId)}
             activityKind={activity.kind}
             chapterSlug={activity.lesson.chapter.slug}
             courseSlug={activity.lesson.chapter.course.slug}

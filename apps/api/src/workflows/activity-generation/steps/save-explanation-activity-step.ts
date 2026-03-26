@@ -51,7 +51,7 @@ export async function saveExplanationActivityStep({
 
   await using stream = createStepStream<ActivityStepName>();
 
-  await stream.status({ status: "started", step: "saveExplanationActivity" });
+  await stream.status({ entityId: activityId, status: "started", step: "saveExplanationActivity" });
 
   const staticRecords = buildStaticStepRecords(activityId, contentSteps);
   const allStepRecords = [...staticRecords, ...completedRows];
@@ -79,5 +79,9 @@ export async function saveExplanationActivityStep({
     return;
   }
 
-  await stream.status({ status: "completed", step: "saveExplanationActivity" });
+  await stream.status({
+    entityId: activityId,
+    status: "completed",
+    step: "saveExplanationActivity",
+  });
 }

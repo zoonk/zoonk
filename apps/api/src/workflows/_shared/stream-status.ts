@@ -1,19 +1,6 @@
+import { type StepStreamMessage, type WorkflowErrorReason } from "@zoonk/core/workflows/steps";
 import { logError } from "@zoonk/utils/logger";
 import { getWritable } from "workflow";
-
-export type StepStatus = "started" | "completed" | "error";
-
-export type WorkflowErrorReason =
-  | "aiEmptyResult"
-  | "aiGenerationFailed"
-  | "contentValidationFailed"
-  | "dbFetchFailed"
-  | "dbSaveFailed"
-  | "audioGenerationFailed"
-  | "romanizationFailed"
-  | "translationGenerationFailed"
-  | "noSourceData"
-  | "notFound";
 
 export function getAIResultErrorReason(
   error: Error | null | undefined,
@@ -31,7 +18,7 @@ export function getAIResultErrorReason(
 }
 
 export type StepStream<T extends string> = {
-  status: (params: { step: T; status: StepStatus; reason?: WorkflowErrorReason }) => Promise<void>;
+  status: (params: StepStreamMessage<T>) => Promise<void>;
   error: (params: { reason: WorkflowErrorReason; step: T }) => Promise<void>;
   [Symbol.asyncDispose]: () => Promise<void>;
 };
@@ -67,7 +54,7 @@ export function createStepStream<T extends string>(): StepStream<T> {
       await writer.write(`data: ${JSON.stringify({ ...params, status: "error" })}\n\n`);
     },
 
-    async status(params: { step: T; status: StepStatus; reason?: WorkflowErrorReason }) {
+    async status(params: StepStreamMessage<T>) {
       await writer.write(`data: ${JSON.stringify(params)}\n\n`);
     },
   };
