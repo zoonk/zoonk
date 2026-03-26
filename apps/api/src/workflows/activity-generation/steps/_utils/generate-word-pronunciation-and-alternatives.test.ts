@@ -291,4 +291,49 @@ describe(generateWordPronunciationAndAlternatives, () => {
     // Alternatives: called for needsBoth + needsAltsOnly (2), not needsPronOnly
     expect(generateWordAlternativeTranslations).toHaveBeenCalledTimes(2);
   });
+
+  test("generates pronunciation for words not yet in the database", async () => {
+    const result = await generateWordPronunciationAndAlternatives({
+      organizationId,
+      targetLanguage: "es",
+      userLanguage: "en",
+      words: [{ word: "completamente-nuevo" }],
+    });
+
+    expect(generateActivityPronunciation).toHaveBeenCalledWith(
+      expect.objectContaining({ word: "completamente-nuevo" }),
+    );
+    expect(result.pronunciations["completamente-nuevo"]).toBe("OH-lah");
+  });
+
+  test("generates alternatives for new words when translation is provided", async () => {
+    const result = await generateWordPronunciationAndAlternatives({
+      organizationId,
+      targetLanguage: "es",
+      userLanguage: "en",
+      words: [{ translation: "completely", word: "completamente-con-trad" }],
+    });
+
+    expect(generateWordAlternativeTranslations).toHaveBeenCalledWith(
+      expect.objectContaining({
+        translation: "completely",
+        word: "completamente-con-trad",
+      }),
+    );
+    expect(result.alternatives["completamente-con-trad"]).toEqual(["hi", "hey"]);
+  });
+
+  test("skips alternatives for new words without translation", async () => {
+    await generateWordPronunciationAndAlternatives({
+      organizationId,
+      targetLanguage: "es",
+      userLanguage: "en",
+      words: [{ word: "sin-traduccion" }],
+    });
+
+    // Pronunciation should still be generated
+    expect(generateActivityPronunciation).toHaveBeenCalledOnce();
+    // No translation provided → alternatives skipped
+    expect(generateWordAlternativeTranslations).not.toHaveBeenCalled();
+  });
 });

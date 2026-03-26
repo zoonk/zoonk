@@ -12,16 +12,23 @@ import { saveVocabularyActivityStep } from "../steps/save-vocabulary-activity-st
  * Orchestrates vocabulary activity generation.
  *
  * Only generates if a vocabulary activity exists in the activitiesToGenerate list.
- * The allActivities parameter is still passed to the save step because it needs
- * the full list to find translation activities.
+ * The allActivities parameter is passed to the save step because it needs
+ * the full list to find translation activities — the translation activity
+ * may not be in activitiesToGenerate (e.g., already completed).
+ *
+ * TODO: If vocabulary is completed but translation failed, vocabulary won't be
+ * in activitiesToGenerate, so this workflow returns early. Translation
+ * regeneration in that case needs separate handling in languageActivityWorkflow.
  */
 export async function vocabularyActivityWorkflow({
   activitiesToGenerate,
+  allActivities,
   concepts,
   neighboringConcepts,
   workflowRunId,
 }: {
   activitiesToGenerate: LessonActivity[];
+  allActivities: LessonActivity[];
   concepts: string[];
   neighboringConcepts: string[];
   workflowRunId: string;
@@ -55,7 +62,7 @@ export async function vocabularyActivityWorkflow({
   const { romanizations } = settled(romanizationResult, { romanizations: {} });
 
   await saveVocabularyActivityStep({
-    activities: activitiesToGenerate,
+    activities: allActivities,
     alternatives,
     pronunciations,
     romanizations,

@@ -47,6 +47,7 @@ export async function coreActivityWorkflow({
   await Promise.allSettled([
     practiceActivityWorkflow({
       activitiesToGenerate,
+      allActivities,
       explanationResults: results,
       totalPractices,
       workflowRunId,

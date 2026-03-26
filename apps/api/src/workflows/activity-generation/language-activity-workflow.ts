@@ -27,6 +27,7 @@ export async function languageActivityWorkflow({
   const [vocabularyResult] = await Promise.allSettled([
     vocabularyActivityWorkflow({
       activitiesToGenerate,
+      allActivities,
       concepts,
       neighboringConcepts,
       workflowRunId,

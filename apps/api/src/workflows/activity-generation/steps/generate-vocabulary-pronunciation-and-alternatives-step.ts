@@ -53,7 +53,7 @@ export async function generateVocabularyPronunciationAndAlternativesStep(
     organizationId: course.organization.id,
     targetLanguage,
     userLanguage,
-    words: words.map((entry) => ({ word: entry.word })),
+    words: words.map((entry) => ({ translation: entry.translation, word: entry.word })),
   });
 
   await stream.status({

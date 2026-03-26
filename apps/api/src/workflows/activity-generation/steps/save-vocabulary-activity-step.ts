@@ -234,21 +234,15 @@ async function saveOneVocabularyWord(params: {
 
 /**
  * Marks the activity as completed after all data has been saved.
- * Skips if already completed (idempotent for retries).
- * In the normal flow, activities are "running" by this point
- * (set by markAllActivitiesAsRunningStep at the workflow entry point).
+ * Uses a conditional update (only if NOT already completed) to make the
+ * operation idempotent without a separate read. This avoids a race condition
+ * where the status could change between the read and the update.
  */
 async function markActivityAsCompleted(activityId: number, workflowRunId: string): Promise<void> {
-  const current = await prisma.activity.findUnique({
-    where: { id: activityId },
-  });
-
-  if (current?.generationStatus === "completed") {
-    return;
-  }
-
-  await prisma.activity.update({
-    data: { generationRunId: workflowRunId, generationStatus: "completed" },
-    where: { id: activityId },
-  });
+  await safeAsync(() =>
+    prisma.activity.update({
+      data: { generationRunId: workflowRunId, generationStatus: "completed" },
+      where: { generationStatus: { not: "completed" }, id: activityId },
+    }),
+  );
 }

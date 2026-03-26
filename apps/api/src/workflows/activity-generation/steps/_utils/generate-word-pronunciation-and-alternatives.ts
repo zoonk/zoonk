@@ -4,6 +4,8 @@ import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 
 type WordReference = {
+  /** Optional translation from the AI generation step, used for new words not yet in the DB. */
+  translation?: string;
   word: string;
 };
 
@@ -67,10 +69,23 @@ export async function generateWordPronunciationAndAlternatives(params: {
 
   const existingByWord = new Map(existingRecords.map((record) => [record.word, record]));
 
-  const needsPronunciation = existingRecords.filter((record) => !record.pronunciation);
-  const needsAlternatives = existingRecords.filter(
-    (record) => record.alternativeTranslations.length === 0,
-  );
+  const newWords = findNewWords(words, existingByWord);
+
+  const needsPronunciation: { word: string }[] = [
+    ...existingRecords.filter((record) => !record.pronunciation),
+    ...newWords,
+  ];
+
+  const needsAlternatives: { translation: string; word: string }[] = [
+    ...existingRecords
+      .filter((record) => record.alternativeTranslations.length === 0)
+      .map((record) => ({ translation: record.translation, word: record.word })),
+    ...newWords
+      .filter((entry): entry is WordReference & { translation: string } =>
+        Boolean(entry.translation),
+      )
+      .map((entry) => ({ translation: entry.translation, word: entry.word })),
+  ];
 
   const [pronunciationResults, alternativeResults] = await Promise.all([
     generateMissingPronunciations({
@@ -79,7 +94,6 @@ export async function generateWordPronunciationAndAlternatives(params: {
       userLanguage,
     }),
     generateMissingAlternatives({
-      existingByWord,
       records: needsAlternatives,
       targetLanguage,
       userLanguage,
@@ -97,6 +111,19 @@ export async function generateWordPronunciationAndAlternatives(params: {
       pronunciationResults.map(({ pronunciation, word }) => [word, pronunciation]),
     ),
   };
+}
+
+/**
+ * Finds words from the request that have no existing DB record.
+ * These are brand-new words being generated for the first time.
+ * Uses case-insensitive matching to avoid false positives from casing differences.
+ */
+function findNewWords(
+  words: WordReference[],
+  existingByWord: Map<string, ExistingTranslationRecord>,
+): WordReference[] {
+  const existingLower = new Set([...existingByWord.keys()].map((key) => key.toLowerCase()));
+  return words.filter((ref) => !existingLower.has(ref.word.toLowerCase()));
 }
 
 /**
@@ -143,8 +170,13 @@ async function fetchExistingTranslationsByWordText(params: {
   });
 }
 
+/**
+ * Generates pronunciation via AI for each word in the list.
+ * Accepts any object with a `word` field so it works for both
+ * existing DB records (missing pronunciation) and brand-new words.
+ */
 async function generateMissingPronunciations(params: {
-  records: ExistingTranslationRecord[];
+  records: { word: string }[];
   targetLanguage: string;
   userLanguage: string;
 }): Promise<PronunciationEntry[]> {
@@ -170,27 +202,25 @@ async function generateMissingPronunciations(params: {
   return results.filter((entry): entry is PronunciationEntry => entry !== null);
 }
 
+/**
+ * Generates alternative translations via AI for each word in the list.
+ * Each record must include a `translation` so the AI can produce
+ * semantically equivalent alternatives. Records without a translation
+ * are filtered out by the caller.
+ */
 async function generateMissingAlternatives(params: {
-  existingByWord: Map<string, ExistingTranslationRecord>;
-  records: ExistingTranslationRecord[];
+  records: { translation: string; word: string }[];
   targetLanguage: string;
   userLanguage: string;
 }): Promise<AlternativeEntry[]> {
-  const { existingByWord, records, targetLanguage, userLanguage } = params;
+  const { records, targetLanguage, userLanguage } = params;
 
   const results = await Promise.all(
     records.map(async (record) => {
-      const existing = existingByWord.get(record.word);
-      const translation = existing?.translation ?? "";
-
-      if (!translation) {
-        return null;
-      }
-
       const { data: result, error } = await safeAsync(() =>
         generateWordAlternativeTranslations({
           targetLanguage,
-          translation,
+          translation: record.translation,
           userLanguage,
           word: record.word,
         }),

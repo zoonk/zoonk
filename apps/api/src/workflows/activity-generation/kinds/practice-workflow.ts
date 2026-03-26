@@ -1,3 +1,4 @@
+import { findActivitiesByKind } from "../steps/_utils/find-activity-by-kind";
 import { type ActivitySteps } from "../steps/_utils/get-activity-steps";
 import { type ExplanationResult } from "../steps/generate-explanation-content-step";
 import { generatePracticeContentStep } from "../steps/generate-practice-content-step";
@@ -30,27 +31,37 @@ function getExplanationStepsForPractice(
  * Each practice is independent — if one fails, others continue.
  * The save step writes steps and marks the activity as completed.
  *
- * Only generates for practice activities in the activitiesToGenerate list.
+ * Iterates over ALL practice activities (from allActivities) to compute
+ * the correct explanation slice per practice index. Only generates content
+ * for practices that appear in activitiesToGenerate — completed practices
+ * are skipped.
  */
 export async function practiceActivityWorkflow({
   activitiesToGenerate,
+  allActivities,
   explanationResults,
   totalPractices,
   workflowRunId,
 }: {
   activitiesToGenerate: LessonActivity[];
+  allActivities: LessonActivity[];
   explanationResults: ExplanationResult[];
   totalPractices: number;
   workflowRunId: string;
 }): Promise<void> {
   "use workflow";
 
-  const practiceIndices = Array.from({ length: totalPractices }, (_, i) => i);
+  const allPractices = findActivitiesByKind(allActivities, "practice");
+  const toGenerateIds = new Set(activitiesToGenerate.map((a) => a.id));
 
   await Promise.allSettled(
-    practiceIndices.map(async (practiceIndex) => {
+    allPractices.map(async (practice, practiceIndex) => {
+      if (!toGenerateIds.has(practice.id)) {
+        return;
+      }
+
       const { activityId, steps } = await generatePracticeContentStep(
-        activitiesToGenerate,
+        allActivities,
         getExplanationStepsForPractice(explanationResults, practiceIndex, totalPractices),
         workflowRunId,
         practiceIndex,

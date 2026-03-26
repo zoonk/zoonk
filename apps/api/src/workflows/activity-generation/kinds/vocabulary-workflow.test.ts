@@ -117,6 +117,7 @@ describe(vocabularyActivityWorkflow, () => {
     const activities = await fetchLessonActivities(lesson.id);
     await vocabularyActivityWorkflow({
       activitiesToGenerate: activities,
+      allActivities: activities,
       concepts: [],
       neighboringConcepts: [],
       workflowRunId: "test-run-id",
@@ -179,6 +180,7 @@ describe(vocabularyActivityWorkflow, () => {
     const activities = await fetchLessonActivities(lesson.id);
     await vocabularyActivityWorkflow({
       activitiesToGenerate: activities,
+      allActivities: activities,
       concepts: [],
       neighboringConcepts: [],
       workflowRunId: "test-run-id",
@@ -237,6 +239,7 @@ describe(vocabularyActivityWorkflow, () => {
     const activities = await fetchLessonActivities(lesson.id);
     await vocabularyActivityWorkflow({
       activitiesToGenerate: activities,
+      allActivities: activities,
       concepts: [],
       neighboringConcepts: [],
       workflowRunId: "test-run-id",
@@ -268,6 +271,7 @@ describe(vocabularyActivityWorkflow, () => {
     const activities = await fetchLessonActivities(lesson.id);
     await vocabularyActivityWorkflow({
       activitiesToGenerate: activities,
+      allActivities: activities,
       concepts: [],
       neighboringConcepts: [],
       workflowRunId: "test-run-id",
@@ -297,6 +301,7 @@ describe(vocabularyActivityWorkflow, () => {
     const activities = await fetchLessonActivities(lesson.id);
     const result = await vocabularyActivityWorkflow({
       activitiesToGenerate: activities,
+      allActivities: activities,
       concepts: [],
       neighboringConcepts: [],
       workflowRunId: "test-run-id",
@@ -340,6 +345,7 @@ describe(vocabularyActivityWorkflow, () => {
     const activities = await fetchLessonActivities(lesson.id);
     await vocabularyActivityWorkflow({
       activitiesToGenerate: activities,
+      allActivities: activities,
       concepts: [],
       neighboringConcepts: [],
       workflowRunId: "test-run-id",
@@ -375,6 +381,7 @@ describe(vocabularyActivityWorkflow, () => {
 
     const result = await vocabularyActivityWorkflow({
       activitiesToGenerate: [],
+      allActivities: [],
       concepts: [],
       neighboringConcepts: [],
       workflowRunId: "test-run-id",
@@ -432,6 +439,7 @@ describe(vocabularyActivityWorkflow, () => {
     const activities = await fetchLessonActivities(lesson.id);
     await vocabularyActivityWorkflow({
       activitiesToGenerate: activities,
+      allActivities: activities,
       concepts: [],
       neighboringConcepts: [],
       workflowRunId: "test-run-id",
@@ -488,6 +496,7 @@ describe(vocabularyActivityWorkflow, () => {
     const activities = await fetchLessonActivities(lesson.id);
     await vocabularyActivityWorkflow({
       activitiesToGenerate: activities,
+      allActivities: activities,
       concepts: [],
       neighboringConcepts: [],
       workflowRunId: "test-run-id",
@@ -550,6 +559,7 @@ describe(vocabularyActivityWorkflow, () => {
     const activities = await fetchLessonActivities(lesson.id);
     await vocabularyActivityWorkflow({
       activitiesToGenerate: activities,
+      allActivities: activities,
       concepts: [],
       neighboringConcepts: [],
       workflowRunId: "test-run-id",
@@ -611,6 +621,7 @@ describe(vocabularyActivityWorkflow, () => {
     const activities = await fetchLessonActivities(lesson.id);
     await vocabularyActivityWorkflow({
       activitiesToGenerate: activities,
+      allActivities: activities,
       concepts: [],
       neighboringConcepts: [],
       workflowRunId: "test-run-id",

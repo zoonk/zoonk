@@ -56,24 +56,17 @@ export async function saveExplanationActivityStep({
   const staticRecords = buildStaticStepRecords(activityId, contentSteps);
   const allStepRecords = [...staticRecords, ...completedRows];
 
-  const { error: saveError } = await safeAsync(() =>
-    prisma.step.createMany({ data: allStepRecords }),
+  const { error } = await safeAsync(() =>
+    prisma.$transaction([
+      prisma.step.createMany({ data: allStepRecords }),
+      prisma.activity.update({
+        data: { generationRunId: workflowRunId, generationStatus: "completed" },
+        where: { id: activityId },
+      }),
+    ]),
   );
 
-  if (saveError) {
-    await stream.error({ reason: "dbSaveFailed", step: "saveExplanationActivity" });
-    await handleActivityFailureStep({ activityId });
-    return;
-  }
-
-  const { error: completeError } = await safeAsync(() =>
-    prisma.activity.update({
-      data: { generationRunId: workflowRunId, generationStatus: "completed" },
-      where: { id: activityId },
-    }),
-  );
-
-  if (completeError) {
+  if (error) {
     await stream.error({ reason: "dbSaveFailed", step: "saveExplanationActivity" });
     await handleActivityFailureStep({ activityId });
     return;

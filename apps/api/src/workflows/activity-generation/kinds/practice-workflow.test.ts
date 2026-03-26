@@ -105,6 +105,7 @@ describe("practice activity workflow", () => {
 
     await practiceActivityWorkflow({
       activitiesToGenerate: activities,
+      allActivities: activities,
       explanationResults,
       totalPractices: 1,
       workflowRunId: "test-run-id",
@@ -160,6 +161,7 @@ describe("practice activity workflow", () => {
 
     await practiceActivityWorkflow({
       activitiesToGenerate: activities,
+      allActivities: activities,
       explanationResults,
       totalPractices: 1,
       workflowRunId: "test-run-id",
@@ -205,6 +207,7 @@ describe("practice activity workflow", () => {
 
     await practiceActivityWorkflow({
       activitiesToGenerate: activities,
+      allActivities: activities,
       explanationResults,
       totalPractices: 1,
       workflowRunId: "test-run-id",
@@ -236,6 +239,7 @@ describe("practice activity workflow", () => {
 
     await practiceActivityWorkflow({
       activitiesToGenerate: activities,
+      allActivities: activities,
       explanationResults: [],
       totalPractices: 1,
       workflowRunId: "test-run-id",
@@ -283,10 +287,12 @@ describe("practice activity workflow", () => {
       position: 0,
     });
 
+    const activities = await getLessonActivitiesStep(testLesson.id);
     const explanationResults = buildExplanationResults(Number(expActivity.id));
 
     await practiceActivityWorkflow({
       activitiesToGenerate: [],
+      allActivities: activities,
       explanationResults,
       totalPractices: 1,
       workflowRunId: "test-run-id",
@@ -368,6 +374,7 @@ describe("practice activity workflow", () => {
 
       await practiceActivityWorkflow({
         activitiesToGenerate: activities,
+        allActivities: activities,
         explanationResults,
         totalPractices: 2,
         workflowRunId: "test-run-id",
@@ -464,6 +471,7 @@ describe("practice activity workflow", () => {
 
       await practiceActivityWorkflow({
         activitiesToGenerate: activities,
+        allActivities: activities,
         explanationResults,
         totalPractices: 2,
         workflowRunId: "test-run-id",
@@ -544,6 +552,7 @@ describe("practice activity workflow", () => {
 
       await practiceActivityWorkflow({
         activitiesToGenerate: activities,
+        allActivities: activities,
         explanationResults,
         totalPractices: 1,
         workflowRunId: "test-run-id",
@@ -648,6 +657,7 @@ describe("practice activity workflow", () => {
 
       await practiceActivityWorkflow({
         activitiesToGenerate: activities,
+        allActivities: activities,
         explanationResults,
         totalPractices: 2,
         workflowRunId: "test-run-id",
@@ -709,6 +719,7 @@ describe("practice activity workflow", () => {
 
       await practiceActivityWorkflow({
         activitiesToGenerate: activities,
+        allActivities: activities,
         explanationResults,
         totalPractices: 2,
         workflowRunId: "test-run-id",

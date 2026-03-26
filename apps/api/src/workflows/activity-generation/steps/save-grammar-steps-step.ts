@@ -143,22 +143,17 @@ export async function saveGrammarActivityStep(
 
   const steps = buildGrammarSteps(activity.id, content, userContent, romanizations);
 
-  const { error: saveError } = await safeAsync(() => prisma.step.createMany({ data: steps }));
-
-  if (saveError) {
-    await stream.error({ reason: "dbSaveFailed", step: "saveGrammarActivity" });
-    await handleActivityFailureStep({ activityId: activity.id });
-    return;
-  }
-
-  const { error: completeError } = await safeAsync(() =>
-    prisma.activity.update({
-      data: { generationRunId: workflowRunId, generationStatus: "completed" },
-      where: { id: activity.id },
-    }),
+  const { error } = await safeAsync(() =>
+    prisma.$transaction([
+      prisma.step.createMany({ data: steps }),
+      prisma.activity.update({
+        data: { generationRunId: workflowRunId, generationStatus: "completed" },
+        where: { id: activity.id },
+      }),
+    ]),
   );
 
-  if (completeError) {
+  if (error) {
     await stream.error({ reason: "dbSaveFailed", step: "saveGrammarActivity" });
     await handleActivityFailureStep({ activityId: activity.id });
     return;

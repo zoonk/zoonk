@@ -43,7 +43,9 @@ async function fetchReadingSourceSteps(
 }
 
 /**
- * Creates listening steps from reading steps and marks the activity as completed.
+ * Creates listening steps from reading steps and marks the activity as completed
+ * in a single transaction. This ensures steps and completion status are always
+ * in sync — if either fails, both are rolled back.
  * Returns true on success, false on failure.
  */
 async function createListeningStepsAndComplete(params: {
@@ -51,31 +53,26 @@ async function createListeningStepsAndComplete(params: {
   readingSteps: { position: number; sentenceId: bigint | null }[];
   workflowRunId: string;
 }): Promise<boolean> {
-  const { error: saveError } = await safeAsync(() =>
-    prisma.step.createMany({
-      data: params.readingSteps.map((readingStep) => ({
-        activityId: params.listeningId,
-        content: assertStepContent("listening", {}),
-        isPublished: true,
-        kind: "listening" as const,
-        position: readingStep.position,
-        sentenceId: readingStep.sentenceId,
-      })),
-    }),
+  const { error } = await safeAsync(() =>
+    prisma.$transaction([
+      prisma.step.createMany({
+        data: params.readingSteps.map((readingStep) => ({
+          activityId: params.listeningId,
+          content: assertStepContent("listening", {}),
+          isPublished: true,
+          kind: "listening" as const,
+          position: readingStep.position,
+          sentenceId: readingStep.sentenceId,
+        })),
+      }),
+      prisma.activity.update({
+        data: { generationRunId: params.workflowRunId, generationStatus: "completed" },
+        where: { id: params.listeningId },
+      }),
+    ]),
   );
 
-  if (saveError) {
-    return false;
-  }
-
-  const { error: completeError } = await safeAsync(() =>
-    prisma.activity.update({
-      data: { generationRunId: params.workflowRunId, generationStatus: "completed" },
-      where: { id: params.listeningId },
-    }),
-  );
-
-  return !completeError;
+  return !error;
 }
 
 /**

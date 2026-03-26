@@ -58,22 +58,17 @@ export async function saveQuizActivityStep({
 
   const stepRecords = buildQuizStepRecords(activityId, questions);
 
-  const { error: saveError } = await safeAsync(() => prisma.step.createMany({ data: stepRecords }));
-
-  if (saveError) {
-    await stream.error({ reason: "dbSaveFailed", step: "saveQuizActivity" });
-    await handleActivityFailureStep({ activityId });
-    return;
-  }
-
-  const { error: completeError } = await safeAsync(() =>
-    prisma.activity.update({
-      data: { generationRunId: workflowRunId, generationStatus: "completed" },
-      where: { id: activityId },
-    }),
+  const { error } = await safeAsync(() =>
+    prisma.$transaction([
+      prisma.step.createMany({ data: stepRecords }),
+      prisma.activity.update({
+        data: { generationRunId: workflowRunId, generationStatus: "completed" },
+        where: { id: activityId },
+      }),
+    ]),
   );
 
-  if (completeError) {
+  if (error) {
     await stream.error({ reason: "dbSaveFailed", step: "saveQuizActivity" });
     await handleActivityFailureStep({ activityId });
     return;
