@@ -1,6 +1,6 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
-import { type CourseWorkflowStepName } from "@/workflows/config";
 import { generateAlternativeTitles } from "@zoonk/ai/tasks/courses/alternative-titles";
+import { type CourseWorkflowStepName } from "@zoonk/core/workflows/steps";
 import { safeAsync } from "@zoonk/utils/error";
 import { type CourseContext } from "./initialize-course-step";
 

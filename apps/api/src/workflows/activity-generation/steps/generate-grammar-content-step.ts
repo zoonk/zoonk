@@ -3,11 +3,11 @@ import {
   createStepStream,
   getAIResultErrorReason,
 } from "@/workflows/_shared/stream-status";
-import { type ActivityStepName } from "@/workflows/config";
 import {
   type ActivityGrammarContentSchema,
   generateActivityGrammarContent,
 } from "@zoonk/ai/tasks/activities/language/grammar-content";
+import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { z } from "zod";

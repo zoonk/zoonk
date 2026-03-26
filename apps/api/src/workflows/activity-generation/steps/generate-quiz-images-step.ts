@@ -1,7 +1,7 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
-import { type ActivityStepName } from "@/workflows/config";
 import { type QuizQuestion, type SelectImageQuestion } from "@zoonk/ai/tasks/activities/core/quiz";
 import { generateStepImage } from "@zoonk/core/steps/image";
+import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { rejected } from "@zoonk/utils/settled";
 import { findActivitiesByKind } from "./_utils/find-activity-by-kind";
 import { type LessonActivity } from "./get-lesson-activities-step";

@@ -36,7 +36,7 @@
     "./users/orgs/list": "./src/users/list-user-orgs.ts",
     "./users/otp/send": "./src/users/send-otp.ts",
     "./users/session/get": "./src/users/get-user-session.ts",
-    "./workflow-steps": "./src/workflow-steps.ts"
+    "./workflows/steps": "./src/workflows/steps.ts"
   },
   "scripts": {
     "test": "vitest run",

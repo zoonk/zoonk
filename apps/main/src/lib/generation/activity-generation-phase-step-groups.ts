@@ -1,4 +1,4 @@
-import { type ActivityStepName } from "@/lib/workflow/config";
+import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 
 const ALL_CONTENT_STEPS: ActivityStepName[] = [
   "generateChallengeContent",

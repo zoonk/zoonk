@@ -1,7 +1,7 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
-import { type ActivityStepName } from "@/workflows/config";
 import { generateActivityRomanization } from "@zoonk/ai/tasks/activities/language/romanization";
 import { generateTranslation } from "@zoonk/ai/tasks/activities/language/translation";
+import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { needsRomanization } from "@zoonk/utils/languages";

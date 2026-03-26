@@ -1,7 +1,7 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
-import { type ChapterStepName } from "@/workflows/config";
 import { generateLanguageChapterLessons } from "@zoonk/ai/tasks/chapters/language-lessons";
 import { type ChapterLesson, generateChapterLessons } from "@zoonk/ai/tasks/chapters/lessons";
+import { type ChapterStepName } from "@zoonk/core/workflows/steps";
 import { safeAsync } from "@zoonk/utils/error";
 import { type ChapterContext } from "./get-chapter-step";
 

@@ -1,6 +1,6 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
-import { type ActivityStepName } from "@/workflows/config";
 import { generateVisualStepImage } from "@zoonk/core/steps/visual-image";
+import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { rejected } from "@zoonk/utils/settled";
 import { type StepVisual, type VisualRow } from "./generate-visuals-step";
 import { type LessonActivity } from "./get-lesson-activities-step";

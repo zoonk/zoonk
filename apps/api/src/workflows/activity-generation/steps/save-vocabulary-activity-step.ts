@@ -1,7 +1,7 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
-import { type ActivityStepName } from "@/workflows/config";
 import { type VocabularyWord } from "@zoonk/ai/tasks/activities/language/vocabulary";
 import { assertStepContent } from "@zoonk/core/steps/content-contract";
+import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { normalizePunctuation } from "@zoonk/utils/string";

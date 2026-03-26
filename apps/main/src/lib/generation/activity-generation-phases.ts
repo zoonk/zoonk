@@ -9,7 +9,7 @@ import {
   getPhaseSteps,
   getPhaseWeights,
 } from "@/lib/generation/activity-generation-phase-config";
-import { type ActivityStepName } from "@/lib/workflow/config";
+import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { type ActivityKind } from "@zoonk/db";
 import {
   AudioLinesIcon,

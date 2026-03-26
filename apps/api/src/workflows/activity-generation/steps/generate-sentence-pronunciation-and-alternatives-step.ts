@@ -1,5 +1,5 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
-import { type ActivityStepName } from "@/workflows/config";
+import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { generateWordPronunciationAndAlternatives } from "./_utils/generate-word-pronunciation-and-alternatives";
 import { type LessonActivity } from "./get-lesson-activities-step";

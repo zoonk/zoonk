@@ -4,7 +4,7 @@ import {
   calculateWeightedProgress as calculateProgress,
   getPhaseStatus as getStatus,
 } from "@/lib/generation-phases";
-import { type LessonStepName } from "@/lib/workflow/config";
+import { type LessonStepName } from "@zoonk/core/workflows/steps";
 import {
   BookOpenIcon,
   CheckCircleIcon,

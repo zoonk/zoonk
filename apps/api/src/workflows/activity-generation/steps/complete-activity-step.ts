@@ -1,6 +1,5 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
-import { type ActivityStepName } from "@/workflows/config";
-import { getActivityCompletionStep } from "@zoonk/core/workflow-steps";
+import { type ActivityStepName, getActivityCompletionStep } from "@zoonk/core/workflows/steps";
 import { type ActivityKind, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { rejected } from "@zoonk/utils/settled";

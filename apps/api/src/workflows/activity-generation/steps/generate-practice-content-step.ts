@@ -1,9 +1,9 @@
 import { createStepStream, getAIResultErrorReason } from "@/workflows/_shared/stream-status";
-import { type ActivityStepName } from "@/workflows/config";
 import {
   type ActivityPracticeSchema,
   generateActivityPractice,
 } from "@zoonk/ai/tasks/activities/core/practice";
+import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { resolveActivityForGeneration } from "./_utils/content-step-helpers";
 import { findActivitiesByKind } from "./_utils/find-activity-by-kind";
