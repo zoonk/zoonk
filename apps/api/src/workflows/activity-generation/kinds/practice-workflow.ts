@@ -26,16 +26,23 @@ function getExplanationStepsForPractice(
 /**
  * Orchestrates practice activity generation.
  *
- * Flow per practice: generateContent → save.
+ * Flow per practice: generateContent -> save.
  * Each practice is independent — if one fails, others continue.
  * The save step writes steps and marks the activity as completed.
+ *
+ * Only generates for practice activities in the activitiesToGenerate list.
  */
-export async function practiceActivityWorkflow(
-  activities: LessonActivity[],
-  workflowRunId: string,
-  explanationResults: ExplanationResult[],
-  totalPractices: number,
-): Promise<void> {
+export async function practiceActivityWorkflow({
+  activitiesToGenerate,
+  explanationResults,
+  totalPractices,
+  workflowRunId,
+}: {
+  activitiesToGenerate: LessonActivity[];
+  explanationResults: ExplanationResult[];
+  totalPractices: number;
+  workflowRunId: string;
+}): Promise<void> {
   "use workflow";
 
   const practiceIndices = Array.from({ length: totalPractices }, (_, i) => i);
@@ -43,7 +50,7 @@ export async function practiceActivityWorkflow(
   await Promise.allSettled(
     practiceIndices.map(async (practiceIndex) => {
       const { activityId, steps } = await generatePracticeContentStep(
-        activities,
+        activitiesToGenerate,
         getExplanationStepsForPractice(explanationResults, practiceIndex, totalPractices),
         workflowRunId,
         practiceIndex,

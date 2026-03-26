@@ -105,12 +105,8 @@ export async function saveListeningActivityStep(
     where: { id: listening.id },
   });
 
-  if (current?.generationStatus === "completed" || current?.generationStatus === "running") {
+  if (current?.generationStatus === "completed") {
     return;
-  }
-
-  if (current?.generationStatus === "failed") {
-    await safeAsync(() => prisma.step.deleteMany({ where: { activityId: listening.id } }));
   }
 
   const readingSteps = await fetchReadingSourceSteps(activities);

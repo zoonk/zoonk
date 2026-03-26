@@ -5,31 +5,25 @@ import {
 } from "@zoonk/ai/tasks/activities/language/vocabulary";
 import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { safeAsync } from "@zoonk/utils/error";
-import { resolveActivityForGeneration } from "./_utils/content-step-helpers";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
-import { setActivityAsRunningStep } from "./set-activity-as-running-step";
 
+/**
+ * Generates vocabulary words via AI for a single vocabulary activity.
+ * No status checks — the caller only passes activities that need generation.
+ * Pure data producer: returns words without saving to the database.
+ */
 export async function generateVocabularyContentStep(
-  activities: LessonActivity[],
+  activity: LessonActivity,
   workflowRunId: string,
   concepts: string[] = [],
   neighboringConcepts: string[] = [],
 ): Promise<{ words: VocabularyWord[] }> {
   "use step";
 
-  const resolved = await resolveActivityForGeneration(activities, "vocabulary");
-
-  if (!resolved.shouldGenerate) {
-    return { words: [] };
-  }
-
-  const { activity } = resolved;
-
   await using stream = createStepStream<ActivityStepName>();
 
   await stream.status({ status: "started", step: "generateVocabularyContent" });
-  await setActivityAsRunningStep({ activityId: activity.id, workflowRunId });
 
   const { data: result, error } = await safeAsync(() =>
     generateActivityVocabulary({

@@ -6,20 +6,49 @@ import { vocabularyActivityWorkflow } from "./kinds/vocabulary-workflow";
 import { type LessonActivity } from "./steps/get-lesson-activities-step";
 import { getNeighboringConceptsStep } from "./steps/get-neighboring-concepts-step";
 
-export async function languageActivityWorkflow(
-  activities: LessonActivity[],
-  workflowRunId: string,
-): Promise<void> {
-  const concepts = activities[0]?.lesson?.concepts ?? [];
-  const neighboringConcepts = await getNeighboringConceptsStep(activities);
+/**
+ * Orchestrates language activity generation (vocabulary, grammar, reading, listening).
+ * Receives both the full activity list and the subset that needs generation.
+ * Generate steps only receive activities that need generation.
+ * Completed activities are used to fetch existing data for downstream dependencies.
+ */
+export async function languageActivityWorkflow({
+  activitiesToGenerate,
+  allActivities,
+  workflowRunId,
+}: {
+  activitiesToGenerate: LessonActivity[];
+  allActivities: LessonActivity[];
+  workflowRunId: string;
+}): Promise<void> {
+  const concepts = allActivities[0]?.lesson?.concepts ?? [];
+  const neighboringConcepts = await getNeighboringConceptsStep(allActivities);
 
   const [vocabularyResult] = await Promise.allSettled([
-    vocabularyActivityWorkflow(activities, workflowRunId, concepts, neighboringConcepts),
-    grammarActivityWorkflow(activities, workflowRunId, concepts, neighboringConcepts),
+    vocabularyActivityWorkflow({
+      activitiesToGenerate,
+      concepts,
+      neighboringConcepts,
+      workflowRunId,
+    }),
+    grammarActivityWorkflow({
+      activitiesToGenerate,
+      concepts,
+      neighboringConcepts,
+      workflowRunId,
+    }),
   ]);
 
   const { words } = settled(vocabularyResult, { words: [] });
 
-  await readingActivityWorkflow(activities, workflowRunId, words, concepts, neighboringConcepts);
-  await listeningActivityWorkflow(activities, workflowRunId);
+  await readingActivityWorkflow({
+    activitiesToGenerate,
+    allActivities,
+    concepts,
+    neighboringConcepts,
+    words,
+    workflowRunId,
+  });
+
+  await listeningActivityWorkflow({ allActivities, workflowRunId });
 }

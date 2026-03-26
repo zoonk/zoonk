@@ -94,7 +94,12 @@ describe("challenge activity workflow", () => {
     const activities = await getLessonActivitiesStep(testLesson.id);
     const concepts = activities[0]?.lesson?.concepts ?? [];
 
-    await challengeActivityWorkflow(activities, "test-run-id", concepts, []);
+    await challengeActivityWorkflow({
+      activitiesToGenerate: activities,
+      concepts,
+      neighboringConcepts: [],
+      workflowRunId: "test-run-id",
+    });
 
     const steps = await prisma.step.findMany({
       orderBy: { position: "asc" },
@@ -161,7 +166,12 @@ describe("challenge activity workflow", () => {
     const activities = await getLessonActivitiesStep(testLesson.id);
     const concepts = activities[0]?.lesson?.concepts ?? [];
 
-    await challengeActivityWorkflow(activities, "test-run-id", concepts, []);
+    await challengeActivityWorkflow({
+      activitiesToGenerate: activities,
+      concepts,
+      neighboringConcepts: [],
+      workflowRunId: "test-run-id",
+    });
 
     const dbActivity = await prisma.activity.findUnique({
       where: { id: activity.id },
@@ -193,7 +203,12 @@ describe("challenge activity workflow", () => {
     const activities = await getLessonActivitiesStep(testLesson.id);
     const concepts = activities[0]?.lesson?.concepts ?? [];
 
-    await challengeActivityWorkflow(activities, "test-run-id", concepts, []);
+    await challengeActivityWorkflow({
+      activitiesToGenerate: activities,
+      concepts,
+      neighboringConcepts: [],
+      workflowRunId: "test-run-id",
+    });
 
     const dbActivity = await prisma.activity.findUnique({
       where: { id: activity.id },
@@ -219,7 +234,12 @@ describe("challenge activity workflow", () => {
 
     const activities = await getLessonActivitiesStep(testLesson.id);
 
-    await challengeActivityWorkflow(activities, "test-run-id", [], []);
+    await challengeActivityWorkflow({
+      activitiesToGenerate: activities,
+      concepts: [],
+      neighboringConcepts: [],
+      workflowRunId: "test-run-id",
+    });
 
     const dbActivity = await prisma.activity.findUnique({
       where: { id: activity.id },
@@ -253,7 +273,12 @@ describe("challenge activity workflow", () => {
     const activities = await getLessonActivitiesStep(testLesson.id);
     const concepts = activities[0]?.lesson?.concepts ?? [];
 
-    await challengeActivityWorkflow(activities, "test-run-id", concepts, []);
+    await challengeActivityWorkflow({
+      activitiesToGenerate: [],
+      concepts,
+      neighboringConcepts: [],
+      workflowRunId: "test-run-id",
+    });
 
     expect(generateActivityChallenge).not.toHaveBeenCalled();
   });

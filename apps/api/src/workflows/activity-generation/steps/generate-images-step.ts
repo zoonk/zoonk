@@ -117,10 +117,6 @@ export async function generateImagesForActivityStep(
     return { completedRows: visualRows, visuals: [] };
   }
 
-  if (activity.generationStatus === "completed" || activity.generationStatus === "running") {
-    return { completedRows: visualRows, visuals: [] };
-  }
-
   await stream.status({ status: "started", step: "generateImages" });
 
   const { completedRows, hadFailure } = await generateImagesForVisualRows({

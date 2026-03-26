@@ -69,10 +69,6 @@ export async function generateQuizImagesStep(
     return [];
   }
 
-  if (activity.generationStatus === "completed" || activity.generationStatus === "running") {
-    return [];
-  }
-
   await using stream = createStepStream<ActivityStepName>();
 
   const selectImageQuestions = questions.filter((question) => isSelectImageQuestion(question));

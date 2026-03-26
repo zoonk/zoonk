@@ -2,8 +2,6 @@ import { createStepStream } from "@/workflows/_shared/stream-status";
 import { generateActivityExplanation } from "@zoonk/ai/tasks/activities/core/explanation";
 import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { rejected, settledValues } from "@zoonk/utils/settled";
-import { resolveActivityForGeneration } from "./_utils/content-step-helpers";
-import { findActivitiesByKind } from "./_utils/find-activity-by-kind";
 import { type ActivitySteps } from "./_utils/get-activity-steps";
 import { type LessonActivity } from "./get-lesson-activities-step";
 
@@ -18,18 +16,14 @@ export type ExplanationResult = {
  * Pure data producer: no DB writes. On failure, throws to let
  * the workflow framework retry. The orchestration level handles
  * failure marking via `handleActivityFailureStep`.
+ *
+ * No status checks — the caller only passes activities that need generation.
  */
 async function generateSingleExplanation(
   activity: LessonActivity,
   concept: string,
   neighboringConcepts: string[],
 ): Promise<ExplanationResult> {
-  const resolved = await resolveActivityForGeneration(activity);
-
-  if (!resolved.shouldGenerate) {
-    return { activityId: activity.id, concept, steps: resolved.existingSteps };
-  }
-
   const result = await generateActivityExplanation({
     chapterTitle: activity.lesson.chapter.title,
     concept,
@@ -51,6 +45,8 @@ async function generateSingleExplanation(
  * Generates explanation content for all explanation activities in parallel.
  * Returns the raw content data without saving to the database.
  * Each activity's content will be persisted later by `saveExplanationActivityStep`.
+ *
+ * Only receives activities that need generation — no status checks needed.
  */
 export async function generateExplanationContentStep(
   activities: LessonActivity[],
@@ -59,9 +55,7 @@ export async function generateExplanationContentStep(
 ): Promise<{ results: ExplanationResult[] }> {
   "use step";
 
-  const explanationActivities = findActivitiesByKind(activities, "explanation");
-
-  if (explanationActivities.length === 0) {
+  if (activities.length === 0) {
     return { results: [] };
   }
 
@@ -70,7 +64,7 @@ export async function generateExplanationContentStep(
   await stream.status({ status: "started", step: "generateExplanationContent" });
 
   const allSettled = await Promise.allSettled(
-    explanationActivities.map((activity) => {
+    activities.map((activity) => {
       const concept = activity.title ?? "";
       const otherLessonConcepts = concepts.filter((item) => item !== concept);
 

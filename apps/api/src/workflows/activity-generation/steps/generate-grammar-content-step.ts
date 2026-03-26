@@ -8,13 +8,10 @@ import {
   generateActivityGrammarContent,
 } from "@zoonk/ai/tasks/activities/language/grammar-content";
 import { type ActivityStepName } from "@zoonk/core/workflows/steps";
-import { prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { z } from "zod";
-import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
-import { setActivityAsRunningStep } from "./set-activity-as-running-step";
 
 const minimumGrammarContentSchema = z.object({
   examples: z.array(z.unknown()).min(1),
@@ -35,33 +32,20 @@ function hasMinimumGrammarContent(data: ActivityGrammarContentSchema): boolean {
  * Generates the TARGET_LANGUAGE portion of grammar content (examples + exercises)
  * without saving to the database. Returns the raw AI output so downstream steps
  * can add user-language content and romanization before persisting.
+ *
+ * No status checks — the caller only passes activities that need generation.
  */
 export async function generateGrammarContentStep(
-  activities: LessonActivity[],
+  activity: LessonActivity,
   workflowRunId: string,
   concepts: string[] = [],
   neighboringConcepts: string[] = [],
 ): Promise<{ generated: boolean; grammarContent: ActivityGrammarContentSchema | null }> {
   "use step";
 
-  const activity = findActivityByKind(activities, "grammar");
-
-  if (!activity) {
-    return { generated: false, grammarContent: null };
-  }
-
-  if (activity.generationStatus === "completed" || activity.generationStatus === "running") {
-    return { generated: false, grammarContent: null };
-  }
-
-  if (activity.generationStatus === "failed") {
-    await prisma.step.deleteMany({ where: { activityId: activity.id } });
-  }
-
   await using stream = createStepStream<ActivityStepName>();
 
   await stream.status({ status: "started", step: "generateGrammarContent" });
-  await setActivityAsRunningStep({ activityId: activity.id, workflowRunId });
 
   const { data: result, error }: SafeReturn<{ data: ActivityGrammarContentSchema }> =
     await safeAsync(() =>

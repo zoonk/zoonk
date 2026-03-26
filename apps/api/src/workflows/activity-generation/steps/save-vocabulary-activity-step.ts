@@ -9,7 +9,6 @@ import { fetchExistingWordCasing } from "./_utils/fetch-existing-word-casing";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
-import { setActivityAsRunningStep } from "./set-activity-as-running-step";
 
 /**
  * Persists all vocabulary data in a single step:
@@ -60,13 +59,6 @@ export async function saveVocabularyActivityStep(params: {
   await stream.status({ status: "started", step: "saveVocabularyActivity" });
 
   const translationActivity = findActivityByKind(activities, "translation");
-
-  if (translationActivity) {
-    await setActivityAsRunningStep({
-      activityId: translationActivity.id,
-      workflowRunId,
-    });
-  }
 
   const targetLanguage = course.targetLanguage ?? "";
   const userLanguage = vocabularyActivity.language;
@@ -232,12 +224,18 @@ async function saveOneVocabularyWord(params: {
   }
 }
 
+/**
+ * Marks the activity as completed after all data has been saved.
+ * Skips if already completed (idempotent for retries).
+ * In the normal flow, activities are "running" by this point
+ * (set by markAllActivitiesAsRunningStep at the workflow entry point).
+ */
 async function markActivityAsCompleted(activityId: number, workflowRunId: string): Promise<void> {
   const current = await prisma.activity.findUnique({
     where: { id: activityId },
   });
 
-  if (current?.generationStatus !== "running") {
+  if (current?.generationStatus === "completed") {
     return;
   }
 

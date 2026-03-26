@@ -328,12 +328,18 @@ async function saveOneSentenceWord(params: {
   });
 }
 
+/**
+ * Marks the activity as completed after all data has been saved.
+ * Skips if already completed (idempotent for retries).
+ * In the normal flow, activities are "running" by this point
+ * (set by markAllActivitiesAsRunningStep at the workflow entry point).
+ */
 async function markActivityAsCompleted(activityId: number, workflowRunId: string): Promise<void> {
   const current = await prisma.activity.findUnique({
     where: { id: activityId },
   });
 
-  if (current?.generationStatus !== "running") {
+  if (current?.generationStatus === "completed") {
     return;
   }
 

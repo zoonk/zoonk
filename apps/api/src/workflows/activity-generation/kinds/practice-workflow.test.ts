@@ -103,7 +103,12 @@ describe("practice activity workflow", () => {
     const activities = await getLessonActivitiesStep(testLesson.id);
     const explanationResults = buildExplanationResults(Number(expActivity.id));
 
-    await practiceActivityWorkflow(activities, "test-run-id", explanationResults, 1);
+    await practiceActivityWorkflow({
+      activitiesToGenerate: activities,
+      explanationResults,
+      totalPractices: 1,
+      workflowRunId: "test-run-id",
+    });
 
     const steps = await prisma.step.findMany({
       orderBy: { position: "asc" },
@@ -153,7 +158,12 @@ describe("practice activity workflow", () => {
     const activities = await getLessonActivitiesStep(testLesson.id);
     const explanationResults = buildExplanationResults(Number(expActivity.id));
 
-    await practiceActivityWorkflow(activities, "test-run-id", explanationResults, 1);
+    await practiceActivityWorkflow({
+      activitiesToGenerate: activities,
+      explanationResults,
+      totalPractices: 1,
+      workflowRunId: "test-run-id",
+    });
 
     const dbActivity = await prisma.activity.findUnique({
       where: { id: activity.id },
@@ -193,7 +203,12 @@ describe("practice activity workflow", () => {
     const activities = await getLessonActivitiesStep(testLesson.id);
     const explanationResults = buildExplanationResults(Number(expActivity.id));
 
-    await practiceActivityWorkflow(activities, "test-run-id", explanationResults, 1);
+    await practiceActivityWorkflow({
+      activitiesToGenerate: activities,
+      explanationResults,
+      totalPractices: 1,
+      workflowRunId: "test-run-id",
+    });
 
     const dbPractice = await prisma.activity.findFirst({
       where: { kind: "practice", lessonId: testLesson.id },
@@ -219,7 +234,12 @@ describe("practice activity workflow", () => {
 
     const activities = await getLessonActivitiesStep(testLesson.id);
 
-    await practiceActivityWorkflow(activities, "test-run-id", [], 1);
+    await practiceActivityWorkflow({
+      activitiesToGenerate: activities,
+      explanationResults: [],
+      totalPractices: 1,
+      workflowRunId: "test-run-id",
+    });
 
     const dbActivity = await prisma.activity.findUnique({
       where: { id: activity.id },
@@ -263,10 +283,14 @@ describe("practice activity workflow", () => {
       position: 0,
     });
 
-    const activities = await getLessonActivitiesStep(testLesson.id);
     const explanationResults = buildExplanationResults(Number(expActivity.id));
 
-    await practiceActivityWorkflow(activities, "test-run-id", explanationResults, 1);
+    await practiceActivityWorkflow({
+      activitiesToGenerate: [],
+      explanationResults,
+      totalPractices: 1,
+      workflowRunId: "test-run-id",
+    });
 
     expect(generateActivityPractice).not.toHaveBeenCalled();
   });
@@ -342,7 +366,12 @@ describe("practice activity workflow", () => {
         { activityId: Number(expS4.id), concept: "S4", steps: [{ text: "S4 text", title: "S4" }] },
       ];
 
-      await practiceActivityWorkflow(activities, "test-run-id", explanationResults, 2);
+      await practiceActivityWorkflow({
+        activitiesToGenerate: activities,
+        explanationResults,
+        totalPractices: 2,
+        workflowRunId: "test-run-id",
+      });
 
       expect(generateActivityPractice).toHaveBeenCalledTimes(2);
     });
@@ -433,7 +462,12 @@ describe("practice activity workflow", () => {
         },
       ];
 
-      await practiceActivityWorkflow(activities, "test-run-id", explanationResults, 2);
+      await practiceActivityWorkflow({
+        activitiesToGenerate: activities,
+        explanationResults,
+        totalPractices: 2,
+        workflowRunId: "test-run-id",
+      });
 
       expect(generateActivityPractice).toHaveBeenCalledTimes(2);
 
@@ -508,7 +542,12 @@ describe("practice activity workflow", () => {
         },
       ];
 
-      await practiceActivityWorkflow(activities, "test-run-id", explanationResults, 1);
+      await practiceActivityWorkflow({
+        activitiesToGenerate: activities,
+        explanationResults,
+        totalPractices: 1,
+        workflowRunId: "test-run-id",
+      });
 
       expect(generateActivityPractice).toHaveBeenCalledOnce();
       expect(generateActivityPractice).toHaveBeenCalledWith(
@@ -607,7 +646,12 @@ describe("practice activity workflow", () => {
         },
       ];
 
-      await practiceActivityWorkflow(activities, "test-run-id", explanationResults, 2);
+      await practiceActivityWorkflow({
+        activitiesToGenerate: activities,
+        explanationResults,
+        totalPractices: 2,
+        workflowRunId: "test-run-id",
+      });
 
       const [dbPractice1, dbPractice2] = await Promise.all([
         prisma.activity.findUnique({ where: { id: practice1.id } }),
@@ -663,7 +707,12 @@ describe("practice activity workflow", () => {
         },
       ];
 
-      await practiceActivityWorkflow(activities, "test-run-id", explanationResults, 2);
+      await practiceActivityWorkflow({
+        activitiesToGenerate: activities,
+        explanationResults,
+        totalPractices: 2,
+        workflowRunId: "test-run-id",
+      });
 
       // Practice 1 must get the single explanation result (not an empty array)
       expect(generateActivityPractice).toHaveBeenCalledOnce();

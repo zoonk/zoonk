@@ -231,7 +231,14 @@ describe(readingActivityWorkflow, () => {
     });
 
     const activities = await fetchLessonActivities(lesson.id);
-    await readingActivityWorkflow(activities, "test-run-id", words, [], []);
+    await readingActivityWorkflow({
+      activitiesToGenerate: activities,
+      allActivities: activities,
+      concepts: [],
+      neighboringConcepts: [],
+      words,
+      workflowRunId: "test-run-id",
+    });
 
     const sentences = await prisma.sentence.findMany({
       where: {
@@ -300,7 +307,14 @@ describe(readingActivityWorkflow, () => {
     });
 
     const activities = await fetchLessonActivities(lesson.id);
-    await readingActivityWorkflow(activities, "test-run-id", words, [], []);
+    await readingActivityWorkflow({
+      activitiesToGenerate: activities,
+      allActivities: activities,
+      concepts: [],
+      neighboringConcepts: [],
+      words,
+      workflowRunId: "test-run-id",
+    });
 
     const savedSentence = await prisma.sentence.findFirst({
       include: { translations: true },
@@ -378,7 +392,14 @@ describe(readingActivityWorkflow, () => {
     });
 
     const activities = await fetchLessonActivities(lesson.id);
-    await readingActivityWorkflow(activities, "test-run-id", greetingWords, [], []);
+    await readingActivityWorkflow({
+      activitiesToGenerate: activities,
+      allActivities: activities,
+      concepts: [],
+      neighboringConcepts: [],
+      words: greetingWords,
+      workflowRunId: "test-run-id",
+    });
 
     const savedSentences = await prisma.sentence.findMany({
       include: { translations: true },
@@ -454,7 +475,14 @@ describe(readingActivityWorkflow, () => {
     });
 
     const activities = await fetchLessonActivities(lesson.id);
-    await readingActivityWorkflow(activities, "test-run-id", greetingWords, [], []);
+    await readingActivityWorkflow({
+      activitiesToGenerate: activities,
+      allActivities: activities,
+      concepts: [],
+      neighboringConcepts: [],
+      words: greetingWords,
+      workflowRunId: "test-run-id",
+    });
 
     const savedSentence = await prisma.sentence.findFirst({
       include: { translations: true },
@@ -526,7 +554,14 @@ describe(readingActivityWorkflow, () => {
     });
 
     const activities = await fetchLessonActivities(lesson.id);
-    await readingActivityWorkflow(activities, "test-run-id", greetingWords, [], []);
+    await readingActivityWorkflow({
+      activitiesToGenerate: activities,
+      allActivities: activities,
+      concepts: [],
+      neighboringConcepts: [],
+      words: greetingWords,
+      workflowRunId: "test-run-id",
+    });
 
     const savedSentence = await prisma.sentence.findFirst({
       include: { translations: true },
@@ -565,7 +600,14 @@ describe(readingActivityWorkflow, () => {
     });
 
     const activities = await fetchLessonActivities(lesson.id);
-    await readingActivityWorkflow(activities, "test-run-id", words, [], []);
+    await readingActivityWorkflow({
+      activitiesToGenerate: activities,
+      allActivities: activities,
+      concepts: [],
+      neighboringConcepts: [],
+      words,
+      workflowRunId: "test-run-id",
+    });
 
     const dbActivity = await prisma.activity.findUnique({ where: { id: activity.id } });
     expect(dbActivity?.generationStatus).toBe("completed");
@@ -589,7 +631,14 @@ describe(readingActivityWorkflow, () => {
     });
 
     const activities = await fetchLessonActivities(lesson.id);
-    await readingActivityWorkflow(activities, "test-run-id", words, [], []);
+    await readingActivityWorkflow({
+      activitiesToGenerate: activities,
+      allActivities: activities,
+      concepts: [],
+      neighboringConcepts: [],
+      words,
+      workflowRunId: "test-run-id",
+    });
 
     // Sentence words should be saved as Word records
     const savedWords = await prisma.word.findMany({
@@ -628,7 +677,14 @@ describe(readingActivityWorkflow, () => {
     });
 
     const activities = await fetchLessonActivities(lesson.id);
-    await readingActivityWorkflow(activities, "test-run-id", [], [], []);
+    await readingActivityWorkflow({
+      activitiesToGenerate: activities,
+      allActivities: activities,
+      concepts: [],
+      neighboringConcepts: [],
+      words: [],
+      workflowRunId: "test-run-id",
+    });
 
     const dbActivity = await prisma.activity.findUnique({ where: { id: activity.id } });
     expect(dbActivity?.generationStatus).toBe("failed");
@@ -654,7 +710,14 @@ describe(readingActivityWorkflow, () => {
     });
 
     const activities = await fetchLessonActivities(lesson.id);
-    await readingActivityWorkflow(activities, "test-run-id", words, [], []);
+    await readingActivityWorkflow({
+      activitiesToGenerate: [],
+      allActivities: activities,
+      concepts: [],
+      neighboringConcepts: [],
+      words,
+      workflowRunId: "test-run-id",
+    });
 
     expect(generateActivitySentences).not.toHaveBeenCalled();
     expect(generateActivitySentenceVariants).not.toHaveBeenCalled();
@@ -702,7 +765,14 @@ describe(readingActivityWorkflow, () => {
     });
 
     const activities = await fetchLessonActivities(lesson.id);
-    await readingActivityWorkflow(activities, "test-run-id", words, [], []);
+    await readingActivityWorkflow({
+      activitiesToGenerate: activities,
+      allActivities: activities,
+      concepts: [],
+      neighboringConcepts: [],
+      words,
+      workflowRunId: "test-run-id",
+    });
 
     const failWordInDb = await prisma.word.findMany({
       include: { translations: true },
@@ -769,7 +839,14 @@ describe(readingActivityWorkflow, () => {
     });
 
     const activities = await fetchLessonActivities(lesson.id);
-    await readingActivityWorkflow(activities, "test-run-id", words, [], []);
+    await readingActivityWorkflow({
+      activitiesToGenerate: activities,
+      allActivities: activities,
+      concepts: [],
+      neighboringConcepts: [],
+      words,
+      workflowRunId: "test-run-id",
+    });
 
     // Should NOT call AI for the word since it already exists (just with different casing)
     expect(generateTranslation).not.toHaveBeenCalledWith(
@@ -820,7 +897,14 @@ describe(readingActivityWorkflow, () => {
     });
 
     const activities = await fetchLessonActivities(lesson.id);
-    await readingActivityWorkflow(activities, "test-run-id", words, [], []);
+    await readingActivityWorkflow({
+      activitiesToGenerate: activities,
+      allActivities: activities,
+      concepts: [],
+      neighboringConcepts: [],
+      words,
+      workflowRunId: "test-run-id",
+    });
 
     expect(generateActivityRomanization).not.toHaveBeenCalled();
 
@@ -890,7 +974,14 @@ describe(readingActivityWorkflow, () => {
     ];
 
     const activities = await fetchLessonActivities(lesson.id);
-    await readingActivityWorkflow(activities, "test-run-id", japaneseWords, [], []);
+    await readingActivityWorkflow({
+      activitiesToGenerate: activities,
+      allActivities: activities,
+      concepts: [],
+      neighboringConcepts: [],
+      words: japaneseWords,
+      workflowRunId: "test-run-id",
+    });
 
     expect(generateActivityRomanization).toHaveBeenCalledWith(
       expect.objectContaining({
@@ -955,7 +1046,14 @@ describe(readingActivityWorkflow, () => {
     });
 
     const activities = await fetchLessonActivities(lesson.id);
-    await readingActivityWorkflow(activities, "test-run-id", words, [], []);
+    await readingActivityWorkflow({
+      activitiesToGenerate: activities,
+      allActivities: activities,
+      concepts: [],
+      neighboringConcepts: [],
+      words,
+      workflowRunId: "test-run-id",
+    });
 
     expect(generateLanguageAudio).not.toHaveBeenCalledWith(
       expect.objectContaining({ text: existingWord }),

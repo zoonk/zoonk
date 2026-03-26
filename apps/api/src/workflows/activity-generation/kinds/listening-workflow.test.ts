@@ -116,7 +116,7 @@ describe(listeningActivityWorkflow, () => {
     });
 
     const activities = await fetchLessonActivities(lesson.id);
-    await listeningActivityWorkflow(activities, "test-run-id");
+    await listeningActivityWorkflow({ allActivities: activities, workflowRunId: "test-run-id" });
 
     const listeningSteps = await prisma.step.findMany({
       orderBy: { position: "asc" },
@@ -171,7 +171,7 @@ describe(listeningActivityWorkflow, () => {
     });
 
     const activities = await fetchLessonActivities(lesson.id);
-    await listeningActivityWorkflow(activities, "test-run-id");
+    await listeningActivityWorkflow({ allActivities: activities, workflowRunId: "test-run-id" });
 
     const dbActivity = await prisma.activity.findUnique({ where: { id: listeningActivity.id } });
     expect(dbActivity?.generationStatus).toBe("completed");
@@ -195,7 +195,7 @@ describe(listeningActivityWorkflow, () => {
     });
 
     const activities = await fetchLessonActivities(lesson.id);
-    await listeningActivityWorkflow(activities, "test-run-id");
+    await listeningActivityWorkflow({ allActivities: activities, workflowRunId: "test-run-id" });
 
     const dbActivity = await prisma.activity.findUnique({ where: { id: listeningActivity.id } });
     expect(dbActivity?.generationStatus).toBe("failed");

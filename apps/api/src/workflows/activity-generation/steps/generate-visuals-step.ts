@@ -45,10 +45,6 @@ export async function generateVisualsForActivityStep(
     return { visualRows: [], visuals: [] };
   }
 
-  if (activity.generationStatus === "completed" || activity.generationStatus === "running") {
-    return { visualRows: [], visuals: [] };
-  }
-
   await stream.status({ status: "started", step: "generateVisuals" });
 
   const result = await generateStepVisuals({

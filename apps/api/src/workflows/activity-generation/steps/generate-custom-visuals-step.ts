@@ -35,10 +35,6 @@ async function generateVisualsForActivity(
     return empty;
   }
 
-  if (activity.generationStatus === "completed" || activity.generationStatus === "running") {
-    return empty;
-  }
-
   const result = await generateStepVisuals({
     chapterTitle: activity.lesson.chapter.title,
     courseTitle: activity.lesson.chapter.course.title,

@@ -5,7 +5,6 @@ import {
 } from "@zoonk/ai/tasks/activities/core/practice";
 import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
-import { resolveActivityForGeneration } from "./_utils/content-step-helpers";
 import { findActivitiesByKind } from "./_utils/find-activity-by-kind";
 import { type ActivitySteps } from "./_utils/get-activity-steps";
 import { type LessonActivity } from "./get-lesson-activities-step";
@@ -18,6 +17,7 @@ export type PracticeStep = ActivityPracticeSchema["steps"][number];
  * Returns the raw steps data without saving to the database.
  * The steps will be passed to `savePracticeActivityStep` for persistence.
  *
+ * No status checks — the caller only passes activities that need generation.
  * Like the quiz step, this uses safeAsync because empty explanations
  * represent a permanent failure (not retryable).
  */
@@ -35,16 +35,8 @@ export async function generatePracticeContentStep(
     return { activityId: null, steps: [] };
   }
 
-  const resolved = await resolveActivityForGeneration(practiceActivity);
-
-  if (!resolved.shouldGenerate) {
-    return { activityId: null, steps: [] };
-  }
-
-  const { activity } = resolved;
-
   if (explanationSteps.length === 0) {
-    await handleActivityFailureStep({ activityId: activity.id });
+    await handleActivityFailureStep({ activityId: practiceActivity.id });
     return { activityId: null, steps: [] };
   }
 
@@ -55,22 +47,22 @@ export async function generatePracticeContentStep(
   const { data: result, error }: SafeReturn<{ data: ActivityPracticeSchema }> = await safeAsync(
     () =>
       generateActivityPractice({
-        chapterTitle: activity.lesson.chapter.title,
-        courseTitle: activity.lesson.chapter.course.title,
+        chapterTitle: practiceActivity.lesson.chapter.title,
+        courseTitle: practiceActivity.lesson.chapter.course.title,
         explanationSteps,
-        language: activity.language,
-        lessonDescription: activity.lesson.description ?? "",
-        lessonTitle: activity.lesson.title,
+        language: practiceActivity.language,
+        lessonDescription: practiceActivity.lesson.description ?? "",
+        lessonTitle: practiceActivity.lesson.title,
       }),
   );
 
   if (error || !result || result.data.steps.length === 0) {
     const reason = getAIResultErrorReason(error, result);
     await stream.error({ reason, step: "generatePracticeContent" });
-    await handleActivityFailureStep({ activityId: activity.id });
+    await handleActivityFailureStep({ activityId: practiceActivity.id });
     return { activityId: null, steps: [] };
   }
 
   await stream.status({ status: "completed", step: "generatePracticeContent" });
-  return { activityId: Number(activity.id), steps: result.data.steps };
+  return { activityId: Number(practiceActivity.id), steps: result.data.steps };
 }

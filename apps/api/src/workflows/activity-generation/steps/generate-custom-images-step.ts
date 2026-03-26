@@ -20,10 +20,6 @@ async function generateImagesForActivity(
   activity: LessonActivity,
   visualResult: CustomVisualResult,
 ): Promise<CustomImageResult> {
-  if (activity.generationStatus === "completed" || activity.generationStatus === "running") {
-    return { activityId: activity.id, completedRows: visualResult.visualRows };
-  }
-
   const orgSlug = activity.lesson.chapter.course.organization?.slug;
   const completedRows = [...visualResult.visualRows];
 

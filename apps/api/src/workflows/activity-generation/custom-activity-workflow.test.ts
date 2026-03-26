@@ -166,9 +166,7 @@ describe("custom activity workflow", () => {
       prisma.activity.findUnique({ where: { id: succeedingCustom.id } }),
     ]);
 
-    // The failing activity stays "pending" because generateCustomContentStep catches
-    // the rejection via Promise.allSettled and drops it — no code marks it as "failed".
-    expect(dbFailing?.generationStatus).toBe("pending");
+    expect(dbFailing?.generationStatus).toBe("failed");
     expect(dbSucceeding?.generationStatus).toBe("completed");
   });
 });

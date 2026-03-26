@@ -115,7 +115,12 @@ describe(vocabularyActivityWorkflow, () => {
     });
 
     const activities = await fetchLessonActivities(lesson.id);
-    await vocabularyActivityWorkflow(activities, "test-run-id", [], []);
+    await vocabularyActivityWorkflow({
+      activitiesToGenerate: activities,
+      concepts: [],
+      neighboringConcepts: [],
+      workflowRunId: "test-run-id",
+    });
 
     const words = await prisma.word.findMany({
       where: {
@@ -172,7 +177,12 @@ describe(vocabularyActivityWorkflow, () => {
     ]);
 
     const activities = await fetchLessonActivities(lesson.id);
-    await vocabularyActivityWorkflow(activities, "test-run-id", [], []);
+    await vocabularyActivityWorkflow({
+      activitiesToGenerate: activities,
+      concepts: [],
+      neighboringConcepts: [],
+      workflowRunId: "test-run-id",
+    });
 
     const [vocabSteps, transSteps] = await Promise.all([
       prisma.step.findMany({
@@ -225,7 +235,12 @@ describe(vocabularyActivityWorkflow, () => {
     });
 
     const activities = await fetchLessonActivities(lesson.id);
-    await vocabularyActivityWorkflow(activities, "test-run-id", [], []);
+    await vocabularyActivityWorkflow({
+      activitiesToGenerate: activities,
+      concepts: [],
+      neighboringConcepts: [],
+      workflowRunId: "test-run-id",
+    });
 
     const dbActivity = await prisma.activity.findUnique({ where: { id: activity.id } });
     expect(dbActivity?.generationStatus).toBe("completed");
@@ -251,7 +266,12 @@ describe(vocabularyActivityWorkflow, () => {
     });
 
     const activities = await fetchLessonActivities(lesson.id);
-    await vocabularyActivityWorkflow(activities, "test-run-id", [], []);
+    await vocabularyActivityWorkflow({
+      activitiesToGenerate: activities,
+      concepts: [],
+      neighboringConcepts: [],
+      workflowRunId: "test-run-id",
+    });
 
     const dbActivity = await prisma.activity.findUnique({ where: { id: activity.id } });
     expect(dbActivity?.generationStatus).toBe("failed");
@@ -275,7 +295,12 @@ describe(vocabularyActivityWorkflow, () => {
     });
 
     const activities = await fetchLessonActivities(lesson.id);
-    const result = await vocabularyActivityWorkflow(activities, "test-run-id", [], []);
+    const result = await vocabularyActivityWorkflow({
+      activitiesToGenerate: activities,
+      concepts: [],
+      neighboringConcepts: [],
+      workflowRunId: "test-run-id",
+    });
 
     expect(result.words).toHaveLength(2);
     expect(result.words.map((record) => record.word).toSorted()).toEqual(["gato", "hola"]);
@@ -313,7 +338,12 @@ describe(vocabularyActivityWorkflow, () => {
     ]);
 
     const activities = await fetchLessonActivities(lesson.id);
-    await vocabularyActivityWorkflow(activities, "test-run-id", [], []);
+    await vocabularyActivityWorkflow({
+      activitiesToGenerate: activities,
+      concepts: [],
+      neighboringConcepts: [],
+      workflowRunId: "test-run-id",
+    });
 
     const [dbVocab, dbTrans] = await Promise.all([
       prisma.activity.findUnique({ where: { id: vocabActivity.id } }),
@@ -343,8 +373,12 @@ describe(vocabularyActivityWorkflow, () => {
       title: `Vocabulary ${randomUUID()}`,
     });
 
-    const activities = await fetchLessonActivities(lesson.id);
-    const result = await vocabularyActivityWorkflow(activities, "test-run-id", [], []);
+    const result = await vocabularyActivityWorkflow({
+      activitiesToGenerate: [],
+      concepts: [],
+      neighboringConcepts: [],
+      workflowRunId: "test-run-id",
+    });
 
     expect(generateActivityVocabulary).not.toHaveBeenCalled();
     expect(result.words).toHaveLength(0);
@@ -396,7 +430,12 @@ describe(vocabularyActivityWorkflow, () => {
     });
 
     const activities = await fetchLessonActivities(lesson.id);
-    await vocabularyActivityWorkflow(activities, "test-run-id", [], []);
+    await vocabularyActivityWorkflow({
+      activitiesToGenerate: activities,
+      concepts: [],
+      neighboringConcepts: [],
+      workflowRunId: "test-run-id",
+    });
 
     const updatedWord = await prisma.word.findFirst({
       where: { organizationId, targetLanguage: "es", word: existingWord },
@@ -447,7 +486,12 @@ describe(vocabularyActivityWorkflow, () => {
     });
 
     const activities = await fetchLessonActivities(lesson.id);
-    await vocabularyActivityWorkflow(activities, "test-run-id", [], []);
+    await vocabularyActivityWorkflow({
+      activitiesToGenerate: activities,
+      concepts: [],
+      neighboringConcepts: [],
+      workflowRunId: "test-run-id",
+    });
 
     const words = await prisma.word.findMany({
       where: {
@@ -504,7 +548,12 @@ describe(vocabularyActivityWorkflow, () => {
     });
 
     const activities = await fetchLessonActivities(lesson.id);
-    await vocabularyActivityWorkflow(activities, "test-run-id", [], []);
+    await vocabularyActivityWorkflow({
+      activitiesToGenerate: activities,
+      concepts: [],
+      neighboringConcepts: [],
+      workflowRunId: "test-run-id",
+    });
 
     // Should not call TTS since audio for "Gato..." already exists on the Word record
     expect(generateLanguageAudio).not.toHaveBeenCalled();
@@ -560,7 +609,12 @@ describe(vocabularyActivityWorkflow, () => {
     });
 
     const activities = await fetchLessonActivities(lesson.id);
-    await vocabularyActivityWorkflow(activities, "test-run-id", [], []);
+    await vocabularyActivityWorkflow({
+      activitiesToGenerate: activities,
+      concepts: [],
+      neighboringConcepts: [],
+      workflowRunId: "test-run-id",
+    });
 
     expect(generateLanguageAudio).not.toHaveBeenCalledWith(
       expect.objectContaining({ text: existingWord }),

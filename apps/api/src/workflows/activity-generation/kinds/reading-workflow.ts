@@ -1,6 +1,7 @@
 import { type VocabularyWord } from "@zoonk/ai/tasks/activities/language/vocabulary";
 import { settled } from "@zoonk/utils/settled";
 import { extractUniqueSentenceWords } from "@zoonk/utils/string";
+import { findActivityByKind } from "../steps/_utils/find-activity-by-kind";
 import { generateReadingAudioStep } from "../steps/generate-reading-audio-step";
 import { generateReadingContentStep } from "../steps/generate-reading-content-step";
 import { generateReadingRomanizationStep } from "../steps/generate-reading-romanization-step";
@@ -10,17 +11,38 @@ import { generateSentenceWordMetadataStep } from "../steps/generate-sentence-wor
 import { type LessonActivity } from "../steps/get-lesson-activities-step";
 import { saveReadingActivityStep } from "../steps/save-reading-activity-step";
 
-export async function readingActivityWorkflow(
-  activities: LessonActivity[],
-  workflowRunId: string,
-  words: VocabularyWord[],
-  concepts: string[],
-  neighboringConcepts: string[],
-): Promise<void> {
+/**
+ * Orchestrates reading activity generation.
+ *
+ * Only generates if a reading activity exists in the activitiesToGenerate list.
+ * The allActivities parameter is passed to the save step and some sub-steps
+ * that need the full activity list (e.g., to find vocabulary activities).
+ */
+export async function readingActivityWorkflow({
+  activitiesToGenerate,
+  allActivities,
+  concepts,
+  neighboringConcepts,
+  words,
+  workflowRunId,
+}: {
+  activitiesToGenerate: LessonActivity[];
+  allActivities: LessonActivity[];
+  concepts: string[];
+  neighboringConcepts: string[];
+  words: VocabularyWord[];
+  workflowRunId: string;
+}): Promise<void> {
   "use workflow";
 
+  const readingActivity = findActivityByKind(activitiesToGenerate, "reading");
+
+  if (!readingActivity) {
+    return;
+  }
+
   const { sentences } = await generateReadingContentStep(
-    activities,
+    readingActivity,
     workflowRunId,
     words,
     concepts,
@@ -28,8 +50,8 @@ export async function readingActivityWorkflow(
   );
 
   const [audioResult, romanizationResult] = await Promise.allSettled([
-    generateReadingAudioStep(activities, sentences),
-    generateReadingRomanizationStep(activities, sentences),
+    generateReadingAudioStep(activitiesToGenerate, sentences),
+    generateReadingRomanizationStep(activitiesToGenerate, sentences),
   ]);
 
   const { sentenceAudioUrls } = settled(audioResult, { sentenceAudioUrls: {} });
@@ -37,15 +59,15 @@ export async function readingActivityWorkflow(
     romanizations: {},
   });
 
-  const { wordMetadata } = await generateSentenceWordMetadataStep(activities, sentences);
+  const { wordMetadata } = await generateSentenceWordMetadataStep(activitiesToGenerate, sentences);
 
   const sentenceWords = extractUniqueSentenceWords(sentences.map((entry) => entry.sentence)).filter(
     (word) => wordMetadata[word],
   );
 
   const [wordAudioResult, wordPronunciationResult] = await Promise.allSettled([
-    generateSentenceWordAudioStep(activities, sentenceWords),
-    generateSentencePronunciationAndAlternativesStep(activities, sentenceWords),
+    generateSentenceWordAudioStep(activitiesToGenerate, sentenceWords),
+    generateSentencePronunciationAndAlternativesStep(activitiesToGenerate, sentenceWords),
   ]);
 
   const { wordAudioUrls } = settled(wordAudioResult, { wordAudioUrls: {} });
@@ -55,7 +77,7 @@ export async function readingActivityWorkflow(
   });
 
   await saveReadingActivityStep({
-    activities,
+    activities: allActivities,
     alternatives,
     pronunciations,
     sentenceAudioUrls,

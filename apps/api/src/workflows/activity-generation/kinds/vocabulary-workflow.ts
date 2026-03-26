@@ -1,5 +1,6 @@
 import { type VocabularyWord } from "@zoonk/ai/tasks/activities/language/vocabulary";
 import { settled } from "@zoonk/utils/settled";
+import { findActivityByKind } from "../steps/_utils/find-activity-by-kind";
 import { generateVocabularyAudioStep } from "../steps/generate-vocabulary-audio-step";
 import { generateVocabularyContentStep } from "../steps/generate-vocabulary-content-step";
 import { generateVocabularyPronunciationAndAlternativesStep } from "../steps/generate-vocabulary-pronunciation-and-alternatives-step";
@@ -7,25 +8,43 @@ import { generateVocabularyRomanizationStep } from "../steps/generate-vocabulary
 import { type LessonActivity } from "../steps/get-lesson-activities-step";
 import { saveVocabularyActivityStep } from "../steps/save-vocabulary-activity-step";
 
-export async function vocabularyActivityWorkflow(
-  activities: LessonActivity[],
-  workflowRunId: string,
-  concepts: string[],
-  neighboringConcepts: string[],
-): Promise<{ words: VocabularyWord[] }> {
+/**
+ * Orchestrates vocabulary activity generation.
+ *
+ * Only generates if a vocabulary activity exists in the activitiesToGenerate list.
+ * The allActivities parameter is still passed to the save step because it needs
+ * the full list to find translation activities.
+ */
+export async function vocabularyActivityWorkflow({
+  activitiesToGenerate,
+  concepts,
+  neighboringConcepts,
+  workflowRunId,
+}: {
+  activitiesToGenerate: LessonActivity[];
+  concepts: string[];
+  neighboringConcepts: string[];
+  workflowRunId: string;
+}): Promise<{ words: VocabularyWord[] }> {
   "use workflow";
 
+  const vocabularyActivity = findActivityByKind(activitiesToGenerate, "vocabulary");
+
+  if (!vocabularyActivity) {
+    return { words: [] };
+  }
+
   const { words } = await generateVocabularyContentStep(
-    activities,
+    vocabularyActivity,
     workflowRunId,
     concepts,
     neighboringConcepts,
   );
 
   const [pronunciationAndAltsResult, audioResult, romanizationResult] = await Promise.allSettled([
-    generateVocabularyPronunciationAndAlternativesStep(activities, words),
-    generateVocabularyAudioStep(activities, words),
-    generateVocabularyRomanizationStep(activities, words),
+    generateVocabularyPronunciationAndAlternativesStep(activitiesToGenerate, words),
+    generateVocabularyAudioStep(activitiesToGenerate, words),
+    generateVocabularyRomanizationStep(activitiesToGenerate, words),
   ]);
 
   const { alternatives, pronunciations } = settled(pronunciationAndAltsResult, {
@@ -36,7 +55,7 @@ export async function vocabularyActivityWorkflow(
   const { romanizations } = settled(romanizationResult, { romanizations: {} });
 
   await saveVocabularyActivityStep({
-    activities,
+    activities: activitiesToGenerate,
     alternatives,
     pronunciations,
     romanizations,

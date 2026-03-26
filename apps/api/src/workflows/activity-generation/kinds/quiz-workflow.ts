@@ -7,20 +7,26 @@ import { saveQuizActivityStep } from "../steps/save-quiz-activity-step";
 /**
  * Orchestrates quiz activity generation.
  *
- * Flow: generateContent → generateImages → save.
+ * Flow: generateContent -> generateImages -> save.
  * The generate steps produce data only; the save step writes everything
  * and marks the activity as completed.
+ *
+ * Only generates for quiz activities in the activitiesToGenerate list.
  */
-export async function quizActivityWorkflow(
-  activities: LessonActivity[],
-  workflowRunId: string,
-  explanationResults: ExplanationResult[],
-): Promise<void> {
+export async function quizActivityWorkflow({
+  activitiesToGenerate,
+  explanationResults,
+  workflowRunId,
+}: {
+  activitiesToGenerate: LessonActivity[];
+  explanationResults: ExplanationResult[];
+  workflowRunId: string;
+}): Promise<void> {
   "use workflow";
 
   const explanationSteps = explanationResults.flatMap((result) => result.steps);
   const { activityId, questions } = await generateQuizContentStep(
-    activities,
+    activitiesToGenerate,
     explanationSteps,
     workflowRunId,
   );
@@ -29,7 +35,7 @@ export async function quizActivityWorkflow(
     return;
   }
 
-  const questionsWithImages = await generateQuizImagesStep(activities, questions);
+  const questionsWithImages = await generateQuizImagesStep(activitiesToGenerate, questions);
   const finalQuestions = questionsWithImages.length > 0 ? questionsWithImages : questions;
 
   await saveQuizActivityStep({

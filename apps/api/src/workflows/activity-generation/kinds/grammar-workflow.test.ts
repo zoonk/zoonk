@@ -129,7 +129,12 @@ describe(grammarActivityWorkflow, () => {
     });
 
     const activities = await fetchLessonActivities(lesson.id);
-    await grammarActivityWorkflow(activities, "test-run-id", [], []);
+    await grammarActivityWorkflow({
+      activitiesToGenerate: activities,
+      concepts: [],
+      neighboringConcepts: [],
+      workflowRunId: "test-run-id",
+    });
 
     const steps = await prisma.step.findMany({
       orderBy: { position: "asc" },
@@ -176,7 +181,12 @@ describe(grammarActivityWorkflow, () => {
     });
 
     const activities = await fetchLessonActivities(lesson.id);
-    await grammarActivityWorkflow(activities, "test-run-id", [], []);
+    await grammarActivityWorkflow({
+      activitiesToGenerate: activities,
+      concepts: [],
+      neighboringConcepts: [],
+      workflowRunId: "test-run-id",
+    });
 
     const dbActivity = await prisma.activity.findUnique({ where: { id: activity.id } });
     expect(dbActivity?.generationStatus).toBe("completed");
@@ -202,7 +212,12 @@ describe(grammarActivityWorkflow, () => {
     });
 
     const activities = await fetchLessonActivities(lesson.id);
-    await grammarActivityWorkflow(activities, "test-run-id", [], []);
+    await grammarActivityWorkflow({
+      activitiesToGenerate: activities,
+      concepts: [],
+      neighboringConcepts: [],
+      workflowRunId: "test-run-id",
+    });
 
     const dbActivity = await prisma.activity.findUnique({ where: { id: activity.id } });
     expect(dbActivity?.generationStatus).toBe("failed");
@@ -233,7 +248,12 @@ describe(grammarActivityWorkflow, () => {
     });
 
     const activities = await fetchLessonActivities(lesson.id);
-    await grammarActivityWorkflow(activities, "test-run-id", [], []);
+    await grammarActivityWorkflow({
+      activitiesToGenerate: activities,
+      concepts: [],
+      neighboringConcepts: [],
+      workflowRunId: "test-run-id",
+    });
 
     const dbActivity = await prisma.activity.findUnique({ where: { id: activity.id } });
     expect(dbActivity?.generationStatus).toBe("failed");
@@ -261,7 +281,12 @@ describe(grammarActivityWorkflow, () => {
     });
 
     const activities = await fetchLessonActivities(lesson.id);
-    await grammarActivityWorkflow(activities, "test-run-id", [], []);
+    await grammarActivityWorkflow({
+      activitiesToGenerate: activities,
+      concepts: [],
+      neighboringConcepts: [],
+      workflowRunId: "test-run-id",
+    });
 
     const dbActivity = await prisma.activity.findUnique({ where: { id: activity.id } });
     expect(dbActivity?.generationStatus).toBe("failed");
@@ -284,8 +309,12 @@ describe(grammarActivityWorkflow, () => {
       title: `Grammar ${randomUUID()}`,
     });
 
-    const activities = await fetchLessonActivities(lesson.id);
-    await grammarActivityWorkflow(activities, "test-run-id", [], []);
+    await grammarActivityWorkflow({
+      activitiesToGenerate: [],
+      concepts: [],
+      neighboringConcepts: [],
+      workflowRunId: "test-run-id",
+    });
 
     expect(generateActivityGrammarContent).not.toHaveBeenCalled();
   });

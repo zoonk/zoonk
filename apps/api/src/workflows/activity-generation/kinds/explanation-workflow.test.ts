@@ -121,7 +121,13 @@ describe("explanation activity workflow", () => {
     const activities = await getLessonActivitiesStep(testLesson.id);
     const concepts = activities[0]?.lesson?.concepts ?? [];
 
-    await explanationActivityWorkflow(activities, "test-run-id", concepts, []);
+    await explanationActivityWorkflow({
+      activitiesToGenerate: activities,
+      allActivities: activities,
+      concepts,
+      neighboringConcepts: [],
+      workflowRunId: "test-run-id",
+    });
 
     const steps = await prisma.step.findMany({
       orderBy: { position: "asc" },
@@ -178,7 +184,13 @@ describe("explanation activity workflow", () => {
     const activities = await getLessonActivitiesStep(testLesson.id);
     const concepts = activities[0]?.lesson?.concepts ?? [];
 
-    await explanationActivityWorkflow(activities, "test-run-id", concepts, []);
+    await explanationActivityWorkflow({
+      activitiesToGenerate: activities,
+      allActivities: activities,
+      concepts,
+      neighboringConcepts: [],
+      workflowRunId: "test-run-id",
+    });
 
     const dbActivity = await prisma.activity.findUnique({
       where: { id: activity.id },
@@ -187,7 +199,7 @@ describe("explanation activity workflow", () => {
     expect(dbActivity?.generationRunId).toBe("test-run-id");
   });
 
-  test("leaves explanation as 'pending' when AI throws (rejection dropped by Promise.allSettled)", async () => {
+  test("marks explanation as 'failed' when AI throws", async () => {
     vi.mocked(generateActivityExplanation).mockRejectedValueOnce(
       new Error("Explanation generation failed"),
     );
@@ -210,14 +222,18 @@ describe("explanation activity workflow", () => {
     const activities = await getLessonActivitiesStep(testLesson.id);
     const concepts = activities[0]?.lesson?.concepts ?? [];
 
-    await explanationActivityWorkflow(activities, "test-run-id", concepts, []);
+    await explanationActivityWorkflow({
+      activitiesToGenerate: activities,
+      allActivities: activities,
+      concepts,
+      neighboringConcepts: [],
+      workflowRunId: "test-run-id",
+    });
 
-    // The activity stays "pending" because generateExplanationContentStep catches
-    // the rejection via Promise.allSettled and drops it — no code marks it as "failed".
     const dbActivity = await prisma.activity.findUnique({
       where: { id: activity.id },
     });
-    expect(dbActivity?.generationStatus).toBe("pending");
+    expect(dbActivity?.generationStatus).toBe("failed");
   });
 
   test("fails when visuals do not cover each step exactly once", async () => {
@@ -258,7 +274,13 @@ describe("explanation activity workflow", () => {
     const activities = await getLessonActivitiesStep(testLesson.id);
     const concepts = activities[0]?.lesson?.concepts ?? [];
 
-    await explanationActivityWorkflow(activities, "test-run-id", concepts, []);
+    await explanationActivityWorkflow({
+      activitiesToGenerate: activities,
+      allActivities: activities,
+      concepts,
+      neighboringConcepts: [],
+      workflowRunId: "test-run-id",
+    });
 
     const [dbActivity, steps] = await Promise.all([
       prisma.activity.findUnique({
@@ -304,7 +326,13 @@ describe("explanation activity workflow", () => {
     const activities = await getLessonActivitiesStep(testLesson.id);
     const concepts = activities[0]?.lesson?.concepts ?? [];
 
-    await explanationActivityWorkflow(activities, "test-run-id", concepts, []);
+    await explanationActivityWorkflow({
+      activitiesToGenerate: activities,
+      allActivities: activities,
+      concepts,
+      neighboringConcepts: [],
+      workflowRunId: "test-run-id",
+    });
 
     const [dbActivity, steps] = await Promise.all([
       prisma.activity.findUnique({
@@ -340,7 +368,13 @@ describe("explanation activity workflow", () => {
     const activities = await getLessonActivitiesStep(testLesson.id);
     const concepts = activities[0]?.lesson?.concepts ?? [];
 
-    const { results } = await explanationActivityWorkflow(activities, "test-run-id", concepts, []);
+    const { results } = await explanationActivityWorkflow({
+      activitiesToGenerate: activities,
+      allActivities: activities,
+      concepts,
+      neighboringConcepts: [],
+      workflowRunId: "test-run-id",
+    });
 
     expect(results).toHaveLength(1);
     expect(results[0]?.concept).toBe("Concept D");
@@ -375,7 +409,13 @@ describe("explanation activity workflow", () => {
     const activities = await getLessonActivitiesStep(testLesson.id);
     const concepts = activities[0]?.lesson?.concepts ?? [];
 
-    await explanationActivityWorkflow(activities, "test-run-id", concepts, []);
+    await explanationActivityWorkflow({
+      activitiesToGenerate: [],
+      allActivities: activities,
+      concepts,
+      neighboringConcepts: [],
+      workflowRunId: "test-run-id",
+    });
 
     expect(generateActivityExplanation).not.toHaveBeenCalled();
   });
@@ -419,7 +459,13 @@ describe("explanation activity workflow", () => {
       const activities = await getLessonActivitiesStep(testLesson.id);
       const concepts = activities[0]?.lesson?.concepts ?? [];
 
-      await explanationActivityWorkflow(activities, "test-run-id", concepts, []);
+      await explanationActivityWorkflow({
+        activitiesToGenerate: activities,
+        allActivities: activities,
+        concepts,
+        neighboringConcepts: [],
+        workflowRunId: "test-run-id",
+      });
 
       expect(generateActivityExplanation).toHaveBeenCalledTimes(3);
 
@@ -485,10 +531,13 @@ describe("explanation activity workflow", () => {
       const activities = await getLessonActivitiesStep(testLesson.id);
       const concepts = activities[0]?.lesson?.concepts ?? [];
 
-      await explanationActivityWorkflow(activities, "test-run-id", concepts, [
-        "Neighbor X",
-        "Neighbor Y",
-      ]);
+      await explanationActivityWorkflow({
+        activitiesToGenerate: activities,
+        allActivities: activities,
+        concepts,
+        neighboringConcepts: ["Neighbor X", "Neighbor Y"],
+        workflowRunId: "test-run-id",
+      });
 
       expect(generateActivityExplanation).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -547,16 +596,20 @@ describe("explanation activity workflow", () => {
       const activities = await getLessonActivitiesStep(testLesson.id);
       const concepts = activities[0]?.lesson?.concepts ?? [];
 
-      await explanationActivityWorkflow(activities, "test-run-id", concepts, []);
+      await explanationActivityWorkflow({
+        activitiesToGenerate: activities,
+        allActivities: activities,
+        concepts,
+        neighboringConcepts: [],
+        workflowRunId: "test-run-id",
+      });
 
       const [dbFail, dbPass] = await Promise.all([
         prisma.activity.findUnique({ where: { id: failExp.id } }),
         prisma.activity.findUnique({ where: { id: passExp.id } }),
       ]);
 
-      // The failing explanation stays "pending" because generateExplanationContentStep
-      // catches the rejection via Promise.allSettled and drops it.
-      expect(dbFail?.generationStatus).toBe("pending");
+      expect(dbFail?.generationStatus).toBe("failed");
       expect(dbPass?.generationStatus).toBe("completed");
     });
   });
@@ -592,7 +645,13 @@ describe("explanation activity workflow", () => {
       const activities = await getLessonActivitiesStep(testLesson.id);
       const concepts = activities[0]?.lesson?.concepts ?? [];
 
-      await explanationActivityWorkflow(activities, "test-run-id", concepts, []);
+      await explanationActivityWorkflow({
+        activitiesToGenerate: activities,
+        allActivities: activities,
+        concepts,
+        neighboringConcepts: [],
+        workflowRunId: "test-run-id",
+      });
 
       const calls = vi.mocked(generateStepVisuals).mock.calls;
       expect(calls.length).toBeGreaterThanOrEqual(2);
@@ -618,7 +677,13 @@ describe("explanation activity workflow", () => {
       const activities = await getLessonActivitiesStep(testLesson.id);
       const concepts = activities[0]?.lesson?.concepts ?? [];
 
-      await explanationActivityWorkflow(activities, "test-run-id", concepts, []);
+      await explanationActivityWorkflow({
+        activitiesToGenerate: activities,
+        allActivities: activities,
+        concepts,
+        neighboringConcepts: [],
+        workflowRunId: "test-run-id",
+      });
 
       const expSteps = await prisma.step.findMany({
         orderBy: { position: "asc" },
@@ -679,7 +744,13 @@ describe("explanation activity workflow", () => {
       const activities = await getLessonActivitiesStep(testLesson.id);
       const concepts = activities[0]?.lesson?.concepts ?? [];
 
-      await explanationActivityWorkflow(activities, "test-run-id", concepts, []);
+      await explanationActivityWorkflow({
+        activitiesToGenerate: activities,
+        allActivities: activities,
+        concepts,
+        neighboringConcepts: [],
+        workflowRunId: "test-run-id",
+      });
 
       const [dbA, dbB, dbC] = await Promise.all([
         prisma.activity.findUnique({ where: { id: expA.id } }),
@@ -756,7 +827,13 @@ describe("explanation activity workflow", () => {
       const activities = await getLessonActivitiesStep(testLesson.id);
       const concepts = activities[0]?.lesson?.concepts ?? [];
 
-      await explanationActivityWorkflow(activities, "test-run-id", concepts, []);
+      await explanationActivityWorkflow({
+        activitiesToGenerate: activities,
+        allActivities: activities,
+        concepts,
+        neighboringConcepts: [],
+        workflowRunId: "test-run-id",
+      });
 
       const [dbA, dbB, dbC] = await Promise.all([
         prisma.activity.findUnique({ where: { id: expA.id } }),
@@ -765,9 +842,7 @@ describe("explanation activity workflow", () => {
       ]);
 
       expect(dbA?.generationStatus).toBe("completed");
-      // The failing explanation stays "pending" because generateExplanationContentStep
-      // catches the rejection via Promise.allSettled and drops it.
-      expect(dbB?.generationStatus).toBe("pending");
+      expect(dbB?.generationStatus).toBe("failed");
       expect(dbC?.generationStatus).toBe("completed");
 
       const streamedMessages = getStreamedMessages();
@@ -809,7 +884,13 @@ describe("explanation activity workflow", () => {
         const activities = await getLessonActivitiesStep(testLesson.id);
         const concepts = activities[0]?.lesson?.concepts ?? [];
 
-        await explanationActivityWorkflow(activities, "test-run-id", concepts, []);
+        await explanationActivityWorkflow({
+          activitiesToGenerate: activities,
+          allActivities: activities,
+          concepts,
+          neighboringConcepts: [],
+          workflowRunId: "test-run-id",
+        });
 
         const dbActivity = await prisma.activity.findUnique({
           where: { id: activity.id },

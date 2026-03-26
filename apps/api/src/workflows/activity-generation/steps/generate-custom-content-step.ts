@@ -2,7 +2,6 @@ import { createStepStream } from "@/workflows/_shared/stream-status";
 import { generateActivityCustom } from "@zoonk/ai/tasks/activities/custom";
 import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { rejected, settledValues } from "@zoonk/utils/settled";
-import { resolveActivityForGeneration } from "./_utils/content-step-helpers";
 import { type ActivitySteps } from "./_utils/get-activity-steps";
 import { type LessonActivity } from "./get-lesson-activities-step";
 
@@ -35,16 +34,10 @@ async function generateContent(activity: LessonActivity): Promise<ActivitySteps>
 
 /**
  * Generates content for a single custom activity.
- * Checks if generation is needed, then calls AI.
+ * No status checks — the caller only passes activities that need generation.
  * Returns data only — no DB writes.
  */
 async function generateForActivity(activity: LessonActivity): Promise<CustomContentResult> {
-  const resolved = await resolveActivityForGeneration(activity);
-
-  if (!resolved.shouldGenerate) {
-    return { activityId: activity.id, steps: resolved.existingSteps };
-  }
-
   const steps = await generateContent(activity);
   return { activityId: activity.id, steps };
 }
@@ -53,15 +46,15 @@ async function generateForActivity(activity: LessonActivity): Promise<CustomCont
  * Generates custom content for all custom activities in parallel.
  * Returns the raw content data without saving to the database.
  * Each activity's content will be persisted later by `saveCustomActivityStep`.
+ *
+ * Only receives activities that need generation — no status checks needed.
  */
 export async function generateCustomContentStep(
   activities: LessonActivity[],
 ): Promise<CustomContentResult[]> {
   "use step";
 
-  const customActivities = activities.filter((act) => act.kind === "custom");
-
-  if (customActivities.length === 0) {
+  if (activities.length === 0) {
     return [];
   }
 
@@ -69,9 +62,7 @@ export async function generateCustomContentStep(
 
   await stream.status({ status: "started", step: "generateCustomContent" });
 
-  const allSettled = await Promise.allSettled(
-    customActivities.map((act) => generateForActivity(act)),
-  );
+  const allSettled = await Promise.allSettled(activities.map((act) => generateForActivity(act)));
 
   await stream.status({
     status: rejected(allSettled) ? "error" : "completed",

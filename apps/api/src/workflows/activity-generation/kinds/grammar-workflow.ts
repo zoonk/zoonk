@@ -10,19 +10,32 @@ import { saveGrammarActivityStep } from "../steps/save-grammar-steps-step";
 /**
  * Orchestrates grammar activity generation.
  *
- * Flow: generateContent → [parallel: generateUserContent, generateRomanization] → save.
+ * Flow: generateContent -> [parallel: generateUserContent, generateRomanization] -> save.
  * The save step writes all steps and marks the activity as completed.
+ *
+ * Only generates if a grammar activity exists in the activitiesToGenerate list.
  */
-export async function grammarActivityWorkflow(
-  activities: LessonActivity[],
-  workflowRunId: string,
-  concepts: string[],
-  neighboringConcepts: string[],
-): Promise<void> {
+export async function grammarActivityWorkflow({
+  activitiesToGenerate,
+  concepts,
+  neighboringConcepts,
+  workflowRunId,
+}: {
+  activitiesToGenerate: LessonActivity[];
+  concepts: string[];
+  neighboringConcepts: string[];
+  workflowRunId: string;
+}): Promise<void> {
   "use workflow";
 
+  const grammarActivity = findActivityByKind(activitiesToGenerate, "grammar");
+
+  if (!grammarActivity) {
+    return;
+  }
+
   const { generated, grammarContent } = await generateGrammarContentStep(
-    activities,
+    grammarActivity,
     workflowRunId,
     concepts,
     neighboringConcepts,
@@ -33,25 +46,20 @@ export async function grammarActivityWorkflow(
   }
 
   const [userContentResult, romanizationResult] = await Promise.allSettled([
-    generateGrammarUserContentStep(activities, grammarContent),
-    generateGrammarRomanizationStep(activities, grammarContent),
+    generateGrammarUserContentStep(activitiesToGenerate, grammarContent),
+    generateGrammarRomanizationStep(activitiesToGenerate, grammarContent),
   ]);
 
   const { userContent } = settled(userContentResult, { userContent: null });
   const { romanizations } = settled(romanizationResult, { romanizations: null });
 
   if (!userContent) {
-    const activity = findActivityByKind(activities, "grammar");
-
-    if (activity) {
-      await handleActivityFailureStep({ activityId: activity.id });
-    }
-
+    await handleActivityFailureStep({ activityId: grammarActivity.id });
     return;
   }
 
   await saveGrammarActivityStep(
-    activities,
+    activitiesToGenerate,
     workflowRunId,
     grammarContent,
     userContent,

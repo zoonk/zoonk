@@ -7,23 +7,54 @@ import { findActivitiesByKind } from "./steps/_utils/find-activity-by-kind";
 import { type LessonActivity } from "./steps/get-lesson-activities-step";
 import { getNeighboringConceptsStep } from "./steps/get-neighboring-concepts-step";
 
-export async function coreActivityWorkflow(
-  activities: LessonActivity[],
-  workflowRunId: string,
-): Promise<void> {
-  const concepts = activities[0]?.lesson?.concepts ?? [];
-  const totalPractices = findActivitiesByKind(activities, "practice").length;
-  const neighboringConcepts = await getNeighboringConceptsStep(activities);
+/**
+ * Orchestrates core activity generation (explanation, challenge, practice, quiz).
+ * Receives both the full activity list and the subset that needs generation.
+ * Generate steps only receive activities that need generation.
+ * Completed activities are used to fetch existing data for downstream dependencies.
+ */
+export async function coreActivityWorkflow({
+  activitiesToGenerate,
+  allActivities,
+  workflowRunId,
+}: {
+  activitiesToGenerate: LessonActivity[];
+  allActivities: LessonActivity[];
+  workflowRunId: string;
+}): Promise<void> {
+  const concepts = allActivities[0]?.lesson?.concepts ?? [];
+  const totalPractices = findActivitiesByKind(allActivities, "practice").length;
+  const neighboringConcepts = await getNeighboringConceptsStep(allActivities);
 
   const [explanationResult] = await Promise.allSettled([
-    explanationActivityWorkflow(activities, workflowRunId, concepts, neighboringConcepts),
-    challengeActivityWorkflow(activities, workflowRunId, concepts, neighboringConcepts),
+    explanationActivityWorkflow({
+      activitiesToGenerate,
+      allActivities,
+      concepts,
+      neighboringConcepts,
+      workflowRunId,
+    }),
+    challengeActivityWorkflow({
+      activitiesToGenerate,
+      concepts,
+      neighboringConcepts,
+      workflowRunId,
+    }),
   ]);
 
   const { results } = settled(explanationResult, { results: [] });
 
   await Promise.allSettled([
-    practiceActivityWorkflow(activities, workflowRunId, results, totalPractices),
-    quizActivityWorkflow(activities, workflowRunId, results),
+    practiceActivityWorkflow({
+      activitiesToGenerate,
+      explanationResults: results,
+      totalPractices,
+      workflowRunId,
+    }),
+    quizActivityWorkflow({
+      activitiesToGenerate,
+      explanationResults: results,
+      workflowRunId,
+    }),
   ]);
 }

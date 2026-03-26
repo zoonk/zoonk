@@ -5,7 +5,6 @@ import {
 } from "@zoonk/ai/tasks/activities/core/challenge";
 import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
-import { resolveActivityForGeneration } from "./_utils/content-step-helpers";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
 
@@ -14,22 +13,15 @@ import { handleActivityFailureStep } from "./handle-failure-step";
  * Returns the raw data without saving to the database.
  * The data will be passed to `saveChallengeActivityStep` for persistence.
  *
+ * No status checks — the caller only passes activities that need generation.
  * Uses safeAsync because empty concepts represent a permanent failure.
  */
 export async function generateChallengeContentStep(
-  activities: LessonActivity[],
+  activity: LessonActivity,
   concepts: string[],
   neighboringConcepts: string[],
 ): Promise<{ activityId: number | null; data: ActivityChallengeSchema | null }> {
   "use step";
-
-  const resolved = await resolveActivityForGeneration(activities, "challenge");
-
-  if (!resolved.shouldGenerate) {
-    return { activityId: null, data: null };
-  }
-
-  const { activity } = resolved;
 
   if (concepts.length === 0) {
     await handleActivityFailureStep({ activityId: activity.id });
