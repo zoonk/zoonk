@@ -1,14 +1,14 @@
 "use client";
 
+import { type StepStreamMessage } from "@zoonk/core/workflows/steps";
 import { getString } from "@zoonk/utils/json";
 import { useCallback, useEffect, useEffectEvent, useReducer, useRef } from "react";
 import {
   type GenerationAction,
   type GenerationState,
   type GenerationStatus,
-  type StreamMessage,
   generationReducer,
-  handleStreamMessage,
+  handleStepStreamMessage,
   initialGenerationState,
 } from "./generation-store";
 import { useSSE } from "./use-sse";
@@ -18,13 +18,21 @@ const MAX_STREAM_RECONNECTS = 5;
 export function useWorkflowGeneration<TStep extends string = string>(config: {
   autoTrigger?: boolean;
   completionStep?: TStep;
+  entityId?: number;
   initialRunId?: string | null;
   initialStatus?: GenerationStatus;
   statusUrl: string;
   triggerBody: Record<string, unknown>;
   triggerUrl: string;
 }) {
-  const { autoTrigger = true, completionStep, statusUrl, triggerBody, triggerUrl } = config;
+  const {
+    autoTrigger = true,
+    completionStep,
+    entityId,
+    statusUrl,
+    triggerBody,
+    triggerUrl,
+  } = config;
   const hasTriggeredRef = useRef(false);
 
   // Wrapper preserves the TStep generic that useReducer would otherwise widen to string.
@@ -39,8 +47,8 @@ export function useWorkflowGeneration<TStep extends string = string>(config: {
     }),
   );
 
-  const handleMessage = useEffectEvent((msg: StreamMessage<TStep>) =>
-    handleStreamMessage(msg, dispatch, completionStep),
+  const handleMessage = useEffectEvent((msg: StepStreamMessage<TStep>) =>
+    handleStepStreamMessage({ completionStep, dispatch, entityId, message: msg }),
   );
 
   /**
@@ -51,7 +59,13 @@ export function useWorkflowGeneration<TStep extends string = string>(config: {
    * via `startIndex`, so the next connection picks up where the previous one ended.
    */
   const handleComplete = useEffectEvent(() => {
-    const isComplete = !completionStep || state.completedSteps.includes(completionStep);
+    /**
+     * If status is already "completed", handleStepStreamMessage already confirmed
+     * both the completion step AND the entityId matched. No need to re-check
+     * completedSteps (which doesn't track entityId and could match a different
+     * activity of the same kind).
+     */
+    const isComplete = state.status === "completed" || !completionStep;
 
     if (isComplete || state.reconnectCount >= MAX_STREAM_RECONNECTS) {
       dispatch({ completionStep, type: "streamEnded" });
@@ -79,7 +93,7 @@ export function useWorkflowGeneration<TStep extends string = string>(config: {
       ? `${statusUrl}?runId=${state.runId}&_rc=${state.reconnectCount}`
       : null;
 
-  const { resetIndex } = useSSE<StreamMessage<TStep>>(sseUrl, {
+  const { resetIndex } = useSSE<StepStreamMessage<TStep>>(sseUrl, {
     onComplete: handleComplete,
     onError: handleError,
     onMessage: handleMessage,

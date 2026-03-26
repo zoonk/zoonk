@@ -795,6 +795,82 @@ describe("core activity workflow", () => {
     });
   });
 
+  describe("partial explanation retry", () => {
+    test("practice gets correct explanation data when some explanations were already completed", async () => {
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        concepts: ["CompletedExp", "PendingExp"],
+        organizationId,
+        title: `Partial Exp Retry Lesson ${randomUUID()}`,
+      });
+
+      // Explanation 1: completed with existing steps in DB
+      const completedExpActivity = await activityFixture({
+        generationStatus: "completed",
+        kind: "explanation",
+        lessonId: testLesson.id,
+        organizationId,
+        position: 1,
+        title: "CompletedExp",
+      });
+
+      await stepFixture({
+        activityId: completedExpActivity.id,
+        content: {
+          text: "Completed explanation text",
+          title: "CompletedExp",
+          variant: "text",
+        },
+        position: 0,
+      });
+
+      // Explanation 2: pending (needs generation)
+      await activityFixture({
+        generationStatus: "pending",
+        kind: "explanation",
+        lessonId: testLesson.id,
+        organizationId,
+        position: 2,
+        title: "PendingExp",
+      });
+
+      // Practice: pending
+      const practiceActivity = await activityFixture({
+        generationStatus: "pending",
+        kind: "practice",
+        lessonId: testLesson.id,
+        organizationId,
+        position: 3,
+        title: `Practice ${randomUUID()}`,
+      });
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      // The mock returns "Explanation step 1 text" / "Explanation Step 1" for the pending one
+      // The completed one provides "Completed explanation text" / "CompletedExp"
+      // Practice should get explanation steps from BOTH sources
+
+      expect(generateActivityExplanation).toHaveBeenCalledOnce();
+      expect(generateActivityPractice).toHaveBeenCalledOnce();
+
+      // Verify practice got explanation steps from both completed and generated explanations
+      expect(generateActivityPractice).toHaveBeenCalledWith(
+        expect.objectContaining({
+          explanationSteps: expect.arrayContaining([
+            { text: "Completed explanation text", title: "CompletedExp" },
+            { text: "Explanation step 1 text", title: "Explanation Step 1" },
+            { text: "Explanation step 2 text", title: "Explanation Step 2" },
+          ]),
+        }),
+      );
+
+      const dbPractice = await prisma.activity.findUnique({
+        where: { id: practiceActivity.id },
+      });
+      expect(dbPractice?.generationStatus).toBe("completed");
+    });
+  });
+
   describe("neighboring concepts", () => {
     test("passes neighboring concepts to all wave 1 generation steps", async () => {
       vi.mocked(getNeighboringConceptsStep).mockResolvedValueOnce(["Neighbor A"]);

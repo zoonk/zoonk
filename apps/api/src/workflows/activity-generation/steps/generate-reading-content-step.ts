@@ -1,10 +1,8 @@
 import {
   type StepStream,
-  type WorkflowErrorReason,
   createStepStream,
   getAIResultErrorReason,
 } from "@/workflows/_shared/stream-status";
-import { type ActivityStepName } from "@/workflows/config";
 import {
   type ActivitySentenceVariantInput,
   type ActivitySentenceVariantsSchema,
@@ -15,16 +13,15 @@ import {
   generateActivitySentences,
 } from "@zoonk/ai/tasks/activities/language/sentences";
 import { type VocabularyWord } from "@zoonk/ai/tasks/activities/language/vocabulary";
+import { type ActivityStepName, type WorkflowErrorReason } from "@zoonk/core/workflows/steps";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
-import { resolveActivityForGeneration } from "./_utils/content-step-helpers";
 import {
   type VocabularyVariantWord,
   mergeReadingSentenceVariants,
 } from "./_utils/merge-reading-sentence-variants";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
-import { setActivityAsRunningStep } from "./set-activity-as-running-step";
 
 type GeneratedReadingSentence = ActivitySentencesSchema["sentences"][number];
 type AuditedReadingSentence = ActivitySentenceVariantsSchema["sentences"][number];
@@ -163,8 +160,13 @@ async function handleReadingGenerationFailure(
   return { sentences: [] };
 }
 
+/**
+ * Generates reading sentences and their variants for a single reading activity.
+ * No status checks — the caller only passes activities that need generation.
+ * Pure data producer: returns sentences without saving to the database.
+ */
 export async function generateReadingContentStep(
-  activities: LessonActivity[],
+  activity: LessonActivity,
   workflowRunId: string,
   currentRunWords: VocabularyWord[],
   concepts: string[] = [],
@@ -172,19 +174,11 @@ export async function generateReadingContentStep(
 ): Promise<{ sentences: ReadingSentence[] }> {
   "use step";
 
-  const resolved = await resolveActivityForGeneration(activities, "reading");
-
-  if (!resolved.shouldGenerate) {
-    return { sentences: [] };
-  }
-
-  const { activity } = resolved;
   const course = activity.lesson.chapter.course;
 
   await using stream = createStepStream<ActivityStepName>();
 
   await stream.status({ status: "started", step: "generateSentences" });
-  await setActivityAsRunningStep({ activityId: activity.id, workflowRunId });
 
   const targetLanguage = course.targetLanguage ?? "";
   const userLanguage = activity.language;

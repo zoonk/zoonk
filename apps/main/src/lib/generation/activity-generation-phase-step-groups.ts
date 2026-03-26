@@ -1,4 +1,4 @@
-import { type ActivityStepName } from "@/lib/workflow/config";
+import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 
 const ALL_CONTENT_STEPS: ActivityStepName[] = [
   "generateChallengeContent",
@@ -9,69 +9,55 @@ const ALL_CONTENT_STEPS: ActivityStepName[] = [
   "generateGrammarContent",
   "generateGrammarUserContent",
   "generateGrammarRomanization",
-  "saveGrammarSteps",
   "generateSentences",
   "generateVocabularyContent",
   "copyListeningSteps",
 ];
 
 const ALL_VOCABULARY_STEPS: ActivityStepName[] = [
-  "saveVocabularyWords",
-  "generateVocabularyPronunciation",
+  "generateVocabularyPronunciationAndAlternatives",
   "generateVocabularyRomanization",
   "generateVocabularyAudio",
-  "saveWordAudioAndRomanization",
 ];
 
 const ALL_READING_STEPS: ActivityStepName[] = [
-  "saveSentences",
   "generateAudio",
-  "saveSentenceAudioAndRomanization",
   "generateReadingRomanization",
+  "generateSentenceWordMetadata",
+  "generateSentenceWordAudio",
+  "generateSentencePronunciationAndAlternatives",
 ];
 
-const ALL_COMPLETION_STEPS: ActivityStepName[] = [
-  "setChallengeAsCompleted",
-  "setCustomAsCompleted",
-  "setExplanationAsCompleted",
-  "setQuizAsCompleted",
-  "setPracticeAsCompleted",
-  "setGrammarAsCompleted",
-  "setTranslationAsCompleted",
-  "setVocabularyAsCompleted",
-  "setReadingAsCompleted",
-  "setListeningAsCompleted",
-  "setActivityAsCompleted",
-  "setFirstActivityAsCompleted",
+const ALL_SAVE_STEPS: ActivityStepName[] = [
+  "saveChallengeActivity",
+  "saveCustomActivity",
+  "saveExplanationActivity",
+  "saveGrammarActivity",
+  "saveListeningActivity",
+  "savePracticeActivity",
+  "saveQuizActivity",
+  "saveReadingActivity",
+  "saveVocabularyActivity",
 ];
 
-export const EXPLANATION_DEPS: ActivityStepName[] = [
-  "setActivityAsRunning",
-  "generateExplanationContent",
-];
+export const EXPLANATION_DEPS: ActivityStepName[] = ["generateExplanationContent"];
 
 export const LISTENING_DEPENDENCY_STEPS: ActivityStepName[] = [
-  "setActivityAsRunning",
   "generateVocabularyContent",
-  "saveVocabularyWords",
-  "generateVocabularyPronunciation",
+  "generateVocabularyPronunciationAndAlternatives",
   "generateVocabularyRomanization",
   "generateVocabularyAudio",
-  "saveWordAudioAndRomanization",
-  "setTranslationAsCompleted",
+  "saveVocabularyActivity",
   "generateGrammarContent",
   "generateGrammarUserContent",
   "generateGrammarRomanization",
-  "saveGrammarSteps",
+  "saveGrammarActivity",
   "generateSentences",
-  "setGrammarAsCompleted",
-  "setActivityAsCompleted",
 ];
 
 export const LISTENING_WRITING_STEPS: ActivityStepName[] = [
   "copyListeningSteps",
-  "setVocabularyAsCompleted",
-  "setReadingAsCompleted",
+  "saveListeningActivity",
 ];
 
 export function getFinishingSteps(exclude: readonly ActivityStepName[]): ActivityStepName[] {
@@ -80,6 +66,6 @@ export function getFinishingSteps(exclude: readonly ActivityStepName[]): Activit
     ...ALL_CONTENT_STEPS.filter((step) => !excluded.has(step)),
     ...ALL_VOCABULARY_STEPS.filter((step) => !excluded.has(step)),
     ...ALL_READING_STEPS.filter((step) => !excluded.has(step)),
-    ...ALL_COMPLETION_STEPS.filter((step) => !excluded.has(step)),
+    ...ALL_SAVE_STEPS.filter((step) => !excluded.has(step)),
   ];
 }

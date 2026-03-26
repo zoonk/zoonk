@@ -1,49 +1,40 @@
-import {
-  type StepStream,
-  type WorkflowErrorReason,
-  createStepStream,
-} from "@/workflows/_shared/stream-status";
-import { type ActivityStepName } from "@/workflows/config";
+import { createStepStream } from "@/workflows/_shared/stream-status";
 import { type StepVisualSchema, generateStepVisuals } from "@zoonk/ai/tasks/steps/visual";
-import { prisma } from "@zoonk/db";
-import { safeAsync } from "@zoonk/utils/error";
+import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { type ActivitySteps } from "./_utils/get-activity-steps";
 import { buildVisualRows } from "./_utils/visual-rows";
 import { type LessonActivity } from "./get-lesson-activities-step";
-import { handleActivityFailureStep } from "./handle-failure-step";
 
 export type StepVisual = StepVisualSchema["visuals"][number];
 
-async function saveVisualsToDB(
-  data: {
-    activityId: bigint | number;
-    content: Omit<StepVisual, "stepIndex">;
-    isPublished: true;
-    kind: "visual";
-    position: number;
-  }[],
-): Promise<{ error: Error | null }> {
-  if (data.length === 0) {
-    return { error: null };
-  }
+export type VisualRow = {
+  activityId: bigint | number;
+  content: Omit<StepVisual, "stepIndex"> & { url?: string };
+  isPublished: true;
+  kind: "visual";
+  position: number;
+};
 
-  return safeAsync(() => prisma.step.createMany({ data }));
+/**
+ * Computes virtual "dbSteps" from the content step count.
+ * Content steps are saved at positions `index * 2` (even positions),
+ * so we recreate that mapping without reading the database.
+ * Visual steps will be placed at `contentPosition + 1` (odd positions).
+ */
+function computeContentStepPositions(stepCount: number): { position: number }[] {
+  return Array.from({ length: stepCount }, (_, i) => ({ position: i * 2 }));
 }
 
-async function handleVisualsError(
-  stream: StepStream<ActivityStepName>,
-  activityId: bigint | number,
-  reason: WorkflowErrorReason,
-): Promise<{ visuals: StepVisual[] }> {
-  await stream.error({ reason, step: "generateVisuals" });
-  await handleActivityFailureStep({ activityId });
-  return { visuals: [] };
-}
-
+/**
+ * Generates visual content (code snippets, images, diagrams) for an explanation activity.
+ * Pure data producer: computes visual positions from content step count instead of reading DB.
+ * Returns visual rows ready for DB insertion. No DB writes happen here.
+ * On failure, throws to let the workflow framework retry.
+ */
 export async function generateVisualsForActivityStep(
   activity: LessonActivity,
   steps: ActivitySteps,
-): Promise<{ visuals: StepVisual[] }> {
+): Promise<{ visuals: StepVisual[]; visualRows: VisualRow[] }> {
   "use step";
 
   await using stream = createStepStream<ActivityStepName>();
@@ -51,42 +42,25 @@ export async function generateVisualsForActivityStep(
   if (steps.length === 0) {
     await stream.status({ status: "started", step: "generateVisuals" });
     await stream.status({ status: "completed", step: "generateVisuals" });
-    return { visuals: [] };
-  }
-
-  if (activity.generationStatus === "completed" || activity.generationStatus === "running") {
-    return { visuals: [] };
-  }
-
-  const dbSteps = await prisma.step.findMany({
-    orderBy: { position: "asc" },
-    select: { id: true, position: true },
-    where: { activityId: activity.id, kind: "static" },
-  });
-
-  if (dbSteps.length === 0) {
-    await stream.status({ status: "started", step: "generateVisuals" });
-    await stream.status({ status: "completed", step: "generateVisuals" });
-    return { visuals: [] };
+    return { visualRows: [], visuals: [] };
   }
 
   await stream.status({ status: "started", step: "generateVisuals" });
 
-  const { data: result, error } = await safeAsync(() =>
-    generateStepVisuals({
-      chapterTitle: activity.lesson.chapter.title,
-      courseTitle: activity.lesson.chapter.course.title,
-      language: activity.language,
-      lessonDescription: activity.lesson.description ?? "",
-      lessonTitle: activity.lesson.title,
-      steps,
-    }),
-  );
+  const result = await generateStepVisuals({
+    chapterTitle: activity.lesson.chapter.title,
+    courseTitle: activity.lesson.chapter.course.title,
+    language: activity.language,
+    lessonDescription: activity.lesson.description ?? "",
+    lessonTitle: activity.lesson.title,
+    steps,
+  });
 
-  if (error || !result) {
-    const reason = error ? "aiGenerationFailed" : "aiEmptyResult";
-    return await handleVisualsError(stream, activity.id, reason);
+  if (!result) {
+    throw new Error("Empty AI result for visual generation");
   }
+
+  const dbSteps = computeContentStepPositions(steps.length);
 
   const visualRows = buildVisualRows({
     activityId: activity.id,
@@ -95,16 +69,10 @@ export async function generateVisualsForActivityStep(
   });
 
   if (!visualRows) {
-    return await handleVisualsError(stream, activity.id, "contentValidationFailed");
-  }
-
-  const { error: saveError } = await saveVisualsToDB(visualRows);
-
-  if (saveError) {
-    return await handleVisualsError(stream, activity.id, "dbSaveFailed");
+    throw new Error("Invalid visual coverage — visuals don't match content step count");
   }
 
   await stream.status({ status: "completed", step: "generateVisuals" });
 
-  return { visuals: result.data.visuals };
+  return { visualRows, visuals: result.data.visuals };
 }

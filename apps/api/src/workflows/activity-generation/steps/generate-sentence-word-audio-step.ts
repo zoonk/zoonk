@@ -1,22 +1,26 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
-import { type ActivityStepName } from "@/workflows/config";
+import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { prisma } from "@zoonk/db";
 import { isTTSSupportedLanguage } from "@zoonk/utils/languages";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { generateAudioForText } from "./_utils/generate-audio-for-text";
 import { type LessonActivity } from "./get-lesson-activities-step";
-import { handleActivityFailureStep } from "./handle-failure-step";
-import { type SavedSentenceWord } from "./save-sentence-words-step";
 
+/**
+ * Generates audio URLs for individual words extracted from reading sentences.
+ * Checks existing Word records by text to skip words that already have audio.
+ * Returns the audio URL map without writing to the database — the save step
+ * persists the results.
+ */
 export async function generateSentenceWordAudioStep(
   activities: LessonActivity[],
-  savedSentenceWords: SavedSentenceWord[],
+  words: string[],
 ): Promise<{ wordAudioUrls: Record<string, string> }> {
   "use step";
 
   const activity = findActivityByKind(activities, "reading");
 
-  if (!activity || savedSentenceWords.length === 0) {
+  if (!activity || words.length === 0) {
     return { wordAudioUrls: {} };
   }
 
@@ -41,7 +45,7 @@ export async function generateSentenceWordAudioStep(
       audioUrl: { not: null },
       organizationId,
       targetLanguage,
-      word: { in: savedSentenceWords.map((saved) => saved.word) },
+      word: { in: words },
     },
   });
 
@@ -49,45 +53,18 @@ export async function generateSentenceWordAudioStep(
     existingAudios.flatMap((record) => (record.audioUrl ? [[record.word, record.audioUrl]] : [])),
   );
 
-  const wordsNeedingAudio = savedSentenceWords.filter(
-    (saved) => !saved.wordAudioUrl && !existingAudioUrls[saved.word],
-  );
+  const wordsNeedingAudio = words.filter((word) => !existingAudioUrls[word]);
 
   const results = await Promise.all(
-    wordsNeedingAudio.map((saved) => generateAudioForText(saved.word, targetLanguage, orgSlug)),
+    wordsNeedingAudio.map((word) => generateAudioForText(word, targetLanguage, orgSlug)),
   );
 
   const fulfilled = results.filter((result) => result !== null);
 
-  const newAudioRecords = await Promise.all(
-    fulfilled.map((result) =>
-      prisma.word.update({
-        data: { audioUrl: result.audioUrl },
-        select: { audioUrl: true, word: true },
-        where: { orgWord: { organizationId, targetLanguage, word: result.text } },
-      }),
-    ),
-  );
-
   const wordAudioUrls: Record<string, string> = {
     ...existingAudioUrls,
-    ...Object.fromEntries(
-      savedSentenceWords.flatMap((saved) =>
-        saved.wordAudioUrl ? [[saved.word, saved.wordAudioUrl]] : [],
-      ),
-    ),
-    ...Object.fromEntries(
-      newAudioRecords.flatMap((record) =>
-        record.audioUrl ? [[record.word, record.audioUrl]] : [],
-      ),
-    ),
+    ...Object.fromEntries(fulfilled.map((result) => [result.text, result.audioUrl])),
   };
-
-  if (fulfilled.length < wordsNeedingAudio.length) {
-    await stream.error({ reason: "audioGenerationFailed", step: "generateSentenceWordAudio" });
-    await handleActivityFailureStep({ activityId: activity.id });
-    return { wordAudioUrls };
-  }
 
   await stream.status({ status: "completed", step: "generateSentenceWordAudio" });
   return { wordAudioUrls };

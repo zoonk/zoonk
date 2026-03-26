@@ -4,7 +4,7 @@ import {
   calculateWeightedProgress as calculateProgress,
   getPhaseStatus as getStatus,
 } from "@/lib/generation-phases";
-import { type ChapterStepName, type ChapterWorkflowStepName } from "@/lib/workflow/config";
+import { type ChapterStepName, type ChapterWorkflowStepName } from "@zoonk/core/workflows/steps";
 import { BookOpenIcon, type LucideIcon, SaveIcon, SettingsIcon } from "lucide-react";
 
 export type PhaseName = "gettingReady" | "preparingLessons" | "savingLessons";

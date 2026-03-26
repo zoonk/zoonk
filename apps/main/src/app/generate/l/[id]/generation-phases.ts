@@ -4,7 +4,7 @@ import {
   calculateWeightedProgress as calculateProgress,
   getPhaseStatus as getStatus,
 } from "@/lib/generation-phases";
-import { type LessonStepName } from "@/lib/workflow/config";
+import { type LessonStepName } from "@zoonk/core/workflows/steps";
 import {
   BookOpenIcon,
   CheckCircleIcon,
@@ -20,7 +20,7 @@ export type PhaseName =
   | "finishing";
 
 const PHASE_STEPS = {
-  figuringOutApproach: ["determineLessonKind", "updateLessonKind"],
+  figuringOutApproach: ["determineLessonKind", "updateLessonKind", "removeNonLanguageLesson"],
   finishing: ["setLessonAsCompleted"],
   gettingStarted: ["getLesson", "setLessonAsRunning"],
   settingUpActivities: ["generateCustomActivities", "addActivities"],

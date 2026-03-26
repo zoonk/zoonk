@@ -55,6 +55,7 @@ describe(generateWordPronunciationAndAlternatives, () => {
 
   test("returns empty results when words array is empty", async () => {
     const result = await generateWordPronunciationAndAlternatives({
+      organizationId,
       targetLanguage: "es",
       userLanguage: "en",
       words: [],
@@ -65,41 +66,42 @@ describe(generateWordPronunciationAndAlternatives, () => {
     expect(generateWordAlternativeTranslations).not.toHaveBeenCalled();
   });
 
-  test("generates pronunciation and writes it to the database", async () => {
+  test("generates pronunciation and returns it without writing to the database", async () => {
     const word = await wordFixture({ organizationId });
     await createWordTranslation({ translation: "hello", wordId: word.id });
 
-    await generateWordPronunciationAndAlternatives({
+    const result = await generateWordPronunciationAndAlternatives({
+      organizationId,
       targetLanguage: "es",
       userLanguage: "en",
-      words: [{ word: word.word, wordId: Number(word.id) }],
+      words: [{ word: word.word }],
     });
 
-    const updated = await prisma.wordTranslation.findFirst({
-      where: { userLanguage: "en", wordId: word.id },
-    });
-
-    expect(updated?.pronunciation).toBe("OH-lah");
+    expect(result.pronunciations[word.word]).toBe("OH-lah");
     expect(generateActivityPronunciation).toHaveBeenCalledWith(
       expect.objectContaining({ targetLanguage: "es", userLanguage: "en", word: word.word }),
     );
-  });
 
-  test("generates alternativeTranslations and writes them to the database", async () => {
-    const word = await wordFixture({ organizationId });
-    await createWordTranslation({ translation: "hello", wordId: word.id });
-
-    await generateWordPronunciationAndAlternatives({
-      targetLanguage: "es",
-      userLanguage: "en",
-      words: [{ word: word.word, wordId: Number(word.id) }],
-    });
-
-    const updated = await prisma.wordTranslation.findFirst({
+    // Verify the function did NOT write to the database
+    const dbRecord = await prisma.wordTranslation.findFirst({
       where: { userLanguage: "en", wordId: word.id },
     });
 
-    expect(updated?.alternativeTranslations).toEqual(["hi", "hey"]);
+    expect(dbRecord?.pronunciation).toBeNull();
+  });
+
+  test("generates alternativeTranslations and returns them without writing to the database", async () => {
+    const word = await wordFixture({ organizationId });
+    await createWordTranslation({ translation: "hello", wordId: word.id });
+
+    const result = await generateWordPronunciationAndAlternatives({
+      organizationId,
+      targetLanguage: "es",
+      userLanguage: "en",
+      words: [{ word: word.word }],
+    });
+
+    expect(result.alternatives[word.word]).toEqual(["hi", "hey"]);
     expect(generateWordAlternativeTranslations).toHaveBeenCalledWith(
       expect.objectContaining({
         targetLanguage: "es",
@@ -108,6 +110,13 @@ describe(generateWordPronunciationAndAlternatives, () => {
         word: word.word,
       }),
     );
+
+    // Verify the function did NOT write to the database
+    const dbRecord = await prisma.wordTranslation.findFirst({
+      where: { userLanguage: "en", wordId: word.id },
+    });
+
+    expect(dbRecord?.alternativeTranslations).toEqual([]);
   });
 
   test("skips pronunciation generation for words that already have it", async () => {
@@ -119,18 +128,13 @@ describe(generateWordPronunciationAndAlternatives, () => {
     });
 
     await generateWordPronunciationAndAlternatives({
+      organizationId,
       targetLanguage: "es",
       userLanguage: "en",
-      words: [{ word: word.word, wordId: Number(word.id) }],
+      words: [{ word: word.word }],
     });
 
     expect(generateActivityPronunciation).not.toHaveBeenCalled();
-
-    const updated = await prisma.wordTranslation.findFirst({
-      where: { userLanguage: "en", wordId: word.id },
-    });
-
-    expect(updated?.pronunciation).toBe("existing-pron");
   });
 
   test("skips alternatives generation for words that already have them", async () => {
@@ -142,18 +146,13 @@ describe(generateWordPronunciationAndAlternatives, () => {
     });
 
     await generateWordPronunciationAndAlternatives({
+      organizationId,
       targetLanguage: "es",
       userLanguage: "en",
-      words: [{ word: word.word, wordId: Number(word.id) }],
+      words: [{ word: word.word }],
     });
 
     expect(generateWordAlternativeTranslations).not.toHaveBeenCalled();
-
-    const updated = await prisma.wordTranslation.findFirst({
-      where: { userLanguage: "en", wordId: word.id },
-    });
-
-    expect(updated?.alternativeTranslations).toEqual(["existing-alt"]);
   });
 
   test("skips both when word already has pronunciation and alternatives", async () => {
@@ -166,9 +165,10 @@ describe(generateWordPronunciationAndAlternatives, () => {
     });
 
     const result = await generateWordPronunciationAndAlternatives({
+      organizationId,
       targetLanguage: "es",
       userLanguage: "en",
-      words: [{ word: word.word, wordId: Number(word.id) }],
+      words: [{ word: word.word }],
     });
 
     expect(generateActivityPronunciation).not.toHaveBeenCalled();
@@ -176,7 +176,7 @@ describe(generateWordPronunciationAndAlternatives, () => {
     expect(result).toEqual({ alternatives: {}, pronunciations: {} });
   });
 
-  test("persists alternatives even when pronunciation AI fails", async () => {
+  test("returns alternatives even when pronunciation AI fails", async () => {
     vi.mocked(generateActivityPronunciation).mockRejectedValueOnce(
       new Error("pronunciation AI failed"),
     );
@@ -184,21 +184,18 @@ describe(generateWordPronunciationAndAlternatives, () => {
     const word = await wordFixture({ organizationId });
     await createWordTranslation({ translation: "hello", wordId: word.id });
 
-    await generateWordPronunciationAndAlternatives({
+    const result = await generateWordPronunciationAndAlternatives({
+      organizationId,
       targetLanguage: "es",
       userLanguage: "en",
-      words: [{ word: word.word, wordId: Number(word.id) }],
+      words: [{ word: word.word }],
     });
 
-    const updated = await prisma.wordTranslation.findFirst({
-      where: { userLanguage: "en", wordId: word.id },
-    });
-
-    expect(updated?.alternativeTranslations).toEqual(["hi", "hey"]);
-    expect(updated?.pronunciation).toBeNull();
+    expect(result.alternatives[word.word]).toEqual(["hi", "hey"]);
+    expect(result.pronunciations[word.word]).toBeUndefined();
   });
 
-  test("persists pronunciation even when alternatives AI fails", async () => {
+  test("returns pronunciation even when alternatives AI fails", async () => {
     vi.mocked(generateWordAlternativeTranslations).mockRejectedValueOnce(
       new Error("alternatives AI failed"),
     );
@@ -206,18 +203,15 @@ describe(generateWordPronunciationAndAlternatives, () => {
     const word = await wordFixture({ organizationId });
     await createWordTranslation({ translation: "hello", wordId: word.id });
 
-    await generateWordPronunciationAndAlternatives({
+    const result = await generateWordPronunciationAndAlternatives({
+      organizationId,
       targetLanguage: "es",
       userLanguage: "en",
-      words: [{ word: word.word, wordId: Number(word.id) }],
+      words: [{ word: word.word }],
     });
 
-    const updated = await prisma.wordTranslation.findFirst({
-      where: { userLanguage: "en", wordId: word.id },
-    });
-
-    expect(updated?.pronunciation).toBe("OH-lah");
-    expect(updated?.alternativeTranslations).toEqual([]);
+    expect(result.pronunciations[word.word]).toBe("OH-lah");
+    expect(result.alternatives[word.word]).toBeUndefined();
   });
 
   test("returns generated pronunciation and alternatives in the result", async () => {
@@ -225,36 +219,14 @@ describe(generateWordPronunciationAndAlternatives, () => {
     await createWordTranslation({ translation: "hello", wordId: word.id });
 
     const result = await generateWordPronunciationAndAlternatives({
+      organizationId,
       targetLanguage: "es",
       userLanguage: "en",
-      words: [{ word: word.word, wordId: Number(word.id) }],
+      words: [{ word: word.word }],
     });
 
     expect(result.pronunciations[word.word]).toBe("OH-lah");
     expect(result.alternatives[word.word]).toEqual(["hi", "hey"]);
-  });
-
-  test("does not overwrite with empty alternatives when AI returns empty array", async () => {
-    vi.mocked(generateWordAlternativeTranslations).mockResolvedValueOnce({
-      data: { alternativeTranslations: [] },
-    } as unknown as Awaited<ReturnType<typeof generateWordAlternativeTranslations>>);
-
-    const word = await wordFixture({ organizationId });
-    await createWordTranslation({ translation: "cat", wordId: word.id });
-
-    await generateWordPronunciationAndAlternatives({
-      targetLanguage: "es",
-      userLanguage: "en",
-      words: [{ word: word.word, wordId: Number(word.id) }],
-    });
-
-    const updated = await prisma.wordTranslation.findFirst({
-      where: { userLanguage: "en", wordId: word.id },
-    });
-
-    // The persist logic guards with `alternatives.length > 0`, so an empty
-    // AI result does not trigger a DB write for alternativeTranslations.
-    expect(updated?.alternativeTranslations).toEqual([]);
   });
 
   test("generates pronunciation and alternatives for multiple words in a single call", async () => {
@@ -269,28 +241,16 @@ describe(generateWordPronunciationAndAlternatives, () => {
     ]);
 
     const result = await generateWordPronunciationAndAlternatives({
+      organizationId,
       targetLanguage: "es",
       userLanguage: "en",
-      words: [
-        { word: word1.word, wordId: Number(word1.id) },
-        { word: word2.word, wordId: Number(word2.id) },
-      ],
+      words: [{ word: word1.word }, { word: word2.word }],
     });
 
     expect(Object.keys(result.pronunciations)).toHaveLength(2);
     expect(Object.keys(result.alternatives)).toHaveLength(2);
     expect(generateActivityPronunciation).toHaveBeenCalledTimes(2);
     expect(generateWordAlternativeTranslations).toHaveBeenCalledTimes(2);
-
-    const [updated1, updated2] = await Promise.all([
-      prisma.wordTranslation.findFirst({ where: { userLanguage: "en", wordId: word1.id } }),
-      prisma.wordTranslation.findFirst({ where: { userLanguage: "en", wordId: word2.id } }),
-    ]);
-
-    expect(updated1?.pronunciation).toBe("OH-lah");
-    expect(updated1?.alternativeTranslations).toEqual(["hi", "hey"]);
-    expect(updated2?.pronunciation).toBe("OH-lah");
-    expect(updated2?.alternativeTranslations).toEqual(["hi", "hey"]);
   });
 
   test("only generates missing fields in a mixed batch", async () => {
@@ -319,13 +279,10 @@ describe(generateWordPronunciationAndAlternatives, () => {
     ]);
 
     await generateWordPronunciationAndAlternatives({
+      organizationId,
       targetLanguage: "es",
       userLanguage: "en",
-      words: [
-        { word: needsBoth.word, wordId: Number(needsBoth.id) },
-        { word: needsPronOnly.word, wordId: Number(needsPronOnly.id) },
-        { word: needsAltsOnly.word, wordId: Number(needsAltsOnly.id) },
-      ],
+      words: [{ word: needsBoth.word }, { word: needsPronOnly.word }, { word: needsAltsOnly.word }],
     });
 
     // Pronunciation: called for needsBoth + needsPronOnly (2), not needsAltsOnly
@@ -333,43 +290,50 @@ describe(generateWordPronunciationAndAlternatives, () => {
 
     // Alternatives: called for needsBoth + needsAltsOnly (2), not needsPronOnly
     expect(generateWordAlternativeTranslations).toHaveBeenCalledTimes(2);
-
-    const [updatedBoth, updatedPronOnly, updatedAltsOnly] = await Promise.all([
-      prisma.wordTranslation.findFirst({ where: { userLanguage: "en", wordId: needsBoth.id } }),
-      prisma.wordTranslation.findFirst({
-        where: { userLanguage: "en", wordId: needsPronOnly.id },
-      }),
-      prisma.wordTranslation.findFirst({
-        where: { userLanguage: "en", wordId: needsAltsOnly.id },
-      }),
-    ]);
-
-    expect(updatedBoth?.pronunciation).toBe("OH-lah");
-    expect(updatedBoth?.alternativeTranslations).toEqual(["hi", "hey"]);
-
-    expect(updatedPronOnly?.pronunciation).toBe("OH-lah");
-    expect(updatedPronOnly?.alternativeTranslations).toEqual(["kitty"]);
-
-    expect(updatedAltsOnly?.pronunciation).toBe("existing-pron");
-    expect(updatedAltsOnly?.alternativeTranslations).toEqual(["hi", "hey"]);
   });
 
-  test("propagates database write failures instead of swallowing them", async () => {
-    const word = await wordFixture({ organizationId });
-    await createWordTranslation({ translation: "hello", wordId: word.id });
+  test("generates pronunciation for words not yet in the database", async () => {
+    const result = await generateWordPronunciationAndAlternatives({
+      organizationId,
+      targetLanguage: "es",
+      userLanguage: "en",
+      words: [{ word: "completamente-nuevo" }],
+    });
 
-    const transactionSpy = vi
-      .spyOn(prisma, "$transaction")
-      .mockRejectedValueOnce(new Error("DB transaction failed"));
+    expect(generateActivityPronunciation).toHaveBeenCalledWith(
+      expect.objectContaining({ word: "completamente-nuevo" }),
+    );
+    expect(result.pronunciations["completamente-nuevo"]).toBe("OH-lah");
+  });
 
-    await expect(
-      generateWordPronunciationAndAlternatives({
-        targetLanguage: "es",
-        userLanguage: "en",
-        words: [{ word: word.word, wordId: Number(word.id) }],
+  test("generates alternatives for new words when translation is provided", async () => {
+    const result = await generateWordPronunciationAndAlternatives({
+      organizationId,
+      targetLanguage: "es",
+      userLanguage: "en",
+      words: [{ translation: "completely", word: "completamente-con-trad" }],
+    });
+
+    expect(generateWordAlternativeTranslations).toHaveBeenCalledWith(
+      expect.objectContaining({
+        translation: "completely",
+        word: "completamente-con-trad",
       }),
-    ).rejects.toThrow("DB transaction failed");
+    );
+    expect(result.alternatives["completamente-con-trad"]).toEqual(["hi", "hey"]);
+  });
 
-    transactionSpy.mockRestore();
+  test("skips alternatives for new words without translation", async () => {
+    await generateWordPronunciationAndAlternatives({
+      organizationId,
+      targetLanguage: "es",
+      userLanguage: "en",
+      words: [{ word: "sin-traduccion" }],
+    });
+
+    // Pronunciation should still be generated
+    expect(generateActivityPronunciation).toHaveBeenCalledOnce();
+    // No translation provided → alternatives skipped
+    expect(generateWordAlternativeTranslations).not.toHaveBeenCalled();
   });
 });

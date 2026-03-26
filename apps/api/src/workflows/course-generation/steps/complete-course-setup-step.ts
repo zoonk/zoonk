@@ -1,5 +1,5 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
-import { type CourseWorkflowStepName } from "@/workflows/config";
+import { type CourseWorkflowStepName } from "@zoonk/core/workflows/steps";
 import { prisma } from "@zoonk/db";
 import { rejected } from "@zoonk/utils/settled";
 

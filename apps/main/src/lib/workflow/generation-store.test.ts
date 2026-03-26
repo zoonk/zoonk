@@ -1,10 +1,10 @@
+import { type StepStreamMessage } from "@zoonk/core/workflows/steps";
 import { describe, expect, it } from "vitest";
 import {
   type GenerationAction,
   type GenerationState,
-  type StreamMessage,
   generationReducer,
-  handleStreamMessage,
+  handleStepStreamMessage,
   initialGenerationState,
 } from "./generation-store";
 
@@ -123,7 +123,7 @@ describe(generationReducer, () => {
   });
 });
 
-describe(handleStreamMessage, () => {
+describe(handleStepStreamMessage, () => {
   function applyActions(actions: GenerationAction[], initial: GenerationState) {
     let state = initial;
     for (const action of actions) {
@@ -133,11 +133,11 @@ describe(handleStreamMessage, () => {
   }
 
   function applyMessage(
-    message: StreamMessage,
+    message: StepStreamMessage,
     initial?: Parameters<typeof initialGenerationState>[0],
   ) {
     const actions: GenerationAction[] = [];
-    handleStreamMessage(message, (a) => actions.push(a));
+    handleStepStreamMessage({ dispatch: (a) => actions.push(a), message });
     return applyActions(actions, initialGenerationState(initial));
   }
 
@@ -153,14 +153,57 @@ describe(handleStreamMessage, () => {
 
   it("triggers streamEnded on completionStep match", () => {
     const actions: GenerationAction[] = [];
-    handleStreamMessage({ status: "completed", step: "done" }, (a) => actions.push(a), "done");
+    handleStepStreamMessage({
+      completionStep: "done",
+      dispatch: (a) => actions.push(a),
+      message: { status: "completed", step: "done" },
+    });
+    const state = applyActions(actions, initialGenerationState({ status: "streaming" }));
+    expect(state.status).toBe("completed");
+  });
+
+  it("triggers streamEnded when entityId matches the completed activity", () => {
+    const actions: GenerationAction[] = [];
+    handleStepStreamMessage({
+      completionStep: "done",
+      dispatch: (a) => actions.push(a),
+      entityId: 42,
+      message: { entityId: 42, status: "completed", step: "done" },
+    });
+    const state = applyActions(actions, initialGenerationState({ status: "streaming" }));
+    expect(state.status).toBe("completed");
+  });
+
+  it("does not trigger streamEnded when entityId does not match", () => {
+    const actions: GenerationAction[] = [];
+    handleStepStreamMessage({
+      completionStep: "done",
+      dispatch: (a) => actions.push(a),
+      entityId: 42,
+      message: { entityId: 99, status: "completed", step: "done" },
+    });
+    const state = applyActions(actions, initialGenerationState({ status: "streaming" }));
+    expect(state.status).toBe("streaming");
+  });
+
+  it("triggers streamEnded when no entityId filter is set (non-activity workflows)", () => {
+    const actions: GenerationAction[] = [];
+    handleStepStreamMessage({
+      completionStep: "done",
+      dispatch: (a) => actions.push(a),
+      message: { entityId: 99, status: "completed", step: "done" },
+    });
     const state = applyActions(actions, initialGenerationState({ status: "streaming" }));
     expect(state.status).toBe("completed");
   });
 
   it("does not trigger streamEnded for non-completion steps", () => {
     const actions: GenerationAction[] = [];
-    handleStreamMessage({ status: "completed", step: "stepA" }, (a) => actions.push(a), "done");
+    handleStepStreamMessage({
+      completionStep: "done",
+      dispatch: (a) => actions.push(a),
+      message: { status: "completed", step: "stepA" },
+    });
     const state = applyActions(actions, initialGenerationState({ status: "streaming" }));
     expect(state.status).toBe("streaming");
   });

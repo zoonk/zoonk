@@ -11,11 +11,11 @@ import {
   GenerationTimelineSubtitle,
   GenerationTimelineTitle,
 } from "@/components/generation/generation-progress";
-import { type ActivityStepName, getActivityCompletionStep } from "@/lib/workflow/config";
 import { useAnimatedProgress } from "@/lib/workflow/use-animated-progress";
 import { useCompletionRedirect } from "@/lib/workflow/use-completion-redirect";
 import { useThinkingMessages } from "@/lib/workflow/use-thinking-messages";
 import { useWorkflowGeneration } from "@/lib/workflow/use-workflow-generation";
+import { type ActivityStepName, getActivityCompletionStep } from "@zoonk/core/workflows/steps";
 import { type ActivityKind, type GenerationStatus } from "@zoonk/db";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { API_URL } from "@zoonk/utils/url";
@@ -23,6 +23,7 @@ import { useExtracted } from "next-intl";
 import { useGenerationPhases } from "./use-generation-phases";
 
 export function GenerationClient({
+  activityId,
   activityKind,
   chapterSlug,
   courseSlug,
@@ -32,6 +33,7 @@ export function GenerationClient({
   lessonSlug,
   position,
 }: {
+  activityId: number;
   activityKind: ActivityKind;
   chapterSlug: string;
   courseSlug: string;
@@ -47,6 +49,7 @@ export function GenerationClient({
 
   const generation = useWorkflowGeneration<ActivityStepName>({
     completionStep,
+    entityId: activityId,
     initialRunId: generationRunId,
     initialStatus: generationStatus === "running" ? "streaming" : "idle",
     statusUrl: `${API_URL}/v1/workflows/activity-generation/status`,

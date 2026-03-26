@@ -1,5 +1,5 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
-import { type ActivityStepName } from "@/workflows/config";
+import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { type LessonActivity } from "./get-lesson-activities-step";

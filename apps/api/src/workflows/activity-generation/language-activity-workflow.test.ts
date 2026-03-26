@@ -13,8 +13,8 @@ import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { activityGenerationWorkflow } from "./activity-generation-workflow";
-import { completeListeningActivityStep } from "./steps/complete-listening-activity-step";
 import { getLessonActivitiesStep } from "./steps/get-lesson-activities-step";
+import { saveListeningActivityStep } from "./steps/save-listening-activity-step";
 
 vi.mock("./steps/get-neighboring-concepts-step", () => ({
   getNeighboringConceptsStep: vi.fn().mockResolvedValue([]),
@@ -131,6 +131,12 @@ vi.mock("@zoonk/ai/tasks/activities/language/sentence-variants", () => ({
         { alternativeSentences: [], alternativeTranslations: [], id: "1" },
       ],
     },
+  }),
+}));
+
+vi.mock("@zoonk/ai/tasks/activities/language/translation", () => ({
+  generateTranslation: vi.fn().mockResolvedValue({
+    data: { translation: "mocked" },
   }),
 }));
 
@@ -457,8 +463,29 @@ describe("language activity generation", () => {
       title: `Reading ${randomUUID()}`,
     });
 
+    // Create a reading step so the listening step has source data to copy
+    const sentence = await prisma.sentence.create({
+      data: {
+        organizationId,
+        sentence: `listen-running-${randomUUID().slice(0, 8)}`,
+        targetLanguage: "es",
+      },
+    });
+
+    await prisma.step.create({
+      data: {
+        activityId: readingActivity.id,
+        content: {},
+        kind: "reading",
+        position: 0,
+        sentenceId: sentence.id,
+      },
+    });
+
+    // Listening must be "pending" (not "running") because saveListeningActivityStep
+    // skips activities that are already "running" or "completed".
     const listeningActivity = await activityFixture({
-      generationStatus: "running",
+      generationStatus: "pending",
       kind: "listening",
       lessonId: testLesson.id,
       organizationId,
@@ -467,7 +494,7 @@ describe("language activity generation", () => {
 
     const activities = await getLessonActivitiesStep(testLesson.id);
 
-    await completeListeningActivityStep(activities, "test-run-id");
+    await saveListeningActivityStep(activities, "test-run-id");
 
     const [dbReading, dbListening] = await Promise.all([
       prisma.activity.findUnique({ where: { id: readingActivity.id } }),
@@ -528,7 +555,7 @@ describe("language activity generation", () => {
     expect(generateActivitySentenceVariants).not.toHaveBeenCalled();
   });
 
-  test("reading audio failure causes both reading and listening to fail", async () => {
+  test("reading completes without audio when audio generation fails", async () => {
     vi.mocked(generateLanguageAudio).mockResolvedValue({
       data: null,
       error: new Error("Audio failed"),
@@ -587,8 +614,101 @@ describe("language activity generation", () => {
       where: { id: listeningActivity.id },
     });
 
-    expect(dbReading?.generationStatus).toBe("failed");
-    expect(dbListening?.generationStatus).toBe("failed");
+    // Audio failure is graceful: the audio step returns empty URLs,
+    // the save step persists sentences without audio, and both activities complete.
+    expect(dbReading?.generationStatus).toBe("completed");
+    expect(dbListening?.generationStatus).toBe("completed");
+  });
+
+  test("regenerates translation when vocabulary is completed but translation failed", async () => {
+    const testLesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `Trans Regen ${randomUUID()}`,
+    });
+
+    // Vocabulary: already completed with steps in DB
+    const vocabActivity = await activityFixture({
+      generationStatus: "completed",
+      kind: "vocabulary",
+      language: "en",
+      lessonId: testLesson.id,
+      organizationId,
+      position: 0,
+      title: `Vocabulary ${randomUUID()}`,
+    });
+
+    // Create vocabulary steps with word references (simulates prior completed run)
+    const word1 = await prisma.word.create({
+      data: {
+        organizationId,
+        targetLanguage: "es",
+        word: `regen-word-1-${randomUUID().slice(0, 8)}`,
+      },
+    });
+
+    const word2 = await prisma.word.create({
+      data: {
+        organizationId,
+        targetLanguage: "es",
+        word: `regen-word-2-${randomUUID().slice(0, 8)}`,
+      },
+    });
+
+    await prisma.step.createMany({
+      data: [
+        {
+          activityId: vocabActivity.id,
+          content: {},
+          isPublished: true,
+          kind: "vocabulary",
+          position: 0,
+          wordId: word1.id,
+        },
+        {
+          activityId: vocabActivity.id,
+          content: {},
+          isPublished: true,
+          kind: "vocabulary",
+          position: 1,
+          wordId: word2.id,
+        },
+      ],
+    });
+
+    // Translation: failed on prior run
+    const transActivity = await activityFixture({
+      generationStatus: "failed",
+      kind: "translation",
+      language: "en",
+      lessonId: testLesson.id,
+      organizationId,
+      position: 1,
+      title: `Translation ${randomUUID()}`,
+    });
+
+    await activityGenerationWorkflow(testLesson.id);
+
+    // Vocabulary AI should NOT be called (vocabulary is already completed)
+    expect(generateActivityVocabulary).not.toHaveBeenCalled();
+
+    // Translation steps should be created from the existing vocabulary steps
+    const transSteps = await prisma.step.findMany({
+      orderBy: { position: "asc" },
+      where: { activityId: transActivity.id },
+    });
+
+    expect(transSteps).toHaveLength(2);
+    expect(transSteps[0]?.kind).toBe("translation");
+    expect(transSteps[0]?.wordId).toBe(word1.id);
+    expect(transSteps[1]?.kind).toBe("translation");
+    expect(transSteps[1]?.wordId).toBe(word2.id);
+
+    const dbTrans = await prisma.activity.findUnique({
+      where: { id: transActivity.id },
+    });
+    expect(dbTrans?.generationStatus).toBe("completed");
   });
 
   test("copies listening from pre-completed reading without calling AI", async () => {

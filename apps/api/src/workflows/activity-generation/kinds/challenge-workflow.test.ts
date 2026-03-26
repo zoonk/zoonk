@@ -94,7 +94,12 @@ describe("challenge activity workflow", () => {
     const activities = await getLessonActivitiesStep(testLesson.id);
     const concepts = activities[0]?.lesson?.concepts ?? [];
 
-    await challengeActivityWorkflow(activities, "test-run-id", concepts, []);
+    await challengeActivityWorkflow({
+      activitiesToGenerate: activities,
+      concepts,
+      neighboringConcepts: [],
+      workflowRunId: "test-run-id",
+    });
 
     const steps = await prisma.step.findMany({
       orderBy: { position: "asc" },
@@ -161,7 +166,12 @@ describe("challenge activity workflow", () => {
     const activities = await getLessonActivitiesStep(testLesson.id);
     const concepts = activities[0]?.lesson?.concepts ?? [];
 
-    await challengeActivityWorkflow(activities, "test-run-id", concepts, []);
+    await challengeActivityWorkflow({
+      activitiesToGenerate: activities,
+      concepts,
+      neighboringConcepts: [],
+      workflowRunId: "test-run-id",
+    });
 
     const dbActivity = await prisma.activity.findUnique({
       where: { id: activity.id },
@@ -193,7 +203,12 @@ describe("challenge activity workflow", () => {
     const activities = await getLessonActivitiesStep(testLesson.id);
     const concepts = activities[0]?.lesson?.concepts ?? [];
 
-    await challengeActivityWorkflow(activities, "test-run-id", concepts, []);
+    await challengeActivityWorkflow({
+      activitiesToGenerate: activities,
+      concepts,
+      neighboringConcepts: [],
+      workflowRunId: "test-run-id",
+    });
 
     const dbActivity = await prisma.activity.findUnique({
       where: { id: activity.id },
@@ -219,12 +234,64 @@ describe("challenge activity workflow", () => {
 
     const activities = await getLessonActivitiesStep(testLesson.id);
 
-    await challengeActivityWorkflow(activities, "test-run-id", [], []);
+    await challengeActivityWorkflow({
+      activitiesToGenerate: activities,
+      concepts: [],
+      neighboringConcepts: [],
+      workflowRunId: "test-run-id",
+    });
 
     const dbActivity = await prisma.activity.findUnique({
       where: { id: activity.id },
     });
     expect(dbActivity?.generationStatus).toBe("failed");
+  });
+
+  test("sets challenge status to 'failed' when save step throws", async () => {
+    const transactionSpy = vi
+      .spyOn(prisma, "$transaction")
+      .mockRejectedValueOnce(new Error("DB transaction failed"));
+
+    const testLesson = await lessonFixture({
+      chapterId: chapter.id,
+      concepts: ["Test Concept"],
+      organizationId,
+      title: `Challenge SaveFail Lesson ${randomUUID()}`,
+    });
+
+    const activity = await activityFixture({
+      generationStatus: "pending",
+      kind: "challenge",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `Challenge ${randomUUID()}`,
+    });
+
+    const activities = await getLessonActivitiesStep(testLesson.id);
+    const concepts = activities[0]?.lesson?.concepts ?? [];
+
+    await challengeActivityWorkflow({
+      activitiesToGenerate: activities,
+      concepts,
+      neighboringConcepts: [],
+      workflowRunId: "test-run-id",
+    });
+
+    const dbActivity = await prisma.activity.findUnique({
+      where: { id: activity.id },
+    });
+
+    // When the transactional save fails, the activity must be marked as failed
+    // (not stuck as "running" with orphaned steps).
+    expect(dbActivity?.generationStatus).toBe("failed");
+
+    // Verify no steps were created (the transaction rolled back)
+    const steps = await prisma.step.findMany({
+      where: { activityId: activity.id },
+    });
+    expect(steps).toHaveLength(0);
+
+    transactionSpy.mockRestore();
   });
 
   test("skips if already completed", async () => {
@@ -253,7 +320,12 @@ describe("challenge activity workflow", () => {
     const activities = await getLessonActivitiesStep(testLesson.id);
     const concepts = activities[0]?.lesson?.concepts ?? [];
 
-    await challengeActivityWorkflow(activities, "test-run-id", concepts, []);
+    await challengeActivityWorkflow({
+      activitiesToGenerate: [],
+      concepts,
+      neighboringConcepts: [],
+      workflowRunId: "test-run-id",
+    });
 
     expect(generateActivityChallenge).not.toHaveBeenCalled();
   });

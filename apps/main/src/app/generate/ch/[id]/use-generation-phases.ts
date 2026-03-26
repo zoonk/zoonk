@@ -1,12 +1,12 @@
 "use client";
 
 import { type PhaseStatus, enforcePhaseProgression } from "@/lib/generation-phases";
-import { type ChapterWorkflowStepName } from "@/lib/workflow/config";
 import {
   type ThinkingMessageGenerator,
   createCountingGenerator,
   cycleMessage,
 } from "@/lib/workflow/use-thinking-messages";
+import { type ChapterWorkflowStepName } from "@zoonk/core/workflows/steps";
 import { useExtracted } from "next-intl";
 import {
   PHASE_ICONS,

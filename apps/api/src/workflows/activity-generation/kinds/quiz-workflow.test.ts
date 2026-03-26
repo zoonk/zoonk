@@ -118,7 +118,11 @@ describe("quiz activity workflow", () => {
     const activities = await getLessonActivitiesStep(testLesson.id);
     const explanationResults = buildExplanationResults(Number(explanationActivity.id));
 
-    await quizActivityWorkflow(activities, "test-run-id", explanationResults);
+    await quizActivityWorkflow({
+      activitiesToGenerate: activities,
+      explanationResults,
+      workflowRunId: "test-run-id",
+    });
 
     const steps = await prisma.step.findMany({
       orderBy: { position: "asc" },
@@ -163,7 +167,11 @@ describe("quiz activity workflow", () => {
     const activities = await getLessonActivitiesStep(testLesson.id);
     const explanationResults = buildExplanationResults(Number(explanationActivity.id));
 
-    await quizActivityWorkflow(activities, "test-run-id", explanationResults);
+    await quizActivityWorkflow({
+      activitiesToGenerate: activities,
+      explanationResults,
+      workflowRunId: "test-run-id",
+    });
 
     const dbActivity = await prisma.activity.findUnique({
       where: { id: quizActivity.id },
@@ -202,7 +210,11 @@ describe("quiz activity workflow", () => {
     const activities = await getLessonActivitiesStep(testLesson.id);
     const explanationResults = buildExplanationResults(Number(explanationActivity.id));
 
-    await quizActivityWorkflow(activities, "test-run-id", explanationResults);
+    await quizActivityWorkflow({
+      activitiesToGenerate: activities,
+      explanationResults,
+      workflowRunId: "test-run-id",
+    });
 
     const dbActivity = await prisma.activity.findUnique({
       where: { id: quizActivity.id },
@@ -228,7 +240,11 @@ describe("quiz activity workflow", () => {
 
     const activities = await getLessonActivitiesStep(testLesson.id);
 
-    await quizActivityWorkflow(activities, "test-run-id", []);
+    await quizActivityWorkflow({
+      activitiesToGenerate: activities,
+      explanationResults: [],
+      workflowRunId: "test-run-id",
+    });
 
     const dbActivity = await prisma.activity.findUnique({
       where: { id: quizActivity.id },
@@ -264,7 +280,11 @@ describe("quiz activity workflow", () => {
     const activities = await getLessonActivitiesStep(testLesson.id);
     const explanationResults = buildExplanationResults(Number(explanationActivity.id));
 
-    await quizActivityWorkflow(activities, "test-run-id", explanationResults);
+    await quizActivityWorkflow({
+      activitiesToGenerate: activities,
+      explanationResults,
+      workflowRunId: "test-run-id",
+    });
 
     const steps = await prisma.step.findMany({
       orderBy: { position: "asc" },
@@ -316,10 +336,13 @@ describe("quiz activity workflow", () => {
       position: 0,
     });
 
-    const activities = await getLessonActivitiesStep(testLesson.id);
     const explanationResults = buildExplanationResults(Number(explanationActivity.id));
 
-    await quizActivityWorkflow(activities, "test-run-id", explanationResults);
+    await quizActivityWorkflow({
+      activitiesToGenerate: [],
+      explanationResults,
+      workflowRunId: "test-run-id",
+    });
 
     expect(generateActivityQuiz).not.toHaveBeenCalled();
   });

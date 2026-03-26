@@ -1,125 +1,68 @@
-import {
-  type StepStream,
-  type WorkflowErrorReason,
-  createStepStream,
-  getAIResultErrorReason,
-} from "@/workflows/_shared/stream-status";
-import { type ActivityStepName } from "@/workflows/config";
+import { createStepStream, getAIResultErrorReason } from "@/workflows/_shared/stream-status";
 import {
   type ActivityPracticeSchema,
   generateActivityPractice,
 } from "@zoonk/ai/tasks/activities/core/practice";
-import { assertStepContent } from "@zoonk/core/steps/content-contract";
-import { prisma } from "@zoonk/db";
+import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
-import { resolveActivityForGeneration } from "./_utils/content-step-helpers";
 import { findActivitiesByKind } from "./_utils/find-activity-by-kind";
 import { type ActivitySteps } from "./_utils/get-activity-steps";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
-import { setActivityAsRunningStep } from "./set-activity-as-running-step";
 
-type PracticeStep = ActivityPracticeSchema["steps"][number];
+export type PracticeStep = ActivityPracticeSchema["steps"][number];
 
-async function savePracticeSteps(
-  activityId: bigint | number,
-  steps: PracticeStep[],
-): Promise<{ error: Error | null }> {
-  return safeAsync(() =>
-    prisma.step.createMany({
-      data: steps.map((step, index) => {
-        const content = assertStepContent("multipleChoice", {
-          context: step.context,
-          kind: "core",
-          options: step.options,
-          question: step.question,
-        });
-
-        return {
-          activityId,
-          content,
-          isPublished: true,
-          kind: "multipleChoice",
-          position: index,
-        };
-      }),
-    }),
-  );
-}
-
-async function handlePracticeError(
-  stream: StepStream<ActivityStepName>,
-  activityId: bigint | number,
-  reason: WorkflowErrorReason,
-): Promise<void> {
-  await stream.error({ reason, step: "generatePracticeContent" });
-  await handleActivityFailureStep({ activityId });
-}
-
-async function saveAndCompletePractice(
-  stream: StepStream<ActivityStepName>,
-  activityId: bigint | number,
-  steps: PracticeStep[],
-): Promise<void> {
-  const { error } = await savePracticeSteps(activityId, steps);
-
-  if (error) {
-    await handlePracticeError(stream, activityId, "dbSaveFailed");
-    return;
-  }
-
-  await stream.status({ status: "completed", step: "generatePracticeContent" });
-}
-
+/**
+ * Generates practice questions from explanation content via AI.
+ * Returns the raw steps data without saving to the database.
+ * The steps will be passed to `savePracticeActivityStep` for persistence.
+ *
+ * No status checks — the caller only passes activities that need generation.
+ * Like the quiz step, this uses safeAsync because empty explanations
+ * represent a permanent failure (not retryable).
+ */
 export async function generatePracticeContentStep(
   activities: LessonActivity[],
   explanationSteps: ActivitySteps,
   workflowRunId: string,
   practiceIndex = 0,
-): Promise<void> {
+): Promise<{ activityId: number | null; steps: PracticeStep[] }> {
   "use step";
 
   const practiceActivity = findActivitiesByKind(activities, "practice")[practiceIndex];
 
   if (!practiceActivity) {
-    return;
+    return { activityId: null, steps: [] };
   }
-
-  const resolved = await resolveActivityForGeneration(practiceActivity);
-
-  if (!resolved.shouldGenerate) {
-    return;
-  }
-
-  const { activity } = resolved;
 
   if (explanationSteps.length === 0) {
-    await handleActivityFailureStep({ activityId: activity.id });
-    return;
+    await handleActivityFailureStep({ activityId: practiceActivity.id });
+    return { activityId: null, steps: [] };
   }
 
   await using stream = createStepStream<ActivityStepName>();
 
   await stream.status({ status: "started", step: "generatePracticeContent" });
-  await setActivityAsRunningStep({ activityId: activity.id, workflowRunId });
 
   const { data: result, error }: SafeReturn<{ data: ActivityPracticeSchema }> = await safeAsync(
     () =>
       generateActivityPractice({
-        chapterTitle: activity.lesson.chapter.title,
-        courseTitle: activity.lesson.chapter.course.title,
+        chapterTitle: practiceActivity.lesson.chapter.title,
+        courseTitle: practiceActivity.lesson.chapter.course.title,
         explanationSteps,
-        language: activity.language,
-        lessonDescription: activity.lesson.description ?? "",
-        lessonTitle: activity.lesson.title,
+        language: practiceActivity.language,
+        lessonDescription: practiceActivity.lesson.description ?? "",
+        lessonTitle: practiceActivity.lesson.title,
       }),
   );
 
   if (error || !result || result.data.steps.length === 0) {
     const reason = getAIResultErrorReason(error, result);
-    await handlePracticeError(stream, activity.id, reason);
-    return;
+    await stream.error({ reason, step: "generatePracticeContent" });
+    await handleActivityFailureStep({ activityId: practiceActivity.id });
+    return { activityId: null, steps: [] };
   }
 
-  await saveAndCompletePractice(stream, activity.id, result.data.steps);
+  await stream.status({ status: "completed", step: "generatePracticeContent" });
+  return { activityId: Number(practiceActivity.id), steps: result.data.steps };
 }

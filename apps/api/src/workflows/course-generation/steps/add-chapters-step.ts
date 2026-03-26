@@ -1,6 +1,6 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
-import { type CourseWorkflowStepName } from "@/workflows/config";
 import { type CourseChapter } from "@zoonk/ai/tasks/courses/chapters";
+import { type CourseWorkflowStepName } from "@zoonk/core/workflows/steps";
 import { type Chapter, type ChapterCreateManyInput, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { deduplicateSlugs, normalizeString, toSlug } from "@zoonk/utils/string";

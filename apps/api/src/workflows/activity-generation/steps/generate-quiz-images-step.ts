@@ -1,17 +1,12 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
-import { type ActivityStepName } from "@/workflows/config";
 import { type QuizQuestion, type SelectImageQuestion } from "@zoonk/ai/tasks/activities/core/quiz";
-import { assertStepContent } from "@zoonk/core/steps/content-contract";
 import { generateStepImage } from "@zoonk/core/steps/image";
-import { prisma } from "@zoonk/db";
-import { safeAsync } from "@zoonk/utils/error";
-import { isJsonObject, toRecord } from "@zoonk/utils/json";
+import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { rejected } from "@zoonk/utils/settled";
 import { findActivitiesByKind } from "./_utils/find-activity-by-kind";
 import { type LessonActivity } from "./get-lesson-activities-step";
-import { handleActivityFailureStep } from "./handle-failure-step";
 
-type QuizQuestionWithUrls =
+export type QuizQuestionWithUrls =
   | Exclude<QuizQuestion, SelectImageQuestion>
   | (Omit<SelectImageQuestion, "options"> & {
       options: (SelectImageQuestion["options"][number] & { url?: string })[];
@@ -24,35 +19,20 @@ type SelectImageOption = {
   url?: string;
 };
 
-function parseSelectImageOptions(content: unknown): SelectImageOption[] | null {
-  if (!isJsonObject(content)) {
-    return null;
-  }
-  const { options } = content;
-  if (!Array.isArray(options)) {
-    return null;
-  }
-  return options.filter(
-    (opt): opt is SelectImageOption =>
-      isJsonObject(opt) &&
-      typeof opt.feedback === "string" &&
-      typeof opt.isCorrect === "boolean" &&
-      typeof opt.prompt === "string",
-  );
+function isSelectImageQuestion(question: QuizQuestion): question is SelectImageQuestion {
+  return question.format === "selectImage";
 }
 
-function toQuizQuestion(step: { content: unknown; kind: string }): QuizQuestionWithUrls {
-  // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- reconstructing QuizQuestion union from DB; kind discriminates the shape
-  return { format: step.kind, ...toRecord(step.content) } as QuizQuestionWithUrls;
-}
-
+/**
+ * Generates images for selectImage options and returns updated options.
+ */
 async function generateOptionImages({
-  options,
   language,
+  options,
   orgSlug,
 }: {
-  options: SelectImageOption[];
   language: string;
+  options: SelectImageOption[];
   orgSlug?: string;
 }): Promise<{ hadFailure: boolean; updatedOptions: SelectImageOption[] }> {
   const results = await Promise.allSettled(
@@ -70,6 +50,12 @@ async function generateOptionImages({
   return { hadFailure: rejected(results), updatedOptions };
 }
 
+/**
+ * Generates images for quiz questions that use selectImage format.
+ * Receives questions data directly from the content step (no DB reads).
+ * Returns the questions with image URLs injected into selectImage options.
+ * No DB writes — the save step handles persistence.
+ */
 export async function generateQuizImagesStep(
   activities: LessonActivity[],
   questions: QuizQuestion[],
@@ -83,19 +69,11 @@ export async function generateQuizImagesStep(
     return [];
   }
 
-  if (activity.generationStatus === "completed" || activity.generationStatus === "running") {
-    return [];
-  }
-
   await using stream = createStepStream<ActivityStepName>();
 
-  const dbSteps = await prisma.step.findMany({
-    orderBy: { position: "asc" },
-    select: { content: true, id: true },
-    where: { activityId: activity.id, kind: "selectImage" },
-  });
+  const selectImageQuestions = questions.filter((question) => isSelectImageQuestion(question));
 
-  if (dbSteps.length === 0) {
+  if (selectImageQuestions.length === 0) {
     await stream.status({ status: "started", step: "generateQuizImages" });
     await stream.status({ status: "completed", step: "generateQuizImages" });
     // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- QuizQuestion is a subtype; url? is optional
@@ -106,53 +84,36 @@ export async function generateQuizImagesStep(
 
   const orgSlug = activity.lesson.chapter.course.organization?.slug;
 
-  const stepResults = await Promise.allSettled(
-    dbSteps.map(async (step) => {
-      const options = parseSelectImageOptions(step.content);
-      if (!options) {
-        return { imageFailed: false, updateFailed: false };
-      }
-
-      const { hadFailure: imageFailed, updatedOptions } = await generateOptionImages({
+  const imageResults = await Promise.allSettled(
+    selectImageQuestions.map((question) =>
+      generateOptionImages({
         language: activity.language,
-        options,
+        options: question.options,
         orgSlug,
-      });
-
-      const stepContent = toRecord(step.content);
-      const content = assertStepContent("selectImage", {
-        ...stepContent,
-        options: updatedOptions,
-      });
-      const { error } = await safeAsync(() =>
-        prisma.step.update({
-          data: { content },
-          where: { id: step.id },
-        }),
-      );
-
-      return { imageFailed, updateFailed: Boolean(error) };
-    }),
+      }),
+    ),
   );
 
-  const hadFailure =
-    rejected(stepResults) ||
-    stepResults.some(
-      (result) =>
-        result.status === "fulfilled" && (result.value?.imageFailed || result.value?.updateFailed),
-    );
+  const updatedSelectImageMap = new Map<number, SelectImageOption[]>();
 
-  if (hadFailure) {
-    await handleActivityFailureStep({ activityId: activity.id });
-  }
+  selectImageQuestions.forEach((question, idx) => {
+    const result = imageResults[idx];
+    if (result?.status === "fulfilled") {
+      const questionIndex = questions.indexOf(question);
+      updatedSelectImageMap.set(questionIndex, result.value.updatedOptions);
+    }
+  });
+
+  const updatedQuestions: QuizQuestionWithUrls[] = questions.map((question, index) => {
+    const updatedOptions = updatedSelectImageMap.get(index);
+    if (updatedOptions && isSelectImageQuestion(question)) {
+      return { ...question, options: updatedOptions };
+    }
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- non-selectImage questions pass through unchanged
+    return question as QuizQuestionWithUrls;
+  });
 
   await stream.status({ status: "completed", step: "generateQuizImages" });
 
-  const updatedSteps = await prisma.step.findMany({
-    orderBy: { position: "asc" },
-    select: { content: true, kind: true },
-    where: { activityId: activity.id },
-  });
-
-  return updatedSteps.map((step) => toQuizQuestion(step));
+  return updatedQuestions;
 }

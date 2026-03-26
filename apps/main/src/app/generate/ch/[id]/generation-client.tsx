@@ -11,11 +11,11 @@ import {
   GenerationTimelineSubtitle,
   GenerationTimelineTitle,
 } from "@/components/generation/generation-progress";
-import { type ChapterWorkflowStepName } from "@/lib/workflow/config";
 import { useAnimatedProgress } from "@/lib/workflow/use-animated-progress";
 import { useCompletionRedirect } from "@/lib/workflow/use-completion-redirect";
 import { useThinkingMessages } from "@/lib/workflow/use-thinking-messages";
 import { useWorkflowGeneration } from "@/lib/workflow/use-workflow-generation";
+import { type ChapterWorkflowStepName } from "@zoonk/core/workflows/steps";
 import { type GenerationStatus } from "@zoonk/db";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { API_URL } from "@zoonk/utils/url";

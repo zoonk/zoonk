@@ -1,6 +1,6 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
-import { type LessonStepName } from "@/workflows/config";
 import { generateLessonKind } from "@zoonk/ai/tasks/lessons/kind";
+import { type LessonStepName } from "@zoonk/core/workflows/steps";
 import { type LessonKind } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { type LessonContext } from "./get-lesson-step";

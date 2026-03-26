@@ -1,8 +1,8 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
-import { type ActivityStepName } from "@/workflows/config";
 import { type ActivityGrammarContentSchema } from "@zoonk/ai/tasks/activities/language/grammar-content";
 import { type ActivityGrammarUserContentSchema } from "@zoonk/ai/tasks/activities/language/grammar-user-content";
 import { assertStepContent } from "@zoonk/core/steps/content-contract";
+import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
@@ -118,11 +118,11 @@ function buildGrammarSteps(
 }
 
 /**
- * Merges content, user content, and romanization data into grammar step records
- * and saves them to the database in a single batch insert.
- * This is the final step of the grammar workflow before marking the activity as completed.
+ * Merges content, user content, and romanization data into grammar step records,
+ * saves them to the database in a single batch insert, and marks the activity
+ * as completed. This is the single save+complete point for the grammar entity.
  */
-export async function saveGrammarStepsStep(
+export async function saveGrammarActivityStep(
   activities: LessonActivity[],
   workflowRunId: string,
   content: ActivityGrammarContentSchema,
@@ -139,17 +139,25 @@ export async function saveGrammarStepsStep(
 
   await using stream = createStepStream<ActivityStepName>();
 
-  await stream.status({ status: "started", step: "saveGrammarSteps" });
+  await stream.status({ entityId: activity.id, status: "started", step: "saveGrammarActivity" });
 
   const steps = buildGrammarSteps(activity.id, content, userContent, romanizations);
 
-  const { error } = await safeAsync(() => prisma.step.createMany({ data: steps }));
+  const { error } = await safeAsync(() =>
+    prisma.$transaction([
+      prisma.step.createMany({ data: steps }),
+      prisma.activity.update({
+        data: { generationRunId: workflowRunId, generationStatus: "completed" },
+        where: { id: activity.id },
+      }),
+    ]),
+  );
 
   if (error) {
-    await stream.error({ reason: "dbSaveFailed", step: "saveGrammarSteps" });
+    await stream.error({ reason: "dbSaveFailed", step: "saveGrammarActivity" });
     await handleActivityFailureStep({ activityId: activity.id });
     return;
   }
 
-  await stream.status({ status: "completed", step: "saveGrammarSteps" });
+  await stream.status({ entityId: activity.id, status: "completed", step: "saveGrammarActivity" });
 }

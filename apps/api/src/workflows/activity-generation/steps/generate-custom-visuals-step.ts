@@ -1,58 +1,54 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
-import { type ActivityStepName } from "@/workflows/config";
 import { type StepVisualSchema, generateStepVisuals } from "@zoonk/ai/tasks/steps/visual";
-import { prisma } from "@zoonk/db";
-import { safeAsync } from "@zoonk/utils/error";
+import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { rejected, settledValues } from "@zoonk/utils/settled";
 import { buildVisualRows } from "./_utils/visual-rows";
 import { type CustomContentResult } from "./generate-custom-content-step";
+import { type VisualRow } from "./generate-visuals-step";
 import { type LessonActivity } from "./get-lesson-activities-step";
-import { handleActivityFailureStep } from "./handle-failure-step";
 
 export type CustomVisualResult = {
   activityId: number;
   visuals: StepVisualSchema["visuals"][number][];
+  visualRows: VisualRow[];
 };
 
+/**
+ * Computes virtual content step positions without reading the database.
+ * Content steps are saved at positions `index * 2` (even positions).
+ */
+function computeContentStepPositions(stepCount: number): { position: number }[] {
+  return Array.from({ length: stepCount }, (_, i) => ({ position: i * 2 }));
+}
+
+/**
+ * Generates visuals for a single custom activity.
+ * Pure data producer: no DB writes. Throws on failure.
+ */
 async function generateVisualsForActivity(
   activity: LessonActivity,
   contentResult: CustomContentResult,
 ): Promise<CustomVisualResult> {
-  const empty = { activityId: activity.id, visuals: [] };
+  const empty = { activityId: activity.id, visualRows: [], visuals: [] };
 
   if (contentResult.steps.length === 0) {
     return empty;
   }
 
-  if (activity.generationStatus === "completed" || activity.generationStatus === "running") {
-    return empty;
-  }
-
-  const dbSteps = await prisma.step.findMany({
-    orderBy: { position: "asc" },
-    select: { id: true, position: true },
-    where: { activityId: activity.id, kind: "static" },
+  const result = await generateStepVisuals({
+    chapterTitle: activity.lesson.chapter.title,
+    courseTitle: activity.lesson.chapter.course.title,
+    language: activity.language,
+    lessonDescription: activity.lesson.description ?? "",
+    lessonTitle: activity.lesson.title,
+    steps: contentResult.steps,
   });
 
-  if (dbSteps.length === 0) {
-    return empty;
+  if (!result) {
+    throw new Error("Empty visual result for custom activity");
   }
 
-  const { data: result, error } = await safeAsync(() =>
-    generateStepVisuals({
-      chapterTitle: activity.lesson.chapter.title,
-      courseTitle: activity.lesson.chapter.course.title,
-      language: activity.language,
-      lessonDescription: activity.lesson.description ?? "",
-      lessonTitle: activity.lesson.title,
-      steps: contentResult.steps,
-    }),
-  );
-
-  if (error || !result) {
-    await handleActivityFailureStep({ activityId: activity.id });
-    throw error ?? new Error("Empty visual result");
-  }
+  const dbSteps = computeContentStepPositions(contentResult.steps.length);
 
   const visualRows = buildVisualRows({
     activityId: activity.id,
@@ -61,23 +57,17 @@ async function generateVisualsForActivity(
   });
 
   if (!visualRows) {
-    await handleActivityFailureStep({ activityId: activity.id });
-    throw new Error("Invalid visual coverage");
+    throw new Error("Invalid visual coverage for custom activity");
   }
 
-  const { error: saveError } =
-    visualRows.length > 0
-      ? await safeAsync(() => prisma.step.createMany({ data: visualRows }))
-      : { error: null };
-
-  if (saveError) {
-    await handleActivityFailureStep({ activityId: activity.id });
-    throw saveError;
-  }
-
-  return { activityId: activity.id, visuals: result.data.visuals };
+  return { activityId: activity.id, visualRows, visuals: result.data.visuals };
 }
 
+/**
+ * Generates visual content for all custom activities in parallel.
+ * Pure data producer: computes positions from content step count instead of reading DB.
+ * Returns visual rows ready for DB insertion. No DB writes happen here.
+ */
 export async function generateCustomVisualsStep(
   activities: LessonActivity[],
   customContentResults: CustomContentResult[],
@@ -96,7 +86,11 @@ export async function generateCustomVisualsStep(
     customContentResults.map((contentResult) => {
       const activity = activities.find((act) => act.id === contentResult.activityId);
       if (!activity) {
-        return Promise.resolve({ activityId: contentResult.activityId, visuals: [] });
+        return Promise.resolve({
+          activityId: contentResult.activityId,
+          visualRows: [],
+          visuals: [],
+        });
       }
       return generateVisualsForActivity(activity, contentResult);
     }),

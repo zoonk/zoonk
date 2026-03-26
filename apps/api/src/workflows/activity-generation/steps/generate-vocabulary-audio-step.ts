@@ -1,13 +1,18 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
-import { type ActivityStepName } from "@/workflows/config";
 import { type VocabularyWord } from "@zoonk/ai/tasks/activities/language/vocabulary";
+import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { prisma } from "@zoonk/db";
 import { isTTSSupportedLanguage } from "@zoonk/utils/languages";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { generateAudioForText } from "./_utils/generate-audio-for-text";
 import { type LessonActivity } from "./get-lesson-activities-step";
-import { handleActivityFailureStep } from "./handle-failure-step";
 
+/**
+ * Generates audio URLs for vocabulary words using TTS.
+ * Checks existing Word records by text to skip words that already have audio.
+ * Returns the audio URL map without writing to the database — the save step
+ * persists the results.
+ */
 export async function generateVocabularyAudioStep(
   activities: LessonActivity[],
   words: VocabularyWord[],
@@ -70,30 +75,10 @@ export async function generateVocabularyAudioStep(
 
   const fulfilled = results.filter((result) => result !== null);
 
-  const newAudioRecords = await Promise.all(
-    fulfilled.map((result) =>
-      prisma.word.update({
-        data: { audioUrl: result.audioUrl },
-        select: { audioUrl: true, word: true },
-        where: { orgWord: { organizationId, targetLanguage, word: result.text } },
-      }),
-    ),
-  );
-
   const wordAudioUrls: Record<string, string> = {
     ...existingAudioUrls,
-    ...Object.fromEntries(
-      newAudioRecords.flatMap((record) =>
-        record.audioUrl ? [[record.word, record.audioUrl]] : [],
-      ),
-    ),
+    ...Object.fromEntries(fulfilled.map((result) => [result.text, result.audioUrl])),
   };
-
-  if (fulfilled.length < wordsNeedingAudio.length) {
-    await stream.error({ reason: "audioGenerationFailed", step: "generateVocabularyAudio" });
-    await handleActivityFailureStep({ activityId: activity.id });
-    return { wordAudioUrls };
-  }
 
   await stream.status({ status: "completed", step: "generateVocabularyAudio" });
   return { wordAudioUrls };

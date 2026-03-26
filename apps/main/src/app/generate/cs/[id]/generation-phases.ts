@@ -4,7 +4,7 @@ import {
   calculateWeightedProgress as calculateProgress,
   getPhaseStatus as getStatus,
 } from "@/lib/generation-phases";
-import { type CourseStepName, type CourseWorkflowStepName } from "@/lib/workflow/config";
+import { type CourseStepName, type CourseWorkflowStepName } from "@zoonk/core/workflows/steps";
 import {
   ImageIcon,
   LayoutListIcon,

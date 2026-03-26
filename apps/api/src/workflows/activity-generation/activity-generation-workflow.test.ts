@@ -306,7 +306,7 @@ describe(activityGenerationWorkflow, () => {
 
       const completionCall = writeMock.mock.calls.find(
         (call: string[]) =>
-          call[0]?.includes('"step":"setActivityAsCompleted"') &&
+          call[0]?.includes('"step":"saveExplanationActivity"') &&
           call[0]?.includes('"status":"completed"'),
       );
       expect(completionCall).toBeDefined();
@@ -344,7 +344,7 @@ describe(activityGenerationWorkflow, () => {
 
       const completionCall = writeMock.mock.calls.find(
         (call: string[]) =>
-          call[0]?.includes('"step":"setActivityAsCompleted"') &&
+          call[0]?.includes('"step":"saveExplanationActivity"') &&
           call[0]?.includes('"status":"completed"'),
       );
       expect(completionCall).toBeUndefined();

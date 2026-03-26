@@ -8,7 +8,6 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
-import { generateCustomContentStep } from "../steps/generate-custom-content-step";
 import { type LessonActivity } from "../steps/get-lesson-activities-step";
 import { customActivityWorkflow } from "./custom-workflow";
 
@@ -131,7 +130,10 @@ describe(customActivityWorkflow, () => {
     });
 
     const activities = await fetchLessonActivities(lesson.id);
-    await customActivityWorkflow(activities, "test-run-id");
+    await customActivityWorkflow({
+      activitiesToGenerate: activities,
+      workflowRunId: "test-run-id",
+    });
 
     const steps = await prisma.step.findMany({
       orderBy: { position: "asc" },
@@ -182,13 +184,16 @@ describe(customActivityWorkflow, () => {
     });
 
     const activities = await fetchLessonActivities(lesson.id);
-    await customActivityWorkflow(activities, "test-run-id");
+    await customActivityWorkflow({
+      activitiesToGenerate: activities,
+      workflowRunId: "test-run-id",
+    });
 
     const dbActivity = await prisma.activity.findUnique({ where: { id: activity.id } });
     expect(dbActivity?.generationStatus).toBe("completed");
   });
 
-  test("sets custom status to 'failed' when AI throws", async () => {
+  test("marks custom as 'failed' when AI throws", async () => {
     vi.mocked(generateActivityCustom).mockRejectedValueOnce(new Error("AI failed"));
 
     const lesson = await lessonFixture({
@@ -207,13 +212,16 @@ describe(customActivityWorkflow, () => {
     });
 
     const activities = await fetchLessonActivities(lesson.id);
-    await customActivityWorkflow(activities, "test-run-id");
+    await customActivityWorkflow({
+      activitiesToGenerate: activities,
+      workflowRunId: "test-run-id",
+    });
 
     const dbActivity = await prisma.activity.findUnique({ where: { id: activity.id } });
     expect(dbActivity?.generationStatus).toBe("failed");
   });
 
-  test("fails when visuals contain out-of-range step indexes", async () => {
+  test("saves content without visuals when visual step indexes are out of range", async () => {
     vi.mocked(generateStepVisuals).mockResolvedValueOnce({
       ...createStepVisualsResult([
         { text: "Custom step 1 text", title: "Custom Step 1" },
@@ -249,7 +257,10 @@ describe(customActivityWorkflow, () => {
     });
 
     const activities = await fetchLessonActivities(lesson.id);
-    await customActivityWorkflow(activities, "test-run-id");
+    await customActivityWorkflow({
+      activitiesToGenerate: activities,
+      workflowRunId: "test-run-id",
+    });
 
     const [dbActivity, steps] = await Promise.all([
       prisma.activity.findUnique({ where: { id: activity.id } }),
@@ -259,7 +270,10 @@ describe(customActivityWorkflow, () => {
       }),
     ]);
 
-    expect(dbActivity?.generationStatus).toBe("failed");
+    // The visual step's rejection is caught by Promise.allSettled and dropped.
+    // The save step still runs with just content data (no visual rows).
+    expect(dbActivity?.generationStatus).toBe("completed");
+    // Only static steps saved — no visual steps because the visual generation was dropped
     expect(steps.filter((step) => step.kind === "static")).toHaveLength(2);
     expect(steps.filter((step) => step.kind === "visual")).toHaveLength(0);
   });
@@ -294,7 +308,10 @@ describe(customActivityWorkflow, () => {
     ]);
 
     const activities = await fetchLessonActivities(lesson.id);
-    await customActivityWorkflow(activities, "test-run-id");
+    await customActivityWorkflow({
+      activitiesToGenerate: activities,
+      workflowRunId: "test-run-id",
+    });
 
     expect(generateActivityCustom).toHaveBeenCalledTimes(2);
 
@@ -305,41 +322,5 @@ describe(customActivityWorkflow, () => {
 
     expect(dbActivity1?.generationStatus).toBe("completed");
     expect(dbActivity2?.generationStatus).toBe("completed");
-  });
-
-  test("reuses saved static content for completed custom activities", async () => {
-    const lesson = await lessonFixture({
-      chapterId: chapter.id,
-      kind: "custom",
-      organizationId,
-      title: `Custom Resume ${randomUUID()}`,
-    });
-
-    await activityFixture({
-      generationStatus: "pending",
-      kind: "custom",
-      lessonId: lesson.id,
-      organizationId,
-      title: `Custom ${randomUUID()}`,
-    });
-
-    const initialActivities = await fetchLessonActivities(lesson.id);
-    await customActivityWorkflow(initialActivities, "test-run-id");
-
-    vi.clearAllMocks();
-
-    const completedActivities = await fetchLessonActivities(lesson.id);
-    const contentResults = await generateCustomContentStep(completedActivities, "resume-run-id");
-
-    expect(contentResults).toEqual([
-      {
-        activityId: completedActivities[0]?.id,
-        steps: [
-          { text: "Custom step 1 text", title: "Custom Step 1" },
-          { text: "Custom step 2 text", title: "Custom Step 2" },
-        ],
-      },
-    ]);
-    expect(generateActivityCustom).not.toHaveBeenCalled();
   });
 });

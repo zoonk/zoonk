@@ -1,10 +1,10 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
-import { type ActivityStepName } from "@/workflows/config";
 import { type ActivityGrammarContentSchema } from "@zoonk/ai/tasks/activities/language/grammar-content";
 import {
   type ActivityGrammarUserContentSchema,
   generateActivityGrammarUserContent,
 } from "@zoonk/ai/tasks/activities/language/grammar-user-content";
+import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { type LessonActivity } from "./get-lesson-activities-step";

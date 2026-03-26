@@ -1,12 +1,12 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
-import { type ActivityStepName } from "@/workflows/config";
 import { generateActivityRomanization } from "@zoonk/ai/tasks/activities/language/romanization";
+import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { safeAsync } from "@zoonk/utils/error";
 import { needsRomanization } from "@zoonk/utils/languages";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
+import { type ReadingSentence } from "./generate-reading-content-step";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
-import { type SavedSentence } from "./save-reading-sentences-step";
 
 /**
  * Generates romanized (Latin-script) representations of reading sentences
@@ -16,13 +16,13 @@ import { type SavedSentence } from "./save-reading-sentences-step";
  */
 export async function generateReadingRomanizationStep(
   activities: LessonActivity[],
-  savedSentences: SavedSentence[],
+  sentences: ReadingSentence[],
 ): Promise<{ romanizations: Record<string, string> }> {
   "use step";
 
   const activity = findActivityByKind(activities, "reading");
 
-  if (!activity || savedSentences.length === 0) {
+  if (!activity || sentences.length === 0) {
     return { romanizations: {} };
   }
 
@@ -37,7 +37,7 @@ export async function generateReadingRomanizationStep(
 
   await stream.status({ status: "started", step: "generateReadingRomanization" });
 
-  const sentenceStrings = savedSentences.map((saved) => saved.sentence);
+  const sentenceStrings = sentences.map((entry) => entry.sentence);
 
   const { data: result, error } = await safeAsync(() =>
     generateActivityRomanization({ targetLanguage, texts: sentenceStrings }),
@@ -55,7 +55,7 @@ export async function generateReadingRomanizationStep(
       .filter((entry): entry is [string, string] => Boolean(entry[1])),
   );
 
-  if (Object.keys(romanizations).length < savedSentences.length) {
+  if (Object.keys(romanizations).length < sentences.length) {
     await stream.error({ reason: "romanizationFailed", step: "generateReadingRomanization" });
     await handleActivityFailureStep({ activityId: activity.id });
     return { romanizations };

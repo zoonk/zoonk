@@ -116,7 +116,7 @@ describe(listeningActivityWorkflow, () => {
     });
 
     const activities = await fetchLessonActivities(lesson.id);
-    await listeningActivityWorkflow(activities, "test-run-id");
+    await listeningActivityWorkflow({ allActivities: activities, workflowRunId: "test-run-id" });
 
     const listeningSteps = await prisma.step.findMany({
       orderBy: { position: "asc" },
@@ -141,7 +141,7 @@ describe(listeningActivityWorkflow, () => {
     });
 
     const readingActivity = await activityFixture({
-      generationStatus: "running",
+      generationStatus: "completed",
       kind: "reading",
       language: "en",
       lessonId: lesson.id,
@@ -160,12 +160,6 @@ describe(listeningActivityWorkflow, () => {
       sentenceId: sentence.id,
     });
 
-    // Mark reading as completed so completeListeningActivityStep succeeds
-    await prisma.activity.update({
-      data: { generationStatus: "completed" },
-      where: { id: readingActivity.id },
-    });
-
     const listeningActivity = await activityFixture({
       generationStatus: "pending",
       kind: "listening",
@@ -177,7 +171,7 @@ describe(listeningActivityWorkflow, () => {
     });
 
     const activities = await fetchLessonActivities(lesson.id);
-    await listeningActivityWorkflow(activities, "test-run-id");
+    await listeningActivityWorkflow({ allActivities: activities, workflowRunId: "test-run-id" });
 
     const dbActivity = await prisma.activity.findUnique({ where: { id: listeningActivity.id } });
     expect(dbActivity?.generationStatus).toBe("completed");
@@ -201,7 +195,7 @@ describe(listeningActivityWorkflow, () => {
     });
 
     const activities = await fetchLessonActivities(lesson.id);
-    await listeningActivityWorkflow(activities, "test-run-id");
+    await listeningActivityWorkflow({ allActivities: activities, workflowRunId: "test-run-id" });
 
     const dbActivity = await prisma.activity.findUnique({ where: { id: listeningActivity.id } });
     expect(dbActivity?.generationStatus).toBe("failed");

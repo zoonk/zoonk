@@ -1,6 +1,6 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
-import { type CourseWorkflowStepName } from "@/workflows/config";
 import { generateCourseImage } from "@zoonk/core/courses/image";
+import { type CourseWorkflowStepName } from "@zoonk/core/workflows/steps";
 import { type CourseContext } from "./initialize-course-step";
 
 export async function generateImageStep(course: CourseContext): Promise<string | null> {
