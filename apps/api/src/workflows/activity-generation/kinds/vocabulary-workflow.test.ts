@@ -148,6 +148,81 @@ describe(vocabularyActivityWorkflow, () => {
     }
   });
 
+  test("creates translation steps when translation activity is not in activitiesToGenerate but is in allActivities", async () => {
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `VocabOnly+AllTrans ${randomUUID()}`,
+    });
+
+    const [vocabActivity, transActivity] = await Promise.all([
+      activityFixture({
+        generationStatus: "pending",
+        kind: "vocabulary",
+        language: "en",
+        lessonId: lesson.id,
+        organizationId,
+        position: 0,
+        title: `Vocabulary ${randomUUID()}`,
+      }),
+      activityFixture({
+        generationStatus: "pending",
+        kind: "translation",
+        language: "en",
+        lessonId: lesson.id,
+        organizationId,
+        position: 1,
+        title: `Translation ${randomUUID()}`,
+      }),
+    ]);
+
+    const allActivities = await fetchLessonActivities(lesson.id);
+
+    // Only vocabulary is in activitiesToGenerate; translation is in allActivities only
+    const activitiesToGenerate = allActivities.filter((a) => a.id === Number(vocabActivity.id));
+
+    await vocabularyActivityWorkflow({
+      activitiesToGenerate,
+      allActivities,
+      concepts: [],
+      neighboringConcepts: [],
+      workflowRunId: "test-run-id",
+    });
+
+    const [vocabSteps, transSteps] = await Promise.all([
+      prisma.step.findMany({
+        orderBy: { position: "asc" },
+        where: { activityId: vocabActivity.id },
+      }),
+      prisma.step.findMany({
+        orderBy: { position: "asc" },
+        where: { activityId: transActivity.id },
+      }),
+    ]);
+
+    expect(vocabSteps).toHaveLength(2);
+    expect(transSteps).toHaveLength(2);
+
+    for (const step of vocabSteps) {
+      expect(step.kind).toBe("vocabulary");
+      expect(step.wordId).not.toBeNull();
+    }
+
+    for (const step of transSteps) {
+      expect(step.kind).toBe("translation");
+      expect(step.wordId).not.toBeNull();
+    }
+
+    const [dbVocab, dbTrans] = await Promise.all([
+      prisma.activity.findUnique({ where: { id: vocabActivity.id } }),
+      prisma.activity.findUnique({ where: { id: transActivity.id } }),
+    ]);
+
+    expect(dbVocab?.generationStatus).toBe("completed");
+    expect(dbTrans?.generationStatus).toBe("completed");
+  });
+
   test("creates translation steps when translation activity exists", async () => {
     const lesson = await lessonFixture({
       chapterId: chapter.id,

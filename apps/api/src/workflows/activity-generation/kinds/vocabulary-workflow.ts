@@ -6,19 +6,19 @@ import { generateVocabularyContentStep } from "../steps/generate-vocabulary-cont
 import { generateVocabularyPronunciationAndAlternativesStep } from "../steps/generate-vocabulary-pronunciation-and-alternatives-step";
 import { generateVocabularyRomanizationStep } from "../steps/generate-vocabulary-romanization-step";
 import { type LessonActivity } from "../steps/get-lesson-activities-step";
+import { saveTranslationFromExistingVocabularyStep } from "../steps/save-translation-from-existing-vocabulary-step";
 import { saveVocabularyActivityStep } from "../steps/save-vocabulary-activity-step";
 
 /**
- * Orchestrates vocabulary activity generation.
+ * Orchestrates vocabulary and translation activity generation.
  *
- * Only generates if a vocabulary activity exists in the activitiesToGenerate list.
- * The allActivities parameter is passed to the save step because it needs
- * the full list to find translation activities — the translation activity
- * may not be in activitiesToGenerate (e.g., already completed).
- *
- * TODO: If vocabulary is completed but translation failed, vocabulary won't be
- * in activitiesToGenerate, so this workflow returns early. Translation
- * regeneration in that case needs separate handling in languageActivityWorkflow.
+ * Handles two scenarios:
+ * 1. Normal: vocabulary needs generation → generate content, audio, pronunciation,
+ *    romanization → save everything (including translation steps) at once.
+ * 2. Edge case: vocabulary is already completed but translation failed on a prior run.
+ *    In this case, vocabulary is NOT in activitiesToGenerate but translation IS.
+ *    We skip AI generation and instead create translation steps from the existing
+ *    vocabulary steps in the DB.
  */
 export async function vocabularyActivityWorkflow({
   activitiesToGenerate,
@@ -38,6 +38,12 @@ export async function vocabularyActivityWorkflow({
   const vocabularyActivity = findActivityByKind(activitiesToGenerate, "vocabulary");
 
   if (!vocabularyActivity) {
+    const translationActivity = findActivityByKind(activitiesToGenerate, "translation");
+
+    if (translationActivity) {
+      await saveTranslationFromExistingVocabularyStep({ allActivities, workflowRunId });
+    }
+
     return { words: [] };
   }
 
