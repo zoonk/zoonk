@@ -8,13 +8,12 @@ import { handleActivityFailureStep } from "./handle-failure-step";
 import { type SavedWord } from "./save-vocabulary-words-step";
 
 /**
- * Updates Word-level fields (audioUrl and romanization) after parallel
- * generation. WordTranslation-level fields (pronunciation,
- * alternativeTranslations) are handled by
- * generateWordPronunciationAndAlternatives, so this step only writes
- * to the Word table.
+ * Saves audioUrl and romanization to Word records after parallel generation.
+ * WordTranslation-level fields (pronunciation, alternativeTranslations) are
+ * handled by generateWordPronunciationAndAlternatives, so this step only
+ * writes to the Word table.
  */
-export async function updateVocabularyEnrichmentsStep(
+export async function saveWordAudioAndRomanizationStep(
   activities: LessonActivity[],
   savedWords: SavedWord[],
   wordAudioUrls: Record<string, string>,
@@ -30,7 +29,7 @@ export async function updateVocabularyEnrichmentsStep(
 
   await using stream = createStepStream<ActivityStepName>();
 
-  await stream.status({ status: "started", step: "updateVocabularyEnrichments" });
+  await stream.status({ status: "started", step: "saveWordAudioAndRomanization" });
 
   const wordUpdates = savedWords
     .filter((saved) => wordAudioUrls[saved.word] || romanizations[saved.word])
@@ -47,10 +46,10 @@ export async function updateVocabularyEnrichmentsStep(
   const { error } = await safeAsync(() => prisma.$transaction(wordUpdates));
 
   if (error) {
-    await stream.error({ reason: "dbSaveFailed", step: "updateVocabularyEnrichments" });
+    await stream.error({ reason: "dbSaveFailed", step: "saveWordAudioAndRomanization" });
     await handleActivityFailureStep({ activityId: activity.id });
     return;
   }
 
-  await stream.status({ status: "completed", step: "updateVocabularyEnrichments" });
+  await stream.status({ status: "completed", step: "saveWordAudioAndRomanization" });
 }

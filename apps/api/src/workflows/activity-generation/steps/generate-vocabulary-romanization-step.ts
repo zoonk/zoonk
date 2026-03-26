@@ -11,7 +11,7 @@ import { handleActivityFailureStep } from "./handle-failure-step";
 /**
  * Generates romanized (Latin-script) representations of vocabulary words
  * for languages that use non-Roman writing systems (e.g., Japanese, Chinese, Korean).
- * This runs as a separate enrichment step so the AI vocabulary generation prompt
+ * This runs as a separate step so the AI vocabulary generation prompt
  * stays focused on word selection and translation quality.
  */
 export async function generateVocabularyRomanizationStep(
@@ -44,7 +44,7 @@ export async function generateVocabularyRomanizationStep(
   );
 
   if (error || !result?.data) {
-    await stream.error({ reason: "enrichmentFailed", step: "generateVocabularyRomanization" });
+    await stream.error({ reason: "romanizationFailed", step: "generateVocabularyRomanization" });
     await handleActivityFailureStep({ activityId: activity.id });
     return { romanizations: {} };
   }
@@ -56,7 +56,7 @@ export async function generateVocabularyRomanizationStep(
   );
 
   if (Object.keys(romanizations).length < words.length) {
-    await stream.error({ reason: "enrichmentFailed", step: "generateVocabularyRomanization" });
+    await stream.error({ reason: "romanizationFailed", step: "generateVocabularyRomanization" });
     await handleActivityFailureStep({ activityId: activity.id });
     return { romanizations };
   }

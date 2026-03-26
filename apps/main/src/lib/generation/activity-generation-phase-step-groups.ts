@@ -7,7 +7,7 @@ const ALL_CONTENT_STEPS: ActivityStepName[] = [
   "generateQuizContent",
   "generatePracticeContent",
   "generateGrammarContent",
-  "generateGrammarEnrichment",
+  "generateGrammarUserContent",
   "generateGrammarRomanization",
   "saveGrammarSteps",
   "generateSentences",
@@ -20,13 +20,13 @@ const ALL_VOCABULARY_STEPS: ActivityStepName[] = [
   "generateVocabularyPronunciation",
   "generateVocabularyRomanization",
   "generateVocabularyAudio",
-  "updateVocabularyEnrichments",
+  "saveWordAudioAndRomanization",
 ];
 
 const ALL_READING_STEPS: ActivityStepName[] = [
   "saveSentences",
   "generateAudio",
-  "updateSentenceEnrichments",
+  "saveSentenceAudioAndRomanization",
   "generateReadingRomanization",
 ];
 
@@ -57,10 +57,10 @@ export const LISTENING_DEPENDENCY_STEPS: ActivityStepName[] = [
   "generateVocabularyPronunciation",
   "generateVocabularyRomanization",
   "generateVocabularyAudio",
-  "updateVocabularyEnrichments",
+  "saveWordAudioAndRomanization",
   "setTranslationAsCompleted",
   "generateGrammarContent",
-  "generateGrammarEnrichment",
+  "generateGrammarUserContent",
   "generateGrammarRomanization",
   "saveGrammarSteps",
   "generateSentences",

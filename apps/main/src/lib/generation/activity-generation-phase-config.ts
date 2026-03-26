@@ -123,7 +123,7 @@ function getLanguagePhaseSteps(kind: ActivityKind): Record<PhaseName, ActivitySt
         ...VISUALS_AS_FINISHING,
         ...getFinishingSteps([
           "generateGrammarContent",
-          "generateGrammarEnrichment",
+          "generateGrammarUserContent",
           "generateGrammarRomanization",
           "saveGrammarSteps",
         ]),
@@ -132,7 +132,7 @@ function getLanguagePhaseSteps(kind: ActivityKind): Record<PhaseName, ActivitySt
       writingContent: [
         "setActivityAsRunning",
         "generateGrammarContent",
-        "generateGrammarEnrichment",
+        "generateGrammarUserContent",
         "generateGrammarRomanization",
         "saveGrammarSteps",
       ],
@@ -150,12 +150,16 @@ function getLanguagePhaseSteps(kind: ActivityKind): Record<PhaseName, ActivitySt
           "generateSentences",
           "saveSentences",
           "generateAudio",
-          "updateSentenceEnrichments",
+          "saveSentenceAudioAndRomanization",
           "generateReadingRomanization",
         ]),
       ],
       processingDependencies: [],
-      recordingAudio: ["generateAudio", "updateSentenceEnrichments", "generateReadingRomanization"],
+      recordingAudio: [
+        "generateAudio",
+        "saveSentenceAudioAndRomanization",
+        "generateReadingRomanization",
+      ],
       writingContent: [],
     };
   }
@@ -173,14 +177,18 @@ function getLanguagePhaseSteps(kind: ActivityKind): Record<PhaseName, ActivitySt
           "generateSentences",
           "saveSentences",
           "generateAudio",
-          "updateSentenceEnrichments",
+          "saveSentenceAudioAndRomanization",
           "generateReadingRomanization",
           "setListeningAsCompleted",
         ]),
         "setListeningAsCompleted",
       ],
       processingDependencies: LISTENING_DEPENDENCY_STEPS,
-      recordingAudio: ["generateAudio", "updateSentenceEnrichments", "generateReadingRomanization"],
+      recordingAudio: [
+        "generateAudio",
+        "saveSentenceAudioAndRomanization",
+        "generateReadingRomanization",
+      ],
       writingContent: LISTENING_WRITING_STEPS,
     };
   }

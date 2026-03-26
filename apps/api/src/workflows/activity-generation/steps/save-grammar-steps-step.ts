@@ -1,7 +1,7 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
 import { type ActivityStepName } from "@/workflows/config";
 import { type ActivityGrammarContentSchema } from "@zoonk/ai/tasks/activities/language/grammar-content";
-import { type ActivityGrammarEnrichmentSchema } from "@zoonk/ai/tasks/activities/language/grammar-enrichment";
+import { type ActivityGrammarUserContentSchema } from "@zoonk/ai/tasks/activities/language/grammar-user-content";
 import { assertStepContent } from "@zoonk/core/steps/content-contract";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
@@ -38,7 +38,7 @@ function buildOptionRomanizations(
 
 /**
  * Merges the raw grammar content (TARGET_LANGUAGE examples + exercises)
- * with the enrichment data (USER_LANGUAGE translations, rule, discovery, feedback)
+ * with the user content (USER_LANGUAGE translations, rule, discovery, feedback)
  * and optional romanizations into the final step records for the database.
  *
  * The step order is: examples → discovery → rule → exercises,
@@ -47,7 +47,7 @@ function buildOptionRomanizations(
 function buildGrammarSteps(
   activityId: bigint | number,
   content: ActivityGrammarContentSchema,
-  enrichment: ActivityGrammarEnrichmentSchema,
+  userContent: ActivityGrammarUserContentSchema,
   romanizations: Record<string, string> | null,
 ) {
   const exampleSteps = content.examples.map((example, index) => {
@@ -55,7 +55,7 @@ function buildGrammarSteps(
       highlight: example.highlight,
       romanization: romanizations?.[example.sentence] ?? null,
       sentence: example.sentence,
-      translation: enrichment.exampleTranslations[index] ?? "",
+      translation: userContent.exampleTranslations[index] ?? "",
       variant: "grammarExample",
     });
 
@@ -66,15 +66,15 @@ function buildGrammarSteps(
     };
   });
 
-  const discoveryQuestion = nullableNonEmpty(enrichment.discovery.question);
-  const discoveryContext = nullableNonEmpty(enrichment.discovery.context);
+  const discoveryQuestion = nullableNonEmpty(userContent.discovery.question);
+  const discoveryContext = nullableNonEmpty(userContent.discovery.context);
 
   const discoveryStep = {
     activityId,
     content: assertStepContent("multipleChoice", {
       ...(discoveryContext ? { context: discoveryContext } : {}),
       kind: "core",
-      options: enrichment.discovery.options,
+      options: userContent.discovery.options,
       ...(discoveryQuestion ? { question: discoveryQuestion } : {}),
     }),
     kind: "multipleChoice" as const,
@@ -83,15 +83,15 @@ function buildGrammarSteps(
   const ruleStep = {
     activityId,
     content: assertStepContent("static", {
-      ruleName: enrichment.ruleName,
-      ruleSummary: enrichment.ruleSummary,
+      ruleName: userContent.ruleName,
+      ruleSummary: userContent.ruleSummary,
       variant: "grammarRule",
     }),
     kind: "static" as const,
   };
 
   const practiceSteps = content.exercises.map((exercise, index) => {
-    const exerciseQuestion = nullableNonEmpty(enrichment.exerciseQuestions[index]);
+    const exerciseQuestion = nullableNonEmpty(userContent.exerciseQuestions[index]);
     const fullSentence = exercise.template.replace("[BLANK]", exercise.answer);
     const allOptionKeys = [fullSentence, exercise.answer, ...exercise.distractors];
     const exerciseRomanizations = buildOptionRomanizations(allOptionKeys, romanizations);
@@ -101,7 +101,7 @@ function buildGrammarSteps(
       content: assertStepContent("fillBlank", {
         answers: [exercise.answer],
         distractors: exercise.distractors,
-        feedback: enrichment.exerciseFeedback[index] ?? "",
+        feedback: userContent.exerciseFeedback[index] ?? "",
         ...(exerciseQuestion ? { question: exerciseQuestion } : {}),
         ...(exerciseRomanizations ? { romanizations: exerciseRomanizations } : {}),
         template: exercise.template,
@@ -118,7 +118,7 @@ function buildGrammarSteps(
 }
 
 /**
- * Merges content, enrichment, and romanization data into grammar step records
+ * Merges content, user content, and romanization data into grammar step records
  * and saves them to the database in a single batch insert.
  * This is the final step of the grammar workflow before marking the activity as completed.
  */
@@ -126,7 +126,7 @@ export async function saveGrammarStepsStep(
   activities: LessonActivity[],
   workflowRunId: string,
   content: ActivityGrammarContentSchema,
-  enrichment: ActivityGrammarEnrichmentSchema,
+  userContent: ActivityGrammarUserContentSchema,
   romanizations: Record<string, string> | null,
 ): Promise<void> {
   "use step";
@@ -141,7 +141,7 @@ export async function saveGrammarStepsStep(
 
   await stream.status({ status: "started", step: "saveGrammarSteps" });
 
-  const steps = buildGrammarSteps(activity.id, content, enrichment, romanizations);
+  const steps = buildGrammarSteps(activity.id, content, userContent, romanizations);
 
   const { error } = await safeAsync(() => prisma.step.createMany({ data: steps }));
 

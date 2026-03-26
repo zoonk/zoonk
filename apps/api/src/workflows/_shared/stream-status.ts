@@ -9,7 +9,9 @@ export type WorkflowErrorReason =
   | "contentValidationFailed"
   | "dbFetchFailed"
   | "dbSaveFailed"
-  | "enrichmentFailed"
+  | "audioGenerationFailed"
+  | "romanizationFailed"
+  | "translationGenerationFailed"
   | "noSourceData"
   | "notFound";
 

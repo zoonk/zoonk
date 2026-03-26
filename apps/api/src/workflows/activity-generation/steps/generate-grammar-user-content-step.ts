@@ -2,42 +2,42 @@ import { createStepStream } from "@/workflows/_shared/stream-status";
 import { type ActivityStepName } from "@/workflows/config";
 import { type ActivityGrammarContentSchema } from "@zoonk/ai/tasks/activities/language/grammar-content";
 import {
-  type ActivityGrammarEnrichmentSchema,
-  generateActivityGrammarEnrichment,
-} from "@zoonk/ai/tasks/activities/language/grammar-enrichment";
+  type ActivityGrammarUserContentSchema,
+  generateActivityGrammarUserContent,
+} from "@zoonk/ai/tasks/activities/language/grammar-user-content";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
 
 /**
- * Generates USER_LANGUAGE enrichment for grammar content: translations,
+ * Generates USER_LANGUAGE content for grammar activities: translations,
  * discovery question, rule name/summary, and exercise feedback.
  * Runs in parallel with romanization since neither depends on the other.
  */
-export async function generateGrammarEnrichmentStep(
+export async function generateGrammarUserContentStep(
   activities: LessonActivity[],
   grammarContent: ActivityGrammarContentSchema,
-): Promise<{ enrichment: ActivityGrammarEnrichmentSchema | null }> {
+): Promise<{ userContent: ActivityGrammarUserContentSchema | null }> {
   "use step";
 
   const activity = findActivityByKind(activities, "grammar");
 
   if (!activity) {
-    return { enrichment: null };
+    return { userContent: null };
   }
 
   await using stream = createStepStream<ActivityStepName>();
 
-  await stream.status({ status: "started", step: "generateGrammarEnrichment" });
+  await stream.status({ status: "started", step: "generateGrammarUserContent" });
 
   const course = activity.lesson.chapter.course;
   const targetLanguage = course.targetLanguage ?? course.title;
   const userLanguage = activity.language;
 
-  const { data: result, error }: SafeReturn<{ data: ActivityGrammarEnrichmentSchema }> =
+  const { data: result, error }: SafeReturn<{ data: ActivityGrammarUserContentSchema }> =
     await safeAsync(() =>
-      generateActivityGrammarEnrichment({
+      generateActivityGrammarUserContent({
         chapterTitle: activity.lesson.chapter.title,
         examples: grammarContent.examples,
         exercises: grammarContent.exercises,
@@ -50,11 +50,11 @@ export async function generateGrammarEnrichmentStep(
 
   if (error || !result) {
     const reason = error ? "aiGenerationFailed" : "aiEmptyResult";
-    await stream.error({ reason, step: "generateGrammarEnrichment" });
+    await stream.error({ reason, step: "generateGrammarUserContent" });
     await handleActivityFailureStep({ activityId: activity.id });
-    return { enrichment: null };
+    return { userContent: null };
   }
 
-  await stream.status({ status: "completed", step: "generateGrammarEnrichment" });
-  return { enrichment: result.data };
+  await stream.status({ status: "completed", step: "generateGrammarUserContent" });
+  return { userContent: result.data };
 }

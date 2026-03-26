@@ -126,6 +126,6 @@
       ]
     }
   ],
-  "taskId": "activity-grammar-enrichment",
-  "testCaseId": "en-japanese-topic-marker-enrichment-1"
+  "taskId": "activity-grammar-user-content",
+  "testCaseId": "en-japanese-topic-marker-user-content-1"
 }

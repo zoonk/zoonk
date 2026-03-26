@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { generateActivityGrammarContent } from "@zoonk/ai/tasks/activities/language/grammar-content";
-import { generateActivityGrammarEnrichment } from "@zoonk/ai/tasks/activities/language/grammar-enrichment";
+import { generateActivityGrammarUserContent } from "@zoonk/ai/tasks/activities/language/grammar-user-content";
 import { prisma } from "@zoonk/db";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
@@ -43,8 +43,8 @@ vi.mock("@zoonk/ai/tasks/activities/language/grammar-content", () => ({
   }),
 }));
 
-vi.mock("@zoonk/ai/tasks/activities/language/grammar-enrichment", () => ({
-  generateActivityGrammarEnrichment: vi.fn().mockResolvedValue({
+vi.mock("@zoonk/ai/tasks/activities/language/grammar-user-content", () => ({
+  generateActivityGrammarUserContent: vi.fn().mockResolvedValue({
     data: {
       discovery: {
         context: null,
@@ -239,16 +239,16 @@ describe(grammarActivityWorkflow, () => {
     expect(dbActivity?.generationStatus).toBe("failed");
   });
 
-  test("sets grammar status to 'failed' when enrichment AI throws", async () => {
-    vi.mocked(generateActivityGrammarEnrichment).mockRejectedValueOnce(
-      new Error("Enrichment failed"),
+  test("sets grammar status to 'failed' when user content AI throws", async () => {
+    vi.mocked(generateActivityGrammarUserContent).mockRejectedValueOnce(
+      new Error("User content generation failed"),
     );
 
     const lesson = await lessonFixture({
       chapterId: chapter.id,
       kind: "language",
       organizationId,
-      title: `Grammar EnrichFail ${randomUUID()}`,
+      title: `Grammar UserContentFail ${randomUUID()}`,
     });
 
     const activity = await activityFixture({

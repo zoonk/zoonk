@@ -1,9 +1,9 @@
 import { describe, expect, test } from "vitest";
-import { enrichReadingSentenceVariants } from "./enrich-reading-sentence-variants";
+import { mergeReadingSentenceVariants } from "./merge-reading-sentence-variants";
 
-describe(enrichReadingSentenceVariants, () => {
+describe(mergeReadingSentenceVariants, () => {
   test("derives alternative sentences from shared source-side vocabulary mappings", () => {
-    const [sentence] = enrichReadingSentenceVariants(
+    const [sentence] = mergeReadingSentenceVariants(
       [
         {
           alternativeSentences: [],
@@ -52,7 +52,7 @@ describe(enrichReadingSentenceVariants, () => {
   });
 
   test("derives alternative translations from a matched word's alternative translations", () => {
-    const [sentence] = enrichReadingSentenceVariants(
+    const [sentence] = mergeReadingSentenceVariants(
       [
         {
           alternativeSentences: [],
@@ -79,7 +79,7 @@ describe(enrichReadingSentenceVariants, () => {
   });
 
   test("keeps AI sentence variants even when they introduce a different lesson phrase", () => {
-    const [sentence] = enrichReadingSentenceVariants(
+    const [sentence] = mergeReadingSentenceVariants(
       [
         {
           alternativeSentences: ["Guten Morgen, Herr Weber."],
@@ -117,7 +117,7 @@ describe(enrichReadingSentenceVariants, () => {
   });
 
   test("keeps AI translation variants even when they introduce a different lesson phrase", () => {
-    const [sentence] = enrichReadingSentenceVariants(
+    const [sentence] = mergeReadingSentenceVariants(
       [
         {
           alternativeSentences: [],
@@ -150,7 +150,7 @@ describe(enrichReadingSentenceVariants, () => {
   });
 
   test("keeps AI sentence-form variants that do not depend on lesson phrase swaps", () => {
-    const [sentence] = enrichReadingSentenceVariants(
+    const [sentence] = mergeReadingSentenceVariants(
       [
         {
           alternativeSentences: ["Soy Lara."],

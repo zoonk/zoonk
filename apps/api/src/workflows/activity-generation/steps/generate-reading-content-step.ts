@@ -20,8 +20,8 @@ import { safeAsync } from "@zoonk/utils/error";
 import { resolveActivityForGeneration } from "./_utils/content-step-helpers";
 import {
   type VocabularyVariantWord,
-  enrichReadingSentenceVariants,
-} from "./_utils/enrich-reading-sentence-variants";
+  mergeReadingSentenceVariants,
+} from "./_utils/merge-reading-sentence-variants";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
 import { setActivityAsRunningStep } from "./set-activity-as-running-step";
@@ -242,7 +242,7 @@ export async function generateReadingContentStep(
     userLanguage,
   });
 
-  const sentences = enrichReadingSentenceVariants(
+  const sentences = mergeReadingSentenceVariants(
     mergeSentenceVariants(generatedSentences, sentenceVariantsResult?.data.sentences),
     wordsWithAlternatives,
   );

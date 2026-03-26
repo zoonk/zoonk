@@ -4,7 +4,7 @@ EVALUATION CRITERIA:
 1. MONOLINGUAL OUTPUT (CRITICAL - highest priority):
    - ALL text MUST be in the TARGET language ONLY
    - There should be NO translations, NO user-language text, NO romanization
-   - This task produces raw grammar content; enrichment is done separately
+   - This task produces raw grammar content; user-language content is generated separately
    - Penalize SEVERELY if any non-target-language text appears in examples or exercises
    - Format tokens ([BLANK] placeholder, JSON keys) are part of the required output structure, NOT language-mixing issues
 

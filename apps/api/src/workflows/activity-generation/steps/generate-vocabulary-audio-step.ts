@@ -90,7 +90,7 @@ export async function generateVocabularyAudioStep(
   };
 
   if (fulfilled.length < wordsNeedingAudio.length) {
-    await stream.error({ reason: "enrichmentFailed", step: "generateVocabularyAudio" });
+    await stream.error({ reason: "audioGenerationFailed", step: "generateVocabularyAudio" });
     await handleActivityFailureStep({ activityId: activity.id });
     return { wordAudioUrls };
   }

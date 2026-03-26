@@ -201,7 +201,10 @@ export async function generateSentenceWordMetadataStep(
   });
 
   if (!isComplete) {
-    await stream.error({ reason: "enrichmentFailed", step: "generateSentenceWordMetadata" });
+    await stream.error({
+      reason: "translationGenerationFailed",
+      step: "generateSentenceWordMetadata",
+    });
     await handleActivityFailureStep({ activityId: activity.id });
     return { wordMetadata };
   }

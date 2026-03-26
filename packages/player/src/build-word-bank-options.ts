@@ -226,7 +226,7 @@ function filterEquivalentLessonWords(
 }
 
 /**
- * Reading sentence chips and reading word-bank chips share the same enrichment rule, so
+ * Reading sentence chips and reading word-bank chips share the same metadata rule, so
  * both callers should build options through one normalized lookup function.
  */
 export function buildSentenceWordOptions(

@@ -69,7 +69,7 @@ export async function generateGrammarRomanizationStep(
   );
 
   if (error || !result?.data) {
-    await stream.error({ reason: "enrichmentFailed", step: "generateGrammarRomanization" });
+    await stream.error({ reason: "romanizationFailed", step: "generateGrammarRomanization" });
     await handleActivityFailureStep({ activityId: activity.id });
     return { romanizations: null };
   }

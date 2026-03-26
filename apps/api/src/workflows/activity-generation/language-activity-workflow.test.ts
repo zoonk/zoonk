@@ -72,8 +72,8 @@ vi.mock("@zoonk/ai/tasks/activities/language/grammar-content", () => ({
   }),
 }));
 
-vi.mock("@zoonk/ai/tasks/activities/language/grammar-enrichment", () => ({
-  generateActivityGrammarEnrichment: vi.fn().mockResolvedValue({
+vi.mock("@zoonk/ai/tasks/activities/language/grammar-user-content", () => ({
+  generateActivityGrammarUserContent: vi.fn().mockResolvedValue({
     data: {
       discovery: {
         context: null,

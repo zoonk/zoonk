@@ -259,11 +259,15 @@ function getAcceptedAlternativeTexts(params: {
 }
 
 /**
- * Combine AI-generated sentence variants with deterministic variants derived from lesson
- * vocabulary data, then deduplicate. AI variants are trusted as-is — the prompt already
+ * Merges AI-generated sentence variants with deterministic variants derived from lesson
+ * vocabulary data, then deduplicates. AI variants are trusted as-is — the prompt already
  * constrains what counts as a valid variant.
+ *
+ * Deterministic variants are derived when two vocabulary words share a translation
+ * (e.g., "Guten Morgen" and "Guten Tag" both map to "Bom dia"), allowing
+ * alternative sentences and translations to be generated from vocabulary overlap.
  */
-export function enrichReadingSentenceVariants<T extends SentenceWithVariants>(
+export function mergeReadingSentenceVariants<T extends SentenceWithVariants>(
   sentences: T[],
   words: VocabularyVariantWord[],
 ): T[] {

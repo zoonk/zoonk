@@ -571,12 +571,12 @@ describe(vocabularyActivityWorkflow, () => {
   test("sets vocabulary status to 'failed' when pronunciation/alternatives DB write fails", async () => {
     const transactionSpy = vi.spyOn(prisma, "$transaction");
 
-    // Let the first $transaction call through (updateVocabularyEnrichmentsStep),
+    // Let the first $transaction call through (saveWordAudioAndRomanizationStep),
     // but fail the pronunciation/alternatives persist. Since both run in
     // Promise.allSettled, we need to fail the specific call from
     // persistGeneratedFields. It's the first $transaction call because
-    // the enrichment step runs in parallel and typically resolves before
-    // the update step.
+    // the audio+romanization step runs in parallel and typically resolves
+    // before the update step.
     transactionSpy.mockRejectedValueOnce(new Error("DB transaction failed"));
 
     const lesson = await lessonFixture({
