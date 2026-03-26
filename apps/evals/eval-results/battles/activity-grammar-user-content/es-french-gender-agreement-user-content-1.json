@@ -126,6 +126,6 @@
       ]
     }
   ],
-  "taskId": "activity-grammar-enrichment",
-  "testCaseId": "es-french-gender-agreement-enrichment-1"
+  "taskId": "activity-grammar-user-content",
+  "testCaseId": "es-french-gender-agreement-user-content-1"
 }

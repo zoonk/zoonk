@@ -11,7 +11,7 @@ import { type SavedSentence } from "./save-reading-sentences-step";
 /**
  * Generates romanized (Latin-script) representations of reading sentences
  * for languages that use non-Roman writing systems (e.g., Japanese, Chinese, Korean).
- * This runs as a separate enrichment step so the AI sentence generation prompt
+ * This runs as a separate step so the AI sentence generation prompt
  * stays focused on sentence quality, grammar, and translation accuracy.
  */
 export async function generateReadingRomanizationStep(
@@ -44,7 +44,7 @@ export async function generateReadingRomanizationStep(
   );
 
   if (error || !result?.data) {
-    await stream.error({ reason: "enrichmentFailed", step: "generateReadingRomanization" });
+    await stream.error({ reason: "romanizationFailed", step: "generateReadingRomanization" });
     await handleActivityFailureStep({ activityId: activity.id });
     return { romanizations: {} };
   }
@@ -56,7 +56,7 @@ export async function generateReadingRomanizationStep(
   );
 
   if (Object.keys(romanizations).length < savedSentences.length) {
-    await stream.error({ reason: "enrichmentFailed", step: "generateReadingRomanization" });
+    await stream.error({ reason: "romanizationFailed", step: "generateReadingRomanization" });
     await handleActivityFailureStep({ activityId: activity.id });
     return { romanizations };
   }

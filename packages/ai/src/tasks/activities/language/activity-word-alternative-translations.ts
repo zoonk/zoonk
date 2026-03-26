@@ -33,7 +33,7 @@ export type WordAlternativeTranslationsParams = {
  * alternative so it's never shown as a distractor — since it's also correct.
  *
  * This is the canonical source of truth for word-level alternative
- * translation rules. Used by the shared word enrichment step to fill in
+ * translation rules. Used by the shared word pronunciation and alternatives step to fill in
  * alternatives for any word (vocabulary or sentence-extracted).
  */
 export async function generateWordAlternativeTranslations({

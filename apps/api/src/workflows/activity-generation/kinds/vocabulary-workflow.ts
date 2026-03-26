@@ -7,7 +7,7 @@ import { generateVocabularyPronunciationAndAlternativesStep } from "../steps/gen
 import { generateVocabularyRomanizationStep } from "../steps/generate-vocabulary-romanization-step";
 import { type LessonActivity } from "../steps/get-lesson-activities-step";
 import { saveVocabularyWordsStep } from "../steps/save-vocabulary-words-step";
-import { updateVocabularyEnrichmentsStep } from "../steps/update-vocabulary-enrichments-step";
+import { saveWordAudioAndRomanizationStep } from "../steps/save-word-audio-and-romanization-step";
 
 export async function vocabularyActivityWorkflow(
   activities: LessonActivity[],
@@ -35,7 +35,7 @@ export async function vocabularyActivityWorkflow(
   const { wordAudioUrls } = settled(audioResult, { wordAudioUrls: {} });
   const { romanizations } = settled(romanizationResult, { romanizations: {} });
 
-  await updateVocabularyEnrichmentsStep(activities, savedWords, wordAudioUrls, romanizations);
+  await saveWordAudioAndRomanizationStep(activities, savedWords, wordAudioUrls, romanizations);
   await completeActivityStep(activities, workflowRunId, "vocabulary");
   await completeActivityStep(activities, workflowRunId, "translation");
 

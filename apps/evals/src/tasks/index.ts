@@ -3,7 +3,7 @@ import { activityChallengeTask } from "./activity-challenge/task";
 import { activityCustomTask } from "./activity-custom/task";
 import { activityExplanationTask } from "./activity-explanation/task";
 import { activityGrammarContentTask } from "./activity-grammar-content/task";
-import { activityGrammarEnrichmentTask } from "./activity-grammar-enrichment/task";
+import { activityGrammarUserContentTask } from "./activity-grammar-user-content/task";
 import { activityPracticeTask } from "./activity-practice/task";
 import { activityPronunciationTask } from "./activity-pronunciation/task";
 import { activityQuizTask } from "./activity-quiz/task";
@@ -31,7 +31,7 @@ export const TASKS: readonly Task[] = [
   activityQuizTask,
   activityExplanationTask,
   activityGrammarContentTask,
-  activityGrammarEnrichmentTask,
+  activityGrammarUserContentTask,
   activityPronunciationTask,
   activitySentenceVariantsTask,
   activityTranslationTask,

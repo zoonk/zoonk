@@ -9,9 +9,9 @@ import { generateSentenceWordAudioStep } from "../steps/generate-sentence-word-a
 import { generateSentenceWordMetadataStep } from "../steps/generate-sentence-word-metadata-step";
 import { type LessonActivity } from "../steps/get-lesson-activities-step";
 import { saveReadingSentencesStep } from "../steps/save-reading-sentences-step";
+import { saveSentenceAudioAndRomanizationStep } from "../steps/save-sentence-audio-and-romanization-step";
+import { saveSentenceWordAudioStep } from "../steps/save-sentence-word-audio-step";
 import { saveSentenceWordsStep } from "../steps/save-sentence-words-step";
-import { updateReadingEnrichmentsStep } from "../steps/update-reading-enrichments-step";
-import { updateSentenceWordEnrichmentsStep } from "../steps/update-sentence-word-enrichments-step";
 
 export async function readingActivityWorkflow(
   activities: LessonActivity[],
@@ -40,7 +40,12 @@ export async function readingActivityWorkflow(
   const { sentenceAudioUrls } = settled(audioResult, { sentenceAudioUrls: {} });
   const { romanizations } = settled(romanizationResult, { romanizations: {} });
 
-  await updateReadingEnrichmentsStep(activities, savedSentences, sentenceAudioUrls, romanizations);
+  await saveSentenceAudioAndRomanizationStep(
+    activities,
+    savedSentences,
+    sentenceAudioUrls,
+    romanizations,
+  );
 
   const { wordMetadata } = await generateSentenceWordMetadataStep(activities, savedSentences);
 
@@ -56,7 +61,7 @@ export async function readingActivityWorkflow(
   ]);
 
   const { wordAudioUrls } = settled(wordAudioResult, { wordAudioUrls: {} });
-  await updateSentenceWordEnrichmentsStep(activities, savedSentenceWords, wordAudioUrls);
+  await saveSentenceWordAudioStep(activities, savedSentenceWords, wordAudioUrls);
 
   await completeActivityStep(activities, workflowRunId, "reading");
 }

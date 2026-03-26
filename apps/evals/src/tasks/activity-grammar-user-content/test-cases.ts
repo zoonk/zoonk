@@ -2,9 +2,9 @@ const SHARED_EXPECTATIONS = `
 EVALUATION CRITERIA:
 
 1. USER-LANGUAGE OUTPUT (CRITICAL - highest priority):
-   - ALL enrichment content MUST be in the USER language
+   - ALL user content MUST be in the USER language
    - Translations, discovery question, rule summary, and feedback must be in the user's language
-   - Penalize SEVERELY if enrichment content is in the target language instead of the user language
+   - Penalize SEVERELY if user content is in the target language instead of the user language
 
 2. EXAMPLE TRANSLATIONS:
    - Must provide one translation per example in the same order
@@ -27,7 +27,7 @@ EVALUATION CRITERIA:
    - Must use clear, simple language in the user's language
    - Penalize if verbose, unclear, or introduces new concepts
 
-5. EXERCISE ENRICHMENT:
+5. EXERCISE USER CONTENT:
    - exerciseFeedback: one feedback string per exercise explaining the correct answer
    - exerciseQuestions: one question per exercise (can be null)
    - exerciseTranslations: one translation per exercise template
@@ -69,7 +69,7 @@ TOPIC-SPECIFIC CHECKS:
 
 ${SHARED_EXPECTATIONS}
     `,
-    id: "en-japanese-topic-marker-enrichment",
+    id: "en-japanese-topic-marker-user-content",
     userInput: {
       chapterTitle: "Basic Particles",
       examples: [
@@ -108,7 +108,7 @@ TOPIC-SPECIFIC CHECKS:
 
 ${SHARED_EXPECTATIONS}
     `,
-    id: "en-spanish-ar-verb-enrichment",
+    id: "en-spanish-ar-verb-user-content",
     userInput: {
       chapterTitle: "Present Tense Verbs",
       examples: [
@@ -148,7 +148,7 @@ TOPIC-SPECIFIC CHECKS:
 
 ${SHARED_EXPECTATIONS}
     `,
-    id: "pt-korean-subject-marker-enrichment",
+    id: "pt-korean-subject-marker-user-content",
     userInput: {
       chapterTitle: "Partículas Básicas",
       examples: [
@@ -188,7 +188,7 @@ TOPIC-SPECIFIC CHECKS:
 
 ${SHARED_EXPECTATIONS}
     `,
-    id: "en-german-v2-enrichment",
+    id: "en-german-v2-user-content",
     userInput: {
       chapterTitle: "Sentence Structure",
       examples: [
@@ -227,7 +227,7 @@ TOPIC-SPECIFIC CHECKS:
 
 ${SHARED_EXPECTATIONS}
     `,
-    id: "es-french-gender-agreement-enrichment",
+    id: "es-french-gender-agreement-user-content",
     userInput: {
       chapterTitle: "Adjetivos",
       examples: [

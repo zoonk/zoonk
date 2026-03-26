@@ -95,7 +95,7 @@ async function createListeningActivity(options: {
     ),
   ]);
 
-  // Create sentence word records for target-language enrichment in feedback
+  // Create sentence word records for target-language metadata in feedback
   if (options.sentenceWords) {
     await Promise.all(
       options.sentenceWords.map(async (sw) => {

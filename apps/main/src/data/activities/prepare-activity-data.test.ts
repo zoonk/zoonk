@@ -1445,7 +1445,7 @@ describe(prepareActivityData, () => {
     expect(result.steps[0]?.wordBankOptions).toEqual([]);
   });
 
-  test("sentenceWordOptions contains enriched target-language words for reading steps", () => {
+  test("sentenceWordOptions contains target-language words with metadata for reading steps", () => {
     const activity = {
       description: null,
       generationRunId: null,
@@ -1517,7 +1517,7 @@ describe(prepareActivityData, () => {
     });
   });
 
-  test("sentenceWordOptions contains enriched target-language words for listening steps", () => {
+  test("sentenceWordOptions contains target-language words with metadata for listening steps", () => {
     const activity = {
       description: null,
       generationRunId: null,

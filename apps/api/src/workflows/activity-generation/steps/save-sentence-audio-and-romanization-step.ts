@@ -7,7 +7,8 @@ import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
 import { type SavedSentence } from "./save-reading-sentences-step";
 
-export async function updateReadingEnrichmentsStep(
+/** Saves audioUrl and romanization to Sentence records after parallel generation. */
+export async function saveSentenceAudioAndRomanizationStep(
   activities: LessonActivity[],
   savedSentences: SavedSentence[],
   sentenceAudioUrls: Record<string, string>,
@@ -23,7 +24,7 @@ export async function updateReadingEnrichmentsStep(
 
   await using stream = createStepStream<ActivityStepName>();
 
-  await stream.status({ status: "started", step: "updateSentenceEnrichments" });
+  await stream.status({ status: "started", step: "saveSentenceAudioAndRomanization" });
 
   const updates = savedSentences
     .filter((saved) => sentenceAudioUrls[saved.sentence] || romanizations[saved.sentence])
@@ -40,10 +41,10 @@ export async function updateReadingEnrichmentsStep(
   const { error } = await safeAsync(() => prisma.$transaction(updates));
 
   if (error) {
-    await stream.error({ reason: "dbSaveFailed", step: "updateSentenceEnrichments" });
+    await stream.error({ reason: "dbSaveFailed", step: "saveSentenceAudioAndRomanization" });
     await handleActivityFailureStep({ activityId: activity.id });
     return;
   }
 
-  await stream.status({ status: "completed", step: "updateSentenceEnrichments" });
+  await stream.status({ status: "completed", step: "saveSentenceAudioAndRomanization" });
 }

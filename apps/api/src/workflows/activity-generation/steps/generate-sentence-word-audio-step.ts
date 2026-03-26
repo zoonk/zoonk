@@ -84,7 +84,7 @@ export async function generateSentenceWordAudioStep(
   };
 
   if (fulfilled.length < wordsNeedingAudio.length) {
-    await stream.error({ reason: "enrichmentFailed", step: "generateSentenceWordAudio" });
+    await stream.error({ reason: "audioGenerationFailed", step: "generateSentenceWordAudio" });
     await handleActivityFailureStep({ activityId: activity.id });
     return { wordAudioUrls };
   }

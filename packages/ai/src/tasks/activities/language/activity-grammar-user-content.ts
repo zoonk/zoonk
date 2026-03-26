@@ -3,9 +3,9 @@ import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-o
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import { getLanguagePromptContext } from "./_utils/language-prompt-context";
-import systemPrompt from "./activity-grammar-enrichment.prompt.md";
+import systemPrompt from "./activity-grammar-user-content.prompt.md";
 
-const DEFAULT_MODEL = process.env.AI_MODEL_ACTIVITY_GRAMMAR_ENRICHMENT ?? "openai/gpt-5.4";
+const DEFAULT_MODEL = process.env.AI_MODEL_ACTIVITY_GRAMMAR_USER_CONTENT ?? "openai/gpt-5.4";
 const FALLBACK_MODELS = ["anthropic/claude-opus-4.6", "google/gemini-3-flash"];
 
 const schema = z.object({
@@ -28,9 +28,9 @@ const schema = z.object({
   ruleSummary: z.string(),
 });
 
-export type ActivityGrammarEnrichmentSchema = z.infer<typeof schema>;
+export type ActivityGrammarUserContentSchema = z.infer<typeof schema>;
 
-export type ActivityGrammarEnrichmentParams = {
+export type ActivityGrammarUserContentParams = {
   chapterTitle: string;
   examples: { highlight: string; sentence: string }[];
   exercises: { answer: string; distractors: string[]; template: string }[];
@@ -44,15 +44,15 @@ export type ActivityGrammarEnrichmentParams = {
 };
 
 /**
- * Generates USER_LANGUAGE enrichment content for a grammar activity.
+ * Generates USER_LANGUAGE content for a grammar activity.
  *
  * The grammar content task produces TARGET_LANGUAGE examples and exercises.
- * This enrichment task takes that output as read-only context and generates
- * all USER_LANGUAGE content: translations, discovery question, rule summary,
+ * This task takes that output as read-only context and generates all
+ * USER_LANGUAGE content: translations, discovery question, rule summary,
  * and exercise feedback. Splitting generation this way keeps each AI call
  * focused on one language, which reduces language mixing errors.
  */
-export async function generateActivityGrammarEnrichment({
+export async function generateActivityGrammarUserContent({
   chapterTitle,
   examples,
   exercises,
@@ -63,7 +63,7 @@ export async function generateActivityGrammarEnrichment({
   targetLanguage,
   useFallback = true,
   userLanguage,
-}: ActivityGrammarEnrichmentParams) {
+}: ActivityGrammarUserContentParams) {
   const promptContext = getLanguagePromptContext({ targetLanguage, userLanguage });
 
   const userPrompt = `TARGET_LANGUAGE: ${promptContext.targetLanguageName}

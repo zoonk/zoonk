@@ -34,7 +34,7 @@ function hasMinimumGrammarContent(data: ActivityGrammarContentSchema): boolean {
 /**
  * Generates the TARGET_LANGUAGE portion of grammar content (examples + exercises)
  * without saving to the database. Returns the raw AI output so downstream steps
- * can enrich it with translations and romanization before persisting.
+ * can add user-language content and romanization before persisting.
  */
 export async function generateGrammarContentStep(
   activities: LessonActivity[],

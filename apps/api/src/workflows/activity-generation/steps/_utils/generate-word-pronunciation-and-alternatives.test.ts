@@ -220,7 +220,7 @@ describe(generateWordPronunciationAndAlternatives, () => {
     expect(updated?.alternativeTranslations).toEqual([]);
   });
 
-  test("returns generated enrichments in the result", async () => {
+  test("returns generated pronunciation and alternatives in the result", async () => {
     const word = await wordFixture({ organizationId });
     await createWordTranslation({ translation: "hello", wordId: word.id });
 
@@ -257,7 +257,7 @@ describe(generateWordPronunciationAndAlternatives, () => {
     expect(updated?.alternativeTranslations).toEqual([]);
   });
 
-  test("enriches multiple words in a single call", async () => {
+  test("generates pronunciation and alternatives for multiple words in a single call", async () => {
     const [word1, word2] = await Promise.all([
       wordFixture({ organizationId }),
       wordFixture({ organizationId }),
@@ -293,7 +293,7 @@ describe(generateWordPronunciationAndAlternatives, () => {
     expect(updated2?.alternativeTranslations).toEqual(["hi", "hey"]);
   });
 
-  test("only enriches missing fields in a mixed batch", async () => {
+  test("only generates missing fields in a mixed batch", async () => {
     const [needsBoth, needsPronOnly, needsAltsOnly] = await Promise.all([
       wordFixture({ organizationId }),
       wordFixture({ organizationId }),

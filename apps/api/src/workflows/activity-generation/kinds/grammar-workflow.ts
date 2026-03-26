@@ -2,8 +2,8 @@ import { settled } from "@zoonk/utils/settled";
 import { findActivityByKind } from "../steps/_utils/find-activity-by-kind";
 import { completeActivityStep } from "../steps/complete-activity-step";
 import { generateGrammarContentStep } from "../steps/generate-grammar-content-step";
-import { generateGrammarEnrichmentStep } from "../steps/generate-grammar-enrichment-step";
 import { generateGrammarRomanizationStep } from "../steps/generate-grammar-romanization-step";
+import { generateGrammarUserContentStep } from "../steps/generate-grammar-user-content-step";
 import { type LessonActivity } from "../steps/get-lesson-activities-step";
 import { handleActivityFailureStep } from "../steps/handle-failure-step";
 import { saveGrammarStepsStep } from "../steps/save-grammar-steps-step";
@@ -27,15 +27,15 @@ export async function grammarActivityWorkflow(
     return;
   }
 
-  const [enrichmentResult, romanizationResult] = await Promise.allSettled([
-    generateGrammarEnrichmentStep(activities, grammarContent),
+  const [userContentResult, romanizationResult] = await Promise.allSettled([
+    generateGrammarUserContentStep(activities, grammarContent),
     generateGrammarRomanizationStep(activities, grammarContent),
   ]);
 
-  const { enrichment } = settled(enrichmentResult, { enrichment: null });
+  const { userContent } = settled(userContentResult, { userContent: null });
   const { romanizations } = settled(romanizationResult, { romanizations: null });
 
-  if (!enrichment) {
+  if (!userContent) {
     const activity = findActivityByKind(activities, "grammar");
 
     if (activity) {
@@ -45,6 +45,6 @@ export async function grammarActivityWorkflow(
     return;
   }
 
-  await saveGrammarStepsStep(activities, workflowRunId, grammarContent, enrichment, romanizations);
+  await saveGrammarStepsStep(activities, workflowRunId, grammarContent, userContent, romanizations);
   await completeActivityStep(activities, workflowRunId, "grammar");
 }

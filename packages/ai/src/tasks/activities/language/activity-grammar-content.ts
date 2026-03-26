@@ -43,7 +43,7 @@ export type ActivityGrammarContentParams = {
  * Generates the monolingual (TARGET_LANGUAGE only) portion of a grammar activity.
  * Produces example sentences with highlights and fill-in-the-blank exercises
  * without any translations, romanization, or user-language explanations.
- * Those are added by a separate enrichment task so the two concerns
+ * Those are added by a separate user content task so the two concerns
  * can run on different models and be cached independently.
  */
 export async function generateActivityGrammarContent({

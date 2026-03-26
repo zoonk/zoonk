@@ -126,6 +126,6 @@
       ]
     }
   ],
-  "taskId": "activity-grammar-enrichment",
-  "testCaseId": "en-german-v2-enrichment-1"
+  "taskId": "activity-grammar-user-content",
+  "testCaseId": "en-german-v2-user-content-1"
 }
