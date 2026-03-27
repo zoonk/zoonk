@@ -85,7 +85,7 @@ function thinkingReducer(state: ThinkingState, action: ThinkingAction): Thinking
  * @returns Map of phase name → current thinking message
  */
 export function useThinkingMessages<TPhase extends string>(
-  generators: Record<TPhase, ThinkingMessageGenerator>,
+  generators: Partial<Record<TPhase, ThinkingMessageGenerator>>,
   activePhases: TPhase[],
 ): Record<string, string> {
   const [state, dispatch] = useReducer(thinkingReducer, INITIAL_STATE);

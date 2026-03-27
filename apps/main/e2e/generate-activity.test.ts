@@ -962,28 +962,6 @@ test.describe("Generate Activity Page - With Subscription", () => {
     await expect(userWithoutProgress.getByText(/this usually takes about a minute/i)).toBeVisible();
   });
 
-  test("shows practice-content phase and skips pronunciation phase for reading", async ({
-    userWithoutProgress,
-    noProgressUser,
-  }) => {
-    await createTestSubscription(noProgressUser.id);
-
-    const { activity } = await createPendingReadingActivity();
-
-    await setupMockApis(userWithoutProgress, {
-      streamDelayMs: 15_000,
-      streamMessages: [{ status: "started", step: "getLessonActivities" }],
-    });
-
-    await userWithoutProgress.goto(`/generate/a/${activity.id}`);
-
-    await expect(userWithoutProgress.getByText(/preparing practice content/i)).toBeVisible({
-      timeout: 10_000,
-    });
-
-    await expect(userWithoutProgress.getByText(/adding pronunciation/i)).toHaveCount(0);
-  });
-
   test("shows error when stream returns error status", async ({
     userWithoutProgress,
     noProgressUser,

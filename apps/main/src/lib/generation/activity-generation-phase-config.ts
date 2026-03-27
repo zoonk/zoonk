@@ -1,314 +1,142 @@
-import { ACTIVITY_STEPS, type ActivityStepName } from "@zoonk/core/workflows/steps";
+import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { type ActivityKind } from "@zoonk/db";
 import {
-  EXPLANATION_DEPS,
-  LISTENING_DEPENDENCY_STEPS,
-  LISTENING_WRITING_STEPS,
-  getFinishingSteps,
-} from "./activity-generation-phase-step-groups";
+  CHALLENGE_PHASE_ORDER,
+  CHALLENGE_PHASE_STEPS,
+  CUSTOM_PHASE_ORDER,
+  CUSTOM_PHASE_STEPS,
+  EXPLANATION_PHASE_ORDER,
+  EXPLANATION_PHASE_STEPS,
+  GRAMMAR_PHASE_ORDER,
+  GRAMMAR_PHASE_STEPS,
+  LISTENING_PHASE_ORDER,
+  LISTENING_PHASE_STEPS,
+  PRACTICE_PHASE_ORDER,
+  PRACTICE_PHASE_STEPS,
+  QUIZ_PHASE_ORDER,
+  QUIZ_PHASE_STEPS,
+  READING_PHASE_ORDER,
+  READING_PHASE_STEPS,
+  VOCABULARY_PHASE_ORDER,
+  VOCABULARY_PHASE_STEPS,
+} from "./activity-generation-phase-kind-steps";
 
 export { getPhaseWeights } from "./activity-generation-phase-weights";
 
+/**
+ * PHASE GROUPING RULES
+ *
+ * Phases are progress indicators shown to users during content generation.
+ * Each phase transition is a visual "tick" telling the user something happened.
+ *
+ * 1. ONE AI/TTS CALL PER PHASE — AI and TTS calls are slow. Each one gets
+ *    its own phase so users see progress movement. Never group multiple
+ *    AI/TTS calls into the same phase.
+ *
+ * 2. DB STEPS CAN BE GROUPED — Database reads and writes are fast (milliseconds).
+ *    Group them into "gettingStarted" (setup) and "saving" (final write).
+ *
+ * 3. ONLY INCLUDE RELEVANT STEPS — Each kind's config only lists steps that
+ *    kind actually executes. No filler steps from other kinds.
+ *
+ * 4. HUMAN-FRIENDLY NAMES — Phase names match what users see in the UI.
+ *    Write for humans, not machines. No jargon or technical terms.
+ *    If a user reports an issue in a specific phase, both sides should
+ *    use the same naming.
+ *
+ * WHEN ADDING A NEW STEP:
+ * 1. Add the step name to ACTIVITY_STEPS in packages/core/src/workflows/steps.ts
+ * 2. Add it to the relevant kind's config in activity-generation-phase-kind-steps.ts
+ * 3. The AssertAllCovered type will error if you forget to assign it to a phase
+ */
 export type PhaseName =
   | "gettingStarted"
-  | "processingDependencies"
-  | "writingContent"
-  | "preparingVisuals"
-  | "creatingImages"
   | "buildingWordList"
   | "addingPronunciation"
+  | "addingRomanization"
+  | "addingVocabularyRomanization"
+  | "addingGrammarRomanization"
   | "recordingAudio"
-  | "finishing";
+  | "recordingVocabularyAudio"
+  | "writingContent"
+  | "creatingExercises"
+  | "creatingSentences"
+  | "lookingUpWords"
+  | "recordingWordAudio"
+  | "addingWordPronunciation"
+  | "writingExplanation"
+  | "savingPrerequisites"
+  | "preparingVisuals"
+  | "creatingImages"
+  | "saving";
 
+const PHASE_ORDER_MAP: Record<ActivityKind, PhaseName[]> = {
+  challenge: CHALLENGE_PHASE_ORDER,
+  custom: CUSTOM_PHASE_ORDER,
+  explanation: EXPLANATION_PHASE_ORDER,
+  grammar: GRAMMAR_PHASE_ORDER,
+  listening: LISTENING_PHASE_ORDER,
+  practice: PRACTICE_PHASE_ORDER,
+  quiz: QUIZ_PHASE_ORDER,
+  reading: READING_PHASE_ORDER,
+  review: EXPLANATION_PHASE_ORDER,
+  translation: VOCABULARY_PHASE_ORDER,
+  vocabulary: VOCABULARY_PHASE_ORDER,
+};
+
+/** Returns the ordered list of phases for a given activity kind. */
 export function getPhaseOrder(kind: ActivityKind): PhaseName[] {
-  if (kind === "vocabulary" || kind === "translation") {
-    return [
-      "gettingStarted",
-      "buildingWordList",
-      "addingPronunciation",
-      "recordingAudio",
-      "finishing",
-    ];
-  }
-
-  if (kind === "reading") {
-    return ["gettingStarted", "buildingWordList", "recordingAudio", "finishing"];
-  }
-
-  if (kind === "listening") {
-    return [
-      "gettingStarted",
-      "processingDependencies",
-      "buildingWordList",
-      "recordingAudio",
-      "writingContent",
-      "finishing",
-    ];
-  }
-
-  if (kind === "grammar") {
-    return ["gettingStarted", "writingContent", "finishing"];
-  }
-
-  if (kind === "custom") {
-    return ["gettingStarted", "writingContent", "preparingVisuals", "creatingImages", "finishing"];
-  }
-
-  if (kind === "practice" || kind === "challenge" || kind === "quiz") {
-    return ["gettingStarted", "processingDependencies", "writingContent", "finishing"];
-  }
-
-  return [
-    "gettingStarted",
-    "processingDependencies",
-    "writingContent",
-    "preparingVisuals",
-    "creatingImages",
-    "finishing",
-  ];
+  return PHASE_ORDER_MAP[kind];
 }
 
-const SHARED_PHASE_STEPS = {
-  addingPronunciation: [] as ActivityStepName[],
-  buildingWordList: [] as ActivityStepName[],
-  creatingImages: ["generateImages", "generateQuizImages"] as ActivityStepName[],
-  gettingStarted: [
-    "getLessonActivities",
-    "getNeighboringConcepts",
-    "setActivityAsRunning",
-  ] as ActivityStepName[],
-  preparingVisuals: ["generateVisuals"] as ActivityStepName[],
-  recordingAudio: [] as ActivityStepName[],
-};
+const EMPTY: readonly ActivityStepName[] = [];
 
-const NO_VISUALS_OVERRIDE = {
-  creatingImages: [] as ActivityStepName[],
-  preparingVisuals: [] as ActivityStepName[],
-};
-
-const VISUALS_AS_FINISHING = [
-  "generateVisuals",
-  "generateImages",
-  "generateQuizImages",
-] as const satisfies readonly ActivityStepName[];
-
-function getLanguagePhaseSteps(kind: ActivityKind): Record<PhaseName, ActivityStepName[]> | null {
-  if (kind === "vocabulary" || kind === "translation") {
-    return {
-      addingPronunciation: [
-        "generateVocabularyPronunciationAndAlternatives",
-        "generateVocabularyRomanization",
-      ],
-      buildingWordList: ["generateVocabularyContent"],
-      ...NO_VISUALS_OVERRIDE,
-      finishing: [
-        ...VISUALS_AS_FINISHING,
-        ...getFinishingSteps([
-          "generateVocabularyContent",
-          "generateVocabularyPronunciationAndAlternatives",
-          "generateVocabularyRomanization",
-          "generateVocabularyAudio",
-          "saveVocabularyActivity",
-        ]),
-        "saveVocabularyActivity",
-      ],
-      gettingStarted: ["getLessonActivities", "getNeighboringConcepts", "setActivityAsRunning"],
-      processingDependencies: [],
-      recordingAudio: ["generateVocabularyAudio"],
-      writingContent: [],
-    };
-  }
-
-  if (kind === "grammar") {
-    return {
-      ...SHARED_PHASE_STEPS,
-      ...NO_VISUALS_OVERRIDE,
-      finishing: [
-        ...VISUALS_AS_FINISHING,
-        ...getFinishingSteps([
-          "generateGrammarContent",
-          "generateGrammarUserContent",
-          "generateGrammarRomanization",
-          "saveGrammarActivity",
-        ]),
-        "saveGrammarActivity",
-      ],
-      processingDependencies: [],
-      writingContent: [
-        "generateGrammarContent",
-        "generateGrammarUserContent",
-        "generateGrammarRomanization",
-      ],
-    };
-  }
-
-  if (kind === "reading") {
-    return {
-      ...SHARED_PHASE_STEPS,
-      buildingWordList: ["generateSentences"],
-      ...NO_VISUALS_OVERRIDE,
-      finishing: [
-        ...VISUALS_AS_FINISHING,
-        ...getFinishingSteps([
-          "generateSentences",
-          "generateAudio",
-          "generateReadingRomanization",
-          "generateSentenceWordMetadata",
-          "generateSentenceWordAudio",
-          "generateSentencePronunciationAndAlternatives",
-          "saveReadingActivity",
-        ]),
-        "saveReadingActivity",
-      ],
-      processingDependencies: [],
-      recordingAudio: [
-        "generateAudio",
-        "generateReadingRomanization",
-        "generateSentenceWordMetadata",
-        "generateSentenceWordAudio",
-        "generateSentencePronunciationAndAlternatives",
-      ],
-      writingContent: [],
-    };
-  }
-
-  if (kind === "listening") {
-    return {
-      ...SHARED_PHASE_STEPS,
-      buildingWordList: ["generateSentences"],
-      ...NO_VISUALS_OVERRIDE,
-      finishing: [
-        ...VISUALS_AS_FINISHING,
-        ...getFinishingSteps([
-          ...LISTENING_DEPENDENCY_STEPS,
-          ...LISTENING_WRITING_STEPS,
-          "generateSentences",
-          "generateAudio",
-          "generateReadingRomanization",
-          "generateSentenceWordMetadata",
-          "generateSentenceWordAudio",
-          "generateSentencePronunciationAndAlternatives",
-          "saveReadingActivity",
-          "saveListeningActivity",
-        ]),
-        "saveListeningActivity",
-      ],
-      processingDependencies: LISTENING_DEPENDENCY_STEPS,
-      recordingAudio: [
-        "generateAudio",
-        "generateReadingRomanization",
-        "generateSentenceWordMetadata",
-        "generateSentenceWordAudio",
-        "generateSentencePronunciationAndAlternatives",
-        "saveReadingActivity",
-      ],
-      writingContent: LISTENING_WRITING_STEPS,
-    };
-  }
-
-  return null;
-}
-
-export function getPhaseSteps(kind: ActivityKind): Record<PhaseName, ActivityStepName[]> {
-  const languagePhase = getLanguagePhaseSteps(kind);
-
-  if (languagePhase) {
-    return languagePhase;
-  }
-
-  if (kind === "custom") {
-    return {
-      ...SHARED_PHASE_STEPS,
-      finishing: [
-        "getNeighboringConcepts",
-        ...getFinishingSteps(["generateCustomContent", "saveCustomActivity"]),
-        "saveCustomActivity",
-      ],
-      gettingStarted: ["getLessonActivities", "setActivityAsRunning"],
-      processingDependencies: [],
-      writingContent: ["generateCustomContent"],
-    };
-  }
-
-  if (kind === "explanation") {
-    return {
-      ...SHARED_PHASE_STEPS,
-      finishing: [
-        ...getFinishingSteps(["generateExplanationContent", "saveExplanationActivity"]),
-        "saveExplanationActivity",
-      ],
-      processingDependencies: [],
-      writingContent: ["generateExplanationContent"],
-    };
-  }
-
-  if (kind === "quiz") {
-    return {
-      ...SHARED_PHASE_STEPS,
-      ...NO_VISUALS_OVERRIDE,
-      finishing: [
-        ...VISUALS_AS_FINISHING,
-        ...getFinishingSteps([
-          "generateExplanationContent",
-          "generateQuizContent",
-          "generateQuizImages",
-          "saveQuizActivity",
-        ]),
-        "saveQuizActivity",
-      ],
-      processingDependencies: EXPLANATION_DEPS,
-      writingContent: ["generateQuizContent", "generateQuizImages"],
-    };
-  }
-
-  const contentStepMap: Partial<Record<ActivityKind, ActivityStepName>> = {
-    challenge: "generateChallengeContent",
-    practice: "generatePracticeContent",
-  };
-
-  const saveStepMap: Partial<Record<ActivityKind, ActivityStepName>> = {
-    challenge: "saveChallengeActivity",
-    practice: "savePracticeActivity",
-  };
-
-  const writingStep = contentStepMap[kind] ?? "generateQuizContent";
-  const saveStep = saveStepMap[kind] ?? "saveQuizActivity";
-
+/**
+ * Fills a partial phase-to-steps mapping into a full Record<PhaseName, ...>
+ * by setting empty arrays for phases the kind doesn't use.
+ */
+function toFullPhaseSteps(
+  partial: Record<string, readonly ActivityStepName[]>,
+): Record<PhaseName, readonly ActivityStepName[]> {
   return {
-    ...SHARED_PHASE_STEPS,
-    finishing: [
-      ...getFinishingSteps(["generateExplanationContent", writingStep, saveStep]),
-      saveStep,
-    ],
-    processingDependencies: EXPLANATION_DEPS,
-    writingContent: [writingStep],
+    addingGrammarRomanization: EMPTY,
+    addingPronunciation: EMPTY,
+    addingRomanization: EMPTY,
+    addingVocabularyRomanization: EMPTY,
+    addingWordPronunciation: EMPTY,
+    buildingWordList: EMPTY,
+    creatingExercises: EMPTY,
+    creatingImages: EMPTY,
+    creatingSentences: EMPTY,
+    gettingStarted: EMPTY,
+    lookingUpWords: EMPTY,
+    preparingVisuals: EMPTY,
+    recordingAudio: EMPTY,
+    recordingVocabularyAudio: EMPTY,
+    recordingWordAudio: EMPTY,
+    saving: EMPTY,
+    savingPrerequisites: EMPTY,
+    writingContent: EMPTY,
+    writingExplanation: EMPTY,
+    ...partial,
   };
 }
 
-const SUPPORTED_KINDS: ActivityKind[] = [
-  "challenge",
-  "custom",
-  "explanation",
-  "grammar",
-  "listening",
-  "practice",
-  "quiz",
-  "reading",
-  "translation",
-  "vocabulary",
-];
+const PHASE_STEPS_MAP: Record<ActivityKind, Record<PhaseName, readonly ActivityStepName[]>> = {
+  challenge: toFullPhaseSteps(CHALLENGE_PHASE_STEPS),
+  custom: toFullPhaseSteps(CUSTOM_PHASE_STEPS),
+  explanation: toFullPhaseSteps(EXPLANATION_PHASE_STEPS),
+  grammar: toFullPhaseSteps(GRAMMAR_PHASE_STEPS),
+  listening: toFullPhaseSteps(LISTENING_PHASE_STEPS),
+  practice: toFullPhaseSteps(PRACTICE_PHASE_STEPS),
+  quiz: toFullPhaseSteps(QUIZ_PHASE_STEPS),
+  reading: toFullPhaseSteps(READING_PHASE_STEPS),
+  review: toFullPhaseSteps(EXPLANATION_PHASE_STEPS),
+  translation: toFullPhaseSteps(VOCABULARY_PHASE_STEPS),
+  vocabulary: toFullPhaseSteps(VOCABULARY_PHASE_STEPS),
+};
 
-for (const kind of SUPPORTED_KINDS) {
-  const phaseSteps = getPhaseSteps(kind);
-  const allPhaseSteps = new Set(Object.values(phaseSteps).flat());
-  const missingSteps = ACTIVITY_STEPS.filter(
-    (step) => step !== "workflowError" && !allPhaseSteps.has(step),
-  );
-
-  if (missingSteps.length > 0) {
-    throw new Error(
-      `Missing activity steps for kind "${kind}": ${missingSteps.join(", ")}. ` +
-        "Add them to the appropriate phase in activity-generation-phase-config.ts",
-    );
-  }
+/** Returns the phase-to-steps mapping for a given activity kind. */
+export function getPhaseSteps(kind: ActivityKind): Record<PhaseName, readonly ActivityStepName[]> {
+  return PHASE_STEPS_MAP[kind];
 }

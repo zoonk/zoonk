@@ -7,10 +7,10 @@ import {
   calculateWeightedProgress,
   getPhaseStatus,
 } from "@/lib/generation/activity-generation-phases";
-import { type ThinkingMessageGenerator, cycleMessage } from "@/lib/workflow/use-thinking-messages";
 import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { type ActivityKind } from "@zoonk/db";
-import { useExtracted } from "next-intl";
+import { usePhaseLabels } from "./use-phase-labels";
+import { usePhaseThinkingGenerators } from "./use-phase-thinking-generators";
 
 export function useGenerationPhases(
   completedSteps: ActivityStepName[],
@@ -18,20 +18,7 @@ export function useGenerationPhases(
   activityKind: ActivityKind,
   startedSteps?: ActivityStepName[],
 ) {
-  const t = useExtracted();
-
-  const labels: Record<PhaseName, string> = {
-    addingPronunciation: t("Adding pronunciation"),
-    buildingWordList: t("Preparing practice content"),
-    creatingImages: t("Creating images"),
-    finishing: t("Almost done"),
-    gettingStarted: t("Getting started"),
-    preparingVisuals: t("Preparing illustrations"),
-    processingDependencies: t("Processing earlier activities"),
-    recordingAudio: t("Recording audio"),
-    writingContent: t("Writing the content"),
-  };
-
+  const labels = usePhaseLabels();
   const phaseOrder = getPhaseOrder(activityKind);
 
   const rawPhases: {
@@ -59,47 +46,7 @@ export function useGenerationPhases(
     .filter((phase) => phase.status === "active")
     .map((phase) => phase.name);
 
-  const thinkingGenerators: Record<PhaseName, ThinkingMessageGenerator> = {
-    addingPronunciation: (index) =>
-      cycleMessage(
-        [t("Looking up how each word sounds..."), t("Mapping out the pronunciation...")],
-        index,
-      ),
-    buildingWordList: (index) =>
-      cycleMessage([t("Picking the key vocabulary..."), t("Choosing words to practice...")], index),
-    creatingImages: (index) =>
-      cycleMessage(
-        [
-          t("Drawing an illustration..."),
-          t("Working on the visuals..."),
-          t("Adding some color..."),
-          t("Refining the details..."),
-        ],
-        index,
-      ),
-    finishing: (index) => cycleMessage([t("Wrapping up..."), t("Almost there...")], index),
-    gettingStarted: (index) =>
-      cycleMessage([t("Getting everything ready..."), t("Setting things up...")], index),
-    preparingVisuals: (index) =>
-      cycleMessage(
-        [
-          t("Thinking about what to illustrate..."),
-          t("Sketching out ideas..."),
-          t("Choosing the right style..."),
-          t("Planning the layout..."),
-        ],
-        index,
-      ),
-    processingDependencies: (index) =>
-      cycleMessage([t("Reviewing earlier activities..."), t("Connecting the pieces...")], index),
-    recordingAudio: (index) =>
-      cycleMessage([t("Recording the audio..."), t("Getting the pronunciation right...")], index),
-    writingContent: (index) =>
-      cycleMessage(
-        [t("Researching the topic..."), t("Writing the explanation..."), t("Making it clear...")],
-        index,
-      ),
-  };
+  const thinkingGenerators = usePhaseThinkingGenerators();
 
   return { activePhaseNames, phases, progress, thinkingGenerators };
 }
