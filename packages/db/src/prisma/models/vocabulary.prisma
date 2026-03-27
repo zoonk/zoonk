@@ -37,18 +37,18 @@ model WordPronunciation {
 }
 
 model Sentence {
-  id                   BigInt           @id @default(autoincrement())
-  organizationId       Int              @map("organization_id")
-  organization         Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  targetLanguage       String           @map("target_language") @db.VarChar(10)
-  sentence             String
-  alternativeSentences String[]         @default([]) @map("alternative_sentences")
-  romanization         String?
-  audioUrl             String?          @map("audio_url")
-  createdAt            DateTime         @default(now()) @map("created_at")
-  updatedAt            DateTime         @default(now()) @updatedAt @map("updated_at")
-  lessons              LessonSentence[]
-  steps                Step[]
+  id                        BigInt           @id @default(autoincrement())
+  organizationId            Int              @map("organization_id")
+  organization              Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  targetLanguage            String           @map("target_language") @db.VarChar(10)
+  sentence                  String
+  distractorUnsafeSentences String[]         @default([]) @map("distractor_unsafe_sentences")
+  romanization              String?
+  audioUrl                  String?          @map("audio_url")
+  createdAt                 DateTime         @default(now()) @map("created_at")
+  updatedAt                 DateTime         @default(now()) @updatedAt @map("updated_at")
+  lessons                   LessonSentence[]
+  steps                     Step[]
 
   @@unique([organizationId, targetLanguage, sentence], name: "orgSentence")
   @@map("sentences")
@@ -60,24 +60,24 @@ model Sentence {
 /// Spanish "banco" means "bank" in a finance lesson but "bench" in a
 /// furniture lesson. A global translation would be overwritten by whichever
 /// lesson saved last.
-/// alternativeTranslations stores synonyms of THIS lesson's specific
+/// distractorUnsafeTranslations stores synonyms of THIS lesson's specific
 /// meaning — e.g. ["financial institution"] for "banco → bank". It does
 /// NOT include other meanings of the word ("bench") because those are
 /// valid distractors in this lesson's context, not equivalent answers.
 model LessonWord {
-  id                      BigInt   @id @default(autoincrement())
-  lessonId                Int      @map("lesson_id")
-  lesson                  Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-  wordId                  BigInt   @map("word_id")
-  word                    Word     @relation(fields: [wordId], references: [id], onDelete: Cascade)
-  userLanguage            String   @map("user_language") @db.VarChar(10)
-  translation             String   @default("")
+  id                           BigInt   @id @default(autoincrement())
+  lessonId                     Int      @map("lesson_id")
+  lesson                       Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  wordId                       BigInt   @map("word_id")
+  word                         Word     @relation(fields: [wordId], references: [id], onDelete: Cascade)
+  userLanguage                 String   @map("user_language") @db.VarChar(10)
+  translation                  String   @default("")
   /// Synonyms of this lesson's translation, used to exclude semantically
   /// equivalent words from the distractor pool. For example, if "boa noite"
   /// translates to "good evening" with alternative "good night", we won't
   /// show "good night" as a wrong answer option since it's also correct.
-  alternativeTranslations String[] @default([]) @map("alternative_translations")
-  createdAt               DateTime @default(now()) @map("created_at")
+  distractorUnsafeTranslations String[] @default([]) @map("distractor_unsafe_translations")
+  createdAt                    DateTime @default(now()) @map("created_at")
 
   @@unique([lessonId, wordId], name: "lessonWord")
   @@index([wordId])
@@ -93,18 +93,18 @@ model LessonWord {
 /// vocabulary lesson), and fixing the schema pre-launch is far cheaper
 /// than migrating production data later.
 model LessonSentence {
-  id                      BigInt   @id @default(autoincrement())
-  lessonId                Int      @map("lesson_id")
-  lesson                  Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-  sentenceId              BigInt   @map("sentence_id")
-  sentence                Sentence @relation(fields: [sentenceId], references: [id], onDelete: Cascade)
-  userLanguage            String   @map("user_language") @db.VarChar(10)
-  translation             String   @default("")
+  id                           BigInt   @id @default(autoincrement())
+  lessonId                     Int      @map("lesson_id")
+  lesson                       Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  sentenceId                   BigInt   @map("sentence_id")
+  sentence                     Sentence @relation(fields: [sentenceId], references: [id], onDelete: Cascade)
+  userLanguage                 String   @map("user_language") @db.VarChar(10)
+  translation                  String   @default("")
   /// Synonyms of this lesson's translation, used to exclude semantically
   /// equivalent sentences from the distractor pool in arrange-words exercises.
-  alternativeTranslations String[] @default([]) @map("alternative_translations")
-  explanation             String?
-  createdAt               DateTime @default(now()) @map("created_at")
+  distractorUnsafeTranslations String[] @default([]) @map("distractor_unsafe_translations")
+  explanation                  String?
+  createdAt                    DateTime @default(now()) @map("created_at")
 
   @@unique([lessonId, sentenceId], name: "lessonSentence")
   @@index([sentenceId])

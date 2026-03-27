@@ -20,13 +20,13 @@ type VocabularySteps =
   | "getNeighboringConcepts"
   | "setActivityAsRunning"
   | "generateVocabularyContent"
-  | "generateVocabularyPronunciationAndAlternatives"
+  | "generateVocabularyPronunciationAndDistractorUnsafes"
   | "generateVocabularyRomanization"
   | "generateVocabularyAudio"
   | "saveVocabularyActivity";
 
 export const VOCABULARY_PHASE_STEPS = {
-  addingPronunciation: ["generateVocabularyPronunciationAndAlternatives"],
+  addingPronunciation: ["generateVocabularyPronunciationAndDistractorUnsafes"],
   addingRomanization: ["generateVocabularyRomanization"],
   buildingWordList: ["generateVocabularyContent"],
   gettingStarted: ["getLessonActivities", "getNeighboringConcepts", "setActivityAsRunning"],
@@ -92,12 +92,12 @@ type ReadingSteps =
   | "generateReadingRomanization"
   | "generateSentenceWordMetadata"
   | "generateSentenceWordAudio"
-  | "generateSentencePronunciationAndAlternatives"
+  | "generateSentencePronunciationAndDistractorUnsafes"
   | "saveReadingActivity";
 
 export const READING_PHASE_STEPS = {
   addingRomanization: ["generateReadingRomanization"],
-  addingWordPronunciation: ["generateSentencePronunciationAndAlternatives"],
+  addingWordPronunciation: ["generateSentencePronunciationAndDistractorUnsafes"],
   creatingSentences: ["generateSentences"],
   gettingStarted: ["getLessonActivities", "getNeighboringConcepts", "setActivityAsRunning"],
   lookingUpWords: ["generateSentenceWordMetadata"],
@@ -138,7 +138,7 @@ type ListeningSteps =
   | "getNeighboringConcepts"
   | "setActivityAsRunning"
   | "generateVocabularyContent"
-  | "generateVocabularyPronunciationAndAlternatives"
+  | "generateVocabularyPronunciationAndDistractorUnsafes"
   | "generateVocabularyRomanization"
   | "generateVocabularyAudio"
   | "saveVocabularyActivity"
@@ -151,17 +151,17 @@ type ListeningSteps =
   | "generateReadingRomanization"
   | "generateSentenceWordMetadata"
   | "generateSentenceWordAudio"
-  | "generateSentencePronunciationAndAlternatives"
+  | "generateSentencePronunciationAndDistractorUnsafes"
   | "saveReadingActivity"
   | "copyListeningSteps"
   | "saveListeningActivity";
 
 export const LISTENING_PHASE_STEPS = {
   addingGrammarRomanization: ["generateGrammarRomanization"],
-  addingPronunciation: ["generateVocabularyPronunciationAndAlternatives"],
+  addingPronunciation: ["generateVocabularyPronunciationAndDistractorUnsafes"],
   addingRomanization: ["generateReadingRomanization"],
   addingVocabularyRomanization: ["generateVocabularyRomanization"],
-  addingWordPronunciation: ["generateSentencePronunciationAndAlternatives"],
+  addingWordPronunciation: ["generateSentencePronunciationAndDistractorUnsafes"],
   buildingWordList: ["generateVocabularyContent"],
   creatingExercises: ["generateGrammarUserContent"],
   creatingSentences: ["generateSentences"],

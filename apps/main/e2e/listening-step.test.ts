@@ -12,13 +12,13 @@ import { type Page, expect, test } from "./fixtures";
 async function createListeningActivity(options: {
   sentences: {
     audioUrl?: string | null;
-    alternativeSentences?: string[];
-    alternativeTranslations?: string[];
+    distractorUnsafeSentences?: string[];
+    distractorUnsafeTranslations?: string[];
     romanization?: string | null;
     sentence: string;
     translation: string;
   }[];
-  words: { alternativeTranslations?: string[]; translation: string; word: string }[];
+  words: { distractorUnsafeTranslations?: string[]; translation: string; word: string }[];
   sentenceWords?: { romanization?: string | null; translation: string; word: string }[];
 }) {
   const org = await getAiOrganization();
@@ -57,7 +57,7 @@ async function createListeningActivity(options: {
       });
 
       await lessonWordFixture({
-        alternativeTranslations: wordData.alternativeTranslations ?? [],
+        distractorUnsafeTranslations: wordData.distractorUnsafeTranslations ?? [],
         lessonId: lesson.id,
         translation: wordData.translation,
         wordId: word.id,
@@ -70,15 +70,15 @@ async function createListeningActivity(options: {
   const createdSentences = await Promise.all(
     options.sentences.map(async (sentenceData) => {
       const sentence = await sentenceFixture({
-        alternativeSentences: sentenceData.alternativeSentences ?? [],
         audioUrl: sentenceData.audioUrl ?? null,
+        distractorUnsafeSentences: sentenceData.distractorUnsafeSentences ?? [],
         organizationId: org.id,
         romanization: sentenceData.romanization ?? null,
         sentence: sentenceData.sentence,
       });
 
       await lessonSentenceFixture({
-        alternativeTranslations: sentenceData.alternativeTranslations ?? [],
+        distractorUnsafeTranslations: sentenceData.distractorUnsafeTranslations ?? [],
         lessonId: lesson.id,
         sentenceId: sentence.id,
         translation: sentenceData.translation,
@@ -286,7 +286,7 @@ test.describe("Listening Step", () => {
     const { url } = await createListeningActivity({
       sentences: [
         {
-          alternativeTranslations: [`${bom} ${dia} ${lara}`],
+          distractorUnsafeTranslations: [`${bom} ${dia} ${lara}`],
           sentence: `${guten} ${tag} ${lara}`,
           translation: `${boa} ${tarde} ${lara}`,
         },
@@ -294,7 +294,7 @@ test.describe("Listening Step", () => {
       words: [
         { translation: `${bom} ${dia}`, word: `${guten} ${morgen}` },
         {
-          alternativeTranslations: [`${bom} ${dia}`],
+          distractorUnsafeTranslations: [`${bom} ${dia}`],
           translation: `${boa} ${tarde}`,
           word: `${guten} ${tag}`,
         },

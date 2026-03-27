@@ -4,10 +4,10 @@ import { getDistractorWords } from "./get-distractor-words";
 function makeWord(
   id: string,
   translation: string,
-  alternativeTranslations: string[] = [],
+  distractorUnsafeTranslations: string[] = [],
   word = `word-${id}`,
 ) {
-  return { alternativeTranslations, id, translation, word };
+  return { distractorUnsafeTranslations, id, translation, word };
 }
 
 describe(getDistractorWords, () => {
@@ -37,7 +37,7 @@ describe(getDistractorWords, () => {
     expect(result[0]?.id).toBe("3");
   });
 
-  test("excludes words whose translation matches an alternative translation of the correct word", () => {
+  test("excludes words whose translation matches a distractor-unsafe translation of the correct word", () => {
     const correct = makeWord("1", "good evening", ["good night"]);
     const words = [correct, makeWord("2", "good night"), makeWord("3", "cat")];
     const result = getDistractorWords(correct, words, 5);
@@ -46,7 +46,7 @@ describe(getDistractorWords, () => {
     expect(result[0]?.id).toBe("3");
   });
 
-  test("bidirectional: excludes words whose alternativeTranslations contain the correct word's translation", () => {
+  test("bidirectional: excludes words whose distractorUnsafeTranslations contain the correct word's translation", () => {
     const correct = makeWord("1", "hi");
     const words = [correct, makeWord("2", "hello", ["hi", "hey"]), makeWord("3", "cat")];
     const result = getDistractorWords(correct, words, 5);
@@ -55,7 +55,7 @@ describe(getDistractorWords, () => {
     expect(result[0]?.id).toBe("3");
   });
 
-  test("combines all rules: same translation + alternative translations", () => {
+  test("combines all rules: same translation + distractor-unsafe translations", () => {
     const correct = makeWord("1", "hello", ["hi"]);
     const words = [
       correct,
@@ -112,7 +112,7 @@ describe(getDistractorWords, () => {
     expect(result.map((word) => word.id).toSorted()).toEqual(["2", "4"]);
   });
 
-  test("returns empty array when all words are alternatives", () => {
+  test("returns empty array when all words are blocked as distractors", () => {
     const correct = makeWord("1", "hello", ["hi", "hey"]);
     const words = [correct, makeWord("2", "hello"), makeWord("3", "hi"), makeWord("4", "hey")];
     const result = getDistractorWords(correct, words, 3);
@@ -120,7 +120,7 @@ describe(getDistractorWords, () => {
     expect(result).toHaveLength(0);
   });
 
-  test("works correctly when alternativeTranslations is empty", () => {
+  test("works correctly when distractorUnsafeTranslations is empty", () => {
     const correct = makeWord("1", "good evening");
     const words = [correct, makeWord("2", "good evening"), makeWord("3", "cat")];
     const result = getDistractorWords(correct, words, 5);
@@ -149,7 +149,7 @@ describe(getDistractorWords, () => {
     expect(allSame).toBe(false);
   });
 
-  test("excludes words whose alternativeTranslations overlap with correct word's alternatives", () => {
+  test("excludes words whose distractorUnsafeTranslations overlap with the correct word's blocked translations", () => {
     const correct = makeWord("1", "farewell", ["bye", "goodbye"]);
     const words = [correct, makeWord("2", "see you", ["bye", "later"]), makeWord("3", "cat")];
     const result = getDistractorWords(correct, words, 5);
@@ -167,7 +167,7 @@ describe(getDistractorWords, () => {
     expect(result[0]?.id).toBe("3");
   });
 
-  test("alternative translation matching is case-insensitive", () => {
+  test("distractor-unsafe translation matching is case-insensitive", () => {
     const correct = makeWord("1", "Good Evening", ["GOOD NIGHT"]);
     const words = [correct, makeWord("2", "good night"), makeWord("3", "cat")];
     const result = getDistractorWords(correct, words, 5);

@@ -28,10 +28,7 @@ export function ReadingStep({
     return null;
   }
 
-  const acceptedWordSequences = buildAcceptedArrangeWordSequences(
-    step.sentence.sentence,
-    step.sentence.alternativeSentences,
-  );
+  const acceptedWordSequences = buildAcceptedArrangeWordSequences(step.sentence.sentence, []);
   const correctWords = acceptedWordSequences[0] ?? [];
   const acceptedWordLengths = getAcceptedArrangeWordLengths(acceptedWordSequences);
 

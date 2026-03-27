@@ -3,7 +3,7 @@ import { settled } from "@zoonk/utils/settled";
 import { findActivityByKind } from "../steps/_utils/find-activity-by-kind";
 import { generateVocabularyAudioStep } from "../steps/generate-vocabulary-audio-step";
 import { generateVocabularyContentStep } from "../steps/generate-vocabulary-content-step";
-import { generateVocabularyPronunciationAndAlternativesStep } from "../steps/generate-vocabulary-pronunciation-and-alternatives-step";
+import { generateVocabularyPronunciationAndDistractorUnsafesStep } from "../steps/generate-vocabulary-pronunciation-and-distractor-unsafes-step";
 import { generateVocabularyRomanizationStep } from "../steps/generate-vocabulary-romanization-step";
 import { type LessonActivity } from "../steps/get-lesson-activities-step";
 import { saveTranslationFromExistingVocabularyStep } from "../steps/save-translation-from-existing-vocabulary-step";
@@ -54,22 +54,26 @@ export async function vocabularyActivityWorkflow({
     neighboringConcepts,
   );
 
-  const [pronunciationAndAltsResult, audioResult, romanizationResult] = await Promise.allSettled([
-    generateVocabularyPronunciationAndAlternativesStep(activitiesToGenerate, words),
-    generateVocabularyAudioStep(activitiesToGenerate, words),
-    generateVocabularyRomanizationStep(activitiesToGenerate, words),
-  ]);
+  const [pronunciationAndDistractorUnsafeResult, audioResult, romanizationResult] =
+    await Promise.allSettled([
+      generateVocabularyPronunciationAndDistractorUnsafesStep(activitiesToGenerate, words),
+      generateVocabularyAudioStep(activitiesToGenerate, words),
+      generateVocabularyRomanizationStep(activitiesToGenerate, words),
+    ]);
 
-  const { alternatives, pronunciations } = settled(pronunciationAndAltsResult, {
-    alternatives: {},
-    pronunciations: {},
-  });
+  const { distractorUnsafeTranslations, pronunciations } = settled(
+    pronunciationAndDistractorUnsafeResult,
+    {
+      distractorUnsafeTranslations: {},
+      pronunciations: {},
+    },
+  );
   const { wordAudioUrls } = settled(audioResult, { wordAudioUrls: {} });
   const { romanizations } = settled(romanizationResult, { romanizations: {} });
 
   await saveVocabularyActivityStep({
     activities: allActivities,
-    alternatives,
+    distractorUnsafeTranslations,
     pronunciations,
     romanizations,
     wordAudioUrls,

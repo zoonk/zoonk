@@ -237,8 +237,8 @@ describe(checkStep, () => {
       id: "translation-1",
       kind: "translation",
       word: {
-        alternativeTranslations: [],
         audioUrl: null,
+        distractorUnsafeTranslations: [],
         id: "word-1",
         pronunciation: null,
         romanization: null,
@@ -297,9 +297,9 @@ describe(checkStep, () => {
       id: "reading-1",
       kind: "reading",
       sentence: {
-        alternativeSentences: [],
-        alternativeTranslations: [],
         audioUrl: null,
+        distractorUnsafeSentences: [],
+        distractorUnsafeTranslations: [],
         explanation: null,
         id: "sent-1",
         romanization: null,
@@ -329,9 +329,9 @@ describe(checkStep, () => {
         id: "reading-2",
         kind: "reading",
         sentence: {
-          alternativeSentences: [],
-          alternativeTranslations: [],
           audioUrl: null,
+          distractorUnsafeSentences: [],
+          distractorUnsafeTranslations: [],
           explanation: "Word order matters in this language.",
           id: "sent-3",
           romanization: null,
@@ -343,6 +343,33 @@ describe(checkStep, () => {
       const { result } = checkStep(stepWithExplanation, answer);
       expect(result.feedback).toBe("Word order matters in this language.");
     });
+
+    test("rejects distractor-only sentence variants", () => {
+      const stepWithDistractorUnsafeVariant = buildStep({
+        content: {},
+        id: "reading-3",
+        kind: "reading",
+        sentence: {
+          audioUrl: null,
+          distractorUnsafeSentences: ["Guten Morgen, Lara."],
+          distractorUnsafeTranslations: [],
+          explanation: null,
+          id: "sent-5",
+          romanization: null,
+          sentence: "Guten Tag, Lara.",
+          translation: "Boa tarde, Lara.",
+        },
+      });
+
+      const answer: SelectedAnswer = {
+        arrangedWords: ["Guten", "Morgen,", "Lara."],
+        kind: "reading",
+      };
+      const { result } = checkStep(stepWithDistractorUnsafeVariant, answer);
+
+      expect(result.isCorrect).toBe(false);
+      expect(result.correctAnswer).toBe("Guten Tag, Lara.");
+    });
   });
 
   describe("listening", () => {
@@ -351,9 +378,9 @@ describe(checkStep, () => {
       id: "listening-1",
       kind: "listening",
       sentence: {
-        alternativeSentences: [],
-        alternativeTranslations: [],
         audioUrl: null,
+        distractorUnsafeSentences: [],
+        distractorUnsafeTranslations: [],
         explanation: null,
         id: "sent-2",
         romanization: null,
@@ -383,9 +410,9 @@ describe(checkStep, () => {
         id: "listening-2",
         kind: "listening",
         sentence: {
-          alternativeSentences: [],
-          alternativeTranslations: [],
           audioUrl: null,
+          distractorUnsafeSentences: [],
+          distractorUnsafeTranslations: [],
           explanation: "Pay attention to accent marks.",
           id: "sent-4",
           romanization: null,
@@ -396,6 +423,33 @@ describe(checkStep, () => {
       const answer: SelectedAnswer = { arrangedWords: ["dias", "Buenos"], kind: "listening" };
       const { result } = checkStep(stepWithExplanation, answer);
       expect(result.feedback).toBe("Pay attention to accent marks.");
+    });
+
+    test("rejects distractor-only translation variants", () => {
+      const stepWithDistractorUnsafeVariant = buildStep({
+        content: {},
+        id: "listening-3",
+        kind: "listening",
+        sentence: {
+          audioUrl: null,
+          distractorUnsafeSentences: [],
+          distractorUnsafeTranslations: ["Bom dia, Lara."],
+          explanation: null,
+          id: "sent-6",
+          romanization: null,
+          sentence: "Guten Tag, Lara.",
+          translation: "Boa tarde, Lara.",
+        },
+      });
+
+      const answer: SelectedAnswer = {
+        arrangedWords: ["Bom", "dia,", "Lara."],
+        kind: "listening",
+      };
+      const { result } = checkStep(stepWithDistractorUnsafeVariant, answer);
+
+      expect(result.isCorrect).toBe(false);
+      expect(result.correctAnswer).toBe("Boa tarde, Lara.");
     });
   });
 

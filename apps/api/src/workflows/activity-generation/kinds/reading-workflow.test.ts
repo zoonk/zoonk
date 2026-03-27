@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { generateActivityRomanization } from "@zoonk/ai/tasks/activities/language/romanization";
-import { generateActivitySentenceVariants } from "@zoonk/ai/tasks/activities/language/sentence-variants";
+import { generateActivitySentenceDistractorUnsafeVariants } from "@zoonk/ai/tasks/activities/language/sentence-distractor-unsafe-variants";
 import { generateActivitySentences } from "@zoonk/ai/tasks/activities/language/sentences";
 import { generateTranslation } from "@zoonk/ai/tasks/activities/language/translation";
 import { generateLanguageAudio } from "@zoonk/core/audio/generate";
@@ -45,12 +45,12 @@ vi.mock("@zoonk/ai/tasks/activities/language/sentences", () => ({
   }),
 }));
 
-vi.mock("@zoonk/ai/tasks/activities/language/sentence-variants", () => ({
-  generateActivitySentenceVariants: vi.fn().mockResolvedValue({
+vi.mock("@zoonk/ai/tasks/activities/language/sentence-distractor-unsafe-variants", () => ({
+  generateActivitySentenceDistractorUnsafeVariants: vi.fn().mockResolvedValue({
     data: {
       sentences: [
-        { alternativeSentences: [], alternativeTranslations: [], id: "0" },
-        { alternativeSentences: [], alternativeTranslations: [], id: "1" },
+        { distractorUnsafeSentences: [], distractorUnsafeTranslations: [], id: "0" },
+        { distractorUnsafeSentences: [], distractorUnsafeTranslations: [], id: "1" },
       ],
     },
   }),
@@ -81,9 +81,9 @@ vi.mock("@zoonk/ai/tasks/activities/language/pronunciation", () => ({
   }),
 }));
 
-vi.mock("@zoonk/ai/tasks/activities/language/word-alternative-translations", () => ({
-  generateWordAlternativeTranslations: vi.fn().mockResolvedValue({
-    data: { alternativeTranslations: [] },
+vi.mock("@zoonk/ai/tasks/activities/language/word-distractor-unsafe-translations", () => ({
+  generateWordDistractorUnsafeTranslations: vi.fn().mockResolvedValue({
+    data: { distractorUnsafeTranslations: [] },
   }),
 }));
 
@@ -104,12 +104,16 @@ function createSentenceGenerationResult(
 }
 
 function createSentenceVariantResult(
-  sentences: Awaited<ReturnType<typeof generateActivitySentenceVariants>>["data"]["sentences"],
-): Awaited<ReturnType<typeof generateActivitySentenceVariants>> {
+  sentences: Awaited<
+    ReturnType<typeof generateActivitySentenceDistractorUnsafeVariants>
+  >["data"]["sentences"],
+): Awaited<ReturnType<typeof generateActivitySentenceDistractorUnsafeVariants>> {
   return {
     data: { sentences },
     systemPrompt: "",
-    usage: {} as Awaited<ReturnType<typeof generateActivitySentenceVariants>>["usage"],
+    usage: {} as Awaited<
+      ReturnType<typeof generateActivitySentenceDistractorUnsafeVariants>
+    >["usage"],
     userPrompt: "",
   };
 }
@@ -137,7 +141,7 @@ async function fetchLessonActivities(lessonId: number): Promise<LessonActivity[]
 
 /**
  * Creates `Word` and `LessonWord` records in the DB so that `getLessonWords`
- * returns words with `alternativeTranslations` for sentence variant
+ * returns words with `distractorUnsafeTranslations` for sentence variant
  * derivation. Translations now live on the `LessonWord` junction table
  * instead of a separate `WordTranslation` model.
  */
@@ -146,7 +150,7 @@ async function seedLessonWordsInDb(params: {
   organizationId: number;
   targetLanguage: string;
   userLanguage: string;
-  words: { alternativeTranslations?: string[]; translation: string; word: string }[];
+  words: { distractorUnsafeTranslations?: string[]; translation: string; word: string }[];
 }): Promise<void> {
   await Promise.all(
     params.words.map(async (entry) => {
@@ -168,14 +172,14 @@ async function seedLessonWordsInDb(params: {
 
       await prisma.lessonWord.upsert({
         create: {
-          alternativeTranslations: entry.alternativeTranslations ?? [],
+          distractorUnsafeTranslations: entry.distractorUnsafeTranslations ?? [],
           lessonId: params.lessonId,
           translation: entry.translation,
           userLanguage: params.userLanguage,
           wordId: wordRecord.id,
         },
         update: {
-          alternativeTranslations: entry.alternativeTranslations ?? [],
+          distractorUnsafeTranslations: entry.distractorUnsafeTranslations ?? [],
           translation: entry.translation,
           userLanguage: params.userLanguage,
         },
@@ -258,7 +262,7 @@ describe(readingActivityWorkflow, () => {
     }
   });
 
-  test("persists accepted sentence variants returned by AI audit", async () => {
+  test("persists distractor-unsafe sentence metadata returned by AI audit", async () => {
     const id = randomUUID().replaceAll("-", "").slice(0, 8);
     const sentenceText = `Yo soy Lara ${id}.`;
     const translationText = `I am Lara ${id}.`;
@@ -274,11 +278,11 @@ describe(readingActivityWorkflow, () => {
         },
       ]),
     );
-    vi.mocked(generateActivitySentenceVariants).mockResolvedValueOnce(
+    vi.mocked(generateActivitySentenceDistractorUnsafeVariants).mockResolvedValueOnce(
       createSentenceVariantResult([
         {
-          alternativeSentences: [alternativeSentence],
-          alternativeTranslations: [alternativeTranslation],
+          distractorUnsafeSentences: [alternativeSentence],
+          distractorUnsafeTranslations: [alternativeTranslation],
           id: "0",
         },
       ]),
@@ -320,18 +324,18 @@ describe(readingActivityWorkflow, () => {
     });
 
     expect(savedSentence).toMatchObject({
-      alternativeSentences: [alternativeSentence],
+      distractorUnsafeSentences: [alternativeSentence],
       sentence: sentenceText,
     });
 
     const lessonSentence = savedSentence?.lessons.find((ls) => ls.userLanguage === "en");
     expect(lessonSentence).toMatchObject({
-      alternativeTranslations: [alternativeTranslation],
+      distractorUnsafeTranslations: [alternativeTranslation],
       translation: translationText,
     });
   });
 
-  test("derives accepted sentence variants from lesson vocabulary when generation omits them", async () => {
+  test("derives distractor-unsafe sentence metadata from lesson vocabulary when generation omits it", async () => {
     vi.mocked(generateActivitySentences).mockResolvedValueOnce(
       createSentenceGenerationResult([
         {
@@ -346,10 +350,10 @@ describe(readingActivityWorkflow, () => {
         },
       ]),
     );
-    vi.mocked(generateActivitySentenceVariants).mockResolvedValueOnce(
+    vi.mocked(generateActivitySentenceDistractorUnsafeVariants).mockResolvedValueOnce(
       createSentenceVariantResult([
-        { alternativeSentences: [], alternativeTranslations: [], id: "0" },
-        { alternativeSentences: [], alternativeTranslations: [], id: "1" },
+        { distractorUnsafeSentences: [], distractorUnsafeTranslations: [], id: "0" },
+        { distractorUnsafeSentences: [], distractorUnsafeTranslations: [], id: "1" },
       ]),
     );
 
@@ -371,7 +375,7 @@ describe(readingActivityWorkflow, () => {
 
     const greetingWords = [
       { translation: "Bom dia", word: "Guten Morgen" },
-      { alternativeTranslations: ["Bom dia"], translation: "Boa tarde", word: "Guten Tag" },
+      { distractorUnsafeTranslations: ["Bom dia"], translation: "Boa tarde", word: "Guten Tag" },
       { translation: "Boa noite", word: "Guten Abend" },
       { translation: "Boa noite", word: "Gute Nacht" },
       { translation: "mãe", word: "Mama" },
@@ -408,14 +412,14 @@ describe(readingActivityWorkflow, () => {
     expect(savedSentences).toEqual(
       expect.arrayContaining([
         expect.objectContaining({
-          alternativeSentences: ["Guten Abend, Mama."],
+          distractorUnsafeSentences: ["Guten Abend, Mama."],
           lessons: expect.arrayContaining([
             expect.objectContaining({ translation: "Boa noite, mãe.", userLanguage: "pt" }),
           ]) as unknown,
           sentence: "Gute Nacht, Mama.",
         }),
         expect.objectContaining({
-          alternativeSentences: ["Guten Tag, Anna!"],
+          distractorUnsafeSentences: ["Guten Tag, Anna!"],
           lessons: expect.arrayContaining([
             expect.objectContaining({ translation: "Bom dia, Anna!", userLanguage: "pt" }),
           ]) as unknown,
@@ -435,7 +439,7 @@ describe(readingActivityWorkflow, () => {
         },
       ]),
     );
-    vi.mocked(generateActivitySentenceVariants).mockRejectedValueOnce(
+    vi.mocked(generateActivitySentenceDistractorUnsafeVariants).mockRejectedValueOnce(
       new Error("Sentence variants AI failed"),
     );
 
@@ -457,7 +461,7 @@ describe(readingActivityWorkflow, () => {
 
     const greetingWords = [
       { translation: "Bom dia", word: "Guten Morgen" },
-      { alternativeTranslations: ["Bom dia"], translation: "Boa tarde", word: "Guten Tag" },
+      { distractorUnsafeTranslations: ["Bom dia"], translation: "Boa tarde", word: "Guten Tag" },
     ];
 
     await seedLessonWordsInDb({
@@ -489,7 +493,7 @@ describe(readingActivityWorkflow, () => {
     });
 
     expect(savedSentence).toMatchObject({
-      alternativeSentences: ["Guten Tag, Anna!"],
+      distractorUnsafeSentences: ["Guten Tag, Anna!"],
       sentence: "Guten Morgen, Anna!",
     });
 
@@ -497,7 +501,7 @@ describe(readingActivityWorkflow, () => {
     expect(lessonSentence).toMatchObject({ translation: "Bom dia, Anna!" });
   });
 
-  test("keeps AI sentence variants even when they introduce a different lesson phrase", async () => {
+  test("keeps AI distractor-unsafe sentences even when they introduce a different lesson phrase", async () => {
     vi.mocked(generateActivitySentences).mockResolvedValueOnce(
       createSentenceGenerationResult([
         {
@@ -507,11 +511,11 @@ describe(readingActivityWorkflow, () => {
         },
       ]),
     );
-    vi.mocked(generateActivitySentenceVariants).mockResolvedValueOnce(
+    vi.mocked(generateActivitySentenceDistractorUnsafeVariants).mockResolvedValueOnce(
       createSentenceVariantResult([
         {
-          alternativeSentences: ["Guten Morgen, Herr Weber."],
-          alternativeTranslations: [],
+          distractorUnsafeSentences: ["Guten Morgen, Herr Weber."],
+          distractorUnsafeTranslations: [],
           id: "0",
         },
       ]),
@@ -535,7 +539,7 @@ describe(readingActivityWorkflow, () => {
 
     const greetingWords = [
       { translation: "Bom dia", word: "Guten Morgen" },
-      { alternativeTranslations: ["Bom dia"], translation: "Boa tarde", word: "Guten Tag" },
+      { distractorUnsafeTranslations: ["Bom dia"], translation: "Boa tarde", word: "Guten Tag" },
       { translation: "senhor", word: "Herr" },
     ];
 
@@ -568,7 +572,7 @@ describe(readingActivityWorkflow, () => {
     });
 
     expect(savedSentence).toMatchObject({
-      alternativeSentences: ["Guten Morgen, Herr Weber."],
+      distractorUnsafeSentences: ["Guten Morgen, Herr Weber."],
       sentence: "Guten Tag, Herr Weber.",
     });
 
@@ -684,7 +688,7 @@ describe(readingActivityWorkflow, () => {
     const dbActivity = await prisma.activity.findUnique({ where: { id: activity.id } });
     expect(dbActivity?.generationStatus).toBe("failed");
     expect(generateActivitySentences).not.toHaveBeenCalled();
-    expect(generateActivitySentenceVariants).not.toHaveBeenCalled();
+    expect(generateActivitySentenceDistractorUnsafeVariants).not.toHaveBeenCalled();
   });
 
   test("skips generation when activity is already completed", async () => {
@@ -715,7 +719,7 @@ describe(readingActivityWorkflow, () => {
     });
 
     expect(generateActivitySentences).not.toHaveBeenCalled();
-    expect(generateActivitySentenceVariants).not.toHaveBeenCalled();
+    expect(generateActivitySentenceDistractorUnsafeVariants).not.toHaveBeenCalled();
   });
 
   test("does not save words with empty translation when metadata generation partially fails", async () => {

@@ -26,14 +26,14 @@ type StepWithSentence = {
   kind: string;
   content: unknown;
   word: { id: bigint } | null;
-  sentence: { id: bigint; sentence: string; alternativeSentences: string[] } | null;
+  sentence: { id: bigint; sentence: string; distractorUnsafeSentences: string[] } | null;
 };
 
 /**
  * Attaches sentence translation data from `LessonSentence` records to steps.
  * Translations live on the `LessonSentence` junction table instead of a
  * separate `SentenceTranslation` model, so we look up the matching `LessonSentence`
- * for each step's sentence and attach flat `translation`/`alternativeTranslations`
+ * for each step's sentence and attach flat `translation`/`distractorUnsafeTranslations`
  * fields that `validateAnswers` expects.
  */
 function attachSentenceTranslationsToSteps(
@@ -47,8 +47,8 @@ function attachSentenceTranslationsToSteps(
     sentence: step.sentence
       ? {
           ...step.sentence,
-          alternativeTranslations:
-            translationMap.get(step.sentence.id)?.alternativeTranslations ?? [],
+          distractorUnsafeTranslations:
+            translationMap.get(step.sentence.id)?.distractorUnsafeTranslations ?? [],
           translation: translationMap.get(step.sentence.id)?.translation ?? "",
         }
       : null,

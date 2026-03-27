@@ -14,7 +14,7 @@ import { type Page, expect, test } from "./fixtures";
 
 async function createTranslationActivity(options: {
   words: {
-    alternativeTranslations?: string[];
+    distractorUnsafeTranslations?: string[];
     audioUrl?: string | null;
     word: string;
     translation: string;
@@ -22,7 +22,7 @@ async function createTranslationActivity(options: {
     romanization?: string | null;
   }[];
   fallbackWords?: {
-    alternativeTranslations?: string[];
+    distractorUnsafeTranslations?: string[];
     audioUrl?: string | null;
     word: string;
     translation: string;
@@ -69,7 +69,7 @@ async function createTranslationActivity(options: {
 
       await Promise.all([
         lessonWordFixture({
-          alternativeTranslations: wordData.alternativeTranslations ?? [],
+          distractorUnsafeTranslations: wordData.distractorUnsafeTranslations ?? [],
           lessonId: lesson.id,
           translation: wordData.translation,
           wordId: word.id,
@@ -94,7 +94,7 @@ async function createTranslationActivity(options: {
 
       await Promise.all([
         lessonWordFixture({
-          alternativeTranslations: wordData.alternativeTranslations ?? [],
+          distractorUnsafeTranslations: wordData.distractorUnsafeTranslations ?? [],
           lessonId: lesson.id,
           translation: wordData.translation,
           wordId: word.id,
@@ -208,12 +208,12 @@ test.describe("Translation Step", () => {
       ],
       words: [
         {
-          alternativeTranslations: [`hi-${uniqueId}`],
+          distractorUnsafeTranslations: [`hi-${uniqueId}`],
           translation: `hello-${uniqueId}`,
           word: correctWord,
         },
         {
-          alternativeTranslations: [`hello-${uniqueId}`],
+          distractorUnsafeTranslations: [`hello-${uniqueId}`],
           translation: `hi-${uniqueId}`,
           word: ambiguousWord,
         },

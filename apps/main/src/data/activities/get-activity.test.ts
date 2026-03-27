@@ -198,8 +198,8 @@ describe(getActivity, () => {
         position: 0,
       }),
       sentenceFixture({
-        alternativeSentences: ["test-sentence-alt"],
         audioUrl: "https://example.com/sent-audio.mp3",
+        distractorUnsafeSentences: ["test-sentence-alt"],
         organizationId: org.id,
         romanization: "test-sent-roman",
         sentence: `test-sentence-${crypto.randomUUID()}`,
@@ -216,8 +216,8 @@ describe(getActivity, () => {
     const result = await getActivity({ lessonId: sentLesson.id, position: 0 });
 
     expect(result?.steps[0]?.sentence).toMatchObject({
-      alternativeSentences: ["test-sentence-alt"],
       audioUrl: "https://example.com/sent-audio.mp3",
+      distractorUnsafeSentences: ["test-sentence-alt"],
       id: sentence.id,
       romanization: "test-sent-roman",
       sentence: sentence.sentence,

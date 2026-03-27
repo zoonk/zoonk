@@ -52,9 +52,9 @@ vi.mock("@zoonk/ai/tasks/activities/language/pronunciation", () => ({
   }),
 }));
 
-vi.mock("@zoonk/ai/tasks/activities/language/word-alternative-translations", () => ({
-  generateWordAlternativeTranslations: vi.fn().mockResolvedValue({
-    data: { alternativeTranslations: [] },
+vi.mock("@zoonk/ai/tasks/activities/language/word-distractor-unsafe-translations", () => ({
+  generateWordDistractorUnsafeTranslations: vi.fn().mockResolvedValue({
+    data: { distractorUnsafeTranslations: [] },
   }),
 }));
 
@@ -493,7 +493,7 @@ describe(vocabularyActivityWorkflow, () => {
     expect(result.words).toHaveLength(0);
   });
 
-  test("preserves existing audioUrl when audio step fails but pronunciation and alternatives succeed", async () => {
+  test("preserves existing audioUrl when audio step fails but pronunciation and distractor filtering succeed", async () => {
     const id = randomUUID().replaceAll("-", "").slice(0, 8);
     const existingWord = `zkeep${id}`;
     const newWord = `znew${id}`;

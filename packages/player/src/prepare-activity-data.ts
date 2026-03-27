@@ -15,7 +15,7 @@ export type SerializedWord = {
   id: string;
   word: string;
   translation: string;
-  alternativeTranslations: string[];
+  distractorUnsafeTranslations: string[];
   pronunciation: string | null;
   romanization: string | null;
   audioUrl: string | null;
@@ -24,9 +24,9 @@ export type SerializedWord = {
 export type SerializedSentence = {
   id: string;
   sentence: string;
-  alternativeSentences: string[];
+  distractorUnsafeSentences: string[];
   translation: string;
-  alternativeTranslations: string[];
+  distractorUnsafeTranslations: string[];
   romanization: string | null;
   explanation: string | null;
   audioUrl: string | null;
@@ -82,18 +82,18 @@ type WordDataInput = {
   romanization: string | null;
   audioUrl: string | null;
   translation: string;
-  alternativeTranslations: string[];
+  distractorUnsafeTranslations: string[];
   pronunciation: string | null;
 };
 
 type SentenceDataInput = {
   id: bigint;
   sentence: string;
-  alternativeSentences: string[];
+  distractorUnsafeSentences: string[];
   romanization: string | null;
   audioUrl: string | null;
   translation: string;
-  alternativeTranslations: string[];
+  distractorUnsafeTranslations: string[];
   explanation: string | null;
 };
 
@@ -104,8 +104,8 @@ type SentenceDataInput = {
  */
 function serializeWord(word: WordDataInput): SerializedWord {
   return {
-    alternativeTranslations: [...word.alternativeTranslations],
     audioUrl: word.audioUrl,
+    distractorUnsafeTranslations: [...word.distractorUnsafeTranslations],
     id: String(word.id),
     pronunciation: word.pronunciation,
     romanization: word.romanization,
@@ -129,9 +129,9 @@ function serializeWords(words: WordDataInput[]): SerializedWord[] {
  */
 function serializeSentence(sentence: SentenceDataInput): SerializedSentence {
   return {
-    alternativeSentences: [...sentence.alternativeSentences],
-    alternativeTranslations: [...sentence.alternativeTranslations],
     audioUrl: sentence.audioUrl,
+    distractorUnsafeSentences: [...sentence.distractorUnsafeSentences],
+    distractorUnsafeTranslations: [...sentence.distractorUnsafeTranslations],
     explanation: sentence.explanation,
     id: String(sentence.id),
     romanization: sentence.romanization,
@@ -170,7 +170,7 @@ function buildTranslationOptions(
   );
   return shuffle([step.word, ...distractors]).map((word) => ({
     ...word,
-    alternativeTranslations: [...word.alternativeTranslations],
+    distractorUnsafeTranslations: [...word.distractorUnsafeTranslations],
   }));
 }
 

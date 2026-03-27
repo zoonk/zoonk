@@ -166,31 +166,37 @@ function emptyWordOption(word: string): WordBankOption {
  * small config object lets the rest of the builder follow one shared flow.
  */
 function getWordBankConfig(step: SerializedStep): {
-  acceptedTexts: string[];
-  acceptedWordSequences: string[][];
+  canonicalWordSequences: string[][];
+  distractorUnsafeTexts: string[];
+  distractorUnsafeWordSequences: string[][];
   primaryText: string;
   distractorField: "word" | "translation";
 } | null {
   if (step.kind === "reading" && step.sentence) {
     return {
-      acceptedTexts: [step.sentence.sentence, ...step.sentence.alternativeSentences],
-      acceptedWordSequences: buildAcceptedArrangeWordSequences(
-        step.sentence.sentence,
-        step.sentence.alternativeSentences,
-      ),
+      canonicalWordSequences: buildAcceptedArrangeWordSequences(step.sentence.sentence, []),
       distractorField: "word",
+      distractorUnsafeTexts: [step.sentence.sentence, ...step.sentence.distractorUnsafeSentences],
+      distractorUnsafeWordSequences: buildAcceptedArrangeWordSequences(
+        step.sentence.sentence,
+        step.sentence.distractorUnsafeSentences,
+      ),
       primaryText: step.sentence.sentence,
     };
   }
 
   if (step.kind === "listening" && step.sentence) {
     return {
-      acceptedTexts: [step.sentence.translation, ...step.sentence.alternativeTranslations],
-      acceptedWordSequences: buildAcceptedArrangeWordSequences(
-        step.sentence.translation,
-        step.sentence.alternativeTranslations,
-      ),
+      canonicalWordSequences: buildAcceptedArrangeWordSequences(step.sentence.translation, []),
       distractorField: "translation",
+      distractorUnsafeTexts: [
+        step.sentence.translation,
+        ...step.sentence.distractorUnsafeTranslations,
+      ],
+      distractorUnsafeWordSequences: buildAcceptedArrangeWordSequences(
+        step.sentence.translation,
+        step.sentence.distractorUnsafeTranslations,
+      ),
       primaryText: step.sentence.translation,
     };
   }
@@ -200,7 +206,7 @@ function getWordBankConfig(step: SerializedStep): {
 
 /**
  * Reading distractors match lesson words against the original word field, while
- * listening distractors must also consider alternative translations that mean the
+ * listening distractors must also consider distractor-unsafe translations that mean the
  * same thing to the learner.
  */
 function getCandidatePhrases(
@@ -209,7 +215,7 @@ function getCandidatePhrases(
 ): string[] {
   return distractorField === "word"
     ? [lessonWord.word]
-    : [lessonWord.translation, ...lessonWord.alternativeTranslations];
+    : [lessonWord.translation, ...lessonWord.distractorUnsafeTranslations];
 }
 
 /**
@@ -221,57 +227,59 @@ function matchesAcceptedTexts(acceptedTexts: string[], phrase: string): boolean 
 }
 
 /**
- * We only want semantic-equivalence filtering to run against words that actually appear
- * in one accepted answer, otherwise unrelated lesson words would remove good distractors.
+ * We only want semantic-equivalence filtering to run against words that appear in the
+ * canonical text or a distractor-unsafe variant, otherwise unrelated lesson words would
+ * remove good distractors.
  */
-function isAcceptedLessonWord(
+function isDistractorUnsafeLessonWord(
   lessonWord: SerializedWord,
-  acceptedTexts: string[],
+  distractorUnsafeTexts: string[],
   distractorField: "word" | "translation",
 ): boolean {
   return getCandidatePhrases(lessonWord, distractorField).some(
-    (phrase) => phrase.length > 0 && matchesAcceptedTexts(acceptedTexts, phrase),
+    (phrase) => phrase.length > 0 && matchesAcceptedTexts(distractorUnsafeTexts, phrase),
   );
 }
 
-function getAcceptedLessonWords(
+function getDistractorUnsafeLessonWords(
   serializedLessonWords: SerializedWord[],
-  acceptedTexts: string[],
+  distractorUnsafeTexts: string[],
   distractorField: "word" | "translation",
 ): SerializedWord[] {
   return serializedLessonWords.filter((lessonWord) =>
-    isAcceptedLessonWord(lessonWord, acceptedTexts, distractorField),
+    isDistractorUnsafeLessonWord(lessonWord, distractorUnsafeTexts, distractorField),
   );
 }
 
 /**
- * Once we know which lesson words are present in accepted answers, we can remove any
+ * Once we know which lesson words appear in distractor-unsafe texts, we can remove any
  * distractor that means the same thing. Keeping that rule separate makes the main
  * builder read like a pipeline instead of nested predicate logic.
  */
-function isEquivalentToAcceptedLessonWord(
+function isEquivalentToDistractorUnsafeLessonWord(
   lessonWord: SerializedWord,
-  acceptedLessonWords: SerializedWord[],
+  distractorUnsafeLessonWords: SerializedWord[],
 ): boolean {
-  return acceptedLessonWords.some((acceptedLessonWord) =>
-    isSemanticMatch(acceptedLessonWord, lessonWord),
+  return distractorUnsafeLessonWords.some((distractorUnsafeLessonWord) =>
+    isSemanticMatch(distractorUnsafeLessonWord, lessonWord),
   );
 }
 
 /**
  * We compare every distractor candidate against the lesson words that appear in
- * accepted answers so fallback pools follow the same ambiguity rules as lesson words.
+ * distractor-unsafe texts so fallback pools follow the same ambiguity rules as lesson words.
  */
 function filterEquivalentLessonWords(
   candidateLessonWords: SerializedWord[],
-  acceptedLessonWords: SerializedWord[],
+  distractorUnsafeLessonWords: SerializedWord[],
 ): SerializedWord[] {
-  if (acceptedLessonWords.length === 0) {
+  if (distractorUnsafeLessonWords.length === 0) {
     return candidateLessonWords;
   }
 
   return candidateLessonWords.filter(
-    (lessonWord) => !isEquivalentToAcceptedLessonWord(lessonWord, acceptedLessonWords),
+    (lessonWord) =>
+      !isEquivalentToDistractorUnsafeLessonWord(lessonWord, distractorUnsafeLessonWords),
   );
 }
 
@@ -297,7 +305,7 @@ export function buildSentenceWordOptions(
 function getUniqueDistractorWords(
   lessonWords: SerializedWord[],
   distractorField: "word" | "translation",
-  acceptedWordSet: Set<string>,
+  blockedDistractorWordSet: Set<string>,
   excludedWordKeys = new Set<string>(),
 ): string[] {
   return [
@@ -307,7 +315,7 @@ function getUniqueDistractorWords(
         .flatMap((word) => {
           const key = normalizeWordKey(word);
 
-          return key.length > 0 && !acceptedWordSet.has(key) && !excludedWordKeys.has(key)
+          return key.length > 0 && !blockedDistractorWordSet.has(key) && !excludedWordKeys.has(key)
             ? [[key, word] as const]
             : [];
         }),
@@ -322,15 +330,15 @@ function getUniqueDistractorWords(
 function buildDistractorWords(
   lessonWords: SerializedWord[],
   fallbackLessonWords: SerializedWord[],
-  acceptedLessonWords: SerializedWord[],
-  acceptedWordSet: Set<string>,
+  distractorUnsafeLessonWords: SerializedWord[],
+  blockedDistractorWordSet: Set<string>,
   distractorField: "word" | "translation",
 ): string[] {
   const lessonDistractorWords = shuffle(
     getUniqueDistractorWords(
-      filterEquivalentLessonWords(lessonWords, acceptedLessonWords),
+      filterEquivalentLessonWords(lessonWords, distractorUnsafeLessonWords),
       distractorField,
-      acceptedWordSet,
+      blockedDistractorWordSet,
     ),
   ).slice(0, WORD_BANK_DISTRACTOR_COUNT);
 
@@ -340,9 +348,9 @@ function buildDistractorWords(
 
   const fallbackDistractorWords = shuffle(
     getUniqueDistractorWords(
-      filterEquivalentLessonWords(fallbackLessonWords, acceptedLessonWords),
+      filterEquivalentLessonWords(fallbackLessonWords, distractorUnsafeLessonWords),
       distractorField,
-      acceptedWordSet,
+      blockedDistractorWordSet,
       new Set(lessonDistractorWords.map((word) => normalizeWordKey(word))),
     ),
   ).slice(0, MIN_WORD_BANK_DISTRACTOR_COUNT - lessonDistractorWords.length);
@@ -379,7 +387,13 @@ export function buildWordBankOptions(
     return [];
   }
 
-  const { acceptedTexts, acceptedWordSequences, distractorField, primaryText } = config;
+  const {
+    canonicalWordSequences,
+    distractorField,
+    distractorUnsafeTexts,
+    distractorUnsafeWordSequences,
+    primaryText,
+  } = config;
 
   const buildOption = createWordBankOptionBuilder(
     step.kind,
@@ -388,18 +402,20 @@ export function buildWordBankOptions(
     fallbackLessonWords,
   );
 
-  const acceptedWordSet = getAcceptedArrangeWordSet(acceptedWordSequences);
-  const acceptedLessonWords = getAcceptedLessonWords(
+  const blockedDistractorWordSet = getAcceptedArrangeWordSet(distractorUnsafeWordSequences);
+  const distractorUnsafeLessonWords = getDistractorUnsafeLessonWords(
     serializedLessonWords,
-    acceptedTexts,
+    distractorUnsafeTexts,
     distractorField,
   );
-  const correctOptions = segmentWords(primaryText).map((word) => buildOption(word));
+  const correctOptions = (canonicalWordSequences[0] ?? segmentWords(primaryText)).map((word) =>
+    buildOption(word),
+  );
   const distractorOptions = buildDistractorWords(
     serializedLessonWords,
     fallbackLessonWords,
-    acceptedLessonWords,
-    acceptedWordSet,
+    distractorUnsafeLessonWords,
+    blockedDistractorWordSet,
     distractorField,
   ).map((word) => buildOption(word));
 

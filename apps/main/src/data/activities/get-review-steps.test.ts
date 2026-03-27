@@ -725,14 +725,14 @@ describe(getReviewValidationSteps, () => {
     expect(stepIds).not.toContain(staticStep.id);
   });
 
-  test("includes sentence variants for review validation", async () => {
+  test("includes distractor-unsafe sentence metadata for review validation", async () => {
     const sentence = await sentenceFixture({
-      alternativeSentences: ["Guten Morgen, ich bin Lara."],
+      distractorUnsafeSentences: ["Guten Morgen, ich bin Lara."],
       organizationId,
     });
 
     await lessonSentenceFixture({
-      alternativeTranslations: ["Good morning, I am Lara."],
+      distractorUnsafeTranslations: ["Good morning, I am Lara."],
       lessonId: lesson.id,
       sentenceId: sentence.id,
       translation: "Hello, I am Lara.",
@@ -756,7 +756,7 @@ describe(getReviewValidationSteps, () => {
     const steps = await getReviewValidationSteps(lesson.id, [readingStep.id]);
 
     expect(steps[0]?.sentence).toMatchObject({
-      alternativeSentences: ["Guten Morgen, ich bin Lara."],
+      distractorUnsafeSentences: ["Guten Morgen, ich bin Lara."],
       sentence: sentence.sentence,
     });
   });

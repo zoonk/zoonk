@@ -38,9 +38,9 @@ function buildStep({
       sentenceRomanization === undefined
         ? null
         : {
-            alternativeSentences: [],
-            alternativeTranslations: [],
             audioUrl: null,
+            distractorUnsafeSentences: [],
+            distractorUnsafeTranslations: [],
             explanation: null,
             id: "s-1",
             romanization: sentenceRomanization,
@@ -55,8 +55,8 @@ function buildStep({
       wordRomanization === undefined
         ? null
         : {
-            alternativeTranslations: [],
             audioUrl: null,
+            distractorUnsafeTranslations: [],
             id: "w-1",
             pronunciation: null,
             romanization: wordRomanization,

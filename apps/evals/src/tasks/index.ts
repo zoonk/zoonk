@@ -8,7 +8,7 @@ import { activityPracticeTask } from "./activity-practice/task";
 import { activityPronunciationTask } from "./activity-pronunciation/task";
 import { activityQuizTask } from "./activity-quiz/task";
 import { activityRomanizationTask } from "./activity-romanization/task";
-import { activitySentenceVariantsTask } from "./activity-sentence-variants/task";
+import { activitySentenceDistractorUnsafeVariantsTask } from "./activity-sentence-distractor-unsafe-variants/task";
 import { activitySentencesTask } from "./activity-sentences/task";
 import { activityTranslationTask } from "./activity-translation/task";
 import { activityVocabularyTask } from "./activity-vocabulary/task";
@@ -23,7 +23,7 @@ import { languageCourseChaptersTask } from "./language-course-chapters/task";
 import { lessonActivitiesTask } from "./lesson-activities/task";
 import { lessonKindTask } from "./lesson-kind/task";
 import { stepVisualTask } from "./step-visual/task";
-import { wordAlternativeTranslationsTask } from "./word-alternative-translations/task";
+import { wordDistractorUnsafeTranslationsTask } from "./word-distractor-unsafe-translations/task";
 
 export const TASKS: readonly Task[] = [
   activityChallengeTask,
@@ -33,7 +33,7 @@ export const TASKS: readonly Task[] = [
   activityGrammarContentTask,
   activityGrammarUserContentTask,
   activityPronunciationTask,
-  activitySentenceVariantsTask,
+  activitySentenceDistractorUnsafeVariantsTask,
   activityTranslationTask,
   activitySentencesTask,
   activityPracticeTask,
@@ -51,7 +51,7 @@ export const TASKS: readonly Task[] = [
   languageCourseChaptersTask,
   lessonKindTask,
   stepVisualTask,
-  wordAlternativeTranslationsTask,
+  wordDistractorUnsafeTranslationsTask,
 ];
 
 // Number of times each test case should be run for more reliable results

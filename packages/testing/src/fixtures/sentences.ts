@@ -4,14 +4,14 @@ export async function sentenceFixture(attrs: {
   organizationId: number;
   sentence?: string;
   targetLanguage?: string;
-  alternativeSentences?: string[];
+  distractorUnsafeSentences?: string[];
   romanization?: string | null;
   audioUrl?: string | null;
 }) {
   return prisma.sentence.create({
     data: {
-      alternativeSentences: attrs.alternativeSentences ?? [],
       audioUrl: attrs.audioUrl ?? null,
+      distractorUnsafeSentences: attrs.distractorUnsafeSentences ?? [],
       organizationId: attrs.organizationId,
       romanization: attrs.romanization ?? null,
       sentence: attrs.sentence ?? `sentence-${crypto.randomUUID()}`,
@@ -25,12 +25,12 @@ export async function lessonSentenceFixture(attrs: {
   sentenceId: bigint;
   userLanguage?: string;
   translation?: string;
-  alternativeTranslations?: string[];
+  distractorUnsafeTranslations?: string[];
   explanation?: string | null;
 }) {
   return prisma.lessonSentence.create({
     data: {
-      alternativeTranslations: attrs.alternativeTranslations ?? [],
+      distractorUnsafeTranslations: attrs.distractorUnsafeTranslations ?? [],
       explanation: attrs.explanation ?? null,
       lessonId: attrs.lessonId,
       sentenceId: attrs.sentenceId,

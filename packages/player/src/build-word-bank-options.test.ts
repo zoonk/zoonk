@@ -10,11 +10,11 @@ function makeLessonWord(
   id: string,
   word: string,
   translation: string,
-  alternativeTranslations: string[] = [],
+  distractorUnsafeTranslations: string[] = [],
 ): SerializedWord {
   return {
-    alternativeTranslations,
     audioUrl: null,
+    distractorUnsafeTranslations,
     id,
     pronunciation: null,
     romanization: null,
@@ -31,11 +31,11 @@ function makeWordWithMetadata(
     audioUrl: string | null;
     romanization: string | null;
   },
-  alternativeTranslations: string[] = [],
+  distractorUnsafeTranslations: string[] = [],
 ): SerializedWord {
   return {
-    alternativeTranslations,
     audioUrl: metadata.audioUrl,
+    distractorUnsafeTranslations,
     id,
     pronunciation: null,
     romanization: metadata.romanization,
@@ -53,9 +53,9 @@ function makeReadingStep(sentence: string): SerializedStep<"reading"> {
     matchColumnsRightItems: [],
     position: 0,
     sentence: {
-      alternativeSentences: [],
-      alternativeTranslations: [],
       audioUrl: null,
+      distractorUnsafeSentences: [],
+      distractorUnsafeTranslations: [],
       explanation: null,
       id: "sentence-reading",
       romanization: null,
@@ -80,9 +80,9 @@ function makeListeningStep(translation: string): SerializedStep<"listening"> {
     matchColumnsRightItems: [],
     position: 0,
     sentence: {
-      alternativeSentences: [],
-      alternativeTranslations: [],
       audioUrl: null,
+      distractorUnsafeSentences: [],
+      distractorUnsafeTranslations: [],
       explanation: null,
       id: "sentence-listening",
       romanization: null,
@@ -99,14 +99,14 @@ function makeListeningStep(translation: string): SerializedStep<"listening"> {
 }
 
 describe(buildWordBankOptions, () => {
-  test("shows canonical reading words only while alternative sentences still suppress distractors", () => {
+  test("shows canonical reading words only while distractor-unsafe sentences still suppress distractors", () => {
     const options = buildWordBankOptions(
       {
         ...makeReadingStep("Guten Morgen, Anna!"),
         sentence: {
-          alternativeSentences: ["Guten Tag, Anna!"],
-          alternativeTranslations: [],
           audioUrl: null,
+          distractorUnsafeSentences: ["Guten Tag, Anna!"],
+          distractorUnsafeTranslations: [],
           explanation: null,
           id: "sentence-reading",
           romanization: null,
@@ -130,14 +130,14 @@ describe(buildWordBankOptions, () => {
     expect(words).toContain("Katze");
   });
 
-  test("shows canonical listening words only while alternative translations still suppress distractors", () => {
+  test("shows canonical listening words only while distractor-unsafe translations still suppress distractors", () => {
     const options = buildWordBankOptions(
       {
         ...makeListeningStep("Boa tarde, senhor Weber."),
         sentence: {
-          alternativeSentences: [],
-          alternativeTranslations: ["Bom dia, senhor Weber."],
           audioUrl: null,
+          distractorUnsafeSentences: [],
+          distractorUnsafeTranslations: ["Bom dia, senhor Weber."],
           explanation: null,
           id: "sentence-listening",
           romanization: null,

@@ -39,7 +39,7 @@ type WordMetadataEntry = {
  */
 export async function saveReadingActivityStep(params: {
   activities: LessonActivity[];
-  alternatives: Record<string, string[]>;
+  distractorUnsafeTranslations: Record<string, string[]>;
   pronunciations: Record<string, string>;
   sentenceAudioUrls: Record<string, string>;
   sentenceRomanizations: Record<string, string>;
@@ -52,7 +52,7 @@ export async function saveReadingActivityStep(params: {
 
   const {
     activities,
-    alternatives,
+    distractorUnsafeTranslations,
     pronunciations,
     sentenceAudioUrls,
     sentenceRomanizations,
@@ -121,7 +121,7 @@ export async function saveReadingActivityStep(params: {
       Promise.all(
         uniqueWords.map((word) =>
           saveOneSentenceWord({
-            alternatives,
+            distractorUnsafeTranslations,
             existingCasing,
             lessonId: activity.lessonId,
             organizationId,
@@ -149,16 +149,14 @@ export async function saveReadingActivityStep(params: {
 }
 
 /**
- * Save one clean copy of each alternative so the database does not store duplicates
+ * Save one clean copy of each distractor-unsafe text so the database does not store duplicates
  * that only differ by formatting.
  * Example: keep "Bonjour!" once instead of saving both "Bonjour!" and " Bonjour ! ".
  */
-function normalizeAlternativeTexts(primaryText: string, altTexts: string[]): string[] {
+function normalizeDistractorUnsafeTexts(primaryText: string, texts: string[]): string[] {
   const primaryKey = normalizeString(normalizePunctuation(primaryText).trim());
 
-  return deduplicateNormalizedTexts(altTexts).filter(
-    (text) => normalizeString(text) !== primaryKey,
-  );
+  return deduplicateNormalizedTexts(texts).filter((text) => normalizeString(text) !== primaryKey);
 }
 
 /**
@@ -189,14 +187,14 @@ async function saveOneSentence(params: {
   } = params;
 
   const sentence = normalizePunctuation(readingSentence.sentence);
-  const alternativeSentences = normalizeAlternativeTexts(
+  const distractorUnsafeSentences = normalizeDistractorUnsafeTexts(
     sentence,
-    readingSentence.alternativeSentences,
+    readingSentence.distractorUnsafeSentences,
   );
   const translation = normalizePunctuation(readingSentence.translation);
-  const alternativeTranslations = normalizeAlternativeTexts(
+  const distractorUnsafeTranslations = normalizeDistractorUnsafeTexts(
     translation,
-    readingSentence.alternativeTranslations,
+    readingSentence.distractorUnsafeTranslations,
   );
 
   const audioUrl = sentenceAudioUrls[readingSentence.sentence] ?? null;
@@ -204,15 +202,15 @@ async function saveOneSentence(params: {
 
   const record = await prisma.sentence.upsert({
     create: {
-      alternativeSentences,
       audioUrl,
+      distractorUnsafeSentences,
       organizationId,
       romanization,
       sentence,
       targetLanguage,
     },
     update: {
-      alternativeSentences,
+      distractorUnsafeSentences,
       ...(audioUrl ? { audioUrl } : {}),
       ...(romanization ? { romanization } : {}),
     },
@@ -229,7 +227,7 @@ async function saveOneSentence(params: {
 
   await prisma.lessonSentence.upsert({
     create: {
-      alternativeTranslations,
+      distractorUnsafeTranslations,
       explanation: emptyToNull(readingSentence.explanation),
       lessonId,
       sentenceId,
@@ -237,7 +235,7 @@ async function saveOneSentence(params: {
       userLanguage,
     },
     update: {
-      alternativeTranslations,
+      distractorUnsafeTranslations,
       explanation: emptyToNull(readingSentence.explanation),
       translation,
     },
@@ -265,7 +263,7 @@ async function saveOneSentence(params: {
  * lesson.
  */
 async function saveOneSentenceWord(params: {
-  alternatives: Record<string, string[]>;
+  distractorUnsafeTranslations: Record<string, string[]>;
   existingCasing: Record<string, string>;
   lessonId: number;
   organizationId: number;
@@ -277,7 +275,7 @@ async function saveOneSentenceWord(params: {
   wordMetadata: Record<string, WordMetadataEntry>;
 }): Promise<void> {
   const {
-    alternatives,
+    distractorUnsafeTranslations,
     existingCasing,
     lessonId,
     organizationId,
@@ -295,7 +293,7 @@ async function saveOneSentenceWord(params: {
   const dbWord = existingCasing[word] ?? word;
   const audioUrl = wordAudioUrls[word] ?? null;
   const pronunciation = pronunciations[word] ?? null;
-  const alternativeTranslations = alternatives[word] ?? [];
+  const wordDistractorUnsafeTranslations = distractorUnsafeTranslations[word] ?? [];
 
   const record = await prisma.word.upsert({
     create: {
@@ -326,14 +324,16 @@ async function saveOneSentenceWord(params: {
 
   await prisma.lessonWord.upsert({
     create: {
-      alternativeTranslations,
+      distractorUnsafeTranslations: wordDistractorUnsafeTranslations,
       lessonId,
       translation,
       userLanguage,
       wordId,
     },
     update: {
-      ...(alternativeTranslations.length > 0 ? { alternativeTranslations } : {}),
+      ...(wordDistractorUnsafeTranslations.length > 0
+        ? { distractorUnsafeTranslations: wordDistractorUnsafeTranslations }
+        : {}),
       translation,
     },
     where: { lessonWord: { lessonId, wordId } },
