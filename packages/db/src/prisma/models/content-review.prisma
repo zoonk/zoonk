@@ -8,8 +8,7 @@ model ContentReview {
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([taskType, entityId], name: "taskEntity")
-  @@index([taskType])
-  @@index([taskType, status])
+  @@index([taskType, status, reviewedAt])
   @@index([userId])
   @@map("content_reviews")
 }

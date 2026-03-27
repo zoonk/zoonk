@@ -33,7 +33,8 @@ model ActivityProgress {
   durationSeconds Int?      @map("duration_seconds")
 
   @@unique([userId, activityId], name: "userActivity")
-  @@index([userId])
   @@index([activityId])
+  @@index([userId, completedAt])
+  @@index([startedAt])
   @@map("activity_progress")
 }

@@ -158,6 +158,8 @@ model Subscription {
   billingInterval      String?   @map("billing_interval")
   stripeScheduleId     String?   @map("stripe_schedule_id")
 
+  @@index([referenceId])
+  @@index([status])
   @@map("subscriptions")
 }
 
@@ -167,6 +169,7 @@ model RateLimit {
   count       Int?
   lastRequest BigInt? @map("last_request")
 
+  @@index([key])
   @@map("rate_limits")
 }
 

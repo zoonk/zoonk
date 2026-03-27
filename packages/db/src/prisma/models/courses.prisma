@@ -37,7 +37,6 @@ model SearchPromptSuggestion {
   createdAt          DateTime         @default(now()) @map("created_at")
 
   @@unique([searchPromptId, courseSuggestionId], name: "promptSuggestion")
-  @@index([searchPromptId])
   @@index([courseSuggestionId])
   @@map("search_prompt_suggestions")
 }
@@ -72,7 +71,6 @@ model Course {
   @@unique([userId, slug], name: "userSlug")
   @@index([organizationId, language, isPublished])
   @@index([organizationId, normalizedTitle])
-  @@index([userId])
   @@index([userId, mode])
   @@map("courses")
 }
@@ -111,7 +109,6 @@ model CourseUser {
   startedAt DateTime @default(now()) @map("started_at")
 
   @@unique([courseId, userId], name: "courseUser")
-  @@index([courseId])
   @@index([userId])
   @@map("course_users")
 }

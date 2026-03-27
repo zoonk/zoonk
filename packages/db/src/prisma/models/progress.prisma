@@ -20,6 +20,7 @@ model StepAttempt {
   @@index([userId, organizationId])
   @@index([userId, dayOfWeek])
   @@index([userId, hourOfDay])
+  @@index([answeredAt])
   @@map("step_attempts")
 }
 
@@ -52,8 +53,8 @@ model DailyProgress {
   energyAtEnd          Float         @default(0) @map("energy_at_end")
 
   @@unique([userId, date, organizationId], name: "userDateOrg")
-  @@index([userId, date])
   @@index([userId, dayOfWeek])
   @@index([organizationId])
+  @@index([date])
   @@map("daily_progress")
 }

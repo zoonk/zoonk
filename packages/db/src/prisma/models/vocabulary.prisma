@@ -13,7 +13,6 @@ model Word {
   steps          Step[]
 
   @@unique([organizationId, targetLanguage, word], name: "orgWord")
-  @@index([organizationId, targetLanguage])
   @@map("words")
 }
 
@@ -34,7 +33,6 @@ model WordPronunciation {
   createdAt     DateTime @default(now()) @map("created_at")
 
   @@unique([wordId, userLanguage], name: "wordPronunciation")
-  @@index([wordId])
   @@map("word_pronunciations")
 }
 
@@ -53,7 +51,6 @@ model Sentence {
   steps                Step[]
 
   @@unique([organizationId, targetLanguage, sentence], name: "orgSentence")
-  @@index([organizationId, targetLanguage])
   @@map("sentences")
 }
 
@@ -83,7 +80,6 @@ model LessonWord {
   createdAt               DateTime @default(now()) @map("created_at")
 
   @@unique([lessonId, wordId], name: "lessonWord")
-  @@index([lessonId])
   @@index([wordId])
   @@map("lesson_words")
 }
@@ -111,7 +107,6 @@ model LessonSentence {
   createdAt               DateTime @default(now()) @map("created_at")
 
   @@unique([lessonId, sentenceId], name: "lessonSentence")
-  @@index([lessonId])
   @@index([sentenceId])
   @@map("lesson_sentences")
 }
