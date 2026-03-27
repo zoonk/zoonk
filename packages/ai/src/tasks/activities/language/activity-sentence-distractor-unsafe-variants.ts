@@ -65,9 +65,7 @@ export async function generateActivitySentenceDistractorUnsafeVariants({
 USER_LANGUAGE: ${promptContext.userLanguage}
 ${chapterTitle ? `CHAPTER_TITLE: ${chapterTitle}\n` : ""}LESSON_TITLE: ${lessonTitle}
 ${lessonDescription ? `LESSON_DESCRIPTION: ${lessonDescription}\n` : ""}CANONICAL_SENTENCES:
-${formatSentences(sentences)}
-
-Review these fixed sentence pairs and return only sentence variants that should be blocked from distractors.`;
+${formatSentences(sentences)}`;
 
   const providerOptions = buildProviderOptions({
     fallbackModels: FALLBACK_MODELS,

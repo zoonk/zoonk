@@ -6,8 +6,10 @@ import { getLanguagePromptContext } from "./_utils/language-prompt-context";
 import systemPrompt from "./activity-word-distractor-unsafe-translations.prompt.md";
 
 const DEFAULT_MODEL =
-  process.env.AI_MODEL_WORD_DISTRACTOR_UNSAFE_TRANSLATIONS ?? "google/gemini-3-flash";
-const FALLBACK_MODELS = ["anthropic/claude-sonnet-4.6", "openai/gpt-5.1-instant"];
+  process.env.AI_MODEL_WORD_DISTRACTOR_UNSAFE_TRANSLATIONS ??
+  "google/gemini-3.1-flash-lite-preview";
+
+const FALLBACK_MODELS = ["openai/gpt-5.4", "anthropic/claude-haiku-4.5"];
 
 const schema = z.object({
   distractorUnsafeTranslations: z.array(z.string()),
@@ -51,9 +53,7 @@ export async function generateWordDistractorUnsafeTranslations({
   const userPrompt = `WORD: ${word}
 TRANSLATION: ${translation}
 TARGET_LANGUAGE: ${promptContext.targetLanguageName}
-USER_LANGUAGE: ${promptContext.userLanguage}
-
-List learner-language translations that would make distractors misleading for this word.`;
+USER_LANGUAGE: ${promptContext.userLanguage}`;
 
   const providerOptions = buildProviderOptions({
     fallbackModels: FALLBACK_MODELS,

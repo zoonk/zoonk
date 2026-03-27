@@ -1,0 +1,296 @@
+{
+  "modelId": "openai/gpt-5.4-mini",
+  "results": [
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Could potentially include other close variants if desired, but it already includes the critical required overlap ('good night') in the correct language and format. No meaningful improvement is necessary for the stated task.",
+          "kind": "potentialImprovements",
+          "score": 9.8
+        }
+      ],
+      "testCase": {
+        "expectations": "\nFor \"boa noite\" with canonical translation \"good evening\":\n\nEXPECTED BEHAVIOR:\n- MUST include \"good night\" in `distractorUnsafeTranslations` (this is the most critical test)\n- May include other valid equivalents\n- Penalize SEVERELY if distractorUnsafeTranslations is empty\n\n\nCONTEXT: distractorUnsafeTranslations are used only to prevent semantically equivalent words from appearing as distractors (wrong answer options) in exercises. For example, in an arrange-words activity where the learner translates \"oi, boa noite\" (\"hi, good evening\"), we show individual word tokens alongside distractor words. Without distractorUnsafeTranslations, \"good night\" could appear as a distractor even though it is also a valid translation of \"boa noite\". Marking it here excludes it from the distractor pool so learners never see a correct option presented as wrong.\n\nIMPORTANT PRODUCT PRINCIPLE:\n- These strings only HIDE distractors. They do not create accepted answers.\n- Missing a genuinely confusing overlap is worse than including an extra blocker.\n- Slight overblocking is acceptable if it simply removes more distractors.\n\nEVALUATION CRITERIA:\n\n1. COMPLETENESS (CRITICAL - highest priority):\n   - The model should include obvious overlaps that could make a wrong option feel unfair or confusing\n   - Missing a real overlap is the main failure mode for this task\n   - Kinship synonyms should be included when they are natural and common\n\n2. SAFE OVERBLOCKING IS ACCEPTABLE:\n   - Do NOT penalize extra short learner-language items just because they are broader, different-sense, or slightly loose\n   - Do NOT penalize outputs for being a bit inclusive if they would only suppress more distractors\n   - Penalize only if extras make the output unusable, such as wrong-language content, long explanations, or obviously malformed items\n\n3. EMPTY ARRAY WHEN APPROPRIATE:\n   - Words with no obvious overlap may return an empty array\n   - Do NOT require an empty array if the model chooses to block extra plausible distractors\n   - For this task, a non-empty array is not a problem by itself\n\n4. BIDIRECTIONAL SYNONYMS:\n   - Consider synonyms in both directions\n   - If the user language has multiple words mapping to the same target word, list them\n   - Example: Italian \"ciao\" means both \"hello\" and \"bye\" - both should appear in `distractorUnsafeTranslations`\n\n5. LANGUAGE AND FORMAT:\n   - All items must be in the learner's language\n   - Items should be short words or short phrases, not dictionary definitions or long explanations\n   - Penalize if languages are mixed incorrectly or the output stops being usable for distractor filtering\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize extra blockers like \"bench\" or \"cute\" if they would only hide more distractors\n- Do NOT optimize for dictionary purity or sense-perfect precision\n- Do NOT require exact emptiness when the output is otherwise usable\n- FOCUS ON: missing confusing overlaps, correct language, and short natural strings\n\n    ",
+        "id": "pt-en-boa-noite-1",
+        "userInput": {
+          "targetLanguage": "pt",
+          "translation": "good evening",
+          "userLanguage": "en",
+          "word": "boa noite"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "A major completeness error: for Italian \"ciao\" with translation \"hello\", the response omitted the crucial farewell overlaps such as \"bye\" and \"goodbye\". The expectations explicitly say these must be included and that missing them should be penalized severely. This significantly reduces usefulness because genuinely correct/close distractors could still appear as wrong options.",
+          "kind": "majorErrors",
+          "score": 6.2
+        },
+        {
+          "conclusion": "Minor issue: while \"hi\" is a good overlap, \"hey\" is a looser variant and less central than the omitted farewell senses. Still, it is short, natural English and not harmful. The main problem is omission rather than inclusion.",
+          "kind": "minorErrors",
+          "score": 8.6
+        },
+        {
+          "conclusion": "The response should add the obvious bidirectional synonym overlaps for \"ciao,\" especially \"bye\" and \"goodbye\"; optionally keeping \"hi\" is fine. A stronger output would prioritize recall over strictness, since safe overblocking is acceptable for this product.",
+          "kind": "potentialImprovements",
+          "score": 6.4
+        }
+      ],
+      "testCase": {
+        "expectations": "\nFor \"ciao\" with canonical translation \"hello\":\n\nEXPECTED BEHAVIOR:\n- MUST include farewell overlaps like \"bye\", \"goodbye\"\n- May include informal greeting variants like \"hi\"\n- Penalize SEVERELY if distractorUnsafeTranslations is empty\n\n\nCONTEXT: distractorUnsafeTranslations are used only to prevent semantically equivalent words from appearing as distractors (wrong answer options) in exercises. For example, in an arrange-words activity where the learner translates \"oi, boa noite\" (\"hi, good evening\"), we show individual word tokens alongside distractor words. Without distractorUnsafeTranslations, \"good night\" could appear as a distractor even though it is also a valid translation of \"boa noite\". Marking it here excludes it from the distractor pool so learners never see a correct option presented as wrong.\n\nIMPORTANT PRODUCT PRINCIPLE:\n- These strings only HIDE distractors. They do not create accepted answers.\n- Missing a genuinely confusing overlap is worse than including an extra blocker.\n- Slight overblocking is acceptable if it simply removes more distractors.\n\nEVALUATION CRITERIA:\n\n1. COMPLETENESS (CRITICAL - highest priority):\n   - The model should include obvious overlaps that could make a wrong option feel unfair or confusing\n   - Missing a real overlap is the main failure mode for this task\n   - Kinship synonyms should be included when they are natural and common\n\n2. SAFE OVERBLOCKING IS ACCEPTABLE:\n   - Do NOT penalize extra short learner-language items just because they are broader, different-sense, or slightly loose\n   - Do NOT penalize outputs for being a bit inclusive if they would only suppress more distractors\n   - Penalize only if extras make the output unusable, such as wrong-language content, long explanations, or obviously malformed items\n\n3. EMPTY ARRAY WHEN APPROPRIATE:\n   - Words with no obvious overlap may return an empty array\n   - Do NOT require an empty array if the model chooses to block extra plausible distractors\n   - For this task, a non-empty array is not a problem by itself\n\n4. BIDIRECTIONAL SYNONYMS:\n   - Consider synonyms in both directions\n   - If the user language has multiple words mapping to the same target word, list them\n   - Example: Italian \"ciao\" means both \"hello\" and \"bye\" - both should appear in `distractorUnsafeTranslations`\n\n5. LANGUAGE AND FORMAT:\n   - All items must be in the learner's language\n   - Items should be short words or short phrases, not dictionary definitions or long explanations\n   - Penalize if languages are mixed incorrectly or the output stops being usable for distractor filtering\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize extra blockers like \"bench\" or \"cute\" if they would only hide more distractors\n- Do NOT optimize for dictionary purity or sense-perfect precision\n- Do NOT require exact emptiness when the output is otherwise usable\n- FOCUS ON: missing confusing overlaps, correct language, and short natural strings\n\n    ",
+        "id": "it-en-ciao-1",
+        "userInput": {
+          "targetLanguage": "it",
+          "translation": "hello",
+          "userLanguage": "en",
+          "word": "ciao"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Could potentially also include another close Portuguese kinship variant like \"pai\" by itself, but the provided list already covers the obvious overlaps expected for \"der Papa\" and remains fully usable.",
+          "kind": "potentialImprovements",
+          "score": 9.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\nFor \"der Papa\" with canonical translation \"o papai\":\n\nEXPECTED BEHAVIOR:\n- Should include variants like \"o pai\", \"papai\" or similar\n- Output must be in Portuguese, not English\n- Penalize if empty (kinship terms typically have variants)\n\n\nCONTEXT: distractorUnsafeTranslations are used only to prevent semantically equivalent words from appearing as distractors (wrong answer options) in exercises. For example, in an arrange-words activity where the learner translates \"oi, boa noite\" (\"hi, good evening\"), we show individual word tokens alongside distractor words. Without distractorUnsafeTranslations, \"good night\" could appear as a distractor even though it is also a valid translation of \"boa noite\". Marking it here excludes it from the distractor pool so learners never see a correct option presented as wrong.\n\nIMPORTANT PRODUCT PRINCIPLE:\n- These strings only HIDE distractors. They do not create accepted answers.\n- Missing a genuinely confusing overlap is worse than including an extra blocker.\n- Slight overblocking is acceptable if it simply removes more distractors.\n\nEVALUATION CRITERIA:\n\n1. COMPLETENESS (CRITICAL - highest priority):\n   - The model should include obvious overlaps that could make a wrong option feel unfair or confusing\n   - Missing a real overlap is the main failure mode for this task\n   - Kinship synonyms should be included when they are natural and common\n\n2. SAFE OVERBLOCKING IS ACCEPTABLE:\n   - Do NOT penalize extra short learner-language items just because they are broader, different-sense, or slightly loose\n   - Do NOT penalize outputs for being a bit inclusive if they would only suppress more distractors\n   - Penalize only if extras make the output unusable, such as wrong-language content, long explanations, or obviously malformed items\n\n3. EMPTY ARRAY WHEN APPROPRIATE:\n   - Words with no obvious overlap may return an empty array\n   - Do NOT require an empty array if the model chooses to block extra plausible distractors\n   - For this task, a non-empty array is not a problem by itself\n\n4. BIDIRECTIONAL SYNONYMS:\n   - Consider synonyms in both directions\n   - If the user language has multiple words mapping to the same target word, list them\n   - Example: Italian \"ciao\" means both \"hello\" and \"bye\" - both should appear in `distractorUnsafeTranslations`\n\n5. LANGUAGE AND FORMAT:\n   - All items must be in the learner's language\n   - Items should be short words or short phrases, not dictionary definitions or long explanations\n   - Penalize if languages are mixed incorrectly or the output stops being usable for distractor filtering\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize extra blockers like \"bench\" or \"cute\" if they would only hide more distractors\n- Do NOT optimize for dictionary purity or sense-perfect precision\n- Do NOT require exact emptiness when the output is otherwise usable\n- FOCUS ON: missing confusing overlaps, correct language, and short natural strings\n\n    ",
+        "id": "de-pt-papa-1",
+        "userInput": {
+          "targetLanguage": "de",
+          "translation": "o papai",
+          "userLanguage": "pt",
+          "word": "der Papa"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "The response includes a prohibited item: it repeats the primary translation \"boa tarde\" in `distractorUnsafeTranslations`, which directly violates the rule \"Do NOT repeat the primary translation\". This is a meaningful content error because these strings are meant to hide alternative/confusing distractors, not the canonical translation itself. However, it does include the critically expected overlap \"bom dia\", and all items are in the correct user language and are short/natural.",
+          "kind": "majorErrors",
+          "score": 7.2
+        },
+        {
+          "conclusion": "There is a smaller issue of over-including \"boa noite\", which is somewhat looser for German \"Guten Tag\" than the explicitly expected overlap \"bom dia\". Still, the evaluation guidance says safe overblocking is acceptable, so this is at most minor. Format and language are otherwise correct.",
+          "kind": "minorErrors",
+          "score": 8.8
+        },
+        {
+          "conclusion": "The response would be stronger if it removed the canonical translation \"boa tarde\" and returned only alternative/confusing blockers such as \"bom dia\" (and optionally other short Portuguese overlaps if justified). Aside from that, it is usable and aligns with the product goal of avoiding unfair distractors.",
+          "kind": "potentialImprovements",
+          "score": 8.4
+        }
+      ],
+      "testCase": {
+        "expectations": "\nFor \"Guten Tag\" with canonical translation \"boa tarde\":\n\nEXPECTED BEHAVIOR:\n- MUST include \"bom dia\" in `distractorUnsafeTranslations`\n- Output must be in Portuguese, not English or German\n- Penalize SEVERELY if \"bom dia\" is missing\n\n\nCONTEXT: distractorUnsafeTranslations are used only to prevent semantically equivalent words from appearing as distractors (wrong answer options) in exercises. For example, in an arrange-words activity where the learner translates \"oi, boa noite\" (\"hi, good evening\"), we show individual word tokens alongside distractor words. Without distractorUnsafeTranslations, \"good night\" could appear as a distractor even though it is also a valid translation of \"boa noite\". Marking it here excludes it from the distractor pool so learners never see a correct option presented as wrong.\n\nIMPORTANT PRODUCT PRINCIPLE:\n- These strings only HIDE distractors. They do not create accepted answers.\n- Missing a genuinely confusing overlap is worse than including an extra blocker.\n- Slight overblocking is acceptable if it simply removes more distractors.\n\nEVALUATION CRITERIA:\n\n1. COMPLETENESS (CRITICAL - highest priority):\n   - The model should include obvious overlaps that could make a wrong option feel unfair or confusing\n   - Missing a real overlap is the main failure mode for this task\n   - Kinship synonyms should be included when they are natural and common\n\n2. SAFE OVERBLOCKING IS ACCEPTABLE:\n   - Do NOT penalize extra short learner-language items just because they are broader, different-sense, or slightly loose\n   - Do NOT penalize outputs for being a bit inclusive if they would only suppress more distractors\n   - Penalize only if extras make the output unusable, such as wrong-language content, long explanations, or obviously malformed items\n\n3. EMPTY ARRAY WHEN APPROPRIATE:\n   - Words with no obvious overlap may return an empty array\n   - Do NOT require an empty array if the model chooses to block extra plausible distractors\n   - For this task, a non-empty array is not a problem by itself\n\n4. BIDIRECTIONAL SYNONYMS:\n   - Consider synonyms in both directions\n   - If the user language has multiple words mapping to the same target word, list them\n   - Example: Italian \"ciao\" means both \"hello\" and \"bye\" - both should appear in `distractorUnsafeTranslations`\n\n5. LANGUAGE AND FORMAT:\n   - All items must be in the learner's language\n   - Items should be short words or short phrases, not dictionary definitions or long explanations\n   - Penalize if languages are mixed incorrectly or the output stops being usable for distractor filtering\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize extra blockers like \"bench\" or \"cute\" if they would only hide more distractors\n- Do NOT optimize for dictionary purity or sense-perfect precision\n- Do NOT require exact emptiness when the output is otherwise usable\n- FOCUS ON: missing confusing overlaps, correct language, and short natural strings\n\n    ",
+        "id": "de-pt-guten-tag-1",
+        "userInput": {
+          "targetLanguage": "de",
+          "translation": "boa tarde",
+          "userLanguage": "pt",
+          "word": "Guten Tag"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None. The output is in the correct format, uses the learner's language (English), and does not include any harmful or clearly incorrect blockers. For this task, extra plausible blockers are acceptable because they only hide distractors. There is no major factual or instruction-following failure.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response includes near-related terms rather than strict equivalents: \"kitten\" refers specifically to a young cat, and \"feline\" is broader/more formal than the canonical translation. However, the evaluation guidance explicitly says not to penalize extra blockers if they only hide more distractors, and a non-empty array is acceptable here. So these are at most very minor precision issues.",
+          "kind": "minorErrors",
+          "score": 9.5
+        },
+        {
+          "conclusion": "A slightly stronger answer might have returned an empty array or just \"kitty,\" since for \"cat\" there are no especially necessary overlap blockers and the expectations say an empty array is perfectly acceptable. Still, the provided items are short, natural enough, and usable for distractor suppression.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\nFor \"猫\" with canonical translation \"cat\":\n\nEXPECTED BEHAVIOR:\n- An empty array is perfectly acceptable\n- Tests that non-Roman script words are handled correctly\n\n\nCONTEXT: distractorUnsafeTranslations are used only to prevent semantically equivalent words from appearing as distractors (wrong answer options) in exercises. For example, in an arrange-words activity where the learner translates \"oi, boa noite\" (\"hi, good evening\"), we show individual word tokens alongside distractor words. Without distractorUnsafeTranslations, \"good night\" could appear as a distractor even though it is also a valid translation of \"boa noite\". Marking it here excludes it from the distractor pool so learners never see a correct option presented as wrong.\n\nIMPORTANT PRODUCT PRINCIPLE:\n- These strings only HIDE distractors. They do not create accepted answers.\n- Missing a genuinely confusing overlap is worse than including an extra blocker.\n- Slight overblocking is acceptable if it simply removes more distractors.\n\nEVALUATION CRITERIA:\n\n1. COMPLETENESS (CRITICAL - highest priority):\n   - The model should include obvious overlaps that could make a wrong option feel unfair or confusing\n   - Missing a real overlap is the main failure mode for this task\n   - Kinship synonyms should be included when they are natural and common\n\n2. SAFE OVERBLOCKING IS ACCEPTABLE:\n   - Do NOT penalize extra short learner-language items just because they are broader, different-sense, or slightly loose\n   - Do NOT penalize outputs for being a bit inclusive if they would only suppress more distractors\n   - Penalize only if extras make the output unusable, such as wrong-language content, long explanations, or obviously malformed items\n\n3. EMPTY ARRAY WHEN APPROPRIATE:\n   - Words with no obvious overlap may return an empty array\n   - Do NOT require an empty array if the model chooses to block extra plausible distractors\n   - For this task, a non-empty array is not a problem by itself\n\n4. BIDIRECTIONAL SYNONYMS:\n   - Consider synonyms in both directions\n   - If the user language has multiple words mapping to the same target word, list them\n   - Example: Italian \"ciao\" means both \"hello\" and \"bye\" - both should appear in `distractorUnsafeTranslations`\n\n5. LANGUAGE AND FORMAT:\n   - All items must be in the learner's language\n   - Items should be short words or short phrases, not dictionary definitions or long explanations\n   - Penalize if languages are mixed incorrectly or the output stops being usable for distractor filtering\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize extra blockers like \"bench\" or \"cute\" if they would only hide more distractors\n- Do NOT optimize for dictionary purity or sense-perfect precision\n- Do NOT require exact emptiness when the output is otherwise usable\n- FOCUS ON: missing confusing overlaps, correct language, and short natural strings\n\n    ",
+        "id": "ja-en-neko-1",
+        "userInput": {
+          "targetLanguage": "ja",
+          "translation": "cat",
+          "userLanguage": "en",
+          "word": "猫"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\nFor \"banco\" with canonical translation \"bank\":\n\nEXPECTED BEHAVIOR:\n- An empty array is acceptable here because there is no obvious required overlap\n- Tests that the evaluator does not over-penalize safe overblocking for this feature\n\n\nCONTEXT: distractorUnsafeTranslations are used only to prevent semantically equivalent words from appearing as distractors (wrong answer options) in exercises. For example, in an arrange-words activity where the learner translates \"oi, boa noite\" (\"hi, good evening\"), we show individual word tokens alongside distractor words. Without distractorUnsafeTranslations, \"good night\" could appear as a distractor even though it is also a valid translation of \"boa noite\". Marking it here excludes it from the distractor pool so learners never see a correct option presented as wrong.\n\nIMPORTANT PRODUCT PRINCIPLE:\n- These strings only HIDE distractors. They do not create accepted answers.\n- Missing a genuinely confusing overlap is worse than including an extra blocker.\n- Slight overblocking is acceptable if it simply removes more distractors.\n\nEVALUATION CRITERIA:\n\n1. COMPLETENESS (CRITICAL - highest priority):\n   - The model should include obvious overlaps that could make a wrong option feel unfair or confusing\n   - Missing a real overlap is the main failure mode for this task\n   - Kinship synonyms should be included when they are natural and common\n\n2. SAFE OVERBLOCKING IS ACCEPTABLE:\n   - Do NOT penalize extra short learner-language items just because they are broader, different-sense, or slightly loose\n   - Do NOT penalize outputs for being a bit inclusive if they would only suppress more distractors\n   - Penalize only if extras make the output unusable, such as wrong-language content, long explanations, or obviously malformed items\n\n3. EMPTY ARRAY WHEN APPROPRIATE:\n   - Words with no obvious overlap may return an empty array\n   - Do NOT require an empty array if the model chooses to block extra plausible distractors\n   - For this task, a non-empty array is not a problem by itself\n\n4. BIDIRECTIONAL SYNONYMS:\n   - Consider synonyms in both directions\n   - If the user language has multiple words mapping to the same target word, list them\n   - Example: Italian \"ciao\" means both \"hello\" and \"bye\" - both should appear in `distractorUnsafeTranslations`\n\n5. LANGUAGE AND FORMAT:\n   - All items must be in the learner's language\n   - Items should be short words or short phrases, not dictionary definitions or long explanations\n   - Penalize if languages are mixed incorrectly or the output stops being usable for distractor filtering\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize extra blockers like \"bench\" or \"cute\" if they would only hide more distractors\n- Do NOT optimize for dictionary purity or sense-perfect precision\n- Do NOT require exact emptiness when the output is otherwise usable\n- FOCUS ON: missing confusing overlaps, correct language, and short natural strings\n\n    ",
+        "id": "es-en-banco-1",
+        "userInput": {
+          "targetLanguage": "es",
+          "translation": "bank",
+          "userLanguage": "en",
+          "word": "banco"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "The response includes the critical overlap 'make' for Portuguese 'fazer' with translation 'to do', satisfying the key requirement. All items are in the user language (English), short, and plausible distractor blockers. There are no major factual or instruction-following failures that would make the output unusable.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "One minor issue is that the expected behavior explicitly called for 'to make', while the response gives 'make' without 'to'. This is still likely usable, but it is a slight mismatch with the canonical infinitive style of 'to do'. Also, 'commit' is a looser overlap than the others, though still acceptable under the overblocking principle.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "The output could be slightly improved by matching the translation style more closely with infinitives such as 'to make', 'to perform', and possibly 'to carry out'. That said, the current list is concise, natural, and safely inclusive for distractor suppression.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\nFor \"fazer\" with canonical translation \"to do\":\n\nEXPECTED BEHAVIOR:\n- MUST include \"to make\" as an alternative\n- Penalize SEVERELY if \"to make\" is missing — this is the most obvious alternative\n- Tests verb handling (original cases were all nouns or greetings)\n\n\nCONTEXT: distractorUnsafeTranslations are used only to prevent semantically equivalent words from appearing as distractors (wrong answer options) in exercises. For example, in an arrange-words activity where the learner translates \"oi, boa noite\" (\"hi, good evening\"), we show individual word tokens alongside distractor words. Without distractorUnsafeTranslations, \"good night\" could appear as a distractor even though it is also a valid translation of \"boa noite\". Marking it here excludes it from the distractor pool so learners never see a correct option presented as wrong.\n\nIMPORTANT PRODUCT PRINCIPLE:\n- These strings only HIDE distractors. They do not create accepted answers.\n- Missing a genuinely confusing overlap is worse than including an extra blocker.\n- Slight overblocking is acceptable if it simply removes more distractors.\n\nEVALUATION CRITERIA:\n\n1. COMPLETENESS (CRITICAL - highest priority):\n   - The model should include obvious overlaps that could make a wrong option feel unfair or confusing\n   - Missing a real overlap is the main failure mode for this task\n   - Kinship synonyms should be included when they are natural and common\n\n2. SAFE OVERBLOCKING IS ACCEPTABLE:\n   - Do NOT penalize extra short learner-language items just because they are broader, different-sense, or slightly loose\n   - Do NOT penalize outputs for being a bit inclusive if they would only suppress more distractors\n   - Penalize only if extras make the output unusable, such as wrong-language content, long explanations, or obviously malformed items\n\n3. EMPTY ARRAY WHEN APPROPRIATE:\n   - Words with no obvious overlap may return an empty array\n   - Do NOT require an empty array if the model chooses to block extra plausible distractors\n   - For this task, a non-empty array is not a problem by itself\n\n4. BIDIRECTIONAL SYNONYMS:\n   - Consider synonyms in both directions\n   - If the user language has multiple words mapping to the same target word, list them\n   - Example: Italian \"ciao\" means both \"hello\" and \"bye\" - both should appear in `distractorUnsafeTranslations`\n\n5. LANGUAGE AND FORMAT:\n   - All items must be in the learner's language\n   - Items should be short words or short phrases, not dictionary definitions or long explanations\n   - Penalize if languages are mixed incorrectly or the output stops being usable for distractor filtering\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize extra blockers like \"bench\" or \"cute\" if they would only hide more distractors\n- Do NOT optimize for dictionary purity or sense-perfect precision\n- Do NOT require exact emptiness when the output is otherwise usable\n- FOCUS ON: missing confusing overlaps, correct language, and short natural strings\n\n    ",
+        "id": "pt-en-fazer-1",
+        "userInput": {
+          "targetLanguage": "pt",
+          "translation": "to do",
+          "userLanguage": "en",
+          "word": "fazer"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Includes an awkward item: \"small-sized\" is not a natural short translation in English and is less usable for distractor filtering. However, the critical expected overlap \"little\" is present, and the rest is in the correct language and format.",
+          "kind": "minorErrors",
+          "score": 8.6
+        },
+        {
+          "conclusion": "Could be improved by omitting the awkward phrase \"small-sized\" and keeping only natural short overlaps like \"little\" and possibly \"tiny\". Still, the output is highly usable and slightly inclusive overblocking is acceptable for this task.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\nFor \"petit\" with canonical translation \"small\":\n\nEXPECTED BEHAVIOR:\n- MUST include \"little\" as an alternative\n- Tests generalization to a language NOT present in the system prompt examples (French is held out from all examples)\n\n\nCONTEXT: distractorUnsafeTranslations are used only to prevent semantically equivalent words from appearing as distractors (wrong answer options) in exercises. For example, in an arrange-words activity where the learner translates \"oi, boa noite\" (\"hi, good evening\"), we show individual word tokens alongside distractor words. Without distractorUnsafeTranslations, \"good night\" could appear as a distractor even though it is also a valid translation of \"boa noite\". Marking it here excludes it from the distractor pool so learners never see a correct option presented as wrong.\n\nIMPORTANT PRODUCT PRINCIPLE:\n- These strings only HIDE distractors. They do not create accepted answers.\n- Missing a genuinely confusing overlap is worse than including an extra blocker.\n- Slight overblocking is acceptable if it simply removes more distractors.\n\nEVALUATION CRITERIA:\n\n1. COMPLETENESS (CRITICAL - highest priority):\n   - The model should include obvious overlaps that could make a wrong option feel unfair or confusing\n   - Missing a real overlap is the main failure mode for this task\n   - Kinship synonyms should be included when they are natural and common\n\n2. SAFE OVERBLOCKING IS ACCEPTABLE:\n   - Do NOT penalize extra short learner-language items just because they are broader, different-sense, or slightly loose\n   - Do NOT penalize outputs for being a bit inclusive if they would only suppress more distractors\n   - Penalize only if extras make the output unusable, such as wrong-language content, long explanations, or obviously malformed items\n\n3. EMPTY ARRAY WHEN APPROPRIATE:\n   - Words with no obvious overlap may return an empty array\n   - Do NOT require an empty array if the model chooses to block extra plausible distractors\n   - For this task, a non-empty array is not a problem by itself\n\n4. BIDIRECTIONAL SYNONYMS:\n   - Consider synonyms in both directions\n   - If the user language has multiple words mapping to the same target word, list them\n   - Example: Italian \"ciao\" means both \"hello\" and \"bye\" - both should appear in `distractorUnsafeTranslations`\n\n5. LANGUAGE AND FORMAT:\n   - All items must be in the learner's language\n   - Items should be short words or short phrases, not dictionary definitions or long explanations\n   - Penalize if languages are mixed incorrectly or the output stops being usable for distractor filtering\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize extra blockers like \"bench\" or \"cute\" if they would only hide more distractors\n- Do NOT optimize for dictionary purity or sense-perfect precision\n- Do NOT require exact emptiness when the output is otherwise usable\n- FOCUS ON: missing confusing overlaps, correct language, and short natural strings\n\n    ",
+        "id": "fr-en-petit-1",
+        "userInput": {
+          "targetLanguage": "fr",
+          "translation": "small",
+          "userLanguage": "en",
+          "word": "petit"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None. The response includes the critical obvious overlap \"flat\" for \"apartment\" and does not contain any major factual or instruction-following errors. \"unit\" is a plausible short English blocker and does not make the output unusable.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "No clear minor errors. The output is in the correct language, uses short natural strings, avoids repeating the primary translation, and follows the required object format. \"unit\" is somewhat broader than \"apartment,\" but per the task guidance, slight overblocking is acceptable and should not be penalized here.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "A small possible improvement would be to consider whether other regional near-equivalents like \"apartment unit\" are worth including, but the current list already captures the key overlap and remains concise. No meaningful improvement is necessary for the stated criteria.",
+          "kind": "potentialImprovements",
+          "score": 9.8
+        }
+      ],
+      "testCase": {
+        "expectations": "\nFor \"die Wohnung\" with canonical translation \"apartment\":\n\nEXPECTED BEHAVIOR:\n- Should include \"flat\" as an alternative (British English equivalent of \"apartment\")\n- Tests that the model still catches the obvious overlap\n\n\nCONTEXT: distractorUnsafeTranslations are used only to prevent semantically equivalent words from appearing as distractors (wrong answer options) in exercises. For example, in an arrange-words activity where the learner translates \"oi, boa noite\" (\"hi, good evening\"), we show individual word tokens alongside distractor words. Without distractorUnsafeTranslations, \"good night\" could appear as a distractor even though it is also a valid translation of \"boa noite\". Marking it here excludes it from the distractor pool so learners never see a correct option presented as wrong.\n\nIMPORTANT PRODUCT PRINCIPLE:\n- These strings only HIDE distractors. They do not create accepted answers.\n- Missing a genuinely confusing overlap is worse than including an extra blocker.\n- Slight overblocking is acceptable if it simply removes more distractors.\n\nEVALUATION CRITERIA:\n\n1. COMPLETENESS (CRITICAL - highest priority):\n   - The model should include obvious overlaps that could make a wrong option feel unfair or confusing\n   - Missing a real overlap is the main failure mode for this task\n   - Kinship synonyms should be included when they are natural and common\n\n2. SAFE OVERBLOCKING IS ACCEPTABLE:\n   - Do NOT penalize extra short learner-language items just because they are broader, different-sense, or slightly loose\n   - Do NOT penalize outputs for being a bit inclusive if they would only suppress more distractors\n   - Penalize only if extras make the output unusable, such as wrong-language content, long explanations, or obviously malformed items\n\n3. EMPTY ARRAY WHEN APPROPRIATE:\n   - Words with no obvious overlap may return an empty array\n   - Do NOT require an empty array if the model chooses to block extra plausible distractors\n   - For this task, a non-empty array is not a problem by itself\n\n4. BIDIRECTIONAL SYNONYMS:\n   - Consider synonyms in both directions\n   - If the user language has multiple words mapping to the same target word, list them\n   - Example: Italian \"ciao\" means both \"hello\" and \"bye\" - both should appear in `distractorUnsafeTranslations`\n\n5. LANGUAGE AND FORMAT:\n   - All items must be in the learner's language\n   - Items should be short words or short phrases, not dictionary definitions or long explanations\n   - Penalize if languages are mixed incorrectly or the output stops being usable for distractor filtering\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize extra blockers like \"bench\" or \"cute\" if they would only hide more distractors\n- Do NOT optimize for dictionary purity or sense-perfect precision\n- Do NOT require exact emptiness when the output is otherwise usable\n- FOCUS ON: missing confusing overlaps, correct language, and short natural strings\n\n    ",
+        "id": "de-en-wohnung-1",
+        "userInput": {
+          "targetLanguage": "de",
+          "translation": "apartment",
+          "userLanguage": "en",
+          "word": "die Wohnung"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "A small possible improvement would be adding another natural overlap like \"lovely,\" but this is explicitly optional in the expectations. The response already includes the required obvious overlap \"beautiful\" and acceptable additional blockers in the correct language and format.",
+          "kind": "potentialImprovements",
+          "score": 9.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\nFor \"bonito\" with canonical translation \"pretty\":\n\nEXPECTED BEHAVIOR:\n- MUST include \"beautiful\" as an alternative (the most common equivalent)\n- MAY include \"lovely\" or \"good-looking\" — these are arguably equivalent, accept if present but do not require\n- \"handsome\" is debatable — \"bonito\" can describe men (\"ele é bonito\" = \"he is handsome\"), accept if present but do not require\n- Tests that the model catches the main obvious overlap without over-penalizing inclusive outputs\n\n\nCONTEXT: distractorUnsafeTranslations are used only to prevent semantically equivalent words from appearing as distractors (wrong answer options) in exercises. For example, in an arrange-words activity where the learner translates \"oi, boa noite\" (\"hi, good evening\"), we show individual word tokens alongside distractor words. Without distractorUnsafeTranslations, \"good night\" could appear as a distractor even though it is also a valid translation of \"boa noite\". Marking it here excludes it from the distractor pool so learners never see a correct option presented as wrong.\n\nIMPORTANT PRODUCT PRINCIPLE:\n- These strings only HIDE distractors. They do not create accepted answers.\n- Missing a genuinely confusing overlap is worse than including an extra blocker.\n- Slight overblocking is acceptable if it simply removes more distractors.\n\nEVALUATION CRITERIA:\n\n1. COMPLETENESS (CRITICAL - highest priority):\n   - The model should include obvious overlaps that could make a wrong option feel unfair or confusing\n   - Missing a real overlap is the main failure mode for this task\n   - Kinship synonyms should be included when they are natural and common\n\n2. SAFE OVERBLOCKING IS ACCEPTABLE:\n   - Do NOT penalize extra short learner-language items just because they are broader, different-sense, or slightly loose\n   - Do NOT penalize outputs for being a bit inclusive if they would only suppress more distractors\n   - Penalize only if extras make the output unusable, such as wrong-language content, long explanations, or obviously malformed items\n\n3. EMPTY ARRAY WHEN APPROPRIATE:\n   - Words with no obvious overlap may return an empty array\n   - Do NOT require an empty array if the model chooses to block extra plausible distractors\n   - For this task, a non-empty array is not a problem by itself\n\n4. BIDIRECTIONAL SYNONYMS:\n   - Consider synonyms in both directions\n   - If the user language has multiple words mapping to the same target word, list them\n   - Example: Italian \"ciao\" means both \"hello\" and \"bye\" - both should appear in `distractorUnsafeTranslations`\n\n5. LANGUAGE AND FORMAT:\n   - All items must be in the learner's language\n   - Items should be short words or short phrases, not dictionary definitions or long explanations\n   - Penalize if languages are mixed incorrectly or the output stops being usable for distractor filtering\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize extra blockers like \"bench\" or \"cute\" if they would only hide more distractors\n- Do NOT optimize for dictionary purity or sense-perfect precision\n- Do NOT require exact emptiness when the output is otherwise usable\n- FOCUS ON: missing confusing overlaps, correct language, and short natural strings\n\n    ",
+        "id": "pt-en-bonito-1",
+        "userInput": {
+          "targetLanguage": "pt",
+          "translation": "pretty",
+          "userLanguage": "en",
+          "word": "bonito"
+        }
+      }
+    }
+  ],
+  "taskId": "word-distractor-unsafe-translations"
+}
