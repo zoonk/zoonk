@@ -116,6 +116,7 @@ When writing React components, use compound components. Always read this before 
 - Extract pure functions with non-trivial logic (validation, transformation, regex) from component files into their own file (e.g., `_utils/`). This follows the single-concern principle and enables direct unit testing without exporting internals from component files
 - Add integration tests for data functions, business logic, and workflows with Prisma
 - Don't add tests for CSS, style changes, prompt wording, zod schemas or other things where tests would only assert copy, external library internals, or implementation details
+- Don't write snapshot-style tests that assert static data equals itself (e.g., testing that a config constant returns a hard-coded list). These tests catch no bugs — any intentional change requires updating both the constant and the test mechanically. Test behavior and logic, not data
 - Parallelize independent fixtures: When test setup creates multiple entities that don't depend on each other (e.g., `user` + `course`, sibling chapters, multiple `activityProgressFixture` calls), use `Promise.all` instead of sequential awaits
 
 **E2E Query Rules (MANDATORY)**:

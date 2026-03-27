@@ -1,53 +1,7 @@
 import { enforcePhaseProgression } from "@/lib/generation-phases";
 import { getPhaseOrder } from "@/lib/generation/activity-generation-phase-config";
 import { describe, expect, test } from "vitest";
-import { calculateWeightedProgress, getPhaseStatus } from "./activity-generation-phases";
-
-describe(getPhaseOrder, () => {
-  test("uses vocabulary-first order for vocabulary activities", () => {
-    expect(getPhaseOrder("vocabulary")).toEqual([
-      "gettingStarted",
-      "buildingWordList",
-      "addingPronunciation",
-      "recordingAudio",
-      "finishing",
-    ]);
-  });
-
-  test("uses same order for translation activities as vocabulary", () => {
-    expect(getPhaseOrder("translation")).toEqual([
-      "gettingStarted",
-      "buildingWordList",
-      "addingPronunciation",
-      "recordingAudio",
-      "finishing",
-    ]);
-  });
-
-  test("keeps visual/image phases for non-language activities", () => {
-    expect(getPhaseOrder("explanation")).toEqual([
-      "gettingStarted",
-      "processingDependencies",
-      "writingContent",
-      "preparingVisuals",
-      "creatingImages",
-      "finishing",
-    ]);
-  });
-
-  test("uses grammar-specific order without visual or audio phases", () => {
-    expect(getPhaseOrder("grammar")).toEqual(["gettingStarted", "writingContent", "finishing"]);
-  });
-
-  test("uses reading-specific order without visuals or pronunciation", () => {
-    expect(getPhaseOrder("reading")).toEqual([
-      "gettingStarted",
-      "buildingWordList",
-      "recordingAudio",
-      "finishing",
-    ]);
-  });
-});
+import { getPhaseStatus } from "./activity-generation-phases";
 
 describe("vocabulary phase status", () => {
   test("activates buildingWordList for vocabulary content steps", () => {
@@ -59,16 +13,6 @@ describe("vocabulary phase status", () => {
     );
 
     expect(status).toBe("active");
-  });
-
-  test("calculates progress for vocabulary flow", () => {
-    const progress = calculateWeightedProgress(
-      ["getLessonActivities", "generateVocabularyContent"],
-      "generateVocabularyPronunciationAndAlternatives",
-      "vocabulary",
-    );
-
-    expect(progress).toBeGreaterThan(0);
   });
 });
 
@@ -84,43 +28,33 @@ describe("grammar phase status", () => {
     expect(status).toBe("active");
   });
 
-  test("calculates progress for grammar flow", () => {
-    const progress = calculateWeightedProgress(
+  test("activates creatingExercises for grammar user content", () => {
+    const status = getPhaseStatus(
+      "creatingExercises",
       ["getLessonActivities", "generateGrammarContent"],
-      "saveGrammarActivity",
+      "generateGrammarUserContent",
       "grammar",
     );
 
-    expect(progress).toBeGreaterThan(0);
+    expect(status).toBe("active");
   });
 });
 
 describe("listening phase status", () => {
-  test("returns correct phase order for listening", () => {
-    expect(getPhaseOrder("listening")).toEqual([
-      "gettingStarted",
-      "processingDependencies",
-      "buildingWordList",
-      "recordingAudio",
-      "writingContent",
-      "finishing",
-    ]);
-  });
-
-  test("activates processingDependencies for generateSentences", () => {
+  test("activates buildingWordList for generateVocabularyContent in listening", () => {
     const status = getPhaseStatus(
-      "processingDependencies",
+      "buildingWordList",
       ["getLessonActivities"],
-      "generateSentences",
+      "generateVocabularyContent",
       "listening",
     );
 
     expect(status).toBe("active");
   });
 
-  test("keeps finishing pending during early dependency processing", () => {
+  test("keeps saving pending during early dependency processing", () => {
     const status = getPhaseStatus(
-      "finishing",
+      "saving",
       ["getLessonActivities", "generateVocabularyContent"],
       "generateGrammarContent",
       "listening",
@@ -129,20 +63,9 @@ describe("listening phase status", () => {
     expect(status).toBe("pending");
   });
 
-  test("activates writingContent for copyListeningSteps", () => {
+  test("activates creatingSentences for generateSentences in listening", () => {
     const status = getPhaseStatus(
-      "writingContent",
-      ["getLessonActivities", "generateSentences", "generateAudio"],
-      "copyListeningSteps",
-      "listening",
-    );
-
-    expect(status).toBe("active");
-  });
-
-  test("activates finishing at terminal listening completion", () => {
-    const status = getPhaseStatus(
-      "finishing",
+      "creatingSentences",
       [
         "getLessonActivities",
         "generateVocabularyContent",
@@ -150,34 +73,20 @@ describe("listening phase status", () => {
         "generateVocabularyAudio",
         "saveVocabularyActivity",
         "generateGrammarContent",
-        "generateSentences",
-        "generateAudio",
-        "generateReadingRomanization",
-        "copyListeningSteps",
-        "saveListeningActivity",
+        "saveGrammarActivity",
       ],
-      null,
+      "generateSentences",
       "listening",
     );
 
     expect(status).toBe("active");
   });
-
-  test("calculates progress for listening flow", () => {
-    const progress = calculateWeightedProgress(
-      ["getLessonActivities", "generateSentences"],
-      "generateAudio",
-      "listening",
-    );
-
-    expect(progress).toBeGreaterThan(0);
-  });
 });
 
 describe("reading phase status", () => {
-  test("activates buildingWordList for sentence generation", () => {
+  test("activates creatingSentences for sentence generation", () => {
     const status = getPhaseStatus(
-      "buildingWordList",
+      "creatingSentences",
       ["getLessonActivities"],
       "generateSentences",
       "reading",
@@ -186,14 +95,15 @@ describe("reading phase status", () => {
     expect(status).toBe("active");
   });
 
-  test("calculates progress for reading flow", () => {
-    const progress = calculateWeightedProgress(
-      ["getLessonActivities", "generateSentences"],
-      "generateAudio",
+  test("activates lookingUpWords for word metadata generation", () => {
+    const status = getPhaseStatus(
+      "lookingUpWords",
+      ["getLessonActivities", "generateSentences", "generateAudio"],
+      "generateSentenceWordMetadata",
       "reading",
     );
 
-    expect(progress).toBeGreaterThan(0);
+    expect(status).toBe("active");
   });
 });
 
@@ -210,16 +120,8 @@ describe("custom phase status", () => {
   });
 });
 
-describe("quiz phase status", () => {
-  test("does not include preparingVisuals or creatingImages phases", () => {
-    const phases = getPhaseOrder("quiz");
-    expect(phases).not.toContain("preparingVisuals");
-    expect(phases).not.toContain("creatingImages");
-  });
-});
-
 describe("enforcePhaseProgression integration", () => {
-  test("clamps finishing to pending when creatingImages is still pending (explanation kind)", () => {
+  test("clamps saving to pending when creatingImages is still pending (explanation kind)", () => {
     const phaseOrder = getPhaseOrder("explanation");
 
     const rawPhases = phaseOrder.map((phase) => ({
@@ -239,11 +141,11 @@ describe("enforcePhaseProgression integration", () => {
 
     const enforced = enforcePhaseProgression(rawPhases);
 
-    const finishing = enforced.find((item) => item.name === "finishing");
+    const saving = enforced.find((item) => item.name === "saving");
     const creatingImages = enforced.find((item) => item.name === "creatingImages");
 
     expect(creatingImages).toBeDefined();
     expect(creatingImages?.status).not.toBe("completed");
-    expect(finishing?.status).toBe("pending");
+    expect(saving?.status).toBe("pending");
   });
 });
