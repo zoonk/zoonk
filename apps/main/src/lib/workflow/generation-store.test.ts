@@ -208,6 +208,106 @@ describe(handleStepStreamMessage, () => {
     expect(state.status).toBe("streaming");
   });
 
+  describe("entity filtering", () => {
+    it("does NOT track stepCompleted when message entityId doesn't match viewer", () => {
+      const actions: GenerationAction[] = [];
+
+      handleStepStreamMessage({
+        dispatch: (a) => actions.push(a),
+        entityId: 235,
+        message: { entityId: 238, status: "completed", step: "generateVisuals" },
+      });
+
+      const state = applyActions(actions, initialGenerationState());
+
+      expect(state.completedSteps).toEqual([]);
+    });
+
+    it("tracks stepCompleted when message entityId matches viewer", () => {
+      const actions: GenerationAction[] = [];
+
+      handleStepStreamMessage({
+        dispatch: (a) => actions.push(a),
+        entityId: 235,
+        message: { entityId: 235, status: "completed", step: "generateVisuals" },
+      });
+
+      const state = applyActions(actions, initialGenerationState());
+
+      expect(state.completedSteps).toEqual(["generateVisuals"]);
+    });
+
+    it("tracks stepCompleted when message has no entityId (shared/batch step)", () => {
+      const actions: GenerationAction[] = [];
+
+      handleStepStreamMessage({
+        dispatch: (a) => actions.push(a),
+        entityId: 235,
+        message: { status: "completed", step: "generateExplanationContent" },
+      });
+
+      const state = applyActions(actions, initialGenerationState());
+
+      expect(state.completedSteps).toEqual(["generateExplanationContent"]);
+    });
+
+    it("tracks stepCompleted when viewer has no entityId (non-activity workflow)", () => {
+      const actions: GenerationAction[] = [];
+
+      handleStepStreamMessage({
+        dispatch: (a) => actions.push(a),
+        message: { entityId: 99, status: "completed", step: "stepA" },
+      });
+
+      const state = applyActions(actions, initialGenerationState());
+
+      expect(state.completedSteps).toEqual(["stepA"]);
+    });
+
+    it("does NOT track stepStarted when message entityId doesn't match viewer", () => {
+      const actions: GenerationAction[] = [];
+
+      handleStepStreamMessage({
+        dispatch: (a) => actions.push(a),
+        entityId: 235,
+        message: { entityId: 238, status: "started", step: "generateVisuals" },
+      });
+
+      const state = applyActions(actions, initialGenerationState());
+
+      expect(state.currentStep).toBeNull();
+      expect(state.startedSteps).toEqual([]);
+    });
+
+    it("tracks stepStarted when message entityId matches viewer", () => {
+      const actions: GenerationAction[] = [];
+
+      handleStepStreamMessage({
+        dispatch: (a) => actions.push(a),
+        entityId: 235,
+        message: { entityId: 235, status: "started", step: "generateVisuals" },
+      });
+
+      const state = applyActions(actions, initialGenerationState());
+
+      expect(state.currentStep).toBe("generateVisuals");
+    });
+
+    it("tracks stepStarted when message has no entityId (shared/batch step)", () => {
+      const actions: GenerationAction[] = [];
+
+      handleStepStreamMessage({
+        dispatch: (a) => actions.push(a),
+        entityId: 235,
+        message: { status: "started", step: "getLessonActivities" },
+      });
+
+      const state = applyActions(actions, initialGenerationState());
+
+      expect(state.currentStep).toBe("getLessonActivities");
+    });
+  });
+
   it("routes 'error' to setError with step name", () => {
     const state = applyMessage({ status: "error", step: "stepA" });
     expect(state.status).toBe("error");

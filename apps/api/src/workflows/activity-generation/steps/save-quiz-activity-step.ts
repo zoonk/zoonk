@@ -1,4 +1,4 @@
-import { createStepStream } from "@/workflows/_shared/stream-status";
+import { createEntityStepStream } from "@/workflows/_shared/stream-status";
 import { type QuizQuestion } from "@zoonk/ai/tasks/activities/core/quiz";
 import { assertStepContent } from "@zoonk/core/steps/content-contract";
 import { type ActivityStepName } from "@zoonk/core/workflows/steps";
@@ -52,9 +52,9 @@ export async function saveQuizActivityStep({
 }): Promise<void> {
   "use step";
 
-  await using stream = createStepStream<ActivityStepName>();
+  await using stream = createEntityStepStream<ActivityStepName>(activityId);
 
-  await stream.status({ entityId: activityId, status: "started", step: "saveQuizActivity" });
+  await stream.status({ status: "started", step: "saveQuizActivity" });
 
   const stepRecords = buildQuizStepRecords(activityId, questions);
 
@@ -74,5 +74,5 @@ export async function saveQuizActivityStep({
     return;
   }
 
-  await stream.status({ entityId: activityId, status: "completed", step: "saveQuizActivity" });
+  await stream.status({ status: "completed", step: "saveQuizActivity" });
 }

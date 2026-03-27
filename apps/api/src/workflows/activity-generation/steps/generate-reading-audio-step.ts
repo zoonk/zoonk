@@ -1,4 +1,4 @@
-import { createStepStream } from "@/workflows/_shared/stream-status";
+import { createEntityStepStream } from "@/workflows/_shared/stream-status";
 import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { prisma } from "@zoonk/db";
 import { isTTSSupportedLanguage } from "@zoonk/utils/languages";
@@ -28,7 +28,7 @@ export async function generateReadingAudioStep(
   const course = activity.lesson.chapter.course;
   const targetLanguage = course.targetLanguage;
 
-  await using stream = createStepStream<ActivityStepName>();
+  await using stream = createEntityStepStream<ActivityStepName>(activity.id);
 
   await stream.status({ status: "started", step: "generateAudio" });
 

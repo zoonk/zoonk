@@ -1,4 +1,4 @@
-import { createStepStream, getAIResultErrorReason } from "@/workflows/_shared/stream-status";
+import { createEntityStepStream, getAIResultErrorReason } from "@/workflows/_shared/stream-status";
 import {
   type ActivityQuizSchema,
   type QuizQuestion,
@@ -41,7 +41,7 @@ export async function generateQuizContentStep(
     return { activityId: null, questions: [] };
   }
 
-  await using stream = createStepStream<ActivityStepName>();
+  await using stream = createEntityStepStream<ActivityStepName>(quizActivity.id);
 
   await stream.status({ status: "started", step: "generateQuizContent" });
 

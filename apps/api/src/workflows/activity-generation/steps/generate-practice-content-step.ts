@@ -1,4 +1,4 @@
-import { createStepStream, getAIResultErrorReason } from "@/workflows/_shared/stream-status";
+import { createEntityStepStream, getAIResultErrorReason } from "@/workflows/_shared/stream-status";
 import {
   type ActivityPracticeSchema,
   generateActivityPractice,
@@ -40,7 +40,7 @@ export async function generatePracticeContentStep(
     return { activityId: null, steps: [] };
   }
 
-  await using stream = createStepStream<ActivityStepName>();
+  await using stream = createEntityStepStream<ActivityStepName>(practiceActivity.id);
 
   await stream.status({ status: "started", step: "generatePracticeContent" });
 

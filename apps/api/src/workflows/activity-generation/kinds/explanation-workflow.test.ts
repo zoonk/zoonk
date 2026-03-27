@@ -554,6 +554,71 @@ describe("explanation activity workflow", () => {
       );
     });
 
+    test("per-entity step events include entityId, batch step events do not", async () => {
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        concepts: ["Entity A", "Entity B"],
+        organizationId,
+        title: `EntityId SSE Lesson ${randomUUID()}`,
+      });
+
+      const [expA, expB] = await Promise.all([
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 1,
+          title: "Entity A",
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 2,
+          title: "Entity B",
+        }),
+      ]);
+
+      const activities = await getLessonActivitiesStep(testLesson.id);
+      const concepts = activities[0]?.lesson?.concepts ?? [];
+
+      await explanationActivityWorkflow({
+        activitiesToGenerate: activities,
+        allActivities: activities,
+        concepts,
+        neighboringConcepts: [],
+        workflowRunId: "test-run-id",
+      });
+
+      const streamedMessages = getStreamedMessages();
+      const activityIds = new Set([Number(expA.id), Number(expB.id)]);
+
+      // Per-entity steps must include entityId matching one of the activity IDs
+      const perEntitySteps = ["generateVisuals", "generateImages", "saveExplanationActivity"];
+
+      for (const stepName of perEntitySteps) {
+        const stepMessages = streamedMessages.filter((msg) => msg.step === stepName);
+        expect(stepMessages.length).toBeGreaterThan(0);
+
+        for (const msg of stepMessages) {
+          expect(msg.entityId).toBeDefined();
+          expect(activityIds.has(Number(msg.entityId))).toBe(true);
+        }
+      }
+
+      // Batch step (generateExplanationContent) should NOT have entityId
+      const batchMessages = streamedMessages.filter(
+        (msg) => msg.step === "generateExplanationContent",
+      );
+      expect(batchMessages.length).toBeGreaterThan(0);
+
+      for (const msg of batchMessages) {
+        expect(msg.entityId).toBeUndefined();
+      }
+    });
+
     test("one explanation failure doesn't block others", async () => {
       vi.mocked(generateActivityExplanation).mockImplementation(async (params) => {
         if (params.concept === "Fail Concept") {

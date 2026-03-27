@@ -1,4 +1,4 @@
-import { createStepStream } from "@/workflows/_shared/stream-status";
+import { createEntityStepStream } from "@/workflows/_shared/stream-status";
 import { assertStepContent } from "@zoonk/core/steps/content-contract";
 import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { prisma } from "@zoonk/db";
@@ -36,13 +36,9 @@ export async function saveTranslationFromExistingVocabularyStep({
     return;
   }
 
-  await using stream = createStepStream<ActivityStepName>();
+  await using stream = createEntityStepStream<ActivityStepName>(translationActivity.id);
 
-  await stream.status({
-    entityId: translationActivity.id,
-    status: "started",
-    step: "saveVocabularyActivity",
-  });
+  await stream.status({ status: "started", step: "saveVocabularyActivity" });
 
   const vocabularySteps = await prisma.step.findMany({
     orderBy: { position: "asc" },
@@ -80,9 +76,5 @@ export async function saveTranslationFromExistingVocabularyStep({
     return;
   }
 
-  await stream.status({
-    entityId: translationActivity.id,
-    status: "completed",
-    step: "saveVocabularyActivity",
-  });
+  await stream.status({ status: "completed", step: "saveVocabularyActivity" });
 }

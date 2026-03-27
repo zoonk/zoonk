@@ -1,4 +1,4 @@
-import { createStepStream } from "@/workflows/_shared/stream-status";
+import { createEntityStepStream } from "@/workflows/_shared/stream-status";
 import { type ActivityChallengeSchema } from "@zoonk/ai/tasks/activities/core/challenge";
 import { assertStepContent } from "@zoonk/core/steps/content-contract";
 import { type ActivityStepName } from "@zoonk/core/workflows/steps";
@@ -62,9 +62,9 @@ export async function saveChallengeActivityStep({
 }): Promise<void> {
   "use step";
 
-  await using stream = createStepStream<ActivityStepName>();
+  await using stream = createEntityStepStream<ActivityStepName>(activityId);
 
-  await stream.status({ entityId: activityId, status: "started", step: "saveChallengeActivity" });
+  await stream.status({ status: "started", step: "saveChallengeActivity" });
 
   const stepRecords = buildChallengeStepRecords(activityId, data);
 
@@ -84,5 +84,5 @@ export async function saveChallengeActivityStep({
     return;
   }
 
-  await stream.status({ entityId: activityId, status: "completed", step: "saveChallengeActivity" });
+  await stream.status({ status: "completed", step: "saveChallengeActivity" });
 }

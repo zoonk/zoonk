@@ -1,4 +1,4 @@
-import { createStepStream } from "@/workflows/_shared/stream-status";
+import { createEntityStepStream } from "@/workflows/_shared/stream-status";
 import { generateActivityRomanization } from "@zoonk/ai/tasks/activities/language/romanization";
 import { generateTranslation } from "@zoonk/ai/tasks/activities/language/translation";
 import { type ActivityStepName } from "@zoonk/core/workflows/steps";
@@ -187,7 +187,7 @@ export async function generateSentenceWordMetadataStep(
     return { wordMetadata: {} };
   }
 
-  await using stream = createStepStream<ActivityStepName>();
+  await using stream = createEntityStepStream<ActivityStepName>(activity.id);
 
   await stream.status({ status: "started", step: "generateSentenceWordMetadata" });
 

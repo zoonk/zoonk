@@ -88,6 +88,26 @@ export function generationReducer<TStep extends string>(
   }
 }
 
+/**
+ * Checks if an SSE event is relevant to the entity the viewer is tracking.
+ * Events without entityId are shared/batch events that apply to all entities.
+ * When the viewer has no entityId (non-activity workflows), everything matches.
+ */
+function isEventRelevantToViewer(
+  messageEntityId: number | undefined,
+  viewerEntityId: number | undefined,
+): boolean {
+  if (messageEntityId === undefined) {
+    return true;
+  }
+
+  if (viewerEntityId === undefined) {
+    return true;
+  }
+
+  return messageEntityId === viewerEntityId;
+}
+
 export function handleStepStreamMessage<TStep extends string>(params: {
   completionStep?: TStep;
   dispatch: (action: GenerationAction<TStep>) => void;
@@ -98,18 +118,28 @@ export function handleStepStreamMessage<TStep extends string>(params: {
 
   switch (message.status) {
     case "started":
-      dispatch({ step: message.step, type: "stepStarted" });
-      break;
-    case "completed":
-      dispatch({ step: message.step, type: "stepCompleted" });
-      if (completionStep && message.step === completionStep) {
-        const entityMatches = entityId === undefined || message.entityId === entityId;
-
-        if (entityMatches) {
-          dispatch({ completionStep, type: "streamEnded" });
-        }
+      if (isEventRelevantToViewer(message.entityId, entityId)) {
+        dispatch({ step: message.step, type: "stepStarted" });
       }
       break;
+    case "completed": {
+      if (isEventRelevantToViewer(message.entityId, entityId)) {
+        dispatch({ step: message.step, type: "stepCompleted" });
+      }
+
+      // streamEnded uses DIFFERENT semantics: undefined message entityId does NOT match
+      // a specific viewer entityId. This prevents batch steps from prematurely ending
+      // a stream that's waiting for a specific entity's save step.
+      const isCompletionForThisEntity =
+        completionStep &&
+        message.step === completionStep &&
+        (entityId === undefined || message.entityId === entityId);
+
+      if (isCompletionForThisEntity) {
+        dispatch({ completionStep, type: "streamEnded" });
+      }
+      break;
+    }
     case "error": {
       const errorMessage = message.reason
         ? `${message.step}: ${message.reason}`
