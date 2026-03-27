@@ -41,8 +41,6 @@
 - `pnpm --filter {app} build:e2e` (always run this before running e2e tests)
 - `pnpm --filter {app} e2e`
 
-Always run `pnpm turbo quality:fix` and `pnpm typecheck` after making any changes
-
 - Always run e2e tests for ALL apps (`main`, `editor`, `api`), not just the one you changed
 - After e2e changes, run your tests multiple times to check for flakiness
 
