@@ -6,11 +6,11 @@ import {
 } from "@/lib/generation-phases";
 import { type CourseStepName, type CourseWorkflowStepName } from "@zoonk/core/workflows/steps";
 import {
+  CheckCircleIcon,
   ImageIcon,
   LayoutListIcon,
   type LucideIcon,
   PenLineIcon,
-  SaveIcon,
   SettingsIcon,
   TagIcon,
 } from "lucide-react";
@@ -65,7 +65,7 @@ export const PHASE_ICONS: Record<PhaseName, LucideIcon> = {
   creatingCoverImage: ImageIcon,
   gettingReady: SettingsIcon,
   outliningChapters: LayoutListIcon,
-  savingCourseInfo: SaveIcon,
+  savingCourseInfo: CheckCircleIcon,
   writingDescription: PenLineIcon,
 };
 

@@ -5,7 +5,7 @@ import {
   getPhaseStatus as getStatus,
 } from "@/lib/generation-phases";
 import { type ChapterStepName, type ChapterWorkflowStepName } from "@zoonk/core/workflows/steps";
-import { BookOpenIcon, type LucideIcon, SaveIcon, SettingsIcon } from "lucide-react";
+import { BookOpenIcon, CheckCircleIcon, type LucideIcon, SettingsIcon } from "lucide-react";
 
 export type PhaseName = "gettingReady" | "preparingLessons" | "savingLessons";
 
@@ -27,7 +27,7 @@ export function getPhaseOrder(): PhaseName[] {
 export const PHASE_ICONS: Record<PhaseName, LucideIcon> = {
   gettingReady: SettingsIcon,
   preparingLessons: BookOpenIcon,
-  savingLessons: SaveIcon,
+  savingLessons: CheckCircleIcon,
 };
 
 const PHASE_WEIGHTS: Record<PhaseName, number> = {
