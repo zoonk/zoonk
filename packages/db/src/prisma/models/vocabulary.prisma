@@ -1,14 +1,14 @@
 model Word {
-  id             BigInt            @id @default(autoincrement())
-  organizationId Int               @map("organization_id")
-  organization   Organization      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  targetLanguage String            @map("target_language") @db.VarChar(10)
+  id             BigInt              @id @default(autoincrement())
+  organizationId Int                 @map("organization_id")
+  organization   Organization        @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  targetLanguage String              @map("target_language") @db.VarChar(10)
   word           String
   romanization   String?
-  audioUrl       String?           @map("audio_url")
-  createdAt      DateTime          @default(now()) @map("created_at")
-  updatedAt      DateTime          @default(now()) @updatedAt @map("updated_at")
-  translations   WordTranslation[]
+  audioUrl       String?             @map("audio_url")
+  createdAt      DateTime            @default(now()) @map("created_at")
+  updatedAt      DateTime            @default(now()) @updatedAt @map("updated_at")
+  pronunciations WordPronunciation[]
   lessons        LessonWord[]
   steps          Step[]
 
@@ -17,38 +17,38 @@ model Word {
   @@map("words")
 }
 
-model WordTranslation {
-  id                      BigInt   @id @default(autoincrement())
-  wordId                  BigInt   @map("word_id")
-  word                    Word     @relation(fields: [wordId], references: [id], onDelete: Cascade)
-  userLanguage            String   @map("user_language") @db.VarChar(10)
-  translation             String
-  /// Other valid translations used to exclude semantically equivalent words
-  /// from the distractor pool in exercises. For example, if "boa noite"
-  /// translates to "good evening" with alternative "good night", we won't
-  /// show "good night" as a wrong answer option since it's also correct.
-  alternativeTranslations String[] @default([]) @map("alternative_translations")
-  pronunciation           String?
-  createdAt               DateTime @default(now()) @map("created_at")
-  updatedAt               DateTime @default(now()) @updatedAt @map("updated_at")
+/// Stores user-language-specific pronunciation guides for words.
+/// Pronunciation is a property of the word's sound, not its meaning —
+/// "banco" is pronounced the same whether it means "bank" or "bench".
+/// But it varies by user language: an English speaker gets "BAHN-koh"
+/// while a Portuguese speaker gets a different phonetic guide.
+/// That's why pronunciation lives in its own table keyed on
+/// (wordId, userLanguage) rather than on `Word` (no user language)
+/// or `LessonWord` (would duplicate the same value across lessons).
+model WordPronunciation {
+  id            BigInt   @id @default(autoincrement())
+  wordId        BigInt   @map("word_id")
+  word          Word     @relation(fields: [wordId], references: [id], onDelete: Cascade)
+  userLanguage  String   @map("user_language") @db.VarChar(10)
+  pronunciation String
+  createdAt     DateTime @default(now()) @map("created_at")
 
-  @@unique([wordId, userLanguage], name: "wordTranslation")
+  @@unique([wordId, userLanguage], name: "wordPronunciation")
   @@index([wordId])
-  @@map("word_translations")
+  @@map("word_pronunciations")
 }
 
 model Sentence {
-  id                   BigInt                @id @default(autoincrement())
-  organizationId       Int                   @map("organization_id")
-  organization         Organization          @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  targetLanguage       String                @map("target_language") @db.VarChar(10)
+  id                   BigInt           @id @default(autoincrement())
+  organizationId       Int              @map("organization_id")
+  organization         Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  targetLanguage       String           @map("target_language") @db.VarChar(10)
   sentence             String
-  alternativeSentences String[]              @default([]) @map("alternative_sentences")
+  alternativeSentences String[]         @default([]) @map("alternative_sentences")
   romanization         String?
-  audioUrl             String?               @map("audio_url")
-  createdAt            DateTime              @default(now()) @map("created_at")
-  updatedAt            DateTime              @default(now()) @updatedAt @map("updated_at")
-  translations         SentenceTranslation[]
+  audioUrl             String?          @map("audio_url")
+  createdAt            DateTime         @default(now()) @map("created_at")
+  updatedAt            DateTime         @default(now()) @updatedAt @map("updated_at")
   lessons              LessonSentence[]
   steps                Step[]
 
@@ -57,31 +57,30 @@ model Sentence {
   @@map("sentences")
 }
 
-model SentenceTranslation {
-  id                      BigInt   @id @default(autoincrement())
-  sentenceId              BigInt   @map("sentence_id")
-  sentence                Sentence @relation(fields: [sentenceId], references: [id], onDelete: Cascade)
-  userLanguage            String   @map("user_language") @db.VarChar(10)
-  translation             String
-  /// Other valid translations used to exclude semantically equivalent
-  /// sentences from the distractor pool in arrange-words exercises.
-  alternativeTranslations String[] @default([]) @map("alternative_translations")
-  explanation             String?
-  createdAt               DateTime @default(now()) @map("created_at")
-  updatedAt               DateTime @default(now()) @updatedAt @map("updated_at")
-
-  @@unique([sentenceId, userLanguage], name: "sentenceTranslation")
-  @@index([sentenceId])
-  @@map("sentence_translations")
-}
-
+/// Links a word to a lesson with its lesson-specific translation.
+/// Translations live here instead of a global `WordTranslation` table because
+/// the same word can have different meanings in different lessons — e.g.
+/// Spanish "banco" means "bank" in a finance lesson but "bench" in a
+/// furniture lesson. A global translation would be overwritten by whichever
+/// lesson saved last.
+/// alternativeTranslations stores synonyms of THIS lesson's specific
+/// meaning — e.g. ["financial institution"] for "banco → bank". It does
+/// NOT include other meanings of the word ("bench") because those are
+/// valid distractors in this lesson's context, not equivalent answers.
 model LessonWord {
-  id        BigInt   @id @default(autoincrement())
-  lessonId  Int      @map("lesson_id")
-  lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-  wordId    BigInt   @map("word_id")
-  word      Word     @relation(fields: [wordId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default(now()) @map("created_at")
+  id                      BigInt   @id @default(autoincrement())
+  lessonId                Int      @map("lesson_id")
+  lesson                  Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  wordId                  BigInt   @map("word_id")
+  word                    Word     @relation(fields: [wordId], references: [id], onDelete: Cascade)
+  userLanguage            String   @map("user_language") @db.VarChar(10)
+  translation             String   @default("")
+  /// Synonyms of this lesson's translation, used to exclude semantically
+  /// equivalent words from the distractor pool. For example, if "boa noite"
+  /// translates to "good evening" with alternative "good night", we won't
+  /// show "good night" as a wrong answer option since it's also correct.
+  alternativeTranslations String[] @default([]) @map("alternative_translations")
+  createdAt               DateTime @default(now()) @map("created_at")
 
   @@unique([lessonId, wordId], name: "lessonWord")
   @@index([lessonId])
@@ -89,13 +88,27 @@ model LessonWord {
   @@map("lesson_words")
 }
 
+/// Links a sentence to a lesson with its lesson-specific translation.
+/// Follows the same pattern as `LessonWord` — translations are scoped to
+/// lessons rather than stored globally. While sentence-level polysemy is
+/// rarer than word-level (sentences carry their own context), the design
+/// principle is identical: explanation is inherently lesson-context-specific
+/// (a grammar lesson explains the same sentence differently than a
+/// vocabulary lesson), and fixing the schema pre-launch is far cheaper
+/// than migrating production data later.
 model LessonSentence {
-  id         BigInt   @id @default(autoincrement())
-  lessonId   Int      @map("lesson_id")
-  lesson     Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-  sentenceId BigInt   @map("sentence_id")
-  sentence   Sentence @relation(fields: [sentenceId], references: [id], onDelete: Cascade)
-  createdAt  DateTime @default(now()) @map("created_at")
+  id                      BigInt   @id @default(autoincrement())
+  lessonId                Int      @map("lesson_id")
+  lesson                  Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  sentenceId              BigInt   @map("sentence_id")
+  sentence                Sentence @relation(fields: [sentenceId], references: [id], onDelete: Cascade)
+  userLanguage            String   @map("user_language") @db.VarChar(10)
+  translation             String   @default("")
+  /// Synonyms of this lesson's translation, used to exclude semantically
+  /// equivalent sentences from the distractor pool in arrange-words exercises.
+  alternativeTranslations String[] @default([]) @map("alternative_translations")
+  explanation             String?
+  createdAt               DateTime @default(now()) @map("created_at")
 
   @@unique([lessonId, sentenceId], name: "lessonSentence")
   @@index([lessonId])

@@ -20,17 +20,19 @@ export async function sentenceFixture(attrs: {
   });
 }
 
-export async function sentenceTranslationFixture(attrs: {
+export async function lessonSentenceFixture(attrs: {
+  lessonId: number;
   sentenceId: bigint;
   userLanguage?: string;
   translation?: string;
   alternativeTranslations?: string[];
   explanation?: string | null;
 }) {
-  return prisma.sentenceTranslation.create({
+  return prisma.lessonSentence.create({
     data: {
       alternativeTranslations: attrs.alternativeTranslations ?? [],
       explanation: attrs.explanation ?? null,
+      lessonId: attrs.lessonId,
       sentenceId: attrs.sentenceId,
       translation: attrs.translation ?? `translation-${crypto.randomUUID()}`,
       userLanguage: attrs.userLanguage ?? "en",

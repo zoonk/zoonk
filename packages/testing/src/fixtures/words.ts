@@ -18,17 +18,31 @@ export async function wordFixture(attrs: {
   });
 }
 
-export async function wordTranslationFixture(attrs: {
+export async function wordPronunciationFixture(attrs: {
+  wordId: bigint;
+  userLanguage?: string;
+  pronunciation?: string;
+}) {
+  return prisma.wordPronunciation.create({
+    data: {
+      pronunciation: attrs.pronunciation ?? "test-pronunciation",
+      userLanguage: attrs.userLanguage ?? "en",
+      wordId: attrs.wordId,
+    },
+  });
+}
+
+export async function lessonWordFixture(attrs: {
+  lessonId: number;
   wordId: bigint;
   userLanguage?: string;
   translation?: string;
   alternativeTranslations?: string[];
-  pronunciation?: string | null;
 }) {
-  return prisma.wordTranslation.create({
+  return prisma.lessonWord.create({
     data: {
       alternativeTranslations: attrs.alternativeTranslations ?? [],
-      pronunciation: attrs.pronunciation ?? "test-pronunciation",
+      lessonId: attrs.lessonId,
       translation: attrs.translation ?? `translation-${crypto.randomUUID()}`,
       userLanguage: attrs.userLanguage ?? "en",
       wordId: attrs.wordId,

@@ -1,9 +1,12 @@
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
-import { lessonWordFixture } from "@zoonk/testing/fixtures/lesson-words";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { wordFixture, wordTranslationFixture } from "@zoonk/testing/fixtures/words";
+import {
+  lessonWordFixture,
+  wordFixture,
+  wordPronunciationFixture,
+} from "@zoonk/testing/fixtures/words";
 import { beforeAll, describe, expect, test } from "vitest";
 import { getLessonWords } from "./get-lesson-words";
 
@@ -60,9 +63,9 @@ describe(getLessonWords, () => {
 
     expect(result).toHaveLength(2);
 
-    const ids = result.map((item) => item.id);
-    expect(ids).toContain(word1.id);
-    expect(ids).toContain(word2.id);
+    const wordIds = result.map((item) => item.wordId);
+    expect(wordIds).toContain(word1.id);
+    expect(wordIds).toContain(word2.id);
   });
 
   test("returns all expected fields", async () => {
@@ -81,31 +84,36 @@ describe(getLessonWords, () => {
       word: `perro-${crypto.randomUUID()}`,
     });
 
-    await wordTranslationFixture({
-      alternativeTranslations: [],
+    await wordPronunciationFixture({
       pronunciation: "peh-roh",
+      userLanguage: "en",
+      wordId: word.id,
+    });
+
+    await lessonWordFixture({
+      alternativeTranslations: [],
+      lessonId: newLesson.id,
       translation: "dog",
       userLanguage: "en",
       wordId: word.id,
     });
 
-    await lessonWordFixture({ lessonId: newLesson.id, wordId: word.id });
-
     const result = await getLessonWords({ lessonId: newLesson.id });
 
     expect(result).toHaveLength(1);
     expect(result[0]).toMatchObject({
-      audioUrl: "https://example.com/perro.mp3",
-      id: word.id,
-      romanization: null,
-      translations: expect.arrayContaining([
-        expect.objectContaining({
-          alternativeTranslations: [],
-          pronunciation: "peh-roh",
-          translation: "dog",
-        }),
-      ]) as unknown,
-      word: word.word,
+      alternativeTranslations: [],
+      translation: "dog",
+      userLanguage: "en",
+      word: expect.objectContaining({
+        audioUrl: "https://example.com/perro.mp3",
+        id: word.id,
+        pronunciations: expect.arrayContaining([
+          expect.objectContaining({ pronunciation: "peh-roh" }),
+        ]) as unknown,
+        romanization: null,
+        word: word.word,
+      }) as unknown,
     });
   });
 

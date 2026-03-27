@@ -3,9 +3,9 @@ import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { sentenceFixture, sentenceTranslationFixture } from "@zoonk/testing/fixtures/sentences";
+import { sentenceFixture } from "@zoonk/testing/fixtures/sentences";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
-import { wordFixture, wordTranslationFixture } from "@zoonk/testing/fixtures/words";
+import { wordFixture } from "@zoonk/testing/fixtures/words";
 import { beforeAll, describe, expect, test } from "vitest";
 import { getActivity } from "./get-activity";
 
@@ -162,14 +162,6 @@ describe(getActivity, () => {
       }),
     ]);
 
-    await wordTranslationFixture({
-      alternativeTranslations: [],
-      pronunciation: "test-pron",
-      translation: "test-translation",
-      userLanguage: "en",
-      wordId: word.id,
-    });
-
     await stepFixture({
       activityId: wordActivity.id,
       isPublished: true,
@@ -183,13 +175,6 @@ describe(getActivity, () => {
       audioUrl: "https://example.com/audio.mp3",
       id: word.id,
       romanization: "test-roman",
-      translations: expect.arrayContaining([
-        expect.objectContaining({
-          alternativeTranslations: [],
-          pronunciation: "test-pron",
-          translation: "test-translation",
-        }),
-      ]) as unknown,
       word: word.word,
     });
   });
@@ -221,13 +206,6 @@ describe(getActivity, () => {
       }),
     ]);
 
-    await sentenceTranslationFixture({
-      alternativeTranslations: ["test-sent-translation-alt"],
-      sentenceId: sentence.id,
-      translation: "test-sent-translation",
-      userLanguage: "en",
-    });
-
     await stepFixture({
       activityId: sentActivity.id,
       isPublished: true,
@@ -243,12 +221,6 @@ describe(getActivity, () => {
       id: sentence.id,
       romanization: "test-sent-roman",
       sentence: sentence.sentence,
-      translations: expect.arrayContaining([
-        expect.objectContaining({
-          alternativeTranslations: ["test-sent-translation-alt"],
-          translation: "test-sent-translation",
-        }),
-      ]) as unknown,
     });
   });
 

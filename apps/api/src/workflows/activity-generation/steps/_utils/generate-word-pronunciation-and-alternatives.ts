@@ -29,9 +29,10 @@ type ExistingTranslationRecord = {
 };
 
 /**
- * Checks which words are missing pronunciation or alternativeTranslations
- * by querying existing WordTranslation records by word TEXT (not by saved IDs).
- * Generates missing fields via AI and returns them for downstream persistence.
+ * Checks which words are missing `pronunciation` or `alternativeTranslations`
+ * by querying existing `WordPronunciation` and `LessonWord` records by word
+ * TEXT (not by saved IDs). Generates missing fields via AI and returns
+ * them for downstream persistence.
  *
  * This step is a pure data producer — it does NOT write to the database.
  * The save step is responsible for persisting the returned data.
@@ -41,18 +42,24 @@ type ExistingTranslationRecord = {
  * not showing "good night" as a distractor when testing "boa noite"
  * since both translations are correct.
  *
- * This is the single source of truth for generating WordTranslation
- * fields that require AI (pronunciation and alternativeTranslations).
- * Both the vocabulary and reading workflows call this, so adding a new
- * field here automatically covers all sources.
+ * Pronunciation and alternatives live in separate tables because they have
+ * different scoping: pronunciation is meaning-independent (keyed on `wordId +
+ * userLanguage` via `WordPronunciation`), while alternatives are lesson-scoped
+ * (keyed on `lessonId + wordId` via `LessonWord`) because "banco" has different
+ * synonyms when it means "bank" vs "bench".
+ *
+ * This is the single source of truth for generating pronunciation and
+ * alternativeTranslations via AI. Both the vocabulary and reading workflows
+ * call this, so adding a new field here automatically covers all sources.
  */
 export async function generateWordPronunciationAndAlternatives(params: {
+  lessonId: number;
   organizationId: number;
   targetLanguage: string;
   userLanguage: string;
   words: WordReference[];
 }): Promise<GeneratedWordTranslationFields> {
-  const { organizationId, targetLanguage, userLanguage, words } = params;
+  const { lessonId, organizationId, targetLanguage, userLanguage, words } = params;
 
   if (words.length === 0) {
     return { alternatives: {}, pronunciations: {} };
@@ -61,6 +68,7 @@ export async function generateWordPronunciationAndAlternatives(params: {
   const wordTexts = words.map((ref) => ref.word);
 
   const existingRecords = await fetchExistingTranslationsByWordText({
+    lessonId,
     organizationId,
     targetLanguage,
     userLanguage,
@@ -127,21 +135,31 @@ function findNewWords(
 }
 
 /**
- * Queries existing WordTranslation records by word text instead of word IDs.
- * This allows the pronunciation step to run before words are saved to the DB,
- * while still skipping AI generation for words that already have translations.
+ * Queries existing `WordPronunciation` and `LessonWord` records by word text
+ * instead of word IDs. This allows the pronunciation step to run before
+ * words are saved to the DB, while still skipping AI generation for words
+ * that already have the relevant data.
+ *
+ * Pronunciation comes from `WordPronunciation` (meaning-independent, keyed
+ * on `wordId + userLanguage`). Alternatives come from `LessonWord` (lesson-scoped,
+ * keyed on `lessonId + wordId`) because the same word can have different
+ * synonyms depending on which meaning the lesson teaches.
  */
 async function fetchExistingTranslationsByWordText(params: {
+  lessonId: number;
   organizationId: number;
   targetLanguage: string;
   userLanguage: string;
   wordTexts: string[];
 }): Promise<ExistingTranslationRecord[]> {
-  const { organizationId, targetLanguage, userLanguage, wordTexts } = params;
+  const { lessonId, organizationId, targetLanguage, userLanguage, wordTexts } = params;
 
   const wordRecords = await prisma.word.findMany({
     include: {
-      translations: {
+      lessons: {
+        where: { lessonId },
+      },
+      pronunciations: {
         where: { userLanguage },
       },
     },
@@ -153,17 +171,19 @@ async function fetchExistingTranslationsByWordText(params: {
   });
 
   return wordRecords.flatMap((record) => {
-    const translation = record.translations[0];
+    const lessonWord = record.lessons[0];
 
-    if (!translation) {
+    if (!lessonWord) {
       return [];
     }
 
+    const pronunciation = record.pronunciations[0]?.pronunciation ?? null;
+
     return [
       {
-        alternativeTranslations: translation.alternativeTranslations,
-        pronunciation: translation.pronunciation,
-        translation: translation.translation,
+        alternativeTranslations: lessonWord.alternativeTranslations,
+        pronunciation,
+        translation: lessonWord.translation,
         word: record.word,
       },
     ];

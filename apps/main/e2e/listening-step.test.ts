@@ -3,12 +3,10 @@ import { getAiOrganization } from "@zoonk/e2e/helpers";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
-import { lessonSentenceFixture } from "@zoonk/testing/fixtures/lesson-sentences";
-import { lessonWordFixture } from "@zoonk/testing/fixtures/lesson-words";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
-import { sentenceFixture, sentenceTranslationFixture } from "@zoonk/testing/fixtures/sentences";
+import { lessonSentenceFixture, sentenceFixture } from "@zoonk/testing/fixtures/sentences";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
-import { wordFixture, wordTranslationFixture } from "@zoonk/testing/fixtures/words";
+import { lessonWordFixture, wordFixture } from "@zoonk/testing/fixtures/words";
 import { type Page, expect, test } from "./fixtures";
 
 async function createListeningActivity(options: {
@@ -51,15 +49,16 @@ async function createListeningActivity(options: {
     title: `E2E Listen Lesson ${uniqueId}`,
   });
 
-  const createdWords = await Promise.all(
+  await Promise.all(
     options.words.map(async (wordData) => {
       const word = await wordFixture({
         organizationId: org.id,
         word: wordData.word,
       });
 
-      await wordTranslationFixture({
+      await lessonWordFixture({
         alternativeTranslations: wordData.alternativeTranslations ?? [],
+        lessonId: lesson.id,
         translation: wordData.translation,
         wordId: word.id,
       });
@@ -78,8 +77,9 @@ async function createListeningActivity(options: {
         sentence: sentenceData.sentence,
       });
 
-      await sentenceTranslationFixture({
+      await lessonSentenceFixture({
         alternativeTranslations: sentenceData.alternativeTranslations ?? [],
+        lessonId: lesson.id,
         sentenceId: sentence.id,
         translation: sentenceData.translation,
       });
@@ -87,13 +87,6 @@ async function createListeningActivity(options: {
       return sentence;
     }),
   );
-
-  await Promise.all([
-    ...createdWords.map((word) => lessonWordFixture({ lessonId: lesson.id, wordId: word.id })),
-    ...createdSentences.map((sentence) =>
-      lessonSentenceFixture({ lessonId: lesson.id, sentenceId: sentence.id }),
-    ),
-  ]);
 
   // Create sentence word records for target-language metadata in feedback
   if (options.sentenceWords) {
@@ -105,7 +98,8 @@ async function createListeningActivity(options: {
           word: sw.word,
         });
 
-        await wordTranslationFixture({
+        await lessonWordFixture({
+          lessonId: lesson.id,
           translation: sw.translation,
           wordId: word.id,
         });

@@ -6,10 +6,7 @@ const cachedGetActivity = cache(async (lessonId: number, position: number) =>
   prisma.activity.findFirst({
     include: {
       steps: {
-        include: {
-          sentence: { include: { translations: true } },
-          word: { include: { translations: true } },
-        },
+        include: { sentence: true, word: true },
         orderBy: { position: "asc" },
         where: { isPublished: true },
       },

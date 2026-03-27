@@ -3,10 +3,13 @@ import { getAiOrganization } from "@zoonk/e2e/helpers";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
-import { lessonWordFixture } from "@zoonk/testing/fixtures/lesson-words";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
-import { wordFixture, wordTranslationFixture } from "@zoonk/testing/fixtures/words";
+import {
+  lessonWordFixture,
+  wordFixture,
+  wordPronunciationFixture,
+} from "@zoonk/testing/fixtures/words";
 import { type Page, expect, test } from "./fixtures";
 
 async function createTranslationActivity(options: {
@@ -61,12 +64,17 @@ async function createTranslationActivity(options: {
         word: wordData.word,
       });
 
-      await wordTranslationFixture({
-        alternativeTranslations: wordData.alternativeTranslations ?? [],
-        pronunciation: wordData.pronunciation ?? null,
-        translation: wordData.translation,
-        wordId: word.id,
-      });
+      await Promise.all([
+        lessonWordFixture({
+          alternativeTranslations: wordData.alternativeTranslations ?? [],
+          lessonId: lesson.id,
+          translation: wordData.translation,
+          wordId: word.id,
+        }),
+        ...(wordData.pronunciation
+          ? [wordPronunciationFixture({ pronunciation: wordData.pronunciation, wordId: word.id })]
+          : []),
+      ]);
 
       return word;
     }),
@@ -80,19 +88,20 @@ async function createTranslationActivity(options: {
         word: wordData.word,
       });
 
-      await wordTranslationFixture({
-        alternativeTranslations: wordData.alternativeTranslations ?? [],
-        pronunciation: wordData.pronunciation ?? null,
-        translation: wordData.translation,
-        wordId: word.id,
-      });
+      await Promise.all([
+        lessonWordFixture({
+          alternativeTranslations: wordData.alternativeTranslations ?? [],
+          lessonId: lesson.id,
+          translation: wordData.translation,
+          wordId: word.id,
+        }),
+        ...(wordData.pronunciation
+          ? [wordPronunciationFixture({ pronunciation: wordData.pronunciation, wordId: word.id })]
+          : []),
+      ]);
 
       return word;
     }),
-  );
-
-  await Promise.all(
-    createdWords.map((word) => lessonWordFixture({ lessonId: lesson.id, wordId: word.id })),
   );
 
   const activity = await activityFixture({

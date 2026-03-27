@@ -69,21 +69,6 @@ async function seedSentence(
     },
   });
 
-  await prisma.sentenceTranslation.upsert({
-    create: {
-      sentenceId: sentence.id,
-      translation: data.translation,
-      userLanguage: data.userLanguage,
-    },
-    update: {},
-    where: {
-      sentenceTranslation: {
-        sentenceId: sentence.id,
-        userLanguage: data.userLanguage,
-      },
-    },
-  });
-
   const lessonSentencePromises = data.lessonSlugs.map(async (lessonSlug) => {
     const lesson = await prisma.lesson.findFirst({
       where: {
@@ -97,6 +82,8 @@ async function seedSentence(
         create: {
           lessonId: lesson.id,
           sentenceId: sentence.id,
+          translation: data.translation,
+          userLanguage: data.userLanguage,
         },
         update: {},
         where: {

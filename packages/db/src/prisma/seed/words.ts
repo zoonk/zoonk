@@ -75,16 +75,15 @@ async function seedWord(
     },
   });
 
-  await prisma.wordTranslation.upsert({
+  await prisma.wordPronunciation.upsert({
     create: {
       pronunciation: data.pronunciation,
-      translation: data.translation,
       userLanguage: data.userLanguage,
       wordId: word.id,
     },
     update: {},
     where: {
-      wordTranslation: {
+      wordPronunciation: {
         userLanguage: data.userLanguage,
         wordId: word.id,
       },
@@ -103,6 +102,8 @@ async function seedWord(
       await prisma.lessonWord.upsert({
         create: {
           lessonId: lesson.id,
+          translation: data.translation,
+          userLanguage: data.userLanguage,
           wordId: word.id,
         },
         update: {},

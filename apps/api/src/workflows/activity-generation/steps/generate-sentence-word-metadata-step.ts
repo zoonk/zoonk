@@ -17,8 +17,11 @@ type WordMetadataEntry = {
 };
 
 /**
- * Fetches existing word metadata by joining Word and WordTranslation tables.
- * Translations now live in WordTranslation, while romanization stays on Word.
+ * Fetches existing word metadata by joining `Word` and `LessonWord` tables.
+ * Translations live on `LessonWord` (lesson-scoped) because the same word
+ * can mean different things in different lessons — e.g. "banco" means
+ * "bank" in a finance lesson but "bench" in a furniture lesson.
+ * Romanization stays on `Word` since it's meaning-independent.
  */
 async function fetchExistingWordMetadata(params: {
   organizationId: number;
@@ -28,7 +31,8 @@ async function fetchExistingWordMetadata(params: {
 }): Promise<Record<string, WordMetadataEntry>> {
   const existing = await prisma.word.findMany({
     include: {
-      translations: {
+      lessons: {
+        take: 1,
         where: { userLanguage: params.userLanguage },
       },
     },
@@ -41,12 +45,12 @@ async function fetchExistingWordMetadata(params: {
 
   return Object.fromEntries(
     existing
-      .filter((record) => record.translations[0]?.translation)
+      .filter((record) => record.lessons[0]?.translation)
       .map((record) => [
         record.word.toLowerCase(),
         {
           romanization: record.romanization,
-          translation: record.translations[0]?.translation ?? "",
+          translation: record.lessons[0]?.translation ?? "",
         },
       ]),
   );

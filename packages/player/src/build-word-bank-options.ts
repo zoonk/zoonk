@@ -93,7 +93,7 @@ function getWordMetadata(
  * Reading steps show rich metadata for each token. Wrapping that in one builder means
  * the rest of the file can map words without branching on every iteration.
  */
-function createEnrichedWordOptionBuilder(
+function createWordOptionBuilder(
   serializedLessonWords: SerializedWord[],
   fallbackLessonWords: SerializedWord[],
   sentenceWordMap: Map<string, WordDataInput>,
@@ -234,7 +234,7 @@ export function buildSentenceWordOptions(
   serializedLessonWords: SerializedWord[],
   sentenceWordMap: Map<string, WordDataInput>,
 ): WordBankOption[] {
-  const buildOption = createEnrichedWordOptionBuilder(serializedLessonWords, [], sentenceWordMap);
+  const buildOption = createWordOptionBuilder(serializedLessonWords, [], sentenceWordMap);
 
   return segmentWords(sentence).map((word) => buildOption(word));
 }
@@ -314,11 +314,7 @@ function createWordBankOptionBuilder(
     return emptyWordOption;
   }
 
-  return createEnrichedWordOptionBuilder(
-    serializedLessonWords,
-    fallbackLessonWords,
-    sentenceWordMap,
-  );
+  return createWordOptionBuilder(serializedLessonWords, fallbackLessonWords, sentenceWordMap);
 }
 
 export function buildWordBankOptions(

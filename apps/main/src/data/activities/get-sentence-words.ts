@@ -20,24 +20,23 @@ const cachedGetSentenceWords = cache(async (lessonId: number) => {
     return [];
   }
 
-  const firstSentence = lessonSentences[0]?.sentence;
-
-  if (!firstSentence) {
-    return [];
-  }
-
-  const { organizationId, targetLanguage } = firstSentence;
-
-  return prisma.word.findMany({
-    include: { translations: true },
+  return prisma.lessonWord.findMany({
+    include: { word: { include: { pronunciations: true } } },
     where: {
-      organizationId,
-      targetLanguage,
-      word: { in: uniqueWords, mode: "insensitive" },
+      lessonId,
+      word: { word: { in: uniqueWords, mode: "insensitive" } },
     },
   });
 });
 
+/**
+ * Returns `LessonWord` records whose surface form appears in any of the
+ * lesson's sentences. The save workflow creates `LessonWord` records for
+ * every word that appears in a sentence, so we can query `LessonWord`
+ * directly (filtered by surface form match) instead of querying the
+ * Word table with text matching. This keeps the return type consistent
+ * with getLessonWords, which prepareActivityData also consumes.
+ */
 export function getSentenceWords(params: { lessonId: number }) {
   return cachedGetSentenceWords(params.lessonId);
 }
