@@ -23,7 +23,6 @@ import {
   MicIcon,
   PaletteIcon,
   PenLineIcon,
-  SaveIcon,
   SearchIcon,
   TextIcon,
 } from "lucide-react";
@@ -45,7 +44,7 @@ export const PHASE_ICONS: Record<PhaseName, LucideIcon> = {
   recordingVocabularyAudio: AudioLinesIcon,
   recordingWordAudio: AudioLinesIcon,
   saving: CheckCircleIcon,
-  savingPrerequisites: SaveIcon,
+  savingPrerequisites: CheckCircleIcon,
   writingContent: PenLineIcon,
   writingExplanation: PenLineIcon,
 };
