@@ -140,13 +140,16 @@ export function handleStepStreamMessage<TStep extends string>(params: {
       }
       break;
     }
-    case "error": {
-      const errorMessage = message.reason
-        ? `${message.step}: ${message.reason}`
-        : `Step "${message.step}" failed`;
-      dispatch({ error: errorMessage, type: "setError" });
+    case "error":
+      if (isEventRelevantToViewer(message.entityId, entityId)) {
+        const errorMessage = message.reason
+          ? `${message.step}: ${message.reason}`
+          : `Step "${message.step}" failed`;
+
+        dispatch({ error: errorMessage, type: "setError" });
+      }
       break;
-    }
+
     default: {
       const exhaustiveCheck: never = message.status;
       throw new Error(`Unexpected status: ${String(exhaustiveCheck)}`);

@@ -319,4 +319,52 @@ describe(handleStepStreamMessage, () => {
     expect(state.status).toBe("error");
     expect(state.error).toBe("stepA: aiGenerationFailed");
   });
+
+  it("does NOT set error when error entityId doesn't match viewer", () => {
+    const actions: GenerationAction[] = [];
+    handleStepStreamMessage({
+      dispatch: (a) => actions.push(a),
+      entityId: 100,
+      message: {
+        entityId: 200,
+        reason: "aiGenerationFailed",
+        status: "error",
+        step: "generateVisuals",
+      },
+    });
+    const state = applyActions(actions, initialGenerationState({ status: "streaming" }));
+    expect(state.status).toBe("streaming");
+    expect(state.error).toBeNull();
+  });
+
+  it("sets error when error entityId matches viewer", () => {
+    const actions: GenerationAction[] = [];
+    handleStepStreamMessage({
+      dispatch: (a) => actions.push(a),
+      entityId: 100,
+      message: {
+        entityId: 100,
+        reason: "aiGenerationFailed",
+        status: "error",
+        step: "generateVisuals",
+      },
+    });
+    const state = applyActions(actions, initialGenerationState({ status: "streaming" }));
+    expect(state.status).toBe("error");
+  });
+
+  it("sets error when error has no entityId (shared/batch step failure)", () => {
+    const actions: GenerationAction[] = [];
+    handleStepStreamMessage({
+      dispatch: (a) => actions.push(a),
+      entityId: 100,
+      message: {
+        reason: "aiGenerationFailed",
+        status: "error",
+        step: "generateExplanationContent",
+      },
+    });
+    const state = applyActions(actions, initialGenerationState({ status: "streaming" }));
+    expect(state.status).toBe("error");
+  });
 });
