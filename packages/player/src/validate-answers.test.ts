@@ -172,9 +172,10 @@ describe(validateAnswers, () => {
         kind: "reading",
         sentence: {
           alternativeSentences: [],
+          alternativeTranslations: [],
           id: 1n,
           sentence: "hello world",
-          translations: [{ alternativeTranslations: [], translation: "olá mundo" }],
+          translation: "olá mundo",
         },
       },
     ];
@@ -195,9 +196,10 @@ describe(validateAnswers, () => {
         kind: "listening",
         sentence: {
           alternativeSentences: [],
+          alternativeTranslations: [],
           id: 1n,
           sentence: "hello world",
-          translations: [{ alternativeTranslations: [], translation: "olá mundo" }],
+          translation: "olá mundo",
         },
       },
     ];
@@ -218,9 +220,10 @@ describe(validateAnswers, () => {
         kind: "reading",
         sentence: {
           alternativeSentences: ["guten morgen lara"],
+          alternativeTranslations: [],
           id: 1n,
           sentence: "guten tag lara",
-          translations: [{ alternativeTranslations: [], translation: "bom dia lara" }],
+          translation: "bom dia lara",
         },
       },
     ];
@@ -241,9 +244,10 @@ describe(validateAnswers, () => {
         kind: "listening",
         sentence: {
           alternativeSentences: [],
+          alternativeTranslations: [],
           id: 1n,
           sentence: "hello lara",
-          translations: [{ alternativeTranslations: [], translation: "bom dia, lara!" }],
+          translation: "bom dia, lara!",
         },
       },
     ];

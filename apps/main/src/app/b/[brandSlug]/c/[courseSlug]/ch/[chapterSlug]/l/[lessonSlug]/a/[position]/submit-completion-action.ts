@@ -4,7 +4,7 @@ import { getReviewValidationSteps } from "@/data/activities/get-review-steps";
 import { preloadNextLesson } from "@/data/progress/preload-next-lesson";
 import { submitActivityCompletion } from "@/data/progress/submit-activity-completion";
 import { auth } from "@zoonk/core/auth";
-import { prisma } from "@zoonk/db";
+import { type LessonSentence, prisma } from "@zoonk/db";
 import { type CompletionInput, completionInputSchema } from "@zoonk/player/completion-input-schema";
 import { computeChallengeScore, computeScore } from "@zoonk/player/compute-score";
 import { computeDimensions, hasNegativeDimension } from "@zoonk/player/dimensions";
@@ -19,6 +19,40 @@ const MAX_DURATION_SECONDS = 7200;
 function clampDuration(startedAt: number): number {
   const raw = Math.floor((Date.now() - startedAt) / 1000);
   return Math.max(0, Math.min(raw, MAX_DURATION_SECONDS));
+}
+
+type StepWithSentence = {
+  id: bigint;
+  kind: string;
+  content: unknown;
+  word: { id: bigint } | null;
+  sentence: { id: bigint; sentence: string; alternativeSentences: string[] } | null;
+};
+
+/**
+ * Attaches sentence translation data from `LessonSentence` records to steps.
+ * Translations live on the `LessonSentence` junction table instead of a
+ * separate `SentenceTranslation` model, so we look up the matching `LessonSentence`
+ * for each step's sentence and attach flat `translation`/`alternativeTranslations`
+ * fields that `validateAnswers` expects.
+ */
+function attachSentenceTranslationsToSteps(
+  steps: StepWithSentence[],
+  lessonSentences: LessonSentence[],
+) {
+  const translationMap = new Map(lessonSentences.map((ls) => [ls.sentenceId, ls]));
+
+  return steps.map((step) => ({
+    ...step,
+    sentence: step.sentence
+      ? {
+          ...step.sentence,
+          alternativeTranslations:
+            translationMap.get(step.sentence.id)?.alternativeTranslations ?? [],
+          translation: translationMap.get(step.sentence.id)?.translation ?? "",
+        }
+      : null,
+  }));
 }
 
 /**
@@ -66,13 +100,20 @@ export async function submitCompletion(rawInput: CompletionInput): Promise<void>
         return;
       }
 
+      const lessonSentences = await prisma.lessonSentence.findMany({
+        where: { lessonId: activity.lessonId },
+      });
+
       const stepsForValidation =
         activity.kind === "review"
-          ? await getReviewValidationSteps(
-              activity.lessonId,
-              Object.keys(input.answers).map(BigInt),
+          ? attachSentenceTranslationsToSteps(
+              await getReviewValidationSteps(
+                activity.lessonId,
+                Object.keys(input.answers).map(BigInt),
+              ),
+              lessonSentences,
             )
-          : activity.steps;
+          : attachSentenceTranslationsToSteps(activity.steps, lessonSentences);
 
       const stepResults = validateAnswers(stepsForValidation, input.answers);
       const isChallenge = activity.kind === "challenge";

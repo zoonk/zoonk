@@ -37,10 +37,7 @@ export async function getReviewSteps({
 
   if (!userId) {
     const allSteps = await prisma.step.findMany({
-      include: {
-        sentence: { include: { translations: true } },
-        word: { include: { translations: true } },
-      },
+      include: { sentence: true, word: true },
       where: lessonStepFilter,
     });
 
@@ -52,10 +49,7 @@ export async function getReviewSteps({
   // and avoids extra queries for prioritized/filler IDs.
   const [allSteps, incorrectAttempts, correctAttempts] = await Promise.all([
     prisma.step.findMany({
-      include: {
-        sentence: { include: { translations: true } },
-        word: { include: { translations: true } },
-      },
+      include: { sentence: true, word: true },
       where: lessonStepFilter,
     }),
     prisma.stepAttempt.findMany({
@@ -101,10 +95,7 @@ export async function getReviewSteps({
  */
 export async function getReviewValidationSteps(lessonId: number, stepIds: bigint[]) {
   return prisma.step.findMany({
-    include: {
-      sentence: { include: { translations: true } },
-      word: { include: { translations: true } },
-    },
+    include: { sentence: true, word: true },
     where: { ...reviewableStepFilter(lessonId), id: { in: stepIds } },
   });
 }

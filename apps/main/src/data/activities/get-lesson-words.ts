@@ -3,14 +3,34 @@ import { prisma } from "@zoonk/db";
 import { cache } from "react";
 
 const cachedGetLessonWords = cache(async (lessonId: number) => {
-  const lessonWords = await prisma.lessonWord.findMany({
-    include: { word: { include: { translations: true } } },
+  const firstLesson = await prisma.lessonWord.findFirst({
+    select: { userLanguage: true },
     where: { lessonId },
   });
 
-  return lessonWords.map((lw) => lw.word);
+  if (!firstLesson) {
+    return [];
+  }
+
+  return prisma.lessonWord.findMany({
+    include: {
+      word: {
+        include: {
+          pronunciations: { where: { userLanguage: firstLesson.userLanguage } },
+        },
+      },
+    },
+    where: { lessonId },
+  });
 });
 
+/**
+ * Returns all `LessonWord` records for a lesson, each including the
+ * associated word with pronunciation filtered by the lesson's user
+ * language. Translations live on `LessonWord` itself rather than a
+ * separate `WordTranslation` table, so the caller gets translation +
+ * word surface form in one object.
+ */
 export function getLessonWords(params: { lessonId: number }) {
   return cachedGetLessonWords(params.lessonId);
 }

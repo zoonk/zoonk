@@ -15,6 +15,13 @@ import { type Metadata } from "next";
 import { notFound } from "next/navigation";
 import { after } from "next/server";
 import { fetchNextSibling, fetchReviewSteps } from "./activity-data-loaders";
+import {
+  attachTranslationsToSteps,
+  toFallbackWordInputs,
+  toLessonSentenceInputs,
+  toLessonWordInputs,
+  toSentenceWordInputs,
+} from "./activity-data-mappers";
 import { ActivityNotGenerated } from "./activity-not-generated";
 import { ActivityPlayerClient } from "./activity-player-client";
 
@@ -102,12 +109,15 @@ export default async function ActivityPage({ params }: Props) {
     );
   }
 
+  const rawSteps = reviewSteps ?? activity.steps;
+  const stepsWithTranslations = attachTranslationsToSteps(rawSteps, lessonWords, lessonSentences);
+
   const serialized = prepareActivityData(
-    reviewSteps ? { ...activity, steps: reviewSteps } : activity,
-    lessonWords,
-    lessonSentences,
-    sentenceWords,
-    fallbackDistractorWords,
+    { ...activity, steps: stepsWithTranslations },
+    toLessonWordInputs(lessonWords),
+    toLessonSentenceInputs(lessonSentences),
+    toSentenceWordInputs(sentenceWords),
+    toFallbackWordInputs(fallbackDistractorWords),
   );
 
   if (session) {

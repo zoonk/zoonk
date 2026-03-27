@@ -67,20 +67,6 @@ export type SerializedActivity = {
   lessonSentences: SerializedSentence[];
 };
 
-type WordTranslationInput = {
-  userLanguage: string;
-  translation: string;
-  alternativeTranslations: string[];
-  pronunciation: string | null;
-};
-
-type SentenceTranslationInput = {
-  userLanguage: string;
-  translation: string;
-  alternativeTranslations: string[];
-  explanation: string | null;
-};
-
 type StepDataInput = {
   id: bigint;
   content: unknown;
@@ -95,7 +81,9 @@ type WordDataInput = {
   word: string;
   romanization: string | null;
   audioUrl: string | null;
-  translations: WordTranslationInput[];
+  translation: string;
+  alternativeTranslations: string[];
+  pronunciation: string | null;
 };
 
 type SentenceDataInput = {
@@ -104,42 +92,24 @@ type SentenceDataInput = {
   alternativeSentences: string[];
   romanization: string | null;
   audioUrl: string | null;
-  translations: SentenceTranslationInput[];
+  translation: string;
+  alternativeTranslations: string[];
+  explanation: string | null;
 };
 
 /**
- * Finds the translation matching the user's language from the translations array.
- * Falls back to the first translation if no exact match exists, because a word
- * always has at least one translation in practice.
+ * Maps a flat WordDataInput (where translation fields live directly on the
+ * object rather than in a nested translations array) to the player's
+ * serialized format with string IDs.
  */
-function findWordTranslation(
-  translations: WordTranslationInput[],
-  userLanguage: string,
-): WordTranslationInput | undefined {
-  return translations.find((t) => t.userLanguage === userLanguage) ?? translations[0];
-}
-
-/**
- * Same as findWordTranslation but for sentence translations which carry
- * explanation instead of pronunciation.
- */
-function findSentenceTranslation(
-  translations: SentenceTranslationInput[],
-  userLanguage: string,
-): SentenceTranslationInput | undefined {
-  return translations.find((t) => t.userLanguage === userLanguage) ?? translations[0];
-}
-
-function serializeWord(word: WordDataInput, userLanguage: string): SerializedWord {
-  const translation = findWordTranslation(word.translations, userLanguage);
-
+function serializeWord(word: WordDataInput): SerializedWord {
   return {
-    alternativeTranslations: translation ? [...translation.alternativeTranslations] : [],
+    alternativeTranslations: [...word.alternativeTranslations],
     audioUrl: word.audioUrl,
     id: String(word.id),
-    pronunciation: translation?.pronunciation ?? null,
+    pronunciation: word.pronunciation,
     romanization: word.romanization,
-    translation: translation?.translation ?? "",
+    translation: word.translation,
     word: word.word,
   };
 }
@@ -148,22 +118,25 @@ function serializeWord(word: WordDataInput, userLanguage: string): SerializedWor
  * The player consumes serialized words from multiple sources, so this helper keeps
  * lesson words and fallback distractor words aligned on one serialization rule.
  */
-function serializeWords(words: WordDataInput[], userLanguage: string): SerializedWord[] {
-  return words.map((word) => serializeWord(word, userLanguage));
+function serializeWords(words: WordDataInput[]): SerializedWord[] {
+  return words.map((word) => serializeWord(word));
 }
 
-function serializeSentence(sentence: SentenceDataInput, userLanguage: string): SerializedSentence {
-  const translation = findSentenceTranslation(sentence.translations, userLanguage);
-
+/**
+ * Maps a flat SentenceDataInput (where translation fields live directly on
+ * the object rather than in a nested translations array) to the player's
+ * serialized format with string IDs.
+ */
+function serializeSentence(sentence: SentenceDataInput): SerializedSentence {
   return {
     alternativeSentences: [...sentence.alternativeSentences],
-    alternativeTranslations: translation ? [...translation.alternativeTranslations] : [],
+    alternativeTranslations: [...sentence.alternativeTranslations],
     audioUrl: sentence.audioUrl,
-    explanation: translation?.explanation ?? null,
+    explanation: sentence.explanation,
     id: String(sentence.id),
     romanization: sentence.romanization,
     sentence: sentence.sentence,
-    translation: translation?.translation ?? "",
+    translation: sentence.translation,
   };
 }
 
@@ -235,7 +208,12 @@ function buildMatchColumnsRightItems(step: SerializedStep): string[] {
   return shuffle(content.pairs.map((pair) => pair.right));
 }
 
-function serializeStep(step: StepDataInput, userLanguage: string): SerializedStep | null {
+/**
+ * Converts a raw step from the database into the player's serialized
+ * format. Returns null for unsupported step kinds or invalid content
+ * so the caller can filter them out with flatMap.
+ */
+function serializeStep(step: StepDataInput): SerializedStep | null {
   if (!isSupportedStepKind(step.kind)) {
     return null;
   }
@@ -253,12 +231,12 @@ function serializeStep(step: StepDataInput, userLanguage: string): SerializedSte
       kind: step.kind,
       matchColumnsRightItems: [],
       position: step.position,
-      sentence: step.sentence ? serializeSentence(step.sentence, userLanguage) : null,
+      sentence: step.sentence ? serializeSentence(step.sentence) : null,
       sentenceWordOptions: [],
       sortOrderItems: [],
       translationOptions: [],
       vocabularyOptions: [],
-      word: step.word ? serializeWord(step.word, userLanguage) : null,
+      word: step.word ? serializeWord(step.word) : null,
       wordBankOptions: [],
     };
   } catch {
@@ -281,14 +259,13 @@ export function prepareActivityData(
   sentenceWords: WordDataInput[] = [],
   fallbackDistractorWords: WordDataInput[] = [],
 ): SerializedActivity {
-  const userLanguage = activity.language;
-  const serializedLessonWords = serializeWords(lessonWords, userLanguage);
-  const serializedFallbackWords = serializeWords(fallbackDistractorWords, userLanguage);
+  const serializedLessonWords = serializeWords(lessonWords);
+  const serializedFallbackWords = serializeWords(fallbackDistractorWords);
 
   const sentenceWordMap = new Map(sentenceWords.map((sw) => [sw.word.toLowerCase(), sw]));
 
   const steps = activity.steps.flatMap((raw) => {
-    const step = serializeStep(raw, userLanguage);
+    const step = serializeStep(raw);
 
     if (!step) {
       return [];
@@ -323,7 +300,7 @@ export function prepareActivityData(
     id: String(activity.id),
     kind: activity.kind,
     language: activity.language,
-    lessonSentences: lessonSentences.map((sentence) => serializeSentence(sentence, userLanguage)),
+    lessonSentences: lessonSentences.map((sentence) => serializeSentence(sentence)),
     lessonWords: serializedLessonWords,
     organizationId: activity.organizationId,
     steps,

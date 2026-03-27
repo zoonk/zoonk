@@ -1,6 +1,9 @@
 import { generateActivityPronunciation } from "@zoonk/ai/tasks/activities/language/pronunciation";
 import { generateWordAlternativeTranslations } from "@zoonk/ai/tasks/activities/language/word-alternative-translations";
 import { prisma } from "@zoonk/db";
+import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { wordFixture } from "@zoonk/testing/fixtures/words";
 import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
@@ -19,21 +22,38 @@ vi.mock("@zoonk/ai/tasks/activities/language/word-alternative-translations", () 
 }));
 
 /**
- * Creates a WordTranslation record with explicit control over nullable fields.
- * The wordTranslationFixture defaults pronunciation to a non-null value,
- * which prevents testing the "missing pronunciation" path.
+ * Creates a WordPronunciation record for testing the "existing pronunciation" path.
  */
-async function createWordTranslation(attrs: {
+async function createWordPronunciation(attrs: {
+  pronunciation?: string;
+  userLanguage?: string;
+  wordId: bigint;
+}) {
+  return prisma.wordPronunciation.create({
+    data: {
+      pronunciation: attrs.pronunciation ?? "test-pronunciation",
+      userLanguage: attrs.userLanguage ?? "en",
+      wordId: attrs.wordId,
+    },
+  });
+}
+
+/**
+ * Creates a LessonWord record with lesson-scoped translation data.
+ * Translations live on LessonWord because the same word can have different
+ * meanings in different lessons.
+ */
+async function createLessonWord(attrs: {
   alternativeTranslations?: string[];
-  pronunciation?: string | null;
+  lessonId: number;
   translation: string;
   userLanguage?: string;
   wordId: bigint;
 }) {
-  return prisma.wordTranslation.create({
+  return prisma.lessonWord.create({
     data: {
       alternativeTranslations: attrs.alternativeTranslations ?? [],
-      pronunciation: attrs.pronunciation,
+      lessonId: attrs.lessonId,
       translation: attrs.translation,
       userLanguage: attrs.userLanguage ?? "en",
       wordId: attrs.wordId,
@@ -43,10 +63,16 @@ async function createWordTranslation(attrs: {
 
 describe(generateWordPronunciationAndAlternatives, () => {
   let organizationId: number;
+  let lessonId: number;
 
   beforeAll(async () => {
     const org = await aiOrganizationFixture();
     organizationId = org.id;
+
+    const course = await courseFixture({ organizationId });
+    const chapter = await chapterFixture({ courseId: course.id, organizationId });
+    const lesson = await lessonFixture({ chapterId: chapter.id, organizationId });
+    lessonId = lesson.id;
   });
 
   beforeEach(() => {
@@ -55,6 +81,7 @@ describe(generateWordPronunciationAndAlternatives, () => {
 
   test("returns empty results when words array is empty", async () => {
     const result = await generateWordPronunciationAndAlternatives({
+      lessonId,
       organizationId,
       targetLanguage: "es",
       userLanguage: "en",
@@ -68,9 +95,10 @@ describe(generateWordPronunciationAndAlternatives, () => {
 
   test("generates pronunciation and returns it without writing to the database", async () => {
     const word = await wordFixture({ organizationId });
-    await createWordTranslation({ translation: "hello", wordId: word.id });
+    await createLessonWord({ lessonId, translation: "hello", wordId: word.id });
 
     const result = await generateWordPronunciationAndAlternatives({
+      lessonId,
       organizationId,
       targetLanguage: "es",
       userLanguage: "en",
@@ -83,18 +111,19 @@ describe(generateWordPronunciationAndAlternatives, () => {
     );
 
     // Verify the function did NOT write to the database
-    const dbRecord = await prisma.wordTranslation.findFirst({
+    const dbRecord = await prisma.wordPronunciation.findFirst({
       where: { userLanguage: "en", wordId: word.id },
     });
 
-    expect(dbRecord?.pronunciation).toBeNull();
+    expect(dbRecord).toBeNull();
   });
 
   test("generates alternativeTranslations and returns them without writing to the database", async () => {
     const word = await wordFixture({ organizationId });
-    await createWordTranslation({ translation: "hello", wordId: word.id });
+    await createLessonWord({ lessonId, translation: "hello", wordId: word.id });
 
     const result = await generateWordPronunciationAndAlternatives({
+      lessonId,
       organizationId,
       targetLanguage: "es",
       userLanguage: "en",
@@ -112,8 +141,8 @@ describe(generateWordPronunciationAndAlternatives, () => {
     );
 
     // Verify the function did NOT write to the database
-    const dbRecord = await prisma.wordTranslation.findFirst({
-      where: { userLanguage: "en", wordId: word.id },
+    const dbRecord = await prisma.lessonWord.findFirst({
+      where: { lessonId, wordId: word.id },
     });
 
     expect(dbRecord?.alternativeTranslations).toEqual([]);
@@ -121,13 +150,13 @@ describe(generateWordPronunciationAndAlternatives, () => {
 
   test("skips pronunciation generation for words that already have it", async () => {
     const word = await wordFixture({ organizationId });
-    await createWordTranslation({
-      pronunciation: "existing-pron",
-      translation: "cat",
-      wordId: word.id,
-    });
+    await Promise.all([
+      createWordPronunciation({ pronunciation: "existing-pron", wordId: word.id }),
+      createLessonWord({ lessonId, translation: "cat", wordId: word.id }),
+    ]);
 
     await generateWordPronunciationAndAlternatives({
+      lessonId,
       organizationId,
       targetLanguage: "es",
       userLanguage: "en",
@@ -139,13 +168,15 @@ describe(generateWordPronunciationAndAlternatives, () => {
 
   test("skips alternatives generation for words that already have them", async () => {
     const word = await wordFixture({ organizationId });
-    await createWordTranslation({
+    await createLessonWord({
       alternativeTranslations: ["existing-alt"],
+      lessonId,
       translation: "good evening",
       wordId: word.id,
     });
 
     await generateWordPronunciationAndAlternatives({
+      lessonId,
       organizationId,
       targetLanguage: "es",
       userLanguage: "en",
@@ -157,14 +188,18 @@ describe(generateWordPronunciationAndAlternatives, () => {
 
   test("skips both when word already has pronunciation and alternatives", async () => {
     const word = await wordFixture({ organizationId });
-    await createWordTranslation({
-      alternativeTranslations: ["good night"],
-      pronunciation: "BOH-ah NOY-chee",
-      translation: "good evening",
-      wordId: word.id,
-    });
+    await Promise.all([
+      createWordPronunciation({ pronunciation: "BOH-ah NOY-chee", wordId: word.id }),
+      createLessonWord({
+        alternativeTranslations: ["good night"],
+        lessonId,
+        translation: "good evening",
+        wordId: word.id,
+      }),
+    ]);
 
     const result = await generateWordPronunciationAndAlternatives({
+      lessonId,
       organizationId,
       targetLanguage: "es",
       userLanguage: "en",
@@ -182,9 +217,10 @@ describe(generateWordPronunciationAndAlternatives, () => {
     );
 
     const word = await wordFixture({ organizationId });
-    await createWordTranslation({ translation: "hello", wordId: word.id });
+    await createLessonWord({ lessonId, translation: "hello", wordId: word.id });
 
     const result = await generateWordPronunciationAndAlternatives({
+      lessonId,
       organizationId,
       targetLanguage: "es",
       userLanguage: "en",
@@ -201,9 +237,10 @@ describe(generateWordPronunciationAndAlternatives, () => {
     );
 
     const word = await wordFixture({ organizationId });
-    await createWordTranslation({ translation: "hello", wordId: word.id });
+    await createLessonWord({ lessonId, translation: "hello", wordId: word.id });
 
     const result = await generateWordPronunciationAndAlternatives({
+      lessonId,
       organizationId,
       targetLanguage: "es",
       userLanguage: "en",
@@ -216,9 +253,10 @@ describe(generateWordPronunciationAndAlternatives, () => {
 
   test("returns generated pronunciation and alternatives in the result", async () => {
     const word = await wordFixture({ organizationId });
-    await createWordTranslation({ translation: "hello", wordId: word.id });
+    await createLessonWord({ lessonId, translation: "hello", wordId: word.id });
 
     const result = await generateWordPronunciationAndAlternatives({
+      lessonId,
       organizationId,
       targetLanguage: "es",
       userLanguage: "en",
@@ -236,11 +274,12 @@ describe(generateWordPronunciationAndAlternatives, () => {
     ]);
 
     await Promise.all([
-      createWordTranslation({ translation: "hello", wordId: word1.id }),
-      createWordTranslation({ translation: "cat", wordId: word2.id }),
+      createLessonWord({ lessonId, translation: "hello", wordId: word1.id }),
+      createLessonWord({ lessonId, translation: "cat", wordId: word2.id }),
     ]);
 
     const result = await generateWordPronunciationAndAlternatives({
+      lessonId,
       organizationId,
       targetLanguage: "es",
       userLanguage: "en",
@@ -261,24 +300,30 @@ describe(generateWordPronunciationAndAlternatives, () => {
     ]);
 
     await Promise.all([
-      createWordTranslation({
+      createLessonWord({
+        lessonId,
         translation: "hello",
         wordId: needsBoth.id,
       }),
-      createWordTranslation({
+      createLessonWord({
         alternativeTranslations: ["kitty"],
-        pronunciation: null,
+        lessonId,
         translation: "cat",
         wordId: needsPronOnly.id,
       }),
-      createWordTranslation({
+      createWordPronunciation({
         pronunciation: "existing-pron",
+        wordId: needsAltsOnly.id,
+      }),
+      createLessonWord({
+        lessonId,
         translation: "dog",
         wordId: needsAltsOnly.id,
       }),
     ]);
 
     await generateWordPronunciationAndAlternatives({
+      lessonId,
       organizationId,
       targetLanguage: "es",
       userLanguage: "en",
@@ -294,6 +339,7 @@ describe(generateWordPronunciationAndAlternatives, () => {
 
   test("generates pronunciation for words not yet in the database", async () => {
     const result = await generateWordPronunciationAndAlternatives({
+      lessonId,
       organizationId,
       targetLanguage: "es",
       userLanguage: "en",
@@ -308,6 +354,7 @@ describe(generateWordPronunciationAndAlternatives, () => {
 
   test("generates alternatives for new words when translation is provided", async () => {
     const result = await generateWordPronunciationAndAlternatives({
+      lessonId,
       organizationId,
       targetLanguage: "es",
       userLanguage: "en",
@@ -325,6 +372,7 @@ describe(generateWordPronunciationAndAlternatives, () => {
 
   test("skips alternatives for new words without translation", async () => {
     await generateWordPronunciationAndAlternatives({
+      lessonId,
       organizationId,
       targetLanguage: "es",
       userLanguage: "en",
@@ -335,5 +383,43 @@ describe(generateWordPronunciationAndAlternatives, () => {
     expect(generateActivityPronunciation).toHaveBeenCalledOnce();
     // No translation provided → alternatives skipped
     expect(generateWordAlternativeTranslations).not.toHaveBeenCalled();
+  });
+
+  test("skips pronunciation AI for words that have WordPronunciation but no LessonWord in the current lesson", async () => {
+    const word = await wordFixture({ organizationId });
+
+    // Word has pronunciation from a prior lesson but no LessonWord in this lesson
+    await createWordPronunciation({ pronunciation: "BAHN-koh", wordId: word.id });
+
+    await generateWordPronunciationAndAlternatives({
+      lessonId,
+      organizationId,
+      targetLanguage: "es",
+      userLanguage: "en",
+      words: [{ translation: "bank", word: word.word }],
+    });
+
+    // Pronunciation already exists in WordPronunciation — should NOT regenerate via AI
+    expect(generateActivityPronunciation).not.toHaveBeenCalled();
+  });
+
+  test("generates alternatives using caller-provided translation when word exists globally but has no LessonWord", async () => {
+    const word = await wordFixture({ organizationId });
+
+    // Word exists in the DB but has no LessonWord in this lesson.
+    // The caller provides a translation — alternatives should be
+    // generated using that translation, not skipped.
+    const result = await generateWordPronunciationAndAlternatives({
+      lessonId,
+      organizationId,
+      targetLanguage: "es",
+      userLanguage: "en",
+      words: [{ translation: "bank", word: word.word }],
+    });
+
+    expect(generateWordAlternativeTranslations).toHaveBeenCalledWith(
+      expect.objectContaining({ translation: "bank", word: word.word }),
+    );
+    expect(result.alternatives[word.word]).toEqual(["hi", "hey"]);
   });
 });

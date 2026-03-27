@@ -231,14 +231,6 @@ describe("language activity generation", () => {
       },
     });
 
-    await prisma.wordTranslation.create({
-      data: {
-        translation: "cat",
-        userLanguage,
-        wordId: word1.id,
-      },
-    });
-
     const word2 = await prisma.word.create({
       data: {
         organizationId,
@@ -248,18 +240,10 @@ describe("language activity generation", () => {
       },
     });
 
-    await prisma.wordTranslation.create({
-      data: {
-        translation: "hello",
-        userLanguage,
-        wordId: word2.id,
-      },
-    });
-
     await prisma.lessonWord.createMany({
       data: [
-        { lessonId, wordId: word1.id },
-        { lessonId, wordId: word2.id },
+        { lessonId, translation: "cat", userLanguage, wordId: word1.id },
+        { lessonId, translation: "hello", userLanguage, wordId: word2.id },
       ],
     });
 
@@ -736,8 +720,9 @@ describe("language activity generation", () => {
       },
     });
 
-    await prisma.sentenceTranslation.create({
+    await prisma.lessonSentence.create({
       data: {
+        lessonId: testLesson.id,
         sentenceId: sentence1.id,
         translation: "Pre-complete sentence 1",
         userLanguage: "en",
@@ -752,8 +737,9 @@ describe("language activity generation", () => {
       },
     });
 
-    await prisma.sentenceTranslation.create({
+    await prisma.lessonSentence.create({
       data: {
+        lessonId: testLesson.id,
         sentenceId: sentence2.id,
         translation: "Pre-complete sentence 2",
         userLanguage: "en",

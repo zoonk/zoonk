@@ -33,12 +33,14 @@ export type {
   GenerationStatus,
   Lesson,
   LessonKind,
+  LessonSentence,
+  LessonWord,
   Member,
   Organization,
   Sentence,
   StepKind,
   Word,
-  WordTranslation,
+  WordPronunciation,
 } from "./generated/prisma/client";
 
 export type { ActivityCreateManyInput } from "./generated/prisma/models/Activity";

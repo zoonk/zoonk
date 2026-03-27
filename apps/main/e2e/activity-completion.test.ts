@@ -6,11 +6,10 @@ import { getAiOrganization } from "@zoonk/e2e/helpers";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
-import { lessonWordFixture } from "@zoonk/testing/fixtures/lesson-words";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { userProgressFixture } from "@zoonk/testing/fixtures/progress";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
-import { wordFixture, wordTranslationFixture } from "@zoonk/testing/fixtures/words";
+import { lessonWordFixture, wordFixture } from "@zoonk/testing/fixtures/words";
 import { expect, test } from "./fixtures";
 
 async function createUniqueUser(baseURL: string) {
@@ -391,12 +390,11 @@ test.describe("Activity Completion", () => {
       word: `gato-${uniqueId}`,
     });
 
-    await wordTranslationFixture({
+    await lessonWordFixture({
+      lessonId: lesson.id,
       translation: `cat-${uniqueId}`,
       wordId: word.id,
     });
-
-    await lessonWordFixture({ lessonId: lesson.id, wordId: word.id });
 
     const activity = await activityFixture({
       generationStatus: "completed",

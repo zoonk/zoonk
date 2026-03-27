@@ -1,16 +1,21 @@
+import {
+  attachTranslationsToSteps,
+  toLessonSentenceInputs,
+  toLessonWordInputs,
+} from "@/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/a/[position]/activity-data-mappers";
 import { prepareActivityData } from "@zoonk/player/prepare-activity-data";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
-import { lessonSentenceFixture } from "@zoonk/testing/fixtures/lesson-sentences";
-import { lessonWordFixture } from "@zoonk/testing/fixtures/lesson-words";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { sentenceFixture, sentenceTranslationFixture } from "@zoonk/testing/fixtures/sentences";
+import { lessonSentenceFixture, sentenceFixture } from "@zoonk/testing/fixtures/sentences";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
-import { wordFixture, wordTranslationFixture } from "@zoonk/testing/fixtures/words";
+import { lessonWordFixture, wordFixture } from "@zoonk/testing/fixtures/words";
 import { beforeAll, describe, expect, expectTypeOf, test } from "vitest";
 import { getActivity } from "./get-activity";
+import { getLessonSentences } from "./get-lesson-sentences";
+import { getLessonWords } from "./get-lesson-words";
 
 describe(prepareActivityData, () => {
   let org: Awaited<ReturnType<typeof organizationFixture>>;
@@ -61,7 +66,8 @@ describe(prepareActivityData, () => {
     });
 
     const raw = await getActivity({ lessonId: lesson.id, position: 100 });
-    const result = prepareActivityData(raw!, [], []);
+    const stepsWithTranslations = attachTranslationsToSteps(raw!.steps, [], []);
+    const result = prepareActivityData({ ...raw!, steps: stepsWithTranslations }, [], []);
 
     expectTypeOf(result.id).toBeString();
     expect(result.id).toBe(String(activity.id));
@@ -92,7 +98,8 @@ describe(prepareActivityData, () => {
     });
 
     const raw = await getActivity({ lessonId: lesson.id, position: 101 });
-    const result = prepareActivityData(raw!, [], []);
+    const stepsWithTranslations = attachTranslationsToSteps(raw!.steps, [], []);
+    const result = prepareActivityData({ ...raw!, steps: stepsWithTranslations }, [], []);
 
     expect(result.steps).toHaveLength(1);
     expect(result.steps[0]?.kind).toBe("static");
@@ -104,6 +111,13 @@ describe(prepareActivityData, () => {
   });
 
   test("serializes word data on steps with word relations", async () => {
+    const newLesson = await lessonFixture({
+      chapterId: chapter.id,
+      isPublished: true,
+      language: "en",
+      organizationId: org.id,
+    });
+
     const [word, activity] = await Promise.all([
       wordFixture({
         audioUrl: "https://example.com/word.mp3",
@@ -116,15 +130,15 @@ describe(prepareActivityData, () => {
         isPublished: true,
         kind: "vocabulary",
         language: "en",
-        lessonId: lesson.id,
+        lessonId: newLesson.id,
         organizationId: org.id,
-        position: 104,
+        position: 0,
       }),
     ]);
 
-    await wordTranslationFixture({
+    await lessonWordFixture({
       alternativeTranslations: [],
-      pronunciation: "hola",
+      lessonId: newLesson.id,
       translation: "hello",
       userLanguage: "en",
       wordId: word.id,
@@ -139,14 +153,19 @@ describe(prepareActivityData, () => {
       wordId: word.id,
     });
 
-    const raw = await getActivity({ lessonId: lesson.id, position: 104 });
-    const result = prepareActivityData(raw!, [], []);
+    const [raw, lessonWords] = await Promise.all([
+      getActivity({ lessonId: newLesson.id, position: 0 }),
+      getLessonWords({ lessonId: newLesson.id }),
+    ]);
+
+    const stepsWithTranslations = attachTranslationsToSteps(raw!.steps, lessonWords, []);
+    const result = prepareActivityData({ ...raw!, steps: stepsWithTranslations }, [], []);
 
     expect(result.steps[0]?.word).toEqual({
       alternativeTranslations: [],
       audioUrl: "https://example.com/word.mp3",
       id: String(word.id),
-      pronunciation: "hola",
+      pronunciation: null,
       romanization: null,
       translation: "hello",
       word: word.word,
@@ -154,6 +173,13 @@ describe(prepareActivityData, () => {
   });
 
   test("serializes sentence data on steps with sentence relations", async () => {
+    const newLesson = await lessonFixture({
+      chapterId: chapter.id,
+      isPublished: true,
+      language: "en",
+      organizationId: org.id,
+    });
+
     const [sentence, activity] = await Promise.all([
       sentenceFixture({
         alternativeSentences: ["ohayo"],
@@ -167,15 +193,16 @@ describe(prepareActivityData, () => {
         isPublished: true,
         kind: "reading",
         language: "en",
-        lessonId: lesson.id,
+        lessonId: newLesson.id,
         organizationId: org.id,
-        position: 105,
+        position: 0,
       }),
     ]);
 
-    await sentenceTranslationFixture({
+    await lessonSentenceFixture({
       alternativeTranslations: ["hi"],
       explanation: null,
+      lessonId: newLesson.id,
       sentenceId: sentence.id,
       translation: "hello",
       userLanguage: "en",
@@ -190,8 +217,13 @@ describe(prepareActivityData, () => {
       sentenceId: sentence.id,
     });
 
-    const raw = await getActivity({ lessonId: lesson.id, position: 105 });
-    const result = prepareActivityData(raw!, [], []);
+    const [raw, lessonSentences] = await Promise.all([
+      getActivity({ lessonId: newLesson.id, position: 0 }),
+      getLessonSentences({ lessonId: newLesson.id }),
+    ]);
+
+    const stepsWithTranslations = attachTranslationsToSteps(raw!.steps, [], lessonSentences);
+    const result = prepareActivityData({ ...raw!, steps: stepsWithTranslations }, [], []);
 
     expect(result.steps[0]?.sentence).toEqual({
       alternativeSentences: ["ohayo"],
@@ -234,13 +266,21 @@ describe(prepareActivityData, () => {
     ]);
 
     const raw = await getActivity({ lessonId: lesson.id, position: 106 });
-    const result = prepareActivityData(raw!, [], []);
+    const stepsWithTranslations = attachTranslationsToSteps(raw!.steps, [], []);
+    const result = prepareActivityData({ ...raw!, steps: stepsWithTranslations }, [], []);
 
     expect(result.steps).toHaveLength(1);
     expect(result.steps[0]?.kind).toBe("static");
   });
 
   test("includes lesson word and sentence pools", async () => {
+    const newLesson = await lessonFixture({
+      chapterId: chapter.id,
+      isPublished: true,
+      language: "en",
+      organizationId: org.id,
+    });
+
     const [word1, word2, sentence1] = await Promise.all([
       wordFixture({ organizationId: org.id }),
       wordFixture({ organizationId: org.id }),
@@ -248,47 +288,24 @@ describe(prepareActivityData, () => {
     ]);
 
     await Promise.all([
-      lessonWordFixture({ lessonId: lesson.id, wordId: word1.id }),
-      lessonWordFixture({ lessonId: lesson.id, wordId: word2.id }),
-      lessonSentenceFixture({ lessonId: lesson.id, sentenceId: sentence1.id }),
+      lessonWordFixture({ lessonId: newLesson.id, wordId: word1.id }),
+      lessonWordFixture({ lessonId: newLesson.id, wordId: word2.id }),
+      lessonSentenceFixture({ lessonId: newLesson.id, sentenceId: sentence1.id }),
     ]);
 
-    const lessonWords = [
-      {
-        audioUrl: word1.audioUrl,
-        id: word1.id,
-        romanization: word1.romanization,
-        translations: [],
-        word: word1.word,
-      },
-      {
-        audioUrl: word2.audioUrl,
-        id: word2.id,
-        romanization: word2.romanization,
-        translations: [],
-        word: word2.word,
-      },
-    ];
-
-    const lessonSentences = [
-      {
-        alternativeSentences: sentence1.alternativeSentences,
-        audioUrl: sentence1.audioUrl,
-        id: sentence1.id,
-        romanization: sentence1.romanization,
-        sentence: sentence1.sentence,
-        translations: [],
-      },
-    ];
+    const [lessonWords, lessonSentences] = await Promise.all([
+      getLessonWords({ lessonId: newLesson.id }),
+      getLessonSentences({ lessonId: newLesson.id }),
+    ]);
 
     const activity = await activityFixture({
       generationStatus: "completed",
       isPublished: true,
       kind: "vocabulary",
       language: "en",
-      lessonId: lesson.id,
+      lessonId: newLesson.id,
       organizationId: org.id,
-      position: 107,
+      position: 0,
     });
 
     await stepFixture({
@@ -299,13 +316,24 @@ describe(prepareActivityData, () => {
       position: 0,
     });
 
-    const raw = await getActivity({ lessonId: lesson.id, position: 107 });
-    const result = prepareActivityData(raw!, lessonWords, lessonSentences);
+    const raw = await getActivity({ lessonId: newLesson.id, position: 0 });
+    const stepsWithTranslations = attachTranslationsToSteps(
+      raw!.steps,
+      lessonWords,
+      lessonSentences,
+    );
+    const result = prepareActivityData(
+      { ...raw!, steps: stepsWithTranslations },
+      toLessonWordInputs(lessonWords),
+      toLessonSentenceInputs(lessonSentences),
+    );
 
     expect(result.lessonWords).toHaveLength(2);
-    expect(result.lessonWords[0]?.id).toBe(String(word1.id));
-    expect(result.lessonWords[1]?.id).toBe(String(word2.id));
     expect(result.lessonSentences).toHaveLength(1);
+
+    const wordIds = result.lessonWords.map((word) => word.id);
+    expect(wordIds).toContain(String(word1.id));
+    expect(wordIds).toContain(String(word2.id));
     expect(result.lessonSentences[0]?.id).toBe(String(sentence1.id));
   });
 
@@ -338,7 +366,8 @@ describe(prepareActivityData, () => {
     });
 
     const raw = await getActivity({ lessonId: lesson.id, position: 109 });
-    const result = prepareActivityData(raw!, [], []);
+    const stepsWithTranslations = attachTranslationsToSteps(raw!.steps, [], []);
+    const result = prepareActivityData({ ...raw!, steps: stepsWithTranslations }, [], []);
 
     expect(result.steps).toHaveLength(1);
 
@@ -357,32 +386,22 @@ describe(prepareActivityData, () => {
 
   test("copies alternativeTranslations arrays for translation options", () => {
     const stepWord = {
+      alternativeTranslations: ["hello"],
       audioUrl: null,
       id: BigInt(1),
+      pronunciation: null,
       romanization: null,
-      translations: [
-        {
-          alternativeTranslations: ["hello"],
-          pronunciation: null,
-          translation: "hello",
-          userLanguage: "en",
-        },
-      ],
+      translation: "hello",
       word: "hola",
     };
 
     const lessonWord = {
+      alternativeTranslations: ["cat"],
       audioUrl: null,
       id: BigInt(2),
+      pronunciation: null,
       romanization: null,
-      translations: [
-        {
-          alternativeTranslations: ["cat"],
-          pronunciation: null,
-          translation: "cat",
-          userLanguage: "en",
-        },
-      ],
+      translation: "cat",
       word: "gato",
     };
 
@@ -414,7 +433,7 @@ describe(prepareActivityData, () => {
     const translationOptions = translationStep?.translationOptions ?? [];
     const serializedStepWord = translationOptions.find((word) => word.id === String(stepWord.id));
 
-    const inputAlternatives = stepWord.translations[0]!.alternativeTranslations;
+    const inputAlternatives = stepWord.alternativeTranslations;
     expect(serializedStepWord).toBeDefined();
     expect(serializedStepWord?.alternativeTranslations).toEqual(inputAlternatives);
     expect(serializedStepWord?.alternativeTranslations).not.toBe(inputAlternatives);
@@ -423,79 +442,54 @@ describe(prepareActivityData, () => {
 
   test("translation options use fallback words without leaking them into lessonWords", () => {
     const stepWord = {
+      alternativeTranslations: ["hi"],
       audioUrl: null,
       id: BigInt(11),
+      pronunciation: null,
       romanization: null,
-      translations: [
-        {
-          alternativeTranslations: ["hi"],
-          pronunciation: null,
-          translation: "hello",
-          userLanguage: "en",
-        },
-      ],
+      translation: "hello",
       word: "hola",
     };
 
     const lessonWords = [
       stepWord,
       {
+        alternativeTranslations: ["hello"],
         audioUrl: null,
         id: BigInt(12),
+        pronunciation: null,
         romanization: null,
-        translations: [
-          {
-            alternativeTranslations: ["hello"],
-            pronunciation: null,
-            translation: "hi",
-            userLanguage: "en",
-          },
-        ],
+        translation: "hi",
         word: "oi",
       },
       {
+        alternativeTranslations: [],
         audioUrl: null,
         id: BigInt(13),
+        pronunciation: null,
         romanization: null,
-        translations: [
-          {
-            alternativeTranslations: [],
-            pronunciation: null,
-            translation: "cat",
-            userLanguage: "en",
-          },
-        ],
+        translation: "cat",
         word: "gato",
       },
     ];
 
     const fallbackWords = [
       {
+        alternativeTranslations: [],
         audioUrl: null,
         id: BigInt(14),
+        pronunciation: null,
         romanization: null,
-        translations: [
-          {
-            alternativeTranslations: [],
-            pronunciation: null,
-            translation: "dog",
-            userLanguage: "en",
-          },
-        ],
+        translation: "dog",
         word: "perro",
       },
       {
+        alternativeTranslations: [],
         audioUrl: null,
         id: BigInt(15),
+        pronunciation: null,
         romanization: null,
-        translations: [
-          {
-            alternativeTranslations: [],
-            pronunciation: null,
-            translation: "bird",
-            userLanguage: "en",
-          },
-        ],
+        translation: "bird",
         word: "pajaro",
       },
     ];
@@ -537,90 +531,60 @@ describe(prepareActivityData, () => {
   test("reading word bank uses fallback words to reach four visible distractors without leaking them into lessonWords", () => {
     const lessonWords = [
       {
+        alternativeTranslations: ["hi"],
         audioUrl: null,
         id: BigInt(18),
+        pronunciation: null,
         romanization: null,
-        translations: [
-          {
-            alternativeTranslations: ["hi"],
-            pronunciation: null,
-            translation: "hello",
-            userLanguage: "en",
-          },
-        ],
+        translation: "hello",
         word: "Hola",
       },
       {
+        alternativeTranslations: ["hello"],
         audioUrl: null,
         id: BigInt(19),
+        pronunciation: null,
         romanization: null,
-        translations: [
-          {
-            alternativeTranslations: ["hello"],
-            pronunciation: null,
-            translation: "hi",
-            userLanguage: "en",
-          },
-        ],
+        translation: "hi",
         word: "Salut",
       },
       {
+        alternativeTranslations: [],
         audioUrl: null,
         id: BigInt(20),
+        pronunciation: null,
         romanization: null,
-        translations: [
-          {
-            alternativeTranslations: [],
-            pronunciation: null,
-            translation: "cat",
-            userLanguage: "en",
-          },
-        ],
+        translation: "cat",
         word: "gato",
       },
     ];
 
     const fallbackWords = [
       {
+        alternativeTranslations: [],
         audioUrl: null,
         id: BigInt(21),
+        pronunciation: null,
         romanization: null,
-        translations: [
-          {
-            alternativeTranslations: [],
-            pronunciation: null,
-            translation: "dog",
-            userLanguage: "en",
-          },
-        ],
+        translation: "dog",
         word: "perro",
       },
       {
+        alternativeTranslations: [],
         audioUrl: null,
         id: BigInt(22),
+        pronunciation: null,
         romanization: null,
-        translations: [
-          {
-            alternativeTranslations: [],
-            pronunciation: null,
-            translation: "bird",
-            userLanguage: "en",
-          },
-        ],
+        translation: "bird",
         word: "pajaro",
       },
       {
+        alternativeTranslations: [],
         audioUrl: null,
         id: BigInt(23),
+        pronunciation: null,
         romanization: null,
-        translations: [
-          {
-            alternativeTranslations: [],
-            pronunciation: null,
-            translation: "fish",
-            userLanguage: "en",
-          },
-        ],
+        translation: "fish",
         word: "pez",
       },
     ];
@@ -642,18 +606,13 @@ describe(prepareActivityData, () => {
           position: 0,
           sentence: {
             alternativeSentences: [],
+            alternativeTranslations: [],
             audioUrl: null,
+            explanation: null,
             id: BigInt(26),
             romanization: null,
             sentence: "Hola mundo",
-            translations: [
-              {
-                alternativeTranslations: [],
-                explanation: null,
-                translation: "Hello world",
-                userLanguage: "en",
-              },
-            ],
+            translation: "Hello world",
           },
           word: null,
         },
@@ -674,6 +633,13 @@ describe(prepareActivityData, () => {
   });
 
   test("reading step gets word bank with sentence words and distractors from lesson word fields", async () => {
+    const newLesson = await lessonFixture({
+      chapterId: chapter.id,
+      isPublished: true,
+      language: "en",
+      organizationId: org.id,
+    });
+
     const uniqueId = crypto.randomUUID().slice(0, 8);
     const sentenceText = `Hola mundo ${uniqueId}`;
     const [sentence, word1, word2, activity] = await Promise.all([
@@ -694,24 +660,27 @@ describe(prepareActivityData, () => {
         isPublished: true,
         kind: "reading",
         language: "en",
-        lessonId: lesson.id,
+        lessonId: newLesson.id,
         organizationId: org.id,
-        position: 110,
+        position: 0,
       }),
     ]);
 
     await Promise.all([
-      sentenceTranslationFixture({
+      lessonSentenceFixture({
+        lessonId: newLesson.id,
         sentenceId: sentence.id,
         translation: `Hello world ${uniqueId}`,
         userLanguage: "en",
       }),
-      wordTranslationFixture({
+      lessonWordFixture({
+        lessonId: newLesson.id,
         translation: `cat-${uniqueId}`,
         userLanguage: "en",
         wordId: word1.id,
       }),
-      wordTranslationFixture({
+      lessonWordFixture({
+        lessonId: newLesson.id,
         translation: `dog-${uniqueId}`,
         userLanguage: "en",
         wordId: word2.id,
@@ -727,39 +696,22 @@ describe(prepareActivityData, () => {
       sentenceId: sentence.id,
     });
 
-    const lessonWords = [
-      {
-        audioUrl: null,
-        id: word1.id,
-        romanization: null,
-        translations: [
-          {
-            alternativeTranslations: [],
-            pronunciation: null,
-            translation: `cat-${uniqueId}`,
-            userLanguage: "en",
-          },
-        ],
-        word: word1.word,
-      },
-      {
-        audioUrl: null,
-        id: word2.id,
-        romanization: null,
-        translations: [
-          {
-            alternativeTranslations: [],
-            pronunciation: null,
-            translation: `dog-${uniqueId}`,
-            userLanguage: "en",
-          },
-        ],
-        word: word2.word,
-      },
-    ];
+    const [raw, lessonWords, lessonSentences] = await Promise.all([
+      getActivity({ lessonId: newLesson.id, position: 0 }),
+      getLessonWords({ lessonId: newLesson.id }),
+      getLessonSentences({ lessonId: newLesson.id }),
+    ]);
 
-    const raw = await getActivity({ lessonId: lesson.id, position: 110 });
-    const result = prepareActivityData(raw!, lessonWords, []);
+    const stepsWithTranslations = attachTranslationsToSteps(
+      raw!.steps,
+      lessonWords,
+      lessonSentences,
+    );
+    const result = prepareActivityData(
+      { ...raw!, steps: stepsWithTranslations },
+      toLessonWordInputs(lessonWords),
+      [],
+    );
     const wordBankWords = (result.steps[0]?.wordBankOptions ?? []).map((option) => option.word);
 
     // Should contain the correct sentence words
@@ -773,6 +725,13 @@ describe(prepareActivityData, () => {
   });
 
   test("listening step gets word bank with translation words and distractors from lesson word translation fields", async () => {
+    const newLesson = await lessonFixture({
+      chapterId: chapter.id,
+      isPublished: true,
+      language: "en",
+      organizationId: org.id,
+    });
+
     const uniqueId = crypto.randomUUID().slice(0, 8);
     const translationText = `Hello world ${uniqueId}`;
     const [sentence, word1, word2, activity] = await Promise.all([
@@ -793,24 +752,27 @@ describe(prepareActivityData, () => {
         isPublished: true,
         kind: "listening",
         language: "en",
-        lessonId: lesson.id,
+        lessonId: newLesson.id,
         organizationId: org.id,
-        position: 111,
+        position: 0,
       }),
     ]);
 
     await Promise.all([
-      sentenceTranslationFixture({
+      lessonSentenceFixture({
+        lessonId: newLesson.id,
         sentenceId: sentence.id,
         translation: translationText,
         userLanguage: "en",
       }),
-      wordTranslationFixture({
+      lessonWordFixture({
+        lessonId: newLesson.id,
         translation: `cat-${uniqueId}`,
         userLanguage: "en",
         wordId: word1.id,
       }),
-      wordTranslationFixture({
+      lessonWordFixture({
+        lessonId: newLesson.id,
         translation: `dog-${uniqueId}`,
         userLanguage: "en",
         wordId: word2.id,
@@ -826,39 +788,23 @@ describe(prepareActivityData, () => {
       sentenceId: sentence.id,
     });
 
-    const lessonWords = [
-      {
-        audioUrl: null,
-        id: word1.id,
-        romanization: null,
-        translations: [
-          {
-            alternativeTranslations: [],
-            pronunciation: null,
-            translation: `cat-${uniqueId}`,
-            userLanguage: "en",
-          },
-        ],
-        word: word1.word,
-      },
-      {
-        audioUrl: null,
-        id: word2.id,
-        romanization: null,
-        translations: [
-          {
-            alternativeTranslations: [],
-            pronunciation: null,
-            translation: `dog-${uniqueId}`,
-            userLanguage: "en",
-          },
-        ],
-        word: word2.word,
-      },
-    ];
+    const [raw, lessonWords, lessonSentences] = await Promise.all([
+      getActivity({ lessonId: newLesson.id, position: 0 }),
+      getLessonWords({ lessonId: newLesson.id }),
+      getLessonSentences({ lessonId: newLesson.id }),
+    ]);
 
-    const raw = await getActivity({ lessonId: lesson.id, position: 111 });
-    const result = prepareActivityData(raw!, lessonWords, []);
+    const stepsWithTranslations = attachTranslationsToSteps(
+      raw!.steps,
+      lessonWords,
+      lessonSentences,
+    );
+
+    const result = prepareActivityData(
+      { ...raw!, steps: stepsWithTranslations },
+      toLessonWordInputs(lessonWords),
+      [],
+    );
     const wordBankWords = (result.steps[0]?.wordBankOptions ?? []).map((option) => option.word);
 
     // Should contain the correct translation words
@@ -889,18 +835,13 @@ describe(prepareActivityData, () => {
           position: 0,
           sentence: {
             alternativeSentences: [],
+            alternativeTranslations: [],
             audioUrl: null,
+            explanation: null,
             id: BigInt(72),
             romanization: null,
             sentence: "gato bonito",
-            translations: [
-              {
-                alternativeTranslations: [],
-                explanation: null,
-                translation: "pretty cat",
-                userLanguage: "en",
-              },
-            ],
+            translation: "pretty cat",
           },
           word: null,
         },
@@ -910,17 +851,12 @@ describe(prepareActivityData, () => {
 
     const lessonWords = [
       {
+        alternativeTranslations: [],
         audioUrl: "https://example.com/gato.mp3",
         id: BigInt(73),
+        pronunciation: null,
         romanization: "ga-to",
-        translations: [
-          {
-            alternativeTranslations: [],
-            pronunciation: null,
-            translation: "cat",
-            userLanguage: "en",
-          },
-        ],
+        translation: "cat",
         word: "gato",
       },
     ];
@@ -954,18 +890,13 @@ describe(prepareActivityData, () => {
           position: 0,
           sentence: {
             alternativeSentences: [],
+            alternativeTranslations: [],
             audioUrl: null,
+            explanation: null,
             id: BigInt(76),
             romanization: null,
             sentence: "gato bonito",
-            translations: [
-              {
-                alternativeTranslations: [],
-                explanation: null,
-                translation: "pretty cat",
-                userLanguage: "en",
-              },
-            ],
+            translation: "pretty cat",
           },
           word: null,
         },
@@ -975,34 +906,24 @@ describe(prepareActivityData, () => {
 
     const lessonWords = [
       {
+        alternativeTranslations: [],
         audioUrl: "https://example.com/lesson-gato.mp3",
         id: BigInt(77),
+        pronunciation: null,
         romanization: null,
-        translations: [
-          {
-            alternativeTranslations: [],
-            pronunciation: null,
-            translation: "cat (lesson)",
-            userLanguage: "en",
-          },
-        ],
+        translation: "cat (lesson)",
         word: "gato",
       },
     ];
 
     const sentenceWords = [
       {
+        alternativeTranslations: [],
         audioUrl: "https://example.com/sentence-gato.mp3",
         id: BigInt(78),
+        pronunciation: null,
         romanization: "ga-to",
-        translations: [
-          {
-            alternativeTranslations: [],
-            pronunciation: null,
-            translation: "cat (sentence)",
-            userLanguage: "en",
-          },
-        ],
+        translation: "cat (sentence)",
         word: "gato",
       },
     ];
@@ -1036,18 +957,13 @@ describe(prepareActivityData, () => {
           position: 0,
           sentence: {
             alternativeSentences: [],
+            alternativeTranslations: [],
             audioUrl: null,
+            explanation: null,
             id: BigInt(22),
             romanization: null,
             sentence: "Hola mundo",
-            translations: [
-              {
-                alternativeTranslations: [],
-                explanation: null,
-                translation: "Hello world",
-                userLanguage: "en",
-              },
-            ],
+            translation: "Hello world",
           },
           word: null,
         },
@@ -1058,31 +974,21 @@ describe(prepareActivityData, () => {
     // Distractor word "hola" overlaps with correct word "Hola" (case-insensitive)
     const lessonWords = [
       {
+        alternativeTranslations: [],
         audioUrl: null,
         id: BigInt(23),
+        pronunciation: null,
         romanization: null,
-        translations: [
-          {
-            alternativeTranslations: [],
-            pronunciation: null,
-            translation: "hello",
-            userLanguage: "en",
-          },
-        ],
+        translation: "hello",
         word: "hola",
       },
       {
+        alternativeTranslations: [],
         audioUrl: null,
         id: BigInt(24),
+        pronunciation: null,
         romanization: null,
-        translations: [
-          {
-            alternativeTranslations: [],
-            pronunciation: null,
-            translation: "cat",
-            userLanguage: "en",
-          },
-        ],
+        translation: "cat",
         word: "gato",
       },
     ];
@@ -1113,18 +1019,13 @@ describe(prepareActivityData, () => {
           position: 0,
           sentence: {
             alternativeSentences: ["Guten Morgen Lara"],
+            alternativeTranslations: [],
             audioUrl: null,
+            explanation: null,
             id: BigInt(27),
             romanization: null,
             sentence: "Guten Tag Lara",
-            translations: [
-              {
-                alternativeTranslations: [],
-                explanation: null,
-                translation: "Good day Lara",
-                userLanguage: "en",
-              },
-            ],
+            translation: "Good day Lara",
           },
           word: null,
         },
@@ -1134,31 +1035,21 @@ describe(prepareActivityData, () => {
 
     const lessonWords = [
       {
+        alternativeTranslations: [],
         audioUrl: null,
         id: BigInt(28),
+        pronunciation: null,
         romanization: null,
-        translations: [
-          {
-            alternativeTranslations: [],
-            pronunciation: null,
-            translation: "morning",
-            userLanguage: "en",
-          },
-        ],
+        translation: "morning",
         word: "Morgen",
       },
       {
+        alternativeTranslations: [],
         audioUrl: null,
         id: BigInt(29),
+        pronunciation: null,
         romanization: null,
-        translations: [
-          {
-            alternativeTranslations: [],
-            pronunciation: null,
-            translation: "evening",
-            userLanguage: "en",
-          },
-        ],
+        translation: "evening",
         word: "Abend",
       },
     ];
@@ -1190,18 +1081,13 @@ describe(prepareActivityData, () => {
           position: 0,
           sentence: {
             alternativeSentences: [],
+            alternativeTranslations: ["Good morning I am Lara"],
             audioUrl: null,
+            explanation: null,
             id: BigInt(37),
             romanization: null,
             sentence: "Bom dia eu sou Lara",
-            translations: [
-              {
-                alternativeTranslations: ["Good morning I am Lara"],
-                explanation: null,
-                translation: "Good day I am Lara",
-                userLanguage: "en",
-              },
-            ],
+            translation: "Good day I am Lara",
           },
           word: null,
         },
@@ -1211,45 +1097,30 @@ describe(prepareActivityData, () => {
 
     const lessonWords = [
       {
+        alternativeTranslations: [],
         audioUrl: null,
         id: BigInt(38),
+        pronunciation: null,
         romanization: null,
-        translations: [
-          {
-            alternativeTranslations: [],
-            pronunciation: null,
-            translation: "morning",
-            userLanguage: "en",
-          },
-        ],
+        translation: "morning",
         word: "Morgen",
       },
       {
+        alternativeTranslations: [],
         audioUrl: null,
         id: BigInt(39),
+        pronunciation: null,
         romanization: null,
-        translations: [
-          {
-            alternativeTranslations: [],
-            pronunciation: null,
-            translation: "morning",
-            userLanguage: "en",
-          },
-        ],
+        translation: "morning",
         word: "morning",
       },
       {
+        alternativeTranslations: [],
         audioUrl: null,
         id: BigInt(40),
+        pronunciation: null,
         romanization: null,
-        translations: [
-          {
-            alternativeTranslations: [],
-            pronunciation: null,
-            translation: "evening",
-            userLanguage: "en",
-          },
-        ],
+        translation: "evening",
         word: "evening",
       },
     ];
@@ -1281,18 +1152,13 @@ describe(prepareActivityData, () => {
           position: 0,
           sentence: {
             alternativeSentences: [],
+            alternativeTranslations: [],
             audioUrl: null,
+            explanation: null,
             id: BigInt(32),
             romanization: null,
             sentence: "Sabes you?",
-            translations: [
-              {
-                alternativeTranslations: [],
-                explanation: null,
-                translation: "Know you?",
-                userLanguage: "en",
-              },
-            ],
+            translation: "Know you?",
           },
           word: null,
         },
@@ -1303,31 +1169,21 @@ describe(prepareActivityData, () => {
     // Distractor "you" (from .word) overlaps with correct word "you?" after stripping punctuation
     const lessonWords = [
       {
+        alternativeTranslations: [],
         audioUrl: null,
         id: BigInt(33),
+        pronunciation: null,
         romanization: null,
-        translations: [
-          {
-            alternativeTranslations: [],
-            pronunciation: null,
-            translation: "you",
-            userLanguage: "en",
-          },
-        ],
+        translation: "you",
         word: "you",
       },
       {
+        alternativeTranslations: [],
         audioUrl: null,
         id: BigInt(34),
+        pronunciation: null,
         romanization: null,
-        translations: [
-          {
-            alternativeTranslations: [],
-            pronunciation: null,
-            translation: "cat",
-            userLanguage: "en",
-          },
-        ],
+        translation: "cat",
         word: "gato",
       },
     ];
@@ -1358,18 +1214,13 @@ describe(prepareActivityData, () => {
           position: 0,
           sentence: {
             alternativeSentences: [],
+            alternativeTranslations: [],
             audioUrl: null,
+            explanation: null,
             id: BigInt(42),
             romanization: null,
             sentence: "Hola amigos",
-            translations: [
-              {
-                alternativeTranslations: [],
-                explanation: null,
-                translation: "Hello friends",
-                userLanguage: "en",
-              },
-            ],
+            translation: "Hello friends",
           },
           word: null,
         },
@@ -1380,31 +1231,21 @@ describe(prepareActivityData, () => {
     // Two lesson words produce distractors "tu" and "tu?" after splitting
     const lessonWords = [
       {
+        alternativeTranslations: [],
         audioUrl: null,
         id: BigInt(43),
+        pronunciation: null,
         romanization: null,
-        translations: [
-          {
-            alternativeTranslations: [],
-            pronunciation: null,
-            translation: "you",
-            userLanguage: "en",
-          },
-        ],
+        translation: "you",
         word: "tu",
       },
       {
+        alternativeTranslations: [],
         audioUrl: null,
         id: BigInt(44),
+        pronunciation: null,
         romanization: null,
-        translations: [
-          {
-            alternativeTranslations: [],
-            pronunciation: null,
-            translation: "you?",
-            userLanguage: "en",
-          },
-        ],
+        translation: "you?",
         word: "tu?",
       },
     ];
@@ -1440,7 +1281,8 @@ describe(prepareActivityData, () => {
     });
 
     const raw = await getActivity({ lessonId: lesson.id, position: 112 });
-    const result = prepareActivityData(raw!, [], []);
+    const stepsWithTranslations = attachTranslationsToSteps(raw!.steps, [], []);
+    const result = prepareActivityData({ ...raw!, steps: stepsWithTranslations }, [], []);
 
     expect(result.steps[0]?.wordBankOptions).toEqual([]);
   });
@@ -1463,18 +1305,13 @@ describe(prepareActivityData, () => {
           position: 0,
           sentence: {
             alternativeSentences: [],
+            alternativeTranslations: [],
             audioUrl: null,
+            explanation: null,
             id: BigInt(92),
             romanization: null,
             sentence: "gato bonito",
-            translations: [
-              {
-                alternativeTranslations: [],
-                explanation: null,
-                translation: "pretty cat",
-                userLanguage: "en",
-              },
-            ],
+            translation: "pretty cat",
           },
           word: null,
         },
@@ -1484,17 +1321,12 @@ describe(prepareActivityData, () => {
 
     const lessonWords = [
       {
+        alternativeTranslations: [],
         audioUrl: "https://example.com/gato.mp3",
         id: BigInt(93),
+        pronunciation: null,
         romanization: "ga-to",
-        translations: [
-          {
-            alternativeTranslations: [],
-            pronunciation: null,
-            translation: "cat",
-            userLanguage: "en",
-          },
-        ],
+        translation: "cat",
         word: "gato",
       },
     ];
@@ -1535,18 +1367,13 @@ describe(prepareActivityData, () => {
           position: 0,
           sentence: {
             alternativeSentences: [],
+            alternativeTranslations: [],
             audioUrl: null,
+            explanation: null,
             id: BigInt(96),
             romanization: null,
             sentence: "gato bonito",
-            translations: [
-              {
-                alternativeTranslations: [],
-                explanation: null,
-                translation: "pretty cat",
-                userLanguage: "en",
-              },
-            ],
+            translation: "pretty cat",
           },
           word: null,
         },
@@ -1556,17 +1383,12 @@ describe(prepareActivityData, () => {
 
     const sentenceWords = [
       {
+        alternativeTranslations: [],
         audioUrl: "https://example.com/sw-gato.mp3",
         id: BigInt(97),
+        pronunciation: null,
         romanization: "ga-to-sw",
-        translations: [
-          {
-            alternativeTranslations: [],
-            pronunciation: null,
-            translation: "cat (sw)",
-            userLanguage: "en",
-          },
-        ],
+        translation: "cat (sw)",
         word: "gato",
       },
     ];
@@ -1777,7 +1599,8 @@ describe(prepareActivityData, () => {
     });
 
     const raw = await getActivity({ lessonId: lesson.id, position: 108 });
-    const result = prepareActivityData(raw!, [], []);
+    const stepsWithTranslations = attachTranslationsToSteps(raw!.steps, [], []);
+    const result = prepareActivityData({ ...raw!, steps: stepsWithTranslations }, [], []);
 
     expect(result.language).toBe("en");
     expect(result.organizationId).toBe(org.id);

@@ -12,10 +12,14 @@ import { handleActivityFailureStep } from "./handle-failure-step";
 
 /**
  * Persists all vocabulary data in a single step:
- * - Upserts Word records (sets audioUrl, romanization)
- * - Upserts WordTranslation records (sets pronunciation, alternativeTranslations)
- * - Creates LessonWord links
- * - Creates Step records (kind: "vocabulary" + "translation")
+ * - Upserts `Word` records (sets audioUrl, romanization)
+ * - Upserts `WordPronunciation` records (pronunciation is language-specific
+ *   but meaning-independent — "banco" sounds the same whether it means
+ *   "bank" or "bench")
+ * - Upserts `LessonWord` records with lesson-scoped translations (translations
+ *   live on `LessonWord` because the same word can mean different things in
+ *   different lessons)
+ * - Creates `Step` records (kind: "vocabulary" + "translation")
  * - Marks vocabulary and translation activities as completed
  *
  * This is the single write point for the vocabulary workflow. All generate
@@ -131,8 +135,9 @@ export async function saveVocabularyActivityStep(params: {
 }
 
 /**
- * Upserts a single word with all its associated data: Word record,
- * WordTranslation, LessonWord link, and vocabulary/translation Step records.
+ * Upserts a single word with all its associated data: `Word` record,
+ * `WordPronunciation` (if pronunciation exists), `LessonWord` with
+ * lesson-scoped translation, and vocabulary/translation `Step` records.
  */
 async function saveOneVocabularyWord(params: {
   alternatives: Record<string, string[]>;
@@ -191,27 +196,26 @@ async function saveOneVocabularyWord(params: {
 
   const wordId = record.id;
 
-  await prisma.wordTranslation.upsert({
+  if (pronunciation) {
+    await prisma.wordPronunciation.upsert({
+      create: { pronunciation, userLanguage, wordId },
+      update: { pronunciation },
+      where: { wordPronunciation: { userLanguage, wordId } },
+    });
+  }
+
+  await prisma.lessonWord.upsert({
     create: {
       alternativeTranslations,
-      pronunciation,
+      lessonId,
       translation,
       userLanguage,
       wordId,
     },
     update: {
       ...(alternativeTranslations.length > 0 ? { alternativeTranslations } : {}),
-      ...(pronunciation ? { pronunciation } : {}),
       translation,
     },
-    where: {
-      wordTranslation: { userLanguage, wordId },
-    },
-  });
-
-  await prisma.lessonWord.upsert({
-    create: { lessonId, wordId },
-    update: {},
     where: { lessonWord: { lessonId, wordId } },
   });
 

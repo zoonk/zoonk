@@ -49,6 +49,7 @@ export async function generateSentencePronunciationAndAlternativesStep(
   const userLanguage = activity.language;
 
   const result = await generateWordPronunciationAndAlternatives({
+    lessonId: activity.lessonId,
     organizationId: course.organization.id,
     targetLanguage,
     userLanguage,

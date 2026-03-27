@@ -17,21 +17,20 @@ type WordMetadataEntry = {
 };
 
 /**
- * Fetches existing word metadata by joining Word and WordTranslation tables.
- * Translations now live in WordTranslation, while romanization stays on Word.
+ * Fetches existing romanization from `Word` records (case-insensitive).
+ * Only returns romanization — NOT translations. Translations are always
+ * generated fresh per lesson because the same word can mean different
+ * things in different sentence contexts (e.g. "banco" = "bank" in a
+ * finance lesson vs "bench" in a furniture lesson). Reusing another
+ * lesson's translation would silently pick the wrong meaning for
+ * polysemous words.
  */
-async function fetchExistingWordMetadata(params: {
+async function fetchExistingWordRomanizations(params: {
   organizationId: number;
   targetLanguage: string;
-  userLanguage: string;
   words: string[];
-}): Promise<Record<string, WordMetadataEntry>> {
+}): Promise<Record<string, string | null>> {
   const existing = await prisma.word.findMany({
-    include: {
-      translations: {
-        where: { userLanguage: params.userLanguage },
-      },
-    },
     where: {
       organizationId: params.organizationId,
       targetLanguage: params.targetLanguage,
@@ -40,15 +39,7 @@ async function fetchExistingWordMetadata(params: {
   });
 
   return Object.fromEntries(
-    existing
-      .filter((record) => record.translations[0]?.translation)
-      .map((record) => [
-        record.word.toLowerCase(),
-        {
-          romanization: record.romanization,
-          translation: record.translations[0]?.translation ?? "",
-        },
-      ]),
+    existing.map((record) => [record.word.toLowerCase(), record.romanization]),
   );
 }
 
@@ -132,41 +123,40 @@ async function buildWordMetadata(params: {
     return { isComplete: true, wordMetadata: {} };
   }
 
-  const existingMetadata = await fetchExistingWordMetadata({
+  // Fetch existing romanizations from the DB (meaning-independent).
+  // Translations are always generated fresh — each lesson needs its own
+  // because the same word can mean different things in different contexts.
+  const existingRomanizations = await fetchExistingWordRomanizations({
     organizationId: params.organizationId,
     targetLanguage: params.targetLanguage,
-    userLanguage: params.userLanguage,
     words: uniqueWords,
   });
 
-  const wordsNeedingTranslation = uniqueWords.filter((word) => !existingMetadata[word]);
-
-  if (wordsNeedingTranslation.length === 0) {
-    return { isComplete: true, wordMetadata: existingMetadata };
-  }
-
   const [translationResult, romanizationResult] = await Promise.allSettled([
-    generateMissingTranslations(
-      wordsNeedingTranslation,
-      params.userLanguage,
+    generateMissingTranslations(uniqueWords, params.userLanguage, params.targetLanguage),
+    generateWordRomanizations(
+      uniqueWords.filter((word) => !existingRomanizations[word]),
       params.targetLanguage,
     ),
-    generateWordRomanizations(wordsNeedingTranslation, params.targetLanguage),
   ]);
 
   const translations = translationResult.status === "fulfilled" ? translationResult.value : {};
-  const romanizations = romanizationResult.status === "fulfilled" ? romanizationResult.value : {};
+  const newRomanizations =
+    romanizationResult.status === "fulfilled" ? romanizationResult.value : {};
 
-  const isComplete = Object.keys(translations).length === wordsNeedingTranslation.length;
+  const isComplete = Object.keys(translations).length === uniqueWords.length;
 
-  const generatedMetadata: Record<string, WordMetadataEntry> = Object.fromEntries(
+  const wordMetadata: Record<string, WordMetadataEntry> = Object.fromEntries(
     Object.entries(translations).map(([word, translation]) => [
       word,
-      { romanization: romanizations[word] ?? null, translation },
+      {
+        romanization: existingRomanizations[word] ?? newRomanizations[word] ?? null,
+        translation,
+      },
     ]),
   );
 
-  return { isComplete, wordMetadata: { ...existingMetadata, ...generatedMetadata } };
+  return { isComplete, wordMetadata };
 }
 
 export async function generateSentenceWordMetadataStep(

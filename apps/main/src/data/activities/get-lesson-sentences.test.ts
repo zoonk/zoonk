@@ -1,9 +1,8 @@
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
-import { lessonSentenceFixture } from "@zoonk/testing/fixtures/lesson-sentences";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { sentenceFixture, sentenceTranslationFixture } from "@zoonk/testing/fixtures/sentences";
+import { lessonSentenceFixture, sentenceFixture } from "@zoonk/testing/fixtures/sentences";
 import { beforeAll, describe, expect, test } from "vitest";
 import { getLessonSentences } from "./get-lesson-sentences";
 
@@ -60,9 +59,9 @@ describe(getLessonSentences, () => {
 
     expect(result).toHaveLength(2);
 
-    const ids = result.map((item) => item.id);
-    expect(ids).toContain(sentence1.id);
-    expect(ids).toContain(sentence2.id);
+    const sentenceIds = result.map((item) => item.sentenceId);
+    expect(sentenceIds).toContain(sentence1.id);
+    expect(sentenceIds).toContain(sentence2.id);
   });
 
   test("returns all expected fields", async () => {
@@ -82,30 +81,28 @@ describe(getLessonSentences, () => {
       targetLanguage: "es",
     });
 
-    await sentenceTranslationFixture({
+    await lessonSentenceFixture({
       alternativeTranslations: ["I enjoy"],
+      lessonId: newLesson.id,
       sentenceId: sentence.id,
       translation: "I like",
       userLanguage: "en",
     });
 
-    await lessonSentenceFixture({ lessonId: newLesson.id, sentenceId: sentence.id });
-
     const result = await getLessonSentences({ lessonId: newLesson.id });
 
     expect(result).toHaveLength(1);
     expect(result[0]).toMatchObject({
-      alternativeSentences: ["Adoro"],
-      audioUrl: "https://example.com/megusta.mp3",
-      id: sentence.id,
-      romanization: null,
-      sentence: sentence.sentence,
-      translations: expect.arrayContaining([
-        expect.objectContaining({
-          alternativeTranslations: ["I enjoy"],
-          translation: "I like",
-        }),
-      ]) as unknown,
+      alternativeTranslations: ["I enjoy"],
+      sentence: expect.objectContaining({
+        alternativeSentences: ["Adoro"],
+        audioUrl: "https://example.com/megusta.mp3",
+        id: sentence.id,
+        romanization: null,
+        sentence: sentence.sentence,
+      }) as unknown,
+      translation: "I like",
+      userLanguage: "en",
     });
   });
 

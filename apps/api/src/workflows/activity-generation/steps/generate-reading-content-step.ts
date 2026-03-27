@@ -32,11 +32,15 @@ export type ReadingSentence = GeneratedReadingSentence & {
 };
 
 /**
- * Fetches lesson words with their translation and alternativeTranslations
+ * Fetches lesson words with their `translation` and `alternativeTranslations`
  * from the database. Used both as the source for sentence generation when
  * the current vocabulary run produced no words, and for sentence variant
- * derivation which needs the alternativeTranslations that the vocabulary
+ * derivation which needs the `alternativeTranslations` that the vocabulary
  * pronunciation-and-alternatives step already wrote to the DB.
+ *
+ * Translations live on `LessonWord` (not a separate table) because the same
+ * word can mean different things in different lessons — e.g. "banco" means
+ * "bank" in a finance lesson but "bench" in a furniture lesson.
  */
 async function getLessonWords(params: {
   lessonId: number;
@@ -51,17 +55,10 @@ async function getLessonWords(params: {
   const words = await prisma.lessonWord.findMany({
     orderBy: { id: "asc" },
     select: {
+      alternativeTranslations: true,
+      translation: true,
       word: {
-        select: {
-          translations: {
-            select: {
-              alternativeTranslations: true,
-              translation: true,
-            },
-            where: { userLanguage: params.userLanguage },
-          },
-          word: true,
-        },
+        select: { word: true },
       },
     },
     where: {
@@ -73,21 +70,13 @@ async function getLessonWords(params: {
     },
   });
 
-  return words.flatMap((record) => {
-    const translation = record.word.translations[0];
-
-    if (!translation) {
-      return [];
-    }
-
-    return [
-      {
-        alternativeTranslations: translation.alternativeTranslations,
-        translation: translation.translation,
-        word: record.word.word,
-      },
-    ];
-  });
+  return words
+    .filter((record) => record.translation)
+    .map((record) => ({
+      alternativeTranslations: record.alternativeTranslations,
+      translation: record.translation,
+      word: record.word.word,
+    }));
 }
 
 function hasValidSentences(sentences: ReadingSentence[]): boolean {

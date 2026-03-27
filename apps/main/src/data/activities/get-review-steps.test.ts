@@ -3,7 +3,7 @@ import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { sentenceFixture, sentenceTranslationFixture } from "@zoonk/testing/fixtures/sentences";
+import { lessonSentenceFixture, sentenceFixture } from "@zoonk/testing/fixtures/sentences";
 import { stepAttemptFixture } from "@zoonk/testing/fixtures/step-attempts";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { userFixture } from "@zoonk/testing/fixtures/users";
@@ -731,8 +731,9 @@ describe(getReviewValidationSteps, () => {
       organizationId,
     });
 
-    await sentenceTranslationFixture({
+    await lessonSentenceFixture({
       alternativeTranslations: ["Good morning, I am Lara."],
+      lessonId: lesson.id,
       sentenceId: sentence.id,
       translation: "Hello, I am Lara.",
       userLanguage: "en",
@@ -757,12 +758,6 @@ describe(getReviewValidationSteps, () => {
     expect(steps[0]?.sentence).toMatchObject({
       alternativeSentences: ["Guten Morgen, ich bin Lara."],
       sentence: sentence.sentence,
-      translations: expect.arrayContaining([
-        expect.objectContaining({
-          alternativeTranslations: ["Good morning, I am Lara."],
-          translation: "Hello, I am Lara.",
-        }),
-      ]) as unknown,
     });
   });
 });

@@ -23,11 +23,15 @@ type WordMetadataEntry = {
 
 /**
  * Persists all reading data in a single step:
- * - Upserts Sentence records (sets audioUrl, romanization)
- * - Upserts SentenceTranslation records
- * - Upserts Word records for sentence words (sets audioUrl)
- * - Upserts WordTranslation records for sentence words (sets pronunciation, alternativeTranslations)
- * - Creates Step records (kind: "reading")
+ * - Upserts `Sentence` records (sets audioUrl, romanization)
+ * - Upserts `LessonSentence` records with lesson-scoped translations
+ *   (translations live on `LessonSentence` because explanation is inherently
+ *   lesson-context-specific)
+ * - Upserts `Word` records for sentence words (sets audioUrl)
+ * - Upserts `WordPronunciation` records (pronunciation is language-specific
+ *   but meaning-independent)
+ * - Upserts `LessonWord` records with lesson-scoped translations
+ * - Creates `Step` records (kind: "reading")
  * - Marks the reading activity as completed
  *
  * This is the single write point for the reading workflow. All generate
@@ -119,6 +123,7 @@ export async function saveReadingActivityStep(params: {
           saveOneSentenceWord({
             alternatives,
             existingCasing,
+            lessonId: activity.lessonId,
             organizationId,
             pronunciations,
             targetLanguage,
@@ -157,7 +162,8 @@ function normalizeAlternativeTexts(primaryText: string, altTexts: string[]): str
 }
 
 /**
- * Upserts a Sentence record with its translation and creates the reading Step.
+ * Upserts a Sentence record, creates a LessonSentence link with lesson-scoped
+ * translation data, and creates the reading Step.
  */
 async function saveOneSentence(params: {
   activityId: number;
@@ -221,10 +227,11 @@ async function saveOneSentence(params: {
 
   const sentenceId = record.id;
 
-  await prisma.sentenceTranslation.upsert({
+  await prisma.lessonSentence.upsert({
     create: {
       alternativeTranslations,
       explanation: emptyToNull(readingSentence.explanation),
+      lessonId,
       sentenceId,
       translation,
       userLanguage,
@@ -234,14 +241,6 @@ async function saveOneSentence(params: {
       explanation: emptyToNull(readingSentence.explanation),
       translation,
     },
-    where: {
-      sentenceTranslation: { sentenceId, userLanguage },
-    },
-  });
-
-  await prisma.lessonSentence.upsert({
-    create: { lessonId, sentenceId },
-    update: {},
     where: { lessonSentence: { lessonId, sentenceId } },
   });
 
@@ -258,12 +257,17 @@ async function saveOneSentence(params: {
 }
 
 /**
- * Upserts a Word record for a word extracted from a reading sentence,
- * with its translation, romanization, audio, pronunciation, and alternatives.
+ * Upserts a `Word` record for a word extracted from a reading sentence,
+ * with its pronunciation (on `WordPronunciation`) and lesson-scoped
+ * translation (on `LessonWord`). Translations live on `LessonWord` because
+ * the same word can mean different things in different lessons — e.g.
+ * "banco" means "bank" in a finance lesson but "bench" in a furniture
+ * lesson.
  */
 async function saveOneSentenceWord(params: {
   alternatives: Record<string, string[]>;
   existingCasing: Record<string, string>;
+  lessonId: number;
   organizationId: number;
   pronunciations: Record<string, string>;
   targetLanguage: string;
@@ -275,6 +279,7 @@ async function saveOneSentenceWord(params: {
   const {
     alternatives,
     existingCasing,
+    lessonId,
     organizationId,
     pronunciations,
     targetLanguage,
@@ -309,22 +314,29 @@ async function saveOneSentenceWord(params: {
     },
   });
 
-  await prisma.wordTranslation.upsert({
+  const wordId = record.id;
+
+  if (pronunciation) {
+    await prisma.wordPronunciation.upsert({
+      create: { pronunciation, userLanguage, wordId },
+      update: { pronunciation },
+      where: { wordPronunciation: { userLanguage, wordId } },
+    });
+  }
+
+  await prisma.lessonWord.upsert({
     create: {
       alternativeTranslations,
-      pronunciation,
+      lessonId,
       translation,
       userLanguage,
-      wordId: record.id,
+      wordId,
     },
     update: {
       ...(alternativeTranslations.length > 0 ? { alternativeTranslations } : {}),
-      ...(pronunciation ? { pronunciation } : {}),
       translation,
     },
-    where: {
-      wordTranslation: { userLanguage, wordId: record.id },
-    },
+    where: { lessonWord: { lessonId, wordId } },
   });
 }
 
