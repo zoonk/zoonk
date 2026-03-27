@@ -35,6 +35,9 @@ const nextConfig: NextConfig = {
       new URL("https://*.githubusercontent.com/**"),
     ],
   },
+  logging: {
+    browserToTerminal: true,
+  },
   pageExtensions: ["js", "jsx", "mdx", "ts", "tsx"],
   reactCompiler: true,
   turbopack: {
