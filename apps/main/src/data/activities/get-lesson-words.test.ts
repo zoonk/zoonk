@@ -133,4 +133,47 @@ describe(getLessonWords, () => {
     const result = await getLessonWords({ lessonId: 999_999 });
     expect(result).toEqual([]);
   });
+
+  test("only includes pronunciation matching the lesson's userLanguage", async () => {
+    const newLesson = await lessonFixture({
+      chapterId: chapter.id,
+      isPublished: true,
+      language: "es",
+      organizationId: org.id,
+    });
+
+    const word = await wordFixture({
+      organizationId: org.id,
+      targetLanguage: "es",
+      word: `banco-${crypto.randomUUID()}`,
+    });
+
+    // Create pronunciations for two different user languages
+    await Promise.all([
+      wordPronunciationFixture({
+        pronunciation: "BAHN-koh",
+        userLanguage: "en",
+        wordId: word.id,
+      }),
+      wordPronunciationFixture({
+        pronunciation: "BAN-co",
+        userLanguage: "pt",
+        wordId: word.id,
+      }),
+    ]);
+
+    await lessonWordFixture({
+      lessonId: newLesson.id,
+      translation: "bank",
+      userLanguage: "en",
+      wordId: word.id,
+    });
+
+    const result = await getLessonWords({ lessonId: newLesson.id });
+
+    // Should only include the English pronunciation (matching userLanguage
+    // on the LessonWord), not the Portuguese one
+    expect(result[0]?.word.pronunciations).toHaveLength(1);
+    expect(result[0]?.word.pronunciations[0]?.pronunciation).toBe("BAHN-koh");
+  });
 });

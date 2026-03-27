@@ -9,7 +9,9 @@ const cachedGetSentenceWords = cache(async (lessonId: number) => {
     where: { lessonId },
   });
 
-  if (lessonSentences.length === 0) {
+  const firstSentence = lessonSentences[0];
+
+  if (!firstSentence) {
     return [];
   }
 
@@ -20,8 +22,15 @@ const cachedGetSentenceWords = cache(async (lessonId: number) => {
     return [];
   }
 
+  // All LessonSentence records in a lesson share the same userLanguage.
+  const { userLanguage } = firstSentence;
+
   return prisma.lessonWord.findMany({
-    include: { word: { include: { pronunciations: true } } },
+    include: {
+      word: {
+        include: { pronunciations: { where: { userLanguage } } },
+      },
+    },
     where: {
       lessonId,
       word: { word: { in: uniqueWords, mode: "insensitive" } },

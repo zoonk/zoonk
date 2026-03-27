@@ -402,4 +402,24 @@ describe(generateWordPronunciationAndAlternatives, () => {
     // Pronunciation already exists in WordPronunciation — should NOT regenerate via AI
     expect(generateActivityPronunciation).not.toHaveBeenCalled();
   });
+
+  test("generates alternatives using caller-provided translation when word exists globally but has no LessonWord", async () => {
+    const word = await wordFixture({ organizationId });
+
+    // Word exists in the DB but has no LessonWord in this lesson.
+    // The caller provides a translation — alternatives should be
+    // generated using that translation, not skipped.
+    const result = await generateWordPronunciationAndAlternatives({
+      lessonId,
+      organizationId,
+      targetLanguage: "es",
+      userLanguage: "en",
+      words: [{ translation: "bank", word: word.word }],
+    });
+
+    expect(generateWordAlternativeTranslations).toHaveBeenCalledWith(
+      expect.objectContaining({ translation: "bank", word: word.word }),
+    );
+    expect(result.alternatives[word.word]).toEqual(["hi", "hey"]);
+  });
 });

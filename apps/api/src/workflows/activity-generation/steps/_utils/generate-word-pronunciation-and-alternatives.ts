@@ -75,13 +75,15 @@ export async function generateWordPronunciationAndAlternatives(params: {
     wordTexts,
   });
 
-  const existingByWord = new Map(existingRecords.map((record) => [record.word, record]));
+  const existingByWord = new Map(
+    existingRecords.map((record) => [record.word.toLowerCase(), record]),
+  );
 
-  const newWords = findNewWords(words, existingByWord);
+  const newWords = findWordsNewToLesson(words, existingByWord);
 
   const needsPronunciation: { word: string }[] = [
     ...existingRecords.filter((record) => !record.pronunciation),
-    ...newWords,
+    ...newWords.filter((ref) => !existingByWord.has(ref.word.toLowerCase())),
   ];
 
   const needsAlternatives: { translation: string; word: string }[] = [
@@ -122,16 +124,21 @@ export async function generateWordPronunciationAndAlternatives(params: {
 }
 
 /**
- * Finds words from the request that have no existing DB record.
- * These are brand-new words being generated for the first time.
- * Uses case-insensitive matching to avoid false positives from casing differences.
+ * Finds words that need to be treated as "new to this lesson" for
+ * alternatives generation. A word is new if either:
+ * 1. It doesn't exist in the DB at all (brand-new word), or
+ * 2. It exists in the DB but has no LessonWord in the current lesson
+ *    (empty translation), so the caller-provided translation should be
+ *    used for alternatives generation instead.
  */
-function findNewWords(
+function findWordsNewToLesson(
   words: WordReference[],
   existingByWord: Map<string, ExistingTranslationRecord>,
 ): WordReference[] {
-  const existingLower = new Set([...existingByWord.keys()].map((key) => key.toLowerCase()));
-  return words.filter((ref) => !existingLower.has(ref.word.toLowerCase()));
+  return words.filter((ref) => {
+    const existing = existingByWord.get(ref.word.toLowerCase());
+    return !existing || !existing.translation;
+  });
 }
 
 /**

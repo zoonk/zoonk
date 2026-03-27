@@ -61,7 +61,13 @@ const cachedGetFallbackDistractorWords = cache(async (lessonId: number, limit: n
   const excludedWordIds = lessonWords.map((lw) => lw.wordId);
 
   return prisma.lessonWord.findMany({
-    include: { word: { include: { pronunciations: true } } },
+    include: {
+      word: {
+        include: {
+          pronunciations: { where: { userLanguage: scope.userLanguage } },
+        },
+      },
+    },
     orderBy: { id: "desc" },
     take: limit,
     where: {

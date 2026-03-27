@@ -9,8 +9,6 @@
     "./fixtures/course-suggestions": "./src/fixtures/course-suggestions.ts",
     "./fixtures/courses": "./src/fixtures/courses.ts",
     "./fixtures/dates": "./src/fixtures/dates.ts",
-    "./fixtures/lesson-sentences": "./src/fixtures/lesson-sentences.ts",
-    "./fixtures/lesson-words": "./src/fixtures/lesson-words.ts",
     "./fixtures/lessons": "./src/fixtures/lessons.ts",
     "./fixtures/orgs": "./src/fixtures/orgs.ts",
     "./fixtures/progress": "./src/fixtures/progress.ts",
