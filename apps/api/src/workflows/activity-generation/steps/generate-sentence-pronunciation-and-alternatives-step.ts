@@ -1,4 +1,4 @@
-import { createStepStream } from "@/workflows/_shared/stream-status";
+import { createEntityStepStream } from "@/workflows/_shared/stream-status";
 import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { generateWordPronunciationAndAlternatives } from "./_utils/generate-word-pronunciation-and-alternatives";
@@ -38,7 +38,7 @@ export async function generateSentencePronunciationAndAlternativesStep(
     return { alternatives: {}, pronunciations: {} };
   }
 
-  await using stream = createStepStream<ActivityStepName>();
+  await using stream = createEntityStepStream<ActivityStepName>(activity.id);
 
   await stream.status({
     status: "started",

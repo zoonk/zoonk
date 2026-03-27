@@ -1,4 +1,4 @@
-import { createStepStream } from "@/workflows/_shared/stream-status";
+import { createEntityStepStream } from "@/workflows/_shared/stream-status";
 import { assertStepContent } from "@zoonk/core/steps/content-contract";
 import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { prisma } from "@zoonk/db";
@@ -96,7 +96,7 @@ export async function saveListeningActivityStep(
     return;
   }
 
-  await using stream = createStepStream<ActivityStepName>();
+  await using stream = createEntityStepStream<ActivityStepName>(listening.id);
 
   const current = await prisma.activity.findUnique({
     where: { id: listening.id },
@@ -114,7 +114,7 @@ export async function saveListeningActivityStep(
     return;
   }
 
-  await stream.status({ entityId: listening.id, status: "started", step: "saveListeningActivity" });
+  await stream.status({ status: "started", step: "saveListeningActivity" });
 
   const success = await createListeningStepsAndComplete({
     listeningId: listening.id,
@@ -128,9 +128,5 @@ export async function saveListeningActivityStep(
     return;
   }
 
-  await stream.status({
-    entityId: listening.id,
-    status: "completed",
-    step: "saveListeningActivity",
-  });
+  await stream.status({ status: "completed", step: "saveListeningActivity" });
 }

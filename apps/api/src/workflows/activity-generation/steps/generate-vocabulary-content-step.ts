@@ -1,4 +1,4 @@
-import { createStepStream } from "@/workflows/_shared/stream-status";
+import { createEntityStepStream } from "@/workflows/_shared/stream-status";
 import {
   type VocabularyWord,
   generateActivityVocabulary,
@@ -21,7 +21,7 @@ export async function generateVocabularyContentStep(
 ): Promise<{ words: VocabularyWord[] }> {
   "use step";
 
-  await using stream = createStepStream<ActivityStepName>();
+  await using stream = createEntityStepStream<ActivityStepName>(activity.id);
 
   await stream.status({ status: "started", step: "generateVocabularyContent" });
 

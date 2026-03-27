@@ -1,4 +1,4 @@
-import { createStepStream } from "@/workflows/_shared/stream-status";
+import { createEntityStepStream } from "@/workflows/_shared/stream-status";
 import { generateActivityRomanization } from "@zoonk/ai/tasks/activities/language/romanization";
 import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { safeAsync } from "@zoonk/utils/error";
@@ -33,7 +33,7 @@ export async function generateReadingRomanizationStep(
     return { romanizations: {} };
   }
 
-  await using stream = createStepStream<ActivityStepName>();
+  await using stream = createEntityStepStream<ActivityStepName>(activity.id);
 
   await stream.status({ status: "started", step: "generateReadingRomanization" });
 

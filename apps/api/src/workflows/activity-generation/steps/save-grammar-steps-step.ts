@@ -1,4 +1,4 @@
-import { createStepStream } from "@/workflows/_shared/stream-status";
+import { createEntityStepStream } from "@/workflows/_shared/stream-status";
 import { type ActivityGrammarContentSchema } from "@zoonk/ai/tasks/activities/language/grammar-content";
 import { type ActivityGrammarUserContentSchema } from "@zoonk/ai/tasks/activities/language/grammar-user-content";
 import { assertStepContent } from "@zoonk/core/steps/content-contract";
@@ -137,9 +137,9 @@ export async function saveGrammarActivityStep(
     return;
   }
 
-  await using stream = createStepStream<ActivityStepName>();
+  await using stream = createEntityStepStream<ActivityStepName>(activity.id);
 
-  await stream.status({ entityId: activity.id, status: "started", step: "saveGrammarActivity" });
+  await stream.status({ status: "started", step: "saveGrammarActivity" });
 
   const steps = buildGrammarSteps(activity.id, content, userContent, romanizations);
 
@@ -159,5 +159,5 @@ export async function saveGrammarActivityStep(
     return;
   }
 
-  await stream.status({ entityId: activity.id, status: "completed", step: "saveGrammarActivity" });
+  await stream.status({ status: "completed", step: "saveGrammarActivity" });
 }

@@ -1,4 +1,4 @@
-import { createStepStream } from "@/workflows/_shared/stream-status";
+import { createEntityStepStream } from "@/workflows/_shared/stream-status";
 import { assertStepContent } from "@zoonk/core/steps/content-contract";
 import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { prisma } from "@zoonk/db";
@@ -46,9 +46,9 @@ export async function savePracticeActivityStep({
 }): Promise<void> {
   "use step";
 
-  await using stream = createStepStream<ActivityStepName>();
+  await using stream = createEntityStepStream<ActivityStepName>(activityId);
 
-  await stream.status({ entityId: activityId, status: "started", step: "savePracticeActivity" });
+  await stream.status({ status: "started", step: "savePracticeActivity" });
 
   const stepRecords = buildPracticeStepRecords(activityId, steps);
 
@@ -68,5 +68,5 @@ export async function savePracticeActivityStep({
     return;
   }
 
-  await stream.status({ entityId: activityId, status: "completed", step: "savePracticeActivity" });
+  await stream.status({ status: "completed", step: "savePracticeActivity" });
 }

@@ -1,6 +1,6 @@
 import {
   type StepStream,
-  createStepStream,
+  createEntityStepStream,
   getAIResultErrorReason,
 } from "@/workflows/_shared/stream-status";
 import {
@@ -176,7 +176,7 @@ export async function generateReadingContentStep(
 
   const course = activity.lesson.chapter.course;
 
-  await using stream = createStepStream<ActivityStepName>();
+  await using stream = createEntityStepStream<ActivityStepName>(activity.id);
 
   await stream.status({ status: "started", step: "generateSentences" });
 

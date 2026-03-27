@@ -1,4 +1,4 @@
-import { createStepStream } from "@/workflows/_shared/stream-status";
+import { createEntityStepStream } from "@/workflows/_shared/stream-status";
 import { type StepVisualSchema, generateStepVisuals } from "@zoonk/ai/tasks/steps/visual";
 import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { type ActivitySteps } from "./_utils/get-activity-steps";
@@ -37,7 +37,7 @@ export async function generateVisualsForActivityStep(
 ): Promise<{ visuals: StepVisual[]; visualRows: VisualRow[] }> {
   "use step";
 
-  await using stream = createStepStream<ActivityStepName>();
+  await using stream = createEntityStepStream<ActivityStepName>(activity.id);
 
   if (steps.length === 0) {
     await stream.status({ status: "started", step: "generateVisuals" });

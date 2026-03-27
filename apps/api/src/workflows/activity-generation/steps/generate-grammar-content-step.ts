@@ -1,4 +1,4 @@
-import { createStepStream, getAIResultErrorReason } from "@/workflows/_shared/stream-status";
+import { createEntityStepStream, getAIResultErrorReason } from "@/workflows/_shared/stream-status";
 import {
   type ActivityGrammarContentSchema,
   generateActivityGrammarContent,
@@ -39,7 +39,7 @@ export async function generateGrammarContentStep(
 ): Promise<{ generated: boolean; grammarContent: ActivityGrammarContentSchema | null }> {
   "use step";
 
-  await using stream = createStepStream<ActivityStepName>();
+  await using stream = createEntityStepStream<ActivityStepName>(activity.id);
 
   await stream.status({ status: "started", step: "generateGrammarContent" });
 

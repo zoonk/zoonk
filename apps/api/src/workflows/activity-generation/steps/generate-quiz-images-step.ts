@@ -1,4 +1,4 @@
-import { createStepStream } from "@/workflows/_shared/stream-status";
+import { createEntityStepStream } from "@/workflows/_shared/stream-status";
 import { type QuizQuestion, type SelectImageQuestion } from "@zoonk/ai/tasks/activities/core/quiz";
 import { generateStepImage } from "@zoonk/core/steps/image";
 import { type ActivityStepName } from "@zoonk/core/workflows/steps";
@@ -69,7 +69,7 @@ export async function generateQuizImagesStep(
     return [];
   }
 
-  await using stream = createStepStream<ActivityStepName>();
+  await using stream = createEntityStepStream<ActivityStepName>(activity.id);
 
   const selectImageQuestions = questions.filter((question) => isSelectImageQuestion(question));
 
