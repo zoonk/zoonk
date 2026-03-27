@@ -6,6 +6,7 @@ import { useExtracted } from "next-intl";
 import { type DimensionInventory, type StepResult } from "../player-reducer";
 import { type SerializedStep } from "../prepare-activity-data";
 import { useReplaceName } from "../user-name-context";
+import { getFeedbackRomanization } from "./_utils/feedback-romanization";
 import {
   type DimensionEntry,
   DimensionList,
@@ -13,11 +14,7 @@ import {
   buildDimensionEntries,
   getWarningDelay,
 } from "./dimension-inventory";
-import {
-  CorrectAnswerBlock,
-  IncorrectAnswerBlock,
-  getFeedbackRomanization,
-} from "./feedback-answer-blocks";
+import { CorrectAnswerBlock, IncorrectAnswerBlock } from "./feedback-answer-blocks";
 import { PlayAudioButton } from "./play-audio-button";
 import { ResultAnnouncement } from "./result-announcement";
 import { RomanizationText } from "./romanization-text";
@@ -166,6 +163,22 @@ function getQuestionText(result: StepResult, step?: SerializedStep): string | nu
   return null;
 }
 
+/**
+ * Returns the audio URL for the feedback screen's pronunciation button.
+ * Reading/listening steps use sentence audio; translation steps use word audio.
+ */
+function getFeedbackAudioUrl(step?: SerializedStep): string | null {
+  if (step?.sentence?.audioUrl) {
+    return step.sentence.audioUrl;
+  }
+
+  if (step?.word?.audioUrl) {
+    return step.word.audioUrl;
+  }
+
+  return null;
+}
+
 function CoreFeedback({ result, step }: { result: StepResult; step?: SerializedStep }) {
   const t = useExtracted();
   const replaceName = useReplaceName();
@@ -177,6 +190,7 @@ function CoreFeedback({ result, step }: { result: StepResult; step?: SerializedS
       : getArrangeWordsSelectedText(result);
   const questionText = getQuestionText(result, step);
   const rom = getFeedbackRomanization(result, step, selectedText, correctAnswer, questionText);
+  const audioUrl = getFeedbackAudioUrl(step);
 
   return (
     <FeedbackScreen>
@@ -203,9 +217,7 @@ function CoreFeedback({ result, step }: { result: StepResult; step?: SerializedS
         )}
       </div>
 
-      {step?.sentence?.audioUrl && (
-        <PlayAudioButton audioUrl={step.sentence.audioUrl} preload={false} variant="text" />
-      )}
+      {audioUrl && <PlayAudioButton audioUrl={audioUrl} preload={false} variant="text" />}
 
       {feedback && <FeedbackMessage>{feedback}</FeedbackMessage>}
 

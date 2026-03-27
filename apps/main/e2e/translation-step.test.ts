@@ -15,6 +15,7 @@ import { type Page, expect, test } from "./fixtures";
 async function createTranslationActivity(options: {
   words: {
     alternativeTranslations?: string[];
+    audioUrl?: string | null;
     word: string;
     translation: string;
     pronunciation?: string | null;
@@ -22,6 +23,7 @@ async function createTranslationActivity(options: {
   }[];
   fallbackWords?: {
     alternativeTranslations?: string[];
+    audioUrl?: string | null;
     word: string;
     translation: string;
     pronunciation?: string | null;
@@ -59,6 +61,7 @@ async function createTranslationActivity(options: {
   const createdWords = await Promise.all(
     options.words.map(async (wordData) => {
       const word = await wordFixture({
+        audioUrl: wordData.audioUrl ?? null,
         organizationId: org.id,
         romanization: wordData.romanization ?? null,
         word: wordData.word,
@@ -83,6 +86,7 @@ async function createTranslationActivity(options: {
   await Promise.all(
     (options.fallbackWords ?? []).map(async (wordData) => {
       const word = await wordFixture({
+        audioUrl: wordData.audioUrl ?? null,
         organizationId: org.id,
         romanization: wordData.romanization ?? null,
         word: wordData.word,
@@ -475,5 +479,119 @@ test.describe("Translation Step", () => {
 
     // After selecting, pronunciation should be visible on the selected option
     await expect(page.getByText(new RegExp(pronunciation))).toBeVisible();
+  });
+
+  test("feedback screen shows romanization on correct translation answer", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const correctWord = `こんにちは-${uniqueId}`;
+    const romanization = `konnichiwa-${uniqueId}`;
+
+    const { url } = await createTranslationActivity({
+      words: [
+        { romanization, translation: `hello-${uniqueId}`, word: correctWord },
+        { translation: `goodbye-${uniqueId}`, word: `さようなら-${uniqueId}` },
+        { translation: `thanks-${uniqueId}`, word: `ありがとう-${uniqueId}` },
+        { translation: `please-${uniqueId}`, word: `おねがい-${uniqueId}` },
+      ],
+    });
+
+    await page.goto(url);
+
+    const radiogroup = page.getByRole("radiogroup", { name: /answer options/i });
+    const correctOption = radiogroup.getByRole("radio", { name: new RegExp(correctWord) });
+
+    await expect(async () => {
+      const isChecked = await correctOption.getAttribute("aria-checked");
+
+      if (isChecked !== "true") {
+        await correctOption.click();
+      }
+
+      await expect(correctOption).toHaveAttribute("aria-checked", "true", { timeout: 1000 });
+    }).toPass();
+
+    await page.getByRole("button", { name: /check/i }).click();
+
+    // Feedback screen should show the romanization below the correct answer
+    await expect(page.getByText(romanization)).toBeVisible();
+  });
+
+  test("feedback screen shows romanization on correct answer line when wrong translation", async ({
+    page,
+  }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const correctWord = `こんにちは-${uniqueId}`;
+    const wrongWord = `さようなら-${uniqueId}`;
+    const romanization = `konnichiwa-${uniqueId}`;
+
+    const { url } = await createTranslationActivity({
+      words: [
+        { romanization, translation: `hello-${uniqueId}`, word: correctWord },
+        { translation: `goodbye-${uniqueId}`, word: wrongWord },
+        { translation: `thanks-${uniqueId}`, word: `ありがとう-${uniqueId}` },
+        { translation: `please-${uniqueId}`, word: `おねがい-${uniqueId}` },
+      ],
+    });
+
+    await page.goto(url);
+
+    const radiogroup = page.getByRole("radiogroup", { name: /answer options/i });
+    const wrongOption = radiogroup.getByRole("radio", { name: new RegExp(wrongWord) });
+
+    await expect(async () => {
+      const isChecked = await wrongOption.getAttribute("aria-checked");
+
+      if (isChecked !== "true") {
+        await wrongOption.click();
+      }
+
+      await expect(wrongOption).toHaveAttribute("aria-checked", "true", { timeout: 1000 });
+    }).toPass();
+
+    await page.getByRole("button", { name: /check/i }).click();
+
+    // Feedback screen should show the correct answer with romanization
+    await expect(page.getByText(/correct answer/i)).toBeVisible();
+    await expect(page.getByText(correctWord)).toBeVisible();
+    await expect(page.getByText(romanization)).toBeVisible();
+  });
+
+  test("feedback screen shows audio button when word has audioUrl", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+
+    const { url } = await createTranslationActivity({
+      words: [
+        {
+          audioUrl: "https://example.com/audio.mp3",
+          translation: `hello-${uniqueId}`,
+          word: `hola-${uniqueId}`,
+        },
+        { translation: `goodbye-${uniqueId}`, word: `adiós-${uniqueId}` },
+        { translation: `thanks-${uniqueId}`, word: `gracias-${uniqueId}` },
+        { translation: `please-${uniqueId}`, word: `por favor-${uniqueId}` },
+      ],
+    });
+
+    await page.goto(url);
+
+    const radiogroup = page.getByRole("radiogroup", { name: /answer options/i });
+    const correctOption = radiogroup.getByRole("radio", {
+      name: new RegExp(`hola-${uniqueId}`),
+    });
+
+    await expect(async () => {
+      const isChecked = await correctOption.getAttribute("aria-checked");
+
+      if (isChecked !== "true") {
+        await correctOption.click();
+      }
+
+      await expect(correctOption).toHaveAttribute("aria-checked", "true", { timeout: 1000 });
+    }).toPass();
+
+    await page.getByRole("button", { name: /check/i }).click();
+
+    // Feedback screen should show an audio play button
+    await expect(page.getByRole("button", { name: /play pronunciation/i })).toBeVisible();
   });
 });
