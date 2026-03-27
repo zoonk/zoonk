@@ -289,6 +289,70 @@ describe(buildWordBankOptions, () => {
     });
   });
 
+  test("propagates romanization to individual tokens from multi-word distractor entries", () => {
+    const options = buildWordBankOptions(
+      makeReadingStep("안녕하세요."),
+      [
+        makeWordWithMetadata("1", "안녕하세요", "olá", {
+          audioUrl: null,
+          romanization: "annyeonghaseyo",
+        }),
+        makeWordWithMetadata("2", "처음 뵙겠습니다", "prazer em conhecê-lo", {
+          audioUrl: null,
+          romanization: "cheoeum boepgetseumnida",
+        }),
+      ],
+      new Map(),
+    );
+
+    const cheoeum = options.find((option) => option.word === "처음");
+    const boepgetseumnida = options.find((option) => option.word === "뵙겠습니다");
+
+    expect(cheoeum?.romanization).toBe("cheoeum");
+    expect(boepgetseumnida?.romanization).toBe("boepgetseumnida");
+  });
+
+  test("falls back to null romanization when token counts do not match", () => {
+    const options = buildWordBankOptions(
+      makeReadingStep("hello world"),
+      [
+        makeLessonWord("1", "hello", "olá"),
+        makeWordWithMetadata("2", "buenos días amigo", "bom dia amigo", {
+          audioUrl: null,
+          romanization: "only-two",
+        }),
+      ],
+      new Map(),
+    );
+
+    const buenos = options.find((option) => option.word === "buenos");
+
+    expect(buenos?.romanization).toBeNull();
+  });
+
+  test("standalone word metadata overrides sub-token metadata from multi-word entry", () => {
+    const options = buildWordBankOptions(
+      makeReadingStep("hello world"),
+      [
+        makeLessonWord("1", "hello", "olá"),
+        makeWordWithMetadata("2", "처음 뵙겠습니다", "prazer em conhecê-lo", {
+          audioUrl: null,
+          romanization: "cheoeum boepgetseumnida",
+        }),
+        makeWordWithMetadata("3", "처음", "início", {
+          audioUrl: "https://example.com/cheoeum.mp3",
+          romanization: "cheoeum-standalone",
+        }),
+      ],
+      new Map(),
+    );
+
+    const cheoeum = options.find((option) => option.word === "처음");
+
+    expect(cheoeum?.romanization).toBe("cheoeum-standalone");
+    expect(cheoeum?.audioUrl).toBe("https://example.com/cheoeum.mp3");
+  });
+
   test("tops up listening distractors from fallback words until there are four visible distractors", () => {
     const options = buildWordBankOptions(
       makeListeningStep("hello world"),
@@ -335,6 +399,33 @@ describe(buildSentenceWordOptions, () => {
       romanization: "mor-gen",
       translation: "morning (lesson)",
       word: "Morgen!",
+    });
+  });
+
+  test("propagates sub-token romanization from multi-word lesson words", () => {
+    const options = buildSentenceWordOptions(
+      "처음 뵙겠습니다.",
+      [
+        makeWordWithMetadata("1", "처음 뵙겠습니다", "prazer em conhecê-lo", {
+          audioUrl: null,
+          romanization: "cheoeum boepgetseumnida",
+        }),
+      ],
+      new Map(),
+    );
+
+    expect(options[0]).toEqual({
+      audioUrl: null,
+      romanization: "cheoeum",
+      translation: null,
+      word: "처음",
+    });
+
+    expect(options[1]).toEqual({
+      audioUrl: null,
+      romanization: "boepgetseumnida",
+      translation: null,
+      word: "뵙겠습니다.",
     });
   });
 });

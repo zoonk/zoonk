@@ -21,6 +21,12 @@ type WordDataInput = {
 };
 
 /**
+ * Sub-token entries from multi-word phrases don't correspond to real database records,
+ * so the lookup stores only the metadata subset of WordBankOption (no word field).
+ */
+type WordMetadata = Omit<WordBankOption, "word">;
+
+/**
  * Word-bank matching should ignore punctuation and case so "Morgen" and "Morgen!"
  * resolve to the same metadata. Keeping that rule in one helper prevents the reading
  * options, distractor filtering, and sentence-word lookup from drifting apart.
@@ -30,14 +36,58 @@ function normalizeWordKey(word: string): string {
 }
 
 /**
+ * Multi-word vocabulary entries (e.g., Korean "처음 뵙겠습니다") are stored as a single
+ * phrase, but word-bank distractors are individual tokens. To resolve metadata for each
+ * token, we split both the word and its romanization by spaces and index each token
+ * separately. Romanization systems (romaja, pinyin, romaji, etc.) maintain a 1:1
+ * space-separated correspondence with source tokens, so splitting by spaces is safe.
+ * If the token counts don't match (a data error), tokens get null romanization.
+ *
+ * Sub-token entries are placed before the full-phrase entry so that standalone words
+ * (which come later in the input array) naturally override sub-token entries via
+ * the Map's last-write-wins behavior.
+ */
+function splitMultiWordEntries(lessonWord: SerializedWord): [string, WordMetadata][] {
+  const wordTokens = lessonWord.word.split(" ").filter(Boolean);
+
+  if (wordTokens.length <= 1) {
+    return [];
+  }
+
+  const romanizationTokens = lessonWord.romanization?.split(" ").filter(Boolean) ?? [];
+  const canSlice = romanizationTokens.length === wordTokens.length;
+
+  return wordTokens.map((token, index) => [
+    normalizeWordKey(token),
+    {
+      audioUrl: null,
+      romanization: canSlice ? (romanizationTokens[index] ?? null) : null,
+      translation: null,
+    },
+  ]);
+}
+
+/**
  * Reading word-bank options need fast metadata lookup by normalized token. Building
  * the map once keeps the top-level pipeline declarative and avoids repeated scans.
+ * Multi-word entries are also indexed by their individual tokens so that distractors
+ * segmented from phrases still carry romanization.
  */
-function buildLessonWordLookup(
-  serializedLessonWords: SerializedWord[],
-): Map<string, SerializedWord> {
+function buildLessonWordLookup(serializedLessonWords: SerializedWord[]): Map<string, WordMetadata> {
   return new Map(
-    serializedLessonWords.map((lessonWord) => [normalizeWordKey(lessonWord.word), lessonWord]),
+    serializedLessonWords.flatMap((lessonWord) => {
+      const subTokenEntries = splitMultiWordEntries(lessonWord);
+      const fullEntry: [string, WordMetadata] = [
+        normalizeWordKey(lessonWord.word),
+        {
+          audioUrl: lessonWord.audioUrl,
+          romanization: lessonWord.romanization,
+          translation: lessonWord.translation,
+        },
+      ];
+
+      return [...subTokenEntries, fullEntry];
+    }),
   );
 }
 
@@ -49,7 +99,7 @@ function buildLessonWordLookup(
 function buildWordMetadataLookup(
   serializedLessonWords: SerializedWord[],
   fallbackLessonWords: SerializedWord[],
-): Map<string, SerializedWord> {
+): Map<string, WordMetadata> {
   return buildLessonWordLookup([...fallbackLessonWords, ...serializedLessonWords]);
 }
 
@@ -75,7 +125,7 @@ function buildSentenceWordLookup(
  */
 function getWordMetadata(
   word: string,
-  lessonWordLookup: Map<string, SerializedWord>,
+  lessonWordLookup: Map<string, WordMetadata>,
   sentenceWordLookup: Map<string, WordDataInput>,
 ): Omit<WordBankOption, "word"> {
   const key = normalizeWordKey(word);
