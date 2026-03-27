@@ -86,7 +86,7 @@ export async function generateWordPronunciationAndAlternatives(params: {
 
   const needsAlternatives: { translation: string; word: string }[] = [
     ...existingRecords
-      .filter((record) => record.alternativeTranslations.length === 0)
+      .filter((record) => record.alternativeTranslations.length === 0 && record.translation)
       .map((record) => ({ translation: record.translation, word: record.word })),
     ...newWords
       .filter((entry): entry is WordReference & { translation: string } =>
@@ -170,23 +170,16 @@ async function fetchExistingTranslationsByWordText(params: {
     },
   });
 
-  return wordRecords.flatMap((record) => {
+  return wordRecords.map((record) => {
     const lessonWord = record.lessons[0];
-
-    if (!lessonWord) {
-      return [];
-    }
-
     const pronunciation = record.pronunciations[0]?.pronunciation ?? null;
 
-    return [
-      {
-        alternativeTranslations: lessonWord.alternativeTranslations,
-        pronunciation,
-        translation: lessonWord.translation,
-        word: record.word,
-      },
-    ];
+    return {
+      alternativeTranslations: lessonWord?.alternativeTranslations ?? [],
+      pronunciation,
+      translation: lessonWord?.translation ?? "",
+      word: record.word,
+    };
   });
 }
 

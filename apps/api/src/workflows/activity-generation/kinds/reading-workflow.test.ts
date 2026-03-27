@@ -788,35 +788,17 @@ describe(readingActivityWorkflow, () => {
     }
   });
 
-  test("reuses existing Word metadata with different casing (case-insensitive lookup)", async () => {
+  test("preserves existing Word casing when sentence uses different case", async () => {
     const id = randomUUID().replaceAll("-", "").slice(0, 8);
     const capitalizedWord = `Zcap${id}`;
     const lowercaseWord = capitalizedWord.toLowerCase();
 
-    // Pre-seed the word in a prior lesson so fetchExistingWordMetadata
-    // finds it with an existing translation via case-insensitive lookup.
-    const priorLesson = await lessonFixture({
-      chapterId: chapter.id,
-      kind: "language",
-      organizationId,
-      title: `Prior Lesson ${randomUUID()}`,
-    });
-
-    const existingWord = await prisma.word.create({
+    await prisma.word.create({
       data: {
         organizationId,
         romanization: "existing-rom",
         targetLanguage: "es",
         word: capitalizedWord,
-      },
-    });
-
-    await prisma.lessonWord.create({
-      data: {
-        lessonId: priorLesson.id,
-        translation: "existing-translation",
-        userLanguage: "en",
-        wordId: existingWord.id,
       },
     });
 
@@ -856,12 +838,8 @@ describe(readingActivityWorkflow, () => {
       workflowRunId: "test-run-id",
     });
 
-    // Should NOT call AI for the word since it already exists (just with different casing)
-    expect(generateTranslation).not.toHaveBeenCalledWith(
-      expect.objectContaining({ word: lowercaseWord }),
-    );
-
-    // Should not create a duplicate lowercase Word record
+    // Should not create a duplicate lowercase Word record — the existing
+    // capitalized version should be reused via case-insensitive lookup
     const allVariants = await prisma.word.findMany({
       where: {
         organizationId,
@@ -1067,5 +1045,79 @@ describe(readingActivityWorkflow, () => {
       expect.objectContaining({ text: existingWord }),
     );
     expect(generateLanguageAudio).toHaveBeenCalledWith(expect.objectContaining({ text: newWord }));
+  });
+
+  test("generates fresh translation for words that exist in other lessons instead of reusing", async () => {
+    const id = randomUUID().replaceAll("-", "").slice(0, 8);
+    const polysemousWord = `zpoly${id}`;
+
+    // "banco" exists in a prior lesson with translation "bank"
+    const priorLesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `Prior Lesson ${randomUUID()}`,
+    });
+
+    const existingWord = await prisma.word.create({
+      data: {
+        organizationId,
+        targetLanguage: "es",
+        word: polysemousWord,
+      },
+    });
+
+    await prisma.lessonWord.create({
+      data: {
+        lessonId: priorLesson.id,
+        translation: "bank",
+        userLanguage: "en",
+        wordId: existingWord.id,
+      },
+    });
+
+    vi.mocked(generateActivitySentences).mockResolvedValueOnce(
+      createSentenceGenerationResult([
+        {
+          explanation: null,
+          sentence: `${polysemousWord} grande`,
+          translation: "big bench",
+        },
+      ]),
+    );
+
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `Reading Polysemy ${randomUUID()}`,
+    });
+
+    await activityFixture({
+      generationStatus: "pending",
+      kind: "reading",
+      language: "en",
+      lessonId: lesson.id,
+      organizationId,
+      title: `Reading ${randomUUID()}`,
+    });
+
+    const activities = await fetchLessonActivities(lesson.id);
+    await readingActivityWorkflow({
+      activitiesToGenerate: activities,
+      allActivities: activities,
+      concepts: [],
+      neighboringConcepts: [],
+      words,
+      workflowRunId: "test-run-id",
+    });
+
+    // Should call generateTranslation for the polysemous word even though
+    // it already has a translation in another lesson. Each lesson needs
+    // its own translation because the same word can mean different things
+    // in different contexts (e.g. "banco" = "bank" vs "bench").
+    expect(generateTranslation).toHaveBeenCalledWith(
+      expect.objectContaining({ word: polysemousWord }),
+    );
   });
 });

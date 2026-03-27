@@ -384,4 +384,22 @@ describe(generateWordPronunciationAndAlternatives, () => {
     // No translation provided → alternatives skipped
     expect(generateWordAlternativeTranslations).not.toHaveBeenCalled();
   });
+
+  test("skips pronunciation AI for words that have WordPronunciation but no LessonWord in the current lesson", async () => {
+    const word = await wordFixture({ organizationId });
+
+    // Word has pronunciation from a prior lesson but no LessonWord in this lesson
+    await createWordPronunciation({ pronunciation: "BAHN-koh", wordId: word.id });
+
+    await generateWordPronunciationAndAlternatives({
+      lessonId,
+      organizationId,
+      targetLanguage: "es",
+      userLanguage: "en",
+      words: [{ translation: "bank", word: word.word }],
+    });
+
+    // Pronunciation already exists in WordPronunciation — should NOT regenerate via AI
+    expect(generateActivityPronunciation).not.toHaveBeenCalled();
+  });
 });
