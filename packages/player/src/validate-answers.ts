@@ -28,7 +28,7 @@ type SelectedAnswer =
 /**
  * Step data for server-side validation. Translations live directly
  * on LessonWord/LessonSentence rather than in a separate translation
- * table, so sentence carries flat translation and alternativeTranslations
+ * table, so sentence carries flat translation and distractorUnsafeTranslations
  * fields.
  */
 type StepData = {
@@ -39,9 +39,9 @@ type StepData = {
   sentence?: {
     id: bigint;
     sentence: string;
-    alternativeSentences?: string[];
+    distractorUnsafeSentences?: string[];
     translation: string;
-    alternativeTranslations: string[];
+    distractorUnsafeTranslations: string[];
   } | null;
 };
 
@@ -135,10 +135,7 @@ function validateReading(step: StepData, answer: SelectedAnswer): ValidatedStepR
     return null;
   }
 
-  const acceptedWordSequences = buildAcceptedArrangeWordSequences(
-    step.sentence.sentence,
-    step.sentence.alternativeSentences ?? [],
-  );
+  const acceptedWordSequences = buildAcceptedArrangeWordSequences(step.sentence.sentence, []);
   const result = checkArrangeWordsAnswer(acceptedWordSequences, answer.arrangedWords);
   return { answer, effects: [], isCorrect: result.isCorrect, stepId: step.id };
 }
@@ -152,10 +149,7 @@ function validateListening(step: StepData, answer: SelectedAnswer): ValidatedSte
     return null;
   }
 
-  const acceptedWordSequences = buildAcceptedArrangeWordSequences(
-    step.sentence.translation,
-    step.sentence.alternativeTranslations,
-  );
+  const acceptedWordSequences = buildAcceptedArrangeWordSequences(step.sentence.translation, []);
   const result = checkArrangeWordsAnswer(acceptedWordSequences, answer.arrangedWords);
   return { answer, effects: [], isCorrect: result.isCorrect, stepId: step.id };
 }

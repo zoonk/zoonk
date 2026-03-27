@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { generateActivityExplanation } from "@zoonk/ai/tasks/activities/core/explanation";
 import { generateActivityGrammarContent } from "@zoonk/ai/tasks/activities/language/grammar-content";
-import { generateActivitySentenceVariants } from "@zoonk/ai/tasks/activities/language/sentence-variants";
+import { generateActivitySentenceDistractorUnsafeVariants } from "@zoonk/ai/tasks/activities/language/sentence-distractor-unsafe-variants";
 import { generateActivitySentences } from "@zoonk/ai/tasks/activities/language/sentences";
 import { generateActivityVocabulary } from "@zoonk/ai/tasks/activities/language/vocabulary";
 import { generateLanguageAudio } from "@zoonk/core/audio/generate";
@@ -123,12 +123,12 @@ vi.mock("@zoonk/ai/tasks/activities/language/sentences", () => ({
   }),
 }));
 
-vi.mock("@zoonk/ai/tasks/activities/language/sentence-variants", () => ({
-  generateActivitySentenceVariants: vi.fn().mockResolvedValue({
+vi.mock("@zoonk/ai/tasks/activities/language/sentence-distractor-unsafe-variants", () => ({
+  generateActivitySentenceDistractorUnsafeVariants: vi.fn().mockResolvedValue({
     data: {
       sentences: [
-        { alternativeSentences: [], alternativeTranslations: [], id: "0" },
-        { alternativeSentences: [], alternativeTranslations: [], id: "1" },
+        { distractorUnsafeSentences: [], distractorUnsafeTranslations: [], id: "0" },
+        { distractorUnsafeSentences: [], distractorUnsafeTranslations: [], id: "1" },
       ],
     },
   }),
@@ -146,9 +146,9 @@ vi.mock("@zoonk/ai/tasks/activities/language/pronunciation", () => ({
   }),
 }));
 
-vi.mock("@zoonk/ai/tasks/activities/language/word-alternative-translations", () => ({
-  generateWordAlternativeTranslations: vi.fn().mockResolvedValue({
-    data: { alternativeTranslations: [] },
+vi.mock("@zoonk/ai/tasks/activities/language/word-distractor-unsafe-translations", () => ({
+  generateWordDistractorUnsafeTranslations: vi.fn().mockResolvedValue({
+    data: { distractorUnsafeTranslations: [] },
   }),
 }));
 
@@ -350,7 +350,7 @@ describe("language activity generation", () => {
       userLanguage: "en",
       words: expectedWords,
     });
-    expect(generateActivitySentenceVariants).toHaveBeenCalledWith({
+    expect(generateActivitySentenceDistractorUnsafeVariants).toHaveBeenCalledWith({
       chapterTitle: chapter.title,
       lessonDescription: testLesson.description ?? undefined,
       lessonTitle: testLesson.title,
@@ -536,7 +536,7 @@ describe("language activity generation", () => {
     });
 
     expect(dbActivity?.generationStatus).toBe("failed");
-    expect(generateActivitySentenceVariants).not.toHaveBeenCalled();
+    expect(generateActivitySentenceDistractorUnsafeVariants).not.toHaveBeenCalled();
   });
 
   test("reading completes without audio when audio generation fails", async () => {
@@ -776,7 +776,7 @@ describe("language activity generation", () => {
     await activityGenerationWorkflow(testLesson.id);
 
     expect(generateActivitySentences).not.toHaveBeenCalled();
-    expect(generateActivitySentenceVariants).not.toHaveBeenCalled();
+    expect(generateActivitySentenceDistractorUnsafeVariants).not.toHaveBeenCalled();
 
     const listeningSteps = await prisma.step.findMany({
       orderBy: { position: "asc" },

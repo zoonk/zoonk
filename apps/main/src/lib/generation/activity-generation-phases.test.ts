@@ -69,7 +69,7 @@ describe("listening phase status", () => {
       [
         "getLessonActivities",
         "generateVocabularyContent",
-        "generateVocabularyPronunciationAndAlternatives",
+        "generateVocabularyPronunciationAndDistractorUnsafes",
         "generateVocabularyAudio",
         "saveVocabularyActivity",
         "generateGrammarContent",

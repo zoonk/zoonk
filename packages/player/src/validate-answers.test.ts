@@ -171,8 +171,8 @@ describe(validateAnswers, () => {
         id: 5n,
         kind: "reading",
         sentence: {
-          alternativeSentences: [],
-          alternativeTranslations: [],
+          distractorUnsafeSentences: [],
+          distractorUnsafeTranslations: [],
           id: 1n,
           sentence: "hello world",
           translation: "olá mundo",
@@ -195,8 +195,8 @@ describe(validateAnswers, () => {
         id: 6n,
         kind: "listening",
         sentence: {
-          alternativeSentences: [],
-          alternativeTranslations: [],
+          distractorUnsafeSentences: [],
+          distractorUnsafeTranslations: [],
           id: 1n,
           sentence: "hello world",
           translation: "olá mundo",
@@ -212,15 +212,15 @@ describe(validateAnswers, () => {
     expect(results[0]?.isCorrect).toBe(true);
   });
 
-  test("accepts an alternative reading answer", () => {
+  test("rejects distractor-only reading variants as answers", () => {
     const steps = [
       {
         content: {},
         id: 7n,
         kind: "reading",
         sentence: {
-          alternativeSentences: ["guten morgen lara"],
-          alternativeTranslations: [],
+          distractorUnsafeSentences: ["guten morgen lara"],
+          distractorUnsafeTranslations: [],
           id: 1n,
           sentence: "guten tag lara",
           translation: "bom dia lara",
@@ -233,7 +233,31 @@ describe(validateAnswers, () => {
     });
 
     expect(results).toHaveLength(1);
-    expect(results[0]?.isCorrect).toBe(true);
+    expect(results[0]?.isCorrect).toBe(false);
+  });
+
+  test("rejects distractor-only listening variants as answers", () => {
+    const steps = [
+      {
+        content: {},
+        id: 10n,
+        kind: "listening",
+        sentence: {
+          distractorUnsafeSentences: [],
+          distractorUnsafeTranslations: ["bom dia lara"],
+          id: 1n,
+          sentence: "guten tag lara",
+          translation: "boa tarde lara",
+        },
+      },
+    ];
+
+    const results = validateAnswers(steps, {
+      "10": { arrangedWords: ["bom", "dia", "lara"], kind: "listening" },
+    });
+
+    expect(results).toHaveLength(1);
+    expect(results[0]?.isCorrect).toBe(false);
   });
 
   test("accepts punctuation-insensitive listening answers", () => {
@@ -243,8 +267,8 @@ describe(validateAnswers, () => {
         id: 8n,
         kind: "listening",
         sentence: {
-          alternativeSentences: [],
-          alternativeTranslations: [],
+          distractorUnsafeSentences: [],
+          distractorUnsafeTranslations: [],
           id: 1n,
           sentence: "hello lara",
           translation: "bom dia, lara!",

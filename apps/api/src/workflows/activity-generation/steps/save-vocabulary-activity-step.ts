@@ -27,7 +27,7 @@ import { handleActivityFailureStep } from "./handle-failure-step";
  */
 export async function saveVocabularyActivityStep(params: {
   activities: LessonActivity[];
-  alternatives: Record<string, string[]>;
+  distractorUnsafeTranslations: Record<string, string[]>;
   pronunciations: Record<string, string>;
   romanizations: Record<string, string>;
   wordAudioUrls: Record<string, string>;
@@ -38,7 +38,7 @@ export async function saveVocabularyActivityStep(params: {
 
   const {
     activities,
-    alternatives,
+    distractorUnsafeTranslations,
     pronunciations,
     romanizations,
     wordAudioUrls,
@@ -82,7 +82,7 @@ export async function saveVocabularyActivityStep(params: {
     Promise.all(
       words.map((vocabWord, position) =>
         saveOneVocabularyWord({
-          alternatives,
+          distractorUnsafeTranslations,
           existingCasing,
           lessonId: vocabularyActivity.lessonId,
           organizationId,
@@ -140,7 +140,7 @@ export async function saveVocabularyActivityStep(params: {
  * lesson-scoped translation, and vocabulary/translation `Step` records.
  */
 async function saveOneVocabularyWord(params: {
-  alternatives: Record<string, string[]>;
+  distractorUnsafeTranslations: Record<string, string[]>;
   existingCasing: Record<string, string>;
   lessonId: number;
   organizationId: number;
@@ -155,7 +155,7 @@ async function saveOneVocabularyWord(params: {
   wordAudioUrls: Record<string, string>;
 }): Promise<void> {
   const {
-    alternatives,
+    distractorUnsafeTranslations,
     existingCasing,
     lessonId,
     organizationId,
@@ -175,7 +175,7 @@ async function saveOneVocabularyWord(params: {
   const audioUrl = wordAudioUrls[vocabWord.word] ?? null;
   const romanization = romanizations[vocabWord.word] ?? null;
   const pronunciation = pronunciations[vocabWord.word] ?? null;
-  const alternativeTranslations = alternatives[vocabWord.word] ?? [];
+  const wordDistractorUnsafeTranslations = distractorUnsafeTranslations[vocabWord.word] ?? [];
 
   const record = await prisma.word.upsert({
     create: {
@@ -206,14 +206,16 @@ async function saveOneVocabularyWord(params: {
 
   await prisma.lessonWord.upsert({
     create: {
-      alternativeTranslations,
+      distractorUnsafeTranslations: wordDistractorUnsafeTranslations,
       lessonId,
       translation,
       userLanguage,
       wordId,
     },
     update: {
-      ...(alternativeTranslations.length > 0 ? { alternativeTranslations } : {}),
+      ...(wordDistractorUnsafeTranslations.length > 0
+        ? { distractorUnsafeTranslations: wordDistractorUnsafeTranslations }
+        : {}),
       translation,
     },
     where: { lessonWord: { lessonId, wordId } },

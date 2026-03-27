@@ -5,7 +5,7 @@ import { findActivityByKind } from "../steps/_utils/find-activity-by-kind";
 import { generateReadingAudioStep } from "../steps/generate-reading-audio-step";
 import { generateReadingContentStep } from "../steps/generate-reading-content-step";
 import { generateReadingRomanizationStep } from "../steps/generate-reading-romanization-step";
-import { generateSentencePronunciationAndAlternativesStep } from "../steps/generate-sentence-pronunciation-and-alternatives-step";
+import { generateSentencePronunciationAndDistractorUnsafesStep } from "../steps/generate-sentence-pronunciation-and-distractor-unsafes-step";
 import { generateSentenceWordAudioStep } from "../steps/generate-sentence-word-audio-step";
 import { generateSentenceWordMetadataStep } from "../steps/generate-sentence-word-metadata-step";
 import { type LessonActivity } from "../steps/get-lesson-activities-step";
@@ -67,18 +67,18 @@ export async function readingActivityWorkflow({
 
   const [wordAudioResult, wordPronunciationResult] = await Promise.allSettled([
     generateSentenceWordAudioStep(activitiesToGenerate, sentenceWords),
-    generateSentencePronunciationAndAlternativesStep(activitiesToGenerate, sentenceWords),
+    generateSentencePronunciationAndDistractorUnsafesStep(activitiesToGenerate, sentenceWords),
   ]);
 
   const { wordAudioUrls } = settled(wordAudioResult, { wordAudioUrls: {} });
-  const { alternatives, pronunciations } = settled(wordPronunciationResult, {
-    alternatives: {},
+  const { distractorUnsafeTranslations, pronunciations } = settled(wordPronunciationResult, {
+    distractorUnsafeTranslations: {},
     pronunciations: {},
   });
 
   await saveReadingActivityStep({
     activities: allActivities,
-    alternatives,
+    distractorUnsafeTranslations,
     pronunciations,
     sentenceAudioUrls,
     sentenceRomanizations,

@@ -1,0 +1,265 @@
+{
+  "modelId": "anthropic/claude-opus-4.6",
+  "results": [
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response likely misses at least one valid alternative translation in Brazilian Portuguese, such as \"Bom dia, Ana!\", since Anna/Ana is commonly accepted as the same name in Portuguese contexts and the task prioritizes completeness. However, the expectations specifically say not to penalize for including or omitting \"Guten Tag, Anna!\" on the German side, and there are no invented variants, language-direction mistakes, duplicates, or punctuation-only variants.",
+          "kind": "minorErrors",
+          "score": 8.2
+        },
+        {
+          "conclusion": "It could be improved by adding obvious learner-acceptable variants if intended by the app, especially Brazilian Portuguese name adaptation like \"Bom dia, Ana!\" and possibly contracted or equally natural greeting/name forms if accepted by native teachers. Still, returning empty arrays is conservative and avoids invalid variants.",
+          "kind": "potentialImprovements",
+          "score": 8.4
+        }
+      ],
+      "testCase": {
+        "expectations": "\nTARGET LANGUAGE: German\nUSER LANGUAGE: Brazilian Portuguese\n\nCANONICAL PAIR:\n- sentence: \"Guten Morgen, Anna!\"\n- translation: \"Bom dia, Anna!\"\n\nEXPECTED BEHAVIOR:\n- The model may include \"Guten Tag, Anna!\" in `distractorUnsafeSentences` from general linguistic knowledge (both \"Guten Morgen\" and \"Guten Tag\" can mean \"Bom dia\"). Do NOT penalize for including or omitting it.\n- Penalize if the model includes invalid variants (e.g., register shifts, punctuation-only changes)\n\n\nCONTEXT: This task predicts correct answers learners might give. The primary goal is to avoid telling learners their correct answer is wrong. Missing a valid variant is worse than including a borderline one. The decision test is: \"If a learner said this, would I understand what they mean and consider it correct?\"\n\nEVALUATION CRITERIA:\n\n1. COMPLETENESS (CRITICAL - highest priority):\n   - The model must catch valid variants that a native speaker would understand as correct\n   - Penalize if the model misses obvious valid alternatives (greeting overlaps, pronoun drops, contractions, aspect-equivalent forms, kinship synonyms)\n   - Missing a valid variant means a learner gets incorrectly told their answer is wrong\n\n2. NO INVENTED VARIANTS:\n   - Penalize if the model includes paraphrases that change the core meaning\n   - Penalize if the model includes variants that significantly shift formality or register (e.g., \"Hello\" → \"Hey\")\n   - Do NOT penalize for borderline-valid synonyms that a native speaker would understand\n\n3. CORRECT DIRECTION:\n   - `distractorUnsafeSentences` must be in TARGET_LANGUAGE\n   - `distractorUnsafeTranslations` must be in USER_LANGUAGE\n   - Penalize if the languages are swapped or mixed\n\n4. NO CANONICAL DUPLICATES:\n   - The canonical sentence or translation must not appear again in the alternative arrays\n\n5. NO PUNCTUATION-ONLY OR CASING-ONLY VARIANTS:\n   - The app already ignores punctuation and case\n\n6. NO TRANSITIVE OVERLAP:\n   - Penalize if the model uses translation overlap transitively\n   - Accept directional asymmetry when only one side has a valid alternative\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT require exact wording if a variant is genuinely equivalent\n- Do NOT penalize for choosing one acceptable canonical answer over another\n- Do NOT penalize for including kinship synonyms (Mom/Mama/Momma/Mommy, Dad/Daddy/Papa) — if a learner says it, we understand what they mean\n- FOCUS ON: completeness, ambiguity detection, correct language direction, and avoiding invented variants\n\n    ",
+        "id": "pt-de-bom-dia-greeting-1",
+        "userInput": {
+          "chapterTitle": "Saudações básicas",
+          "lessonDescription": "Cumprimente pessoas em diferentes momentos do dia.",
+          "lessonTitle": "Saudações",
+          "sentences": [
+            {
+              "id": "0",
+              "sentence": "Guten Morgen, Anna!",
+              "translation": "Bom dia, Anna!"
+            }
+          ],
+          "targetLanguage": "de",
+          "userLanguage": "pt"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response is directionally correct, preserves the canonical pair, avoids duplicates, and includes a valid Brazilian Portuguese kinship synonym ('Boa noite, mamãe.'). A minor gap is completeness: given the task's preference to include every understandable correct variant, it could also have included another common accepted BP variant such as 'Boa noite, mãezinha.'. However, the expectations explicitly say not to penalize for including or omitting certain greeting-side variants, and the provided output does not introduce any incorrect alternatives.",
+          "kind": "minorErrors",
+          "score": 8.8
+        },
+        {
+          "conclusion": "The answer could be improved by being more exhaustive with learner-acceptable Brazilian Portuguese kinship synonyms (for example, additional common equivalents of 'mãe'). It might also have considered the German-side greeting overlap if judged acceptable, though omission of that specific variant should not be penalized per the expectations.",
+          "kind": "potentialImprovements",
+          "score": 8.7
+        }
+      ],
+      "testCase": {
+        "expectations": "\nTARGET LANGUAGE: German\nUSER LANGUAGE: Brazilian Portuguese\n\nCANONICAL PAIR:\n- sentence: \"Gute Nacht, Mama.\"\n- translation: \"Boa noite, mãe.\"\n\nEXPECTED BEHAVIOR:\n- The model may include \"Guten Abend, Mama.\" in `distractorUnsafeSentences` from general linguistic knowledge (both \"Gute Nacht\" and \"Guten Abend\" can mean \"Boa noite\"). Do NOT penalize for including or omitting it.\n- `distractorUnsafeTranslations` may include kinship synonyms like \"Boa noite, mamãe.\" or \"Boa noite, mãezinha.\" — if a learner says \"mamãe\" or \"mãezinha\" instead of \"mãe\", we understand they mean the same person. Do NOT penalize for including these.\n\n\nCONTEXT: This task predicts correct answers learners might give. The primary goal is to avoid telling learners their correct answer is wrong. Missing a valid variant is worse than including a borderline one. The decision test is: \"If a learner said this, would I understand what they mean and consider it correct?\"\n\nEVALUATION CRITERIA:\n\n1. COMPLETENESS (CRITICAL - highest priority):\n   - The model must catch valid variants that a native speaker would understand as correct\n   - Penalize if the model misses obvious valid alternatives (greeting overlaps, pronoun drops, contractions, aspect-equivalent forms, kinship synonyms)\n   - Missing a valid variant means a learner gets incorrectly told their answer is wrong\n\n2. NO INVENTED VARIANTS:\n   - Penalize if the model includes paraphrases that change the core meaning\n   - Penalize if the model includes variants that significantly shift formality or register (e.g., \"Hello\" → \"Hey\")\n   - Do NOT penalize for borderline-valid synonyms that a native speaker would understand\n\n3. CORRECT DIRECTION:\n   - `distractorUnsafeSentences` must be in TARGET_LANGUAGE\n   - `distractorUnsafeTranslations` must be in USER_LANGUAGE\n   - Penalize if the languages are swapped or mixed\n\n4. NO CANONICAL DUPLICATES:\n   - The canonical sentence or translation must not appear again in the alternative arrays\n\n5. NO PUNCTUATION-ONLY OR CASING-ONLY VARIANTS:\n   - The app already ignores punctuation and case\n\n6. NO TRANSITIVE OVERLAP:\n   - Penalize if the model uses translation overlap transitively\n   - Accept directional asymmetry when only one side has a valid alternative\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT require exact wording if a variant is genuinely equivalent\n- Do NOT penalize for choosing one acceptable canonical answer over another\n- Do NOT penalize for including kinship synonyms (Mom/Mama/Momma/Mommy, Dad/Daddy/Papa) — if a learner says it, we understand what they mean\n- FOCUS ON: completeness, ambiguity detection, correct language direction, and avoiding invented variants\n\n    ",
+        "id": "pt-de-boa-noite-greeting-1",
+        "userInput": {
+          "chapterTitle": "Saudações básicas",
+          "lessonDescription": "Use cumprimentos em situações cotidianas.",
+          "lessonTitle": "Saudações",
+          "sentences": [
+            {
+              "id": "0",
+              "sentence": "Gute Nacht, Mama.",
+              "translation": "Boa noite, mãe."
+            }
+          ],
+          "targetLanguage": "de",
+          "userLanguage": "pt"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None. The response keeps distractorUnsafeSentences empty, which correctly avoids the major transitive-overlap error of adding a different German greeting such as \"Guten Morgen, Herr Weber.\" The variant provided is in the correct language direction (Brazilian Portuguese), does not repeat the canonical translation, and is a plausible accepted translation of \"Guten Tag\" per the task expectations.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None. No concrete minor errors found. The output is structurally correct, uses the correct id, and the single alternative translation is acceptable under the stated expectations. It also avoids punctuation-only variants and does not mix languages.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Could be slightly more complete by also including other acceptable Brazilian Portuguese variants such as informal address forms with \"seu\" (for example, \"Boa tarde, seu Weber.\" and possibly \"Bom dia, seu Weber.\"). However, the expectations explicitly say not to penalize for including or omitting these, so this is only an optional completeness improvement rather than an error.",
+          "kind": "potentialImprovements",
+          "score": 9.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\nTARGET LANGUAGE: German\nUSER LANGUAGE: Brazilian Portuguese\n\nCANONICAL PAIR:\n- sentence: \"Guten Tag, Herr Weber.\"\n- translation: \"Boa tarde, senhor Weber.\"\n\nEXPECTED BEHAVIOR:\n- `distractorUnsafeSentences` should stay empty — do NOT include \"Guten Morgen, Herr Weber.\" (transitive overlap is invalid)\n- The model may include \"Bom dia, senhor Weber.\" in `distractorUnsafeTranslations` from general linguistic knowledge (\"Guten Tag\" can also mean \"Bom dia\"). Do NOT penalize for including or omitting it.\n- `distractorUnsafeTranslations` may include variants with \"seu\" instead of \"senhor\" (e.g., \"Boa tarde, seu Weber.\") — \"seu\" is a common informal form of \"senhor\" in Brazilian Portuguese and if a learner says it, we understand what they mean. Do NOT penalize for including these.\n- Penalize if the model treats translation overlap transitively (e.g., because \"Guten Tag\" can mean \"Bom dia\" and \"Guten Morgen\" also means \"Bom dia\", incorrectly concluding \"Guten Morgen\" is valid for \"Boa tarde\")\n\n\nCONTEXT: This task predicts correct answers learners might give. The primary goal is to avoid telling learners their correct answer is wrong. Missing a valid variant is worse than including a borderline one. The decision test is: \"If a learner said this, would I understand what they mean and consider it correct?\"\n\nEVALUATION CRITERIA:\n\n1. COMPLETENESS (CRITICAL - highest priority):\n   - The model must catch valid variants that a native speaker would understand as correct\n   - Penalize if the model misses obvious valid alternatives (greeting overlaps, pronoun drops, contractions, aspect-equivalent forms, kinship synonyms)\n   - Missing a valid variant means a learner gets incorrectly told their answer is wrong\n\n2. NO INVENTED VARIANTS:\n   - Penalize if the model includes paraphrases that change the core meaning\n   - Penalize if the model includes variants that significantly shift formality or register (e.g., \"Hello\" → \"Hey\")\n   - Do NOT penalize for borderline-valid synonyms that a native speaker would understand\n\n3. CORRECT DIRECTION:\n   - `distractorUnsafeSentences` must be in TARGET_LANGUAGE\n   - `distractorUnsafeTranslations` must be in USER_LANGUAGE\n   - Penalize if the languages are swapped or mixed\n\n4. NO CANONICAL DUPLICATES:\n   - The canonical sentence or translation must not appear again in the alternative arrays\n\n5. NO PUNCTUATION-ONLY OR CASING-ONLY VARIANTS:\n   - The app already ignores punctuation and case\n\n6. NO TRANSITIVE OVERLAP:\n   - Penalize if the model uses translation overlap transitively\n   - Accept directional asymmetry when only one side has a valid alternative\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT require exact wording if a variant is genuinely equivalent\n- Do NOT penalize for choosing one acceptable canonical answer over another\n- Do NOT penalize for including kinship synonyms (Mom/Mama/Momma/Mommy, Dad/Daddy/Papa) — if a learner says it, we understand what they mean\n- FOCUS ON: completeness, ambiguity detection, correct language direction, and avoiding invented variants\n\n    ",
+        "id": "pt-de-boa-tarde-nontransitive-overlap-1",
+        "userInput": {
+          "chapterTitle": "Cumprimentos iniciais",
+          "lessonDescription": "Cumprimente pessoas em momentos diferentes do dia.",
+          "lessonTitle": "Saudações formais",
+          "sentences": [
+            {
+              "id": "0",
+              "sentence": "Guten Tag, Herr Weber.",
+              "translation": "Boa tarde, senhor Weber."
+            }
+          ],
+          "targetLanguage": "de",
+          "userLanguage": "pt"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response includes \"My name is Lara.\" as an alternative translation for \"Yo soy Lara.\" While understandable in context, this is a looser reformulation rather than a strict equivalent of the canonical prompt, and the task asked for strict accepted variants. The expected behavior specifically highlighted the contraction \"I'm Lara.\" and optional pronoun drop, not this paraphrastic introduction formula.",
+          "kind": "minorErrors",
+          "score": 8.4
+        },
+        {
+          "conclusion": "The response correctly includes the key valid variants \"Soy Lara.\" and \"I'm Lara.\" To improve, it should avoid borderline paraphrases like \"My name is Lara.\" unless the task explicitly allows that level of flexibility for this pair. Otherwise, the output is complete and in the correct format/direction.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\nTARGET LANGUAGE: Spanish\nUSER LANGUAGE: English\n\nCANONICAL PAIR:\n- sentence: \"Yo soy Lara.\"\n- translation: \"I am Lara.\"\n\nEXPECTED BEHAVIOR:\n- `distractorUnsafeSentences` should include \"Soy Lara.\"\n- `distractorUnsafeTranslations` should include \"I'm Lara.\"\n- Penalize if the model misses optional pronouns or standard contractions\n\n\nCONTEXT: This task predicts correct answers learners might give. The primary goal is to avoid telling learners their correct answer is wrong. Missing a valid variant is worse than including a borderline one. The decision test is: \"If a learner said this, would I understand what they mean and consider it correct?\"\n\nEVALUATION CRITERIA:\n\n1. COMPLETENESS (CRITICAL - highest priority):\n   - The model must catch valid variants that a native speaker would understand as correct\n   - Penalize if the model misses obvious valid alternatives (greeting overlaps, pronoun drops, contractions, aspect-equivalent forms, kinship synonyms)\n   - Missing a valid variant means a learner gets incorrectly told their answer is wrong\n\n2. NO INVENTED VARIANTS:\n   - Penalize if the model includes paraphrases that change the core meaning\n   - Penalize if the model includes variants that significantly shift formality or register (e.g., \"Hello\" → \"Hey\")\n   - Do NOT penalize for borderline-valid synonyms that a native speaker would understand\n\n3. CORRECT DIRECTION:\n   - `distractorUnsafeSentences` must be in TARGET_LANGUAGE\n   - `distractorUnsafeTranslations` must be in USER_LANGUAGE\n   - Penalize if the languages are swapped or mixed\n\n4. NO CANONICAL DUPLICATES:\n   - The canonical sentence or translation must not appear again in the alternative arrays\n\n5. NO PUNCTUATION-ONLY OR CASING-ONLY VARIANTS:\n   - The app already ignores punctuation and case\n\n6. NO TRANSITIVE OVERLAP:\n   - Penalize if the model uses translation overlap transitively\n   - Accept directional asymmetry when only one side has a valid alternative\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT require exact wording if a variant is genuinely equivalent\n- Do NOT penalize for choosing one acceptable canonical answer over another\n- Do NOT penalize for including kinship synonyms (Mom/Mama/Momma/Mommy, Dad/Daddy/Papa) — if a learner says it, we understand what they mean\n- FOCUS ON: completeness, ambiguity detection, correct language direction, and avoiding invented variants\n\n    ",
+        "id": "en-es-pronoun-and-contraction-1",
+        "userInput": {
+          "chapterTitle": "Introductions",
+          "lessonDescription": "Introduce yourself with very simple sentences.",
+          "lessonTitle": "Names and Introductions",
+          "sentences": [
+            {
+              "id": "0",
+              "sentence": "Yo soy Lara.",
+              "translation": "I am Lara."
+            }
+          ],
+          "targetLanguage": "es",
+          "userLanguage": "en"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\nTARGET LANGUAGE: Spanish\nUSER LANGUAGE: English\n\nCANONICAL PAIR:\n- sentence: \"El gato duerme.\"\n- translation: \"The cat sleeps.\"\n\nEXPECTED BEHAVIOR:\n- `distractorUnsafeTranslations` should include \"The cat is sleeping.\" — both \"sleeps\" and \"is sleeping\" are valid English translations of the present-tense Spanish verb \"duerme\"\n- Do NOT penalize the model for including this aspect-equivalent variant\n- Penalize if the model includes unrelated paraphrases beyond aspect-equivalent forms\n\n\nCONTEXT: This task predicts correct answers learners might give. The primary goal is to avoid telling learners their correct answer is wrong. Missing a valid variant is worse than including a borderline one. The decision test is: \"If a learner said this, would I understand what they mean and consider it correct?\"\n\nEVALUATION CRITERIA:\n\n1. COMPLETENESS (CRITICAL - highest priority):\n   - The model must catch valid variants that a native speaker would understand as correct\n   - Penalize if the model misses obvious valid alternatives (greeting overlaps, pronoun drops, contractions, aspect-equivalent forms, kinship synonyms)\n   - Missing a valid variant means a learner gets incorrectly told their answer is wrong\n\n2. NO INVENTED VARIANTS:\n   - Penalize if the model includes paraphrases that change the core meaning\n   - Penalize if the model includes variants that significantly shift formality or register (e.g., \"Hello\" → \"Hey\")\n   - Do NOT penalize for borderline-valid synonyms that a native speaker would understand\n\n3. CORRECT DIRECTION:\n   - `distractorUnsafeSentences` must be in TARGET_LANGUAGE\n   - `distractorUnsafeTranslations` must be in USER_LANGUAGE\n   - Penalize if the languages are swapped or mixed\n\n4. NO CANONICAL DUPLICATES:\n   - The canonical sentence or translation must not appear again in the alternative arrays\n\n5. NO PUNCTUATION-ONLY OR CASING-ONLY VARIANTS:\n   - The app already ignores punctuation and case\n\n6. NO TRANSITIVE OVERLAP:\n   - Penalize if the model uses translation overlap transitively\n   - Accept directional asymmetry when only one side has a valid alternative\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT require exact wording if a variant is genuinely equivalent\n- Do NOT penalize for choosing one acceptable canonical answer over another\n- Do NOT penalize for including kinship synonyms (Mom/Mama/Momma/Mommy, Dad/Daddy/Papa) — if a learner says it, we understand what they mean\n- FOCUS ON: completeness, ambiguity detection, correct language direction, and avoiding invented variants\n\n    ",
+        "id": "en-es-aspect-variant-1",
+        "userInput": {
+          "chapterTitle": "Animals",
+          "lessonDescription": "Learn simple animal sentences.",
+          "lessonTitle": "Pets",
+          "sentences": [
+            {
+              "id": "0",
+              "sentence": "El gato duerme.",
+              "translation": "The cat sleeps."
+            }
+          ],
+          "targetLanguage": "es",
+          "userLanguage": "en"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response misses at least one obvious valid TARGET_LANGUAGE variant: the pronoun-drop sentence alternative \"Guten Tag, bin Lara.\" should likely be accepted under the prompt's guidance to allow pronoun-drop variants where natural. Everything else is directionally correct, avoids canonical duplicates, and does not include forbidden general greetings like \"Oi/Olá\".",
+          "kind": "minorErrors",
+          "score": 8.4
+        },
+        {
+          "conclusion": "The answer is strong and mostly complete. Possible improvements: include a valid German alternative if acceptable in context (most plausibly a pronoun-drop variant), and potentially consider additional equally acceptable Portuguese contractions/variants if the app accepts them. The included Portuguese alternatives are good and appropriately capture the greeting ambiguity between \"Guten Tag\" and both \"Bom dia\"/\"Boa tarde\" while preserving meaning.",
+          "kind": "potentialImprovements",
+          "score": 8.8
+        }
+      ],
+      "testCase": {
+        "expectations": "\nTARGET LANGUAGE: German\nUSER LANGUAGE: Brazilian Portuguese\n\nCANONICAL PAIR:\n- sentence: \"Guten Tag, ich bin Lara.\"\n- translation: \"Bom dia, eu sou Lara.\"\n\nEXPECTED BEHAVIOR:\n- Do NOT include \"Oi, eu sou Lara.\" or \"Olá, eu sou Lara.\" in `distractorUnsafeTranslations` — \"Bom dia\" carries time-of-day meaning that \"Oi\"/\"Olá\" drop entirely, so this is a meaning change, not just a register shift\n- `distractorUnsafeTranslations` may include \"Boa tarde, eu sou Lara.\" or \"Boa tarde, sou Lara.\" — \"Guten Tag\" genuinely means both \"Bom dia\" and \"Boa tarde\" in Portuguese, so these are valid time-of-day greeting alternatives. Do NOT penalize for including these.\n- `distractorUnsafeSentences` may include pronoun-drop variants. Do NOT penalize for including them.\n\n\nCONTEXT: This task predicts correct answers learners might give. The primary goal is to avoid telling learners their correct answer is wrong. Missing a valid variant is worse than including a borderline one. The decision test is: \"If a learner said this, would I understand what they mean and consider it correct?\"\n\nEVALUATION CRITERIA:\n\n1. COMPLETENESS (CRITICAL - highest priority):\n   - The model must catch valid variants that a native speaker would understand as correct\n   - Penalize if the model misses obvious valid alternatives (greeting overlaps, pronoun drops, contractions, aspect-equivalent forms, kinship synonyms)\n   - Missing a valid variant means a learner gets incorrectly told their answer is wrong\n\n2. NO INVENTED VARIANTS:\n   - Penalize if the model includes paraphrases that change the core meaning\n   - Penalize if the model includes variants that significantly shift formality or register (e.g., \"Hello\" → \"Hey\")\n   - Do NOT penalize for borderline-valid synonyms that a native speaker would understand\n\n3. CORRECT DIRECTION:\n   - `distractorUnsafeSentences` must be in TARGET_LANGUAGE\n   - `distractorUnsafeTranslations` must be in USER_LANGUAGE\n   - Penalize if the languages are swapped or mixed\n\n4. NO CANONICAL DUPLICATES:\n   - The canonical sentence or translation must not appear again in the alternative arrays\n\n5. NO PUNCTUATION-ONLY OR CASING-ONLY VARIANTS:\n   - The app already ignores punctuation and case\n\n6. NO TRANSITIVE OVERLAP:\n   - Penalize if the model uses translation overlap transitively\n   - Accept directional asymmetry when only one side has a valid alternative\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT require exact wording if a variant is genuinely equivalent\n- Do NOT penalize for choosing one acceptable canonical answer over another\n- Do NOT penalize for including kinship synonyms (Mom/Mama/Momma/Mommy, Dad/Daddy/Papa) — if a learner says it, we understand what they mean\n- FOCUS ON: completeness, ambiguity detection, correct language direction, and avoiding invented variants\n\n    ",
+        "id": "pt-de-register-drift-1",
+        "userInput": {
+          "chapterTitle": "Introduções",
+          "lessonDescription": "Cumprimentos simples para conhecer alguém.",
+          "lessonTitle": "Apresentações",
+          "sentences": [
+            {
+              "id": "0",
+              "sentence": "Guten Tag, ich bin Lara.",
+              "translation": "Bom dia, eu sou Lara."
+            }
+          ],
+          "targetLanguage": "de",
+          "userLanguage": "pt"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "No clear minor errors. The output keeps the canonical sentence unchanged, uses correct language direction, avoids punctuation-only variants, and includes valid kinship synonyms in English. Including \"Good night, Ma.\" is somewhat more informal/dialectal than the examples, but it is still understandable as the same kinship reference and does not clearly violate the instructions.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "A small improvement would be to consider whether additional common kinship variants like \"Good night, Mommy.\" / \"Mama.\" / \"Momma.\" were included—they were. One could debate other edge variants, but no concrete required variant is missing based on the prompt and expectations.",
+          "kind": "potentialImprovements",
+          "score": 9.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\nTARGET LANGUAGE: German\nUSER LANGUAGE: English\n\nCANONICAL PAIR:\n- sentence: \"Gute Nacht, Mama.\"\n- translation: \"Good night, Mom.\"\n\nEXPECTED BEHAVIOR:\n- Do NOT include \"Gute Nacht Mama.\" as an alternative sentence (punctuation-only variant)\n- Do NOT include punctuation-only variants in either array\n- `distractorUnsafeTranslations` should include common kinship synonyms like \"Good night, Mama.\", \"Good night, Momma.\", or \"Good night, Mommy.\" — these are valid because if a learner says \"Mama\", \"Momma\", or \"Mommy\" instead of \"Mom\", we understand they mean the same person and their answer is correct\n- Do NOT penalize the model for including these kinship-synonym variants\n\n\nCONTEXT: This task predicts correct answers learners might give. The primary goal is to avoid telling learners their correct answer is wrong. Missing a valid variant is worse than including a borderline one. The decision test is: \"If a learner said this, would I understand what they mean and consider it correct?\"\n\nEVALUATION CRITERIA:\n\n1. COMPLETENESS (CRITICAL - highest priority):\n   - The model must catch valid variants that a native speaker would understand as correct\n   - Penalize if the model misses obvious valid alternatives (greeting overlaps, pronoun drops, contractions, aspect-equivalent forms, kinship synonyms)\n   - Missing a valid variant means a learner gets incorrectly told their answer is wrong\n\n2. NO INVENTED VARIANTS:\n   - Penalize if the model includes paraphrases that change the core meaning\n   - Penalize if the model includes variants that significantly shift formality or register (e.g., \"Hello\" → \"Hey\")\n   - Do NOT penalize for borderline-valid synonyms that a native speaker would understand\n\n3. CORRECT DIRECTION:\n   - `distractorUnsafeSentences` must be in TARGET_LANGUAGE\n   - `distractorUnsafeTranslations` must be in USER_LANGUAGE\n   - Penalize if the languages are swapped or mixed\n\n4. NO CANONICAL DUPLICATES:\n   - The canonical sentence or translation must not appear again in the alternative arrays\n\n5. NO PUNCTUATION-ONLY OR CASING-ONLY VARIANTS:\n   - The app already ignores punctuation and case\n\n6. NO TRANSITIVE OVERLAP:\n   - Penalize if the model uses translation overlap transitively\n   - Accept directional asymmetry when only one side has a valid alternative\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT require exact wording if a variant is genuinely equivalent\n- Do NOT penalize for choosing one acceptable canonical answer over another\n- Do NOT penalize for including kinship synonyms (Mom/Mama/Momma/Mommy, Dad/Daddy/Papa) — if a learner says it, we understand what they mean\n- FOCUS ON: completeness, ambiguity detection, correct language direction, and avoiding invented variants\n\n    ",
+        "id": "en-de-kinship-and-punctuation-variant-1",
+        "userInput": {
+          "chapterTitle": "Family greetings",
+          "lessonDescription": "Short bedtime and family expressions.",
+          "lessonTitle": "Bedtime phrases",
+          "sentences": [
+            {
+              "id": "0",
+              "sentence": "Gute Nacht, Mama.",
+              "translation": "Good night, Mom."
+            }
+          ],
+          "targetLanguage": "de",
+          "userLanguage": "en"
+        }
+      }
+    }
+  ],
+  "taskId": "activity-sentence-distractor-unsafe-variants"
+}

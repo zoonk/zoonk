@@ -20,18 +20,18 @@ type WordDataInput = {
   romanization: string | null;
   audioUrl: string | null;
   translation: string;
-  alternativeTranslations: string[];
+  distractorUnsafeTranslations: string[];
   pronunciation: string | null;
 };
 
 type SentenceDataInput = {
   id: bigint;
   sentence: string;
-  alternativeSentences: string[];
+  distractorUnsafeSentences: string[];
   romanization: string | null;
   audioUrl: string | null;
   translation: string;
-  alternativeTranslations: string[];
+  distractorUnsafeTranslations: string[];
   explanation: string | null;
 };
 
@@ -61,8 +61,8 @@ type StepWithTranslations = {
  */
 function toLessonWordInput(lessonWord: LessonWordWithRelations): WordDataInput {
   return {
-    alternativeTranslations: lessonWord.alternativeTranslations,
     audioUrl: lessonWord.word.audioUrl,
+    distractorUnsafeTranslations: lessonWord.distractorUnsafeTranslations,
     id: lessonWord.word.id,
     pronunciation: lessonWord.word.pronunciations[0]?.pronunciation ?? null,
     romanization: lessonWord.word.romanization,
@@ -88,9 +88,9 @@ export function toLessonWordInputs(lessonWords: LessonWordWithRelations[]): Word
  */
 function toLessonSentenceInput(lessonSentence: LessonSentenceWithRelations): SentenceDataInput {
   return {
-    alternativeSentences: lessonSentence.sentence.alternativeSentences,
-    alternativeTranslations: lessonSentence.alternativeTranslations,
     audioUrl: lessonSentence.sentence.audioUrl,
+    distractorUnsafeSentences: lessonSentence.sentence.distractorUnsafeSentences,
+    distractorUnsafeTranslations: lessonSentence.distractorUnsafeTranslations,
     explanation: lessonSentence.explanation,
     id: lessonSentence.sentence.id,
     romanization: lessonSentence.sentence.romanization,
@@ -164,8 +164,8 @@ function mergeWordWithTranslation(
   const lessonWord = wordMap.get(word.id);
 
   return {
-    alternativeTranslations: lessonWord?.alternativeTranslations ?? [],
     audioUrl: word.audioUrl,
+    distractorUnsafeTranslations: lessonWord?.distractorUnsafeTranslations ?? [],
     id: word.id,
     pronunciation: lessonWord?.word.pronunciations[0]?.pronunciation ?? null,
     romanization: word.romanization,
@@ -186,9 +186,9 @@ function mergeSentenceWithTranslation(
   const lessonSentence = sentenceMap.get(sentence.id);
 
   return {
-    alternativeSentences: sentence.alternativeSentences,
-    alternativeTranslations: lessonSentence?.alternativeTranslations ?? [],
     audioUrl: sentence.audioUrl,
+    distractorUnsafeSentences: sentence.distractorUnsafeSentences,
+    distractorUnsafeTranslations: lessonSentence?.distractorUnsafeTranslations ?? [],
     explanation: lessonSentence?.explanation ?? null,
     id: sentence.id,
     romanization: sentence.romanization,

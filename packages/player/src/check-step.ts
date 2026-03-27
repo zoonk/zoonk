@@ -101,10 +101,7 @@ function checkReadingStep(step: SerializedStep, answer: SelectedAnswer): CheckSt
   }
 
   const words = segmentWords(step.sentence.sentence);
-  const acceptedWordSequences = buildAcceptedArrangeWordSequences(
-    step.sentence.sentence,
-    step.sentence.alternativeSentences,
-  );
+  const acceptedWordSequences = buildAcceptedArrangeWordSequences(step.sentence.sentence, []);
   const result = checkArrangeWordsAnswer(acceptedWordSequences, answer.arrangedWords);
 
   return {
@@ -127,10 +124,7 @@ function checkListeningStep(step: SerializedStep, answer: SelectedAnswer): Check
   }
 
   const words = segmentWords(step.sentence.translation);
-  const acceptedWordSequences = buildAcceptedArrangeWordSequences(
-    step.sentence.translation,
-    step.sentence.alternativeTranslations,
-  );
+  const acceptedWordSequences = buildAcceptedArrangeWordSequences(step.sentence.translation, []);
   const result = checkArrangeWordsAnswer(acceptedWordSequences, answer.arrangedWords);
 
   return {

@@ -4,10 +4,10 @@ import {
   getAIResultErrorReason,
 } from "@/workflows/_shared/stream-status";
 import {
-  type ActivitySentenceVariantInput,
-  type ActivitySentenceVariantsSchema,
-  generateActivitySentenceVariants,
-} from "@zoonk/ai/tasks/activities/language/sentence-variants";
+  type ActivitySentenceDistractorUnsafeVariantInput,
+  type ActivitySentenceDistractorUnsafeVariantsSchema,
+  generateActivitySentenceDistractorUnsafeVariants,
+} from "@zoonk/ai/tasks/activities/language/sentence-distractor-unsafe-variants";
 import {
   type ActivitySentencesSchema,
   generateActivitySentences,
@@ -17,26 +17,26 @@ import { type ActivityStepName, type WorkflowErrorReason } from "@zoonk/core/wor
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import {
-  type VocabularyVariantWord,
-  mergeReadingSentenceVariants,
-} from "./_utils/merge-reading-sentence-variants";
+  type VocabularyDistractorUnsafeWord,
+  mergeReadingSentenceDistractorUnsafeVariants,
+} from "./_utils/merge-reading-sentence-distractor-unsafe-variants";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
 
 type GeneratedReadingSentence = ActivitySentencesSchema["sentences"][number];
-type AuditedReadingSentence = ActivitySentenceVariantsSchema["sentences"][number];
+type AuditedReadingSentence = ActivitySentenceDistractorUnsafeVariantsSchema["sentences"][number];
 
 export type ReadingSentence = GeneratedReadingSentence & {
-  alternativeSentences: string[];
-  alternativeTranslations: string[];
+  distractorUnsafeSentences: string[];
+  distractorUnsafeTranslations: string[];
 };
 
 /**
- * Fetches lesson words with their `translation` and `alternativeTranslations`
+ * Fetches lesson words with their `translation` and `distractorUnsafeTranslations`
  * from the database. Used both as the source for sentence generation when
- * the current vocabulary run produced no words, and for sentence variant
- * derivation which needs the `alternativeTranslations` that the vocabulary
- * pronunciation-and-alternatives step already wrote to the DB.
+ * the current vocabulary run produced no words, and for sentence distractor
+ * derivation which needs the `distractorUnsafeTranslations` that the vocabulary
+ * pronunciation-and-distractor-unsafes step already wrote to the DB.
  *
  * Translations live on `LessonWord` (not a separate table) because the same
  * word can mean different things in different lessons — e.g. "banco" means
@@ -47,7 +47,7 @@ async function getLessonWords(params: {
   organizationId: number | null;
   targetLanguage: string;
   userLanguage: string;
-}): Promise<VocabularyVariantWord[]> {
+}): Promise<VocabularyDistractorUnsafeWord[]> {
   if (!params.organizationId) {
     return [];
   }
@@ -55,7 +55,7 @@ async function getLessonWords(params: {
   const words = await prisma.lessonWord.findMany({
     orderBy: { id: "asc" },
     select: {
-      alternativeTranslations: true,
+      distractorUnsafeTranslations: true,
       translation: true,
       word: {
         select: { word: true },
@@ -73,7 +73,7 @@ async function getLessonWords(params: {
   return words
     .filter((record) => record.translation)
     .map((record) => ({
-      alternativeTranslations: record.alternativeTranslations,
+      distractorUnsafeTranslations: record.distractorUnsafeTranslations,
       translation: record.translation,
       word: record.word.word,
     }));
@@ -85,9 +85,9 @@ function hasValidSentences(sentences: ReadingSentence[]): boolean {
   );
 }
 
-function createSentenceVariantInputs(
+function createSentenceDistractorUnsafeInputs(
   sentences: GeneratedReadingSentence[],
-): ActivitySentenceVariantInput[] {
+): ActivitySentenceDistractorUnsafeVariantInput[] {
   return sentences.map((sentence, index) => ({
     id: String(index),
     sentence: sentence.sentence,
@@ -95,19 +95,21 @@ function createSentenceVariantInputs(
   }));
 }
 
-function mergeSentenceVariants(
+function attachSentenceDistractorUnsafeData(
   sentences: GeneratedReadingSentence[],
-  variants: AuditedReadingSentence[] | undefined,
+  distractorUnsafeSentences: AuditedReadingSentence[] | undefined,
 ): ReadingSentence[] {
-  const variantsById = new Map(variants?.map((variant) => [variant.id, variant]));
+  const distractorUnsafeById = new Map(
+    distractorUnsafeSentences?.map((sentence) => [sentence.id, sentence]),
+  );
 
   return sentences.map((sentence, index) => {
-    const variant = variantsById.get(String(index));
+    const distractorUnsafe = distractorUnsafeById.get(String(index));
 
     return {
       ...sentence,
-      alternativeSentences: variant?.alternativeSentences ?? [],
-      alternativeTranslations: variant?.alternativeTranslations ?? [],
+      distractorUnsafeSentences: distractorUnsafe?.distractorUnsafeSentences ?? [],
+      distractorUnsafeTranslations: distractorUnsafe?.distractorUnsafeTranslations ?? [],
     };
   });
 }
@@ -150,7 +152,8 @@ async function handleReadingGenerationFailure(
 }
 
 /**
- * Generates reading sentences and their variants for a single reading activity.
+ * Generates reading sentences and their distractor-unsafe sentence metadata for a
+ * single reading activity.
  * No status checks — the caller only passes activities that need generation.
  * Pure data producer: returns sentences without saving to the database.
  */
@@ -200,34 +203,38 @@ export async function generateReadingContentStep(
 
   const generatedSentences = result?.data.sentences ?? [];
 
-  const { data: sentenceVariantsResult } =
+  const { data: sentenceDistractorUnsafeResult } =
     generatedSentences.length > 0
       ? await safeAsync(() =>
-          generateActivitySentenceVariants({
+          generateActivitySentenceDistractorUnsafeVariants({
             chapterTitle: activity.lesson.chapter.title,
             lessonDescription: activity.lesson.description ?? undefined,
             lessonTitle: activity.lesson.title,
-            sentences: createSentenceVariantInputs(generatedSentences),
+            sentences: createSentenceDistractorUnsafeInputs(generatedSentences),
             targetLanguage: course.targetLanguage ?? course.title,
             userLanguage,
           }),
         )
       : { data: null };
 
-  // Fetch words with alternativeTranslations from DB for variant derivation.
-  // The in-memory sourceWords don't have alternativeTranslations since the
-  // vocabulary AI task no longer generates them — they're produced by a
+  // Fetch words with distractorUnsafeTranslations from DB for sentence-level
+  // distractor derivation.
+  // The in-memory sourceWords don't have distractorUnsafeTranslations since the
+  // vocabulary generation task no longer returns them directly. They're produced by a
   // separate step which has already written them to the database by this point.
-  const wordsWithAlternatives = await getLessonWords({
+  const wordsWithDistractorUnsafeTranslations = await getLessonWords({
     lessonId: activity.lessonId,
     organizationId: course.organization?.id ?? null,
     targetLanguage,
     userLanguage,
   });
 
-  const sentences = mergeReadingSentenceVariants(
-    mergeSentenceVariants(generatedSentences, sentenceVariantsResult?.data.sentences),
-    wordsWithAlternatives,
+  const sentences = mergeReadingSentenceDistractorUnsafeVariants(
+    attachSentenceDistractorUnsafeData(
+      generatedSentences,
+      sentenceDistractorUnsafeResult?.data.sentences,
+    ),
+    wordsWithDistractorUnsafeTranslations,
   );
 
   if (error || !result || sentences.length === 0 || !hasValidSentences(sentences)) {

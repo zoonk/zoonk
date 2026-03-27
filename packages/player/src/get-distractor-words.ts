@@ -1,7 +1,7 @@
 import { shuffle } from "@zoonk/utils/shuffle";
 
 type DistractorWord = {
-  alternativeTranslations: string[];
+  distractorUnsafeTranslations: string[];
   id: string;
   translation: string;
   word: string;
@@ -17,7 +17,7 @@ function normalizeWordText(text: string): string {
 /**
  * Checks whether a candidate word is safe to show as a distractor (wrong
  * answer option). A word is NOT safe if it's semantically equivalent to the
- * correct word — meaning its translation or alternativeTranslations overlap.
+ * correct word — meaning its translation or distractorUnsafeTranslations overlap.
  * Showing a semantically equivalent word as a distractor would confuse the
  * learner because it's actually a valid answer.
  */
@@ -57,21 +57,25 @@ function getUniqueDistractors<T extends DistractorWord>(
 
 /**
  * Two words are a semantic match when their translations or
- * alternativeTranslations overlap — meaning they could both be correct
+ * distractorUnsafeTranslations overlap — meaning they could both be correct
  * answers for the same prompt. We use this to exclude semantically
  * equivalent words from the distractor pool so learners never see a
  * valid answer presented as a wrong option.
  *
- * Example: "boa noite" (translation: "good evening", alternatives:
+ * Example: "boa noite" (translation: "good evening", distractor-unsafe translations:
  * ["good night"]) is a semantic match with any word whose translation
  * is "good night", so neither would appear as a distractor for the other.
  */
 export function isSemanticMatch(correctWord: DistractorWord, candidate: DistractorWord): boolean {
   const correctTranslation = correctWord.translation.toLowerCase();
   const candidateTranslation = candidate.translation.toLowerCase();
-  const correctAlternatives = correctWord.alternativeTranslations.map((alt) => alt.toLowerCase());
+
+  const correctAlternatives = correctWord.distractorUnsafeTranslations.map((alt) =>
+    alt.toLowerCase(),
+  );
+
   const candidateAlternatives = new Set(
-    candidate.alternativeTranslations.map((alt) => alt.toLowerCase()),
+    candidate.distractorUnsafeTranslations.map((alt) => alt.toLowerCase()),
   );
 
   // Rule 2: same translation
@@ -79,17 +83,17 @@ export function isSemanticMatch(correctWord: DistractorWord, candidate: Distract
     return true;
   }
 
-  // Rule 3: candidate's translation is in the correct word's alternatives
+  // Rule 3: candidate's translation is already blocked by the correct word
   if (correctAlternatives.includes(candidateTranslation)) {
     return true;
   }
 
-  // Rule 4: correct word's translation is in the candidate's alternatives
+  // Rule 4: correct word's translation is already blocked by the candidate
   if (candidateAlternatives.has(correctTranslation)) {
     return true;
   }
 
-  // Rule 5: overlapping alternatives (shared synonym means semantic equivalence)
+  // Rule 5: overlapping blocked translations mean semantic equivalence
   if (correctAlternatives.some((alt) => candidateAlternatives.has(alt))) {
     return true;
   }

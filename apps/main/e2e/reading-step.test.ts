@@ -11,21 +11,21 @@ import { type Page, expect, test } from "./fixtures";
 
 async function createReadingActivity(options: {
   fallbackWords?: {
-    alternativeTranslations?: string[];
+    distractorUnsafeTranslations?: string[];
     romanization?: string | null;
     translation: string;
     word: string;
   }[];
   sentences: {
     audioUrl?: string | null;
-    alternativeSentences?: string[];
-    alternativeTranslations?: string[];
+    distractorUnsafeSentences?: string[];
+    distractorUnsafeTranslations?: string[];
     romanization?: string | null;
     sentence: string;
     translation: string;
   }[];
   words: {
-    alternativeTranslations?: string[];
+    distractorUnsafeTranslations?: string[];
     romanization?: string | null;
     translation: string;
     word: string;
@@ -68,7 +68,7 @@ async function createReadingActivity(options: {
       });
 
       await lessonWordFixture({
-        alternativeTranslations: wordData.alternativeTranslations ?? [],
+        distractorUnsafeTranslations: wordData.distractorUnsafeTranslations ?? [],
         lessonId: lesson.id,
         translation: wordData.translation,
         wordId: word.id,
@@ -87,7 +87,7 @@ async function createReadingActivity(options: {
       });
 
       await lessonWordFixture({
-        alternativeTranslations: wordData.alternativeTranslations ?? [],
+        distractorUnsafeTranslations: wordData.distractorUnsafeTranslations ?? [],
         lessonId: lesson.id,
         translation: wordData.translation,
         wordId: word.id,
@@ -100,15 +100,15 @@ async function createReadingActivity(options: {
   const createdSentences = await Promise.all(
     options.sentences.map(async (sentenceData) => {
       const sentence = await sentenceFixture({
-        alternativeSentences: sentenceData.alternativeSentences ?? [],
         audioUrl: sentenceData.audioUrl ?? null,
+        distractorUnsafeSentences: sentenceData.distractorUnsafeSentences ?? [],
         organizationId: org.id,
         romanization: sentenceData.romanization ?? null,
         sentence: sentenceData.sentence,
       });
 
       await lessonSentenceFixture({
-        alternativeTranslations: sentenceData.alternativeTranslations ?? [],
+        distractorUnsafeTranslations: sentenceData.distractorUnsafeTranslations ?? [],
         lessonId: lesson.id,
         sentenceId: sentence.id,
         translation: sentenceData.translation,
@@ -227,12 +227,12 @@ test.describe("Reading Step", () => {
       ],
       words: [
         {
-          alternativeTranslations: [`hi-${uniqueId}`],
+          distractorUnsafeTranslations: [`hi-${uniqueId}`],
           translation: `hello-${uniqueId}`,
           word: helloWord,
         },
         {
-          alternativeTranslations: [`hello-${uniqueId}`],
+          distractorUnsafeTranslations: [`hello-${uniqueId}`],
           translation: `hi-${uniqueId}`,
           word: ambiguousWord,
         },
@@ -409,7 +409,7 @@ test.describe("Reading Step", () => {
     const { url } = await createReadingActivity({
       sentences: [
         {
-          alternativeSentences: [`${guten} ${tag} ${lara}`],
+          distractorUnsafeSentences: [`${guten} ${tag} ${lara}`],
           sentence: `${guten} ${morgen} ${lara}`,
           translation: `Bom-dia-${uniqueId}`,
         },
@@ -417,7 +417,7 @@ test.describe("Reading Step", () => {
       words: [
         { translation: `Bom-dia-${uniqueId}`, word: `${guten} ${morgen}` },
         {
-          alternativeTranslations: [`Bom-dia-${uniqueId}`],
+          distractorUnsafeTranslations: [`Bom-dia-${uniqueId}`],
           translation: `Boa-tarde-${uniqueId}`,
           word: `${guten} ${tag}`,
         },
