@@ -3,9 +3,9 @@ EVALUATION CRITERIA:
 
 1. PRACTICE AUTHENTICITY: Dialogue must be pure conversation between colleagues with no narrator text, no character name prefixes (like "Sarah:"), and no action descriptions. The learner should feel immersed in a real workplace conversation.
 
-2. EDUCATIONAL ALIGNMENT: Every decision point must require applying lesson concepts through reasoning, not memorizing facts. Wrong options should be plausible but flawed for specific conceptual reasons.
+2. EDUCATIONAL ALIGNMENT: Every decision point must require applying lesson concepts through reasoning, not memorizing facts. Wrong options should be plausible but flawed for specific conceptual reasons. Penalize meta-scenarios where the main action is preparing a presentation, poster, cartaz, slogan, summary, or wording about the lesson topic instead of using the concept in a real situation.
 
-3. PLOT COHERENCE: Steps must flow naturally as a continuous practice where each step builds from the previous dialogue. Near the end (within the final 2-3 steps), the practice should introduce a fun, surprising twist that reframes the narrative — the best twists subvert an assumption the practice has been building. The final step must resolve the problem AND reinforce the main learning takeaway. Do NOT penalize for exact twist placement (e.g., 2nd-to-last vs 3rd-to-last) as long as the narrative flow is good.
+3. PLOT COHERENCE: Steps must flow naturally as a continuous practice where each step builds from the previous dialogue. Near the end (within the final 2-3 steps), the practice should introduce a fun, surprising twist that reframes the narrative — the best twists subvert an assumption the practice has been building. A mere escalation or a new requirement from a teacher, boss, or client is not enough to count as a twist. Strong twists usually reinterpret earlier details rather than just adding a late surprise. The final step must resolve the problem AND reinforce the main learning takeaway. Do NOT penalize for exact twist placement (e.g., 2nd-to-last vs 3rd-to-last) as long as the narrative flow is good.
 
 4. FORMAT COMPLIANCE: Verify these constraints:
    - context: Maximum 500 characters of pure dialogue
@@ -20,7 +20,9 @@ EVALUATION CRITERIA:
 
 7. STEP COUNT: Practice must have between 7 and 20 steps. Let problem complexity dictate length.
 
-8. DISTRACTOR QUALITY: All wrong options must be plausible choices someone might consider. Penalize obviously silly or absurd options that no reasonable person would choose.
+8. DISTRACTOR QUALITY: All wrong options must be plausible choices someone might consider. Do not penalize light humor, playful wording, or a mildly funny option if it is still believable in the scene. Penalize distractors that are so silly or absurd that no reasonable person would choose them.
+
+9. DIALOGUE NATURALNESS: Penalize dialogue that sounds like prompt residue, coaching language, polished writing advice, or translated corporate speech instead of something a real person in the scene would say. This includes lines that comment on how a question or sentence sounds rather than moving the scene forward. Examples of suspicious phrasing include things like "great question", "honestly", "without sounding rehearsed", "How do I say that without sounding awkward?", "What wording works better?", or local-language equivalents of that same delivery-focused wording when they feel copied from instructions rather than motivated by the scene. Also penalize dialogue that announces the story structure with labels like "twist", "plot twist", "big reveal", or local-language equivalents instead of letting the surprise happen naturally. Do not penalize light humor, playful exchanges, or a mildly silly twist when they still feel natural for the scene.
 
 ANTI-CHECKLIST GUIDANCE (CRITICAL):
 - Do NOT penalize for specific plot choices, character names, or scenario settings you might expect
@@ -29,6 +31,9 @@ ANTI-CHECKLIST GUIDANCE (CRITICAL):
 - Do NOT penalize for exact twist placement — if the twist occurs anywhere in the final third of the story, that's fine
 - Do NOT penalize for output being wrapped in {"steps": [...]} instead of a raw array
 - Do NOT penalize option text that is 55 characters or fewer — only penalize options clearly exceeding 55 characters
+- Do NOT penalize light humor, a playful tone, or slightly silly moments when they still sound natural and scene-appropriate
+- Do penalize scenes whose main task is choosing wording, polishing phrasing, or presenting the concept instead of using it
+- Do penalize lines that feel like prompt instructions leaking into dialogue, even if grammar and structure are otherwise correct
 - ONLY penalize for: format violations (option text over 55 chars, context over 500 chars, etc.), narrator/description text in dialogue, decisions that test memorization instead of reasoning, complete absence of any twist or surprise, poor distractor quality, or factually incorrect lesson application
 - Different valid practice approaches exist - assess the quality of what IS provided
 `;
@@ -86,9 +91,11 @@ TOPIC-SPECIFIC GUIDANCE:
    - Bool-int subclass relationship is misrepresented
    - Float precision issues are incorrectly described
 
-2. SCENARIO CHECK: The workplace problem should involve realistic Python programming challenges like: debugging unexpected numeric behavior, handling precision in financial calculations, or resolving type coercion surprises.
+2. PORTUGUESE NATURALNESS CHECK: Prefer everyday Brazilian Portuguese. Penalize stiff, translated, or prompt-like phrasing that sounds written instead of spoken, including local-language versions of phrases like "without sounding rehearsed" when they do not fit the scene.
 
-3. CONCEPTUAL FOCUS: Decisions should require reasoning about the structural relationship between bool and int, and about float precision limitations.
+3. SCENARIO CHECK: The workplace problem should involve realistic Python programming challenges like: debugging unexpected numeric behavior, handling precision in financial calculations, or resolving type coercion surprises.
+
+4. CONCEPTUAL FOCUS: Decisions should require reasoning about the structural relationship between bool and int, and about float precision limitations.
 
 ${SHARED_EXPECTATIONS}
     `,
@@ -216,9 +223,11 @@ TOPIC-SPECIFIC GUIDANCE:
    - Audit requirements are misrepresented for the legal context
    - Quality metrics are described without connection to document safety
 
-2. SCENARIO CHECK: The workplace problem should involve realistic legal tech challenges like: investigating a batch of documents with errors, setting up monitoring for a new automation pipeline, or responding to an audit finding.
+2. PORTUGUESE NATURALNESS CHECK: Prefer everyday Brazilian Portuguese. Penalize stiff, translated, or prompt-like phrasing that sounds written instead of spoken, including lines like "foi uma otima pergunta" when they do not fit the scene.
 
-3. CONCEPTUAL FOCUS: Decisions should require reasoning about how metrics and audit trails ensure quality and safety in automated legal document generation.
+3. SCENARIO CHECK: The workplace problem should involve realistic legal tech challenges like: investigating a batch of documents with errors, setting up monitoring for a new automation pipeline, or responding to an audit finding.
+
+4. CONCEPTUAL FOCUS: Decisions should require reasoning about how metrics and audit trails ensure quality and safety in automated legal document generation.
 
 ${SHARED_EXPECTATIONS}
     `,
