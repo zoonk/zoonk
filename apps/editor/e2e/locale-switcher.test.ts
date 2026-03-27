@@ -1,22 +1,37 @@
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { type Page, expect, test } from "./fixtures";
 
+/**
+ * Retry-click the org dropdown trigger until the menu appears.
+ * The first click can be lost if it lands before React hydration
+ * attaches the event handler (same pattern as openDialog in e2e helpers).
+ */
 async function openOrgDropdown(page: Page) {
-  await page.getByRole("button", { name: /organizations|ai/i }).click();
+  const trigger = page.getByRole("button", { name: /organizations|ai/i });
+  const menu = page.getByRole("menu");
+
+  await expect(async () => {
+    if (!(await menu.isVisible())) {
+      await trigger.click();
+    }
+
+    await expect(menu).toBeVisible({ timeout: 1000 });
+  }).toPass();
 }
 
 async function openLanguageSubmenu(page: Page) {
   await openOrgDropdown(page);
 
   const languageMenuItem = page.getByRole("menuitem", { name: /language/i });
-  const englishMenuItem = page.getByRole("menuitem", { name: "English" });
 
-  // Use keyboard navigation to open submenu reliably.
-  // Arrow keys work consistently with Base UI menus.
-  await languageMenuItem.focus();
-  await page.keyboard.press("ArrowRight");
+  // Wait for the dropdown to fully render before interacting
+  await expect(languageMenuItem).toBeVisible();
+
+  // Hover to open submenu — Base UI opens submenus on pointer enter
+  await languageMenuItem.hover();
 
   // Wait for submenu to appear
+  const englishMenuItem = page.getByRole("menuitem", { name: "English" });
   await expect(englishMenuItem).toBeVisible();
 }
 
