@@ -3,60 +3,7 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { CircleCheck, CircleX } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { type StepResult } from "../player-reducer";
-import { type SerializedStep } from "../prepare-activity-data";
 import { RomanizationText } from "./romanization-text";
-
-/**
- * Returns romanization only when it differs from the displayed text.
- * Prevents showing duplicate text when romanization equals the sentence
- * (bad AI generation data where the original script was copied into
- * the romanization field instead of the Latin transliteration).
- */
-function getVisibleRomanization(
-  romanization: string | null | undefined,
-  displayedText: string,
-): string | null {
-  if (!romanization) {
-    return null;
-  }
-
-  if (romanization.trim() === displayedText.trim()) {
-    return null;
-  }
-
-  return romanization;
-}
-
-/** Resolves which romanization texts to show based on the answer kind and dedup rules. */
-export function getFeedbackRomanization(
-  result: StepResult,
-  step: SerializedStep | undefined,
-  selectedText: string | null,
-  correctAnswer: string | null | undefined,
-  questionText: string | null,
-) {
-  const romanization = step?.sentence?.romanization;
-  const kind = result.answer?.kind;
-
-  return {
-    /** Romanization for the "Your answer:" line on correct reading answers. */
-    correctReading:
-      kind === "reading" && selectedText
-        ? getVisibleRomanization(romanization, selectedText)
-        : null,
-
-    /** Romanization for the "Translate:" line — only for listening (shows target language sentence). */
-    translate:
-      kind === "listening" ? getVisibleRomanization(romanization, questionText ?? "") : null,
-
-    /** Romanization for the "Correct answer:" line on wrong reading answers. */
-    wrongReading:
-      kind === "reading" && correctAnswer
-        ? getVisibleRomanization(romanization, correctAnswer)
-        : null,
-  };
-}
 
 function AnswerLine({
   children,
