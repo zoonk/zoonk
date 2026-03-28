@@ -1,0 +1,23 @@
+packages/ai/src/tasks/audio/generate-language-audio.ts
+  d8858b0ff67a9ad1 100
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.22",
+  "base_commit_sha": "8a644005cf788dabe427b0fb2c3c481fb0634768",
+  "prompts": {
+    "d8858b0ff67a9ad1": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "bbb523ef-100d-4502-bedd-538bb082b51f",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill <4393133+ceolinwill@users.noreply.github.com>",
+      "messages": [],
+      "total_additions": 1,
+      "total_deletions": 1,
+      "accepted_lines": 1,
+      "overriden_lines": 0
+    }
+  }
+}
