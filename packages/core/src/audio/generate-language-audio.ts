@@ -27,7 +27,7 @@ export async function generateLanguageAudio({
   }
 
   const slug = toSlug(text);
-  const fileName = `audio/${orgSlug ?? "default"}/${slug}.wav`;
+  const fileName = `audio/${orgSlug ?? "default"}/${slug}.${audioResult.format}`;
 
   const { data: url, error: uploadError } = await uploadAudio({
     audio: audioResult.audio,
