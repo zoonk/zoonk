@@ -1,0 +1,52 @@
+apps/api/src/workflows/lesson-generation/lesson-generation-workflow.test.ts
+  91e2a29f68d2fcb2 292
+apps/evals/src/app/audio-test/form.tsx
+  91e2a29f68d2fcb2 66
+packages/ai/src/tasks/audio/wrap-pcm-in-wav.ts
+  91e2a29f68d2fcb2 1-46
+packages/core/src/audio/generate-language-audio.ts
+  91e2a29f68d2fcb2 30
+packages/ai/src/tasks/audio/generate-language-audio.prompt.md
+  91e2a29f68d2fcb2 1-5
+packages/ai/src/tasks/audio/generate-language-audio.ts
+  91e2a29f68d2fcb2 2,4,6-7,9-10,12-23,27,31,38-51,55-62
+apps/api/.env.example
+  91e2a29f68d2fcb2 47
+apps/evals/.env.example
+  91e2a29f68d2fcb2 6-9
+packages/utils/src/languages.ts
+  91e2a29f68d2fcb2 2-8,12,17,21-22,24,26-27,30-31,33,35,37,40-41,44,48-50,52-53,55,57-58,60,64-65,68-69,71,73,75,80,162-191
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.20",
+  "base_commit_sha": "13559a00229cb5ec84aae27ff300ce36c66ad533",
+  "prompts": {
+    "91e2a29f68d2fcb2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4757069f-4067-43f9-8526-c8622d72f807",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill <4393133+ceolinwill@users.noreply.github.com>",
+      "messages": [],
+      "total_additions": 326,
+      "total_deletions": 207,
+      "accepted_lines": 173,
+      "overriden_lines": 1
+    },
+    "de6e486cb6d5ef20": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d30ba-d494-77c0-acbc-2940561452e4",
+        "model": "gpt-5.4-mini"
+      },
+      "human_author": "ceolinwill <4393133+ceolinwill@users.noreply.github.com>",
+      "messages": [],
+      "total_additions": 202,
+      "total_deletions": 271,
+      "accepted_lines": 186,
+      "overriden_lines": 0
+    }
+  }
+}
