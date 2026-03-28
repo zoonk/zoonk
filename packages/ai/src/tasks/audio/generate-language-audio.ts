@@ -1,13 +1,13 @@
 import "server-only";
 import { GoogleGenAI } from "@google/genai";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
-import { getLanguageName } from "@zoonk/utils/languages";
+import { type TTSVoice, getLanguageName } from "@zoonk/utils/languages";
 import { logError } from "@zoonk/utils/logger";
 import promptTemplate from "./generate-language-audio.prompt.md";
 import { wrapPCMInWAV } from "./wrap-pcm-in-wav";
 
 const DEFAULT_MODEL = "gemini-2.5-flash-preview-tts";
-const DEFAULT_VOICE = "Kore";
+const DEFAULT_VOICE: TTSVoice = "Kore";
 
 function buildInstructions(languageCode: string | undefined): string {
   const languageName = languageCode
@@ -28,7 +28,7 @@ export async function generateLanguageAudio({
 }: {
   language?: string;
   text: string;
-  voice?: string;
+  voice?: TTSVoice;
 }): Promise<
   SafeReturn<{
     audio: Uint8Array;
