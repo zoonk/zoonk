@@ -115,6 +115,16 @@ function useContentPhaseGenerators(): Partial<Record<PhaseName, ThinkingMessageG
   const t = useExtracted();
 
   return {
+    creatingAnswerOptions: (index) =>
+      cycleMessage(
+        [
+          t("Preparing options..."),
+          t("Adding more options..."),
+          t("Getting answer options ready..."),
+          t("Preparing the word bank..."),
+        ],
+        index,
+      ),
     creatingExercises: (index) =>
       cycleMessage(
         [

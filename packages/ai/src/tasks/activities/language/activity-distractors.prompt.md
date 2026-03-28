@@ -38,10 +38,6 @@ Good outputs:
   LANGUAGE: Japanese
   SHAPE: `any`
   distractors: `["犬","鳥","魚","馬","牛","象","虎","熊"]`
-- INPUT: `you're welcome`
-  LANGUAGE: English
-  SHAPE: `any`
-  distractors: `["please","sure thing","absolutely","certainly","of course","anytime","gladly","alright"]`
 - INPUT: `money`
   LANGUAGE: English
   SHAPE: `any`

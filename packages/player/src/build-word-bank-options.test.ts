@@ -213,4 +213,38 @@ describe(buildSentenceWordOptions, () => {
       },
     ]);
   });
+
+  test("keeps lesson-word translations when sentence metadata adds audio and romanization", () => {
+    const options = buildSentenceWordOptions(
+      "Hola",
+      [
+        makeLessonWord({
+          audioUrl: "/audio/hola.mp3",
+          romanization: null,
+          translation: "hello",
+          word: "Hola",
+        }),
+      ],
+      [],
+      new Map([
+        [
+          "hola",
+          {
+            audioUrl: "/audio/hola-sentence.mp3",
+            romanization: "o-la",
+            word: "Hola",
+          },
+        ],
+      ]),
+    );
+
+    expect(options).toEqual([
+      {
+        audioUrl: "/audio/hola-sentence.mp3",
+        romanization: "o-la",
+        translation: "hello",
+        word: "Hola",
+      },
+    ]);
+  });
 });

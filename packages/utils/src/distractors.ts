@@ -13,10 +13,11 @@ function getNormalizedText(text: string): string | null {
 }
 
 /**
- * Distractor collisions should ignore casing and punctuation so variants like
- * "Boa tarde" and "boa tarde!" collapse to one stable option.
+ * Saving and rendering distractors should agree on what counts as "the same" text.
+ * This key collapses punctuation, accents, casing, and spacing differences so variants
+ * like "Boa tarde!", "boa tarde", and "café" vs "cafe" all resolve to one lookup key.
  */
-function getDistractorKey(text: string): string {
+export function normalizeDistractorKey(text: string): string {
   return normalizeString(stripPunctuation(text));
 }
 
@@ -44,7 +45,7 @@ export function sanitizeDistractors(params: {
   shape?: DistractorShape;
 }): string[] {
   const shape = params.shape ?? "single-word";
-  const inputKey = getDistractorKey(normalizePunctuation(params.input).trim());
+  const inputKey = normalizeDistractorKey(normalizePunctuation(params.input).trim());
   const seenDistractors = new Set<string>();
 
   return params.distractors.flatMap((distractor) => {
@@ -54,7 +55,7 @@ export function sanitizeDistractors(params: {
       return [];
     }
 
-    const distractorKey = getDistractorKey(normalizedDistractor);
+    const distractorKey = normalizeDistractorKey(normalizedDistractor);
 
     if (!distractorKey || distractorKey === inputKey || seenDistractors.has(distractorKey)) {
       return [];

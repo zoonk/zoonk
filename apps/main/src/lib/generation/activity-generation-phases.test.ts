@@ -82,6 +82,28 @@ describe("listening phase status", () => {
 
     expect(status).toBe("active");
   });
+
+  test("keeps sentence distractors in their own listening phase", () => {
+    const status = getPhaseStatus(
+      "creatingAnswerOptions",
+      [
+        "getLessonActivities",
+        "generateVocabularyContent",
+        "generateVocabularyDistractors",
+        "generateVocabularyPronunciation",
+        "generateVocabularyAudio",
+        "saveVocabularyActivity",
+        "generateGrammarContent",
+        "generateGrammarUserContent",
+        "saveGrammarActivity",
+        "generateSentences",
+      ],
+      "generateSentenceDistractors",
+      "listening",
+    );
+
+    expect(status).toBe("active");
+  });
 });
 
 describe("reading phase status", () => {

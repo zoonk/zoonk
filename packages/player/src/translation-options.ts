@@ -1,6 +1,5 @@
-import { sanitizeDistractors } from "@zoonk/utils/distractors";
+import { normalizeDistractorKey, sanitizeDistractors } from "@zoonk/utils/distractors";
 import { shuffle } from "@zoonk/utils/shuffle";
-import { stripPunctuation } from "@zoonk/utils/string";
 
 const VOCABULARY_DISTRACTOR_COUNT = 3;
 
@@ -28,14 +27,6 @@ type TranslationSourceWord = {
   romanization: string | null;
   audioUrl: string | null;
 };
-
-/**
- * Multiple input sources need the same normalized word key when resolving direct
- * distractor metadata by surface text.
- */
-export function normalizeWordKey(word: string): string {
-  return stripPunctuation(word).toLowerCase().trim();
-}
 
 /**
  * Direct distractor words do not need lesson translations, only render metadata.
@@ -78,7 +69,7 @@ function toTranslationOption(word: TranslationSourceWord | DistractorWord): Tran
 export function buildDistractorWordLookup(
   distractorWords: DistractorWord[],
 ): Map<string, DistractorWord> {
-  return new Map(distractorWords.map((word) => [normalizeWordKey(word.word), word] as const));
+  return new Map(distractorWords.map((word) => [normalizeDistractorKey(word.word), word] as const));
 }
 
 /**
@@ -100,13 +91,13 @@ export function buildTranslationOptions(params: {
     shape: "any",
   })
     .map((word) => {
-      const hydrated = params.distractorLookup.get(normalizeWordKey(word));
+      const hydrated = params.distractorLookup.get(normalizeDistractorKey(word));
 
       return hydrated
         ? toTranslationOption(hydrated)
         : {
             audioUrl: null,
-            id: `distractor:${normalizeWordKey(word)}`,
+            id: `distractor:${normalizeDistractorKey(word)}`,
             pronunciation: null,
             romanization: null,
             word,

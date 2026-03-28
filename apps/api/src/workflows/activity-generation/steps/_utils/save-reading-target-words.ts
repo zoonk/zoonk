@@ -114,6 +114,21 @@ function removeCanonicalWords(canonicalWords: string[], distractorWords: string[
 }
 
 /**
+ * A missing metadata entry means the caller has no new romanization information for this
+ * word. Preserve the existing DB value in that case, but still allow explicit `null` or
+ * empty strings to clear stale romanization when the metadata entry is present.
+ */
+function getRomanizationUpdate(metadata: WordMetadataEntry | undefined): {
+  romanization?: string | null;
+} {
+  if (metadata === undefined) {
+    return {};
+  }
+
+  return { romanization: emptyToNull(metadata.romanization ?? null) };
+}
+
+/**
  * Reading still needs these `LessonWord` rows for canonical sentence tokens because the
  * same surface word can mean different things in different lessons. We intentionally do
  * not update `LessonWord.distractors` here so vocabulary-owned distractors stay intact.
@@ -211,7 +226,8 @@ async function saveDistractorWord(params: {
   const dbWord = params.existingCasing[params.word.toLowerCase()] ?? params.word;
   const audioUrl = params.wordAudioUrls[params.word] ?? null;
   const pronunciation = params.pronunciations[params.word] ?? null;
-  const romanization = emptyToNull(params.wordMetadata[params.word]?.romanization ?? null);
+  const metadata = params.wordMetadata[params.word];
+  const romanization = emptyToNull(metadata?.romanization ?? null);
 
   const record = await prisma.word.upsert({
     create: {
@@ -223,7 +239,7 @@ async function saveDistractorWord(params: {
     },
     update: {
       ...(audioUrl ? { audioUrl } : {}),
-      romanization,
+      ...getRomanizationUpdate(metadata),
     },
     where: {
       orgWord: {

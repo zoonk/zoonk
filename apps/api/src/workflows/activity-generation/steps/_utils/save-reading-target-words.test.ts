@@ -263,11 +263,13 @@ describe(saveReadingTargetWords, () => {
 
     expect(lessonWords.map((entry) => entry.word.word)).toEqual([canonicalWord]);
     expect(distractorLessonWords).toEqual([]);
-
-    expect(words.map((entry) => [entry.word, entry.audioUrl])).toEqual([
-      [canonicalWord, `/audio/${canonicalWord}.mp3`],
-      [distractorWord, null],
-    ]);
+    expect(words).toHaveLength(2);
+    expect(words.map((entry) => [entry.word, entry.audioUrl])).toEqual(
+      expect.arrayContaining([
+        [canonicalWord, `/audio/${canonicalWord}.mp3`],
+        [distractorWord, null],
+      ]),
+    );
 
     expect(pronunciations.map((entry) => entry.word.word)).toEqual([canonicalWord]);
   });
@@ -456,5 +458,49 @@ describe(saveReadingTargetWords, () => {
     expect(pronunciations).toHaveLength(1);
     expect(pronunciations[0]).toMatchObject({ pronunciation: `${lowercaseDistractor}-pron` });
     expect(pronunciations[0]?.word.word).toBe(existingDistractor);
+  });
+
+  test("preserves existing distractor romanization when metadata entry is missing", async () => {
+    const { lesson, organization } = await createLessonContext();
+    const id = randomUUID().replaceAll("-", "").slice(0, 8);
+    const canonicalWord = `hallo${id}`;
+    const existingDistractor = `Fenster${id}`;
+    const lowercaseDistractor = existingDistractor.toLowerCase();
+
+    const distractorWord = await wordFixture({
+      organizationId: organization.id,
+      romanization: "keep-rom",
+      targetLanguage: "de",
+      word: existingDistractor,
+    });
+
+    await saveReadingTargetWords({
+      distractors: {
+        [canonicalWord]: [lowercaseDistractor],
+      },
+      lessonId: lesson.id,
+      organizationId: organization.id,
+      pronunciations: {},
+      sentences: [{ explanation: null, sentence: canonicalWord, translation: "hello" }],
+      targetLanguage: "de",
+      userLanguage: "en",
+      wordAudioUrls: {},
+      wordMetadata: {
+        [canonicalWord]: { romanization: null, translation: "hello" },
+      },
+    });
+
+    const savedDistractor = await prisma.word.findUniqueOrThrow({
+      where: {
+        orgWord: {
+          organizationId: organization.id,
+          targetLanguage: "de",
+          word: existingDistractor,
+        },
+      },
+    });
+
+    expect(savedDistractor.id).toBe(distractorWord.id);
+    expect(savedDistractor.romanization).toBe("keep-rom");
   });
 });

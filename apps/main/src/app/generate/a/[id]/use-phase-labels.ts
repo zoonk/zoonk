@@ -14,6 +14,7 @@ export function usePhaseLabels(): Record<PhaseName, string> {
     addingVocabularyRomanization: t("Adding vocabulary romanization"),
     addingWordPronunciation: t("Adding word pronunciation"),
     buildingWordList: t("Building word list"),
+    creatingAnswerOptions: t("Preparing options"),
     creatingExercises: t("Creating exercises"),
     creatingImages: t("Creating images"),
     creatingSentences: t("Creating sentences"),

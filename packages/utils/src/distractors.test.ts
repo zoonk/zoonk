@@ -1,5 +1,11 @@
 import { describe, expect, test } from "vitest";
-import { sanitizeDistractors } from "./distractors";
+import { normalizeDistractorKey, sanitizeDistractors } from "./distractors";
+
+describe(normalizeDistractorKey, () => {
+  test("normalizes punctuation, accents, and spacing into one lookup key", () => {
+    expect(normalizeDistractorKey("  Café!  ")).toBe(normalizeDistractorKey("cafe"));
+  });
+});
 
 describe(sanitizeDistractors, () => {
   test("keeps only unique single-word distractors by default", () => {

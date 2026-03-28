@@ -5,6 +5,7 @@ import {
   isSupportedStepKind,
   parseStepContent,
 } from "@zoonk/core/steps/content-contract";
+import { normalizeDistractorKey } from "@zoonk/utils/distractors";
 import { shuffle } from "@zoonk/utils/shuffle";
 import {
   type ActivityDistractorWordInput,
@@ -26,7 +27,6 @@ import {
   type TranslationOption,
   buildDistractorWordLookup,
   buildTranslationOptions,
-  normalizeWordKey,
   serializeDistractorWord,
 } from "./translation-options";
 export type { TranslationOption } from "./translation-options";
@@ -240,7 +240,9 @@ function prepareActivityData(
   const serializedLessonWords = serializeWords(lessonWords);
   const serializedDistractorWords = distractorWords.map((word) => serializeDistractorWord(word));
   const distractorLookup = buildDistractorWordLookup(serializedDistractorWords);
-  const sentenceWordMap = new Map(sentenceWords.map((word) => [normalizeWordKey(word.word), word]));
+  const sentenceWordMap = new Map(
+    sentenceWords.map((word) => [normalizeDistractorKey(word.word), word]),
+  );
 
   const steps = activity.steps.flatMap((raw) => {
     const step = serializeStep(raw);

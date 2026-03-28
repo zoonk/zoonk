@@ -49,6 +49,58 @@ function splitMultiWordEntries(lessonWord: SerializedWord): [string, WordMetadat
 }
 
 /**
+ * Sentence-level token metadata is more precise for audio and romanization, but it does
+ * not carry translations. Preserve any existing translation when a later source only
+ * contributes render metadata.
+ */
+function mergeWordMetadata(
+  current: WordMetadata | undefined,
+  incoming: WordMetadata,
+): WordMetadata {
+  return {
+    audioUrl: incoming.audioUrl ?? current?.audioUrl ?? null,
+    romanization: incoming.romanization ?? current?.romanization ?? null,
+    translation: incoming.translation ?? current?.translation ?? null,
+  };
+}
+
+/**
+ * Different sources contribute metadata for the same visible token. Reducing them into a
+ * final lookup keeps the merge rule immutable and makes the source order explicit: later
+ * entries can refine earlier metadata without mutating shared state in place.
+ */
+function getUniqueMetadataKeys(entries: readonly (readonly [string, WordMetadata])[]): string[] {
+  return [...new Set(entries.map(([key]) => key))];
+}
+
+/**
+ * A token can collect metadata from lesson words, distractor words, and sentence-level
+ * word data. Merging one key at a time keeps the precedence rule obvious and avoids
+ * in-place mutation while these small arrays are being prepared for the player.
+ */
+function getMergedWordMetadata(
+  entries: readonly (readonly [string, WordMetadata])[],
+  key: string,
+): WordMetadata {
+  return entries
+    .filter(([entryKey]) => entryKey === key)
+    .map(([, metadata]) => metadata)
+    .reduce((current, incoming) => mergeWordMetadata(current, incoming));
+}
+
+/**
+ * Different sources contribute metadata for the same visible token. Building the final
+ * lookup from stable keys keeps the merge deterministic without mutating a shared map.
+ */
+function buildMergedWordMetadataLookup(
+  entries: readonly (readonly [string, WordMetadata])[],
+): Map<string, WordMetadata> {
+  return new Map(
+    getUniqueMetadataKeys(entries).map((key) => [key, getMergedWordMetadata(entries, key)]),
+  );
+}
+
+/**
  * Canonical lesson words and hydrated distractor words share one metadata lookup. Sentence-
  * specific word metadata overrides both because it is the most precise source.
  */
@@ -93,7 +145,11 @@ function buildWordMetadataLookup(params: {
       ] as const,
   );
 
-  return new Map([...lessonEntries, ...distractorEntries, ...sentenceEntries]);
+  return buildMergedWordMetadataLookup([
+    ...lessonEntries,
+    ...distractorEntries,
+    ...sentenceEntries,
+  ]);
 }
 
 /**

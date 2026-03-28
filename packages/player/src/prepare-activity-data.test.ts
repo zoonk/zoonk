@@ -399,7 +399,7 @@ describe(prepareLessonActivityData, () => {
       },
       {
         audioUrl: null,
-        id: "distractor:até logo",
+        id: "distractor:ate logo",
         pronunciation: null,
         romanization: null,
         word: "até logo",
@@ -630,7 +630,7 @@ describe(prepareLessonActivityData, () => {
       {
         audioUrl: "/audio/sentence-gato.mp3",
         romanization: "ga-to",
-        translation: null,
+        translation: "cat (lesson)",
         word: "gato",
       },
       {
