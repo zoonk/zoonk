@@ -93,11 +93,11 @@ async function generateWithFallback({
       return await attempt.generate({ instructions, text, voice });
     } catch (error) {
       lastError = error instanceof Error ? error : new Error(String(error));
-      logError(`TTS ${attempt.name} failed:`, lastError);
     }
   }
   /* oxlint-enable no-await-in-loop */
 
+  logError("All TTS providers failed after retries:", lastError);
   throw lastError ?? new Error("All TTS providers failed");
 }
 
