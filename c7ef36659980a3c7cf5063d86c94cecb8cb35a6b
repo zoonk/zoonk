@@ -1,0 +1,23 @@
+turbo.json
+  91e2a29f68d2fcb2 38
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.22",
+  "base_commit_sha": "c7ef36659980a3c7cf5063d86c94cecb8cb35a6b",
+  "prompts": {
+    "91e2a29f68d2fcb2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4757069f-4067-43f9-8526-c8622d72f807",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill <4393133+ceolinwill@users.noreply.github.com>",
+      "messages": [],
+      "total_additions": 1,
+      "total_deletions": 0,
+      "accepted_lines": 1,
+      "overriden_lines": 0
+    }
+  }
+}
