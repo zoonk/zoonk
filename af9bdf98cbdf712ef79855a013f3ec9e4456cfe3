@@ -1,0 +1,59 @@
+packages/player/src/translation-options.ts
+  070df3797133fe5d 1,72,94,100
+packages/utils/src/distractors.ts
+  070df3797133fe5d 16-18,20,48,58
+packages/player/src/build-word-bank-options.ts
+  070df3797133fe5d 52-102,148-152
+packages/player/src/prepare-activity-data.test.ts
+  070df3797133fe5d 402,633
+packages/player/src/translation-options.test.ts
+  070df3797133fe5d 1-64
+apps/api/src/workflows/activity-generation/steps/_utils/save-reading-target-words.ts
+  070df3797133fe5d 117-130,229-230,242
+apps/main/messages/en.po
+  070df3797133fe5d 1789,1943,2154-2157
+apps/main/src/lib/generation/activity-generation-phases.test.ts
+  070df3797133fe5d 85-106
+packages/player/src/build-word-bank-options.test.ts
+  070df3797133fe5d 216-249
+apps/main/src/app/generate/a/[id]/use-phase-thinking-generators.ts
+  070df3797133fe5d 118-120,124-127
+apps/main/src/lib/generation/activity-generation-phase-weights.ts
+  070df3797133fe5d 12,75,77
+apps/main/src/lib/generation/activity-generation-phase-config.ts
+  070df3797133fe5d 63,109
+packages/player/src/prepare-activity-data.ts
+  070df3797133fe5d 8,243-245
+apps/main/src/lib/generation/activity-generation-phases.ts
+  070df3797133fe5d 22,38
+apps/api/src/workflows/activity-generation/steps/_utils/save-reading-target-words.test.ts
+  070df3797133fe5d 266-272,462-504
+apps/main/messages/es.po
+  070df3797133fe5d 1789,1943,2154-2157
+packages/utils/src/distractors.test.ts
+  070df3797133fe5d 2-8
+apps/main/messages/pt.po
+  070df3797133fe5d 1789,1943,1997,2154-2157
+apps/main/src/lib/generation/activity-generation-phase-kind-steps.ts
+  070df3797133fe5d 174-175,205
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.20",
+  "base_commit_sha": "af9bdf98cbdf712ef79855a013f3ec9e4456cfe3",
+  "prompts": {
+    "070df3797133fe5d": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d3399-de15-72e1-8170-ca1687939a08",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill <4393133+ceolinwill@users.noreply.github.com>",
+      "messages": [],
+      "total_additions": 392,
+      "total_deletions": 68,
+      "accepted_lines": 329,
+      "overriden_lines": 22
+    }
+  }
+}
