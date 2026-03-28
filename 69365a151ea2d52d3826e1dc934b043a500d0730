@@ -1,0 +1,175 @@
+apps/main/e2e/translation-step.test.ts
+  070df3797133fe5d 18,62,67-81,97,170,178,187-188
+packages/player/src/prepare-activity-data.ts
+  070df3797133fe5d 9-23,25-32,38,47,49,69,90-91,94-97,100-106,110-111,116,126-127,134-135,140,146,153,191-192,225,238,241-243,258-263,266-270,274,293-312
+apps/main/src/lib/generation/activity-generation-phase-kind-steps.ts
+  070df3797133fe5d 23-24,30,33,49,94,99,104-105,121,147-148,157,162,169,172,174-178
+apps/api/src/workflows/activity-generation/steps/generate-reading-content-step.test.ts
+  070df3797133fe5d 1-170
+apps/main/src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/a/[position]/submit-completion-action.ts
+  070df3797133fe5d 29,34-36
+packages/utils/src/distractors.test.ts
+  070df3797133fe5d 1-52
+packages/testing/src/fixtures/sentences.ts
+  070df3797133fe5d 26-27,32,37
+apps/api/src/workflows/activity-generation/kinds/vocabulary-workflow.ts
+  070df3797133fe5d 3,7-8,14-28,74-75,77-83,89
+packages/ai/src/tasks/activities/language/activity-distractors.prompt.md
+  070df3797133fe5d 1-61
+apps/api/src/workflows/activity-generation/language-activity-workflow.test.ts
+  070df3797133fe5d 1-7,9-10,13-14,17-18,21-23,27-28,31-37,39,44-82,86-87,89,91-94,97-104,106,109-110,112,114-117,120-126,128-130,134-135,137,139-142,145-152,154-156
+packages/player/src/prepare-activity-data.test.ts
+  070df3797133fe5d 1-741
+apps/main/src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/a/[position]/page.tsx
+  070df3797133fe5d 2,12,64,75,105-112
+apps/main/e2e/reading-step.test.ts
+  070df3797133fe5d 15,82,179,188,194-195,197-198,206,360-362,373,380
+apps/api/src/workflows/activity-generation/steps/_utils/save-reading-target-words.ts
+  070df3797133fe5d 1-253
+apps/api/src/workflows/activity-generation/steps/_utils/save-reading-target-words.test.ts
+  070df3797133fe5d 1-460
+apps/api/src/workflows/activity-generation/steps/generate-reading-content-step.ts
+  070df3797133fe5d 17,19,22-24,30,51,54-57,64-68,70,74,94-97,109-113,118,158
+apps/api/.env.example
+  070df3797133fe5d 52,55
+apps/main/src/data/activities/get-lesson-words.test.ts
+  070df3797133fe5d 94,105
+apps/api/src/workflows/activity-generation/kinds/reading-workflow.ts
+  070df3797133fe5d 3,8,11,15-29,78-86,90-91,95,99,104
+packages/testing/src/fixtures/words.ts
+  070df3797133fe5d 40,44
+packages/ai/src/tasks/activities/language/activity-distractors.ts
+  070df3797133fe5d 1-67
+packages/utils/package.json
+  070df3797133fe5d 15
+apps/api/src/workflows/activity-generation/steps/save-reading-activity-step.ts
+  070df3797133fe5d 5,7,9,15-16,18-21,25,30,39,44,75,83,96-99,101-102,104-108,110-113,122-126,130,138,143,151,157-166,193,196,198,202,205,207,217,225
+apps/main/e2e/generate-activity.test.ts
+  070df3797133fe5d 634-635
+apps/main/src/data/activities/get-review-steps.test.ts
+  070df3797133fe5d 728-729,732,736
+packages/db/src/prisma/models/vocabulary.prisma
+  070df3797133fe5d 40-50,63-74,90-102
+apps/main/e2e/listening-step.test.ts
+  070df3797133fe5d 18,20,81-82,272-274,291,296
+apps/main/src/lib/generation/activity-generation-phases.test.ts
+  070df3797133fe5d 72-73
+packages/ai/package.json
+  070df3797133fe5d 7,11,13,19,28,35
+apps/api/src/workflows/activity-generation/steps/save-vocabulary-activity-step.ts
+  070df3797133fe5d 6,8,15-16,18-20,24,35,68-72,76,79-86,89,104-120,157-159,162,177,197-201,222,224,230,234,237,240,250,262,268-325,329
+packages/player/src/translation-options.ts
+  070df3797133fe5d 1-118
+apps/main/src/data/activities/get-lesson-sentences.test.ts
+  070df3797133fe5d 84,88,96,104
+packages/player/src/_utils/activity-data-mappers.ts
+  070df3797133fe5d 1-239
+apps/api/src/workflows/activity-generation/steps/_utils/generate-direct-distractors.ts
+  070df3797133fe5d 1-53
+apps/api/src/workflows/activity-generation/steps/generate-vocabulary-romanization-step.ts
+  070df3797133fe5d 18,39
+apps/evals/src/tasks/index.ts
+  070df3797133fe5d 4,30
+turbo.json
+  070df3797133fe5d 7,10
+apps/evals/src/tasks/activity-distractors/test-cases.ts
+  070df3797133fe5d 1-161
+packages/player/src/validate-answers.test.ts
+  070df3797133fe5d 174,178,198,202,215,222,226,239,246,250,270,274
+apps/api/src/workflows/activity-generation/steps/_utils/generate-word-pronunciations.ts
+  070df3797133fe5d 1-105
+packages/player/src/build-word-bank-options.test.ts
+  070df3797133fe5d 3-8,14,17-18,21-23,27,29-37,41-44,48-49,52,62,64-69,74,76-79,81-84,88-94,97,99-103,105-106,108-112,118-123,126,128-135,137-141,145-148,154-166,169,171-179,183,188,190,192-194,197,201-214
+apps/api/src/workflows/activity-generation/kinds/reading-workflow.test.ts
+  070df3797133fe5d 1-9,12-20,24-26,30-32,36-39,43-51,55-63,67-75,79-80,83-84,92-94,97-100,102,105-107,109-116,118-121,124-125,127-152,154-156,159-160,162-169,171-176,178,182,184-185,189,192-193,196-197,200-205,208-213,217-220,222-224,227,230-231,234-235,238,240-245
+packages/player/src/validate-answers.ts
+  070df3797133fe5d 31-32
+packages/core/src/workflows/steps.ts
+  070df3797133fe5d 82-85
+packages/player/src/build-word-bank-options.ts
+  070df3797133fe5d 1,3,9,13,20-21,28-29,52-75,77-79,81-82,84-93,96,100-101,103-108,110-111,113-118,123-124,131-146,149-151,155-161,167-173,181-182,184-185,187,191-192,196-197,206-211,214-217
+packages/player/src/components/translation-step.tsx
+  070df3797133fe5d 5,27
+apps/evals/src/tasks/activity-distractors/task.ts
+  070df3797133fe5d 1-16
+packages/player/src/_utils/activity-data-mappers.test.ts
+  070df3797133fe5d 1-317
+apps/main/src/data/activities/get-activity-distractor-words.test.ts
+  070df3797133fe5d 1-194
+packages/player/src/components/_utils/feedback-romanization.test.ts
+  070df3797133fe5d 42,48,59
+apps/api/src/workflows/activity-generation/steps/generate-vocabulary-pronunciation-step.ts
+  070df3797133fe5d 1-42
+apps/api/src/workflows/activity-generation/steps/generate-vocabulary-distractors-step.ts
+  070df3797133fe5d 1-44
+apps/api/src/workflows/activity-generation/steps/generate-sentence-distractors-step.ts
+  070df3797133fe5d 1-59
+apps/api/src/workflows/activity-generation/steps/generate-sentence-word-metadata-step.ts
+  070df3797133fe5d 118,121-124,140,142,151,154,157-158,169,193
+apps/api/src/workflows/activity-generation/steps/save-translation-from-existing-vocabulary-step.test.ts
+  070df3797133fe5d 1-188
+apps/api/src/workflows/activity-generation/kinds/vocabulary-workflow.test.ts
+  070df3797133fe5d 1-8,11-13,17-20,25-31,35-41,45-47,51-57,59-60,68-69,71-84,86-90,92-95,97-100,102-108,110-114,116-117,121-123,125-127,130,133-136,138-139,142-143,145-147,150,153-156,159-160,162-168,171-172,175,178-185
+packages/utils/src/distractors.ts
+  070df3797133fe5d 1-71
+packages/db/src/prisma/migrations/20260328075924_simplify_language_distractors/migration.sql
+  070df3797133fe5d 1-11
+apps/main/src/data/activities/get-activity-distractor-words.ts
+  070df3797133fe5d 1-57
+apps/api/src/workflows/activity-generation/steps/save-vocabulary-activity-step.test.ts
+  070df3797133fe5d 1-271
+packages/player/src/check-step.test.ts
+  070df3797133fe5d 241,301,307,333,339,347-348,354,360,368,382,388,414,420,428-429,435,441,449
+apps/api/src/workflows/activity-generation/steps/generate-vocabulary-audio-step.ts
+  070df3797133fe5d 17,48,59-61,65,68
+apps/api/src/workflows/activity-generation/steps/save-reading-activity-step.test.ts
+  070df3797133fe5d 1-351
+apps/api/src/workflows/activity-generation/steps/generate-sentence-word-pronunciation-step.ts
+  070df3797133fe5d 1-42
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.20",
+  "base_commit_sha": "69365a151ea2d52d3826e1dc934b043a500d0730",
+  "prompts": {
+    "070df3797133fe5d": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d3399-de15-72e1-8170-ca1687939a08",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill <4393133+ceolinwill@users.noreply.github.com>",
+      "messages": [],
+      "total_additions": 14293,
+      "total_deletions": 9301,
+      "accepted_lines": 13403,
+      "overriden_lines": 0
+    },
+    "84aadaea807b2360": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d3099-a5e3-7ee1-85ca-83ea23bfb25e",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill <4393133+ceolinwill@users.noreply.github.com>",
+      "messages": [],
+      "total_additions": 2312,
+      "total_deletions": 5781,
+      "accepted_lines": 1592,
+      "overriden_lines": 0
+    },
+    "b73a357b3b894df9": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d3126-8baa-77b0-8147-c916e67ebaf3",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill <4393133+ceolinwill@users.noreply.github.com>",
+      "messages": [],
+      "total_additions": 531,
+      "total_deletions": 3110,
+      "accepted_lines": 379,
+      "overriden_lines": 0
+    }
+  }
+}
