@@ -2,7 +2,6 @@ import { describe, expect, test } from "vitest";
 import {
   buildAcceptedArrangeWordSequences,
   getAcceptedArrangeWordLengths,
-  getAcceptedArrangeWordSet,
   matchesAcceptedArrangeWords,
 } from "./arrange-words-answers";
 
@@ -24,17 +23,6 @@ describe(getAcceptedArrangeWordLengths, () => {
     const lengths = getAcceptedArrangeWordLengths([[], ["one"], ["a", "b"], ["x", "y"]]);
 
     expect(lengths).toEqual([1, 2]);
-  });
-});
-
-describe(getAcceptedArrangeWordSet, () => {
-  test("normalizes words and skips empty tokens", () => {
-    const acceptedWordSet = getAcceptedArrangeWordSet([
-      ["Hallo,", "Lara!"],
-      ["hallo", "", "Freund."],
-    ]);
-
-    expect([...acceptedWordSet].toSorted()).toEqual(["freund", "hallo", "lara"]);
   });
 });
 

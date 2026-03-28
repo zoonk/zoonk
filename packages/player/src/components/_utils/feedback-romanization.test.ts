@@ -39,13 +39,13 @@ function buildStep({
         ? null
         : {
             audioUrl: null,
-            distractorUnsafeSentences: [],
-            distractorUnsafeTranslations: [],
+            distractors: [],
             explanation: null,
             id: "s-1",
             romanization: sentenceRomanization,
             sentence: "test sentence",
             translation: "test translation",
+            translationDistractors: [],
           },
     sentenceWordOptions: [],
     sortOrderItems: [],
@@ -56,7 +56,7 @@ function buildStep({
         ? null
         : {
             audioUrl: null,
-            distractorUnsafeTranslations: [],
+            distractors: [],
             id: "w-1",
             pronunciation: null,
             romanization: wordRomanization,

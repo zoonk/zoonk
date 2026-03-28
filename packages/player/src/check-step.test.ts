@@ -238,7 +238,7 @@ describe(checkStep, () => {
       kind: "translation",
       word: {
         audioUrl: null,
-        distractorUnsafeTranslations: [],
+        distractors: [],
         id: "word-1",
         pronunciation: null,
         romanization: null,
@@ -298,13 +298,13 @@ describe(checkStep, () => {
       kind: "reading",
       sentence: {
         audioUrl: null,
-        distractorUnsafeSentences: [],
-        distractorUnsafeTranslations: [],
+        distractors: [],
         explanation: null,
         id: "sent-1",
         romanization: null,
         sentence: "Hello world",
         translation: "Hola mundo",
+        translationDistractors: [],
       },
     });
 
@@ -330,13 +330,13 @@ describe(checkStep, () => {
         kind: "reading",
         sentence: {
           audioUrl: null,
-          distractorUnsafeSentences: [],
-          distractorUnsafeTranslations: [],
+          distractors: [],
           explanation: "Word order matters in this language.",
           id: "sent-3",
           romanization: null,
           sentence: "Hello world",
           translation: "Hola mundo",
+          translationDistractors: [],
         },
       });
       const answer: SelectedAnswer = { arrangedWords: ["world", "Hello"], kind: "reading" };
@@ -344,20 +344,20 @@ describe(checkStep, () => {
       expect(result.feedback).toBe("Word order matters in this language.");
     });
 
-    test("rejects distractor-only sentence variants", () => {
-      const stepWithDistractorUnsafeVariant = buildStep({
+    test("rejects non-canonical reading answers", () => {
+      const stepWithDistractors = buildStep({
         content: {},
         id: "reading-3",
         kind: "reading",
         sentence: {
           audioUrl: null,
-          distractorUnsafeSentences: ["Guten Morgen, Lara."],
-          distractorUnsafeTranslations: [],
+          distractors: ["Morgen"],
           explanation: null,
           id: "sent-5",
           romanization: null,
           sentence: "Guten Tag, Lara.",
           translation: "Boa tarde, Lara.",
+          translationDistractors: [],
         },
       });
 
@@ -365,7 +365,7 @@ describe(checkStep, () => {
         arrangedWords: ["Guten", "Morgen,", "Lara."],
         kind: "reading",
       };
-      const { result } = checkStep(stepWithDistractorUnsafeVariant, answer);
+      const { result } = checkStep(stepWithDistractors, answer);
 
       expect(result.isCorrect).toBe(false);
       expect(result.correctAnswer).toBe("Guten Tag, Lara.");
@@ -379,13 +379,13 @@ describe(checkStep, () => {
       kind: "listening",
       sentence: {
         audioUrl: null,
-        distractorUnsafeSentences: [],
-        distractorUnsafeTranslations: [],
+        distractors: [],
         explanation: null,
         id: "sent-2",
         romanization: null,
         sentence: "Good morning",
         translation: "Buenos dias",
+        translationDistractors: [],
       },
     });
 
@@ -411,13 +411,13 @@ describe(checkStep, () => {
         kind: "listening",
         sentence: {
           audioUrl: null,
-          distractorUnsafeSentences: [],
-          distractorUnsafeTranslations: [],
+          distractors: [],
           explanation: "Pay attention to accent marks.",
           id: "sent-4",
           romanization: null,
           sentence: "Good morning",
           translation: "Buenos dias",
+          translationDistractors: [],
         },
       });
       const answer: SelectedAnswer = { arrangedWords: ["dias", "Buenos"], kind: "listening" };
@@ -425,20 +425,20 @@ describe(checkStep, () => {
       expect(result.feedback).toBe("Pay attention to accent marks.");
     });
 
-    test("rejects distractor-only translation variants", () => {
-      const stepWithDistractorUnsafeVariant = buildStep({
+    test("rejects non-canonical listening answers", () => {
+      const stepWithDistractors = buildStep({
         content: {},
         id: "listening-3",
         kind: "listening",
         sentence: {
           audioUrl: null,
-          distractorUnsafeSentences: [],
-          distractorUnsafeTranslations: ["Bom dia, Lara."],
+          distractors: [],
           explanation: null,
           id: "sent-6",
           romanization: null,
           sentence: "Guten Tag, Lara.",
           translation: "Boa tarde, Lara.",
+          translationDistractors: ["Bom"],
         },
       });
 
@@ -446,7 +446,7 @@ describe(checkStep, () => {
         arrangedWords: ["Bom", "dia,", "Lara."],
         kind: "listening",
       };
-      const { result } = checkStep(stepWithDistractorUnsafeVariant, answer);
+      const { result } = checkStep(stepWithDistractors, answer);
 
       expect(result.isCorrect).toBe(false);
       expect(result.correctAnswer).toBe("Boa tarde, Lara.");

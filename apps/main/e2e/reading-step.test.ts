@@ -10,22 +10,14 @@ import { lessonWordFixture, wordFixture } from "@zoonk/testing/fixtures/words";
 import { type Page, expect, test } from "./fixtures";
 
 async function createReadingActivity(options: {
-  fallbackWords?: {
-    distractorUnsafeTranslations?: string[];
-    romanization?: string | null;
-    translation: string;
-    word: string;
-  }[];
   sentences: {
     audioUrl?: string | null;
-    distractorUnsafeSentences?: string[];
-    distractorUnsafeTranslations?: string[];
+    distractors?: string[];
     romanization?: string | null;
     sentence: string;
     translation: string;
   }[];
   words: {
-    distractorUnsafeTranslations?: string[];
     romanization?: string | null;
     translation: string;
     word: string;
@@ -68,26 +60,6 @@ async function createReadingActivity(options: {
       });
 
       await lessonWordFixture({
-        distractorUnsafeTranslations: wordData.distractorUnsafeTranslations ?? [],
-        lessonId: lesson.id,
-        translation: wordData.translation,
-        wordId: word.id,
-      });
-
-      return word;
-    }),
-  );
-
-  await Promise.all(
-    (options.fallbackWords ?? []).map(async (wordData) => {
-      const word = await wordFixture({
-        organizationId: org.id,
-        romanization: wordData.romanization ?? null,
-        word: wordData.word,
-      });
-
-      await lessonWordFixture({
-        distractorUnsafeTranslations: wordData.distractorUnsafeTranslations ?? [],
         lessonId: lesson.id,
         translation: wordData.translation,
         wordId: word.id,
@@ -101,14 +73,13 @@ async function createReadingActivity(options: {
     options.sentences.map(async (sentenceData) => {
       const sentence = await sentenceFixture({
         audioUrl: sentenceData.audioUrl ?? null,
-        distractorUnsafeSentences: sentenceData.distractorUnsafeSentences ?? [],
         organizationId: org.id,
         romanization: sentenceData.romanization ?? null,
         sentence: sentenceData.sentence,
       });
 
       await lessonSentenceFixture({
-        distractorUnsafeTranslations: sentenceData.distractorUnsafeTranslations ?? [],
+        distractors: sentenceData.distractors ?? options.words.map((word) => word.word),
         lessonId: lesson.id,
         sentenceId: sentence.id,
         translation: sentenceData.translation,
@@ -205,38 +176,26 @@ test.describe("Reading Step", () => {
     ).toBeVisible();
   });
 
-  test("uses fallback words to keep four visible distractors for short reading steps", async ({
-    page,
-  }) => {
+  test("uses stored sentence distractors only for short reading steps", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const helloWord = `Hola-${uniqueId}`;
     const ambiguousWord = `Salut-${uniqueId}`;
     const worldWord = `mundo-${uniqueId}`;
 
     const { url } = await createReadingActivity({
-      fallbackWords: [
-        { translation: `dog-${uniqueId}`, word: `perro-${uniqueId}` },
-        { translation: `bird-${uniqueId}`, word: `pajaro-${uniqueId}` },
-        { translation: `fish-${uniqueId}`, word: `pez-${uniqueId}` },
-      ],
       sentences: [
         {
+          distractors: [`gato-${uniqueId}`, `perro-${uniqueId}`, `pajaro-${uniqueId}`],
           sentence: `${helloWord} ${worldWord}`,
           translation: `hello-${uniqueId} world-${uniqueId}`,
         },
       ],
       words: [
-        {
-          distractorUnsafeTranslations: [`hi-${uniqueId}`],
-          translation: `hello-${uniqueId}`,
-          word: helloWord,
-        },
-        {
-          distractorUnsafeTranslations: [`hello-${uniqueId}`],
-          translation: `hi-${uniqueId}`,
-          word: ambiguousWord,
-        },
+        { translation: `hello-${uniqueId}`, word: helloWord },
+        { translation: `hi-${uniqueId}`, word: ambiguousWord },
         { translation: `cat-${uniqueId}`, word: `gato-${uniqueId}` },
+        { translation: `dog-${uniqueId}`, word: `perro-${uniqueId}` },
+        { translation: `bird-${uniqueId}`, word: `pajaro-${uniqueId}` },
       ],
     });
 
@@ -244,7 +203,7 @@ test.describe("Reading Step", () => {
 
     const wordBank = page.getByRole("group", { name: /word bank/i });
 
-    await expect(wordBank.getByRole("button")).toHaveCount(6);
+    await expect(wordBank.getByRole("button")).toHaveCount(5);
     await expect(wordBank.getByRole("button", { exact: true, name: helloWord })).toBeVisible();
     await expect(wordBank.getByRole("button", { exact: true, name: worldWord })).toBeVisible();
     await expect(
@@ -398,7 +357,9 @@ test.describe("Reading Step", () => {
     await expect(page.getByText(sentence)).toBeVisible();
   });
 
-  test("hides alternative lexical reading words from the word bank", async ({ page }) => {
+  test("uses stored reading distractors instead of deriving them from lesson words", async ({
+    page,
+  }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const guten = `Guten-${uniqueId}`;
     const tag = `Tag-${uniqueId}`;
@@ -409,18 +370,14 @@ test.describe("Reading Step", () => {
     const { url } = await createReadingActivity({
       sentences: [
         {
-          distractorUnsafeSentences: [`${guten} ${tag} ${lara}`],
+          distractors: [abend],
           sentence: `${guten} ${morgen} ${lara}`,
           translation: `Bom-dia-${uniqueId}`,
         },
       ],
       words: [
         { translation: `Bom-dia-${uniqueId}`, word: `${guten} ${morgen}` },
-        {
-          distractorUnsafeTranslations: [`Bom-dia-${uniqueId}`],
-          translation: `Boa-tarde-${uniqueId}`,
-          word: `${guten} ${tag}`,
-        },
+        { translation: `Boa-tarde-${uniqueId}`, word: `${guten} ${tag}` },
         { translation: `night-${uniqueId}`, word: abend },
       ],
     });

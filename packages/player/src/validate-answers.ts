@@ -28,8 +28,8 @@ type SelectedAnswer =
 /**
  * Step data for server-side validation. Translations live directly
  * on LessonWord/LessonSentence rather than in a separate translation
- * table, so sentence carries flat translation and distractorUnsafeTranslations
- * fields.
+ * table, so sentence carries only the canonical translation string used
+ * by listening validation.
  */
 type StepData = {
   id: bigint;
@@ -39,9 +39,7 @@ type StepData = {
   sentence?: {
     id: bigint;
     sentence: string;
-    distractorUnsafeSentences?: string[];
     translation: string;
-    distractorUnsafeTranslations: string[];
   } | null;
 };
 

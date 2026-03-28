@@ -115,9 +115,13 @@ async function buildWordMetadata(params: {
   organizationId: number;
   sentences: ReadingSentence[];
   targetLanguage: string;
+  targetWords: string[];
   userLanguage: string;
 }): Promise<{ isComplete: boolean; wordMetadata: Record<string, WordMetadataEntry> }> {
-  const uniqueWords = extractUniqueSentenceWords(params.sentences.map((entry) => entry.sentence));
+  const canonicalWords = extractUniqueSentenceWords(
+    params.sentences.map((entry) => entry.sentence),
+  );
+  const uniqueWords = params.targetWords;
 
   if (uniqueWords.length === 0) {
     return { isComplete: true, wordMetadata: {} };
@@ -133,9 +137,9 @@ async function buildWordMetadata(params: {
   });
 
   const [translationResult, romanizationResult] = await Promise.allSettled([
-    generateMissingTranslations(uniqueWords, params.userLanguage, params.targetLanguage),
+    generateMissingTranslations(canonicalWords, params.userLanguage, params.targetLanguage),
     generateWordRomanizations(
-      uniqueWords.filter((word) => !existingRomanizations[word]),
+      uniqueWords.filter((word) => !existingRomanizations[word.toLowerCase()]),
       params.targetLanguage,
     ),
   ]);
@@ -144,14 +148,14 @@ async function buildWordMetadata(params: {
   const newRomanizations =
     romanizationResult.status === "fulfilled" ? romanizationResult.value : {};
 
-  const isComplete = Object.keys(translations).length === uniqueWords.length;
+  const isComplete = Object.keys(translations).length === canonicalWords.length;
 
   const wordMetadata: Record<string, WordMetadataEntry> = Object.fromEntries(
-    Object.entries(translations).map(([word, translation]) => [
+    uniqueWords.map((word) => [
       word,
       {
-        romanization: existingRomanizations[word] ?? newRomanizations[word] ?? null,
-        translation,
+        romanization: existingRomanizations[word.toLowerCase()] ?? newRomanizations[word] ?? null,
+        translation: translations[word] ?? "",
       },
     ]),
   );
@@ -162,6 +166,7 @@ async function buildWordMetadata(params: {
 export async function generateSentenceWordMetadataStep(
   activities: LessonActivity[],
   sentences: ReadingSentence[],
+  targetWords: string[],
 ): Promise<{ wordMetadata: Record<string, WordMetadataEntry> }> {
   "use step";
 
@@ -185,6 +190,7 @@ export async function generateSentenceWordMetadataStep(
     organizationId: course.organization.id,
     sentences,
     targetLanguage: course.targetLanguage ?? "",
+    targetWords,
     userLanguage: activity.language,
   });
 

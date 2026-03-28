@@ -171,11 +171,11 @@ describe(validateAnswers, () => {
         id: 5n,
         kind: "reading",
         sentence: {
-          distractorUnsafeSentences: [],
-          distractorUnsafeTranslations: [],
+          distractors: [],
           id: 1n,
           sentence: "hello world",
           translation: "olá mundo",
+          translationDistractors: [],
         },
       },
     ];
@@ -195,11 +195,11 @@ describe(validateAnswers, () => {
         id: 6n,
         kind: "listening",
         sentence: {
-          distractorUnsafeSentences: [],
-          distractorUnsafeTranslations: [],
+          distractors: [],
           id: 1n,
           sentence: "hello world",
           translation: "olá mundo",
+          translationDistractors: [],
         },
       },
     ];
@@ -212,18 +212,18 @@ describe(validateAnswers, () => {
     expect(results[0]?.isCorrect).toBe(true);
   });
 
-  test("rejects distractor-only reading variants as answers", () => {
+  test("rejects non-canonical reading answers", () => {
     const steps = [
       {
         content: {},
         id: 7n,
         kind: "reading",
         sentence: {
-          distractorUnsafeSentences: ["guten morgen lara"],
-          distractorUnsafeTranslations: [],
+          distractors: ["morgen"],
           id: 1n,
           sentence: "guten tag lara",
           translation: "bom dia lara",
+          translationDistractors: [],
         },
       },
     ];
@@ -236,18 +236,18 @@ describe(validateAnswers, () => {
     expect(results[0]?.isCorrect).toBe(false);
   });
 
-  test("rejects distractor-only listening variants as answers", () => {
+  test("rejects non-canonical listening answers", () => {
     const steps = [
       {
         content: {},
         id: 10n,
         kind: "listening",
         sentence: {
-          distractorUnsafeSentences: [],
-          distractorUnsafeTranslations: ["bom dia lara"],
+          distractors: [],
           id: 1n,
           sentence: "guten tag lara",
           translation: "boa tarde lara",
+          translationDistractors: ["bom"],
         },
       },
     ];
@@ -267,11 +267,11 @@ describe(validateAnswers, () => {
         id: 8n,
         kind: "listening",
         sentence: {
-          distractorUnsafeSentences: [],
-          distractorUnsafeTranslations: [],
+          distractors: [],
           id: 1n,
           sentence: "hello lara",
           translation: "bom dia, lara!",
+          translationDistractors: [],
         },
       },
     ];

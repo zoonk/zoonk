@@ -12,13 +12,12 @@ import { type Page, expect, test } from "./fixtures";
 async function createListeningActivity(options: {
   sentences: {
     audioUrl?: string | null;
-    distractorUnsafeSentences?: string[];
-    distractorUnsafeTranslations?: string[];
     romanization?: string | null;
     sentence: string;
     translation: string;
+    translationDistractors?: string[];
   }[];
-  words: { distractorUnsafeTranslations?: string[]; translation: string; word: string }[];
+  words: { translation: string; word: string }[];
   sentenceWords?: { romanization?: string | null; translation: string; word: string }[];
 }) {
   const org = await getAiOrganization();
@@ -57,7 +56,6 @@ async function createListeningActivity(options: {
       });
 
       await lessonWordFixture({
-        distractorUnsafeTranslations: wordData.distractorUnsafeTranslations ?? [],
         lessonId: lesson.id,
         translation: wordData.translation,
         wordId: word.id,
@@ -71,17 +69,17 @@ async function createListeningActivity(options: {
     options.sentences.map(async (sentenceData) => {
       const sentence = await sentenceFixture({
         audioUrl: sentenceData.audioUrl ?? null,
-        distractorUnsafeSentences: sentenceData.distractorUnsafeSentences ?? [],
         organizationId: org.id,
         romanization: sentenceData.romanization ?? null,
         sentence: sentenceData.sentence,
       });
 
       await lessonSentenceFixture({
-        distractorUnsafeTranslations: sentenceData.distractorUnsafeTranslations ?? [],
         lessonId: lesson.id,
         sentenceId: sentence.id,
         translation: sentenceData.translation,
+        translationDistractors:
+          sentenceData.translationDistractors ?? options.words.map((word) => word.translation),
       });
 
       return sentence;
@@ -271,7 +269,9 @@ test.describe("Listening Step", () => {
     await expect(page.getByText(translation)).toBeVisible();
   });
 
-  test("hides alternative lexical listening words from the word bank", async ({ page }) => {
+  test("uses stored listening distractors instead of deriving them from lesson words", async ({
+    page,
+  }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const bom = `bom-${uniqueId}`;
     const dia = `dia-${uniqueId}`;
@@ -286,18 +286,14 @@ test.describe("Listening Step", () => {
     const { url } = await createListeningActivity({
       sentences: [
         {
-          distractorUnsafeTranslations: [`${bom} ${dia} ${lara}`],
           sentence: `${guten} ${tag} ${lara}`,
           translation: `${boa} ${tarde} ${lara}`,
+          translationDistractors: [noite],
         },
       ],
       words: [
         { translation: `${bom} ${dia}`, word: `${guten} ${morgen}` },
-        {
-          distractorUnsafeTranslations: [`${bom} ${dia}`],
-          translation: `${boa} ${tarde}`,
-          word: `${guten} ${tag}`,
-        },
+        { translation: `${boa} ${tarde}`, word: `${guten} ${tag}` },
         { translation: noite, word: `abend-${uniqueId}` },
       ],
     });

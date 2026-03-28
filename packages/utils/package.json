@@ -12,6 +12,7 @@
     "./cookies": "./src/cookies.ts",
     "./currency": "./src/currency.ts",
     "./date-ranges": "./src/date-ranges.ts",
+    "./distractors": "./src/distractors.ts",
     "./download": "./src/download.ts",
     "./energy": "./src/energy.ts",
     "./environment": "./src/environment.ts",

@@ -1,6 +1,5 @@
 import { createEntityStepStream } from "@/workflows/_shared/stream-status";
 import { generateActivityRomanization } from "@zoonk/ai/tasks/activities/language/romanization";
-import { type VocabularyWord } from "@zoonk/ai/tasks/activities/language/vocabulary";
 import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { safeAsync } from "@zoonk/utils/error";
 import { needsRomanization } from "@zoonk/utils/languages";
@@ -16,7 +15,7 @@ import { handleActivityFailureStep } from "./handle-failure-step";
  */
 export async function generateVocabularyRomanizationStep(
   activities: LessonActivity[],
-  words: VocabularyWord[],
+  words: string[],
 ): Promise<{ romanizations: Record<string, string> }> {
   "use step";
 
@@ -37,7 +36,7 @@ export async function generateVocabularyRomanizationStep(
 
   await stream.status({ status: "started", step: "generateVocabularyRomanization" });
 
-  const wordStrings = words.map((vocabWord) => vocabWord.word);
+  const wordStrings = words;
 
   const { data: result, error } = await safeAsync(() =>
     generateActivityRomanization({ targetLanguage, texts: wordStrings }),

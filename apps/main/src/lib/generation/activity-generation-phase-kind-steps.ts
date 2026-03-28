@@ -20,15 +20,17 @@ type VocabularySteps =
   | "getNeighboringConcepts"
   | "setActivityAsRunning"
   | "generateVocabularyContent"
-  | "generateVocabularyPronunciationAndDistractorUnsafes"
+  | "generateVocabularyDistractors"
+  | "generateVocabularyPronunciation"
   | "generateVocabularyRomanization"
   | "generateVocabularyAudio"
   | "saveVocabularyActivity";
 
 export const VOCABULARY_PHASE_STEPS = {
-  addingPronunciation: ["generateVocabularyPronunciationAndDistractorUnsafes"],
+  addingPronunciation: ["generateVocabularyPronunciation"],
   addingRomanization: ["generateVocabularyRomanization"],
   buildingWordList: ["generateVocabularyContent"],
+  creatingExercises: ["generateVocabularyDistractors"],
   gettingStarted: ["getLessonActivities", "getNeighboringConcepts", "setActivityAsRunning"],
   recordingAudio: ["generateVocabularyAudio"],
   saving: ["saveVocabularyActivity"],
@@ -44,6 +46,7 @@ type _ValidateVocabulary = AssertAllCovered<
 export const VOCABULARY_PHASE_ORDER: PhaseName[] = [
   "gettingStarted",
   "buildingWordList",
+  "creatingExercises",
   "addingPronunciation",
   "addingRomanization",
   "recordingAudio",
@@ -88,16 +91,18 @@ type ReadingSteps =
   | "getNeighboringConcepts"
   | "setActivityAsRunning"
   | "generateSentences"
+  | "generateSentenceDistractors"
   | "generateAudio"
   | "generateReadingRomanization"
   | "generateSentenceWordMetadata"
   | "generateSentenceWordAudio"
-  | "generateSentencePronunciationAndDistractorUnsafes"
+  | "generateSentenceWordPronunciation"
   | "saveReadingActivity";
 
 export const READING_PHASE_STEPS = {
   addingRomanization: ["generateReadingRomanization"],
-  addingWordPronunciation: ["generateSentencePronunciationAndDistractorUnsafes"],
+  addingWordPronunciation: ["generateSentenceWordPronunciation"],
+  creatingExercises: ["generateSentenceDistractors"],
   creatingSentences: ["generateSentences"],
   gettingStarted: ["getLessonActivities", "getNeighboringConcepts", "setActivityAsRunning"],
   lookingUpWords: ["generateSentenceWordMetadata"],
@@ -113,6 +118,7 @@ type _ValidateReading = AssertAllCovered<
 export const READING_PHASE_ORDER: PhaseName[] = [
   "gettingStarted",
   "creatingSentences",
+  "creatingExercises",
   "recordingAudio",
   "addingRomanization",
   "lookingUpWords",
@@ -138,7 +144,8 @@ type ListeningSteps =
   | "getNeighboringConcepts"
   | "setActivityAsRunning"
   | "generateVocabularyContent"
-  | "generateVocabularyPronunciationAndDistractorUnsafes"
+  | "generateVocabularyDistractors"
+  | "generateVocabularyPronunciation"
   | "generateVocabularyRomanization"
   | "generateVocabularyAudio"
   | "saveVocabularyActivity"
@@ -147,23 +154,28 @@ type ListeningSteps =
   | "generateGrammarRomanization"
   | "saveGrammarActivity"
   | "generateSentences"
+  | "generateSentenceDistractors"
   | "generateAudio"
   | "generateReadingRomanization"
   | "generateSentenceWordMetadata"
   | "generateSentenceWordAudio"
-  | "generateSentencePronunciationAndDistractorUnsafes"
+  | "generateSentenceWordPronunciation"
   | "saveReadingActivity"
   | "copyListeningSteps"
   | "saveListeningActivity";
 
 export const LISTENING_PHASE_STEPS = {
   addingGrammarRomanization: ["generateGrammarRomanization"],
-  addingPronunciation: ["generateVocabularyPronunciationAndDistractorUnsafes"],
+  addingPronunciation: ["generateVocabularyPronunciation"],
   addingRomanization: ["generateReadingRomanization"],
   addingVocabularyRomanization: ["generateVocabularyRomanization"],
-  addingWordPronunciation: ["generateSentencePronunciationAndDistractorUnsafes"],
+  addingWordPronunciation: ["generateSentenceWordPronunciation"],
   buildingWordList: ["generateVocabularyContent"],
-  creatingExercises: ["generateGrammarUserContent"],
+  creatingExercises: [
+    "generateGrammarUserContent",
+    "generateVocabularyDistractors",
+    "generateSentenceDistractors",
+  ],
   creatingSentences: ["generateSentences"],
   gettingStarted: ["getLessonActivities", "getNeighboringConcepts", "setActivityAsRunning"],
   lookingUpWords: ["generateSentenceWordMetadata"],

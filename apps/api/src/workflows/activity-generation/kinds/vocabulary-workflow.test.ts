@@ -1,737 +1,188 @@
-import { randomUUID } from "node:crypto";
-import {
-  type VocabularyWord,
-  generateActivityVocabulary,
-} from "@zoonk/ai/tasks/activities/language/vocabulary";
-import { generateLanguageAudio } from "@zoonk/core/audio/generate";
-import { prisma } from "@zoonk/db";
-import { activityFixture } from "@zoonk/testing/fixtures/activities";
-import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
-import { courseFixture } from "@zoonk/testing/fixtures/courses";
-import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
-import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
-import { type LessonActivity } from "../steps/get-lesson-activities-step";
+import { beforeEach, describe, expect, test, vi } from "vitest";
+import { generateVocabularyAudioStep } from "../steps/generate-vocabulary-audio-step";
+import { generateVocabularyContentStep } from "../steps/generate-vocabulary-content-step";
+import { generateVocabularyDistractorsStep } from "../steps/generate-vocabulary-distractors-step";
+import { generateVocabularyPronunciationStep } from "../steps/generate-vocabulary-pronunciation-step";
+import { generateVocabularyRomanizationStep } from "../steps/generate-vocabulary-romanization-step";
+import { saveTranslationFromExistingVocabularyStep } from "../steps/save-translation-from-existing-vocabulary-step";
+import { saveVocabularyActivityStep } from "../steps/save-vocabulary-activity-step";
 import { vocabularyActivityWorkflow } from "./vocabulary-workflow";
 
-const mockStreamWrite = vi.fn().mockResolvedValue(null);
-
-vi.mock("workflow", () => ({
-  FatalError: class FatalError extends Error {},
-  getWorkflowMetadata: vi.fn().mockReturnValue({ workflowRunId: "test-run-id" }),
-  getWritable: vi.fn().mockReturnValue({
-    getWriter: () => ({
-      releaseLock: vi.fn(),
-      write: mockStreamWrite,
-    }),
+vi.mock("../steps/generate-vocabulary-content-step", () => ({
+  generateVocabularyContentStep: vi.fn().mockResolvedValue({
+    words: [{ translation: "good evening", word: "boa noite" }],
   }),
-  workflowStep: vi.fn().mockImplementation((_name: string, fn: unknown) => fn),
 }));
 
-function getStreamedMessages(): Record<string, unknown>[] {
-  return mockStreamWrite.mock.calls.map(
-    (call: string[]) =>
-      JSON.parse(call[0]!.replace("data: ", "").trim()) as Record<string, unknown>,
-  );
-}
-
-vi.mock("@zoonk/ai/tasks/activities/language/vocabulary", () => ({
-  generateActivityVocabulary: vi.fn().mockResolvedValue({
-    data: {
-      words: [
-        { translation: "hello", word: "hola" },
-        { translation: "cat", word: "gato" },
-      ],
+vi.mock("../steps/generate-vocabulary-distractors-step", () => ({
+  generateVocabularyDistractorsStep: vi.fn().mockResolvedValue({
+    distractors: {
+      "boa noite": ["boa tarde", "bom dia", "boa tarde"],
     },
   }),
 }));
 
-vi.mock("@zoonk/ai/tasks/activities/language/pronunciation", () => ({
-  generateActivityPronunciation: vi.fn().mockResolvedValue({
-    data: { pronunciation: "OH-lah" },
-  }),
-}));
-
-vi.mock("@zoonk/ai/tasks/activities/language/word-distractor-unsafe-translations", () => ({
-  generateWordDistractorUnsafeTranslations: vi.fn().mockResolvedValue({
-    data: { distractorUnsafeTranslations: [] },
-  }),
-}));
-
-vi.mock("@zoonk/core/audio/generate", () => ({
-  generateLanguageAudio: vi.fn().mockResolvedValue({
-    data: "https://example.com/audio.mp3",
-    error: null,
-  }),
-}));
-
-async function fetchLessonActivities(lessonId: number): Promise<LessonActivity[]> {
-  const activities = await prisma.activity.findMany({
-    include: {
-      _count: { select: { steps: true } },
-      lesson: {
-        include: {
-          chapter: {
-            include: {
-              course: { include: { organization: true } },
-            },
-          },
-        },
-      },
+vi.mock("../steps/generate-vocabulary-pronunciation-step", () => ({
+  generateVocabularyPronunciationStep: vi.fn().mockResolvedValue({
+    pronunciations: {
+      "boa noite": "pron-boa-noite",
+      "boa tarde": "pron-boa-tarde",
+      "bom dia": "pron-bom-dia",
     },
-    orderBy: { position: "asc" },
-    where: { lessonId },
-  });
+  }),
+}));
 
-  return activities.map((activity) => ({ ...activity, id: Number(activity.id) }));
+vi.mock("../steps/generate-vocabulary-audio-step", () => ({
+  generateVocabularyAudioStep: vi.fn().mockResolvedValue({
+    wordAudioUrls: {
+      "boa noite": "/audio/boa-noite.mp3",
+      "boa tarde": "/audio/boa-tarde.mp3",
+      "bom dia": "/audio/bom-dia.mp3",
+    },
+  }),
+}));
+
+vi.mock("../steps/generate-vocabulary-romanization-step", () => ({
+  generateVocabularyRomanizationStep: vi.fn().mockResolvedValue({
+    romanizations: {},
+  }),
+}));
+
+vi.mock("../steps/save-translation-from-existing-vocabulary-step", () => ({
+  saveTranslationFromExistingVocabularyStep: vi.fn(async () => {}),
+}));
+
+vi.mock("../steps/save-vocabulary-activity-step", () => ({
+  saveVocabularyActivityStep: vi.fn(async () => {}),
+}));
+
+function makeActivity(kind: string) {
+  return { id: kind, kind };
 }
 
 describe(vocabularyActivityWorkflow, () => {
-  let organizationId: number;
-  let course: Awaited<ReturnType<typeof courseFixture>>;
-  let chapter: Awaited<ReturnType<typeof chapterFixture>>;
-
-  beforeAll(async () => {
-    const org = await aiOrganizationFixture();
-    organizationId = org.id;
-    course = await courseFixture({ organizationId, targetLanguage: "es" });
-    chapter = await chapterFixture({
-      courseId: course.id,
-      organizationId,
-      title: `Vocab Chapter ${randomUUID()}`,
-    });
-  });
-
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  test("creates word records and steps with wordId links", async () => {
-    const lesson = await lessonFixture({
-      chapterId: chapter.id,
-      kind: "language",
-      organizationId,
-      title: `Vocab Words ${randomUUID()}`,
+  test("collects canonical and distractor target words for enrichment", async () => {
+    const activities = [makeActivity("vocabulary"), makeActivity("translation")];
+
+    const result = await vocabularyActivityWorkflow({
+      activitiesToGenerate: activities as never,
+      allActivities: activities as never,
+      concepts: ["greetings"],
+      neighboringConcepts: ["introductions"],
+      workflowRunId: "workflow-1",
     });
 
-    const activity = await activityFixture({
-      generationStatus: "pending",
-      kind: "vocabulary",
-      language: "en",
-      lessonId: lesson.id,
-      organizationId,
-      title: `Vocabulary ${randomUUID()}`,
-    });
-
-    const activities = await fetchLessonActivities(lesson.id);
-    await vocabularyActivityWorkflow({
-      activitiesToGenerate: activities,
-      allActivities: activities,
-      concepts: [],
-      neighboringConcepts: [],
-      workflowRunId: "test-run-id",
-    });
-
-    const words = await prisma.word.findMany({
-      where: {
-        organizationId,
-        steps: { some: { activityId: activity.id } },
-        targetLanguage: "es",
+    expect(result.words).toEqual([{ translation: "good evening", word: "boa noite" }]);
+    expect(generateVocabularyContentStep).toHaveBeenCalledWith(
+      activities[0],
+      "workflow-1",
+      ["greetings"],
+      ["introductions"],
+    );
+    expect(generateVocabularyDistractorsStep).toHaveBeenCalledWith(activities, result.words);
+    expect(generateVocabularyPronunciationStep).toHaveBeenCalledWith(activities, [
+      "boa noite",
+      "boa tarde",
+      "bom dia",
+    ]);
+    expect(generateVocabularyAudioStep).toHaveBeenCalledWith(activities, [
+      "boa noite",
+      "boa tarde",
+      "bom dia",
+    ]);
+    expect(generateVocabularyRomanizationStep).toHaveBeenCalledWith(activities, [
+      "boa noite",
+      "boa tarde",
+      "bom dia",
+    ]);
+    expect(saveVocabularyActivityStep).toHaveBeenCalledWith({
+      activities,
+      distractors: { "boa noite": ["boa tarde", "bom dia", "boa tarde"] },
+      pronunciations: {
+        "boa noite": "pron-boa-noite",
+        "boa tarde": "pron-boa-tarde",
+        "bom dia": "pron-bom-dia",
       },
+      romanizations: {},
+      wordAudioUrls: {
+        "boa noite": "/audio/boa-noite.mp3",
+        "boa tarde": "/audio/boa-tarde.mp3",
+        "bom dia": "/audio/bom-dia.mp3",
+      },
+      words: [{ translation: "good evening", word: "boa noite" }],
+      workflowRunId: "workflow-1",
     });
-
-    expect(words).toHaveLength(2);
-    expect(words.map((record) => record.word).toSorted()).toEqual(["gato", "hola"]);
-
-    const steps = await prisma.step.findMany({
-      orderBy: { position: "asc" },
-      where: { activityId: activity.id },
-    });
-
-    expect(steps).toHaveLength(2);
-
-    for (const step of steps) {
-      expect(step.kind).toBe("vocabulary");
-      expect(step.wordId).not.toBeNull();
-      expect(step.isPublished).toBe(true);
-    }
   });
 
-  test("creates translation steps when translation activity is not in activitiesToGenerate but is in allActivities", async () => {
-    const lesson = await lessonFixture({
-      chapterId: chapter.id,
-      kind: "language",
-      organizationId,
-      title: `VocabOnly+AllTrans ${randomUUID()}`,
+  test("reuses existing vocabulary when only translation needs generation", async () => {
+    const activitiesToGenerate = [makeActivity("translation")];
+    const allActivities = [makeActivity("vocabulary"), makeActivity("translation")];
+
+    const result = await vocabularyActivityWorkflow({
+      activitiesToGenerate: activitiesToGenerate as never,
+      allActivities: allActivities as never,
+      concepts: [],
+      neighboringConcepts: [],
+      workflowRunId: "workflow-2",
     });
 
-    const [vocabActivity, transActivity] = await Promise.all([
-      activityFixture({
-        generationStatus: "pending",
-        kind: "vocabulary",
-        language: "en",
-        lessonId: lesson.id,
-        organizationId,
-        position: 0,
-        title: `Vocabulary ${randomUUID()}`,
-      }),
-      activityFixture({
-        generationStatus: "pending",
-        kind: "translation",
-        language: "en",
-        lessonId: lesson.id,
-        organizationId,
-        position: 1,
-        title: `Translation ${randomUUID()}`,
-      }),
-    ]);
-
-    const allActivities = await fetchLessonActivities(lesson.id);
-
-    // Only vocabulary is in activitiesToGenerate; translation is in allActivities only
-    const activitiesToGenerate = allActivities.filter((a) => a.id === Number(vocabActivity.id));
-
-    await vocabularyActivityWorkflow({
-      activitiesToGenerate,
+    expect(result).toEqual({ words: [] });
+    expect(saveTranslationFromExistingVocabularyStep).toHaveBeenCalledWith({
       allActivities,
-      concepts: [],
-      neighboringConcepts: [],
-      workflowRunId: "test-run-id",
+      workflowRunId: "workflow-2",
     });
-
-    const [vocabSteps, transSteps] = await Promise.all([
-      prisma.step.findMany({
-        orderBy: { position: "asc" },
-        where: { activityId: vocabActivity.id },
-      }),
-      prisma.step.findMany({
-        orderBy: { position: "asc" },
-        where: { activityId: transActivity.id },
-      }),
-    ]);
-
-    expect(vocabSteps).toHaveLength(2);
-    expect(transSteps).toHaveLength(2);
-
-    for (const step of vocabSteps) {
-      expect(step.kind).toBe("vocabulary");
-      expect(step.wordId).not.toBeNull();
-    }
-
-    for (const step of transSteps) {
-      expect(step.kind).toBe("translation");
-      expect(step.wordId).not.toBeNull();
-    }
-
-    const [dbVocab, dbTrans] = await Promise.all([
-      prisma.activity.findUnique({ where: { id: vocabActivity.id } }),
-      prisma.activity.findUnique({ where: { id: transActivity.id } }),
-    ]);
-
-    expect(dbVocab?.generationStatus).toBe("completed");
-    expect(dbTrans?.generationStatus).toBe("completed");
-
-    const streamedMessages = getStreamedMessages();
-
-    expect(streamedMessages).toContainEqual(
-      expect.objectContaining({
-        entityId: Number(vocabActivity.id),
-        status: "completed",
-        step: "saveVocabularyActivity",
-      }),
-    );
-
-    expect(streamedMessages).toContainEqual(
-      expect.objectContaining({
-        entityId: Number(transActivity.id),
-        status: "completed",
-        step: "saveVocabularyActivity",
-      }),
-    );
+    expect(generateVocabularyContentStep).not.toHaveBeenCalled();
+    expect(saveVocabularyActivityStep).not.toHaveBeenCalled();
   });
 
-  test("creates translation steps when translation activity exists", async () => {
-    const lesson = await lessonFixture({
-      chapterId: chapter.id,
-      kind: "language",
-      organizationId,
-      title: `Vocab+Trans ${randomUUID()}`,
-    });
-
-    const [vocabActivity, transActivity] = await Promise.all([
-      activityFixture({
-        generationStatus: "pending",
-        kind: "vocabulary",
-        language: "en",
-        lessonId: lesson.id,
-        organizationId,
-        position: 0,
-        title: `Vocabulary ${randomUUID()}`,
-      }),
-      activityFixture({
-        generationStatus: "pending",
-        kind: "translation",
-        language: "en",
-        lessonId: lesson.id,
-        organizationId,
-        position: 1,
-        title: `Translation ${randomUUID()}`,
-      }),
-    ]);
-
-    const activities = await fetchLessonActivities(lesson.id);
-    await vocabularyActivityWorkflow({
-      activitiesToGenerate: activities,
-      allActivities: activities,
-      concepts: [],
-      neighboringConcepts: [],
-      workflowRunId: "test-run-id",
-    });
-
-    const [vocabSteps, transSteps] = await Promise.all([
-      prisma.step.findMany({
-        orderBy: { position: "asc" },
-        where: { activityId: vocabActivity.id },
-      }),
-      prisma.step.findMany({
-        orderBy: { position: "asc" },
-        where: { activityId: transActivity.id },
-      }),
-    ]);
-
-    expect(vocabSteps).toHaveLength(2);
-    expect(transSteps).toHaveLength(2);
-
-    for (const step of vocabSteps) {
-      expect(step.kind).toBe("vocabulary");
-      expect(step.wordId).not.toBeNull();
-    }
-
-    for (const step of transSteps) {
-      expect(step.kind).toBe("translation");
-      expect(step.wordId).not.toBeNull();
-    }
-
-    const [dbVocab, dbTrans] = await Promise.all([
-      prisma.activity.findUnique({ where: { id: vocabActivity.id } }),
-      prisma.activity.findUnique({ where: { id: transActivity.id } }),
-    ]);
-
-    expect(dbVocab?.generationStatus).toBe("completed");
-    expect(dbTrans?.generationStatus).toBe("completed");
-  });
-
-  test("sets vocabulary status to 'completed' after full pipeline", async () => {
-    const lesson = await lessonFixture({
-      chapterId: chapter.id,
-      kind: "language",
-      organizationId,
-      title: `Vocab Complete ${randomUUID()}`,
-    });
-
-    const activity = await activityFixture({
-      generationStatus: "pending",
-      kind: "vocabulary",
-      language: "en",
-      lessonId: lesson.id,
-      organizationId,
-      title: `Vocabulary ${randomUUID()}`,
-    });
-
-    const activities = await fetchLessonActivities(lesson.id);
-    await vocabularyActivityWorkflow({
-      activitiesToGenerate: activities,
-      allActivities: activities,
-      concepts: [],
-      neighboringConcepts: [],
-      workflowRunId: "test-run-id",
-    });
-
-    const dbActivity = await prisma.activity.findUnique({ where: { id: activity.id } });
-    expect(dbActivity?.generationStatus).toBe("completed");
-  });
-
-  test("sets vocabulary status to 'failed' when AI throws", async () => {
-    vi.mocked(generateActivityVocabulary).mockRejectedValueOnce(new Error("AI failed"));
-
-    const lesson = await lessonFixture({
-      chapterId: chapter.id,
-      kind: "language",
-      organizationId,
-      title: `Vocab Fail ${randomUUID()}`,
-    });
-
-    const activity = await activityFixture({
-      generationStatus: "pending",
-      kind: "vocabulary",
-      language: "en",
-      lessonId: lesson.id,
-      organizationId,
-      title: `Vocabulary ${randomUUID()}`,
-    });
-
-    const activities = await fetchLessonActivities(lesson.id);
-    await vocabularyActivityWorkflow({
-      activitiesToGenerate: activities,
-      allActivities: activities,
-      concepts: [],
-      neighboringConcepts: [],
-      workflowRunId: "test-run-id",
-    });
-
-    const dbActivity = await prisma.activity.findUnique({ where: { id: activity.id } });
-    expect(dbActivity?.generationStatus).toBe("failed");
-  });
-
-  test("returns vocabulary words for downstream workflows", async () => {
-    const lesson = await lessonFixture({
-      chapterId: chapter.id,
-      kind: "language",
-      organizationId,
-      title: `Vocab Return ${randomUUID()}`,
-    });
-
-    await activityFixture({
-      generationStatus: "pending",
-      kind: "vocabulary",
-      language: "en",
-      lessonId: lesson.id,
-      organizationId,
-      title: `Vocabulary ${randomUUID()}`,
-    });
-
-    const activities = await fetchLessonActivities(lesson.id);
-    const result = await vocabularyActivityWorkflow({
-      activitiesToGenerate: activities,
-      allActivities: activities,
-      concepts: [],
-      neighboringConcepts: [],
-      workflowRunId: "test-run-id",
-    });
-
-    expect(result.words).toHaveLength(2);
-    expect(result.words.map((record) => record.word).toSorted()).toEqual(["gato", "hola"]);
-  });
-
-  test("marks translation as 'failed' when vocabulary save fails", async () => {
-    const upsertSpy = vi.spyOn(prisma.word, "upsert").mockRejectedValue(new Error("DB error"));
-
-    const lesson = await lessonFixture({
-      chapterId: chapter.id,
-      kind: "language",
-      organizationId,
-      title: `Vocab Save Fail ${randomUUID()}`,
-    });
-
-    const [vocabActivity, transActivity] = await Promise.all([
-      activityFixture({
-        generationStatus: "pending",
-        kind: "vocabulary",
-        language: "en",
-        lessonId: lesson.id,
-        organizationId,
-        position: 0,
-        title: `Vocabulary ${randomUUID()}`,
-      }),
-      activityFixture({
-        generationStatus: "pending",
-        kind: "translation",
-        language: "en",
-        lessonId: lesson.id,
-        organizationId,
-        position: 1,
-        title: `Translation ${randomUUID()}`,
-      }),
-    ]);
-
-    const activities = await fetchLessonActivities(lesson.id);
-    await vocabularyActivityWorkflow({
-      activitiesToGenerate: activities,
-      allActivities: activities,
-      concepts: [],
-      neighboringConcepts: [],
-      workflowRunId: "test-run-id",
-    });
-
-    const [dbVocab, dbTrans] = await Promise.all([
-      prisma.activity.findUnique({ where: { id: vocabActivity.id } }),
-      prisma.activity.findUnique({ where: { id: transActivity.id } }),
-    ]);
-
-    expect(dbVocab?.generationStatus).toBe("failed");
-    expect(dbTrans?.generationStatus).toBe("failed");
-
-    upsertSpy.mockRestore();
-  });
-
-  test("skips generation when activity is already completed", async () => {
-    const lesson = await lessonFixture({
-      chapterId: chapter.id,
-      kind: "language",
-      organizationId,
-      title: `Vocab Skip ${randomUUID()}`,
-    });
-
-    await activityFixture({
-      generationStatus: "completed",
-      kind: "vocabulary",
-      language: "en",
-      lessonId: lesson.id,
-      organizationId,
-      title: `Vocabulary ${randomUUID()}`,
-    });
+  test("returns early when neither vocabulary nor translation need generation", async () => {
+    const allActivities = [makeActivity("vocabulary"), makeActivity("translation")];
 
     const result = await vocabularyActivityWorkflow({
-      activitiesToGenerate: [],
-      allActivities: [],
+      activitiesToGenerate: [] as never,
+      allActivities: allActivities as never,
       concepts: [],
       neighboringConcepts: [],
-      workflowRunId: "test-run-id",
+      workflowRunId: "workflow-noop",
     });
 
-    expect(generateActivityVocabulary).not.toHaveBeenCalled();
-    expect(result.words).toHaveLength(0);
+    expect(result).toEqual({ words: [] });
+    expect(generateVocabularyContentStep).not.toHaveBeenCalled();
+    expect(saveTranslationFromExistingVocabularyStep).not.toHaveBeenCalled();
+    expect(saveVocabularyActivityStep).not.toHaveBeenCalled();
   });
 
-  test("preserves existing audioUrl when audio step fails but pronunciation and distractor filtering succeed", async () => {
-    const id = randomUUID().replaceAll("-", "").slice(0, 8);
-    const existingWord = `zkeep${id}`;
-    const newWord = `znew${id}`;
+  test("falls back to empty enrichment maps when optional steps fail", async () => {
+    const activities = [makeActivity("vocabulary"), makeActivity("translation")];
 
-    await prisma.word.create({
-      data: {
-        audioUrl: "https://example.com/keep-audio.mp3",
-        organizationId,
-        targetLanguage: "es",
-        word: existingWord,
-      },
-    });
-
-    const mockWords: VocabularyWord[] = [
-      {
-        translation: "existing",
-        word: existingWord,
-      },
-      { translation: "new", word: newWord },
-    ];
-
-    vi.mocked(generateActivityVocabulary).mockResolvedValueOnce({
-      data: { words: mockWords },
-    } as Awaited<ReturnType<typeof generateActivityVocabulary>>);
-
-    // Audio rejects for the new word → audio step throws → settled returns {}
-    vi.mocked(generateLanguageAudio).mockRejectedValueOnce(new Error("TTS failed"));
-
-    const lesson = await lessonFixture({
-      chapterId: chapter.id,
-      kind: "language",
-      organizationId,
-      title: `Vocab KeepAudio ${randomUUID()}`,
-    });
-
-    await activityFixture({
-      generationStatus: "pending",
-      kind: "vocabulary",
-      language: "en",
-      lessonId: lesson.id,
-      organizationId,
-      title: `Vocabulary ${randomUUID()}`,
-    });
-
-    const activities = await fetchLessonActivities(lesson.id);
-    await vocabularyActivityWorkflow({
-      activitiesToGenerate: activities,
-      allActivities: activities,
-      concepts: [],
-      neighboringConcepts: [],
-      workflowRunId: "test-run-id",
-    });
-
-    const updatedWord = await prisma.word.findFirst({
-      where: { organizationId, targetLanguage: "es", word: existingWord },
-    });
-
-    expect(updatedWord?.audioUrl).toBe("https://example.com/keep-audio.mp3");
-  });
-
-  test("reuses existing Word record when casing differs", async () => {
-    const id = randomUUID().replaceAll("-", "").slice(0, 8);
-    const existingWord = `Hola${id}`;
-
-    const existingRecord = await prisma.word.create({
-      data: {
-        audioUrl: "https://example.com/hola-audio.mp3",
-        organizationId,
-        targetLanguage: "es",
-        word: existingWord,
-      },
-    });
-
-    const mockWords: VocabularyWord[] = [
-      {
-        translation: "hello",
-        word: existingWord.toLowerCase(),
-      },
-      { translation: "cat", word: `gato${id}` },
-    ];
-
-    vi.mocked(generateActivityVocabulary).mockResolvedValueOnce({
-      data: { words: mockWords },
-    } as Awaited<ReturnType<typeof generateActivityVocabulary>>);
-
-    const lesson = await lessonFixture({
-      chapterId: chapter.id,
-      kind: "language",
-      organizationId,
-      title: `Vocab CaseDedup ${randomUUID()}`,
-    });
-
-    await activityFixture({
-      generationStatus: "pending",
-      kind: "vocabulary",
-      language: "en",
-      lessonId: lesson.id,
-      organizationId,
-      title: `Vocabulary ${randomUUID()}`,
-    });
-
-    const activities = await fetchLessonActivities(lesson.id);
-    await vocabularyActivityWorkflow({
-      activitiesToGenerate: activities,
-      allActivities: activities,
-      concepts: [],
-      neighboringConcepts: [],
-      workflowRunId: "test-run-id",
-    });
-
-    const words = await prisma.word.findMany({
-      where: {
-        organizationId,
-        targetLanguage: "es",
-        word: { in: [existingWord, existingWord.toLowerCase()], mode: "insensitive" },
-      },
-    });
-
-    // Should reuse the existing "Hola..." record, not create a new "hola..." one
-    expect(words).toHaveLength(1);
-    expect(words[0]!.word).toBe(existingWord);
-    expect(words[0]!.id).toBe(existingRecord.id);
-  });
-
-  test("reuses existing audio when casing differs", async () => {
-    const id = randomUUID().replaceAll("-", "").slice(0, 8);
-    const existingWord = `Gato${id}`;
-
-    await prisma.word.create({
-      data: {
-        audioUrl: "https://example.com/gato-audio.mp3",
-        organizationId,
-        targetLanguage: "es",
-        word: existingWord,
-      },
-    });
-
-    const mockWords: VocabularyWord[] = [
-      {
-        translation: "cat",
-        word: existingWord.toLowerCase(),
-      },
-    ];
-
-    vi.mocked(generateActivityVocabulary).mockResolvedValueOnce({
-      data: { words: mockWords },
-    } as Awaited<ReturnType<typeof generateActivityVocabulary>>);
-
-    const lesson = await lessonFixture({
-      chapterId: chapter.id,
-      kind: "language",
-      organizationId,
-      title: `Vocab AudioCase ${randomUUID()}`,
-    });
-
-    await activityFixture({
-      generationStatus: "pending",
-      kind: "vocabulary",
-      language: "en",
-      lessonId: lesson.id,
-      organizationId,
-      title: `Vocabulary ${randomUUID()}`,
-    });
-
-    const activities = await fetchLessonActivities(lesson.id);
-    await vocabularyActivityWorkflow({
-      activitiesToGenerate: activities,
-      allActivities: activities,
-      concepts: [],
-      neighboringConcepts: [],
-      workflowRunId: "test-run-id",
-    });
-
-    // Should not call TTS since audio for "Gato..." already exists on the Word record
-    expect(generateLanguageAudio).not.toHaveBeenCalled();
-
-    // The Word record should have the existing audioUrl preserved
-    const word = await prisma.word.findFirst({
-      where: { organizationId, targetLanguage: "es", word: existingWord },
-    });
-
-    expect(word?.audioUrl).toBe("https://example.com/gato-audio.mp3");
-  });
-
-  test("skips TTS for vocabulary words that already have an audioUrl", async () => {
-    const id = randomUUID().replaceAll("-", "").slice(0, 8);
-    const existingWord = `zexist${id}`;
-    const newWord = `znew${id}`;
-
-    await prisma.word.create({
-      data: {
-        audioUrl: "https://example.com/existing-audio.mp3",
-        organizationId,
-        targetLanguage: "es",
-        word: existingWord,
-      },
-    });
-
-    const mockWords: VocabularyWord[] = [
-      {
-        translation: "existing",
-        word: existingWord,
-      },
-      { translation: "new", word: newWord },
-    ];
-
-    vi.mocked(generateActivityVocabulary).mockResolvedValueOnce({
-      data: { words: mockWords },
-    } as Awaited<ReturnType<typeof generateActivityVocabulary>>);
-
-    const lesson = await lessonFixture({
-      chapterId: chapter.id,
-      kind: "language",
-      organizationId,
-      title: `Vocab SkipTTS ${randomUUID()}`,
-    });
-
-    await activityFixture({
-      generationStatus: "pending",
-      kind: "vocabulary",
-      language: "en",
-      lessonId: lesson.id,
-      organizationId,
-      title: `Vocabulary ${randomUUID()}`,
-    });
-
-    const activities = await fetchLessonActivities(lesson.id);
-    await vocabularyActivityWorkflow({
-      activitiesToGenerate: activities,
-      allActivities: activities,
-      concepts: [],
-      neighboringConcepts: [],
-      workflowRunId: "test-run-id",
-    });
-
-    expect(generateLanguageAudio).not.toHaveBeenCalledWith(
-      expect.objectContaining({ text: existingWord }),
+    vi.mocked(generateVocabularyPronunciationStep).mockRejectedValueOnce(
+      new Error("pronunciation failed"),
     );
-    expect(generateLanguageAudio).toHaveBeenCalledWith(expect.objectContaining({ text: newWord }));
+    vi.mocked(generateVocabularyAudioStep).mockRejectedValueOnce(new Error("audio failed"));
+    vi.mocked(generateVocabularyRomanizationStep).mockRejectedValueOnce(
+      new Error("romanization failed"),
+    );
+
+    await vocabularyActivityWorkflow({
+      activitiesToGenerate: activities as never,
+      allActivities: activities as never,
+      concepts: [],
+      neighboringConcepts: [],
+      workflowRunId: "workflow-3",
+    });
+
+    expect(saveVocabularyActivityStep).toHaveBeenCalledWith(
+      expect.objectContaining({
+        activities,
+        pronunciations: {},
+        romanizations: {},
+        wordAudioUrls: {},
+        workflowRunId: "workflow-3",
+      }),
+    );
   });
 });
