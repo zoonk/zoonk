@@ -2,7 +2,7 @@
 
 import { useExtracted } from "next-intl";
 import { type SelectedAnswer } from "../player-reducer";
-import { type SerializedStep, type SerializedWord } from "../prepare-activity-data";
+import { type SerializedStep, type TranslationOption } from "../prepare-activity-data";
 import { useOptionKeyboard } from "../use-option-keyboard";
 import { useWordAudio } from "../use-word-audio";
 import { OptionCard } from "./option-card";
@@ -24,7 +24,7 @@ function TranslationOptionContent({
   word,
 }: {
   isSelected: boolean;
-  word: SerializedWord;
+  word: TranslationOption;
 }) {
   return (
     <>

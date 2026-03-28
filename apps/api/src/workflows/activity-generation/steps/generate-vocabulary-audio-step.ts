@@ -1,5 +1,4 @@
 import { createEntityStepStream } from "@/workflows/_shared/stream-status";
-import { type VocabularyWord } from "@zoonk/ai/tasks/activities/language/vocabulary";
 import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { prisma } from "@zoonk/db";
 import { isTTSSupportedLanguage } from "@zoonk/utils/languages";
@@ -15,7 +14,7 @@ import { type LessonActivity } from "./get-lesson-activities-step";
  */
 export async function generateVocabularyAudioStep(
   activities: LessonActivity[],
-  words: VocabularyWord[],
+  words: string[],
 ): Promise<{ wordAudioUrls: Record<string, string> }> {
   "use step";
 
@@ -46,7 +45,7 @@ export async function generateVocabularyAudioStep(
       audioUrl: { not: null },
       organizationId,
       targetLanguage,
-      word: { in: words.map((vocab) => vocab.word), mode: "insensitive" },
+      word: { in: words, mode: "insensitive" },
     },
   });
 
@@ -57,20 +56,16 @@ export async function generateVocabularyAudioStep(
   );
 
   const existingAudioUrls: Record<string, string> = Object.fromEntries(
-    words.flatMap((vocab) => {
-      const audioUrl = existingAudioByLower[vocab.word.toLowerCase()];
-      return audioUrl ? [[vocab.word, audioUrl]] : [];
+    words.flatMap((word) => {
+      const audioUrl = existingAudioByLower[word.toLowerCase()];
+      return audioUrl ? [[word, audioUrl]] : [];
     }),
   );
 
-  const wordsNeedingAudio = words.filter(
-    (vocab) => !existingAudioByLower[vocab.word.toLowerCase()],
-  );
+  const wordsNeedingAudio = words.filter((word) => !existingAudioByLower[word.toLowerCase()]);
 
   const results = await Promise.all(
-    wordsNeedingAudio.map((vocabWord) =>
-      generateAudioForText(vocabWord.word, targetLanguage, orgSlug),
-    ),
+    wordsNeedingAudio.map((word) => generateAudioForText(word, targetLanguage, orgSlug)),
   );
 
   const fulfilled = results.filter((result) => result !== null);

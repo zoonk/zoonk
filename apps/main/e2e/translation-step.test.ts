@@ -14,16 +14,8 @@ import { type Page, expect, test } from "./fixtures";
 
 async function createTranslationActivity(options: {
   words: {
-    distractorUnsafeTranslations?: string[];
     audioUrl?: string | null;
-    word: string;
-    translation: string;
-    pronunciation?: string | null;
-    romanization?: string | null;
-  }[];
-  fallbackWords?: {
-    distractorUnsafeTranslations?: string[];
-    audioUrl?: string | null;
+    distractors?: string[];
     word: string;
     translation: string;
     pronunciation?: string | null;
@@ -67,45 +59,26 @@ async function createTranslationActivity(options: {
         word: wordData.word,
       });
 
-      await Promise.all([
-        lessonWordFixture({
-          distractorUnsafeTranslations: wordData.distractorUnsafeTranslations ?? [],
-          lessonId: lesson.id,
-          translation: wordData.translation,
-          wordId: word.id,
-        }),
-        ...(wordData.pronunciation
-          ? [wordPronunciationFixture({ pronunciation: wordData.pronunciation, wordId: word.id })]
-          : []),
-      ]);
-
-      return word;
+      return { data: wordData, word };
     }),
   );
 
   await Promise.all(
-    (options.fallbackWords ?? []).map(async (wordData) => {
-      const word = await wordFixture({
-        audioUrl: wordData.audioUrl ?? null,
-        organizationId: org.id,
-        romanization: wordData.romanization ?? null,
-        word: wordData.word,
-      });
-
-      await Promise.all([
-        lessonWordFixture({
-          distractorUnsafeTranslations: wordData.distractorUnsafeTranslations ?? [],
-          lessonId: lesson.id,
-          translation: wordData.translation,
-          wordId: word.id,
-        }),
-        ...(wordData.pronunciation
-          ? [wordPronunciationFixture({ pronunciation: wordData.pronunciation, wordId: word.id })]
-          : []),
-      ]);
-
-      return word;
-    }),
+    createdWords.flatMap(({ data, word }, index) => [
+      lessonWordFixture({
+        distractors:
+          data.distractors ??
+          createdWords
+            .filter((_, candidateIndex) => candidateIndex !== index)
+            .map((candidate) => candidate.word.word),
+        lessonId: lesson.id,
+        translation: data.translation,
+        wordId: word.id,
+      }),
+      ...(data.pronunciation
+        ? [wordPronunciationFixture({ pronunciation: data.pronunciation, wordId: word.id })]
+        : []),
+    ]),
   );
 
   const activity = await activityFixture({
@@ -121,7 +94,7 @@ async function createTranslationActivity(options: {
   // Create a second activity so the tested one is not the last in the lesson.
   // This ensures tests see mid-lesson completion behavior (not lesson-complete).
   await Promise.all([
-    ...createdWords.map((word, index) =>
+    ...createdWords.map(({ word }, index) =>
       stepFixture({
         activityId: activity.id,
         content: {},
@@ -194,30 +167,25 @@ test.describe("Translation Step", () => {
     await expect(radiogroup.getByRole("radio", { name: new RegExp(word) })).toBeVisible();
   });
 
-  test("uses fallback words to keep four safe options when lesson words overlap in meaning", async ({
-    page,
-  }) => {
+  test("uses stored distractors only when lesson words overlap in meaning", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const correctWord = `hola-${uniqueId}`;
     const ambiguousWord = `oi-${uniqueId}`;
 
     const { url } = await createTranslationActivity({
-      fallbackWords: [
-        { translation: `dog-${uniqueId}`, word: `perro-${uniqueId}` },
-        { translation: `bird-${uniqueId}`, word: `pajaro-${uniqueId}` },
-      ],
       words: [
         {
-          distractorUnsafeTranslations: [`hi-${uniqueId}`],
+          distractors: [`gato-${uniqueId}`, `perro-${uniqueId}`, `pajaro-${uniqueId}`],
           translation: `hello-${uniqueId}`,
           word: correctWord,
         },
         {
-          distractorUnsafeTranslations: [`hello-${uniqueId}`],
           translation: `hi-${uniqueId}`,
           word: ambiguousWord,
         },
         { translation: `cat-${uniqueId}`, word: `gato-${uniqueId}` },
+        { translation: `dog-${uniqueId}`, word: `perro-${uniqueId}` },
+        { translation: `bird-${uniqueId}`, word: `pajaro-${uniqueId}` },
       ],
     });
 

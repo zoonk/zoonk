@@ -1,5 +1,5 @@
 import { getActivity } from "@/data/activities/get-activity";
-import { getFallbackDistractorWords } from "@/data/activities/get-fallback-distractor-words";
+import { getActivityDistractorWords } from "@/data/activities/get-activity-distractor-words";
 import { getLessonSentences } from "@/data/activities/get-lesson-sentences";
 import { getLessonWords } from "@/data/activities/get-lesson-words";
 import { getSentenceWords } from "@/data/activities/get-sentence-words";
@@ -9,19 +9,12 @@ import { startActivity } from "@/data/progress/start-activity";
 import { getActivitySeoMeta } from "@/lib/activities";
 import { getNextActivityInCourse } from "@zoonk/core/activities/next-in-course";
 import { getSession } from "@zoonk/core/users/session/get";
-import { prepareActivityData } from "@zoonk/player/prepare-activity-data";
+import { prepareLessonActivityData } from "@zoonk/player/prepare-activity-data";
 import { parseNumericId } from "@zoonk/utils/number";
 import { type Metadata } from "next";
 import { notFound } from "next/navigation";
 import { after } from "next/server";
 import { fetchNextSibling, fetchReviewSteps } from "./activity-data-loaders";
-import {
-  attachTranslationsToSteps,
-  toFallbackWordInputs,
-  toLessonSentenceInputs,
-  toLessonWordInputs,
-  toSentenceWordInputs,
-} from "./activity-data-mappers";
 import { ActivityNotGenerated } from "./activity-not-generated";
 import { ActivityPlayerClient } from "./activity-player-client";
 
@@ -68,10 +61,10 @@ export default async function ActivityPage({ params }: Props) {
 
   const [
     activity,
+    distractorWords,
     lessonWords,
     lessonSentences,
     sentenceWords,
-    fallbackDistractorWords,
     nextActivity,
     session,
     reviewSteps,
@@ -79,10 +72,10 @@ export default async function ActivityPage({ params }: Props) {
     totalBrainPower,
   ] = await Promise.all([
     getActivity({ lessonId: lesson.id, position: activityPosition }),
+    getActivityDistractorWords({ lessonId: lesson.id }),
     getLessonWords({ lessonId: lesson.id }),
     getLessonSentences({ lessonId: lesson.id }),
     getSentenceWords({ lessonId: lesson.id }),
-    getFallbackDistractorWords({ lessonId: lesson.id }),
     getNextActivityInCourse({
       activityPosition,
       chapterId: lesson.chapter.id,
@@ -109,16 +102,14 @@ export default async function ActivityPage({ params }: Props) {
     );
   }
 
-  const rawSteps = reviewSteps ?? activity.steps;
-  const stepsWithTranslations = attachTranslationsToSteps(rawSteps, lessonWords, lessonSentences);
-
-  const serialized = prepareActivityData(
-    { ...activity, steps: stepsWithTranslations },
-    toLessonWordInputs(lessonWords),
-    toLessonSentenceInputs(lessonSentences),
-    toSentenceWordInputs(sentenceWords),
-    toFallbackWordInputs(fallbackDistractorWords),
-  );
+  const serialized = prepareLessonActivityData({
+    activity,
+    distractorWords,
+    lessonSentences,
+    lessonWords,
+    sentenceWords,
+    steps: reviewSteps ?? activity.steps,
+  });
 
   if (session) {
     after(() => startActivity(Number(session.user.id), activity.id));

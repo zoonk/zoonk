@@ -725,17 +725,15 @@ describe(getReviewValidationSteps, () => {
     expect(stepIds).not.toContain(staticStep.id);
   });
 
-  test("includes distractor-unsafe sentence metadata for review validation", async () => {
-    const sentence = await sentenceFixture({
-      distractorUnsafeSentences: ["Guten Morgen, ich bin Lara."],
-      organizationId,
-    });
+  test("includes canonical sentence metadata for review validation", async () => {
+    const sentence = await sentenceFixture({ organizationId });
 
     await lessonSentenceFixture({
-      distractorUnsafeTranslations: ["Good morning, I am Lara."],
+      distractors: ["Morgen"],
       lessonId: lesson.id,
       sentenceId: sentence.id,
       translation: "Hello, I am Lara.",
+      translationDistractors: ["Good"],
       userLanguage: "en",
     });
 
@@ -756,7 +754,6 @@ describe(getReviewValidationSteps, () => {
     const steps = await getReviewValidationSteps(lesson.id, [readingStep.id]);
 
     expect(steps[0]?.sentence).toMatchObject({
-      distractorUnsafeSentences: ["Guten Morgen, ich bin Lara."],
       sentence: sentence.sentence,
     });
   });

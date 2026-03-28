@@ -55,6 +55,7 @@
 - **Zero tolerance for flakiness.** If a test fails once in any number of runs, it's broken — investigate and fix it. Never dismiss failures as "intermittent" or "pre-existing". A flaky test is worse than no test because it erodes trust in the entire suite. Run e2e tests multiple times before considering them done. Zero tolerance for flakiness means fixing ALL failures, not just the ones in your plan.
 - **Own the whole build.** When making changes, run ALL quality checks across ALL apps — not just the ones you modified. A change to a shared package can break any consumer. "I didn't modify that file" is never an excuse for leaving something broken. Always leave the codebase better than you found it, even if it's outside your direct change area.
 - **Never copy bad patterns.** When existing code has a bad pattern, fix it instead of replicating it. Always evaluate whether existing patterns are correct before following them. "Leave the codebase better than you found it" means actively fixing bad patterns you encounter, not propagating them.
+- In review/assessment mode, do not defer confirmed bugs as “low priority.” Classify each finding as real bug, non-bug, or behavior-dependent. Fix confirmed bugs unless the user explicitly asks for triage only or the fix has meaningful product/architecture risk.
 
 ## Design Style
 

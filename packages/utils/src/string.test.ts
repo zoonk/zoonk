@@ -5,13 +5,11 @@ import {
   emptyToNull,
   ensureLocaleSuffix,
   extractUniqueSentenceWords,
-  hasWholePhrase,
   normalizePunctuation,
   normalizeString,
   removeAccents,
   removeLocaleSuffix,
   replaceNamePlaceholder,
-  replaceWholePhrase,
   segmentWords,
   stripPunctuation,
   toSlug,
@@ -327,44 +325,6 @@ describe(normalizePunctuation, () => {
     expect(normalizePunctuation("Bonjour , comment allez-vous ?")).toBe(
       "Bonjour, comment allez-vous?",
     );
-  });
-});
-
-describe(hasWholePhrase, () => {
-  test("matches a full phrase without matching inside another word", () => {
-    expect(hasWholePhrase("the cat sleeps", "he")).toBe(false);
-    expect(hasWholePhrase("he sleeps", "he")).toBe(true);
-  });
-
-  test("matches phrases even when the text uses extra spaces", () => {
-    expect(hasWholePhrase("Guten   Tag, Anna!", "Guten Tag")).toBe(true);
-  });
-
-  test("matches Unicode words using Unicode-aware boundaries", () => {
-    expect(hasWholePhrase("Olá, Lara!", "Olá")).toBe(true);
-    expect(hasWholePhrase("猫、犬", "猫")).toBe(true);
-    expect(hasWholePhrase("猫です", "猫")).toBe(false);
-  });
-
-  test("returns false for an empty phrase", () => {
-    expect(hasWholePhrase("hello world", "")).toBe(false);
-    expect(hasWholePhrase("", "")).toBe(false);
-  });
-});
-
-describe(replaceWholePhrase, () => {
-  test("replaces only the matched whole phrase", () => {
-    expect(replaceWholePhrase("he said hello", "he", "she")).toBe("she said hello");
-    expect(replaceWholePhrase("the hero arrived", "he", "she")).toBeNull();
-  });
-
-  test("keeps normalized punctuation when it replaces a phrase", () => {
-    expect(replaceWholePhrase("Bonjour !", "Bonjour", "Salut")).toBe("Salut!");
-  });
-
-  test("returns null for an empty search phrase", () => {
-    expect(replaceWholePhrase("hello world", "", "goodbye")).toBeNull();
-    expect(replaceWholePhrase("", "", "goodbye")).toBeNull();
   });
 });
 

@@ -60,6 +60,7 @@ export type PhaseName =
   | "recordingVocabularyAudio"
   | "writingContent"
   | "creatingExercises"
+  | "creatingAnswerOptions"
   | "creatingSentences"
   | "lookingUpWords"
   | "recordingWordAudio"
@@ -105,6 +106,7 @@ function toFullPhaseSteps(
     addingVocabularyRomanization: EMPTY,
     addingWordPronunciation: EMPTY,
     buildingWordList: EMPTY,
+    creatingAnswerOptions: EMPTY,
     creatingExercises: EMPTY,
     creatingImages: EMPTY,
     creatingSentences: EMPTY,

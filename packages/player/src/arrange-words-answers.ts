@@ -35,14 +35,6 @@ function hasWords(words: string[]): boolean {
 }
 
 /**
- * Reuse the same normalization pipeline when we need the accepted word set. This keeps
- * word-bank building and answer validation aligned on what counts as the same token.
- */
-function getNormalizedArrangeWords(words: string[]): string[] {
-  return words.map((word) => normalizeArrangeWord(word)).filter((word) => word.length > 0);
-}
-
-/**
  * Deduplicate accepted sequences by their normalized key while preserving the first
  * original tokenization we saw. That keeps the canonical display words stable.
  */
@@ -77,14 +69,6 @@ export function getAcceptedArrangeWordLengths(acceptedWordSequences: string[][])
       acceptedWordSequences.filter((words) => hasWords(words)).map((words) => words.length),
     ),
   ].toSorted((left, right) => left - right);
-}
-
-/**
- * Build the normalized vocabulary set for the accepted sequences so downstream consumers
- * can ask "is this token allowed at all?" without caring which full sequence it came from.
- */
-export function getAcceptedArrangeWordSet(acceptedWordSequences: string[][]): Set<string> {
-  return new Set(acceptedWordSequences.flatMap((words) => getNormalizedArrangeWords(words)));
 }
 
 /**

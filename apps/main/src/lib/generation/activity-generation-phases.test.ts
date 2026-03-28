@@ -69,13 +69,36 @@ describe("listening phase status", () => {
       [
         "getLessonActivities",
         "generateVocabularyContent",
-        "generateVocabularyPronunciationAndDistractorUnsafes",
+        "generateVocabularyDistractors",
+        "generateVocabularyPronunciation",
         "generateVocabularyAudio",
         "saveVocabularyActivity",
         "generateGrammarContent",
         "saveGrammarActivity",
       ],
       "generateSentences",
+      "listening",
+    );
+
+    expect(status).toBe("active");
+  });
+
+  test("keeps sentence distractors in their own listening phase", () => {
+    const status = getPhaseStatus(
+      "creatingAnswerOptions",
+      [
+        "getLessonActivities",
+        "generateVocabularyContent",
+        "generateVocabularyDistractors",
+        "generateVocabularyPronunciation",
+        "generateVocabularyAudio",
+        "saveVocabularyActivity",
+        "generateGrammarContent",
+        "generateGrammarUserContent",
+        "saveGrammarActivity",
+        "generateSentences",
+      ],
+      "generateSentenceDistractors",
       "listening",
     );
 

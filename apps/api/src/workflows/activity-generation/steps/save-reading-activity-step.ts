@@ -2,48 +2,32 @@ import { createEntityStepStream } from "@/workflows/_shared/stream-status";
 import { assertStepContent } from "@zoonk/core/steps/content-contract";
 import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { prisma } from "@zoonk/db";
+import { sanitizeDistractors } from "@zoonk/utils/distractors";
 import { safeAsync } from "@zoonk/utils/error";
-import {
-  deduplicateNormalizedTexts,
-  emptyToNull,
-  extractUniqueSentenceWords,
-  normalizePunctuation,
-  normalizeString,
-} from "@zoonk/utils/string";
-import { fetchExistingWordCasing } from "./_utils/fetch-existing-word-casing";
+import { emptyToNull, normalizePunctuation } from "@zoonk/utils/string";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
+import { type WordMetadataEntry, saveReadingTargetWords } from "./_utils/save-reading-target-words";
 import { type ReadingSentence } from "./generate-reading-content-step";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
 
-type WordMetadataEntry = {
-  romanization: string | null;
-  translation: string;
-};
-
 /**
- * Persists all reading data in a single step:
- * - Upserts `Sentence` records (sets audioUrl, romanization)
- * - Upserts `LessonSentence` records with lesson-scoped translations
- *   (translations live on `LessonSentence` because explanation is inherently
- *   lesson-context-specific)
- * - Upserts `Word` records for sentence words (sets audioUrl)
- * - Upserts `WordPronunciation` records (pronunciation is language-specific
- *   but meaning-independent)
- * - Upserts `LessonWord` records with lesson-scoped translations
- * - Creates `Step` records (kind: "reading")
- * - Marks the reading activity as completed
+ * Persists canonical reading sentences, their direct distractor arrays, and the
+ * target-language word metadata needed by the player.
  *
- * This is the single write point for the reading workflow. All generate
- * steps produce data without DB writes; this step persists everything at once.
+ * Canonical sentence words still become `LessonWord` rows because their translations are
+ * lesson-scoped. Generated distractor words become only `Word` plus `WordPronunciation`
+ * records so they can render audio and romanization without polluting the lesson
+ * vocabulary.
  */
 export async function saveReadingActivityStep(params: {
   activities: LessonActivity[];
-  distractorUnsafeTranslations: Record<string, string[]>;
+  distractors: Record<string, string[]>;
   pronunciations: Record<string, string>;
   sentenceAudioUrls: Record<string, string>;
   sentenceRomanizations: Record<string, string>;
   sentences: ReadingSentence[];
+  translationDistractors: Record<string, string[]>;
   wordAudioUrls: Record<string, string>;
   wordMetadata: Record<string, WordMetadataEntry>;
   workflowRunId: string;
@@ -52,11 +36,12 @@ export async function saveReadingActivityStep(params: {
 
   const {
     activities,
-    distractorUnsafeTranslations,
+    distractors,
     pronunciations,
     sentenceAudioUrls,
     sentenceRomanizations,
     sentences,
+    translationDistractors,
     wordAudioUrls,
     wordMetadata,
     workflowRunId,
@@ -87,6 +72,7 @@ export async function saveReadingActivityStep(params: {
       sentences.map((readingSentence, position) =>
         saveOneSentence({
           activityId: activity.id,
+          distractors,
           lessonId: activity.lessonId,
           organizationId,
           position,
@@ -94,6 +80,7 @@ export async function saveReadingActivityStep(params: {
           sentenceAudioUrls,
           sentenceRomanizations,
           targetLanguage,
+          translationDistractors,
           userLanguage,
         }),
       ),
@@ -106,41 +93,24 @@ export async function saveReadingActivityStep(params: {
     return;
   }
 
-  const uniqueWords = extractUniqueSentenceWords(sentences.map((entry) => entry.sentence)).filter(
-    (word) => wordMetadata[word],
+  const { error: wordError } = await safeAsync(() =>
+    saveReadingTargetWords({
+      distractors,
+      lessonId: activity.lessonId,
+      organizationId,
+      pronunciations,
+      sentences,
+      targetLanguage,
+      userLanguage,
+      wordAudioUrls,
+      wordMetadata,
+    }),
   );
 
-  if (uniqueWords.length > 0) {
-    const existingCasing = await fetchExistingWordCasing({
-      organizationId,
-      targetLanguage,
-      words: uniqueWords,
-    });
-
-    const { error: wordError } = await safeAsync(() =>
-      Promise.all(
-        uniqueWords.map((word) =>
-          saveOneSentenceWord({
-            distractorUnsafeTranslations,
-            existingCasing,
-            lessonId: activity.lessonId,
-            organizationId,
-            pronunciations,
-            targetLanguage,
-            userLanguage,
-            word,
-            wordAudioUrls,
-            wordMetadata,
-          }),
-        ),
-      ),
-    );
-
-    if (wordError) {
-      await stream.error({ reason: "dbSaveFailed", step: "saveReadingActivity" });
-      await handleActivityFailureStep({ activityId: activity.id });
-      return;
-    }
+  if (wordError) {
+    await stream.error({ reason: "dbSaveFailed", step: "saveReadingActivity" });
+    await handleActivityFailureStep({ activityId: activity.id });
+    return;
   }
 
   await markActivityAsCompleted(activity.id, workflowRunId);
@@ -149,22 +119,15 @@ export async function saveReadingActivityStep(params: {
 }
 
 /**
- * Save one clean copy of each distractor-unsafe text so the database does not store duplicates
- * that only differ by formatting.
- * Example: keep "Bonjour!" once instead of saving both "Bonjour!" and " Bonjour ! ".
- */
-function normalizeDistractorUnsafeTexts(primaryText: string, texts: string[]): string[] {
-  const primaryKey = normalizeString(normalizePunctuation(primaryText).trim());
-
-  return deduplicateNormalizedTexts(texts).filter((text) => normalizeString(text) !== primaryKey);
-}
-
-/**
- * Upserts a Sentence record, creates a LessonSentence link with lesson-scoped
- * translation data, and creates the reading Step.
+ * Saves one canonical sentence and its lesson-scoped distractor arrays.
+ *
+ * The sentence table stores only the canonical target-language sentence plus shared audio
+ * and romanization. Direct distractor arrays live on `LessonSentence` because they are
+ * lesson-scoped exercise data.
  */
 async function saveOneSentence(params: {
   activityId: number;
+  distractors: Record<string, string[]>;
   lessonId: number;
   organizationId: number;
   position: number;
@@ -172,10 +135,12 @@ async function saveOneSentence(params: {
   sentenceAudioUrls: Record<string, string>;
   sentenceRomanizations: Record<string, string>;
   targetLanguage: string;
+  translationDistractors: Record<string, string[]>;
   userLanguage: string;
 }): Promise<void> {
   const {
     activityId,
+    distractors,
     lessonId,
     organizationId,
     position,
@@ -183,34 +148,34 @@ async function saveOneSentence(params: {
     sentenceAudioUrls,
     sentenceRomanizations,
     targetLanguage,
+    translationDistractors,
     userLanguage,
   } = params;
 
   const sentence = normalizePunctuation(readingSentence.sentence);
-  const distractorUnsafeSentences = normalizeDistractorUnsafeTexts(
-    sentence,
-    readingSentence.distractorUnsafeSentences,
-  );
   const translation = normalizePunctuation(readingSentence.translation);
-  const distractorUnsafeTranslations = normalizeDistractorUnsafeTexts(
-    translation,
-    readingSentence.distractorUnsafeTranslations,
-  );
-
+  const sentenceDistractors = sanitizeDistractors({
+    distractors: distractors[readingSentence.sentence] ?? [],
+    input: readingSentence.sentence,
+    shape: "single-word",
+  });
+  const sentenceTranslationDistractors = sanitizeDistractors({
+    distractors: translationDistractors[readingSentence.translation] ?? [],
+    input: readingSentence.translation,
+    shape: "single-word",
+  });
   const audioUrl = sentenceAudioUrls[readingSentence.sentence] ?? null;
   const romanization = sentenceRomanizations[readingSentence.sentence] ?? null;
 
   const record = await prisma.sentence.upsert({
     create: {
       audioUrl,
-      distractorUnsafeSentences,
       organizationId,
       romanization,
       sentence,
       targetLanguage,
     },
     update: {
-      distractorUnsafeSentences,
       ...(audioUrl ? { audioUrl } : {}),
       ...(romanization ? { romanization } : {}),
     },
@@ -223,23 +188,23 @@ async function saveOneSentence(params: {
     },
   });
 
-  const sentenceId = record.id;
-
   await prisma.lessonSentence.upsert({
     create: {
-      distractorUnsafeTranslations,
+      distractors: sentenceDistractors,
       explanation: emptyToNull(readingSentence.explanation),
       lessonId,
-      sentenceId,
+      sentenceId: record.id,
       translation,
+      translationDistractors: sentenceTranslationDistractors,
       userLanguage,
     },
     update: {
-      distractorUnsafeTranslations,
+      distractors: sentenceDistractors,
       explanation: emptyToNull(readingSentence.explanation),
       translation,
+      translationDistractors: sentenceTranslationDistractors,
     },
-    where: { lessonSentence: { lessonId, sentenceId } },
+    where: { lessonSentence: { lessonId, sentenceId: record.id } },
   });
 
   await prisma.step.create({
@@ -249,102 +214,15 @@ async function saveOneSentence(params: {
       isPublished: true,
       kind: "reading",
       position,
-      sentenceId,
+      sentenceId: record.id,
     },
-  });
-}
-
-/**
- * Upserts a `Word` record for a word extracted from a reading sentence,
- * with its pronunciation (on `WordPronunciation`) and lesson-scoped
- * translation (on `LessonWord`). Translations live on `LessonWord` because
- * the same word can mean different things in different lessons — e.g.
- * "banco" means "bank" in a finance lesson but "bench" in a furniture
- * lesson.
- */
-async function saveOneSentenceWord(params: {
-  distractorUnsafeTranslations: Record<string, string[]>;
-  existingCasing: Record<string, string>;
-  lessonId: number;
-  organizationId: number;
-  pronunciations: Record<string, string>;
-  targetLanguage: string;
-  userLanguage: string;
-  word: string;
-  wordAudioUrls: Record<string, string>;
-  wordMetadata: Record<string, WordMetadataEntry>;
-}): Promise<void> {
-  const {
-    distractorUnsafeTranslations,
-    existingCasing,
-    lessonId,
-    organizationId,
-    pronunciations,
-    targetLanguage,
-    userLanguage,
-    word,
-    wordAudioUrls,
-    wordMetadata,
-  } = params;
-
-  const metadata = wordMetadata[word];
-  const translation = metadata?.translation ?? "";
-  const romanization = emptyToNull(metadata?.romanization ?? null);
-  const dbWord = existingCasing[word] ?? word;
-  const audioUrl = wordAudioUrls[word] ?? null;
-  const pronunciation = pronunciations[word] ?? null;
-  const wordDistractorUnsafeTranslations = distractorUnsafeTranslations[word] ?? [];
-
-  const record = await prisma.word.upsert({
-    create: {
-      audioUrl,
-      organizationId,
-      romanization,
-      targetLanguage,
-      word: dbWord,
-    },
-    update: {
-      ...(audioUrl ? { audioUrl } : {}),
-      romanization,
-    },
-    where: {
-      orgWord: { organizationId, targetLanguage, word: dbWord },
-    },
-  });
-
-  const wordId = record.id;
-
-  if (pronunciation) {
-    await prisma.wordPronunciation.upsert({
-      create: { pronunciation, userLanguage, wordId },
-      update: { pronunciation },
-      where: { wordPronunciation: { userLanguage, wordId } },
-    });
-  }
-
-  await prisma.lessonWord.upsert({
-    create: {
-      distractorUnsafeTranslations: wordDistractorUnsafeTranslations,
-      lessonId,
-      translation,
-      userLanguage,
-      wordId,
-    },
-    update: {
-      ...(wordDistractorUnsafeTranslations.length > 0
-        ? { distractorUnsafeTranslations: wordDistractorUnsafeTranslations }
-        : {}),
-      translation,
-    },
-    where: { lessonWord: { lessonId, wordId } },
   });
 }
 
 /**
  * Marks the activity as completed after all data has been saved.
  * Uses updateMany so "no matching row" (already completed) returns count=0
- * instead of throwing. Real DB errors (connection, constraints) still throw
- * and propagate to the caller for proper failure handling.
+ * instead of throwing. Real DB errors still propagate to the caller.
  */
 async function markActivityAsCompleted(activityId: number, workflowRunId: string): Promise<void> {
   await prisma.activity.updateMany({

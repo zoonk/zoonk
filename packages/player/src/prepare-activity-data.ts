@@ -5,17 +5,37 @@ import {
   isSupportedStepKind,
   parseStepContent,
 } from "@zoonk/core/steps/content-contract";
+import { normalizeDistractorKey } from "@zoonk/utils/distractors";
 import { shuffle } from "@zoonk/utils/shuffle";
+import {
+  type ActivityDistractorWordInput,
+  type ActivityStepInput,
+  type DistractorWordDataInput,
+  type LessonSentenceInput,
+  type LessonWordInput,
+  type SentenceDataInput,
+  type StepDataInput,
+  type WordDataInput,
+  attachTranslationsToSteps,
+  toDistractorWordInputs,
+  toLessonSentenceInputs,
+  toLessonWordInputs,
+  toSentenceWordInputs,
+} from "./_utils/activity-data-mappers";
 import { buildSentenceWordOptions, buildWordBankOptions } from "./build-word-bank-options";
-import { getDistractorWords } from "./get-distractor-words";
-
-const VOCABULARY_DISTRACTOR_COUNT = 3;
+import {
+  type TranslationOption,
+  buildDistractorWordLookup,
+  buildTranslationOptions,
+  serializeDistractorWord,
+} from "./translation-options";
+export type { TranslationOption } from "./translation-options";
 
 export type SerializedWord = {
   id: string;
   word: string;
   translation: string;
-  distractorUnsafeTranslations: string[];
+  distractors: string[];
   pronunciation: string | null;
   romanization: string | null;
   audioUrl: string | null;
@@ -24,9 +44,9 @@ export type SerializedWord = {
 export type SerializedSentence = {
   id: string;
   sentence: string;
-  distractorUnsafeSentences: string[];
+  distractors: string[];
   translation: string;
-  distractorUnsafeTranslations: string[];
+  translationDistractors: string[];
   romanization: string | null;
   explanation: string | null;
   audioUrl: string | null;
@@ -46,7 +66,7 @@ export type SerializedStep<Kind extends SupportedStepKind = SupportedStepKind> =
   content: StepContentByKind[Kind];
   word: SerializedWord | null;
   sentence: SerializedSentence | null;
-  translationOptions: SerializedWord[];
+  translationOptions: TranslationOption[];
   vocabularyOptions: SerializedWord[];
   wordBankOptions: WordBankOption[];
   sentenceWordOptions: WordBankOption[];
@@ -67,45 +87,33 @@ export type SerializedActivity = {
   lessonSentences: SerializedSentence[];
 };
 
-type StepDataInput = {
+type PrepareLessonActivitySource = {
+  description: string | null;
   id: bigint;
-  content: unknown;
   kind: string;
-  position: number;
-  word: WordDataInput | null;
-  sentence: SentenceDataInput | null;
+  language: string;
+  organizationId: number | null;
+  steps: ActivityStepInput[];
+  title: string | null;
 };
 
-type WordDataInput = {
-  id: bigint;
-  word: string;
-  romanization: string | null;
-  audioUrl: string | null;
-  translation: string;
-  distractorUnsafeTranslations: string[];
-  pronunciation: string | null;
-};
-
-type SentenceDataInput = {
-  id: bigint;
-  sentence: string;
-  distractorUnsafeSentences: string[];
-  romanization: string | null;
-  audioUrl: string | null;
-  translation: string;
-  distractorUnsafeTranslations: string[];
-  explanation: string | null;
+type PrepareLessonActivityInput = {
+  activity: PrepareLessonActivitySource;
+  distractorWords?: ActivityDistractorWordInput[];
+  lessonSentences: LessonSentenceInput[];
+  lessonWords: LessonWordInput[];
+  sentenceWords?: LessonWordInput[];
+  steps?: ActivityStepInput[];
 };
 
 /**
- * Maps a flat WordDataInput (where translation fields live directly on the
- * object rather than in a nested translations array) to the player's
- * serialized format with string IDs.
+ * Canonical lesson words travel through the player with lesson-scoped translations and
+ * distractor arrays. This serializer converts bigint IDs and copies arrays defensively.
  */
 function serializeWord(word: WordDataInput): SerializedWord {
   return {
     audioUrl: word.audioUrl,
-    distractorUnsafeTranslations: [...word.distractorUnsafeTranslations],
+    distractors: [...word.distractors],
     id: String(word.id),
     pronunciation: word.pronunciation,
     romanization: word.romanization,
@@ -115,63 +123,34 @@ function serializeWord(word: WordDataInput): SerializedWord {
 }
 
 /**
- * The player consumes serialized words from multiple sources, so this helper keeps
- * lesson words and fallback distractor words aligned on one serialization rule.
+ * Lesson-level word serialization is shared by steps, review payloads, and the visible
+ * lesson word list.
  */
 function serializeWords(words: WordDataInput[]): SerializedWord[] {
   return words.map((word) => serializeWord(word));
 }
 
 /**
- * Maps a flat SentenceDataInput (where translation fields live directly on
- * the object rather than in a nested translations array) to the player's
- * serialized format with string IDs.
+ * Sentences carry the canonical translation plus the direct distractor arrays used by
+ * reading and listening activities.
  */
 function serializeSentence(sentence: SentenceDataInput): SerializedSentence {
   return {
     audioUrl: sentence.audioUrl,
-    distractorUnsafeSentences: [...sentence.distractorUnsafeSentences],
-    distractorUnsafeTranslations: [...sentence.distractorUnsafeTranslations],
+    distractors: [...sentence.distractors],
     explanation: sentence.explanation,
     id: String(sentence.id),
     romanization: sentence.romanization,
     sentence: sentence.sentence,
     translation: sentence.translation,
+    translationDistractors: [...sentence.translationDistractors],
   };
 }
 
 function shuffleMultipleChoiceContent(
   content: MultipleChoiceStepContent,
 ): MultipleChoiceStepContent {
-  switch (content.kind) {
-    case "core":
-      return { ...content, options: shuffle(content.options) };
-    case "challenge":
-      return content;
-    default:
-      return content;
-  }
-}
-
-function buildTranslationOptions(
-  step: SerializedStep,
-  serializedLessonWords: SerializedWord[],
-  serializedFallbackWords: SerializedWord[],
-): SerializedWord[] {
-  if (step.kind !== "translation" || !step.word) {
-    return [];
-  }
-
-  const distractors = getDistractorWords(
-    step.word,
-    serializedLessonWords,
-    VOCABULARY_DISTRACTOR_COUNT,
-    serializedFallbackWords,
-  );
-  return shuffle([step.word, ...distractors]).map((word) => ({
-    ...word,
-    distractorUnsafeTranslations: [...word.distractorUnsafeTranslations],
-  }));
+  return content.kind === "core" ? { ...content, options: shuffle(content.options) } : content;
 }
 
 function buildSortOrderItems(step: SerializedStep): string[] {
@@ -209,9 +188,8 @@ function buildMatchColumnsRightItems(step: SerializedStep): string[] {
 }
 
 /**
- * Converts a raw step from the database into the player's serialized
- * format. Returns null for unsupported step kinds or invalid content
- * so the caller can filter them out with flatMap.
+ * Only supported step kinds reach the player. Invalid content still gets dropped so the
+ * rest of the page can render instead of failing the whole activity.
  */
 function serializeStep(step: StepDataInput): SerializedStep | null {
   if (!isSupportedStepKind(step.kind)) {
@@ -244,7 +222,7 @@ function serializeStep(step: StepDataInput): SerializedStep | null {
   }
 }
 
-export function prepareActivityData(
+function prepareActivityData(
   activity: {
     id: bigint;
     kind: string;
@@ -257,12 +235,14 @@ export function prepareActivityData(
   lessonWords: WordDataInput[],
   lessonSentences: SentenceDataInput[],
   sentenceWords: WordDataInput[] = [],
-  fallbackDistractorWords: WordDataInput[] = [],
+  distractorWords: DistractorWordDataInput[] = [],
 ): SerializedActivity {
   const serializedLessonWords = serializeWords(lessonWords);
-  const serializedFallbackWords = serializeWords(fallbackDistractorWords);
-
-  const sentenceWordMap = new Map(sentenceWords.map((sw) => [sw.word.toLowerCase(), sw]));
+  const serializedDistractorWords = distractorWords.map((word) => serializeDistractorWord(word));
+  const distractorLookup = buildDistractorWordLookup(serializedDistractorWords);
+  const sentenceWordMap = new Map(
+    sentenceWords.map((word) => [normalizeDistractorKey(word.word), word]),
+  );
 
   const steps = activity.steps.flatMap((raw) => {
     const step = serializeStep(raw);
@@ -277,19 +257,24 @@ export function prepareActivityData(
         fillBlankOptions: buildFillBlankOptions(step),
         matchColumnsRightItems: buildMatchColumnsRightItems(step),
         sentenceWordOptions: step.sentence
-          ? buildSentenceWordOptions(step.sentence.sentence, serializedLessonWords, sentenceWordMap)
+          ? buildSentenceWordOptions(
+              step.sentence.sentence,
+              serializedLessonWords,
+              serializedDistractorWords,
+              sentenceWordMap,
+            )
           : [],
         sortOrderItems: buildSortOrderItems(step),
-        translationOptions: buildTranslationOptions(
-          step,
-          serializedLessonWords,
-          serializedFallbackWords,
-        ),
+        translationOptions: buildTranslationOptions({
+          distractorLookup,
+          kind: step.kind,
+          word: step.word,
+        }),
         wordBankOptions: buildWordBankOptions(
           step,
           serializedLessonWords,
+          serializedDistractorWords,
           sentenceWordMap,
-          serializedFallbackWords,
         ),
       },
     ];
@@ -306,4 +291,24 @@ export function prepareActivityData(
     steps,
     title: activity.title,
   };
+}
+
+/**
+ * The app should only fetch the raw lesson activity inputs. This helper keeps the entire
+ * preparation pipeline inside the player package so the app does not need to know about
+ * translation attachment, mapper ordering, or the serializer's internal input shapes.
+ */
+export function prepareLessonActivityData(params: PrepareLessonActivityInput): SerializedActivity {
+  const steps = params.steps ?? params.activity.steps;
+
+  return prepareActivityData(
+    {
+      ...params.activity,
+      steps: attachTranslationsToSteps(steps, params.lessonWords, params.lessonSentences),
+    },
+    toLessonWordInputs(params.lessonWords),
+    toLessonSentenceInputs(params.lessonSentences),
+    toSentenceWordInputs(params.sentenceWords ?? []),
+    toDistractorWordInputs(params.distractorWords ?? []),
+  );
 }

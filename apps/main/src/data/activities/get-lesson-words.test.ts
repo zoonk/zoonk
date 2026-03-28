@@ -91,7 +91,7 @@ describe(getLessonWords, () => {
     });
 
     await lessonWordFixture({
-      distractorUnsafeTranslations: [],
+      distractors: [],
       lessonId: newLesson.id,
       translation: "dog",
       userLanguage: "en",
@@ -102,7 +102,7 @@ describe(getLessonWords, () => {
 
     expect(result).toHaveLength(1);
     expect(result[0]).toMatchObject({
-      distractorUnsafeTranslations: [],
+      distractors: [],
       translation: "dog",
       userLanguage: "en",
       word: expect.objectContaining({

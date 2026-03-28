@@ -7,7 +7,6 @@
     "./completion-input-schema": "./src/completion-input-schema.ts",
     "./dimensions": "./src/dimensions.ts",
     "./compute-score": "./src/compute-score.ts",
-    "./distractor-words": "./src/get-distractor-words.ts",
     "./prepare-activity-data": "./src/prepare-activity-data.ts",
     "./provider": "./src/player-provider.tsx",
     "./shell": "./src/components/player-shell.tsx",

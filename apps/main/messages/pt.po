@@ -1783,6 +1783,11 @@ msgid "Writing the content"
 msgstr "Escrevendo o conteúdo"
 
 #: src/app/generate/a/[id]/use-phase-labels.ts
+msgctxt "viluaR"
+msgid "Preparing options"
+msgstr "Preparando alternativas"
+
+#: src/app/generate/a/[id]/use-phase-labels.ts
 msgctxt "ZA0/P+"
 msgid "Writing the explanation"
 msgstr "Escrevendo a explicação"
@@ -1831,6 +1836,11 @@ msgstr "Gravando áudio do vocabulário..."
 msgctxt "2e5abC"
 msgid "Wrapping things up..."
 msgstr "Finalizando as coisas..."
+
+#: src/app/generate/a/[id]/use-phase-thinking-generators.ts
+msgctxt "4wkMNX"
+msgid "Getting answer options ready..."
+msgstr "Preparando as alternativas de resposta..."
 
 #: src/app/generate/a/[id]/use-phase-thinking-generators.ts
 msgctxt "4xvh9e"
@@ -1892,6 +1902,11 @@ msgid "Making it easier to read..."
 msgstr "Facilitando a leitura..."
 
 #: src/app/generate/a/[id]/use-phase-thinking-generators.ts
+msgctxt "BBwnPG"
+msgid "Adding more options..."
+msgstr "Adicionando mais alternativas..."
+
+#: src/app/generate/a/[id]/use-phase-thinking-generators.ts
 msgctxt "bC9979"
 msgid "Almost done..."
 msgstr "Quase pronto..."
@@ -1920,6 +1935,11 @@ msgstr "Deixando cada palavra audível..."
 msgctxt "Ch9BcP"
 msgid "Converting vocabulary to Latin script..."
 msgstr "Convertendo vocabulário para escrita latina..."
+
+#: src/app/generate/a/[id]/use-phase-thinking-generators.ts
+msgctxt "cVoRCh"
+msgid "Preparing options..."
+msgstr "Preparando alternativas..."
 
 #: src/app/generate/a/[id]/use-phase-thinking-generators.ts
 msgctxt "DLZ9fl"
@@ -1974,7 +1994,7 @@ msgstr "Escolhendo o vocabulário principal..."
 #: src/app/generate/a/[id]/use-phase-thinking-generators.ts
 msgctxt "IdWf9/"
 msgid "Choosing words to practice..."
-msgstr "Escolhendo palavras pra praticar..."
+msgstr "Escolhendo palavras para praticar..."
 
 #: src/app/generate/a/[id]/use-phase-thinking-generators.ts
 msgctxt "Izq6mP"
@@ -2130,6 +2150,11 @@ msgstr "Anotando como cada palavra soa..."
 msgctxt "WnqJeL"
 msgid "Mapping out the pronunciation..."
 msgstr "Mapeando a pronúncia..."
+
+#: src/app/generate/a/[id]/use-phase-thinking-generators.ts
+msgctxt "WsjFV2"
+msgid "Preparing the word bank..."
+msgstr "Preparando o banco de palavras..."
 
 #: src/app/generate/a/[id]/use-phase-thinking-generators.ts
 msgctxt "xBaVAH"

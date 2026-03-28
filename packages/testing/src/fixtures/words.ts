@@ -37,11 +37,11 @@ export async function lessonWordFixture(attrs: {
   wordId: bigint;
   userLanguage?: string;
   translation?: string;
-  distractorUnsafeTranslations?: string[];
+  distractors?: string[];
 }) {
   return prisma.lessonWord.create({
     data: {
-      distractorUnsafeTranslations: attrs.distractorUnsafeTranslations ?? [],
+      distractors: attrs.distractors ?? [],
       lessonId: attrs.lessonId,
       translation: attrs.translation ?? `translation-${crypto.randomUUID()}`,
       userLanguage: attrs.userLanguage ?? "en",

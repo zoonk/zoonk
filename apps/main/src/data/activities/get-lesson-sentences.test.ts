@@ -74,7 +74,6 @@ describe(getLessonSentences, () => {
 
     const sentence = await sentenceFixture({
       audioUrl: "https://example.com/megusta.mp3",
-      distractorUnsafeSentences: ["Adoro"],
       organizationId: org.id,
       romanization: null,
       sentence: `Me gusta ${crypto.randomUUID()}`,
@@ -82,10 +81,11 @@ describe(getLessonSentences, () => {
     });
 
     await lessonSentenceFixture({
-      distractorUnsafeTranslations: ["I enjoy"],
+      distractors: ["Adoro"],
       lessonId: newLesson.id,
       sentenceId: sentence.id,
       translation: "I like",
+      translationDistractors: ["I enjoy"],
       userLanguage: "en",
     });
 
@@ -93,15 +93,15 @@ describe(getLessonSentences, () => {
 
     expect(result).toHaveLength(1);
     expect(result[0]).toMatchObject({
-      distractorUnsafeTranslations: ["I enjoy"],
+      distractors: ["Adoro"],
       sentence: expect.objectContaining({
         audioUrl: "https://example.com/megusta.mp3",
-        distractorUnsafeSentences: ["Adoro"],
         id: sentence.id,
         romanization: null,
         sentence: sentence.sentence,
       }) as unknown,
       translation: "I like",
+      translationDistractors: ["I enjoy"],
       userLanguage: "en",
     });
   });

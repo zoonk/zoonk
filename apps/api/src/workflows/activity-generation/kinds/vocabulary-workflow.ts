@@ -1,13 +1,30 @@
 import { type VocabularyWord } from "@zoonk/ai/tasks/activities/language/vocabulary";
 import { settled } from "@zoonk/utils/settled";
+import { deduplicateNormalizedTexts } from "@zoonk/utils/string";
 import { findActivityByKind } from "../steps/_utils/find-activity-by-kind";
 import { generateVocabularyAudioStep } from "../steps/generate-vocabulary-audio-step";
 import { generateVocabularyContentStep } from "../steps/generate-vocabulary-content-step";
-import { generateVocabularyPronunciationAndDistractorUnsafesStep } from "../steps/generate-vocabulary-pronunciation-and-distractor-unsafes-step";
+import { generateVocabularyDistractorsStep } from "../steps/generate-vocabulary-distractors-step";
+import { generateVocabularyPronunciationStep } from "../steps/generate-vocabulary-pronunciation-step";
 import { generateVocabularyRomanizationStep } from "../steps/generate-vocabulary-romanization-step";
 import { type LessonActivity } from "../steps/get-lesson-activities-step";
 import { saveTranslationFromExistingVocabularyStep } from "../steps/save-translation-from-existing-vocabulary-step";
 import { saveVocabularyActivityStep } from "../steps/save-vocabulary-activity-step";
+
+/**
+ * Canonical vocabulary words and their generated distractor words share the same
+ * target-language enrichment pipeline. Collecting the union here ensures we create
+ * audio, romanization, and pronunciation for every word the player may render.
+ */
+function collectVocabularyTargetWords(
+  words: VocabularyWord[],
+  distractors: Record<string, string[]>,
+): string[] {
+  return deduplicateNormalizedTexts([
+    ...words.map((entry) => entry.word),
+    ...words.flatMap((entry) => distractors[entry.word] ?? []),
+  ]);
+}
 
 /**
  * Orchestrates vocabulary and translation activity generation.
@@ -54,26 +71,22 @@ export async function vocabularyActivityWorkflow({
     neighboringConcepts,
   );
 
-  const [pronunciationAndDistractorUnsafeResult, audioResult, romanizationResult] =
-    await Promise.allSettled([
-      generateVocabularyPronunciationAndDistractorUnsafesStep(activitiesToGenerate, words),
-      generateVocabularyAudioStep(activitiesToGenerate, words),
-      generateVocabularyRomanizationStep(activitiesToGenerate, words),
-    ]);
+  const { distractors } = await generateVocabularyDistractorsStep(activitiesToGenerate, words);
+  const vocabularyTargetWords = collectVocabularyTargetWords(words, distractors);
 
-  const { distractorUnsafeTranslations, pronunciations } = settled(
-    pronunciationAndDistractorUnsafeResult,
-    {
-      distractorUnsafeTranslations: {},
-      pronunciations: {},
-    },
-  );
+  const [pronunciationResult, audioResult, romanizationResult] = await Promise.allSettled([
+    generateVocabularyPronunciationStep(activitiesToGenerate, vocabularyTargetWords),
+    generateVocabularyAudioStep(activitiesToGenerate, vocabularyTargetWords),
+    generateVocabularyRomanizationStep(activitiesToGenerate, vocabularyTargetWords),
+  ]);
+
+  const { pronunciations } = settled(pronunciationResult, { pronunciations: {} });
   const { wordAudioUrls } = settled(audioResult, { wordAudioUrls: {} });
   const { romanizations } = settled(romanizationResult, { romanizations: {} });
 
   await saveVocabularyActivityStep({
     activities: allActivities,
-    distractorUnsafeTranslations,
+    distractors,
     pronunciations,
     romanizations,
     wordAudioUrls,

@@ -1,15 +1,31 @@
 import { type VocabularyWord } from "@zoonk/ai/tasks/activities/language/vocabulary";
 import { settled } from "@zoonk/utils/settled";
-import { extractUniqueSentenceWords } from "@zoonk/utils/string";
+import { deduplicateNormalizedTexts, extractUniqueSentenceWords } from "@zoonk/utils/string";
 import { findActivityByKind } from "../steps/_utils/find-activity-by-kind";
 import { generateReadingAudioStep } from "../steps/generate-reading-audio-step";
 import { generateReadingContentStep } from "../steps/generate-reading-content-step";
 import { generateReadingRomanizationStep } from "../steps/generate-reading-romanization-step";
-import { generateSentencePronunciationAndDistractorUnsafesStep } from "../steps/generate-sentence-pronunciation-and-distractor-unsafes-step";
+import { generateSentenceDistractorsStep } from "../steps/generate-sentence-distractors-step";
 import { generateSentenceWordAudioStep } from "../steps/generate-sentence-word-audio-step";
 import { generateSentenceWordMetadataStep } from "../steps/generate-sentence-word-metadata-step";
+import { generateSentenceWordPronunciationStep } from "../steps/generate-sentence-word-pronunciation-step";
 import { type LessonActivity } from "../steps/get-lesson-activities-step";
 import { saveReadingActivityStep } from "../steps/save-reading-activity-step";
+
+/**
+ * Reading activities enrich every target-language word the player may render:
+ * canonical sentence tokens plus generated reading distractors. Listening-side
+ * distractors stay as plain learner-language strings and are excluded here.
+ */
+function collectReadingTargetWords(params: {
+  distractors: Record<string, string[]>;
+  sentences: { sentence: string }[];
+}): string[] {
+  return deduplicateNormalizedTexts([
+    ...extractUniqueSentenceWords(params.sentences.map((entry) => entry.sentence)),
+    ...params.sentences.flatMap((entry) => params.distractors[entry.sentence] ?? []),
+  ]);
+}
 
 /**
  * Orchestrates reading activity generation.
@@ -59,30 +75,33 @@ export async function readingActivityWorkflow({
     romanizations: {},
   });
 
-  const { wordMetadata } = await generateSentenceWordMetadataStep(activitiesToGenerate, sentences);
-
-  const sentenceWords = extractUniqueSentenceWords(sentences.map((entry) => entry.sentence)).filter(
-    (word) => wordMetadata[word],
+  const { distractors, translationDistractors } = await generateSentenceDistractorsStep(
+    activitiesToGenerate,
+    sentences,
+  );
+  const targetWords = collectReadingTargetWords({ distractors, sentences });
+  const { wordMetadata } = await generateSentenceWordMetadataStep(
+    activitiesToGenerate,
+    sentences,
+    targetWords,
   );
 
   const [wordAudioResult, wordPronunciationResult] = await Promise.allSettled([
-    generateSentenceWordAudioStep(activitiesToGenerate, sentenceWords),
-    generateSentencePronunciationAndDistractorUnsafesStep(activitiesToGenerate, sentenceWords),
+    generateSentenceWordAudioStep(activitiesToGenerate, targetWords),
+    generateSentenceWordPronunciationStep(activitiesToGenerate, targetWords),
   ]);
 
   const { wordAudioUrls } = settled(wordAudioResult, { wordAudioUrls: {} });
-  const { distractorUnsafeTranslations, pronunciations } = settled(wordPronunciationResult, {
-    distractorUnsafeTranslations: {},
-    pronunciations: {},
-  });
+  const { pronunciations } = settled(wordPronunciationResult, { pronunciations: {} });
 
   await saveReadingActivityStep({
     activities: allActivities,
-    distractorUnsafeTranslations,
+    distractors,
     pronunciations,
     sentenceAudioUrls,
     sentenceRomanizations,
     sentences,
+    translationDistractors,
     wordAudioUrls,
     wordMetadata,
     workflowRunId,

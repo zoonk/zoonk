@@ -199,7 +199,6 @@ describe(getActivity, () => {
       }),
       sentenceFixture({
         audioUrl: "https://example.com/sent-audio.mp3",
-        distractorUnsafeSentences: ["test-sentence-alt"],
         organizationId: org.id,
         romanization: "test-sent-roman",
         sentence: `test-sentence-${crypto.randomUUID()}`,
@@ -217,7 +216,6 @@ describe(getActivity, () => {
 
     expect(result?.steps[0]?.sentence).toMatchObject({
       audioUrl: "https://example.com/sent-audio.mp3",
-      distractorUnsafeSentences: ["test-sentence-alt"],
       id: sentence.id,
       romanization: "test-sent-roman",
       sentence: sentence.sentence,
