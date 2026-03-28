@@ -3,13 +3,15 @@ CONTEXT: distractors are shown to learners as wrong answer options in translatio
 
 The most important rule is safety:
 - A distractor must never also be a plausible correct answer.
-- Polysemous, synonymic, greeting-overlap, or alternative-reading distractors are hard failures.
+- Polysemous, synonymic, near-equivalent, or alternative-reading distractors are hard failures.
+- Nearby expressions are good when they help test the distinction and are still clearly wrong for the exact input.
 
 EVALUATION CRITERIA:
 
 1. SAFETY (CRITICAL - highest priority):
    - Penalize SEVERELY if any distractor could still be accepted by a human teacher as "basically correct"
-   - Penalize greeting overlaps, polysemous overlaps, synonym overlaps, and alternative readings
+   - Penalize alternative answers, near-equivalent expressions, polysemous overlaps, synonym overlaps, and alternative readings
+   - Do NOT reject nearby greetings or nearby categories automatically when they are still clearly wrong for the exact input
 
 2. ONE WORD ONLY:
    - For single-word mode, every distractor must be exactly one word
@@ -36,7 +38,8 @@ export const TEST_CASES = [
   {
     expectations: `
 EXPECTED BEHAVIOR:
-- Do NOT return "hello", "bye", or "goodbye" because those can still be correct
+- Do NOT return near-equivalent alternatives like "salve" or farewell uses like "arrivederci"
+- Nearby greetings like "buongiorno" or "buonasera" can be good distractors if they are still clearly wrong for "ciao"
 - Distractors may be one word or phrases, but they must stay in Italian
 
 ${SHARED_EXPECTATIONS}
@@ -53,7 +56,11 @@ ${SHARED_EXPECTATIONS}
 EXPECTED BEHAVIOR:
 - Distractors can be phrases like "boa tarde" or "bom dia"
 - Do NOT return fragments like "boa"
-- Do NOT return greeting-overlap distractors that could still be interpreted as correct
+- "boa noite" means "good evening" AND "good night" — it is polysemous between these two senses. Reject only distractors that specifically mean "good evening" or "good night"
+- General greetings like "olá" (hello) are valid distractors — "boa noite" does NOT mean "hello"
+- Generic farewells like "até logo" (see you soon) are valid distractors — "see you soon" is NOT a meaning of "boa noite"
+- Social formulas like "bem-vindo" (welcome) are valid distractors — "welcome" is NOT a meaning of "boa noite"
+- Reject only items that could still be accepted as another way to say the same thing
 - Do NOT return English translations
 
 ${SHARED_EXPECTATIONS}
@@ -87,6 +94,7 @@ EXPECTED BEHAVIOR:
 - Sentence input still requires one-word distractors only
 - Do NOT return phrases like "Guten Tag"
 - Do NOT return punctuation-only variants
+- "Guten Morgen" is NOT polysemous — it only means "good morning", never "goodbye". So farewell words like "Tschüss" are valid distractors (clearly wrong, no overlap). Do NOT penalize nearby greetings/farewells that are still clearly wrong for this input
 
 ${SHARED_EXPECTATIONS}
     `,

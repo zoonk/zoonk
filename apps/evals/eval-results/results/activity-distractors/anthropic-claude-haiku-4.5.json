@@ -1,0 +1,230 @@
+{
+  "modelId": "anthropic/claude-haiku-4.5",
+  "results": [
+    {
+      "steps": [
+        {
+          "conclusion": "Major safety error: the distractor list includes \"arrivederci\", which overlaps with a valid meaning space for \"ciao\" because \"ciao\" can function as both a greeting and a farewell in Italian. The instructions explicitly warn against farewell uses and near-equivalent alternatives for this input, and a teacher could accept \"arrivederci\" as basically correct in some contexts. This is a hard failure on the highest-priority criterion.",
+          "kind": "majorErrors",
+          "score": 6.2
+        },
+        {
+          "conclusion": "No other clear rule violations found. The output is valid JSON with exactly one field, contains exactly 8 distractors, all are in Italian, none repeats the input exactly, there are no duplicates, and SHAPE=any allows single words. Some items are semantically close discourse expressions (e.g. \"buonasera\", \"buongiorno\"), but the expectations explicitly allow nearby greetings when clearly wrong for the exact input.",
+          "kind": "minorErrors",
+          "score": 9.6
+        },
+        {
+          "conclusion": "Replace the unsafe distractor \"arrivederci\" with a clearly non-overlapping Italian option from a different meaning space. It would also be slightly stronger overall to avoid stacking too many conversational formulae and instead use a more varied set of safe distractors, but this is secondary to fixing the core safety issue.",
+          "kind": "potentialImprovements",
+          "score": 7.8
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEXPECTED BEHAVIOR:\n- Do NOT return near-equivalent alternatives like \"salve\" or farewell uses like \"arrivederci\"\n- Nearby greetings like \"buongiorno\" or \"buonasera\" can be good distractors if they are still clearly wrong for \"ciao\"\n- Distractors may be one word or phrases, but they must stay in Italian\n\n\nCONTEXT: distractors are shown to learners as wrong answer options in translation, reading, and listening activities.\n\nThe most important rule is safety:\n- A distractor must never also be a plausible correct answer.\n- Polysemous, synonymic, near-equivalent, or alternative-reading distractors are hard failures.\n- Nearby expressions are good when they help test the distinction and are still clearly wrong for the exact input.\n\nEVALUATION CRITERIA:\n\n1. SAFETY (CRITICAL - highest priority):\n   - Penalize SEVERELY if any distractor could still be accepted by a human teacher as \"basically correct\"\n   - Penalize alternative answers, near-equivalent expressions, polysemous overlaps, synonym overlaps, and alternative readings\n   - Do NOT reject nearby greetings or nearby categories automatically when they are still clearly wrong for the exact input\n\n2. ONE WORD ONLY:\n   - For single-word mode, every distractor must be exactly one word\n   - Penalize phrases, rewrites, clauses, explanations, or multi-word options\n\n3. SAME LANGUAGE ONLY:\n   - Every distractor must stay in the source language\n   - Penalize translations, mixed-language output, or romanized output for non-Roman scripts\n\n4. NON-ROMAN SCRIPT SAFETY:\n   - For Japanese, Chinese, Korean, and similar scripts, keep distractors in the original script\n   - Penalize romanized output like romaji, pinyin, or hangul transliterations written in Latin letters\n\n5. CLEAN OUTPUT:\n   - Penalize duplicates, punctuation-only variants, casing-only variants, and repetitions of the source input\n\nANTI-CHECKLIST GUIDANCE:\n- Do NOT require a specific semantic category if the distractors are clearly safe and plausible\n- Do NOT reward \"clever\" distractors if they introduce ambiguity\n- FOCUS ON: safety, one-word format, correct script, and clean output\n\n    ",
+        "id": "it-ciao-polysemy-1",
+        "userInput": {
+          "input": "ciao",
+          "language": "it",
+          "shape": "any"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "One distractor is somewhat awkward: \"boa madrugada\" is not a very common or natural social formula in Portuguese, so it is a weaker distractor choice. However, it does not overlap with the meanings of \"boa noite\" under the provided expectations. All items are in Portuguese, none repeats the input, and SHAPE:any allows multi-word distractors.",
+          "kind": "minorErrors",
+          "score": 8.8
+        },
+        {
+          "conclusion": "The set is largely safe and follows the instructions well. It could be improved by replacing the less natural \"boa madrugada\" with a more common Portuguese expression that is still clearly non-overlapping, to make the distractor list more natural for learners.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEXPECTED BEHAVIOR:\n- Distractors can be phrases like \"boa tarde\" or \"bom dia\"\n- Do NOT return fragments like \"boa\"\n- \"boa noite\" means \"good evening\" AND \"good night\" — it is polysemous between these two senses. Reject only distractors that specifically mean \"good evening\" or \"good night\"\n- General greetings like \"olá\" (hello) are valid distractors — \"boa noite\" does NOT mean \"hello\"\n- Generic farewells like \"até logo\" (see you soon) are valid distractors — \"see you soon\" is NOT a meaning of \"boa noite\"\n- Social formulas like \"bem-vindo\" (welcome) are valid distractors — \"welcome\" is NOT a meaning of \"boa noite\"\n- Reject only items that could still be accepted as another way to say the same thing\n- Do NOT return English translations\n\n\nCONTEXT: distractors are shown to learners as wrong answer options in translation, reading, and listening activities.\n\nThe most important rule is safety:\n- A distractor must never also be a plausible correct answer.\n- Polysemous, synonymic, near-equivalent, or alternative-reading distractors are hard failures.\n- Nearby expressions are good when they help test the distinction and are still clearly wrong for the exact input.\n\nEVALUATION CRITERIA:\n\n1. SAFETY (CRITICAL - highest priority):\n   - Penalize SEVERELY if any distractor could still be accepted by a human teacher as \"basically correct\"\n   - Penalize alternative answers, near-equivalent expressions, polysemous overlaps, synonym overlaps, and alternative readings\n   - Do NOT reject nearby greetings or nearby categories automatically when they are still clearly wrong for the exact input\n\n2. ONE WORD ONLY:\n   - For single-word mode, every distractor must be exactly one word\n   - Penalize phrases, rewrites, clauses, explanations, or multi-word options\n\n3. SAME LANGUAGE ONLY:\n   - Every distractor must stay in the source language\n   - Penalize translations, mixed-language output, or romanized output for non-Roman scripts\n\n4. NON-ROMAN SCRIPT SAFETY:\n   - For Japanese, Chinese, Korean, and similar scripts, keep distractors in the original script\n   - Penalize romanized output like romaji, pinyin, or hangul transliterations written in Latin letters\n\n5. CLEAN OUTPUT:\n   - Penalize duplicates, punctuation-only variants, casing-only variants, and repetitions of the source input\n\nANTI-CHECKLIST GUIDANCE:\n- Do NOT require a specific semantic category if the distractors are clearly safe and plausible\n- Do NOT reward \"clever\" distractors if they introduce ambiguity\n- FOCUS ON: safety, one-word format, correct script, and clean output\n\n    ",
+        "id": "pt-boa-noite-greeting-1",
+        "userInput": {
+          "input": "boa noite",
+          "language": "pt",
+          "shape": "any"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Possible improvement: while all distractors are safe, same-language, clean, and valid under SHAPE=any, they are somewhat abstract and not especially 'near-miss contrasts' for the input. Slightly more tempting but still clearly non-overlapping concrete nouns could improve learner usefulness. This is not a rule violation.",
+          "kind": "potentialImprovements",
+          "score": 9.2
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEXPECTED BEHAVIOR:\n- Do NOT return highly polysemous distractors like \"bank\", \"change\", \"note\", or \"bill\"\n- Do NOT return synonyms like \"cash\" that could still be accepted as correct\n- Prefer clearly wrong English output that is less ambiguous\n\n\nCONTEXT: distractors are shown to learners as wrong answer options in translation, reading, and listening activities.\n\nThe most important rule is safety:\n- A distractor must never also be a plausible correct answer.\n- Polysemous, synonymic, near-equivalent, or alternative-reading distractors are hard failures.\n- Nearby expressions are good when they help test the distinction and are still clearly wrong for the exact input.\n\nEVALUATION CRITERIA:\n\n1. SAFETY (CRITICAL - highest priority):\n   - Penalize SEVERELY if any distractor could still be accepted by a human teacher as \"basically correct\"\n   - Penalize alternative answers, near-equivalent expressions, polysemous overlaps, synonym overlaps, and alternative readings\n   - Do NOT reject nearby greetings or nearby categories automatically when they are still clearly wrong for the exact input\n\n2. ONE WORD ONLY:\n   - For single-word mode, every distractor must be exactly one word\n   - Penalize phrases, rewrites, clauses, explanations, or multi-word options\n\n3. SAME LANGUAGE ONLY:\n   - Every distractor must stay in the source language\n   - Penalize translations, mixed-language output, or romanized output for non-Roman scripts\n\n4. NON-ROMAN SCRIPT SAFETY:\n   - For Japanese, Chinese, Korean, and similar scripts, keep distractors in the original script\n   - Penalize romanized output like romaji, pinyin, or hangul transliterations written in Latin letters\n\n5. CLEAN OUTPUT:\n   - Penalize duplicates, punctuation-only variants, casing-only variants, and repetitions of the source input\n\nANTI-CHECKLIST GUIDANCE:\n- Do NOT require a specific semantic category if the distractors are clearly safe and plausible\n- Do NOT reward \"clever\" distractors if they introduce ambiguity\n- FOCUS ON: safety, one-word format, correct script, and clean output\n\n    ",
+        "id": "en-money-polysemy-1",
+        "userInput": {
+          "input": "money",
+          "language": "en",
+          "shape": "any"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Could be slightly improved by choosing distractors a bit closer to the sentence's meaning space (e.g. other greetings or salutations that are still clearly wrong), but the provided options are still safe, one-word, same-language, and clean. Given the expectations, nearby but non-overlapping greetings would also have been acceptable; however, this is an optimization rather than an error.",
+          "kind": "potentialImprovements",
+          "score": 9.3
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEXPECTED BEHAVIOR:\n- Sentence input still requires one-word distractors only\n- Do NOT return phrases like \"Guten Tag\"\n- Do NOT return punctuation-only variants\n- \"Guten Morgen\" is NOT polysemous — it only means \"good morning\", never \"goodbye\". So farewell words like \"Tschüss\" are valid distractors (clearly wrong, no overlap). Do NOT penalize nearby greetings/farewells that are still clearly wrong for this input\n\n\nCONTEXT: distractors are shown to learners as wrong answer options in translation, reading, and listening activities.\n\nThe most important rule is safety:\n- A distractor must never also be a plausible correct answer.\n- Polysemous, synonymic, near-equivalent, or alternative-reading distractors are hard failures.\n- Nearby expressions are good when they help test the distinction and are still clearly wrong for the exact input.\n\nEVALUATION CRITERIA:\n\n1. SAFETY (CRITICAL - highest priority):\n   - Penalize SEVERELY if any distractor could still be accepted by a human teacher as \"basically correct\"\n   - Penalize alternative answers, near-equivalent expressions, polysemous overlaps, synonym overlaps, and alternative readings\n   - Do NOT reject nearby greetings or nearby categories automatically when they are still clearly wrong for the exact input\n\n2. ONE WORD ONLY:\n   - For single-word mode, every distractor must be exactly one word\n   - Penalize phrases, rewrites, clauses, explanations, or multi-word options\n\n3. SAME LANGUAGE ONLY:\n   - Every distractor must stay in the source language\n   - Penalize translations, mixed-language output, or romanized output for non-Roman scripts\n\n4. NON-ROMAN SCRIPT SAFETY:\n   - For Japanese, Chinese, Korean, and similar scripts, keep distractors in the original script\n   - Penalize romanized output like romaji, pinyin, or hangul transliterations written in Latin letters\n\n5. CLEAN OUTPUT:\n   - Penalize duplicates, punctuation-only variants, casing-only variants, and repetitions of the source input\n\nANTI-CHECKLIST GUIDANCE:\n- Do NOT require a specific semantic category if the distractors are clearly safe and plausible\n- Do NOT reward \"clever\" distractors if they introduce ambiguity\n- FOCUS ON: safety, one-word format, correct script, and clean output\n\n    ",
+        "id": "de-sentence-one-word-only-1",
+        "userInput": {
+          "input": "Guten Morgen, Anna!",
+          "language": "de",
+          "shape": "single-word"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Could be slightly improved by making the set a bit more varied in script/register consistency (mixing kanji and katakana animal names is acceptable but not maximally uniform), but this does not violate any instruction. All distractors are safe, in Japanese script, distinct, and none overlaps with the meaning of 猫.",
+          "kind": "potentialImprovements",
+          "score": 9.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEXPECTED BEHAVIOR:\n- All distractors must stay in Japanese script\n- Do NOT output romaji like \"inu\" or \"neko\"\n\n\nCONTEXT: distractors are shown to learners as wrong answer options in translation, reading, and listening activities.\n\nThe most important rule is safety:\n- A distractor must never also be a plausible correct answer.\n- Polysemous, synonymic, near-equivalent, or alternative-reading distractors are hard failures.\n- Nearby expressions are good when they help test the distinction and are still clearly wrong for the exact input.\n\nEVALUATION CRITERIA:\n\n1. SAFETY (CRITICAL - highest priority):\n   - Penalize SEVERELY if any distractor could still be accepted by a human teacher as \"basically correct\"\n   - Penalize alternative answers, near-equivalent expressions, polysemous overlaps, synonym overlaps, and alternative readings\n   - Do NOT reject nearby greetings or nearby categories automatically when they are still clearly wrong for the exact input\n\n2. ONE WORD ONLY:\n   - For single-word mode, every distractor must be exactly one word\n   - Penalize phrases, rewrites, clauses, explanations, or multi-word options\n\n3. SAME LANGUAGE ONLY:\n   - Every distractor must stay in the source language\n   - Penalize translations, mixed-language output, or romanized output for non-Roman scripts\n\n4. NON-ROMAN SCRIPT SAFETY:\n   - For Japanese, Chinese, Korean, and similar scripts, keep distractors in the original script\n   - Penalize romanized output like romaji, pinyin, or hangul transliterations written in Latin letters\n\n5. CLEAN OUTPUT:\n   - Penalize duplicates, punctuation-only variants, casing-only variants, and repetitions of the source input\n\nANTI-CHECKLIST GUIDANCE:\n- Do NOT require a specific semantic category if the distractors are clearly safe and plausible\n- Do NOT reward \"clever\" distractors if they introduce ambiguity\n- FOCUS ON: safety, one-word format, correct script, and clean output\n\n    ",
+        "id": "ja-non-roman-1",
+        "userInput": {
+          "input": "猫",
+          "language": "ja",
+          "shape": "any"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Could be slightly improved by including a wider mix of semantic domains instead of all place nouns, but this is not required and does not reduce safety or usefulness in a meaningful way.",
+          "kind": "potentialImprovements",
+          "score": 9.7
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEXPECTED BEHAVIOR:\n- All distractors must stay in Hangul\n- Do NOT output Latin-script romanizations\n\n\nCONTEXT: distractors are shown to learners as wrong answer options in translation, reading, and listening activities.\n\nThe most important rule is safety:\n- A distractor must never also be a plausible correct answer.\n- Polysemous, synonymic, near-equivalent, or alternative-reading distractors are hard failures.\n- Nearby expressions are good when they help test the distinction and are still clearly wrong for the exact input.\n\nEVALUATION CRITERIA:\n\n1. SAFETY (CRITICAL - highest priority):\n   - Penalize SEVERELY if any distractor could still be accepted by a human teacher as \"basically correct\"\n   - Penalize alternative answers, near-equivalent expressions, polysemous overlaps, synonym overlaps, and alternative readings\n   - Do NOT reject nearby greetings or nearby categories automatically when they are still clearly wrong for the exact input\n\n2. ONE WORD ONLY:\n   - For single-word mode, every distractor must be exactly one word\n   - Penalize phrases, rewrites, clauses, explanations, or multi-word options\n\n3. SAME LANGUAGE ONLY:\n   - Every distractor must stay in the source language\n   - Penalize translations, mixed-language output, or romanized output for non-Roman scripts\n\n4. NON-ROMAN SCRIPT SAFETY:\n   - For Japanese, Chinese, Korean, and similar scripts, keep distractors in the original script\n   - Penalize romanized output like romaji, pinyin, or hangul transliterations written in Latin letters\n\n5. CLEAN OUTPUT:\n   - Penalize duplicates, punctuation-only variants, casing-only variants, and repetitions of the source input\n\nANTI-CHECKLIST GUIDANCE:\n- Do NOT require a specific semantic category if the distractors are clearly safe and plausible\n- Do NOT reward \"clever\" distractors if they introduce ambiguity\n- FOCUS ON: safety, one-word format, correct script, and clean output\n\n    ",
+        "id": "ko-non-roman-1",
+        "userInput": {
+          "input": "학교",
+          "language": "ko",
+          "shape": "any"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "One distractor is somewhat semantically close to the sentence meaning: \"茶\" could be a tempting substitute because the sentence is about liking a beverage, though it is still clearly not a correct answer for the exact input \"我喜欢咖啡。\". Otherwise, all distractors are single-word, in Chinese script, not duplicates, and do not repeat the input.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "The response is strong and follows the JSON/format requirements well. A small improvement would be to choose distractors from a slightly broader semantic spread, since several are beverages and thus cluster near the input domain. That said, they remain clearly wrong and useful as distractors.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEXPECTED BEHAVIOR:\n- Sentence input still requires one-word distractors only\n- All distractors must stay in Chinese script\n- Do NOT output pinyin or English\n\n\nCONTEXT: distractors are shown to learners as wrong answer options in translation, reading, and listening activities.\n\nThe most important rule is safety:\n- A distractor must never also be a plausible correct answer.\n- Polysemous, synonymic, near-equivalent, or alternative-reading distractors are hard failures.\n- Nearby expressions are good when they help test the distinction and are still clearly wrong for the exact input.\n\nEVALUATION CRITERIA:\n\n1. SAFETY (CRITICAL - highest priority):\n   - Penalize SEVERELY if any distractor could still be accepted by a human teacher as \"basically correct\"\n   - Penalize alternative answers, near-equivalent expressions, polysemous overlaps, synonym overlaps, and alternative readings\n   - Do NOT reject nearby greetings or nearby categories automatically when they are still clearly wrong for the exact input\n\n2. ONE WORD ONLY:\n   - For single-word mode, every distractor must be exactly one word\n   - Penalize phrases, rewrites, clauses, explanations, or multi-word options\n\n3. SAME LANGUAGE ONLY:\n   - Every distractor must stay in the source language\n   - Penalize translations, mixed-language output, or romanized output for non-Roman scripts\n\n4. NON-ROMAN SCRIPT SAFETY:\n   - For Japanese, Chinese, Korean, and similar scripts, keep distractors in the original script\n   - Penalize romanized output like romaji, pinyin, or hangul transliterations written in Latin letters\n\n5. CLEAN OUTPUT:\n   - Penalize duplicates, punctuation-only variants, casing-only variants, and repetitions of the source input\n\nANTI-CHECKLIST GUIDANCE:\n- Do NOT require a specific semantic category if the distractors are clearly safe and plausible\n- Do NOT reward \"clever\" distractors if they introduce ambiguity\n- FOCUS ON: safety, one-word format, correct script, and clean output\n\n    ",
+        "id": "zh-sentence-non-roman-1",
+        "userInput": {
+          "input": "我喜欢咖啡。",
+          "language": "zh",
+          "shape": "single-word"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "Major error: one distractor, \"loud\", is in English rather than French, violating the same-language-only requirement. This is a significant instruction failure for a language-learning distractor set. No clear semantic-overlap safety failures are present among the listed items for the French input \"petit\".",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "Minor errors: the set is somewhat uneven in plausibility because several adjectives are generic contrasts rather than especially natural near-miss distractors for \"petit\". However, all items are single tokens, there are exactly 8 items, no duplicates, and no obvious overlap with accepted meanings of \"petit\".",
+          "kind": "minorErrors",
+          "score": 8.5
+        },
+        {
+          "conclusion": "Improvements: replace the English item \"loud\" with a French adjective; ensure every distractor is in French. Optionally choose more natural French distractors that are closer in learner-confusability while still clearly wrong, such as other common adjectives in the same register.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEXPECTED BEHAVIOR:\n- Do NOT return English items like \"small\" or \"little\"\n- Do NOT return duplicates or formatting variants\n\n\nCONTEXT: distractors are shown to learners as wrong answer options in translation, reading, and listening activities.\n\nThe most important rule is safety:\n- A distractor must never also be a plausible correct answer.\n- Polysemous, synonymic, near-equivalent, or alternative-reading distractors are hard failures.\n- Nearby expressions are good when they help test the distinction and are still clearly wrong for the exact input.\n\nEVALUATION CRITERIA:\n\n1. SAFETY (CRITICAL - highest priority):\n   - Penalize SEVERELY if any distractor could still be accepted by a human teacher as \"basically correct\"\n   - Penalize alternative answers, near-equivalent expressions, polysemous overlaps, synonym overlaps, and alternative readings\n   - Do NOT reject nearby greetings or nearby categories automatically when they are still clearly wrong for the exact input\n\n2. ONE WORD ONLY:\n   - For single-word mode, every distractor must be exactly one word\n   - Penalize phrases, rewrites, clauses, explanations, or multi-word options\n\n3. SAME LANGUAGE ONLY:\n   - Every distractor must stay in the source language\n   - Penalize translations, mixed-language output, or romanized output for non-Roman scripts\n\n4. NON-ROMAN SCRIPT SAFETY:\n   - For Japanese, Chinese, Korean, and similar scripts, keep distractors in the original script\n   - Penalize romanized output like romaji, pinyin, or hangul transliterations written in Latin letters\n\n5. CLEAN OUTPUT:\n   - Penalize duplicates, punctuation-only variants, casing-only variants, and repetitions of the source input\n\nANTI-CHECKLIST GUIDANCE:\n- Do NOT require a specific semantic category if the distractors are clearly safe and plausible\n- Do NOT reward \"clever\" distractors if they introduce ambiguity\n- FOCUS ON: safety, one-word format, correct script, and clean output\n\n    ",
+        "id": "fr-clean-output-1",
+        "userInput": {
+          "input": "petit",
+          "language": "fr",
+          "shape": "any"
+        }
+      }
+    }
+  ],
+  "taskId": "activity-distractors"
+}
