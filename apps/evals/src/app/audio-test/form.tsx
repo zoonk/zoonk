@@ -63,7 +63,7 @@ export function AudioTestForm() {
 
         <div className="flex flex-col gap-2">
           <Label htmlFor="voice">Voice</Label>
-          <Select defaultValue="marin" name="voice">
+          <Select defaultValue="Kore" name="voice">
             <SelectTrigger id="voice">
               <SelectValue />
             </SelectTrigger>

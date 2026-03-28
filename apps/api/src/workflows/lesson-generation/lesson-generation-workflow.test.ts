@@ -289,7 +289,7 @@ describe(lessonGenerationWorkflow, () => {
     });
 
     test("generates 5 activities without listening for non-TTS language lesson", async () => {
-      const nonTtsCourse = await courseFixture({ organizationId, targetLanguage: "am" });
+      const nonTtsCourse = await courseFixture({ organizationId, targetLanguage: "cy" });
       const nonTtsChapter = await chapterFixture({
         courseId: nonTtsCourse.id,
         organizationId,
