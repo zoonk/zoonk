@@ -1,0 +1,29 @@
+packages/ai/src/tasks/audio/provider-openai.ts
+  91e2a29f68d2fcb2 1-12,14-36
+packages/core/src/audio/generate-language-audio.ts
+  91e2a29f68d2fcb2 30
+packages/ai/src/tasks/audio/generate-language-audio.ts
+  91e2a29f68d2fcb2 2,7-8,11-12,14-15,17-18,20-26,28-31,42-49,51-70,72,74,76-81,83,85-90,92-96,98-99,101,105-107,117-118,120
+packages/ai/src/tasks/audio/provider-gemini.ts
+  91e2a29f68d2fcb2 1-45
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.22",
+  "base_commit_sha": "543e83e1055db81f2a717b9f34cba03311c4566f",
+  "prompts": {
+    "91e2a29f68d2fcb2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4757069f-4067-43f9-8526-c8622d72f807",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill <4393133+ceolinwill@users.noreply.github.com>",
+      "messages": [],
+      "total_additions": 241,
+      "total_deletions": 110,
+      "accepted_lines": 171,
+      "overriden_lines": 4
+    }
+  }
+}
