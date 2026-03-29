@@ -1,10 +1,4 @@
-/**
- * Type guard that checks if a value is a non-null object (Record-like).
- * Used to safely narrow `unknown` from JSON.parse into Record<string, unknown>.
- */
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === "object" && value !== null;
-}
+import { isJsonObject } from "@zoonk/utils/json";
 
 /**
  * Safely parses a JSON string into a Record<string, unknown>.
@@ -12,7 +6,7 @@ function isRecord(value: unknown): value is Record<string, unknown> {
  */
 function parseEvent(raw: unknown): Record<string, unknown> {
   const parsed: unknown = JSON.parse(String(raw).replace("data: ", "").trim());
-  return isRecord(parsed) ? parsed : {};
+  return isJsonObject(parsed) ? parsed : {};
 }
 
 /**

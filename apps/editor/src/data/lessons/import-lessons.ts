@@ -4,10 +4,10 @@ import { type ImportMode } from "@/lib/import-mode";
 import { deduplicateImportSlugs, resolveImportSlug } from "@/lib/import-slug";
 import { getLessonKind } from "@/lib/lesson-kind";
 import { parseJsonFile } from "@/lib/parse-json-file";
-import { isRecord } from "@/lib/validation";
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
 import { type Lesson, type LessonKind, type TransactionClient, prisma } from "@zoonk/db";
 import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
+import { isJsonObject } from "@zoonk/utils/json";
 import { normalizeString, toSlug } from "@zoonk/utils/string";
 
 type LessonImportData = {
@@ -17,7 +17,7 @@ type LessonImportData = {
 };
 
 function validateLessonData(lesson: unknown): lesson is LessonImportData {
-  if (!isRecord(lesson)) {
+  if (!isJsonObject(lesson)) {
     return false;
   }
 
@@ -30,7 +30,7 @@ function validateLessonData(lesson: unknown): lesson is LessonImportData {
 function validateImportData(data: unknown): data is {
   lessons: LessonImportData[];
 } {
-  if (!isRecord(data)) {
+  if (!isJsonObject(data)) {
     return false;
   }
 
