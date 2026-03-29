@@ -1,0 +1,47 @@
+apps/api/src/workflows/activity-generation/steps/_utils/save-reading-target-words.ts
+  115ae19ed71d139c 9,67-72,74-76,79-81,156-164,173,181
+apps/api/src/workflows/activity-generation/steps/save-vocabulary-activity-step.ts
+  115ae19ed71d139c 11,108-112,114-116,119-121,204-212,221,227,237,249
+apps/api/src/workflows/activity-generation/steps/_utils/upsert-word-with-pronunciation.test.ts
+  115ae19ed71d139c 1-168
+apps/api/src/workflows/activity-generation/steps/_utils/generate-activity-romanizations.test.ts
+  115ae19ed71d139c 1-31,34-73,75-76
+apps/api/src/workflows/activity-generation/steps/generate-sentence-word-audio-step.ts
+  115ae19ed71d139c 5,38-39
+apps/api/src/workflows/activity-generation/steps/generate-grammar-romanization-step.ts
+  115ae19ed71d139c 6,60,66,68
+apps/api/src/workflows/activity-generation/steps/_utils/generate-word-audio-urls.test.ts
+  115ae19ed71d139c 1-36,38-61,63-84,86-107,109-119,121-128
+apps/api/src/workflows/activity-generation/steps/_utils/upsert-word-with-pronunciation.ts
+  115ae19ed71d139c 1-64
+apps/api/src/workflows/activity-generation/steps/_utils/generate-activity-romanizations.ts
+  115ae19ed71d139c 1-43
+apps/api/src/workflows/activity-generation/steps/generate-vocabulary-audio-step.ts
+  115ae19ed71d139c 5,38-39,41-42
+apps/api/src/workflows/activity-generation/steps/_utils/generate-word-audio-urls.ts
+  115ae19ed71d139c 1-44,46-57
+apps/api/src/workflows/activity-generation/steps/generate-vocabulary-romanization-step.ts
+  115ae19ed71d139c 5,27,37,39
+apps/api/src/workflows/activity-generation/steps/generate-reading-romanization-step.ts
+  115ae19ed71d139c 5,28,34,40-43,45
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.22",
+  "base_commit_sha": "2547db88a06c73f9f62117e75c88a9f86ba053cf",
+  "prompts": {
+    "115ae19ed71d139c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a2e9ec06-0647-4f47-bb0e-7c7088d4ee3a",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill <4393133+ceolinwill@users.noreply.github.com>",
+      "messages": [],
+      "total_additions": 704,
+      "total_deletions": 404,
+      "accepted_lines": 617,
+      "overriden_lines": 8
+    }
+  }
+}
