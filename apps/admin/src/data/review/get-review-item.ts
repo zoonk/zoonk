@@ -31,3 +31,21 @@ export const getStepVisualReview = cache(async function getStepVisualReview(enti
     where: { id: entityId },
   });
 });
+
+export const getWordAudioReview = cache(async function getWordAudioReview(entityId: bigint) {
+  if (!(await isAdmin())) {
+    return null;
+  }
+
+  return prisma.word.findUnique({ where: { id: entityId } });
+});
+
+export const getSentenceAudioReview = cache(async function getSentenceAudioReview(
+  entityId: bigint,
+) {
+  if (!(await isAdmin())) {
+    return null;
+  }
+
+  return prisma.sentence.findUnique({ where: { id: entityId } });
+});

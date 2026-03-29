@@ -1,12 +1,22 @@
-type ReviewGroup = "text" | "image";
+type ReviewGroup = "text" | "image" | "audio";
 
-type ReviewTaskType = "courseSuggestions" | "stepVisualImage" | "stepSelectImage";
+type ReviewTaskType =
+  | "courseSuggestions"
+  | "sentenceAudio"
+  | "stepSelectImage"
+  | "stepVisualImage"
+  | "wordAudio";
 
 const REVIEW_TASKS: Record<ReviewTaskType, { group: ReviewGroup; label: string; path: string }> = {
   courseSuggestions: {
     group: "text",
     label: "Course Suggestions",
     path: "/review/text/course-suggestions",
+  },
+  sentenceAudio: {
+    group: "audio",
+    label: "Sentence Audio",
+    path: "/review/audio/sentence-audio",
   },
   stepSelectImage: {
     group: "image",
@@ -17,6 +27,11 @@ const REVIEW_TASKS: Record<ReviewTaskType, { group: ReviewGroup; label: string; 
     group: "image",
     label: "Visual Images",
     path: "/review/image/step-visual-image",
+  },
+  wordAudio: {
+    group: "audio",
+    label: "Word Audio",
+    path: "/review/audio/word-audio",
   },
 };
 
@@ -91,6 +106,7 @@ function getVisualKindFromTaskType(taskType: string): string | null {
 const REVIEW_GROUPS: { group: ReviewGroup; label: string }[] = [
   { group: "text", label: "Text" },
   { group: "image", label: "Image" },
+  { group: "audio", label: "Audio" },
 ];
 
 export {

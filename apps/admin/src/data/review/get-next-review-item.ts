@@ -54,6 +54,40 @@ async function getNextStepVisualByKind(
   return { entityId: next?.id ?? null, remaining };
 }
 
+async function getNextWordAudio(): Promise<ReviewQueueResult> {
+  const excludeIds = await reviewedEntityIds("wordAudio");
+
+  const where = {
+    NOT: { id: { in: excludeIds } },
+    audioUrl: { not: null },
+    organization: { slug: AI_ORG_SLUG },
+  };
+
+  const [next, remaining] = await Promise.all([
+    prisma.word.findFirst({ orderBy: { createdAt: "asc" }, select: { id: true }, where }),
+    prisma.word.count({ where }),
+  ]);
+
+  return { entityId: next?.id ?? null, remaining };
+}
+
+async function getNextSentenceAudio(): Promise<ReviewQueueResult> {
+  const excludeIds = await reviewedEntityIds("sentenceAudio");
+
+  const where = {
+    NOT: { id: { in: excludeIds } },
+    audioUrl: { not: null },
+    organization: { slug: AI_ORG_SLUG },
+  };
+
+  const [next, remaining] = await Promise.all([
+    prisma.sentence.findFirst({ orderBy: { createdAt: "asc" }, select: { id: true }, where }),
+    prisma.sentence.count({ where }),
+  ]);
+
+  return { entityId: next?.id ?? null, remaining };
+}
+
 async function getNextStepSelectImage(): Promise<ReviewQueueResult> {
   const excludeIds = await reviewedEntityIds("stepSelectImage");
 
@@ -90,6 +124,14 @@ export const getNextReviewItem = cache(async function getNextReviewItem(
 
   if (taskType === "stepSelectImage") {
     return getNextStepSelectImage();
+  }
+
+  if (taskType === "wordAudio") {
+    return getNextWordAudio();
+  }
+
+  if (taskType === "sentenceAudio") {
+    return getNextSentenceAudio();
   }
 
   return EMPTY_RESULT;
