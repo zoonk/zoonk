@@ -1,0 +1,203 @@
+apps/api/src/workflows/lesson-generation/steps/add-activities-step.ts
+  a59e9e120623a8ff 4,6
+apps/api/src/workflows/activity-generation/steps/handle-failure-step.test.ts
+  a59e9e120623a8ff 1-67
+apps/api/src/workflows/activity-generation/steps/generate-practice-content-step.test.ts
+  a59e9e120623a8ff 1-265
+apps/api/src/workflows/activity-generation/steps/generate-custom-content-step.test.ts
+  a59e9e120623a8ff 1-187
+apps/api/src/workflows/course-generation/steps/generate-alternative-titles-step.test.ts
+  a59e9e120623a8ff 1-78
+apps/api/src/workflows/course-generation/_internal/setup-course.test.ts
+  a59e9e120623a8ff 1-3,5-34,37-133
+apps/api/src/workflows/lesson-generation/steps/add-activities-step.test.ts
+  a59e9e120623a8ff 1-191
+apps/api/src/workflows/activity-generation/steps/save-challenge-activity-step.test.ts
+  a59e9e120623a8ff 1-164
+apps/api/src/workflows/activity-generation/steps/generate-custom-images-step.test.ts
+  a59e9e120623a8ff 1-85,87-93,95-168,170-174,176-304
+apps/api/src/workflows/lesson-generation/steps/set-lesson-as-completed-step.test.ts
+  a59e9e120623a8ff 1-9,11-52,54-95
+apps/api/src/workflows/course-generation/steps/get-course-suggestion-step.test.ts
+  a59e9e120623a8ff 1-47,49-56
+apps/api/src/workflows/activity-generation/steps/save-custom-activity-step.test.ts
+  a59e9e120623a8ff 1-144
+apps/api/src/workflows/activity-generation/steps/_utils/generate-word-pronunciations.test.ts
+  a59e9e120623a8ff 1-118,120-137
+apps/api/src/workflows/activity-generation/steps/generate-sentence-word-metadata-step.test.ts
+  a59e9e120623a8ff 1-134,136-262,265-277
+apps/api/src/workflows/course-generation/steps/generate-categories-step.test.ts
+  a59e9e120623a8ff 1-77
+apps/api/src/workflows/course-generation/steps/handle-failure-step.test.ts
+  a59e9e120623a8ff 1-5,7-132
+apps/api/src/workflows/activity-generation/steps/generate-custom-visuals-step.test.ts
+  a59e9e120623a8ff 1-246
+apps/api/src/workflows/activity-generation/steps/generate-challenge-content-step.ts
+  a59e9e120623a8ff 49
+apps/api/src/workflows/lesson-generation/steps/update-lesson-kind-step.test.ts
+  a59e9e120623a8ff 1-81
+apps/api/src/workflows/chapter-generation/steps/add-lessons-step.test.ts
+  a59e9e120623a8ff 1-63,65-113
+apps/api/src/workflows/activity-generation/steps/generate-vocabulary-romanization-step.test.ts
+  a59e9e120623a8ff 1-236
+apps/api/src/workflows/activity-generation/steps/generate-quiz-content-step.test.ts
+  a59e9e120623a8ff 1-265
+apps/api/src/workflows/activity-generation/steps/generate-vocabulary-content-step.test.ts
+  a59e9e120623a8ff 1-169
+apps/api/src/workflows/activity-generation/steps/generate-reading-romanization-step.test.ts
+  a59e9e120623a8ff 1-256
+apps/api/src/workflows/activity-generation/steps/save-grammar-steps-step.test.ts
+  a59e9e120623a8ff 1,3-246
+apps/api/src/workflows/activity-generation/steps/generate-sentence-distractors-step.test.ts
+  a59e9e120623a8ff 125-161
+apps/api/src/workflows/course-generation/steps/set-course-as-running-step.test.ts
+  a59e9e120623a8ff 1-4,6-90
+apps/api/src/workflows/course-generation/steps/get-ai-organization-step.test.ts
+  a59e9e120623a8ff 1-34
+apps/api/src/workflows/activity-generation/steps/save-practice-activity-step.test.ts
+  a59e9e120623a8ff 1-153
+apps/api/src/workflows/course-generation/steps/check-existing-course-step.test.ts
+  a59e9e120623a8ff 1-3,5-101
+apps/api/src/workflows/activity-generation/steps/save-explanation-activity-step.test.ts
+  a59e9e120623a8ff 1-109,111-125
+apps/api/src/workflows/activity-generation/steps/save-listening-activity-step.test.ts
+  a59e9e120623a8ff 1,3-255
+apps/api/src/workflows/_test-utils/parse-stream-events.ts
+  a59e9e120623a8ff 1-27
+apps/api/src/workflows/activity-generation/steps/_utils/get-explanation-steps-for-practice.test.ts
+  a59e9e120623a8ff 1-77
+apps/api/src/workflows/activity-generation/steps/mark-all-activities-as-running-step.test.ts
+  a59e9e120623a8ff 1,3-200
+apps/api/src/workflows/activity-generation/steps/generate-sentence-word-pronunciation-step.test.ts
+  a59e9e120623a8ff 1-275
+apps/api/src/workflows/activity-generation/steps/generate-practice-content-step.ts
+  a59e9e120623a8ff 60
+apps/api/src/workflows/lesson-generation/steps/set-lesson-as-running-step.test.ts
+  a59e9e120623a8ff 1-83
+apps/api/src/workflows/activity-generation/steps/save-quiz-activity-step.test.ts
+  a59e9e120623a8ff 1-151
+apps/api/src/workflows/activity-generation/steps/generate-grammar-content-step.ts
+  a59e9e120623a8ff 60
+apps/api/src/workflows/activity-generation/steps/_utils/fetch-existing-word-casing.test.ts
+  a59e9e120623a8ff 1-103
+apps/api/src/workflows/course-generation/steps/update-course-step.test.ts
+  a59e9e120623a8ff 1-7,9-127
+apps/api/src/workflows/activity-generation/steps/generate-challenge-content-step.test.ts
+  a59e9e120623a8ff 1-147,149-246
+apps/api/src/workflows/lesson-generation/steps/_utils/get-activities-for-kind.test.ts
+  a59e9e120623a8ff 1-136
+apps/api/src/workflows/chapter-generation/steps/get-chapter-step.test.ts
+  a59e9e120623a8ff 1-86,88-93
+apps/api/src/workflows/lesson-generation/steps/generate-custom-activities-step.test.ts
+  a59e9e120623a8ff 1-106
+apps/api/src/workflows/activity-generation/steps/generate-explanation-content-step.test.ts
+  a59e9e120623a8ff 1-198
+apps/api/src/workflows/activity-generation/steps/_utils/get-activity-steps.test.ts
+  a59e9e120623a8ff 1-6,9-30
+apps/api/src/workflows/activity-generation/steps/generate-reading-audio-step.test.ts
+  a59e9e120623a8ff 1-240,242-278
+apps/api/src/workflows/activity-generation/steps/get-lesson-activities-step.test.ts
+  a59e9e120623a8ff 1-80,82-114
+apps/api/src/workflows/activity-generation/steps/generate-visuals-step.test.ts
+  a59e9e120623a8ff 1-184,186-234
+apps/api/src/workflows/lesson-generation/steps/remove-non-language-lesson-step.test.ts
+  a59e9e120623a8ff 1-78
+apps/api/src/workflows/course-generation/steps/generate-description-step.test.ts
+  a59e9e120623a8ff 1-78
+apps/api/src/workflows/course-generation/steps/add-alternative-titles-step.test.ts
+  a59e9e120623a8ff 1-95
+apps/api/src/workflows/lesson-generation/steps/determine-lesson-kind-step.test.ts
+  a59e9e120623a8ff 1-100
+apps/api/src/workflows/activity-generation/steps/generate-quiz-content-step.ts
+  a59e9e120623a8ff 60
+apps/api/src/workflows/chapter-generation/steps/set-chapter-as-completed-step.test.ts
+  a59e9e120623a8ff 1-8,10-89
+apps/api/src/workflows/_shared/stream-status.ts
+  a59e9e120623a8ff 5-11
+apps/api/src/workflows/lesson-generation/steps/handle-failure-step.test.ts
+  a59e9e120623a8ff 1-67
+apps/api/src/workflows/course-generation/steps/initialize-course-step.test.ts
+  a59e9e120623a8ff 1-104
+apps/api/src/workflows/course-generation/_internal/persist-generated-content.test.ts
+  a59e9e120623a8ff 1-136
+apps/api/src/workflows/_test-utils/fetch-lesson-activities.ts
+  a59e9e120623a8ff 1-13,15-22
+apps/api/src/workflows/course-generation/steps/complete-course-setup-step.test.ts
+  a59e9e120623a8ff 1-4,6-87
+apps/api/src/workflows/activity-generation/steps/_utils/get-explanation-steps-for-practice.ts
+  a59e9e120623a8ff 1-34
+apps/api/src/workflows/activity-generation/steps/generate-vocabulary-audio-step.test.ts
+  a59e9e120623a8ff 1-264
+apps/api/src/workflows/activity-generation/steps/generate-images-step.test.ts
+  a59e9e120623a8ff 1-74,76-87,89-141,143-147,149-300
+apps/api/src/workflows/chapter-generation/steps/generate-lessons-step.test.ts
+  a59e9e120623a8ff 1-139
+apps/api/src/workflows/activity-generation/steps/generate-vocabulary-pronunciation-step.test.ts
+  a59e9e120623a8ff 1-168,198-202,211-241
+apps/api/src/workflows/activity-generation/steps/_utils/content-step-helpers.test.ts
+  a59e9e120623a8ff 1,3-124
+apps/api/src/workflows/course-generation/_internal/get-or-create-course.test.ts
+  a59e9e120623a8ff 1-3,5-108
+apps/api/src/workflows/course-generation/steps/generate-chapters-step.test.ts
+  a59e9e120623a8ff 1-106
+apps/api/src/workflows/activity-generation/steps/generate-sentence-word-audio-step.test.ts
+  a59e9e120623a8ff 1-264
+apps/api/src/workflows/activity-generation/steps/generate-reading-content-step.ts
+  a59e9e120623a8ff 161
+apps/api/src/workflows/lesson-generation/steps/get-lesson-step.test.ts
+  a59e9e120623a8ff 1-72,74-79
+apps/api/src/workflows/lesson-generation/steps/_utils/get-activities-for-kind.ts
+  a59e9e120623a8ff 1-108
+apps/api/src/workflows/activity-generation/steps/_utils/generate-direct-distractors.test.ts
+  a59e9e120623a8ff 1-85
+apps/api/src/workflows/course-generation/steps/generate-image-step.test.ts
+  a59e9e120623a8ff 1-79
+apps/api/src/workflows/activity-generation/steps/get-neighboring-concepts-step.test.ts
+  a59e9e120623a8ff 1,3-127
+apps/api/src/workflows/activity-generation/steps/generate-quiz-images-step.test.ts
+  a59e9e120623a8ff 1-284
+apps/api/src/workflows/activity-generation/steps/generate-grammar-user-content-step.test.ts
+  a59e9e120623a8ff 1-228
+apps/api/src/workflows/activity-generation/steps/handle-workflow-failure-step.test.ts
+  a59e9e120623a8ff 1-131
+apps/api/src/workflows/chapter-generation/steps/set-chapter-as-running-step.test.ts
+  a59e9e120623a8ff 1-77
+apps/api/src/workflows/course-generation/_internal/generate-missing-content.test.ts
+  a59e9e120623a8ff 1-4,6-31,34-178
+apps/api/src/workflows/activity-generation/kinds/practice-workflow.ts
+  a59e9e120623a8ff 2
+apps/api/src/workflows/course-generation/steps/add-chapters-step.test.ts
+  a59e9e120623a8ff 1-104
+apps/api/src/workflows/activity-generation/steps/generate-grammar-content-step.test.ts
+  a59e9e120623a8ff 1-162
+apps/api/src/workflows/activity-generation/steps/generate-grammar-romanization-step.test.ts
+  a59e9e120623a8ff 1-214
+apps/api/src/workflows/course-generation/steps/add-categories-step.test.ts
+  a59e9e120623a8ff 1-105
+apps/api/src/workflows/_shared/stream-status.test.ts
+  a59e9e120623a8ff 1-12,14-30
+apps/api/src/workflows/activity-generation/steps/generate-vocabulary-distractors-step.test.ts
+  a59e9e120623a8ff 1-184
+apps/api/src/workflows/course-generation/steps/get-course-chapters-step.test.ts
+  a59e9e120623a8ff 1-77
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.22",
+  "base_commit_sha": "d0eea98f918d9bfc24cc14f46043c15c293fefa3",
+  "prompts": {
+    "a59e9e120623a8ff": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0ec3460d-d6e4-4561-bb02-8431b3edff1a",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill <4393133+ceolinwill@users.noreply.github.com>",
+      "messages": [],
+      "total_additions": 12399,
+      "total_deletions": 1401,
+      "accepted_lines": 11817,
+      "overriden_lines": 29
+    }
+  }
+}
