@@ -1,0 +1,25 @@
+apps/admin/src/app/(private)/review/_components/play-audio-inline.tsx
+  335ae0cab1237cd8 29
+apps/admin/src/app/(private)/review/[group]/[task]/[entityId]/audio-edit.tsx
+  335ae0cab1237cd8 32,52-58
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.22",
+  "base_commit_sha": "d5a00b849cda5c94370a061aaf30fbeb299f014d",
+  "prompts": {
+    "335ae0cab1237cd8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5bbf4c67-5a2e-46d8-90fd-4ae8aa183dcf",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill <4393133+ceolinwill@users.noreply.github.com>",
+      "messages": [],
+      "total_additions": 9,
+      "total_deletions": 1,
+      "accepted_lines": 9,
+      "overriden_lines": 0
+    }
+  }
+}
