@@ -1,0 +1,43 @@
+apps/admin/src/app/(private)/review/[group]/[task]/[entityId]/flagged-item-content.tsx
+  335ae0cab1237cd8 1-5,10-11,16-59,112-119
+apps/admin/src/app/(private)/review/[group]/[task]/[entityId]/_actions/upload-audio.ts
+  335ae0cab1237cd8 1-110
+apps/admin/src/data/review/get-next-review-item.ts
+  335ae0cab1237cd8 57-90,129-136
+apps/admin/src/data/review/count-pending-reviews.ts
+  335ae0cab1237cd8 34-53,83-90
+apps/admin/src/data/review/get-review-item.ts
+  335ae0cab1237cd8 34-51
+apps/admin/src/lib/review-utils.ts
+  335ae0cab1237cd8 1,3-8,16-20,31-34,109
+apps/admin/src/app/(private)/review/[group]/[task]/[entityId]/audio-edit.tsx
+  335ae0cab1237cd8 1-35,37-105
+packages/utils/src/upload.ts
+  335ae0cab1237cd8 7-10
+apps/admin/src/app/(private)/review/_components/content/audio-review.tsx
+  335ae0cab1237cd8 1-34
+apps/admin/src/app/(private)/review/_components/play-audio-inline.tsx
+  335ae0cab1237cd8 1-29,31-58
+apps/admin/src/app/(private)/review/[group]/[task]/review-queue.tsx
+  335ae0cab1237cd8 4-6,11,43-44,46-49,51-52
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.22",
+  "base_commit_sha": "f46059a39daf0dc6259bc5da9d938a3a4e2f3af0",
+  "prompts": {
+    "335ae0cab1237cd8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5bbf4c67-5a2e-46d8-90fd-4ae8aa183dcf",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill <4393133+ceolinwill@users.noreply.github.com>",
+      "messages": [],
+      "total_additions": 852,
+      "total_deletions": 108,
+      "accepted_lines": 738,
+      "overriden_lines": 14
+    }
+  }
+}
