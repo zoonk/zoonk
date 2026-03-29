@@ -29,11 +29,14 @@ export function AudioEdit({
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [currentAudioUrl, setCurrentAudioUrl] = useState(item.audioUrl);
+  const blobUrlRef = useRef<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
-    if (!file) {return;}
+    if (!file) {
+      return;
+    }
 
     setError(null);
 
@@ -46,7 +49,13 @@ export function AudioEdit({
       if (result.error) {
         setError(result.error);
       } else {
-        setCurrentAudioUrl(URL.createObjectURL(file));
+        if (blobUrlRef.current) {
+          URL.revokeObjectURL(blobUrlRef.current);
+        }
+
+        const newUrl = URL.createObjectURL(file);
+        blobUrlRef.current = newUrl;
+        setCurrentAudioUrl(newUrl);
       }
 
       if (fileInputRef.current) {

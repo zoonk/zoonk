@@ -26,6 +26,7 @@ export function PlayAudioInline({ audioUrl }: { audioUrl: string }) {
     () => () => {
       audioRef.current?.pause();
       audioRef.current = null;
+      setIsPlaying(false);
     },
     [audioUrl],
   );
