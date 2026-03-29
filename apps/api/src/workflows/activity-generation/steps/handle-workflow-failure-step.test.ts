@@ -1,0 +1,131 @@
+import { randomUUID } from "node:crypto";
+import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
+import { prisma } from "@zoonk/db";
+import { activityFixture } from "@zoonk/testing/fixtures/activities";
+import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
+import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
+import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { handleWorkflowFailureStep } from "./handle-workflow-failure-step";
+
+const writeMock = vi.fn().mockResolvedValue(null);
+
+vi.mock("workflow", () => ({
+  FatalError: class FatalError extends Error {},
+  getWorkflowMetadata: vi.fn().mockReturnValue({ workflowRunId: "test-run-id" }),
+  getWritable: vi.fn().mockReturnValue({
+    getWriter: () => ({
+      releaseLock: vi.fn(),
+      write: writeMock,
+    }),
+  }),
+  workflowStep: vi.fn().mockImplementation((_name: string, fn: unknown) => fn),
+}));
+
+describe(handleWorkflowFailureStep, () => {
+  let organizationId: number;
+  let chapterId: number;
+
+  beforeAll(async () => {
+    const organization = await aiOrganizationFixture();
+    organizationId = organization.id;
+    const course = await courseFixture({ organizationId });
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      organizationId,
+      title: `Workflow Failure Chapter ${randomUUID()}`,
+    });
+    chapterId = chapter.id;
+  });
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  test("marks running activities matching the workflow run ID as failed", async () => {
+    const workflowRunId = `run-${randomUUID()}`;
+    const otherRunId = `run-${randomUUID()}`;
+
+    const lesson = await lessonFixture({
+      chapterId,
+      kind: "language",
+      organizationId,
+      title: `Workflow Failure ${randomUUID()}`,
+    });
+
+    const [runningMatchingActivity, runningOtherActivity, completedMatchingActivity] =
+      await Promise.all([
+        activityFixture({
+          generationRunId: workflowRunId,
+          generationStatus: "running",
+          kind: "vocabulary",
+          lessonId: lesson.id,
+          organizationId,
+          position: 0,
+          title: `Running Matching ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationRunId: otherRunId,
+          generationStatus: "running",
+          kind: "reading",
+          lessonId: lesson.id,
+          organizationId,
+          position: 1,
+          title: `Running Other ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationRunId: workflowRunId,
+          generationStatus: "completed",
+          kind: "translation",
+          lessonId: lesson.id,
+          organizationId,
+          position: 2,
+          title: `Completed Matching ${randomUUID()}`,
+        }),
+      ]);
+
+    await handleWorkflowFailureStep(lesson.id, workflowRunId);
+
+    const [updatedRunningMatching, updatedRunningOther, updatedCompletedMatching] =
+      await Promise.all([
+        prisma.activity.findUniqueOrThrow({ where: { id: runningMatchingActivity.id } }),
+        prisma.activity.findUniqueOrThrow({ where: { id: runningOtherActivity.id } }),
+        prisma.activity.findUniqueOrThrow({ where: { id: completedMatchingActivity.id } }),
+      ]);
+
+    expect(updatedRunningMatching).toMatchObject({
+      generationRunId: null,
+      generationStatus: "failed",
+    });
+
+    expect(updatedRunningOther).toMatchObject({
+      generationRunId: otherRunId,
+      generationStatus: "running",
+    });
+
+    expect(updatedCompletedMatching).toMatchObject({
+      generationRunId: workflowRunId,
+      generationStatus: "completed",
+    });
+  });
+
+  test("streams error event", async () => {
+    const workflowRunId = `run-${randomUUID()}`;
+
+    const lesson = await lessonFixture({
+      chapterId,
+      kind: "language",
+      organizationId,
+      title: `Workflow Failure Stream ${randomUUID()}`,
+    });
+
+    await handleWorkflowFailureStep(lesson.id, workflowRunId);
+
+    const events = getStreamedEvents(writeMock);
+
+    expect(events).toContainEqual(
+      expect.objectContaining({ status: "error", step: "workflowError" }),
+    );
+  });
+});

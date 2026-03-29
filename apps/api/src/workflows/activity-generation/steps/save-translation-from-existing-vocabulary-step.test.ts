@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { fetchLessonActivities } from "@/workflows/_test-utils/fetch-lesson-activities";
 import { prisma } from "@zoonk/db";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
@@ -8,7 +9,6 @@ import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { wordFixture } from "@zoonk/testing/fixtures/words";
 import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
-import { type LessonActivity } from "./get-lesson-activities-step";
 import { saveTranslationFromExistingVocabularyStep } from "./save-translation-from-existing-vocabulary-step";
 
 vi.mock("workflow", () => ({
@@ -22,27 +22,6 @@ vi.mock("workflow", () => ({
   }),
   workflowStep: vi.fn().mockImplementation((_name: string, fn: unknown) => fn),
 }));
-
-async function fetchLessonActivities(lessonId: number): Promise<LessonActivity[]> {
-  const activities = await prisma.activity.findMany({
-    include: {
-      _count: { select: { steps: true } },
-      lesson: {
-        include: {
-          chapter: {
-            include: {
-              course: { include: { organization: true } },
-            },
-          },
-        },
-      },
-    },
-    orderBy: { position: "asc" },
-    where: { lessonId },
-  });
-
-  return activities.map((activity) => ({ ...activity, id: Number(activity.id) }));
-}
 
 describe(saveTranslationFromExistingVocabularyStep, () => {
   let organizationId: number;

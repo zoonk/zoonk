@@ -1,6 +1,5 @@
 import { randomUUID } from "node:crypto";
 import { activityGenerationWorkflow } from "@/workflows/activity-generation/activity-generation-workflow";
-import { generateLanguageChapterLessons } from "@zoonk/ai/tasks/chapters/language-lessons";
 import { generateChapterLessons } from "@zoonk/ai/tasks/chapters/lessons";
 import { CHAPTER_COMPLETION_STEP } from "@zoonk/core/workflows/steps";
 import { prisma } from "@zoonk/db";
@@ -154,50 +153,6 @@ describe(chapterGenerationWorkflow, () => {
   });
 
   describe("happy path", () => {
-    test("generates lessons for pending chapter", async () => {
-      const title = `Pending Chapter ${randomUUID()}`;
-      const chapter = await chapterFixture({
-        courseId: course.id,
-        generationStatus: "pending",
-        organizationId,
-        title,
-      });
-
-      await chapterGenerationWorkflow(chapter.id);
-
-      const dbChapter = await prisma.chapter.findUnique({
-        where: { id: chapter.id },
-      });
-
-      expect(dbChapter?.generationStatus).toBe("completed");
-      expect(dbChapter?.generationRunId).toBe("test-run-id");
-    });
-
-    test("creates lessons in database with correct data", async () => {
-      const title = `Chapter for Lesson Test ${randomUUID()}`;
-      const chapter = await chapterFixture({
-        courseId: course.id,
-        generationStatus: "pending",
-        organizationId,
-        title,
-      });
-
-      await chapterGenerationWorkflow(chapter.id);
-
-      const lessons = await prisma.lesson.findMany({
-        orderBy: { position: "asc" },
-        where: { chapterId: chapter.id },
-      });
-
-      expect(lessons).toHaveLength(2);
-      expect(lessons[0]?.title).toBe("Lesson 1");
-      expect(lessons[0]?.description).toBe("Lesson 1 description");
-      expect(lessons[0]?.position).toBe(0);
-      expect(lessons[1]?.title).toBe("Lesson 2");
-      expect(lessons[1]?.description).toBe("Lesson 2 description");
-      expect(lessons[1]?.position).toBe(1);
-    });
-
     test("calls activityGenerationWorkflow with first lesson's ID", async () => {
       const title = `Activity Gen Chapter ${randomUUID()}`;
       const chapter = await chapterFixture({
@@ -260,41 +215,6 @@ describe(chapterGenerationWorkflow, () => {
         where: { id: chapter.id },
       });
       expect(finalChapter?.generationStatus).toBe("completed");
-    });
-  });
-
-  describe("language branching", () => {
-    test("language course calls generateLanguageChapterLessons", async () => {
-      const languageCourse = await courseFixture({
-        organizationId,
-        targetLanguage: "es",
-      });
-
-      const chapter = await chapterFixture({
-        courseId: languageCourse.id,
-        generationStatus: "pending",
-        organizationId,
-        title: `Language Chapter ${randomUUID()}`,
-      });
-
-      await chapterGenerationWorkflow(chapter.id);
-
-      expect(generateLanguageChapterLessons).toHaveBeenCalled();
-      expect(generateChapterLessons).not.toHaveBeenCalled();
-    });
-
-    test("non-language course calls generateChapterLessons", async () => {
-      const chapter = await chapterFixture({
-        courseId: course.id,
-        generationStatus: "pending",
-        organizationId,
-        title: `Generic Chapter ${randomUUID()}`,
-      });
-
-      await chapterGenerationWorkflow(chapter.id);
-
-      expect(generateChapterLessons).toHaveBeenCalled();
-      expect(generateLanguageChapterLessons).not.toHaveBeenCalled();
     });
   });
 

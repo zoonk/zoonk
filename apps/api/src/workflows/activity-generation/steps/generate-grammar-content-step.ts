@@ -3,7 +3,7 @@ import {
   type ActivityGrammarContentSchema,
   generateActivityGrammarContent,
 } from "@zoonk/ai/tasks/activities/language/grammar-content";
-import { type ActivityStepName, type WorkflowErrorReason } from "@zoonk/core/workflows/steps";
+import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { z } from "zod";
 import { type LessonActivity } from "./get-lesson-activities-step";
@@ -57,7 +57,7 @@ export async function generateGrammarContentStep(
     );
 
   if (error || !result || !hasMinimumGrammarContent(result.data)) {
-    const reason: WorkflowErrorReason = getAIResultErrorReason(error, result);
+    const reason = getAIResultErrorReason({ error, result });
     await stream.error({ reason, step: "generateGrammarContent" });
     await handleActivityFailureStep({ activityId: activity.id });
     return { generated: false, grammarContent: null };

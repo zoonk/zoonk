@@ -1,93 +1,10 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
 import { type GeneratedActivity } from "@zoonk/ai/tasks/lessons/activities";
 import { type LessonStepName } from "@zoonk/core/workflows/steps";
-import {
-  type ActivityCreateManyInput,
-  type ActivityKind,
-  type LessonKind,
-  prisma,
-} from "@zoonk/db";
+import { type ActivityCreateManyInput, type LessonKind, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
-import { isTTSSupportedLanguage } from "@zoonk/utils/languages";
+import { getActivitiesForKind } from "./_utils/get-activities-for-kind";
 import { type LessonContext } from "./get-lesson-step";
-
-type ActivityEntry = {
-  kind: ActivityKind;
-  title: string | null;
-  description: string | null;
-};
-
-const LANGUAGE_ACTIVITY_KINDS: ActivityKind[] = [
-  "vocabulary",
-  "translation",
-  "grammar",
-  "reading",
-  "listening",
-  "review",
-];
-
-function getCoreActivities(concepts: string[]): ActivityEntry[] {
-  const explanations: ActivityEntry[] = concepts.map((concept) => ({
-    description: null,
-    kind: "explanation",
-    title: concept,
-  }));
-
-  const fallbackExplanation: ActivityEntry[] =
-    explanations.length === 0 ? [{ description: null, kind: "explanation", title: null }] : [];
-
-  const allExplanations = [...fallbackExplanation, ...explanations];
-
-  const practice: ActivityEntry = { description: null, kind: "practice", title: null };
-  const challenge: ActivityEntry = { description: null, kind: "challenge", title: null };
-  const review: ActivityEntry = { description: null, kind: "review", title: null };
-  const quiz: ActivityEntry = { description: null, kind: "quiz", title: null };
-
-  const minConceptsForTwoPractices = 4;
-
-  if (concepts.length < minConceptsForTwoPractices) {
-    return [...allExplanations, practice, quiz, challenge, review];
-  }
-
-  const splitIndex = Math.floor(concepts.length / 2);
-  const firstGroup = explanations.slice(0, splitIndex);
-  const secondGroup = explanations.slice(splitIndex);
-
-  return [...firstGroup, practice, ...secondGroup, practice, quiz, challenge, review];
-}
-
-function getLanguageActivities(targetLanguage: string | null): ActivityKind[] {
-  if (isTTSSupportedLanguage(targetLanguage)) {
-    return LANGUAGE_ACTIVITY_KINDS;
-  }
-
-  return LANGUAGE_ACTIVITY_KINDS.filter((kind) => kind !== "listening");
-}
-
-function getActivitiesForKind(
-  lessonKind: LessonKind,
-  customActivities: GeneratedActivity[],
-  targetLanguage: string | null,
-  concepts: string[],
-): ActivityEntry[] {
-  if (lessonKind === "core") {
-    return getCoreActivities(concepts);
-  }
-
-  if (lessonKind === "language") {
-    return getLanguageActivities(targetLanguage).map((kind) => ({
-      description: null,
-      kind,
-      title: null,
-    }));
-  }
-
-  return customActivities.map((activity) => ({
-    description: activity.description,
-    kind: "custom" as const,
-    title: activity.title,
-  }));
-}
 
 export async function addActivitiesStep(input: {
   concepts: string[];
