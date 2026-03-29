@@ -1,0 +1,35 @@
+apps/api/src/workflows/activity-generation/steps/save-practice-activity-step.test.ts
+  a59e9e120623a8ff 126-130,132-142,158
+apps/api/src/workflows/activity-generation/steps/save-quiz-activity-step.test.ts
+  a59e9e120623a8ff 125-129,131-141,156
+apps/api/src/workflows/activity-generation/steps/generate-visuals-step.test.ts
+  a59e9e120623a8ff 79-85,186,216
+apps/api/src/workflows/course-generation/_internal/persist-generated-content.test.ts
+  a59e9e120623a8ff 132-134,136-139
+apps/api/src/workflows/activity-generation/steps/generate-custom-visuals-step.test.ts
+  a59e9e120623a8ff 81-87,181,232
+apps/api/src/workflows/chapter-generation/steps/get-chapter-step.test.ts
+  a59e9e120623a8ff 64-66,70,83,85-86
+apps/api/src/workflows/activity-generation/steps/save-challenge-activity-step.test.ts
+  a59e9e120623a8ff 127-131,133-143,169
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.22",
+  "base_commit_sha": "2e1cc95fa873b1f0b38584f0d98789800b5cc114",
+  "prompts": {
+    "a59e9e120623a8ff": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0ec3460d-d6e4-4561-bb02-8431b3edff1a",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill <4393133+ceolinwill@users.noreply.github.com>",
+      "messages": [],
+      "total_additions": 86,
+      "total_deletions": 17,
+      "accepted_lines": 86,
+      "overriden_lines": 0
+    }
+  }
+}
