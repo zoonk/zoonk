@@ -135,7 +135,12 @@ describe(persistGeneratedContent, () => {
 
     expect(completedSteps).toHaveLength(4);
     expect(completedSteps).toEqual(
-      expect.arrayContaining(["updateCourse", "addAlternativeTitles", "addCategories", "addChapters"]),
+      expect.arrayContaining([
+        "updateCourse",
+        "addAlternativeTitles",
+        "addCategories",
+        "addChapters",
+      ]),
     );
   });
 });

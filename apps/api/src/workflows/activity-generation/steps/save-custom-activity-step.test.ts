@@ -125,7 +125,7 @@ describe(saveCustomActivityStep, () => {
     );
   });
 
-  test("streams error and marks activity as failed when DB transaction fails", async () => {
+  test("streams error when DB transaction fails", async () => {
     const invalidActivityId = 999_999_999;
 
     await saveCustomActivityStep({

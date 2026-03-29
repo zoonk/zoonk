@@ -122,7 +122,7 @@ describe(savePracticeActivityStep, () => {
     );
   });
 
-  test("streams error and marks activity as failed when DB transaction fails", async () => {
+  test("streams error when DB transaction fails", async () => {
     const lesson = await lessonFixture({
       chapterId: chapter.id,
       organizationId,

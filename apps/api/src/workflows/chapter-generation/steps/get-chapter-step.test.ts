@@ -80,7 +80,9 @@ describe(getChapterStep, () => {
     const result = await getChapterStep(middleChapter.id);
 
     const neighborTitles = result.neighboringChapters.map((ch) => ch.title);
-    const expectedNeighborTitles = chapters.filter((ch) => ch.id !== middleChapter.id).map((ch) => ch.title);
+    const expectedNeighborTitles = chapters
+      .filter((ch) => ch.id !== middleChapter.id)
+      .map((ch) => ch.title);
 
     expect(neighborTitles).toHaveLength(4);
     expect(neighborTitles).toEqual(expect.arrayContaining(expectedNeighborTitles));
