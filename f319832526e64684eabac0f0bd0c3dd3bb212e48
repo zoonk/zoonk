@@ -1,0 +1,31 @@
+apps/editor/src/data/alternative-titles/import-alternative-titles.ts
+  601701484a33b3de 17
+apps/editor/src/data/chapters/import-chapters.ts
+  601701484a33b3de 19,32
+apps/api/src/workflows/_test-utils/parse-stream-events.ts
+  601701484a33b3de 1,9
+apps/editor/src/data/activities/import-activities.ts
+  601701484a33b3de 36,48
+apps/editor/src/data/lessons/import-lessons.ts
+  601701484a33b3de 20,33
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.22",
+  "base_commit_sha": "f319832526e64684eabac0f0bd0c3dd3bb212e48",
+  "prompts": {
+    "601701484a33b3de": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ffe3a150-6086-4316-9000-044428890a8f",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill <4393133+ceolinwill@users.noreply.github.com>",
+      "messages": [],
+      "total_additions": 23,
+      "total_deletions": 14,
+      "accepted_lines": 19,
+      "overriden_lines": 0
+    }
+  }
+}
