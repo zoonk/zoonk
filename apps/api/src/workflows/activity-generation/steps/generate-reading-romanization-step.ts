@@ -1,9 +1,8 @@
 import { createEntityStepStream } from "@/workflows/_shared/stream-status";
-import { generateActivityRomanization } from "@zoonk/ai/tasks/activities/language/romanization";
 import { type ActivityStepName } from "@zoonk/core/workflows/steps";
-import { safeAsync } from "@zoonk/utils/error";
 import { needsRomanization } from "@zoonk/utils/languages";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
+import { generateActivityRomanizations } from "./_utils/generate-activity-romanizations";
 import { type ReadingSentence } from "./generate-reading-content-step";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
@@ -26,34 +25,28 @@ export async function generateReadingRomanizationStep(
     return { romanizations: {} };
   }
 
-  const course = activity.lesson.chapter.course;
-  const targetLanguage = course.targetLanguage ?? "";
+  const targetLanguage = activity.lesson.chapter.course.targetLanguage ?? "";
 
   if (!needsRomanization(targetLanguage)) {
     return { romanizations: {} };
   }
 
+  const sentenceStrings = sentences.map((entry) => entry.sentence);
+
   await using stream = createEntityStepStream<ActivityStepName>(activity.id);
 
   await stream.status({ status: "started", step: "generateReadingRomanization" });
 
-  const sentenceStrings = sentences.map((entry) => entry.sentence);
+  const romanizations = await generateActivityRomanizations({
+    targetLanguage,
+    texts: sentenceStrings,
+  });
 
-  const { data: result, error } = await safeAsync(() =>
-    generateActivityRomanization({ targetLanguage, texts: sentenceStrings }),
-  );
-
-  if (error || !result?.data) {
+  if (!romanizations) {
     await stream.error({ reason: "romanizationFailed", step: "generateReadingRomanization" });
     await handleActivityFailureStep({ activityId: activity.id });
     return { romanizations: {} };
   }
-
-  const romanizations: Record<string, string> = Object.fromEntries(
-    sentenceStrings
-      .map((sentence, index) => [sentence, result.data.romanizations[index]] as const)
-      .filter((entry): entry is [string, string] => Boolean(entry[1])),
-  );
 
   if (Object.keys(romanizations).length < sentences.length) {
     await stream.error({ reason: "romanizationFailed", step: "generateReadingRomanization" });

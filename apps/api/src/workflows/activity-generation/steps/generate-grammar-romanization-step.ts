@@ -1,10 +1,9 @@
 import { createEntityStepStream } from "@/workflows/_shared/stream-status";
 import { type ActivityGrammarContentSchema } from "@zoonk/ai/tasks/activities/language/grammar-content";
-import { generateActivityRomanization } from "@zoonk/ai/tasks/activities/language/romanization";
 import { type ActivityStepName } from "@zoonk/core/workflows/steps";
-import { safeAsync } from "@zoonk/utils/error";
 import { needsRomanization } from "@zoonk/utils/languages";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
+import { generateActivityRomanizations } from "./_utils/generate-activity-romanizations";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
 
@@ -58,25 +57,19 @@ export async function generateGrammarRomanizationStep(
     return { romanizations: null };
   }
 
+  const allTexts = collectTextsForRomanization(grammarContent);
+
   await using stream = createEntityStepStream<ActivityStepName>(activity.id);
 
   await stream.status({ status: "started", step: "generateGrammarRomanization" });
 
-  const allTexts = collectTextsForRomanization(grammarContent);
+  const romanizations = await generateActivityRomanizations({ targetLanguage, texts: allTexts });
 
-  const { data: result, error } = await safeAsync(() =>
-    generateActivityRomanization({ targetLanguage, texts: allTexts }),
-  );
-
-  if (error || !result?.data) {
+  if (!romanizations) {
     await stream.error({ reason: "romanizationFailed", step: "generateGrammarRomanization" });
     await handleActivityFailureStep({ activityId: activity.id });
     return { romanizations: null };
   }
-
-  const romanizations: Record<string, string> = Object.fromEntries(
-    allTexts.map((text, index) => [text, result.data.romanizations[index] ?? ""]),
-  );
 
   await stream.status({ status: "completed", step: "generateGrammarRomanization" });
   return { romanizations };
