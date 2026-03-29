@@ -31,6 +31,26 @@ function countPendingStepVisual(kind: string, excludeIds: bigint[]): Promise<num
   });
 }
 
+function countPendingWordAudio(excludeIds: bigint[]): Promise<number> {
+  return prisma.word.count({
+    where: {
+      NOT: { id: { in: excludeIds } },
+      audioUrl: { not: null },
+      organization: { slug: AI_ORG_SLUG },
+    },
+  });
+}
+
+function countPendingSentenceAudio(excludeIds: bigint[]): Promise<number> {
+  return prisma.sentence.count({
+    where: {
+      NOT: { id: { in: excludeIds } },
+      audioUrl: { not: null },
+      organization: { slug: AI_ORG_SLUG },
+    },
+  });
+}
+
 export const countPendingForTask = cache(async function countPendingForTask(
   taskType: ReviewTaskType,
 ): Promise<number> {
@@ -58,6 +78,14 @@ export const countPendingForTask = cache(async function countPendingForTask(
         kind: "selectImage",
       },
     });
+  }
+
+  if (taskType === "wordAudio") {
+    return countPendingWordAudio(excludeIds);
+  }
+
+  if (taskType === "sentenceAudio") {
+    return countPendingSentenceAudio(excludeIds);
   }
 
   return 0;

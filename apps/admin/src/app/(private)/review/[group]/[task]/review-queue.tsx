@@ -1,8 +1,14 @@
 import { getNextReviewItem } from "@/data/review/get-next-review-item";
-import { getCourseSuggestionReview, getStepVisualReview } from "@/data/review/get-review-item";
+import {
+  getCourseSuggestionReview,
+  getSentenceAudioReview,
+  getStepVisualReview,
+  getWordAudioReview,
+} from "@/data/review/get-review-item";
 import { type ReviewTaskType, getTaskPath, getVisualKindFromTaskType } from "@/lib/review-utils";
 import { parseBigIntId } from "@zoonk/utils/number";
 import { redirect } from "next/navigation";
+import { AudioReview } from "../../_components/content/audio-review";
 import { CourseSuggestionReview } from "../../_components/content/course-suggestion-review";
 import { StepSelectImageReview } from "../../_components/content/step-select-image-review";
 import { StepVisualImageReview } from "../../_components/content/step-visual-image-review";
@@ -32,6 +38,16 @@ async function renderContent(taskType: ReviewTaskType, entityId: bigint) {
       return null;
     }
     return <StepSelectImageReview item={item} />;
+  }
+
+  if (taskType === "wordAudio") {
+    const item = await getWordAudioReview(entityId);
+    return item ? <AudioReview item={{ ...item, label: "word", text: item.word }} /> : null;
+  }
+
+  if (taskType === "sentenceAudio") {
+    const item = await getSentenceAudioReview(entityId);
+    return item ? <AudioReview item={{ ...item, label: "sentence", text: item.sentence }} /> : null;
   }
 
   return null;
