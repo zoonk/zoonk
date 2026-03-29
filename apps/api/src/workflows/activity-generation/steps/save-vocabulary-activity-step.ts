@@ -8,6 +8,7 @@ import { safeAsync } from "@zoonk/utils/error";
 import { deduplicateNormalizedTexts, normalizePunctuation } from "@zoonk/utils/string";
 import { fetchExistingWordCasing } from "./_utils/fetch-existing-word-casing";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
+import { upsertWordWithPronunciation } from "./_utils/upsert-word-with-pronunciation";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
 
@@ -104,18 +105,20 @@ export async function saveVocabularyActivityStep(params: {
     );
 
     await Promise.all(
-      distractorWords.map((word) =>
-        saveDistractorWord({
-          existingCasing,
+      distractorWords.map((word) => {
+        const romanization = romanizations[word] ?? null;
+
+        return upsertWordWithPronunciation({
+          audioUrl: wordAudioUrls[word] ?? null,
           organizationId,
-          pronunciations,
-          romanizations,
+          pronunciation: pronunciations[word] ?? null,
+          romanization,
+          romanizationUpdate: romanization ? { romanization } : {},
           targetLanguage,
           userLanguage,
-          word,
-          wordAudioUrls,
-        }),
-      ),
+          word: existingCasing[word.toLowerCase()] ?? word,
+        });
+      }),
     );
   });
 
@@ -191,39 +194,23 @@ async function saveOneVocabularyWord(params: {
 
   const translation = normalizePunctuation(vocabWord.translation);
   const dbWord = existingCasing[vocabWord.word.toLowerCase()] ?? vocabWord.word;
-  const audioUrl = wordAudioUrls[vocabWord.word] ?? null;
   const romanization = romanizations[vocabWord.word] ?? null;
-  const pronunciation = pronunciations[vocabWord.word] ?? null;
   const wordDistractors = sanitizeDistractors({
     distractors: distractors[vocabWord.word] ?? [],
     input: vocabWord.word,
     shape: "any",
   });
 
-  const record = await prisma.word.upsert({
-    create: {
-      audioUrl,
-      organizationId,
-      romanization,
-      targetLanguage,
-      word: dbWord,
-    },
-    update: {
-      ...(audioUrl ? { audioUrl } : {}),
-      ...(romanization ? { romanization } : {}),
-    },
-    where: {
-      orgWord: { organizationId, targetLanguage, word: dbWord },
-    },
+  const wordId = await upsertWordWithPronunciation({
+    audioUrl: wordAudioUrls[vocabWord.word] ?? null,
+    organizationId,
+    pronunciation: pronunciations[vocabWord.word] ?? null,
+    romanization,
+    romanizationUpdate: romanization ? { romanization } : {},
+    targetLanguage,
+    userLanguage,
+    word: dbWord,
   });
-
-  if (pronunciation) {
-    await prisma.wordPronunciation.upsert({
-      create: { pronunciation, userLanguage, wordId: record.id },
-      update: { pronunciation },
-      where: { wordPronunciation: { userLanguage, wordId: record.id } },
-    });
-  }
 
   await prisma.lessonWord.upsert({
     create: {
@@ -231,13 +218,13 @@ async function saveOneVocabularyWord(params: {
       lessonId,
       translation,
       userLanguage,
-      wordId: record.id,
+      wordId,
     },
     update: {
       distractors: wordDistractors,
       translation,
     },
-    where: { lessonWord: { lessonId, wordId: record.id } },
+    where: { lessonWord: { lessonId, wordId } },
   });
 
   await prisma.step.create({
@@ -247,7 +234,7 @@ async function saveOneVocabularyWord(params: {
       isPublished: true,
       kind: "vocabulary",
       position,
-      wordId: record.id,
+      wordId,
     },
   });
 
@@ -259,66 +246,8 @@ async function saveOneVocabularyWord(params: {
         isPublished: true,
         kind: "translation",
         position,
-        wordId: record.id,
+        wordId,
       },
-    });
-  }
-}
-
-/**
- * Saves a target-language distractor word as reusable word-level metadata only.
- *
- * Distractors must have audio, romanization, and pronunciation when possible, but they
- * must not become `LessonWord` rows because that would pollute the taught vocabulary.
- */
-async function saveDistractorWord(params: {
-  existingCasing: Record<string, string>;
-  organizationId: number;
-  pronunciations: Record<string, string>;
-  romanizations: Record<string, string>;
-  targetLanguage: string;
-  userLanguage: string;
-  word: string;
-  wordAudioUrls: Record<string, string>;
-}): Promise<void> {
-  const {
-    existingCasing,
-    organizationId,
-    pronunciations,
-    romanizations,
-    targetLanguage,
-    userLanguage,
-    word,
-    wordAudioUrls,
-  } = params;
-
-  const dbWord = existingCasing[word.toLowerCase()] ?? word;
-  const audioUrl = wordAudioUrls[word] ?? null;
-  const romanization = romanizations[word] ?? null;
-  const pronunciation = pronunciations[word] ?? null;
-
-  const record = await prisma.word.upsert({
-    create: {
-      audioUrl,
-      organizationId,
-      romanization,
-      targetLanguage,
-      word: dbWord,
-    },
-    update: {
-      ...(audioUrl ? { audioUrl } : {}),
-      ...(romanization ? { romanization } : {}),
-    },
-    where: {
-      orgWord: { organizationId, targetLanguage, word: dbWord },
-    },
-  });
-
-  if (pronunciation) {
-    await prisma.wordPronunciation.upsert({
-      create: { pronunciation, userLanguage, wordId: record.id },
-      update: { pronunciation },
-      where: { wordPronunciation: { userLanguage, wordId: record.id } },
     });
   }
 }
