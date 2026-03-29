@@ -3,10 +3,10 @@ import { ErrorCode } from "@/lib/app-error";
 import { type ImportMode } from "@/lib/import-mode";
 import { deduplicateImportSlugs, resolveImportSlug } from "@/lib/import-slug";
 import { parseJsonFile } from "@/lib/parse-json-file";
-import { isRecord } from "@/lib/validation";
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
 import { type Chapter, type TransactionClient, prisma } from "@zoonk/db";
 import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
+import { isJsonObject } from "@zoonk/utils/json";
 import { normalizeString, toSlug } from "@zoonk/utils/string";
 
 type ChapterImportData = {
@@ -16,7 +16,7 @@ type ChapterImportData = {
 };
 
 function validateChapterData(chapter: unknown): chapter is ChapterImportData {
-  if (!isRecord(chapter)) {
+  if (!isJsonObject(chapter)) {
     return false;
   }
 
@@ -29,7 +29,7 @@ function validateChapterData(chapter: unknown): chapter is ChapterImportData {
 function validateImportData(data: unknown): data is {
   chapters: ChapterImportData[];
 } {
-  if (!isRecord(data)) {
+  if (!isJsonObject(data)) {
     return false;
   }
 

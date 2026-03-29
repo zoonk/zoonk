@@ -2,10 +2,10 @@ import "server-only";
 import { ErrorCode } from "@/lib/app-error";
 import { type ImportMode } from "@/lib/import-mode";
 import { parseJsonFile } from "@/lib/parse-json-file";
-import { isRecord } from "@/lib/validation";
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
 import { type Activity, type ActivityKind, type TransactionClient, prisma } from "@zoonk/db";
 import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
+import { isJsonObject } from "@zoonk/utils/json";
 
 const validActivityKinds = new Set<ActivityKind>([
   "custom",
@@ -33,7 +33,7 @@ function isActivityKind(value: string): value is ActivityKind {
 }
 
 function validateActivityData(activity: unknown): activity is ActivityImportData {
-  if (!isRecord(activity)) {
+  if (!isJsonObject(activity)) {
     return false;
   }
 
@@ -45,7 +45,7 @@ function validateActivityData(activity: unknown): activity is ActivityImportData
 function validateImportData(data: unknown): data is {
   activities: ActivityImportData[];
 } {
-  if (!isRecord(data)) {
+  if (!isJsonObject(data)) {
     return false;
   }
 
