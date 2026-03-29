@@ -124,7 +124,23 @@ describe(saveChallengeActivityStep, () => {
   });
 
   test("streams error and marks activity as failed when DB transaction fails", async () => {
-    const invalidActivityId = 999_999_999;
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      organizationId,
+      title: `Save Challenge Error ${randomUUID()}`,
+    });
+
+    const activity = await activityFixture({
+      generationStatus: "pending",
+      kind: "challenge",
+      language: "en",
+      lessonId: lesson.id,
+      organizationId,
+      title: `Challenge Fail ${randomUUID()}`,
+    });
+
+    // Delete the activity so the prisma.activity.update inside the transaction fails
+    await prisma.activity.delete({ where: { id: activity.id } });
 
     const data: ActivityChallengeSchema = {
       intro: "Intro text",
@@ -150,7 +166,7 @@ describe(saveChallengeActivityStep, () => {
     };
 
     await saveChallengeActivityStep({
-      activityId: invalidActivityId,
+      activityId: Number(activity.id),
       data,
       workflowRunId: "workflow-error",
     });

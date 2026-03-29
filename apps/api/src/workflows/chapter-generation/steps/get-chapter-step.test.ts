@@ -61,10 +61,13 @@ describe(getChapterStep, () => {
   });
 
   test("includes neighboring chapters within range", async () => {
+    // Use a dedicated course so other tests' chapters don't interfere with neighbor counts
+    const isolatedCourse = await courseFixture({ organizationId });
+
     const chapters = await Promise.all(
       Array.from({ length: 5 }, (_, i) =>
         chapterFixture({
-          courseId,
+          courseId: isolatedCourse.id,
           organizationId,
           position: i,
           title: `Neighbor ${i} ${randomUUID()}`,
@@ -76,10 +79,11 @@ describe(getChapterStep, () => {
 
     const result = await getChapterStep(middleChapter.id);
 
-    expect(result.neighboringChapters.length).toBeGreaterThan(0);
-
     const neighborTitles = result.neighboringChapters.map((ch) => ch.title);
+    const expectedNeighborTitles = chapters.filter((ch) => ch.id !== middleChapter.id).map((ch) => ch.title);
 
+    expect(neighborTitles).toHaveLength(4);
+    expect(neighborTitles).toEqual(expect.arrayContaining(expectedNeighborTitles));
     expect(neighborTitles).not.toContain(middleChapter.title);
   });
 

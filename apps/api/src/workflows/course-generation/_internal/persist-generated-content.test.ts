@@ -129,8 +129,13 @@ describe(persistGeneratedContent, () => {
     expect(chapters).toEqual([]);
 
     const events = getStreamedEvents(writeMock);
-    const completedSkips = events.filter((event) => event.status === "completed");
+    const completedSteps = events
+      .filter((event) => event.status === "completed")
+      .map((event) => event.step);
 
-    expect(completedSkips.length).toBeGreaterThanOrEqual(4);
+    expect(completedSteps).toHaveLength(4);
+    expect(completedSteps).toEqual(
+      expect.arrayContaining(["updateCourse", "addAlternativeTitles", "addCategories", "addChapters"]),
+    );
   });
 });

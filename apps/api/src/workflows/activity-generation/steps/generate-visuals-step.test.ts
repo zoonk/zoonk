@@ -76,7 +76,13 @@ describe(generateVisualsForActivityStep, () => {
     ];
 
     const aiVisuals = [
-      { kind: "code" as const, language: "typescript", snippet: "const x = 1;", stepIndex: 0 },
+      {
+        annotations: null,
+        code: "const x = 1;",
+        kind: "code" as const,
+        language: "typescript",
+        stepIndex: 0,
+      },
       { kind: "image" as const, prompt: "a diagram", stepIndex: 1 },
     ];
 
@@ -177,7 +183,7 @@ describe(generateVisualsForActivityStep, () => {
 
     generateStepVisualsMock.mockResolvedValue({
       data: {
-        visuals: [{ kind: "code", language: "js", snippet: "x", stepIndex: 0 }],
+        visuals: [{ annotations: null, code: "x", kind: "code", language: "js", stepIndex: 0 }],
       },
     });
 
@@ -207,7 +213,7 @@ describe(generateVisualsForActivityStep, () => {
 
     generateStepVisualsMock.mockResolvedValue({
       data: {
-        visuals: [{ kind: "code", language: "js", snippet: "x", stepIndex: 0 }],
+        visuals: [{ annotations: null, code: "x", kind: "code", language: "js", stepIndex: 0 }],
       },
     });
 
