@@ -1,0 +1,241 @@
+import { randomUUID } from "node:crypto";
+import { fetchLessonActivities } from "@/workflows/_test-utils/fetch-lesson-activities";
+import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
+import { generateActivityPronunciation } from "@zoonk/ai/tasks/activities/language/pronunciation";
+import { activityFixture } from "@zoonk/testing/fixtures/activities";
+import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
+import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
+import { wordFixture, wordPronunciationFixture } from "@zoonk/testing/fixtures/words";
+import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { generateVocabularyPronunciationStep } from "./generate-vocabulary-pronunciation-step";
+
+const writeMock = vi.fn().mockResolvedValue(null);
+
+vi.mock("workflow", () => ({
+  FatalError: class FatalError extends Error {},
+  getWorkflowMetadata: vi.fn().mockReturnValue({ workflowRunId: "test-run-id" }),
+  getWritable: vi.fn().mockReturnValue({
+    getWriter: () => ({ releaseLock: vi.fn(), write: writeMock }),
+  }),
+  workflowStep: vi.fn().mockImplementation((_name: string, fn: unknown) => fn),
+}));
+
+vi.mock("@zoonk/ai/tasks/activities/language/pronunciation", () => ({
+  generateActivityPronunciation: vi
+    .fn()
+    .mockImplementation(({ word }: { word: string }) =>
+      Promise.resolve({ data: { pronunciation: `pron-${word}` } }),
+    ),
+}));
+
+describe(generateVocabularyPronunciationStep, () => {
+  let organizationId: number;
+
+  beforeAll(async () => {
+    const organization = await aiOrganizationFixture();
+    organizationId = organization.id;
+  });
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  test("generates missing pronunciations for vocabulary words", async () => {
+    const course = await courseFixture({ organizationId, targetLanguage: "es" });
+
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      organizationId,
+      title: `Vocab Pron Chapter ${randomUUID()}`,
+    });
+
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `Vocab Pron ${randomUUID()}`,
+    });
+
+    await activityFixture({
+      generationStatus: "pending",
+      kind: "vocabulary",
+      language: "en",
+      lessonId: lesson.id,
+      organizationId,
+      title: `Vocabulary ${randomUUID()}`,
+    });
+
+    const activities = await fetchLessonActivities(lesson.id);
+    const id = randomUUID().slice(0, 8);
+    const words = [`hola-${id}`, `adiós-${id}`];
+
+    const result = await generateVocabularyPronunciationStep(activities, words);
+
+    expect(result.pronunciations[`hola-${id}`]).toBe(`pron-hola-${id}`);
+    expect(result.pronunciations[`adiós-${id}`]).toBe(`pron-adiós-${id}`);
+
+    const events = getStreamedEvents(writeMock);
+
+    expect(events).toContainEqual(
+      expect.objectContaining({ status: "started", step: "generateVocabularyPronunciation" }),
+    );
+
+    expect(events).toContainEqual(
+      expect.objectContaining({ status: "completed", step: "generateVocabularyPronunciation" }),
+    );
+  });
+
+  test("reuses existing pronunciations from Word records", async () => {
+    const course = await courseFixture({ organizationId, targetLanguage: "es" });
+
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      organizationId,
+      title: `Vocab Pron Existing ${randomUUID()}`,
+    });
+
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `Vocab Pron Existing ${randomUUID()}`,
+    });
+
+    await activityFixture({
+      generationStatus: "pending",
+      kind: "vocabulary",
+      language: "en",
+      lessonId: lesson.id,
+      organizationId,
+      title: `Vocabulary ${randomUUID()}`,
+    });
+
+    const id = randomUUID().slice(0, 8);
+    const existingWordText = `hola-${id}`;
+
+    const word = await wordFixture({
+      organizationId,
+      targetLanguage: "es",
+      word: existingWordText,
+    });
+
+    await wordPronunciationFixture({
+      pronunciation: "existing-pron",
+      userLanguage: "en",
+      wordId: word.id,
+    });
+
+    const activities = await fetchLessonActivities(lesson.id);
+
+    const result = await generateVocabularyPronunciationStep(activities, [existingWordText]);
+
+    expect(result.pronunciations[existingWordText]).toBe("existing-pron");
+    expect(generateActivityPronunciation).not.toHaveBeenCalled();
+  });
+
+  test("returns empty pronunciations when no vocabulary activity exists", async () => {
+    const course = await courseFixture({ organizationId, targetLanguage: "es" });
+
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      organizationId,
+      title: `Vocab Pron NoAct ${randomUUID()}`,
+    });
+
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `Vocab Pron NoAct ${randomUUID()}`,
+    });
+
+    await activityFixture({
+      generationStatus: "pending",
+      kind: "reading",
+      language: "en",
+      lessonId: lesson.id,
+      organizationId,
+      title: `Reading ${randomUUID()}`,
+    });
+
+    const activities = await fetchLessonActivities(lesson.id);
+    const result = await generateVocabularyPronunciationStep(activities, ["hola"]);
+
+    expect(result).toEqual({ pronunciations: {} });
+  });
+
+  test("skips words when pronunciation AI fails and returns partial results", async () => {
+    const course = await courseFixture({ organizationId, targetLanguage: "es" });
+
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      organizationId,
+      title: `Vocab Pron Fail ${randomUUID()}`,
+    });
+
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `Vocab Pron Fail ${randomUUID()}`,
+    });
+
+    await activityFixture({
+      generationStatus: "pending",
+      kind: "vocabulary",
+      language: "en",
+      lessonId: lesson.id,
+      organizationId,
+      title: `Vocabulary ${randomUUID()}`,
+    });
+
+    const activities = await fetchLessonActivities(lesson.id);
+    const id = randomUUID().slice(0, 8);
+    const words = [`bueno-${id}`, `malo-${id}`];
+
+    // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- test mock doesn't need full AI SDK return shape
+    (vi.mocked(generateActivityPronunciation) as any)
+      .mockResolvedValueOnce({
+        data: { pronunciation: `pron-bueno-${id}` },
+      })
+      .mockRejectedValueOnce(new Error("AI failed"));
+
+    const result = await generateVocabularyPronunciationStep(activities, words);
+
+    expect(result.pronunciations[`bueno-${id}`]).toBe(`pron-bueno-${id}`);
+    expect(result.pronunciations[`malo-${id}`]).toBeUndefined();
+  });
+
+  test("returns empty pronunciations when words array is empty", async () => {
+    const course = await courseFixture({ organizationId, targetLanguage: "es" });
+
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      organizationId,
+      title: `Vocab Pron Empty ${randomUUID()}`,
+    });
+
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      kind: "language",
+      organizationId,
+      title: `Vocab Pron Empty ${randomUUID()}`,
+    });
+
+    await activityFixture({
+      generationStatus: "pending",
+      kind: "vocabulary",
+      language: "en",
+      lessonId: lesson.id,
+      organizationId,
+      title: `Vocabulary ${randomUUID()}`,
+    });
+
+    const activities = await fetchLessonActivities(lesson.id);
+    const result = await generateVocabularyPronunciationStep(activities, []);
+
+    expect(result).toEqual({ pronunciations: {} });
+  });
+});

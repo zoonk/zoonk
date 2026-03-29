@@ -2,10 +2,13 @@ import { type StepStreamMessage, type WorkflowErrorReason } from "@zoonk/core/wo
 import { logError } from "@zoonk/utils/logger";
 import { getWritable } from "workflow";
 
-export function getAIResultErrorReason(
-  error: Error | null | undefined,
-  result: unknown,
-): WorkflowErrorReason {
+export function getAIResultErrorReason({
+  error,
+  result,
+}: {
+  error?: Error | null;
+  result?: unknown;
+} = {}): WorkflowErrorReason {
   if (error) {
     return "aiGenerationFailed";
   }

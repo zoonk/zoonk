@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { fetchLessonActivities } from "@/workflows/_test-utils/fetch-lesson-activities";
 import { generateActivitySentences } from "@zoonk/ai/tasks/activities/language/sentences";
 import { prisma } from "@zoonk/db";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
@@ -9,7 +10,6 @@ import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { lessonWordFixture, wordFixture } from "@zoonk/testing/fixtures/words";
 import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { generateReadingContentStep } from "./generate-reading-content-step";
-import { type LessonActivity } from "./get-lesson-activities-step";
 
 vi.mock("workflow", () => ({
   FatalError: class FatalError extends Error {},
@@ -36,27 +36,6 @@ vi.mock("@zoonk/ai/tasks/activities/language/sentences", () => ({
     },
   }),
 }));
-
-async function fetchLessonActivities(lessonId: number): Promise<LessonActivity[]> {
-  const activities = await prisma.activity.findMany({
-    include: {
-      _count: { select: { steps: true } },
-      lesson: {
-        include: {
-          chapter: {
-            include: {
-              course: { include: { organization: true } },
-            },
-          },
-        },
-      },
-    },
-    orderBy: { position: "asc" },
-    where: { lessonId },
-  });
-
-  return activities.map((activity) => ({ ...activity, id: Number(activity.id) }));
-}
 
 describe(generateReadingContentStep, () => {
   let organizationId: number;

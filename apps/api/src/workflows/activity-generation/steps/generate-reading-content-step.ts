@@ -158,7 +158,7 @@ export async function generateReadingContentStep(
   const sentences = result?.data.sentences ?? [];
 
   if (error || !result || sentences.length === 0 || !hasValidSentences(sentences)) {
-    const reason = getAIResultErrorReason(error, result);
+    const reason = getAIResultErrorReason({ error, result });
     return await handleReadingGenerationFailure(stream, activity.id, reason);
   }
 

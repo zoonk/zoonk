@@ -117,6 +117,7 @@ When writing React components, use compound components. Always read this before 
 - Don't add tests for CSS, style changes, prompt wording, zod schemas or other things where tests would only assert copy, external library internals, or implementation details
 - Don't write snapshot-style tests that assert static data equals itself (e.g., testing that a config constant returns a hard-coded list). These tests catch no bugs — any intentional change requires updating both the constant and the test mechanically. Test behavior and logic, not data
 - Parallelize independent fixtures: When test setup creates multiple entities that don't depend on each other (e.g., `user` + `course`, sibling chapters, multiple `activityProgressFixture` calls), use `Promise.all` instead of sequential awaits
+- Don't export a function just to test it. Instead, write tests for the public exported function that calls the internal function
 
 **E2E Query Rules (MANDATORY)**:
 

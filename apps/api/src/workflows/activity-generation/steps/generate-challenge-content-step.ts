@@ -46,7 +46,7 @@ export async function generateChallengeContentStep(
   );
 
   if (error || !result || result.data.steps.length === 0) {
-    const reason = getAIResultErrorReason(error, result);
+    const reason = getAIResultErrorReason({ error, result });
     await stream.error({ reason, step: "generateChallengeContent" });
     await handleActivityFailureStep({ activityId: activity.id });
     return { activityId: null, data: null };

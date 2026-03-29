@@ -57,7 +57,7 @@ export async function generatePracticeContentStep(
   );
 
   if (error || !result || result.data.steps.length === 0) {
-    const reason = getAIResultErrorReason(error, result);
+    const reason = getAIResultErrorReason({ error, result });
     await stream.error({ reason, step: "generatePracticeContent" });
     await handleActivityFailureStep({ activityId: practiceActivity.id });
     return { activityId: null, steps: [] };

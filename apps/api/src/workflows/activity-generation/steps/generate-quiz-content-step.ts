@@ -57,7 +57,7 @@ export async function generateQuizContentStep(
   );
 
   if (error || !result || result.data.questions.length === 0) {
-    const reason = getAIResultErrorReason(error, result);
+    const reason = getAIResultErrorReason({ error, result });
     await stream.error({ reason, step: "generateQuizContent" });
     await handleActivityFailureStep({ activityId: quizActivity.id });
     return { activityId: null, questions: [] };

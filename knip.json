@@ -20,7 +20,7 @@
   "workspaces": {
     "apps/api": {
       "ignore": ["src/app/.well-known/workflow/**"],
-      "project": ["src/**/*.{ts,tsx}!", "e2e/**/*.ts"]
+      "project": ["src/**/*.{ts,tsx}!", "e2e/**/*.ts", "!**/_test-utils/**!"]
     },
     "apps/editor": {
       "ignore": ["e2e/mocks/**"],
