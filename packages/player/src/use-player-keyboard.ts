@@ -14,7 +14,6 @@ type PlayerKeyboardParams = {
   onNavigatePrev: () => void;
   onNext: (() => void) | null;
   onRestart: () => void;
-  onStartChallenge: (() => void) | null;
   phase: PlayerPhase;
 };
 
@@ -24,16 +23,11 @@ function getEnterAction({
   onContinue,
   onEscape,
   onNext,
-  onStartChallenge,
   phase,
 }: Pick<
   PlayerKeyboardParams,
-  "hasAnswer" | "onCheck" | "onContinue" | "onEscape" | "onNext" | "onStartChallenge" | "phase"
+  "hasAnswer" | "onCheck" | "onContinue" | "onEscape" | "onNext" | "phase"
 >): (() => void) | null {
-  if (phase === "intro" && onStartChallenge) {
-    return onStartChallenge;
-  }
-
   if (phase === "playing" && hasAnswer) {
     return onCheck;
   }
@@ -60,7 +54,6 @@ export function usePlayerKeyboard({
   onNavigatePrev,
   onNext,
   onRestart,
-  onStartChallenge,
   phase,
 }: PlayerKeyboardParams) {
   useKeyboardCallback(
@@ -72,7 +65,6 @@ export function usePlayerKeyboard({
         onContinue,
         onEscape,
         onNext,
-        onStartChallenge,
         phase,
       });
 

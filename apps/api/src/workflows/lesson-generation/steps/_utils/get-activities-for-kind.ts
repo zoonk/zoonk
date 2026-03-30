@@ -22,13 +22,12 @@ const LANGUAGE_ACTIVITY_KINDS: ActivityKind[] = [
  * of concepts.
  *
  * Core lessons always include explanations (one per concept), a quiz,
- * a challenge, and a review activity. When there are 4+ concepts, two
- * practice activities are inserted — one after the first half of
- * explanations and another after the second half — to break up long
- * sequences.
+ * and a review activity. When there are 4+ concepts, two practice
+ * activities are inserted — one after the first half of explanations
+ * and another after the second half — to break up long sequences.
  *
  * Example with 5 concepts:
- *   [exp1, exp2, practice, exp3, exp4, exp5, practice, quiz, challenge, review]
+ *   [exp1, exp2, practice, exp3, exp4, exp5, practice, quiz, review]
  */
 function getCoreActivities(concepts: string[]): ActivityEntry[] {
   const explanations: ActivityEntry[] = concepts.map((concept) => ({
@@ -43,21 +42,20 @@ function getCoreActivities(concepts: string[]): ActivityEntry[] {
   const allExplanations = [...fallbackExplanation, ...explanations];
 
   const practice: ActivityEntry = { description: null, kind: "practice", title: null };
-  const challenge: ActivityEntry = { description: null, kind: "challenge", title: null };
   const review: ActivityEntry = { description: null, kind: "review", title: null };
   const quiz: ActivityEntry = { description: null, kind: "quiz", title: null };
 
   const minConceptsForTwoPractices = 4;
 
   if (concepts.length < minConceptsForTwoPractices) {
-    return [...allExplanations, practice, quiz, challenge, review];
+    return [...allExplanations, practice, quiz, review];
   }
 
   const splitIndex = Math.floor(concepts.length / 2);
   const firstGroup = explanations.slice(0, splitIndex);
   const secondGroup = explanations.slice(splitIndex);
 
-  return [...firstGroup, practice, ...secondGroup, practice, quiz, challenge, review];
+  return [...firstGroup, practice, ...secondGroup, practice, quiz, review];
 }
 
 /**
@@ -76,7 +74,7 @@ function getLanguageActivities(targetLanguage: string | null): ActivityKind[] {
 /**
  * Returns the full activity list for a lesson based on its kind.
  *
- * - "core" lessons get explanation/practice/quiz/challenge/review activities
+ * - "core" lessons get explanation/practice/quiz/review activities
  *   derived from the lesson's concepts.
  * - "language" lessons get a fixed set of activity kinds (vocabulary,
  *   translation, grammar, reading, listening, review).

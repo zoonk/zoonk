@@ -206,27 +206,11 @@ checksums:
     Level%20progress/singular: 286f095acd17006787247db0b69270e3
     "%7Bvalue%7D%20BP%20to%20level%20up/singular": 755c2fe6e435645cb35b57bf92af09d3
     "%7Bcolor%7D%20Belt%20%E2%80%94%20Level%20%7Blevel%7D/singular": 367f2e902d39199c8507aaad09e8907a
-    Game%20over./singular: 7f7c4f4404b868e6062363dfffd9adf7
-    Challenge%20Complete/singular: 7854472cc9245aaa8a13f54514968506
-    "%7Bnames%7D%20dropped%20below%20zero./singular": 36735509d5747d09d3519324aa0f1493
-    All%20Activities/singular: 9eee26b7ca58444c6d0db6bcd7ea7eda
-    "%7Bname%7D%20dropped%20to%20%7Bvalue%7D./singular": 95e21895ac0d6fa49a9a2117ccd8fd6a
-    Try%20again/singular: 33dd8820e743e35a66e6977f69e9d3b5
-    Final%20scores/singular: e772441fda83e82c2101876fee323481
-    Total%20score/singular: 52bf3d9b021a715f5624d7c945d97eb6
-    If%20any%20score%20ends%20below%20zero%2C%20game%20over./singular: 1c5c2c71e421c428e792d3c1509b0276
-    No%20choice%20is%20right%20or%20wrong%20%E2%80%94%20every%20one%20has%20trade-offs./singular: 8a67c34645c8bfd8546261a977ace665
-    Challenge/singular: 7f333a59ee7a3596e27a2f8c3401b764
-    How%20to%20play/singular: 2cfbb8fb4e6096dcd53c55ddbda9bdda
-    Starting%20scores/singular: 6a21f8424cdc75e477c3d7857a97db6d
-    Choose%20carefully.%20You%20can't%20undo./singular: cf4e1fea906ef68f82c993072d02abf6
-    Begin/singular: cc2a17a662cb60dd2d8335a2e8440997
-    Each%20choice%20raises%20some%20scores%20and%20lowers%20others./singular: f2fe298b9617dcbd9b1783eeb47acfcb
-    Your%20scores/singular: 1700f65ead0647bc4876f4b3b6453a8b
-    You%20start%20at%200%20in%20every%20score./singular: ef7c9e35b5b066d492618fcaec8eef46
     Next/singular: 89ddbcf710eba274963494f312bdc8a9
     Login/singular: f4f219abeb5a465ecb1c7efaf50246de
+    All%20Activities/singular: 9eee26b7ca58444c6d0db6bcd7ea7eda
     Sign%20up%20to%20track%20your%20progress/singular: 554ed29d9b8a243362c3b3374222af08
+    Try%20again/singular: 33dd8820e743e35a66e6977f69e9d3b5
     Next%20Chapter/singular: 88bd2a8dbe3d1ba13dc3441da4eb83bc
     Next%20Lesson/singular: d8f3c6027310c4e0becf70b1e0738b05
     Review%20Lesson/singular: f7660f36b45eef40711a96beb3d5c41a
@@ -237,19 +221,9 @@ checksums:
     Lesson%20Complete/singular: c2353c93f81c6ff8aab8825a73bcbb6a
     correct/singular: 0c2df4a764cea47295c0b550477e8e29
     Chapter%20Complete/singular: 93c49bef3b2cfd1305e910cd79381afd
-    All%20clear/singular: ca7355395e213474da78c66783aefc0c
-    Current%20scores/singular: 9540e05ca834af8682ea93bdec677299
-    "%7Bcount%7D%20in%20danger/singular": 82145029fddd68fcd3b3b094a2be8eb1
-    "%7Bcount%7D%20at%20risk/singular": d0c6a90b2830b7b26e220ef1f7708d08
-    View%20scores/singular: 8089ad914ec6636a00fd58ed3c84f07b
     Your%20answer%3A/singular: 663abc310ccb6229c6325f8c857adce2
     Correct%20answer%3A/singular: a8b8cc0d5d0059cbfeee0ad4721540d5
-    "%7Bname%7D%20is%20negative.%20You%20need%20to%20bring%20this%20back%20up%20or%20you%20will%20lose./singular": c893d2d3c1bb15ea45614228ea9ddcac
     Translate%3A/singular: 0a44ccd6c0e1dd4545fd00d059eaf0a5
-    Outcome/singular: 4cfc7a40e384ea8b6658e8da6e351bf0
-    Close%20call./singular: 7913cf61fc4e2fcd3eaf0d51bd86ba4d
-    "%7Bname%7D%20is%20at%20zero.%20One%20more%20drop%20and%20you%20lose./singular": 4e48a2c335f69b412a58e4aef620caf1
-    Score%20changes/singular: ddf8ff300115aa23776dc4b3157581de
     Blank%20%7Bposition%7D/singular: 70a4795f65f91685071b6abb1c3a6bad
     Blank%20%7Bposition%7D%3A%20%7Bitem%7D.%20%7Bresult%7D./singular: c64e721cdd1e4cc48eff9f9690f1fc6b
     Blank%20%7Bposition%7D%3A%20%7Bitem%7D.%20Tap%20to%20remove./singular: d7ab9b86256fae5fbb5187fe718afe0b
@@ -357,7 +331,7 @@ checksums:
     No%20courses/singular: 72fc2629e79529e927834070a26d2a07
     Start%20learning%20something%20new%20today/singular: 727ed4b5249a54fc3975f77b91e96757
     Online%20Courses%20using%20AI/singular: 4e3c619f363cc66f3f2e604e372ca038
-    Explore%20all%20Zoonk%20courses%20to%20learn%20anything%20using%20AI.%20Find%20interactive%20lessons%2C%20challenges%2C%20and%20activities%20to%20learn%20subjects%20like%20science%2C%20math%2C%20technology%2C%20and%20more./singular: c3f4a7dfd17b4523b5535f40170c7731
+    Explore%20all%20Zoonk%20courses%20to%20learn%20anything%20using%20AI.%20Find%20interactive%20lessons%20and%20activities%20to%20learn%20subjects%20like%20science%2C%20math%2C%20technology%2C%20and%20more./singular: 77bf08cb8f88d8b9aa7290f86aaf4503
     Create/singular: 757ccd28dd533ff3a933355273c1e32a
     Cancel/singular: 2e2a849c2223911717de8caa2c71bade
     Cooking%20up%20some%20course%20ideas/singular: a42520f96dbac3580a2ccae4bd6ceb31
@@ -698,7 +672,6 @@ checksums:
     Test%20your%20%7Btopic%7D%20vocabulary%20by%20translating%20words%20you've%20learned./singular: d81da859633df4dd0b03711f48cc1cdd
     Grammar/singular: 1d97aca351a45df1d6eb27adbee04832
     Learn%20about%20%7Btopic%7D%20through%20an%20interactive%20activity./singular: 94f8ca153ea2ee6b539f507266548201
-    Apply%20your%20knowledge%20of%20%7Btopic%7D%20through%20analytical%20decisions%20with%20real%20trade-offs./singular: a45d6f6551b5ec5c1206d7886bff0437
     Understand%20what%20%7Btopic%7D%20is%20%E2%80%94%20core%20concepts%20and%20definitions%20explained%20with%20clear%20metaphors%20and%20analogies./singular: ec3b49a710ebac5f592523bdaa68ceff
     Practice%20%7Btopic%7D%20grammar%20rules%20with%20exercises%20designed%20to%20help%20you%20remember%20and%20apply%20them./singular: 107adae09992e8b4deb051afa38da3bd
     "%7Bactivity%7D%20-%20%7Blesson%7D/singular": 0aad8d82851f799d79c052a0f2b90d67

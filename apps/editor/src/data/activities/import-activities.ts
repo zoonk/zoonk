@@ -12,7 +12,6 @@ const validActivityKinds = new Set<ActivityKind>([
   "explanation",
   "quiz",
   "practice",
-  "challenge",
   "vocabulary",
   "translation",
   "grammar",

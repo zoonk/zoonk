@@ -119,7 +119,7 @@ export function getPhaseWeights(kind: ActivityKind): Record<PhaseName, number> {
     };
   }
 
-  if (kind === "practice" || kind === "challenge") {
+  if (kind === "practice") {
     return {
       ...ZERO_WEIGHTS,
       gettingStarted: 5,

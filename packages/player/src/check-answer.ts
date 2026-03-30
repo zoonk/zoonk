@@ -17,14 +17,6 @@ export function checkMultipleChoiceAnswer(
   content: MultipleChoiceStepContent,
   selectedIndex: number,
 ): AnswerResult {
-  if (content.kind === "challenge") {
-    const option = content.options[selectedIndex];
-    if (!option) {
-      return { correctAnswer: null, feedback: null, isCorrect: false };
-    }
-    return { correctAnswer: null, feedback: option.consequence, isCorrect: true };
-  }
-
   const correctAnswer = content.options.find((opt) => opt.isCorrect)?.text ?? null;
   const option = content.options[selectedIndex];
   if (!option) {

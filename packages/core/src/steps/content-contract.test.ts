@@ -36,34 +36,6 @@ describe("step content contracts", () => {
     });
   });
 
-  test("parses challenge multipleChoice", () => {
-    const content = parseStepContent("multipleChoice", {
-      context: "You face a decision.",
-      kind: "challenge",
-      options: [
-        {
-          consequence: "Good outcome",
-          effects: [{ dimension: "Quality", impact: "positive" }],
-          text: "Option A",
-        },
-      ],
-      question: "What do you do?",
-    });
-
-    expect(content).toEqual({
-      context: "You face a decision.",
-      kind: "challenge",
-      options: [
-        {
-          consequence: "Good outcome",
-          effects: [{ dimension: "Quality", impact: "positive" }],
-          text: "Option A",
-        },
-      ],
-      question: "What do you do?",
-    });
-  });
-
   test("rejects multipleChoice without kind", () => {
     expect(() =>
       parseStepContent("multipleChoice", {
@@ -72,7 +44,7 @@ describe("step content contracts", () => {
     ).toThrow();
   });
 
-  test("rejects core options with challenge fields", () => {
+  test("rejects core options with extra fields", () => {
     expect(() =>
       parseStepContent("multipleChoice", {
         kind: "core",
@@ -83,17 +55,6 @@ describe("step content contracts", () => {
             text: "A",
           },
         ],
-      }),
-    ).toThrow();
-  });
-
-  test("rejects challenge options with core fields", () => {
-    expect(() =>
-      parseStepContent("multipleChoice", {
-        context: "Context",
-        kind: "challenge",
-        options: [{ feedback: "Great", isCorrect: true, text: "A" }],
-        question: "Q?",
       }),
     ).toThrow();
   });

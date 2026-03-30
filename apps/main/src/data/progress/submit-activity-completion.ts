@@ -14,13 +14,8 @@ import {
 const MAX_LOCAL_DATE_DRIFT_MS = 2 * MS_PER_DAY;
 
 function getCompletionField(input: {
-  isChallenge: boolean;
   stepResults: unknown[];
-}): "challengesCompleted" | "interactiveCompleted" | "staticCompleted" {
-  if (input.isChallenge) {
-    return "challengesCompleted";
-  }
-
+}): "interactiveCompleted" | "staticCompleted" {
   if (input.stepResults.length === 0) {
     return "staticCompleted";
   }
@@ -66,7 +61,7 @@ async function upsertDailyProgress(
     date: Date;
     dayOfWeek: number;
     durationSeconds: number;
-    field: "challengesCompleted" | "interactiveCompleted" | "staticCompleted";
+    field: "interactiveCompleted" | "staticCompleted";
     organizationId: number | null;
     score: ScoreResult;
     userId: number;
@@ -74,7 +69,6 @@ async function upsertDailyProgress(
 ): Promise<void> {
   const createData = {
     brainPowerEarned: params.score.brainPower,
-    challengesCompleted: params.field === "challengesCompleted" ? 1 : 0,
     correctAnswers: params.score.correctCount,
     date: params.date,
     dayOfWeek: params.dayOfWeek,
@@ -136,7 +130,6 @@ export async function submitActivityCompletion(input: {
   activityId: bigint;
   courseId: number;
   durationSeconds: number;
-  isChallenge: boolean;
   localDate: string;
   organizationId: number | null;
   score: ScoreResult;
@@ -146,7 +139,6 @@ export async function submitActivityCompletion(input: {
     answeredAt: Date;
     dayOfWeek: number;
     durationSeconds: number;
-    effects: object[];
     hourOfDay: number;
     isCorrect: boolean;
     stepId: bigint;
@@ -177,7 +169,6 @@ export async function submitActivityCompletion(input: {
           answeredAt: step.answeredAt,
           dayOfWeek: step.dayOfWeek,
           durationSeconds: step.durationSeconds,
-          effects: step.effects.length > 0 ? step.effects : undefined,
           hourOfDay: step.hourOfDay,
           isCorrect: step.isCorrect,
           organizationId: input.organizationId,

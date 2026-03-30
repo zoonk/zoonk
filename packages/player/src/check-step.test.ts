@@ -37,16 +37,15 @@ describe(checkStep, () => {
       kind: "multipleChoice",
     });
 
-    test("correct answer returns isCorrect true with empty effects", () => {
+    test("correct answer returns isCorrect true", () => {
       const answer: SelectedAnswer = {
         kind: "multipleChoice",
         selectedIndex: 0,
         selectedText: "4",
       };
-      const { effects, result } = checkStep(step, answer);
+      const { result } = checkStep(step, answer);
       expect(result.isCorrect).toBe(true);
       expect(result.feedback).toBe("Correct!");
-      expect(effects).toEqual([]);
     });
 
     test("incorrect answer returns isCorrect false", () => {
@@ -58,51 +57,6 @@ describe(checkStep, () => {
       const { result } = checkStep(step, answer);
       expect(result.isCorrect).toBe(false);
       expect(result.feedback).toBe("Wrong!");
-    });
-  });
-
-  describe("multipleChoice challenge", () => {
-    const step = buildStep({
-      content: {
-        context: "You are a manager",
-        kind: "challenge" as const,
-        options: [
-          {
-            consequence: "Good result",
-            effects: [{ dimension: "Quality", impact: "positive" as const }],
-            text: "Option A",
-          },
-          {
-            consequence: "Bad result",
-            effects: [{ dimension: "Quality", impact: "negative" as const }],
-            text: "Option B",
-          },
-        ],
-        question: "What do you do?",
-      },
-      id: "mc-challenge",
-      kind: "multipleChoice",
-    });
-
-    test("returns effects from selected option", () => {
-      const answer: SelectedAnswer = {
-        kind: "multipleChoice",
-        selectedIndex: 0,
-        selectedText: "Option A",
-      };
-      const { effects, result } = checkStep(step, answer);
-      expect(result.isCorrect).toBe(true);
-      expect(effects).toEqual([{ dimension: "Quality", impact: "positive" }]);
-    });
-
-    test("returns effects from second option", () => {
-      const answer: SelectedAnswer = {
-        kind: "multipleChoice",
-        selectedIndex: 1,
-        selectedText: "Option B",
-      };
-      const { effects } = checkStep(step, answer);
-      expect(effects).toEqual([{ dimension: "Quality", impact: "negative" }]);
     });
   });
 
@@ -120,9 +74,8 @@ describe(checkStep, () => {
 
     test("correct answer", () => {
       const answer: SelectedAnswer = { kind: "fillBlank", userAnswers: ["sky"] };
-      const { effects, result } = checkStep(step, answer);
+      const { result } = checkStep(step, answer);
       expect(result.isCorrect).toBe(true);
-      expect(effects).toEqual([]);
     });
 
     test("incorrect answer", () => {
@@ -154,9 +107,8 @@ describe(checkStep, () => {
           { left: "B", right: "2" },
         ],
       };
-      const { effects, result } = checkStep(step, answer);
+      const { result } = checkStep(step, answer);
       expect(result.isCorrect).toBe(true);
-      expect(effects).toEqual([]);
     });
 
     test("incorrect pairs", () => {
@@ -189,9 +141,8 @@ describe(checkStep, () => {
         kind: "sortOrder",
         userOrder: ["first", "second", "third"],
       };
-      const { effects, result } = checkStep(step, answer);
+      const { result } = checkStep(step, answer);
       expect(result.isCorrect).toBe(true);
-      expect(effects).toEqual([]);
     });
 
     test("incorrect order", () => {
@@ -219,9 +170,8 @@ describe(checkStep, () => {
 
     test("correct selection", () => {
       const answer: SelectedAnswer = { kind: "selectImage", selectedIndex: 0 };
-      const { effects, result } = checkStep(step, answer);
+      const { result } = checkStep(step, answer);
       expect(result.isCorrect).toBe(true);
-      expect(effects).toEqual([]);
     });
 
     test("incorrect selection", () => {
@@ -254,9 +204,8 @@ describe(checkStep, () => {
         selectedText: "hello",
         selectedWordId: "word-1",
       };
-      const { effects, result } = checkStep(step, answer);
+      const { result } = checkStep(step, answer);
       expect(result.isCorrect).toBe(true);
-      expect(effects).toEqual([]);
     });
 
     test("incorrect word", () => {
@@ -284,10 +233,9 @@ describe(checkStep, () => {
         selectedText: "hello",
         selectedWordId: "word-1",
       };
-      const { effects, result } = checkStep(step, answer);
+      const { result } = checkStep(step, answer);
       expect(result.isCorrect).toBe(false);
       expect(result.feedback).toBeNull();
-      expect(effects).toEqual([]);
     });
   });
 
@@ -310,10 +258,9 @@ describe(checkStep, () => {
 
     test("correct word arrangement", () => {
       const answer: SelectedAnswer = { arrangedWords: ["Hello", "world"], kind: "reading" };
-      const { effects, result } = checkStep(step, answer);
+      const { result } = checkStep(step, answer);
       expect(result.isCorrect).toBe(true);
       expect(result.correctAnswer).toBe("Hello world");
-      expect(effects).toEqual([]);
     });
 
     test("incorrect word arrangement returns correct answer", () => {
@@ -391,10 +338,9 @@ describe(checkStep, () => {
 
     test("correct word arrangement uses translation", () => {
       const answer: SelectedAnswer = { arrangedWords: ["Buenos", "dias"], kind: "listening" };
-      const { effects, result } = checkStep(step, answer);
+      const { result } = checkStep(step, answer);
       expect(result.isCorrect).toBe(true);
       expect(result.correctAnswer).toBe("Buenos dias");
-      expect(effects).toEqual([]);
     });
 
     test("incorrect word arrangement returns correct answer", () => {
@@ -464,19 +410,17 @@ describe(checkStep, () => {
         kind: "multipleChoice",
       });
       const answer: SelectedAnswer = { kind: "fillBlank", userAnswers: ["test"] };
-      const { effects, result } = checkStep(step, answer);
+      const { result } = checkStep(step, answer);
       expect(result.isCorrect).toBe(false);
       expect(result.feedback).toBeNull();
-      expect(effects).toEqual([]);
     });
 
     test("static step returns mismatch result", () => {
       const step = buildStep();
       const answer: SelectedAnswer = { kind: "multipleChoice", selectedIndex: 0, selectedText: "" };
-      const { effects, result } = checkStep(step, answer);
+      const { result } = checkStep(step, answer);
       expect(result.isCorrect).toBe(false);
       expect(result.feedback).toBeNull();
-      expect(effects).toEqual([]);
     });
   });
 });

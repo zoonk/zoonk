@@ -93,38 +93,6 @@ vi.mock("@zoonk/ai/tasks/activities/core/practice", () => ({
   }),
 }));
 
-vi.mock("@zoonk/ai/tasks/activities/core/challenge", () => ({
-  generateActivityChallenge: vi.fn().mockResolvedValue({
-    data: {
-      intro: "Welcome to the challenge scenario...",
-      reflection: "Every decision involves trade-offs...",
-      steps: [
-        {
-          context: "Your team lead asks you to choose...",
-          options: [
-            {
-              consequence: "Great outcome",
-              effects: [{ dimension: "Quality", impact: "positive" }],
-              text: "Option A",
-            },
-            {
-              consequence: "Mixed outcome",
-              effects: [{ dimension: "Speed", impact: "positive" }],
-              text: "Option B",
-            },
-            {
-              consequence: "Poor outcome",
-              effects: [{ dimension: "Quality", impact: "negative" }],
-              text: "Option C",
-            },
-          ],
-          question: "What approach do you take?",
-        },
-      ],
-    },
-  }),
-}));
-
 vi.mock("@zoonk/ai/tasks/activities/core/quiz", () => ({
   generateActivityQuiz: vi.fn().mockResolvedValue({
     data: {

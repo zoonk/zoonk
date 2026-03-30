@@ -1,8 +1,6 @@
 import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { type ActivityKind } from "@zoonk/db";
 import {
-  CHALLENGE_PHASE_ORDER,
-  CHALLENGE_PHASE_STEPS,
   CUSTOM_PHASE_ORDER,
   CUSTOM_PHASE_STEPS,
   EXPLANATION_PHASE_ORDER,
@@ -72,7 +70,6 @@ export type PhaseName =
   | "saving";
 
 const PHASE_ORDER_MAP: Record<ActivityKind, PhaseName[]> = {
-  challenge: CHALLENGE_PHASE_ORDER,
   custom: CUSTOM_PHASE_ORDER,
   explanation: EXPLANATION_PHASE_ORDER,
   grammar: GRAMMAR_PHASE_ORDER,
@@ -125,7 +122,6 @@ function toFullPhaseSteps(
 }
 
 const PHASE_STEPS_MAP: Record<ActivityKind, Record<PhaseName, readonly ActivityStepName[]>> = {
-  challenge: toFullPhaseSteps(CHALLENGE_PHASE_STEPS),
   custom: toFullPhaseSteps(CUSTOM_PHASE_STEPS),
   explanation: toFullPhaseSteps(EXPLANATION_PHASE_STEPS),
   grammar: toFullPhaseSteps(GRAMMAR_PHASE_STEPS),

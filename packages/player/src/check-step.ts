@@ -1,4 +1,4 @@
-import { type ChallengeEffect, parseStepContent } from "@zoonk/core/steps/content-contract";
+import { parseStepContent } from "@zoonk/core/steps/content-contract";
 import { segmentWords } from "@zoonk/utils/string";
 import { buildAcceptedArrangeWordSequences } from "./arrange-words-answers";
 import {
@@ -15,12 +15,10 @@ import { type SelectedAnswer } from "./player-reducer";
 import { type SerializedStep } from "./prepare-activity-data";
 
 type CheckStepResult = {
-  effects: ChallengeEffect[];
   result: AnswerResult;
 };
 
 const MISMATCH_RESULT: CheckStepResult = {
-  effects: [],
   result: { correctAnswer: null, feedback: null, isCorrect: false },
 };
 
@@ -31,10 +29,8 @@ function checkMultipleChoice(step: SerializedStep, answer: SelectedAnswer): Chec
 
   const content = parseStepContent("multipleChoice", step.content);
   const result = checkMultipleChoiceAnswer(content, answer.selectedIndex);
-  const effects =
-    content.kind === "challenge" ? (content.options[answer.selectedIndex]?.effects ?? []) : [];
 
-  return { effects, result };
+  return { result };
 }
 
 function checkFillBlank(step: SerializedStep, answer: SelectedAnswer): CheckStepResult {
@@ -43,7 +39,7 @@ function checkFillBlank(step: SerializedStep, answer: SelectedAnswer): CheckStep
   }
 
   const content = parseStepContent("fillBlank", step.content);
-  return { effects: [], result: checkFillBlankAnswer(content, answer.userAnswers) };
+  return { result: checkFillBlankAnswer(content, answer.userAnswers) };
 }
 
 function checkMatchColumns(step: SerializedStep, answer: SelectedAnswer): CheckStepResult {
@@ -53,7 +49,6 @@ function checkMatchColumns(step: SerializedStep, answer: SelectedAnswer): CheckS
 
   const content = parseStepContent("matchColumns", step.content);
   return {
-    effects: [],
     result: checkMatchColumnsAnswer(content, answer.userPairs, answer.mistakes),
   };
 }
@@ -64,7 +59,7 @@ function checkSortOrder(step: SerializedStep, answer: SelectedAnswer): CheckStep
   }
 
   const content = parseStepContent("sortOrder", step.content);
-  return { effects: [], result: checkSortOrderAnswer(content, answer.userOrder) };
+  return { result: checkSortOrderAnswer(content, answer.userOrder) };
 }
 
 function checkSelectImage(step: SerializedStep, answer: SelectedAnswer): CheckStepResult {
@@ -73,7 +68,7 @@ function checkSelectImage(step: SerializedStep, answer: SelectedAnswer): CheckSt
   }
 
   const content = parseStepContent("selectImage", step.content);
-  return { effects: [], result: checkSelectImageAnswer(content, answer.selectedIndex) };
+  return { result: checkSelectImageAnswer(content, answer.selectedIndex) };
 }
 
 function checkTranslationStep(step: SerializedStep, answer: SelectedAnswer): CheckStepResult {
@@ -86,7 +81,6 @@ function checkTranslationStep(step: SerializedStep, answer: SelectedAnswer): Che
   }
 
   return {
-    effects: [],
     result: checkTranslationAnswer(step.word.id, answer.selectedWordId, step.word.word),
   };
 }
@@ -105,7 +99,6 @@ function checkReadingStep(step: SerializedStep, answer: SelectedAnswer): CheckSt
   const result = checkArrangeWordsAnswer(acceptedWordSequences, answer.arrangedWords);
 
   return {
-    effects: [],
     result: {
       ...result,
       correctAnswer: words.join(" "),
@@ -128,7 +121,6 @@ function checkListeningStep(step: SerializedStep, answer: SelectedAnswer): Check
   const result = checkArrangeWordsAnswer(acceptedWordSequences, answer.arrangedWords);
 
   return {
-    effects: [],
     result: {
       ...result,
       correctAnswer: words.join(" "),

@@ -70,104 +70,6 @@ msgctxt "xiSVL4"
 msgid "{color} Belt — Level {level}"
 msgstr "Faixa {color} — Nível {level}"
 
-#: ../../packages/player/src/components/challenge-completion.tsx
-msgctxt "1tm+gP"
-msgid "Game over."
-msgstr "Fim de jogo."
-
-#: ../../packages/player/src/components/challenge-completion.tsx
-msgctxt "a0e1mh"
-msgid "Challenge Complete"
-msgstr "Desafio Completo"
-
-#: ../../packages/player/src/components/challenge-completion.tsx
-msgctxt "BEjT3b"
-msgid "{names} dropped below zero."
-msgstr "{names} caíram abaixo de zero."
-
-#: ../../packages/player/src/components/challenge-completion.tsx
-#: ../../packages/player/src/components/completion-auth-branch.tsx
-msgctxt "CC/yEt"
-msgid "All Activities"
-msgstr "Todas as Atividades"
-
-#: ../../packages/player/src/components/challenge-completion.tsx
-msgctxt "EQISGX"
-msgid "{name} dropped to {value}."
-msgstr "{name} caiu para {value}."
-
-#: ../../packages/player/src/components/challenge-completion.tsx
-#: ../../packages/player/src/components/completion-auth-branch.tsx
-#: src/app/generate/a/[id]/generation-client.tsx
-#: src/app/generate/ch/[id]/generation-client.tsx
-#: src/app/generate/cs/[id]/generation-client.tsx
-#: src/app/generate/l/[id]/generation-client.tsx
-msgctxt "FazwRl"
-msgid "Try again"
-msgstr "Tentar de novo"
-
-#: ../../packages/player/src/components/challenge-completion.tsx
-msgctxt "gjP7K/"
-msgid "Final scores"
-msgstr "Pontuações finais"
-
-#: ../../packages/player/src/components/challenge-completion.tsx
-msgctxt "me6E3h"
-msgid "Total score"
-msgstr "Pontuação total"
-
-#: ../../packages/player/src/components/challenge-intro.tsx
-msgctxt "+jQyoM"
-msgid "If any score ends below zero, game over."
-msgstr "Se qualquer pontuação terminar abaixo de zero, fim de jogo."
-
-#: ../../packages/player/src/components/challenge-intro.tsx
-msgctxt "5lbATl"
-msgid "No choice is right or wrong — every one has trade-offs."
-msgstr "Nenhuma escolha é certa ou errada — cada uma tem consequências."
-
-#: ../../packages/player/src/components/challenge-intro.tsx
-#: src/lib/activities.ts
-msgctxt "9MidH4"
-msgid "Challenge"
-msgstr "Desafio"
-
-#: ../../packages/player/src/components/challenge-intro.tsx
-msgctxt "eyYrQ7"
-msgid "How to play"
-msgstr "Como jogar"
-
-#: ../../packages/player/src/components/challenge-intro.tsx
-msgctxt "kKztdT"
-msgid "Starting scores"
-msgstr "Pontuações iniciais"
-
-#: ../../packages/player/src/components/challenge-intro.tsx
-msgctxt "m40JR0"
-msgid "Choose carefully. You can't undo."
-msgstr "Escolha com cuidado. A gente não pode desfazer."
-
-#: ../../packages/player/src/components/challenge-intro.tsx
-msgctxt "PVe26p"
-msgid "Begin"
-msgstr "Começar"
-
-#: ../../packages/player/src/components/challenge-intro.tsx
-msgctxt "QUvM0O"
-msgid "Each choice raises some scores and lowers others."
-msgstr "Cada escolha aumenta algumas pontuações e diminui outras."
-
-#: ../../packages/player/src/components/challenge-intro.tsx
-#: ../../packages/player/src/components/dimension-header-status.tsx
-msgctxt "SFKe0U"
-msgid "Your scores"
-msgstr "Suas pontuações"
-
-#: ../../packages/player/src/components/challenge-intro.tsx
-msgctxt "WPIaw8"
-msgid "You start at 0 in every score."
-msgstr "A gente começa em 0 em cada pontuação."
-
 #: ../../packages/player/src/components/completion-auth-branch.tsx
 msgctxt "9+Ddtu"
 msgid "Next"
@@ -185,10 +87,24 @@ msgid "Login"
 msgstr "Entrar"
 
 #: ../../packages/player/src/components/completion-auth-branch.tsx
+msgctxt "CC/yEt"
+msgid "All Activities"
+msgstr "Todas as Atividades"
+
+#: ../../packages/player/src/components/completion-auth-branch.tsx
 #: ../../packages/player/src/components/completion-milestone-actions.tsx
 msgctxt "e1M39C"
 msgid "Sign up to track your progress"
 msgstr "Cadastre-se para acompanhar seu progresso"
+
+#: ../../packages/player/src/components/completion-auth-branch.tsx
+#: src/app/generate/a/[id]/generation-client.tsx
+#: src/app/generate/ch/[id]/generation-client.tsx
+#: src/app/generate/cs/[id]/generation-client.tsx
+#: src/app/generate/l/[id]/generation-client.tsx
+msgctxt "FazwRl"
+msgid "Try again"
+msgstr "Tentar de novo"
 
 #: ../../packages/player/src/components/completion-milestone-actions.tsx
 msgctxt "DiIkZH"
@@ -244,31 +160,6 @@ msgctxt "t2VOpl"
 msgid "Chapter Complete"
 msgstr "Capítulo Concluído"
 
-#: ../../packages/player/src/components/dimension-header-status.tsx
-msgctxt "BX5BGP"
-msgid "All clear"
-msgstr "Tudo certo"
-
-#: ../../packages/player/src/components/dimension-header-status.tsx
-msgctxt "eI59HZ"
-msgid "Current scores"
-msgstr "Pontuações atuais"
-
-#: ../../packages/player/src/components/dimension-header-status.tsx
-msgctxt "Inhyu/"
-msgid "{count} in danger"
-msgstr "{count} em perigo"
-
-#: ../../packages/player/src/components/dimension-header-status.tsx
-msgctxt "KFC6d7"
-msgid "{count} at risk"
-msgstr "{count} em risco"
-
-#: ../../packages/player/src/components/dimension-header-status.tsx
-msgctxt "qymjuq"
-msgid "View scores"
-msgstr "Ver pontuações"
-
 #: ../../packages/player/src/components/feedback-answer-blocks.tsx
 msgctxt "3nOd8f"
 msgid "Your answer:"
@@ -280,34 +171,9 @@ msgid "Correct answer:"
 msgstr "Resposta correta:"
 
 #: ../../packages/player/src/components/feedback-screen.tsx
-msgctxt "eBxz+u"
-msgid "{name} is negative. You need to bring this back up or you will lose."
-msgstr "{name} está negativo. Você precisa aumentar isso ou vai perder."
-
-#: ../../packages/player/src/components/feedback-screen.tsx
 msgctxt "fpO9TK"
 msgid "Translate:"
 msgstr "Traduzir:"
-
-#: ../../packages/player/src/components/feedback-screen.tsx
-msgctxt "iaHymw"
-msgid "Outcome"
-msgstr "Resultado"
-
-#: ../../packages/player/src/components/feedback-screen.tsx
-msgctxt "IkQdu5"
-msgid "Close call."
-msgstr "Por pouco."
-
-#: ../../packages/player/src/components/feedback-screen.tsx
-msgctxt "ld7zgc"
-msgid "{name} is at zero. One more drop and you lose."
-msgstr "{name} está em zero. Mais uma queda e você perde."
-
-#: ../../packages/player/src/components/feedback-screen.tsx
-msgctxt "vhpTgv"
-msgid "Score changes"
-msgstr "Mudanças na pontuação"
 
 #: ../../packages/player/src/components/fill-blank-step.tsx
 msgctxt "FmmJ/j"
@@ -910,9 +776,9 @@ msgid "Online Courses using AI"
 msgstr "Cursos online usando IA"
 
 #: src/app/(catalog)/courses/page.tsx
-msgctxt "z6saPZ"
-msgid "Explore all Zoonk courses to learn anything using AI. Find interactive lessons, challenges, and activities to learn subjects like science, math, technology, and more."
-msgstr "Explore todos os cursos do Zoonk para aprender qualquer coisa usando IA. Encontre aulas interativas, desafios e atividades para aprender matérias como ciência, matemática, tecnologia e muito mais."
+msgctxt "q2GvDq"
+msgid "Explore all Zoonk courses to learn anything using AI. Find interactive lessons and activities to learn subjects like science, math, technology, and more."
+msgstr "Explore todos os cursos do Zoonk para aprender qualquer coisa usando IA. Encontre aulas e atividades interativas para aprender matérias como ciência, matemática, tecnologia e muito mais."
 
 #: src/app/(catalog)/learn/[prompt]/course-suggestion-item.tsx
 msgctxt "VzzYJk"
@@ -2648,11 +2514,6 @@ msgstr "Gramática"
 msgctxt "RtjVBh"
 msgid "Learn about {topic} through an interactive activity."
 msgstr "Aprenda sobre {topic} através de uma atividade interativa."
-
-#: src/lib/activities.ts
-msgctxt "T24ZU7"
-msgid "Apply your knowledge of {topic} through analytical decisions with real trade-offs."
-msgstr "Aplique seu conhecimento de {topic} através de decisões analíticas com trade-offs reais."
 
 #: src/lib/activities.ts
 msgctxt "THPcKi"

@@ -3,7 +3,7 @@ import { type ActivityKind, type StepKind, prisma } from "@zoonk/db";
 import { shuffle } from "@zoonk/utils/shuffle";
 
 const REVIEW_TARGET_COUNT = 10;
-const EXCLUDED_ACTIVITY_KINDS: ActivityKind[] = ["review", "challenge"];
+const EXCLUDED_ACTIVITY_KINDS: ActivityKind[] = ["review"];
 const NON_REVIEWABLE_STEP_KINDS: StepKind[] = ["static", "visual"];
 
 function reviewableStepFilter(lessonId: number) {
@@ -91,7 +91,7 @@ export async function getReviewSteps({
 /**
  * Fetches steps for validating a review activity submission.
  * Only returns steps that are eligible for review — excludes
- * steps from review/challenge activities and static steps.
+ * steps from review activities and static steps.
  */
 export async function getReviewValidationSteps(lessonId: number, stepIds: bigint[]) {
   return prisma.step.findMany({

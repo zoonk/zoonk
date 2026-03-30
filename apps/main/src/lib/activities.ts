@@ -4,7 +4,6 @@ import {
   BookTextIcon,
   BracesIcon,
   CircleHelpIcon,
-  FlameIcon,
   HeadphonesIcon,
   LanguagesIcon,
   LayersIcon,
@@ -22,7 +21,6 @@ export async function getActivityKinds(): Promise<{ key: ActivityKind; label: st
     { key: "explanation", label: t("Explanation") },
     { key: "quiz", label: t("Quiz") },
     { key: "practice", label: t("Practice") },
-    { key: "challenge", label: t("Challenge") },
     { key: "vocabulary", label: t("Vocabulary") },
     { key: "translation", label: t("Translation") },
     { key: "grammar", label: t("Grammar") },
@@ -36,10 +34,6 @@ async function getSeoDescription(kind: ActivityKind, topic: string): Promise<str
   const t = await getExtracted();
 
   const descriptions: Record<ActivityKind, string> = {
-    challenge: t(
-      "Apply your knowledge of {topic} through analytical decisions with real trade-offs.",
-      { topic },
-    ),
     custom: t("Learn about {topic} through an interactive activity.", { topic }),
     explanation: t(
       "Understand what {topic} is — core concepts and definitions explained with clear metaphors and analogies.",
@@ -117,7 +111,6 @@ async function getSeoActivityDescription(
 }
 
 const ACTIVITY_ICONS: Record<ActivityKind, LucideIcon> = {
-  challenge: FlameIcon,
   custom: SparklesIcon,
   explanation: BookOpenIcon,
   grammar: BracesIcon,

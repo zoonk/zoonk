@@ -333,34 +333,3 @@ export const PRACTICE_PHASE_ORDER: PhaseName[] = [
   "writingContent",
   "saving",
 ];
-
-// -- Challenge --------------------------------------------------------------
-
-type ChallengeSteps =
-  | "getLessonActivities"
-  | "getNeighboringConcepts"
-  | "setActivityAsRunning"
-  | "generateExplanationContent"
-  | "generateChallengeContent"
-  | "saveChallengeActivity";
-
-export const CHALLENGE_PHASE_STEPS = {
-  gettingStarted: ["getLessonActivities", "getNeighboringConcepts", "setActivityAsRunning"],
-  saving: ["saveChallengeActivity"],
-  writingContent: ["generateChallengeContent"],
-  writingExplanation: ["generateExplanationContent"],
-} as const satisfies Record<string, readonly ActivityStepName[]>;
-
-type _ValidateChallenge = AssertAllCovered<
-  Exclude<
-    ChallengeSteps,
-    (typeof CHALLENGE_PHASE_STEPS)[keyof typeof CHALLENGE_PHASE_STEPS][number]
-  >
->;
-
-export const CHALLENGE_PHASE_ORDER: PhaseName[] = [
-  "gettingStarted",
-  "writingExplanation",
-  "writingContent",
-  "saving",
-];

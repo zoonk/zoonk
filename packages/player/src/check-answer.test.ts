@@ -51,50 +51,6 @@ describe(checkMultipleChoiceAnswer, () => {
       });
     });
   });
-
-  describe("challenge kind", () => {
-    const content: MultipleChoiceStepContent = {
-      context: "You face a decision.",
-      kind: "challenge",
-      options: [
-        {
-          consequence: "Good outcome",
-          effects: [{ dimension: "Quality", impact: "positive" }],
-          text: "Option A",
-        },
-        {
-          consequence: "Bad outcome",
-          effects: [{ dimension: "Quality", impact: "negative" }],
-          text: "Option B",
-        },
-      ],
-      question: "What do you do?",
-    };
-
-    test("always returns correct with consequence as feedback", () => {
-      expect(checkMultipleChoiceAnswer(content, 0)).toEqual({
-        correctAnswer: null,
-        feedback: "Good outcome",
-        isCorrect: true,
-      });
-    });
-
-    test("returns correct for any valid index", () => {
-      expect(checkMultipleChoiceAnswer(content, 1)).toEqual({
-        correctAnswer: null,
-        feedback: "Bad outcome",
-        isCorrect: true,
-      });
-    });
-
-    test("returns incorrect with null feedback for out-of-bounds index", () => {
-      expect(checkMultipleChoiceAnswer(content, 10)).toEqual({
-        correctAnswer: null,
-        feedback: null,
-        isCorrect: false,
-      });
-    });
-  });
 });
 
 describe(checkFillBlankAnswer, () => {

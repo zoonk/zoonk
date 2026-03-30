@@ -17,7 +17,6 @@ describe(getReviewSteps, () => {
   let org: Awaited<ReturnType<typeof organizationFixture>>;
   let user: Awaited<ReturnType<typeof userFixture>>;
 
-  let challengeStepId: bigint;
   let reviewStepId: bigint;
   let unpublishedStepId: bigint;
 
@@ -101,31 +100,6 @@ describe(getReviewSteps, () => {
     });
 
     reviewStepId = reviewStep.id;
-
-    // Also create a challenge activity (its steps should be excluded)
-    const challengeActivity = await activityFixture({
-      generationStatus: "completed",
-      isPublished: true,
-      kind: "challenge",
-      language: "en",
-      lessonId: lesson.id,
-      organizationId: org.id,
-      position: 2,
-    });
-
-    const challengeStep = await stepFixture({
-      activityId: challengeActivity.id,
-      content: {
-        kind: "challenge",
-        options: [{ effects: [{ dimension: "speed", value: 1 }], text: "Option A" }],
-        question: "Challenge Q",
-      },
-      isPublished: true,
-      kind: "multipleChoice",
-      position: 0,
-    });
-
-    challengeStepId = challengeStep.id;
 
     // Also create an unpublished step (should be excluded)
     stepPromises.push(
@@ -390,16 +364,6 @@ describe(getReviewSteps, () => {
     expect(resultIds).not.toContain(reviewStepId);
   });
 
-  test("excludes challenge activity steps", async () => {
-    const result = await getReviewSteps({
-      lessonId: lesson.id,
-      userId: Number(user.id),
-    });
-
-    const resultIds = result.map((step) => step.id);
-    expect(resultIds).not.toContain(challengeStepId);
-  });
-
   test("excludes static steps", async () => {
     const result = await getReviewSteps({
       lessonId: lesson.id,
@@ -649,7 +613,6 @@ describe(getReviewValidationSteps, () => {
   let lesson: Awaited<ReturnType<typeof lessonFixture>>;
   let organizationId: number;
   let quizStep: Awaited<ReturnType<typeof stepFixture>>;
-  let challengeStep: Awaited<ReturnType<typeof stepFixture>>;
   let reviewStep: Awaited<ReturnType<typeof stepFixture>>;
   let staticStep: Awaited<ReturnType<typeof stepFixture>>;
 
@@ -668,21 +631,14 @@ describe(getReviewValidationSteps, () => {
       ],
     };
 
-    const [quizActivity, challengeActivity, reviewActivity] = await Promise.all([
+    const [quizActivity, reviewActivity] = await Promise.all([
       activityFixture({ kind: "quiz", lessonId: lesson.id, organizationId: org.id }),
-      activityFixture({ kind: "challenge", lessonId: lesson.id, organizationId: org.id }),
       activityFixture({ kind: "review", lessonId: lesson.id, organizationId: org.id }),
     ]);
 
-    [quizStep, challengeStep, reviewStep, staticStep] = await Promise.all([
+    [quizStep, reviewStep, staticStep] = await Promise.all([
       stepFixture({
         activityId: quizActivity.id,
-        content: mcContent,
-        isPublished: true,
-        kind: "multipleChoice",
-      }),
-      stepFixture({
-        activityId: challengeActivity.id,
         content: mcContent,
         isPublished: true,
         kind: "multipleChoice",
@@ -702,17 +658,12 @@ describe(getReviewValidationSteps, () => {
     ]);
   });
 
-  test("excludes steps from challenge and review activities", async () => {
-    const steps = await getReviewValidationSteps(lesson.id, [
-      quizStep.id,
-      challengeStep.id,
-      reviewStep.id,
-    ]);
+  test("excludes steps from review activities", async () => {
+    const steps = await getReviewValidationSteps(lesson.id, [quizStep.id, reviewStep.id]);
 
     const stepIds = steps.map((step) => step.id);
 
     expect(stepIds).toContain(quizStep.id);
-    expect(stepIds).not.toContain(challengeStep.id);
     expect(stepIds).not.toContain(reviewStep.id);
   });
 

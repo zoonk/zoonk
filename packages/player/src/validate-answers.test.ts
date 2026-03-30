@@ -9,24 +9,6 @@ const coreMultipleChoiceContent = {
   ],
 };
 
-const challengeMultipleChoiceContent = {
-  context: "A scenario",
-  kind: "challenge" as const,
-  options: [
-    {
-      consequence: "Good choice",
-      effects: [{ dimension: "Courage", impact: "positive" as const }],
-      text: "Option A",
-    },
-    {
-      consequence: "Bad choice",
-      effects: [{ dimension: "Diplomacy", impact: "negative" as const }],
-      text: "Option B",
-    },
-  ],
-  question: "What do you do?",
-};
-
 const fillBlankContent = {
   answers: ["cat"],
   distractors: ["dog"],
@@ -45,7 +27,6 @@ describe(validateAnswers, () => {
     expect(results).toHaveLength(1);
     expect(results[0]?.isCorrect).toBe(true);
     expect(results[0]?.stepId).toBe(1n);
-    expect(results[0]?.effects).toEqual([]);
   });
 
   test("validates incorrect multipleChoice answer", () => {
@@ -68,40 +49,6 @@ describe(validateAnswers, () => {
 
     expect(results).toHaveLength(1);
     expect(results[0]?.isCorrect).toBe(false);
-  });
-
-  test("challenge multipleChoice returns effects", () => {
-    const steps = [{ content: challengeMultipleChoiceContent, id: 3n, kind: "multipleChoice" }];
-
-    const results = validateAnswers(steps, {
-      "3": { kind: "multipleChoice", selectedIndex: 0, selectedText: "Option A" },
-    });
-
-    expect(results).toHaveLength(1);
-    expect(results[0]?.effects).toEqual([{ dimension: "Courage", impact: "positive" }]);
-  });
-
-  test("challenge multipleChoice resolves correct option by text when index is shuffled", () => {
-    const steps = [{ content: challengeMultipleChoiceContent, id: 3n, kind: "multipleChoice" }];
-
-    const results = validateAnswers(steps, {
-      "3": { kind: "multipleChoice", selectedIndex: 0, selectedText: "Option B" },
-    });
-
-    expect(results).toHaveLength(1);
-    expect(results[0]?.effects).toEqual([{ dimension: "Diplomacy", impact: "negative" }]);
-  });
-
-  test("unmatched selectedText returns incorrect with no effects", () => {
-    const steps = [{ content: challengeMultipleChoiceContent, id: 3n, kind: "multipleChoice" }];
-
-    const results = validateAnswers(steps, {
-      "3": { kind: "multipleChoice", selectedIndex: 0, selectedText: "Nonexistent" },
-    });
-
-    expect(results).toHaveLength(1);
-    expect(results[0]?.isCorrect).toBe(false);
-    expect(results[0]?.effects).toEqual([]);
   });
 
   test("skips steps with no client answer", () => {

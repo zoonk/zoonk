@@ -69,7 +69,6 @@ export const ACTIVITY_STEPS = [
   "setActivityAsRunning",
 
   // Content generation (pure data producers — no DB writes)
-  "generateChallengeContent",
   "generateCustomContent",
   "generateExplanationContent",
   "generateQuizContent",
@@ -101,7 +100,6 @@ export const ACTIVITY_STEPS = [
   "saveReadingActivity",
   "saveQuizActivity",
   "savePracticeActivity",
-  "saveChallengeActivity",
   "saveExplanationActivity",
   "saveCustomActivity",
   "saveGrammarActivity",
@@ -115,7 +113,6 @@ export type ActivityStepName = (typeof ACTIVITY_STEPS)[number];
 
 type ActivityCompletionStep = Extract<
   ActivityStepName,
-  | "saveChallengeActivity"
   | "saveCustomActivity"
   | "saveExplanationActivity"
   | "saveGrammarActivity"
@@ -127,7 +124,6 @@ type ActivityCompletionStep = Extract<
 >;
 
 const activityCompletionSteps: Partial<Record<string, ActivityCompletionStep>> = {
-  challenge: "saveChallengeActivity",
   custom: "saveCustomActivity",
   explanation: "saveExplanationActivity",
   grammar: "saveGrammarActivity",

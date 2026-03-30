@@ -13,18 +13,15 @@ function formatEnergyDelta(delta: number): string {
 export function RewardBadges({
   brainPower,
   energyDelta,
-  isChallenge,
 }: {
   brainPower: number;
   energyDelta: number;
-  isChallenge: boolean;
 }) {
   const t = useExtracted();
-  const isHighBp = isChallenge && brainPower >= 100;
 
   return (
     <div className="animate-badge-land flex gap-2 motion-reduce:animate-none">
-      <Badge variant={isHighBp ? "default" : "secondary"}>
+      <Badge variant="secondary">
         <BrainIcon data-icon="inline-start" />
         <span>+{brainPower}</span> {t("BP")}
       </Badge>

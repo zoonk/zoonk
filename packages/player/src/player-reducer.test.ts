@@ -59,9 +59,7 @@ function buildState(overrides: Partial<PlayerState> = {}): PlayerState {
     activityId: "activity-1",
     completion: null,
     currentStepIndex: 0,
-    dimensions: {},
     phase: "playing",
-    previousDimensions: {},
     results: {},
     selectedAnswers: {},
     startedAt: 1000,
@@ -79,44 +77,12 @@ const multipleChoiceAnswer: SelectedAnswer = {
   selectedText: "Option A",
 };
 
-const challengeContent = {
-  context: "A scenario",
-  kind: "challenge" as const,
-  options: [
-    {
-      consequence: "Good",
-      effects: [{ dimension: "Courage", impact: "positive" as const }],
-      text: "A",
-    },
-    {
-      consequence: "Bad",
-      effects: [{ dimension: "Diplomacy", impact: "negative" as const }],
-      text: "B",
-    },
-  ],
-  question: "What do you do?",
-};
-
-function buildChallengeActivity(): SerializedActivity {
-  return buildActivity({
-    steps: [
-      buildStep({ content: challengeContent, id: "c1", kind: "multipleChoice" }),
-      buildStep({ content: challengeContent, id: "c2", kind: "multipleChoice", position: 1 }),
-    ],
-  });
-}
-
 describe(createInitialState, () => {
-  test("sets phase to playing and index to 0 for non-challenge", () => {
+  test("sets phase to playing and index to 0", () => {
     const activity = buildActivity();
     const state = createInitialState({ activity, totalBrainPower: 0 });
     expect(state.phase).toBe("playing");
     expect(state.currentStepIndex).toBe(0);
-  });
-
-  test("sets phase to intro for challenge activity", () => {
-    const state = createInitialState({ activity: buildChallengeActivity(), totalBrainPower: 0 });
-    expect(state.phase).toBe("intro");
   });
 
   test("copies activityId and steps", () => {
@@ -127,16 +93,10 @@ describe(createInitialState, () => {
     expect(state.steps).toEqual(steps);
   });
 
-  test("initializes empty maps for non-challenge activity", () => {
+  test("initializes empty maps", () => {
     const state = createInitialState({ activity: buildActivity(), totalBrainPower: 0 });
     expect(state.selectedAnswers).toEqual({});
     expect(state.results).toEqual({});
-    expect(state.dimensions).toEqual({});
-  });
-
-  test("collects all dimensions from challenge steps at init", () => {
-    const state = createInitialState({ activity: buildChallengeActivity(), totalBrainPower: 0 });
-    expect(state.dimensions).toEqual({ Courage: 0, Diplomacy: 0 });
   });
 
   test("stores totalBrainPower from input", () => {
@@ -161,32 +121,6 @@ describe(createInitialState, () => {
     ];
     const state = createInitialState({ activity: buildActivity({ steps }), totalBrainPower: 0 });
     expect(state.selectedAnswers).toEqual({});
-  });
-});
-
-describe("START_CHALLENGE", () => {
-  test("transitions from intro to playing", () => {
-    const state = buildState({ phase: "intro" });
-    const next = playerReducer(state, { type: "START_CHALLENGE" });
-    expect(next.phase).toBe("playing");
-  });
-
-  test("no-ops in playing phase", () => {
-    const state = buildState({ phase: "playing" });
-    const next = playerReducer(state, { type: "START_CHALLENGE" });
-    expect(next).toBe(state);
-  });
-
-  test("no-ops in feedback phase", () => {
-    const state = buildState({ phase: "feedback" });
-    const next = playerReducer(state, { type: "START_CHALLENGE" });
-    expect(next).toBe(state);
-  });
-
-  test("no-ops in completed phase", () => {
-    const state = buildState({ phase: "completed" });
-    const next = playerReducer(state, { type: "START_CHALLENGE" });
-    expect(next).toBe(state);
   });
 });
 
@@ -232,7 +166,6 @@ describe("CHECK_ANSWER", () => {
     const step = buildMultipleChoiceStep({ id: "mc-1" });
     const state = buildState({ steps: [step] });
     const next = playerReducer(state, {
-      effects: [],
       result: { correctAnswer: null, feedback: "Correct!", isCorrect: true },
       stepId: "mc-1",
       type: "CHECK_ANSWER",
@@ -240,7 +173,6 @@ describe("CHECK_ANSWER", () => {
     expect(next.phase).toBe("feedback");
     expect(next.results["mc-1"]).toEqual({
       answer: undefined,
-      effects: [],
       result: { correctAnswer: null, feedback: "Correct!", isCorrect: true },
       stepId: "mc-1",
     });
@@ -253,68 +185,11 @@ describe("CHECK_ANSWER", () => {
       steps: [step],
     });
     const next = playerReducer(state, {
-      effects: [],
       result: { correctAnswer: null, feedback: "Correct!", isCorrect: true },
       stepId: "mc-1",
       type: "CHECK_ANSWER",
     });
     expect(next.results["mc-1"]?.answer).toEqual(multipleChoiceAnswer);
-  });
-
-  test("applies positive effect to dimensions", () => {
-    const state = buildState();
-    const next = playerReducer(state, {
-      effects: [{ dimension: "Quality", impact: "positive" }],
-      result: { correctAnswer: null, feedback: null, isCorrect: true },
-      stepId: "step-1",
-      type: "CHECK_ANSWER",
-    });
-    expect(next.dimensions).toEqual({ Quality: 1 });
-  });
-
-  test("applies negative effect to dimensions", () => {
-    const state = buildState();
-    const next = playerReducer(state, {
-      effects: [{ dimension: "Quality", impact: "negative" }],
-      result: { correctAnswer: null, feedback: null, isCorrect: true },
-      stepId: "step-1",
-      type: "CHECK_ANSWER",
-    });
-    expect(next.dimensions).toEqual({ Quality: -1 });
-  });
-
-  test("applies neutral effect (zero change)", () => {
-    const state = buildState();
-    const next = playerReducer(state, {
-      effects: [{ dimension: "Quality", impact: "neutral" }],
-      result: { correctAnswer: null, feedback: null, isCorrect: true },
-      stepId: "step-1",
-      type: "CHECK_ANSWER",
-    });
-    expect(next.dimensions).toEqual({ Quality: 0 });
-  });
-
-  test("accumulates effects on same dimension across multiple calls", () => {
-    const steps = [
-      buildMultipleChoiceStep({ id: "s1" }),
-      buildMultipleChoiceStep({ id: "s2", position: 1 }),
-    ];
-    let state = buildState({ steps });
-    state = playerReducer(state, {
-      effects: [{ dimension: "Quality", impact: "positive" }],
-      result: { correctAnswer: null, feedback: null, isCorrect: true },
-      stepId: "s1",
-      type: "CHECK_ANSWER",
-    });
-    // Simulate continue + next step
-    state = { ...state, currentStepIndex: 1, phase: "playing" };
-    state = playerReducer(state, {
-      effects: [{ dimension: "Quality", impact: "positive" }],
-      result: { correctAnswer: null, feedback: null, isCorrect: true },
-      stepId: "s2",
-      type: "CHECK_ANSWER",
-    });
-    expect(state.dimensions).toEqual({ Quality: 2 });
   });
 
   describe("matchColumns auto-advance", () => {
@@ -325,7 +200,6 @@ describe("CHECK_ANSWER", () => {
       ];
       const state = buildState({ steps });
       const next = playerReducer(state, {
-        effects: [],
         result: { correctAnswer: null, feedback: null, isCorrect: true },
         stepId: "mc-1",
         type: "CHECK_ANSWER",
@@ -334,7 +208,6 @@ describe("CHECK_ANSWER", () => {
       expect(next.currentStepIndex).toBe(1);
       expect(next.results["mc-1"]).toEqual({
         answer: undefined,
-        effects: [],
         result: { correctAnswer: null, feedback: null, isCorrect: true },
         stepId: "mc-1",
       });
@@ -344,7 +217,6 @@ describe("CHECK_ANSWER", () => {
       const steps = [buildStep({ id: "mc-1", kind: "matchColumns", position: 0 })];
       const state = buildState({ steps });
       const next = playerReducer(state, {
-        effects: [],
         result: { correctAnswer: null, feedback: null, isCorrect: true },
         stepId: "mc-1",
         type: "CHECK_ANSWER",
@@ -352,7 +224,6 @@ describe("CHECK_ANSWER", () => {
       expect(next.phase).toBe("completed");
       expect(next.results["mc-1"]).toEqual({
         answer: undefined,
-        effects: [],
         result: { correctAnswer: null, feedback: null, isCorrect: true },
         stepId: "mc-1",
       });
@@ -369,7 +240,6 @@ describe("CHECK_ANSWER", () => {
       vi.setSystemTime(new Date("2026-03-15T14:30:07"));
 
       const next = playerReducer(state, {
-        effects: [],
         result: { correctAnswer: null, feedback: null, isCorrect: true },
         stepId: "mc-1",
         type: "CHECK_ANSWER",
@@ -390,7 +260,6 @@ describe("CHECK_ANSWER", () => {
   test("no-ops in feedback phase", () => {
     const state = buildState({ phase: "feedback" });
     const next = playerReducer(state, {
-      effects: [],
       result: { correctAnswer: null, feedback: null, isCorrect: true },
       stepId: "step-1",
       type: "CHECK_ANSWER",
@@ -401,7 +270,6 @@ describe("CHECK_ANSWER", () => {
   test("no-ops in completed phase", () => {
     const state = buildState({ phase: "completed" });
     const next = playerReducer(state, {
-      effects: [],
       result: { correctAnswer: null, feedback: null, isCorrect: true },
       stepId: "step-1",
       type: "CHECK_ANSWER",
@@ -535,7 +403,6 @@ describe("local completion computation", () => {
       results: {
         "step-1": {
           answer: multipleChoiceAnswer,
-          effects: [],
           result: { correctAnswer: null, feedback: "Yes", isCorrect: true },
           stepId: "step-1",
         },
@@ -563,51 +430,6 @@ describe("local completion computation", () => {
     expect(next.completion).not.toBeNull();
     expect(next.completion?.brainPower).toBe(10);
     expect(next.completion?.newTotalBp).toBe(60);
-  });
-
-  test("computes challenge completion with 100 BP for successful challenge", () => {
-    const state = buildState({
-      currentStepIndex: 0,
-      dimensions: { Courage: 2 },
-      phase: "feedback",
-      results: {
-        "step-1": {
-          answer: multipleChoiceAnswer,
-          effects: [{ dimension: "Courage", impact: "positive" }],
-          result: { correctAnswer: null, feedback: null, isCorrect: true },
-          stepId: "step-1",
-        },
-      },
-      steps: [buildMultipleChoiceStep()],
-      totalBrainPower: 0,
-    });
-
-    const next = playerReducer(state, { type: "CONTINUE" });
-
-    expect(next.completion?.brainPower).toBe(100);
-    expect(next.completion?.newTotalBp).toBe(100);
-  });
-
-  test("computes challenge completion with 10 BP for failed challenge", () => {
-    const state = buildState({
-      currentStepIndex: 0,
-      dimensions: { Courage: -1 },
-      phase: "feedback",
-      results: {
-        "step-1": {
-          answer: multipleChoiceAnswer,
-          effects: [{ dimension: "Courage", impact: "negative" }],
-          result: { correctAnswer: null, feedback: null, isCorrect: false },
-          stepId: "step-1",
-        },
-      },
-      steps: [buildMultipleChoiceStep()],
-      totalBrainPower: 0,
-    });
-
-    const next = playerReducer(state, { type: "CONTINUE" });
-
-    expect(next.completion?.brainPower).toBe(10);
   });
 
   test("resets completion to null on RESTART", () => {
@@ -646,7 +468,6 @@ describe("RESTART", () => {
       results: {
         s1: {
           answer: multipleChoiceAnswer,
-          effects: [],
           result: { correctAnswer: null, feedback: null, isCorrect: true },
           stepId: "s1",
         },
@@ -660,15 +481,13 @@ describe("RESTART", () => {
     expect(next.currentStepIndex).toBe(0);
   });
 
-  test("clears results, selectedAnswers, and dimensions", () => {
+  test("clears results and selectedAnswers", () => {
     const steps = [buildMultipleChoiceStep({ id: "s1" })];
     const state = buildState({
-      dimensions: { Quality: 2 },
       phase: "completed",
       results: {
         s1: {
           answer: multipleChoiceAnswer,
-          effects: [{ dimension: "Quality", impact: "positive" }],
           result: { correctAnswer: null, feedback: null, isCorrect: true },
           stepId: "s1",
         },
@@ -680,7 +499,6 @@ describe("RESTART", () => {
     const next = playerReducer(state, { type: "RESTART" });
     expect(next.results).toEqual({});
     expect(next.selectedAnswers).toEqual({});
-    expect(next.dimensions).toEqual({});
   });
 
   test("preserves activityId and steps", () => {
@@ -715,21 +533,6 @@ describe("RESTART", () => {
       userOrder: sortItems,
     });
     expect(next.selectedAnswers["mc-1"]).toBeUndefined();
-  });
-
-  test("resets to playing (not intro) for challenge activities", () => {
-    const steps = [
-      buildStep({ content: challengeContent, id: "c1", kind: "multipleChoice" }),
-      buildStep({ content: challengeContent, id: "c2", kind: "multipleChoice", position: 1 }),
-    ];
-    const state = buildState({
-      dimensions: { Courage: 2, Diplomacy: -1 },
-      phase: "completed",
-      steps,
-    });
-
-    const next = playerReducer(state, { type: "RESTART" });
-    expect(next.phase).toBe("playing");
   });
 });
 
@@ -790,7 +593,6 @@ describe("timing", () => {
 
     vi.setSystemTime(new Date("2026-03-15T14:30:05"));
     const next = playerReducer(state, {
-      effects: [],
       result: { correctAnswer: null, feedback: "Correct!", isCorrect: true },
       stepId: "mc-1",
       type: "CHECK_ANSWER",
@@ -890,21 +692,6 @@ describe("edge cases", () => {
     expect(state.phase).toBe("completed");
   });
 
-  test("CHECK_ANSWER with multiple effects on different dimensions", () => {
-    const state = buildState();
-    const next = playerReducer(state, {
-      effects: [
-        { dimension: "Quality", impact: "positive" },
-        { dimension: "Speed", impact: "negative" },
-        { dimension: "Budget", impact: "neutral" },
-      ],
-      result: { correctAnswer: null, feedback: null, isCorrect: true },
-      stepId: "step-1",
-      type: "CHECK_ANSWER",
-    });
-    expect(next.dimensions).toEqual({ Budget: 0, Quality: 1, Speed: -1 });
-  });
-
   test("results include the stored StepResult structure", () => {
     const step = buildMultipleChoiceStep({ id: "mc-1" });
     const answer: SelectedAnswer = {
@@ -914,14 +701,12 @@ describe("edge cases", () => {
     };
     const state = buildState({ selectedAnswers: { "mc-1": answer }, steps: [step] });
     const next = playerReducer(state, {
-      effects: [{ dimension: "Quality", impact: "positive" }],
       result: { correctAnswer: null, feedback: "Good!", isCorrect: true },
       stepId: "mc-1",
       type: "CHECK_ANSWER",
     });
     const expected: StepResult = {
       answer,
-      effects: [{ dimension: "Quality", impact: "positive" }],
       result: { correctAnswer: null, feedback: "Good!", isCorrect: true },
       stepId: "mc-1",
     };

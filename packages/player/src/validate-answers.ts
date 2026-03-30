@@ -1,5 +1,4 @@
 import {
-  type ChallengeEffect,
   type SupportedStepKind,
   isSupportedStepKind,
   parseStepContent,
@@ -45,7 +44,6 @@ type StepData = {
 
 type ValidatedStepResult = {
   answer: object;
-  effects: ChallengeEffect[];
   isCorrect: boolean;
   stepId: bigint;
 };
@@ -62,13 +60,12 @@ function validateMultipleChoice(
   const index = content.options.findIndex((option) => option.text === answer.selectedText);
 
   if (index === -1) {
-    return { answer, effects: [], isCorrect: false, stepId: step.id };
+    return { answer, isCorrect: false, stepId: step.id };
   }
 
   const result = checkMultipleChoiceAnswer(content, index);
-  const effects = content.kind === "challenge" ? (content.options[index]?.effects ?? []) : [];
 
-  return { answer, effects, isCorrect: result.isCorrect, stepId: step.id };
+  return { answer, isCorrect: result.isCorrect, stepId: step.id };
 }
 
 function validateFillBlank(step: StepData, answer: SelectedAnswer): ValidatedStepResult | null {
@@ -78,7 +75,7 @@ function validateFillBlank(step: StepData, answer: SelectedAnswer): ValidatedSte
 
   const content = parseStepContent("fillBlank", step.content);
   const result = checkFillBlankAnswer(content, answer.userAnswers);
-  return { answer, effects: [], isCorrect: result.isCorrect, stepId: step.id };
+  return { answer, isCorrect: result.isCorrect, stepId: step.id };
 }
 
 function validateMatchColumns(step: StepData, answer: SelectedAnswer): ValidatedStepResult | null {
@@ -88,7 +85,7 @@ function validateMatchColumns(step: StepData, answer: SelectedAnswer): Validated
 
   const content = parseStepContent("matchColumns", step.content);
   const result = checkMatchColumnsAnswer(content, answer.userPairs, answer.mistakes);
-  return { answer, effects: [], isCorrect: result.isCorrect, stepId: step.id };
+  return { answer, isCorrect: result.isCorrect, stepId: step.id };
 }
 
 function validateSortOrder(step: StepData, answer: SelectedAnswer): ValidatedStepResult | null {
@@ -98,7 +95,7 @@ function validateSortOrder(step: StepData, answer: SelectedAnswer): ValidatedSte
 
   const content = parseStepContent("sortOrder", step.content);
   const result = checkSortOrderAnswer(content, answer.userOrder);
-  return { answer, effects: [], isCorrect: result.isCorrect, stepId: step.id };
+  return { answer, isCorrect: result.isCorrect, stepId: step.id };
 }
 
 function validateSelectImage(step: StepData, answer: SelectedAnswer): ValidatedStepResult | null {
@@ -108,7 +105,7 @@ function validateSelectImage(step: StepData, answer: SelectedAnswer): ValidatedS
 
   const content = parseStepContent("selectImage", step.content);
   const result = checkSelectImageAnswer(content, answer.selectedIndex);
-  return { answer, effects: [], isCorrect: result.isCorrect, stepId: step.id };
+  return { answer, isCorrect: result.isCorrect, stepId: step.id };
 }
 
 function validateTranslation(step: StepData, answer: SelectedAnswer): ValidatedStepResult | null {
@@ -121,7 +118,7 @@ function validateTranslation(step: StepData, answer: SelectedAnswer): ValidatedS
   }
 
   const result = checkTranslationAnswer(String(step.word.id), answer.selectedWordId);
-  return { answer, effects: [], isCorrect: result.isCorrect, stepId: step.id };
+  return { answer, isCorrect: result.isCorrect, stepId: step.id };
 }
 
 function validateReading(step: StepData, answer: SelectedAnswer): ValidatedStepResult | null {
@@ -135,7 +132,7 @@ function validateReading(step: StepData, answer: SelectedAnswer): ValidatedStepR
 
   const acceptedWordSequences = buildAcceptedArrangeWordSequences(step.sentence.sentence, []);
   const result = checkArrangeWordsAnswer(acceptedWordSequences, answer.arrangedWords);
-  return { answer, effects: [], isCorrect: result.isCorrect, stepId: step.id };
+  return { answer, isCorrect: result.isCorrect, stepId: step.id };
 }
 
 function validateListening(step: StepData, answer: SelectedAnswer): ValidatedStepResult | null {
@@ -149,7 +146,7 @@ function validateListening(step: StepData, answer: SelectedAnswer): ValidatedSte
 
   const acceptedWordSequences = buildAcceptedArrangeWordSequences(step.sentence.translation, []);
   const result = checkArrangeWordsAnswer(acceptedWordSequences, answer.arrangedWords);
-  return { answer, effects: [], isCorrect: result.isCorrect, stepId: step.id };
+  return { answer, isCorrect: result.isCorrect, stepId: step.id };
 }
 
 const validators: Record<

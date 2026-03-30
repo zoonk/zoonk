@@ -60,16 +60,8 @@ async function createTestLessonWithActivities() {
     position: 2,
   });
 
-  const challenge = await activityFixture({
-    isPublished: true,
-    kind: "challenge",
-    lessonId: lesson.id,
-    organizationId: org.id,
-    position: 3,
-  });
-
   return {
-    activities: { challenge, explanation, practice, quiz },
+    activities: { explanation, practice, quiz },
     chapter,
     course,
     lesson,
@@ -197,7 +189,6 @@ test.describe("Lesson Detail Page", () => {
     await expect(activityList.getByRole("link", { name: /practice/i })).toBeVisible();
     await expect(activityList.getByRole("link", { name: /explanation/i })).toBeVisible();
     await expect(activityList.getByRole("link", { name: /quiz/i })).toBeVisible();
-    await expect(activityList.getByRole("link", { name: /challenge/i })).toBeVisible();
   });
 
   test("displays custom activity numbers from zero-based positions", async ({ page }) => {
@@ -267,7 +258,7 @@ test.describe("Lesson Detail Page", () => {
 
     const activityList = page.getByRole("list", { name: /activities/i });
     const notCompletedIndicators = activityList.getByRole("img", { name: /not completed/i });
-    await expect(notCompletedIndicators).toHaveCount(4);
+    await expect(notCompletedIndicators).toHaveCount(3);
   });
 
   test("shows completed indicators for activities with progress", async ({
@@ -295,12 +286,6 @@ test.describe("Lesson Detail Page", () => {
         durationSeconds: 60,
         userId: withProgressUser.id,
       }),
-      activityProgressFixture({
-        activityId: activities.challenge.id,
-        completedAt: new Date(),
-        durationSeconds: 60,
-        userId: withProgressUser.id,
-      }),
     ]);
 
     await authenticatedPage.goto(
@@ -309,7 +294,7 @@ test.describe("Lesson Detail Page", () => {
 
     const activityList = authenticatedPage.getByRole("list", { name: /activities/i });
     const completedIndicators = activityList.getByRole("img", { name: /^completed$/i });
-    await expect(completedIndicators).toHaveCount(4);
+    await expect(completedIndicators).toHaveCount(3);
   });
 
   test("shows mix of completed and not-completed indicators", async ({
@@ -341,6 +326,6 @@ test.describe("Lesson Detail Page", () => {
     const completedIndicators = activityList.getByRole("img", { name: /^completed$/i });
     const notCompletedIndicators = activityList.getByRole("img", { name: /not completed/i });
     await expect(completedIndicators).toHaveCount(2);
-    await expect(notCompletedIndicators).toHaveCount(2);
+    await expect(notCompletedIndicators).toHaveCount(1);
   });
 });

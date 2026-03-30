@@ -1,7 +1,6 @@
 "use client";
 
 import {
-  type ChallengeMultipleChoiceContent,
   type CoreMultipleChoiceContent,
   parseStepContent,
 } from "@zoonk/core/steps/content-contract";
@@ -76,29 +75,6 @@ function CoreVariant({
   );
 }
 
-function ChallengeVariant({
-  content,
-  onSelect,
-  selectedIndex,
-}: {
-  content: ChallengeMultipleChoiceContent;
-  onSelect: (index: number) => void;
-  selectedIndex: number | null;
-}) {
-  const replaceName = useReplaceName();
-
-  return (
-    <>
-      <StepTextGroup>
-        <ContextText>{replaceName(content.context)}</ContextText>
-        <QuestionText>{replaceName(content.question)}</QuestionText>
-      </StepTextGroup>
-
-      <OptionList onSelect={onSelect} options={content.options} selectedIndex={selectedIndex} />
-    </>
-  );
-}
-
 export function MultipleChoiceStep({
   onSelectAnswer,
   selectedAnswer,
@@ -124,13 +100,7 @@ export function MultipleChoiceStep({
 
   return (
     <InteractiveStepLayout>
-      {content.kind === "challenge" && (
-        <ChallengeVariant content={content} onSelect={handleSelect} selectedIndex={selectedIndex} />
-      )}
-
-      {content.kind === "core" && (
-        <CoreVariant content={content} onSelect={handleSelect} selectedIndex={selectedIndex} />
-      )}
+      <CoreVariant content={content} onSelect={handleSelect} selectedIndex={selectedIndex} />
     </InteractiveStepLayout>
   );
 }

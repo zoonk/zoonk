@@ -17,7 +17,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
   return {
     description: t(
-      "Explore all Zoonk courses to learn anything using AI. Find interactive lessons, challenges, and activities to learn subjects like science, math, technology, and more.",
+      "Explore all Zoonk courses to learn anything using AI. Find interactive lessons and activities to learn subjects like science, math, technology, and more.",
     ),
     title: t("Online Courses using AI"),
   };

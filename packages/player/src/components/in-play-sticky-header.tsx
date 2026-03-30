@@ -1,24 +1,16 @@
 "use client";
 
 import { type PlayerRoute } from "../player-context";
-import { type DimensionInventory } from "../player-reducer";
-import { DimensionHeaderStatus } from "./dimension-header-status";
 import { PlayerCloseLink, PlayerHeader, PlayerStepFraction } from "./player-header";
 import { PlayerProgressBar } from "./player-progress-bar";
 
 export function InPlayStickyHeader({
-  changedDimensions,
   currentStepIndex,
-  dimensions,
-  hasDimensions,
   lessonHref,
   progressValue,
   totalSteps,
 }: {
-  changedDimensions: Set<string>;
   currentStepIndex: number;
-  dimensions: DimensionInventory;
-  hasDimensions: boolean;
   lessonHref: PlayerRoute;
   progressValue: number;
   totalSteps: number;
@@ -30,16 +22,9 @@ export function InPlayStickyHeader({
 
         <div className="pointer-events-none absolute inset-x-0 flex justify-center">
           <div className="pointer-events-auto">
-            {hasDimensions ? (
-              <DimensionHeaderStatus
-                changedDimensions={changedDimensions}
-                dimensions={dimensions}
-              />
-            ) : (
-              <PlayerStepFraction>
-                {currentStepIndex + 1} / {totalSteps}
-              </PlayerStepFraction>
-            )}
+            <PlayerStepFraction>
+              {currentStepIndex + 1} / {totalSteps}
+            </PlayerStepFraction>
           </div>
         </div>
       </PlayerHeader>

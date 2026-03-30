@@ -5,7 +5,6 @@
   "exports": {
     "./check-answer": "./src/check-answer.ts",
     "./completion-input-schema": "./src/completion-input-schema.ts",
-    "./dimensions": "./src/dimensions.ts",
     "./compute-score": "./src/compute-score.ts",
     "./prepare-activity-data": "./src/prepare-activity-data.ts",
     "./provider": "./src/player-provider.tsx",
