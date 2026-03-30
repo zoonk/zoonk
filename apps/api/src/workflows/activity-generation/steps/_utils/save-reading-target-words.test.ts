@@ -61,7 +61,7 @@ describe(saveReadingTargetWords, () => {
       lessonId: lesson.id,
       organizationId: organization.id,
       pronunciations: {},
-      sentences: [{ explanation: null, sentence: "... !!!", translation: "" }],
+      sentences: [{ explanation: "test explanation", sentence: "... !!!", translation: "" }],
       targetLanguage: "de",
       userLanguage: "en",
       wordAudioUrls: {},
@@ -185,7 +185,7 @@ describe(saveReadingTargetWords, () => {
       pronunciations: {},
       sentences: [
         {
-          explanation: null,
+          explanation: "test explanation",
           sentence: `${translatedWord} ${untranslatedWord}`,
           translation: "pretty cat",
         },
@@ -219,7 +219,7 @@ describe(saveReadingTargetWords, () => {
       pronunciations: {
         [canonicalWord]: `${canonicalWord}-pron`,
       },
-      sentences: [{ explanation: null, sentence: canonicalWord, translation: "cat" }],
+      sentences: [{ explanation: "test explanation", sentence: canonicalWord, translation: "cat" }],
       targetLanguage: "de",
       userLanguage: "en",
       wordAudioUrls: {
@@ -287,7 +287,9 @@ describe(saveReadingTargetWords, () => {
       lessonId: lesson.id,
       organizationId: organization.id,
       pronunciations: {},
-      sentences: [{ explanation: null, sentence: canonicalWord, translation: "hello" }],
+      sentences: [
+        { explanation: "test explanation", sentence: canonicalWord, translation: "hello" },
+      ],
       targetLanguage: "de",
       userLanguage: "en",
       wordAudioUrls: {},
@@ -360,7 +362,7 @@ describe(saveReadingTargetWords, () => {
       pronunciations: {
         [lowercaseWord]: `${lowercaseWord}-pron`,
       },
-      sentences: [{ explanation: null, sentence: lowercaseWord, translation: "cat" }],
+      sentences: [{ explanation: "test explanation", sentence: lowercaseWord, translation: "cat" }],
       targetLanguage: "de",
       userLanguage: "en",
       wordAudioUrls: {},
@@ -415,7 +417,9 @@ describe(saveReadingTargetWords, () => {
       pronunciations: {
         [lowercaseDistractor]: `${lowercaseDistractor}-pron`,
       },
-      sentences: [{ explanation: null, sentence: canonicalWord, translation: "hello" }],
+      sentences: [
+        { explanation: "test explanation", sentence: canonicalWord, translation: "hello" },
+      ],
       targetLanguage: "de",
       userLanguage: "en",
       wordAudioUrls: {},
@@ -481,7 +485,9 @@ describe(saveReadingTargetWords, () => {
       lessonId: lesson.id,
       organizationId: organization.id,
       pronunciations: {},
-      sentences: [{ explanation: null, sentence: canonicalWord, translation: "hello" }],
+      sentences: [
+        { explanation: "test explanation", sentence: canonicalWord, translation: "hello" },
+      ],
       targetLanguage: "de",
       userLanguage: "en",
       wordAudioUrls: {},

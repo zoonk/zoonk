@@ -12,7 +12,7 @@ const FALLBACK_MODELS = ["google/gemini-3.1-pro-preview", "anthropic/claude-opus
 const schema = z.object({
   sentences: z.array(
     z.object({
-      explanation: z.string().nullable(),
+      explanation: z.string(),
       sentence: z.string(),
       translation: z.string(),
     }),

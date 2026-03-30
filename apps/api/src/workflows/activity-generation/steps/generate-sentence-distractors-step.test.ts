@@ -70,7 +70,11 @@ describe(generateSentenceDistractorsStep, () => {
     const id = randomUUID().slice(0, 8);
 
     const sentences = [
-      { explanation: null, sentence: `Guten Morgen ${id}`, translation: `Good morning ${id}` },
+      {
+        explanation: "test explanation",
+        sentence: `Guten Morgen ${id}`,
+        translation: `Good morning ${id}`,
+      },
     ];
 
     const result = await generateSentenceDistractorsStep(activities, sentences);
@@ -115,7 +119,7 @@ describe(generateSentenceDistractorsStep, () => {
     const activities = await fetchLessonActivities(lesson.id);
 
     const result = await generateSentenceDistractorsStep(activities, [
-      { explanation: null, sentence: "test", translation: "test" },
+      { explanation: "test explanation", sentence: "test", translation: "test" },
     ]);
 
     expect(result).toEqual({ distractors: {}, translationDistractors: {} });
@@ -143,7 +147,11 @@ describe(generateSentenceDistractorsStep, () => {
     const id = randomUUID().slice(0, 8);
 
     const sentences = [
-      { explanation: null, sentence: `Guten Morgen ${id}`, translation: `Good morning ${id}` },
+      {
+        explanation: "test explanation",
+        sentence: `Guten Morgen ${id}`,
+        translation: `Good morning ${id}`,
+      },
     ];
 
     // oxlint-disable-next-line typescript/no-unsafe-type-assertion -- test mock doesn't need full AI SDK return shape

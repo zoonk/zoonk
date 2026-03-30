@@ -13,7 +13,7 @@ vi.mock("../steps/generate-reading-content-step", () => ({
   generateReadingContentStep: vi.fn().mockResolvedValue({
     sentences: [
       {
-        explanation: null,
+        explanation: "test explanation",
         sentence: "Guten Morgen, Lara.",
         translation: "Bom dia, Lara.",
       },
@@ -111,7 +111,7 @@ describe(readingActivityWorkflow, () => {
     );
     expect(generateSentenceDistractorsStep).toHaveBeenCalledWith(activities, [
       {
-        explanation: null,
+        explanation: "test explanation",
         sentence: "Guten Morgen, Lara.",
         translation: "Bom dia, Lara.",
       },
@@ -120,7 +120,7 @@ describe(readingActivityWorkflow, () => {
       activities,
       [
         {
-          explanation: null,
+          explanation: "test explanation",
           sentence: "Guten Morgen, Lara.",
           translation: "Bom dia, Lara.",
         },
@@ -155,7 +155,7 @@ describe(readingActivityWorkflow, () => {
       sentenceRomanizations: { "Guten Morgen, Lara.": null },
       sentences: [
         {
-          explanation: null,
+          explanation: "test explanation",
           sentence: "Guten Morgen, Lara.",
           translation: "Bom dia, Lara.",
         },

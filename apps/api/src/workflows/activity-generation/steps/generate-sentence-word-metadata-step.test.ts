@@ -79,7 +79,11 @@ describe(generateSentenceWordMetadataStep, () => {
     const id = randomUUID().slice(0, 8);
 
     const sentences = [
-      { explanation: null, sentence: `Guten${id} Morgen${id}`, translation: "Good morning" },
+      {
+        explanation: "test explanation",
+        sentence: `Guten${id} Morgen${id}`,
+        translation: "Good morning",
+      },
     ];
 
     const targetWords = [`guten${id}`, `morgen${id}`];
@@ -132,7 +136,9 @@ describe(generateSentenceWordMetadataStep, () => {
     const activities = await fetchLessonActivities(lesson.id);
     const id = randomUUID().slice(0, 8);
 
-    const sentences = [{ explanation: null, sentence: `猫${id} 犬${id}`, translation: "Cat dog" }];
+    const sentences = [
+      { explanation: "test explanation", sentence: `猫${id} 犬${id}`, translation: "Cat dog" },
+    ];
 
     const targetWords = [`猫${id}`, `犬${id}`];
 
@@ -184,7 +190,7 @@ describe(generateSentenceWordMetadataStep, () => {
 
     const result = await generateSentenceWordMetadataStep(
       activities,
-      [{ explanation: null, sentence: "Hallo", translation: "Hello" }],
+      [{ explanation: "test explanation", sentence: "Hallo", translation: "Hello" }],
       ["hallo"],
     );
 
@@ -255,7 +261,11 @@ describe(generateSentenceWordMetadataStep, () => {
     const id = randomUUID().slice(0, 8);
 
     const sentences = [
-      { explanation: null, sentence: `Hallo${id} Welt${id}`, translation: "Hello World" },
+      {
+        explanation: "test explanation",
+        sentence: `Hallo${id} Welt${id}`,
+        translation: "Hello World",
+      },
     ];
 
     const result = await generateSentenceWordMetadataStep(activities, sentences, [

@@ -70,7 +70,11 @@ describe(generateReadingRomanizationStep, () => {
     const id = randomUUID().slice(0, 8);
 
     const sentences = [
-      { explanation: null, sentence: `これは猫です-${id}`, translation: `This is a cat ${id}` },
+      {
+        explanation: "test explanation",
+        sentence: `これは猫です-${id}`,
+        translation: `This is a cat ${id}`,
+      },
     ];
 
     const result = await generateReadingRomanizationStep(activities, sentences);
@@ -123,7 +127,7 @@ describe(generateReadingRomanizationStep, () => {
     const activities = await fetchLessonActivities(lesson.id);
 
     const result = await generateReadingRomanizationStep(activities, [
-      { explanation: null, sentence: "Guten Morgen", translation: "Good morning" },
+      { explanation: "test explanation", sentence: "Guten Morgen", translation: "Good morning" },
     ]);
 
     expect(result).toEqual({ romanizations: {} });
@@ -158,7 +162,7 @@ describe(generateReadingRomanizationStep, () => {
     const activities = await fetchLessonActivities(lesson.id);
 
     const result = await generateReadingRomanizationStep(activities, [
-      { explanation: null, sentence: "これは猫です", translation: "This is a cat" },
+      { explanation: "test explanation", sentence: "これは猫です", translation: "This is a cat" },
     ]);
 
     expect(result).toEqual({ romanizations: {} });
@@ -195,7 +199,7 @@ describe(generateReadingRomanizationStep, () => {
     const activities = await fetchLessonActivities(lesson.id);
 
     const result = await generateReadingRomanizationStep(activities, [
-      { explanation: null, sentence: "これは猫です", translation: "This is a cat" },
+      { explanation: "test explanation", sentence: "これは猫です", translation: "This is a cat" },
     ]);
 
     expect(result).toEqual({ romanizations: {} });
@@ -239,8 +243,8 @@ describe(generateReadingRomanizationStep, () => {
     const activities = await fetchLessonActivities(lesson.id);
 
     const sentences = [
-      { explanation: null, sentence: "これは猫です", translation: "This is a cat" },
-      { explanation: null, sentence: "あれは犬です", translation: "That is a dog" },
+      { explanation: "test explanation", sentence: "これは猫です", translation: "This is a cat" },
+      { explanation: "test explanation", sentence: "あれは犬です", translation: "That is a dog" },
     ];
 
     const result = await generateReadingRomanizationStep(activities, sentences);
