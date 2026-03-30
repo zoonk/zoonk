@@ -1,0 +1,41 @@
+apps/api/src/workflows/activity-generation/steps/generate-reading-romanization-step.test.ts
+  4a31742a217c927e 74,130,165,202,246-247
+apps/api/src/workflows/activity-generation/steps/generate-reading-audio-step.test.ts
+  4a31742a217c927e 74,169,237-239,241-244,246,287
+apps/api/src/workflows/activity-generation/steps/generate-reading-content-step.test.ts
+  4a31742a217c927e 31,96
+apps/api/src/workflows/activity-generation/steps/generate-sentence-word-metadata-step.test.ts
+  4a31742a217c927e 83,193,265
+packages/ai/src/tasks/activities/language/activity-sentences.ts
+  4a31742a217c927e 15
+apps/api/src/workflows/activity-generation/steps/save-reading-activity-step.test.ts
+  4a31742a217c927e 238,299
+packages/ai/src/tasks/activities/language/activity-sentences.prompt.md
+  4a31742a217c927e 104,106,108-133,149,157
+apps/api/src/workflows/activity-generation/steps/generate-sentence-distractors-step.test.ts
+  4a31742a217c927e 74,122,151
+apps/api/src/workflows/activity-generation/steps/_utils/save-reading-target-words.test.ts
+  4a31742a217c927e 64,188,222,365
+apps/api/src/workflows/activity-generation/kinds/reading-workflow.test.ts
+  4a31742a217c927e 16,114,123,158
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.22",
+  "base_commit_sha": "4915fbaff1eef57b121bfa35f49a0af3d1657881",
+  "prompts": {
+    "4a31742a217c927e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a8ed333d-4e04-4783-93d8-15b363552a13",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill <4393133+ceolinwill@users.noreply.github.com>",
+      "messages": [],
+      "total_additions": 72,
+      "total_deletions": 47,
+      "accepted_lines": 67,
+      "overriden_lines": 7
+    }
+  }
+}
