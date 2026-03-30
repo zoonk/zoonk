@@ -9,7 +9,6 @@ export function buildCompletionInput(state: PlayerState, now: Date = new Date())
   return {
     activityId: state.activityId,
     answers: state.selectedAnswers,
-    dimensions: state.dimensions,
     localDate: getLocalDate(now),
     startedAt: state.startedAt,
     stepTimings: state.stepTimings,

@@ -1,5 +1,4 @@
 import { settled } from "@zoonk/utils/settled";
-import { challengeActivityWorkflow } from "./kinds/challenge-workflow";
 import { explanationActivityWorkflow } from "./kinds/explanation-workflow";
 import { practiceActivityWorkflow } from "./kinds/practice-workflow";
 import { quizActivityWorkflow } from "./kinds/quiz-workflow";
@@ -8,7 +7,7 @@ import { type LessonActivity } from "./steps/get-lesson-activities-step";
 import { getNeighboringConceptsStep } from "./steps/get-neighboring-concepts-step";
 
 /**
- * Orchestrates core activity generation (explanation, challenge, practice, quiz).
+ * Orchestrates core activity generation (explanation, practice, quiz).
  * Receives both the full activity list and the subset that needs generation.
  * Generate steps only receive activities that need generation.
  * Completed activities are used to fetch existing data for downstream dependencies.
@@ -30,12 +29,6 @@ export async function coreActivityWorkflow({
     explanationActivityWorkflow({
       activitiesToGenerate,
       allActivities,
-      concepts,
-      neighboringConcepts,
-      workflowRunId,
-    }),
-    challengeActivityWorkflow({
-      activitiesToGenerate,
       concepts,
       neighboringConcepts,
       workflowRunId,

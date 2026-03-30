@@ -1,6 +1,5 @@
 import { parseStepContent } from "@zoonk/core/steps/content-contract";
 import { type CompletionResult } from "./completion-input-schema";
-import { hasNegativeDimension } from "./dimensions";
 import { type PlayerState } from "./player-reducer";
 import { type SerializedStep } from "./prepare-activity-data";
 import { canNavigatePrev, isStaticNavigationStep } from "./step-navigation";
@@ -15,14 +14,6 @@ function computeProgress(currentIndex: number, total: number): number {
 
 export function getCanNavigatePrev(state: PlayerState): boolean {
   return canNavigatePrev(state.steps, state.currentStepIndex);
-}
-
-export function getChangedDimensions(state: PlayerState): Set<string> {
-  return new Set(
-    Object.entries(state.dimensions)
-      .filter(([name, value]) => value !== state.previousDimensions[name])
-      .map(([name]) => name),
-  );
 }
 
 export function getCompletionResult(state: PlayerState): CompletionResult | null {
@@ -51,14 +42,6 @@ export function getHasAnswer(state: PlayerState): boolean {
   }
 
   return Boolean(state.selectedAnswers[currentStep.id]);
-}
-
-export function getIsGameOver(state: PlayerState): boolean {
-  if (state.phase !== "completed" || Object.keys(state.dimensions).length === 0) {
-    return false;
-  }
-
-  return hasNegativeDimension(state.dimensions);
 }
 
 export function getIsStaticStep(state: PlayerState): boolean {

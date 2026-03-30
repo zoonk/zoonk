@@ -1,2 +1,1 @@
 export const BRAIN_POWER_PER_ACTIVITY = 10;
-export const BRAIN_POWER_PER_CHALLENGE = 100;

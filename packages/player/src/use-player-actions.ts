@@ -18,7 +18,6 @@ export type PlayerActions = {
   navigatePrev: () => void;
   restart: () => void;
   selectAnswer: (stepId: string, answer: SelectedAnswer | null) => void;
-  startChallenge: () => void;
 };
 
 export function usePlayerActions(
@@ -64,8 +63,8 @@ export function usePlayerActions(
       return;
     }
 
-    const { effects, result } = checkStep(currentStep, answer);
-    dispatchTransition({ effects, result, stepId: currentStep.id, type: "CHECK_ANSWER" });
+    const { result } = checkStep(currentStep, answer);
+    dispatchTransition({ result, stepId: currentStep.id, type: "CHECK_ANSWER" });
   }, [currentStep, dispatchTransition, state.selectedAnswers]);
 
   const handleContinue = useCallback(() => {
@@ -84,10 +83,6 @@ export function usePlayerActions(
     dispatchTransition({ type: "RESTART" });
   }, [dispatchTransition]);
 
-  const startChallenge = useCallback(() => {
-    dispatchTransition({ type: "START_CHALLENGE" });
-  }, [dispatchTransition]);
-
   return {
     check,
     continue: handleContinue,
@@ -95,6 +90,5 @@ export function usePlayerActions(
     navigatePrev,
     restart,
     selectAnswer,
-    startChallenge,
   };
 }

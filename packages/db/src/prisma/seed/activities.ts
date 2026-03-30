@@ -39,11 +39,6 @@ const activitiesData: {
         kind: "quiz",
       },
       {
-        generationStatus: "completed",
-        isPublished: true,
-        kind: "challenge",
-      },
-      {
         generationStatus: "pending",
         isPublished: true,
         kind: "quiz",

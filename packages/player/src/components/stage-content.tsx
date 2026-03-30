@@ -1,13 +1,7 @@
 import { type CompletionResult } from "../completion-input-schema";
 import { type PlayerRoute } from "../player-context";
-import {
-  type DimensionInventory,
-  type PlayerPhase,
-  type SelectedAnswer,
-  type StepResult,
-} from "../player-reducer";
+import { type PlayerPhase, type SelectedAnswer, type StepResult } from "../player-reducer";
 import { type SerializedStep } from "../prepare-activity-data";
-import { ChallengeIntro } from "./challenge-intro";
 import { CompletionScreenContent } from "./completion-screen";
 import { FeedbackScreenContent } from "./feedback-screen";
 import { StepRenderer } from "./step-renderer";
@@ -27,14 +21,12 @@ export function StageContent({
   currentResult,
   currentStep,
   currentStepIndex,
-  dimensions,
   lessonHref,
   nextActivityHref,
   onNavigateNext,
   onNavigatePrev,
   onRestart,
   onSelectAnswer,
-  onStartChallenge,
   results,
   phase,
   selectedAnswer,
@@ -44,27 +36,20 @@ export function StageContent({
   currentResult: StepResult | undefined;
   currentStep: SerializedStep | undefined;
   currentStepIndex: number;
-  dimensions: DimensionInventory;
   lessonHref: PlayerRoute;
   nextActivityHref: PlayerRoute | null;
   onNavigateNext: () => void;
   onNavigatePrev: () => void;
   onRestart: () => void;
   onSelectAnswer: (stepId: string, answer: SelectedAnswer | null) => void;
-  onStartChallenge: () => void;
   results: Record<string, StepResult>;
   phase: PlayerPhase;
   selectedAnswer: SelectedAnswer | undefined;
 }) {
-  if (phase === "intro") {
-    return <ChallengeIntro dimensions={dimensions} onStart={onStartChallenge} />;
-  }
-
   if (phase === "completed") {
     return (
       <CompletionScreenContent
         completionResult={completionResult}
-        dimensions={dimensions}
         lessonHref={lessonHref}
         nextActivityHref={nextActivityHref}
         onRestart={onRestart}
@@ -74,9 +59,7 @@ export function StageContent({
   }
 
   if (phase === "feedback" && currentResult && (!currentStep || needsFeedbackScreen(currentStep))) {
-    return (
-      <FeedbackScreenContent dimensions={dimensions} result={currentResult} step={currentStep} />
-    );
+    return <FeedbackScreenContent result={currentResult} step={currentStep} />;
   }
 
   if ((phase === "playing" || phase === "feedback") && currentStep) {

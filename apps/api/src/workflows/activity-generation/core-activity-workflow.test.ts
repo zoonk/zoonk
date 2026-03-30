@@ -1,5 +1,4 @@
 import { randomUUID } from "node:crypto";
-import { generateActivityChallenge } from "@zoonk/ai/tasks/activities/core/challenge";
 import { generateActivityExplanation } from "@zoonk/ai/tasks/activities/core/explanation";
 import { generateActivityPractice } from "@zoonk/ai/tasks/activities/core/practice";
 import { generateActivityQuiz } from "@zoonk/ai/tasks/activities/core/quiz";
@@ -97,38 +96,6 @@ vi.mock("@zoonk/ai/tasks/activities/core/practice", () => ({
             { feedback: "Nope.", isCorrect: false, text: "Option D" },
           ],
           question: "What should you do?",
-        },
-      ],
-    },
-  }),
-}));
-
-vi.mock("@zoonk/ai/tasks/activities/core/challenge", () => ({
-  generateActivityChallenge: vi.fn().mockResolvedValue({
-    data: {
-      intro: "Welcome to the challenge scenario...",
-      reflection: "Every decision involves trade-offs...",
-      steps: [
-        {
-          context: "Your team lead asks you to choose...",
-          options: [
-            {
-              consequence: "Great outcome",
-              effects: [{ dimension: "Quality", impact: "positive" }],
-              text: "Option A",
-            },
-            {
-              consequence: "Mixed outcome",
-              effects: [{ dimension: "Speed", impact: "positive" }],
-              text: "Option B",
-            },
-            {
-              consequence: "Poor outcome",
-              effects: [{ dimension: "Quality", impact: "negative" }],
-              text: "Option C",
-            },
-          ],
-          question: "What approach do you take?",
         },
       ],
     },
@@ -571,33 +538,6 @@ describe("core activity workflow", () => {
       expect(generateActivityPractice).not.toHaveBeenCalled();
     });
 
-    test("empty concepts → challenge marked as failed", async () => {
-      const testLesson = await lessonFixture({
-        chapterId: chapter.id,
-        concepts: [],
-        organizationId,
-        title: `Empty Concepts Cascade Lesson ${randomUUID()}`,
-      });
-
-      const challengeActivity = await activityFixture({
-        generationStatus: "pending",
-        kind: "challenge",
-        lessonId: testLesson.id,
-        organizationId,
-        title: `Challenge ${randomUUID()}`,
-      });
-
-      await activityGenerationWorkflow(testLesson.id);
-
-      const dbChallenge = await prisma.activity.findUnique({
-        where: { id: challengeActivity.id },
-      });
-
-      expect(dbChallenge?.generationStatus).toBe("failed");
-
-      expect(generateActivityChallenge).not.toHaveBeenCalled();
-    });
-
     test("doesn't call generateActivityQuiz if explanation steps are empty", async () => {
       vi.mocked(generateActivityExplanation).mockResolvedValueOnce({
         data: { steps: [] },
@@ -672,8 +612,8 @@ describe("core activity workflow", () => {
   });
 
   describe("error isolation", () => {
-    test("one activity kind fails → others still complete", async () => {
-      vi.mocked(generateActivityExplanation).mockRejectedValueOnce(new Error("Explanation failed"));
+    test("practice failure does not affect explanation completion", async () => {
+      vi.mocked(generateActivityPractice).mockRejectedValueOnce(new Error("Practice failed"));
 
       const testLesson = await lessonFixture({
         chapterId: chapter.id,
@@ -682,7 +622,7 @@ describe("core activity workflow", () => {
         title: `Isolation Lesson ${randomUUID()}`,
       });
 
-      const [expActivity, challengeActivity] = await Promise.all([
+      const [expActivity, practiceActivity] = await Promise.all([
         activityFixture({
           generationStatus: "pending",
           kind: "explanation",
@@ -692,27 +632,27 @@ describe("core activity workflow", () => {
         }),
         activityFixture({
           generationStatus: "pending",
-          kind: "challenge",
+          kind: "practice",
           lessonId: testLesson.id,
           organizationId,
-          title: `Challenge ${randomUUID()}`,
+          title: `Practice ${randomUUID()}`,
         }),
       ]);
 
       await activityGenerationWorkflow(testLesson.id);
 
-      const [dbExp, dbChallenge] = await Promise.all([
+      const [dbExp, dbPractice] = await Promise.all([
         prisma.activity.findUnique({ where: { id: expActivity.id } }),
-        prisma.activity.findUnique({ where: { id: challengeActivity.id } }),
+        prisma.activity.findUnique({ where: { id: practiceActivity.id } }),
       ]);
 
-      expect(dbExp?.generationStatus).toBe("failed");
-      expect(dbChallenge?.generationStatus).toBe("completed");
+      expect(dbExp?.generationStatus).toBe("completed");
+      expect(dbPractice?.generationStatus).toBe("failed");
     });
   });
 
   describe("full pipeline", () => {
-    test("generates all 4 activities end to end", async () => {
+    test("generates all 3 activities end to end", async () => {
       const testLesson = await lessonFixture({
         chapterId: chapter.id,
         concepts: ["Test Concept"],
@@ -720,7 +660,7 @@ describe("core activity workflow", () => {
         title: `Full Pipeline Lesson ${randomUUID()}`,
       });
 
-      const [expActivity, quizActivity, practiceActivity, challengeActivity] = await Promise.all([
+      const [expActivity, quizActivity, practiceActivity] = await Promise.all([
         activityFixture({
           generationStatus: "pending",
           kind: "explanation",
@@ -742,45 +682,33 @@ describe("core activity workflow", () => {
           organizationId,
           title: `Practice ${randomUUID()}`,
         }),
-        activityFixture({
-          generationStatus: "pending",
-          kind: "challenge",
-          lessonId: testLesson.id,
-          organizationId,
-          title: `Challenge ${randomUUID()}`,
-        }),
       ]);
 
       await activityGenerationWorkflow(testLesson.id);
 
-      const [dbExp, dbQuiz, dbPractice, dbChallenge] = await Promise.all([
+      const [dbExp, dbQuiz, dbPractice] = await Promise.all([
         prisma.activity.findUnique({ where: { id: expActivity.id } }),
         prisma.activity.findUnique({ where: { id: quizActivity.id } }),
         prisma.activity.findUnique({ where: { id: practiceActivity.id } }),
-        prisma.activity.findUnique({ where: { id: challengeActivity.id } }),
       ]);
 
       expect(dbExp?.generationStatus).toBe("completed");
       expect(dbQuiz?.generationStatus).toBe("completed");
       expect(dbPractice?.generationStatus).toBe("completed");
-      expect(dbChallenge?.generationStatus).toBe("completed");
 
       expect(generateActivityExplanation).toHaveBeenCalledOnce();
       expect(generateActivityQuiz).toHaveBeenCalledOnce();
       expect(generateActivityPractice).toHaveBeenCalledOnce();
-      expect(generateActivityChallenge).toHaveBeenCalledOnce();
 
-      const [expSteps, quizSteps, practiceSteps, challengeSteps] = await Promise.all([
+      const [expSteps, quizSteps, practiceSteps] = await Promise.all([
         prisma.step.findMany({ where: { activityId: expActivity.id } }),
         prisma.step.findMany({ where: { activityId: quizActivity.id } }),
         prisma.step.findMany({ where: { activityId: practiceActivity.id } }),
-        prisma.step.findMany({ where: { activityId: challengeActivity.id } }),
       ]);
 
       expect(expSteps.length).toBeGreaterThan(0);
       expect(quizSteps.length).toBeGreaterThan(0);
       expect(practiceSteps.length).toBeGreaterThan(0);
-      expect(challengeSteps.length).toBeGreaterThan(0);
 
       for (const steps of [expSteps]) {
         const imageSteps = steps.filter(
@@ -897,21 +825,11 @@ describe("core activity workflow", () => {
           organizationId,
           title: `Practice ${randomUUID()}`,
         }),
-        activityFixture({
-          generationStatus: "pending",
-          kind: "challenge",
-          lessonId: testLesson.id,
-          organizationId,
-          title: `Challenge ${randomUUID()}`,
-        }),
       ]);
 
       await activityGenerationWorkflow(testLesson.id);
 
       expect(generateActivityExplanation).toHaveBeenCalledWith(
-        expect.objectContaining({ neighboringConcepts: ["Neighbor A"] }),
-      );
-      expect(generateActivityChallenge).toHaveBeenCalledWith(
         expect.objectContaining({ neighboringConcepts: ["Neighbor A"] }),
       );
     });

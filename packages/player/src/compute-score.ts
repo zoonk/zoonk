@@ -1,10 +1,5 @@
-import { BRAIN_POWER_PER_ACTIVITY, BRAIN_POWER_PER_CHALLENGE } from "@zoonk/utils/brain-power";
-import {
-  CHALLENGE_FAILURE_ENERGY,
-  ENERGY_PER_CORRECT,
-  ENERGY_PER_INCORRECT,
-  ENERGY_PER_STATIC,
-} from "@zoonk/utils/energy";
+import { BRAIN_POWER_PER_ACTIVITY } from "@zoonk/utils/brain-power";
+import { ENERGY_PER_CORRECT, ENERGY_PER_INCORRECT, ENERGY_PER_STATIC } from "@zoonk/utils/energy";
 
 type ActivityScoreInput = {
   results: { isCorrect: boolean }[];
@@ -36,39 +31,6 @@ export function computeScore(input: ActivityScoreInput): ScoreResult {
     brainPower: BRAIN_POWER_PER_ACTIVITY,
     correctCount,
     energyDelta: Math.round(energyDelta * 100) / 100,
-    incorrectCount,
-  };
-}
-
-function countDimensionOutcomes(dimensions: Record<string, number>) {
-  const values = Object.values(dimensions);
-  const incorrectCount = values.filter((value) => value < 0).length;
-  return { correctCount: values.length - incorrectCount, incorrectCount };
-}
-
-export function computeChallengeScore(input: {
-  dimensions: Record<string, number>;
-  isSuccessful: boolean;
-}): ScoreResult {
-  const { correctCount, incorrectCount } = countDimensionOutcomes(input.dimensions);
-
-  if (input.isSuccessful) {
-    const positiveSum = Object.values(input.dimensions)
-      .filter((value) => value > 0)
-      .reduce((sum, value) => sum + value, 0);
-
-    return {
-      brainPower: BRAIN_POWER_PER_CHALLENGE,
-      correctCount,
-      energyDelta: Math.max(1, positiveSum),
-      incorrectCount,
-    };
-  }
-
-  return {
-    brainPower: BRAIN_POWER_PER_ACTIVITY,
-    correctCount,
-    energyDelta: CHALLENGE_FAILURE_ENERGY,
     incorrectCount,
   };
 }

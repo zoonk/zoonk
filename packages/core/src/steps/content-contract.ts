@@ -1,25 +1,10 @@
 import { z } from "zod";
 import { type VisualStepContent, visualStepContentSchema } from "./visual-content-contract";
 
-const challengeEffectSchema = z
-  .object({
-    dimension: z.string(),
-    impact: z.enum(["positive", "neutral", "negative"]),
-  })
-  .strict();
-
 const coreOptionSchema = z
   .object({
     feedback: z.string(),
     isCorrect: z.boolean(),
-    text: z.string(),
-  })
-  .strict();
-
-const challengeOptionSchema = z
-  .object({
-    consequence: z.string(),
-    effects: z.array(challengeEffectSchema),
     text: z.string(),
   })
   .strict();
@@ -33,19 +18,7 @@ const coreMultipleChoiceContentSchema = z
   })
   .strict();
 
-const challengeMultipleChoiceContentSchema = z
-  .object({
-    context: z.string(),
-    kind: z.literal("challenge"),
-    options: z.array(challengeOptionSchema).min(1),
-    question: z.string(),
-  })
-  .strict();
-
-export const multipleChoiceContentSchema = z.discriminatedUnion("kind", [
-  coreMultipleChoiceContentSchema,
-  challengeMultipleChoiceContentSchema,
-]);
+export const multipleChoiceContentSchema = coreMultipleChoiceContentSchema;
 
 const fillBlankChoiceSchema = z.string();
 
@@ -152,7 +125,6 @@ const stepContentSchemas = {
 export type SupportedStepKind = keyof typeof stepContentSchemas;
 
 export type CoreMultipleChoiceContent = z.infer<typeof coreMultipleChoiceContentSchema>;
-export type ChallengeMultipleChoiceContent = z.infer<typeof challengeMultipleChoiceContentSchema>;
 
 export type MultipleChoiceStepContent = z.infer<typeof multipleChoiceContentSchema>;
 export type FillBlankStepContent = z.infer<typeof fillBlankContentSchema>;
@@ -166,8 +138,6 @@ export type ReadingStepContent = z.infer<typeof readingContentSchema>;
 export type ListeningStepContent = z.infer<typeof listeningContentSchema>;
 
 export type { VisualStepContent };
-
-export type ChallengeEffect = z.infer<typeof challengeEffectSchema>;
 
 export type StepContentByKind = {
   fillBlank: FillBlankStepContent;

@@ -1,13 +1,11 @@
-import { type ChallengeEffect } from "@zoonk/core/steps/content-contract";
 import { type AnswerResult } from "./check-answer";
 import { type CompletionResult } from "./completion-input-schema";
-import { IMPACT_DELTA } from "./dimensions";
 import { computeLocalCompletion } from "./player-completion";
-import { buildInitialAnswers, collectAllDimensions } from "./player-initial-state";
+import { buildInitialAnswers } from "./player-initial-state";
 import { type SerializedStep } from "./prepare-activity-data";
 import { canNavigatePrev, isStaticNavigationStep } from "./step-navigation";
 
-export type PlayerPhase = "intro" | "playing" | "feedback" | "completed";
+export type PlayerPhase = "playing" | "feedback" | "completed";
 
 export type SelectedAnswer =
   | { kind: "fillBlank"; userAnswers: string[] }
@@ -23,10 +21,7 @@ export type StepResult = {
   stepId: string;
   answer: SelectedAnswer | undefined;
   result: AnswerResult;
-  effects: ChallengeEffect[];
 };
-
-export type DimensionInventory = Record<string, number>;
 
 export type StepTiming = {
   answeredAt: number;
@@ -39,9 +34,7 @@ export type PlayerState = {
   activityId: string;
   completion: CompletionResult | null;
   currentStepIndex: number;
-  dimensions: DimensionInventory;
   phase: PlayerPhase;
-  previousDimensions: DimensionInventory;
   results: Record<string, StepResult>;
   selectedAnswers: Record<string, SelectedAnswer>;
   startedAt: number;
@@ -54,29 +47,11 @@ export type PlayerState = {
 export type PlayerAction =
   | { type: "SELECT_ANSWER"; stepId: string; answer: SelectedAnswer }
   | { type: "CLEAR_ANSWER"; stepId: string }
-  | { type: "CHECK_ANSWER"; stepId: string; result: AnswerResult; effects: ChallengeEffect[] }
+  | { type: "CHECK_ANSWER"; stepId: string; result: AnswerResult }
   | { type: "CONTINUE" }
   | { type: "COMPLETE" }
   | { type: "NAVIGATE_STEP"; direction: "next" | "prev" }
-  | { type: "RESTART" }
-  | { type: "START_CHALLENGE" };
-
-function applyEffects(
-  dimensions: DimensionInventory,
-  effects: ChallengeEffect[],
-): DimensionInventory {
-  if (effects.length === 0) {
-    return dimensions;
-  }
-
-  const next = { ...dimensions };
-
-  for (const effect of effects) {
-    next[effect.dimension] = (next[effect.dimension] ?? 0) + IMPACT_DELTA[effect.impact];
-  }
-
-  return next;
-}
+  | { type: "RESTART" };
 
 export { createInitialState } from "./player-initial-state";
 
@@ -125,16 +100,13 @@ function handleCheckAnswer(
 
   const stepResult: StepResult = {
     answer: state.selectedAnswers[action.stepId],
-    effects: action.effects,
     result: action.result,
     stepId: action.stepId,
   };
 
   const checked: PlayerState = {
     ...state,
-    dimensions: applyEffects(state.dimensions, action.effects),
     phase: "feedback",
-    previousDimensions: state.dimensions,
     results: { ...state.results, [action.stepId]: stepResult },
     stepTimings: recordStepTiming(state, action.stepId),
   };
@@ -207,29 +179,18 @@ function handleNavigateStep(
 
 function handleRestart(state: PlayerState): PlayerState {
   const now = Date.now();
-  const dimensions = collectAllDimensions(state.steps);
 
   return {
     ...state,
     completion: null,
     currentStepIndex: 0,
-    dimensions,
     phase: "playing",
-    previousDimensions: { ...dimensions },
     results: {},
     selectedAnswers: buildInitialAnswers(state.steps),
     startedAt: now,
     stepStartedAt: now,
     stepTimings: {},
   };
-}
-
-function handleStartChallenge(state: PlayerState): PlayerState {
-  if (state.phase !== "intro") {
-    return state;
-  }
-
-  return { ...state, phase: "playing" };
 }
 
 function handleComplete(state: PlayerState): PlayerState {
@@ -262,9 +223,6 @@ export function playerReducer(state: PlayerState, action: PlayerAction): PlayerS
 
     case "RESTART":
       return handleRestart(state);
-
-    case "START_CHALLENGE":
-      return handleStartChallenge(state);
 
     default:
       return state;

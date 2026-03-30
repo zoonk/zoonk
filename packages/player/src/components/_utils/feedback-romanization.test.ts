@@ -10,7 +10,6 @@ import { getFeedbackRomanization } from "./feedback-romanization";
 function buildResult(answer?: StepResult["answer"]): StepResult {
   return {
     answer,
-    effects: [],
     result: { correctAnswer: null, feedback: null, isCorrect: true },
     stepId: "step-1",
   };

@@ -13,7 +13,6 @@ function buildOwnerDailyProgress(
   userId: number,
 ): {
   brainPowerEarned: number;
-  challengesCompleted: number;
   correctAnswers: number;
   date: Date;
   dayOfWeek: number;
@@ -42,7 +41,6 @@ function buildOwnerDailyProgress(
 
       return {
         brainPowerEarned: 150 + Math.floor(seededRandom(seed + 2) * 350),
-        challengesCompleted: seededRandom(seed + 3) > 0.7 ? 1 : 0,
         correctAnswers: 12 + Math.floor(seededRandom(seed + 4) * 25),
         date,
         dayOfWeek: date.getDay(),

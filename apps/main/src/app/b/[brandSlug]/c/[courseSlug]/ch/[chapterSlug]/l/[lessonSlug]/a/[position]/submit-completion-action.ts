@@ -6,8 +6,7 @@ import { submitActivityCompletion } from "@/data/progress/submit-activity-comple
 import { auth } from "@zoonk/core/auth";
 import { type LessonSentence, prisma } from "@zoonk/db";
 import { type CompletionInput, completionInputSchema } from "@zoonk/player/completion-input-schema";
-import { computeChallengeScore, computeScore } from "@zoonk/player/compute-score";
-import { computeDimensions, hasNegativeDimension } from "@zoonk/player/dimensions";
+import { computeScore } from "@zoonk/player/compute-score";
 import { validateAnswers } from "@zoonk/player/validate-answers";
 import { logError } from "@zoonk/utils/logger";
 import { revalidatePath } from "next/cache";
@@ -113,19 +112,10 @@ export async function submitCompletion(rawInput: CompletionInput): Promise<void>
           : attachSentenceTranslationsToSteps(activity.steps, lessonSentences);
 
       const stepResults = validateAnswers(stepsForValidation, input.answers);
-      const isChallenge = activity.kind === "challenge";
 
-      const dimensions = isChallenge
-        ? computeDimensions(stepResults.map((result) => result.effects))
-        : {};
-
-      const isSuccessful = !hasNegativeDimension(dimensions);
-
-      const score = isChallenge
-        ? computeChallengeScore({ dimensions, isSuccessful })
-        : computeScore({
-            results: stepResults.map((step) => ({ isCorrect: step.isCorrect })),
-          });
+      const score = computeScore({
+        results: stepResults.map((step) => ({ isCorrect: step.isCorrect })),
+      });
 
       const durationSeconds = clampDuration(input.startedAt);
 
@@ -138,7 +128,6 @@ export async function submitCompletion(rawInput: CompletionInput): Promise<void>
           answeredAt: timing ? new Date(timing.answeredAt) : new Date(),
           dayOfWeek: timing?.dayOfWeek ?? new Date().getDay(),
           durationSeconds: timing?.durationSeconds ?? 0,
-          effects: validated.effects,
           hourOfDay: timing?.hourOfDay ?? new Date().getHours(),
           isCorrect: validated.isCorrect,
           stepId: validated.stepId,
@@ -149,7 +138,6 @@ export async function submitCompletion(rawInput: CompletionInput): Promise<void>
         activityId: activity.id,
         courseId: activity.lesson.chapter.courseId,
         durationSeconds,
-        isChallenge,
         localDate: input.localDate,
         organizationId: activity.organizationId,
         score,

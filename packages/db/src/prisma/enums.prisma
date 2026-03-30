@@ -16,7 +16,6 @@ enum ActivityKind {
   explanation
   quiz
   practice
-  challenge
   vocabulary
   grammar
   reading

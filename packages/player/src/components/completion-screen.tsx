@@ -5,10 +5,8 @@ import { CircleCheck } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type CompletionResult } from "../completion-input-schema";
 import { computeScore } from "../compute-score";
-import { hasNegativeDimension } from "../dimensions";
 import { type PlayerRoute, usePlayerMilestone, usePlayerViewer } from "../player-context";
-import { type DimensionInventory, type StepResult } from "../player-reducer";
-import { ChallengeFailureContent, ChallengeSuccessContent } from "./challenge-completion";
+import { type StepResult } from "../player-reducer";
 import { AuthBranch } from "./completion-auth-branch";
 
 function CompletionScreen({ className, ...props }: React.ComponentProps<"div">) {
@@ -82,14 +80,12 @@ function getCompletionScore(results: Record<string, StepResult>) {
 
 export function CompletionScreenContent({
   completionResult,
-  dimensions,
   lessonHref,
   nextActivityHref,
   onRestart,
   results,
 }: {
   completionResult: CompletionResult | null;
-  dimensions: DimensionInventory;
   lessonHref: PlayerRoute;
   nextActivityHref: PlayerRoute | null;
   onRestart: () => void;
@@ -98,32 +94,6 @@ export function CompletionScreenContent({
   const t = useExtracted();
   const milestone = usePlayerMilestone();
   const { completionFooter } = usePlayerViewer();
-  const isChallenge = Object.keys(dimensions).length > 0;
-
-  if (isChallenge && hasNegativeDimension(dimensions)) {
-    return (
-      <ChallengeFailureContent
-        completionResult={completionResult}
-        dimensions={dimensions}
-        lessonHref={lessonHref}
-        onRestart={onRestart}
-      />
-    );
-  }
-
-  if (isChallenge) {
-    return (
-      <ChallengeSuccessContent completionResult={completionResult} dimensions={dimensions}>
-        <AuthBranch
-          completionResult={completionResult}
-          lessonHref={lessonHref}
-          nextActivityHref={nextActivityHref}
-          onRestart={onRestart}
-          showRewards={false}
-        />
-      </ChallengeSuccessContent>
-    );
-  }
 
   if (milestone.kind !== "activity") {
     return (

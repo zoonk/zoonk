@@ -11,12 +11,7 @@ import {
 } from "./player-context";
 import { type InitialStateInput } from "./player-initial-state";
 import { createInitialState, playerReducer } from "./player-reducer";
-import {
-  getCanNavigatePrev,
-  getHasAnswer,
-  getIsGameOver,
-  getIsStaticStep,
-} from "./player-selectors";
+import { getCanNavigatePrev, getHasAnswer, getIsStaticStep } from "./player-selectors";
 import { type SerializedActivity } from "./prepare-activity-data";
 import { usePlayerActions } from "./use-player-actions";
 import { usePlayerKeyboard } from "./use-player-keyboard";
@@ -63,9 +58,8 @@ export function PlayerProvider({
     onEscape,
     onNavigateNext: actions.navigateNext,
     onNavigatePrev: actions.navigatePrev,
-    onNext: onNext && !getIsGameOver(state) ? handleNext : null,
+    onNext: onNext ? handleNext : null,
     onRestart: actions.restart,
-    onStartChallenge: state.phase === "intro" ? actions.startChallenge : null,
     phase: state.phase,
   });
 

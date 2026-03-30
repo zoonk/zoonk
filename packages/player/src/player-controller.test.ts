@@ -27,9 +27,7 @@ function buildState(overrides: Partial<PlayerState> = {}): PlayerState {
     activityId: "activity-1",
     completion: null,
     currentStepIndex: 0,
-    dimensions: {},
     phase: "playing",
-    previousDimensions: {},
     results: {},
     selectedAnswers: {},
     startedAt: 1000,
@@ -88,7 +86,6 @@ describe(buildCompletionInput, () => {
     const answeredAt = new Date("2026-03-18T15:30:00.000Z").getTime();
     const now = new Date("2026-03-18T18:45:00.000Z");
     const state = buildState({
-      dimensions: { Courage: 1 },
       selectedAnswers: {
         "step-1": { kind: "multipleChoice", selectedIndex: 0, selectedText: "A" },
       },
@@ -107,7 +104,6 @@ describe(buildCompletionInput, () => {
       answers: {
         "step-1": { kind: "multipleChoice", selectedIndex: 0, selectedText: "A" },
       },
-      dimensions: { Courage: 1 },
       localDate: "2026-03-18",
       startedAt: 1000,
       stepTimings: {

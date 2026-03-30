@@ -115,7 +115,6 @@ function AuthenticatedContent({
           <RewardBadges
             brainPower={completionResult.brainPower}
             energyDelta={completionResult.energyDelta}
-            isChallenge={false}
           />
           <BeltProgressHint
             brainPower={completionResult.brainPower}

@@ -69,7 +69,7 @@ describe(submitActivityCompletion, () => {
       activityId: activity.id,
       courseId: course.id,
       durationSeconds: 10,
-      isChallenge: false,
+
       localDate: todayLocalDate(),
       organizationId: org.id,
       score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
@@ -97,7 +97,7 @@ describe(submitActivityCompletion, () => {
       activityId: activity.id,
       courseId: course.id,
       durationSeconds: 15,
-      isChallenge: false,
+
       localDate: todayLocalDate(),
       organizationId: org.id,
       score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
@@ -123,7 +123,7 @@ describe(submitActivityCompletion, () => {
       activityId: activity.id,
       courseId: course.id,
       durationSeconds: 10,
-      isChallenge: false,
+
       localDate: todayLocalDate(),
       organizationId: org.id,
       score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
@@ -147,7 +147,7 @@ describe(submitActivityCompletion, () => {
       activityId: activity.id,
       courseId: course.id,
       durationSeconds: 10,
-      isChallenge: false,
+
       localDate: todayLocalDate(),
       organizationId: org.id,
       score: { brainPower: 10, correctCount: 3, energyDelta: 0.4, incorrectCount: 2 },
@@ -165,7 +165,7 @@ describe(submitActivityCompletion, () => {
     expect(daily?.incorrectAnswers).toBe(2);
     expect(daily?.brainPowerEarned).toBe(10);
     expect(daily?.interactiveCompleted).toBe(1);
-    expect(daily?.challengesCompleted).toBe(0);
+
     expect(daily?.staticCompleted).toBe(0);
   });
 
@@ -178,7 +178,7 @@ describe(submitActivityCompletion, () => {
       activityId: activity.id,
       courseId: course.id,
       durationSeconds: 10,
-      isChallenge: false,
+
       localDate: todayLocalDate(),
       organizationId: org.id,
       score: { brainPower: 10, correctCount: 5, energyDelta: 1, incorrectCount: 0 },
@@ -201,7 +201,7 @@ describe(submitActivityCompletion, () => {
       activityId: activity.id,
       courseId: course.id,
       durationSeconds: 10,
-      isChallenge: false,
+
       localDate: todayLocalDate(),
       organizationId: org.id,
       score: { brainPower: 10, correctCount: 0, energyDelta: -0.5, incorrectCount: 5 },
@@ -214,54 +214,6 @@ describe(submitActivityCompletion, () => {
     expect(userProgress?.currentEnergy).toBe(0);
   });
 
-  test("challenge success: 100 BP", async () => {
-    const user = await userFixture();
-    const userId = Number(user.id);
-
-    const result = await submitActivityCompletion({
-      activityId: activity.id,
-      courseId: course.id,
-      durationSeconds: 10,
-      isChallenge: true,
-      localDate: todayLocalDate(),
-      organizationId: org.id,
-      score: { brainPower: 100, correctCount: 0, energyDelta: 3, incorrectCount: 0 },
-      startedAt: new Date(Date.now() - 10_000),
-      stepResults: [stepResult(true)],
-      userId,
-    });
-
-    expect(result.brainPower).toBe(100);
-
-    const daily = await prisma.dailyProgress.findFirst({
-      where: { organizationId: org.id, userId },
-    });
-
-    expect(daily?.challengesCompleted).toBe(1);
-    expect(daily?.interactiveCompleted).toBe(0);
-  });
-
-  test("challenge failure: 10 BP, energy +0.1", async () => {
-    const user = await userFixture();
-    const userId = Number(user.id);
-
-    const result = await submitActivityCompletion({
-      activityId: activity.id,
-      courseId: course.id,
-      durationSeconds: 10,
-      isChallenge: true,
-      localDate: todayLocalDate(),
-      organizationId: org.id,
-      score: { brainPower: 10, correctCount: 0, energyDelta: 0.1, incorrectCount: 0 },
-      startedAt: new Date(Date.now() - 10_000),
-      stepResults: [stepResult(true)],
-      userId,
-    });
-
-    expect(result.brainPower).toBe(10);
-    expect(result.energyDelta).toBe(0.1);
-  });
-
   test("re-completion: new StepAttempts, updated BP", async () => {
     const user = await userFixture();
     const userId = Number(user.id);
@@ -270,7 +222,7 @@ describe(submitActivityCompletion, () => {
       activityId: activity.id,
       courseId: course.id,
       durationSeconds: 10,
-      isChallenge: false,
+
       localDate: todayLocalDate(),
       organizationId: org.id,
       score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
@@ -305,7 +257,7 @@ describe(submitActivityCompletion, () => {
       activityId: staticActivity.id,
       courseId: course.id,
       durationSeconds: 5,
-      isChallenge: false,
+
       localDate: todayLocalDate(),
       organizationId: org.id,
       score: { brainPower: 10, correctCount: 0, energyDelta: 0.1, incorrectCount: 0 },
@@ -321,7 +273,6 @@ describe(submitActivityCompletion, () => {
     expect(daily).not.toBeNull();
     expect(daily?.staticCompleted).toBe(1);
     expect(daily?.interactiveCompleted).toBe(0);
-    expect(daily?.challengesCompleted).toBe(0);
   });
 
   test("returns correct belt level based on new total BP", async () => {
@@ -332,7 +283,7 @@ describe(submitActivityCompletion, () => {
       activityId: activity.id,
       courseId: course.id,
       durationSeconds: 10,
-      isChallenge: false,
+
       localDate: todayLocalDate(),
       organizationId: org.id,
       score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
@@ -354,7 +305,7 @@ describe(submitActivityCompletion, () => {
       activityId: activity.id,
       courseId: course.id,
       durationSeconds: 10,
-      isChallenge: false,
+
       localDate: todayLocalDate(),
       organizationId: null,
       score: { brainPower: 10, correctCount: 2, energyDelta: 0.3, incorrectCount: 1 },
@@ -382,7 +333,7 @@ describe(submitActivityCompletion, () => {
       activityId: activity.id,
       courseId: course.id,
       durationSeconds: 10,
-      isChallenge: false,
+
       localDate: todayLocalDate(),
       organizationId: null as number | null,
       score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
@@ -412,7 +363,7 @@ describe(submitActivityCompletion, () => {
       activityId: activity.id,
       courseId: course.id,
       durationSeconds: 10,
-      isChallenge: false,
+
       localDate: todayLocalDate(),
       organizationId: null,
       score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
@@ -439,7 +390,7 @@ describe(submitActivityCompletion, () => {
       activityId: activity.id,
       courseId: course.id,
       durationSeconds: 10,
-      isChallenge: false,
+
       localDate: todayLocalDate(),
       organizationId: org.id,
       score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
@@ -465,7 +416,7 @@ describe(submitActivityCompletion, () => {
       activityId: activity.id,
       courseId: course.id,
       durationSeconds: 10,
-      isChallenge: false,
+
       localDate: todayLocalDate(),
       organizationId: org.id,
       score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
@@ -511,7 +462,7 @@ describe(submitActivityCompletion, () => {
       activityId: activity.id,
       courseId: course.id,
       durationSeconds: 10,
-      isChallenge: false,
+
       localDate: todayLocalDate(),
       organizationId: org.id,
       score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
@@ -549,7 +500,7 @@ describe(submitActivityCompletion, () => {
       activityId: activity.id,
       courseId: course.id,
       durationSeconds: 20,
-      isChallenge: false,
+
       localDate: todayLocalDate(),
       organizationId: org.id,
       score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
@@ -583,7 +534,7 @@ describe(submitActivityCompletion, () => {
       activityId: activity.id,
       courseId: course.id,
       durationSeconds: 10,
-      isChallenge: false,
+
       localDate,
       organizationId: org.id,
       score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
@@ -613,7 +564,7 @@ describe(submitActivityCompletion, () => {
         activityId: activity.id,
         courseId: course.id,
         durationSeconds: 10,
-        isChallenge: false,
+
         localDate: "9999-12-31",
         organizationId: org.id,
         score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
@@ -633,7 +584,7 @@ describe(submitActivityCompletion, () => {
         activityId: activity.id,
         courseId: course.id,
         durationSeconds: 10,
-        isChallenge: false,
+
         localDate: "2020-01-01",
         organizationId: org.id,
         score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
@@ -662,7 +613,7 @@ describe(submitActivityCompletion, () => {
       activityId: activity.id,
       courseId: course.id,
       durationSeconds: 10,
-      isChallenge: false,
+
       localDate,
       organizationId: org.id,
       score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
@@ -714,7 +665,7 @@ describe(submitActivityCompletion, () => {
       activityId: activity.id,
       courseId: course.id,
       durationSeconds: 10,
-      isChallenge: false,
+
       localDate: todayLocalDate(),
       organizationId: org.id,
       score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
