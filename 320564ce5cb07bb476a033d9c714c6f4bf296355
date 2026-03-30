@@ -1,0 +1,94 @@
+packages/player/src/compute-score.ts
+  b7a9dbefe444c0b7 1-2
+packages/player/src/components/completion-screen.tsx
+  b7a9dbefe444c0b7 9
+packages/player/src/components/feedback-screen.tsx
+  b7a9dbefe444c0b7 5,79-84
+packages/player/src/check-step.test.ts
+  b7a9dbefe444c0b7 40,46,77,110,144,173,207,236,261,341,413,421
+apps/api/src/workflows/lesson-generation/steps/_utils/get-activities-for-kind.ts
+  b7a9dbefe444c0b7 25-27,30,51,58,77
+apps/main/src/lib/generation/activity-generation-phase-weights.ts
+  b7a9dbefe444c0b7 122
+apps/main/src/data/activities/get-review-steps.test.ts
+  b7a9dbefe444c0b7 661
+apps/main/src/data/activities/get-review-steps.ts
+  b7a9dbefe444c0b7 94
+apps/main/src/app/(catalog)/courses/page.tsx
+  b7a9dbefe444c0b7 20
+packages/player/src/player-completion.ts
+  b7a9dbefe444c0b7 3,9,15-19
+apps/api/src/workflows/activity-generation/core-activity-workflow.ts
+  b7a9dbefe444c0b7 10
+packages/core/src/steps/content-contract.test.ts
+  b7a9dbefe444c0b7 47
+apps/main/src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/a/[position]/submit-completion-action.ts
+  b7a9dbefe444c0b7 9,116-118
+apps/main/src/data/progress/submit-activity-completion.ts
+  b7a9dbefe444c0b7 18,64
+packages/player/src/use-player-keyboard.ts
+  b7a9dbefe444c0b7 29
+apps/main/src/data/progress/submit-activity-completion.test.ts
+  b7a9dbefe444c0b7 72,100,126,150,168,181,204,225,260,286,308,336,366,393,419,465,503,537,616,668
+packages/player/src/check-step.ts
+  b7a9dbefe444c0b7 1,33,42,62,71
+packages/player/src/player-initial-state.ts
+  b7a9dbefe444c0b7 1,12,32
+packages/player/src/player-reducer.test.ts
+  b7a9dbefe444c0b7 81,96,484
+packages/player/src/components/in-play-sticky-header.tsx
+  b7a9dbefe444c0b7 25-27
+apps/main/e2e/static-step.test.ts
+  b7a9dbefe444c0b7 11
+packages/player/src/use-player-actions.ts
+  b7a9dbefe444c0b7 66-67
+packages/player/src/components/stage-content.tsx
+  b7a9dbefe444c0b7 3,62
+packages/player/src/player-provider.tsx
+  b7a9dbefe444c0b7 14,61
+apps/api/src/workflows/activity-generation/core-activity-workflow.test.ts
+  b7a9dbefe444c0b7 615-616,625,635,638,644,646,649-650,655
+packages/player/src/components/reward-badges.tsx
+  b7a9dbefe444c0b7 24
+packages/player/src/player-reducer.ts
+  b7a9dbefe444c0b7 4,8,50,54
+packages/player/src/compute-score.test.ts
+  b7a9dbefe444c0b7 2
+apps/main/e2e/lesson-detail.test.ts
+  b7a9dbefe444c0b7 64,261,297,329
+packages/core/src/steps/content-contract.ts
+  b7a9dbefe444c0b7 21
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.22",
+  "base_commit_sha": "320564ce5cb07bb476a033d9c714c6f4bf296355",
+  "prompts": {
+    "b7a9dbefe444c0b7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f05c1300-ad69-45ce-9af0-63da402f45c2",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill <4393133+ceolinwill@users.noreply.github.com>",
+      "messages": [],
+      "total_additions": 135,
+      "total_deletions": 2392,
+      "accepted_lines": 124,
+      "overriden_lines": 0
+    },
+    "ddd7d5f81aba2ab6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1baecb97-6643-48c1-91cd-61d2fcf8b770",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill <4393133+ceolinwill@users.noreply.github.com>",
+      "messages": [],
+      "total_additions": 469,
+      "total_deletions": 413,
+      "accepted_lines": 496,
+      "overriden_lines": 0
+    }
+  }
+}
