@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { computeScore, computeTradeoffScore } from "./compute-score";
+import { computeScore } from "./compute-score";
 
 describe(computeScore, () => {
   test("all correct (5): BP=10, energyDelta=1.0", () => {
@@ -66,19 +66,6 @@ describe(computeScore, () => {
       brainPower: 10,
       correctCount: 0,
       energyDelta: 0.1,
-      incorrectCount: 0,
-    });
-  });
-});
-
-describe(computeTradeoffScore, () => {
-  test("returns 100 BP, 5 energy, 0 correct/incorrect", () => {
-    const result = computeTradeoffScore();
-
-    expect(result).toEqual({
-      brainPower: 100,
-      correctCount: 0,
-      energyDelta: 5,
       incorrectCount: 0,
     });
   });

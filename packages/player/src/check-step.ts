@@ -108,6 +108,14 @@ function checkReadingStep(step: SerializedStep, answer: SelectedAnswer): CheckSt
   };
 }
 
+function checkTradeoff(answer: SelectedAnswer): CheckStepResult {
+  if (answer.kind !== "tradeoff") {
+    return MISMATCH_RESULT;
+  }
+
+  return { result: checkTradeoffAnswer() };
+}
+
 function checkListeningStep(step: SerializedStep, answer: SelectedAnswer): CheckStepResult {
   if (answer.kind !== "listening") {
     return MISMATCH_RESULT;
@@ -157,7 +165,7 @@ export function checkStep(step: SerializedStep, answer: SelectedAnswer): CheckSt
       return checkListeningStep(step, answer);
 
     case "tradeoff":
-      return { result: checkTradeoffAnswer() };
+      return checkTradeoff(answer);
 
     case "static":
     case "visual":

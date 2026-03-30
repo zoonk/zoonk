@@ -1,10 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  CONSEQUENCE_STATE_DELTAS,
-  getEffectiveTokenTotal,
-  getStateDirection,
-  getStateTier,
-} from "./state-tier";
+import { getEffectiveTokenTotal, getStateDirection, getStateTier } from "./state-tier";
 
 describe(getStateTier, () => {
   it("returns Critical for negative states", () => {
@@ -62,20 +57,6 @@ describe(getStateDirection, () => {
 
   it("returns → for zero delta", () => {
     expect(getStateDirection(0)).toBe("→");
-  });
-});
-
-describe("CONSEQUENCE_STATE_DELTAS", () => {
-  it("maps invested to +1", () => {
-    expect(CONSEQUENCE_STATE_DELTAS.invested).toBe(1);
-  });
-
-  it("maps maintained to 0", () => {
-    expect(CONSEQUENCE_STATE_DELTAS.maintained).toBe(0);
-  });
-
-  it("maps neglected to -1", () => {
-    expect(CONSEQUENCE_STATE_DELTAS.neglected).toBe(-1);
   });
 });
 
