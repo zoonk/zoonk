@@ -101,11 +101,36 @@ For languages with grammatical gender, ensure all agreement is correct throughou
 
 # Explanation
 
-For each sentence, provide a brief explanation (1-2 sentences) of the key grammar or word-order pattern demonstrated. Write the explanation in USER_LANGUAGE (the learner's native language).
+Every sentence MUST have an explanation. Never set it to `null` or leave it empty.
 
-- Focus on patterns that differ from the user's native language (e.g., adjective placement, verb conjugation rules, word order differences)
-- Set to `null` for very simple sentences where the structure is obvious (e.g., single-word greetings, basic "Hello!" sentences)
-- Keep explanations concise and practical — highlight the one thing a learner should notice
+Write the explanation in USER_LANGUAGE (the learner's native language). The explanation should help the learner understand **why this sentence is written this way in the target language** by comparing it with how they would express the same idea in their own language.
+
+## What to Explain
+
+The core question the explanation answers is: **"Why is this sentence structured this way, and how does it differ from what I'd say in my language?"**
+
+Focus on contrasts and potential confusion points between TARGET_LANGUAGE and USER_LANGUAGE:
+
+- **Word order differences**: If the target language places the verb at the end, the adjective after the noun, or the question word in a different position than USER_LANGUAGE, explain why. E.g., "In German, the verb goes to the end in subordinate clauses — unlike in Portuguese, where the verb stays near the subject."
+- **Word choice surprises**: When the target language uses a different word, structure, or concept than the learner would expect. E.g., "German uses 'Wie geht's?' (literally 'How goes it?') — unlike Portuguese, which asks 'Como vai?' (How do you go?)."
+- **Grammar patterns that don't exist in USER_LANGUAGE**: Articles, cases, gendered nouns, verb conjugations, particles, or other structures the learner's language lacks. E.g., "German has formal ('Sie') and informal ('du') versions of 'you' — if you'd use 'você' in Portuguese, use 'Sie' in German for the same level of politeness."
+- **False friends and misleading similarities**: Words that look or sound similar between languages but mean different things or are used differently. E.g., "'Hallo' looks like 'alô' in Portuguese, but 'alô' is only used on the phone — 'Hallo' is a general greeting."
+- **Why this word and not another**: When multiple words could seemingly fit, explain why this specific one is used. E.g., "'Guten Morgen' uses 'Guten' (accusative) because German greetings use an implied 'I wish you a...' construction — you wouldn't say 'Guter Morgen'."
+
+## Romanization in Explanations
+
+When TARGET_LANGUAGE uses a non-Latin script (Japanese, Korean, Chinese, Arabic, Thai, Hindi, Russian, Greek, etc.), **always include romanization** next to any target-language word or phrase mentioned in the explanation. Learners — especially beginners — cannot yet read the script fluently, so bare characters are unhelpful.
+
+Format: `characters (romanization)`. E.g., "こんばんは (konbanwa) is the greeting used at night" — NOT "こんばんは is the greeting used at night".
+
+This applies to every target-language word or phrase in the explanation, not just the first mention.
+
+## Explanation Style
+
+- Keep explanations concise (1-3 sentences) but always informative
+- Be specific to THIS sentence — don't give generic grammar lectures
+- Use concrete comparisons: "In TARGET_LANGUAGE you say X, but in USER_LANGUAGE you'd say Y, because..."
+- Make the learner feel like they understand the logic, not just memorizing
 
 ## Explanation Accuracy (CRITICAL)
 
@@ -121,7 +146,7 @@ Many grammar elements have multiple functions. Picking the wrong one teaches inc
 - **German prepositions**: Many take different cases depending on meaning (e.g., "in" + accusative for direction vs "in" + dative for location). Identify the correct case and meaning for the sentence.
 - **Korean particles**: 을/를 (object), 이/가 (subject), 은/는 (topic) serve distinct roles. Do not conflate them.
 
-**General principle**: If a grammar element has multiple functions, identify which function applies in this specific sentence. A wrong explanation is worse than no explanation — set the field to `null` if you are unsure.
+**General principle**: If a grammar element has multiple functions, identify which function applies in this specific sentence. A wrong explanation is worse than a vague one — but every sentence must still have an explanation. If unsure about a specific grammar detail, focus the explanation on word order or vocabulary contrasts instead.
 
 # Output Format
 
@@ -129,45 +154,7 @@ Return an object with a `sentences` array. Each sentence object must include:
 
 - `sentence`: The complete sentence in the target language
 - `translation`: The translation in the native language
-- `explanation`: Brief grammar/structure explanation in USER_LANGUAGE, or `null` for trivially simple sentences
-
-**Example for Spanish:**
-
-```json
-{
-  "sentences": [
-    {
-      "sentence": "Mi hermana trabaja en un hospital.",
-      "translation": "My sister works at a hospital.",
-      "explanation": "In Spanish, possessive adjectives like 'mi' (my) come before the noun, just like in English."
-    },
-    {
-      "sentence": "¿Dónde está la estación de tren?",
-      "translation": "Where is the train station?",
-      "explanation": "'Estar' is used for location. Questions in Spanish are framed with ¿...? and the verb often comes before the subject."
-    }
-  ]
-}
-```
-
-**Example for Japanese:**
-
-```json
-{
-  "sentences": [
-    {
-      "sentence": "私の姉は病院で働いています。",
-      "translation": "My older sister works at a hospital.",
-      "explanation": "Japanese uses the particle 'de' (で) to indicate where an action takes place, similar to 'at' or 'in' in English."
-    },
-    {
-      "sentence": "駅はどこですか？",
-      "translation": "Where is the station?",
-      "explanation": "In Japanese, the question word 'doko' (where) comes after the topic, and 'ka' at the end marks it as a question."
-    }
-  ]
-}
-```
+- `explanation`: Explanation in USER_LANGUAGE comparing the target-language structure with the learner's language (always required, never `null`)
 
 # Quality Requirements
 

@@ -28,7 +28,7 @@ vi.mock("@zoonk/ai/tasks/activities/language/sentences", () => ({
     data: {
       sentences: [
         {
-          explanation: null,
+          explanation: "test explanation",
           sentence: "Guten Morgen",
           translation: "Good morning",
         },
@@ -93,7 +93,7 @@ describe(generateReadingContentStep, () => {
 
     expect(result.sentences).toEqual([
       {
-        explanation: null,
+        explanation: "test explanation",
         sentence: "Guten Morgen",
         translation: "Good morning",
       },

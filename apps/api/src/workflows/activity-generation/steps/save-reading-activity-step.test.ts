@@ -235,7 +235,7 @@ describe(saveReadingActivityStep, () => {
       sentenceRomanizations: {},
       sentences: [
         {
-          explanation: null,
+          explanation: "test explanation",
           sentence: `${translatedWord} ${untranslatedWord}`,
           translation: "pretty cat",
         },
@@ -296,7 +296,7 @@ describe(saveReadingActivityStep, () => {
       sentenceRomanizations: {},
       sentences: [
         {
-          explanation: null,
+          explanation: "test explanation",
           sentence: lowercaseWord,
           translation: "cat",
         },

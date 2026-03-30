@@ -70,7 +70,11 @@ describe(generateReadingAudioStep, () => {
     const id = randomUUID().slice(0, 8);
 
     const sentences = [
-      { explanation: null, sentence: `Guten Morgen ${id}`, translation: `Good morning ${id}` },
+      {
+        explanation: "test explanation",
+        sentence: `Guten Morgen ${id}`,
+        translation: `Good morning ${id}`,
+      },
     ];
 
     const result = await generateReadingAudioStep(activities, sentences);
@@ -125,7 +129,9 @@ describe(generateReadingAudioStep, () => {
 
     const activities = await fetchLessonActivities(lesson.id);
 
-    const sentences = [{ explanation: null, sentence: sentenceText, translation: "Good day" }];
+    const sentences = [
+      { explanation: "test explanation", sentence: sentenceText, translation: "Good day" },
+    ];
 
     const result = await generateReadingAudioStep(activities, sentences);
 
@@ -160,7 +166,7 @@ describe(generateReadingAudioStep, () => {
     const activities = await fetchLessonActivities(lesson.id);
 
     const result = await generateReadingAudioStep(activities, [
-      { explanation: null, sentence: "test", translation: "test" },
+      { explanation: "test explanation", sentence: "test", translation: "test" },
     ]);
 
     expect(result).toEqual({ sentenceAudioUrls: {} });
@@ -228,8 +234,16 @@ describe(generateReadingAudioStep, () => {
     const id = randomUUID().slice(0, 8);
 
     const sentences = [
-      { explanation: null, sentence: `Guten Morgen ${id}`, translation: `Good morning ${id}` },
-      { explanation: null, sentence: `Gute Nacht ${id}`, translation: `Good night ${id}` },
+      {
+        explanation: "test explanation",
+        sentence: `Guten Morgen ${id}`,
+        translation: `Good morning ${id}`,
+      },
+      {
+        explanation: "test explanation",
+        sentence: `Gute Nacht ${id}`,
+        translation: `Good night ${id}`,
+      },
     ];
 
     vi.mocked(generateLanguageAudio)
@@ -270,7 +284,7 @@ describe(generateReadingAudioStep, () => {
     const activities = await fetchLessonActivities(lesson.id);
 
     const result = await generateReadingAudioStep(activities, [
-      { explanation: null, sentence: "test", translation: "test" },
+      { explanation: "test explanation", sentence: "test", translation: "test" },
     ]);
 
     expect(result).toEqual({ sentenceAudioUrls: {} });
