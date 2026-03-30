@@ -231,6 +231,69 @@ describe(validateAnswers, () => {
     expect(results[0]?.isCorrect).toBe(true);
   });
 
+  test("tradeoff always validates as correct and creates a StepAttempt record", () => {
+    const steps = [
+      {
+        content: {
+          event: null,
+          outcomes: [],
+          priorities: [
+            { description: "d", id: "study", name: "Study" },
+            { description: "d", id: "exercise", name: "Exercise" },
+            { description: "d", id: "sleep", name: "Sleep" },
+          ],
+          resource: { name: "hours", total: 5 },
+          stateModifiers: null,
+          tokenOverride: null,
+        },
+        id: 20n,
+        kind: "tradeoff",
+      },
+    ];
+
+    const results = validateAnswers(steps, {
+      "20": {
+        allocations: [
+          { priorityId: "study", tokens: 3 },
+          { priorityId: "exercise", tokens: 1 },
+          { priorityId: "sleep", tokens: 1 },
+        ],
+        kind: "tradeoff",
+      },
+    });
+
+    expect(results).toHaveLength(1);
+    expect(results[0]?.isCorrect).toBe(true);
+    expect(results[0]?.stepId).toBe(20n);
+  });
+
+  test("tradeoff returns null when answer kind does not match", () => {
+    const steps = [
+      {
+        content: {
+          event: null,
+          outcomes: [],
+          priorities: [
+            { description: "d", id: "study", name: "Study" },
+            { description: "d", id: "exercise", name: "Exercise" },
+            { description: "d", id: "sleep", name: "Sleep" },
+          ],
+          resource: { name: "hours", total: 5 },
+          stateModifiers: null,
+          tokenOverride: null,
+        },
+        id: 21n,
+        kind: "tradeoff",
+      },
+    ];
+
+    const results = validateAnswers(steps, {
+      "21": { kind: "multipleChoice", selectedIndex: 0, selectedText: "test" },
+    });
+
+    expect(results).toHaveLength(0);
+  });
+
   test("skips unsupported step kinds", () => {
     const steps = [{ content: {}, id: 7n, kind: "unknownKind" }];
 

@@ -21,6 +21,7 @@ enum ActivityKind {
   reading
   listening
   translation
+  tradeoff
   review
 }
 
@@ -37,6 +38,7 @@ enum StepKind {
   translation
   reading
   listening
+  tradeoff
 }
 
 enum CourseMode {

@@ -44,18 +44,19 @@ function getCoreActivities(concepts: string[]): ActivityEntry[] {
   const practice: ActivityEntry = { description: null, kind: "practice", title: null };
   const review: ActivityEntry = { description: null, kind: "review", title: null };
   const quiz: ActivityEntry = { description: null, kind: "quiz", title: null };
+  const tradeoff: ActivityEntry = { description: null, kind: "tradeoff", title: null };
 
   const minConceptsForTwoPractices = 4;
 
   if (concepts.length < minConceptsForTwoPractices) {
-    return [...allExplanations, practice, quiz, review];
+    return [...allExplanations, practice, quiz, tradeoff, review];
   }
 
   const splitIndex = Math.floor(concepts.length / 2);
   const firstGroup = explanations.slice(0, splitIndex);
   const secondGroup = explanations.slice(splitIndex);
 
-  return [...firstGroup, practice, ...secondGroup, practice, quiz, review];
+  return [...firstGroup, practice, ...secondGroup, practice, quiz, tradeoff, review];
 }
 
 /**

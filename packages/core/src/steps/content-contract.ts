@@ -108,6 +108,51 @@ const translationContentSchema = z.object({}).strict();
 const readingContentSchema = z.object({}).strict();
 const listeningContentSchema = z.object({}).strict();
 
+const tradeoffPrioritySchema = z
+  .object({
+    description: z.string(),
+    id: z.string(),
+    name: z.string(),
+  })
+  .strict();
+
+const tradeoffResourceSchema = z
+  .object({
+    name: z.string(),
+    total: z.number().int(),
+  })
+  .strict();
+
+const tradeoffOutcomeSchema = z
+  .object({
+    invested: z.object({ consequence: z.string() }).strict(),
+    maintained: z.object({ consequence: z.string() }).strict(),
+    neglected: z.object({ consequence: z.string() }).strict(),
+    priorityId: z.string(),
+  })
+  .strict();
+
+const tradeoffStateModifierSchema = z
+  .object({
+    delta: z.number().int(),
+    priorityId: z.string(),
+  })
+  .strict();
+
+const MIN_PRIORITIES = 3;
+const MAX_PRIORITIES = 4;
+
+export const tradeoffContentSchema = z
+  .object({
+    event: z.string().nullable(),
+    outcomes: z.array(tradeoffOutcomeSchema).min(1),
+    priorities: z.array(tradeoffPrioritySchema).min(MIN_PRIORITIES).max(MAX_PRIORITIES),
+    resource: tradeoffResourceSchema,
+    stateModifiers: z.array(tradeoffStateModifierSchema).nullable(),
+    tokenOverride: z.number().int().nullable(),
+  })
+  .strict();
+
 const stepContentSchemas = {
   fillBlank: fillBlankContentSchema,
   listening: listeningContentSchema,
@@ -117,6 +162,7 @@ const stepContentSchemas = {
   selectImage: selectImageContentSchema,
   sortOrder: sortOrderContentSchema,
   static: staticContentSchema,
+  tradeoff: tradeoffContentSchema,
   translation: translationContentSchema,
   visual: visualStepContentSchema,
   vocabulary: vocabularyContentSchema,
@@ -136,6 +182,7 @@ export type VocabularyStepContent = z.infer<typeof vocabularyContentSchema>;
 export type TranslationStepContent = z.infer<typeof translationContentSchema>;
 export type ReadingStepContent = z.infer<typeof readingContentSchema>;
 export type ListeningStepContent = z.infer<typeof listeningContentSchema>;
+export type TradeoffStepContent = z.infer<typeof tradeoffContentSchema>;
 
 export type { VisualStepContent };
 
@@ -148,6 +195,7 @@ export type StepContentByKind = {
   selectImage: SelectImageStepContent;
   sortOrder: SortOrderStepContent;
   static: StaticStepContent;
+  tradeoff: TradeoffStepContent;
   translation: TranslationStepContent;
   visual: VisualStepContent;
   vocabulary: VocabularyStepContent;
@@ -168,6 +216,7 @@ export function parseStepContent(kind: "reading", content: unknown): ReadingStep
 export function parseStepContent(kind: "selectImage", content: unknown): SelectImageStepContent;
 export function parseStepContent(kind: "sortOrder", content: unknown): SortOrderStepContent;
 export function parseStepContent(kind: "static", content: unknown): StaticStepContent;
+export function parseStepContent(kind: "tradeoff", content: unknown): TradeoffStepContent;
 export function parseStepContent(kind: "translation", content: unknown): TranslationStepContent;
 export function parseStepContent(kind: "visual", content: unknown): VisualStepContent;
 export function parseStepContent(kind: "vocabulary", content: unknown): VocabularyStepContent;
@@ -190,6 +239,7 @@ export function assertStepContent(kind: "reading", content: unknown): ReadingSte
 export function assertStepContent(kind: "selectImage", content: unknown): SelectImageStepContent;
 export function assertStepContent(kind: "sortOrder", content: unknown): SortOrderStepContent;
 export function assertStepContent(kind: "static", content: unknown): StaticStepContent;
+export function assertStepContent(kind: "tradeoff", content: unknown): TradeoffStepContent;
 export function assertStepContent(kind: "translation", content: unknown): TranslationStepContent;
 export function assertStepContent(kind: "visual", content: unknown): VisualStepContent;
 export function assertStepContent(kind: "vocabulary", content: unknown): VocabularyStepContent;

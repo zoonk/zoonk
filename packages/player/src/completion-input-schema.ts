@@ -41,6 +41,11 @@ const sortOrderAnswerSchema = z.object({
   userOrder: z.array(z.string()),
 });
 
+const tradeoffAnswerSchema = z.object({
+  allocations: z.array(z.object({ priorityId: z.string(), tokens: z.number() })),
+  kind: z.literal("tradeoff"),
+});
+
 const translationAnswerSchema = z.object({
   kind: z.literal("translation"),
   questionText: z.string(),
@@ -56,6 +61,7 @@ const selectedAnswerSchema = z.discriminatedUnion("kind", [
   readingAnswerSchema,
   selectImageAnswerSchema,
   sortOrderAnswerSchema,
+  tradeoffAnswerSchema,
   translationAnswerSchema,
 ]);
 

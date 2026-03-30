@@ -9,6 +9,7 @@ import {
   checkMultipleChoiceAnswer,
   checkSelectImageAnswer,
   checkSortOrderAnswer,
+  checkTradeoffAnswer,
   checkTranslationAnswer,
 } from "./check-answer";
 import { type SelectedAnswer } from "./player-reducer";
@@ -154,6 +155,9 @@ export function checkStep(step: SerializedStep, answer: SelectedAnswer): CheckSt
 
     case "listening":
       return checkListeningStep(step, answer);
+
+    case "tradeoff":
+      return { result: checkTradeoffAnswer() };
 
     case "static":
     case "visual":

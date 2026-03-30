@@ -1,4 +1,8 @@
-import { BRAIN_POWER_PER_ACTIVITY } from "@zoonk/utils/brain-power";
+import {
+  BRAIN_POWER_PER_ACTIVITY,
+  TRADEOFF_BRAIN_POWER,
+  TRADEOFF_ENERGY,
+} from "@zoonk/utils/brain-power";
 import { ENERGY_PER_CORRECT, ENERGY_PER_INCORRECT, ENERGY_PER_STATIC } from "@zoonk/utils/energy";
 
 type ActivityScoreInput = {
@@ -20,6 +24,20 @@ function calculateEnergyDelta(results: ActivityScoreInput["results"]): number {
   const correctCount = results.filter((result) => result.isCorrect).length;
   const incorrectCount = results.length - correctCount;
   return correctCount * ENERGY_PER_CORRECT + incorrectCount * ENERGY_PER_INCORRECT;
+}
+
+/**
+ * Tradeoff activities have no correct/incorrect answers — they test
+ * judgment, not recall. They award a boosted reward (100 BP + 5 energy)
+ * to reflect the higher engagement and complexity.
+ */
+export function computeTradeoffScore(): ScoreResult {
+  return {
+    brainPower: TRADEOFF_BRAIN_POWER,
+    correctCount: 0,
+    energyDelta: TRADEOFF_ENERGY,
+    incorrectCount: 0,
+  };
 }
 
 export function computeScore(input: ActivityScoreInput): ScoreResult {

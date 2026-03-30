@@ -2,6 +2,7 @@ import { settled } from "@zoonk/utils/settled";
 import { explanationActivityWorkflow } from "./kinds/explanation-workflow";
 import { practiceActivityWorkflow } from "./kinds/practice-workflow";
 import { quizActivityWorkflow } from "./kinds/quiz-workflow";
+import { tradeoffActivityWorkflow } from "./kinds/tradeoff-workflow";
 import { findActivitiesByKind } from "./steps/_utils/find-activity-by-kind";
 import { type LessonActivity } from "./steps/get-lesson-activities-step";
 import { getNeighboringConceptsStep } from "./steps/get-neighboring-concepts-step";
@@ -46,6 +47,11 @@ export async function coreActivityWorkflow({
       workflowRunId,
     }),
     quizActivityWorkflow({
+      activitiesToGenerate,
+      explanationResults: results,
+      workflowRunId,
+    }),
+    tradeoffActivityWorkflow({
       activitiesToGenerate,
       explanationResults: results,
       workflowRunId,

@@ -93,6 +93,16 @@ export function checkTranslationAnswer(
   };
 }
 
+/**
+ * Tradeoff steps have no correct or incorrect answer — the learning
+ * comes from experiencing consequences, not from being graded. Always
+ * returns isCorrect: true so the player's CHECK_ANSWER flow proceeds.
+ * The score pipeline excludes tradeoff from accuracy calculations.
+ */
+export function checkTradeoffAnswer(): AnswerResult {
+  return { correctAnswer: null, feedback: null, isCorrect: true };
+}
+
 export function checkArrangeWordsAnswer(
   correctWords: string[][],
   userWords: string[],

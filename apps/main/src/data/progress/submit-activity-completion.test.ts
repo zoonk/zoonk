@@ -698,4 +698,107 @@ describe(submitActivityCompletion, () => {
     });
     expect(todayRecord?.energyAtEnd).toBeCloseTo(46.2);
   });
+
+  describe("tradeoff activity", () => {
+    test("increments tradeoffCompleted and awards boosted BP + energy", async () => {
+      const user = await userFixture();
+      const userId = Number(user.id);
+
+      const tradeoffActivity = await activityFixture({
+        kind: "tradeoff",
+        lessonId: lesson.id,
+        organizationId: org.id,
+      });
+
+      const tradeoffStep = await stepFixture({
+        activityId: tradeoffActivity.id,
+        content: {
+          event: null,
+          outcomes: [
+            {
+              invested: { consequence: "good" },
+              maintained: { consequence: "ok" },
+              neglected: { consequence: "bad" },
+              priorityId: "study",
+            },
+            {
+              invested: { consequence: "good" },
+              maintained: { consequence: "ok" },
+              neglected: { consequence: "bad" },
+              priorityId: "exercise",
+            },
+            {
+              invested: { consequence: "good" },
+              maintained: { consequence: "ok" },
+              neglected: { consequence: "bad" },
+              priorityId: "sleep",
+            },
+          ],
+          priorities: [
+            { description: "d", id: "study", name: "Study" },
+            { description: "d", id: "exercise", name: "Exercise" },
+            { description: "d", id: "sleep", name: "Sleep" },
+          ],
+          resource: { name: "hours", total: 5 },
+          stateModifiers: null,
+          tokenOverride: null,
+        },
+        kind: "tradeoff",
+      });
+
+      const result = await submitActivityCompletion({
+        activityId: tradeoffActivity.id,
+        courseId: course.id,
+        durationSeconds: 30,
+        isTradeoff: true,
+        localDate: todayLocalDate(),
+        organizationId: org.id,
+        score: { brainPower: 100, correctCount: 0, energyDelta: 5, incorrectCount: 0 },
+        startedAt: new Date(),
+        stepResults: [
+          {
+            answer: {
+              allocations: [
+                { priorityId: "study", tokens: 3 },
+                { priorityId: "exercise", tokens: 1 },
+                { priorityId: "sleep", tokens: 1 },
+              ],
+              kind: "tradeoff",
+            },
+            answeredAt: new Date(),
+            dayOfWeek: 1,
+            durationSeconds: 15,
+            hourOfDay: 14,
+            isCorrect: true,
+            stepId: tradeoffStep.id,
+          },
+        ],
+        userId,
+      });
+
+      expect(result.brainPower).toBe(100);
+      expect(result.energyDelta).toBe(5);
+
+      const userProgress = await prisma.userProgress.findUniqueOrThrow({
+        where: { userId },
+      });
+      expect(Number(userProgress.totalBrainPower)).toBe(100);
+      expect(userProgress.currentEnergy).toBe(5);
+
+      const dailyProgress = await prisma.dailyProgress.findFirst({
+        where: { organizationId: org.id, userId },
+      });
+      expect(dailyProgress?.tradeoffCompleted).toBe(1);
+      expect(dailyProgress?.interactiveCompleted).toBe(0);
+      expect(dailyProgress?.staticCompleted).toBe(0);
+      expect(dailyProgress?.brainPowerEarned).toBe(100);
+
+      // Verify StepAttempt was created for analytics
+      const attempts = await prisma.stepAttempt.findMany({
+        where: { stepId: tradeoffStep.id, userId },
+      });
+      expect(attempts).toHaveLength(1);
+      expect(attempts[0]?.isCorrect).toBe(true);
+    });
+  });
 });

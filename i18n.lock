@@ -250,6 +250,19 @@ checksums:
     Drag%20items%20into%20the%20correct%20order/singular: 8ccab82ee3ba645ac23da4ca14a0dd2a
     Sort%20items/singular: 3b1072a596203b5acdc5718d38161392
     Correct%20order%3A/singular: df3f446653ec8cde9c29d8d5912636ef
+    All%20%7Bresource%7D%20allocated.%20Tap%20Check%20to%20see%20what%20happens./singular: 7b8d26da1f3b9d3ea7f641f357300284
+    "%7Ballocated%7D%20of%20%7Btotal%7D%20%7Bresource%7D%20allocated/singular": ccc85d4365fd53b39ae075de5af332cb
+    "%7Bcount%7D%20for%20%7Bpriority%7D/singular": 4f3e5315af485baf2aed59bbd8724a5b
+    Remove%20from%20%7Bpriority%7D/singular: d37d557caa6f47775b2895d5f20a8e4d
+    Add%20to%20%7Bpriority%7D/singular: 338f059d76d39fde44745cf3761bfd38
+    Round%20%7Bcurrent%7D%20of%20%7Btotal%7D/singular: be6cb1edf8c1c749fca1c3ac4371d7a7
+    You%20now%20have%20%7Bcount%7D%20%7Bresource%7D./singular: f349005db6bd92aab706320282f8cc31
+    Final%20state/singular: 917efbc42bb73a48b957ebaf4459355d
+    Stable/singular: 28f533f118426f7ae7d274c90d6d3031
+    Critical/singular: eb327cd411b50aee954f8d1d215d003a
+    Stressed/singular: ef49e5b495c5c1bca26897208d0c926a
+    Thriving/singular: 09b11a4ee3607fd466eeb502a7c12d7d
+    Healthy/singular: a16896be3f594e1def8245fae1c9d93c
     Translate%20this%20word%3A/singular: 05fede3c583e9ea39f27ac9fdf17fcc3
     Visual%20content/singular: 38b0261c39ebe4d775867363482225d8
     Legend/singular: 3b588fbd2fe35ded6ca38334e15400c3
@@ -665,6 +678,7 @@ checksums:
     Explanation/singular: f6b595df4ffb1a5b0cbbe1dda5993522
     Sharpen%20your%20%7Btopic%7D%20listening%20skills%20by%20translating%20audio%20sentences./singular: b624ceffbbfc91a29cec43a0037b067f
     Test%20your%20understanding%20of%20%7Btopic%7D%20with%20questions%20designed%20to%20check%20real%20comprehension%2C%20not%20just%20memorization./singular: d9f3e39d19b1c6969b481bc8aec8fc10
+    Tradeoff/singular: 17dd8d0b8a47685bc1e2d6fc4ae6212e
     Practice/singular: ea10afa88a3687e6c40d1bfb3e0f4f20
     "%7Blesson%7D%20%7Bactivity%7D/singular": d959fed1ee77dca493e8cf0a3b3129c0
     Reading/singular: 9d93f1dff4a01a9e1566f23b401b8868
@@ -676,6 +690,7 @@ checksums:
     Practice%20%7Btopic%7D%20grammar%20rules%20with%20exercises%20designed%20to%20help%20you%20remember%20and%20apply%20them./singular: 107adae09992e8b4deb051afa38da3bd
     "%7Bactivity%7D%20-%20%7Blesson%7D/singular": 0aad8d82851f799d79c052a0f2b90d67
     Improve%20your%20%7Btopic%7D%20reading%20comprehension%20by%20translating%20sentences%20and%20passages./singular: 60baac4222f76009cc1eb1b6065b403b
+    Navigate%20real-world%20tradeoffs%20about%20%7Btopic%7D%20%E2%80%94%20allocate%20limited%20resources%20across%20competing%20priorities%20and%20see%20how%20your%20choices%20play%20out./singular: fb4f0bd021e81000b3620253f7f56b55
     Apply%20%7Btopic%7D%20through%20a%20real-world%20dialogue%20scenario./singular: e170c3bd82d42f0972d0f447f10379f0
     "%7Bcategory%7D%20Courses/singular": f82680a650c487992e1025b66f324d4c
     Math/singular: 0a604ffa5ef57408918fe98ef05eb05a

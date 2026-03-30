@@ -13,9 +13,16 @@ import {
 
 const MAX_LOCAL_DATE_DRIFT_MS = 2 * MS_PER_DAY;
 
+type CompletionField = "interactiveCompleted" | "staticCompleted" | "tradeoffCompleted";
+
 function getCompletionField(input: {
+  isTradeoff: boolean;
   stepResults: unknown[];
-}): "interactiveCompleted" | "staticCompleted" {
+}): CompletionField {
+  if (input.isTradeoff) {
+    return "tradeoffCompleted";
+  }
+
   if (input.stepResults.length === 0) {
     return "staticCompleted";
   }
@@ -61,7 +68,7 @@ async function upsertDailyProgress(
     date: Date;
     dayOfWeek: number;
     durationSeconds: number;
-    field: "interactiveCompleted" | "staticCompleted";
+    field: CompletionField;
     organizationId: number | null;
     score: ScoreResult;
     userId: number;
@@ -78,6 +85,7 @@ async function upsertDailyProgress(
     organizationId: params.organizationId,
     staticCompleted: params.field === "staticCompleted" ? 1 : 0,
     timeSpentSeconds: params.durationSeconds,
+    tradeoffCompleted: params.field === "tradeoffCompleted" ? 1 : 0,
     userId: params.userId,
   };
 
@@ -130,6 +138,7 @@ export async function submitActivityCompletion(input: {
   activityId: bigint;
   courseId: number;
   durationSeconds: number;
+  isTradeoff?: boolean;
   localDate: string;
   organizationId: number | null;
   score: ScoreResult;
@@ -248,7 +257,10 @@ export async function submitActivityCompletion(input: {
     });
 
     // DailyProgress upsert for today
-    const field = getCompletionField(input);
+    const field = getCompletionField({
+      isTradeoff: input.isTradeoff ?? false,
+      stepResults: input.stepResults,
+    });
 
     await upsertDailyProgress(tx, {
       clampedEnergy,

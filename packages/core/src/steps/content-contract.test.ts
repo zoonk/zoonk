@@ -237,4 +237,102 @@ describe("step content contracts", () => {
       }),
     ).toThrow();
   });
+
+  describe("tradeoff", () => {
+    const validContent = {
+      event: null,
+      outcomes: [
+        {
+          invested: { consequence: "Great progress" },
+          maintained: { consequence: "Treading water" },
+          neglected: { consequence: "Things got worse" },
+          priorityId: "study",
+        },
+        {
+          invested: { consequence: "Healthy" },
+          maintained: { consequence: "OK" },
+          neglected: { consequence: "Stressed" },
+          priorityId: "exercise",
+        },
+        {
+          invested: { consequence: "Well rested" },
+          maintained: { consequence: "Fine" },
+          neglected: { consequence: "Exhausted" },
+          priorityId: "sleep",
+        },
+      ],
+      priorities: [
+        { description: "Study notes", id: "study", name: "Study" },
+        { description: "Physical activity", id: "exercise", name: "Exercise" },
+        { description: "Rest and recovery", id: "sleep", name: "Sleep" },
+      ],
+      resource: { name: "hours", total: 5 },
+      stateModifiers: null,
+      tokenOverride: null,
+    };
+
+    test("parses valid tradeoff content", () => {
+      const result = parseStepContent("tradeoff", validContent);
+      expect(result.priorities).toHaveLength(3);
+      expect(result.resource.total).toBe(5);
+      expect(result.event).toBeNull();
+    });
+
+    test("parses tradeoff content with event and modifiers", () => {
+      const result = parseStepContent("tradeoff", {
+        ...validContent,
+        event: "The exam was moved to tomorrow",
+        stateModifiers: [{ delta: -1, priorityId: "sleep" }],
+        tokenOverride: 4,
+      });
+      expect(result.event).toBe("The exam was moved to tomorrow");
+      expect(result.stateModifiers).toHaveLength(1);
+      expect(result.tokenOverride).toBe(4);
+    });
+
+    test("rejects tradeoff with fewer than 3 priorities", () => {
+      expect(() =>
+        parseStepContent("tradeoff", {
+          ...validContent,
+          priorities: [
+            { description: "a", id: "a", name: "A" },
+            { description: "b", id: "b", name: "B" },
+          ],
+        }),
+      ).toThrow();
+    });
+
+    test("rejects tradeoff with more than 4 priorities", () => {
+      expect(() =>
+        parseStepContent("tradeoff", {
+          ...validContent,
+          priorities: [
+            { description: "a", id: "a", name: "A" },
+            { description: "b", id: "b", name: "B" },
+            { description: "c", id: "c", name: "C" },
+            { description: "d", id: "d", name: "D" },
+            { description: "e", id: "e", name: "E" },
+          ],
+        }),
+      ).toThrow();
+    });
+
+    test("rejects tradeoff with missing outcomes", () => {
+      expect(() =>
+        parseStepContent("tradeoff", {
+          ...validContent,
+          outcomes: [],
+        }),
+      ).toThrow();
+    });
+
+    test("rejects tradeoff with extra fields", () => {
+      expect(() =>
+        parseStepContent("tradeoff", {
+          ...validContent,
+          extraField: "should fail",
+        }),
+      ).toThrow();
+    });
+  });
 });

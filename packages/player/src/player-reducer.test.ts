@@ -257,6 +257,54 @@ describe("CHECK_ANSWER", () => {
     });
   });
 
+  describe("tradeoff feedback phase", () => {
+    test("enters feedback phase to show consequences (does not auto-advance)", () => {
+      const steps = [
+        buildStep({ id: "t-1", kind: "tradeoff", position: 0 }),
+        buildStep({ id: "t-2", kind: "tradeoff", position: 1 }),
+      ];
+      const state = buildState({ steps });
+      const next = playerReducer(state, {
+        result: { correctAnswer: null, feedback: null, isCorrect: true },
+        stepId: "t-1",
+        type: "CHECK_ANSWER",
+      });
+      expect(next.phase).toBe("feedback");
+      expect(next.currentStepIndex).toBe(0);
+      expect(next.results["t-1"]).toEqual({
+        answer: undefined,
+        result: { correctAnswer: null, feedback: null, isCorrect: true },
+        stepId: "t-1",
+      });
+    });
+
+    test("advances to next step on CONTINUE after feedback", () => {
+      const steps = [
+        buildStep({ id: "t-1", kind: "tradeoff", position: 0 }),
+        buildStep({ id: "t-2", kind: "tradeoff", position: 1 }),
+      ];
+      const feedbackState = buildState({
+        currentStepIndex: 0,
+        phase: "feedback",
+        steps,
+      });
+      const next = playerReducer(feedbackState, { type: "CONTINUE" });
+      expect(next.phase).toBe("playing");
+      expect(next.currentStepIndex).toBe(1);
+    });
+
+    test("completes activity on CONTINUE after last tradeoff round feedback", () => {
+      const steps = [buildStep({ id: "t-1", kind: "tradeoff", position: 0 })];
+      const feedbackState = buildState({
+        currentStepIndex: 0,
+        phase: "feedback",
+        steps,
+      });
+      const next = playerReducer(feedbackState, { type: "CONTINUE" });
+      expect(next.phase).toBe("completed");
+    });
+  });
+
   test("no-ops in feedback phase", () => {
     const state = buildState({ phase: "feedback" });
     const next = playerReducer(state, {

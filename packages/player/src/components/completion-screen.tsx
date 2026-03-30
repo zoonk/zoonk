@@ -5,7 +5,12 @@ import { CircleCheck } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type CompletionResult } from "../completion-input-schema";
 import { computeScore } from "../compute-score";
-import { type PlayerRoute, usePlayerMilestone, usePlayerViewer } from "../player-context";
+import {
+  type PlayerRoute,
+  usePlayerMilestone,
+  usePlayerRuntime,
+  usePlayerViewer,
+} from "../player-context";
 import { type StepResult } from "../player-reducer";
 import { AuthBranch } from "./completion-auth-branch";
 
@@ -64,18 +69,25 @@ function MilestoneHeading() {
   return <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">{getHeading()}</h2>;
 }
 
-function getCompletionScore(results: Record<string, StepResult>) {
-  const resultList = Object.values(results);
+/**
+ * Computes the score display for the completion screen.
+ *
+ * Tradeoff steps are excluded because they have no correct/incorrect
+ * answer — showing "3/3 correct" would be misleading. When only
+ * tradeoff + static steps exist, returns null so the screen shows
+ * the "Completed" checkmark instead.
+ */
+function getCompletionScore(results: Record<string, StepResult>, tradeoffStepIds: Set<string>) {
+  const scorableResults = Object.entries(results)
+    .filter(([stepId]) => !tradeoffStepIds.has(stepId))
+    .map(([_, stepResult]) => ({ isCorrect: stepResult.result.isCorrect }));
 
-  if (resultList.length === 0) {
+  if (scorableResults.length === 0) {
     return null;
   }
 
-  const score = computeScore({
-    results: resultList.map((stepResult) => ({ isCorrect: stepResult.result.isCorrect })),
-  });
-
-  return { correctCount: score.correctCount, totalCount: resultList.length };
+  const score = computeScore({ results: scorableResults });
+  return { correctCount: score.correctCount, totalCount: scorableResults.length };
 }
 
 export function CompletionScreenContent({
@@ -92,6 +104,7 @@ export function CompletionScreenContent({
   results: Record<string, StepResult>;
 }) {
   const t = useExtracted();
+  const { state } = usePlayerRuntime();
   const milestone = usePlayerMilestone();
   const { completionFooter } = usePlayerViewer();
 
@@ -113,7 +126,10 @@ export function CompletionScreenContent({
     );
   }
 
-  const score = getCompletionScore(results);
+  const tradeoffStepIds = new Set(
+    state.steps.filter((step) => step.kind === "tradeoff").map((step) => step.id),
+  );
+  const score = getCompletionScore(results, tradeoffStepIds);
 
   return (
     <CompletionScreen>

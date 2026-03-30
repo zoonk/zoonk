@@ -316,6 +316,71 @@ msgctxt "VA8c/A"
 msgid "Correct order:"
 msgstr "Orden correcto:"
 
+#: ../../packages/player/src/components/tradeoff/tradeoff-allocation.tsx
+msgctxt "1nYFVe"
+msgid "All {resource} allocated. Tap Check to see what happens."
+msgstr "Todo {resource} asignado. Toca Comprobar para ver qué sucede."
+
+#: ../../packages/player/src/components/tradeoff/tradeoff-allocation.tsx
+msgctxt "2kjEYh"
+msgid "{allocated} of {total} {resource} allocated"
+msgstr "Se asignaron {allocated} de {total} {resource}"
+
+#: ../../packages/player/src/components/tradeoff/tradeoff-allocation.tsx
+msgctxt "Fk/yRD"
+msgid "{count} for {priority}"
+msgstr "{count} para {priority}"
+
+#: ../../packages/player/src/components/tradeoff/tradeoff-allocation.tsx
+msgctxt "fQKXig"
+msgid "Remove from {priority}"
+msgstr "Quitar de {priority}"
+
+#: ../../packages/player/src/components/tradeoff/tradeoff-allocation.tsx
+msgctxt "fT/Gww"
+msgid "Add to {priority}"
+msgstr "Añadir a {priority}"
+
+#: ../../packages/player/src/components/tradeoff/tradeoff-allocation.tsx
+msgctxt "xcMVN8"
+msgid "Round {current} of {total}"
+msgstr "Ronda {current} de {total}"
+
+#: ../../packages/player/src/components/tradeoff/tradeoff-event-banner.tsx
+msgctxt "garskw"
+msgid "You now have {count} {resource}."
+msgstr "Ahora tienes {count} {resource}."
+
+#: ../../packages/player/src/components/tradeoff/tradeoff-final-states.tsx
+msgctxt "pomVZp"
+msgid "Final state"
+msgstr "Estado final"
+
+#: ../../packages/player/src/components/tradeoff/use-state-tier-label.ts
+msgctxt "/UNyqw"
+msgid "Stable"
+msgstr "Estable"
+
+#: ../../packages/player/src/components/tradeoff/use-state-tier-label.ts
+msgctxt "2pzTGC"
+msgid "Critical"
+msgstr "Crítico"
+
+#: ../../packages/player/src/components/tradeoff/use-state-tier-label.ts
+msgctxt "e+SDEH"
+msgid "Stressed"
+msgstr "Bajo presión"
+
+#: ../../packages/player/src/components/tradeoff/use-state-tier-label.ts
+msgctxt "G9gjpL"
+msgid "Thriving"
+msgstr "En crecimiento"
+
+#: ../../packages/player/src/components/tradeoff/use-state-tier-label.ts
+msgctxt "TIDNOO"
+msgid "Healthy"
+msgstr "Saludable"
+
 #: ../../packages/player/src/components/translation-step.tsx
 msgctxt "MxLxkr"
 msgid "Translate this word:"
@@ -2481,6 +2546,11 @@ msgid "Test your understanding of {topic} with questions designed to check real 
 msgstr "Pon a prueba tu comprensión de {topic} con preguntas diseñadas para verificar la comprensión real, no solo la memorización."
 
 #: src/lib/activities.ts
+msgctxt "k1VNwu"
+msgid "Tradeoff"
+msgstr "Dilema"
+
+#: src/lib/activities.ts
 msgctxt "KV+O0y"
 msgid "Practice"
 msgstr "Practica"
@@ -2534,6 +2604,11 @@ msgstr "{activity} - {lesson}"
 msgctxt "XzxpBZ"
 msgid "Improve your {topic} reading comprehension by translating sentences and passages."
 msgstr "Mejora tu comprensión de lectura en {topic} traduciendo oraciones y pasajes."
+
+#: src/lib/activities.ts
+msgctxt "y3b5D+"
+msgid "Navigate real-world tradeoffs about {topic} — allocate limited resources across competing priorities and see how your choices play out."
+msgstr "Explora dilemas del mundo real sobre {topic} — asigna recursos limitados entre prioridades en competencia y mira cómo se desarrollan tus decisiones."
 
 #: src/lib/activities.ts
 msgctxt "YfgUQS"

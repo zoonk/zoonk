@@ -6,7 +6,13 @@ describe(getActivitiesForKind, () => {
     test("returns fallback explanation when concepts are empty", () => {
       const result = getActivitiesForKind("core", [], null, []);
 
-      expect(result.map((a) => a.kind)).toEqual(["explanation", "practice", "quiz", "review"]);
+      expect(result.map((a) => a.kind)).toEqual([
+        "explanation",
+        "practice",
+        "quiz",
+        "tradeoff",
+        "review",
+      ]);
       expect(result[0]?.title).toBeNull();
     });
 
@@ -19,9 +25,10 @@ describe(getActivitiesForKind, () => {
         "explanation",
         "practice",
         "quiz",
+        "tradeoff",
         "review",
       ]);
-      expect(result.map((a) => a.title)).toEqual(["A", "B", "C", null, null, null]);
+      expect(result.map((a) => a.title)).toEqual(["A", "B", "C", null, null, null, null]);
     });
 
     test("inserts two practices when there are 4 concepts", () => {
@@ -35,6 +42,7 @@ describe(getActivitiesForKind, () => {
         "explanation",
         "practice",
         "quiz",
+        "tradeoff",
         "review",
       ]);
     });
@@ -51,6 +59,7 @@ describe(getActivitiesForKind, () => {
         "explanation",
         "practice",
         "quiz",
+        "tradeoff",
         "review",
       ]);
       expect(result[0]?.title).toBe("A");
@@ -63,7 +72,13 @@ describe(getActivitiesForKind, () => {
     test("returns single concept with single practice", () => {
       const result = getActivitiesForKind("core", [], null, ["Solo"]);
 
-      expect(result.map((a) => a.kind)).toEqual(["explanation", "practice", "quiz", "review"]);
+      expect(result.map((a) => a.kind)).toEqual([
+        "explanation",
+        "practice",
+        "quiz",
+        "tradeoff",
+        "review",
+      ]);
       expect(result[0]?.title).toBe("Solo");
     });
   });

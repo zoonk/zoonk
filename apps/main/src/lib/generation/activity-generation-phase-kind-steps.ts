@@ -306,6 +306,38 @@ export const QUIZ_PHASE_ORDER: PhaseName[] = [
   "saving",
 ];
 
+// -- Tradeoff ---------------------------------------------------------------
+//
+// Tradeoff activities generate a resource allocation scenario with multiple
+// rounds. Like practice, they depend on explanation content for context.
+// Single AI call + save — no images or audio.
+
+type TradeoffSteps =
+  | "getLessonActivities"
+  | "getNeighboringConcepts"
+  | "setActivityAsRunning"
+  | "generateExplanationContent"
+  | "generateTradeoffContent"
+  | "saveTradeoffActivity";
+
+export const TRADEOFF_PHASE_STEPS = {
+  gettingStarted: ["getLessonActivities", "getNeighboringConcepts", "setActivityAsRunning"],
+  saving: ["saveTradeoffActivity"],
+  writingContent: ["generateTradeoffContent"],
+  writingExplanation: ["generateExplanationContent"],
+} as const satisfies Record<string, readonly ActivityStepName[]>;
+
+type _ValidateTradeoff = AssertAllCovered<
+  Exclude<TradeoffSteps, (typeof TRADEOFF_PHASE_STEPS)[keyof typeof TRADEOFF_PHASE_STEPS][number]>
+>;
+
+export const TRADEOFF_PHASE_ORDER: PhaseName[] = [
+  "gettingStarted",
+  "writingExplanation",
+  "writingContent",
+  "saving",
+];
+
 // -- Practice ---------------------------------------------------------------
 
 type PracticeSteps =

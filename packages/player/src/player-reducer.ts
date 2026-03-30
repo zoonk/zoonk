@@ -15,6 +15,7 @@ export type SelectedAnswer =
   | { kind: "reading"; arrangedWords: string[] }
   | { kind: "selectImage"; selectedIndex: number }
   | { kind: "sortOrder"; userOrder: string[] }
+  | { kind: "tradeoff"; allocations: { priorityId: string; tokens: number }[] }
   | { kind: "translation"; selectedWordId: string; selectedText: string; questionText: string };
 
 export type StepResult = {

@@ -22,6 +22,7 @@ type SelectedAnswer =
   | { kind: "reading"; arrangedWords: string[] }
   | { kind: "selectImage"; selectedIndex: number }
   | { kind: "sortOrder"; userOrder: string[] }
+  | { kind: "tradeoff"; allocations: { priorityId: string; tokens: number }[] }
   | { kind: "translation"; selectedWordId: string; selectedText: string; questionText: string };
 
 /**
@@ -135,6 +136,19 @@ function validateReading(step: StepData, answer: SelectedAnswer): ValidatedStepR
   return { answer, isCorrect: result.isCorrect, stepId: step.id };
 }
 
+/**
+ * Tradeoff steps always return isCorrect: true because there is no
+ * right or wrong allocation. We still create a StepAttempt record so
+ * the learner's allocation choices are available for analytics.
+ */
+function validateTradeoff(step: StepData, answer: SelectedAnswer): ValidatedStepResult | null {
+  if (answer.kind !== "tradeoff") {
+    return null;
+  }
+
+  return { answer, isCorrect: true, stepId: step.id };
+}
+
 function validateListening(step: StepData, answer: SelectedAnswer): ValidatedStepResult | null {
   if (answer.kind !== "listening") {
     return null;
@@ -161,6 +175,7 @@ const validators: Record<
   selectImage: validateSelectImage,
   sortOrder: validateSortOrder,
   static: () => null,
+  tradeoff: validateTradeoff,
   translation: validateTranslation,
   visual: () => null,
   vocabulary: () => null,

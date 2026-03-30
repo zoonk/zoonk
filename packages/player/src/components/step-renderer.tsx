@@ -12,6 +12,7 @@ import { SortOrderStep } from "./sort-order-step";
 import { StaticStep } from "./static-step";
 import { NavigableStepLayout } from "./step-layouts";
 import { StepSideNav } from "./step-side-nav";
+import { TradeoffStep } from "./tradeoff/tradeoff-step";
 import { TranslationStep } from "./translation-step";
 import { VisualStep } from "./visual-step";
 import { VocabularyStep } from "./vocabulary-step";
@@ -122,6 +123,17 @@ export function StepRenderer({
         />
         <VocabularyStep step={step} />
       </NavigableStepLayout>
+    );
+  }
+
+  if (step.kind === "tradeoff") {
+    return (
+      <TradeoffStep
+        onSelectAnswer={onSelectAnswer}
+        result={result}
+        selectedAnswer={selectedAnswer}
+        step={step}
+      />
     );
   }
 

@@ -47,6 +47,7 @@ model DailyProgress {
   incorrectAnswers     Int           @default(0) @map("incorrect_answers")
   staticCompleted      Int           @default(0) @map("static_completed")
   interactiveCompleted Int           @default(0) @map("interactive_completed")
+  tradeoffCompleted    Int           @default(0) @map("tradeoff_completed")
   brainPowerEarned     Int           @default(0) @map("brain_power_earned")
   timeSpentSeconds     Int           @default(0) @map("time_spent_seconds")
   energyAtEnd          Float         @default(0) @map("energy_at_end")

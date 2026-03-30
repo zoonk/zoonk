@@ -9,6 +9,7 @@ import {
   LayersIcon,
   type LucideIcon,
   RotateCcwIcon,
+  ScaleIcon,
   SparklesIcon,
   TargetIcon,
 } from "lucide-react";
@@ -26,6 +27,7 @@ export async function getActivityKinds(): Promise<{ key: ActivityKind; label: st
     { key: "grammar", label: t("Grammar") },
     { key: "reading", label: t("Reading") },
     { key: "listening", label: t("Listening") },
+    { key: "tradeoff", label: t("Tradeoff") },
     { key: "review", label: t("Review") },
   ];
 }
@@ -57,6 +59,10 @@ async function getSeoDescription(kind: ActivityKind, topic: string): Promise<str
       { topic },
     ),
     review: t("Review everything you learned about {topic} with a comprehensive quiz.", { topic }),
+    tradeoff: t(
+      "Navigate real-world tradeoffs about {topic} — allocate limited resources across competing priorities and see how your choices play out.",
+      { topic },
+    ),
     translation: t("Test your {topic} vocabulary by translating words you've learned.", { topic }),
     vocabulary: t(
       "Learn new {topic} words with flashcards — see each word, its translation, and pronunciation.",
@@ -120,6 +126,7 @@ const ACTIVITY_ICONS: Record<ActivityKind, LucideIcon> = {
   quiz: CircleHelpIcon,
   reading: BookTextIcon,
   review: RotateCcwIcon,
+  tradeoff: ScaleIcon,
   translation: LanguagesIcon,
   vocabulary: LayersIcon,
 };

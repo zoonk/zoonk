@@ -91,6 +91,7 @@ export const ACTIVITY_STEPS = [
   "generateVisuals",
   "generateImages",
   "generateQuizImages",
+  "generateTradeoffContent",
 
   // Listening (copies steps from vocabulary/reading)
   "copyListeningSteps",
@@ -104,6 +105,7 @@ export const ACTIVITY_STEPS = [
   "saveCustomActivity",
   "saveGrammarActivity",
   "saveListeningActivity",
+  "saveTradeoffActivity",
 
   // Error
   "workflowError",
@@ -120,6 +122,7 @@ type ActivityCompletionStep = Extract<
   | "savePracticeActivity"
   | "saveQuizActivity"
   | "saveReadingActivity"
+  | "saveTradeoffActivity"
   | "saveVocabularyActivity"
 >;
 
@@ -131,6 +134,7 @@ const activityCompletionSteps: Partial<Record<string, ActivityCompletionStep>> =
   practice: "savePracticeActivity",
   quiz: "saveQuizActivity",
   reading: "saveReadingActivity",
+  tradeoff: "saveTradeoffActivity",
   translation: "saveVocabularyActivity",
   vocabulary: "saveVocabularyActivity",
 };

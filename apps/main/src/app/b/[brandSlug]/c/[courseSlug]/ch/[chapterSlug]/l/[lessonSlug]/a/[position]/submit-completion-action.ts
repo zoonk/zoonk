@@ -6,7 +6,7 @@ import { submitActivityCompletion } from "@/data/progress/submit-activity-comple
 import { auth } from "@zoonk/core/auth";
 import { type LessonSentence, prisma } from "@zoonk/db";
 import { type CompletionInput, completionInputSchema } from "@zoonk/player/completion-input-schema";
-import { computeScore } from "@zoonk/player/compute-score";
+import { computeScore, computeTradeoffScore } from "@zoonk/player/compute-score";
 import { validateAnswers } from "@zoonk/player/validate-answers";
 import { logError } from "@zoonk/utils/logger";
 import { revalidatePath } from "next/cache";
@@ -113,9 +113,12 @@ export async function submitCompletion(rawInput: CompletionInput): Promise<void>
 
       const stepResults = validateAnswers(stepsForValidation, input.answers);
 
-      const score = computeScore({
-        results: stepResults.map((step) => ({ isCorrect: step.isCorrect })),
-      });
+      const score =
+        activity.kind === "tradeoff"
+          ? computeTradeoffScore()
+          : computeScore({
+              results: stepResults.map((step) => ({ isCorrect: step.isCorrect })),
+            });
 
       const durationSeconds = clampDuration(input.startedAt);
 
@@ -138,6 +141,7 @@ export async function submitCompletion(rawInput: CompletionInput): Promise<void>
         activityId: activity.id,
         courseId: activity.lesson.chapter.courseId,
         durationSeconds,
+        isTradeoff: activity.kind === "tradeoff",
         localDate: input.localDate,
         organizationId: activity.organizationId,
         score,

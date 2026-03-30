@@ -119,6 +119,16 @@ export function getPhaseWeights(kind: ActivityKind): Record<PhaseName, number> {
     };
   }
 
+  if (kind === "tradeoff") {
+    return {
+      ...ZERO_WEIGHTS,
+      gettingStarted: 5,
+      saving: 5,
+      writingContent: 50,
+      writingExplanation: 40,
+    };
+  }
+
   if (kind === "practice") {
     return {
       ...ZERO_WEIGHTS,

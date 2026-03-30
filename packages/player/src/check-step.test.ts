@@ -399,6 +399,58 @@ describe(checkStep, () => {
     });
   });
 
+  describe("tradeoff", () => {
+    const tradeoffContent = {
+      event: null,
+      outcomes: [
+        {
+          invested: { consequence: "good" },
+          maintained: { consequence: "ok" },
+          neglected: { consequence: "bad" },
+          priorityId: "study",
+        },
+      ],
+      priorities: [
+        { description: "Study notes", id: "study", name: "Study" },
+        { description: "Exercise", id: "exercise", name: "Exercise" },
+        { description: "Sleep", id: "sleep", name: "Sleep" },
+      ],
+      resource: { name: "hours", total: 5 },
+      stateModifiers: null,
+      tokenOverride: null,
+    };
+
+    test("always returns isCorrect: true regardless of allocation", () => {
+      const step = buildStep({ content: tradeoffContent, kind: "tradeoff" });
+      const answer: SelectedAnswer = {
+        allocations: [
+          { priorityId: "study", tokens: 3 },
+          { priorityId: "exercise", tokens: 1 },
+          { priorityId: "sleep", tokens: 1 },
+        ],
+        kind: "tradeoff",
+      };
+      const { result } = checkStep(step, answer);
+      expect(result.isCorrect).toBe(true);
+      expect(result.correctAnswer).toBeNull();
+      expect(result.feedback).toBeNull();
+    });
+
+    test("returns isCorrect: true even with all tokens on one priority", () => {
+      const step = buildStep({ content: tradeoffContent, kind: "tradeoff" });
+      const answer: SelectedAnswer = {
+        allocations: [
+          { priorityId: "study", tokens: 5 },
+          { priorityId: "exercise", tokens: 0 },
+          { priorityId: "sleep", tokens: 0 },
+        ],
+        kind: "tradeoff",
+      };
+      const { result } = checkStep(step, answer);
+      expect(result.isCorrect).toBe(true);
+    });
+  });
+
   describe("mismatched kinds", () => {
     test("multipleChoice step with fillBlank answer returns safe fallback", () => {
       const step = buildStep({

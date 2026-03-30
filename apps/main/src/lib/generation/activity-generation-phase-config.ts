@@ -15,6 +15,8 @@ import {
   QUIZ_PHASE_STEPS,
   READING_PHASE_ORDER,
   READING_PHASE_STEPS,
+  TRADEOFF_PHASE_ORDER,
+  TRADEOFF_PHASE_STEPS,
   VOCABULARY_PHASE_ORDER,
   VOCABULARY_PHASE_STEPS,
 } from "./activity-generation-phase-kind-steps";
@@ -78,6 +80,7 @@ const PHASE_ORDER_MAP: Record<ActivityKind, PhaseName[]> = {
   quiz: QUIZ_PHASE_ORDER,
   reading: READING_PHASE_ORDER,
   review: EXPLANATION_PHASE_ORDER,
+  tradeoff: TRADEOFF_PHASE_ORDER,
   translation: VOCABULARY_PHASE_ORDER,
   vocabulary: VOCABULARY_PHASE_ORDER,
 };
@@ -130,6 +133,7 @@ const PHASE_STEPS_MAP: Record<ActivityKind, Record<PhaseName, readonly ActivityS
   quiz: toFullPhaseSteps(QUIZ_PHASE_STEPS),
   reading: toFullPhaseSteps(READING_PHASE_STEPS),
   review: toFullPhaseSteps(EXPLANATION_PHASE_STEPS),
+  tradeoff: toFullPhaseSteps(TRADEOFF_PHASE_STEPS),
   translation: toFullPhaseSteps(VOCABULARY_PHASE_STEPS),
   vocabulary: toFullPhaseSteps(VOCABULARY_PHASE_STEPS),
 };

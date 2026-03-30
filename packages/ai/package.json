@@ -8,6 +8,7 @@
     "./tasks/activities/core/explanation": "./src/tasks/activities/core/activity-explanation.ts",
     "./tasks/activities/core/practice": "./src/tasks/activities/core/activity-practice.ts",
     "./tasks/activities/core/quiz": "./src/tasks/activities/core/activity-quiz.ts",
+    "./tasks/activities/core/tradeoff": "./src/tasks/activities/core/activity-tradeoff.ts",
     "./tasks/activities/custom": "./src/tasks/activities/custom/activity-custom.ts",
     "./tasks/activities/language/distractors": "./src/tasks/activities/language/activity-distractors.ts",
     "./tasks/activities/language/grammar-content": "./src/tasks/activities/language/activity-grammar-content.ts",
