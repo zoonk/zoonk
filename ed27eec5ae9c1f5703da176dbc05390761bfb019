@@ -1,0 +1,25 @@
+packages/player/src/player-completion.ts
+  460abf8f8c505257 1,4,8-17,22-29,39-47
+packages/player/src/player-completion.test.ts
+  460abf8f8c505257 1-131,133-165
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.22",
+  "base_commit_sha": "ed27eec5ae9c1f5703da176dbc05390761bfb019",
+  "prompts": {
+    "460abf8f8c505257": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "502b259a-e451-4164-b631-d5c9e0fd114e",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill <4393133+ceolinwill@users.noreply.github.com>",
+      "messages": [],
+      "total_additions": 210,
+      "total_deletions": 14,
+      "accepted_lines": 194,
+      "overriden_lines": 2
+    }
+  }
+}
