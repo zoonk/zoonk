@@ -13,7 +13,7 @@ EVALUATION CRITERIA:
 
 6. CONSEQUENCE QUALITY: Consequences must show what HAPPENS, not explain why. They must be concrete with human/emotional detail ("Three workers walk off the line") rather than evaluative ("This was inefficient"). Consequences should make the learner go "oh, I see."
 
-7. METRIC CHANGES: MetricChanges keys must match the defined metric ids exactly. Values should be between -15 and +15. Strong choices should generally improve metrics, weak choices should generally hurt them, partial choices should have mixed results.
+7. METRIC CHANGES: Each metricId in metricChanges must match a defined metric id. Delta values should be between -15 and +15. Strong choices should generally improve metrics, weak choices should generally hurt them, partial choices should have mixed results.
 
 8. STEP ESCALATION: Steps must build a progressive narrative. Step 1 should be manageable. Middle steps should escalate with surprises or complications. Late steps should feel like pressure is building toward a crisis or breakthrough.
 

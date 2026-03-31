@@ -15,11 +15,16 @@ const storyMetricSchema = z.object({
   label: z.string(),
 });
 
+const storyMetricChangeSchema = z.object({
+  delta: z.number(),
+  metricId: z.string(),
+});
+
 const storyChoiceSchema = z.object({
   alignment: storyAlignmentSchema,
   consequence: z.string(),
   id: z.string(),
-  metricChanges: z.record(z.string(), z.number()),
+  metricChanges: z.array(storyMetricChangeSchema).min(1),
   text: z.string(),
 });
 

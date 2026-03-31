@@ -51,7 +51,10 @@ ${SHARED_EXPECTATIONS}
                 consequence:
                   "O estoque cresce. O aço acaba antes do fim do mês. Dois pedidos urgentes ficam sem matéria-prima. O diretor bate na sua porta.",
                 id: "1a",
-                metricChanges: { caixa: -15, estoque: -10 },
+                metricChanges: [
+                  { delta: -15, metricId: "caixa" },
+                  { delta: -10, metricId: "estoque" },
+                ],
                 text: "Produzir mais peças para aproveitar as máquinas paradas",
               },
               {
@@ -59,7 +62,11 @@ ${SHARED_EXPECTATIONS}
                 consequence:
                   "Máquinas ficam ociosas por horas. Alguns operários reclamam. Mas o aço dura, e cada peça produzida já tem destino certo.",
                 id: "1b",
-                metricChanges: { caixa: 10, entrega: 5, estoque: 10 },
+                metricChanges: [
+                  { delta: 10, metricId: "caixa" },
+                  { delta: 5, metricId: "entrega" },
+                  { delta: 10, metricId: "estoque" },
+                ],
                 text: "Reduzir a produção e só fabricar o que já foi pedido",
               },
               {
@@ -67,7 +74,10 @@ ${SHARED_EXPECTATIONS}
                 consequence:
                   "Algumas linhas param com peças quase prontas. Outras que tinham pedidos urgentes ficam lentas. O resultado é desigual.",
                 id: "1c",
-                metricChanges: { entrega: -5, estoque: 5 },
+                metricChanges: [
+                  { delta: -5, metricId: "entrega" },
+                  { delta: 5, metricId: "estoque" },
+                ],
                 text: "Cortar a produção pela metade em todas as linhas igualmente",
               },
             ],
@@ -81,7 +91,11 @@ ${SHARED_EXPECTATIONS}
                 consequence:
                   "Gasto enorme de energia e tempo. As bielas viram sucata cara. Você entrega os eixos, mas o custo come todo o lucro.",
                 id: "2a",
-                metricChanges: { caixa: -15, entrega: 5, estoque: -5 },
+                metricChanges: [
+                  { delta: -15, metricId: "caixa" },
+                  { delta: 5, metricId: "entrega" },
+                  { delta: -5, metricId: "estoque" },
+                ],
                 text: "Derreter as bielas encalhadas e refundir como eixos",
               },
               {
@@ -89,7 +103,11 @@ ${SHARED_EXPECTATIONS}
                 consequence:
                   "O cliente aceita três dias a mais. Você produz exatamente o que ele pediu, sem desperdício. Ele elogia a transparência.",
                 id: "2b",
-                metricChanges: { caixa: 10, entrega: 10, estoque: 5 },
+                metricChanges: [
+                  { delta: 10, metricId: "caixa" },
+                  { delta: 10, metricId: "entrega" },
+                  { delta: 5, metricId: "estoque" },
+                ],
                 text: "Negociar prazo maior e começar os eixos quando o aço chegar",
               },
               {
@@ -97,7 +115,10 @@ ${SHARED_EXPECTATIONS}
                 consequence:
                   "Os eixos ficam prontos a tempo. Mas a conta estoura o orçamento do mês. O financeiro congela suas próximas compras.",
                 id: "2c",
-                metricChanges: { caixa: -15, entrega: 10 },
+                metricChanges: [
+                  { delta: -15, metricId: "caixa" },
+                  { delta: 10, metricId: "entrega" },
+                ],
                 text: "Comprar aço de emergência no mercado paralelo, preço triplo",
               },
             ],
@@ -111,7 +132,11 @@ ${SHARED_EXPECTATIONS}
                 consequence:
                   "Um estalo. Se cada estação da fábrica pedisse peças só quando precisasse, o estoque ficaria no mínimo. Você rabisca num guardanapo.",
                 id: "3a",
-                metricChanges: { caixa: 5, entrega: 5, estoque: 10 },
+                metricChanges: [
+                  { delta: 5, metricId: "caixa" },
+                  { delta: 5, metricId: "entrega" },
+                  { delta: 10, metricId: "estoque" },
+                ],
                 text: "Pensar: 'Ela só repõe o que saiu — a demanda puxa a reposição'",
               },
               {
@@ -119,7 +144,10 @@ ${SHARED_EXPECTATIONS}
                 consequence:
                   "Você volta pra casa sem ligar os pontos. Na segunda, o estoque continua crescendo e o galpão apertando.",
                 id: "3b",
-                metricChanges: { caixa: -5, estoque: -5 },
+                metricChanges: [
+                  { delta: -5, metricId: "caixa" },
+                  { delta: -5, metricId: "estoque" },
+                ],
                 text: "Pensar: 'O supermercado tem sorte de vender tudo rápido'",
               },
               {
@@ -127,7 +155,7 @@ ${SHARED_EXPECTATIONS}
                 consequence:
                   "Você descarta a ideia pela metade. Algo incomoda, mas você não desenvolve. Na fábrica, nada muda por enquanto.",
                 id: "3c",
-                metricChanges: { entrega: -5 },
+                metricChanges: [{ delta: -5, metricId: "entrega" }],
                 text: "Pensar: 'Funciona pra arroz, mas peças industriais são diferentes'",
               },
             ],
@@ -141,7 +169,11 @@ ${SHARED_EXPECTATIONS}
                 consequence:
                   "Os operários começam a pedir só o que precisam, quando precisam. O almoxarifado vira um mini-supermercado. As paradas caem pela metade.",
                 id: "4a",
-                metricChanges: { caixa: 5, entrega: 15, estoque: 10 },
+                metricChanges: [
+                  { delta: 5, metricId: "caixa" },
+                  { delta: 15, metricId: "entrega" },
+                  { delta: 10, metricId: "estoque" },
+                ],
                 text: "Criar um cartão que cada estação envia quando precisa de peças",
               },
               {
@@ -149,7 +181,11 @@ ${SHARED_EXPECTATIONS}
                 consequence:
                   "As paradas param, mas agora cada estação tem caixas enormes de pinos. Espaço some. Alguns pinos enferrujam antes do uso.",
                 id: "4b",
-                metricChanges: { caixa: -10, entrega: 10, estoque: -10 },
+                metricChanges: [
+                  { delta: -10, metricId: "caixa" },
+                  { delta: 10, metricId: "entrega" },
+                  { delta: -10, metricId: "estoque" },
+                ],
                 text: "Montar um estoque grande de pinos em cada estação",
               },
               {
@@ -157,7 +193,10 @@ ${SHARED_EXPECTATIONS}
                 consequence:
                   "Melhora, mas às vezes ele leva demais, às vezes de menos. A sincronia depende da memória de uma pessoa.",
                 id: "4c",
-                metricChanges: { caixa: -5, entrega: 5 },
+                metricChanges: [
+                  { delta: -5, metricId: "caixa" },
+                  { delta: 5, metricId: "entrega" },
+                ],
                 text: "Designar um funcionário para levar pinos de hora em hora",
               },
             ],
@@ -171,7 +210,11 @@ ${SHARED_EXPECTATIONS}
                 consequence:
                   "Ele examina os relatórios. O silêncio dura um minuto. 'Continuem assim.' Ele aperta sua mão. Os operários respiram aliviados.",
                 id: "5a",
-                metricChanges: { caixa: 10, entrega: 10, estoque: 5 },
+                metricChanges: [
+                  { delta: 10, metricId: "caixa" },
+                  { delta: 10, metricId: "entrega" },
+                  { delta: 5, metricId: "estoque" },
+                ],
                 text: "Mostrar os números: menos estoque, mais entregas no prazo, custo menor",
               },
               {
@@ -179,7 +222,11 @@ ${SHARED_EXPECTATIONS}
                 consequence:
                   "O galpão ronca. Peças se acumulam sem pedido. Em duas semanas, o estoque volta ao caos do início. O diretor volta, pior.",
                 id: "5b",
-                metricChanges: { caixa: -15, entrega: -10, estoque: -15 },
+                metricChanges: [
+                  { delta: -15, metricId: "caixa" },
+                  { delta: -10, metricId: "entrega" },
+                  { delta: -15, metricId: "estoque" },
+                ],
                 text: "Ligar todas as máquinas imediatamente para impressionar",
               },
               {
@@ -187,7 +234,10 @@ ${SHARED_EXPECTATIONS}
                 consequence:
                   "Ele vai embora satisfeito, por ora. Você ganha tempo, mas a pressão volta. Alguns operários começam a produzir peças desnecessárias por medo.",
                 id: "5c",
-                metricChanges: { caixa: -5, estoque: -5 },
+                metricChanges: [
+                  { delta: -5, metricId: "caixa" },
+                  { delta: -5, metricId: "estoque" },
+                ],
                 text: "Prometer aumentar a produção gradualmente nos próximos dias",
               },
             ],

@@ -39,9 +39,9 @@ export type ActivityStoryDebriefParams = {
  * Formats metric changes into a compact readable string.
  * Example: "estoque: +10, caixa: -5"
  */
-function formatMetricChanges(metricChanges: Record<string, number>): string {
-  return Object.entries(metricChanges)
-    .map(([key, value]) => `${key}: ${value > 0 ? "+" : ""}${value}`)
+function formatMetricChanges(metricChanges: { metricId: string; delta: number }[]): string {
+  return metricChanges
+    .map(({ metricId, delta }) => `${metricId}: ${delta > 0 ? "+" : ""}${delta}`)
     .join(", ");
 }
 
