@@ -1,4 +1,5 @@
 import {
+  type ActivityKind,
   type MultipleChoiceStepContent,
   type StepContentByKind,
   type SupportedStepKind,
@@ -77,7 +78,7 @@ export type SerializedStep<Kind extends SupportedStepKind = SupportedStepKind> =
 
 export type SerializedActivity = {
   id: string;
-  kind: string;
+  kind: ActivityKind;
   title: string | null;
   description: string | null;
   language: string;
@@ -90,7 +91,7 @@ export type SerializedActivity = {
 type PrepareLessonActivitySource = {
   description: string | null;
   id: bigint;
-  kind: string;
+  kind: ActivityKind;
   language: string;
   organizationId: number | null;
   steps: ActivityStepInput[];
@@ -225,7 +226,7 @@ function serializeStep(step: StepDataInput): SerializedStep | null {
 function prepareActivityData(
   activity: {
     id: bigint;
-    kind: string;
+    kind: ActivityKind;
     title: string | null;
     description: string | null;
     language: string;

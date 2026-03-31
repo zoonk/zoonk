@@ -43,7 +43,7 @@ function buildActivity(overrides: Partial<SerializedActivity> = {}): SerializedA
   return {
     description: null,
     id: "activity-1",
-    kind: "core",
+    kind: "quiz",
     language: "en",
     lessonSentences: [],
     lessonWords: [],
