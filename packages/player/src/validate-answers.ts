@@ -14,17 +14,7 @@ import {
   checkStoryAnswer,
   checkTranslationAnswer,
 } from "./check-answer";
-
-type SelectedAnswer =
-  | { kind: "fillBlank"; userAnswers: string[] }
-  | { kind: "listening"; arrangedWords: string[] }
-  | { kind: "matchColumns"; userPairs: { left: string; right: string }[]; mistakes: number }
-  | { kind: "multipleChoice"; selectedIndex: number; selectedText: string }
-  | { kind: "reading"; arrangedWords: string[] }
-  | { kind: "selectImage"; selectedIndex: number }
-  | { kind: "sortOrder"; userOrder: string[] }
-  | { kind: "story"; selectedChoiceId: string; selectedText: string }
-  | { kind: "translation"; selectedWordId: string; selectedText: string; questionText: string };
+import { type SelectedAnswer } from "./player-reducer";
 
 /**
  * Step data for server-side validation. Translations live directly

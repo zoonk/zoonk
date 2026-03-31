@@ -120,7 +120,7 @@ function makeActivity(steps: RawStep[], overrides: Partial<ActivityInput> = {}):
   return {
     description: null,
     id: 1n,
-    kind: "lesson",
+    kind: "quiz",
     language: "en",
     organizationId: 1,
     steps,

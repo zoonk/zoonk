@@ -1,6 +1,8 @@
 import { z } from "zod";
 import { type VisualStepContent, visualStepContentSchema } from "./visual-content-contract";
 
+export type { ActivityKind } from "@zoonk/db";
+
 const coreOptionSchema = z
   .object({
     feedback: z.string(),
