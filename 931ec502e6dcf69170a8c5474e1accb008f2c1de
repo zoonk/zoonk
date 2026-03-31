@@ -1,0 +1,50 @@
+packages/ai/src/tasks/investigation/investigation-prototype.ts
+  89dcc14126fe7455 1-5,8-38,40-57,59-146
+apps/main/src/app/debug/investigation/[id]/delete-button.tsx
+  89dcc14126fe7455 1-31
+packages/ai/package.json
+  89dcc14126fe7455 33
+apps/main/src/app/debug/investigation/generate-investigation.ts
+  89dcc14126fe7455 1-2,4-10,12-17,19-24,27-37,39-42,44-51,53,55-85,87,89-97,99-100,103-112
+apps/main/src/app/debug/investigation/investigation-player.tsx
+  89dcc14126fe7455 1-2,4-10,12-18,20-23,25-27,29-81,83-195,197,201-373,375-415,419-455,457-460,462-474,476-494
+apps/main/src/app/debug/investigation/page.tsx
+  89dcc14126fe7455 1-54
+apps/main/src/app/debug/investigation/[id]/page.tsx
+  89dcc14126fe7455 1-2,5-6,8,10,12-33,35-49,52-60
+apps/main/src/app/debug/investigation/investigation-form.tsx
+  89dcc14126fe7455 1-66
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.22",
+  "base_commit_sha": "931ec502e6dcf69170a8c5474e1accb008f2c1de",
+  "prompts": {
+    "6c69c1d4296763cf": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d3b08-d5f5-78e3-af6a-0ed39203a60c",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill <4393133+ceolinwill@users.noreply.github.com>",
+      "messages": [],
+      "total_additions": 268,
+      "total_deletions": 116,
+      "accepted_lines": 115,
+      "overriden_lines": 0
+    },
+    "89dcc14126fe7455": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ccdd3863-79db-4a8e-bdca-b9df8e4dba3d",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill <4393133+ceolinwill@users.noreply.github.com>",
+      "messages": [],
+      "total_additions": 1231,
+      "total_deletions": 176,
+      "accepted_lines": 921,
+      "overriden_lines": 32
+    }
+  }
+}
