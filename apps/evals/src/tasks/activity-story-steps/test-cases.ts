@@ -5,7 +5,7 @@ EVALUATION CRITERIA:
 
 2. HIDDEN CONCEPTS: The specific concept names provided in the CONCEPTS input must NEVER appear during play — not in the intro, not in situations, not in choices, not in consequences. Everyday domain vocabulary needed to set the scene (e.g., "virus" in a health scenario, "factory" in a manufacturing scenario) is fine and should NOT be penalized. Only penalize when the actual concept names or their direct synonyms appear.
 
-3. METRIC DESIGN: Metrics must represent meaningful, independent dimensions of the scenario. Metric labels must be simple and domain-appropriate. Initial values must be between 40-60. At least 2 metrics required.
+3. METRIC DESIGN: Metrics must represent meaningful, independent dimensions of the scenario. Metric labels must be simple and domain-appropriate. At least 2 metrics required.
 
 4. CHOICE QUALITY: Every step must have at least 3 choices. All choices must be plausible actions in context — no obviously wrong or absurd options. Choices must be actions (imperative form), not opinions or meta-commentary. Each choice must be immediately understandable without jargon.
 
@@ -24,21 +24,19 @@ EVALUATION CRITERIA:
    - consequence: max 30 words, max 2-3 sentences
    Do NOT penalize for being slightly under these limits. Only penalize for clearly exceeding them.
 
-10. FORMAT: Output must be valid JSON with: intro (string), metrics (array of {label, initial}), steps (array of {situation, choices}).
+10. FACTUAL ACCURACY: Domain content must be factually correct. Penalize choices or consequences that misrepresent how the topic actually works.
 
-11. FACTUAL ACCURACY: Domain content must be factually correct. Penalize choices or consequences that misrepresent how the topic actually works.
-
-12. VOICE: Casual, conversational register. No academic or corporate tone. No jargon from the topic.
+11. VOICE: Casual, conversational register. No academic or corporate tone. No jargon from the topic.
 
 ANTI-CHECKLIST GUIDANCE (CRITICAL):
 - Do NOT penalize for specific scenario settings, character names, or plot choices
 - Do NOT require exactly 5 steps or exactly 3 metrics — these are guidance, not hard constraints
 - Do NOT penalize for the exact number of choices per step as long as there are at least 3
 - Do NOT penalize for creative or unconventional scenarios that still teach the concepts
-- Do NOT penalize for metric initial values anywhere in the 40-60 range
+- Do NOT penalize for the number of metrics as long as there are at least 2
 - Do NOT check against an imagined "ideal" story structure
 - Do NOT penalize for everyday domain vocabulary that sets the scene (e.g., "virus", "factory", "reaction") — only penalize when actual CONCEPT names from the input appear
-- ONLY penalize for: actual concept names leaking into play, evaluative consequences instead of concrete ones, obviously wrong choices, missing alignment diversity, format violations, or factually incorrect domain content
+- ONLY penalize for: actual concept names leaking into play, evaluative consequences instead of concrete ones, obviously wrong choices, missing alignment diversity, or factually incorrect domain content
 `;
 
 export const TEST_CASES = [

@@ -23,7 +23,7 @@ A scenario with **5 steps** (decision points). Each step has:
 - **Metric effects** for each choice: "positive", "neutral", or "negative" impact on each affected metric
 - An **alignment** tag for each choice: "strong" (aligns with lesson concepts), "partial" (partially right), or "weak" (goes against concepts)
 
-Plus **3 metrics** that track the world state (e.g., "Production", "Morale", "Cash"), each starting at a value between 40-60.
+Plus **3 metrics** that track the world state (e.g., "Production", "Morale", "Cash").
 
 ## CRITICAL: Length Constraints
 

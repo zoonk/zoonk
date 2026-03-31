@@ -10,11 +10,6 @@ const FALLBACK_MODELS = ["anthropic/claude-opus-4.6", "google/gemini-3.1-pro-pre
 const storyAlignmentSchema = z.enum(["strong", "partial", "weak"]);
 const storyMetricEffectSchema = z.enum(["positive", "neutral", "negative"]);
 
-const storyMetricSchema = z.object({
-  initial: z.number(),
-  label: z.string(),
-});
-
 const storyMetricEffectEntrySchema = z.object({
   effect: storyMetricEffectSchema,
   metric: z.string(),
@@ -24,7 +19,7 @@ const storyChoiceSchema = z.object({
   alignment: storyAlignmentSchema,
   consequence: z.string(),
   id: z.string(),
-  metricEffects: z.array(storyMetricEffectEntrySchema),
+  metricEffects: z.array(storyMetricEffectEntrySchema).min(1),
   text: z.string(),
 });
 
@@ -35,7 +30,7 @@ const storyStepSchema = z.object({
 
 const schema = z.object({
   intro: z.string(),
-  metrics: z.array(storyMetricSchema).min(1),
+  metrics: z.array(z.string()).min(1),
   steps: z.array(storyStepSchema).min(1),
 });
 

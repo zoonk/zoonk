@@ -63,10 +63,7 @@ function formatStep(step: ActivityStoryStepsSchema["steps"][number], index: numb
  * for the debrief AI prompt.
  */
 function formatStoryStepsForPrompt(storySteps: ActivityStoryStepsSchema): string {
-  const formattedMetrics = storySteps.metrics
-    .map((metric) => `  ${metric.label}: starts at ${metric.initial}`)
-    .join("\n");
-
+  const formattedMetrics = storySteps.metrics.join(", ");
   const formattedSteps = storySteps.steps.map(formatStep).join("\n\n");
 
   return `

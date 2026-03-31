@@ -38,11 +38,7 @@ ${SHARED_EXPECTATIONS}
       storySteps: {
         intro:
           "Japão, 1950. Chão de fábrica barulhento, cheiro de óleo e aço quente. Recursos escassos, galpão abarrotado de peças sem destino. Você foi promovido ontem.",
-        metrics: [
-          { initial: 40, label: "Controle de Estoque" },
-          { initial: 45, label: "Caixa" },
-          { initial: 50, label: "Entregas no Prazo" },
-        ],
+        metrics: ["Controle de Estoque", "Caixa", "Entregas no Prazo"],
         steps: [
           {
             choices: [

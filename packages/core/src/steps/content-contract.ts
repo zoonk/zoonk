@@ -97,13 +97,6 @@ const staticGrammarRuleContentSchema = z
   })
   .strict();
 
-const storyMetricSchema = z
-  .object({
-    initial: z.number(),
-    label: z.string(),
-  })
-  .strict();
-
 const storyOutcomeSchema = z
   .object({
     minStrongChoices: z.number().int().min(0),
@@ -126,7 +119,7 @@ const storyDebriefConceptSchema = z
 const staticStoryIntroContentSchema = z
   .object({
     intro: z.string(),
-    metrics: z.array(storyMetricSchema).min(1),
+    metrics: z.array(z.string()).min(1),
     variant: z.literal("storyIntro"),
   })
   .strict();

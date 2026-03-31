@@ -312,11 +312,7 @@ describe("step content contracts", () => {
     test("parses intro with metrics", () => {
       const content = parseStepContent("static", {
         intro: "You are a factory manager in 1950.",
-        metrics: [
-          { initial: 50, label: "Production" },
-          { initial: 45, label: "Morale" },
-          { initial: 40, label: "Cash" },
-        ],
+        metrics: ["Production", "Morale", "Cash"],
         variant: "storyIntro",
       });
 
