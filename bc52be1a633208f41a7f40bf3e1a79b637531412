@@ -1,0 +1,29 @@
+packages/ai/src/tasks/activities/core/activity-story-debrief.ts
+  4b531681ddd481ea 44
+apps/evals/src/tasks/activity-story-steps/test-cases.ts
+  4b531681ddd481ea 16
+packages/ai/src/tasks/activities/core/activity-story-steps.ts
+  4b531681ddd481ea 18-22,27
+apps/evals/src/tasks/activity-story-debrief/test-cases.ts
+  4b531681ddd481ea 54-57,65-69,77-80,94-98,106-110,118-121,135-139,147-150,158,172-176,184-188,196-199,213-217,225-229,237-240
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.3",
+  "base_commit_sha": "bc52be1a633208f41a7f40bf3e1a79b637531412",
+  "prompts": {
+    "4b531681ddd481ea": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "666ef487-336f-45c4-997c-71aa2b4e66df",
+        "model": "unknown"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 77,
+      "total_deletions": 20,
+      "accepted_lines": 73,
+      "overriden_lines": 0
+    }
+  }
+}
