@@ -1,0 +1,52 @@
+apps/main/src/app/debug/mission/mission-player.tsx
+  04e239d6d0fd99d7 1-574
+apps/main/src/app/debug/mission/page.tsx
+  04e239d6d0fd99d7 1-21
+packages/ai/src/tasks/activities/core/mission-types.ts
+  04e239d6d0fd99d7 1-58
+packages/ai/src/tasks/activities/core/activity-mission-beats.ts
+  04e239d6d0fd99d7 1-70
+packages/ai/src/tasks/activities/core/activity-mission-debrief.ts
+  04e239d6d0fd99d7 1-76
+packages/ai/package.json
+  04e239d6d0fd99d7 10-12
+packages/ai/src/tasks/activities/core/activity-mission-debrief.prompt.md
+  04e239d6d0fd99d7 1-51
+packages/ai/src/tasks/activities/core/activity-mission-beats.prompt.md
+  04e239d6d0fd99d7 1-101
+apps/main/src/app/debug/mission/generate-mission.ts
+  04e239d6d0fd99d7 1-104
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.22",
+  "base_commit_sha": "aa1aeff22d931a6ec9f89f06ea5b36efa3adb5bd",
+  "prompts": {
+    "04e239d6d0fd99d7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9d46bd67-95c5-4303-9265-320cba43d376",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill <4393133+ceolinwill@users.noreply.github.com>",
+      "messages": [],
+      "total_additions": 2480,
+      "total_deletions": 251,
+      "accepted_lines": 2229,
+      "overriden_lines": 0
+    },
+    "d7e416fa0c1622a1": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1b446bb6-ce79-4ab6-8587-70487d165253",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill <4393133+ceolinwill@users.noreply.github.com>",
+      "messages": [],
+      "total_additions": 38,
+      "total_deletions": 0,
+      "accepted_lines": 38,
+      "overriden_lines": 0
+    }
+  }
+}
