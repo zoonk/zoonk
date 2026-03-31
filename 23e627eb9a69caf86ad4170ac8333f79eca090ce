@@ -1,0 +1,31 @@
+packages/player/src/prepare-activity-data.ts
+  c47005eb028dbcc3 2,81,94,229
+packages/player/src/player-reducer.test.ts
+  c47005eb028dbcc3 46
+packages/player/src/prepare-activity-data.test.ts
+  c47005eb028dbcc3 123
+packages/player/src/validate-answers.ts
+  c47005eb028dbcc3 17
+packages/core/src/steps/content-contract.ts
+  c47005eb028dbcc3 4-5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.22",
+  "base_commit_sha": "23e627eb9a69caf86ad4170ac8333f79eca090ce",
+  "prompts": {
+    "c47005eb028dbcc3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "44857573-d514-4067-aeb4-8c63656c7b18",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill <4393133+ceolinwill@users.noreply.github.com>",
+      "messages": [],
+      "total_additions": 9,
+      "total_deletions": 16,
+      "accepted_lines": 9,
+      "overriden_lines": 0
+    }
+  }
+}
