@@ -1,0 +1,45 @@
+packages/ai/src/tasks/activities/core/activity-story-steps.ts
+  4b531681ddd481ea 11,18-20,27
+packages/player/src/validate-answers.test.ts
+  4b531681ddd481ea 241,248,272,279,303,310
+packages/ai/src/tasks/activities/core/activity-story-debrief.ts
+  4b531681ddd481ea 39-40,43,54,67
+packages/ai/src/tasks/activities/core/activity-story-steps.prompt.md
+  4b531681ddd481ea 23,75-80
+packages/core/src/steps/content-contract.test.ts
+  4b531681ddd481ea 246,316-318
+packages/player/src/check-answer.test.ts
+  4b531681ddd481ea 287,294,301
+apps/evals/src/tasks/activity-story-steps/test-cases.ts
+  4b531681ddd481ea 6,8,16,40-41
+packages/core/src/steps/content-contract.ts
+  4b531681ddd481ea 156-164,170
+packages/player/src/player-completion.test.ts
+  4b531681ddd481ea 48,55,62
+packages/player/src/check-step.test.ts
+  4b531681ddd481ea 410,417
+apps/evals/src/tasks/activity-story-debrief/test-cases.ts
+  4b531681ddd481ea 42-44,54-56,65-68,77-79,94-97,106-109,118-120,135-138,147-149,172-175,184-187,196-198,213-216,225-228,237-239
+packages/player/src/player-reducer.test.ts
+  4b531681ddd481ea 267,274
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.3",
+  "base_commit_sha": "49c56e11f8df7ce16d8ac8acc980d9e75f4fd1eb",
+  "prompts": {
+    "4b531681ddd481ea": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "666ef487-336f-45c4-997c-71aa2b4e66df",
+        "model": "unknown"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 116,
+      "total_deletions": 102,
+      "accepted_lines": 105,
+      "overriden_lines": 1
+    }
+  }
+}
