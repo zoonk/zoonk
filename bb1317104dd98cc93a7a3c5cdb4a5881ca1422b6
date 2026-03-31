@@ -1,0 +1,27 @@
+packages/core/src/steps/content-contract.test.ts
+  460abf8f8c505257 250,283-288,309-331,334-351,356-357,359
+packages/core/src/steps/content-contract.ts
+  460abf8f8c505257 124-131,136-137,139-167
+packages/player/src/components/static-step.tsx
+  460abf8f8c505257 72-75
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.22",
+  "base_commit_sha": "bb1317104dd98cc93a7a3c5cdb4a5881ca1422b6",
+  "prompts": {
+    "460abf8f8c505257": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "502b259a-e451-4164-b631-d5c9e0fd114e",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill <4393133+ceolinwill@users.noreply.github.com>",
+      "messages": [],
+      "total_additions": 107,
+      "total_deletions": 71,
+      "accepted_lines": 105,
+      "overriden_lines": 0
+    }
+  }
+}
