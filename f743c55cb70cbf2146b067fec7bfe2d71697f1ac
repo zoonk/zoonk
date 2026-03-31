@@ -1,0 +1,25 @@
+apps/evals/src/tasks/activity-story-steps/test-cases.ts
+  4b531681ddd481ea 6,14,16,38-41
+packages/ai/src/tasks/activities/core/activity-story-steps.prompt.md
+  4b531681ddd481ea 100
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.3",
+  "base_commit_sha": "f743c55cb70cbf2146b067fec7bfe2d71697f1ac",
+  "prompts": {
+    "4b531681ddd481ea": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "666ef487-336f-45c4-997c-71aa2b4e66df",
+        "model": "unknown"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 7,
+      "total_deletions": 4,
+      "accepted_lines": 10,
+      "overriden_lines": 0
+    }
+  }
+}
