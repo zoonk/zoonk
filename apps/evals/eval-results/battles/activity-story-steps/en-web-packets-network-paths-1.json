@@ -1,0 +1,131 @@
+{
+  "expectations": "\nEVALUATION CRITERIA:\n\n1. SCENARIO IMMERSION: The intro must drop the learner into a vivid scene with sensory detail and a role that demands immediate action. Second person. No abstract setup or backstory dumps.\n\n2. HIDDEN CONCEPTS: The specific concept names provided in the CONCEPTS input must NEVER appear verbatim during play. However, DO NOT do word-matching — think about context. A story about a pandemic MUST use words like \"virus\", \"vaccine\", \"hospital\". A chemistry story MUST mention \"reaction\", \"solution\", \"base\". A networking story MUST say \"route\", \"destination\", \"sender\". These are the language of the scenario, not concept leaks. Only penalize when the output explicitly teaches or names the concept as a concept (e.g., \"This is called Non-Pharmaceutical Interventions\" or \"You just applied the Pull System principle\").\n\n3. METRIC DESIGN: Metrics must represent meaningful, independent dimensions of the scenario. Metric labels must be simple and domain-appropriate. At least 2 metrics required.\n\n4. CHOICE QUALITY: Every step must have at least 3 choices. All choices must be plausible actions in context — no obviously wrong or absurd options. Choices must be actions (imperative form), not opinions or meta-commentary. Each choice must be immediately understandable without jargon.\n\n5. ALIGNMENT CALIBRATION: Each step must have a mix of strong, partial, and weak choices. The \"strong\" choice should NOT be obviously correct — it might feel counterintuitive. The alignment should never be hinted at in the choice text or consequence.\n\n6. CONSEQUENCE QUALITY: Consequences must show what HAPPENS, not explain why. They should be concrete with human/emotional detail (\"Three workers walk off the line\") rather than evaluative (\"This was inefficient\"). A consequence like \"Your team starts seeing the pattern faster\" is fine — it describes an observable outcome through character reactions. Only penalize consequences that read like textbook explanations or explicitly teach the lesson.\n\n7. METRIC EFFECTS: Each metric name in metricEffects must match a defined metric label. Effects must be \"positive\", \"neutral\", or \"negative\". Strong choices should GENERALLY have positive effects, but a weak choice having a positive effect on ONE metric is fine — real decisions have tradeoffs. A shortcut that saves time (positive on speed) but causes chaos (negative on quality) is good design, not a calibration error. Only penalize when effects are completely inverted (e.g., all weak choices are fully positive across all metrics).\n\n8. STEP ESCALATION: Steps must build a progressive narrative. Step 1 should be manageable. Middle steps should escalate with surprises or complications. Late steps should feel like pressure is building toward a crisis or breakthrough.\n\n9. LENGTH CONSTRAINTS: Verify these limits:\n   - intro: max 30 words, max 2 sentences\n   - situation: max 30 words, max 2-3 sentences\n   - choice text: max 15 words, 1 sentence\n   - consequence: max 30 words, max 2-3 sentences\n   Do NOT penalize for being slightly under these limits. Only penalize for clearly exceeding them.\n\n10. FACTUAL ACCURACY: Domain content must be factually correct. Penalize choices or consequences that misrepresent how the topic actually works.\n\n11. VOICE: Casual, conversational register. No academic or corporate tone. No jargon from the topic.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific scenario settings, character names, or plot choices\n- Do NOT require exactly 5 steps or exactly 3 metrics — these are guidance, not hard constraints\n- Do NOT penalize for the exact number of choices per step as long as there are at least 3\n- Do NOT penalize for creative or unconventional scenarios that still teach the concepts\n- Do NOT penalize for the number of metrics as long as there are at least 2\n- Do NOT check against an imagined \"ideal\" story structure\n- Do NOT do word-matching for concept leaks — think about whether the word is part of the scenario's natural language or an explicit concept reveal\n- Do NOT penalize weak choices for having a positive effect on one metric — tradeoffs are good game design\n- Do NOT penalize consequences that describe observable outcomes through character reactions, even if they hint at why something worked\n- ONLY penalize for: explicit concept teaching during play (\"This is called X\"), consequences that read like textbook explanations, effects completely inverted across all metrics, or factually incorrect domain content\n",
+  "judgedAt": "2026-03-31T21:54:30.838Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Excellent immersion with a realistic web dev scenario. Strong escalation from diagnosis to crisis to proof-of-fix. Consequences are vivid with human detail (\"Your boss winces,\" \"the CEO watches\"). Concepts are embedded naturally without being named. Step 3's pivot (Dublin node mangling labels) is a genuine surprise. Some consequences are slightly long (Step 2a, 3a borderline on 30 words) but not egregiously so. Metric design is meaningful and independent. Choices feel genuinely plausible at each step.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Creative studio-lot scenario with strong sensory detail and escalation (rehearsal surprise, sponsor visit, live show deadline). Concepts are well-hidden in the domain language. Good human reactions throughout (\"the producer finally stops shouting your name\"). Some metric effects only affect 1-2 of 3 metrics, which is fine but slightly less nuanced. Choices are all plausible and well-calibrated. Solid overall execution.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Good logistics/delivery metaphor that maps well to networking concepts. Strong escalation with the round-trip discovery in Step 3 being a genuine pivot. Consequences are concrete and show outcomes. The intro is slightly less immersive than top models — \"A message is stuck\" feels more abstract. Step 4's strong choice (use known route) is debatable — in networking, dynamic routing across multiple paths is often preferred, but the scenario frames it as a risk-management decision under pressure, which works. Overall solid.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Well-structured courier metaphor that maps cleanly to packet concepts. Good escalation with the parade surprise and relay stations. However, Step 1's strong choice (50 envelopes with 50 couriers) feels a bit too obviously correct — the scenario practically tells you one bike can't carry it. Some consequences are slightly evaluative (\"maximizing their agility\"). Step 4 introduces hop-by-hop routing which is factually sound. The intro is clear but slightly over the word limit at ~30 words. Decent but somewhat predictable.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Clean courier/envelope metaphor covering all key concepts. However, the strong choices are often too obvious (breaking into small envelopes vs. one giant container is a no-brainer). Step 4 about keeping vs. stripping contents doesn't map as cleanly to real networking tradeoffs. Some consequences lack human/emotional richness compared to top models. The scenario feels more like a teaching exercise than an immersive story — escalation is limited (no real crisis arc). Intro is adequate but generic.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Good checkout-system scenario with immediate tension. However, the scenario feels somewhat repetitive — multiple steps involve the same basic problem of sending a message correctly. Step escalation is weaker; the crisis doesn't build as distinctly. \"Delay\" as a metric is awkward since positive/negative effects are counterintuitive (positive effect on Delay = less delay?). Step 5's strong choice (\"send one clean copy with only what matters\") doesn't clearly map to a networking concept and feels vague. Some consequences are vivid (\"printers wake up\") but others are generic.",
+          "score": 6.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "This output provides a masterfully executed courier analogy that perfectly maps to every requested networking concept (packets, headers, dynamic routing, hops) without using any jargon. It strictly adheres to all length constraints and delivers a highly immersive, escalating scenario.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "An excellent use of an A/V broadcasting scenario to teach network concepts. 'Clips' and 'handoffs' elegantly substitute for packets and hops, making the troubleshooting feel authentic. It perfectly obeys all length constraints.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Adheres perfectly to all length constraints and builds a solid escalation. However, mixing a literal IT setting ('junior network tech') with purely physical metaphors ('strip off the wrapping,' 'address card') makes the actions feel slightly disjointed for a realistic simulation.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "A functional logistics analogy that effectively represents the core concepts. It receives minor penalties for slightly exceeding length constraints (e.g., a 3-sentence intro) and for using direct networking jargon ('routing table'), which violates the voice rules.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "The scenario suffers from jarring mixed metaphors that break immersion. Blending digital concepts ('high-resolution video file') with purely physical outcomes ('massive crate', 'mail carrier') makes the world feel internally inconsistent, though length constraints are mostly followed.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "This output consistently and clearly violates the critical length constraints. Almost every situation is between 35-40 words and 3-4 sentences, clearly exceeding the strict 30-word and 2-3 sentence maximums. The prompt mandates heavy penalties for ignoring formatting rules.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "This is the strongest balance of immersion, escalation, plausible actions, and hidden-concept teaching through consequences. It stays within the spirit of the length limits better than most, avoids explicit concept lecturing, and keeps the networking ideas accurate and discoverable.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "A very strong, coherent scenario with excellent escalation and solid domain accuracy, especially around route tracing and return confirmation. It loses points for more overt networking jargon/concept exposure and several situations/consequences that feel wordier and more explanatory than the prompt prefers.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "This is clear, compact, and highly compliant with the hidden-rule philosophy, using a strong courier metaphor to embed packet ideas without teaching them explicitly. Its main weakness is factual simplification in a few places and a less dramatic, human-feeling escalation than the best entries.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Good immersion, clear choices, and generally solid progression under pressure, with consequences that stay concrete and immediate. However, some metric calibration is shaky—especially treating lower delay as 'positive' on a metric named 'Delay'—and a few choices blur payload/header ideas in ways that are less precise.",
+          "score": 7.9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "This is structurally strong and mostly accurate, with good step progression and plausible choices. But the tone is a bit flatter and more abstract, and there are more explicit concept-adjacent phrases and explanatory consequences than ideal for immersive play.",
+          "score": 7.7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "The core packet/path metaphor is coherent and the five-step structure works, but it feels more schematic than immersive and the choice texts/consequences are often overly obvious. It also includes some avoidable prompt violations, such as punctuation-heavy choice texts and a few less plausible or exaggerated actions like using 50 couriers.",
+          "score": 7.1
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-story-steps",
+  "testCaseId": "en-web-packets-network-paths-1"
+}

@@ -1,0 +1,131 @@
+{
+  "expectations": "\nLANGUAGE REQUIREMENT: All content must be in Latin American Spanish.\n\n\nEVALUATION CRITERIA:\n\n1. OUTCOME TIER STRUCTURE: Must have 4 outcome tiers with minStrongChoices forming a descending progression proportional to the total number of steps. One tier must have minStrongChoices: 0 as the catch-all. Tiers must not overlap or skip reasonable thresholds.\n\n2. OUTCOME NARRATIVES: Each narrative must be written in second person and stay within 40 words. Narratives describe where the player ended up at each performance tier — they are hypothetical end states, not replays of specific choices. A narrative like \"Your factory runs lean and every part has a destination\" is good. Do NOT require narratives to name specific choices — the AI doesn't know which choices the player made.\n\n3. OUTCOME TITLES: Titles must be evocative but not judgmental. Max 5 words. No \"Failure\", \"Perfect\", \"F grade\", or grade-like labels. Confident titles like \"Dominio total\" or \"Master Manager\" are fine — they celebrate achievement, not judge. Only penalize labels that shame or grade the player.\n\n4. DEBRIEF CONCEPT QUALITY: Each concept must be a genuine educational insight from the topic — not a restatement of what happened in the story. Concepts should name actual domain knowledge that was hidden during play.\n\n5. CONCEPT-TO-CHOICE CONNECTION: Explanations must reference specific choices or consequences from the story (\"When you chose to X, you experienced Y — this is called Z\"). Generic explanations that could apply to any story should be penalized.\n\n6. CONCEPT NAMES: Must be actual domain concepts from the topic (this is the reveal moment). Max 5 words. These are the terms the player never saw during the story.\n\n7. COMPLETENESS: The debrief should cover the main educational themes embedded in the story's alignment tags. If the story tested 3 distinct concepts through its choices, the debrief should surface all 3.\n\n8. TONE: Warm, mentoring, not condescending. Like a coach explaining after a game. The player just lived through this — respect their experience. No \"you should have\" or \"the correct answer was.\"\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for the exact number of concepts — 3-5 is guidance, 6 is fine too\n- Do NOT penalize for creative or unconventional concept names if they are accurate\n- Do NOT require specific wording patterns in explanations\n- Do NOT penalize for outcome tiers that use slightly different thresholds than a mathematical formula would suggest, as long as the progression is logical and descending\n- Do NOT penalize outcome narratives for being general — they describe hypothetical end states for performance tiers, not specific choice replays\n- Do NOT penalize titles that celebrate achievement (e.g., \"Dominio total\", \"Master Manager\") — only penalize labels that shame or use letter/number grades\n- Do NOT require perfectly even spacing between tier thresholds — 5/4/2/0 is fine for 5 steps\n- ONLY penalize for: missing catch-all tier, language that shames the player, concept explanations that don't connect to ANY part of the story, factually incorrect concept names, or clearly exceeding length constraints (a few words over is fine)\n\n    ",
+  "judgedAt": "2026-03-31T23:13:00.511Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Strong tier structure (5/4/2/0) with proper catch-all. Concept names are genuine domain terms well-connected to story choices. Narratives are warm, non-judgmental, and within word limits. Explanations reference specific choices naturally. Only minor issue: concept names like 'Apagado de reacción' are slightly generic but still accurate.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Excellent concept quality with real domain terms (tautomería ceto-enólica, enolato cinético vs termodinámico, contraión). Tier structure (5/3/2/0) is logical. Explanations connect well to story choices with warm tone. Five concepts covering all key themes. Minor: some concept explanations are slightly long but within limits.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Good domain concepts (equilibrio enol-enolato, bases cinéticas vs termodinámicas). Tier structure (5/3/1/0) is acceptable. Tone is warm and evocative titles work well. However, concept name 'Equilibrio enol-enolato' conflates two distinct things slightly, and some explanations reference step numbers rather than choices more naturally. The 1-threshold tier is a bit low but acceptable.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Solid structure (5/3/1/0) with catch-all. Warm tone throughout. However, concept names ('Formación controlada de enol', 'Enolato en frío', 'Captura oportuna', 'Apagado suave', 'Escalado prudente') are more descriptive labels than actual domain concept reveals — they lack the 'aha' moment of naming real chemistry terms. This weakens the debrief's purpose as a reveal.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Good concept names (Catálisis Ácida de Enoles, Formación de Enolatos Cinéticos, Equilibrio Termodinámico). Tier structure (4/3/2/0) works but best outcome at 4 instead of 5 means a player getting all 5 strong choices gets the same tier as one getting 4 — slightly off. Only 4 concepts but covers key themes. Tone is warm. Narratives within limits.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Best outcome at minStrongChoices=4 (not 5) is a structural flaw for a 5-step story. Only 4 concepts. Mixing English ('quenching') in a Spanish-language output is a minor language issue. Some explanations are more generic and less connected to specific story moments. Narrative for tier 2 uses exclamation mark that feels slightly condescending. Title 'Resultados Inestables pero Útiles' exceeds 5-word limit (it's technically 4 words with 'pero' but it's borderline long).",
+          "score": 6.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Flawless execution. The concept names accurately reveal the hidden scientific domain knowledge (e.g., 'Tautomería ceto-enólica', 'Enolato cinético vs termodinámico') and perfectly connect them to the player's choices. The tone is perfectly mentoring, natural, and adheres strictly to all length constraints.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Excellent educational insights and accurate use of chemical terminology. The outcome narratives and titles are very creative and fit the requirements perfectly. Referencing 'el paso 1', 'el paso 2', etc., makes the explanations slightly more mechanical than Model A, but it remains highly effective.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Very strong output with a fantastic mentoring tone, particularly in the concept explanations (e.g., '¿Recuerdas cuando la mezcla...'). The scientific terminology is accurate and well-explained. It handles the catch-all outcome with grace.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Solid execution with accurate chemical concepts and clear explanations. The outcome tiers are well-structured and the tone is appropriately warm. It only generates 4 concepts (missing the scale-up step), which is allowed by the prompt but slightly less comprehensive than the top models.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Good output that follows all constraints and structures well. However, the concept names (e.g., 'Formación de enoles', 'Formación de enolatos') are slightly too generic compared to the specific scientific terminology (kinetic/thermodynamic, tautomerism) surfaced by the higher-ranked models.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "The model followed most formatting constraints but failed a critical instruction regarding the debrief concepts. Instead of revealing actual scientific domain knowledge (like keto-enol tautomerism or kinetic enolates), it used descriptive labels of the player's actions (e.g., 'Captura oportuna', 'Apagado suave', 'Escalado prudente'). This misses the 'reveal' purpose of the debrief.",
+          "score": 6
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Cumple muy bien la estructura: 4 outcomes con umbrales lógicos 5/4/2/0, tono cálido y explicaciones conectadas a decisiones concretas. Los conceptos son mayormente correctos y específicos del tema, con solo pequeñas simplificaciones técnicas.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Es sólido en contenido y revela conceptos útiles del tema con buenas conexiones al relato. Pierde puntos porque varios textos exceden claramente los máximos de palabras y los umbrales 5/3/2/0 dejan una progresión algo menos limpia.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Respeta bien el tono, el idioma y la longitud en general, y conecta cada concepto con elecciones del escenario. Sin embargo, varios nombres de concepto son más descriptivos que conceptos disciplinares formales, lo que debilita el efecto de 'reveal'.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Las explicaciones están bien ancladas en pasos específicos y cubren ideas clave como control cinético, quench y escalado. Baja por algunos nombres conceptuales menos precisos o discutibles y por umbrales 5/3/1/0 algo menos proporcionados para 5 pasos.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Tiene buena claridad y tono mentor, con conexiones razonables a elecciones del relato. Pero incumple más reglas: títulos y varias explicaciones exceden longitud, los umbrales empiezan en 4 en vez de reflejar 'casi todas' para el mejor resultado, y el peor outcome roza un tono más punitivo.",
+          "score": 6.6
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Incluye conceptos relevantes y un tono generalmente correcto, pero omite un tema importante del escenario como contraión/escalado y mezcla algo de inglés con 'quenching'. También falla más en restricciones: mejor outcome en 4, títulos largos y varias narrativas/explicaciones demasiado extensas.",
+          "score": 5.8
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-story-debrief",
+  "testCaseId": "es-quimica-formacion-enoles-enolatos-1"
+}

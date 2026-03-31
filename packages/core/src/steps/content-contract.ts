@@ -99,14 +99,6 @@ const staticGrammarRuleContentSchema = z
   })
   .strict();
 
-const storyMetricSchema = z
-  .object({
-    id: z.string(),
-    initial: z.number(),
-    label: z.string(),
-  })
-  .strict();
-
 const storyOutcomeSchema = z
   .object({
     minStrongChoices: z.number().int().min(0),
@@ -129,7 +121,7 @@ const storyDebriefConceptSchema = z
 const staticStoryIntroContentSchema = z
   .object({
     intro: z.string(),
-    metrics: z.array(storyMetricSchema).min(1),
+    metrics: z.array(z.string()).min(1),
     variant: z.literal("storyIntro"),
   })
   .strict();
@@ -156,12 +148,21 @@ const staticContentSchema = z.discriminatedUnion("variant", [
 
 const storyAlignmentSchema = z.enum(["strong", "partial", "weak"]);
 
+const storyMetricEffectSchema = z.enum(["positive", "neutral", "negative"]);
+
+const storyMetricEffectEntrySchema = z
+  .object({
+    effect: storyMetricEffectSchema,
+    metric: z.string(),
+  })
+  .strict();
+
 const storyChoiceSchema = z
   .object({
     alignment: storyAlignmentSchema,
     consequence: z.string(),
     id: z.string(),
-    metricChanges: z.record(z.string(), z.number()),
+    metricEffects: z.array(storyMetricEffectEntrySchema),
     text: z.string(),
   })
   .strict();

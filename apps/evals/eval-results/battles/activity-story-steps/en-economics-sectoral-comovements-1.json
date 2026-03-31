@@ -1,0 +1,131 @@
+{
+  "expectations": "\nEVALUATION CRITERIA:\n\n1. SCENARIO IMMERSION: The intro must drop the learner into a vivid scene with sensory detail and a role that demands immediate action. Second person. No abstract setup or backstory dumps.\n\n2. HIDDEN CONCEPTS: The specific concept names provided in the CONCEPTS input must NEVER appear verbatim during play. However, DO NOT do word-matching — think about context. A story about a pandemic MUST use words like \"virus\", \"vaccine\", \"hospital\". A chemistry story MUST mention \"reaction\", \"solution\", \"base\". A networking story MUST say \"route\", \"destination\", \"sender\". These are the language of the scenario, not concept leaks. Only penalize when the output explicitly teaches or names the concept as a concept (e.g., \"This is called Non-Pharmaceutical Interventions\" or \"You just applied the Pull System principle\").\n\n3. METRIC DESIGN: Metrics must represent meaningful, independent dimensions of the scenario. Metric labels must be simple and domain-appropriate. At least 2 metrics required.\n\n4. CHOICE QUALITY: Every step must have at least 3 choices. All choices must be plausible actions in context — no obviously wrong or absurd options. Choices must be actions (imperative form), not opinions or meta-commentary. Each choice must be immediately understandable without jargon.\n\n5. ALIGNMENT CALIBRATION: Each step must have a mix of strong, partial, and weak choices. The \"strong\" choice should NOT be obviously correct — it might feel counterintuitive. The alignment should never be hinted at in the choice text or consequence.\n\n6. CONSEQUENCE QUALITY: Consequences must show what HAPPENS, not explain why. They should be concrete with human/emotional detail (\"Three workers walk off the line\") rather than evaluative (\"This was inefficient\"). A consequence like \"Your team starts seeing the pattern faster\" is fine — it describes an observable outcome through character reactions. Only penalize consequences that read like textbook explanations or explicitly teach the lesson.\n\n7. METRIC EFFECTS: Each metric name in metricEffects must match a defined metric label. Effects must be \"positive\", \"neutral\", or \"negative\". Strong choices should GENERALLY have positive effects, but a weak choice having a positive effect on ONE metric is fine — real decisions have tradeoffs. A shortcut that saves time (positive on speed) but causes chaos (negative on quality) is good design, not a calibration error. Only penalize when effects are completely inverted (e.g., all weak choices are fully positive across all metrics).\n\n8. STEP ESCALATION: Steps must build a progressive narrative. Step 1 should be manageable. Middle steps should escalate with surprises or complications. Late steps should feel like pressure is building toward a crisis or breakthrough.\n\n9. LENGTH CONSTRAINTS: Verify these limits:\n   - intro: max 30 words, max 2 sentences\n   - situation: max 30 words, max 2-3 sentences\n   - choice text: max 15 words, 1 sentence\n   - consequence: max 30 words, max 2-3 sentences\n   Do NOT penalize for being slightly under these limits. Only penalize for clearly exceeding them.\n\n10. FACTUAL ACCURACY: Domain content must be factually correct. Penalize choices or consequences that misrepresent how the topic actually works.\n\n11. VOICE: Casual, conversational register. No academic or corporate tone. No jargon from the topic.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific scenario settings, character names, or plot choices\n- Do NOT require exactly 5 steps or exactly 3 metrics — these are guidance, not hard constraints\n- Do NOT penalize for the exact number of choices per step as long as there are at least 3\n- Do NOT penalize for creative or unconventional scenarios that still teach the concepts\n- Do NOT penalize for the number of metrics as long as there are at least 2\n- Do NOT check against an imagined \"ideal\" story structure\n- Do NOT do word-matching for concept leaks — think about whether the word is part of the scenario's natural language or an explicit concept reveal\n- Do NOT penalize weak choices for having a positive effect on one metric — tradeoffs are good game design\n- Do NOT penalize consequences that describe observable outcomes through character reactions, even if they hint at why something worked\n- ONLY penalize for: explicit concept teaching during play (\"This is called X\"), consequences that read like textbook explanations, effects completely inverted across all metrics, or factually incorrect domain content\n",
+  "judgedAt": "2026-03-31T21:54:07.592Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Strong immersive intro with sensory detail. Excellent scenario framing as a journalist/analyst role that naturally teaches sectoral/regional comovements without naming concepts. Consequences are concrete and human ('hotel and clinic owners call in furious'). Good escalation from initial briefing to live broadcast. Length constraints well respected. Metrics affect only 2 sometimes, which is fine. Strong choices are genuinely non-obvious. No concept leaks.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Good immersive intro and plant coordinator role. Consequences are vivid and concrete ('supervisors sending photos of crowded aisles'). Escalation is solid. However, several consequences exceed 30 words (e.g., s1c2, s3c1, s5c1 are clearly over), which is a notable length violation. The scenario teaches the concepts well through outcomes without naming them. Choices are plausible and well-differentiated.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Well-crafted investment analyst scenario that naturally embeds sectoral/regional concepts. Good escalation and Step 3 surprise. However, the intro lacks sensory detail and urgency ('Your boss needs a regional strategy by Friday' is low-stakes). Some consequences lean slightly explanatory ('Your thesis holds'). Choice 4b text ('services typically ride out downturns better') edges close to teaching the concept. Metrics are somewhat abstract/overlapping (Forecast Accuracy and Portfolio Health).",
+          "score": 7.3
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Decent scenario but significant issues. The intro lacks sensory detail. Several choices are opinions/advice rather than actions ('Tell her...', 'Explain that...', 'Point out that...'). Choice 3B ('services always react slower but will eventually follow') is a direct concept leak — it explicitly teaches services cyclicality. Choice 5B ('different parts heal at different speeds') also verges on explicit concept naming. Strong choices are often too obviously correct. Many consequences exceed 30 words.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Intro lacks sensory detail and immediacy ('showing early signs of slowing down'). Choice s4c1 ('Explain that heavy building always swings harder than daily necessities') is a blatant concept leak — explicitly teaching construction cyclicality vs services. Several consequences are explanatory rather than showing outcomes ('Realizing that shocks affect everything to varying degrees saves you'). Some choice texts exceed 15 words. The partial choice in step 3 has all-negative metrics identical to the weak choice in step 1, suggesting poor calibration.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Intro exceeds word limit (27 words but lacks sensory detail — it's abstract setup). Multiple consequences exceed 30 words. Consequences are often evaluative/explanatory rather than showing outcomes ('You caught the most volatile sector before it collapsed', 'The economy begins to move in sync again'). Step 3 situation starts with 'Surprise!' which breaks immersion. Several situations exceed 30 words. The strong choices are often too obviously correct. Tone is more textbook than casual/conversational.",
+          "score": 4.8
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Flawlessly adheres to all formatting and length constraints, keeping every consequence under the strict 30-word limit. Masterfully teaches the hidden concepts (comovement, cyclicality) through narrative action and observable outcomes without ever resorting to textbook explanations. The scenario feels highly immersive and escalating while keeping choices actionable and jargon-free.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Highly creative approach that brilliantly abstracts macroeconomics into a tangible factory floor scenario, making the concepts intuitive. Unfortunately, it significantly violates the consequence length constraints, with several reaching 35-45 words (the limit is 30). Otherwise, it is an exceptionally well-designed learning experience.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Follows word counts well and sets up a solid, realistic scenario. However, it loses points on consequence quality; several consequences evaluate the player's choice or explain why it worked (e.g., 'By taking money out... you've prevented the momentum'), violating the 'show, don't explain' rule.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "The scenario is plausible, but the output explicitly teaches the hidden concepts during play. For example, a strong choice states 'Explain that heavy building always swings harder than daily necessities,' which violates the core rule of not explicitly explaining the hidden rules or concepts. Consequences also lean toward textbook explanations.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Consistently fails the situation length constraint by exceeding 30 words in nearly every step. More importantly, it repeatedly violates the 'show, don't tell' rule by placing direct explanations of the economic concepts into the choice text (e.g., 'Point out that services always react slower but will eventually follow').",
+          "score": 4.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Violates the intro sentence limit and multiple situation word counts. It explicitly teaches the core concepts within the choice text itself (e.g., 'Reassure the client that services typically ride out downturns better'), which directly violates a critical top-penalty negative constraint. Consequences are also highly evaluative rather than concrete.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Strong overall fit: immersive enough, exactly 5 steps, clear escalation, plausible actions, vivid consequences, and solid metric/effect consistency. Minor weaknesses are occasional abstraction and one slightly explanatory consequence in step 3, but it best balances story play with the hidden lesson.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Excellent structure and escalation, with concise, vivid writing that stays within constraints and keeps the concepts hidden. The main drawback is metric design: 'Output' and 'Jobs' feel weakly tied to the player's journalist role, with some effects that read metaphorically rather than as world-state changes.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Covers the topic accurately and uses the hidden ideas well through decisions about sectors, regions, and shared shocks. However, it is noticeably more analytical/jargony than requested, and several choice/situation texts clearly exceed the word limits.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Good progression and clear treatment of uneven regional and sectoral patterns, with mostly plausible choices and coherent consequences. But it slips into explicit explanation/teaching more often, some choices are too obviously correct, and several texts exceed the strict length limits.",
+          "score": 7.6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "The sector differences are used effectively and the scenario has a workable escalation arc, but it feels more like business-case instruction than immersive play. It also has repeated explanatory consequences, some overlong choice texts, and a few factually overconfident claims about how sectors behave.",
+          "score": 7.1
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "It captures some relevant economic patterns, but the tone is policy-textbook rather than immersive game story, with sparse sensory detail and several explanatory or didactic consequences. It also contains factual overreach by treating specific sector responses as too deterministic and makes the 'strong' options fairly obvious.",
+          "score": 6.6
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-story-steps",
+  "testCaseId": "en-economics-sectoral-comovements-1"
+}
