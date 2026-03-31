@@ -1,0 +1,25 @@
+packages/ai/src/tasks/activities/core/activity-story-debrief.prompt.md
+  4b531681ddd481ea 31-35
+apps/evals/src/tasks/activity-story-debrief/test-cases.ts
+  4b531681ddd481ea 6,8,21,24-28
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.3",
+  "base_commit_sha": "dd6337d880b294556070470af399ede7d3d601b5",
+  "prompts": {
+    "4b531681ddd481ea": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "666ef487-336f-45c4-997c-71aa2b4e66df",
+        "model": "unknown"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 13,
+      "total_deletions": 6,
+      "accepted_lines": 13,
+      "overriden_lines": 0
+    }
+  }
+}
