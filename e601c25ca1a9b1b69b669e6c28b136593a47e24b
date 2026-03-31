@@ -1,0 +1,55 @@
+packages/player/src/check-answer.test.ts
+  460abf8f8c505257 17,280-340
+packages/player/src/check-step.ts
+  460abf8f8c505257 12,133-138,140-142,169-170
+packages/player/src/compute-score.test.ts
+  460abf8f8c505257 2,73-137
+packages/player/src/check-answer.ts
+  460abf8f8c505257 7,97-113
+packages/player/src/validate-answers.test.ts
+  460abf8f8c505257 234-325
+packages/player/src/player-reducer.ts
+  460abf8f8c505257 18
+packages/db/src/prisma/enums.prisma
+  460abf8f8c505257 25,41
+packages/player/src/validate-answers.ts
+  460abf8f8c505257 14,26,154-160,162-164,177
+apps/main/src/lib/activities.ts
+  460abf8f8c505257 60-61,63,127
+packages/player/src/check-step.test.ts
+  460abf8f8c505257 402-432,434-443,445-455
+packages/player/src/completion-input-schema.ts
+  460abf8f8c505257 44-49,65
+apps/main/src/lib/generation/activity-generation-phase-config.ts
+  460abf8f8c505257 81,134
+packages/core/src/steps/content-contract.test.ts
+  460abf8f8c505257 240-347
+packages/player/src/player-reducer.test.ts
+  460abf8f8c505257 260-284,286,288-292,294-297
+packages/utils/src/brain-power.ts
+  460abf8f8c505257 2
+packages/core/src/steps/content-contract.ts
+  460abf8f8c505257 106-160,175,191-192,209,230,253
+packages/player/src/compute-score.ts
+  460abf8f8c505257 1-2,26-28,30-43,45-54
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.22",
+  "base_commit_sha": "e601c25ca1a9b1b69b669e6c28b136593a47e24b",
+  "prompts": {
+    "460abf8f8c505257": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "502b259a-e451-4164-b631-d5c9e0fd114e",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill <4393133+ceolinwill@users.noreply.github.com>",
+      "messages": [],
+      "total_additions": 654,
+      "total_deletions": 81,
+      "accepted_lines": 572,
+      "overriden_lines": 2
+    }
+  }
+}
