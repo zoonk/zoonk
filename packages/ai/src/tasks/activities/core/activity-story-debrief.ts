@@ -6,7 +6,7 @@ import systemPrompt from "./activity-story-debrief.prompt.md";
 import { type ActivityStoryStepsSchema } from "./activity-story-steps";
 
 const DEFAULT_MODEL = process.env.AI_MODEL_ACTIVITY_STORY_DEBRIEF ?? "openai/gpt-5.4";
-const FALLBACK_MODELS = ["anthropic/claude-opus-4.6", "google/gemini-3.1-pro-preview"];
+const FALLBACK_MODELS = ["anthropic/claude-sonnet-4.6"];
 
 const storyOutcomeSchema = z.object({
   minStrongChoices: z.number().int().min(0),

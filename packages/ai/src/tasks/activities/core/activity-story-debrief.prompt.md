@@ -28,7 +28,11 @@ IMPORTANT: Even the worst outcome should feel like a learning moment, not a puni
 Each concept has:
 
 - **name**: The actual concept name from the topic (NOW you name it — this is the reveal)
-- **explanation**: 2-3 sentences connecting the concept to specific choices/consequences in the story. Reference what the player experienced.
+- **explanation**: 2-3 sentences connecting the concept to the story. This is NOT a label — it must be a full explanation.
+
+GOOD explanation: "When you chose to only produce what was ordered, you were applying pull-based production. The supermarket shelf worked the same way — replenishing only what was taken."
+
+BAD explanation: "Pull-based production" (this is just a label, not an explanation)
 
 The debrief should make the learner think: "Oh! THAT'S why that choice worked / didn't work."
 

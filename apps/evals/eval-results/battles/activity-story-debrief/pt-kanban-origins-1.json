@@ -1,0 +1,131 @@
+{
+  "expectations": "\nLANGUAGE REQUIREMENT: All content must be in Brazilian Portuguese.\n\n\nEVALUATION CRITERIA:\n\n1. OUTCOME TIER STRUCTURE: Must have 4 outcome tiers with minStrongChoices forming a descending progression proportional to the total number of steps. One tier must have minStrongChoices: 0 as the catch-all. Tiers must not overlap or skip reasonable thresholds.\n\n2. OUTCOME NARRATIVES: Each narrative must be written in second person and stay within 40 words. Narratives describe where the player ended up at each performance tier — they are hypothetical end states, not replays of specific choices. A narrative like \"Your factory runs lean and every part has a destination\" is good. Do NOT require narratives to name specific choices — the AI doesn't know which choices the player made.\n\n3. OUTCOME TITLES: Titles must be evocative but not judgmental. Max 5 words. No \"Failure\", \"Perfect\", \"F grade\", or grade-like labels. Confident titles like \"Dominio total\" or \"Master Manager\" are fine — they celebrate achievement, not judge. Only penalize labels that shame or grade the player.\n\n4. DEBRIEF CONCEPT QUALITY: Each concept must be a genuine educational insight from the topic — not a restatement of what happened in the story. Concepts should name actual domain knowledge that was hidden during play.\n\n5. CONCEPT-TO-CHOICE CONNECTION: Explanations must reference specific choices or consequences from the story (\"When you chose to X, you experienced Y — this is called Z\"). Generic explanations that could apply to any story should be penalized.\n\n6. CONCEPT NAMES: Must be actual domain concepts from the topic (this is the reveal moment). Max 5 words. These are the terms the player never saw during the story.\n\n7. COMPLETENESS: The debrief should cover the main educational themes embedded in the story's alignment tags. If the story tested 3 distinct concepts through its choices, the debrief should surface all 3.\n\n8. TONE: Warm, mentoring, not condescending. Like a coach explaining after a game. The player just lived through this — respect their experience. No \"you should have\" or \"the correct answer was.\"\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for the exact number of concepts — 3-5 is guidance, 6 is fine too\n- Do NOT penalize for creative or unconventional concept names if they are accurate\n- Do NOT require specific wording patterns in explanations\n- Do NOT penalize for outcome tiers that use slightly different thresholds than a mathematical formula would suggest, as long as the progression is logical and descending\n- Do NOT penalize outcome narratives for being general — they describe hypothetical end states for performance tiers, not specific choice replays\n- Do NOT penalize titles that celebrate achievement (e.g., \"Dominio total\", \"Master Manager\") — only penalize labels that shame or use letter/number grades\n- Do NOT require perfectly even spacing between tier thresholds — 5/4/2/0 is fine for 5 steps\n- ONLY penalize for: missing catch-all tier, language that shames the player, concept explanations that don't connect to ANY part of the story, factually incorrect concept names, or clearly exceeding length constraints (a few words over is fine)\n\n    ",
+  "judgedAt": "2026-03-31T23:13:10.709Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "5 concepts all accurately named and well-connected to specific story moments. 4 outcome tiers with logical progression (5/3/2/0). Narratives are within word limits, warm in tone, and describe end states without referencing specific choices. Concept explanations are rich and specific. 'Fluxo sobre ocupação' is a creative but accurate concept name. Excellent overall.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "5 strong concepts with accurate domain names and excellent story connections. Tiers at 5/3/2/0 are logical. Tone is warm and respectful throughout. The 'Inspiração no varejo' concept nicely reveals the Taiichi Ohno history. Narratives are evocative and within limits. Very slightly less precise in concept-to-choice connections than D (e.g., 'Fluxo contínuo enxuto' explanation is slightly more generic).",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "4 strong concepts with accurate names including Muda. Tiers at 5/3/2/0 are logical. Excellent tone — 'Galpão Lotado, Bolso Vazio' is evocative without being judgmental. Concept explanations connect well to story moments. Slightly fewer concepts (4 vs 5) than top models but all are high quality. Some explanations slightly exceed 40 words.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "4 good concepts with accurate names. Tiers at 4/3/2/0 are logical. However, concept explanations reference 'Step 1', 'Step 3', 'Step 4', 'Step 5' by number rather than describing what happened — this feels slightly mechanical. Some narratives are slightly over 40 words. Overall solid but less warm and natural than the top models.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "4 concepts with decent connections. Tiers at 4/3/1/0 — the jump from 3 to 1 skips threshold 2, which is a gap in the progression for 5 steps. 'Falsa Eficiência' is an accurate insight but not a standard domain concept name (the reveal moment is weaker). Tone is warm and narratives are within limits. Solid but the tier gap and weaker concept naming reduce the score.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "4 concepts but 'Gestão visual' is misapplied — showing numbers to the director is not really gestão visual in the Lean sense (which refers to visual management boards/signals on the floor). This is a factual inaccuracy in concept naming. Narratives for the best outcome exceed 40 words noticeably. Tiers at 4/3/2/0 are logical. Tone is good but the concept error and length violations lower the score.",
+          "score": 6.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model A follows all instructions flawlessly. The tone is perfectly aligned with the mentor persona, seamlessly referencing story choices without breaking the fourth wall. The domain concepts are accurate (including 'Falsa Eficiência', a great reference to Taiichi Ohno's Apparent vs. True Efficiency), and all length constraints are strictly respected.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Model D provides excellent explanations and organically references the player's choices as requested. 'Fluxo sobre ocupação' is an excellent domain concept. It scores slightly below A only because 'Origem no supermercado' functions more as a historical fact than a domain concept name, though it is still well-integrated.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model E is very strong and provides excellent concept explanations connected directly to the story. However, explicitly saying 'no passo 3' is slightly mechanical and breaks the narrative immersion compared to the natural phrasing used by Models A and D.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model C has good formatting and tone, but its fourth concept explanation ('Supermercado como Metáfora') fails to connect to the player's specific choices or consequences, violating a core prompt rule. It reads as a generic fun fact rather than a personalized debrief.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model B mechanically names 'No Step 1', 'No Step 4', etc., in its explanations. While the prompt asked to reference steps, it provided examples of narrative phrasing ('When you chose to...'). Model B's literal approach breaks the requested warm, mentoring tone.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Model F commits a significant factual error, which incurs a heavy penalty based on the evaluation criteria. It labels the act of showing numerical reports to a director as 'Gestão visual' (Visual Management). In this context, Visual Management refers to physical signals on the shop floor (like Kanban cards), not defending metrics in a report.",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Best balance of prompt adherence and content quality. It has 4 logical outcome tiers including a 0 catch-all, all in Portuguese and within limits, plus 5 concise debrief concepts that clearly connect to specific story moments without obvious factual issues.",
+          "score": 9.4
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Strong, accurate debrief with clear reveal-style concepts tied to the story, and the tier structure is logical with a 0 catch-all. Slightly weaker than D because a few concept names are a bit long/awkward and some outcome phrasing is a touch more dramatic than mentoring.",
+          "score": 9.1
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Good concept explanations with strong story connections and solid outcome writing. It loses points for mixing English into Portuguese concept names, which violates the language requirement, and for having only a 5/3/2/0 tier spread that is a bit less balanced than the best outputs.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Concept coverage is relevant and mostly accurate, and the outcome progression is sensible with a proper catch-all. However, it mixes English heavily ('Step', 'Pull'), some narratives are more generic, and several items sit close to or over the word constraints.",
+          "score": 7.9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Clear Portuguese and generally relevant concepts, with acceptable outcome structure including the required 0 tier. But the middle thresholds are weaker (4/3/1/0), the debrief is less tightly tied to specific choices than the top models, and some wording feels more evaluative than warm mentoring.",
+          "score": 7.6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Readable and mostly aligned in tone, with 4 outcomes and a valid catch-all tier. Major weaknesses are a factual/conceptual error in calling the Step 5 defense 'Gestão visual' and multiple outcome narratives that clearly exceed the 40-word limit, which should be heavily penalized.",
+          "score": 6.2
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-story-debrief",
+  "testCaseId": "pt-kanban-origins-1"
+}
