@@ -97,7 +97,7 @@ The alignment tags are HIDDEN from the player. They only determine the final out
 
 ## Language
 
-Generate ALL content in the specified LANGUAGE. Never mix languages.
+Generate ALL content in the specified LANGUAGE. Never mix languages. Every single word in intro, situations, choice texts, and consequences must be in the specified language — no English words slipping into Portuguese or Spanish output. The only English in the output should be the JSON field names and enum values (like "strong", "positive").
 
 - `en`: US English
 - `pt`: Brazilian Portuguese

@@ -1,0 +1,239 @@
+{
+  "modelId": "openai/gpt-5.4-mini",
+  "results": [
+    {
+      "steps": [
+        {
+          "conclusion": "None. The response is structurally complete, in the correct language, includes 5 steps, 3 metrics, and each step has 3 choices with consequences, metricEffects, and alignment tags. It avoids explicitly teaching or naming the lesson concepts as concepts. The scenario is immersive and generally factually sound for a simplified learning game. No severe instruction violations or high-impact factual errors were found.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "There are a few minor issues. Some wording edges close to concept leakage by using near-direct instructional proxies such as 'outer labels,' 'address card,' and 'round trip' style framing, though it still does not explicitly teach the named concepts. A few choices are a bit more obviously correct than ideal, especially 'Add the right labels and send it to the server' and 'Send one careful test and wait,' which slightly weakens the hidden-rule design. Metric semantics are a little awkward: 'Delay' and 'Load' are meaningful, but positive/negative effects on 'Delay' can be slightly counterintuitive unless read as low delay being good. Also, the factual realism is simplified in places, e.g., 'one tiny message can’t get through' and some consequences anthropomorphize message handling in a way that is more game-like than technically precise.",
+          "kind": "minorErrors",
+          "score": 8.8
+        },
+        {
+          "conclusion": "Potential improvements: make the strongest options less obviously optimal by adding more plausible tradeoffs or making them feel more counterintuitive; refine metric naming so effect polarity is instantly clear (for example, use 'Speed' instead of 'Delay' or 'Congestion' instead of 'Load'); and tighten a few consequences to feel a bit less explanatory and a bit more purely observable. Otherwise, the scenario meets the brief well and escalates effectively.",
+          "kind": "potentialImprovements",
+          "score": 9.1
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. SCENARIO IMMERSION: The intro must drop the learner into a vivid scene with sensory detail and a role that demands immediate action. Second person. No abstract setup or backstory dumps.\n\n2. HIDDEN CONCEPTS: The specific concept names provided in the CONCEPTS input must NEVER appear verbatim during play. However, DO NOT do word-matching — think about context. A story about a pandemic MUST use words like \"virus\", \"vaccine\", \"hospital\". A chemistry story MUST mention \"reaction\", \"solution\", \"base\". A networking story MUST say \"route\", \"destination\", \"sender\". These are the language of the scenario, not concept leaks. Only penalize when the output explicitly teaches or names the concept as a concept (e.g., \"This is called Non-Pharmaceutical Interventions\" or \"You just applied the Pull System principle\").\n\n3. METRIC DESIGN: Metrics must represent meaningful, independent dimensions of the scenario. Metric labels must be simple and domain-appropriate. At least 2 metrics required.\n\n4. CHOICE QUALITY: Every step must have at least 3 choices. All choices must be plausible actions in context — no obviously wrong or absurd options. Choices must be actions (imperative form), not opinions or meta-commentary. Each choice must be immediately understandable without jargon.\n\n5. ALIGNMENT CALIBRATION: Each step must have a mix of strong, partial, and weak choices. The \"strong\" choice should NOT be obviously correct — it might feel counterintuitive. The alignment should never be hinted at in the choice text or consequence.\n\n6. CONSEQUENCE QUALITY: Consequences must show what HAPPENS, not explain why. They should be concrete with human/emotional detail (\"Three workers walk off the line\") rather than evaluative (\"This was inefficient\"). A consequence like \"Your team starts seeing the pattern faster\" is fine — it describes an observable outcome through character reactions. Only penalize consequences that read like textbook explanations or explicitly teach the lesson.\n\n7. METRIC EFFECTS: Each metric name in metricEffects must match a defined metric label. Effects must be \"positive\", \"neutral\", or \"negative\". Strong choices should GENERALLY have positive effects, but a weak choice having a positive effect on ONE metric is fine — real decisions have tradeoffs. A shortcut that saves time (positive on speed) but causes chaos (negative on quality) is good design, not a calibration error. Only penalize when effects are completely inverted (e.g., all weak choices are fully positive across all metrics).\n\n8. STEP ESCALATION: Steps must build a progressive narrative. Step 1 should be manageable. Middle steps should escalate with surprises or complications. Late steps should feel like pressure is building toward a crisis or breakthrough.\n\n9. LENGTH CONSTRAINTS: Verify these limits:\n   - intro: max 30 words, max 2 sentences\n   - situation: max 30 words, max 2-3 sentences\n   - choice text: max 15 words, 1 sentence\n   - consequence: max 30 words, max 2-3 sentences\n   Do NOT penalize for being slightly under these limits. Only penalize for clearly exceeding them.\n\n10. FACTUAL ACCURACY: Domain content must be factually correct. Penalize choices or consequences that misrepresent how the topic actually works.\n\n11. VOICE: Casual, conversational register. No academic or corporate tone. No jargon from the topic.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific scenario settings, character names, or plot choices\n- Do NOT require exactly 5 steps or exactly 3 metrics — these are guidance, not hard constraints\n- Do NOT penalize for the exact number of choices per step as long as there are at least 3\n- Do NOT penalize for creative or unconventional scenarios that still teach the concepts\n- Do NOT penalize for the number of metrics as long as there are at least 2\n- Do NOT check against an imagined \"ideal\" story structure\n- Do NOT do word-matching for concept leaks — think about whether the word is part of the scenario's natural language or an explicit concept reveal\n- Do NOT penalize weak choices for having a positive effect on one metric — tradeoffs are good game design\n- Do NOT penalize consequences that describe observable outcomes through character reactions, even if they hint at why something worked\n- ONLY penalize for: explicit concept teaching during play (\"This is called X\"), consequences that read like textbook explanations, effects completely inverted across all metrics, or factually incorrect domain content\n",
+        "id": "en-web-packets-network-paths-1",
+        "userInput": {
+          "chapterTitle": "Networking fundamentals",
+          "concepts": [
+            "Network Packets",
+            "Packet Headers",
+            "Packet Payload",
+            "Source Address",
+            "Destination Address",
+            "Hop",
+            "Round Trip",
+            "Path Through a Network"
+          ],
+          "courseTitle": "Web Development",
+          "language": "en",
+          "lessonDescription": "The basic units of network communication and the path traffic follows between two endpoints. These concepts build the mental model needed before IP, routing, and transport behavior make sense.",
+          "topic": "Packets and Network Paths"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "There are a few minor issues. The scenario generally stays immersive and in Brazilian Portuguese, but some wording is awkward or slightly inaccurate for the domain: step 3's consequence mentions 'ponto e vírgula', which is odd and potentially confusing in a numeric-types context; step 1's strong choice 'Use valores inteiros e decimais sem misturar' oversimplifies numeric handling and can imply an unnecessarily rigid rule rather than a contextual decision. Also, the output does not explicitly mention handling Python-specific numeric forms in a fully grounded way, so a few consequences feel a bit abstract rather than tightly tied to concrete code behavior.",
+          "kind": "minorErrors",
+          "score": 8.4
+        },
+        {
+          "conclusion": "The response is strong overall, but it could be improved by making a few consequences more concretely tied to observable script behavior in Python while still avoiding explicit concept teaching. Step 3 could use clearer, more natural wording around the two-part number representation. Some choices could be made slightly less leading or less reductive, especially around mixing integers and decimals, to better preserve plausibility and nuance. Still, the structure, escalation, metrics, and hidden-rule design are solid.",
+          "kind": "potentialImprovements",
+          "score": 8.9
+        }
+      ],
+      "testCase": {
+        "expectations": "\nLANGUAGE REQUIREMENT: All content must be in Brazilian Portuguese.\n\n\nEVALUATION CRITERIA:\n\n1. SCENARIO IMMERSION: The intro must drop the learner into a vivid scene with sensory detail and a role that demands immediate action. Second person. No abstract setup or backstory dumps.\n\n2. HIDDEN CONCEPTS: The specific concept names provided in the CONCEPTS input must NEVER appear verbatim during play. However, DO NOT do word-matching — think about context. A story about a pandemic MUST use words like \"virus\", \"vaccine\", \"hospital\". A chemistry story MUST mention \"reaction\", \"solution\", \"base\". A networking story MUST say \"route\", \"destination\", \"sender\". These are the language of the scenario, not concept leaks. Only penalize when the output explicitly teaches or names the concept as a concept (e.g., \"This is called Non-Pharmaceutical Interventions\" or \"You just applied the Pull System principle\").\n\n3. METRIC DESIGN: Metrics must represent meaningful, independent dimensions of the scenario. Metric labels must be simple and domain-appropriate. At least 2 metrics required.\n\n4. CHOICE QUALITY: Every step must have at least 3 choices. All choices must be plausible actions in context — no obviously wrong or absurd options. Choices must be actions (imperative form), not opinions or meta-commentary. Each choice must be immediately understandable without jargon.\n\n5. ALIGNMENT CALIBRATION: Each step must have a mix of strong, partial, and weak choices. The \"strong\" choice should NOT be obviously correct — it might feel counterintuitive. The alignment should never be hinted at in the choice text or consequence.\n\n6. CONSEQUENCE QUALITY: Consequences must show what HAPPENS, not explain why. They should be concrete with human/emotional detail (\"Three workers walk off the line\") rather than evaluative (\"This was inefficient\"). A consequence like \"Your team starts seeing the pattern faster\" is fine — it describes an observable outcome through character reactions. Only penalize consequences that read like textbook explanations or explicitly teach the lesson.\n\n7. METRIC EFFECTS: Each metric name in metricEffects must match a defined metric label. Effects must be \"positive\", \"neutral\", or \"negative\". Strong choices should GENERALLY have positive effects, but a weak choice having a positive effect on ONE metric is fine — real decisions have tradeoffs. A shortcut that saves time (positive on speed) but causes chaos (negative on quality) is good design, not a calibration error. Only penalize when effects are completely inverted (e.g., all weak choices are fully positive across all metrics).\n\n8. STEP ESCALATION: Steps must build a progressive narrative. Step 1 should be manageable. Middle steps should escalate with surprises or complications. Late steps should feel like pressure is building toward a crisis or breakthrough.\n\n9. LENGTH CONSTRAINTS: Verify these limits:\n   - intro: max 30 words, max 2 sentences\n   - situation: max 30 words, max 2-3 sentences\n   - choice text: max 15 words, 1 sentence\n   - consequence: max 30 words, max 2-3 sentences\n   Do NOT penalize for being slightly under these limits. Only penalize for clearly exceeding them.\n\n10. FACTUAL ACCURACY: Domain content must be factually correct. Penalize choices or consequences that misrepresent how the topic actually works.\n\n11. VOICE: Casual, conversational register. No academic or corporate tone. No jargon from the topic.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific scenario settings, character names, or plot choices\n- Do NOT require exactly 5 steps or exactly 3 metrics — these are guidance, not hard constraints\n- Do NOT penalize for the exact number of choices per step as long as there are at least 3\n- Do NOT penalize for creative or unconventional scenarios that still teach the concepts\n- Do NOT penalize for the number of metrics as long as there are at least 2\n- Do NOT check against an imagined \"ideal\" story structure\n- Do NOT do word-matching for concept leaks — think about whether the word is part of the scenario's natural language or an explicit concept reveal\n- Do NOT penalize weak choices for having a positive effect on one metric — tradeoffs are good game design\n- Do NOT penalize consequences that describe observable outcomes through character reactions, even if they hint at why something worked\n- ONLY penalize for: explicit concept teaching during play (\"This is called X\"), consequences that read like textbook explanations, effects completely inverted across all metrics, or factually incorrect domain content\n\n    ",
+        "id": "pt-python-tipos-numericos-principais-1",
+        "userInput": {
+          "chapterTitle": "Tipos numéricos e valores especiais",
+          "concepts": [
+            "Objetos numéricos em Python",
+            "Imutabilidade dos números",
+            "Tipo int",
+            "Tipo float",
+            "Tipo complex",
+            "Tipo bool",
+            "Valor None"
+          ],
+          "courseTitle": "Python",
+          "language": "pt",
+          "lessonDescription": "Os principais valores numéricos e especiais da linguagem, com a identidade de cada tipo embutido e o papel de None fora da família numérica.",
+          "topic": "Tipos numéricos principais"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "There is a likely factual calibration issue in step 1/3 around treating generic careful base addition as universally best and especially presenting lithium vs sodium as a simple 'lithium strong / sodium partial' rule without substrate/conditions context; for enol/enolate formation this can be oversimplified. Step 4 also introduces 'air exposure' and closing the system as if it were a core governing rule, which is not clearly tied to the lesson concepts provided and may distract from them. Also, the scenario uses some chemistry-adjacent terms like 'carbonilo' and 'solvente'; while acceptable in context, the instruction asked for no jargon from the topic, so this is borderline.",
+          "kind": "minorErrors",
+          "score": 8.2
+        },
+        {
+          "conclusion": "Could more clearly embed the hidden rules from the provided concepts across the full arc: e.g., distinguish acid-mediated vs base-mediated pathways through observable outcomes rather than mostly 'keep cold/add slowly'. The pivotal step 3 does introduce the cation insight well, but other steps could better reflect alpha deprotonation/reprotonation consequences. Metric independence is decent, though 'Tiempo' is sometimes used loosely as a proxy for process smoothness. Overall immersion and escalation are strong, all content stays in Spanish, and length constraints appear respected.",
+          "kind": "potentialImprovements",
+          "score": 8.8
+        }
+      ],
+      "testCase": {
+        "expectations": "\nLANGUAGE REQUIREMENT: All content must be in Latin American Spanish.\n\n\nEVALUATION CRITERIA:\n\n1. SCENARIO IMMERSION: The intro must drop the learner into a vivid scene with sensory detail and a role that demands immediate action. Second person. No abstract setup or backstory dumps.\n\n2. HIDDEN CONCEPTS: The specific concept names provided in the CONCEPTS input must NEVER appear verbatim during play. However, DO NOT do word-matching — think about context. A story about a pandemic MUST use words like \"virus\", \"vaccine\", \"hospital\". A chemistry story MUST mention \"reaction\", \"solution\", \"base\". A networking story MUST say \"route\", \"destination\", \"sender\". These are the language of the scenario, not concept leaks. Only penalize when the output explicitly teaches or names the concept as a concept (e.g., \"This is called Non-Pharmaceutical Interventions\" or \"You just applied the Pull System principle\").\n\n3. METRIC DESIGN: Metrics must represent meaningful, independent dimensions of the scenario. Metric labels must be simple and domain-appropriate. At least 2 metrics required.\n\n4. CHOICE QUALITY: Every step must have at least 3 choices. All choices must be plausible actions in context — no obviously wrong or absurd options. Choices must be actions (imperative form), not opinions or meta-commentary. Each choice must be immediately understandable without jargon.\n\n5. ALIGNMENT CALIBRATION: Each step must have a mix of strong, partial, and weak choices. The \"strong\" choice should NOT be obviously correct — it might feel counterintuitive. The alignment should never be hinted at in the choice text or consequence.\n\n6. CONSEQUENCE QUALITY: Consequences must show what HAPPENS, not explain why. They should be concrete with human/emotional detail (\"Three workers walk off the line\") rather than evaluative (\"This was inefficient\"). A consequence like \"Your team starts seeing the pattern faster\" is fine — it describes an observable outcome through character reactions. Only penalize consequences that read like textbook explanations or explicitly teach the lesson.\n\n7. METRIC EFFECTS: Each metric name in metricEffects must match a defined metric label. Effects must be \"positive\", \"neutral\", or \"negative\". Strong choices should GENERALLY have positive effects, but a weak choice having a positive effect on ONE metric is fine — real decisions have tradeoffs. A shortcut that saves time (positive on speed) but causes chaos (negative on quality) is good design, not a calibration error. Only penalize when effects are completely inverted (e.g., all weak choices are fully positive across all metrics).\n\n8. STEP ESCALATION: Steps must build a progressive narrative. Step 1 should be manageable. Middle steps should escalate with surprises or complications. Late steps should feel like pressure is building toward a crisis or breakthrough.\n\n9. LENGTH CONSTRAINTS: Verify these limits:\n   - intro: max 30 words, max 2 sentences\n   - situation: max 30 words, max 2-3 sentences\n   - choice text: max 15 words, 1 sentence\n   - consequence: max 30 words, max 2-3 sentences\n   Do NOT penalize for being slightly under these limits. Only penalize for clearly exceeding them.\n\n10. FACTUAL ACCURACY: Domain content must be factually correct. Penalize choices or consequences that misrepresent how the topic actually works.\n\n11. VOICE: Casual, conversational register. No academic or corporate tone. No jargon from the topic.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific scenario settings, character names, or plot choices\n- Do NOT require exactly 5 steps or exactly 3 metrics — these are guidance, not hard constraints\n- Do NOT penalize for the exact number of choices per step as long as there are at least 3\n- Do NOT penalize for creative or unconventional scenarios that still teach the concepts\n- Do NOT penalize for the number of metrics as long as there are at least 2\n- Do NOT check against an imagined \"ideal\" story structure\n- Do NOT do word-matching for concept leaks — think about whether the word is part of the scenario's natural language or an explicit concept reveal\n- Do NOT penalize weak choices for having a positive effect on one metric — tradeoffs are good game design\n- Do NOT penalize consequences that describe observable outcomes through character reactions, even if they hint at why something worked\n- ONLY penalize for: explicit concept teaching during play (\"This is called X\"), consequences that read like textbook explanations, effects completely inverted across all metrics, or factually incorrect domain content\n\n    ",
+        "id": "es-quimica-formacion-enoles-enolatos-1",
+        "userInput": {
+          "chapterTitle": "Carbonilos y enolatos",
+          "concepts": [
+            "Enolización catalizada por ácido",
+            "Enolización catalizada por base",
+            "Desprotonación alfa",
+            "Reprotonación del enolato",
+            "Enolato de litio",
+            "Enolato de sodio"
+          ],
+          "courseTitle": "Química",
+          "language": "es",
+          "lessonDescription": "La generación de enoles y enolatos depende del medio de reacción, del tipo de base y del catión presente.",
+          "topic": "Formación de enoles y enolatos"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The scenario generally follows instructions well, but there are a few minor issues. Step 3's 'strong' choice text ('Trace the delay across all teams') is less of an immediate operational action than the other choices and edges toward analytical framing. Some metric calibration is slightly flat: many strong choices only improve Stability while leaving Output and Cash neutral, which reduces the game feel of tradeoffs and consequences. Also, step 5 choice text 'Summarize the big picture only' is a bit inconsistent with its consequence, which says it mentions a few exceptions.",
+          "kind": "minorErrors",
+          "score": 8.7
+        },
+        {
+          "conclusion": "The response could be improved by making the hidden lesson dynamics feel even more discoverable through direct operational consequences instead of analysis/reporting language in later steps. A bit more escalation from step 4 to step 5 would strengthen the crisis arc, and stronger differentiation among metrics would make outcomes feel more consequential. Still, the scenario is immersive, choices are plausible, consequences are concrete, metrics are valid, and the concepts are embedded rather than explicitly taught.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. SCENARIO IMMERSION: The intro must drop the learner into a vivid scene with sensory detail and a role that demands immediate action. Second person. No abstract setup or backstory dumps.\n\n2. HIDDEN CONCEPTS: The specific concept names provided in the CONCEPTS input must NEVER appear verbatim during play. However, DO NOT do word-matching — think about context. A story about a pandemic MUST use words like \"virus\", \"vaccine\", \"hospital\". A chemistry story MUST mention \"reaction\", \"solution\", \"base\". A networking story MUST say \"route\", \"destination\", \"sender\". These are the language of the scenario, not concept leaks. Only penalize when the output explicitly teaches or names the concept as a concept (e.g., \"This is called Non-Pharmaceutical Interventions\" or \"You just applied the Pull System principle\").\n\n3. METRIC DESIGN: Metrics must represent meaningful, independent dimensions of the scenario. Metric labels must be simple and domain-appropriate. At least 2 metrics required.\n\n4. CHOICE QUALITY: Every step must have at least 3 choices. All choices must be plausible actions in context — no obviously wrong or absurd options. Choices must be actions (imperative form), not opinions or meta-commentary. Each choice must be immediately understandable without jargon.\n\n5. ALIGNMENT CALIBRATION: Each step must have a mix of strong, partial, and weak choices. The \"strong\" choice should NOT be obviously correct — it might feel counterintuitive. The alignment should never be hinted at in the choice text or consequence.\n\n6. CONSEQUENCE QUALITY: Consequences must show what HAPPENS, not explain why. They should be concrete with human/emotional detail (\"Three workers walk off the line\") rather than evaluative (\"This was inefficient\"). A consequence like \"Your team starts seeing the pattern faster\" is fine — it describes an observable outcome through character reactions. Only penalize consequences that read like textbook explanations or explicitly teach the lesson.\n\n7. METRIC EFFECTS: Each metric name in metricEffects must match a defined metric label. Effects must be \"positive\", \"neutral\", or \"negative\". Strong choices should GENERALLY have positive effects, but a weak choice having a positive effect on ONE metric is fine — real decisions have tradeoffs. A shortcut that saves time (positive on speed) but causes chaos (negative on quality) is good design, not a calibration error. Only penalize when effects are completely inverted (e.g., all weak choices are fully positive across all metrics).\n\n8. STEP ESCALATION: Steps must build a progressive narrative. Step 1 should be manageable. Middle steps should escalate with surprises or complications. Late steps should feel like pressure is building toward a crisis or breakthrough.\n\n9. LENGTH CONSTRAINTS: Verify these limits:\n   - intro: max 30 words, max 2 sentences\n   - situation: max 30 words, max 2-3 sentences\n   - choice text: max 15 words, 1 sentence\n   - consequence: max 30 words, max 2-3 sentences\n   Do NOT penalize for being slightly under these limits. Only penalize for clearly exceeding them.\n\n10. FACTUAL ACCURACY: Domain content must be factually correct. Penalize choices or consequences that misrepresent how the topic actually works.\n\n11. VOICE: Casual, conversational register. No academic or corporate tone. No jargon from the topic.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific scenario settings, character names, or plot choices\n- Do NOT require exactly 5 steps or exactly 3 metrics — these are guidance, not hard constraints\n- Do NOT penalize for the exact number of choices per step as long as there are at least 3\n- Do NOT penalize for creative or unconventional scenarios that still teach the concepts\n- Do NOT penalize for the number of metrics as long as there are at least 2\n- Do NOT check against an imagined \"ideal\" story structure\n- Do NOT do word-matching for concept leaks — think about whether the word is part of the scenario's natural language or an explicit concept reveal\n- Do NOT penalize weak choices for having a positive effect on one metric — tradeoffs are good game design\n- Do NOT penalize consequences that describe observable outcomes through character reactions, even if they hint at why something worked\n- ONLY penalize for: explicit concept teaching during play (\"This is called X\"), consequences that read like textbook explanations, effects completely inverted across all metrics, or factually incorrect domain content\n",
+        "id": "en-economics-sectoral-comovements-1",
+        "userInput": {
+          "chapterTitle": "Business cycles",
+          "concepts": [
+            "Comovement Across Industries",
+            "Comovement Across Regions",
+            "Sectoral Dispersion",
+            "Manufacturing Cyclicality",
+            "Construction Cyclicality",
+            "Services Cyclicality"
+          ],
+          "courseTitle": "Economics",
+          "language": "en",
+          "lessonDescription": "How cyclical fluctuations differ across parts of the economy while still sharing common aggregate patterns.",
+          "topic": "Sectoral and Regional Comovements"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "There is one minor issue in instruction adherence: the prompt says 'What You Generate' is a scenario with 5 steps, and although the anti-checklist says not to penalize exact counts, the result does in fact have 5 steps, so that is fine. The actual minor issue is metric design: the labels are simple and plausible, but 'Satisfação' is slightly broad/indirect compared with more clearly operational legal-document metrics. Still, it remains usable and domain-appropriate enough. Another small issue is that a few choices are a bit more obvious than ideal, especially 'Acelerar sem ouvir o time' as weak and 'Usar os comentários para ajustar o fluxo' as strong, which slightly reduces hiddenness.",
+          "kind": "minorErrors",
+          "score": 8.8
+        },
+        {
+          "conclusion": "Potential improvements: make the strong choice feel a bit less obviously correct in a few later steps, and make one metric slightly more concrete to the document workflow (for example, something closer to return volume or consistency rather than broad satisfaction). Otherwise, the output is strong: all content is in Brazilian Portuguese, the hidden concepts are embedded rather than explicitly taught, consequences are vivid and concrete, metric names match exactly in metricEffects, and the scenario escalates appropriately with a clear pivotal step 3. Length constraints also appear to be respected throughout.",
+          "kind": "potentialImprovements",
+          "score": 9.1
+        }
+      ],
+      "testCase": {
+        "expectations": "\nLANGUAGE REQUIREMENT: All content must be in Brazilian Portuguese.\n\n\nEVALUATION CRITERIA:\n\n1. SCENARIO IMMERSION: The intro must drop the learner into a vivid scene with sensory detail and a role that demands immediate action. Second person. No abstract setup or backstory dumps.\n\n2. HIDDEN CONCEPTS: The specific concept names provided in the CONCEPTS input must NEVER appear verbatim during play. However, DO NOT do word-matching — think about context. A story about a pandemic MUST use words like \"virus\", \"vaccine\", \"hospital\". A chemistry story MUST mention \"reaction\", \"solution\", \"base\". A networking story MUST say \"route\", \"destination\", \"sender\". These are the language of the scenario, not concept leaks. Only penalize when the output explicitly teaches or names the concept as a concept (e.g., \"This is called Non-Pharmaceutical Interventions\" or \"You just applied the Pull System principle\").\n\n3. METRIC DESIGN: Metrics must represent meaningful, independent dimensions of the scenario. Metric labels must be simple and domain-appropriate. At least 2 metrics required.\n\n4. CHOICE QUALITY: Every step must have at least 3 choices. All choices must be plausible actions in context — no obviously wrong or absurd options. Choices must be actions (imperative form), not opinions or meta-commentary. Each choice must be immediately understandable without jargon.\n\n5. ALIGNMENT CALIBRATION: Each step must have a mix of strong, partial, and weak choices. The \"strong\" choice should NOT be obviously correct — it might feel counterintuitive. The alignment should never be hinted at in the choice text or consequence.\n\n6. CONSEQUENCE QUALITY: Consequences must show what HAPPENS, not explain why. They should be concrete with human/emotional detail (\"Three workers walk off the line\") rather than evaluative (\"This was inefficient\"). A consequence like \"Your team starts seeing the pattern faster\" is fine — it describes an observable outcome through character reactions. Only penalize consequences that read like textbook explanations or explicitly teach the lesson.\n\n7. METRIC EFFECTS: Each metric name in metricEffects must match a defined metric label. Effects must be \"positive\", \"neutral\", or \"negative\". Strong choices should GENERALLY have positive effects, but a weak choice having a positive effect on ONE metric is fine — real decisions have tradeoffs. A shortcut that saves time (positive on speed) but causes chaos (negative on quality) is good design, not a calibration error. Only penalize when effects are completely inverted (e.g., all weak choices are fully positive across all metrics).\n\n8. STEP ESCALATION: Steps must build a progressive narrative. Step 1 should be manageable. Middle steps should escalate with surprises or complications. Late steps should feel like pressure is building toward a crisis or breakthrough.\n\n9. LENGTH CONSTRAINTS: Verify these limits:\n   - intro: max 30 words, max 2 sentences\n   - situation: max 30 words, max 2-3 sentences\n   - choice text: max 15 words, 1 sentence\n   - consequence: max 30 words, max 2-3 sentences\n   Do NOT penalize for being slightly under these limits. Only penalize for clearly exceeding them.\n\n10. FACTUAL ACCURACY: Domain content must be factually correct. Penalize choices or consequences that misrepresent how the topic actually works.\n\n11. VOICE: Casual, conversational register. No academic or corporate tone. No jargon from the topic.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific scenario settings, character names, or plot choices\n- Do NOT require exactly 5 steps or exactly 3 metrics — these are guidance, not hard constraints\n- Do NOT penalize for the exact number of choices per step as long as there are at least 3\n- Do NOT penalize for creative or unconventional scenarios that still teach the concepts\n- Do NOT penalize for the number of metrics as long as there are at least 2\n- Do NOT check against an imagined \"ideal\" story structure\n- Do NOT do word-matching for concept leaks — think about whether the word is part of the scenario's natural language or an explicit concept reveal\n- Do NOT penalize weak choices for having a positive effect on one metric — tradeoffs are good game design\n- Do NOT penalize consequences that describe observable outcomes through character reactions, even if they hint at why something worked\n- ONLY penalize for: explicit concept teaching during play (\"This is called X\"), consequences that read like textbook explanations, effects completely inverted across all metrics, or factually incorrect domain content\n\n    ",
+        "id": "pt-direito-medicao-desempenho-1",
+        "userInput": {
+          "chapterTitle": "Legal tech e automação de documentos",
+          "concepts": [
+            "Métrica de uso do template",
+            "Taxa de retrabalho documental",
+            "Tempo de geração",
+            "Taxa de erro documental",
+            "Aderência ao padrão",
+            "Feedback de usuário interno"
+          ],
+          "courseTitle": "Direito",
+          "language": "pt",
+          "lessonDescription": "Indicadores voltados ao desempenho dos modelos automatizados e à melhoria contínua da qualidade documental.",
+          "topic": "Medição de desempenho documental"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None. The output follows the requested structure well, stays in English throughout, avoids explicitly naming or teaching the hidden concepts as concepts, and presents a coherent COVID governance scenario with plausible decisions and consequences. Metrics are defined and reused correctly, alignment tags are mixed appropriately in each step, and the narrative generally escalates from crowd control to hospital strain, vaccination, policy coordination, and mortality reporting. I did not find any major factual inaccuracies or rule-breaking issues severe enough to significantly undermine usefulness.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "A few minor issues are present. Step 3's pivotal surprise/insight is weaker than requested: vaccine arrival plus media denialism is a complication, but not a sharply unexpected turning point. Some metric calibration is a bit imperfect: for example, Step 2 strong choice gives Transmission a negative effect even though reallocating oxygen/staff inside the hospital does not directly worsen spread in an obvious way, and Step 5 strong choice improving Health System is somewhat indirect. Also, the metric label 'Health System' is slightly less state-like than labels such as capacity/strain, though still understandable and domain-appropriate. These are small design/calibration issues, not serious failures.",
+          "kind": "minorErrors",
+          "score": 8.8
+        },
+        {
+          "conclusion": "Potential improvements: make Step 3 feel more clearly pivotal and surprising; tighten a few metric effects so they map more directly to the action taken; and make the progression from Step 4 to Step 5 feel slightly more crisis-driven, since the final step is strong but could connect even more explicitly to the cumulative breakdown. Otherwise, the scenario is immersive, concise, and useful.",
+          "kind": "potentialImprovements",
+          "score": 9.1
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. SCENARIO IMMERSION: The intro must drop the learner into a vivid scene with sensory detail and a role that demands immediate action. Second person. No abstract setup or backstory dumps.\n\n2. HIDDEN CONCEPTS: The specific concept names provided in the CONCEPTS input must NEVER appear verbatim during play. However, DO NOT do word-matching — think about context. A story about a pandemic MUST use words like \"virus\", \"vaccine\", \"hospital\". A chemistry story MUST mention \"reaction\", \"solution\", \"base\". A networking story MUST say \"route\", \"destination\", \"sender\". These are the language of the scenario, not concept leaks. Only penalize when the output explicitly teaches or names the concept as a concept (e.g., \"This is called Non-Pharmaceutical Interventions\" or \"You just applied the Pull System principle\").\n\n3. METRIC DESIGN: Metrics must represent meaningful, independent dimensions of the scenario. Metric labels must be simple and domain-appropriate. At least 2 metrics required.\n\n4. CHOICE QUALITY: Every step must have at least 3 choices. All choices must be plausible actions in context — no obviously wrong or absurd options. Choices must be actions (imperative form), not opinions or meta-commentary. Each choice must be immediately understandable without jargon.\n\n5. ALIGNMENT CALIBRATION: Each step must have a mix of strong, partial, and weak choices. The \"strong\" choice should NOT be obviously correct — it might feel counterintuitive. The alignment should never be hinted at in the choice text or consequence.\n\n6. CONSEQUENCE QUALITY: Consequences must show what HAPPENS, not explain why. They should be concrete with human/emotional detail (\"Three workers walk off the line\") rather than evaluative (\"This was inefficient\"). A consequence like \"Your team starts seeing the pattern faster\" is fine — it describes an observable outcome through character reactions. Only penalize consequences that read like textbook explanations or explicitly teach the lesson.\n\n7. METRIC EFFECTS: Each metric name in metricEffects must match a defined metric label. Effects must be \"positive\", \"neutral\", or \"negative\". Strong choices should GENERALLY have positive effects, but a weak choice having a positive effect on ONE metric is fine — real decisions have tradeoffs. A shortcut that saves time (positive on speed) but causes chaos (negative on quality) is good design, not a calibration error. Only penalize when effects are completely inverted (e.g., all weak choices are fully positive across all metrics).\n\n8. STEP ESCALATION: Steps must build a progressive narrative. Step 1 should be manageable. Middle steps should escalate with surprises or complications. Late steps should feel like pressure is building toward a crisis or breakthrough.\n\n9. LENGTH CONSTRAINTS: Verify these limits:\n   - intro: max 30 words, max 2 sentences\n   - situation: max 30 words, max 2-3 sentences\n   - choice text: max 15 words, 1 sentence\n   - consequence: max 30 words, max 2-3 sentences\n   Do NOT penalize for being slightly under these limits. Only penalize for clearly exceeding them.\n\n10. FACTUAL ACCURACY: Domain content must be factually correct. Penalize choices or consequences that misrepresent how the topic actually works.\n\n11. VOICE: Casual, conversational register. No academic or corporate tone. No jargon from the topic.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific scenario settings, character names, or plot choices\n- Do NOT require exactly 5 steps or exactly 3 metrics — these are guidance, not hard constraints\n- Do NOT penalize for the exact number of choices per step as long as there are at least 3\n- Do NOT penalize for creative or unconventional scenarios that still teach the concepts\n- Do NOT penalize for the number of metrics as long as there are at least 2\n- Do NOT check against an imagined \"ideal\" story structure\n- Do NOT do word-matching for concept leaks — think about whether the word is part of the scenario's natural language or an explicit concept reveal\n- Do NOT penalize weak choices for having a positive effect on one metric — tradeoffs are good game design\n- Do NOT penalize consequences that describe observable outcomes through character reactions, even if they hint at why something worked\n- ONLY penalize for: explicit concept teaching during play (\"This is called X\"), consequences that read like textbook explanations, effects completely inverted across all metrics, or factually incorrect domain content\n",
+        "id": "en-history-covid-pandemic-governance-1",
+        "userInput": {
+          "chapterTitle": "Health and disease",
+          "concepts": [
+            "COVID-19 in Brazil",
+            "Coronavirus Transmission",
+            "Non-Pharmaceutical Interventions",
+            "Hospital System Overload",
+            "Vaccine Procurement",
+            "COVID-19 Denialism",
+            "Federal-State Conflict in the Pandemic",
+            "Excess Mortality"
+          ],
+          "courseTitle": "Brazilian History",
+          "language": "en",
+          "lessonDescription": "The main epidemiological and political dimensions of the COVID-19 crisis in Brazil. These concepts track transmission control, system strain, vaccination, denialism, and intergovernmental conflict.",
+          "topic": "COVID-19 Crisis and Pandemic Governance"
+        }
+      }
+    }
+  ],
+  "taskId": "activity-story-steps"
+}

@@ -3,7 +3,7 @@ EVALUATION CRITERIA:
 
 1. SCENARIO IMMERSION: The intro must drop the learner into a vivid scene with sensory detail and a role that demands immediate action. Second person. No abstract setup or backstory dumps.
 
-2. HIDDEN CONCEPTS: The specific concept names provided in the CONCEPTS input must NEVER appear during play — not in the intro, not in situations, not in choices, not in consequences. Everyday domain vocabulary needed to set the scene (e.g., "virus" in a health scenario, "factory" in a manufacturing scenario) is fine and should NOT be penalized. Only penalize when the actual concept names or their direct synonyms appear.
+2. HIDDEN CONCEPTS: The specific concept names provided in the CONCEPTS input must NEVER appear verbatim during play. However, DO NOT do word-matching — think about context. A story about a pandemic MUST use words like "virus", "vaccine", "hospital". A chemistry story MUST mention "reaction", "solution", "base". A networking story MUST say "route", "destination", "sender". These are the language of the scenario, not concept leaks. Only penalize when the output explicitly teaches or names the concept as a concept (e.g., "This is called Non-Pharmaceutical Interventions" or "You just applied the Pull System principle").
 
 3. METRIC DESIGN: Metrics must represent meaningful, independent dimensions of the scenario. Metric labels must be simple and domain-appropriate. At least 2 metrics required.
 
@@ -11,9 +11,9 @@ EVALUATION CRITERIA:
 
 5. ALIGNMENT CALIBRATION: Each step must have a mix of strong, partial, and weak choices. The "strong" choice should NOT be obviously correct — it might feel counterintuitive. The alignment should never be hinted at in the choice text or consequence.
 
-6. CONSEQUENCE QUALITY: Consequences must show what HAPPENS, not explain why. They must be concrete with human/emotional detail ("Three workers walk off the line") rather than evaluative ("This was inefficient"). Consequences should make the learner go "oh, I see."
+6. CONSEQUENCE QUALITY: Consequences must show what HAPPENS, not explain why. They should be concrete with human/emotional detail ("Three workers walk off the line") rather than evaluative ("This was inefficient"). A consequence like "Your team starts seeing the pattern faster" is fine — it describes an observable outcome through character reactions. Only penalize consequences that read like textbook explanations or explicitly teach the lesson.
 
-7. METRIC EFFECTS: Each metric name in metricEffects must match a defined metric label. Effects must be "positive", "neutral", or "negative". Strong choices should generally have positive effects, weak choices should generally have negative effects, partial choices should have mixed effects.
+7. METRIC EFFECTS: Each metric name in metricEffects must match a defined metric label. Effects must be "positive", "neutral", or "negative". Strong choices should GENERALLY have positive effects, but a weak choice having a positive effect on ONE metric is fine — real decisions have tradeoffs. A shortcut that saves time (positive on speed) but causes chaos (negative on quality) is good design, not a calibration error. Only penalize when effects are completely inverted (e.g., all weak choices are fully positive across all metrics).
 
 8. STEP ESCALATION: Steps must build a progressive narrative. Step 1 should be manageable. Middle steps should escalate with surprises or complications. Late steps should feel like pressure is building toward a crisis or breakthrough.
 
@@ -35,8 +35,10 @@ ANTI-CHECKLIST GUIDANCE (CRITICAL):
 - Do NOT penalize for creative or unconventional scenarios that still teach the concepts
 - Do NOT penalize for the number of metrics as long as there are at least 2
 - Do NOT check against an imagined "ideal" story structure
-- Do NOT penalize for everyday domain vocabulary that sets the scene (e.g., "virus", "factory", "reaction") — only penalize when actual CONCEPT names from the input appear
-- ONLY penalize for: actual concept names leaking into play, evaluative consequences instead of concrete ones, obviously wrong choices, missing alignment diversity, or factually incorrect domain content
+- Do NOT do word-matching for concept leaks — think about whether the word is part of the scenario's natural language or an explicit concept reveal
+- Do NOT penalize weak choices for having a positive effect on one metric — tradeoffs are good game design
+- Do NOT penalize consequences that describe observable outcomes through character reactions, even if they hint at why something worked
+- ONLY penalize for: explicit concept teaching during play ("This is called X"), consequences that read like textbook explanations, effects completely inverted across all metrics, or factually incorrect domain content
 `;
 
 export const TEST_CASES = [
