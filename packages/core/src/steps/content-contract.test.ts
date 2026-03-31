@@ -243,7 +243,7 @@ describe("step content contracts", () => {
       alignment: "strong" as const,
       consequence: "Things improve.",
       id: "1a",
-      metricChanges: { production: 10 },
+      metricEffects: [{ effect: "positive" as const, metric: "Production" }],
       text: "Do the right thing",
     };
 
@@ -313,9 +313,9 @@ describe("step content contracts", () => {
       const content = parseStepContent("static", {
         intro: "You are a factory manager in 1950.",
         metrics: [
-          { id: "production", initial: 50, label: "Production" },
-          { id: "morale", initial: 45, label: "Morale" },
-          { id: "cash", initial: 40, label: "Cash" },
+          { initial: 50, label: "Production" },
+          { initial: 45, label: "Morale" },
+          { initial: 40, label: "Cash" },
         ],
         variant: "storyIntro",
       });

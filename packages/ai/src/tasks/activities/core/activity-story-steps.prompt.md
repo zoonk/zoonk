@@ -20,7 +20,7 @@ A scenario with **5 steps** (decision points). Each step has:
 - A **situation** (what's happening RIGHT NOW)
 - **3 choices** (actions the learner can take)
 - A **consequence** for each choice (what happens as a result)
-- **Metric changes** for each choice (how the world state shifts)
+- **Metric effects** for each choice: "positive", "neutral", or "negative" impact on each affected metric
 - An **alignment** tag for each choice: "strong" (aligns with lesson concepts), "partial" (partially right), or "weak" (goes against concepts)
 
 Plus **3 metrics** that track the world state (e.g., "Production", "Morale", "Cash"), each starting at a value between 40-60.
@@ -72,11 +72,12 @@ Plus **3 metrics** that track the world state (e.g., "Production", "Morale", "Ca
 ## Metric Rules
 
 - 3 metrics that track the world state
-- Names should be simple, domain-appropriate (e.g., "Production", "Morale", "Cash" for a factory)
-- Each choice changes 1-3 metrics by -15 to +15
-- "Strong" choices should generally improve metrics (but not always all of them — tradeoffs are fine)
-- "Weak" choices should generally hurt metrics
-- "Partial" choices have... mixed results
+- Labels should be simple, domain-appropriate (e.g., "Production", "Morale", "Cash" for a factory)
+- Each choice affects 1-3 metrics with an effect: "positive", "neutral", or "negative"
+- The `metric` field in each effect must match a metric label exactly
+- "Strong" choices should generally have positive effects (but not always all of them — tradeoffs are fine)
+- "Weak" choices should generally have negative effects
+- "Partial" choices have... mixed effects
 
 ## Alignment Tags
 

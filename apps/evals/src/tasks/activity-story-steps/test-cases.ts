@@ -3,9 +3,9 @@ EVALUATION CRITERIA:
 
 1. SCENARIO IMMERSION: The intro must drop the learner into a vivid scene with sensory detail and a role that demands immediate action. Second person. No abstract setup or backstory dumps.
 
-2. HIDDEN CONCEPTS: The lesson's concepts must NEVER be named during play — not in the intro, not in situations, not in choices, not in consequences. Concepts are the invisible rules governing which choices work. Penalize any mention of the topic's technical terms or jargon.
+2. HIDDEN CONCEPTS: The specific concept names provided in the CONCEPTS input must NEVER appear during play — not in the intro, not in situations, not in choices, not in consequences. Everyday domain vocabulary needed to set the scene (e.g., "virus" in a health scenario, "factory" in a manufacturing scenario) is fine and should NOT be penalized. Only penalize when the actual concept names or their direct synonyms appear.
 
-3. METRIC DESIGN: Metrics must represent meaningful, independent dimensions of the scenario. Metric ids must be valid slug-like identifiers. Metric labels must be simple and domain-appropriate. Initial values must be between 40-60. At least 2 metrics required.
+3. METRIC DESIGN: Metrics must represent meaningful, independent dimensions of the scenario. Metric labels must be simple and domain-appropriate. Initial values must be between 40-60. At least 2 metrics required.
 
 4. CHOICE QUALITY: Every step must have at least 3 choices. All choices must be plausible actions in context — no obviously wrong or absurd options. Choices must be actions (imperative form), not opinions or meta-commentary. Each choice must be immediately understandable without jargon.
 
@@ -13,7 +13,7 @@ EVALUATION CRITERIA:
 
 6. CONSEQUENCE QUALITY: Consequences must show what HAPPENS, not explain why. They must be concrete with human/emotional detail ("Three workers walk off the line") rather than evaluative ("This was inefficient"). Consequences should make the learner go "oh, I see."
 
-7. METRIC CHANGES: Each metricId in metricChanges must match a defined metric id. Delta values should be between -15 and +15. Strong choices should generally improve metrics, weak choices should generally hurt them, partial choices should have mixed results.
+7. METRIC EFFECTS: Each metric name in metricEffects must match a defined metric label. Effects must be "positive", "neutral", or "negative". Strong choices should generally have positive effects, weak choices should generally have negative effects, partial choices should have mixed effects.
 
 8. STEP ESCALATION: Steps must build a progressive narrative. Step 1 should be manageable. Middle steps should escalate with surprises or complications. Late steps should feel like pressure is building toward a crisis or breakthrough.
 
@@ -24,7 +24,7 @@ EVALUATION CRITERIA:
    - consequence: max 30 words, max 2-3 sentences
    Do NOT penalize for being slightly under these limits. Only penalize for clearly exceeding them.
 
-10. FORMAT: Output must be valid JSON with: intro (string), metrics (array of {id, label, initial}), steps (array of {situation, choices}).
+10. FORMAT: Output must be valid JSON with: intro (string), metrics (array of {label, initial}), steps (array of {situation, choices}).
 
 11. FACTUAL ACCURACY: Domain content must be factually correct. Penalize choices or consequences that misrepresent how the topic actually works.
 
@@ -37,7 +37,8 @@ ANTI-CHECKLIST GUIDANCE (CRITICAL):
 - Do NOT penalize for creative or unconventional scenarios that still teach the concepts
 - Do NOT penalize for metric initial values anywhere in the 40-60 range
 - Do NOT check against an imagined "ideal" story structure
-- ONLY penalize for: concept names leaking into play, evaluative consequences instead of concrete ones, obviously wrong choices, missing alignment diversity, format violations, or factually incorrect domain content
+- Do NOT penalize for everyday domain vocabulary that sets the scene (e.g., "virus", "factory", "reaction") — only penalize when actual CONCEPT names from the input appear
+- ONLY penalize for: actual concept names leaking into play, evaluative consequences instead of concrete ones, obviously wrong choices, missing alignment diversity, format violations, or factually incorrect domain content
 `;
 
 export const TEST_CASES = [

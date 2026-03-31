@@ -36,13 +36,11 @@ export type ActivityStoryDebriefParams = {
 };
 
 /**
- * Formats metric changes into a compact readable string.
- * Example: "estoque: +10, caixa: -5"
+ * Formats metric effects into a compact readable string.
+ * Example: "Production: positive, Morale: negative"
  */
-function formatMetricChanges(metricChanges: { metricId: string; delta: number }[]): string {
-  return metricChanges
-    .map(({ metricId, delta }) => `${metricId}: ${delta > 0 ? "+" : ""}${delta}`)
-    .join(", ");
+function formatMetricEffects(metricEffects: { metric: string; effect: string }[]): string {
+  return metricEffects.map(({ metric, effect }) => `${metric}: ${effect}`).join(", ");
 }
 
 /**
@@ -53,7 +51,7 @@ function formatStep(step: ActivityStoryStepsSchema["steps"][number], index: numb
   const choicesText = step.choices
     .map(
       (choice) =>
-        `  - [${choice.id}] (${choice.alignment}) "${choice.text}" → ${choice.consequence} (${formatMetricChanges(choice.metricChanges)})`,
+        `  - [${choice.id}] (${choice.alignment}) "${choice.text}" → ${choice.consequence} (${formatMetricEffects(choice.metricEffects)})`,
     )
     .join("\n");
 
@@ -66,7 +64,7 @@ function formatStep(step: ActivityStoryStepsSchema["steps"][number], index: numb
  */
 function formatStoryStepsForPrompt(storySteps: ActivityStoryStepsSchema): string {
   const formattedMetrics = storySteps.metrics
-    .map((metric) => `  ${metric.label} (${metric.id}): starts at ${metric.initial}`)
+    .map((metric) => `  ${metric.label}: starts at ${metric.initial}`)
     .join("\n");
 
   const formattedSteps = storySteps.steps.map(formatStep).join("\n\n");

@@ -8,23 +8,23 @@ const DEFAULT_MODEL = process.env.AI_MODEL_ACTIVITY_STORY_STEPS ?? "openai/gpt-5
 const FALLBACK_MODELS = ["anthropic/claude-opus-4.6", "google/gemini-3.1-pro-preview"];
 
 const storyAlignmentSchema = z.enum(["strong", "partial", "weak"]);
+const storyMetricEffectSchema = z.enum(["positive", "neutral", "negative"]);
 
 const storyMetricSchema = z.object({
-  id: z.string(),
   initial: z.number(),
   label: z.string(),
 });
 
-const storyMetricChangeSchema = z.object({
-  delta: z.number(),
-  metricId: z.string(),
+const storyMetricEffectEntrySchema = z.object({
+  effect: storyMetricEffectSchema,
+  metric: z.string(),
 });
 
 const storyChoiceSchema = z.object({
   alignment: storyAlignmentSchema,
   consequence: z.string(),
   id: z.string(),
-  metricChanges: z.array(storyMetricChangeSchema).min(1),
+  metricEffects: z.array(storyMetricEffectEntrySchema),
   text: z.string(),
 });
 
