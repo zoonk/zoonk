@@ -231,6 +231,98 @@ describe(validateAnswers, () => {
     expect(results[0]?.isCorrect).toBe(true);
   });
 
+  test("validates story strong choice as correct", () => {
+    const storyContent = {
+      choices: [
+        {
+          alignment: "strong",
+          consequence: "Things improve.",
+          id: "1a",
+          metricChanges: { production: 10 },
+          text: "Do the right thing",
+        },
+        {
+          alignment: "weak",
+          consequence: "Things get worse.",
+          id: "1b",
+          metricChanges: { production: -10 },
+          text: "Do the wrong thing",
+        },
+      ],
+      situation: "You face a decision.",
+    };
+
+    const steps = [{ content: storyContent, id: 8n, kind: "story" }];
+
+    const results = validateAnswers(steps, {
+      "8": { kind: "story", selectedChoiceId: "1a", selectedText: "Do the right thing" },
+    });
+
+    expect(results).toHaveLength(1);
+    expect(results[0]?.isCorrect).toBe(true);
+  });
+
+  test("validates story weak choice as incorrect", () => {
+    const storyContent = {
+      choices: [
+        {
+          alignment: "strong",
+          consequence: "Things improve.",
+          id: "1a",
+          metricChanges: { production: 10 },
+          text: "Do the right thing",
+        },
+        {
+          alignment: "weak",
+          consequence: "Things get worse.",
+          id: "1b",
+          metricChanges: { production: -10 },
+          text: "Do the wrong thing",
+        },
+      ],
+      situation: "You face a decision.",
+    };
+
+    const steps = [{ content: storyContent, id: 8n, kind: "story" }];
+
+    const results = validateAnswers(steps, {
+      "8": { kind: "story", selectedChoiceId: "1b", selectedText: "Do the wrong thing" },
+    });
+
+    expect(results).toHaveLength(1);
+    expect(results[0]?.isCorrect).toBe(false);
+  });
+
+  test("story validator returns empty for wrong answer kind", () => {
+    const storyContent = {
+      choices: [
+        {
+          alignment: "strong",
+          consequence: "Things improve.",
+          id: "1a",
+          metricChanges: { production: 10 },
+          text: "Do the right thing",
+        },
+        {
+          alignment: "weak",
+          consequence: "Things get worse.",
+          id: "1b",
+          metricChanges: { production: -10 },
+          text: "Do the wrong thing",
+        },
+      ],
+      situation: "You face a decision.",
+    };
+
+    const steps = [{ content: storyContent, id: 9n, kind: "story" }];
+
+    const results = validateAnswers(steps, {
+      "9": { kind: "multipleChoice", selectedIndex: 0, selectedText: "Option A" },
+    });
+
+    expect(results).toHaveLength(0);
+  });
+
   test("skips unsupported step kinds", () => {
     const steps = [{ content: {}, id: 7n, kind: "unknownKind" }];
 

@@ -103,6 +103,61 @@ const staticContentSchema = z.discriminatedUnion("variant", [
   staticGrammarRuleContentSchema,
 ]);
 
+const storyMetricSchema = z
+  .object({
+    id: z.string(),
+    initial: z.number(),
+    label: z.string(),
+  })
+  .strict();
+
+const storyAlignmentSchema = z.enum(["strong", "partial", "weak"]);
+
+const storyChoiceSchema = z
+  .object({
+    alignment: storyAlignmentSchema,
+    consequence: z.string(),
+    id: z.string(),
+    metricChanges: z.record(z.string(), z.number()),
+    text: z.string(),
+  })
+  .strict();
+
+const storyOutcomeSchema = z
+  .object({
+    minStrongChoices: z.number().int().min(0),
+    narrative: z.string(),
+    title: z.string(),
+  })
+  .strict();
+
+const storyDebriefConceptSchema = z
+  .object({
+    explanation: z.string(),
+    name: z.string(),
+  })
+  .strict();
+
+/**
+ * Schema for a story step's content.
+ *
+ * Every step has a situation and choices. The first step also carries
+ * story-level intro/metrics, and the last step carries outcomes/debrief.
+ * Position-based requirements are enforced at the save layer, not here.
+ */
+const storyContentSchema = z
+  .object({
+    choices: z.array(storyChoiceSchema).min(2),
+    // Story-level data on last step.
+    debrief: z.array(storyDebriefConceptSchema).min(1).optional(),
+    // Story-level data on first step.
+    intro: z.string().optional(),
+    metrics: z.array(storyMetricSchema).min(1).optional(),
+    outcomes: z.array(storyOutcomeSchema).min(1).optional(),
+    situation: z.string(),
+  })
+  .strict();
+
 const vocabularyContentSchema = z.object({}).strict();
 const translationContentSchema = z.object({}).strict();
 const readingContentSchema = z.object({}).strict();
@@ -117,6 +172,7 @@ const stepContentSchemas = {
   selectImage: selectImageContentSchema,
   sortOrder: sortOrderContentSchema,
   static: staticContentSchema,
+  story: storyContentSchema,
   translation: translationContentSchema,
   visual: visualStepContentSchema,
   vocabulary: vocabularyContentSchema,
@@ -132,6 +188,8 @@ export type MatchColumnsStepContent = z.infer<typeof matchColumnsContentSchema>;
 export type SortOrderStepContent = z.infer<typeof sortOrderContentSchema>;
 export type SelectImageStepContent = z.infer<typeof selectImageContentSchema>;
 export type StaticStepContent = z.infer<typeof staticContentSchema>;
+export type StoryAlignment = z.infer<typeof storyAlignmentSchema>;
+export type StoryStepContent = z.infer<typeof storyContentSchema>;
 export type VocabularyStepContent = z.infer<typeof vocabularyContentSchema>;
 export type TranslationStepContent = z.infer<typeof translationContentSchema>;
 export type ReadingStepContent = z.infer<typeof readingContentSchema>;
@@ -148,6 +206,7 @@ export type StepContentByKind = {
   selectImage: SelectImageStepContent;
   sortOrder: SortOrderStepContent;
   static: StaticStepContent;
+  story: StoryStepContent;
   translation: TranslationStepContent;
   visual: VisualStepContent;
   vocabulary: VocabularyStepContent;
@@ -168,6 +227,7 @@ export function parseStepContent(kind: "reading", content: unknown): ReadingStep
 export function parseStepContent(kind: "selectImage", content: unknown): SelectImageStepContent;
 export function parseStepContent(kind: "sortOrder", content: unknown): SortOrderStepContent;
 export function parseStepContent(kind: "static", content: unknown): StaticStepContent;
+export function parseStepContent(kind: "story", content: unknown): StoryStepContent;
 export function parseStepContent(kind: "translation", content: unknown): TranslationStepContent;
 export function parseStepContent(kind: "visual", content: unknown): VisualStepContent;
 export function parseStepContent(kind: "vocabulary", content: unknown): VocabularyStepContent;
@@ -190,6 +250,7 @@ export function assertStepContent(kind: "reading", content: unknown): ReadingSte
 export function assertStepContent(kind: "selectImage", content: unknown): SelectImageStepContent;
 export function assertStepContent(kind: "sortOrder", content: unknown): SortOrderStepContent;
 export function assertStepContent(kind: "static", content: unknown): StaticStepContent;
+export function assertStepContent(kind: "story", content: unknown): StoryStepContent;
 export function assertStepContent(kind: "translation", content: unknown): TranslationStepContent;
 export function assertStepContent(kind: "visual", content: unknown): VisualStepContent;
 export function assertStepContent(kind: "vocabulary", content: unknown): VocabularyStepContent;

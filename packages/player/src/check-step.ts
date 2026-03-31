@@ -9,6 +9,7 @@ import {
   checkMultipleChoiceAnswer,
   checkSelectImageAnswer,
   checkSortOrderAnswer,
+  checkStoryAnswer,
   checkTranslationAnswer,
 } from "./check-answer";
 import { type SelectedAnswer } from "./player-reducer";
@@ -129,6 +130,16 @@ function checkListeningStep(step: SerializedStep, answer: SelectedAnswer): Check
   };
 }
 
+function checkStory(step: SerializedStep, answer: SelectedAnswer): CheckStepResult {
+  if (answer.kind !== "story") {
+    return MISMATCH_RESULT;
+  }
+
+  const content = parseStepContent("story", step.content);
+
+  return { result: checkStoryAnswer(content, answer.selectedChoiceId) };
+}
+
 export function checkStep(step: SerializedStep, answer: SelectedAnswer): CheckStepResult {
   switch (step.kind) {
     case "multipleChoice":
@@ -154,6 +165,9 @@ export function checkStep(step: SerializedStep, answer: SelectedAnswer): CheckSt
 
     case "listening":
       return checkListeningStep(step, answer);
+
+    case "story":
+      return checkStory(step, answer);
 
     case "static":
     case "visual":

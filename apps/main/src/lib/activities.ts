@@ -57,6 +57,10 @@ async function getSeoDescription(kind: ActivityKind, topic: string): Promise<str
       { topic },
     ),
     review: t("Review everything you learned about {topic} with a comprehensive quiz.", { topic }),
+    story: t(
+      "Experience {topic} through an interactive story where your decisions shape the outcome.",
+      { topic },
+    ),
     translation: t("Test your {topic} vocabulary by translating words you've learned.", { topic }),
     vocabulary: t(
       "Learn new {topic} words with flashcards — see each word, its translation, and pronunciation.",
@@ -120,6 +124,7 @@ const ACTIVITY_ICONS: Record<ActivityKind, LucideIcon> = {
   quiz: CircleHelpIcon,
   reading: BookTextIcon,
   review: RotateCcwIcon,
+  story: BookOpenIcon,
   translation: LanguagesIcon,
   vocabulary: LayersIcon,
 };

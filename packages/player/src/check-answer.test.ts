@@ -14,6 +14,7 @@ import {
   checkSelectImageAnswer,
   checkSingleMatchPair,
   checkSortOrderAnswer,
+  checkStoryAnswer,
   checkTranslationAnswer,
 } from "./check-answer";
 
@@ -269,6 +270,67 @@ describe(checkTranslationAnswer, () => {
 
   test("returns incorrect for non-matching IDs", () => {
     expect(checkTranslationAnswer("word-1", "word-2")).toEqual({
+      correctAnswer: null,
+      feedback: null,
+      isCorrect: false,
+    });
+  });
+});
+
+describe(checkStoryAnswer, () => {
+  const content = {
+    choices: [
+      {
+        alignment: "strong" as const,
+        consequence: "Things improve.",
+        id: "1a",
+        metricChanges: { production: 10 },
+        text: "Strong choice",
+      },
+      {
+        alignment: "partial" as const,
+        consequence: "Mixed results.",
+        id: "1b",
+        metricChanges: { production: 5 },
+        text: "Partial choice",
+      },
+      {
+        alignment: "weak" as const,
+        consequence: "Things get worse.",
+        id: "1c",
+        metricChanges: { production: -10 },
+        text: "Weak choice",
+      },
+    ],
+    situation: "You face a decision.",
+  };
+
+  test("strong alignment is correct with consequence as feedback", () => {
+    expect(checkStoryAnswer(content, "1a")).toEqual({
+      correctAnswer: null,
+      feedback: "Things improve.",
+      isCorrect: true,
+    });
+  });
+
+  test("partial alignment is correct with consequence as feedback", () => {
+    expect(checkStoryAnswer(content, "1b")).toEqual({
+      correctAnswer: null,
+      feedback: "Mixed results.",
+      isCorrect: true,
+    });
+  });
+
+  test("weak alignment is incorrect with consequence as feedback", () => {
+    expect(checkStoryAnswer(content, "1c")).toEqual({
+      correctAnswer: null,
+      feedback: "Things get worse.",
+      isCorrect: false,
+    });
+  });
+
+  test("unknown choice ID is incorrect with null feedback", () => {
+    expect(checkStoryAnswer(content, "unknown")).toEqual({
       correctAnswer: null,
       feedback: null,
       isCorrect: false,

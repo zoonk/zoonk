@@ -2516,6 +2516,11 @@ msgid "Learn about {topic} through an interactive activity."
 msgstr "Aprende sobre {topic} a través de una actividad interactiva."
 
 #: src/lib/activities.ts
+msgctxt "SJvUFW"
+msgid "Experience {topic} through an interactive story where your decisions shape the outcome."
+msgstr "Vive {topic} a través de una historia interactiva donde tus decisiones moldean el resultado."
+
+#: src/lib/activities.ts
 msgctxt "THPcKi"
 msgid "Understand what {topic} is — core concepts and definitions explained with clear metaphors and analogies."
 msgstr "Entiende qué es {topic}: conceptos centrales y definiciones explicados con metáforas y analogías claras."

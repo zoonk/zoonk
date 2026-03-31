@@ -22,6 +22,7 @@ enum ActivityKind {
   listening
   translation
   review
+  story
 }
 
 enum StepKind {
@@ -37,6 +38,7 @@ enum StepKind {
   translation
   reading
   listening
+  story
 }
 
 enum CourseMode {
