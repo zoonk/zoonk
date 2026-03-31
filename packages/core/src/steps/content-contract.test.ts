@@ -247,7 +247,7 @@ describe("step content contracts", () => {
       text: "Do the right thing",
     };
 
-    test("parses middle step with situation and choices only", () => {
+    test("parses step with situation and choices", () => {
       const content = parseStepContent("story", {
         choices: [baseChoice, { ...baseChoice, alignment: "weak", id: "1b" }],
         situation: "You face a decision.",
@@ -255,44 +255,6 @@ describe("step content contracts", () => {
 
       expect(content.situation).toBe("You face a decision.");
       expect(content.choices).toHaveLength(2);
-      expect(content.intro).toBeUndefined();
-      expect(content.metrics).toBeUndefined();
-      expect(content.outcomes).toBeUndefined();
-      expect(content.debrief).toBeUndefined();
-    });
-
-    test("parses first step with intro and metrics", () => {
-      const content = parseStepContent("story", {
-        choices: [baseChoice, { ...baseChoice, alignment: "partial", id: "1b" }],
-        intro: "You are a factory manager in 1950.",
-        metrics: [
-          { id: "production", initial: 50, label: "Production" },
-          { id: "morale", initial: 45, label: "Morale" },
-          { id: "cash", initial: 40, label: "Cash" },
-        ],
-        situation: "The factory floor is chaotic.",
-      });
-
-      expect(content.intro).toBe("You are a factory manager in 1950.");
-      expect(content.metrics).toHaveLength(3);
-    });
-
-    test("parses last step with outcomes and debrief", () => {
-      const content = parseStepContent("story", {
-        choices: [baseChoice, { ...baseChoice, alignment: "weak", id: "1b" }],
-        debrief: [
-          { explanation: "When you chose X, you experienced Y.", name: "Kanban" },
-          { explanation: "Pulling work based on demand.", name: "Pull System" },
-        ],
-        outcomes: [
-          { minStrongChoices: 4, narrative: "Your factory thrives.", title: "Master Manager" },
-          { minStrongChoices: 0, narrative: "Things fell apart.", title: "Learning Moment" },
-        ],
-        situation: "The director visits.",
-      });
-
-      expect(content.outcomes).toHaveLength(2);
-      expect(content.debrief).toHaveLength(2);
     });
 
     test("accepts more than 4 choices", () => {
@@ -318,6 +280,16 @@ describe("step content contracts", () => {
       ).toThrow();
     });
 
+    test("rejects extra fields on step content", () => {
+      expect(() =>
+        parseStepContent("story", {
+          choices: [baseChoice, { ...baseChoice, id: "1b" }],
+          intro: "Not allowed here.",
+          situation: "Test.",
+        }),
+      ).toThrow();
+    });
+
     test("rejects extra fields on choice", () => {
       expect(() =>
         parseStepContent("story", {
@@ -334,13 +306,57 @@ describe("step content contracts", () => {
         }),
       ).toThrow();
     });
+  });
+
+  describe("static storyIntro", () => {
+    test("parses intro with metrics", () => {
+      const content = parseStepContent("static", {
+        intro: "You are a factory manager in 1950.",
+        metrics: [
+          { id: "production", initial: 50, label: "Production" },
+          { id: "morale", initial: 45, label: "Morale" },
+          { id: "cash", initial: 40, label: "Cash" },
+        ],
+        variant: "storyIntro",
+      });
+
+      expect(content.variant).toBe("storyIntro");
+    });
+
+    test("rejects empty metrics", () => {
+      expect(() =>
+        parseStepContent("static", {
+          intro: "You are a factory manager.",
+          metrics: [],
+          variant: "storyIntro",
+        }),
+      ).toThrow();
+    });
+  });
+
+  describe("static storyDebrief", () => {
+    test("parses debrief with outcomes", () => {
+      const content = parseStepContent("static", {
+        debrief: [
+          { explanation: "When you chose X, you experienced Y.", name: "Kanban" },
+          { explanation: "Pulling work based on demand.", name: "Pull System" },
+        ],
+        outcomes: [
+          { minStrongChoices: 4, narrative: "Your factory thrives.", title: "Master Manager" },
+          { minStrongChoices: 0, narrative: "Things fell apart.", title: "Learning Moment" },
+        ],
+        variant: "storyDebrief",
+      });
+
+      expect(content.variant).toBe("storyDebrief");
+    });
 
     test("rejects negative minStrongChoices", () => {
       expect(() =>
-        parseStepContent("story", {
-          choices: [baseChoice, { ...baseChoice, id: "1b" }],
+        parseStepContent("static", {
+          debrief: [{ explanation: "Test.", name: "Concept" }],
           outcomes: [{ minStrongChoices: -1, narrative: "Bad.", title: "Bad" }],
-          situation: "Test.",
+          variant: "storyDebrief",
         }),
       ).toThrow();
     });

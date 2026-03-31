@@ -97,29 +97,11 @@ const staticGrammarRuleContentSchema = z
   })
   .strict();
 
-const staticContentSchema = z.discriminatedUnion("variant", [
-  staticTextContentSchema,
-  staticGrammarExampleContentSchema,
-  staticGrammarRuleContentSchema,
-]);
-
 const storyMetricSchema = z
   .object({
     id: z.string(),
     initial: z.number(),
     label: z.string(),
-  })
-  .strict();
-
-const storyAlignmentSchema = z.enum(["strong", "partial", "weak"]);
-
-const storyChoiceSchema = z
-  .object({
-    alignment: storyAlignmentSchema,
-    consequence: z.string(),
-    id: z.string(),
-    metricChanges: z.record(z.string(), z.number()),
-    text: z.string(),
   })
   .strict();
 
@@ -139,21 +121,53 @@ const storyDebriefConceptSchema = z
   .strict();
 
 /**
- * Schema for a story step's content.
- *
- * Every step has a situation and choices. The first step also carries
- * story-level intro/metrics, and the last step carries outcomes/debrief.
- * Position-based requirements are enforced at the save layer, not here.
+ * Intro screen for a story activity (static step, first position).
+ * Sets the scene and defines the metrics the player will track.
  */
+const staticStoryIntroContentSchema = z
+  .object({
+    intro: z.string(),
+    metrics: z.array(storyMetricSchema).min(1),
+    variant: z.literal("storyIntro"),
+  })
+  .strict();
+
+/**
+ * Debrief screen for a story activity (static step, last position).
+ * Reveals hidden concepts and shows outcome based on player's choices.
+ */
+const staticStoryDebriefContentSchema = z
+  .object({
+    debrief: z.array(storyDebriefConceptSchema).min(1),
+    outcomes: z.array(storyOutcomeSchema).min(1),
+    variant: z.literal("storyDebrief"),
+  })
+  .strict();
+
+const staticContentSchema = z.discriminatedUnion("variant", [
+  staticTextContentSchema,
+  staticGrammarExampleContentSchema,
+  staticGrammarRuleContentSchema,
+  staticStoryIntroContentSchema,
+  staticStoryDebriefContentSchema,
+]);
+
+const storyAlignmentSchema = z.enum(["strong", "partial", "weak"]);
+
+const storyChoiceSchema = z
+  .object({
+    alignment: storyAlignmentSchema,
+    consequence: z.string(),
+    id: z.string(),
+    metricChanges: z.record(z.string(), z.number()),
+    text: z.string(),
+  })
+  .strict();
+
+/** Schema for a story decision step's content (situation + choices). */
 const storyContentSchema = z
   .object({
     choices: z.array(storyChoiceSchema).min(2),
-    // Story-level data on last step.
-    debrief: z.array(storyDebriefConceptSchema).min(1).optional(),
-    // Story-level data on first step.
-    intro: z.string().optional(),
-    metrics: z.array(storyMetricSchema).min(1).optional(),
-    outcomes: z.array(storyOutcomeSchema).min(1).optional(),
     situation: z.string(),
   })
   .strict();
