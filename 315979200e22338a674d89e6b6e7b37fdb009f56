@@ -1,0 +1,27 @@
+packages/player/src/components/tradeoff/_utils/state-tier.test.ts
+  3a29bdf21fae7a11 2
+packages/player/src/compute-score.test.ts
+  3a29bdf21fae7a11 2
+packages/player/src/check-step.ts
+  3a29bdf21fae7a11 111-118,168
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.22",
+  "base_commit_sha": "315979200e22338a674d89e6b6e7b37fdb009f56",
+  "prompts": {
+    "3a29bdf21fae7a11": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7745ff53-e87e-4075-a043-69cf8a416c8a",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill <4393133+ceolinwill@users.noreply.github.com>",
+      "messages": [],
+      "total_additions": 14,
+      "total_deletions": 36,
+      "accepted_lines": 11,
+      "overriden_lines": 0
+    }
+  }
+}

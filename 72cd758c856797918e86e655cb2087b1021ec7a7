@@ -1,0 +1,135 @@
+packages/player/src/components/step-renderer.tsx
+  3a29bdf21fae7a11 15,129-139
+packages/player/src/components/tradeoff/tradeoff-event-banner.tsx
+  3a29bdf21fae7a11 1-37,39-84
+packages/ai/src/tasks/activities/core/activity-tradeoff.prompt.md
+  3a29bdf21fae7a11 1-68,70-82,84-125
+packages/db/src/prisma/models/progress.prisma
+  3a29bdf21fae7a11 50
+packages/player/src/components/tradeoff/tradeoff-step.tsx
+  3a29bdf21fae7a11 1-83
+packages/player/src/components/tradeoff/use-state-tier-label.ts
+  3a29bdf21fae7a11 1-17,19,22,25,28,31,33-37
+packages/ai/package.json
+  3a29bdf21fae7a11 11
+packages/player/src/components/tradeoff/_utils/state-tier.test.ts
+  3a29bdf21fae7a11 1-8,10-51,53-90
+packages/player/src/validate-answers.ts
+  3a29bdf21fae7a11 25,139-151,178
+apps/main/src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/a/[position]/submit-completion-action.ts
+  3a29bdf21fae7a11 9,116-121,144
+packages/player/src/components/tradeoff/_utils/compute-priority-states.ts
+  3a29bdf21fae7a11 1-145
+packages/player/src/compute-score.test.ts
+  3a29bdf21fae7a11 2,73-85
+packages/player/src/completion-input-schema.ts
+  3a29bdf21fae7a11 44-48,64
+packages/core/src/workflows/steps.ts
+  3a29bdf21fae7a11 94,108,125,137
+apps/main/src/lib/activities.ts
+  3a29bdf21fae7a11 12,30,62-65,129
+packages/player/src/check-answer.ts
+  3a29bdf21fae7a11 96-105
+packages/player/src/check-step.test.ts
+  3a29bdf21fae7a11 402-453
+apps/main/src/data/progress/submit-activity-completion.ts
+  3a29bdf21fae7a11 16-17,19,21-25,71,88,141,260-263
+apps/api/src/workflows/lesson-generation/steps/_utils/get-activities-for-kind.test.ts
+  3a29bdf21fae7a11 9-15,28,31,45,62,75-81
+apps/main/src/data/progress/submit-activity-completion.test.ts
+  3a29bdf21fae7a11 701-803
+apps/main/e2e/tradeoff-step.test.ts
+  3a29bdf21fae7a11 1-44,46-172,174-175,177-197,199-244,246-268,270-343
+apps/main/messages/es.po
+  3a29bdf21fae7a11 2551
+packages/player/src/compute-score.ts
+  3a29bdf21fae7a11 2-3,29-42
+packages/player/src/check-step.ts
+  3a29bdf21fae7a11 12,159-161
+packages/player/src/components/tradeoff/_utils/compute-priority-states.test.ts
+  3a29bdf21fae7a11 1-14,16-67,69-210,212-240
+apps/main/src/lib/generation/activity-generation-phase-weights.ts
+  3a29bdf21fae7a11 122-131
+packages/core/src/steps/content-contract.ts
+  3a29bdf21fae7a11 111-112,114-130,132-137,139-155,165,185,198,219,242
+packages/player/src/components/tradeoff/_utils/state-tier.ts
+  3a29bdf21fae7a11 1-92
+packages/player/src/components/tradeoff/_utils/get-consequence-tier.test.ts
+  3a29bdf21fae7a11 1-3,5-21
+packages/player/src/components/tradeoff/_utils/get-consequence-tier.ts
+  3a29bdf21fae7a11 1-27
+packages/utils/src/brain-power.ts
+  3a29bdf21fae7a11 2-9
+packages/player/src/components/completion-screen.tsx
+  3a29bdf21fae7a11 11,72-83,85,89-90,107,129-132
+packages/player/src/components/tradeoff/tradeoff-allocation.tsx
+  3a29bdf21fae7a11 1-184
+packages/player/src/validate-answers.test.ts
+  3a29bdf21fae7a11 234-296
+apps/api/src/workflows/activity-generation/steps/save-tradeoff-activity-step.ts
+  3a29bdf21fae7a11 1-105
+packages/ai/src/tasks/activities/core/activity-tradeoff.ts
+  3a29bdf21fae7a11 1-107
+packages/player/src/components/tradeoff/tradeoff-state-label.tsx
+  3a29bdf21fae7a11 1-36
+apps/evals/src/tasks/activity-tradeoff/task.ts
+  3a29bdf21fae7a11 1-16
+apps/main/src/lib/generation/activity-generation-phase-config.ts
+  3a29bdf21fae7a11 18-19,83,136
+packages/player/src/player-reducer.test.ts
+  3a29bdf21fae7a11 260-307
+apps/main/src/lib/generation/activity-generation-phase-kind-steps.ts
+  3a29bdf21fae7a11 309-340
+packages/player/src/player-completion.test.ts
+  3a29bdf21fae7a11 1-35,37-132
+packages/player/src/components/tradeoff/tradeoff-consequences.tsx
+  3a29bdf21fae7a11 1-58,60-76
+packages/db/src/prisma/enums.prisma
+  3a29bdf21fae7a11 24,41
+packages/player/src/player-completion.ts
+  3a29bdf21fae7a11 3,6-9,17-19,22-28
+apps/evals/src/tasks/activity-tradeoff/test-cases.ts
+  3a29bdf21fae7a11 1-251
+apps/api/src/workflows/activity-generation/core-activity-workflow.ts
+  3a29bdf21fae7a11 5,54-58
+apps/api/src/workflows/activity-generation/steps/save-tradeoff-activity-step.test.ts
+  3a29bdf21fae7a11 1-232
+apps/evals/src/tasks/index.ts
+  3a29bdf21fae7a11 12,38
+apps/api/src/workflows/activity-generation/steps/generate-tradeoff-content-step.ts
+  3a29bdf21fae7a11 1-66
+apps/main/messages/pt.po
+  3a29bdf21fae7a11 2551,2611
+apps/api/src/workflows/activity-generation/kinds/tradeoff-workflow.ts
+  3a29bdf21fae7a11 1-43
+packages/core/src/steps/content-contract.test.ts
+  3a29bdf21fae7a11 240-337
+apps/api/src/workflows/lesson-generation/steps/_utils/get-activities-for-kind.ts
+  3a29bdf21fae7a11 47,52,59
+apps/api/src/workflows/activity-generation/steps/generate-tradeoff-content-step.test.ts
+  3a29bdf21fae7a11 1-286
+packages/player/src/player-reducer.ts
+  3a29bdf21fae7a11 18
+packages/player/src/components/tradeoff/tradeoff-final-states.tsx
+  3a29bdf21fae7a11 1-30,32-42,44-57
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.22",
+  "base_commit_sha": "72cd758c856797918e86e655cb2087b1021ec7a7",
+  "prompts": {
+    "3a29bdf21fae7a11": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7745ff53-e87e-4075-a043-69cf8a416c8a",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill <4393133+ceolinwill@users.noreply.github.com>",
+      "messages": [],
+      "total_additions": 3798,
+      "total_deletions": 320,
+      "accepted_lines": 3498,
+      "overriden_lines": 25
+    }
+  }
+}
