@@ -399,6 +399,60 @@ describe(checkStep, () => {
     });
   });
 
+  describe("story", () => {
+    const step = buildStep({
+      content: {
+        choices: [
+          {
+            alignment: "strong",
+            consequence: "Things improve.",
+            id: "1a",
+            metricChanges: { production: 10 },
+            text: "Do the right thing",
+          },
+          {
+            alignment: "weak",
+            consequence: "Things get worse.",
+            id: "1b",
+            metricChanges: { production: -10 },
+            text: "Do the wrong thing",
+          },
+        ],
+        situation: "You face a decision.",
+      },
+      id: "story-1",
+      kind: "story",
+    });
+
+    test("strong alignment returns isCorrect true", () => {
+      const answer: SelectedAnswer = {
+        kind: "story",
+        selectedChoiceId: "1a",
+        selectedText: "Do the right thing",
+      };
+
+      const { result } = checkStep(step, answer);
+      expect(result.isCorrect).toBe(true);
+    });
+
+    test("weak alignment returns isCorrect false", () => {
+      const answer: SelectedAnswer = {
+        kind: "story",
+        selectedChoiceId: "1b",
+        selectedText: "Do the wrong thing",
+      };
+
+      const { result } = checkStep(step, answer);
+      expect(result.isCorrect).toBe(false);
+    });
+
+    test("returns mismatch for wrong answer kind", () => {
+      const answer: SelectedAnswer = { kind: "multipleChoice", selectedIndex: 0, selectedText: "" };
+      const { result } = checkStep(step, answer);
+      expect(result.isCorrect).toBe(false);
+    });
+  });
+
   describe("mismatched kinds", () => {
     test("multipleChoice step with fillBlank answer returns safe fallback", () => {
       const step = buildStep({

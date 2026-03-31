@@ -41,6 +41,12 @@ const sortOrderAnswerSchema = z.object({
   userOrder: z.array(z.string()),
 });
 
+const storyAnswerSchema = z.object({
+  kind: z.literal("story"),
+  selectedChoiceId: z.string(),
+  selectedText: z.string(),
+});
+
 const translationAnswerSchema = z.object({
   kind: z.literal("translation"),
   questionText: z.string(),
@@ -56,6 +62,7 @@ const selectedAnswerSchema = z.discriminatedUnion("kind", [
   readingAnswerSchema,
   selectImageAnswerSchema,
   sortOrderAnswerSchema,
+  storyAnswerSchema,
   translationAnswerSchema,
 ]);
 

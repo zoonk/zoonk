@@ -237,4 +237,128 @@ describe("step content contracts", () => {
       }),
     ).toThrow();
   });
+
+  describe("story", () => {
+    const baseChoice = {
+      alignment: "strong" as const,
+      consequence: "Things improve.",
+      id: "1a",
+      metricChanges: { production: 10 },
+      text: "Do the right thing",
+    };
+
+    test("parses step with situation and choices", () => {
+      const content = parseStepContent("story", {
+        choices: [baseChoice, { ...baseChoice, alignment: "weak", id: "1b" }],
+        situation: "You face a decision.",
+      });
+
+      expect(content.situation).toBe("You face a decision.");
+      expect(content.choices).toHaveLength(2);
+    });
+
+    test("accepts more than 4 choices", () => {
+      const choices = Array.from({ length: 5 }, (_, i) => ({
+        ...baseChoice,
+        id: `choice-${i}`,
+      }));
+
+      const content = parseStepContent("story", {
+        choices,
+        situation: "Many options available.",
+      });
+
+      expect(content.choices).toHaveLength(5);
+    });
+
+    test("rejects fewer than 2 choices", () => {
+      expect(() =>
+        parseStepContent("story", {
+          choices: [baseChoice],
+          situation: "Only one option.",
+        }),
+      ).toThrow();
+    });
+
+    test("rejects extra fields on step content", () => {
+      expect(() =>
+        parseStepContent("story", {
+          choices: [baseChoice, { ...baseChoice, id: "1b" }],
+          intro: "Not allowed here.",
+          situation: "Test.",
+        }),
+      ).toThrow();
+    });
+
+    test("rejects extra fields on choice", () => {
+      expect(() =>
+        parseStepContent("story", {
+          choices: [{ ...baseChoice, extra: "field" }],
+          situation: "Test.",
+        }),
+      ).toThrow();
+    });
+
+    test("rejects missing situation", () => {
+      expect(() =>
+        parseStepContent("story", {
+          choices: [baseChoice, { ...baseChoice, id: "1b" }],
+        }),
+      ).toThrow();
+    });
+  });
+
+  describe("static storyIntro", () => {
+    test("parses intro with metrics", () => {
+      const content = parseStepContent("static", {
+        intro: "You are a factory manager in 1950.",
+        metrics: [
+          { id: "production", initial: 50, label: "Production" },
+          { id: "morale", initial: 45, label: "Morale" },
+          { id: "cash", initial: 40, label: "Cash" },
+        ],
+        variant: "storyIntro",
+      });
+
+      expect(content.variant).toBe("storyIntro");
+    });
+
+    test("rejects empty metrics", () => {
+      expect(() =>
+        parseStepContent("static", {
+          intro: "You are a factory manager.",
+          metrics: [],
+          variant: "storyIntro",
+        }),
+      ).toThrow();
+    });
+  });
+
+  describe("static storyDebrief", () => {
+    test("parses debrief with outcomes", () => {
+      const content = parseStepContent("static", {
+        debrief: [
+          { explanation: "When you chose X, you experienced Y.", name: "Kanban" },
+          { explanation: "Pulling work based on demand.", name: "Pull System" },
+        ],
+        outcomes: [
+          { minStrongChoices: 4, narrative: "Your factory thrives.", title: "Master Manager" },
+          { minStrongChoices: 0, narrative: "Things fell apart.", title: "Learning Moment" },
+        ],
+        variant: "storyDebrief",
+      });
+
+      expect(content.variant).toBe("storyDebrief");
+    });
+
+    test("rejects negative minStrongChoices", () => {
+      expect(() =>
+        parseStepContent("static", {
+          debrief: [{ explanation: "Test.", name: "Concept" }],
+          outcomes: [{ minStrongChoices: -1, narrative: "Bad.", title: "Bad" }],
+          variant: "storyDebrief",
+        }),
+      ).toThrow();
+    });
+  });
 });

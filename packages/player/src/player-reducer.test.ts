@@ -257,6 +257,44 @@ describe("CHECK_ANSWER", () => {
     });
   });
 
+  test("story step enters feedback phase instead of auto-continuing", () => {
+    const storyContent = {
+      choices: [
+        {
+          alignment: "strong" as const,
+          consequence: "Things improve.",
+          id: "1a",
+          metricChanges: { production: 10 },
+          text: "Do the right thing",
+        },
+        {
+          alignment: "weak" as const,
+          consequence: "Things get worse.",
+          id: "1b",
+          metricChanges: { production: -10 },
+          text: "Do the wrong thing",
+        },
+      ],
+      situation: "You face a decision.",
+    };
+
+    const steps = [
+      buildStep({ content: storyContent, id: "story-1", kind: "story", position: 0 }),
+      buildStep({ content: storyContent, id: "story-2", kind: "story", position: 1 }),
+    ];
+
+    const state = buildState({ steps });
+
+    const next = playerReducer(state, {
+      result: { correctAnswer: null, feedback: null, isCorrect: true },
+      stepId: "story-1",
+      type: "CHECK_ANSWER",
+    });
+
+    expect(next.phase).toBe("feedback");
+    expect(next.currentStepIndex).toBe(0);
+  });
+
   test("no-ops in feedback phase", () => {
     const state = buildState({ phase: "feedback" });
     const next = playerReducer(state, {

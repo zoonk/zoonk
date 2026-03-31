@@ -4,6 +4,7 @@ import {
   type MultipleChoiceStepContent,
   type SelectImageStepContent,
   type SortOrderStepContent,
+  type StoryStepContent,
 } from "@zoonk/core/steps/content-contract";
 import { matchesAcceptedArrangeWords } from "./arrange-words-answers";
 
@@ -91,6 +92,23 @@ export function checkTranslationAnswer(
     feedback: null,
     isCorrect: correctWordId === selectedWordId,
   };
+}
+
+/**
+ * Check a story answer by looking up the selected choice's alignment.
+ *
+ * Alignment is hidden from the player during play, but determines correctness
+ * for analytics/metrics: strong and partial count as correct, weak as incorrect.
+ * The choice's consequence text is returned as feedback for display on the
+ * feedback screen — it describes what happens as a result of the player's decision.
+ */
+export function checkStoryAnswer(
+  content: StoryStepContent,
+  selectedChoiceId: string,
+): AnswerResult {
+  const choice = content.choices.find((option) => option.id === selectedChoiceId);
+  const isCorrect = choice ? choice.alignment !== "weak" : false;
+  return { correctAnswer: null, feedback: choice?.consequence ?? null, isCorrect };
 }
 
 export function checkArrangeWordsAnswer(

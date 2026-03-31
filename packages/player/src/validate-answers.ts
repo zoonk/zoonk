@@ -11,6 +11,7 @@ import {
   checkMultipleChoiceAnswer,
   checkSelectImageAnswer,
   checkSortOrderAnswer,
+  checkStoryAnswer,
   checkTranslationAnswer,
 } from "./check-answer";
 
@@ -22,6 +23,7 @@ type SelectedAnswer =
   | { kind: "reading"; arrangedWords: string[] }
   | { kind: "selectImage"; selectedIndex: number }
   | { kind: "sortOrder"; userOrder: string[] }
+  | { kind: "story"; selectedChoiceId: string; selectedText: string }
   | { kind: "translation"; selectedWordId: string; selectedText: string; questionText: string };
 
 /**
@@ -149,6 +151,17 @@ function validateListening(step: StepData, answer: SelectedAnswer): ValidatedSte
   return { answer, isCorrect: result.isCorrect, stepId: step.id };
 }
 
+function validateStory(step: StepData, answer: SelectedAnswer): ValidatedStepResult | null {
+  if (answer.kind !== "story") {
+    return null;
+  }
+
+  const content = parseStepContent("story", step.content);
+  const result = checkStoryAnswer(content, answer.selectedChoiceId);
+
+  return { answer, isCorrect: result.isCorrect, stepId: step.id };
+}
+
 const validators: Record<
   SupportedStepKind,
   (step: StepData, answer: SelectedAnswer) => ValidatedStepResult | null
@@ -161,6 +174,7 @@ const validators: Record<
   selectImage: validateSelectImage,
   sortOrder: validateSortOrder,
   static: () => null,
+  story: validateStory,
   translation: validateTranslation,
   visual: () => null,
   vocabulary: () => null,
