@@ -1,0 +1,41 @@
+apps/evals/src/tasks/activity-story-debrief/test-cases.ts
+  4b531681ddd481ea 1-202
+packages/ai/src/tasks/activities/core/activity-story-steps.prompt.md
+  4b531681ddd481ea 1-30,32-103
+packages/ai/src/tasks/activities/core/activity-story-debrief.prompt.md
+  4b531681ddd481ea 1-37,39-53
+apps/evals/src/tasks/activity-story-steps/test-cases.ts
+  4b531681ddd481ea 1-181
+packages/ai/src/tasks/activities/core/activity-story-debrief.ts
+  4b531681ddd481ea 1-5,7-73,79-82,84-95,101-117
+packages/ai/src/tasks/activities/core/activity-story-steps.ts
+  4b531681ddd481ea 1-93
+apps/evals/src/tasks/activity-story-debrief/task.ts
+  4b531681ddd481ea 1-18
+packages/ai/package.json
+  4b531681ddd481ea 11-12
+apps/evals/src/tasks/index.ts
+  4b531681ddd481ea 12-13,39-40
+apps/evals/src/tasks/activity-story-steps/task.ts
+  4b531681ddd481ea 1-16
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.1.22",
+  "base_commit_sha": "9ebdc443270d1f40ec7aaf61ba84e06d5f5fe6db",
+  "prompts": {
+    "4b531681ddd481ea": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "666ef487-336f-45c4-997c-71aa2b4e66df",
+        "model": "unknown"
+      },
+      "human_author": "ceolinwill <4393133+ceolinwill@users.noreply.github.com>",
+      "messages": [],
+      "total_additions": 912,
+      "total_deletions": 125,
+      "accepted_lines": 775,
+      "overriden_lines": 7
+    }
+  }
+}
