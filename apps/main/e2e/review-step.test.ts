@@ -150,6 +150,7 @@ async function completeVocabStep(
   translationToWord: Record<string, string>,
 ): Promise<void> {
   const radiogroup = page.getByRole("radiogroup", { name: /answer options/i });
+  await expect(radiogroup).toBeVisible();
 
   // Read the displayed translation from the prompt text
   const promptText = await page
@@ -172,7 +173,9 @@ async function completeVocabStep(
       await option.click();
     }
 
-    await expect(option).toHaveAttribute("aria-checked", "true", { timeout: 1000 });
+    await expect(option).toHaveAttribute("aria-checked", "true", {
+      timeout: 1000,
+    });
   }).toPass();
 
   await page.getByRole("button", { name: /check/i }).click();
@@ -194,28 +197,100 @@ async function completeReadingStep(page: Page, word1: string, word2: string): Pr
 }
 
 /**
- * Completes a single step in the review. Steps are shuffled so we detect
- * the type and handle accordingly.
+ * Review screens can briefly be between interactive states while the player swaps
+ * feedback, the next step, and the completion screen. Polling the visible screen
+ * keeps the test aligned with the real UI instead of assuming answer controls are
+ * always the first stable element to appear.
+ */
+async function getVisibleReviewState(
+  page: Page,
+): Promise<"completed" | "pending" | "reading" | "vocab"> {
+  if (await page.getByText(/translate this word/i).isVisible()) {
+    return "vocab";
+  }
+
+  if (await page.getByText(/translate this sentence/i).isVisible()) {
+    return "reading";
+  }
+
+  if (await page.getByRole("status").isVisible()) {
+    return "completed";
+  }
+
+  return "pending";
+}
+
+/**
+ * Completes a single step in the review. Steps are shuffled, so we wait for the
+ * current visible screen and handle that state directly.
  */
 async function completeAnyStep(
   page: Page,
   translationToWord: Record<string, string>,
   sentenceWord1: string,
   sentenceWord2: string,
-): Promise<void> {
-  // Wait for either a radiogroup (vocab) or word bank (reading) to appear
-  const radiogroup = page.getByRole("radiogroup", { name: /answer options/i });
-  const wordBank = page.getByRole("group", { name: /word bank/i });
+): Promise<boolean> {
+  await expect.poll(() => getVisibleReviewState(page), { timeout: 10_000 }).not.toBe("pending");
 
-  await expect(radiogroup.or(wordBank)).toBeVisible();
+  const reviewState = await getVisibleReviewState(page);
 
-  const isVocab = await radiogroup.isVisible();
-
-  if (isVocab) {
-    await completeVocabStep(page, translationToWord);
-  } else {
-    await completeReadingStep(page, sentenceWord1, sentenceWord2);
+  if (reviewState === "completed") {
+    return false;
   }
+
+  if (reviewState === "vocab") {
+    await completeVocabStep(page, translationToWord);
+    return true;
+  }
+
+  if (reviewState === "reading") {
+    await completeReadingStep(page, sentenceWord1, sentenceWord2);
+    return true;
+  }
+
+  throw new Error(`Unexpected review state: ${reviewState}`);
+}
+
+/**
+ * Review steps are sequential: each answer changes which screen appears next.
+ * Recursing through the remaining count keeps that one-at-a-time flow explicit
+ * without relying on an `await` loop.
+ */
+async function completeRemainingReviewSteps({
+  page,
+  remainingStepCount,
+  sentenceWord1,
+  sentenceWord2,
+  translationToWord,
+}: {
+  page: Page;
+  remainingStepCount: number;
+  sentenceWord1: string;
+  sentenceWord2: string;
+  translationToWord: Record<string, string>;
+}): Promise<void> {
+  if (remainingStepCount === 0) {
+    return;
+  }
+
+  const completedStep = await completeAnyStep(
+    page,
+    translationToWord,
+    sentenceWord1,
+    sentenceWord2,
+  );
+
+  if (!completedStep) {
+    return;
+  }
+
+  await completeRemainingReviewSteps({
+    page,
+    remainingStepCount: remainingStepCount - 1,
+    sentenceWord1,
+    sentenceWord2,
+    translationToWord,
+  });
 }
 
 test.describe("Review Step", () => {
@@ -249,13 +324,16 @@ test.describe("Review Step", () => {
 
     // Steps are shuffled, so complete each step by detecting its type.
     // 5 total steps: 4 vocabulary + 1 reading
-    await completeAnyStep(page, translationToWord, sentenceWord1, sentenceWord2);
-    await completeAnyStep(page, translationToWord, sentenceWord1, sentenceWord2);
-    await completeAnyStep(page, translationToWord, sentenceWord1, sentenceWord2);
-    await completeAnyStep(page, translationToWord, sentenceWord1, sentenceWord2);
-    await completeAnyStep(page, translationToWord, sentenceWord1, sentenceWord2);
+    await completeRemainingReviewSteps({
+      page,
+      remainingStepCount: 5,
+      sentenceWord1,
+      sentenceWord2,
+      translationToWord,
+    });
 
     // Completion screen
+    await expect(page.getByRole("status")).toBeVisible();
     await expect(page.getByText("5/5")).toBeVisible();
     await expect(page.getByText(/correct/i)).toBeVisible();
   });
