@@ -1,0 +1,101 @@
+packages/player/src/components/static-step.tsx
+  4538ccfb205327fc 9-10,74-79
+packages/player/src/components/story-briefing-popover.tsx
+  4538ccfb205327fc 1-36
+packages/player/src/player-reducer.ts
+  4538ccfb205327fc 1,149-163,174-187
+packages/player/src/components/story-outcome-content.tsx
+  4538ccfb205327fc 1-56,59-70,73-131
+packages/player/src/player-provider.tsx
+  4538ccfb205327fc 17,69
+packages/player/src/use-story-haptics.ts
+  4538ccfb205327fc 1-147
+packages/player/src/components/story-metric-pill.tsx
+  3e7e761329e5c1d0 33-34,39-40
+  4538ccfb205327fc 2-32,35-38,41-53
+packages/player/src/components/choice-step-layout.tsx
+  4538ccfb205327fc 1-66
+packages/player/src/components/feedback-screen.tsx
+  4538ccfb205327fc 13,126-138
+packages/player/src/player-completion.test.ts
+  4538ccfb205327fc 153-177
+apps/api/src/workflows/activity-generation/steps/save-story-activity-step.ts
+  4538ccfb205327fc 16,58,61-63,67-68,70,78
+packages/player/src/player-selectors.ts
+  4538ccfb205327fc 69-240
+packages/player/src/player-selectors.test.ts
+  4538ccfb205327fc 2-6,8,47-239
+packages/player/src/components/in-play-sticky-header.tsx
+  4538ccfb205327fc 6,12,18,33,35,37
+packages/player/src/player-completion.ts
+  4538ccfb205327fc 39
+packages/ui/src/styles/globals.css
+  3e7e761329e5c1d0 68,322-333
+packages/player/src/use-player-keyboard.test.ts
+  4538ccfb205327fc 20,87-104
+packages/player/src/step-navigation.ts
+  4538ccfb205327fc 1,4-19,21-29
+packages/player/src/components/story-step.tsx
+  4538ccfb205327fc 1-17,19-65
+packages/player/src/components/stage-content.tsx
+  4538ccfb205327fc 14-15
+apps/main/src/lib/activities.ts
+  4538ccfb205327fc 7,31,129
+packages/player/src/components/multiple-choice-step.tsx
+  4538ccfb205327fc 3,6,21,29-33,39-46
+packages/player/src/components/step-renderer.tsx
+  4538ccfb205327fc 16,39-46,170-175
+packages/player/src/components/story-metrics-bar.tsx
+  4538ccfb205327fc 1-27
+packages/player/src/components/story-feedback-content.tsx
+  4538ccfb205327fc 1-2,4-102
+apps/main/e2e/story-step.test.ts
+  4538ccfb205327fc 1-61,67-68,70-416
+apps/api/src/workflows/activity-generation/steps/save-story-activity-step.test.ts
+  4538ccfb205327fc 139-140,158,161-167
+packages/player/src/components/story-intro-content.tsx
+  4538ccfb205327fc 1-30,32-44
+apps/api/src/workflows/activity-generation/kinds/story-workflow.test.ts
+  4538ccfb205327fc 150-151,169,172-178
+apps/main/e2e/multiple-choice-step.test.ts
+  4538ccfb205327fc 383-415
+packages/player/src/components/player-shell.tsx
+  4538ccfb205327fc 5,7,14,17-19,29,31-80,93,96-98,101-107,109,119,124-125,147-155
+packages/player/src/components/option-card.tsx
+  4538ccfb205327fc 25,29
+packages/player/src/use-player-keyboard.ts
+  4538ccfb205327fc 5,19,27,30,33-40,42-49,77,87,90
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.4",
+  "base_commit_sha": "2d0a57d78d1e1fb55c8d6462dbba95cd90619c9b",
+  "prompts": {
+    "3e7e761329e5c1d0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3b502ff0-04f0-49b2-9411-2cec4939b90b",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 17,
+      "total_deletions": 10,
+      "accepted_lines": 17,
+      "overriden_lines": 0
+    },
+    "4538ccfb205327fc": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "863a1a85-0a4a-4756-a2a8-e1571c4501f4",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 2692,
+      "total_deletions": 824,
+      "accepted_lines": 1786,
+      "overriden_lines": 15
+    }
+  }
+}
