@@ -1,0 +1,33 @@
+packages/core/src/steps/content-contract.ts
+  84c2c90aa4143b77 130-140,143,157
+apps/api/src/workflows/activity-generation/steps/save-story-activity-step.ts
+  84c2c90aa4143b77 15-16,46-57,66,69,76-77
+packages/player/src/components/static-step.tsx
+  84c2c90aa4143b77 74-75
+apps/api/src/workflows/activity-generation/steps/save-story-activity-step.test.ts
+  84c2c90aa4143b77 139-140,153,156-161
+packages/core/src/steps/content-contract.test.ts
+  84c2c90aa4143b77 333-357,359,371,375
+apps/api/src/workflows/activity-generation/kinds/story-workflow.test.ts
+  84c2c90aa4143b77 150-151,164,167-172
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.3",
+  "base_commit_sha": "ce881789ae9e0cdf810b8fdd3359feaaab0fae03",
+  "prompts": {
+    "84c2c90aa4143b77": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "360d1924-f493-47c2-883c-9f7178deba7a",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 79,
+      "total_deletions": 23,
+      "accepted_lines": 80,
+      "overriden_lines": 0
+    }
+  }
+}
