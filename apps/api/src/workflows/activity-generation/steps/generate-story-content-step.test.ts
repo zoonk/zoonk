@@ -189,9 +189,19 @@ describe(generateStoryContentStep, () => {
 
     const updated = await prisma.activity.findUniqueOrThrow({ where: { id: dbActivity.id } });
     expect(updated.generationStatus).toBe("failed");
+
+    const events = getStreamedEvents(writeMock);
+
+    expect(events).toContainEqual(
+      expect.objectContaining({
+        entityId: Number(dbActivity.id),
+        status: "error",
+        step: "generateStoryContent",
+      }),
+    );
   });
 
-  test("marks activity as failed when AI call throws", async () => {
+  test("marks activity as failed and streams error when AI call throws", async () => {
     const lesson = await lessonFixture({
       chapterId: chapter.id,
       organizationId,
@@ -217,6 +227,16 @@ describe(generateStoryContentStep, () => {
 
     const updated = await prisma.activity.findUniqueOrThrow({ where: { id: dbActivity.id } });
     expect(updated.generationStatus).toBe("failed");
+
+    const events = getStreamedEvents(writeMock);
+
+    expect(events).toContainEqual(
+      expect.objectContaining({
+        entityId: Number(dbActivity.id),
+        status: "error",
+        step: "generateStoryContent",
+      }),
+    );
   });
 
   test("streams started and completed events on success", async () => {
@@ -256,40 +276,6 @@ describe(generateStoryContentStep, () => {
       expect.objectContaining({
         entityId: storyActivity.id,
         status: "completed",
-        step: "generateStoryContent",
-      }),
-    );
-  });
-
-  test("streams error event when AI call fails", async () => {
-    const lesson = await lessonFixture({
-      chapterId: chapter.id,
-      organizationId,
-      title: `Story Stream Error ${randomUUID()}`,
-    });
-
-    await activityFixture({
-      generationStatus: "pending",
-      kind: "story",
-      language: "en",
-      lessonId: lesson.id,
-      organizationId,
-      title: `Story ${randomUUID()}`,
-    });
-
-    const activities = await fetchLessonActivities(lesson.id);
-    const storyActivity = activities.find((a) => a.kind === "story")!;
-
-    generateActivityStoryStepsMock.mockRejectedValue(new Error("AI failed"));
-
-    await generateStoryContentStep(activities);
-
-    const events = getStreamedEvents(writeMock);
-
-    expect(events).toContainEqual(
-      expect.objectContaining({
-        entityId: storyActivity.id,
-        status: "error",
         step: "generateStoryContent",
       }),
     );

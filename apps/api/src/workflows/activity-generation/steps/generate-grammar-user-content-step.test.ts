@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { fetchLessonActivities } from "@/workflows/_test-utils/fetch-lesson-activities";
 import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
 import { generateActivityGrammarUserContent } from "@zoonk/ai/tasks/activities/language/grammar-user-content";
+import { prisma } from "@zoonk/db";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
@@ -152,7 +153,7 @@ describe(generateGrammarUserContentStep, () => {
     expect(generateActivityGrammarUserContent).not.toHaveBeenCalled();
   });
 
-  test("streams error when AI fails", async () => {
+  test("marks activity as failed and streams error when AI fails", async () => {
     vi.mocked(generateActivityGrammarUserContent).mockRejectedValueOnce(new Error("AI error"));
 
     const lesson = await lessonFixture({
@@ -162,7 +163,7 @@ describe(generateGrammarUserContentStep, () => {
       title: `Grammar UserContent Fail ${randomUUID()}`,
     });
 
-    await activityFixture({
+    const dbActivity = await activityFixture({
       generationStatus: "pending",
       kind: "grammar",
       language: "en",
@@ -182,6 +183,9 @@ describe(generateGrammarUserContentStep, () => {
 
     expect(result).toEqual({ userContent: null });
 
+    const updated = await prisma.activity.findUniqueOrThrow({ where: { id: dbActivity.id } });
+    expect(updated.generationStatus).toBe("failed");
+
     const events = getStreamedEvents(writeMock);
 
     expect(events).toContainEqual(
@@ -189,7 +193,7 @@ describe(generateGrammarUserContentStep, () => {
     );
   });
 
-  test("streams error when AI returns empty result", async () => {
+  test("marks activity as failed and streams error when AI returns empty result", async () => {
     vi.mocked(generateActivityGrammarUserContent).mockResolvedValueOnce(null as never);
 
     const lesson = await lessonFixture({
@@ -199,7 +203,7 @@ describe(generateGrammarUserContentStep, () => {
       title: `Grammar UserContent Empty ${randomUUID()}`,
     });
 
-    await activityFixture({
+    const dbActivity = await activityFixture({
       generationStatus: "pending",
       kind: "grammar",
       language: "en",
@@ -218,6 +222,9 @@ describe(generateGrammarUserContentStep, () => {
     const result = await generateGrammarUserContentStep(activities, grammarContent);
 
     expect(result).toEqual({ userContent: null });
+
+    const updated = await prisma.activity.findUniqueOrThrow({ where: { id: dbActivity.id } });
+    expect(updated.generationStatus).toBe("failed");
 
     const events = getStreamedEvents(writeMock);
 
