@@ -1,6 +1,7 @@
 import { LoginRequired } from "@/components/auth/login-required";
 import { SubscriptionGate } from "@/components/subscription/subscription-gate";
 import { getActivityForGeneration } from "@/data/activities/get-activity-for-generation";
+import { getInitialGenerationPageStatus } from "@/lib/workflow/get-initial-generation-page-status";
 import { getSession } from "@zoonk/core/users/session/get";
 import {
   Container,
@@ -14,7 +15,7 @@ import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { parseBigIntId } from "@zoonk/utils/number";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { getExtracted } from "next-intl/server";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import { GenerationClient } from "./generation-client";
 
 export async function GenerateActivityContent({ params }: { params: Promise<{ id: string }> }) {
@@ -42,14 +43,12 @@ export async function GenerateActivityContent({ params }: { params: Promise<{ id
 
   const backLabel = t("Back to lesson");
 
+  const initialStatus = getInitialGenerationPageStatus({
+    generationStatus: activity.generationStatus,
+  });
+
   if (!session && !hasStarted) {
     return <LoginRequired backHref={backHref} backLabel={backLabel} title={t("Create Activity")} />;
-  }
-
-  if (activity.generationStatus === "completed") {
-    redirect(
-      `/b/${AI_ORG_SLUG}/c/${activity.lesson.chapter.course.slug}/ch/${activity.lesson.chapter.slug}/l/${activity.lesson.slug}/a/${activity.position}`,
-    );
   }
 
   return (
@@ -69,7 +68,7 @@ export async function GenerateActivityContent({ params }: { params: Promise<{ id
             chapterSlug={activity.lesson.chapter.slug}
             courseSlug={activity.lesson.chapter.course.slug}
             generationRunId={activity.generationRunId}
-            generationStatus={activity.generationStatus}
+            initialStatus={initialStatus}
             lessonId={activity.lesson.id}
             lessonSlug={activity.lesson.slug}
             position={activity.position}

@@ -5,6 +5,7 @@ import { getAiOrganization } from "@zoonk/e2e/helpers";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
+import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { normalizeString } from "@zoonk/utils/string";
 import { expect, test } from "./fixtures";
 
@@ -184,6 +185,34 @@ test.describe("Generate Chapter Page - No Subscription", () => {
 });
 
 test.describe("Generate Chapter Page - With Subscription", () => {
+  test("shows completion UI before redirecting when chapter is already ready", async ({ page }) => {
+    const { chapter, course, organizationId } = await createPendingChapter();
+    const uniqueId = randomUUID().slice(0, 8);
+
+    await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
+        isPublished: true,
+        organizationId,
+        slug: `e2e-ready-lesson-${uniqueId}`,
+        title: `E2E Ready Lesson ${uniqueId}`,
+      }),
+      prisma.chapter.update({
+        data: { generationStatus: "completed" },
+        where: { id: chapter.id },
+      }),
+    ]);
+
+    await page.goto(`/generate/ch/${chapter.id}`);
+
+    await expect(page.getByText(/your lessons are ready/i)).toBeVisible();
+    await expect(page.getByText(/taking you to your chapter/i)).toBeVisible();
+
+    await page.waitForURL(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}`, {
+      timeout: 10_000,
+    });
+  });
+
   test("shows generation UI and completes workflow", async ({
     userWithoutProgress,
     noProgressUser,
