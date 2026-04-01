@@ -1,6 +1,7 @@
 import { LoginRequired } from "@/components/auth/login-required";
 import { SubscriptionGate } from "@/components/subscription/subscription-gate";
 import { getLessonForGeneration } from "@/data/lessons/get-lesson-for-generation";
+import { getInitialGenerationPageStatus } from "@/lib/workflow/get-initial-generation-page-status";
 import { getSession } from "@zoonk/core/users/session/get";
 import {
   Container,
@@ -14,7 +15,7 @@ import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { parseNumericId } from "@zoonk/utils/number";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { getExtracted } from "next-intl/server";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import { GenerationClient } from "./generation-client";
 
 export async function GenerateLessonContent({ params }: { params: Promise<{ id: string }> }) {
@@ -39,22 +40,13 @@ export async function GenerateLessonContent({ params }: { params: Promise<{ id: 
 
   const backLabel = t("Back to chapter");
 
+  const initialStatus = getInitialGenerationPageStatus({
+    generationStatus: lesson.generationStatus,
+    isReadyForRedirect: lesson._count.activities > 0,
+  });
+
   if (!session && !hasStarted) {
     return <LoginRequired backHref={backHref} backLabel={backLabel} title={t("Create Lesson")} />;
-  }
-
-  /**
-   * Only redirect when the lesson has actually generated its activities.
-   * Without the activity count check, a redirect loop can occur: the lesson
-   * page redirects here when `activities.length === 0`, and this page redirects
-   * back when `generationStatus === "completed"`. This happens when Next.js
-   * serves a stale prefetched RSC payload for the lesson page that still
-   * shows zero activities even though they were created in the background.
-   */
-  if (lesson.generationStatus === "completed" && lesson._count.activities > 0) {
-    redirect(
-      `/b/${AI_ORG_SLUG}/c/${lesson.chapter.course.slug}/ch/${lesson.chapter.slug}/l/${lesson.slug}`,
-    );
   }
 
   return (
@@ -72,7 +64,7 @@ export async function GenerateLessonContent({ params }: { params: Promise<{ id: 
             chapterSlug={lesson.chapter.slug}
             courseSlug={lesson.chapter.course.slug}
             generationRunId={lesson.generationRunId}
-            generationStatus={lesson.generationStatus}
+            initialStatus={initialStatus}
             lessonId={lessonId}
             lessonSlug={lesson.slug}
           />

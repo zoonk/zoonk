@@ -258,6 +258,27 @@ test.describe("Generate Activity Page - No Subscription", () => {
 });
 
 test.describe("Generate Activity Page - With Subscription", () => {
+  test("shows completion UI before redirecting when activity is already ready", async ({
+    page,
+  }) => {
+    const { activity, chapter, course, lesson } = await createPendingActivity();
+
+    await prisma.activity.update({
+      data: { generationStatus: "completed" },
+      where: { id: activity.id },
+    });
+
+    await page.goto(`/generate/a/${activity.id}`);
+
+    await expect(page.getByText(/your activity is ready/i)).toBeVisible();
+    await expect(page.getByText(/taking you to your activity/i)).toBeVisible();
+
+    await page.waitForURL(
+      `/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}/a/${activity.position}`,
+      { timeout: 10_000 },
+    );
+  });
+
   test("shows generation UI and completes workflow", async ({
     userWithoutProgress,
     noProgressUser,

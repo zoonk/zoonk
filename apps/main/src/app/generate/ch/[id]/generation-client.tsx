@@ -11,12 +11,12 @@ import {
   GenerationTimelineSubtitle,
   GenerationTimelineTitle,
 } from "@/components/generation/generation-progress";
+import { type GenerationStatus } from "@/lib/workflow/generation-store";
 import { useAnimatedProgress } from "@/lib/workflow/use-animated-progress";
 import { useCompletionRedirect } from "@/lib/workflow/use-completion-redirect";
 import { useThinkingMessages } from "@/lib/workflow/use-thinking-messages";
 import { useWorkflowGeneration } from "@/lib/workflow/use-workflow-generation";
 import { CHAPTER_COMPLETION_STEP, type ChapterWorkflowStepName } from "@zoonk/core/workflows/steps";
-import { type GenerationStatus } from "@zoonk/db";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { API_URL } from "@zoonk/utils/url";
 import { useExtracted } from "next-intl";
@@ -27,20 +27,20 @@ export function GenerationClient({
   chapterSlug,
   courseSlug,
   generationRunId,
-  generationStatus,
+  initialStatus,
 }: {
   chapterId: number;
   chapterSlug: string;
   courseSlug: string;
   generationRunId: string | null;
-  generationStatus: GenerationStatus;
+  initialStatus: GenerationStatus;
 }) {
   const t = useExtracted();
 
   const generation = useWorkflowGeneration<ChapterWorkflowStepName>({
     completionStep: CHAPTER_COMPLETION_STEP,
     initialRunId: generationRunId,
-    initialStatus: generationStatus === "running" ? "streaming" : "idle",
+    initialStatus,
     statusUrl: `${API_URL}/v1/workflows/chapter-generation/status`,
     triggerBody: { chapterId },
     triggerUrl: `${API_URL}/v1/workflows/chapter-generation/trigger`,

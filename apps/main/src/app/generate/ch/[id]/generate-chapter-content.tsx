@@ -1,6 +1,7 @@
 import { LoginRequired } from "@/components/auth/login-required";
 import { SubscriptionGate } from "@/components/subscription/subscription-gate";
 import { getChapterForGeneration } from "@/data/chapters/get-chapter-for-generation";
+import { getInitialGenerationPageStatus } from "@/lib/workflow/get-initial-generation-page-status";
 import { getSession } from "@zoonk/core/users/session/get";
 import {
   Container,
@@ -14,7 +15,7 @@ import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { parseNumericId } from "@zoonk/utils/number";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { getExtracted } from "next-intl/server";
-import { notFound, redirect } from "next/navigation";
+import { notFound } from "next/navigation";
 import { GenerationClient } from "./generation-client";
 
 export async function GenerateChapterContent({ params }: { params: Promise<{ id: string }> }) {
@@ -39,20 +40,13 @@ export async function GenerateChapterContent({ params }: { params: Promise<{ id:
   const backHref = `/b/${AI_ORG_SLUG}/c/${chapter.course.slug}` as const;
   const backLabel = t("Back to course");
 
+  const initialStatus = getInitialGenerationPageStatus({
+    generationStatus: chapter.generationStatus,
+    isReadyForRedirect: chapter._count.lessons > 0,
+  });
+
   if (!session && !bypassAuth) {
     return <LoginRequired backHref={backHref} backLabel={backLabel} title={t("Create Chapter")} />;
-  }
-
-  /**
-   * Only redirect when the chapter has actually generated its lessons.
-   * Without the lesson count check, a redirect loop can occur: the chapter
-   * page redirects here when `lessons.length === 0`, and this page redirects
-   * back when `generationStatus === "completed"`. This happens when Next.js
-   * serves a stale prefetched RSC payload for the chapter page that still
-   * shows zero lessons even though they were created in the background.
-   */
-  if (chapter.generationStatus === "completed" && chapter._count.lessons > 0) {
-    redirect(`/b/${AI_ORG_SLUG}/c/${chapter.course.slug}/ch/${chapter.slug}`);
   }
 
   return (
@@ -73,7 +67,7 @@ export async function GenerateChapterContent({ params }: { params: Promise<{ id:
             chapterSlug={chapter.slug}
             courseSlug={chapter.course.slug}
             generationRunId={chapter.generationRunId}
-            generationStatus={chapter.generationStatus}
+            initialStatus={initialStatus}
           />
         </SubscriptionGate>
       </ContainerBody>
