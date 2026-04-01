@@ -202,9 +202,13 @@ async function completeReadingStep(page: Page, word1: string, word2: string): Pr
  * keeps the test aligned with the real UI instead of assuming answer controls are
  * always the first stable element to appear.
  */
-async function getVisibleReviewState(
-  page: Page,
-): Promise<"completed" | "pending" | "reading" | "vocab"> {
+async function getVisibleReviewState({
+  completionScoreText,
+  page,
+}: {
+  completionScoreText: string;
+  page: Page;
+}): Promise<"completed" | "pending" | "reading" | "vocab"> {
   if (await page.getByText(/translate this word/i).isVisible()) {
     return "vocab";
   }
@@ -213,7 +217,7 @@ async function getVisibleReviewState(
     return "reading";
   }
 
-  if (await page.getByRole("status").isVisible()) {
+  if (await page.getByText(completionScoreText, { exact: true }).isVisible()) {
     return "completed";
   }
 
@@ -221,18 +225,43 @@ async function getVisibleReviewState(
 }
 
 /**
+ * `expect.poll()` only tells us that a state became visible at least once.
+ * Returning the state from the successful poll avoids a second read that can
+ * land in the middle of the same transition we just waited through.
+ */
+async function waitForVisibleReviewState({
+  completionScoreText,
+  page,
+}: {
+  completionScoreText: string;
+  page: Page;
+}): Promise<"completed" | "reading" | "vocab"> {
+  let reviewState: "completed" | "pending" | "reading" | "vocab" = "pending";
+
+  await expect(async () => {
+    reviewState = await getVisibleReviewState({ completionScoreText, page });
+    expect(reviewState).not.toBe("pending");
+  }).toPass({ timeout: 10_000 });
+
+  if (reviewState === "pending") {
+    throw new Error("Expected review state to be visible");
+  }
+
+  return reviewState;
+}
+
+/**
  * Completes a single step in the review. Steps are shuffled, so we wait for the
  * current visible screen and handle that state directly.
  */
 async function completeAnyStep(
+  completionScoreText: string,
   page: Page,
   translationToWord: Record<string, string>,
   sentenceWord1: string,
   sentenceWord2: string,
 ): Promise<boolean> {
-  await expect.poll(() => getVisibleReviewState(page), { timeout: 10_000 }).not.toBe("pending");
-
-  const reviewState = await getVisibleReviewState(page);
+  const reviewState = await waitForVisibleReviewState({ completionScoreText, page });
 
   if (reviewState === "completed") {
     return false;
@@ -248,7 +277,7 @@ async function completeAnyStep(
     return true;
   }
 
-  throw new Error(`Unexpected review state: ${reviewState}`);
+  throw new Error("Unexpected review state");
 }
 
 /**
@@ -257,12 +286,14 @@ async function completeAnyStep(
  * without relying on an `await` loop.
  */
 async function completeRemainingReviewSteps({
+  completionScoreText,
   page,
   remainingStepCount,
   sentenceWord1,
   sentenceWord2,
   translationToWord,
 }: {
+  completionScoreText: string;
   page: Page;
   remainingStepCount: number;
   sentenceWord1: string;
@@ -274,6 +305,7 @@ async function completeRemainingReviewSteps({
   }
 
   const completedStep = await completeAnyStep(
+    completionScoreText,
     page,
     translationToWord,
     sentenceWord1,
@@ -285,6 +317,7 @@ async function completeRemainingReviewSteps({
   }
 
   await completeRemainingReviewSteps({
+    completionScoreText,
     page,
     remainingStepCount: remainingStepCount - 1,
     sentenceWord1,
@@ -296,6 +329,7 @@ async function completeRemainingReviewSteps({
 test.describe("Review Step", () => {
   test("complete all review steps to reach completion screen", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
+    const completionScoreText = "5/5";
     const sentenceWord1 = `Hola-${uniqueId}`;
     const sentenceWord2 = `amigo-${uniqueId}`;
 
@@ -325,6 +359,7 @@ test.describe("Review Step", () => {
     // Steps are shuffled, so complete each step by detecting its type.
     // 5 total steps: 4 vocabulary + 1 reading
     await completeRemainingReviewSteps({
+      completionScoreText,
       page,
       remainingStepCount: 5,
       sentenceWord1,
@@ -334,7 +369,7 @@ test.describe("Review Step", () => {
 
     // Completion screen
     await expect(page.getByRole("status")).toBeVisible();
-    await expect(page.getByText("5/5")).toBeVisible();
+    await expect(page.getByText(completionScoreText, { exact: true })).toBeVisible();
     await expect(page.getByText(/correct/i)).toBeVisible();
   });
 });
