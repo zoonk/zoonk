@@ -12,7 +12,8 @@ import { handleActivityFailureStep } from "./handle-failure-step";
  *
  * - Position 0: static intro step (scene setup + metric definitions)
  * - Positions 1..N: story decision steps (situation + choices)
- * - Position N+1: static debrief step (outcomes + concept reveals)
+ * - Position N+1: static outcome step (narrative results + final metrics)
+ * - Position N+2: static debrief step (hidden concept reveals)
  */
 function buildStoryStepRecords(
   activityId: number,
@@ -42,26 +43,38 @@ function buildStoryStepRecords(
     position: index + 1,
   }));
 
-  const debriefRecord = {
+  const outcomeRecord = {
     activityId,
     content: assertStepContent("static", {
-      debrief: debriefData.debrief,
+      metrics: storySteps.metrics,
       outcomes: debriefData.outcomes,
-      variant: "storyDebrief" as const,
+      variant: "storyOutcome" as const,
     }),
     isPublished: true,
     kind: "static" as const,
     position: storySteps.steps.length + 1,
   };
 
-  return [introRecord, ...decisionRecords, debriefRecord];
+  const debriefRecord = {
+    activityId,
+    content: assertStepContent("static", {
+      debrief: debriefData.debrief,
+      variant: "storyDebrief" as const,
+    }),
+    isPublished: true,
+    kind: "static" as const,
+    position: storySteps.steps.length + 2,
+  };
+
+  return [introRecord, ...decisionRecords, outcomeRecord, debriefRecord];
 }
 
 /**
  * Persists all generated story data in one transaction:
  * - Static intro step with metrics
  * - Interactive decision steps with choices and consequences
- * - Static debrief step with outcomes and concept reveals
+ * - Static outcome step with narrative results and final metrics
+ * - Static debrief step with hidden concept reveals
  * - Marks the activity as completed
  *
  * This is the single save point for a story entity.

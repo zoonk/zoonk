@@ -136,8 +136,8 @@ describe(saveStoryActivityStep, () => {
       }),
     ]);
 
-    // 1 intro + 2 decision steps + 1 debrief = 4
-    expect(dbSteps).toHaveLength(4);
+    // 1 intro + 2 decision steps + 1 outcome + 1 debrief = 5
+    expect(dbSteps).toHaveLength(5);
 
     // Intro: static with storyIntro variant at position 0
     expect(dbSteps[0]?.kind).toBe("static");
@@ -150,10 +150,15 @@ describe(saveStoryActivityStep, () => {
     expect(dbSteps[2]?.kind).toBe("story");
     expect(dbSteps[2]?.position).toBe(2);
 
-    // Debrief: static with storyDebrief variant at position 3
+    // Outcome: static with storyOutcome variant at position 3
     expect(dbSteps[3]?.kind).toBe("static");
     expect(dbSteps[3]?.position).toBe(3);
-    expect(getString(dbSteps[3]?.content, "variant")).toBe("storyDebrief");
+    expect(getString(dbSteps[3]?.content, "variant")).toBe("storyOutcome");
+
+    // Debrief: static with storyDebrief variant at position 4
+    expect(dbSteps[4]?.kind).toBe("static");
+    expect(dbSteps[4]?.position).toBe(4);
+    expect(getString(dbSteps[4]?.content, "variant")).toBe("storyDebrief");
 
     // All steps are published
     for (const step of dbSteps) {

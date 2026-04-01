@@ -330,16 +330,37 @@ describe("step content contracts", () => {
     });
   });
 
+  describe("static storyOutcome", () => {
+    test("parses outcome with metrics", () => {
+      const content = parseStepContent("static", {
+        metrics: ["Production", "Morale"],
+        outcomes: [
+          { minStrongChoices: 4, narrative: "Your factory thrives.", title: "Master Manager" },
+          { minStrongChoices: 0, narrative: "Things fell apart.", title: "Learning Moment" },
+        ],
+        variant: "storyOutcome",
+      });
+
+      expect(content.variant).toBe("storyOutcome");
+    });
+
+    test("rejects negative minStrongChoices", () => {
+      expect(() =>
+        parseStepContent("static", {
+          metrics: ["Production"],
+          outcomes: [{ minStrongChoices: -1, narrative: "Bad.", title: "Bad" }],
+          variant: "storyOutcome",
+        }),
+      ).toThrow();
+    });
+  });
+
   describe("static storyDebrief", () => {
-    test("parses debrief with outcomes", () => {
+    test("parses debrief with concepts", () => {
       const content = parseStepContent("static", {
         debrief: [
           { explanation: "When you chose X, you experienced Y.", name: "Kanban" },
           { explanation: "Pulling work based on demand.", name: "Pull System" },
-        ],
-        outcomes: [
-          { minStrongChoices: 4, narrative: "Your factory thrives.", title: "Master Manager" },
-          { minStrongChoices: 0, narrative: "Things fell apart.", title: "Learning Moment" },
         ],
         variant: "storyDebrief",
       });
@@ -347,11 +368,11 @@ describe("step content contracts", () => {
       expect(content.variant).toBe("storyDebrief");
     });
 
-    test("rejects negative minStrongChoices", () => {
+    test("rejects outcomes in debrief", () => {
       expect(() =>
         parseStepContent("static", {
           debrief: [{ explanation: "Test.", name: "Concept" }],
-          outcomes: [{ minStrongChoices: -1, narrative: "Bad.", title: "Bad" }],
+          outcomes: [{ minStrongChoices: 0, narrative: "Bad.", title: "Bad" }],
           variant: "storyDebrief",
         }),
       ).toThrow();

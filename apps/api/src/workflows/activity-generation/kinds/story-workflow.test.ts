@@ -147,8 +147,8 @@ describe("story activity workflow", () => {
       where: { activityId: storyActivity.id },
     });
 
-    // 1 intro + 2 decision steps + 1 debrief = 4
-    expect(steps).toHaveLength(4);
+    // 1 intro + 2 decision steps + 1 outcome + 1 debrief = 5
+    expect(steps).toHaveLength(5);
 
     // Intro step: static with storyIntro variant
     expect(steps[0]?.kind).toBe("static");
@@ -161,10 +161,15 @@ describe("story activity workflow", () => {
     expect(steps[2]?.kind).toBe("story");
     expect(steps[2]?.position).toBe(2);
 
-    // Debrief step: static with storyDebrief variant
+    // Outcome step: static with storyOutcome variant
     expect(steps[3]?.kind).toBe("static");
     expect(steps[3]?.position).toBe(3);
-    expect(getString(steps[3]?.content, "variant")).toBe("storyDebrief");
+    expect(getString(steps[3]?.content, "variant")).toBe("storyOutcome");
+
+    // Debrief step: static with storyDebrief variant
+    expect(steps[4]?.kind).toBe("static");
+    expect(steps[4]?.position).toBe(4);
+    expect(getString(steps[4]?.content, "variant")).toBe("storyDebrief");
 
     for (const step of steps) {
       expect(step.isPublished).toBe(true);

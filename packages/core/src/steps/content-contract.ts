@@ -127,13 +127,24 @@ const staticStoryIntroContentSchema = z
   .strict();
 
 /**
+ * Outcome screen for a story activity (static step, second-to-last position).
+ * Shows the narrative result of the player's decisions alongside final metric values.
+ */
+const staticStoryOutcomeContentSchema = z
+  .object({
+    metrics: z.array(z.string()).min(1),
+    outcomes: z.array(storyOutcomeSchema).min(1),
+    variant: z.literal("storyOutcome"),
+  })
+  .strict();
+
+/**
  * Debrief screen for a story activity (static step, last position).
- * Reveals hidden concepts and shows outcome based on player's choices.
+ * Reveals the hidden concepts the player practiced through the story.
  */
 const staticStoryDebriefContentSchema = z
   .object({
     debrief: z.array(storyDebriefConceptSchema).min(1),
-    outcomes: z.array(storyOutcomeSchema).min(1),
     variant: z.literal("storyDebrief"),
   })
   .strict();
@@ -143,6 +154,7 @@ const staticContentSchema = z.discriminatedUnion("variant", [
   staticGrammarExampleContentSchema,
   staticGrammarRuleContentSchema,
   staticStoryIntroContentSchema,
+  staticStoryOutcomeContentSchema,
   staticStoryDebriefContentSchema,
 ]);
 

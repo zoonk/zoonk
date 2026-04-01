@@ -69,7 +69,11 @@ function StaticStepContent({ step }: { step: SerializedStep }) {
     return <GrammarRuleVariant ruleName={content.ruleName} ruleSummary={content.ruleSummary} />;
   }
 
-  if (content.variant === "storyIntro" || content.variant === "storyDebrief") {
+  if (
+    content.variant === "storyIntro" ||
+    content.variant === "storyOutcome" ||
+    content.variant === "storyDebrief"
+  ) {
     return null;
   }
 
