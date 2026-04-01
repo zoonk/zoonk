@@ -150,6 +150,31 @@ describe(computeLocalCompletion, () => {
       expect(completion.energyDelta).toBe(3);
     });
 
+    test("detects story activity when story steps are preceded by static intro", () => {
+      const steps = [
+        buildStep({
+          content: {
+            intro: "You are a manager.",
+            metrics: ["Production", "Morale"],
+            variant: "storyIntro" as const,
+          },
+          id: "intro",
+          kind: "static",
+          position: 0,
+        }),
+        buildStoryStep("s1", 1),
+        buildStoryStep("s2", 2),
+      ];
+
+      const results: Record<string, StepResult> = {
+        s1: buildStoryResult("s1", "1a"),
+        s2: buildStoryResult("s2", "1b"),
+      };
+
+      const completion = computeLocalCompletion(buildState({ results, steps }));
+      expect(completion.brainPower).toBe(100);
+    });
+
     test("adds story BP to existing totalBrainPower", () => {
       const steps = [buildStoryStep("s1", 0)];
       const results: Record<string, StepResult> = {

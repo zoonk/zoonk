@@ -17,6 +17,7 @@ function buildOptions(overrides: Partial<Parameters<typeof usePlayerKeyboard>[0]
     onNext: null as (() => void) | null,
     onRestart: vi.fn(),
     phase: "playing" as PlayerPhase,
+    storyStaticVariant: null as Parameters<typeof usePlayerKeyboard>[0]["storyStaticVariant"],
     ...overrides,
   };
 }
@@ -80,6 +81,27 @@ describe(usePlayerKeyboard, () => {
       expect(opts.onEscape).toHaveBeenCalledOnce();
       expect(opts.onCheck).not.toHaveBeenCalled();
       expect(opts.onContinue).not.toHaveBeenCalled();
+    });
+  });
+
+  describe("Enter key — story static variants", () => {
+    test("calls onNavigateNext on story intro", () => {
+      const opts = buildOptions({ phase: "playing", storyStaticVariant: "storyIntro" });
+      renderHook(() => usePlayerKeyboard(opts));
+
+      fireKey("Enter");
+
+      expect(opts.onNavigateNext).toHaveBeenCalledOnce();
+      expect(opts.onCheck).not.toHaveBeenCalled();
+    });
+
+    test("calls onNavigateNext on story outcome", () => {
+      const opts = buildOptions({ phase: "playing", storyStaticVariant: "storyOutcome" });
+      renderHook(() => usePlayerKeyboard(opts));
+
+      fireKey("Enter");
+
+      expect(opts.onNavigateNext).toHaveBeenCalledOnce();
     });
   });
 

@@ -136,8 +136,8 @@ describe(saveStoryActivityStep, () => {
       }),
     ]);
 
-    // 1 intro + 2 decision steps + 1 outcome + 1 debrief = 5
-    expect(dbSteps).toHaveLength(5);
+    // 1 intro + 2 decision steps + 1 outcome + 2 debrief concepts = 6
+    expect(dbSteps).toHaveLength(6);
 
     // Intro: static with storyIntro variant at position 0
     expect(dbSteps[0]?.kind).toBe("static");
@@ -155,10 +155,16 @@ describe(saveStoryActivityStep, () => {
     expect(dbSteps[3]?.position).toBe(3);
     expect(getString(dbSteps[3]?.content, "variant")).toBe("storyOutcome");
 
-    // Debrief: static with storyDebrief variant at position 4
+    // Debrief concepts: individual text steps at positions 4 and 5
     expect(dbSteps[4]?.kind).toBe("static");
     expect(dbSteps[4]?.position).toBe(4);
-    expect(getString(dbSteps[4]?.content, "variant")).toBe("storyDebrief");
+    expect(getString(dbSteps[4]?.content, "variant")).toBe("text");
+    expect(getString(dbSteps[4]?.content, "title")).toBe("Crisis Communication");
+
+    expect(dbSteps[5]?.kind).toBe("static");
+    expect(dbSteps[5]?.position).toBe(5);
+    expect(getString(dbSteps[5]?.content, "variant")).toBe("text");
+    expect(getString(dbSteps[5]?.content, "title")).toBe("Supply Chain Resilience");
 
     // All steps are published
     for (const step of dbSteps) {

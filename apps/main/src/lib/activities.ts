@@ -4,6 +4,7 @@ import {
   BookTextIcon,
   BracesIcon,
   CircleHelpIcon,
+  DramaIcon,
   HeadphonesIcon,
   LanguagesIcon,
   LayersIcon,
@@ -27,6 +28,7 @@ export async function getActivityKinds(): Promise<{ key: ActivityKind; label: st
     { key: "reading", label: t("Reading") },
     { key: "listening", label: t("Listening") },
     { key: "review", label: t("Review") },
+    { key: "story", label: t("Story") },
   ];
 }
 
@@ -124,7 +126,7 @@ const ACTIVITY_ICONS: Record<ActivityKind, LucideIcon> = {
   quiz: CircleHelpIcon,
   reading: BookTextIcon,
   review: RotateCcwIcon,
-  story: BookOpenIcon,
+  story: DramaIcon,
   translation: LanguagesIcon,
   vocabulary: LayersIcon,
 };

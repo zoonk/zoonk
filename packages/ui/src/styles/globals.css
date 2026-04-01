@@ -65,6 +65,7 @@
   --animate-dot-pulse: dot-pulse 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
   --animate-shimmer-text: shimmer-text 3s ease-in-out infinite;
   --animate-placeholder-cycle: placeholder-cycle 64s both infinite;
+  --animate-pulse-scale: pulse-scale 300ms ease-out;
 }
 
 :root {
@@ -315,6 +316,18 @@
   }
   80% {
     transform: translateX(3px);
+  }
+}
+
+@keyframes pulse-scale {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.15);
+  }
+  100% {
+    transform: scale(1);
   }
 }
 

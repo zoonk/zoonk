@@ -10,6 +10,7 @@ import { CorrectAnswerBlock, IncorrectAnswerBlock } from "./feedback-answer-bloc
 import { PlayAudioButton } from "./play-audio-button";
 import { ResultAnnouncement } from "./result-announcement";
 import { RomanizationText } from "./romanization-text";
+import { StoryFeedbackContent } from "./story-feedback-content";
 
 function FeedbackScreen({ className, ...props }: React.ComponentProps<"div">) {
   return (
@@ -76,13 +77,7 @@ function getFeedbackAudioUrl(step?: SerializedStep): string | null {
   return null;
 }
 
-export function FeedbackScreenContent({
-  result,
-  step,
-}: {
-  result: StepResult;
-  step?: SerializedStep;
-}) {
+function StandardFeedbackContent({ result, step }: { result: StepResult; step?: SerializedStep }) {
   const t = useExtracted();
   const replaceName = useReplaceName();
   const { isCorrect, feedback: rawFeedback, correctAnswer } = result.result;
@@ -127,4 +122,18 @@ export function FeedbackScreenContent({
       <ResultAnnouncement isCorrect={isCorrect} />
     </FeedbackScreen>
   );
+}
+
+export function FeedbackScreenContent({
+  result,
+  step,
+}: {
+  result: StepResult;
+  step?: SerializedStep;
+}) {
+  if (result.answer?.kind === "story") {
+    return <StoryFeedbackContent result={result} step={step} />;
+  }
+
+  return <StandardFeedbackContent result={result} step={step} />;
 }

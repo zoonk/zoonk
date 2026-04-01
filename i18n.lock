@@ -206,6 +206,7 @@ checksums:
     Level%20progress/singular: 286f095acd17006787247db0b69270e3
     "%7Bvalue%7D%20BP%20to%20level%20up/singular": 755c2fe6e435645cb35b57bf92af09d3
     "%7Bcolor%7D%20Belt%20%E2%80%94%20Level%20%7Blevel%7D/singular": 367f2e902d39199c8507aaad09e8907a
+    Answer%20options/singular: acb0b378cefcb8a8d50a7c43ce77ae39
     Next/singular: 89ddbcf710eba274963494f312bdc8a9
     Login/singular: f4f219abeb5a465ecb1c7efaf50246de
     All%20Activities/singular: 9eee26b7ca58444c6d0db6bcd7ea7eda
@@ -234,7 +235,6 @@ checksums:
     Translate%20this%20sentence%3A/singular: f69b2eec827b3a74bafca50e9058716f
     What%20do%20you%20hear%3F/singular: 9527d094d65c550a40108673bc67744f
     All%20pairs%20matched.%20Press%20Check%20to%20continue./singular: 0663e33ba7db53b298c5f50a2f3c7ae8
-    Answer%20options/singular: acb0b378cefcb8a8d50a7c43ce77ae39
     Play%20pronunciation/singular: 623289cc3217c5404e3d48a78dd0456f
     Pause%20pronunciation/singular: e24b23e108f8efb6f2eea709e5f540e9
     Previous%20step/singular: 96b31ec6dab003c2bbfbbca10a8a9826
@@ -243,6 +243,7 @@ checksums:
     Close/singular: 2c2e22f8424a1031de89063bd0022e16
     Activity%20progress/singular: 8ff2fb7372b8a2525f2955c851c4fa42
     Continue/singular: 3cfba90b4600131e82fc4260c568d044
+    Begin/singular: cc2a17a662cb60dd2d8335a2e8440997
     Check/singular: 023cc2ba432775c38e3efc004ad7b9ef
     BP/singular: 842ed01b3a4d0efa6fe96ae8c595726c
     Energy/singular: 958809db5050650b97519e0f1f3e1951
@@ -250,6 +251,10 @@ checksums:
     Drag%20items%20into%20the%20correct%20order/singular: 8ccab82ee3ba645ac23da4ca14a0dd2a
     Sort%20items/singular: 3b1072a596203b5acdc5718d38161392
     Correct%20order%3A/singular: df3f446653ec8cde9c29d8d5912636ef
+    Briefing/singular: 557fdc15cf73ec0d6d9eb4041340498a
+    Metric%20changes/singular: b47eb6ffcf56070345e7783cb048b563
+    Current%20status/singular: b9c587d6cd7ee919b59e75066fa4675f
+    Final%20status/singular: 62c3befb232a9d290e74b84d6ddbf22c
     Translate%20this%20word%3A/singular: 05fede3c583e9ea39f27ac9fdf17fcc3
     Visual%20content/singular: 38b0261c39ebe4d775867363482225d8
     Legend/singular: 3b588fbd2fe35ded6ca38334e15400c3
@@ -674,6 +679,7 @@ checksums:
     Translation/singular: 9276816e7bc1a6ff00f388faa0863986
     Listening/singular: 9e680c44cd88a178b953349ed8881ef2
     Learn%20new%20%7Btopic%7D%20words%20with%20flashcards%20%E2%80%94%20see%20each%20word%2C%20its%20translation%2C%20and%20pronunciation./singular: 923933ba274d61fc2ffb279cf64aceba
+    Story/singular: fabac3f62af801d429e2cd7115bf14c9
     Review%20everything%20you%20learned%20about%20%7Btopic%7D%20with%20a%20comprehensive%20quiz./singular: 8acf9006cabdcbaac217c7565943f068
     Explanation/singular: f6b595df4ffb1a5b0cbbe1dda5993522
     Sharpen%20your%20%7Btopic%7D%20listening%20skills%20by%20translating%20audio%20sentences./singular: b624ceffbbfc91a29cec43a0037b067f

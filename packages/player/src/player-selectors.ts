@@ -66,6 +66,178 @@ export function getSelectedAnswer(state: PlayerState) {
   return state.selectedAnswers[currentStep.id];
 }
 
+export type StoryStaticVariant = "storyIntro" | "storyOutcome";
+
+/** Returns true when the activity contains at least one story decision step. */
+export function getIsStoryActivity(state: PlayerState): boolean {
+  return state.steps.some((step) => step.kind === "story");
+}
+
+/**
+ * Returns the intro text from the storyIntro step, or null if the current
+ * step is not a story decision step.
+ *
+ * Used by the sticky header to show a briefing popover only during
+ * decision-making, so players can recall the premise without navigating back.
+ */
+export function getStoryBriefingText(state: PlayerState): string | null {
+  const currentStep = getCurrentStep(state);
+
+  if (!currentStep || currentStep.kind !== "story") {
+    return null;
+  }
+
+  const introStep = state.steps.find((step) => step.kind === "static");
+
+  if (!introStep) {
+    return null;
+  }
+
+  const content = parseStepContent("static", introStep.content);
+
+  if (content.variant !== "storyIntro") {
+    return null;
+  }
+
+  return content.intro;
+}
+
+/**
+ * Returns the story-specific static variant of the current step, or null
+ * if the current step is not a story static screen.
+ *
+ * Used by PlayerShell to pick the correct bottom bar (Begin, Continue)
+ * and by keyboard handlers for Enter key behavior.
+ */
+export function getStoryStaticVariant(state: PlayerState): StoryStaticVariant | null {
+  const step = getCurrentStep(state);
+
+  if (!step || step.kind !== "static") {
+    return null;
+  }
+
+  const content = parseStepContent("static", step.content);
+
+  if (content.variant === "storyIntro" || content.variant === "storyOutcome") {
+    return content.variant;
+  }
+
+  return null;
+}
+
+export type StoryMetric = {
+  metric: string;
+  value: number;
+};
+
+const METRIC_STARTING_VALUE = 50;
+const METRIC_POSITIVE_DELTA = 15;
+const METRIC_NEGATIVE_DELTA = -15;
+
+/**
+ * Computes the current value of each story metric by walking all completed
+ * story step results.
+ *
+ * Reads metric names from the storyIntro step (first step), then for each
+ * answered story step, looks up the selected choice's metricEffects and
+ * accumulates deltas (positive = +15, neutral = 0, negative = -15) starting
+ * from 50.
+ */
+/**
+ * Finds the storyIntro step and returns its metric names, or null if
+ * no intro step exists.
+ */
+function findIntroMetricNames(steps: SerializedStep[]): string[] | null {
+  const introStep = steps.find((step) => step.kind === "static");
+
+  if (!introStep) {
+    return null;
+  }
+
+  const content = parseStepContent("static", introStep.content);
+
+  if (content.variant !== "storyIntro") {
+    return null;
+  }
+
+  return content.metrics;
+}
+
+/**
+ * Extracts the selected choice from a story step result, if available.
+ * Returns null when the step has no result or the choice ID doesn't match.
+ */
+function findSelectedChoice(
+  step: SerializedStep,
+  results: Record<string, { answer?: { kind: string; selectedChoiceId?: string } }>,
+) {
+  const result = results[step.id];
+  const answer = result?.answer;
+
+  if (!answer || answer.kind !== "story" || !answer.selectedChoiceId) {
+    return null;
+  }
+
+  const choiceId = answer.selectedChoiceId;
+  const content = parseStepContent("story", step.content);
+
+  return content.choices.find((option) => option.id === choiceId) ?? null;
+}
+
+/**
+ * Applies a single story step's metric effects to the running totals.
+ */
+function applyMetricEffects(
+  metricValues: Map<string, number>,
+  step: SerializedStep,
+  results: Record<string, { answer?: { kind: string; selectedChoiceId?: string } }>,
+): void {
+  const choice = findSelectedChoice(step, results);
+
+  if (!choice) {
+    return;
+  }
+
+  for (const effect of choice.metricEffects) {
+    const current = metricValues.get(effect.metric) ?? METRIC_STARTING_VALUE;
+    const delta = getMetricDelta(effect.effect);
+    metricValues.set(effect.metric, current + delta);
+  }
+}
+
+export function getStoryMetrics(state: PlayerState): StoryMetric[] {
+  const metricNames = findIntroMetricNames(state.steps);
+
+  if (!metricNames) {
+    return [];
+  }
+
+  const metricValues = new Map(metricNames.map((name) => [name, METRIC_STARTING_VALUE]));
+
+  const storySteps = state.steps.filter((step) => step.kind === "story");
+
+  for (const step of storySteps) {
+    applyMetricEffects(metricValues, step, state.results);
+  }
+
+  return metricNames.map((name) => ({
+    metric: name,
+    value: metricValues.get(name) ?? METRIC_STARTING_VALUE,
+  }));
+}
+
+function getMetricDelta(effect: "negative" | "neutral" | "positive"): number {
+  if (effect === "positive") {
+    return METRIC_POSITIVE_DELTA;
+  }
+
+  if (effect === "negative") {
+    return METRIC_NEGATIVE_DELTA;
+  }
+
+  return 0;
+}
+
 export type PreloadableImage = {
   kind: "selectImage" | "visual";
   url: string;

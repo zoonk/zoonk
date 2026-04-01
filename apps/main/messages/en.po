@@ -70,6 +70,12 @@ msgctxt "xiSVL4"
 msgid "{color} Belt — Level {level}"
 msgstr "{color} Belt — Level {level}"
 
+#: ../../packages/player/src/components/choice-step-layout.tsx
+#: ../../packages/player/src/components/translation-step.tsx
+msgctxt "akd+cv"
+msgid "Answer options"
+msgstr "Answer options"
+
 #: ../../packages/player/src/components/completion-auth-branch.tsx
 msgctxt "9+Ddtu"
 msgid "Next"
@@ -226,12 +232,6 @@ msgctxt "ja1JDt"
 msgid "All pairs matched. Press Check to continue."
 msgstr "All pairs matched. Press Check to continue."
 
-#: ../../packages/player/src/components/multiple-choice-step.tsx
-#: ../../packages/player/src/components/translation-step.tsx
-msgctxt "akd+cv"
-msgid "Answer options"
-msgstr "Answer options"
-
 #: ../../packages/player/src/components/play-audio-button.tsx
 msgctxt "lYWSeP"
 msgid "Play pronunciation"
@@ -278,6 +278,11 @@ msgid "Continue"
 msgstr "Continue"
 
 #: ../../packages/player/src/components/player-shell.tsx
+msgctxt "PVe26p"
+msgid "Begin"
+msgstr "Begin"
+
+#: ../../packages/player/src/components/player-shell.tsx
 msgctxt "RDZVQL"
 msgid "Check"
 msgstr "Check"
@@ -315,6 +320,26 @@ msgstr "Sort items"
 msgctxt "VA8c/A"
 msgid "Correct order:"
 msgstr "Correct order:"
+
+#: ../../packages/player/src/components/story-briefing-popover.tsx
+msgctxt "XyeasA"
+msgid "Briefing"
+msgstr "Briefing"
+
+#: ../../packages/player/src/components/story-feedback-content.tsx
+msgctxt "jSeUY4"
+msgid "Metric changes"
+msgstr "Metric changes"
+
+#: ../../packages/player/src/components/story-intro-content.tsx
+msgctxt "pFm27r"
+msgid "Current status"
+msgstr "Current status"
+
+#: ../../packages/player/src/components/story-outcome-content.tsx
+msgctxt "ZJ5JQC"
+msgid "Final status"
+msgstr "Final status"
 
 #: ../../packages/player/src/components/translation-step.tsx
 msgctxt "MxLxkr"
@@ -2524,6 +2549,11 @@ msgstr "Listening"
 msgctxt "3198Ew"
 msgid "Learn new {topic} words with flashcards — see each word, its translation, and pronunciation."
 msgstr "Learn new {topic} words with flashcards — see each word, its translation, and pronunciation."
+
+#: src/lib/activities.ts
+msgctxt "Bfq+7w"
+msgid "Story"
+msgstr "Story"
 
 #: src/lib/activities.ts
 msgctxt "bzFQEy"

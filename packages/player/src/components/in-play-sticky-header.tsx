@@ -3,16 +3,19 @@
 import { type PlayerRoute } from "../player-context";
 import { PlayerCloseLink, PlayerHeader, PlayerStepFraction } from "./player-header";
 import { PlayerProgressBar } from "./player-progress-bar";
+import { StoryBriefingPopover } from "./story-briefing-popover";
 
 export function InPlayStickyHeader({
   currentStepIndex,
   lessonHref,
   progressValue,
+  storyBriefing,
   totalSteps,
 }: {
   currentStepIndex: number;
   lessonHref: PlayerRoute;
   progressValue: number;
+  storyBriefing: string | null;
   totalSteps: number;
 }) {
   return (
@@ -27,6 +30,12 @@ export function InPlayStickyHeader({
             </PlayerStepFraction>
           </div>
         </div>
+
+        {storyBriefing ? (
+          <StoryBriefingPopover intro={storyBriefing} />
+        ) : (
+          <div className="size-9" />
+        )}
       </PlayerHeader>
 
       <PlayerProgressBar value={progressValue} />

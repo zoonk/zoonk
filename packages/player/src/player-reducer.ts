@@ -1,3 +1,4 @@
+import { parseStepContent } from "@zoonk/core/steps/content-contract";
 import { type AnswerResult } from "./check-answer";
 import { type CompletionResult } from "./completion-input-schema";
 import { computeLocalCompletion } from "./player-completion";
@@ -145,6 +146,21 @@ function handleContinue(state: PlayerState): PlayerState {
   };
 }
 
+/**
+ * Checks whether the current step is a story static variant (intro, outcome,
+ * debrief). These steps allow forward-only navigation via the "Begin" /
+ * "Continue" buttons but not arrow-key navigation.
+ */
+function isStoryStaticStep(step: SerializedStep | undefined): boolean {
+  if (!step || step.kind !== "static") {
+    return false;
+  }
+
+  const content = parseStepContent("static", step.content);
+
+  return content.variant === "storyIntro" || content.variant === "storyOutcome";
+}
+
 function handleNavigateStep(
   state: PlayerState,
   action: Extract<PlayerAction, { type: "NAVIGATE_STEP" }>,
@@ -154,6 +170,21 @@ function handleNavigateStep(
   }
 
   const currentStep = state.steps[state.currentStepIndex];
+
+  /**
+   * Story static steps (intro, outcome, debrief) allow forward-only
+   * navigation via the bottom bar action buttons. They don't participate
+   * in arrow-key navigation handled by `isStaticNavigationStep`.
+   */
+  if (isStoryStaticStep(currentStep) && action.direction === "next") {
+    const nextIndex = state.currentStepIndex + 1;
+
+    if (nextIndex >= state.steps.length) {
+      return completeWith(state);
+    }
+
+    return { ...state, currentStepIndex: nextIndex, stepStartedAt: Date.now() };
+  }
 
   if (!isStaticNavigationStep(currentStep)) {
     return state;
