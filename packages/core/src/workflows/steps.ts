@@ -51,6 +51,7 @@ export const LESSON_STEPS = [
   "getLesson",
   "setLessonAsRunning",
   "determineLessonKind",
+  "determineAppliedActivity",
   "updateLessonKind",
   "removeNonLanguageLesson",
   "generateCustomActivities",
@@ -73,6 +74,8 @@ export const ACTIVITY_STEPS = [
   "generateExplanationContent",
   "generateQuizContent",
   "generatePracticeContent",
+  "generateStoryContent",
+  "generateStoryDebrief",
   "generateGrammarContent",
   "generateGrammarUserContent",
   "generateGrammarRomanization",
@@ -100,6 +103,7 @@ export const ACTIVITY_STEPS = [
   "saveReadingActivity",
   "saveQuizActivity",
   "savePracticeActivity",
+  "saveStoryActivity",
   "saveExplanationActivity",
   "saveCustomActivity",
   "saveGrammarActivity",
@@ -120,6 +124,7 @@ type ActivityCompletionStep = Extract<
   | "savePracticeActivity"
   | "saveQuizActivity"
   | "saveReadingActivity"
+  | "saveStoryActivity"
   | "saveVocabularyActivity"
 >;
 
@@ -131,6 +136,7 @@ const activityCompletionSteps: Partial<Record<string, ActivityCompletionStep>> =
   practice: "savePracticeActivity",
   quiz: "saveQuizActivity",
   reading: "saveReadingActivity",
+  story: "saveStoryActivity",
   translation: "saveVocabularyActivity",
   vocabulary: "saveVocabularyActivity",
 };
@@ -181,3 +187,10 @@ export type ChapterWorkflowStepName = ChapterStepName | LessonStepName | Activit
  * so the stream includes all downstream step events.
  */
 export type CourseWorkflowStepName = CourseStepName | ChapterWorkflowStepName;
+
+/**
+ * The applied activity kind assigned to a core lesson by the AI classifier.
+ * Applied activities are scenario-based experiences (story, investigation, etc.)
+ * added on top of the standard explanation/practice/quiz set.
+ */
+export type AppliedActivityKind = "story" | null;

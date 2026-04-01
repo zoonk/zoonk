@@ -15,6 +15,8 @@ import {
   QUIZ_PHASE_STEPS,
   READING_PHASE_ORDER,
   READING_PHASE_STEPS,
+  STORY_PHASE_ORDER,
+  STORY_PHASE_STEPS,
   VOCABULARY_PHASE_ORDER,
   VOCABULARY_PHASE_STEPS,
 } from "./activity-generation-phase-kind-steps";
@@ -50,6 +52,7 @@ export { getPhaseWeights } from "./activity-generation-phase-weights";
 export type PhaseName =
   | "gettingStarted"
   | "buildingWordList"
+  | "buildingScenario"
   | "addingPronunciation"
   | "addingRomanization"
   | "addingVocabularyRomanization"
@@ -57,6 +60,7 @@ export type PhaseName =
   | "recordingAudio"
   | "recordingVocabularyAudio"
   | "writingContent"
+  | "writingDebrief"
   | "creatingExercises"
   | "creatingAnswerOptions"
   | "creatingSentences"
@@ -78,7 +82,7 @@ const PHASE_ORDER_MAP: Record<ActivityKind, PhaseName[]> = {
   quiz: QUIZ_PHASE_ORDER,
   reading: READING_PHASE_ORDER,
   review: EXPLANATION_PHASE_ORDER,
-  story: EXPLANATION_PHASE_ORDER,
+  story: STORY_PHASE_ORDER,
   translation: VOCABULARY_PHASE_ORDER,
   vocabulary: VOCABULARY_PHASE_ORDER,
 };
@@ -103,6 +107,7 @@ function toFullPhaseSteps(
     addingRomanization: EMPTY,
     addingVocabularyRomanization: EMPTY,
     addingWordPronunciation: EMPTY,
+    buildingScenario: EMPTY,
     buildingWordList: EMPTY,
     creatingAnswerOptions: EMPTY,
     creatingExercises: EMPTY,
@@ -117,6 +122,7 @@ function toFullPhaseSteps(
     saving: EMPTY,
     savingPrerequisites: EMPTY,
     writingContent: EMPTY,
+    writingDebrief: EMPTY,
     writingExplanation: EMPTY,
     ...partial,
   };
@@ -131,7 +137,7 @@ const PHASE_STEPS_MAP: Record<ActivityKind, Record<PhaseName, readonly ActivityS
   quiz: toFullPhaseSteps(QUIZ_PHASE_STEPS),
   reading: toFullPhaseSteps(READING_PHASE_STEPS),
   review: toFullPhaseSteps(EXPLANATION_PHASE_STEPS),
-  story: toFullPhaseSteps(EXPLANATION_PHASE_STEPS),
+  story: toFullPhaseSteps(STORY_PHASE_STEPS),
   translation: toFullPhaseSteps(VOCABULARY_PHASE_STEPS),
   vocabulary: toFullPhaseSteps(VOCABULARY_PHASE_STEPS),
 };

@@ -1609,6 +1609,16 @@ msgid "Recording word audio"
 msgstr "Recording word audio"
 
 #: src/app/generate/a/[id]/use-phase-labels.ts
+msgctxt "jN8cMX"
+msgid "Creating the story"
+msgstr "Creating the story"
+
+#: src/app/generate/a/[id]/use-phase-labels.ts
+msgctxt "kVV8P0"
+msgid "Preparing the wrap-up"
+msgstr "Preparing the wrap-up"
+
+#: src/app/generate/a/[id]/use-phase-labels.ts
 msgctxt "mIpv67"
 msgid "Creating sentences"
 msgstr "Creating sentences"
@@ -1664,9 +1674,19 @@ msgid "Finding the right sounds..."
 msgstr "Finding the right sounds..."
 
 #: src/app/generate/a/[id]/use-phase-thinking-generators.ts
+msgctxt "+6mDjl"
+msgid "Designing the choices..."
+msgstr "Designing the choices..."
+
+#: src/app/generate/a/[id]/use-phase-thinking-generators.ts
 msgctxt "+QrqeN"
 msgid "Writing the explanation first..."
 msgstr "Writing the explanation first..."
+
+#: src/app/generate/a/[id]/use-phase-thinking-generators.ts
+msgctxt "+r6Z9x"
+msgid "Preparing the wrap-up..."
+msgstr "Preparing the wrap-up..."
 
 #: src/app/generate/a/[id]/use-phase-thinking-generators.ts
 msgctxt "+wV822"
@@ -1702,6 +1722,11 @@ msgstr "Recording vocabulary audio..."
 msgctxt "2e5abC"
 msgid "Wrapping things up..."
 msgstr "Wrapping things up..."
+
+#: src/app/generate/a/[id]/use-phase-thinking-generators.ts
+msgctxt "2Qq4mP"
+msgid "Connecting choices to concepts..."
+msgstr "Connecting choices to concepts..."
 
 #: src/app/generate/a/[id]/use-phase-thinking-generators.ts
 msgctxt "4wkMNX"
@@ -1798,6 +1823,11 @@ msgid "Making each word listenable..."
 msgstr "Making each word listenable..."
 
 #: src/app/generate/a/[id]/use-phase-thinking-generators.ts
+msgctxt "C30MSR"
+msgid "Setting the scene..."
+msgstr "Setting the scene..."
+
+#: src/app/generate/a/[id]/use-phase-thinking-generators.ts
 msgctxt "Ch9BcP"
 msgid "Converting vocabulary to Latin script..."
 msgstr "Converting vocabulary to Latin script..."
@@ -1821,6 +1851,11 @@ msgstr "Choosing the right style..."
 msgctxt "EAqAX/"
 msgid "Thinking about what to illustrate..."
 msgstr "Thinking about what to illustrate..."
+
+#: src/app/generate/a/[id]/use-phase-thinking-generators.ts
+msgctxt "eh88d1"
+msgid "Adding consequences..."
+msgstr "Adding consequences..."
 
 #: src/app/generate/a/[id]/use-phase-thinking-generators.ts
 msgctxt "epxxAx"
@@ -1898,6 +1933,11 @@ msgid "Writing the explanation..."
 msgstr "Writing the explanation..."
 
 #: src/app/generate/a/[id]/use-phase-thinking-generators.ts
+msgctxt "k+mDX9"
+msgid "Creating your story..."
+msgstr "Creating your story..."
+
+#: src/app/generate/a/[id]/use-phase-thinking-generators.ts
 msgctxt "k0Q/Ph"
 msgid "Looking up each term..."
 msgstr "Looking up each term..."
@@ -1968,6 +2008,11 @@ msgid "Researching the topic..."
 msgstr "Researching the topic..."
 
 #: src/app/generate/a/[id]/use-phase-thinking-generators.ts
+msgctxt "rMBa9K"
+msgid "Crafting the outcomes..."
+msgstr "Crafting the outcomes..."
+
+#: src/app/generate/a/[id]/use-phase-thinking-generators.ts
 msgctxt "SC0o7J"
 msgid "Building the vocabulary guide..."
 msgstr "Building the vocabulary guide..."
@@ -2034,6 +2079,11 @@ msgstr "Finishing the artwork..."
 msgctxt "xrLiIe"
 msgid "Setting things up..."
 msgstr "Setting things up..."
+
+#: src/app/generate/a/[id]/use-phase-thinking-generators.ts
+msgctxt "XU3/xf"
+msgid "Writing the debrief..."
+msgstr "Writing the debrief..."
 
 #: src/app/generate/a/[id]/use-phase-thinking-generators.ts
 msgctxt "YgG70c"
@@ -2264,6 +2314,11 @@ msgid "Thinking about how to teach this..."
 msgstr "Thinking about how to teach this..."
 
 #: src/app/generate/l/[id]/use-generation-phases.ts
+msgctxt "HwkHAi"
+msgid "Personalizing the lesson"
+msgstr "Personalizing the lesson"
+
+#: src/app/generate/l/[id]/use-generation-phases.ts
 msgctxt "HYmCaW"
 msgid "Almost done"
 msgstr "Almost done"
@@ -2272,6 +2327,11 @@ msgstr "Almost done"
 msgctxt "igBmpz"
 msgid "Making it interactive..."
 msgstr "Making it interactive..."
+
+#: src/app/generate/l/[id]/use-generation-phases.ts
+msgctxt "jtFSH4"
+msgid "Tailoring the experience..."
+msgstr "Tailoring the experience..."
 
 #: src/app/generate/l/[id]/use-generation-phases.ts
 msgctxt "MNQpiA"
@@ -2292,6 +2352,11 @@ msgstr "Figuring out the best approach"
 msgctxt "Nhva19"
 msgid "Choosing the right approach..."
 msgstr "Choosing the right approach..."
+
+#: src/app/generate/l/[id]/use-generation-phases.ts
+msgctxt "OV0vGb"
+msgid "Personalizing the lesson..."
+msgstr "Personalizing the lesson..."
 
 #: src/app/generate/layout.tsx
 msgctxt "/tq5fR"

@@ -493,6 +493,8 @@ checksums:
     Adding%20vocabulary%20romanization/singular: 4fe1e590bba583a7bcea4f7fbb1a113a
     Saving%20earlier%20activities/singular: 4a5c7258994f11d2152bb7d65e7c963a
     Recording%20word%20audio/singular: 89a018a75830ff5590ed158f01b1809e
+    Creating%20the%20story/singular: a063029253c8262e769d0ca1f949de73
+    Preparing%20the%20wrap-up/singular: 28cfda9388f052a4391705ec7ad01511
     Creating%20sentences/singular: a9f832408dd259bd6458708c84b34ff0
     Building%20word%20list/singular: 9a9b5271981383a36db347f286054e02
     Preparing%20illustrations/singular: ebb0d8d739dd029c1ac7327ab6adf8b7
@@ -504,7 +506,9 @@ checksums:
     Preparing%20options/singular: 62f984059e903150a341e8775f897d84
     Writing%20the%20explanation/singular: 9019a6d759ed0983454bc40f281e6c45
     Finding%20the%20right%20sounds.../singular: e98992b78e94cf880db6a82e2d9dea71
+    Designing%20the%20choices.../singular: 8aec77b9ca385431c902bd9fcbeee368
     Writing%20the%20explanation%20first.../singular: 77cc0507a1013d90c5b9a0ae9f543236
+    Preparing%20the%20wrap-up.../singular: c27ba5f2b8aade84ad77a5a90291e185
     Saving%20your%20activity.../singular: 7faac2f9e34b347881e7074bae7a8313
     Explaining%20the%20topic.../singular: 1e2968adf3ec2b589dd754982830840a
     Putting%20words%20in%20context.../singular: 3b63ddc4157c48ac1c1f8797fa0dc2fb
@@ -512,6 +516,7 @@ checksums:
     Making%20vocabulary%20easier%20to%20read.../singular: c335046b2e76760b03f473562eda5443
     Recording%20vocabulary%20audio.../singular: 2e70abbf9fcc50d1058b663854d16cf9
     Wrapping%20things%20up.../singular: c6343ae3437b730bc961c2a319a617e7
+    Connecting%20choices%20to%20concepts.../singular: 671d2ecd83a2a4d11730f2d8ff6e2015
     Getting%20answer%20options%20ready.../singular: d37e6efe3c82d8ddee1e3b1f537ed4f5
     Getting%20the%20pronunciation%20right.../singular: a809bb5d01620f015cae9a4f0eeede13
     Recording%20the%20audio.../singular: e6e8da2d75c102373fec6056189d54ba
@@ -530,11 +535,13 @@ checksums:
     Adding%20reading%20aids.../singular: c2a09bc7ea6dc5fad494cd5bcd33bdbc
     Building%20interactive%20tasks.../singular: cd08796577042526d8ac1ef9608480a7
     Making%20each%20word%20listenable.../singular: 867c55b5eb4038eaff47657d2ef1c3c1
+    Setting%20the%20scene.../singular: 1d1dafcdd21594e1cbaac7f7e7973bad
     Converting%20vocabulary%20to%20Latin%20script.../singular: bee78842a0524d9beb3ecf2cbd0e9fc5
     Preparing%20options.../singular: c4fcd4a9e3b72550c86c62e79d7e9408
     Converting%20to%20Latin%20script.../singular: 6052e7545ae1927e02e42b9238091b9e
     Choosing%20the%20right%20style.../singular: 7c273483546943a1553fbc762646c079
     Thinking%20about%20what%20to%20illustrate.../singular: fe3a341a8fba909f02f4a26fb4510637
+    Adding%20consequences.../singular: 1ab324dbe6d4d9b2bd3e846b6a990756
     Building%20the%20foundation.../singular: b8101b6b421f014348465a4842ed718e
     Preparing%20vocabulary%20audio.../singular: a981ba3b51ad33dd23b54006e1ca8565
     Converting%20grammar%20text%20to%20Latin%20script.../singular: 22e7aeb66fdd90905fdd239c307184bc
@@ -550,6 +557,7 @@ checksums:
     Finishing%20up.../singular: 6bcdd72fd5aa845ae0f32f41f3e5f26d
     Getting%20the%20sound%20for%20each%20word.../singular: d449f3e06926833803a2e4d213a68e81
     Writing%20the%20explanation.../singular: cb3b01d1dc07a25447ee138dde5bfdde
+    Creating%20your%20story.../singular: 234c96be1ed372c81ea7d27817f30a9a
     Looking%20up%20each%20term.../singular: 9d0357c0da11eaf709f71945a65b3852
     Writing%20fill-in-the-blanks.../singular: b3d5f34c982c68c1bfac3e03acfda523
     Adding%20romanization%20for%20grammar.../singular: 114d35a8c97da77df790b1e767422da5
@@ -564,6 +572,7 @@ checksums:
     Preparing%20word-by-word%20audio.../singular: 8dfc633c922918272408507108c3d270
     Getting%20the%20audio%20for%20each%20term.../singular: 97dd8fda4b4011ace74b6d43a7967d67
     Researching%20the%20topic.../singular: 54c9981da59b1efccfbba3c40bb1fdd5
+    Crafting%20the%20outcomes.../singular: b009f6b2355e6fbe991570e478675c82
     Building%20the%20vocabulary%20guide.../singular: d91fca805f4e6523b60d86c3998227e1
     Making%20it%20sound%20natural.../singular: 1c95405cf7277ee02e760b48a8e0e45f
     Creating%20reading%20passages.../singular: 1f4ecba76f3c5421292dfb8e2bafbea9
@@ -577,6 +586,7 @@ checksums:
     Preparing%20the%20word%20bank.../singular: 87c5f53472bbc0e5120e338f491087ff
     Finishing%20the%20artwork.../singular: 0943b62bd602abbacf8bba3c3865f36e
     Setting%20things%20up.../singular: 4696c8e1048ec21837f886410864dfe2
+    Writing%20the%20debrief.../singular: 4c6f5256333e59e811621acfaf5066c4
     Selecting%20important%20terms.../singular: 74d7c5283c1071c3a5906260b01c72d4
     Refining%20the%20details.../singular: eaf7a7ca135f8919dc93f80095040ab0
     Detailing%20the%20word%20sounds.../singular: 75e4509b4a016e935d3bb7729aa932b2
@@ -622,12 +632,15 @@ checksums:
     This%20usually%20takes%20a%20few%20seconds/singular: d95f1b6378326c1aeb3792bd9cd643e7
     Wrapping%20up.../singular: f53e2507f652df36db205a5201fe5008
     Thinking%20about%20how%20to%20teach%20this.../singular: e71e60276db8c3d5ddb63542b0c7251e
+    Personalizing%20the%20lesson/singular: a01eae5e4ede2a5cc5fcffe98b653e75
     Almost%20done/singular: fa5f270ea4b185be8dd47cfb91b87810
     Making%20it%20interactive.../singular: 1379852e804db4736e71c068cd50982e
+    Tailoring%20the%20experience.../singular: a95d87d1a44b1f716adf7aba86c86c97
     Almost%20there.../singular: decd6d1e84363cf4c89e5446eab55dc9
     Setting%20up%20activities/singular: a644864fddf71801feef8c789333456a
     Figuring%20out%20the%20best%20approach/singular: 0cbd8e2d3c43eb874e25dd6b30fff474
     Choosing%20the%20right%20approach.../singular: 2ed5698b6fd002b38e10035a29a815dc
+    Personalizing%20the%20lesson.../singular: 4d4cbcecaa25a9650c0da5f77a6d45ad
     Creating%20content/singular: ec70a8b5ffb94c0d5b83409d03d5b77b
     Read%20Zoonk's%20privacy%20policy%20to%20understand%20how%20we%20collect%2C%20use%2C%20and%20protect%20your%20personal%20information./singular: 044f3586abe7d9915820a6629cef08e4
     Privacy%20Policy/singular: 7459744a63ef8af4e517a09024bd7c08

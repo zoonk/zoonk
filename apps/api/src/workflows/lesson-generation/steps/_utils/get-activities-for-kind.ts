@@ -1,4 +1,5 @@
 import { type GeneratedActivity } from "@zoonk/ai/tasks/lessons/activities";
+import { type AppliedActivityKind } from "@zoonk/core/workflows/steps";
 import { type ActivityKind, type LessonKind } from "@zoonk/db";
 import { isTTSSupportedLanguage } from "@zoonk/utils/languages";
 
@@ -26,10 +27,16 @@ const LANGUAGE_ACTIVITY_KINDS: ActivityKind[] = [
  * activities are inserted — one after the first half of explanations
  * and another after the second half — to break up long sequences.
  *
- * Example with 5 concepts:
+ * Example with 5 concepts (no applied activity):
  *   [exp1, exp2, practice, exp3, exp4, exp5, practice, quiz, review]
+ *
+ * Example with 5 concepts and story:
+ *   [exp1, exp2, practice, exp3, exp4, exp5, practice, quiz, story, review]
  */
-function getCoreActivities(concepts: string[]): ActivityEntry[] {
+function getCoreActivities(
+  concepts: string[],
+  appliedActivityKind: AppliedActivityKind,
+): ActivityEntry[] {
   const explanations: ActivityEntry[] = concepts.map((concept) => ({
     description: null,
     kind: "explanation",
@@ -45,17 +52,21 @@ function getCoreActivities(concepts: string[]): ActivityEntry[] {
   const review: ActivityEntry = { description: null, kind: "review", title: null };
   const quiz: ActivityEntry = { description: null, kind: "quiz", title: null };
 
+  const appliedActivities: ActivityEntry[] = appliedActivityKind
+    ? [{ description: null, kind: appliedActivityKind, title: null }]
+    : [];
+
   const minConceptsForTwoPractices = 4;
 
   if (concepts.length < minConceptsForTwoPractices) {
-    return [...allExplanations, practice, quiz, review];
+    return [...allExplanations, practice, quiz, ...appliedActivities, review];
   }
 
   const splitIndex = Math.floor(concepts.length / 2);
   const firstGroup = explanations.slice(0, splitIndex);
   const secondGroup = explanations.slice(splitIndex);
 
-  return [...firstGroup, practice, ...secondGroup, practice, quiz, review];
+  return [...firstGroup, practice, ...secondGroup, practice, quiz, ...appliedActivities, review];
 }
 
 /**
@@ -85,9 +96,10 @@ export function getActivitiesForKind(
   customActivities: GeneratedActivity[],
   targetLanguage: string | null,
   concepts: string[],
+  appliedActivityKind: AppliedActivityKind = null,
 ): ActivityEntry[] {
   if (lessonKind === "core") {
-    return getCoreActivities(concepts);
+    return getCoreActivities(concepts, appliedActivityKind);
   }
 
   if (lessonKind === "language") {

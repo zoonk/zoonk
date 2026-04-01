@@ -2,6 +2,8 @@ import { randomUUID } from "node:crypto";
 import { generateActivityExplanation } from "@zoonk/ai/tasks/activities/core/explanation";
 import { generateActivityPractice } from "@zoonk/ai/tasks/activities/core/practice";
 import { generateActivityQuiz } from "@zoonk/ai/tasks/activities/core/quiz";
+import { generateActivityStoryDebrief } from "@zoonk/ai/tasks/activities/core/story-debrief";
+import { generateActivityStorySteps } from "@zoonk/ai/tasks/activities/core/story-steps";
 import { generateStepVisuals } from "@zoonk/ai/tasks/steps/visual";
 import { generateVisualStepImage } from "@zoonk/core/steps/visual-image";
 import { prisma } from "@zoonk/db";
@@ -123,6 +125,48 @@ vi.mock("@zoonk/ai/tasks/activities/core/quiz", () => ({
           ],
           question: "Which image shows a cat?",
         },
+      ],
+    },
+  }),
+}));
+
+vi.mock("@zoonk/ai/tasks/activities/core/story-steps", () => ({
+  generateActivityStorySteps: vi.fn().mockResolvedValue({
+    data: {
+      intro: "You are a factory manager.",
+      metrics: ["Production", "Morale"],
+      steps: [
+        {
+          choices: [
+            {
+              alignment: "strong",
+              consequence: "Workers rally.",
+              id: "c1",
+              metricEffects: [{ effect: "positive", metric: "Morale" }],
+              text: "Address the team",
+            },
+            {
+              alignment: "weak",
+              consequence: "Rumors spread.",
+              id: "c2",
+              metricEffects: [{ effect: "negative", metric: "Morale" }],
+              text: "Send an email",
+            },
+          ],
+          situation: "Your supplier went bankrupt.",
+        },
+      ],
+    },
+  }),
+}));
+
+vi.mock("@zoonk/ai/tasks/activities/core/story-debrief", () => ({
+  generateActivityStoryDebrief: vi.fn().mockResolvedValue({
+    data: {
+      debrief: [{ explanation: "Communication matters.", name: "Crisis Communication" }],
+      outcomes: [
+        { minStrongChoices: 1, narrative: "Well done.", title: "Great" },
+        { minStrongChoices: 0, narrative: "Needs work.", title: "Okay" },
       ],
     },
   }),
@@ -796,6 +840,93 @@ describe("core activity workflow", () => {
         where: { id: practiceActivity.id },
       });
       expect(dbPractice?.generationStatus).toBe("completed");
+    });
+  });
+
+  describe("story isolation", () => {
+    test("story failure does not affect explanation or practice completion", async () => {
+      vi.mocked(generateActivityStorySteps).mockRejectedValueOnce(new Error("Story failed"));
+
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        concepts: ["Test Concept"],
+        organizationId,
+        title: `Story Isolation Lesson ${randomUUID()}`,
+      });
+
+      const [expActivity, practiceActivity, storyActivity] = await Promise.all([
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Explanation ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "practice",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Practice ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "story",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Story ${randomUUID()}`,
+        }),
+      ]);
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      const [dbExp, dbPractice, dbStory] = await Promise.all([
+        prisma.activity.findUnique({ where: { id: expActivity.id } }),
+        prisma.activity.findUnique({ where: { id: practiceActivity.id } }),
+        prisma.activity.findUnique({ where: { id: storyActivity.id } }),
+      ]);
+
+      expect(dbExp?.generationStatus).toBe("completed");
+      expect(dbPractice?.generationStatus).toBe("completed");
+      expect(dbStory?.generationStatus).toBe("failed");
+    });
+
+    test("generates story alongside explanation in wave 1", async () => {
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        concepts: ["Test Concept"],
+        organizationId,
+        title: `Story Wave 1 Lesson ${randomUUID()}`,
+      });
+
+      const [expActivity, storyActivity] = await Promise.all([
+        activityFixture({
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Explanation ${randomUUID()}`,
+        }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "story",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Story ${randomUUID()}`,
+        }),
+      ]);
+
+      await activityGenerationWorkflow(testLesson.id);
+
+      const [dbExp, dbStory] = await Promise.all([
+        prisma.activity.findUnique({ where: { id: expActivity.id } }),
+        prisma.activity.findUnique({ where: { id: storyActivity.id } }),
+      ]);
+
+      expect(dbExp?.generationStatus).toBe("completed");
+      expect(dbStory?.generationStatus).toBe("completed");
+      expect(generateActivityStorySteps).toHaveBeenCalled();
+      expect(generateActivityStoryDebrief).toHaveBeenCalled();
     });
   });
 

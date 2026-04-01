@@ -70,6 +70,7 @@ describe(addActivitiesStep, () => {
     };
 
     await addActivitiesStep({
+      appliedActivityKind: null,
       concepts: [],
       context: lessonContext,
       customActivities: [],
@@ -114,6 +115,7 @@ describe(addActivitiesStep, () => {
     };
 
     await addActivitiesStep({
+      appliedActivityKind: null,
       concepts: ["Concept A", "Concept B"],
       context: lessonContext,
       customActivities: [],
@@ -141,6 +143,7 @@ describe(addActivitiesStep, () => {
 
     await expect(
       addActivitiesStep({
+        appliedActivityKind: null,
         concepts: [],
         context: brokenContext,
         customActivities: [],
@@ -171,6 +174,7 @@ describe(addActivitiesStep, () => {
     };
 
     await addActivitiesStep({
+      appliedActivityKind: null,
       concepts: [],
       context: lessonContext,
       customActivities: [],
