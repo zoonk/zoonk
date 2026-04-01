@@ -15,27 +15,19 @@ const REVIEW_TARGET_COUNT = 10;
 describe(getReviewSteps, () => {
   let lesson: Awaited<ReturnType<typeof lessonFixture>>;
   let org: Awaited<ReturnType<typeof organizationFixture>>;
-  let user: Awaited<ReturnType<typeof userFixture>>;
-
-  let reviewStepId: bigint;
   let unpublishedStepId: bigint;
 
   beforeAll(async () => {
     org = await organizationFixture({ kind: "brand" });
 
-    const [courseResult, userResult] = await Promise.all([
-      courseFixture({
-        isPublished: true,
-        language: "en",
-        organizationId: org.id,
-      }),
-      userFixture(),
-    ]);
-
-    user = userResult;
+    const course = await courseFixture({
+      isPublished: true,
+      language: "en",
+      organizationId: org.id,
+    });
 
     const chapter = await chapterFixture({
-      courseId: courseResult.id,
+      courseId: course.id,
       isPublished: true,
       language: "en",
       organizationId: org.id,
@@ -48,7 +40,7 @@ describe(getReviewSteps, () => {
       organizationId: org.id,
     });
 
-    // Create a source activity with 12 interactive steps + 1 static step
+    // Create a source activity with 12 interactive steps
     const sourceActivity = await activityFixture({
       generationStatus: "completed",
       isPublished: true,
@@ -69,38 +61,6 @@ describe(getReviewSteps, () => {
       }),
     );
 
-    // Also create a static step (should be excluded from reviews)
-    stepPromises.push(
-      stepFixture({
-        activityId: sourceActivity.id,
-        content: { text: "Static content", title: "Static" },
-        isPublished: true,
-        kind: "static",
-        position: 12,
-      }),
-    );
-
-    // Also create a review activity (its steps should be excluded)
-    const reviewActivity = await activityFixture({
-      generationStatus: "completed",
-      isPublished: true,
-      kind: "review",
-      language: "en",
-      lessonId: lesson.id,
-      organizationId: org.id,
-      position: 1,
-    });
-
-    const reviewStep = await stepFixture({
-      activityId: reviewActivity.id,
-      content: { kind: "core", options: [], question: "Review Q", text: "Review step" },
-      isPublished: true,
-      kind: "multipleChoice",
-      position: 0,
-    });
-
-    reviewStepId = reviewStep.id;
-
     // Also create an unpublished step (should be excluded)
     stepPromises.push(
       stepFixture({
@@ -113,7 +73,7 @@ describe(getReviewSteps, () => {
     );
 
     const allSteps = await Promise.all(stepPromises);
-    unpublishedStepId = allSteps[13]!.id;
+    unpublishedStepId = allSteps[12]!.id;
   });
 
   test("returns steps where user only has incorrect attempts (tier 1)", async () => {
@@ -354,37 +314,77 @@ describe(getReviewSteps, () => {
     expect(occurrences).toHaveLength(1);
   });
 
+  /**
+   * Each exclusion test uses an isolated lesson with fewer steps than
+   * REVIEW_TARGET_COUNT so ALL eligible steps are returned. This makes
+   * the assertion deterministic: if the filter is broken, the excluded
+   * step will always appear in the result.
+   */
+
   test("excludes review activity steps", async () => {
-    const result = await getReviewSteps({
-      lessonId: lesson.id,
-      userId: Number(user.id),
+    const isolated = await createLessonWithSteps(org.id, 3);
+
+    const reviewActivity = await activityFixture({
+      generationStatus: "completed",
+      isPublished: true,
+      kind: "review",
+      language: "en",
+      lessonId: isolated.lesson.id,
+      organizationId: org.id,
     });
 
+    const reviewStep = await stepFixture({
+      activityId: reviewActivity.id,
+      content: { kind: "core", options: [], question: "Review Q" },
+      isPublished: true,
+      kind: "multipleChoice",
+      position: 0,
+    });
+
+    const result = await getReviewSteps({
+      lessonId: isolated.lesson.id,
+      userId: null,
+    });
+
+    expect(result).toHaveLength(3);
+
     const resultIds = result.map((step) => step.id);
-    expect(resultIds).not.toContain(reviewStepId);
+    expect(resultIds).not.toContain(reviewStep.id);
   });
 
   test("excludes static steps", async () => {
-    const result = await getReviewSteps({
-      lessonId: lesson.id,
-      userId: Number(user.id),
+    const isolated = await createLessonWithSteps(org.id, 3);
+
+    await stepFixture({
+      activityId: isolated.activity.id,
+      content: { text: "Static content", title: "Static" },
+      isPublished: true,
+      kind: "static",
+      position: 10,
     });
 
-    // No static steps should be in results
+    const result = await getReviewSteps({
+      lessonId: isolated.lesson.id,
+      userId: null,
+    });
+
+    expect(result).toHaveLength(3);
+
     for (const step of result) {
       expect(step.kind).not.toBe("static");
     }
   });
 
   test("excludes story steps", async () => {
+    const isolated = await createLessonWithSteps(org.id, 3);
+
     const storyActivity = await activityFixture({
       generationStatus: "completed",
       isPublished: true,
       kind: "story",
       language: "en",
-      lessonId: lesson.id,
+      lessonId: isolated.lesson.id,
       organizationId: org.id,
-      position: 2,
     });
 
     await stepFixture({
@@ -407,9 +407,11 @@ describe(getReviewSteps, () => {
     });
 
     const result = await getReviewSteps({
-      lessonId: lesson.id,
-      userId: Number(user.id),
+      lessonId: isolated.lesson.id,
+      userId: null,
     });
+
+    expect(result).toHaveLength(3);
 
     for (const step of result) {
       expect(step.kind).not.toBe("story");
