@@ -115,6 +115,16 @@ function useContentPhaseGenerators(): Partial<Record<PhaseName, ThinkingMessageG
   const t = useExtracted();
 
   return {
+    buildingScenario: (index) =>
+      cycleMessage(
+        [
+          t("Creating your story..."),
+          t("Setting the scene..."),
+          t("Designing the choices..."),
+          t("Adding consequences..."),
+        ],
+        index,
+      ),
     creatingAnswerOptions: (index) =>
       cycleMessage(
         [
@@ -203,6 +213,16 @@ function useContentPhaseGenerators(): Partial<Record<PhaseName, ThinkingMessageG
           t("Making it clear..."),
           t("Putting together the lesson..."),
           t("Crafting the content..."),
+        ],
+        index,
+      ),
+    writingDebrief: (index) =>
+      cycleMessage(
+        [
+          t("Preparing the wrap-up..."),
+          t("Connecting choices to concepts..."),
+          t("Crafting the outcomes..."),
+          t("Writing the debrief..."),
         ],
         index,
       ),

@@ -1,6 +1,7 @@
 import { streamSkipStep } from "@/workflows/_shared/stream-skip-step";
 import { getWorkflowMetadata } from "workflow";
 import { addActivitiesStep } from "./steps/add-activities-step";
+import { determineAppliedActivityStep } from "./steps/determine-applied-activity-step";
 import { determineLessonKindStep } from "./steps/determine-lesson-kind-step";
 import { generateCustomActivitiesStep } from "./steps/generate-custom-activities-step";
 import { getLessonStep } from "./steps/get-lesson-step";
@@ -31,6 +32,14 @@ async function generateActivities(
   lessonId: number,
 ): Promise<"filtered" | "completed"> {
   const lessonKind = await determineLessonKindStep(context);
+
+  const appliedActivityKind =
+    lessonKind === "core" ? await determineAppliedActivityStep(context) : null;
+
+  if (lessonKind !== "core") {
+    await streamSkipStep("determineAppliedActivity");
+  }
+
   await updateLessonKindStep({ kind: lessonKind, lessonId });
 
   // The AI sometimes classifies a language-course lesson as "core" or "custom"
@@ -41,7 +50,9 @@ async function generateActivities(
   }
 
   const customActivities = await getCustomActivities(context, lessonKind);
+
   await addActivitiesStep({
+    appliedActivityKind,
     concepts: context.concepts,
     context,
     customActivities,

@@ -13,6 +13,7 @@ export function usePhaseLabels(): Record<PhaseName, string> {
     addingRomanization: t("Adding romanization"),
     addingVocabularyRomanization: t("Adding vocabulary romanization"),
     addingWordPronunciation: t("Adding word pronunciation"),
+    buildingScenario: t("Creating the story"),
     buildingWordList: t("Building word list"),
     creatingAnswerOptions: t("Preparing options"),
     creatingExercises: t("Creating exercises"),
@@ -27,6 +28,7 @@ export function usePhaseLabels(): Record<PhaseName, string> {
     saving: t("Saving your activity"),
     savingPrerequisites: t("Saving earlier activities"),
     writingContent: t("Writing the content"),
+    writingDebrief: t("Preparing the wrap-up"),
     writingExplanation: t("Writing the explanation"),
   };
 }

@@ -34,6 +34,7 @@ export const PHASE_ICONS: Record<PhaseName, LucideIcon> = {
   addingRomanization: LanguagesIcon,
   addingVocabularyRomanization: LanguagesIcon,
   addingWordPronunciation: MicIcon,
+  buildingScenario: BookOpenIcon,
   buildingWordList: BookTextIcon,
   creatingAnswerOptions: ListChecksIcon,
   creatingExercises: GraduationCapIcon,
@@ -48,6 +49,7 @@ export const PHASE_ICONS: Record<PhaseName, LucideIcon> = {
   saving: CheckCircleIcon,
   savingPrerequisites: CheckCircleIcon,
   writingContent: PenLineIcon,
+  writingDebrief: PenLineIcon,
   writingExplanation: PenLineIcon,
 };
 

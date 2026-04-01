@@ -333,3 +333,30 @@ export const PRACTICE_PHASE_ORDER: PhaseName[] = [
   "writingContent",
   "saving",
 ];
+
+// -- Story ------------------------------------------------------------------
+
+type StorySteps =
+  | "getLessonActivities"
+  | "setActivityAsRunning"
+  | "generateStoryContent"
+  | "generateStoryDebrief"
+  | "saveStoryActivity";
+
+export const STORY_PHASE_STEPS = {
+  buildingScenario: ["generateStoryContent"],
+  gettingStarted: ["getLessonActivities", "setActivityAsRunning"],
+  saving: ["saveStoryActivity"],
+  writingDebrief: ["generateStoryDebrief"],
+} as const satisfies Record<string, readonly ActivityStepName[]>;
+
+type _ValidateStory = AssertAllCovered<
+  Exclude<StorySteps, (typeof STORY_PHASE_STEPS)[keyof typeof STORY_PHASE_STEPS][number]>
+>;
+
+export const STORY_PHASE_ORDER: PhaseName[] = [
+  "gettingStarted",
+  "buildingScenario",
+  "writingDebrief",
+  "saving",
+];

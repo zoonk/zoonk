@@ -376,6 +376,46 @@ describe(getReviewSteps, () => {
     }
   });
 
+  test("excludes story steps", async () => {
+    const storyActivity = await activityFixture({
+      generationStatus: "completed",
+      isPublished: true,
+      kind: "story",
+      language: "en",
+      lessonId: lesson.id,
+      organizationId: org.id,
+      position: 2,
+    });
+
+    await stepFixture({
+      activityId: storyActivity.id,
+      content: {
+        choices: [
+          {
+            alignment: "strong",
+            consequence: "Good outcome",
+            id: "c1",
+            metricEffects: [{ effect: "positive", metric: "Score" }],
+            text: "Choice A",
+          },
+        ],
+        situation: "A scenario",
+      },
+      isPublished: true,
+      kind: "story",
+      position: 0,
+    });
+
+    const result = await getReviewSteps({
+      lessonId: lesson.id,
+      userId: Number(user.id),
+    });
+
+    for (const step of result) {
+      expect(step.kind).not.toBe("story");
+    }
+  });
+
   test("fills with random steps when total mistakes < 10", async () => {
     const newLesson = await createLessonWithSteps(org.id, 12);
     const newUser = await userFixture();

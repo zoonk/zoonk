@@ -103,6 +103,82 @@ describe(getActivitiesForKind, () => {
     });
   });
 
+  describe("applied activity", () => {
+    test("inserts story after quiz before review with 3 concepts", () => {
+      const result = getActivitiesForKind("core", [], null, ["A", "B", "C"], "story");
+
+      expect(result.map((a) => a.kind)).toEqual([
+        "explanation",
+        "explanation",
+        "explanation",
+        "practice",
+        "quiz",
+        "story",
+        "review",
+      ]);
+    });
+
+    test("inserts story after quiz before review with 5 concepts", () => {
+      const result = getActivitiesForKind("core", [], null, ["A", "B", "C", "D", "E"], "story");
+
+      expect(result.map((a) => a.kind)).toEqual([
+        "explanation",
+        "explanation",
+        "practice",
+        "explanation",
+        "explanation",
+        "explanation",
+        "practice",
+        "quiz",
+        "story",
+        "review",
+      ]);
+    });
+
+    test("inserts story with 0 concepts", () => {
+      const result = getActivitiesForKind("core", [], null, [], "story");
+
+      expect(result.map((a) => a.kind)).toEqual([
+        "explanation",
+        "practice",
+        "quiz",
+        "story",
+        "review",
+      ]);
+    });
+
+    test("inserts story with 1 concept", () => {
+      const result = getActivitiesForKind("core", [], null, ["Solo"], "story");
+
+      expect(result.map((a) => a.kind)).toEqual([
+        "explanation",
+        "practice",
+        "quiz",
+        "story",
+        "review",
+      ]);
+    });
+
+    test("does not insert story when appliedActivityKind is null", () => {
+      const result = getActivitiesForKind("core", [], null, ["A", "B", "C"], null);
+
+      expect(result.map((a) => a.kind)).toEqual([
+        "explanation",
+        "explanation",
+        "explanation",
+        "practice",
+        "quiz",
+        "review",
+      ]);
+    });
+
+    test("defaults to no applied activity when parameter is omitted", () => {
+      const result = getActivitiesForKind("core", [], null, ["A", "B", "C"]);
+
+      expect(result.map((a) => a.kind)).not.toContain("story");
+    });
+  });
+
   describe("custom lessons", () => {
     test("returns custom activities from AI-generated definitions", () => {
       const customActivities = [

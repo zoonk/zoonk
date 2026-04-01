@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { generateLessonActivities } from "@zoonk/ai/tasks/lessons/activities";
+import { generateAppliedActivityKind } from "@zoonk/ai/tasks/lessons/applied-activity-kind";
 import { generateLessonKind } from "@zoonk/ai/tasks/lessons/kind";
 import { prisma } from "@zoonk/db";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
@@ -26,6 +27,12 @@ vi.mock("workflow", () => ({
 vi.mock("@zoonk/ai/tasks/lessons/kind", () => ({
   generateLessonKind: vi.fn().mockResolvedValue({
     data: { kind: "core" },
+  }),
+}));
+
+vi.mock("@zoonk/ai/tasks/lessons/applied-activity-kind", () => ({
+  generateAppliedActivityKind: vi.fn().mockResolvedValue({
+    data: { appliedActivityKind: "story" },
   }),
 }));
 
@@ -225,6 +232,84 @@ describe(lessonGenerationWorkflow, () => {
       });
       expect(finalLesson?.generationStatus).toBe("completed");
       expect(finalLesson?.generationRunId).toBe("test-run-id");
+    });
+  });
+
+  describe("applied activity classifier", () => {
+    test("calls classifier for core lessons and includes story activity", async () => {
+      vi.mocked(generateLessonKind).mockResolvedValueOnce({
+        data: { kind: "core" },
+      } as Awaited<ReturnType<typeof generateLessonKind>>);
+
+      const lesson = await lessonFixture({
+        chapterId: chapter.id,
+        concepts: ["Test Concept"],
+        generationStatus: "pending",
+        organizationId,
+        title: `Applied Core Lesson ${randomUUID()}`,
+      });
+
+      await lessonGenerationWorkflow(lesson.id);
+
+      expect(generateAppliedActivityKind).toHaveBeenCalled();
+
+      const activities = await prisma.activity.findMany({
+        orderBy: { position: "asc" },
+        where: { lessonId: lesson.id },
+      });
+
+      expect(activities.some((a) => a.kind === "story")).toBe(true);
+    });
+
+    test("skips classifier for language lessons", async () => {
+      vi.mocked(generateLessonKind).mockResolvedValueOnce({
+        data: { kind: "language" },
+      } as Awaited<ReturnType<typeof generateLessonKind>>);
+
+      const languageCourse = await courseFixture({
+        organizationId,
+        targetLanguage: "es",
+      });
+
+      const languageChapter = await chapterFixture({
+        courseId: languageCourse.id,
+        organizationId,
+        title: `Language Chapter ${randomUUID()}`,
+      });
+
+      const lesson = await lessonFixture({
+        chapterId: languageChapter.id,
+        generationStatus: "pending",
+        organizationId,
+        title: `Applied Language Lesson ${randomUUID()}`,
+      });
+
+      await lessonGenerationWorkflow(lesson.id);
+
+      expect(generateAppliedActivityKind).not.toHaveBeenCalled();
+
+      const activities = await prisma.activity.findMany({
+        where: { lessonId: lesson.id },
+      });
+
+      expect(activities.some((a) => a.kind === "story")).toBe(false);
+    });
+
+    test("skips classifier for custom lessons", async () => {
+      vi.mocked(generateLessonKind).mockResolvedValueOnce({
+        data: { kind: "custom" },
+      } as Awaited<ReturnType<typeof generateLessonKind>>);
+
+      const lesson = await lessonFixture({
+        chapterId: chapter.id,
+        generationStatus: "pending",
+        organizationId,
+        title: `Applied Custom Lesson ${randomUUID()}`,
+      });
+
+      await lessonGenerationWorkflow(lesson.id);
+
+      expect(generateAppliedActivityKind).not.toHaveBeenCalled();
     });
   });
 });
