@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { fetchLessonActivities } from "@/workflows/_test-utils/fetch-lesson-activities";
 import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
 import { generateActivityVocabulary } from "@zoonk/ai/tasks/activities/language/vocabulary";
+import { prisma } from "@zoonk/db";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
@@ -99,7 +100,7 @@ describe(generateVocabularyContentStep, () => {
     );
   });
 
-  test("streams error and returns empty words when AI fails", async () => {
+  test("marks activity as failed and streams error when AI fails", async () => {
     vi.mocked(generateActivityVocabulary).mockRejectedValueOnce(new Error("AI error"));
 
     const lesson = await lessonFixture({
@@ -109,7 +110,7 @@ describe(generateVocabularyContentStep, () => {
       title: `Vocab Content Fail ${randomUUID()}`,
     });
 
-    await activityFixture({
+    const dbActivity = await activityFixture({
       generationStatus: "pending",
       kind: "vocabulary",
       language: "en",
@@ -123,6 +124,9 @@ describe(generateVocabularyContentStep, () => {
 
     expect(result).toEqual({ words: [] });
 
+    const updated = await prisma.activity.findUniqueOrThrow({ where: { id: dbActivity.id } });
+    expect(updated.generationStatus).toBe("failed");
+
     const events = getStreamedEvents(writeMock);
 
     expect(events).toContainEqual(
@@ -130,7 +134,7 @@ describe(generateVocabularyContentStep, () => {
     );
   });
 
-  test("streams error when AI returns empty words array", async () => {
+  test("marks activity as failed and streams error when AI returns empty words array", async () => {
     vi.mocked(generateActivityVocabulary).mockResolvedValueOnce({
       data: { words: [] },
     } as never);
@@ -142,7 +146,7 @@ describe(generateVocabularyContentStep, () => {
       title: `Vocab Content Empty ${randomUUID()}`,
     });
 
-    await activityFixture({
+    const dbActivity = await activityFixture({
       generationStatus: "pending",
       kind: "vocabulary",
       language: "en",
@@ -155,6 +159,9 @@ describe(generateVocabularyContentStep, () => {
     const result = await generateVocabularyContentStep(activity!, "workflow-3");
 
     expect(result).toEqual({ words: [] });
+
+    const updated = await prisma.activity.findUniqueOrThrow({ where: { id: dbActivity.id } });
+    expect(updated.generationStatus).toBe("failed");
 
     const events = getStreamedEvents(writeMock);
 

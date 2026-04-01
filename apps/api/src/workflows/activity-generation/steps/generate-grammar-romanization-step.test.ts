@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { fetchLessonActivities } from "@/workflows/_test-utils/fetch-lesson-activities";
 import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
 import { generateActivityRomanization } from "@zoonk/ai/tasks/activities/language/romanization";
+import { prisma } from "@zoonk/db";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
@@ -167,7 +168,7 @@ describe(generateGrammarRomanizationStep, () => {
     expect(generateActivityRomanization).not.toHaveBeenCalled();
   });
 
-  test("streams error when AI romanization fails", async () => {
+  test("marks activity as failed and streams error when AI romanization fails", async () => {
     vi.mocked(generateActivityRomanization).mockRejectedValueOnce(new Error("AI error"));
 
     const course = await courseFixture({ organizationId, targetLanguage: "ja" });
@@ -185,7 +186,7 @@ describe(generateGrammarRomanizationStep, () => {
       title: `Grammar Roman Fail ${randomUUID()}`,
     });
 
-    await activityFixture({
+    const dbActivity = await activityFixture({
       generationStatus: "pending",
       kind: "grammar",
       language: "en",
@@ -204,6 +205,9 @@ describe(generateGrammarRomanizationStep, () => {
     const result = await generateGrammarRomanizationStep(activities, grammarContent);
 
     expect(result).toEqual({ romanizations: null });
+
+    const updated = await prisma.activity.findUniqueOrThrow({ where: { id: dbActivity.id } });
+    expect(updated.generationStatus).toBe("failed");
 
     const events = getStreamedEvents(writeMock);
 

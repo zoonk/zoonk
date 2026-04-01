@@ -3,6 +3,7 @@ import { fetchLessonActivities } from "@/workflows/_test-utils/fetch-lesson-acti
 import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
 import { generateActivityRomanization } from "@zoonk/ai/tasks/activities/language/romanization";
 import { generateTranslation } from "@zoonk/ai/tasks/activities/language/translation";
+import { prisma } from "@zoonk/db";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
@@ -230,7 +231,7 @@ describe(generateSentenceWordMetadataStep, () => {
     expect(generateTranslation).not.toHaveBeenCalled();
   });
 
-  test("streams error when translations are incomplete", async () => {
+  test("marks activity as failed and streams error when translations are incomplete", async () => {
     vi.mocked(generateTranslation).mockRejectedValue(new Error("AI error"));
 
     const course = await courseFixture({ organizationId, targetLanguage: "de" });
@@ -248,7 +249,7 @@ describe(generateSentenceWordMetadataStep, () => {
       title: `SentWord Meta Fail ${randomUUID()}`,
     });
 
-    await activityFixture({
+    const dbActivity = await activityFixture({
       generationStatus: "pending",
       kind: "reading",
       language: "en",
@@ -274,6 +275,9 @@ describe(generateSentenceWordMetadataStep, () => {
     ]);
 
     expect(result.wordMetadata).toBeDefined();
+
+    const updated = await prisma.activity.findUniqueOrThrow({ where: { id: dbActivity.id } });
+    expect(updated.generationStatus).toBe("failed");
 
     const events = getStreamedEvents(writeMock);
 
