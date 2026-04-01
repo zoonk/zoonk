@@ -9,7 +9,7 @@ const GOOD_THRESHOLD = 60;
  * <25: critical (destructive + bold), 25-49: bad (destructive),
  * 50-59: average (warning), 60+: good (success).
  */
-export function getMetricColor(value: number): string {
+function getMetricColor(value: number): string {
   if (value < CRITICAL_THRESHOLD) {
     return "text-destructive font-bold";
   }
