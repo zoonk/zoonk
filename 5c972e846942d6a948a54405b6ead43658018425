@@ -1,0 +1,27 @@
+packages/player/src/components/story-metrics-bar.tsx
+  4538ccfb205327fc 3,14-15,22,24
+apps/main/e2e/story-step.test.ts
+  4538ccfb205327fc 340-376
+packages/player/src/components/player-shell.tsx
+  4538ccfb205327fc 109
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.4",
+  "base_commit_sha": "5c972e846942d6a948a54405b6ead43658018425",
+  "prompts": {
+    "4538ccfb205327fc": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "863a1a85-0a4a-4756-a2a8-e1571c4501f4",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 95,
+      "total_deletions": 50,
+      "accepted_lines": 43,
+      "overriden_lines": 0
+    }
+  }
+}
