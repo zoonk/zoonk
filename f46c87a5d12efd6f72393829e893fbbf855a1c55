@@ -1,0 +1,23 @@
+apps/main/e2e/review-step.test.ts
+  2cffe41ce918a18f 153,176-178,200-220,224-225,232-233,235,237-239,241,243-246,248,250-273,275-293,327-333,336
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.3",
+  "base_commit_sha": "f46c87a5d12efd6f72393829e893fbbf855a1c55",
+  "prompts": {
+    "2cffe41ce918a18f": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d49d8-6fb7-76b0-9e25-aa685b7ee627",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 94,
+      "total_deletions": 16,
+      "accepted_lines": 94,
+      "overriden_lines": 0
+    }
+  }
+}
