@@ -332,6 +332,7 @@ msgid "Metric changes"
 msgstr "Metric changes"
 
 #: ../../packages/player/src/components/story-intro-content.tsx
+#: ../../packages/player/src/components/story-metrics-bar.tsx
 msgctxt "pFm27r"
 msgid "Current status"
 msgstr "Current status"

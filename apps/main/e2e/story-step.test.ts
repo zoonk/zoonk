@@ -337,6 +337,43 @@ test.describe("Story Consequence Feedback", () => {
   });
 });
 
+test.describe("Story Metrics Bar", () => {
+  test("metrics bar visible only on decision and feedback steps", async ({ page }) => {
+    const { uniqueId, url } = await createStoryActivity();
+    const metricsBar = page.getByRole("status", { name: /current status/i });
+
+    await page.goto(url);
+    await page.waitForLoadState("networkidle");
+
+    // Intro: no metrics bar
+    await expect(page.getByRole("button", { name: /begin/i })).toBeVisible();
+    await expect(metricsBar).not.toBeVisible();
+
+    // Decision step: metrics bar visible
+    await page.getByRole("button", { name: /begin/i }).click();
+    await expect(metricsBar).toBeVisible();
+
+    // Check answer → feedback: metrics bar still visible
+    await page
+      .getByRole("radio", { name: new RegExp(`Invest in training ${uniqueId}`, "i") })
+      .click();
+    await page.getByRole("button", { name: /check/i }).click();
+    await expect(metricsBar).toBeVisible();
+
+    // Continue to outcome: no metrics bar
+    await page.getByRole("button", { name: /continue/i }).click();
+    await expect(page.getByText(new RegExp(`Great Manager ${uniqueId}`))).toBeVisible();
+    await expect(metricsBar).not.toBeVisible();
+
+    // Continue to debrief text step: no metrics bar
+    await page.getByRole("button", { name: /continue/i }).click();
+    await expect(
+      page.getByRole("heading", { name: new RegExp(`Resource Allocation ${uniqueId}`) }),
+    ).toBeVisible();
+    await expect(metricsBar).not.toBeVisible();
+  });
+});
+
 test.describe("Full Story Flow", () => {
   test("intro -> decision -> feedback -> outcome -> debrief -> completion", async ({ page }) => {
     const { uniqueId, url } = await createStoryActivity();

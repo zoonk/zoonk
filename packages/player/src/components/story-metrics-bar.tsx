@@ -1,5 +1,6 @@
 "use client";
 
+import { useExtracted } from "next-intl";
 import { type StoryMetric } from "../player-selectors";
 import { StoryMetricPill } from "./story-metric-pill";
 
@@ -10,14 +11,17 @@ import { StoryMetricPill } from "./story-metric-pill";
  * sticky header and the story content.
  */
 export function StoryMetricsBar({ metrics }: { metrics: StoryMetric[] }) {
+  const t = useExtracted();
+
   if (metrics.length === 0) {
     return null;
   }
 
   return (
     <div
+      aria-label={t("Current status")}
       className="mx-auto flex w-full max-w-2xl flex-wrap items-center justify-center gap-2 p-4"
-      data-slot="story-metrics-bar"
+      role="status"
     >
       {metrics.map((metric) => (
         <StoryMetricPill key={metric.metric} metric={metric.metric} value={metric.value} />

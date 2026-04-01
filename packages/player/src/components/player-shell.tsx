@@ -106,7 +106,7 @@ export function PlayerShell() {
   });
 
   const showChrome = state.phase === "playing" || state.phase === "feedback";
-  const showMetricsBar = isStoryActivity && showChrome && storyStaticVariant !== "storyIntro";
+  const showMetricsBar = currentStep?.kind === "story" && showChrome;
   const buttonLabel = state.phase === "feedback" ? t("Continue") : t("Check");
 
   return (
