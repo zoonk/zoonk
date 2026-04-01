@@ -1,0 +1,83 @@
+apps/api/src/workflows/activity-generation/core-activity-workflow.test.ts
+  599638312b9a1921 5-6,133-174,846-932
+apps/api/src/workflows/activity-generation/steps/generate-story-content-step.ts
+  599638312b9a1921 1-6,8-43,45-49,51-56,58-59,61-64,66-67
+apps/api/src/workflows/lesson-generation/steps/determine-applied-activity-step.test.ts
+  599638312b9a1921 1-121
+apps/main/src/lib/generation/activity-generation-phase-config.ts
+  599638312b9a1921 18-19,55,63,85,110,125,140
+apps/main/src/app/generate/l/[id]/generation-phases.ts
+  599638312b9a1921 19,39,53,57
+apps/api/src/workflows/activity-generation/steps/generate-story-debrief-step.ts
+  599638312b9a1921 1-7,9-40,42-50,52-53,55-58,60-61
+apps/api/src/workflows/lesson-generation/steps/add-activities-step.ts
+  599638312b9a1921 3,10,28
+apps/main/src/app/generate/l/[id]/use-generation-phases.ts
+  599638312b9a1921 59
+packages/ai/package.json
+  599638312b9a1921 33
+apps/main/src/data/activities/get-review-steps.test.ts
+  599638312b9a1921 379-418
+apps/main/src/lib/generation/activity-generation-phase-weights.ts
+  599638312b9a1921 11,26,134-143
+apps/api/src/workflows/activity-generation/steps/save-story-activity-step.ts
+  599638312b9a1921 1-107
+apps/main/src/data/activities/get-review-steps.ts
+  599638312b9a1921 7
+apps/main/src/app/generate/a/[id]/use-phase-labels.ts
+  599638312b9a1921 16,31
+apps/api/src/workflows/lesson-generation/lesson-generation-workflow.test.ts
+  599638312b9a1921 33-38,237-314
+apps/api/src/workflows/lesson-generation/steps/determine-applied-activity-step.ts
+  599638312b9a1921 1-8,10-34,37-42
+packages/core/src/workflows/steps.ts
+  599638312b9a1921 54,77-78,106,127,139,190-196
+apps/api/src/workflows/lesson-generation/lesson-generation-workflow.ts
+  599638312b9a1921 4,35-42,55
+apps/api/src/workflows/activity-generation/kinds/story-workflow.test.ts
+  599638312b9a1921 1-42,45-298
+apps/api/src/workflows/lesson-generation/steps/_utils/get-activities-for-kind.test.ts
+  599638312b9a1921 106-181
+packages/ai/src/tasks/lessons/applied-activity-kind.ts
+  599638312b9a1921 1-27,29-40,43-46,49-65
+apps/api/src/workflows/lesson-generation/steps/add-activities-step.test.ts
+  599638312b9a1921 73,118,146,177
+apps/api/src/workflows/activity-generation/steps/generate-story-debrief-step.test.ts
+  599638312b9a1921 1-54,56-294
+apps/api/src/workflows/activity-generation/core-activity-workflow.ts
+  599638312b9a1921 5,11-16,42-45
+packages/ai/src/tasks/lessons/applied-activity-kind.prompt.md
+  599638312b9a1921 1-45
+apps/main/src/app/generate/a/[id]/use-phase-thinking-generators.ts
+  599638312b9a1921 118-127,219-224,226-228
+apps/api/src/workflows/activity-generation/kinds/story-workflow.ts
+  599638312b9a1921 1-2,4-34,36-42,44
+apps/main/src/lib/generation/activity-generation-phases.ts
+  599638312b9a1921 37,52
+apps/api/src/workflows/activity-generation/steps/generate-story-content-step.test.ts
+  599638312b9a1921 1-297
+apps/main/src/lib/generation/activity-generation-phase-kind-steps.ts
+  599638312b9a1921 336-362
+apps/api/src/workflows/lesson-generation/steps/_utils/get-activities-for-kind.ts
+  599638312b9a1921 2,30,32-34,36-38,55-58,62,69,99,102
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.3",
+  "base_commit_sha": "83b5c9081a1fa9b3ac6e1a82eca3aae6049bce67",
+  "prompts": {
+    "599638312b9a1921": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d2da99cb-9140-4267-9f5e-c83b6d035772",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 2051,
+      "total_deletions": 135,
+      "accepted_lines": 1882,
+      "overriden_lines": 12
+    }
+  }
+}
