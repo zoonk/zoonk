@@ -1,0 +1,23 @@
+packages/player/src/player-selectors.ts
+  99ac95d68d7622d9 89,91,95,129-131,133,153-159,174-176,178-186,190,193-194,197-205,207,209,215,217-220
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.4",
+  "base_commit_sha": "a65d34ca3492152dc4dc4c262f0d1aff30947946",
+  "prompts": {
+    "99ac95d68d7622d9": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "61630772-c682-4528-9fa9-5d990a2cfd5c",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 73,
+      "total_deletions": 74,
+      "accepted_lines": 46,
+      "overriden_lines": 0
+    }
+  }
+}
