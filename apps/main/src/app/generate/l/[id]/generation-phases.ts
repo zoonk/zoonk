@@ -2,6 +2,7 @@ import {
   type AssertAllCovered,
   type PhaseStatus,
   calculateWeightedProgress as calculateProgress,
+  calculateTargetProgress as calculateTarget,
   getPhaseStatus as getStatus,
 } from "@/lib/generation-phases";
 import { type LessonStepName } from "@zoonk/core/workflows/steps";
@@ -66,15 +67,24 @@ export function getPhaseStatus(
   return getStatus(phase, completedSteps, currentStep, PHASE_STEPS, startedSteps);
 }
 
+const PROGRESS_CONFIG = {
+  phaseOrder: PHASE_ORDER,
+  phaseSteps: PHASE_STEPS,
+  phaseWeights: PHASE_WEIGHTS,
+};
+
 export function calculateWeightedProgress(
   completedSteps: LessonStepName[],
   currentStep: LessonStepName | null,
   startedSteps?: LessonStepName[],
 ): number {
-  return calculateProgress(completedSteps, currentStep, {
-    phaseOrder: PHASE_ORDER,
-    phaseSteps: PHASE_STEPS,
-    phaseWeights: PHASE_WEIGHTS,
-    startedSteps,
-  });
+  return calculateProgress(completedSteps, currentStep, { ...PROGRESS_CONFIG, startedSteps });
+}
+
+export function calculateTargetProgress(
+  completedSteps: LessonStepName[],
+  currentStep: LessonStepName | null,
+  startedSteps?: LessonStepName[],
+): number {
+  return calculateTarget(completedSteps, currentStep, { ...PROGRESS_CONFIG, startedSteps });
 }

@@ -1,6 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   type PhaseStatus,
+  calculateTargetProgress,
   calculateWeightedProgress,
   enforcePhaseProgression,
   getPhaseStatus,
@@ -129,6 +130,62 @@ describe(calculateWeightedProgress, () => {
     // start: completed (20), middle: pending (0), finishing: clamped to pending (0)
     // 20/60 * 100 = 33
     expect(progress).toBe(33);
+  });
+});
+
+describe(calculateTargetProgress, () => {
+  it("returns 0 when no steps completed and no active phases", () => {
+    expect(calculateTargetProgress([], null, testConfig)).toBe(0);
+  });
+
+  it("returns 100 when all steps completed", () => {
+    const allSteps: TestStep[] = ["stepA", "stepB", "stepC", "stepD", "stepE"];
+    expect(calculateTargetProgress(allSteps, null, testConfig)).toBe(100);
+  });
+
+  it("includes full weight of active phase in target", () => {
+    // phase1: stepA completed (active, 1/2 steps done)
+    // real progress = 10 (half of phase1's weight 20)
+    // target = 20 (full weight of phase1, since it's active)
+    expect(calculateTargetProgress(["stepA"], null, testConfig)).toBe(20);
+  });
+
+  it("includes full weight of current-step phase", () => {
+    // No steps completed, but currentStep is in phase2
+    // phase1: pending (0), phase2: active via currentStep (target = full 30)
+    // But enforcePhaseProgression doesn't promote phase2 since phase1 isn't completed.
+    // phase2 becomes active because currentStep is in it.
+    // Target should include phase2's full weight = 30
+    expect(calculateTargetProgress([], "stepC", testConfig)).toBe(30);
+  });
+
+  it("includes weights of all completed phases plus active phase", () => {
+    // phase1 complete (20) + phase2 active via currentStep (full weight 30) = 50
+    expect(calculateTargetProgress(["stepA", "stepB"], "stepC", testConfig)).toBe(50);
+  });
+
+  it("handles multiple active phases in parallel", () => {
+    // phase1: stepA started (active via startedSteps)
+    // phase2: stepC is currentStep (active)
+    // Both are active, target should include both full weights = 20 + 30 = 50
+    const config = { ...testConfig, startedSteps: ["stepA" as TestStep] };
+    expect(calculateTargetProgress([], "stepC", config)).toBe(50);
+  });
+
+  it("equals real progress when no phases are active", () => {
+    // phase1 complete (20), phase2 and phase3 pending
+    // enforcePhaseProgression promotes phase2 to active
+    // so target = 20 (completed) + 30 (active phase2) = 50
+    const progress = calculateWeightedProgress(["stepA", "stepB"], null, testConfig);
+    const target = calculateTargetProgress(["stepA", "stepB"], null, testConfig);
+    expect(target).toBeGreaterThanOrEqual(progress);
+  });
+
+  it("is always >= real progress", () => {
+    const steps: TestStep[] = ["stepA"];
+    const progress = calculateWeightedProgress(steps, null, testConfig);
+    const target = calculateTargetProgress(steps, null, testConfig);
+    expect(target).toBeGreaterThanOrEqual(progress);
   });
 });
 

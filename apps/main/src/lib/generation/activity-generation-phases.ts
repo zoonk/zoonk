@@ -1,6 +1,7 @@
 import {
   type PhaseStatus,
   calculateWeightedProgress as calculateProgress,
+  calculateTargetProgress as calculateTarget,
   getPhaseStatus as getStatus,
 } from "@/lib/generation-phases";
 import {
@@ -63,16 +64,37 @@ export function getPhaseStatus(
   return getStatus(phase, completedSteps, currentStep, getPhaseSteps(activityKind), startedSteps);
 }
 
+function getProgressConfig(activityKind: ActivityKind, startedSteps?: ActivityStepName[]) {
+  return {
+    phaseOrder: getPhaseOrder(activityKind),
+    phaseSteps: getPhaseSteps(activityKind),
+    phaseWeights: getPhaseWeights(activityKind),
+    startedSteps,
+  };
+}
+
 export function calculateWeightedProgress(
   completedSteps: ActivityStepName[],
   currentStep: ActivityStepName | null,
   activityKind: ActivityKind,
   startedSteps?: ActivityStepName[],
 ): number {
-  return calculateProgress(completedSteps, currentStep, {
-    phaseOrder: getPhaseOrder(activityKind),
-    phaseSteps: getPhaseSteps(activityKind),
-    phaseWeights: getPhaseWeights(activityKind),
-    startedSteps,
-  });
+  return calculateProgress(
+    completedSteps,
+    currentStep,
+    getProgressConfig(activityKind, startedSteps),
+  );
+}
+
+export function calculateTargetProgress(
+  completedSteps: ActivityStepName[],
+  currentStep: ActivityStepName | null,
+  activityKind: ActivityKind,
+  startedSteps?: ActivityStepName[],
+): number {
+  return calculateTarget(
+    completedSteps,
+    currentStep,
+    getProgressConfig(activityKind, startedSteps),
+  );
 }
