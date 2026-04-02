@@ -1,6 +1,11 @@
-import { type CompletionResult } from "../completion-input-schema";
-import { type PlayerRoute } from "../player-context";
-import { type PlayerPhase, type SelectedAnswer, type StepResult } from "../player-reducer";
+import { usePlayerNavigation, usePlayerRuntime } from "../player-context";
+import {
+  getCanNavigatePrev,
+  getCompletionResult,
+  getCurrentResult,
+  getCurrentStep,
+  getSelectedAnswer,
+} from "../player-selectors";
 import { type SerializedStep } from "../prepare-activity-data";
 import { CompletionScreenContent } from "./completion-screen";
 import { FeedbackScreenContent } from "./feedback-screen";
@@ -16,65 +21,48 @@ function needsFeedbackScreen(step: SerializedStep): boolean {
   );
 }
 
-export function StageContent({
-  canNavigatePrev,
-  completionResult,
-  currentResult,
-  currentStep,
-  currentStepIndex,
-  lessonHref,
-  nextActivityHref,
-  onNavigateNext,
-  onNavigatePrev,
-  onRestart,
-  onSelectAnswer,
-  results,
-  phase,
-  selectedAnswer,
-}: {
-  canNavigatePrev: boolean;
-  completionResult: CompletionResult | null;
-  currentResult: StepResult | undefined;
-  currentStep: SerializedStep | undefined;
-  currentStepIndex: number;
-  lessonHref: PlayerRoute;
-  nextActivityHref: PlayerRoute | null;
-  onNavigateNext: () => void;
-  onNavigatePrev: () => void;
-  onRestart: () => void;
-  onSelectAnswer: (stepId: string, answer: SelectedAnswer | null) => void;
-  results: Record<string, StepResult>;
-  phase: PlayerPhase;
-  selectedAnswer: SelectedAnswer | undefined;
-}) {
-  if (phase === "completed") {
+export function StageContent() {
+  const { actions, state } = usePlayerRuntime();
+  const { lessonHref, nextActivityHref } = usePlayerNavigation();
+
+  const canNavigatePrev = getCanNavigatePrev(state);
+  const completionResult = getCompletionResult(state);
+  const currentResult = getCurrentResult(state);
+  const currentStep = getCurrentStep(state);
+  const selectedAnswer = getSelectedAnswer(state);
+
+  if (state.phase === "completed") {
     return (
       <CompletionScreenContent
         completionResult={completionResult}
         lessonHref={lessonHref}
         nextActivityHref={nextActivityHref}
-        onRestart={onRestart}
-        results={results}
+        onRestart={actions.restart}
+        results={state.results}
       />
     );
   }
 
-  if (phase === "feedback" && currentResult && (!currentStep || needsFeedbackScreen(currentStep))) {
+  if (
+    state.phase === "feedback" &&
+    currentResult &&
+    (!currentStep || needsFeedbackScreen(currentStep))
+  ) {
     return <FeedbackScreenContent result={currentResult} step={currentStep} />;
   }
 
-  if ((phase === "playing" || phase === "feedback") && currentStep) {
+  if ((state.phase === "playing" || state.phase === "feedback") && currentStep) {
     return (
       <div
         className="animate-in fade-in flex min-h-0 w-full min-w-0 flex-1 flex-col items-center duration-150 ease-out motion-reduce:animate-none"
-        key={`step-${currentStepIndex}`}
+        key={`step-${state.currentStepIndex}`}
       >
         <StepRenderer
           canNavigatePrev={canNavigatePrev}
-          onNavigateNext={onNavigateNext}
-          onNavigatePrev={onNavigatePrev}
-          onSelectAnswer={onSelectAnswer}
-          result={phase === "feedback" ? currentResult : undefined}
+          onNavigateNext={actions.navigateNext}
+          onNavigatePrev={actions.navigatePrev}
+          onSelectAnswer={actions.selectAnswer}
+          result={state.phase === "feedback" ? currentResult : undefined}
           selectedAnswer={selectedAnswer}
           step={currentStep}
         />
