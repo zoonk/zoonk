@@ -1,0 +1,29 @@
+packages/player/src/step-navigation.ts
+  4ff46c83d9e7b128 2
+packages/player/src/player-reducer.test.ts
+  4ff46c83d9e7b128 414-500
+packages/player/src/player-reducer.ts
+  4ff46c83d9e7b128 7,150-152,154-155,157-159,161,179-180,197
+packages/player/src/story.ts
+  4ff46c83d9e7b128 1-19
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.4",
+  "base_commit_sha": "e181ec330a7fc996ffdbb122027d1677c2f946e2",
+  "prompts": {
+    "4ff46c83d9e7b128": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "169aea6c-6525-48c0-b39e-310952c456b3",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 133,
+      "total_deletions": 55,
+      "accepted_lines": 127,
+      "overriden_lines": 0
+    }
+  }
+}
