@@ -1,0 +1,36 @@
+packages/player/src/components/choice-step-layout.tsx
+  21c43991e728a583 35
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.4",
+  "base_commit_sha": "64ad99ab12a0171d778ef44c952f7fa9f12a8743",
+  "prompts": {
+    "21c43991e728a583": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9a77518b-d95f-4578-9c38-fad3bd55cfb5",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 10,
+      "total_deletions": 16,
+      "accepted_lines": 6,
+      "overriden_lines": 2
+    },
+    "4ff46c83d9e7b128": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "169aea6c-6525-48c0-b39e-310952c456b3",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 6,
+      "overriden_lines": 0
+    }
+  }
+}
