@@ -823,10 +823,8 @@ describe("core activity workflow", () => {
       // Practice should get explanation steps from BOTH sources
 
       expect(generateActivityExplanation).toHaveBeenCalledOnce();
-      expect(generateActivityPractice).toHaveBeenCalledOnce();
-
       // Verify practice got explanation steps from both completed and generated explanations
-      expect(generateActivityPractice).toHaveBeenCalledWith(
+      expect(generateActivityPractice).toHaveBeenCalledExactlyOnceWith(
         expect.objectContaining({
           explanationSteps: expect.arrayContaining([
             { text: "Completed explanation text", title: "CompletedExp" },

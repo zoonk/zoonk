@@ -558,8 +558,7 @@ describe("practice activity workflow", () => {
         workflowRunId: "test-run-id",
       });
 
-      expect(generateActivityPractice).toHaveBeenCalledOnce();
-      expect(generateActivityPractice).toHaveBeenCalledWith(
+      expect(generateActivityPractice).toHaveBeenCalledExactlyOnceWith(
         expect.objectContaining({
           explanationSteps: [
             { text: "SA text", title: "SA" },
@@ -771,8 +770,7 @@ describe("practice activity workflow", () => {
 
       // Practice 1 (index 1 in allPractices) should get the SECOND half
       // of explanations (IdxC, IdxD), not the first half or all of them.
-      expect(generateActivityPractice).toHaveBeenCalledOnce();
-      expect(generateActivityPractice).toHaveBeenCalledWith(
+      expect(generateActivityPractice).toHaveBeenCalledExactlyOnceWith(
         expect.objectContaining({
           explanationSteps: [
             { text: "IdxC text", title: "IdxC" },
@@ -844,8 +842,7 @@ describe("practice activity workflow", () => {
       });
 
       // Practice 1 must get the single explanation result (not an empty array)
-      expect(generateActivityPractice).toHaveBeenCalledOnce();
-      expect(generateActivityPractice).toHaveBeenCalledWith(
+      expect(generateActivityPractice).toHaveBeenCalledExactlyOnceWith(
         expect.objectContaining({
           explanationSteps: [{ text: "Only text", title: "Only" }],
         }),

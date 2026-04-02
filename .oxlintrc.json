@@ -84,6 +84,7 @@
     "typescript/no-confusing-void-expression": ["error", { "ignoreArrowShorthand": true }],
     "typescript/no-import-type-side-effects": "off",
     "typescript/no-misused-promises": ["error", { "checksVoidReturn": false }],
+    "no-unnecessary-type-arguments": "off",
     "typescript/no-unsafe-type-assertion": "error",
     "typescript/prefer-nullish-coalescing": "off",
     "typescript/promise-function-async": "off",
@@ -104,6 +105,8 @@
     "vitest/prefer-to-be-falsy": "off",
     "vitest/prefer-to-be-truthy": "off",
     "vitest/require-hook": "off",
+    "vitest/require-mock-type-parameters": "off",
+    "vitest/require-test-timeout": "off",
     "vitest/require-top-level-describe": "off",
 
     // custom rules
