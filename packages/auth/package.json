@@ -31,9 +31,9 @@
   "devDependencies": {
     "@types/node": "^24",
     "@types/react": "^19.2.14",
-    "@typescript/native-preview": "7.0.0-dev.20260324.1",
+    "@typescript/native-preview": "7.0.0-dev.20260401.1",
     "@zoonk/tsconfig": "workspace:*",
-    "vitest": "4.1.1"
+    "vitest": "4.1.2"
   },
   "peerDependencies": {
     "next": ">=16",

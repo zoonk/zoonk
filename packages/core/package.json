@@ -44,7 +44,7 @@
     "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
-    "@vercel/blob": "2.3.1",
+    "@vercel/blob": "2.3.3",
     "@zoonk/ai": "workspace:*",
     "@zoonk/auth": "workspace:*",
     "@zoonk/db": "workspace:*",
@@ -54,10 +54,10 @@
   },
   "devDependencies": {
     "@types/react": "^19.2.14",
-    "@typescript/native-preview": "7.0.0-dev.20260324.1",
+    "@typescript/native-preview": "7.0.0-dev.20260401.1",
     "@zoonk/testing": "workspace:*",
     "@zoonk/tsconfig": "workspace:*",
-    "vitest": "4.1.1"
+    "vitest": "4.1.2"
   },
   "peerDependencies": {
     "next": ">=16",

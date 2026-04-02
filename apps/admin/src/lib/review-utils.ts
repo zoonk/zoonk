@@ -94,7 +94,7 @@ function isVisualKind(value: string): boolean {
 }
 
 function getVisualKindFromTaskType(taskType: string): string | null {
-  const match = taskType.match(/^stepVisual(.+)$/);
+  const match = /^stepVisual(.+)$/.exec(taskType);
   if (!match?.[1]) {
     return null;
   }
