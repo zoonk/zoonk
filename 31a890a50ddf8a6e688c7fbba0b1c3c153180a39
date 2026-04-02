@@ -1,0 +1,25 @@
+packages/player/src/components/player-shell.tsx
+  7983e8ad8482a77d 82,121
+packages/player/src/components/stage-content.tsx
+  7983e8ad8482a77d 1,3-8,24-32,34,40-41,47,54,58,62-65
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.4",
+  "base_commit_sha": "31a890a50ddf8a6e688c7fbba0b1c3c153180a39",
+  "prompts": {
+    "7983e8ad8482a77d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9c0f5939-b0bf-4edf-9761-ff305ff3fb59",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 33,
+      "total_deletions": 70,
+      "accepted_lines": 29,
+      "overriden_lines": 0
+    }
+  }
+}
