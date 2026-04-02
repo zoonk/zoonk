@@ -1,0 +1,27 @@
+packages/core/src/steps/content-contract.ts
+  15feea7ce552ba15 200-202
+packages/player/src/player-selectors.ts
+  15feea7ce552ba15 1
+packages/player/src/components/player-shell.tsx
+  15feea7ce552ba15 3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.4",
+  "base_commit_sha": "26cef137ea94ed4c349e07cd0cdc058535326247",
+  "prompts": {
+    "15feea7ce552ba15": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "97b0166a-112f-4784-8d5c-7b32b80866ef",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 20,
+      "total_deletions": 12,
+      "accepted_lines": 5,
+      "overriden_lines": 0
+    }
+  }
+}
