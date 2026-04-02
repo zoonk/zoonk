@@ -56,7 +56,6 @@ export function StoryStep({
   return (
     <ChoiceStepLayout
       context={content.situation}
-      keyboardEnabled={selectedAnswer === undefined || selectedAnswer.kind === "story"}
       onSelect={handleSelect}
       options={content.choices.map((choice) => ({ key: choice.id, text: choice.text }))}
       selectedIndex={selectedIndex}

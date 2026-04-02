@@ -16,14 +16,12 @@ import { InteractiveStepLayout } from "./step-layouts";
  */
 export function ChoiceStepLayout({
   context,
-  keyboardEnabled,
   onSelect,
   options,
   question,
   selectedIndex,
 }: {
   context?: string | null;
-  keyboardEnabled: boolean;
   onSelect: (index: number) => void;
   options: readonly { key: string; text: string }[];
   question?: string | null;
@@ -34,7 +32,7 @@ export function ChoiceStepLayout({
   const hasSelection = selectedIndex !== null;
 
   useOptionKeyboard({
-    enabled: keyboardEnabled,
+    enabled: true,
     onSelect,
     optionCount: options.length,
   });

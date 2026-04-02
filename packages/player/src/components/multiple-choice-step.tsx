@@ -38,7 +38,6 @@ export function MultipleChoiceStep({
   return (
     <ChoiceStepLayout
       context={content.context}
-      keyboardEnabled={selectedAnswer === undefined || selectedAnswer.kind === "multipleChoice"}
       onSelect={handleSelect}
       options={content.options.map((option) => ({ key: option.text, text: option.text }))}
       question={content.question}
