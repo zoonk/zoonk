@@ -4,6 +4,7 @@ import { type PhaseStatus, enforcePhaseProgression } from "@/lib/generation-phas
 import { type PhaseName, getPhaseOrder } from "@/lib/generation/activity-generation-phase-config";
 import {
   PHASE_ICONS,
+  calculateTargetProgress,
   calculateWeightedProgress,
   getPhaseStatus,
 } from "@/lib/generation/activity-generation-phases";
@@ -42,11 +43,18 @@ export function useGenerationPhases(
     startedSteps,
   );
 
+  const targetProgress = calculateTargetProgress(
+    completedSteps,
+    currentStep,
+    activityKind,
+    startedSteps,
+  );
+
   const activePhaseNames = phases
     .filter((phase) => phase.status === "active")
     .map((phase) => phase.name);
 
   const thinkingGenerators = usePhaseThinkingGenerators();
 
-  return { activePhaseNames, phases, progress, thinkingGenerators };
+  return { activePhaseNames, phases, progress, targetProgress, thinkingGenerators };
 }

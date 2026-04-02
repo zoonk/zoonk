@@ -8,6 +8,7 @@ import {
   PHASE_ICONS,
   PHASE_ORDER,
   type PhaseName,
+  calculateTargetProgress,
   calculateWeightedProgress,
   getPhaseStatus,
 } from "./generation-phases";
@@ -42,6 +43,7 @@ export function useGenerationPhases(
   const phases = enforcePhaseProgression(rawPhases);
 
   const progress = calculateWeightedProgress(completedSteps, currentStep, startedSteps);
+  const targetProgress = calculateTargetProgress(completedSteps, currentStep, startedSteps);
 
   const activePhaseNames = phases
     .filter((phase) => phase.status === "active")
@@ -62,5 +64,5 @@ export function useGenerationPhases(
       cycleMessage([t("Designing practice exercises..."), t("Making it interactive...")], index),
   };
 
-  return { activePhaseNames, phases, progress, thinkingGenerators };
+  return { activePhaseNames, phases, progress, targetProgress, thinkingGenerators };
 }

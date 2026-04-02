@@ -95,22 +95,20 @@ function getPhaseWeightContribution<TPhase extends string, TStep extends string>
   return (completedCount / steps.length) * weight;
 }
 
-export function calculateWeightedProgress<TPhase extends string, TStep extends string>(
+/**
+ * Resolves phase statuses from step data, applying enforcement rules.
+ * Shared by both progress and target-progress calculations to avoid
+ * duplicating the status resolution logic.
+ */
+function resolvePhaseStatuses<TPhase extends string, TStep extends string>(
   completedSteps: TStep[],
   currentStep: TStep | null,
   config: {
     phaseSteps: Record<TPhase, readonly TStep[]>;
     phaseOrder: readonly TPhase[];
-    phaseWeights: Record<TPhase, number>;
     startedSteps?: TStep[];
   },
-): number {
-  const totalWeight = sumOf(config.phaseOrder.map((phase) => config.phaseWeights[phase]));
-
-  if (totalWeight === 0) {
-    return 0;
-  }
-
+): { phase: TPhase; status: PhaseStatus }[] {
   const rawStatuses = config.phaseOrder.map((phase) => ({
     phase,
     status: getPhaseStatus(
@@ -122,12 +120,68 @@ export function calculateWeightedProgress<TPhase extends string, TStep extends s
     ),
   }));
 
-  const enforced = enforcePhaseProgression(rawStatuses);
+  return enforcePhaseProgression(rawStatuses);
+}
+
+type ProgressConfig<TPhase extends string, TStep extends string> = {
+  phaseSteps: Record<TPhase, readonly TStep[]>;
+  phaseOrder: readonly TPhase[];
+  phaseWeights: Record<TPhase, number>;
+  startedSteps?: TStep[];
+};
+
+export function calculateWeightedProgress<TPhase extends string, TStep extends string>(
+  completedSteps: TStep[],
+  currentStep: TStep | null,
+  config: ProgressConfig<TPhase, TStep>,
+): number {
+  const totalWeight = sumOf(config.phaseOrder.map((phase) => config.phaseWeights[phase]));
+
+  if (totalWeight === 0) {
+    return 0;
+  }
+
+  const enforced = resolvePhaseStatuses(completedSteps, currentStep, config);
 
   const weightedSum = sumOf(
     enforced.map(({ phase, status }) =>
       getPhaseWeightContribution(phase, status, completedSteps, config),
     ),
+  );
+
+  return Math.round((weightedSum / totalWeight) * 100);
+}
+
+/**
+ * Computes the progress value that would be reached if all currently
+ * active phases completed right now. This gives `useAnimatedProgress`
+ * a meaningful ceiling to drift toward instead of a fixed constant.
+ *
+ * With parallel phases (e.g. listening runs vocab + grammar simultaneously),
+ * multiple phases can be active at once — their combined remaining weight
+ * is included in the target.
+ */
+export function calculateTargetProgress<TPhase extends string, TStep extends string>(
+  completedSteps: TStep[],
+  currentStep: TStep | null,
+  config: ProgressConfig<TPhase, TStep>,
+): number {
+  const totalWeight = sumOf(config.phaseOrder.map((phase) => config.phaseWeights[phase]));
+
+  if (totalWeight === 0) {
+    return 0;
+  }
+
+  const enforced = resolvePhaseStatuses(completedSteps, currentStep, config);
+
+  const weightedSum = sumOf(
+    enforced.map(({ phase, status }) => {
+      if (status === "active") {
+        return config.phaseWeights[phase];
+      }
+
+      return getPhaseWeightContribution(phase, status, completedSteps, config);
+    }),
   );
 
   return Math.round((weightedSum / totalWeight) * 100);

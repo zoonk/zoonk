@@ -2,8 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
-const MAX_DRIFT = 8;
-const HALF_LIFE = 15_000;
+const HALF_LIFE = 12_000;
 const CAP = 97;
 
 /**
@@ -11,10 +10,26 @@ const CAP = 97;
  * while streaming is active, creating the illusion of movement
  * during long-running backend steps.
  *
+ * The drift ceiling is dynamic: instead of a fixed constant,
+ * it uses `targetProgress` (the value progress will reach when
+ * all currently active phases complete). This makes the drift
+ * proportional to the actual work remaining in the active phase(s),
+ * so a heavy phase like "recording audio" (weight 50) gets a wide
+ * drift range while a light phase like "saving" (weight 2) gets
+ * a narrow one.
+ *
  * Uses a high-water mark to ensure the displayed value never decreases,
  * preventing visual "snap-back" when real progress drops after drift inflation.
  */
-export function useAnimatedProgress(realProgress: number, active: boolean): number {
+export function useAnimatedProgress({
+  isActive,
+  realProgress,
+  targetProgress,
+}: {
+  isActive: boolean;
+  realProgress: number;
+  targetProgress: number;
+}): number {
   const [display, setDisplay] = useState(realProgress);
   const rafRef = useRef<number>(0);
   const startTimeRef = useRef<number>(0);
@@ -32,7 +47,7 @@ export function useAnimatedProgress(realProgress: number, active: boolean): numb
   }, [realProgress]);
 
   useEffect(() => {
-    if (!active) {
+    if (!isActive) {
       setDisplay(realProgress);
       highWaterRef.current = realProgress;
       cancelAnimationFrame(rafRef.current);
@@ -40,8 +55,9 @@ export function useAnimatedProgress(realProgress: number, active: boolean): numb
     }
 
     function tick() {
+      const gap = Math.max(0, targetProgress - baseRef.current);
       const elapsed = performance.now() - startTimeRef.current;
-      const drift = MAX_DRIFT * (1 - 1 / (1 + elapsed / HALF_LIFE));
+      const drift = gap * (1 - Math.exp(-elapsed / HALF_LIFE));
       const animated = baseRef.current + drift;
       const capped = Math.min(animated, CAP);
       const monotonic = Math.max(capped, highWaterRef.current);
@@ -61,7 +77,7 @@ export function useAnimatedProgress(realProgress: number, active: boolean): numb
     return () => {
       cancelAnimationFrame(rafRef.current);
     };
-  }, [active, realProgress]);
+  }, [isActive, realProgress, targetProgress]);
 
   return display;
 }

@@ -11,6 +11,7 @@ import { useExtracted } from "next-intl";
 import {
   PHASE_ICONS,
   type PhaseName,
+  calculateTargetProgress,
   calculateWeightedProgress,
   getPhaseOrder,
   getPhaseStatus,
@@ -46,6 +47,7 @@ export function useGenerationPhases(
   const phases = enforcePhaseProgression(rawPhases);
 
   const progress = calculateWeightedProgress(completedSteps, currentStep, startedSteps);
+  const targetProgress = calculateTargetProgress(completedSteps, currentStep, startedSteps);
 
   const activePhaseNames = phases
     .filter((phase) => phase.status === "active")
@@ -63,5 +65,5 @@ export function useGenerationPhases(
       cycleMessage([t("Saving your progress..."), t("Putting it all together...")], index),
   };
 
-  return { activePhaseNames, phases, progress, thinkingGenerators };
+  return { activePhaseNames, phases, progress, targetProgress, thinkingGenerators };
 }
