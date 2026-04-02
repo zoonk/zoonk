@@ -1,0 +1,27 @@
+packages/player/src/story.ts
+  faa725e2f047c9b7 11-21
+packages/player/src/components/story-feedback-content.tsx
+  faa725e2f047c9b7 9
+packages/player/src/player-selectors.ts
+  faa725e2f047c9b7 6,202
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.4",
+  "base_commit_sha": "2196d95ffd894d084a96791199ade7aa32a4f389",
+  "prompts": {
+    "faa725e2f047c9b7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5b689d31-2068-459e-b60a-6447f48dced1",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 16,
+      "total_deletions": 23,
+      "accepted_lines": 14,
+      "overriden_lines": 0
+    }
+  }
+}
