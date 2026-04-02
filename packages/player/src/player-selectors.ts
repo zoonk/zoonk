@@ -147,8 +147,11 @@ function findStoryIntroContent(steps: SerializedStep[]) {
 /**
  * Extracts the selected choice from a story step result, if available.
  * Returns null when the step has no result or the choice ID doesn't match.
+ *
+ * Also used by the outcome screen to determine choice alignment
+ * without duplicating the lookup logic.
  */
-function findSelectedChoice({
+export function findSelectedChoice({
   step,
   results,
 }: {

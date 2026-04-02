@@ -76,7 +76,7 @@ function StaticStepContent({ step }: { step: SerializedStep }) {
   }
 
   if (content.variant === "storyOutcome") {
-    return <StoryOutcomeContent metrics={content.metrics} outcomes={content.outcomes} />;
+    return <StoryOutcomeContent outcomes={content.outcomes} />;
   }
 
   return <TextVariant text={content.text} title={content.title} />;

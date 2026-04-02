@@ -1,10 +1,9 @@
 "use client";
 
-import { parseStepContent } from "@zoonk/core/steps/content-contract";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { usePlayerRuntime } from "../player-context";
-import { getStoryMetrics } from "../player-selectors";
+import { findSelectedChoice, getStoryMetrics } from "../player-selectors";
 import { type SerializedStep } from "../prepare-activity-data";
 import { StoryMetricPill } from "./story-metric-pill";
 
@@ -15,21 +14,26 @@ type StoryOutcome = {
 };
 
 /**
+ * A ranked outcome includes its position in the sorted list so we can
+ * determine the tier color without re-sorting.
+ */
+type RankedOutcome = {
+  index: number;
+  outcome: StoryOutcome;
+  total: number;
+};
+
+/**
  * Checks whether a story step result has a "strong" alignment choice.
  */
-function isStrongChoice(
-  step: SerializedStep,
-  results: Record<string, { answer?: { kind: string; selectedChoiceId?: string } }>,
-): boolean {
-  const result = results[step.id];
-
-  if (!result?.answer || result.answer.kind !== "story" || !result.answer.selectedChoiceId) {
-    return false;
-  }
-
-  const content = parseStepContent("story", step.content);
-  const choice = content.choices.find((option) => option.id === result.answer?.selectedChoiceId);
-
+function isStrongChoice({
+  results,
+  step,
+}: {
+  results: Record<string, { answer?: { kind: string; selectedChoiceId?: string } }>;
+  step: SerializedStep;
+}): boolean {
+  const choice = findSelectedChoice({ results, step });
   return choice?.alignment === "strong";
 }
 
@@ -37,47 +41,58 @@ function isStrongChoice(
  * Counts how many "strong" alignment choices the player made across all
  * story decision steps.
  */
-function countStrongChoices(state: {
+function countStrongChoices({
+  results,
+  steps,
+}: {
   results: Record<string, { answer?: { kind: string; selectedChoiceId?: string } }>;
   steps: SerializedStep[];
 }): number {
-  return state.steps
-    .filter((step) => step.kind === "story")
-    .filter((step) => isStrongChoice(step, state.results)).length;
+  return steps.filter((step) => isStrongChoice({ results, step })).length;
 }
 
 /**
- * Selects the best-matching outcome based on the player's strong choice count.
+ * Sorts outcomes by minStrongChoices descending (best first, worst last)
+ * and selects the first one where the player's count meets or exceeds
+ * the threshold. Falls back to the last outcome if none match.
  *
- * Sorts outcomes by minStrongChoices descending and picks the first one
- * where the player's count meets or exceeds the threshold. Falls back to
- * the last outcome (lowest threshold) if none match.
+ * Returns the matched outcome along with its tier index and total count
+ * so the caller can determine the color without re-sorting.
  */
-function selectOutcome(outcomes: StoryOutcome[], strongCount: number): StoryOutcome | undefined {
+function selectOutcome({
+  outcomes,
+  strongCount,
+}: {
+  outcomes: StoryOutcome[];
+  strongCount: number;
+}): RankedOutcome | null {
   const sorted = [...outcomes].toSorted(
     (left, right) => right.minStrongChoices - left.minStrongChoices,
   );
 
-  return sorted.find((outcome) => strongCount >= outcome.minStrongChoices) ?? sorted.at(-1);
+  const index = sorted.findIndex((entry) => strongCount >= entry.minStrongChoices);
+  const resolvedIndex = index === -1 ? sorted.length - 1 : index;
+  const outcome = sorted[resolvedIndex];
+
+  if (!outcome) {
+    return null;
+  }
+
+  return { index: resolvedIndex, outcome, total: sorted.length };
 }
 
 /**
- * Returns the color class for the outcome title based on its tier.
+ * Returns the color class for the outcome title based on its position
+ * in the ranked list.
  *
- * The best outcome (highest threshold) is green, the worst (lowest) is
- * destructive, and everything in between is warning.
+ * First (best) = green, last (worst) = destructive, middle = warning.
  */
-function getOutcomeTierColor(outcome: StoryOutcome, allOutcomes: StoryOutcome[]): string {
-  const sorted = [...allOutcomes].toSorted(
-    (left, right) => right.minStrongChoices - left.minStrongChoices,
-  );
-  const index = sorted.indexOf(outcome);
-
+function getOutcomeTierColor({ index, total }: RankedOutcome): string {
   if (index === 0) {
     return "text-success";
   }
 
-  if (index === sorted.length - 1) {
+  if (index === total - 1) {
     return "text-destructive";
   }
 
@@ -90,39 +105,39 @@ function getOutcomeTierColor(outcome: StoryOutcome, allOutcomes: StoryOutcome[])
  * Displays the narrative result of the player's decisions with a
  * color-coded title reflecting how well they did.
  */
-export function StoryOutcomeContent({ outcomes }: { metrics: string[]; outcomes: StoryOutcome[] }) {
+export function StoryOutcomeContent({ outcomes }: { outcomes: StoryOutcome[] }) {
   const t = useExtracted();
   const { state } = usePlayerRuntime();
   const strongCount = countStrongChoices(state);
-  const outcome = selectOutcome(outcomes, strongCount);
+  const ranked = selectOutcome({ outcomes, strongCount });
   const storyMetrics = getStoryMetrics(state);
 
-  if (!outcome) {
+  if (!ranked) {
     return null;
   }
 
-  const titleColor = getOutcomeTierColor(outcome, outcomes);
+  const titleColor = getOutcomeTierColor(ranked);
 
   return (
     <div className="flex flex-col gap-6">
-      <h2 className={cn("text-2xl font-semibold tracking-tight", titleColor)}>{outcome.title}</h2>
+      <h2 className={cn("text-2xl font-semibold tracking-tight", titleColor)}>
+        {ranked.outcome.title}
+      </h2>
 
-      <p className="text-lg leading-relaxed">{outcome.narrative}</p>
+      <p className="text-lg leading-relaxed">{ranked.outcome.narrative}</p>
 
       {storyMetrics.length > 0 && (
         <div className="flex flex-col gap-3">
           <div className="bg-border h-px" />
 
-          <div className="flex flex-col gap-3">
-            <p className="text-muted-foreground text-xs font-medium tracking-widest uppercase">
-              {t("Final status")}
-            </p>
+          <p className="text-muted-foreground text-xs font-medium tracking-widest uppercase">
+            {t("Final status")}
+          </p>
 
-            <div className="-ml-1 flex flex-wrap gap-2">
-              {storyMetrics.map((entry) => (
-                <StoryMetricPill key={entry.metric} metric={entry.metric} value={entry.value} />
-              ))}
-            </div>
+          <div className="-ml-1 flex flex-wrap gap-2">
+            {storyMetrics.map((entry) => (
+              <StoryMetricPill key={entry.metric} metric={entry.metric} value={entry.value} />
+            ))}
           </div>
         </div>
       )}
