@@ -37,6 +37,13 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "pt-kanban-origins",
     userInput: {
+      concepts: [
+        "Sistema puxado",
+        "Estoque mínimo",
+        "Fluxo contínuo",
+        "Sinalização visual",
+        "Produção just-in-time",
+      ],
       language: "pt",
       storySteps: {
         intro:
@@ -252,6 +259,7 @@ ${SHARED_EXPECTATIONS}
     expectations: SHARED_EXPECTATIONS,
     id: "en-web-packets-network-paths",
     userInput: {
+      concepts: ["Packet switching", "Routing", "Latency", "Bandwidth", "Network congestion"],
       language: "en",
       storySteps: {
         intro:
@@ -584,6 +592,13 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "pt-python-tipos-numericos-principais",
     userInput: {
+      concepts: [
+        "Inteiros",
+        "Ponto flutuante",
+        "Booleanos",
+        "Números complexos",
+        "Conversão de tipos",
+      ],
       language: "pt",
       storySteps: {
         intro:
@@ -900,6 +915,13 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "es-quimica-formacion-enoles-enolatos",
     userInput: {
+      concepts: [
+        "Tautomería ceto-enólica",
+        "Acidez del hidrógeno alfa",
+        "Enolización",
+        "Bases fuertes y débiles",
+        "Alquilación de enolatos",
+      ],
       language: "es",
       storySteps: {
         intro:
@@ -1248,6 +1270,13 @@ ${SHARED_EXPECTATIONS}
     expectations: SHARED_EXPECTATIONS,
     id: "en-economics-sectoral-comovements",
     userInput: {
+      concepts: [
+        "Business cycle synchronization",
+        "Sectoral spillovers",
+        "Regional disparities",
+        "Leading and lagging indicators",
+        "Aggregate demand shocks",
+      ],
       language: "en",
       storySteps: {
         intro:

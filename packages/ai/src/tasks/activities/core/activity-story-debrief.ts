@@ -27,6 +27,7 @@ const schema = z.object({
 export type ActivityStoryDebriefSchema = z.infer<typeof schema>;
 
 export type ActivityStoryDebriefParams = {
+  concepts: string[];
   storySteps: ActivityStoryStepsSchema;
   topic: string;
   language: string;
@@ -81,6 +82,7 @@ function formatStoryStepsForPrompt(storySteps: ActivityStoryStepsSchema): string
  * This is phase 2 of story generation.
  */
 export async function generateActivityStoryDebrief({
+  concepts,
   storySteps,
   topic,
   language,
@@ -91,6 +93,7 @@ export async function generateActivityStoryDebrief({
   const userPrompt = `
     TOPIC: ${topic}
     LANGUAGE: ${language}
+    CONCEPTS: ${concepts.join(", ")}
     ${formatStoryStepsForPrompt(storySteps)}
   `;
 
