@@ -11,7 +11,8 @@ function needsFeedbackScreen(step: SerializedStep): boolean {
     step.kind === "multipleChoice" ||
     step.kind === "translation" ||
     step.kind === "reading" ||
-    step.kind === "listening"
+    step.kind === "listening" ||
+    step.kind === "story"
   );
 }
 

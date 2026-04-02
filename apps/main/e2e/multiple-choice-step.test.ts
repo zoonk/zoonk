@@ -380,6 +380,39 @@ test.describe("Interaction Mechanics", () => {
     );
   });
 
+  test("clicking a selected option unselects it", async ({ page }) => {
+    const { url } = await createMultipleChoiceActivity({
+      steps: [
+        {
+          content: {
+            kind: "core",
+            options: [
+              { feedback: "No", isCorrect: false, text: "Toggle A" },
+              { feedback: "Yes", isCorrect: true, text: "Toggle B" },
+            ],
+            question: "Toggle test",
+          },
+          position: 0,
+        },
+      ],
+    });
+
+    await page.goto(url);
+    await page.waitForLoadState("networkidle");
+
+    const option = page.getByRole("radio", { name: /toggle a/i });
+
+    // Select the option
+    await option.click();
+    await expect(option).toHaveAttribute("aria-checked", "true");
+    await expect(page.getByRole("button", { name: /check/i })).toBeEnabled();
+
+    // Click again to unselect
+    await option.click();
+    await expect(option).toHaveAttribute("aria-checked", "false");
+    await expect(page.getByRole("button", { name: /check/i })).toBeDisabled();
+  });
+
   test("feedback screen replaces step after checking", async ({ page }) => {
     const uniqueId = randomUUID().slice(0, 8);
     const { url } = await createMultipleChoiceActivity({

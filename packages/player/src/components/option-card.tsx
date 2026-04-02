@@ -22,11 +22,11 @@ export function OptionCard({
     <button
       aria-checked={isSelected}
       className={cn(
-        "focus-visible:border-ring focus-visible:ring-ring/50 flex w-full items-center gap-3 rounded-xl border px-4 py-3.5 text-left transition-colors duration-150 outline-none focus-visible:ring-[3px]",
+        "focus-visible:border-ring focus-visible:ring-ring/50 flex w-full items-center gap-3 rounded-xl border px-4 py-3.5 text-left transition-all duration-150 outline-none focus-visible:ring-[3px]",
         !disabled && !isSelected && "border-border hover:bg-accent",
         !disabled && isSelected && "border-primary bg-primary/5",
         disabled && "pointer-events-none",
-        isDimmed && "opacity-40",
+        isDimmed && "opacity-50",
         resultState === "correct" && "bg-success/5 text-success border-transparent opacity-75",
         resultState === "incorrect" &&
           "bg-destructive/5 text-destructive border-transparent opacity-75",

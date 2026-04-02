@@ -354,28 +354,4 @@ describe("step content contracts", () => {
       ).toThrow();
     });
   });
-
-  describe("static storyDebrief", () => {
-    test("parses debrief with concepts", () => {
-      const content = parseStepContent("static", {
-        debrief: [
-          { explanation: "When you chose X, you experienced Y.", name: "Kanban" },
-          { explanation: "Pulling work based on demand.", name: "Pull System" },
-        ],
-        variant: "storyDebrief",
-      });
-
-      expect(content.variant).toBe("storyDebrief");
-    });
-
-    test("rejects outcomes in debrief", () => {
-      expect(() =>
-        parseStepContent("static", {
-          debrief: [{ explanation: "Test.", name: "Concept" }],
-          outcomes: [{ minStrongChoices: 0, narrative: "Bad.", title: "Bad" }],
-          variant: "storyDebrief",
-        }),
-      ).toThrow();
-    });
-  });
 });

@@ -4,6 +4,7 @@ import { computeLocalCompletion } from "./player-completion";
 import { buildInitialAnswers } from "./player-initial-state";
 import { type SerializedStep } from "./prepare-activity-data";
 import { canNavigatePrev, isStaticNavigationStep } from "./step-navigation";
+import { isStoryStaticVariant } from "./story";
 
 export type PlayerPhase = "playing" | "feedback" | "completed";
 
@@ -145,6 +146,21 @@ function handleContinue(state: PlayerState): PlayerState {
   };
 }
 
+/**
+ * Moves the player to the next step, or completes the activity if there
+ * are no more steps. Shared by both story-static and regular-static
+ * forward navigation to avoid duplicating the advance-or-complete logic.
+ */
+function advanceForward(state: PlayerState): PlayerState {
+  const nextIndex = state.currentStepIndex + 1;
+
+  if (nextIndex >= state.steps.length) {
+    return completeWith(state);
+  }
+
+  return { ...state, currentStepIndex: nextIndex, stepStartedAt: Date.now() };
+}
+
 function handleNavigateStep(
   state: PlayerState,
   action: Extract<PlayerAction, { type: "NAVIGATE_STEP" }>,
@@ -154,6 +170,15 @@ function handleNavigateStep(
   }
 
   const currentStep = state.steps[state.currentStepIndex];
+
+  /**
+   * Story static steps (intro, outcome, debrief) allow forward-only
+   * navigation via the bottom bar action buttons. They don't participate
+   * in arrow-key navigation handled by `isStaticNavigationStep`.
+   */
+  if (currentStep && isStoryStaticVariant(currentStep) && action.direction === "next") {
+    return advanceForward(state);
+  }
 
   if (!isStaticNavigationStep(currentStep)) {
     return state;
@@ -169,13 +194,7 @@ function handleNavigateStep(
     return { ...state, currentStepIndex: prevIndex, stepStartedAt: Date.now() };
   }
 
-  const nextIndex = state.currentStepIndex + 1;
-
-  if (nextIndex >= state.steps.length) {
-    return completeWith(state);
-  }
-
-  return { ...state, currentStepIndex: nextIndex, stepStartedAt: Date.now() };
+  return advanceForward(state);
 }
 
 function handleRestart(state: PlayerState): PlayerState {

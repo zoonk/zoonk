@@ -70,6 +70,12 @@ msgctxt "xiSVL4"
 msgid "{color} Belt — Level {level}"
 msgstr "Faixa {color} — Nível {level}"
 
+#: ../../packages/player/src/components/choice-step-layout.tsx
+#: ../../packages/player/src/components/translation-step.tsx
+msgctxt "akd+cv"
+msgid "Answer options"
+msgstr "Opções de resposta"
+
 #: ../../packages/player/src/components/completion-auth-branch.tsx
 msgctxt "9+Ddtu"
 msgid "Next"
@@ -226,12 +232,6 @@ msgctxt "ja1JDt"
 msgid "All pairs matched. Press Check to continue."
 msgstr "Todos os pares combinados. Pressione Verificar para continuar."
 
-#: ../../packages/player/src/components/multiple-choice-step.tsx
-#: ../../packages/player/src/components/translation-step.tsx
-msgctxt "akd+cv"
-msgid "Answer options"
-msgstr "Opções de resposta"
-
 #: ../../packages/player/src/components/play-audio-button.tsx
 msgctxt "lYWSeP"
 msgid "Play pronunciation"
@@ -278,6 +278,11 @@ msgid "Continue"
 msgstr "Continuar"
 
 #: ../../packages/player/src/components/player-shell.tsx
+msgctxt "PVe26p"
+msgid "Begin"
+msgstr "Começar"
+
+#: ../../packages/player/src/components/player-shell.tsx
 msgctxt "RDZVQL"
 msgid "Check"
 msgstr "Verificar"
@@ -315,6 +320,27 @@ msgstr "Ordenar itens"
 msgctxt "VA8c/A"
 msgid "Correct order:"
 msgstr "Ordem correta:"
+
+#: ../../packages/player/src/components/story-briefing-popover.tsx
+msgctxt "XyeasA"
+msgid "Briefing"
+msgstr "Resumo"
+
+#: ../../packages/player/src/components/story-feedback-content.tsx
+msgctxt "jSeUY4"
+msgid "Metric changes"
+msgstr "Mudanças nas métricas"
+
+#: ../../packages/player/src/components/story-intro-content.tsx
+#: ../../packages/player/src/components/story-metrics-bar.tsx
+msgctxt "pFm27r"
+msgid "Current status"
+msgstr "Status atual"
+
+#: ../../packages/player/src/components/story-outcome-content.tsx
+msgctxt "ZJ5JQC"
+msgid "Final status"
+msgstr "Status final"
 
 #: ../../packages/player/src/components/translation-step.tsx
 msgctxt "MxLxkr"
@@ -2524,6 +2550,11 @@ msgstr "Escuta"
 msgctxt "3198Ew"
 msgid "Learn new {topic} words with flashcards — see each word, its translation, and pronunciation."
 msgstr "Aprenda novas palavras de {topic} com flashcards — veja cada palavra, sua tradução e pronúncia."
+
+#: src/lib/activities.ts
+msgctxt "Bfq+7w"
+msgid "Story"
+msgstr "História"
 
 #: src/lib/activities.ts
 msgctxt "bzFQEy"

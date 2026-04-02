@@ -1,7 +1,16 @@
 import { type SerializedStep } from "./prepare-activity-data";
+import { isStoryStaticVariant } from "./story";
 
 export function isStaticNavigationStep(step: SerializedStep | undefined): boolean {
-  return step?.kind === "static" || step?.kind === "visual" || step?.kind === "vocabulary";
+  if (!step) {
+    return false;
+  }
+
+  if (isStoryStaticVariant(step)) {
+    return false;
+  }
+
+  return step.kind === "static" || step.kind === "visual" || step.kind === "vocabulary";
 }
 
 export function canNavigatePrev(steps: SerializedStep[], currentStepIndex: number): boolean {

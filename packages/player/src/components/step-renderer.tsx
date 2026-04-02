@@ -1,5 +1,6 @@
 "use client";
 
+import { parseStepContent } from "@zoonk/core/steps/content-contract";
 import { type SelectedAnswer, type StepResult } from "../player-reducer";
 import { type SerializedStep } from "../prepare-activity-data";
 import { FillBlankStep } from "./fill-blank-step";
@@ -12,6 +13,7 @@ import { SortOrderStep } from "./sort-order-step";
 import { StaticStep } from "./static-step";
 import { NavigableStepLayout } from "./step-layouts";
 import { StepSideNav } from "./step-side-nav";
+import { StoryStep } from "./story-step";
 import { TranslationStep } from "./translation-step";
 import { VisualStep } from "./visual-step";
 import { VocabularyStep } from "./vocabulary-step";
@@ -34,6 +36,14 @@ export function StepRenderer({
   step: SerializedStep;
 }) {
   if (step.kind === "static") {
+    const staticContent = parseStepContent("static", step.content);
+    const isStoryStatic =
+      staticContent.variant === "storyIntro" || staticContent.variant === "storyOutcome";
+
+    if (isStoryStatic) {
+      return <StaticStep step={step} />;
+    }
+
     return (
       <NavigableStepLayout>
         <StepSideNav
@@ -154,6 +164,12 @@ export function StepRenderer({
         selectedAnswer={selectedAnswer}
         step={step}
       />
+    );
+  }
+
+  if (step.kind === "story") {
+    return (
+      <StoryStep onSelectAnswer={onSelectAnswer} selectedAnswer={selectedAnswer} step={step} />
     );
   }
 

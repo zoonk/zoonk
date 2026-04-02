@@ -11,7 +11,12 @@ import {
 } from "./player-context";
 import { type InitialStateInput } from "./player-initial-state";
 import { createInitialState, playerReducer } from "./player-reducer";
-import { getCanNavigatePrev, getHasAnswer, getIsStaticStep } from "./player-selectors";
+import {
+  getCanNavigatePrev,
+  getHasAnswer,
+  getIsStaticStep,
+  getStoryStaticVariant,
+} from "./player-selectors";
 import { type SerializedActivity } from "./prepare-activity-data";
 import { usePlayerActions } from "./use-player-actions";
 import { usePlayerKeyboard } from "./use-player-keyboard";
@@ -61,6 +66,7 @@ export function PlayerProvider({
     onNext: onNext ? handleNext : null,
     onRestart: actions.restart,
     phase: state.phase,
+    storyStaticVariant: getStoryStaticVariant(state),
   });
 
   const configValue = useMemo(

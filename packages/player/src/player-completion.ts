@@ -36,7 +36,7 @@ function getStoryAlignments(state: PlayerState): StoryAlignment[] {
  * in the background via `after()`.
  */
 export function computeLocalCompletion(state: PlayerState): CompletionResult {
-  const isStory = state.steps[0]?.kind === "story";
+  const isStory = state.steps.some((step) => step.kind === "story");
 
   const score = isStory
     ? computeStoryScore({ alignments: getStoryAlignments(state) })

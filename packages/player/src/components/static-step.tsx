@@ -6,6 +6,8 @@ import { useReplaceName } from "../user-name-context";
 import { HighlightText } from "./highlight-text";
 import { ContextText, QuestionText } from "./question-text";
 import { RomanizationText } from "./romanization-text";
+import { StoryIntroContent } from "./story-intro-content";
+import { StoryOutcomeContent } from "./story-outcome-content";
 
 function TextVariant({ title, text }: { title: string; text: string }) {
   const replaceName = useReplaceName();
@@ -69,12 +71,12 @@ function StaticStepContent({ step }: { step: SerializedStep }) {
     return <GrammarRuleVariant ruleName={content.ruleName} ruleSummary={content.ruleSummary} />;
   }
 
-  if (
-    content.variant === "storyIntro" ||
-    content.variant === "storyOutcome" ||
-    content.variant === "storyDebrief"
-  ) {
-    return null;
+  if (content.variant === "storyIntro") {
+    return <StoryIntroContent intro={content.intro} metrics={content.metrics} />;
+  }
+
+  if (content.variant === "storyOutcome") {
+    return <StoryOutcomeContent outcomes={content.outcomes} />;
   }
 
   return <TextVariant text={content.text} title={content.title} />;

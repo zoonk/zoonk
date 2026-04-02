@@ -411,6 +411,93 @@ describe("NAVIGATE_STEP", () => {
     const next = playerReducer(state, { direction: "next", type: "NAVIGATE_STEP" });
     expect(next).toBe(state);
   });
+
+  describe("story static steps", () => {
+    const storyIntroContent = {
+      intro: "You are a factory manager.",
+      metrics: ["Production", "Morale"],
+      variant: "storyIntro" as const,
+    };
+
+    const storyOutcomeContent = {
+      metrics: ["Production"],
+      outcomes: [{ minStrongChoices: 0, narrative: "Result.", title: "Outcome" }],
+      variant: "storyOutcome" as const,
+    };
+
+    function buildStoryIntroStep(overrides: Partial<SerializedStep> = {}): SerializedStep {
+      return buildStep({ content: storyIntroContent, id: "intro", kind: "static", ...overrides });
+    }
+
+    function buildStoryOutcomeStep(overrides: Partial<SerializedStep> = {}): SerializedStep {
+      return buildStep({
+        content: storyOutcomeContent,
+        id: "outcome",
+        kind: "static",
+        ...overrides,
+      });
+    }
+
+    test("next advances on storyIntro step", () => {
+      const steps = [
+        buildStoryIntroStep({ position: 0 }),
+        buildStep({ id: "s2", kind: "static", position: 1 }),
+      ];
+      const state = buildState({ steps });
+      const next = playerReducer(state, { direction: "next", type: "NAVIGATE_STEP" });
+      expect(next.currentStepIndex).toBe(1);
+    });
+
+    test("next advances on storyOutcome step", () => {
+      const steps = [
+        buildStoryOutcomeStep({ position: 0 }),
+        buildStep({ id: "s2", kind: "static", position: 1 }),
+      ];
+      const state = buildState({ steps });
+      const next = playerReducer(state, { direction: "next", type: "NAVIGATE_STEP" });
+      expect(next.currentStepIndex).toBe(1);
+    });
+
+    test("next on last storyIntro step transitions to completed", () => {
+      const steps = [buildStoryIntroStep()];
+      const state = buildState({ currentStepIndex: 0, steps, totalBrainPower: 50 });
+      const next = playerReducer(state, { direction: "next", type: "NAVIGATE_STEP" });
+      expect(next.phase).toBe("completed");
+      expect(next.completion).not.toBeNull();
+    });
+
+    test("prev no-ops on story static step (forward-only)", () => {
+      const steps = [
+        buildStoryIntroStep({ position: 0 }),
+        buildStoryOutcomeStep({ id: "outcome", position: 1 }),
+      ];
+      const state = buildState({ currentStepIndex: 1, steps });
+      const next = playerReducer(state, { direction: "prev", type: "NAVIGATE_STEP" });
+      expect(next).toBe(state);
+    });
+
+    test("next resets stepStartedAt on story static step", () => {
+      vi.useFakeTimers();
+      vi.setSystemTime(new Date("2026-03-15T10:00:00"));
+
+      const steps = [
+        buildStoryIntroStep({ position: 0 }),
+        buildStep({ id: "s2", kind: "static", position: 1 }),
+      ];
+      const state = buildState({ stepStartedAt: 1000, steps });
+      const next = playerReducer(state, { direction: "next", type: "NAVIGATE_STEP" });
+      expect(next.stepStartedAt).toBe(Date.now());
+
+      vi.useRealTimers();
+    });
+
+    test("no-ops in feedback phase", () => {
+      const steps = [buildStoryIntroStep()];
+      const state = buildState({ phase: "feedback", steps });
+      const next = playerReducer(state, { direction: "next", type: "NAVIGATE_STEP" });
+      expect(next).toBe(state);
+    });
+  });
 });
 
 describe("COMPLETE", () => {

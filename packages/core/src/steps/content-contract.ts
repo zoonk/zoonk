@@ -107,13 +107,6 @@ const storyOutcomeSchema = z
   })
   .strict();
 
-const storyDebriefConceptSchema = z
-  .object({
-    explanation: z.string(),
-    name: z.string(),
-  })
-  .strict();
-
 /**
  * Intro screen for a story activity (static step, first position).
  * Sets the scene and defines the metrics the player will track.
@@ -138,24 +131,12 @@ const staticStoryOutcomeContentSchema = z
   })
   .strict();
 
-/**
- * Debrief screen for a story activity (static step, last position).
- * Reveals the hidden concepts the player practiced through the story.
- */
-const staticStoryDebriefContentSchema = z
-  .object({
-    debrief: z.array(storyDebriefConceptSchema).min(1),
-    variant: z.literal("storyDebrief"),
-  })
-  .strict();
-
 const staticContentSchema = z.discriminatedUnion("variant", [
   staticTextContentSchema,
   staticGrammarExampleContentSchema,
   staticGrammarRuleContentSchema,
   staticStoryIntroContentSchema,
   staticStoryOutcomeContentSchema,
-  staticStoryDebriefContentSchema,
 ]);
 
 const storyAlignmentSchema = z.enum(["strong", "partial", "weak"]);
@@ -209,8 +190,6 @@ const stepContentSchemas = {
 
 export type SupportedStepKind = keyof typeof stepContentSchemas;
 
-export type CoreMultipleChoiceContent = z.infer<typeof coreMultipleChoiceContentSchema>;
-
 export type MultipleChoiceStepContent = z.infer<typeof multipleChoiceContentSchema>;
 export type FillBlankStepContent = z.infer<typeof fillBlankContentSchema>;
 export type MatchColumnsStepContent = z.infer<typeof matchColumnsContentSchema>;
@@ -218,6 +197,9 @@ export type SortOrderStepContent = z.infer<typeof sortOrderContentSchema>;
 export type SelectImageStepContent = z.infer<typeof selectImageContentSchema>;
 export type StaticStepContent = z.infer<typeof staticContentSchema>;
 export type StoryAlignment = z.infer<typeof storyAlignmentSchema>;
+export type StoryStaticVariant =
+  | z.infer<typeof staticStoryIntroContentSchema>["variant"]
+  | z.infer<typeof staticStoryOutcomeContentSchema>["variant"];
 export type StoryStepContent = z.infer<typeof storyContentSchema>;
 export type VocabularyStepContent = z.infer<typeof vocabularyContentSchema>;
 export type TranslationStepContent = z.infer<typeof translationContentSchema>;

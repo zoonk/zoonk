@@ -26,7 +26,8 @@
     "@zoonk/utils": "workspace:*",
     "abcjs": "6.6.2",
     "katex": "0.16.40",
-    "shiki": "4.0.2"
+    "shiki": "4.0.2",
+    "web-haptics": "0.0.6"
   },
   "devDependencies": {
     "@testing-library/react": "16.3.2",

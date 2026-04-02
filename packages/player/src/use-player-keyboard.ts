@@ -1,5 +1,6 @@
 "use client";
 
+import { type StoryStaticVariant } from "@zoonk/core/steps/content-contract";
 import { useKeyboardCallback } from "@zoonk/ui/hooks/keyboard";
 import { type PlayerPhase } from "./player-reducer";
 
@@ -15,6 +16,7 @@ type PlayerKeyboardParams = {
   onNext: (() => void) | null;
   onRestart: () => void;
   phase: PlayerPhase;
+  storyStaticVariant: StoryStaticVariant | null;
 };
 
 function getEnterAction({
@@ -22,12 +24,25 @@ function getEnterAction({
   onCheck,
   onContinue,
   onEscape,
+  onNavigateNext,
   onNext,
   phase,
+  storyStaticVariant,
 }: Pick<
   PlayerKeyboardParams,
-  "hasAnswer" | "onCheck" | "onContinue" | "onEscape" | "onNext" | "phase"
+  | "hasAnswer"
+  | "onCheck"
+  | "onContinue"
+  | "onEscape"
+  | "onNavigateNext"
+  | "onNext"
+  | "phase"
+  | "storyStaticVariant"
 >): (() => void) | null {
+  if (phase === "playing" && storyStaticVariant) {
+    return onNavigateNext;
+  }
+
   if (phase === "playing" && hasAnswer) {
     return onCheck;
   }
@@ -55,6 +70,7 @@ export function usePlayerKeyboard({
   onNext,
   onRestart,
   phase,
+  storyStaticVariant,
 }: PlayerKeyboardParams) {
   useKeyboardCallback(
     "Enter",
@@ -64,8 +80,10 @@ export function usePlayerKeyboard({
         onCheck,
         onContinue,
         onEscape,
+        onNavigateNext,
         onNext,
         phase,
+        storyStaticVariant,
       });
 
       if (!action) {
