@@ -6,14 +6,11 @@ import { usePlayerNavigation, usePlayerRuntime } from "../player-context";
 import { type PlayerPhase } from "../player-reducer";
 import {
   getCanNavigatePrev,
-  getCompletionResult,
-  getCurrentResult,
   getCurrentStep,
   getHasAnswer,
   getIsStaticStep,
   getIsStoryActivity,
   getProgressValue,
-  getSelectedAnswer,
   getStoryBriefingText,
   getStoryMetrics,
   getStoryStaticVariant,
@@ -82,17 +79,14 @@ function BottomBarContent({
 export function PlayerShell() {
   const t = useExtracted();
   const { actions, state } = usePlayerRuntime();
-  const { lessonHref, nextActivityHref } = usePlayerNavigation();
+  const { lessonHref } = usePlayerNavigation();
 
   const canNavigatePrev = getCanNavigatePrev(state);
-  const completionResult = getCompletionResult(state);
-  const currentResult = getCurrentResult(state);
   const currentStep = getCurrentStep(state);
   const hasAnswer = getHasAnswer(state);
   const isStaticStep = getIsStaticStep(state);
   const isStoryActivity = getIsStoryActivity(state);
   const progressValue = getProgressValue(state);
-  const selectedAnswer = getSelectedAnswer(state);
   const storyBriefing = getStoryBriefingText(state);
   const storyMetrics = getStoryMetrics(state);
   const storyStaticVariant = getStoryStaticVariant(state);
@@ -124,22 +118,7 @@ export function PlayerShell() {
       {showMetricsBar && <StoryMetricsBar metrics={storyMetrics} />}
 
       <PlayerStage isStatic={isStaticStep && state.phase === "playing"} phase={state.phase}>
-        <StageContent
-          canNavigatePrev={canNavigatePrev}
-          completionResult={completionResult}
-          currentResult={currentResult}
-          currentStep={currentStep}
-          currentStepIndex={state.currentStepIndex}
-          lessonHref={lessonHref}
-          nextActivityHref={nextActivityHref}
-          onNavigateNext={actions.navigateNext}
-          onNavigatePrev={actions.navigatePrev}
-          onRestart={actions.restart}
-          onSelectAnswer={actions.selectAnswer}
-          phase={state.phase}
-          results={state.results}
-          selectedAnswer={selectedAnswer}
-        />
+        <StageContent />
       </PlayerStage>
 
       {showChrome && (
