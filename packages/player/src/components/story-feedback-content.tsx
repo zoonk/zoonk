@@ -6,18 +6,13 @@ import { ArrowDown, ArrowUp } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type StepResult } from "../player-reducer";
 import { type SerializedStep } from "../prepare-activity-data";
+import { EFFECT_DELTA_MAP } from "../story";
 import { useReplaceName } from "../user-name-context";
 
 type MetricDelta = {
   delta: number;
   metric: string;
 };
-
-const EFFECT_DELTA_MAP = {
-  negative: -15,
-  neutral: 0,
-  positive: 15,
-} as const;
 
 /**
  * Finds the selected choice from the story step content and computes

@@ -3,6 +3,7 @@ import { type CompletionResult } from "./completion-input-schema";
 import { type PlayerState } from "./player-reducer";
 import { type SerializedStep } from "./prepare-activity-data";
 import { canNavigatePrev, isStaticNavigationStep } from "./step-navigation";
+import { EFFECT_DELTA_MAP } from "./story";
 
 function computeProgress(currentIndex: number, total: number): number {
   if (total === 0) {
@@ -131,8 +132,6 @@ export type StoryMetric = {
 };
 
 const METRIC_STARTING_VALUE = 50;
-const METRIC_POSITIVE_DELTA = 15;
-const METRIC_NEGATIVE_DELTA = -15;
 
 /**
  * Computes the current value of each story metric by walking all completed
@@ -200,8 +199,7 @@ function applyMetricEffects(
 
   for (const effect of choice.metricEffects) {
     const current = metricValues.get(effect.metric) ?? METRIC_STARTING_VALUE;
-    const delta = getMetricDelta(effect.effect);
-    metricValues.set(effect.metric, current + delta);
+    metricValues.set(effect.metric, current + EFFECT_DELTA_MAP[effect.effect]);
   }
 }
 
@@ -224,18 +222,6 @@ export function getStoryMetrics(state: PlayerState): StoryMetric[] {
     metric: name,
     value: metricValues.get(name) ?? METRIC_STARTING_VALUE,
   }));
-}
-
-function getMetricDelta(effect: "negative" | "neutral" | "positive"): number {
-  if (effect === "positive") {
-    return METRIC_POSITIVE_DELTA;
-  }
-
-  if (effect === "negative") {
-    return METRIC_NEGATIVE_DELTA;
-  }
-
-  return 0;
 }
 
 export type PreloadableImage = {
