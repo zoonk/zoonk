@@ -1,9 +1,8 @@
 "use client";
 
 import { useExtracted } from "next-intl";
+import { METRIC_AVERAGE_THRESHOLD } from "../story";
 import { StoryMetricPill } from "./story-metric-pill";
-
-const STARTING_VALUE = 50;
 
 /**
  * Intro screen for a story activity.
@@ -34,7 +33,7 @@ export function StoryIntroContent({ intro, metrics }: { intro: string; metrics: 
 
           <div className="-ml-1 flex flex-wrap gap-2">
             {metrics.map((metric) => (
-              <StoryMetricPill key={metric} metric={metric} value={STARTING_VALUE} />
+              <StoryMetricPill key={metric} metric={metric} value={METRIC_AVERAGE_THRESHOLD} />
             ))}
           </div>
         </div>

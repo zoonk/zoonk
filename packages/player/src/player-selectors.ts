@@ -3,7 +3,7 @@ import { type CompletionResult } from "./completion-input-schema";
 import { type PlayerState } from "./player-reducer";
 import { type SerializedStep } from "./prepare-activity-data";
 import { canNavigatePrev, isStaticNavigationStep } from "./step-navigation";
-import { EFFECT_DELTA_MAP } from "./story";
+import { EFFECT_DELTA_MAP, METRIC_AVERAGE_THRESHOLD } from "./story";
 
 function computeProgress(currentIndex: number, total: number): number {
   if (total === 0) {
@@ -123,8 +123,6 @@ export type StoryMetric = {
   value: number;
 };
 
-const METRIC_STARTING_VALUE = 50;
-
 /**
  * Finds the storyIntro step and returns its parsed content, or null if
  * no intro step exists. Shared by getStoryMetrics (needs metrics) and
@@ -216,7 +214,7 @@ export function getStoryMetrics(state: PlayerState): StoryMetric[] {
     metric: name,
     value: storySteps.reduce(
       (sum, step) => sum + getStepMetricDelta({ metric: name, results: state.results, step }),
-      METRIC_STARTING_VALUE,
+      METRIC_AVERAGE_THRESHOLD,
     ),
   }));
 }
