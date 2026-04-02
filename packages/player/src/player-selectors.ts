@@ -86,19 +86,13 @@ export function getStoryBriefingText(state: PlayerState): string | null {
     return null;
   }
 
-  const introStep = state.steps.find((step) => step.kind === "static");
+  const introContent = findStoryIntroContent(state.steps);
 
-  if (!introStep) {
+  if (!introContent) {
     return null;
   }
 
-  const content = parseStepContent("static", introStep.content);
-
-  if (content.variant !== "storyIntro") {
-    return null;
-  }
-
-  return content.intro;
+  return introContent.intro;
 }
 
 /**
@@ -132,19 +126,11 @@ export type StoryMetric = {
 const METRIC_STARTING_VALUE = 50;
 
 /**
- * Computes the current value of each story metric by walking all completed
- * story step results.
- *
- * Reads metric names from the storyIntro step (first step), then for each
- * answered story step, looks up the selected choice's metricEffects and
- * accumulates deltas (positive = +15, neutral = 0, negative = -15) starting
- * from 50.
+ * Finds the storyIntro step and returns its parsed content, or null if
+ * no intro step exists. Shared by getStoryMetrics (needs metrics) and
+ * getStoryBriefingText (needs intro text).
  */
-/**
- * Finds the storyIntro step and returns its metric names, or null if
- * no intro step exists.
- */
-function findIntroMetricNames(steps: SerializedStep[]): string[] | null {
+function findStoryIntroContent(steps: SerializedStep[]) {
   const introStep = steps.find((step) => step.kind === "static");
 
   if (!introStep) {
@@ -157,17 +143,20 @@ function findIntroMetricNames(steps: SerializedStep[]): string[] | null {
     return null;
   }
 
-  return content.metrics;
+  return content;
 }
 
 /**
  * Extracts the selected choice from a story step result, if available.
  * Returns null when the step has no result or the choice ID doesn't match.
  */
-function findSelectedChoice(
-  step: SerializedStep,
-  results: Record<string, { answer?: { kind: string; selectedChoiceId?: string } }>,
-) {
+function findSelectedChoice({
+  step,
+  results,
+}: {
+  step: SerializedStep;
+  results: Record<string, { answer?: { kind: string; selectedChoiceId?: string } }>;
+}) {
   const result = results[step.id];
   const answer = result?.answer;
 
@@ -182,43 +171,53 @@ function findSelectedChoice(
 }
 
 /**
- * Applies a single story step's metric effects to the running totals.
+ * Returns the delta a single step contributes to a specific metric.
+ * Returns 0 when the step has no result or the choice doesn't affect
+ * the given metric.
  */
-function applyMetricEffects(
-  metricValues: Map<string, number>,
-  step: SerializedStep,
-  results: Record<string, { answer?: { kind: string; selectedChoiceId?: string } }>,
-): void {
-  const choice = findSelectedChoice(step, results);
+function getStepMetricDelta({
+  metric,
+  results,
+  step,
+}: {
+  metric: string;
+  results: Record<string, { answer?: { kind: string; selectedChoiceId?: string } }>;
+  step: SerializedStep;
+}): number {
+  const choice = findSelectedChoice({ results, step });
 
   if (!choice) {
-    return;
+    return 0;
   }
 
-  for (const effect of choice.metricEffects) {
-    const current = metricValues.get(effect.metric) ?? METRIC_STARTING_VALUE;
-    metricValues.set(effect.metric, current + EFFECT_DELTA_MAP[effect.effect]);
-  }
+  const effect = choice.metricEffects.find((entry) => entry.metric === metric);
+  return effect ? EFFECT_DELTA_MAP[effect.effect] : 0;
 }
 
+/**
+ * Computes the current value of each story metric by summing deltas
+ * from all completed story steps.
+ *
+ * Reads metric names from the storyIntro step (first step), then for each
+ * answered story step, looks up the selected choice's metricEffects and
+ * accumulates deltas (positive = +15, neutral = 0, negative = -15) starting
+ * from 50.
+ */
 export function getStoryMetrics(state: PlayerState): StoryMetric[] {
-  const metricNames = findIntroMetricNames(state.steps);
+  const introContent = findStoryIntroContent(state.steps);
 
-  if (!metricNames) {
+  if (!introContent) {
     return [];
   }
 
-  const metricValues = new Map(metricNames.map((name) => [name, METRIC_STARTING_VALUE]));
-
   const storySteps = state.steps.filter((step) => step.kind === "story");
 
-  for (const step of storySteps) {
-    applyMetricEffects(metricValues, step, state.results);
-  }
-
-  return metricNames.map((name) => ({
+  return introContent.metrics.map((name) => ({
     metric: name,
-    value: metricValues.get(name) ?? METRIC_STARTING_VALUE,
+    value: storySteps.reduce(
+      (sum, step) => sum + getStepMetricDelta({ metric: name, results: state.results, step }),
+      METRIC_STARTING_VALUE,
+    ),
   }));
 }
 
