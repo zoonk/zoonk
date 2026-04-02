@@ -1,0 +1,42 @@
+packages/player/src/story.ts
+  0f5c0ae43d1a34b7 1,5-9,11-13,17-20,22-24,32
+packages/player/src/player-selectors.ts
+  0f5c0ae43d1a34b7 6,8,17,22,27,38,43,54,59,68,115,127-129,132-139,142,157,183
+packages/player/src/components/story-outcome-content.tsx
+  0f5c0ae43d1a34b7 6,34,49
+packages/player/src/player-selectors.test.ts
+  0f5c0ae43d1a34b7 4,6,168-290
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.4",
+  "base_commit_sha": "04373922ae15773891e18ff3e372f54982e86d31",
+  "prompts": {
+    "0f5c0ae43d1a34b7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6cf2f61f-98b9-421f-b8c1-97d1e3e8f2b8",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 215,
+      "total_deletions": 74,
+      "accepted_lines": 191,
+      "overriden_lines": 0
+    },
+    "21c43991e728a583": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9a77518b-d95f-4578-9c38-fad3bd55cfb5",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 7,
+      "overriden_lines": 0
+    }
+  }
+}
