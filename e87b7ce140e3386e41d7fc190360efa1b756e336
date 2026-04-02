@@ -1,0 +1,31 @@
+packages/ai/src/tasks/activities/core/activity-story-debrief.ts
+  9ae46ed04b064667 30,85,96
+apps/api/src/workflows/activity-generation/steps/generate-story-debrief-step.ts
+  9ae46ed04b064667 43
+packages/ai/src/tasks/activities/core/activity-story-steps.prompt.md
+  9ae46ed04b064667 18,28-34,45-59,61-62,66,73-74,80,82,84-85,97-98
+packages/ai/src/tasks/lessons/applied-activity-kind.prompt.md
+  9ae46ed04b064667 1,12,14,16,18,20,22,24,26,28,30-33,39,41-43,45
+packages/ai/src/tasks/activities/core/activity-story-debrief.prompt.md
+  9ae46ed04b064667 7,27,29,33-34
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.4",
+  "base_commit_sha": "e87b7ce140e3386e41d7fc190360efa1b756e336",
+  "prompts": {
+    "9ae46ed04b064667": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5a57df5b-5808-4545-a3a6-624716bc3e18",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 171,
+      "total_deletions": 123,
+      "accepted_lines": 67,
+      "overriden_lines": 4
+    }
+  }
+}
