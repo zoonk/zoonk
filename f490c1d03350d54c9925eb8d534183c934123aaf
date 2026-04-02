@@ -1,0 +1,25 @@
+apps/api/src/workflows/activity-generation/kinds/practice-workflow.test.ts
+  7675c9105c778143 561,773,845
+apps/api/src/workflows/activity-generation/core-activity-workflow.test.ts
+  7675c9105c778143 827
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.4",
+  "base_commit_sha": "f490c1d03350d54c9925eb8d534183c934123aaf",
+  "prompts": {
+    "7675c9105c778143": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3348ad68-910f-4ca7-a329-787c32da0ac3",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 4,
+      "total_deletions": 9,
+      "accepted_lines": 4,
+      "overriden_lines": 0
+    }
+  }
+}
