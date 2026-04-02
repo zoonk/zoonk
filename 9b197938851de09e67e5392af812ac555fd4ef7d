@@ -1,0 +1,49 @@
+packages/player/src/components/in-play-sticky-header.tsx
+  fbc7a7c4736120a0 34
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.4",
+  "base_commit_sha": "9b197938851de09e67e5392af812ac555fd4ef7d",
+  "prompts": {
+    "21c43991e728a583": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9a77518b-d95f-4578-9c38-fad3bd55cfb5",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 7,
+      "overriden_lines": 0
+    },
+    "4ff46c83d9e7b128": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "169aea6c-6525-48c0-b39e-310952c456b3",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 6,
+      "overriden_lines": 0
+    },
+    "fbc7a7c4736120a0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "239ba667-45bc-4375-97e7-863817160838",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 2,
+      "total_deletions": 6,
+      "accepted_lines": 1,
+      "overriden_lines": 0
+    }
+  }
+}
