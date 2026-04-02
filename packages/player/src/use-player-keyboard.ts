@@ -39,11 +39,7 @@ function getEnterAction({
   | "phase"
   | "storyStaticVariant"
 >): (() => void) | null {
-  if (phase === "playing" && storyStaticVariant === "storyIntro") {
-    return onNavigateNext;
-  }
-
-  if (phase === "playing" && storyStaticVariant === "storyOutcome") {
+  if (phase === "playing" && storyStaticVariant) {
     return onNavigateNext;
   }
 
