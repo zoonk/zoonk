@@ -3,8 +3,9 @@ import { type CompletionResult } from "./completion-input-schema";
 import { type PlayerState } from "./player-reducer";
 import { type SerializedStep } from "./prepare-activity-data";
 import { canNavigatePrev, isStaticNavigationStep } from "./step-navigation";
-import { EFFECT_DELTA_MAP, METRIC_AVERAGE_THRESHOLD } from "./story";
+import { EFFECT_DELTA_MAP, METRIC_AVERAGE_THRESHOLD, getStepStoryVariant } from "./story";
 
+/** Converts a 0-based step index to a 1-based percentage (0–100). */
 function computeProgress(currentIndex: number, total: number): number {
   if (total === 0) {
     return 0;
@@ -13,14 +14,17 @@ function computeProgress(currentIndex: number, total: number): number {
   return Math.round(((currentIndex + 1) / total) * 100);
 }
 
+/** Whether the player can navigate to the previous step. */
 export function getCanNavigatePrev(state: PlayerState): boolean {
   return canNavigatePrev(state.steps, state.currentStepIndex);
 }
 
+/** Returns the completion payload once the activity is finished, or null while still playing. */
 export function getCompletionResult(state: PlayerState): CompletionResult | null {
   return state.completion;
 }
 
+/** Returns the checked result for the current step, or undefined if not yet checked. */
 export function getCurrentResult(state: PlayerState) {
   const currentStep = getCurrentStep(state);
 
@@ -31,10 +35,12 @@ export function getCurrentResult(state: PlayerState) {
   return state.results[currentStep.id];
 }
 
+/** Returns the step at the current index. */
 export function getCurrentStep(state: PlayerState) {
   return state.steps[state.currentStepIndex];
 }
 
+/** Whether the player has selected an answer for the current step. */
 export function getHasAnswer(state: PlayerState): boolean {
   const currentStep = getCurrentStep(state);
 
@@ -45,10 +51,12 @@ export function getHasAnswer(state: PlayerState): boolean {
   return Boolean(state.selectedAnswers[currentStep.id]);
 }
 
+/** Whether the current step uses static (auto-advance) navigation. */
 export function getIsStaticStep(state: PlayerState): boolean {
   return isStaticNavigationStep(getCurrentStep(state));
 }
 
+/** Returns the progress percentage (0–100), snapping to 100 when completed. */
 export function getProgressValue(state: PlayerState): number {
   if (state.phase === "completed") {
     return 100;
@@ -57,6 +65,7 @@ export function getProgressValue(state: PlayerState): number {
   return computeProgress(state.currentStepIndex, state.steps.length);
 }
 
+/** Returns the selected answer for the current step, or undefined if none selected. */
 export function getSelectedAnswer(state: PlayerState) {
   const currentStep = getCurrentStep(state);
 
@@ -103,19 +112,7 @@ export function getStoryBriefingText(state: PlayerState): string | null {
  * and by keyboard handlers for Enter key behavior.
  */
 export function getStoryStaticVariant(state: PlayerState): StoryStaticVariant | null {
-  const step = getCurrentStep(state);
-
-  if (!step || step.kind !== "static") {
-    return null;
-  }
-
-  const content = parseStepContent("static", step.content);
-
-  if (content.variant === "storyIntro" || content.variant === "storyOutcome") {
-    return content.variant;
-  }
-
-  return null;
+  return getStepStoryVariant(getCurrentStep(state));
 }
 
 export type StoryMetric = {
@@ -127,21 +124,22 @@ export type StoryMetric = {
  * Finds the storyIntro step and returns its parsed content, or null if
  * no intro step exists. Shared by getStoryMetrics (needs metrics) and
  * getStoryBriefingText (needs intro text).
+ *
+ * Scans all static steps (not just the first one) because a non-intro
+ * static step could appear earlier in the list.
  */
 function findStoryIntroContent(steps: SerializedStep[]) {
-  const introStep = steps.find((step) => step.kind === "static");
+  for (const step of steps) {
+    if (step.kind === "static") {
+      const content = parseStepContent("static", step.content);
 
-  if (!introStep) {
-    return null;
+      if (content.variant === "storyIntro") {
+        return content;
+      }
+    }
   }
 
-  const content = parseStepContent("static", introStep.content);
-
-  if (content.variant !== "storyIntro") {
-    return null;
-  }
-
-  return content;
+  return null;
 }
 
 /**
@@ -156,7 +154,7 @@ export function findSelectedChoice({
   results,
 }: {
   step: SerializedStep;
-  results: Record<string, { answer?: { kind: string; selectedChoiceId?: string } }>;
+  results: PlayerState["results"];
 }) {
   const result = results[step.id];
   const answer = result?.answer;
@@ -182,7 +180,7 @@ function getStepMetricDelta({
   step,
 }: {
   metric: string;
-  results: Record<string, { answer?: { kind: string; selectedChoiceId?: string } }>;
+  results: PlayerState["results"];
   step: SerializedStep;
 }): number {
   const choice = findSelectedChoice({ results, step });

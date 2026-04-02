@@ -3,6 +3,7 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { usePlayerRuntime } from "../player-context";
+import { type PlayerState } from "../player-reducer";
 import { findSelectedChoice, getStoryMetrics } from "../player-selectors";
 import { type SerializedStep } from "../prepare-activity-data";
 import { StoryMetricPill } from "./story-metric-pill";
@@ -30,7 +31,7 @@ function isStrongChoice({
   results,
   step,
 }: {
-  results: Record<string, { answer?: { kind: string; selectedChoiceId?: string } }>;
+  results: PlayerState["results"];
   step: SerializedStep;
 }): boolean {
   const choice = findSelectedChoice({ results, step });
@@ -45,7 +46,7 @@ function countStrongChoices({
   results,
   steps,
 }: {
-  results: Record<string, { answer?: { kind: string; selectedChoiceId?: string } }>;
+  results: PlayerState["results"];
   steps: SerializedStep[];
 }): number {
   return steps.filter((step) => isStrongChoice({ results, step })).length;

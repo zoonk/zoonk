@@ -1,5 +1,26 @@
-import { parseStepContent } from "@zoonk/core/steps/content-contract";
+import { type StoryStaticVariant, parseStepContent } from "@zoonk/core/steps/content-contract";
 import { type SerializedStep } from "./prepare-activity-data";
+
+/**
+ * Returns the story-specific static variant ("storyIntro" or "storyOutcome")
+ * of a step, or null if the step is not a story static screen.
+ *
+ * Shared by `isStoryStaticVariant` (boolean gate for reducer/navigation)
+ * and `getStoryStaticVariant` (selector that lifts this to PlayerState level).
+ */
+export function getStepStoryVariant(step: SerializedStep | undefined): StoryStaticVariant | null {
+  if (!step || step.kind !== "static") {
+    return null;
+  }
+
+  const content = parseStepContent("static", step.content);
+
+  if (content.variant === "storyIntro" || content.variant === "storyOutcome") {
+    return content.variant;
+  }
+
+  return null;
+}
 
 /**
  * Checks whether a step is a story-specific static variant (storyIntro
@@ -8,13 +29,7 @@ import { type SerializedStep } from "./prepare-activity-data";
  * reducer and navigation guards.
  */
 export function isStoryStaticVariant(step: SerializedStep): boolean {
-  if (step.kind !== "static") {
-    return false;
-  }
-
-  const content = parseStepContent("static", step.content);
-
-  return content.variant === "storyIntro" || content.variant === "storyOutcome";
+  return getStepStoryVariant(step) !== null;
 }
 
 /**

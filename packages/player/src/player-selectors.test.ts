@@ -1,7 +1,9 @@
 import { describe, expect, test } from "vitest";
 import { type PlayerState, type StepResult } from "./player-reducer";
 import {
+  findSelectedChoice,
   getIsStoryActivity,
+  getStoryBriefingText,
   getStoryMetrics,
   getStoryStaticVariant,
   getUpcomingImages,
@@ -160,6 +162,129 @@ describe(getStoryStaticVariant, () => {
     });
 
     expect(getStoryStaticVariant(state)).toBeNull();
+  });
+});
+
+describe(getStoryBriefingText, () => {
+  test("returns intro text when current step is a story decision step", () => {
+    const state = buildState({
+      currentStepIndex: 1,
+      steps: [buildStoryIntroStep(), buildStoryStep("s1", 1)],
+    });
+
+    expect(getStoryBriefingText(state)).toBe("You are a factory manager.");
+  });
+
+  test("returns null when current step is a static step", () => {
+    const state = buildState({
+      currentStepIndex: 0,
+      steps: [buildStoryIntroStep(), buildStoryStep("s1", 1)],
+    });
+
+    expect(getStoryBriefingText(state)).toBeNull();
+  });
+
+  test("returns null when current step is not a story step", () => {
+    const state = buildState({
+      steps: [buildStep({ id: "s1" })],
+    });
+
+    expect(getStoryBriefingText(state)).toBeNull();
+  });
+
+  test("returns null when there is no intro step", () => {
+    const state = buildState({
+      steps: [buildStoryStep("s1", 0)],
+    });
+
+    expect(getStoryBriefingText(state)).toBeNull();
+  });
+
+  test("finds intro even when a non-intro static step comes first", () => {
+    const state = buildState({
+      currentStepIndex: 2,
+      steps: [
+        buildStep({
+          content: { text: "Welcome", title: "Preamble", variant: "text" as const },
+          id: "text-static",
+          kind: "static",
+          position: 0,
+        }),
+        buildStoryIntroStep(),
+        buildStoryStep("s1", 2),
+      ],
+    });
+
+    expect(getStoryBriefingText(state)).toBe("You are a factory manager.");
+  });
+});
+
+describe(findSelectedChoice, () => {
+  test("returns the matching choice when a story answer exists", () => {
+    const step = buildStoryStep("s1", 0);
+    const results = { s1: buildStoryResult("s1", "c1") };
+
+    const choice = findSelectedChoice({ results, step });
+
+    expect(choice).toEqual(
+      expect.objectContaining({ alignment: "strong", id: "c1", text: "Strong choice" }),
+    );
+  });
+
+  test("returns null when the step has no result", () => {
+    const step = buildStoryStep("s1", 0);
+
+    expect(findSelectedChoice({ results: {}, step })).toBeNull();
+  });
+
+  test("returns null when the answer is not a story kind", () => {
+    const step = buildStoryStep("s1", 0);
+    const results = {
+      s1: {
+        answer: { kind: "multipleChoice" as const, selectedIndex: 0, selectedText: "A" },
+        result: { correctAnswer: null, feedback: null, isCorrect: true },
+        stepId: "s1",
+      },
+    };
+
+    expect(findSelectedChoice({ results, step })).toBeNull();
+  });
+
+  test("returns null when the choice ID does not match any option", () => {
+    const step = buildStoryStep("s1", 0);
+    const results = {
+      s1: buildStoryResult("s1", "nonexistent"),
+    };
+
+    expect(findSelectedChoice({ results, step })).toBeNull();
+  });
+});
+
+describe("findStoryIntroContent (via getStoryMetrics)", () => {
+  test("finds storyIntro even when a non-intro static step comes first", () => {
+    const state = buildState({
+      steps: [
+        buildStep({
+          content: { text: "Welcome", title: "Preamble", variant: "text" as const },
+          id: "text-static",
+          kind: "static",
+          position: 0,
+        }),
+        buildStep({
+          content: {
+            intro: "You are a factory manager.",
+            metrics: ["Production"],
+            variant: "storyIntro" as const,
+          },
+          id: "intro",
+          kind: "static",
+          position: 1,
+        }),
+        buildStoryStep("s1", 2),
+      ],
+    });
+
+    expect(getStoryMetrics(state)).toEqual([{ metric: "Production", value: 50 }]);
   });
 });
 
