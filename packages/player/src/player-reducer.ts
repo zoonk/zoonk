@@ -1,10 +1,10 @@
-import { parseStepContent } from "@zoonk/core/steps/content-contract";
 import { type AnswerResult } from "./check-answer";
 import { type CompletionResult } from "./completion-input-schema";
 import { computeLocalCompletion } from "./player-completion";
 import { buildInitialAnswers } from "./player-initial-state";
 import { type SerializedStep } from "./prepare-activity-data";
 import { canNavigatePrev, isStaticNavigationStep } from "./step-navigation";
+import { isStoryStaticVariant } from "./story";
 
 export type PlayerPhase = "playing" | "feedback" | "completed";
 
@@ -147,18 +147,18 @@ function handleContinue(state: PlayerState): PlayerState {
 }
 
 /**
- * Checks whether the current step is a story static variant (intro, outcome,
- * debrief). These steps allow forward-only navigation via the "Begin" /
- * "Continue" buttons but not arrow-key navigation.
+ * Moves the player to the next step, or completes the activity if there
+ * are no more steps. Shared by both story-static and regular-static
+ * forward navigation to avoid duplicating the advance-or-complete logic.
  */
-function isStoryStaticStep(step: SerializedStep | undefined): boolean {
-  if (!step || step.kind !== "static") {
-    return false;
+function advanceForward(state: PlayerState): PlayerState {
+  const nextIndex = state.currentStepIndex + 1;
+
+  if (nextIndex >= state.steps.length) {
+    return completeWith(state);
   }
 
-  const content = parseStepContent("static", step.content);
-
-  return content.variant === "storyIntro" || content.variant === "storyOutcome";
+  return { ...state, currentStepIndex: nextIndex, stepStartedAt: Date.now() };
 }
 
 function handleNavigateStep(
@@ -176,14 +176,8 @@ function handleNavigateStep(
    * navigation via the bottom bar action buttons. They don't participate
    * in arrow-key navigation handled by `isStaticNavigationStep`.
    */
-  if (isStoryStaticStep(currentStep) && action.direction === "next") {
-    const nextIndex = state.currentStepIndex + 1;
-
-    if (nextIndex >= state.steps.length) {
-      return completeWith(state);
-    }
-
-    return { ...state, currentStepIndex: nextIndex, stepStartedAt: Date.now() };
+  if (currentStep && isStoryStaticVariant(currentStep) && action.direction === "next") {
+    return advanceForward(state);
   }
 
   if (!isStaticNavigationStep(currentStep)) {
@@ -200,13 +194,7 @@ function handleNavigateStep(
     return { ...state, currentStepIndex: prevIndex, stepStartedAt: Date.now() };
   }
 
-  const nextIndex = state.currentStepIndex + 1;
-
-  if (nextIndex >= state.steps.length) {
-    return completeWith(state);
-  }
-
-  return { ...state, currentStepIndex: nextIndex, stepStartedAt: Date.now() };
+  return advanceForward(state);
 }
 
 function handleRestart(state: PlayerState): PlayerState {

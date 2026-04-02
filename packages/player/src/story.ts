@@ -1,3 +1,22 @@
+import { parseStepContent } from "@zoonk/core/steps/content-contract";
+import { type SerializedStep } from "./prepare-activity-data";
+
+/**
+ * Checks whether a step is a story-specific static variant (storyIntro
+ * or storyOutcome). These steps use action buttons for forward-only
+ * navigation instead of arrow keys, and need special handling in the
+ * reducer and navigation guards.
+ */
+export function isStoryStaticVariant(step: SerializedStep): boolean {
+  if (step.kind !== "static") {
+    return false;
+  }
+
+  const content = parseStepContent("static", step.content);
+
+  return content.variant === "storyIntro" || content.variant === "storyOutcome";
+}
+
 /**
  * Shared threshold values for story metric feedback.
  *
