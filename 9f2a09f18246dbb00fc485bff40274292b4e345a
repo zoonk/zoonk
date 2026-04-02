@@ -1,0 +1,53 @@
+apps/main/src/app/generate/a/[id]/use-generation-phases.ts
+  e39c7e3ba60f75c5 7,46-52,59
+apps/main/src/lib/workflow/use-animated-progress.test.ts
+  e39c7e3ba60f75c5 17,25,33,43-46,49-64,70,75,86,97,107,118,128,139,149,157,162-171,177
+apps/main/src/app/generate/l/[id]/generation-phases.ts
+  e39c7e3ba60f75c5 70-75,81-89
+apps/main/src/lib/generation/activity-generation-phases.ts
+  e39c7e3ba60f75c5 67-75,86-97
+apps/main/src/lib/workflow/use-animated-progress.ts
+  e39c7e3ba60f75c5 5,13-20,24-32,50,58,60,80
+apps/main/src/app/generate/cs/[id]/generation-client.tsx
+  e39c7e3ba60f75c5 47
+apps/main/src/lib/generation-phases.test.ts
+  e39c7e3ba60f75c5 4,136-191
+apps/main/src/app/generate/ch/[id]/generation-phases.ts
+  e39c7e3ba60f75c5 49-54,60-68
+apps/main/src/lib/generation-phases.ts
+  e39c7e3ba60f75c5 98-103,111,123-142,144,154-184
+apps/main/src/app/generate/ch/[id]/use-generation-phases.ts
+  e39c7e3ba60f75c5 14,50,68
+apps/main/src/app/generate/ch/[id]/generation-client.tsx
+  e39c7e3ba60f75c5 49
+apps/main/src/app/generate/cs/[id]/generation-phases.ts
+  e39c7e3ba60f75c5 91-96,102-110
+apps/main/src/app/generate/l/[id]/use-generation-phases.ts
+  e39c7e3ba60f75c5 11,46,67
+apps/main/src/app/generate/l/[id]/generation-client.tsx
+  e39c7e3ba60f75c5 51
+apps/main/src/app/generate/a/[id]/generation-client.tsx
+  e39c7e3ba60f75c5 61
+apps/main/src/app/generate/cs/[id]/use-generation-phases.ts
+  e39c7e3ba60f75c5 14,53,84
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.4",
+  "base_commit_sha": "9f2a09f18246dbb00fc485bff40274292b4e345a",
+  "prompts": {
+    "e39c7e3ba60f75c5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "70686090-d69d-46ba-9e1a-e3fd2cc4c247",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 390,
+      "total_deletions": 143,
+      "accepted_lines": 278,
+      "overriden_lines": 6
+    }
+  }
+}
