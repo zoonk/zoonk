@@ -197,6 +197,9 @@ export type SortOrderStepContent = z.infer<typeof sortOrderContentSchema>;
 export type SelectImageStepContent = z.infer<typeof selectImageContentSchema>;
 export type StaticStepContent = z.infer<typeof staticContentSchema>;
 export type StoryAlignment = z.infer<typeof storyAlignmentSchema>;
+export type StoryStaticVariant =
+  | z.infer<typeof staticStoryIntroContentSchema>["variant"]
+  | z.infer<typeof staticStoryOutcomeContentSchema>["variant"];
 export type StoryStepContent = z.infer<typeof storyContentSchema>;
 export type VocabularyStepContent = z.infer<typeof vocabularyContentSchema>;
 export type TranslationStepContent = z.infer<typeof translationContentSchema>;

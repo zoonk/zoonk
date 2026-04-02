@@ -1,4 +1,4 @@
-import { parseStepContent } from "@zoonk/core/steps/content-contract";
+import { type StoryStaticVariant, parseStepContent } from "@zoonk/core/steps/content-contract";
 import { type CompletionResult } from "./completion-input-schema";
 import { type PlayerState } from "./player-reducer";
 import { type SerializedStep } from "./prepare-activity-data";
@@ -66,8 +66,6 @@ export function getSelectedAnswer(state: PlayerState) {
 
   return state.selectedAnswers[currentStep.id];
 }
-
-export type StoryStaticVariant = "storyIntro" | "storyOutcome";
 
 /** Returns true when the activity contains at least one story decision step. */
 export function getIsStoryActivity(state: PlayerState): boolean {

@@ -1,8 +1,8 @@
 "use client";
 
+import { type StoryStaticVariant } from "@zoonk/core/steps/content-contract";
 import { useKeyboardCallback } from "@zoonk/ui/hooks/keyboard";
 import { type PlayerPhase } from "./player-reducer";
-import { type StoryStaticVariant } from "./player-selectors";
 
 type PlayerKeyboardParams = {
   canNavigatePrev: boolean;
