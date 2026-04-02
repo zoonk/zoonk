@@ -40,6 +40,7 @@ export async function generateStoryDebriefStep({
 
   const { data: result, error } = await safeAsync(() =>
     generateActivityStoryDebrief({
+      concepts: storyActivity.lesson.concepts,
       language: storyActivity.language,
       storySteps,
       topic: storyActivity.lesson.title,
