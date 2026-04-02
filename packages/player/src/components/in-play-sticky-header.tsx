@@ -31,11 +31,7 @@ export function InPlayStickyHeader({
           </div>
         </div>
 
-        {storyBriefing ? (
-          <StoryBriefingPopover intro={storyBriefing} />
-        ) : (
-          <div className="size-9" />
-        )}
+        {storyBriefing && <StoryBriefingPopover intro={storyBriefing} />}
       </PlayerHeader>
 
       <PlayerProgressBar value={progressValue} />
