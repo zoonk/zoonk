@@ -12,6 +12,7 @@ You choose which applied activity fits a lesson — a hands-on experience where 
 ## Available kinds
 
 - `"story"` — The learner is dropped into a scenario and makes decisions with consequences. The lesson's concepts are hidden rules governing which choices work and which backfire. Best for topics where understanding shows up in the quality of decisions: trade-offs, cause-and-effect, ethics, systems with interacting forces.
+- `"investigation"` — The learner is presented with a problem scenario and must choose which actions to take, evaluate findings from those actions, and draw a conclusion. Best for topics where understanding shows up in the ability to gather evidence, evaluate it critically, and reach sound conclusions: diagnostics, root-cause analysis, research methodology, scientific reasoning, debugging, legal reasoning, historical analysis.
 
 Return `null` if no kind fits this lesson.
 
@@ -25,14 +26,17 @@ Don't be fooled by how the lesson description is worded. "Levels of biological o
 
 ## Examples
 
-| Lesson                          | Verdict   | Why                                                                                                                |
-| ------------------------------- | --------- | ------------------------------------------------------------------------------------------------------------------ |
-| Supply and demand               | `"story"` | A shop owner sets prices during a festival — economics governs what happens                                        |
-| Dimensions of biodiversity      | `"story"` | A conservation manager allocates limited budget across genetic, species, and ecosystem diversity — real trade-offs |
-| Types of chemical bonds         | `"story"` | A materials engineer picks adhesives for an aircraft — bond properties govern whether it holds                     |
-| Proving the Pythagorean theorem | `null`    | Pure proof with no decision context                                                                                |
-| Gödel's incompleteness theorem  | `null`    | Abstract theory — no practitioner makes decisions governed by it                                                   |
-| Dates of World War I            | `null`    | Pure recall, no decisions to make                                                                                  |
+| Lesson                          | Verdict           | Why                                                                                                                |
+| ------------------------------- | ----------------- | ------------------------------------------------------------------------------------------------------------------ |
+| Supply and demand               | `"story"`         | A shop owner sets prices during a festival — economics governs what happens                                        |
+| Dimensions of biodiversity      | `"story"`         | A conservation manager allocates limited budget across genetic, species, and ecosystem diversity — real trade-offs |
+| Types of chemical bonds         | `"story"`         | A materials engineer picks adhesives for an aircraft — bond properties govern whether it holds                     |
+| Network troubleshooting         | `"investigation"` | A sysadmin diagnoses why a server is unreachable — choosing which logs to check and interpreting ambiguous results |
+| Genetic inheritance patterns    | `"investigation"` | A genetic counselor evaluates family history and test results to determine the most likely inheritance pattern     |
+| Evidence in historical analysis | `"investigation"` | A historian examines conflicting primary sources to determine what actually happened at a disputed event           |
+| Proving the Pythagorean theorem | `null`            | Pure proof with no decision context                                                                                |
+| Gödel's incompleteness theorem  | `null`            | Abstract theory — no practitioner makes decisions governed by it                                                   |
+| Dates of World War I            | `null`            | Pure recall, no decisions to make                                                                                  |
 
 ## When to return null
 

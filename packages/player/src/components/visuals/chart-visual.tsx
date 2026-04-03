@@ -1,6 +1,6 @@
 "use client";
 
-import { type ChartVisualContent } from "@zoonk/core/steps/visual-content-contract";
+import { type ChartVisualContent } from "@zoonk/core/steps/contract/visual";
 import { isValidChartPayload } from "@zoonk/utils/chart";
 import { useExtracted } from "next-intl";
 import { useId } from "react";

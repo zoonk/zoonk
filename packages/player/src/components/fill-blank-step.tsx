@@ -1,6 +1,6 @@
 "use client";
 
-import { parseStepContent } from "@zoonk/core/steps/content-contract";
+import { parseStepContent } from "@zoonk/core/steps/contract/content";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useCallback, useMemo, useState } from "react";

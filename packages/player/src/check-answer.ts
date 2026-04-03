@@ -5,7 +5,7 @@ import {
   type SelectImageStepContent,
   type SortOrderStepContent,
   type StoryStepContent,
-} from "@zoonk/core/steps/content-contract";
+} from "@zoonk/core/steps/contract/content";
 import { matchesAcceptedArrangeWords } from "./arrange-words-answers";
 
 export type AnswerResult = {

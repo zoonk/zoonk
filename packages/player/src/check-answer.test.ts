@@ -4,7 +4,7 @@ import {
   type MultipleChoiceStepContent,
   type SelectImageStepContent,
   type SortOrderStepContent,
-} from "@zoonk/core/steps/content-contract";
+} from "@zoonk/core/steps/contract/content";
 import { describe, expect, test } from "vitest";
 import {
   checkArrangeWordsAnswer,

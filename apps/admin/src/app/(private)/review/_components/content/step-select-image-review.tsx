@@ -1,4 +1,4 @@
-import { parseStepContent } from "@zoonk/core/steps/content-contract";
+import { parseStepContent } from "@zoonk/core/steps/contract/content";
 import { Badge } from "@zoonk/ui/components/badge";
 import Image from "next/image";
 

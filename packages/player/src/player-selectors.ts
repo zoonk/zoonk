@@ -1,4 +1,4 @@
-import { type StoryStaticVariant, parseStepContent } from "@zoonk/core/steps/content-contract";
+import { type StoryStaticVariant, parseStepContent } from "@zoonk/core/steps/contract/content";
 import { type CompletionResult } from "./completion-input-schema";
 import { type PlayerState } from "./player-reducer";
 import { type SerializedStep } from "./prepare-activity-data";

@@ -193,4 +193,4 @@ export type CourseWorkflowStepName = CourseStepName | ChapterWorkflowStepName;
  * Applied activities are scenario-based experiences (story, investigation, etc.)
  * added on top of the standard explanation/practice/quiz set.
  */
-export type AppliedActivityKind = "story" | null;
+export type AppliedActivityKind = "investigation" | "story" | null;

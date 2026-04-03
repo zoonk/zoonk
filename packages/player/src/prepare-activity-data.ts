@@ -5,7 +5,7 @@ import {
   type SupportedStepKind,
   isSupportedStepKind,
   parseStepContent,
-} from "@zoonk/core/steps/content-contract";
+} from "@zoonk/core/steps/contract/content";
 import { normalizeDistractorKey } from "@zoonk/utils/distractors";
 import { shuffle } from "@zoonk/utils/shuffle";
 import {

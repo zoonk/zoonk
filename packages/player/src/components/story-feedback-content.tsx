@@ -1,6 +1,6 @@
 "use client";
 
-import { type StoryStepContent, parseStepContent } from "@zoonk/core/steps/content-contract";
+import { type StoryStepContent, parseStepContent } from "@zoonk/core/steps/contract/content";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import { useExtracted } from "next-intl";

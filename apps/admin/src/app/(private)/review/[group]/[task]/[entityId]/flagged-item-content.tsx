@@ -5,7 +5,7 @@ import {
   getWordAudioReview,
 } from "@/data/review/get-review-item";
 import { type ReviewTaskType, getVisualKindFromTaskType } from "@/lib/review-utils";
-import { parseStepContent } from "@zoonk/core/steps/content-contract";
+import { parseStepContent } from "@zoonk/core/steps/contract/content";
 import { notFound } from "next/navigation";
 import { uploadSentenceAudioAction, uploadWordAudioAction } from "./_actions/upload-audio";
 import { AudioEdit } from "./audio-edit";

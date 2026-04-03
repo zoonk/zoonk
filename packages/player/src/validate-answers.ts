@@ -2,7 +2,7 @@ import {
   type SupportedStepKind,
   isSupportedStepKind,
   parseStepContent,
-} from "@zoonk/core/steps/content-contract";
+} from "@zoonk/core/steps/contract/content";
 import { buildAcceptedArrangeWordSequences } from "./arrange-words-answers";
 import {
   checkArrangeWordsAnswer,
@@ -157,6 +157,7 @@ const validators: Record<
   (step: StepData, answer: SelectedAnswer) => ValidatedStepResult | null
 > = {
   fillBlank: validateFillBlank,
+  investigation: () => null,
   listening: validateListening,
   matchColumns: validateMatchColumns,
   multipleChoice: validateMultipleChoice,

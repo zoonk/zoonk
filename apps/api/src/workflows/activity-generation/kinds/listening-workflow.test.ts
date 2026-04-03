@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { assertStepContent } from "@zoonk/core/steps/content-contract";
+import { assertStepContent } from "@zoonk/core/steps/contract/content";
 import { prisma } from "@zoonk/db";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";

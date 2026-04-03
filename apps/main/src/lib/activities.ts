@@ -10,6 +10,7 @@ import {
   LayersIcon,
   type LucideIcon,
   RotateCcwIcon,
+  SearchIcon,
   SparklesIcon,
   TargetIcon,
 } from "lucide-react";
@@ -29,6 +30,7 @@ export async function getActivityKinds(): Promise<{ key: ActivityKind; label: st
     { key: "listening", label: t("Listening") },
     { key: "review", label: t("Review") },
     { key: "story", label: t("Story") },
+    { key: "investigation", label: t("Investigation") },
   ];
 }
 
@@ -45,7 +47,10 @@ async function getSeoDescription(kind: ActivityKind, topic: string): Promise<str
       "Practice {topic} grammar rules with exercises designed to help you remember and apply them.",
       { topic },
     ),
-
+    investigation: t(
+      "Investigate {topic} by gathering evidence, evaluating findings, and drawing your own conclusions.",
+      { topic },
+    ),
     listening: t("Sharpen your {topic} listening skills by translating audio sentences.", {
       topic,
     }),
@@ -120,7 +125,7 @@ const ACTIVITY_ICONS: Record<ActivityKind, LucideIcon> = {
   custom: SparklesIcon,
   explanation: BookOpenIcon,
   grammar: BracesIcon,
-
+  investigation: SearchIcon,
   listening: HeadphonesIcon,
   practice: TargetIcon,
   quiz: CircleHelpIcon,

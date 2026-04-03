@@ -1,7 +1,7 @@
 import { createEntityStepStream } from "@/workflows/_shared/stream-status";
 import { type ActivityStoryDebriefSchema } from "@zoonk/ai/tasks/activities/core/story-debrief";
 import { type ActivityStoryStepsSchema } from "@zoonk/ai/tasks/activities/core/story-steps";
-import { assertStepContent } from "@zoonk/core/steps/content-contract";
+import { assertStepContent } from "@zoonk/core/steps/contract/content";
 import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";

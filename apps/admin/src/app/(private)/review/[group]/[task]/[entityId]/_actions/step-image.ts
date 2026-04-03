@@ -2,7 +2,7 @@
 
 import { isAdmin } from "@/lib/admin-guard";
 import { processAndUploadImage } from "@zoonk/core/images/process-and-upload";
-import { parseStepContent } from "@zoonk/core/steps/content-contract";
+import { parseStepContent } from "@zoonk/core/steps/contract/content";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { parseBigIntId } from "@zoonk/utils/number";

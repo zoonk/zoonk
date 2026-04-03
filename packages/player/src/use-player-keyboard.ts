@@ -1,6 +1,6 @@
 "use client";
 
-import { type StoryStaticVariant } from "@zoonk/core/steps/content-contract";
+import { type StoryStaticVariant } from "@zoonk/core/steps/contract/content";
 import { useKeyboardCallback } from "@zoonk/ui/hooks/keyboard";
 import { type PlayerPhase } from "./player-reducer";
 
