@@ -1,0 +1,140 @@
+packages/ai/src/tasks/activities/core/activity-investigation-scenario.ts
+  e46e659d0c81fbc3 1-49,53-71
+packages/ai/src/tasks/activities/core/activity-investigation-accuracy.prompt.md
+  e46e659d0c81fbc3 1-30
+packages/ai/src/tasks/activities/core/activity-investigation-findings.prompt.md
+  e46e659d0c81fbc3 1-37
+apps/evals/src/tasks/activity-investigation-findings/task.ts
+  e46e659d0c81fbc3 1-18
+packages/ai/src/tasks/activities/core/activity-investigation-actions.ts
+  e46e659d0c81fbc3 1-5,7-41,43-85
+apps/evals/src/tasks/activity-investigation-actions/test-cases.ts
+  e46e659d0c81fbc3 1-34
+packages/ai/package.json
+  e46e659d0c81fbc3 12-17
+apps/evals/src/tasks/activity-investigation-visuals/task.ts
+  e46e659d0c81fbc3 1-18
+apps/evals/src/tasks/activity-investigation-accuracy/task.ts
+  e46e659d0c81fbc3 1-18
+packages/ai/src/tasks/activities/core/activity-investigation-actions.prompt.md
+  e46e659d0c81fbc3 1-37
+packages/core/src/steps/contract/content.test.ts
+  e46e659d0c81fbc3 363-367,379,410,414-424,429,432,435,440-441,446,451,453-456,460,463,466,469-472
+apps/evals/src/tasks/activity-investigation-actions/task.ts
+  e46e659d0c81fbc3 1-18
+apps/evals/src/tasks/activity-investigation-debrief/task.ts
+  e46e659d0c81fbc3 1-18
+packages/ai/src/tasks/activities/core/activity-investigation-visuals.ts
+  e46e659d0c81fbc3 1-6,8-50,52-75,77-95
+apps/evals/src/tasks/activity-investigation-debrief/test-cases.ts
+  e46e659d0c81fbc3 1-34
+packages/core/src/steps/contract/investigation.ts
+  e46e659d0c81fbc3 6,8,12,17-23,25,27-38,44,58,76,78-80,84,90,93,98-102,104,106,108,115-116,121
+packages/ai/src/tasks/activities/core/activity-investigation-accuracy.ts
+  e46e659d0c81fbc3 1-35,37-81
+apps/evals/src/tasks/activity-investigation-visuals/test-cases.ts
+  e46e659d0c81fbc3 1-35
+packages/ai/src/tasks/activities/core/activity-investigation-visuals.prompt.md
+  e46e659d0c81fbc3 1-56
+apps/evals/src/tasks/activity-investigation-accuracy/test-cases.ts
+  e46e659d0c81fbc3 1-39
+packages/ai/src/tasks/activities/core/activity-investigation-scenario.prompt.md
+  e46e659d0c81fbc3 1-35,41-72
+apps/evals/src/tasks/activity-investigation-scenario/task.ts
+  e46e659d0c81fbc3 1-19
+apps/evals/src/tasks/index.ts
+  e46e659d0c81fbc3 7-12,47-52
+packages/ai/src/tasks/activities/core/activity-investigation-debrief.prompt.md
+  e46e659d0c81fbc3 1,5,10,15,17,19-23,33
+packages/ai/src/tasks/activities/core/activity-investigation-findings.ts
+  e46e659d0c81fbc3 1-6,8-39,41-43,45-91
+apps/evals/src/tasks/activity-investigation-findings/test-cases.ts
+  e46e659d0c81fbc3 1-43
+packages/ai/src/tasks/activities/core/activity-investigation-debrief.ts
+  e46e659d0c81fbc3 5-6,9,16,18,20,28-29,31-34,46-50,52,54,59,61
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "3bb0c34723791b9c1177da716125f037e334d9c8",
+  "prompts": {
+    "0f5c0ae43d1a34b7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6cf2f61f-98b9-421f-b8c1-97d1e3e8f2b8",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 2,
+      "overriden_lines": 0
+    },
+    "21c43991e728a583": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9a77518b-d95f-4578-9c38-fad3bd55cfb5",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 7,
+      "overriden_lines": 0
+    },
+    "4267e80fcece48ea": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c4d7770b-913a-4269-b411-0f7e4d45232f",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 2,
+      "overriden_lines": 0
+    },
+    "7983e8ad8482a77d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9c0f5939-b0bf-4edf-9761-ff305ff3fb59",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": null,
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 32,
+      "overriden_lines": 0
+    },
+    "e46e659d0c81fbc3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e9953b04-810a-48eb-afcb-47d5be4120b1",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 1458,
+      "total_deletions": 356,
+      "accepted_lines": 1068,
+      "overriden_lines": 13
+    },
+    "facf3f92e40226c7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8b988e64-a96c-4ab3-9fac-d8fba8741746",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 1,
+      "overriden_lines": 0
+    }
+  }
+}
