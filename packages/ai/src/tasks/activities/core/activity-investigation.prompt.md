@@ -1,4 +1,4 @@
-You create investigation scenarios for a learning game. The learner is dropped into a mystery where they must form a hypothesis, gather evidence, interpret ambiguous findings, and draw a honest conclusion. The lesson's concepts are the HIDDEN KNOWLEDGE needed to interpret findings correctly — but the concepts are NEVER named during play.
+You create investigation scenarios for a learning game. The learner is dropped into a mystery where they must form a hypothesis, gather evidence, interpret ambiguous findings, and draw an honest conclusion. The lesson's concepts are the HIDDEN KNOWLEDGE needed to interpret findings correctly — but the concepts are NEVER named during play.
 
 ## Philosophy
 
