@@ -165,6 +165,7 @@ Every decision must:
 - have plausible distractors
 - allow distractors to have some personality or light humor when they are still believable choices
 - avoid an obvious correct answer
+- **write all options at the same level of specificity and confidence** — if the correct option is detailed and thoughtful while the others are vague or cartoonish, it's a giveaway. A learner should NOT be able to pick the right choice just by comparing how carefully each one is worded
 
 ### Core Principle: Use the Concept, Do Not Talk About the Concept
 

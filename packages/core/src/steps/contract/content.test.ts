@@ -360,7 +360,11 @@ describe("step content contracts", () => {
 
     test("parses problem variant with scenario, explanations, and visual", () => {
       const content = parseStepContent("investigation", {
-        explanations: [{ text: "The butler did it" }, { text: "The maid did it" }],
+        explanations: [
+          { accuracy: "best", text: "The butler did it" },
+          { accuracy: "partial", text: "The maid did it" },
+          { accuracy: "wrong", text: "The dog did it" },
+        ],
         scenario: "A mysterious event occurred at the manor.",
         variant: "problem",
         visual: baseVisual,
@@ -372,7 +376,7 @@ describe("step content contracts", () => {
     test("rejects problem with extra fields", () => {
       expect(() =>
         parseStepContent("investigation", {
-          explanations: [{ text: "The butler did it" }],
+          explanations: [{ accuracy: "best", text: "The butler did it" }],
           extra: "field",
           scenario: "A mysterious event.",
           variant: "problem",
@@ -403,78 +407,69 @@ describe("step content contracts", () => {
       ).toThrow();
     });
 
-    test("parses finding variant with correctTag, feedback, text, and visual", () => {
+    test("parses evidence variant with findings, interpretations, and visuals", () => {
       const content = parseStepContent("investigation", {
         findings: [
           {
-            correctTag: "supports",
-            feedback: "The footage clearly shows the butler near the scene.",
+            interpretations: [
+              {
+                feedback:
+                  "The careful reading acknowledges both what the footage shows and its limits.",
+                statements: [
+                  { quality: "best", text: "The footage shows movement but doesn't identify who." },
+                  { quality: "overclaims", text: "The footage proves the butler was there." },
+                  { quality: "dismissive", text: "The footage doesn't show anything useful." },
+                ],
+              },
+            ],
             text: "The security footage shows movement at 11pm.",
             visual: { kind: "image" as const, prompt: "Security camera still" },
           },
-          {
-            correctTag: "inconclusive",
-            feedback: "The gardener's testimony is vague and could apply to anyone.",
-            text: "The gardener heard footsteps but couldn't identify who.",
-            visual: { author: "Gardener", kind: "quote" as const, text: "I heard something..." },
-          },
         ],
-        variant: "finding",
+        variant: "evidence",
       });
 
-      expect(content.variant).toBe("finding");
+      expect(content.variant).toBe("evidence");
     });
 
-    test("rejects invalid correctTag value", () => {
+    test("rejects evidence with extra fields on findings", () => {
       expect(() =>
         parseStepContent("investigation", {
           findings: [
             {
-              correctTag: "proves",
-              feedback: "Some feedback.",
+              correctTag: "supports",
+              interpretations: [],
               text: "Some text.",
               visual: baseVisual,
             },
           ],
-          variant: "finding",
+          variant: "evidence",
         }),
       ).toThrow();
     });
 
-    test("parses conclusion variant", () => {
+    test("parses call variant with explanations and fullExplanation", () => {
       const content = parseStepContent("investigation", {
-        conclusions: [
-          { quality: "critical", text: "The butler did it based on clear evidence." },
-          { quality: "useful", text: "It was probably the butler." },
-          { quality: "weak", text: "Someone at the manor is guilty." },
+        explanations: [
+          { accuracy: "best", text: "The butler did it" },
+          { accuracy: "partial", text: "The maid did it" },
+          { accuracy: "wrong", text: "The dog did it" },
         ],
-        correctExplanationIndex: 0,
         fullExplanation:
           "The security footage and fingerprint evidence both pointed to the butler.",
-        variant: "conclusion",
+        variant: "call",
       });
 
-      expect(content.variant).toBe("conclusion");
+      expect(content.variant).toBe("call");
     });
 
-    test("rejects negative correctExplanationIndex", () => {
+    test("rejects call with extra fields", () => {
       expect(() =>
         parseStepContent("investigation", {
-          conclusions: [{ quality: "critical", text: "Conclusion." }],
-          correctExplanationIndex: -1,
-          fullExplanation: "Explanation.",
-          variant: "conclusion",
-        }),
-      ).toThrow();
-    });
-
-    test("rejects non-integer correctExplanationIndex", () => {
-      expect(() =>
-        parseStepContent("investigation", {
-          conclusions: [{ quality: "critical", text: "Conclusion." }],
-          correctExplanationIndex: 1.5,
-          fullExplanation: "Explanation.",
-          variant: "conclusion",
+          correctExplanationIndex: 0,
+          explanations: [{ accuracy: "best", text: "Explanation." }],
+          fullExplanation: "Full explanation.",
+          variant: "call",
         }),
       ).toThrow();
     });

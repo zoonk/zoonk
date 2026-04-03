@@ -65,7 +65,7 @@ The best format for testing whether learners can apply concepts to novel scenari
 
 - `context`: A novel real-world scenario that sets up the question (max 300 chars). Write it as if describing a situation to a friend. For code-related topics, include short code snippets inline
 - `question`: Short question about the context (max 50 chars)
-- `options`: Exactly 4 options with 1 correct and 3 plausible distractors representing real misconceptions. Each option has `text`, `isCorrect`, and `feedback`
+- `options`: Exactly 4 options with 1 correct and 3 plausible distractors representing real misconceptions. Each option has `text`, `isCorrect`, and `feedback`. **Write all options at the same level of specificity and confidence.** If the correct option is detailed and precise while the distractors are vague or obviously wrong, the answer is a giveaway. A learner should NOT be able to pick the correct option just by comparing how carefully each one is worded
 
 ## fillBlank
 
