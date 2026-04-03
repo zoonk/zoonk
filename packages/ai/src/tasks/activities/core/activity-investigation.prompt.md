@@ -55,6 +55,7 @@ A scenario about "investigating how supply and demand works" is meta — nobody 
 
 - 3-4 possible explanations for the problem. One sentence each.
 - ALL explanations must be plausible. The correct one should NOT be obviously correct.
+- **Write all explanations at the same level of specificity and confidence.** If the correct explanation is a detailed, multi-part theory while the others are vague one-liners, it's obvious. If the correct one sounds like an expert wrote it while the others sound like guesses, it's obvious. A reader should NOT be able to pick the correct explanation just by comparing how carefully each one is worded.
 - The explanations should represent genuinely different theories about what happened.
 - The correct explanation should be the one best supported by the full evidence — but never so clearly that no investigation is needed.
 
@@ -86,6 +87,7 @@ A scenario about "investigating how supply and demand works" is meta — nobody 
 - `contradicts`: the finding provides evidence against the correct explanation.
 - `inconclusive`: the finding doesn't meaningfully distinguish between explanations.
 - Each tag must be objectively defensible given the finding text and the correct explanation.
+- **Tags must be mixed across findings.** Don't default to "supports" — a good investigation has evidence that pulls in different directions. Aim for at least one of each tag across the full set of actions. If most findings point the same way, the investigation feels one-sided and tagging becomes trivial.
 
 ## Conclusion Rules
 
@@ -100,17 +102,19 @@ A scenario about "investigating how supply and demand works" is meta — nobody 
 ## Visual Rules
 
 - Every scenario and every finding MUST have a visual.
-- Choose the right `visualKind` for the evidence:
-  - `code`: Programming snippets, logs, configuration files, error traces
-  - `chart`: Trends, distributions, time series, comparisons of quantities
-  - `table`: Structured comparisons, test results, data summaries
-  - `diagram`: Systems, relationships, flows, architectures
-  - `image`: Real-world scenes, physical evidence, photographs
-  - `formula`: Mathematical or scientific formulas, equations
-  - `timeline`: Chronological sequences of events
+- **Choose `visualKind` based on the data structure, not for variety.** If 4 findings are best shown as tables, use `table` for all 4. Never pick a less suitable kind just to avoid repeating one.
+- The decision rule is simple: **what IS the evidence?**
+  - The evidence IS code, a log, a config file, or a stack trace → `code`
+  - The evidence IS numeric data with trends, distributions, or comparisons → `chart`
+  - The evidence IS structured rows and columns of data → `table`
+  - The evidence IS a system, flow, or set of relationships → `diagram`
+  - The evidence IS a physical scene that can only be described as a real-world photograph → `image`
+  - The evidence IS a mathematical or scientific equation → `formula`
+  - The evidence IS a sequence of dated events → `timeline`
+- **`image` is a last resort.** Only use it when the evidence genuinely requires a photograph or illustration — a physical scene, a biological specimen, a piece of hardware. If the evidence can be represented as a table, chart, code, or diagram, use that instead. A "screenshot of a dashboard" is NOT an image — it's a `table` (if showing data rows) or a `chart` (if showing graphs). Describe the DATA, not the UI.
 - **Be specific in descriptions.** A visual generation system will create the actual visual from your description. Include: data values for charts, code structure for snippets, column headers and row data for tables, node labels and connections for diagrams.
-- **Bad**: "A chart showing the data" — too vague.
-- **Good**: "Line chart showing daily revenue over 30 days. Steady at ~$2,400/day for days 1-15, sharp drop to ~$1,500/day starting day 16, with a brief spike to $2,100 on day 22 (Saturday)."
+- **Bad**: "Screenshot of an admin panel showing a table with errors" — describes a UI, not data. Use `table` and describe the actual rows and columns.
+- **Good**: "Table with columns: Client, Score, Status. Rows: 'Acme Corp' / inf / Error, 'Beta Inc' / nan / Error, 'Gamma Ltd' / 87.3 / OK, 'Delta Co' / (blank) / Missing. Note: ordering changes on page reload."
 
 ## Debrief Rules
 

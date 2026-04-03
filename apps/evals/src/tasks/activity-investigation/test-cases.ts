@@ -19,7 +19,7 @@ EVALUATION CRITERIA:
 
 9. FEEDBACK QUALITY: Each finding's feedback must explain WHY the correct tag applies and address why someone might reasonably assign a different tag. Feedback that just restates the finding or says "this is correct" without reasoning should be penalized.
 
-10. VISUAL DESCRIPTIONS: Every scenario and every finding must have a visualDescription and visualKind. Descriptions must be specific enough for a separate system to generate the actual visual — include concrete details like data values for charts, code structure for snippets, column headers for tables, node labels for diagrams. Penalize vague descriptions like "a relevant chart" or "some code".
+10. VISUAL DESCRIPTIONS: Every scenario and every finding must have a visualDescription and visualKind. Descriptions must be specific enough for a separate system to generate the actual visual — include concrete details like data values for charts, code structure for snippets, column headers for tables, node labels for diagrams. Penalize vague descriptions like "a relevant chart" or "some code". Penalize using "image" when the evidence is actually tabular data (use "table"), numeric trends (use "chart"), code/logs (use "code"), or system relationships (use "diagram"). "image" should only be used for evidence that genuinely requires a photograph or physical illustration.
 
 11. FACTUAL ACCURACY: Domain content must be factually correct. Findings, explanations, and the debrief must accurately represent how the topic actually works.
 
@@ -33,7 +33,7 @@ ANTI-CHECKLIST GUIDANCE (CRITICAL):
 - Do NOT penalize for creative or unconventional investigation scenarios that still teach the concepts
 - Do NOT penalize for the specific visual kinds chosen as long as they're appropriate for the evidence type
 - Do NOT do word-matching for concept leaks — think about whether the word is part of the scenario's natural language
-- ONLY penalize for: findings without complicating factors, obviously correct explanations, factual errors, meta scenarios, vague visual descriptions, concept names used as concepts during play
+- ONLY penalize for: findings without complicating factors, obviously correct explanations, factual errors, meta scenarios, vague visual descriptions, mismatched visual kinds (e.g., "image" for tabular data), concept names used as concepts during play
 `;
 
 export const TEST_CASES = [
