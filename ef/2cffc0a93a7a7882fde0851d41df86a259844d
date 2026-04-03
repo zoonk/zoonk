@@ -1,0 +1,89 @@
+packages/ai/src/tasks/activities/core/activity-investigation.prompt.md
+  4267e80fcece48ea 1-38,44-133
+apps/evals/src/tasks/activity-investigation/test-cases.ts
+  4267e80fcece48ea 1-174
+packages/core/src/steps/contract/content.test.ts
+  4267e80fcece48ea 447-450,464,475
+packages/core/src/steps/contract/investigation.ts
+  4267e80fcece48ea 4-10,43,86
+apps/evals/src/tasks/activity-investigation/task.ts
+  4267e80fcece48ea 1-19
+packages/ai/src/tasks/activities/core/activity-investigation.ts
+  4267e80fcece48ea 1-110
+packages/ai/package.json
+  4267e80fcece48ea 12
+apps/evals/src/tasks/index.ts
+  4267e80fcece48ea 7,42
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "ef2cffc0a93a7a7882fde0851d41df86a259844d",
+  "prompts": {
+    "0f5c0ae43d1a34b7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6cf2f61f-98b9-421f-b8c1-97d1e3e8f2b8",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 2,
+      "overriden_lines": 0
+    },
+    "21c43991e728a583": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9a77518b-d95f-4578-9c38-fad3bd55cfb5",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 7,
+      "overriden_lines": 0
+    },
+    "4267e80fcece48ea": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c4d7770b-913a-4269-b411-0f7e4d45232f",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 453,
+      "total_deletions": 9,
+      "accepted_lines": 449,
+      "overriden_lines": 3
+    },
+    "7983e8ad8482a77d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9c0f5939-b0bf-4edf-9761-ff305ff3fb59",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": null,
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 32,
+      "overriden_lines": 0
+    },
+    "facf3f92e40226c7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8b988e64-a96c-4ab3-9fac-d8fba8741746",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 2,
+      "overriden_lines": 0
+    }
+  }
+}
