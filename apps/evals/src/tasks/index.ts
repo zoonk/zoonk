@@ -4,6 +4,7 @@ import { activityDistractorsTask } from "./activity-distractors/task";
 import { activityExplanationTask } from "./activity-explanation/task";
 import { activityGrammarContentTask } from "./activity-grammar-content/task";
 import { activityGrammarUserContentTask } from "./activity-grammar-user-content/task";
+import { activityInvestigationTask } from "./activity-investigation/task";
 import { activityPracticeTask } from "./activity-practice/task";
 import { activityPronunciationTask } from "./activity-pronunciation/task";
 import { activityQuizTask } from "./activity-quiz/task";
@@ -38,6 +39,7 @@ export const TASKS: readonly Task[] = [
   activityPracticeTask,
   activityStoryDebriefTask,
   activityStoryStepsTask,
+  activityInvestigationTask,
 
   activityRomanizationTask,
   activityVocabularyTask,

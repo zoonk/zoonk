@@ -444,9 +444,10 @@ describe("step content contracts", () => {
     test("parses conclusion variant", () => {
       const content = parseStepContent("investigation", {
         conclusions: [
-          { quality: "critical", text: "The butler did it based on clear evidence." },
-          { quality: "useful", text: "It was probably the butler." },
-          { quality: "weak", text: "Someone at the manor is guilty." },
+          { quality: "overclaims", text: "The butler did it based on clear evidence." },
+          { quality: "honest", text: "It was probably the butler." },
+          { quality: "ignoresEvidence", text: "Someone at the manor is guilty." },
+          { quality: "best", text: "Evidence points to the butler but other suspects remain." },
         ],
         correctExplanationIndex: 0,
         fullExplanation:
@@ -460,7 +461,7 @@ describe("step content contracts", () => {
     test("rejects negative correctExplanationIndex", () => {
       expect(() =>
         parseStepContent("investigation", {
-          conclusions: [{ quality: "critical", text: "Conclusion." }],
+          conclusions: [{ quality: "best", text: "Conclusion." }],
           correctExplanationIndex: -1,
           fullExplanation: "Explanation.",
           variant: "conclusion",
@@ -471,7 +472,7 @@ describe("step content contracts", () => {
     test("rejects non-integer correctExplanationIndex", () => {
       expect(() =>
         parseStepContent("investigation", {
-          conclusions: [{ quality: "critical", text: "Conclusion." }],
+          conclusions: [{ quality: "best", text: "Conclusion." }],
           correctExplanationIndex: 1.5,
           fullExplanation: "Explanation.",
           variant: "conclusion",

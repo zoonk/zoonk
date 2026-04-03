@@ -1,7 +1,14 @@
 import { z } from "zod";
 import { visualStepContentSchema } from "./visual";
 
-const investigationQualitySchema = z.enum(["critical", "useful", "weak"]);
+const investigationActionQualitySchema = z.enum(["critical", "useful", "weak"]);
+
+const investigationConclusionQualitySchema = z.enum([
+  "overclaims",
+  "ignoresEvidence",
+  "honest",
+  "best",
+]);
 
 const investigationCorrectTagSchema = z.enum(["supports", "contradicts", "inconclusive"]);
 
@@ -33,7 +40,7 @@ const investigationProblemContentSchema = z
 const investigationActionItemSchema = z
   .object({
     label: z.string(),
-    quality: investigationQualitySchema,
+    quality: investigationActionQualitySchema,
   })
   .strict();
 
@@ -76,7 +83,7 @@ const investigationFindingContentSchema = z
  */
 const investigationConclusionItemSchema = z
   .object({
-    quality: investigationQualitySchema,
+    quality: investigationConclusionQualitySchema,
     text: z.string(),
   })
   .strict();
