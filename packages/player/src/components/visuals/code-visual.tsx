@@ -1,6 +1,6 @@
 "use client";
 
-import { type CodeVisualContent } from "@zoonk/core/steps/visual-content-contract";
+import { type CodeVisualContent } from "@zoonk/core/steps/contract/visual";
 import { Fragment, useEffect, useState } from "react";
 import { type BundledLanguage, type ThemedToken, codeToTokens } from "shiki";
 

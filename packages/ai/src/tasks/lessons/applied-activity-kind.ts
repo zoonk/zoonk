@@ -8,7 +8,7 @@ const DEFAULT_MODEL = process.env.AI_MODEL_APPLIED_ACTIVITY_KIND ?? "openai/gpt-
 const FALLBACK_MODELS = ["google/gemini-3.1-flash-lite-preview", "anthropic/claude-haiku-4.5"];
 
 const schema = z.object({
-  appliedActivityKind: z.enum(["story"]).nullable(),
+  appliedActivityKind: z.enum(["investigation", "story"]).nullable(),
 });
 
 type AppliedActivityKindParams = {

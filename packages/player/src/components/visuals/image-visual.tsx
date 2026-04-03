@@ -1,6 +1,6 @@
 "use client";
 
-import { type ImageVisualContent } from "@zoonk/core/steps/visual-content-contract";
+import { type ImageVisualContent } from "@zoonk/core/steps/contract/visual";
 import Image from "next/image";
 import { useState } from "react";
 import { VISUAL_IMAGE_PROPS } from "../../image-config";

@@ -2582,6 +2582,11 @@ msgid "Practice"
 msgstr "Praticar"
 
 #: src/lib/activities.ts
+msgctxt "lLtcKR"
+msgid "Investigate {topic} by gathering evidence, evaluating findings, and drawing your own conclusions."
+msgstr "Investigue {topic} reunindo evidências, avaliando os resultados e tirando suas próprias conclusões."
+
+#: src/lib/activities.ts
 msgctxt "MfGqY2"
 msgid "{lesson} {activity}"
 msgstr "{lesson} {activity}"
@@ -2625,6 +2630,11 @@ msgstr "Entenda o que é {topic} — conceitos centrais e definições explicado
 msgctxt "tlgfSZ"
 msgid "Practice {topic} grammar rules with exercises designed to help you remember and apply them."
 msgstr "Pratique regras gramaticais de {topic} com exercícios projetados pra te ajudar a lembrar e aplicar elas."
+
+#: src/lib/activities.ts
+msgctxt "tNseQe"
+msgid "Investigation"
+msgstr "Investigação"
 
 #: src/lib/activities.ts
 msgctxt "UDijXW"

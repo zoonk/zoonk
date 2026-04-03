@@ -1,6 +1,6 @@
 "use client";
 
-import { parseStepContent } from "@zoonk/core/steps/content-contract";
+import { parseStepContent } from "@zoonk/core/steps/contract/content";
 import { type SelectedAnswer } from "../player-reducer";
 import { type SerializedStep } from "../prepare-activity-data";
 import { ChoiceStepLayout } from "./choice-step-layout";

@@ -1,4 +1,4 @@
-import { type StoryAlignment, parseStepContent } from "@zoonk/core/steps/content-contract";
+import { type StoryAlignment, parseStepContent } from "@zoonk/core/steps/contract/content";
 import { calculateBeltLevel } from "@zoonk/utils/belt-level";
 import { type CompletionResult } from "./completion-input-schema";
 import { computeScore, computeStoryScore } from "./compute-score";

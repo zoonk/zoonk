@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { visualStepContentSchema } from "./visual-content-contract";
+import { visualStepContentSchema } from "./visual";
 
 describe("visual content contracts", () => {
   test("parses code visual content", () => {

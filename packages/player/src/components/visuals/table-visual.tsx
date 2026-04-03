@@ -1,6 +1,6 @@
 "use client";
 
-import { type TableVisualContent } from "@zoonk/core/steps/visual-content-contract";
+import { type TableVisualContent } from "@zoonk/core/steps/contract/visual";
 import {
   Table,
   TableBody,

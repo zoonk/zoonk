@@ -13,32 +13,40 @@ enum LessonKind {
 
 enum ActivityKind {
   custom
-  explanation
-  quiz
-  practice
-  vocabulary
-  grammar
-  reading
-  listening
-  translation
   review
+
+  // core lessons
+  explanation
+  practice
+  quiz
+
+  // applied activities
+  investigation
   story
+
+  // language lessons
+  grammar
+  listening
+  reading
+  translation
+  vocabulary
 }
 
 enum StepKind {
-  static
-  visual
+  arrangeWords   @map("arrange_words")
   fillBlank      @map("fill_blank")
+  investigation
+  listening
   matchColumns   @map("match_columns")
   multipleChoice @map("multiple_choice")
+  reading
   selectImage    @map("select_image")
   sortOrder      @map("sort_order")
-  arrangeWords   @map("arrange_words")
-  vocabulary
-  translation
-  reading
-  listening
+  static
   story
+  translation
+  visual
+  vocabulary
 }
 
 enum CourseMode {

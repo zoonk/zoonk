@@ -1,4 +1,4 @@
-import { parseStepContent } from "@zoonk/core/steps/content-contract";
+import { parseStepContent } from "@zoonk/core/steps/contract/content";
 
 export type ActivitySteps = { title: string; text: string }[];
 

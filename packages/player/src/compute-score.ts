@@ -1,4 +1,4 @@
-import { type StoryAlignment } from "@zoonk/core/steps/content-contract";
+import { type StoryAlignment } from "@zoonk/core/steps/contract/content";
 import { BRAIN_POWER_PER_ACTIVITY, STORY_BRAIN_POWER } from "@zoonk/utils/brain-power";
 import { ENERGY_PER_CORRECT, ENERGY_PER_INCORRECT, ENERGY_PER_STATIC } from "@zoonk/utils/energy";
 

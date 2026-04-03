@@ -1,6 +1,6 @@
 import { createEntityStepStream } from "@/workflows/_shared/stream-status";
 import { type QuizQuestion } from "@zoonk/ai/tasks/activities/core/quiz";
-import { assertStepContent } from "@zoonk/core/steps/content-contract";
+import { assertStepContent } from "@zoonk/core/steps/contract/content";
 import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";

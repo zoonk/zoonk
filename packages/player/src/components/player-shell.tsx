@@ -1,6 +1,6 @@
 "use client";
 
-import { type StoryStaticVariant } from "@zoonk/core/steps/content-contract";
+import { type StoryStaticVariant } from "@zoonk/core/steps/contract/content";
 import { useExtracted } from "next-intl";
 import { usePlayerNavigation, usePlayerRuntime } from "../player-context";
 import { type PlayerPhase } from "../player-reducer";

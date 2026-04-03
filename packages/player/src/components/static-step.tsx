@@ -1,6 +1,6 @@
 "use client";
 
-import { parseStepContent } from "@zoonk/core/steps/content-contract";
+import { parseStepContent } from "@zoonk/core/steps/contract/content";
 import { type SerializedStep } from "../prepare-activity-data";
 import { useReplaceName } from "../user-name-context";
 import { HighlightText } from "./highlight-text";
@@ -77,6 +77,10 @@ function StaticStepContent({ step }: { step: SerializedStep }) {
 
   if (content.variant === "storyOutcome") {
     return <StoryOutcomeContent outcomes={content.outcomes} />;
+  }
+
+  if (content.variant === "investigationScore") {
+    return null;
   }
 
   return <TextVariant text={content.text} title={content.title} />;

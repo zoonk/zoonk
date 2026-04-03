@@ -1,6 +1,6 @@
 "use client";
 
-import { type FormulaVisualContent } from "@zoonk/core/steps/visual-content-contract";
+import { type FormulaVisualContent } from "@zoonk/core/steps/contract/visual";
 import { render } from "katex";
 import "katex/dist/katex.min.css";
 import { useEffect, useRef } from "react";

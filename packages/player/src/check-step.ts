@@ -1,4 +1,4 @@
-import { parseStepContent } from "@zoonk/core/steps/content-contract";
+import { parseStepContent } from "@zoonk/core/steps/contract/content";
 import { segmentWords } from "@zoonk/utils/string";
 import { buildAcceptedArrangeWordSequences } from "./arrange-words-answers";
 import {
@@ -169,6 +169,7 @@ export function checkStep(step: SerializedStep, answer: SelectedAnswer): CheckSt
     case "story":
       return checkStory(step, answer);
 
+    case "investigation":
     case "static":
     case "visual":
     case "vocabulary":

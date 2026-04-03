@@ -1,6 +1,6 @@
 "use client";
 
-import { type DiagramVisualContent } from "@zoonk/core/steps/visual-content-contract";
+import { type DiagramVisualContent } from "@zoonk/core/steps/contract/visual";
 import { useExtracted } from "next-intl";
 import { useId, useMemo } from "react";
 import {

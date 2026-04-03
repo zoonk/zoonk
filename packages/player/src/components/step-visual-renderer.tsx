@@ -1,6 +1,6 @@
 "use client";
 
-import { type VisualStepContent } from "@zoonk/core/steps/visual-content-contract";
+import { type VisualStepContent } from "@zoonk/core/steps/contract/visual";
 import { ChartVisual } from "./visuals/chart-visual";
 import { CodeVisual } from "./visuals/code-visual";
 import { DiagramVisual } from "./visuals/diagram-visual";

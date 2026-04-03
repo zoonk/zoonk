@@ -1,6 +1,6 @@
 "use client";
 
-import { type MusicVisualContent } from "@zoonk/core/steps/visual-content-contract";
+import { type MusicVisualContent } from "@zoonk/core/steps/contract/visual";
 import abcjs from "abcjs";
 import { useEffect, useRef } from "react";
 

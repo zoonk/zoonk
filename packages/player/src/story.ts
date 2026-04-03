@@ -1,4 +1,4 @@
-import { type StoryStaticVariant, parseStepContent } from "@zoonk/core/steps/content-contract";
+import { type StoryStaticVariant, parseStepContent } from "@zoonk/core/steps/contract/content";
 import { type SerializedStep } from "./prepare-activity-data";
 
 /**

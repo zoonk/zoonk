@@ -1,6 +1,6 @@
 "use client";
 
-import { parseStepContent } from "@zoonk/core/steps/content-contract";
+import { parseStepContent } from "@zoonk/core/steps/contract/content";
 import { useExtracted } from "next-intl";
 import { type SerializedStep } from "../prepare-activity-data";
 import { StepVisualRenderer } from "./step-visual-renderer";
