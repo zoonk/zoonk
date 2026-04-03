@@ -1,39 +1,26 @@
 const SHARED_EXPECTATIONS = `
 EVALUATION CRITERIA:
 
-1. SCENARIO QUALITY: The scenario must present a genuine mystery or problem — something unexpected that demands investigation. It must NOT be a definition, trivia question, or textbook exercise. Second person, vivid, concrete, 2-3 sentences max.
+1. SCENARIO QUALITY: The scenario must present a genuine mystery or problem — something unexpected that demands investigation. It must NOT be a definition, trivia question, or textbook exercise. Second person, vivid, concrete, 2-3 short sentences. Should read like a hook, not a briefing — punchy but clear enough to understand the mystery.
 
 2. NO META SCENARIOS: The scenario must be a real-world problem that exists independently of the concept being taught. A scenario about "investigating how X works" is meta. A scenario about "a system broke and you need to find out why" is real. Penalize any scenario that only makes sense as an educational exercise about the concept.
 
 3. HIDDEN CONCEPTS: The specific concept names provided in the CONCEPTS input must NEVER appear verbatim during play. However, DO NOT do word-matching — think about context. A networking investigation MUST use words like "server", "request", "timeout". A chemistry investigation MUST mention "reaction", "compound", "mixture". Only penalize when the output explicitly names the concept as a concept (e.g., "This is an example of NaN propagation" or "You just observed enolization").
 
-4. AMBIGUITY: Every finding MUST have a complicating factor — a clause that introduces doubt or an alternative interpretation. In English this is typically a "however" clause; in Portuguese "porém"/"no entanto"; in Spanish "sin embargo". The complicating factor must be in the content's language. If any finding presents clear, unambiguous evidence, penalize.
+4. EXPLANATION PLAUSIBILITY AND LENGTH: All 3-4 explanations must be genuinely plausible. None should be obviously correct or obviously wrong before investigation. Each explanation should be one concise sentence — clear enough to understand without extra context. All explanations must be similar in length and tone — none should stand out by being longer, more detailed, or more carefully worded.
 
-5. EXPLANATION PLAUSIBILITY: All 3-4 explanations must be genuinely plausible. The correct one should NOT be obviously correct before investigation. If a reader can identify the correct explanation without any evidence, the scenario fails.
+5. NO ACCURACY TIERS IN THIS TASK: This task intentionally does NOT include accuracy tiers (best/partial/wrong). Accuracy is assigned by a separate downstream task. Do NOT penalize for missing accuracy labels — they are not expected in the output.
 
-6. CONCLUSION QUALITY: Exactly 4 conclusion statements, one of each quality level (overclaims, ignoresEvidence, honest, best). The "best" conclusion should acknowledge both what the evidence shows AND its limitations. The "overclaims" conclusion should state certainty beyond the evidence. Do NOT penalize for specific wording — evaluate the quality tier assignment.
+6. FACTUAL ACCURACY: The scenario and explanations must be factually correct for the domain. Explanations should represent genuinely different theories about what happened that make sense given the scenario.
 
-7. ACTION QUALITY TIERS: 5-6 total actions. 1-2 critical (directly test the core question), 2-3 useful (valuable supporting evidence), 1-2 weak (tangentially related). Penalize only if the distribution is severely skewed (e.g., all critical, or no critical).
-
-8. TAG ACCURACY: Each correctTag must be objectively correct relative to the problem's truth (the correct explanation). Evaluate whether the tag assignment is defensible given the finding text.
-
-9. FEEDBACK QUALITY: Each finding's feedback must explain WHY the correct tag applies and address why someone might reasonably assign a different tag. Feedback that just restates the finding or says "this is correct" without reasoning should be penalized.
-
-10. VISUAL DESCRIPTIONS: Every scenario and every finding must have a visualDescription and visualKind. Descriptions must be specific enough for a separate system to generate the actual visual — include concrete details like data values for charts, code structure for snippets, column headers for tables, node labels for diagrams. Penalize vague descriptions like "a relevant chart" or "some code". Penalize using "image" when the evidence is actually tabular data (use "table"), numeric trends (use "chart"), code/logs (use "code"), or system relationships (use "diagram"). "image" should only be used for evidence that genuinely requires a photograph or physical illustration.
-
-11. FACTUAL ACCURACY: Domain content must be factually correct. Findings, explanations, and the debrief must accurately represent how the topic actually works.
-
-12. LANGUAGE: All content must be in the specified language. Only JSON field names and enum values (like "supports", "critical", "best") should be in English. No English words slipping into non-English content — including the complicating factor connective (use the target language's equivalent, not "however").
-
-13. DEBRIEF: The fullExplanation must be 2-3 sentences that explain the full picture — what actually happened and why. The correctExplanationIndex must point to the correct explanation.
+7. LANGUAGE: All content must be in the specified language. Only JSON field names should be in English. No English words slipping into non-English content.
 
 ANTI-CHECKLIST GUIDANCE (CRITICAL):
-- Do NOT penalize for specific scenario settings, investigation angles, or plot choices
-- Do NOT require exact counts as long as within specified ranges (3-4 explanations, 5-6 actions, exactly 4 conclusions)
+- Do NOT penalize for specific scenario settings or plot choices
+- Do NOT require exact counts as long as within specified ranges (3-4 explanations)
 - Do NOT penalize for creative or unconventional investigation scenarios that still teach the concepts
-- Do NOT penalize for the specific visual kinds chosen as long as they're appropriate for the evidence type
 - Do NOT do word-matching for concept leaks — think about whether the word is part of the scenario's natural language
-- ONLY penalize for: findings without complicating factors, obviously correct explanations, factual errors, meta scenarios, vague visual descriptions, mismatched visual kinds (e.g., "image" for tabular data), concept names used as concepts during play
+- ONLY penalize for: obviously correct explanations, factual errors, meta scenarios, concept names used as concepts during play, explanations with uneven specificity/confidence
 `;
 
 export const TEST_CASES = [

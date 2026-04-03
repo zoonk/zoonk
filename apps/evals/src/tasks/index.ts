@@ -4,7 +4,12 @@ import { activityDistractorsTask } from "./activity-distractors/task";
 import { activityExplanationTask } from "./activity-explanation/task";
 import { activityGrammarContentTask } from "./activity-grammar-content/task";
 import { activityGrammarUserContentTask } from "./activity-grammar-user-content/task";
-import { activityInvestigationTask } from "./activity-investigation/task";
+import { activityInvestigationAccuracyTask } from "./activity-investigation-accuracy/task";
+import { activityInvestigationActionsTask } from "./activity-investigation-actions/task";
+import { activityInvestigationDebriefTask } from "./activity-investigation-debrief/task";
+import { activityInvestigationFindingsTask } from "./activity-investigation-findings/task";
+import { activityInvestigationScenarioTask } from "./activity-investigation-scenario/task";
+import { activityInvestigationVisualsTask } from "./activity-investigation-visuals/task";
 import { activityPracticeTask } from "./activity-practice/task";
 import { activityPronunciationTask } from "./activity-pronunciation/task";
 import { activityQuizTask } from "./activity-quiz/task";
@@ -39,7 +44,12 @@ export const TASKS: readonly Task[] = [
   activityPracticeTask,
   activityStoryDebriefTask,
   activityStoryStepsTask,
-  activityInvestigationTask,
+  activityInvestigationAccuracyTask,
+  activityInvestigationActionsTask,
+  activityInvestigationDebriefTask,
+  activityInvestigationFindingsTask,
+  activityInvestigationScenarioTask,
+  activityInvestigationVisualsTask,
 
   activityRomanizationTask,
   activityVocabularyTask,
