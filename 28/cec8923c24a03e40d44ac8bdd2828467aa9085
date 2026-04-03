@@ -1,0 +1,92 @@
+packages/player/src/check-step.ts
+  facf3f92e40226c7 172
+packages/core/src/steps/contract/exercise.ts
+  facf3f92e40226c7 1-77
+packages/core/src/steps/contract/visual.test.ts
+  facf3f92e40226c7 2
+packages/player/src/validate-answers.ts
+  facf3f92e40226c7 160
+packages/player/src/components/static-step.tsx
+  facf3f92e40226c7 82-85
+apps/main/src/lib/activities.ts
+  facf3f92e40226c7 13,33,50-53,128
+apps/main/src/lib/generation/activity-generation-phase-config.ts
+  facf3f92e40226c7 80,136
+packages/core/src/steps/contract/story.ts
+  facf3f92e40226c7 1-68
+packages/core/src/steps/contract/content.ts
+  facf3f92e40226c7 13,15-17,26-30
+packages/core/src/steps/contract/static.ts
+  facf3f92e40226c7 1-40
+packages/ai/src/tasks/lessons/applied-activity-kind.prompt.md
+  facf3f92e40226c7 15,29,31-37
+packages/core/src/workflows/steps.ts
+  facf3f92e40226c7 196
+packages/core/src/steps/contract/content.test.ts
+  facf3f92e40226c7 2
+packages/core/src/steps/contract/investigation.ts
+  facf3f92e40226c7 2
+packages/ai/src/tasks/lessons/applied-activity-kind.ts
+  facf3f92e40226c7 11
+packages/core/package.json
+  facf3f92e40226c7 32-33
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "28cec8923c24a03e40d44ac8bdd2828467aa9085",
+  "prompts": {
+    "0f5c0ae43d1a34b7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6cf2f61f-98b9-421f-b8c1-97d1e3e8f2b8",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 3,
+      "overriden_lines": 0
+    },
+    "21c43991e728a583": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9a77518b-d95f-4578-9c38-fad3bd55cfb5",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 7,
+      "overriden_lines": 0
+    },
+    "7983e8ad8482a77d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9c0f5939-b0bf-4edf-9761-ff305ff3fb59",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": null,
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 32,
+      "overriden_lines": 0
+    },
+    "facf3f92e40226c7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8b988e64-a96c-4ab3-9fac-d8fba8741746",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 687,
+      "total_deletions": 348,
+      "accepted_lines": 225,
+      "overriden_lines": 3
+    }
+  }
+}
