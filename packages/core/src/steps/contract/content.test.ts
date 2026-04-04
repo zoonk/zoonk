@@ -413,13 +413,19 @@ describe("step content contracts", () => {
           {
             interpretations: [
               {
-                feedback:
-                  "The careful reading acknowledges both what the footage shows and its limits.",
-                statements: [
-                  { quality: "best", text: "The footage shows movement but doesn't identify who." },
-                  { quality: "overclaims", text: "The footage proves the butler was there." },
-                  { quality: "dismissive", text: "The footage doesn't show anything useful." },
-                ],
+                best: {
+                  feedback:
+                    "The careful reading acknowledges both what the footage shows and its limits.",
+                  text: "The footage shows movement but doesn't identify who.",
+                },
+                dismissive: {
+                  feedback: "Dismissing the footage entirely ignores relevant evidence.",
+                  text: "The footage doesn't show anything useful.",
+                },
+                overclaims: {
+                  feedback: "The footage alone doesn't prove identity.",
+                  text: "The footage proves the butler was there.",
+                },
               },
             ],
             text: "The security footage shows movement at 11pm.",
