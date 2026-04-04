@@ -1,0 +1,131 @@
+{
+  "expectations": "\nEVALUATION CRITERIA:\n\n1. STATEMENT COUNT: Exactly 3 tiers (best, overclaims, dismissive), each with a text and feedback.\n\n2. QUALITY TIERS: The \"best\" should acknowledge both what the evidence shows and its limits. \"overclaims\" should read too much into it. \"dismissive\" should dismiss relevant evidence.\n\n3. PERSPECTIVE CONSISTENCY: All interpretations must be written from the perspective of someone who believes the given explanation. They should make sense for that specific hunch.\n\n4. MIRRORED STRUCTURE: All 3 statement texts must use the same sentence structure, same opening pattern, and same length. The ONLY difference should be the reasoning inside.\n\n5. PER-TIER FEEDBACK: Each tier's feedback must address the specific choice. overclaims feedback should point out the leap; dismissive feedback should point out what was ignored; best feedback should reinforce what was handled well. All feedback must reference specific evidence details, not generic phrases.\n\n6. LANGUAGE: All content must be in the specified language. Only JSON field names should be in English.\n",
+  "judgedAt": "2026-04-04T12:51:48.090Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "All three tiers are well-written from the correct perspective, with strong feedback referencing specific evidence details (holiday shift, midsummer resilience). Statements have similar structure and length, using \"This\" openers that feel natural. The best statement appropriately hedges, the overclaims reads too much in, and the dismissive genuinely dismisses. Feedback is concrete and specific throughout. Minor issue: the mirrored structure is good but not perfectly identical in clause count.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Strong content with nuanced best statement that handles the midsummer complication well. Feedback is specific and concrete throughout, particularly the overclaims feedback pointing to the midsummer lag. However, statement lengths vary noticeably — the best and dismissive are longer/more complex than ideal for matching, and the dismissive is slightly too sophisticated in its reasoning for a true dismissal. Overall very solid.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Excellent feedback quality with very specific evidence references. However, the statements vary significantly in length — the best statement is notably longer than ideal for structural matching with the others. The overclaims and dismissive are also longer. While content quality is high and perspective is consistent, the mirrored structure requirement is only partially met. The dismissive statement is also somewhat too analytical rather than truly dismissive.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Good perspective consistency and concrete feedback. The best statement handles the nuance well. However, the statements differ noticeably in structure and opening patterns (\"The early lift...\" vs \"That early bump...\" vs \"The shifted holiday...\"), weakening the mirrored structure requirement. The dismissive statement works well as a genuine dismissal. Feedback is specific but slightly less detailed than top contenders.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Decent content but structural mirroring is weak — statements have different openings and vary in length/clause count. The overclaims statement is noticeably shorter and more blunt ('completely prove our theory') making it easier to identify by pattern. Feedback is concrete and references specific evidence. The dismissive feedback says 'definitely inflated' which is slightly overclaiming itself.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Uses jargon-like terms ('H1 bubble,' 'baseline,' 'market baseline') which violates the no-jargon rule. Statement lengths are reasonably matched but the best feedback is too generic ('balanced the evidence' without naming specific details). The overclaims feedback references 'cities that stayed profitable through July' — the evidence says 'midsummer,' not specifically July, and 'profitable' isn't mentioned. Minor accuracy concern.",
+          "score": 6
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "This model followed all instructions perfectly, including the difficult 'mirrored structure' constraint. It achieved the exact same sentence structure and opening pattern ('This [adverb] [verb]...') for all three statements. The interpretations accurately reflect the correct perspective, and the feedback is highly specific to the evidence.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "The statements have very similar lengths and clause counts, though it slightly missed the strict 'same opening pattern' rule. The logic, nuance, and feedback are exceptional and tie very well to the specific details of the evidence.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Good logic and concrete, specific feedback that addresses the learner's choices well. It missed the strict 'same opening pattern' constraint, though the two-clause structures remain somewhat similar across tiers.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "The logic is solid and the feedback correctly identifies the specific nuances of the evidence. However, it missed the 'same opening pattern' constraint, and the statement structures vary more significantly than higher-ranked models.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Missed the structural constraints regarding mirroring and opening patterns. Additionally, the 'best' feedback contains a slight logic misstep by implying the drop was partially caused by the new stores, which slightly undermines the core hunch being argued.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Completely missed the mirrored structure constraints, using very different grammatical shapes, conjunctions, and openings for each statement. While the text is readable, it fails the formatting rules of the prompt.",
+          "score": 5.5
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "This is the strongest overall: all three tiers fit the hunch, the best option is nuanced, and the feedback is concrete and evidence-specific. It follows the mirrored-structure requirement better than most, though the texts are not perfectly identical in shape.",
+          "score": 8.9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "The reasoning is accurate and well tailored to the evidence, with especially strong per-tier feedback and a solid nuanced best statement. It loses points because the three statements are noticeably different in structure and length, which violates a key prompt rule.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "This is clear, faithful to the hunch, and the feedback correctly addresses each choice with specific reference to the evidence. However, the mirrored structure is weak, and the best statement is a bit less explicitly tied to the explanation than the top entries.",
+          "score": 8.1
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "The content is accurate and the best tier appropriately balances support with limits, while the feedback stays concrete. Its main weakness is prompt adherence: the three texts do not share the same structure, and the best statement is somewhat more obviously cautious than disguised.",
+          "score": 7.9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "The output is mostly accurate and the feedback is specific, with a plausible best reading from the chosen hunch. But the dismissive and overclaiming texts are less well mirrored with the best, and some wording like 'definitely inflated' pushes beyond the evidence.",
+          "score": 7.6
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "It captures the basic tier distinctions, but the output is less aligned with the requested voice and specificity. The feedback is comparatively generic, it uses jargon-like shorthand ('H1'), and the mirrored structure requirement is followed poorly.",
+          "score": 6.4
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-investigation-interpretations",
+  "testCaseId": "en-economics-business-cycle-phases-1"
+}

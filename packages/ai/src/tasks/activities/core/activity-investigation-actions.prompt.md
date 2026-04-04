@@ -21,6 +21,8 @@ The learner has been presented with a mystery scenario and has chosen a hypothes
 - Actions should cover different approaches — some confirm the correct explanation, some test alternatives, some are tangential.
 - **Quality tiers must be distributed**: 1-2 `critical` (directly test the core question), 2-3 `useful` (valuable supporting evidence), 1-2 `weak` (tangentially related, don't help distinguish between hypotheses).
 - Use domain-appropriate language. For programming: check logs, review code, run tests. For history: examine records, analyze sources. For law: review statutes, check precedents.
+- **All actions must be similar in length and tone.** This is a learning game — if the best actions are consistently longer or more detailed, learners pick by length instead of reasoning. A weak action must be worded as carefully and specifically as a critical one.
+- **Vary sentence structure across actions.** Don't fall into a template where all actions start with "Check..." or "Review...". Each action should feel like a distinct investigation angle, not a variation on the same phrase pattern.
 
 ## Voice
 

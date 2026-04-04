@@ -1,0 +1,180 @@
+{
+  "modelId": "openai/gpt-5.4-mini",
+  "results": [
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response generally follows the task well, but it misses the mirrored-structure requirement: the three statement texts are similar in topic and length, yet they do not use the same opening pattern or clearly matched sentence structure. For example, one starts with 'The browser and app both start fast...', another with 'This just shows...', and another with 'This basically confirms...'. This weakens the intended gameplay constraint where learners should not identify tiers by pattern. Also, there is a small risk that the overclaim text overstates certainty a bit too directly with 'basically confirms,' though that is aligned with the tier's purpose.",
+          "kind": "minorErrors",
+          "score": 8.4
+        },
+        {
+          "conclusion": "To improve, make the three interpretation statements more tightly parallel in syntax, clause count, and opening pattern while still changing the reasoning inside. For instance, each could begin with the same evidence frame and then diverge in interpretation. Feedback is strong and specific already, but the best option could mention the regional detail explicitly in the text itself to show both support and limitation even more clearly.",
+          "kind": "potentialImprovements",
+          "score": 8.7
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. STATEMENT COUNT: Exactly 3 tiers (best, overclaims, dismissive), each with a text and feedback.\n\n2. QUALITY TIERS: The \"best\" should acknowledge both what the evidence shows and its limits. \"overclaims\" should read too much into it. \"dismissive\" should dismiss relevant evidence.\n\n3. PERSPECTIVE CONSISTENCY: All interpretations must be written from the perspective of someone who believes the given explanation. They should make sense for that specific hunch.\n\n4. MIRRORED STRUCTURE: All 3 statement texts must use the same sentence structure, same opening pattern, and same length. The ONLY difference should be the reasoning inside.\n\n5. PER-TIER FEEDBACK: Each tier's feedback must address the specific choice. overclaims feedback should point out the leap; dismissive feedback should point out what was ignored; best feedback should reinforce what was handled well. All feedback must reference specific evidence details, not generic phrases.\n\n6. LANGUAGE: All content must be in the specified language. Only JSON field names should be in English.\n",
+        "id": "en-web-packets-network-paths-1",
+        "userInput": {
+          "explanation": "A recent equipment change is sending requests through a much longer chain of machines before they reach the app.",
+          "finding": "A timing breakdown shows the browser connects quickly and the app starts generating the page in its usual time. However, there is a long gap while data is being exchanged after the first response bytes appear, and that gap is much larger only for users in the affected region.",
+          "language": "en",
+          "scenario": "Your team's web app suddenly feels slow for users in one region, even though the servers look healthy and CPU use is normal. You need to figure out why pages are taking several extra seconds to load before support starts rolling back unrelated changes."
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response satisfies the basic tiering, perspective, and language requirements, but it misses the strict mirrored-structure requirement. The three statement texts do not use the same opening pattern or closely matched clause structure: 'Isso aponta...', 'Essas diferenças...', and 'Isso prova...' are structurally different, and the internal sentence shapes are not clearly parallel. There is also some phrase overlap between best and overclaims around 'valor vazio ... número', which slightly weakens the 'written independently' constraint. These issues reduce game utility because learners may detect the best option by form rather than reasoning.",
+          "kind": "minorErrors",
+          "score": 8.2
+        },
+        {
+          "conclusion": "The answer would be stronger if all three text statements were rewritten into a tighter matched template with the same opening and number of clauses while preserving different reasoning. The best option could also be made a bit less obviously nuanced in comparison to the others so it is less easy to spot by tone alone. Otherwise, the feedback is concrete and appropriately tailored to each choice.",
+          "kind": "potentialImprovements",
+          "score": 8.8
+        }
+      ],
+      "testCase": {
+        "expectations": "\nLANGUAGE REQUIREMENT: All content must be in Brazilian Portuguese.\n\n\nEVALUATION CRITERIA:\n\n1. STATEMENT COUNT: Exactly 3 tiers (best, overclaims, dismissive), each with a text and feedback.\n\n2. QUALITY TIERS: The \"best\" should acknowledge both what the evidence shows and its limits. \"overclaims\" should read too much into it. \"dismissive\" should dismiss relevant evidence.\n\n3. PERSPECTIVE CONSISTENCY: All interpretations must be written from the perspective of someone who believes the given explanation. They should make sense for that specific hunch.\n\n4. MIRRORED STRUCTURE: All 3 statement texts must use the same sentence structure, same opening pattern, and same length. The ONLY difference should be the reasoning inside.\n\n5. PER-TIER FEEDBACK: Each tier's feedback must address the specific choice. overclaims feedback should point out the leap; dismissive feedback should point out what was ignored; best feedback should reinforce what was handled well. All feedback must reference specific evidence details, not generic phrases.\n\n6. LANGUAGE: All content must be in the specified language. Only JSON field names should be in English.\n\n    ",
+        "id": "pt-python-inf-nan-1",
+        "userInput": {
+          "explanation": "Um dado ausente ou inválido entrou como se fosse número comum, e as contas seguintes espalharam esse problema por vários relatórios.",
+          "finding": "Ao seguir o caminho dos dados, os valores já saem da leitura inicial com diferenças de formato entre colunas parecidas, e em uma etapa intermediária alguns campos passam a aparecer como número comum mesmo quando vieram vazios. No entanto, em outras linhas o valor original continua visível até quase o fim e o problema só aparece no fechamento do relatório.",
+          "language": "pt",
+          "scenario": "Você foi chamado porque o sistema de risco de uma fintech aprovou alguns pedidos que deveriam ter sido bloqueados e, ao mesmo tempo, marcou outros como impossíveis de avaliar. Nos relatórios da madrugada, várias colunas aparecem com números sem sentido, campos vazios e alertas contraditórios."
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response generally follows the task well, but it does not fully satisfy the 'mirrored structure' requirement. The three statement texts are similar in length and all one sentence, yet they do not use the same sentence structure or opening pattern: 'Las dos posiciones parecidas...', 'Eso no dice mucho...', and 'Como ya había...' are structurally different. Also, the instruction said the only English should be JSON field names; while that is respected, the content slightly drifts toward topic-specific wording like 'transformación' and 'variantes', though still understandable and mostly everyday language.",
+          "kind": "minorErrors",
+          "score": 8.4
+        },
+        {
+          "conclusion": "The answer could be improved by making the three statement texts more tightly parallel in syntax and opening pattern while still varying the reasoning, since this was an explicit learning-game constraint. The 'best' option is good and nuanced, but it could be made a bit less obviously balanced so it is not as easy to identify as the careful choice. Otherwise, the per-tier feedback is concrete, corrective where needed, and tied closely to the evidence.",
+          "kind": "potentialImprovements",
+          "score": 8.8
+        }
+      ],
+      "testCase": {
+        "expectations": "\nLANGUAGE REQUIREMENT: All content must be in Latin American Spanish.\n\n\nEVALUATION CRITERIA:\n\n1. STATEMENT COUNT: Exactly 3 tiers (best, overclaims, dismissive), each with a text and feedback.\n\n2. QUALITY TIERS: The \"best\" should acknowledge both what the evidence shows and its limits. \"overclaims\" should read too much into it. \"dismissive\" should dismiss relevant evidence.\n\n3. PERSPECTIVE CONSISTENCY: All interpretations must be written from the perspective of someone who believes the given explanation. They should make sense for that specific hunch.\n\n4. MIRRORED STRUCTURE: All 3 statement texts must use the same sentence structure, same opening pattern, and same length. The ONLY difference should be the reasoning inside.\n\n5. PER-TIER FEEDBACK: Each tier's feedback must address the specific choice. overclaims feedback should point out the leap; dismissive feedback should point out what was ignored; best feedback should reinforce what was handled well. All feedback must reference specific evidence details, not generic phrases.\n\n6. LANGUAGE: All content must be in the specified language. Only JSON field names should be in English.\n\n    ",
+        "id": "es-quimica-alquilacion-alfa-1",
+        "userInput": {
+          "explanation": "La causa fue que la transformación ocurrió en más de un punto posible de la molécula, así que el proceso produjo una mezcla de compuestos difíciles de separar.",
+          "finding": "En el dibujo del compuesto de partida hay dos posiciones muy parecidas donde podía ocurrir el cambio, y en los antecedentes del proceso ya se habían reportado mezclas pequeñas de dos variantes. Sin embargo, en las corridas buenas esas variantes quedaban en niveles bajos y esta vez la proporción entre ellas salió mucho más desordenada.",
+          "language": "es",
+          "scenario": "Estás revisando una corrida en la planta y el lote salió con muy poco producto útil y demasiadas impurezas. El procedimiento parecía rutinario, pero esta vez aparecieron compuestos inesperados y nadie sabe en qué paso se torció todo."
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response meets the basic tier requirements and stays in English, but it misses the mirrored-structure requirement: the three statement texts do not use the same opening pattern or closely matched clause structure. The dismissive option is also somewhat weaker than ideal because it speaks more generally about expected growth than engaging as directly with the specific complicating detail that some boosted cities held up into midsummer. Feedback is mostly concrete and tier-appropriate, though the best feedback edges slightly toward broader conclusion language rather than only reinforcing the learner's handling of this exact evidence.",
+          "kind": "minorErrors",
+          "score": 8.3
+        },
+        {
+          "conclusion": "To improve, the three text statements should be rewritten with more tightly parallel sentence shape, similar rhythm, and comparable clause count while still using distinct reasoning. The dismissive statement could better throw away the actual evidence by explicitly minimizing the holiday shift and temporary traffic surge rather than shifting to a generic growth expectation. The best option could more explicitly name both sides of the evidence: the early-year boost was temporary, yet the midsummer resilience means the finding does not fully settle whether the later decline was purely broad slowdown.",
+          "kind": "potentialImprovements",
+          "score": 8.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. STATEMENT COUNT: Exactly 3 tiers (best, overclaims, dismissive), each with a text and feedback.\n\n2. QUALITY TIERS: The \"best\" should acknowledge both what the evidence shows and its limits. \"overclaims\" should read too much into it. \"dismissive\" should dismiss relevant evidence.\n\n3. PERSPECTIVE CONSISTENCY: All interpretations must be written from the perspective of someone who believes the given explanation. They should make sense for that specific hunch.\n\n4. MIRRORED STRUCTURE: All 3 statement texts must use the same sentence structure, same opening pattern, and same length. The ONLY difference should be the reasoning inside.\n\n5. PER-TIER FEEDBACK: Each tier's feedback must address the specific choice. overclaims feedback should point out the leap; dismissive feedback should point out what was ignored; best feedback should reinforce what was handled well. All feedback must reference specific evidence details, not generic phrases.\n\n6. LANGUAGE: All content must be in the specified language. Only JSON field names should be in English.\n",
+        "id": "en-economics-business-cycle-phases-1",
+        "userInput": {
+          "explanation": "Your expansion was based on unusually strong early-year results that couldn't last, so the second-half drop reflects a broader slowdown rather than a store-level mistake.",
+          "finding": "The first half included a holiday shift that pushed seasonal purchases earlier than usual, and several regions also saw one-time jumps during a short stretch of unusually strong foot traffic. However, some of the cities where those boosts were largest still held up reasonably well into midsummer before dropping later.",
+          "language": "en",
+          "scenario": "You run strategy for a retail chain that opened 18 new stores after a strong first half of the year. By early fall, sales are sliding, inventory is piling up, and the new locations are missing their targets even in cities that looked promising."
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "No major errors in core tiering or perspective: the answer provides exactly three tiers with text and feedback, stays in Brazilian Portuguese, and the overclaims/dismissive/best roles are broadly correct and tied to the given hunch. However, the response does not fully satisfy the explicit mirrored-structure requirement: the three statement texts do not use the same sentence structure/opening pattern, and one claim in overclaims ('os pedidos problemáticos sempre acabam passando por ele') overstates the finding in a way that conflicts with the evidence, though as an overclaim this is partially intentional rather than a clear task-breaking factual failure.",
+          "kind": "majorErrors",
+          "score": 8.7
+        },
+        {
+          "conclusion": "There are several minor issues. The 'best' text is somewhat too definitive for a nuanced reading: it says the change 'está mesmo pegando pedidos pela metade' without explicitly acknowledging in the statement itself that some diverted orders finish normally and some failures happen without the diversion. The three texts also differ noticeably in structure and length instead of maintaining the same shape. In addition, the overclaims text says problematic orders 'sempre' pass through the new service, but the finding says only part of them do, so the overclaim stretches beyond the evidence more sharply than necessary.",
+          "kind": "minorErrors",
+          "score": 7.9
+        },
+        {
+          "conclusion": "The response would be stronger if the three statement texts were rewritten to mirror each other more closely in syntax, opening, and clause count while still using distinct reasoning. The 'best' text should mention both sides of the evidence inside the sentence itself—e.g., that the mid-flow diversion matters but does not explain all failures because some diverted orders succeed and some failed orders never divert. That would better meet the nuanced-reading requirement and the 'same shape, different arguments' rule.",
+          "kind": "potentialImprovements",
+          "score": 7.8
+        }
+      ],
+      "testCase": {
+        "expectations": "\nLANGUAGE REQUIREMENT: All content must be in Brazilian Portuguese.\n\n\nEVALUATION CRITERIA:\n\n1. STATEMENT COUNT: Exactly 3 tiers (best, overclaims, dismissive), each with a text and feedback.\n\n2. QUALITY TIERS: The \"best\" should acknowledge both what the evidence shows and its limits. \"overclaims\" should read too much into it. \"dismissive\" should dismiss relevant evidence.\n\n3. PERSPECTIVE CONSISTENCY: All interpretations must be written from the perspective of someone who believes the given explanation. They should make sense for that specific hunch.\n\n4. MIRRORED STRUCTURE: All 3 statement texts must use the same sentence structure, same opening pattern, and same length. The ONLY difference should be the reasoning inside.\n\n5. PER-TIER FEEDBACK: Each tier's feedback must address the specific choice. overclaims feedback should point out the leap; dismissive feedback should point out what was ignored; best feedback should reinforce what was handled well. All feedback must reference specific evidence details, not generic phrases.\n\n6. LANGUAGE: All content must be in the specified language. Only JSON field names should be in English.\n\n    ",
+        "id": "pt-agile-transformacao-gradual-1",
+        "userInput": {
+          "explanation": "Uma mudança recente em uma parte do sistema passou a desviar pedidos para um serviço novo, mas esse caminho ainda não cobre todos os casos e está deixando operações pela metade.",
+          "finding": "Nos registros das etapas da compra, os pedidos problemáticos seguem o caminho antigo no começo e depois parte deles é enviada para um serviço novo antes da finalização. No entanto, há alguns pedidos com esse mesmo desvio que terminam normalmente, e outros que falham sem passar por esse ponto.",
+          "language": "pt",
+          "scenario": "Você faz parte da equipe de um produto que ficou anos crescendo sem parar, e agora os erros aumentaram sempre que uma compra passa por etapas específicas do fluxo. O site continua no ar, mas cada ajuste parece consertar um pedaço e quebrar outro, e você precisa descobrir o que realmente está acontecendo sem parar a operação."
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None. The response provides all three required tiers with text and feedback, keeps the interpretations aligned to the given hunch about insufficient trained staff/tested routines, and the core reasoning is factually appropriate to the evidence. The best option acknowledges both supporting details (manuals, some successful batches) and limits (adjustments between batches, inconsistent checks across sites). The dismissive option is clearly incorrect in the intended way and its feedback properly corrects the learner rather than validating the dismissal. No major factual or instruction-breaking error is present.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "There is a notable issue with the mirrored-structure requirement: the three statement texts do not share the same opening pattern or closely matched structure/length. 'The manuals and those early batches...', 'This doesn’t really tell us much...', and 'This pretty much proves...' are structurally different, making the tiers somewhat easier to identify by form rather than reasoning. Also, the dismissive text overstates what manuals imply ('they already knew how to do everything'), which works for a dismissive wrong choice but is a bit less grounded in the specific evidence than ideal.",
+          "kind": "minorErrors",
+          "score": 8.2
+        },
+        {
+          "conclusion": "The answer could be improved by making all three statements follow a more tightly mirrored sentence shape and similar clause count while still varying the reasoning independently. The dismissive option could also engage the specific evidence more directly—e.g., downplaying the inconsistent timing/cleanliness checks instead of pivoting mostly to manuals—so that the contrast among tiers is driven more by interpretation than by obvious discourse markers like 'doesn’t really tell us much' or 'pretty much proves.'",
+          "kind": "potentialImprovements",
+          "score": 8.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. STATEMENT COUNT: Exactly 3 tiers (best, overclaims, dismissive), each with a text and feedback.\n\n2. QUALITY TIERS: The \"best\" should acknowledge both what the evidence shows and its limits. \"overclaims\" should read too much into it. \"dismissive\" should dismiss relevant evidence.\n\n3. PERSPECTIVE CONSISTENCY: All interpretations must be written from the perspective of someone who believes the given explanation. They should make sense for that specific hunch.\n\n4. MIRRORED STRUCTURE: All 3 statement texts must use the same sentence structure, same opening pattern, and same length. The ONLY difference should be the reasoning inside.\n\n5. PER-TIER FEEDBACK: Each tier's feedback must address the specific choice. overclaims feedback should point out the leap; dismissive feedback should point out what was ignored; best feedback should reinforce what was handled well. All feedback must reference specific evidence details, not generic phrases.\n\n6. LANGUAGE: All content must be in the specified language. Only JSON field names should be in English.\n",
+        "id": "en-history-biomedical-institutions-1",
+        "userInput": {
+          "explanation": "The vaccination campaign stalled because local labs had the right buildings but not enough trained staff and tested routines to scale up safely.",
+          "finding": "Internal manuals exist for the main production steps, and a few batches before the outbreak followed the same checklist from start to finish. However, audit notes show several steps were still being adjusted between batches, and some records from different sites use different timing and cleanliness checks for the same task.",
+          "language": "en",
+          "scenario": "You're advising officials as a new disease spreads, but the national vaccination campaign keeps falling behind schedule. Some regions are waiting for doses while others get shipments late, and you need to figure out why the country couldn't respond faster."
+        }
+      }
+    }
+  ],
+  "taskId": "activity-investigation-interpretations"
+}

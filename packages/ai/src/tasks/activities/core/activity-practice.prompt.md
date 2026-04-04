@@ -166,6 +166,8 @@ Every decision must:
 - allow distractors to have some personality or light humor when they are still believable choices
 - avoid an obvious correct answer
 - **write all options at the same level of specificity and confidence** — if the correct option is detailed and thoughtful while the others are vague or cartoonish, it's a giveaway. A learner should NOT be able to pick the right choice just by comparing how carefully each one is worded
+- **length must not signal quality** — if the correct answer is consistently the longest, learners stop reading and just pick it. Wrong options must be equally developed — a wrong answer is a fully argued bad take, not a lazy short one
+- **vary sentence structure across options** — if all correct answers follow the same template (e.g., more hedging, more nuance) while wrong answers share a different template (e.g., shorter, more blunt), learners pick by pattern instead of reasoning
 
 ### Core Principle: Use the Concept, Do Not Talk About the Concept
 

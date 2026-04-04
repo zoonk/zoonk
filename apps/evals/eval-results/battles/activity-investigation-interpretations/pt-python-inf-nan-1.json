@@ -1,0 +1,131 @@
+{
+  "expectations": "\nLANGUAGE REQUIREMENT: All content must be in Brazilian Portuguese.\n\n\nEVALUATION CRITERIA:\n\n1. STATEMENT COUNT: Exactly 3 tiers (best, overclaims, dismissive), each with a text and feedback.\n\n2. QUALITY TIERS: The \"best\" should acknowledge both what the evidence shows and its limits. \"overclaims\" should read too much into it. \"dismissive\" should dismiss relevant evidence.\n\n3. PERSPECTIVE CONSISTENCY: All interpretations must be written from the perspective of someone who believes the given explanation. They should make sense for that specific hunch.\n\n4. MIRRORED STRUCTURE: All 3 statement texts must use the same sentence structure, same opening pattern, and same length. The ONLY difference should be the reasoning inside.\n\n5. PER-TIER FEEDBACK: Each tier's feedback must address the specific choice. overclaims feedback should point out the leap; dismissive feedback should point out what was ignored; best feedback should reinforce what was handled well. All feedback must reference specific evidence details, not generic phrases.\n\n6. LANGUAGE: All content must be in the specified language. Only JSON field names should be in English.\n\n    ",
+  "judgedAt": "2026-04-04T12:53:32.355Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "All three statements have similar length and structure, making it hard to pattern-match. The best tier carefully balances both sides of the evidence. Overclaims appropriately stretches ('praticamente prova... todos os relatórios do mesmo jeito'). Dismissive properly dismisses but is corrected well in feedback. Feedback is concrete and evidence-specific throughout.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Good structural balance across tiers with similar length and clause count. The best interpretation captures both the confirmation and the limitation well. Feedback is specific and references concrete details. Minor issue: uses slightly more technical-sounding language ('contaminação', 'propagação') that borders on jargon, and 'espaços em branco' is a slightly different framing than the evidence uses.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Strong content quality with nuanced best tier and well-crafted overclaims. Feedback is concrete and evidence-specific. However, statement lengths vary noticeably — the overclaims statement is significantly longer than the dismissive one — violating the mirrored structure requirement. This makes pattern-matching easier for learners.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Content is accurate and feedback is detailed and evidence-specific. However, the overclaims statement ('Isso prova que um dado vazio virou número e contaminou toda a cadeia de relatórios.') is dramatically shorter than the other two, making it trivially easy to identify by length alone. This significantly violates the mirrored structure rule.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Content quality is good — the best tier is genuinely nuanced and feedback is concrete. However, statements vary significantly in length and the shared opener 'Esse achado' is repeated across all three, which the rules warn against (shared text patterns). The best statement is noticeably longer than the others, making pattern-matching easy.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Content is reasonable but statements vary significantly in length and structure — the best statement is shorter and more hedging while overclaims is punchier. The dismissive statement focuses on 'falha visual' which somewhat mischaracterizes the evidence. Feedback is decent but less specific than top models. Structure mismatch makes tier identification easy.",
+          "score": 6
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "This model brilliantly balances the lengths of the statements (24, 24, 23 words), which is crucial for preventing learners from guessing by visual pattern. The feedback is exceptional, quoting specific evidence from the prompt while correctly challenging or affirming the learner's choice. Its only minor flaw is that the 'dismissive' statement flips the clause order, slightly violating the 'same sentence structure' rule.",
+          "score": 9.1
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model A perfectly captures the 'mirrored structure' constraint, keeping all three statements virtually identical in length (23, 21, 22 words) and using a matching noun-phrase opening pattern. The feedback correctly references specific evidence without being generic. However, the 'dismissive' text has a slight logical flaw, as it claims the glitch 'doesn't alter the final result,' even though the learner knows the final reports are broken.",
+          "score": 8.9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "The feedback provided for each tier is highly specific and effectively corrects or reinforces the learner. The conversational tone is excellent. However, it fails the 'same length' constraint, as the 'best' option is noticeably longer (45 words) than the other two (34 and 35 words), making it somewhat gameable.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "The model writes strong, accurate interpretations from the perspective of someone who believes the hunch, and the feedback directly points to evidence. However, it completely ignores the 'same sentence structure' and 'same length' rules, producing statements of 43, 32, and 37 words with entirely different phrasing styles.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "While this model attempted to fulfill the 'same opening pattern' rule by starting everything with 'Esse achado...', it severely violated the mirrored length constraint (ranging from 25 to 41 words). The 'best' statement is a run-on sentence that visually stands out, making it too easy for a learner to pick without reading.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "This output completely fails the 'same shape' and 'same length' rules, with statements ranging drastically from 15 to 29 words. A learner could instantly identify the 'overclaims' tier simply because it is half the size of the 'best' tier. The lack of structural mirroring warrants a heavy penalty for a learning game context.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Cumpre bem os três papéis, mantém perspectiva alinhada à hipótese e traz feedbacks específicos ao achado. Ainda falha na exigência mais rígida de estrutura espelhada, mas é o conjunto mais forte e equilibrado.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "As interpretações são claras, específicas e bem ancoradas na evidência, com um \"best\" especialmente cuidadoso. Perde pontos por não espelhar bem a forma entre os três textos e por usar linguagem um pouco menos simples em alguns trechos.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Tem boa diferenciação entre overclaims, dismissive e best, e os feedbacks corrigem de modo concreto. Cai por usar termos mais técnicos/menos naturais para o tom pedido e por não manter estrutura realmente paralela entre os textos.",
+          "score": 7.9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "É muito sólido na leitura cuidadosa da evidência e nos feedbacks concretos, sem erros factuais relevantes. No entanto, os textos são longos, com formas bem diferentes entre si, e o \"best\" fica mais obviamente cuidadoso do que o ideal.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Os três tiers fazem sentido e o conteúdo está em português, com feedbacks razoavelmente específicos. Porém o \"best\" é genérico demais diante da evidência, e a simetria de estrutura entre os textos está fraca.",
+          "score": 7.3
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Tem boa aderência ao hunch e feedbacks corretivos úteis, mas quebra regras importantes do prompt. O feedback do best tem 3 frases, e a forma dos três textos não segue o espelhamento exigido.",
+          "score": 6.9
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-investigation-interpretations",
+  "testCaseId": "pt-python-inf-nan-1"
+}

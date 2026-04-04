@@ -95,6 +95,8 @@ A scenario about "organizing an exhibit on supply and demand" is meta — nobody
 - The "strong" choice should NOT be obvious — it might feel counterintuitive
 - NEVER hint which is correct. All choices should seem reasonable.
 - **Write all choices at the same level of specificity and confidence.** If the "strong" choice is a detailed, thoughtful action while the others are vague or cartoonish, it's obvious. A reader should NOT be able to pick the best choice just by comparing how carefully each one is worded.
+- **Length must not signal quality** — if the strong choice is consistently the longest, learners stop reading and just pick it. Weak and partial choices must be equally developed — a weak choice is a fully argued bad action, not a lazy short one.
+- **Vary sentence structure across choices within each step.** Don't let strong choices follow a recognizable template while weak choices share a different one.
 - **CRITICAL: Vary the nature of the strong choice across steps.** If the strong choice in step 1 is "observe carefully before acting," the strong choice in step 2 MUST NOT be another version of "observe carefully." Sometimes the best move is bold action. Sometimes it's restraint. Sometimes it's an unexpected creative approach. Sometimes it's asking for help. If a player can win by always picking "the careful/measured option," your choices are broken.
 - **Vary the weak choice too.** The intuitive-but-wrong approach shouldn't always be the same type (e.g., not always "overreact" or "do the drastic thing"). Sometimes the wrong move is being too cautious, too conventional, or too focused on short-term optics.
 

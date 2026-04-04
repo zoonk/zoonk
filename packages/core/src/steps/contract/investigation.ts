@@ -3,8 +3,6 @@ import { visualStepContentSchema } from "./visual";
 
 const investigationActionQualitySchema = z.enum(["critical", "useful", "weak"]);
 
-const investigationInterpretationQualitySchema = z.enum(["best", "overclaims", "dismissive"]);
-
 const investigationAccuracySchema = z.enum(["best", "partial", "wrong"]);
 
 const investigationExplanationSchema = z
@@ -14,28 +12,25 @@ const investigationExplanationSchema = z
   })
   .strict();
 
-/**
- * A single interpretation statement for a finding, written
- * from the perspective of one explanation. The learner picks
- * the "best" reading — the one that carefully acknowledges
- * what the evidence shows and its limitations.
- */
-const investigationInterpretationStatementSchema = z
+const investigationInterpretationTierSchema = z
   .object({
-    quality: investigationInterpretationQualitySchema,
+    feedback: z.string(),
     text: z.string(),
   })
   .strict();
 
 /**
  * Interpretation set for a finding from one explanation's perspective.
- * Contains 3 statements (best/overclaims/dismissive) and feedback
- * explaining why the best reading is the best.
+ * Contains 3 tiers (best/overclaims/dismissive), each with its own
+ * statement text and feedback. Per-tier feedback addresses the
+ * learner's specific choice: what they overclaimed, what they
+ * dismissed, or why their careful reading works.
  */
 const investigationInterpretationSetSchema = z
   .object({
-    feedback: z.string(),
-    statements: z.array(investigationInterpretationStatementSchema),
+    best: investigationInterpretationTierSchema,
+    dismissive: investigationInterpretationTierSchema,
+    overclaims: investigationInterpretationTierSchema,
   })
   .strict();
 
