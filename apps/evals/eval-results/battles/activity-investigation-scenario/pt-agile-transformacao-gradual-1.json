@@ -1,0 +1,185 @@
+{
+  "expectations": "\nLANGUAGE REQUIREMENT: All content must be in Brazilian Portuguese.\n\n\nEVALUATION CRITERIA:\n\n1. SCENARIO QUALITY: The scenario must present a genuine mystery or problem — something unexpected that demands investigation. It must NOT be a definition, trivia question, or textbook exercise. Second person, vivid, concrete, 2-3 short sentences. Should read like a hook, not a briefing — punchy but clear enough to understand the mystery.\n\n2. NO META SCENARIOS: The scenario must be a real-world problem that exists independently of the concept being taught. A scenario about \"investigating how X works\" is meta. A scenario about \"a system broke and you need to find out why\" is real. Penalize any scenario that only makes sense as an educational exercise about the concept.\n\n3. HIDDEN CONCEPTS: The specific concept names provided in the CONCEPTS input must NEVER appear verbatim during play. However, DO NOT do word-matching — think about context. A networking investigation MUST use words like \"server\", \"request\", \"timeout\". A chemistry investigation MUST mention \"reaction\", \"compound\", \"mixture\". Only penalize when the output explicitly names the concept as a concept (e.g., \"This is an example of NaN propagation\" or \"You just observed enolization\").\n\n4. EXPLANATION PLAUSIBILITY AND LENGTH: All 3-4 explanations must be genuinely plausible. None should be obviously correct or obviously wrong before investigation. Each explanation should be one concise sentence — clear enough to understand without extra context. All explanations must be similar in length and tone — none should stand out by being longer, more detailed, or more carefully worded.\n\n5. NO ACCURACY TIERS IN THIS TASK: This task intentionally does NOT include accuracy tiers (best/partial/wrong). Accuracy is assigned by a separate downstream task. Do NOT penalize for missing accuracy labels — they are not expected in the output.\n\n6. FACTUAL ACCURACY: The scenario and explanations must be factually correct for the domain. Explanations should represent genuinely different theories about what happened that make sense given the scenario.\n\n7. LANGUAGE: All content must be in the specified language. Only JSON field names should be in English. No English words slipping into non-English content.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific scenario settings or plot choices\n- Do NOT require exact counts as long as within specified ranges (3-4 explanations)\n- Do NOT penalize for creative or unconventional investigation scenarios that still teach the concepts\n- Do NOT do word-matching for concept leaks — think about whether the word is part of the scenario's natural language\n- ONLY penalize for: obviously correct explanations, factual errors, meta scenarios, concept names used as concepts during play, explanations with uneven specificity/confidence\n\n    ",
+  "judgedAt": "2026-04-04T07:47:59.995Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Excellent scenario: vivid, concrete mystery (inherited e-commerce with half-finished migration causing duplicates and silent failures). All four explanations are plausible, well-balanced in length/tone, and represent genuinely different theories. No concept names leak. Language is natural Brazilian Portuguese. The scenario is slightly long (3+ sentences) but still reads like a hook.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Strong scenario: logistics system being modernized piece by piece, drivers losing routes while new dashboard shows everything fine — a real, concrete mystery. Four explanations are plausible, balanced in length, and represent distinct theories. No concept names leak explicitly. Good natural Portuguese. Clean and punchy.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Good concrete scenario with duplicate routes in a logistics fleet management update. Explanations are diverse and plausible — including a non-migration explanation (network instability) and a human factor (coordinators double-entering). Well-balanced in tone and length. No concept leaks. Solid overall.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Good scenario with a real problem: errors increasing during specific purchase steps, fixes breaking other things. Explanations are plausible and balanced, including one that proposes no structural change (just a traffic spike). No concept names leak. Scenario is slightly vague ('etapas específicas do fluxo') but still works as a hook.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Decent scenario with disappearing/duplicated orders and teams seeing different versions. Explanations are plausible and balanced. However, explanation 4 uses 'fatias' which is close to 'migração por fatias' (a listed concept), though in context it reads naturally enough. The scenario lacks specificity about what domain/system this is, making it slightly less vivid.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Good concrete scenario (legacy e-commerce migration, old customers' orders vanishing). However, the scenario directly mentions 'migrando... para uma nova arquitetura' which somewhat telegraphs the answer space. Explanations are plausible and well-balanced. 'Extraído do sistema legado' in explanation 3 is close to the concept 'Extração de módulo' but acceptable in natural language.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "The scenario mentions 'atualização em etapas' which hints at the concept of incremental/progressive change. The explanations have inconsistent formatting — some have trailing spaces, mismatched quotes. Explanations are plausible but vary in length. The scenario's last sentence ('descobrir o que, nessa transição, está causando') slightly frames the investigation around the transition concept itself.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "The scenario is somewhat meta — it mentions 'estratégia de substituição' and 'migração,' essentially describing the concept rather than just symptoms. Worse, the explanations are NOT competing theories about what went wrong — they describe different strategies being used, making them more like 'which approach is being taken' rather than 'what caused the problem.' This fundamentally violates the explanation rules.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Major rule violations: The scenario is not a mystery but a 'how to' question ('Como a equipe consegue transformar o código sem parar tudo?'). The explanations describe different strategies rather than competing theories about what went wrong. This is essentially a textbook exercise about the concepts, not an investigation. The scenario is meta — it's about investigating how to do architectural transformation, which is the concept itself.",
+          "score": 2.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Exceptional output. The scenario is incredibly vivid, realistic, and completely avoids feeling like a textbook exercise. The explanations are diverse and highly plausible, perfectly blending architectural issues with human and network errors.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Exceptional output. The scenario is concrete and presents a highly realistic engineering mystery. The hypotheses are technically sound, perfectly formatted, and naturally incorporate the hidden concepts without ever naming them.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Excellent output. Presents a very good, high-stakes scenario that fits the target concepts well. The explanations are concise, plausible, and directly address the symptoms described.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Excellent output. Follows all instructions perfectly with a solid, grounded scenario and plausible, well-crafted hypotheses. Slightly more generic in its phrasing compared to the top models.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Excellent output. The mystery is engaging and the competing theories offer genuinely different explanations for the observed behavior, fitting the constraints perfectly.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Very good output that meets most requirements. However, the heavy use of quotation marks around phrases like 'caminho novo' and 'atualização em etapas' makes the text feel a bit artificial and slightly breaks the immersion.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Good output, but suffers from a slight logical disconnect. The scenario mentions a 6-month migration process, while the first hypothesis suggests they tried to migrate everything at once in a single weekend.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Major failure on the explanation rules. Instead of providing hypotheses for what caused the system slowness, the explanations simply describe different architectural strategies. They do not function as competing theories for a mystery.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Unacceptable. Fails the critical 'No Meta Scenarios' rule. The scenario is a textbook exercise asking 'how can the team transform the code', and the explanations are just definitions of architectural concepts. It completely ignores the mystery investigation format.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Entrega um mistério real, claro e conciso em português, com 4 hipóteses plausíveis e de tom bem equilibrado para a mesma situação. Há leve proximidade com os conceitos do curso, mas sem explicá-los explicitamente nem virar cenário meta.",
+          "score": 9.3
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "O cenário é forte, investigativo e não meta, mantendo boa ambiguidade e consequência operacional real. As explicações são plausíveis e uniformes, embora o cenário seja um pouco mais genérico do que os melhores.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Traz um problema concreto e convincente, em segunda pessoa, com consequências reais e hipóteses distintas para o mesmo caso. O cenário menciona a modernização “peça por peça”, o que chega perto de explicitar a ideia ensinada, mas ainda funciona bem como investigação.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "O problema é realista e as hipóteses são boas, específicas e competitivas entre si. Perde pontos por cenário longo demais para o pedido de 2-3 frases curtas e por explicações mais detalhadas e menos uniformes do que o ideal.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Cenário concreto, objetivo e investigativo, com 4 hipóteses plausíveis e bem separadas. Fica um pouco mais fraco por uma explicação menos alinhada com a transformação arquitetural em si e por menor coesão temática entre todas as alternativas.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "O cenário é real e claro, mas nomeia de forma muito direta a migração para “nova arquitetura”, aproximando-se demais dos conceitos escondidos. As explicações são plausíveis, porém mais assertivas e específicas, o que reduz um pouco a ambiguidade investigativa.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Tem um problema real e hipóteses variadas, mas o cenário viola regras importantes: usa aspas e formulações meta como “atualização em etapas” e “seu trabalho é descobrir”, além de ser mais longo e explicativo do que o desejado. Também há deslizes de naturalidade e clareza em algumas hipóteses.",
+          "score": 6.6
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "O cenário apresenta um problema operacional, mas as explicações não são hipóteses sobre a causa do incidente; várias descrevem estratégias de migração em geral, inclusive uma bem-sucedida. Isso fere o requisito central de explicações concorrentes para o mesmo mistério.",
+          "score": 4.2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Falha gravemente no formato da tarefa: o cenário é meta, em tom de exercício (“como a equipe consegue...?”), não um mistério investigativo real. As explicações não competem para explicar um incidente; algumas descrevem abordagens corretas em geral e uma contradiz o próprio contexto.",
+          "score": 2.3
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-investigation-scenario",
+  "testCaseId": "pt-agile-transformacao-gradual-1"
+}

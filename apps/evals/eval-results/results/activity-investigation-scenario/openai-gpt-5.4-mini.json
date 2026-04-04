@@ -1,0 +1,236 @@
+{
+  "modelId": "openai/gpt-5.4-mini",
+  "results": [
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response is strong and follows the task well: it is in English, presents a real-world networking mystery in second person, avoids explicitly naming the provided concepts as concepts, and offers four plausible competing hypotheses of similar length and tone. Small improvements are possible: the scenario could be slightly more vivid or concrete about the stakes, and one explanation ('load the wrong page') loosely overlaps more with application behavior than pure network behavior, though it remains plausible after a network change.",
+          "kind": "potentialImprovements",
+          "score": 9.2
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. SCENARIO QUALITY: The scenario must present a genuine mystery or problem — something unexpected that demands investigation. It must NOT be a definition, trivia question, or textbook exercise. Second person, vivid, concrete, 2-3 short sentences. Should read like a hook, not a briefing — punchy but clear enough to understand the mystery.\n\n2. NO META SCENARIOS: The scenario must be a real-world problem that exists independently of the concept being taught. A scenario about \"investigating how X works\" is meta. A scenario about \"a system broke and you need to find out why\" is real. Penalize any scenario that only makes sense as an educational exercise about the concept.\n\n3. HIDDEN CONCEPTS: The specific concept names provided in the CONCEPTS input must NEVER appear verbatim during play. However, DO NOT do word-matching — think about context. A networking investigation MUST use words like \"server\", \"request\", \"timeout\". A chemistry investigation MUST mention \"reaction\", \"compound\", \"mixture\". Only penalize when the output explicitly names the concept as a concept (e.g., \"This is an example of NaN propagation\" or \"You just observed enolization\").\n\n4. EXPLANATION PLAUSIBILITY AND LENGTH: All 3-4 explanations must be genuinely plausible. None should be obviously correct or obviously wrong before investigation. Each explanation should be one concise sentence — clear enough to understand without extra context. All explanations must be similar in length and tone — none should stand out by being longer, more detailed, or more carefully worded.\n\n5. NO ACCURACY TIERS IN THIS TASK: This task intentionally does NOT include accuracy tiers (best/partial/wrong). Accuracy is assigned by a separate downstream task. Do NOT penalize for missing accuracy labels — they are not expected in the output.\n\n6. FACTUAL ACCURACY: The scenario and explanations must be factually correct for the domain. Explanations should represent genuinely different theories about what happened that make sense given the scenario.\n\n7. LANGUAGE: All content must be in the specified language. Only JSON field names should be in English. No English words slipping into non-English content.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific scenario settings or plot choices\n- Do NOT require exact counts as long as within specified ranges (3-4 explanations)\n- Do NOT penalize for creative or unconventional investigation scenarios that still teach the concepts\n- Do NOT do word-matching for concept leaks — think about whether the word is part of the scenario's natural language\n- ONLY penalize for: obviously correct explanations, factual errors, meta scenarios, concept names used as concepts during play, explanations with uneven specificity/confidence\n",
+        "id": "en-web-packets-network-paths-1",
+        "userInput": {
+          "chapterTitle": "Networking fundamentals",
+          "concepts": [
+            "Network Packets",
+            "Packet Headers",
+            "Packet Payload",
+            "Source Address",
+            "Destination Address",
+            "Hop",
+            "Round Trip",
+            "Path Through a Network"
+          ],
+          "courseTitle": "Web Development",
+          "language": "en",
+          "lessonDescription": "The basic units of network communication and the path traffic follows between two endpoints. These concepts build the mental model needed before IP, routing, and transport behavior make sense.",
+          "topic": "Packets and Network Paths"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The output structure is slightly off relative to the task framing: the first explanation partly repeats the scenario instead of being a clean competing hypothesis, which makes the set a bit less balanced as hypotheses. Also, explanation lengths and specificity are not perfectly even; some are more detailed and mechanism-heavy than others, making a few stand out slightly. Finally, the first explanation leans close to describing the hidden concept ('um valor inválido ... se espalhando pelas contas'), which is not an explicit concept name leak but edges toward mechanism description more than necessary.",
+          "kind": "minorErrors",
+          "score": 8.4
+        },
+        {
+          "conclusion": "A stronger version would make all explanations purely causal alternatives with more uniform length and tone, avoiding any one option that restates symptoms or hints too directly at the underlying lesson concepts. It could also sharpen the scenario hook with one more concrete consequence to increase urgency while keeping it within 2 short sentences.",
+          "kind": "potentialImprovements",
+          "score": 8.8
+        }
+      ],
+      "testCase": {
+        "expectations": "\nLANGUAGE REQUIREMENT: All content must be in Brazilian Portuguese.\n\n\nEVALUATION CRITERIA:\n\n1. SCENARIO QUALITY: The scenario must present a genuine mystery or problem — something unexpected that demands investigation. It must NOT be a definition, trivia question, or textbook exercise. Second person, vivid, concrete, 2-3 short sentences. Should read like a hook, not a briefing — punchy but clear enough to understand the mystery.\n\n2. NO META SCENARIOS: The scenario must be a real-world problem that exists independently of the concept being taught. A scenario about \"investigating how X works\" is meta. A scenario about \"a system broke and you need to find out why\" is real. Penalize any scenario that only makes sense as an educational exercise about the concept.\n\n3. HIDDEN CONCEPTS: The specific concept names provided in the CONCEPTS input must NEVER appear verbatim during play. However, DO NOT do word-matching — think about context. A networking investigation MUST use words like \"server\", \"request\", \"timeout\". A chemistry investigation MUST mention \"reaction\", \"compound\", \"mixture\". Only penalize when the output explicitly names the concept as a concept (e.g., \"This is an example of NaN propagation\" or \"You just observed enolization\").\n\n4. EXPLANATION PLAUSIBILITY AND LENGTH: All 3-4 explanations must be genuinely plausible. None should be obviously correct or obviously wrong before investigation. Each explanation should be one concise sentence — clear enough to understand without extra context. All explanations must be similar in length and tone — none should stand out by being longer, more detailed, or more carefully worded.\n\n5. NO ACCURACY TIERS IN THIS TASK: This task intentionally does NOT include accuracy tiers (best/partial/wrong). Accuracy is assigned by a separate downstream task. Do NOT penalize for missing accuracy labels — they are not expected in the output.\n\n6. FACTUAL ACCURACY: The scenario and explanations must be factually correct for the domain. Explanations should represent genuinely different theories about what happened that make sense given the scenario.\n\n7. LANGUAGE: All content must be in the specified language. Only JSON field names should be in English. No English words slipping into non-English content.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific scenario settings or plot choices\n- Do NOT require exact counts as long as within specified ranges (3-4 explanations)\n- Do NOT penalize for creative or unconventional investigation scenarios that still teach the concepts\n- Do NOT do word-matching for concept leaks — think about whether the word is part of the scenario's natural language\n- ONLY penalize for: obviously correct explanations, factual errors, meta scenarios, concept names used as concepts during play, explanations with uneven specificity/confidence\n\n    ",
+        "id": "pt-python-inf-nan-1",
+        "userInput": {
+          "chapterTitle": "Tipos numéricos e valores especiais",
+          "concepts": [
+            "math.isinf()",
+            "math.isnan()",
+            "NaN não igual a si mesmo",
+            "Propagação de NaN",
+            "Operações com infinito",
+            "Estouro para infinito"
+          ],
+          "courseTitle": "Python",
+          "language": "pt",
+          "lessonDescription": "Como identificar infinitos e NaN, além dos comportamentos menos intuitivos desses valores em comparações e operações.",
+          "topic": "Comportamento de inf e NaN"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The scenario is 3 sentences and works as a real lab mystery, but it is a bit more briefing-like than punchy and the phrase about 'una sola modificación' lightly gestures toward the underlying lesson mechanism instead of sticking purely to observed symptoms. Among the explanations, #1 and #4 are somewhat overlapping because both suggest continued overreaction/multiple additions, so the set is slightly less distinct than ideal. Explanation #3 is plausible but a little awkwardly phrased ('las dos formas que tiene') and less immediately clear than the others.",
+          "kind": "minorErrors",
+          "score": 8.6
+        },
+        {
+          "conclusion": "The response is fully in Latin American Spanish, avoids explicit naming of the target concepts, and provides a credible real-world chemistry investigation with four plausible competing hypotheses. It could be improved by making the hook slightly sharper, keeping the scenario closer to observable evidence only, and differentiating the hypotheses more strongly so no two feel partially redundant.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\nLANGUAGE REQUIREMENT: All content must be in Latin American Spanish.\n\n\nEVALUATION CRITERIA:\n\n1. SCENARIO QUALITY: The scenario must present a genuine mystery or problem — something unexpected that demands investigation. It must NOT be a definition, trivia question, or textbook exercise. Second person, vivid, concrete, 2-3 short sentences. Should read like a hook, not a briefing — punchy but clear enough to understand the mystery.\n\n2. NO META SCENARIOS: The scenario must be a real-world problem that exists independently of the concept being taught. A scenario about \"investigating how X works\" is meta. A scenario about \"a system broke and you need to find out why\" is real. Penalize any scenario that only makes sense as an educational exercise about the concept.\n\n3. HIDDEN CONCEPTS: The specific concept names provided in the CONCEPTS input must NEVER appear verbatim during play. However, DO NOT do word-matching — think about context. A networking investigation MUST use words like \"server\", \"request\", \"timeout\". A chemistry investigation MUST mention \"reaction\", \"compound\", \"mixture\". Only penalize when the output explicitly names the concept as a concept (e.g., \"This is an example of NaN propagation\" or \"You just observed enolization\").\n\n4. EXPLANATION PLAUSIBILITY AND LENGTH: All 3-4 explanations must be genuinely plausible. None should be obviously correct or obviously wrong before investigation. Each explanation should be one concise sentence — clear enough to understand without extra context. All explanations must be similar in length and tone — none should stand out by being longer, more detailed, or more carefully worded.\n\n5. NO ACCURACY TIERS IN THIS TASK: This task intentionally does NOT include accuracy tiers (best/partial/wrong). Accuracy is assigned by a separate downstream task. Do NOT penalize for missing accuracy labels — they are not expected in the output.\n\n6. FACTUAL ACCURACY: The scenario and explanations must be factually correct for the domain. Explanations should represent genuinely different theories about what happened that make sense given the scenario.\n\n7. LANGUAGE: All content must be in the specified language. Only JSON field names should be in English. No English words slipping into non-English content.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific scenario settings or plot choices\n- Do NOT require exact counts as long as within specified ranges (3-4 explanations)\n- Do NOT penalize for creative or unconventional investigation scenarios that still teach the concepts\n- Do NOT do word-matching for concept leaks — think about whether the word is part of the scenario's natural language\n- ONLY penalize for: obviously correct explanations, factual errors, meta scenarios, concept names used as concepts during play, explanations with uneven specificity/confidence\n\n    ",
+        "id": "es-quimica-alquilacion-alfa-1",
+        "userInput": {
+          "chapterTitle": "Carbonilos y enolatos",
+          "concepts": [
+            "Alquilación de enolatos",
+            "Electrófilo primario en alquilación alfa",
+            "Polialquilación de enolatos",
+            "Alquilación de cetonas no simétricas",
+            "Enaminas de Stork",
+            "Alquilación vía enamina"
+          ],
+          "courseTitle": "Química",
+          "language": "es",
+          "lessonDescription": "La formación de enlaces carbono-carbono en posición alfa puede lograrse con enolatos o enaminas, con atención especial a la selectividad y la evitación de polialquilación.",
+          "topic": "Alquilación en posición alfa"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The scenario is slightly overlong and reads more like a brief than 2-3 short punchy hook sentences; it is also 3 sentences compressed into one longer sentence. Some explanations vary a bit in specificity, with the first and third sounding somewhat broader/macro while the fourth is more internal/company-specific, though all remain plausible. The scenario lightly hints at broader economic conditions, but it does not explicitly name the hidden concepts.",
+          "kind": "minorErrors",
+          "score": 8.7
+        },
+        {
+          "conclusion": "The response could be improved by making the scenario punchier and more clearly split into 2-3 short sentences in second person. The explanations could be made even more parallel in scope and wording so none feels more company-specific or more macro-level than the others. Otherwise, it is a strong, non-meta real-world investigation frame in the correct language with plausible competing hypotheses.",
+          "kind": "potentialImprovements",
+          "score": 8.8
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. SCENARIO QUALITY: The scenario must present a genuine mystery or problem — something unexpected that demands investigation. It must NOT be a definition, trivia question, or textbook exercise. Second person, vivid, concrete, 2-3 short sentences. Should read like a hook, not a briefing — punchy but clear enough to understand the mystery.\n\n2. NO META SCENARIOS: The scenario must be a real-world problem that exists independently of the concept being taught. A scenario about \"investigating how X works\" is meta. A scenario about \"a system broke and you need to find out why\" is real. Penalize any scenario that only makes sense as an educational exercise about the concept.\n\n3. HIDDEN CONCEPTS: The specific concept names provided in the CONCEPTS input must NEVER appear verbatim during play. However, DO NOT do word-matching — think about context. A networking investigation MUST use words like \"server\", \"request\", \"timeout\". A chemistry investigation MUST mention \"reaction\", \"compound\", \"mixture\". Only penalize when the output explicitly names the concept as a concept (e.g., \"This is an example of NaN propagation\" or \"You just observed enolization\").\n\n4. EXPLANATION PLAUSIBILITY AND LENGTH: All 3-4 explanations must be genuinely plausible. None should be obviously correct or obviously wrong before investigation. Each explanation should be one concise sentence — clear enough to understand without extra context. All explanations must be similar in length and tone — none should stand out by being longer, more detailed, or more carefully worded.\n\n5. NO ACCURACY TIERS IN THIS TASK: This task intentionally does NOT include accuracy tiers (best/partial/wrong). Accuracy is assigned by a separate downstream task. Do NOT penalize for missing accuracy labels — they are not expected in the output.\n\n6. FACTUAL ACCURACY: The scenario and explanations must be factually correct for the domain. Explanations should represent genuinely different theories about what happened that make sense given the scenario.\n\n7. LANGUAGE: All content must be in the specified language. Only JSON field names should be in English. No English words slipping into non-English content.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific scenario settings or plot choices\n- Do NOT require exact counts as long as within specified ranges (3-4 explanations)\n- Do NOT penalize for creative or unconventional investigation scenarios that still teach the concepts\n- Do NOT do word-matching for concept leaks — think about whether the word is part of the scenario's natural language\n- ONLY penalize for: obviously correct explanations, factual errors, meta scenarios, concept names used as concepts during play, explanations with uneven specificity/confidence\n",
+        "id": "en-economics-business-cycle-phases-1",
+        "userInput": {
+          "chapterTitle": "Business cycles",
+          "concepts": [
+            "Business Cycle",
+            "Expansion Phase",
+            "Peak of a Cycle",
+            "Contraction Phase",
+            "Trough of a Cycle",
+            "Recession",
+            "Recovery"
+          ],
+          "courseTitle": "Economics",
+          "language": "en",
+          "lessonDescription": "The recurring rise and fall of aggregate economic activity, with the standard turning points and phase labels used to describe the path of the economy.",
+          "topic": "Business Cycle Phases"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The scenario and explanations are all in Brazilian Portuguese and fit a real engineering problem well. Minor issue: one explanation uses wording very close to hidden concepts from the prompt ('migração por partes', 'fatias'), which slightly risks making the lesson concept feel more explicit than ideal, even though it is still framed as a plausible operational cause rather than naming the concept directly. Another small issue is that the first explanation is a bit more concrete and immediately compelling than the others, making the set very slightly uneven in specificity.",
+          "kind": "minorErrors",
+          "score": 8.8
+        },
+        {
+          "conclusion": "The output is strong and useful. It could be improved by making the four explanations even more uniform in specificity and by avoiding phrasing that echoes the hidden concepts too closely. The scenario could also be trimmed a touch for even punchier hook-style delivery, though it already satisfies the 2-sentence requirement.",
+          "kind": "potentialImprovements",
+          "score": 9.1
+        }
+      ],
+      "testCase": {
+        "expectations": "\nLANGUAGE REQUIREMENT: All content must be in Brazilian Portuguese.\n\n\nEVALUATION CRITERIA:\n\n1. SCENARIO QUALITY: The scenario must present a genuine mystery or problem — something unexpected that demands investigation. It must NOT be a definition, trivia question, or textbook exercise. Second person, vivid, concrete, 2-3 short sentences. Should read like a hook, not a briefing — punchy but clear enough to understand the mystery.\n\n2. NO META SCENARIOS: The scenario must be a real-world problem that exists independently of the concept being taught. A scenario about \"investigating how X works\" is meta. A scenario about \"a system broke and you need to find out why\" is real. Penalize any scenario that only makes sense as an educational exercise about the concept.\n\n3. HIDDEN CONCEPTS: The specific concept names provided in the CONCEPTS input must NEVER appear verbatim during play. However, DO NOT do word-matching — think about context. A networking investigation MUST use words like \"server\", \"request\", \"timeout\". A chemistry investigation MUST mention \"reaction\", \"compound\", \"mixture\". Only penalize when the output explicitly names the concept as a concept (e.g., \"This is an example of NaN propagation\" or \"You just observed enolization\").\n\n4. EXPLANATION PLAUSIBILITY AND LENGTH: All 3-4 explanations must be genuinely plausible. None should be obviously correct or obviously wrong before investigation. Each explanation should be one concise sentence — clear enough to understand without extra context. All explanations must be similar in length and tone — none should stand out by being longer, more detailed, or more carefully worded.\n\n5. NO ACCURACY TIERS IN THIS TASK: This task intentionally does NOT include accuracy tiers (best/partial/wrong). Accuracy is assigned by a separate downstream task. Do NOT penalize for missing accuracy labels — they are not expected in the output.\n\n6. FACTUAL ACCURACY: The scenario and explanations must be factually correct for the domain. Explanations should represent genuinely different theories about what happened that make sense given the scenario.\n\n7. LANGUAGE: All content must be in the specified language. Only JSON field names should be in English. No English words slipping into non-English content.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific scenario settings or plot choices\n- Do NOT require exact counts as long as within specified ranges (3-4 explanations)\n- Do NOT penalize for creative or unconventional investigation scenarios that still teach the concepts\n- Do NOT do word-matching for concept leaks — think about whether the word is part of the scenario's natural language\n- ONLY penalize for: obviously correct explanations, factual errors, meta scenarios, concept names used as concepts during play, explanations with uneven specificity/confidence\n\n    ",
+        "id": "pt-agile-transformacao-gradual-1",
+        "userInput": {
+          "chapterTitle": "Arquitetura em ambientes ágeis",
+          "concepts": [
+            "Evolução incremental da arquitetura",
+            "Estrangulamento arquitetural",
+            "Extração de módulo",
+            "Substituição progressiva",
+            "Migração por fatias",
+            "Convivência entre arquiteturas"
+          ],
+          "courseTitle": "Metodologias Ágeis",
+          "language": "pt",
+          "lessonDescription": "Estratégias para transformar a arquitetura sem reescrever tudo de uma vez. A mudança é conduzida em etapas pequenas, preservando a operação contínua do sistema existente.",
+          "topic": "Transformação arquitetural gradual"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The scenario is strong and realistic, but the explanations are somewhat uneven because two of them overlap heavily around cold-chain/temperature problems rather than offering clearly distinct competing theories. This slightly reduces variety in the hypothesis set.",
+          "kind": "minorErrors",
+          "score": 8.5
+        },
+        {
+          "conclusion": "The output could be improved by making the hypotheses more differentiated while keeping them equally plausible, for example varying between production shortfall, allocation/reporting error, theft/diversion, regulatory hold, or cold-chain failure instead of repeating temperature-related causes. Otherwise it follows the prompt well: real-world mystery, second person, concise, in English, and without explicitly naming the lesson concepts.",
+          "kind": "potentialImprovements",
+          "score": 8.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. SCENARIO QUALITY: The scenario must present a genuine mystery or problem — something unexpected that demands investigation. It must NOT be a definition, trivia question, or textbook exercise. Second person, vivid, concrete, 2-3 short sentences. Should read like a hook, not a briefing — punchy but clear enough to understand the mystery.\n\n2. NO META SCENARIOS: The scenario must be a real-world problem that exists independently of the concept being taught. A scenario about \"investigating how X works\" is meta. A scenario about \"a system broke and you need to find out why\" is real. Penalize any scenario that only makes sense as an educational exercise about the concept.\n\n3. HIDDEN CONCEPTS: The specific concept names provided in the CONCEPTS input must NEVER appear verbatim during play. However, DO NOT do word-matching — think about context. A networking investigation MUST use words like \"server\", \"request\", \"timeout\". A chemistry investigation MUST mention \"reaction\", \"compound\", \"mixture\". Only penalize when the output explicitly names the concept as a concept (e.g., \"This is an example of NaN propagation\" or \"You just observed enolization\").\n\n4. EXPLANATION PLAUSIBILITY AND LENGTH: All 3-4 explanations must be genuinely plausible. None should be obviously correct or obviously wrong before investigation. Each explanation should be one concise sentence — clear enough to understand without extra context. All explanations must be similar in length and tone — none should stand out by being longer, more detailed, or more carefully worded.\n\n5. NO ACCURACY TIERS IN THIS TASK: This task intentionally does NOT include accuracy tiers (best/partial/wrong). Accuracy is assigned by a separate downstream task. Do NOT penalize for missing accuracy labels — they are not expected in the output.\n\n6. FACTUAL ACCURACY: The scenario and explanations must be factually correct for the domain. Explanations should represent genuinely different theories about what happened that make sense given the scenario.\n\n7. LANGUAGE: All content must be in the specified language. Only JSON field names should be in English. No English words slipping into non-English content.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT penalize for specific scenario settings or plot choices\n- Do NOT require exact counts as long as within specified ranges (3-4 explanations)\n- Do NOT penalize for creative or unconventional investigation scenarios that still teach the concepts\n- Do NOT do word-matching for concept leaks — think about whether the word is part of the scenario's natural language\n- ONLY penalize for: obviously correct explanations, factual errors, meta scenarios, concept names used as concepts during play, explanations with uneven specificity/confidence\n",
+        "id": "en-history-biomedical-institutions-1",
+        "userInput": {
+          "chapterTitle": "Health and disease",
+          "concepts": [
+            "Fiocruz",
+            "Butantan Institute",
+            "Biomedical Research",
+            "Vaccine Production",
+            "Public Laboratories"
+          ],
+          "courseTitle": "Brazilian History",
+          "language": "en",
+          "lessonDescription": "Research and production institutions that became central to Brazilian public health capacity. The focus is on domestic science infrastructure and vaccine self-sufficiency.",
+          "topic": "Biomedical Institutions and Vaccine Capacity"
+        }
+      }
+    }
+  ],
+  "taskId": "activity-investigation-scenario"
+}
