@@ -1,0 +1,41 @@
+packages/ai/src/tasks/activities/core/activity-investigation-interpretations.ts
+  44f008214a98a003 12-23,25-27,33-35,43-45,47-49,53-54,61-63
+packages/ai/src/tasks/activities/core/activity-investigation-interpretations.prompt.md
+  44f008214a98a003 1,5,11,16,18-20,24,26-28,30,37
+apps/evals/src/tasks/activity-investigation-interpretations/task.ts
+  44f008214a98a003 14
+packages/ai/src/tasks/activities/core/activity-practice.prompt.md
+  44f008214a98a003 169-170
+packages/ai/src/tasks/activities/core/activity-investigation-scenario.prompt.md
+  44f008214a98a003 57-58
+packages/ai/src/tasks/activities/core/activity-story-steps.prompt.md
+  44f008214a98a003 98-99
+apps/evals/src/tasks/activity-investigation-interpretations/test-cases.ts
+  44f008214a98a003 1,4,6,10,12,14-19,22-54,56-102,104-105
+packages/core/src/steps/contract/investigation.ts
+  44f008214a98a003 15,17,24-27,31-33
+packages/ai/src/tasks/activities/core/activity-quiz.prompt.md
+  44f008214a98a003 68
+packages/ai/src/tasks/activities/core/activity-investigation-actions.prompt.md
+  44f008214a98a003 24-25
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "2ca637e20132ab6bfcc863041eff7bdabefff71a",
+  "prompts": {
+    "44f008214a98a003": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "afeb5613-0fea-49ad-ba96-cf4e3943d8ab",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 377,
+      "total_deletions": 327,
+      "accepted_lines": 166,
+      "overriden_lines": 1
+    }
+  }
+}
