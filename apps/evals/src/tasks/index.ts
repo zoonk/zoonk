@@ -31,6 +31,15 @@ import { languageCourseChaptersTask } from "./language-course-chapters/task";
 import { lessonActivitiesTask } from "./lesson-activities/task";
 import { lessonKindTask } from "./lesson-kind/task";
 import { stepVisualTask } from "./step-visual/task";
+import { visualChartTask } from "./visual-chart/task";
+import { visualCodeTask } from "./visual-code/task";
+import { visualDiagramTask } from "./visual-diagram/task";
+import { visualFormulaTask } from "./visual-formula/task";
+import { visualImageTask } from "./visual-image/task";
+import { visualMusicTask } from "./visual-music/task";
+import { visualQuoteTask } from "./visual-quote/task";
+import { visualTableTask } from "./visual-table/task";
+import { visualTimelineTask } from "./visual-timeline/task";
 
 export const TASKS: readonly Task[] = [
   activityCustomTask,
@@ -66,6 +75,15 @@ export const TASKS: readonly Task[] = [
   languageCourseChaptersTask,
   lessonKindTask,
   stepVisualTask,
+  visualChartTask,
+  visualCodeTask,
+  visualDiagramTask,
+  visualFormulaTask,
+  visualImageTask,
+  visualMusicTask,
+  visualQuoteTask,
+  visualTableTask,
+  visualTimelineTask,
 ];
 
 // Number of times each test case should be run for more reliable results
