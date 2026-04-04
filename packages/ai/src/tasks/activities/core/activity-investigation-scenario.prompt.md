@@ -17,8 +17,8 @@ Investigation teaches evidence interpretation by giving you ambiguous findings. 
 
 A scenario frame for an investigation:
 
-1. **Scenario**: A problem/mystery (2-3 sentences)
-2. **Explanations**: 3-4 possible explanations for the problem
+1. **Scenario**: A single problem/mystery (2-3 short sentences)
+2. **Explanations**: 3-4 competing hypotheses that could explain what happened in that ONE scenario
 
 ## CRITICAL: No Meta Scenarios
 
@@ -46,27 +46,29 @@ A scenario about "investigating how supply and demand works" is meta — nobody 
 - Drop the learner INTO a mystery. Second person ("you"). Something unexpected happened and needs investigation.
 - The scenario must present a genuine problem — not a definition, trivia question, or textbook exercise.
 - **2-3 short sentences.** Be punchy and concrete — a good scenario reads like a hook, not a briefing. Cut filler words but keep enough detail that the mystery is clear and specific.
-- NEVER name the lesson's concepts in the scenario.
+- **NEVER name OR describe the lesson's concepts in the scenario.** Don't use synonyms, paraphrases, or technical descriptions that point to the concept. The scenario should describe observable symptoms (what went wrong) without hinting at the underlying mechanism. For example, if the concept is "NaN propagation," don't say "a strange value is spreading through the system" — that describes the concept. Say "your dashboard is showing garbage data in every column" — that describes the symptom.
 - Choose settings where investigation has real consequences — a failing business, a broken system, a medical mystery, a legal dispute.
 
 ## Explanation Rules
 
 - 3-4 possible explanations for the problem. **One sentence each.** Be concise but clear — the reader should understand each explanation without needing extra context. Don't sacrifice clarity for brevity.
+- **Every explanation must be a hypothesis about the SAME scenario above.** Each one proposes a different CAUSE for the same observed problem. They are NOT separate situations, sub-problems, or different scenarios — they are competing theories about what happened.
 - ALL explanations must be plausible. None should be obviously correct or obviously wrong before investigation.
 - **All explanations must be similar in length and tone.** A reader should NOT be able to guess which one is correct from the writing style, length, or level of detail.
 - The explanations should represent genuinely different theories about what happened.
 
-## Voice
+## CRITICAL: Language
 
-- Write in the specified LANGUAGE.
-- Use casual, conversational register.
-- Second person for the scenario ("You arrive at...", "Your team discovers...").
-- NO jargon from the topic. Use everyday language.
-
-## Language
-
-Generate ALL content in the specified LANGUAGE. Never mix languages. Every single word in scenario text and explanations must be in the specified language — no English words slipping into Portuguese or Spanish output. The only English in the output should be the JSON field names.
+**ALL content MUST be in the specified LANGUAGE field.** This is non-negotiable. Don't use English words if `LANGUAGE` is `pt` or `es`, for example. It doesn't matter what the subject is. For example, if the topic is Mexican History and the language is `en`, you should use English, not Spanish. If the topic is Brazilian Cuisine and the language is `es`, you should use Spanish, not Portuguese.
 
 - `en`: US English
 - `pt`: Brazilian Portuguese
 - `es`: Latin American Spanish
+
+**Self-check before outputting**: Read your scenario and explanations. Is every single word in the specified language? If you see ANY word in the wrong language, rewrite it.
+
+## Voice
+
+- Use casual, conversational register in the specified LANGUAGE.
+- Second person for the scenario ("You arrive at...", "Your team discovers..." — translated to the target language).
+- NO jargon from the topic. Use everyday language.
