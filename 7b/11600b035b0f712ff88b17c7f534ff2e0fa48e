@@ -1,0 +1,27 @@
+apps/evals/src/tasks/activity-investigation-visuals/test-cases.ts
+  93db000bbc3ce25d 1,11,38,59-60,91-96,98,101,103-108,110,113,115-118,120,123,125-130,132,135,191-194,234,237,241-242
+packages/ai/src/tasks/activities/core/activity-investigation-visuals.prompt.md
+  93db000bbc3ce25d 1,5,9-10,13-14,17,21,27,31-33,40,47
+apps/evals/src/tasks/index.ts
+  93db000bbc3ce25d 54
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "7b11600b035b0f712ff88b17c7f534ff2e0fa48e",
+  "prompts": {
+    "93db000bbc3ce25d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "98c5fadc-c87a-4620-80cf-70dd85d840a3",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 316,
+      "total_deletions": 117,
+      "accepted_lines": 65,
+      "overriden_lines": 37
+    }
+  }
+}
