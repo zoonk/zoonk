@@ -3,11 +3,13 @@ import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-o
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import { type ActivityInvestigationAccuracySchema } from "./activity-investigation-accuracy";
+import { type ActivityInvestigationActionsSchema } from "./activity-investigation-actions";
 import systemPrompt from "./activity-investigation-debrief.prompt.md";
+import { type ActivityInvestigationFindingsSchema } from "./activity-investigation-findings";
 import { type ActivityInvestigationScenarioSchema } from "./activity-investigation-scenario";
 
-const DEFAULT_MODEL = process.env.AI_MODEL_ACTIVITY_INVESTIGATION_DEBRIEF ?? "openai/gpt-5.4";
-const FALLBACK_MODELS = ["anthropic/claude-opus-4.6", "google/gemini-3.1-pro-preview"];
+const DEFAULT_MODEL = process.env.AI_MODEL_ACTIVITY_INVESTIGATION_DEBRIEF ?? "openai/gpt-5.4-mini";
+const FALLBACK_MODELS = ["google/gemini-3-flash", "anthropic/claude-sonnet-4.6"];
 
 const schema = z.object({
   fullExplanation: z.string(),
@@ -18,6 +20,8 @@ export type ActivityInvestigationDebriefSchema = z.infer<typeof schema>;
 export type ActivityInvestigationDebriefParams = {
   scenario: ActivityInvestigationScenarioSchema;
   accuracy: ActivityInvestigationAccuracySchema;
+  actions: ActivityInvestigationActionsSchema;
+  findings: ActivityInvestigationFindingsSchema;
   language: string;
   model?: string;
   useFallback?: boolean;
@@ -25,20 +29,31 @@ export type ActivityInvestigationDebriefParams = {
 };
 
 /**
- * Formats the scenario and accuracy tiers into a readable prompt block
- * so the AI knows which explanation is correct when writing the reveal.
+ * Formats the scenario, accuracy tiers, actions, and findings into
+ * a readable prompt block so the AI can reference the actual evidence
+ * the learner investigated when writing the reveal.
  */
 function formatInputsForPrompt({
   scenario,
   accuracy,
-}: Pick<ActivityInvestigationDebriefParams, "scenario" | "accuracy">): string {
+  actions,
+  findings,
+}: Pick<
+  ActivityInvestigationDebriefParams,
+  "scenario" | "accuracy" | "actions" | "findings"
+>): string {
   const explanations = scenario.explanations
     .map((exp, i) => `${i}. [${accuracy.accuracies[i]}] ${exp}`)
+    .join("\n");
+
+  const actionList = actions.actions
+    .map((action, i) => `${i}. ${action.label} → ${findings.findings[i]}`)
     .join("\n");
 
   return `
     SCENARIO: ${scenario.scenario}
     EXPLANATIONS: ${explanations}
+    ACTIONS AND FINDINGS: ${actionList}
   `;
 }
 
@@ -52,13 +67,15 @@ function formatInputsForPrompt({
 export async function generateActivityInvestigationDebrief({
   scenario,
   accuracy,
+  actions,
+  findings,
   language,
   model = DEFAULT_MODEL,
   useFallback = true,
   reasoningEffort,
 }: ActivityInvestigationDebriefParams) {
   const userPrompt = `
-    ${formatInputsForPrompt({ accuracy, scenario })}
+    ${formatInputsForPrompt({ accuracy, actions, findings, scenario })}
     LANGUAGE: ${language}
   `;
 

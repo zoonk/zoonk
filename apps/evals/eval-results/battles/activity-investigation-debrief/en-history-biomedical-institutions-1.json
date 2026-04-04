@@ -1,0 +1,131 @@
+{
+  "expectations": "\nEVALUATION CRITERIA:\n\n1. LENGTH: 2-3 sentences maximum. Penalize if longer.\n\n2. REVEALS THE TRUTH: Must clearly explain what actually happened — the correct explanation — and why.\n\n3. CONNECTS TO EVIDENCE: Must reference or connect back to the investigation findings. The debrief should tie the evidence to the correct explanation so the learner understands how the findings support the truth.\n\n4. NO CONCEPT LEAKAGE: Must not explicitly name the lesson's academic concepts. Explains through the scenario, not through jargon.\n\n5. TONE: Should feel like a satisfying reveal, not a lecture. Casual and direct.\n\n6. LANGUAGE: Must be in the specified language.\n",
+  "judgedAt": "2026-04-04T10:36:07.177Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Exactly 3 sentences, clearly reveals the correct explanation (buildings ready but lacking consistent routines and certified staff), directly references audit notes and training gaps from the evidence, casual and satisfying tone, no jargon leakage. Very clean and well-structured.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "3 sentences, clearly states the correct explanation, connects to evidence (missing trained operators, inconsistent routines). Slightly less specific in evidence references than Model B but still solid. Clean tone, no jargon. Minor weakness: 'As your investigation showed' is a bit formulaic.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Only 2 sentences but they're quite long. Clearly reveals the truth, connects well to multiple evidence points (output plans vs actual production, training gaps, changing routines), and acknowledges partial explanations without overweighting them. Slightly dense but within rules. No jargon.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "3 sentences, good reveal with a nice framing (not politics — it was readiness). Connects to evidence (spotty training, shifting procedures, unfinished safety checks). Casual tone works well. Slightly wordy but within bounds. No jargon issues.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "3 sentences but they're long and the output feels like it pushes the boundary of conciseness. Good evidence connections and clear explanation. The phrase 'hidden weaknesses became real bottlenecks' borders on jargon-adjacent but is acceptable. Slightly lecture-y in tone.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Clearly exceeds the 2-3 sentence maximum — it's 3 very long sentences that read more like a paragraph. While the content is accurate and well-connected to evidence, the length violation is notable. Phrases like 'deep bench' and 'battle-tested' and 'playbooks' feel slightly stylized rather than casual. Must be penalized for length.",
+          "score": 6.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "This model provides an exceptionally satisfying reveal. It perfectly integrates specific findings (training logs, checklists, short trial runs) to support the correct explanation, strictly adheres to the length constraint, and maintains a great conversational tone.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Excellent output that not only highlights the correct explanation and its supporting evidence (spotty hands-on training, shifting procedures), but also elegantly addresses and dismisses the red-herring explanations (politics, imports). It feels like a true investigative debrief.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Very strong and straightforward. It clearly states the truth and explicitly connects it to the audit notes and training gaps found in the investigation. The sentences flow well and meet all constraints.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "A solid response that effectively summarizes the evidence and connects it to the true cause. It is only slightly less concise than the top models, with minor repetition between the first and last sentences.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Meets all requirements and correctly references the evidence, but the writing relies on two very long, slightly run-on sentences. It lacks the punchy, satisfying rhythm of the higher-scored models.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "While accurate and within the length limits, this model fails to explicitly tie the conclusion back to the specific evidence gathered (e.g., audit notes, logs). It simply restates the correct explanation and says 'as your investigation showed', making the reveal less satisfying.",
+          "score": 7
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "This is clear, accurate, and feels like a strong reveal while tying together multiple findings, including training gaps, shifting procedures, unfinished safety checks, and the secondary role of imports. It stays within 3 sentences, uses plain language, and directly reflects the best explanation.",
+          "score": 9.4
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "This closely matches the correct explanation and connects well to the evidence about certification gaps, inconsistent routines, and untested production targets. The tone is direct and satisfying, though slightly more explanatory than reveal-like.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "This gives a solid, evidence-based explanation and nicely distinguishes the main cause from imports, coordination, and politics. It is a bit denser and more formal in phrasing than ideal, but it follows the prompt well.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "This is concise, accurate, and easy to follow, with good linkage to the key findings about staffing and routines. It is slightly less satisfying as a reveal because it doesn't weave in as much specific evidence or contrast with other explanations.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "This is accurate and well-supported by the evidence on staff training and unstable procedures. However, it is more generic and less vivid as an 'aha' reveal, and it connects to fewer findings than the strongest responses.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "This is factually aligned and uses evidence well, but it leans into more elaborate phrasing like 'deep bench' and 'battle-tested,' which feels less natural and more jargon-adjacent than requested. It also sounds slightly more dramatic and overwritten than the brief, casual reveal the prompt asks for.",
+          "score": 8.2
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-investigation-debrief",
+  "testCaseId": "en-history-biomedical-institutions-1"
+}

@@ -1,0 +1,131 @@
+{
+  "expectations": "\nLANGUAGE REQUIREMENT: All content must be in Brazilian Portuguese.\n\n\nEVALUATION CRITERIA:\n\n1. LENGTH: 2-3 sentences maximum. Penalize if longer.\n\n2. REVEALS THE TRUTH: Must clearly explain what actually happened — the correct explanation — and why.\n\n3. CONNECTS TO EVIDENCE: Must reference or connect back to the investigation findings. The debrief should tie the evidence to the correct explanation so the learner understands how the findings support the truth.\n\n4. NO CONCEPT LEAKAGE: Must not explicitly name the lesson's academic concepts. Explains through the scenario, not through jargon.\n\n5. TONE: Should feel like a satisfying reveal, not a lecture. Casual and direct.\n\n6. LANGUAGE: Must be in the specified language.\n\n    ",
+  "judgedAt": "2026-04-04T10:36:18.247Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Exactly 3 sentences, clearly reveals the correct explanation, connects well to evidence (path divergence, timing of the routing rule), dismisses red herrings naturally. Casual tone, no jargon, fully in Portuguese. Strong and concise.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Only 2 sentences but they're quite long. Clearly explains the correct answer and connects to multiple pieces of evidence (routing rule timing, history jumps, dismisses alternatives). Tone is good and casual. Slightly dense but effective.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Clean 3 sentences, reveals the truth clearly, connects to evidence (path change, history jumps). Slightly less specific in evidence connections compared to top outputs, but well-structured and appropriately concise. Good casual tone.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "3 sentences, reveals the correct explanation well, connects to the evidence about the jump in history. However, it doesn't dismiss the red herrings or connect to as many findings as the best outputs. Still solid and well-written.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "3 sentences but the last one is quite long and packs a lot in. Good evidence connections (flow divergence, history breaks, dismisses alternatives). Slightly verbose feel but still within limits. Casual tone works well.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Clearly 3 sentences but they are very long, making it feel like a paragraph rather than a concise reveal. Excellent content — connects to multiple findings and dismisses red herrings — but the length pushes against the spirit of the 2-3 sentence constraint. Reads more like a summary than a satisfying reveal.",
+          "score": 7
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "This model provides an excellent, satisfying reveal that perfectly adheres to all constraints. It clearly explains the core issue, accurately references the specific findings (jumps in the flow, old/new path split), and elegantly dismisses the distractors within the 3-sentence limit.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "A very strong response that succinctly captures the truth and ties it to the evidence, including the activation date of the routing rule. It neatly explains away the distractors as side effects, maintaining a casual and direct tone throughout.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "This output accurately explains the correct scenario and connects it well to the evidence of path changes and history jumps. However, its third sentence feels slightly redundant compared to the first, rather than adding new value.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "A good explanation that meets the basic requirements and maintains the correct tone. Its main weakness is that the third sentence is largely a repetition of the first sentence's premise, making it slightly less efficient.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "While technically 2 sentences, the second sentence is a massive, clunky run-on that tries to list every single piece of evidence at once. It loses the 'clear and direct' quality requested in the prompt.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "This model struggles significantly with conciseness. Although it limits itself to 3 sentences, each sentence is a bloated run-on that makes the explanation feel exhausting rather than satisfying and direct.",
+          "score": 6
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Segue bem a explicação correta, conecta várias evidências de forma clara e ainda descarta pistas secundárias sem soar técnico. Está em 2 frases, em português natural e com tom de revelação bem ajustado.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Acerta a causa real e liga bem os achados principais, inclusive contrastando com hipóteses alternativas como pico de acesso. É claro e satisfatório, mas um pouco menos preciso que A ao resumir o conjunto de evidências.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "É muito completo e bem fundamentado nas evidências, mas viola uma regra importante ao usar 3 frases longas e ficar mais explicativo do que revelador. Ainda assim, o conteúdo está correto e bem amarrado.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Explica corretamente a causa e usa evidências centrais relevantes, com boa clareza e dentro do limite de 3 frases. Perde pontos por afirmar que as outras pistas são efeitos colaterais, algo que vai além do que as evidências sustentam.",
+          "score": 8.1
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Está correto, claro e em tom adequado, mas fica mais genérico e conecta menos detalhes concretos da investigação do que os melhores. Não amarra tão bem o momento da mudança nem as pistas que descartam outras leituras.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Acerta a explicação principal e mantém boa clareza, mas usa menos evidências do conjunto investigado e traz uma afirmação mais especulativa sobre o novo sistema não dar conta de todos os detalhes da operação original. Fica um pouco mais repetitivo e menos amarrado ao caso.",
+          "score": 7.4
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-investigation-debrief",
+  "testCaseId": "pt-agile-transformacao-gradual-1"
+}

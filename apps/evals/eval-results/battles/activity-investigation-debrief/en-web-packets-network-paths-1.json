@@ -1,0 +1,131 @@
+{
+  "expectations": "\nEVALUATION CRITERIA:\n\n1. LENGTH: 2-3 sentences maximum. Penalize if longer.\n\n2. REVEALS THE TRUTH: Must clearly explain what actually happened — the correct explanation — and why.\n\n3. CONNECTS TO EVIDENCE: Must reference or connect back to the investigation findings. The debrief should tie the evidence to the correct explanation so the learner understands how the findings support the truth.\n\n4. NO CONCEPT LEAKAGE: Must not explicitly name the lesson's academic concepts. Explains through the scenario, not through jargon.\n\n5. TONE: Should feel like a satisfying reveal, not a lecture. Casual and direct.\n\n6. LANGUAGE: Must be in the specified language.\n",
+  "judgedAt": "2026-04-04T10:36:42.846Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Concise at 2 sentences, clearly reveals the correct explanation (device on the path dropping/delaying data), connects well to multiple pieces of evidence (long delay during transfer, bursts of dropped traffic, bigger pages hit harder, servers healthy), no jargon, casual tone. Excellent adherence to all rules.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Clean 3 sentences, reveals the correct explanation clearly, connects to evidence (larger pages slower, servers healthy, device dropping data). Casual and satisfying tone. Slightly less evidence connection than some others but follows all rules well.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "3 sentences, clearly explains what happened, connects to key evidence (small vs large pages, servers healthy, data being dropped). Casual tone, no jargon. Good overall but slightly less evidence integration than Model E.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "3 sentences, good explanation and evidence connection. However, uses the term 'packet drops' which is borderline technical jargon, slightly violating the no-jargon rule. Otherwise well-structured and clear.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Good content and evidence connection, but clearly exceeds 3 sentences (has 3 long sentences, with the last one being extremely long). The phrase 'all classic signs of' edges toward lecture tone. Uses 'retransmissions' which is somewhat technical. Slightly over-length.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Clearly exceeds the 2-3 sentence limit with 3 very long sentences that read more like a paragraph. Uses 'packets' which is technical jargon. The tone leans more analytical/lecture-like than a satisfying reveal. Good evidence connection but rule violations hurt the score.",
+          "score": 6.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "This output is exceptional. It perfectly hits the 3-sentence constraint, adopts a highly satisfying \"reveal\" tone (\"the real culprit\", \"classic signs\"), and seamlessly connects multiple pieces of key evidence (timing after connection, packet drops, larger pages) to the correct explanation without using academic jargon.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Also an exceptional output that meets all constraints. The tone is highly conversational and natural, and it successfully ties the core evidence (delay after first bytes, extra hops, packet drops) directly to the truth of the mystery. ",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "A very strong, accurate, and concise response. It perfectly avoids jargon by translating the findings into everyday language (\"losing chunks of data\", \"repeated sends\"). It scores slightly lower only because the narrative tone is a bit less engaging as a \"reveal\" compared to the top models.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "This model successfully explains the truth and connects it to the evidence within the 3-sentence limit. However, the sentences are heavily packed with clauses and feel a bit dense and run-on, making it slightly less conversational.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "The explanation is written well and maintains a good conversational tone. However, it misses the most critical piece of evidence—that the delay happened *after* the connection was established (the first bytes)—which is the key clue separating a network transit issue from a server issue.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Similar to Model B, this output provides a decent general explanation but omits the critical timing evidence regarding the connection and first bytes. The reveal is adequate but lacks the depth of evidence connection requested by the prompt.",
+          "score": 7
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Clear, accurate 3-sentence reveal that directly states the real cause and ties it to multiple concrete findings without sounding academic. It stays casual, region-specific, and rules out the server cleanly while keeping the tone satisfying.",
+          "score": 9.3
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Concise and accurate, with a strong explanation of what happened and solid links to the evidence like transfer-stage delay, dropped traffic, retries, and unaffected regions. It is slightly less vivid and complete than the top answer but follows the prompt very well.",
+          "score": 9.1
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Very strong explanation with good evidence linkage and a satisfying reveal, but it breaks the 2-3 sentence maximum by using 3 long, dense sentences and leans a bit more technical. Still highly accurate and well supported.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Accurate and well connected to the findings, but it uses more explicit jargon and the phrase 'all classic signs,' which edges toward lesson-concept leakage and a more lecture-like tone. Otherwise it explains the cause and evidence clearly in 3 sentences.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "It is clear, casual, and within length, and it correctly identifies a faulty device along the route as the cause. However, it connects to less of the actual evidence and overstates that the application is 'working perfectly,' which is stronger than the findings support.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Readable and mostly correct, but it is the weakest on evidence linkage because it barely references the investigation findings beyond larger pages and healthy servers. It also says the browser requests missing parts 'over and over,' which slightly overstates the retry behavior.",
+          "score": 7.5
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-investigation-debrief",
+  "testCaseId": "en-web-packets-network-paths-1"
+}
