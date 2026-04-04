@@ -8,6 +8,7 @@ The learner has investigated a mystery: they picked a hunch, ran experiments, in
 
 - **SCENARIO**: The mystery scenario text
 - **EXPLANATIONS**: The possible explanations (numbered, with accuracy tiers: best/partial/wrong)
+- **ACTIONS AND FINDINGS**: Each investigation action paired with its finding (the evidence the learner discovered)
 - **LANGUAGE**: The content language
 
 ## What You Generate

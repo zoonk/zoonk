@@ -1,0 +1,131 @@
+{
+  "expectations": "\nLANGUAGE REQUIREMENT: All content must be in Brazilian Portuguese.\n\n\nEVALUATION CRITERIA:\n\n1. LENGTH: 2-3 sentences maximum. Penalize if longer.\n\n2. REVEALS THE TRUTH: Must clearly explain what actually happened — the correct explanation — and why.\n\n3. CONNECTS TO EVIDENCE: Must reference or connect back to the investigation findings. The debrief should tie the evidence to the correct explanation so the learner understands how the findings support the truth.\n\n4. NO CONCEPT LEAKAGE: Must not explicitly name the lesson's academic concepts. Explains through the scenario, not through jargon.\n\n5. TONE: Should feel like a satisfying reveal, not a lecture. Casual and direct.\n\n6. LANGUAGE: Must be in the specified language.\n\n    ",
+  "judgedAt": "2026-04-04T10:36:01.318Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Exactly 2 sentences, clearly reveals the correct explanation (invalid/missing data treated as normal numbers spreading through calculations), directly references specific evidence (fields with \"N/A\", zeros, intermediate step conversion). Casual tone, no jargon, satisfying reveal. Concise and well-structured.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "3 sentences (counting the compound structure), clearly explains the correct answer and connects well to evidence (tracing the failure from initial reading through different stages). Good casual tone, references specific data issues. Slightly dense but stays within limits.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "3 sentences, clear and satisfying reveal with good casual tone ('engolindo', 'bola de neve'). Connects to evidence (giant nonsensical results). Slightly less specific in evidence references compared to B and D, but stays within length and tone requirements well.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "3 sentences, explains the correct answer clearly. Connects to evidence reasonably but more abstractly — doesn't reference specific findings like intermediate step conversion or specific field issues. Tone is good and casual. Slightly generic in evidence connection.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "3 sentences but on the longer side, pushing length boundaries. Content is accurate and well-connected to evidence. However, it's quite detailed/explanatory, leaning slightly toward lecture tone rather than satisfying reveal. Still solid overall.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Clearly exceeds the 2-3 sentence limit — this is effectively one very long explanation that reads as more than 3 sentences worth of content (3 very long sentences). Content is accurate and well-connected to evidence, but the length violation is significant per the rules. Tone leans slightly toward lecture.",
+          "score": 6
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "This model provides an exceptional explanation. It perfectly integrates the correct explanation with specific evidence from the findings (such as 'N/A', padding zeros, and the out-of-range transformation) while maintaining a natural, casual tone within the 3-sentence limit.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Excellent response that ties the correct explanation directly to the evidence gathered during the investigation. The flow is logical, and it successfully adheres to all constraints without using jargon.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "A highly concise and effective 2-sentence explanation. Using everyday terms like 'tapa-buraco' (placeholder) keeps the tone perfectly casual, and it connects clearly to the investigation's tracking findings.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Very engaging and conversational tone, utilizing phrases like 'bola de neve' (snowball) and 'engolindo'. It accurately reflects the core explanation, though it connects slightly less to the specific granular findings compared to the top models.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "A solid and concise explanation that meets all requirements and references the evidence accurately. It loses minor points for a slightly less polished narrative flow and a trailing space at the end.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Provides a good summary of what happened and fits the length constraints perfectly. However, it is a bit more generic and doesn't explicitly weave in as many specific details from the evidence (like 'N/A' or default zeros) as the other models do.",
+          "score": 8
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Segue perfeitamente a explicação correta em 2 frases, com tom claro e natural em português. Conecta bem às evidências principais sem usar jargão nem exagerar além do que os achados sustentam.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Também acerta a causa e liga bem aos achados, especialmente ao rastreio em etapas diferentes. A formulação é forte e dentro do limite, embora \"0\" como tapa-buraco soe um pouco mais interpretativo.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Explica corretamente o que aconteceu e amarra a transformação onde os números saem da faixa esperada. Perde um pouco por afirmar de forma forte que os pedidos problemáticos compartilhavam \"exatamente\" essas colunas, algo mais categórico do que as evidências mostram.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "É completo, claro e muito bem conectado às evidências, mas viola uma regra importante ao usar 3 frases longas e ficar mais explicativo do que revelação casual. Ainda assim, o conteúdo está correto e bem alinhado ao cenário.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Acerta a ideia central e mantém um tom de revelação, mas fica mais genérico e se apoia menos nas evidências específicas da investigação. A conexão com os achados é mais implícita do que demonstrada.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Tem bom tom e aponta a causa principal, mas conecta pouco aos achados concretos e adiciona que as regras de aprovação foram enganadas de modo mais afirmativo do que o conjunto de evidências permite. Fica mais solto e menos sustentado que os melhores.",
+          "score": 7.2
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-investigation-debrief",
+  "testCaseId": "pt-python-inf-nan-1"
+}

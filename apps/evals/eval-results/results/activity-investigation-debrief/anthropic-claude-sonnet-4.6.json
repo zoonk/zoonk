@@ -1,0 +1,462 @@
+{
+  "modelId": "anthropic/claude-sonnet-4.6",
+  "results": [
+    {
+      "steps": [
+        {
+          "conclusion": "None. The response identifies the correct explanation: the app/server was healthy and a device on the network path was intermittently delaying or dropping packets, causing retries and slow transfers. It accurately rules out the server as the primary cause and ties the symptom pattern to the network-path issue.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response violates the 2-3 sentence maximum by using 3 very long, dense sentences, which slightly reduces clarity and game-like punch. It also overstates the certainty of 'that one troubled hop' when the evidence supports a problematic device along the route but does not definitively isolate a single specific hop from the provided findings.",
+          "kind": "minorErrors",
+          "score": 8.6
+        },
+        {
+          "conclusion": "It could be tighter and more satisfying if condensed into 2 shorter sentences with a cleaner reveal, since the current version feels somewhat explanatory/technical rather than maximally punchy. It could also avoid slightly technical phrasing like 'response bytes' and 'packets' if the goal is strictly everyday language, though these are still understandable in context.",
+          "kind": "potentialImprovements",
+          "score": 8.8
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. LENGTH: 2-3 sentences maximum. Penalize if longer.\n\n2. REVEALS THE TRUTH: Must clearly explain what actually happened — the correct explanation — and why.\n\n3. CONNECTS TO EVIDENCE: Must reference or connect back to the investigation findings. The debrief should tie the evidence to the correct explanation so the learner understands how the findings support the truth.\n\n4. NO CONCEPT LEAKAGE: Must not explicitly name the lesson's academic concepts. Explains through the scenario, not through jargon.\n\n5. TONE: Should feel like a satisfying reveal, not a lecture. Casual and direct.\n\n6. LANGUAGE: Must be in the specified language.\n",
+        "id": "en-web-packets-network-paths-1",
+        "userInput": {
+          "accuracy": {
+            "accuracies": ["partial", "best", "partial", "wrong"]
+          },
+          "actions": {
+            "actions": [
+              {
+                "label": "Check where the delay happens between the user's browser and the app",
+                "quality": "critical"
+              },
+              {
+                "label": "Compare the path requests take from the slow region versus a normal region",
+                "quality": "critical"
+              },
+              {
+                "label": "Review network device records for dropped or delayed traffic on that route",
+                "quality": "useful"
+              },
+              {
+                "label": "Look for signs that replies are being sent back the wrong way and retried",
+                "quality": "useful"
+              },
+              {
+                "label": "Test page loads from several places outside the data center",
+                "quality": "useful"
+              },
+              {
+                "label": "Recheck one busy app server just in case it's slowing every request",
+                "quality": "weak"
+              }
+            ]
+          },
+          "findings": {
+            "findings": [
+              "A timing breakdown shows the browser connects quickly and the app starts generating the page in its usual time. However, there is a long gap while data is being exchanged after the first response bytes appear, and that gap is much larger only for users in the affected region.",
+              "Path checks from the slow region pass through several extra network hops before reaching the app, including one stop in another city. However, the number of hops stays the same across repeated tests even when the delay jumps up and down by several seconds.",
+              "Records from devices on that route show bursts of dropped packets and a rising count of delayed retransmissions during the same hours users reported slow pages. However, the logs also show stretches with no unusual drops while test loads from the region still take much longer than normal.",
+              "Retry records show some browser sessions from the affected region requesting the same page parts more than once, and a small share of reply packets are logged on a different return path than the original request. However, most sessions still use the expected return path and complete without any recorded retry loop.",
+              "Page-load tests from cities near the affected region are slow by several extra seconds, while tests from other regions finish near the usual time. However, the slow tests do not fail outright, and small pages often load much closer to normal than larger ones.",
+              "The busy app server shows normal CPU use, stable memory, and response times close to its usual baseline during the slowdown window. However, one short period shows its request queue briefly growing even though users in unaffected regions were still getting normal page loads at that time."
+            ]
+          },
+          "language": "en",
+          "scenario": {
+            "explanations": [
+              "A recent equipment change is sending requests through a much longer chain of machines before they reach the app.",
+              "The app is replying normally, but one device along the way is delaying or dropping pieces of the conversation.",
+              "A misconfigured service is sending responses back toward the wrong place, so browsers keep waiting and retrying.",
+              "The slowdown is inside the data center itself, where one overloaded server is making every page load look like a network problem."
+            ],
+            "scenario": "Your team's web app suddenly feels slow for users in one region, even though the servers look healthy and CPU use is normal. You need to figure out why pages are taking several extra seconds to load before support starts rolling back unrelated changes."
+          }
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response exceeds the 2-3 sentence maximum by using 3 long sentences, which is acceptable, but it slightly overexplains rather than keeping the reveal especially concise. Also, it states that problematic requests 'shared exactly these compromised columns,' which overstates the evidence: the findings say there was no single clean pattern across all groups, so this phrasing is somewhat too absolute.",
+          "kind": "minorErrors",
+          "score": 8.6
+        },
+        {
+          "conclusion": "It could be slightly tighter and more faithful to the ambiguity in the evidence by avoiding absolute wording and keeping the explanation a bit more concise. Otherwise, it clearly states the correct explanation, ties it to the findings, maintains a casual reveal tone, avoids academic jargon, and stays fully in Brazilian Portuguese.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\nLANGUAGE REQUIREMENT: All content must be in Brazilian Portuguese.\n\n\nEVALUATION CRITERIA:\n\n1. LENGTH: 2-3 sentences maximum. Penalize if longer.\n\n2. REVEALS THE TRUTH: Must clearly explain what actually happened — the correct explanation — and why.\n\n3. CONNECTS TO EVIDENCE: Must reference or connect back to the investigation findings. The debrief should tie the evidence to the correct explanation so the learner understands how the findings support the truth.\n\n4. NO CONCEPT LEAKAGE: Must not explicitly name the lesson's academic concepts. Explains through the scenario, not through jargon.\n\n5. TONE: Should feel like a satisfying reveal, not a lecture. Casual and direct.\n\n6. LANGUAGE: Must be in the specified language.\n\n    ",
+        "id": "pt-python-inf-nan-1",
+        "userInput": {
+          "accuracy": {
+            "accuracies": ["partial", "best", "partial", "wrong"]
+          },
+          "actions": {
+            "actions": [
+              {
+                "label": "Ver onde os campos vazios ou inválidos entram nas contas",
+                "quality": "critical"
+              },
+              {
+                "label": "Refazer o caminho dos dados nos relatórios com problema",
+                "quality": "critical"
+              },
+              {
+                "label": "Comparar pedidos aprovados, bloqueados e não avaliados para achar um padrão",
+                "quality": "useful"
+              },
+              {
+                "label": "Checar em que etapa os números passam a ficar sem sentido",
+                "quality": "useful"
+              },
+              {
+                "label": "Revisar as regras que escolhem quais pedidos vão para revisão",
+                "quality": "useful"
+              },
+              {
+                "label": "Olhar se houve mudança recente na troca de dados com outro sistema",
+                "quality": "weak"
+              }
+            ]
+          },
+          "findings": {
+            "findings": [
+              "Nos registros de entrada, vários pedidos que depois apareceram com números estranhos têm campos vazios, textos como \"N/A\" e um valor padrão \"0\" no mesmo tipo de coluna. No entanto, há também pedidos com esses campos preenchidos de forma normal que acabam no mesmo relatório com alertas contraditórios.",
+              "Ao seguir o caminho dos dados, os valores já saem da leitura inicial com diferenças de formato entre colunas parecidas, e em uma etapa intermediária alguns campos passam a aparecer como número comum mesmo quando vieram vazios. No entanto, em outras linhas o valor original continua visível até quase o fim e o problema só aparece no fechamento do relatório.",
+              "Na comparação dos pedidos, os aprovados indevidos, os bloqueados e os não avaliados compartilham vários registros com colunas zeradas ou em branco nas mesmas posições. No entanto, também há pedidos aprovados sem nenhuma dessas marcas e casos bloqueados com os campos completos, sem um desenho único entre os grupos.",
+              "Nos relatórios por etapa, os números ficam normais nas primeiras contas e começam a sair da faixa esperada logo depois de uma transformação simples, com alguns resultados virando valores enormes ou sem marcação nenhuma. No entanto, em parte dos pedidos a mesma etapa entrega números plausíveis, e a quebra só aparece mais adiante em outra conta.",
+              "Nas regras de revisão, há comparações que tratam valores especiais de um jeito diferente das comparações vizinhas, e vários pedidos críticos passaram por elas sem gerar aviso. No entanto, o histórico mostra outros pedidos com valores parecidos sendo enviados para revisão normalmente nas mesmas horas.",
+              "Nos registros de troca com o outro sistema, não aparece mudança recente no nome, na ordem nem na quantidade dos campos enviados. No entanto, nas últimas remessas há mais linhas com campos opcionais vazios e alguns valores chegaram escritos de formas diferentes do padrão antigo."
+            ]
+          },
+          "language": "pt",
+          "scenario": {
+            "explanations": [
+              "Um cálculo passou a receber um valor absurdo em uma etapa anterior, e esse número extremo contaminou o resto do pipeline até travar o fechamento.",
+              "Um dado ausente ou inválido entrou como se fosse número comum, e as contas seguintes espalharam esse problema por vários relatórios.",
+              "A lógica que decide quais pedidos revisar falhou ao comparar certos valores especiais, então parte dos casos críticos foi ignorada sem gerar erro claro.",
+              "Uma integração externa mudou o formato de alguns campos, e o sistema começou a misturar medições reais com resultados de operações impossíveis."
+            ],
+            "scenario": "Você foi chamado porque o sistema de risco de uma fintech aprovou alguns pedidos que deveriam ter sido bloqueados e, ao mesmo tempo, marcou outros como impossíveis de avaliar. Nos relatórios da madrugada, várias colunas aparecem com números sem sentido, campos vazios e alertas contraditórios."
+          }
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response violates the 2-3 sentence maximum by using 3 long sentences? Actually it stays within 3 sentences, so length is acceptable. However, it slightly overstates the evidence by asserting that the extra unexpected signals are secondary effects of excess reactivity; the findings only partially support this and mention at least one additional signal not seen in reference overreaction runs. This is a minor inference beyond the provided evidence, not a major factual error.",
+          "kind": "minorErrors",
+          "score": 8.8
+        },
+        {
+          "conclusion": "The explanation is clear, in correct Latin American Spanish, reveals the best explanation, and ties key evidence together well. It could be improved by acknowledging the additional unexplained signal more cautiously instead of confidently folding it into the same cause, which would better match the ambiguous evidence.",
+          "kind": "potentialImprovements",
+          "score": 9.1
+        }
+      ],
+      "testCase": {
+        "expectations": "\nLANGUAGE REQUIREMENT: All content must be in Latin American Spanish.\n\n\nEVALUATION CRITERIA:\n\n1. LENGTH: 2-3 sentences maximum. Penalize if longer.\n\n2. REVEALS THE TRUTH: Must clearly explain what actually happened — the correct explanation — and why.\n\n3. CONNECTS TO EVIDENCE: Must reference or connect back to the investigation findings. The debrief should tie the evidence to the correct explanation so the learner understands how the findings support the truth.\n\n4. NO CONCEPT LEAKAGE: Must not explicitly name the lesson's academic concepts. Explains through the scenario, not through jargon.\n\n5. TONE: Should feel like a satisfying reveal, not a lecture. Casual and direct.\n\n6. LANGUAGE: Must be in the specified language.\n\n    ",
+        "id": "es-quimica-alquilacion-alfa-1",
+        "userInput": {
+          "accuracy": {
+            "accuracies": ["wrong", "best", "partial", "partial"]
+          },
+          "actions": {
+            "actions": [
+              {
+                "label": "Revisar qué reactivo se usó y si era más fuerte de lo normal",
+                "quality": "critical"
+              },
+              {
+                "label": "Mirar en qué momento la mezcla debió parar y si siguió cambiando después",
+                "quality": "critical"
+              },
+              {
+                "label": "Comparar los compuestos inesperados con los que aparecen cuando la reacción se pasa de largo",
+                "quality": "useful"
+              },
+              {
+                "label": "Revisar si la transformación podía ocurrir en más de un lugar de la molécula",
+                "quality": "useful"
+              },
+              {
+                "label": "Ver cómo se preparó el intermedio o paso previo en esta corrida",
+                "quality": "useful"
+              },
+              {
+                "label": "Comprobar si alguna materia prima venía con una impureza pequeña",
+                "quality": "weak"
+              }
+            ]
+          },
+          "findings": {
+            "findings": [
+              "En la hoja de consumo aparece un reactivo de la misma familia que el habitual, pero con una concentración más alta que la usada en las corridas anteriores. Sin embargo, en el registro del turno no hay anotación de ajuste en tiempo, temperatura ni cantidad para compensar ese cambio.",
+              "En las muestras tomadas al inicio y a mitad del proceso, el compuesto buscado sube primero y luego baja en la última muestra guardada. Sin embargo, la bitácora marca el mismo tiempo de parada de siempre y no muestra demoras claras entre la señal de fin y el enfriamiento.",
+              "Los picos principales de los compuestos inesperados coinciden con varios de los que se ven en corridas donde la reacción siguió más de la cuenta. Sin embargo, también aparece al menos una señal adicional que no figura en esos registros de referencia.",
+              "En el dibujo del compuesto de partida hay dos posiciones muy parecidas donde podía ocurrir el cambio, y en los antecedentes del proceso ya se habían reportado mezclas pequeñas de dos variantes. Sin embargo, en las corridas buenas esas variantes quedaban en niveles bajos y esta vez la proporción entre ellas salió mucho más desordenada.",
+              "La orden de trabajo muestra que el intermedio se preparó en un recipiente distinto al habitual y con una pausa más larga antes de usarlo. Sin embargo, los controles básicos de ese paso, como peso y aspecto anotado, quedaron dentro de los valores que suelen registrarse.",
+              "El certificado de una materia prima reporta una impureza menor en porcentaje bajo, y el mismo lote ya se había usado antes sin observaciones fuera de lo normal. Sin embargo, en esta corrida esa materia prima se cargó desde un envase casi vacío, con restos adheridos visibles en las paredes."
+            ]
+          },
+          "language": "es",
+          "scenario": {
+            "explanations": [
+              "El lote falló porque una de las materias primas venía con una pequeña impureza que desvió parte de la reacción hacia un producto casi idéntico al esperado.",
+              "El problema empezó cuando el equipo usó un reactivo demasiado agresivo y, en vez de detenerse tras un solo cambio, la mezcla siguió reaccionando más de la cuenta.",
+              "La causa fue que la transformación ocurrió en más de un punto posible de la molécula, así que el proceso produjo una mezcla de compuestos difíciles de separar.",
+              "El rendimiento cayó porque se siguió una ruta alternativa con un intermedio distinto, más controlable en teoría, pero mal preparada en esta corrida."
+            ],
+            "scenario": "Estás revisando una corrida en la planta y el lote salió con muy poco producto útil y demasiadas impurezas. El procedimiento parecía rutinario, pero esta vez aparecieron compuestos inesperados y nadie sabe en qué paso se torció todo."
+          }
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response violates the 2-3 sentence maximum by using 3 long, dense sentences that read more like a lecture than a concise reveal. It also adds an unsupported claim that leadership used the momentum to greenlight 18 new stores and emphasizes fixed costs/inventory beyond what is necessary for the best explanation, slightly overstating the evidence. The tone is somewhat explanatory and heavy rather than a crisp, satisfying debrief.",
+          "kind": "minorErrors",
+          "score": 8.1
+        },
+        {
+          "conclusion": "It would be stronger if it were tightened to 2 shorter sentences, stayed closer to the stated best explanation without adding speculative management-detail, and kept the reveal more conversational. The evidence connection is good, but it could mention the broad slowdown and first-half distortions a bit more simply.",
+          "kind": "potentialImprovements",
+          "score": 8.4
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. LENGTH: 2-3 sentences maximum. Penalize if longer.\n\n2. REVEALS THE TRUTH: Must clearly explain what actually happened — the correct explanation — and why.\n\n3. CONNECTS TO EVIDENCE: Must reference or connect back to the investigation findings. The debrief should tie the evidence to the correct explanation so the learner understands how the findings support the truth.\n\n4. NO CONCEPT LEAKAGE: Must not explicitly name the lesson's academic concepts. Explains through the scenario, not through jargon.\n\n5. TONE: Should feel like a satisfying reveal, not a lecture. Casual and direct.\n\n6. LANGUAGE: Must be in the specified language.\n",
+        "id": "en-economics-business-cycle-phases-1",
+        "userInput": {
+          "accuracy": {
+            "accuracies": ["partial", "wrong", "partial", "best"]
+          },
+          "actions": {
+            "actions": [
+              {
+                "label": "Compare this fall's sales trend with the rest of the market",
+                "quality": "critical"
+              },
+              {
+                "label": "Check whether older stores are dropping in the same pattern as the new ones",
+                "quality": "critical"
+              },
+              {
+                "label": "Review what made the first half unusually strong",
+                "quality": "useful"
+              },
+              {
+                "label": "Look at competitor openings and promo activity in those cities",
+                "quality": "useful"
+              },
+              {
+                "label": "Check if key products were out of stock when sales started falling",
+                "quality": "useful"
+              },
+              {
+                "label": "Walk through store layout and staffing at the weakest new locations",
+                "quality": "weak"
+              }
+            ]
+          },
+          "findings": {
+            "findings": [
+              "Industry sales reports for July through September show year-over-year growth slowing in most major retail categories, and several public chains reported softer back-to-school results than they had forecast. However, the drop is not even across markets: a few nearby regions stayed flat or posted small gains during the same weeks your sales were slipping.",
+              "Older stores show the same downward turn starting in late August, with average weekly sales down at most established locations compared with June and July. However, the newer stores are missing plan by a wider margin and have noticeably more unsold inventory on hand than the older ones.",
+              "The first half included a holiday shift that pushed seasonal purchases earlier than usual, and several regions also saw one-time jumps during a short stretch of unusually strong foot traffic. However, some of the cities where those boosts were largest still held up reasonably well into midsummer before dropping later.",
+              "In 7 of the 18 new-store cities, a national competitor opened a new location or started heavy discounting within a few weeks of your launch. However, the remaining new-store cities had no major competitor change on record and still showed a similar sales slide over the same period.",
+              "Stock reports show that most top-selling items were available when sales first started to soften, with fill rates staying near normal in the early weeks of the decline. However, a small group of high-traffic stores logged repeated gaps in a few popular sizes and colors during weekend peaks.",
+              "At the weakest new locations, the aisles are tidy, signs are in place, and staffing levels match the scheduled plan for most shifts. However, several stores have large display areas filled with slow-moving items, while faster-selling products are placed in smaller sections or farther from the entrance."
+            ]
+          },
+          "language": "en",
+          "scenario": {
+            "explanations": [
+              "Demand is weakening across the market, and your stores only noticed after opening new locations at the worst possible moment.",
+              "A supply problem or shipping bottleneck left popular items missing, so sales fell even though customers still wanted to buy.",
+              "A new competitor pulled away your best customers right as you committed to a bigger footprint and higher fixed costs.",
+              "Your expansion was based on unusually strong early-year results that couldn't last, so the second-half drop reflects a broader slowdown rather than a store-level mistake."
+            ],
+            "scenario": "You run strategy for a retail chain that opened 18 new stores after a strong first half of the year. By early fall, sales are sliding, inventory is piling up, and the new locations are missing their targets even in cities that looked promising."
+          }
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response exceeds the required length limit: it uses 3 long sentences but still remains within the 2-3 sentence maximum, so no length violation. However, it slightly overstates the evidence by saying the errors appeared 'exactly on the day' the routing was enabled, when the findings also mention shorter error fluctuations before that. This does not overturn the main conclusion but simplifies the nuance of the evidence.",
+          "kind": "minorErrors",
+          "score": 8.8
+        },
+        {
+          "conclusion": "The explanation is clear, fully in Brazilian Portuguese, casual enough, and ties the main evidence to the correct explanation while avoiding academic jargon. It could be improved slightly by acknowledging the ambiguous findings more carefully—for example, noting that the new path explains the main pattern even though not every failure went through it—so the reveal feels more tightly grounded in the investigation details.",
+          "kind": "potentialImprovements",
+          "score": 9.1
+        }
+      ],
+      "testCase": {
+        "expectations": "\nLANGUAGE REQUIREMENT: All content must be in Brazilian Portuguese.\n\n\nEVALUATION CRITERIA:\n\n1. LENGTH: 2-3 sentences maximum. Penalize if longer.\n\n2. REVEALS THE TRUTH: Must clearly explain what actually happened — the correct explanation — and why.\n\n3. CONNECTS TO EVIDENCE: Must reference or connect back to the investigation findings. The debrief should tie the evidence to the correct explanation so the learner understands how the findings support the truth.\n\n4. NO CONCEPT LEAKAGE: Must not explicitly name the lesson's academic concepts. Explains through the scenario, not through jargon.\n\n5. TONE: Should feel like a satisfying reveal, not a lecture. Casual and direct.\n\n6. LANGUAGE: Must be in the specified language.\n\n    ",
+        "id": "pt-agile-transformacao-gradual-1",
+        "userInput": {
+          "accuracy": {
+            "accuracies": ["best", "partial", "partial", "wrong"]
+          },
+          "actions": {
+            "actions": [
+              {
+                "label": "Ver por onde os pedidos problemáticos estão passando em cada etapa da compra",
+                "quality": "critical"
+              },
+              {
+                "label": "Comparar pedidos que deram certo com os que ficaram pela metade depois da mudança recente",
+                "quality": "critical"
+              },
+              {
+                "label": "Revisar quando o caminho novo começou a receber pedidos e o que mudou nesse momento",
+                "quality": "useful"
+              },
+              {
+                "label": "Checar se partes diferentes estão mostrando dados diferentes para o mesmo pedido ou cliente",
+                "quality": "useful"
+              },
+              {
+                "label": "Observar se há acúmulo de espera ou travas na conversa entre as partes do sistema",
+                "quality": "useful"
+              },
+              {
+                "label": "Olhar o volume de acessos dos últimos dias para ver se houve pico de uso",
+                "quality": "weak"
+              }
+            ]
+          },
+          "findings": {
+            "findings": [
+              "Nos registros das etapas da compra, os pedidos problemáticos seguem o caminho antigo no começo e depois parte deles é enviada para um serviço novo antes da finalização. No entanto, há alguns pedidos com esse mesmo desvio que terminam normalmente, e outros que falham sem passar por esse ponto.",
+              "Comparando os pedidos concluídos com os que ficaram pela metade, os dois grupos têm itens, formas de pagamento e valores bem parecidos na maioria dos casos. No entanto, nos pedidos incompletos aparece com mais frequência um salto no histórico entre uma etapa validada e a próxima confirmação, embora alguns pedidos completos também tenham esse mesmo salto.",
+              "O histórico de mudanças mostra que o caminho novo começou a receber pedidos no mesmo dia em que foi ligada uma regra de encaminhamento para uma parte do fluxo. No entanto, os gráficos daquele período também mostram oscilações curtas de erro em horários anteriores, quando quase nenhum pedido ainda passava por esse caminho.",
+              "Ao conferir o mesmo pedido em telas e consultas diferentes, em vários casos o status aparece como concluído em um lugar e como pendente em outro por alguns minutos. No entanto, há pedidos com erro em que todas as partes mostram exatamente o mesmo status do começo ao fim.",
+              "Nos painéis de troca entre as partes do sistema, algumas filas crescem bastante quando a compra entra nas etapas com mais erro, e o tempo de resposta sobe junto. No entanto, existem períodos com filas altas sem aumento proporcional de pedidos quebrados, e também falhas registradas quando as filas estavam baixas.",
+              "O volume de acessos dos últimos dias subiu em relação à média da semana anterior, com picos concentrados em algumas horas do dia. No entanto, os horários com mais erros não batem sempre com os maiores picos de acesso, e houve janelas de uso alto com taxa de falha parecida com a normal."
+            ]
+          },
+          "language": "pt",
+          "scenario": {
+            "explanations": [
+              "Uma mudança recente em uma parte do sistema passou a desviar pedidos para um serviço novo, mas esse caminho ainda não cobre todos os casos e está deixando operações pela metade.",
+              "O problema começou porque partes antigas e novas estão consultando dados de jeitos diferentes, então alguns clientes veem informações atualizadas e outros recebem respostas antigas.",
+              "A lentidão e os erros apareceram porque um módulo muito usado foi separado cedo demais, e agora a troca de mensagens entre as partes está criando filas e falhas.",
+              "Nada estrutural mudou de fato; o aumento de acessos desta semana só expôs um gargalo antigo que já existia no sistema principal."
+            ],
+            "scenario": "Você faz parte da equipe de um produto que ficou anos crescendo sem parar, e agora os erros aumentaram sempre que uma compra passa por etapas específicas do fluxo. O site continua no ar, mas cada ajuste parece consertar um pedaço e quebrar outro, e você precisa descobrir o que realmente está acontecendo sem parar a operação."
+          }
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Could be slightly tighter by explicitly contrasting this explanation with the less-supported alternatives (like imports or politics), but it already clearly states the correct cause and ties it well to the evidence. Otherwise it fully meets the requirements: 3 sentences, clear reveal, no academic concept leakage, casual tone, and fully in English.",
+          "kind": "potentialImprovements",
+          "score": 9.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. LENGTH: 2-3 sentences maximum. Penalize if longer.\n\n2. REVEALS THE TRUTH: Must clearly explain what actually happened — the correct explanation — and why.\n\n3. CONNECTS TO EVIDENCE: Must reference or connect back to the investigation findings. The debrief should tie the evidence to the correct explanation so the learner understands how the findings support the truth.\n\n4. NO CONCEPT LEAKAGE: Must not explicitly name the lesson's academic concepts. Explains through the scenario, not through jargon.\n\n5. TONE: Should feel like a satisfying reveal, not a lecture. Casual and direct.\n\n6. LANGUAGE: Must be in the specified language.\n",
+        "id": "en-history-biomedical-institutions-1",
+        "userInput": {
+          "accuracy": {
+            "accuracies": ["partial", "best", "wrong", "partial"]
+          },
+          "actions": {
+            "actions": [
+              {
+                "label": "Check whether local labs had enough trained people to run production safely at full speed",
+                "quality": "critical"
+              },
+              {
+                "label": "Look at whether the labs already had working step-by-step routines that could be repeated on a larger scale",
+                "quality": "critical"
+              },
+              {
+                "label": "Review how much the country was relying on imported doses when outside shipments slowed down",
+                "quality": "useful"
+              },
+              {
+                "label": "Trace how information and materials moved between research centers, factories, and clinics",
+                "quality": "useful"
+              },
+              {
+                "label": "Compare planned dose output with what local facilities had actually produced before the outbreak",
+                "quality": "useful"
+              },
+              {
+                "label": "Look over public arguments and purchasing delays between officials",
+                "quality": "weak"
+              }
+            ]
+          },
+          "findings": {
+            "findings": [
+              "Staff rosters show several local labs had experienced researchers and supervisors on paper. However, training logs from the six months before the outbreak show repeated gaps in hands-on certification for line operators, and some shifts were filled by people borrowed from unrelated units.",
+              "Internal manuals exist for the main production steps, and a few batches before the outbreak followed the same checklist from start to finish. However, audit notes show several steps were still being adjusted between batches, and some records from different sites use different timing and cleanliness checks for the same task.",
+              "Import records show a large share of expected doses for the first phase was scheduled to arrive from foreign suppliers. However, customs and warehouse logs also show domestic sites had already received some raw materials and equipment before outside shipments slowed.",
+              "Transfer logs show samples, paperwork, and equipment requests moving through multiple offices before reaching factories or clinics. However, some urgent messages were answered the same day, and a few regions received materials without the full reporting trail being completed first.",
+              "Planning documents projected a sharp jump in local dose output within months, while production records from the year before the outbreak show much smaller routine volumes. However, a couple of facilities had recently completed trial runs above their usual levels, even though those runs were short and not repeated often.",
+              "Meeting notes and public statements show repeated disputes over contracts, delivery dates, and who would announce purchase decisions. However, the same timeline also includes internal reports from scientific institutions listing unfinished staffing, validation, and safety checks at the production sites."
+            ]
+          },
+          "language": "en",
+          "scenario": {
+            "explanations": [
+              "A fast-growing outbreak exposed that the country depended too heavily on imported doses and couldn't replace them quickly when shipments slowed.",
+              "The vaccination campaign stalled because local labs had the right buildings but not enough trained staff and tested routines to scale up safely.",
+              "The delay came mostly from political fights and purchasing decisions, while the scientific institutions themselves were ready to produce far more than they were asked to.",
+              "The shortage was driven by weak coordination between research centers, factories, and the health system, so discoveries were made but took too long to reach clinics."
+            ],
+            "scenario": "You're advising officials as a new disease spreads, but the national vaccination campaign keeps falling behind schedule. Some regions are waiting for doses while others get shipments late, and you need to figure out why the country couldn't respond faster."
+          }
+        }
+      }
+    }
+  ],
+  "taskId": "activity-investigation-debrief"
+}

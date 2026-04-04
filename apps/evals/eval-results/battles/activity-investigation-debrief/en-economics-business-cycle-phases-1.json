@@ -1,0 +1,131 @@
+{
+  "expectations": "\nEVALUATION CRITERIA:\n\n1. LENGTH: 2-3 sentences maximum. Penalize if longer.\n\n2. REVEALS THE TRUTH: Must clearly explain what actually happened — the correct explanation — and why.\n\n3. CONNECTS TO EVIDENCE: Must reference or connect back to the investigation findings. The debrief should tie the evidence to the correct explanation so the learner understands how the findings support the truth.\n\n4. NO CONCEPT LEAKAGE: Must not explicitly name the lesson's academic concepts. Explains through the scenario, not through jargon.\n\n5. TONE: Should feel like a satisfying reveal, not a lecture. Casual and direct.\n\n6. LANGUAGE: Must be in the specified language.\n",
+  "judgedAt": "2026-04-04T10:36:09.139Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Exactly 2 sentences, clearly reveals the correct explanation (expansion based on inflated first-half results + broader slowdown), connects well to multiple pieces of evidence (industry softening, older stores dropping, first-half timing boosts), dismisses alternative explanations naturally. Tone is conversational and satisfying. No concept leakage.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "2 sentences, clearly states the correct explanation, connects to evidence (older stores fell too, extra inventory at new locations). Tone is casual and direct. Slightly less rich in evidence connections than Model E but still strong and well within the rules.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "3 sentences, clearly reveals the truth, connects to evidence (holiday shifts, foot traffic, old and new stores dropping, excess inventory). Casual tone, no jargon. Solid across all criteria though slightly more lecture-like than the best outputs.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "3 sentences, clear and direct reveal. Connects to evidence (industry slowdown, both old and new stores affected, rules out competition and inventory). Slightly more lecture-like tone but stays within rules. Could connect more specifically to the first-half evidence findings.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "3 sentences but quite long ones — pushes the boundary of the length rule. Content is excellent: reveals the truth clearly, connects to multiple evidence points, dismisses alternatives naturally. Tone is engaging. But the verbosity is a concern for the 2-3 sentence constraint.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "3 sentences but they are very long, making this feel more like a paragraph than 2-3 concise sentences. Violates the spirit of the length constraint. Content and evidence connections are strong, but the output reads more like a detailed analysis than a punchy reveal. The last sentence listing evidence feels lecture-like.",
+          "score": 7
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "This output perfectly captures the tone of a satisfying reveal without feeling like a lecture. It beautifully weaves the true explanation with the specific evidence (holiday shift, broader market cooling, competitors, stockouts) into three highly engaging and cohesive sentences.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "An excellent, punchy response that clearly explains the reality of the situation. It directly ties in multiple pieces of evidence, including elegantly dismissing the false leads (local competition, missing inventory) within the 3-sentence limit.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "A very strong and accurate explanation that successfully incorporates the evidence. However, using parentheses to explicitly say '(ruling out a store-level problem)' feels slightly too academic and lecture-like compared to the conversational reveals of higher-ranked models.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Clear, concise, and effectively addresses the core reason behind the mystery while meeting the length constraints. However, it misses the opportunity to mention the false leads (competitors, stockouts) that the learner investigated.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "This model successfully identifies the truth and hits every piece of evidence. However, its second sentence is a massive, heavily-punctuated run-on sentence that acts as a laundry list of clues, detracting from the conversational tone.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Meets the basic criteria and provides the correct explanation, but it is quite vague. It misses specific details from the findings (like the holiday shift or the false leads regarding competitors and stockouts) that would make for a more satisfying debrief.",
+          "score": 7
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "This is clear, accurate, and tightly tied to the evidence: industry softening, older stores declining too, and first-half strength being distorted by one-off factors. It stays within 2 sentences, uses natural language, and cleanly explains why competitor and stock issues are secondary.",
+          "score": 9.6
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Concise and satisfying, with a strong explanation of the core truth and good use of evidence from older stores and excess inventory. It is slightly less complete than the top answer because it leaves out the specific first-half distortions that made the expansion look better than it was.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "It clearly explains the correct reveal and connects it to temporary first-half boosts, market cooling, and excess inventory. The main weakness is a slight overstatement in saying sales dropped back to 'normal levels,' which is less supported than a broader slowdown.",
+          "score": 8.9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "This is well-written and accurate, with strong evidence use and a satisfying reveal. However, it violates the strict 2-3 sentence maximum by using 3 long, dense sentences and is a bit more elaborate than necessary.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "It gives a strong, evidence-based explanation and rules out alternatives well. But it is 3 long sentences with a slightly more analytical, lecture-like tone, and phrases like 'fixed costs' edge closer to business jargon than the prompt wants.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "It follows the length and language requirements and states the main idea clearly. However, it oversimplifies the evidence by attributing the inflation mainly to the holiday shift while omitting the unusual traffic spikes and other supporting clues, making it less complete.",
+          "score": 8
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-investigation-debrief",
+  "testCaseId": "en-economics-business-cycle-phases-1"
+}
