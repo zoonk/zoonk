@@ -11,12 +11,14 @@ const FALLBACK_MODELS = ["google/gemini-3-flash"];
  * Matches `diagramVisualContentSchema` from `@zoonk/core/steps/contract/visual`.
  * Defined inline because `@zoonk/core` depends on `@zoonk/ai`,
  * so importing from core would create a circular dependency.
+ * Uses `.nullable()` instead of `.optional()` because OpenAI
+ * structured outputs require all fields to be present in the JSON.
  */
 const schema = z
   .object({
     edges: z.array(
       z.object({
-        label: z.string().optional(),
+        label: z.string().nullable(),
         source: z.string(),
         target: z.string(),
       }),
