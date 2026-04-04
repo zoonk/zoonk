@@ -1,0 +1,131 @@
+{
+  "expectations": "\nLANGUAGE REQUIREMENT: All content must be in Brazilian Portuguese.\n\n\nEVALUATION CRITERIA:\n\n1. FINDING COUNT: Exactly one finding per action.\n\n2. AMBIGUITY: Every finding MUST have a complicating factor — a second observable fact that contradicts or complicates the first (e.g., using \"however\" in English, \"no entanto\" in Portuguese, \"sin embargo\" in Spanish). If any finding presents clear, unambiguous evidence, penalize.\n\n3. FINDINGS ARE ONLY OBSERVABLE FACTS: Every sentence in a finding must describe something the learner can directly see, measure, count, or read in a log/report/record. Penalize ANY sentence that contains conclusions, speculation, or possibility language — phrases like \"can't rule out that...\", \"this might mean...\", \"it's possible that...\", \"suggesting that...\", \"which could indicate...\", or any equivalent in the content language (e.g., \"não dá para descartar\", \"no se puede descartar\", \"podría indicar\"). These are conclusions about what the evidence means — the learner's job, not the finding's. Each violation is a major error.\n\n4. CONSISTENCY: Findings must be factually consistent with the scenario and domain.\n\n5. LANGUAGE: All finding texts must be in the specified language. Complicating factor connectives must use the target language's equivalent.\n\n    ",
+  "judgedAt": "2026-04-04T09:19:46.384Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "All six findings are purely observable facts with no speculation or conclusion language. Each finding has a strong complicating factor using 'no entanto' that genuinely creates ambiguity without pointing toward any single explanation. The language is natural Brazilian Portuguese, casual but clear. The findings for actions 4 and 5 are particularly well-crafted, showing contradictions that prevent easy interpretation (e.g., queues high without proportional errors, and error timing not matching access peaks).",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Findings are well-constructed with strong ambiguity and purely observable facts. Good use of specific numbers (40%, 1200 pedidos, 200ms to 1.8s) that feel realistic. All complicating factors genuinely complicate interpretation. Minor issue: 'seguem sem explicação nos registros' in finding 1 edges toward a conclusion about what the records contain rather than a pure observation, and 'nenhuma' is misspelled as 'nenhuma' in finding 2. Overall excellent quality.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Findings are clean observable facts with good ambiguity. Finding 1 (action 0) has a strong complicating factor. Finding 3 is excellent — the deploy documentation describing only config changes adds real ambiguity. Finding 2 (action 1) is slightly less ambiguous than ideal: it somewhat clearly supports explanation 0 by showing incomplete records in the new system for failed orders. But overall very solid and well-written in natural Portuguese.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Good observable facts throughout with proper 'no entanto' usage. Finding 3 (action 2) is well-crafted with the 5% detail. However, finding 4 mentions 'ao atualizar a página várias vezes' which describes an active test rather than a pre-existing observable fact, slightly crossing the line. Finding 6 effectively undermines explanation 3 by noting errors preceded the traffic increase, which is good ambiguity overall but slightly too clear in ruling out one explanation.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Findings contain good complicating factors and are mostly observable. However, finding 2 uses 'uma análise das compras' which is slightly meta/conclusion-adjacent. Finding 3 is good but the marketing report detail makes it slightly too convenient. Finding 6 is strong in ruling out the traffic explanation but the numbers (10k to 45k) feel exaggerated and less realistic. The word 'Porém' and 'Por outro lado' and 'Contudo' show good variety in connectives.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Finding 0 uses 'mas' instead of a stronger complicating connective like 'no entanto', and the complicating factor is somewhat weak — it says the marking 'também aparece em alguns casos, mas em outros ela não aparece', which is confusing rather than genuinely ambiguous. Finding 3 lacks a proper complicating connective. Finding 1's complicating factor (same start time and product code) is weak as a contradiction. The typo 'nenhuma' appears. Overall the findings feel less crisp and some ambiguity is achieved through confusion rather than genuine contradiction.",
+          "score": 7
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Perfectly follows all instructions. The findings are entirely observable facts with no conclusions, use a great variety of natural connectives (No entanto, Porém, Contudo, etc.), and are masterfully crafted to be ambiguous. It avoids technical jargon successfully.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Flawless execution. Every finding is strictly factual, exactly 2-3 sentences, and clearly presents a complicating factor using the correct Portuguese connective. It uses excellent everyday language, completely avoiding technical jargon.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Very strong overall with great ambiguity. However, it uses some IT jargon ('timeout', 'módulo de roteamento') violating the 'no jargon' rule, and finding 2 contains a slightly subjective phrase ('seguem sem explicação').",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Good ambiguity and formatting, but finding 6 contains a clear conclusion regarding causation ('por causa de uma campanha promocional'), which violates the strict rule against conclusions and speculation.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Fails the core ambiguity rule in finding 2. Contrasting successful orders (complete records) with failed orders (incomplete records in the new system) perfectly confirms the problem without a complicating factor. It also uses heavy jargon ('deploy', 'timeouts').",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Fails the structural ambiguity rules repeatedly. Finding 3 lacks a complicating factor entirely, and several findings fail to use an explicit connective to introduce the contradicting fact, ignoring prompt instructions.",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Entrega exatamente um achado por ação, em português, com 2 frases ambíguas e só fatos observáveis em todos os itens. Mantém bem a ambiguidade sem escorregar para conclusões, e os achados se alinham bem ao cenário e às ações.",
+          "score": 9.6
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Cumpre bem a estrutura, fica em português e preserva a ambiguidade com contrastes observáveis na maior parte dos achados. Perde um pouco por nem sempre usar um conectivo explícito de complicação e por alguns trechos soarem menos naturais/conversacionais.",
+          "score": 9.1
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "É claro, factual e geralmente ambíguo, com bons contrastes e aderência ao cenário. Cai um pouco porque o segundo achado fica mais confirmatório do que o ideal, aproximando-se demais de uma explicação específica.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Segue o formato e mantém os achados como fatos observáveis, com boa ambiguidade na maioria dos casos. A principal fraqueza é usar conectivos menos naturais para o requisito e alguns detalhes excessivamente precisos ou estranhos, como o mesmo milissegundo, que soam artificiais.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Tem boa cobertura, linguagem correta e evidências observáveis com contraste em quase todos os itens. Porém, o segundo achado é quase conclusivo ao dizer que os pedidos travados param 'logo depois de entrar no caminho novo, sempre na mesma etapa', reduzindo a ambiguidade exigida.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Atende contagem, idioma e formato, e a maior parte dos achados é observável e ambígua. Ainda assim, há deslizes importantes: 'por causa de uma campanha promocional' é uma inferência causal, e alguns trechos usam linguagem mais técnica do que o pedido queria.",
+          "score": 7.8
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-investigation-findings",
+  "testCaseId": "pt-agile-transformacao-gradual-1"
+}
