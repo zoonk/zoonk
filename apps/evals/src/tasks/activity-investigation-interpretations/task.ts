@@ -11,7 +11,7 @@ export const activityInvestigationInterpretationsTask: Task<
   ActivityInvestigationInterpretationsSchema
 > = {
   description:
-    "Generate interpretation statements for each finding from one explanation's perspective",
+    "Generate interpretation statements for a single finding from one explanation's perspective",
   generate: generateActivityInvestigationInterpretations,
   id: "activity-investigation-interpretations",
   name: "Activity Investigation Interpretations",

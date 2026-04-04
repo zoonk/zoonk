@@ -54,7 +54,8 @@ A scenario about "investigating how supply and demand works" is meta — nobody 
 - 3-4 possible explanations for the problem. **One sentence each.** Be concise but clear — the reader should understand each explanation without needing extra context. Don't sacrifice clarity for brevity.
 - **Every explanation must be a hypothesis about the SAME scenario above.** Each one proposes a different CAUSE for the same observed problem. They are NOT separate situations, sub-problems, or different scenarios — they are competing theories about what happened.
 - ALL explanations must be plausible. None should be obviously correct or obviously wrong before investigation.
-- **All explanations must be similar in length and tone.** A reader should NOT be able to guess which one is correct from the writing style, length, or level of detail.
+- **All explanations must be similar in length and tone.** A reader should NOT be able to guess which one is correct from the writing style, length, or level of detail. This is a learning game — if the correct explanation is consistently the longest or follows a recognizable sentence template (e.g., more hedging, more detail), learners stop reading and pick by pattern. Wrong explanations must be equally developed and confident — they are fully argued bad theories, not lazy short ones.
+- **Vary sentence structure across explanations.** Don't fall into repeated templates. Each explanation should read like a different person wrote it.
 - The explanations should represent genuinely different theories about what happened.
 
 ## CRITICAL: Language
