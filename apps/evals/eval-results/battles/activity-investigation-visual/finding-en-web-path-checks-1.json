@@ -1,0 +1,95 @@
+{
+  "expectations": "\nEVALUATION CRITERIA:\n\n1. KIND APPROPRIATENESS: Choose kind based on data structure. Code/logs -> \"code\". Numeric trends -> \"chart\". Structured data -> \"table\". Systems/flows -> \"diagram\". Physical scenes -> \"image\" (last resort). Penalize \"image\" when a structured type fits.\n\n2. DESCRIPTION SPECIFICITY: Descriptions must be specific enough for a visual generation system — include data values for charts, column headers for tables, code structure for snippets, node labels for diagrams. When content is qualitative (e.g., \"values rise then fall\"), the description should invent plausible illustrative values that match the described pattern — the visual is an illustration, not a data source. Penalize vague descriptions like \"a relevant chart.\" For tables, every row must have exactly one value per column — missing fields make the data malformed.\n\n3. CONSISTENCY: Visual descriptions must reflect the same evidence as the input content. If the content mentions specific data, the visual should show that data. Do NOT penalize plausible illustrative values added to make qualitative content generatable — that is expected. DO penalize descriptions that add speculative mechanisms or conclusions not present in the content (e.g., inventing a specific cause when the content only describes symptoms).\n\n4. LANGUAGE: Visual descriptions should use the content language where applicable.\n",
+  "judgedAt": "2026-04-04T22:35:46.950Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Chart is a strong kind choice for showing the key pattern: latency fluctuates wildly while hop count stays flat. The dual-axis line chart with 10 concrete data points effectively illustrates the finding's core observation. Values are plausible and specific. No speculative causes are added. Clean and directly generatable.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Table mimicking traceroute output is a reasonable kind choice and provides specific, plausible values per hop. Every row has exactly one value per column. The Min/Max latency columns cleverly capture the variability. However, the table implies the latency spike originates specifically at hop 4 ('exchange-point.other-city.net'), which is a speculative causal conclusion not stated in the finding — the finding only says delay jumps up and down, not which hop causes it. Minor consistency concern, but overall solid.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Diagram is a reasonable choice for showing network path structure. Very detailed with specific node labels, hop counts, and latency values. However, it introduces a 'normal route' comparison (5 hops vs 8 hops) that isn't in the finding — the finding only describes the slow region's path. The normal route with specific hop count is speculative. Also, the finding says hop count stays the same across repeated tests, not that the slow region has more hops than a normal region. Still well-structured and generatable.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Diagram showing the network path is a reasonable kind choice. However, it introduces a 'normal path' comparison (direct to app servers) not mentioned in the finding. Also, the description is relatively vague — node labels like 'Transit node A' and 'Transit node B' are generic, and there are no concrete latency values included. The finding's key quantitative pattern (delay varying by seconds while hops stay constant) is only captured via text callouts rather than illustrated with data. Less specific and generatable than the others.",
+          "score": 6
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "This is an exceptional response. Choosing a table to represent an MTR or traceroute perfectly captures the nature of network path checks. The columns and row data flawlessly illustrate both key details from the finding: the geographic detour ('Other City') and the wildly fluctuating delay (shown via Min vs. Max Latency) while the hop count remains steady.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "A highly detailed and effective use of a diagram to map out the network flow. It accurately captures the extra hops, the detour to another city, and effectively uses labels to show the varying latency times, fulfilling all prompt requirements well.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Using a dual-axis chart is a very creative and effective way to illustrate the relationship between the flat hop count and the wildly fluctuating latency. However, it misses incorporating the 'another city' detail mentioned in the finding, which slightly reduces its completeness.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "This model provides a solid diagram description that captures the extra hops and the detour. However, it relies entirely on generic text callouts rather than data integration to explain the jumping delay, making it slightly less specific than Model D.",
+          "score": 7
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "This chooses an appropriate diagram for a routing/path relationship and gives a highly specific, generatable layout with concrete hop counts and illustrative latency values. It stays faithful to the finding by emphasizing extra hops, an out-of-city stop, constant hop count, and variable delay without overclaiming a root cause.",
+          "score": 9.3
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "This uses a table appropriately for structured hop-by-hop path data and includes complete columns and rows with concrete values. Its main weakness is that the finding emphasizes repeated tests with stable hop count but varying delay, and a single min/max table captures that less directly than a comparison-oriented diagram or trend visual.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "The chart is plausible because the evidence includes numeric variation across repeated tests, and it clearly shows constant hop count versus volatile latency. However, it adds a stronger claim about a 'consistent physical path through extra cities' without actually depicting the extra-city stop, so it is a bit less aligned with the full finding than the best outputs.",
+          "score": 8.1
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "The diagram format fits the network-route evidence, but it invents a side-by-side 'normal path' comparison that is not supported by the finding and is less specific than the stronger answers. It also lacks concrete illustrative values for the delay swings, making it less generatable and slightly more speculative.",
+          "score": 7.2
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-investigation-visual",
+  "testCaseId": "finding-en-web-path-checks-1"
+}

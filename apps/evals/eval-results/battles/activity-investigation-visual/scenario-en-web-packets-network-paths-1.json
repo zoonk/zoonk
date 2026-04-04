@@ -1,0 +1,95 @@
+{
+  "expectations": "\nEVALUATION CRITERIA:\n\n1. KIND APPROPRIATENESS: Choose kind based on data structure. Code/logs -> \"code\". Numeric trends -> \"chart\". Structured data -> \"table\". Systems/flows -> \"diagram\". Physical scenes -> \"image\" (last resort). Penalize \"image\" when a structured type fits.\n\n2. DESCRIPTION SPECIFICITY: Descriptions must be specific enough for a visual generation system — include data values for charts, column headers for tables, code structure for snippets, node labels for diagrams. When content is qualitative (e.g., \"values rise then fall\"), the description should invent plausible illustrative values that match the described pattern — the visual is an illustration, not a data source. Penalize vague descriptions like \"a relevant chart.\" For tables, every row must have exactly one value per column — missing fields make the data malformed.\n\n3. CONSISTENCY: Visual descriptions must reflect the same evidence as the input content. If the content mentions specific data, the visual should show that data. Do NOT penalize plausible illustrative values added to make qualitative content generatable — that is expected. DO penalize descriptions that add speculative mechanisms or conclusions not present in the content (e.g., inventing a specific cause when the content only describes symptoms).\n\n4. LANGUAGE: Visual descriptions should use the content language where applicable.\n",
+  "judgedAt": "2026-04-04T22:35:39.782Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Chart is appropriate for showing numeric trends. The description is highly specific with concrete values, time ranges, and multiple series that clearly illustrate the regional slowdown pattern. It doesn't over-speculate on causes — it simply shows the symptom (localized slowdown) which matches the scenario. The time-series approach is a natural fit for diagnosing when the issue started.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Chart is appropriate. The bar chart approach is reasonable for comparing regions, with specific values and clear labeling. It's slightly less informative than a time-series (no temporal dimension), but it accurately illustrates the scenario's core symptom without speculating on causes. Well-specified and generatable.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Chart is appropriate and the description is specific with concrete values. However, using a line chart with categorical X-axis regions is a poor chart design choice — a bar chart would be more natural for categorical comparisons, making the 'line chart' designation slightly awkward. Otherwise solid, with a helpful contextual note.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Diagram is a defensible choice for showing system architecture, but the description speculates heavily on causes not present in the scenario — 'High latency / packet loss', 'issue likely in network path, DNS, CDN edge, or regional routing' — when the scenario only describes symptoms. This violates the consistency criterion by adding speculative mechanisms and conclusions. The description is also very complex, which could make generation difficult.",
+          "score": 5.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model A perfectly captures both the 'suddenly' and 'one region' aspects of the scenario by using a time-series line chart where a single region spikes at a specific time. The illustrative values are highly appropriate and well-described.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model B is very good and provides a clear bar chart showing the regional discrepancy. It loses a point only because a bar chart doesn't capture the 'suddenly' aspect of the prompt as effectively as a time-series chart.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Model C uses a line chart but puts categorical data (Regions) on the X-axis. This is a poor data visualization choice, as line charts should be used for continuous data like time.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Model D violates a critical negative constraint: 'DO penalize descriptions that add speculative mechanisms or conclusions not present in the content'. By explicitly labeling high latency, packet loss, and potential DNS/routing issues, it solves the mystery in the scenario visual before the investigation has even begun.",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "This is the strongest fit: a chart is appropriate for regional performance symptoms, and it provides concrete axes, time range, series, and plausible values without overcommitting to a specific root cause. It stays consistent with the scenario by visualizing a localized slowdown while keeping other regions stable.",
+          "score": 8.9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "This is clear, specific, and uses plausible numeric values to show one region as an outlier, which fits the scenario well. It is slightly weaker than A because it gives only a static regional comparison and less investigative richness about the slowdown developing over time.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "The chart choice is reasonable and includes concrete values, but the description is internally inconsistent because it calls itself a line chart while the x-axis is categorical regions. It also adds a note that is somewhat more interpretive than necessary, though still mostly grounded in the prompt.",
+          "score": 7.1
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "The diagram is detailed and visually generatable, but it violates the prompt’s consistency rule by introducing speculative mechanisms and conclusions like packet loss, DNS, CDN, and routing issues that are not given in the scenario. That extra causal framing is a major overreach compared with simply depicting the observed symptom.",
+          "score": 5.2
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-investigation-visual",
+  "testCaseId": "scenario-en-web-packets-network-paths-1"
+}

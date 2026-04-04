@@ -1,0 +1,95 @@
+{
+  "expectations": "\nEVALUATION CRITERIA:\n\n1. KIND APPROPRIATENESS: Choose kind based on data structure. Code/logs -> \"code\". Numeric trends -> \"chart\". Structured data -> \"table\". Systems/flows -> \"diagram\". Physical scenes -> \"image\" (last resort). Penalize \"image\" when a structured type fits.\n\n2. DESCRIPTION SPECIFICITY: Descriptions must be specific enough for a visual generation system — include data values for charts, column headers for tables, code structure for snippets, node labels for diagrams. When content is qualitative (e.g., \"values rise then fall\"), the description should invent plausible illustrative values that match the described pattern — the visual is an illustration, not a data source. Penalize vague descriptions like \"a relevant chart.\" For tables, every row must have exactly one value per column — missing fields make the data malformed.\n\n3. CONSISTENCY: Visual descriptions must reflect the same evidence as the input content. If the content mentions specific data, the visual should show that data. Do NOT penalize plausible illustrative values added to make qualitative content generatable — that is expected. DO penalize descriptions that add speculative mechanisms or conclusions not present in the content (e.g., inventing a specific cause when the content only describes symptoms).\n\n4. LANGUAGE: Visual descriptions should use the content language where applicable.\n",
+  "judgedAt": "2026-04-04T22:35:41.397Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Excellent image description with rich physical detail (crack types, mortar, stone color, fresh vs. old surfaces, settlement). However, it speculates about uneven foundation settlement as a cause, which is not mentioned in the scenario — this adds a mechanism not present in the content, violating consistency rules. Still the most detailed and generatable description.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Strong image description that stays faithful to the scenario without inventing causes. Specific about crack locations (upper floors, window corners, mortar joints), material condition, absence of renovation signs, and contrasting intact neighbors. Clean and generatable. Slightly less physically detailed than Model A but avoids speculative mechanisms.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Good close-up perspective with specific physical details (crack color contrast, mortar flaking, spider-webbing pattern). Stays mostly faithful to the scenario. The arched window frame is an invention but a plausible architectural detail rather than a speculative mechanism. Slightly narrower scope than C by focusing on a single wall section.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Adequate but notably less specific than the others. Mentions cracks and intact neighbors but lacks detail about material textures, crack patterns, mortar condition, or other physical specifics that would help a generation system produce the visual. Too vague relative to the description specificity requirement.",
+          "score": 5.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Follows all instructions perfectly. The choice of 'image' is correct for a physical scene. The description accurately translates all scenario details into visual elements, including the brilliant addition of 'no signs of recent renovation such as new brickwork or scaffolding' to represent the lack of renovations.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Excellent output with highly specific and vivid visual details of the physical damage (spider-webbing cracks, flaking mortar). It accurately captures the scenario elements without inventing any speculative causes.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Accurately describes a physical scene that matches the scenario, including the cracks on the upper floors and the intact neighboring buildings. It is slightly less detailed than Models B and C but still very good.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Heavily penalized for violating the consistency rule. The prompt explicitly forbids adding speculative mechanisms or causes not present in the content, but this model invented a 'subtly settled' foundation and 'uneven settlement' as the cause of the cracks.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Best matches the scenario with a specific, generatable visual and strong physical-detail descriptions. It adds a subtle settled foundation, which is somewhat speculative, but overall remains the most complete and useful output.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Appropriate `image` choice and a clear, scenario-consistent description with good visual cues like fresh cracks, no renovation signs, and intact neighboring buildings. It is slightly less specific than A and omits interior/contextual structural detail.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Vivid and specific physical imagery, but it narrows the scene too much to a close-up wall and introduces details like an arched window and granite blocks that are not supported by the scenario. It captures the cracking evidence well but is less representative of the full scenario context.",
+          "score": 7.1
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "It follows the format and picks a plausible `image`, but the description is very sparse and less generatable than the others. The phrase 'deep' cracks may overstate the evidence, and it lacks the specificity expected by the prompt.",
+          "score": 6.2
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-investigation-visual",
+  "testCaseId": "scenario-en-engineering-structural-diagnosis-1"
+}

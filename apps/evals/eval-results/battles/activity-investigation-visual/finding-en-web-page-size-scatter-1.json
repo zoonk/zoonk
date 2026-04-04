@@ -1,0 +1,95 @@
+{
+  "expectations": "\nEVALUATION CRITERIA:\n\n1. KIND APPROPRIATENESS: Choose kind based on data structure. Code/logs -> \"code\". Numeric trends -> \"chart\". Structured data -> \"table\". Systems/flows -> \"diagram\". Physical scenes -> \"image\" (last resort). Penalize \"image\" when a structured type fits.\n\n2. DESCRIPTION SPECIFICITY: Descriptions must be specific enough for a visual generation system — include data values for charts, column headers for tables, code structure for snippets, node labels for diagrams. When content is qualitative (e.g., \"values rise then fall\"), the description should invent plausible illustrative values that match the described pattern — the visual is an illustration, not a data source. Penalize vague descriptions like \"a relevant chart.\" For tables, every row must have exactly one value per column — missing fields make the data malformed.\n\n3. CONSISTENCY: Visual descriptions must reflect the same evidence as the input content. If the content mentions specific data, the visual should show that data. Do NOT penalize plausible illustrative values added to make qualitative content generatable — that is expected. DO penalize descriptions that add speculative mechanisms or conclusions not present in the content (e.g., inventing a specific cause when the content only describes symptoms).\n\n4. LANGUAGE: Visual descriptions should use the content language where applicable.\n",
+  "judgedAt": "2026-04-04T22:35:45.256Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Chooses 'chart' appropriately. The grouped bar chart with region × page size is a natural fit. Data values are plausible: small pages show modest slowdown (1.5–1.8s vs 0.8–0.9s) while large pages show dramatic slowdown (4.8–5.5s vs 1.2–1.3s), matching the finding well. Labels are clear and specific. Doesn't over-interpret or add speculative causes. Good balance of specificity and faithfulness.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Good kind choice and clean grouped bar chart design. The two-category approach (Small vs Large) with two series (Healthy vs Affected) captures the key pattern. Values are plausible and clearly illustrate the size-dependent slowdown. Slightly less granular than Model D (only two regions vs four), but the pattern is faithfully represented. The description about 'non-linear slowdown' is a mild interpretation but not egregious.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Appropriate kind and reasonable structure. Five locations with small/large page bars captures the pattern well. However, the small-page values for affected cities (2.1–2.6s) are close to the baseline (2.0s), which partially contradicts the finding that 'small pages often load much closer to normal' — the finding implies they're close but still somewhat slow, and these values do show that. The generic location names ('Local city 1') are less specific but acceptable. The reference line is a nice touch.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Chooses 'chart' appropriately and provides very detailed data. However, a line chart with 8 cities on the x-axis is an unusual choice — cities aren't ordered continuously, making a line chart less natural than a bar chart. The three page sizes (Small/Medium/Large) add useful granularity. The main issue: the values for unaffected regions (e.g., Seattle 1.2/2.0/3.1, Dallas 1.4/2.3/3.5) are quite high — a 3.1s load for a small-ish page in a healthy region seems inflated. Also invents specific city names which adds specificity but risks implying geographic conclusions not in the finding.",
+          "score": 7
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model D provides an exceptional description. It uses a grouped bar chart which is the perfect visual choice, and invents highly realistic region names and data values that perfectly illustrate the nuanced finding (showing near-affected regions with small vs. large page load times).",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model A is excellent and provides a very clear, easy-to-generate description with logical illustrative values. It slightly simplifies the geographic aspect compared to D by just using 'Healthy' vs 'Affected' rather than illustrating the 'cities near the affected region' detail, but it remains highly effective.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Model C provides a solid description and accurate data values that reflect the finding. However, using generic placeholder names for the X-axis (like 'Local city 1' and 'Nearby region city') makes it slightly less realistic as a mock visual than Model D.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Model B includes great data values and a thorough description, but selecting a line chart for categorical/discrete variables (cities) is a poor data visualization practice. A line chart implies a continuous relationship between the X-axis variables, whereas a bar chart is the appropriate choice here.",
+          "score": 7
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "This chooses an appropriate chart and provides concrete illustrative values that match the finding: nearby cities are slower, larger pages are disproportionately affected, and tests still complete. It is specific and generatable, though the line-chart design is a bit awkward for grouped locations and it adds exact city names not grounded in the prompt.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "This is a clear, specific chart with plausible values showing stronger slowdown near the affected region and milder impact on small pages. It is slightly weaker because it invents a specific affected geography ('EU') not supported by the prompt and uses only broad regions rather than tests from cities near the region.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "The kind is correct and the description is concise and easy to generate, with values that reflect the size-dependent slowdown. However, it oversimplifies the evidence by collapsing everything into just two regional categories and misses the finding's emphasis on tests from cities near the affected region versus other regions.",
+          "score": 7.6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "The chart type is appropriate and it captures the idea that larger pages are much more affected than small pages. But it is less consistent with the prompt because some 'normal' locations are set near or above the stated 2.5s baseline, and labels like 'Global baseline' are artificial rather than actual test locations, making the visual less faithful and precise.",
+          "score": 6.9
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-investigation-visual",
+  "testCaseId": "finding-en-web-page-size-scatter-1"
+}

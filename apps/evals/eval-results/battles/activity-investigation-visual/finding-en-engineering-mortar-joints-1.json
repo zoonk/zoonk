@@ -1,0 +1,95 @@
+{
+  "expectations": "\nEVALUATION CRITERIA:\n\n1. KIND APPROPRIATENESS: Choose kind based on data structure. Code/logs -> \"code\". Numeric trends -> \"chart\". Structured data -> \"table\". Systems/flows -> \"diagram\". Physical scenes -> \"image\" (last resort). Penalize \"image\" when a structured type fits.\n\n2. DESCRIPTION SPECIFICITY: Descriptions must be specific enough for a visual generation system — include data values for charts, column headers for tables, code structure for snippets, node labels for diagrams. When content is qualitative (e.g., \"values rise then fall\"), the description should invent plausible illustrative values that match the described pattern — the visual is an illustration, not a data source. Penalize vague descriptions like \"a relevant chart.\" For tables, every row must have exactly one value per column — missing fields make the data malformed.\n\n3. CONSISTENCY: Visual descriptions must reflect the same evidence as the input content. If the content mentions specific data, the visual should show that data. Do NOT penalize plausible illustrative values added to make qualitative content generatable — that is expected. DO penalize descriptions that add speculative mechanisms or conclusions not present in the content (e.g., inventing a specific cause when the content only describes symptoms).\n\n4. LANGUAGE: Visual descriptions should use the content language where applicable.\n\nIMAGE KIND: This finding describes a physical scene (crumbling mortar joints) that can only be represented as a photograph. It SHOULD use \"image\" kind. Penalize using a structured type when the evidence is inherently a physical scene.\n    ",
+  "judgedAt": "2026-04-04T22:35:42.453Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Correctly uses 'image' kind for physical material condition. The description is highly specific, covering all key details from the finding: floor-by-floor contrast within the same structural bay, pocket knife scraping, fingertip-width gaps, texture differences. Includes helpful labels and callouts without inventing speculative causes. The cutaway approach effectively conveys the vertical contrast described in the finding.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Correctly uses 'image' kind. Good side-by-side close-up approach with specific physical details (pale/powdery vs dark/dense mortar, knife interaction). Accurately reflects the finding without adding speculative conclusions. Only mentions third floor and ground floor, omitting fourth floor and basement which were both mentioned in the finding, a minor completeness gap.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Correctly uses 'image' kind with a clear side-by-side macro photography concept. Captures the key contrast well with specific physical details. However, it labels the left side generically as 'Upper Floors' rather than specifying third and fourth floors, and labels the right as 'Ground Floor' without mentioning the basement. Slightly less specific than Model A or D in texture description.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Correctly uses 'image' kind and covers all four levels (basement, ground, third, fourth floor). However, the description adds 'subtle crack lines near the weakened upper joints' which, while plausible, introduces detail not present in the finding (the finding describes crumbling mortar and gaps, not cracks — cracks are from the scenario context, not this specific finding). Slightly less vivid in physical texture detail compared to Model A.",
+          "score": 7
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model B perfectly captures the physical evidence and resolves the scale issue by using a side-by-side macro photography format. This allows the subtle details (pocket knife scraping, fingertip-sized gaps) to be clearly visible, which is exactly what a generation system would need to render this evidence accurately.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model D also correctly utilizes a side-by-side close-up approach to make the details visible. It is highly specific and accurate, missing only the explicit mention of the fingertip size for the gaps, though it still conveys the wide gaps effectively.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Model A includes all the necessary details from the finding, but struggles with visual scale. By framing the image as an elevation spanning five floors (basement to fourth floor), it becomes practically impossible to see millimeter-scale details like a pocket knife or a fingertip in the same view without explicit insets.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Model C suffers from the same scale contradiction as Model A (showing an elevation of four floors while expecting fingertip-sized gaps to be visible). Additionally, it completely omits the pocket knife scraping detail which is a key part of the evidence.",
+          "score": 7
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Best matches the finding with an appropriate image and gives the most specific, generatable visual details, including floor-by-floor contrast, pocket knife and fingertip scale, and consistent same-bay comparison. It stays grounded in the evidence without overexplaining cause.",
+          "score": 9.6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Accurately uses image and captures the key contrast between upper-floor deterioration and lower-floor sound mortar across the same structural bay. It is clear and useful, though slightly less concrete than A and adds minor speculative crack detail not stated in the finding.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "A solid, specific image description with a clear upper-versus-lower comparison and good physical detail. However, it omits the basement and fourth-floor evidence and narrows the finding more than necessary, making it somewhat less complete.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Appropriate image choice and a clear side-by-side comparison, but it is the least complete because it collapses multiple floors into broad categories and loses the same-structural-bay context. The statement that the knife is 'unable to cause any crumbling or indentation' is a bit stronger than the evidence supports.",
+          "score": 7.9
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-investigation-visual",
+  "testCaseId": "finding-en-engineering-mortar-joints-1"
+}
