@@ -1,0 +1,98 @@
+packages/ai/src/tasks/activities/core/activity-investigation-interpretations.ts
+  e46e659d0c81fbc3 1-51,53-99
+packages/ai/src/tasks/activities/core/activity-investigation-interpretations.prompt.md
+  e46e659d0c81fbc3 1-50
+packages/ai/package.json
+  e46e659d0c81fbc3 16
+apps/evals/src/tasks/activity-investigation-interpretations/task.ts
+  e46e659d0c81fbc3 1-19
+apps/evals/src/tasks/index.ts
+  e46e659d0c81fbc3 11,52
+apps/evals/src/tasks/activity-investigation-interpretations/test-cases.ts
+  e46e659d0c81fbc3 1-41
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "e2cfb1c51e07ca9505ac0fdd97319d9ee1fa1267",
+  "prompts": {
+    "0f5c0ae43d1a34b7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6cf2f61f-98b9-421f-b8c1-97d1e3e8f2b8",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 2,
+      "overriden_lines": 0
+    },
+    "21c43991e728a583": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9a77518b-d95f-4578-9c38-fad3bd55cfb5",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 7,
+      "overriden_lines": 0
+    },
+    "4267e80fcece48ea": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "c4d7770b-913a-4269-b411-0f7e4d45232f",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 2,
+      "overriden_lines": 0
+    },
+    "7983e8ad8482a77d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "9c0f5939-b0bf-4edf-9761-ff305ff3fb59",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": null,
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 32,
+      "overriden_lines": 0
+    },
+    "e46e659d0c81fbc3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e9953b04-810a-48eb-afcb-47d5be4120b1",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 213,
+      "total_deletions": 0,
+      "accepted_lines": 211,
+      "overriden_lines": 1
+    },
+    "facf3f92e40226c7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8b988e64-a96c-4ab3-9fac-d8fba8741746",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 1,
+      "overriden_lines": 0
+    }
+  }
+}
