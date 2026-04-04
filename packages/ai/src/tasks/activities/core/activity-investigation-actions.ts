@@ -7,7 +7,7 @@ import systemPrompt from "./activity-investigation-actions.prompt.md";
 import { type ActivityInvestigationScenarioSchema } from "./activity-investigation-scenario";
 
 const DEFAULT_MODEL = process.env.AI_MODEL_ACTIVITY_INVESTIGATION_ACTIONS ?? "openai/gpt-5.4";
-const FALLBACK_MODELS = ["anthropic/claude-opus-4.6", "google/gemini-3.1-pro-preview"];
+const FALLBACK_MODELS = ["anthropic/claude-opus-4.6", "google/gemini-3-flash"];
 
 const schema = z.object({
   actions: z.array(

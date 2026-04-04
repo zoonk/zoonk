@@ -1,0 +1,185 @@
+{
+  "expectations": "\nEVALUATION CRITERIA:\n\n1. ACTION COUNT: 5-6 actions total.\n\n2. QUALITY DISTRIBUTION: 1-2 critical (directly test the core question), 2-3 useful (valuable supporting evidence), 1-2 weak (tangentially related). Penalize severely skewed distributions.\n\n3. DOMAIN APPROPRIATENESS: Actions should use domain-appropriate language. For networking: check logs, trace routes, run diagnostics. Actions should feel like things a real investigator would do in this domain.\n\n4. COVERAGE: Actions should cover different investigation angles — some that would confirm the best explanation, some that test alternatives, some tangential.\n\n5. LANGUAGE: All action labels must be in the specified language.\n",
+  "judgedAt": "2026-04-04T08:48:46.515Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Excellent distribution (2 critical, 3 useful, 1 weak). Critical actions directly test the best explanation (comparing first-half to prior years, checking if older stores are also affected). Good coverage of alternative hypotheses. Casual but clear language. Labels are slightly long but still natural and conversational.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Perfect distribution (2 critical, 2 useful, 2 weak). Critical actions are well-targeted at the core question. Good coverage across hypotheses. Weather/holiday calendar is a genuinely weak action that doesn't help distinguish between explanations. Clean, casual language throughout.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Perfect distribution (2 critical, 2 useful, 2 weak). Critical actions directly test the best explanation. Good coverage of alternatives (competitor, supply). Weak actions (social media comments, utility bills) are genuinely tangential. Very casual, everyday language with no jargon. Solid all around.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Good distribution (2 critical, 3 useful, 1 weak). Critical actions are strong and well-targeted. Coverage is good across hypotheses. Only one weak action is at the minimum threshold. Language is casual and clear. Slightly less conversational than some others but still appropriate.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Good distribution (2 critical, 3 useful, 1 weak). Critical actions are relevant and well-chosen. Coverage is decent but the 'dig into which cities' useful action is somewhat generic and doesn't clearly test a specific hypothesis. Only 1 weak action. Language is clean and casual.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Perfect distribution (2 critical, 2 useful, 2 weak). Critical actions are well-targeted. Very casual, conversational language. The second weak action ('paint colors') feels a bit too silly/contrived rather than a plausible tangential investigation, but it clearly qualifies as weak. Good overall but slightly less polished.",
+          "score": 7.7
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Distribution is 2 critical, 3 useful, 1 weak. The second critical action (inventory turnover at new vs established stores) is more of a useful action than a critical one—it doesn't directly test the core question of whether the expansion was based on an unsustainable spike. Only 1 weak action. Otherwise solid coverage and language.",
+          "score": 7.3
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Distribution (2 critical, 3 useful, 1 weak) is acceptable. However, several labels are quite long and include parenthetical explanations that feel more like instructions than casual investigation labels. Language like 'audit distribution and shipping performance' leans toward jargon. The prompt says 'NO jargon from the topic' and to use 'everyday language,' which this partially violates.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Distribution (2 critical, 3 useful, 1 weak) is fine, but the second critical action ('review the initial market research and growth projections') uses business jargon and feels more like a useful action than critical—it doesn't directly test whether the first-half spike was anomalous. Labels are somewhat long and formal. Only 1 weak action. 'Analyze the number of customers visiting' also borders on jargon.",
+          "score": 6.8
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Flawlessly executes the prompt. The actions are concise, conversational, and perfectly targeted to test the various explanations. The quality distribution perfectly maps to testing the core issue, exploring alternatives, and offering a tangential distraction.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Excellent output that follows all instructions perfectly. The actions are clear, domain-appropriate without using heavy jargon, and accurately map to the critical, useful, and weak tiers based on the provided hypotheses.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Very strong set of actions with a great conversational tone that fits the 'everyday language' requirement perfectly. The weak actions are slightly silly compared to other models, but they fulfill the criteria well.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Hits all the right angles and tests the hypotheses very accurately. The only minor drawback is that the action phrases are slightly longer and wordier than necessary, feeling less like quick menu options.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "A solid set of actions that meets all criteria. The phrasing is good, though slightly less punchy and professional than the top models. Covers the hypotheses logically.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Good coverage of the alternatives, but one of the 'critical' actions (reviewing initial market research) looks backward rather than directly testing the current reason for the sales drop, making it more of a 'useful' or 'weak' action.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Generally good, but one of the 'critical' actions ('Check whether the sales drop started before or after the new stores opened') is mostly redundant since the scenario explicitly states the drop happened in the fall after the H1 expansion.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Assigns a 'critical' tier to checking inventory turnover, which tests the 'wrong' explanation rather than the core question (broader market slowdown). Otherwise, the phrasing and coverage are decent.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Violates the 'short phrase' rule by including the 'why' (e.g., 'to test whether it was a supply issue') inside every action label. This breaks the fourth wall for a learning game menu and makes the text overly long and explanatory.",
+          "score": 6
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Strong coverage with clear actions that directly test the best explanation, while also probing competitor and stock alternatives plus one tangential angle. It follows the count and tier distribution well, and the language stays plain and natural.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Very solid set with two strong critical actions aimed at the core hypothesis and good useful actions for key alternatives. Slightly weaker only because one label slips into a bit more technical/business wording than the prompt prefers.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Well balanced and easy to understand, with especially good critical actions for testing whether the slowdown is broad and whether early results were unusually strong. The weak actions are clearly tangential, though the social media item is a bit less domain-grounded than the best responses.",
+          "score": 8.9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Good action mix and clean adherence to the requested structure, with critical checks that help distinguish broad slowdown from new-store-specific issues. It is slightly less sharp than the top answers because the year-over-year comparison is supportive but not as directly tied to the expansion thesis.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Concise, plain-language, and well aligned with the scenario, especially on testing whether the early surge was misleading and whether the market is broadly weakening. The weak actions are appropriately tangential, though one is arguably too frivolous and the overall set is a bit narrower than the best ones.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Reasonable overall coverage and proper tier balance, with useful checks on timing, inventory, and competitors. The first critical action is less directly tied to the best explanation than stronger alternatives, and some actions overlap around sales pattern diagnosis.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Covers the hypothesis space well and has a strong investigative structure, but it violates the prompt’s voice requirement by using quite a bit of jargon like churn, backroom counts, audit, and store execution. That prompt-following issue materially lowers an otherwise capable answer.",
+          "score": 7.6
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "The set is plausible and balanced, but one critical action on inventory turnover/stock levels is mis-tiered since it mainly tests an alternative explanation rather than the core question. It also leans more formal and analytical than the requested casual everyday wording.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "It has decent coverage and proper tier counts, but it clearly violates the instruction to avoid jargon, using terms like market research, growth projections, internal inventory reports, press releases, and turnover rates. Some actions also feel more corporate-analytic than conversational investigation choices.",
+          "score": 6.8
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-investigation-actions",
+  "testCaseId": "en-economics-business-cycle-phases-1"
+}

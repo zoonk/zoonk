@@ -1,0 +1,234 @@
+{
+  "modelId": "openai/gpt-5.4",
+  "results": [
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "There is a slight mismatch with the 'NO jargon' instruction: phrases like 'network device records', 'route', and 'retried' are somewhat technical, though still understandable. Otherwise the response meets the required action count, distribution, language, and domain fit.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "The set is strong overall. It could be improved slightly by making the labels even more everyday and less technical, and by including one more clearly tangential weak action to maximize contrast across investigation angles. Still, the current coverage is good and distinguishes hypotheses well.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. ACTION COUNT: 5-6 actions total.\n\n2. QUALITY DISTRIBUTION: 1-2 critical (directly test the core question), 2-3 useful (valuable supporting evidence), 1-2 weak (tangentially related). Penalize severely skewed distributions.\n\n3. DOMAIN APPROPRIATENESS: Actions should use domain-appropriate language. For networking: check logs, trace routes, run diagnostics. Actions should feel like things a real investigator would do in this domain.\n\n4. COVERAGE: Actions should cover different investigation angles — some that would confirm the best explanation, some that test alternatives, some tangential.\n\n5. LANGUAGE: All action labels must be in the specified language.\n",
+        "id": "en-web-packets-network-paths-1",
+        "userInput": {
+          "accuracy": {
+            "accuracies": ["partial", "best", "partial", "wrong"]
+          },
+          "language": "en",
+          "scenario": {
+            "explanations": [
+              "A recent equipment change is sending requests through a much longer chain of machines before they reach the app.",
+              "The app is replying normally, but one device along the way is delaying or dropping pieces of the conversation.",
+              "A misconfigured service is sending responses back toward the wrong place, so browsers keep waiting and retrying.",
+              "The slowdown is inside the data center itself, where one overloaded server is making every page load look like a network problem."
+            ],
+            "scenario": "Your team's web app suddenly feels slow for users in one region, even though the servers look healthy and CPU use is normal. You need to figure out why pages are taking several extra seconds to load before support starts rolling back unrelated changes."
+          }
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Could be slightly stronger by making one critical action more explicitly target the key best explanation (for example, checking whether missing/invalid values were treated as normal numbers). Still, the current set already covers that angle well, has the right count, good tier distribution, varied investigation angles, domain-appropriate actions, and all labels are in Brazilian Portuguese with no English leakage.",
+          "kind": "potentialImprovements",
+          "score": 9.4
+        }
+      ],
+      "testCase": {
+        "expectations": "\nLANGUAGE REQUIREMENT: All content must be in Brazilian Portuguese.\n\n\nEVALUATION CRITERIA:\n\n1. ACTION COUNT: 5-6 actions total.\n\n2. QUALITY DISTRIBUTION: 1-2 critical (directly test the core question), 2-3 useful (valuable supporting evidence), 1-2 weak (tangentially related). Penalize severely skewed distributions.\n\n3. DOMAIN APPROPRIATENESS: Actions should use domain-appropriate language. For networking: check logs, trace routes, run diagnostics. Actions should feel like things a real investigator would do in this domain.\n\n4. COVERAGE: Actions should cover different investigation angles — some that would confirm the best explanation, some that test alternatives, some tangential.\n\n5. LANGUAGE: All action labels must be in the specified language.\n\n    ",
+        "id": "pt-python-inf-nan-1",
+        "userInput": {
+          "accuracy": {
+            "accuracies": ["partial", "best", "partial", "wrong"]
+          },
+          "language": "pt",
+          "scenario": {
+            "explanations": [
+              "Um cálculo passou a receber um valor absurdo em uma etapa anterior, e esse número extremo contaminou o resto do pipeline até travar o fechamento.",
+              "Um dado ausente ou inválido entrou como se fosse número comum, e as contas seguintes espalharam esse problema por vários relatórios.",
+              "A lógica que decide quais pedidos revisar falhou ao comparar certos valores especiais, então parte dos casos críticos foi ignorada sem gerar erro claro.",
+              "Uma integração externa mudou o formato de alguns campos, e o sistema começou a misturar medições reais com resultados de operações impossíveis."
+            ],
+            "scenario": "Você foi chamado porque o sistema de risco de uma fintech aprovou alguns pedidos que deveriam ter sido bloqueados e, ao mesmo tempo, marcou outros como impossíveis de avaliar. Nos relatórios da madrugada, várias colunas aparecem com números sem sentido, campos vazios e alertas contraditórios."
+          }
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "No concrete minor errors found. The output has 6 actions, all labels are in Latin American Spanish, and the quality distribution matches the requested pattern well: 2 critical, 3 useful, 1 weak. The actions cover the best explanation, partial alternatives, and a weaker tangential check. Domain fit is solid for a plant/process chemistry investigation while keeping language fairly accessible. One small caveat is that terms like 'reactivo', 'mezcla', and 'molécula' are somewhat technical, but they are natural and appropriate for the scenario and do not meaningfully violate the instruction.",
+          "kind": "minorErrors",
+          "score": 9.6
+        },
+        {
+          "conclusion": "A small improvement would be to make one label even more concrete about what evidence to inspect (for example, samples, registros, or results from the run) while still avoiding heavy jargon. Also, the weak action is plausible but only one weak option is included; adding a second weak option instead of one useful one could have created a slightly broader learner choice set while still staying within spec. These are refinements rather than deficiencies.",
+          "kind": "potentialImprovements",
+          "score": 9.4
+        }
+      ],
+      "testCase": {
+        "expectations": "\nLANGUAGE REQUIREMENT: All content must be in Latin American Spanish.\n\n\nEVALUATION CRITERIA:\n\n1. ACTION COUNT: 5-6 actions total.\n\n2. QUALITY DISTRIBUTION: 1-2 critical (directly test the core question), 2-3 useful (valuable supporting evidence), 1-2 weak (tangentially related). Penalize severely skewed distributions.\n\n3. DOMAIN APPROPRIATENESS: Actions should use domain-appropriate language. For networking: check logs, trace routes, run diagnostics. Actions should feel like things a real investigator would do in this domain.\n\n4. COVERAGE: Actions should cover different investigation angles — some that would confirm the best explanation, some that test alternatives, some tangential.\n\n5. LANGUAGE: All action labels must be in the specified language.\n\n    ",
+        "id": "es-quimica-alquilacion-alfa-1",
+        "userInput": {
+          "accuracy": {
+            "accuracies": ["wrong", "best", "partial", "partial"]
+          },
+          "language": "es",
+          "scenario": {
+            "explanations": [
+              "El lote falló porque una de las materias primas venía con una pequeña impureza que desvió parte de la reacción hacia un producto casi idéntico al esperado.",
+              "El problema empezó cuando el equipo usó un reactivo demasiado agresivo y, en vez de detenerse tras un solo cambio, la mezcla siguió reaccionando más de la cuenta.",
+              "La causa fue que la transformación ocurrió en más de un punto posible de la molécula, así que el proceso produjo una mezcla de compuestos difíciles de separar.",
+              "El rendimiento cayó porque se siguió una ruta alternativa con un intermedio distinto, más controlable en teoría, pero mal preparada en esta corrida."
+            ],
+            "scenario": "Estás revisando una corrida en la planta y el lote salió con muy poco producto útil y demasiadas impurezas. El procedimiento parecía rutinario, pero esta vez aparecieron compuestos inesperados y nadie sabe en qué paso se torció todo."
+          }
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Very strong overall. The response provides 6 actions, which fits the required count. Quality distribution is correct and well balanced: 2 critical, 3 useful, 1 weak. The actions cover distinct investigation angles: market-wide demand, comparison between old and new stores, first-half anomaly analysis, competitor activity, stock availability, and store-level operations. They are domain-appropriate for a retail strategy scenario and written fully in clear US English with casual, accessible wording and little jargon. Small room for improvement: one or two labels could be even more explicitly framed as learner-facing investigation choices, and the weak action is slightly less tangential than ideal because store layout/staffing could still meaningfully test a store-level mistake. Still, this is a minor calibration issue rather than a real flaw.",
+          "kind": "potentialImprovements",
+          "score": 9.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. ACTION COUNT: 5-6 actions total.\n\n2. QUALITY DISTRIBUTION: 1-2 critical (directly test the core question), 2-3 useful (valuable supporting evidence), 1-2 weak (tangentially related). Penalize severely skewed distributions.\n\n3. DOMAIN APPROPRIATENESS: Actions should use domain-appropriate language. For networking: check logs, trace routes, run diagnostics. Actions should feel like things a real investigator would do in this domain.\n\n4. COVERAGE: Actions should cover different investigation angles — some that would confirm the best explanation, some that test alternatives, some tangential.\n\n5. LANGUAGE: All action labels must be in the specified language.\n",
+        "id": "en-economics-business-cycle-phases-1",
+        "userInput": {
+          "accuracy": {
+            "accuracies": ["partial", "wrong", "partial", "best"]
+          },
+          "language": "en",
+          "scenario": {
+            "explanations": [
+              "Demand is weakening across the market, and your stores only noticed after opening new locations at the worst possible moment.",
+              "A supply problem or shipping bottleneck left popular items missing, so sales fell even though customers still wanted to buy.",
+              "A new competitor pulled away your best customers right as you committed to a bigger footprint and higher fixed costs.",
+              "Your expansion was based on unusually strong early-year results that couldn't last, so the second-half drop reflects a broader slowdown rather than a store-level mistake."
+            ],
+            "scenario": "You run strategy for a retail chain that opened 18 new stores after a strong first half of the year. By early fall, sales are sliding, inventory is piling up, and the new locations are missing their targets even in cities that looked promising."
+          }
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Very strong response overall. It provides 6 actions, matching the required count. The quality distribution is correct and well balanced: 2 critical, 3 useful, 1 weak. The actions cover multiple investigation angles: tracing the problematic purchase path, comparing successful vs incomplete orders, checking timing of the new path rollout, testing inconsistent data views, examining message/queue issues, and considering traffic spikes as a weaker alternative. This aligns well with the scenario and explanations, especially the best explanation about routing to a new incomplete service, while also testing partial and wrong alternatives. Language is fully in Brazilian Portuguese and uses accessible, low-jargon phrasing. A small improvement would be to make one action slightly more concrete about checking records/history of recent changes, but the current wording is already adequate.",
+          "kind": "potentialImprovements",
+          "score": 9.6
+        }
+      ],
+      "testCase": {
+        "expectations": "\nLANGUAGE REQUIREMENT: All content must be in Brazilian Portuguese.\n\n\nEVALUATION CRITERIA:\n\n1. ACTION COUNT: 5-6 actions total.\n\n2. QUALITY DISTRIBUTION: 1-2 critical (directly test the core question), 2-3 useful (valuable supporting evidence), 1-2 weak (tangentially related). Penalize severely skewed distributions.\n\n3. DOMAIN APPROPRIATENESS: Actions should use domain-appropriate language. For networking: check logs, trace routes, run diagnostics. Actions should feel like things a real investigator would do in this domain.\n\n4. COVERAGE: Actions should cover different investigation angles — some that would confirm the best explanation, some that test alternatives, some tangential.\n\n5. LANGUAGE: All action labels must be in the specified language.\n\n    ",
+        "id": "pt-agile-transformacao-gradual-1",
+        "userInput": {
+          "accuracy": {
+            "accuracies": ["best", "partial", "partial", "wrong"]
+          },
+          "language": "pt",
+          "scenario": {
+            "explanations": [
+              "Uma mudança recente em uma parte do sistema passou a desviar pedidos para um serviço novo, mas esse caminho ainda não cobre todos os casos e está deixando operações pela metade.",
+              "O problema começou porque partes antigas e novas estão consultando dados de jeitos diferentes, então alguns clientes veem informações atualizadas e outros recebem respostas antigas.",
+              "A lentidão e os erros apareceram porque um módulo muito usado foi separado cedo demais, e agora a troca de mensagens entre as partes está criando filas e falhas.",
+              "Nada estrutural mudou de fato; o aumento de acessos desta semana só expôs um gargalo antigo que já existia no sistema principal."
+            ],
+            "scenario": "Você faz parte da equipe de um produto que ficou anos crescendo sem parar, e agora os erros aumentaram sempre que uma compra passa por etapas específicas do fluxo. O site continua no ar, mas cada ajuste parece consertar um pedaço e quebrar outro, e você precisa descobrir o que realmente está acontecendo sem parar a operação."
+          }
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Could be improved slightly by making one weak action a bit more tangential and less overlapping with a listed alternative explanation, but the current set still satisfies the requested distribution, coverage, domain fit, and language requirements.",
+          "kind": "potentialImprovements",
+          "score": 9.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. ACTION COUNT: 5-6 actions total.\n\n2. QUALITY DISTRIBUTION: 1-2 critical (directly test the core question), 2-3 useful (valuable supporting evidence), 1-2 weak (tangentially related). Penalize severely skewed distributions.\n\n3. DOMAIN APPROPRIATENESS: Actions should use domain-appropriate language. For networking: check logs, trace routes, run diagnostics. Actions should feel like things a real investigator would do in this domain.\n\n4. COVERAGE: Actions should cover different investigation angles — some that would confirm the best explanation, some that test alternatives, some tangential.\n\n5. LANGUAGE: All action labels must be in the specified language.\n",
+        "id": "en-history-biomedical-institutions-1",
+        "userInput": {
+          "accuracy": {
+            "accuracies": ["partial", "best", "wrong", "partial"]
+          },
+          "language": "en",
+          "scenario": {
+            "explanations": [
+              "A fast-growing outbreak exposed that the country depended too heavily on imported doses and couldn't replace them quickly when shipments slowed.",
+              "The vaccination campaign stalled because local labs had the right buildings but not enough trained staff and tested routines to scale up safely.",
+              "The delay came mostly from political fights and purchasing decisions, while the scientific institutions themselves were ready to produce far more than they were asked to.",
+              "The shortage was driven by weak coordination between research centers, factories, and the health system, so discoveries were made but took too long to reach clinics."
+            ],
+            "scenario": "You're advising officials as a new disease spreads, but the national vaccination campaign keeps falling behind schedule. Some regions are waiting for doses while others get shipments late, and you need to figure out why the country couldn't respond faster."
+          }
+        }
+      }
+    }
+  ],
+  "taskId": "activity-investigation-actions"
+}
