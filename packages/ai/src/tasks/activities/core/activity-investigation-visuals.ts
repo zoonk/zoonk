@@ -2,12 +2,10 @@ import "server-only";
 import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
 import { Output, generateText } from "ai";
 import { z } from "zod";
-import { type ActivityInvestigationFindingsSchema } from "./activity-investigation-findings";
-import { type ActivityInvestigationScenarioSchema } from "./activity-investigation-scenario";
 import systemPrompt from "./activity-investigation-visuals.prompt.md";
 
-const DEFAULT_MODEL = process.env.AI_MODEL_ACTIVITY_INVESTIGATION_VISUALS ?? "openai/gpt-5.4";
-const FALLBACK_MODELS = ["anthropic/claude-opus-4.6", "google/gemini-3.1-pro-preview"];
+const DEFAULT_MODEL = process.env.AI_MODEL_ACTIVITY_INVESTIGATION_VISUALS ?? "openai/gpt-5.4-mini";
+const FALLBACK_MODELS = ["google/gemini-3-flash"];
 
 const visualKindSchema = z.enum([
   "chart",
@@ -19,21 +17,16 @@ const visualKindSchema = z.enum([
   "timeline",
 ]);
 
-const visualSchema = z.object({
+const schema = z.object({
   description: z.string(),
   kind: visualKindSchema,
 });
 
-const schema = z.object({
-  findingVisuals: z.array(visualSchema),
-  scenarioVisual: visualSchema,
-});
+export type ActivityInvestigationVisualSchema = z.infer<typeof schema>;
 
-export type ActivityInvestigationVisualsSchema = z.infer<typeof schema>;
-
-export type ActivityInvestigationVisualsParams = {
-  scenario: ActivityInvestigationScenarioSchema;
-  findings: ActivityInvestigationFindingsSchema;
+export type ActivityInvestigationVisualParams = {
+  scenario: string;
+  finding?: string;
   language: string;
   model?: string;
   useFallback?: boolean;
@@ -41,39 +34,29 @@ export type ActivityInvestigationVisualsParams = {
 };
 
 /**
- * Formats the scenario and findings into a readable prompt block
- * so the AI can describe appropriate visuals for each piece of content.
+ * Generates a visual description for a single piece of investigation
+ * content — either the scenario or one finding. Produces a visual
+ * kind and description with enough specificity for a separate system
+ * to generate the actual visual.
+ *
+ * When `finding` is provided, generates a finding visual with the
+ * scenario as context. When omitted, generates a scenario visual.
+ * One instance runs per item, all in parallel. This keeps each call
+ * focused and eliminates quality degradation from generating many
+ * visuals in a single batch.
  */
-function formatInputsForPrompt({
+export async function generateInvestigationVisual({
   scenario,
-  findings,
-}: Pick<ActivityInvestigationVisualsParams, "scenario" | "findings">): string {
-  const findingList = findings.findings.map((finding, index) => `${index}. ${finding}`).join("\n");
-
-  return `
-    SCENARIO: ${scenario.scenario}
-    FINDINGS: ${findingList}
-  `;
-}
-
-/**
- * Generates visual descriptions for an investigation's scenario
- * and findings. Produces a visual kind and description for the
- * scenario and one for each finding, with enough specificity for
- * a separate system to generate the actual visuals. This is phase 5
- * of investigation generation — runs in parallel with the conclusions
- * task after findings are ready.
- */
-export async function generateActivityInvestigationVisuals({
-  scenario,
-  findings,
+  finding,
   language,
   model = DEFAULT_MODEL,
   useFallback = true,
   reasoningEffort,
-}: ActivityInvestigationVisualsParams) {
+}: ActivityInvestigationVisualParams) {
+  const findingBlock = finding ? `\n    FINDING: ${finding}` : "";
+
   const userPrompt = `
-    ${formatInputsForPrompt({ findings, scenario })}
+    SCENARIO: ${scenario}${findingBlock}
     LANGUAGE: ${language}
   `;
 

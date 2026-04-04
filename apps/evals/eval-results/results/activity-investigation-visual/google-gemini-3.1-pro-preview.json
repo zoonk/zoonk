@@ -1,0 +1,615 @@
+{
+  "modelId": "google/gemini-3.1-pro-preview",
+  "results": [
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response is generally good, but it assumes a specific affected region ('AP-South') and a precise time window/spike pattern that are not stated in the scenario. While illustrative values are allowed, naming a specific region and event timing introduces avoidable speculation rather than staying closer to the evidence that only says 'one region' and 'suddenly feels slow.'",
+          "kind": "minorErrors",
+          "score": 8.6
+        },
+        {
+          "conclusion": "It could be improved by making the chart description even more generatable with explicit sample time-value points for each region, and by using more neutral regional labels or indicating 'affected region' versus 'other regions' to avoid unnecessary speculation. Including a title and clearer legend wording would also help, though the current description is already usable.",
+          "kind": "potentialImprovements",
+          "score": 8.8
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. KIND APPROPRIATENESS: Choose kind based on data structure. Code/logs -> \"code\". Numeric trends -> \"chart\". Structured data -> \"table\". Systems/flows -> \"diagram\". Physical scenes -> \"image\" (last resort). Penalize \"image\" when a structured type fits.\n\n2. DESCRIPTION SPECIFICITY: Descriptions must be specific enough for a visual generation system — include data values for charts, column headers for tables, code structure for snippets, node labels for diagrams. When content is qualitative (e.g., \"values rise then fall\"), the description should invent plausible illustrative values that match the described pattern — the visual is an illustration, not a data source. Penalize vague descriptions like \"a relevant chart.\" For tables, every row must have exactly one value per column — missing fields make the data malformed.\n\n3. CONSISTENCY: Visual descriptions must reflect the same evidence as the input content. If the content mentions specific data, the visual should show that data. Do NOT penalize plausible illustrative values added to make qualitative content generatable — that is expected. DO penalize descriptions that add speculative mechanisms or conclusions not present in the content (e.g., inventing a specific cause when the content only describes symptoms).\n\n4. LANGUAGE: Visual descriptions should use the content language where applicable.\n",
+        "id": "scenario-en-web-packets-network-paths-1",
+        "userInput": {
+          "language": "en",
+          "scenario": "Your team's web app suddenly feels slow for users in one region, even though the servers look healthy and CPU use is normal. You need to figure out why pages are taking several extra seconds to load before support starts rolling back unrelated changes."
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response is strong overall, but there is a minor language/localization issue: it uses English numeric tokens 'NaN' and 'Infinity' as table values. While these may realistically appear in a system report, the prompt says data labels, column headers, and values should use the content language where applicable; 'Infinity' especially could have been localized or framed more clearly in Portuguese. This does not seriously harm usefulness because the scenario itself refers to nonsensical numeric outputs, and these tokens are common in technical contexts.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "The choice of 'table' is appropriate for structured report data, and the description is specific with clear columns and complete rows. To improve it further, it could include one or two additional rows to better represent the scenario's breadth ('várias colunas', contradictory alerts across more cases) or use slightly more localized technical wording for special values. It could also clarify whether values like '9999999' are illustrative. Still, the current output is already very usable for generation.",
+          "kind": "potentialImprovements",
+          "score": 9.2
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. KIND APPROPRIATENESS: Choose kind based on data structure. Code/logs -> \"code\". Numeric trends -> \"chart\". Structured data -> \"table\". Systems/flows -> \"diagram\". Physical scenes -> \"image\" (last resort). Penalize \"image\" when a structured type fits.\n\n2. DESCRIPTION SPECIFICITY: Descriptions must be specific enough for a visual generation system — include data values for charts, column headers for tables, code structure for snippets, node labels for diagrams. When content is qualitative (e.g., \"values rise then fall\"), the description should invent plausible illustrative values that match the described pattern — the visual is an illustration, not a data source. Penalize vague descriptions like \"a relevant chart.\" For tables, every row must have exactly one value per column — missing fields make the data malformed.\n\n3. CONSISTENCY: Visual descriptions must reflect the same evidence as the input content. If the content mentions specific data, the visual should show that data. Do NOT penalize plausible illustrative values added to make qualitative content generatable — that is expected. DO penalize descriptions that add speculative mechanisms or conclusions not present in the content (e.g., inventing a specific cause when the content only describes symptoms).\n\n4. LANGUAGE: Visual descriptions should use the content language where applicable.\n\nLANGUAGE REQUIREMENT: All content must be in Brazilian Portuguese.\n    ",
+        "id": "scenario-pt-python-inf-nan-1",
+        "userInput": {
+          "language": "pt",
+          "scenario": "Você foi chamado porque o sistema de risco de uma fintech aprovou alguns pedidos que deveriam ter sido bloqueados e, ao mesmo tempo, marcou outros como impossíveis de avaliar. Nos relatórios da madrugada, várias colunas aparecem com números sem sentido, campos vazios e alertas contraditórios."
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response invents specific quantitative values ('12% producto útil, 88% impurezas') even though only the scenario is provided and no finding is given. While illustrative values are allowed for qualitative content, here they are presented as a precise outcome in the process diagram rather than clearly as an example, which risks overstating unsupported specifics. Also, the description adds 'compuestos desconocidos' at the collection node; the scenario mentions unexpected compounds, so this is close but slightly shifts the wording. These are minor consistency issues rather than major errors.",
+          "kind": "minorErrors",
+          "score": 8.6
+        },
+        {
+          "conclusion": "The chosen kind 'diagram' is appropriate for a process investigation scenario, and the description is fairly specific with labeled nodes and directional flow. It could be improved by making the illustrative nature of the percentages explicit, or by avoiding exact numbers altogether in a scenario-level visual. It could also include one or two more concrete visual cues about where impurities appear without implying a confirmed failure point. Otherwise, it follows the Spanish language requirement well.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. KIND APPROPRIATENESS: Choose kind based on data structure. Code/logs -> \"code\". Numeric trends -> \"chart\". Structured data -> \"table\". Systems/flows -> \"diagram\". Physical scenes -> \"image\" (last resort). Penalize \"image\" when a structured type fits.\n\n2. DESCRIPTION SPECIFICITY: Descriptions must be specific enough for a visual generation system — include data values for charts, column headers for tables, code structure for snippets, node labels for diagrams. When content is qualitative (e.g., \"values rise then fall\"), the description should invent plausible illustrative values that match the described pattern — the visual is an illustration, not a data source. Penalize vague descriptions like \"a relevant chart.\" For tables, every row must have exactly one value per column — missing fields make the data malformed.\n\n3. CONSISTENCY: Visual descriptions must reflect the same evidence as the input content. If the content mentions specific data, the visual should show that data. Do NOT penalize plausible illustrative values added to make qualitative content generatable — that is expected. DO penalize descriptions that add speculative mechanisms or conclusions not present in the content (e.g., inventing a specific cause when the content only describes symptoms).\n\n4. LANGUAGE: Visual descriptions should use the content language where applicable.\n\nLANGUAGE REQUIREMENT: All content must be in Latin American Spanish.\n    ",
+        "id": "scenario-es-quimica-alquilacion-alfa-1",
+        "userInput": {
+          "language": "es",
+          "scenario": "Estás revisando una corrida en la planta y el lote salió con muy poco producto útil y demasiadas impurezas. El procedimiento parecía rutinario, pero esta vez aparecieron compuestos inesperados y nadie sabe en qué paso se torció todo."
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response slightly overstates specificity by labeling the opening event as occurring between June and July, while the scenario only says 18 new stores opened after a strong first half and that problems appear by early fall. This is a reasonable illustrative choice, but the precise timing is somewhat invented. Also, the chart focuses on chain-wide sales and inventory but only indirectly reflects that new locations are missing targets in promising cities; that aspect of the scenario is not visualized directly.",
+          "kind": "minorErrors",
+          "score": 8.7
+        },
+        {
+          "conclusion": "A stronger version could incorporate the underperformance of new stores more explicitly, for example with an additional series for new-store target attainment or a separate panel comparing legacy vs new stores. The current chart is still appropriate and sufficiently specific, but it does not capture every important element of the scenario.",
+          "kind": "potentialImprovements",
+          "score": 8.8
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. KIND APPROPRIATENESS: Choose kind based on data structure. Code/logs -> \"code\". Numeric trends -> \"chart\". Structured data -> \"table\". Systems/flows -> \"diagram\". Physical scenes -> \"image\" (last resort). Penalize \"image\" when a structured type fits.\n\n2. DESCRIPTION SPECIFICITY: Descriptions must be specific enough for a visual generation system — include data values for charts, column headers for tables, code structure for snippets, node labels for diagrams. When content is qualitative (e.g., \"values rise then fall\"), the description should invent plausible illustrative values that match the described pattern — the visual is an illustration, not a data source. Penalize vague descriptions like \"a relevant chart.\" For tables, every row must have exactly one value per column — missing fields make the data malformed.\n\n3. CONSISTENCY: Visual descriptions must reflect the same evidence as the input content. If the content mentions specific data, the visual should show that data. Do NOT penalize plausible illustrative values added to make qualitative content generatable — that is expected. DO penalize descriptions that add speculative mechanisms or conclusions not present in the content (e.g., inventing a specific cause when the content only describes symptoms).\n\n4. LANGUAGE: Visual descriptions should use the content language where applicable.\n",
+        "id": "scenario-en-economics-business-cycle-phases-1",
+        "userInput": {
+          "language": "en",
+          "scenario": "You run strategy for a retail chain that opened 18 new stores after a strong first half of the year. By early fall, sales are sliding, inventory is piling up, and the new locations are missing their targets even in cities that looked promising."
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The chosen kind 'diagram' is appropriate for a scenario-level visual about a complex purchase flow and relationships between services. The description is in Brazilian Portuguese and is fairly specific about nodes and problematic transitions. Minor issue: it introduces a specific mechanism, 'Ajuste recente' between 'Pagamento' and 'Faturamento', which is somewhat speculative because the scenario only says that each adjustment fixes one part and breaks another, without identifying a particular recent adjustment or exact dependency path. This does not fully contradict the scenario, but it adds a concrete detail not grounded in the input.",
+          "kind": "minorErrors",
+          "score": 8.7
+        },
+        {
+          "conclusion": "The response could be improved by making the visual slightly less interpretive and more directly tied to the scenario text—for example, emphasizing repeated errors at specific stages of the purchase flow without implying a particular recent change in one edge. It could also include a clearer visual cue that the system remains operational despite failures, such as marking the site as still online while certain transitions error intermittently. Still, the current description is useful and generatable.",
+          "kind": "potentialImprovements",
+          "score": 8.9
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. KIND APPROPRIATENESS: Choose kind based on data structure. Code/logs -> \"code\". Numeric trends -> \"chart\". Structured data -> \"table\". Systems/flows -> \"diagram\". Physical scenes -> \"image\" (last resort). Penalize \"image\" when a structured type fits.\n\n2. DESCRIPTION SPECIFICITY: Descriptions must be specific enough for a visual generation system — include data values for charts, column headers for tables, code structure for snippets, node labels for diagrams. When content is qualitative (e.g., \"values rise then fall\"), the description should invent plausible illustrative values that match the described pattern — the visual is an illustration, not a data source. Penalize vague descriptions like \"a relevant chart.\" For tables, every row must have exactly one value per column — missing fields make the data malformed.\n\n3. CONSISTENCY: Visual descriptions must reflect the same evidence as the input content. If the content mentions specific data, the visual should show that data. Do NOT penalize plausible illustrative values added to make qualitative content generatable — that is expected. DO penalize descriptions that add speculative mechanisms or conclusions not present in the content (e.g., inventing a specific cause when the content only describes symptoms).\n\n4. LANGUAGE: Visual descriptions should use the content language where applicable.\n\nLANGUAGE REQUIREMENT: All content must be in Brazilian Portuguese.\n    ",
+        "id": "scenario-pt-agile-transformacao-gradual-1",
+        "userInput": {
+          "language": "pt",
+          "scenario": "Você faz parte da equipe de um produto que ficou anos crescendo sem parar, e agora os erros aumentaram sempre que uma compra passa por etapas específicas do fluxo. O site continua no ar, mas cada ajuste parece consertar um pedaço e quebrar outro, e você precisa descobrir o que realmente está acontecendo sem parar a operação."
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response uses a plausible chart for the scenario, but it introduces a specific mechanism ('logistics schedule') and a precise target-vs-actual framing that are not explicitly stated in the scenario. The scenario says shipments are delayed and regions are waiting, but does not directly mention an official target distribution curve or confirm logistics as the cause. These additions are somewhat speculative, though still broadly aligned with the investigation theme.",
+          "kind": "minorErrors",
+          "score": 8.5
+        },
+        {
+          "conclusion": "The visual is appropriate and specific: a chart fits the scenario-level quantitative shortfall, and the description includes axes, series names, and illustrative values. It could be improved by making the invented values more fully specified for all weeks, or by choosing a visual that more directly reflects regional delays mentioned in the scenario (for example, a chart by region or a timeline of shipment delays) while avoiding causal wording not present in the prompt.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. KIND APPROPRIATENESS: Choose kind based on data structure. Code/logs -> \"code\". Numeric trends -> \"chart\". Structured data -> \"table\". Systems/flows -> \"diagram\". Physical scenes -> \"image\" (last resort). Penalize \"image\" when a structured type fits.\n\n2. DESCRIPTION SPECIFICITY: Descriptions must be specific enough for a visual generation system — include data values for charts, column headers for tables, code structure for snippets, node labels for diagrams. When content is qualitative (e.g., \"values rise then fall\"), the description should invent plausible illustrative values that match the described pattern — the visual is an illustration, not a data source. Penalize vague descriptions like \"a relevant chart.\" For tables, every row must have exactly one value per column — missing fields make the data malformed.\n\n3. CONSISTENCY: Visual descriptions must reflect the same evidence as the input content. If the content mentions specific data, the visual should show that data. Do NOT penalize plausible illustrative values added to make qualitative content generatable — that is expected. DO penalize descriptions that add speculative mechanisms or conclusions not present in the content (e.g., inventing a specific cause when the content only describes symptoms).\n\n4. LANGUAGE: Visual descriptions should use the content language where applicable.\n",
+        "id": "scenario-en-history-biomedical-institutions-1",
+        "userInput": {
+          "language": "en",
+          "scenario": "You're advising officials as a new disease spreads, but the national vaccination campaign keeps falling behind schedule. Some regions are waiting for doses while others get shipments late, and you need to figure out why the country couldn't respond faster."
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None. The output chooses an appropriate kind for a scenario-level visual with no FINDING present: the scenario describes a physical building condition (visible cracks on upper floors), so an image is a valid fit. The description is consistent with the scenario and does not introduce a major unsupported causal claim.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The description omits a few scenario details that could have been reflected visually, such as the contrast with the prior inspection being two years ago or the fact that no renovations occurred since, though some of these are not directly visualizable. It also says the cracks are 'deep,' which is a slightly stronger characterization than 'new cracks' in the prompt, though still broadly plausible. Overall these are minor limitations rather than clear violations.",
+          "kind": "minorErrors",
+          "score": 8.8
+        },
+        {
+          "conclusion": "The visual could be improved by adding more concrete spatial details for generation, such as the number and placement of cracks, approximate facade composition, and clearer arrangement of neighboring buildings. It could also include subtle age cues for the century-old structure and emphasize that the cracks are concentrated on upper floors. Still, the current description is usable and appropriately in English.",
+          "kind": "potentialImprovements",
+          "score": 8.9
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. KIND APPROPRIATENESS: Choose kind based on data structure. Code/logs -> \"code\". Numeric trends -> \"chart\". Structured data -> \"table\". Systems/flows -> \"diagram\". Physical scenes -> \"image\" (last resort). Penalize \"image\" when a structured type fits.\n\n2. DESCRIPTION SPECIFICITY: Descriptions must be specific enough for a visual generation system — include data values for charts, column headers for tables, code structure for snippets, node labels for diagrams. When content is qualitative (e.g., \"values rise then fall\"), the description should invent plausible illustrative values that match the described pattern — the visual is an illustration, not a data source. Penalize vague descriptions like \"a relevant chart.\" For tables, every row must have exactly one value per column — missing fields make the data malformed.\n\n3. CONSISTENCY: Visual descriptions must reflect the same evidence as the input content. If the content mentions specific data, the visual should show that data. Do NOT penalize plausible illustrative values added to make qualitative content generatable — that is expected. DO penalize descriptions that add speculative mechanisms or conclusions not present in the content (e.g., inventing a specific cause when the content only describes symptoms).\n\n4. LANGUAGE: Visual descriptions should use the content language where applicable.\n",
+        "id": "scenario-en-engineering-structural-diagnosis-1",
+        "userInput": {
+          "language": "en",
+          "scenario": "You've been called to inspect a century-old stone building after residents reported new cracks appearing on upper floors. The building passed its last inspection two years ago, no renovations were done since, and neighboring buildings of similar age show no problems."
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response slightly over-interprets the finding by asserting that latency fluctuation occurs specifically at the 'Other City' node. The finding only says the path includes an extra stop in another city and that delay varies across tests while hop count stays constant; it does not localize the source of variation to a specific hop. This is a minor consistency issue, though the overall representation remains aligned with the evidence.",
+          "kind": "minorErrors",
+          "score": 8.8
+        },
+        {
+          "conclusion": "The chosen kind is appropriate: the evidence is structured repeated path-check output, so a table fits well. The description is specific, uses English as required, and includes complete rows and columns. It could be improved by making the repeated-test aspect more explicit in the table structure (for example, adding separate test runs or an Avg/Current latency column) so the fluctuating delay across repeated tests is shown more directly rather than only via min/max values. It could also avoid causal emphasis on a single hop unless the evidence states that explicitly.",
+          "kind": "potentialImprovements",
+          "score": 9.2
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. KIND APPROPRIATENESS: Choose kind based on data structure. Code/logs -> \"code\". Numeric trends -> \"chart\". Structured data -> \"table\". Systems/flows -> \"diagram\". Physical scenes -> \"image\" (last resort). Penalize \"image\" when a structured type fits.\n\n2. DESCRIPTION SPECIFICITY: Descriptions must be specific enough for a visual generation system — include data values for charts, column headers for tables, code structure for snippets, node labels for diagrams. When content is qualitative (e.g., \"values rise then fall\"), the description should invent plausible illustrative values that match the described pattern — the visual is an illustration, not a data source. Penalize vague descriptions like \"a relevant chart.\" For tables, every row must have exactly one value per column — missing fields make the data malformed.\n\n3. CONSISTENCY: Visual descriptions must reflect the same evidence as the input content. If the content mentions specific data, the visual should show that data. Do NOT penalize plausible illustrative values added to make qualitative content generatable — that is expected. DO penalize descriptions that add speculative mechanisms or conclusions not present in the content (e.g., inventing a specific cause when the content only describes symptoms).\n\n4. LANGUAGE: Visual descriptions should use the content language where applicable.\n",
+        "id": "finding-en-web-path-checks-1",
+        "userInput": {
+          "finding": "Path checks from the slow region pass through several extra network hops before reaching the app, including one stop in another city. However, the number of hops stays the same across repeated tests even when the delay jumps up and down by several seconds.",
+          "language": "en",
+          "scenario": "Your team's web app suddenly feels slow for users in one region, even though the servers look healthy and CPU use is normal. You need to figure out why pages are taking several extra seconds to load before support starts rolling back unrelated changes."
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response is broadly correct, but there is a minor consistency issue: the finding says that in some rows the original value remains visible until near the end and the problem appears only at report closing; row 4 uses 'null' all the way to the end rather than showing a clearer late-stage transformation/failure of an originally preserved value. Also, 'Tabela demonstrando o fluxo' slightly mixes table content with process framing, though the actual structure is still tabular and valid.",
+          "kind": "minorErrors",
+          "score": 8.8
+        },
+        {
+          "conclusion": "The output could be improved by making the table even more explicit about the contrasted patterns mentioned in the finding: add more rows to show multiple similar columns with format mismatches, and make the late-failure example more clearly preserve an original raw representation until the final column. It could also use slightly more Portuguese-native value labels for missing data states to avoid technical ambiguity, while still keeping one value per cell.",
+          "kind": "potentialImprovements",
+          "score": 8.9
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. KIND APPROPRIATENESS: Choose kind based on data structure. Code/logs -> \"code\". Numeric trends -> \"chart\". Structured data -> \"table\". Systems/flows -> \"diagram\". Physical scenes -> \"image\" (last resort). Penalize \"image\" when a structured type fits.\n\n2. DESCRIPTION SPECIFICITY: Descriptions must be specific enough for a visual generation system — include data values for charts, column headers for tables, code structure for snippets, node labels for diagrams. When content is qualitative (e.g., \"values rise then fall\"), the description should invent plausible illustrative values that match the described pattern — the visual is an illustration, not a data source. Penalize vague descriptions like \"a relevant chart.\" For tables, every row must have exactly one value per column — missing fields make the data malformed.\n\n3. CONSISTENCY: Visual descriptions must reflect the same evidence as the input content. If the content mentions specific data, the visual should show that data. Do NOT penalize plausible illustrative values added to make qualitative content generatable — that is expected. DO penalize descriptions that add speculative mechanisms or conclusions not present in the content (e.g., inventing a specific cause when the content only describes symptoms).\n\n4. LANGUAGE: Visual descriptions should use the content language where applicable.\n\nLANGUAGE REQUIREMENT: All content must be in Brazilian Portuguese.\n    ",
+        "id": "finding-pt-python-data-pipeline-1",
+        "userInput": {
+          "finding": "Ao seguir o caminho dos dados, os valores já saem da leitura inicial com diferenças de formato entre colunas parecidas, e em uma etapa intermediária alguns campos passam a aparecer como número comum mesmo quando vieram vazios. No entanto, em outras linhas o valor original continua visível até quase o fim e o problema só aparece no fechamento do relatório.",
+          "language": "pt",
+          "scenario": "Você foi chamado porque o sistema de risco de uma fintech aprovou alguns pedidos que deveriam ter sido bloqueados e, ao mesmo tempo, marcou outros como impossíveis de avaliar. Nos relatórios da madrugada, várias colunas aparecem com números sem sentido, campos vazios e alertas contraditórios."
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response slightly over-specifies the chemistry by stating the molecule has 'una estructura central, como un anillo aromático', which is speculative because the finding only says there are two similar positions on the starting compound, not that it is aromatic. Also, the embedded bar-comparison data inside the diagram is acceptable, but it blurs the kind choice slightly since part of the content behaves like a chart. These issues do not seriously reduce usefulness.",
+          "kind": "minorErrors",
+          "score": 8.7
+        },
+        {
+          "conclusion": "The answer is strong and appropriately chooses 'diagram' because the finding is about two similar reactive positions and variant relationships rather than a pure numeric dataset. It is specific, in Spanish, and includes plausible illustrative values consistent with the finding. It could be improved by avoiding speculative structural detail, and by describing the molecular layout more neutrally (e.g., 'esqueleto del compuesto de partida con dos sitios de reacción similares') while still keeping the comparison of historical vs current variant proportions. If desired, it could also clarify labels such as 'Variante A' and 'Variante B' as regioisómeros/productos alternativos.",
+          "kind": "potentialImprovements",
+          "score": 9.1
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. KIND APPROPRIATENESS: Choose kind based on data structure. Code/logs -> \"code\". Numeric trends -> \"chart\". Structured data -> \"table\". Systems/flows -> \"diagram\". Physical scenes -> \"image\" (last resort). Penalize \"image\" when a structured type fits.\n\n2. DESCRIPTION SPECIFICITY: Descriptions must be specific enough for a visual generation system — include data values for charts, column headers for tables, code structure for snippets, node labels for diagrams. When content is qualitative (e.g., \"values rise then fall\"), the description should invent plausible illustrative values that match the described pattern — the visual is an illustration, not a data source. Penalize vague descriptions like \"a relevant chart.\" For tables, every row must have exactly one value per column — missing fields make the data malformed.\n\n3. CONSISTENCY: Visual descriptions must reflect the same evidence as the input content. If the content mentions specific data, the visual should show that data. Do NOT penalize plausible illustrative values added to make qualitative content generatable — that is expected. DO penalize descriptions that add speculative mechanisms or conclusions not present in the content (e.g., inventing a specific cause when the content only describes symptoms).\n\n4. LANGUAGE: Visual descriptions should use the content language where applicable.\n\nLANGUAGE REQUIREMENT: All content must be in Latin American Spanish.\n    ",
+        "id": "finding-es-quimica-molecule-positions-1",
+        "userInput": {
+          "finding": "En el dibujo del compuesto de partida hay dos posiciones muy parecidas donde podía ocurrir el cambio, y en los antecedentes del proceso ya se habían reportado mezclas pequeñas de dos variantes. Sin embargo, en las corridas buenas esas variantes quedaban en niveles bajos y esta vez la proporción entre ellas salió mucho más desordenada.",
+          "language": "es",
+          "scenario": "Estás revisando una corrida en la planta y el lote salió con muy poco producto útil y demasiadas impurezas. El procedimiento parecía rutinario, pero esta vez aparecieron compuestos inesperados y nadie sabe en qué paso se torció todo."
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response slightly over-interprets the finding by grouping cities into 'High Early Traffic Cities' versus 'Other Expansion Cities' without that exact segmentation being stated. While this is a plausible visualization choice, it introduces a categorization not explicitly present in the evidence. Also, the y-axis label 'Average Sales Volume' is somewhat generic given the scenario refers to sales and targets, though this is a small clarity issue rather than a factual problem.",
+          "kind": "minorErrors",
+          "score": 8.8
+        },
+        {
+          "conclusion": "The answer is strong and appropriately chooses a chart for time-based comparative numeric trends. It provides concrete monthly values, axes, series names, and annotations, making it generatable. It could be improved by tying the cohorts more explicitly to the finding text (for example, naming one series around cities with the largest temporary boosts and another around baseline regions), and by clarifying units such as indexed sales or revenue. If desired, it could also note that values are illustrative to avoid implying exact source data.",
+          "kind": "potentialImprovements",
+          "score": 9.1
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. KIND APPROPRIATENESS: Choose kind based on data structure. Code/logs -> \"code\". Numeric trends -> \"chart\". Structured data -> \"table\". Systems/flows -> \"diagram\". Physical scenes -> \"image\" (last resort). Penalize \"image\" when a structured type fits.\n\n2. DESCRIPTION SPECIFICITY: Descriptions must be specific enough for a visual generation system — include data values for charts, column headers for tables, code structure for snippets, node labels for diagrams. When content is qualitative (e.g., \"values rise then fall\"), the description should invent plausible illustrative values that match the described pattern — the visual is an illustration, not a data source. Penalize vague descriptions like \"a relevant chart.\" For tables, every row must have exactly one value per column — missing fields make the data malformed.\n\n3. CONSISTENCY: Visual descriptions must reflect the same evidence as the input content. If the content mentions specific data, the visual should show that data. Do NOT penalize plausible illustrative values added to make qualitative content generatable — that is expected. DO penalize descriptions that add speculative mechanisms or conclusions not present in the content (e.g., inventing a specific cause when the content only describes symptoms).\n\n4. LANGUAGE: Visual descriptions should use the content language where applicable.\n",
+        "id": "finding-en-economics-first-half-boost-1",
+        "userInput": {
+          "finding": "The first half included a holiday shift that pushed seasonal purchases earlier than usual, and several regions also saw one-time jumps during a short stretch of unusually strong foot traffic. However, some of the cities where those boosts were largest still held up reasonably well into midsummer before dropping later.",
+          "language": "en",
+          "scenario": "You run strategy for a retail chain that opened 18 new stores after a strong first half of the year. By early fall, sales are sliding, inventory is piling up, and the new locations are missing their targets even in cities that looked promising."
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response slightly over-specifies the evidence by naming concrete system layers ('Front-end', 'Back-office', 'Banco de Dados') that were not stated in the finding, which risks adding speculative implementation details. However, this does not materially distort the core evidence, which is inconsistent statuses across different views for some orders and consistent statuses for others.",
+          "kind": "minorErrors",
+          "score": 8.7
+        },
+        {
+          "conclusion": "The table kind is appropriate for structured cross-system status comparisons, and the description is specific with clear columns and complete rows. It could be improved by using more neutral labels such as 'Tela A', 'Tela B' and 'Consulta C' to avoid implying unsupported architecture details, and possibly by including a time/reference column to make the 'por alguns minutos' aspect even more explicit. Language use is correctly in Brazilian Portuguese.",
+          "kind": "potentialImprovements",
+          "score": 9.1
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. KIND APPROPRIATENESS: Choose kind based on data structure. Code/logs -> \"code\". Numeric trends -> \"chart\". Structured data -> \"table\". Systems/flows -> \"diagram\". Physical scenes -> \"image\" (last resort). Penalize \"image\" when a structured type fits.\n\n2. DESCRIPTION SPECIFICITY: Descriptions must be specific enough for a visual generation system — include data values for charts, column headers for tables, code structure for snippets, node labels for diagrams. When content is qualitative (e.g., \"values rise then fall\"), the description should invent plausible illustrative values that match the described pattern — the visual is an illustration, not a data source. Penalize vague descriptions like \"a relevant chart.\" For tables, every row must have exactly one value per column — missing fields make the data malformed.\n\n3. CONSISTENCY: Visual descriptions must reflect the same evidence as the input content. If the content mentions specific data, the visual should show that data. Do NOT penalize plausible illustrative values added to make qualitative content generatable — that is expected. DO penalize descriptions that add speculative mechanisms or conclusions not present in the content (e.g., inventing a specific cause when the content only describes symptoms).\n\n4. LANGUAGE: Visual descriptions should use the content language where applicable.\n\nLANGUAGE REQUIREMENT: All content must be in Brazilian Portuguese.\n    ",
+        "id": "finding-pt-agile-status-divergence-1",
+        "userInput": {
+          "finding": "Ao conferir o mesmo pedido em telas e consultas diferentes, em vários casos o status aparece como concluído em um lugar e como pendente em outro por alguns minutos. No entanto, há pedidos com erro em que todas as partes mostram exatamente o mesmo status do começo ao fim.",
+          "language": "pt",
+          "scenario": "Você faz parte da equipe de um produto que ficou anos crescendo sem parar, e agora os erros aumentaram sempre que uma compra passa por etapas específicas do fluxo. O site continua no ar, mas cada ajuste parece consertar um pedaço e quebrar outro, e você precisa descobrir o que realmente está acontecendo sem parar a operação."
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The table is broadly appropriate and specific, but it only provides four illustrative rows and does not clearly show the 'multiple offices before reaching factories or clinics' pattern across samples, paperwork, and equipment requests as comprehensively as it could. It also compresses the routing path into a single column instead of structuring transfer stages into clearer columns, which slightly reduces visual clarity for the evidence. These are minor utility issues, not violations.",
+          "kind": "minorErrors",
+          "score": 8.6
+        },
+        {
+          "conclusion": "The response could be improved by including more representative rows to cover all mentioned evidence types (samples, paperwork, equipment requests, urgent messages, and exceptions where materials arrived before reporting was complete). A more explicit table schema—such as separate columns for Origin, Office 1, Office 2, Destination, Response Time, and Reporting Status—would better highlight the bottleneck and the exceptions. Still, the current output is usable and consistent.",
+          "kind": "potentialImprovements",
+          "score": 8.7
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. KIND APPROPRIATENESS: Choose kind based on data structure. Code/logs -> \"code\". Numeric trends -> \"chart\". Structured data -> \"table\". Systems/flows -> \"diagram\". Physical scenes -> \"image\" (last resort). Penalize \"image\" when a structured type fits.\n\n2. DESCRIPTION SPECIFICITY: Descriptions must be specific enough for a visual generation system — include data values for charts, column headers for tables, code structure for snippets, node labels for diagrams. When content is qualitative (e.g., \"values rise then fall\"), the description should invent plausible illustrative values that match the described pattern — the visual is an illustration, not a data source. Penalize vague descriptions like \"a relevant chart.\" For tables, every row must have exactly one value per column — missing fields make the data malformed.\n\n3. CONSISTENCY: Visual descriptions must reflect the same evidence as the input content. If the content mentions specific data, the visual should show that data. Do NOT penalize plausible illustrative values added to make qualitative content generatable — that is expected. DO penalize descriptions that add speculative mechanisms or conclusions not present in the content (e.g., inventing a specific cause when the content only describes symptoms).\n\n4. LANGUAGE: Visual descriptions should use the content language where applicable.\n",
+        "id": "finding-en-history-material-transfer-1",
+        "userInput": {
+          "finding": "Transfer logs show samples, paperwork, and equipment requests moving through multiple offices before reaching factories or clinics. However, some urgent messages were answered the same day, and a few regions received materials without the full reporting trail being completed first.",
+          "language": "en",
+          "scenario": "You're advising officials as a new disease spreads, but the national vaccination campaign keeps falling behind schedule. Some regions are waiting for doses while others get shipments late, and you need to figure out why the country couldn't respond faster."
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response slightly overstates the finding by saying the lines track an 'almost identical' decline and 'clearly illustrates' the same severe decline regardless of competitor presence. The finding says the remaining cities showed a similar sales slide, not necessarily an almost identical week-by-week pattern. This is a mild extrapolation rather than a serious inconsistency. Also, the chart uses invented weekly values for both groups without explicitly distinguishing them as illustrative, though inventing plausible values is allowed by the instructions.",
+          "kind": "minorErrors",
+          "score": 8.8
+        },
+        {
+          "conclusion": "A stronger response could provide the full weekly values for both series explicitly rather than only start and end points, making generation more deterministic. It could also consider a grouped comparison chart or include the grouping counts more directly in labels/subtitle. Finally, wording could be slightly more neutral to avoid implying a stronger causal conclusion than the finding supports.",
+          "kind": "potentialImprovements",
+          "score": 8.9
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. KIND APPROPRIATENESS: Choose kind based on data structure. Code/logs -> \"code\". Numeric trends -> \"chart\". Structured data -> \"table\". Systems/flows -> \"diagram\". Physical scenes -> \"image\" (last resort). Penalize \"image\" when a structured type fits.\n\n2. DESCRIPTION SPECIFICITY: Descriptions must be specific enough for a visual generation system — include data values for charts, column headers for tables, code structure for snippets, node labels for diagrams. When content is qualitative (e.g., \"values rise then fall\"), the description should invent plausible illustrative values that match the described pattern — the visual is an illustration, not a data source. Penalize vague descriptions like \"a relevant chart.\" For tables, every row must have exactly one value per column — missing fields make the data malformed.\n\n3. CONSISTENCY: Visual descriptions must reflect the same evidence as the input content. If the content mentions specific data, the visual should show that data. Do NOT penalize plausible illustrative values added to make qualitative content generatable — that is expected. DO penalize descriptions that add speculative mechanisms or conclusions not present in the content (e.g., inventing a specific cause when the content only describes symptoms).\n\n4. LANGUAGE: Visual descriptions should use the content language where applicable.\n",
+        "id": "finding-en-economics-competitor-cities-1",
+        "userInput": {
+          "finding": "In 7 of the 18 new-store cities, a national competitor opened a new location or started heavy discounting within a few weeks of your launch. However, the remaining new-store cities had no major competitor change on record and still showed a similar sales slide over the same period.",
+          "language": "en",
+          "scenario": "You run strategy for a retail chain that opened 18 new stores after a strong first half of the year. By early fall, sales are sliding, inventory is piling up, and the new locations are missing their targets even in cities that looked promising."
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response is strong and appropriately chooses a chart for numeric timing breakdown data. The description is specific, uses plausible illustrative values, stays consistent with the finding, and is in English as requested. A small improvement would be to mention the bar labels more explicitly (for example, naming each full bar as 'Normal Region' and 'Affected Region') and perhaps clarify that the chart compares timing after first byte appears, but these are minor refinements rather than deficiencies.",
+          "kind": "potentialImprovements",
+          "score": 9.4
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. KIND APPROPRIATENESS: Choose kind based on data structure. Code/logs -> \"code\". Numeric trends -> \"chart\". Structured data -> \"table\". Systems/flows -> \"diagram\". Physical scenes -> \"image\" (last resort). Penalize \"image\" when a structured type fits.\n\n2. DESCRIPTION SPECIFICITY: Descriptions must be specific enough for a visual generation system — include data values for charts, column headers for tables, code structure for snippets, node labels for diagrams. When content is qualitative (e.g., \"values rise then fall\"), the description should invent plausible illustrative values that match the described pattern — the visual is an illustration, not a data source. Penalize vague descriptions like \"a relevant chart.\" For tables, every row must have exactly one value per column — missing fields make the data malformed.\n\n3. CONSISTENCY: Visual descriptions must reflect the same evidence as the input content. If the content mentions specific data, the visual should show that data. Do NOT penalize plausible illustrative values added to make qualitative content generatable — that is expected. DO penalize descriptions that add speculative mechanisms or conclusions not present in the content (e.g., inventing a specific cause when the content only describes symptoms).\n\n4. LANGUAGE: Visual descriptions should use the content language where applicable.\n",
+        "id": "finding-en-web-timing-breakdown-1",
+        "userInput": {
+          "finding": "A timing breakdown shows the browser connects quickly and the app starts generating the page in its usual time. However, there is a long gap while data is being exchanged after the first response bytes appear, and that gap is much larger only for users in the affected region.",
+          "language": "en",
+          "scenario": "Your team's web app suddenly feels slow for users in one region, even though the servers look healthy and CPU use is normal. You need to figure out why pages are taking several extra seconds to load before support starts rolling back unrelated changes."
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The chosen kind 'chart' is appropriate because the finding is numeric/trend-oriented. The description is fairly specific with axes, time window, and illustrative values. However, it omits one key metric explicitly mentioned in the finding: the rising count of delayed retransmissions. Instead, it substitutes average page load time as the second series, which is contextually relevant but not actually part of the device records described in the finding. This weakens evidence fidelity slightly. Also, the 4-hour chart only provides a handful of point values rather than a clearer full set of time points, though it remains generatable.",
+          "kind": "minorErrors",
+          "score": 8.4
+        },
+        {
+          "conclusion": "A stronger answer would include delayed retransmissions directly—either as a second line or in a multi-series chart with packet drop bursts, retransmission counts, and regional test load time—so the visual more fully reflects the finding without introducing a proxy metric in place of stated evidence. Adding a few more explicit timestamps/values would make generation easier and the pattern more precise.",
+          "kind": "potentialImprovements",
+          "score": 8.6
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. KIND APPROPRIATENESS: Choose kind based on data structure. Code/logs -> \"code\". Numeric trends -> \"chart\". Structured data -> \"table\". Systems/flows -> \"diagram\". Physical scenes -> \"image\" (last resort). Penalize \"image\" when a structured type fits.\n\n2. DESCRIPTION SPECIFICITY: Descriptions must be specific enough for a visual generation system — include data values for charts, column headers for tables, code structure for snippets, node labels for diagrams. When content is qualitative (e.g., \"values rise then fall\"), the description should invent plausible illustrative values that match the described pattern — the visual is an illustration, not a data source. Penalize vague descriptions like \"a relevant chart.\" For tables, every row must have exactly one value per column — missing fields make the data malformed.\n\n3. CONSISTENCY: Visual descriptions must reflect the same evidence as the input content. If the content mentions specific data, the visual should show that data. Do NOT penalize plausible illustrative values added to make qualitative content generatable — that is expected. DO penalize descriptions that add speculative mechanisms or conclusions not present in the content (e.g., inventing a specific cause when the content only describes symptoms).\n\n4. LANGUAGE: Visual descriptions should use the content language where applicable.\n",
+        "id": "finding-en-web-dropped-packets-1",
+        "userInput": {
+          "finding": "Records from devices on that route show bursts of dropped packets and a rising count of delayed retransmissions during the same hours users reported slow pages. However, the logs also show stretches with no unusual drops while test loads from the region still take much longer than normal.",
+          "language": "en",
+          "scenario": "Your team's web app suddenly feels slow for users in one region, even though the servers look healthy and CPU use is normal. You need to figure out why pages are taking several extra seconds to load before support starts rolling back unrelated changes."
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "No clear minor errors. The chosen kind is appropriate: this is numeric comparative performance data, so a chart fits well. The description is specific, includes axis labels, series names, and plausible illustrative values that match the finding: nearby/affected regions are slower, slow tests do not fail outright, and larger pages are much more impacted than small pages. Language use is correctly in English. One slight limitation is that the finding mentions cities near the affected region, while the chart uses broader regions rather than city-level labels, but this does not materially reduce usefulness.",
+          "kind": "minorErrors",
+          "score": 9.6
+        },
+        {
+          "conclusion": "The response could be improved by making the geography align even more closely with the finding by naming cities instead of broad regions, and by optionally choosing a different chart form (such as a scatter or clustered bars with clearer emphasis on page-size effect) to show that larger pages are disproportionately affected. It could also mention that all tests complete successfully to reflect 'do not fail outright,' though the load-time values already imply completion.",
+          "kind": "potentialImprovements",
+          "score": 9.1
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. KIND APPROPRIATENESS: Choose kind based on data structure. Code/logs -> \"code\". Numeric trends -> \"chart\". Structured data -> \"table\". Systems/flows -> \"diagram\". Physical scenes -> \"image\" (last resort). Penalize \"image\" when a structured type fits.\n\n2. DESCRIPTION SPECIFICITY: Descriptions must be specific enough for a visual generation system — include data values for charts, column headers for tables, code structure for snippets, node labels for diagrams. When content is qualitative (e.g., \"values rise then fall\"), the description should invent plausible illustrative values that match the described pattern — the visual is an illustration, not a data source. Penalize vague descriptions like \"a relevant chart.\" For tables, every row must have exactly one value per column — missing fields make the data malformed.\n\n3. CONSISTENCY: Visual descriptions must reflect the same evidence as the input content. If the content mentions specific data, the visual should show that data. Do NOT penalize plausible illustrative values added to make qualitative content generatable — that is expected. DO penalize descriptions that add speculative mechanisms or conclusions not present in the content (e.g., inventing a specific cause when the content only describes symptoms).\n\n4. LANGUAGE: Visual descriptions should use the content language where applicable.\n",
+        "id": "finding-en-web-page-size-scatter-1",
+        "userInput": {
+          "finding": "Page-load tests from cities near the affected region are slow by several extra seconds, while tests from other regions finish near the usual time. However, the slow tests do not fail outright, and small pages often load much closer to normal than larger ones.",
+          "language": "en",
+          "scenario": "Your team's web app suddenly feels slow for users in one region, even though the servers look healthy and CPU use is normal. You need to figure out why pages are taking several extra seconds to load before support starts rolling back unrelated changes."
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "No clear minor factual or instruction-following errors. The chosen kind is appropriate because the finding is numeric time-series behavior, and the description includes concrete values, axis meaning, series names, and the key anomaly: a brief queue spike while CPU and response time remain normal. Language is correctly in English. One subtle omission is that the finding mentions unaffected regions still seeing normal page loads during the queue event, and the chart does not explicitly encode that regional contrast, but this does not materially break the visualization of the finding itself.",
+          "kind": "minorErrors",
+          "score": 9.4
+        },
+        {
+          "conclusion": "Could be improved slightly by making the regional context explicit, for example adding a fourth series or annotation such as 'Unaffected Region Page Load Time' staying normal, or by noting baseline values more explicitly across the full 30-minute interval. An annotation calling out the 10:15-10:19 anomaly window would also help. Still, the current chart description is already specific and generatable.",
+          "kind": "potentialImprovements",
+          "score": 9.2
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. KIND APPROPRIATENESS: Choose kind based on data structure. Code/logs -> \"code\". Numeric trends -> \"chart\". Structured data -> \"table\". Systems/flows -> \"diagram\". Physical scenes -> \"image\" (last resort). Penalize \"image\" when a structured type fits.\n\n2. DESCRIPTION SPECIFICITY: Descriptions must be specific enough for a visual generation system — include data values for charts, column headers for tables, code structure for snippets, node labels for diagrams. When content is qualitative (e.g., \"values rise then fall\"), the description should invent plausible illustrative values that match the described pattern — the visual is an illustration, not a data source. Penalize vague descriptions like \"a relevant chart.\" For tables, every row must have exactly one value per column — missing fields make the data malformed.\n\n3. CONSISTENCY: Visual descriptions must reflect the same evidence as the input content. If the content mentions specific data, the visual should show that data. Do NOT penalize plausible illustrative values added to make qualitative content generatable — that is expected. DO penalize descriptions that add speculative mechanisms or conclusions not present in the content (e.g., inventing a specific cause when the content only describes symptoms).\n\n4. LANGUAGE: Visual descriptions should use the content language where applicable.\n",
+        "id": "finding-en-web-server-metrics-1",
+        "userInput": {
+          "finding": "The busy app server shows normal CPU use, stable memory, and response times close to its usual baseline during the slowdown window. However, one short period shows its request queue briefly growing even though users in unaffected regions were still getting normal page loads at that time.",
+          "language": "en",
+          "scenario": "Your team's web app suddenly feels slow for users in one region, even though the servers look healthy and CPU use is normal. You need to figure out why pages are taking several extra seconds to load before support starts rolling back unrelated changes."
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response is highly appropriate and accurate: it correctly chooses \"image\" for a physical scene involving visible cracks in stone, matching the explicit expectation. The description is specific and visually generatable, distinguishing new diagonal cracks from older hairline cracks and noting the fresh, light-colored stone versus weathered older edges. A minor issue is that it adds absolute wording like \"absolutely no weathering, dust, or staining,\" which slightly over-specifies beyond the finding's wording and could be seen as a small embellishment rather than a direct reflection of the evidence.",
+          "kind": "minorErrors",
+          "score": 9.2
+        },
+        {
+          "conclusion": "The output could be improved slightly by including a bit more spatial detail for generation, such as whether the cracks originate from the top left and top right window corners and how many cracks are visible. It could also avoid absolute phrasing and stick closer to the source by saying the new cracks show no visible weathering or staining, rather than \"absolutely no weathering, dust, or staining.\" These are refinements only; the current answer already meets the task well.",
+          "kind": "potentialImprovements",
+          "score": 9.3
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. KIND APPROPRIATENESS: Choose kind based on data structure. Code/logs -> \"code\". Numeric trends -> \"chart\". Structured data -> \"table\". Systems/flows -> \"diagram\". Physical scenes -> \"image\" (last resort). Penalize \"image\" when a structured type fits.\n\n2. DESCRIPTION SPECIFICITY: Descriptions must be specific enough for a visual generation system — include data values for charts, column headers for tables, code structure for snippets, node labels for diagrams. When content is qualitative (e.g., \"values rise then fall\"), the description should invent plausible illustrative values that match the described pattern — the visual is an illustration, not a data source. Penalize vague descriptions like \"a relevant chart.\" For tables, every row must have exactly one value per column — missing fields make the data malformed.\n\n3. CONSISTENCY: Visual descriptions must reflect the same evidence as the input content. If the content mentions specific data, the visual should show that data. Do NOT penalize plausible illustrative values added to make qualitative content generatable — that is expected. DO penalize descriptions that add speculative mechanisms or conclusions not present in the content (e.g., inventing a specific cause when the content only describes symptoms).\n\n4. LANGUAGE: Visual descriptions should use the content language where applicable.\n\nIMAGE KIND: This finding describes a physical scene (visible cracks in stone) that can only be represented as a photograph. It SHOULD use \"image\" kind. Penalize using a structured type when the evidence is inherently a physical scene.\n    ",
+        "id": "finding-en-engineering-wall-cracks-1",
+        "userInput": {
+          "finding": "Several new cracks on the upper floors run diagonally from window corners toward the ceiling, and the crack edges show fresh, light-colored stone with no weathering or staining. However, a few older hairline cracks on the same walls have similar diagonal angles and were marked as stable in the previous inspection report.",
+          "language": "en",
+          "scenario": "You've been called to inspect a century-old stone building after residents reported new cracks appearing on upper floors. The building passed its last inspection two years ago, no renovations were done since, and neighboring buildings of similar age show no problems."
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response is strong and chooses the correct kind ('image') for a physical scene. The description is clear, consistent with the finding, and in the correct language. A small improvement would be to add a few more concrete visual details for generation, such as the approximate color of the damp band, the arrangement/size of the stone blocks, lighting or viewpoint, and clearer spatial framing of the split-screen comparison. These are enhancements rather than deficiencies.",
+          "kind": "potentialImprovements",
+          "score": 9.4
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. KIND APPROPRIATENESS: Choose kind based on data structure. Code/logs -> \"code\". Numeric trends -> \"chart\". Structured data -> \"table\". Systems/flows -> \"diagram\". Physical scenes -> \"image\" (last resort). Penalize \"image\" when a structured type fits.\n\n2. DESCRIPTION SPECIFICITY: Descriptions must be specific enough for a visual generation system — include data values for charts, column headers for tables, code structure for snippets, node labels for diagrams. When content is qualitative (e.g., \"values rise then fall\"), the description should invent plausible illustrative values that match the described pattern — the visual is an illustration, not a data source. Penalize vague descriptions like \"a relevant chart.\" For tables, every row must have exactly one value per column — missing fields make the data malformed.\n\n3. CONSISTENCY: Visual descriptions must reflect the same evidence as the input content. If the content mentions specific data, the visual should show that data. Do NOT penalize plausible illustrative values added to make qualitative content generatable — that is expected. DO penalize descriptions that add speculative mechanisms or conclusions not present in the content (e.g., inventing a specific cause when the content only describes symptoms).\n\n4. LANGUAGE: Visual descriptions should use the content language where applicable.\n\nIMAGE KIND: This finding describes a physical scene (damp, eroded foundation stones) that can only be represented as a photograph. It SHOULD use \"image\" kind. Penalize using a structured type when the evidence is inherently a physical scene.\n    ",
+        "id": "finding-en-engineering-foundation-stones-1",
+        "userInput": {
+          "finding": "The exposed foundation stones on the east side show a dark, damp band running along the base about one foot high, with soft powdery patches where the stone surface has eroded. However, the west side foundation also has some damp patches at a lower height, and those stones appear firm to the touch.",
+          "language": "en",
+          "scenario": "You've been called to inspect a century-old stone building after residents reported new cracks appearing on upper floors. The building passed its last inspection two years ago, no renovations were done since, and neighboring buildings of similar age show no problems."
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response is strong and matches the finding well: it correctly chooses 'image' for a physical material condition and provides concrete visual details contrasting upper floors with ground floor. A small improvement would be to include the fourth floor explicitly, since the finding mentions both third and fourth floors, and to note that the comparison is within the same structural bay. These are minor completeness improvements rather than errors.",
+          "kind": "potentialImprovements",
+          "score": 9.3
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. KIND APPROPRIATENESS: Choose kind based on data structure. Code/logs -> \"code\". Numeric trends -> \"chart\". Structured data -> \"table\". Systems/flows -> \"diagram\". Physical scenes -> \"image\" (last resort). Penalize \"image\" when a structured type fits.\n\n2. DESCRIPTION SPECIFICITY: Descriptions must be specific enough for a visual generation system — include data values for charts, column headers for tables, code structure for snippets, node labels for diagrams. When content is qualitative (e.g., \"values rise then fall\"), the description should invent plausible illustrative values that match the described pattern — the visual is an illustration, not a data source. Penalize vague descriptions like \"a relevant chart.\" For tables, every row must have exactly one value per column — missing fields make the data malformed.\n\n3. CONSISTENCY: Visual descriptions must reflect the same evidence as the input content. If the content mentions specific data, the visual should show that data. Do NOT penalize plausible illustrative values added to make qualitative content generatable — that is expected. DO penalize descriptions that add speculative mechanisms or conclusions not present in the content (e.g., inventing a specific cause when the content only describes symptoms).\n\n4. LANGUAGE: Visual descriptions should use the content language where applicable.\n\nIMAGE KIND: This finding describes a physical scene (crumbling mortar joints) that can only be represented as a photograph. It SHOULD use \"image\" kind. Penalize using a structured type when the evidence is inherently a physical scene.\n    ",
+        "id": "finding-en-engineering-mortar-joints-1",
+        "userInput": {
+          "finding": "Mortar between stones on the third and fourth floors crumbles easily when scraped with a pocket knife, and several joints have gaps wide enough to insert a fingertip. However, mortar samples from the ground floor and basement walls resist scraping and show no visible gaps, even in the same structural bay.",
+          "language": "en",
+          "scenario": "You've been called to inspect a century-old stone building after residents reported new cracks appearing on upper floors. The building passed its last inspection two years ago, no renovations were done since, and neighboring buildings of similar age show no problems."
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The description captures the key physical evidence well, but it omits one part of the finding: the comparison that interior moisture readings on the east wall are only slightly above those on the north wall, and that the north wall has no exterior staining. Since the task is to generate a visual for the finding, this omitted contrast slightly reduces completeness. However, because the evidence is primarily a physical scene and 'image' is the correct kind, this is a minor issue rather than a major error.",
+          "kind": "minorErrors",
+          "score": 8.6
+        },
+        {
+          "conclusion": "The output could be improved by incorporating the comparative aspect of the finding more explicitly, for example by depicting a side-by-side or annotated photographic composition showing the stained east wall and wetter soil versus an unstained north wall, or by noting subtle indoor moisture comparison if the image system supports labeled composite visuals. This would make the visual more fully represent the entire finding while staying grounded in the provided evidence.",
+          "kind": "potentialImprovements",
+          "score": 8.8
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. KIND APPROPRIATENESS: Choose kind based on data structure. Code/logs -> \"code\". Numeric trends -> \"chart\". Structured data -> \"table\". Systems/flows -> \"diagram\". Physical scenes -> \"image\" (last resort). Penalize \"image\" when a structured type fits.\n\n2. DESCRIPTION SPECIFICITY: Descriptions must be specific enough for a visual generation system — include data values for charts, column headers for tables, code structure for snippets, node labels for diagrams. When content is qualitative (e.g., \"values rise then fall\"), the description should invent plausible illustrative values that match the described pattern — the visual is an illustration, not a data source. Penalize vague descriptions like \"a relevant chart.\" For tables, every row must have exactly one value per column — missing fields make the data malformed.\n\n3. CONSISTENCY: Visual descriptions must reflect the same evidence as the input content. If the content mentions specific data, the visual should show that data. Do NOT penalize plausible illustrative values added to make qualitative content generatable — that is expected. DO penalize descriptions that add speculative mechanisms or conclusions not present in the content (e.g., inventing a specific cause when the content only describes symptoms).\n\n4. LANGUAGE: Visual descriptions should use the content language where applicable.\n\nIMAGE KIND: This finding describes a physical scene (discolored stone and wet soil) that can only be represented as a photograph. It SHOULD use \"image\" kind. Penalize using a structured type when the evidence is inherently a physical scene.\n    ",
+        "id": "finding-en-engineering-water-staining-1",
+        "userInput": {
+          "finding": "A broad area of discolored stone and mineral deposits runs down the east exterior wall from the roofline gutter, and the soil at the base of that wall stays visibly wetter than soil on the other sides even during dry weather. However, interior moisture readings on the east wall are only slightly above those on the north wall, which shows no exterior staining.",
+          "language": "en",
+          "scenario": "You've been called to inspect a century-old stone building after residents reported new cracks appearing on upper floors. The building passed its last inspection two years ago, no renovations were done since, and neighboring buildings of similar age show no problems."
+        }
+      }
+    }
+  ],
+  "taskId": "activity-investigation-visual"
+}

@@ -1,0 +1,95 @@
+{
+  "expectations": "\nEVALUATION CRITERIA:\n\n1. KIND APPROPRIATENESS: Choose kind based on data structure. Code/logs -> \"code\". Numeric trends -> \"chart\". Structured data -> \"table\". Systems/flows -> \"diagram\". Physical scenes -> \"image\" (last resort). Penalize \"image\" when a structured type fits.\n\n2. DESCRIPTION SPECIFICITY: Descriptions must be specific enough for a visual generation system — include data values for charts, column headers for tables, code structure for snippets, node labels for diagrams. When content is qualitative (e.g., \"values rise then fall\"), the description should invent plausible illustrative values that match the described pattern — the visual is an illustration, not a data source. Penalize vague descriptions like \"a relevant chart.\" For tables, every row must have exactly one value per column — missing fields make the data malformed.\n\n3. CONSISTENCY: Visual descriptions must reflect the same evidence as the input content. If the content mentions specific data, the visual should show that data. Do NOT penalize plausible illustrative values added to make qualitative content generatable — that is expected. DO penalize descriptions that add speculative mechanisms or conclusions not present in the content (e.g., inventing a specific cause when the content only describes symptoms).\n\n4. LANGUAGE: Visual descriptions should use the content language where applicable.\n",
+  "judgedAt": "2026-04-04T22:35:58.093Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Excellent choice of diagram kind, matching the finding's description of flows through multiple offices with bypass paths. The description is highly specific with detailed node labels, multiple parallel lanes (main path, lab materials, paperwork), concrete delay labels, and clearly highlighted exceptions that directly correspond to the finding's two key observations (urgent same-day responses and materials sent before reporting completion). No speculative mechanisms added beyond what the finding describes.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Good diagram choice with clear node labels and appropriate representation of standard vs. bypass flows. The description is reasonably specific but less detailed than Model A — fewer nodes, no delay annotations, and doesn't capture the paperwork/documentation trail as a distinct lane. The description accurately reflects the finding without hallucinations, though it's somewhat simplified.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Appropriate diagram kind with relevant node labels. However, the 'Same-day Response' as a separate node is a bit odd — it's more of an outcome than an entity. The description captures the key elements (multi-office routing, urgent bypasses, incomplete reporting) but is less structured and specific than Models A or D. The bottleneck emphasis with queue icons adds speculative detail not directly in the finding.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Table is a defensible choice since the finding mentions 'transfer logs,' which are structured data. The table is well-formed with consistent columns and plausible values illustrating both the standard multi-hop routing and the exceptions. However, a diagram better captures the systemic flow and relationships described in the finding — the finding emphasizes the process/routing structure rather than individual log entries. Still a reasonable interpretation.",
+          "score": 6.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "This model correctly understood that the visual should represent the evidence itself (the logs) rather than the inferred conclusion (a system diagram). It brilliantly utilized a `table` to represent the structured log data and invented perfect plausible values that illustrated the qualitative details of the finding (urgent requests, incomplete trails).",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "While this model chose `diagram` instead of visualizing the logs themselves as data (`table` or `code`), its description is well-structured, clear, and perfectly aligns with the finding. It uses solid and dashed lines effectively to show the standard process versus the urgent overrides.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "This model also chose `diagram` instead of a data type for logs. The description is extremely detailed and highly generatable, but it borders on being overly complex and introduces quite a few speculative steps and paths that weren't necessarily implied by the prompt.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Like the other diagram models, it missed the opportunity to visualize the logs directly. Additionally, it introduced speculative visual elements like 'bottlenecks' and 'queue icons' that draw conclusions beyond what the evidence strictly states.",
+          "score": 6
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Best fit on kind: a diagram clearly matches multi-office routing and exceptions. The description is highly specific, visually generatable, and stays faithful to the finding without overcommitting to unsupported causes.",
+          "score": 9.4
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Correctly chooses a diagram and captures the standard flow plus urgent and bypass exceptions. However, it is less specific than Model A, with fewer concrete nodes, paths, and visual details for generation.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Also an appropriate diagram, but it invents more specific entities like a quality control lab and production facility that are not grounded in the finding. It is clear and structured, yet less faithful and less detailed than the stronger diagram responses.",
+          "score": 7.3
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "The table is plausible, but the finding is primarily about process flow and exceptions, so diagram is the stronger kind choice. It also introduces several speculative row values and routing entities not supported by the prompt, reducing consistency.",
+          "score": 6.1
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-investigation-visual",
+  "testCaseId": "finding-en-history-material-transfer-1"
+}

@@ -1,0 +1,95 @@
+{
+  "expectations": "\nEVALUATION CRITERIA:\n\n1. KIND APPROPRIATENESS: Choose kind based on data structure. Code/logs -> \"code\". Numeric trends -> \"chart\". Structured data -> \"table\". Systems/flows -> \"diagram\". Physical scenes -> \"image\" (last resort). Penalize \"image\" when a structured type fits.\n\n2. DESCRIPTION SPECIFICITY: Descriptions must be specific enough for a visual generation system — include data values for charts, column headers for tables, code structure for snippets, node labels for diagrams. When content is qualitative (e.g., \"values rise then fall\"), the description should invent plausible illustrative values that match the described pattern — the visual is an illustration, not a data source. Penalize vague descriptions like \"a relevant chart.\" For tables, every row must have exactly one value per column — missing fields make the data malformed.\n\n3. CONSISTENCY: Visual descriptions must reflect the same evidence as the input content. If the content mentions specific data, the visual should show that data. Do NOT penalize plausible illustrative values added to make qualitative content generatable — that is expected. DO penalize descriptions that add speculative mechanisms or conclusions not present in the content (e.g., inventing a specific cause when the content only describes symptoms).\n\n4. LANGUAGE: Visual descriptions should use the content language where applicable.\n\nLANGUAGE REQUIREMENT: All content must be in Brazilian Portuguese.\n    ",
+  "judgedAt": "2026-04-04T22:35:44.135Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Chooses 'diagram' which is appropriate since the finding describes a system with relationships and data flow causing status inconsistencies. The description is exceptionally detailed with specific node labels, connections, timing examples, color coding, and annotations. It accurately captures both the temporary inconsistency pattern and the consistent-error pattern from the finding. Includes plausible illustrative values. However, it somewhat speculates on architecture (async queue, read DB) which goes slightly beyond the finding's symptoms, though this is a minor concern given the evidence pattern strongly implies it.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Chooses 'table' which reasonably represents structured comparison data. The description is specific with clear columns, rows, and values. It accurately captures both patterns from the finding (divergent statuses and consistently synchronized errors). All rows have values for every column. Language is correctly in Portuguese. A table is a valid choice for showing the comparison data described in the finding.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Chooses 'table' which is reasonable. Description is specific with clear columns and rows, all properly filled. Captures both the divergence and consistency patterns from the finding. However, having the front-end show 'Concluído' while back-office shows 'Pendente' in one row and vice versa in another adds variety but is reasonable. Language is in Portuguese. Comparable quality to Model A.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Chooses 'diagram' which is reasonable but the description mixes system flow with UI/UX elements (clock icons, dashed arrows, legends) that are somewhat vague for generation. It speculates on the process flow (payment authorization, separation, shipping) which goes beyond what the finding states. The finding describes status inconsistency across views, not a specific e-commerce fulfillment pipeline. Still captures both patterns but adds more speculative detail than warranted.",
+          "score": 6.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model A perfectly translates the finding into a 'table' visual, which is the most appropriate format for comparing the status of items across different views. The description correctly invents plausible illustrative values without adding speculative root causes, and strictly follows the formatting rules.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model D is equivalent in quality to Model A. It correctly chooses a 'table' to represent the structured comparison of order statuses across different systems. The rows and columns are clearly defined with highly relevant illustrative data that matches the finding perfectly.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Model C provides a good description but chooses a 'diagram' format, which is slightly less direct than a table for comparing static states across different screens. However, it illustrates the finding well without inventing overly speculative technical mechanisms.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Model B receives a major penalty for violating the consistency rule. It invents speculative architectural mechanisms ('Fila de Eventos', 'Banco de Leitura', 'atualização assíncrona') that are not present in the content, attempting to explain the root cause rather than just illustrating the finding itself.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Escolhe corretamente `table`, um formato muito adequado para comparar o mesmo pedido em múltiplas fontes e mostrar divergências temporárias. A descrição é específica, em português, e todas as linhas têm exatamente um valor por coluna; só perde pontos por introduzir fontes específicas não explicitadas no achado.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Também usa `table` de forma apropriada e fornece colunas e linhas completas, com valores plausíveis e em português. É claro e gerável, mas adiciona mais suposições sobre as origens dos dados e um dos exemplos inverte a direção da divergência sem reforçar tão bem a natureza temporária do achado.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "O diagrama é coerente com a ideia de múltiplas visões divergindo temporariamente e mantém o conteúdo em português. Porém é mais genérico e menos específico que as tabelas, com poucos valores concretos e mais foco em fluxo amplo do sistema do que na evidência em si.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "É visualmente detalhado, mas escolhe `diagram` enquanto introduz uma causa específica não mencionada no achado: fila de eventos, banco principal e banco de leitura com atraso assíncrono. Essa especulação de mecanismo viola a exigência de não inventar conclusões causais, apesar da boa clareza descritiva.",
+          "score": 5.8
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-investigation-visual",
+  "testCaseId": "finding-pt-agile-status-divergence-1"
+}

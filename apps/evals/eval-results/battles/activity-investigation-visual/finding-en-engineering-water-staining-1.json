@@ -1,0 +1,95 @@
+{
+  "expectations": "\nEVALUATION CRITERIA:\n\n1. KIND APPROPRIATENESS: Choose kind based on data structure. Code/logs -> \"code\". Numeric trends -> \"chart\". Structured data -> \"table\". Systems/flows -> \"diagram\". Physical scenes -> \"image\" (last resort). Penalize \"image\" when a structured type fits.\n\n2. DESCRIPTION SPECIFICITY: Descriptions must be specific enough for a visual generation system — include data values for charts, column headers for tables, code structure for snippets, node labels for diagrams. When content is qualitative (e.g., \"values rise then fall\"), the description should invent plausible illustrative values that match the described pattern — the visual is an illustration, not a data source. Penalize vague descriptions like \"a relevant chart.\" For tables, every row must have exactly one value per column — missing fields make the data malformed.\n\n3. CONSISTENCY: Visual descriptions must reflect the same evidence as the input content. If the content mentions specific data, the visual should show that data. Do NOT penalize plausible illustrative values added to make qualitative content generatable — that is expected. DO penalize descriptions that add speculative mechanisms or conclusions not present in the content (e.g., inventing a specific cause when the content only describes symptoms).\n\n4. LANGUAGE: Visual descriptions should use the content language where applicable.\n\nIMAGE KIND: This finding describes a physical scene (discolored stone and wet soil) that can only be represented as a photograph. It SHOULD use \"image\" kind. Penalize using a structured type when the evidence is inherently a physical scene.\n    ",
+  "judgedAt": "2026-04-04T22:35:41.369Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Uses the correct 'image' kind. The description is the most comprehensive and specific, covering all key details from the finding: discolored stone, mineral deposits, wet soil contrast, and critically includes the moisture meter comparison (east ~18% vs north ~15%) that captures the important nuance about interior readings being only slightly different despite heavy exterior staining. Adds plausible illustrative values for the moisture readings. Does not fabricate unsupported conclusions.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Uses the correct 'image' kind with a thorough description covering discoloration, mineral deposits, wet soil, and the north wall comparison. Importantly captures the interior moisture nuance (slight difference between east and north walls). Slightly less specific than Model C (no illustrative moisture values) but still faithfully represents all aspects of the finding without adding speculative conclusions.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Uses the correct 'image' kind with good physical detail of the exterior scene. However, it completely omits the critical finding detail about interior moisture readings being only slightly elevated on the east wall compared to the north wall — this is a key part of the evidence. Also mentions 'surface erosion' which is not stated in the finding, adding unsupported detail.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Uses the correct 'image' kind but the description is too brief and generic. It omits the important contrast with the north wall, omits the interior moisture reading comparison, and lacks the specificity needed for a visual generation system to produce a faithful representation of the finding.",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "This output is exceptional. It captures all elements of the finding and specifically follows the prompt's instruction to 'invent plausible values' for qualitative evidence by adding specific percentages (18% vs 15%) for the moisture meter inset.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Very good description that attempts to include all parts of the finding, including the interior moisture readings. However, it misses the opportunity to invent specific plausible numbers for the moisture meters, making it slightly less concrete than the top model.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Provides a solid description of the exterior physical scene, but it completely ignores the second half of the finding regarding the interior moisture readings. Missing key evidence lowers its score.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Like Model B, it completely misses the interior moisture reading evidence. Furthermore, its description of the exterior is the least detailed of all the models.",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Best matches the finding with an appropriate `image` and highly specific, generatable visual details. The invented moisture readings are plausible and explicitly framed as a slight indoor difference, though adding upper-floor cracks goes a bit beyond the finding itself.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Strong, specific image description that captures the stained wall, mineral deposits, wet soil, and slight indoor moisture contrast. It is slightly less concrete than Model C and the mention of a leak/overflow point is mildly inferential but still reasonable.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Accurately chooses `image` and gives a clear depiction of the exterior staining, efflorescence, and wet soil. However, it omits the finding's important contrast that interior moisture is only slightly elevated, making it less complete.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Correct kind and faithful to the core exterior evidence, but the description is notably sparse. It misses the interior-moisture comparison and provides less specificity for generation than the stronger answers.",
+          "score": 7
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-investigation-visual",
+  "testCaseId": "finding-en-engineering-water-staining-1"
+}
