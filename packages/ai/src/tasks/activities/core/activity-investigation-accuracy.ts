@@ -5,14 +5,22 @@ import { z } from "zod";
 import systemPrompt from "./activity-investigation-accuracy.prompt.md";
 import { type ActivityInvestigationScenarioSchema } from "./activity-investigation-scenario";
 
-const DEFAULT_MODEL = process.env.AI_MODEL_ACTIVITY_INVESTIGATION_ACCURACY ?? "openai/gpt-5.4";
-const FALLBACK_MODELS = ["anthropic/claude-opus-4.6", "google/gemini-3.1-pro-preview"];
+const DEFAULT_MODEL = process.env.AI_MODEL_ACTIVITY_INVESTIGATION_ACCURACY ?? "openai/gpt-5.4-mini";
+const FALLBACK_MODELS = ["google/gemini-3.1-flash-lite-preview", "anthropic/claude-sonnet-4.6"];
 
-const schema = z.object({
-  accuracies: z.array(z.enum(["best", "partial", "wrong"])),
-});
+/**
+ * Builds a schema that enforces the accuracy array length
+ * matches the number of explanations. A wrong-length output
+ * is structurally broken — tiers can't be mapped back to
+ * explanations — so we fail fast instead of silently misaligning.
+ */
+function buildSchema(explanationCount: number) {
+  return z.object({
+    accuracies: z.array(z.enum(["best", "partial", "wrong"])).length(explanationCount),
+  });
+}
 
-export type ActivityInvestigationAccuracySchema = z.infer<typeof schema>;
+export type ActivityInvestigationAccuracySchema = z.infer<ReturnType<typeof buildSchema>>;
 
 export type ActivityInvestigationAccuracyParams = {
   scenario: ActivityInvestigationScenarioSchema;
@@ -38,6 +46,7 @@ function formatInputsForPrompt({
   return `
     SCENARIO: ${scenario.scenario}
     EXPLANATIONS: ${explanations}
+    EXPLANATION_COUNT: ${scenario.explanations.length}
     TOPIC: ${topic}
     CONCEPTS: ${concepts.join(", ")}
   `;
@@ -68,6 +77,8 @@ export async function generateActivityInvestigationAccuracy({
     reasoningEffort,
     useFallback,
   });
+
+  const schema = buildSchema(scenario.explanations.length);
 
   const { output, usage } = await generateText({
     model,

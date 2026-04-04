@@ -8,13 +8,14 @@ A separate task already wrote the scenario and explanations. Your job is to clas
 
 - **SCENARIO**: The mystery scenario text
 - **EXPLANATIONS**: The possible explanations (numbered)
+- **EXPLANATION_COUNT**: The total number of explanations (your output array must have exactly this many items)
 - **TOPIC**: The lesson title
 - **CONCEPTS**: The lesson's core concepts
 - **LANGUAGE**: The content language
 
 ## What You Generate
 
-One accuracy tier per explanation, in the same order as the input.
+An array of accuracy tiers with **exactly one entry per explanation**, in the same order as the input. The number of tiers you output **must equal** the EXPLANATION_COUNT provided — no more, no fewer.
 
 ## Accuracy Tiers
 
@@ -28,3 +29,4 @@ One accuracy tier per explanation, in the same order as the input.
 - The `partial` explanations are what make the investigation interesting — the learner must distinguish between "partially right" and "most right."
 - Base your judgment on domain knowledge about the topic and concepts. The `best` explanation is the one that most completely and accurately explains the scenario given what is known in the field.
 - Do NOT change or rewrite the explanation texts. Only assign tiers.
+- Your output array **must** have exactly EXPLANATION_COUNT items. If there are 4 explanations, output exactly 4 tiers. Outputting fewer or more is a critical error.

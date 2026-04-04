@@ -1,0 +1,185 @@
+{
+  "expectations": "\nEVALUATION CRITERIA:\n\n1. TIER DISTRIBUTION: There must be exactly one \"best\", at least one \"partial\", and at least one \"wrong\". Penalize if any tier is missing.\n\n2. DOMAIN CORRECTNESS: The \"best\" explanation should be the one most supported by domain knowledge for the given topic and concepts. The accuracy assignment should reflect real-world factual correctness, not just plausibility.\n\n3. PARTIAL VS WRONG: \"partial\" explanations should have genuine elements of truth — they explain part of the problem but miss the key insight. \"wrong\" explanations should be factually incorrect for the domain, even if they sound plausible. Penalize if a \"wrong\" explanation actually has significant truth to it, or if a \"partial\" is completely off-base.\n\n4. OUTPUT LENGTH: The output should contain exactly as many accuracy values as there are explanations in the input. No more, no less.\n",
+  "judgedAt": "2026-04-04T08:17:26.470Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Assigns 'best' to explanation 1 (device along the way delaying/dropping packets), which best aligns with the topic 'Packets and Network Paths' and concepts like Hop, Round Trip, Path Through a Network. A network device causing packet loss/delay along the path directly demonstrates packet-level and hop-level issues. Explanation 0 (longer chain of machines = more hops) is 'partial' — it's plausible but adding hops alone wouldn't cause 'several extra seconds.' Explanation 2 (misconfigured routing) is 'partial' — relates to network paths but misidentifies the mechanism. Explanation 3 is correctly 'wrong' since the scenario says servers are healthy and CPU is normal. Excellent tier distribution and domain reasoning.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Identical to Model C — same tier assignments. Best on explanation 1, partial on 0 and 2, wrong on 3. All the same reasoning applies. Equally strong domain alignment.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Identical to Models C and E. Same tier assignments with the same strong domain reasoning.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Identical to Models C, E, and F. Same tier assignments, same quality.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Correctly assigns 'best' to explanation 1, which aligns well with packet/hop concepts. However, marking explanation 2 (misconfigured routing sending responses wrong way) as 'wrong' is debatable — it does relate to network paths and has partial truth about routing issues. Having two 'wrong' and only one 'partial' makes the investigation less nuanced, and explanation 2 has enough network-path relevance to merit 'partial.'",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Assigns 'best' to explanation 0 (longer chain of machines/more hops). While this relates to the concepts (Hop, Path Through a Network), it's less directly supported by the scenario — adding hops alone wouldn't typically cause 'several extra seconds' of delay. Explanation 1 (device delaying/dropping packets) is a better fit for 'best' given the described symptoms. Partial on 1 and 2, wrong on 3 is reasonable for the remaining tiers.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Identical to Model B — same tier assignments. Best on explanation 0 is a defensible but suboptimal choice compared to explanation 1, which more directly explains the symptoms through packet-level issues at a hop.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Assigns 'best' to explanation 0 (longer chain/more hops), which is suboptimal. More problematically, marks explanation 3 (overloaded server inside data center) as 'partial' despite the scenario explicitly stating servers are healthy and CPU is normal — this directly contradicts the evidence and should be 'wrong.' Marking explanation 2 as 'wrong' while keeping 3 as 'partial' is a clear domain error.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Assigns 'best' to explanation 0 (longer chain/more hops), which is suboptimal. More critically, marks explanation 1 (device delaying/dropping packets) as only 'partial' while marking both explanations 2 and 3 as 'wrong.' Explanation 1 is the strongest candidate for 'best' given the topic and symptoms. Having two 'wrong' entries reduces the investigative nuance, and explanation 2 has enough merit for 'partial.'",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Perfect domain accuracy. It correctly identifies explanation 1 as 'best' since packet loss causes multi-second TCP delays, while extra hops (explanation 0) only add milliseconds. It also correctly marks 2 and 3 as 'wrong' because 2 would result in a total failure and 3 explicitly contradicts the scenario's evidence.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Correctly identifies explanation 1 as the 'best' fit for a multi-second delay. However, it marks explanation 2 as 'partial' instead of 'wrong'. Sending responses to the wrong place would likely cause a complete timeout rather than just a slower load time, making it factually incorrect.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Correctly identifies explanation 1 as the 'best' fit for a multi-second delay. However, it marks explanation 2 as 'partial' instead of 'wrong'. Sending responses to the wrong place would likely cause a complete timeout rather than just a slower load time, making it factually incorrect.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Correctly identifies explanation 1 as the 'best' fit for a multi-second delay. However, it marks explanation 2 as 'partial' instead of 'wrong'. Sending responses to the wrong place would likely cause a complete timeout rather than just a slower load time, making it factually incorrect.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Correctly identifies explanation 1 as the 'best' fit for a multi-second delay. However, it marks explanation 2 as 'partial' instead of 'wrong'. Sending responses to the wrong place would likely cause a complete timeout rather than just a slower load time, making it factually incorrect.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Incorrectly identifies explanation 0 as 'best'. In the real world, a longer chain of machines adds milliseconds of latency, whereas packet loss (explanation 1) correctly accounts for the 'several extra seconds' of delay. It successfully identifies 2 and 3 as 'wrong'.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Incorrectly identifies explanation 0 as 'best', missing that extra hops only add milliseconds of delay, not seconds. Additionally, it incorrectly marks explanation 2 as 'partial', even though a misconfigured destination would typically cause a complete failure.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Incorrectly identifies explanation 0 as 'best', missing that extra hops only add milliseconds of delay, not seconds. Additionally, it incorrectly marks explanation 2 as 'partial', even though a misconfigured destination would typically cause a complete failure.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Misses the correct 'best' explanation, but more importantly, marks explanation 3 as 'partial'. Explanation 3 directly contradicts the scenario's premise ('servers look healthy'), so it must be classified as 'wrong'. This is a significant factual penalty.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "It follows the required format and tier distribution exactly, with #1 correctly identified as the best explanation for a network path issue causing delay or packet loss along the route. Marking #0 and #2 as partial is defensible because both involve path/routing-related mechanisms, while #3 is the least supported by the packet-path framing.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "It satisfies all structural rules and gives the strongest explanation to #1, which best matches the scenario and topic. Its partial/wrong distinctions are reasonable and align well with network-path concepts.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "This output fully obeys the prompt and correctly treats the in-transit network issue in #1 as best. The remaining labels are sensible, especially keeping the overloaded-server explanation as wrong for this scenario.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "It has exactly one best, at least one partial, and at least one wrong, with #1 appropriately chosen as best. The two partials are plausible-but-incomplete network explanations, making this a strong classification.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "It meets all formatting and distribution requirements, but choosing #0 as best is less accurate than #1 because longer paths add latency yet do not as directly explain delay/drop behavior along the route. Still, #0 and #2 as at least partially related to path issues keeps it fairly strong.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "This is structurally correct and broadly plausible, but it overvalues #0 as the best explanation instead of the more directly supported #1. The rest of the labels are acceptable, so the main weakness is the top-choice accuracy.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "The output has the correct number of items and required tier mix, but assigning #3 as partial is weak because an overloaded internal server conflicts with the scenario’s healthy servers and network-path focus. It also incorrectly promotes #0 over the stronger #1.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "It follows the output rules and correctly selects #1 as best, but calling #0 wrong is too harsh since a longer path can genuinely contribute to regional slowness. That weak partial-vs-wrong judgment lowers the score.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Although the format and tier counts are valid, it incorrectly labels #0 as best and treats #2 as wrong even though misrouting can plausibly cause waiting and retries. Those domain misclassifications are significant for this task.",
+          "score": 5.5
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-investigation-accuracy",
+  "testCaseId": "en-web-packets-network-paths-1"
+}
