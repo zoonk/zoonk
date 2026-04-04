@@ -1,0 +1,185 @@
+{
+  "expectations": "\nEVALUATION CRITERIA:\n\n1. ACTION COUNT: 5-6 actions total.\n\n2. QUALITY DISTRIBUTION: 1-2 critical (directly test the core question), 2-3 useful (valuable supporting evidence), 1-2 weak (tangentially related). Penalize severely skewed distributions.\n\n3. DOMAIN APPROPRIATENESS: Actions should use domain-appropriate language. For networking: check logs, trace routes, run diagnostics. Actions should feel like things a real investigator would do in this domain.\n\n4. COVERAGE: Actions should cover different investigation angles — some that would confirm the best explanation, some that test alternatives, some tangential.\n\n5. LANGUAGE: All action labels must be in the specified language.\n",
+  "judgedAt": "2026-04-04T08:49:27.421Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Excellent quality distribution (2 critical, 3 useful, 1 weak). Both critical actions directly target the best explanation (trained staff + tested routines). Uses casual, everyday language throughout — no jargon. Good coverage across all hypotheses. The third useful action (comparing planned vs actual output) adds a nice differentiating angle. Only weakness: could use a second weak action per the 1-2 guideline, but 1 is within range.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Strong casual/conversational voice — the most natural-sounding of all outputs. Distribution is perfect (2 critical, 2 useful, 2 weak). Both critical actions target the best explanation well. The last weak action (neighborhood maps) is genuinely tangential and well-chosen. All labels are in plain everyday language with no jargon. Very solid overall.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Good distribution (2 critical, 3 useful, 1 weak). Critical actions target the best explanation well. The weak action cleverly references something the scenario already confirms (buildings were fine). However, the language is slightly more formal than casual in places ('validated procedures'), and 'dig into budget approvals' borders on domain jargon. Solid coverage across hypotheses.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Good distribution (2 critical, 3 useful, 1 weak). Critical actions target the best explanation. The 'neighboring countries' action is a creative useful angle. However, 'standard operating procedures' is clear domain jargon, violating the 'no jargon' rule. Language is otherwise clean but slightly formal rather than casual/conversational.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Distribution is 2 critical, 2 useful, 2 weak — good. However, the second critical action (communication logs between labs/factories/clinics) more directly tests explanation 3 (coordination) than explanation 1 (the best). This is a useful action miscategorized as critical. Cold chain survey is a nice weak action. Language is mostly casual but 'certifications' is slightly jargony.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Distribution is 2 critical, 2 useful, 2 weak. Critical actions are well-targeted. However, import shipment logs as 'weak' is questionable — it directly tests explanation 0 (import dependency) and should be 'useful.' This misclassification is a notable flaw. Language is appropriately casual. Good concise labels.",
+          "score": 7.3
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Distribution is 2 critical, 3 useful, 1 weak — valid. Critical actions are well-targeted. However, the language is quite formal ('internal audit reports regarding manufacturing protocols and safety testing routines', 'certification logs') — uses domain jargon and violates the casual/no-jargon rule. Actions are otherwise well-differentiated.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Distribution is 1 critical, 3 useful, 2 weak. Only 1 critical action — the second critical should test 'tested routines' but is missing. Weather reports is amusingly tangential but a good weak choice. Labels lack capitalization (minor formatting issue). 'Government purchasing contracts' as useful is reasonable but could test explanation 2 more directly. Only having 1 critical action is a notable gap.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Distribution is technically 2 critical, 3 useful, 1 weak, but the first critical action tests explanation 0 (import dependency) rather than the core question of explanation 1. Labels are very long and overly detailed — more like investigation briefs than short action phrases. The verbose style doesn't match 'casual, conversational' and the colon-separated lists feel like jargon-heavy specifications. Misalignment of critical tier is a significant issue.",
+          "score": 6.3
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Perfectly balances a casual yet domain-appropriate investigator tone ('Dig into', 'Map out', 'Review records'). The weak action is exceptionally clever, testing a premise already established as true, which perfectly fits the 'tangential' requirement.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Features excellent domain-appropriate language and strong, distinct action phrasing. Matches the quality distribution perfectly, though the weak action tests an alternative hypothesis rather than being purely tangential.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Maintains a great conversational tone that completely avoids jargon while offering perfectly tangential weak actions. The phrasing is slightly simpler and less 'investigative' than the top models, but still very effective.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Provides good distribution and coverage of the explanations. However, the labels read a bit too much like hypotheses ('Check whether local labs had enough...') rather than direct investigative actions like reviewing specific records.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Actions are solidly formulated and formatted correctly. However, investigating how neighboring countries scaled up is out of scope for diagnosing the specific internal delays of the country in the scenario.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Good phrasing and domain language, but it misclassifies an action testing a partial explanation (communication logs) as 'critical', a tier that should be reserved for the core/best explanation.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Generates good investigative steps, but mislabels checking import logs (which tests a provided partial explanation) as a 'weak' action. Since it tests a valid hypothesis, it should be classified as 'useful'.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Features excellent truly tangential weak actions and good coverage. However, it completely fails basic capitalization for every action label, making the output feel unpolished.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Heavily violates the 'short phrase' constraint. The actions are verbose, multi-part sentences that simply regurgitate the prompt's explanation text rather than acting as concise, distinct investigation steps.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "This is the strongest overall: it has 6 actions, a correct 2/3/1 quality split, and directly targets the best explanation while still testing the main alternatives. The wording stays clear and mostly everyday, and the angles are well differentiated and domain-appropriate.",
+          "score": 9.4
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "It follows the requested count and distribution perfectly, and its labels are the most casual and non-jargony while still covering the key explanations and a tangential angle. A couple actions are slightly less precise than the best answer, but it adheres very well to the prompt.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "This is comprehensive and well balanced, with strong coverage of staffing, routines, imports, coordination, and politics. It loses some points because several labels lean more formal and jargon-heavy than the prompt wanted.",
+          "score": 8.9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Good coverage and a correct 2/2/2 distribution, with strong actions on staffing, imports, coordination, and tangential factors. The main weakness is that the coordination action is marked critical even though it fits better as a supporting test than a direct test of the best explanation.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "This has the right count and a solid 2/3/1 distribution, with strong direct checks for staffing and routines plus decent coverage of imports and coordination. Its weakest point is the neighboring-countries comparison, which feels less directly grounded in the scenario than the best alternatives.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "The set is well structured and relevant, with good direct tests of staffing and procedures and useful checks for imports and coordination. However, it uses more technical wording than requested and the weak action about buildings/infrastructure is only somewhat tangential because the scenario already hints buildings existed.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "It is concise, on-topic, and has a valid 2/2/2 distribution with strong actions tied to staffing, routines, and coordination. The main issue is that import shipment logs are too central to one partial explanation to be labeled weak, so the tiering is less well judged.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "The coverage is broad and thoughtful, but the labels are too long and packed with sub-items, which conflicts with the prompt's request for short action phrases. It also uses more jargon and makes import dependency critical, diluting focus from the best explanation.",
+          "score": 7.6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "It has the right count and generally relevant actions, but it fails the required quality distribution by giving only one critical and three useful actions. Some weak actions are overly flimsy, and the casual style comes at the cost of polish and precision.",
+          "score": 6.8
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-investigation-actions",
+  "testCaseId": "en-history-biomedical-institutions-1"
+}

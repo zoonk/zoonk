@@ -1,0 +1,185 @@
+{
+  "expectations": "\nLANGUAGE REQUIREMENT: All content must be in Brazilian Portuguese.\n\n\nEVALUATION CRITERIA:\n\n1. ACTION COUNT: 5-6 actions total.\n\n2. QUALITY DISTRIBUTION: 1-2 critical (directly test the core question), 2-3 useful (valuable supporting evidence), 1-2 weak (tangentially related). Penalize severely skewed distributions.\n\n3. DOMAIN APPROPRIATENESS: Actions should use domain-appropriate language. For networking: check logs, trace routes, run diagnostics. Actions should feel like things a real investigator would do in this domain.\n\n4. COVERAGE: Actions should cover different investigation angles — some that would confirm the best explanation, some that test alternatives, some tangential.\n\n5. LANGUAGE: All action labels must be in the specified language.\n\n    ",
+  "judgedAt": "2026-04-04T08:48:25.932Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Excellent distribution (2 critical, 3 useful, 1 weak). All labels are in natural, jargon-free Brazilian Portuguese. Actions cover different angles well: critical actions target the best explanation, useful ones test alternatives (data consistency, message delays, recent changes), and the weak one tests the wrong hypothesis. Clean and conversational.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Perfect distribution (2 critical, 3 useful, 1 weak). Labels are concise, conversational, and in proper Portuguese. Good coverage across explanations. Minor issue: some labels like 'serviço novo' and 'módulos' lean slightly toward jargon but are still mostly accessible. Very solid overall.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Good distribution (2 critical, 3 useful, 1 weak). Conversational, jargon-free Portuguese throughout. Strong coverage of different angles. The critical actions are well-targeted at the best explanation. Labels are clear and natural. Very comparable to Model G.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Good distribution (2 critical, 2 useful, 2 weak). All in casual, jargon-free Portuguese. The second weak action (checking if buttons and images load fast) is genuinely tangential and weak, which is appropriate. Good coverage. Slightly fewer useful actions than ideal but within acceptable range.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Distribution is 2 critical, 3 useful, 1 weak — meets requirements. All in Portuguese and mostly conversational. Good coverage across hypotheses. Minor concern: the third useful action ('dados consultados estão vindo de fontes diferentes dependendo do caminho do pedido') could arguably be critical since it's very close to the core question. Overall solid.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Distribution is 2 critical, 3 useful, 1 weak. Good Portuguese, mostly conversational. Uses 'deploys' (English loanword) in the first action, which is a minor language violation. The third useful action about access volume could arguably be weak rather than useful, making the distribution slightly questionable. Otherwise good coverage.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Distribution is fine (2 critical, 3 useful, 1 weak), but violates the 'no jargon' rule with terms like 'logs,' 'roteados,' 'módulos,' 'filas de mensagens,' and 'múltiplas fontes.' These are technical terms that break the conversational, everyday-language requirement. Content and coverage are otherwise good.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Distribution is acceptable (2 critical, 2 useful, 2 weak). However, uses jargon ('logs,' 'transações,' 'banco de dados,' 'módulos'). The second useful action (checking client devices) is poorly targeted — it doesn't meaningfully test any of the hypotheses and feels more like a weak action, making the effective distribution skewed. The second weak action about admin permissions is very tangential.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Heavily violates the 'no jargon, casual language' rule with terms like 'logs,' 'métricas,' 'requisições,' 'contadores por serviço,' 'consistência,' 'tabelas,' 'retentativas,' 'infraestrutura,' 'escalonamento,' 'latência.' Labels are also excessively long with parenthetical technical details. Content is accurate and well-distributed but reads like engineer notes, not conversational labels.",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Excellent output. Follows all instructions perfectly, using natural, conversational Portuguese without jargon. The quality tiers are accurately assigned to hypotheses.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Excellent output that perfectly maps to the explanations. Uses short, clear phrases and correctly balances the quality tiers.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Flawlessly follows the prompt. Actions are domain-appropriate but use everyday language, and map accurately to the provided explanations.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Outstanding execution. Provides clear, conversational investigation actions that accurately test the best, partial, and wrong hypotheses.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Perfect execution. Actions are short, conversational, and accurately distributed across the quality tiers to test the hypotheses.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Very strong. Actions map perfectly to the hypotheses and have the correct distribution, though the vocabulary is slightly more technical than the top models.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Good overall, but includes jargon like 'deploys' and 'renderizando', slightly missing the 'everyday language' constraint.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Adequate, but incorrectly labels checking different devices as 'useful' when it is completely tangential to the provided explanations and should be 'weak'.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Fails multiple constraints. The actions are too long (not short phrases), use heavy technical jargon ('escalonamento', 'latência'), and lack the requested conversational tone.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Segue muito bem o português pedido, com linguagem simples e 6 ações bem distribuídas (2 critical, 3 useful, 1 weak). Cobre diretamente a melhor explicação e também testa as alternativas parciais, com boa clareza e sem tangentes excessivas.",
+          "score": 9.4
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "É forte em cobertura e distribuição, com ações claras, naturais e bem alinhadas ao cenário. Fica ligeiramente atrás porque uma ou duas ações são um pouco mais genéricas do que as melhores respostas.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Tem ótima aderência ao caso principal, boa variedade de ângulos e distribuição correta das tiers. A redação é simples e adequada, embora algumas ações fiquem um pouco próximas entre si em foco.",
+          "score": 9.1
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Boa resposta, com linguagem acessível, distribuição correta e ações que testam hipótese principal, alternativas e itens tangenciais. Perde pontos porque a ação sobre botões e imagens é bastante superficial e pouco útil até como weak.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Cumpre bem contagem, idioma e distribuição, além de cobrir a principal hipótese e alternativas plausíveis. Fica um pouco abaixo das melhores por ter algumas formulações mais amplas e menos direcionadas que poderiam testar o desvio para o serviço novo com mais precisão.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Tem boas ações principais e linguagem em português, com cobertura útil do fluxo e das hipóteses alternativas. A principal fraqueza é classificar análise de volume de acessos como useful, o que desequilibra um pouco a intenção das tiers e torna a distribuição menos alinhada ao pedido.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "As ações são relevantes e cobrem bem o problema, mas viola o requisito de voz ao usar bastante jargão técnico como logs, roteados, múltiplas fontes e módulos separados. Em conteúdo é forte, porém a aderência ao estilo pedido cai de forma importante.",
+          "score": 7.6
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "É analiticamente sólido e cobre hipóteses importantes, mas descumpre claramente a instrução de evitar jargão e usar linguagem cotidiana. Termos como métricas, requisições, tabelas, versão/formato, retentativas, carga e infraestrutura deixam a resposta técnica demais.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Tem distribuição correta, mas inclui ações menos alinhadas ao mistério, como dispositivos diferentes e permissões de administrador, que soam arbitrárias. Além disso, usa jargão relevante demais para um pedido explícito de linguagem simples.",
+          "score": 6.2
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-investigation-actions",
+  "testCaseId": "pt-agile-transformacao-gradual-1"
+}
