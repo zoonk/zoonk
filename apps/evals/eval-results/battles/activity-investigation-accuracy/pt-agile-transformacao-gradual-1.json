@@ -1,0 +1,185 @@
+{
+  "expectations": "\nLANGUAGE REQUIREMENT: All content must be in Brazilian Portuguese.\n\n\nEVALUATION CRITERIA:\n\n1. TIER DISTRIBUTION: There must be exactly one \"best\", at least one \"partial\", and at least one \"wrong\". Penalize if any tier is missing.\n\n2. DOMAIN CORRECTNESS: The \"best\" explanation should be the one most supported by domain knowledge for the given topic and concepts. The accuracy assignment should reflect real-world factual correctness, not just plausibility.\n\n3. PARTIAL VS WRONG: \"partial\" explanations should have genuine elements of truth — they explain part of the problem but miss the key insight. \"wrong\" explanations should be factually incorrect for the domain, even if they sound plausible. Penalize if a \"wrong\" explanation actually has significant truth to it, or if a \"partial\" is completely off-base.\n\n4. OUTPUT LENGTH: The output should contain exactly as many accuracy values as there are explanations in the input. No more, no less.\n\n    ",
+  "judgedAt": "2026-04-04T08:16:52.156Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Correct tier distribution (one best, two partial, one wrong). Explanation 0 as best aligns well with the Strangler Fig pattern and gradual architectural transformation. Explanation 1 (partial) correctly identifies data inconsistency as a real but incomplete aspect. Explanation 2 (partial) touches on premature module extraction, relevant but not the core issue. Explanation 3 (wrong) denies structural changes, contradicting the scenario's premise of architectural evolution.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Identical output to Model B. Same correct reasoning applies: best on 0, partial on 1 and 2, wrong on 3. All tier assignments are well-justified by domain knowledge.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Identical output to Model B. Same correct reasoning applies: best on 0, partial on 1 and 2, wrong on 3. All tier assignments are well-justified by domain knowledge.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Identical output to Model B. Same correct reasoning applies: best on 0, partial on 1 and 2, wrong on 3. All tier assignments are well-justified by domain knowledge.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Identical output to Model B. Same correct reasoning applies: best on 0, partial on 1 and 2, wrong on 3. All tier assignments are well-justified by domain knowledge.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Identical output to Model B. Same correct reasoning applies: best on 0, partial on 1 and 2, wrong on 3. All tier assignments are well-justified by domain knowledge.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Identical output to Model B. Same correct reasoning applies: best on 0, partial on 1 and 2, wrong on 3. All tier assignments are well-justified by domain knowledge.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Assigns explanation 2 as wrong and explanation 3 as partial. Explanation 2 about premature module extraction has genuine truth related to the concepts of module extraction and architectural evolution, so labeling it wrong is questionable. Explanation 3 denies any structural change, which contradicts the core topic, making it more clearly wrong than partial.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Assigns explanation 1 as best and explanation 0 as partial. While explanation 1 about data inconsistency is relevant, explanation 0 more directly describes the Strangler Fig / progressive substitution pattern central to the topic. Making explanation 0 merely partial undervalues its alignment with the core concepts of gradual architectural transformation.",
+          "score": 5.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Correctly identifies Explanation 0 as the 'best' because it perfectly aligns with the Strangler Fig pattern (routing traffic to a new service), which is the core concept of the lesson. It accurately classifies Explanation 3 as 'wrong' since it denies any structural changes, directly contradicting the topic of architectural transformation.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Correctly identifies Explanation 0 as the 'best' because it perfectly aligns with the Strangler Fig pattern (routing traffic to a new service), which is the core concept of the lesson. It accurately classifies Explanation 3 as 'wrong' since it denies any structural changes, directly contradicting the topic of architectural transformation.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Correctly identifies Explanation 0 as the 'best' because it perfectly aligns with the Strangler Fig pattern (routing traffic to a new service), which is the core concept of the lesson. It accurately classifies Explanation 3 as 'wrong' since it denies any structural changes, directly contradicting the topic of architectural transformation.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Correctly identifies Explanation 0 as the 'best' because it perfectly aligns with the Strangler Fig pattern (routing traffic to a new service), which is the core concept of the lesson. It accurately classifies Explanation 3 as 'wrong' since it denies any structural changes, directly contradicting the topic of architectural transformation.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Correctly identifies Explanation 0 as the 'best' because it perfectly aligns with the Strangler Fig pattern (routing traffic to a new service), which is the core concept of the lesson. It accurately classifies Explanation 3 as 'wrong' since it denies any structural changes, directly contradicting the topic of architectural transformation.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Correctly identifies Explanation 0 as the 'best' because it perfectly aligns with the Strangler Fig pattern (routing traffic to a new service), which is the core concept of the lesson. It accurately classifies Explanation 3 as 'wrong' since it denies any structural changes, directly contradicting the topic of architectural transformation.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Correctly identifies Explanation 0 as the 'best' because it perfectly aligns with the Strangler Fig pattern (routing traffic to a new service), which is the core concept of the lesson. It accurately classifies Explanation 3 as 'wrong' since it denies any structural changes, directly contradicting the topic of architectural transformation.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Properly identifies Explanation 3 as 'wrong', but incorrectly assigns 'best' to Explanation 1. While Explanation 1 is a valid partial symptom (data consistency), Explanation 0 is a much more comprehensive match for the core domain concept of gradual architectural transformation (strangler pattern) causing flow-specific errors.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Fails to accurately assess the 'wrong' explanation. It assigns 'partial' to Explanation 3, which explicitly denies any architectural changes and ignores the 'fix one, break another' scenario. Explanation 3 completely misses the domain concepts and should be 'wrong'.",
+          "score": 6
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Segue perfeitamente o formato e a distribuição exigidos, com exatamente um \"best\", dois \"partial\" e um \"wrong\". A classificação faz sentido para transformação arquitetural gradual: 0 é a melhor explicação, 1 e 2 são parciais plausíveis, e 3 é a menos suportada pelo contexto.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Cumpre integralmente as restrições de contagem e distribuição, sem adicionar conteúdo indevido. A hierarquia atribuída está bem alinhada aos conceitos de estrangulamento arquitetural, convivência entre arquiteturas e extração de módulo.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Atende ao prompt com saída válida, completa e corretamente ordenada. A escolha de 0 como \"best\" e 3 como \"wrong\" é forte do ponto de vista de domínio, enquanto 1 e 2 funcionam como explicações parcialmente verdadeiras.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Entrega exatamente quatro tiers e respeita todas as regras centrais do prompt. A avaliação é consistente com o cenário de migração gradual, distinguindo bem a causa principal das hipóteses apenas parcialmente explicativas.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Resposta correta no formato, na quantidade e na distribuição dos tiers. O mapeamento entre explicações e níveis de acurácia é sólido e compatível com os conceitos arquiteturais apresentados.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Cumpre todas as exigências formais e apresenta uma classificação de boa qualidade. A resposta identifica adequadamente a explicação mais completa e separa de forma razoável as hipóteses parciais da incorreta.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Saída totalmente aderente ao prompt, com quatro itens e distribuição válida. A atribuição dos tiers está bem fundamentada no contexto de substituição progressiva e problemas de coexistência arquitetural.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "O formato e a distribuição estão corretos, mas classificar a explicação 2 como \"wrong\" é severo demais, pois ela tem base plausível em extração prematura de módulo e falhas de integração. Já a 3 como \"partial\" parece menos adequada, porque contradiz melhor o foco do cenário em mudança estrutural gradual.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Apesar de respeitar formato e distribuição, erra no ponto mais importante ao marcar a explicação 1 como \"best\" em vez da 0, que é a mais diretamente alinhada ao padrão de estrangulamento/migração por fatias. Isso compromete significativamente a correção de domínio da resposta.",
+          "score": 4.5
+        }
+      ]
+    }
+  ],
+  "taskId": "activity-investigation-accuracy",
+  "testCaseId": "pt-agile-transformacao-gradual-1"
+}

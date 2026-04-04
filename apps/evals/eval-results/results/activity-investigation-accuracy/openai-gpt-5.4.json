@@ -1,0 +1,272 @@
+{
+  "modelId": "openai/gpt-5.4",
+  "results": [
+    {
+      "steps": [
+        {
+          "conclusion": "None. The output satisfies the core structural rules: it provides exactly 4 labels for 4 explanations, includes exactly one \"best\", at least one \"partial\", and at least one \"wrong\". The selected \"best\" is domain-plausible for a packets/network-paths scenario: a middle device delaying or dropping packets can cause long page loads despite healthy servers. No major factual or instruction-breaking error is evident.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "One minor issue is that explanation 2 being labeled \"partial\" is somewhat debatable. A misconfigured service sending responses toward the wrong place is not the clearest fit for the given evidence and could reasonably be considered \"wrong\" unless the scenario strongly implied routing/addressing mistakes causing retries. However, it still relates to packet addressing/path behavior, so this is a classification nuance rather than a clear factual miss.",
+          "kind": "minorErrors",
+          "score": 8.5
+        },
+        {
+          "conclusion": "The response could be improved by choosing a more clearly evidence-supported partial tier if possible. Explanation 0 (longer path/more hops) as partial is reasonable, and explanation 1 as best is strong, but explanation 2 could be more rigorously separated from partial vs wrong based on whether incorrect return addressing truly matches the symptoms. Still, the overall ranking is coherent and useful.",
+          "kind": "potentialImprovements",
+          "score": 8.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. TIER DISTRIBUTION: There must be exactly one \"best\", at least one \"partial\", and at least one \"wrong\". Penalize if any tier is missing.\n\n2. DOMAIN CORRECTNESS: The \"best\" explanation should be the one most supported by domain knowledge for the given topic and concepts. The accuracy assignment should reflect real-world factual correctness, not just plausibility.\n\n3. PARTIAL VS WRONG: \"partial\" explanations should have genuine elements of truth — they explain part of the problem but miss the key insight. \"wrong\" explanations should be factually incorrect for the domain, even if they sound plausible. Penalize if a \"wrong\" explanation actually has significant truth to it, or if a \"partial\" is completely off-base.\n\n4. OUTPUT LENGTH: The output should contain exactly as many accuracy values as there are explanations in the input. No more, no less.\n",
+        "id": "en-web-packets-network-paths-1",
+        "userInput": {
+          "concepts": [
+            "Network Packets",
+            "Packet Headers",
+            "Packet Payload",
+            "Source Address",
+            "Destination Address",
+            "Hop",
+            "Round Trip",
+            "Path Through a Network"
+          ],
+          "language": "en",
+          "scenario": {
+            "explanations": [
+              "A recent equipment change is sending requests through a much longer chain of machines before they reach the app.",
+              "The app is replying normally, but one device along the way is delaying or dropping pieces of the conversation.",
+              "A misconfigured service is sending responses back toward the wrong place, so browsers keep waiting and retrying.",
+              "The slowdown is inside the data center itself, where one overloaded server is making every page load look like a network problem."
+            ],
+            "scenario": "Your team's web app suddenly feels slow for users in one region, even though the servers look healthy and CPU use is normal. You need to figure out why pages are taking several extra seconds to load before support starts rolling back unrelated changes."
+          },
+          "topic": "Packets and Network Paths"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The tier distribution and output length are correct, but explanation 0 is likely underrated as merely partial. It directly matches overflow to infinity ('valor absurdo', 'número extremo', contaminou o pipeline), which is central to the topic 'Comportamento de inf e NaN'. Explanation 2 is reasonably partial because comparisons with special values, especially NaN not being equal to itself, can cause critical cases to be skipped without obvious errors. Explanation 3 as wrong is defensible because format changes/integration issues are not the core domain explanation, though its mention of 'operações impossíveis' loosely gestures toward NaN. The biggest issue is that explanation 1 was labeled best even though it is more specifically about missing/invalid data treated as numbers, which fits NaN propagation, but may be less complete than explanation 0 or at least not clearly superior given the concepts also include infinity/overflow and comparison behavior.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "The response would be stronger if it selected as 'best' the explanation most comprehensively tied to the listed concepts, or at least better differentiated why explanation 1 is best over explanation 0. A more domain-faithful ranking might be explanation 1 or 0 as best depending on interpretation, but explanation 0 deserves stronger consideration because the scenario mentions nonsensical numbers and contradictory alerts, which are highly consistent with overflow to inf contaminating downstream calculations. Still, the provided labels remain broadly plausible and usable.",
+          "kind": "potentialImprovements",
+          "score": 8.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\nLANGUAGE REQUIREMENT: All content must be in Brazilian Portuguese.\n\n\nEVALUATION CRITERIA:\n\n1. TIER DISTRIBUTION: There must be exactly one \"best\", at least one \"partial\", and at least one \"wrong\". Penalize if any tier is missing.\n\n2. DOMAIN CORRECTNESS: The \"best\" explanation should be the one most supported by domain knowledge for the given topic and concepts. The accuracy assignment should reflect real-world factual correctness, not just plausibility.\n\n3. PARTIAL VS WRONG: \"partial\" explanations should have genuine elements of truth — they explain part of the problem but miss the key insight. \"wrong\" explanations should be factually incorrect for the domain, even if they sound plausible. Penalize if a \"wrong\" explanation actually has significant truth to it, or if a \"partial\" is completely off-base.\n\n4. OUTPUT LENGTH: The output should contain exactly as many accuracy values as there are explanations in the input. No more, no less.\n\n    ",
+        "id": "pt-python-inf-nan-1",
+        "userInput": {
+          "concepts": [
+            "math.isinf()",
+            "math.isnan()",
+            "NaN não igual a si mesmo",
+            "Propagação de NaN",
+            "Operações com infinito",
+            "Estouro para infinito"
+          ],
+          "language": "pt",
+          "scenario": {
+            "explanations": [
+              "Um cálculo passou a receber um valor absurdo em uma etapa anterior, e esse número extremo contaminou o resto do pipeline até travar o fechamento.",
+              "Um dado ausente ou inválido entrou como se fosse número comum, e as contas seguintes espalharam esse problema por vários relatórios.",
+              "A lógica que decide quais pedidos revisar falhou ao comparar certos valores especiais, então parte dos casos críticos foi ignorada sem gerar erro claro.",
+              "Uma integração externa mudou o formato de alguns campos, e o sistema começou a misturar medições reais com resultados de operações impossíveis."
+            ],
+            "scenario": "Você foi chamado porque o sistema de risco de uma fintech aprovou alguns pedidos que deveriam ter sido bloqueados e, ao mesmo tempo, marcou outros como impossíveis de avaliar. Nos relatórios da madrugada, várias colunas aparecem com números sem sentido, campos vazios e alertas contraditórios."
+          },
+          "topic": "Comportamento de inf e NaN"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None. The output provides exactly 4 labels for 4 explanations, includes exactly one \"best\", at least one \"partial\", and at least one \"wrong\". The chosen \"best\" is well supported by the topic and concepts: in alpha alkylation, using an overly reactive alkylating setup can lead to over-alkylation/polialkylation, which directly explains low yield and unexpected byproducts. The assignment of explanation 2 as partial is also domain-consistent because non-symmetric ketones can give mixtures from alkylation at different alpha positions. Explanation 3 can reasonably be partial because an alternative enamine-based route/intermediate relates to the listed concepts but does not best fit the scenario evidence. Explanation 0 as wrong is acceptable because a vague raw-material impurity creating a near-identical side product is not the conceptually supported core explanation for this lesson compared with the alpha-alkylation mechanisms highlighted.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Minor issue: the response is in JSON with an \"accuracies\" key rather than a bare array, while the instruction says \"an array of accuracy tiers\". However, the evaluation notes emphasize content criteria over JSON formatting, and the content itself is complete and correctly ordered. Also, explanation 0 could arguably be considered partial in some real manufacturing contexts because impurities can affect selectivity, but within this lesson framing it is still reasonable to mark it wrong.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "The answer could be improved by returning only the bare array if strict output shape matters, and by ensuring the Spanish-language requirement is reflected more explicitly if any surrounding text were present. Content-wise, little improvement is needed because the tier distribution and domain judgments are strong.",
+          "kind": "potentialImprovements",
+          "score": 9.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\nLANGUAGE REQUIREMENT: All content must be in Latin American Spanish.\n\n\nEVALUATION CRITERIA:\n\n1. TIER DISTRIBUTION: There must be exactly one \"best\", at least one \"partial\", and at least one \"wrong\". Penalize if any tier is missing.\n\n2. DOMAIN CORRECTNESS: The \"best\" explanation should be the one most supported by domain knowledge for the given topic and concepts. The accuracy assignment should reflect real-world factual correctness, not just plausibility.\n\n3. PARTIAL VS WRONG: \"partial\" explanations should have genuine elements of truth — they explain part of the problem but miss the key insight. \"wrong\" explanations should be factually incorrect for the domain, even if they sound plausible. Penalize if a \"wrong\" explanation actually has significant truth to it, or if a \"partial\" is completely off-base.\n\n4. OUTPUT LENGTH: The output should contain exactly as many accuracy values as there are explanations in the input. No more, no less.\n\n    ",
+        "id": "es-quimica-alquilacion-alfa-1",
+        "userInput": {
+          "concepts": [
+            "Alquilación de enolatos",
+            "Electrófilo primario en alquilación alfa",
+            "Polialquilación de enolatos",
+            "Alquilación de cetonas no simétricas",
+            "Enaminas de Stork",
+            "Alquilación vía enamina"
+          ],
+          "language": "es",
+          "scenario": {
+            "explanations": [
+              "El lote falló porque una de las materias primas venía con una pequeña impureza que desvió parte de la reacción hacia un producto casi idéntico al esperado.",
+              "El problema empezó cuando el equipo usó un reactivo demasiado agresivo y, en vez de detenerse tras un solo cambio, la mezcla siguió reaccionando más de la cuenta.",
+              "La causa fue que la transformación ocurrió en más de un punto posible de la molécula, así que el proceso produjo una mezcla de compuestos difíciles de separar.",
+              "El rendimiento cayó porque se siguió una ruta alternativa con un intermedio distinto, más controlable en teoría, pero mal preparada en esta corrida."
+            ],
+            "scenario": "Estás revisando una corrida en la planta y el lote salió con muy poco producto útil y demasiadas impurezas. El procedimiento parecía rutinario, pero esta vez aparecieron compuestos inesperados y nadie sabe en qué paso se torció todo."
+          },
+          "topic": "Alquilación en posición alfa"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None. The output follows the required structure in substance: it assigns exactly 4 tiers for 4 explanations, includes exactly one 'best', at least one 'partial', and at least one 'wrong'. The domain judgment is also sound: explanation 3 is the strongest fit for Business Cycle Phases because it identifies expansion based on unusually strong early results followed by a broader slowdown near/after the peak, which best explains the chain-wide sales slide and weak performance in new stores. Explanation 0 is reasonably partial because it captures weakening demand but lacks the key insight about overreading early-cycle strength. Explanation 1 is appropriately wrong because a supply bottleneck does not align with the scenario's emphasis on piling inventory and broad demand weakness. Explanation 2 is also reasonably partial rather than best because competition could hurt performance, but it is less supported than a macro cycle slowdown and does not best explain the broader pattern.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None. There are no concrete minor errors in the classification. The ordering is preserved, the labels are valid, and the distinctions between partial and wrong are defensible under the given business-cycle framing.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "A small improvement would be to classify explanation 2 as 'wrong' and explanation 0 as 'partial' or keep as is but with clearer justification if explanations were allowed. In a strict business-cycle reading, the competitor explanation is less tied to the lesson concepts than the market-demand explanations, so some evaluators might prefer ['partial','wrong','wrong','best']. However, this is a borderline interpretive refinement rather than a clear defect. Since only labels were requested, the provided result is still highly useful.",
+          "kind": "potentialImprovements",
+          "score": 9.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. TIER DISTRIBUTION: There must be exactly one \"best\", at least one \"partial\", and at least one \"wrong\". Penalize if any tier is missing.\n\n2. DOMAIN CORRECTNESS: The \"best\" explanation should be the one most supported by domain knowledge for the given topic and concepts. The accuracy assignment should reflect real-world factual correctness, not just plausibility.\n\n3. PARTIAL VS WRONG: \"partial\" explanations should have genuine elements of truth — they explain part of the problem but miss the key insight. \"wrong\" explanations should be factually incorrect for the domain, even if they sound plausible. Penalize if a \"wrong\" explanation actually has significant truth to it, or if a \"partial\" is completely off-base.\n\n4. OUTPUT LENGTH: The output should contain exactly as many accuracy values as there are explanations in the input. No more, no less.\n",
+        "id": "en-economics-business-cycle-phases-1",
+        "userInput": {
+          "concepts": [
+            "Business Cycle",
+            "Expansion Phase",
+            "Peak of a Cycle",
+            "Contraction Phase",
+            "Trough of a Cycle",
+            "Recession",
+            "Recovery"
+          ],
+          "language": "en",
+          "scenario": {
+            "explanations": [
+              "Demand is weakening across the market, and your stores only noticed after opening new locations at the worst possible moment.",
+              "A supply problem or shipping bottleneck left popular items missing, so sales fell even though customers still wanted to buy.",
+              "A new competitor pulled away your best customers right as you committed to a bigger footprint and higher fixed costs.",
+              "Your expansion was based on unusually strong early-year results that couldn't last, so the second-half drop reflects a broader slowdown rather than a store-level mistake."
+            ],
+            "scenario": "You run strategy for a retail chain that opened 18 new stores after a strong first half of the year. By early fall, sales are sliding, inventory is piling up, and the new locations are missing their targets even in cities that looked promising."
+          },
+          "topic": "Business Cycle Phases"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Nenhum erro menor concreto identificado. A resposta contém exatamente 4 itens, usa apenas os rótulos permitidos, respeita a distribuição exigida com exatamente um \"best\", pelo menos um \"partial\" e pelo menos um \"wrong\", e a escolha parece consistente com o cenário e os conceitos de transformação arquitetural gradual. A explicação 0 é plausivelmente a melhor por descrever um desvio parcial para um novo serviço que não cobre todos os casos, algo muito alinhado a estrangulamento arquitetural/substituição progressiva. As explicações 1 e 2 têm elementos verdadeiros e compatíveis com convivência entre arquiteturas e extração de módulo, então classificá-las como \"partial\" faz sentido. A 3 é menos compatível com o foco do cenário em mudanças graduais e quebras em etapas específicas do fluxo, então \"wrong\" também é adequado.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Poderia haver leve incerteza interpretativa entre marcar a explicação 2 como \"partial\" ou até \"best\", já que separação precoce de módulo e falhas de mensageria também combinam com o cenário. Ainda assim, a classificação escolhida é defensável e útil. Como o formato exigia apenas os tiers, não havia necessidade de justificativas adicionais.",
+          "kind": "potentialImprovements",
+          "score": 9.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\nLANGUAGE REQUIREMENT: All content must be in Brazilian Portuguese.\n\n\nEVALUATION CRITERIA:\n\n1. TIER DISTRIBUTION: There must be exactly one \"best\", at least one \"partial\", and at least one \"wrong\". Penalize if any tier is missing.\n\n2. DOMAIN CORRECTNESS: The \"best\" explanation should be the one most supported by domain knowledge for the given topic and concepts. The accuracy assignment should reflect real-world factual correctness, not just plausibility.\n\n3. PARTIAL VS WRONG: \"partial\" explanations should have genuine elements of truth — they explain part of the problem but miss the key insight. \"wrong\" explanations should be factually incorrect for the domain, even if they sound plausible. Penalize if a \"wrong\" explanation actually has significant truth to it, or if a \"partial\" is completely off-base.\n\n4. OUTPUT LENGTH: The output should contain exactly as many accuracy values as there are explanations in the input. No more, no less.\n\n    ",
+        "id": "pt-agile-transformacao-gradual-1",
+        "userInput": {
+          "concepts": [
+            "Evolução incremental da arquitetura",
+            "Estrangulamento arquitetural",
+            "Extração de módulo",
+            "Substituição progressiva",
+            "Migração por fatias",
+            "Convivência entre arquiteturas"
+          ],
+          "language": "pt",
+          "scenario": {
+            "explanations": [
+              "Uma mudança recente em uma parte do sistema passou a desviar pedidos para um serviço novo, mas esse caminho ainda não cobre todos os casos e está deixando operações pela metade.",
+              "O problema começou porque partes antigas e novas estão consultando dados de jeitos diferentes, então alguns clientes veem informações atualizadas e outros recebem respostas antigas.",
+              "A lentidão e os erros apareceram porque um módulo muito usado foi separado cedo demais, e agora a troca de mensagens entre as partes está criando filas e falhas.",
+              "Nada estrutural mudou de fato; o aumento de acessos desta semana só expôs um gargalo antigo que já existia no sistema principal."
+            ],
+            "scenario": "Você faz parte da equipe de um produto que ficou anos crescendo sem parar, e agora os erros aumentaram sempre que uma compra passa por etapas específicas do fluxo. O site continua no ar, mas cada ajuste parece consertar um pedaço e quebrar outro, e você precisa descobrir o que realmente está acontecendo sem parar a operação."
+          },
+          "topic": "Transformação arquitetural gradual"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None. The output has exactly 4 entries for 4 explanations, preserves the required order, and includes exactly one \"best\", at least one \"partial\", and at least one \"wrong\". The chosen \"best\" is defensible for the topic: in Brazil's vaccine-capacity context, limits in trained personnel, validated processes, and scale-up readiness at public labs are a core real constraint, so explanation 1 is not a major factual misfire. The other labels are also broadly plausible: import dependence and coordination problems both contain truth but are less complete, while the claim that institutions were ready to produce far more than asked is overstated and thus reasonably marked wrong.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "There is a possible classification nuance: explanation 0 (dependence on imported doses) could arguably be the best or co-best in some real-world framings, because reliance on imported inputs/doses was a major bottleneck during rollout. Likewise, explanation 3 might also be seen as partly overlapping with the best due to translational and system coordination issues. These are not clear-cut factual errors, but they reduce confidence that the single strongest explanation was uniquely identified.",
+          "kind": "minorErrors",
+          "score": 8.9
+        },
+        {
+          "conclusion": "The response could be improved by choosing the most strongly supported explanation with more confidence if the underlying domain is specifically Brazil/Fiocruz/Butantan: explanation 0 and explanation 1 are both credible, and the evaluator might have benefited from weighing import dependence versus internal scale-up constraints more explicitly. Still, within the required output-only format, the submitted tiers are coherent and useful.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. TIER DISTRIBUTION: There must be exactly one \"best\", at least one \"partial\", and at least one \"wrong\". Penalize if any tier is missing.\n\n2. DOMAIN CORRECTNESS: The \"best\" explanation should be the one most supported by domain knowledge for the given topic and concepts. The accuracy assignment should reflect real-world factual correctness, not just plausibility.\n\n3. PARTIAL VS WRONG: \"partial\" explanations should have genuine elements of truth — they explain part of the problem but miss the key insight. \"wrong\" explanations should be factually incorrect for the domain, even if they sound plausible. Penalize if a \"wrong\" explanation actually has significant truth to it, or if a \"partial\" is completely off-base.\n\n4. OUTPUT LENGTH: The output should contain exactly as many accuracy values as there are explanations in the input. No more, no less.\n",
+        "id": "en-history-biomedical-institutions-1",
+        "userInput": {
+          "concepts": [
+            "Fiocruz",
+            "Butantan Institute",
+            "Biomedical Research",
+            "Vaccine Production",
+            "Public Laboratories"
+          ],
+          "language": "en",
+          "scenario": {
+            "explanations": [
+              "A fast-growing outbreak exposed that the country depended too heavily on imported doses and couldn't replace them quickly when shipments slowed.",
+              "The vaccination campaign stalled because local labs had the right buildings but not enough trained staff and tested routines to scale up safely.",
+              "The delay came mostly from political fights and purchasing decisions, while the scientific institutions themselves were ready to produce far more than they were asked to.",
+              "The shortage was driven by weak coordination between research centers, factories, and the health system, so discoveries were made but took too long to reach clinics."
+            ],
+            "scenario": "You're advising officials as a new disease spreads, but the national vaccination campaign keeps falling behind schedule. Some regions are waiting for doses while others get shipments late, and you need to figure out why the country couldn't respond faster."
+          },
+          "topic": "Biomedical Institutions and Vaccine Capacity"
+        }
+      }
+    }
+  ],
+  "taskId": "activity-investigation-accuracy"
+}
