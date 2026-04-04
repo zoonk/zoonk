@@ -1,0 +1,27 @@
+packages/ai/src/tasks/visuals/visual-table.ts
+  0feffe6e39a72d6d 14-15,19
+packages/ai/src/tasks/visuals/visual-code.ts
+  0feffe6e39a72d6d 14-15,26
+packages/ai/src/tasks/visuals/visual-diagram.ts
+  0feffe6e39a72d6d 14-15,21
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "130bb301aa9854e5b58780a39d289d3fcf9668ef",
+  "prompts": {
+    "0feffe6e39a72d6d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "80fd1d08-4a6c-485e-83aa-b42425f409b9",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 9,
+      "total_deletions": 3,
+      "accepted_lines": 9,
+      "overriden_lines": 0
+    }
+  }
+}
