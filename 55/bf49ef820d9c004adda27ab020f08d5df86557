@@ -1,0 +1,23 @@
+packages/core/src/steps/contract/content.test.ts
+  aa2869736a4eef5a 416-428
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "55bf49ef820d9c004adda27ab020f08d5df86557",
+  "prompts": {
+    "aa2869736a4eef5a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "caea2d68-3d24-430e-8986-ee8c694c7f89",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 13,
+      "total_deletions": 7,
+      "accepted_lines": 13,
+      "overriden_lines": 0
+    }
+  }
+}
