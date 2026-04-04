@@ -1,0 +1,27 @@
+packages/ai/src/tasks/activities/core/activity-investigation-debrief.prompt.md
+  6829fab93a88d1c9 11
+packages/ai/src/tasks/activities/core/activity-investigation-debrief.ts
+  6829fab93a88d1c9 6,8,23-24,32-34,39-40,43,49-52,56,70-71,78
+apps/evals/src/tasks/activity-investigation-debrief/test-cases.ts
+  6829fab93a88d1c9 1,8,10,12-19,21-116,118-265,270-373,378-381,384
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "dea1a5347b91bcef9e6bd11e3722bd4d58366645",
+  "prompts": {
+    "6829fab93a88d1c9": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "747ef396-5efe-46e1-903b-2b41c7d906f1",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 388,
+      "total_deletions": 16,
+      "accepted_lines": 384,
+      "overriden_lines": 1
+    }
+  }
+}
