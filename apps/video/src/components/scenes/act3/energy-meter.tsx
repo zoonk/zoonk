@@ -2,6 +2,7 @@ import { SceneContainer } from "@/components/scene-container";
 import { SceneHeadline } from "@/components/scene-headline";
 import { entryScale } from "@/lib/animation";
 import { COLORS } from "@/lib/constants";
+import { useT } from "@/lib/use-translations";
 import { Easing, interpolate, useCurrentFrame } from "remotion";
 
 const ARC_CIRCUMFERENCE = Math.PI * 64;
@@ -15,6 +16,7 @@ const ARC_CIRCUMFERENCE = Math.PI * 64;
  */
 export function EnergyIntro() {
   const frame = useCurrentFrame();
+  const t = useT();
 
   const gaugeStyle = entryScale({ frame, delay: 50, duration: 12 });
   const energyValue = interpolate(frame, [55, 75], [78, 76], {
@@ -36,8 +38,8 @@ export function EnergyIntro() {
         }}
       >
         <SceneHeadline
-          setup="Miss a day?"
-          payoff="Your energy dips a little."
+          setup={t.energySetup}
+          payoff={t.energyPayoff}
           fontSize={44}
         />
 
@@ -95,11 +97,13 @@ export function EnergyIntro() {
  * Short, punchy. The relief.
  */
 export function EnergyNeverGone() {
+  const t = useT();
+
   return (
     <SceneContainer bg="white">
       <SceneHeadline
-        setup="But it doesn't disappear."
-        payoff="It bounces right back."
+        setup={t.energyGoneSetup}
+        payoff={t.energyGonePayoff}
         payoffStartFrame={20}
         fontSize={44}
       />
@@ -114,11 +118,13 @@ export function EnergyNeverGone() {
  * The emotional payoff.
  */
 export function EnergyPhilosophy() {
+  const t = useT();
+
   return (
     <SceneContainer bg="white">
       <SceneHeadline
-        setup="No guilt. No punishment."
-        payoff="Just pick up where you left off."
+        setup={t.energyPhiloSetup}
+        payoff={t.energyPhiloPayoff}
         fontSize={44}
       />
     </SceneContainer>

@@ -2,6 +2,7 @@ import { SceneContainer } from "@/components/scene-container";
 import { SceneHeadline } from "@/components/scene-headline";
 import { entryScale, stagger } from "@/lib/animation";
 import { COLORS } from "@/lib/constants";
+import { useT } from "@/lib/use-translations";
 import {
   IconBallBasketball,
   IconBuildingStore,
@@ -36,6 +37,7 @@ const ICONS = [
  */
 export function EverydayLanguage() {
   const frame = useCurrentFrame();
+  const t = useT();
 
   return (
     <SceneContainer bg="white">
@@ -48,8 +50,8 @@ export function EverydayLanguage() {
         }}
       >
         <SceneHeadline
-          setup="We explain hard things"
-          payoff="using stuff you already know."
+          setup={t.everydaySetup}
+          payoff={t.everydayPayoff}
         />
 
         {/* Icon grid — 2 rows of 5 */}

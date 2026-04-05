@@ -1,19 +1,7 @@
 import { SceneContainer } from "@/components/scene-container";
 import { COLORS } from "@/lib/constants";
+import { useT } from "@/lib/use-translations";
 import { Easing, interpolate, useCurrentFrame } from "remotion";
-
-const JARGON =
-  "Wave-particle duality constitutes a fundamental ontological principle " +
-  "within the theoretical framework of quantum mechanics, whereby subatomic " +
-  "entities — including but not limited to photons, electrons, and other " +
-  "elementary particles — simultaneously exhibit characteristics attributable " +
-  "to both classical wave phenomena and discrete corpuscular behavior, as " +
-  "empirically demonstrated through interference patterns observed in the " +
-  "double-slit experiment, thereby challenging deterministic interpretations " +
-  "of physical reality and necessitating a probabilistic reformulation of " +
-  "measurement theory within the Copenhagen interpretation.";
-
-const SIMPLE = "Light acts like both a wave and a ball.";
 
 /**
  * Dense jargon paragraph dissolves (opacity + blur + scale down)
@@ -23,6 +11,7 @@ const SIMPLE = "Light acts like both a wave and a ball.";
  */
 export function LanguageTransform() {
   const frame = useCurrentFrame();
+  const t = useT();
 
   /**
    * Jargon: enters frames 0-8, holds briefly 8-35, dissolves 35-65.
@@ -80,7 +69,7 @@ export function LanguageTransform() {
             filter: `blur(${jargonBlur}px)`,
           }}
         >
-          {JARGON}
+          {t.jargon}
         </p>
 
         {/* Simple sentence — larger, dark, confident, emerges from the fog */}
@@ -99,7 +88,7 @@ export function LanguageTransform() {
             opacity: simpleOpacity,
           }}
         >
-          {SIMPLE}
+          {t.simple}
         </p>
       </div>
     </SceneContainer>

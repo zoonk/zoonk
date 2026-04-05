@@ -2,6 +2,7 @@ import { SceneContainer } from "@/components/scene-container";
 import { SceneHeadline } from "@/components/scene-headline";
 import { countUp, entryScale } from "@/lib/animation";
 import { COLORS } from "@/lib/constants";
+import { useT } from "@/lib/use-translations";
 import { useCurrentFrame } from "remotion";
 
 /**
@@ -11,11 +12,13 @@ import { useCurrentFrame } from "remotion";
  * Introduces the concept before showing data.
  */
 export function PatternsIntro() {
+  const t = useT();
+
   return (
     <SceneContainer bg="white">
       <SceneHeadline
-        setup="Zoonk tracks your learning patterns"
-        payoff="so you always know what works."
+        setup={t.patternsSetup}
+        payoff={t.patternsPayoff}
         fontSize={40}
       />
     </SceneContainer>
@@ -28,6 +31,7 @@ export function PatternsIntro() {
  */
 export function PatternsData() {
   const frame = useCurrentFrame();
+  const t = useT();
 
   const leftStatStyle = entryScale({ frame, delay: 8, duration: 12 });
   const rightStatStyle = entryScale({ frame, delay: 14, duration: 12 });
@@ -55,8 +59,8 @@ export function PatternsData() {
               gap: 8,
             }}
           >
-            <span style={{ fontSize: 48, fontWeight: 700, color: COLORS.text }}>Tue, 8 AM</span>
-            <span style={{ fontSize: 14, fontWeight: 500, color: COLORS.muted }}>Best focus time</span>
+            <span style={{ fontSize: 48, fontWeight: 700, color: COLORS.text }}>{t.patternsFocusTime}</span>
+            <span style={{ fontSize: 14, fontWeight: 500, color: COLORS.muted }}>{t.patternsFocusLabel}</span>
           </div>
 
           <div
@@ -80,7 +84,7 @@ export function PatternsData() {
             >
               {accuracy}%
             </span>
-            <span style={{ fontSize: 14, fontWeight: 500, color: COLORS.muted }}>Accuracy</span>
+            <span style={{ fontSize: 14, fontWeight: 500, color: COLORS.muted }}>{t.patternsAccuracyLabel}</span>
           </div>
         </div>
       </div>
@@ -95,11 +99,13 @@ export function PatternsData() {
  * The "so what" — connects the data to the viewer's life.
  */
 export function PatternsPayoff() {
+  const t = useT();
+
   return (
     <SceneContainer bg="white">
       <SceneHeadline
-        setup="Know when you learn best,"
-        payoff="so you can be more productive."
+        setup={t.patternsWhySetup}
+        payoff={t.patternsWhyPayoff}
         payoffStartFrame={20}
         fontSize={40}
       />

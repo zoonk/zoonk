@@ -1,29 +1,8 @@
 import { SceneContainer } from "@/components/scene-container";
 import { entryScale, stagger, typewriter } from "@/lib/animation";
 import { COLORS } from "@/lib/constants";
+import { useT } from "@/lib/use-translations";
 import { Easing, interpolate, useCurrentFrame } from "remotion";
-
-const PLACEHOLDER = "What do you want to learn?";
-const QUERY = "quantum physics";
-
-/** First 3 appear slowly, the rest cascade in fast. */
-const CHAPTERS = [
-  "What is quantum physics?",
-  "Waves and particles",
-  "Superposition",
-  "Heisenberg's uncertainty principle",
-  "Schrödinger's equation",
-  "Quantum entanglement",
-  "Wave function collapse",
-  "Quantum tunneling",
-  "Spin and angular momentum",
-  "The double-slit experiment",
-  "Quantum decoherence",
-  "Quantum field theory",
-  "Bell's theorem",
-  "Quantum computing basics",
-  "Interpretations of quantum mechanics",
-];
 
 const ITEM_HEIGHT = 44;
 const ITEM_GAP = 8;
@@ -48,6 +27,10 @@ const LIST_TOP = INPUT_FINAL_Y + 72 + 20;
  */
 export function SearchPrompt() {
   const frame = useCurrentFrame();
+  const t = useT();
+
+  const PLACEHOLDER = t.searchPlaceholder;
+  const QUERY = t.searchQuery;
 
   const inputEntryStyle = entryScale({ frame, delay: 0, duration: 12 });
 
@@ -139,7 +122,7 @@ export function SearchPrompt() {
             paddingLeft: 28,
           }}
         >
-          {CHAPTERS.map((title, index) => {
+          {t.chapters.map((title, index) => {
             const delay = stagger({ index, baseDelay: typingDone + 8, gap: 3 });
             const style = entryScale({ frame, delay });
 

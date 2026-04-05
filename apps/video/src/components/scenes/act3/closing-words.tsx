@@ -1,6 +1,7 @@
 import { SceneContainer } from "@/components/scene-container";
 import { WordReveal } from "@/components/word-reveal";
 import { COLORS } from "@/lib/constants";
+import { useT } from "@/lib/use-translations";
 
 /**
  * "You can learn anything." — word by word, all bold, all black.
@@ -8,10 +9,12 @@ import { COLORS } from "@/lib/constants";
  * No setup/payoff split — every word carries equal weight.
  */
 export function ClosingWords() {
+  const t = useT();
+
   return (
     <SceneContainer bg="white">
       <WordReveal
-        text="You can learn anything."
+        text={t.closingWords}
         startFrame={0}
         style={{
           fontSize: 72,

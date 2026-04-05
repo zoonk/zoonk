@@ -1,6 +1,7 @@
 import { SceneContainer } from "@/components/scene-container";
 import { entryScale, smoothSpring } from "@/lib/animation";
 import { COLORS } from "@/lib/constants";
+import { useT } from "@/lib/use-translations";
 import { Easing, Sequence, interpolate, useCurrentFrame, useVideoConfig } from "remotion";
 
 const FRAMES_PER_VISUAL = 60;
@@ -53,6 +54,7 @@ function VisualLabel({ text }: { text: string }) {
 function TimelineVisual() {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
+  const t = useT();
 
   const lineWidth = 600;
   const lineY = 50;
@@ -62,7 +64,7 @@ function TimelineVisual() {
 
   return (
     <>
-      <VisualLabel text="Timelines" />
+      <VisualLabel text={t.labelTimelines} />
       <div style={{ ...entryScale({ frame, delay: 0, duration: 12 }), marginTop: 80 }}>
         <svg width={lineWidth + 40} height={120} viewBox={`0 0 ${lineWidth + 40} 120`}>
           <line x1={20} y1={lineY} x2={lineWidth + 20} y2={lineY} stroke={COLORS.border} strokeWidth={2} />
@@ -92,15 +94,16 @@ function TimelineVisual() {
 function DiagramVisual() {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
+  const t = useT();
 
-  const nodes = ["You look at it", "It picks a state", "Now it's definite"];
+  const nodes = t.diagramNodes;
   const nodeWidth = 180;
   const gap = 60;
   const totalWidth = nodes.length * nodeWidth + (nodes.length - 1) * gap;
 
   return (
     <>
-      <VisualLabel text="Diagrams" />
+      <VisualLabel text={t.labelDiagrams} />
       <div style={{ position: "relative", width: totalWidth, height: 56, marginTop: 80 }}>
         {nodes.map((label, i) => {
           const nodeStyle = entryScale({ frame, delay: i * 15, duration: 12 });
@@ -151,6 +154,7 @@ function DiagramVisual() {
 function ChartVisual() {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
+  const t = useT();
 
   const bars = [
     { label: "Classical", height: 120, color: COLORS.border },
@@ -160,7 +164,7 @@ function ChartVisual() {
 
   return (
     <>
-      <VisualLabel text="Charts" />
+      <VisualLabel text={t.labelCharts} />
       <div style={{ display: "flex", alignItems: "flex-end", gap: 32, marginTop: 80 }}>
         {bars.map((bar, i) => {
           const progress = smoothSpring({ frame, fps, delay: 8 + i * 6, durationInFrames: 30 });

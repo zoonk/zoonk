@@ -1,5 +1,6 @@
 import { SceneContainer } from "@/components/scene-container";
 import { COLORS } from "@/lib/constants";
+import { useT } from "@/lib/use-translations";
 import { interpolate, useCurrentFrame } from "remotion";
 
 /**
@@ -8,6 +9,7 @@ import { interpolate, useCurrentFrame } from "remotion";
  */
 export function Website() {
   const frame = useCurrentFrame();
+  const t = useT();
 
   const opacity = interpolate(frame, [0, 3], [0, 1], {
     extrapolateLeft: "clamp",
@@ -24,7 +26,7 @@ export function Website() {
           opacity,
         }}
       >
-        zoonk.com
+        {t.website}
       </span>
     </SceneContainer>
   );

@@ -2,6 +2,7 @@ import { SceneContainer } from "@/components/scene-container";
 import { SceneHeadline } from "@/components/scene-headline";
 import { entryScale, exitFade, stagger } from "@/lib/animation";
 import { BELT_COLORS } from "@/lib/constants";
+import { useT } from "@/lib/use-translations";
 import { useCurrentFrame } from "remotion";
 
 /**
@@ -12,6 +13,7 @@ import { useCurrentFrame } from "remotion";
  */
 export function BeltSystem() {
   const frame = useCurrentFrame();
+  const t = useT();
 
   const beat1Fading = frame >= 65;
   const beat1FadeStyle = beat1Fading ? exitFade({ frame, start: 65, duration: 10 }) : {};
@@ -30,8 +32,8 @@ export function BeltSystem() {
         }}
       >
         <SceneHeadline
-          setup="Become a black belt"
-          payoff="in anything you learn."
+          setup={t.beltSetup}
+          payoff={t.beltPayoff}
           payoffStartFrame={15}
           fontSize={44}
         />
@@ -63,8 +65,8 @@ export function BeltSystem() {
       {frame >= 77 && (
         <div style={{ position: "absolute" }}>
           <SceneHeadline
-            setup="Like martial arts."
-            payoff="But for your brain."
+            setup={t.beltPunchSetup}
+            payoff={t.beltPunchPayoff}
             payoffStartFrame={100}
             fontSize={44}
           />

@@ -2,17 +2,8 @@ import { SceneContainer } from "@/components/scene-container";
 import { SceneHeadline } from "@/components/scene-headline";
 import { entryScale, stagger } from "@/lib/animation";
 import { COLORS } from "@/lib/constants";
+import { useT } from "@/lib/use-translations";
 import { interpolate, useCurrentFrame } from "remotion";
-
-const SCENARIO =
-  "You're running a laser calibration lab. Your latest readings are inconsistent. " +
-  "One sensor says wave, another says particle.";
-
-const CHOICES = [
-  "Recalibrate both sensors",
-  "Check the observation method",
-  "Increase sample size",
-];
 
 const WRONG_INDEX = 0;
 const CORRECT_INDEX = 1;
@@ -24,6 +15,7 @@ const ERROR_COLOR = "#ef4444";
  */
 export function StoryBranch() {
   const frame = useCurrentFrame();
+  const t = useT();
 
   const scenarioStyle = entryScale({ frame, delay: 35, duration: 12 });
 
@@ -65,8 +57,8 @@ export function StoryBranch() {
         }}
       >
         <SceneHeadline
-          setup="You learn"
-          payoff="by making decisions."
+          setup={t.storySetup}
+          payoff={t.storyPayoff}
           payoffStartFrame={15}
         />
 
@@ -83,12 +75,12 @@ export function StoryBranch() {
             margin: 0,
           }}
         >
-          {SCENARIO}
+          {t.storyScenario}
         </p>
 
         {/* Choice cards */}
         <div style={{ display: "flex", flexDirection: "column", gap: 12, width: "100%", marginTop: 8 }}>
-          {CHOICES.map((choice, index) => {
+          {t.storyChoices.map((choice, index) => {
             const delay = stagger({ index, baseDelay: 48, gap: 6 });
             const choiceStyle = entryScale({ frame, delay });
 
@@ -145,8 +137,7 @@ export function StoryBranch() {
                     }}
                   >
                     <span style={{ fontSize: 14, fontWeight: 400, color: COLORS.muted, lineHeight: 1.5 }}>
-                      Recalibrating won't help — the inconsistency is caused by
-                      how the measurement is done, not the sensors themselves.
+                      {t.storyFeedback}
                     </span>
                   </div>
                 )}

@@ -2,6 +2,7 @@ import { SceneContainer } from "@/components/scene-container";
 import { SceneHeadline } from "@/components/scene-headline";
 import { countUp, entryScale } from "@/lib/animation";
 import { COLORS } from "@/lib/constants";
+import { useT } from "@/lib/use-translations";
 import { useCurrentFrame } from "remotion";
 
 /**
@@ -13,6 +14,7 @@ import { useCurrentFrame } from "remotion";
  */
 export function BrainPowerIntro() {
   const frame = useCurrentFrame();
+  const t = useT();
 
   const counterStyle = entryScale({ frame, delay: 50, duration: 12 });
   const bpValue = countUp({ frame, startFrame: 55, endFrame: 85, from: 2440, to: 2450 });
@@ -29,8 +31,8 @@ export function BrainPowerIntro() {
         }}
       >
         <SceneHeadline
-          setup="As you learn things"
-          payoff="your Brain Power increases."
+          setup={t.brainIntroSetup}
+          payoff={t.brainIntroPayoff}
         />
 
         {/* Brain Power counter */}
@@ -62,11 +64,13 @@ export function BrainPowerIntro() {
  * Short, punchy. The surprising fact.
  */
 export function BrainPowerNeverDown() {
+  const t = useT();
+
   return (
     <SceneContainer bg="white">
       <SceneHeadline
-        setup="Your Brain Power never goes down."
-        payoff="It only goes up."
+        setup={t.brainNeverSetup}
+        payoff={t.brainNeverPayoff}
         payoffStartFrame={20}
         fontSize={44}
       />
@@ -81,11 +85,13 @@ export function BrainPowerNeverDown() {
  * The emotional payoff. The "because" connects back to the previous scene.
  */
 export function BrainPowerPhilosophy() {
+  const t = useT();
+
   return (
     <SceneContainer bg="white">
       <SceneHeadline
-        setup="Because knowledge"
-        payoff="is something nobody can take from you."
+        setup={t.brainPhiloSetup}
+        payoff={t.brainPhiloPayoff}
         fontSize={44}
       />
     </SceneContainer>

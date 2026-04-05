@@ -1,6 +1,7 @@
 import { SceneContainer } from "@/components/scene-container";
 import { entryScale, stagger } from "@/lib/animation";
 import { COLORS } from "@/lib/constants";
+import { useT } from "@/lib/use-translations";
 import {
   IconChartBar,
   IconCode,
@@ -14,25 +15,26 @@ import {
 } from "@tabler/icons-react";
 import { useCurrentFrame } from "remotion";
 
-/**
- * All 9 visual types Zoonk can generate, in a 3x3 grid.
- * The grid IS the statement — no headline needed.
- * Shows abundance: "there's a whole system of visual tools."
- */
-const VISUALS = [
-  { icon: IconChartBar, label: "Charts" },
-  { icon: IconSchema, label: "Diagrams" },
-  { icon: IconTimeline, label: "Timelines" },
-  { icon: IconCode, label: "Code" },
-  { icon: IconMathFunction, label: "Formulas" },
-  { icon: IconTable, label: "Tables" },
-  { icon: IconPhoto, label: "Images" },
-  { icon: IconMusic, label: "Music" },
-  { icon: IconQuote, label: "Quotes" },
-];
-
 export function VisualsGrid() {
   const frame = useCurrentFrame();
+  const t = useT();
+
+  /**
+   * All 9 visual types Zoonk can generate, in a 3x3 grid.
+   * The grid IS the statement — no headline needed.
+   * Shows abundance: "there's a whole system of visual tools."
+   */
+  const visuals = [
+    { icon: IconChartBar, label: t.gridLabels.charts },
+    { icon: IconSchema, label: t.gridLabels.diagrams },
+    { icon: IconTimeline, label: t.gridLabels.timelines },
+    { icon: IconCode, label: t.gridLabels.code },
+    { icon: IconMathFunction, label: t.gridLabels.formulas },
+    { icon: IconTable, label: t.gridLabels.tables },
+    { icon: IconPhoto, label: t.gridLabels.images },
+    { icon: IconMusic, label: t.gridLabels.music },
+    { icon: IconQuote, label: t.gridLabels.quotes },
+  ];
 
   return (
     <SceneContainer bg="white">
@@ -43,7 +45,7 @@ export function VisualsGrid() {
           gap: "40px 48px",
         }}
       >
-        {VISUALS.map(({ icon: Icon, label }, index) => {
+        {visuals.map(({ icon: Icon, label }, index) => {
           /**
            * First icon appears instantly (index 0, no animation).
            * Remaining icons stagger in with 3-frame gaps.
