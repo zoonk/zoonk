@@ -9,10 +9,10 @@ export function VisualsHeadline() {
   return (
     <SceneContainer bg="white">
       <SceneHeadline
-        setup="Complex things, made simple."
-        payoff="Charts. Diagrams. Timelines."
+        setup="Complex things,"
+        payoff="made simple."
         payoffStartFrame={20}
-        fontSize={48}
+        fontSize={56}
       />
     </SceneContainer>
   );
