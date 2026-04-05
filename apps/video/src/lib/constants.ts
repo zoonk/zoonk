@@ -55,7 +55,9 @@ export const SCENES = {
   // ACT 1: THE SPARK
   searchPrompt: 4 * FPS,
   everydayLanguage: 3.5 * FPS,
-  storyBranch: 6 * FPS,
+  storyClaim: 3 * FPS,
+  storyCorrect: 4 * FPS,
+  storyFeedback: 4.5 * FPS,
 
   // ACT 2: THE PROOF
   visualsHeadline: 3.5 * FPS,

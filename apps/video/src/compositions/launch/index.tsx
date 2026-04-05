@@ -1,7 +1,7 @@
 import { EverydayLanguage } from "@/components/scenes/act1/everyday-language";
 import { SearchPrompt } from "@/components/scenes/act1/search-prompt";
 import { LanguageTransform } from "@/components/scenes/act2/language-transform";
-import { StoryBranch } from "@/components/scenes/act2/story-branch";
+import { StoryClaim, StoryCorrect, StoryFeedback } from "@/components/scenes/act2/story-branch";
 import { VisualsGrid } from "@/components/scenes/act2/visuals-grid";
 import { VisualsHeadline } from "@/components/scenes/act2/visuals-headline";
 import { VisualsMontage } from "@/components/scenes/act2/visuals-montage";
@@ -78,8 +78,16 @@ export function LaunchVideo({ locale }: LaunchVideoProps) {
             <EverydayLanguage />
           </Series.Sequence>
 
-          <Series.Sequence durationInFrames={SCENES.storyBranch}>
-            <StoryBranch />
+          <Series.Sequence durationInFrames={SCENES.storyClaim}>
+            <StoryClaim />
+          </Series.Sequence>
+
+          <Series.Sequence durationInFrames={SCENES.storyCorrect}>
+            <StoryCorrect />
+          </Series.Sequence>
+
+          <Series.Sequence durationInFrames={SCENES.storyFeedback}>
+            <StoryFeedback />
           </Series.Sequence>
 
           {/* ─── ACT 2: THE PROOF ─── */}

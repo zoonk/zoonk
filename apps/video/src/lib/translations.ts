@@ -21,6 +21,8 @@ type TranslationStrings = {
   storyPayoff: string;
   storyScenario: string;
   storyChoices: string[];
+  storyFeedbackSetup: string;
+  storyFeedbackPayoff: string;
   storyFeedback: string;
 
   /** Scene: VisualsHeadline */
@@ -116,17 +118,15 @@ const en: TranslationStrings = {
 
   storySetup: "You learn",
   storyPayoff: "by making decisions.",
-  storyScenario:
-    "You're running a laser calibration lab. Your latest readings are inconsistent. " +
-    "One sensor says wave, another says particle.",
+  storyScenario: "A customer wants a refund after 90 days. What do you do?",
   storyChoices: [
-    "Recalibrate both sensors",
-    "Check the observation method",
-    "Increase sample size",
+    "Ignore the request",
+    "Check the refund policy",
+    "Offer a full refund",
   ],
-  storyFeedback:
-    "Recalibrating won't help — the inconsistency is caused by " +
-    "how the measurement is done, not the sensors themselves.",
+  storyFeedbackSetup: "Make a mistake?",
+  storyFeedbackPayoff: "You'll know why.",
+  storyFeedback: "Ignoring customers damages trust and loyalty.",
 
   visualsSetup: "Complex things,",
   visualsPayoff: "made simple.",
@@ -219,17 +219,15 @@ const ptBr: TranslationStrings = {
 
   storySetup: "Você aprende",
   storyPayoff: "tomando decisões.",
-  storyScenario:
-    "Você está em um laboratório de calibração a laser. Suas últimas leituras estão inconsistentes. " +
-    "Um sensor diz onda, outro diz partícula.",
+  storyScenario: "Um cliente quer reembolso após 90 dias. O que você faz?",
   storyChoices: [
-    "Recalibrar ambos os sensores",
-    "Verificar o método de observação",
-    "Aumentar o tamanho da amostra",
+    "Ignorar o pedido",
+    "Verificar a política de reembolso",
+    "Oferecer reembolso total",
   ],
-  storyFeedback:
-    "Recalibrar não vai ajudar — a inconsistência é causada pelo " +
-    "método de medição, não pelos sensores em si.",
+  storyFeedbackSetup: "Errou?",
+  storyFeedbackPayoff: "Você vai saber o porquê.",
+  storyFeedback: "Ignorar clientes prejudica a confiança e a lealdade.",
 
   visualsSetup: "Coisas complexas,",
   visualsPayoff: "simplificadas.",

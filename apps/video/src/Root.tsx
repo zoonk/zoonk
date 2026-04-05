@@ -7,7 +7,7 @@ import { loadGeistFonts } from "./lib/fonts";
 
 loadGeistFonts();
 
-const DURATION_IN_FRAMES = 2010;
+const DURATION_IN_FRAMES = 2175;
 
 export const RemotionRoot = () => {
   return (
