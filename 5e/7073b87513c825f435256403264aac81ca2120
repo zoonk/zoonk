@@ -1,0 +1,25 @@
+packages/ai/src/tasks/visuals/visual-code.prompt.md
+  0feffe6e39a72d6d 6,15,17-34,43-55,59
+apps/evals/src/tasks/visual-code/test-cases.ts
+  0feffe6e39a72d6d 6,8,10,12-16
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "5e7073b87513c825f435256403264aac81ca2120",
+  "prompts": {
+    "0feffe6e39a72d6d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "80fd1d08-4a6c-485e-83aa-b42425f409b9",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 50,
+      "total_deletions": 17,
+      "accepted_lines": 43,
+      "overriden_lines": 0
+    }
+  }
+}
