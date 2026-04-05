@@ -1,0 +1,99 @@
+packages/ai/src/tasks/visuals/visual-quote.ts
+  0feffe6e39a72d6d 1-66
+packages/ai/src/tasks/visuals/visual-timeline.prompt.md
+  0feffe6e39a72d6d 1-28
+apps/evals/src/tasks/visual-code/task.ts
+  0feffe6e39a72d6d 1-16
+apps/evals/src/tasks/visual-chart/test-cases.ts
+  0feffe6e39a72d6d 1-72
+apps/evals/src/tasks/visual-music/test-cases.ts
+  0feffe6e39a72d6d 1-65
+apps/evals/src/tasks/visual-table/test-cases.ts
+  0feffe6e39a72d6d 1-74
+apps/api/.env.example
+  0feffe6e39a72d6d 83-91
+apps/evals/src/tasks/visual-code/test-cases.ts
+  0feffe6e39a72d6d 1-74
+packages/ai/src/tasks/visuals/visual-music.prompt.md
+  0feffe6e39a72d6d 1-33
+apps/evals/src/tasks/visual-formula/test-cases.ts
+  0feffe6e39a72d6d 1-65
+packages/ai/src/tasks/visuals/visual-timeline.ts
+  0feffe6e39a72d6d 1-71
+apps/evals/src/tasks/visual-formula/task.ts
+  0feffe6e39a72d6d 1-16
+apps/evals/src/tasks/visual-timeline/test-cases.ts
+  0feffe6e39a72d6d 1-63
+apps/evals/src/tasks/visual-table/task.ts
+  0feffe6e39a72d6d 1-16
+packages/ai/src/tasks/visuals/visual-table.ts
+  0feffe6e39a72d6d 1-67
+apps/evals/src/tasks/visual-chart/task.ts
+  0feffe6e39a72d6d 1-16
+packages/ai/src/tasks/visuals/visual-code.prompt.md
+  0feffe6e39a72d6d 1-34
+apps/evals/src/tasks/visual-quote/task.ts
+  0feffe6e39a72d6d 1-16
+packages/ai/src/tasks/visuals/visual-table.prompt.md
+  0feffe6e39a72d6d 1-27
+apps/evals/src/tasks/visual-timeline/task.ts
+  0feffe6e39a72d6d 1-16
+apps/evals/src/tasks/visual-diagram/task.ts
+  0feffe6e39a72d6d 1-15
+packages/ai/src/tasks/visuals/visual-quote.prompt.md
+  0feffe6e39a72d6d 1-27
+apps/evals/src/tasks/visual-image/test-cases.ts
+  0feffe6e39a72d6d 1-67
+packages/ai/src/tasks/visuals/visual-chart.prompt.md
+  0feffe6e39a72d6d 1-34
+packages/ai/src/tasks/visuals/visual-chart.ts
+  0feffe6e39a72d6d 1-72
+packages/ai/src/tasks/visuals/visual-formula.ts
+  0feffe6e39a72d6d 1-66
+apps/evals/src/tasks/visual-diagram/test-cases.ts
+  0feffe6e39a72d6d 1-65
+apps/evals/src/tasks/visual-image/task.ts
+  0feffe6e39a72d6d 1-15
+packages/ai/src/tasks/visuals/visual-image.ts
+  0feffe6e39a72d6d 1-67
+packages/ai/src/tasks/visuals/visual-formula.prompt.md
+  0feffe6e39a72d6d 1-30
+apps/evals/src/tasks/visual-music/task.ts
+  0feffe6e39a72d6d 1-16
+apps/evals/src/tasks/visual-quote/test-cases.ts
+  0feffe6e39a72d6d 1-65
+packages/ai/src/tasks/visuals/visual-image.prompt.md
+  0feffe6e39a72d6d 1-27
+packages/ai/src/tasks/visuals/visual-diagram.prompt.md
+  0feffe6e39a72d6d 1-28
+packages/ai/src/tasks/visuals/visual-code.ts
+  0feffe6e39a72d6d 1-74
+packages/ai/src/tasks/visuals/visual-music.ts
+  0feffe6e39a72d6d 1-66
+packages/ai/package.json
+  0feffe6e39a72d6d 44-53
+apps/evals/src/tasks/index.ts
+  0feffe6e39a72d6d 34-42,78-86
+packages/ai/src/tasks/visuals/visual-diagram.ts
+  0feffe6e39a72d6d 1-77
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "58f94c218208224cb40e18c1f58d7ce200faeef6",
+  "prompts": {
+    "0feffe6e39a72d6d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "80fd1d08-4a6c-485e-83aa-b42425f409b9",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 1676,
+      "total_deletions": 1,
+      "accepted_lines": 1683,
+      "overriden_lines": 0
+    }
+  }
+}
