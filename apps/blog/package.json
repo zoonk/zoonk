@@ -1,0 +1,31 @@
+{
+  "name": "blog",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "next build",
+    "dev": "next dev -p 3300",
+    "start": "next start -p 3300",
+    "typecheck": "next typegen && tsgo --noEmit"
+  },
+  "dependencies": {
+    "@tabler/icons-react": "3.41.1",
+    "@zoonk/ui": "workspace:*",
+    "next": "16.2.2",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "react-youtube": "10.1.0"
+  },
+  "devDependencies": {
+    "@mdx-js/loader": "3.1.1",
+    "@mdx-js/react": "3.1.1",
+    "@next/mdx": "16.2.2",
+    "@types/mdx": "2.0.13",
+    "@types/node": "^24",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@typescript/native-preview": "7.0.0-dev.20260401.1",
+    "@zoonk/tsconfig": "workspace:*",
+    "babel-plugin-react-compiler": "1.0.0"
+  }
+}
