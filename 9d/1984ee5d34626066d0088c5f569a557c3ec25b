@@ -1,0 +1,69 @@
+apps/video/src/components/product/course-result.tsx
+  d1fb9b4aac0d2669 1-74
+apps/video/remotion.config.ts
+  d1fb9b4aac0d2669 1-18
+apps/video/src/index.ts
+  d1fb9b4aac0d2669 1-4
+apps/video/package.json
+  d1fb9b4aac0d2669 1-27,29-32
+apps/video/tsconfig.json
+  d1fb9b4aac0d2669 1-22
+apps/video/src/Root.tsx
+  d1fb9b4aac0d2669 1-23
+apps/video/src/lib/constants.ts
+  d1fb9b4aac0d2669 1-26
+apps/video/src/components/product/phone-frame.tsx
+  d1fb9b4aac0d2669 1-74
+apps/video/src/compositions/launch/schema.ts
+  d1fb9b4aac0d2669 1-5
+apps/video/src/components/product/activity-screens.tsx
+  d1fb9b4aac0d2669 1-352
+apps/video/src/components/product/progress-screen.tsx
+  d1fb9b4aac0d2669 1-115
+apps/video/src/index.css
+  d1fb9b4aac0d2669 1
+apps/video/.gitignore
+  d1fb9b4aac0d2669 1
+apps/video/src/components/product/learn-page.tsx
+  d1fb9b4aac0d2669 1-85
+apps/video/src/lib/fonts.ts
+  d1fb9b4aac0d2669 1-34
+apps/video/src/components/scenes/close.tsx
+  d1fb9b4aac0d2669 1-62
+apps/video/src/components/scenes/mission.tsx
+  d1fb9b4aac0d2669 1-70
+apps/video/src/components/scenes/tagline.tsx
+  d1fb9b4aac0d2669 1-41
+apps/video/src/components/scenes/hook.tsx
+  d1fb9b4aac0d2669 1-54
+apps/video/src/components/scenes/pivot.tsx
+  d1fb9b4aac0d2669 1-43
+apps/video/src/compositions/launch/index.tsx
+  d1fb9b4aac0d2669 1-92
+apps/video/src/components/scenes/problem.tsx
+  d1fb9b4aac0d2669 1-70
+apps/video/src/components/scenes/magic-moment.tsx
+  d1fb9b4aac0d2669 1-60
+apps/video/src/components/scenes/experience.tsx
+  d1fb9b4aac0d2669 1-74
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "9d1984ee5d34626066d0088c5f569a557c3ec25b",
+  "prompts": {
+    "d1fb9b4aac0d2669": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "040f27b0-62a5-42fe-8913-fa883e0d71e7",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 6818,
+      "total_deletions": 1657,
+      "accepted_lines": 1431,
+      "overriden_lines": 1
+    }
+  }
+}
