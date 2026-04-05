@@ -6,68 +6,89 @@ import { Easing, interpolate, useCurrentFrame } from "remotion";
 const ARC_CIRCUMFERENCE = Math.PI * 80;
 
 /**
- * Energy meter showing 78, dipping to 76, then recovering to 77.
- * The tiny 2-point drop IS the message: miss a day, it dips, it doesn't disappear.
- * SVG semicircular arc gauge.
+ * "Miss a day? Your energy dips a little. But it doesn't disappear."
+ * "No guilt. No punishment. Just pick up where you left off."
+ *
+ * Three-layer scene: bold claim, muted reasoning, arc gauge proof.
+ * Mirrors the Brain Power scene structure.
  */
 export function EnergyMeter() {
   const frame = useCurrentFrame();
-  const containerStyle = entryScale({ frame, delay: 0, duration: 12 });
 
-  /**
-   * Three-phase animation: 78 -> 76 -> 77.
-   * Frames 20-40: dip from 78 to 76.
-   * Frames 50-75: recover to 77.
-   */
+  const headlineStyle = entryScale({ frame, delay: 0, duration: 12 });
+  const reasonStyle = entryScale({ frame, delay: 30, duration: 12 });
+  const gaugeStyle = entryScale({ frame, delay: 50, duration: 12 });
+
   const energyValue = getEnergyValue(frame);
   const arcFraction = energyValue / 100;
   const arcDashoffset = ARC_CIRCUMFERENCE * (1 - arcFraction);
-
-  /** "Missed 2 days" label fades in during the dip. */
-  const missedOpacity = interpolate(frame, [22, 30], [0, 1], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-  });
 
   return (
     <SceneContainer bg="white">
       <div
         style={{
-          ...containerStyle,
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
           gap: 20,
         }}
       >
-        {/* SVG circular arc gauge */}
-        <div style={{ position: "relative", width: 200, height: 120 }}>
-          <svg width={200} height={120} viewBox="0 0 200 120">
-            {/* Background arc */}
+        {/* Bold claim */}
+        <div
+          style={{
+            ...headlineStyle,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: 4,
+          }}
+        >
+          <span style={{ fontSize: 40, fontWeight: 600, color: COLORS.text, textAlign: "center" }}>
+            Miss a day? Your energy dips a little.
+          </span>
+          <span style={{ fontSize: 40, fontWeight: 600, color: COLORS.text }}>
+            But it doesn't disappear.
+          </span>
+        </div>
+
+        {/* Emotional reasoning */}
+        <span
+          style={{
+            ...reasonStyle,
+            fontSize: 22,
+            fontWeight: 400,
+            color: COLORS.muted,
+            textAlign: "center",
+          }}
+        >
+          No guilt. No punishment. Just pick up where you left off.
+        </span>
+
+        {/* Arc gauge */}
+        <div style={{ ...gaugeStyle, position: "relative", width: 160, height: 100, marginTop: 8 }}>
+          <svg width={160} height={100} viewBox="0 0 160 100">
             <path
-              d="M 20 100 A 80 80 0 0 1 180 100"
+              d="M 16 84 A 64 64 0 0 1 144 84"
               fill="none"
               stroke={COLORS.border}
-              strokeWidth={8}
+              strokeWidth={7}
               strokeLinecap="round"
             />
-            {/* Filled arc */}
             <path
-              d="M 20 100 A 80 80 0 0 1 180 100"
+              d="M 16 84 A 64 64 0 0 1 144 84"
               fill="none"
               stroke={COLORS.energy}
-              strokeWidth={8}
+              strokeWidth={7}
               strokeLinecap="round"
               strokeDasharray={ARC_CIRCUMFERENCE}
               strokeDashoffset={arcDashoffset}
             />
           </svg>
 
-          {/* Energy number centered in the arc */}
           <div
             style={{
               position: "absolute",
-              top: 40,
+              top: 32,
               left: 0,
               right: 0,
               display: "flex",
@@ -76,7 +97,7 @@ export function EnergyMeter() {
           >
             <span
               style={{
-                fontSize: 56,
+                fontSize: 44,
                 fontWeight: 700,
                 color: COLORS.energy,
                 fontVariantNumeric: "tabular-nums",
@@ -87,19 +108,8 @@ export function EnergyMeter() {
           </div>
         </div>
 
-        {/* Label */}
-        <span style={{ fontSize: 18, fontWeight: 500, color: COLORS.muted }}>Energy</span>
-
-        {/* "Missed 2 days" indicator */}
-        <span
-          style={{
-            fontSize: 14,
-            fontWeight: 500,
-            color: COLORS.muted,
-            opacity: missedOpacity,
-          }}
-        >
-          Missed 2 days — it dips. It doesn't disappear.
+        <span style={{ ...gaugeStyle, fontSize: 14, fontWeight: 500, color: COLORS.muted }}>
+          Energy Level
         </span>
       </div>
     </SceneContainer>
@@ -108,17 +118,17 @@ export function EnergyMeter() {
 
 /** Returns the energy value at a given frame: 78 -> 76 -> 77. */
 function getEnergyValue(frame: number): number {
-  if (frame < 20) return 78;
+  if (frame < 55) return 78;
 
-  if (frame < 50) {
-    return interpolate(frame, [20, 40], [78, 76], {
+  if (frame < 80) {
+    return interpolate(frame, [55, 75], [78, 76], {
       easing: Easing.inOut(Easing.quad),
       extrapolateLeft: "clamp",
       extrapolateRight: "clamp",
     });
   }
 
-  return interpolate(frame, [50, 75], [76, 77], {
+  return interpolate(frame, [80, 105], [76, 77], {
     easing: Easing.out(Easing.quad),
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",

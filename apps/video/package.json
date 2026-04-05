@@ -16,6 +16,7 @@
     "@remotion/cli": "4.0.301",
     "@remotion/fonts": "4.0.301",
     "@remotion/transitions": "4.0.301",
+    "@tabler/icons-react": "3.41.1",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "remotion": "4.0.301",

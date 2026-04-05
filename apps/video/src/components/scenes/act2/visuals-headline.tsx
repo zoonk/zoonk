@@ -3,14 +3,15 @@ import { entryScale, stagger } from "@/lib/animation";
 import { COLORS } from "@/lib/constants";
 import { useCurrentFrame } from "remotion";
 
-const WORDS = ["Type anything.", "Learn everything."];
+const LINES = ["Complex things, made simple.", "Charts. Diagrams. Timelines."];
+const WEIGHTS = [600, 400] as const;
 
 /**
- * "Type anything. Learn everything." appears line by line.
- * SemiBold 56px, dark text on white, generous spacing.
- * The periods land with weight.
+ * Typography beat that sets up the visuals montage.
+ * Line 1 (the WHY): "Complex things, made simple." — bold, confident.
+ * Line 2 (the WHAT): "Charts. Diagrams. Timelines." — lighter, like a friend adding detail.
  */
-export function TypographyMoment1() {
+export function VisualsHeadline() {
   const frame = useCurrentFrame();
 
   return (
@@ -23,8 +24,8 @@ export function TypographyMoment1() {
           gap: 20,
         }}
       >
-        {WORDS.map((line, index) => {
-          const delay = stagger({ index, baseDelay: 10, gap: 18 });
+        {LINES.map((line, index) => {
+          const delay = stagger({ index, baseDelay: 10, gap: 20 });
           const style = entryScale({ frame, delay, duration: 15 });
 
           return (
@@ -32,8 +33,8 @@ export function TypographyMoment1() {
               key={line}
               style={{
                 ...style,
-                fontSize: 56,
-                fontWeight: 600,
+                fontSize: index === 0 ? 56 : 40,
+                fontWeight: WEIGHTS[index],
                 color: COLORS.text,
                 letterSpacing: "0.01em",
                 lineHeight: 1.4,

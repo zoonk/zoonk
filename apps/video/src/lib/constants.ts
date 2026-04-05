@@ -1,14 +1,5 @@
 export const FPS = 30;
 
-/** Duration of the video in seconds. */
-export const DURATION = 60;
-
-/** Crossfade duration between scenes in frames (~0.27s). */
-export const TRANSITION_FRAMES = 8;
-
-/** Longer crossfade at act boundaries in frames (~0.4s). */
-export const ACT_TRANSITION_FRAMES = 12;
-
 /** Standard element entry animation duration in frames (400ms). */
 export const ENTRY_DURATION = 12;
 
@@ -17,52 +8,64 @@ export const EXIT_DURATION = 8;
 
 /**
  * Color palette for the video.
- * Alternating black/white backgrounds with accent colors for UI elements.
+ * White background throughout with accent colors for UI elements.
  */
 export const COLORS = {
   black: "#000000",
   white: "#ffffff",
   text: "#0f0f0f",
-  textOnBlack: "#ffffff",
   muted: "#78716c",
-  mutedOnBlack: "rgba(255, 255, 255, 0.4)",
   border: "#e7e5e4",
-  borderOnBlack: "rgba(255, 255, 255, 0.12)",
   success: "#16a34a",
-  successBg: "rgba(22, 163, 74, 0.08)",
   energy: "#f97316",
   bpGreen: "#22c55e",
   bpBlue: "#3b82f6",
   primary: "#171717",
   primaryFg: "#fafafa",
-  desaturated: "#1a1a1a",
 } as const;
 
 /**
+ * Belt colors in order, matching the actual Zoonk belt system.
+ * 10 levels from White to Black.
+ */
+export const BELT_COLORS = [
+  { name: "White", hex: "#e8e5e0" },
+  { name: "Yellow", hex: "#facc15" },
+  { name: "Orange", hex: "#f97316" },
+  { name: "Green", hex: "#22c55e" },
+  { name: "Blue", hex: "#3b82f6" },
+  { name: "Purple", hex: "#a855f7" },
+  { name: "Brown", hex: "#92400e" },
+  { name: "Red", hex: "#ef4444" },
+  { name: "Gray", hex: "#6b7280" },
+  { name: "Black", hex: "#171717" },
+] as const;
+
+/**
  * Scene durations in frames.
- * These are the "content" durations for each TransitionSeries.Sequence.
- * Transition overlaps are handled by TransitionSeries automatically.
+ * No crossfades — each scene handles its own entry/exit animations
+ * against the shared white background. Hard cuts between scenes.
+ *
+ * NARRATIVE ARC:
+ * ACT 1: THE SPARK — curiosity, understanding
+ * ACT 2: THE PROOF — how it works, see for yourself
+ * ACT 3: THE FEELING — this respects you, you can do this
  */
 export const SCENES = {
-  // ACT 1: THE SPARK (0:00-0:12)
-  searchPrompt: 5.5 * FPS,
-  typographyMoment1: 1 * FPS,
-  statusQuo: 1.5 * FPS,
-  zoonkCard: 2 * FPS,
+  // ACT 1: THE SPARK
+  searchPrompt: 8 * FPS,
+  everydayLanguage: 5 * FPS,
+  storyBranch: 6 * FPS,
 
-  // ACT 2: THE PROOF (0:12-0:38)
-  timeline: 5 * FPS,
-  fillInBlank: 5 * FPS,
-  nodeDiagram: 5 * FPS,
-  storyBranch: 5 * FPS,
-  typographyMoment2: 6 * FPS,
+  // ACT 2: THE PROOF
+  visualsHeadline: 3.5 * FPS,
+  visualsMontage: 7 * FPS,
 
-  // ACT 3: THE FEELING (0:38-1:00)
-  brainPowerBelt: 3 * FPS,
-  energyMeter: 3 * FPS,
-  performanceStats: 3 * FPS,
-  multiLanguageFlash: 3 * FPS,
-  theBreath: 2 * FPS,
-  closingWords: 6 * FPS,
-  logo: 2 * FPS,
+  // ACT 3: THE FEELING
+  brainPower: 5 * FPS,
+  beltSystem: 5 * FPS,
+  energyMeter: 5 * FPS,
+  performanceStats: 4 * FPS,
+  closingWords: 7 * FPS,
+  logo: 4 * FPS,
 } as const;

@@ -2,7 +2,7 @@ import "./index.css";
 import { Composition } from "remotion";
 import { LaunchVideo } from "./compositions/launch";
 import { launchVideoSchema } from "./compositions/launch/schema";
-import { DURATION, FPS } from "./lib/constants";
+import { FPS } from "./lib/constants";
 import { loadGeistFonts } from "./lib/fonts";
 
 loadGeistFonts();
@@ -12,7 +12,7 @@ export const RemotionRoot = () => {
     <Composition
       id="LaunchVideo"
       component={LaunchVideo}
-      durationInFrames={FPS * DURATION}
+      durationInFrames={1785}
       fps={FPS}
       width={1920}
       height={1080}
