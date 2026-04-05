@@ -46,7 +46,6 @@
     "./tasks/visuals/code": "./src/tasks/visuals/visual-code.ts",
     "./tasks/visuals/diagram": "./src/tasks/visuals/visual-diagram.ts",
     "./tasks/visuals/formula": "./src/tasks/visuals/visual-formula.ts",
-    "./tasks/visuals/image": "./src/tasks/visuals/visual-image.ts",
     "./tasks/visuals/music": "./src/tasks/visuals/visual-music.ts",
     "./tasks/visuals/quote": "./src/tasks/visuals/visual-quote.ts",
     "./tasks/visuals/table": "./src/tasks/visuals/visual-table.ts",

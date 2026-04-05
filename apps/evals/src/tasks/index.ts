@@ -35,7 +35,6 @@ import { visualChartTask } from "./visual-chart/task";
 import { visualCodeTask } from "./visual-code/task";
 import { visualDiagramTask } from "./visual-diagram/task";
 import { visualFormulaTask } from "./visual-formula/task";
-import { visualImageTask } from "./visual-image/task";
 import { visualMusicTask } from "./visual-music/task";
 import { visualQuoteTask } from "./visual-quote/task";
 import { visualTableTask } from "./visual-table/task";
@@ -79,7 +78,6 @@ export const TASKS: readonly Task[] = [
   visualCodeTask,
   visualDiagramTask,
   visualFormulaTask,
-  visualImageTask,
   visualMusicTask,
   visualQuoteTask,
   visualTableTask,
