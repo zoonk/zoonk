@@ -1,0 +1,168 @@
+{
+  "modelId": "google/gemini-3-flash",
+  "results": [
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The annotation text exceeds the stated max 100 characters limit. Otherwise the code is syntactically correct, faithfully preserves the bug, uses the correct programming language field, and annotates the semantically correct buggy line.",
+          "kind": "minorErrors",
+          "score": 8.8
+        },
+        {
+          "conclusion": "Could shorten the annotation to satisfy the 100-character limit while keeping the same meaning, e.g. noting that division by zero occurs when the list is empty.",
+          "kind": "potentialImprovements",
+          "score": 9.2
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. CODE CORRECTNESS: The code must be syntactically correct and follow the conventions of the specified programming language. It must demonstrate the concept described in the VISUAL_DESCRIPTION.\n\n2. LANGUAGE FIELD: The \"language\" field in the output must be the programming language or format (e.g., \"python\", \"javascript\", \"sql\", \"yaml\", \"nginx\", \"java\"), NOT the human language from the ANNOTATION_LANGUAGE input. Never use generic values like \"text\" or \"log\".\n\n3. ANNOTATIONS: The model generates a lineContent field internally, which is then post-processed into a 1-based line number before output. The output you see has \"line\" (a number) — this is expected and correct. Do NOT penalize the output for having a \"line\" field instead of \"lineContent\" — that conversion is handled automatically by the system. Evaluate whether the line number points to the semantically correct line in the code (e.g., the buggy line, the WHERE clause, the error entry). The annotation text should be in the specified human ANNOTATION_LANGUAGE.\n\n4. CONCISENESS: Code should be max 500 chars, focused on the described concept. Do not add boilerplate, extra fields, or extra stack frames unless they are part of the description.\n\n5. FORMATTING: Code must be properly formatted with newlines — one statement per line, standard indentation, no minified/compressed style. For SQL, each clause (SELECT, FROM, JOIN, WHERE) should be on its own line.\n\n6. FAITHFULNESS: The code should match the description closely. Do not add unrequested elements (extra interface fields, extra stack frames, unnecessary variables). Do not fix bugs the description asks to demonstrate.\n\n7. TYPE QUALITY: For TypeScript, use proper type annotations (interfaces, union types with null). Never use \"any\".\n",
+        "id": "en-python-division-by-zero-1",
+        "userInput": {
+          "description": "Python function that calculates an average but crashes when the list is empty due to division by zero. The error is on the line that divides the sum by the length. Annotate the buggy line.",
+          "language": "en"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Could be slightly improved by placing the semicolon on its own final line only if a stricter formatter preferred it, but the current SQL is valid, concise, correctly formatted, under 500 chars, uses the correct language field, and the annotation correctly targets the WHERE clause in English.",
+          "kind": "potentialImprovements",
+          "score": 9.8
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. CODE CORRECTNESS: The code must be syntactically correct and follow the conventions of the specified programming language. It must demonstrate the concept described in the VISUAL_DESCRIPTION.\n\n2. LANGUAGE FIELD: The \"language\" field in the output must be the programming language or format (e.g., \"python\", \"javascript\", \"sql\", \"yaml\", \"nginx\", \"java\"), NOT the human language from the ANNOTATION_LANGUAGE input. Never use generic values like \"text\" or \"log\".\n\n3. ANNOTATIONS: The model generates a lineContent field internally, which is then post-processed into a 1-based line number before output. The output you see has \"line\" (a number) — this is expected and correct. Do NOT penalize the output for having a \"line\" field instead of \"lineContent\" — that conversion is handled automatically by the system. Evaluate whether the line number points to the semantically correct line in the code (e.g., the buggy line, the WHERE clause, the error entry). The annotation text should be in the specified human ANNOTATION_LANGUAGE.\n\n4. CONCISENESS: Code should be max 500 chars, focused on the described concept. Do not add boilerplate, extra fields, or extra stack frames unless they are part of the description.\n\n5. FORMATTING: Code must be properly formatted with newlines — one statement per line, standard indentation, no minified/compressed style. For SQL, each clause (SELECT, FROM, JOIN, WHERE) should be on its own line.\n\n6. FAITHFULNESS: The code should match the description closely. Do not add unrequested elements (extra interface fields, extra stack frames, unnecessary variables). Do not fix bugs the description asks to demonstrate.\n\n7. TYPE QUALITY: For TypeScript, use proper type annotations (interfaces, union types with null). Never use \"any\".\n",
+        "id": "en-sql-query-with-join-1",
+        "userInput": {
+          "description": "SQL query joining an 'orders' table with a 'customers' table on customer_id, filtering for orders placed in the last 30 days. The query selects customer name, order total, and order date. Annotate the WHERE clause.",
+          "language": "en"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Could be slightly improved by making the successful requests more semantically balanced (e.g., another typical asset or API endpoint), but this is optional. The output already matches the requested nginx-style access log format, includes exactly 5 requests with the correct 200/404/500 distribution, correctly places the 500 on POST /api/payments, uses the correct language field ('nginx'), and annotations point to the semantically correct lines in English.",
+          "kind": "potentialImprovements",
+          "score": 9.7
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. CODE CORRECTNESS: The code must be syntactically correct and follow the conventions of the specified programming language. It must demonstrate the concept described in the VISUAL_DESCRIPTION.\n\n2. LANGUAGE FIELD: The \"language\" field in the output must be the programming language or format (e.g., \"python\", \"javascript\", \"sql\", \"yaml\", \"nginx\", \"java\"), NOT the human language from the ANNOTATION_LANGUAGE input. Never use generic values like \"text\" or \"log\".\n\n3. ANNOTATIONS: The model generates a lineContent field internally, which is then post-processed into a 1-based line number before output. The output you see has \"line\" (a number) — this is expected and correct. Do NOT penalize the output for having a \"line\" field instead of \"lineContent\" — that conversion is handled automatically by the system. Evaluate whether the line number points to the semantically correct line in the code (e.g., the buggy line, the WHERE clause, the error entry). The annotation text should be in the specified human ANNOTATION_LANGUAGE.\n\n4. CONCISENESS: Code should be max 500 chars, focused on the described concept. Do not add boilerplate, extra fields, or extra stack frames unless they are part of the description.\n\n5. FORMATTING: Code must be properly formatted with newlines — one statement per line, standard indentation, no minified/compressed style. For SQL, each clause (SELECT, FROM, JOIN, WHERE) should be on its own line.\n\n6. FAITHFULNESS: The code should match the description closely. Do not add unrequested elements (extra interface fields, extra stack frames, unnecessary variables). Do not fix bugs the description asks to demonstrate.\n\n7. TYPE QUALITY: For TypeScript, use proper type annotations (interfaces, union types with null). Never use \"any\".\n",
+        "id": "en-javascript-log-output-1",
+        "userInput": {
+          "description": "Server access log showing 5 HTTP requests: three successful (200), one not found (404), and one internal server error (500). The 500 error happens on a POST to /api/payments. Format as nginx-style log lines.",
+          "language": "en"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Could improve slightly by shortening the annotation text, but it is still valid, in Brazilian Portuguese, and correctly targets the problematic DATABASE_URL line. Otherwise the output is faithful, concise, properly formatted YAML, and uses the correct language field.",
+          "kind": "potentialImprovements",
+          "score": 9.6
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. CODE CORRECTNESS: The code must be syntactically correct and follow the conventions of the specified programming language. It must demonstrate the concept described in the VISUAL_DESCRIPTION.\n\n2. LANGUAGE FIELD: The \"language\" field in the output must be the programming language or format (e.g., \"python\", \"javascript\", \"sql\", \"yaml\", \"nginx\", \"java\"), NOT the human language from the ANNOTATION_LANGUAGE input. Never use generic values like \"text\" or \"log\".\n\n3. ANNOTATIONS: The model generates a lineContent field internally, which is then post-processed into a 1-based line number before output. The output you see has \"line\" (a number) — this is expected and correct. Do NOT penalize the output for having a \"line\" field instead of \"lineContent\" — that conversion is handled automatically by the system. Evaluate whether the line number points to the semantically correct line in the code (e.g., the buggy line, the WHERE clause, the error entry). The annotation text should be in the specified human ANNOTATION_LANGUAGE.\n\n4. CONCISENESS: Code should be max 500 chars, focused on the described concept. Do not add boilerplate, extra fields, or extra stack frames unless they are part of the description.\n\n5. FORMATTING: Code must be properly formatted with newlines — one statement per line, standard indentation, no minified/compressed style. For SQL, each clause (SELECT, FROM, JOIN, WHERE) should be on its own line.\n\n6. FAITHFULNESS: The code should match the description closely. Do not add unrequested elements (extra interface fields, extra stack frames, unnecessary variables). Do not fix bugs the description asks to demonstrate.\n\n7. TYPE QUALITY: For TypeScript, use proper type annotations (interfaces, union types with null). Never use \"any\".\n\nLANGUAGE REQUIREMENT: Annotation text must be in Brazilian Portuguese.\n    ",
+        "id": "pt-python-config-file-1",
+        "userInput": {
+          "description": "Arquivo de configuração YAML de um serviço com variáveis de ambiente. Uma das variáveis (DATABASE_URL) está apontando para localhost em vez do host de produção. Anotar a linha problemática.",
+          "language": "pt"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The TypeScript code is concise, properly formatted, under 500 characters, and the language field is correct. The annotation is in Spanish and points to the buggy access line semantically. A minor issue is that `return user.address.city;` is not syntactically valid under standard TypeScript null checking because `address` is `null | { city: string }`, while the prompt required syntactically correct code. This slightly reduces correctness, though it still clearly demonstrates the intended bug.",
+          "kind": "minorErrors",
+          "score": 8.7
+        },
+        {
+          "conclusion": "Could make the snippet compile while preserving the bug more faithfully to runtime behavior, e.g. by loosening the type or using a cast, since the task asked for syntactically correct code but also to keep the bug intact. Otherwise the output matches the description well and does not add unnecessary elements.",
+          "kind": "potentialImprovements",
+          "score": 8.8
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. CODE CORRECTNESS: The code must be syntactically correct and follow the conventions of the specified programming language. It must demonstrate the concept described in the VISUAL_DESCRIPTION.\n\n2. LANGUAGE FIELD: The \"language\" field in the output must be the programming language or format (e.g., \"python\", \"javascript\", \"sql\", \"yaml\", \"nginx\", \"java\"), NOT the human language from the ANNOTATION_LANGUAGE input. Never use generic values like \"text\" or \"log\".\n\n3. ANNOTATIONS: The model generates a lineContent field internally, which is then post-processed into a 1-based line number before output. The output you see has \"line\" (a number) — this is expected and correct. Do NOT penalize the output for having a \"line\" field instead of \"lineContent\" — that conversion is handled automatically by the system. Evaluate whether the line number points to the semantically correct line in the code (e.g., the buggy line, the WHERE clause, the error entry). The annotation text should be in the specified human ANNOTATION_LANGUAGE.\n\n4. CONCISENESS: Code should be max 500 chars, focused on the described concept. Do not add boilerplate, extra fields, or extra stack frames unless they are part of the description.\n\n5. FORMATTING: Code must be properly formatted with newlines — one statement per line, standard indentation, no minified/compressed style. For SQL, each clause (SELECT, FROM, JOIN, WHERE) should be on its own line.\n\n6. FAITHFULNESS: The code should match the description closely. Do not add unrequested elements (extra interface fields, extra stack frames, unnecessary variables). Do not fix bugs the description asks to demonstrate.\n\n7. TYPE QUALITY: For TypeScript, use proper type annotations (interfaces, union types with null). Never use \"any\".\n\nLANGUAGE REQUIREMENT: Annotation text must be in Latin American Spanish.\n    ",
+        "id": "es-typescript-null-check-1",
+        "userInput": {
+          "description": "Función TypeScript que accede a una propiedad anidada de un objeto (user.address.city) sin verificar si 'address' es null. El error se produce cuando el usuario no tiene dirección registrada. Anotar la línea del error.",
+          "language": "es"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None. The output correctly represents a Java stack trace for a NullPointerException, uses the required originating language label `java`, and the annotation points to the top stack frame `PaymentService.processRefund(...)`, which is the origin of the exception described by the prompt.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None. The code is concise, under 500 characters, properly formatted with one stack frame per line, and does not add unrequested frames or extra content. Annotation text is in English as requested.",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "A small improvement would be to use the more canonical first line `Exception in thread \"main\" java.lang.NullPointerException` only if the goal is a generic Java trace; however, this is already acceptable and faithful. No meaningful content issues otherwise.",
+          "kind": "potentialImprovements",
+          "score": 9.8
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. CODE CORRECTNESS: The code must be syntactically correct and follow the conventions of the specified programming language. It must demonstrate the concept described in the VISUAL_DESCRIPTION.\n\n2. LANGUAGE FIELD: The \"language\" field in the output must be the programming language or format (e.g., \"python\", \"javascript\", \"sql\", \"yaml\", \"nginx\", \"java\"), NOT the human language from the ANNOTATION_LANGUAGE input. Never use generic values like \"text\" or \"log\".\n\n3. ANNOTATIONS: The model generates a lineContent field internally, which is then post-processed into a 1-based line number before output. The output you see has \"line\" (a number) — this is expected and correct. Do NOT penalize the output for having a \"line\" field instead of \"lineContent\" — that conversion is handled automatically by the system. Evaluate whether the line number points to the semantically correct line in the code (e.g., the buggy line, the WHERE clause, the error entry). The annotation text should be in the specified human ANNOTATION_LANGUAGE.\n\n4. CONCISENESS: Code should be max 500 chars, focused on the described concept. Do not add boilerplate, extra fields, or extra stack frames unless they are part of the description.\n\n5. FORMATTING: Code must be properly formatted with newlines — one statement per line, standard indentation, no minified/compressed style. For SQL, each clause (SELECT, FROM, JOIN, WHERE) should be on its own line.\n\n6. FAITHFULNESS: The code should match the description closely. Do not add unrequested elements (extra interface fields, extra stack frames, unnecessary variables). Do not fix bugs the description asks to demonstrate.\n\n7. TYPE QUALITY: For TypeScript, use proper type annotations (interfaces, union types with null). Never use \"any\".\n",
+        "id": "en-bash-stack-trace-1",
+        "userInput": {
+          "description": "Java stack trace showing a NullPointerException in a payment processing service. The trace starts at PaymentService.processRefund (line 142), goes through TransactionManager.execute (line 87), and ends at Main.handleRequest (line 23). Annotate the origin of the exception.",
+          "language": "en"
+        }
+      }
+    }
+  ],
+  "taskId": "visual-code"
+}

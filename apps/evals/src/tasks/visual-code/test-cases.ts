@@ -3,13 +3,17 @@ EVALUATION CRITERIA:
 
 1. CODE CORRECTNESS: The code must be syntactically correct and follow the conventions of the specified programming language. It must demonstrate the concept described in the VISUAL_DESCRIPTION.
 
-2. LANGUAGE FIELD: The "language" field in the output must be the programming language (e.g., "python", "javascript"), NOT the human language from the LANGUAGE input.
+2. LANGUAGE FIELD: The "language" field in the output must be the programming language or format (e.g., "python", "javascript", "sql", "yaml", "nginx", "java"), NOT the human language from the ANNOTATION_LANGUAGE input. Never use generic values like "text" or "log".
 
-3. ANNOTATIONS: If key lines or errors are described, annotations should highlight them with 1-based line numbers. Annotation text should be in the specified human LANGUAGE.
+3. ANNOTATIONS: The model generates a lineContent field internally, which is then post-processed into a 1-based line number before output. The output you see has "line" (a number) — this is expected and correct. Do NOT penalize the output for having a "line" field instead of "lineContent" — that conversion is handled automatically by the system. Evaluate whether the line number points to the semantically correct line in the code (e.g., the buggy line, the WHERE clause, the error entry). The annotation text should be in the specified human ANNOTATION_LANGUAGE.
 
-4. CONCISENESS: Code should be max 500 chars, focused on the described concept. Do not add boilerplate or imports unless essential to the demonstration.
+4. CONCISENESS: Code should be max 500 chars, focused on the described concept. Do not add boilerplate, extra fields, or extra stack frames unless they are part of the description.
 
-5. LANGUAGE: Annotation text must be in the specified human language. Code identifiers follow the programming language's conventions (typically English).
+5. FORMATTING: Code must be properly formatted with newlines — one statement per line, standard indentation, no minified/compressed style. For SQL, each clause (SELECT, FROM, JOIN, WHERE) should be on its own line.
+
+6. FAITHFULNESS: The code should match the description closely. Do not add unrequested elements (extra interface fields, extra stack frames, unnecessary variables). Do not fix bugs the description asks to demonstrate.
+
+7. TYPE QUALITY: For TypeScript, use proper type annotations (interfaces, union types with null). Never use "any".
 `;
 
 export const TEST_CASES = [

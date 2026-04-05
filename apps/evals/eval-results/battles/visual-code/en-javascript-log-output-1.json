@@ -1,0 +1,185 @@
+{
+  "expectations": "\nEVALUATION CRITERIA:\n\n1. CODE CORRECTNESS: The code must be syntactically correct and follow the conventions of the specified programming language. It must demonstrate the concept described in the VISUAL_DESCRIPTION.\n\n2. LANGUAGE FIELD: The \"language\" field in the output must be the programming language or format (e.g., \"python\", \"javascript\", \"sql\", \"yaml\", \"nginx\", \"java\"), NOT the human language from the ANNOTATION_LANGUAGE input. Never use generic values like \"text\" or \"log\".\n\n3. ANNOTATIONS: The model generates a lineContent field internally, which is then post-processed into a 1-based line number before output. The output you see has \"line\" (a number) — this is expected and correct. Do NOT penalize the output for having a \"line\" field instead of \"lineContent\" — that conversion is handled automatically by the system. Evaluate whether the line number points to the semantically correct line in the code (e.g., the buggy line, the WHERE clause, the error entry). The annotation text should be in the specified human ANNOTATION_LANGUAGE.\n\n4. CONCISENESS: Code should be max 500 chars, focused on the described concept. Do not add boilerplate, extra fields, or extra stack frames unless they are part of the description.\n\n5. FORMATTING: Code must be properly formatted with newlines — one statement per line, standard indentation, no minified/compressed style. For SQL, each clause (SELECT, FROM, JOIN, WHERE) should be on its own line.\n\n6. FAITHFULNESS: The code should match the description closely. Do not add unrequested elements (extra interface fields, extra stack frames, unnecessary variables). Do not fix bugs the description asks to demonstrate.\n\n7. TYPE QUALITY: For TypeScript, use proper type annotations (interfaces, union types with null). Never use \"any\".\n",
+  "judgedAt": "2026-04-05T22:17:02.606Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Correct nginx format with all 5 requests (3×200, 1×404, 1×500), POST /api/payments returns 500. Only annotates the key error line (line 5). Includes referrer and user-agent fields for realistic nginx combined log format. Annotation text is concise and accurate. Follows the rule to only annotate relevant lines.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Correct nginx format with 3×200, 1×404, 1×500 POST /api/payments. Only annotates the 500 error line, following the principle of not over-annotating. Annotation text is slightly long but within 100 chars. Well-formatted realistic log entries with varied IPs.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Correct nginx format with proper distribution (3×200, 1×404, 1×500). Only annotates the 500 line. Clean, concise annotation text. Includes referrer and user-agent fields. Solid output with no issues.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Correct format and status code distribution. Annotates both the 404 and 500 lines, which is reasonable since both are error conditions mentioned in the description. Missing referrer/user-agent fields (uses simpler log format) but still valid nginx style. Clean and concise.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Correct nginx format with proper status distribution. Annotates 404 (line 3) and 500 (line 5) lines reasonably. However, the 404 is on line 3 and the third 200 is on line 4, which is a slightly unusual ordering but not wrong. All from same IP (127.0.0.1) is less realistic but valid.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Correct format and distribution. Only annotates the 500 error line. Missing referrer/user-agent fields (simpler format). Mostly same IP for all requests except line 5 is slightly less realistic but acceptable. Clean and follows rules well.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Correct nginx format with 3×200, 1×404, 1×500. However, the annotation points to line 4 which is the 500 POST /api/payments line — this is correct. But the ordering places 404 before 500 and then another 200 after, which is fine. Only 1 annotation on the key line. Good output overall, but annotation text is slightly long.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Correct nginx format but the annotation on line 4 points to the 500 error, which is correct. However, the 404 comes on line 5 (last line), and there are only 2×200 before the 500 and 1×200 between — actually checking: lines 1-3 are 200, line 4 is 500, line 5 is 404. That's 3×200, 1×500, 1×404 — correct distribution. Only annotates the 500 line. Solid output.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Correct format and distribution. However, it violates the rule 'Only annotate the lines the description asks about. Do not annotate every line' — it annotates all 5 lines, including all three 200 responses with redundant 'Successful request' annotations. This is a clear rule violation that warrants a significant penalty.",
+          "score": 5.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Flawlessly implements the request with realistic nginx log formatting. Properly annotates only the key line requested, avoiding unnecessary annotations. The use of TEST-NET IP addresses is an excellent touch.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Excellent output that correctly uses the Common Log Format. Provides exactly the 5 requests asked for and annotates the critical error and not-found lines without over-annotating.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Perfectly formats the nginx log using the combined log format. Accurately maps the 5 requested HTTP requests and annotates the key line efficiently.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Meets all criteria flawlessly. Accurately provides three 200s, one 404, and the 500 error on the exact requested path, maintaining valid formatting and precise annotations.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Successfully produces a valid nginx log demonstrating the described scenario. Correctly targets the annotations towards the error and not-found lines as specified.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Flawless execution. Generates exactly five correctly formatted log lines representing the requested statuses and properly annotates the internal server error.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Output is correct, precise, and well-structured. Follows all formatting and annotation constraints seamlessly.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Provides a clean and accurate implementation of the common log format. Meets all prompt constraints, keeping the annotation strictly to the key 500 error line.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "The code itself is correctly formatted, but it directly violates the negative constraint: 'Only annotate the lines the description asks about. Do not annotate every line'. Providing an annotation for all 5 lines results in a significant penalty.",
+          "score": 6
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Best matches the prompt with exactly 5 nginx-style log lines, correct status distribution, and a precise annotation on the 500 POST /api/payments line. The format is realistic and concise, with no meaningful rule violations.",
+          "score": 9.8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Faithful to the requested 3×200, 1×404, 1×500 pattern and correctly annotates the 500 POST /api/payments entry. The nginx-style formatting is strong, though slightly less polished than A in realism/detail.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Accurate nginx-style output with the correct mix of requests and the 500 error on POST /api/payments. The annotation is correctly placed, though its text adds mild extra guidance beyond simply identifying the line.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Meets the core requirements well: correct language field, correct counts, and sensible annotations on the 404 and 500 lines. It is slightly less complete stylistically because the log lines are a more minimal variant.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Correctly represents five nginx-style requests with the required status breakdown and a proper 500 POST /api/payments line. The extra 404 annotation is acceptable, but the overall output is a bit less targeted than stronger entries.",
+          "score": 8.9
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Accurate and concise with the right number of requests and correct placement of the 500 POST /api/payments entry. It uses a minimal log format and the annotation is fine, but it is less rich and realistic than top-ranked outputs.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "The log content is accurate and the language field is correct, but it over-annotates every line despite the prompt saying to annotate only requested lines. That prompt-following issue materially lowers the score.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "The log lines themselves satisfy the requested status pattern, but the annotation points to line 4 even though the 500 POST /api/payments appears there and not the semantically expected fifth line in a typical progression. More importantly, it only annotates the 500 while misordering the narrative flow slightly compared with stronger answers.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Major annotation error: it marks line 4 as the internal server error, but line 4 is indeed the 500 POST /api/payments while the 404 is on line 5, creating a less faithful ordering to the described sequence. The content is otherwise valid, but the request order mismatch and odd annotation choice weaken it.",
+          "score": 6.8
+        }
+      ]
+    }
+  ],
+  "taskId": "visual-code",
+  "testCaseId": "en-javascript-log-output-1"
+}

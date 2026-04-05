@@ -1,0 +1,185 @@
+{
+  "expectations": "\nEVALUATION CRITERIA:\n\n1. CODE CORRECTNESS: The code must be syntactically correct and follow the conventions of the specified programming language. It must demonstrate the concept described in the VISUAL_DESCRIPTION.\n\n2. LANGUAGE FIELD: The \"language\" field in the output must be the programming language or format (e.g., \"python\", \"javascript\", \"sql\", \"yaml\", \"nginx\", \"java\"), NOT the human language from the ANNOTATION_LANGUAGE input. Never use generic values like \"text\" or \"log\".\n\n3. ANNOTATIONS: The model generates a lineContent field internally, which is then post-processed into a 1-based line number before output. The output you see has \"line\" (a number) — this is expected and correct. Do NOT penalize the output for having a \"line\" field instead of \"lineContent\" — that conversion is handled automatically by the system. Evaluate whether the line number points to the semantically correct line in the code (e.g., the buggy line, the WHERE clause, the error entry). The annotation text should be in the specified human ANNOTATION_LANGUAGE.\n\n4. CONCISENESS: Code should be max 500 chars, focused on the described concept. Do not add boilerplate, extra fields, or extra stack frames unless they are part of the description.\n\n5. FORMATTING: Code must be properly formatted with newlines — one statement per line, standard indentation, no minified/compressed style. For SQL, each clause (SELECT, FROM, JOIN, WHERE) should be on its own line.\n\n6. FAITHFULNESS: The code should match the description closely. Do not add unrequested elements (extra interface fields, extra stack frames, unnecessary variables). Do not fix bugs the description asks to demonstrate.\n\n7. TYPE QUALITY: For TypeScript, use proper type annotations (interfaces, union types with null). Never use \"any\".\n\nLANGUAGE REQUIREMENT: Annotation text must be in Brazilian Portuguese.\n    ",
+  "judgedAt": "2026-04-05T22:16:45.978Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Clean YAML with proper structure, correct language field, annotation on line 6 correctly points to the DATABASE_URL line with localhost. Annotation text is clear Brazilian Portuguese. Good balance of conciseness and realism with production-like context (NODE_ENV, PORT, CACHE_REDIS).",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Concise, well-structured YAML. Annotation on line 5 correctly targets the DATABASE_URL line with localhost. Annotation text is clear Portuguese. Good contrast between localhost DATABASE_URL and prod REDIS_URL. Minimal and focused.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Concise and correct YAML. Line 5 annotation correctly targets DATABASE_URL with localhost. Annotation in Portuguese is clear. Slightly less realistic (no user:pass in URL) but still valid and focused on the concept.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Docker Compose-style YAML which is a valid interpretation. Line 7 correctly points to DATABASE_URL with localhost. Annotation is in Portuguese. Uses dash-prefixed environment variable syntax which is valid. Good realism.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Well-structured YAML with good contrast between localhost DATABASE_URL and production REDIS. Line 8 correctly targets the DATABASE_URL line. Annotation in Portuguese. Slightly verbose with extra fields (replicas, SECRET_KEY, LOG_LEVEL) that weren't requested, but not harmful.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Correct YAML and language field. Line 4 correctly targets DATABASE_URL with localhost. Annotation in Portuguese. Good contrast with prod REDIS_URL. However, DATABASE_URL lacks user:pass which makes it slightly less realistic as a production config.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Uses Kubernetes ConfigMap format which is a valid YAML config interpretation. Line 8 correctly targets DATABASE_URL with localhost. Annotation in Portuguese. However, it's a Kubernetes-specific format which goes beyond the simple 'service config file' described — adds unrequested structure.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Correct YAML and language field. However, the service config lacks a name field which is less realistic. Line 3 correctly points to DATABASE_URL. Annotation in Portuguese is good. Missing the 'name' field for service makes it feel incomplete.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "While correct in structure and annotation targeting, DATABASE_URL is set to just 'localhost' rather than a realistic connection string, making it less representative of a real misconfiguration scenario. The description implies a URL pointing to localhost, not just the word 'localhost'.",
+          "score": 6
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Excellent response. The code uses a highly realistic Docker Compose format to demonstrate the concept, correctly targets the exact line with the annotation in Portuguese, and respects all constraints.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Excellent response. Perfectly implements the request using a realistic Kubernetes ConfigMap structure. The annotation correctly targets the localhost URL and is accurately translated to Portuguese.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Perfectly accurate and concise. The YAML structure is clean, clearly juxtaposing the 'production' environment flag with the incorrect localhost database URL. Line targeting is exact.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Follows all instructions perfectly. The code is concise and includes strong context with the production node environment flag, and the line target is perfectly accurate.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Excellent implementation. It meets all prompt requirements, maintains conciseness, and correctly annotates the problematic line in Portuguese.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Clean, highly concise, and fully accurate. The annotation is descriptive and perfectly aligned with the request.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Accurate and strictly follows the prompt. Includes just enough context to make the code realistic while keeping it well within limits.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Very good response. Fully correct and annotated properly. It includes slightly more boilerplate than necessary, but it remains well under the 500-character limit.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Correctly follows the constraints and annotates the requested line. However, using just 'localhost' rather than a full connection string makes the DATABASE_URL slightly less realistic compared to the other models.",
+          "score": 9
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Faithful, concise YAML config with the problematic DATABASE_URL correctly annotated, and the annotation is in Portuguese. It stays focused on the requested concept without unnecessary extras and uses the correct language field.",
+          "score": 9.6
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Correct YAML, correct language field, and the annotation points to the right problematic line in Portuguese. Slightly less concise and includes some unrequested extra fields, but still closely matches the prompt.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Very concise and accurate, with the buggy DATABASE_URL clearly annotated in Portuguese. It is slightly less descriptive as a full service config than the top entries, but it fully satisfies the task.",
+          "score": 8.9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Accurate YAML with the correct line annotated and appropriate Portuguese annotation text. It is concise and faithful, though the added API_KEY is unnecessary and the config is a bit less natural than stronger answers.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Correctly formatted YAML and the annotation targets the right line with Portuguese text. It adds several unnecessary fields, including a secret, which makes it less focused than better responses.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Very concise and semantically correct, with the problematic DATABASE_URL line annotated properly in Portuguese. However, using just 'localhost' as the value is less realistic and less faithful to an environment variable URL than stronger outputs.",
+          "score": 8.1
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "The YAML is valid and the annotation line is correct, but it shifts the task into a Kubernetes ConfigMap rather than a simple service config. It also adds substantial unrequested boilerplate and extra settings, reducing faithfulness and conciseness.",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "It captures the localhost mistake and annotates the correct line in Portuguese, but the structure is Docker Compose-style with list-form environment entries rather than a clearer service config with variables. It also includes an unnecessary secret-like value and is less faithful to the described format.",
+          "score": 7.1
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "The YAML and annotation are technically correct, but it is overly verbose and includes many unrequested fields, including a sensitive-looking SECRET_KEY. This hurts conciseness and faithfulness compared with simpler, more targeted solutions.",
+          "score": 6.8
+        }
+      ]
+    }
+  ],
+  "taskId": "visual-code",
+  "testCaseId": "pt-python-config-file-1"
+}
