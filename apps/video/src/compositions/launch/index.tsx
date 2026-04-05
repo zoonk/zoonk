@@ -1,5 +1,6 @@
 import { EverydayLanguage } from "@/components/scenes/act1/everyday-language";
 import { SearchPrompt } from "@/components/scenes/act1/search-prompt";
+import { LanguageTransform } from "@/components/scenes/act2/language-transform";
 import { StoryBranch } from "@/components/scenes/act2/story-branch";
 import { VisualsHeadline } from "@/components/scenes/act2/visuals-headline";
 import { VisualsMontage } from "@/components/scenes/act2/visuals-montage";
@@ -64,6 +65,10 @@ export function LaunchVideo(_props: LaunchVideoProps) {
 
         <Series.Sequence durationInFrames={SCENES.visualsHeadline}>
           <VisualsHeadline />
+        </Series.Sequence>
+
+        <Series.Sequence durationInFrames={SCENES.languageTransform}>
+          <LanguageTransform />
         </Series.Sequence>
 
         <Series.Sequence durationInFrames={SCENES.visualsMontage}>

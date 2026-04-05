@@ -59,6 +59,7 @@ export const SCENES = {
 
   // ACT 2: THE PROOF
   visualsHeadline: 3.5 * FPS,
+  languageTransform: 5 * FPS,
   visualsMontage: 7 * FPS,
 
   // ACT 3: THE FEELING
