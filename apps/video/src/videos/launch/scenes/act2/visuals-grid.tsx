@@ -1,4 +1,5 @@
 import { SceneContainer } from "@/components/scene-container";
+import { SceneHeadline } from "@/components/scene-headline";
 import { entryScale, stagger } from "@/lib/animation";
 import { COLORS } from "@/lib/constants";
 import {
@@ -15,15 +16,18 @@ import {
 import { useCurrentFrame } from "remotion";
 import { useT } from "../../use-translations";
 
+/**
+ * "Charts. Diagrams. Timelines." (headline, word-by-word)
+ * → "And more." (payoff)
+ * → 3x3 icon grid showing all 9 visual types.
+ *
+ * Replaces the old montage — the grid communicates breadth
+ * far more efficiently than stepping through individual types.
+ */
 export function VisualsGrid() {
   const frame = useCurrentFrame();
   const t = useT();
 
-  /**
-   * All 9 visual types Zoonk can generate, in a 3x3 grid.
-   * The grid IS the statement — no headline needed.
-   * Shows abundance: "there's a whole system of visual tools."
-   */
   const visuals = [
     { icon: IconChartBar, label: t.gridLabels.charts },
     { icon: IconSchema, label: t.gridLabels.diagrams },
@@ -36,51 +40,65 @@ export function VisualsGrid() {
     { icon: IconQuote, label: t.gridLabels.quotes },
   ];
 
+  /** Grid starts after the headline has settled (~50 frames). */
+  const gridBaseDelay = 50;
+
   return (
     <SceneContainer bg="white">
       <div
         style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(3, 1fr)",
-          gap: "40px 48px",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: 40,
         }}
       >
-        {visuals.map(({ icon: Icon, label }, index) => {
-          /**
-           * First icon appears instantly (index 0, no animation).
-           * Remaining icons stagger in with 3-frame gaps.
-           */
-          const style =
-            index === 0
-              ? {}
-              : entryScale({ frame, delay: stagger({ index, baseDelay: 0, gap: 3 }) });
+        <SceneHeadline setup={t.gridSetup} payoff={t.gridPayoff} payoffStartFrame={18} />
 
-          return (
-            <div
-              key={label}
-              style={{
-                ...style,
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                gap: 12,
-              }}
-            >
-              <Icon size={44} stroke={1.5} color={COLORS.text} />
-              <span
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(3, 1fr)",
+            gap: "40px 48px",
+            ...entryScale({ frame, delay: gridBaseDelay, duration: 12 }),
+          }}
+        >
+          {visuals.map(({ icon: Icon, label }, index) => {
+            const style =
+              index === 0
+                ? {}
+                : entryScale({
+                    frame,
+                    delay: stagger({ index, baseDelay: gridBaseDelay, gap: 5 }),
+                  });
+
+            return (
+              <div
+                key={label}
                 style={{
-                  fontSize: 13,
-                  fontWeight: 500,
-                  color: COLORS.muted,
-                  textTransform: "uppercase" as const,
-                  letterSpacing: "0.05em",
+                  ...style,
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  gap: 12,
                 }}
               >
-                {label}
-              </span>
-            </div>
-          );
-        })}
+                <Icon size={44} stroke={1.5} color={COLORS.text} />
+                <span
+                  style={{
+                    fontSize: 13,
+                    fontWeight: 500,
+                    color: COLORS.muted,
+                    textTransform: "uppercase" as const,
+                    letterSpacing: "0.05em",
+                  }}
+                >
+                  {label}
+                </span>
+              </div>
+            );
+          })}
+        </div>
       </div>
     </SceneContainer>
   );

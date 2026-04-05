@@ -34,15 +34,9 @@ type TranslationStrings = {
   /** Words from the simple sentence that appear in the jargon, in order. */
   simpleWords: string[];
 
-  /** Scene: VisualsMontage labels */
-  labelTimelines: string;
-  labelDiagrams: string;
-  labelCharts: string;
-
-  /** Scene: VisualsMontage — diagram nodes */
-  diagramNodes: string[];
-
-  /** Scene: VisualsGrid labels */
+  /** Scene: VisualsGrid */
+  gridSetup: string;
+  gridPayoff: string;
   gridLabels: {
     charts: string;
     diagrams: string;
@@ -120,7 +114,7 @@ const en: TranslationStrings = {
   storyPayoff: "by making decisions.",
   storyScenario: "A customer wants a refund after 90 days. What do you do?",
   storyChoices: ["Ignore the request", "Check the refund policy", "Offer a full refund"],
-  storyFeedbackSetup: "Make a mistake?",
+  storyFeedbackSetup: "Made a mistake?",
   storyFeedbackPayoff: "You'll know why.",
   storyFeedback: "Ignoring customers damages trust and loyalty.",
 
@@ -143,11 +137,8 @@ const en: TranslationStrings = {
     "not unlike a ball of concentrated energy.",
   simpleWords: ["Light,", "acts", "like", "both", "a", "wave", "and", "a", "ball"],
 
-  labelTimelines: "Timelines",
-  labelDiagrams: "Diagrams",
-  labelCharts: "Charts",
-
-  diagramNodes: ["You look at it", "It picks a state", "Now it's definite"],
+  gridSetup: "Hard to explain,",
+  gridPayoff: "easy to show.",
 
   gridLabels: {
     charts: "Charts",
@@ -254,11 +245,8 @@ const ptBr: TranslationStrings = {
     "tempo.",
   ],
 
-  labelTimelines: "Linhas do tempo",
-  labelDiagrams: "Diagramas",
-  labelCharts: "Gráficos",
-
-  diagramNodes: ["Você observa", "Ele escolhe um estado", "Agora é definitivo"],
+  gridSetup: "Difícil de explicar,",
+  gridPayoff: "fácil de mostrar.",
 
   gridLabels: {
     charts: "Gráficos",

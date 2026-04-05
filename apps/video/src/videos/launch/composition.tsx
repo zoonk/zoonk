@@ -6,7 +6,6 @@ import { LanguageTransform } from "./scenes/act2/language-transform";
 import { StoryClaim, StoryCorrect, StoryFeedback } from "./scenes/act2/story-branch";
 import { VisualsGrid } from "./scenes/act2/visuals-grid";
 import { VisualsHeadline } from "./scenes/act2/visuals-headline";
-import { VisualsMontage } from "./scenes/act2/visuals-montage";
 import { BeltSystem } from "./scenes/act3/belt-system";
 import {
   BrainPowerIntro,
@@ -92,10 +91,6 @@ export function LaunchVideo({ locale }: LaunchVideoProps) {
             <LanguageTransform />
           </Series.Sequence>
 
-          <Series.Sequence durationInFrames={SCENES.visualsMontage}>
-            <VisualsMontage />
-          </Series.Sequence>
-
           <Series.Sequence durationInFrames={SCENES.visualsGrid}>
             <VisualsGrid />
           </Series.Sequence>
@@ -142,16 +137,16 @@ export function LaunchVideo({ locale }: LaunchVideoProps) {
             <PatternsPayoff />
           </Series.Sequence>
 
-          <Series.Sequence durationInFrames={SCENES.logo}>
-            <Logo />
+          <Series.Sequence durationInFrames={SCENES.website}>
+            <Website />
           </Series.Sequence>
 
           <Series.Sequence durationInFrames={SCENES.closingWords}>
             <ClosingWords />
           </Series.Sequence>
 
-          <Series.Sequence durationInFrames={SCENES.website}>
-            <Website />
+          <Series.Sequence durationInFrames={SCENES.logo}>
+            <Logo />
           </Series.Sequence>
         </Series>
       </AbsoluteFill>

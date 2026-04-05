@@ -15,14 +15,13 @@ export const SCENES = {
   searchPrompt: 4 * FPS,
   everydayLanguage: 3.5 * FPS,
   storyClaim: 3 * FPS,
-  storyCorrect: 4 * FPS,
+  storyCorrect: 3 * FPS,
   storyFeedback: 4.5 * FPS,
 
   // ACT 2: THE PROOF
   visualsHeadline: 3.5 * FPS,
   languageTransform: 5 * FPS,
-  visualsMontage: 6 * FPS,
-  visualsGrid: 2.5 * FPS,
+  visualsGrid: 5 * FPS,
 
   // ACT 3: THE FEELING
   brainPowerIntro: 3.5 * FPS,
@@ -32,10 +31,10 @@ export const SCENES = {
   energyIntro: 3.5 * FPS,
   energyDip: 3 * FPS,
   energyRecovers: 3.5 * FPS,
-  patternsIntro: 3 * FPS,
+  patternsIntro: 4.5 * FPS,
   patternsData: 3.5 * FPS,
-  patternsPayoff: 2.5 * FPS,
-  logo: 1.5 * FPS,
-  closingWords: 2 * FPS,
+  patternsPayoff: 4 * FPS,
   website: 1.5 * FPS,
+  closingWords: 2 * FPS,
+  logo: 1.5 * FPS,
 } as const;

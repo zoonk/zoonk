@@ -61,30 +61,6 @@ export function exitFade({
 }
 
 /**
- * Smooth spring animation with no bounce.
- * Returns a 0-1 progress value — ideal for drawing/filling animations
- * like timeline strokes and progress bars.
- */
-export function smoothSpring({
-  frame,
-  fps,
-  delay = 0,
-  durationInFrames,
-}: {
-  frame: number;
-  fps: number;
-  delay?: number;
-  durationInFrames?: number;
-}): number {
-  return spring({
-    config: { damping: 200 },
-    durationInFrames,
-    fps,
-    frame: frame - delay,
-  });
-}
-
-/**
  * Typewriter effect — reveals text character by character with a blinking cursor.
  * Returns the visible portion of the text and the cursor opacity.
  */
