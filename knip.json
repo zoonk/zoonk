@@ -26,6 +26,9 @@
       "ignore": ["e2e/mocks/**"],
       "project": ["src/**/*.{ts,tsx}!", "e2e/**/*.ts"]
     },
+    "apps/blog": {
+      "project": ["src/**/*.{ts,tsx}!"]
+    },
     "apps/main": {
       "entry": ["src/app/privacy/*.mdx", "src/app/terms/*.mdx"],
       "project": ["src/**/*.{ts,tsx}!", "e2e/**/*.ts"]
