@@ -43,8 +43,9 @@
       "prisma": false
     },
     "apps/video": {
-      "entry": ["src/index.ts", "remotion.config.ts"],
-      "project": ["src/**/*.{ts,tsx}"]
+      "entry": ["src/index.ts!", "remotion.config.ts"],
+      "ignoreDependencies": ["@remotion/cli!"],
+      "project": ["src/**/*.{ts,tsx}!"]
     },
     "packages/ui": {
       "includeEntryExports": false
