@@ -1,5 +1,5 @@
 import { SceneContainer } from "@/components/scene-container";
-import { WordReveal } from "@/components/word-reveal";
+import { SceneHeadline } from "@/components/scene-headline";
 import { countUp, entryScale } from "@/lib/animation";
 import { COLORS } from "@/lib/constants";
 import { useCurrentFrame } from "remotion";
@@ -7,8 +7,8 @@ import { useCurrentFrame } from "remotion";
 /**
  * "YOUR LEARNING PATTERNS" (instant label)
  * → stats fade in
- * → "Know when and how you learn best," (word by word)
- * → "so you can be more productive." (word by word, lighter)
+ * → "Know when and how you learn best," (setup, bold)
+ * → "so you can be more productive." (payoff, muted, word by word)
  */
 export function PerformanceStats() {
   const frame = useCurrentFrame();
@@ -79,19 +79,13 @@ export function PerformanceStats() {
           </div>
         </div>
 
-        {/* Why it matters — word by word */}
-        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
-          <WordReveal
-            text="Know when and how you learn best,"
-            startFrame={40}
-            style={{ fontSize: 20, fontWeight: 600, color: COLORS.text, justifyContent: "center" }}
-          />
-          <WordReveal
-            text="so you can be more productive."
-            startFrame={72}
-            style={{ fontSize: 20, fontWeight: 400, color: COLORS.muted, justifyContent: "center" }}
-          />
-        </div>
+        {/* Why it matters — using SceneHeadline for consistent styling */}
+        <SceneHeadline
+          setup="Know when and how you learn best,"
+          payoff="so you can be more productive."
+          payoffStartFrame={72}
+          fontSize={20}
+        />
       </div>
     </SceneContainer>
   );

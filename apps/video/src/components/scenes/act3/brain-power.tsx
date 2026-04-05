@@ -1,12 +1,12 @@
 import { SceneContainer } from "@/components/scene-container";
-import { WordReveal } from "@/components/word-reveal";
+import { SceneHeadline } from "@/components/scene-headline";
 import { countUp, entryScale } from "@/lib/animation";
 import { COLORS } from "@/lib/constants";
 import { useCurrentFrame } from "remotion";
 
 /**
- * "Your Brain Power only goes up." (instant)
- * → "Never down." (word by word)
+ * "Your Brain Power only goes up." (instant, bold)
+ * → "Never down." (word by word, muted)
  * → "Because knowledge is something nobody can take from you." (quiet fade)
  * → counter as proof.
  */
@@ -29,24 +29,12 @@ export function BrainPower() {
           gap: 20,
         }}
       >
-        {/* Bold claim with word-by-word payoff */}
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: 4,
-          }}
-        >
-          <span style={{ fontSize: 44, fontWeight: 700, color: COLORS.text, textAlign: "center" }}>
-            Your Brain Power only goes up.
-          </span>
-          <WordReveal
-            text="Never down."
-            startFrame={20}
-            style={{ fontSize: 44, fontWeight: 700, color: COLORS.text, justifyContent: "center" }}
-          />
-        </div>
+        <SceneHeadline
+          setup="Your Brain Power only goes up."
+          payoff="Never down."
+          payoffStartFrame={20}
+          fontSize={44}
+        />
 
         {/* Quiet philosophical line */}
         <span

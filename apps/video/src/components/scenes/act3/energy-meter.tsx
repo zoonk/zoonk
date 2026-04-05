@@ -1,4 +1,5 @@
 import { SceneContainer } from "@/components/scene-container";
+import { SceneHeadline } from "@/components/scene-headline";
 import { WordReveal } from "@/components/word-reveal";
 import { entryScale } from "@/lib/animation";
 import { COLORS } from "@/lib/constants";
@@ -7,9 +8,9 @@ import { Easing, interpolate, useCurrentFrame } from "remotion";
 const ARC_CIRCUMFERENCE = Math.PI * 80;
 
 /**
- * "Miss a day?" (instant)
- * → "Your energy dips a little." (word by word, lighter)
- * → "But it doesn't disappear." (word by word, bold returns)
+ * "Miss a day?" (instant, bold)
+ * → "Your energy dips a little." (word by word, muted)
+ * → "But it doesn't disappear." (word by word, muted)
  * → "No guilt. No punishment. Just pick up where you left off." (quiet fade)
  * → arc gauge.
  */
@@ -33,7 +34,7 @@ export function EnergyMeter() {
           gap: 16,
         }}
       >
-        {/* Three-line headline with word-by-word reveals */}
+        {/* Three-line headline: setup + two payoff lines */}
         <div
           style={{
             display: "flex",
@@ -42,16 +43,21 @@ export function EnergyMeter() {
             gap: 4,
           }}
         >
-          <span style={{ fontSize: 40, fontWeight: 700, color: COLORS.text }}>Miss a day?</span>
-          <WordReveal
-            text="Your energy dips a little."
-            startFrame={15}
-            style={{ fontSize: 40, fontWeight: 400, color: COLORS.text, justifyContent: "center" }}
+          <SceneHeadline
+            setup="Miss a day?"
+            payoff="Your energy dips a little."
+            payoffStartFrame={15}
+            fontSize={40}
           />
           <WordReveal
             text="But it doesn't disappear."
             startFrame={38}
-            style={{ fontSize: 40, fontWeight: 700, color: COLORS.text, justifyContent: "center" }}
+            style={{
+              fontSize: 40,
+              fontWeight: 400,
+              color: COLORS.muted,
+              justifyContent: "center",
+            }}
           />
         </div>
 
