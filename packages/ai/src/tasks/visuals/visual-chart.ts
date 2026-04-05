@@ -4,8 +4,8 @@ import { Output, generateText } from "ai";
 import { z } from "zod";
 import systemPrompt from "./visual-chart.prompt.md";
 
-const DEFAULT_MODEL = process.env.AI_MODEL_VISUAL_CHART ?? "openai/gpt-5.4-mini";
-const FALLBACK_MODELS = ["google/gemini-3-flash"];
+const DEFAULT_MODEL = process.env.AI_MODEL_VISUAL_CHART ?? "google/gemini-3.1-flash-lite-preview";
+const FALLBACK_MODELS = ["openai/gpt-5.4-mini", "anthropic/claude-haiku-4.5"];
 
 /**
  * Matches `chartVisualContentSchema` from `@zoonk/core/steps/contract/visual`.

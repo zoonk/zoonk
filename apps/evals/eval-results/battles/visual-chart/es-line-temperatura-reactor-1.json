@@ -1,0 +1,185 @@
+{
+  "expectations": "\nEVALUATION CRITERIA:\n\n1. CHART TYPE: The chartType must match the data structure. Use \"bar\" for category comparisons, \"line\" for trends over a continuous dimension, \"pie\" for proportions summing to 100%. Penalize mismatched types (e.g., \"pie\" for data that doesn't sum to 100%).\n\n2. DATA ACCURACY: Data points must faithfully reflect the VISUAL_DESCRIPTION. If the description gives specific values, use them exactly. If the description is qualitative (e.g., \"rises then falls\"), illustrative values are expected — but they must match the described pattern. Do NOT add extra data points beyond what the description specifies.\n\n3. TITLE: Must be concise (max 50 chars), descriptive, and in the correct language.\n\n4. LANGUAGE: All text content (title, data point names) must be in the specified language. Only JSON field names and enum values should be in English.\n\nLANGUAGE REQUIREMENT: All content must be in Latin American Spanish.\n    ",
+  "judgedAt": "2026-04-05T21:27:07.497Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Correct chart type, exact 4 data points matching the description's 4 specified values (6:00/120, 10:00/185, 12:00/185, 14:00/95), correct title and language. Follows the rule not to add data points beyond what the description specifies.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Identical to Model B — correct chart type, exactly 4 data points matching the described values, correct title and language. No extra points added.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Identical to Models B and C — correct chart type, 4 data points faithfully reflecting the description, proper title and language.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Identical to Models B, C, and E — correct chart type, 4 data points matching the description exactly, proper title and language.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Same 4 data points and correct output overall. The only minor difference is '06:00' instead of '6:00', which is a trivial formatting choice that doesn't affect accuracy.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Adds one extra data point (8:00/153) not explicitly specified in the description. While it illustrates the 'gradual rise' trend, the prompt rule says not to add data points beyond what the description specifies. The description specifies 4 key points.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Adds 3 extra interpolated points (8:00, 11:00, 13:00) beyond the 4 specified in the description, violating the rule not to add extra data points. However, 7 points is within the 4-8 range and the values are plausible.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "8 data points — adds 4 interpolated points beyond the 4 described. Violates the 'do not add data points beyond what the description specifies' rule significantly, though stays at the upper bound of 4-8.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "9 data points exceeds the 4-8 maximum clarity range and adds 5 points beyond what's described. Double violation: exceeds the data point limit and adds significantly beyond the description.",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Perfectly follows all instructions. Accurately extracts the exactly 4 specified data points without adding extra ones, uses the correct chart type, and correctly applies the Spanish title.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Perfectly follows all instructions. Accurately extracts the exactly 4 specified data points without adding extra ones, uses the correct chart type, and correctly applies the Spanish title.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Perfectly follows all instructions. Accurately extracts the exactly 4 specified data points without adding extra ones, uses the correct chart type, and correctly applies the Spanish title.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Perfectly follows all instructions. Accurately extracts the exactly 4 specified data points without adding extra ones, uses the correct chart type, and correctly applies the Spanish title.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Perfectly follows instructions and correctly refrains from adding unspecified data points. Formatting '6:00' as '06:00' is an acceptable and logical choice for consistency.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Adequate, but violates the strict negative constraint to not add data points beyond what the description specifies by inventing an extra data point for 8:00.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Poor because it violates the negative constraint against adding extra data points not specified in the prompt. It hallucinates 3 extra times that were not requested.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Very poor. It invents 4 extra data points not specified in the description, clearly violating the negative constraint.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Fails multiple requirements: it heavily violates the rule against adding unspecified data points by inventing 5 extra times, and violates the 4-8 data point limit by returning 9 data points.",
+          "score": 2
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "It uses the correct line chart type, exact stated temperatures and times, and keeps all text in Spanish. It also follows the instruction not to add extra points beyond the described values, making it a clean, fully compliant answer.",
+          "score": 9.8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "This is fully aligned with the prompt: correct chart type, exact extracted values, valid JSON structure, and an appropriate Spanish title. It avoids unnecessary invented points and matches the described trend precisely.",
+          "score": 9.8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "The output is essentially ideal: correct line chart, exact key time/value pairs from the description, and proper Spanish text. It is concise and adheres closely to the rule against adding unspecified data points.",
+          "score": 9.8
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "It correctly selects a line chart and captures the explicitly stated times and temperatures without adding unsupported points. The title and labels are in Spanish and the structure is valid.",
+          "score": 9.8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "This is also highly accurate and compliant, with the only trivial difference being the zero-padded '06:00' label. That formatting choice does not change meaning, so it remains nearly perfect.",
+          "score": 9.7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "It preserves the main trend and uses a reasonable illustrative midpoint at 8:00, which is allowed for qualitative progression. However, it adds a data point not explicitly given, which is less aligned than using only the stated times.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "The chart type and overall trend are correct, and the invented intermediate values are plausible. Still, it adds several extra data points beyond what the description specifies, which conflicts with a key prompt rule.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "It produces a coherent line trend with plausible invented values and stays within the 4–8 point guidance. However, it adds multiple unspecified points, making it less faithful to the instruction not to add data beyond what was described.",
+          "score": 6.9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Although the trend is plausible and the line chart choice is correct, it adds many extra points and ends up with 9 data points, exceeding the stated 4–8 optimal range. This is a notable prompt violation despite otherwise reasonable values.",
+          "score": 5.8
+        }
+      ]
+    }
+  ],
+  "taskId": "visual-chart",
+  "testCaseId": "es-line-temperatura-reactor-1"
+}
