@@ -1,0 +1,29 @@
+apps/video/src/components/scenes/act3/brain-power.tsx
+  e103c310d81ee4e4 8-12,14,17-19,28,32-33,37,57-90
+apps/video/src/compositions/launch/index.tsx
+  e103c310d81ee4e4 9-12,89-98
+apps/video/src/Root.tsx
+  e103c310d81ee4e4 15
+apps/video/src/lib/constants.ts
+  e103c310d81ee4e4 67-69
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "ab9a2ad7a2a056879a862c2e85216f212d9625f7",
+  "prompts": {
+    "e103c310d81ee4e4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0d12634c-7e79-46b9-8ca2-1c7ed52fe511",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 69,
+      "total_deletions": 38,
+      "accepted_lines": 68,
+      "overriden_lines": 0
+    }
+  }
+}
