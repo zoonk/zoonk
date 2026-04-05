@@ -61,6 +61,7 @@ export const SCENES = {
   visualsHeadline: 3.5 * FPS,
   languageTransform: 5 * FPS,
   visualsMontage: 7 * FPS,
+  visualsGrid: 2.5 * FPS,
 
   // ACT 3: THE FEELING
   brainPower: 5 * FPS,

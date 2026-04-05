@@ -3,6 +3,7 @@ import { SearchPrompt } from "@/components/scenes/act1/search-prompt";
 import { LanguageTransform } from "@/components/scenes/act2/language-transform";
 import { StoryBranch } from "@/components/scenes/act2/story-branch";
 import { VisualsHeadline } from "@/components/scenes/act2/visuals-headline";
+import { VisualsGrid } from "@/components/scenes/act2/visuals-grid";
 import { VisualsMontage } from "@/components/scenes/act2/visuals-montage";
 import { BeltSystem } from "@/components/scenes/act3/belt-system";
 import { BrainPower } from "@/components/scenes/act3/brain-power";
@@ -73,6 +74,10 @@ export function LaunchVideo(_props: LaunchVideoProps) {
 
         <Series.Sequence durationInFrames={SCENES.visualsMontage}>
           <VisualsMontage />
+        </Series.Sequence>
+
+        <Series.Sequence durationInFrames={SCENES.visualsGrid}>
+          <VisualsGrid />
         </Series.Sequence>
 
         {/* ─── ACT 3: THE FEELING ─── */}
