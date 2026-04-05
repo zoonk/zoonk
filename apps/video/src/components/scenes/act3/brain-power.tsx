@@ -13,12 +13,11 @@ import { useCurrentFrame } from "remotion";
 export function BrainPower() {
   const frame = useCurrentFrame();
 
-  const headlineStyle = entryScale({ frame, delay: 0, duration: 12 });
-  const reasonStyle = entryScale({ frame, delay: 30, duration: 12 });
-  const counterStyle = entryScale({ frame, delay: 55, duration: 12 });
+  const reasonStyle = entryScale({ frame, delay: 25, duration: 12 });
+  const counterStyle = entryScale({ frame, delay: 50, duration: 12 });
 
-  const bpValue = countUp({ frame, startFrame: 60, endFrame: 90, from: 2440, to: 2450 });
-  const badgeStyle = entryScale({ frame, delay: 60, duration: 10 });
+  const bpValue = countUp({ frame, startFrame: 55, endFrame: 85, from: 2440, to: 2450 });
+  const badgeStyle = entryScale({ frame, delay: 55, duration: 10 });
 
   return (
     <SceneContainer bg="white">
@@ -30,10 +29,9 @@ export function BrainPower() {
           gap: 24,
         }}
       >
-        {/* Bold claim */}
+        {/* Bold claim — visible immediately */}
         <div
           style={{
-            ...headlineStyle,
             display: "flex",
             flexDirection: "column",
             alignItems: "center",

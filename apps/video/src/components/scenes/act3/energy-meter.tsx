@@ -15,9 +15,8 @@ const ARC_CIRCUMFERENCE = Math.PI * 80;
 export function EnergyMeter() {
   const frame = useCurrentFrame();
 
-  const headlineStyle = entryScale({ frame, delay: 0, duration: 12 });
-  const reasonStyle = entryScale({ frame, delay: 30, duration: 12 });
-  const gaugeStyle = entryScale({ frame, delay: 50, duration: 12 });
+  const reasonStyle = entryScale({ frame, delay: 25, duration: 12 });
+  const gaugeStyle = entryScale({ frame, delay: 45, duration: 12 });
 
   const energyValue = getEnergyValue(frame);
   const arcFraction = energyValue / 100;
@@ -33,10 +32,9 @@ export function EnergyMeter() {
           gap: 20,
         }}
       >
-        {/* Bold claim */}
+        {/* Bold claim — visible immediately */}
         <div
           style={{
-            ...headlineStyle,
             display: "flex",
             flexDirection: "column",
             alignItems: "center",

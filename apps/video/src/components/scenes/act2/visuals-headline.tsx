@@ -25,8 +25,8 @@ export function VisualsHeadline() {
         }}
       >
         {LINES.map((line, index) => {
-          const delay = stagger({ index, baseDelay: 10, gap: 20 });
-          const style = entryScale({ frame, delay, duration: 15 });
+          /** First line visible immediately, second line fades in. */
+          const style = index === 0 ? {} : entryScale({ frame, delay: 20, duration: 15 });
 
           return (
             <span

@@ -13,10 +13,9 @@ import { useCurrentFrame } from "remotion";
 export function PerformanceStats() {
   const frame = useCurrentFrame();
 
-  const labelStyle = entryScale({ frame, delay: 0, duration: 12 });
-  const leftStatStyle = entryScale({ frame, delay: 12, duration: 12 });
-  const rightStatStyle = entryScale({ frame, delay: 18, duration: 12 });
-  const whyStyle = entryScale({ frame, delay: 40, duration: 12 });
+  const leftStatStyle = entryScale({ frame, delay: 8, duration: 12 });
+  const rightStatStyle = entryScale({ frame, delay: 14, duration: 12 });
+  const whyStyle = entryScale({ frame, delay: 35, duration: 12 });
 
   const accuracy = countUp({ frame, startFrame: 18, endFrame: 55, from: 0, to: 87 });
 
@@ -33,7 +32,6 @@ export function PerformanceStats() {
         {/* Label */}
         <span
           style={{
-            ...labelStyle,
             fontSize: 14,
             fontWeight: 500,
             color: COLORS.muted,

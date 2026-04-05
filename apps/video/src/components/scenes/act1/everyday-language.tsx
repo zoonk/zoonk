@@ -38,8 +38,6 @@ const ICONS = [
 export function EverydayLanguage() {
   const frame = useCurrentFrame();
 
-  const textStyle = entryScale({ frame, delay: 0, duration: 12 });
-
   return (
     <SceneContainer bg="white">
       <div
@@ -50,10 +48,9 @@ export function EverydayLanguage() {
           gap: 48,
         }}
       >
-        {/* Explanatory text */}
+        {/* Explanatory text — visible immediately, no fade */}
         <span
           style={{
-            ...textStyle,
             fontSize: 40,
             fontWeight: 600,
             color: COLORS.text,
@@ -76,7 +73,7 @@ export function EverydayLanguage() {
           }}
         >
           {ICONS.map((Icon, index) => {
-            const delay = stagger({ index, baseDelay: 20, gap: 4 });
+            const delay = stagger({ index, baseDelay: 10, gap: 4 });
             const style = entryScale({ frame, delay });
 
             return (

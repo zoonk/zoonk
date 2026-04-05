@@ -25,8 +25,7 @@ const SELECTED_INDEX = 1;
 export function StoryBranch() {
   const frame = useCurrentFrame();
 
-  const headlineStyle = entryScale({ frame, delay: 0, duration: 12 });
-  const scenarioStyle = entryScale({ frame, delay: 12, duration: 12 });
+  const scenarioStyle = entryScale({ frame, delay: 10, duration: 12 });
 
   /** The selected choice highlights between frames 80-92. */
   const selectionProgress = interpolate(frame, [80, 92], [0, 1], {
@@ -45,10 +44,9 @@ export function StoryBranch() {
           maxWidth: 620,
         }}
       >
-        {/* Framing headline */}
+        {/* Framing headline — visible immediately */}
         <span
           style={{
-            ...headlineStyle,
             fontSize: 40,
             fontWeight: 600,
             color: COLORS.text,
