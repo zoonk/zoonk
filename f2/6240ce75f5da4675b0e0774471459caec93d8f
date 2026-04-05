@@ -1,0 +1,39 @@
+apps/video/src/components/scenes/act3/energy-meter.tsx
+  e103c310d81ee4e4 2,10-14,19-20,33,36,45-55,58,125,127-128,135
+apps/video/src/components/scenes/act2/visuals-headline.tsx
+  e103c310d81ee4e4 2,6-7,17,20-42
+apps/video/src/components/scenes/act3/brain-power.tsx
+  e103c310d81ee4e4 2,8-11,16-17,19-20,29,32,41,44-48,51,66
+apps/video/src/components/scenes/act1/everyday-language.tsx
+  e103c310d81ee4e4 2,33-35,50,52-55,58-66,79
+apps/video/src/components/scenes/act3/performance-stats.tsx
+  e103c310d81ee4e4 2,8-11,31,82-94
+apps/video/src/components/scenes/act2/story-branch.tsx
+  e103c310d81ee4e4 2,22-23,28,30,35,40,45,50-53,67-68,70-73,76-82,103,110,145,153,158
+apps/video/src/components/scenes/act3/belt-system.tsx
+  e103c310d81ee4e4 2,8-9,11,16-17,32,34-37,40-48,53,73-95
+apps/video/src/lib/animation.ts
+  e103c310d81ee4e4 153-214
+apps/video/src/components/word-reveal.tsx
+  e103c310d81ee4e4 1-32
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "f26240ce75f5da4675b0e0774471459caec93d8f",
+  "prompts": {
+    "e103c310d81ee4e4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0d12634c-7e79-46b9-8ca2-1c7ed52fe511",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 421,
+      "total_deletions": 348,
+      "accepted_lines": 279,
+      "overriden_lines": 0
+    }
+  }
+}
