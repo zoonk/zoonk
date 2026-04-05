@@ -74,6 +74,8 @@ export function PatternsData() {
                 fontWeight: 700,
                 color: COLORS.bpGreen,
                 fontVariantNumeric: "tabular-nums",
+                minWidth: 120,
+                textAlign: "center",
               }}
             >
               {accuracy}%
