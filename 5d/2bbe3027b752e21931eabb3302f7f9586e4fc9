@@ -1,0 +1,23 @@
+knip.json
+  f6e6daf0d17feaa3 46,48
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "5d2bbe3027b752e21931eabb3302f7f9586e4fc9",
+  "prompts": {
+    "f6e6daf0d17feaa3": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a1a2e974-4912-4ab2-b904-d0c513875db1",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 12,
+      "total_deletions": 11,
+      "accepted_lines": 2,
+      "overriden_lines": 1
+    }
+  }
+}
