@@ -31,7 +31,7 @@ export function StoryCorrect() {
   const frame = useCurrentFrame();
   const t = useT();
 
-  const selectionProgress = interpolate(frame, [65, 77], [0, 1], {
+  const selectionProgress = interpolate(frame, [40, 52], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
@@ -179,9 +179,9 @@ export function StoryFeedback() {
           payoffStartFrame={15}
         />
 
-        {/* Choices — appear after headline */}
+        {/* Choices — appear after headline. Fixed width matches StoryCorrect's maxWidth. */}
         <div
-          style={{ display: "flex", flexDirection: "column", gap: 12, width: "100%", marginTop: 4 }}
+          style={{ display: "flex", flexDirection: "column", gap: 12, width: 580, marginTop: 4 }}
         >
           {t.storyChoices.map((choice, index) => {
             const choiceStyle = entryScale({
