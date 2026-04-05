@@ -75,12 +75,14 @@ Payoff lines reveal word by word with variable timing that mimics natural speech
 - Each word fades in over **3 frames** (opacity only, no scale or translate)
 - Gap after full line completes, before next element: **20-24 frames**
 
-### Weight contrast for emphasis
+### Weight and color contrast for emphasis
 
-- **Setup line:** Bold (700) — the tension
-- **Payoff line:** Regular (400) — the relief/twist (when the payoff is softer)
-- **Same weight** for both halves when they're equally strong ("Never" + "down.")
-- **Never** use more than one contrast tool between consecutive lines (pause + weight OR pause + size, not both)
+Use a **consistent pattern** for the setup/payoff pair across all scenes:
+
+- **Setup line (instant):** Bold (700), dark color (`COLORS.text` / `#0f0f0f`)
+- **Payoff line (word-by-word):** Regular (400), muted color (`COLORS.muted` / `#78716c`)
+
+This creates clear visual hierarchy — the setup grabs attention, the payoff reads as a lighter continuation. Apply this consistently to every scene. Don't mix patterns (eg bold+dark payoff in one scene, light+muted in another).
 
 ### Three-layer pattern for emotional scenes
 

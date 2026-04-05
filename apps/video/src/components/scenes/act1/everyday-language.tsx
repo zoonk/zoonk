@@ -1,5 +1,5 @@
 import { SceneContainer } from "@/components/scene-container";
-import { WordReveal } from "@/components/word-reveal";
+import { SceneHeadline } from "@/components/scene-headline";
 import { entryScale, stagger } from "@/lib/animation";
 import { COLORS } from "@/lib/constants";
 import {
@@ -31,7 +31,7 @@ const ICONS = [
 
 /**
  * "We explain hard things" (instant)
- * → "using stuff you already know." (word by word)
+ * → "using stuff you already know." (word by word, muted)
  * → icons stagger in below.
  */
 export function EverydayLanguage() {
@@ -47,23 +47,10 @@ export function EverydayLanguage() {
           gap: 48,
         }}
       >
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: 8,
-          }}
-        >
-          <span style={{ fontSize: 40, fontWeight: 700, color: COLORS.text, textAlign: "center" }}>
-            We explain hard things
-          </span>
-          <WordReveal
-            text="using stuff you already know."
-            startFrame={18}
-            style={{ fontSize: 40, fontWeight: 400, color: COLORS.text, textAlign: "center", justifyContent: "center" }}
-          />
-        </div>
+        <SceneHeadline
+          setup="We explain hard things"
+          payoff="using stuff you already know."
+        />
 
         {/* Icon grid — 2 rows of 5 */}
         <div

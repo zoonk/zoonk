@@ -1,5 +1,5 @@
 import { SceneContainer } from "@/components/scene-container";
-import { WordReveal } from "@/components/word-reveal";
+import { SceneHeadline } from "@/components/scene-headline";
 import { entryScale, stagger } from "@/lib/animation";
 import { COLORS } from "@/lib/constants";
 import { interpolate, useCurrentFrame } from "remotion";
@@ -19,7 +19,7 @@ const CORRECT_INDEX = 1;
 const ERROR_COLOR = "#ef4444";
 
 /**
- * "You learn" (instant) → "by making decisions." (word by word)
+ * "You learn" (instant) → "by making decisions." (word by word, muted)
  * → scenario + choices → wrong answer → feedback → correct answer.
  */
 export function StoryBranch() {
@@ -64,22 +64,11 @@ export function StoryBranch() {
           maxWidth: 620,
         }}
       >
-        {/* Headline with word-by-word reveal */}
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: 4,
-          }}
-        >
-          <span style={{ fontSize: 40, fontWeight: 700, color: COLORS.text }}>You learn</span>
-          <WordReveal
-            text="by making decisions."
-            startFrame={15}
-            style={{ fontSize: 40, fontWeight: 700, color: COLORS.text, justifyContent: "center" }}
-          />
-        </div>
+        <SceneHeadline
+          setup="You learn"
+          payoff="by making decisions."
+          payoffStartFrame={15}
+        />
 
         {/* Scenario text */}
         <p
