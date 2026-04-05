@@ -1,6 +1,6 @@
 {
   "$schema": "./node_modules/knip/schema.json",
-  "ignore": ["**/*.d.**.ts", "**/codec.ts"],
+  "ignore": ["**/*.d.**.ts", "**/codec.ts", ".agents/**", ".claude/**"],
   "ignoreWorkspaces": ["packages/e2e!", "packages/testing!"],
   "ignoreBinaries": ["stripe", "build-and-start", "turbo!"],
   "ignoreDependencies": [
@@ -41,6 +41,11 @@
       "ignore": ["src/prisma/seed.ts", "src/prisma/seed/**"],
       "ignoreDependencies": ["@zoonk/utils"],
       "prisma": false
+    },
+    "apps/video": {
+      "entry": ["src/index.ts!", "remotion.config.ts"],
+      "ignoreDependencies": ["@remotion/cli!"],
+      "project": ["src/**/*.{ts,tsx}!"]
     },
     "packages/ui": {
       "includeEntryExports": false

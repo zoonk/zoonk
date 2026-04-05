@@ -1,0 +1,26 @@
+{
+  "name": "video",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "remotion studio src/index.ts --port 3202 --no-open",
+    "build": "remotion render src/index.ts LaunchVideo out/launch-landscape.mp4",
+    "render:portrait": "remotion render src/index.ts LaunchVideo out/launch-portrait.mp4 --height 1920 --width 1080",
+    "render:square": "remotion render src/index.ts LaunchVideo out/launch-square.mp4 --height 1080 --width 1080",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.301",
+    "@remotion/fonts": "4.0.301",
+    "@tabler/icons-react": "3.41.1",
+    "react": "19.2.4",
+    "react-dom": "19.2.4",
+    "remotion": "4.0.301",
+    "zod": "4.3.6"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "typescript": "5.8.3"
+  }
+}

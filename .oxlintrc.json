@@ -267,6 +267,7 @@
     "**/messages/**",
     ".turbo",
     "pnpm-lock.yaml",
-    ".agents"
+    ".agents",
+    "apps/video/**"
   ]
 }
