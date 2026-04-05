@@ -7,10 +7,8 @@ import { useCurrentFrame } from "remotion";
 
 /**
  * "As you learn things" (instant, bold)
- * → "your Brain Power increases." (word by word, muted)
+ * → "your Brain Power goes up." (word by word, muted)
  * → counter counting up with +10 badge.
- *
- * The "what is it" scene — introduces the concept with a tangible counter.
  */
 export function BrainPowerIntro() {
   const frame = useCurrentFrame();
@@ -30,10 +28,7 @@ export function BrainPowerIntro() {
           gap: 28,
         }}
       >
-        <SceneHeadline
-          setup={t.brainIntroSetup}
-          payoff={t.brainIntroPayoff}
-        />
+        <SceneHeadline setup={t.brainIntroSetup} payoff={t.brainIntroPayoff} />
 
         {/* Brain Power counter */}
         <div style={{ ...counterStyle, display: "flex", alignItems: "baseline", gap: 12 }}>
@@ -51,29 +46,23 @@ export function BrainPowerIntro() {
             +10
           </span>
         </div>
-
       </div>
     </SceneContainer>
   );
 }
 
 /**
- * "Your Brain Power never goes down." (instant, bold)
- * → "It only goes up." (word by word, muted)
- *
- * Short, punchy. The surprising fact.
+ * "It never goes down." — standalone, bold, centered.
+ * Short and punchy. The surprising fact gets its own screen.
  */
 export function BrainPowerNeverDown() {
   const t = useT();
 
   return (
     <SceneContainer bg="white">
-      <SceneHeadline
-        setup={t.brainNeverSetup}
-        payoff={t.brainNeverPayoff}
-        payoffStartFrame={20}
-        fontSize={44}
-      />
+      <span style={{ fontSize: 48, fontWeight: 700, color: COLORS.text }}>
+        {t.brainNeverSetup}
+      </span>
     </SceneContainer>
   );
 }
@@ -81,19 +70,13 @@ export function BrainPowerNeverDown() {
 /**
  * "Because knowledge" (instant, bold)
  * → "is something nobody can take from you." (word by word, muted)
- *
- * The emotional payoff. The "because" connects back to the previous scene.
  */
 export function BrainPowerPhilosophy() {
   const t = useT();
 
   return (
     <SceneContainer bg="white">
-      <SceneHeadline
-        setup={t.brainPhiloSetup}
-        payoff={t.brainPhiloPayoff}
-        fontSize={44}
-      />
+      <SceneHeadline setup={t.brainPhiloSetup} payoff={t.brainPhiloPayoff} fontSize={44} />
     </SceneContainer>
   );
 }

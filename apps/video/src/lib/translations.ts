@@ -31,7 +31,6 @@ type TranslationStrings = {
 
   /** Scene: LanguageTransform */
   jargon: string;
-  simple: string;
   /** Words from the simple sentence that appear in the jargon, in order. */
   simpleWords: string[];
 
@@ -60,7 +59,6 @@ type TranslationStrings = {
   brainIntroSetup: string;
   brainIntroPayoff: string;
   brainNeverSetup: string;
-  brainNeverPayoff: string;
   brainPhiloSetup: string;
   brainPhiloPayoff: string;
 
@@ -121,11 +119,7 @@ const en: TranslationStrings = {
   storySetup: "You learn",
   storyPayoff: "by making decisions.",
   storyScenario: "A customer wants a refund after 90 days. What do you do?",
-  storyChoices: [
-    "Ignore the request",
-    "Check the refund policy",
-    "Offer a full refund",
-  ],
+  storyChoices: ["Ignore the request", "Check the refund policy", "Offer a full refund"],
   storyFeedbackSetup: "Make a mistake?",
   storyFeedbackPayoff: "You'll know why.",
   storyFeedback: "Ignoring customers damages trust and loyalty.",
@@ -147,7 +141,6 @@ const en: TranslationStrings = {
     "that is both continuous, manifesting as a wave through measurable " +
     "interference patterns, and discrete, functioning as a particulate entity " +
     "not unlike a ball of concentrated energy.",
-  simple: "Light acts like both a wave and a ball.",
   simpleWords: ["Light,", "acts", "like", "both", "a", "wave", "and", "a", "ball"],
 
   labelTimelines: "Timelines",
@@ -170,8 +163,7 @@ const en: TranslationStrings = {
 
   brainIntroSetup: "As you learn things",
   brainIntroPayoff: "your Brain Power increases.",
-  brainNeverSetup: "Your Brain Power never goes down.",
-  brainNeverPayoff: "It only goes up.",
+  brainNeverSetup: "It never goes down.",
   brainPhiloSetup: "Because knowledge",
   brainPhiloPayoff: "is something nobody can take from you.",
 
@@ -246,8 +238,21 @@ const ptBr: TranslationStrings = {
     "através de padrões mensuráveis de interferência, e discreto, funcionando " +
     "como uma entidade particulada não diferente de uma bola de energia " +
     "concentrada, ao mesmo tempo.",
-  simple: "A luz se comporta como uma onda e uma bola ao mesmo tempo.",
-  simpleWords: ["A", "luz,", "se", "comporta", "como", "uma", "onda", "e", "uma", "bola", "ao", "mesmo", "tempo."],
+  simpleWords: [
+    "A",
+    "luz,",
+    "se",
+    "comporta",
+    "como",
+    "uma",
+    "onda",
+    "e",
+    "uma",
+    "bola",
+    "ao",
+    "mesmo",
+    "tempo.",
+  ],
 
   labelTimelines: "Linhas do tempo",
   labelDiagrams: "Diagramas",
@@ -269,8 +274,7 @@ const ptBr: TranslationStrings = {
 
   brainIntroSetup: "Conforme você aprende",
   brainIntroPayoff: "seu Poder Mental aumenta.",
-  brainNeverSetup: "Seu Poder Mental nunca diminui.",
-  brainNeverPayoff: "Ele só sobe.",
+  brainNeverSetup: "Nunca diminui.",
   brainPhiloSetup: "Porque conhecimento",
   brainPhiloPayoff: "é algo que ninguém pode tirar de você.",
 
