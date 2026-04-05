@@ -32,6 +32,8 @@ type TranslationStrings = {
   /** Scene: LanguageTransform */
   jargon: string;
   simple: string;
+  /** Words from the simple sentence that appear in the jargon, in order. */
+  simpleWords: string[];
 
   /** Scene: VisualsMontage labels */
   labelTimelines: string;
@@ -131,17 +133,22 @@ const en: TranslationStrings = {
   visualsSetup: "Complex things,",
   visualsPayoff: "made simple.",
 
+  /**
+   * The jargon text is engineered so that the words of the simple sentence
+   * appear within it in order. The animation fades out everything except
+   * those anchor words, distilling the jargon into the simple sentence.
+   *
+   * Simple: "Light acts like both a wave and a ball."
+   * Anchors: Light, acts, like, both, a, wave, and, a, ball.
+   */
   jargon:
-    "Wave-particle duality constitutes a fundamental ontological principle " +
-    "within the theoretical framework of quantum mechanics, whereby subatomic " +
-    "entities — including but not limited to photons, electrons, and other " +
-    "elementary particles — simultaneously exhibit characteristics attributable " +
-    "to both classical wave phenomena and discrete corpuscular behavior, as " +
-    "empirically demonstrated through interference patterns observed in the " +
-    "double-slit experiment, thereby challenging deterministic interpretations " +
-    "of physical reality and necessitating a probabilistic reformulation of " +
-    "measurement theory within the Copenhagen interpretation.",
+    "Light, as characterized within quantum electrodynamics, acts in accordance " +
+    "with the principle of wave-particle duality, behaving like a phenomenon " +
+    "that is both continuous, manifesting as a wave through measurable " +
+    "interference patterns, and discrete, functioning as a particulate entity " +
+    "not unlike a ball of concentrated energy.",
   simple: "Light acts like both a wave and a ball.",
+  simpleWords: ["Light,", "acts", "like", "both", "a", "wave", "and", "a", "ball"],
 
   labelTimelines: "Timelines",
   labelDiagrams: "Diagrams",
@@ -233,16 +240,14 @@ const ptBr: TranslationStrings = {
   visualsPayoff: "simplificadas.",
 
   jargon:
-    "A dualidade onda-partícula constitui um princípio ontológico fundamental " +
-    "dentro do arcabouço teórico da mecânica quântica, segundo o qual entidades " +
-    "subatômicas — incluindo, mas não se limitando a fótons, elétrons e outras " +
-    "partículas elementares — exibem simultaneamente características atribuíveis " +
-    "tanto a fenômenos ondulatórios clássicos quanto ao comportamento corpuscular " +
-    "discreto, conforme empiricamente demonstrado por padrões de interferência " +
-    "observados no experimento de dupla fenda, desafiando interpretações " +
-    "determinísticas da realidade física e necessitando uma reformulação " +
-    "probabilística da teoria de medição dentro da interpretação de Copenhague.",
+    "A luz, conforme caracterizada pela eletrodinâmica quântica, se comporta " +
+    "de acordo com o princípio da dualidade onda-partícula, agindo como um " +
+    "fenômeno que é simultaneamente contínuo, manifestando-se como uma onda " +
+    "através de padrões mensuráveis de interferência, e discreto, funcionando " +
+    "como uma entidade particulada não diferente de uma bola de energia " +
+    "concentrada, ao mesmo tempo.",
   simple: "A luz se comporta como uma onda e uma bola ao mesmo tempo.",
+  simpleWords: ["A", "luz,", "se", "comporta", "como", "uma", "onda", "e", "uma", "bola", "ao", "mesmo", "tempo."],
 
   labelTimelines: "Linhas do tempo",
   labelDiagrams: "Diagramas",
