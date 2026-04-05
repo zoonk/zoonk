@@ -1,0 +1,79 @@
+apps/video/src/lib/constants.ts
+  e103c310d81ee4e4 6-7,9-17,19-20,23-24,26,28,30,32-35,38-67
+  d1fb9b4aac0d2669 1-5,8,18,21-22,25,27,29,31,36-37,68
+apps/video/src/components/scenes/act3/multi-language-flash.tsx
+  e103c310d81ee4e4 1-85
+apps/video/src/components/scenes/act2/node-diagram.tsx
+  e103c310d81ee4e4 1-115
+apps/video/src/components/scene-container.tsx
+  e103c310d81ee4e4 1-29
+apps/video/src/components/scenes/act2/timeline.tsx
+  e103c310d81ee4e4 1-110
+apps/video/src/components/scenes/act2/typography-moment-2.tsx
+  e103c310d81ee4e4 1-53
+apps/video/src/components/scenes/act1/typography-moment-1.tsx
+  e103c310d81ee4e4 1-49
+apps/video/src/components/scenes/act3/performance-stats.tsx
+  e103c310d81ee4e4 1-68
+apps/video/src/components/scenes/act3/energy-meter.tsx
+  e103c310d81ee4e4 1-126
+apps/video/src/components/scenes/act1/search-prompt.tsx
+  e103c310d81ee4e4 1-194
+apps/video/src/compositions/launch/index.tsx
+  d1fb9b4aac0d2669 21-25,28,33-35,43,51-65,152,157-159
+  e103c310d81ee4e4 1-19,26-27,29-32,36-42,44-50,66-151,153-156
+apps/video/src/components/scenes/act3/closing-words.tsx
+  e103c310d81ee4e4 1-119
+apps/video/src/lib/animation.ts
+  e103c310d81ee4e4 1-152
+apps/video/src/components/scenes/act3/the-breath.tsx
+  e103c310d81ee4e4 1-9
+apps/video/src/components/scenes/act3/brain-power-belt.tsx
+  e103c310d81ee4e4 1-95
+apps/video/src/components/scenes/act3/logo.tsx
+  e103c310d81ee4e4 1-60
+apps/video/src/components/scenes/act2/story-branch.tsx
+  e103c310d81ee4e4 1-124
+apps/video/src/components/scenes/act1/zoonk-card.tsx
+  e103c310d81ee4e4 1-59
+apps/video/src/components/scenes/act1/status-quo.tsx
+  e103c310d81ee4e4 1-91
+apps/video/src/lib/fonts.ts
+  e103c310d81ee4e4 22-26
+  d1fb9b4aac0d2669 1-21,27-39
+apps/video/src/components/scenes/act2/fill-in-blank.tsx
+  e103c310d81ee4e4 1-124
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "52c87a2360b28c23897edb0a33e0051ba8007af3",
+  "prompts": {
+    "d1fb9b4aac0d2669": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "040f27b0-62a5-42fe-8913-fa883e0d71e7",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 79,
+      "overriden_lines": 0
+    },
+    "e103c310d81ee4e4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0d12634c-7e79-46b9-8ca2-1c7ed52fe511",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": null,
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 1848,
+      "overriden_lines": 0
+    }
+  }
+}
