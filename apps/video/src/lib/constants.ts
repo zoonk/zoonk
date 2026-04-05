@@ -74,6 +74,7 @@ export const SCENES = {
   patternsIntro: 3 * FPS,
   patternsData: 3.5 * FPS,
   patternsPayoff: 2.5 * FPS,
-  closingWords: 7 * FPS,
-  logo: 4 * FPS,
+  logo: 1.5 * FPS,
+  closingWords: 2 * FPS,
+  website: 1.5 * FPS,
 } as const;

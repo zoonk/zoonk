@@ -12,6 +12,7 @@ import {
   BrainPowerPhilosophy,
 } from "@/components/scenes/act3/brain-power";
 import { ClosingWords } from "@/components/scenes/act3/closing-words";
+import { Website } from "@/components/scenes/act3/website";
 import {
   EnergyIntro,
   EnergyNeverGone,
@@ -134,12 +135,16 @@ export function LaunchVideo(_props: LaunchVideoProps) {
           <PatternsPayoff />
         </Series.Sequence>
 
+        <Series.Sequence durationInFrames={SCENES.logo}>
+          <Logo />
+        </Series.Sequence>
+
         <Series.Sequence durationInFrames={SCENES.closingWords}>
           <ClosingWords />
         </Series.Sequence>
 
-        <Series.Sequence durationInFrames={SCENES.logo}>
-          <Logo />
+        <Series.Sequence durationInFrames={SCENES.website}>
+          <Website />
         </Series.Sequence>
       </Series>
     </AbsoluteFill>

@@ -1,60 +1,24 @@
 import { SceneContainer } from "@/components/scene-container";
-import { COLORS } from "@/lib/constants";
-import { Easing, interpolate, useCurrentFrame } from "remotion";
+import { Img, interpolate, staticFile, useCurrentFrame } from "remotion";
 
 /**
- * Zoonk wordmark fades in. Centered. Alone.
- * No scale animation — should feel like it was always there,
- * just becoming visible. The logo IS the statement at this point.
+ * Zoonk icon/logo centered on white. No text.
+ * Identity beat — "here is who we are."
  */
 export function Logo() {
   const frame = useCurrentFrame();
 
-  const logoOpacity = interpolate(frame, [0, 18], [0, 1], {
-    easing: Easing.out(Easing.quad),
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-  });
-
-  const urlOpacity = interpolate(frame, [12, 24], [0, 1], {
-    easing: Easing.out(Easing.quad),
+  const opacity = interpolate(frame, [0, 5], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
 
   return (
     <SceneContainer bg="white">
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          gap: 16,
-        }}
-      >
-        <span
-          style={{
-            fontSize: 56,
-            fontWeight: 700,
-            color: COLORS.text,
-            opacity: logoOpacity,
-            letterSpacing: "-0.02em",
-          }}
-        >
-          zoonk
-        </span>
-
-        <span
-          style={{
-            fontSize: 18,
-            fontWeight: 400,
-            color: COLORS.muted,
-            opacity: urlOpacity,
-          }}
-        >
-          zoonk.com
-        </span>
-      </div>
+      <Img
+        src={staticFile("images/icon.svg")}
+        style={{ width: 120, height: 120, opacity }}
+      />
     </SceneContainer>
   );
 }
