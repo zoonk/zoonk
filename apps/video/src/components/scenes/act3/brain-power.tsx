@@ -1,23 +1,23 @@
 import { SceneContainer } from "@/components/scene-container";
+import { WordReveal } from "@/components/word-reveal";
 import { countUp, entryScale } from "@/lib/animation";
 import { COLORS } from "@/lib/constants";
 import { useCurrentFrame } from "remotion";
 
 /**
- * "Your Brain Power only goes up. Never down."
- * "Because knowledge is something nobody can take from you."
- *
- * Bold claim at top, emotional reasoning in the middle (muted),
- * then the Brain Power counter as proof at the bottom.
+ * "Your Brain Power only goes up." (instant)
+ * → "Never down." (word by word)
+ * → "Because knowledge is something nobody can take from you." (quiet fade)
+ * → counter as proof.
  */
 export function BrainPower() {
   const frame = useCurrentFrame();
 
-  const reasonStyle = entryScale({ frame, delay: 25, duration: 12 });
-  const counterStyle = entryScale({ frame, delay: 50, duration: 12 });
+  const reasonStyle = entryScale({ frame, delay: 40, duration: 12 });
+  const counterStyle = entryScale({ frame, delay: 60, duration: 12 });
 
-  const bpValue = countUp({ frame, startFrame: 55, endFrame: 85, from: 2440, to: 2450 });
-  const badgeStyle = entryScale({ frame, delay: 55, duration: 10 });
+  const bpValue = countUp({ frame, startFrame: 65, endFrame: 95, from: 2440, to: 2450 });
+  const badgeStyle = entryScale({ frame, delay: 65, duration: 10 });
 
   return (
     <SceneContainer bg="white">
@@ -26,10 +26,10 @@ export function BrainPower() {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          gap: 24,
+          gap: 20,
         }}
       >
-        {/* Bold claim — visible immediately */}
+        {/* Bold claim with word-by-word payoff */}
         <div
           style={{
             display: "flex",
@@ -38,13 +38,17 @@ export function BrainPower() {
             gap: 4,
           }}
         >
-          <span style={{ fontSize: 44, fontWeight: 600, color: COLORS.text, textAlign: "center" }}>
+          <span style={{ fontSize: 44, fontWeight: 700, color: COLORS.text, textAlign: "center" }}>
             Your Brain Power only goes up.
           </span>
-          <span style={{ fontSize: 44, fontWeight: 600, color: COLORS.text }}>Never down.</span>
+          <WordReveal
+            text="Never down."
+            startFrame={20}
+            style={{ fontSize: 44, fontWeight: 700, color: COLORS.text, justifyContent: "center" }}
+          />
         </div>
 
-        {/* Emotional reasoning */}
+        {/* Quiet philosophical line */}
         <span
           style={{
             ...reasonStyle,
@@ -59,7 +63,7 @@ export function BrainPower() {
         </span>
 
         {/* Brain Power counter */}
-        <div style={{ ...counterStyle, display: "flex", alignItems: "baseline", gap: 12, marginTop: 16 }}>
+        <div style={{ ...counterStyle, display: "flex", alignItems: "baseline", gap: 12, marginTop: 12 }}>
           <span
             style={{
               fontSize: 64,

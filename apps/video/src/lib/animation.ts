@@ -150,3 +150,65 @@ export function stagger({
 }): number {
   return baseDelay + index * gap;
 }
+
+/** Short words that get a faster pause (5 frames) in word-by-word reveals. */
+const SHORT_WORDS = new Set([
+  "a", "an", "and", "as", "at", "be", "but", "by", "can", "do", "for",
+  "from", "has", "how", "if", "in", "is", "it", "my", "no", "not", "of",
+  "on", "or", "so", "the", "to", "up", "we", "you", "your",
+]);
+
+/**
+ * Calculates the start frame for each word in a sentence, using
+ * variable timing that mimics natural speech rhythm.
+ *
+ * - Short connective words: 5 frames between
+ * - Content words: 7 frames between
+ * - Final word: 10 frames before it appears
+ *
+ * Returns an array of { word, startFrame } for each word.
+ */
+export function wordByWordTimings({
+  text,
+  startFrame,
+}: {
+  text: string;
+  startFrame: number;
+}): Array<{ word: string; startFrame: number }> {
+  const words = text.split(" ");
+  const result: Array<{ word: string; startFrame: number }> = [];
+  let currentFrame = startFrame;
+
+  for (let i = 0; i < words.length; i++) {
+    const word = words[i];
+    if (!word) continue;
+
+    result.push({ word, startFrame: currentFrame });
+
+    const isLast = i === words.length - 1;
+    if (!isLast) {
+      const nextWord = words[i + 1]?.toLowerCase().replace(/[.,!?]$/, "") ?? "";
+      const gap = SHORT_WORDS.has(nextWord) ? 5 : 7;
+      currentFrame += gap;
+    }
+  }
+
+  return result;
+}
+
+/**
+ * Returns the opacity for a word in a word-by-word reveal.
+ * Each word fades in over 3 frames (near-instant but soft).
+ */
+export function wordOpacity({
+  frame,
+  wordStartFrame,
+}: {
+  frame: number;
+  wordStartFrame: number;
+}): number {
+  return interpolate(frame, [wordStartFrame, wordStartFrame + 3], [0, 1], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+  });
+}

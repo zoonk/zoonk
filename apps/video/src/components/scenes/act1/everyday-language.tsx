@@ -1,4 +1,5 @@
 import { SceneContainer } from "@/components/scene-container";
+import { WordReveal } from "@/components/word-reveal";
 import { entryScale, stagger } from "@/lib/animation";
 import { COLORS } from "@/lib/constants";
 import {
@@ -29,11 +30,9 @@ const ICONS = [
 ];
 
 /**
- * "We explain hard things using stuff you already know."
- *
- * A grid of everyday icons (basketball, car, pizza, etc.) staggers in
- * below the text. The viewer instantly sees familiar objects — no thinking
- * required. This communicates the everyday-language value prop visually.
+ * "We explain hard things" (instant)
+ * → "using stuff you already know." (word by word)
+ * → icons stagger in below.
  */
 export function EverydayLanguage() {
   const frame = useCurrentFrame();
@@ -48,19 +47,23 @@ export function EverydayLanguage() {
           gap: 48,
         }}
       >
-        {/* Explanatory text — visible immediately, no fade */}
-        <span
+        <div
           style={{
-            fontSize: 40,
-            fontWeight: 600,
-            color: COLORS.text,
-            textAlign: "center",
-            lineHeight: 1.4,
-            maxWidth: 700,
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: 8,
           }}
         >
-          We explain hard things using stuff you already know.
-        </span>
+          <span style={{ fontSize: 40, fontWeight: 700, color: COLORS.text, textAlign: "center" }}>
+            We explain hard things
+          </span>
+          <WordReveal
+            text="using stuff you already know."
+            startFrame={18}
+            style={{ fontSize: 40, fontWeight: 400, color: COLORS.text, textAlign: "center", justifyContent: "center" }}
+          />
+        </div>
 
         {/* Icon grid — 2 rows of 5 */}
         <div
@@ -73,7 +76,7 @@ export function EverydayLanguage() {
           }}
         >
           {ICONS.map((Icon, index) => {
-            const delay = stagger({ index, baseDelay: 10, gap: 4 });
+            const delay = stagger({ index, baseDelay: 55, gap: 3 });
             const style = entryScale({ frame, delay });
 
             return (

@@ -1,4 +1,5 @@
 import { SceneContainer } from "@/components/scene-container";
+import { WordReveal } from "@/components/word-reveal";
 import { entryScale, stagger } from "@/lib/animation";
 import { COLORS } from "@/lib/constants";
 import { interpolate, useCurrentFrame } from "remotion";
@@ -18,53 +19,38 @@ const CORRECT_INDEX = 1;
 const ERROR_COLOR = "#ef4444";
 
 /**
- * "You learn by making decisions."
- *
- * Flow: viewer sees scenario → wrong choice (A) selected → red border,
- * brief feedback → correct choice (B) selected → green border.
- * Shows the full learning loop: try, fail, learn.
+ * "You learn" (instant) → "by making decisions." (word by word)
+ * → scenario + choices → wrong answer → feedback → correct answer.
  */
 export function StoryBranch() {
   const frame = useCurrentFrame();
 
-  const scenarioStyle = entryScale({ frame, delay: 10, duration: 12 });
+  const scenarioStyle = entryScale({ frame, delay: 35, duration: 12 });
 
-  /**
-   * Timeline:
-   * Frame 65-75: Wrong choice (A) selects
-   * Frame 75-90: Red border + shake on A
-   * Frame 110-120: Correct choice (B) selects
-   * Frame 120+: Green border on B
-   */
-  const wrongProgress = interpolate(frame, [65, 75], [0, 1], {
+  const wrongProgress = interpolate(frame, [85, 95], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
 
-  const errorProgress = interpolate(frame, [75, 85], [0, 1], {
+  const errorProgress = interpolate(frame, [95, 105], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
 
-  const correctProgress = interpolate(frame, [110, 120], [0, 1], {
+  const feedbackProgress = interpolate(frame, [108, 118], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
 
-  /** Feedback text slides in after the error shake settles. */
-  const feedbackProgress = interpolate(frame, [88, 98], [0, 1], {
+  const correctProgress = interpolate(frame, [130, 140], [0, 1], {
     extrapolateLeft: "clamp",
     extrapolateRight: "clamp",
   });
 
-  /** Subtle horizontal shake on wrong answer. */
-  const shakeX = frame >= 75 && frame <= 90
-    ? interpolate(
-        frame,
-        [75, 77, 79, 81, 83, 85],
-        [0, -4, 4, -3, 2, 0],
-        { extrapolateRight: "clamp" },
-      )
+  const shakeX = frame >= 95 && frame <= 110
+    ? interpolate(frame, [95, 97, 99, 101, 103, 105], [0, -4, 4, -3, 2, 0], {
+        extrapolateRight: "clamp",
+      })
     : 0;
 
   return (
@@ -78,17 +64,22 @@ export function StoryBranch() {
           maxWidth: 620,
         }}
       >
-        {/* Framing headline — visible immediately */}
-        <span
+        {/* Headline with word-by-word reveal */}
+        <div
           style={{
-            fontSize: 40,
-            fontWeight: 600,
-            color: COLORS.text,
-            textAlign: "center",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: 4,
           }}
         >
-          You learn by making decisions.
-        </span>
+          <span style={{ fontSize: 40, fontWeight: 700, color: COLORS.text }}>You learn</span>
+          <WordReveal
+            text="by making decisions."
+            startFrame={15}
+            style={{ fontSize: 40, fontWeight: 700, color: COLORS.text, justifyContent: "center" }}
+          />
+        </div>
 
         {/* Scenario text */}
         <p
@@ -109,20 +100,14 @@ export function StoryBranch() {
         {/* Choice cards */}
         <div style={{ display: "flex", flexDirection: "column", gap: 12, width: "100%", marginTop: 8 }}>
           {CHOICES.map((choice, index) => {
-            const delay = stagger({ index, baseDelay: 24, gap: 6 });
+            const delay = stagger({ index, baseDelay: 48, gap: 6 });
             const choiceStyle = entryScale({ frame, delay });
 
             const isWrong = index === WRONG_INDEX;
             const isCorrect = index === CORRECT_INDEX;
 
             const { borderColor, bgColor, badgeBorder, badgeBg, badgeColor, textWeight } =
-              getChoiceStyles({
-                isWrong,
-                isCorrect,
-                wrongProgress,
-                errorProgress,
-                correctProgress,
-              });
+              getChoiceStyles({ isWrong, isCorrect, wrongProgress, errorProgress, correctProgress });
 
             return (
               <div key={choice} style={{ display: "flex", flexDirection: "column", gap: 8 }}>
@@ -157,34 +142,20 @@ export function StoryBranch() {
                   >
                     {String.fromCharCode(65 + index)}
                   </span>
-                  <span
-                    style={{
-                      fontSize: 17,
-                      fontWeight: textWeight,
-                      color: COLORS.text,
-                    }}
-                  >
+                  <span style={{ fontSize: 17, fontWeight: textWeight, color: COLORS.text }}>
                     {choice}
                   </span>
                 </div>
 
-                {/* Feedback message — appears after wrong answer */}
                 {isWrong && feedbackProgress > 0 && (
                   <div
                     style={{
-                      ...entryScale({ frame, delay: 88, duration: 10 }),
+                      ...entryScale({ frame, delay: 108, duration: 10 }),
                       paddingLeft: 22,
                       paddingRight: 22,
                     }}
                   >
-                    <span
-                      style={{
-                        fontSize: 14,
-                        fontWeight: 400,
-                        color: COLORS.muted,
-                        lineHeight: 1.5,
-                      }}
-                    >
+                    <span style={{ fontSize: 14, fontWeight: 400, color: COLORS.muted, lineHeight: 1.5 }}>
                       Recalibrating won't help — the inconsistency is caused by
                       how the measurement is done, not the sensors themselves.
                     </span>
@@ -199,10 +170,6 @@ export function StoryBranch() {
   );
 }
 
-/**
- * Returns the visual style for each choice card based on the current
- * animation phase (neutral → wrong selected → error shown → correct selected).
- */
 function getChoiceStyles({
   isWrong,
   isCorrect,
@@ -216,7 +183,6 @@ function getChoiceStyles({
   errorProgress: number;
   correctProgress: number;
 }) {
-  /** Wrong choice: neutral → selected → red error state. */
   if (isWrong && wrongProgress > 0.5) {
     const isError = errorProgress > 0.5;
     return {
@@ -229,7 +195,6 @@ function getChoiceStyles({
     };
   }
 
-  /** Correct choice: neutral → green success state. */
   if (isCorrect && correctProgress > 0.5) {
     return {
       borderColor: COLORS.success,
@@ -241,7 +206,6 @@ function getChoiceStyles({
     };
   }
 
-  /** Default neutral state. */
   return {
     borderColor: COLORS.border,
     bgColor: "transparent",
