@@ -1,0 +1,33 @@
+apps/video/src/lib/constants.ts
+  e103c310d81ee4e4 77-79
+apps/video/src/components/scenes/act3/website.tsx
+  e103c310d81ee4e4 1-31
+apps/video/src/components/scenes/act3/closing-words.tsx
+  e103c310d81ee4e4 2,6-8,13-22
+apps/video/src/components/scenes/act3/logo.tsx
+  e103c310d81ee4e4 2,5-6,11,18-21
+apps/video/src/compositions/launch/index.tsx
+  e103c310d81ee4e4 15,138-141,146-147
+apps/video/src/Root.tsx
+  e103c310d81ee4e4 15
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "8b9b6650f57f761a05a1afdfe0118cd5117e2fb1",
+  "prompts": {
+    "e103c310d81ee4e4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0d12634c-7e79-46b9-8ca2-1c7ed52fe511",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 64,
+      "total_deletions": 157,
+      "accepted_lines": 64,
+      "overriden_lines": 0
+    }
+  }
+}
