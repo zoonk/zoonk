@@ -1,0 +1,31 @@
+apps/video/src/lib/constants.ts
+  e103c310d81ee4e4 71-76
+apps/video/src/compositions/launch/index.tsx
+  e103c310d81ee4e4 15-18,21-24,113-114,117-130,133-134
+apps/video/src/Root.tsx
+  e103c310d81ee4e4 15
+apps/video/src/components/scenes/act3/energy-meter.tsx
+  e103c310d81ee4e4 7,12-14,16,19-24,35,38-42,44-46,48,51,55,58,67,76,91-107,110-125
+apps/video/src/components/scenes/act3/performance-stats.tsx
+  e103c310d81ee4e4 8-11,13-29,88-103
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "51d0ce9b49cd517be2bfe84c1573349a5e4330af",
+  "prompts": {
+    "e103c310d81ee4e4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0d12634c-7e79-46b9-8ca2-1c7ed52fe511",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 138,
+      "total_deletions": 116,
+      "accepted_lines": 134,
+      "overriden_lines": 0
+    }
+  }
+}
