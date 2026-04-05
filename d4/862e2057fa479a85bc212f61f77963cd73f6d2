@@ -1,0 +1,29 @@
+packages/ai/src/tasks/visuals/visual-code.ts
+  0feffe6e39a72d6d 31-34,36-40
+packages/ai/src/tasks/visuals/visual-diagram.prompt.md
+  0feffe6e39a72d6d 10,12-30,37
+apps/evals/src/tasks/visual-diagram/test-cases.ts
+  0feffe6e39a72d6d 4,6,8,10,12-18
+packages/ai/src/tasks/visuals/visual-diagram.ts
+  0feffe6e39a72d6d 3,12-15,17,21,23,34-38,40,43,54-59,62,64-65,67-68,70-109,116-120,142,148
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "d4862e2057fa479a85bc212f61f77963cd73f6d2",
+  "prompts": {
+    "0feffe6e39a72d6d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "80fd1d08-4a6c-485e-83aa-b42425f409b9",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 215,
+      "total_deletions": 137,
+      "accepted_lines": 132,
+      "overriden_lines": 5
+    }
+  }
+}
