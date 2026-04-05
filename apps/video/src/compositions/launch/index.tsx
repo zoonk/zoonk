@@ -6,7 +6,11 @@ import { VisualsHeadline } from "@/components/scenes/act2/visuals-headline";
 import { VisualsGrid } from "@/components/scenes/act2/visuals-grid";
 import { VisualsMontage } from "@/components/scenes/act2/visuals-montage";
 import { BeltSystem } from "@/components/scenes/act3/belt-system";
-import { BrainPower } from "@/components/scenes/act3/brain-power";
+import {
+  BrainPowerIntro,
+  BrainPowerNeverDown,
+  BrainPowerPhilosophy,
+} from "@/components/scenes/act3/brain-power";
 import { ClosingWords } from "@/components/scenes/act3/closing-words";
 import { EnergyMeter } from "@/components/scenes/act3/energy-meter";
 import { Logo } from "@/components/scenes/act3/logo";
@@ -82,8 +86,16 @@ export function LaunchVideo(_props: LaunchVideoProps) {
 
         {/* ─── ACT 3: THE FEELING ─── */}
 
-        <Series.Sequence durationInFrames={SCENES.brainPower}>
-          <BrainPower />
+        <Series.Sequence durationInFrames={SCENES.brainPowerIntro}>
+          <BrainPowerIntro />
+        </Series.Sequence>
+
+        <Series.Sequence durationInFrames={SCENES.brainPowerNeverDown}>
+          <BrainPowerNeverDown />
+        </Series.Sequence>
+
+        <Series.Sequence durationInFrames={SCENES.brainPowerPhilosophy}>
+          <BrainPowerPhilosophy />
         </Series.Sequence>
 
         <Series.Sequence durationInFrames={SCENES.beltSystem}>

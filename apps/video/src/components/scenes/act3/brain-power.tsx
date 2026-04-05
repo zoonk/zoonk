@@ -5,19 +5,18 @@ import { COLORS } from "@/lib/constants";
 import { useCurrentFrame } from "remotion";
 
 /**
- * "Your Brain Power only goes up." (instant, bold)
- * → "Never down." (word by word, muted)
- * → "Because knowledge is something nobody can take from you." (quiet fade)
- * → counter as proof.
+ * "As you learn things" (instant, bold)
+ * → "your Brain Power increases." (word by word, muted)
+ * → counter counting up with +10 badge.
+ *
+ * The "what is it" scene — introduces the concept with a tangible counter.
  */
-export function BrainPower() {
+export function BrainPowerIntro() {
   const frame = useCurrentFrame();
 
-  const reasonStyle = entryScale({ frame, delay: 40, duration: 12 });
-  const counterStyle = entryScale({ frame, delay: 60, duration: 12 });
-
-  const bpValue = countUp({ frame, startFrame: 65, endFrame: 95, from: 2440, to: 2450 });
-  const badgeStyle = entryScale({ frame, delay: 65, duration: 10 });
+  const counterStyle = entryScale({ frame, delay: 50, duration: 12 });
+  const bpValue = countUp({ frame, startFrame: 55, endFrame: 85, from: 2440, to: 2450 });
+  const badgeStyle = entryScale({ frame, delay: 55, duration: 10 });
 
   return (
     <SceneContainer bg="white">
@@ -26,32 +25,16 @@ export function BrainPower() {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          gap: 20,
+          gap: 28,
         }}
       >
         <SceneHeadline
-          setup="Your Brain Power only goes up."
-          payoff="Never down."
-          payoffStartFrame={20}
-          fontSize={44}
+          setup="As you learn things"
+          payoff="your Brain Power increases."
         />
 
-        {/* Quiet philosophical line */}
-        <span
-          style={{
-            ...reasonStyle,
-            fontSize: 24,
-            fontWeight: 400,
-            color: COLORS.muted,
-            textAlign: "center",
-            maxWidth: 600,
-          }}
-        >
-          Because knowledge is something nobody can take from you.
-        </span>
-
         {/* Brain Power counter */}
-        <div style={{ ...counterStyle, display: "flex", alignItems: "baseline", gap: 12, marginTop: 12 }}>
+        <div style={{ ...counterStyle, display: "flex", alignItems: "baseline", gap: 12 }}>
           <span
             style={{
               fontSize: 64,
@@ -67,10 +50,44 @@ export function BrainPower() {
           </span>
         </div>
 
-        <span style={{ ...counterStyle, fontSize: 16, fontWeight: 500, color: COLORS.muted }}>
-          Brain Power
-        </span>
       </div>
+    </SceneContainer>
+  );
+}
+
+/**
+ * "Your Brain Power never goes down." (instant, bold)
+ * → "It only goes up." (word by word, muted)
+ *
+ * Short, punchy. The surprising fact.
+ */
+export function BrainPowerNeverDown() {
+  return (
+    <SceneContainer bg="white">
+      <SceneHeadline
+        setup="Your Brain Power never goes down."
+        payoff="It only goes up."
+        payoffStartFrame={20}
+        fontSize={44}
+      />
+    </SceneContainer>
+  );
+}
+
+/**
+ * "Because knowledge" (instant, bold)
+ * → "is something nobody can take from you." (word by word, muted)
+ *
+ * The emotional payoff. The "because" connects back to the previous scene.
+ */
+export function BrainPowerPhilosophy() {
+  return (
+    <SceneContainer bg="white">
+      <SceneHeadline
+        setup="Because knowledge"
+        payoff="is something nobody can take from you."
+        fontSize={44}
+      />
     </SceneContainer>
   );
 }

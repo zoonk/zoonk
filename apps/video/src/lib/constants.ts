@@ -64,7 +64,9 @@ export const SCENES = {
   visualsGrid: 2.5 * FPS,
 
   // ACT 3: THE FEELING
-  brainPower: 5 * FPS,
+  brainPowerIntro: 3.5 * FPS,
+  brainPowerNeverDown: 2.5 * FPS,
+  brainPowerPhilosophy: 3 * FPS,
   beltSystem: 5 * FPS,
   energyMeter: 5 * FPS,
   performanceStats: 4 * FPS,
