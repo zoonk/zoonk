@@ -177,7 +177,7 @@ const en: TranslationStrings = {
   energyDipSetup: "Miss a day?",
   energyDipPayoff: "It dips. Just a little.",
   energyRecoversSetup: "Life is messy.",
-  energyRecoversPayoff: "Your energy always recovers.",
+  energyRecoversPayoff: "But your energy always recovers.",
 
   patternsSetup: "Zoonk tracks your learning patterns",
   patternsPayoff: "so you always know what works.",
@@ -288,7 +288,7 @@ const ptBr: TranslationStrings = {
   energyDipSetup: "Perdeu um dia?",
   energyDipPayoff: "Ela cai. Só um pouco.",
   energyRecoversSetup: "A vida é imprevisível.",
-  energyRecoversPayoff: "Sua energia sempre se recupera.",
+  energyRecoversPayoff: "Mas sua energia sempre se recupera.",
 
   patternsSetup: "O Zoonk mostra seus padrões de aprendizado",
   patternsPayoff: "para você saber o que funciona.",
