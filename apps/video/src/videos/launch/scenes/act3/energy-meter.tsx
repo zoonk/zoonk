@@ -2,8 +2,8 @@ import { SceneContainer } from "@/components/scene-container";
 import { SceneHeadline } from "@/components/scene-headline";
 import { entryScale } from "@/lib/animation";
 import { COLORS } from "@/lib/constants";
-import { useT } from "@/lib/use-translations";
 import { Easing, interpolate, useCurrentFrame } from "remotion";
+import { useT } from "../../use-translations";
 
 const ARC_CIRCUMFERENCE = Math.PI * 64;
 

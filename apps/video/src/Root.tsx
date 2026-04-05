@@ -1,9 +1,9 @@
 import "./index.css";
 import { Composition, Folder } from "remotion";
-import { LaunchVideo } from "./compositions/launch";
-import { launchVideoSchema } from "./compositions/launch/schema";
 import { FPS } from "./lib/constants";
 import { loadGeistFonts } from "./lib/fonts";
+import { LaunchVideo } from "./videos/launch/composition";
+import { launchVideoSchema } from "./videos/launch/schema";
 
 loadGeistFonts();
 

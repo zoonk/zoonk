@@ -1,7 +1,6 @@
 import { SceneContainer } from "@/components/scene-container";
 import { entryScale, stagger } from "@/lib/animation";
 import { COLORS } from "@/lib/constants";
-import { useT } from "@/lib/use-translations";
 import {
   IconChartBar,
   IconCode,
@@ -14,6 +13,7 @@ import {
   IconTimeline,
 } from "@tabler/icons-react";
 import { useCurrentFrame } from "remotion";
+import { useT } from "../../use-translations";
 
 export function VisualsGrid() {
   const frame = useCurrentFrame();
@@ -50,7 +50,10 @@ export function VisualsGrid() {
            * First icon appears instantly (index 0, no animation).
            * Remaining icons stagger in with 3-frame gaps.
            */
-          const style = index === 0 ? {} : entryScale({ frame, delay: stagger({ index, baseDelay: 0, gap: 3 }) });
+          const style =
+            index === 0
+              ? {}
+              : entryScale({ frame, delay: stagger({ index, baseDelay: 0, gap: 3 }) });
 
           return (
             <div

@@ -1,8 +1,8 @@
 import { SceneContainer } from "@/components/scene-container";
 import { entryScale, stagger, typewriter } from "@/lib/animation";
 import { COLORS } from "@/lib/constants";
-import { useT } from "@/lib/use-translations";
 import { Easing, interpolate, useCurrentFrame } from "remotion";
+import { useT } from "../../use-translations";
 
 const ITEM_HEIGHT = 44;
 const ITEM_GAP = 8;
@@ -46,11 +46,16 @@ export function SearchPrompt() {
   const textColor = isTyping ? COLORS.text : COLORS.muted;
 
   const typingDone = 15 + QUERY.length * 2 + 8;
-  const inputY = interpolate(frame, [typingDone, typingDone + 15], [INPUT_CENTER_Y, INPUT_FINAL_Y], {
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-    easing: Easing.bezier(0.16, 1, 0.3, 1),
-  });
+  const inputY = interpolate(
+    frame,
+    [typingDone, typingDone + 15],
+    [INPUT_CENTER_Y, INPUT_FINAL_Y],
+    {
+      extrapolateLeft: "clamp",
+      extrapolateRight: "clamp",
+      easing: Easing.bezier(0.16, 1, 0.3, 1),
+    },
+  );
 
   /** Chapters become visible after the input has slid up. */
   const chaptersVisible = frame >= typingDone + 8;

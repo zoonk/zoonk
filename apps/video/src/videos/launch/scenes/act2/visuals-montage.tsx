@@ -1,8 +1,8 @@
 import { SceneContainer } from "@/components/scene-container";
 import { entryScale, smoothSpring } from "@/lib/animation";
 import { COLORS } from "@/lib/constants";
-import { useT } from "@/lib/use-translations";
 import { Easing, Sequence, interpolate, useCurrentFrame, useVideoConfig } from "remotion";
+import { useT } from "../../use-translations";
 
 const FRAMES_PER_VISUAL = 60;
 
@@ -67,19 +67,46 @@ function TimelineVisual() {
       <VisualLabel text={t.labelTimelines} />
       <div style={{ ...entryScale({ frame, delay: 0, duration: 12 }), marginTop: 80 }}>
         <svg width={lineWidth + 40} height={120} viewBox={`0 0 ${lineWidth + 40} 120`}>
-          <line x1={20} y1={lineY} x2={lineWidth + 20} y2={lineY} stroke={COLORS.border} strokeWidth={2} />
-          <line x1={20} y1={lineY} x2={20 + drawnWidth} y2={lineY} stroke={COLORS.text} strokeWidth={2} strokeLinecap="round" />
+          <line
+            x1={20}
+            y1={lineY}
+            x2={lineWidth + 20}
+            y2={lineY}
+            stroke={COLORS.border}
+            strokeWidth={2}
+          />
+          <line
+            x1={20}
+            y1={lineY}
+            x2={20 + drawnWidth}
+            y2={lineY}
+            stroke={COLORS.text}
+            strokeWidth={2}
+            strokeLinecap="round"
+          />
           {nodes.map((label, i) => {
             const nodeX = 20 + (i / (nodes.length - 1)) * lineWidth;
             const threshold = (i / (nodes.length - 1)) * lineWidth;
-            const opacity = drawnWidth >= threshold
-              ? interpolate(drawnWidth - threshold, [0, 30], [0, 1], { extrapolateRight: "clamp" })
-              : 0;
+            const opacity =
+              drawnWidth >= threshold
+                ? interpolate(drawnWidth - threshold, [0, 30], [0, 1], {
+                    extrapolateRight: "clamp",
+                  })
+                : 0;
 
             return (
               <g key={label}>
                 <circle cx={nodeX} cy={lineY} r={8} fill={COLORS.text} opacity={opacity} />
-                <text x={nodeX} y={lineY + 28} textAnchor="middle" fill={COLORS.muted} fontSize={14} fontWeight={500} fontFamily="Geist, system-ui, sans-serif" opacity={opacity}>
+                <text
+                  x={nodeX}
+                  y={lineY + 28}
+                  textAnchor="middle"
+                  fill={COLORS.muted}
+                  fontSize={14}
+                  fontWeight={500}
+                  fontFamily="Geist, system-ui, sans-serif"
+                  opacity={opacity}
+                >
                   {label}
                 </text>
               </g>
@@ -107,15 +134,28 @@ function DiagramVisual() {
       <div style={{ position: "relative", width: totalWidth, height: 56, marginTop: 80 }}>
         {nodes.map((label, i) => {
           const nodeStyle = entryScale({ frame, delay: i * 15, duration: 12 });
-          const arrowProgress = i > 0 ? smoothSpring({ frame, fps, delay: i * 15 - 5, durationInFrames: 15 }) : 0;
+          const arrowProgress =
+            i > 0 ? smoothSpring({ frame, fps, delay: i * 15 - 5, durationInFrames: 15 }) : 0;
           const nodeX = i * (nodeWidth + gap);
           const arrowX = nodeX - gap + 8;
 
           return (
             <div key={label}>
               {i > 0 && (
-                <svg style={{ position: "absolute", left: arrowX, top: 26, overflow: "visible" }} width={gap - 16} height={2}>
-                  <line x1={0} y1={0} x2={arrowProgress * (gap - 16)} y2={0} stroke={COLORS.text} strokeWidth={1.5} opacity={arrowProgress} />
+                <svg
+                  style={{ position: "absolute", left: arrowX, top: 26, overflow: "visible" }}
+                  width={gap - 16}
+                  height={2}
+                >
+                  <line
+                    x1={0}
+                    y1={0}
+                    x2={arrowProgress * (gap - 16)}
+                    y2={0}
+                    stroke={COLORS.text}
+                    strokeWidth={1.5}
+                    opacity={arrowProgress}
+                  />
                   <polygon
                     points={`${arrowProgress * (gap - 16) - 6},-4 ${arrowProgress * (gap - 16)},0 ${arrowProgress * (gap - 16) - 6},4`}
                     fill={COLORS.text}
@@ -169,7 +209,10 @@ function ChartVisual() {
         {bars.map((bar, i) => {
           const progress = smoothSpring({ frame, fps, delay: 8 + i * 6, durationInFrames: 30 });
           return (
-            <div key={bar.label} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
+            <div
+              key={bar.label}
+              style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}
+            >
               <div
                 style={{
                   width: 64,
@@ -178,7 +221,9 @@ function ChartVisual() {
                   backgroundColor: bar.color,
                 }}
               />
-              <span style={{ fontSize: 13, fontWeight: 500, color: COLORS.muted }}>{bar.label}</span>
+              <span style={{ fontSize: 13, fontWeight: 500, color: COLORS.muted }}>
+                {bar.label}
+              </span>
             </div>
           );
         })}

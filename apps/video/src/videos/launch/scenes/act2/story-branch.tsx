@@ -2,8 +2,8 @@ import { SceneContainer } from "@/components/scene-container";
 import { SceneHeadline } from "@/components/scene-headline";
 import { entryScale, stagger } from "@/lib/animation";
 import { COLORS } from "@/lib/constants";
-import { useT } from "@/lib/use-translations";
 import { interpolate, useCurrentFrame } from "remotion";
+import { useT } from "../../use-translations";
 
 const CORRECT_INDEX = 1;
 const WRONG_INDEX = 0;
@@ -62,17 +62,24 @@ export function StoryCorrect() {
         </p>
 
         {/* Choice cards */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 12, width: "100%", marginTop: 8 }}>
+        <div
+          style={{ display: "flex", flexDirection: "column", gap: 12, width: "100%", marginTop: 8 }}
+        >
           {t.storyChoices.map((choice, index) => {
             const delay = stagger({ index, baseDelay: 12, gap: 6 });
             const choiceStyle = entryScale({ frame, delay });
 
             const isCorrect = index === CORRECT_INDEX;
-            const borderColor = isCorrect && selectionProgress > 0.5 ? COLORS.success : COLORS.border;
-            const bgColor = isCorrect ? `rgba(22, 163, 74, ${selectionProgress * 0.04})` : "transparent";
+            const borderColor =
+              isCorrect && selectionProgress > 0.5 ? COLORS.success : COLORS.border;
+            const bgColor = isCorrect
+              ? `rgba(22, 163, 74, ${selectionProgress * 0.04})`
+              : "transparent";
             const badgeBg = isCorrect && selectionProgress > 0.5 ? COLORS.success : "transparent";
-            const badgeBorder = isCorrect && selectionProgress > 0.5 ? COLORS.success : COLORS.border;
-            const badgeColor = isCorrect && selectionProgress > 0.5 ? COLORS.primaryFg : COLORS.muted;
+            const badgeBorder =
+              isCorrect && selectionProgress > 0.5 ? COLORS.success : COLORS.border;
+            const badgeColor =
+              isCorrect && selectionProgress > 0.5 ? COLORS.primaryFg : COLORS.muted;
 
             return (
               <div
@@ -173,9 +180,14 @@ export function StoryFeedback() {
         />
 
         {/* Choices — appear after headline */}
-        <div style={{ display: "flex", flexDirection: "column", gap: 12, width: "100%", marginTop: 4 }}>
+        <div
+          style={{ display: "flex", flexDirection: "column", gap: 12, width: "100%", marginTop: 4 }}
+        >
           {t.storyChoices.map((choice, index) => {
-            const choiceStyle = entryScale({ frame, delay: stagger({ index, baseDelay: 35, gap: 4 }) });
+            const choiceStyle = entryScale({
+              frame,
+              delay: stagger({ index, baseDelay: 35, gap: 4 }),
+            });
 
             const isWrong = index === WRONG_INDEX;
 
@@ -229,7 +241,14 @@ export function StoryFeedback() {
                       paddingRight: 22,
                     }}
                   >
-                    <span style={{ fontSize: 14, fontWeight: 400, color: COLORS.muted, lineHeight: 1.5 }}>
+                    <span
+                      style={{
+                        fontSize: 14,
+                        fontWeight: 400,
+                        color: COLORS.muted,
+                        lineHeight: 1.5,
+                      }}
+                    >
                       {t.storyFeedback}
                     </span>
                   </div>

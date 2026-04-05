@@ -158,3 +158,28 @@ This communicates "we give learners instant, meaningful feedback."
 - Don't show all text at once — build it word by word for payoff lines
 - Don't alternate background colors between scenes
 - Don't use CSS transitions or Tailwind animation classes (Remotion won't render them)
+
+## Project Structure
+
+Shared code lives in `lib/` and `components/`. Each video is self-contained in `videos/<name>/`.
+
+```
+src/
+  lib/                          ← Shared: animation helpers, colors, fonts
+  components/                   ← Shared: SceneContainer, SceneHeadline, WordReveal
+  videos/
+    launch/                     ← Self-contained video
+      composition.tsx             Main component wiring scenes
+      schema.ts                   Zod schema (locale prop, etc.)
+      constants.ts                SCENES durations (video-specific)
+      translations.ts             All translatable strings
+      use-translations.tsx        React context + useT() hook
+      scenes/                     Scene components organized by act
+```
+
+**To add a new video:** create `src/videos/<name>/` with its own composition, scenes, translations, and constants. Import shared code from `@/lib/` and `@/components/`. Register in Root.tsx. No other video's files need to change.
+
+**What goes in shared vs video-specific:**
+
+- **Shared:** Animation helpers, colors, belt colors, fonts, SceneContainer, SceneHeadline, WordReveal
+- **Video-specific:** Scene components, SCENES durations, translations, composition wiring, schema

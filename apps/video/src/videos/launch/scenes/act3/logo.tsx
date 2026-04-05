@@ -15,10 +15,7 @@ export function Logo() {
 
   return (
     <SceneContainer bg="white">
-      <Img
-        src={staticFile("images/icon.svg")}
-        style={{ width: 120, height: 120, opacity }}
-      />
+      <Img src={staticFile("images/icon.svg")} style={{ width: 120, height: 120, opacity }} />
     </SceneContainer>
   );
 }

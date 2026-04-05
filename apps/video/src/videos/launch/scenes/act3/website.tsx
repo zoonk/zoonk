@@ -1,7 +1,7 @@
 import { SceneContainer } from "@/components/scene-container";
 import { COLORS } from "@/lib/constants";
-import { useT } from "@/lib/use-translations";
 import { interpolate, useCurrentFrame } from "remotion";
+import { useT } from "../../use-translations";
 
 /**
  * "zoonk.com" — centered, clean, understated.

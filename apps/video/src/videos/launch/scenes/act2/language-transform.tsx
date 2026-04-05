@@ -1,7 +1,7 @@
 import { SceneContainer } from "@/components/scene-container";
 import { COLORS } from "@/lib/constants";
-import { useT } from "@/lib/use-translations";
 import { Easing, interpolate, useCurrentFrame } from "remotion";
+import { useT } from "../../use-translations";
 
 /**
  * Assigns each jargon word to a fade wave (1-3) or marks it as an anchor
@@ -19,7 +19,10 @@ function classifyWords(
   return jargonWords.map((word) => {
     const target = simpleWords[anchorIndex];
 
-    if (target && word.toLowerCase().replace(/[.,]$/, "") === target.toLowerCase().replace(/[.,]$/, "")) {
+    if (
+      target &&
+      word.toLowerCase().replace(/[.,]$/, "") === target.toLowerCase().replace(/[.,]$/, "")
+    ) {
       anchorIndex++;
       return { word, isAnchor: true, wave: 0 };
     }

@@ -2,7 +2,6 @@ import { SceneContainer } from "@/components/scene-container";
 import { SceneHeadline } from "@/components/scene-headline";
 import { entryScale, stagger } from "@/lib/animation";
 import { COLORS } from "@/lib/constants";
-import { useT } from "@/lib/use-translations";
 import {
   IconBallBasketball,
   IconBuildingStore,
@@ -16,6 +15,7 @@ import {
   IconMovie,
 } from "@tabler/icons-react";
 import { useCurrentFrame } from "remotion";
+import { useT } from "../../use-translations";
 
 const ICONS = [
   IconBallBasketball,
@@ -49,10 +49,7 @@ export function EverydayLanguage() {
           gap: 48,
         }}
       >
-        <SceneHeadline
-          setup={t.everydaySetup}
-          payoff={t.everydayPayoff}
-        />
+        <SceneHeadline setup={t.everydaySetup} payoff={t.everydayPayoff} />
 
         {/* Icon grid — 2 rows of 5 */}
         <div

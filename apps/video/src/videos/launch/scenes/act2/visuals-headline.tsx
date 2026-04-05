@@ -1,6 +1,6 @@
 import { SceneContainer } from "@/components/scene-container";
 import { SceneHeadline } from "@/components/scene-headline";
-import { useT } from "@/lib/use-translations";
+import { useT } from "../../use-translations";
 
 /**
  * "Complex things, made simple." (instant)

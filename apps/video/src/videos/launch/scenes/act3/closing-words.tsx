@@ -1,7 +1,7 @@
 import { SceneContainer } from "@/components/scene-container";
 import { WordReveal } from "@/components/word-reveal";
 import { COLORS } from "@/lib/constants";
-import { useT } from "@/lib/use-translations";
+import { useT } from "../../use-translations";
 
 /**
  * "You can learn anything." — word by word, all bold, all black.

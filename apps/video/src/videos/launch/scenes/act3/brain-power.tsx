@@ -2,9 +2,9 @@ import { SceneContainer } from "@/components/scene-container";
 import { SceneHeadline } from "@/components/scene-headline";
 import { countUp, entryScale } from "@/lib/animation";
 import { COLORS } from "@/lib/constants";
-import { useT } from "@/lib/use-translations";
 import { IconBrain } from "@tabler/icons-react";
 import { Easing, interpolate, useCurrentFrame } from "remotion";
+import { useT } from "../../use-translations";
 
 /**
  * "As you learn things" (instant, bold)
@@ -73,9 +73,7 @@ export function BrainPowerNeverDown() {
 
   return (
     <SceneContainer bg="white">
-      <span style={{ fontSize: 48, fontWeight: 700, color: COLORS.text }}>
-        {t.brainNeverSetup}
-      </span>
+      <span style={{ fontSize: 48, fontWeight: 700, color: COLORS.text }}>{t.brainNeverSetup}</span>
     </SceneContainer>
   );
 }

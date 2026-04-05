@@ -1,29 +1,25 @@
-import { EverydayLanguage } from "@/components/scenes/act1/everyday-language";
-import { SearchPrompt } from "@/components/scenes/act1/search-prompt";
-import { LanguageTransform } from "@/components/scenes/act2/language-transform";
-import { StoryClaim, StoryCorrect, StoryFeedback } from "@/components/scenes/act2/story-branch";
-import { VisualsGrid } from "@/components/scenes/act2/visuals-grid";
-import { VisualsHeadline } from "@/components/scenes/act2/visuals-headline";
-import { VisualsMontage } from "@/components/scenes/act2/visuals-montage";
-import { BeltSystem } from "@/components/scenes/act3/belt-system";
+import { AbsoluteFill, Audio, Series, interpolate, staticFile, useVideoConfig } from "remotion";
+import { SCENES } from "./constants";
+import { EverydayLanguage } from "./scenes/act1/everyday-language";
+import { SearchPrompt } from "./scenes/act1/search-prompt";
+import { LanguageTransform } from "./scenes/act2/language-transform";
+import { StoryClaim, StoryCorrect, StoryFeedback } from "./scenes/act2/story-branch";
+import { VisualsGrid } from "./scenes/act2/visuals-grid";
+import { VisualsHeadline } from "./scenes/act2/visuals-headline";
+import { VisualsMontage } from "./scenes/act2/visuals-montage";
+import { BeltSystem } from "./scenes/act3/belt-system";
 import {
   BrainPowerIntro,
   BrainPowerNeverDown,
   BrainPowerPhilosophy,
-} from "@/components/scenes/act3/brain-power";
-import { ClosingWords } from "@/components/scenes/act3/closing-words";
-import { EnergyDip, EnergyIntro, EnergyRecovers } from "@/components/scenes/act3/energy-meter";
-import { Logo } from "@/components/scenes/act3/logo";
-import {
-  PatternsData,
-  PatternsIntro,
-  PatternsPayoff,
-} from "@/components/scenes/act3/performance-stats";
-import { Website } from "@/components/scenes/act3/website";
-import { SCENES } from "@/lib/constants";
-import { TranslationProvider } from "@/lib/use-translations";
-import { AbsoluteFill, Audio, Series, interpolate, staticFile, useVideoConfig } from "remotion";
+} from "./scenes/act3/brain-power";
+import { ClosingWords } from "./scenes/act3/closing-words";
+import { EnergyDip, EnergyIntro, EnergyRecovers } from "./scenes/act3/energy-meter";
+import { Logo } from "./scenes/act3/logo";
+import { PatternsData, PatternsIntro, PatternsPayoff } from "./scenes/act3/performance-stats";
+import { Website } from "./scenes/act3/website";
 import { type LaunchVideoProps } from "./schema";
+import { TranslationProvider } from "./use-translations";
 
 /**
  * Zoonk launch video — storytelling version.

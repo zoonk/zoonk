@@ -2,8 +2,8 @@ import { SceneContainer } from "@/components/scene-container";
 import { SceneHeadline } from "@/components/scene-headline";
 import { countUp, entryScale } from "@/lib/animation";
 import { COLORS } from "@/lib/constants";
-import { useT } from "@/lib/use-translations";
 import { useCurrentFrame } from "remotion";
+import { useT } from "../../use-translations";
 
 /**
  * "Zoonk tracks your learning patterns" (instant, bold)
@@ -16,11 +16,7 @@ export function PatternsIntro() {
 
   return (
     <SceneContainer bg="white">
-      <SceneHeadline
-        setup={t.patternsSetup}
-        payoff={t.patternsPayoff}
-        fontSize={40}
-      />
+      <SceneHeadline setup={t.patternsSetup} payoff={t.patternsPayoff} fontSize={40} />
     </SceneContainer>
   );
 }
@@ -59,8 +55,12 @@ export function PatternsData() {
               gap: 8,
             }}
           >
-            <span style={{ fontSize: 48, fontWeight: 700, color: COLORS.text }}>{t.patternsFocusTime}</span>
-            <span style={{ fontSize: 14, fontWeight: 500, color: COLORS.muted }}>{t.patternsFocusLabel}</span>
+            <span style={{ fontSize: 48, fontWeight: 700, color: COLORS.text }}>
+              {t.patternsFocusTime}
+            </span>
+            <span style={{ fontSize: 14, fontWeight: 500, color: COLORS.muted }}>
+              {t.patternsFocusLabel}
+            </span>
           </div>
 
           <div
@@ -84,7 +84,9 @@ export function PatternsData() {
             >
               {accuracy}%
             </span>
-            <span style={{ fontSize: 14, fontWeight: 500, color: COLORS.muted }}>{t.patternsAccuracyLabel}</span>
+            <span style={{ fontSize: 14, fontWeight: 500, color: COLORS.muted }}>
+              {t.patternsAccuracyLabel}
+            </span>
           </div>
         </div>
       </div>

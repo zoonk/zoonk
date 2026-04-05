@@ -2,8 +2,8 @@ import { SceneContainer } from "@/components/scene-container";
 import { SceneHeadline } from "@/components/scene-headline";
 import { entryScale, exitFade, stagger } from "@/lib/animation";
 import { BELT_COLORS } from "@/lib/constants";
-import { useT } from "@/lib/use-translations";
 import { useCurrentFrame } from "remotion";
+import { useT } from "../../use-translations";
 
 /**
  * Beat 1: "Become a black belt" (instant, bold) → "in your field." (word by word, muted)
