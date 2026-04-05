@@ -1,0 +1,57 @@
+apps/video/src/components/scenes/act3/performance-stats.tsx
+  e103c310d81ee4e4 5,15-16,20-21,34,62-63,87,102-103,107-108
+apps/video/src/components/scenes/act3/website.tsx
+  e103c310d81ee4e4 3,12,29
+apps/video/src/components/scenes/act1/search-prompt.tsx
+  e103c310d81ee4e4 4,30-33,125
+apps/video/src/components/scenes/act3/brain-power.tsx
+  e103c310d81ee4e4 5,17,34-35,67-68,72-73,88-89,93-94
+apps/video/src/components/scenes/act2/story-branch.tsx
+  e103c310d81ee4e4 5,18,60-61,78,83,140
+apps/video/src/compositions/launch/index.tsx
+  e103c310d81ee4e4 28,45,49,158
+apps/video/src/lib/translations.ts
+  e103c310d81ee4e4 1-267,270-307
+apps/video/src/compositions/launch/schema.ts
+  e103c310d81ee4e4 3-4
+apps/video/src/components/scenes/act2/visuals-grid.tsx
+  e103c310d81ee4e4 4,20-37,48
+apps/video/src/components/scenes/act1/everyday-language.tsx
+  e103c310d81ee4e4 5,40,53-54
+apps/video/src/Root.tsx
+  e103c310d81ee4e4 2,10-11,14-35
+apps/video/src/components/scenes/act3/energy-meter.tsx
+  e103c310d81ee4e4 5,19,41-42,100-101,105-106,121-122,126-127
+apps/video/src/lib/use-translations.tsx
+  e103c310d81ee4e4 1-29
+apps/video/src/components/scenes/act3/belt-system.tsx
+  e103c310d81ee4e4 5,16,35-36,68-69
+apps/video/src/components/scenes/act2/visuals-headline.tsx
+  e103c310d81ee4e4 3,10-11,15-16
+apps/video/src/components/scenes/act2/language-transform.tsx
+  e103c310d81ee4e4 3,14,72,91
+apps/video/src/components/scenes/act2/visuals-montage.tsx
+  e103c310d81ee4e4 4,57,67,97,99,106,157,167
+apps/video/src/components/scenes/act3/closing-words.tsx
+  e103c310d81ee4e4 4,12-13,17
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "bcc535266f3e396eb31d792804303818f39dd618",
+  "prompts": {
+    "e103c310d81ee4e4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0d12634c-7e79-46b9-8ca2-1c7ed52fe511",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 472,
+      "total_deletions": 118,
+      "accepted_lines": 469,
+      "overriden_lines": 2
+    }
+  }
+}

@@ -1,0 +1,29 @@
+apps/video/src/lib/constants.ts
+  e103c310d81ee4e4 62
+apps/video/src/compositions/launch/index.tsx
+  e103c310d81ee4e4 3,70-73
+apps/video/src/components/scenes/act2/language-transform.tsx
+  e103c310d81ee4e4 1-107
+apps/video/src/Root.tsx
+  e103c310d81ee4e4 15
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "2d855b37c7d50e01e960a05457a4bc9ad3b51e22",
+  "prompts": {
+    "e103c310d81ee4e4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0d12634c-7e79-46b9-8ca2-1c7ed52fe511",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 429,
+      "total_deletions": 316,
+      "accepted_lines": 114,
+      "overriden_lines": 0
+    }
+  }
+}

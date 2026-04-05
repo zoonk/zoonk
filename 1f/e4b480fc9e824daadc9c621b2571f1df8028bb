@@ -1,0 +1,43 @@
+apps/video/src/components/scenes/act2/story-branch.tsx
+  e103c310d81ee4e4 19-23,28-32,44-45,48-60,65,67,78,80,96,102,107-109,117,127
+apps/video/src/components/scenes/act3/performance-stats.tsx
+  e103c310d81ee4e4 7-11,15-19,21,28-30,33-45,47-73,75-78,81-99
+apps/video/src/components/scenes/act3/energy-meter.tsx
+  e103c310d81ee4e4 9-13,18-21,36-69,71,74,78,81,91,100,111-112,121,123-124,131
+apps/video/src/components/scenes/act3/belt-system.tsx
+  e103c310d81ee4e4 1-89
+apps/video/src/Root.tsx
+  e103c310d81ee4e4 5,15
+apps/video/src/components/scenes/act1/everyday-language.tsx
+  e103c310d81ee4e4 1-92
+apps/video/src/components/scenes/act2/visuals-montage.tsx
+  e103c310d81ee4e4 1-184
+apps/video/src/components/scenes/act3/brain-power.tsx
+  e103c310d81ee4e4 1-86
+apps/video/src/lib/constants.ts
+  e103c310d81ee4e4 11,27-42,46-52,55-58,60-62,64-70
+apps/video/src/compositions/launch/index.tsx
+  e103c310d81ee4e4 1,4-7,12-13,17,19-22,25-27,33,48,51,53,55-57,59-61,65-67,69-71,75-77,79-81,83,85,87,89,91,93,95,97-98
+apps/video/src/components/scenes/act2/visuals-headline.tsx
+  e103c310d81ee4e4 1-50
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "1fe4b480fc9e824daadc9c621b2571f1df8028bb",
+  "prompts": {
+    "e103c310d81ee4e4": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "0d12634c-7e79-46b9-8ca2-1c7ed52fe511",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 784,
+      "total_deletions": 276,
+      "accepted_lines": 760,
+      "overriden_lines": 0
+    }
+  }
+}
