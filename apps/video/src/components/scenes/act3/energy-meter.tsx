@@ -1,26 +1,27 @@
 import { SceneContainer } from "@/components/scene-container";
 import { SceneHeadline } from "@/components/scene-headline";
-import { WordReveal } from "@/components/word-reveal";
 import { entryScale } from "@/lib/animation";
 import { COLORS } from "@/lib/constants";
 import { Easing, interpolate, useCurrentFrame } from "remotion";
 
-const ARC_CIRCUMFERENCE = Math.PI * 80;
+const ARC_CIRCUMFERENCE = Math.PI * 64;
 
 /**
  * "Miss a day?" (instant, bold)
  * → "Your energy dips a little." (word by word, muted)
- * → "But it doesn't disappear." (word by word, muted)
- * → "No guilt. No punishment. Just pick up where you left off." (quiet fade)
- * → arc gauge.
+ * → small gauge showing 78 → 76.
+ *
+ * The concept scene — one question, one answer, one visual proof.
  */
-export function EnergyMeter() {
+export function EnergyIntro() {
   const frame = useCurrentFrame();
 
-  const reasonStyle = entryScale({ frame, delay: 55, duration: 12 });
-  const gaugeStyle = entryScale({ frame, delay: 72, duration: 12 });
-
-  const energyValue = getEnergyValue(frame);
+  const gaugeStyle = entryScale({ frame, delay: 50, duration: 12 });
+  const energyValue = interpolate(frame, [55, 75], [78, 76], {
+    extrapolateLeft: "clamp",
+    extrapolateRight: "clamp",
+    easing: Easing.inOut(Easing.quad),
+  });
   const arcFraction = energyValue / 100;
   const arcDashoffset = ARC_CIRCUMFERENCE * (1 - arcFraction);
 
@@ -31,74 +32,39 @@ export function EnergyMeter() {
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          gap: 16,
+          gap: 28,
         }}
       >
-        {/* Three-line headline: setup + two payoff lines */}
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: 4,
-          }}
-        >
-          <SceneHeadline
-            setup="Miss a day?"
-            payoff="Your energy dips a little."
-            payoffStartFrame={15}
-            fontSize={40}
-          />
-          <WordReveal
-            text="But it doesn't disappear."
-            startFrame={38}
-            style={{
-              fontSize: 40,
-              fontWeight: 400,
-              color: COLORS.muted,
-              justifyContent: "center",
-            }}
-          />
-        </div>
+        <SceneHeadline
+          setup="Miss a day?"
+          payoff="Your energy dips a little."
+          fontSize={44}
+        />
 
-        {/* Quiet philosophical closer */}
-        <span
-          style={{
-            ...reasonStyle,
-            fontSize: 22,
-            fontWeight: 400,
-            color: COLORS.muted,
-            textAlign: "center",
-          }}
-        >
-          No guilt. No punishment. Just pick up where you left off.
-        </span>
-
-        {/* Arc gauge */}
-        <div style={{ ...gaugeStyle, position: "relative", width: 160, height: 100, marginTop: 8 }}>
-          <svg width={160} height={100} viewBox="0 0 160 100">
+        {/* Small gauge — secondary to text */}
+        <div style={{ ...gaugeStyle, position: "relative", width: 140, height: 88 }}>
+          <svg width={140} height={88} viewBox="0 0 140 88">
             <path
-              d="M 16 84 A 64 64 0 0 1 144 84"
+              d="M 14 74 A 56 56 0 0 1 126 74"
               fill="none"
               stroke={COLORS.border}
-              strokeWidth={7}
+              strokeWidth={6}
               strokeLinecap="round"
             />
             <path
-              d="M 16 84 A 64 64 0 0 1 144 84"
+              d="M 14 74 A 56 56 0 0 1 126 74"
               fill="none"
               stroke={COLORS.energy}
-              strokeWidth={7}
+              strokeWidth={6}
               strokeLinecap="round"
               strokeDasharray={ARC_CIRCUMFERENCE}
               strokeDashoffset={arcDashoffset}
             />
           </svg>
-
           <div
             style={{
               position: "absolute",
-              top: 32,
+              top: 28,
               left: 0,
               right: 0,
               display: "flex",
@@ -107,7 +73,7 @@ export function EnergyMeter() {
           >
             <span
               style={{
-                fontSize: 44,
+                fontSize: 36,
                 fontWeight: 700,
                 color: COLORS.energy,
                 fontVariantNumeric: "tabular-nums",
@@ -117,30 +83,44 @@ export function EnergyMeter() {
             </span>
           </div>
         </div>
-
-        <span style={{ ...gaugeStyle, fontSize: 14, fontWeight: 500, color: COLORS.muted }}>
-          Energy Level
-        </span>
       </div>
     </SceneContainer>
   );
 }
 
-/** Returns the energy value at a given frame: 78 -> 76 -> 77. */
-function getEnergyValue(frame: number): number {
-  if (frame < 77) return 78;
+/**
+ * "But it doesn't disappear." (instant, bold)
+ * → "It bounces right back." (word by word, muted)
+ *
+ * Short, punchy. The relief.
+ */
+export function EnergyNeverGone() {
+  return (
+    <SceneContainer bg="white">
+      <SceneHeadline
+        setup="But it doesn't disappear."
+        payoff="It bounces right back."
+        payoffStartFrame={20}
+        fontSize={44}
+      />
+    </SceneContainer>
+  );
+}
 
-  if (frame < 107) {
-    return interpolate(frame, [77, 97], [78, 76], {
-      easing: Easing.inOut(Easing.quad),
-      extrapolateLeft: "clamp",
-      extrapolateRight: "clamp",
-    });
-  }
-
-  return interpolate(frame, [107, 132], [76, 77], {
-    easing: Easing.out(Easing.quad),
-    extrapolateLeft: "clamp",
-    extrapolateRight: "clamp",
-  });
+/**
+ * "No guilt. No punishment." (instant, bold)
+ * → "Just pick up where you left off." (word by word, muted)
+ *
+ * The emotional payoff.
+ */
+export function EnergyPhilosophy() {
+  return (
+    <SceneContainer bg="white">
+      <SceneHeadline
+        setup="No guilt. No punishment."
+        payoff="Just pick up where you left off."
+        fontSize={44}
+      />
+    </SceneContainer>
+  );
 }

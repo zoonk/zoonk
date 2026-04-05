@@ -5,12 +5,28 @@ import { COLORS } from "@/lib/constants";
 import { useCurrentFrame } from "remotion";
 
 /**
- * "YOUR LEARNING PATTERNS" (instant label)
- * → stats fade in
- * → "Know when and how you learn best," (setup, bold)
- * → "so you can be more productive." (payoff, muted, word by word)
+ * "Zoonk tracks your learning patterns" (instant, bold)
+ * → "so you always know what works." (word by word, muted)
+ *
+ * Introduces the concept before showing data.
  */
-export function PerformanceStats() {
+export function PatternsIntro() {
+  return (
+    <SceneContainer bg="white">
+      <SceneHeadline
+        setup="Zoonk tracks your learning patterns"
+        payoff="so you always know what works."
+        fontSize={40}
+      />
+    </SceneContainer>
+  );
+}
+
+/**
+ * "YOUR LEARNING PATTERNS" label + two hero stats.
+ * Data only — no philosophical text. Let the numbers speak.
+ */
+export function PatternsData() {
   const frame = useCurrentFrame();
 
   const leftStatStyle = entryScale({ frame, delay: 8, duration: 12 });
@@ -28,19 +44,6 @@ export function PerformanceStats() {
           gap: 28,
         }}
       >
-        {/* Label — visible immediately */}
-        <span
-          style={{
-            fontSize: 14,
-            fontWeight: 500,
-            color: COLORS.muted,
-            letterSpacing: "0.08em",
-            textTransform: "uppercase" as const,
-          }}
-        >
-          Your learning patterns
-        </span>
-
         {/* Two hero stats side by side */}
         <div style={{ display: "flex", gap: 80, alignItems: "flex-start" }}>
           <div
@@ -78,15 +81,26 @@ export function PerformanceStats() {
             <span style={{ fontSize: 14, fontWeight: 500, color: COLORS.muted }}>Accuracy</span>
           </div>
         </div>
-
-        {/* Why it matters — using SceneHeadline for consistent styling */}
-        <SceneHeadline
-          setup="Know when and how you learn best,"
-          payoff="so you can be more productive."
-          payoffStartFrame={72}
-          fontSize={20}
-        />
       </div>
+    </SceneContainer>
+  );
+}
+
+/**
+ * "Know when you learn best," (instant, bold)
+ * → "so you can be more productive." (word by word, muted)
+ *
+ * The "so what" — connects the data to the viewer's life.
+ */
+export function PatternsPayoff() {
+  return (
+    <SceneContainer bg="white">
+      <SceneHeadline
+        setup="Know when you learn best,"
+        payoff="so you can be more productive."
+        payoffStartFrame={20}
+        fontSize={40}
+      />
     </SceneContainer>
   );
 }

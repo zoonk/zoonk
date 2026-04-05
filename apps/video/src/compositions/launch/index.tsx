@@ -12,9 +12,17 @@ import {
   BrainPowerPhilosophy,
 } from "@/components/scenes/act3/brain-power";
 import { ClosingWords } from "@/components/scenes/act3/closing-words";
-import { EnergyMeter } from "@/components/scenes/act3/energy-meter";
+import {
+  EnergyIntro,
+  EnergyNeverGone,
+  EnergyPhilosophy,
+} from "@/components/scenes/act3/energy-meter";
 import { Logo } from "@/components/scenes/act3/logo";
-import { PerformanceStats } from "@/components/scenes/act3/performance-stats";
+import {
+  PatternsData,
+  PatternsIntro,
+  PatternsPayoff,
+} from "@/components/scenes/act3/performance-stats";
 import { SCENES } from "@/lib/constants";
 import { AbsoluteFill, Audio, Series, interpolate, staticFile, useVideoConfig } from "remotion";
 import { type LaunchVideoProps } from "./schema";
@@ -102,12 +110,28 @@ export function LaunchVideo(_props: LaunchVideoProps) {
           <BeltSystem />
         </Series.Sequence>
 
-        <Series.Sequence durationInFrames={SCENES.energyMeter}>
-          <EnergyMeter />
+        <Series.Sequence durationInFrames={SCENES.energyIntro}>
+          <EnergyIntro />
         </Series.Sequence>
 
-        <Series.Sequence durationInFrames={SCENES.performanceStats}>
-          <PerformanceStats />
+        <Series.Sequence durationInFrames={SCENES.energyNeverGone}>
+          <EnergyNeverGone />
+        </Series.Sequence>
+
+        <Series.Sequence durationInFrames={SCENES.energyPhilosophy}>
+          <EnergyPhilosophy />
+        </Series.Sequence>
+
+        <Series.Sequence durationInFrames={SCENES.patternsIntro}>
+          <PatternsIntro />
+        </Series.Sequence>
+
+        <Series.Sequence durationInFrames={SCENES.patternsData}>
+          <PatternsData />
+        </Series.Sequence>
+
+        <Series.Sequence durationInFrames={SCENES.patternsPayoff}>
+          <PatternsPayoff />
         </Series.Sequence>
 
         <Series.Sequence durationInFrames={SCENES.closingWords}>
