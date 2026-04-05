@@ -3,7 +3,8 @@ import { SceneHeadline } from "@/components/scene-headline";
 import { countUp, entryScale } from "@/lib/animation";
 import { COLORS } from "@/lib/constants";
 import { useT } from "@/lib/use-translations";
-import { useCurrentFrame } from "remotion";
+import { IconBrain } from "@tabler/icons-react";
+import { Easing, interpolate, useCurrentFrame } from "remotion";
 
 /**
  * "As you learn things" (instant, bold)
@@ -31,7 +32,19 @@ export function BrainPowerIntro() {
         <SceneHeadline setup={t.brainIntroSetup} payoff={t.brainIntroPayoff} />
 
         {/* Brain Power counter */}
-        <div style={{ ...counterStyle, display: "flex", alignItems: "baseline", gap: 12 }}>
+        <div style={{ ...counterStyle, display: "flex", alignItems: "center", gap: 12 }}>
+          <IconBrain
+            size={56}
+            stroke={1.5}
+            color={COLORS.text}
+            style={{
+              transform: `scale(${interpolate(frame, [55, 85], [0.4, 1.2], {
+                extrapolateLeft: "clamp",
+                extrapolateRight: "clamp",
+                easing: Easing.out(Easing.quad),
+              })})`,
+            }}
+          />
           <span
             style={{
               fontSize: 64,

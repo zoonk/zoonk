@@ -71,10 +71,10 @@ type TranslationStrings = {
   /** Scene: EnergyMeter */
   energySetup: string;
   energyPayoff: string;
-  energyGoneSetup: string;
-  energyGonePayoff: string;
-  energyPhiloSetup: string;
-  energyPhiloPayoff: string;
+  energyDipSetup: string;
+  energyDipPayoff: string;
+  energyRecoversSetup: string;
+  energyRecoversPayoff: string;
 
   /** Scene: PerformanceStats */
   patternsSetup: string;
@@ -172,12 +172,12 @@ const en: TranslationStrings = {
   beltPunchSetup: "Like martial arts.",
   beltPunchPayoff: "But for your brain.",
 
-  energySetup: "Miss a day?",
-  energyPayoff: "Your energy dips a little.",
-  energyGoneSetup: "But it doesn't disappear.",
-  energyGonePayoff: "It bounces right back.",
-  energyPhiloSetup: "No guilt. No punishment.",
-  energyPhiloPayoff: "Just pick up where you left off.",
+  energySetup: "Every correct answer",
+  energyPayoff: "boosts your energy.",
+  energyDipSetup: "Miss a day?",
+  energyDipPayoff: "It dips. Just a little.",
+  energyRecoversSetup: "Life is messy.",
+  energyRecoversPayoff: "Your energy always recovers.",
 
   patternsSetup: "Zoonk tracks your learning patterns",
   patternsPayoff: "so you always know what works.",
@@ -278,19 +278,19 @@ const ptBr: TranslationStrings = {
   brainPhiloSetup: "Porque conhecimento",
   brainPhiloPayoff: "é algo que ninguém pode tirar de você.",
 
-  beltSetup: "Conquiste a faixa preta",
+  beltSetup: "Seja faixa preta",
   beltPayoff: "em tudo que você aprender.",
   beltPunchSetup: "Como artes marciais.",
-  beltPunchPayoff: "Mas para o seu cérebro.",
+  beltPunchPayoff: "Mas para a sua mente.",
 
-  energySetup: "Perdeu um dia?",
-  energyPayoff: "Sua energia cai um pouco.",
-  energyGoneSetup: "Mas não desaparece.",
-  energyGonePayoff: "Ela volta rapidinho.",
-  energyPhiloSetup: "Sem culpa. Sem punição.",
-  energyPhiloPayoff: "Continue de onde parou.",
+  energySetup: "Cada resposta certa",
+  energyPayoff: "aumenta sua energia.",
+  energyDipSetup: "Perdeu um dia?",
+  energyDipPayoff: "Ela cai. Só um pouco.",
+  energyRecoversSetup: "A vida é imprevisível.",
+  energyRecoversPayoff: "Sua energia sempre se recupera.",
 
-  patternsSetup: "O Zoonk rastreia seus padrões de aprendizado",
+  patternsSetup: "O Zoonk mostra seus padrões de aprendizado",
   patternsPayoff: "para você saber o que funciona.",
   patternsFocusTime: "Ter, 8h",
   patternsFocusLabel: "Melhor horário de foco",

@@ -12,11 +12,7 @@ import {
   BrainPowerPhilosophy,
 } from "@/components/scenes/act3/brain-power";
 import { ClosingWords } from "@/components/scenes/act3/closing-words";
-import {
-  EnergyIntro,
-  EnergyNeverGone,
-  EnergyPhilosophy,
-} from "@/components/scenes/act3/energy-meter";
+import { EnergyDip, EnergyIntro, EnergyRecovers } from "@/components/scenes/act3/energy-meter";
 import { Logo } from "@/components/scenes/act3/logo";
 import {
   PatternsData,
@@ -130,12 +126,12 @@ export function LaunchVideo({ locale }: LaunchVideoProps) {
             <EnergyIntro />
           </Series.Sequence>
 
-          <Series.Sequence durationInFrames={SCENES.energyNeverGone}>
-            <EnergyNeverGone />
+          <Series.Sequence durationInFrames={SCENES.energyDip}>
+            <EnergyDip />
           </Series.Sequence>
 
-          <Series.Sequence durationInFrames={SCENES.energyPhilosophy}>
-            <EnergyPhilosophy />
+          <Series.Sequence durationInFrames={SCENES.energyRecovers}>
+            <EnergyRecovers />
           </Series.Sequence>
 
           <Series.Sequence durationInFrames={SCENES.patternsIntro}>
