@@ -179,7 +179,7 @@ const en: TranslationStrings = {
   energyRecoversSetup: "Life is messy.",
   energyRecoversPayoff: "But your energy always recovers.",
 
-  patternsSetup: "Zoonk tracks your learning patterns",
+  patternsSetup: "Zoonk shows your learning patterns",
   patternsPayoff: "so you always know what works.",
   patternsFocusTime: "Tue, 8 AM",
   patternsFocusLabel: "Best focus time",
