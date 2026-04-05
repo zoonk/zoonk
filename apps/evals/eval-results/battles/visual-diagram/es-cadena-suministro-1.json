@@ -1,0 +1,185 @@
+{
+  "expectations": "\nEVALUATION CRITERIA:\n\n1. NODE QUALITY: Node labels should be clear (max 30 chars) and use the description's exact wording when it fits. Do not add qualifiers or synonyms not in the description.\n\n2. EDGE DIRECTION: Edges use \"from\" (the actor — who does the action) and \"to\" (the receiver). Evaluate whether the direction is correct for the described relationship. For example, \"A reads from B\" should be from=A, to=B (A is the actor).\n\n3. EDGE LABELS: Each edge label should describe a single action or relationship. Do NOT penalize for combining closely related actions on a single edge when only one connection exists between two nodes.\n\n4. POST-PROCESSING: The output goes through post-processing where: node IDs are auto-generated from labels (the model only provides labels), \"from\"/\"to\" labels are resolved to \"source\"/\"target\" IDs, and orphan nodes are removed. The output you see has \"id\", \"source\", and \"target\" fields — this is expected. Do NOT penalize for having these fields instead of label-only nodes or \"from\"/\"to\" edges.\n\n5. SCHEMA LIMITATIONS: The diagram schema only supports nodes and edges. Do NOT penalize for internal actions that cannot be represented as edges (e.g., \"transforms data\" is an internal process, not a connection). Do NOT penalize for reasonable interpretations of ambiguous spatial descriptions (e.g., \"sits between\" can be modeled in multiple valid ways).\n\n6. NO POSITIONS: Output must NOT include x/y coordinates or position data.\n\n7. FOCUS: 3-7 nodes for optimal clarity. If the description implies more, prioritize the most important relationships.\n\n8. LANGUAGE: All text content (node labels, edge labels) must be in the specified language. Only JSON field names should be in English.\n\nLANGUAGE REQUIREMENT: All content must be in Latin American Spanish.\n    ",
+  "judgedAt": "2026-04-05T22:50:43.525Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Faithful representation with 6 nodes and 8 edges matching the description exactly. Edge labels are clean (\"despacha\", \"devuelve productos\") without redundant prepositions. All directions correct. Language is proper Spanish. Identical to Models E and G.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Identical to Model A — correct structure, clean edge labels, proper directions, all in Spanish. No issues found.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Identical to Models A and E — correct structure, clean edge labels, proper directions, all in Spanish. No issues found.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Very similar to A/E/G but uses \"despacha productos\" instead of \"despacha\" for the dispatch edges. This is a reasonable and slightly more descriptive label, perfectly valid. Essentially equivalent quality.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Identical to Model B — uses \"despacha productos\" for dispatch edges. Same quality, correct structure and directions throughout.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Identical structure to A/E/G but capitalizes edge labels (\"Envía\", \"Despacha\", \"Devuelve\"). This is a very minor stylistic difference — edge labels are typically lowercase. Otherwise fully correct.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Correct structure and nodes, but edge labels include trailing \"a\" (e.g., \"envía materias primas a\", \"despacha a\"). Since edges already connect nodes visually, appending \"a\" is redundant and slightly awkward. Minor issue but noticeable.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Redundantly includes target node names in dispatch edge labels (\"despacha a Tienda Minorista 1\") which is unnecessary since the edge already points to that node. This clutters the diagram. Otherwise correct.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Collapses three distinct retail stores into a single \"Tiendas Minoristas\" node, losing the explicit \"three stores\" structure described in the prompt. While this stays within the 3-7 node guideline, it doesn't faithfully extract the described structure of three separate stores with individual return connections.",
+          "score": 6.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Exceptional output. Perfectly captures the three distinct retail stores while remaining within the 3-7 node limit. Edge labels use the exact, concise wording from the description.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Exceptional output. Perfectly captures the three distinct retail stores while remaining within the 3-7 node limit. Edge labels use the exact, concise wording from the description.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Exceptional output. Perfectly captures the three distinct retail stores while remaining within the 3-7 node limit. Edge labels use the exact, concise wording from the description.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Exceptional output. Creates the correct number of nodes to accurately reflect the text while staying within the optimal node limit. The capitalized edge labels are a perfectly valid stylistic choice.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Excellent output. Accurately extracts the diagram structure and nodes. However, it adds the implied word 'productos' to the 'despacha' edges rather than using the exact wording from the text.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Excellent output. Accurately extracts the diagram structure and nodes. However, it adds the implied word 'productos' to the 'despacha' edges rather than using the exact wording from the text.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Very good output. Accurately maps the nodes and relationships, but unnecessarily includes the preposition 'a' at the end of edge labels, which is redundant given the visual direction of the edges.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Good output. The structure is correct, but the edge labels redundantly include the target node's name (e.g., 'despacha a Tienda Minorista 1'), which clutters the diagram.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Good output. While it successfully captures the overall supply chain flow, it grouped the retail stores into a single node, missing the text's explicit mention of 'tres Tiendas Minoristas'. Creating three distinct nodes would still have kept the diagram within the 3-7 node limit.",
+          "score": 8
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Faithfully captures all key entities and directions, including the three separate retail stores and return flows. Labels are concise, fully in Spanish, and slightly more specific than bare verbs without violating the schema.",
+          "score": 9.6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Equivalent in structure and quality to Model B, with correct node set, edge directions, and clear Spanish labels. It follows the prompt closely and has no meaningful content errors.",
+          "score": 9.6
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Accurate and complete representation of the supply chain, with correct directions and all required return edges. Edge labels are a bit less specific than B/D but still valid and concise.",
+          "score": 9.3
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Matches the described structure correctly and keeps labels simple and valid. Slightly less informative edge wording than the top outputs, but otherwise very strong.",
+          "score": 9.3
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Also a faithful and complete diagram with correct flow and no schema violations. It is essentially tied with A/E, differing only in minor stylistic choices in edge labels.",
+          "score": 9.3
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Structurally correct and complete, with proper directions and all nodes connected. The capitalization of edge labels is a minor style inconsistency versus the source phrasing, but not a substantive issue.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "The structure and directions are correct, but the dispatch edge labels redundantly include the destination node name. That makes the labels less clean and less aligned with the brief-action guidance.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Accurate structure and directions, but several edge labels end awkwardly with the preposition “a,” making them less natural and less polished as standalone relationship labels. Still, it remains factually correct and complete.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "It preserves the overall flow, but collapses three retail stores into one plural node, losing an explicit detail from the description. This simplification reduces fidelity compared with the stronger outputs.",
+          "score": 7.2
+        }
+      ]
+    }
+  ],
+  "taskId": "visual-diagram",
+  "testCaseId": "es-cadena-suministro-1"
+}

@@ -28,28 +28,16 @@ const aiSchema = z
   .strict();
 
 /**
- * Matches `codeVisualContentSchema` from `@zoonk/core/steps/contract/visual`.
- * Defined inline because `@zoonk/core` depends on `@zoonk/ai`,
- * so importing from core would create a circular dependency.
- * Uses `.nullable()` instead of `.optional()` because OpenAI
- * structured outputs require all fields to be present in the JSON.
+ * Public output type matching `codeVisualContentSchema`
+ * from `@zoonk/core/steps/contract/visual`. Defined as a plain
+ * type (not a Zod schema) because it's never parsed — the AI
+ * uses `aiSchema` and `generateVisualCode` produces this shape.
  */
-const publicSchema = z
-  .object({
-    annotations: z
-      .array(
-        z.object({
-          line: z.number(),
-          text: z.string(),
-        }),
-      )
-      .nullable(),
-    code: z.string(),
-    language: z.string(),
-  })
-  .strict();
-
-export type VisualCodeSchema = z.infer<typeof publicSchema>;
+export type VisualCodeSchema = {
+  annotations: { line: number; text: string }[] | null;
+  code: string;
+  language: string;
+};
 
 export type VisualCodeParams = {
   description: string;

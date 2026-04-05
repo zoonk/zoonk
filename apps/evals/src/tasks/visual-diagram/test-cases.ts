@@ -1,15 +1,21 @@
 const SHARED_EXPECTATIONS = `
 EVALUATION CRITERIA:
 
-1. NODE QUALITY: Nodes must have unique, descriptive IDs (not "node1", "node2") and clear labels (max 30 chars). Node count should match what the description specifies — do not add extra nodes.
+1. NODE QUALITY: Node labels should be clear (max 30 chars) and use the description's exact wording when it fits. Do not add qualifiers or synonyms not in the description.
 
-2. EDGE ACCURACY: Edges must faithfully represent the connections described. Source and target must reference valid node IDs. Edge labels are optional but should be used when the description specifies the nature of the connection.
+2. EDGE DIRECTION: Edges use "from" (the actor — who does the action) and "to" (the receiver). Evaluate whether the direction is correct for the described relationship. For example, "A reads from B" should be from=A, to=B (A is the actor).
 
-3. NO POSITIONS: Output must NOT include x/y coordinates or position data — the frontend handles layout.
+3. EDGE LABELS: Each edge label should describe a single action or relationship. Do NOT penalize for combining closely related actions on a single edge when only one connection exists between two nodes.
 
-4. FOCUS: 3-7 nodes for optimal clarity. If the description implies more, prioritize the most important relationships.
+4. POST-PROCESSING: The output goes through post-processing where: node IDs are auto-generated from labels (the model only provides labels), "from"/"to" labels are resolved to "source"/"target" IDs, and orphan nodes are removed. The output you see has "id", "source", and "target" fields — this is expected. Do NOT penalize for having these fields instead of label-only nodes or "from"/"to" edges.
 
-5. LANGUAGE: All text content (node labels, edge labels) must be in the specified language. Only JSON field names should be in English.
+5. SCHEMA LIMITATIONS: The diagram schema only supports nodes and edges. Do NOT penalize for internal actions that cannot be represented as edges (e.g., "transforms data" is an internal process, not a connection). Do NOT penalize for reasonable interpretations of ambiguous spatial descriptions (e.g., "sits between" can be modeled in multiple valid ways).
+
+6. NO POSITIONS: Output must NOT include x/y coordinates or position data.
+
+7. FOCUS: 3-7 nodes for optimal clarity. If the description implies more, prioritize the most important relationships.
+
+8. LANGUAGE: All text content (node labels, edge labels) must be in the specified language. Only JSON field names should be in English.
 `;
 
 export const TEST_CASES = [

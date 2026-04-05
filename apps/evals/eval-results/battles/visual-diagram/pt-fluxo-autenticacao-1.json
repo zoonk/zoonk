@@ -1,0 +1,185 @@
+{
+  "expectations": "\nEVALUATION CRITERIA:\n\n1. NODE QUALITY: Node labels should be clear (max 30 chars) and use the description's exact wording when it fits. Do not add qualifiers or synonyms not in the description.\n\n2. EDGE DIRECTION: Edges use \"from\" (the actor — who does the action) and \"to\" (the receiver). Evaluate whether the direction is correct for the described relationship. For example, \"A reads from B\" should be from=A, to=B (A is the actor).\n\n3. EDGE LABELS: Each edge label should describe a single action or relationship. Do NOT penalize for combining closely related actions on a single edge when only one connection exists between two nodes.\n\n4. POST-PROCESSING: The output goes through post-processing where: node IDs are auto-generated from labels (the model only provides labels), \"from\"/\"to\" labels are resolved to \"source\"/\"target\" IDs, and orphan nodes are removed. The output you see has \"id\", \"source\", and \"target\" fields — this is expected. Do NOT penalize for having these fields instead of label-only nodes or \"from\"/\"to\" edges.\n\n5. SCHEMA LIMITATIONS: The diagram schema only supports nodes and edges. Do NOT penalize for internal actions that cannot be represented as edges (e.g., \"transforms data\" is an internal process, not a connection). Do NOT penalize for reasonable interpretations of ambiguous spatial descriptions (e.g., \"sits between\" can be modeled in multiple valid ways).\n\n6. NO POSITIONS: Output must NOT include x/y coordinates or position data.\n\n7. FOCUS: 3-7 nodes for optimal clarity. If the description implies more, prioritize the most important relationships.\n\n8. LANGUAGE: All text content (node labels, edge labels) must be in the specified language. Only JSON field names should be in English.\n\nLANGUAGE REQUIREMENT: All content must be in Brazilian Portuguese.\n    ",
+  "judgedAt": "2026-04-05T22:50:58.640Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "4 nodes (correct count), all edge directions correct, edge labels are concise and accurate. \"acessa com token\" is a clean summary. \"valida credenciais\" accurately describes the action against the DB. \"retorna Token JWT\" is descriptive. Excellent output.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Identical to Model B in every way — same nodes, same edges, same labels. Equally excellent output.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Nearly identical to B/G, with the only difference being lowercase \"token\" in \"retorna token JWT\". This is a trivial stylistic difference. Otherwise equally strong.",
+          "score": 8.9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Identical structure to B/G but with capitalized edge labels (\"Envia credenciais\", \"Valida credenciais\"). This is a minor stylistic choice that doesn't affect correctness. Otherwise excellent.",
+          "score": 8.9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "4 nodes, correct directions. Uses \"usa token para acessar\" which is slightly more verbose than \"acessa com token\" but faithful to the description. \"valida credenciais\" and \"retorna Token JWT\" are good. Very solid output.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "4 nodes, correct directions. Uses \"valida contra\" for the DB edge which is faithful to the description's wording. All other edges are clean. Very good output, essentially equivalent to the top models.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "4 nodes, correct directions. The edge label \"retorna\" from Servidor de Auth to Usuário is too vague — it doesn't specify what is returned (Token JWT). This loses important information compared to other models. Otherwise solid.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Adds Token JWT as a separate node (5 nodes), which misrepresents the flow — the token is returned to the Usuário, not kept as a separate entity. The edge \"gera e retorna\" goes to Token JWT instead of Usuário, breaking the described flow. Also, edge labels ending with prepositions (\"para\", \"contra\", \"com\") read awkwardly.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Same issue as Model C: Token JWT as a separate node with \"gera e retorna\" pointing to it instead of to Usuário. This breaks the authentication flow described (token should be returned to user). The prompt says to extract structure faithfully, and Token JWT is not a separate entity in the description.",
+          "score": 5.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Perfectly identifies the four system components as nodes and accurately maps the five directional actions between them. The edge labels are clear, concise, and natively capture the Portuguese description.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Excellent output that accurately extracts the four nodes and five relationships. The edge labels are highly descriptive and appropriately capture the data flow.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Flawlessly captures the structural flow between the four entities. The relationships are perfectly accurate, and the use of title case for edge labels works well.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Identical in quality to Model B. Perfectly extracts the nodes and edges according to the system description with clear Portuguese labels.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Accurately represents the system architecture with the correct four nodes and precise edge labels. It maintains proper directional flow for all actions.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Perfect extraction of the diagram structure, representing the four main actors as nodes and accurately labeling the authentication flow between them.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "The structural representation of nodes and edges is correct. However, the edge label 'retorna' is slightly too brief, omitting the crucial context that a 'Token JWT' is what is being returned.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Incorrectly extracts 'Token JWT' as a system node rather than data passed between nodes. This breaks the described flow, as it misses the explicit connection where the server returns the token to the User.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Shares the same major flaw as Model C by making 'Token JWT' a distinct node. This misrepresents the architecture and completely drops the interaction of returning the token to the user.",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Faithfully captures the 4-node authentication flow with correct directions and concise Portuguese labels. Its edge wording stays close to the prompt, especially 'valida contra', while avoiding unnecessary extra nodes.",
+          "score": 9.4
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Accurate and complete with the right 4 nodes and 5 connections, and all labels are in Portuguese. 'valida credenciais' is a slight interpretation of 'valida contra', but still reasonable and clear.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Strong overall structure and correct edge directions, with no extra nodes or omissions. 'acessa com token' is a clean paraphrase, though a bit less faithful than wording that preserves 'usa o token para acessar'.",
+          "score": 9.1
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Essentially equivalent to Model B: complete, accurate, and well-formed with all text in Portuguese. Minor paraphrasing reduces fidelity slightly but does not harm clarity.",
+          "score": 9.1
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Very good output with correct nodes, edges, and directions, and it preserves the access action well. 'valida credenciais' is a mild simplification of validating against the user database, but still acceptable.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Content is structurally accurate and complete, but edge labels are capitalized like sentence starts rather than matching the surrounding style. That is a minor consistency issue only; otherwise it follows the prompt well.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Correctly keeps the main 4 entities and all required connections, with good directions. However, 'retorna' is too vague compared with 'retorna ao Usuário' plus JWT context, and several labels are less specific than stronger outputs.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Adds 'Token JWT' as a node, which is not necessary and distorts the described flow because the token is returned to the user, not primarily a standalone actor. It also misses the direct return edge to the user, though the rest is mostly coherent.",
+          "score": 6.3
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Like Model C, it incorrectly introduces 'Token JWT' as a node and replaces the return-to-user relation with a server-to-token edge, which is a notable faithfulness error. Some labels are also overly vague, such as 'usa para acessar' and 'valida com'.",
+          "score": 5.9
+        }
+      ]
+    }
+  ],
+  "taskId": "visual-diagram",
+  "testCaseId": "pt-fluxo-autenticacao-1"
+}
