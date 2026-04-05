@@ -1,0 +1,185 @@
+{
+  "expectations": "\nEVALUATION CRITERIA:\n\n1. LATEX VALIDITY: The formula field must contain valid LaTeX syntax that renders correctly. Common issues: unmatched braces, invalid commands, missing backslashes.\n\n2. FORMULA ACCURACY: The formula must match what the VISUAL_DESCRIPTION specifies. If the description names specific variables or notation, use those exactly — do not substitute different symbols.\n\n3. DESCRIPTION QUALITY: The \"description\" field must be a brief plain-text explanation (max 100 chars) of what the formula represents. It must NOT be a copy of the VISUAL_DESCRIPTION input — it should be a concise label suitable for display.\n\n4. FOCUS: One main equation, not a full derivation. For multi-line equations, use LaTeX aligned or cases environments.\n\n5. LANGUAGE: The description field must be in the specified language. LaTeX notation is language-neutral.\n\nLANGUAGE REQUIREMENT: The description field must be in Latin American Spanish.\n    ",
+  "judgedAt": "2026-04-05T23:00:30.590Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Valid LaTeX, accurate formula, description is concise (73 chars), in Spanish, mentions all key variables (presión, volumen, moles, temperatura), and is not a copy of the input. Well-balanced between brevity and informativeness.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Valid LaTeX, accurate formula, concise description (63 chars) in Spanish that mentions all key variables. Very similar quality to Model E with slightly less polished phrasing ('del gas ideal' vs 'de un gas ideal').",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Valid LaTeX, accurate formula, good description in Spanish mentioning key variables. At 82 chars it's within the limit. Includes 'Ley de los gases ideales' prefix which adds context but makes it slightly longer. Solid output.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Valid LaTeX, accurate formula, concise description (63 chars) in Spanish. However, it omits 'moles' (n) from the description, only mentioning presión, volumen, and temperatura — a minor completeness gap.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Valid LaTeX, accurate formula, description in Spanish. 'Cantidad' is vague compared to 'moles' or 'cantidad de sustancia'. Otherwise solid at 72 chars.",
+          "score": 7.7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Valid LaTeX, accurate formula, description mentions key variables. However, at 90 chars with the period, it's close to the 100-char limit. 'Cantidad de sustancia' is accurate but verbose. Good overall.",
+          "score": 7.7
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Valid LaTeX, accurate formula. Description is 95 chars — within limit but pushing it. Mentioning 'la constante R' is unnecessary detail for a brief label and makes it feel more like a copy of the input description.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Valid LaTeX, accurate formula, description is in Spanish and very concise (27 chars). However, it's arguably too brief — just the name without any explanatory value. Still valid and correct.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Valid LaTeX, accurate formula. Description is only 'Ley de los gases ideales' (24 chars) — functional but minimal. Equivalent to Model G in quality.",
+          "score": 7
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Provides an excellent, comprehensive description that names the law and lists the related variables. It stays well under the 100-character limit while providing a perfectly accurate formula.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Provides a perfect, concise label for the formula that is highly suitable for display. It follows all formatting and length constraints perfectly.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Equally excellent concise label for the formula, fitting perfectly within the constraints. The LaTeX formula is fully accurate.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Provides a very descriptive explanation that names the law and its components. It strictly adheres to the 100-character limit.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Accurate and well-formatted description that includes all variables. However, it omits the formal name of the law.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Accurately describes the relationship between the variables within the character limit. It misses a slight opportunity to name the specific law.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Provides a clear and accurate description of the relationship, following all constraints. It omits the formal name of the law, making it slightly less optimal than the top models.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Provides a good description and an accurate formula. However, it phrases 'cantidad de un gas ideal' slightly less accurately than 'cantidad de sustancia'.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Follows most formatting instructions well with an accurate formula. The description, however, omits the 'moles' or amount of substance variable when listing the related components.",
+          "score": 8.5
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Accurately reproduces the specified equation with valid LaTeX and uses the exact variables. The Spanish description is concise, plain text, under 100 characters, and clearly explains what the formula represents.",
+          "score": 9.7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Correct formula and a strong, concise Spanish description that captures the key variables and meaning. Slightly less polished than the top answer due to omitted accent marks, but it still follows the prompt well.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "The formula is exact and the description is brief, plain text, and in Spanish. It is less informative than the best answers, but still fully compliant and suitable as a display label.",
+          "score": 9.3
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "This matches the requested equation and provides a valid short Spanish label. The description is minimal and a bit less explanatory than stronger options, but it remains compliant.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "The formula is correct and the description is accurate and in Spanish. However, the description exceeds the 100-character limit, which is a direct prompt violation and should be penalized significantly.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "The formula is correct, but the description is weaker because 'cantidad' is imprecise compared with the prompt's 'cantidad de sustancia en moles.' It is still Spanish and under the limit, but less exact than higher-ranked answers.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "The equation is correct, but the description exceeds the 100-character maximum. It is also somewhat verbose for a brief display explanation, reducing adherence to the prompt.",
+          "score": 6.2
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Although the formula is correct and the description is accurate, the description is clearly over the 100-character limit. That prompt violation outweighs the otherwise good content.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "The formula is correct, but the description exceeds the 100-character limit and omits 'moles' or amount of substance mentioned in the prompt. The length violation is the main reason for the lower score.",
+          "score": 5.8
+        }
+      ]
+    }
+  ],
+  "taskId": "visual-formula",
+  "testCaseId": "es-ley-gases-ideales-1"
+}

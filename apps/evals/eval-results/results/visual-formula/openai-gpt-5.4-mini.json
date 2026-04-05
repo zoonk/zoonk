@@ -1,0 +1,141 @@
+{
+  "modelId": "openai/gpt-5.4-mini",
+  "results": [
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Could more explicitly preserve spacing/style with standard LaTeX formatting such as `x = \\frac{-b \\pm \\sqrt{b^2 - 4ac}}{2a}`, but the provided formula is still valid and accurate.",
+          "kind": "potentialImprovements",
+          "score": 9.7
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. LATEX VALIDITY: The formula field must contain valid LaTeX syntax that renders correctly. Common issues: unmatched braces, invalid commands, missing backslashes.\n\n2. FORMULA ACCURACY: The formula must match what the VISUAL_DESCRIPTION specifies. If the description names specific variables or notation, use those exactly — do not substitute different symbols.\n\n3. DESCRIPTION QUALITY: The \"description\" field must be a brief plain-text explanation (max 100 chars) of what the formula represents. It must NOT be a copy of the VISUAL_DESCRIPTION input — it should be a concise label suitable for display.\n\n4. FOCUS: One main equation, not a full derivation. For multi-line equations, use LaTeX aligned or cases environments.\n\n5. LANGUAGE: The description field must be in the specified language. LaTeX notation is language-neutral.\n",
+        "id": "en-quadratic-formula-1",
+        "userInput": {
+          "description": "The quadratic formula: x equals negative b plus or minus the square root of b squared minus 4ac, all divided by 2a. Variables are a, b, and c as coefficients.",
+          "language": "en"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Could be marginally improved by making the description slightly shorter/simpler (e.g., 'Final amount with compound interest'), but the current description is accurate, in English, plain text, and under 100 characters.",
+          "kind": "potentialImprovements",
+          "score": 9.8
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. LATEX VALIDITY: The formula field must contain valid LaTeX syntax that renders correctly. Common issues: unmatched braces, invalid commands, missing backslashes.\n\n2. FORMULA ACCURACY: The formula must match what the VISUAL_DESCRIPTION specifies. If the description names specific variables or notation, use those exactly — do not substitute different symbols.\n\n3. DESCRIPTION QUALITY: The \"description\" field must be a brief plain-text explanation (max 100 chars) of what the formula represents. It must NOT be a copy of the VISUAL_DESCRIPTION input — it should be a concise label suitable for display.\n\n4. FOCUS: One main equation, not a full derivation. For multi-line equations, use LaTeX aligned or cases environments.\n\n5. LANGUAGE: The description field must be in the specified language. LaTeX notation is language-neutral.\n",
+        "id": "en-compound-interest-1",
+        "userInput": {
+          "description": "Compound interest formula: A = P(1 + r/n)^(nt), where A is the final amount, P is principal, r is annual interest rate, n is compounding frequency, and t is time in years.",
+          "language": "en"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The description slightly exceeds the stated max length of 100 characters. Otherwise, the formula matches the requested equation and uses the exact variables, and the LaTeX is valid.",
+          "kind": "minorErrors",
+          "score": 8.7
+        },
+        {
+          "conclusion": "The description could be shortened to stay within 100 characters while preserving the same meaning, e.g. a more concise Portuguese label.",
+          "kind": "potentialImprovements",
+          "score": 8.9
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. LATEX VALIDITY: The formula field must contain valid LaTeX syntax that renders correctly. Common issues: unmatched braces, invalid commands, missing backslashes.\n\n2. FORMULA ACCURACY: The formula must match what the VISUAL_DESCRIPTION specifies. If the description names specific variables or notation, use those exactly — do not substitute different symbols.\n\n3. DESCRIPTION QUALITY: The \"description\" field must be a brief plain-text explanation (max 100 chars) of what the formula represents. It must NOT be a copy of the VISUAL_DESCRIPTION input — it should be a concise label suitable for display.\n\n4. FOCUS: One main equation, not a full derivation. For multi-line equations, use LaTeX aligned or cases environments.\n\n5. LANGUAGE: The description field must be in the specified language. LaTeX notation is language-neutral.\n\nLANGUAGE REQUIREMENT: The description field must be in Brazilian Portuguese.\n    ",
+        "id": "pt-lei-newton-1",
+        "userInput": {
+          "description": "Segunda lei de Newton: F = ma, onde F é a força resultante, m é a massa do objeto, e a é a aceleração. A força é medida em newtons (N).",
+          "language": "pt"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "A small improvement would be to include minimal LaTeX spacing such as `PV = nRT` for readability, though `PV=nRT` is still valid LaTeX and fully accurate. Otherwise, the output matches the specified equation, uses the exact variables, keeps to one main equation, and provides a brief Spanish description under 100 characters.",
+          "kind": "potentialImprovements",
+          "score": 9.6
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. LATEX VALIDITY: The formula field must contain valid LaTeX syntax that renders correctly. Common issues: unmatched braces, invalid commands, missing backslashes.\n\n2. FORMULA ACCURACY: The formula must match what the VISUAL_DESCRIPTION specifies. If the description names specific variables or notation, use those exactly — do not substitute different symbols.\n\n3. DESCRIPTION QUALITY: The \"description\" field must be a brief plain-text explanation (max 100 chars) of what the formula represents. It must NOT be a copy of the VISUAL_DESCRIPTION input — it should be a concise label suitable for display.\n\n4. FOCUS: One main equation, not a full derivation. For multi-line equations, use LaTeX aligned or cases environments.\n\n5. LANGUAGE: The description field must be in the specified language. LaTeX notation is language-neutral.\n\nLANGUAGE REQUIREMENT: The description field must be in Latin American Spanish.\n    ",
+        "id": "es-ley-gases-ideales-1",
+        "userInput": {
+          "description": "Ley de los gases ideales: PV = nRT, donde P es la presión, V el volumen, n la cantidad de sustancia en moles, R la constante universal de los gases, y T la temperatura absoluta en kelvin.",
+          "language": "es"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The output is accurate and well-formed. A small possible refinement is to make the description slightly more concise for display, e.g. 'Bayes theorem' or 'Conditional probability update', but the current description is valid, in English, plain text, and under 100 characters.",
+          "kind": "potentialImprovements",
+          "score": 9.7
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. LATEX VALIDITY: The formula field must contain valid LaTeX syntax that renders correctly. Common issues: unmatched braces, invalid commands, missing backslashes.\n\n2. FORMULA ACCURACY: The formula must match what the VISUAL_DESCRIPTION specifies. If the description names specific variables or notation, use those exactly — do not substitute different symbols.\n\n3. DESCRIPTION QUALITY: The \"description\" field must be a brief plain-text explanation (max 100 chars) of what the formula represents. It must NOT be a copy of the VISUAL_DESCRIPTION input — it should be a concise label suitable for display.\n\n4. FOCUS: One main equation, not a full derivation. For multi-line equations, use LaTeX aligned or cases environments.\n\n5. LANGUAGE: The description field must be in the specified language. LaTeX notation is language-neutral.\n",
+        "id": "en-bayes-theorem-1",
+        "userInput": {
+          "description": "Bayes' theorem: P(A|B) = P(B|A) * P(A) / P(B). The probability of A given B equals the probability of B given A times the prior probability of A, divided by the probability of B.",
+          "language": "en"
+        }
+      }
+    }
+  ],
+  "taskId": "visual-formula"
+}

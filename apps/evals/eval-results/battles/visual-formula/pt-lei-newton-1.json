@@ -1,0 +1,185 @@
+{
+  "expectations": "\nEVALUATION CRITERIA:\n\n1. LATEX VALIDITY: The formula field must contain valid LaTeX syntax that renders correctly. Common issues: unmatched braces, invalid commands, missing backslashes.\n\n2. FORMULA ACCURACY: The formula must match what the VISUAL_DESCRIPTION specifies. If the description names specific variables or notation, use those exactly — do not substitute different symbols.\n\n3. DESCRIPTION QUALITY: The \"description\" field must be a brief plain-text explanation (max 100 chars) of what the formula represents. It must NOT be a copy of the VISUAL_DESCRIPTION input — it should be a concise label suitable for display.\n\n4. FOCUS: One main equation, not a full derivation. For multi-line equations, use LaTeX aligned or cases environments.\n\n5. LANGUAGE: The description field must be in the specified language. LaTeX notation is language-neutral.\n\nLANGUAGE REQUIREMENT: The description field must be in Brazilian Portuguese.\n    ",
+  "judgedAt": "2026-04-05T23:00:43.724Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Valid LaTeX, accurate formula matching the description's variables exactly. Description is 52 chars, concise, in Portuguese, doesn't copy input. Clean and focused.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Valid LaTeX, accurate formula, description is 47 chars—concise and in Portuguese. Very similar quality to Model A; slightly less polished phrasing but fully compliant.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Valid LaTeX, accurate formula, description is 68 chars, in Portuguese, concise and doesn't copy input. Good quality overall.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Valid LaTeX with \\cdot notation (acceptable variant of F=ma), description is 69 chars, in Portuguese. Slightly embellished formula but still accurate and within constraints.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Valid LaTeX, accurate formula, description is 73 chars. Good quality, but the period at the end is slightly unusual for a label. Fully compliant otherwise.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Valid LaTeX, accurate formula, but description is 74 chars. Slightly verbose but under 100 chars. In correct language, doesn't copy input.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Uses \\mathbf for F and a, adding vector notation not specified in the VISUAL_DESCRIPTION. The description specifies scalar variables F, m, a—not bold/vector notation. This deviates from the 'use those exactly' rule.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Valid LaTeX with \\cdot. However, description is 96 chars—very close to the limit but acceptable. The main issue is it reads more like a copied/paraphrased version of the input rather than a concise label.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Description is 92 chars, close to 100 char limit but the bigger problem is it reads like a near-copy of the input description rather than a concise label. Otherwise valid LaTeX and accurate formula.",
+          "score": 6
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "The model followed all instructions perfectly. It extracted the exact formula as requested and provided a concise, highly accurate description in Portuguese that fits well under the 100-character limit while including the name of the law.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "The model followed all instructions perfectly. It extracted the exact formula and provided an excellent, concise description under the 100-character limit.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "The model followed all instructions correctly, including the exact formula extraction. The description is accurate, includes the name of the law, and stays just under the 100-character limit.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "The model extracted the exact formula and provided a good description within the character limit. However, the description omits the name of the law (Newton's Second Law), making it slightly less comprehensive than the top models.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "The model successfully extracted the exact formula and provided a valid description under 100 characters. However, it failed to mention that this is Newton's Second Law in the description.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "The model extracted the correct formula and wrote a concise description. Like other models at this score, it missed the opportunity to include the name of the law in the description.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "The model provided a good description but failed to extract the exact formula as instructed. By adding the '\\cdot' symbol for multiplication, it violated the rule to not substitute or add different symbols.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "The model wrote a good description but violated the prompt's instructions by altering the formula's notation (adding '\\cdot' for multiplication) instead of extracting it exactly as written.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "The model failed to follow the negative constraint to extract the exact formula without substituting symbols. It unnecessarily added bold vector notation ('\\mathbf') which was not present in the source text.",
+          "score": 7
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Fully matches the specified equation with valid LaTeX and uses the exact variables. The description is concise, plain text, in Brazilian Portuguese, and clearly under 100 characters.",
+          "score": 9.8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Accurate formula with exact notation and a concise Portuguese description suitable for display. Slightly less direct than H because it states a relation rather than the law itself, but still fully compliant.",
+          "score": 9.6
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Correct formula and a clear Portuguese description that stays brief and plain text. Very strong overall, though the wording is a bit less polished than the top entries.",
+          "score": 9.4
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "The formula is valid LaTeX, but it changes the notation by adding bold vectors not present in the prompt. The description is concise and in Portuguese, but the symbol substitution should be penalized.",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Accurate equation and valid LaTeX, with a Portuguese description that fits the task. However, the description exceeds the 100-character limit, which is an explicit prompt violation.",
+          "score": 6.9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "The formula is accurate and valid, but the description exceeds 100 characters and is closer to a sentence than a brief display label. It still remains in Portuguese and relevant to the formula.",
+          "score": 6.7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Correct formula and appropriate Portuguese content, but the description is over the 100-character maximum. That explicit formatting violation meaningfully lowers the score.",
+          "score": 6.6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "The formula is correct, but the description is far too long and reads like an explanatory sentence rather than a brief label. It follows the language requirement but misses the strict brevity constraint.",
+          "score": 6.2
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "The formula is mathematically equivalent and valid LaTeX, but it substitutes notation with \\cdot and has an overlong description. The biggest issue is the description exceeding the 100-character limit by a wide margin.",
+          "score": 6
+        }
+      ]
+    }
+  ],
+  "taskId": "visual-formula",
+  "testCaseId": "pt-lei-newton-1"
+}

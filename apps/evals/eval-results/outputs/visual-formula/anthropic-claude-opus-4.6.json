@@ -1,0 +1,52 @@
+{
+  "generatedAt": "2026-04-05T22:56:53.530Z",
+  "modelId": "anthropic/claude-opus-4.6",
+  "outputs": [
+    {
+      "duration": 6138.651542000007,
+      "inputTokens": 578,
+      "output": "{\n  \"description\": \"Quadratic formula for solving ax² + bx + c = 0\",\n  \"formula\": \"x = \\\\frac{-b \\\\pm \\\\sqrt{b^2 - 4ac}}{2a}\"\n}",
+      "outputTokens": 55,
+      "systemPrompt": "You generate structured formula data from a textual description.\n\n## Inputs\n\n- **VISUAL_DESCRIPTION**: A textual description of the formula or equation to generate — including variable names, relationships, and what it represents.\n- **LANGUAGE**: The language for the plain-text explanation in the output.\n\n## Your Task\n\nTransform the VISUAL_DESCRIPTION into a valid formula object with `formula` (a LaTeX math expression) and `description` (a brief plain-text explanation).\n\n## Important Distinction\n\nThe `description` field in your output is a brief plain-text explanation of what the formula represents (max 100 characters). This is separate from the VISUAL_DESCRIPTION input — do not copy the input into the output `description`. Instead, write a concise explanation suitable for display alongside the rendered formula.\n\n## Requirements\n\n- Use valid LaTeX syntax for the `formula` field\n- Keep formulas focused — one main equation, not a full derivation\n- For multi-line equations, use LaTeX `aligned` or `cases` environments\n- The `description` field should be max 100 characters, plain text (no LaTeX)\n- Extract the exact equation from the VISUAL_DESCRIPTION. If the description specifies particular variables or notation, use those — do not substitute different symbols\n\n## Language\n\nWrite the `description` field in the specified LANGUAGE. LaTeX notation is language-neutral.\n\n- `en`: US English\n- `pt`: Brazilian Portuguese\n- `es`: Latin American Spanish\n",
+      "testCaseId": "en-quadratic-formula-1",
+      "userPrompt": "\n    VISUAL_DESCRIPTION: The quadratic formula: x equals negative b plus or minus the square root of b squared minus 4ac, all divided by 2a. Variables are a, b, and c as coefficients.\n    LANGUAGE: en\n  "
+    },
+    {
+      "duration": 4186.9534590000985,
+      "inputTokens": 587,
+      "output": "{\n  \"description\": \"Compound interest formula for calculating the final accumulated amount\",\n  \"formula\": \"A = P\\\\left(1 + \\\\frac{r}{n}\\\\right)^{nt}\"\n}",
+      "outputTokens": 46,
+      "systemPrompt": "You generate structured formula data from a textual description.\n\n## Inputs\n\n- **VISUAL_DESCRIPTION**: A textual description of the formula or equation to generate — including variable names, relationships, and what it represents.\n- **LANGUAGE**: The language for the plain-text explanation in the output.\n\n## Your Task\n\nTransform the VISUAL_DESCRIPTION into a valid formula object with `formula` (a LaTeX math expression) and `description` (a brief plain-text explanation).\n\n## Important Distinction\n\nThe `description` field in your output is a brief plain-text explanation of what the formula represents (max 100 characters). This is separate from the VISUAL_DESCRIPTION input — do not copy the input into the output `description`. Instead, write a concise explanation suitable for display alongside the rendered formula.\n\n## Requirements\n\n- Use valid LaTeX syntax for the `formula` field\n- Keep formulas focused — one main equation, not a full derivation\n- For multi-line equations, use LaTeX `aligned` or `cases` environments\n- The `description` field should be max 100 characters, plain text (no LaTeX)\n- Extract the exact equation from the VISUAL_DESCRIPTION. If the description specifies particular variables or notation, use those — do not substitute different symbols\n\n## Language\n\nWrite the `description` field in the specified LANGUAGE. LaTeX notation is language-neutral.\n\n- `en`: US English\n- `pt`: Brazilian Portuguese\n- `es`: Latin American Spanish\n",
+      "testCaseId": "en-compound-interest-1",
+      "userPrompt": "\n    VISUAL_DESCRIPTION: Compound interest formula: A = P(1 + r/n)^(nt), where A is the final amount, P is principal, r is annual interest rate, n is compounding frequency, and t is time in years.\n    LANGUAGE: en\n  "
+    },
+    {
+      "duration": 3735.4607499999693,
+      "inputTokens": 579,
+      "output": "{\n  \"description\": \"Segunda lei de Newton: força é igual ao produto da massa pela aceleração\",\n  \"formula\": \"F = m \\\\cdot a\"\n}",
+      "outputTokens": 34,
+      "systemPrompt": "You generate structured formula data from a textual description.\n\n## Inputs\n\n- **VISUAL_DESCRIPTION**: A textual description of the formula or equation to generate — including variable names, relationships, and what it represents.\n- **LANGUAGE**: The language for the plain-text explanation in the output.\n\n## Your Task\n\nTransform the VISUAL_DESCRIPTION into a valid formula object with `formula` (a LaTeX math expression) and `description` (a brief plain-text explanation).\n\n## Important Distinction\n\nThe `description` field in your output is a brief plain-text explanation of what the formula represents (max 100 characters). This is separate from the VISUAL_DESCRIPTION input — do not copy the input into the output `description`. Instead, write a concise explanation suitable for display alongside the rendered formula.\n\n## Requirements\n\n- Use valid LaTeX syntax for the `formula` field\n- Keep formulas focused — one main equation, not a full derivation\n- For multi-line equations, use LaTeX `aligned` or `cases` environments\n- The `description` field should be max 100 characters, plain text (no LaTeX)\n- Extract the exact equation from the VISUAL_DESCRIPTION. If the description specifies particular variables or notation, use those — do not substitute different symbols\n\n## Language\n\nWrite the `description` field in the specified LANGUAGE. LaTeX notation is language-neutral.\n\n- `en`: US English\n- `pt`: Brazilian Portuguese\n- `es`: Latin American Spanish\n",
+      "testCaseId": "pt-lei-newton-1",
+      "userPrompt": "\n    VISUAL_DESCRIPTION: Segunda lei de Newton: F = ma, onde F é a força resultante, m é a massa do objeto, e a é a aceleração. A força é medida em newtons (N).\n    LANGUAGE: pt\n  "
+    },
+    {
+      "duration": 3917.55700000003,
+      "inputTokens": 592,
+      "output": "{\n  \"description\": \"Ley de los gases ideales: relación entre presión, volumen, moles y temperatura\",\n  \"formula\": \"PV = nRT\"\n}",
+      "outputTokens": 37,
+      "systemPrompt": "You generate structured formula data from a textual description.\n\n## Inputs\n\n- **VISUAL_DESCRIPTION**: A textual description of the formula or equation to generate — including variable names, relationships, and what it represents.\n- **LANGUAGE**: The language for the plain-text explanation in the output.\n\n## Your Task\n\nTransform the VISUAL_DESCRIPTION into a valid formula object with `formula` (a LaTeX math expression) and `description` (a brief plain-text explanation).\n\n## Important Distinction\n\nThe `description` field in your output is a brief plain-text explanation of what the formula represents (max 100 characters). This is separate from the VISUAL_DESCRIPTION input — do not copy the input into the output `description`. Instead, write a concise explanation suitable for display alongside the rendered formula.\n\n## Requirements\n\n- Use valid LaTeX syntax for the `formula` field\n- Keep formulas focused — one main equation, not a full derivation\n- For multi-line equations, use LaTeX `aligned` or `cases` environments\n- The `description` field should be max 100 characters, plain text (no LaTeX)\n- Extract the exact equation from the VISUAL_DESCRIPTION. If the description specifies particular variables or notation, use those — do not substitute different symbols\n\n## Language\n\nWrite the `description` field in the specified LANGUAGE. LaTeX notation is language-neutral.\n\n- `en`: US English\n- `pt`: Brazilian Portuguese\n- `es`: Latin American Spanish\n",
+      "testCaseId": "es-ley-gases-ideales-1",
+      "userPrompt": "\n    VISUAL_DESCRIPTION: Ley de los gases ideales: PV = nRT, donde P es la presión, V el volumen, n la cantidad de sustancia en moles, R la constante universal de los gases, y T la temperatura absoluta en kelvin.\n    LANGUAGE: es\n  "
+    },
+    {
+      "duration": 4494.472916000057,
+      "inputTokens": 592,
+      "output": "{\n  \"description\": \"Bayes' theorem: posterior probability of A given evidence B\",\n  \"formula\": \"P(A \\\\mid B) = \\\\frac{P(B \\\\mid A) \\\\cdot P(A)}{P(B)}\"\n}",
+      "outputTokens": 58,
+      "systemPrompt": "You generate structured formula data from a textual description.\n\n## Inputs\n\n- **VISUAL_DESCRIPTION**: A textual description of the formula or equation to generate — including variable names, relationships, and what it represents.\n- **LANGUAGE**: The language for the plain-text explanation in the output.\n\n## Your Task\n\nTransform the VISUAL_DESCRIPTION into a valid formula object with `formula` (a LaTeX math expression) and `description` (a brief plain-text explanation).\n\n## Important Distinction\n\nThe `description` field in your output is a brief plain-text explanation of what the formula represents (max 100 characters). This is separate from the VISUAL_DESCRIPTION input — do not copy the input into the output `description`. Instead, write a concise explanation suitable for display alongside the rendered formula.\n\n## Requirements\n\n- Use valid LaTeX syntax for the `formula` field\n- Keep formulas focused — one main equation, not a full derivation\n- For multi-line equations, use LaTeX `aligned` or `cases` environments\n- The `description` field should be max 100 characters, plain text (no LaTeX)\n- Extract the exact equation from the VISUAL_DESCRIPTION. If the description specifies particular variables or notation, use those — do not substitute different symbols\n\n## Language\n\nWrite the `description` field in the specified LANGUAGE. LaTeX notation is language-neutral.\n\n- `en`: US English\n- `pt`: Brazilian Portuguese\n- `es`: Latin American Spanish\n",
+      "testCaseId": "en-bayes-theorem-1",
+      "userPrompt": "\n    VISUAL_DESCRIPTION: Bayes' theorem: P(A|B) = P(B|A) * P(A) / P(B). The probability of A given B equals the probability of B given A times the prior probability of A, divided by the probability of B.\n    LANGUAGE: en\n  "
+    }
+  ],
+  "taskId": "visual-formula"
+}
