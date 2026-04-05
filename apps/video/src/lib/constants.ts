@@ -53,8 +53,8 @@ export const BELT_COLORS = [
  */
 export const SCENES = {
   // ACT 1: THE SPARK
-  searchPrompt: 8 * FPS,
-  everydayLanguage: 5 * FPS,
+  searchPrompt: 4 * FPS,
+  everydayLanguage: 2.5 * FPS,
   storyBranch: 6 * FPS,
 
   // ACT 2: THE PROOF

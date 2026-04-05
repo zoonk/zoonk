@@ -72,12 +72,6 @@ export function SearchPrompt() {
   /** Chapters become visible after the input has slid up. */
   const chaptersVisible = frame >= typingDone + 8;
 
-  /**
-   * Phase 2 starts at frame 113 — remaining chapters cascade in
-   * with a fast 2-frame stagger.
-   */
-  const fastCascadeStart = 113;
-
   return (
     <SceneContainer bg="white">
       {/* Search input — slides from center to top, then stays */}
@@ -146,10 +140,7 @@ export function SearchPrompt() {
           }}
         >
           {CHAPTERS.map((title, index) => {
-            const isInitial = index < INITIAL_VISIBLE;
-            const delay = isInitial
-              ? stagger({ index, baseDelay: typingDone + 8, gap: 4 })
-              : stagger({ index: index - INITIAL_VISIBLE, baseDelay: fastCascadeStart, gap: 2 });
+            const delay = stagger({ index, baseDelay: typingDone + 8, gap: 3 });
             const style = entryScale({ frame, delay });
 
             return (
