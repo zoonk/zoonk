@@ -31,7 +31,7 @@ export function BeltSystem() {
       >
         <SceneHeadline
           setup="Become a black belt"
-          payoff="in your field."
+          payoff="in anything you learn."
           payoffStartFrame={15}
           fontSize={44}
         />
