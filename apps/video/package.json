@@ -2,9 +2,6 @@
   "name": "video",
   "private": true,
   "type": "module",
-  "sideEffects": [
-    "*.css"
-  ],
   "scripts": {
     "dev": "remotion studio src/index.ts --port 3202 --no-open",
     "build": "remotion render src/index.ts LaunchVideo out/launch-landscape.mp4",
@@ -15,7 +12,6 @@
   "dependencies": {
     "@remotion/cli": "4.0.301",
     "@remotion/fonts": "4.0.301",
-    "@remotion/transitions": "4.0.301",
     "@tabler/icons-react": "3.41.1",
     "react": "19.2.4",
     "react-dom": "19.2.4",
@@ -23,11 +19,8 @@
     "zod": "4.3.6"
   },
   "devDependencies": {
-    "@remotion/tailwind-v4": "4.0.301",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
-    "geist": "1.7.0",
-    "tailwindcss": "4.2.2",
     "typescript": "5.8.3"
   }
 }

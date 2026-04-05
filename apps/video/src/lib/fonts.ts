@@ -36,4 +36,3 @@ export async function loadGeistFonts() {
 }
 
 export const FONT_FAMILY = "Geist, system-ui, sans-serif";
-export const FONT_FAMILY_MONO = "Geist Mono, monospace";

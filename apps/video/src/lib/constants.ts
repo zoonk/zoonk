@@ -1,11 +1,5 @@
 export const FPS = 30;
 
-/** Standard element entry animation duration in frames (400ms). */
-export const ENTRY_DURATION = 12;
-
-/** Standard element exit animation duration in frames (~267ms). */
-export const EXIT_DURATION = 8;
-
 /**
  * Color palette for the video.
  * White background throughout with accent colors for UI elements.

@@ -1,4 +1,3 @@
-import "./index.css";
 import { Composition, Folder } from "remotion";
 import { FPS } from "./lib/constants";
 import { loadGeistFonts } from "./lib/fonts";
