@@ -1,0 +1,31 @@
+packages/ai/src/tasks/visuals/visual-quote.prompt.md
+  1beb550f2fdcf4c5 10,15-19,22
+packages/ai/src/tasks/steps/_tools/quote.prompt.md
+  1beb550f2fdcf4c5 8,16
+packages/ai/src/tasks/visuals/visual-quote.ts
+  1beb550f2fdcf4c5 18,37-39
+packages/ai/src/tasks/steps/_tools/quote.ts
+  1beb550f2fdcf4c5 5-7
+packages/core/src/steps/contract/visual.ts
+  1beb550f2fdcf4c5 79
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "9221767608a0b64174d77a5fba9e6931e5ff8cd9",
+  "prompts": {
+    "1beb550f2fdcf4c5": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d6374-4054-7422-8d6d-4a09dee5007b",
+        "model": "gpt-5.4-mini"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 19,
+      "total_deletions": 4,
+      "accepted_lines": 17,
+      "overriden_lines": 0
+    }
+  }
+}
