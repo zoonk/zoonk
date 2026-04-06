@@ -1,5 +1,6 @@
 import { Logo } from "@/components/logo";
 import { SocialLinks } from "@/components/social-links";
+import { Analytics } from "@vercel/analytics/next";
 import { BLOG_URL } from "@zoonk/utils/url";
 import { type Metadata } from "next";
 import "@zoonk/ui/globals.css";
@@ -36,6 +37,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             <SocialLinks />
           </footer>
         </div>
+
+        <Analytics />
       </body>
     </html>
   );
