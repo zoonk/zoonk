@@ -1,0 +1,191 @@
+{
+  "expectations": "\nEVALUATION CRITERIA:\n\n1. AUTHENTICITY: The quote must be a real statement by a real, named person. Never invented, paraphrased, or attributed to generic sources like \"Common saying\" or \"Traditional wisdom\". If the exact quote cannot be determined, the closest real, verifiable quote should be used.\n\n2. ATTRIBUTION: Author must be a real, identifiable person in the format \"Name, Year\" (e.g., \"Alan Turing, 1950\") or just \"Name\" (e.g., \"Marie Curie\"). Never a generic source.\n\n3. RELEVANCE: The quote must directly support the point described in the VISUAL_DESCRIPTION.\n\n4. CONSTRAINTS: Quote text max 500 characters.\n\n5. LANGUAGE: Text and author fields must be in the specified language. If the original quote is in a different language, provide a faithful translation.\n\nLANGUAGE REQUIREMENT: All content must be in Latin American Spanish.\n    ",
+  "judgedAt": "2026-04-06T16:10:28.497Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Uses the famous misquote attributed to Darwin but correctly sets canVerify to false, acknowledging it's not verified. Does not include a year, which is appropriate since the quote isn't from any Darwin work. Follows prompt rules well by not claiming authenticity for a dubious quote. Relevant to the VISUAL_DESCRIPTION.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Uses the misquote but correctly sets canVerify to false. However, it includes '1859' in the author field, which is misleading since the quote doesn't come from Origin of Species (1859). The false canVerify partially mitigates this, but the year is still problematic.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Uses the misquote but correctly sets canVerify to false and doesn't include a misleading year. Very similar to Model A in approach and quality. Properly handles the dubious attribution.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Uses the misquote with canVerify false, which is correct. No misleading year. The wording is slightly more awkward than other versions but still acceptable. Properly acknowledges the quote's dubious authenticity.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Uses an actual verifiable Darwin quote from On the Origin of Species about natural selection and survival of the fittest. canVerify is correctly true, and the year 1859 is appropriate. However, the quote doesn't directly address the 'adaptability over strength' point from the VISUAL_DESCRIPTION—it's about natural selection generally. Good authenticity but weaker relevance.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Very similar to Model F—uses the same real, verifiable Darwin quote from Origin of Species with minor wording variation. Same strengths (authentic, verifiable) and same weakness (doesn't directly address adaptability vs. strength). Slightly different word order but equivalent quality.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Uses the famous misquote but sets canVerify to true and attributes it to 1859, which is factually incorrect—Darwin never wrote this. This is a significant factual error: claiming a misquote is verified and from a specific year. Also has extraneous quotation marks in the text field.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Uses the famous misquote and sets canVerify to true. This is a factual error—the quote is widely attributed to Darwin but scholars have confirmed he never said or wrote it. Claiming it's verifiable is misleading.",
+          "score": 3.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Uses the famous misquote and sets canVerify to true. Same fundamental problem as Model D—falsely claiming a misquote is verifiable. This violates the prompt's requirement to use canVerify false when the request is based on a popular misquote.",
+          "score": 3.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Perfectly followed all instructions. Recognized the requested quote as a popular misquote (by Leon C. Megginson) and successfully substituted it with a genuine, verifiable quote from Darwin's 'Origin of Species', correctly setting 'canVerify' to true.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Perfectly followed all instructions by replacing the popular misquote with an authentic, verified quote from Darwin. Excellent translation and correct use of the 'canVerify' flag.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Correctly recognized the requested quote as a misquote by setting 'canVerify' to false. However, it failed the explicit instruction to substitute doubtful wording with a different authentic quote from the same person.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Correctly flagged the misquote by setting 'canVerify' to false, but failed to provide an authentic alternative. The Spanish phrasing is also slightly awkward ('el más fuerte de las especies' instead of 'la especie más fuerte').",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Correctly flagged the misquote with 'canVerify' false, but failed to substitute it with an authentic quote. The phrasing is also slightly repetitive and clunky.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Recognized the misquote ('canVerify' is false) but failed to substitute it. Additionally, appending a specific publication year (1859) to a widely known misquote is contradictory and misleading.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Failed completely on authenticity and hallucinated a verification. Output a well-known misquote and incorrectly flagged 'canVerify' as true, violating the core instruction to never verify fake quotes.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Failed on authenticity by providing a famous misquote and falsely setting 'canVerify' to true. The phrasing is also slightly awkward in Spanish.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Major failure. Hallucinated verification ('canVerify: true') for a famous misquote, incorrectly attributed a specific year (1859) to a fake quote, and included unnecessary quotation marks inside the text string.",
+          "score": 1.5
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "This avoids the famous misquote and provides a real Darwin line that directly supports the theme of survival through favorable variation and natural selection. Attribution format is valid, Spanish is acceptable, and `canVerify: true` is the strongest justified confidence here.",
+          "score": 9.3
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Like Model F, it replaces the dubious wording with an authentic Darwin quote that is relevant and plausibly verifiable. It is slightly weaker due to less polished phrasing, but still far better than the misquote-based answers.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "It uses the well-known adaptation misquote, but at least correctly flags it as unverifiable, which follows the prompt's warning against doubtful wording. The quote is relevant and formatted correctly, though still inferior to supplying a real Darwin quote.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "This is still the common misquote, but `canVerify: false` appropriately signals doubt while keeping the content relevant and in proper Spanish. It loses points because the task preferred switching to a different authentic quote when the requested wording is doubtful.",
+          "score": 7.1
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "It presents the standard misquote and correctly marks it as unverifiable, which is better than falsely asserting authenticity. However, it misses the opportunity to provide a genuine Darwin quote instead.",
+          "score": 7.1
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "This is also the popular misquote and is marked unverifiable, which is appropriate. It scores a bit lower because the wording is clunkier and less natural in Spanish than similar false-flagged alternatives.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Like Model F, it replaces the dubious wording with an authentic Darwin quote that is relevant and plausibly verifiable. It is slightly weaker due to less polished phrasing, but still far better than the misquote-based answers.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "This gives the popular misattributed line but incorrectly claims it is verifiable and pins it to 1859, a significant factual error under the prompt's core criteria. Strong relevance cannot compensate for falsely certifying an inauthentic quote.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "It uses the standard Darwin misquote and incorrectly marks it as verifiable, which is a major authenticity failure. The output is otherwise clean, but the false confidence is heavily penalized.",
+          "score": 2.8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "This is the same core misquote presented as authentic with `canVerify: true`, directly violating the prompt's emphasis on authenticity over relevance. Despite good Spanish and relevance, the factual misattribution makes it one of the weakest responses.",
+          "score": 2.8
+        }
+      ]
+    }
+  ],
+  "taskId": "visual-quote",
+  "testCaseId": "es-darwin-adaptacion-1"
+}

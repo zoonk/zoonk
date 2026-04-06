@@ -1,0 +1,185 @@
+{
+  "expectations": "\nEVALUATION CRITERIA:\n\n1. CODE CORRECTNESS: The code must be syntactically correct and follow the conventions of the specified programming language. It must demonstrate the concept described in the VISUAL_DESCRIPTION.\n\n2. LANGUAGE FIELD: The \"language\" field in the output must be the programming language or format (e.g., \"python\", \"javascript\", \"sql\", \"yaml\", \"nginx\", \"java\"), NOT the human language from the ANNOTATION_LANGUAGE input. Never use generic values like \"text\" or \"log\".\n\n3. ANNOTATIONS: The model generates a lineContent field internally, which is then post-processed into a 1-based line number before output. The output you see has \"line\" (a number) — this is expected and correct. Do NOT penalize the output for having a \"line\" field instead of \"lineContent\" — that conversion is handled automatically by the system. Evaluate whether the line number points to the semantically correct line in the code (e.g., the buggy line, the WHERE clause, the error entry). The annotation text should be in the specified human ANNOTATION_LANGUAGE.\n\n4. CONCISENESS: Code should be max 500 chars, focused on the described concept. Do not add boilerplate, extra fields, or extra stack frames unless they are part of the description.\n\n5. FORMATTING: Code must be properly formatted with newlines — one statement per line, standard indentation, no minified/compressed style. For SQL, each clause (SELECT, FROM, JOIN, WHERE) should be on its own line.\n\n6. FAITHFULNESS: The code should match the description closely. Do not add unrequested elements (extra interface fields, extra stack frames, unnecessary variables). Do not fix bugs the description asks to demonstrate.\n\n7. TYPE QUALITY: For TypeScript, use proper type annotations (interfaces, union types with null). Never use \"any\".\n\nLANGUAGE REQUIREMENT: Annotation text must be in Latin American Spanish.\n    ",
+  "judgedAt": "2026-04-05T22:16:53.798Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Concise, correct TypeScript with proper type annotation (`{ city: string } | null`), well-formatted, annotation on the correct buggy line (line 7), good Spanish annotation text. Minimal and faithful to the description. Includes `name` field which is reasonable context.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Correct TypeScript, proper formatting with the inline type broken across lines, annotation correctly targets line 8 (the buggy line). Spanish annotation is clear and accurate. Clean and concise. Very good overall.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Correct TypeScript with proper type annotations, good formatting, annotation correctly targets line 9 (the buggy return statement). Spanish annotation is concise and accurate. Includes `name` field which is fine.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Clean, minimal code with separate Address interface. Annotation correctly targets line 10. Spanish annotation is concise ('Falla si address es null'). Slightly minimal but faithful to the description. Lacks `name` field but that's not required.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Correct TypeScript with separate Address interface. Annotation targets line 12 correctly. Spanish annotation text is good but mentions 'undefined' which isn't part of the type definition (type is `Address | null`, not `Address | null | undefined`), which is a minor inaccuracy. Adds `street` field which is unrequested but not harmful.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Correct TypeScript, proper formatting. Annotation correctly targets line 10. Adds `street` field which is unrequested extra. Uses intermediate variable (`const city = ...`) which adds slight unnecessary complexity. Good Spanish annotation.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Correct TypeScript but adds unnecessary fields (street, zipCode) in the Address interface beyond what was described. Uses an intermediate variable unnecessarily. Annotation correctly targets the buggy line. Spanish annotation is good.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Poor formatting: `type User={` with no spaces, `export function getCity(user:User):string{` compressed on one line without spaces. This violates the formatting requirements. Adds unrequested `id` field. Annotation is on the correct line with acceptable Spanish text.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "The code is not syntactically correct — `user` is used on line 5 without being declared or being inside a function, making this invalid TypeScript. The description asks for a function that accesses the property, and this doesn't provide one. Missing the function structure is a significant faithfulness issue.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Perfect execution. Concisely demonstrates the requested concept with accurate TypeScript typings, proper formatting, and perfectly targeted annotations.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Perfect execution. Concisely demonstrates the requested concept with accurate TypeScript typings, proper formatting, and perfectly targeted annotations.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Perfect execution. Concisely demonstrates the requested concept with accurate TypeScript typings, proper formatting, and perfectly targeted annotations.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Perfect execution. Concisely demonstrates the requested concept with accurate TypeScript typings, proper formatting, and perfectly targeted annotations.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Excellent output that follows all instructions. Only slightly less concise than the top models due to the inclusion of unrequested interface properties.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Excellent output that follows all instructions. Only slightly less concise than the top models due to the inclusion of unrequested interface properties.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Excellent output that follows all instructions. Only slightly less concise than the top models due to the inclusion of unrequested interface properties.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Meets the functional requirements, but violates the prompt's formatting rule to not use minified/compressed style. The code lacks necessary spaces around operators, colons, and braces.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Fails to create a function as explicitly requested in the prompt. Additionally, the snippet uses an undeclared `user` variable, resulting in an invalid code fragment.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Concise, syntactically correct TypeScript with proper null union typing and the annotation points to the exact buggy line. It stays closest to the requested concept without unnecessary extra fields.",
+          "score": 9.6
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Correct TypeScript and accurate annotation on the failing access line, with good brevity. Slightly less minimal than C due to the extra name field, but still faithful and well-formed.",
+          "score": 9.3
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Accurate, properly typed, and the annotation targets the correct line in Spanish. It is concise, though the inline object type split across lines is a bit less clean than the top entries.",
+          "score": 9.1
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Valid and faithful TypeScript with a correct annotation line and brief Spanish note. It adds an unnecessary name field, but otherwise matches the prompt well.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Semantically correct and concise, preserving the bug with proper TypeScript typing. However, formatting is compressed rather than fully readable, which violates the formatting guidance.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "The bug and annotation are correct, and typing is solid. But it adds several unrequested fields and an extra variable, making it less faithful and less concise than stronger answers.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Correct overall and the annotation lands on the buggy line, but it adds unrequested properties and an extra variable assignment. This makes it less focused on the described concept.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "The code is valid and demonstrates the issue, but the annotation line is incorrect since the return statement is on line 11, not 12. It also inaccurately mentions undefined, which was not part of the typed code.",
+          "score": 5.2
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "It fails the prompt’s request for a TypeScript function by providing a top-level constant and references an undefined user variable, making the snippet invalid. The annotation also points to a blank/non-buggy line rather than the actual error line.",
+          "score": 2.1
+        }
+      ]
+    }
+  ],
+  "taskId": "visual-code",
+  "testCaseId": "es-typescript-null-check-1"
+}

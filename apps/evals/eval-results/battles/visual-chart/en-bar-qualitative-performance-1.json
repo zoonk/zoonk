@@ -1,0 +1,185 @@
+{
+  "expectations": "\nEVALUATION CRITERIA:\n\n1. CHART TYPE: The chartType must match the data structure. Use \"bar\" for category comparisons, \"line\" for trends over a continuous dimension, \"pie\" for proportions summing to 100%. Penalize mismatched types (e.g., \"pie\" for data that doesn't sum to 100%).\n\n2. DATA ACCURACY: Data points must faithfully reflect the VISUAL_DESCRIPTION. If the description gives specific values, use them exactly. If the description is qualitative (e.g., \"rises then falls\"), illustrative values are expected — but they must match the described pattern. Do NOT add extra data points beyond what the description specifies.\n\n3. TITLE: Must be concise (max 50 chars), descriptive, and in the correct language.\n\n4. LANGUAGE: All text content (title, data point names) must be in the specified language. Only JSON field names and enum values should be in English.\n",
+  "judgedAt": "2026-04-05T21:27:17.444Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Correct chart type, exactly 3 data points matching the description. Values (12, 18, 95) show B-tree fastest, hash slightly slower, and full table scan dramatically slower. Title is concise (35 chars), descriptive, and in English. Clean and well-structured.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Identical data and structure to Model G with equally good values. Title is slightly less descriptive ('by Index' vs 'by Index Type') but still clear and concise. Essentially equivalent to Model G.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Correct chart type, 3 data points. Values (15, 25, 90) capture the pattern well — B-tree fastest, hash slightly slower, full scan dramatically slower. The gap between B-tree and hash (15 vs 25) is a bit larger than 'slightly slower' suggests, but still reasonable. Title is concise and clear.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Correct chart type, 3 data points. Values (5, 8, 85) capture the pattern well with B-tree fastest, hash slightly slower, and full scan dramatically slower. Title is good. Slightly less ideal proportions but the pattern is clear.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Same excellent values as Model G (12, 18, 95), but title is 42 characters — close to the 50-char limit but valid. However, 'Query Performance by Database Index Type' is slightly verbose. Still a strong output.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Correct chart type, 3 data points. Values (10, 15, 120) capture the pattern well. The dramatic gap for full scan is clear. Title 'Query Execution Time by Index Type' is 37 chars and descriptive. Solid output.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Correct chart type, 3 data points. Values (10, 15, 200) show the correct pattern. The jump to 200 for full table scan is quite extreme but still illustrates 'dramatically slower' appropriately. Title is good.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Correct chart type, 3 data points. Values (12, 18, 320) show the correct pattern but 320 is excessively dramatic compared to the indexed values, making the bar chart hard to read. Title includes '(ms)' which adds specificity not in the description but isn't wrong. Title is 40 chars, within limit.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "The values are inverted — higher values for B-tree (95) and lower for full table scan (10), implying a 'performance score' interpretation. While not strictly wrong, the description says 'fastest' and 'slower' which more naturally maps to execution time (lower = better). This interpretation is less intuitive and could confuse readers. The pattern of 'slightly slower' between B-tree and hash (95 vs 75) also seems too large a gap.",
+          "score": 5.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Perfectly follows all instructions. By explicitly using 'Execution Time' in the title, the model brilliantly clarifies why lower numerical values represent the 'fastest' index, eliminating any ambiguity.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Perfectly follows all instructions. Adding '(ms)' to the title smartly clarifies that the values represent time, making total sense of why lower values indicate the 'fastest' performance.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Flawlessly follows instructions. The model smartly interprets 'performance' as a higher-is-better metric (such as throughput or queries per second), assigning the highest value to the 'fastest' index and providing excellent illustrative proportions.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Follows all instructions well and provides excellent illustrative proportions (a 20x jump) for 'dramatically slower'. However, plotting lower values for 'fastest' under the general title 'Performance' is slightly ambiguous without specifying a unit like time or latency.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Follows all instructions and provides strong illustrative proportions (a 17x jump). Similar to other models, using lower values for 'fastest' under a general 'Performance' title leaves a minor ambiguity compared to explicitly specifying execution time.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Follows all instructions and creates a valid chart. The proportions are good, though slightly less 'dramatic' (6x jump) than other models. The title doesn't clarify if the metric is time or throughput to explain the lower values.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Follows all instructions with valid illustrative data. The jump to 95 represents 'dramatically slower' adequately, though using lower values for 'performance' is slightly ambiguous without unit specification.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Meets all requirements and provides reasonable illustrative data. The proportions are good, but the lower-is-better metric under a general 'Performance' title lacks the clarifying units seen in the top-scoring models.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Successfully generates the chart with exactly three data points and valid illustrative values. The title is concise, but lacks a unit or metric specification to intuitively explain why lower values mean faster performance.",
+          "score": 9
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "It uses the correct bar chart, exactly three data points, and illustrative values that clearly match the intended ordering: B-tree fastest, hash slightly slower, full table scan dramatically slower. The title is concise, descriptive, in English, and under the 50-character limit.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "This closely follows the prompt with an appropriate bar chart, sensible illustrative values, and clear English labels. Its title is slightly less specific than Model G’s but still concise, accurate, and within the limit.",
+          "score": 9.3
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "The chart type, number of data points, and relative values all fit the description well, with full table scan much worse than the indexed approaches. The title is accurate and under 50 characters, though the small gap between B-tree and hash is a bit less clearly 'slightly slower' than some stronger answers.",
+          "score": 9.1
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "This is a solid response with the correct chart type and a plausible ordering of values that reflects the described performance pattern. The title is acceptable, but the distinction between hash and full table scan is less dramatic than in the best outputs.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "The data pattern is strong and faithful to the description, but the title exceeds the 50-character maximum, which is a direct prompt violation. That formatting miss meaningfully lowers an otherwise high-quality answer.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "The values appropriately show B-tree fastest, hash slightly slower, and full table scan dramatically slower, and the chart type is correct. However, the title exceeds the 50-character limit, which is a significant instruction-following error.",
+          "score": 6.7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "The data values are plausible and the chart type is correct, but the title exceeds the 50-character maximum. It also shifts the framing specifically to execution time, which is reasonable but slightly more inferred than necessary.",
+          "score": 6.6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "The comparative pattern is valid and the chart type is correct, but the title exceeds 50 characters and introduces '(ms)' despite no unit being provided in the prompt. That added unsupported detail is a notable accuracy/instruction issue.",
+          "score": 5.8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "This output reverses the intended meaning by giving the fastest option the highest value and the slowest option the lowest, which misrepresents the described performance ranking. Although the chart type is correct, this is a major factual failure.",
+          "score": 2.2
+        }
+      ]
+    }
+  ],
+  "taskId": "visual-chart",
+  "testCaseId": "en-bar-qualitative-performance-1"
+}

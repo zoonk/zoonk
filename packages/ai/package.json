@@ -41,9 +41,19 @@
     "./tasks/lessons/kind": "./src/tasks/lessons/lesson-kind.ts",
     "./tasks/steps/select-image": "./src/tasks/steps/step-select-image.ts",
     "./tasks/steps/visual-image": "./src/tasks/steps/step-visual-image.ts",
-    "./tasks/steps/visual": "./src/tasks/steps/step-visual.ts"
+    "./tasks/steps/visual": "./src/tasks/steps/step-visual.ts",
+    "./tasks/visuals/chart": "./src/tasks/visuals/visual-chart.ts",
+    "./tasks/visuals/code": "./src/tasks/visuals/visual-code.ts",
+    "./tasks/visuals/diagram": "./src/tasks/visuals/visual-diagram.ts",
+    "./tasks/visuals/formula": "./src/tasks/visuals/visual-formula.ts",
+    "./tasks/visuals/music": "./src/tasks/visuals/visual-music.ts",
+    "./tasks/visuals/quote": "./src/tasks/visuals/visual-quote.ts",
+    "./tasks/visuals/table": "./src/tasks/visuals/visual-table.ts",
+    "./tasks/visuals/timeline": "./src/tasks/visuals/visual-timeline.ts"
   },
   "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
     "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
@@ -56,7 +66,8 @@
   "devDependencies": {
     "@types/node": "^24",
     "@typescript/native-preview": "7.0.0-dev.20260401.1",
-    "@zoonk/tsconfig": "workspace:*"
+    "@zoonk/tsconfig": "workspace:*",
+    "vitest": "4.1.2"
   },
   "peerDependencies": {
     "server-only": ">=0.0.1",

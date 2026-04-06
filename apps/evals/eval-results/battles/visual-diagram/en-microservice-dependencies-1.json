@@ -1,0 +1,185 @@
+{
+  "expectations": "\nEVALUATION CRITERIA:\n\n1. NODE QUALITY: Node labels should be clear (max 30 chars) and use the description's exact wording when it fits. Do not add qualifiers or synonyms not in the description.\n\n2. EDGE DIRECTION: Edges use \"from\" (the actor — who does the action) and \"to\" (the receiver). Evaluate whether the direction is correct for the described relationship. For example, \"A reads from B\" should be from=A, to=B (A is the actor).\n\n3. EDGE LABELS: Each edge label should describe a single action or relationship. Do NOT penalize for combining closely related actions on a single edge when only one connection exists between two nodes.\n\n4. POST-PROCESSING: The output goes through post-processing where: node IDs are auto-generated from labels (the model only provides labels), \"from\"/\"to\" labels are resolved to \"source\"/\"target\" IDs, and orphan nodes are removed. The output you see has \"id\", \"source\", and \"target\" fields — this is expected. Do NOT penalize for having these fields instead of label-only nodes or \"from\"/\"to\" edges.\n\n5. SCHEMA LIMITATIONS: The diagram schema only supports nodes and edges. Do NOT penalize for internal actions that cannot be represented as edges (e.g., \"transforms data\" is an internal process, not a connection). Do NOT penalize for reasonable interpretations of ambiguous spatial descriptions (e.g., \"sits between\" can be modeled in multiple valid ways).\n\n6. NO POSITIONS: Output must NOT include x/y coordinates or position data.\n\n7. FOCUS: 3-7 nodes for optimal clarity. If the description implies more, prioritize the most important relationships.\n\n8. LANGUAGE: All text content (node labels, edge labels) must be in the specified language. Only JSON field names should be in English.\n",
+  "judgedAt": "2026-04-05T22:50:39.091Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "All 7 nodes match the description exactly. Edges faithfully reproduce the description: 'connects to' for API Gateway→User/Order Service (matches description's 'connects to'), 'depends on' for Order→Payment/Inventory, 'connects to' for Payment→External Provider, and 'connects to' for Config Service edges (matches 'All services connect to'). Most faithful to the original wording throughout.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Identical to Model B in structure and labels. Uses 'connects to' consistently for the API Gateway and Config Service edges, which directly mirrors the description's language. Fully faithful output.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Identical to Models B, D, F, G, and I. Same nodes, same edges, same labels. Equally faithful to the description.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Identical output to Models B, D, E, G, and I. Correctly uses description's exact wording for all edge labels.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Identical output to Models B, D, E, F, and I. All edges and nodes faithfully match the description.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Identical output to Models B, D, E, F, and G. Faithful reproduction of the description's relationships and wording.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Nodes are correct. Uses 'routes to' for API Gateway edges (reasonable interpretation but not the description's word 'connects to'), and 'uses' for Config Service edges instead of the description's 'connect to'. Both are reasonable interpretations but deviate from the description's exact wording.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Nodes are correct. Uses 'routes to' for API Gateway (not the description's 'connects to') and 'reads config' for Config Service edges (the description says 'connect to', not 'reads config'—this adds an interpretation not present in the description). Slightly more deviation than Model H.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Identical to Model A—uses 'routes to' and 'reads config'. Same deviations from the description's exact wording. Tied with Model A.",
+          "score": 7
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model D flawlessly translates the visual description into the requested JSON schema. It accurately captures all nodes and directly uses the action verbs provided in the text ('connects to', 'depends on') for the edge labels without hallucinating inferred technical actions.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Model E perfectly follows all instructions. It captures the nodes and their relationships flawlessly, maintaining the exact terminology used in the prompt for edge labels ('connects to' instead of injecting domain assumptions).",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model F provides a perfect output. Node labels are clean and accurately extracted, and edge labels mirror the exact relationship descriptions ('connects to', 'depends on') provided in the prompt.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Model G perfectly maps the described architecture into the schema. It appropriately resists the urge to add synonyms or assumptions to the edge labels, strictly adhering to the verbs given in the description.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Model I exhibits excellent instruction-following. It maps out all 7 nodes and 10 edges with complete accuracy, correctly retaining the phrasing ('connects to') from the text.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Model B provides an excellent structure but slightly deviates by using 'routes to' for the API Gateway connections instead of the exact phrase 'connects to' provided in the text. However, the rest of the diagram is perfectly modeled.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Model H correctly structures the nodes and edges, but it substitutes the prompt's wording ('connects to') with domain-specific assumptions ('routes to', 'uses'). While technically plausible, it drifts from the direct textual source.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model A correctly identifies all nodes and dependencies but takes liberties with the edge labels. Instead of using the text's explicitly stated 'connects to', it hallucinates the labels 'routes to' and 'reads config'.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model C successfully maps the architecture but hallucinates edge labels ('routes to', 'reads config') instead of using the simple 'connects to' relationship explicitly defined in the source description.",
+          "score": 8
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Faithfully captures all described nodes and edge directions, and its labels stay closest to the source wording, especially for the shared Config Service connections. The only notable weakness is exceeding the preferred 3-7 node focus limit, but the prompt explicitly implies these seven services plus Config and provider.",
+          "score": 9.4
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Very accurate structure and directions, with strong labels like 'routes to' and reasonable 'uses' edges to Config Service. 'Uses' is a slight interpretation beyond the exact 'connects to' wording, so it is marginally less faithful than the best output.",
+          "score": 9.1
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Correct nodes, directions, and complete coverage of the described dependencies with no hallucinated elements. It is slightly less precise than the top entries because 'connects to' for API Gateway edges is less informative than 'routes to'.",
+          "score": 8.9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Equivalent in quality to Model D: complete, accurate, and structurally faithful. The edge labels are generic in a couple of places, but still acceptable and aligned with the description.",
+          "score": 8.9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Equivalent to Models D and E, with correct structure and no factual issues. The main limitation is generic labeling where more specific relationship wording was available.",
+          "score": 8.9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Equivalent to the other generic-but-correct outputs: all nodes and edges are present and directed properly. It loses a bit of quality for using broad 'connects to' labels where the prompt supports more specific phrasing.",
+          "score": 8.9
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Accurate and complete, with no schema violations or direction mistakes. Like several others, it is slightly weaker because some edge labels are less semantically precise than they could be.",
+          "score": 8.9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Structure and directions are correct, but 'reads config' is a stronger assumption than the description's simpler 'connect to a shared Config Service.' That interpretive leap makes it a bit less faithful than outputs that keep the Config edges more neutral.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Same strengths and weakness as Model A: the dependency graph is correct, but 'reads config' adds behavior not explicitly stated. That makes it slightly less accurate for a task that prioritizes faithful extraction over inference.",
+          "score": 8.6
+        }
+      ]
+    }
+  ],
+  "taskId": "visual-diagram",
+  "testCaseId": "en-microservice-dependencies-1"
+}

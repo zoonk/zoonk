@@ -1,0 +1,141 @@
+{
+  "modelId": "openai/gpt-5.4",
+  "results": [
+    {
+      "steps": [
+        {
+          "conclusion": "None. The response captures the main entities and most stated relationships correctly, uses valid English labels under 30 characters, includes no orphan nodes, and does not add forbidden position data. There are no severe factual or instruction-breaking errors.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The description says the Cache layer sits between the Load Balancer and the App Servers, but the output only includes Load Balancer -> Cache and omits any Cache -> App Server connections. This makes the cache's intermediary role underrepresented. Also, using 'App Server 1' and 'App Server 2' is a mild interpretation of 'one of two App Servers' rather than exact wording from the description, though it is understandable and useful.",
+          "kind": "minorErrors",
+          "score": 8.2
+        },
+        {
+          "conclusion": "Could better reflect the stated topology by adding edges from Cache to each App Server (or otherwise modeling the cache as between them), since that relationship is explicitly mentioned. It could also adhere even more closely to the original wording for node labels where possible. Still, the current diagram is clear and largely faithful.",
+          "kind": "potentialImprovements",
+          "score": 8.4
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. NODE QUALITY: Node labels should be clear (max 30 chars) and use the description's exact wording when it fits. Do not add qualifiers or synonyms not in the description.\n\n2. EDGE DIRECTION: Edges use \"from\" (the actor — who does the action) and \"to\" (the receiver). Evaluate whether the direction is correct for the described relationship. For example, \"A reads from B\" should be from=A, to=B (A is the actor).\n\n3. EDGE LABELS: Each edge label should describe a single action or relationship. Do NOT penalize for combining closely related actions on a single edge when only one connection exists between two nodes.\n\n4. POST-PROCESSING: The output goes through post-processing where: node IDs are auto-generated from labels (the model only provides labels), \"from\"/\"to\" labels are resolved to \"source\"/\"target\" IDs, and orphan nodes are removed. The output you see has \"id\", \"source\", and \"target\" fields — this is expected. Do NOT penalize for having these fields instead of label-only nodes or \"from\"/\"to\" edges.\n\n5. SCHEMA LIMITATIONS: The diagram schema only supports nodes and edges. Do NOT penalize for internal actions that cannot be represented as edges (e.g., \"transforms data\" is an internal process, not a connection). Do NOT penalize for reasonable interpretations of ambiguous spatial descriptions (e.g., \"sits between\" can be modeled in multiple valid ways).\n\n6. NO POSITIONS: Output must NOT include x/y coordinates or position data.\n\n7. FOCUS: 3-7 nodes for optimal clarity. If the description implies more, prioritize the most important relationships.\n\n8. LANGUAGE: All text content (node labels, edge labels) must be in the specified language. Only JSON field names should be in English.\n",
+        "id": "en-network-request-flow-1",
+        "userInput": {
+          "description": "Diagram showing a web request flow: Client sends request to Load Balancer, which routes to one of two App Servers. Both App Servers connect to a shared Database. The Load Balancer also connects to a Cache layer that sits between it and the App Servers.",
+          "language": "en"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "There is one concrete minor error in edge direction: for the relationship 'A reads from B', the instructions define A as the actor, so the edge should be from 'Processing Worker' to 'Message Queue' with label 'reads from'. The result instead uses source='message-queue' and target='processing-worker', reversing the actor/receiver semantics for that edge. Everything else is faithful: exact node labels are used, all labels are under 30 characters, there are 7 connected nodes, no positions are included, and other edge directions appear correct.",
+          "kind": "minorErrors",
+          "score": 8.2
+        },
+        {
+          "conclusion": "A small improvement would be to flip the 'reads from' edge direction so it matches the stated actor-based rule. Aside from that, the output is strong and aligned with the description and schema expectations.",
+          "kind": "potentialImprovements",
+          "score": 9.2
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. NODE QUALITY: Node labels should be clear (max 30 chars) and use the description's exact wording when it fits. Do not add qualifiers or synonyms not in the description.\n\n2. EDGE DIRECTION: Edges use \"from\" (the actor — who does the action) and \"to\" (the receiver). Evaluate whether the direction is correct for the described relationship. For example, \"A reads from B\" should be from=A, to=B (A is the actor).\n\n3. EDGE LABELS: Each edge label should describe a single action or relationship. Do NOT penalize for combining closely related actions on a single edge when only one connection exists between two nodes.\n\n4. POST-PROCESSING: The output goes through post-processing where: node IDs are auto-generated from labels (the model only provides labels), \"from\"/\"to\" labels are resolved to \"source\"/\"target\" IDs, and orphan nodes are removed. The output you see has \"id\", \"source\", and \"target\" fields — this is expected. Do NOT penalize for having these fields instead of label-only nodes or \"from\"/\"to\" edges.\n\n5. SCHEMA LIMITATIONS: The diagram schema only supports nodes and edges. Do NOT penalize for internal actions that cannot be represented as edges (e.g., \"transforms data\" is an internal process, not a connection). Do NOT penalize for reasonable interpretations of ambiguous spatial descriptions (e.g., \"sits between\" can be modeled in multiple valid ways).\n\n6. NO POSITIONS: Output must NOT include x/y coordinates or position data.\n\n7. FOCUS: 3-7 nodes for optimal clarity. If the description implies more, prioritize the most important relationships.\n\n8. LANGUAGE: All text content (node labels, edge labels) must be in the specified language. Only JSON field names should be in English.\n",
+        "id": "en-data-pipeline-1",
+        "userInput": {
+          "description": "Diagram of a data pipeline: Raw Data feeds into an Ingestion Service, which writes to a Message Queue. A Processing Worker reads from the queue, transforms data, and writes to a Data Warehouse. A separate Monitoring Service watches the Processing Worker and sends alerts to an Alert Dashboard.",
+          "language": "en"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response omits the node 'Token JWT' even though the description explicitly says 'gera um Token JWT e retorna ao Usuário'. This loses one described entity and one potential connection, though the schema limitation and focus guidance make this somewhat understandable. Also, the edge 'retorna' from 'Servidor de Auth' to 'Usuário' is less specific than the described content because it does not mention that what is returned is the token.",
+          "kind": "minorErrors",
+          "score": 8.4
+        },
+        {
+          "conclusion": "A stronger extraction could include 'Token JWT' as a node, since it is a named artifact in the flow and fits within the 3-7 node guideline, allowing edges such as Auth Server -> Token JWT and Token JWT -> Usuário, if desired. Alternatively, if keeping 4 nodes, the return edge label could be made more explicit, e.g. 'retorna token JWT'. Otherwise, node labels, edge directions, language, and lack of position data are all good.",
+          "kind": "potentialImprovements",
+          "score": 8.8
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. NODE QUALITY: Node labels should be clear (max 30 chars) and use the description's exact wording when it fits. Do not add qualifiers or synonyms not in the description.\n\n2. EDGE DIRECTION: Edges use \"from\" (the actor — who does the action) and \"to\" (the receiver). Evaluate whether the direction is correct for the described relationship. For example, \"A reads from B\" should be from=A, to=B (A is the actor).\n\n3. EDGE LABELS: Each edge label should describe a single action or relationship. Do NOT penalize for combining closely related actions on a single edge when only one connection exists between two nodes.\n\n4. POST-PROCESSING: The output goes through post-processing where: node IDs are auto-generated from labels (the model only provides labels), \"from\"/\"to\" labels are resolved to \"source\"/\"target\" IDs, and orphan nodes are removed. The output you see has \"id\", \"source\", and \"target\" fields — this is expected. Do NOT penalize for having these fields instead of label-only nodes or \"from\"/\"to\" edges.\n\n5. SCHEMA LIMITATIONS: The diagram schema only supports nodes and edges. Do NOT penalize for internal actions that cannot be represented as edges (e.g., \"transforms data\" is an internal process, not a connection). Do NOT penalize for reasonable interpretations of ambiguous spatial descriptions (e.g., \"sits between\" can be modeled in multiple valid ways).\n\n6. NO POSITIONS: Output must NOT include x/y coordinates or position data.\n\n7. FOCUS: 3-7 nodes for optimal clarity. If the description implies more, prioritize the most important relationships.\n\n8. LANGUAGE: All text content (node labels, edge labels) must be in the specified language. Only JSON field names should be in English.\n\nLANGUAGE REQUIREMENT: All content must be in Brazilian Portuguese.\n    ",
+        "id": "pt-fluxo-autenticacao-1",
+        "userInput": {
+          "description": "Diagrama do fluxo de autenticação: Usuário envia credenciais para o Servidor de Auth. O Servidor de Auth valida contra o Banco de Dados de Usuários. Se válido, gera um Token JWT e retorna ao Usuário. O Usuário usa o token para acessar a API, que valida o token com o Servidor de Auth.",
+          "language": "pt"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The description says the distribution center dispatches to three retail stores and that each retail store can also return products to the distribution center. The output collapses these into a single aggregated node 'Tiendas Minoristas' instead of representing three stores, so it does not faithfully preserve the specified cardinality. This reduces structural fidelity, though the main flow and directions are still understandable.",
+          "kind": "minorErrors",
+          "score": 8.2
+        },
+        {
+          "conclusion": "Use three separate store nodes (for example, if labels are available from the description, three instances of 'Tienda Minorista' distinguished only as needed by the schema/post-processing) so the 'a tres Tiendas Minoristas' requirement is represented explicitly. Otherwise, the node labels, edge directions, Spanish text, and lack of position data are all good.",
+          "kind": "potentialImprovements",
+          "score": 8.6
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. NODE QUALITY: Node labels should be clear (max 30 chars) and use the description's exact wording when it fits. Do not add qualifiers or synonyms not in the description.\n\n2. EDGE DIRECTION: Edges use \"from\" (the actor — who does the action) and \"to\" (the receiver). Evaluate whether the direction is correct for the described relationship. For example, \"A reads from B\" should be from=A, to=B (A is the actor).\n\n3. EDGE LABELS: Each edge label should describe a single action or relationship. Do NOT penalize for combining closely related actions on a single edge when only one connection exists between two nodes.\n\n4. POST-PROCESSING: The output goes through post-processing where: node IDs are auto-generated from labels (the model only provides labels), \"from\"/\"to\" labels are resolved to \"source\"/\"target\" IDs, and orphan nodes are removed. The output you see has \"id\", \"source\", and \"target\" fields — this is expected. Do NOT penalize for having these fields instead of label-only nodes or \"from\"/\"to\" edges.\n\n5. SCHEMA LIMITATIONS: The diagram schema only supports nodes and edges. Do NOT penalize for internal actions that cannot be represented as edges (e.g., \"transforms data\" is an internal process, not a connection). Do NOT penalize for reasonable interpretations of ambiguous spatial descriptions (e.g., \"sits between\" can be modeled in multiple valid ways).\n\n6. NO POSITIONS: Output must NOT include x/y coordinates or position data.\n\n7. FOCUS: 3-7 nodes for optimal clarity. If the description implies more, prioritize the most important relationships.\n\n8. LANGUAGE: All text content (node labels, edge labels) must be in the specified language. Only JSON field names should be in English.\n\nLANGUAGE REQUIREMENT: All content must be in Latin American Spanish.\n    ",
+        "id": "es-cadena-suministro-1",
+        "userInput": {
+          "description": "Diagrama de cadena de suministro: Proveedor envía materias primas a la Fábrica. La Fábrica produce productos y los envía al Centro de Distribución. El Centro de Distribución despacha a tres Tiendas Minoristas. Cada Tienda Minorista también puede devolver productos al Centro de Distribución.",
+          "language": "es"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The output is largely faithful, but there is one minor issue: the description says 'All services connect to a shared Config Service.' The node label was changed to 'Config Service' instead of using the exact wording 'shared Config Service'. While this is understandable and still clear, the instructions prefer exact wording when it fits within 30 characters, and 'shared Config Service' would fit. Everything else—node count, connectivity, edge directions, and absence of positions—is correct.",
+          "kind": "minorErrors",
+          "score": 8.9
+        },
+        {
+          "conclusion": "A small improvement would be to preserve the exact node wording from the description by labeling the node 'shared Config Service' rather than 'Config Service'. Otherwise, the structure is strong: all key entities are represented, all nodes are connected, edge directions match the described dependencies, and labels are in English as required.",
+          "kind": "potentialImprovements",
+          "score": 9.3
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. NODE QUALITY: Node labels should be clear (max 30 chars) and use the description's exact wording when it fits. Do not add qualifiers or synonyms not in the description.\n\n2. EDGE DIRECTION: Edges use \"from\" (the actor — who does the action) and \"to\" (the receiver). Evaluate whether the direction is correct for the described relationship. For example, \"A reads from B\" should be from=A, to=B (A is the actor).\n\n3. EDGE LABELS: Each edge label should describe a single action or relationship. Do NOT penalize for combining closely related actions on a single edge when only one connection exists between two nodes.\n\n4. POST-PROCESSING: The output goes through post-processing where: node IDs are auto-generated from labels (the model only provides labels), \"from\"/\"to\" labels are resolved to \"source\"/\"target\" IDs, and orphan nodes are removed. The output you see has \"id\", \"source\", and \"target\" fields — this is expected. Do NOT penalize for having these fields instead of label-only nodes or \"from\"/\"to\" edges.\n\n5. SCHEMA LIMITATIONS: The diagram schema only supports nodes and edges. Do NOT penalize for internal actions that cannot be represented as edges (e.g., \"transforms data\" is an internal process, not a connection). Do NOT penalize for reasonable interpretations of ambiguous spatial descriptions (e.g., \"sits between\" can be modeled in multiple valid ways).\n\n6. NO POSITIONS: Output must NOT include x/y coordinates or position data.\n\n7. FOCUS: 3-7 nodes for optimal clarity. If the description implies more, prioritize the most important relationships.\n\n8. LANGUAGE: All text content (node labels, edge labels) must be in the specified language. Only JSON field names should be in English.\n",
+        "id": "en-microservice-dependencies-1",
+        "userInput": {
+          "description": "Diagram showing microservice dependencies: API Gateway connects to User Service and Order Service. Order Service depends on Payment Service and Inventory Service. Payment Service connects to an External Payment Provider. All services connect to a shared Config Service.",
+          "language": "en"
+        }
+      }
+    }
+  ],
+  "taskId": "visual-diagram"
+}

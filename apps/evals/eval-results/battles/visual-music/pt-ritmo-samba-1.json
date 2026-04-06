@@ -1,0 +1,185 @@
+{
+  "expectations": "\nEVALUATION CRITERIA:\n\n1. ABC VALIDITY: The abc field must contain valid ABC notation with required headers: X:1, M: (meter), L: (default note length), K: (key). The notation must render correctly in an ABC parser.\n\n2. MUSICAL ACCURACY: The notation must faithfully represent what the VISUAL_DESCRIPTION specifies — correct notes, intervals, rhythm, and key.\n\n3. CONSTRAINTS: Single voice only (no V:), no lyrics (w:), no layout directives (%%), no MIDI directives. Keep notation to 1-4 lines of notes.\n\n4. DESCRIPTION QUALITY: The \"description\" field must be a brief plain-text explanation (max 100 chars) of what the notation demonstrates. It must NOT be a copy of the VISUAL_DESCRIPTION input.\n\n5. LANGUAGE: The description field must be in the specified language. ABC notation is language-neutral.\n\nLANGUAGE REQUIREMENT: The description field must be in Brazilian Portuguese.\n    ",
+  "judgedAt": "2026-04-06T15:13:29.432Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Uses L:1/16 with the pattern G G2 G G3 G = 1+2+1+3+1 = 8 sixteenths = 2/4. The rhythm is: semicolcheia (1), colcheia (2), semicolcheia (1) for beat 1, then colcheia pontuada (3) + semicolcheia (1) for beat 2. This exactly matches the description. Two measures with repeat. Valid ABC with proper headers and newlines. Description is concise and in Portuguese.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Same rhythmic pattern as Model A (C C2 C C3 C = 1+2+1+3+1 = 8 sixteenths), which correctly represents the samba pattern. However, headers are not separated by newlines — they're all on one line with spaces, which is invalid ABC notation (headers must be on separate lines). This is a significant formatting error. Description is appropriate.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Same correct rhythm (c c2 c c3 c = 8 sixteenths in 2/4) using repeat signs |: :| for two measures. Valid ABC notation with proper headers. However, it only writes one measure with repeats rather than two explicit measures, which is a minor but acceptable interpretation. Description is good and in Portuguese.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Pattern C2C2 C3C = 2+2+3+1 = 8 sixteenths. This gives colcheia, colcheia, colcheia pontuada, semicolcheia — which does NOT match the specified pattern (semicolcheia, colcheia, semicolcheia, colcheia pontuada, semicolcheia). The rhythm is wrong. Valid ABC format otherwise. Description in Portuguese.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Uses L:1/16 but then uses fractional note lengths like C/2 which would be 1/32 notes, making the measures far too short. The total durations per bar don't add up to 8 sixteenths. The rhythm doesn't match the description and the notation is likely invalid or will render incorrectly.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Uses L:1/8 with complex subdivisions. A/2 = semiquaver, A = quaver. Pattern 'A/2A A/2A' = 0.5+1+0.5+1 = 3 eighth notes, not 2 (needed for one beat in 2/4). The measures don't add up correctly, and the rhythmic pattern doesn't match the samba description. The A>A/2 notation is also problematic.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Starts with an empty measure z4, then has 5 measures total — far exceeding the 2-measure requirement. Pattern A2 A A2 = 2+1+1+2 = 6 (not 8 sixteenths for 2/4). The measures don't have correct durations, the rhythm doesn't match, and it's too long. Description exceeds 100 characters.",
+          "score": 2.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Uses triplets (3cd which is completely wrong for a samba rhythm in straight 2/4 time. The notation doesn't represent semicolcheias and colcheias at all. Musical content is entirely inaccurate.",
+          "score": 1.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Uses 'S' as note names which are not valid ABC notation (ABC uses A-G and a-g). The entire notation is invalid and would not parse. Also uses malformed triplet syntax. Complete failure in ABC validity.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Perfectly accurate. It correctly translates the complex samba rhythm into ABC notation, precisely mapping the sixteenth and eighth note combinations. The ABC format is valid and the description is concise.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Excellent output. It accurately captures the requested syncopated rhythm. Using repeat barlines is a valid interpretation of 'repeat for two measures', though writing out the two measures explicitly (like Model A) is slightly closer to standard expectations.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Generates valid ABC notation, but fails musically. It outputs 'C2C2' (eighth, eighth) for the first beat instead of the requested sixteenth-eighth-sixteenth pattern, losing the characteristic samba syncopation.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Calculated the correct musical rhythm perfectly, but failed to format the ABC string correctly. ABC headers (X:, M:, etc.) must be separated by newlines, not spaces, making this unparseable.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Fails musically. It breaks the 2/4 meter by placing the first and second beats into separate measures and incorrectly calculates the note durations ('A2 A A2' equals 5 sixteenths).",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Incorrectly calculates note values. With a default note length (L:1/16), 'C/2' becomes a thirty-second note, which does not match the prompt's request for sixteenth and eighth notes.",
+          "score": 3
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Poorly formatted ABC notation with concatenated notes ('A/2A') and incorrect rhythm logic that violates the 2/4 time signature.",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Unacceptable. Uses 'S' as a note pitch, which does not exist in ABC notation, rendering the entire string completely invalid.",
+          "score": 1
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Completely invalid ABC syntax. It generates malformed tuplets with missing parameters and fails to represent the requested rhythm entirely.",
+          "score": 1
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "This best matches the requested 2/4 rhythm over two measures with valid ABC headers and a correct Portuguese description. The notation is simple and mostly faithful: 1/16, 1/8, 1/16, then dotted 1/8 plus 1/16, repeated twice.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Musically it represents the requested rhythm accurately over two bars, and the description is brief, clear, and in Portuguese. The main weakness is formatting: the ABC headers are crammed onto one line, which is less standard and may hurt parser compatibility.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "It has the required headers, valid-looking single-voice ABC, and the rhythm sums correctly to two 2/4 measures. However, the first beat is rendered as two eighth notes instead of semiquaver–quaver–semiquaver, so it is not fully faithful to the prompt.",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "This is concise and uses valid headers with a Portuguese description, but it only gives one bar inside a repeat rather than explicitly notating two measures. The rhythm itself is correct for the pattern, though the realization is less faithful to the 'repeat for two measures' instruction.",
+          "score": 7.1
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "It follows most structural constraints and the description is acceptable, but the durations are wrong: C/2 under L:1/16 is a thirty-second note, so the pattern does not match the requested semiquaver/eighth/dotted-eighth grouping. Each bar also sums incorrectly for 2/4.",
+          "score": 4.8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Although it includes valid required headers and stays single-voice, the notation does not match the described rhythm and even inserts an extra rest/introduction measure. The description is also too close to the input and exceeds the 100-character limit.",
+          "score": 4.2
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "The use of repeats is compact, but the ABC rhythm is malformed or at least highly dubious with mixed broken rhythm and half-note-length notation under L:1/8, and it does not clearly realize the specified pattern. The description is fine but too generic compared with the prompt.",
+          "score": 3.9
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "This fails musical accuracy because tuplets of pitch notes do not represent the requested samba rhythm pattern, and with L:1/8 the bars are not a faithful 2/4 realization. The description is in Portuguese but close to a restatement rather than a concise explanation.",
+          "score": 3.2
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "This output is largely invalid ABC because it uses non-note symbols like 'S' as rhythmic tokens without defined pitches, so it would not render correctly. The description is in Portuguese, but it is too long and the notation does not satisfy the core validity requirement.",
+          "score": 1.6
+        }
+      ]
+    }
+  ],
+  "taskId": "visual-music",
+  "testCaseId": "pt-ritmo-samba-1"
+}

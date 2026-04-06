@@ -1,0 +1,52 @@
+{
+  "generatedAt": "2026-04-06T15:01:29.935Z",
+  "modelId": "openai/gpt-5.4-nano",
+  "outputs": [
+    {
+      "duration": 3120.64108299464,
+      "inputTokens": 394,
+      "output": "{\n  \"abc\": \"X:1\\nM:4/4\\nL:1/4\\nK:C\\nC D E F G A B c\",\n  \"description\": \"C major scale up from middle C to one octave above in quarter notes\"\n}",
+      "outputTokens": 55,
+      "systemPrompt": "You generate structured music notation data from a textual description.\n\n## Inputs\n\n- **VISUAL_DESCRIPTION**: A textual description of the musical content to notate — scales, chords, intervals, rhythms, melodies, or musical patterns.\n- **LANGUAGE**: The language for the plain-text explanation in the output.\n\n## Your Task\n\nTransform the VISUAL_DESCRIPTION into a valid music object with `abc` (ABC notation string) and `description` (a brief plain-text explanation).\n\n## Important Distinction\n\nThe `description` field in your output is a brief plain-text explanation of what the notation demonstrates (max 100 characters). This is separate from the VISUAL_DESCRIPTION input — do not copy the input into the output `description`. Instead, write a concise explanation suitable for display alongside the rendered notation.\n\n## Requirements\n\n- Use valid ABC notation with required headers: `X:1`, `M:` (meter), `L:` (default note length), `K:` (key)\n- Keep notation short and focused — 1 to 4 lines of notes\n- Single voice only (no `V:` multi-voice)\n- No lyrics lines (`w:`)\n- No layout directives (`%%`)\n- No MIDI directives\n- The `description` field should be max 100 characters, plain text\n- Extract the musical content faithfully from the VISUAL_DESCRIPTION\n\n## Language\n\nWrite the `description` field in the specified LANGUAGE. ABC notation itself is language-neutral.\n\n- `en`: US English\n- `pt`: Brazilian Portuguese\n- `es`: Latin American Spanish\n",
+      "testCaseId": "en-c-major-scale-1",
+      "userPrompt": "\n    VISUAL_DESCRIPTION: C major scale ascending from middle C to the C one octave above, in quarter notes. 4/4 time signature.\n    LANGUAGE: en\n  "
+    },
+    {
+      "duration": 2573.9810840040445,
+      "inputTokens": 410,
+      "output": "{\n  \"abc\": \"X:1\\nM:4/4\\nL:1/4\\nK:Am\\n[A,C,E] [A]2 [C]2 [E]2\",\n  \"description\": \"A minor chord then A, C, E as quarter notes\"\n}",
+      "outputTokens": 62,
+      "systemPrompt": "You generate structured music notation data from a textual description.\n\n## Inputs\n\n- **VISUAL_DESCRIPTION**: A textual description of the musical content to notate — scales, chords, intervals, rhythms, melodies, or musical patterns.\n- **LANGUAGE**: The language for the plain-text explanation in the output.\n\n## Your Task\n\nTransform the VISUAL_DESCRIPTION into a valid music object with `abc` (ABC notation string) and `description` (a brief plain-text explanation).\n\n## Important Distinction\n\nThe `description` field in your output is a brief plain-text explanation of what the notation demonstrates (max 100 characters). This is separate from the VISUAL_DESCRIPTION input — do not copy the input into the output `description`. Instead, write a concise explanation suitable for display alongside the rendered notation.\n\n## Requirements\n\n- Use valid ABC notation with required headers: `X:1`, `M:` (meter), `L:` (default note length), `K:` (key)\n- Keep notation short and focused — 1 to 4 lines of notes\n- Single voice only (no `V:` multi-voice)\n- No lyrics lines (`w:`)\n- No layout directives (`%%`)\n- No MIDI directives\n- The `description` field should be max 100 characters, plain text\n- Extract the musical content faithfully from the VISUAL_DESCRIPTION\n\n## Language\n\nWrite the `description` field in the specified LANGUAGE. ABC notation itself is language-neutral.\n\n- `en`: US English\n- `pt`: Brazilian Portuguese\n- `es`: Latin American Spanish\n",
+      "testCaseId": "en-minor-triad-1",
+      "userPrompt": "\n    VISUAL_DESCRIPTION: A minor triad: the notes A, C, and E played as a chord, followed by the same three notes played individually as quarter notes. Key of A minor, 4/4 time.\n    LANGUAGE: en\n  "
+    },
+    {
+      "duration": 2584.219749994576,
+      "inputTokens": 424,
+      "output": "{\n  \"abc\": \"X:1\\nM:2/4\\nL:1/8\\nK:C\\n| (3cd (3ef | (3cd (3ef |\",\n  \"description\": \"Padrão rítmico de samba 2/4: semicolcheias e colcheias pontuadas em 2 compassos\"\n}",
+      "outputTokens": 77,
+      "systemPrompt": "You generate structured music notation data from a textual description.\n\n## Inputs\n\n- **VISUAL_DESCRIPTION**: A textual description of the musical content to notate — scales, chords, intervals, rhythms, melodies, or musical patterns.\n- **LANGUAGE**: The language for the plain-text explanation in the output.\n\n## Your Task\n\nTransform the VISUAL_DESCRIPTION into a valid music object with `abc` (ABC notation string) and `description` (a brief plain-text explanation).\n\n## Important Distinction\n\nThe `description` field in your output is a brief plain-text explanation of what the notation demonstrates (max 100 characters). This is separate from the VISUAL_DESCRIPTION input — do not copy the input into the output `description`. Instead, write a concise explanation suitable for display alongside the rendered notation.\n\n## Requirements\n\n- Use valid ABC notation with required headers: `X:1`, `M:` (meter), `L:` (default note length), `K:` (key)\n- Keep notation short and focused — 1 to 4 lines of notes\n- Single voice only (no `V:` multi-voice)\n- No lyrics lines (`w:`)\n- No layout directives (`%%`)\n- No MIDI directives\n- The `description` field should be max 100 characters, plain text\n- Extract the musical content faithfully from the VISUAL_DESCRIPTION\n\n## Language\n\nWrite the `description` field in the specified LANGUAGE. ABC notation itself is language-neutral.\n\n- `en`: US English\n- `pt`: Brazilian Portuguese\n- `es`: Latin American Spanish\n",
+      "testCaseId": "pt-ritmo-samba-1",
+      "userPrompt": "\n    VISUAL_DESCRIPTION: Padrão rítmico básico de samba em 2/4: semicolcheia, colcheia, semicolcheia no primeiro tempo, e colcheia pontuada com semicolcheia no segundo tempo. Repetir por dois compassos.\n    LANGUAGE: pt\n  "
+    },
+    {
+      "duration": 2809.8712910041213,
+      "inputTokens": 406,
+      "output": "{\n  \"abc\": \"X:1\\nM:4/4\\nL:1/2\\nK:G\\nC G |\",\n  \"description\": \"Sube de Do a Sol, intervalo de quinta justa (blancas)\"\n}",
+      "outputTokens": 51,
+      "systemPrompt": "You generate structured music notation data from a textual description.\n\n## Inputs\n\n- **VISUAL_DESCRIPTION**: A textual description of the musical content to notate — scales, chords, intervals, rhythms, melodies, or musical patterns.\n- **LANGUAGE**: The language for the plain-text explanation in the output.\n\n## Your Task\n\nTransform the VISUAL_DESCRIPTION into a valid music object with `abc` (ABC notation string) and `description` (a brief plain-text explanation).\n\n## Important Distinction\n\nThe `description` field in your output is a brief plain-text explanation of what the notation demonstrates (max 100 characters). This is separate from the VISUAL_DESCRIPTION input — do not copy the input into the output `description`. Instead, write a concise explanation suitable for display alongside the rendered notation.\n\n## Requirements\n\n- Use valid ABC notation with required headers: `X:1`, `M:` (meter), `L:` (default note length), `K:` (key)\n- Keep notation short and focused — 1 to 4 lines of notes\n- Single voice only (no `V:` multi-voice)\n- No lyrics lines (`w:`)\n- No layout directives (`%%`)\n- No MIDI directives\n- The `description` field should be max 100 characters, plain text\n- Extract the musical content faithfully from the VISUAL_DESCRIPTION\n\n## Language\n\nWrite the `description` field in the specified LANGUAGE. ABC notation itself is language-neutral.\n\n- `en`: US English\n- `pt`: Brazilian Portuguese\n- `es`: Latin American Spanish\n",
+      "testCaseId": "es-intervalo-quinta-justa-1",
+      "userPrompt": "\n    VISUAL_DESCRIPTION: Intervalo de quinta justa ascendente partiendo de Do: primero la nota Do como blanca, luego Sol como blanca. En clave de Sol, compás de 4/4.\n    LANGUAGE: es\n  "
+    },
+    {
+      "duration": 2749.9842090010643,
+      "inputTokens": 429,
+      "output": "{\n  \"abc\": \"X:1\\nM:4/4\\nL:1/8\\nK:C\\nC2 D2 E F G A B c\",\n  \"description\": \"Shows whole, half, quarter, and eighth durations in 4/4\"\n}",
+      "outputTokens": 58,
+      "systemPrompt": "You generate structured music notation data from a textual description.\n\n## Inputs\n\n- **VISUAL_DESCRIPTION**: A textual description of the musical content to notate — scales, chords, intervals, rhythms, melodies, or musical patterns.\n- **LANGUAGE**: The language for the plain-text explanation in the output.\n\n## Your Task\n\nTransform the VISUAL_DESCRIPTION into a valid music object with `abc` (ABC notation string) and `description` (a brief plain-text explanation).\n\n## Important Distinction\n\nThe `description` field in your output is a brief plain-text explanation of what the notation demonstrates (max 100 characters). This is separate from the VISUAL_DESCRIPTION input — do not copy the input into the output `description`. Instead, write a concise explanation suitable for display alongside the rendered notation.\n\n## Requirements\n\n- Use valid ABC notation with required headers: `X:1`, `M:` (meter), `L:` (default note length), `K:` (key)\n- Keep notation short and focused — 1 to 4 lines of notes\n- Single voice only (no `V:` multi-voice)\n- No lyrics lines (`w:`)\n- No layout directives (`%%`)\n- No MIDI directives\n- The `description` field should be max 100 characters, plain text\n- Extract the musical content faithfully from the VISUAL_DESCRIPTION\n\n## Language\n\nWrite the `description` field in the specified LANGUAGE. ABC notation itself is language-neutral.\n\n- `en`: US English\n- `pt`: Brazilian Portuguese\n- `es`: Latin American Spanish\n",
+      "testCaseId": "en-whole-half-notes-1",
+      "userPrompt": "\n    VISUAL_DESCRIPTION: Demonstration of note durations: a whole note (C), then a half note (D), then two quarter notes (E, F), then four eighth notes (G, A, B, C). Key of C major, 4/4 time. Show how note values divide within measures.\n    LANGUAGE: en\n  "
+    }
+  ],
+  "taskId": "visual-music"
+}

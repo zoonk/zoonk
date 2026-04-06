@@ -1,0 +1,185 @@
+{
+  "expectations": "\nEVALUATION CRITERIA:\n\n1. LATEX VALIDITY: The formula field must contain valid LaTeX syntax that renders correctly. Common issues: unmatched braces, invalid commands, missing backslashes.\n\n2. FORMULA ACCURACY: The formula must match what the VISUAL_DESCRIPTION specifies. If the description names specific variables or notation, use those exactly — do not substitute different symbols.\n\n3. DESCRIPTION QUALITY: The \"description\" field must be a brief plain-text explanation (max 100 chars) of what the formula represents. It must NOT be a copy of the VISUAL_DESCRIPTION input — it should be a concise label suitable for display.\n\n4. FOCUS: One main equation, not a full derivation. For multi-line equations, use LaTeX aligned or cases environments.\n\n5. LANGUAGE: The description field must be in the specified language. LaTeX notation is language-neutral.\n",
+  "judgedAt": "2026-04-05T23:00:22.213Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Valid LaTeX, accurate formula, concise description at 49 chars that's distinct from the input. Mentions the equation form ax²+bx+c=0 which adds context. Excellent overall.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Valid LaTeX, accurate formula, description at 47 chars is concise and informative, mentioning the equation form. Very strong output, essentially equivalent to Model A.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Valid LaTeX, accurate formula, description at 49 chars is concise and descriptive. Mentions the equation form. Excellent quality, on par with A and F.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Valid LaTeX, accurate formula, description at 48 chars is concise and informative. Essentially equivalent to F with minor formatting differences (no spaces in LaTeX, which is fine).",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Valid LaTeX, accurate formula, very concise description at 35 chars. Slightly less informative than others but perfectly valid and well within constraints.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Valid LaTeX, accurate formula, description at 57 chars is good. Slightly more generic than those mentioning ax²+bx+c=0, but still a quality output.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Valid LaTeX, accurate formula, description at 49 chars mentions the equation form. Good output, equivalent quality to the top tier.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Valid LaTeX, accurate formula. Description at 66 chars is acceptable but reads more like a sentence rephrasing the input rather than a concise label. Still within 100 chars.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Valid LaTeX, accurate formula. Description at 73 chars is within limits but is wordy and uses 'second-degree polynomial' which, while correct, is less standard phrasing for this context. Reads more like a rephrased input.",
+          "score": 7.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Perfectly follows all instructions. The formula is accurately translated to LaTeX, and the description is pure plain-text, concise, and clearly explains what the formula represents without exceeding the character limit.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Perfectly follows all instructions. The formula is accurately translated to LaTeX, and the description is pure plain-text, concise, and clearly explains what the formula represents without exceeding the character limit.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Perfectly follows all instructions. The formula is accurately translated to LaTeX, and the description is pure plain-text, concise, and clearly explains what the formula represents without exceeding the character limit.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Perfectly follows all instructions. Provides an accurate LaTeX formula and a very brief, plain-text description that avoids any LaTeX-like syntax.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Excellent output. The formula is correct, and the description successfully avoids LaTeX syntax by utilizing standard unicode characters (²) for the plain-text requirement.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Excellent output. The formula is correct, and the description successfully avoids LaTeX syntax by utilizing standard unicode characters (²) for the plain-text requirement.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Excellent output. The formula is correct, and the description successfully avoids LaTeX syntax by utilizing standard unicode characters (²) for the plain-text requirement.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Excellent output. The formula is correct, and the description successfully avoids LaTeX syntax by utilizing standard unicode characters (²) for the plain-text requirement.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "The formula is perfectly accurate. However, the description uses '^2' which is technically LaTeX/math notation, slightly violating the strict 'plain text (no LaTeX)' rule for the description field.",
+          "score": 9.5
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Accurate LaTeX and a concise English description that stays within 100 characters. It cleanly explains what the formula represents without copying the prompt or adding unnecessary detail.",
+          "score": 9.8
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "The formula is correct and the description is clear, concise, and in English. It is slightly less plain-text compliant because it uses the Unicode superscript character.",
+          "score": 9.4
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "This has the correct formula and a good concise description in English. It is slightly weaker because it uses the Unicode superscript character in the description rather than plain ASCII text.",
+          "score": 9.3
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "The formula is fully correct and the description is concise and informative. It is slightly less ideal because the description includes an equation-like expression and a Unicode superscript character.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "The formula matches the prompt exactly and the description is concise and relevant. It loses a bit for including equation notation in the description instead of a simpler plain-text label.",
+          "score": 9.1
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "The formula is accurate and the description is relevant, but it is a bit less display-friendly because it includes equation notation and ends with punctuation. It also uses a Unicode superscript character in the description.",
+          "score": 8.9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "The formula is correct, but the description exceeds the 100-character limit, which is a direct prompt violation. Aside from that, it is clear and in the correct language.",
+          "score": 6.2
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "The formula is accurate, but the description exceeds the 100-character limit and includes unnecessary extra wording. That prompt violation substantially lowers its score.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "The formula is correct, but the description is clearly over the 100-character maximum. It also adds more wording than needed for a brief display label.",
+          "score": 5.8
+        }
+      ]
+    }
+  ],
+  "taskId": "visual-formula",
+  "testCaseId": "en-quadratic-formula-1"
+}

@@ -1,0 +1,185 @@
+{
+  "expectations": "\nEVALUATION CRITERIA:\n\n1. NODE QUALITY: Node labels should be clear (max 30 chars) and use the description's exact wording when it fits. Do not add qualifiers or synonyms not in the description.\n\n2. EDGE DIRECTION: Edges use \"from\" (the actor — who does the action) and \"to\" (the receiver). Evaluate whether the direction is correct for the described relationship. For example, \"A reads from B\" should be from=A, to=B (A is the actor).\n\n3. EDGE LABELS: Each edge label should describe a single action or relationship. Do NOT penalize for combining closely related actions on a single edge when only one connection exists between two nodes.\n\n4. POST-PROCESSING: The output goes through post-processing where: node IDs are auto-generated from labels (the model only provides labels), \"from\"/\"to\" labels are resolved to \"source\"/\"target\" IDs, and orphan nodes are removed. The output you see has \"id\", \"source\", and \"target\" fields — this is expected. Do NOT penalize for having these fields instead of label-only nodes or \"from\"/\"to\" edges.\n\n5. SCHEMA LIMITATIONS: The diagram schema only supports nodes and edges. Do NOT penalize for internal actions that cannot be represented as edges (e.g., \"transforms data\" is an internal process, not a connection). Do NOT penalize for reasonable interpretations of ambiguous spatial descriptions (e.g., \"sits between\" can be modeled in multiple valid ways).\n\n6. NO POSITIONS: Output must NOT include x/y coordinates or position data.\n\n7. FOCUS: 3-7 nodes for optimal clarity. If the description implies more, prioritize the most important relationships.\n\n8. LANGUAGE: All text content (node labels, edge labels) must be in the specified language. Only JSON field names should be in English.\n",
+  "judgedAt": "2026-04-05T22:50:41.443Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "All 7 nodes correct with exact wording. All edge directions correct: \"reads from\" has source=processing-worker, target=message-queue (Processing Worker is the actor). Edge label \"sends alerts to\" matches the description. No issues.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Identical to Model D in every respect — all nodes, edge directions, and edge labels are correct. \"reads from\" correctly has Processing Worker as source. \"sends alerts to\" matches description.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Identical to Models D and E — perfect node labels, correct edge directions including \"reads from\" with Processing Worker as source, and accurate edge labels including \"sends alerts to\".",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Identical to Models D, E, and F — all nodes and edges are correct with proper directions and labels. No issues found.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "All nodes and edge directions are correct, including \"reads from\" with Processing Worker as source. Minor difference: edge label is \"sends alerts\" instead of \"sends alerts to\" — slightly less faithful to the description but still acceptable.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "All nodes correct. However, the \"reads from\" edge has source=message-queue and target=processing-worker, which is incorrect — the description says \"Processing Worker reads from the queue,\" making Processing Worker the actor (source). Other edges are fine.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Same incorrect direction as Model A for \"reads from\" — source=message-queue, target=processing-worker. The actor (Processing Worker) should be the source. Otherwise correct.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Has the same \"reads from\" direction error as Models A and C (source=message-queue instead of processing-worker). Additionally, the edge label \"sends\" is less descriptive than the description's \"sends alerts to\". Two issues compound.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Has the \"reads from\" direction error (source=message-queue). Also changes the edge label to \"sends data to\" instead of using the description's wording \"reads from\" — this misrepresents the relationship. Two issues.",
+          "score": 6.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Flawless execution. Followed all instructions perfectly, including the specific edge direction rule for 'reads from' where the Processing Worker is the actor and the Message Queue is the target.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Flawless execution. Followed all instructions perfectly, including the specific edge direction rule for 'reads from' where the Processing Worker is the actor and the Message Queue is the target.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Flawless execution. Followed all instructions perfectly, including the specific edge direction rule for 'reads from' where the Processing Worker is the actor and the Message Queue is the target.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Flawless execution. Followed all instructions perfectly, including the specific edge direction rule for 'reads from' where the Processing Worker is the actor and the Message Queue is the target.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Excellent output. Correctly handled the edge direction for 'reads from'. Very minor deduction for omitting 'to' in the 'sends alerts' label, but overall highly accurate.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Adequate. Avoided the directional error by rewriting 'reads from' to 'sends data to' to represent the data flow. However, it failed to use the exact action verb provided in the text and missed the opportunity to properly model the actor/receiver relationship as instructed.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Poor. Failed the explicit edge direction rule provided in the prompt's examples. By setting 'Message Queue' as the source and 'Processing Worker' as the target with the label 'reads from', it makes the factually incorrect claim that the Message Queue reads from the worker.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Poor. Failed the explicit edge direction rule provided in the prompt's examples. By setting 'Message Queue' as the source and 'Processing Worker' as the target with the label 'reads from', it makes the factually incorrect claim that the Message Queue reads from the worker.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Poor. Contains the same critical edge direction error as Models A and C ('Message Queue reads from Processing Worker'). Additionally, it truncated 'sends alerts to' down to just 'sends', losing context.",
+          "score": 3.5
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "This is the strongest output because it gets the key actor/receiver direction right for \"Processing Worker reads from the queue\" and preserves the described structure cleanly. Labels are faithful and concise, with only a very minor simplification in \"sends alerts\".",
+          "score": 9.6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "This accurately models the pipeline and correctly directs the read edge from Processing Worker to Message Queue, which is the most important distinction here. It follows the prompt well overall and uses clear labels.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "This captures all required nodes and connections and correctly treats the worker as the actor reading from the queue. It is effectively equivalent to the other top answers.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "This is a faithful, complete diagram with the crucial read relationship oriented correctly. Node labels match the description and all nodes are connected.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "This output is complete and structurally accurate, especially on the read edge direction, which many others miss. It adheres closely to the wording and schema expectations.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "This gets the important edge directions right and includes all key nodes and relationships. The only notable weakness is the vague edge label \"sends,\" which loses specificity compared with the description.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "This is complete and otherwise well-formed, but it reverses the actor/receiver direction for \"reads from\" by making the queue act on the worker. That is a meaningful prompt-following error despite the rest being solid.",
+          "score": 6.4
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "This has the same major issue as Model A: the read edge is reversed, which conflicts with the prompt's explicit actor-based direction rule. Aside from that, the nodes and remaining edges are good.",
+          "score": 6.4
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "This incorrectly reverses the read relationship and also changes it to \"sends data to,\" which is less faithful to the source description. While the rest is clean, that key connection is misrepresented.",
+          "score": 5.9
+        }
+      ]
+    }
+  ],
+  "taskId": "visual-diagram",
+  "testCaseId": "en-data-pipeline-1"
+}

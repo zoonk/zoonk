@@ -1,0 +1,168 @@
+{
+  "modelId": "google/gemini-3-flash",
+  "results": [
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Could optionally note that the source description mentions Europe should visually stand out as the slowest, but the required output schema has no styling field, so this cannot be represented. Within the allowed schema, the response already captures this correctly via the highest value for Europe.",
+          "kind": "potentialImprovements",
+          "score": 9.8
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. CHART TYPE: The chartType must match the data structure. Use \"bar\" for category comparisons, \"line\" for trends over a continuous dimension, \"pie\" for proportions summing to 100%. Penalize mismatched types (e.g., \"pie\" for data that doesn't sum to 100%).\n\n2. DATA ACCURACY: Data points must faithfully reflect the VISUAL_DESCRIPTION. If the description gives specific values, use them exactly. If the description is qualitative (e.g., \"rises then falls\"), illustrative values are expected — but they must match the described pattern. Do NOT add extra data points beyond what the description specifies.\n\n3. TITLE: Must be concise (max 50 chars), descriptive, and in the correct language.\n\n4. LANGUAGE: All text content (title, data point names) must be in the specified language. Only JSON field names and enum values should be in English.\n",
+        "id": "en-bar-regional-latency-1",
+        "userInput": {
+          "description": "Bar chart comparing average page load times across four regions: US East (1.2s), US West (1.4s), Europe (3.8s), Asia (2.1s). Title: 'Page Load by Region'. The Europe bar should stand out as the slowest.",
+          "language": "en"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response generally follows the instructions: it selects the correct chart type (line), uses the exact values stated, keeps the title within 50 characters, and uses the correct language. However, the visual description says 'over 6 hours' and describes a gradual rise to 11:00 and then a climb back by 14:00, which suggests intermediate hourly points may have better represented the 6-hour progression. Still, the instruction also says not to add data points beyond what the description specifies, so this is at most a minor ambiguity rather than a clear failure.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "Could potentially improve clarity by including intermediate hourly labels only if explicitly supported by the description, but given the instruction not to add unspecified points, the chosen 4 points are defensible. No meaningful factual improvements are clearly required.",
+          "kind": "potentialImprovements",
+          "score": 9.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. CHART TYPE: The chartType must match the data structure. Use \"bar\" for category comparisons, \"line\" for trends over a continuous dimension, \"pie\" for proportions summing to 100%. Penalize mismatched types (e.g., \"pie\" for data that doesn't sum to 100%).\n\n2. DATA ACCURACY: Data points must faithfully reflect the VISUAL_DESCRIPTION. If the description gives specific values, use them exactly. If the description is qualitative (e.g., \"rises then falls\"), illustrative values are expected — but they must match the described pattern. Do NOT add extra data points beyond what the description specifies.\n\n3. TITLE: Must be concise (max 50 chars), descriptive, and in the correct language.\n\n4. LANGUAGE: All text content (title, data point names) must be in the specified language. Only JSON field names and enum values should be in English.\n",
+        "id": "en-line-cpu-usage-over-time-1",
+        "userInput": {
+          "description": "Line chart showing CPU usage over 6 hours: starts at 45% at 8:00, gradually rises to 72% at 11:00, drops sharply to 30% at 12:00, then climbs back to 65% by 14:00. Title: 'CPU Usage During Incident'.",
+          "language": "en"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "potentialImprovements",
+          "score": 10
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. CHART TYPE: The chartType must match the data structure. Use \"bar\" for category comparisons, \"line\" for trends over a continuous dimension, \"pie\" for proportions summing to 100%. Penalize mismatched types (e.g., \"pie\" for data that doesn't sum to 100%).\n\n2. DATA ACCURACY: Data points must faithfully reflect the VISUAL_DESCRIPTION. If the description gives specific values, use them exactly. If the description is qualitative (e.g., \"rises then falls\"), illustrative values are expected — but they must match the described pattern. Do NOT add extra data points beyond what the description specifies.\n\n3. TITLE: Must be concise (max 50 chars), descriptive, and in the correct language.\n\n4. LANGUAGE: All text content (title, data point names) must be in the specified language. Only JSON field names and enum values should be in English.\n",
+        "id": "en-pie-error-distribution-1",
+        "userInput": {
+          "description": "Pie chart showing the distribution of error types in a web application: Timeout errors (45%), Connection refused (30%), SSL handshake failures (15%), DNS resolution (10%). Title: 'Error Type Breakdown'.",
+          "language": "en"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Could optionally clarify units in the title or values (e.g., indicating that values are in R$ mil), but this is not required by the prompt and the extracted numeric values faithfully match the description. Otherwise no meaningful improvements are needed.",
+          "kind": "potentialImprovements",
+          "score": 9.7
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. CHART TYPE: The chartType must match the data structure. Use \"bar\" for category comparisons, \"line\" for trends over a continuous dimension, \"pie\" for proportions summing to 100%. Penalize mismatched types (e.g., \"pie\" for data that doesn't sum to 100%).\n\n2. DATA ACCURACY: Data points must faithfully reflect the VISUAL_DESCRIPTION. If the description gives specific values, use them exactly. If the description is qualitative (e.g., \"rises then falls\"), illustrative values are expected — but they must match the described pattern. Do NOT add extra data points beyond what the description specifies.\n\n3. TITLE: Must be concise (max 50 chars), descriptive, and in the correct language.\n\n4. LANGUAGE: All text content (title, data point names) must be in the specified language. Only JSON field names and enum values should be in English.\n\nLANGUAGE REQUIREMENT: All content must be in Brazilian Portuguese.\n    ",
+        "id": "pt-bar-vendas-por-loja-1",
+        "userInput": {
+          "description": "Gráfico de barras comparando vendas trimestrais de 5 lojas: Loja Centro (R$ 450 mil), Loja Sul (R$ 320 mil), Loja Norte (R$ 280 mil), Loja Oeste (R$ 510 mil), Loja Leste (R$ 390 mil). Título: 'Vendas por Loja — T3'.",
+          "language": "pt"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "A small improvement would be to include intermediate hourly points between 06:00 and 14:00 to better illustrate the gradual rise, stable period, and decline described over 8 hours. However, the instruction also says not to add data points beyond what the description specifies, so the chosen 4-point representation is still compliant and useful.",
+          "kind": "potentialImprovements",
+          "score": 9.4
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. CHART TYPE: The chartType must match the data structure. Use \"bar\" for category comparisons, \"line\" for trends over a continuous dimension, \"pie\" for proportions summing to 100%. Penalize mismatched types (e.g., \"pie\" for data that doesn't sum to 100%).\n\n2. DATA ACCURACY: Data points must faithfully reflect the VISUAL_DESCRIPTION. If the description gives specific values, use them exactly. If the description is qualitative (e.g., \"rises then falls\"), illustrative values are expected — but they must match the described pattern. Do NOT add extra data points beyond what the description specifies.\n\n3. TITLE: Must be concise (max 50 chars), descriptive, and in the correct language.\n\n4. LANGUAGE: All text content (title, data point names) must be in the specified language. Only JSON field names and enum values should be in English.\n\nLANGUAGE REQUIREMENT: All content must be in Latin American Spanish.\n    ",
+        "id": "es-line-temperatura-reactor-1",
+        "userInput": {
+          "description": "Gráfico de línea mostrando la temperatura de un reactor durante 8 horas: empieza en 120°C a las 6:00, sube gradualmente a 185°C a las 10:00, se mantiene estable hasta las 12:00, y luego baja a 95°C a las 14:00. Título: 'Temperatura del Reactor'.",
+          "language": "es"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Could be slightly improved by making the title a bit closer to the original phrasing ('query performance' rather than 'execution time'), but the current title is still accurate, concise, under 50 characters, and in the correct language. The illustrative values appropriately reflect the described ordering and magnitude differences, and no extra data points were added.",
+          "kind": "potentialImprovements",
+          "score": 9.6
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. CHART TYPE: The chartType must match the data structure. Use \"bar\" for category comparisons, \"line\" for trends over a continuous dimension, \"pie\" for proportions summing to 100%. Penalize mismatched types (e.g., \"pie\" for data that doesn't sum to 100%).\n\n2. DATA ACCURACY: Data points must faithfully reflect the VISUAL_DESCRIPTION. If the description gives specific values, use them exactly. If the description is qualitative (e.g., \"rises then falls\"), illustrative values are expected — but they must match the described pattern. Do NOT add extra data points beyond what the description specifies.\n\n3. TITLE: Must be concise (max 50 chars), descriptive, and in the correct language.\n\n4. LANGUAGE: All text content (title, data point names) must be in the specified language. Only JSON field names and enum values should be in English.\n",
+        "id": "en-bar-qualitative-performance-1",
+        "userInput": {
+          "description": "Bar chart showing query performance across different database indexes. The description says: 'B-tree index is fastest, hash index is slightly slower, and full table scan is dramatically slower.' No exact numbers given — illustrative values expected.",
+          "language": "en"
+        }
+      }
+    }
+  ],
+  "taskId": "visual-chart"
+}
