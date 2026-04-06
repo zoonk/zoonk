@@ -1,0 +1,29 @@
+apps/evals/eval-results/results/visual-quote/openai-gpt-5.4-nano.json
+  1beb550f2fdcf4c5 1-141
+apps/evals/eval-results/outputs/visual-quote/openai-gpt-5.4-nano.json
+  1beb550f2fdcf4c5 1-52
+apps/evals/eval-results/outputs/visual-quote/openai-gpt-5.4.json
+  1beb550f2fdcf4c5 1-52
+apps/evals/eval-results/results/visual-quote/openai-gpt-5.4.json
+  1beb550f2fdcf4c5 1-141
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "f9f8df00bd5df979abc4f89de2b1b433e87618da",
+  "prompts": {
+    "1beb550f2fdcf4c5": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d6374-4054-7422-8d6d-4a09dee5007b",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 386,
+      "total_deletions": 0,
+      "accepted_lines": 386,
+      "overriden_lines": 0
+    }
+  }
+}
