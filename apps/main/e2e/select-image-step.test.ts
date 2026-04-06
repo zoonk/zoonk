@@ -359,9 +359,10 @@ test.describe("Select Image Step", () => {
     await page.goto(url);
     await page.waitForLoadState("networkidle");
 
-    await page.keyboard.press("1");
-
-    await expect(page.getByRole("button", { name: /check/i })).toBeEnabled();
+    await expect(async () => {
+      await page.keyboard.press("1");
+      await expect(page.getByRole("button", { name: /check/i })).toBeEnabled();
+    }).toPass();
 
     await page.keyboard.press("Enter");
     await expect(page.getByText(new RegExp(`Fb[12] ${uniqueId}`))).toBeVisible();

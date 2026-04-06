@@ -195,9 +195,15 @@ importers:
       '@tabler/icons-react':
         specifier: 3.41.1
         version: 3.41.1(react@19.2.4)
+      '@vercel/analytics':
+        specifier: 2.0.1
+        version: 2.0.1(next@16.2.2(@opentelemetry/api@1.9.1)(@playwright/test@1.59.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)
       '@zoonk/ui':
         specifier: workspace:*
         version: link:../../packages/ui
+      '@zoonk/utils':
+        specifier: workspace:*
+        version: link:../../packages/utils
       next:
         specifier: 16.2.2
         version: 16.2.2(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.59.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
