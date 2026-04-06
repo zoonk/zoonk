@@ -1,0 +1,185 @@
+{
+  "expectations": "\nEVALUATION CRITERIA:\n\n1. AUTHENTICITY: The quote must be a real statement by a real, named person. Never invented, paraphrased, or attributed to generic sources like \"Common saying\" or \"Traditional wisdom\". If the exact quote cannot be determined, the closest real, verifiable quote should be used.\n\n2. ATTRIBUTION: Author must be a real, identifiable person in the format \"Name, Year\" (e.g., \"Alan Turing, 1950\") or just \"Name\" (e.g., \"Marie Curie\"). Never a generic source.\n\n3. RELEVANCE: The quote must directly support the point described in the VISUAL_DESCRIPTION.\n\n4. CONSTRAINTS: Quote text max 500 characters.\n\n5. LANGUAGE: Text and author fields must be in the specified language. If the original quote is in a different language, provide a faithful translation.\n",
+  "judgedAt": "2026-04-06T16:10:13.259Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Provides the most commonly cited authentic portion of the quote accurately. Uses correct author format with year. canVerify is true, which is appropriate since this is a well-documented quote from the 1974 paper. Clean, accurate, verifiable.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Identical to Model E in every way — same accurate quote text, same attribution format, same canVerify value. Equally excellent.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Identical to Models E and G. Same accurate quote, attribution, and canVerify. Equally excellent.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Includes the fuller context of the quote, which is authentic. However, the wording has a subtle inaccuracy: the original says 'these attempts at efficiency actually have a strong negative impact when debugging and maintenance are considered' but Model B says 'these attempts at optimization actually have a very negative effect on the overall performance of their programs.' This is a paraphrase/misquote of the original text, which violates the authenticity requirement.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Attempts the fuller quote and gets closer to the actual wording ('attempts at efficiency actually have a strong negative impact when debugging and maintenance are considered'), but still has minor wording differences from the original. The effort to include more context is commendable but introduces risk of subtle inaccuracy. canVerify true is appropriate.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Same accurate quote as E/G/I, but sets canVerify to false, which is incorrect — this is one of the most well-documented and verifiable quotes in computer science from a specific, named 1974 paper. Also uses 'Donald E. Knuth' which is fine but slightly unusual, and has curly quotes. The false canVerify is the main issue.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "The quote 'Premature optimization is the root of all evil (or at least most of it) in programming' is not the exact wording from Knuth's paper. This appears to be a conflation or paraphrase. The actual text doesn't contain this exact phrasing. This is a fabricated variant, violating the authenticity requirement.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Uses only the shortened, popular version of the quote which omits the important preceding clause. While widely attributed, this truncated form is essentially a popular misquote/partial quote. canVerify true is questionable for this truncated version. Attribution format is correct.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Same truncated quote issue as Model C, plus lacks the year in the author field despite the VISUAL_DESCRIPTION explicitly mentioning 1974. Missing the year is a clear formatting shortcoming given the prompt's preference for 'Name, Year' format and the available information.",
+          "score": 5.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Perfect response. It provides the exact, verifiable quote from the specified 1974 paper, including excellent context while remaining well under the 500-character limit.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Excellent response. It accurately captures the core verifiable sentence without paraphrasing. It is slightly less comprehensive than Model D but still perfectly accurate.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Excellent response. It accurately captures the core verifiable sentence without paraphrasing. It is slightly less comprehensive than Model D but still perfectly accurate.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Excellent response. It accurately captures the core verifiable sentence without paraphrasing. It is slightly less comprehensive than Model D but still perfectly accurate.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Very good response. It accurately captures the final phrase of the quote, though it leaves out the surrounding sentence context that gives it fuller meaning.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Good response with accurate quote text, but it omits the year in the attribution despite the year being provided directly in the prompt.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "The model incorrectly flags this highly famous and verifiable quote with `canVerify: false`. It also includes unnecessary quotation marks inside the string.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Fails the strict authenticity rule. The first sentence is entirely paraphrased and misquoted (altering Knuth's point about 'debugging and maintenance' to 'overall performance').",
+          "score": 2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Fails the strict authenticity rule. It hallucinates a popular misquote/paraphrase by inserting '(or at least most of it) in programming', which is not part of the original text.",
+          "score": 2
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "This gives the most reliable, authentic excerpt associated with the 1974 source, with correct attribution format and strong relevance. It avoids extra wording that is more error-prone while staying clearly verifiable and within constraints.",
+          "score": 9.8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Equivalent in quality to Model E: authentic, concise, correctly attributed, and directly aligned to the prompt. It cleanly uses a verifiable wording from the cited context without unnecessary additions.",
+          "score": 9.8
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Equivalent to Models E and G in accuracy and prompt adherence. The quote is concise, relevant, and plausibly verifiable from Knuth’s 1974 paper.",
+          "score": 9.8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "This is highly relevant and mostly authentic, but the longer wording is riskier because exact phrasing around the surrounding sentences is easier to get wrong. It still fits the prompt well and remains strong overall.",
+          "score": 8.9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "This uses the famous core line and is highly relevant, but it is less robust than the fuller authentic excerpt because the isolated wording is often treated as a misquote or decontextualized fragment. Still, it is concise and broadly acceptable.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "The quote is relevant and likely authentic enough, but omitting the year is slightly weaker given the prompt’s source-specific context. The shorter fragment also carries the same decontextualization risk as Model C.",
+          "score": 8.1
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "The text is strong and relevant, but marking canVerify as false is a notable prompt-adherence issue because this quote is well known and sourceable to the cited paper. The author formatting is acceptable, though slightly less standard than the others.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "This appears to blend Knuth’s famous line with wording more associated with later paraphrases or variants, making authenticity doubtful. Because it claims canVerify true despite that risk, it is heavily penalized.",
+          "score": 4.2
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "This introduces unsupported wording like the debugging and maintenance clause, which does not match the authentic Knuth passage and looks fabricated or conflated. The hallucinated expansion combined with canVerify true is a major failure on the most important criteria.",
+          "score": 2.3
+        }
+      ]
+    }
+  ],
+  "taskId": "visual-quote",
+  "testCaseId": "en-knuth-premature-optimization-1"
+}

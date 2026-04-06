@@ -1,0 +1,185 @@
+{
+  "expectations": "\nEVALUATION CRITERIA:\n\n1. AUTHENTICITY: The quote must be a real statement by a real, named person. Never invented, paraphrased, or attributed to generic sources like \"Common saying\" or \"Traditional wisdom\". If the exact quote cannot be determined, the closest real, verifiable quote should be used.\n\n2. ATTRIBUTION: Author must be a real, identifiable person in the format \"Name, Year\" (e.g., \"Alan Turing, 1950\") or just \"Name\" (e.g., \"Marie Curie\"). Never a generic source.\n\n3. RELEVANCE: The quote must directly support the point described in the VISUAL_DESCRIPTION.\n\n4. CONSTRAINTS: Quote text max 500 characters.\n\n5. LANGUAGE: Text and author fields must be in the specified language. If the original quote is in a different language, provide a faithful translation.\n",
+  "judgedAt": "2026-04-06T16:10:18.534Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Uses the authentic, verifiable quote from Einstein's 1933 Herbert Spencer Lecture at Oxford. The full quote beginning with 'It can scarcely be denied...' is the actual documented statement. Sets canVerify to true with the year 1933, which is correct. This is the best response as it follows the prompt's rule to prefer a different authentic quote over a popular misquote.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Uses the same 1933 lecture quote with correct year attribution and canVerify true, but truncates the opening clause 'It can scarcely be denied that,' making it slightly less faithful to the original. Still a strong response that correctly identifies the popular version as a paraphrase and provides a verifiable alternative.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Uses the correct full authentic quote from the 1933 lecture, which is excellent. However, it sets canVerify to false and omits the year, which is inconsistent — this quote IS verifiable from the Herbert Spencer Lecture. The lack of year in attribution is a minor weakness per the format guidelines.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Uses the popular paraphrased version with canVerify false, acknowledging it's not confidently verifiable. This follows the prompt's guidance on marking doubtful quotes, but the prompt also says to choose a different authentic quote rather than using doubtful wording. Missing year in attribution.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Identical to Model A — uses the popular paraphrase with canVerify false. Same strengths and weaknesses: correctly marks as unverifiable but fails to follow the rule about choosing a different authentic quote when the requested wording is doubtful.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Identical to Models A/B — popular paraphrase with canVerify false. Same assessment applies.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Identical to Models A/B/G — popular paraphrase with canVerify false. Same assessment applies.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Same as Models A/B/G/I but with extra curly quotation marks embedded in the text field, which is a formatting issue — quotes within the text string create redundant punctuation. Otherwise same weaknesses.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Uses the popular paraphrased version but sets canVerify to true, which is factually incorrect — this exact wording cannot be confidently traced to Einstein. This violates the prompt's rule that canVerify should be true only when confident the quote is authentic. Worst handling of the authenticity question.",
+          "score": 3.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Perfectly follows all instructions. It correctly recognizes that the requested wording is a popular paraphrase, and as instructed, replaces it with the actual authentic quote from Einstein's 1933 lecture. The attribution includes the year, and the verification flag is correctly set to true.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Follows the instructions excellently by providing the authentic, verifiable quote rather than repeating the popular paraphrase. The quote is slightly truncated compared to the full original sentence in Model E, but it remains completely accurate, authentic, and properly attributed.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Successfully identifies and provides the authentic quote instead of the popular misquote. However, it incorrectly sets 'canVerify' to false despite providing a genuinely verifiable quote, showing a slight contradiction with its own output.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Fails a critical instruction: 'If the requested wording is doubtful, choose a different authentic quote'. The model repeated the popular paraphrase instead of finding the actual quote. It is only partially redeemed by correctly flagging 'canVerify' as false.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Fails a critical instruction: 'If the requested wording is doubtful, choose a different authentic quote'. The model repeated the popular paraphrase instead of finding the actual quote. It is only partially redeemed by correctly flagging 'canVerify' as false.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Fails a critical instruction: 'If the requested wording is doubtful, choose a different authentic quote'. The model repeated the popular paraphrase instead of finding the actual quote. It is only partially redeemed by correctly flagging 'canVerify' as false.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Fails a critical instruction: 'If the requested wording is doubtful, choose a different authentic quote'. The model repeated the popular paraphrase instead of finding the actual quote. It is only partially redeemed by correctly flagging 'canVerify' as false.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Violates the core instruction to replace a paraphrased prompt with an authentic quote. Additionally, it unnecessarily includes literal typographic quotation marks inside the text string.",
+          "score": 3.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Major failure. It repeats the popular paraphrase (violating the instruction to find an authentic alternative) AND incorrectly sets 'canVerify' to true, presenting a well-known misquote as a fully verified fact.",
+          "score": 2
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Uses a real Einstein quotation closely tied to the requested idea, with proper attribution format including year. `canVerify: true` is well-justified because this is a verifiable source-linked formulation rather than the popular misquote.",
+          "score": 9.7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Also provides an authentic, source-based Einstein quote and correctly marks it verifiable with year attribution. Slightly weaker than E because it drops the opening clause, making it a bit less faithful to the known wording.",
+          "score": 9.4
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "The quote text is strong and likely authentic, directly supporting the intended concept. However, it undersells confidence with `canVerify: false` and omits the year despite the quote appearing sourceable.",
+          "score": 8.1
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "It follows the structure and sensibly flags the famous wording as unverifiable, which is better than confidently asserting a dubious quote. But it still outputs the likely misquote itself instead of substituting a more authentic Einstein quote as instructed.",
+          "score": 6.2
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Same strengths and weaknesses as A: correct JSON shape and cautious `canVerify: false`, but it repeats the doubtful wording rather than choosing a verified alternative. That is a notable prompt-following failure.",
+          "score": 6.2
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Same as A and B: appropriately skeptical with `canVerify: false`, but still returns the likely misattributed wording instead of a safer authentic substitute. Adequate but not compliant with the core authenticity preference.",
+          "score": 6.2
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Like A/B/G, it properly signals uncertainty yet still presents the popular misquote rather than replacing it with a real sourced Einstein statement. This keeps it below outputs that chose an authentic alternative.",
+          "score": 6.2
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "It has the same core issue as A/B/G/I by repeating the doubtful quote instead of using an authentic alternative. The extra quotation marks inside `text` are a minor formatting blemish on top of that.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "This is the popular Einstein line presented as definitively verifiable, which is the most serious kind of mistake here. It directly violates the authenticity and `canVerify` requirements by overstating confidence in a doubtful quote.",
+          "score": 2.5
+        }
+      ]
+    }
+  ],
+  "taskId": "visual-quote",
+  "testCaseId": "en-einstein-simplicity-1"
+}
