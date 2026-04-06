@@ -1,10 +1,13 @@
 import { Logo } from "@/components/logo";
 import { SocialLinks } from "@/components/social-links";
+import { BLOG_URL } from "@zoonk/utils/url";
 import { type Metadata } from "next";
 import "@zoonk/ui/globals.css";
 
 export const metadata: Metadata = {
+  alternates: { canonical: "./" },
   description: "Thoughts on education, technology, and open source.",
+  metadataBase: new URL(BLOG_URL),
   title: {
     default: "Zoonk Blog",
     template: "%s | Zoonk Blog",

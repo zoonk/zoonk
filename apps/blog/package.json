@@ -11,6 +11,7 @@
   "dependencies": {
     "@tabler/icons-react": "3.41.1",
     "@zoonk/ui": "workspace:*",
+    "@zoonk/utils": "workspace:*",
     "next": "16.2.2",
     "react": "19.2.4",
     "react-dom": "19.2.4",
