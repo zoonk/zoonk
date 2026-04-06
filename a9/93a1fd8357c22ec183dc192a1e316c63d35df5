@@ -1,0 +1,35 @@
+apps/blog/src/app/robots.ts
+  95abf17996670867 1-12
+apps/blog/src/app/sitemap.ts
+  95abf17996670867 1-11
+apps/blog/src/app/layout.tsx
+  95abf17996670867 3,8,10
+packages/utils/src/url.ts
+  95abf17996670867 18
+apps/blog/package.json
+  95abf17996670867 14
+apps/main/src/app/blog/page.tsx
+  95abf17996670867 1,5
+apps/blog/src/app/(post)/2026/future-of-education/page.mdx
+  95abf17996670867 5-6
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "a993a1fd8357c22ec183dc192a1e316c63d35df5",
+  "prompts": {
+    "95abf17996670867": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "66824249-b50b-4171-8c0b-5cb0504684fd",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 32,
+      "total_deletions": 1,
+      "accepted_lines": 32,
+      "overriden_lines": 0
+    }
+  }
+}
