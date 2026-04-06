@@ -1,0 +1,23 @@
+packages/ai/src/tasks/visuals/visual-music.ts
+  0d21c61ca3a8c122 7-8
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "c4b37c0966a3b1fbac84d3b276ca672954c16c52",
+  "prompts": {
+    "0d21c61ca3a8c122": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d6362-6552-7912-adb3-c2e95203c7ce",
+        "model": "unknown"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 2,
+      "total_deletions": 2,
+      "accepted_lines": 2,
+      "overriden_lines": 0
+    }
+  }
+}
