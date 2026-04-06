@@ -1,0 +1,58 @@
+packages/ai/src/tasks/visuals/_utils/diagram-output.test.ts
+  431661fec320782a 1-58
+packages/ai/src/tasks/visuals/_utils/music-notation.ts
+  431661fec320782a 1-68
+packages/ai/src/tasks/visuals/visual-diagram.ts
+  431661fec320782a 5,91
+packages/ai/src/tasks/visuals/visual-music.prompt.md
+  431661fec320782a 19
+packages/ai/src/tasks/visuals/visual-music.ts
+  431661fec320782a 67-68
+packages/ai/src/tasks/visuals/_utils/code-annotations.ts
+  431661fec320782a 1-59
+packages/ai/src/tasks/visuals/visual-code.ts
+  431661fec320782a 5,89
+packages/ai/vitest.config.mts
+  431661fec320782a 1-8
+packages/ai/src/tasks/visuals/_utils/diagram-output.ts
+  431661fec320782a 1-106
+packages/ai/package.json
+  431661fec320782a 55-56,69-70
+packages/ai/src/tasks/visuals/_utils/code-annotations.test.ts
+  431661fec320782a 1-38
+packages/ai/src/tasks/visuals/_utils/music-notation.test.ts
+  431661fec320782a 1-25
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "a0f547034c0680b8413c160a33299e26f2071ce4",
+  "prompts": {
+    "0d21c61ca3a8c122": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d6362-6552-7912-adb3-c2e95203c7ce",
+        "model": "unknown"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 2,
+      "overriden_lines": 0
+    },
+    "431661fec320782a": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d6362-454f-7340-9ca8-93f2f16b8aa6",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 371,
+      "total_deletions": 97,
+      "accepted_lines": 374,
+      "overriden_lines": 0
+    }
+  }
+}
