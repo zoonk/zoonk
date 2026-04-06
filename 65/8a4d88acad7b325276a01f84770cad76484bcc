@@ -1,0 +1,75 @@
+apps/main/src/app/(catalog)/_components/command-palette.tsx
+  abbec39997606f5a 69-72
+.agents/skills/zoonk-business/SKILL.md
+  f88e0081beacf517 36-40,46,51,53-57,126-138
+apps/main/src/lib/menu.ts
+  abbec39997606f5a 10,18
+apps/main/src/app/blog/page.tsx
+  abbec39997606f5a 1-5
+apps/main/src/app/(catalog)/_components/user-dropdown-menu.tsx
+  abbec39997606f5a 21-24,48-56
+apps/blog/src/app/(post)/2026/future-of-education/page.mdx
+  f88e0081beacf517 17,21,49,74,79,81,86,107,109,111,115
+  caa3bd1f957095f0 12,14,16,18-20,22,24,26,28,30,32,34,36,38,40,42,44,46,48,50,52-73,75-76,78,80,82-85,87-106,108,110,112-114,116,118-120,122,124,126
+apps/blog/src/app/posts.json
+  675aad25352e1ac3 3-4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "658a4d88acad7b325276a01f84770cad76484bcc",
+  "prompts": {
+    "675aad25352e1ac3": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d6427-0922-7562-93f1-ba970574fcb1",
+        "model": "unknown"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 4,
+      "total_deletions": 27,
+      "accepted_lines": 2,
+      "overriden_lines": 1
+    },
+    "abbec39997606f5a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "2458dd97-d5f4-4c87-8757-6b188cb5f23c",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 24,
+      "total_deletions": 1,
+      "accepted_lines": 24,
+      "overriden_lines": 0
+    },
+    "caa3bd1f957095f0": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d6426-c1f7-7c02-8ae8-20af4d8e1a26",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 118,
+      "total_deletions": 75,
+      "accepted_lines": 83,
+      "overriden_lines": 0
+    },
+    "f88e0081beacf517": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "d3dbb53f-e8ca-458a-9d6e-eb318093191e",
+        "model": "<synthetic>"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 65,
+      "total_deletions": 22,
+      "accepted_lines": 36,
+      "overriden_lines": 0
+    }
+  }
+}
