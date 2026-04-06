@@ -1,0 +1,185 @@
+{
+  "expectations": "\nEVALUATION CRITERIA:\n\n1. ABC VALIDITY: The abc field must contain valid ABC notation with required headers: X:1, M: (meter), L: (default note length), K: (key). The notation must render correctly in an ABC parser.\n\n2. MUSICAL ACCURACY: The notation must faithfully represent what the VISUAL_DESCRIPTION specifies — correct notes, intervals, rhythm, and key.\n\n3. CONSTRAINTS: Single voice only (no V:), no lyrics (w:), no layout directives (%%), no MIDI directives. Keep notation to 1-4 lines of notes.\n\n4. DESCRIPTION QUALITY: The \"description\" field must be a brief plain-text explanation (max 100 chars) of what the notation demonstrates. It must NOT be a copy of the VISUAL_DESCRIPTION input.\n\n5. LANGUAGE: The description field must be in the specified language. ABC notation is language-neutral.\n",
+  "judgedAt": "2026-04-06T15:13:25.748Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Valid ABC with all required headers, correct notes (C D E F G A B c), proper bar lines, and a thin-double barline `|]` for a clean ending. Description is concise and accurate at 45 chars. Excellent overall.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Identical ABC to Model H with correct headers, notes, and bar lines. Description is concise and accurate. Only minor point: no final double barline, but single barline ending is valid. Essentially equivalent to Model H.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Identical to Model G in every way except a trailing period in the description. Both are correct and clean. Equivalent quality.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Valid ABC with correct notes and bar lines, just missing spaces between notes within bars (e.g., `C D E F` vs `CDEF`), which is still valid ABC. Description is concise and accurate. Very slightly less readable than spaced versions but functionally identical.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Valid ABC with an added `T:` title header, which is acceptable but unnecessary. Description at 66 chars is fine but references 'C5' which is technical jargon not from the original description. Otherwise correct and well-formed.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Valid ABC with correct notes and formatting. However, the description reads almost like a copy of the VISUAL_DESCRIPTION input ('C major scale ascending from middle C to one octave above'), which the prompt explicitly says to avoid. This is a notable violation.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Valid ABC with correct notes and headers. No bar lines means the 4/4 meter isn't visually enforced, which slightly reduces musical clarity for a 4/4 time signature, though still valid. Description is fine.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Valid ABC with correct notes but no bar lines, reducing visual clarity of 4/4 meter. Description ('C major scale up from middle C to one octave above in quarter notes') is borderline copying the input description, which the prompt warns against.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "ABC is valid but notes are concatenated without spaces (`CDEFGABc`), which while technically parseable is poor practice and less readable. No bar lines either. Description is very close to copying the input VISUAL_DESCRIPTION, violating the prompt rule.",
+          "score": 6.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Perfect formatting. The model correctly divides the 8 quarter notes into two measures for the 4/4 time signature and includes a proper ending barline (|]). The description is perfectly concise and distinct from the input.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Excellent output. The model correctly uses barlines to divide the notes into measures according to the 4/4 time signature. The description is accurate and within constraints.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Excellent output. Identical in musical quality to Model H. It correctly uses barlines to divide measures. The description is perfectly concise.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Excellent output. Uses proper barlines to denote measures in 4/4 time. The description is good, though slightly closer in phrasing to the original prompt.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Excellent output with correct measure barlines. It loses a tiny fraction of a point for not adding spaces around the middle barline, which makes the ABC string slightly less readable in plain text, but it renders perfectly.",
+          "score": 9.4
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Very good output with proper barlines. However, it includes an unrequested 'T:' (title) header which was not part of the required headers, making it slightly less strictly aligned with the prompt's simplicity constraints.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Good output, but it fails to include barlines. Placing 8 quarter notes into a single un-barred line is technically incorrect musical grammar for a 4/4 time signature.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Similar to Model C, this output fails to include necessary measure barlines for a 4/4 time signature. The description is also fairly close to a direct copy of the input.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Adequate, but suffers from missing barlines (incorrect for 4/4 time) and a lack of spaces between notes. This makes the ABC notation dense and visually harder to read in its raw format.",
+          "score": 7.5
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Accurate and complete: valid ABC with all required headers, correct notes and rhythm, and a concise English description. It fully matches the prompt and stays within all constraints.",
+          "score": 9.8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Correct ABC notation and faithful musical content with a brief English description. Slightly less precise than A because it omits explicit mention of middle C, though the notation is still accurate.",
+          "score": 9.6
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Musically accurate and properly formatted with valid required headers and concise description. Very similar to G; the trailing period is fine, but the description is a bit generic compared with the best response.",
+          "score": 9.6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Accurate notes, rhythm, and headers, and it respects the single-voice constraint. The ABC is valid though a bit less cleanly spaced, and the description is slightly less informative than the top entries.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "The notation is correct and complete, but the description is too close to the input phrasing, which the prompt explicitly warns against. Still, it remains accurate and under 100 characters.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Musically correct with required headers, and the description is acceptable English. However, the notes are not clearly barred for the stated 4/4 structure, making it less aligned with the requested notation clarity.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "The pitches and headers are correct, but the unbarred note line is less faithful to the specified 4/4 presentation. The description is also quite close to the original wording and less concise.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "The ABC is valid and musically accurate, but the description exceeds the 100-character limit and is overly close to the original prompt. Extra header T: is not forbidden, yet it adds unnecessary content to a task asking for short, focused notation.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "The compact note string is likely parseable and the musical content is mostly right, but the description is too close to the source phrasing and less display-friendly. Lack of barlines also weakens adherence to the 4/4 specification.",
+          "score": 6.5
+        }
+      ]
+    }
+  ],
+  "taskId": "visual-music",
+  "testCaseId": "en-c-major-scale-1"
+}

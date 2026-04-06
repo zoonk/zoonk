@@ -4,8 +4,8 @@ import { Output, generateText } from "ai";
 import { z } from "zod";
 import systemPrompt from "./visual-music.prompt.md";
 
-const DEFAULT_MODEL = process.env.AI_MODEL_VISUAL_MUSIC ?? "openai/gpt-5.4-mini";
-const FALLBACK_MODELS = ["google/gemini-3-flash"];
+const DEFAULT_MODEL = process.env.AI_MODEL_VISUAL_MUSIC ?? "google/gemini-3.1-pro-preview";
+const FALLBACK_MODELS = ["openai/gpt-5.4", "anthropic/claude-opus-4.6"];
 
 /**
  * Matches `musicVisualContentSchema` from `@zoonk/core/steps/contract/visual`.

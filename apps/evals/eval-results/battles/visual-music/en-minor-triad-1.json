@@ -1,0 +1,185 @@
+{
+  "expectations": "\nEVALUATION CRITERIA:\n\n1. ABC VALIDITY: The abc field must contain valid ABC notation with required headers: X:1, M: (meter), L: (default note length), K: (key). The notation must render correctly in an ABC parser.\n\n2. MUSICAL ACCURACY: The notation must faithfully represent what the VISUAL_DESCRIPTION specifies — correct notes, intervals, rhythm, and key.\n\n3. CONSTRAINTS: Single voice only (no V:), no lyrics (w:), no layout directives (%%), no MIDI directives. Keep notation to 1-4 lines of notes.\n\n4. DESCRIPTION QUALITY: The \"description\" field must be a brief plain-text explanation (max 100 chars) of what the notation demonstrates. It must NOT be a copy of the VISUAL_DESCRIPTION input.\n\n5. LANGUAGE: The description field must be in the specified language. ABC notation is language-neutral.\n",
+  "judgedAt": "2026-04-06T15:14:08.215Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Valid ABC with all required headers. [ACE] correctly represents the A minor triad (A4, C5, E5 in ABC default octave context), followed by individual quarter notes. The barline is a nice touch. Description is concise (under 100 chars), accurate, and in English. No constraint violations.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Essentially identical to Model G in ABC content and validity. Description is slightly long but still under 100 characters. Correct notes, correct format, no constraint violations. Equally strong output.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Valid ABC notation with correct headers. [ACE] followed by A C E is musically accurate. Missing a barline at the end, but that's not required. Description is within 100 chars and in English. Slightly less polished than G/D but fully correct.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Valid ABC with correct notation. Includes a T: header which isn't prohibited. Uses K:Amin which is valid. The |] final barline is a nice touch. Description is under 100 chars and accurate. Very solid output, though the extra T: header is unnecessary.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Valid ABC with correct headers and notes. However, adding z2 rests after the chord and z rest after the individual notes changes the musical content from what was described — the prompt didn't mention rests. Still correct notes but less faithful to the description.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Uses [A,C,E] which places A and C in the lower octave (A3, C4, E4). While this is a valid voicing of an A minor triad, the comma on C is problematic — it puts C below A, making it C3 rather than C4, which creates an unusual inversion. The individual notes A C E without commas are then in different octaves than the chord, creating inconsistency. Description is good.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Uses [Ace] which in ABC notation means A4, C5, E5 for the chord (lowercase c and e are an octave higher). Then writes A c e for individual notes, which correctly matches the chord pitches. Actually this is internally consistent — but the use of lowercase c and e means C5 and E5, making it a wide-spaced voicing. This is a valid A minor triad but the notation style is unusual. Acceptable but slightly off from the simplest representation.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Uses [A,CE] which puts A in a lower octave than C and E, creating an odd voicing. Adds unnecessary rests (z z z) that weren't specified. The individual notes use A, (low octave) but C and E in default octave, creating inconsistency with the chord voicing. Less faithful to the description.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Uses [A,C,E] placing notes in lower octaves with commas on both A and C, which is questionable. Then writes [A]2 [C]2 [E]2 — wrapping single notes in brackets is unnecessary and the '2' makes them half notes, not quarter notes as specified. This is a clear musical inaccuracy: the individual notes should be quarter notes, not half notes.",
+          "score": 3.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model H provides a perfect execution. It accurately uses standard ABC octave notation to create a root-position, linearly ascending A minor triad ([Ace]), and correctly fits the four beats into a single measure in 4/4 time. The description is concise and perfectly accurate.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model F also correctly understands ABC octave notation to produce a root-position triad ([A,CE] equates to A2, C3, E3). It uses two measures padded with rests, which is musically sound and mathematically correct, though slightly less elegant than fitting it into one measure.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model G has great rhythm and follows most constraints perfectly. However, it uses [ACE], which in ABC notation evaluates to A3, C3, E3—resulting in a first-inversion chord and a melody line that jumps down rather than ascending. Still, this is a very common LLM abstraction.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Model D shares the exact same ABC notation as Model G, including the minor octave inversion issue. Its description is slightly wordier but fully meets the prompt's requirements.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Model A has the same minor octave inversion issue as Model G and D, but it also lacks a final barline to close the measure. It is otherwise fully functional.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model C includes an unrequested Title (T:) header and uses a less standard key signature format (K:Amin instead of K:Am). It also shares the same minor octave inversion issue.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Model B uses [A,C,E] for the chord, which creates an awkward and non-standard voicing spanning multiple octaves (A2, C2, E3). It also lacks a final barline.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Model E fails on musical accuracy regarding the meter. The first measure only has 3 beats ([ACE] + z2), which violates the 4/4 time signature. It also has the octave inversion issue.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Model I fails a direct prompt instruction by using half notes ([A]2) instead of the requested quarter notes. Additionally, the chord voicing is awkwardly spaced and it lacks a final barline.",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Accurately represents the A minor chord followed by A, C, E as quarter notes with all required ABC headers and valid single-voice notation. The description is concise, in English, and under 100 characters.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Musically accurate and uses the required headers with clean, valid ABC notation. Its description is clear but exceeds the 100-character limit, which is a notable prompt violation.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Strong overall: required headers are present, the music matches the requested chord then separate notes, and the description is concise and compliant. The chord spelling with commas changes octave placement, making it less faithful than the best answer.",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "The ABC content is accurate and minimal, matching the requested chord and quarter notes in A minor. However, the description is too long and exceeds the 100-character limit.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Mostly accurate and valid, with acceptable ABC despite the extra title header and closing barline. The description exceeds 100 characters, and the key field is less standard than the clearer compliant options.",
+          "score": 6.9
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "It follows the formatting rules, but the lowercase c and e place later notes in a higher octave than specified, so the musical content is not faithful. The description also exceeds 100 characters.",
+          "score": 5.6
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Includes required headers, but it alters the rhythm by inserting rests and stretching the chord duration, which was not requested. The description is fine, but the notation is not faithful to the prompt.",
+          "score": 5.2
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "The notation is inaccurate: the separate notes are written as bracketed chords with half-note durations rather than individual quarter notes, and the measure is rhythmically inconsistent. The description is concise, but the core music content fails the task.",
+          "score": 3.4
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "This output is musically incorrect: the chord uses mismatched octaves and extra rests, and the following notes do not faithfully represent the specified pattern. Although the description is acceptable, the notation substantially deviates from the prompt.",
+          "score": 2.8
+        }
+      ]
+    }
+  ],
+  "taskId": "visual-music",
+  "testCaseId": "en-minor-triad-1"
+}

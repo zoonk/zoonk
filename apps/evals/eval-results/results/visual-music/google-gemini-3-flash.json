@@ -1,0 +1,141 @@
+{
+  "modelId": "google/gemini-3-flash",
+  "results": [
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The ABC notation is mostly correct and likely renders, but it does not fully satisfy the musical description because it omits the final upper C. The prompt asks for the C major scale ascending from middle C to the C one octave above; the notes given are C D E F G A B and stop before the destination c. Also, the description is a bit too close to the input phrasing rather than being a more concise display-oriented explanation, though it still remains acceptable and under 100 characters.",
+          "kind": "minorErrors",
+          "score": 8.2
+        },
+        {
+          "conclusion": "Add the final upper c note so the scale truly runs from middle C to the octave above, and adjust note grouping to fit 4/4 cleanly across measures if desired (for example, two full bars). The description could be shortened to something like 'Ascending C major scale, one octave.' for better compliance with the brief explanatory intent.",
+          "kind": "potentialImprovements",
+          "score": 8.6
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. ABC VALIDITY: The abc field must contain valid ABC notation with required headers: X:1, M: (meter), L: (default note length), K: (key). The notation must render correctly in an ABC parser.\n\n2. MUSICAL ACCURACY: The notation must faithfully represent what the VISUAL_DESCRIPTION specifies — correct notes, intervals, rhythm, and key.\n\n3. CONSTRAINTS: Single voice only (no V:), no lyrics (w:), no layout directives (%%), no MIDI directives. Keep notation to 1-4 lines of notes.\n\n4. DESCRIPTION QUALITY: The \"description\" field must be a brief plain-text explanation (max 100 chars) of what the notation demonstrates. It must NOT be a copy of the VISUAL_DESCRIPTION input.\n\n5. LANGUAGE: The description field must be in the specified language. ABC notation is language-neutral.\n",
+        "id": "en-c-major-scale-1",
+        "userInput": {
+          "description": "C major scale ascending from middle C to the C one octave above, in quarter notes. 4/4 time signature.",
+          "language": "en"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The ABC mostly matches the request, but the chord duration is ambiguous relative to the stated quarter-note default. The prompt asks for the triad chord followed by the same notes individually as quarter notes; with L:1/4, [ACE] is a quarter-note chord, which is acceptable, but the full bar only totals four quarter-note beats and leaves no extra ambiguity issue resolved. More importantly, the description is slightly too close to the input phrasing, though still transformed. These are minor concerns rather than clear failures.",
+          "kind": "minorErrors",
+          "score": 8.8
+        },
+        {
+          "conclusion": "The response could be improved by making the rhythmic intent even clearer, for example explicitly confirming the chord is a quarter-note chord if that matters to the display context. The description could also be a bit shorter and more display-oriented, e.g. 'A minor triad: chord then quarter notes.' Otherwise it satisfies the requirements well.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. ABC VALIDITY: The abc field must contain valid ABC notation with required headers: X:1, M: (meter), L: (default note length), K: (key). The notation must render correctly in an ABC parser.\n\n2. MUSICAL ACCURACY: The notation must faithfully represent what the VISUAL_DESCRIPTION specifies — correct notes, intervals, rhythm, and key.\n\n3. CONSTRAINTS: Single voice only (no V:), no lyrics (w:), no layout directives (%%), no MIDI directives. Keep notation to 1-4 lines of notes.\n\n4. DESCRIPTION QUALITY: The \"description\" field must be a brief plain-text explanation (max 100 chars) of what the notation demonstrates. It must NOT be a copy of the VISUAL_DESCRIPTION input.\n\n5. LANGUAGE: The description field must be in the specified language. ABC notation is language-neutral.\n",
+        "id": "en-minor-triad-1",
+        "userInput": {
+          "description": "A minor triad: the notes A, C, and E played as a chord, followed by the same three notes played individually as quarter notes. Key of A minor, 4/4 time.",
+          "language": "en"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The ABC notation appears structurally weak: headers are present, but they are compressed onto one line, which may reduce parser compatibility. More importantly, the rhythm likely does not faithfully encode the described second beat. The prompt specifies a dotted eighth plus sixteenth on beat two; with L:1/16, that should be notated as 3 sixteenth units plus 1 sixteenth unit, which the response does as C3 C, but the first beat and full bar grouping are ambiguous without clearer spacing or separators. Also, the description is very close to the input wording rather than a distinct concise explanation.",
+          "kind": "minorErrors",
+          "score": 7.8
+        },
+        {
+          "conclusion": "The response could be improved by formatting ABC headers on separate lines for stronger validity, using clearer beat/bar grouping, and making the description more display-oriented and less copied from the input, e.g. 'Célula rítmica de samba em 2/4'. This would better satisfy both parser robustness and the instruction not to copy the visual description.",
+          "kind": "potentialImprovements",
+          "score": 8.2
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. ABC VALIDITY: The abc field must contain valid ABC notation with required headers: X:1, M: (meter), L: (default note length), K: (key). The notation must render correctly in an ABC parser.\n\n2. MUSICAL ACCURACY: The notation must faithfully represent what the VISUAL_DESCRIPTION specifies — correct notes, intervals, rhythm, and key.\n\n3. CONSTRAINTS: Single voice only (no V:), no lyrics (w:), no layout directives (%%), no MIDI directives. Keep notation to 1-4 lines of notes.\n\n4. DESCRIPTION QUALITY: The \"description\" field must be a brief plain-text explanation (max 100 chars) of what the notation demonstrates. It must NOT be a copy of the VISUAL_DESCRIPTION input.\n\n5. LANGUAGE: The description field must be in the specified language. ABC notation is language-neutral.\n\nLANGUAGE REQUIREMENT: The description field must be in Brazilian Portuguese.\n    ",
+        "id": "pt-ritmo-samba-1",
+        "userInput": {
+          "description": "Padrão rítmico básico de samba em 2/4: semicolcheia, colcheia, semicolcheia no primeiro tempo, e colcheia pontuada com semicolcheia no segundo tempo. Repetir por dois compassos.",
+          "language": "pt"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The ABC notation includes all required headers and matches the requested 4/4 context, but it is formatted on one line rather than using conventional line breaks between headers and music, which may reduce parser compatibility in some ABC implementations. Also, the response does not explicitly encode treble clef; while ABC defaults may make this acceptable, it is a slight fidelity gap relative to the prompt's 'clave de Sol'.",
+          "kind": "minorErrors",
+          "score": 8.5
+        },
+        {
+          "conclusion": "Improve ABC robustness by placing each required header on its own line and optionally specifying the clef explicitly in the key field if supported (e.g., treble), to better mirror the visual description. The description is accurate and in Spanish, but it could be slightly shorter while still clear.",
+          "kind": "potentialImprovements",
+          "score": 8.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. ABC VALIDITY: The abc field must contain valid ABC notation with required headers: X:1, M: (meter), L: (default note length), K: (key). The notation must render correctly in an ABC parser.\n\n2. MUSICAL ACCURACY: The notation must faithfully represent what the VISUAL_DESCRIPTION specifies — correct notes, intervals, rhythm, and key.\n\n3. CONSTRAINTS: Single voice only (no V:), no lyrics (w:), no layout directives (%%), no MIDI directives. Keep notation to 1-4 lines of notes.\n\n4. DESCRIPTION QUALITY: The \"description\" field must be a brief plain-text explanation (max 100 chars) of what the notation demonstrates. It must NOT be a copy of the VISUAL_DESCRIPTION input.\n\n5. LANGUAGE: The description field must be in the specified language. ABC notation is language-neutral.\n\nLANGUAGE REQUIREMENT: The description field must be in Latin American Spanish.\n    ",
+        "id": "es-intervalo-quinta-justa-1",
+        "userInput": {
+          "description": "Intervalo de quinta justa ascendente partiendo de Do: primero la nota Do como blanca, luego Sol como blanca. En clave de Sol, compás de 4/4.",
+          "language": "es"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The ABC is mostly valid and includes all required headers, but the rhythmic content does not faithfully match the requested sequence. With L:1/4, the final group `G/2A/2B/2c/2 z2` adds four eighth notes plus a half rest, which was not requested. Also, the prompt asked to show a whole note, then a half note, then two quarter notes, then four eighth notes; the response spreads these across measures in a way that may be acceptable pedagogically, but the added rest changes the specified musical content.",
+          "kind": "minorErrors",
+          "score": 8.2
+        },
+        {
+          "conclusion": "Improve musical fidelity by removing the unrequested half rest and structuring the measures so the durations alone demonstrate subdivision cleanly, e.g. one whole-note bar, one bar with half + two quarters, and one bar with four eighths plus explicitly intended continuation only if needed. The description is good, in English, concise, and not just a copy of the prompt.",
+          "kind": "potentialImprovements",
+          "score": 8.6
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. ABC VALIDITY: The abc field must contain valid ABC notation with required headers: X:1, M: (meter), L: (default note length), K: (key). The notation must render correctly in an ABC parser.\n\n2. MUSICAL ACCURACY: The notation must faithfully represent what the VISUAL_DESCRIPTION specifies — correct notes, intervals, rhythm, and key.\n\n3. CONSTRAINTS: Single voice only (no V:), no lyrics (w:), no layout directives (%%), no MIDI directives. Keep notation to 1-4 lines of notes.\n\n4. DESCRIPTION QUALITY: The \"description\" field must be a brief plain-text explanation (max 100 chars) of what the notation demonstrates. It must NOT be a copy of the VISUAL_DESCRIPTION input.\n\n5. LANGUAGE: The description field must be in the specified language. ABC notation is language-neutral.\n",
+        "id": "en-whole-half-notes-1",
+        "userInput": {
+          "description": "Demonstration of note durations: a whole note (C), then a half note (D), then two quarter notes (E, F), then four eighth notes (G, A, B, C). Key of C major, 4/4 time. Show how note values divide within measures.",
+          "language": "en"
+        }
+      }
+    }
+  ],
+  "taskId": "visual-music"
+}
