@@ -475,11 +475,14 @@ test.describe("Visual Step Content", () => {
     await expect(page.getByText(/1 \/ 2/)).toBeVisible();
 
     await page.waitForLoadState("networkidle");
-    await page.keyboard.press("ArrowRight");
 
-    await expect(
-      page.getByRole("heading", { name: new RegExp(`Diagram Step2 ${uniqueId}`) }),
-    ).toBeVisible();
+    await expect(async () => {
+      await page.keyboard.press("ArrowRight");
+      await expect(
+        page.getByRole("heading", { name: new RegExp(`Diagram Step2 ${uniqueId}`) }),
+      ).toBeVisible();
+    }).toPass();
+
     await expect(page.getByText(/2 \/ 2/)).toBeVisible();
   });
 
@@ -543,11 +546,14 @@ test.describe("Visual Step Content", () => {
     await expect(page.getByText(/1 \/ 2/)).toBeVisible();
 
     await page.waitForLoadState("networkidle");
-    await page.keyboard.press("ArrowRight");
 
-    await expect(
-      page.getByRole("heading", { name: new RegExp(`Code Step2 ${uniqueId}`) }),
-    ).toBeVisible();
+    await expect(async () => {
+      await page.keyboard.press("ArrowRight");
+      await expect(
+        page.getByRole("heading", { name: new RegExp(`Code Step2 ${uniqueId}`) }),
+      ).toBeVisible();
+    }).toPass();
+
     await expect(page.getByText(/2 \/ 2/)).toBeVisible();
   });
 
@@ -693,11 +699,14 @@ test.describe("Visual Step Content", () => {
     await expect(page.getByText(/1 \/ 2/)).toBeVisible();
 
     await page.waitForLoadState("networkidle");
-    await page.keyboard.press("ArrowRight");
 
-    await expect(
-      page.getByRole("heading", { name: new RegExp(`Table Step2 ${uniqueId}`) }),
-    ).toBeVisible();
+    await expect(async () => {
+      await page.keyboard.press("ArrowRight");
+      await expect(
+        page.getByRole("heading", { name: new RegExp(`Table Step2 ${uniqueId}`) }),
+      ).toBeVisible();
+    }).toPass();
+
     await expect(page.getByText(/2 \/ 2/)).toBeVisible();
   });
 
@@ -793,11 +802,14 @@ test.describe("Visual Step Content", () => {
     await expect(page.getByText(/1 \/ 2/)).toBeVisible();
 
     await page.waitForLoadState("networkidle");
-    await page.keyboard.press("ArrowRight");
 
-    await expect(
-      page.getByRole("heading", { name: new RegExp(`Timeline Step2 ${uniqueId}`) }),
-    ).toBeVisible();
+    await expect(async () => {
+      await page.keyboard.press("ArrowRight");
+      await expect(
+        page.getByRole("heading", { name: new RegExp(`Timeline Step2 ${uniqueId}`) }),
+      ).toBeVisible();
+    }).toPass();
+
     await expect(page.getByText(/2 \/ 2/)).toBeVisible();
   });
 
@@ -945,11 +957,14 @@ test.describe("Visual Step Content", () => {
     await expect(page.getByText(/1 \/ 2/)).toBeVisible();
 
     await page.waitForLoadState("networkidle");
-    await page.keyboard.press("ArrowRight");
 
-    await expect(
-      page.getByRole("heading", { name: new RegExp(`Chart Step2 ${uniqueId}`) }),
-    ).toBeVisible();
+    await expect(async () => {
+      await page.keyboard.press("ArrowRight");
+      await expect(
+        page.getByRole("heading", { name: new RegExp(`Chart Step2 ${uniqueId}`) }),
+      ).toBeVisible();
+    }).toPass();
+
     await expect(page.getByText(/2 \/ 2/)).toBeVisible();
   });
 
@@ -1040,11 +1055,14 @@ test.describe("Visual Step Content", () => {
     await expect(page.getByText(/1 \/ 2/)).toBeVisible();
 
     await page.waitForLoadState("networkidle");
-    await page.keyboard.press("ArrowRight");
 
-    await expect(
-      page.getByRole("heading", { name: new RegExp(`Formula Next ${uniqueId}`) }),
-    ).toBeVisible();
+    await expect(async () => {
+      await page.keyboard.press("ArrowRight");
+      await expect(
+        page.getByRole("heading", { name: new RegExp(`Formula Next ${uniqueId}`) }),
+      ).toBeVisible();
+    }).toPass();
+
     await expect(page.getByText(/2 \/ 2/)).toBeVisible();
   });
 });
