@@ -1,0 +1,25 @@
+apps/main/e2e/step-visual-content.test.ts
+  7863dcc0f04a6c02 479-485,550-556,703-709,806-812,961-967,1059-1065
+apps/main/e2e/select-image-step.test.ts
+  7863dcc0f04a6c02 362-365
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "6ddade7a67b5f69cf367d881cc5b87c321d4c85f",
+  "prompts": {
+    "7863dcc0f04a6c02": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "dac868f8-6522-4ee6-95c9-7cf12f4d34ad",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 52,
+      "total_deletions": 33,
+      "accepted_lines": 52,
+      "overriden_lines": 0
+    }
+  }
+}
