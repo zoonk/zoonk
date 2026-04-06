@@ -16,6 +16,7 @@ The `description` field in your output is a brief plain-text explanation of what
 ## Requirements
 
 - Use valid ABC notation with required headers: `X:1`, `M:` (meter), `L:` (default note length), `K:` (key)
+- Use actual newline characters inside `abc`, never literal `\n` or `\r\n` text
 - Keep notation short and focused — 1 to 4 lines of notes
 - Single voice only (no `V:` multi-voice)
 - No lyrics lines (`w:`)

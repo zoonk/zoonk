@@ -2,6 +2,7 @@ import "server-only";
 import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
 import { Output, generateText } from "ai";
 import { z } from "zod";
+import { buildVisualCodeOutput } from "./_utils/code-annotations";
 import systemPrompt from "./visual-code.prompt.md";
 
 const DEFAULT_MODEL = process.env.AI_MODEL_VISUAL_CODE ?? "openai/gpt-5.4";
@@ -48,31 +49,6 @@ export type VisualCodeParams = {
 };
 
 /**
- * Finds the 1-based line number where `lineContent` appears in
- * the code. Tries exact match first, then falls back to substring
- * match (trimmed). Returns 1 if no match is found so annotations
- * always have a valid line number.
- */
-function resolveLineNumber(code: string, lineContent: string): number {
-  const lines = code.split("\n");
-
-  const exactIndex = lines.indexOf(lineContent);
-
-  if (exactIndex !== -1) {
-    return exactIndex + 1;
-  }
-
-  const trimmed = lineContent.trim();
-  const substringIndex = lines.findIndex((line) => line.trim().includes(trimmed));
-
-  if (substringIndex !== -1) {
-    return substringIndex + 1;
-  }
-
-  return 1;
-}
-
-/**
  * Generates structured code snippet data from a textual description.
  * Takes a visual description (from a kind-selection task like
  * `generateInvestigationVisual`) and produces code content
@@ -110,18 +86,7 @@ export async function generateVisualCode({
     system: systemPrompt,
   });
 
-  const annotations = output.annotations
-    ? output.annotations.map((annotation) => ({
-        line: resolveLineNumber(output.code, annotation.lineContent),
-        text: annotation.text,
-      }))
-    : null;
-
-  const data: VisualCodeSchema = {
-    annotations,
-    code: output.code,
-    language: output.language,
-  };
+  const data: VisualCodeSchema = buildVisualCodeOutput(output);
 
   return { data, systemPrompt, usage, userPrompt };
 }

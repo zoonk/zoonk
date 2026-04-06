@@ -1,8 +1,8 @@
 import "server-only";
 import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
-import { toSlug } from "@zoonk/utils/string";
 import { Output, generateText } from "ai";
 import { z } from "zod";
+import { buildVisualDiagramOutput } from "./_utils/diagram-output";
 import systemPrompt from "./visual-diagram.prompt.md";
 
 const DEFAULT_MODEL = process.env.AI_MODEL_VISUAL_DIAGRAM ?? "google/gemini-3.1-flash-lite-preview";
@@ -51,63 +51,6 @@ export type VisualDiagramParams = {
 };
 
 /**
- * Finds the best matching node ID for an edge's `from` or `to` label.
- * Tries exact label match first, then case-insensitive, then substring.
- * Returns the slugified input as fallback so edges always have valid IDs.
- */
-function resolveNodeId(edgeLabel: string, nodeMap: Map<string, string>): string {
-  const direct = nodeMap.get(edgeLabel);
-
-  if (direct) {
-    return direct;
-  }
-
-  const lower = edgeLabel.toLowerCase();
-  const entries = [...nodeMap];
-
-  const caseInsensitive = entries.find(([label]) => label.toLowerCase() === lower);
-
-  if (caseInsensitive) {
-    return caseInsensitive[1];
-  }
-
-  const substring = entries.find(([label]) => {
-    const labelLower = label.toLowerCase();
-    return labelLower.includes(lower) || lower.includes(labelLower);
-  });
-
-  return substring?.[1] ?? toSlug(edgeLabel);
-}
-
-type AiDiagramOutput = z.infer<typeof aiSchema>;
-
-/**
- * Converts AI-generated label-only nodes and from/to edges into
- * the public diagram schema with auto-generated IDs and
- * source/target references. Removes orphan nodes that aren't
- * referenced by any edge.
- */
-function buildDiagram(output: AiDiagramOutput): VisualDiagramSchema {
-  const allNodes = output.nodes.map((node) => ({
-    id: toSlug(node.label),
-    label: node.label,
-  }));
-
-  const nodeMap = new Map(allNodes.map((node) => [node.label, node.id]));
-
-  const edges = output.edges.map((edge) => ({
-    label: edge.label,
-    source: resolveNodeId(edge.from, nodeMap),
-    target: resolveNodeId(edge.to, nodeMap),
-  }));
-
-  const referencedIds = new Set(edges.flatMap((edge) => [edge.source, edge.target]));
-  const nodes = allNodes.filter((node) => referencedIds.has(node.id));
-
-  return { edges, nodes };
-}
-
-/**
  * Generates structured diagram data from a textual description.
  * Takes a visual description (from a kind-selection task like
  * `generateInvestigationVisual`) and produces diagram content
@@ -145,7 +88,7 @@ export async function generateVisualDiagram({
     system: systemPrompt,
   });
 
-  const data = buildDiagram(output);
+  const data: VisualDiagramSchema = buildVisualDiagramOutput(output);
 
   return { data, systemPrompt, usage, userPrompt };
 }

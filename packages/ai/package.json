@@ -52,6 +52,8 @@
     "./tasks/visuals/timeline": "./src/tasks/visuals/visual-timeline.ts"
   },
   "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest",
     "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
@@ -64,7 +66,8 @@
   "devDependencies": {
     "@types/node": "^24",
     "@typescript/native-preview": "7.0.0-dev.20260401.1",
-    "@zoonk/tsconfig": "workspace:*"
+    "@zoonk/tsconfig": "workspace:*",
+    "vitest": "4.1.2"
   },
   "peerDependencies": {
     "server-only": ">=0.0.1",

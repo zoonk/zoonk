@@ -2,6 +2,7 @@ import "server-only";
 import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
 import { Output, generateText } from "ai";
 import { z } from "zod";
+import { normalizeVisualMusicOutput } from "./_utils/music-notation";
 import systemPrompt from "./visual-music.prompt.md";
 
 const DEFAULT_MODEL = process.env.AI_MODEL_VISUAL_MUSIC ?? "google/gemini-3.1-pro-preview";
@@ -62,5 +63,7 @@ export async function generateVisualMusic({
     system: systemPrompt,
   });
 
-  return { data: output, systemPrompt, usage, userPrompt };
+  const data = normalizeVisualMusicOutput(output);
+
+  return { data, systemPrompt, usage, userPrompt };
 }
