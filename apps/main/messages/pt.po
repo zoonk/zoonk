@@ -509,6 +509,12 @@ msgid "Help"
 msgstr "Ajuda"
 
 #: src/app/(catalog)/_components/command-palette.tsx
+#: src/app/(catalog)/_components/user-dropdown-menu.tsx
+msgctxt "tv5FG3"
+msgid "Blog"
+msgstr "Blog"
+
+#: src/app/(catalog)/_components/command-palette.tsx
 #: src/app/(catalog)/_components/navbar-links.tsx
 #: src/app/(performance)/_components/performance-navbar.tsx
 #: src/app/(settings)/_components/settings-navbar.tsx
