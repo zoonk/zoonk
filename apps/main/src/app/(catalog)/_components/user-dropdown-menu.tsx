@@ -18,6 +18,10 @@ export async function UserDropdownMenu() {
   const accountMenu = [
     { key: t("Profile"), ...getMenu("profile") },
     { key: t("Subscription"), ...getMenu("subscription") },
+  ];
+
+  const resourcesMenu = [
+    { key: t("Blog"), ...getMenu("blog") },
     { key: t("Feedback & Support"), ...getMenu("support") },
   ];
 
@@ -33,6 +37,15 @@ export async function UserDropdownMenu() {
       <DropdownMenuSeparator />
 
       {accountMenu.map((menu) => (
+        <DropdownMenuItem key={menu.key} render={<Link href={menu.url} />}>
+          <menu.icon aria-hidden="true" />
+          {menu.key}
+        </DropdownMenuItem>
+      ))}
+
+      <DropdownMenuSeparator />
+
+      {resourcesMenu.map((menu) => (
         <DropdownMenuItem key={menu.key} render={<Link href={menu.url} />}>
           <menu.icon aria-hidden="true" />
           {menu.key}

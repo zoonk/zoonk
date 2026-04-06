@@ -7,6 +7,7 @@ import {
   LayoutGrid,
   LifeBuoy,
   LogIn,
+  Newspaper,
   Search,
   Settings,
   TargetIcon,
@@ -14,6 +15,7 @@ import {
 } from "lucide-react";
 
 const menu = {
+  blog: { icon: Newspaper, url: "/blog" },
   courses: { icon: LayoutGrid, url: "/courses" },
   energy: { icon: ZapIcon, url: "/energy" },
   home: { icon: Home, url: "/" },

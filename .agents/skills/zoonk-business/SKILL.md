@@ -33,19 +33,28 @@ Help anyone learn anything, especially those outside the "Silicon Valley bubble"
 
 ### Founder's Story
 
-Zoonk's founder grew up in a small town in Brazil, from a poor family that sometimes couldn't afford food. Studied in public school and never believed becoming an engineer was possible — that was for "geniuses." This is the mindset most people outside privileged environments have: focused on survival, unaware that education is the path out.
+Zoonk's founder grew up in a small town in Brazil, from a poor family. Left home at 14 — after that, there were days he couldn't afford to eat. Studied in public school, had good grades but felt like he was just memorizing things to pass exams without understanding why any of it mattered. Never believed becoming an engineer was possible — that was for "geniuses."
+
+At 10, bought a book on creating websites, wrote code by hand on paper, and tested it at a cyber cafe with 30 minutes of purchased internet. Built a Formula One encyclopedia that paid his bills in college. But even then, didn't think of himself as a programmer. It wasn't until a friend casually talked about science at age 22 that he realized science was fun — which led him to leave his job and move to the Netherlands at 25 to study AI (already had a journalism degree). Even there, didn't apply for engineering jobs because he still didn't believe he could do it. Eventually got a frontend developer job and it slowly sank in.
+
+There was no single "aha" moment. It took more than 10 years to realize he could be a software engineer. This is the mindset most people outside privileged environments have: focused on survival, unaware that education is the path out.
 
 ### Vision
 
 **Short-term**: Make learning more active, interactive, fun, and practical - like Duolingo. Activities should use everyday language and show practical examples people can relate to.
 
-**Long-term**: Make learning as fun and engaging as playing video games. Make learning Einstein's general relativity as easy, fun, and immersive as playing No Man's Sky. Learning should be an immersive adventure.
+**Long-term**: Make learning as fun and engaging as playing video games. Make learning Einstein's general relativity as easy, fun, and immersive as playing No Man's Sky. Imagine smart glasses where you explore the real world through missions — understanding physics, biology, chemistry by seeing how everything around you works. Learning should be an immersive adventure.
 
 **Ultimate Vision**: The go-to place for **learning AND career development**. Users come to:
 
 1. Learn anything
-2. Find jobs
+2. Find jobs, build profiles/resumes, connect with companies
 3. Find peers to build the future together
+4. Start projects, get funding, collaborate
+
+**Deepest aspiration**: Contribute to ending poverty through education. If Zoonk succeeds fully, it won't even be necessary anymore — everyone will have great education, great careers, and the tools to build whatever they imagine.
+
+**Open-source philosophy**: If Zoonk doesn't succeed but someone takes what we built and does a better job, that's fine. The founder just wants the vision to happen — it doesn't have to be him. Any company he builds will be open-source. Open-source accelerates progress because it lets everyone learn from each other's work and mistakes.
 
 ## Core Values
 
@@ -114,7 +123,19 @@ When facing conflicts, prioritize in this order:
 
 ### Product Strategy Mindset
 
-The B2C learning experience is the primary focus. B2B offerings are experiments — invest when demand signals appear, never at the expense of the core product.
+The B2C learning experience is the primary focus. To really change education, Zoonk needs to be where people are — so the roadmap includes:
+
+- **B2C** (now): Core learning product — interactive courses, personalized learning
+- **Brand profiles**: Companies create courses for their products on Zoonk
+- **Career/professional**: Public profiles, job postings, peer connections (LinkedIn competitor/replacement)
+- **B2B for schools**: Teachers type curriculum codes (e.g., BNCC in Brazil), get lesson materials, assign activities, receive student reports with strengths/weaknesses. School managers get data for resource allocation and talent discovery
+- **B2B for teams/creators**: Eventually, products for teams and content creators
+
+B2C comes first. B2B follows as demand signals appear, never at the expense of the core product.
+
+### Positioning: Complement, Not Replacement
+
+Zoonk is not a replacement for schools, teachers, or degrees. It gives teachers superpowers — freeing them from content delivery, grading, and materials prep so they can focus on mentoring, guiding, and opening minds. It helps learners get started, deepen knowledge, and learn faster — not replace formal education.
 
 ### Pricing Philosophy
 

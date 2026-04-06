@@ -66,7 +66,10 @@ export function CommandPalette({ isLoggedIn }: { isLoggedIn: boolean }) {
     { key: t("Update profile"), ...getMenu("profile") },
   ];
 
-  const contactUs = [{ key: t("Feedback & Support"), ...getMenu("support") }];
+  const contactUs = [
+    { key: t("Blog"), ...getMenu("blog") },
+    { key: t("Feedback & Support"), ...getMenu("support") },
+  ];
 
   const hasCourses = courses.length > 0;
 
