@@ -1,0 +1,141 @@
+{
+  "modelId": "anthropic/claude-opus-4.6",
+  "results": [
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "One minor issue: the title \"Traffic Rerouted, Latency Resolved\" appears to exceed the 50-character maximum. Otherwise, the events are in correct chronological order, faithfully extracted, and in the correct language.",
+          "kind": "minorErrors",
+          "score": 8.8
+        },
+        {
+          "conclusion": "Could improve by shortening the 10:30 AM title to stay within the stated max 50 characters. Everything else aligns well with the instructions and expectations.",
+          "kind": "potentialImprovements",
+          "score": 9.2
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. CHRONOLOGICAL ORDER: Events must be in chronological order — earliest first.\n\n2. EVENT ACCURACY: Events must faithfully reflect the VISUAL_DESCRIPTION. If the description specifies dates and event names, use those. Do not add extra events beyond what the description specifies.\n\n3. CONSTRAINTS: Title max 50 characters, description max 150 characters per event. Dates can be approximate (\"Early 2000s\", \"Mid-20th century\").\n\n4. LANGUAGE: All text content (dates, titles, descriptions) must be in the specified language. Only JSON field names should be in English.\n",
+        "id": "en-incident-timeline-1",
+        "userInput": {
+          "description": "Timeline of a production incident: 9:15 AM — first user reports of slow pages; 9:30 AM — monitoring alerts fire for high latency in EU region; 9:45 AM — team identifies network path issue through intermediate hop; 10:00 AM — ISP contacted about routing anomaly; 10:30 AM — ISP reroutes traffic, latency returns to normal; 11:00 AM — incident postmortem begins.",
+          "language": "en"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Descriptions appear to exceed the 150-character maximum for multiple events, which violates a stated output constraint. Otherwise, the events are chronologically ordered, faithful to the source, and all text is correctly in English.",
+          "kind": "minorErrors",
+          "score": 8.5
+        },
+        {
+          "conclusion": "Tighten several descriptions to ensure they are safely under 150 characters each. Also avoid adding slight interpretive details not explicit in the prompt, such as prioritizing high-density areas or waning protection, though these do not materially distort the timeline.",
+          "kind": "potentialImprovements",
+          "score": 8.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. CHRONOLOGICAL ORDER: Events must be in chronological order — earliest first.\n\n2. EVENT ACCURACY: Events must faithfully reflect the VISUAL_DESCRIPTION. If the description specifies dates and event names, use those. Do not add extra events beyond what the description specifies.\n\n3. CONSTRAINTS: Title max 50 characters, description max 150 characters per event. Dates can be approximate (\"Early 2000s\", \"Mid-20th century\").\n\n4. LANGUAGE: All text content (dates, titles, descriptions) must be in the specified language. Only JSON field names should be in English.\n",
+        "id": "en-vaccination-campaign-1",
+        "userInput": {
+          "description": "Timeline of a national vaccination campaign: January 2021 — first batch of vaccines approved; March 2021 — distribution to major urban centers begins; June 2021 — rural distribution starts but faces cold chain challenges; September 2021 — 50% of population receives first dose; December 2021 — booster campaign announced.",
+          "language": "en"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "Could be marginally improved by aligning wording even more literally with the source phrase 'arquitetura de eventos' instead of 'arquitetura orientada a eventos', though this does not materially reduce correctness. Otherwise it fully satisfies the task.",
+          "kind": "potentialImprovements",
+          "score": 9.8
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. CHRONOLOGICAL ORDER: Events must be in chronological order — earliest first.\n\n2. EVENT ACCURACY: Events must faithfully reflect the VISUAL_DESCRIPTION. If the description specifies dates and event names, use those. Do not add extra events beyond what the description specifies.\n\n3. CONSTRAINTS: Title max 50 characters, description max 150 characters per event. Dates can be approximate (\"Early 2000s\", \"Mid-20th century\").\n\n4. LANGUAGE: All text content (dates, titles, descriptions) must be in the specified language. Only JSON field names should be in English.\n\nLANGUAGE REQUIREMENT: All content must be in Brazilian Portuguese.\n    ",
+        "id": "pt-evolucao-sistema-1",
+        "userInput": {
+          "description": "Linha do tempo da evolução de um sistema de pagamentos: 2018 — Sistema monolítico lançado com pagamento via boleto; 2019 — Adicionado pagamento por cartão de crédito; 2020 — Migração para microsserviços iniciada; 2021 — Integração com PIX implementada; 2023 — Sistema completamente migrado para arquitetura de eventos.",
+          "language": "pt"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The response is in correct chronological order, uses Spanish throughout, and includes exactly 5 events matching the source description. However, several descriptions are not fully faithful because they add unsupported details not present in the visual description, such as 'entre computadoras', 'unificando las redes existentes', 'revolucionando el acceso a la información en línea', naming Larry Page and Sergey Brin, and 'dando inicio a la era de las redes sociales masivas'. These additions do not severely harm usefulness but slightly reduce faithfulness to the source. Also, at least one description appears to exceed the 150-character limit, especially the 2004 Facebook description.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "To improve, the output should adhere more strictly to the provided text and avoid embellishing events with extra contextual claims or named individuals not mentioned in the input. It should also verify character limits more carefully, especially for descriptions close to or above 150 characters. Otherwise, the structure, ordering, event count, and language are strong.",
+          "kind": "potentialImprovements",
+          "score": 8.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. CHRONOLOGICAL ORDER: Events must be in chronological order — earliest first.\n\n2. EVENT ACCURACY: Events must faithfully reflect the VISUAL_DESCRIPTION. If the description specifies dates and event names, use those. Do not add extra events beyond what the description specifies.\n\n3. CONSTRAINTS: Title max 50 characters, description max 150 characters per event. Dates can be approximate (\"Early 2000s\", \"Mid-20th century\").\n\n4. LANGUAGE: All text content (dates, titles, descriptions) must be in the specified language. Only JSON field names should be in English.\n\nLANGUAGE REQUIREMENT: All content must be in Latin American Spanish.\n    ",
+        "id": "es-historia-internet-1",
+        "userInput": {
+          "description": "Línea de tiempo de hitos clave de Internet: 1969 — ARPANET establece la primera conexión; 1983 — TCP/IP se convierte en el estándar; 1991 — Tim Berners-Lee presenta la World Wide Web; 1998 — Google es fundado; 2004 — Facebook se lanza desde Harvard.",
+          "language": "es"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The output is chronologically ordered, matches the 5 events in the source description, and uses English as requested. However, multiple descriptions appear to exceed the 150-character limit, and at least one title likely exceeds the 50-character limit ('Structured Programming Gains Traction'). These are minor constraint violations rather than faithfulness or ordering failures.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "The response could be improved by tightening several titles and descriptions to strictly satisfy the stated maximum lengths while preserving the same event content. Otherwise, the extraction is faithful and complete.",
+          "kind": "potentialImprovements",
+          "score": 8.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. CHRONOLOGICAL ORDER: Events must be in chronological order — earliest first.\n\n2. EVENT ACCURACY: Events must faithfully reflect the VISUAL_DESCRIPTION. If the description specifies dates and event names, use those. Do not add extra events beyond what the description specifies.\n\n3. CONSTRAINTS: Title max 50 characters, description max 150 characters per event. Dates can be approximate (\"Early 2000s\", \"Mid-20th century\").\n\n4. LANGUAGE: All text content (dates, titles, descriptions) must be in the specified language. Only JSON field names should be in English.\n",
+        "id": "en-approximate-dates-1",
+        "userInput": {
+          "description": "Timeline of the development of programming paradigms: Late 1950s — first procedural languages emerge (Fortran, COBOL); Early 1970s — structured programming gains traction; Mid-1980s — object-oriented programming becomes mainstream; Late 1990s — functional programming sees renewed interest; 2010s — concurrent and reactive paradigms rise.",
+          "language": "en"
+        }
+      }
+    }
+  ],
+  "taskId": "visual-timeline"
+}

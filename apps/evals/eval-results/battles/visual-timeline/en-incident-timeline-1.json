@@ -1,0 +1,185 @@
+{
+  "expectations": "\nEVALUATION CRITERIA:\n\n1. CHRONOLOGICAL ORDER: Events must be in chronological order — earliest first.\n\n2. EVENT ACCURACY: Events must faithfully reflect the VISUAL_DESCRIPTION. If the description specifies dates and event names, use those. Do not add extra events beyond what the description specifies.\n\n3. CONSTRAINTS: Title max 50 characters, description max 150 characters per event. Dates can be approximate (\"Early 2000s\", \"Mid-20th century\").\n\n4. LANGUAGE: All text content (dates, titles, descriptions) must be in the specified language. Only JSON field names should be in English.\n",
+  "judgedAt": "2026-04-06T16:44:52.590Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Faithfully mirrors the source description with minimal embellishment. All constraints met (chronological order, character limits, correct event count, English). Descriptions are concise and closely track the original wording, which is ideal for faithful extraction.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Very close to the source text with minimal additions. All constraints satisfied. Titles like 'Root Cause Identified' slightly editorialize (the description says 'identifies network path issue,' not explicitly 'root cause'), but this is minor.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Clean, faithful output with good titles and descriptions that stay close to the source. All constraints met. Very comparable to Model B and F in quality.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Accurate, concise, and faithful. All constraints met. Slight rewording ('slow-loading pages') but nothing problematic. Solid overall.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Faithful and concise. All constraints met. Some titles are slightly longer and more descriptive than necessary ('ISP contacted for routing anomaly') but still within limits. Good output.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Accurate and well-structured with all constraints met. Descriptions add embellishments not in the source ('to the support team,' 'prevent recurrence'), which slightly reduces faithfulness, but nothing is factually wrong.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "All constraints met and chronological. Some titles ('Root cause identified', 'Service restored') editorialize beyond the source description. 'Root cause' isn't mentioned in the original, and 'Service restored' reframes 'ISP reroutes traffic.' Slightly less faithful.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Accurate and well-written but adds information not in the source ('as the root cause,' 'affecting traffic in the EU region' for the ISP contact, 'document findings and identify preventive measures'). These embellishments reduce faithfulness.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Descriptions add significant editorial content not present in the source ('signaling the start of the incident,' 'confirming a widespread issue,' 'review the timeline, root cause, and preventive measures'). While not inaccurate per se, this goes beyond faithful extraction. All constraints are technically met.",
+          "score": 7.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Flawless output. The model faithfully extracted the events verbatim from the prompt, created concise and accurate titles, and perfectly adhered to all length and formatting constraints.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Flawless output. The descriptions are faithfully extracted without adding hallucinated fluff, titles are highly concise, and all constraints are strictly followed.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Excellent and extremely faithful extraction. It loses a tiny fraction of a point just for omitting ending punctuation on the descriptions, but it is otherwise perfect.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Excellent output that follows all instructions perfectly. It features very slight but accurate rewording of the descriptions compared to the literal text.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Excellent output meeting all constraints. The rewording of the descriptions is accurate and retains the original meaning perfectly.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Meets all constraints and generates a valid timeline. However, it takes slight liberties by labeling the intermediate hop issue as the 'Root cause', which was not explicitly stated in the text.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Follows all formatting and length constraints correctly. However, it adds unprompted assumptions to the descriptions, such as stating the postmortem was 'to document findings and identify preventive measures'.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Meets all technical constraints for length and formatting. It loses points for adding unprompted context to the descriptions, such as mentioning 'the support team' and 'prevent recurrence'.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Adheres to the JSON and length constraints well. However, it includes the most unprompted, hallucinated narrative additions (e.g., 'signaling the start of the incident', 'confirming a widespread issue').",
+          "score": 8
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "This is the most faithful and concise rendering of the source timeline: all 6 events are present, in order, with no added detail. Titles and descriptions stay comfortably within limits and closely match the prompt wording.",
+          "score": 9.9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Very accurate and fully compliant, with all events in order and no meaningful additions beyond light rephrasing. It is slightly less literal than Model B but still highly faithful and clear.",
+          "score": 9.7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Strong, compliant output with accurate chronology and well-sized fields. Minor wording additions like 'The incident postmortem process begins' make it a touch less direct than the best entries.",
+          "score": 9.6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Chronology and event coverage are correct, and the output remains concise and within limits. However, titles like 'Root Cause Identified' overstate what the prompt says, making it slightly less faithful.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Accurate ordering and event extraction, with concise descriptions. But several titles are noticeably longer and closer to the 50-character cap, and some phrasing is a bit less natural than higher-ranked outputs.",
+          "score": 9.1
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "All required events are present and in order, but it adds explanatory detail not explicitly stated in the prompt, such as support team involvement and prevention of recurrence. Those embellishments reduce faithfulness despite otherwise solid formatting.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Structurally correct and chronological, but titles like 'Root cause identified' and 'Service restored' introduce interpretation not directly stated in the source. That added inference makes it less faithful than the stronger outputs.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "The structure and ordering are correct, but it adds notable unsupported detail like calling the issue the 'root cause' and mentioning documentation and preventive measures. Those extras make it less faithful to the provided description.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "This follows the structure and chronology, but several descriptions are embellished with unsupported details such as 'widespread issue,' 'across affected systems,' and review goals for the postmortem. It remains usable, yet the extra narrative reduces accuracy and prompt adherence.",
+          "score": 7.8
+        }
+      ]
+    }
+  ],
+  "taskId": "visual-timeline",
+  "testCaseId": "en-incident-timeline-1"
+}

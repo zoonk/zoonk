@@ -1,0 +1,185 @@
+{
+  "expectations": "\nEVALUATION CRITERIA:\n\n1. CHRONOLOGICAL ORDER: Events must be in chronological order — earliest first.\n\n2. EVENT ACCURACY: Events must faithfully reflect the VISUAL_DESCRIPTION. If the description specifies dates and event names, use those. Do not add extra events beyond what the description specifies.\n\n3. CONSTRAINTS: Title max 50 characters, description max 150 characters per event. Dates can be approximate (\"Early 2000s\", \"Mid-20th century\").\n\n4. LANGUAGE: All text content (dates, titles, descriptions) must be in the specified language. Only JSON field names should be in English.\n",
+  "judgedAt": "2026-04-06T16:44:55.858Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "All 5 events in correct chronological order, faithfully reflecting the description. Titles are concise and within 50 chars, descriptions are informative and within 150 chars. Language is correct. Very faithful to the source without embellishment.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "All events accurate, chronological, and within constraints. Descriptions are clean and faithful to the source material without adding unsupported details. Slightly less descriptive than Model C but equally correct.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "All 5 events correct and chronological. Titles and descriptions are concise and faithful. No hallucinations or constraint violations. Solid output that closely mirrors the source.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "All events accurate and chronological. Good variety in title phrasing. Minor: 'cold-chain logistics create delays' slightly embellishes beyond 'faces cold chain challenges' but is a reasonable inference. All constraints met.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "All events correct and in order. Constraints met. Faithful to source. Descriptions are slightly less detailed but accurate. Title 'Rural Distribution' could be more descriptive about the challenges mentioned in the source.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Correct chronological order and constraints met. Faithful to source. Title 'Vaccination Milestone' is somewhat vague compared to other models, and 'Urban Distribution' lacks the 'begins' aspect. Minor issues only.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Accurate and in order. Meets all constraints. Descriptions are very minimal—almost too terse—but this is not a violation. Faithfully reflects the source without hallucination. Capitalization style differs (sentence case) but acceptable.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Correct chronological order, all constraints met. However, adds embellishments not in the source: 'prioritizing densely populated areas,' 'as the year comes to a close.' These are minor hallucinations/fabrications beyond the source description.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Chronological and within constraints. However, adds details not in the source: 'prioritizing high-density population areas,' 'in remote areas,' 'address waning vaccine protection.' These are fabricated embellishments that go beyond faithful extraction from the description.",
+          "score": 7.3
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "This model followed all constraints perfectly and extracted the text almost verbatim from the prompt, showing the highest level of faithfulness to the source material.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "The model perfectly formatted the output, adhered to all length constraints, and faithfully relayed only the information present in the source prompt without adding unnecessary details.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Excellent output. It accurately extracted all dates and events, kept titles and descriptions well under the character limits, and refrained from hallucinating extra information.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Follows all instructions and formatting rules well. It adds very minor filler text ('to boost immunity') not present in the prompt, but remains highly accurate.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Properly structures the timeline and respects all constraints. It assumes 'the government' announced the booster, which is a logical but technically unprompted addition.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Adheres to all chronological and length constraints. It includes slight embellishments ('to strengthen immunity') but remains accurate overall.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Generates a solid timeline that follows the prompt rules. Like Model D, it adds 'the government' to the final event, which is minor fluff not explicitly stated in the source.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Meets length and formatting constraints, but adds hallucinated policy details ('prioritizing densely populated areas') that were not present in the original description.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Follows the JSON and length constraints but includes fabricated information not in the prompt, such as 'prioritizing high-density population areas' and 'address waning vaccine protection'.",
+          "score": 7.5
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Faithful, concise, and fully compliant: five events in correct order, clear English text, and no notable hallucinations. Titles and descriptions stay within limits while closely matching the source wording.",
+          "score": 9.7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Most directly mirrors the input with minimal paraphrase, preserving all five events accurately and cleanly. It is slightly less polished than the best entry, but fully follows the structure and constraints.",
+          "score": 9.6
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Accurate and well-structured, with all events in order and concise text within limits. Minor wording compression makes it a bit less precise than the top two, but it remains highly faithful.",
+          "score": 9.4
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Strong overall with correct chronology and solid fidelity to the prompt. It adds a bit of extra framing like 'across the country' and 'to boost immunity,' which is acceptable but slightly less strict than the best outputs.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Clear and chronological, with concise event summaries that mostly reflect the source. However, phrases like 'create delays' and 'strengthen immunity' introduce small unsupported details.",
+          "score": 8.9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Well-formed and accurate in sequence, but several descriptions add extra information such as prioritization, timely delivery, and year-end framing not stated in the prompt. These additions reduce faithfulness somewhat.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Good structure and chronology, but it introduces unsupported specifics like 'the government' and 'the start of' the booster campaign rather than simply announcing it. Titles are also a bit more generic than necessary.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Mostly accurate and compliant, but it adds unsupported details such as government involvement and uses vaguer titles that lose some specificity from the source. Still acceptable, just less faithful than higher-ranked outputs.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Chronology and formatting are correct, but it contains the most noticeable unsupported elaborations, including prioritizing dense areas, remote areas, and waning protection. These factual additions make it less faithful to the prompt.",
+          "score": 8
+        }
+      ]
+    }
+  ],
+  "taskId": "visual-timeline",
+  "testCaseId": "en-vaccination-campaign-1"
+}

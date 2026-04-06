@@ -5,7 +5,7 @@ import { z } from "zod";
 import systemPrompt from "./visual-timeline.prompt.md";
 
 const DEFAULT_MODEL = process.env.AI_MODEL_VISUAL_TIMELINE ?? "openai/gpt-5.4-mini";
-const FALLBACK_MODELS = ["google/gemini-3-flash"];
+const FALLBACK_MODELS = ["google/gemini-3.1-flash-lite-preview", "anthropic/claude-haiku-4.5"];
 
 /**
  * Matches `timelineVisualContentSchema` from `@zoonk/core/steps/contract/visual`.

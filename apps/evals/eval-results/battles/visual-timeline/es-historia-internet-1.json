@@ -1,0 +1,185 @@
+{
+  "expectations": "\nEVALUATION CRITERIA:\n\n1. CHRONOLOGICAL ORDER: Events must be in chronological order — earliest first.\n\n2. EVENT ACCURACY: Events must faithfully reflect the VISUAL_DESCRIPTION. If the description specifies dates and event names, use those. Do not add extra events beyond what the description specifies.\n\n3. CONSTRAINTS: Title max 50 characters, description max 150 characters per event. Dates can be approximate (\"Early 2000s\", \"Mid-20th century\").\n\n4. LANGUAGE: All text content (dates, titles, descriptions) must be in the specified language. Only JSON field names should be in English.\n\nLANGUAGE REQUIREMENT: All content must be in Latin American Spanish.\n    ",
+  "judgedAt": "2026-04-06T16:44:50.954Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "All 5 events in chronological order, faithful to the description, all in Spanish. Titles and descriptions within character limits. Descriptions add minor context without hallucinating significant details. Clean and accurate.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Chronological, faithful, all in Spanish, within character limits. Descriptions are well-elaborated and natural. No significant hallucinations—mentions of Larry Page and Sergey Brin are factually accurate additions, though slightly beyond what the description specifies.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Chronological, in Spanish, within character limits. Well-written descriptions but adds details not in the original description (Larry Page and Sergey Brin for Google). While factually accurate, this slightly embellishes beyond the source. Some descriptions are on the longer side but stay within 150 chars.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Chronological, in Spanish, within limits. Faithful to the description without adding extraneous details. Descriptions are concise and accurate. Slightly less informative than top models but clean and correct.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Chronological, in Spanish, within limits. Adds details not in the source (nodos universitarios, Mark Zuckerberg, Larry Page/Sergey Brin, primer navegador y servidor). While factually accurate, these embellishments go beyond faithful extraction from the description.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Chronological, in Spanish, within limits. Descriptions add editorial commentary ('revolucionando', 'convirtiéndose en un gigante tecnológico') that goes beyond the source. Uses 'internet' inconsistently. Generally good but slightly embellished.",
+          "score": 7.7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Chronological, in Spanish, within limits. Contains a grammatical error: 'e empieza' should be 'y empieza' (the 'e' form is only used before words starting with 'i-' or 'hi-'). Otherwise solid output.",
+          "score": 7.3
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Chronological, in Spanish, within limits. Descriptions are very minimal—essentially just repeating the source text verbatim with no added value. While this is faithful, the descriptions are too terse to be very informative for a timeline.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Chronological, in Spanish, within limits. Like Model F, descriptions are very minimal and nearly verbatim from the source. Functional but lacks the descriptive richness expected in a good timeline.",
+          "score": 7.2
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Perfectly follows all instructions. The model extracts the timeline events faithfully and exactly from the text without adding unnecessary external information, while keeping titles and descriptions well within the character limits.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Identical in quality to Model F. It extracts the text almost verbatim, follows chronological order, adheres to character limits, and avoids inserting external knowledge.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Excellent output that stays very faithful to the original text. It adds very minor logical extensions to the descriptions (like 'entre computadoras') but overall captures the exact essence of the prompt.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Very good output. It slightly rephrases the input text and adds minor embellishments ('compañía Google, transformando la búsqueda web') but remains highly accurate and well within constraints.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Follows structural and language requirements well. However, it adds a fair amount of external historical context ('sentando las bases técnicas') rather than extracting strictly from the source description.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Follows the format and constraints well but includes a lot of external contextual fluff not present in the original description. Additionally, it forgets closing punctuation at the end of the descriptions.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Good formatting, but penalizing slightly for introducing external facts (e.g., naming Larry Page and Sergey Brin) that were not present in the provided source description, violating the faithful extraction requirement.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Also introduces multiple external facts (Mark Zuckerberg, Larry Page, Sergey Brin) that were entirely absent from the source text, rather than faithfully extracting the provided description.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Follows the overall structure but contains a notable grammatical error in Spanish ('e empieza' instead of 'y empieza'). It also adds slight embellishments to the text.",
+          "score": 6.5
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Faithfully captures all 5 specified events in correct order and keeps titles/descriptions within limits. Wording stays close to the source with clear Spanish and no notable factual additions.",
+          "score": 9.6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Highly faithful and concise, with all 5 events in order and no unnecessary embellishment. It follows the format and language requirements very cleanly, though it is less descriptive than the best answer.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Accurate, chronological, and compliant with length and language constraints. Slightly less faithful than the top answers because \"Nacimiento de la WWW\" reframes the source's \"presenta\" wording.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Meets the structural and language requirements and preserves the five events in order. It adds mild interpretive phrasing like growth/transformation that goes a bit beyond the source.",
+          "score": 8.9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Correct order, valid JSON structure, and all content is in Spanish within the limits. Some titles and descriptions are more generalized than the prompt, reducing fidelity to the original wording.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Well-formed and chronological, but several descriptions introduce extra details and interpretation not present in the source. The added founders for Google are factual, yet the prompt asked for faithful extraction rather than enrichment.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Structurally correct and mostly accurate, but it adds unsupported details like naming Google's founders and broader impact statements. Those additions reduce faithfulness to the provided description.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "The structure and chronology are correct, but it uses lowercase \"internet\" and more importantly adds speculative or promotional language like \"gigante tecnológico\" and \"era de las redes sociales modernas.\" This is less faithful to the source and includes awkward phrasing in Spanish.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Although formatted correctly and chronological, it adds multiple specific details not in the prompt, such as nodos universitarios, official ARPANET standardization, the first browser/server, and Mark Zuckerberg. These unsupported additions materially hurt faithfulness to the task.",
+          "score": 6.9
+        }
+      ]
+    }
+  ],
+  "taskId": "visual-timeline",
+  "testCaseId": "es-historia-internet-1"
+}
