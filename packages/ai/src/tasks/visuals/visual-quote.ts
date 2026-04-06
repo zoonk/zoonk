@@ -15,6 +15,7 @@ const FALLBACK_MODELS = ["google/gemini-3-flash"];
 const schema = z
   .object({
     author: z.string(),
+    canVerify: z.boolean(),
     text: z.string(),
   })
   .strict();
@@ -33,8 +34,9 @@ export type VisualQuoteParams = {
  * Generates structured quote data from a textual description.
  * Takes a visual description (from a kind-selection task like
  * `generateInvestigationVisual`) and produces quote content
- * matching `quoteVisualContentSchema`: the quote text and
- * its attribution to a real, identifiable person.
+ * matching `quoteVisualContentSchema`: the quote text, its
+ * attribution to a real, identifiable person, and whether
+ * the model believes that attribution is verifiable.
  */
 export async function generateVisualQuote({
   description,

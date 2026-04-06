@@ -76,6 +76,7 @@ export const imageVisualContentSchema = z
 export const quoteVisualContentSchema = z
   .object({
     author: z.string(),
+    canVerify: z.boolean().optional(),
     text: z.string(),
   })
   .strict();
