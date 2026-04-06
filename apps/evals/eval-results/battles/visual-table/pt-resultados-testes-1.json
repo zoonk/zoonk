@@ -1,0 +1,185 @@
+{
+  "expectations": "\nEVALUATION CRITERIA:\n\n1. STRUCTURE: Every row must have exactly one value per column — the number of values in each row must match the number of columns. Missing fields make the table malformed.\n\n2. DATA ACCURACY: Column headers and cell values must faithfully reflect the VISUAL_DESCRIPTION. If the description gives specific column names and values, use those. If the description is qualitative, illustrative values are expected but must match the described pattern.\n\n3. ALL VALUES ARE STRINGS: Cell values must be strings (e.g., \"42\" not 42), even for numeric data.\n\n4. CAPTION: Optional but should be included when the description provides context for the table. Max 100 characters.\n\n5. LANGUAGE: All text content (column headers, cell values, caption) must be in the specified language. Only JSON field names should be in English.\n\nLANGUAGE REQUIREMENT: All content must be in Brazilian Portuguese.\n    ",
+  "judgedAt": "2026-04-06T16:16:48.121Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Identical output to all others. Perfect structure, accurate data, all values are strings, caption matches, language is correct.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Identical output to all others. Perfect structure, accurate data, all values are strings, caption matches, language is correct.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Identical output to all others. Perfect structure, accurate data, all values are strings, caption matches, language is correct.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Identical output to all others. Perfect structure, accurate data, all values are strings, caption matches, language is correct.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Identical output to all others. Perfect structure, accurate data, all values are strings, caption matches, language is correct.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Identical output to all others. Perfect structure, accurate data, all values are strings, caption matches, language is correct.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Identical output to all others. Perfect structure, accurate data, all values are strings, caption matches, language is correct.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Identical output to all others. Perfect structure, accurate data, all values are strings, caption matches, language is correct.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Identical output to all others. Perfect structure, accurate data, all values are strings, caption matches, language is correct.",
+          "score": 10
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "The model followed all instructions perfectly, creating an accurate JSON structure with the correct columns, rows, and caption as specified in the prompt. All values are formatted as strings and translated correctly.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "The model followed all instructions perfectly, creating an accurate JSON structure with the correct columns, rows, and caption as specified in the prompt. All values are formatted as strings and translated correctly.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "The model followed all instructions perfectly, creating an accurate JSON structure with the correct columns, rows, and caption as specified in the prompt. All values are formatted as strings and translated correctly.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "The model followed all instructions perfectly, creating an accurate JSON structure with the correct columns, rows, and caption as specified in the prompt. All values are formatted as strings and translated correctly.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "The model followed all instructions perfectly, creating an accurate JSON structure with the correct columns, rows, and caption as specified in the prompt. All values are formatted as strings and translated correctly.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "The model followed all instructions perfectly, creating an accurate JSON structure with the correct columns, rows, and caption as specified in the prompt. All values are formatted as strings and translated correctly.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "The model followed all instructions perfectly, creating an accurate JSON structure with the correct columns, rows, and caption as specified in the prompt. All values are formatted as strings and translated correctly.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "The model followed all instructions perfectly, creating an accurate JSON structure with the correct columns, rows, and caption as specified in the prompt. All values are formatted as strings and translated correctly.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "The model followed all instructions perfectly, creating an accurate JSON structure with the correct columns, rows, and caption as specified in the prompt. All values are formatted as strings and translated correctly.",
+          "score": 10
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "The output is fully faithful to the description, with correct columns, rows, and caption in Brazilian Portuguese. Structure is valid and all cell values are strings, so it cleanly satisfies the prompt.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "This matches the source data exactly and uses the requested JSON table structure correctly. Caption inclusion, row completeness, and Portuguese text all comply perfectly.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "The table is accurate, well-formed, and includes the provided caption within the length limit. All values are strings and the content adheres precisely to the prompt.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "This output correctly reproduces the specified headers and row values with no structural issues. It follows the language and formatting requirements exactly.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "The response is identical in quality to the best outputs: accurate data extraction, valid structure, and all text in Portuguese. Nothing is missing or incorrect.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "The model delivers a complete and correct table object with the exact requested content. It meets all requirements, including string values and optional caption usage.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "This is a perfect match to the visual description, with correct headers, rows, and caption. No inaccuracies or prompt violations are present.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "The output is fully compliant: exact data, proper table schema, and consistent use of Portuguese text. Every row has the right number of string fields.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "The response faithfully captures the provided table details and includes a helpful caption. It is structurally valid and indistinguishable in quality from the top outputs.",
+          "score": 10
+        }
+      ]
+    }
+  ],
+  "taskId": "visual-table",
+  "testCaseId": "pt-resultados-testes-1"
+}

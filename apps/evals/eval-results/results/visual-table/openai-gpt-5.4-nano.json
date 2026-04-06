@@ -1,0 +1,168 @@
+{
+  "modelId": "openai/gpt-5.4-nano",
+  "results": [
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "A very small improvement would be to keep the caption a bit closer to the source phrasing, but the current caption is valid, under 100 characters, and helpful. No meaningful content issues were found.",
+          "kind": "potentialImprovements",
+          "score": 9.8
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. STRUCTURE: Every row must have exactly one value per column — the number of values in each row must match the number of columns. Missing fields make the table malformed.\n\n2. DATA ACCURACY: Column headers and cell values must faithfully reflect the VISUAL_DESCRIPTION. If the description gives specific column names and values, use those. If the description is qualitative, illustrative values are expected but must match the described pattern.\n\n3. ALL VALUES ARE STRINGS: Cell values must be strings (e.g., \"42\" not 42), even for numeric data.\n\n4. CAPTION: Optional but should be included when the description provides context for the table. Max 100 characters.\n\n5. LANGUAGE: All text content (column headers, cell values, caption) must be in the specified language. Only JSON field names should be in English.\n",
+        "id": "en-client-scores-errors-1",
+        "userInput": {
+          "description": "Table with columns: Client, Score, Status. Rows: 'Acme Corp' / inf / Error, 'Beta Inc' / nan / Error, 'Gamma Ltd' / 87.3 / OK, 'Delta Co' / (blank) / Missing. Note: ordering changes on page reload.",
+          "language": "en"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "A small improvement would be to make the caption slightly more concise, since captions are optional but ideally compact. However, the current caption is still under 100 characters and fully appropriate. No substantive content issues found.",
+          "kind": "potentialImprovements",
+          "score": 9.8
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. STRUCTURE: Every row must have exactly one value per column — the number of values in each row must match the number of columns. Missing fields make the table malformed.\n\n2. DATA ACCURACY: Column headers and cell values must faithfully reflect the VISUAL_DESCRIPTION. If the description gives specific column names and values, use those. If the description is qualitative, illustrative values are expected but must match the described pattern.\n\n3. ALL VALUES ARE STRINGS: Cell values must be strings (e.g., \"42\" not 42), even for numeric data.\n\n4. CAPTION: Optional but should be included when the description provides context for the table. Max 100 characters.\n\n5. LANGUAGE: All text content (column headers, cell values, caption) must be in the specified language. Only JSON field names should be in English.\n",
+        "id": "en-http-status-codes-1",
+        "userInput": {
+          "description": "Table comparing HTTP response codes from 5 endpoints: /api/users returns 200, /api/orders returns 200, /api/payments returns 500, /api/search returns 404, /api/health returns 200. Columns: Endpoint, Status Code, Response Time (ms). Add plausible response times.",
+          "language": "en"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The output is strong and fully usable. Small improvements are possible: the caption says 'after database optimization,' which is acceptable, but a slightly shorter caption could better align with the optional brevity guidance; also, the 'Improvement' values are sensibly derived rather than explicitly provided in the description, which is allowed, though a format like '1155ms faster (96.25%)' might be marginally clearer than a negative delta. These are not errors, just minor polish opportunities.",
+          "kind": "potentialImprovements",
+          "score": 9.6
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. STRUCTURE: Every row must have exactly one value per column — the number of values in each row must match the number of columns. Missing fields make the table malformed.\n\n2. DATA ACCURACY: Column headers and cell values must faithfully reflect the VISUAL_DESCRIPTION. If the description gives specific column names and values, use those. If the description is qualitative, illustrative values are expected but must match the described pattern.\n\n3. ALL VALUES ARE STRINGS: Cell values must be strings (e.g., \"42\" not 42), even for numeric data.\n\n4. CAPTION: Optional but should be included when the description provides context for the table. Max 100 characters.\n\n5. LANGUAGE: All text content (column headers, cell values, caption) must be in the specified language. Only JSON field names should be in English.\n",
+        "id": "en-before-after-comparison-1",
+        "userInput": {
+          "description": "Table comparing before and after metrics for a database optimization: Query A went from 1200ms to 45ms, Query B from 800ms to 120ms, Query C from 3500ms to 200ms, Query D stayed the same at 50ms. Columns: Query, Before (ms), After (ms), Improvement.",
+          "language": "en"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "A very small improvement would be to ensure locale-consistent numeric formatting in Brazilian Portuguese (e.g., using commas in pH values like \"4,2\"), though the provided values still faithfully match the source description and remain understandable. Otherwise the table is complete, well-structured, and accurate.",
+          "kind": "potentialImprovements",
+          "score": 9.6
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. STRUCTURE: Every row must have exactly one value per column — the number of values in each row must match the number of columns. Missing fields make the table malformed.\n\n2. DATA ACCURACY: Column headers and cell values must faithfully reflect the VISUAL_DESCRIPTION. If the description gives specific column names and values, use those. If the description is qualitative, illustrative values are expected but must match the described pattern.\n\n3. ALL VALUES ARE STRINGS: Cell values must be strings (e.g., \"42\" not 42), even for numeric data.\n\n4. CAPTION: Optional but should be included when the description provides context for the table. Max 100 characters.\n\n5. LANGUAGE: All text content (column headers, cell values, caption) must be in the specified language. Only JSON field names should be in English.\n\nLANGUAGE REQUIREMENT: All content must be in Brazilian Portuguese.\n    ",
+        "id": "pt-resultados-testes-1",
+        "userInput": {
+          "description": "Tabela com resultados de testes de qualidade de um produto alimentício. Colunas: Amostra, pH, Temperatura (°C), Resultado. Linhas: Amostra 1 / 4.2 / 22 / Aprovado, Amostra 2 / 6.8 / 35 / Reprovado, Amostra 3 / 4.5 / 20 / Aprovado, Amostra 4 / 7.1 / 40 / Reprovado. Legenda: 'Testes de controle de qualidade — Lote 47'.",
+          "language": "pt"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "None",
+          "kind": "minorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "A very small improvement would be to shorten the caption slightly, since it appears to exceed the 100-character guidance. Otherwise, the table content is faithful, well-structured, and entirely in Spanish.",
+          "kind": "potentialImprovements",
+          "score": 9.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. STRUCTURE: Every row must have exactly one value per column — the number of values in each row must match the number of columns. Missing fields make the table malformed.\n\n2. DATA ACCURACY: Column headers and cell values must faithfully reflect the VISUAL_DESCRIPTION. If the description gives specific column names and values, use those. If the description is qualitative, illustrative values are expected but must match the described pattern.\n\n3. ALL VALUES ARE STRINGS: Cell values must be strings (e.g., \"42\" not 42), even for numeric data.\n\n4. CAPTION: Optional but should be included when the description provides context for the table. Max 100 characters.\n\n5. LANGUAGE: All text content (column headers, cell values, caption) must be in the specified language. Only JSON field names should be in English.\n\nLANGUAGE REQUIREMENT: All content must be in Latin American Spanish.\n    ",
+        "id": "es-comparacion-servidores-1",
+        "userInput": {
+          "description": "Tabla comparando tres servidores de base de datos: PostgreSQL, MySQL y MongoDB. Columnas: Característica, PostgreSQL, MySQL, MongoDB. Filas: Tipo (Relacional, Relacional, Documento), Transacciones ACID (Sí, Sí, Parcial), Escalabilidad horizontal (Limitada, Limitada, Nativa), Esquema (Estricto, Estricto, Flexible).",
+          "language": "es"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The caption exceeds the stated maximum of 100 characters. Otherwise, the structure is valid, rows match columns, all cell values are strings, the specified column names are used, and the data faithfully reflects the described pattern.",
+          "kind": "minorErrors",
+          "score": 8.8
+        },
+        {
+          "conclusion": "Shorten the caption to 100 characters or fewer to fully satisfy the requirement. Everything else is well aligned with the prompt: language is correct, illustrative values are plausible, and the table is properly formed.",
+          "kind": "potentialImprovements",
+          "score": 9.2
+        }
+      ],
+      "testCase": {
+        "expectations": "\nEVALUATION CRITERIA:\n\n1. STRUCTURE: Every row must have exactly one value per column — the number of values in each row must match the number of columns. Missing fields make the table malformed.\n\n2. DATA ACCURACY: Column headers and cell values must faithfully reflect the VISUAL_DESCRIPTION. If the description gives specific column names and values, use those. If the description is qualitative, illustrative values are expected but must match the described pattern.\n\n3. ALL VALUES ARE STRINGS: Cell values must be strings (e.g., \"42\" not 42), even for numeric data.\n\n4. CAPTION: Optional but should be included when the description provides context for the table. Max 100 characters.\n\n5. LANGUAGE: All text content (column headers, cell values, caption) must be in the specified language. Only JSON field names should be in English.\n",
+        "id": "en-qualitative-investigation-findings-1",
+        "userInput": {
+          "description": "Table showing investigation test results for a network issue. The description says: 'Traceroute from affected region shows extra hops through an intermediate city, packet loss varies between 2% and 15% across tests, while traceroute from unaffected region shows direct path with no packet loss.' Columns: Test, Affected Region, Unaffected Region.",
+          "language": "en"
+        }
+      }
+    }
+  ],
+  "taskId": "visual-table"
+}

@@ -1,0 +1,185 @@
+{
+  "expectations": "\nEVALUATION CRITERIA:\n\n1. STRUCTURE: Every row must have exactly one value per column — the number of values in each row must match the number of columns. Missing fields make the table malformed.\n\n2. DATA ACCURACY: Column headers and cell values must faithfully reflect the VISUAL_DESCRIPTION. If the description gives specific column names and values, use those. If the description is qualitative, illustrative values are expected but must match the described pattern.\n\n3. ALL VALUES ARE STRINGS: Cell values must be strings (e.g., \"42\" not 42), even for numeric data.\n\n4. CAPTION: Optional but should be included when the description provides context for the table. Max 100 characters.\n\n5. LANGUAGE: All text content (column headers, cell values, caption) must be in the specified language. Only JSON field names should be in English.\n",
+  "judgedAt": "2026-04-06T16:16:53.447Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Perfect structure, data accuracy, all strings. Caption mentions both errors and the ordering note from the description, staying within 100 chars. Faithfully captures the key contextual detail.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Perfect structure and data. Caption concisely captures both the table content and the ordering note from the description within 100 chars.",
+          "score": 9.2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Perfect structure and data. Caption includes the ordering note and describes the table well, though at 75 chars it's slightly verbose but still under the limit.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Perfect structure and data. Caption mentions the ordering note, which is good, but the phrasing 'fluctuating order' is a bit awkward and the caption is on the longer side though still under 100 chars.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Perfect structure and data. Caption describes anomalies well but omits the ordering-on-reload note. Also slightly long at 82 characters but under the limit.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Perfect structure and data. Caption is reasonable but doesn't mention the ordering note from the description, missing a contextual detail.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Perfect structure and data. Caption mentions anomalies which is relevant, but omits the ordering note from the description.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Perfect structure and data. Caption is concise but generic and omits the ordering note from the description.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Perfect structure and data. Caption is very minimal and omits the ordering note and any mention of errors/anomalies from the description.",
+          "score": 7.6
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "The model followed all instructions perfectly, accurately transcribing the table data and translating the '(blank)' instruction to an empty string. It also included a helpful caption that successfully captured the context note ('ordering changes on page reload') from the description.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "The model followed all instructions perfectly, accurately transcribing the table data and translating the '(blank)' instruction to an empty string. It also included a helpful caption that successfully captured the context note ('ordering changes on page reload') from the description.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "The model followed all instructions perfectly, accurately transcribing the table data and translating the '(blank)' instruction to an empty string. It also included a helpful caption that successfully captured the context note ('ordering changes on page reload') from the description.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "The model followed all instructions perfectly, accurately transcribing the table data and translating the '(blank)' instruction to an empty string. It also included a helpful caption that successfully captured the context note ('ordering changes on page reload') from the description.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "The model followed all instructions perfectly, transcribing the data accurately and formatting the blank string correctly. However, it missed the opportunity to include the specific context note ('ordering changes on page reload') in its caption.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "The model followed all instructions perfectly, transcribing the data accurately and formatting the blank string correctly. However, it missed the opportunity to include the specific context note ('ordering changes on page reload') in its caption.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "The model followed all instructions perfectly, transcribing the data accurately and formatting the blank string correctly. However, it missed the opportunity to include the specific context note ('ordering changes on page reload') in its caption.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "The model followed all instructions perfectly, transcribing the data accurately and formatting the blank string correctly. However, it missed the opportunity to include the specific context note ('ordering changes on page reload') in its caption.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "The model followed all instructions perfectly, transcribing the data accurately and formatting the blank string correctly. However, it missed the opportunity to include the specific context note ('ordering changes on page reload') in its caption.",
+          "score": 9.5
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "The structure and data are fully correct, all values are strings, and the caption is concise while capturing the note about changing order. It stays faithful without adding misleading interpretation and is comfortably under the caption limit.",
+          "score": 9.8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "This output is structurally perfect and includes the page-reload ordering note, which adds useful context from the prompt. The caption is slightly less neutral because it foregrounds errors, but it remains accurate and concise.",
+          "score": 9.6
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "The table content is fully correct and the caption includes the ordering-change context from the description. The wording is a bit more interpretive and less concise than the strongest options, but still accurate and within limits.",
+          "score": 9.4
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "The rows and columns are exact, and the caption captures the reload-order note. However, it is more verbose than needed and uses more inferred wording than the top choices.",
+          "score": 9.3
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "This is fully correct on structure, data fidelity, and string formatting. It loses a bit of value only because the caption omits the notable context about ordering changes on page reload.",
+          "score": 9.1
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "The data and structure are flawless, and the caption is clear and brief. It ranks slightly lower because it omits the page-reload ordering note and introduces 'validation' wording not stated in the description.",
+          "score": 8.9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "The core table is perfectly formed and faithful to the specified rows and columns. The caption is acceptable but more inferred with 'processing' language and does not include the ordering-change context.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "The table structure and values are correct, but the caption adds a generalized statement about some entries containing errors or missing values rather than reflecting the more specific reload-order note. It is also relatively wordy and close to the caption length limit.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "The row data and headers are correct, but the caption is more editorialized and less faithful to the source description. 'Performance Data with Anomalies' adds interpretation not present in the prompt and omits the ordering-change note.",
+          "score": 8.1
+        }
+      ]
+    }
+  ],
+  "taskId": "visual-table",
+  "testCaseId": "en-client-scores-errors-1"
+}
