@@ -14,6 +14,7 @@ const ZERO_WEIGHTS: Record<PhaseName, number> = {
   creatingExercises: 0,
   creatingImages: 0,
   creatingSentences: 0,
+  creatingVisuals: 0,
   gettingStarted: 0,
   lookingUpWords: 0,
   preparingVisuals: 0,
@@ -91,22 +92,22 @@ export function getPhaseWeights(kind: ActivityKind): Record<PhaseName, number> {
   if (kind === "custom") {
     return {
       ...ZERO_WEIGHTS,
-      creatingImages: 43,
+      creatingVisuals: 35,
       gettingStarted: 3,
-      preparingVisuals: 22,
-      saving: 7,
-      writingContent: 25,
+      preparingVisuals: 44,
+      saving: 4,
+      writingContent: 14,
     };
   }
 
   if (kind === "explanation") {
     return {
       ...ZERO_WEIGHTS,
-      creatingImages: 52,
+      creatingVisuals: 35,
       gettingStarted: 3,
-      preparingVisuals: 18,
-      saving: 7,
-      writingContent: 20,
+      preparingVisuals: 44,
+      saving: 4,
+      writingContent: 14,
     };
   }
 
@@ -143,11 +144,11 @@ export function getPhaseWeights(kind: ActivityKind): Record<PhaseName, number> {
 
   return {
     ...ZERO_WEIGHTS,
-    creatingImages: 35,
+    creatingVisuals: 27,
     gettingStarted: 3,
-    preparingVisuals: 18,
-    saving: 9,
-    writingContent: 20,
-    writingExplanation: 15,
+    preparingVisuals: 34,
+    saving: 4,
+    writingContent: 11,
+    writingExplanation: 21,
   };
 }

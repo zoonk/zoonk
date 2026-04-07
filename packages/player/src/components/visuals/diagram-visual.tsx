@@ -14,9 +14,6 @@ const NODE_BORDER_RADIUS = 8;
 const EDGE_STROKE_WIDTH = 1.5;
 const EDGE_OPACITY = 0.25;
 const ARROW_SIZE = 8;
-const EDGE_LABEL_CHAR_WIDTH = 6;
-const EDGE_LABEL_PADDING_X = 6;
-const EDGE_LABEL_PADDING_Y = 3;
 const EDGE_LABEL_FONT_SIZE = 11;
 
 function ArrowMarker({ markerId }: { markerId: string }) {
@@ -59,39 +56,37 @@ function DiagramEdgeLine({ edge, markerId }: { edge: PositionedEdge; markerId: s
   );
 }
 
+/**
+ * Renders an edge label at the position computed by dagre.
+ * Dagre places labels at non-overlapping coordinates because
+ * we pass label `width` and `height` in `setEdge`, so it
+ * treats labels as layout participants (not afterthoughts).
+ */
 function DiagramEdgeLabel({ edge }: { edge: PositionedEdge }) {
-  if (!edge.label) {
+  if (!edge.label || edge.labelX === undefined || edge.labelY === undefined) {
     return null;
   }
-
-  const midIndex = Math.floor(edge.points.length / 2);
-  const midPoint = edge.points[midIndex];
-
-  if (!midPoint) {
-    return null;
-  }
-
-  const labelWidth = edge.label.length * EDGE_LABEL_CHAR_WIDTH + EDGE_LABEL_PADDING_X * 2;
-  const labelHeight = EDGE_LABEL_FONT_SIZE + EDGE_LABEL_PADDING_Y * 2;
 
   return (
     <g>
-      <rect
-        fill="var(--background)"
-        height={labelHeight}
-        rx={4}
-        width={labelWidth}
-        x={midPoint.x - labelWidth / 2}
-        y={midPoint.y - labelHeight / 2}
-      />
+      {edge.labelWidth && edge.labelHeight ? (
+        <rect
+          fill="var(--background)"
+          height={edge.labelHeight}
+          rx={4}
+          width={edge.labelWidth}
+          x={edge.labelX - edge.labelWidth / 2}
+          y={edge.labelY - edge.labelHeight / 2}
+        />
+      ) : null}
 
       <text
         dominantBaseline="central"
         fill="var(--muted-foreground)"
         fontSize={EDGE_LABEL_FONT_SIZE}
         textAnchor="middle"
-        x={midPoint.x}
-        y={midPoint.y}
+        x={edge.labelX}
+        y={edge.labelY}
       >
         {edge.label}
       </text>

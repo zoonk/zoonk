@@ -4,8 +4,7 @@ import { generateActivityPractice } from "@zoonk/ai/tasks/activities/core/practi
 import { generateActivityQuiz } from "@zoonk/ai/tasks/activities/core/quiz";
 import { generateActivityStoryDebrief } from "@zoonk/ai/tasks/activities/core/story-debrief";
 import { generateActivityStorySteps } from "@zoonk/ai/tasks/activities/core/story-steps";
-import { generateStepVisuals } from "@zoonk/ai/tasks/steps/visual";
-import { generateVisualStepImage } from "@zoonk/core/steps/visual-image";
+import { generateStepVisualDescriptions } from "@zoonk/ai/tasks/steps/visual-descriptions";
 import { prisma } from "@zoonk/db";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
@@ -16,6 +15,7 @@ import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { getString } from "@zoonk/utils/json";
 import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { activityGenerationWorkflow } from "./activity-generation-workflow";
+import { dispatchVisualContent } from "./steps/_utils/dispatch-visual-content";
 import { getNeighboringConceptsStep } from "./steps/get-neighboring-concepts-step";
 
 vi.mock("./steps/get-neighboring-concepts-step", () => ({
@@ -24,27 +24,31 @@ vi.mock("./steps/get-neighboring-concepts-step", () => ({
 
 const mockStreamWrite = vi.hoisted(() => vi.fn().mockResolvedValue(null));
 
-function createStepVisualsResult(
+function createDescriptionsResult(
   steps: { title: string; text: string }[],
-): Awaited<ReturnType<typeof generateStepVisuals>> {
+): Awaited<ReturnType<typeof generateStepVisualDescriptions>> {
   return {
     data: {
-      visuals: steps.map((step, stepIndex) =>
-        stepIndex === 0
-          ? { kind: "image", prompt: `A visual prompt for ${step.title}`, stepIndex }
-          : {
-              annotations: null,
-              code: "const x = 1;",
-              kind: "code",
-              language: "typescript",
-              stepIndex,
-            },
+      descriptions: steps.map((step, index) =>
+        index === 0
+          ? { description: `A visual prompt for ${step.title}`, kind: "image" as const }
+          : { description: `A code snippet for ${step.title}`, kind: "code" as const },
       ),
     },
     systemPrompt: "test",
-    usage: {} as Awaited<ReturnType<typeof generateStepVisuals>>["usage"],
+    usage: {} as Awaited<ReturnType<typeof generateStepVisualDescriptions>>["usage"],
     userPrompt: "test",
   };
+}
+
+function createDispatchResult(
+  descriptions: { kind: string; description: string }[],
+): Awaited<ReturnType<typeof dispatchVisualContent>> {
+  return descriptions.map((desc, index) =>
+    index === 0
+      ? { kind: "image", prompt: desc.description, url: "https://example.com/image.webp" }
+      : { annotations: null, code: "const x = 1;", kind: "code", language: "typescript" },
+  );
 }
 
 vi.mock("workflow", () => ({
@@ -70,19 +74,21 @@ vi.mock("@zoonk/ai/tasks/activities/core/explanation", () => ({
   }),
 }));
 
-vi.mock("@zoonk/ai/tasks/steps/visual", () => ({
-  generateStepVisuals: vi
+vi.mock("@zoonk/ai/tasks/steps/visual-descriptions", () => ({
+  generateStepVisualDescriptions: vi
     .fn()
     .mockImplementation(({ steps }: { steps: { title: string; text: string }[] }) =>
-      Promise.resolve(createStepVisualsResult(steps)),
+      Promise.resolve(createDescriptionsResult(steps)),
     ),
 }));
 
-vi.mock("@zoonk/core/steps/visual-image", () => ({
-  generateVisualStepImage: vi.fn().mockResolvedValue({
-    data: "https://example.com/image.webp",
-    error: null,
-  }),
+vi.mock("./steps/_utils/dispatch-visual-content", () => ({
+  dispatchVisualContent: vi
+    .fn()
+    .mockImplementation(
+      ({ descriptions }: { descriptions: { kind: string; description: string }[] }) =>
+        Promise.resolve(createDispatchResult(descriptions)),
+    ),
 }));
 
 vi.mock("@zoonk/ai/tasks/activities/core/practice", () => ({
@@ -308,7 +314,7 @@ describe("core activity workflow", () => {
       await activityGenerationWorkflow(testLesson.id);
 
       expect(generateActivityExplanation).not.toHaveBeenCalled();
-      expect(generateStepVisuals).not.toHaveBeenCalled();
+      expect(generateStepVisualDescriptions).not.toHaveBeenCalled();
     });
 
     test("skips images if ALL image steps already have URLs", async () => {
@@ -342,7 +348,7 @@ describe("core activity workflow", () => {
 
       await activityGenerationWorkflow(testLesson.id);
 
-      expect(generateVisualStepImage).not.toHaveBeenCalled();
+      expect(dispatchVisualContent).not.toHaveBeenCalled();
     });
 
     test("skips quiz content if quiz steps already exist in DB", async () => {

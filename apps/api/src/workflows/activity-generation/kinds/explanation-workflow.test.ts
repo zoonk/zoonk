@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { generateActivityExplanation } from "@zoonk/ai/tasks/activities/core/explanation";
-import { generateStepVisuals } from "@zoonk/ai/tasks/steps/visual";
+import { generateStepVisualDescriptions } from "@zoonk/ai/tasks/steps/visual-descriptions";
 import { prisma } from "@zoonk/db";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
@@ -10,32 +10,41 @@ import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { getString } from "@zoonk/utils/json";
 import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { dispatchVisualContent } from "../steps/_utils/dispatch-visual-content";
 import { getLessonActivitiesStep } from "../steps/get-lesson-activities-step";
 import { explanationActivityWorkflow } from "./explanation-workflow";
 
 const mockStreamWrite = vi.hoisted(() => vi.fn().mockResolvedValue(null));
 
-function createStepVisualsResult(
+function createDescriptionsResult(
   steps: { title: string; text: string }[],
-): Awaited<ReturnType<typeof generateStepVisuals>> {
+): Awaited<ReturnType<typeof generateStepVisualDescriptions>> {
   return {
     data: {
-      visuals: steps.map((step, stepIndex) =>
-        stepIndex === 0
-          ? { kind: "image", prompt: `A visual prompt for ${step.title}`, stepIndex }
-          : {
-              annotations: null,
-              code: "const x = 1;",
-              kind: "code",
-              language: "typescript",
-              stepIndex,
-            },
+      descriptions: steps.map((step, index) =>
+        index === 0
+          ? { description: `A visual prompt for ${step.title}`, kind: "image" as const }
+          : { description: `A code snippet for ${step.title}`, kind: "code" as const },
       ),
     },
     systemPrompt: "test",
-    usage: {} as Awaited<ReturnType<typeof generateStepVisuals>>["usage"],
+    usage: {} as Awaited<ReturnType<typeof generateStepVisualDescriptions>>["usage"],
     userPrompt: "test",
   };
+}
+
+function createDispatchResult(
+  steps: { title: string; text: string }[],
+): Awaited<ReturnType<typeof dispatchVisualContent>> {
+  return steps.map((step, index) =>
+    index === 0
+      ? {
+          kind: "image",
+          prompt: `A visual prompt for ${step.title}`,
+          url: "https://example.com/image.webp",
+        }
+      : { annotations: null, code: "const x = 1;", kind: "code", language: "typescript" },
+  );
 }
 
 function getStreamedMessages(): Record<string, string>[] {
@@ -67,19 +76,26 @@ vi.mock("@zoonk/ai/tasks/activities/core/explanation", () => ({
   }),
 }));
 
-vi.mock("@zoonk/ai/tasks/steps/visual", () => ({
-  generateStepVisuals: vi
+vi.mock("@zoonk/ai/tasks/steps/visual-descriptions", () => ({
+  generateStepVisualDescriptions: vi
     .fn()
     .mockImplementation(({ steps }: { steps: { title: string; text: string }[] }) =>
-      Promise.resolve(createStepVisualsResult(steps)),
+      Promise.resolve(createDescriptionsResult(steps)),
     ),
 }));
 
-vi.mock("@zoonk/core/steps/visual-image", () => ({
-  generateVisualStepImage: vi.fn().mockResolvedValue({
-    data: "https://example.com/image.webp",
-    error: null,
-  }),
+vi.mock("../steps/_utils/dispatch-visual-content", () => ({
+  dispatchVisualContent: vi
+    .fn()
+    .mockImplementation(
+      ({ descriptions }: { descriptions: { kind: string; description: string }[] }) => {
+        const steps = descriptions.map((desc) => ({
+          text: desc.description,
+          title: desc.description,
+        }));
+        return Promise.resolve(createDispatchResult(steps));
+      },
+    ),
 }));
 
 describe("explanation activity workflow", () => {
@@ -236,31 +252,14 @@ describe("explanation activity workflow", () => {
     expect(dbActivity?.generationStatus).toBe("failed");
   });
 
-  test("fails when visuals do not cover each step exactly once", async () => {
-    vi.mocked(generateStepVisuals).mockResolvedValueOnce({
-      ...createStepVisualsResult([
-        { text: "Explanation step 1 text", title: "Explanation Step 1" },
-        { text: "Explanation step 2 text", title: "Explanation Step 2" },
-      ]),
-      data: {
-        visuals: [
-          { kind: "image", prompt: "Duplicate visual", stepIndex: 0 },
-          {
-            annotations: null,
-            code: "const x = 1;",
-            kind: "code",
-            language: "typescript",
-            stepIndex: 0,
-          },
-        ],
-      },
-    });
+  test("marks activity as failed when visual dispatch throws", async () => {
+    vi.mocked(dispatchVisualContent).mockRejectedValueOnce(new Error("Visual dispatch failed"));
 
     const testLesson = await lessonFixture({
       chapterId: chapter.id,
-      concepts: ["Concept Duplicate Visuals"],
+      concepts: ["Concept Dispatch Failure"],
       organizationId,
-      title: `Exp Invalid Visuals Lesson ${randomUUID()}`,
+      title: `Exp Dispatch Fail Lesson ${randomUUID()}`,
     });
 
     const activity = await activityFixture({
@@ -268,7 +267,7 @@ describe("explanation activity workflow", () => {
       kind: "explanation",
       lessonId: testLesson.id,
       organizationId,
-      title: "Concept Duplicate Visuals",
+      title: "Concept Dispatch Failure",
     });
 
     const activities = await getLessonActivitiesStep(testLesson.id);
@@ -293,20 +292,11 @@ describe("explanation activity workflow", () => {
     ]);
 
     expect(dbActivity?.generationStatus).toBe("failed");
-    // No steps are saved because the save step is never reached (visuals throw)
     expect(steps).toHaveLength(0);
   });
 
   test("completes when the model returns no visuals", async () => {
-    vi.mocked(generateStepVisuals).mockResolvedValueOnce({
-      ...createStepVisualsResult([
-        { text: "Explanation step 1 text", title: "Explanation Step 1" },
-        { text: "Explanation step 2 text", title: "Explanation Step 2" },
-      ]),
-      data: {
-        visuals: [],
-      },
-    });
+    vi.mocked(dispatchVisualContent).mockResolvedValueOnce([]);
 
     const testLesson = await lessonFixture({
       chapterId: chapter.id,
@@ -596,7 +586,11 @@ describe("explanation activity workflow", () => {
       const activityIds = new Set([Number(expA.id), Number(expB.id)]);
 
       // Per-entity steps must include entityId matching one of the activity IDs
-      const perEntitySteps = ["generateVisuals", "generateImages", "saveExplanationActivity"];
+      const perEntitySteps = [
+        "generateVisualDescriptions",
+        "generateVisualContent",
+        "saveExplanationActivity",
+      ];
 
       for (const stepName of perEntitySteps) {
         const stepMessages = streamedMessages.filter((msg) => msg.step === stepName);
@@ -718,7 +712,7 @@ describe("explanation activity workflow", () => {
         workflowRunId: "test-run-id",
       });
 
-      const calls = vi.mocked(generateStepVisuals).mock.calls;
+      const calls = vi.mocked(generateStepVisualDescriptions).mock.calls;
       expect(calls.length).toBeGreaterThanOrEqual(2);
     });
 

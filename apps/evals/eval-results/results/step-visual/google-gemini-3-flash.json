@@ -4,42 +4,82 @@
     {
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "None. The response provides exactly one visual description for each of the 13 input steps, keeps the correct order, and avoids the major prohibited mistakes called out in the expectations. It does not use chart, timeline, quote, formula, music, or code in inappropriate ways, and there is no fabricated statistical chart data. Overall, there are no major factual or instruction-level failures that significantly undermine usefulness.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "None",
+          "conclusion": "Several minor issues reduce precision and fit. Step 2 uses a diagram with visible text labels ('Payload', 'Header', 'Trailer'); while diagram text is allowed, it is a fairly literal restatement and not especially revealing. Step 4 and Step 8 use simple stage-box arrow diagrams that border on the disallowed 'just restates the text as boxes with arrows' pattern, though they remain usable. Step 7 image includes explicit text-like labeling ('Network Header') inside an image-oriented description, which edges toward image text contamination. Step 11 image uses visible symbolic text-like elements ('GPS coordinates, timestamps') on the envelope surface; this is not strictly necessary and risks violating the no-text preference for images. Step 12's image is somewhat abstract and may not communicate encapsulation specifically enough without additional structure.",
           "kind": "minorErrors",
-          "score": 10
+          "score": 8.1
         },
         {
-          "conclusion": "None",
+          "conclusion": "The response could be improved by choosing more structurally informative visuals for a few steps. Step 0 might work better as a table or diagram showing payload plus successive wrappers rather than a generic concentric image. Step 4 and Step 8 could be made more specific by naming exact nodes and unique edge relationships instead of simple staged boxes. Step 7 could avoid image text entirely by visually showing only the router inspecting the outer shell. Step 12 could better summarize the 'big picture' with a clearer table or focused diagram showing how multiple systems read only their relevant layer. A bit more cross-step differentiation would also help, since multiple visuals rely on similar wrapped-packet metaphors.",
           "kind": "potentialImprovements",
-          "score": 10
+          "score": 8.5
         }
       ],
       "testCase": {
-        "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\nThis test covers historical content about the French Revolution (1789-1799).\n\nACCURACY CHECKS - PENALIZE if:\n- Any historical dates are wrong (key dates: 1789 Bastille, 1791 Constitution, 1793 Reign of Terror, 1799 Napoleon's coup)\n- Historical quotes are fabricated or misattributed\n- Cause-effect relationships are historically inaccurate\n\nREDUNDANCY CHECKS - PENALIZE if:\n- Multiple visuals cover the same historical events\n- The same dates/figures appear across different visuals without adding new information\n\nVISUAL-CONTENT FIT - PENALIZE if:\n- Code visual is used (no programming content)\n- Chart visual is used without meaningful numerical data\n\nDo NOT PENALIZE if:\n- All steps use image visuals (valid if each shows distinct content)\n- No timeline is used (historical content can be visualized many ways)\n- A diagram showing cause-effect is used instead of a timeline\n\n\nEVALUATION CRITERIA:\n\n1. COVERAGE: Every step must have exactly one visual. Check that the number of visuals equals the number of steps and stepIndex values are unique and complete (0 to N-1).\n\n2. NO REDUNDANCY: Each visual must add UNIQUE information. PENALIZE if:\n   - Multiple visuals repeat the same data points, events, or concepts\n   - A visual restates what another visual already showed\n   - Example: Two timelines covering overlapping periods with the same events\n\n3. VISUAL-CONTENT FIT: The visual type must make sense for the content. PENALIZE if:\n   - Code visual is used for non-programming content\n   - Chart is used without numerical/statistical data to display\n   - Timeline is used for content with no temporal/sequential element\n   - Quote is fabricated or misattributed (must be real, verifiable quotes)\n\n   Do NOT penalize if:\n   - Image is used for any content (image can visualize anything)\n   - Diagram is used instead of timeline (relationships can be shown multiple ways)\n   - Any visual type is used multiple times (if each instance adds unique value)\n\n4. TECHNICAL ACCURACY: Visual content must be factually correct:\n   - Code must be syntactically valid\n   - Historical dates and events must be accurate\n   - Scientific processes must be correctly represented\n   - Chart data must be realistic and internally consistent\n\n5. LANGUAGE CONSISTENCY: All text in visuals must match the specified language. PENALIZE any mixed-language content.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT expect specific visual types based on topic (history does not require timeline; programming does not require code)\n- Do NOT penalize for using \"image\" as the visual type - it is a valid choice for any content\n- Do NOT penalize for using the same visual type multiple times IF each adds unique information\n- Do NOT require variety in visual types - consistency is fine if appropriate\n- ONLY penalize for: redundant information across visuals, visual type that cannot represent the content, technical inaccuracies, language errors, missing steps\n\n    ",
-        "id": "en-history-french-revolution-1",
+        "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\nNetwork encapsulation — Web Development / networking. Steps explain how data gets wrapped in layers.\n\nThis topic has no numerical data, no historical events, no musical content, and no equations.\n\n\nEVALUATION CRITERIA:\n\nYou are evaluating the VISUAL DESCRIPTION stage — the model selects a visual kind and writes a description for each step. A separate system generates the actual visual from this description. Evaluate the KIND SELECTION and DESCRIPTION QUALITY, not the rendered visual.\n\n1. COVERAGE: There must be exactly one visual description per step. Check that the descriptions array length equals the step count.\n\n2. NO REDUNDANCY: Each description must add UNIQUE information. PENALIZE if:\n   - Multiple descriptions repeat the same data points, events, or concepts\n   - A description restates what another description already covered\n\n3. KIND SELECTION FIT: The visual kind must make sense for the content. PENALIZE if:\n   - Code kind is used for non-programming content\n   - Chart kind is used with purely invented data that has no basis in the source text or in known facts (IMPORTANT: this is a MAJOR error — score it under majorErrors)\n   - Timeline kind is used for content with no temporal/sequential element\n   - Quote kind is used with a fabricated, paraphrased, or unverifiable quote\n   - Formula kind is used for a single value or trivial comparison (e.g., \"109.5°\" or \"90° < 109.5°\")\n   - Music kind is used for content that merely mentions music without specific notes to notate\n   - Code kind is used for mathematical notation (should be formula kind)\n\n   Do NOT penalize chart use if:\n   - The data comes from a well-known formula or mathematical relationship (e.g., IEEE 754 float spacing, compound interest curves, known physical constants)\n   - The step describes a qualitative pattern (e.g., \"few serious errors but many small adjustments\") and the chart uses plausible illustrative values that concretize that exact pattern — this is expected and educational, not fabrication\n\n   Do NOT penalize if:\n   - Image kind is used for any content (image can visualize anything)\n   - Diagram kind is used instead of timeline (relationships can be shown multiple ways)\n   - Any kind is used multiple times (if each instance adds unique value)\n   - Tables include illustrative example values in a clearly labeled \"Example\" column when the step describes metric types or categories — plausible example values help the reader understand what a metric looks like in practice\n\n4. DESCRIPTION SPECIFICITY: Descriptions must have enough detail for a downstream system to generate the visual without seeing the original step content. PENALIZE if:\n   - Chart descriptions lack data values, axis labels, or trends\n   - Table descriptions lack column headers or row data\n   - Code descriptions lack the programming language or what the code should demonstrate\n   - Diagram descriptions lack node labels or connections\n   - Timeline descriptions lack dates or event labels\n   - Formula descriptions lack the actual equation\n   - Image descriptions are vague (e.g., \"an image about the topic\")\n\n5. IMAGE TEXT CONTAMINATION: Image descriptions should describe ONLY the scene, objects, and composition — NOT text to display. PENALIZE if:\n   - An image description asks for labels, captions, signs, annotations, or visible text that isn't strictly necessary to understand the concept\n   - The only way to understand the described image is by reading text within it\n   - Exception: a single word or short phrase is acceptable when the concept genuinely requires it\n\n6. DIAGRAM COMPLEXITY: Diagrams should be focused and reveal non-obvious structure. PENALIZE if:\n   - A diagram description has more than 7 nodes\n   - A diagram just restates the text as boxes with arrows\n   - A diagram uses abstract platitude nodes connected by generic verbs\n   - A diagram is used for a simple list (should be a table)\n\n7. LANGUAGE CONSISTENCY: All text in descriptions — including image descriptions — must match the specified language. PENALIZE any mixed-language content (except JSON field names and enum values like \"chart\", \"table\").\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT expect specific visual kinds based on topic\n- Do NOT penalize for using \"image\" as the kind\n- Do NOT penalize for using the same kind multiple times IF each adds unique information\n- Do NOT require variety in kinds\n- ONLY penalize for: redundant information, kind that cannot represent the content, vague descriptions, image text contamination, diagram overcomplexity, language errors, missing steps\n\n    ",
+        "id": "en-web-data-movement-1",
         "userInput": {
-          "chapterTitle": "Revolutionary Era",
-          "courseTitle": "World History",
+          "chapterTitle": "Networking fundamentals",
+          "courseTitle": "Web Development",
           "language": "en",
-          "lessonDescription": "Understanding the causes, key events, and lasting impact of the French Revolution on modern political systems",
-          "lessonTitle": "The French Revolution",
+          "lessonDescription": "Core building blocks for how data moves across networks, from encapsulation to hop-by-hop forwarding constraints.",
+          "lessonTitle": "How Data Moves on Networks",
           "steps": [
             {
-              "text": "By 1789, France was in crisis. The monarchy was bankrupt, harvests had failed, and the common people were starving while the nobility lived in luxury.",
-              "title": "A Nation in Crisis"
+              "text": "When you send one message online, it doesn't travel as one naked piece of data. It gets wrapped in layers of extra information so different parts of the network know what to do with it. That wrapping is encapsulation.",
+              "title": "Why data needs wrapping"
             },
             {
-              "text": "On July 14, 1789, Parisians stormed the Bastille fortress. This wasn't just about freeing prisoners - it symbolized the people rising against tyranny.",
-              "title": "The Storming of the Bastille"
+              "text": "Think of mailing a gift: the gift goes in a box, the box gets a shipping label, and that may go in a mail bag for transport. Each layer adds instructions for a different job. Network data is packaged in a similar way.",
+              "title": "A package inside a package"
             },
             {
-              "text": "The revolutionaries declared that all men are born free and equal. This radical idea challenged centuries of aristocratic privilege and divine right of kings.",
-              "title": "Liberty, Equality, Fraternity"
+              "text": "Your original content might be text, an image, or part of a web page. That content is the payload. Encapsulation doesn't replace the payload. It surrounds it with headers, and sometimes trailers, that carry control information.",
+              "title": "The payload stays inside"
+            },
+            {
+              "text": "Each layer adds its own small piece of metadata: who the data is for, how to check errors, or how to keep pieces in order. The point is separation of jobs. One layer doesn't need to do everything.",
+              "title": "Each layer adds its own note"
+            },
+            {
+              "text": "As data moves down the network stack on the sender's side, each layer wraps the data from the layer above. So the next layer treats the whole previous package as its payload and adds its own header around it.",
+              "title": "Layers wrap lower and lower"
+            },
+            {
+              "text": "That means the same bytes can be seen in different ways. What is \"data\" to one layer becomes \"payload\" to the next, and then a larger unit once another header is added. The contents stay the same, but the package grows.",
+              "title": "One thing, several views"
+            },
+            {
+              "text": "The added information matters because different devices and software care about different questions. An app cares about the message. Other parts care about delivery details. Encapsulation lets each part read the layer meant for it.",
+              "title": "Different parts read different layers"
+            },
+            {
+              "text": "A router, for example, usually does not care about the text in your message. It mainly looks at the outer networking information needed to move the packet onward. The deeper contents stay wrapped and mostly untouched.",
+              "title": "Outer layers guide the trip"
+            },
+            {
+              "text": "At the receiving side, the process reverses. Each layer reads the information meant for it, removes that wrapper, and passes the inner contents upward. This is decapsulation: unwrapping the package layer by layer.",
+              "title": "Unwrapping at the other end"
+            },
+            {
+              "text": "Encapsulation is not just tidy organization. It makes networks modular. You can change one layer's details without redesigning everything above and below it, as long as the layers still agree on their interfaces.",
+              "title": "Why layering helps so much"
+            },
+            {
+              "text": "A common mix-up is thinking encapsulation means encryption or compression. It doesn't. Encapsulation is about packaging and labels. Encryption hides content. Compression shrinks content. A packet can be encapsulated with or without those.",
+              "title": "Not the same as hiding data"
+            },
+            {
+              "text": "Another mix-up: the headers are not random overhead. They are the instructions that make delivery possible. Without them, devices would just see raw bytes and have no clear way to interpret or route the data.",
+              "title": "The extra bytes have a job"
+            },
+            {
+              "text": "So encapsulation is the habit of wrapping data in layers so each layer can do its own job. That's why one message can travel through many systems that each understand only part of the whole package.",
+              "title": "The big picture"
             }
           ]
         }
@@ -48,174 +88,406 @@
     {
       "steps": [
         {
-          "conclusion": "None",
+          "conclusion": "One major error is present: the final step is labeled as a quote, but the description is not an exact, attributable quotation from a real named person. This violates the explicit rule for quote visuals and is a concrete kind-selection failure. No other clear major errors are evident; coverage is complete and there is one description per step.",
+          "kind": "majorErrors",
+          "score": 7.2
+        },
+        {
+          "conclusion": "Several minor issues reduce quality. Step 2 uses a table with a 'Memória' column whose values ('Valor exato', 'Valor com ponto flutuante') do not actually describe memory and are somewhat misleading. Step 5 uses a diagram with effectively a single container plus incoming flow rather than a clearly specified 3-7 node relationship structure with unique labeled edges, so it is weak as a diagram. Step 7 uses formula for a programming behavior that the task guidance says is well suited to code in Python REPL form. Step 8 chart lacks full required specificity such as explicit axis labels/series beyond a rough description. Step 12 diagram includes visible text inside the described visual and gives limited connection detail. Step 13's description is also too generic even aside from the invalid quote kind.",
+          "kind": "minorErrors",
+          "score": 7.8
+        },
+        {
+          "conclusion": "Improvements: use code for steps about Python type behavior and floating-point surprises more consistently; replace the fabricated quote with a table, code snippet, or image; make chart descriptions fully self-contained with axis labels and exact values; make diagrams conform more closely to node/edge guidance or switch them to table/image when the structure is not the teaching point; tighten table columns so each column meaning is accurate; for step 12, a Python REPL snippet such as repr(0.1) or formatted output would better convey 'what you see is not all' than a text-labeled diagram.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\nPython floating-point numbers. Steps explain floats, precision, and when to use them. Content is in Portuguese. This is a programming topic — code visuals showing Python REPL behavior are appropriate.\n\nTOPIC-SPECIFIC: Do NOT penalize chart kind for float precision spacing — this is a real mathematical property of IEEE 754 (spacing grows with magnitude), not fabricated data.\n\n\nEVALUATION CRITERIA:\n\nYou are evaluating the VISUAL DESCRIPTION stage — the model selects a visual kind and writes a description for each step. A separate system generates the actual visual from this description. Evaluate the KIND SELECTION and DESCRIPTION QUALITY, not the rendered visual.\n\n1. COVERAGE: There must be exactly one visual description per step. Check that the descriptions array length equals the step count.\n\n2. NO REDUNDANCY: Each description must add UNIQUE information. PENALIZE if:\n   - Multiple descriptions repeat the same data points, events, or concepts\n   - A description restates what another description already covered\n\n3. KIND SELECTION FIT: The visual kind must make sense for the content. PENALIZE if:\n   - Code kind is used for non-programming content\n   - Chart kind is used with purely invented data that has no basis in the source text or in known facts (IMPORTANT: this is a MAJOR error — score it under majorErrors)\n   - Timeline kind is used for content with no temporal/sequential element\n   - Quote kind is used with a fabricated, paraphrased, or unverifiable quote\n   - Formula kind is used for a single value or trivial comparison (e.g., \"109.5°\" or \"90° < 109.5°\")\n   - Music kind is used for content that merely mentions music without specific notes to notate\n   - Code kind is used for mathematical notation (should be formula kind)\n\n   Do NOT penalize chart use if:\n   - The data comes from a well-known formula or mathematical relationship (e.g., IEEE 754 float spacing, compound interest curves, known physical constants)\n   - The step describes a qualitative pattern (e.g., \"few serious errors but many small adjustments\") and the chart uses plausible illustrative values that concretize that exact pattern — this is expected and educational, not fabrication\n\n   Do NOT penalize if:\n   - Image kind is used for any content (image can visualize anything)\n   - Diagram kind is used instead of timeline (relationships can be shown multiple ways)\n   - Any kind is used multiple times (if each instance adds unique value)\n   - Tables include illustrative example values in a clearly labeled \"Example\" column when the step describes metric types or categories — plausible example values help the reader understand what a metric looks like in practice\n\n4. DESCRIPTION SPECIFICITY: Descriptions must have enough detail for a downstream system to generate the visual without seeing the original step content. PENALIZE if:\n   - Chart descriptions lack data values, axis labels, or trends\n   - Table descriptions lack column headers or row data\n   - Code descriptions lack the programming language or what the code should demonstrate\n   - Diagram descriptions lack node labels or connections\n   - Timeline descriptions lack dates or event labels\n   - Formula descriptions lack the actual equation\n   - Image descriptions are vague (e.g., \"an image about the topic\")\n\n5. IMAGE TEXT CONTAMINATION: Image descriptions should describe ONLY the scene, objects, and composition — NOT text to display. PENALIZE if:\n   - An image description asks for labels, captions, signs, annotations, or visible text that isn't strictly necessary to understand the concept\n   - The only way to understand the described image is by reading text within it\n   - Exception: a single word or short phrase is acceptable when the concept genuinely requires it\n\n6. DIAGRAM COMPLEXITY: Diagrams should be focused and reveal non-obvious structure. PENALIZE if:\n   - A diagram description has more than 7 nodes\n   - A diagram just restates the text as boxes with arrows\n   - A diagram uses abstract platitude nodes connected by generic verbs\n   - A diagram is used for a simple list (should be a table)\n\n7. LANGUAGE CONSISTENCY: All text in descriptions — including image descriptions — must match the specified language. PENALIZE any mixed-language content (except JSON field names and enum values like \"chart\", \"table\").\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT expect specific visual kinds based on topic\n- Do NOT penalize for using \"image\" as the kind\n- Do NOT penalize for using the same kind multiple times IF each adds unique information\n- Do NOT require variety in kinds\n- ONLY penalize for: redundant information, kind that cannot represent the content, vague descriptions, image text contamination, diagram overcomplexity, language errors, missing steps\n\n    ",
+        "id": "pt-python-float-bool-1",
+        "userInput": {
+          "chapterTitle": "Tipos numéricos e valores especiais",
+          "courseTitle": "Python",
+          "language": "pt",
+          "lessonDescription": "Valores de ponto flutuante e booleanos, sintaxe de literais e a relação estrutural entre bool e int.",
+          "lessonTitle": "Float e bool como tipos numéricos",
+          "steps": [
+            {
+              "text": "Quando você vê 3.14, 0.5 ou -2.0 em Python, está vendo valores de ponto flutuante, ou só \"float\". Eles servem para representar números com parte decimal, mas também muitos valores que parecem inteiros, como 7.0.",
+              "title": "Números com vírgula? Quase isso"
+            },
+            {
+              "text": "O nome vem da ideia de que o \"ponto\" decimal pode se mover. Em 1.23, 12.3 e 123.0, os mesmos algarismos ganham valores diferentes conforme a posição do ponto. Float foi feito para lidar com essa flexibilidade.",
+              "title": "Por que chama ponto flutuante?"
+            },
+            {
+              "text": "Mesmo sem parte decimal visível no mundo real, um float sempre é tratado como um valor desse tipo. Então 2 é um inteiro, mas 2.0 é float. Eles podem parecer o mesmo número, mas não são o mesmo tipo de dado.",
+              "title": "2 e 2.0 não são o mesmo tipo"
+            },
+            {
+              "text": "Um float guarda uma aproximação numérica usando um formato interno. Ele não armazena \"o número perfeito\" em todos os casos. Isso é a parte mais importante para entender floats de verdade.",
+              "title": "O detalhe escondido: aproximação"
+            },
+            {
+              "text": "Pense num float como um desenho em pixels. De longe, parece exato. De perto, você vê limites. Muitos números cabem muito bem nesse formato; outros precisam ser arredondados para o valor mais próximo possível.",
+              "title": "Como uma foto com pixels"
+            },
+            {
+              "text": "Isso acontece porque o computador guarda números em bits. Com espaço finito, ele não consegue representar infinitas casas decimais. Então alguns valores entram certinho, e outros entram como aproximações muito próximas.",
+              "title": "Bits limitados, precisão limitada"
+            },
+            {
+              "text": "Um caso famoso é 0.1. Para nós, parece simples. Mas no formato interno do computador, 0.1 normalmente não cabe de forma exata. Python guarda um valor muito próximo, suficiente para quase todo uso comum.",
+              "title": "Por que 0.1 pode enganar"
+            },
+            {
+              "text": "Esse pequeno erro pode aparecer quando vários cálculos se acumulam. Não é que Python \"errou a conta\" por descuido. Ele está seguindo as regras do formato de ponto flutuante, que troca exatidão total por praticidade e velocidade.",
+              "title": "Erros pequenos podem crescer"
+            },
+            {
+              "text": "Float foi criado para dar alcance e rapidez. Ele consegue representar números muito grandes, muito pequenos e com frações, tudo num formato eficiente. O preço disso é aceitar pequenas diferenças em vários casos.",
+              "title": "Velocidade e alcance com um custo"
+            },
+            {
+              "text": "Nem todo float tem a mesma \"nitidez\". Perto de certos valores, a diferença entre um número representável e o próximo é bem pequena. Em outros pontos, esse espaçamento cresce. Então a precisão não é uniforme em toda a reta numérica.",
+              "title": "A precisão muda com o tamanho"
+            },
+            {
+              "text": "Por isso, float é ótimo para medidas, temperatura, tempo, distância e muitos cálculos científicos. Nessas situações, uma aproximação muito boa costuma bastar. O foco é representar o mundo físico, que já envolve medida aproximada.",
+              "title": "Onde float faz sentido"
+            },
+            {
+              "text": "Mas float não combina bem com situações que exigem exatidão absoluta, como dinheiro em muitos contextos. Se um centavo importa, uma aproximação minúscula já pode virar problema quando somada várias vezes.",
+              "title": "Quando float vira má escolha"
+            },
+            {
+              "text": "Uma confusão comum é pensar: \"se tem casas decimais, é mais preciso\". Nem sempre. Um float pode mostrar poucas casas e ainda ser aproximado por dentro. O que aparece na tela é uma forma amigável de mostrar o valor, não a verdade completa.",
+              "title": "O que você vê não é tudo"
+            },
+            {
+              "text": "Então, entender ponto flutuante é entender uma troca: o computador representa números reais de forma prática, não perfeita. Float não é \"número decimal exato\". É uma aproximação útil, rápida e essencial para muita coisa em programação.",
+              "title": "A ideia central para guardar"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "One major error: Step 6 uses a chart without providing any actual data values or axis labels beyond a vague '10 years' unemployment line with a recession shading. The instructions require chart descriptions to specify data values, axis labels, series names, and trends. This makes the chart under-specified and not clearly grounded in given or known data. The rest do not show major factual or rule-breaking issues; coverage is complete and kinds are generally plausible.",
+          "kind": "majorErrors",
+          "score": 8.2
+        },
+        {
+          "conclusion": "Several minor issues reduce quality. Image descriptions for steps 4 and 11 include visible text ('Searching', document titles), which violates the rule that image descriptions should avoid text unless strictly necessary. Step 5 uses a trivially small 2-node diagram with 1 arrow, which the instructions explicitly discourage. Step 7's bathtub diagram includes quoted labels inside an image-like metaphor and may be too text-dependent; as a diagram it is also somewhat simplistic. Step 3's pie chart is acceptable with given numbers, but it does not specify axis/legend styling or exact emphasis method. Overall these are mostly specification and rule-fit issues rather than severe content failures.",
+          "kind": "minorErrors",
+          "score": 7.7
+        },
+        {
+          "conclusion": "The response could be improved by making all image descriptions text-free, replacing the 2-node discouraged-worker diagram with a clearer table or a richer flow diagram, and fully specifying the recession chart with concrete example yearly values and axis labels. Some descriptions could also be more self-contained and precise for downstream generation, especially the diagrams. Despite that, the output covers every step in order, uses mostly fitting kinds, and avoids redundancy reasonably well.",
+          "kind": "potentialImprovements",
+          "score": 8.3
+        }
+      ],
+      "testCase": {
+        "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\nUnemployment rate — economics concept. Steps explain what the rate measures, how it's calculated, and its limitations.\n\nTOPIC-SPECIFIC: Step 3 gives a specific formula (unemployed / labor force). Step 4 gives specific numbers (5/65 = 7.7%). Chart and formula kinds are valid for these steps.\n\nThis topic has no programming content, no musical content, and no historical events.\n\n\nEVALUATION CRITERIA:\n\nYou are evaluating the VISUAL DESCRIPTION stage — the model selects a visual kind and writes a description for each step. A separate system generates the actual visual from this description. Evaluate the KIND SELECTION and DESCRIPTION QUALITY, not the rendered visual.\n\n1. COVERAGE: There must be exactly one visual description per step. Check that the descriptions array length equals the step count.\n\n2. NO REDUNDANCY: Each description must add UNIQUE information. PENALIZE if:\n   - Multiple descriptions repeat the same data points, events, or concepts\n   - A description restates what another description already covered\n\n3. KIND SELECTION FIT: The visual kind must make sense for the content. PENALIZE if:\n   - Code kind is used for non-programming content\n   - Chart kind is used with purely invented data that has no basis in the source text or in known facts (IMPORTANT: this is a MAJOR error — score it under majorErrors)\n   - Timeline kind is used for content with no temporal/sequential element\n   - Quote kind is used with a fabricated, paraphrased, or unverifiable quote\n   - Formula kind is used for a single value or trivial comparison (e.g., \"109.5°\" or \"90° < 109.5°\")\n   - Music kind is used for content that merely mentions music without specific notes to notate\n   - Code kind is used for mathematical notation (should be formula kind)\n\n   Do NOT penalize chart use if:\n   - The data comes from a well-known formula or mathematical relationship (e.g., IEEE 754 float spacing, compound interest curves, known physical constants)\n   - The step describes a qualitative pattern (e.g., \"few serious errors but many small adjustments\") and the chart uses plausible illustrative values that concretize that exact pattern — this is expected and educational, not fabrication\n\n   Do NOT penalize if:\n   - Image kind is used for any content (image can visualize anything)\n   - Diagram kind is used instead of timeline (relationships can be shown multiple ways)\n   - Any kind is used multiple times (if each instance adds unique value)\n   - Tables include illustrative example values in a clearly labeled \"Example\" column when the step describes metric types or categories — plausible example values help the reader understand what a metric looks like in practice\n\n4. DESCRIPTION SPECIFICITY: Descriptions must have enough detail for a downstream system to generate the visual without seeing the original step content. PENALIZE if:\n   - Chart descriptions lack data values, axis labels, or trends\n   - Table descriptions lack column headers or row data\n   - Code descriptions lack the programming language or what the code should demonstrate\n   - Diagram descriptions lack node labels or connections\n   - Timeline descriptions lack dates or event labels\n   - Formula descriptions lack the actual equation\n   - Image descriptions are vague (e.g., \"an image about the topic\")\n\n5. IMAGE TEXT CONTAMINATION: Image descriptions should describe ONLY the scene, objects, and composition — NOT text to display. PENALIZE if:\n   - An image description asks for labels, captions, signs, annotations, or visible text that isn't strictly necessary to understand the concept\n   - The only way to understand the described image is by reading text within it\n   - Exception: a single word or short phrase is acceptable when the concept genuinely requires it\n\n6. DIAGRAM COMPLEXITY: Diagrams should be focused and reveal non-obvious structure. PENALIZE if:\n   - A diagram description has more than 7 nodes\n   - A diagram just restates the text as boxes with arrows\n   - A diagram uses abstract platitude nodes connected by generic verbs\n   - A diagram is used for a simple list (should be a table)\n\n7. LANGUAGE CONSISTENCY: All text in descriptions — including image descriptions — must match the specified language. PENALIZE any mixed-language content (except JSON field names and enum values like \"chart\", \"table\").\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT expect specific visual kinds based on topic\n- Do NOT penalize for using \"image\" as the kind\n- Do NOT penalize for using the same kind multiple times IF each adds unique information\n- Do NOT require variety in kinds\n- ONLY penalize for: redundant information, kind that cannot represent the content, vague descriptions, image text contamination, diagram overcomplexity, language errors, missing steps\n\n    ",
+        "id": "en-economics-labor-cycles-1",
+        "userInput": {
+          "chapterTitle": "Business cycles",
+          "courseTitle": "Economics",
+          "language": "en",
+          "lessonDescription": "Empirical regularities linking downturns to labor market outcomes at the level of aggregate fluctuations, without modeling search or wage-setting mechanisms.",
+          "lessonTitle": "Labor market aggregates over the cycle",
+          "steps": [
+            {
+              "text": "When people hear \"unemployment rate,\" they often think \"the share of all people without a job.\" That sounds right, but it's not. The unemployment rate only counts people in the labor force: people working or actively trying to work.",
+              "title": "Who's counted here?"
+            },
+            {
+              "text": "A person is unemployed if they do not have a job, are available to work, and are actively looking. If they are not searching, they are usually not counted as unemployed. That small rule changes the number a lot.",
+              "title": "Jobless is not enough"
+            },
+            {
+              "text": "The labor force has two groups: employed people and unemployed people. The unemployment rate is unemployed divided by labor force. So the denominator is not the whole population.",
+              "title": "The two parts of the rate"
+            },
+            {
+              "text": "Suppose 100 adults exist. If 60 have jobs, 5 are jobless and searching, and 35 are not working and not searching, the unemployment rate is 5 out of 65, not 5 out of 100. That is about 7.7%.",
+              "title": "A quick number example"
+            },
+            {
+              "text": "This rate is trying to answer a narrow question: among people participating in the job market, how many cannot find work? It is not meant to summarize everyone's well-being or everyone without pay.",
+              "title": "What question it answers"
+            },
+            {
+              "text": "That's why the rate can miss some pain. If many people stop looking because jobs seem hopeless, they drop out of the labor force. Then unemployment can stay flat or even fall, even though the labor market got worse.",
+              "title": "Why the rate can mislead"
+            },
+            {
+              "text": "In a downturn, firms cut hiring and may cut jobs. More people search unsuccessfully, so unemployment usually rises. But the size and timing depend on whether people keep searching or step back from the labor market.",
+              "title": "What changes in recessions"
+            },
+            {
+              "text": "The unemployment rate is a stock: a snapshot at a moment in time. Behind that snapshot are flows. Some people lose jobs and enter unemployment, while others find jobs and leave it. The rate moves when those flows change.",
+              "title": "A snapshot built from flows"
+            },
+            {
+              "text": "A high unemployment rate can come from two different situations: many people are losing jobs, or unemployed people are staying unemployed longer. Those lead to the same rate, but they describe different labor market conditions.",
+              "title": "Same rate, different reality"
+            },
+            {
+              "text": "Even when the economy looks \"good,\" the unemployment rate is rarely zero. People are always changing jobs, moving, graduating, or reentering work. So some unemployment exists because matching workers and jobs takes time.",
+              "title": "Why it rarely reaches zero"
+            },
+            {
+              "text": "That does not mean every positive unemployment rate is harmless. A little unemployment can reflect normal job turnover. A large jump during a recession usually signals broad weakness: fewer openings, slower hiring, and longer jobless spells.",
+              "title": "Normal turnover vs. weak economy"
+            },
+            {
+              "text": "So the unemployment rate is best read as a focused indicator of labor market slack among active workers. Useful? Very. Complete? No. Its meaning depends on who is counted, who is searching, and how people move in and out of unemployment.",
+              "title": "How to read it wisely"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "No major errors found. The response covers all 12 steps in order with exactly one visual per step. It avoids forbidden kinds like code/timeline/music/quote for this chemistry topic. The two chart uses rely on well-known approximate pKa values rather than fabricated arbitrary statistics, so they are acceptable under the stated criteria. Most descriptions are specific enough to generate visuals.",
           "kind": "majorErrors",
           "score": 10
         },
         {
-          "conclusion": "The code visual (Step 1) contains sloppy annotations. 1) One annotation refers to `greet()` which does not exist in the code snippet (the function is named `createGreeter`). 2) The annotation for line 7 points to an empty line in the code string. 3) The annotation on line 4 ('Outer function finishes...') is placed on the console.log statement inside the inner function, rather than on the return statement or the closing brace of the outer function, which is misleading.",
+          "conclusion": "Several minor issues reduce fit and precision. Step 3 is labeled as image but includes arrows to depict electron-pulling; this is somewhat close to diagram logic and may risk text-like annotation behavior. Step 4 uses a diagram with only 2 nodes and 1 connection, which the instructions explicitly discourage as a trivially small diagram; formula would likely fit better for resonance structures. Step 7 is an image that explicitly asks for text labels ('Carbono alfa', 'Carbono beta'), which violates the rule that image descriptions should avoid text unless absolutely necessary. Step 11 uses a linear 5-node diagram that largely restates the prose sequence rather than revealing a non-obvious structure. There is also some redundancy across steps 4, 5, and 6 around enolate stabilization/base-conjugate stability comparisons.",
           "kind": "minorErrors",
           "score": 8
         },
         {
-          "conclusion": "For Step 2 (Practical Use: Private State), while the table is valid, a code example demonstrating the 'private variable' pattern (e.g., a counter with increment/decrement methods but no direct access to the count) is often the standard way to teach this specific concept in programming courses. However, the table provides a good theoretical comparison, so this is just a minor suggestion for alternative utility.",
+          "conclusion": "Improvements are available in kind selection and adherence to visual rules. Step 4 could be a formula showing resonance forms of the enolate instead of a minimal diagram. Step 7 could avoid visible text by highlighting alpha and beta carbons through color or position rather than labels. Some steps could be made more uniquely informative to reduce overlap, especially the cluster on stabilization/acidity logic. Step 11 could use a more concrete reaction schematic or table of 'before/after reactivity' rather than a generic flow. A few image descriptions could be more self-contained about composition and visual hierarchy.",
           "kind": "potentialImprovements",
-          "score": 9.5
-        }
-      ],
-      "testCase": {
-        "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\nThis test covers JavaScript closures - a programming concept.\n\nACCURACY CHECKS - PENALIZE if:\n- Code snippets have syntax errors\n- Code doesn't actually demonstrate closures (must show inner function accessing outer scope)\n- Technical explanations are incorrect\n\nREDUNDANCY CHECKS - PENALIZE if:\n- Multiple code snippets show essentially the same pattern\n- The same closure example is repeated across visuals\n\nVISUAL-CONTENT FIT - PENALIZE if:\n- Timeline is used (closures are not a historical/sequential topic)\n- Chart is used without numerical data\n\nDo NOT PENALIZE if:\n- Image visuals are used (can show conceptual diagrams of scope)\n- Diagram is used to show scope chains\n- Not all steps use code visuals\n\n\nEVALUATION CRITERIA:\n\n1. COVERAGE: Every step must have exactly one visual. Check that the number of visuals equals the number of steps and stepIndex values are unique and complete (0 to N-1).\n\n2. NO REDUNDANCY: Each visual must add UNIQUE information. PENALIZE if:\n   - Multiple visuals repeat the same data points, events, or concepts\n   - A visual restates what another visual already showed\n   - Example: Two timelines covering overlapping periods with the same events\n\n3. VISUAL-CONTENT FIT: The visual type must make sense for the content. PENALIZE if:\n   - Code visual is used for non-programming content\n   - Chart is used without numerical/statistical data to display\n   - Timeline is used for content with no temporal/sequential element\n   - Quote is fabricated or misattributed (must be real, verifiable quotes)\n\n   Do NOT penalize if:\n   - Image is used for any content (image can visualize anything)\n   - Diagram is used instead of timeline (relationships can be shown multiple ways)\n   - Any visual type is used multiple times (if each instance adds unique value)\n\n4. TECHNICAL ACCURACY: Visual content must be factually correct:\n   - Code must be syntactically valid\n   - Historical dates and events must be accurate\n   - Scientific processes must be correctly represented\n   - Chart data must be realistic and internally consistent\n\n5. LANGUAGE CONSISTENCY: All text in visuals must match the specified language. PENALIZE any mixed-language content.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT expect specific visual types based on topic (history does not require timeline; programming does not require code)\n- Do NOT penalize for using \"image\" as the visual type - it is a valid choice for any content\n- Do NOT penalize for using the same visual type multiple times IF each adds unique information\n- Do NOT require variety in visual types - consistency is fine if appropriate\n- ONLY penalize for: redundant information across visuals, visual type that cannot represent the content, technical inaccuracies, language errors, missing steps\n\n    ",
-        "id": "en-programming-closures-1",
-        "userInput": {
-          "chapterTitle": "Advanced Functions",
-          "courseTitle": "JavaScript Fundamentals",
-          "language": "en",
-          "lessonDescription": "Understanding closures - how functions remember their lexical scope even when executed outside of it",
-          "lessonTitle": "Understanding Closures",
-          "steps": [
-            {
-              "text": "A closure is created when a function 'remembers' variables from its surrounding scope, even after that scope has finished executing.",
-              "title": "What is a Closure?"
-            },
-            {
-              "text": "When you return a function from another function, the inner function carries its environment with it. It can access variables that no longer exist in the call stack.",
-              "title": "Functions Carrying Their Environment"
-            },
-            {
-              "text": "Closures are commonly used to create private variables. The outer function's variables become hidden, accessible only through the returned function.",
-              "title": "Practical Use: Private State"
-            }
-          ]
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\nThis test covers photosynthesis - a biological process.\n\nLANGUAGE REQUIREMENT: All visual content must be in Portuguese.\n\nACCURACY CHECKS - PENALIZE if:\n- Scientific process is incorrect (inputs: light, CO2, H2O; outputs: glucose, O2)\n- Any text is in English instead of Portuguese\n- Biological terminology is wrong\n\nREDUNDANCY CHECKS - PENALIZE if:\n- Multiple visuals show the same stage of photosynthesis\n- The same chemical equation or process diagram is repeated\n\nVISUAL-CONTENT FIT - PENALIZE if:\n- Code visual is used (no programming content)\n- Timeline is used (photosynthesis is not a historical topic)\n\nDo NOT PENALIZE if:\n- Image visuals are used for all steps\n- Diagram is used to show the process flow\n- Chart showing energy conversion data is used\n\n\nEVALUATION CRITERIA:\n\n1. COVERAGE: Every step must have exactly one visual. Check that the number of visuals equals the number of steps and stepIndex values are unique and complete (0 to N-1).\n\n2. NO REDUNDANCY: Each visual must add UNIQUE information. PENALIZE if:\n   - Multiple visuals repeat the same data points, events, or concepts\n   - A visual restates what another visual already showed\n   - Example: Two timelines covering overlapping periods with the same events\n\n3. VISUAL-CONTENT FIT: The visual type must make sense for the content. PENALIZE if:\n   - Code visual is used for non-programming content\n   - Chart is used without numerical/statistical data to display\n   - Timeline is used for content with no temporal/sequential element\n   - Quote is fabricated or misattributed (must be real, verifiable quotes)\n\n   Do NOT penalize if:\n   - Image is used for any content (image can visualize anything)\n   - Diagram is used instead of timeline (relationships can be shown multiple ways)\n   - Any visual type is used multiple times (if each instance adds unique value)\n\n4. TECHNICAL ACCURACY: Visual content must be factually correct:\n   - Code must be syntactically valid\n   - Historical dates and events must be accurate\n   - Scientific processes must be correctly represented\n   - Chart data must be realistic and internally consistent\n\n5. LANGUAGE CONSISTENCY: All text in visuals must match the specified language. PENALIZE any mixed-language content.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT expect specific visual types based on topic (history does not require timeline; programming does not require code)\n- Do NOT penalize for using \"image\" as the visual type - it is a valid choice for any content\n- Do NOT penalize for using the same visual type multiple times IF each adds unique information\n- Do NOT require variety in visual types - consistency is fine if appropriate\n- ONLY penalize for: redundant information across visuals, visual type that cannot represent the content, technical inaccuracies, language errors, missing steps\n\n    ",
-        "id": "pt-biology-photosynthesis-1",
-        "userInput": {
-          "chapterTitle": "Processos Celulares",
-          "courseTitle": "Biologia para Iniciantes",
-          "language": "pt",
-          "lessonDescription": "Entendendo como as plantas convertem luz solar em energia através da fotossíntese",
-          "lessonTitle": "Fotossíntese",
-          "steps": [
-            {
-              "text": "As plantas capturam energia da luz solar usando clorofila, o pigmento verde presente nas folhas. Essa energia será usada para criar alimento.",
-              "title": "Capturando Luz"
-            },
-            {
-              "text": "A planta absorve dióxido de carbono do ar pelos estômatos e água do solo pelas raízes. Esses são os ingredientes necessários.",
-              "title": "Os Ingredientes"
-            },
-            {
-              "text": "Usando a energia da luz, a planta combina CO2 e água para produzir glicose e oxigênio. A glicose é o alimento da planta.",
-              "title": "A Transformação"
-            }
-          ]
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "None. The model correctly generated three visuals, one for each step, ensuring full coverage.",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None. The visual types selected are highly appropriate: a pie chart for the definition of market share (parts of a whole), a bar chart to show the ranking and concentration of the top 3 smartphone manufacturers (verifying the >60% claim correctly with 24+20+18=62%), and a flow diagram to illustrate the causal relationship of economies of scale. The data in the pie chart sums to 100%, and the logic in the diagram accurately reflects the text.",
-          "kind": "minorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "None. The response is optimal. The data generated matches the text constraints perfectly, and the text in the visuals is in the correct language.",
-          "kind": "potentialImprovements",
-          "score": 10
-        }
-      ],
-      "testCase": {
-        "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\nThis test covers market share - an economics/business concept with numerical data.\n\nACCURACY CHECKS - PENALIZE if:\n- Chart data is unrealistic (e.g., market share values that don't make sense)\n- Economic concepts are incorrectly explained\n- Pie chart values don't sum to 100% (if pie chart is used)\n\nREDUNDANCY CHECKS - PENALIZE if:\n- Multiple charts show the same data\n- The same market share examples are repeated across visuals\n\nVISUAL-CONTENT FIT - PENALIZE if:\n- Code visual is used (no programming content)\n- Timeline is used for content that isn't about historical market evolution\n\nDo NOT PENALIZE if:\n- Image visuals are used\n- No chart is used (market share can be explained without charts)\n- Diagram showing market relationships is used\n\n\nEVALUATION CRITERIA:\n\n1. COVERAGE: Every step must have exactly one visual. Check that the number of visuals equals the number of steps and stepIndex values are unique and complete (0 to N-1).\n\n2. NO REDUNDANCY: Each visual must add UNIQUE information. PENALIZE if:\n   - Multiple visuals repeat the same data points, events, or concepts\n   - A visual restates what another visual already showed\n   - Example: Two timelines covering overlapping periods with the same events\n\n3. VISUAL-CONTENT FIT: The visual type must make sense for the content. PENALIZE if:\n   - Code visual is used for non-programming content\n   - Chart is used without numerical/statistical data to display\n   - Timeline is used for content with no temporal/sequential element\n   - Quote is fabricated or misattributed (must be real, verifiable quotes)\n\n   Do NOT penalize if:\n   - Image is used for any content (image can visualize anything)\n   - Diagram is used instead of timeline (relationships can be shown multiple ways)\n   - Any visual type is used multiple times (if each instance adds unique value)\n\n4. TECHNICAL ACCURACY: Visual content must be factually correct:\n   - Code must be syntactically valid\n   - Historical dates and events must be accurate\n   - Scientific processes must be correctly represented\n   - Chart data must be realistic and internally consistent\n\n5. LANGUAGE CONSISTENCY: All text in visuals must match the specified language. PENALIZE any mixed-language content.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT expect specific visual types based on topic (history does not require timeline; programming does not require code)\n- Do NOT penalize for using \"image\" as the visual type - it is a valid choice for any content\n- Do NOT penalize for using the same visual type multiple times IF each adds unique information\n- Do NOT require variety in visual types - consistency is fine if appropriate\n- ONLY penalize for: redundant information across visuals, visual type that cannot represent the content, technical inaccuracies, language errors, missing steps\n\n    ",
-        "id": "en-economics-market-share-1",
-        "userInput": {
-          "chapterTitle": "Market Analysis",
-          "courseTitle": "Business Economics",
-          "language": "en",
-          "lessonDescription": "Understanding how market share is measured and what it reveals about competitive dynamics",
-          "lessonTitle": "Understanding Market Share",
-          "steps": [
-            {
-              "text": "Market share represents the percentage of total sales in an industry captured by a single company. A higher share often means more pricing power.",
-              "title": "What is Market Share?"
-            },
-            {
-              "text": "In the smartphone market, the top three manufacturers control over 60% of global sales. This concentration affects how the entire industry operates.",
-              "title": "Concentration in Action"
-            },
-            {
-              "text": "Companies with dominant market share can achieve economies of scale, spreading fixed costs over more units and lowering per-unit costs.",
-              "title": "The Scale Advantage"
-            }
-          ]
-        }
-      }
-    },
-    {
-      "steps": [
-        {
-          "conclusion": "None",
-          "kind": "majorErrors",
-          "score": 10
-        },
-        {
-          "conclusion": "For Step 2, the AI selected a 'chart' visual type. The source text ('Regular mindfulness practice has been shown to reduce stress, improve focus...') contains only qualitative assertions, not quantitative data. To create the chart, the AI fabricated specific percentage values (e.g., 'Stress Reduction: 35', 'Focus Improvement: 42'). While the prompt allows for 'realistic' data, generating specific statistical outcomes that are not in the source material can be misleading in an educational context, as it implies these are factual statistics derived from the lesson. An 'image' or 'table' would have been more appropriate.",
-          "kind": "minorErrors",
           "score": 8.5
-        },
-        {
-          "conclusion": "Step 2 could be improved by using a 'table' to compare 'Reaction' vs 'Response' or simply an 'image' depicting a calm state/brain activity, rather than a chart with made-up numbers. This would align better with the qualitative nature of the text.",
-          "kind": "potentialImprovements",
-          "score": 9
         }
       ],
       "testCase": {
-        "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\nThis test covers mindfulness - an abstract psychological/wellness concept.\n\nACCURACY CHECKS - PENALIZE if:\n- Quotes are fabricated or misattributed (if quotes are used, they must be real)\n- Scientific claims about mindfulness benefits are inaccurate\n\nREDUNDANCY CHECKS - PENALIZE if:\n- Multiple visuals depict the same mindfulness concept\n- The same breathing/meditation technique is shown repeatedly\n\nVISUAL-CONTENT FIT - PENALIZE if:\n- Code visual is used (no programming content)\n- Timeline is used (mindfulness is not a historical topic)\n- Chart is used without meaningful data\n\nDo NOT PENALIZE if:\n- Image visuals are used for all steps (very appropriate for abstract concepts)\n- No specialized visual types are used\n- Quotes from meditation teachers are used (if real and properly attributed)\n\n\nEVALUATION CRITERIA:\n\n1. COVERAGE: Every step must have exactly one visual. Check that the number of visuals equals the number of steps and stepIndex values are unique and complete (0 to N-1).\n\n2. NO REDUNDANCY: Each visual must add UNIQUE information. PENALIZE if:\n   - Multiple visuals repeat the same data points, events, or concepts\n   - A visual restates what another visual already showed\n   - Example: Two timelines covering overlapping periods with the same events\n\n3. VISUAL-CONTENT FIT: The visual type must make sense for the content. PENALIZE if:\n   - Code visual is used for non-programming content\n   - Chart is used without numerical/statistical data to display\n   - Timeline is used for content with no temporal/sequential element\n   - Quote is fabricated or misattributed (must be real, verifiable quotes)\n\n   Do NOT penalize if:\n   - Image is used for any content (image can visualize anything)\n   - Diagram is used instead of timeline (relationships can be shown multiple ways)\n   - Any visual type is used multiple times (if each instance adds unique value)\n\n4. TECHNICAL ACCURACY: Visual content must be factually correct:\n   - Code must be syntactically valid\n   - Historical dates and events must be accurate\n   - Scientific processes must be correctly represented\n   - Chart data must be realistic and internally consistent\n\n5. LANGUAGE CONSISTENCY: All text in visuals must match the specified language. PENALIZE any mixed-language content.\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT expect specific visual types based on topic (history does not require timeline; programming does not require code)\n- Do NOT penalize for using \"image\" as the visual type - it is a valid choice for any content\n- Do NOT penalize for using the same visual type multiple times IF each adds unique information\n- Do NOT require variety in visual types - consistency is fine if appropriate\n- ONLY penalize for: redundant information across visuals, visual type that cannot represent the content, technical inaccuracies, language errors, missing steps\n\n    ",
-        "id": "en-psychology-mindfulness-1",
+        "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\nAlpha-acidity and enolate formation in organic chemistry. Steps explain why alpha-hydrogens are acidic. Content is in Spanish.\n\nTOPIC-SPECIFIC: Formula kind is valid for resonance structures or pKa comparisons. Diagram kind is valid for electron movement or causal chemistry chains.\n\nThis topic has no programming content, no historical events, no musical content, and no numerical statistics.\n\n\nEVALUATION CRITERIA:\n\nYou are evaluating the VISUAL DESCRIPTION stage — the model selects a visual kind and writes a description for each step. A separate system generates the actual visual from this description. Evaluate the KIND SELECTION and DESCRIPTION QUALITY, not the rendered visual.\n\n1. COVERAGE: There must be exactly one visual description per step. Check that the descriptions array length equals the step count.\n\n2. NO REDUNDANCY: Each description must add UNIQUE information. PENALIZE if:\n   - Multiple descriptions repeat the same data points, events, or concepts\n   - A description restates what another description already covered\n\n3. KIND SELECTION FIT: The visual kind must make sense for the content. PENALIZE if:\n   - Code kind is used for non-programming content\n   - Chart kind is used with purely invented data that has no basis in the source text or in known facts (IMPORTANT: this is a MAJOR error — score it under majorErrors)\n   - Timeline kind is used for content with no temporal/sequential element\n   - Quote kind is used with a fabricated, paraphrased, or unverifiable quote\n   - Formula kind is used for a single value or trivial comparison (e.g., \"109.5°\" or \"90° < 109.5°\")\n   - Music kind is used for content that merely mentions music without specific notes to notate\n   - Code kind is used for mathematical notation (should be formula kind)\n\n   Do NOT penalize chart use if:\n   - The data comes from a well-known formula or mathematical relationship (e.g., IEEE 754 float spacing, compound interest curves, known physical constants)\n   - The step describes a qualitative pattern (e.g., \"few serious errors but many small adjustments\") and the chart uses plausible illustrative values that concretize that exact pattern — this is expected and educational, not fabrication\n\n   Do NOT penalize if:\n   - Image kind is used for any content (image can visualize anything)\n   - Diagram kind is used instead of timeline (relationships can be shown multiple ways)\n   - Any kind is used multiple times (if each instance adds unique value)\n   - Tables include illustrative example values in a clearly labeled \"Example\" column when the step describes metric types or categories — plausible example values help the reader understand what a metric looks like in practice\n\n4. DESCRIPTION SPECIFICITY: Descriptions must have enough detail for a downstream system to generate the visual without seeing the original step content. PENALIZE if:\n   - Chart descriptions lack data values, axis labels, or trends\n   - Table descriptions lack column headers or row data\n   - Code descriptions lack the programming language or what the code should demonstrate\n   - Diagram descriptions lack node labels or connections\n   - Timeline descriptions lack dates or event labels\n   - Formula descriptions lack the actual equation\n   - Image descriptions are vague (e.g., \"an image about the topic\")\n\n5. IMAGE TEXT CONTAMINATION: Image descriptions should describe ONLY the scene, objects, and composition — NOT text to display. PENALIZE if:\n   - An image description asks for labels, captions, signs, annotations, or visible text that isn't strictly necessary to understand the concept\n   - The only way to understand the described image is by reading text within it\n   - Exception: a single word or short phrase is acceptable when the concept genuinely requires it\n\n6. DIAGRAM COMPLEXITY: Diagrams should be focused and reveal non-obvious structure. PENALIZE if:\n   - A diagram description has more than 7 nodes\n   - A diagram just restates the text as boxes with arrows\n   - A diagram uses abstract platitude nodes connected by generic verbs\n   - A diagram is used for a simple list (should be a table)\n\n7. LANGUAGE CONSISTENCY: All text in descriptions — including image descriptions — must match the specified language. PENALIZE any mixed-language content (except JSON field names and enum values like \"chart\", \"table\").\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT expect specific visual kinds based on topic\n- Do NOT penalize for using \"image\" as the kind\n- Do NOT penalize for using the same kind multiple times IF each adds unique information\n- Do NOT require variety in kinds\n- ONLY penalize for: redundant information, kind that cannot represent the content, vague descriptions, image text contamination, diagram overcomplexity, language errors, missing steps\n\n    ",
+        "id": "es-quimica-acidez-enolatos-1",
         "userInput": {
-          "chapterTitle": "Mental Wellness",
-          "courseTitle": "Introduction to Psychology",
-          "language": "en",
-          "lessonDescription": "Understanding mindfulness as a practice for improving mental clarity and emotional regulation",
-          "lessonTitle": "The Practice of Mindfulness",
+          "chapterTitle": "Carbonilos y enolatos",
+          "courseTitle": "Química",
+          "language": "es",
+          "lessonDescription": "Origen de la acidez en α y cómo se forma el enolato como nucleófilo clave en reacciones de construcción C–C.",
+          "lessonTitle": "Acidez en α y formación de enolatos",
           "steps": [
             {
-              "text": "Mindfulness means paying attention to the present moment without judgment. Instead of worrying about the future or dwelling on the past, you observe what's happening now.",
-              "title": "Being Present"
+              "text": "En muchos carbonilos, un hidrógeno pegado al carbono vecino del C=O se puede quitar con relativa facilidad. Ese lugar vecino se llama posición alfa. No es \"súper ácido\" como un ácido fuerte, pero sí más ácido que un alcano común.",
+              "title": "¿Qué tiene de especial el carbono alfa?"
             },
             {
-              "text": "Your breath is always with you, making it a perfect anchor for attention. When your mind wanders, simply notice it and gently return to the breath.",
-              "title": "The Breath Anchor"
+              "text": "No cualquier H de la molécula se comporta igual. Los hidrógenos en posición alfa son especiales porque al salir como H+, la carga negativa que queda no queda atrapada en un solo átomo. Puede repartirse mejor.",
+              "title": "No todos los hidrógenos valen lo mismo"
             },
             {
-              "text": "Regular mindfulness practice has been shown to reduce stress, improve focus, and help people respond rather than react to difficult situations.",
-              "title": "Benefits of Practice"
+              "text": "Piensa en una carga negativa como peso sobre una mesa. Si el peso se reparte entre dos apoyos, la mesa sufre menos. Aquí pasa algo parecido: después de quitar el H alfa, la carga puede acomodarse entre el carbono alfa y el oxígeno.",
+              "title": "La carga no queda amontonada"
+            },
+            {
+              "text": "El grupo carbonilo jala densidad electrónica hacia el oxígeno porque ese oxígeno es muy electronegativo. Ese \"tirón\" hace que el enlace C–H en alfa quede más dispuesto a romperse que un C–H lejos del carbonilo.",
+              "title": "El carbonilo tira de los electrones"
+            },
+            {
+              "text": "Cuando una base arranca ese protón alfa, no se forma un carbocatión ni un radical. Se forma una especie con carga negativa llamada enolato. Aquí lo importante es entender por qué esa especie puede existir sin ser absurdamente inestable.",
+              "title": "Qué se forma al quitar ese protón"
+            },
+            {
+              "text": "Si quitar un protón produce una base conjugada estable, ese protón era más ácido. Esa es la lógica completa. La acidez en alfa no se entiende mirando solo el H; se entiende mirando qué tan bien queda estabilizada la especie que se forma después.",
+              "title": "La acidez depende del \"después\""
+            },
+            {
+              "text": "Un alcano normal también podría perder un H en teoría, pero la carga negativa quedaría en un carbono sin buen apoyo. Eso es muy inestable. Por eso sus C–H casi no son ácidos comparados con los de la posición alfa de un carbonilo.",
+              "title": "Por qué un alcano no compite"
+            },
+            {
+              "text": "La posición alfa es el carbono directamente unido al carbono del carbonilo. Si te alejas un carbono más, ya estás en beta. Esa cercanía importa: el efecto del carbonilo disminuye con la distancia, así que el H beta no gana la misma acidez.",
+              "title": "La cercanía al C=O sí importa"
+            },
+            {
+              "text": "La acidez en alfa no significa que esos protones se vayan solos en agua como si nada. Significa que, frente a una base adecuada, salen mucho más fácil que otros C–H. Es una diferencia relativa, no una magia absoluta.",
+              "title": "\"Ácido\" aquí es algo relativo"
+            },
+            {
+              "text": "Si una molécula tiene varios hidrógenos alfa, no siempre todos son igual de fáciles de quitar. Importan qué tan estabilizada queda la carga y qué tan accesible es ese sitio. La estructura alrededor cambia la acidez real.",
+              "title": "No todos los sitios alfa son iguales"
+            },
+            {
+              "text": "También influye el tipo de carbonilo. Aldehídos, cetonas, ésteres y otros derivados no empujan ni estabilizan exactamente igual. O sea: \"tener carbonilo\" ayuda, pero el resto de la molécula afina cuánto ácido es el H alfa.",
+              "title": "El resto de la molécula modifica todo"
+            },
+            {
+              "text": "Entender esta acidez importa porque convierte un C–H, que suele parecer poco reactivo, en un punto que sí puede transformarse. Ese cambio de \"H común\" a \"H removible\" abre la puerta a mucha química de formación de enlaces.",
+              "title": "Por qué esta idea cambia la reactividad"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "There is exact coverage with 12 descriptions for 12 steps, and the order appears aligned. Most kind selections fit the legal-tech metric content well, especially the repeated use of tables for comparisons and metric categories. However, there are some minor issues: step 4 uses an image with visible text labels ('Número do Processo', 'CPF do Autor'), which violates the image rule against text contamination because the concept could have been shown without readable text; step 8 uses an image for standardization and mentions numbered sections, again implying visible text/format cues when a table may have been clearer; step 9 uses a chart with invented monthly data and system-performance framing ('três meses', 'Gerados Sem Erro') even though the step is about turning quality into measurable indicators conceptually, so the chart is somewhat less aligned than a table of example metrics; step 10's table includes a 'Meta Alvo' column, which introduces targets not stated in the source step and shifts from describing metric types to prescribing goals. These issues reduce precision but do not fundamentally break usefulness.",
+          "kind": "minorErrors",
+          "score": 8.3
+        },
+        {
+          "conclusion": "The response could be improved by choosing tables more consistently for concept-definition steps in this domain, especially where the expectations explicitly suggest tables with illustrative example values. Step 4 could become a table of fields, correct example, and impact of error instead of an image with text. Step 8 could use a table comparing 'segue o padrão' vs 'não segue o padrão' with structure, language, mandatory fields, and argument presentation. Step 9 could better match the prompt by using a table of metric name, what is observed, and illustrative example value rather than a month-by-month chart that implies a time series absent from the step. Step 10 could replace 'Meta Alvo' with an example value column to stay closer to the instructional goal. Overall, the descriptions are specific and usable, but a few choices are less optimal than they could be.",
+          "kind": "potentialImprovements",
+          "score": 8.7
+        }
+      ],
+      "testCase": {
+        "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\nDocument quality metrics in legal tech. Steps explain how to measure document quality in automated legal workflows. Content is in Portuguese.\n\nTOPIC-SPECIFIC: The steps describe metric types (completion rate, rework rate, errors per document) without providing actual numbers. Tables with illustrative example values are appropriate and expected.\n\nThis topic has no programming content, no historical events, no musical content, and no equations.\n\n\nEVALUATION CRITERIA:\n\nYou are evaluating the VISUAL DESCRIPTION stage — the model selects a visual kind and writes a description for each step. A separate system generates the actual visual from this description. Evaluate the KIND SELECTION and DESCRIPTION QUALITY, not the rendered visual.\n\n1. COVERAGE: There must be exactly one visual description per step. Check that the descriptions array length equals the step count.\n\n2. NO REDUNDANCY: Each description must add UNIQUE information. PENALIZE if:\n   - Multiple descriptions repeat the same data points, events, or concepts\n   - A description restates what another description already covered\n\n3. KIND SELECTION FIT: The visual kind must make sense for the content. PENALIZE if:\n   - Code kind is used for non-programming content\n   - Chart kind is used with purely invented data that has no basis in the source text or in known facts (IMPORTANT: this is a MAJOR error — score it under majorErrors)\n   - Timeline kind is used for content with no temporal/sequential element\n   - Quote kind is used with a fabricated, paraphrased, or unverifiable quote\n   - Formula kind is used for a single value or trivial comparison (e.g., \"109.5°\" or \"90° < 109.5°\")\n   - Music kind is used for content that merely mentions music without specific notes to notate\n   - Code kind is used for mathematical notation (should be formula kind)\n\n   Do NOT penalize chart use if:\n   - The data comes from a well-known formula or mathematical relationship (e.g., IEEE 754 float spacing, compound interest curves, known physical constants)\n   - The step describes a qualitative pattern (e.g., \"few serious errors but many small adjustments\") and the chart uses plausible illustrative values that concretize that exact pattern — this is expected and educational, not fabrication\n\n   Do NOT penalize if:\n   - Image kind is used for any content (image can visualize anything)\n   - Diagram kind is used instead of timeline (relationships can be shown multiple ways)\n   - Any kind is used multiple times (if each instance adds unique value)\n   - Tables include illustrative example values in a clearly labeled \"Example\" column when the step describes metric types or categories — plausible example values help the reader understand what a metric looks like in practice\n\n4. DESCRIPTION SPECIFICITY: Descriptions must have enough detail for a downstream system to generate the visual without seeing the original step content. PENALIZE if:\n   - Chart descriptions lack data values, axis labels, or trends\n   - Table descriptions lack column headers or row data\n   - Code descriptions lack the programming language or what the code should demonstrate\n   - Diagram descriptions lack node labels or connections\n   - Timeline descriptions lack dates or event labels\n   - Formula descriptions lack the actual equation\n   - Image descriptions are vague (e.g., \"an image about the topic\")\n\n5. IMAGE TEXT CONTAMINATION: Image descriptions should describe ONLY the scene, objects, and composition — NOT text to display. PENALIZE if:\n   - An image description asks for labels, captions, signs, annotations, or visible text that isn't strictly necessary to understand the concept\n   - The only way to understand the described image is by reading text within it\n   - Exception: a single word or short phrase is acceptable when the concept genuinely requires it\n\n6. DIAGRAM COMPLEXITY: Diagrams should be focused and reveal non-obvious structure. PENALIZE if:\n   - A diagram description has more than 7 nodes\n   - A diagram just restates the text as boxes with arrows\n   - A diagram uses abstract platitude nodes connected by generic verbs\n   - A diagram is used for a simple list (should be a table)\n\n7. LANGUAGE CONSISTENCY: All text in descriptions — including image descriptions — must match the specified language. PENALIZE any mixed-language content (except JSON field names and enum values like \"chart\", \"table\").\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT expect specific visual kinds based on topic\n- Do NOT penalize for using \"image\" as the kind\n- Do NOT penalize for using the same kind multiple times IF each adds unique information\n- Do NOT require variety in kinds\n- ONLY penalize for: redundant information, kind that cannot represent the content, vague descriptions, image text contamination, diagram overcomplexity, language errors, missing steps\n\n    ",
+        "id": "pt-direito-medicao-automacao-1",
+        "userInput": {
+          "chapterTitle": "Legal tech e automação de documentos",
+          "courseTitle": "Direito",
+          "language": "pt",
+          "lessonDescription": "Métricas operacionais focadas em qualidade e segurança da automação documental, com rastros para auditoria.",
+          "lessonTitle": "Medição e monitoramento da automação",
+          "steps": [
+            {
+              "text": "Quando um documento sai \"sem erro técnico\", isso ainda não garante que ele esteja bom. Qualidade documental é medir se o texto final está correto, completo, consistente e adequado ao caso real.",
+              "title": "Bom não é só \"sem travar\""
+            },
+            {
+              "text": "Essas métricas olham para o produto final: o documento gerado. Não medem velocidade do sistema nem segurança da plataforma. A pergunta aqui é: \"o documento ficou bom para uso jurídico?\"",
+              "title": "O foco está no documento pronto"
+            },
+            {
+              "text": "Um documento de qualidade acerta dados, nomes, datas, valores, pedidos e fundamentos esperados. Se uma dessas peças falha, o texto pode parecer bonito e ainda assim estar juridicamente fraco.",
+              "title": "O que precisa estar certo"
+            },
+            {
+              "text": "Por isso, qualidade não é uma coisa só. Ela costuma juntar várias dimensões: precisão, completude, consistência, clareza e aderência ao padrão exigido pelo escritório ou órgão.",
+              "title": "Qualidade tem várias faces"
+            },
+            {
+              "text": "Precisão é acertar o conteúdo. Exemplo: CPF, número do processo ou valor da causa. Um dado impreciso não é um detalhe; ele pode comprometer protocolo, análise e confiança no documento.",
+              "title": "Precisão: acertar o conteúdo"
+            },
+            {
+              "text": "Completude é não deixar faltar o que o tipo de documento exige. Uma petição pode ter dados corretos, mas, se faltar um pedido essencial ou anexo mencionado, a qualidade cai bastante.",
+              "title": "Completude: nada importante faltando"
+            },
+            {
+              "text": "Consistência é o documento não se contradizer. Se no começo consta uma data e depois aparece outra, ou o nome da parte muda ao longo do texto, o problema não é só estético: gera dúvida jurídica.",
+              "title": "Consistência: o texto precisa combinar"
+            },
+            {
+              "text": "Clareza também entra na conta. Um documento pode estar tecnicamente correto, mas confuso, repetitivo ou ambíguo. Qualidade envolve permitir que outra pessoa entenda rápido o que está sendo dito.",
+              "title": "Clareza também é métrica"
+            },
+            {
+              "text": "Aderência ao padrão significa seguir o modelo esperado: estrutura, linguagem, campos obrigatórios e forma de apresentar argumentos. Isso importa porque o trabalho jurídico precisa ser previsível e revisável.",
+              "title": "Seguir o padrão esperado"
+            },
+            {
+              "text": "Métrica é a forma de transformar essa ideia em algo observável. Em vez de dizer \"ficou ruim\", você mede, por exemplo, quantos documentos saíram completos ou quantos exigiram correção humana.",
+              "title": "Como qualidade vira número"
+            },
+            {
+              "text": "Algumas métricas contam erros por documento. Outras medem taxa de retrabalho, percentual de campos corretos ou proporção de documentos aprovados na primeira revisão. Cada uma ilumina um pedaço da qualidade.",
+              "title": "Números mostram partes diferentes"
+            },
+            {
+              "text": "Isso importa porque um único número pode enganar. Um sistema pode ter poucos erros graves, mas muitos ajustes pequenos. Ou pode acertar quase tudo e falhar justo nos campos mais sensíveis.",
+              "title": "Um número sozinho pode mentir"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None. The response provides exactly one visual description for each of the 12 input steps, in the correct order. There are no major instruction violations such as skipped steps, extra steps, fabricated quotes, misuse of code/music/formula, or chart misuse with unjustified fabricated data. The single chart uses clearly illustrative values to depict a qualitative shrinking search space pattern, which is allowed by the expectations. Language is consistently English.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "A few minor issues reduce precision and fit. Step 1's diagram is somewhat close to a simple linear restatement of the text rather than revealing deeper structure; the edge labels are specific enough, but the visual is still fairly basic. Step 4's diagram labels are less aligned with the lesson wording because it skips the explicit local segment/checkpoint idea and compresses boundaries into a generic Machine→Router→Internet→Destination path. Step 8's table includes 'App is slow' → 'High latency only at final hop', which slightly stretches the lesson's focus on reachability boundaries into latency diagnosis. Step 10's chart is useful, but the x-axis is categorical while described as a bar chart, and the wording 'data points' is a little awkward for bars. These are utility-reducing but not severe.",
+          "kind": "minorErrors",
+          "score": 8.4
+        },
+        {
+          "conclusion": "Potential improvements: use a stronger process-oriented diagram for steps 1 or 4 that makes the dependency logic and checkpoint boundaries more explicit; tighten a few tables so examples map more directly to reachability rather than broader networking symptoms; make the chart specification more precise by listing bars/values explicitly and clarifying that values are illustrative; and for some image steps, connect the metaphor even more tightly to the networking concept so the downstream visual is less generic. Overall, the set is varied, self-contained, and mostly well chosen.",
+          "kind": "potentialImprovements",
+          "score": 8.8
+        }
+      ],
+      "testCase": {
+        "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\nConnectivity debugging mental models — Web Development / networking. Steps explain systematic layer-by-layer isolation for network troubleshooting.\n\nTOPIC-SPECIFIC: Diagram kind is valid for showing the layer-by-layer isolation process (host → local network → gateway → path → service). This topic is conceptual — debugging mental models, not code.\n\nThis topic has no numerical data, no historical events, no musical content, and no equations.\n\n\nEVALUATION CRITERIA:\n\nYou are evaluating the VISUAL DESCRIPTION stage — the model selects a visual kind and writes a description for each step. A separate system generates the actual visual from this description. Evaluate the KIND SELECTION and DESCRIPTION QUALITY, not the rendered visual.\n\n1. COVERAGE: There must be exactly one visual description per step. Check that the descriptions array length equals the step count.\n\n2. NO REDUNDANCY: Each description must add UNIQUE information. PENALIZE if:\n   - Multiple descriptions repeat the same data points, events, or concepts\n   - A description restates what another description already covered\n\n3. KIND SELECTION FIT: The visual kind must make sense for the content. PENALIZE if:\n   - Code kind is used for non-programming content\n   - Chart kind is used with purely invented data that has no basis in the source text or in known facts (IMPORTANT: this is a MAJOR error — score it under majorErrors)\n   - Timeline kind is used for content with no temporal/sequential element\n   - Quote kind is used with a fabricated, paraphrased, or unverifiable quote\n   - Formula kind is used for a single value or trivial comparison (e.g., \"109.5°\" or \"90° < 109.5°\")\n   - Music kind is used for content that merely mentions music without specific notes to notate\n   - Code kind is used for mathematical notation (should be formula kind)\n\n   Do NOT penalize chart use if:\n   - The data comes from a well-known formula or mathematical relationship (e.g., IEEE 754 float spacing, compound interest curves, known physical constants)\n   - The step describes a qualitative pattern (e.g., \"few serious errors but many small adjustments\") and the chart uses plausible illustrative values that concretize that exact pattern — this is expected and educational, not fabrication\n\n   Do NOT penalize if:\n   - Image kind is used for any content (image can visualize anything)\n   - Diagram kind is used instead of timeline (relationships can be shown multiple ways)\n   - Any kind is used multiple times (if each instance adds unique value)\n   - Tables include illustrative example values in a clearly labeled \"Example\" column when the step describes metric types or categories — plausible example values help the reader understand what a metric looks like in practice\n\n4. DESCRIPTION SPECIFICITY: Descriptions must have enough detail for a downstream system to generate the visual without seeing the original step content. PENALIZE if:\n   - Chart descriptions lack data values, axis labels, or trends\n   - Table descriptions lack column headers or row data\n   - Code descriptions lack the programming language or what the code should demonstrate\n   - Diagram descriptions lack node labels or connections\n   - Timeline descriptions lack dates or event labels\n   - Formula descriptions lack the actual equation\n   - Image descriptions are vague (e.g., \"an image about the topic\")\n\n5. IMAGE TEXT CONTAMINATION: Image descriptions should describe ONLY the scene, objects, and composition — NOT text to display. PENALIZE if:\n   - An image description asks for labels, captions, signs, annotations, or visible text that isn't strictly necessary to understand the concept\n   - The only way to understand the described image is by reading text within it\n   - Exception: a single word or short phrase is acceptable when the concept genuinely requires it\n\n6. DIAGRAM COMPLEXITY: Diagrams should be focused and reveal non-obvious structure. PENALIZE if:\n   - A diagram description has more than 7 nodes\n   - A diagram just restates the text as boxes with arrows\n   - A diagram uses abstract platitude nodes connected by generic verbs\n   - A diagram is used for a simple list (should be a table)\n\n7. LANGUAGE CONSISTENCY: All text in descriptions — including image descriptions — must match the specified language. PENALIZE any mixed-language content (except JSON field names and enum values like \"chart\", \"table\").\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT expect specific visual kinds based on topic\n- Do NOT penalize for using \"image\" as the kind\n- Do NOT penalize for using the same kind multiple times IF each adds unique information\n- Do NOT require variety in kinds\n- ONLY penalize for: redundant information, kind that cannot represent the content, vague descriptions, image text contamination, diagram overcomplexity, language errors, missing steps\n\n    ",
+        "id": "en-web-debugging-mental-models-1",
+        "userInput": {
+          "chapterTitle": "Networking fundamentals",
+          "courseTitle": "Web Development",
+          "language": "en",
+          "lessonDescription": "Practical mental models for narrowing a problem to host, subnet, gateway, path, or service-layer reachability without relying on protocol-specific details.",
+          "lessonTitle": "Connectivity Debugging Mental Models",
+          "steps": [
+            {
+              "text": "When something \"can't connect,\" the fastest progress often comes from one question: how far does traffic get before it fails? Layer-by-layer isolation means checking reachability in chunks instead of treating the network like one black box.",
+              "title": "Don't debug the whole path at once"
+            },
+            {
+              "text": "A connection path has stages: your own machine, the local network, the way out of that network, the wider route, and finally the target service. If one stage is broken, anything beyond it will also look broken.",
+              "title": "Think in stages, not one giant system"
+            },
+            {
+              "text": "This matters because later failures can imitate earlier ones. If your device is offline, the website is unreachable. If the website is down, it can feel like \"the network\" is broken. Isolation separates cause from symptom.",
+              "title": "Why symptoms can fool you"
+            },
+            {
+              "text": "Start close to yourself. Your own host is the first dependency. If the problem starts there, nothing farther away can work. Nearby checks are powerful because they remove huge parts of the mystery very quickly.",
+              "title": "Near-first checks cut the search space"
+            },
+            {
+              "text": "Then move one boundary outward at a time. Can you reach your local segment? Can traffic leave it? Can it get farther through the path? Each boundary is like a checkpoint showing where failure begins.",
+              "title": "Boundaries reveal the break point"
+            },
+            {
+              "text": "Picture a row of doors between you and a destination. If door 2 is locked, doors 3 and 4 don't matter yet. Layer-by-layer isolation works the same way: find the first blocked door, not the last place you hoped to reach.",
+              "title": "A hallway of locked doors"
+            },
+            {
+              "text": "The phrase \"layer-by-layer\" here is about dependencies, not memorizing protocol layers. You're asking: what must already be working before the next reachability claim can possibly be true?",
+              "title": "It's about dependency order"
+            },
+            {
+              "text": "That order creates a useful rule: don't trust a distant failure message until nearer prerequisites have been checked. \"Can't reach the app\" tells you very little if local connectivity hasn't been established first.",
+              "title": "Distant failures are weak evidence"
+            },
+            {
+              "text": "Good isolation turns a vague complaint into a smaller statement, like \"works on the host but not past the local network.\" That narrower description is already progress, even before you know the exact fix.",
+              "title": "From vague outage to precise boundary"
+            },
+            {
+              "text": "Notice what this method does not do: it doesn't guess the cause from one symptom. It avoids jumping to \"DNS,\" \"firewall,\" or \"server issue\" too early. First locate the failing stage; then causes become more believable.",
+              "title": "It prevents premature blame"
+            },
+            {
+              "text": "The hidden strength is efficiency. Each successful check clears an entire region of possibilities. Each failed check also helps, because it says the fault is at this layer or earlier, not somewhere beyond.",
+              "title": "Every result shrinks the mystery"
+            },
+            {
+              "text": "This is why experienced debuggers can seem calm. They are not magically seeing the answer. They are ruling out whole sections of the path in order, until the problem has nowhere left to hide.",
+              "title": "Why this feels almost like a superpower"
             }
           ]
         }

@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { generateActivityCustom } from "@zoonk/ai/tasks/activities/custom";
-import { generateStepVisuals } from "@zoonk/ai/tasks/steps/visual";
+import { type generateStepVisualDescriptions } from "@zoonk/ai/tasks/steps/visual-descriptions";
 import { prisma } from "@zoonk/db";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
@@ -8,30 +8,35 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { type dispatchVisualContent } from "../steps/_utils/dispatch-visual-content";
 import { type LessonActivity } from "../steps/get-lesson-activities-step";
 import { customActivityWorkflow } from "./custom-workflow";
 
-function createStepVisualsResult(
+function createDescriptionsResult(
   steps: { title: string; text: string }[],
-): Awaited<ReturnType<typeof generateStepVisuals>> {
+): Awaited<ReturnType<typeof generateStepVisualDescriptions>> {
   return {
     data: {
-      visuals: steps.map((step, stepIndex) =>
-        stepIndex === 0
-          ? { kind: "image", prompt: `A visual prompt for ${step.title}`, stepIndex }
-          : {
-              annotations: null,
-              code: "const x = 1;",
-              kind: "code",
-              language: "typescript",
-              stepIndex,
-            },
+      descriptions: steps.map((step, index) =>
+        index === 0
+          ? { description: `A visual prompt for ${step.title}`, kind: "image" as const }
+          : { description: `A code snippet for ${step.title}`, kind: "code" as const },
       ),
     },
     systemPrompt: "test",
-    usage: {} as Awaited<ReturnType<typeof generateStepVisuals>>["usage"],
+    usage: {} as Awaited<ReturnType<typeof generateStepVisualDescriptions>>["usage"],
     userPrompt: "test",
   };
+}
+
+function createDispatchResult(
+  descriptions: { kind: string; description: string }[],
+): Awaited<ReturnType<typeof dispatchVisualContent>> {
+  return descriptions.map((desc, index) =>
+    index === 0
+      ? { kind: "image", prompt: desc.description, url: "https://example.com/image.webp" }
+      : { annotations: null, code: "const x = 1;", kind: "code", language: "typescript" },
+  );
 }
 
 vi.mock("workflow", () => ({
@@ -57,19 +62,21 @@ vi.mock("@zoonk/ai/tasks/activities/custom", () => ({
   }),
 }));
 
-vi.mock("@zoonk/ai/tasks/steps/visual", () => ({
-  generateStepVisuals: vi
+vi.mock("@zoonk/ai/tasks/steps/visual-descriptions", () => ({
+  generateStepVisualDescriptions: vi
     .fn()
     .mockImplementation(({ steps }: { steps: { title: string; text: string }[] }) =>
-      Promise.resolve(createStepVisualsResult(steps)),
+      Promise.resolve(createDescriptionsResult(steps)),
     ),
 }));
 
-vi.mock("@zoonk/core/steps/visual-image", () => ({
-  generateVisualStepImage: vi.fn().mockResolvedValue({
-    data: "https://example.com/image.webp",
-    error: null,
-  }),
+vi.mock("../steps/_utils/dispatch-visual-content", () => ({
+  dispatchVisualContent: vi
+    .fn()
+    .mockImplementation(
+      ({ descriptions }: { descriptions: { kind: string; description: string }[] }) =>
+        Promise.resolve(createDispatchResult(descriptions)),
+    ),
 }));
 
 async function fetchLessonActivities(lessonId: number): Promise<LessonActivity[]> {
@@ -219,63 +226,6 @@ describe(customActivityWorkflow, () => {
 
     const dbActivity = await prisma.activity.findUnique({ where: { id: activity.id } });
     expect(dbActivity?.generationStatus).toBe("failed");
-  });
-
-  test("saves content without visuals when visual step indexes are out of range", async () => {
-    vi.mocked(generateStepVisuals).mockResolvedValueOnce({
-      ...createStepVisualsResult([
-        { text: "Custom step 1 text", title: "Custom Step 1" },
-        { text: "Custom step 2 text", title: "Custom Step 2" },
-      ]),
-      data: {
-        visuals: [
-          { kind: "image", prompt: "A visual prompt", stepIndex: 0 },
-          {
-            annotations: null,
-            code: "const x = 1;",
-            kind: "code",
-            language: "typescript",
-            stepIndex: 2,
-          },
-        ],
-      },
-    });
-
-    const lesson = await lessonFixture({
-      chapterId: chapter.id,
-      kind: "custom",
-      organizationId,
-      title: `Custom Invalid Visuals ${randomUUID()}`,
-    });
-
-    const activity = await activityFixture({
-      generationStatus: "pending",
-      kind: "custom",
-      lessonId: lesson.id,
-      organizationId,
-      title: `Custom ${randomUUID()}`,
-    });
-
-    const activities = await fetchLessonActivities(lesson.id);
-    await customActivityWorkflow({
-      activitiesToGenerate: activities,
-      workflowRunId: "test-run-id",
-    });
-
-    const [dbActivity, steps] = await Promise.all([
-      prisma.activity.findUnique({ where: { id: activity.id } }),
-      prisma.step.findMany({
-        orderBy: { position: "asc" },
-        where: { activityId: activity.id },
-      }),
-    ]);
-
-    // The visual step's rejection is caught by Promise.allSettled and dropped.
-    // The save step still runs with just content data (no visual rows).
-    expect(dbActivity?.generationStatus).toBe("completed");
-    // Only static steps saved — no visual steps because the visual generation was dropped
-    expect(steps.filter((step) => step.kind === "static")).toHaveLength(2);
-    expect(steps.filter((step) => step.kind === "visual")).toHaveLength(0);
   });
 
   test("handles multiple custom activities in parallel", async () => {

@@ -41,6 +41,7 @@ export const PHASE_ICONS: Record<PhaseName, LucideIcon> = {
   creatingExercises: GraduationCapIcon,
   creatingImages: ImageIcon,
   creatingSentences: TextIcon,
+  creatingVisuals: PaletteIcon,
   gettingStarted: BookOpenIcon,
   lookingUpWords: SearchIcon,
   preparingVisuals: PaletteIcon,

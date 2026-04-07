@@ -489,6 +489,7 @@ checksums:
     Creating%20your%20activity/singular: cac8f88defaeee245484bd91660d32d6
     Progress/singular: dd0200d5849ebb7d64c15098ae91d229
     Something%20went%20wrong.%20Please%20try%20again./singular: c62a7718d9a1e9c4ffb707807550f836
+    Creating%20illustrations/singular: 7e8a4a626e8d6c11753208628f00cbac
     Looking%20up%20words/singular: 3175ee5b66e9f68484b3ce3856d7b8a1
     Adding%20word%20pronunciation/singular: f5bbf4b6efb18872caa92df58f62d9c2
     Adding%20grammar%20romanization/singular: aec7227120d75a046352755b221cb078
@@ -539,6 +540,7 @@ checksums:
     Almost%20done.../singular: 2937988598ae31bed9b52d2876980db4
     Adding%20some%20color.../singular: 80aec5cf210399ff202a166190660fa2
     Adding%20reading%20aids.../singular: c2a09bc7ea6dc5fad494cd5bcd33bdbc
+    Creating%20the%20visual.../singular: 5aa4a567a20fc7f55e9624094b60bd70
     Building%20interactive%20tasks.../singular: cd08796577042526d8ac1ef9608480a7
     Making%20each%20word%20listenable.../singular: 867c55b5eb4038eaff47657d2ef1c3c1
     Setting%20the%20scene.../singular: 1d1dafcdd21594e1cbaac7f7e7973bad
@@ -571,11 +573,14 @@ checksums:
     Checking%20what%20we%20need.../singular: 95e10b20508fe4531a247695871b7775
     Recording%20pronunciation%20info.../singular: db8d8039b76cc4dd12f64b46eb65474f
     Recording%20pronunciation%20for%20each%20word.../singular: 44329fae5bbab8364b439bfaff1f17ea
+    Building%20the%20graphic.../singular: fa41faecc354e826196d2137fb470864
     Crafting%20the%20content.../singular: c3cf56b8895a11aae6d11de3be5a5073
     Working%20on%20the%20visuals.../singular: 21d3d631b915edf6c2c2c1882f387a12
+    Working%20on%20the%20details.../singular: f335012c5890f25d175c198f6e82b958
     Preparing%20the%20voice.../singular: 737fc89210fa2b5a6c5e8788a0c2e15a
     Making%20grammar%20content%20easier%20to%20read.../singular: 47d131249b72a3402b529e50521a04df
     Preparing%20word-by-word%20audio.../singular: 8dfc633c922918272408507108c3d270
+    Rendering%20the%20visual.../singular: 0b33a8c0efa4863482aee2783cd7fe21
     Getting%20the%20audio%20for%20each%20term.../singular: 97dd8fda4b4011ace74b6d43a7967d67
     Researching%20the%20topic.../singular: 54c9981da59b1efccfbba3c40bb1fdd5
     Crafting%20the%20outcomes.../singular: b009f6b2355e6fbe991570e478675c82

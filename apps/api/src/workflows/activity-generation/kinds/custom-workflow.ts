@@ -1,6 +1,6 @@
 import { generateCustomContentStep } from "../steps/generate-custom-content-step";
-import { generateCustomImagesStep } from "../steps/generate-custom-images-step";
-import { generateCustomVisualsStep } from "../steps/generate-custom-visuals-step";
+import { generateCustomVisualContentStep } from "../steps/generate-custom-visual-content-step";
+import { generateCustomVisualDescriptionsStep } from "../steps/generate-custom-visuals-step";
 import { type LessonActivity } from "../steps/get-lesson-activities-step";
 import { handleActivityFailureStep } from "../steps/handle-failure-step";
 import { saveCustomActivityStep } from "../steps/save-custom-activity-step";
@@ -28,9 +28,13 @@ async function markDroppedCustomActivitiesAsFailed(
 /**
  * Orchestrates custom activity generation with per-entity save.
  *
- * Flow: generateContent -> generateVisuals -> generateImages -> save per entity.
- * Each entity is independent — if one fails, others continue.
+ * Flow: generateContent -> generateVisualDescriptions -> generateVisualContent -> save per entity.
  *
+ * Visual descriptions (stage 1) select the best visual kind for each step.
+ * Visual content (stage 2) dispatches to per-kind tasks in parallel,
+ * including image generation for image kinds.
+ *
+ * Each entity is independent — if one fails, others continue.
  * Only generates for custom activities in the activitiesToGenerate list.
  */
 export async function customActivityWorkflow({
@@ -52,13 +56,19 @@ export async function customActivityWorkflow({
 
   await markDroppedCustomActivitiesAsFailed(activitiesToGenerate, customContent);
 
-  const customVisuals = await generateCustomVisualsStep(customActivitiesToGenerate, customContent);
-  const customImages = await generateCustomImagesStep(customActivitiesToGenerate, customVisuals);
+  const customDescriptions = await generateCustomVisualDescriptionsStep(
+    customActivitiesToGenerate,
+    customContent,
+  );
+  const customVisuals = await generateCustomVisualContentStep(
+    customActivitiesToGenerate,
+    customDescriptions,
+  );
 
   await Promise.allSettled(
     customContent.map(async (contentResult) => {
-      const imageResult = customImages.find((img) => img.activityId === contentResult.activityId);
-      const completedRows = imageResult?.completedRows ?? [];
+      const visualResult = customVisuals.find((vis) => vis.activityId === contentResult.activityId);
+      const completedRows = visualResult?.completedRows ?? [];
 
       try {
         await saveCustomActivityStep({

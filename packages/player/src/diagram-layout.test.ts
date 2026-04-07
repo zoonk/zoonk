@@ -145,6 +145,52 @@ describe(computeDiagramLayout, () => {
     }
   });
 
+  it("computes label positions for edges with labels", () => {
+    const nodes = [
+      { id: "a", label: "A" },
+      { id: "b", label: "B" },
+    ];
+    const edges = [
+      { label: "this is a fairly long edge label for testing", source: "a", target: "b" },
+    ];
+
+    const layout = computeDiagramLayout(nodes, edges);
+    const [edge] = layout.edges;
+
+    expect(edge!.labelX).toBeDefined();
+    expect(edge!.labelY).toBeDefined();
+    expect(edge!.labelWidth).toBeGreaterThan(0);
+    expect(edge!.labelHeight).toBeGreaterThan(0);
+
+    /** Dagre should place the label within the layout bounds. */
+    expect(edge!.labelX!).toBeGreaterThan(0);
+    expect(edge!.labelX!).toBeLessThan(layout.width);
+  });
+
+  it("keeps all edge points within layout bounds for cyclic graphs", () => {
+    const nodes = [
+      { id: "a", label: "Start" },
+      { id: "b", label: "Middle" },
+      { id: "c", label: "End" },
+    ];
+    const edges = [
+      { label: "forward", source: "a", target: "b" },
+      { label: "forward", source: "b", target: "c" },
+      { label: "back to start", source: "c", target: "a" },
+    ];
+
+    const layout = computeDiagramLayout(nodes, edges);
+
+    for (const edge of layout.edges) {
+      for (const point of edge.points) {
+        expect(point.x).toBeGreaterThanOrEqual(0);
+        expect(point.x).toBeLessThanOrEqual(layout.width);
+        expect(point.y).toBeGreaterThanOrEqual(0);
+        expect(point.y).toBeLessThanOrEqual(layout.height);
+      }
+    }
+  });
+
   it("handles edges without labels", () => {
     const nodes = [
       { id: "a", label: "A" },
@@ -157,5 +203,7 @@ describe(computeDiagramLayout, () => {
 
     expect(edge).toBeDefined();
     expect(edge!.label).toBeUndefined();
+    expect(edge!.labelX).toBeUndefined();
+    expect(edge!.labelY).toBeUndefined();
   });
 });

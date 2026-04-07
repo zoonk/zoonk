@@ -7,7 +7,7 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
-import { generateCustomVisualsStep } from "./generate-custom-visuals-step";
+import { generateCustomVisualDescriptionsStep } from "./generate-custom-visuals-step";
 
 const writeMock = vi.fn().mockResolvedValue(null);
 
@@ -23,15 +23,15 @@ vi.mock("workflow", () => ({
   workflowStep: vi.fn().mockImplementation((_name: string, fn: unknown) => fn),
 }));
 
-const { generateStepVisualsMock } = vi.hoisted(() => ({
-  generateStepVisualsMock: vi.fn(),
+const { generateStepVisualDescriptionsMock } = vi.hoisted(() => ({
+  generateStepVisualDescriptionsMock: vi.fn(),
 }));
 
-vi.mock("@zoonk/ai/tasks/steps/visual", () => ({
-  generateStepVisuals: generateStepVisualsMock,
+vi.mock("@zoonk/ai/tasks/steps/visual-descriptions", () => ({
+  generateStepVisualDescriptions: generateStepVisualDescriptionsMock,
 }));
 
-describe(generateCustomVisualsStep, () => {
+describe(generateCustomVisualDescriptionsStep, () => {
   let organizationId: number;
   let chapter: Awaited<ReturnType<typeof chapterFixture>>;
 
@@ -43,7 +43,7 @@ describe(generateCustomVisualsStep, () => {
     chapter = await chapterFixture({
       courseId: course.id,
       organizationId,
-      title: `Gen Custom Visuals Chapter ${randomUUID()}`,
+      title: `Gen Custom Descriptions Chapter ${randomUUID()}`,
     });
   });
 
@@ -51,11 +51,11 @@ describe(generateCustomVisualsStep, () => {
     vi.clearAllMocks();
   });
 
-  test("returns visual results for each custom activity", async () => {
+  test("returns visual descriptions for each custom activity", async () => {
     const lesson = await lessonFixture({
       chapterId: chapter.id,
       organizationId,
-      title: `Custom Visuals ${randomUUID()}`,
+      title: `Custom Descriptions ${randomUUID()}`,
     });
 
     await activityFixture({
@@ -77,36 +77,26 @@ describe(generateCustomVisualsStep, () => {
       },
     ];
 
-    const aiVisuals = [
-      {
-        annotations: null,
-        code: "const x = 1;",
-        kind: "code" as const,
-        language: "typescript",
-        stepIndex: 0,
-      },
+    const aiDescriptions = [
+      { description: "A code snippet showing const x = 1", kind: "code" as const },
     ];
 
-    generateStepVisualsMock.mockResolvedValue({ data: { visuals: aiVisuals } });
+    generateStepVisualDescriptionsMock.mockResolvedValue({
+      data: { descriptions: aiDescriptions },
+    });
 
-    const results = await generateCustomVisualsStep(activities, contentResults);
+    const results = await generateCustomVisualDescriptionsStep(activities, contentResults);
 
     expect(results).toHaveLength(1);
     expect(results[0]?.activityId).toBe(activity.id);
-    expect(results[0]?.visuals).toEqual(aiVisuals);
-    expect(results[0]?.visualRows).toHaveLength(1);
-    expect(results[0]?.visualRows[0]).toMatchObject({
-      activityId: activity.id,
-      kind: "visual",
-      position: 1,
-    });
+    expect(results[0]?.descriptions).toEqual(aiDescriptions);
   });
 
   test("returns empty array when content results are empty", async () => {
     const lesson = await lessonFixture({
       chapterId: chapter.id,
       organizationId,
-      title: `Custom Visuals Empty ${randomUUID()}`,
+      title: `Custom Descriptions Empty ${randomUUID()}`,
     });
 
     await activityFixture({
@@ -120,16 +110,16 @@ describe(generateCustomVisualsStep, () => {
 
     const activities = await fetchLessonActivities(lesson.id);
 
-    const results = await generateCustomVisualsStep(activities, []);
+    const results = await generateCustomVisualDescriptionsStep(activities, []);
 
     expect(results).toEqual([]);
   });
 
-  test("returns empty visuals for an activity with empty content steps", async () => {
+  test("returns empty descriptions for an activity with empty content steps", async () => {
     const lesson = await lessonFixture({
       chapterId: chapter.id,
       organizationId,
-      title: `Custom Visuals No Steps ${randomUUID()}`,
+      title: `Custom Descriptions No Steps ${randomUUID()}`,
     });
 
     await activityFixture({
@@ -146,22 +136,21 @@ describe(generateCustomVisualsStep, () => {
 
     const contentResults = [{ activityId: activity.id, steps: [] }];
 
-    const results = await generateCustomVisualsStep(activities, contentResults);
+    const results = await generateCustomVisualDescriptionsStep(activities, contentResults);
 
     expect(results).toHaveLength(1);
     expect(results[0]).toMatchObject({
       activityId: activity.id,
-      visualRows: [],
-      visuals: [],
+      descriptions: [],
     });
-    expect(generateStepVisualsMock).not.toHaveBeenCalled();
+    expect(generateStepVisualDescriptionsMock).not.toHaveBeenCalled();
   });
 
   test("streams started and completed events", async () => {
     const lesson = await lessonFixture({
       chapterId: chapter.id,
       organizationId,
-      title: `Custom Visuals Stream ${randomUUID()}`,
+      title: `Custom Descriptions Stream ${randomUUID()}`,
     });
 
     await activityFixture({
@@ -176,24 +165,24 @@ describe(generateCustomVisualsStep, () => {
     const activities = await fetchLessonActivities(lesson.id);
     const activity = activities[0]!;
 
-    generateStepVisualsMock.mockResolvedValue({
+    generateStepVisualDescriptionsMock.mockResolvedValue({
       data: {
-        visuals: [{ annotations: null, code: "x", kind: "code", language: "js", stepIndex: 0 }],
+        descriptions: [{ description: "A code snippet", kind: "code" }],
       },
     });
 
-    await generateCustomVisualsStep(activities, [
+    await generateCustomVisualDescriptionsStep(activities, [
       { activityId: activity.id, steps: [{ text: "text", title: "title" }] },
     ]);
 
     const events = getStreamedEvents(writeMock);
 
     expect(events).toContainEqual(
-      expect.objectContaining({ status: "started", step: "generateVisuals" }),
+      expect.objectContaining({ status: "started", step: "generateVisualDescriptions" }),
     );
 
     expect(events).toContainEqual(
-      expect.objectContaining({ status: "completed", step: "generateVisuals" }),
+      expect.objectContaining({ status: "completed", step: "generateVisualDescriptions" }),
     );
   });
 
@@ -201,7 +190,7 @@ describe(generateCustomVisualsStep, () => {
     const lesson = await lessonFixture({
       chapterId: chapter.id,
       organizationId,
-      title: `Custom Visuals Error ${randomUUID()}`,
+      title: `Custom Descriptions Error ${randomUUID()}`,
     });
 
     await Promise.all([
@@ -226,10 +215,10 @@ describe(generateCustomVisualsStep, () => {
 
     const activities = await fetchLessonActivities(lesson.id);
 
-    generateStepVisualsMock
+    generateStepVisualDescriptionsMock
       .mockResolvedValueOnce({
         data: {
-          visuals: [{ annotations: null, code: "x", kind: "code", language: "js", stepIndex: 0 }],
+          descriptions: [{ description: "A code snippet", kind: "code" }],
         },
       })
       .mockResolvedValueOnce(null);
@@ -239,14 +228,14 @@ describe(generateCustomVisualsStep, () => {
       steps: [{ text: "text", title: "title" }],
     }));
 
-    const results = await generateCustomVisualsStep(activities, contentResults);
+    const results = await generateCustomVisualDescriptionsStep(activities, contentResults);
 
     expect(results).toHaveLength(1);
 
     const events = getStreamedEvents(writeMock);
 
     expect(events).toContainEqual(
-      expect.objectContaining({ status: "error", step: "generateVisuals" }),
+      expect.objectContaining({ status: "error", step: "generateVisualDescriptions" }),
     );
   });
 });

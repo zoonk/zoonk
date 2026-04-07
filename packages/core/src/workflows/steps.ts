@@ -91,8 +91,8 @@ export const ACTIVITY_STEPS = [
   "generateReadingRomanization",
   "generateSentenceWordMetadata",
   "generateSentenceWordAudio",
-  "generateVisuals",
-  "generateImages",
+  "generateVisualDescriptions",
+  "generateVisualContent",
   "generateQuizImages",
 
   // Listening (copies steps from vocabulary/reading)

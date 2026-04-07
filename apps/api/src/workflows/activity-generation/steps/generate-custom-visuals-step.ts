@@ -1,41 +1,33 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
-import { type StepVisualSchema, generateStepVisuals } from "@zoonk/ai/tasks/steps/visual";
+import {
+  type VisualDescription,
+  generateStepVisualDescriptions,
+} from "@zoonk/ai/tasks/steps/visual-descriptions";
 import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { rejected, settledValues } from "@zoonk/utils/settled";
-import { buildVisualRows } from "./_utils/visual-rows";
 import { type CustomContentResult } from "./generate-custom-content-step";
-import { type VisualRow } from "./generate-visuals-step";
 import { type LessonActivity } from "./get-lesson-activities-step";
 
-export type CustomVisualResult = {
+export type CustomVisualDescriptionResult = {
   activityId: number;
-  visuals: StepVisualSchema["visuals"][number][];
-  visualRows: VisualRow[];
+  descriptions: VisualDescription[];
 };
 
 /**
- * Computes virtual content step positions without reading the database.
- * Content steps are saved at positions `index * 2` (even positions).
- */
-function computeContentStepPositions(stepCount: number): { position: number }[] {
-  return Array.from({ length: stepCount }, (_, i) => ({ position: i * 2 }));
-}
-
-/**
- * Generates visuals for a single custom activity.
+ * Generates visual descriptions for a single custom activity.
  * Pure data producer: no DB writes. Throws on failure.
  */
-async function generateVisualsForActivity(
+async function generateDescriptionsForActivity(
   activity: LessonActivity,
   contentResult: CustomContentResult,
-): Promise<CustomVisualResult> {
-  const empty = { activityId: activity.id, visualRows: [], visuals: [] };
+): Promise<CustomVisualDescriptionResult> {
+  const empty = { activityId: activity.id, descriptions: [] };
 
   if (contentResult.steps.length === 0) {
     return empty;
   }
 
-  const result = await generateStepVisuals({
+  const result = await generateStepVisualDescriptions({
     chapterTitle: activity.lesson.chapter.title,
     courseTitle: activity.lesson.chapter.course.title,
     language: activity.language,
@@ -45,33 +37,24 @@ async function generateVisualsForActivity(
   });
 
   if (!result) {
-    throw new Error("Empty visual result for custom activity");
+    throw new Error("Empty visual description result for custom activity");
   }
 
-  const dbSteps = computeContentStepPositions(contentResult.steps.length);
-
-  const visualRows = buildVisualRows({
-    activityId: activity.id,
-    dbSteps,
-    visuals: result.data.visuals,
-  });
-
-  if (!visualRows) {
-    throw new Error("Invalid visual coverage for custom activity");
-  }
-
-  return { activityId: activity.id, visualRows, visuals: result.data.visuals };
+  return { activityId: activity.id, descriptions: result.data.descriptions };
 }
 
 /**
- * Generates visual content for all custom activities in parallel.
- * Pure data producer: computes positions from content step count instead of reading DB.
- * Returns visual rows ready for DB insertion. No DB writes happen here.
+ * Generates visual descriptions for all custom activities in parallel.
+ * This is stage 1 of the two-stage visual pipeline: it selects the
+ * best visual kind for each step and writes a description for downstream
+ * per-kind generation tasks.
+ *
+ * Pure data producer: no DB writes happen here.
  */
-export async function generateCustomVisualsStep(
+export async function generateCustomVisualDescriptionsStep(
   activities: LessonActivity[],
   customContentResults: CustomContentResult[],
-): Promise<CustomVisualResult[]> {
+): Promise<CustomVisualDescriptionResult[]> {
   "use step";
 
   if (customContentResults.length === 0) {
@@ -80,7 +63,7 @@ export async function generateCustomVisualsStep(
 
   await using stream = createStepStream<ActivityStepName>();
 
-  await stream.status({ status: "started", step: "generateVisuals" });
+  await stream.status({ status: "started", step: "generateVisualDescriptions" });
 
   const allSettled = await Promise.allSettled(
     customContentResults.map((contentResult) => {
@@ -88,17 +71,16 @@ export async function generateCustomVisualsStep(
       if (!activity) {
         return Promise.resolve({
           activityId: contentResult.activityId,
-          visualRows: [],
-          visuals: [],
+          descriptions: [],
         });
       }
-      return generateVisualsForActivity(activity, contentResult);
+      return generateDescriptionsForActivity(activity, contentResult);
     }),
   );
 
   await stream.status({
     status: rejected(allSettled) ? "error" : "completed",
-    step: "generateVisuals",
+    step: "generateVisualDescriptions",
   });
 
   return settledValues(allSettled);

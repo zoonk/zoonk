@@ -41,7 +41,7 @@
     "./tasks/lessons/kind": "./src/tasks/lessons/lesson-kind.ts",
     "./tasks/steps/select-image": "./src/tasks/steps/step-select-image.ts",
     "./tasks/steps/visual-image": "./src/tasks/steps/step-visual-image.ts",
-    "./tasks/steps/visual": "./src/tasks/steps/step-visual.ts",
+    "./tasks/steps/visual-descriptions": "./src/tasks/steps/step-visual-descriptions.ts",
     "./tasks/visuals/chart": "./src/tasks/visuals/visual-chart.ts",
     "./tasks/visuals/code": "./src/tasks/visuals/visual-code.ts",
     "./tasks/visuals/diagram": "./src/tasks/visuals/visual-diagram.ts",

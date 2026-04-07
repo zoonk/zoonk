@@ -33,7 +33,7 @@
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "server-only": "0.0.1",
-    "workflow": "4.2.0-beta.75",
+    "workflow": "4.2.0-beta.76",
     "zod": "4.3.6"
   },
   "devDependencies": {
