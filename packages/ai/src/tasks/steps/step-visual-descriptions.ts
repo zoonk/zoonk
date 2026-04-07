@@ -24,13 +24,13 @@ const visualDescriptionSchema = z.object({
   kind: visualKindSchema,
 });
 
-const schema = z.array(visualDescriptionSchema);
+const schema = z.object({
+  descriptions: z.array(visualDescriptionSchema),
+});
 
 export type VisualDescription = z.infer<typeof visualDescriptionSchema>;
 
-export type StepVisualDescriptionsSchema = {
-  descriptions: VisualDescription[];
-};
+export type StepVisualDescriptionsSchema = z.infer<typeof schema>;
 
 export type StepVisualDescriptionsParams = {
   lessonTitle: string;
@@ -93,5 +93,5 @@ ${formattedSteps}`;
     system: systemPrompt,
   });
 
-  return { data: { descriptions: output }, systemPrompt, usage, userPrompt };
+  return { data: output, systemPrompt, usage, userPrompt };
 }
