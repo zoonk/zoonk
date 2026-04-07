@@ -1,6 +1,11 @@
 import { describe, expect, it } from "vitest";
 import { computeDiagramLayout } from "./diagram-layout";
 
+function parseViewBox(viewBox: string) {
+  const parts = viewBox.split(" ").map(Number);
+  return { height: parts[3]!, width: parts[2]!, x: parts[0]!, y: parts[1]! };
+}
+
 describe(computeDiagramLayout, () => {
   it("positions a linear chain with vertical ordering", () => {
     const nodes = [
@@ -84,6 +89,7 @@ describe(computeDiagramLayout, () => {
     expect(layout.edges).toHaveLength(0);
     expect(layout.width).toBeGreaterThan(0);
     expect(layout.height).toBeGreaterThan(0);
+    expect(layout.viewBox).toBeDefined();
   });
 
   it("preserves edge labels in output", () => {
@@ -126,7 +132,7 @@ describe(computeDiagramLayout, () => {
     expect(node!.width).toBeGreaterThanOrEqual(100);
   });
 
-  it("returns layout dimensions that encompass all nodes", () => {
+  it("returns a viewBox that encompasses all nodes", () => {
     const nodes = [
       { id: "a", label: "Alpha" },
       { id: "b", label: "Beta" },
@@ -138,10 +144,13 @@ describe(computeDiagramLayout, () => {
     ];
 
     const layout = computeDiagramLayout(nodes, edges);
+    const vb = parseViewBox(layout.viewBox);
 
     for (const node of layout.nodes) {
-      expect(node.x + node.width / 2).toBeLessThanOrEqual(layout.width);
-      expect(node.y + node.height / 2).toBeLessThanOrEqual(layout.height);
+      expect(node.x - node.width / 2).toBeGreaterThanOrEqual(vb.x);
+      expect(node.x + node.width / 2).toBeLessThanOrEqual(vb.x + vb.width);
+      expect(node.y - node.height / 2).toBeGreaterThanOrEqual(vb.y);
+      expect(node.y + node.height / 2).toBeLessThanOrEqual(vb.y + vb.height);
     }
   });
 
@@ -162,12 +171,13 @@ describe(computeDiagramLayout, () => {
     expect(edge!.labelWidth).toBeGreaterThan(0);
     expect(edge!.labelHeight).toBeGreaterThan(0);
 
-    /** Dagre should place the label within the layout bounds. */
-    expect(edge!.labelX!).toBeGreaterThan(0);
-    expect(edge!.labelX!).toBeLessThan(layout.width);
+    /** Dagre should place the label within the viewBox bounds. */
+    const vb = parseViewBox(layout.viewBox);
+    expect(edge!.labelX!).toBeGreaterThanOrEqual(vb.x);
+    expect(edge!.labelX!).toBeLessThanOrEqual(vb.x + vb.width);
   });
 
-  it("keeps all edge points within layout bounds for cyclic graphs", () => {
+  it("keeps all edge points within viewBox for cyclic graphs", () => {
     const nodes = [
       { id: "a", label: "Start" },
       { id: "b", label: "Middle" },
@@ -180,13 +190,14 @@ describe(computeDiagramLayout, () => {
     ];
 
     const layout = computeDiagramLayout(nodes, edges);
+    const vb = parseViewBox(layout.viewBox);
 
     for (const edge of layout.edges) {
       for (const point of edge.points) {
-        expect(point.x).toBeGreaterThanOrEqual(0);
-        expect(point.x).toBeLessThanOrEqual(layout.width);
-        expect(point.y).toBeGreaterThanOrEqual(0);
-        expect(point.y).toBeLessThanOrEqual(layout.height);
+        expect(point.x).toBeGreaterThanOrEqual(vb.x);
+        expect(point.x).toBeLessThanOrEqual(vb.x + vb.width);
+        expect(point.y).toBeGreaterThanOrEqual(vb.y);
+        expect(point.y).toBeLessThanOrEqual(vb.y + vb.height);
       }
     }
   });

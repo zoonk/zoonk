@@ -24,28 +24,75 @@ export type DiagramLayout = {
   edges: PositionedEdge[];
   height: number;
   nodes: PositionedNode[];
+  viewBox: string;
   width: number;
 };
 
 const MIN_NODE_WIDTH = 100;
 const NODE_HEIGHT = 40;
-const CHAR_WIDTH = 7.5;
 const NODE_PADDING = 32;
 const NODE_SEP = 60;
 const RANK_SEP = 60;
 const LAYOUT_PADDING = 40;
-const EDGE_LABEL_CHAR_WIDTH = 7;
 const EDGE_LABEL_PADDING_X = 6;
 const EDGE_LABEL_FONT_SIZE = 11;
 const EDGE_LABEL_PADDING_Y = 3;
 const EDGE_LABEL_HEIGHT = EDGE_LABEL_FONT_SIZE + EDGE_LABEL_PADDING_Y * 2;
 
-function estimateNodeWidth(label: string): number {
-  return Math.max(MIN_NODE_WIDTH, label.length * CHAR_WIDTH + NODE_PADDING);
+const NODE_FONT_SIZE = 14;
+const NODE_FONT_WEIGHT = 500;
+const NODE_FONT = `${NODE_FONT_WEIGHT} ${NODE_FONT_SIZE}px Inter, system-ui, sans-serif`;
+const EDGE_FONT = `${EDGE_LABEL_FONT_SIZE}px Inter, system-ui, sans-serif`;
+
+/**
+ * Cached OffscreenCanvas context for text measurement.
+ * `undefined` = not yet initialized, `null` = unavailable
+ * (e.g. test environments without canvas support).
+ */
+let canvasCtx: OffscreenCanvasRenderingContext2D | null | undefined;
+
+function getCanvasContext(): OffscreenCanvasRenderingContext2D | null {
+  if (canvasCtx !== undefined) {
+    return canvasCtx;
+  }
+
+  if (typeof OffscreenCanvas === "undefined") {
+    canvasCtx = null;
+    return null;
+  }
+
+  const canvas = new OffscreenCanvas(1, 1);
+  canvasCtx = canvas.getContext("2d");
+  return canvasCtx;
 }
 
-function estimateEdgeLabelWidth(label: string): number {
-  return label.length * EDGE_LABEL_CHAR_WIDTH + EDGE_LABEL_PADDING_X * 2;
+/**
+ * Measures text width using OffscreenCanvas when available (browser),
+ * falling back to a character-count heuristic in environments without
+ * canvas support (e.g. jsdom in tests). Using actual measurement
+ * produces accurate node sizing for proportional fonts, mixed-width
+ * characters, and non-Latin scripts.
+ */
+function measureText(text: string, font: string, fontSize: number): number {
+  const ctx = getCanvasContext();
+
+  if (ctx) {
+    ctx.font = font;
+    return ctx.measureText(text).width;
+  }
+
+  // Fallback: average character width for proportional
+  // sans-serif fonts like Inter is ~55% of the font size.
+  const averageCharWidthRatio = 0.55;
+  return text.length * fontSize * averageCharWidthRatio;
+}
+
+function measureNodeWidth(label: string): number {
+  return Math.max(MIN_NODE_WIDTH, measureText(label, NODE_FONT, NODE_FONT_SIZE) + NODE_PADDING);
+}
+
+function measureEdgeLabelWidth(label: string): number {
+  return measureText(label, EDGE_FONT, EDGE_LABEL_FONT_SIZE) + EDGE_LABEL_PADDING_X * 2;
 }
 
 function readNodePosition(
@@ -77,22 +124,17 @@ function readEdge(
 }
 
 /**
- * Computes the actual bounding box of all positioned elements —
- * nodes and edge points — then returns dimensions and an offset
- * that ensures nothing is clipped by the SVG viewBox.
+ * Computes an SVG viewBox that encompasses all positioned elements —
+ * nodes, edge points, and edge labels — with padding.
  *
- * Dagre's `graph.graph()` dimensions can undercount because
- * back-edges in cycles produce control points outside the
- * reported bounds. Computing from actual positions avoids this.
- *
- * Edge labels don't need special handling here because dagre
- * already accounts for their dimensions when we pass `width`
- * and `height` in `setEdge`.
+ * Instead of translating all coordinates to a (0,0) origin, we let
+ * the SVG viewBox handle the coordinate mapping. This eliminates the
+ * offset-translation step while correctly handling dagre's back-edge
+ * control points that can fall outside its reported bounds.
  */
-function computeBounds({ edges, nodes }: { edges: PositionedEdge[]; nodes: PositionedNode[] }): {
+function computeViewBox({ edges, nodes }: { edges: PositionedEdge[]; nodes: PositionedNode[] }): {
   height: number;
-  offsetX: number;
-  offsetY: number;
+  viewBox: string;
   width: number;
 } {
   let minX = Infinity;
@@ -101,15 +143,10 @@ function computeBounds({ edges, nodes }: { edges: PositionedEdge[]; nodes: Posit
   let maxY = -Infinity;
 
   for (const node of nodes) {
-    const left = node.x - node.width / 2;
-    const right = node.x + node.width / 2;
-    const top = node.y - node.height / 2;
-    const bottom = node.y + node.height / 2;
-
-    minX = Math.min(minX, left);
-    maxX = Math.max(maxX, right);
-    minY = Math.min(minY, top);
-    maxY = Math.max(maxY, bottom);
+    minX = Math.min(minX, node.x - node.width / 2);
+    maxX = Math.max(maxX, node.x + node.width / 2);
+    minY = Math.min(minY, node.y - node.height / 2);
+    maxY = Math.max(maxY, node.y + node.height / 2);
   }
 
   for (const edge of edges) {
@@ -121,26 +158,24 @@ function computeBounds({ edges, nodes }: { edges: PositionedEdge[]; nodes: Posit
     }
 
     if (edge.labelX !== undefined && edge.labelWidth) {
-      const halfWidth = edge.labelWidth / 2;
-      minX = Math.min(minX, edge.labelX - halfWidth);
-      maxX = Math.max(maxX, edge.labelX + halfWidth);
+      minX = Math.min(minX, edge.labelX - edge.labelWidth / 2);
+      maxX = Math.max(maxX, edge.labelX + edge.labelWidth / 2);
     }
 
     if (edge.labelY !== undefined && edge.labelHeight) {
-      const halfHeight = edge.labelHeight / 2;
-      minY = Math.min(minY, edge.labelY - halfHeight);
-      maxY = Math.max(maxY, edge.labelY + halfHeight);
+      minY = Math.min(minY, edge.labelY - edge.labelHeight / 2);
+      maxY = Math.max(maxY, edge.labelY + edge.labelHeight / 2);
     }
   }
 
-  const contentWidth = maxX - minX;
-  const contentHeight = maxY - minY;
+  const padding = LAYOUT_PADDING / 2;
+  const width = maxX - minX + LAYOUT_PADDING;
+  const height = maxY - minY + LAYOUT_PADDING;
 
   return {
-    height: contentHeight + LAYOUT_PADDING,
-    offsetX: -minX + LAYOUT_PADDING / 2,
-    offsetY: -minY + LAYOUT_PADDING / 2,
-    width: contentWidth + LAYOUT_PADDING,
+    height,
+    viewBox: `${minX - padding} ${minY - padding} ${width} ${height}`,
+    width,
   };
 }
 
@@ -164,7 +199,7 @@ export function computeDiagramLayout(
     graph.setNode(node.id, {
       height: NODE_HEIGHT,
       label: node.label,
-      width: estimateNodeWidth(node.label),
+      width: measureNodeWidth(node.label),
     });
   }
 
@@ -172,27 +207,25 @@ export function computeDiagramLayout(
     graph.setEdge(edge.source, edge.target, {
       height: edge.label ? EDGE_LABEL_HEIGHT : 0,
       label: edge.label,
-      width: edge.label ? estimateEdgeLabelWidth(edge.label) : 0,
+      width: edge.label ? measureEdgeLabelWidth(edge.label) : 0,
     });
   }
 
   layout(graph);
 
-  const rawNodes = nodes.map((node) => ({
+  const positionedNodes = nodes.map((node) => ({
     ...readNodePosition(graph, node.id),
     id: node.id,
     label: node.label,
   }));
 
-  const rawEdges = edges.map((edge) => {
+  const positionedEdges = edges.map((edge) => {
     const edgeData = readEdge(graph, edge.source, edge.target);
-    const labelWidth = edge.label ? estimateEdgeLabelWidth(edge.label) : undefined;
-    const labelHeight = edge.label ? EDGE_LABEL_HEIGHT : undefined;
 
     return {
       label: edge.label,
-      labelHeight,
-      labelWidth,
+      labelHeight: edge.label ? EDGE_LABEL_HEIGHT : undefined,
+      labelWidth: edge.label ? measureEdgeLabelWidth(edge.label) : undefined,
       labelX: edgeData.labelX,
       labelY: edgeData.labelY,
       points: edgeData.points,
@@ -201,28 +234,16 @@ export function computeDiagramLayout(
     };
   });
 
-  const bounds = computeBounds({ edges: rawEdges, nodes: rawNodes });
-
-  const positionedNodes = rawNodes.map((node) => ({
-    ...node,
-    x: node.x + bounds.offsetX,
-    y: node.y + bounds.offsetY,
-  }));
-
-  const positionedEdges = rawEdges.map((edge) => ({
-    ...edge,
-    labelX: edge.labelX === undefined ? undefined : edge.labelX + bounds.offsetX,
-    labelY: edge.labelY === undefined ? undefined : edge.labelY + bounds.offsetY,
-    points: edge.points.map((point) => ({
-      x: point.x + bounds.offsetX,
-      y: point.y + bounds.offsetY,
-    })),
-  }));
+  const { height, viewBox, width } = computeViewBox({
+    edges: positionedEdges,
+    nodes: positionedNodes,
+  });
 
   return {
     edges: positionedEdges,
-    height: bounds.height,
+    height,
     nodes: positionedNodes,
-    width: bounds.width,
+    viewBox,
+    width,
   };
 }
