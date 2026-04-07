@@ -21,6 +21,7 @@ import { activityStoryStepsTask } from "./activity-story-steps/task";
 import { activityTranslationTask } from "./activity-translation/task";
 import { activityVocabularyTask } from "./activity-vocabulary/task";
 import { alternativeTitlesTask } from "./alternative-titles/task";
+import { appliedActivityKindTask } from "./applied-activity-kind/task";
 import { chapterLessonsTask } from "./chapter-lessons/task";
 import { courseCategoriesTask } from "./course-categories/task";
 import { courseChaptersTask } from "./course-chapters/task";
@@ -63,6 +64,7 @@ export const TASKS: readonly Task[] = [
 
   activityRomanizationTask,
   activityVocabularyTask,
+  appliedActivityKindTask,
   alternativeTitlesTask,
   chapterLessonsTask,
   courseCategoriesTask,

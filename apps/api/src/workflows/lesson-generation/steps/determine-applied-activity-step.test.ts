@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
+import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
@@ -32,21 +33,28 @@ vi.mock("@zoonk/ai/tasks/lessons/applied-activity-kind", () => ({
 
 describe(determineAppliedActivityStep, () => {
   let context: LessonContext;
+  let organizationId: number;
+  let chapterId: number;
 
   beforeAll(async () => {
     const organization = await aiOrganizationFixture();
-    const course = await courseFixture({ organizationId: organization.id });
+    organizationId = organization.id;
+
+    const course = await courseFixture({ organizationId });
 
     const chapter = await chapterFixture({
       courseId: course.id,
-      organizationId: organization.id,
+      organizationId,
       title: `Applied Activity Chapter ${randomUUID()}`,
     });
 
+    chapterId = chapter.id;
+
     const lesson = await lessonFixture({
-      chapterId: chapter.id,
+      chapterId,
       concepts: ["Supply Chain", "Communication"],
-      organizationId: organization.id,
+      organizationId,
+      position: 0,
       title: `Applied Activity Lesson ${randomUUID()}`,
     });
 
@@ -77,6 +85,7 @@ describe(determineAppliedActivityStep, () => {
       language: context.language,
       lessonDescription: context.description ?? "",
       lessonTitle: context.title,
+      recentAppliedKinds: [],
     });
 
     const events = getStreamedEvents(writeMock);
@@ -88,16 +97,6 @@ describe(determineAppliedActivityStep, () => {
     expect(events).toContainEqual(
       expect.objectContaining({ status: "completed", step: "determineAppliedActivity" }),
     );
-  });
-
-  test("returns null when AI classifies as no applied activity", async () => {
-    generateAppliedActivityKindMock.mockResolvedValue({
-      data: { appliedActivityKind: null },
-    });
-
-    const result = await determineAppliedActivityStep(context);
-
-    expect(result).toBeNull();
   });
 
   test("returns null when AI generation fails (non-fatal)", async () => {
@@ -116,6 +115,55 @@ describe(determineAppliedActivityStep, () => {
 
     expect(events).not.toContainEqual(
       expect.objectContaining({ status: "error", step: "determineAppliedActivity" }),
+    );
+  });
+
+  test("passes recent applied kinds from preceding lessons", async () => {
+    generateAppliedActivityKindMock.mockResolvedValue({
+      data: { appliedActivityKind: "investigation" },
+    });
+
+    // Create two preceding lessons with applied activities.
+    const [lesson1, lesson2] = await Promise.all([
+      lessonFixture({
+        chapterId,
+        organizationId,
+        position: 10,
+        title: `Preceding Lesson 1 ${randomUUID()}`,
+      }),
+      lessonFixture({
+        chapterId,
+        organizationId,
+        position: 20,
+        title: `Preceding Lesson 2 ${randomUUID()}`,
+      }),
+    ]);
+
+    await Promise.all([
+      activityFixture({
+        kind: "story",
+        lessonId: lesson1.id,
+        organizationId,
+      }),
+      activityFixture({
+        kind: "investigation",
+        lessonId: lesson2.id,
+        organizationId,
+      }),
+    ]);
+
+    // Current lesson at position 30 should see both preceding kinds.
+    const laterContext: LessonContext = {
+      ...context,
+      position: 30,
+    };
+
+    await determineAppliedActivityStep(laterContext);
+
+    expect(generateAppliedActivityKindMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        recentAppliedKinds: ["investigation", "story"],
+      }),
     );
   });
 });
