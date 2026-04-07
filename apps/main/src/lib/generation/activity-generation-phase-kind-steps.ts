@@ -217,14 +217,14 @@ type CustomSteps =
   | "getLessonActivities"
   | "setActivityAsRunning"
   | "generateCustomContent"
-  | "generateVisuals"
-  | "generateImages"
+  | "generateVisualDescriptions"
+  | "generateVisualContent"
   | "saveCustomActivity";
 
 export const CUSTOM_PHASE_STEPS = {
-  creatingImages: ["generateImages"],
+  creatingVisuals: ["generateVisualContent"],
   gettingStarted: ["getLessonActivities", "setActivityAsRunning"],
-  preparingVisuals: ["generateVisuals"],
+  preparingVisuals: ["generateVisualDescriptions"],
   saving: ["saveCustomActivity"],
   writingContent: ["generateCustomContent"],
 } as const satisfies Record<string, readonly ActivityStepName[]>;
@@ -237,7 +237,7 @@ export const CUSTOM_PHASE_ORDER: PhaseName[] = [
   "gettingStarted",
   "writingContent",
   "preparingVisuals",
-  "creatingImages",
+  "creatingVisuals",
   "saving",
 ];
 
@@ -248,14 +248,14 @@ type ExplanationSteps =
   | "getNeighboringConcepts"
   | "setActivityAsRunning"
   | "generateExplanationContent"
-  | "generateVisuals"
-  | "generateImages"
+  | "generateVisualDescriptions"
+  | "generateVisualContent"
   | "saveExplanationActivity";
 
 export const EXPLANATION_PHASE_STEPS = {
-  creatingImages: ["generateImages"],
+  creatingVisuals: ["generateVisualContent"],
   gettingStarted: ["getLessonActivities", "getNeighboringConcepts", "setActivityAsRunning"],
-  preparingVisuals: ["generateVisuals"],
+  preparingVisuals: ["generateVisualDescriptions"],
   saving: ["saveExplanationActivity"],
   writingContent: ["generateExplanationContent"],
 } as const satisfies Record<string, readonly ActivityStepName[]>;
@@ -271,7 +271,7 @@ export const EXPLANATION_PHASE_ORDER: PhaseName[] = [
   "gettingStarted",
   "writingContent",
   "preparingVisuals",
-  "creatingImages",
+  "creatingVisuals",
   "saving",
 ];
 

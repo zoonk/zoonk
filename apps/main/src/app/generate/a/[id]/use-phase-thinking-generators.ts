@@ -166,6 +166,17 @@ function useContentPhaseGenerators(): Partial<Record<PhaseName, ThinkingMessageG
         ],
         index,
       ),
+    creatingVisuals: (index) =>
+      cycleMessage(
+        [
+          t("Drawing an illustration..."),
+          t("Creating the visual..."),
+          t("Working on the details..."),
+          t("Building the graphic..."),
+          t("Rendering the visual..."),
+        ],
+        index,
+      ),
     gettingStarted: (index) =>
       cycleMessage(
         [

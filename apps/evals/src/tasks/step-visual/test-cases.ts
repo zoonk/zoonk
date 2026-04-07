@@ -1,38 +1,43 @@
 const SHARED_EXPECTATIONS = `
 EVALUATION CRITERIA:
 
-1. COVERAGE: Every step must have exactly one visual. Check that the number of visuals equals the number of steps and stepIndex values are unique and complete (0 to N-1).
+You are evaluating the VISUAL DESCRIPTION stage — the model selects a visual kind and writes a description for each step. A separate system generates the actual visual from this description. Evaluate the KIND SELECTION and DESCRIPTION QUALITY, not the rendered visual.
 
-2. NO REDUNDANCY: Each visual must add UNIQUE information. PENALIZE if:
-   - Multiple visuals repeat the same data points, events, or concepts
-   - A visual restates what another visual already showed
-   - Example: Two timelines covering overlapping periods with the same events
+1. COVERAGE: There must be exactly one visual description per step. Check that the descriptions array length equals the step count.
 
-3. VISUAL-CONTENT FIT: The visual type must make sense for the content. PENALIZE if:
-   - Code visual is used for non-programming content
-   - Chart is used without numerical/statistical data to display (IMPORTANT: if a chart forces the model to fabricate numbers that don't exist in the source text, this is a MAJOR error - score it under majorErrors, not minorErrors)
-   - Timeline is used for content with no temporal/sequential element
-   - Quote is fabricated or misattributed (must be real, verifiable quotes)
+2. NO REDUNDANCY: Each description must add UNIQUE information. PENALIZE if:
+   - Multiple descriptions repeat the same data points, events, or concepts
+   - A description restates what another description already covered
+   - Example: Two timeline descriptions covering overlapping periods with the same events
+
+3. KIND SELECTION FIT: The visual kind must make sense for the content. PENALIZE if:
+   - Code kind is used for non-programming content
+   - Chart kind is used without numerical/statistical data (IMPORTANT: if a chart requires fabricating numbers that don't exist in the source text, this is a MAJOR error)
+   - Timeline kind is used for content with no temporal/sequential element
+   - Quote kind is used with a fabricated or unverifiable quote
 
    Do NOT penalize if:
-   - Image is used for any content (image can visualize anything)
-   - Diagram is used instead of timeline (relationships can be shown multiple ways)
-   - Any visual type is used multiple times (if each instance adds unique value)
+   - Image kind is used for any content (image can visualize anything)
+   - Diagram kind is used instead of timeline (relationships can be shown multiple ways)
+   - Any kind is used multiple times (if each instance adds unique value)
 
-4. TECHNICAL ACCURACY: Visual content must be factually correct:
-   - Code must be syntactically valid
-   - Historical dates and events must be accurate
-   - Scientific processes must be correctly represented
-   - Chart data must be realistic and internally consistent
+4. DESCRIPTION SPECIFICITY: Descriptions must have enough detail for a downstream system to generate the visual without seeing the original step content. PENALIZE if:
+   - Chart descriptions lack data values, axis labels, or trends
+   - Table descriptions lack column headers or row data
+   - Code descriptions lack the programming language or what the code should demonstrate
+   - Diagram descriptions lack node labels or connections
+   - Timeline descriptions lack dates or event labels
+   - Formula descriptions lack the actual equation
+   - Image descriptions are vague (e.g., "an image about the topic")
 
-5. LANGUAGE CONSISTENCY: All text in visuals must match the specified language. PENALIZE any mixed-language content.
+5. LANGUAGE CONSISTENCY: All text in descriptions must match the specified language. PENALIZE any mixed-language content (except the JSON field names and enum values like "chart", "table").
 
 ANTI-CHECKLIST GUIDANCE (CRITICAL):
-- Do NOT expect specific visual types based on topic (history does not require timeline; programming does not require code)
-- Do NOT penalize for using "image" as the visual type - it is a valid choice for any content
-- Do NOT penalize for using the same visual type multiple times IF each adds unique information
-- Do NOT require variety in visual types - consistency is fine if appropriate
-- ONLY penalize for: redundant information across visuals, visual type that cannot represent the content, technical inaccuracies, language errors, missing steps
+- Do NOT expect specific visual kinds based on topic (history does not require timeline; programming does not require code)
+- Do NOT penalize for using "image" as the kind — it is a valid choice for any content
+- Do NOT penalize for using the same kind multiple times IF each adds unique information
+- Do NOT require variety in kinds — consistency is fine if appropriate
+- ONLY penalize for: redundant information across descriptions, kind that cannot represent the content, vague descriptions, language errors, missing steps
 `;
 
 export const TEST_CASES = [
@@ -42,23 +47,18 @@ TOPIC-SPECIFIC GUIDANCE:
 
 This test covers historical content about the French Revolution (1789-1799).
 
-ACCURACY CHECKS - PENALIZE if:
-- Any historical dates are wrong (key dates: 1789 Bastille, 1791 Constitution, 1793 Reign of Terror, 1799 Napoleon's coup)
+KIND SELECTION CHECKS - PENALIZE if:
+- Code kind is used (no programming content)
+- Chart kind is used without meaningful numerical data
+
+DESCRIPTION CHECKS - PENALIZE if:
+- Historical dates are wrong in descriptions (key dates: 1789 Bastille, 1791 Constitution, 1793 Reign of Terror, 1799 Napoleon's coup)
 - Historical quotes are fabricated or misattributed
-- Cause-effect relationships are historically inaccurate
-
-REDUNDANCY CHECKS - PENALIZE if:
-- Multiple visuals cover the same historical events
-- The same dates/figures appear across different visuals without adding new information
-
-VISUAL-CONTENT FIT - PENALIZE if:
-- Code visual is used (no programming content)
-- Chart visual is used without meaningful numerical data
+- Descriptions are too vague to generate a visual (e.g., "an image of the revolution")
 
 Do NOT PENALIZE if:
-- All steps use image visuals (valid if each shows distinct content)
-- No timeline is used (historical content can be visualized many ways)
-- A diagram showing cause-effect is used instead of a timeline
+- All steps use image kind (valid if each describes distinct content)
+- No timeline kind is used (historical content can be visualized many ways)
 
 ${SHARED_EXPECTATIONS}
     `,
@@ -92,23 +92,19 @@ TOPIC-SPECIFIC GUIDANCE:
 
 This test covers JavaScript closures - a programming concept.
 
-ACCURACY CHECKS - PENALIZE if:
-- Code snippets have syntax errors
-- Code doesn't actually demonstrate closures (must show inner function accessing outer scope)
-- Technical explanations are incorrect
+KIND SELECTION CHECKS - PENALIZE if:
+- Timeline kind is used (closures are not a historical/sequential topic)
+- Chart kind is used without numerical data
 
-REDUNDANCY CHECKS - PENALIZE if:
-- Multiple code snippets show essentially the same pattern
-- The same closure example is repeated across visuals
-
-VISUAL-CONTENT FIT - PENALIZE if:
-- Timeline is used (closures are not a historical/sequential topic)
-- Chart is used without numerical data
+DESCRIPTION CHECKS - PENALIZE if:
+- Code descriptions have technical inaccuracies about closures
+- Code descriptions don't specify the programming language
+- Descriptions are too vague to generate working code
 
 Do NOT PENALIZE if:
-- Image visuals are used (can show conceptual diagrams of scope)
-- Diagram is used to show scope chains
-- Not all steps use code visuals
+- Image kind is used (can describe conceptual diagrams of scope)
+- Diagram kind is used to describe scope chains
+- Not all steps use code kind
 
 ${SHARED_EXPECTATIONS}
     `,
@@ -142,25 +138,20 @@ TOPIC-SPECIFIC GUIDANCE:
 
 This test covers photosynthesis - a biological process.
 
-LANGUAGE REQUIREMENT: All visual content must be in Portuguese.
+LANGUAGE REQUIREMENT: All description content must be in Portuguese.
 
-ACCURACY CHECKS - PENALIZE if:
+KIND SELECTION CHECKS - PENALIZE if:
+- Code kind is used (no programming content)
+- Timeline kind is used (photosynthesis is not a historical topic)
+
+DESCRIPTION CHECKS - PENALIZE if:
 - Scientific process is incorrect (inputs: light, CO2, H2O; outputs: glucose, O2)
-- Any text is in English instead of Portuguese
-- Biological terminology is wrong
-
-REDUNDANCY CHECKS - PENALIZE if:
-- Multiple visuals show the same stage of photosynthesis
-- The same chemical equation or process diagram is repeated
-
-VISUAL-CONTENT FIT - PENALIZE if:
-- Code visual is used (no programming content)
-- Timeline is used (photosynthesis is not a historical topic)
+- Any description text is in English instead of Portuguese
+- Descriptions are too vague to generate a visual
 
 Do NOT PENALIZE if:
-- Image visuals are used for all steps
-- Diagram is used to show the process flow
-- Chart showing energy conversion data is used
+- Image kind is used for all steps
+- Diagram kind is used to describe the process flow
 
 ${SHARED_EXPECTATIONS}
     `,
@@ -194,25 +185,20 @@ TOPIC-SPECIFIC GUIDANCE:
 
 This test covers market share - an economics/business concept with numerical data.
 
-ACCURACY CHECKS - PENALIZE if:
-- Chart data is unrealistic (e.g., market share values that don't make sense)
-- Economic concepts are incorrectly explained
-- Pie chart values don't sum to 100% (if pie chart is used)
+KIND SELECTION CHECKS - PENALIZE if:
+- Code kind is used (no programming content)
+- Timeline kind is used for content that isn't about historical market evolution
 
-Do NOT penalize for minor approximations in generated chart data (e.g., values summing to exactly 60% when the text says "over 60%" is acceptable - the spirit of the data is correct).
+DESCRIPTION CHECKS - PENALIZE if:
+- Chart descriptions have unrealistic data (e.g., market share values that don't make sense)
+- Descriptions are too vague to generate the visual
 
-REDUNDANCY CHECKS - PENALIZE if:
-- Multiple charts show the same data
-- The same market share examples are repeated across visuals
-
-VISUAL-CONTENT FIT - PENALIZE if:
-- Code visual is used (no programming content)
-- Timeline is used for content that isn't about historical market evolution
+Do NOT penalize for minor approximations in chart data descriptions (e.g., values summing to exactly 60% when the text says "over 60%").
 
 Do NOT PENALIZE if:
-- Image visuals are used
-- No chart is used (market share can be explained without charts)
-- Diagram showing market relationships is used
+- Image kind is used
+- No chart kind is used (market share can be explained without charts)
+- Diagram kind is used to describe market relationships
 
 ${SHARED_EXPECTATIONS}
     `,
@@ -246,24 +232,19 @@ TOPIC-SPECIFIC GUIDANCE:
 
 This test covers mindfulness - an abstract psychological/wellness concept.
 
-ACCURACY CHECKS - PENALIZE if:
-- Quotes are fabricated or misattributed (if quotes are used, they must be real)
-- Scientific claims about mindfulness benefits are inaccurate
+KIND SELECTION CHECKS - PENALIZE if:
+- Code kind is used (no programming content)
+- Music kind is used (no musical notation content)
+- Timeline kind is used (mindfulness is not a historical topic)
+- Chart kind is used without meaningful data (IMPORTANT: Step 2 "Benefits of Practice" contains ONLY qualitative descriptions like "reduce stress" and "improve focus" with NO numerical data. If chart kind is selected for this step, the model MUST fabricate numbers. This is ALWAYS a MAJOR error.)
 
-REDUNDANCY CHECKS - PENALIZE if:
-- Multiple visuals depict the same mindfulness concept
-- The same breathing/meditation technique is shown repeatedly
-
-VISUAL-CONTENT FIT - PENALIZE if:
-- Code visual is used (no programming content)
-- Music visual is used (no musical notation content)
-- Timeline is used (mindfulness is not a historical topic)
-- Chart is used without meaningful data (IMPORTANT: Step 2 "Benefits of Practice" contains ONLY qualitative descriptions like "reduce stress" and "improve focus" with NO numerical data. If a chart is used for this step, the model MUST fabricate numbers to populate it. This is ALWAYS a MAJOR error because it presents made-up statistics as educational facts. Score it under majorErrors, not minorErrors.)
+DESCRIPTION CHECKS - PENALIZE if:
+- Descriptions are too vague or generic
+- Quote descriptions reference fabricated or unverifiable quotes
 
 Do NOT PENALIZE if:
-- Image visuals are used for all steps (very appropriate for abstract concepts)
-- No specialized visual types are used
-- Quotes from meditation teachers are used (if real and properly attributed)
+- Image kind is used for all steps (very appropriate for abstract concepts)
+- No specialized visual kinds are used
 
 ${SHARED_EXPECTATIONS}
     `,
@@ -297,28 +278,19 @@ TOPIC-SPECIFIC GUIDANCE:
 
 This test covers music theory - the major scale pattern.
 
-ACCURACY CHECKS - PENALIZE if:
-- ABC notation has syntax errors (missing required headers like X:, K:, M:, L:)
-- Musical content is incorrect (wrong notes in scales, wrong key signatures)
-- Notation doesn't match the described concept (e.g., shows a minor scale when the text describes a major scale)
+KIND SELECTION CHECKS - PENALIZE if:
+- Code kind is used (no programming content)
+- Chart kind is used without numerical data
+- Timeline kind is used (not a historical topic)
 
-REDUNDANCY CHECKS - PENALIZE if:
-- Multiple visuals show the same scale or pattern
-- The same notes appear across different visuals without adding new information
-
-VISUAL-CONTENT FIT:
-- Music visual is the ideal type for steps with specific scales, intervals, or melodies
-- Table is acceptable for comparing scale degrees or intervals
-- Image is acceptable as fallback
-
-PENALIZE if:
-- Code visual is used (no programming content)
-- Chart is used without numerical data
-- Timeline is used (not a historical topic)
+DESCRIPTION CHECKS - PENALIZE if:
+- Music descriptions have wrong notes (C major: C-D-E-F-G-A-B-C, G major: G-A-B-C-D-E-F#-G)
+- Music descriptions don't specify key, time signature, or notes
+- Descriptions are too vague to generate the visual
 
 Do NOT PENALIZE if:
-- Not all steps use music visuals (table or image can supplement)
-- Music visual is used for all steps (if each shows distinct notation)
+- Not all steps use music kind (table or image can supplement)
+- Music kind is used for all steps (if each describes distinct notation)
 
 ${SHARED_EXPECTATIONS}
     `,

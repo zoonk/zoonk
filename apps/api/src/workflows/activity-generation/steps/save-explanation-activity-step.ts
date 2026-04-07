@@ -4,7 +4,7 @@ import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { type ActivitySteps } from "./_utils/get-activity-steps";
-import { type VisualRow } from "./generate-visuals-step";
+import { type VisualStepRow } from "./_utils/visual-rows";
 import { handleActivityFailureStep } from "./handle-failure-step";
 
 /**
@@ -43,7 +43,7 @@ export async function saveExplanationActivityStep({
   workflowRunId,
 }: {
   activityId: number;
-  completedRows: VisualRow[];
+  completedRows: VisualStepRow[];
   contentSteps: ActivitySteps;
   workflowRunId: string;
 }): Promise<void> {

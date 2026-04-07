@@ -19,6 +19,7 @@ export function usePhaseLabels(): Record<PhaseName, string> {
     creatingExercises: t("Creating exercises"),
     creatingImages: t("Creating images"),
     creatingSentences: t("Creating sentences"),
+    creatingVisuals: t("Creating illustrations"),
     gettingStarted: t("Getting started"),
     lookingUpWords: t("Looking up words"),
     preparingVisuals: t("Preparing illustrations"),

@@ -4,8 +4,8 @@ import {
   type ExplanationResult,
   generateExplanationContentStep,
 } from "../steps/generate-explanation-content-step";
-import { generateImagesForActivityStep } from "../steps/generate-images-step";
-import { generateVisualsForActivityStep } from "../steps/generate-visuals-step";
+import { generateVisualContentForActivityStep } from "../steps/generate-visual-content-step";
+import { generateVisualDescriptionsForActivityStep } from "../steps/generate-visuals-step";
 import { type LessonActivity } from "../steps/get-lesson-activities-step";
 import { handleActivityFailureStep } from "../steps/handle-failure-step";
 import { saveExplanationActivityStep } from "../steps/save-explanation-activity-step";
@@ -60,9 +60,15 @@ async function getResultsFromCompletedActivities(
 /**
  * Orchestrates explanation activity generation with per-entity save.
  *
- * Flow per entity: generateContent -> generateVisuals -> generateImages -> save.
+ * Flow per entity:
+ *   generateContent -> generateVisualDescriptions -> generateVisualContent -> save.
+ *
+ * Visual descriptions (stage 1) select the best visual kind for each step.
+ * Visual content (stage 2) dispatches to per-kind tasks in parallel,
+ * including image generation for image kinds.
+ *
  * Each entity is independent — if one fails, others continue.
- * The save step writes all data (content + visuals + images) at once
+ * The save step writes all data (content + visuals) at once
  * and marks the activity as completed.
  *
  * Returns results from BOTH generated and completed activities so downstream
@@ -105,14 +111,13 @@ export async function explanationActivityWorkflow({
       }
 
       try {
-        const { visuals, visualRows } = await generateVisualsForActivityStep(
+        const { descriptions } = await generateVisualDescriptionsForActivityStep(
           activity,
           result.steps,
         );
-        const { completedRows } = await generateImagesForActivityStep(
+        const { completedRows } = await generateVisualContentForActivityStep(
           activity,
-          visuals,
-          visualRows,
+          descriptions,
         );
 
         await saveExplanationActivityStep({

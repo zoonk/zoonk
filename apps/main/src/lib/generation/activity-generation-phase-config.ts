@@ -70,6 +70,7 @@ export type PhaseName =
   | "writingExplanation"
   | "savingPrerequisites"
   | "preparingVisuals"
+  | "creatingVisuals"
   | "creatingImages"
   | "saving";
 
@@ -114,6 +115,7 @@ function toFullPhaseSteps(
     creatingExercises: EMPTY,
     creatingImages: EMPTY,
     creatingSentences: EMPTY,
+    creatingVisuals: EMPTY,
     gettingStarted: EMPTY,
     lookingUpWords: EMPTY,
     preparingVisuals: EMPTY,

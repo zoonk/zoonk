@@ -1,9 +1,29 @@
 type DbStep = { position: number };
+
 type VisualWithStepIndex = { stepIndex: number };
 
+/**
+ * A database-ready row for a visual step. Contains the visual content
+ * (without stepIndex) and the computed position for database insertion.
+ */
 type VisualRow<TVisual extends VisualWithStepIndex> = {
   activityId: bigint | number;
   content: Omit<TVisual, "stepIndex">;
+  isPublished: true;
+  kind: "visual";
+  position: number;
+};
+
+type JsonValue = string | number | boolean | null | JsonValue[] | { [key: string]: JsonValue };
+
+/**
+ * Concrete (non-generic) visual step row for use by save steps and
+ * workflow orchestration where the exact content shape doesn't matter —
+ * it's stored as JSON in the database.
+ */
+export type VisualStepRow = {
+  activityId: bigint | number;
+  content: Record<string, JsonValue>;
   isPublished: true;
   kind: "visual";
   position: number;
@@ -55,7 +75,44 @@ function getDbStepOrThrow(dbSteps: DbStep[], stepIndex: number): DbStep {
   return dbStep;
 }
 
-export function buildVisualRows<TVisual extends VisualWithStepIndex>({
+/**
+ * Computes virtual "dbSteps" from the content step count.
+ * Content steps are saved at positions `index * 2` (even positions),
+ * so we recreate that mapping without reading the database.
+ * Visual steps will be placed at `contentPosition + 1` (odd positions).
+ */
+function computeContentStepPositions(stepCount: number): DbStep[] {
+  return Array.from({ length: stepCount }, (_, i) => ({ position: i * 2 }));
+}
+
+/**
+ * Takes dispatched visual content (an ordered array from `dispatchVisualContent`),
+ * adds `stepIndex` to each item, computes content step positions, and builds
+ * database-ready visual rows. This is the shared pipeline used by both
+ * explanation and custom visual content steps.
+ *
+ * Throws if the visual count doesn't match the description count.
+ */
+export function buildVisualStepRows({
+  activityId,
+  visuals,
+}: {
+  activityId: bigint | number;
+  visuals: Record<string, unknown>[];
+}): VisualStepRow[] {
+  const visualsWithIndex = visuals.map((visual, index) => ({ ...visual, stepIndex: index }));
+  const dbSteps = computeContentStepPositions(visuals.length);
+
+  const rows = buildVisualRows({ activityId, dbSteps, visuals: visualsWithIndex });
+
+  if (!rows) {
+    throw new Error("Invalid visual coverage — visuals don't match content step count");
+  }
+
+  return rows;
+}
+
+function buildVisualRows<TVisual extends VisualWithStepIndex>({
   activityId,
   dbSteps,
   visuals,

@@ -1590,6 +1590,11 @@ msgid "Something went wrong. Please try again."
 msgstr "Algo deu errado. Por favor, tente novamente."
 
 #: src/app/generate/a/[id]/use-phase-labels.ts
+msgctxt "/1ijBZ"
+msgid "Creating illustrations"
+msgstr "Criando ilustrações"
+
+#: src/app/generate/a/[id]/use-phase-labels.ts
 msgctxt "0zeST/"
 msgid "Looking up words"
 msgstr "Procurando palavras"
@@ -1845,6 +1850,11 @@ msgid "Adding reading aids..."
 msgstr "Adicionando auxílios de leitura..."
 
 #: src/app/generate/a/[id]/use-phase-thinking-generators.ts
+msgctxt "bslhjb"
+msgid "Creating the visual..."
+msgstr "Criando o visual..."
+
+#: src/app/generate/a/[id]/use-phase-thinking-generators.ts
 msgctxt "C05+tM"
 msgid "Building interactive tasks..."
 msgstr "Criando tarefas interativas..."
@@ -2005,6 +2015,11 @@ msgid "Recording pronunciation for each word..."
 msgstr "Gravando pronúncia de cada palavra..."
 
 #: src/app/generate/a/[id]/use-phase-thinking-generators.ts
+msgctxt "NRdY6u"
+msgid "Building the graphic..."
+msgstr "Montando o gráfico..."
+
+#: src/app/generate/a/[id]/use-phase-thinking-generators.ts
 msgctxt "nwi1Ym"
 msgid "Crafting the content..."
 msgstr "Criando o conteúdo..."
@@ -2013,6 +2028,11 @@ msgstr "Criando o conteúdo..."
 msgctxt "O8xr9p"
 msgid "Working on the visuals..."
 msgstr "Trabalhando nos visuais..."
+
+#: src/app/generate/a/[id]/use-phase-thinking-generators.ts
+msgctxt "O9szRw"
+msgid "Working on the details..."
+msgstr "Trabalhando nos detalhes..."
 
 #: src/app/generate/a/[id]/use-phase-thinking-generators.ts
 msgctxt "oB01Wc"
@@ -2028,6 +2048,11 @@ msgstr "Deixando o conteúdo de gramática mais fácil de ler..."
 msgctxt "OJkDgV"
 msgid "Preparing word-by-word audio..."
 msgstr "Preparando o áudio palavra por palavra..."
+
+#: src/app/generate/a/[id]/use-phase-thinking-generators.ts
+msgctxt "OMoSv+"
+msgid "Rendering the visual..."
+msgstr "Renderizando o visual..."
 
 #: src/app/generate/a/[id]/use-phase-thinking-generators.ts
 msgctxt "QDv0wS"
