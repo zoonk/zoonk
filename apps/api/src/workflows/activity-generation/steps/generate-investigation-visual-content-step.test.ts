@@ -104,15 +104,15 @@ describe(generateInvestigationVisualContentStep, () => {
       activityId: Number(dbActivity.id),
       findingVisuals: [mockFindingVisual1, mockFindingVisual2],
       language: "en",
+      orgSlug: "test-org",
       scenarioVisual: mockScenarioVisual,
     });
 
-    expect(dispatchVisualContentMock).toHaveBeenCalledWith(
-      expect.objectContaining({
-        descriptions: [mockScenarioVisual, mockFindingVisual1, mockFindingVisual2],
-        language: "en",
-      }),
-    );
+    expect(dispatchVisualContentMock).toHaveBeenCalledWith({
+      descriptions: [mockScenarioVisual, mockFindingVisual1, mockFindingVisual2],
+      language: "en",
+      orgSlug: "test-org",
+    });
 
     expect(result).not.toBeNull();
   });

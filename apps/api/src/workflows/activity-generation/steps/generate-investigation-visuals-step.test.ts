@@ -126,12 +126,10 @@ describe(generateInvestigationVisualsStep, () => {
     expect(generateInvestigationVisualMock).toHaveBeenCalledTimes(3);
 
     // Scenario call (no finding param)
-    expect(generateInvestigationVisualMock).toHaveBeenCalledWith(
-      expect.objectContaining({
-        language: "pt",
-        scenario: "The scenario",
-      }),
-    );
+    expect(generateInvestigationVisualMock).toHaveBeenCalledWith({
+      language: "pt",
+      scenario: "The scenario",
+    });
 
     // Finding calls include the finding param
     expect(generateInvestigationVisualMock).toHaveBeenCalledWith(

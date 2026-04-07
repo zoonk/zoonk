@@ -28,11 +28,13 @@ export async function generateInvestigationVisualContentStep({
   activityId,
   findingVisuals,
   language,
+  orgSlug,
   scenarioVisual,
 }: {
   activityId: number;
   findingVisuals: ActivityInvestigationVisualSchema[];
   language: string;
+  orgSlug?: string;
   scenarioVisual: ActivityInvestigationVisualSchema;
 }): Promise<InvestigationVisualContentResult | null> {
   "use step";
@@ -44,7 +46,7 @@ export async function generateInvestigationVisualContentStep({
   const allDescriptions = [scenarioVisual, ...findingVisuals];
 
   const { data: dispatched, error } = await safeAsync(() =>
-    dispatchVisualContent({ descriptions: allDescriptions, language }),
+    dispatchVisualContent({ descriptions: allDescriptions, language, orgSlug }),
   );
 
   if (error || !dispatched || dispatched.length !== allDescriptions.length) {
@@ -55,8 +57,6 @@ export async function generateInvestigationVisualContentStep({
     await handleActivityFailureStep({ activityId });
     return null;
   }
-
-  await stream.status({ status: "completed", step: "generateInvestigationVisualContent" });
 
   const scenarioResult = dispatched[0];
   const findingResults = dispatched.slice(1);
@@ -69,6 +69,8 @@ export async function generateInvestigationVisualContentStep({
     await handleActivityFailureStep({ activityId });
     return null;
   }
+
+  await stream.status({ status: "completed", step: "generateInvestigationVisualContent" });
 
   return {
     findingVisuals: findingResults,

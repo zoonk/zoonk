@@ -119,6 +119,7 @@ export async function investigationActivityWorkflow({
     activityId,
     findingVisuals: visuals.findingVisuals,
     language: activity.language,
+    orgSlug: activity.lesson.chapter.course.organization?.slug,
     scenarioVisual: visuals.scenarioVisual,
   });
 
