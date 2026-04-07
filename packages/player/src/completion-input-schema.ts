@@ -54,8 +54,44 @@ const translationAnswerSchema = z.object({
   selectedWordId: z.string(),
 });
 
-const selectedAnswerSchema = z.discriminatedUnion("kind", [
+const investigationProblemAnswerSchema = z.object({
+  kind: z.literal("investigation"),
+  selectedExplanationIndex: z.number(),
+  variant: z.literal("problem"),
+});
+
+const investigationActionAnswerSchema = z.object({
+  kind: z.literal("investigation"),
+  readyForCall: z.boolean(),
+  selectedActionIndex: z.number(),
+  variant: z.literal("action"),
+});
+
+const investigationEvidenceAnswerSchema = z.object({
+  actionIndex: z.number(),
+  hunchIndex: z.number(),
+  kind: z.literal("investigation"),
+  selectedTier: z.enum(["best", "dismissive", "overclaims"]),
+  variant: z.literal("evidence"),
+});
+
+const investigationCallAnswerSchema = z.object({
+  kind: z.literal("investigation"),
+  selectedExplanationIndex: z.number(),
+  variant: z.literal("call"),
+});
+
+/**
+ * Investigation has 4 answer variants sharing `kind: "investigation"`.
+ * Since zod's discriminatedUnion requires unique discriminator values,
+ * we use z.union for the full answer schema instead.
+ */
+const selectedAnswerSchema = z.union([
   fillBlankAnswerSchema,
+  investigationProblemAnswerSchema,
+  investigationActionAnswerSchema,
+  investigationEvidenceAnswerSchema,
+  investigationCallAnswerSchema,
   listeningAnswerSchema,
   matchColumnsAnswerSchema,
   multipleChoiceAnswerSchema,
@@ -73,9 +109,23 @@ const stepTimingSchema = z.object({
   hourOfDay: z.number().int().min(0).max(MAX_HOUR_OF_DAY),
 });
 
+/**
+ * Investigation loop state sent from the client so the server can
+ * compute the same investigation-specific score. Intermediate
+ * experiment answers overwrite the same physical step ID in the
+ * answers map, so the loop state is the only way to reconstruct
+ * the full scoring input server-side.
+ */
+const investigationLoopSchema = z.object({
+  experimentResults: z.array(z.object({ actionIndex: z.number(), isCorrect: z.boolean() })),
+  hunchIndex: z.number(),
+  usedActionIndices: z.array(z.number()),
+});
+
 export const completionInputSchema = z.object({
   activityId: z.string(),
   answers: z.record(z.string(), selectedAnswerSchema),
+  investigationLoop: investigationLoopSchema.optional(),
   localDate: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
   startedAt: z.number(),
   stepTimings: z.record(z.string(), stepTimingSchema),

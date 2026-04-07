@@ -332,4 +332,175 @@ describe(validateAnswers, () => {
 
     expect(results).toHaveLength(0);
   });
+
+  test("validates investigation problem as always correct", () => {
+    const steps = [
+      {
+        content: {
+          explanations: [{ accuracy: "best", text: "A" }],
+          scenario: "test",
+          variant: "problem",
+          visual: { columns: ["A"], kind: "table", rows: [["1"]] },
+        },
+        id: 10n,
+        kind: "investigation",
+      },
+    ];
+
+    const results = validateAnswers(steps, {
+      "10": { kind: "investigation", selectedExplanationIndex: 0, variant: "problem" },
+    });
+
+    expect(results).toHaveLength(1);
+    expect(results[0]?.isCorrect).toBe(true);
+  });
+
+  test("validates investigation action as always correct", () => {
+    const steps = [
+      {
+        content: {
+          actions: [{ label: "Check logs", quality: "critical" }],
+          variant: "action",
+        },
+        id: 11n,
+        kind: "investigation",
+      },
+    ];
+
+    const results = validateAnswers(steps, {
+      "11": {
+        kind: "investigation",
+        readyForCall: false,
+        selectedActionIndex: 0,
+        variant: "action",
+      },
+    });
+
+    expect(results).toHaveLength(1);
+    expect(results[0]?.isCorrect).toBe(true);
+  });
+
+  test("validates investigation evidence: best tier is correct", () => {
+    const steps = [
+      {
+        content: {
+          findings: [
+            {
+              interpretations: [
+                {
+                  best: { feedback: "Good", text: "Pattern" },
+                  dismissive: { feedback: "Bad", text: "Not relevant" },
+                  overclaims: { feedback: "Too much", text: "Proves it" },
+                },
+              ],
+              text: "Finding",
+              visual: { columns: ["A"], kind: "table", rows: [["1"]] },
+            },
+          ],
+          variant: "evidence",
+        },
+        id: 12n,
+        kind: "investigation",
+      },
+    ];
+
+    const results = validateAnswers(steps, {
+      "12": {
+        actionIndex: 0,
+        hunchIndex: 0,
+        kind: "investigation",
+        selectedTier: "best",
+        variant: "evidence",
+      },
+    });
+
+    expect(results).toHaveLength(1);
+    expect(results[0]?.isCorrect).toBe(true);
+  });
+
+  test("validates investigation evidence: dismissive tier is incorrect", () => {
+    const steps = [
+      {
+        content: {
+          findings: [
+            {
+              interpretations: [
+                {
+                  best: { feedback: "Good", text: "Pattern" },
+                  dismissive: { feedback: "Bad", text: "Not relevant" },
+                  overclaims: { feedback: "Too much", text: "Proves it" },
+                },
+              ],
+              text: "Finding",
+              visual: { columns: ["A"], kind: "table", rows: [["1"]] },
+            },
+          ],
+          variant: "evidence",
+        },
+        id: 13n,
+        kind: "investigation",
+      },
+    ];
+
+    const results = validateAnswers(steps, {
+      "13": {
+        actionIndex: 0,
+        hunchIndex: 0,
+        kind: "investigation",
+        selectedTier: "dismissive",
+        variant: "evidence",
+      },
+    });
+
+    expect(results).toHaveLength(1);
+    expect(results[0]?.isCorrect).toBe(false);
+  });
+
+  test("validates investigation call: best accuracy is correct", () => {
+    const steps = [
+      {
+        content: {
+          explanations: [
+            { accuracy: "best", text: "Memory leak" },
+            { accuracy: "wrong", text: "Network failure" },
+          ],
+          fullExplanation: "The API had a memory leak",
+          variant: "call",
+        },
+        id: 14n,
+        kind: "investigation",
+      },
+    ];
+
+    const results = validateAnswers(steps, {
+      "14": { kind: "investigation", selectedExplanationIndex: 0, variant: "call" },
+    });
+
+    expect(results).toHaveLength(1);
+    expect(results[0]?.isCorrect).toBe(true);
+  });
+
+  test("validates investigation call: wrong accuracy is incorrect", () => {
+    const steps = [
+      {
+        content: {
+          explanations: [
+            { accuracy: "best", text: "Memory leak" },
+            { accuracy: "wrong", text: "Network failure" },
+          ],
+          fullExplanation: "The API had a memory leak",
+          variant: "call",
+        },
+        id: 15n,
+        kind: "investigation",
+      },
+    ];
+
+    const results = validateAnswers(steps, {
+      "15": { kind: "investigation", selectedExplanationIndex: 1, variant: "call" },
+    });
+
+    expect(results).toHaveLength(1);
+    expect(results[0]?.isCorrect).toBe(false);
+  });
 });

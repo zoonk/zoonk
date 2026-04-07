@@ -19,7 +19,6 @@
   "tags": ["-lintignore", "-internal", "-public"],
   "workspaces": {
     "apps/api": {
-      "ignore": ["src/app/.well-known/workflow/**"],
       "project": ["src/**/*.{ts,tsx}!", "e2e/**/*.ts", "!**/_test-utils/**!"]
     },
     "apps/editor": {

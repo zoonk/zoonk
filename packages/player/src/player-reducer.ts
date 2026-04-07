@@ -1,5 +1,13 @@
 import { type AnswerResult } from "./check-answer";
 import { type CompletionResult } from "./completion-input-schema";
+import { type InvestigationLoopState, isInvestigationScoreVariant } from "./investigation";
+import {
+  continueFromAction,
+  continueFromEvidence,
+  continueFromProblem,
+  getInvestigationVariant,
+  recordActionInLoop,
+} from "./investigation-reducer";
 import { computeLocalCompletion } from "./player-completion";
 import { buildInitialAnswers } from "./player-initial-state";
 import { type SerializedStep } from "./prepare-activity-data";
@@ -10,6 +18,16 @@ export type PlayerPhase = "playing" | "feedback" | "completed";
 
 export type SelectedAnswer =
   | { kind: "fillBlank"; userAnswers: string[] }
+  | { kind: "investigation"; variant: "action"; readyForCall: boolean; selectedActionIndex: number }
+  | { kind: "investigation"; variant: "call"; selectedExplanationIndex: number }
+  | {
+      kind: "investigation";
+      variant: "evidence";
+      actionIndex: number;
+      hunchIndex: number;
+      selectedTier: "best" | "dismissive" | "overclaims";
+    }
+  | { kind: "investigation"; variant: "problem"; selectedExplanationIndex: number }
   | { kind: "listening"; arrangedWords: string[] }
   | { kind: "matchColumns"; userPairs: { left: string; right: string }[]; mistakes: number }
   | { kind: "multipleChoice"; selectedIndex: number; selectedText: string }
@@ -36,6 +54,7 @@ export type PlayerState = {
   activityId: string;
   completion: CompletionResult | null;
   currentStepIndex: number;
+  investigationLoop: InvestigationLoopState | null;
   phase: PlayerPhase;
   results: Record<string, StepResult>;
   selectedAnswers: Record<string, SelectedAnswer>;
@@ -118,6 +137,25 @@ function handleCheckAnswer(
     return handleContinue(checked);
   }
 
+  const variant = getInvestigationVariant(currentStep);
+
+  /**
+   * Investigation action steps auto-advance like matchColumns.
+   * Record the chosen action in the loop state, then immediately continue
+   * to the evidence step (or call if readyForCall).
+   */
+  if (variant === "action") {
+    const answer = state.selectedAnswers[action.stepId];
+    const loop = state.investigationLoop;
+
+    if (loop && answer) {
+      const updatedLoop = recordActionInLoop(loop, answer);
+      return handleContinue({ ...checked, investigationLoop: updatedLoop });
+    }
+
+    return handleContinue(checked);
+  }
+
   return checked;
 }
 
@@ -126,9 +164,57 @@ function completeWith(state: PlayerState): PlayerState {
   return { ...completed, completion: computeLocalCompletion(completed) };
 }
 
+/**
+ * Handles the CONTINUE action for investigation steps.
+ *
+ * Investigation has non-linear step progression:
+ * - After problem: init loop, advance to action step
+ * - After action (readyForCall=false): advance to evidence step
+ * - After action (readyForCall=true): jump to call step
+ * - After evidence: record experiment, loop back to action step
+ * - After call: advance to score step (triggers completion if last)
+ *
+ * Returns null if the current step is not an investigation step,
+ * signaling the caller to use default continue behavior.
+ */
+function handleInvestigationContinue(state: PlayerState): PlayerState | null {
+  const currentStep = state.steps[state.currentStepIndex];
+  const variant = getInvestigationVariant(currentStep);
+
+  if (!variant) {
+    return null;
+  }
+
+  switch (variant) {
+    case "problem":
+      return continueFromProblem(state);
+    case "action":
+      return continueFromAction(state);
+    case "evidence":
+      return continueFromEvidence(state);
+    case "call": {
+      const nextIndex = state.currentStepIndex + 1;
+
+      if (nextIndex >= state.steps.length) {
+        return completeWith(state);
+      }
+
+      return { ...state, currentStepIndex: nextIndex, phase: "playing", stepStartedAt: Date.now() };
+    }
+    default:
+      return null;
+  }
+}
+
 function handleContinue(state: PlayerState): PlayerState {
   if (state.phase !== "feedback") {
     return state;
+  }
+
+  const investigationResult = handleInvestigationContinue(state);
+
+  if (investigationResult) {
+    return investigationResult;
   }
 
   const nextIndex = state.currentStepIndex + 1;
@@ -180,6 +266,14 @@ function handleNavigateStep(
     return advanceForward(state);
   }
 
+  /**
+   * Investigation score step uses a "Continue" button for forward-only
+   * navigation, similar to story static variants.
+   */
+  if (currentStep && isInvestigationScoreVariant(currentStep) && action.direction === "next") {
+    return advanceForward(state);
+  }
+
   if (!isStaticNavigationStep(currentStep)) {
     return state;
   }
@@ -204,6 +298,7 @@ function handleRestart(state: PlayerState): PlayerState {
     ...state,
     completion: null,
     currentStepIndex: 0,
+    investigationLoop: null,
     phase: "playing",
     results: {},
     selectedAnswers: buildInitialAnswers(state.steps),

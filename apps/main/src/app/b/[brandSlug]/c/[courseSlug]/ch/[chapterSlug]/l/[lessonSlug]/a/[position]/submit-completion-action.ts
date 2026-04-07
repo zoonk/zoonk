@@ -6,7 +6,7 @@ import { submitActivityCompletion } from "@/data/progress/submit-activity-comple
 import { auth } from "@zoonk/core/auth";
 import { type LessonSentence, prisma } from "@zoonk/db";
 import { type CompletionInput, completionInputSchema } from "@zoonk/player/completion-input-schema";
-import { computeScore } from "@zoonk/player/compute-score";
+import { buildScoringInput, computeActivityScore } from "@zoonk/player/compute-score";
 import { validateAnswers } from "@zoonk/player/validate-answers";
 import { logError } from "@zoonk/utils/logger";
 import { revalidatePath } from "next/cache";
@@ -113,9 +113,19 @@ export async function submitCompletion(rawInput: CompletionInput): Promise<void>
 
       const stepResults = validateAnswers(stepsForValidation, input.answers);
 
-      const score = computeScore({
-        results: stepResults.map((step) => ({ isCorrect: step.isCorrect })),
-      });
+      const score = computeActivityScore(
+        buildScoringInput({
+          activityKind: activity.kind,
+          answers: input.answers,
+          investigationLoop: input.investigationLoop,
+          stepResults: stepResults.map((step) => ({ isCorrect: step.isCorrect })),
+          steps: activity.steps.map((step) => ({
+            content: step.content,
+            id: String(step.id),
+            kind: step.kind,
+          })),
+        }),
+      );
 
       const durationSeconds = clampDuration(input.startedAt);
 

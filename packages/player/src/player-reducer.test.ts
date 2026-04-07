@@ -59,6 +59,7 @@ function buildState(overrides: Partial<PlayerState> = {}): PlayerState {
     activityId: "activity-1",
     completion: null,
     currentStepIndex: 0,
+    investigationLoop: null,
     phase: "playing",
     results: {},
     selectedAnswers: {},

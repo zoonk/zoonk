@@ -418,6 +418,43 @@ describe(getReviewSteps, () => {
     }
   });
 
+  test("excludes investigation steps", async () => {
+    const isolated = await createLessonWithSteps(org.id, 3);
+
+    const investigationActivity = await activityFixture({
+      generationStatus: "completed",
+      isPublished: true,
+      kind: "investigation",
+      language: "en",
+      lessonId: isolated.lesson.id,
+      organizationId: org.id,
+    });
+
+    await stepFixture({
+      activityId: investigationActivity.id,
+      content: {
+        explanations: [{ accuracy: "best", text: "Explanation A" }],
+        scenario: "A mystery scenario",
+        variant: "problem",
+        visual: { kind: "image", url: "https://example.com/img.jpg" },
+      },
+      isPublished: true,
+      kind: "investigation",
+      position: 0,
+    });
+
+    const result = await getReviewSteps({
+      lessonId: isolated.lesson.id,
+      userId: null,
+    });
+
+    expect(result).toHaveLength(3);
+
+    for (const step of result) {
+      expect(step.kind).not.toBe("investigation");
+    }
+  });
+
   test("fills with random steps when total mistakes < 10", async () => {
     const newLesson = await createLessonWithSteps(org.id, 12);
     const newUser = await userFixture();

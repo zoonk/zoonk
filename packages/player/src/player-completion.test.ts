@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { computeLocalCompletion } from "./player-completion";
-import { type PlayerState, type StepResult } from "./player-reducer";
+import { type PlayerState, type SelectedAnswer, type StepResult } from "./player-reducer";
 import { type SerializedStep } from "./prepare-activity-data";
 
 function buildStep(overrides: Partial<SerializedStep> = {}): SerializedStep {
@@ -27,6 +27,7 @@ function buildState(overrides: Partial<PlayerState> = {}): PlayerState {
     activityId: "activity-1",
     completion: null,
     currentStepIndex: 0,
+    investigationLoop: null,
     phase: "completed",
     results: {},
     selectedAnswers: {},
@@ -70,9 +71,13 @@ function buildStoryStep(id: string, position: number): SerializedStep {
   return buildStep({ content: storyStepContent, id, kind: "story", position });
 }
 
+function buildStoryAnswer(selectedChoiceId: string): SelectedAnswer {
+  return { kind: "story", selectedChoiceId, selectedText: "choice" };
+}
+
 function buildStoryResult(stepId: string, selectedChoiceId: string): StepResult {
   return {
-    answer: { kind: "story", selectedChoiceId, selectedText: "choice" },
+    answer: buildStoryAnswer(selectedChoiceId),
     result: { correctAnswer: null, feedback: null, isCorrect: selectedChoiceId !== "1c" },
     stepId,
   };
@@ -112,8 +117,12 @@ describe(computeLocalCompletion, () => {
         s1: buildStoryResult("s1", "1a"),
         s2: buildStoryResult("s2", "1a"),
       };
+      const selectedAnswers: Record<string, SelectedAnswer> = {
+        s1: buildStoryAnswer("1a"),
+        s2: buildStoryAnswer("1a"),
+      };
 
-      const completion = computeLocalCompletion(buildState({ results, steps }));
+      const completion = computeLocalCompletion(buildState({ results, selectedAnswers, steps }));
       expect(completion.brainPower).toBe(100);
     });
 
@@ -123,8 +132,12 @@ describe(computeLocalCompletion, () => {
         s1: buildStoryResult("s1", "1a"),
         s2: buildStoryResult("s2", "1a"),
       };
+      const selectedAnswers: Record<string, SelectedAnswer> = {
+        s1: buildStoryAnswer("1a"),
+        s2: buildStoryAnswer("1a"),
+      };
 
-      const completion = computeLocalCompletion(buildState({ results, steps }));
+      const completion = computeLocalCompletion(buildState({ results, selectedAnswers, steps }));
       expect(completion.energyDelta).toBe(6);
     });
 
@@ -135,18 +148,26 @@ describe(computeLocalCompletion, () => {
         s2: buildStoryResult("s2", "1b"), // partial = 1
         s3: buildStoryResult("s3", "1c"), // weak = 0
       };
+      const selectedAnswers: Record<string, SelectedAnswer> = {
+        s1: buildStoryAnswer("1a"),
+        s2: buildStoryAnswer("1b"),
+        s3: buildStoryAnswer("1c"),
+      };
 
-      const completion = computeLocalCompletion(buildState({ results, steps }));
+      const completion = computeLocalCompletion(buildState({ results, selectedAnswers, steps }));
       expect(completion.energyDelta).toBe(4);
     });
 
-    test("skips steps without results", () => {
+    test("skips steps without answers", () => {
       const steps = [buildStoryStep("s1", 0), buildStoryStep("s2", 1)];
       const results: Record<string, StepResult> = {
         s1: buildStoryResult("s1", "1a"), // strong = 3
       };
+      const selectedAnswers: Record<string, SelectedAnswer> = {
+        s1: buildStoryAnswer("1a"),
+      };
 
-      const completion = computeLocalCompletion(buildState({ results, steps }));
+      const completion = computeLocalCompletion(buildState({ results, selectedAnswers, steps }));
       expect(completion.energyDelta).toBe(3);
     });
 
@@ -170,8 +191,12 @@ describe(computeLocalCompletion, () => {
         s1: buildStoryResult("s1", "1a"),
         s2: buildStoryResult("s2", "1b"),
       };
+      const selectedAnswers: Record<string, SelectedAnswer> = {
+        s1: buildStoryAnswer("1a"),
+        s2: buildStoryAnswer("1b"),
+      };
 
-      const completion = computeLocalCompletion(buildState({ results, steps }));
+      const completion = computeLocalCompletion(buildState({ results, selectedAnswers, steps }));
       expect(completion.brainPower).toBe(100);
     });
 
@@ -180,9 +205,12 @@ describe(computeLocalCompletion, () => {
       const results: Record<string, StepResult> = {
         s1: buildStoryResult("s1", "1a"),
       };
+      const selectedAnswers: Record<string, SelectedAnswer> = {
+        s1: buildStoryAnswer("1a"),
+      };
 
       const completion = computeLocalCompletion(
-        buildState({ results, steps, totalBrainPower: 500 }),
+        buildState({ results, selectedAnswers, steps, totalBrainPower: 500 }),
       );
       expect(completion.newTotalBp).toBe(600);
     });

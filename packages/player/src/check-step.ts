@@ -5,6 +5,8 @@ import {
   type AnswerResult,
   checkArrangeWordsAnswer,
   checkFillBlankAnswer,
+  checkInvestigationCall,
+  checkInvestigationEvidence,
   checkMatchColumnsAnswer,
   checkMultipleChoiceAnswer,
   checkSelectImageAnswer,
@@ -130,6 +132,45 @@ function checkListeningStep(step: SerializedStep, answer: SelectedAnswer): Check
   };
 }
 
+/**
+ * Checks an investigation answer based on the step variant.
+ *
+ * - Problem: always correct (ungraded hunch commitment)
+ * - Action: always correct (quality tracked for scoring, not per-step)
+ * - Evidence: checks if the selected interpretation tier is "best"
+ * - Call: checks if the selected explanation has "best" accuracy
+ */
+function checkInvestigation(step: SerializedStep, answer: SelectedAnswer): CheckStepResult {
+  if (answer.kind !== "investigation") {
+    return MISMATCH_RESULT;
+  }
+
+  const content = parseStepContent("investigation", step.content);
+
+  if (content.variant === "problem" || content.variant === "action") {
+    return { result: { correctAnswer: null, feedback: null, isCorrect: true } };
+  }
+
+  if (content.variant === "evidence" && answer.variant === "evidence") {
+    return {
+      result: checkInvestigationEvidence(
+        content,
+        answer.actionIndex,
+        answer.hunchIndex,
+        answer.selectedTier,
+      ),
+    };
+  }
+
+  if (content.variant === "call" && answer.variant === "call") {
+    return {
+      result: checkInvestigationCall(content, answer.selectedExplanationIndex),
+    };
+  }
+
+  return MISMATCH_RESULT;
+}
+
 function checkStory(step: SerializedStep, answer: SelectedAnswer): CheckStepResult {
   if (answer.kind !== "story") {
     return MISMATCH_RESULT;
@@ -170,6 +211,8 @@ export function checkStep(step: SerializedStep, answer: SelectedAnswer): CheckSt
       return checkStory(step, answer);
 
     case "investigation":
+      return checkInvestigation(step, answer);
+
     case "static":
     case "visual":
     case "vocabulary":

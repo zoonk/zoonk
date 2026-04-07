@@ -232,6 +232,51 @@ checksums:
     Not%20quite/singular: e570085e69662802acf485c4565e3e3e
     Answer%20feedback/singular: 9ec80a1e5b591c3d6c790b8d43266c0f
     Correct!/singular: dda1a98dc04fd9db252887ecf1765d41
+    Ready%20to%20make%20your%20call%3F/singular: 2abf242c6f5bc9589fece5d69624f90e
+    What%20do%20you%20check%20next%3F/singular: f5db3e2eba7328756e00c03633d4991c
+    What%20do%20you%20check%3F/singular: 62510abf3332a1d2baa510a3e5f2139c
+    Investigate/singular: 2d2eabd3c65eccf58fb4ebcbbd9f7c17
+    You've%20seen%20the%20evidence./singular: 0c8558e20d0b2de5fd7775565019ce08
+    Here's%20what%20actually%20happened/singular: bf1b08a2dc9d242d17f0a2d98821a3fa
+    Your%20hunch/singular: 3a6de05f6b875234ea4f035f2a92136b
+    You%20started%20with%3A/singular: 47464bba35859b4be69030701e7408ed
+    Your%20instinct%20was%20right%20%E2%80%94%20and%20the%20evidence%20backs%20it%20up./singular: a1c8f60a04a33faabbbfbacd6a288ce3
+    You%20started%20elsewhere%2C%20but%20the%20evidence%20changed%20your%20mind.%20That's%20exactly%20how%20investigation%20works./singular: b8487b13d56e6da97de0cb0574e96f4c
+    What%20do%20you%20think%20happened%3F/singular: 5fcc4c51ba3f52e459f316ef4b5fc756
+    You%20checked%3A/singular: b7f4c0551beb52fc6b8e7b93c73b7719
+    The%20evidence%20pointed%20in%20a%20different%20direction%2C%20but%20you%20held%20your%20ground.%20Sometimes%20the%20hardest%20part%20is%20letting%20go%20of%20your%20first%20idea./singular: 2946344b3ac1d5d57b48fe9cd586c500
+    You%20changed%20your%20mind%20during%20the%20investigation.%20The%20evidence%20was%20tricky%20%E2%80%94%20that's%20part%20of%20the%20process./singular: 78747c387926e6c14e5ef2e9bcc59d99
+    Your%20journey/singular: b84840595c63fd804e549c979e38ea47
+    Your%20Call/singular: 0b986d5f607d615a4e4d54a1ecfc2af3
+    Evidence/singular: 49eed19c45401d0d53f3ebfd5e5e0d19
+    What%20does%20this%20tell%20you%3F/singular: 43b1ec06ba814b4325130ced279b41d4
+    What's%20your%20hunch%3F/singular: 7c3af206a415555854f7d47d7eb71575
+    The%20Case/singular: da25531981c47e8d30f64ac4e5f954d8
+    Work%20on%20reading%20evidence%20more%20carefully/singular: 382ad987e0439314c4da7e9052fcadc3
+    Needs%20work/singular: 5e2a87ac87a6b0a9164ec800378812a8
+    Solid/singular: 8fabb23c92beb3f5165cc79bf6522e4c
+    Sharp/singular: f788a4179c299578d600bb402fc97484
+    Good/singular: a3e1bf9f8c5eddcac5170f6523d745c3
+    You%20interpreted%20evidence%20well/singular: 79d9cbf74342895b58b8fd42902e005b
+    Your%20reads/singular: d466f91cc489217475b3a73a64dc16e1
+    Fair/singular: ed18855e62d770f92868283612f2e237
+    Weak/singular: 767bb32fc3300e1116be065b60e79eef
+    Try%20picking%20actions%20that%20test%20your%20hunch%20more%20directly/singular: eb46921d3f8c2d9e4ca08bac44566706
+    You%20identified%20what%20happened/singular: c9eece75a7ef11999914d692cfcc1d50
+    Excellent/singular: 16372294108f169683263c353c4071dc
+    Nailed%20it/singular: 86c2f3af2a5d2e6aa6304c4ddf560687
+    Your%20call/singular: 4e624a55cfbd2b10778f98d26ff4a971
+    Debrief/singular: c3c26a415cbf49f51f2b985aed922f8f
+    Close/singular: 2c2e22f8424a1031de89063bd0022e16
+    Focus%20on%20what%20the%20evidence%20actually%20shows/singular: ef042173f4a530dce1e8c96d59ebd002
+    The%20evidence%20pointed%20in%20a%20different%20direction/singular: 43111c087f8480912de0674a725a9b11
+    You%20were%20on%20the%20right%20track%20but%20missed%20the%20full%20picture/singular: 837c88a0d5c61cef57c31dac5fb30b7f
+    You%20read%20the%20evidence%20carefully/singular: 439fd4293b0712b5295a6a8386b7f15f
+    Your%20approach/singular: bba0cbc30b7adb95f146b8591f4f0125
+    Some%20of%20your%20investigation%20choices%20could%20improve/singular: b1e57139d5f447ccf69059ca996dc0c3
+    Developing/singular: ac8560dbed04079af85d5d36082eb7c8
+    You%20picked%20the%20most%20informative%20actions/singular: f7c89f968174276a5647a2b6ca48e2cd
+    You%20picked%20useful%20actions/singular: 1b2a6bb97b06e1dc133d2aa67b824d94
     Translate%20this%20sentence%3A/singular: f69b2eec827b3a74bafca50e9058716f
     What%20do%20you%20hear%3F/singular: 9527d094d65c550a40108673bc67744f
     All%20pairs%20matched.%20Press%20Check%20to%20continue./singular: 0663e33ba7db53b298c5f50a2f3c7ae8
@@ -240,7 +285,6 @@ checksums:
     Previous%20step/singular: 96b31ec6dab003c2bbfbbca10a8a9826
     Next%20step/singular: 712c63650b5180cbc14d6246b5d558c2
     Step%20navigation/singular: ec328f28051577e1c0aab044c89b138c
-    Close/singular: 2c2e22f8424a1031de89063bd0022e16
     Activity%20progress/singular: 8ff2fb7372b8a2525f2955c851c4fa42
     Continue/singular: 3cfba90b4600131e82fc4260c568d044
     Begin/singular: cc2a17a662cb60dd2d8335a2e8440997

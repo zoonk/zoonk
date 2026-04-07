@@ -1,5 +1,6 @@
 import {
   type FillBlankStepContent,
+  type InvestigationStepContent,
   type MatchColumnsStepContent,
   type MultipleChoiceStepContent,
   type SelectImageStepContent,
@@ -117,4 +118,65 @@ export function checkArrangeWordsAnswer(
 ): AnswerResult {
   const isCorrect = matchesAcceptedArrangeWords(correctWords, userWords);
   return { correctAnswer: null, feedback: null, isCorrect };
+}
+
+type InterpretationTier = "best" | "dismissive" | "overclaims";
+
+/**
+ * Checks an investigation evidence interpretation answer.
+ *
+ * The learner picks one of three interpretation tiers (best, dismissive,
+ * overclaims) for a finding. "best" is the careful, nuanced reading —
+ * selecting it counts as correct. The other two represent overclaiming
+ * or dismissing evidence.
+ *
+ * Returns the per-tier feedback so the player can explain why the
+ * selected interpretation was right or wrong.
+ */
+export function checkInvestigationEvidence(
+  content: Extract<InvestigationStepContent, { variant: "evidence" }>,
+  actionIndex: number,
+  hunchIndex: number,
+  selectedTier: InterpretationTier,
+): AnswerResult {
+  const finding = content.findings[actionIndex];
+
+  if (!finding) {
+    return { correctAnswer: null, feedback: null, isCorrect: false };
+  }
+
+  const interpretationSet = finding.interpretations[hunchIndex];
+
+  if (!interpretationSet) {
+    return { correctAnswer: null, feedback: null, isCorrect: false };
+  }
+
+  const selected = interpretationSet[selectedTier];
+  const isCorrect = selectedTier === "best";
+
+  return { correctAnswer: null, feedback: selected.feedback, isCorrect };
+}
+
+/**
+ * Checks an investigation call (final answer) against the explanation's
+ * accuracy tier.
+ *
+ * "best" is the correct explanation. "partial" gets partial credit in
+ * scoring but counts as incorrect for the binary check. "wrong" is
+ * fully incorrect. Returns the fullExplanation as feedback for the
+ * debrief reveal.
+ */
+export function checkInvestigationCall(
+  content: Extract<InvestigationStepContent, { variant: "call" }>,
+  selectedExplanationIndex: number,
+): AnswerResult {
+  const explanation = content.explanations[selectedExplanationIndex];
+
+  if (!explanation) {
+    return { correctAnswer: null, feedback: content.fullExplanation, isCorrect: false };
+  }
+
+  const isCorrect = explanation.accuracy === "best";
+
+  return { correctAnswer: null, feedback: content.fullExplanation, isCorrect };
 }

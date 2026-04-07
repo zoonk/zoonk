@@ -1,18 +1,21 @@
 "use client";
 
 import { type PlayerRoute } from "../player-context";
+import { InvestigationHunchPopover } from "./investigation-hunch-popover";
 import { PlayerCloseLink, PlayerHeader, PlayerStepFraction } from "./player-header";
 import { PlayerProgressBar } from "./player-progress-bar";
 import { StoryBriefingPopover } from "./story-briefing-popover";
 
 export function InPlayStickyHeader({
   currentStepIndex,
+  investigationHunch,
   lessonHref,
   progressValue,
   storyBriefing,
   totalSteps,
 }: {
   currentStepIndex: number;
+  investigationHunch: string | null;
   lessonHref: PlayerRoute;
   progressValue: number;
   storyBriefing: string | null;
@@ -32,6 +35,7 @@ export function InPlayStickyHeader({
         </div>
 
         {storyBriefing && <StoryBriefingPopover intro={storyBriefing} />}
+        {investigationHunch && <InvestigationHunchPopover hunch={investigationHunch} />}
       </PlayerHeader>
 
       <PlayerProgressBar value={progressValue} />

@@ -1,3 +1,4 @@
+import { isInvestigationScoreVariant } from "./investigation";
 import { type SerializedStep } from "./prepare-activity-data";
 import { isStoryStaticVariant } from "./story";
 
@@ -7,6 +8,10 @@ export function isStaticNavigationStep(step: SerializedStep | undefined): boolea
   }
 
   if (isStoryStaticVariant(step)) {
+    return false;
+  }
+
+  if (isInvestigationScoreVariant(step)) {
     return false;
   }
 

@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { computeScore, computeStoryScore } from "./compute-score";
+import { buildScoringInput, computeActivityScore, computeScore } from "./compute-score";
 
 describe(computeScore, () => {
   test("all correct (5): BP=10, energyDelta=1.0", () => {
@@ -71,10 +71,11 @@ describe(computeScore, () => {
   });
 });
 
-describe(computeStoryScore, () => {
+describe("computeActivityScore (story)", () => {
   test("all strong: BP=100, energy=15, 5 correct", () => {
-    const result = computeStoryScore({
+    const result = computeActivityScore({
       alignments: ["strong", "strong", "strong", "strong", "strong"],
+      kind: "story",
     });
 
     expect(result).toEqual({
@@ -86,8 +87,9 @@ describe(computeStoryScore, () => {
   });
 
   test("all weak: BP=100, energy=0, 0 correct", () => {
-    const result = computeStoryScore({
+    const result = computeActivityScore({
       alignments: ["weak", "weak", "weak", "weak", "weak"],
+      kind: "story",
     });
 
     expect(result).toEqual({
@@ -99,8 +101,9 @@ describe(computeStoryScore, () => {
   });
 
   test("all partial: BP=100, energy=5, 5 correct", () => {
-    const result = computeStoryScore({
+    const result = computeActivityScore({
       alignments: ["partial", "partial", "partial", "partial", "partial"],
+      kind: "story",
     });
 
     expect(result).toEqual({
@@ -112,8 +115,9 @@ describe(computeStoryScore, () => {
   });
 
   test("mixed alignments: energy sums per choice", () => {
-    const result = computeStoryScore({
+    const result = computeActivityScore({
       alignments: ["strong", "weak", "partial", "strong", "weak"],
+      kind: "story",
     });
 
     expect(result).toEqual({
@@ -125,7 +129,7 @@ describe(computeStoryScore, () => {
   });
 
   test("empty alignments: BP=100, energy=0", () => {
-    const result = computeStoryScore({ alignments: [] });
+    const result = computeActivityScore({ alignments: [], kind: "story" });
 
     expect(result).toEqual({
       brainPower: 100,
@@ -133,5 +137,185 @@ describe(computeStoryScore, () => {
       energyDelta: 0,
       incorrectCount: 0,
     });
+  });
+});
+
+describe(computeActivityScore, () => {
+  test("dispatches generic kind to computeScore", () => {
+    const result = computeActivityScore({
+      kind: "generic",
+      results: [{ isCorrect: true }, { isCorrect: false }],
+    });
+
+    expect(result.brainPower).toBe(10);
+    expect(result.correctCount).toBe(1);
+  });
+
+  test("dispatches story kind to computeStoryScore", () => {
+    const result = computeActivityScore({
+      alignments: ["strong", "partial"],
+      kind: "story",
+    });
+
+    expect(result.brainPower).toBe(100);
+    expect(result.energyDelta).toBe(4);
+  });
+
+  test("dispatches investigation kind to computeInvestigationScore", () => {
+    const result = computeActivityScore({
+      investigation: {
+        actionQualities: ["critical"],
+        callAccuracy: "best",
+        interpretationResults: [{ isCorrect: true }],
+      },
+      kind: "investigation",
+    });
+
+    expect(result.brainPower).toBe(100);
+  });
+});
+
+describe(buildScoringInput, () => {
+  test("returns generic input for standard activity kinds", () => {
+    const result = buildScoringInput({
+      activityKind: "quiz",
+      answers: {},
+      stepResults: [{ isCorrect: true }, { isCorrect: false }],
+      steps: [],
+    });
+
+    expect(result.kind).toBe("generic");
+  });
+
+  test("returns story input when activity has story steps and answers", () => {
+    const result = buildScoringInput({
+      activityKind: "story",
+      answers: {
+        "1": { kind: "story", selectedChoiceId: "c1", selectedText: "Strong choice" },
+      },
+      stepResults: [],
+      steps: [
+        {
+          content: {
+            choices: [
+              {
+                alignment: "strong",
+                consequence: "Good",
+                id: "c1",
+                metricEffects: [],
+                text: "Strong choice",
+              },
+              {
+                alignment: "weak",
+                consequence: "Bad",
+                id: "c2",
+                metricEffects: [],
+                text: "Weak choice",
+              },
+            ],
+            situation: "Scenario",
+          },
+          id: "1",
+          kind: "story",
+        },
+      ],
+    });
+
+    expect(result.kind).toBe("story");
+
+    if (result.kind === "story") {
+      expect(result.alignments).toEqual(["strong"]);
+    }
+  });
+
+  test("returns investigation input when activity has investigation steps and loop", () => {
+    const result = buildScoringInput({
+      activityKind: "investigation",
+      answers: {
+        "call-1": { kind: "investigation", selectedExplanationIndex: 0, variant: "call" },
+      },
+      investigationLoop: {
+        experimentResults: [{ actionIndex: 0, isCorrect: true }],
+        hunchIndex: 0,
+        usedActionIndices: [0],
+      },
+      stepResults: [],
+      steps: [
+        {
+          content: {
+            actions: [{ label: "Check logs", quality: "critical" }],
+            variant: "action",
+          },
+          id: "action-1",
+          kind: "investigation",
+        },
+        {
+          content: {
+            explanations: [
+              { accuracy: "best", text: "Memory leak" },
+              { accuracy: "wrong", text: "Network" },
+            ],
+            fullExplanation: "It was a memory leak",
+            variant: "call",
+          },
+          id: "call-1",
+          kind: "investigation",
+        },
+      ],
+    });
+
+    expect(result.kind).toBe("investigation");
+
+    if (result.kind === "investigation") {
+      expect(result.investigation.actionQualities).toEqual(["critical"]);
+      expect(result.investigation.callAccuracy).toBe("best");
+      expect(result.investigation.interpretationResults).toEqual([{ isCorrect: true }]);
+    }
+  });
+
+  test("falls back to generic when investigation loop is missing", () => {
+    const result = buildScoringInput({
+      activityKind: "investigation",
+      answers: {},
+      stepResults: [{ isCorrect: true }],
+      steps: [],
+    });
+
+    expect(result.kind).toBe("generic");
+  });
+
+  test("falls back to generic when story has no matching answers", () => {
+    const result = buildScoringInput({
+      activityKind: "story",
+      answers: {},
+      stepResults: [{ isCorrect: true }],
+      steps: [
+        {
+          content: {
+            choices: [
+              {
+                alignment: "strong",
+                consequence: "Good",
+                id: "c1",
+                metricEffects: [],
+                text: "Strong choice",
+              },
+              {
+                alignment: "weak",
+                consequence: "Bad",
+                id: "c2",
+                metricEffects: [],
+                text: "Weak choice",
+              },
+            ],
+            situation: "Scenario",
+          },
+          id: "1",
+          kind: "story",
+        },
+      ],
+    });
+
+    expect(result.kind).toBe("generic");
   });
 });

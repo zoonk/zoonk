@@ -7,6 +7,8 @@ import { buildAcceptedArrangeWordSequences } from "./arrange-words-answers";
 import {
   checkArrangeWordsAnswer,
   checkFillBlankAnswer,
+  checkInvestigationCall,
+  checkInvestigationEvidence,
   checkMatchColumnsAnswer,
   checkMultipleChoiceAnswer,
   checkSelectImageAnswer,
@@ -141,6 +143,43 @@ function validateListening(step: StepData, answer: SelectedAnswer): ValidatedSte
   return { answer, isCorrect: result.isCorrect, stepId: step.id };
 }
 
+/**
+ * Validates an investigation answer server-side.
+ *
+ * Problem and action variants are always correct (ungraded).
+ * Evidence checks the selected interpretation tier against "best".
+ * Call checks the selected explanation's accuracy tier.
+ */
+function validateInvestigation(step: StepData, answer: SelectedAnswer): ValidatedStepResult | null {
+  if (answer.kind !== "investigation") {
+    return null;
+  }
+
+  const content = parseStepContent("investigation", step.content);
+
+  if (content.variant === "problem" || content.variant === "action") {
+    return { answer, isCorrect: true, stepId: step.id };
+  }
+
+  if (content.variant === "evidence" && answer.variant === "evidence") {
+    const result = checkInvestigationEvidence(
+      content,
+      answer.actionIndex,
+      answer.hunchIndex,
+      answer.selectedTier,
+    );
+
+    return { answer, isCorrect: result.isCorrect, stepId: step.id };
+  }
+
+  if (content.variant === "call" && answer.variant === "call") {
+    const result = checkInvestigationCall(content, answer.selectedExplanationIndex);
+    return { answer, isCorrect: result.isCorrect, stepId: step.id };
+  }
+
+  return null;
+}
+
 function validateStory(step: StepData, answer: SelectedAnswer): ValidatedStepResult | null {
   if (answer.kind !== "story") {
     return null;
@@ -157,7 +196,7 @@ const validators: Record<
   (step: StepData, answer: SelectedAnswer) => ValidatedStepResult | null
 > = {
   fillBlank: validateFillBlank,
-  investigation: () => null,
+  investigation: validateInvestigation,
   listening: validateListening,
   matchColumns: validateMatchColumns,
   multipleChoice: validateMultipleChoice,

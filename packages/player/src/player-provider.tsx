@@ -14,6 +14,7 @@ import { createInitialState, playerReducer } from "./player-reducer";
 import {
   getCanNavigatePrev,
   getHasAnswer,
+  getIsInvestigationScoreStep,
   getIsStaticStep,
   getStoryStaticVariant,
 } from "./player-selectors";
@@ -57,6 +58,7 @@ export function PlayerProvider({
   usePlayerKeyboard({
     canNavigatePrev: getCanNavigatePrev(state),
     hasAnswer: getHasAnswer(state),
+    isInvestigationScore: getIsInvestigationScoreStep(state),
     isStaticStep: getIsStaticStep(state),
     onCheck: actions.check,
     onContinue: actions.continue,

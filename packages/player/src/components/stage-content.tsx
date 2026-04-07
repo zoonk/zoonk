@@ -11,6 +11,14 @@ import { CompletionScreenContent } from "./completion-screen";
 import { FeedbackScreenContent } from "./feedback-screen";
 import { StepRenderer } from "./step-renderer";
 
+/**
+ * Determines whether a step should use the full-screen feedback view
+ * after the answer is checked.
+ *
+ * Investigation steps handle feedback inline within their own component
+ * (InlineFeedback for evidence, debrief for call), so they don't need
+ * the separate feedback screen.
+ */
 function needsFeedbackScreen(step: SerializedStep): boolean {
   return (
     step.kind === "multipleChoice" ||

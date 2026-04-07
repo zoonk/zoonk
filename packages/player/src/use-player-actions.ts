@@ -42,14 +42,26 @@ export function usePlayerActions(
 
   const selectAnswer = useCallback(
     (stepId: string, answer: SelectedAnswer | null) => {
-      if (answer) {
-        dispatchTransition({ answer, stepId, type: "SELECT_ANSWER" });
+      if (!answer) {
+        dispatchTransition({ stepId, type: "CLEAR_ANSWER" });
         return;
       }
 
-      dispatchTransition({ stepId, type: "CLEAR_ANSWER" });
+      dispatchTransition({ answer, stepId, type: "SELECT_ANSWER" });
+
+      /**
+       * Investigation action steps auto-advance: selecting an action
+       * immediately triggers check + continue (handled by the reducer).
+       * We dispatch CHECK_ANSWER synchronously after SELECT_ANSWER so
+       * both are processed in the same React batch, avoiding the stale
+       * closure issue with requestAnimationFrame.
+       */
+      if (answer.kind === "investigation" && answer.variant === "action" && currentStep) {
+        const { result } = checkStep(currentStep, answer);
+        dispatchTransition({ result, stepId, type: "CHECK_ANSWER" });
+      }
     },
-    [dispatchTransition],
+    [currentStep, dispatchTransition],
   );
 
   const check = useCallback(() => {

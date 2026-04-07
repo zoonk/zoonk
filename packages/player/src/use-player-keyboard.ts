@@ -7,6 +7,7 @@ import { type PlayerPhase } from "./player-reducer";
 type PlayerKeyboardParams = {
   canNavigatePrev: boolean;
   hasAnswer: boolean;
+  isInvestigationScore: boolean;
   isStaticStep: boolean;
   onCheck: () => void;
   onContinue: () => void;
@@ -21,6 +22,7 @@ type PlayerKeyboardParams = {
 
 function getEnterAction({
   hasAnswer,
+  isInvestigationScore,
   onCheck,
   onContinue,
   onEscape,
@@ -31,6 +33,7 @@ function getEnterAction({
 }: Pick<
   PlayerKeyboardParams,
   | "hasAnswer"
+  | "isInvestigationScore"
   | "onCheck"
   | "onContinue"
   | "onEscape"
@@ -40,6 +43,10 @@ function getEnterAction({
   | "storyStaticVariant"
 >): (() => void) | null {
   if (phase === "playing" && storyStaticVariant) {
+    return onNavigateNext;
+  }
+
+  if (phase === "playing" && isInvestigationScore) {
     return onNavigateNext;
   }
 
@@ -61,6 +68,7 @@ function getEnterAction({
 export function usePlayerKeyboard({
   canNavigatePrev,
   hasAnswer,
+  isInvestigationScore,
   isStaticStep,
   onCheck,
   onContinue,
@@ -77,6 +85,7 @@ export function usePlayerKeyboard({
     () => {
       const action = getEnterAction({
         hasAnswer,
+        isInvestigationScore,
         onCheck,
         onContinue,
         onEscape,

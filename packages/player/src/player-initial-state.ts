@@ -29,6 +29,7 @@ export function createInitialState({ activity, totalBrainPower }: InitialStateIn
     activityId: activity.id,
     completion: null,
     currentStepIndex: 0,
+    investigationLoop: null,
     phase: getInitialPhase(activity.steps),
     results: {},
     selectedAnswers: buildInitialAnswers(activity.steps),
