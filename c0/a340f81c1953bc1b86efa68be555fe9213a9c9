@@ -1,0 +1,27 @@
+packages/player/src/diagram-layout.test.ts
+  a790a3ccb4dea873 148-153,155-193,206-207
+packages/player/src/diagram-layout.ts
+  a790a3ccb4dea873 14-17,37-41,47-50,65,69,71-76,79-92,94-95,98-113,115-144,172-176,181-182,187-202,204,206-209,212-220,224,226
+packages/player/src/components/visuals/diagram-visual.tsx
+  a790a3ccb4dea873 59-64,66,72-81,88-89
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "c0a340f81c1953bc1b86efa68be555fe9213a9c9",
+  "prompts": {
+    "a790a3ccb4dea873": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7dba8159-549d-48b4-9599-190ca37c3f9b",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 243,
+      "total_deletions": 115,
+      "accepted_lines": 195,
+      "overriden_lines": 2
+    }
+  }
+}
