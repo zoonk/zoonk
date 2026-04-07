@@ -8,19 +8,44 @@ You choose which applied activity fits a lesson — a hands-on experience where 
 - **COURSE_TITLE:** The course context
 - **CONCEPTS:** The lesson's core concepts
 - **LANGUAGE:** The content language
+- **RECENT_APPLIED_KINDS:** Applied activity kinds assigned to the previous lessons in this chapter (most recent first). May be empty.
 
-## Available kinds
+## The core distinction
 
-- `"story"` — The learner is dropped into a scenario and makes decisions with consequences. The lesson's concepts are hidden rules governing which choices work and which backfire. Best for topics where understanding shows up in the quality of decisions: trade-offs, cause-and-effect, ethics, systems with interacting forces.
-- `"investigation"` — The learner is presented with a problem scenario and must choose which actions to take, evaluate findings from those actions, and draw a conclusion. Best for topics where understanding shows up in the ability to gather evidence, evaluate it critically, and reach sound conclusions: diagnostics, root-cause analysis, research methodology, scientific reasoning, debugging, legal reasoning, historical analysis.
+**Story tests if you can DECIDE well. Investigation tests if you can DIAGNOSE well.**
 
-Return `null` if no kind fits this lesson.
+- `"story"` — The learner is dropped into a scenario and makes decisions with hidden consequences. The lesson's concepts are invisible rules governing which choices work and which backfire. The learner never sees the concept names during play — they experience the concepts as the physics of the world.
 
-## The One Question
+  Best when understanding shows up as **better decisions**: trade-offs, cause-and-effect, resource allocation, ethics, policy choices, systems with interacting forces, risk management, strategic planning.
 
-**Can you imagine a real person in a real job where this knowledge governs their decisions or actions?**
+  Ask: "Could someone who learned these concepts make meaningfully different choices than someone who didn't?"
 
-If yes → pick the kind that best fits. If the only scenario you can imagine is someone teaching, presenting, or organizing content about the concept → `null`.
+- `"investigation"` — The learner faces a mystery or problem, chooses what to examine, interprets ambiguous evidence, and draws a conclusion. The concepts govern what to look for, what the evidence means, and which conclusions the evidence supports.
+
+  Best when understanding shows up as **better diagnosis**: root-cause analysis, evidence gathering, pattern recognition, debugging, differential diagnosis, auditing, forensic analysis, historical reconstruction, scientific reasoning.
+
+  Ask: "Could someone who learned these concepts find the answer faster or avoid a wrong conclusion?"
+
+## Handling ambiguity
+
+Some topics could support either kind. When genuinely ambiguous, ask: what is the PRIMARY cognitive demand?
+
+- If the concepts mostly govern **what you should do** → `"story"`
+- If the concepts mostly govern **what you should conclude** → `"investigation"`
+- If genuinely 50/50, use diversity (below) as a tiebreaker
+
+## Diversity signal
+
+RECENT_APPLIED_KINDS shows what the previous lessons in this chapter were assigned (most recent first). Use this ONLY as a soft tiebreaker:
+
+- If the topic clearly fits one kind, pick that kind regardless of what came before.
+- If the topic is genuinely ambiguous (either kind would work equally well), prefer the kind that has appeared less recently.
+- Never force a kind that doesn't fit just for variety.
+- An empty list means no prior context — decide purely on the topic.
+
+## The real-world test
+
+**Can you imagine a real person in a real job where this knowledge governs their decisions or diagnoses?**
 
 Don't be fooled by how the lesson description is worded. "Levels of biological organization" sounds like a hierarchy to memorize, but an epidemiologist tracing a disease outbreak must choose which level to investigate — molecular, cellular, population, ecosystem — and choosing wrong wastes time and lives. Most frameworks, hierarchies, and classifications exist because professionals use them to navigate real problems.
 
@@ -34,16 +59,3 @@ Don't be fooled by how the lesson description is worded. "Levels of biological o
 | Network troubleshooting         | `"investigation"` | A sysadmin diagnoses why a server is unreachable — choosing which logs to check and interpreting ambiguous results |
 | Genetic inheritance patterns    | `"investigation"` | A genetic counselor evaluates family history and test results to determine the most likely inheritance pattern     |
 | Evidence in historical analysis | `"investigation"` | A historian examines conflicting primary sources to determine what actually happened at a disputed event           |
-| Proving the Pythagorean theorem | `null`            | Pure proof with no decision context                                                                                |
-| Gödel's incompleteness theorem  | `null`            | Abstract theory — no practitioner makes decisions governed by it                                                   |
-| Dates of World War I            | `null`            | Pure recall, no decisions to make                                                                                  |
-
-## When to return null
-
-`null` should be rare. Return it only when:
-
-- The knowledge is purely about recall (arbitrary labels, dates, proofs) with no practical application
-- There is only one correct procedure and no room for meaningful choices
-- You genuinely cannot imagine a scenario where the concepts govern decisions without the scenario being ABOUT the concepts (teaching, presenting, curating, explaining them)
-
-Note: if the course itself is about teaching, event planning, etc., then those activities ARE the real domain — that's not meta.
