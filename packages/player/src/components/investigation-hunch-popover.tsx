@@ -7,7 +7,7 @@ import {
   PopoverDescription,
   PopoverTrigger,
 } from "@zoonk/ui/components/popover";
-import { SearchIcon } from "lucide-react";
+import { CompassIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 
 /**
@@ -24,7 +24,7 @@ export function InvestigationHunchPopover({ hunch }: { hunch: string }) {
   return (
     <Popover>
       <PopoverTrigger className={buttonVariants({ size: "icon", variant: "ghost" })}>
-        <SearchIcon className="size-4" />
+        <CompassIcon className="size-4" />
         <span className="sr-only">{t("Your hunch")}</span>
       </PopoverTrigger>
 
