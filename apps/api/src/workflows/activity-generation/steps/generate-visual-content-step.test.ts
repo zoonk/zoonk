@@ -6,6 +6,7 @@ import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
+import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { generateVisualContentForActivityStep } from "./generate-visual-content-step";
 
@@ -153,6 +154,7 @@ describe(generateVisualContentForActivityStep, () => {
       expect.objectContaining({
         descriptions,
         language: "pt",
+        orgSlug: AI_ORG_SLUG,
       }),
     );
   });
