@@ -1,0 +1,27 @@
+packages/ai/src/tasks/steps/step-visual-descriptions.prompt.md
+  a790a3ccb4dea873 12,51-52,89,112-122
+apps/evals/src/tasks/step-visual/test-cases.ts
+  a790a3ccb4dea873 14,21-24,29,43,46-49,51,54-55,57-58,66,68,72,74-75,78-79,82-85,87-111,114-115,118-120,122-123,126-127,130-131,140,142,146,148-150,152-153,156-166,168-169,172-173,176-177,179-209,218,220,222,226,228-230,232-233,236-251,253-270,272-273,276-277,280-281,290,292,294,298,300-302,304-305,308-309,312-313,317-326,329,332-333,336-337,339,341-353,362,364,366,370,372-374,376-377,380-382,384-385,388-389,392-393,396-423,425,434,436,438,442,444-445,448-449,452-479,481-486,489,492-493,496-497
+packages/ai/src/tasks/steps/step-visual-descriptions.ts
+  a790a3ccb4dea873 27-35,37,41-43,100
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "4f76781239d7c5b3d28d173a125a9a4318583b15",
+  "prompts": {
+    "a790a3ccb4dea873": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7dba8159-549d-48b4-9599-190ca37c3f9b",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 442,
+      "total_deletions": 267,
+      "accepted_lines": 353,
+      "overriden_lines": 8
+    }
+  }
+}
