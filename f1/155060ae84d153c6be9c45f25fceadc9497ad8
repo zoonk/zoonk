@@ -1,0 +1,21 @@
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "f1155060ae84d153c6be9c45f25fceadc9497ad8",
+  "prompts": {
+    "3b95621e1b18a2c5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a6da674d-8475-4048-aa38-daef3905971e",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 7,
+      "overriden_lines": 0
+    }
+  }
+}
