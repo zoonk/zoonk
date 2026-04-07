@@ -1,0 +1,25 @@
+pnpm-workspace.yaml
+  306c72ca4b9eab0b 5-38
+apps/video/package.json
+  306c72ca4b9eab0b 7,21
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "1ba485ac824deb52433f264a7c13347ec2a8da4f",
+  "prompts": {
+    "306c72ca4b9eab0b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "467a29e5-6962-4b25-8535-d874416a3f2c",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 36,
+      "total_deletions": 2,
+      "accepted_lines": 36,
+      "overriden_lines": 0
+    }
+  }
+}
