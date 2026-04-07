@@ -1,0 +1,23 @@
+packages/ai/src/tasks/steps/step-visual-descriptions.ts
+  a790a3ccb4dea873 27-29,33
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "78dd6ed5d3b04228fb76eb4cdcdd8dd171e258c1",
+  "prompts": {
+    "a790a3ccb4dea873": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7dba8159-549d-48b4-9599-190ca37c3f9b",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 10,
+      "total_deletions": 5,
+      "accepted_lines": 4,
+      "overriden_lines": 0
+    }
+  }
+}
