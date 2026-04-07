@@ -140,9 +140,18 @@ function handleCheckAnswer(
   const variant = getInvestigationVariant(currentStep);
 
   /**
-   * Investigation action steps auto-advance like matchColumns.
-   * Record the chosen action in the loop state, then immediately continue
-   * to the evidence step (or call if readyForCall).
+   * Investigation problem steps skip the feedback phase because we
+   * don't show any feedback for the initial hunch selection. Clicking
+   * "Check" immediately advances to the action step.
+   */
+  if (variant === "problem") {
+    return handleContinue(checked);
+  }
+
+  /**
+   * Investigation action steps skip the feedback phase because there's
+   * no right/wrong answer. Record the chosen action in the loop state,
+   * then immediately continue to the evidence step (or call if readyForCall).
    */
   if (variant === "action") {
     const answer = state.selectedAnswers[action.stepId];

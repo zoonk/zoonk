@@ -276,7 +276,6 @@ test.describe("Investigation Action Step", () => {
 
     await page.keyboard.press("1");
     await page.getByRole("button", { name: /check/i }).click();
-    await page.getByRole("button", { name: /continue/i }).click();
 
     await expect(page.getByText(/investigate/i)).toBeVisible();
     await expect(page.getByText(/what do you check/i)).toBeVisible();
@@ -293,7 +292,6 @@ test.describe("Investigation Action Step", () => {
 
     await page.keyboard.press("1");
     await page.getByRole("button", { name: /check/i }).click();
-    await page.getByRole("button", { name: /continue/i }).click();
 
     await expect(page.getByRole("button", { name: /ready to make your call/i })).not.toBeVisible();
   });
@@ -308,11 +306,10 @@ test.describe("Investigation Evidence Step", () => {
 
     await page.keyboard.press("1");
     await page.getByRole("button", { name: /check/i }).click();
-    await page.getByRole("button", { name: /continue/i }).click();
 
     await page.getByRole("radio", { name: new RegExp(`Check server logs ${uniqueId}`) }).click();
+    await page.getByRole("button", { name: /check/i }).click();
 
-    // Wait for the evidence step to render after auto-advance
     await expect(page.getByText(/what does this tell you/i)).toBeVisible();
 
     const radiogroup = page.getByRole("radiogroup", { name: /answer options/i });
@@ -327,9 +324,9 @@ test.describe("Investigation Evidence Step", () => {
 
     await page.keyboard.press("1");
     await page.getByRole("button", { name: /check/i }).click();
-    await page.getByRole("button", { name: /continue/i }).click();
 
     await page.getByRole("radio", { name: new RegExp(`Check server logs ${uniqueId}`) }).click();
+    await page.getByRole("button", { name: /check/i }).click();
 
     await page.keyboard.press("1");
     await page.getByRole("button", { name: /check/i }).click();
@@ -347,9 +344,9 @@ test.describe("Investigation Choice Point", () => {
 
     await page.keyboard.press("1");
     await page.getByRole("button", { name: /check/i }).click();
-    await page.getByRole("button", { name: /continue/i }).click();
 
     await page.getByRole("radio", { name: new RegExp(`Check server logs ${uniqueId}`) }).click();
+    await page.getByRole("button", { name: /check/i }).click();
 
     await page.keyboard.press("1");
     await page.getByRole("button", { name: /check/i }).click();
@@ -366,9 +363,9 @@ test.describe("Investigation Choice Point", () => {
 
     await page.keyboard.press("1");
     await page.getByRole("button", { name: /check/i }).click();
-    await page.getByRole("button", { name: /continue/i }).click();
 
     await page.getByRole("radio", { name: new RegExp(`Check server logs ${uniqueId}`) }).click();
+    await page.getByRole("button", { name: /check/i }).click();
 
     await page.keyboard.press("1");
     await page.getByRole("button", { name: /check/i }).click();
@@ -395,7 +392,6 @@ test.describe("Investigation Hunch Popover", () => {
 
     await page.keyboard.press("1");
     await page.getByRole("button", { name: /check/i }).click();
-    await page.getByRole("button", { name: /continue/i }).click();
 
     await expect(page.getByRole("button", { name: /your hunch/i })).toBeVisible();
   });
@@ -410,9 +406,9 @@ test.describe("Investigation Call Step", () => {
 
     await page.keyboard.press("1");
     await page.getByRole("button", { name: /check/i }).click();
-    await page.getByRole("button", { name: /continue/i }).click();
 
     await page.getByRole("radio", { name: new RegExp(`Check server logs ${uniqueId}`) }).click();
+    await page.getByRole("button", { name: /check/i }).click();
 
     await page.keyboard.press("1");
     await page.getByRole("button", { name: /check/i }).click();
@@ -433,9 +429,9 @@ test.describe("Investigation Call Step", () => {
 
     await page.keyboard.press("1");
     await page.getByRole("button", { name: /check/i }).click();
-    await page.getByRole("button", { name: /continue/i }).click();
 
     await page.getByRole("radio", { name: new RegExp(`Check server logs ${uniqueId}`) }).click();
+    await page.getByRole("button", { name: /check/i }).click();
 
     await page.keyboard.press("1");
     await page.getByRole("button", { name: /check/i }).click();
@@ -461,9 +457,9 @@ test.describe("Investigation Score Screen", () => {
 
     await page.keyboard.press("1");
     await page.getByRole("button", { name: /check/i }).click();
-    await page.getByRole("button", { name: /continue/i }).click();
 
     await page.getByRole("radio", { name: new RegExp(`Check server logs ${uniqueId}`) }).click();
+    await page.getByRole("button", { name: /check/i }).click();
 
     await page.keyboard.press("1");
     await page.getByRole("button", { name: /check/i }).click();
@@ -489,17 +485,17 @@ test.describe("Full Investigation Flow", () => {
     await page.goto(url);
     await page.waitForLoadState("networkidle");
 
-    // Step 1: Problem - select hunch
+    // Step 1: Problem - select hunch, check advances to action
     await expect(page.getByText(/the case/i)).toBeVisible();
     await page.keyboard.press("1");
     await page.getByRole("button", { name: /check/i }).click();
-    await page.getByRole("button", { name: /continue/i }).click();
 
-    // Step 2: Action - select investigation action
+    // Step 2: Action - select investigation action, check advances to evidence
     await expect(page.getByText(/investigate/i)).toBeVisible();
     await page.getByRole("radio", { name: new RegExp(`Check server logs ${uniqueId}`) }).click();
+    await page.getByRole("button", { name: /check/i }).click();
 
-    // Step 3: Evidence - select interpretation (wait for auto-advance from action)
+    // Step 3: Evidence - select interpretation
     await expect(page.getByText(/what does this tell you/i)).toBeVisible();
     await page.keyboard.press("1");
     await page.getByRole("button", { name: /check/i }).click();

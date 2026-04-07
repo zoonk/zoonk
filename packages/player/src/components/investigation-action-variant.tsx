@@ -19,15 +19,17 @@ type ActionContent = Extract<InvestigationStepContent, { variant: "action" }>;
  * Renders the action selection step of an investigation activity.
  * Shows available investigation actions (used ones filtered out)
  * and a "Ready to make your call?" button after the first experiment.
- * Selecting an action auto-advances to the evidence step.
+ * The player selects an action, then clicks "Check" to advance.
  */
 export function InvestigationActionVariant({
   content,
   onSelectAnswer,
+  selectedAnswer,
   step,
 }: {
   content: ActionContent;
   onSelectAnswer: (stepId: string, answer: SelectedAnswer | null) => void;
+  selectedAnswer: SelectedAnswer | undefined;
   step: SerializedStep;
 }) {
   const t = useExtracted();
@@ -41,6 +43,13 @@ export function InvestigationActionVariant({
   const questionText =
     experimentCount === 0 ? t("What do you check?") : t("What do you check next?");
 
+  const selectedActionIndex =
+    selectedAnswer?.kind === "investigation" && selectedAnswer.variant === "action"
+      ? selectedAnswer.selectedActionIndex
+      : null;
+
+  const hasSelection = selectedActionIndex !== null;
+
   const handleSelect = (index: number) => {
     const action = availableActions[index];
 
@@ -48,13 +57,11 @@ export function InvestigationActionVariant({
       return;
     }
 
-    /**
-     * Selecting an action auto-advances to the evidence step.
-     * The auto-check is handled by usePlayerActions.selectAnswer —
-     * it dispatches CHECK_ANSWER immediately after SELECT_ANSWER
-     * for investigation/action answers, and the reducer auto-continues
-     * (like matchColumns).
-     */
+    if (selectedActionIndex === action.originalIndex) {
+      onSelectAnswer(step.id, null);
+      return;
+    }
+
     onSelectAnswer(step.id, {
       kind: "investigation",
       readyForCall: false,
@@ -88,8 +95,8 @@ export function InvestigationActionVariant({
         {availableActions.map((action, index) => (
           <OptionCard
             index={index}
-            isDimmed={false}
-            isSelected={false}
+            isDimmed={hasSelection && selectedActionIndex !== action.originalIndex}
+            isSelected={selectedActionIndex === action.originalIndex}
             key={action.originalIndex}
             onSelect={() => handleSelect(index)}
           >

@@ -41,7 +41,12 @@ export function InvestigationStep({
 
   if (content.variant === "action") {
     return (
-      <InvestigationActionVariant content={content} onSelectAnswer={onSelectAnswer} step={step} />
+      <InvestigationActionVariant
+        content={content}
+        onSelectAnswer={onSelectAnswer}
+        selectedAnswer={selectedAnswer}
+        step={step}
+      />
     );
   }
 
