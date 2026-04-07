@@ -1,0 +1,36 @@
+apps/api/package.json
+  7c9cfa7510a44892 36
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "a999b5765bc4335fba642f624ad0a6680fc50690",
+  "prompts": {
+    "31f363e148801a91": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7f9fbf56-ccb2-4127-92b1-3df3bedec39f",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 290,
+      "overriden_lines": 0
+    },
+    "7c9cfa7510a44892": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d65ed-3640-7561-836e-886f7a1a3def",
+        "model": "unknown"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 1,
+      "total_deletions": 1,
+      "accepted_lines": 1,
+      "overriden_lines": 0
+    }
+  }
+}
