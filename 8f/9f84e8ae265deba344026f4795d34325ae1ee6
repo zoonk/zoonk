@@ -1,0 +1,34 @@
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "8f9f84e8ae265deba344026f4795d34325ae1ee6",
+  "prompts": {
+    "4eca31c6e6cb1baf": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d64ba-de46-78f1-a9ed-f9e80bd69c23",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 996,
+      "total_deletions": 188,
+      "accepted_lines": 111,
+      "overriden_lines": 0
+    },
+    "a790a3ccb4dea873": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7dba8159-549d-48b4-9599-190ca37c3f9b",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 114,
+      "total_deletions": 130,
+      "accepted_lines": 114,
+      "overriden_lines": 0
+    }
+  }
+}
