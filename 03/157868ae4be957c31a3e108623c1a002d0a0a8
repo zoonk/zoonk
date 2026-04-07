@@ -1,0 +1,31 @@
+apps/main/e2e/investigation-step.test.ts
+  f200132aaedd1669 311,329,349,368,411,434,462,488,493,496,498
+packages/player/src/components/investigation-action-variant.tsx
+  f200132aaedd1669 22,27,32,46-52,60-61,98-99
+packages/player/src/player-reducer.ts
+  f200132aaedd1669 143-154
+packages/player/src/use-player-actions.ts
+  f200132aaedd1669 53-55,57-62
+packages/player/src/components/investigation-step.tsx
+  f200132aaedd1669 44-49
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "03157868ae4be957c31a3e108623c1a002d0a0a8",
+  "prompts": {
+    "f200132aaedd1669": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "15d50031-e8c0-4adf-903b-fdca6f3f3858",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 61,
+      "total_deletions": 41,
+      "accepted_lines": 61,
+      "overriden_lines": 0
+    }
+  }
+}
