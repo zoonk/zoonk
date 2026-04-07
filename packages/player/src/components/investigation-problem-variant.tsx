@@ -5,11 +5,11 @@ import { useExtracted } from "next-intl";
 import { type SelectedAnswer } from "../player-reducer";
 import { type SerializedStep } from "../prepare-activity-data";
 import { useOptionKeyboard } from "../use-option-keyboard";
+import { InvestigationVisual } from "./investigation-visual";
 import { OptionCard } from "./option-card";
 import { ContextText, QuestionText } from "./question-text";
 import { SectionLabel } from "./section-label";
 import { InteractiveStepLayout } from "./step-layouts";
-import { StepVisualRenderer } from "./step-visual-renderer";
 
 type ProblemContent = Extract<InvestigationStepContent, { variant: "problem" }>;
 
@@ -61,7 +61,7 @@ export function InvestigationProblemVariant({
     <InteractiveStepLayout>
       <SectionLabel>{t("The Case")}</SectionLabel>
 
-      <StepVisualRenderer content={content.visual} />
+      <InvestigationVisual content={content.visual} />
 
       <ContextText>{content.scenario}</ContextText>
 

@@ -303,6 +303,7 @@ msgid "Your Call"
 msgstr "Your Call"
 
 #: ../../packages/player/src/components/investigation-evidence-variant.tsx
+#: ../../packages/player/src/components/investigation-visual.tsx
 msgctxt "6g7+6N"
 msgid "Evidence"
 msgstr "Evidence"
@@ -447,6 +448,16 @@ msgstr "You picked the most informative actions"
 msgctxt "zsgXLc"
 msgid "You picked useful actions"
 msgstr "You picked useful actions"
+
+#: ../../packages/player/src/components/investigation-visual.tsx
+msgctxt "C25NP5"
+msgid "View full evidence"
+msgstr "View full evidence"
+
+#: ../../packages/player/src/components/investigation-visual.tsx
+msgctxt "oRrZiI"
+msgid "View full"
+msgstr "View full"
 
 #: ../../packages/player/src/components/listening-step.tsx
 #: ../../packages/player/src/components/reading-step.tsx

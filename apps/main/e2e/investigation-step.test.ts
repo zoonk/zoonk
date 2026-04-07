@@ -216,7 +216,7 @@ async function createInvestigationActivity() {
 }
 
 test.describe("Investigation Problem Step", () => {
-  test("renders scenario, visual, and explanation options", async ({ page }) => {
+  test("renders scenario, visual preview, and explanation options", async ({ page }) => {
     const { uniqueId, url } = await createInvestigationActivity();
 
     await page.goto(url);
@@ -224,7 +224,7 @@ test.describe("Investigation Problem Step", () => {
 
     await expect(page.getByText(/the case/i)).toBeVisible();
     await expect(page.getByText(new RegExp(`intermittent 500 errors.*${uniqueId}`))).toBeVisible();
-    await expect(page.getByText(new RegExp(`Server Metrics ${uniqueId}`))).toBeVisible();
+    await expect(page.getByRole("button", { name: /view full evidence/i })).toBeVisible();
     await expect(page.getByText(/what's your hunch/i)).toBeVisible();
 
     const radiogroup = page.getByRole("radiogroup", { name: /answer options/i });
@@ -238,6 +238,19 @@ test.describe("Investigation Problem Step", () => {
     await expect(
       radiogroup.getByRole("radio", { name: new RegExp(`Network switch.*${uniqueId}`) }),
     ).toBeVisible();
+  });
+
+  test("opens dialog with full visual when tapping view full", async ({ page }) => {
+    const { uniqueId, url } = await createInvestigationActivity();
+
+    await page.goto(url);
+    await page.waitForLoadState("networkidle");
+
+    await page.getByRole("button", { name: /view full evidence/i }).click();
+
+    const dialog = page.getByRole("dialog");
+    await expect(dialog).toBeVisible();
+    await expect(dialog.getByText(new RegExp(`Server Metrics ${uniqueId}`))).toBeVisible();
   });
 
   test("check button disabled until hunch selected", async ({ page }) => {

@@ -9,11 +9,11 @@ import { type SelectedAnswer, type StepResult } from "../player-reducer";
 import { type SerializedStep } from "../prepare-activity-data";
 import { useOptionKeyboard } from "../use-option-keyboard";
 import { InlineFeedback } from "./inline-feedback";
+import { InvestigationVisual } from "./investigation-visual";
 import { OptionCard } from "./option-card";
 import { ContextText, QuestionText } from "./question-text";
 import { SectionLabel } from "./section-label";
 import { InteractiveStepLayout } from "./step-layouts";
-import { StepVisualRenderer } from "./step-visual-renderer";
 
 type EvidenceContent = Extract<InvestigationStepContent, { variant: "evidence" }>;
 type InterpretationTier = "best" | "dismissive" | "overclaims";
@@ -133,7 +133,7 @@ export function InvestigationEvidenceVariant({
     <InteractiveStepLayout>
       <SectionLabel>{t("Evidence")}</SectionLabel>
 
-      <StepVisualRenderer content={finding.visual} />
+      <InvestigationVisual content={finding.visual} />
 
       <div className="bg-muted/50 rounded-lg px-4 py-3">
         <ContextText>{finding.text}</ContextText>
