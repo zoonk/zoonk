@@ -72,6 +72,14 @@ export const ACTIVITY_STEPS = [
   // Content generation (pure data producers — no DB writes)
   "generateCustomContent",
   "generateExplanationContent",
+  "generateInvestigationScenario",
+  "generateInvestigationAccuracy",
+  "generateInvestigationActions",
+  "generateInvestigationFindings",
+  "generateInvestigationInterpretations",
+  "generateInvestigationDebrief",
+  "generateInvestigationVisuals",
+  "generateInvestigationVisualContent",
   "generateQuizContent",
   "generatePracticeContent",
   "generateStoryContent",
@@ -104,6 +112,7 @@ export const ACTIVITY_STEPS = [
   "saveQuizActivity",
   "savePracticeActivity",
   "saveStoryActivity",
+  "saveInvestigationActivity",
   "saveExplanationActivity",
   "saveCustomActivity",
   "saveGrammarActivity",
@@ -120,6 +129,7 @@ type ActivityCompletionStep = Extract<
   | "saveCustomActivity"
   | "saveExplanationActivity"
   | "saveGrammarActivity"
+  | "saveInvestigationActivity"
   | "saveListeningActivity"
   | "savePracticeActivity"
   | "saveQuizActivity"
@@ -132,6 +142,7 @@ const activityCompletionSteps: Partial<Record<string, ActivityCompletionStep>> =
   custom: "saveCustomActivity",
   explanation: "saveExplanationActivity",
   grammar: "saveGrammarActivity",
+  investigation: "saveInvestigationActivity",
   listening: "saveListeningActivity",
   practice: "savePracticeActivity",
   quiz: "saveQuizActivity",

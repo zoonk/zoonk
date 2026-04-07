@@ -489,30 +489,6 @@ checksums:
     Creating%20your%20activity/singular: cac8f88defaeee245484bd91660d32d6
     Progress/singular: dd0200d5849ebb7d64c15098ae91d229
     Something%20went%20wrong.%20Please%20try%20again./singular: c62a7718d9a1e9c4ffb707807550f836
-    Creating%20illustrations/singular: 7e8a4a626e8d6c11753208628f00cbac
-    Looking%20up%20words/singular: 3175ee5b66e9f68484b3ce3856d7b8a1
-    Adding%20word%20pronunciation/singular: f5bbf4b6efb18872caa92df58f62d9c2
-    Adding%20grammar%20romanization/singular: aec7227120d75a046352755b221cb078
-    Creating%20images/singular: ab6fe5010daa5a4deb52eabed6ca071f
-    Creating%20exercises/singular: 053bc9e20db8cb27cea117a0a823af32
-    Saving%20your%20activity/singular: 7dc60a662368e56e7c769a6b53f7b369
-    Getting%20started/singular: 8e5e7bd026b5bec46bbfdce02ab9e0b8
-    Adding%20vocabulary%20romanization/singular: 4fe1e590bba583a7bcea4f7fbb1a113a
-    Saving%20earlier%20activities/singular: 4a5c7258994f11d2152bb7d65e7c963a
-    Recording%20word%20audio/singular: 89a018a75830ff5590ed158f01b1809e
-    Creating%20the%20story/singular: a063029253c8262e769d0ca1f949de73
-    Preparing%20the%20wrap-up/singular: 28cfda9388f052a4391705ec7ad01511
-    Creating%20sentences/singular: a9f832408dd259bd6458708c84b34ff0
-    Building%20word%20list/singular: 9a9b5271981383a36db347f286054e02
-    Preparing%20illustrations/singular: ebb0d8d739dd029c1ac7327ab6adf8b7
-    Recording%20audio/singular: 528bf44d9d7b8a1c8be7ec526307a703
-    Adding%20pronunciation/singular: f4a57ae308d27a1b5d4214f4cbf0370c
-    Adding%20romanization/singular: e0b8ab2412f64db09f1d07b1ae3df80f
-    Recording%20vocabulary%20audio/singular: aacb135ed225a0b5cc7854b25a2919c9
-    Writing%20the%20content/singular: 8c98570945250d1750e3b95270cbecae
-    Preparing%20options/singular: 62f984059e903150a341e8775f897d84
-    Writing%20the%20explanation/singular: 9019a6d759ed0983454bc40f281e6c45
-    Finding%20the%20right%20sounds.../singular: e98992b78e94cf880db6a82e2d9dea71
     Designing%20the%20choices.../singular: 8aec77b9ca385431c902bd9fcbeee368
     Writing%20the%20explanation%20first.../singular: 77cc0507a1013d90c5b9a0ae9f543236
     Preparing%20the%20wrap-up.../singular: c27ba5f2b8aade84ad77a5a90291e185
@@ -520,89 +496,141 @@ checksums:
     Explaining%20the%20topic.../singular: 1e2968adf3ec2b589dd754982830840a
     Putting%20words%20in%20context.../singular: 3b63ddc4157c48ac1c1f8797fa0dc2fb
     Making%20it%20clear.../singular: 1ed081f030c3683c04585adc47488b17
-    Making%20vocabulary%20easier%20to%20read.../singular: c335046b2e76760b03f473562eda5443
-    Recording%20vocabulary%20audio.../singular: 2e70abbf9fcc50d1058b663854d16cf9
     Wrapping%20things%20up.../singular: c6343ae3437b730bc961c2a319a617e7
     Connecting%20choices%20to%20concepts.../singular: 671d2ecd83a2a4d11730f2d8ff6e2015
     Getting%20answer%20options%20ready.../singular: d37e6efe3c82d8ddee1e3b1f537ed4f5
-    Getting%20the%20pronunciation%20right.../singular: a809bb5d01620f015cae9a4f0eeede13
-    Recording%20the%20audio.../singular: e6e8da2d75c102373fec6056189d54ba
     Getting%20ready%20for%20the%20next%20step.../singular: 44d64fd2747ac6b2d6e5beb1538a0c1f
     Getting%20everything%20ready.../singular: 8695db1d7ae8e0b7774c0a2b57a26e99
     Putting%20together%20the%20lesson.../singular: 928ff34048d45b6b52b94d2aecc02211
-    Translating%20individual%20words.../singular: f622f3dd714f201722599665b6fb81a8
     Creating%20examples%20to%20try.../singular: 213697f83fdb307b6970c91d187763ec
     Designing%20practice%20exercises.../singular: 9f1ddddd3324e1586eb427a2c96ee399
     Sketching%20out%20ideas.../singular: 26ec605c90c1c3b83e6d489330a8f623
     Planning%20the%20layout.../singular: 034a73e1a9ece4ec350cbcd36dd16f99
-    Making%20it%20easier%20to%20read.../singular: 8dea71f31dbbc7575c12448946b7d333
     Adding%20more%20options.../singular: b1e8049193158e8334935d0d366ea537
     Almost%20done.../singular: 2937988598ae31bed9b52d2876980db4
     Adding%20some%20color.../singular: 80aec5cf210399ff202a166190660fa2
-    Adding%20reading%20aids.../singular: c2a09bc7ea6dc5fad494cd5bcd33bdbc
     Creating%20the%20visual.../singular: 5aa4a567a20fc7f55e9624094b60bd70
     Building%20interactive%20tasks.../singular: cd08796577042526d8ac1ef9608480a7
-    Making%20each%20word%20listenable.../singular: 867c55b5eb4038eaff47657d2ef1c3c1
     Setting%20the%20scene.../singular: 1d1dafcdd21594e1cbaac7f7e7973bad
-    Converting%20vocabulary%20to%20Latin%20script.../singular: bee78842a0524d9beb3ecf2cbd0e9fc5
     Preparing%20options.../singular: c4fcd4a9e3b72550c86c62e79d7e9408
-    Converting%20to%20Latin%20script.../singular: 6052e7545ae1927e02e42b9238091b9e
     Choosing%20the%20right%20style.../singular: 7c273483546943a1553fbc762646c079
     Thinking%20about%20what%20to%20illustrate.../singular: fe3a341a8fba909f02f4a26fb4510637
     Adding%20consequences.../singular: 1ab324dbe6d4d9b2bd3e846b6a990756
     Building%20the%20foundation.../singular: b8101b6b421f014348465a4842ed718e
-    Preparing%20vocabulary%20audio.../singular: a981ba3b51ad33dd23b54006e1ca8565
-    Converting%20grammar%20text%20to%20Latin%20script.../singular: 22e7aeb66fdd90905fdd239c307184bc
     Preparing%20background%20context.../singular: 58e1f7945a362d5e67665efc67304f15
-    Checking%20how%20to%20say%20each%20word.../singular: 1c6e9a7eb325603e8a323d44c40d559a
-    Finding%20word%20meanings.../singular: afb8ff241c0521e1876c92e04e4a05db
-    Picking%20the%20key%20vocabulary.../singular: 0cf4cef9dc1941ff8fedefd7a632ed3f
-    Choosing%20words%20to%20practice.../singular: b412e7e986b60c99cb7481686615c820
     Saving%20vocabulary%20and%20grammar.../singular: 9f48bcf4386f791ddb51ceccc05af6f0
-    Making%20words%20listenable.../singular: 1708aa2ceebb00571a661442378fe52b
     Drawing%20an%20illustration.../singular: 5b6fbaeca062dc204a246839c499d5d4
     Building%20natural%20sentences.../singular: 92c13a96c696fbed730a9a0692a0221e
     Finishing%20up.../singular: 6bcdd72fd5aa845ae0f32f41f3e5f26d
-    Getting%20the%20sound%20for%20each%20word.../singular: d449f3e06926833803a2e4d213a68e81
     Writing%20the%20explanation.../singular: cb3b01d1dc07a25447ee138dde5bfdde
     Creating%20your%20story.../singular: 234c96be1ed372c81ea7d27817f30a9a
-    Looking%20up%20each%20term.../singular: 9d0357c0da11eaf709f71945a65b3852
     Writing%20fill-in-the-blanks.../singular: b3d5f34c982c68c1bfac3e03acfda523
-    Adding%20romanization%20for%20grammar.../singular: 114d35a8c97da77df790b1e767422da5
-    Adding%20romanization%20for%20vocabulary.../singular: 6201ff456c619bca98090395143842b7
     Checking%20what%20we%20need.../singular: 95e10b20508fe4531a247695871b7775
-    Recording%20pronunciation%20info.../singular: db8d8039b76cc4dd12f64b46eb65474f
-    Recording%20pronunciation%20for%20each%20word.../singular: 44329fae5bbab8364b439bfaff1f17ea
     Building%20the%20graphic.../singular: fa41faecc354e826196d2137fb470864
     Crafting%20the%20content.../singular: c3cf56b8895a11aae6d11de3be5a5073
     Working%20on%20the%20visuals.../singular: 21d3d631b915edf6c2c2c1882f387a12
     Working%20on%20the%20details.../singular: f335012c5890f25d175c198f6e82b958
-    Preparing%20the%20voice.../singular: 737fc89210fa2b5a6c5e8788a0c2e15a
-    Making%20grammar%20content%20easier%20to%20read.../singular: 47d131249b72a3402b529e50521a04df
-    Preparing%20word-by-word%20audio.../singular: 8dfc633c922918272408507108c3d270
     Rendering%20the%20visual.../singular: 0b33a8c0efa4863482aee2783cd7fe21
-    Getting%20the%20audio%20for%20each%20term.../singular: 97dd8fda4b4011ace74b6d43a7967d67
     Researching%20the%20topic.../singular: 54c9981da59b1efccfbba3c40bb1fdd5
     Crafting%20the%20outcomes.../singular: b009f6b2355e6fbe991570e478675c82
-    Building%20the%20vocabulary%20guide.../singular: d91fca805f4e6523b60d86c3998227e1
-    Making%20it%20sound%20natural.../singular: 1c95405cf7277ee02e760b48a8e0e45f
     Creating%20reading%20passages.../singular: 1f4ecba76f3c5421292dfb8e2bafbea9
     Loading%20lesson%20data.../singular: 2c749f89c60b8ca01418fc23f4fea0e1
-    Writing%20out%20the%20sounds.../singular: 5cf351b29f8f6fb56d9a69487edde135
     Writing%20example%20sentences.../singular: 2402bca017d147a796b7f1bc47cf62e3
-    Finding%20the%20most%20useful%20words.../singular: fecc300a0f1d1becbc138730d721b58c
-    Looking%20up%20how%20each%20word%20sounds.../singular: 2417013c03464cbb2d4aa6d0ad6dcee0
-    Noting%20how%20each%20word%20sounds.../singular: d4720ed7fe8d832b7b70b9e4b06bdbb0
-    Mapping%20out%20the%20pronunciation.../singular: 6f8b9708ba6726ef8e471bbba8b38f8b
     Preparing%20the%20word%20bank.../singular: 87c5f53472bbc0e5120e338f491087ff
     Finishing%20the%20artwork.../singular: 0943b62bd602abbacf8bba3c3865f36e
     Setting%20things%20up.../singular: 4696c8e1048ec21837f886410864dfe2
     Writing%20the%20debrief.../singular: 4c6f5256333e59e811621acfaf5066c4
-    Selecting%20important%20terms.../singular: 74d7c5283c1071c3a5906260b01c72d4
     Refining%20the%20details.../singular: eaf7a7ca135f8919dc93f80095040ab0
-    Detailing%20the%20word%20sounds.../singular: 75e4509b4a016e935d3bb7729aa932b2
     Storing%20earlier%20activities.../singular: 9a0ea4e32f8336f4b19c931b715548ea
+    Creating%20action%20options.../singular: 5aa992660ccaa29cd8a4dc7dacb6e468
+    Setting%20up%20the%20investigation.../singular: 77e64580356c549fcdfad37e1caf14d9
+    Designing%20what%20you%20can%20investigate.../singular: 8a387e12356fc62f2fa45d0795412ab1
+    Generating%20evidence%20for%20each%20action.../singular: 7d1c018fa83a158b9a1f1b642322682d
+    Planning%20investigation%20steps.../singular: f6b67dec06c6b8afe77c6970aac8a61e
+    Sorting%20explanations%20by%20quality.../singular: 6092b281728d6211ee37279cd281c60a
+    Making%20the%20evidence%20deliberately%20ambiguous.../singular: 2383128d6bfee5d4cec5fcc59b66cb49
+    Crafting%20analysis%20statements.../singular: 1b32247acb5fd23c3f574cdd0ae57dc1
+    Crafting%20possible%20explanations.../singular: 6027626c9cf272c785604806fcb60bd5
+    Writing%20interpretations%20for%20each%20finding.../singular: 198ac547bf687e5b3c4ce99e6ce27936
+    Creating%20the%20mystery%20scenario.../singular: 0284827c3666725204d7d2bb963d4a2d
+    Preparing%20the%20debrief.../singular: 0e7d13dbb081f7d9246f83175b9d3ce7
+    Building%20the%20reasoning%20chains.../singular: ece173ab597e8e1d6414b11555636f08
+    Writing%20the%20final%20explanation.../singular: d0c84daa53c1b35a76ba6206919357b2
+    Crafting%20the%20findings.../singular: cdbbddb05ecbaef050263d1dff0cd6a1
+    Mapping%20out%20the%20investigation%20paths.../singular: 09489b963a15905c0279db3aed4a5fef
+    Examining%20evidence%20from%20every%20angle.../singular: b66ff9528025382fc00d02e8aad9a59b
+    Crafting%20the%20reveal%20moment.../singular: 031dc19831d36aa0648c7921480ed9bd
+    Building%20the%20clues.../singular: da454dacf64e48e5811d240dce802f31
+    Determining%20accuracy%20levels.../singular: 9330bc89ef43f0f064b94a10f5ded68a
+    Designing%20the%20case.../singular: b09cb94c192296021130b4d9bcf6b313
+    Evaluating%20each%20explanation.../singular: 2959f69e013ba4e4261aa7d6b6e99cdb
+    Finding%20the%20right%20sounds.../singular: e98992b78e94cf880db6a82e2d9dea71
+    Making%20vocabulary%20easier%20to%20read.../singular: c335046b2e76760b03f473562eda5443
+    Recording%20vocabulary%20audio.../singular: 2e70abbf9fcc50d1058b663854d16cf9
+    Getting%20the%20pronunciation%20right.../singular: a809bb5d01620f015cae9a4f0eeede13
+    Recording%20the%20audio.../singular: e6e8da2d75c102373fec6056189d54ba
+    Translating%20individual%20words.../singular: f622f3dd714f201722599665b6fb81a8
+    Making%20it%20easier%20to%20read.../singular: 8dea71f31dbbc7575c12448946b7d333
+    Adding%20reading%20aids.../singular: c2a09bc7ea6dc5fad494cd5bcd33bdbc
+    Making%20each%20word%20listenable.../singular: 867c55b5eb4038eaff47657d2ef1c3c1
+    Converting%20vocabulary%20to%20Latin%20script.../singular: bee78842a0524d9beb3ecf2cbd0e9fc5
+    Converting%20to%20Latin%20script.../singular: 6052e7545ae1927e02e42b9238091b9e
+    Preparing%20vocabulary%20audio.../singular: a981ba3b51ad33dd23b54006e1ca8565
+    Converting%20grammar%20text%20to%20Latin%20script.../singular: 22e7aeb66fdd90905fdd239c307184bc
+    Checking%20how%20to%20say%20each%20word.../singular: 1c6e9a7eb325603e8a323d44c40d559a
+    Finding%20word%20meanings.../singular: afb8ff241c0521e1876c92e04e4a05db
+    Picking%20the%20key%20vocabulary.../singular: 0cf4cef9dc1941ff8fedefd7a632ed3f
+    Choosing%20words%20to%20practice.../singular: b412e7e986b60c99cb7481686615c820
+    Making%20words%20listenable.../singular: 1708aa2ceebb00571a661442378fe52b
+    Getting%20the%20sound%20for%20each%20word.../singular: d449f3e06926833803a2e4d213a68e81
+    Looking%20up%20each%20term.../singular: 9d0357c0da11eaf709f71945a65b3852
+    Adding%20romanization%20for%20grammar.../singular: 114d35a8c97da77df790b1e767422da5
+    Adding%20romanization%20for%20vocabulary.../singular: 6201ff456c619bca98090395143842b7
+    Recording%20pronunciation%20info.../singular: db8d8039b76cc4dd12f64b46eb65474f
+    Recording%20pronunciation%20for%20each%20word.../singular: 44329fae5bbab8364b439bfaff1f17ea
+    Preparing%20the%20voice.../singular: 737fc89210fa2b5a6c5e8788a0c2e15a
+    Making%20grammar%20content%20easier%20to%20read.../singular: 47d131249b72a3402b529e50521a04df
+    Preparing%20word-by-word%20audio.../singular: 8dfc633c922918272408507108c3d270
+    Getting%20the%20audio%20for%20each%20term.../singular: 97dd8fda4b4011ace74b6d43a7967d67
+    Building%20the%20vocabulary%20guide.../singular: d91fca805f4e6523b60d86c3998227e1
+    Making%20it%20sound%20natural.../singular: 1c95405cf7277ee02e760b48a8e0e45f
+    Writing%20out%20the%20sounds.../singular: 5cf351b29f8f6fb56d9a69487edde135
+    Finding%20the%20most%20useful%20words.../singular: fecc300a0f1d1becbc138730d721b58c
+    Looking%20up%20how%20each%20word%20sounds.../singular: 2417013c03464cbb2d4aa6d0ad6dcee0
+    Noting%20how%20each%20word%20sounds.../singular: d4720ed7fe8d832b7b70b9e4b06bdbb0
+    Mapping%20out%20the%20pronunciation.../singular: 6f8b9708ba6726ef8e471bbba8b38f8b
+    Selecting%20important%20terms.../singular: 74d7c5283c1071c3a5906260b01c72d4
+    Detailing%20the%20word%20sounds.../singular: 75e4509b4a016e935d3bb7729aa932b2
     Adding%20pronunciation%20for%20each%20word.../singular: 436346889e0b93b3f16cecf518678f70
+    Creating%20illustrations/singular: 7e8a4a626e8d6c11753208628f00cbac
+    Looking%20up%20words/singular: 3175ee5b66e9f68484b3ce3856d7b8a1
+    Adding%20word%20pronunciation/singular: f5bbf4b6efb18872caa92df58f62d9c2
+    Adding%20grammar%20romanization/singular: aec7227120d75a046352755b221cb078
+    Setting%20the%20scene/singular: 1fe7275df8c75374681c678698ea4209
+    Analyzing%20explanations/singular: 51e45a477eac011f207fc67026550c3f
+    Writing%20the%20reveal/singular: 0775ee12f46c6184ac744992393d6309
+    Creating%20images/singular: ab6fe5010daa5a4deb52eabed6ca071f
+    Creating%20exercises/singular: 053bc9e20db8cb27cea117a0a823af32
+    Saving%20your%20activity/singular: 7dc60a662368e56e7c769a6b53f7b369
+    Getting%20started/singular: 8e5e7bd026b5bec46bbfdce02ab9e0b8
+    Gathering%20evidence/singular: eb21d94a5a0873c25a45a32bc0189c15
+    Adding%20vocabulary%20romanization/singular: 4fe1e590bba583a7bcea4f7fbb1a113a
+    Saving%20earlier%20activities/singular: 4a5c7258994f11d2152bb7d65e7c963a
+    Recording%20word%20audio/singular: 89a018a75830ff5590ed158f01b1809e
+    Creating%20the%20story/singular: a063029253c8262e769d0ca1f949de73
+    Preparing%20the%20wrap-up/singular: 28cfda9388f052a4391705ec7ad01511
+    Creating%20sentences/singular: a9f832408dd259bd6458708c84b34ff0
+    Analyzing%20the%20evidence/singular: 629968775cc2e17e4c93e4b24362f287
+    Building%20word%20list/singular: 9a9b5271981383a36db347f286054e02
+    Preparing%20illustrations/singular: ebb0d8d739dd029c1ac7327ab6adf8b7
+    Recording%20audio/singular: 528bf44d9d7b8a1c8be7ec526307a703
+    Adding%20pronunciation/singular: f4a57ae308d27a1b5d4214f4cbf0370c
+    Designing%20investigation%20paths/singular: acad6279b00df087d81fab9e3792a7dc
+    Adding%20romanization/singular: e0b8ab2412f64db09f1d07b1ae3df80f
+    Recording%20vocabulary%20audio/singular: aacb135ed225a0b5cc7854b25a2919c9
+    Writing%20the%20content/singular: 8c98570945250d1750e3b95270cbecae
+    Preparing%20options/singular: 62f984059e903150a341e8775f897d84
+    Writing%20the%20explanation/singular: 9019a6d759ed0983454bc40f281e6c45
     Create%20Chapter/singular: eff367b47e651ac3234f8b4655d5a078
     Back%20to%20course/singular: 605eb294c4cd0dbfee151a369d28fe36
     Your%20lessons%20are%20ready/singular: fe8d9df59ba42f451b249fd750813cba

@@ -1,5 +1,6 @@
 import { settled } from "@zoonk/utils/settled";
 import { explanationActivityWorkflow } from "./kinds/explanation-workflow";
+import { investigationActivityWorkflow } from "./kinds/investigation-workflow";
 import { practiceActivityWorkflow } from "./kinds/practice-workflow";
 import { quizActivityWorkflow } from "./kinds/quiz-workflow";
 import { storyActivityWorkflow } from "./kinds/story-workflow";
@@ -8,10 +9,10 @@ import { type LessonActivity } from "./steps/get-lesson-activities-step";
 import { getNeighboringConceptsStep } from "./steps/get-neighboring-concepts-step";
 
 /**
- * Orchestrates core activity generation (explanation, practice, quiz, story).
+ * Orchestrates core activity generation (explanation, practice, quiz, story, investigation).
  *
- * Wave 1 (parallel): explanation + story — story uses lesson concepts directly
- * and is independent of explanation results.
+ * Wave 1 (parallel): explanation + story + investigation — story and investigation
+ * use lesson concepts directly and are independent of explanation results.
  * Wave 2 (parallel): practice + quiz — both depend on explanation results.
  *
  * Receives both the full activity list and the subset that needs generation.
@@ -40,6 +41,10 @@ export async function coreActivityWorkflow({
       workflowRunId,
     }),
     storyActivityWorkflow({
+      activitiesToGenerate,
+      workflowRunId,
+    }),
+    investigationActivityWorkflow({
       activitiesToGenerate,
       workflowRunId,
     }),
