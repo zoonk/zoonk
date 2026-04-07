@@ -1,0 +1,23 @@
+packages/player/src/components/visuals/table-visual.tsx
+  a790a3ccb4dea873 19-21,32-33
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "163fb98d0841ee3625f5a75d85e3c13675d04c56",
+  "prompts": {
+    "a790a3ccb4dea873": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7dba8159-549d-48b4-9599-190ca37c3f9b",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 7,
+      "total_deletions": 5,
+      "accepted_lines": 5,
+      "overriden_lines": 0
+    }
+  }
+}
