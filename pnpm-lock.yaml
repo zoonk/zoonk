@@ -4,6 +4,105 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+catalogs:
+  default:
+    '@dnd-kit/core':
+      specifier: 6.3.1
+      version: 6.3.1
+    '@dnd-kit/sortable':
+      specifier: 10.0.0
+      version: 10.0.0
+    '@dnd-kit/utilities':
+      specifier: 3.2.2
+      version: 3.2.2
+    '@mdx-js/loader':
+      specifier: 3.1.1
+      version: 3.1.1
+    '@mdx-js/react':
+      specifier: 3.1.1
+      version: 3.1.1
+    '@next/mdx':
+      specifier: 16.2.2
+      version: 16.2.2
+    '@sentry/nextjs':
+      specifier: 10.47.0
+      version: 10.47.0
+    '@tabler/icons-react':
+      specifier: 3.41.1
+      version: 3.41.1
+    '@tailwindcss/postcss':
+      specifier: 4.2.2
+      version: 4.2.2
+    '@testing-library/react':
+      specifier: 16.3.2
+      version: 16.3.2
+    '@types/mdx':
+      specifier: 2.0.13
+      version: 2.0.13
+    '@types/node':
+      specifier: ^24
+      version: 24.12.2
+    '@types/react':
+      specifier: ^19.2.14
+      version: 19.2.14
+    '@types/react-dom':
+      specifier: ^19.2.3
+      version: 19.2.3
+    '@typescript/native-preview':
+      specifier: 7.0.0-dev.20260401.1
+      version: 7.0.0-dev.20260401.1
+    '@vercel/analytics':
+      specifier: 2.0.1
+      version: 2.0.1
+    ai:
+      specifier: 6.0.143
+      version: 6.0.143
+    babel-plugin-react-compiler:
+      specifier: 1.0.0
+      version: 1.0.0
+    botid:
+      specifier: 1.5.11
+      version: 1.5.11
+    jsdom:
+      specifier: 29.0.1
+      version: 29.0.1
+    lucide-react:
+      specifier: 1.7.0
+      version: 1.7.0
+    next:
+      specifier: 16.2.2
+      version: 16.2.2
+    next-intl:
+      specifier: 4.9.0
+      version: 4.9.0
+    nuqs:
+      specifier: 2.8.9
+      version: 2.8.9
+    raw-loader:
+      specifier: 4.0.2
+      version: 4.0.2
+    react:
+      specifier: 19.2.4
+      version: 19.2.4
+    react-dom:
+      specifier: 19.2.4
+      version: 19.2.4
+    recharts:
+      specifier: 3.8.1
+      version: 3.8.1
+    server-only:
+      specifier: 0.0.1
+      version: 0.0.1
+    tsx:
+      specifier: 4.21.0
+      version: 4.21.0
+    vitest:
+      specifier: 4.1.2
+      version: 4.1.2
+    zod:
+      specifier: 4.3.6
+      version: 4.3.6
+
 overrides:
   '@types/pg': 8.20.0
   devalue@<5.6.4: '>=5.6.4'
@@ -59,53 +158,53 @@ importers:
         specifier: workspace:*
         version: link:../../packages/utils
       lucide-react:
-        specifier: 1.7.0
+        specifier: 'catalog:'
         version: 1.7.0(react@19.2.4)
       next:
-        specifier: 16.2.2
+        specifier: 'catalog:'
         version: 16.2.2(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.59.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       nuqs:
-        specifier: 2.8.9
+        specifier: 'catalog:'
         version: 2.8.9(next@16.2.2(@opentelemetry/api@1.9.1)(@playwright/test@1.59.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)
       react:
-        specifier: 19.2.4
+        specifier: 'catalog:'
         version: 19.2.4
       react-dom:
-        specifier: 19.2.4
+        specifier: 'catalog:'
         version: 19.2.4(react@19.2.4)
       recharts:
-        specifier: 3.8.1
+        specifier: 'catalog:'
         version: 3.8.1(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react-is@17.0.2)(react@19.2.4)(redux@5.0.1)
       server-only:
-        specifier: 0.0.1
+        specifier: 'catalog:'
         version: 0.0.1
     devDependencies:
       '@types/node':
-        specifier: ^24
+        specifier: 'catalog:'
         version: 24.12.2
       '@types/react':
-        specifier: ^19.2.14
+        specifier: 'catalog:'
         version: 19.2.14
       '@types/react-dom':
-        specifier: ^19.2.3
+        specifier: 'catalog:'
         version: 19.2.3(@types/react@19.2.14)
       '@typescript/native-preview':
-        specifier: 7.0.0-dev.20260401.1
+        specifier: 'catalog:'
         version: 7.0.0-dev.20260401.1
       '@zoonk/tsconfig':
         specifier: workspace:*
         version: link:../../packages/tsconfig
       babel-plugin-react-compiler:
-        specifier: 1.0.0
+        specifier: 'catalog:'
         version: 1.0.0
 
   apps/api:
     dependencies:
       '@sentry/nextjs':
-        specifier: 10.47.0
+        specifier: 'catalog:'
         version: 10.47.0(@opentelemetry/context-async-hooks@2.6.1(@opentelemetry/api@1.9.1))(@opentelemetry/core@2.6.1(@opentelemetry/api@1.9.1))(@opentelemetry/sdk-trace-base@2.6.1(@opentelemetry/api@1.9.1))(next@16.2.2(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.59.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)(webpack@5.96.1(@swc/core@1.15.3)(esbuild@0.27.7))
       '@tabler/icons-react':
-        specifier: 3.41.1
+        specifier: 'catalog:'
         version: 3.41.1(react@19.2.4)
       '@zoonk/ai':
         specifier: workspace:*
@@ -126,47 +225,47 @@ importers:
         specifier: workspace:*
         version: link:../../packages/utils
       botid:
-        specifier: 1.5.11
+        specifier: 'catalog:'
         version: 1.5.11(next@16.2.2(@opentelemetry/api@1.9.1)(@playwright/test@1.59.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)
       lucide-react:
-        specifier: 1.7.0
+        specifier: 'catalog:'
         version: 1.7.0(react@19.2.4)
       next:
-        specifier: 16.2.2
+        specifier: 'catalog:'
         version: 16.2.2(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.59.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       next-intl:
-        specifier: 4.9.0
+        specifier: 'catalog:'
         version: 4.9.0(next@16.2.2(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.59.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)(typescript@5.8.3)
       react:
-        specifier: 19.2.4
+        specifier: 'catalog:'
         version: 19.2.4
       react-dom:
-        specifier: 19.2.4
+        specifier: 'catalog:'
         version: 19.2.4(react@19.2.4)
       server-only:
-        specifier: 0.0.1
+        specifier: 'catalog:'
         version: 0.0.1
       workflow:
         specifier: 4.2.0-beta.76
         version: 4.2.0-beta.76(@nestjs/common@11.1.18(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.18(@nestjs/common@11.1.18(reflect-metadata@0.2.2)(rxjs@7.8.2))(reflect-metadata@0.2.2)(rxjs@7.8.2))(@opentelemetry/api@1.9.1)(@swc/cli@0.8.1(@swc/core@1.15.3)(chokidar@5.0.0))(@swc/core@1.15.3)(next@16.2.2(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.59.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(typescript@5.8.3)
       zod:
-        specifier: 4.3.6
+        specifier: 'catalog:'
         version: 4.3.6
     devDependencies:
       '@scalar/nextjs-api-reference':
         specifier: 0.10.5
         version: 0.10.5(next@16.2.2(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.59.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)
       '@types/node':
-        specifier: ^24
+        specifier: 'catalog:'
         version: 24.12.2
       '@types/react':
-        specifier: ^19.2.14
+        specifier: 'catalog:'
         version: 19.2.14
       '@types/react-dom':
-        specifier: ^19.2.3
+        specifier: 'catalog:'
         version: 19.2.3(@types/react@19.2.14)
       '@typescript/native-preview':
-        specifier: 7.0.0-dev.20260401.1
+        specifier: 'catalog:'
         version: 7.0.0-dev.20260401.1
       '@zoonk/e2e':
         specifier: workspace:*
@@ -178,13 +277,13 @@ importers:
         specifier: workspace:*
         version: link:../../packages/tsconfig
       babel-plugin-react-compiler:
-        specifier: 1.0.0
+        specifier: 'catalog:'
         version: 1.0.0
       raw-loader:
-        specifier: 4.0.2
+        specifier: 'catalog:'
         version: 4.0.2(webpack@5.96.1(@swc/core@1.15.3)(esbuild@0.27.7))
       vitest:
-        specifier: 4.1.2
+        specifier: 'catalog:'
         version: 4.1.2(@opentelemetry/api@1.9.1)(@types/node@24.12.2)(jsdom@29.0.1(@noble/hashes@2.0.1))(vite@8.0.3(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@24.12.2)(esbuild@0.27.7)(jiti@2.6.1)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
       zod-openapi:
         specifier: 5.4.6
@@ -193,10 +292,10 @@ importers:
   apps/blog:
     dependencies:
       '@tabler/icons-react':
-        specifier: 3.41.1
+        specifier: 'catalog:'
         version: 3.41.1(react@19.2.4)
       '@vercel/analytics':
-        specifier: 2.0.1
+        specifier: 'catalog:'
         version: 2.0.1(next@16.2.2(@opentelemetry/api@1.9.1)(@playwright/test@1.59.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)
       '@zoonk/ui':
         specifier: workspace:*
@@ -205,62 +304,62 @@ importers:
         specifier: workspace:*
         version: link:../../packages/utils
       next:
-        specifier: 16.2.2
+        specifier: 'catalog:'
         version: 16.2.2(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.59.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       react:
-        specifier: 19.2.4
+        specifier: 'catalog:'
         version: 19.2.4
       react-dom:
-        specifier: 19.2.4
+        specifier: 'catalog:'
         version: 19.2.4(react@19.2.4)
       react-youtube:
         specifier: 10.1.0
         version: 10.1.0(react@19.2.4)
     devDependencies:
       '@mdx-js/loader':
-        specifier: 3.1.1
+        specifier: 'catalog:'
         version: 3.1.1(webpack@5.96.1)
       '@mdx-js/react':
-        specifier: 3.1.1
+        specifier: 'catalog:'
         version: 3.1.1(@types/react@19.2.14)(react@19.2.4)
       '@next/mdx':
-        specifier: 16.2.2
+        specifier: 'catalog:'
         version: 16.2.2(@mdx-js/loader@3.1.1(webpack@5.96.1))(@mdx-js/react@3.1.1(@types/react@19.2.14)(react@19.2.4))
       '@types/mdx':
-        specifier: 2.0.13
+        specifier: 'catalog:'
         version: 2.0.13
       '@types/node':
-        specifier: ^24
+        specifier: 'catalog:'
         version: 24.12.2
       '@types/react':
-        specifier: ^19.2.14
+        specifier: 'catalog:'
         version: 19.2.14
       '@types/react-dom':
-        specifier: ^19.2.3
+        specifier: 'catalog:'
         version: 19.2.3(@types/react@19.2.14)
       '@typescript/native-preview':
-        specifier: 7.0.0-dev.20260401.1
+        specifier: 'catalog:'
         version: 7.0.0-dev.20260401.1
       '@zoonk/tsconfig':
         specifier: workspace:*
         version: link:../../packages/tsconfig
       babel-plugin-react-compiler:
-        specifier: 1.0.0
+        specifier: 'catalog:'
         version: 1.0.0
 
   apps/editor:
     dependencies:
       '@dnd-kit/core':
-        specifier: 6.3.1
+        specifier: 'catalog:'
         version: 6.3.1(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@dnd-kit/sortable':
-        specifier: 10.0.0
+        specifier: 'catalog:'
         version: 10.0.0(@dnd-kit/core@6.3.1(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)
       '@dnd-kit/utilities':
-        specifier: 3.2.2
+        specifier: 'catalog:'
         version: 3.2.2(react@19.2.4)
       '@sentry/nextjs':
-        specifier: 10.47.0
+        specifier: 'catalog:'
         version: 10.47.0(@opentelemetry/context-async-hooks@2.6.1(@opentelemetry/api@1.9.1))(@opentelemetry/core@2.6.1(@opentelemetry/api@1.9.1))(@opentelemetry/sdk-trace-base@2.6.1(@opentelemetry/api@1.9.1))(next@16.2.2(@opentelemetry/api@1.9.1)(@playwright/test@1.59.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)(webpack@5.96.1(esbuild@0.27.7))
       '@zoonk/core':
         specifier: workspace:*
@@ -278,38 +377,38 @@ importers:
         specifier: workspace:*
         version: link:../../packages/utils
       lucide-react:
-        specifier: 1.7.0
+        specifier: 'catalog:'
         version: 1.7.0(react@19.2.4)
       next:
-        specifier: 16.2.2
+        specifier: 'catalog:'
         version: 16.2.2(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.59.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       next-intl:
-        specifier: 4.9.0
+        specifier: 'catalog:'
         version: 4.9.0(next@16.2.2(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.59.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)(typescript@5.8.3)
       react:
-        specifier: 19.2.4
+        specifier: 'catalog:'
         version: 19.2.4
       react-dom:
-        specifier: 19.2.4
+        specifier: 'catalog:'
         version: 19.2.4(react@19.2.4)
       server-only:
-        specifier: 0.0.1
+        specifier: 'catalog:'
         version: 0.0.1
     devDependencies:
       '@types/node':
-        specifier: ^24
+        specifier: 'catalog:'
         version: 24.12.2
       '@types/react':
-        specifier: ^19.2.14
+        specifier: 'catalog:'
         version: 19.2.14
       '@types/react-dom':
-        specifier: ^19.2.3
+        specifier: 'catalog:'
         version: 19.2.3(@types/react@19.2.14)
       '@types/tmp':
         specifier: 0.2.6
         version: 0.2.6
       '@typescript/native-preview':
-        specifier: 7.0.0-dev.20260401.1
+        specifier: 'catalog:'
         version: 7.0.0-dev.20260401.1
       '@zoonk/e2e':
         specifier: workspace:*
@@ -321,13 +420,13 @@ importers:
         specifier: workspace:*
         version: link:../../packages/tsconfig
       babel-plugin-react-compiler:
-        specifier: 1.0.0
+        specifier: 'catalog:'
         version: 1.0.0
       tmp:
         specifier: 0.2.5
         version: 0.2.5
       vitest:
-        specifier: 4.1.2
+        specifier: 'catalog:'
         version: 4.1.2(@opentelemetry/api@1.9.1)(@types/node@24.12.2)(jsdom@29.0.1(@noble/hashes@2.0.1))(vite@8.0.3(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@24.12.2)(esbuild@0.27.7)(jiti@2.6.1)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
 
   apps/evals:
@@ -345,56 +444,56 @@ importers:
         specifier: workspace:*
         version: link:../../packages/utils
       ai:
-        specifier: 6.0.143
+        specifier: 'catalog:'
         version: 6.0.143(zod@4.3.6)
       lucide-react:
-        specifier: 1.7.0
+        specifier: 'catalog:'
         version: 1.7.0(react@19.2.4)
       next:
-        specifier: 16.2.2
+        specifier: 'catalog:'
         version: 16.2.2(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.59.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       react:
-        specifier: 19.2.4
+        specifier: 'catalog:'
         version: 19.2.4
       react-dom:
-        specifier: 19.2.4
+        specifier: 'catalog:'
         version: 19.2.4(react@19.2.4)
       zod:
-        specifier: 4.3.6
+        specifier: 'catalog:'
         version: 4.3.6
     devDependencies:
       '@types/node':
-        specifier: ^24
+        specifier: 'catalog:'
         version: 24.12.2
       '@types/react':
-        specifier: ^19.2.14
+        specifier: 'catalog:'
         version: 19.2.14
       '@types/react-dom':
-        specifier: ^19.2.3
+        specifier: 'catalog:'
         version: 19.2.3(@types/react@19.2.14)
       '@typescript/native-preview':
-        specifier: 7.0.0-dev.20260401.1
+        specifier: 'catalog:'
         version: 7.0.0-dev.20260401.1
       '@zoonk/tsconfig':
         specifier: workspace:*
         version: link:../../packages/tsconfig
       babel-plugin-react-compiler:
-        specifier: 1.0.0
+        specifier: 'catalog:'
         version: 1.0.0
       raw-loader:
-        specifier: 4.0.2
+        specifier: 'catalog:'
         version: 4.0.2(webpack@5.96.1)
 
   apps/main:
     dependencies:
       '@sentry/nextjs':
-        specifier: 10.47.0
+        specifier: 'catalog:'
         version: 10.47.0(@opentelemetry/context-async-hooks@2.6.1(@opentelemetry/api@1.9.1))(@opentelemetry/core@2.6.1(@opentelemetry/api@1.9.1))(@opentelemetry/sdk-trace-base@2.6.1(@opentelemetry/api@1.9.1))(next@16.2.2(@opentelemetry/api@1.9.1)(@playwright/test@1.59.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)(webpack@5.96.1(esbuild@0.27.7))
       '@tabler/icons-react':
-        specifier: 3.41.1
+        specifier: 'catalog:'
         version: 3.41.1(react@19.2.4)
       '@vercel/analytics':
-        specifier: 2.0.1
+        specifier: 'catalog:'
         version: 2.0.1(next@16.2.2(@opentelemetry/api@1.9.1)(@playwright/test@1.59.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)
       '@zoonk/ai':
         specifier: workspace:*
@@ -418,68 +517,68 @@ importers:
         specifier: workspace:*
         version: link:../../packages/utils
       botid:
-        specifier: 1.5.11
+        specifier: 'catalog:'
         version: 1.5.11(next@16.2.2(@opentelemetry/api@1.9.1)(@playwright/test@1.59.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)
       eventsource-parser:
         specifier: 3.0.6
         version: 3.0.6
       lucide-react:
-        specifier: 1.7.0
+        specifier: 'catalog:'
         version: 1.7.0(react@19.2.4)
       next:
-        specifier: 16.2.2
+        specifier: 'catalog:'
         version: 16.2.2(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.59.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       next-intl:
-        specifier: 4.9.0
+        specifier: 'catalog:'
         version: 4.9.0(next@16.2.2(@babel/core@7.29.0)(@opentelemetry/api@1.9.1)(@playwright/test@1.59.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)(typescript@5.8.3)
       nuqs:
-        specifier: 2.8.9
+        specifier: 'catalog:'
         version: 2.8.9(next@16.2.2(@opentelemetry/api@1.9.1)(@playwright/test@1.59.1)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)
       react:
-        specifier: 19.2.4
+        specifier: 'catalog:'
         version: 19.2.4
       react-dom:
-        specifier: 19.2.4
+        specifier: 'catalog:'
         version: 19.2.4(react@19.2.4)
       recharts:
-        specifier: 3.8.1
+        specifier: 'catalog:'
         version: 3.8.1(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react-is@17.0.2)(react@19.2.4)(redux@5.0.1)
       server-only:
-        specifier: 0.0.1
+        specifier: 'catalog:'
         version: 0.0.1
       zod:
-        specifier: 4.3.6
+        specifier: 'catalog:'
         version: 4.3.6
     devDependencies:
       '@mdx-js/loader':
-        specifier: 3.1.1
+        specifier: 'catalog:'
         version: 3.1.1(webpack@5.96.1(esbuild@0.27.7))
       '@mdx-js/react':
-        specifier: 3.1.1
+        specifier: 'catalog:'
         version: 3.1.1(@types/react@19.2.14)(react@19.2.4)
       '@next/mdx':
-        specifier: 16.2.2
+        specifier: 'catalog:'
         version: 16.2.2(@mdx-js/loader@3.1.1(webpack@5.96.1(esbuild@0.27.7)))(@mdx-js/react@3.1.1(@types/react@19.2.14)(react@19.2.4))
       '@tailwindcss/postcss':
-        specifier: 4.2.2
+        specifier: 'catalog:'
         version: 4.2.2
       '@testing-library/react':
-        specifier: 16.3.2
+        specifier: 'catalog:'
         version: 16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@types/mdx':
-        specifier: 2.0.13
+        specifier: 'catalog:'
         version: 2.0.13
       '@types/node':
-        specifier: ^24
+        specifier: 'catalog:'
         version: 24.12.2
       '@types/react':
-        specifier: ^19.2.14
+        specifier: 'catalog:'
         version: 19.2.14
       '@types/react-dom':
-        specifier: ^19.2.3
+        specifier: 'catalog:'
         version: 19.2.3(@types/react@19.2.14)
       '@typescript/native-preview':
-        specifier: 7.0.0-dev.20260401.1
+        specifier: 'catalog:'
         version: 7.0.0-dev.20260401.1
       '@zoonk/e2e':
         specifier: workspace:*
@@ -491,19 +590,19 @@ importers:
         specifier: workspace:*
         version: link:../../packages/tsconfig
       babel-plugin-react-compiler:
-        specifier: 1.0.0
+        specifier: 'catalog:'
         version: 1.0.0
       jsdom:
-        specifier: 29.0.1
+        specifier: 'catalog:'
         version: 29.0.1(@noble/hashes@2.0.1)
       raw-loader:
-        specifier: 4.0.2
+        specifier: 'catalog:'
         version: 4.0.2(webpack@5.96.1(esbuild@0.27.7))
       tsx:
-        specifier: 4.21.0
+        specifier: 'catalog:'
         version: 4.21.0
       vitest:
-        specifier: 4.1.2
+        specifier: 'catalog:'
         version: 4.1.2(@opentelemetry/api@1.9.1)(@types/node@24.12.2)(jsdom@29.0.1(@noble/hashes@2.0.1))(vite@8.0.3(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@24.12.2)(esbuild@0.27.7)(jiti@2.6.1)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
 
   apps/video:
@@ -515,30 +614,30 @@ importers:
         specifier: 4.0.301
         version: 4.0.301(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@tabler/icons-react':
-        specifier: 3.41.1
+        specifier: 'catalog:'
         version: 3.41.1(react@19.2.4)
       react:
-        specifier: 19.2.4
+        specifier: 'catalog:'
         version: 19.2.4
       react-dom:
-        specifier: 19.2.4
+        specifier: 'catalog:'
         version: 19.2.4(react@19.2.4)
       remotion:
         specifier: 4.0.301
         version: 4.0.301(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       zod:
-        specifier: 4.3.6
+        specifier: 'catalog:'
         version: 4.3.6
     devDependencies:
       '@types/react':
-        specifier: ^19.2.14
+        specifier: 'catalog:'
         version: 19.2.14
       '@types/react-dom':
-        specifier: ^19.2.3
+        specifier: 'catalog:'
         version: 19.2.3(@types/react@19.2.14)
-      typescript:
-        specifier: 5.8.3
-        version: 5.8.3
+      '@typescript/native-preview':
+        specifier: 'catalog:'
+        version: 7.0.0-dev.20260401.1
 
   packages/ai:
     dependencies:
@@ -555,7 +654,7 @@ importers:
         specifier: workspace:*
         version: link:../utils
       ai:
-        specifier: 6.0.143
+        specifier: 'catalog:'
         version: 6.0.143(zod@4.3.6)
       server-only:
         specifier: '>=0.0.1'
@@ -565,16 +664,16 @@ importers:
         version: 4.3.6
     devDependencies:
       '@types/node':
-        specifier: ^24
+        specifier: 'catalog:'
         version: 24.12.2
       '@typescript/native-preview':
-        specifier: 7.0.0-dev.20260401.1
+        specifier: 'catalog:'
         version: 7.0.0-dev.20260401.1
       '@zoonk/tsconfig':
         specifier: workspace:*
         version: link:../tsconfig
       vitest:
-        specifier: 4.1.2
+        specifier: 'catalog:'
         version: 4.1.2(@opentelemetry/api@1.9.1)(@types/node@24.12.2)(jsdom@29.0.1(@noble/hashes@2.0.1))(vite@8.0.3(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@24.12.2)(esbuild@0.27.7)(jiti@2.6.1)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
 
   packages/auth:
@@ -610,23 +709,23 @@ importers:
         specifier: 20.4.1
         version: 20.4.1(@types/node@24.12.2)
       zod:
-        specifier: 4.3.6
+        specifier: 'catalog:'
         version: 4.3.6
     devDependencies:
       '@types/node':
-        specifier: ^24
+        specifier: 'catalog:'
         version: 24.12.2
       '@types/react':
-        specifier: ^19.2.14
+        specifier: 'catalog:'
         version: 19.2.14
       '@typescript/native-preview':
-        specifier: 7.0.0-dev.20260401.1
+        specifier: 'catalog:'
         version: 7.0.0-dev.20260401.1
       '@zoonk/tsconfig':
         specifier: workspace:*
         version: link:../tsconfig
       vitest:
-        specifier: 4.1.2
+        specifier: 'catalog:'
         version: 4.1.2(@opentelemetry/api@1.9.1)(@types/node@24.12.2)(jsdom@29.0.1(@noble/hashes@2.0.1))(vite@8.0.3(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@24.12.2)(esbuild@0.27.7)(jiti@2.6.1)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
 
   packages/core:
@@ -662,14 +761,14 @@ importers:
         specifier: '>=0.34'
         version: 0.34.5
       zod:
-        specifier: 4.3.6
+        specifier: 'catalog:'
         version: 4.3.6
     devDependencies:
       '@types/react':
-        specifier: ^19.2.14
+        specifier: 'catalog:'
         version: 19.2.14
       '@typescript/native-preview':
-        specifier: 7.0.0-dev.20260401.1
+        specifier: 'catalog:'
         version: 7.0.0-dev.20260401.1
       '@zoonk/testing':
         specifier: workspace:*
@@ -678,7 +777,7 @@ importers:
         specifier: workspace:*
         version: link:../tsconfig
       vitest:
-        specifier: 4.1.2
+        specifier: 'catalog:'
         version: 4.1.2(@opentelemetry/api@1.9.1)(@types/node@24.12.2)(jsdom@29.0.1(@noble/hashes@2.0.1))(vite@8.0.3(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@24.12.2)(esbuild@0.27.7)(jiti@2.6.1)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
 
   packages/db:
@@ -706,7 +805,7 @@ importers:
         specifier: 8.20.0
         version: 8.20.0
       '@typescript/native-preview':
-        specifier: 7.0.0-dev.20260401.1
+        specifier: 'catalog:'
         version: 7.0.0-dev.20260401.1
       '@zoonk/tsconfig':
         specifier: workspace:*
@@ -718,7 +817,7 @@ importers:
         specifier: 7.6.0
         version: 7.6.0(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)(typescript@5.8.3)
       tsx:
-        specifier: 4.21.0
+        specifier: 'catalog:'
         version: 4.21.0
 
   packages/e2e:
@@ -734,10 +833,10 @@ importers:
         specifier: 1.59.1
         version: 1.59.1
       '@types/node':
-        specifier: ^24
+        specifier: 'catalog:'
         version: 24.12.2
       '@typescript/native-preview':
-        specifier: 7.0.0-dev.20260401.1
+        specifier: 'catalog:'
         version: 7.0.0-dev.20260401.1
       '@zoonk/testing':
         specifier: workspace:*
@@ -753,10 +852,10 @@ importers:
         version: link:../utils
     devDependencies:
       '@types/node':
-        specifier: ^24
+        specifier: 'catalog:'
         version: 24.12.2
       '@typescript/native-preview':
-        specifier: 7.0.0-dev.20260401.1
+        specifier: 'catalog:'
         version: 7.0.0-dev.20260401.1
       '@zoonk/tsconfig':
         specifier: workspace:*
@@ -781,16 +880,16 @@ importers:
         version: 19.2.4(react@19.2.4)
     devDependencies:
       '@types/node':
-        specifier: ^24
+        specifier: 'catalog:'
         version: 24.12.2
       '@types/react':
-        specifier: ^19.2.14
+        specifier: 'catalog:'
         version: 19.2.14
       '@types/react-dom':
-        specifier: ^19.2.3
+        specifier: 'catalog:'
         version: 19.2.3(@types/react@19.2.14)
       '@typescript/native-preview':
-        specifier: 7.0.0-dev.20260401.1
+        specifier: 'catalog:'
         version: 7.0.0-dev.20260401.1
       '@zoonk/tsconfig':
         specifier: workspace:*
@@ -808,13 +907,13 @@ importers:
         specifier: 3.0.0
         version: 3.0.0
       '@dnd-kit/core':
-        specifier: 6.3.1
+        specifier: 'catalog:'
         version: 6.3.1(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@dnd-kit/sortable':
-        specifier: 10.0.0
+        specifier: 'catalog:'
         version: 10.0.0(@dnd-kit/core@6.3.1(react-dom@19.2.4(react@19.2.4))(react@19.2.4))(react@19.2.4)
       '@dnd-kit/utilities':
-        specifier: 3.2.2
+        specifier: 'catalog:'
         version: 3.2.2(react@19.2.4)
       '@zoonk/core':
         specifier: workspace:*
@@ -857,22 +956,22 @@ importers:
         version: 4.3.6
     devDependencies:
       '@testing-library/react':
-        specifier: 16.3.2
+        specifier: 'catalog:'
         version: 16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@types/react':
-        specifier: ^19.2.14
+        specifier: 'catalog:'
         version: 19.2.14
       '@typescript/native-preview':
-        specifier: 7.0.0-dev.20260401.1
+        specifier: 'catalog:'
         version: 7.0.0-dev.20260401.1
       '@zoonk/tsconfig':
         specifier: workspace:*
         version: link:../tsconfig
       jsdom:
-        specifier: 29.0.1
+        specifier: 'catalog:'
         version: 29.0.1(@noble/hashes@2.0.1)
       vitest:
-        specifier: 4.1.2
+        specifier: 'catalog:'
         version: 4.1.2(@opentelemetry/api@1.9.1)(@types/node@24.12.2)(jsdom@29.0.1(@noble/hashes@2.0.1))(vite@8.0.3(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@24.12.2)(esbuild@0.27.7)(jiti@2.6.1)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
 
   packages/testing:
@@ -888,10 +987,10 @@ importers:
         version: link:../utils
     devDependencies:
       '@types/node':
-        specifier: ^24
+        specifier: 'catalog:'
         version: 24.12.2
       '@typescript/native-preview':
-        specifier: 7.0.0-dev.20260401.1
+        specifier: 'catalog:'
         version: 7.0.0-dev.20260401.1
       '@zoonk/tsconfig':
         specifier: workspace:*
@@ -945,31 +1044,31 @@ importers:
         version: 3.5.0
     devDependencies:
       '@tailwindcss/postcss':
-        specifier: 4.2.2
+        specifier: 'catalog:'
         version: 4.2.2
       '@tailwindcss/typography':
         specifier: 0.5.19
         version: 0.5.19(tailwindcss@4.2.2)
       '@testing-library/react':
-        specifier: 16.3.2
+        specifier: 'catalog:'
         version: 16.3.2(@testing-library/dom@10.4.1)(@types/react-dom@19.2.3(@types/react@19.2.14))(@types/react@19.2.14)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@types/node':
-        specifier: ^24
+        specifier: 'catalog:'
         version: 24.12.2
       '@types/react':
-        specifier: ^19.2.14
+        specifier: 'catalog:'
         version: 19.2.14
       '@types/react-dom':
-        specifier: ^19.2.3
+        specifier: 'catalog:'
         version: 19.2.3(@types/react@19.2.14)
       '@typescript/native-preview':
-        specifier: 7.0.0-dev.20260401.1
+        specifier: 'catalog:'
         version: 7.0.0-dev.20260401.1
       '@zoonk/tsconfig':
         specifier: workspace:*
         version: link:../tsconfig
       jsdom:
-        specifier: 29.0.1
+        specifier: 'catalog:'
         version: 29.0.1(@noble/hashes@2.0.1)
       tailwindcss:
         specifier: 4.2.2
@@ -978,7 +1077,7 @@ importers:
         specifier: 1.4.0
         version: 1.4.0
       vitest:
-        specifier: 4.1.2
+        specifier: 'catalog:'
         version: 4.1.2(@opentelemetry/api@1.9.1)(@types/node@24.12.2)(jsdom@29.0.1(@noble/hashes@2.0.1))(vite@8.0.3(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@24.12.2)(esbuild@0.27.7)(jiti@2.6.1)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
 
   packages/utils:
@@ -994,13 +1093,13 @@ importers:
         specifier: 0.6.4
         version: 0.6.4
       '@typescript/native-preview':
-        specifier: 7.0.0-dev.20260401.1
+        specifier: 'catalog:'
         version: 7.0.0-dev.20260401.1
       '@zoonk/tsconfig':
         specifier: workspace:*
         version: link:../tsconfig
       vitest:
-        specifier: 4.1.2
+        specifier: 'catalog:'
         version: 4.1.2(@opentelemetry/api@1.9.1)(@types/node@24.12.2)(jsdom@29.0.1(@noble/hashes@2.0.1))(vite@8.0.3(@emnapi/core@1.9.2)(@emnapi/runtime@1.9.2)(@types/node@24.12.2)(esbuild@0.27.7)(jiti@2.6.1)(terser@5.46.1)(tsx@4.21.0)(yaml@2.8.3))
 
 packages:
@@ -9361,7 +9460,7 @@ snapshots:
       '@mdx-js/mdx': 3.1.1
       source-map: 0.7.6
     optionalDependencies:
-      webpack: 5.96.1
+      webpack: 5.96.1(esbuild@0.25.0)
     transitivePeerDependencies:
       - supports-color
 
@@ -10526,14 +10625,14 @@ snapshots:
     dependencies:
       '@remotion/studio': 4.0.301(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@remotion/studio-shared': 4.0.301(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
-      css-loader: 5.2.7(webpack@5.96.1(esbuild@0.25.0))
+      css-loader: 5.2.7(webpack@5.96.1)
       esbuild: 0.25.0
       react: 19.2.4
       react-dom: 19.2.4(react@19.2.4)
       react-refresh: 0.9.0
       remotion: 4.0.301(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       source-map: 0.7.3
-      style-loader: 4.0.0(webpack@5.96.1(esbuild@0.25.0))
+      style-loader: 4.0.0(webpack@5.96.1)
       webpack: 5.96.1(esbuild@0.25.0)
     transitivePeerDependencies:
       - '@swc/core'
@@ -12797,7 +12896,7 @@ snapshots:
       shebang-command: 2.0.0
       which: 2.0.2
 
-  css-loader@5.2.7(webpack@5.96.1(esbuild@0.25.0)):
+  css-loader@5.2.7(webpack@5.96.1):
     dependencies:
       icss-utils: 5.1.0(postcss@8.5.8)
       loader-utils: 2.0.4
@@ -15018,7 +15117,7 @@ snapshots:
     dependencies:
       loader-utils: 2.0.4
       schema-utils: 3.3.0
-      webpack: 5.96.1
+      webpack: 5.96.1(esbuild@0.25.0)
 
   rc9@2.1.2:
     dependencies:
@@ -15591,7 +15690,7 @@ snapshots:
     dependencies:
       '@tokenizer/token': 0.3.0
 
-  style-loader@4.0.0(webpack@5.96.1(esbuild@0.25.0)):
+  style-loader@4.0.0(webpack@5.96.1):
     dependencies:
       webpack: 5.96.1(esbuild@0.25.0)
 
@@ -15683,14 +15782,6 @@ snapshots:
       webpack: 5.96.1(esbuild@0.27.7)
     optionalDependencies:
       esbuild: 0.27.7
-
-  terser-webpack-plugin@5.4.0(webpack@5.96.1):
-    dependencies:
-      '@jridgewell/trace-mapping': 0.3.31
-      jest-worker: 27.5.1
-      schema-utils: 4.3.3
-      terser: 5.46.1
-      webpack: 5.96.1
 
   terser@5.46.1:
     dependencies:
@@ -16051,36 +16142,6 @@ snapshots:
   webpack-sources@3.3.4: {}
 
   webpack-virtual-modules@0.6.2: {}
-
-  webpack@5.96.1:
-    dependencies:
-      '@types/eslint-scope': 3.7.7
-      '@types/estree': 1.0.8
-      '@webassemblyjs/ast': 1.14.1
-      '@webassemblyjs/wasm-edit': 1.14.1
-      '@webassemblyjs/wasm-parser': 1.14.1
-      acorn: 8.16.0
-      browserslist: 4.28.2
-      chrome-trace-event: 1.0.4
-      enhanced-resolve: 5.20.1
-      es-module-lexer: 1.7.0
-      eslint-scope: 5.1.1
-      events: 3.3.0
-      glob-to-regexp: 0.4.1
-      graceful-fs: 4.2.11
-      json-parse-even-better-errors: 2.3.1
-      loader-runner: 4.3.1
-      mime-types: 2.1.35
-      neo-async: 2.6.2
-      schema-utils: 3.3.0
-      tapable: 2.3.2
-      terser-webpack-plugin: 5.4.0(webpack@5.96.1)
-      watchpack: 2.5.1
-      webpack-sources: 3.3.4
-    transitivePeerDependencies:
-      - '@swc/core'
-      - esbuild
-      - uglify-js
 
   webpack@5.96.1(@swc/core@1.15.3)(esbuild@0.27.7):
     dependencies:

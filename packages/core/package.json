@@ -50,14 +50,14 @@
     "@zoonk/db": "workspace:*",
     "@zoonk/mailer": "workspace:*",
     "@zoonk/utils": "workspace:*",
-    "zod": "4.3.6"
+    "zod": "catalog:"
   },
   "devDependencies": {
-    "@types/react": "^19.2.14",
-    "@typescript/native-preview": "7.0.0-dev.20260401.1",
+    "@types/react": "catalog:",
+    "@typescript/native-preview": "catalog:",
     "@zoonk/testing": "workspace:*",
     "@zoonk/tsconfig": "workspace:*",
-    "vitest": "4.1.2"
+    "vitest": "catalog:"
   },
   "peerDependencies": {
     "next": ">=16",

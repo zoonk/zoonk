@@ -14,10 +14,10 @@
     "po-parser": "2.1.1"
   },
   "devDependencies": {
-    "@types/node": "^24",
-    "@types/react": "^19.2.14",
-    "@types/react-dom": "^19.2.3",
-    "@typescript/native-preview": "7.0.0-dev.20260401.1",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "@typescript/native-preview": "catalog:",
     "@zoonk/tsconfig": "workspace:*"
   },
   "peerDependencies": {
