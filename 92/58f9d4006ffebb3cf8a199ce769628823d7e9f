@@ -1,0 +1,39 @@
+apps/api/src/workflows/activity-generation/kinds/explanation-workflow.test.ts
+  31f363e148801a91 87
+apps/api/src/workflows/activity-generation/steps/_utils/dispatch-visual-content.test.ts
+  31f363e148801a91 1-173
+apps/api/src/workflows/activity-generation/steps/generate-visual-content-step.test.ts
+  31f363e148801a91 31
+apps/api/src/workflows/activity-generation/kinds/custom-workflow.test.ts
+  31f363e148801a91 73
+apps/api/src/workflows/activity-generation/custom-activity-workflow.test.ts
+  31f363e148801a91 86
+apps/api/src/workflows/activity-generation/steps/_utils/dispatch-visual-content.ts
+  31f363e148801a91 1-117
+apps/api/src/workflows/activity-generation/steps/generate-custom-visual-content-step.test.ts
+  31f363e148801a91 30
+apps/api/src/workflows/activity-generation/activity-generation-workflow.test.ts
+  31f363e148801a91 75
+apps/api/src/workflows/activity-generation/core-activity-workflow.test.ts
+  31f363e148801a91 85
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "9258f9d4006ffebb3cf8a199ce769628823d7e9f",
+  "prompts": {
+    "31f363e148801a91": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7f9fbf56-ccb2-4127-92b1-3df3bedec39f",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 304,
+      "total_deletions": 15,
+      "accepted_lines": 297,
+      "overriden_lines": 0
+    }
+  }
+}
