@@ -1,0 +1,119 @@
+apps/api/src/workflows/activity-generation/steps/generate-investigation-actions-step.ts
+  3b95621e1b18a2c5 1,3-5,8-55
+apps/main/src/lib/generation/phase-kind-steps/explanation.ts
+  3b95621e1b18a2c5 1-35
+apps/api/src/workflows/activity-generation/steps/generate-investigation-actions-step.test.ts
+  3b95621e1b18a2c5 1-29,31-260
+apps/api/src/workflows/activity-generation/steps/generate-investigation-accuracy-step.test.ts
+  3b95621e1b18a2c5 1-29,31-256
+apps/main/src/app/generate/a/[id]/phase-thinking-generators/content.ts
+  3b95621e1b18a2c5 1-145
+packages/core/src/workflows/steps.ts
+  3b95621e1b18a2c5 75-82,115,132,145
+apps/main/src/lib/generation/phase-kind-steps/vocabulary.ts
+  3b95621e1b18a2c5 1-41
+apps/api/src/workflows/activity-generation/steps/generate-investigation-findings-step.test.ts
+  3b95621e1b18a2c5 1-29,31-272
+apps/api/src/workflows/activity-generation/steps/generate-investigation-debrief-step.ts
+  3b95621e1b18a2c5 1,4-6,10-64
+apps/main/src/lib/generation/activity-generation-phases.ts
+  3b95621e1b18a2c5 20-21,25,28,32,43,46,52-53,62,66
+apps/main/src/lib/generation/phase-kind-steps/quiz.ts
+  3b95621e1b18a2c5 1-32
+apps/main/src/lib/generation/activity-generation-phase-weights.ts
+  3b95621e1b18a2c5 11,14,20-21,30,34,151-166
+apps/api/src/workflows/activity-generation/steps/generate-investigation-interpretations-step.test.ts
+  3b95621e1b18a2c5 1-29,31-263
+apps/api/src/workflows/activity-generation/steps/generate-investigation-visuals-step.ts
+  3b95621e1b18a2c5 1-4,6-66
+apps/main/src/app/generate/a/[id]/phase-thinking-generators/language.ts
+  3b95621e1b18a2c5 1-7,9-111
+apps/api/src/workflows/activity-generation/steps/generate-investigation-visual-content-step.ts
+  3b95621e1b18a2c5 1,3-52,54-77
+apps/api/src/workflows/activity-generation/steps/generate-investigation-debrief-step.test.ts
+  3b95621e1b18a2c5 1-29,31-238
+apps/main/src/lib/generation/phase-kind-steps/listening.ts
+  3b95621e1b18a2c5 1-87
+apps/api/src/workflows/activity-generation/steps/save-investigation-activity-step.test.ts
+  3b95621e1b18a2c5 1-128,130-131,133-219,221-222,224-241,243-270,272-273,275-310,312-313,315-327
+apps/api/src/workflows/activity-generation/steps/generate-investigation-accuracy-step.ts
+  3b95621e1b18a2c5 1-4,7-56
+apps/main/src/lib/generation/phase-kind-steps/investigation.ts
+  3b95621e1b18a2c5 3
+apps/main/src/app/generate/a/[id]/use-phase-labels.ts
+  3b95621e1b18a2c5 16,19,25-26,35,39
+apps/api/src/workflows/_test-utils/json-helpers.ts
+  3b95621e1b18a2c5 1-16
+packages/utils/src/settled.ts
+  3b95621e1b18a2c5 32-38,41
+  380e2fddae57283b 39-40
+apps/api/src/workflows/activity-generation/steps/generate-investigation-visuals-step.test.ts
+  3b95621e1b18a2c5 1-29,31-240
+apps/api/src/workflows/activity-generation/steps/generate-investigation-visual-content-step.test.ts
+  3b95621e1b18a2c5 1-252
+apps/main/src/lib/generation/phase-kind-steps/story.ts
+  3b95621e1b18a2c5 1-28
+apps/api/src/workflows/activity-generation/kinds/investigation-workflow.ts
+  3b95621e1b18a2c5 1-53,55-63,65-75,77-88,90-131,133-134,136-141
+apps/main/src/lib/generation/phase-kind-steps/custom.ts
+  3b95621e1b18a2c5 1-31
+apps/api/src/workflows/activity-generation/steps/save-investigation-activity-step.ts
+  3b95621e1b18a2c5 1,8-170,172-173,175-197
+apps/api/src/workflows/activity-generation/steps/generate-investigation-findings-step.ts
+  3b95621e1b18a2c5 1,4-6,9-59
+apps/api/src/workflows/activity-generation/steps/generate-investigation-interpretations-step.ts
+  3b95621e1b18a2c5 1-4,6-81
+apps/main/src/lib/generation/activity-generation-phase-config.ts
+  3b95621e1b18a2c5 3-5,7-15,42,49-54,80,111,114,120-121,130,134,143
+apps/main/src/lib/generation/phase-kind-steps/grammar.ts
+  3b95621e1b18a2c5 1-32
+apps/main/src/lib/generation/phase-kind-steps/practice.ts
+  3b95621e1b18a2c5 1-29
+apps/api/src/workflows/activity-generation/steps/generate-investigation-scenario-step.test.ts
+  3b95621e1b18a2c5 1-30,32-38,40-270
+packages/utils/src/settled.test.ts
+  3b95621e1b18a2c5 2,97-131
+apps/api/src/workflows/activity-generation/core-activity-workflow.ts
+  3b95621e1b18a2c5 3,12,14-15,47-50
+apps/main/src/app/generate/a/[id]/use-phase-thinking-generators.ts
+  3b95621e1b18a2c5 4-7,12-13,16-20
+apps/main/src/lib/generation/phase-kind-steps/reading.ts
+  3b95621e1b18a2c5 1-44
+apps/api/src/workflows/activity-generation/steps/generate-investigation-scenario-step.ts
+  3b95621e1b18a2c5 1-4,6-65
+apps/api/src/workflows/activity-generation/kinds/investigation-workflow.test.ts
+  3b95621e1b18a2c5 1,9-16,18-52,56-60,62-74,80,82-88,90-92,94-96,98-100,102-104,106-110,112-114,116-639
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "f59da71d6e9e24e36c816e84bb55466567dfaff9",
+  "prompts": {
+    "380e2fddae57283b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e859933d-2bba-44cd-9b53-856cfd6a377f",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 2,
+      "total_deletions": 11,
+      "accepted_lines": 2,
+      "overriden_lines": 0
+    },
+    "3b95621e1b18a2c5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a6da674d-8475-4048-aa38-daef3905971e",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 5112,
+      "total_deletions": 596,
+      "accepted_lines": 4574,
+      "overriden_lines": 71
+    }
+  }
+}
