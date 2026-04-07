@@ -16,8 +16,9 @@ export function TableVisual({ content }: { content: TableVisualContent }) {
       <Table>
         <TableHeader>
           <TableRow>
-            {content.columns.map((column) => (
-              <TableHead key={column} scope="col">
+            {content.columns.map((column, columnIndex) => (
+              // oxlint-disable-next-line react/no-array-index-key -- AI-generated columns can have duplicate names
+              <TableHead key={columnIndex} scope="col">
                 {column}
               </TableHead>
             ))}
@@ -28,7 +29,8 @@ export function TableVisual({ content }: { content: TableVisualContent }) {
           {content.rows.map((row) => (
             <TableRow key={row.join("-")}>
               {content.columns.map((column, columnIndex) => (
-                <TableCell className="whitespace-normal" key={column}>
+                // oxlint-disable-next-line react/no-array-index-key -- AI-generated columns can have duplicate names
+                <TableCell className="whitespace-normal" key={columnIndex}>
                   {row[columnIndex]}
                 </TableCell>
               ))}
