@@ -66,6 +66,7 @@
       "persistent": true
     },
     "e2e": {
+      "dependsOn": ["build:e2e"],
       "passThroughEnv": ["PLAYWRIGHT_*", "E2E_BASE_URL"]
     },
     "start": {

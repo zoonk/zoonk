@@ -88,8 +88,5 @@ jobs:
       - name: Setup database
         run: pnpm --filter @zoonk/db db:setup:e2e
 
-      - name: Build app
-        run: pnpm build:e2e --filter api
-
       - name: Run E2E tests
         run: pnpm e2e --filter api
