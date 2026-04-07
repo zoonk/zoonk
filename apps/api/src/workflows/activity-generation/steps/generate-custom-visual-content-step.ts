@@ -1,7 +1,7 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
-import { dispatchVisualContent } from "@zoonk/core/steps/dispatch-visual-content";
 import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { rejected, settledValues } from "@zoonk/utils/settled";
+import { dispatchVisualContent } from "./_utils/dispatch-visual-content";
 import { type VisualStepRow, buildVisualStepRows } from "./_utils/visual-rows";
 import { type CustomVisualDescriptionResult } from "./generate-custom-visuals-step";
 import { type LessonActivity } from "./get-lesson-activities-step";

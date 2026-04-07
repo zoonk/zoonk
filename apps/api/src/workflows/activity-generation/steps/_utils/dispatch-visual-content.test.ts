@@ -49,7 +49,7 @@ vi.mock("@zoonk/ai/tasks/visuals/timeline", () => ({
   }),
 }));
 
-vi.mock("./step-visual-image", () => ({
+vi.mock("@zoonk/core/steps/visual-image", () => ({
   generateVisualStepImage: vi.fn().mockResolvedValue({
     data: "https://example.com/image.webp",
     error: null,

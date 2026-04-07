@@ -1,7 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { generateActivityCustom } from "@zoonk/ai/tasks/activities/custom";
 import { type generateStepVisualDescriptions } from "@zoonk/ai/tasks/steps/visual-descriptions";
-import { type dispatchVisualContent } from "@zoonk/core/steps/dispatch-visual-content";
 import { prisma } from "@zoonk/db";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
@@ -9,6 +8,7 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { type dispatchVisualContent } from "../steps/_utils/dispatch-visual-content";
 import { type LessonActivity } from "../steps/get-lesson-activities-step";
 import { customActivityWorkflow } from "./custom-workflow";
 
@@ -70,7 +70,7 @@ vi.mock("@zoonk/ai/tasks/steps/visual-descriptions", () => ({
     ),
 }));
 
-vi.mock("@zoonk/core/steps/dispatch-visual-content", () => ({
+vi.mock("../steps/_utils/dispatch-visual-content", () => ({
   dispatchVisualContent: vi
     .fn()
     .mockImplementation(

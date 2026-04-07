@@ -5,7 +5,6 @@ import { generateActivityQuiz } from "@zoonk/ai/tasks/activities/core/quiz";
 import { generateActivityStoryDebrief } from "@zoonk/ai/tasks/activities/core/story-debrief";
 import { generateActivityStorySteps } from "@zoonk/ai/tasks/activities/core/story-steps";
 import { generateStepVisualDescriptions } from "@zoonk/ai/tasks/steps/visual-descriptions";
-import { dispatchVisualContent } from "@zoonk/core/steps/dispatch-visual-content";
 import { prisma } from "@zoonk/db";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
@@ -16,6 +15,7 @@ import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { getString } from "@zoonk/utils/json";
 import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { activityGenerationWorkflow } from "./activity-generation-workflow";
+import { dispatchVisualContent } from "./steps/_utils/dispatch-visual-content";
 import { getNeighboringConceptsStep } from "./steps/get-neighboring-concepts-step";
 
 vi.mock("./steps/get-neighboring-concepts-step", () => ({
@@ -82,7 +82,7 @@ vi.mock("@zoonk/ai/tasks/steps/visual-descriptions", () => ({
     ),
 }));
 
-vi.mock("@zoonk/core/steps/dispatch-visual-content", () => ({
+vi.mock("./steps/_utils/dispatch-visual-content", () => ({
   dispatchVisualContent: vi
     .fn()
     .mockImplementation(

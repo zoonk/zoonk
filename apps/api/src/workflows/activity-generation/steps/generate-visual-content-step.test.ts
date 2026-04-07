@@ -28,7 +28,7 @@ const { dispatchVisualContentMock } = vi.hoisted(() => ({
   dispatchVisualContentMock: vi.fn(),
 }));
 
-vi.mock("@zoonk/core/steps/dispatch-visual-content", () => ({
+vi.mock("./_utils/dispatch-visual-content", () => ({
   dispatchVisualContent: dispatchVisualContentMock,
 }));
 

@@ -1,4 +1,3 @@
-import "server-only";
 import { type VisualDescription } from "@zoonk/ai/tasks/steps/visual-descriptions";
 import { generateVisualChart } from "@zoonk/ai/tasks/visuals/chart";
 import { generateVisualCode } from "@zoonk/ai/tasks/visuals/code";
@@ -8,8 +7,8 @@ import { generateVisualMusic } from "@zoonk/ai/tasks/visuals/music";
 import { generateVisualQuote } from "@zoonk/ai/tasks/visuals/quote";
 import { generateVisualTable } from "@zoonk/ai/tasks/visuals/table";
 import { generateVisualTimeline } from "@zoonk/ai/tasks/visuals/timeline";
+import { generateVisualStepImage } from "@zoonk/core/steps/visual-image";
 import { logError } from "@zoonk/utils/logger";
-import { generateVisualStepImage } from "./step-visual-image";
 
 /**
  * Result of dispatching a single visual description to its per-kind

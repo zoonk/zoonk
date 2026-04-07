@@ -31,7 +31,6 @@
     "./steps/image": "./src/steps/step-image.ts",
     "./steps/contract/content": "./src/steps/contract/content.ts",
     "./steps/contract/visual": "./src/steps/contract/visual.ts",
-    "./steps/dispatch-visual-content": "./src/steps/dispatch-visual-content.ts",
     "./steps/visual-image": "./src/steps/step-visual-image.ts",
     "./orgs/org": "./src/orgs/org.ts",
     "./users/orgs/list": "./src/users/list-user-orgs.ts",
