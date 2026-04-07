@@ -24,8 +24,8 @@
     "@zoonk/utils": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": "^24",
-    "@typescript/native-preview": "7.0.0-dev.20260401.1",
+    "@types/node": "catalog:",
+    "@typescript/native-preview": "catalog:",
     "@zoonk/tsconfig": "workspace:*"
   }
 }

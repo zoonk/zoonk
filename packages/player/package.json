@@ -18,9 +18,9 @@
   },
   "dependencies": {
     "@dagrejs/dagre": "3.0.0",
-    "@dnd-kit/core": "6.3.1",
-    "@dnd-kit/sortable": "10.0.0",
-    "@dnd-kit/utilities": "3.2.2",
+    "@dnd-kit/core": "catalog:",
+    "@dnd-kit/sortable": "catalog:",
+    "@dnd-kit/utilities": "catalog:",
     "@zoonk/core": "workspace:*",
     "@zoonk/ui": "workspace:*",
     "@zoonk/utils": "workspace:*",
@@ -30,12 +30,12 @@
     "web-haptics": "0.0.6"
   },
   "devDependencies": {
-    "@testing-library/react": "16.3.2",
-    "@types/react": "^19.2.14",
-    "@typescript/native-preview": "7.0.0-dev.20260401.1",
+    "@testing-library/react": "catalog:",
+    "@types/react": "catalog:",
+    "@typescript/native-preview": "catalog:",
     "@zoonk/tsconfig": "workspace:*",
-    "jsdom": "29.0.1",
-    "vitest": "4.1.2"
+    "jsdom": "catalog:",
+    "vitest": "catalog:"
   },
   "peerDependencies": {
     "lucide-react": ">=0.400",

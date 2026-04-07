@@ -16,8 +16,8 @@
   },
   "devDependencies": {
     "@playwright/test": "1.59.1",
-    "@types/node": "^24",
-    "@typescript/native-preview": "7.0.0-dev.20260401.1",
+    "@types/node": "catalog:",
+    "@typescript/native-preview": "catalog:",
     "@zoonk/testing": "workspace:*",
     "@zoonk/tsconfig": "workspace:*"
   }
