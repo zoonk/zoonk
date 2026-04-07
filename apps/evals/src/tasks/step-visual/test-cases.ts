@@ -12,9 +12,12 @@ You are evaluating the VISUAL DESCRIPTION stage — the model selects a visual k
 
 3. KIND SELECTION FIT: The visual kind must make sense for the content. PENALIZE if:
    - Code kind is used for non-programming content
-   - Chart kind is used without numerical/statistical data (IMPORTANT: if a chart requires fabricating numbers that don't exist in the source text, this is a MAJOR error)
+   - Chart kind is used without numerical/statistical data (IMPORTANT: if a chart requires fabricating numbers that don't exist in the source text, this is a MAJOR error — score it under majorErrors)
    - Timeline kind is used for content with no temporal/sequential element
-   - Quote kind is used with a fabricated or unverifiable quote
+   - Quote kind is used with a fabricated, paraphrased, or unverifiable quote
+   - Formula kind is used for a single value or trivial comparison (e.g., "109.5°" or "90° < 109.5°" — these are not formulas)
+   - Music kind is used for content that merely mentions music without specific notes to notate
+   - Code kind is used for mathematical notation (should be formula kind)
 
    Do NOT penalize if:
    - Image kind is used for any content (image can visualize anything)
@@ -30,14 +33,25 @@ You are evaluating the VISUAL DESCRIPTION stage — the model selects a visual k
    - Formula descriptions lack the actual equation
    - Image descriptions are vague (e.g., "an image about the topic")
 
-5. LANGUAGE CONSISTENCY: All text in descriptions must match the specified language. PENALIZE any mixed-language content (except the JSON field names and enum values like "chart", "table").
+5. IMAGE TEXT CONTAMINATION: Image descriptions should describe ONLY the scene, objects, and composition — NOT text to display. PENALIZE if:
+   - An image description asks for labels, captions, signs, annotations, or visible text that isn't strictly necessary to understand the concept
+   - The only way to understand the described image is by reading text within it
+   - Exception: a single word or short phrase is acceptable when the concept genuinely requires it (e.g., a protest sign, a storefront name)
+
+6. DIAGRAM COMPLEXITY: Diagrams should be focused and reveal non-obvious structure. PENALIZE if:
+   - A diagram description has more than 7 nodes (too complex, loses clarity)
+   - A diagram description just restates the text as boxes with arrows (e.g., "A leads to B leads to C" turned into three boxes — this adds nothing)
+   - A diagram uses abstract platitude nodes like "Performance", "Simplicity", "Importance" connected by generic verbs — these don't help the reader understand anything new
+   - A diagram is used for a simple list of items without meaningful relationships between them (should be a table)
+
+7. LANGUAGE CONSISTENCY: All text in descriptions must match the specified language. PENALIZE any mixed-language content (except the JSON field names and enum values like "chart", "table").
 
 ANTI-CHECKLIST GUIDANCE (CRITICAL):
 - Do NOT expect specific visual kinds based on topic (history does not require timeline; programming does not require code)
 - Do NOT penalize for using "image" as the kind — it is a valid choice for any content
 - Do NOT penalize for using the same kind multiple times IF each adds unique information
 - Do NOT require variety in kinds — consistency is fine if appropriate
-- ONLY penalize for: redundant information across descriptions, kind that cannot represent the content, vague descriptions, language errors, missing steps
+- ONLY penalize for: redundant information across descriptions, kind that cannot represent the content, vague descriptions, image text contamination, diagram overcomplexity, language errors, missing steps
 `;
 
 export const TEST_CASES = [
@@ -55,6 +69,8 @@ DESCRIPTION CHECKS - PENALIZE if:
 - Historical dates are wrong in descriptions (key dates: 1789 Bastille, 1791 Constitution, 1793 Reign of Terror, 1799 Napoleon's coup)
 - Historical quotes are fabricated or misattributed
 - Descriptions are too vague to generate a visual (e.g., "an image of the revolution")
+- Image descriptions ask for text overlays, labels, or captions instead of depicting scenes
+- Diagram descriptions have more than 7 nodes or use abstract nodes like "Crisis", "Change", "Impact" without concrete relationships
 
 Do NOT PENALIZE if:
 - All steps use image kind (valid if each describes distinct content)
@@ -95,11 +111,14 @@ This test covers JavaScript closures - a programming concept.
 KIND SELECTION CHECKS - PENALIZE if:
 - Timeline kind is used (closures are not a historical/sequential topic)
 - Chart kind is used without numerical data
+- Formula kind is used (closures are a programming concept, not math)
 
 DESCRIPTION CHECKS - PENALIZE if:
 - Code descriptions have technical inaccuracies about closures
 - Code descriptions don't specify the programming language
 - Descriptions are too vague to generate working code
+- Diagram descriptions use abstract nodes like "Scope", "Memory", "Function" without concrete relationships (prefer code to show actual closure mechanics)
+- Image descriptions include text/labels when a code snippet would be more appropriate
 
 Do NOT PENALIZE if:
 - Image kind is used (can describe conceptual diagrams of scope)
@@ -148,10 +167,13 @@ DESCRIPTION CHECKS - PENALIZE if:
 - Scientific process is incorrect (inputs: light, CO2, H2O; outputs: glucose, O2)
 - Any description text is in English instead of Portuguese
 - Descriptions are too vague to generate a visual
+- Image descriptions ask for text labels or annotations instead of depicting the scene
+- Diagram descriptions have more than 7 nodes
 
 Do NOT PENALIZE if:
 - Image kind is used for all steps
 - Diagram kind is used to describe the process flow
+- Formula kind is used for the chemical equation (6CO2 + 6H2O → C6H12O6 + 6O2)
 
 ${SHARED_EXPECTATIONS}
     `,
@@ -192,6 +214,8 @@ KIND SELECTION CHECKS - PENALIZE if:
 DESCRIPTION CHECKS - PENALIZE if:
 - Chart descriptions have unrealistic data (e.g., market share values that don't make sense)
 - Descriptions are too vague to generate the visual
+- Image descriptions ask for text labels, percentages, or data overlays instead of depicting scenes
+- Diagram descriptions use abstract nodes like "Power", "Scale", "Cost" without concrete relationships
 
 Do NOT penalize for minor approximations in chart data descriptions (e.g., values summing to exactly 60% when the text says "over 60%").
 
@@ -241,6 +265,8 @@ KIND SELECTION CHECKS - PENALIZE if:
 DESCRIPTION CHECKS - PENALIZE if:
 - Descriptions are too vague or generic
 - Quote descriptions reference fabricated or unverifiable quotes
+- Image descriptions include text labels, words, or annotations (mindfulness is a visual/experiential concept — describe scenes, not text)
+- Diagram descriptions use abstract platitude nodes like "Calm", "Focus", "Awareness" with generic connections — these don't add insight beyond the text
 
 Do NOT PENALIZE if:
 - Image kind is used for all steps (very appropriate for abstract concepts)
@@ -282,15 +308,18 @@ KIND SELECTION CHECKS - PENALIZE if:
 - Code kind is used (no programming content)
 - Chart kind is used without numerical data
 - Timeline kind is used (not a historical topic)
+- Image kind is used for steps that describe specific notes or scales (music kind renders real notation — prefer it over an image of notation)
 
 DESCRIPTION CHECKS - PENALIZE if:
 - Music descriptions have wrong notes (C major: C-D-E-F-G-A-B-C, G major: G-A-B-C-D-E-F#-G)
 - Music descriptions don't specify key, time signature, or notes
 - Descriptions are too vague to generate the visual
+- Image descriptions ask for text showing note names or scale patterns instead of depicting a scene
 
 Do NOT PENALIZE if:
 - Not all steps use music kind (table or image can supplement)
 - Music kind is used for all steps (if each describes distinct notation)
+- Table kind is used to compare scale degrees or intervals
 
 ${SHARED_EXPECTATIONS}
     `,
