@@ -1,0 +1,23 @@
+apps/main/src/lib/generation/activity-generation-phase-weights.ts
+  a790a3ccb4dea873 95,97-99,106,108-110,147,149-152
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "66b46fd0f4bd6727fb6640c7fff058f2f0f4e709",
+  "prompts": {
+    "a790a3ccb4dea873": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "7dba8159-549d-48b4-9599-190ca37c3f9b",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 26,
+      "total_deletions": 26,
+      "accepted_lines": 13,
+      "overriden_lines": 0
+    }
+  }
+}
