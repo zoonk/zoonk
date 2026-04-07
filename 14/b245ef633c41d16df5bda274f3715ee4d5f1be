@@ -1,0 +1,25 @@
+apps/blog/src/components/post-list.tsx
+  08d8358911611c6d 1,6-8,12,16-18,20-22,24-29,31-38
+apps/blog/src/lib/posts.ts
+  08d8358911611c6d 25-30,32
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "14b245ef633c41d16df5bda274f3715ee4d5f1be",
+  "prompts": {
+    "08d8358911611c6d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b808f51a-c5e3-4a4c-b0bf-1185b3445788",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 41,
+      "total_deletions": 30,
+      "accepted_lines": 32,
+      "overriden_lines": 1
+    }
+  }
+}
