@@ -1,0 +1,23 @@
+turbo.json
+  d300a0269d768a1e 69
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "3e878a01ff245c410d03fb0061b707078ef2c6eb",
+  "prompts": {
+    "d300a0269d768a1e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5007770a-fdac-4309-9870-a5f6b8f5c693",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 1,
+      "total_deletions": 119,
+      "accepted_lines": 1,
+      "overriden_lines": 0
+    }
+  }
+}
