@@ -1,0 +1,131 @@
+{
+  "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\nDocument quality metrics in legal tech. Steps explain how to measure document quality in automated legal workflows. Content is in Portuguese.\n\nTOPIC-SPECIFIC: The steps describe metric types (completion rate, rework rate, errors per document) without providing actual numbers. Tables with illustrative example values are appropriate and expected.\n\nThis topic has no programming content, no historical events, no musical content, and no equations.\n\n\nEVALUATION CRITERIA:\n\nYou are evaluating the VISUAL DESCRIPTION stage — the model selects a visual kind and writes a description for each step. A separate system generates the actual visual from this description. Evaluate the KIND SELECTION and DESCRIPTION QUALITY, not the rendered visual.\n\n1. COVERAGE: There must be exactly one visual description per step. Check that the descriptions array length equals the step count.\n\n2. NO REDUNDANCY: Each description must add UNIQUE information. PENALIZE if:\n   - Multiple descriptions repeat the same data points, events, or concepts\n   - A description restates what another description already covered\n\n3. KIND SELECTION FIT: The visual kind must make sense for the content. PENALIZE if:\n   - Code kind is used for non-programming content\n   - Chart kind is used with purely invented data that has no basis in the source text or in known facts (IMPORTANT: this is a MAJOR error — score it under majorErrors)\n   - Timeline kind is used for content with no temporal/sequential element\n   - Quote kind is used with a fabricated, paraphrased, or unverifiable quote\n   - Formula kind is used for a single value or trivial comparison (e.g., \"109.5°\" or \"90° < 109.5°\")\n   - Music kind is used for content that merely mentions music without specific notes to notate\n   - Code kind is used for mathematical notation (should be formula kind)\n\n   Do NOT penalize chart use if:\n   - The data comes from a well-known formula or mathematical relationship (e.g., IEEE 754 float spacing, compound interest curves, known physical constants)\n   - The step describes a qualitative pattern (e.g., \"few serious errors but many small adjustments\") and the chart uses plausible illustrative values that concretize that exact pattern — this is expected and educational, not fabrication\n\n   Do NOT penalize if:\n   - Image kind is used for any content (image can visualize anything)\n   - Diagram kind is used instead of timeline (relationships can be shown multiple ways)\n   - Any kind is used multiple times (if each instance adds unique value)\n   - Tables include illustrative example values in a clearly labeled \"Example\" column when the step describes metric types or categories — plausible example values help the reader understand what a metric looks like in practice\n\n4. DESCRIPTION SPECIFICITY: Descriptions must have enough detail for a downstream system to generate the visual without seeing the original step content. PENALIZE if:\n   - Chart descriptions lack data values, axis labels, or trends\n   - Table descriptions lack column headers or row data\n   - Code descriptions lack the programming language or what the code should demonstrate\n   - Diagram descriptions lack node labels or connections\n   - Timeline descriptions lack dates or event labels\n   - Formula descriptions lack the actual equation\n   - Image descriptions are vague (e.g., \"an image about the topic\")\n\n5. IMAGE TEXT CONTAMINATION: Image descriptions should describe ONLY the scene, objects, and composition — NOT text to display. PENALIZE if:\n   - An image description asks for labels, captions, signs, annotations, or visible text that isn't strictly necessary to understand the concept\n   - The only way to understand the described image is by reading text within it\n   - Exception: a single word or short phrase is acceptable when the concept genuinely requires it\n\n6. DIAGRAM COMPLEXITY: Diagrams should be focused and reveal non-obvious structure. PENALIZE if:\n   - A diagram description has more than 7 nodes\n   - A diagram just restates the text as boxes with arrows\n   - A diagram uses abstract platitude nodes connected by generic verbs\n   - A diagram is used for a simple list (should be a table)\n\n7. LANGUAGE CONSISTENCY: All text in descriptions — including image descriptions — must match the specified language. PENALIZE any mixed-language content (except JSON field names and enum values like \"chart\", \"table\").\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT expect specific visual kinds based on topic\n- Do NOT penalize for using \"image\" as the kind\n- Do NOT penalize for using the same kind multiple times IF each adds unique information\n- Do NOT require variety in kinds\n- ONLY penalize for: redundant information, kind that cannot represent the content, vague descriptions, image text contamination, diagram overcomplexity, language errors, missing steps\n\n    ",
+  "judgedAt": "2026-04-07T16:18:47.120Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Excellent coverage (12 steps, 12 descriptions). Kind selections are well-chosen: heavy use of tables which fits the topic perfectly, with images providing visual variety. No fabricated charts or quotes. The formula for step 9 is reasonable—it shows actual expressions that help concretize the concept. Tables are detailed with clear column headers and complete row data. Images avoid text contamination well. No redundancy across steps—each table covers distinct content. Descriptions are self-contained and specific enough for generation. Minor issue: step 4 image mentions 'uma sequência de números' which borders on text, but is handled carefully.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Full coverage with 12 descriptions. Good mix of tables and images. Tables are well-structured with complete data. No fabricated charts or invented quotes. However, step 0 image includes 'selo de aprovado' and 'checkmark verde' which is borderline text. Steps 5-8 are all images in sequence, which while not penalizable, means less informative visuals for those steps compared to tables. Step 8 image describes a formulário with field labels which is borderline text-heavy. Overall solid but slightly less informative than the best outputs due to heavy image use in the middle section.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Full coverage with 12 descriptions. Good variety of kinds. However, diagram in step 1 is essentially a trivial 3-node linear flow that mostly restates the text (what's in/out of scope), bordering on a star pattern with the 'riscada' element. Diagram in step 6 is a trivially small 3-node diagram that just restates the text about contradictory dates—this adds little. Step 9 diagram is reasonable for showing transformation. Image descriptions are generally good but step 0 mentions 'trecho do corpo do texto destacado em vermelho' which implies readable text. Tables are well-structured. Overall good but some diagram choices are suboptimal.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Full coverage with 12 descriptions. Good table structures for steps 2, 3, 8, 10. However, diagram in step 1 is trivially small (2 main blocks) and essentially just restates 'system produces document, we evaluate document'—adds little. Step 9 diagram with 3 blocks is also borderline trivial. Several images in sequence (steps 0, 4, 5, 6, 7, 11) reduce information density. Some image descriptions mention elements that imply text ('setas de leitura' in step 7). The table in step 3 has 5 columns which is ambitious but well-executed. Overall decent but over-reliant on images for steps that could benefit from tables.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Full coverage with 12 descriptions. However, two charts (steps 9 and 11) use completely fabricated data with no basis in the source text—this is a major error per the evaluation criteria. The source text mentions no specific numbers for these metrics, and the prompt explicitly warns against inventing data for charts. Step 4 image describes text elements ('Número do Processo' and 'CPF do Autor' as visible fields with checkmarks) which is text contamination. Tables are generally well-structured. The diagram in step 6 is reasonable for showing a verification process. Despite good table quality, the fabricated chart data is a significant penalty.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Full coverage with 12 descriptions. However, two charts (steps 9 and 10) use completely fabricated data—the source provides no actual numbers, making this a major error. Step 9 invents monthly improvement percentages (40%, 65%, 82%, 94%) with no textual basis. Step 10 invents specific metric values (98%, 72%, 28%). The diagram in step 5 describes a process not actually described in the source step about completude—it invents a validation workflow. Some tables are good (steps 0, 2, 6). The table for step 11 with only 2 rows is somewhat thin. The fabricated charts are the most significant issue.",
+          "score": 5.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Exceptional use of visual kinds. The logical diagram for consistency checking (Step 6) and the line chart demonstrating how a stable average can hide volatile critical errors (Step 11) concretize the qualitative concepts perfectly.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Extremely rigorous execution. Excellent and creative use of the formula kind to define metrics objectively (Step 9). The model also strictly adheres to the rule against text in images by explicitly forbidding it in every image description.",
+          "score": 9.8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Very strong output. The charts use plausible illustrative values exactly as permitted to demonstrate metric trends, and the diagram (Step 5) uses clear, unique edge labels. Image descriptions explicitly avoid text contamination.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Solid and safe approach. Relies heavily on tables and images, which misses opportunities for diagrams or charts, but the tables are highly educational and effectively structured for comparisons.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Penalized for diagram rule violations. The diagrams in Steps 1 and 6 lack unique edge labels and simply restate the text in boxes connected by generic arrows, which the prompt explicitly forbids.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Major penalty for directly violating diagram constraints. Step 1 explicitly creates a trivially small 2-node diagram with an unlabeled edge ('Nenhum rótulo extra'). Additionally, some image descriptions contain contradictory instructions, asking to show name variations but with no legible text.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Cobre corretamente os 12 passos na ordem, com descrições específicas e em português. A escolha de tipos é muito sólida, evitando gráficos inventados e diagramas fracos; só há pequenos deslizes visuais como menções a “etiquetas” e “marcadores” em imagens que podem sugerir texto/annotação.",
+          "score": 9.4
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Tem cobertura completa, boa especificidade e escolhas majoritariamente adequadas, com tabelas úteis para métricas qualitativas e exemplos concretos. Perde pontos por alguma contaminação textual em imagens (“aprovado”, datas explícitas) e por leve redundância no uso de imagens conceituais para vários passos.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Mantém os 12 itens em ordem e em português, com tabelas claras e descrições geralmente suficientes. Cai bastante por usar diagramas muito fracos ou triviais em passos 1 e 9, além de várias imagens que soam genéricas e pouco informativas para geração downstream.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "É completo e muitas descrições são específicas, especialmente nas tabelas comparativas. Contudo, usa gráficos com números inteiramente inventados sem base clara no passo, inclui algum inglês misturado e escolhe um diagrama linear pouco justificável para completude.",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Cobre todos os passos e várias tabelas estão bem alinhadas ao conteúdo. Mas há problemas relevantes de linguagem mista, imagens com texto visível explícito e gráficos com séries e metas fabricadas sem ancoragem suficiente, o que pesa bastante.",
+          "score": 6.8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Tem boa cobertura e algumas tabelas úteis, mas vários diagramas violam regras importantes: incluem texto em imagem/diagrama em inglês misturado, um diagrama de 2 nós/trivial e outro que praticamente restata o texto. Também há contaminação textual em várias imagens e descrições menos adequadas para geração visual.",
+          "score": 6.2
+        }
+      ]
+    }
+  ],
+  "taskId": "step-visual",
+  "testCaseId": "pt-direito-medicao-automacao-1"
+}

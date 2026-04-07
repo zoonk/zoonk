@@ -1,0 +1,131 @@
+{
+  "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\nUnemployment rate — economics concept. Steps explain what the rate measures, how it's calculated, and its limitations.\n\nTOPIC-SPECIFIC: Step 3 gives a specific formula (unemployed / labor force). Step 4 gives specific numbers (5/65 = 7.7%). Chart and formula kinds are valid for these steps.\n\nThis topic has no programming content, no musical content, and no historical events.\n\n\nEVALUATION CRITERIA:\n\nYou are evaluating the VISUAL DESCRIPTION stage — the model selects a visual kind and writes a description for each step. A separate system generates the actual visual from this description. Evaluate the KIND SELECTION and DESCRIPTION QUALITY, not the rendered visual.\n\n1. COVERAGE: There must be exactly one visual description per step. Check that the descriptions array length equals the step count.\n\n2. NO REDUNDANCY: Each description must add UNIQUE information. PENALIZE if:\n   - Multiple descriptions repeat the same data points, events, or concepts\n   - A description restates what another description already covered\n\n3. KIND SELECTION FIT: The visual kind must make sense for the content. PENALIZE if:\n   - Code kind is used for non-programming content\n   - Chart kind is used with purely invented data that has no basis in the source text or in known facts (IMPORTANT: this is a MAJOR error — score it under majorErrors)\n   - Timeline kind is used for content with no temporal/sequential element\n   - Quote kind is used with a fabricated, paraphrased, or unverifiable quote\n   - Formula kind is used for a single value or trivial comparison (e.g., \"109.5°\" or \"90° < 109.5°\")\n   - Music kind is used for content that merely mentions music without specific notes to notate\n   - Code kind is used for mathematical notation (should be formula kind)\n\n   Do NOT penalize chart use if:\n   - The data comes from a well-known formula or mathematical relationship (e.g., IEEE 754 float spacing, compound interest curves, known physical constants)\n   - The step describes a qualitative pattern (e.g., \"few serious errors but many small adjustments\") and the chart uses plausible illustrative values that concretize that exact pattern — this is expected and educational, not fabrication\n\n   Do NOT penalize if:\n   - Image kind is used for any content (image can visualize anything)\n   - Diagram kind is used instead of timeline (relationships can be shown multiple ways)\n   - Any kind is used multiple times (if each instance adds unique value)\n   - Tables include illustrative example values in a clearly labeled \"Example\" column when the step describes metric types or categories — plausible example values help the reader understand what a metric looks like in practice\n\n4. DESCRIPTION SPECIFICITY: Descriptions must have enough detail for a downstream system to generate the visual without seeing the original step content. PENALIZE if:\n   - Chart descriptions lack data values, axis labels, or trends\n   - Table descriptions lack column headers or row data\n   - Code descriptions lack the programming language or what the code should demonstrate\n   - Diagram descriptions lack node labels or connections\n   - Timeline descriptions lack dates or event labels\n   - Formula descriptions lack the actual equation\n   - Image descriptions are vague (e.g., \"an image about the topic\")\n\n5. IMAGE TEXT CONTAMINATION: Image descriptions should describe ONLY the scene, objects, and composition — NOT text to display. PENALIZE if:\n   - An image description asks for labels, captions, signs, annotations, or visible text that isn't strictly necessary to understand the concept\n   - The only way to understand the described image is by reading text within it\n   - Exception: a single word or short phrase is acceptable when the concept genuinely requires it\n\n6. DIAGRAM COMPLEXITY: Diagrams should be focused and reveal non-obvious structure. PENALIZE if:\n   - A diagram description has more than 7 nodes\n   - A diagram just restates the text as boxes with arrows\n   - A diagram uses abstract platitude nodes connected by generic verbs\n   - A diagram is used for a simple list (should be a table)\n\n7. LANGUAGE CONSISTENCY: All text in descriptions — including image descriptions — must match the specified language. PENALIZE any mixed-language content (except JSON field names and enum values like \"chart\", \"table\").\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT expect specific visual kinds based on topic\n- Do NOT penalize for using \"image\" as the kind\n- Do NOT penalize for using the same kind multiple times IF each adds unique information\n- Do NOT require variety in kinds\n- ONLY penalize for: redundant information, kind that cannot represent the content, vague descriptions, image text contamination, diagram overcomplexity, language errors, missing steps\n\n    ",
+  "judgedAt": "2026-04-07T16:19:06.603Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Excellent coverage with exactly 12 descriptions matching 12 steps. Kind selections are well-suited: formula for step 2, tables for comparisons, diagrams for flows (steps 5 and 7), and images used appropriately as fallback. No fabricated chart data. Diagrams are well-constructed with unique edge labels and appropriate node counts. Image descriptions avoid text contamination. Tables are specific with clear column headers and row data. Minor issue: the step 9 image (revolving door) is a reasonable metaphor. All in English as required.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Full 12-step coverage with strong kind selections. Uses tables heavily but each adds unique value. Diagrams for steps 5, 6, and 7 are well-specified with unique edge labels and appropriate complexity. Formula for step 2 is clean. Image descriptions (steps 0 and 4) avoid text contamination. Step 0's image is detailed but the 100-figure grid may be overly complex for generation. Tables are very specific with clear headers and row data throughout. No fabricated data. Slightly table-heavy but each is well-differentiated.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Full 12-step coverage. Good kind variety with diagrams, tables, formula, charts, and images. The chart for step 3 uses real data from the step (60/5/35) which is legitimate. The chart for step 10 is a stylized line chart showing recession dynamics — uses plausible illustrative values for a qualitative pattern, which is acceptable. Diagrams are well-specified. However, step 5's diagram has a 'side note' that reads like text annotation, and the chart annotations include text labels. Image descriptions are clean. Tables are thorough. Some diagram descriptions are slightly over-complex with annotation requests.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Full 12-step coverage. Good variety of kinds. Step 0 diagram is a valid hierarchical tree. Step 1 flowchart diagram is well-constructed. Formula for step 2 is correct. Step 5 chart fabricates data (1000 jobs declining to 750, flat 5% rate) — the step gives no such numbers, making this a fabricated chart, which is a major error per the criteria. Step 10 chart uses real US unemployment data (2009, 2020 spikes) which is factually grounded. Step 9 table is good. Some image descriptions are adequate but step 11's image with 'blank pieces of paper' is slightly unclear as a metaphor.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Full 12-step coverage. Step 0 is labeled 'diagram' but described as an 'infographic' with labels — this is more of an image with text. Step 8 uses timeline kind for step 9 content (why unemployment rarely reaches zero) but there are no dates or temporal events — the 'milestones' are conceptual, not chronological, making timeline a poor fit. Step 10's diagram is a star pattern (central node 'unemployment rate' with three surrounding nodes using generic edge labels like 'defines the boundary of') — violates the star pattern rule. Several table descriptions begin with 'Create a...' which is instructional rather than descriptive but acceptable. Overall decent but with kind selection errors.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Full 12-step coverage. Step 4 pie chart uses data from the text (60/5/35) — acceptable. Step 5 diagram has only 2 nodes and 1 edge, violating the 'no trivially small diagrams' rule. Step 6 chart fabricates a national unemployment rate over 10 years with no specific data from the step — major fabrication error. Step 4 image has text on signs ('Searching') which is text contamination. Step 7 bathtub diagram uses labels like 'Inflow' and 'Outflow' which are somewhat generic. Step 11 image describes documents with visible titles ('Unemployment Rate', 'Participation', 'Flows') — clear text contamination. Multiple image text violations combined with fabricated chart data significantly reduce the score.",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model A followed all rules perfectly and provided exceptionally detailed, highly imaginative descriptions. It correctly leveraged the rule exception allowing plausible illustrative data in charts to demonstrate qualitative trends (Steps 5 and 10), resulting in fantastic educational visuals. Its diagrams adhere strictly to the node/edge constraints and avoid star patterns.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Model C provides concise, highly accurate descriptions that strictly follow all guidelines. It offers excellent variety and ensures all diagrams are well-structured with clear nodes and unique edge labels. It completely avoids image text contamination.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Model B provides excellent, structured descriptions that fulfill the prompt's requirements well. The only minor flaw is the diagram in Step 7, which awkwardly describes placing nodes \"on the path\" of an edge rather than treating them as standard connected entities. Otherwise, it is highly accurate.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model E is generally solid and adheres to most rules. However, its diagram description in Step 7 defines inflow and outflow arrows without explicitly defining their source or target nodes, which makes generation ambiguous. The rest of the outputs are well-calibrated and educational.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model F has several significant rule violations. It creates a trivially small 2-node diagram for Step 5 (explicitly forbidden), includes unnecessary text in image descriptions for Steps 4 and 11, and describes an illustration (a bathtub) instead of a proper node-edge graph for the Step 7 diagram.",
+          "score": 4
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Model D fails critically on coverage and alignment: it completely missed the content for Step 6, misaligning the subsequent steps, and effectively generated two descriptions for Step 11. It also improperly used a timeline for non-temporal content in Step 9 and failed to provide concrete nodes and edges for the Step 0 diagram.",
+          "score": 2
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "This output covers all 12 steps in order with strong kind selection and consistently specific, self-contained descriptions. It avoids major factual issues, keeps all content in English, and mostly chooses tables/diagrams/images in ways that add distinct value without relying on fabricated statistics.",
+          "score": 9.4
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "This is complete, clear, and largely well-matched to the steps, with good specificity across formulas, tables, diagrams, and images. Its main weakness is one diagram that is structurally shaky and a few visuals that are slightly less precise than Model B, but there are no major prompt violations.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "The response is complete and generally specific, with several effective tables and diagrams. However, it includes image/diagram text contamination in multiple places and a few weaker kind choices, which matter given the prompt’s restrictions on image text and visual fit.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "This output is complete and often detailed, but it makes several weaker visual choices and includes some questionable or invented charting that is less grounded than stronger alternatives. It also repeats themes more than the best responses and has some diagram selections that border on list-like structures.",
+          "score": 7.6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "It covers all 12 steps, but many descriptions are too vague for downstream generation and several omit required specifics such as full table structure or chart data. It also violates the no-text-in-images rule and uses a trivially small 2-node diagram, which the prompt explicitly warns against.",
+          "score": 5.8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "This response has a major coverage/order failure: several visuals are shifted to the wrong steps, so later descriptions do not correspond to the intended content. It also uses a timeline despite the task explicitly noting no historical events and includes text-heavy image/diagram phrasing that is less aligned with the prompt.",
+          "score": 4.6
+        }
+      ]
+    }
+  ],
+  "taskId": "step-visual",
+  "testCaseId": "en-economics-labor-cycles-1"
+}

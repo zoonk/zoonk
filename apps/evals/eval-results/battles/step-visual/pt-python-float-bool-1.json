@@ -1,0 +1,131 @@
+{
+  "expectations": "\nTOPIC-SPECIFIC GUIDANCE:\n\nPython floating-point numbers. Steps explain floats, precision, and when to use them. Content is in Portuguese. This is a programming topic — code visuals showing Python REPL behavior are appropriate.\n\nTOPIC-SPECIFIC: Do NOT penalize chart kind for float precision spacing — this is a real mathematical property of IEEE 754 (spacing grows with magnitude), not fabricated data.\n\n\nEVALUATION CRITERIA:\n\nYou are evaluating the VISUAL DESCRIPTION stage — the model selects a visual kind and writes a description for each step. A separate system generates the actual visual from this description. Evaluate the KIND SELECTION and DESCRIPTION QUALITY, not the rendered visual.\n\n1. COVERAGE: There must be exactly one visual description per step. Check that the descriptions array length equals the step count.\n\n2. NO REDUNDANCY: Each description must add UNIQUE information. PENALIZE if:\n   - Multiple descriptions repeat the same data points, events, or concepts\n   - A description restates what another description already covered\n\n3. KIND SELECTION FIT: The visual kind must make sense for the content. PENALIZE if:\n   - Code kind is used for non-programming content\n   - Chart kind is used with purely invented data that has no basis in the source text or in known facts (IMPORTANT: this is a MAJOR error — score it under majorErrors)\n   - Timeline kind is used for content with no temporal/sequential element\n   - Quote kind is used with a fabricated, paraphrased, or unverifiable quote\n   - Formula kind is used for a single value or trivial comparison (e.g., \"109.5°\" or \"90° < 109.5°\")\n   - Music kind is used for content that merely mentions music without specific notes to notate\n   - Code kind is used for mathematical notation (should be formula kind)\n\n   Do NOT penalize chart use if:\n   - The data comes from a well-known formula or mathematical relationship (e.g., IEEE 754 float spacing, compound interest curves, known physical constants)\n   - The step describes a qualitative pattern (e.g., \"few serious errors but many small adjustments\") and the chart uses plausible illustrative values that concretize that exact pattern — this is expected and educational, not fabrication\n\n   Do NOT penalize if:\n   - Image kind is used for any content (image can visualize anything)\n   - Diagram kind is used instead of timeline (relationships can be shown multiple ways)\n   - Any kind is used multiple times (if each instance adds unique value)\n   - Tables include illustrative example values in a clearly labeled \"Example\" column when the step describes metric types or categories — plausible example values help the reader understand what a metric looks like in practice\n\n4. DESCRIPTION SPECIFICITY: Descriptions must have enough detail for a downstream system to generate the visual without seeing the original step content. PENALIZE if:\n   - Chart descriptions lack data values, axis labels, or trends\n   - Table descriptions lack column headers or row data\n   - Code descriptions lack the programming language or what the code should demonstrate\n   - Diagram descriptions lack node labels or connections\n   - Timeline descriptions lack dates or event labels\n   - Formula descriptions lack the actual equation\n   - Image descriptions are vague (e.g., \"an image about the topic\")\n\n5. IMAGE TEXT CONTAMINATION: Image descriptions should describe ONLY the scene, objects, and composition — NOT text to display. PENALIZE if:\n   - An image description asks for labels, captions, signs, annotations, or visible text that isn't strictly necessary to understand the concept\n   - The only way to understand the described image is by reading text within it\n   - Exception: a single word or short phrase is acceptable when the concept genuinely requires it\n\n6. DIAGRAM COMPLEXITY: Diagrams should be focused and reveal non-obvious structure. PENALIZE if:\n   - A diagram description has more than 7 nodes\n   - A diagram just restates the text as boxes with arrows\n   - A diagram uses abstract platitude nodes connected by generic verbs\n   - A diagram is used for a simple list (should be a table)\n\n7. LANGUAGE CONSISTENCY: All text in descriptions — including image descriptions — must match the specified language. PENALIZE any mixed-language content (except JSON field names and enum values like \"chart\", \"table\").\n\nANTI-CHECKLIST GUIDANCE (CRITICAL):\n- Do NOT expect specific visual kinds based on topic\n- Do NOT penalize for using \"image\" as the kind\n- Do NOT penalize for using the same kind multiple times IF each adds unique information\n- Do NOT require variety in kinds\n- ONLY penalize for: redundant information, kind that cannot represent the content, vague descriptions, image text contamination, diagram overcomplexity, language errors, missing steps\n\n    ",
+  "judgedAt": "2026-04-07T16:18:41.163Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.6",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "14 descriptions for 14 steps — correct coverage. Kind selection is strong: good use of code for steps 2, 6, 7, 12; table for steps 0, 8, 10, 11; chart for step 9 (IEEE 754 spacing — legitimate data); images are varied with distinct metaphors. Diagram in step 5 is borderline (linear chain that could be a table, but edge labels are unique and specific). Descriptions are detailed and self-contained. Language is consistently Portuguese. No image text contamination. No redundancy between code snippets (each demonstrates a different concept). The chart has plausible IEEE 754 values. Minor issue: step 1 image mentions numbers 1.23, 12.3, 123.0 which is text in an image, but these are essential to the concept.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "14 descriptions for 14 steps — correct coverage. Excellent kind selection with strong code usage for programming steps (0, 2, 6, 7, 11, 12). Chart for step 9 uses legitimate IEEE 754 spacing data with log scales. Tables are well-structured. Images are varied and text-free. Step 11 (money) uses code with Decimal module alternative — very educational. Step 12 also uses code, which fits well. No star-pattern diagrams. Descriptions are highly specific and self-contained. Minor: steps 12 and 7 have some overlap in showing format precision, but each demonstrates distinct concepts (1/3 vs accumulation). Overall very strong execution.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "14 descriptions for 14 steps — correct coverage. Good variety: code for steps 0, 2, 6, 7, 11; tables for steps 1, 8, 10, 13; images for steps 3, 4, 5, 9, 12. Step 11 includes Decimal alternative which is educational. Images are well-described and text-free. Step 9 (precision varies) uses image of number line with irregular spacing — works well. Tables are well-structured. Minor weaknesses: step 5 image with binary bits and arrow pointing to a decimal number implies text/numbers in the image. Overall solid and well-coordinated.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "14 descriptions for 14 steps — correct coverage. Good code usage for programming steps. However, step 7 chart fabricates error accumulation data (no real data given — the step discusses the concept qualitatively without specific numbers or a known formula, making this fabricated data). Step 9 chart for float spacing is legitimate (IEEE 754). Step 11 image includes specific text 'R$ 100.00000000000001' which, while argued as essential, is text contamination. Step 5 diagram is a simple flowchart with only 4 nodes including a yes/no branch — acceptable but borderline trivial. Tables are well-structured. Overall good but the fabricated chart data in step 7 is a notable issue.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "14 descriptions for 14 steps — correct coverage. However, too many images (steps 0, 3, 4, 6, 9, 11, 12, 13 — 8 out of 14). Misses opportunities to use code for programming-relevant steps like 6 (0.1 problem) and 7 (error accumulation). Step 0 image includes numbers as text. Step 6 image describes '0.1' as visible text. Step 1 diagram describes the floating point concept but is borderline — edge labels seem forced. Step 7 diagram with 'Cálculo 1' → 'Pequeno erro' → 'Acúmulo' → 'Resultado visível' is abstract platitudes with generic nodes. Steps 10-11 merged into one table loses the contrast between good/bad uses. Step 13 image is very vague ('mão segurando um bloco transparente'). Overall, underutilizes code kind for a Python programming course.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "14 descriptions for 14 steps — correct coverage. However, several significant issues: Step 1 diagram describing floating point position is not really a process/flow — it's a visual illustration better suited as table or image. Step 5 diagram with 64 compartments is really an image description disguised as a diagram. Step 8 uses formula kind for '0.1 + 0.1 + 0.1 ≠ 0.3' which is a trivial inequality, not a meaningful formula. Step 12 diagram with 'O que o usuário vê' and 'O que o Python armazena' is only 2 layers — trivially small. Step 13 uses quote kind with a fabricated/invented quote — no real author attribution, violating the quote rules. Step 8 chart uses real IEEE 754 boundary values which is fine. Step 2 table has only 2 rows — minimal. Multiple issues with kind selection make this the weakest output.",
+          "score": 5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Exceptional output. Follows all prompt rules perfectly, including the strict diagram constraints with unique edge labels and appropriate node counts. The chart in step 9 uses highly accurate, real mathematical values for IEEE 754 precision spacing. Code snippets and tables are incredibly well-structured.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Exceptional output with outstanding technical accuracy. The chart description in step 9 demonstrates a deep understanding of float math by providing precise log-log scale values for IEEE 754 spacing. The Python code snippets perfectly illustrate the concepts, and all constraints are followed flawlessly.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Excellent output. It creatively and correctly invokes the text exception for images in step 11 to show an ATM screen with a float bug. The flowchart in step 5 correctly defines nodes and unique edges, and the code snippets (like the classic 0.1 + 0.2 example) are highly effective.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Excellent output that accurately addresses the educational content. While it opts not to use charts or diagrams, its fallback to well-structured tables, clear code snippets, and descriptive images (like the iceberg metaphor) is entirely valid and effective. Follows all formatting rules strictly.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Very good output, though somewhat heavily reliant on images. It correctly applies the diagram rules in steps 5 and 7 with specific nodes and unique edges, though the diagram in step 1 lacks explicitly named edge labels. Descriptions are detailed and accurately reflect the concepts.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Very poor output due to multiple critical rule violations. In step 13, it invents a quote without a named author, strictly violating the quote rules. In step 7, it uses the formula kind for a trivial comparison inequality. Furthermore, the diagrams in steps 5 and 12 describe visual image scenes rather than concrete node-link structures.",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Cobre os 14 passos na ordem correta, com descrições específicas e em português. A seleção de tipos é forte, especialmente nos trechos de código e na tabela, com apenas pequenas fragilidades como um diagrama um pouco linear no passo 5 e um image com números/texto embutidos no passo 1.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-opus-4.6",
+          "reasoning": "Muito completo, específico e bem alinhado ao tema de Python, com bom uso de code/table/chart e cobertura exata dos passos. Perde pontos por algum conteúdo em inglês dentro das descrições de código, uso de exemplos que deslizam um pouco do passo original (como 1/3 no passo 12) e algumas saídas possivelmente excessivamente assertivas para floats formatados.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Boa cobertura e descrições geralmente claras, com escolhas de tipo quase sempre adequadas e úteis para ensino. Cai um pouco por misturar inglês nas strings/saídas de código, por um passo 6 que junta exemplos além do foco em 0.1, e por algumas imagens/tabelas menos fortes que alternativas em código.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Cumpre cobertura e linguagem, e várias imagens são didáticas e coerentes com os conceitos. No entanto, usa image/diagram com frequência onde code seria mais nativo para Python, inclui alguns diagramas bastante genéricos, e no passo 10 mistura conteúdo do passo seguinte ao incluir dinheiro.",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Tem cobertura completa e várias descrições são específicas, com bons usos de code e table. Porém há problemas relevantes: muito texto em inglês apesar da língua pedida ser pt, um chart com dados/trajetória inventados de forma solta no passo 7, e contaminação de texto em image no passo 11.",
+          "score": 6.6
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Embora tenha 14 itens, há vários desvios importantes das regras e do conteúdo: uso de quote sem citação real, fórmula onde code seria mais adequado, e diagramas com texto/nós pouco especificados. Também há erros factuais e de precisão, como saída exageradamente longa para format(0.1, '.20f') e tabela com coluna 'Memória' mal preenchida/conceitualmente inadequada.",
+          "score": 4.8
+        }
+      ]
+    }
+  ],
+  "taskId": "step-visual",
+  "testCaseId": "pt-python-float-bool-1"
+}

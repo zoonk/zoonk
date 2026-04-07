@@ -9,6 +9,7 @@ This is the highest-priority instruction in this task.
 - The output order must match the input step order (first output = first step)
 - NEVER skip a step
 - NEVER generate more than one description for the same step
+- EVERY description must be written in the LANGUAGE specified in the input — no exceptions, including image descriptions
 
 # Task
 
@@ -47,6 +48,8 @@ Use as the fallback when no other type fits the content.
 
 **NEVER reference copyrighted or trademarked characters** (e.g., Mickey Mouse, Spider-Man, Mario, Pikachu). Describe concepts abstractly or use generic, original characters.
 
+**Write image descriptions in the specified LANGUAGE.** Even though image descriptions become prompts for an image generator, they must use the content language like every other description. Do not switch to a different language for image descriptions.
+
 ## Diagram
 
 Use ONLY when the step describes a **concrete process, flow, or dependency chain** where the connections between nodes are the teaching point — not the nodes themselves.
@@ -83,7 +86,7 @@ Use ONLY when the step contains or implies **real numerical data** — actual st
 
 **When NOT to use charts:**
 
-- **Never invent data.** If the step describes a concept qualitatively (e.g., "rehashing reduces conflicts") but gives no specific numbers, do NOT fabricate values. Use a table or diagram instead.
+- **Never invent data.** If the step describes a concept qualitatively (e.g., "rehashing reduces conflicts") but gives no specific numbers, do NOT fabricate values. Use a table or diagram instead. **"Mentions metrics" is not the same as "provides data."** A step that says "we measure completion rates" does NOT give you numbers — don't invent 82% or 61%. A step that says "the rate is 5 out of 65, about 7.7%" DOES give you data.
 - **Never use charts for conceptual comparisons.** "Before vs. after", "fast vs. slow", "good vs. bad" — these are qualitative and belong in a table or diagram.
 - **Never use charts when the numbers have no units or meaning.** Every value must represent something concrete the reader can interpret (e.g., "milliseconds", "% of capacity", "number of probes"). If you can't explain what the y-axis measures, don't use a chart.
 - **Never chart a trivially obvious relationship.** If the reader could derive every data point in their head instantly, the chart adds no insight — use a table.
@@ -106,7 +109,17 @@ In your description, specify: column headers, row data with actual values. **Eve
 
 ## Code
 
-Use when the step describes something that can be **concretely demonstrated** in code — algorithms, data structure operations, syntax, APIs, or logic.
+Use when the step describes something that can be **concretely demonstrated** in code — algorithms, data structure operations, syntax, APIs, logic, or type behavior.
+
+**Prefer code over tables for programming topics.** If the lesson is about a programming language and a step discusses types, values, operators, or behavior that could be shown in a REPL or short snippet, use code. A code snippet showing `type(2)` vs `type(2.0)` or `0.1 + 0.1 + 0.1 == 0.3` teaches more than a table listing the same facts. **Code is the native medium for programming concepts** — don't avoid it in favor of tables when the topic is programming.
+
+**When to use code:**
+
+- The step explains type behavior, value comparisons, or operator results in a programming language — show it as a runnable snippet
+- The step describes an algorithm or procedure with concrete steps
+- The step describes a data structure operation (insert, delete, lookup, push, pop)
+- The step discusses syntax, APIs, or language features
+- The step describes logic (conditionals, loops, recursion) where seeing the code is more precise than prose
 
 **When NOT to use code:**
 

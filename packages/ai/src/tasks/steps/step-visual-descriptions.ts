@@ -5,7 +5,7 @@ import { type ReasoningEffort, buildProviderOptions } from "../../provider-optio
 import systemPrompt from "./step-visual-descriptions.prompt.md";
 
 const DEFAULT_MODEL = process.env.AI_MODEL_STEP_VISUAL_DESCRIPTIONS ?? "openai/gpt-5.4";
-const FALLBACK_MODELS = ["anthropic/claude-opus-4.6"];
+const FALLBACK_MODELS = ["anthropic/claude-opus-4.6", "google/gemini-3.1-pro-preview"];
 
 const visualKindSchema = z.enum([
   "chart",
@@ -24,13 +24,23 @@ const visualDescriptionSchema = z.object({
   kind: visualKindSchema,
 });
 
-const schema = z.object({
-  descriptions: z.array(visualDescriptionSchema),
-});
+/**
+ * Builds the output schema with a fixed-length array matching
+ * the number of input steps. This enforces that the model returns
+ * exactly one description per step, preventing mismatches that
+ * would break the downstream visual dispatch pipeline.
+ */
+function buildSchema(stepCount: number) {
+  return z.object({
+    descriptions: z.array(visualDescriptionSchema).length(stepCount),
+  });
+}
 
 export type VisualDescription = z.infer<typeof visualDescriptionSchema>;
 
-export type StepVisualDescriptionsSchema = z.infer<typeof schema>;
+export type StepVisualDescriptionsSchema = {
+  descriptions: VisualDescription[];
+};
 
 export type StepVisualDescriptionsParams = {
   lessonTitle: string;
@@ -87,7 +97,7 @@ ${formattedSteps}`;
 
   const { output, usage } = await generateText({
     model,
-    output: Output.object({ schema }),
+    output: Output.object({ schema: buildSchema(steps.length) }),
     prompt: userPrompt,
     providerOptions,
     system: systemPrompt,
