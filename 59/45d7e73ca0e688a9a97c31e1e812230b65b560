@@ -1,0 +1,25 @@
+packages/player/src/components/investigation-hunch-popover.tsx
+  42453b08033c12d0 10,27
+apps/main/src/lib/activities.ts
+  42453b08033c12d0 128
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "5945d7e73ca0e688a9a97c31e1e812230b65b560",
+  "prompts": {
+    "42453b08033c12d0": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b51de91a-c978-438c-9163-d1fdaea7d40b",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 8,
+      "total_deletions": 8,
+      "accepted_lines": 3,
+      "overriden_lines": 0
+    }
+  }
+}
