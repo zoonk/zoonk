@@ -92,22 +92,22 @@ export function getPhaseWeights(kind: ActivityKind): Record<PhaseName, number> {
   if (kind === "custom") {
     return {
       ...ZERO_WEIGHTS,
-      creatingVisuals: 55,
+      creatingVisuals: 35,
       gettingStarted: 3,
-      preparingVisuals: 10,
-      saving: 7,
-      writingContent: 25,
+      preparingVisuals: 44,
+      saving: 4,
+      writingContent: 14,
     };
   }
 
   if (kind === "explanation") {
     return {
       ...ZERO_WEIGHTS,
-      creatingVisuals: 60,
+      creatingVisuals: 35,
       gettingStarted: 3,
-      preparingVisuals: 10,
-      saving: 7,
-      writingContent: 20,
+      preparingVisuals: 44,
+      saving: 4,
+      writingContent: 14,
     };
   }
 
@@ -144,11 +144,11 @@ export function getPhaseWeights(kind: ActivityKind): Record<PhaseName, number> {
 
   return {
     ...ZERO_WEIGHTS,
-    creatingVisuals: 35,
+    creatingVisuals: 27,
     gettingStarted: 3,
-    preparingVisuals: 10,
-    saving: 9,
-    writingContent: 23,
-    writingExplanation: 20,
+    preparingVisuals: 34,
+    saving: 4,
+    writingContent: 11,
+    writingExplanation: 21,
   };
 }
