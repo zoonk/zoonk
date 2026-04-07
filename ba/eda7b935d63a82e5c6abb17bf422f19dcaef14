@@ -1,0 +1,23 @@
+apps/evals/src/tasks/applied-activity-kind/task.ts
+  e962d0077d76e74e 10
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "baeda7b935d63a82e5c6abb17bf422f19dcaef14",
+  "prompts": {
+    "e962d0077d76e74e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "fcba549a-abc4-4999-bd18-7ecd45de8d21",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 1,
+      "total_deletions": 1,
+      "accepted_lines": 1,
+      "overriden_lines": 0
+    }
+  }
+}
