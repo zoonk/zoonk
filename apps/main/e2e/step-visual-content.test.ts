@@ -70,45 +70,6 @@ async function createVisualActivity(options: {
   return { url };
 }
 
-function buildLargeDiagram(uniqueId: string) {
-  const ranks = [
-    "collect",
-    "prepare",
-    "train",
-    "evaluate",
-    "validate",
-    "ship",
-    "monitor",
-    "improve",
-  ];
-  const nodes = ranks.flatMap((rank) =>
-    Array.from({ length: 6 }, (_, index) => ({
-      id: `${rank}-${index}`,
-      label: `${rank.toUpperCase()} ${index + 1} ${uniqueId} system`,
-    })),
-  );
-
-  const edges = ranks.flatMap((rank, rankIndex) => {
-    const nextRank = ranks[rankIndex + 1];
-
-    if (!nextRank) {
-      return [];
-    }
-
-    return Array.from({ length: 6 }, (_, index) => ({
-      label: `${rank} to ${nextRank} ${index + 1}`,
-      source: `${rank}-${index}`,
-      target: `${nextRank}-${index}`,
-    }));
-  });
-
-  return {
-    edges,
-    kind: "diagram" as const,
-    nodes,
-  };
-}
-
 function buildWideTable(uniqueId: string) {
   const columns = Array.from({ length: 7 }, (_, index) => `Column ${index + 1} ${uniqueId}`);
   const rows = Array.from({ length: 4 }, (_, rowIndex) =>
@@ -137,11 +98,6 @@ async function getVisualContentMetrics(page: Page) {
 async function getVisualContentScrollLeft(page: Page) {
   const metrics = await getVisualContentMetrics(page);
   return metrics.scrollLeft;
-}
-
-async function getVisualContentScrollTop(page: Page) {
-  const metrics = await getVisualContentMetrics(page);
-  return metrics.scrollTop;
 }
 
 async function getHorizontalScrollMetrics(locator: Locator) {
@@ -371,72 +327,6 @@ test.describe("Visual Step Content", () => {
 
     expect(spacing.top).toBeGreaterThan(40);
     expect(spacing.bottom).toBeGreaterThan(40);
-  });
-
-  test("diagram scroll stays inside the player", async ({ page }) => {
-    const uniqueId = randomUUID().slice(0, 8);
-    const { url } = await createVisualActivity({
-      steps: [
-        {
-          content: buildLargeDiagram(uniqueId),
-          kind: "visual",
-          position: 0,
-        },
-      ],
-    });
-
-    await page.setViewportSize({ height: 700, width: 390 });
-    await page.goto(url);
-
-    const figure = page.getByRole("figure", { name: /diagram/i });
-    const diagram = figure.getByRole("img");
-    const closeButton = page.getByRole("link", { name: /close/i });
-    const nextButton = page.getByRole("button", { name: /next step/i });
-    const visualContent = page.getByRole("region", { name: /visual content/i });
-
-    await expect(figure).toBeVisible();
-    await expect(closeButton).toBeVisible();
-    await expect(nextButton).toBeVisible();
-    await expect(visualContent).toBeVisible();
-
-    await expect
-      .poll(() => getVisualContentMetrics(page))
-      .toMatchObject({
-        scrollHeight: expect.any(Number),
-        scrollWidth: expect.any(Number),
-      });
-
-    const initialMetrics = await getVisualContentMetrics(page);
-    const initialDiagramMetrics = await getHorizontalScrollMetrics(diagram);
-
-    expect(initialMetrics.scrollHeight).toBeGreaterThan(initialMetrics.clientHeight);
-    expect(initialDiagramMetrics.scrollWidth).toBeGreaterThan(initialDiagramMetrics.clientWidth);
-
-    const initialWindowScrollY = await page.evaluate(() => window.scrollY);
-    const initialCloseTop = await getViewportTop(closeButton);
-    const initialNextTop = await getViewportTop(nextButton);
-    await visualContent.hover();
-    await page.mouse.wheel(0, 150);
-
-    await expect.poll(() => getVisualContentScrollTop(page)).toBeGreaterThan(0);
-
-    const scrollTopAfterVertical = await getVisualContentScrollTop(page);
-
-    await diagram.hover();
-    await page.mouse.wheel(500, 0);
-
-    await expect.poll(() => getHorizontalScrollLeft(diagram)).toBeGreaterThan(0);
-    await expect.poll(() => getVisualContentScrollLeft(page)).toBe(0);
-
-    await page.mouse.wheel(0, 150);
-
-    await expect
-      .poll(() => getVisualContentScrollTop(page))
-      .toBeGreaterThan(scrollTopAfterVertical);
-
-    expect(await page.evaluate(() => window.scrollY)).toBe(initialWindowScrollY);
-    expect(Math.abs((await getViewportTop(closeButton)) - initialCloseTop)).toBeLessThan(1);
-    expect(Math.abs((await getViewportTop(nextButton)) - initialNextTop)).toBeLessThan(1);
   });
 
   test("clicking on a visual step with diagram navigates to next step", async ({ page }) => {

@@ -1,25 +1,18 @@
 import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { type ActivityKind } from "@zoonk/db";
+import { CUSTOM_PHASE_ORDER, CUSTOM_PHASE_STEPS } from "./phase-kind-steps/custom";
+import { EXPLANATION_PHASE_ORDER, EXPLANATION_PHASE_STEPS } from "./phase-kind-steps/explanation";
+import { GRAMMAR_PHASE_ORDER, GRAMMAR_PHASE_STEPS } from "./phase-kind-steps/grammar";
 import {
-  CUSTOM_PHASE_ORDER,
-  CUSTOM_PHASE_STEPS,
-  EXPLANATION_PHASE_ORDER,
-  EXPLANATION_PHASE_STEPS,
-  GRAMMAR_PHASE_ORDER,
-  GRAMMAR_PHASE_STEPS,
-  LISTENING_PHASE_ORDER,
-  LISTENING_PHASE_STEPS,
-  PRACTICE_PHASE_ORDER,
-  PRACTICE_PHASE_STEPS,
-  QUIZ_PHASE_ORDER,
-  QUIZ_PHASE_STEPS,
-  READING_PHASE_ORDER,
-  READING_PHASE_STEPS,
-  STORY_PHASE_ORDER,
-  STORY_PHASE_STEPS,
-  VOCABULARY_PHASE_ORDER,
-  VOCABULARY_PHASE_STEPS,
-} from "./activity-generation-phase-kind-steps";
+  INVESTIGATION_PHASE_ORDER,
+  INVESTIGATION_PHASE_STEPS,
+} from "./phase-kind-steps/investigation";
+import { LISTENING_PHASE_ORDER, LISTENING_PHASE_STEPS } from "./phase-kind-steps/listening";
+import { PRACTICE_PHASE_ORDER, PRACTICE_PHASE_STEPS } from "./phase-kind-steps/practice";
+import { QUIZ_PHASE_ORDER, QUIZ_PHASE_STEPS } from "./phase-kind-steps/quiz";
+import { READING_PHASE_ORDER, READING_PHASE_STEPS } from "./phase-kind-steps/reading";
+import { STORY_PHASE_ORDER, STORY_PHASE_STEPS } from "./phase-kind-steps/story";
+import { VOCABULARY_PHASE_ORDER, VOCABULARY_PHASE_STEPS } from "./phase-kind-steps/vocabulary";
 
 export { getPhaseWeights } from "./activity-generation-phase-weights";
 
@@ -46,13 +39,19 @@ export { getPhaseWeights } from "./activity-generation-phase-weights";
  *
  * WHEN ADDING A NEW STEP:
  * 1. Add the step name to ACTIVITY_STEPS in packages/core/src/workflows/steps.ts
- * 2. Add it to the relevant kind's config in activity-generation-phase-kind-steps.ts
+ * 2. Add it to the relevant kind's config in phase-kind-steps/{kind}.ts
  * 3. The AssertAllCovered type will error if you forget to assign it to a phase
  */
 export type PhaseName =
   | "gettingStarted"
   | "buildingWordList"
   | "buildingScenario"
+  | "settingTheScene"
+  | "classifyingExplanations"
+  | "designingActions"
+  | "gatheringEvidence"
+  | "analyzingEvidence"
+  | "writingTheReveal"
   | "addingPronunciation"
   | "addingRomanization"
   | "addingVocabularyRomanization"
@@ -78,7 +77,7 @@ const PHASE_ORDER_MAP: Record<ActivityKind, PhaseName[]> = {
   custom: CUSTOM_PHASE_ORDER,
   explanation: EXPLANATION_PHASE_ORDER,
   grammar: GRAMMAR_PHASE_ORDER,
-  investigation: [],
+  investigation: INVESTIGATION_PHASE_ORDER,
   listening: LISTENING_PHASE_ORDER,
   practice: PRACTICE_PHASE_ORDER,
   quiz: QUIZ_PHASE_ORDER,
@@ -109,13 +108,17 @@ function toFullPhaseSteps(
     addingRomanization: EMPTY,
     addingVocabularyRomanization: EMPTY,
     addingWordPronunciation: EMPTY,
+    analyzingEvidence: EMPTY,
     buildingScenario: EMPTY,
     buildingWordList: EMPTY,
+    classifyingExplanations: EMPTY,
     creatingAnswerOptions: EMPTY,
     creatingExercises: EMPTY,
     creatingImages: EMPTY,
     creatingSentences: EMPTY,
     creatingVisuals: EMPTY,
+    designingActions: EMPTY,
+    gatheringEvidence: EMPTY,
     gettingStarted: EMPTY,
     lookingUpWords: EMPTY,
     preparingVisuals: EMPTY,
@@ -124,9 +127,11 @@ function toFullPhaseSteps(
     recordingWordAudio: EMPTY,
     saving: EMPTY,
     savingPrerequisites: EMPTY,
+    settingTheScene: EMPTY,
     writingContent: EMPTY,
     writingDebrief: EMPTY,
     writingExplanation: EMPTY,
+    writingTheReveal: EMPTY,
     ...partial,
   };
 }
@@ -135,7 +140,7 @@ const PHASE_STEPS_MAP: Record<ActivityKind, Record<PhaseName, readonly ActivityS
   custom: toFullPhaseSteps(CUSTOM_PHASE_STEPS),
   explanation: toFullPhaseSteps(EXPLANATION_PHASE_STEPS),
   grammar: toFullPhaseSteps(GRAMMAR_PHASE_STEPS),
-  investigation: toFullPhaseSteps({}),
+  investigation: toFullPhaseSteps(INVESTIGATION_PHASE_STEPS),
   listening: toFullPhaseSteps(LISTENING_PHASE_STEPS),
   practice: toFullPhaseSteps(PRACTICE_PHASE_STEPS),
   quiz: toFullPhaseSteps(QUIZ_PHASE_STEPS),
