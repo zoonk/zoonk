@@ -410,15 +410,13 @@ describe("step content contracts", () => {
       ).toThrow();
     });
 
-    test("parses call variant with explanations and fullExplanation", () => {
+    test("parses call variant with explanations and per-explanation feedback", () => {
       const content = parseStepContent("investigation", {
         explanations: [
-          { accuracy: "best", text: "The butler did it" },
-          { accuracy: "partial", text: "The maid did it" },
-          { accuracy: "wrong", text: "The dog did it" },
+          { accuracy: "best", feedback: "Correct — the butler did it.", text: "The butler did it" },
+          { accuracy: "partial", feedback: "Close, but not quite.", text: "The maid did it" },
+          { accuracy: "wrong", feedback: "Not supported by evidence.", text: "The dog did it" },
         ],
-        fullExplanation:
-          "The security footage and fingerprint evidence both pointed to the butler.",
         variant: "call",
       });
 
@@ -429,8 +427,7 @@ describe("step content contracts", () => {
       expect(() =>
         parseStepContent("investigation", {
           correctExplanationIndex: 0,
-          explanations: [{ accuracy: "best", text: "Explanation." }],
-          fullExplanation: "Full explanation.",
+          explanations: [{ accuracy: "best", feedback: "Correct.", text: "Explanation." }],
           variant: "call",
         }),
       ).toThrow();

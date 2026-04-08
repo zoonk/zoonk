@@ -1954,14 +1954,14 @@ msgid "Generating evidence for each action..."
 msgstr "Generando evidencia para cada acción..."
 
 #: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
+msgctxt "bn5TYw"
+msgid "Writing feedback for each explanation..."
+msgstr "Escribiendo comentarios para cada explicación..."
+
+#: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
 msgctxt "btzedf"
 msgid "Planning investigation steps..."
 msgstr "Planeando los pasos de investigación..."
-
-#: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
-msgctxt "CygeNq"
-msgid "Sorting explanations by quality..."
-msgstr "Ordenando las explicaciones por calidad..."
 
 #: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
 msgctxt "eZgYlp"
@@ -1969,39 +1969,14 @@ msgid "Making the evidence deliberately ambiguous..."
 msgstr "Haciendo la evidencia deliberadamente ambigua..."
 
 #: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
-msgctxt "GJS6pt"
-msgid "Crafting analysis statements..."
-msgstr "Redactando declaraciones de análisis..."
-
-#: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
 msgctxt "gX67z0"
 msgid "Crafting possible explanations..."
 msgstr "Redactando posibles explicaciones..."
 
 #: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
-msgctxt "hwYnBz"
-msgid "Writing interpretations for each finding..."
-msgstr "Escribiendo interpretaciones para cada hallazgo..."
-
-#: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
 msgctxt "ISjUeV"
 msgid "Creating the mystery scenario..."
 msgstr "Creando el escenario de misterio..."
-
-#: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
-msgctxt "LyQKJb"
-msgid "Preparing the debrief..."
-msgstr "Preparando el informe final..."
-
-#: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
-msgctxt "MpbtqB"
-msgid "Building the reasoning chains..."
-msgstr "Construyendo las cadenas de razonamiento..."
-
-#: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
-msgctxt "ncTtNl"
-msgid "Writing the final explanation..."
-msgstr "Escribiendo la explicación final..."
 
 #: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
 msgctxt "OWWxLA"
@@ -2012,16 +1987,6 @@ msgstr "Redactando los hallazgos..."
 msgctxt "rugo1+"
 msgid "Mapping out the investigation paths..."
 msgstr "Trazando las rutas de investigación..."
-
-#: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
-msgctxt "T+hBiU"
-msgid "Examining evidence from every angle..."
-msgstr "Examinando la evidencia desde todos los ángulos..."
-
-#: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
-msgctxt "t8DGDG"
-msgid "Crafting the reveal moment..."
-msgstr "Diseñando el momento de la revelación..."
 
 #: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
 msgctxt "TG/Jbn"
@@ -2264,11 +2229,6 @@ msgid "Analyzing explanations"
 msgstr "Analizando explicaciones"
 
 #: src/app/generate/a/[id]/use-phase-labels.ts
-msgctxt "9+VDw9"
-msgid "Writing the reveal"
-msgstr "Escribiendo la revelación"
-
-#: src/app/generate/a/[id]/use-phase-labels.ts
 msgctxt "aKNA/b"
 msgid "Creating images"
 msgstr "Creando imágenes"
@@ -2323,11 +2283,6 @@ msgstr "Preparando el cierre"
 msgctxt "mIpv67"
 msgid "Creating sentences"
 msgstr "Creando oraciones"
-
-#: src/app/generate/a/[id]/use-phase-labels.ts
-msgctxt "NvgorH"
-msgid "Analyzing the evidence"
-msgstr "Analizando la evidencia"
 
 #: src/app/generate/a/[id]/use-phase-labels.ts
 msgctxt "RXfSEl"

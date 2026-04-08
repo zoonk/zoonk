@@ -50,8 +50,6 @@ export type PhaseName =
   | "classifyingExplanations"
   | "designingActions"
   | "gatheringEvidence"
-  | "analyzingEvidence"
-  | "writingTheReveal"
   | "addingPronunciation"
   | "addingRomanization"
   | "addingVocabularyRomanization"
@@ -108,7 +106,6 @@ function toFullPhaseSteps(
     addingRomanization: EMPTY,
     addingVocabularyRomanization: EMPTY,
     addingWordPronunciation: EMPTY,
-    analyzingEvidence: EMPTY,
     buildingScenario: EMPTY,
     buildingWordList: EMPTY,
     classifyingExplanations: EMPTY,
@@ -131,7 +128,6 @@ function toFullPhaseSteps(
     writingContent: EMPTY,
     writingDebrief: EMPTY,
     writingExplanation: EMPTY,
-    writingTheReveal: EMPTY,
     ...partial,
   };
 }

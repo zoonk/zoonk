@@ -11,7 +11,6 @@
     "./tasks/activities/core/story-debrief": "./src/tasks/activities/core/activity-story-debrief.ts",
     "./tasks/activities/core/investigation-accuracy": "./src/tasks/activities/core/activity-investigation-accuracy.ts",
     "./tasks/activities/core/investigation-actions": "./src/tasks/activities/core/activity-investigation-actions.ts",
-    "./tasks/activities/core/investigation-debrief": "./src/tasks/activities/core/activity-investigation-debrief.ts",
     "./tasks/activities/core/investigation-findings": "./src/tasks/activities/core/activity-investigation-findings.ts",
     "./tasks/activities/core/investigation-scenario": "./src/tasks/activities/core/activity-investigation-scenario.ts",
     "./tasks/activities/core/story-steps": "./src/tasks/activities/core/activity-story-steps.ts",

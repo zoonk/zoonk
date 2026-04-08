@@ -30,7 +30,10 @@ const mockScenario = {
 };
 
 const mockAccuracy = {
-  accuracies: ["best", "wrong"] as ("best" | "partial" | "wrong")[],
+  accuracies: [
+    { accuracy: "best" as const, feedback: "This is the correct answer." },
+    { accuracy: "wrong" as const, feedback: "This is incorrect." },
+  ],
 };
 
 const mockActions = {
@@ -42,10 +45,6 @@ const mockActions = {
 
 const mockFindings = {
   findings: ["Server logs show 500 errors around 2 AM.", "Colleague says nothing changed."],
-};
-
-const mockDebrief = {
-  fullExplanation: "The traffic drop was caused by a CDN outage.",
 };
 
 describe(saveInvestigationActivityStep, () => {
@@ -88,7 +87,6 @@ describe(saveInvestigationActivityStep, () => {
       accuracy: mockAccuracy,
       actions: mockActions,
       activityId: Number(activity.id),
-      debrief: mockDebrief,
       findings: mockFindings,
       scenario: mockScenario,
       workflowRunId: "workflow-1",
@@ -121,7 +119,11 @@ describe(saveInvestigationActivityStep, () => {
     expect(dbSteps[2]?.kind).toBe("investigation");
     expect(dbSteps[2]?.position).toBe(2);
     expect(getString(dbSteps[2]?.content, "variant")).toBe("call");
-    expect(getString(dbSteps[2]?.content, "fullExplanation")).toBe(mockDebrief.fullExplanation);
+    const explanations = dbSteps[2]?.content as {
+      explanations: { accuracy: string; feedback: string; text: string }[];
+    };
+    expect(explanations.explanations[0]?.feedback).toBe("This is the correct answer.");
+    expect(explanations.explanations[1]?.feedback).toBe("This is incorrect.");
 
     for (const step of dbSteps) {
       expect(step.isPublished).toBe(true);
@@ -163,7 +165,6 @@ describe(saveInvestigationActivityStep, () => {
       accuracy: mockAccuracy,
       actions: mockActions,
       activityId: Number(activity.id),
-      debrief: mockDebrief,
       findings: mockFindings,
       scenario: mockScenario,
       workflowRunId: "workflow-completed",
@@ -200,7 +201,6 @@ describe(saveInvestigationActivityStep, () => {
       accuracy: mockAccuracy,
       actions: mockActions,
       activityId: Number(activity.id),
-      debrief: mockDebrief,
       findings: mockFindings,
       scenario: mockScenario,
       workflowRunId: "workflow-error",

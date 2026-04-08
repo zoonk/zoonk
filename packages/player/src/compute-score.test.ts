@@ -359,10 +359,9 @@ describe(buildScoringInput, () => {
         {
           content: {
             explanations: [
-              { accuracy: "best", text: "Memory leak" },
-              { accuracy: "wrong", text: "Network" },
+              { accuracy: "best", feedback: "Correct!", text: "Memory leak" },
+              { accuracy: "wrong", feedback: "Incorrect.", text: "Network" },
             ],
-            fullExplanation: "It was a memory leak",
             variant: "call",
           },
           id: "call-1",

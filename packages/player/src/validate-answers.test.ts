@@ -388,10 +388,9 @@ describe(validateAnswers, () => {
       {
         content: {
           explanations: [
-            { accuracy: "best", text: "Memory leak" },
-            { accuracy: "wrong", text: "Network failure" },
+            { accuracy: "best", feedback: "Correct!", text: "Memory leak" },
+            { accuracy: "wrong", feedback: "Incorrect.", text: "Network failure" },
           ],
-          fullExplanation: "The API had a memory leak",
           variant: "call",
         },
         id: 14n,
@@ -412,10 +411,9 @@ describe(validateAnswers, () => {
       {
         content: {
           explanations: [
-            { accuracy: "best", text: "Memory leak" },
-            { accuracy: "wrong", text: "Network failure" },
+            { accuracy: "best", feedback: "Correct!", text: "Memory leak" },
+            { accuracy: "wrong", feedback: "Incorrect.", text: "Network failure" },
           ],
-          fullExplanation: "The API had a memory leak",
           variant: "call",
         },
         id: 15n,

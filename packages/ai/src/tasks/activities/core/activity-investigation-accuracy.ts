@@ -13,10 +13,22 @@ const FALLBACK_MODELS = ["google/gemini-3.1-flash-lite-preview", "anthropic/clau
  * matches the number of explanations. A wrong-length output
  * is structurally broken — tiers can't be mapped back to
  * explanations — so we fail fast instead of silently misaligning.
+ *
+ * Each entry pairs an accuracy tier with a feedback message
+ * explaining WHY this explanation is best/partial/wrong.
+ * This replaces the standalone debrief task — learners now
+ * see feedback specific to the explanation they picked.
  */
 function buildSchema(explanationCount: number) {
   return z.object({
-    accuracies: z.array(z.enum(["best", "partial", "wrong"])).length(explanationCount),
+    accuracies: z
+      .array(
+        z.object({
+          accuracy: z.enum(["best", "partial", "wrong"]),
+          feedback: z.string(),
+        }),
+      )
+      .length(explanationCount),
   });
 }
 

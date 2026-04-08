@@ -560,20 +560,13 @@ checksums:
     Setting%20up%20the%20investigation.../singular: 77e64580356c549fcdfad37e1caf14d9
     Designing%20what%20you%20can%20investigate.../singular: 8a387e12356fc62f2fa45d0795412ab1
     Generating%20evidence%20for%20each%20action.../singular: 7d1c018fa83a158b9a1f1b642322682d
+    Writing%20feedback%20for%20each%20explanation.../singular: ff40120cc826c02dfcd45e2661f33b16
     Planning%20investigation%20steps.../singular: f6b67dec06c6b8afe77c6970aac8a61e
-    Sorting%20explanations%20by%20quality.../singular: 6092b281728d6211ee37279cd281c60a
     Making%20the%20evidence%20deliberately%20ambiguous.../singular: 2383128d6bfee5d4cec5fcc59b66cb49
-    Crafting%20analysis%20statements.../singular: 1b32247acb5fd23c3f574cdd0ae57dc1
     Crafting%20possible%20explanations.../singular: 6027626c9cf272c785604806fcb60bd5
-    Writing%20interpretations%20for%20each%20finding.../singular: 198ac547bf687e5b3c4ce99e6ce27936
     Creating%20the%20mystery%20scenario.../singular: 0284827c3666725204d7d2bb963d4a2d
-    Preparing%20the%20debrief.../singular: 0e7d13dbb081f7d9246f83175b9d3ce7
-    Building%20the%20reasoning%20chains.../singular: ece173ab597e8e1d6414b11555636f08
-    Writing%20the%20final%20explanation.../singular: d0c84daa53c1b35a76ba6206919357b2
     Crafting%20the%20findings.../singular: cdbbddb05ecbaef050263d1dff0cd6a1
     Mapping%20out%20the%20investigation%20paths.../singular: 09489b963a15905c0279db3aed4a5fef
-    Examining%20evidence%20from%20every%20angle.../singular: b66ff9528025382fc00d02e8aad9a59b
-    Crafting%20the%20reveal%20moment.../singular: 031dc19831d36aa0648c7921480ed9bd
     Building%20the%20clues.../singular: da454dacf64e48e5811d240dce802f31
     Determining%20accuracy%20levels.../singular: 9330bc89ef43f0f064b94a10f5ded68a
     Designing%20the%20case.../singular: b09cb94c192296021130b4d9bcf6b313
@@ -622,7 +615,6 @@ checksums:
     Adding%20grammar%20romanization/singular: aec7227120d75a046352755b221cb078
     Setting%20the%20scene/singular: 1fe7275df8c75374681c678698ea4209
     Analyzing%20explanations/singular: 51e45a477eac011f207fc67026550c3f
-    Writing%20the%20reveal/singular: 0775ee12f46c6184ac744992393d6309
     Creating%20images/singular: ab6fe5010daa5a4deb52eabed6ca071f
     Creating%20exercises/singular: 053bc9e20db8cb27cea117a0a823af32
     Saving%20your%20activity/singular: 7dc60a662368e56e7c769a6b53f7b369
@@ -634,7 +626,6 @@ checksums:
     Creating%20the%20story/singular: a063029253c8262e769d0ca1f949de73
     Preparing%20the%20wrap-up/singular: 28cfda9388f052a4391705ec7ad01511
     Creating%20sentences/singular: a9f832408dd259bd6458708c84b34ff0
-    Analyzing%20the%20evidence/singular: 629968775cc2e17e4c93e4b24362f287
     Building%20word%20list/singular: 9a9b5271981383a36db347f286054e02
     Preparing%20illustrations/singular: ebb0d8d739dd029c1ac7327ab6adf8b7
     Recording%20audio/singular: 528bf44d9d7b8a1c8be7ec526307a703

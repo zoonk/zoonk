@@ -1,7 +1,6 @@
 import { createEntityStepStream } from "@/workflows/_shared/stream-status";
 import { type ActivityInvestigationAccuracySchema } from "@zoonk/ai/tasks/activities/core/investigation-accuracy";
 import { type ActivityInvestigationActionsSchema } from "@zoonk/ai/tasks/activities/core/investigation-actions";
-import { type ActivityInvestigationDebriefSchema } from "@zoonk/ai/tasks/activities/core/investigation-debrief";
 import { type ActivityInvestigationFindingsSchema } from "@zoonk/ai/tasks/activities/core/investigation-findings";
 import { type ActivityInvestigationScenarioSchema } from "@zoonk/ai/tasks/activities/core/investigation-scenario";
 import { assertStepContent } from "@zoonk/core/steps/contract/content";
@@ -11,15 +10,18 @@ import { safeAsync } from "@zoonk/utils/error";
 import { handleActivityFailureStep } from "./handle-failure-step";
 
 /**
- * Zips scenario explanations with accuracy tiers to produce the
- * explanations array used in the call step.
+ * Zips scenario explanations with accuracy tiers and feedback
+ * to produce the explanations array used in the call step.
+ * Each explanation carries its own feedback message so the player
+ * can show explanation-specific feedback after the learner commits.
  */
 function buildExplanationsWithAccuracy(
   scenario: ActivityInvestigationScenarioSchema,
   accuracy: ActivityInvestigationAccuracySchema,
 ) {
   return scenario.explanations.map((text, index) => ({
-    accuracy: accuracy.accuracies[index] ?? "wrong",
+    accuracy: accuracy.accuracies[index]?.accuracy ?? "wrong",
+    feedback: accuracy.accuracies[index]?.feedback ?? "",
     text,
   }));
 }
@@ -29,20 +31,18 @@ function buildExplanationsWithAccuracy(
  *
  * - Position 0: investigation/problem — scenario
  * - Position 1: investigation/action — actions with embedded findings
- * - Position 2: investigation/call — explanations with accuracy, fullExplanation
+ * - Position 2: investigation/call — explanations with accuracy and feedback
  */
 function buildInvestigationStepRecords({
   accuracy,
   activityId,
   actions,
-  debrief,
   findings,
   scenario,
 }: {
   accuracy: ActivityInvestigationAccuracySchema;
   activityId: number;
   actions: ActivityInvestigationActionsSchema;
-  debrief: ActivityInvestigationDebriefSchema;
   findings: ActivityInvestigationFindingsSchema;
   scenario: ActivityInvestigationScenarioSchema;
 }) {
@@ -78,7 +78,6 @@ function buildInvestigationStepRecords({
     activityId,
     content: assertStepContent("investigation", {
       explanations,
-      fullExplanation: debrief.fullExplanation,
       variant: "call" as const,
     }),
     isPublished: true,
@@ -93,7 +92,7 @@ function buildInvestigationStepRecords({
  * Persists all generated investigation data in one transaction:
  * - Problem step with scenario
  * - Action step with all investigation actions and embedded findings
- * - Call step with explanations and debrief
+ * - Call step with explanations and per-explanation feedback
  * - Marks the activity as completed
  *
  * This is the single save point for an investigation entity.
@@ -104,7 +103,6 @@ export async function saveInvestigationActivityStep({
   accuracy,
   activityId,
   actions,
-  debrief,
   findings,
   scenario,
   workflowRunId,
@@ -112,7 +110,6 @@ export async function saveInvestigationActivityStep({
   accuracy: ActivityInvestigationAccuracySchema;
   activityId: number;
   actions: ActivityInvestigationActionsSchema;
-  debrief: ActivityInvestigationDebriefSchema;
   findings: ActivityInvestigationFindingsSchema;
   scenario: ActivityInvestigationScenarioSchema;
   workflowRunId: string;
@@ -127,7 +124,6 @@ export async function saveInvestigationActivityStep({
     accuracy,
     actions,
     activityId,
-    debrief,
     findings,
     scenario,
   });

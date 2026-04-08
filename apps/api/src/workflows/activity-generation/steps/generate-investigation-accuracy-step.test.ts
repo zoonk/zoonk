@@ -37,7 +37,11 @@ const mockScenario = {
 };
 
 const mockAccuracyData = {
-  accuracies: ["best", "partial", "wrong"] as ("best" | "partial" | "wrong")[],
+  accuracies: [
+    { accuracy: "best" as const, feedback: "This is the most complete explanation." },
+    { accuracy: "partial" as const, feedback: "Has some truth but misses key insight." },
+    { accuracy: "wrong" as const, feedback: "Plausible but incorrect." },
+  ],
 };
 
 describe(generateInvestigationAccuracyStep, () => {

@@ -9,9 +9,21 @@ import { expect, test } from "./fixtures";
 
 function buildInvestigationContent(uniqueId: string) {
   const explanations = [
-    { accuracy: "best" as const, text: `Memory leak in the API service ${uniqueId}` },
-    { accuracy: "partial" as const, text: `Database connection pool exhausted ${uniqueId}` },
-    { accuracy: "wrong" as const, text: `Network switch failure ${uniqueId}` },
+    {
+      accuracy: "best" as const,
+      feedback: `Correct — the API had a memory leak introduced in v2.2 ${uniqueId}`,
+      text: `Memory leak in the API service ${uniqueId}`,
+    },
+    {
+      accuracy: "partial" as const,
+      feedback: `Close — DB pools were strained, but that was a symptom ${uniqueId}`,
+      text: `Database connection pool exhausted ${uniqueId}`,
+    },
+    {
+      accuracy: "wrong" as const,
+      feedback: `Network hardware was fine — the issue was in software ${uniqueId}`,
+      text: `Network switch failure ${uniqueId}`,
+    },
   ];
 
   return {
@@ -47,7 +59,6 @@ function buildInvestigationContent(uniqueId: string) {
     },
     call: {
       explanations,
-      fullExplanation: `The API service had a memory leak introduced in v2.2 ${uniqueId}`,
       variant: "call" as const,
     },
     problem: {
@@ -285,7 +296,9 @@ test.describe("Investigation Call Step", () => {
     await expect(page.getByText(new RegExp(`unusual pattern.*${uniqueId}`))).toBeVisible();
   });
 
-  test("shows debrief on feedback screen after checking call", async ({ page }) => {
+  test("shows per-explanation feedback on feedback screen after checking call", async ({
+    page,
+  }) => {
     const { uniqueId, url } = await createInvestigationActivity();
 
     await page.goto(url);

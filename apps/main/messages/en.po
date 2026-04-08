@@ -1954,14 +1954,14 @@ msgid "Generating evidence for each action..."
 msgstr "Generating evidence for each action..."
 
 #: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
+msgctxt "bn5TYw"
+msgid "Writing feedback for each explanation..."
+msgstr "Writing feedback for each explanation..."
+
+#: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
 msgctxt "btzedf"
 msgid "Planning investigation steps..."
 msgstr "Planning investigation steps..."
-
-#: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
-msgctxt "CygeNq"
-msgid "Sorting explanations by quality..."
-msgstr "Sorting explanations by quality..."
 
 #: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
 msgctxt "eZgYlp"
@@ -1969,39 +1969,14 @@ msgid "Making the evidence deliberately ambiguous..."
 msgstr "Making the evidence deliberately ambiguous..."
 
 #: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
-msgctxt "GJS6pt"
-msgid "Crafting analysis statements..."
-msgstr "Crafting analysis statements..."
-
-#: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
 msgctxt "gX67z0"
 msgid "Crafting possible explanations..."
 msgstr "Crafting possible explanations..."
 
 #: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
-msgctxt "hwYnBz"
-msgid "Writing interpretations for each finding..."
-msgstr "Writing interpretations for each finding..."
-
-#: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
 msgctxt "ISjUeV"
 msgid "Creating the mystery scenario..."
 msgstr "Creating the mystery scenario..."
-
-#: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
-msgctxt "LyQKJb"
-msgid "Preparing the debrief..."
-msgstr "Preparing the debrief..."
-
-#: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
-msgctxt "MpbtqB"
-msgid "Building the reasoning chains..."
-msgstr "Building the reasoning chains..."
-
-#: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
-msgctxt "ncTtNl"
-msgid "Writing the final explanation..."
-msgstr "Writing the final explanation..."
 
 #: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
 msgctxt "OWWxLA"
@@ -2012,16 +1987,6 @@ msgstr "Crafting the findings..."
 msgctxt "rugo1+"
 msgid "Mapping out the investigation paths..."
 msgstr "Mapping out the investigation paths..."
-
-#: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
-msgctxt "T+hBiU"
-msgid "Examining evidence from every angle..."
-msgstr "Examining evidence from every angle..."
-
-#: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
-msgctxt "t8DGDG"
-msgid "Crafting the reveal moment..."
-msgstr "Crafting the reveal moment..."
 
 #: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
 msgctxt "TG/Jbn"
@@ -2264,11 +2229,6 @@ msgid "Analyzing explanations"
 msgstr "Analyzing explanations"
 
 #: src/app/generate/a/[id]/use-phase-labels.ts
-msgctxt "9+VDw9"
-msgid "Writing the reveal"
-msgstr "Writing the reveal"
-
-#: src/app/generate/a/[id]/use-phase-labels.ts
 msgctxt "aKNA/b"
 msgid "Creating images"
 msgstr "Creating images"
@@ -2323,11 +2283,6 @@ msgstr "Preparing the wrap-up"
 msgctxt "mIpv67"
 msgid "Creating sentences"
 msgstr "Creating sentences"
-
-#: src/app/generate/a/[id]/use-phase-labels.ts
-msgctxt "NvgorH"
-msgid "Analyzing the evidence"
-msgstr "Analyzing the evidence"
 
 #: src/app/generate/a/[id]/use-phase-labels.ts
 msgctxt "RXfSEl"

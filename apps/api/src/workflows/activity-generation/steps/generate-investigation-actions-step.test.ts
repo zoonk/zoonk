@@ -37,7 +37,11 @@ const mockScenario = {
 };
 
 const mockAccuracy = {
-  accuracies: ["best", "partial", "wrong"] as ("best" | "partial" | "wrong")[],
+  accuracies: [
+    { accuracy: "best" as const, feedback: "Correct." },
+    { accuracy: "partial" as const, feedback: "Partially right." },
+    { accuracy: "wrong" as const, feedback: "Incorrect." },
+  ],
 };
 
 const mockActionsData = {

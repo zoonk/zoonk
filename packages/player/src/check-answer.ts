@@ -146,9 +146,9 @@ export function checkInvestigationAction(
  * accuracy tier.
  *
  * "best" is the correct explanation. "partial" gets partial credit in
- * scoring but counts as incorrect for the binary check. "wrong" is
- * fully incorrect. Returns the fullExplanation as feedback for the
- * debrief reveal.
+ * scoring but counts as incorrect for the binary check. Returns the
+ * selected explanation's feedback — each explanation has its own
+ * message explaining why it's correct, partially right, or wrong.
  */
 export function checkInvestigationCall(
   content: Extract<InvestigationStepContent, { variant: "call" }>,
@@ -157,10 +157,10 @@ export function checkInvestigationCall(
   const explanation = content.explanations[selectedExplanationIndex];
 
   if (!explanation) {
-    return { correctAnswer: null, feedback: content.fullExplanation, isCorrect: false };
+    return { correctAnswer: null, feedback: null, isCorrect: false };
   }
 
   const isCorrect = explanation.accuracy === "best";
 
-  return { correctAnswer: null, feedback: content.fullExplanation, isCorrect };
+  return { correctAnswer: null, feedback: explanation.feedback, isCorrect };
 }

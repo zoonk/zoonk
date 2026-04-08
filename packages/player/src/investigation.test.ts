@@ -45,11 +45,10 @@ const actionContent = {
 
 const callContent = {
   explanations: [
-    { accuracy: "best" as const, text: "Memory leak" },
-    { accuracy: "partial" as const, text: "DB pool exhausted" },
-    { accuracy: "wrong" as const, text: "Network failure" },
+    { accuracy: "best" as const, feedback: "Correct — memory leak.", text: "Memory leak" },
+    { accuracy: "partial" as const, feedback: "Partially right.", text: "DB pool exhausted" },
+    { accuracy: "wrong" as const, feedback: "Not supported.", text: "Network failure" },
   ],
-  fullExplanation: "The API had a memory leak",
   variant: "call" as const,
 };
 

@@ -433,8 +433,9 @@ describe(getInvestigationProgress, () => {
       steps: [
         buildStep({
           content: {
-            explanations: [{ accuracy: "best" as const, text: "Correct explanation" }],
-            fullExplanation: "Full debrief.",
+            explanations: [
+              { accuracy: "best" as const, feedback: "Correct!", text: "Correct explanation" },
+            ],
             variant: "call" as const,
           },
           id: "call-step",

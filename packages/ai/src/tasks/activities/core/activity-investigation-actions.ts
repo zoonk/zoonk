@@ -39,7 +39,7 @@ function formatInputsForPrompt({
   accuracy,
 }: Pick<ActivityInvestigationActionsParams, "scenario" | "accuracy">): string {
   const explanations = scenario.explanations
-    .map((exp, i) => `${i}. [${accuracy.accuracies[i]}] ${exp}`)
+    .map((exp, i) => `${i}. [${accuracy.accuracies[i]?.accuracy}] ${exp}`)
     .join("\n");
 
   return `

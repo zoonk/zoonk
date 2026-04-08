@@ -519,14 +519,21 @@ describe(checkStep, () => {
       expect(result.feedback).toBe("Logs show memory climbing");
     });
 
-    test("call variant: best accuracy is correct with fullExplanation feedback", () => {
+    test("call variant: best accuracy is correct with per-explanation feedback", () => {
       const step = buildStep({
         content: {
           explanations: [
-            { accuracy: "best" as const, text: "Memory leak" },
-            { accuracy: "wrong" as const, text: "Network failure" },
+            {
+              accuracy: "best" as const,
+              feedback: "Correct — this fully explains it.",
+              text: "Memory leak",
+            },
+            {
+              accuracy: "wrong" as const,
+              feedback: "Plausible but incorrect.",
+              text: "Network failure",
+            },
           ],
-          fullExplanation: "The API had a memory leak",
           variant: "call" as const,
         },
         kind: "investigation",
@@ -538,17 +545,24 @@ describe(checkStep, () => {
       };
       const { result } = checkStep(step, answer);
       expect(result.isCorrect).toBe(true);
-      expect(result.feedback).toBe("The API had a memory leak");
+      expect(result.feedback).toBe("Correct — this fully explains it.");
     });
 
-    test("call variant: wrong accuracy is incorrect", () => {
+    test("call variant: wrong accuracy is incorrect with its own feedback", () => {
       const step = buildStep({
         content: {
           explanations: [
-            { accuracy: "best" as const, text: "Memory leak" },
-            { accuracy: "wrong" as const, text: "Network failure" },
+            {
+              accuracy: "best" as const,
+              feedback: "Correct — this fully explains it.",
+              text: "Memory leak",
+            },
+            {
+              accuracy: "wrong" as const,
+              feedback: "Plausible but incorrect.",
+              text: "Network failure",
+            },
           ],
-          fullExplanation: "The API had a memory leak",
           variant: "call" as const,
         },
         kind: "investigation",
@@ -560,7 +574,7 @@ describe(checkStep, () => {
       };
       const { result } = checkStep(step, answer);
       expect(result.isCorrect).toBe(false);
-      expect(result.feedback).toBe("The API had a memory leak");
+      expect(result.feedback).toBe("Plausible but incorrect.");
     });
 
     test("mismatched answer kind returns mismatch result", () => {

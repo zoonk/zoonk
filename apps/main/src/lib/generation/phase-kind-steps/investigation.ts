@@ -5,10 +5,11 @@ import { type PhaseName } from "../activity-generation-phase-config";
 /**
  * Investigation phase step config.
  *
- * Investigation runs 5 AI tasks in a dependency chain:
- * scenario → accuracy → actions → findings → debrief → save
+ * Investigation runs 4 AI tasks in a dependency chain:
+ * scenario → accuracy (with feedback) → actions → findings → save
  *
- * Each AI call gets its own phase.
+ * Each AI call gets its own phase. The accuracy task also produces
+ * per-explanation feedback, replacing the former debrief step.
  *
  * See activity-generation-phase-config.ts for the phase grouping rules.
  */
@@ -20,19 +21,15 @@ type InvestigationSteps =
   | "generateInvestigationAccuracy"
   | "generateInvestigationActions"
   | "generateInvestigationFindings"
-  | "generateInvestigationInterpretations"
-  | "generateInvestigationDebrief"
   | "saveInvestigationActivity";
 
 export const INVESTIGATION_PHASE_STEPS = {
-  analyzingEvidence: ["generateInvestigationInterpretations"],
   classifyingExplanations: ["generateInvestigationAccuracy"],
   designingActions: ["generateInvestigationActions"],
   gatheringEvidence: ["generateInvestigationFindings"],
   gettingStarted: ["getLessonActivities", "setActivityAsRunning"],
   saving: ["saveInvestigationActivity"],
   settingTheScene: ["generateInvestigationScenario"],
-  writingTheReveal: ["generateInvestigationDebrief"],
 } as const satisfies Record<string, readonly ActivityStepName[]>;
 
 type _ValidateInvestigation = AssertAllCovered<
@@ -48,7 +45,5 @@ export const INVESTIGATION_PHASE_ORDER: PhaseName[] = [
   "classifyingExplanations",
   "designingActions",
   "gatheringEvidence",
-  "analyzingEvidence",
-  "writingTheReveal",
   "saving",
 ];

@@ -7,6 +7,7 @@ const investigationAccuracySchema = z.enum(["best", "partial", "wrong"]);
 const investigationExplanationSchema = z
   .object({
     accuracy: investigationAccuracySchema,
+    feedback: z.string(),
     text: z.string(),
   })
   .strict();
@@ -51,13 +52,13 @@ const investigationActionContentSchema = z
 /**
  * Call step: the learner picks which explanation they believe is correct
  * after investigating. The player checks the learner's pick against each
- * explanation's `accuracy` tier for scoring. `fullExplanation` is the
- * debrief reveal shown after the learner commits.
+ * explanation's `accuracy` tier for scoring. Each explanation carries its
+ * own `feedback` message shown after the learner commits — explaining
+ * why their specific choice is correct, partially right, or wrong.
  */
 const investigationCallContentSchema = z
   .object({
     explanations: z.array(investigationExplanationSchema),
-    fullExplanation: z.string(),
     variant: z.literal("call"),
   })
   .strict();

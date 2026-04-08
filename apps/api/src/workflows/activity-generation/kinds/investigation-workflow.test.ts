@@ -1,7 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { generateActivityInvestigationAccuracy } from "@zoonk/ai/tasks/activities/core/investigation-accuracy";
 import { generateActivityInvestigationActions } from "@zoonk/ai/tasks/activities/core/investigation-actions";
-import { generateActivityInvestigationDebrief } from "@zoonk/ai/tasks/activities/core/investigation-debrief";
 import { generateActivityInvestigationFindings } from "@zoonk/ai/tasks/activities/core/investigation-findings";
 import { generateActivityInvestigationScenario } from "@zoonk/ai/tasks/activities/core/investigation-scenario";
 import { prisma } from "@zoonk/db";
@@ -28,9 +27,13 @@ vi.mock("workflow", () => ({
   workflowStep: vi.fn().mockImplementation((_name: string, fn: unknown) => fn),
 }));
 
-const { mockScenario, mockAccuracy, mockActions, mockFindings, mockDebrief } = vi.hoisted(() => ({
+const { mockScenario, mockAccuracy, mockActions, mockFindings } = vi.hoisted(() => ({
   mockAccuracy: {
-    accuracies: ["best" as const, "partial" as const, "wrong" as const],
+    accuracies: [
+      { accuracy: "best" as const, feedback: "This is the most complete explanation." },
+      { accuracy: "partial" as const, feedback: "This has some truth but misses the key insight." },
+      { accuracy: "wrong" as const, feedback: "This sounds plausible but is incorrect." },
+    ],
   },
   mockActions: {
     actions: [
@@ -38,9 +41,6 @@ const { mockScenario, mockAccuracy, mockActions, mockFindings, mockDebrief } = v
       { label: "Interview workers", quality: "useful" as const },
       { label: "Look at the ceiling", quality: "weak" as const },
     ],
-  },
-  mockDebrief: {
-    fullExplanation: "The factory incident was caused by a power surge that triggered the alarm.",
   },
   mockFindings: {
     findings: [
@@ -73,10 +73,6 @@ vi.mock("@zoonk/ai/tasks/activities/core/investigation-actions", () => ({
 
 vi.mock("@zoonk/ai/tasks/activities/core/investigation-findings", () => ({
   generateActivityInvestigationFindings: vi.fn().mockResolvedValue({ data: mockFindings }),
-}));
-
-vi.mock("@zoonk/ai/tasks/activities/core/investigation-debrief", () => ({
-  generateActivityInvestigationDebrief: vi.fn().mockResolvedValue({ data: mockDebrief }),
 }));
 
 describe("investigation activity workflow", () => {
@@ -239,7 +235,7 @@ describe("investigation activity workflow", () => {
     expect(getString(actions[0], "finding")).toBe(mockFindings.findings[0]);
   });
 
-  test("saves correct call step content with debrief", async () => {
+  test("saves correct call step content with per-explanation feedback", async () => {
     const lesson = await lessonFixture({
       chapterId: chapter.id,
       concepts: ["Test Concept"],
@@ -266,11 +262,12 @@ describe("investigation activity workflow", () => {
       where: { activityId: activity.id, position: 2 },
     });
 
-    expect(getString(callStep?.content, "fullExplanation")).toBe(mockDebrief.fullExplanation);
-
     const explanations = getArray(callStep?.content, "explanations");
     expect(explanations).toHaveLength(3);
     expect(getString(explanations[0], "accuracy")).toBe("best");
+    expect(getString(explanations[0], "feedback")).toBe("This is the most complete explanation.");
+    expect(getString(explanations[1], "accuracy")).toBe("partial");
+    expect(getString(explanations[2], "accuracy")).toBe("wrong");
   });
 
   test("skips when no investigation activity exists", async () => {
@@ -398,38 +395,6 @@ describe("investigation activity workflow", () => {
       concepts: ["Test Concept"],
       organizationId,
       title: `Inv Findings Fail ${randomUUID()}`,
-    });
-
-    const activity = await activityFixture({
-      generationStatus: "pending",
-      kind: "investigation",
-      lessonId: lesson.id,
-      organizationId,
-      title: `Investigation ${randomUUID()}`,
-    });
-
-    const activities = await getLessonActivitiesStep(lesson.id);
-
-    await investigationActivityWorkflow({
-      activitiesToGenerate: activities,
-      workflowRunId: "test-run-id",
-    });
-
-    const dbActivity = await prisma.activity.findUnique({ where: { id: activity.id } });
-    expect(dbActivity?.generationStatus).toBe("failed");
-    expect(generateActivityInvestigationDebrief).not.toHaveBeenCalled();
-  });
-
-  test("marks as failed when debrief generation throws", async () => {
-    vi.mocked(generateActivityInvestigationDebrief).mockRejectedValueOnce(
-      new Error("Debrief failed"),
-    );
-
-    const lesson = await lessonFixture({
-      chapterId: chapter.id,
-      concepts: ["Test Concept"],
-      organizationId,
-      title: `Inv Debrief Fail ${randomUUID()}`,
     });
 
     const activity = await activityFixture({
