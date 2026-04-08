@@ -213,7 +213,7 @@ msgstr "Resultado da resposta"
 #: ../../packages/player/src/components/investigation-action-variant.tsx
 msgctxt "5jvK4n"
 msgid "Evidence complete — time to make your call."
-msgstr "Evidências completas — hora de fazer sua conclusão."
+msgstr "Evidências completas — hora de tirar sua conclusão."
 
 #: ../../packages/player/src/components/investigation-action-variant.tsx
 #: ../../packages/player/src/components/investigation-call-variant.tsx
