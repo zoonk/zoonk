@@ -79,17 +79,15 @@ function computeStoryScore({ alignments }: { alignments: StoryAlignment[] }): Sc
 // Investigation activity scoring
 // ---------------------------------------------------------------------------
 
-const ACTION_QUALITY_POINTS = {
-  critical: 20,
-  useful: 13,
-  weak: 7,
+const INVESTIGATION_ACTION_ENERGY = {
+  critical: 2,
+  useful: 1,
+  weak: 0,
 } as const;
 
-const INVESTIGATION_SCORE_CAP = 40;
-
-const CALL_ACCURACY_POINTS = {
-  best: 60,
-  partial: 30,
+const INVESTIGATION_CALL_ENERGY = {
+  best: 6,
+  partial: 3,
   wrong: 0,
 } as const;
 
@@ -98,58 +96,32 @@ export type InvestigationScoreInput = {
   callAccuracy: "best" | "partial" | "wrong";
 };
 
-type InvestigationScoreDimensions = {
-  callScore: number;
-  investigationScore: number;
-};
-
 /**
- * Computes the two dimension scores from the scoring input.
+ * Computes the investigation score from two energy dimensions:
  *
- * - Investigation (max 40): quality of actions chosen
- *   (critical = 20, useful = 13, weak = 7, capped at 40)
- * - Final Call (max 60): whether the learner identified what happened
- *   (best = 60, partial = 30, wrong = 0)
+ * - Action quality: critical (+2), useful (+1), weak (+0) per action
+ * - Final call: best (+6), partial (+3), wrong (+0)
  *
- * Total max is 100 points.
+ * Max energy with 3 critical actions + best call = 6 + 6 = +12.
+ * This is higher than story max (+9) because investigations
+ * require more effort (multiple experiments + a final judgment).
+ *
+ * correctCount is 1 when callAccuracy is "best", 0 otherwise.
  */
-function computeDimensionScores(input: InvestigationScoreInput): InvestigationScoreDimensions {
-  const investigationRaw = input.actionQualities.reduce(
-    (sum, quality) => sum + ACTION_QUALITY_POINTS[quality],
+function computeInvestigationScore(input: InvestigationScoreInput): ScoreResult {
+  const actionEnergy = input.actionQualities.reduce(
+    (sum, quality) => sum + INVESTIGATION_ACTION_ENERGY[quality],
     0,
   );
 
-  return {
-    callScore: CALL_ACCURACY_POINTS[input.callAccuracy],
-    investigationScore: Math.min(investigationRaw, INVESTIGATION_SCORE_CAP),
-  };
-}
-
-/**
- * Computes the investigation score across two dimensions:
- *
- * - Investigation (max 40): quality of actions chosen
- * - Final Call (max 60): whether the learner identified what happened
- *
- * Total max is 100 points. Energy is proportional to score.
- * Brain power is 100 (same as story — applied activity).
- */
-function computeInvestigationScore(input: InvestigationScoreInput): ScoreResult {
-  const dimensions = computeDimensionScores(input);
-  const totalScore = dimensions.investigationScore + dimensions.callScore;
-  const maxScore = 100;
-  const scoreRatio = totalScore / maxScore;
-
+  const callEnergy = INVESTIGATION_CALL_ENERGY[input.callAccuracy];
   const correctCount = input.callAccuracy === "best" ? 1 : 0;
-  const incorrectCount = 1 - correctCount;
-
-  const energyDelta = correctCount * ENERGY_PER_CORRECT + incorrectCount * ENERGY_PER_INCORRECT;
 
   return {
     brainPower: APPLIED_ACTIVITY_BRAIN_POWER,
     correctCount,
-    energyDelta: Math.round(energyDelta * scoreRatio * 100) / 100,
-    incorrectCount,
+    energyDelta: actionEnergy + callEnergy,
+    incorrectCount: 1 - correctCount,
   };
 }
 

@@ -174,6 +174,110 @@ describe(computeActivityScore, () => {
   });
 });
 
+describe("computeActivityScore (investigation)", () => {
+  test("perfect run: 3 critical actions + best call = +12 energy", () => {
+    const result = computeActivityScore({
+      investigation: {
+        actionQualities: ["critical", "critical", "critical"],
+        callAccuracy: "best",
+      },
+      kind: "investigation",
+    });
+
+    expect(result).toEqual({
+      brainPower: 100,
+      correctCount: 1,
+      energyDelta: 12,
+      incorrectCount: 0,
+    });
+  });
+
+  test("mediocre run: 3 useful actions + partial call = +6 energy", () => {
+    const result = computeActivityScore({
+      investigation: {
+        actionQualities: ["useful", "useful", "useful"],
+        callAccuracy: "partial",
+      },
+      kind: "investigation",
+    });
+
+    expect(result).toEqual({
+      brainPower: 100,
+      correctCount: 0,
+      energyDelta: 6,
+      incorrectCount: 1,
+    });
+  });
+
+  test("worst run: 3 weak actions + wrong call = 0 energy", () => {
+    const result = computeActivityScore({
+      investigation: {
+        actionQualities: ["weak", "weak", "weak"],
+        callAccuracy: "wrong",
+      },
+      kind: "investigation",
+    });
+
+    expect(result).toEqual({
+      brainPower: 100,
+      correctCount: 0,
+      energyDelta: 0,
+      incorrectCount: 1,
+    });
+  });
+
+  test("mixed actions: critical + useful + weak + best call = +9 energy", () => {
+    const result = computeActivityScore({
+      investigation: {
+        actionQualities: ["critical", "useful", "weak"],
+        callAccuracy: "best",
+      },
+      kind: "investigation",
+    });
+
+    expect(result).toEqual({
+      brainPower: 100,
+      correctCount: 1,
+      energyDelta: 9,
+      incorrectCount: 0,
+    });
+  });
+
+  test("single action: 1 critical + partial call = +5 energy", () => {
+    const result = computeActivityScore({
+      investigation: {
+        actionQualities: ["critical"],
+        callAccuracy: "partial",
+      },
+      kind: "investigation",
+    });
+
+    expect(result).toEqual({
+      brainPower: 100,
+      correctCount: 0,
+      energyDelta: 5,
+      incorrectCount: 1,
+    });
+  });
+
+  test("empty actions + best call = +6 energy (call only)", () => {
+    const result = computeActivityScore({
+      investigation: {
+        actionQualities: [],
+        callAccuracy: "best",
+      },
+      kind: "investigation",
+    });
+
+    expect(result).toEqual({
+      brainPower: 100,
+      correctCount: 1,
+      energyDelta: 6,
+      incorrectCount: 0,
+    });
+  });
+});
+
 describe(buildScoringInput, () => {
   test("returns generic input for standard activity kinds", () => {
     const result = buildScoringInput({

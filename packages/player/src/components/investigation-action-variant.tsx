@@ -10,7 +10,6 @@ import { type SerializedStep } from "../prepare-activity-data";
 import { useOptionKeyboard } from "../use-option-keyboard";
 import { OptionCard } from "./option-card";
 import { ContextText, QuestionText } from "./question-text";
-import { SectionLabel } from "./section-label";
 import { InteractiveStepLayout } from "./step-layouts";
 
 type ActionContent = Extract<InvestigationStepContent, { variant: "action" }>;
@@ -76,13 +75,9 @@ function ActionFeedback({
 
   return (
     <InteractiveStepLayout>
-      <SectionLabel>{t("Evidence")}</SectionLabel>
+      <p className={`text-lg font-semibold ${quality.className}`}>{quality.label}</p>
 
-      <p className={`text-sm font-medium ${quality.className}`}>{quality.label}</p>
-
-      <div className="bg-muted/50 rounded-lg px-4 py-3">
-        <ContextText>{action.finding}</ContextText>
-      </div>
+      <ContextText>{action.finding}</ContextText>
 
       {isLastExperiment && (
         <p className="text-muted-foreground text-sm">

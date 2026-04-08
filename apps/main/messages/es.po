@@ -228,11 +228,7 @@ msgid "Evidence complete — time to make your call."
 msgstr "Evidencia completa — es hora de tomar tu decisión."
 
 #: ../../packages/player/src/components/investigation-action-variant.tsx
-msgctxt "6g7+6N"
-msgid "Evidence"
-msgstr "Evidencia"
-
-#: ../../packages/player/src/components/investigation-action-variant.tsx
+#: ../../packages/player/src/components/investigation-call-variant.tsx
 msgctxt "dLRz0R"
 msgid "Weak signal"
 msgstr "Señal débil"
@@ -248,6 +244,7 @@ msgid "One more lead to follow"
 msgstr "Un indicio más para seguir"
 
 #: ../../packages/player/src/components/investigation-action-variant.tsx
+#: ../../packages/player/src/components/investigation-call-variant.tsx
 msgctxt "P/5Naz"
 msgid "Useful clue"
 msgstr "Pista útil"
@@ -258,6 +255,7 @@ msgid "What do you want to investigate first?"
 msgstr "¿Qué quieres investigar primero?"
 
 #: ../../packages/player/src/components/investigation-action-variant.tsx
+#: ../../packages/player/src/components/investigation-call-variant.tsx
 msgctxt "U0rj9y"
 msgid "Strong lead"
 msgstr "Pista sólida"
@@ -273,24 +271,9 @@ msgid "Here's what actually happened"
 msgstr "Esto es lo que realmente pasó"
 
 #: ../../packages/player/src/components/investigation-call-variant.tsx
-msgctxt "9g19aR"
-msgid "weak signal"
-msgstr "señal débil"
-
-#: ../../packages/player/src/components/investigation-call-variant.tsx
 msgctxt "IE/I2y"
 msgid "What do you think happened?"
 msgstr "¿Qué crees que pasó?"
-
-#: ../../packages/player/src/components/investigation-call-variant.tsx
-msgctxt "pplMXL"
-msgid "strong lead"
-msgstr "pista sólida"
-
-#: ../../packages/player/src/components/investigation-call-variant.tsx
-msgctxt "VyC8N7"
-msgid "useful clue"
-msgstr "pista útil"
 
 #: ../../packages/player/src/components/investigation-call-variant.tsx
 msgctxt "XwgFvQ"

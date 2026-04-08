@@ -4,6 +4,8 @@ import {
   type InvestigationStepContent,
   parseStepContent,
 } from "@zoonk/core/steps/contract/content";
+import { Badge } from "@zoonk/ui/components/badge";
+import { Separator } from "@zoonk/ui/components/separator";
 import { useExtracted } from "next-intl";
 import { getInvestigationStepByVariant } from "../investigation";
 import { usePlayerRuntime } from "../player-context";
@@ -44,22 +46,22 @@ function getResultState({
 }
 
 /**
- * Renders a translated quality label for an action.
- * Extracted as a component so it can call useExtracted internally
- * instead of receiving `t` as a function argument.
+ * Renders the evidence quality as a Badge with visual weight
+ * that matches the quality tier: strong (default), useful (secondary),
+ * weak (outline).
  */
-function QualityText({ quality }: { quality: "critical" | "useful" | "weak" }) {
+function QualityBadge({ quality }: { quality: "critical" | "useful" | "weak" }) {
   const t = useExtracted();
 
   if (quality === "critical") {
-    return <>{t("strong lead")}</>;
+    return <Badge>{t("Strong lead")}</Badge>;
   }
 
   if (quality === "useful") {
-    return <>{t("useful clue")}</>;
+    return <Badge variant="secondary">{t("Useful clue")}</Badge>;
   }
 
-  return <>{t("weak signal")}</>;
+  return <Badge variant="outline">{t("Weak signal")}</Badge>;
 }
 
 type GatheredEvidence = {
@@ -115,25 +117,21 @@ function EvidenceSummary({ evidence }: { evidence: GatheredEvidence[] }) {
   }
 
   return (
-    <div className="bg-muted/30 flex flex-col gap-3 rounded-lg px-4 py-3">
-      <p className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
-        {t("Your evidence")}
-      </p>
+    <div className="flex flex-col gap-4">
+      <SectionLabel>{t("Your evidence")}</SectionLabel>
 
-      {evidence.map((item) => (
-        <div className="flex flex-col gap-0.5" key={item.label}>
-          <div className="flex items-baseline justify-between gap-2">
-            <p className="text-sm font-semibold">{item.label}</p>
-            <p className="text-muted-foreground text-xs font-medium">
-              <QualityText quality={item.quality} />
-            </p>
+      <div className="flex flex-col gap-5">
+        {evidence.map((item) => (
+          <div className="flex flex-col gap-1" key={item.label}>
+            <div className="flex items-center gap-2">
+              <p className="text-sm font-medium">{item.label}</p>
+              <QualityBadge quality={item.quality} />
+            </div>
+
+            <p className="text-muted-foreground text-sm leading-relaxed">{item.finding}</p>
           </div>
-
-          <p className="text-muted-foreground line-clamp-2 text-sm leading-relaxed">
-            {item.finding}
-          </p>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
 }
@@ -147,29 +145,34 @@ function CallDebrief({ evidence, result }: { evidence: GatheredEvidence[]; resul
   const t = useExtracted();
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-6">
       {result.result.feedback && (
         <div className="flex flex-col gap-2">
-          <p className="text-sm font-semibold">{t("Here's what actually happened")}</p>
-          <p className="text-muted-foreground text-sm leading-relaxed">{result.result.feedback}</p>
+          <p className="text-lg font-semibold">{t("Here's what actually happened")}</p>
+
+          <p className="text-muted-foreground text-base leading-relaxed">
+            {result.result.feedback}
+          </p>
         </div>
       )}
 
       {evidence.length > 0 && (
-        <div className="flex flex-col gap-2">
-          <p className="text-sm font-semibold">{t("You checked")}</p>
+        <>
+          <Separator />
 
-          <ul className="flex flex-col gap-1">
-            {evidence.map((item) => (
-              <li className="text-muted-foreground text-sm" key={item.label}>
-                {item.label}{" "}
-                <span className="text-muted-foreground/70">
-                  (<QualityText quality={item.quality} />)
-                </span>
-              </li>
-            ))}
-          </ul>
-        </div>
+          <div className="flex flex-col gap-3">
+            <SectionLabel>{t("You checked")}</SectionLabel>
+
+            <div className="flex flex-col gap-2">
+              {evidence.map((item) => (
+                <div className="flex items-center gap-2" key={item.label}>
+                  <span className="text-muted-foreground text-sm">{item.label}</span>
+                  <QualityBadge quality={item.quality} />
+                </div>
+              ))}
+            </div>
+          </div>
+        </>
       )}
     </div>
   );
@@ -259,7 +262,12 @@ export function InvestigationCallVariant({
         ))}
       </div>
 
-      {hasFeedback && result && <CallDebrief evidence={evidence} result={result} />}
+      {hasFeedback && result && (
+        <>
+          <Separator />
+          <CallDebrief evidence={evidence} result={result} />
+        </>
+      )}
     </InteractiveStepLayout>
   );
 }

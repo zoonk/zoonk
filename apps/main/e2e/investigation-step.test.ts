@@ -180,7 +180,7 @@ test.describe("Investigation Action Step", () => {
     await page.getByRole("radio", { name: new RegExp(`Check server logs ${uniqueId}`) }).click();
     await page.getByRole("button", { name: /check/i }).click();
 
-    await expect(page.getByText("Evidence", { exact: true })).toBeVisible();
+    await expect(page.getByText(/strong lead/i)).toBeVisible();
     await expect(
       page.getByText(new RegExp(`Finding 0.*unusual pattern.*${uniqueId}`)),
     ).toBeVisible();
@@ -283,9 +283,11 @@ test.describe("Investigation Call Step", () => {
     await page.keyboard.press("1");
     await page.getByRole("button", { name: /check/i }).click();
 
+    await expect(page.getByText(/here's what actually happened/i)).toBeVisible();
     await expect(
       page.getByText(new RegExp(`memory leak introduced in v2.2 ${uniqueId}`)),
     ).toBeVisible();
+    await expect(page.getByText(/you checked/i)).toBeVisible();
   });
 });
 

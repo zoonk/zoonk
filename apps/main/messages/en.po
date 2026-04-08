@@ -228,11 +228,7 @@ msgid "Evidence complete — time to make your call."
 msgstr "Evidence complete — time to make your call."
 
 #: ../../packages/player/src/components/investigation-action-variant.tsx
-msgctxt "6g7+6N"
-msgid "Evidence"
-msgstr "Evidence"
-
-#: ../../packages/player/src/components/investigation-action-variant.tsx
+#: ../../packages/player/src/components/investigation-call-variant.tsx
 msgctxt "dLRz0R"
 msgid "Weak signal"
 msgstr "Weak signal"
@@ -248,6 +244,7 @@ msgid "One more lead to follow"
 msgstr "One more lead to follow"
 
 #: ../../packages/player/src/components/investigation-action-variant.tsx
+#: ../../packages/player/src/components/investigation-call-variant.tsx
 msgctxt "P/5Naz"
 msgid "Useful clue"
 msgstr "Useful clue"
@@ -258,6 +255,7 @@ msgid "What do you want to investigate first?"
 msgstr "What do you want to investigate first?"
 
 #: ../../packages/player/src/components/investigation-action-variant.tsx
+#: ../../packages/player/src/components/investigation-call-variant.tsx
 msgctxt "U0rj9y"
 msgid "Strong lead"
 msgstr "Strong lead"
@@ -273,24 +271,9 @@ msgid "Here's what actually happened"
 msgstr "Here's what actually happened"
 
 #: ../../packages/player/src/components/investigation-call-variant.tsx
-msgctxt "9g19aR"
-msgid "weak signal"
-msgstr "weak signal"
-
-#: ../../packages/player/src/components/investigation-call-variant.tsx
 msgctxt "IE/I2y"
 msgid "What do you think happened?"
 msgstr "What do you think happened?"
-
-#: ../../packages/player/src/components/investigation-call-variant.tsx
-msgctxt "pplMXL"
-msgid "strong lead"
-msgstr "strong lead"
-
-#: ../../packages/player/src/components/investigation-call-variant.tsx
-msgctxt "VyC8N7"
-msgid "useful clue"
-msgstr "useful clue"
 
 #: ../../packages/player/src/components/investigation-call-variant.tsx
 msgctxt "XwgFvQ"
