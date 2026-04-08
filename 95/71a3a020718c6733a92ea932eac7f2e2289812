@@ -1,0 +1,39 @@
+packages/ui/src/components/drawer.tsx
+  05ae9f83c3fef4ba 1-143
+packages/player/src/components/investigation-call-variant.tsx
+  05ae9f83c3fef4ba 8-16,115,117-120,122-123,129-130,132,140-158,160-162,168-170,223
+packages/player/src/components/result-announcement.tsx
+  05ae9f83c3fef4ba 3,5-12,16
+packages/player/src/components/stage-content.tsx
+  05ae9f83c3fef4ba 1,16-29,34-36,44-45
+packages/player/src/components/investigation-call-feedback.tsx
+  05ae9f83c3fef4ba 1-33,35,39,42-78
+apps/main/e2e/investigation-step.test.ts
+  05ae9f83c3fef4ba 234,257,260,267-268,282-288,313-314,316,349
+packages/player/src/components/verdict-label.tsx
+  05ae9f83c3fef4ba 1-22,24,28,31-51
+packages/player/src/components/inline-feedback.tsx
+  05ae9f83c3fef4ba 7,23,29
+packages/player/src/components/feedback-screen.tsx
+  05ae9f83c3fef4ba 10,123,139-142
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.6",
+  "base_commit_sha": "9571a3a020718c6733a92ea932eac7f2e2289812",
+  "prompts": {
+    "05ae9f83c3fef4ba": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ebf14d43-45b1-475d-9aa2-0cb9478200b8",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 563,
+      "total_deletions": 280,
+      "accepted_lines": 391,
+      "overriden_lines": 4
+    }
+  }
+}
