@@ -17,8 +17,8 @@ export type PlayerPhase = "playing" | "feedback" | "completed";
 
 export type SelectedAnswer =
   | { kind: "fillBlank"; userAnswers: string[] }
-  | { kind: "investigation"; variant: "action"; selectedActionIndex: number }
-  | { kind: "investigation"; variant: "call"; selectedExplanationIndex: number }
+  | { kind: "investigation"; variant: "action"; selectedActionId: string }
+  | { kind: "investigation"; variant: "call"; selectedExplanationId: string }
   | { kind: "investigation"; variant: "problem" }
   | { kind: "listening"; arrangedWords: string[] }
   | { kind: "matchColumns"; userPairs: { left: string; right: string }[]; mistakes: number }

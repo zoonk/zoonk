@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "exports": {
+    "./activities": "./src/activities.ts",
     "./aggregation": "./src/aggregation.ts",
     "./belt-level": "./src/belt-level.ts",
     "./categories": "./src/categories.ts",

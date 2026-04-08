@@ -1,9 +1,9 @@
 "use client";
 
 import { type InvestigationStepContent } from "@zoonk/core/steps/contract/content";
+import { INVESTIGATION_EXPERIMENT_COUNT } from "@zoonk/utils/activities";
 import { useExtracted } from "next-intl";
 import { getAvailableActions } from "../investigation";
-import { MAX_EXPERIMENTS } from "../investigation-reducer";
 import { usePlayerRuntime } from "../player-context";
 import { type SelectedAnswer, type StepResult } from "../player-reducer";
 import { type SerializedStep } from "../prepare-activity-data";
@@ -49,7 +49,7 @@ function useQuestionText(experimentNumber: number): string {
     return t("What do you want to investigate first?");
   }
 
-  if (experimentNumber >= MAX_EXPERIMENTS - 1) {
+  if (experimentNumber >= INVESTIGATION_EXPERIMENT_COUNT - 1) {
     return t("One more lead to follow");
   }
 
@@ -111,19 +111,19 @@ export function InvestigationActionVariant({
   const { state } = usePlayerRuntime();
 
   const loop = state.investigationLoop;
-  const usedIndices = loop?.usedActionIndices ?? [];
-  const experimentNumber = usedIndices.length;
-  const availableActions = getAvailableActions(content.actions, usedIndices);
+  const usedIds = loop?.usedActionIds ?? [];
+  const experimentNumber = usedIds.length;
+  const availableActions = getAvailableActions(content.actions, usedIds);
   const hasFeedback = result !== undefined;
 
   const questionText = useQuestionText(experimentNumber);
 
-  const selectedActionIndex =
+  const selectedActionId =
     selectedAnswer?.kind === "investigation" && selectedAnswer.variant === "action"
-      ? selectedAnswer.selectedActionIndex
+      ? selectedAnswer.selectedActionId
       : null;
 
-  const hasSelection = selectedActionIndex !== null;
+  const hasSelection = selectedActionId !== null;
 
   const handleSelect = (index: number) => {
     if (hasFeedback) {
@@ -136,14 +136,14 @@ export function InvestigationActionVariant({
       return;
     }
 
-    if (selectedActionIndex === action.originalIndex) {
+    if (selectedActionId === action.id) {
       onSelectAnswer(step.id, null);
       return;
     }
 
     onSelectAnswer(step.id, {
       kind: "investigation",
-      selectedActionIndex: action.originalIndex,
+      selectedActionId: action.id,
       variant: "action",
     });
   };
@@ -154,13 +154,16 @@ export function InvestigationActionVariant({
     optionCount: availableActions.length,
   });
 
-  const selectedAction = selectedActionIndex === null ? null : content.actions[selectedActionIndex];
+  const selectedAction =
+    selectedActionId === null
+      ? null
+      : (content.actions.find((a) => a.id === selectedActionId) ?? null);
 
   if (hasFeedback && selectedAction) {
     return (
       <ActionFeedback
         action={selectedAction}
-        isLastExperiment={usedIndices.length >= MAX_EXPERIMENTS}
+        isLastExperiment={usedIds.length >= INVESTIGATION_EXPERIMENT_COUNT}
       />
     );
   }
@@ -173,9 +176,9 @@ export function InvestigationActionVariant({
         {availableActions.map((action, index) => (
           <OptionCard
             index={index}
-            isDimmed={hasSelection && selectedActionIndex !== action.originalIndex}
-            isSelected={selectedActionIndex === action.originalIndex}
-            key={action.originalIndex}
+            isDimmed={hasSelection && selectedActionId !== action.id}
+            isSelected={selectedActionId === action.id}
+            key={action.id}
             onSelect={() => handleSelect(index)}
           >
             <span className="text-base leading-6">{action.label}</span>

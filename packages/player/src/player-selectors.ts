@@ -1,7 +1,8 @@
 import { type StoryStaticVariant, parseStepContent } from "@zoonk/core/steps/contract/content";
+import { INVESTIGATION_EXPERIMENT_COUNT } from "@zoonk/utils/activities";
 import { type CompletionResult } from "./completion-input-schema";
 import { getInvestigationScenario } from "./investigation";
-import { MAX_EXPERIMENTS, getInvestigationVariant } from "./investigation-reducer";
+import { getInvestigationVariant } from "./investigation-reducer";
 import { type PlayerState } from "./player-reducer";
 import { type SerializedStep } from "./prepare-activity-data";
 import { canNavigatePrev, isStaticNavigationStep } from "./step-navigation";
@@ -99,8 +100,8 @@ export function getInvestigationProgress(state: PlayerState): InvestigationProgr
     return null;
   }
 
-  const collected = state.investigationLoop?.usedActionIndices.length ?? 0;
-  return { collected, total: MAX_EXPERIMENTS };
+  const collected = state.investigationLoop?.usedActionIds.length ?? 0;
+  return { collected, total: INVESTIGATION_EXPERIMENT_COUNT };
 }
 
 /** Returns the progress percentage (0–100), snapping to 100 when completed. */

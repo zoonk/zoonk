@@ -136,7 +136,7 @@ function checkListeningStep(step: SerializedStep, answer: SelectedAnswer): Check
  * Checks an investigation answer based on the step variant.
  *
  * - Problem: always correct (read-only step, no real answer)
- * - Action: always correct but returns finding as feedback
+ * - Action: correct unless weak quality (critical/useful = correct, weak = incorrect)
  * - Call: checks if the selected explanation has "best" accuracy
  */
 function checkInvestigation(step: SerializedStep, answer: SelectedAnswer): CheckStepResult {
@@ -152,13 +152,13 @@ function checkInvestigation(step: SerializedStep, answer: SelectedAnswer): Check
 
   if (content.variant === "action" && answer.variant === "action") {
     return {
-      result: checkInvestigationAction(content, answer.selectedActionIndex),
+      result: checkInvestigationAction(content, answer.selectedActionId),
     };
   }
 
   if (content.variant === "call" && answer.variant === "call") {
     return {
-      result: checkInvestigationCall(content, answer.selectedExplanationIndex),
+      result: checkInvestigationCall(content, answer.selectedExplanationId),
     };
   }
 

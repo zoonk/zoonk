@@ -163,7 +163,7 @@ function validateInvestigation(step: StepData, answer: SelectedAnswer): Validate
   }
 
   if (content.variant === "call" && answer.variant === "call") {
-    const result = checkInvestigationCall(content, answer.selectedExplanationIndex);
+    const result = checkInvestigationCall(content, answer.selectedExplanationId);
     return { answer, isCorrect: result.isCorrect, stepId: step.id };
   }
 

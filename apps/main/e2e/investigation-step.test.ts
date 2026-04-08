@@ -12,16 +12,19 @@ function buildInvestigationContent(uniqueId: string) {
     {
       accuracy: "best" as const,
       feedback: `Correct — the API had a memory leak introduced in v2.2 ${uniqueId}`,
+      id: randomUUID(),
       text: `Memory leak in the API service ${uniqueId}`,
     },
     {
       accuracy: "partial" as const,
       feedback: `Close — DB pools were strained, but that was a symptom ${uniqueId}`,
+      id: randomUUID(),
       text: `Database connection pool exhausted ${uniqueId}`,
     },
     {
       accuracy: "wrong" as const,
       feedback: `Network hardware was fine — the issue was in software ${uniqueId}`,
+      id: randomUUID(),
       text: `Network switch failure ${uniqueId}`,
     },
   ];
@@ -31,26 +34,31 @@ function buildInvestigationContent(uniqueId: string) {
       actions: [
         {
           finding: `Finding 0: The data shows an unusual pattern ${uniqueId}`,
+          id: randomUUID(),
           label: `Check server logs ${uniqueId}`,
           quality: "critical" as const,
         },
         {
           finding: `Finding 1: Resource usage is abnormally high ${uniqueId}`,
+          id: randomUUID(),
           label: `Monitor resource usage ${uniqueId}`,
           quality: "critical" as const,
         },
         {
           finding: `Finding 2: Errors concentrated on one route ${uniqueId}`,
+          id: randomUUID(),
           label: `Review error distribution ${uniqueId}`,
           quality: "useful" as const,
         },
         {
           finding: `Finding 3: Recent deploy introduced a regression ${uniqueId}`,
+          id: randomUUID(),
           label: `Check deploy history ${uniqueId}`,
           quality: "useful" as const,
         },
         {
           finding: `Finding 4: One query taking 1500ms ${uniqueId}`,
+          id: randomUUID(),
           label: `Run database queries ${uniqueId}`,
           quality: "weak" as const,
         },

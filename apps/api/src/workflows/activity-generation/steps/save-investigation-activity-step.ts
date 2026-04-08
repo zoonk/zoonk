@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { createEntityStepStream } from "@/workflows/_shared/stream-status";
 import { type ActivityInvestigationAccuracySchema } from "@zoonk/ai/tasks/activities/core/investigation-accuracy";
 import { type ActivityInvestigationActionsSchema } from "@zoonk/ai/tasks/activities/core/investigation-actions";
@@ -22,6 +23,7 @@ function buildExplanationsWithAccuracy(
   return scenario.explanations.map((text, index) => ({
     accuracy: accuracy.accuracies[index]?.accuracy ?? "wrong",
     feedback: accuracy.accuracies[index]?.feedback ?? "",
+    id: randomUUID(),
     text,
   }));
 }
@@ -64,6 +66,7 @@ function buildInvestigationStepRecords({
     content: assertStepContent("investigation", {
       actions: actions.actions.map((action, index) => ({
         finding: findings.findings[index] ?? "",
+        id: randomUUID(),
         label: action.label,
         quality: action.quality,
       })),

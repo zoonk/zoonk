@@ -368,9 +368,9 @@ function buildInvestigationActionStep(): SerializedStep {
   return buildStep({
     content: {
       actions: [
-        { finding: "Clue A", label: "Check logs", quality: "critical" as const },
-        { finding: "Clue B", label: "Ask witness", quality: "useful" as const },
-        { finding: "Clue C", label: "Check camera", quality: "weak" as const },
+        { finding: "Clue A", id: "a1", label: "Check logs", quality: "critical" as const },
+        { finding: "Clue B", id: "a2", label: "Ask witness", quality: "useful" as const },
+        { finding: "Clue C", id: "a3", label: "Check camera", quality: "weak" as const },
       ],
       variant: "action" as const,
     },
@@ -384,7 +384,7 @@ describe(getInvestigationProgress, () => {
   test("returns progress when current step is an investigation action step", () => {
     const state = buildState({
       currentStepIndex: 0,
-      investigationLoop: { actionTimings: [], usedActionIndices: [0] },
+      investigationLoop: { actionTimings: [], usedActionIds: ["a1"] },
       steps: [buildInvestigationActionStep()],
     });
 
@@ -394,7 +394,7 @@ describe(getInvestigationProgress, () => {
   test("returns 0 collected when no actions have been used", () => {
     const state = buildState({
       currentStepIndex: 0,
-      investigationLoop: { actionTimings: [], usedActionIndices: [] },
+      investigationLoop: { actionTimings: [], usedActionIds: [] },
       steps: [buildInvestigationActionStep()],
     });
 
@@ -404,7 +404,7 @@ describe(getInvestigationProgress, () => {
   test("returns 3 collected when all experiments are done", () => {
     const state = buildState({
       currentStepIndex: 0,
-      investigationLoop: { actionTimings: [], usedActionIndices: [0, 1, 2] },
+      investigationLoop: { actionTimings: [], usedActionIds: ["a1", "a2", "a3"] },
       steps: [buildInvestigationActionStep()],
     });
 
@@ -429,12 +429,17 @@ describe(getInvestigationProgress, () => {
   test("returns collected count for investigation call step", () => {
     const state = buildState({
       currentStepIndex: 0,
-      investigationLoop: { actionTimings: [], usedActionIndices: [0, 1, 2] },
+      investigationLoop: { actionTimings: [], usedActionIds: ["a1", "a2", "a3"] },
       steps: [
         buildStep({
           content: {
             explanations: [
-              { accuracy: "best" as const, feedback: "Correct!", text: "Correct explanation" },
+              {
+                accuracy: "best" as const,
+                feedback: "Correct!",
+                id: "e1",
+                text: "Correct explanation",
+              },
             ],
             variant: "call" as const,
           },

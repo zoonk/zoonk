@@ -24,7 +24,8 @@ function getCallVerdict({ result, step }: { result: StepResult; step?: Serialize
     return result.result.isCorrect ? "correct" : "incorrect";
   }
 
-  const explanation = content.explanations[result.answer.selectedExplanationIndex];
+  const { selectedExplanationId } = result.answer;
+  const explanation = content.explanations.find((exp) => exp.id === selectedExplanationId);
 
   if (!explanation) {
     return "incorrect";

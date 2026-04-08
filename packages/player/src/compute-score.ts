@@ -232,8 +232,8 @@ function extractInvestigationInput({
     return null;
   }
 
-  const actionQualities = investigationLoop.usedActionIndices.flatMap((index) => {
-    const action = actionContent.actions[index];
+  const actionQualities = investigationLoop.usedActionIds.flatMap((id) => {
+    const action = actionContent.actions.find((a) => a.id === id);
     return action ? [action.quality] : [];
   });
 
@@ -262,7 +262,9 @@ function extractInvestigationInput({
     return null;
   }
 
-  const selectedExplanation = callContent.explanations[callAnswer.selectedExplanationIndex];
+  const selectedExplanation = callContent.explanations.find(
+    (explanation) => explanation.id === callAnswer.selectedExplanationId,
+  );
 
   if (!selectedExplanation) {
     return null;

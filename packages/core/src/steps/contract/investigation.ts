@@ -1,3 +1,4 @@
+import { INVESTIGATION_EXPERIMENT_COUNT } from "@zoonk/utils/activities";
 import { z } from "zod";
 
 const investigationActionQualitySchema = z.enum(["critical", "useful", "weak"]);
@@ -8,6 +9,7 @@ const investigationExplanationSchema = z
   .object({
     accuracy: investigationAccuracySchema,
     feedback: z.string(),
+    id: z.string(),
     text: z.string(),
   })
   .strict();
@@ -20,6 +22,7 @@ const investigationExplanationSchema = z
 const investigationActionItemSchema = z
   .object({
     finding: z.string(),
+    id: z.string(),
     label: z.string(),
     quality: investigationActionQualitySchema,
   })
@@ -44,7 +47,7 @@ const investigationProblemContentSchema = z
  */
 const investigationActionContentSchema = z
   .object({
-    actions: z.array(investigationActionItemSchema),
+    actions: z.array(investigationActionItemSchema).min(INVESTIGATION_EXPERIMENT_COUNT),
     variant: z.literal("action"),
   })
   .strict();

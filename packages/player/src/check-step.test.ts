@@ -501,9 +501,12 @@ describe(checkStep, () => {
           actions: [
             {
               finding: "Logs show memory climbing",
+              id: "a1",
               label: "Check logs",
               quality: "critical" as const,
             },
+            { finding: "Filler", id: "a2", label: "Filler 1", quality: "useful" as const },
+            { finding: "Filler", id: "a3", label: "Filler 2", quality: "weak" as const },
           ],
           variant: "action" as const,
         },
@@ -511,7 +514,7 @@ describe(checkStep, () => {
       });
       const answer: SelectedAnswer = {
         kind: "investigation",
-        selectedActionIndex: 0,
+        selectedActionId: "a1",
         variant: "action",
       };
       const { result } = checkStep(step, answer);
@@ -525,9 +528,12 @@ describe(checkStep, () => {
           actions: [
             {
               finding: "Some useful data found",
+              id: "a1",
               label: "Review logs",
               quality: "useful" as const,
             },
+            { finding: "Filler", id: "a2", label: "Filler 1", quality: "critical" as const },
+            { finding: "Filler", id: "a3", label: "Filler 2", quality: "weak" as const },
           ],
           variant: "action" as const,
         },
@@ -535,7 +541,7 @@ describe(checkStep, () => {
       });
       const answer: SelectedAnswer = {
         kind: "investigation",
-        selectedActionIndex: 0,
+        selectedActionId: "a1",
         variant: "action",
       };
       const { result } = checkStep(step, answer);
@@ -549,9 +555,12 @@ describe(checkStep, () => {
           actions: [
             {
               finding: "Nothing useful here",
+              id: "a1",
               label: "Random check",
               quality: "weak" as const,
             },
+            { finding: "Filler", id: "a2", label: "Filler 1", quality: "critical" as const },
+            { finding: "Filler", id: "a3", label: "Filler 2", quality: "useful" as const },
           ],
           variant: "action" as const,
         },
@@ -559,7 +568,7 @@ describe(checkStep, () => {
       });
       const answer: SelectedAnswer = {
         kind: "investigation",
-        selectedActionIndex: 0,
+        selectedActionId: "a1",
         variant: "action",
       };
       const { result } = checkStep(step, answer);
@@ -567,15 +576,18 @@ describe(checkStep, () => {
       expect(result.feedback).toBe("Nothing useful here");
     });
 
-    test("action variant: out-of-bounds index is incorrect", () => {
+    test("action variant: unknown ID is incorrect", () => {
       const step = buildStep({
         content: {
           actions: [
             {
               finding: "Logs show memory climbing",
+              id: "a1",
               label: "Check logs",
               quality: "critical" as const,
             },
+            { finding: "Filler", id: "a2", label: "Filler 1", quality: "useful" as const },
+            { finding: "Filler", id: "a3", label: "Filler 2", quality: "weak" as const },
           ],
           variant: "action" as const,
         },
@@ -583,7 +595,7 @@ describe(checkStep, () => {
       });
       const answer: SelectedAnswer = {
         kind: "investigation",
-        selectedActionIndex: 99,
+        selectedActionId: "nonexistent",
         variant: "action",
       };
       const { result } = checkStep(step, answer);
@@ -597,11 +609,13 @@ describe(checkStep, () => {
             {
               accuracy: "best" as const,
               feedback: "Correct — this fully explains it.",
+              id: "e1",
               text: "Memory leak",
             },
             {
               accuracy: "wrong" as const,
               feedback: "Plausible but incorrect.",
+              id: "e2",
               text: "Network failure",
             },
           ],
@@ -611,7 +625,7 @@ describe(checkStep, () => {
       });
       const answer: SelectedAnswer = {
         kind: "investigation",
-        selectedExplanationIndex: 0,
+        selectedExplanationId: "e1",
         variant: "call",
       };
       const { result } = checkStep(step, answer);
@@ -626,11 +640,13 @@ describe(checkStep, () => {
             {
               accuracy: "best" as const,
               feedback: "Correct — this fully explains it.",
+              id: "e1",
               text: "Memory leak",
             },
             {
               accuracy: "wrong" as const,
               feedback: "Plausible but incorrect.",
+              id: "e2",
               text: "Network failure",
             },
           ],
@@ -640,7 +656,7 @@ describe(checkStep, () => {
       });
       const answer: SelectedAnswer = {
         kind: "investigation",
-        selectedExplanationIndex: 1,
+        selectedExplanationId: "e2",
         variant: "call",
       };
       const { result } = checkStep(step, answer);

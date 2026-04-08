@@ -359,9 +359,12 @@ describe(validateAnswers, () => {
           actions: [
             {
               finding: "Logs show memory climbing",
+              id: "a1",
               label: "Check logs",
               quality: "critical",
             },
+            { finding: "Filler", id: "a2", label: "Filler 1", quality: "useful" },
+            { finding: "Filler", id: "a3", label: "Filler 2", quality: "weak" },
           ],
           variant: "action",
         },
@@ -373,7 +376,7 @@ describe(validateAnswers, () => {
     const results = validateAnswers(steps, {
       "11": {
         kind: "investigation",
-        selectedActionIndex: 0,
+        selectedActionId: "a1",
         variant: "action",
       },
     });
@@ -386,8 +389,8 @@ describe(validateAnswers, () => {
       {
         content: {
           explanations: [
-            { accuracy: "best", feedback: "Correct!", text: "Memory leak" },
-            { accuracy: "wrong", feedback: "Incorrect.", text: "Network failure" },
+            { accuracy: "best", feedback: "Correct!", id: "e1", text: "Memory leak" },
+            { accuracy: "wrong", feedback: "Incorrect.", id: "e2", text: "Network failure" },
           ],
           variant: "call",
         },
@@ -397,7 +400,7 @@ describe(validateAnswers, () => {
     ];
 
     const results = validateAnswers(steps, {
-      "14": { kind: "investigation", selectedExplanationIndex: 0, variant: "call" },
+      "14": { kind: "investigation", selectedExplanationId: "e1", variant: "call" },
     });
 
     expect(results).toHaveLength(1);
@@ -409,8 +412,8 @@ describe(validateAnswers, () => {
       {
         content: {
           explanations: [
-            { accuracy: "best", feedback: "Correct!", text: "Memory leak" },
-            { accuracy: "wrong", feedback: "Incorrect.", text: "Network failure" },
+            { accuracy: "best", feedback: "Correct!", id: "e1", text: "Memory leak" },
+            { accuracy: "wrong", feedback: "Incorrect.", id: "e2", text: "Network failure" },
           ],
           variant: "call",
         },
@@ -420,7 +423,7 @@ describe(validateAnswers, () => {
     ];
 
     const results = validateAnswers(steps, {
-      "15": { kind: "investigation", selectedExplanationIndex: 1, variant: "call" },
+      "15": { kind: "investigation", selectedExplanationId: "e2", variant: "call" },
     });
 
     expect(results).toHaveLength(1);

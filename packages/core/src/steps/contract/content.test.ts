@@ -380,14 +380,17 @@ describe("step content contracts", () => {
         actions: [
           {
             finding: "The footage shows movement at 11pm.",
+            id: "a1",
             label: "Check the security footage",
             quality: "critical",
           },
           {
             finding: "The gardener was in the shed.",
+            id: "a2",
             label: "Interview the gardener",
             quality: "useful",
           },
+          { finding: "No clues here.", id: "a3", label: "Check the attic", quality: "weak" },
         ],
         variant: "action",
       });
@@ -399,11 +402,9 @@ describe("step content contracts", () => {
       expect(() =>
         parseStepContent("investigation", {
           actions: [
-            {
-              finding: "Something",
-              label: "Do something",
-              quality: "excellent",
-            },
+            { finding: "Something", id: "a1", label: "Do something", quality: "excellent" },
+            { finding: "Something", id: "a2", label: "Do more", quality: "critical" },
+            { finding: "Something", id: "a3", label: "Do other", quality: "useful" },
           ],
           variant: "action",
         }),
@@ -413,9 +414,24 @@ describe("step content contracts", () => {
     test("parses call variant with explanations and per-explanation feedback", () => {
       const content = parseStepContent("investigation", {
         explanations: [
-          { accuracy: "best", feedback: "Correct — the butler did it.", text: "The butler did it" },
-          { accuracy: "partial", feedback: "Close, but not quite.", text: "The maid did it" },
-          { accuracy: "wrong", feedback: "Not supported by evidence.", text: "The dog did it" },
+          {
+            accuracy: "best",
+            feedback: "Correct — the butler did it.",
+            id: "e1",
+            text: "The butler did it",
+          },
+          {
+            accuracy: "partial",
+            feedback: "Close, but not quite.",
+            id: "e2",
+            text: "The maid did it",
+          },
+          {
+            accuracy: "wrong",
+            feedback: "Not supported by evidence.",
+            id: "e3",
+            text: "The dog did it",
+          },
         ],
         variant: "call",
       });
@@ -427,7 +443,9 @@ describe("step content contracts", () => {
       expect(() =>
         parseStepContent("investigation", {
           correctExplanationIndex: 0,
-          explanations: [{ accuracy: "best", feedback: "Correct.", text: "Explanation." }],
+          explanations: [
+            { accuracy: "best", feedback: "Correct.", id: "e1", text: "Explanation." },
+          ],
           variant: "call",
         }),
       ).toThrow();

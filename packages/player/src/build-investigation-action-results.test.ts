@@ -3,9 +3,9 @@ import { buildInvestigationActionResults } from "./build-investigation-action-re
 
 const actionContent = {
   actions: [
-    { finding: "Critical evidence", label: "Check logs", quality: "critical" as const },
-    { finding: "Useful data", label: "Review metrics", quality: "useful" as const },
-    { finding: "Nothing here", label: "Random check", quality: "weak" as const },
+    { finding: "Critical evidence", id: "a1", label: "Check logs", quality: "critical" as const },
+    { finding: "Useful data", id: "a2", label: "Review metrics", quality: "useful" as const },
+    { finding: "Nothing here", id: "a3", label: "Random check", quality: "weak" as const },
   ],
   variant: "action" as const,
 };
@@ -22,7 +22,7 @@ describe(buildInvestigationActionResults, () => {
     const results = buildInvestigationActionResults({
       investigationLoop: {
         actionTimings: [baseTiming, baseTiming, baseTiming],
-        usedActionIndices: [0, 1, 2],
+        usedActionIds: ["a1", "a2", "a3"],
       },
       steps: [{ content: actionContent, id: 100n, kind: "investigation" }],
     });
@@ -37,7 +37,7 @@ describe(buildInvestigationActionResults, () => {
     const results = buildInvestigationActionResults({
       investigationLoop: {
         actionTimings: [baseTiming, baseTiming, baseTiming],
-        usedActionIndices: [0, 1, 2],
+        usedActionIds: ["a1", "a2", "a3"],
       },
       steps: [{ content: actionContent, id: 42n, kind: "investigation" }],
     });
@@ -55,7 +55,7 @@ describe(buildInvestigationActionResults, () => {
     const results = buildInvestigationActionResults({
       investigationLoop: {
         actionTimings: timings,
-        usedActionIndices: [0, 1, 2],
+        usedActionIds: ["a1", "a2", "a3"],
       },
       steps: [{ content: actionContent, id: 1n, kind: "investigation" }],
     });
@@ -65,23 +65,23 @@ describe(buildInvestigationActionResults, () => {
     expect(results[2]?.durationSeconds).toBe(12);
   });
 
-  test("stores selectedActionIndex in the answer", () => {
+  test("stores selectedActionId in the answer", () => {
     const results = buildInvestigationActionResults({
       investigationLoop: {
         actionTimings: [baseTiming, baseTiming],
-        usedActionIndices: [2, 0],
+        usedActionIds: ["a3", "a1"],
       },
       steps: [{ content: actionContent, id: 1n, kind: "investigation" }],
     });
 
     expect(results[0]?.answer).toEqual({
       kind: "investigation",
-      selectedActionIndex: 2,
+      selectedActionId: "a3",
       variant: "action",
     });
     expect(results[1]?.answer).toEqual({
       kind: "investigation",
-      selectedActionIndex: 0,
+      selectedActionId: "a1",
       variant: "action",
     });
   });
@@ -99,7 +99,7 @@ describe(buildInvestigationActionResults, () => {
     const results = buildInvestigationActionResults({
       investigationLoop: {
         actionTimings: [baseTiming],
-        usedActionIndices: [0],
+        usedActionIds: ["a1"],
       },
       steps: [
         {
@@ -113,11 +113,11 @@ describe(buildInvestigationActionResults, () => {
     expect(results).toEqual([]);
   });
 
-  test("skips entries where actionTimings and usedActionIndices are mismatched", () => {
+  test("skips entries where actionTimings and usedActionIds are mismatched", () => {
     const results = buildInvestigationActionResults({
       investigationLoop: {
         actionTimings: [baseTiming], // Only 1 timing
-        usedActionIndices: [0, 1, 2], // 3 indices
+        usedActionIds: ["a1", "a2", "a3"], // 3 IDs
       },
       steps: [{ content: actionContent, id: 1n, kind: "investigation" }],
     });
@@ -126,11 +126,11 @@ describe(buildInvestigationActionResults, () => {
     expect(results[0]?.isCorrect).toBe(true); // critical
   });
 
-  test("returns empty array when usedActionIndices is empty", () => {
+  test("returns empty array when usedActionIds is empty", () => {
     const results = buildInvestigationActionResults({
       investigationLoop: {
         actionTimings: [],
-        usedActionIndices: [],
+        usedActionIds: [],
       },
       steps: [{ content: actionContent, id: 1n, kind: "investigation" }],
     });

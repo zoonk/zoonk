@@ -130,9 +130,9 @@ export function checkArrangeWordsAnswer(
  */
 export function checkInvestigationAction(
   content: Extract<InvestigationStepContent, { variant: "action" }>,
-  selectedActionIndex: number,
+  selectedActionId: string,
 ): AnswerResult {
-  const action = content.actions[selectedActionIndex];
+  const action = content.actions.find((a) => a.id === selectedActionId);
 
   if (!action) {
     return { correctAnswer: null, feedback: null, isCorrect: false };
@@ -152,9 +152,9 @@ export function checkInvestigationAction(
  */
 export function checkInvestigationCall(
   content: Extract<InvestigationStepContent, { variant: "call" }>,
-  selectedExplanationIndex: number,
+  selectedExplanationId: string,
 ): AnswerResult {
-  const explanation = content.explanations[selectedExplanationIndex];
+  const explanation = content.explanations.find((exp) => exp.id === selectedExplanationId);
 
   if (!explanation) {
     return { correctAnswer: null, feedback: null, isCorrect: false };

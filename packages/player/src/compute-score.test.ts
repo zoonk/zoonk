@@ -355,11 +355,11 @@ describe(buildScoringInput, () => {
     const result = buildScoringInput({
       activityKind: "investigation",
       answers: {
-        "call-1": { kind: "investigation", selectedExplanationIndex: 0, variant: "call" },
+        "call-1": { kind: "investigation", selectedExplanationId: "e1", variant: "call" },
       },
       investigationLoop: {
         actionTimings: [],
-        usedActionIndices: [0],
+        usedActionIds: ["a1"],
       },
       stepResults: [],
       steps: [
@@ -368,9 +368,12 @@ describe(buildScoringInput, () => {
             actions: [
               {
                 finding: "Logs show memory climbing",
+                id: "a1",
                 label: "Check logs",
                 quality: "critical",
               },
+              { finding: "Filler", id: "a2", label: "Filler 1", quality: "useful" },
+              { finding: "Filler", id: "a3", label: "Filler 2", quality: "weak" },
             ],
             variant: "action",
           },
@@ -380,8 +383,8 @@ describe(buildScoringInput, () => {
         {
           content: {
             explanations: [
-              { accuracy: "best", feedback: "Correct!", text: "Memory leak" },
-              { accuracy: "wrong", feedback: "Incorrect.", text: "Network" },
+              { accuracy: "best", feedback: "Correct!", id: "e1", text: "Memory leak" },
+              { accuracy: "wrong", feedback: "Incorrect.", id: "e2", text: "Network" },
             ],
             variant: "call",
           },

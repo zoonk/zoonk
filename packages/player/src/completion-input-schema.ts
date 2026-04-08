@@ -61,13 +61,13 @@ const investigationProblemAnswerSchema = z.object({
 
 const investigationActionAnswerSchema = z.object({
   kind: z.literal("investigation"),
-  selectedActionIndex: z.number(),
+  selectedActionId: z.string(),
   variant: z.literal("action"),
 });
 
 const investigationCallAnswerSchema = z.object({
   kind: z.literal("investigation"),
-  selectedExplanationIndex: z.number(),
+  selectedExplanationId: z.string(),
   variant: z.literal("call"),
 });
 
@@ -107,7 +107,7 @@ const stepTimingSchema = z.object({
  */
 const investigationLoopSchema = z.object({
   actionTimings: z.array(stepTimingSchema).default([]),
-  usedActionIndices: z.array(z.number()),
+  usedActionIds: z.array(z.string()),
 });
 
 export const completionInputSchema = z.object({

@@ -1,4 +1,5 @@
 import { parseStepContent } from "@zoonk/core/steps/contract/content";
+import { INVESTIGATION_EXPERIMENT_COUNT } from "@zoonk/utils/activities";
 import {
   type ActionTiming,
   type InvestigationLoopState,
@@ -6,8 +7,6 @@ import {
 } from "./investigation";
 import { type PlayerState, type SelectedAnswer } from "./player-reducer";
 import { type SerializedStep } from "./prepare-activity-data";
-
-export const MAX_EXPERIMENTS = 3;
 
 /**
  * Returns the investigation variant of the current step, or null
@@ -28,12 +27,12 @@ export function getInvestigationVariant(step: SerializedStep | undefined) {
  * across the 3 fixed experiments.
  */
 function initInvestigationLoop(): InvestigationLoopState {
-  return { actionTimings: [], usedActionIndices: [] };
+  return { actionTimings: [], usedActionIds: [] };
 }
 
 /**
- * Records a used action index and its timing in the investigation
- * loop when the action step is checked. The action index is stored
+ * Records a used action ID and its timing in the investigation
+ * loop when the action step is checked. The action ID is stored
  * for scoring (quality tiers), filtering out used actions on the
  * next visit, and building per-experiment StepAttempts server-side.
  */
@@ -53,7 +52,7 @@ export function recordActionInLoop({
   return {
     ...loop,
     actionTimings: [...loop.actionTimings, timing],
-    usedActionIndices: [...loop.usedActionIndices, answer.selectedActionIndex],
+    usedActionIds: [...loop.usedActionIds, answer.selectedActionId],
   };
 }
 
@@ -108,9 +107,9 @@ export function continueFromAction(state: PlayerState): PlayerState {
     return state;
   }
 
-  const experimentsDone = loop.usedActionIndices.length;
+  const experimentsDone = loop.usedActionIds.length;
 
-  if (experimentsDone >= MAX_EXPERIMENTS) {
+  if (experimentsDone >= INVESTIGATION_EXPERIMENT_COUNT) {
     const callStep = getInvestigationStepByVariant(state.steps, "call");
     const callIndex = callStep ? state.steps.indexOf(callStep) : state.currentStepIndex + 1;
     return { ...state, currentStepIndex: callIndex, phase: "playing", stepStartedAt: Date.now() };

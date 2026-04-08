@@ -40,11 +40,16 @@ const mockActions = {
   actions: [
     { label: "Check server logs", quality: "critical" as const },
     { label: "Ask a colleague", quality: "weak" as const },
+    { label: "Review metrics", quality: "useful" as const },
   ],
 };
 
 const mockFindings = {
-  findings: ["Server logs show 500 errors around 2 AM.", "Colleague says nothing changed."],
+  findings: [
+    "Server logs show 500 errors around 2 AM.",
+    "Colleague says nothing changed.",
+    "Metrics show traffic spike at 1 AM.",
+  ],
 };
 
 describe(saveInvestigationActivityStep, () => {
@@ -120,10 +125,24 @@ describe(saveInvestigationActivityStep, () => {
     expect(dbSteps[2]?.position).toBe(2);
     expect(getString(dbSteps[2]?.content, "variant")).toBe("call");
     const explanations = dbSteps[2]?.content as {
-      explanations: { accuracy: string; feedback: string; text: string }[];
+      explanations: { accuracy: string; feedback: string; id: string; text: string }[];
     };
     expect(explanations.explanations[0]?.feedback).toBe("This is the correct answer.");
     expect(explanations.explanations[1]?.feedback).toBe("This is incorrect.");
+
+    // Verify UUIDs are stamped on explanations
+    for (const explanation of explanations.explanations) {
+      expect(explanation.id).toMatch(/^[\da-f-]+$/);
+    }
+
+    // Verify UUIDs are stamped on actions
+    const actions = dbSteps[1]?.content as {
+      actions: { id: string; label: string }[];
+    };
+
+    for (const action of actions.actions) {
+      expect(action.id).toMatch(/^[\da-f-]+$/);
+    }
 
     for (const step of dbSteps) {
       expect(step.isPublished).toBe(true);

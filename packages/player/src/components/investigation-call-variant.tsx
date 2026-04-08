@@ -29,23 +29,23 @@ type CallContent = Extract<InvestigationStepContent, { variant: "call" }>;
 function getResultState({
   accuracy,
   hasFeedback,
-  index,
-  selectedIndex,
+  id,
+  selectedId,
 }: {
   accuracy: "best" | "partial" | "wrong";
   hasFeedback: boolean;
-  index: number;
-  selectedIndex: number | null;
+  id: string;
+  selectedId: string | null;
 }): "correct" | "incorrect" | undefined {
   if (!hasFeedback) {
     return undefined;
   }
 
-  if (index === selectedIndex) {
+  if (id === selectedId) {
     return accuracy === "best" ? "correct" : "incorrect";
   }
 
-  if (accuracy === "best" && selectedIndex !== null) {
+  if (accuracy === "best" && selectedId !== null) {
     return "correct";
   }
 
@@ -101,8 +101,8 @@ function useGatheredEvidence(): GatheredEvidence[] {
     return [];
   }
 
-  return loop.usedActionIndices.flatMap((index) => {
-    const action = actionContent.actions[index];
+  return loop.usedActionIds.flatMap((id) => {
+    const action = actionContent.actions.find((a) => a.id === id);
 
     if (!action) {
       return [];
@@ -188,26 +188,32 @@ export function InvestigationCallVariant({
   const hasFeedback = result !== undefined;
   const evidence = useGatheredEvidence();
 
-  const selectedIndex =
+  const selectedId =
     selectedAnswer?.kind === "investigation" && selectedAnswer.variant === "call"
-      ? selectedAnswer.selectedExplanationIndex
+      ? selectedAnswer.selectedExplanationId
       : null;
 
-  const hasSelection = selectedIndex !== null;
+  const hasSelection = selectedId !== null;
 
   const handleSelect = (index: number) => {
     if (hasFeedback) {
       return;
     }
 
-    if (selectedIndex === index) {
+    const explanation = explanations[index];
+
+    if (!explanation) {
+      return;
+    }
+
+    if (selectedId === explanation.id) {
       onSelectAnswer(step.id, null);
       return;
     }
 
     onSelectAnswer(step.id, {
       kind: "investigation",
-      selectedExplanationIndex: index,
+      selectedExplanationId: explanation.id,
       variant: "call",
     });
   };
@@ -229,15 +235,15 @@ export function InvestigationCallVariant({
           <OptionCard
             disabled={hasFeedback}
             index={index}
-            isDimmed={hasSelection && selectedIndex !== index}
-            isSelected={selectedIndex === index}
-            key={explanation.text}
+            isDimmed={hasSelection && selectedId !== explanation.id}
+            isSelected={selectedId === explanation.id}
+            key={explanation.id}
             onSelect={() => handleSelect(index)}
             resultState={getResultState({
               accuracy: explanation.accuracy,
               hasFeedback,
-              index,
-              selectedIndex,
+              id: explanation.id,
+              selectedId,
             })}
           >
             <span className="text-base leading-6">{explanation.text}</span>

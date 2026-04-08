@@ -1,5 +1,6 @@
 import "server-only";
 import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
+import { INVESTIGATION_EXPERIMENT_COUNT } from "@zoonk/utils/activities";
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import { type ActivityInvestigationAccuracySchema } from "./activity-investigation-accuracy";
@@ -10,12 +11,14 @@ const DEFAULT_MODEL = process.env.AI_MODEL_ACTIVITY_INVESTIGATION_ACTIONS ?? "op
 const FALLBACK_MODELS = ["anthropic/claude-opus-4.6", "google/gemini-3-flash"];
 
 const schema = z.object({
-  actions: z.array(
-    z.object({
-      label: z.string(),
-      quality: z.enum(["critical", "useful", "weak"]),
-    }),
-  ),
+  actions: z
+    .array(
+      z.object({
+        label: z.string(),
+        quality: z.enum(["critical", "useful", "weak"]),
+      }),
+    )
+    .min(INVESTIGATION_EXPERIMENT_COUNT),
 });
 
 export type ActivityInvestigationActionsSchema = z.infer<typeof schema>;

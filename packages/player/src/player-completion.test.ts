@@ -239,17 +239,22 @@ describe(computeLocalCompletion, () => {
   describe("investigation activities", () => {
     const actionContent = {
       actions: [
-        { finding: "Critical evidence", label: "Check logs", quality: "critical" as const },
-        { finding: "Useful data", label: "Review metrics", quality: "useful" as const },
-        { finding: "Nothing here", label: "Random check", quality: "weak" as const },
+        {
+          finding: "Critical evidence",
+          id: "a1",
+          label: "Check logs",
+          quality: "critical" as const,
+        },
+        { finding: "Useful data", id: "a2", label: "Review metrics", quality: "useful" as const },
+        { finding: "Nothing here", id: "a3", label: "Random check", quality: "weak" as const },
       ],
       variant: "action" as const,
     };
 
     const callContent = {
       explanations: [
-        { accuracy: "best" as const, feedback: "Correct!", text: "Memory leak" },
-        { accuracy: "wrong" as const, feedback: "Wrong.", text: "Network" },
+        { accuracy: "best" as const, feedback: "Correct!", id: "e1", text: "Memory leak" },
+        { accuracy: "wrong" as const, feedback: "Wrong.", id: "e2", text: "Network" },
       ],
       variant: "call" as const,
     };
@@ -261,12 +266,12 @@ describe(computeLocalCompletion, () => {
       ];
 
       const selectedAnswers: Record<string, SelectedAnswer> = {
-        "call-1": { kind: "investigation", selectedExplanationIndex: 1, variant: "call" },
+        "call-1": { kind: "investigation", selectedExplanationId: "e2", variant: "call" },
       };
 
       const investigationLoop = {
         actionTimings: [],
-        usedActionIndices: [0, 1, 2], // critical, useful, weak
+        usedActionIds: ["a1", "a2", "a3"], // critical, useful, weak
       };
 
       const completion = computeLocalCompletion(
@@ -284,12 +289,12 @@ describe(computeLocalCompletion, () => {
       ];
 
       const selectedAnswers: Record<string, SelectedAnswer> = {
-        "call-1": { kind: "investigation", selectedExplanationIndex: 0, variant: "call" },
+        "call-1": { kind: "investigation", selectedExplanationId: "e1", variant: "call" },
       };
 
       const investigationLoop = {
         actionTimings: [],
-        usedActionIndices: [0, 0, 1], // critical, critical, useful — all correct
+        usedActionIds: ["a1", "a1", "a2"], // critical, critical, useful — all correct
       };
 
       const completion = computeLocalCompletion(

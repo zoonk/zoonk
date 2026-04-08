@@ -52,8 +52,8 @@ export function buildInvestigationActionResults({
     return [];
   }
 
-  return investigationLoop.usedActionIndices.flatMap((actionIndex, i) => {
-    const action = actionContent.actions[actionIndex];
+  return investigationLoop.usedActionIds.flatMap((actionId, i) => {
+    const action = actionContent.actions.find((a) => a.id === actionId);
     const timing = investigationLoop.actionTimings[i];
 
     if (!action || !timing) {
@@ -64,7 +64,7 @@ export function buildInvestigationActionResults({
       {
         answer: {
           kind: "investigation" as const,
-          selectedActionIndex: actionIndex,
+          selectedActionId: actionId,
           variant: "action" as const,
         },
         answeredAt: new Date(timing.answeredAt),

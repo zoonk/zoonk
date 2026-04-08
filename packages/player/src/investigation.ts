@@ -14,7 +14,7 @@ export type ActionTiming = {
 
 export type InvestigationLoopState = {
   actionTimings: ActionTiming[];
-  usedActionIndices: number[];
+  usedActionIds: string[];
 };
 
 type InvestigationVariant = InvestigationStepContent["variant"];
@@ -44,19 +44,18 @@ export function getInvestigationStepByVariant(
 
 /**
  * Returns available investigation actions by filtering out already-used
- * action indices. Each action can only be selected once during the
- * investigation loop.
+ * actions. Each action can only be selected once during the
+ * investigation loop. Uses stable IDs so lookups are
+ * order-independent (safe across shuffling).
  */
 export function getAvailableActions(
-  actions: { label: string; quality: "critical" | "useful" | "weak" }[],
-  usedIndices: number[],
-): { originalIndex: number; label: string; quality: "critical" | "useful" | "weak" }[] {
-  const usedSet = new Set(usedIndices);
+  actions: { id: string; label: string; quality: "critical" | "useful" | "weak" }[],
+  usedIds: string[],
+): { id: string; label: string; quality: "critical" | "useful" | "weak" }[] {
+  const usedSet = new Set(usedIds);
 
-  return actions.flatMap((action, index) =>
-    usedSet.has(index)
-      ? []
-      : [{ label: action.label, originalIndex: index, quality: action.quality }],
+  return actions.flatMap((action) =>
+    usedSet.has(action.id) ? [] : [{ id: action.id, label: action.label, quality: action.quality }],
   );
 }
 
