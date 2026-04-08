@@ -3,6 +3,7 @@
 import { type InvestigationStepContent } from "@zoonk/core/steps/contract/content";
 import { useExtracted } from "next-intl";
 import { getAvailableActions } from "../investigation";
+import { MAX_EXPERIMENTS } from "../investigation-reducer";
 import { usePlayerRuntime } from "../player-context";
 import { type SelectedAnswer, type StepResult } from "../player-reducer";
 import { type SerializedStep } from "../prepare-activity-data";
@@ -36,12 +37,40 @@ function useQualityLabel(quality: "critical" | "useful" | "weak"): {
 }
 
 /**
+ * Returns progress-aware question text that guides the learner through
+ * the investigation loop with increasingly specific language.
+ *
+ * First experiment is inviting ("investigate first?"), middle ones keep
+ * momentum ("next?"), and the last one signals finality ("one more lead").
+ */
+function useQuestionText(experimentNumber: number): string {
+  const t = useExtracted();
+
+  if (experimentNumber === 0) {
+    return t("What do you want to investigate first?");
+  }
+
+  if (experimentNumber >= MAX_EXPERIMENTS - 1) {
+    return t("One more lead to follow");
+  }
+
+  return t("What do you want to investigate next?");
+}
+
+/**
  * Renders the evidence feedback shown after checking an action.
- * Shows the quality indicator and finding text.
+ * Shows the quality indicator, finding text, and a transition message
+ * after the final experiment to prepare the learner for the call step.
  */
 type ActionItem = ActionContent["actions"][number];
 
-function ActionFeedback({ action }: { action: ActionItem }) {
+function ActionFeedback({
+  action,
+  isLastExperiment,
+}: {
+  action: ActionItem;
+  isLastExperiment: boolean;
+}) {
   const t = useExtracted();
   const quality = useQualityLabel(action.quality);
 
@@ -54,6 +83,12 @@ function ActionFeedback({ action }: { action: ActionItem }) {
       <div className="bg-muted/50 rounded-lg px-4 py-3">
         <ContextText>{action.finding}</ContextText>
       </div>
+
+      {isLastExperiment && (
+        <p className="text-muted-foreground text-sm">
+          {t("Evidence complete — time to make your call.")}
+        </p>
+      )}
     </InteractiveStepLayout>
   );
 }
@@ -78,7 +113,6 @@ export function InvestigationActionVariant({
   selectedAnswer: SelectedAnswer | undefined;
   step: SerializedStep;
 }) {
-  const t = useExtracted();
   const { state } = usePlayerRuntime();
 
   const loop = state.investigationLoop;
@@ -87,8 +121,7 @@ export function InvestigationActionVariant({
   const availableActions = getAvailableActions(content.actions, usedIndices);
   const hasFeedback = result !== undefined;
 
-  const questionText =
-    experimentNumber === 0 ? t("What do you check?") : t("What do you check next?");
+  const questionText = useQuestionText(experimentNumber);
 
   const selectedActionIndex =
     selectedAnswer?.kind === "investigation" && selectedAnswer.variant === "action"
@@ -129,16 +162,19 @@ export function InvestigationActionVariant({
   const selectedAction = selectedActionIndex === null ? null : content.actions[selectedActionIndex];
 
   if (hasFeedback && selectedAction) {
-    return <ActionFeedback action={selectedAction} />;
+    return (
+      <ActionFeedback
+        action={selectedAction}
+        isLastExperiment={usedIndices.length >= MAX_EXPERIMENTS}
+      />
+    );
   }
 
   return (
     <InteractiveStepLayout>
-      <SectionLabel>{t("Investigate")}</SectionLabel>
-
       <QuestionText>{questionText}</QuestionText>
 
-      <div aria-label={t("Answer options")} className="flex flex-col gap-3" role="radiogroup">
+      <div aria-label={questionText} className="flex flex-col gap-3" role="radiogroup">
         {availableActions.map((action, index) => (
           <OptionCard
             index={index}

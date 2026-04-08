@@ -71,7 +71,6 @@ msgid "{color} Belt — Level {level}"
 msgstr "Cinturón {color} — Nivel {level}"
 
 #: ../../packages/player/src/components/choice-step-layout.tsx
-#: ../../packages/player/src/components/investigation-action-variant.tsx
 #: ../../packages/player/src/components/investigation-call-variant.tsx
 #: ../../packages/player/src/components/translation-step.tsx
 msgctxt "akd+cv"
@@ -224,6 +223,11 @@ msgid "Correct!"
 msgstr "¡Correcto!"
 
 #: ../../packages/player/src/components/investigation-action-variant.tsx
+msgctxt "5jvK4n"
+msgid "Evidence complete — time to make your call."
+msgstr "Evidencia completa — es hora de tomar tu decisión."
+
+#: ../../packages/player/src/components/investigation-action-variant.tsx
 msgctxt "6g7+6N"
 msgid "Evidence"
 msgstr "Evidencia"
@@ -234,25 +238,24 @@ msgid "Weak signal"
 msgstr "Señal débil"
 
 #: ../../packages/player/src/components/investigation-action-variant.tsx
+msgctxt "hoKNDb"
+msgid "What do you want to investigate next?"
+msgstr "¿Qué quieres investigar después?"
+
+#: ../../packages/player/src/components/investigation-action-variant.tsx
+msgctxt "LrUFLN"
+msgid "One more lead to follow"
+msgstr "Un indicio más para seguir"
+
+#: ../../packages/player/src/components/investigation-action-variant.tsx
 msgctxt "P/5Naz"
 msgid "Useful clue"
 msgstr "Pista útil"
 
 #: ../../packages/player/src/components/investigation-action-variant.tsx
-msgctxt "SjF3aL"
-msgid "What do you check next?"
-msgstr "¿Qué revisas después?"
-
-#: ../../packages/player/src/components/investigation-action-variant.tsx
-msgctxt "Tg7ugj"
-msgid "What do you check?"
-msgstr "¿Qué revisas?"
-
-#: ../../packages/player/src/components/investigation-action-variant.tsx
-#: ../../packages/player/src/components/player-shell.tsx
-msgctxt "tXxpcp"
-msgid "Investigate"
-msgstr "Investigar"
+msgctxt "snhsrG"
+msgid "What do you want to investigate first?"
+msgstr "¿Qué quieres investigar primero?"
 
 #: ../../packages/player/src/components/investigation-action-variant.tsx
 msgctxt "U0rj9y"
@@ -359,11 +362,21 @@ msgid "Activity progress"
 msgstr "Progreso de actividad"
 
 #: ../../packages/player/src/components/player-shell.tsx
+msgctxt "9p9JgX"
+msgid "Start Investigation"
+msgstr "Iniciar investigación"
+
+#: ../../packages/player/src/components/player-shell.tsx
 #: src/app/(catalog)/(home)/continue-learning-card.tsx
 #: src/components/catalog/continue-activity-link.tsx
 msgctxt "acrOoz"
 msgid "Continue"
 msgstr "Continuar"
+
+#: ../../packages/player/src/components/player-shell.tsx
+msgctxt "EqkwlK"
+msgid "evidence"
+msgstr "evidencia"
 
 #: ../../packages/player/src/components/player-shell.tsx
 msgctxt "PVe26p"
@@ -373,7 +386,7 @@ msgstr "Comenzar"
 #: ../../packages/player/src/components/player-shell.tsx
 msgctxt "RDZVQL"
 msgid "Check"
-msgstr "Verificación"
+msgstr "Revisar"
 
 #: ../../packages/player/src/components/reward-badges.tsx
 #: src/app/(performance)/level/level-stats.tsx

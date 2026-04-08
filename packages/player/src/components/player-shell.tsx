@@ -8,6 +8,7 @@ import {
   getCanNavigatePrev,
   getCurrentStep,
   getHasAnswer,
+  getInvestigationProgress,
   getInvestigationScenarioData,
   getIsInvestigationProblem,
   getIsStaticStep,
@@ -24,6 +25,7 @@ import { InPlayStickyHeader } from "./in-play-sticky-header";
 import { PlayerBottomBar, PlayerBottomBarAction, PlayerBottomBarNav } from "./player-bottom-bar";
 import { PlayerStage } from "./player-stage";
 import { StageContent } from "./stage-content";
+import { StatusPill } from "./status-pill";
 import { StepImagePreloader } from "./step-image-preloader";
 import { StoryMetricsBar } from "./story-metrics-bar";
 
@@ -69,13 +71,15 @@ function BottomBarContent({
   }
 
   /**
-   * The investigation problem step shows "Investigate" because the
-   * learner is reading a scenario — "Check" would imply there's an
-   * answer to validate.
+   * The investigation problem step shows "Start Investigation" because
+   * the learner is reading a scenario — "Check" would imply there's
+   * an answer to validate.
    */
   if (isInvestigationProblem) {
     return (
-      <PlayerBottomBarAction onClick={actions.check}>{t("Investigate")}</PlayerBottomBarAction>
+      <PlayerBottomBarAction onClick={actions.check}>
+        {t("Start Investigation")}
+      </PlayerBottomBarAction>
     );
   }
 
@@ -90,6 +94,7 @@ function BottomBarContent({
 }
 
 export function PlayerShell() {
+  const t = useExtracted();
   const { actions, state } = usePlayerRuntime();
   const { lessonHref } = usePlayerNavigation();
 
@@ -113,14 +118,26 @@ export function PlayerShell() {
   const contextRecall =
     getStoryBriefingText(state) ?? getInvestigationScenarioData(state)?.scenario ?? null;
 
+  const investigationProgress = getInvestigationProgress(state);
   const isInvestigationProblem = getIsInvestigationProblem(state);
   const showChrome = state.phase === "playing" || state.phase === "feedback";
   const showMetricsBar = currentStep?.kind === "story" && showChrome;
+
+  const evidencePill = investigationProgress ? (
+    <StatusPill animationKey={investigationProgress.collected}>
+      <span className="text-muted-foreground text-xs font-semibold tabular-nums">
+        {investigationProgress.collected} / {investigationProgress.total}
+      </span>
+
+      <span className="text-muted-foreground text-xs">{t("evidence")}</span>
+    </StatusPill>
+  ) : undefined;
 
   return (
     <main className="flex h-dvh flex-col overflow-hidden">
       {showChrome && (
         <InPlayStickyHeader
+          centerContent={evidencePill}
           contextRecall={contextRecall}
           currentStepIndex={state.currentStepIndex}
           lessonHref={lessonHref}

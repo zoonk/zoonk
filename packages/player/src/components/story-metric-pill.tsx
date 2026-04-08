@@ -5,6 +5,7 @@ import {
   METRIC_DANGER_THRESHOLD,
   METRIC_GOOD_THRESHOLD,
 } from "../story";
+import { StatusPill } from "./status-pill";
 
 /** Returns the Tailwind color class for a metric value based on threshold bands. */
 function getMetricColor(value: number): string {
@@ -37,10 +38,7 @@ function getMetricColor(value: number): string {
  */
 export function StoryMetricPill({ metric, value }: { metric: string; value: number }) {
   return (
-    <span
-      key={value}
-      className="animate-pulse-scale bg-muted/50 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 motion-reduce:animate-none"
-    >
+    <StatusPill animationKey={value}>
       <span className="text-muted-foreground text-xs">{metric}</span>
       <span
         className={cn(
@@ -50,6 +48,6 @@ export function StoryMetricPill({ metric, value }: { metric: string; value: numb
       >
         {value}
       </span>
-    </span>
+    </StatusPill>
   );
 }

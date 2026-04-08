@@ -233,12 +233,13 @@ checksums:
     Not%20quite/singular: e570085e69662802acf485c4565e3e3e
     Answer%20feedback/singular: 9ec80a1e5b591c3d6c790b8d43266c0f
     Correct!/singular: dda1a98dc04fd9db252887ecf1765d41
+    Evidence%20complete%20%E2%80%94%20time%20to%20make%20your%20call./singular: 6f1a545162b4f3799dab45247dfc5f35
     Evidence/singular: 49eed19c45401d0d53f3ebfd5e5e0d19
     Weak%20signal/singular: 19b95e7dfa1cb1c1f257f1812720859f
+    What%20do%20you%20want%20to%20investigate%20next%3F/singular: 9ddcec8a58615e2d5c501f12c091c1dc
+    One%20more%20lead%20to%20follow/singular: 8f719bae5f33676aa045aed39b080f46
     Useful%20clue/singular: 9ae26309bb851fc48999bc8455ed8f88
-    What%20do%20you%20check%20next%3F/singular: f5db3e2eba7328756e00c03633d4991c
-    What%20do%20you%20check%3F/singular: 62510abf3332a1d2baa510a3e5f2139c
-    Investigate/singular: 2d2eabd3c65eccf58fb4ebcbbd9f7c17
+    What%20do%20you%20want%20to%20investigate%20first%3F/singular: 84bfc285b668f4dc31f58cb56a7d7978
     Strong%20lead/singular: 440134c4a18791b05471ce1435d27ed9
     You%20checked/singular: b3a11092bafe3c830cd55e537a3c7814
     Here's%20what%20actually%20happened/singular: bf1b08a2dc9d242d17f0a2d98821a3fa
@@ -259,7 +260,9 @@ checksums:
     Step%20navigation/singular: ec328f28051577e1c0aab044c89b138c
     Close/singular: 2c2e22f8424a1031de89063bd0022e16
     Activity%20progress/singular: 8ff2fb7372b8a2525f2955c851c4fa42
+    Start%20Investigation/singular: 597f9ca357f5bfb78aa995ce49660ca9
     Continue/singular: 3cfba90b4600131e82fc4260c568d044
+    evidence/singular: e79d4526b88aca84fbc283178ed61264
     Begin/singular: cc2a17a662cb60dd2d8335a2e8440997
     Check/singular: 023cc2ba432775c38e3efc004ad7b9ef
     BP/singular: 842ed01b3a4d0efa6fe96ae8c595726c

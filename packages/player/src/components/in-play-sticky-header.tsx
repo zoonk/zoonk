@@ -6,12 +6,14 @@ import { PlayerCloseLink, PlayerHeader, PlayerStepFraction } from "./player-head
 import { PlayerProgressBar } from "./player-progress-bar";
 
 export function InPlayStickyHeader({
+  centerContent,
   contextRecall,
   currentStepIndex,
   lessonHref,
   progressValue,
   totalSteps,
 }: {
+  centerContent?: React.ReactNode;
   contextRecall: string | null;
   currentStepIndex: number;
   lessonHref: PlayerRoute;
@@ -25,9 +27,11 @@ export function InPlayStickyHeader({
 
         <div className="pointer-events-none absolute inset-x-0 flex justify-center">
           <div className="pointer-events-auto">
-            <PlayerStepFraction>
-              {currentStepIndex + 1} / {totalSteps}
-            </PlayerStepFraction>
+            {centerContent ?? (
+              <PlayerStepFraction>
+                {currentStepIndex + 1} / {totalSteps}
+              </PlayerStepFraction>
+            )}
           </div>
         </div>
 

@@ -3,7 +3,7 @@ import { type InvestigationLoopState, getInvestigationStepByVariant } from "./in
 import { type PlayerState, type SelectedAnswer } from "./player-reducer";
 import { type SerializedStep } from "./prepare-activity-data";
 
-const MAX_EXPERIMENTS = 3;
+export const MAX_EXPERIMENTS = 3;
 
 /**
  * Returns the investigation variant of the current step, or null

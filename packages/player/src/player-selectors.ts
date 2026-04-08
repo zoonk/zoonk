@@ -1,6 +1,7 @@
 import { type StoryStaticVariant, parseStepContent } from "@zoonk/core/steps/contract/content";
 import { type CompletionResult } from "./completion-input-schema";
 import { getInvestigationScenario } from "./investigation";
+import { MAX_EXPERIMENTS, getInvestigationVariant } from "./investigation-reducer";
 import { type PlayerState } from "./player-reducer";
 import { type SerializedStep } from "./prepare-activity-data";
 import { canNavigatePrev, isStaticNavigationStep } from "./step-navigation";
@@ -73,6 +74,33 @@ export function getIsInvestigationProblem(state: PlayerState): boolean {
 
   const content = parseStepContent("investigation", step.content);
   return content.variant === "problem";
+}
+
+type InvestigationProgress = {
+  collected: number;
+  total: number;
+};
+
+/**
+ * Returns the evidence collection progress for any investigation step,
+ * or null when the current step is not part of an investigation.
+ *
+ * The step fraction ("2/3") is misleading for investigations because
+ * the action step loops 3 times at the same index. This pill replaces
+ * the fraction throughout the entire investigation — showing "0 / 3"
+ * on the problem step, incrementing during the action loop, and
+ * displaying "3 / 3" on the call step.
+ */
+export function getInvestigationProgress(state: PlayerState): InvestigationProgress | null {
+  const step = getCurrentStep(state);
+  const variant = getInvestigationVariant(step);
+
+  if (!variant) {
+    return null;
+  }
+
+  const collected = state.investigationLoop?.usedActionIndices.length ?? 0;
+  return { collected, total: MAX_EXPERIMENTS };
 }
 
 /** Returns the progress percentage (0–100), snapping to 100 when completed. */
