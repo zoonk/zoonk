@@ -1,0 +1,23 @@
+apps/main/e2e/investigation-step.test.ts
+  b0bca91cc78f5308 299-326,351,391
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.6",
+  "base_commit_sha": "1bfbcd38a164981343696984f425aeb27de3181d",
+  "prompts": {
+    "b0bca91cc78f5308": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "cf456c20-2329-421f-9550-98c6be94d7e3",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 34,
+      "total_deletions": 2,
+      "accepted_lines": 30,
+      "overriden_lines": 0
+    }
+  }
+}
