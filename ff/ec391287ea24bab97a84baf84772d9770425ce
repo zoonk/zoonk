@@ -1,0 +1,40 @@
+packages/player/src/components/in-play-sticky-header.tsx
+  7f60b71b5a650569 4,9,15,34
+packages/player/src/components/context-recall-popover.tsx
+  7f60b71b5a650569 1-36
+packages/player/src/components/player-shell.tsx
+  7f60b71b5a650569 102-104,113
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "ffec391287ea24bab97a84baf84772d9770425ce",
+  "prompts": {
+    "7f60b71b5a650569": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "f08c6a7f-f0b1-4a89-96d6-e0308e2abc6a",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 70,
+      "total_deletions": 40,
+      "accepted_lines": 44,
+      "overriden_lines": 0
+    },
+    "e7582e38064b7354": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8055adee-7d12-4ed0-9f9f-962458fb5feb",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 0,
+      "overriden_lines": 0
+    }
+  }
+}
