@@ -1,0 +1,25 @@
+apps/main/e2e/investigation-step.test.ts
+  9b5b887d1ebe7482 226,230
+packages/player/src/components/player-shell.tsx
+  9b5b887d1ebe7482 12,34,42,71-81,87,116,144
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "fe95f88b2ea7eef1fb1916197fefb86b26510616",
+  "prompts": {
+    "9b5b887d1ebe7482": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b7f0ea2f-ff46-433f-8c1c-443ed796e3be",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 87,
+      "total_deletions": 55,
+      "accepted_lines": 19,
+      "overriden_lines": 0
+    }
+  }
+}
