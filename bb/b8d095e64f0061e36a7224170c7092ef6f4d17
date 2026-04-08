@@ -1,0 +1,25 @@
+packages/player/src/components/verdict-label.tsx
+  60fcfd9504a39ce8 17-18,20
+packages/player/src/components/inline-feedback.tsx
+  60fcfd9504a39ce8 21-26
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.6",
+  "base_commit_sha": "bbb8d095e64f0061e36a7224170c7092ef6f4d17",
+  "prompts": {
+    "60fcfd9504a39ce8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b4484e9e-3fdc-460f-8ad6-6408409185ea",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 9,
+      "total_deletions": 17,
+      "accepted_lines": 9,
+      "overriden_lines": 0
+    }
+  }
+}
