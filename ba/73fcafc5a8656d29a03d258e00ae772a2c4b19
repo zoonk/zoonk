@@ -1,0 +1,39 @@
+packages/player/src/components/player-shell.tsx
+  1cd1170dbeaa718a 11,28,74-76,80-82,97,121,126-135,140
+packages/player/src/investigation-reducer.ts
+  1cd1170dbeaa718a 6
+packages/player/src/components/status-pill.tsx
+  1cd1170dbeaa718a 1-24
+packages/player/src/player-selectors.ts
+  1cd1170dbeaa718a 4,79-105
+apps/main/e2e/investigation-step.test.ts
+  1cd1170dbeaa718a 153,164,166,178,183,198,227,240,242,247,252,267,269,274,279,301,305,310,315
+packages/player/src/player-selectors.test.ts
+  1cd1170dbeaa718a 5,367-467
+packages/player/src/components/story-metric-pill.tsx
+  1cd1170dbeaa718a 8,41,51
+packages/player/src/components/in-play-sticky-header.tsx
+  1cd1170dbeaa718a 9,16,30-34
+packages/player/src/components/investigation-action-variant.tsx
+  1cd1170dbeaa718a 6,40-59,62-63,67-73,86-91,124,165-170,177
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.6",
+  "base_commit_sha": "ba73fcafc5a8656d29a03d258e00ae772a2c4b19",
+  "prompts": {
+    "1cd1170dbeaa718a": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "245c018c-77e7-48c4-a8d3-4555d36d2887",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 267,
+      "total_deletions": 59,
+      "accepted_lines": 250,
+      "overriden_lines": 0
+    }
+  }
+}
