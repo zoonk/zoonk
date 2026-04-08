@@ -1,0 +1,53 @@
+packages/player/src/compute-score.test.ts
+  514242801dffeff8 181,184,192-193,198,201,209-210,215,218,228,232,235,245,249,252,260-261
+packages/player/src/investigation-reducer.ts
+  514242801dffeff8 27,99
+packages/ai/src/tasks/activities/core/activity-investigation-actions.prompt.md
+  514242801dffeff8 15,19
+packages/player/src/compute-score.ts
+  514242801dffeff8 105,112
+packages/player/src/player-selectors.test.ts
+  514242801dffeff8 391,401,404,407,411,426,432,452,470
+packages/player/src/player-reducer.ts
+  514242801dffeff8 186
+packages/utils/src/activities.ts
+  514242801dffeff8 7
+apps/main/e2e/investigation-step.test.ts
+  514242801dffeff8 351,361,371,376,388,390,407,421,423
+packages/ai/src/tasks/activities/core/activity-investigation-accuracy.prompt.md
+  514242801dffeff8 33,35-37
+packages/player/src/components/investigation-problem-variant.tsx
+  514242801dffeff8 27-28
+packages/player/src/player-completion.test.ts
+  514242801dffeff8 262,274,280,285,297,303
+packages/player/src/player-selectors.ts
+  514242801dffeff8 89-91,93
+packages/player/src/components/investigation-action-variant.tsx
+  514242801dffeff8 42-43,52
+packages/player/src/build-investigation-action-results.test.ts
+  514242801dffeff8 21,24-25,30,32,35,38-39,56
+packages/player/src/investigation.test.ts
+  514242801dffeff8 85,87,93,212,215,221,233
+packages/ai/src/tasks/activities/core/activity-investigation-findings.prompt.md
+  514242801dffeff8 16,20,24,29-36,42
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.6",
+  "base_commit_sha": "47cab2eccd2bcbcf322cd69c69f6592aa2264e72",
+  "prompts": {
+    "514242801dffeff8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "4a08770c-cbfb-4e21-aecc-e91a1bf6c3af",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 91,
+      "total_deletions": 127,
+      "accepted_lines": 91,
+      "overriden_lines": 0
+    }
+  }
+}
