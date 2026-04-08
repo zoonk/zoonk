@@ -1,0 +1,58 @@
+apps/main/src/lib/generation/activity-generation-phase-weights.ts
+  1d561be0dff2265e 154-157,160-161
+packages/player/src/components/investigation-action-variant.tsx
+  1d561be0dff2265e 40,65-66
+apps/main/src/lib/generation/phase-kind-steps/investigation.ts
+  1d561be0dff2265e 8-9,11
+packages/player/src/components/investigation-problem-variant.tsx
+  1d561be0dff2265e 13
+apps/api/src/workflows/activity-generation/kinds/investigation-workflow.ts
+  1d561be0dff2265e 12,15,75-77,79,81
+apps/api/src/workflows/activity-generation/steps/save-investigation-activity-step.ts
+  1d561be0dff2265e 30-31,94
+packages/core/src/steps/contract/content.test.ts
+  1d561be0dff2265e 359
+apps/main/e2e/investigation-step.test.ts
+  1d561be0dff2265e 137
+packages/utils/src/settled.test.ts
+  1d561be0dff2265e 2
+packages/core/src/steps/contract/investigation.ts
+  1d561be0dff2265e 15-16,28
+packages/player/src/investigation.ts
+  1d561be0dff2265e 90
+apps/api/src/workflows/activity-generation/kinds/investigation-workflow.test.ts
+  1d561be0dff2265e 423
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "34667d8719d15c2859d386bc72d712864bb0097f",
+  "prompts": {
+    "1d561be0dff2265e": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "ebd1d065-a598-4312-9ff2-df103694032a",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 38,
+      "total_deletions": 407,
+      "accepted_lines": 35,
+      "overriden_lines": 0
+    },
+    "e7582e38064b7354": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8055adee-7d12-4ed0-9f9f-962458fb5feb",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 36,
+      "overriden_lines": 0
+    }
+  }
+}
