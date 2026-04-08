@@ -33,7 +33,7 @@ export type VisualMusicParams = {
 /**
  * Generates structured music notation data from a textual description.
  * Takes a visual description (from a kind-selection task like
- * `generateInvestigationVisual`) and produces music content
+ * `generateVisualDescriptions`) and produces music content
  * matching `musicVisualContentSchema`: ABC notation and a
  * plain-text explanation of what the notation demonstrates.
  */

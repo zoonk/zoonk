@@ -1,3 +1,4 @@
+import { parseStepContent } from "@zoonk/core/steps/contract/content";
 import { usePlayerNavigation, usePlayerRuntime } from "../player-context";
 import {
   getCanNavigatePrev,
@@ -11,13 +12,37 @@ import { CompletionScreenContent } from "./completion-screen";
 import { FeedbackScreenContent } from "./feedback-screen";
 import { StepRenderer } from "./step-renderer";
 
+/**
+ * Investigation action steps show feedback inline (the finding reveal
+ * is brief and contextual), but the call step uses the dedicated
+ * feedback screen because its debrief explanation is long-form text
+ * that benefits from a focused reading experience.
+ */
+function isInvestigationCallStep(step: SerializedStep): boolean {
+  if (step.kind !== "investigation") {
+    return false;
+  }
+
+  const content = parseStepContent("investigation", step.content);
+  return content.variant === "call";
+}
+
+/**
+ * Determines whether a step should use the full-screen feedback view
+ * after the answer is checked.
+ *
+ * Investigation action steps handle feedback inline (brief finding
+ * reveal), but investigation call steps use the feedback screen
+ * for their long-form debrief explanation.
+ */
 function needsFeedbackScreen(step: SerializedStep): boolean {
   return (
     step.kind === "multipleChoice" ||
     step.kind === "translation" ||
     step.kind === "reading" ||
     step.kind === "listening" ||
-    step.kind === "story"
+    step.kind === "story" ||
+    isInvestigationCallStep(step)
   );
 }
 
@@ -38,7 +63,6 @@ export function StageContent() {
         lessonHref={lessonHref}
         nextActivityHref={nextActivityHref}
         onRestart={actions.restart}
-        results={state.results}
       />
     );
   }

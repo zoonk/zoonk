@@ -53,7 +53,7 @@ export type VisualDiagramParams = {
 /**
  * Generates structured diagram data from a textual description.
  * Takes a visual description (from a kind-selection task like
- * `generateInvestigationVisual`) and produces diagram content
+ * `generateVisualDescriptions`) and produces diagram content
  * matching `diagramVisualContentSchema`: nodes with labels
  * and edges showing connections between them.
  *

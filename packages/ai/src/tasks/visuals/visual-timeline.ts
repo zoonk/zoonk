@@ -37,7 +37,7 @@ export type VisualTimelineParams = {
 /**
  * Generates structured timeline data from a textual description.
  * Takes a visual description (from a kind-selection task like
- * `generateInvestigationVisual`) and produces timeline content
+ * `generateVisualDescriptions`) and produces timeline content
  * matching `timelineVisualContentSchema`: an array of chronological
  * events, each with a date, title, and description.
  */

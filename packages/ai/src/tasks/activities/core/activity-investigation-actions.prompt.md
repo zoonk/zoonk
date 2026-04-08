@@ -12,11 +12,11 @@ The learner has been presented with a mystery scenario and has chosen a hypothes
 
 ## What You Generate
 
-5-6 investigation actions, each with a label and quality tier.
+4-5 investigation actions, each with a label and quality tier.
 
 ## Action Rules
 
-- 5-6 actions representing different investigation angles.
+- 4-5 actions representing different investigation angles.
 - Each action is a short phrase: what to check/review/analyze/examine.
 - Actions should cover different approaches — some confirm the correct explanation, some test alternatives, some are tangential.
 - **Quality tiers must be distributed**: 1-2 `critical` (directly test the core question), 2-3 `useful` (valuable supporting evidence), 1-2 `weak` (tangentially related, don't help distinguish between hypotheses).

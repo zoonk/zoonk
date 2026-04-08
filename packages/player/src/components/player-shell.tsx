@@ -8,6 +8,9 @@ import {
   getCanNavigatePrev,
   getCurrentStep,
   getHasAnswer,
+  getInvestigationProgress,
+  getInvestigationScenarioData,
+  getIsInvestigationProblem,
   getIsStaticStep,
   getIsStoryActivity,
   getProgressValue,
@@ -22,22 +25,23 @@ import { InPlayStickyHeader } from "./in-play-sticky-header";
 import { PlayerBottomBar, PlayerBottomBarAction, PlayerBottomBarNav } from "./player-bottom-bar";
 import { PlayerStage } from "./player-stage";
 import { StageContent } from "./stage-content";
+import { StatusPill } from "./status-pill";
 import { StepImagePreloader } from "./step-image-preloader";
 import { StoryMetricsBar } from "./story-metrics-bar";
 
 function BottomBarContent({
   actions,
-  buttonLabel,
   canNavigatePrev,
   hasAnswer,
+  isInvestigationProblem,
   isStaticStep,
   phase,
   storyStaticVariant,
 }: {
   actions: PlayerActions;
-  buttonLabel: string;
   canNavigatePrev: boolean;
   hasAnswer: boolean;
+  isInvestigationProblem: boolean;
   isStaticStep: boolean;
   phase: PlayerPhase;
   storyStaticVariant: StoryStaticVariant | null;
@@ -66,12 +70,25 @@ function BottomBarContent({
     );
   }
 
+  /**
+   * The investigation problem step shows "Start Investigation" because
+   * the learner is reading a scenario — "Check" would imply there's
+   * an answer to validate.
+   */
+  if (isInvestigationProblem) {
+    return (
+      <PlayerBottomBarAction onClick={actions.check}>
+        {t("Start Investigation")}
+      </PlayerBottomBarAction>
+    );
+  }
+
   return (
     <PlayerBottomBarAction
       disabled={phase === "playing" && !hasAnswer}
       onClick={phase === "feedback" ? actions.continue : actions.check}
     >
-      {buttonLabel}
+      {phase === "feedback" ? t("Continue") : t("Check")}
     </PlayerBottomBarAction>
   );
 }
@@ -87,7 +104,6 @@ export function PlayerShell() {
   const isStaticStep = getIsStaticStep(state);
   const isStoryActivity = getIsStoryActivity(state);
   const progressValue = getProgressValue(state);
-  const storyBriefing = getStoryBriefingText(state);
   const storyMetrics = getStoryMetrics(state);
   const storyStaticVariant = getStoryStaticVariant(state);
   const upcomingImages = getUpcomingImages(state);
@@ -99,18 +115,33 @@ export function PlayerShell() {
     storyStaticVariant,
   });
 
+  const contextRecall =
+    getStoryBriefingText(state) ?? getInvestigationScenarioData(state)?.scenario ?? null;
+
+  const investigationProgress = getInvestigationProgress(state);
+  const isInvestigationProblem = getIsInvestigationProblem(state);
   const showChrome = state.phase === "playing" || state.phase === "feedback";
   const showMetricsBar = currentStep?.kind === "story" && showChrome;
-  const buttonLabel = state.phase === "feedback" ? t("Continue") : t("Check");
+
+  const evidencePill = investigationProgress ? (
+    <StatusPill animationKey={investigationProgress.collected}>
+      <span className="text-muted-foreground text-xs font-semibold tabular-nums">
+        {investigationProgress.collected} / {investigationProgress.total}
+      </span>
+
+      <span className="text-muted-foreground text-xs">{t("evidence")}</span>
+    </StatusPill>
+  ) : undefined;
 
   return (
     <main className="flex h-dvh flex-col overflow-hidden">
       {showChrome && (
         <InPlayStickyHeader
+          centerContent={evidencePill}
+          contextRecall={contextRecall}
           currentStepIndex={state.currentStepIndex}
           lessonHref={lessonHref}
           progressValue={progressValue}
-          storyBriefing={storyBriefing}
           totalSteps={state.steps.length}
         />
       )}
@@ -125,9 +156,9 @@ export function PlayerShell() {
         <PlayerBottomBar className={isStaticStep ? "lg:hidden" : undefined}>
           <BottomBarContent
             actions={actions}
-            buttonLabel={buttonLabel}
             canNavigatePrev={canNavigatePrev}
             hasAnswer={hasAnswer}
+            isInvestigationProblem={isInvestigationProblem}
             isStaticStep={isStaticStep}
             phase={state.phase}
             storyStaticVariant={storyStaticVariant}

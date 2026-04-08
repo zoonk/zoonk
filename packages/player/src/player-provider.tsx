@@ -57,6 +57,7 @@ export function PlayerProvider({
   usePlayerKeyboard({
     canNavigatePrev: getCanNavigatePrev(state),
     hasAnswer: getHasAnswer(state),
+
     isStaticStep: getIsStaticStep(state),
     onCheck: actions.check,
     onContinue: actions.continue,

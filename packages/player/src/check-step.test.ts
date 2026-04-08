@@ -477,4 +477,204 @@ describe(checkStep, () => {
       expect(result.feedback).toBeNull();
     });
   });
+
+  describe("investigation", () => {
+    test("problem variant is always correct", () => {
+      const step = buildStep({
+        content: {
+          scenario: "test",
+          variant: "problem" as const,
+        },
+        kind: "investigation",
+      });
+      const answer: SelectedAnswer = {
+        kind: "investigation",
+        variant: "problem",
+      };
+      const { result } = checkStep(step, answer);
+      expect(result.isCorrect).toBe(true);
+    });
+
+    test("action variant: critical quality is correct", () => {
+      const step = buildStep({
+        content: {
+          actions: [
+            {
+              finding: "Logs show memory climbing",
+              id: "a1",
+              label: "Check logs",
+              quality: "critical" as const,
+            },
+            { finding: "Filler", id: "a2", label: "Filler 1", quality: "useful" as const },
+            { finding: "Filler", id: "a3", label: "Filler 2", quality: "weak" as const },
+          ],
+          variant: "action" as const,
+        },
+        kind: "investigation",
+      });
+      const answer: SelectedAnswer = {
+        kind: "investigation",
+        selectedActionId: "a1",
+        variant: "action",
+      };
+      const { result } = checkStep(step, answer);
+      expect(result.isCorrect).toBe(true);
+      expect(result.feedback).toBe("Logs show memory climbing");
+    });
+
+    test("action variant: useful quality is correct", () => {
+      const step = buildStep({
+        content: {
+          actions: [
+            {
+              finding: "Some useful data found",
+              id: "a1",
+              label: "Review logs",
+              quality: "useful" as const,
+            },
+            { finding: "Filler", id: "a2", label: "Filler 1", quality: "critical" as const },
+            { finding: "Filler", id: "a3", label: "Filler 2", quality: "weak" as const },
+          ],
+          variant: "action" as const,
+        },
+        kind: "investigation",
+      });
+      const answer: SelectedAnswer = {
+        kind: "investigation",
+        selectedActionId: "a1",
+        variant: "action",
+      };
+      const { result } = checkStep(step, answer);
+      expect(result.isCorrect).toBe(true);
+      expect(result.feedback).toBe("Some useful data found");
+    });
+
+    test("action variant: weak quality is incorrect", () => {
+      const step = buildStep({
+        content: {
+          actions: [
+            {
+              finding: "Nothing useful here",
+              id: "a1",
+              label: "Random check",
+              quality: "weak" as const,
+            },
+            { finding: "Filler", id: "a2", label: "Filler 1", quality: "critical" as const },
+            { finding: "Filler", id: "a3", label: "Filler 2", quality: "useful" as const },
+          ],
+          variant: "action" as const,
+        },
+        kind: "investigation",
+      });
+      const answer: SelectedAnswer = {
+        kind: "investigation",
+        selectedActionId: "a1",
+        variant: "action",
+      };
+      const { result } = checkStep(step, answer);
+      expect(result.isCorrect).toBe(false);
+      expect(result.feedback).toBe("Nothing useful here");
+    });
+
+    test("action variant: unknown ID is incorrect", () => {
+      const step = buildStep({
+        content: {
+          actions: [
+            {
+              finding: "Logs show memory climbing",
+              id: "a1",
+              label: "Check logs",
+              quality: "critical" as const,
+            },
+            { finding: "Filler", id: "a2", label: "Filler 1", quality: "useful" as const },
+            { finding: "Filler", id: "a3", label: "Filler 2", quality: "weak" as const },
+          ],
+          variant: "action" as const,
+        },
+        kind: "investigation",
+      });
+      const answer: SelectedAnswer = {
+        kind: "investigation",
+        selectedActionId: "nonexistent",
+        variant: "action",
+      };
+      const { result } = checkStep(step, answer);
+      expect(result.isCorrect).toBe(false);
+    });
+
+    test("call variant: best accuracy is correct with per-explanation feedback", () => {
+      const step = buildStep({
+        content: {
+          explanations: [
+            {
+              accuracy: "best" as const,
+              feedback: "Correct — this fully explains it.",
+              id: "e1",
+              text: "Memory leak",
+            },
+            {
+              accuracy: "wrong" as const,
+              feedback: "Plausible but incorrect.",
+              id: "e2",
+              text: "Network failure",
+            },
+          ],
+          variant: "call" as const,
+        },
+        kind: "investigation",
+      });
+      const answer: SelectedAnswer = {
+        kind: "investigation",
+        selectedExplanationId: "e1",
+        variant: "call",
+      };
+      const { result } = checkStep(step, answer);
+      expect(result.isCorrect).toBe(true);
+      expect(result.feedback).toBe("Correct — this fully explains it.");
+    });
+
+    test("call variant: wrong accuracy is incorrect with its own feedback", () => {
+      const step = buildStep({
+        content: {
+          explanations: [
+            {
+              accuracy: "best" as const,
+              feedback: "Correct — this fully explains it.",
+              id: "e1",
+              text: "Memory leak",
+            },
+            {
+              accuracy: "wrong" as const,
+              feedback: "Plausible but incorrect.",
+              id: "e2",
+              text: "Network failure",
+            },
+          ],
+          variant: "call" as const,
+        },
+        kind: "investigation",
+      });
+      const answer: SelectedAnswer = {
+        kind: "investigation",
+        selectedExplanationId: "e2",
+        variant: "call",
+      };
+      const { result } = checkStep(step, answer);
+      expect(result.isCorrect).toBe(false);
+      expect(result.feedback).toBe("Plausible but incorrect.");
+    });
+
+    test("mismatched answer kind returns mismatch result", () => {
+      const step = buildStep({
+        content: {
+          scenario: "test",
+          variant: "problem" as const,
+        },
+        kind: "investigation",
+      });
+      const answer: SelectedAnswer = { kind: "multipleChoice", selectedIndex: 0, selectedText: "" };
+      const { result } = checkStep(step, answer);
+      expect(result.isCorrect).toBe(false);
+    });
+  });
 });

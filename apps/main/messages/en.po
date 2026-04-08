@@ -12,7 +12,6 @@ msgstr "Your answer"
 
 #: ../../packages/player/src/components/arrange-words-answer-area.tsx
 #: ../../packages/player/src/components/fill-blank-step.tsx
-#: ../../packages/player/src/components/result-announcement.tsx
 #: ../../packages/player/src/components/sort-order-step.tsx
 msgctxt "6NoIUl"
 msgid "Correct"
@@ -36,7 +35,6 @@ msgstr "Position {position}: {item}. Tap to remove."
 
 #: ../../packages/player/src/components/arrange-words-answer-area.tsx
 #: ../../packages/player/src/components/fill-blank-step.tsx
-#: ../../packages/player/src/components/result-announcement.tsx
 #: ../../packages/player/src/components/sort-order-step.tsx
 msgctxt "Ypr9T5"
 msgid "Incorrect"
@@ -71,6 +69,7 @@ msgid "{color} Belt — Level {level}"
 msgstr "{color} Belt — Level {level}"
 
 #: ../../packages/player/src/components/choice-step-layout.tsx
+#: ../../packages/player/src/components/investigation-call-variant.tsx
 #: ../../packages/player/src/components/translation-step.tsx
 msgctxt "akd+cv"
 msgid "Answer options"
@@ -166,6 +165,11 @@ msgctxt "t2VOpl"
 msgid "Chapter Complete"
 msgstr "Chapter Complete"
 
+#: ../../packages/player/src/components/context-recall-popover.tsx
+msgctxt "V2qutI"
+msgid "Context"
+msgstr "Context"
+
 #: ../../packages/player/src/components/feedback-answer-blocks.tsx
 msgctxt "3nOd8f"
 msgid "Your answer:"
@@ -202,19 +206,67 @@ msgid "Correct answer: {answer}"
 msgstr "Correct answer: {answer}"
 
 #: ../../packages/player/src/components/inline-feedback.tsx
-msgctxt "++l7ni"
-msgid "Not quite"
-msgstr "Not quite"
-
-#: ../../packages/player/src/components/inline-feedback.tsx
 msgctxt "HvLGEN"
 msgid "Answer feedback"
 msgstr "Answer feedback"
 
-#: ../../packages/player/src/components/inline-feedback.tsx
-msgctxt "xmF49T"
-msgid "Correct!"
-msgstr "Correct!"
+#: ../../packages/player/src/components/investigation-action-variant.tsx
+msgctxt "5jvK4n"
+msgid "Evidence complete — time to make your call."
+msgstr "Evidence complete — time to make your call."
+
+#: ../../packages/player/src/components/investigation-action-variant.tsx
+#: ../../packages/player/src/components/investigation-call-variant.tsx
+msgctxt "dLRz0R"
+msgid "Weak signal"
+msgstr "Weak signal"
+
+#: ../../packages/player/src/components/investigation-action-variant.tsx
+msgctxt "LrUFLN"
+msgid "One more lead to follow"
+msgstr "One more lead to follow"
+
+#: ../../packages/player/src/components/investigation-action-variant.tsx
+#: ../../packages/player/src/components/investigation-call-variant.tsx
+msgctxt "P/5Naz"
+msgid "Useful clue"
+msgstr "Useful clue"
+
+#: ../../packages/player/src/components/investigation-action-variant.tsx
+msgctxt "snhsrG"
+msgid "What do you want to investigate first?"
+msgstr "What do you want to investigate first?"
+
+#: ../../packages/player/src/components/investigation-action-variant.tsx
+#: ../../packages/player/src/components/investigation-call-variant.tsx
+msgctxt "U0rj9y"
+msgid "Strong lead"
+msgstr "Strong lead"
+
+#: ../../packages/player/src/components/investigation-call-variant.tsx
+msgctxt "6g7+6N"
+msgid "Evidence"
+msgstr "Evidence"
+
+#: ../../packages/player/src/components/investigation-call-variant.tsx
+msgctxt "IE/I2y"
+msgid "What do you think happened?"
+msgstr "What do you think happened?"
+
+#: ../../packages/player/src/components/investigation-call-variant.tsx
+msgctxt "LmlOva"
+msgid "Review evidence"
+msgstr "Review evidence"
+
+#: ../../packages/player/src/components/investigation-problem-variant.tsx
+msgctxt "4Xsz3M"
+msgid "The Case"
+msgstr "The Case"
+
+#: ../../packages/player/src/components/investigation-problem-variant.tsx
+msgctxt "kW2sOl"
+msgid "Collect 2 leads. Then make your call."
+msgstr "Collect 2 leads. Then make your call."
 
 #: ../../packages/player/src/components/listening-step.tsx
 #: ../../packages/player/src/components/reading-step.tsx
@@ -271,11 +323,21 @@ msgid "Activity progress"
 msgstr "Activity progress"
 
 #: ../../packages/player/src/components/player-shell.tsx
+msgctxt "9p9JgX"
+msgid "Start Investigation"
+msgstr "Start Investigation"
+
+#: ../../packages/player/src/components/player-shell.tsx
 #: src/app/(catalog)/(home)/continue-learning-card.tsx
 #: src/components/catalog/continue-activity-link.tsx
 msgctxt "acrOoz"
 msgid "Continue"
 msgstr "Continue"
+
+#: ../../packages/player/src/components/player-shell.tsx
+msgctxt "EqkwlK"
+msgid "evidence"
+msgstr "evidence"
 
 #: ../../packages/player/src/components/player-shell.tsx
 msgctxt "PVe26p"
@@ -321,11 +383,6 @@ msgctxt "VA8c/A"
 msgid "Correct order:"
 msgstr "Correct order:"
 
-#: ../../packages/player/src/components/story-briefing-popover.tsx
-msgctxt "XyeasA"
-msgid "Briefing"
-msgstr "Briefing"
-
 #: ../../packages/player/src/components/story-feedback-content.tsx
 msgctxt "jSeUY4"
 msgid "Metric changes"
@@ -346,6 +403,21 @@ msgstr "Final status"
 msgctxt "MxLxkr"
 msgid "Translate this word:"
 msgstr "Translate this word:"
+
+#: ../../packages/player/src/components/verdict-label.tsx
+msgctxt "++l7ni"
+msgid "Not quite"
+msgstr "Not quite"
+
+#: ../../packages/player/src/components/verdict-label.tsx
+msgctxt "MxcfM1"
+msgid "Good, but..."
+msgstr "Good, but..."
+
+#: ../../packages/player/src/components/verdict-label.tsx
+msgctxt "xmF49T"
+msgid "Correct!"
+msgstr "Correct!"
 
 #: ../../packages/player/src/components/visual-step.tsx
 msgctxt "9bIjWj"
@@ -1882,14 +1954,14 @@ msgid "Generating evidence for each action..."
 msgstr "Generating evidence for each action..."
 
 #: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
+msgctxt "bn5TYw"
+msgid "Writing feedback for each explanation..."
+msgstr "Writing feedback for each explanation..."
+
+#: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
 msgctxt "btzedf"
 msgid "Planning investigation steps..."
 msgstr "Planning investigation steps..."
-
-#: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
-msgctxt "CygeNq"
-msgid "Sorting explanations by quality..."
-msgstr "Sorting explanations by quality..."
 
 #: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
 msgctxt "eZgYlp"
@@ -1897,39 +1969,14 @@ msgid "Making the evidence deliberately ambiguous..."
 msgstr "Making the evidence deliberately ambiguous..."
 
 #: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
-msgctxt "GJS6pt"
-msgid "Crafting analysis statements..."
-msgstr "Crafting analysis statements..."
-
-#: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
 msgctxt "gX67z0"
 msgid "Crafting possible explanations..."
 msgstr "Crafting possible explanations..."
 
 #: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
-msgctxt "hwYnBz"
-msgid "Writing interpretations for each finding..."
-msgstr "Writing interpretations for each finding..."
-
-#: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
 msgctxt "ISjUeV"
 msgid "Creating the mystery scenario..."
 msgstr "Creating the mystery scenario..."
-
-#: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
-msgctxt "LyQKJb"
-msgid "Preparing the debrief..."
-msgstr "Preparing the debrief..."
-
-#: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
-msgctxt "MpbtqB"
-msgid "Building the reasoning chains..."
-msgstr "Building the reasoning chains..."
-
-#: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
-msgctxt "ncTtNl"
-msgid "Writing the final explanation..."
-msgstr "Writing the final explanation..."
 
 #: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
 msgctxt "OWWxLA"
@@ -1940,16 +1987,6 @@ msgstr "Crafting the findings..."
 msgctxt "rugo1+"
 msgid "Mapping out the investigation paths..."
 msgstr "Mapping out the investigation paths..."
-
-#: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
-msgctxt "T+hBiU"
-msgid "Examining evidence from every angle..."
-msgstr "Examining evidence from every angle..."
-
-#: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
-msgctxt "t8DGDG"
-msgid "Crafting the reveal moment..."
-msgstr "Crafting the reveal moment..."
 
 #: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
 msgctxt "TG/Jbn"
@@ -2192,11 +2229,6 @@ msgid "Analyzing explanations"
 msgstr "Analyzing explanations"
 
 #: src/app/generate/a/[id]/use-phase-labels.ts
-msgctxt "9+VDw9"
-msgid "Writing the reveal"
-msgstr "Writing the reveal"
-
-#: src/app/generate/a/[id]/use-phase-labels.ts
 msgctxt "aKNA/b"
 msgid "Creating images"
 msgstr "Creating images"
@@ -2251,11 +2283,6 @@ msgstr "Preparing the wrap-up"
 msgctxt "mIpv67"
 msgid "Creating sentences"
 msgstr "Creating sentences"
-
-#: src/app/generate/a/[id]/use-phase-labels.ts
-msgctxt "NvgorH"
-msgid "Analyzing the evidence"
-msgstr "Analyzing the evidence"
 
 #: src/app/generate/a/[id]/use-phase-labels.ts
 msgctxt "RXfSEl"

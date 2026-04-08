@@ -1,5 +1,6 @@
 import {
   type FillBlankStepContent,
+  type InvestigationStepContent,
   type MatchColumnsStepContent,
   type MultipleChoiceStepContent,
   type SelectImageStepContent,
@@ -117,4 +118,49 @@ export function checkArrangeWordsAnswer(
 ): AnswerResult {
   const isCorrect = matchesAcceptedArrangeWords(correctWords, userWords);
   return { correctAnswer: null, feedback: null, isCorrect };
+}
+
+/**
+ * Checks an investigation action answer by quality tier.
+ *
+ * Critical and useful actions are correct (strong evidence choices).
+ * Weak actions are incorrect (poor investigation decisions).
+ * Returns the finding text as feedback so the evidence can be shown
+ * after checking.
+ */
+export function checkInvestigationAction(
+  content: Extract<InvestigationStepContent, { variant: "action" }>,
+  selectedActionId: string,
+): AnswerResult {
+  const action = content.actions.find((a) => a.id === selectedActionId);
+
+  if (!action) {
+    return { correctAnswer: null, feedback: null, isCorrect: false };
+  }
+
+  return { correctAnswer: null, feedback: action.finding, isCorrect: action.quality !== "weak" };
+}
+
+/**
+ * Checks an investigation call (final answer) against the explanation's
+ * accuracy tier.
+ *
+ * "best" is the correct explanation. "partial" gets partial credit in
+ * scoring but counts as incorrect for the binary check. Returns the
+ * selected explanation's feedback — each explanation has its own
+ * message explaining why it's correct, partially right, or wrong.
+ */
+export function checkInvestigationCall(
+  content: Extract<InvestigationStepContent, { variant: "call" }>,
+  selectedExplanationId: string,
+): AnswerResult {
+  const explanation = content.explanations.find((exp) => exp.id === selectedExplanationId);
+
+  if (!explanation) {
+    return { correctAnswer: null, feedback: null, isCorrect: false };
+  }
+
+  const isCorrect = explanation.accuracy === "best";
+
+  return { correctAnswer: null, feedback: explanation.feedback, isCorrect };
 }

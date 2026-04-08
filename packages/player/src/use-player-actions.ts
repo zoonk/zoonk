@@ -42,12 +42,12 @@ export function usePlayerActions(
 
   const selectAnswer = useCallback(
     (stepId: string, answer: SelectedAnswer | null) => {
-      if (answer) {
-        dispatchTransition({ answer, stepId, type: "SELECT_ANSWER" });
+      if (!answer) {
+        dispatchTransition({ stepId, type: "CLEAR_ANSWER" });
         return;
       }
 
-      dispatchTransition({ stepId, type: "CLEAR_ANSWER" });
+      dispatchTransition({ answer, stepId, type: "SELECT_ANSWER" });
     },
     [dispatchTransition],
   );

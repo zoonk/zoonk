@@ -255,17 +255,17 @@ test.describe("Story Decision Step", () => {
     await page.waitForLoadState("networkidle");
 
     // Briefing icon not visible on intro screen (only on decision steps)
-    await expect(page.getByRole("button", { name: /briefing/i })).not.toBeVisible();
+    await expect(page.getByRole("button", { name: /context/i })).not.toBeVisible();
 
     // Navigate to decision step
     await page.getByRole("button", { name: /begin/i }).click();
 
     // Briefing icon now visible
-    const briefingButton = page.getByRole("button", { name: /briefing/i });
-    await expect(briefingButton).toBeVisible();
+    const contextButton = page.getByRole("button", { name: /context/i });
+    await expect(contextButton).toBeVisible();
 
     // Click to open popover
-    await briefingButton.click();
+    await contextButton.click();
 
     // Popover shows intro text
     await expect(page.getByText(new RegExp(`You are a factory manager ${uniqueId}`))).toBeVisible();

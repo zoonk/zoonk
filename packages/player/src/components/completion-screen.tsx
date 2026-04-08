@@ -4,9 +4,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { CircleCheck } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type CompletionResult } from "../completion-input-schema";
-import { computeScore } from "../compute-score";
 import { type PlayerRoute, usePlayerMilestone, usePlayerViewer } from "../player-context";
-import { type StepResult } from "../player-reducer";
 import { AuthBranch } from "./completion-auth-branch";
 
 function CompletionScreen({ className, ...props }: React.ComponentProps<"div">) {
@@ -64,32 +62,16 @@ function MilestoneHeading() {
   return <h2 className="text-2xl font-semibold tracking-tight sm:text-3xl">{getHeading()}</h2>;
 }
 
-function getCompletionScore(results: Record<string, StepResult>) {
-  const resultList = Object.values(results);
-
-  if (resultList.length === 0) {
-    return null;
-  }
-
-  const score = computeScore({
-    results: resultList.map((stepResult) => ({ isCorrect: stepResult.result.isCorrect })),
-  });
-
-  return { correctCount: score.correctCount, totalCount: resultList.length };
-}
-
 export function CompletionScreenContent({
   completionResult,
   lessonHref,
   nextActivityHref,
   onRestart,
-  results,
 }: {
   completionResult: CompletionResult | null;
   lessonHref: PlayerRoute;
   nextActivityHref: PlayerRoute | null;
   onRestart: () => void;
-  results: Record<string, StepResult>;
 }) {
   const t = useExtracted();
   const milestone = usePlayerMilestone();
@@ -113,14 +95,16 @@ export function CompletionScreenContent({
     );
   }
 
-  const score = getCompletionScore(results);
+  const totalCount = completionResult
+    ? completionResult.correctCount + completionResult.incorrectCount
+    : 0;
 
   return (
     <CompletionScreen>
-      {score ? (
+      {totalCount > 0 && completionResult ? (
         <CompletionScore>
           <p className="text-5xl font-bold tracking-tight tabular-nums">
-            {score.correctCount}/{score.totalCount}
+            {completionResult.correctCount}/{totalCount}
           </p>
           <p className="text-muted-foreground text-sm">{t("correct")}</p>
         </CompletionScore>

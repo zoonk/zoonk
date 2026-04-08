@@ -32,7 +32,7 @@ export type VisualFormulaParams = {
 /**
  * Generates structured formula data from a textual description.
  * Takes a visual description (from a kind-selection task like
- * `generateInvestigationVisual`) and produces formula content
+ * `generateVisualDescriptions`) and produces formula content
  * matching `formulaVisualContentSchema`: a LaTeX math expression
  * and a plain-text explanation of what the formula represents.
  */

@@ -12,7 +12,6 @@ msgstr "Tu respuesta"
 
 #: ../../packages/player/src/components/arrange-words-answer-area.tsx
 #: ../../packages/player/src/components/fill-blank-step.tsx
-#: ../../packages/player/src/components/result-announcement.tsx
 #: ../../packages/player/src/components/sort-order-step.tsx
 msgctxt "6NoIUl"
 msgid "Correct"
@@ -36,7 +35,6 @@ msgstr "Posición {position}: {item}. Toca para quitar."
 
 #: ../../packages/player/src/components/arrange-words-answer-area.tsx
 #: ../../packages/player/src/components/fill-blank-step.tsx
-#: ../../packages/player/src/components/result-announcement.tsx
 #: ../../packages/player/src/components/sort-order-step.tsx
 msgctxt "Ypr9T5"
 msgid "Incorrect"
@@ -71,6 +69,7 @@ msgid "{color} Belt — Level {level}"
 msgstr "Cinturón {color} — Nivel {level}"
 
 #: ../../packages/player/src/components/choice-step-layout.tsx
+#: ../../packages/player/src/components/investigation-call-variant.tsx
 #: ../../packages/player/src/components/translation-step.tsx
 msgctxt "akd+cv"
 msgid "Answer options"
@@ -166,6 +165,11 @@ msgctxt "t2VOpl"
 msgid "Chapter Complete"
 msgstr "Capítulo completado"
 
+#: ../../packages/player/src/components/context-recall-popover.tsx
+msgctxt "V2qutI"
+msgid "Context"
+msgstr "Contexto"
+
 #: ../../packages/player/src/components/feedback-answer-blocks.tsx
 msgctxt "3nOd8f"
 msgid "Your answer:"
@@ -202,19 +206,67 @@ msgid "Correct answer: {answer}"
 msgstr "Respuesta correcta: {answer}"
 
 #: ../../packages/player/src/components/inline-feedback.tsx
-msgctxt "++l7ni"
-msgid "Not quite"
-msgstr "No del todo"
-
-#: ../../packages/player/src/components/inline-feedback.tsx
 msgctxt "HvLGEN"
 msgid "Answer feedback"
 msgstr "Comentario de respuesta"
 
-#: ../../packages/player/src/components/inline-feedback.tsx
-msgctxt "xmF49T"
-msgid "Correct!"
-msgstr "¡Correcto!"
+#: ../../packages/player/src/components/investigation-action-variant.tsx
+msgctxt "5jvK4n"
+msgid "Evidence complete — time to make your call."
+msgstr "Evidencia completa — es hora de tomar tu decisión."
+
+#: ../../packages/player/src/components/investigation-action-variant.tsx
+#: ../../packages/player/src/components/investigation-call-variant.tsx
+msgctxt "dLRz0R"
+msgid "Weak signal"
+msgstr "Señal débil"
+
+#: ../../packages/player/src/components/investigation-action-variant.tsx
+msgctxt "LrUFLN"
+msgid "One more lead to follow"
+msgstr "Un indicio más para seguir"
+
+#: ../../packages/player/src/components/investigation-action-variant.tsx
+#: ../../packages/player/src/components/investigation-call-variant.tsx
+msgctxt "P/5Naz"
+msgid "Useful clue"
+msgstr "Pista útil"
+
+#: ../../packages/player/src/components/investigation-action-variant.tsx
+msgctxt "snhsrG"
+msgid "What do you want to investigate first?"
+msgstr "¿Qué quieres investigar primero?"
+
+#: ../../packages/player/src/components/investigation-action-variant.tsx
+#: ../../packages/player/src/components/investigation-call-variant.tsx
+msgctxt "U0rj9y"
+msgid "Strong lead"
+msgstr "Pista sólida"
+
+#: ../../packages/player/src/components/investigation-call-variant.tsx
+msgctxt "6g7+6N"
+msgid "Evidence"
+msgstr "Evidencias"
+
+#: ../../packages/player/src/components/investigation-call-variant.tsx
+msgctxt "IE/I2y"
+msgid "What do you think happened?"
+msgstr "¿Qué crees que pasó?"
+
+#: ../../packages/player/src/components/investigation-call-variant.tsx
+msgctxt "LmlOva"
+msgid "Review evidence"
+msgstr "Revisar evidencias"
+
+#: ../../packages/player/src/components/investigation-problem-variant.tsx
+msgctxt "4Xsz3M"
+msgid "The Case"
+msgstr "El caso"
+
+#: ../../packages/player/src/components/investigation-problem-variant.tsx
+msgctxt "kW2sOl"
+msgid "Collect 2 leads. Then make your call."
+msgstr "Consigue 2 evidencias y luego toma tu decisión."
 
 #: ../../packages/player/src/components/listening-step.tsx
 #: ../../packages/player/src/components/reading-step.tsx
@@ -271,11 +323,21 @@ msgid "Activity progress"
 msgstr "Progreso de actividad"
 
 #: ../../packages/player/src/components/player-shell.tsx
+msgctxt "9p9JgX"
+msgid "Start Investigation"
+msgstr "Iniciar investigación"
+
+#: ../../packages/player/src/components/player-shell.tsx
 #: src/app/(catalog)/(home)/continue-learning-card.tsx
 #: src/components/catalog/continue-activity-link.tsx
 msgctxt "acrOoz"
 msgid "Continue"
 msgstr "Continuar"
+
+#: ../../packages/player/src/components/player-shell.tsx
+msgctxt "EqkwlK"
+msgid "evidence"
+msgstr "evidencias"
 
 #: ../../packages/player/src/components/player-shell.tsx
 msgctxt "PVe26p"
@@ -285,7 +347,7 @@ msgstr "Comenzar"
 #: ../../packages/player/src/components/player-shell.tsx
 msgctxt "RDZVQL"
 msgid "Check"
-msgstr "Verificación"
+msgstr "Revisar"
 
 #: ../../packages/player/src/components/reward-badges.tsx
 #: src/app/(performance)/level/level-stats.tsx
@@ -321,11 +383,6 @@ msgctxt "VA8c/A"
 msgid "Correct order:"
 msgstr "Orden correcto:"
 
-#: ../../packages/player/src/components/story-briefing-popover.tsx
-msgctxt "XyeasA"
-msgid "Briefing"
-msgstr "Informe previo"
-
 #: ../../packages/player/src/components/story-feedback-content.tsx
 msgctxt "jSeUY4"
 msgid "Metric changes"
@@ -346,6 +403,21 @@ msgstr "Estado final"
 msgctxt "MxLxkr"
 msgid "Translate this word:"
 msgstr "Traduce esta palabra:"
+
+#: ../../packages/player/src/components/verdict-label.tsx
+msgctxt "++l7ni"
+msgid "Not quite"
+msgstr "No del todo"
+
+#: ../../packages/player/src/components/verdict-label.tsx
+msgctxt "MxcfM1"
+msgid "Good, but..."
+msgstr "Bueno, pero..."
+
+#: ../../packages/player/src/components/verdict-label.tsx
+msgctxt "xmF49T"
+msgid "Correct!"
+msgstr "¡Correcto!"
 
 #: ../../packages/player/src/components/visual-step.tsx
 msgctxt "9bIjWj"
@@ -1874,7 +1946,7 @@ msgstr "Preparando la investigación..."
 #: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
 msgctxt "aseqqC"
 msgid "Designing what you can investigate..."
-msgstr "Diseñando qué puedes investigar..."
+msgstr "Diseñando lo que puedes investigar..."
 
 #: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
 msgctxt "BL1C4H"
@@ -1882,14 +1954,14 @@ msgid "Generating evidence for each action..."
 msgstr "Generando evidencia para cada acción..."
 
 #: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
-msgctxt "btzedf"
-msgid "Planning investigation steps..."
-msgstr "Planeando los pasos de la investigación..."
+msgctxt "bn5TYw"
+msgid "Writing feedback for each explanation..."
+msgstr "Escribiendo comentarios para cada explicación..."
 
 #: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
-msgctxt "CygeNq"
-msgid "Sorting explanations by quality..."
-msgstr "Ordenando las explicaciones por calidad..."
+msgctxt "btzedf"
+msgid "Planning investigation steps..."
+msgstr "Planeando los pasos de investigación..."
 
 #: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
 msgctxt "eZgYlp"
@@ -1897,39 +1969,14 @@ msgid "Making the evidence deliberately ambiguous..."
 msgstr "Haciendo la evidencia deliberadamente ambigua..."
 
 #: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
-msgctxt "GJS6pt"
-msgid "Crafting analysis statements..."
-msgstr "Redactando declaraciones de análisis..."
-
-#: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
 msgctxt "gX67z0"
 msgid "Crafting possible explanations..."
 msgstr "Redactando posibles explicaciones..."
 
 #: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
-msgctxt "hwYnBz"
-msgid "Writing interpretations for each finding..."
-msgstr "Escribiendo interpretaciones para cada hallazgo..."
-
-#: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
 msgctxt "ISjUeV"
 msgid "Creating the mystery scenario..."
-msgstr "Creando el escenario del misterio..."
-
-#: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
-msgctxt "LyQKJb"
-msgid "Preparing the debrief..."
-msgstr "Preparando el resumen..."
-
-#: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
-msgctxt "MpbtqB"
-msgid "Building the reasoning chains..."
-msgstr "Construyendo las cadenas de razonamiento..."
-
-#: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
-msgctxt "ncTtNl"
-msgid "Writing the final explanation..."
-msgstr "Escribiendo la explicación final..."
+msgstr "Creando el escenario de misterio..."
 
 #: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
 msgctxt "OWWxLA"
@@ -1940,16 +1987,6 @@ msgstr "Redactando los hallazgos..."
 msgctxt "rugo1+"
 msgid "Mapping out the investigation paths..."
 msgstr "Trazando las rutas de investigación..."
-
-#: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
-msgctxt "T+hBiU"
-msgid "Examining evidence from every angle..."
-msgstr "Examinando la evidencia desde todos los ángulos..."
-
-#: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
-msgctxt "t8DGDG"
-msgid "Crafting the reveal moment..."
-msgstr "Diseñando el momento de la revelación..."
 
 #: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
 msgctxt "TG/Jbn"
@@ -2184,17 +2221,12 @@ msgstr "Agregando romanización de gramática"
 #: src/app/generate/a/[id]/use-phase-labels.ts
 msgctxt "7p4ov/"
 msgid "Setting the scene"
-msgstr "Ambientando la escena"
+msgstr "Preparando la escena"
 
 #: src/app/generate/a/[id]/use-phase-labels.ts
 msgctxt "8ukgjx"
 msgid "Analyzing explanations"
 msgstr "Analizando explicaciones"
-
-#: src/app/generate/a/[id]/use-phase-labels.ts
-msgctxt "9+VDw9"
-msgid "Writing the reveal"
-msgstr "Escribiendo la revelación"
 
 #: src/app/generate/a/[id]/use-phase-labels.ts
 msgctxt "aKNA/b"
@@ -2220,7 +2252,7 @@ msgstr "Comenzando"
 #: src/app/generate/a/[id]/use-phase-labels.ts
 msgctxt "ErY5I7"
 msgid "Gathering evidence"
-msgstr "Reuniendo pruebas"
+msgstr "Reuniendo evidencia"
 
 #: src/app/generate/a/[id]/use-phase-labels.ts
 msgctxt "HXMA75"
@@ -2251,11 +2283,6 @@ msgstr "Preparando el cierre"
 msgctxt "mIpv67"
 msgid "Creating sentences"
 msgstr "Creando oraciones"
-
-#: src/app/generate/a/[id]/use-phase-labels.ts
-msgctxt "NvgorH"
-msgid "Analyzing the evidence"
-msgstr "Analizando las pruebas"
 
 #: src/app/generate/a/[id]/use-phase-labels.ts
 msgctxt "RXfSEl"

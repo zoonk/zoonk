@@ -1,5 +1,8 @@
 import { type StoryStaticVariant, parseStepContent } from "@zoonk/core/steps/contract/content";
+import { INVESTIGATION_EXPERIMENT_COUNT } from "@zoonk/utils/activities";
 import { type CompletionResult } from "./completion-input-schema";
+import { getInvestigationScenario } from "./investigation";
+import { getInvestigationVariant } from "./investigation-reducer";
 import { type PlayerState } from "./player-reducer";
 import { type SerializedStep } from "./prepare-activity-data";
 import { canNavigatePrev, isStaticNavigationStep } from "./step-navigation";
@@ -56,6 +59,51 @@ export function getIsStaticStep(state: PlayerState): boolean {
   return isStaticNavigationStep(getCurrentStep(state));
 }
 
+/**
+ * Whether the current step is an investigation problem step.
+ *
+ * The problem step is read-only (the learner just reads the scenario),
+ * so the bottom bar should show "Investigate" instead of "Check"
+ * to describe the action the learner is about to take.
+ */
+export function getIsInvestigationProblem(state: PlayerState): boolean {
+  const step = getCurrentStep(state);
+
+  if (!step || step.kind !== "investigation") {
+    return false;
+  }
+
+  const content = parseStepContent("investigation", step.content);
+  return content.variant === "problem";
+}
+
+type InvestigationProgress = {
+  collected: number;
+  total: number;
+};
+
+/**
+ * Returns the evidence collection progress for any investigation step,
+ * or null when the current step is not part of an investigation.
+ *
+ * The step fraction is misleading for investigations because the
+ * action step loops at the same index. This pill replaces the
+ * fraction throughout the entire investigation — showing "0 / 2"
+ * on the problem step, incrementing during the action loop, and
+ * displaying "2 / 2" on the call step.
+ */
+export function getInvestigationProgress(state: PlayerState): InvestigationProgress | null {
+  const step = getCurrentStep(state);
+  const variant = getInvestigationVariant(step);
+
+  if (!variant) {
+    return null;
+  }
+
+  const collected = state.investigationLoop?.usedActionIds.length ?? 0;
+  return { collected, total: INVESTIGATION_EXPERIMENT_COUNT };
+}
+
 /** Returns the progress percentage (0–100), snapping to 100 when completed. */
 export function getProgressValue(state: PlayerState): number {
   if (state.phase === "completed") {
@@ -79,6 +127,14 @@ export function getSelectedAnswer(state: PlayerState) {
 /** Returns true when the activity contains at least one story decision step. */
 export function getIsStoryActivity(state: PlayerState): boolean {
   return state.steps.some((step) => step.kind === "story");
+}
+
+/**
+ * Returns the scenario data for the sticky header recall popover,
+ * or null if the current step is not an investigation step past the problem.
+ */
+export function getInvestigationScenarioData(state: PlayerState) {
+  return getInvestigationScenario(state);
 }
 
 /**

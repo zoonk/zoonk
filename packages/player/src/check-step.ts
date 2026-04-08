@@ -5,6 +5,8 @@ import {
   type AnswerResult,
   checkArrangeWordsAnswer,
   checkFillBlankAnswer,
+  checkInvestigationAction,
+  checkInvestigationCall,
   checkMatchColumnsAnswer,
   checkMultipleChoiceAnswer,
   checkSelectImageAnswer,
@@ -130,6 +132,39 @@ function checkListeningStep(step: SerializedStep, answer: SelectedAnswer): Check
   };
 }
 
+/**
+ * Checks an investigation answer based on the step variant.
+ *
+ * - Problem: always correct (read-only step, no real answer)
+ * - Action: correct unless weak quality (critical/useful = correct, weak = incorrect)
+ * - Call: checks if the selected explanation has "best" accuracy
+ */
+function checkInvestigation(step: SerializedStep, answer: SelectedAnswer): CheckStepResult {
+  if (answer.kind !== "investigation") {
+    return MISMATCH_RESULT;
+  }
+
+  const content = parseStepContent("investigation", step.content);
+
+  if (content.variant === "problem") {
+    return { result: { correctAnswer: null, feedback: null, isCorrect: true } };
+  }
+
+  if (content.variant === "action" && answer.variant === "action") {
+    return {
+      result: checkInvestigationAction(content, answer.selectedActionId),
+    };
+  }
+
+  if (content.variant === "call" && answer.variant === "call") {
+    return {
+      result: checkInvestigationCall(content, answer.selectedExplanationId),
+    };
+  }
+
+  return MISMATCH_RESULT;
+}
+
 function checkStory(step: SerializedStep, answer: SelectedAnswer): CheckStepResult {
   if (answer.kind !== "story") {
     return MISMATCH_RESULT;
@@ -170,6 +205,8 @@ export function checkStep(step: SerializedStep, answer: SelectedAnswer): CheckSt
       return checkStory(step, answer);
 
     case "investigation":
+      return checkInvestigation(step, answer);
+
     case "static":
     case "visual":
     case "vocabulary":

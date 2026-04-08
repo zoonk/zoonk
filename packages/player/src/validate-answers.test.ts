@@ -332,4 +332,101 @@ describe(validateAnswers, () => {
 
     expect(results).toHaveLength(0);
   });
+
+  test("skips investigation problem step (no StepAttempt for read-only steps)", () => {
+    const steps = [
+      {
+        content: {
+          scenario: "test",
+          variant: "problem",
+        },
+        id: 10n,
+        kind: "investigation",
+      },
+    ];
+
+    const results = validateAnswers(steps, {
+      "10": { kind: "investigation", variant: "problem" },
+    });
+
+    expect(results).toHaveLength(0);
+  });
+
+  test("skips investigation action step (StepAttempts built from investigationLoop)", () => {
+    const steps = [
+      {
+        content: {
+          actions: [
+            {
+              finding: "Logs show memory climbing",
+              id: "a1",
+              label: "Check logs",
+              quality: "critical",
+            },
+            { finding: "Filler", id: "a2", label: "Filler 1", quality: "useful" },
+            { finding: "Filler", id: "a3", label: "Filler 2", quality: "weak" },
+          ],
+          variant: "action",
+        },
+        id: 11n,
+        kind: "investigation",
+      },
+    ];
+
+    const results = validateAnswers(steps, {
+      "11": {
+        kind: "investigation",
+        selectedActionId: "a1",
+        variant: "action",
+      },
+    });
+
+    expect(results).toHaveLength(0);
+  });
+
+  test("validates investigation call: best accuracy is correct", () => {
+    const steps = [
+      {
+        content: {
+          explanations: [
+            { accuracy: "best", feedback: "Correct!", id: "e1", text: "Memory leak" },
+            { accuracy: "wrong", feedback: "Incorrect.", id: "e2", text: "Network failure" },
+          ],
+          variant: "call",
+        },
+        id: 14n,
+        kind: "investigation",
+      },
+    ];
+
+    const results = validateAnswers(steps, {
+      "14": { kind: "investigation", selectedExplanationId: "e1", variant: "call" },
+    });
+
+    expect(results).toHaveLength(1);
+    expect(results[0]?.isCorrect).toBe(true);
+  });
+
+  test("validates investigation call: wrong accuracy is incorrect", () => {
+    const steps = [
+      {
+        content: {
+          explanations: [
+            { accuracy: "best", feedback: "Correct!", id: "e1", text: "Memory leak" },
+            { accuracy: "wrong", feedback: "Incorrect.", id: "e2", text: "Network failure" },
+          ],
+          variant: "call",
+        },
+        id: 15n,
+        kind: "investigation",
+      },
+    ];
+
+    const results = validateAnswers(steps, {
+      "15": { kind: "investigation", selectedExplanationId: "e2", variant: "call" },
+    });
+
+    expect(results).toHaveLength(1);
+    expect(results[0]?.isCorrect).toBe(false);
+  });
 });

@@ -11,22 +11,12 @@ export function useInvestigationPhaseGenerators(): Partial<
   const t = useExtracted();
 
   return {
-    analyzingEvidence: (index) =>
-      cycleMessage(
-        [
-          t("Writing interpretations for each finding..."),
-          t("Crafting analysis statements..."),
-          t("Building the reasoning chains..."),
-          t("Examining evidence from every angle..."),
-        ],
-        index,
-      ),
     classifyingExplanations: (index) =>
       cycleMessage(
         [
           t("Evaluating each explanation..."),
           t("Determining accuracy levels..."),
-          t("Sorting explanations by quality..."),
+          t("Writing feedback for each explanation..."),
         ],
         index,
       ),
@@ -57,15 +47,6 @@ export function useInvestigationPhaseGenerators(): Partial<
           t("Setting up the investigation..."),
           t("Crafting possible explanations..."),
           t("Designing the case..."),
-        ],
-        index,
-      ),
-    writingTheReveal: (index) =>
-      cycleMessage(
-        [
-          t("Writing the final explanation..."),
-          t("Crafting the reveal moment..."),
-          t("Preparing the debrief..."),
         ],
         index,
       ),

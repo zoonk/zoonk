@@ -22,14 +22,12 @@ import {
   GraduationCapIcon,
   ImageIcon,
   LanguagesIcon,
-  LightbulbIcon,
   ListChecksIcon,
   type LucideIcon,
   MapIcon,
   MicIcon,
   PaletteIcon,
   PenLineIcon,
-  ScaleIcon,
   SearchIcon,
   TextIcon,
 } from "lucide-react";
@@ -40,7 +38,6 @@ export const PHASE_ICONS: Record<PhaseName, LucideIcon> = {
   addingRomanization: LanguagesIcon,
   addingVocabularyRomanization: LanguagesIcon,
   addingWordPronunciation: MicIcon,
-  analyzingEvidence: ScaleIcon,
   buildingScenario: BookOpenIcon,
   buildingWordList: BookTextIcon,
   classifyingExplanations: ListChecksIcon,
@@ -63,7 +60,6 @@ export const PHASE_ICONS: Record<PhaseName, LucideIcon> = {
   writingContent: PenLineIcon,
   writingDebrief: PenLineIcon,
   writingExplanation: PenLineIcon,
-  writingTheReveal: LightbulbIcon,
 };
 
 export function getPhaseStatus(

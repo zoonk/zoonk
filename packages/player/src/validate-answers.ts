@@ -7,6 +7,7 @@ import { buildAcceptedArrangeWordSequences } from "./arrange-words-answers";
 import {
   checkArrangeWordsAnswer,
   checkFillBlankAnswer,
+  checkInvestigationCall,
   checkMatchColumnsAnswer,
   checkMultipleChoiceAnswer,
   checkSelectImageAnswer,
@@ -141,6 +142,34 @@ function validateListening(step: StepData, answer: SelectedAnswer): ValidatedSte
   return { answer, isCorrect: result.isCorrect, stepId: step.id };
 }
 
+/**
+ * Validates an investigation answer server-side.
+ *
+ * Problem steps produce no StepAttempt (read-only, like static steps).
+ * Action steps produce no StepAttempt here — the 3 per-experiment
+ * StepAttempts are built separately from investigationLoop in the
+ * submission pipeline.
+ * Call checks the selected explanation's accuracy tier.
+ */
+function validateInvestigation(step: StepData, answer: SelectedAnswer): ValidatedStepResult | null {
+  if (answer.kind !== "investigation") {
+    return null;
+  }
+
+  const content = parseStepContent("investigation", step.content);
+
+  if (content.variant === "problem" || content.variant === "action") {
+    return null;
+  }
+
+  if (content.variant === "call" && answer.variant === "call") {
+    const result = checkInvestigationCall(content, answer.selectedExplanationId);
+    return { answer, isCorrect: result.isCorrect, stepId: step.id };
+  }
+
+  return null;
+}
+
 function validateStory(step: StepData, answer: SelectedAnswer): ValidatedStepResult | null {
   if (answer.kind !== "story") {
     return null;
@@ -157,7 +186,7 @@ const validators: Record<
   (step: StepData, answer: SelectedAnswer) => ValidatedStepResult | null
 > = {
   fillBlank: validateFillBlank,
-  investigation: () => null,
+  investigation: validateInvestigation,
   listening: validateListening,
   matchColumns: validateMatchColumns,
   multipleChoice: validateMultipleChoice,

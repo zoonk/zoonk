@@ -222,6 +222,7 @@ checksums:
     Lesson%20Complete/singular: c2353c93f81c6ff8aab8825a73bcbb6a
     correct/singular: 0c2df4a764cea47295c0b550477e8e29
     Chapter%20Complete/singular: 93c49bef3b2cfd1305e910cd79381afd
+    Context/singular: 71588d4b2baccf54e6dc6956717b960e
     Your%20answer%3A/singular: 663abc310ccb6229c6325f8c857adce2
     Correct%20answer%3A/singular: a8b8cc0d5d0059cbfeee0ad4721540d5
     Translate%3A/singular: 0a44ccd6c0e1dd4545fd00d059eaf0a5
@@ -229,9 +230,18 @@ checksums:
     Blank%20%7Bposition%7D%3A%20%7Bitem%7D.%20%7Bresult%7D./singular: c64e721cdd1e4cc48eff9f9690f1fc6b
     Blank%20%7Bposition%7D%3A%20%7Bitem%7D.%20Tap%20to%20remove./singular: d7ab9b86256fae5fbb5187fe718afe0b
     Correct%20answer%3A%20%7Banswer%7D/singular: 7745b2664e841dffff4568203ee443b2
-    Not%20quite/singular: e570085e69662802acf485c4565e3e3e
     Answer%20feedback/singular: 9ec80a1e5b591c3d6c790b8d43266c0f
-    Correct!/singular: dda1a98dc04fd9db252887ecf1765d41
+    Evidence%20complete%20%E2%80%94%20time%20to%20make%20your%20call./singular: 6f1a545162b4f3799dab45247dfc5f35
+    Weak%20signal/singular: 19b95e7dfa1cb1c1f257f1812720859f
+    What%20do%20you%20want%20to%20investigate%20next%3F/singular: 9ddcec8a58615e2d5c501f12c091c1dc
+    One%20more%20lead%20to%20follow/singular: 8f719bae5f33676aa045aed39b080f46
+    Useful%20clue/singular: 9ae26309bb851fc48999bc8455ed8f88
+    What%20do%20you%20want%20to%20investigate%20first%3F/singular: 84bfc285b668f4dc31f58cb56a7d7978
+    Strong%20lead/singular: 440134c4a18791b05471ce1435d27ed9
+    Evidence/singular: 49eed19c45401d0d53f3ebfd5e5e0d19
+    What%20do%20you%20think%20happened%3F/singular: 5fcc4c51ba3f52e459f316ef4b5fc756
+    Review%20evidence/singular: 7edeeb02b39b1ebd65fe36986bd63407
+    The%20Case/singular: da25531981c47e8d30f64ac4e5f954d8
     Translate%20this%20sentence%3A/singular: f69b2eec827b3a74bafca50e9058716f
     What%20do%20you%20hear%3F/singular: 9527d094d65c550a40108673bc67744f
     All%20pairs%20matched.%20Press%20Check%20to%20continue./singular: 0663e33ba7db53b298c5f50a2f3c7ae8
@@ -242,7 +252,9 @@ checksums:
     Step%20navigation/singular: ec328f28051577e1c0aab044c89b138c
     Close/singular: 2c2e22f8424a1031de89063bd0022e16
     Activity%20progress/singular: 8ff2fb7372b8a2525f2955c851c4fa42
+    Start%20Investigation/singular: 597f9ca357f5bfb78aa995ce49660ca9
     Continue/singular: 3cfba90b4600131e82fc4260c568d044
+    evidence/singular: e79d4526b88aca84fbc283178ed61264
     Begin/singular: cc2a17a662cb60dd2d8335a2e8440997
     Check/singular: 023cc2ba432775c38e3efc004ad7b9ef
     BP/singular: 842ed01b3a4d0efa6fe96ae8c595726c
@@ -251,11 +263,13 @@ checksums:
     Drag%20items%20into%20the%20correct%20order/singular: 8ccab82ee3ba645ac23da4ca14a0dd2a
     Sort%20items/singular: 3b1072a596203b5acdc5718d38161392
     Correct%20order%3A/singular: df3f446653ec8cde9c29d8d5912636ef
-    Briefing/singular: 557fdc15cf73ec0d6d9eb4041340498a
     Metric%20changes/singular: b47eb6ffcf56070345e7783cb048b563
     Current%20status/singular: b9c587d6cd7ee919b59e75066fa4675f
     Final%20status/singular: 62c3befb232a9d290e74b84d6ddbf22c
     Translate%20this%20word%3A/singular: 05fede3c583e9ea39f27ac9fdf17fcc3
+    Not%20quite/singular: e570085e69662802acf485c4565e3e3e
+    Good%2C%20but.../singular: b9c6fc59b943221a2eb6aa1bce74af43
+    Correct!/singular: dda1a98dc04fd9db252887ecf1765d41
     Visual%20content/singular: 38b0261c39ebe4d775867363482225d8
     Legend/singular: 3b588fbd2fe35ded6ca38334e15400c3
     Diagram/singular: e0bc1ef7782cb0d749c9582da6775175
@@ -546,20 +560,13 @@ checksums:
     Setting%20up%20the%20investigation.../singular: 77e64580356c549fcdfad37e1caf14d9
     Designing%20what%20you%20can%20investigate.../singular: 8a387e12356fc62f2fa45d0795412ab1
     Generating%20evidence%20for%20each%20action.../singular: 7d1c018fa83a158b9a1f1b642322682d
+    Writing%20feedback%20for%20each%20explanation.../singular: ff40120cc826c02dfcd45e2661f33b16
     Planning%20investigation%20steps.../singular: f6b67dec06c6b8afe77c6970aac8a61e
-    Sorting%20explanations%20by%20quality.../singular: 6092b281728d6211ee37279cd281c60a
     Making%20the%20evidence%20deliberately%20ambiguous.../singular: 2383128d6bfee5d4cec5fcc59b66cb49
-    Crafting%20analysis%20statements.../singular: 1b32247acb5fd23c3f574cdd0ae57dc1
     Crafting%20possible%20explanations.../singular: 6027626c9cf272c785604806fcb60bd5
-    Writing%20interpretations%20for%20each%20finding.../singular: 198ac547bf687e5b3c4ce99e6ce27936
     Creating%20the%20mystery%20scenario.../singular: 0284827c3666725204d7d2bb963d4a2d
-    Preparing%20the%20debrief.../singular: 0e7d13dbb081f7d9246f83175b9d3ce7
-    Building%20the%20reasoning%20chains.../singular: ece173ab597e8e1d6414b11555636f08
-    Writing%20the%20final%20explanation.../singular: d0c84daa53c1b35a76ba6206919357b2
     Crafting%20the%20findings.../singular: cdbbddb05ecbaef050263d1dff0cd6a1
     Mapping%20out%20the%20investigation%20paths.../singular: 09489b963a15905c0279db3aed4a5fef
-    Examining%20evidence%20from%20every%20angle.../singular: b66ff9528025382fc00d02e8aad9a59b
-    Crafting%20the%20reveal%20moment.../singular: 031dc19831d36aa0648c7921480ed9bd
     Building%20the%20clues.../singular: da454dacf64e48e5811d240dce802f31
     Determining%20accuracy%20levels.../singular: 9330bc89ef43f0f064b94a10f5ded68a
     Designing%20the%20case.../singular: b09cb94c192296021130b4d9bcf6b313
@@ -608,7 +615,6 @@ checksums:
     Adding%20grammar%20romanization/singular: aec7227120d75a046352755b221cb078
     Setting%20the%20scene/singular: 1fe7275df8c75374681c678698ea4209
     Analyzing%20explanations/singular: 51e45a477eac011f207fc67026550c3f
-    Writing%20the%20reveal/singular: 0775ee12f46c6184ac744992393d6309
     Creating%20images/singular: ab6fe5010daa5a4deb52eabed6ca071f
     Creating%20exercises/singular: 053bc9e20db8cb27cea117a0a823af32
     Saving%20your%20activity/singular: 7dc60a662368e56e7c769a6b53f7b369
@@ -620,7 +626,6 @@ checksums:
     Creating%20the%20story/singular: a063029253c8262e769d0ca1f949de73
     Preparing%20the%20wrap-up/singular: 28cfda9388f052a4391705ec7ad01511
     Creating%20sentences/singular: a9f832408dd259bd6458708c84b34ff0
-    Analyzing%20the%20evidence/singular: 629968775cc2e17e4c93e4b24362f287
     Building%20word%20list/singular: 9a9b5271981383a36db347f286054e02
     Preparing%20illustrations/singular: ebb0d8d739dd029c1ac7327ab6adf8b7
     Recording%20audio/singular: 528bf44d9d7b8a1c8be7ec526307a703

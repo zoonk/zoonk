@@ -35,7 +35,7 @@ export type VisualTableParams = {
 /**
  * Generates structured table data from a textual description.
  * Takes a visual description (from a kind-selection task like
- * `generateInvestigationVisual`) and produces table content
+ * `generateVisualDescriptions`) and produces table content
  * matching `tableVisualContentSchema`: column headers, data rows,
  * and an optional caption.
  */

@@ -24,7 +24,11 @@ export type {
   SelectImageStepContent,
   SortOrderStepContent,
 } from "./exercise";
-export type { InvestigationStepContent } from "./investigation";
+export type {
+  InvestigationActionQuality,
+  InvestigationCallAccuracy,
+  InvestigationStepContent,
+} from "./investigation";
 export type { StaticStepContent } from "./static";
 export type { StoryAlignment, StoryStaticVariant, StoryStepContent } from "./story";
 export type { VisualStepContent } from "./visual";

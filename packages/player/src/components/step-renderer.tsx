@@ -1,9 +1,11 @@
+/* oxlint-disable max-lines-per-function, max-statements */
 "use client";
 
 import { parseStepContent } from "@zoonk/core/steps/contract/content";
 import { type SelectedAnswer, type StepResult } from "../player-reducer";
 import { type SerializedStep } from "../prepare-activity-data";
 import { FillBlankStep } from "./fill-blank-step";
+import { InvestigationStep } from "./investigation-step";
 import { ListeningStep } from "./listening-step";
 import { MatchColumnsStep } from "./match-columns-step";
 import { MultipleChoiceStep } from "./multiple-choice-step";
@@ -170,6 +172,17 @@ export function StepRenderer({
   if (step.kind === "story") {
     return (
       <StoryStep onSelectAnswer={onSelectAnswer} selectedAnswer={selectedAnswer} step={step} />
+    );
+  }
+
+  if (step.kind === "investigation") {
+    return (
+      <InvestigationStep
+        onSelectAnswer={onSelectAnswer}
+        result={result}
+        selectedAnswer={selectedAnswer}
+        step={step}
+      />
     );
   }
 

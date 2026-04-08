@@ -1,21 +1,23 @@
 "use client";
 
 import { type PlayerRoute } from "../player-context";
+import { ContextRecallPopover } from "./context-recall-popover";
 import { PlayerCloseLink, PlayerHeader, PlayerStepFraction } from "./player-header";
 import { PlayerProgressBar } from "./player-progress-bar";
-import { StoryBriefingPopover } from "./story-briefing-popover";
 
 export function InPlayStickyHeader({
+  centerContent,
+  contextRecall,
   currentStepIndex,
   lessonHref,
   progressValue,
-  storyBriefing,
   totalSteps,
 }: {
+  centerContent?: React.ReactNode;
+  contextRecall: string | null;
   currentStepIndex: number;
   lessonHref: PlayerRoute;
   progressValue: number;
-  storyBriefing: string | null;
   totalSteps: number;
 }) {
   return (
@@ -25,13 +27,15 @@ export function InPlayStickyHeader({
 
         <div className="pointer-events-none absolute inset-x-0 flex justify-center">
           <div className="pointer-events-auto">
-            <PlayerStepFraction>
-              {currentStepIndex + 1} / {totalSteps}
-            </PlayerStepFraction>
+            {centerContent ?? (
+              <PlayerStepFraction>
+                {currentStepIndex + 1} / {totalSteps}
+              </PlayerStepFraction>
+            )}
           </div>
         </div>
 
-        {storyBriefing && <StoryBriefingPopover intro={storyBriefing} />}
+        {contextRecall && <ContextRecallPopover content={contextRecall} />}
       </PlayerHeader>
 
       <PlayerProgressBar value={progressValue} />

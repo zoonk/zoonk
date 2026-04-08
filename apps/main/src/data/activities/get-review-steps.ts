@@ -4,7 +4,7 @@ import { shuffle } from "@zoonk/utils/shuffle";
 
 const REVIEW_TARGET_COUNT = 10;
 const EXCLUDED_ACTIVITY_KINDS: ActivityKind[] = ["review"];
-const NON_REVIEWABLE_STEP_KINDS: StepKind[] = ["static", "story", "visual"];
+const NON_REVIEWABLE_STEP_KINDS: StepKind[] = ["investigation", "static", "story", "visual"];
 
 function reviewableStepFilter(lessonId: number) {
   return {

@@ -6,11 +6,8 @@ import { activityGrammarContentTask } from "./activity-grammar-content/task";
 import { activityGrammarUserContentTask } from "./activity-grammar-user-content/task";
 import { activityInvestigationAccuracyTask } from "./activity-investigation-accuracy/task";
 import { activityInvestigationActionsTask } from "./activity-investigation-actions/task";
-import { activityInvestigationDebriefTask } from "./activity-investigation-debrief/task";
 import { activityInvestigationFindingsTask } from "./activity-investigation-findings/task";
-import { activityInvestigationInterpretationsTask } from "./activity-investigation-interpretations/task";
 import { activityInvestigationScenarioTask } from "./activity-investigation-scenario/task";
-import { activityInvestigationVisualTask } from "./activity-investigation-visuals/task";
 import { activityPracticeTask } from "./activity-practice/task";
 import { activityPronunciationTask } from "./activity-pronunciation/task";
 import { activityQuizTask } from "./activity-quiz/task";
@@ -56,12 +53,8 @@ export const TASKS: readonly Task[] = [
   activityStoryStepsTask,
   activityInvestigationAccuracyTask,
   activityInvestigationActionsTask,
-  activityInvestigationDebriefTask,
   activityInvestigationFindingsTask,
-  activityInvestigationInterpretationsTask,
   activityInvestigationScenarioTask,
-  activityInvestigationVisualTask,
-
   activityRomanizationTask,
   activityVocabularyTask,
   appliedActivityKindTask,

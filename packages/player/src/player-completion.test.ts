@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { computeLocalCompletion } from "./player-completion";
-import { type PlayerState, type StepResult } from "./player-reducer";
+import { type PlayerState, type SelectedAnswer, type StepResult } from "./player-reducer";
 import { type SerializedStep } from "./prepare-activity-data";
 
 function buildStep(overrides: Partial<SerializedStep> = {}): SerializedStep {
@@ -27,6 +27,7 @@ function buildState(overrides: Partial<PlayerState> = {}): PlayerState {
     activityId: "activity-1",
     completion: null,
     currentStepIndex: 0,
+    investigationLoop: null,
     phase: "completed",
     results: {},
     selectedAnswers: {},
@@ -70,9 +71,13 @@ function buildStoryStep(id: string, position: number): SerializedStep {
   return buildStep({ content: storyStepContent, id, kind: "story", position });
 }
 
+function buildStoryAnswer(selectedChoiceId: string): SelectedAnswer {
+  return { kind: "story", selectedChoiceId, selectedText: "choice" };
+}
+
 function buildStoryResult(stepId: string, selectedChoiceId: string): StepResult {
   return {
-    answer: { kind: "story", selectedChoiceId, selectedText: "choice" },
+    answer: buildStoryAnswer(selectedChoiceId),
     result: { correctAnswer: null, feedback: null, isCorrect: selectedChoiceId !== "1c" },
     stepId,
   };
@@ -102,6 +107,8 @@ describe(computeLocalCompletion, () => {
 
       const completion = computeLocalCompletion(buildState({ results, steps }));
       expect(completion.brainPower).toBe(10);
+      expect(completion.correctCount).toBe(1);
+      expect(completion.incorrectCount).toBe(0);
     });
   });
 
@@ -112,8 +119,12 @@ describe(computeLocalCompletion, () => {
         s1: buildStoryResult("s1", "1a"),
         s2: buildStoryResult("s2", "1a"),
       };
+      const selectedAnswers: Record<string, SelectedAnswer> = {
+        s1: buildStoryAnswer("1a"),
+        s2: buildStoryAnswer("1a"),
+      };
 
-      const completion = computeLocalCompletion(buildState({ results, steps }));
+      const completion = computeLocalCompletion(buildState({ results, selectedAnswers, steps }));
       expect(completion.brainPower).toBe(100);
     });
 
@@ -123,8 +134,12 @@ describe(computeLocalCompletion, () => {
         s1: buildStoryResult("s1", "1a"),
         s2: buildStoryResult("s2", "1a"),
       };
+      const selectedAnswers: Record<string, SelectedAnswer> = {
+        s1: buildStoryAnswer("1a"),
+        s2: buildStoryAnswer("1a"),
+      };
 
-      const completion = computeLocalCompletion(buildState({ results, steps }));
+      const completion = computeLocalCompletion(buildState({ results, selectedAnswers, steps }));
       expect(completion.energyDelta).toBe(6);
     });
 
@@ -135,18 +150,26 @@ describe(computeLocalCompletion, () => {
         s2: buildStoryResult("s2", "1b"), // partial = 1
         s3: buildStoryResult("s3", "1c"), // weak = 0
       };
+      const selectedAnswers: Record<string, SelectedAnswer> = {
+        s1: buildStoryAnswer("1a"),
+        s2: buildStoryAnswer("1b"),
+        s3: buildStoryAnswer("1c"),
+      };
 
-      const completion = computeLocalCompletion(buildState({ results, steps }));
+      const completion = computeLocalCompletion(buildState({ results, selectedAnswers, steps }));
       expect(completion.energyDelta).toBe(4);
     });
 
-    test("skips steps without results", () => {
+    test("skips steps without answers", () => {
       const steps = [buildStoryStep("s1", 0), buildStoryStep("s2", 1)];
       const results: Record<string, StepResult> = {
         s1: buildStoryResult("s1", "1a"), // strong = 3
       };
+      const selectedAnswers: Record<string, SelectedAnswer> = {
+        s1: buildStoryAnswer("1a"),
+      };
 
-      const completion = computeLocalCompletion(buildState({ results, steps }));
+      const completion = computeLocalCompletion(buildState({ results, selectedAnswers, steps }));
       expect(completion.energyDelta).toBe(3);
     });
 
@@ -170,8 +193,12 @@ describe(computeLocalCompletion, () => {
         s1: buildStoryResult("s1", "1a"),
         s2: buildStoryResult("s2", "1b"),
       };
+      const selectedAnswers: Record<string, SelectedAnswer> = {
+        s1: buildStoryAnswer("1a"),
+        s2: buildStoryAnswer("1b"),
+      };
 
-      const completion = computeLocalCompletion(buildState({ results, steps }));
+      const completion = computeLocalCompletion(buildState({ results, selectedAnswers, steps }));
       expect(completion.brainPower).toBe(100);
     });
 
@@ -180,11 +207,101 @@ describe(computeLocalCompletion, () => {
       const results: Record<string, StepResult> = {
         s1: buildStoryResult("s1", "1a"),
       };
+      const selectedAnswers: Record<string, SelectedAnswer> = {
+        s1: buildStoryAnswer("1a"),
+      };
 
       const completion = computeLocalCompletion(
-        buildState({ results, steps, totalBrainPower: 500 }),
+        buildState({ results, selectedAnswers, steps, totalBrainPower: 500 }),
       );
       expect(completion.newTotalBp).toBe(600);
+    });
+
+    test("counts correct and incorrect for story alignments", () => {
+      const steps = [buildStoryStep("s1", 0), buildStoryStep("s2", 1), buildStoryStep("s3", 2)];
+      const results: Record<string, StepResult> = {
+        s1: buildStoryResult("s1", "1a"), // strong = correct
+        s2: buildStoryResult("s2", "1b"), // partial = correct
+        s3: buildStoryResult("s3", "1c"), // weak = incorrect
+      };
+      const selectedAnswers: Record<string, SelectedAnswer> = {
+        s1: buildStoryAnswer("1a"),
+        s2: buildStoryAnswer("1b"),
+        s3: buildStoryAnswer("1c"),
+      };
+
+      const completion = computeLocalCompletion(buildState({ results, selectedAnswers, steps }));
+      expect(completion.correctCount).toBe(2);
+      expect(completion.incorrectCount).toBe(1);
+    });
+  });
+
+  describe("investigation activities", () => {
+    const actionContent = {
+      actions: [
+        {
+          finding: "Critical evidence",
+          id: "a1",
+          label: "Check logs",
+          quality: "critical" as const,
+        },
+        { finding: "Useful data", id: "a2", label: "Review metrics", quality: "useful" as const },
+        { finding: "Nothing here", id: "a3", label: "Random check", quality: "weak" as const },
+      ],
+      variant: "action" as const,
+    };
+
+    const callContent = {
+      explanations: [
+        { accuracy: "best" as const, feedback: "Correct!", id: "e1", text: "Memory leak" },
+        { accuracy: "wrong" as const, feedback: "Wrong.", id: "e2", text: "Network" },
+      ],
+      variant: "call" as const,
+    };
+
+    test("counts action qualities and call accuracy: 1 correct action + wrong call = 1/3", () => {
+      const steps = [
+        buildStep({ content: actionContent, id: "action-1", kind: "investigation" }),
+        buildStep({ content: callContent, id: "call-1", kind: "investigation" }),
+      ];
+
+      const selectedAnswers: Record<string, SelectedAnswer> = {
+        "call-1": { kind: "investigation", selectedExplanationId: "e2", variant: "call" },
+      };
+
+      const investigationLoop = {
+        actionTimings: [],
+        usedActionIds: ["a1", "a3"], // critical, weak
+      };
+
+      const completion = computeLocalCompletion(
+        buildState({ investigationLoop, results: {}, selectedAnswers, steps }),
+      );
+      expect(completion.correctCount).toBe(1);
+      expect(completion.incorrectCount).toBe(2);
+      expect(completion.brainPower).toBe(100);
+    });
+
+    test("perfect investigation: 2 correct actions + best call = 3/3", () => {
+      const steps = [
+        buildStep({ content: actionContent, id: "action-1", kind: "investigation" }),
+        buildStep({ content: callContent, id: "call-1", kind: "investigation" }),
+      ];
+
+      const selectedAnswers: Record<string, SelectedAnswer> = {
+        "call-1": { kind: "investigation", selectedExplanationId: "e1", variant: "call" },
+      };
+
+      const investigationLoop = {
+        actionTimings: [],
+        usedActionIds: ["a1", "a2"], // critical, useful — all correct
+      };
+
+      const completion = computeLocalCompletion(
+        buildState({ investigationLoop, results: {}, selectedAnswers, steps }),
+      );
+      expect(completion.correctCount).toBe(3);
+      expect(completion.incorrectCount).toBe(0);
     });
   });
 });

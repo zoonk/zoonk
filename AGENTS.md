@@ -37,9 +37,8 @@
 - `pnpm lint:fix` (only run linting AFTER `typecheck`)
 - `pnpm knip --production`
 - `pnpm test`
-- `pnpm --filter {app} build` (eg `pnpm --filter main build`)
-- `pnpm --filter {app} build:e2e` (always run this before running e2e tests)
-- `pnpm --filter {app} e2e`
+- `pnpm build --filter {app}` (eg `pnpm build --filter main`)
+- `pnpm e2e --filter {app}` (eg `pnpm e2e --filter main`)
 
 - Always run e2e tests for ALL apps (`main`, `editor`, `api`), not just the one you changed
 - After e2e changes, run your tests multiple times to check for flakiness
@@ -147,6 +146,7 @@ page.getByLabel(/email/i);
 
 - Use `getExtracted` (server) or `useExtracted` (client) for translations, don't use `getTranslations` or `useTranslations`
 - Pass string literals, never variables or keys (e.g., `getExtracted("Hello world")`, not `getExtracted(greeting)` nor `getExtracted("greeting")`)
+- **NEVER pass `t` / `getExtracted` / `useExtracted` as a function argument, prop, or store it in a variable to call later.** Always call `t("literal")` directly in the component. If you need translated text in a helper, use conditionals in the component: `verdict === "correct" ? t("Correct!") : t("Not quite")`
 - Translation strings are extracted to PO files automatically when running `pnpm --filter {app} build`
 - Never edit `i18n.lock` manually
 - Manual translation should be done only in PO entries with empty `msgstr`

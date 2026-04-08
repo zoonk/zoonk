@@ -8,6 +8,7 @@ function buildOptions(overrides: Partial<Parameters<typeof usePlayerKeyboard>[0]
   return {
     canNavigatePrev: false,
     hasAnswer: false,
+    isInvestigationScore: false,
     isStaticStep: false,
     onCheck: vi.fn(),
     onContinue: vi.fn(),

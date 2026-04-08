@@ -5,8 +5,9 @@ import { preloadNextLesson } from "@/data/progress/preload-next-lesson";
 import { submitActivityCompletion } from "@/data/progress/submit-activity-completion";
 import { auth } from "@zoonk/core/auth";
 import { type LessonSentence, prisma } from "@zoonk/db";
+import { buildInvestigationActionResults } from "@zoonk/player/build-investigation-action-results";
 import { type CompletionInput, completionInputSchema } from "@zoonk/player/completion-input-schema";
-import { computeScore } from "@zoonk/player/compute-score";
+import { buildScoringInput, computeActivityScore } from "@zoonk/player/compute-score";
 import { validateAnswers } from "@zoonk/player/validate-answers";
 import { logError } from "@zoonk/utils/logger";
 import { revalidatePath } from "next/cache";
@@ -113,9 +114,19 @@ export async function submitCompletion(rawInput: CompletionInput): Promise<void>
 
       const stepResults = validateAnswers(stepsForValidation, input.answers);
 
-      const score = computeScore({
-        results: stepResults.map((step) => ({ isCorrect: step.isCorrect })),
-      });
+      const score = computeActivityScore(
+        buildScoringInput({
+          activityKind: activity.kind,
+          answers: input.answers,
+          investigationLoop: input.investigationLoop,
+          stepResults: stepResults.map((step) => ({ isCorrect: step.isCorrect })),
+          steps: activity.steps.map((step) => ({
+            content: step.content,
+            id: String(step.id),
+            kind: step.kind,
+          })),
+        }),
+      );
 
       const durationSeconds = clampDuration(input.startedAt);
 
@@ -134,6 +145,14 @@ export async function submitCompletion(rawInput: CompletionInput): Promise<void>
         };
       });
 
+      const investigationActionResults =
+        activity.kind === "investigation"
+          ? buildInvestigationActionResults({
+              investigationLoop: input.investigationLoop,
+              steps: activity.steps,
+            })
+          : [];
+
       await submitActivityCompletion({
         activityId: activity.id,
         courseId: activity.lesson.chapter.courseId,
@@ -142,7 +161,7 @@ export async function submitCompletion(rawInput: CompletionInput): Promise<void>
         organizationId: activity.organizationId,
         score,
         startedAt: new Date(input.startedAt),
-        stepResults: mergedStepResults,
+        stepResults: [...mergedStepResults, ...investigationActionResults],
         userId,
       });
 

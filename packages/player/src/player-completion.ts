@@ -1,29 +1,42 @@
-import { type StoryAlignment, parseStepContent } from "@zoonk/core/steps/contract/content";
 import { calculateBeltLevel } from "@zoonk/utils/belt-level";
 import { type CompletionResult } from "./completion-input-schema";
-import { computeScore, computeStoryScore } from "./compute-score";
+import {
+  type ActivityScoringInput,
+  buildScoringInput,
+  computeActivityScore,
+} from "./compute-score";
 import { type PlayerState } from "./player-reducer";
 
 /**
- * Extract the alignment of each selected choice from story step results.
+ * Builds the ActivityScoringInput from client-side PlayerState.
  *
- * Looks up each answer's selectedChoiceId in the step content to find
- * the alignment tag. Used to compute story-specific scoring (energy by
- * alignment instead of correct/incorrect counts).
+ * Delegates to the shared buildScoringInput, normalizing the client's
+ * data shapes (steps as SerializedStep[], results as StepResult records)
+ * into the format the unified scorer expects.
  */
-function getStoryAlignments(state: PlayerState): StoryAlignment[] {
-  return state.steps.flatMap((step) => {
-    const result = state.results[step.id];
+function getActivityKind(steps: PlayerState["steps"]): string {
+  if (steps.some((step) => step.kind === "investigation")) {
+    return "investigation";
+  }
 
-    if (!result?.answer || result.answer.kind !== "story") {
-      return [];
-    }
+  if (steps.some((step) => step.kind === "story")) {
+    return "story";
+  }
 
-    const { selectedChoiceId } = result.answer;
-    const content = parseStepContent("story", step.content);
-    const choice = content.choices.find((option) => option.id === selectedChoiceId);
+  return "generic";
+}
 
-    return choice ? [choice.alignment] : [];
+function buildClientScoringInput(state: PlayerState): ActivityScoringInput {
+  const activityKind = getActivityKind(state.steps);
+
+  return buildScoringInput({
+    activityKind,
+    answers: state.selectedAnswers,
+    investigationLoop: state.investigationLoop,
+    stepResults: Object.values(state.results).map((stepResult) => ({
+      isCorrect: stepResult.result.isCorrect,
+    })),
+    steps: state.steps,
   });
 }
 
@@ -32,26 +45,19 @@ function getStoryAlignments(state: PlayerState): StoryAlignment[] {
  *
  * All inputs (correct/incorrect answers, totalBrainPower) are
  * already available on the client, so we can show metrics instantly without
- * waiting for a server round-trip. The server still validates and persists
- * in the background via `after()`.
+ * waiting for a server round-trip. The server computes the same score
+ * via computeActivityScore + buildScoringInput to ensure consistency.
  */
 export function computeLocalCompletion(state: PlayerState): CompletionResult {
-  const isStory = state.steps.some((step) => step.kind === "story");
-
-  const score = isStory
-    ? computeStoryScore({ alignments: getStoryAlignments(state) })
-    : computeScore({
-        results: Object.values(state.results).map((stepResult) => ({
-          isCorrect: stepResult.result.isCorrect,
-        })),
-      });
-
+  const score = computeActivityScore(buildClientScoringInput(state));
   const newTotalBp = state.totalBrainPower + score.brainPower;
 
   return {
     belt: calculateBeltLevel(newTotalBp),
     brainPower: score.brainPower,
+    correctCount: score.correctCount,
     energyDelta: score.energyDelta,
+    incorrectCount: score.incorrectCount,
     newTotalBp,
   };
 }

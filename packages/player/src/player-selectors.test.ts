@@ -2,6 +2,7 @@ import { describe, expect, test } from "vitest";
 import { type PlayerState, type StepResult } from "./player-reducer";
 import {
   findSelectedChoice,
+  getInvestigationProgress,
   getIsStoryActivity,
   getStoryBriefingText,
   getStoryMetrics,
@@ -34,6 +35,7 @@ function buildState(overrides: Partial<PlayerState> = {}): PlayerState {
     activityId: "activity-1",
     completion: null,
     currentStepIndex: 0,
+    investigationLoop: null,
     phase: "playing",
     results: {},
     selectedAnswers: {},
@@ -359,6 +361,113 @@ describe(getStoryMetrics, () => {
     });
 
     expect(getStoryMetrics(state)).toEqual([]);
+  });
+});
+
+function buildInvestigationActionStep(): SerializedStep {
+  return buildStep({
+    content: {
+      actions: [
+        { finding: "Clue A", id: "a1", label: "Check logs", quality: "critical" as const },
+        { finding: "Clue B", id: "a2", label: "Ask witness", quality: "useful" as const },
+        { finding: "Clue C", id: "a3", label: "Check camera", quality: "weak" as const },
+      ],
+      variant: "action" as const,
+    },
+    id: "action-step",
+    kind: "investigation",
+    position: 1,
+  });
+}
+
+describe(getInvestigationProgress, () => {
+  test("returns progress when current step is an investigation action step", () => {
+    const state = buildState({
+      currentStepIndex: 0,
+      investigationLoop: { actionTimings: [], usedActionIds: ["a1"] },
+      steps: [buildInvestigationActionStep()],
+    });
+
+    expect(getInvestigationProgress(state)).toEqual({ collected: 1, total: 2 });
+  });
+
+  test("returns 0 collected when no actions have been used", () => {
+    const state = buildState({
+      currentStepIndex: 0,
+      investigationLoop: { actionTimings: [], usedActionIds: [] },
+      steps: [buildInvestigationActionStep()],
+    });
+
+    expect(getInvestigationProgress(state)).toEqual({ collected: 0, total: 2 });
+  });
+
+  test("returns 2 collected when all experiments are done", () => {
+    const state = buildState({
+      currentStepIndex: 0,
+      investigationLoop: { actionTimings: [], usedActionIds: ["a1", "a2"] },
+      steps: [buildInvestigationActionStep()],
+    });
+
+    expect(getInvestigationProgress(state)).toEqual({ collected: 2, total: 2 });
+  });
+
+  test("returns 0 collected for investigation problem step", () => {
+    const state = buildState({
+      currentStepIndex: 0,
+      steps: [
+        buildStep({
+          content: { scenario: "A mystery occurred.", variant: "problem" as const },
+          id: "problem-step",
+          kind: "investigation",
+        }),
+      ],
+    });
+
+    expect(getInvestigationProgress(state)).toEqual({ collected: 0, total: 2 });
+  });
+
+  test("returns collected count for investigation call step", () => {
+    const state = buildState({
+      currentStepIndex: 0,
+      investigationLoop: { actionTimings: [], usedActionIds: ["a1", "a2"] },
+      steps: [
+        buildStep({
+          content: {
+            explanations: [
+              {
+                accuracy: "best" as const,
+                feedback: "Correct!",
+                id: "e1",
+                text: "Correct explanation",
+              },
+            ],
+            variant: "call" as const,
+          },
+          id: "call-step",
+          kind: "investigation",
+        }),
+      ],
+    });
+
+    expect(getInvestigationProgress(state)).toEqual({ collected: 2, total: 2 });
+  });
+
+  test("returns null for non-investigation steps", () => {
+    const state = buildState({
+      steps: [buildStep({ id: "s1" })],
+    });
+
+    expect(getInvestigationProgress(state)).toBeNull();
+  });
+
+  test("returns 0 collected when investigation loop is null", () => {
+    const state = buildState({
+      currentStepIndex: 0,
+      investigationLoop: null,
+      steps: [buildInvestigationActionStep()],
+    });
+
+    expect(getInvestigationProgress(state)).toEqual({ collected: 0, total: 2 });
   });
 });
 
