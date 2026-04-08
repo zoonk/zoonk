@@ -5,6 +5,7 @@ import { preloadNextLesson } from "@/data/progress/preload-next-lesson";
 import { submitActivityCompletion } from "@/data/progress/submit-activity-completion";
 import { auth } from "@zoonk/core/auth";
 import { type LessonSentence, prisma } from "@zoonk/db";
+import { buildInvestigationActionResults } from "@zoonk/player/build-investigation-action-results";
 import { type CompletionInput, completionInputSchema } from "@zoonk/player/completion-input-schema";
 import { buildScoringInput, computeActivityScore } from "@zoonk/player/compute-score";
 import { validateAnswers } from "@zoonk/player/validate-answers";
@@ -144,6 +145,14 @@ export async function submitCompletion(rawInput: CompletionInput): Promise<void>
         };
       });
 
+      const investigationActionResults =
+        activity.kind === "investigation"
+          ? buildInvestigationActionResults({
+              investigationLoop: input.investigationLoop,
+              steps: activity.steps,
+            })
+          : [];
+
       await submitActivityCompletion({
         activityId: activity.id,
         courseId: activity.lesson.chapter.courseId,
@@ -152,7 +161,7 @@ export async function submitCompletion(rawInput: CompletionInput): Promise<void>
         organizationId: activity.organizationId,
         score,
         startedAt: new Date(input.startedAt),
-        stepResults: mergedStepResults,
+        stepResults: [...mergedStepResults, ...investigationActionResults],
         userId,
       });
 

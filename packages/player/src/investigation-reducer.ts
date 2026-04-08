@@ -1,5 +1,9 @@
 import { parseStepContent } from "@zoonk/core/steps/contract/content";
-import { type InvestigationLoopState, getInvestigationStepByVariant } from "./investigation";
+import {
+  type ActionTiming,
+  type InvestigationLoopState,
+  getInvestigationStepByVariant,
+} from "./investigation";
 import { type PlayerState, type SelectedAnswer } from "./player-reducer";
 import { type SerializedStep } from "./prepare-activity-data";
 
@@ -24,24 +28,31 @@ export function getInvestigationVariant(step: SerializedStep | undefined) {
  * across the 3 fixed experiments.
  */
 function initInvestigationLoop(): InvestigationLoopState {
-  return { usedActionIndices: [] };
+  return { actionTimings: [], usedActionIndices: [] };
 }
 
 /**
- * Records a used action index in the investigation loop when the
- * action step is checked. The action index is stored for scoring
- * (quality tiers) and for filtering out used actions on the next visit.
+ * Records a used action index and its timing in the investigation
+ * loop when the action step is checked. The action index is stored
+ * for scoring (quality tiers), filtering out used actions on the
+ * next visit, and building per-experiment StepAttempts server-side.
  */
-export function recordActionInLoop(
-  loop: InvestigationLoopState,
-  answer: SelectedAnswer,
-): InvestigationLoopState {
+export function recordActionInLoop({
+  answer,
+  loop,
+  timing,
+}: {
+  answer: SelectedAnswer;
+  loop: InvestigationLoopState;
+  timing: ActionTiming;
+}): InvestigationLoopState {
   if (answer.kind !== "investigation" || answer.variant !== "action") {
     return loop;
   }
 
   return {
     ...loop,
+    actionTimings: [...loop.actionTimings, timing],
     usedActionIndices: [...loop.usedActionIndices, answer.selectedActionIndex],
   };
 }

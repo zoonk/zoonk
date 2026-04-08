@@ -63,7 +63,6 @@ export function StageContent() {
         lessonHref={lessonHref}
         nextActivityHref={nextActivityHref}
         onRestart={actions.restart}
-        results={state.results}
       />
     );
   }

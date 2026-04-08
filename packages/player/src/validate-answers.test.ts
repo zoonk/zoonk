@@ -333,7 +333,7 @@ describe(validateAnswers, () => {
     expect(results).toHaveLength(0);
   });
 
-  test("validates investigation problem as always correct", () => {
+  test("skips investigation problem step (no StepAttempt for read-only steps)", () => {
     const steps = [
       {
         content: {
@@ -349,11 +349,10 @@ describe(validateAnswers, () => {
       "10": { kind: "investigation", variant: "problem" },
     });
 
-    expect(results).toHaveLength(1);
-    expect(results[0]?.isCorrect).toBe(true);
+    expect(results).toHaveLength(0);
   });
 
-  test("validates investigation action as always correct", () => {
+  test("skips investigation action step (StepAttempts built from investigationLoop)", () => {
     const steps = [
       {
         content: {
@@ -379,8 +378,7 @@ describe(validateAnswers, () => {
       },
     });
 
-    expect(results).toHaveLength(1);
-    expect(results[0]?.isCorrect).toBe(true);
+    expect(results).toHaveLength(0);
   });
 
   test("validates investigation call: best accuracy is correct", () => {

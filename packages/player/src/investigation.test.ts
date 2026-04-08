@@ -61,7 +61,7 @@ function buildInvestigationSteps(): SerializedStep[] {
 }
 
 describe("computeActivityScore (investigation)", () => {
-  test("perfect score: 3 critical actions, best call", () => {
+  test("perfect score: 3 critical actions, best call = 4/4", () => {
     const input: InvestigationScoreInput = {
       actionQualities: ["critical", "critical", "critical"],
       callAccuracy: "best",
@@ -69,11 +69,11 @@ describe("computeActivityScore (investigation)", () => {
 
     const result = computeActivityScore({ investigation: input, kind: "investigation" });
     expect(result.brainPower).toBe(100);
-    expect(result.correctCount).toBe(1);
+    expect(result.correctCount).toBe(4);
     expect(result.incorrectCount).toBe(0);
   });
 
-  test("minimum score: 1 weak action, wrong call", () => {
+  test("minimum score: 1 weak action, wrong call = 0/2", () => {
     const input: InvestigationScoreInput = {
       actionQualities: ["weak"],
       callAccuracy: "wrong",
@@ -82,17 +82,17 @@ describe("computeActivityScore (investigation)", () => {
     const result = computeActivityScore({ investigation: input, kind: "investigation" });
     expect(result.brainPower).toBe(100);
     expect(result.correctCount).toBe(0);
-    expect(result.incorrectCount).toBe(1);
+    expect(result.incorrectCount).toBe(2);
   });
 
-  test("partial call accuracy counts as incorrect", () => {
+  test("partial call accuracy counts as incorrect: 1 critical + partial = 1/2", () => {
     const input: InvestigationScoreInput = {
       actionQualities: ["critical"],
       callAccuracy: "partial",
     };
 
     const result = computeActivityScore({ investigation: input, kind: "investigation" });
-    expect(result.correctCount).toBe(0);
+    expect(result.correctCount).toBe(1);
     expect(result.incorrectCount).toBe(1);
   });
 });

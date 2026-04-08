@@ -121,12 +121,12 @@ export function checkArrangeWordsAnswer(
 }
 
 /**
- * Checks an investigation action answer.
+ * Checks an investigation action answer by quality tier.
  *
- * Action steps are ungraded (always "correct") because any action is
- * a valid investigation choice. The quality tier affects scoring,
- * not correctness. Returns the finding text as feedback so the
- * evidence can be shown after checking.
+ * Critical and useful actions are correct (strong evidence choices).
+ * Weak actions are incorrect (poor investigation decisions).
+ * Returns the finding text as feedback so the evidence can be shown
+ * after checking.
  */
 export function checkInvestigationAction(
   content: Extract<InvestigationStepContent, { variant: "action" }>,
@@ -135,10 +135,10 @@ export function checkInvestigationAction(
   const action = content.actions[selectedActionIndex];
 
   if (!action) {
-    return { correctAnswer: null, feedback: null, isCorrect: true };
+    return { correctAnswer: null, feedback: null, isCorrect: false };
   }
 
-  return { correctAnswer: null, feedback: action.finding, isCorrect: true };
+  return { correctAnswer: null, feedback: action.finding, isCorrect: action.quality !== "weak" };
 }
 
 /**

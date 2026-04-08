@@ -145,7 +145,10 @@ function validateListening(step: StepData, answer: SelectedAnswer): ValidatedSte
 /**
  * Validates an investigation answer server-side.
  *
- * Problem and action variants are always correct (ungraded).
+ * Problem steps produce no StepAttempt (read-only, like static steps).
+ * Action steps produce no StepAttempt here — the 3 per-experiment
+ * StepAttempts are built separately from investigationLoop in the
+ * submission pipeline.
  * Call checks the selected explanation's accuracy tier.
  */
 function validateInvestigation(step: StepData, answer: SelectedAnswer): ValidatedStepResult | null {
@@ -156,7 +159,7 @@ function validateInvestigation(step: StepData, answer: SelectedAnswer): Validate
   const content = parseStepContent("investigation", step.content);
 
   if (content.variant === "problem" || content.variant === "action") {
-    return { answer, isCorrect: true, stepId: step.id };
+    return null;
   }
 
   if (content.variant === "call" && answer.variant === "call") {

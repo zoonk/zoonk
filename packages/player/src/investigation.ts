@@ -5,7 +5,15 @@ import {
 import { type PlayerState } from "./player-reducer";
 import { type SerializedStep } from "./prepare-activity-data";
 
+export type ActionTiming = {
+  answeredAt: number;
+  dayOfWeek: number;
+  durationSeconds: number;
+  hourOfDay: number;
+};
+
 export type InvestigationLoopState = {
+  actionTimings: ActionTiming[];
   usedActionIndices: number[];
 };
 

@@ -143,14 +143,27 @@ function handleCheckAnswer(
   /**
    * Investigation action steps enter the feedback phase to show
    * evidence (the finding for the chosen action). Record the
-   * chosen action in the loop state before entering feedback.
+   * chosen action and its timing in the loop state before entering
+   * feedback. Per-experiment timings are stored in the loop (not
+   * in stepTimings) because all experiments share the same step ID
+   * and stepTimings would overwrite previous experiments.
    */
   if (variant === "action") {
     const answer = state.selectedAnswers[action.stepId];
     const loop = state.investigationLoop;
 
     if (loop && answer) {
-      const updatedLoop = recordActionInLoop(loop, answer);
+      const now = Date.now();
+      const answeredDate = new Date(now);
+
+      const timing = {
+        answeredAt: now,
+        dayOfWeek: answeredDate.getDay(),
+        durationSeconds: Math.max(0, Math.round((now - state.stepStartedAt) / 1000)),
+        hourOfDay: answeredDate.getHours(),
+      };
+
+      const updatedLoop = recordActionInLoop({ answer, loop, timing });
       return { ...checked, investigationLoop: updatedLoop };
     }
 

@@ -106,6 +106,7 @@ const stepTimingSchema = z.object({
  * the full scoring input server-side.
  */
 const investigationLoopSchema = z.object({
+  actionTimings: z.array(stepTimingSchema).default([]),
   usedActionIndices: z.array(z.number()),
 });
 
@@ -123,6 +124,8 @@ export type CompletionInput = z.infer<typeof completionInputSchema>;
 export type CompletionResult = {
   belt: BeltLevelResult;
   brainPower: number;
+  correctCount: number;
   energyDelta: number;
+  incorrectCount: number;
   newTotalBp: number;
 };

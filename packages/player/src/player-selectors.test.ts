@@ -384,7 +384,7 @@ describe(getInvestigationProgress, () => {
   test("returns progress when current step is an investigation action step", () => {
     const state = buildState({
       currentStepIndex: 0,
-      investigationLoop: { usedActionIndices: [0] },
+      investigationLoop: { actionTimings: [], usedActionIndices: [0] },
       steps: [buildInvestigationActionStep()],
     });
 
@@ -394,7 +394,7 @@ describe(getInvestigationProgress, () => {
   test("returns 0 collected when no actions have been used", () => {
     const state = buildState({
       currentStepIndex: 0,
-      investigationLoop: { usedActionIndices: [] },
+      investigationLoop: { actionTimings: [], usedActionIndices: [] },
       steps: [buildInvestigationActionStep()],
     });
 
@@ -404,7 +404,7 @@ describe(getInvestigationProgress, () => {
   test("returns 3 collected when all experiments are done", () => {
     const state = buildState({
       currentStepIndex: 0,
-      investigationLoop: { usedActionIndices: [0, 1, 2] },
+      investigationLoop: { actionTimings: [], usedActionIndices: [0, 1, 2] },
       steps: [buildInvestigationActionStep()],
     });
 
@@ -429,7 +429,7 @@ describe(getInvestigationProgress, () => {
   test("returns collected count for investigation call step", () => {
     const state = buildState({
       currentStepIndex: 0,
-      investigationLoop: { usedActionIndices: [0, 1, 2] },
+      investigationLoop: { actionTimings: [], usedActionIndices: [0, 1, 2] },
       steps: [
         buildStep({
           content: {

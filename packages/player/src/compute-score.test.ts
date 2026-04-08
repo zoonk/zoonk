@@ -1,9 +1,10 @@
 import { describe, expect, test } from "vitest";
-import { buildScoringInput, computeActivityScore, computeScore } from "./compute-score";
+import { buildScoringInput, computeActivityScore } from "./compute-score";
 
-describe(computeScore, () => {
+describe("computeActivityScore (generic)", () => {
   test("all correct (5): BP=10, energyDelta=1.0", () => {
-    const result = computeScore({
+    const result = computeActivityScore({
+      kind: "generic",
       results: [
         { isCorrect: true },
         { isCorrect: true },
@@ -22,7 +23,8 @@ describe(computeScore, () => {
   });
 
   test("all incorrect (5): BP=10, energyDelta=-0.5", () => {
-    const result = computeScore({
+    const result = computeActivityScore({
+      kind: "generic",
       results: [
         { isCorrect: false },
         { isCorrect: false },
@@ -41,7 +43,8 @@ describe(computeScore, () => {
   });
 
   test("mix (3 correct, 2 incorrect): BP=10, energyDelta=0.4", () => {
-    const result = computeScore({
+    const result = computeActivityScore({
+      kind: "generic",
       results: [
         { isCorrect: true },
         { isCorrect: true },
@@ -60,7 +63,7 @@ describe(computeScore, () => {
   });
 
   test("empty results (static activity): BP=10, energyDelta=0.1", () => {
-    const result = computeScore({ results: [] });
+    const result = computeActivityScore({ kind: "generic", results: [] });
 
     expect(result).toEqual({
       brainPower: 10,
@@ -175,7 +178,7 @@ describe(computeActivityScore, () => {
 });
 
 describe("computeActivityScore (investigation)", () => {
-  test("perfect run: 3 critical actions + best call = +12 energy", () => {
+  test("perfect run: 3 critical actions + best call = 4/4 correct, +12 energy", () => {
     const result = computeActivityScore({
       investigation: {
         actionQualities: ["critical", "critical", "critical"],
@@ -186,13 +189,13 @@ describe("computeActivityScore (investigation)", () => {
 
     expect(result).toEqual({
       brainPower: 100,
-      correctCount: 1,
+      correctCount: 4,
       energyDelta: 12,
       incorrectCount: 0,
     });
   });
 
-  test("mediocre run: 3 useful actions + partial call = +6 energy", () => {
+  test("mediocre run: 3 useful actions + partial call = 3/4 correct, +6 energy", () => {
     const result = computeActivityScore({
       investigation: {
         actionQualities: ["useful", "useful", "useful"],
@@ -203,13 +206,13 @@ describe("computeActivityScore (investigation)", () => {
 
     expect(result).toEqual({
       brainPower: 100,
-      correctCount: 0,
+      correctCount: 3,
       energyDelta: 6,
       incorrectCount: 1,
     });
   });
 
-  test("worst run: 3 weak actions + wrong call = 0 energy", () => {
+  test("worst run: 3 weak actions + wrong call = 0/4 correct, 0 energy", () => {
     const result = computeActivityScore({
       investigation: {
         actionQualities: ["weak", "weak", "weak"],
@@ -222,11 +225,11 @@ describe("computeActivityScore (investigation)", () => {
       brainPower: 100,
       correctCount: 0,
       energyDelta: 0,
-      incorrectCount: 1,
+      incorrectCount: 4,
     });
   });
 
-  test("mixed actions: critical + useful + weak + best call = +9 energy", () => {
+  test("mixed actions: critical + useful + weak + best call = 3/4 correct, +9 energy", () => {
     const result = computeActivityScore({
       investigation: {
         actionQualities: ["critical", "useful", "weak"],
@@ -237,13 +240,30 @@ describe("computeActivityScore (investigation)", () => {
 
     expect(result).toEqual({
       brainPower: 100,
-      correctCount: 1,
+      correctCount: 3,
       energyDelta: 9,
-      incorrectCount: 0,
+      incorrectCount: 1,
     });
   });
 
-  test("single action: 1 critical + partial call = +5 energy", () => {
+  test("mixed actions + wrong call: critical + useful + weak + wrong = 2/4 correct", () => {
+    const result = computeActivityScore({
+      investigation: {
+        actionQualities: ["critical", "useful", "weak"],
+        callAccuracy: "wrong",
+      },
+      kind: "investigation",
+    });
+
+    expect(result).toEqual({
+      brainPower: 100,
+      correctCount: 2,
+      energyDelta: 3,
+      incorrectCount: 2,
+    });
+  });
+
+  test("single action: 1 critical + partial call = 1/2 correct, +5 energy", () => {
     const result = computeActivityScore({
       investigation: {
         actionQualities: ["critical"],
@@ -254,13 +274,13 @@ describe("computeActivityScore (investigation)", () => {
 
     expect(result).toEqual({
       brainPower: 100,
-      correctCount: 0,
+      correctCount: 1,
       energyDelta: 5,
       incorrectCount: 1,
     });
   });
 
-  test("empty actions + best call = +6 energy (call only)", () => {
+  test("empty actions + best call = 1/1 correct, +6 energy (call only)", () => {
     const result = computeActivityScore({
       investigation: {
         actionQualities: [],
@@ -338,6 +358,7 @@ describe(buildScoringInput, () => {
         "call-1": { kind: "investigation", selectedExplanationIndex: 0, variant: "call" },
       },
       investigationLoop: {
+        actionTimings: [],
         usedActionIndices: [0],
       },
       stepResults: [],

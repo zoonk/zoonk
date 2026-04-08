@@ -55,7 +55,9 @@ export function computeLocalCompletion(state: PlayerState): CompletionResult {
   return {
     belt: calculateBeltLevel(newTotalBp),
     brainPower: score.brainPower,
+    correctCount: score.correctCount,
     energyDelta: score.energyDelta,
+    incorrectCount: score.incorrectCount,
     newTotalBp,
   };
 }

@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "exports": {
+    "./build-investigation-action-results": "./src/build-investigation-action-results.ts",
     "./check-answer": "./src/check-answer.ts",
     "./completion-input-schema": "./src/completion-input-schema.ts",
     "./compute-score": "./src/compute-score.ts",

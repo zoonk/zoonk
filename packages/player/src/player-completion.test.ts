@@ -107,6 +107,8 @@ describe(computeLocalCompletion, () => {
 
       const completion = computeLocalCompletion(buildState({ results, steps }));
       expect(completion.brainPower).toBe(10);
+      expect(completion.correctCount).toBe(1);
+      expect(completion.incorrectCount).toBe(0);
     });
   });
 
@@ -213,6 +215,88 @@ describe(computeLocalCompletion, () => {
         buildState({ results, selectedAnswers, steps, totalBrainPower: 500 }),
       );
       expect(completion.newTotalBp).toBe(600);
+    });
+
+    test("counts correct and incorrect for story alignments", () => {
+      const steps = [buildStoryStep("s1", 0), buildStoryStep("s2", 1), buildStoryStep("s3", 2)];
+      const results: Record<string, StepResult> = {
+        s1: buildStoryResult("s1", "1a"), // strong = correct
+        s2: buildStoryResult("s2", "1b"), // partial = correct
+        s3: buildStoryResult("s3", "1c"), // weak = incorrect
+      };
+      const selectedAnswers: Record<string, SelectedAnswer> = {
+        s1: buildStoryAnswer("1a"),
+        s2: buildStoryAnswer("1b"),
+        s3: buildStoryAnswer("1c"),
+      };
+
+      const completion = computeLocalCompletion(buildState({ results, selectedAnswers, steps }));
+      expect(completion.correctCount).toBe(2);
+      expect(completion.incorrectCount).toBe(1);
+    });
+  });
+
+  describe("investigation activities", () => {
+    const actionContent = {
+      actions: [
+        { finding: "Critical evidence", label: "Check logs", quality: "critical" as const },
+        { finding: "Useful data", label: "Review metrics", quality: "useful" as const },
+        { finding: "Nothing here", label: "Random check", quality: "weak" as const },
+      ],
+      variant: "action" as const,
+    };
+
+    const callContent = {
+      explanations: [
+        { accuracy: "best" as const, feedback: "Correct!", text: "Memory leak" },
+        { accuracy: "wrong" as const, feedback: "Wrong.", text: "Network" },
+      ],
+      variant: "call" as const,
+    };
+
+    test("counts action qualities and call accuracy: 2 correct actions + wrong call = 2/4", () => {
+      const steps = [
+        buildStep({ content: actionContent, id: "action-1", kind: "investigation" }),
+        buildStep({ content: callContent, id: "call-1", kind: "investigation" }),
+      ];
+
+      const selectedAnswers: Record<string, SelectedAnswer> = {
+        "call-1": { kind: "investigation", selectedExplanationIndex: 1, variant: "call" },
+      };
+
+      const investigationLoop = {
+        actionTimings: [],
+        usedActionIndices: [0, 1, 2], // critical, useful, weak
+      };
+
+      const completion = computeLocalCompletion(
+        buildState({ investigationLoop, results: {}, selectedAnswers, steps }),
+      );
+      expect(completion.correctCount).toBe(2);
+      expect(completion.incorrectCount).toBe(2);
+      expect(completion.brainPower).toBe(100);
+    });
+
+    test("perfect investigation: 3 correct actions + best call = 4/4", () => {
+      const steps = [
+        buildStep({ content: actionContent, id: "action-1", kind: "investigation" }),
+        buildStep({ content: callContent, id: "call-1", kind: "investigation" }),
+      ];
+
+      const selectedAnswers: Record<string, SelectedAnswer> = {
+        "call-1": { kind: "investigation", selectedExplanationIndex: 0, variant: "call" },
+      };
+
+      const investigationLoop = {
+        actionTimings: [],
+        usedActionIndices: [0, 0, 1], // critical, critical, useful — all correct
+      };
+
+      const completion = computeLocalCompletion(
+        buildState({ investigationLoop, results: {}, selectedAnswers, steps }),
+      );
+      expect(completion.correctCount).toBe(4);
+      expect(completion.incorrectCount).toBe(0);
     });
   });
 });

@@ -495,7 +495,7 @@ describe(checkStep, () => {
       expect(result.isCorrect).toBe(true);
     });
 
-    test("action variant is always correct and returns finding as feedback", () => {
+    test("action variant: critical quality is correct", () => {
       const step = buildStep({
         content: {
           actions: [
@@ -517,6 +517,77 @@ describe(checkStep, () => {
       const { result } = checkStep(step, answer);
       expect(result.isCorrect).toBe(true);
       expect(result.feedback).toBe("Logs show memory climbing");
+    });
+
+    test("action variant: useful quality is correct", () => {
+      const step = buildStep({
+        content: {
+          actions: [
+            {
+              finding: "Some useful data found",
+              label: "Review logs",
+              quality: "useful" as const,
+            },
+          ],
+          variant: "action" as const,
+        },
+        kind: "investigation",
+      });
+      const answer: SelectedAnswer = {
+        kind: "investigation",
+        selectedActionIndex: 0,
+        variant: "action",
+      };
+      const { result } = checkStep(step, answer);
+      expect(result.isCorrect).toBe(true);
+      expect(result.feedback).toBe("Some useful data found");
+    });
+
+    test("action variant: weak quality is incorrect", () => {
+      const step = buildStep({
+        content: {
+          actions: [
+            {
+              finding: "Nothing useful here",
+              label: "Random check",
+              quality: "weak" as const,
+            },
+          ],
+          variant: "action" as const,
+        },
+        kind: "investigation",
+      });
+      const answer: SelectedAnswer = {
+        kind: "investigation",
+        selectedActionIndex: 0,
+        variant: "action",
+      };
+      const { result } = checkStep(step, answer);
+      expect(result.isCorrect).toBe(false);
+      expect(result.feedback).toBe("Nothing useful here");
+    });
+
+    test("action variant: out-of-bounds index is incorrect", () => {
+      const step = buildStep({
+        content: {
+          actions: [
+            {
+              finding: "Logs show memory climbing",
+              label: "Check logs",
+              quality: "critical" as const,
+            },
+          ],
+          variant: "action" as const,
+        },
+        kind: "investigation",
+      });
+      const answer: SelectedAnswer = {
+        kind: "investigation",
+        selectedActionIndex: 99,
+        variant: "action",
+      };
+      const { result } = checkStep(step, answer);
+      expect(result.isCorrect).toBe(false);
     });
 
     test("call variant: best accuracy is correct with per-explanation feedback", () => {

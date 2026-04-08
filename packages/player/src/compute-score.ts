@@ -29,7 +29,7 @@ function calculateEnergyDelta(results: { isCorrect: boolean }[]): number {
   return correctCount * ENERGY_PER_CORRECT + incorrectCount * ENERGY_PER_INCORRECT;
 }
 
-export function computeScore({ results }: { results: { isCorrect: boolean }[] }): ScoreResult {
+function computeScore({ results }: { results: { isCorrect: boolean }[] }): ScoreResult {
   const correctCount = results.filter((result) => result.isCorrect).length;
   const incorrectCount = results.length - correctCount;
   const energyDelta = calculateEnergyDelta(results);
@@ -106,7 +106,10 @@ export type InvestigationScoreInput = {
  * This is higher than story max (+9) because investigations
  * require more effort (multiple experiments + a final judgment).
  *
- * correctCount is 1 when callAccuracy is "best", 0 otherwise.
+ * correctCount includes all graded decisions: each action
+ * (critical/useful = correct, weak = incorrect) plus the call
+ * (best = correct, partial/wrong = incorrect).
+ * Example: 1 critical + 1 useful + 1 weak + wrong call = 2/4.
  */
 function computeInvestigationScore(input: InvestigationScoreInput): ScoreResult {
   const actionEnergy = input.actionQualities.reduce(
@@ -115,13 +118,14 @@ function computeInvestigationScore(input: InvestigationScoreInput): ScoreResult 
   );
 
   const callEnergy = INVESTIGATION_CALL_ENERGY[input.callAccuracy];
-  const correctCount = input.callAccuracy === "best" ? 1 : 0;
+  const correctActions = input.actionQualities.filter((quality) => quality !== "weak").length;
+  const callCorrect = input.callAccuracy === "best" ? 1 : 0;
 
   return {
     brainPower: APPLIED_ACTIVITY_BRAIN_POWER,
-    correctCount,
+    correctCount: correctActions + callCorrect,
     energyDelta: actionEnergy + callEnergy,
-    incorrectCount: 1 - correctCount,
+    incorrectCount: input.actionQualities.length - correctActions + (1 - callCorrect),
   };
 }
 

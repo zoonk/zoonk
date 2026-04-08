@@ -360,7 +360,7 @@ test.describe("Investigation Call Step", () => {
 });
 
 test.describe("Full Investigation Flow", () => {
-  test("problem -> 3 experiments -> call -> completion", async ({ page }) => {
+  test("problem -> 3 experiments -> call -> completion shows correct score", async ({ page }) => {
     const { uniqueId, url } = await createInvestigationActivity();
 
     await page.goto(url);
@@ -370,23 +370,30 @@ test.describe("Full Investigation Flow", () => {
     await expect(page.getByText(/the case/i)).toBeVisible();
     await page.getByRole("button", { name: /start investigation/i }).click();
 
-    // Steps 2-4: Three experiments (action -> evidence feedback -> continue)
-    // Experiment 1
-    await page.getByRole("radiogroup").getByRole("radio").first().click();
+    // Steps 2-4: Three experiments — pick specific actions by name to avoid flakiness
+    // Experiment 1: "Check server logs" (critical = correct)
+    await expect(page.getByText(/what do you want to investigate first/i)).toBeVisible();
+    await page.getByRole("radio", { name: new RegExp(`Check server logs ${uniqueId}`) }).click();
     await page.getByRole("button", { name: /check/i }).click();
     await page.getByRole("button", { name: /continue/i }).click();
 
-    // Experiment 2
-    await page.getByRole("radiogroup").getByRole("radio").first().click();
+    // Experiment 2: "Monitor resource usage" (critical = correct)
+    await expect(page.getByText(/what do you want to investigate next/i)).toBeVisible();
+    await page
+      .getByRole("radio", { name: new RegExp(`Monitor resource usage ${uniqueId}`) })
+      .click();
     await page.getByRole("button", { name: /check/i }).click();
     await page.getByRole("button", { name: /continue/i }).click();
 
-    // Experiment 3
-    await page.getByRole("radiogroup").getByRole("radio").first().click();
+    // Experiment 3: "Review error distribution" (useful = correct)
+    await expect(page.getByText(/one more lead/i)).toBeVisible();
+    await page
+      .getByRole("radio", { name: new RegExp(`Review error distribution ${uniqueId}`) })
+      .click();
     await page.getByRole("button", { name: /check/i }).click();
     await page.getByRole("button", { name: /continue/i }).click();
 
-    // Step 5: Call - select final answer
+    // Step 5: Call - select best explanation
     await expect(page.getByText(/what do you think happened/i)).toBeVisible();
     await page.getByRole("radio", { name: new RegExp(`Memory leak.*${uniqueId}`) }).click();
     await page.getByRole("button", { name: /check/i }).click();
@@ -398,7 +405,49 @@ test.describe("Full Investigation Flow", () => {
 
     await page.getByRole("button", { name: /continue/i }).click();
 
-    // Completion screen
+    // Completion screen shows 4/4 (3 correct actions + correct call)
     await expect(page.getByRole("status")).toBeVisible();
+    await expect(page.getByText("4/4")).toBeVisible();
+  });
+
+  test("mixed action qualities + wrong call shows correct score", async ({ page }) => {
+    const { uniqueId, url } = await createInvestigationActivity();
+
+    await page.goto(url);
+    await page.waitForLoadState("networkidle");
+
+    await page.getByRole("button", { name: /start investigation/i }).click();
+
+    // Experiment 1: Pick "Check server logs" (critical = correct)
+    await expect(page.getByText(/what do you want to investigate first/i)).toBeVisible();
+    await page.getByRole("radio", { name: new RegExp(`Check server logs ${uniqueId}`) }).click();
+    await page.getByRole("button", { name: /check/i }).click();
+    await page.getByRole("button", { name: /continue/i }).click();
+
+    // Experiment 2: Pick "Review error distribution" (useful = correct)
+    await expect(page.getByText(/what do you want to investigate next/i)).toBeVisible();
+    await page
+      .getByRole("radio", { name: new RegExp(`Review error distribution ${uniqueId}`) })
+      .click();
+    await page.getByRole("button", { name: /check/i }).click();
+    await page.getByRole("button", { name: /continue/i }).click();
+
+    // Experiment 3: Pick "Run database queries" (weak = incorrect)
+    await expect(page.getByText(/one more lead/i)).toBeVisible();
+    await page.getByRole("radio", { name: new RegExp(`Run database queries ${uniqueId}`) }).click();
+    await page.getByRole("button", { name: /check/i }).click();
+    await page.getByRole("button", { name: /continue/i }).click();
+
+    // Call: Pick "Network switch failure" (wrong = incorrect)
+    await expect(page.getByText(/what do you think happened/i)).toBeVisible();
+    await page
+      .getByRole("radio", { name: new RegExp(`Network switch failure ${uniqueId}`) })
+      .click();
+    await page.getByRole("button", { name: /check/i }).click();
+    await page.getByRole("button", { name: /continue/i }).click();
+
+    // Completion screen shows 2/4 (2 correct actions + 0 correct call)
+    await expect(page.getByRole("status")).toBeVisible();
+    await expect(page.getByText("2/4")).toBeVisible();
   });
 });
