@@ -102,14 +102,14 @@ export type InvestigationScoreInput = {
  * - Action quality: critical (+2), useful (+1), weak (+0) per action
  * - Final call: best (+6), partial (+3), wrong (+0)
  *
- * Max energy with 3 critical actions + best call = 6 + 6 = +12.
+ * Max energy with 2 critical actions + best call = 4 + 6 = +10.
  * This is higher than story max (+9) because investigations
  * require more effort (multiple experiments + a final judgment).
  *
  * correctCount includes all graded decisions: each action
  * (critical/useful = correct, weak = incorrect) plus the call
  * (best = correct, partial/wrong = incorrect).
- * Example: 1 critical + 1 useful + 1 weak + wrong call = 2/4.
+ * Example: 1 critical + 1 weak + wrong call = 1/3.
  */
 function computeInvestigationScore(input: InvestigationScoreInput): ScoreResult {
   const actionEnergy = input.actionQualities.reduce(

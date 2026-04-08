@@ -388,7 +388,7 @@ describe(getInvestigationProgress, () => {
       steps: [buildInvestigationActionStep()],
     });
 
-    expect(getInvestigationProgress(state)).toEqual({ collected: 1, total: 3 });
+    expect(getInvestigationProgress(state)).toEqual({ collected: 1, total: 2 });
   });
 
   test("returns 0 collected when no actions have been used", () => {
@@ -398,17 +398,17 @@ describe(getInvestigationProgress, () => {
       steps: [buildInvestigationActionStep()],
     });
 
-    expect(getInvestigationProgress(state)).toEqual({ collected: 0, total: 3 });
+    expect(getInvestigationProgress(state)).toEqual({ collected: 0, total: 2 });
   });
 
-  test("returns 3 collected when all experiments are done", () => {
+  test("returns 2 collected when all experiments are done", () => {
     const state = buildState({
       currentStepIndex: 0,
-      investigationLoop: { actionTimings: [], usedActionIds: ["a1", "a2", "a3"] },
+      investigationLoop: { actionTimings: [], usedActionIds: ["a1", "a2"] },
       steps: [buildInvestigationActionStep()],
     });
 
-    expect(getInvestigationProgress(state)).toEqual({ collected: 3, total: 3 });
+    expect(getInvestigationProgress(state)).toEqual({ collected: 2, total: 2 });
   });
 
   test("returns 0 collected for investigation problem step", () => {
@@ -423,13 +423,13 @@ describe(getInvestigationProgress, () => {
       ],
     });
 
-    expect(getInvestigationProgress(state)).toEqual({ collected: 0, total: 3 });
+    expect(getInvestigationProgress(state)).toEqual({ collected: 0, total: 2 });
   });
 
   test("returns collected count for investigation call step", () => {
     const state = buildState({
       currentStepIndex: 0,
-      investigationLoop: { actionTimings: [], usedActionIds: ["a1", "a2", "a3"] },
+      investigationLoop: { actionTimings: [], usedActionIds: ["a1", "a2"] },
       steps: [
         buildStep({
           content: {
@@ -449,7 +449,7 @@ describe(getInvestigationProgress, () => {
       ],
     });
 
-    expect(getInvestigationProgress(state)).toEqual({ collected: 3, total: 3 });
+    expect(getInvestigationProgress(state)).toEqual({ collected: 2, total: 2 });
   });
 
   test("returns null for non-investigation steps", () => {
@@ -467,7 +467,7 @@ describe(getInvestigationProgress, () => {
       steps: [buildInvestigationActionStep()],
     });
 
-    expect(getInvestigationProgress(state)).toEqual({ collected: 0, total: 3 });
+    expect(getInvestigationProgress(state)).toEqual({ collected: 0, total: 2 });
   });
 });
 

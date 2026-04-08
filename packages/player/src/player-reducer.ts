@@ -183,7 +183,7 @@ function completeWith(state: PlayerState): PlayerState {
  *
  * Investigation has a looping step progression:
  * - After problem: init loop, advance to action step
- * - After action feedback: if 3 experiments done, advance to call;
+ * - After action feedback: if all experiments done, advance to call;
  *   otherwise clear action answer and stay on action step
  * - After call: complete the activity
  *

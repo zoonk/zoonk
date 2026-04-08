@@ -82,15 +82,15 @@ function buildInvestigationSteps(): SerializedStep[] {
 }
 
 describe("computeActivityScore (investigation)", () => {
-  test("perfect score: 3 critical actions, best call = 4/4", () => {
+  test("perfect score: 2 critical actions, best call = 3/3", () => {
     const input: InvestigationScoreInput = {
-      actionQualities: ["critical", "critical", "critical"],
+      actionQualities: ["critical", "critical"],
       callAccuracy: "best",
     };
 
     const result = computeActivityScore({ investigation: input, kind: "investigation" });
     expect(result.brainPower).toBe(100);
-    expect(result.correctCount).toBe(4);
+    expect(result.correctCount).toBe(3);
     expect(result.incorrectCount).toBe(0);
   });
 
@@ -209,24 +209,20 @@ describe("server/client agreement after shuffling", () => {
 });
 
 describe("investigation content schema validation", () => {
-  test("rejects action content with fewer than 3 actions", () => {
+  test("rejects action content with fewer than 2 actions", () => {
     expect(() =>
       parseStepContent("investigation", {
-        actions: [
-          { finding: "F1", id: "a1", label: "Action 1", quality: "critical" },
-          { finding: "F2", id: "a2", label: "Action 2", quality: "useful" },
-        ],
+        actions: [{ finding: "F1", id: "a1", label: "Action 1", quality: "critical" }],
         variant: "action",
       }),
     ).toThrow();
   });
 
-  test("accepts action content with exactly 3 actions", () => {
+  test("accepts action content with exactly 2 actions", () => {
     const result = parseStepContent("investigation", {
       actions: [
         { finding: "F1", id: "a1", label: "Action 1", quality: "critical" },
         { finding: "F2", id: "a2", label: "Action 2", quality: "useful" },
-        { finding: "F3", id: "a3", label: "Action 3", quality: "weak" },
       ],
       variant: "action",
     });
@@ -234,7 +230,7 @@ describe("investigation content schema validation", () => {
     expect(result.variant).toBe("action");
 
     if (result.variant === "action") {
-      expect(result.actions).toHaveLength(3);
+      expect(result.actions).toHaveLength(2);
     }
   });
 });

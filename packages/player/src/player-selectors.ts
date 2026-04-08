@@ -86,11 +86,11 @@ type InvestigationProgress = {
  * Returns the evidence collection progress for any investigation step,
  * or null when the current step is not part of an investigation.
  *
- * The step fraction ("2/3") is misleading for investigations because
- * the action step loops 3 times at the same index. This pill replaces
- * the fraction throughout the entire investigation — showing "0 / 3"
+ * The step fraction is misleading for investigations because the
+ * action step loops at the same index. This pill replaces the
+ * fraction throughout the entire investigation — showing "0 / 2"
  * on the problem step, incrementing during the action loop, and
- * displaying "3 / 3" on the call step.
+ * displaying "2 / 2" on the call step.
  */
 export function getInvestigationProgress(state: PlayerState): InvestigationProgress | null {
   const step = getCurrentStep(state);

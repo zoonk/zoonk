@@ -18,26 +18,25 @@ const baseTiming = {
 };
 
 describe(buildInvestigationActionResults, () => {
-  test("builds 3 StepAttempts with correct isCorrect based on quality", () => {
+  test("builds StepAttempts with correct isCorrect based on quality", () => {
     const results = buildInvestigationActionResults({
       investigationLoop: {
-        actionTimings: [baseTiming, baseTiming, baseTiming],
-        usedActionIds: ["a1", "a2", "a3"],
+        actionTimings: [baseTiming, baseTiming],
+        usedActionIds: ["a1", "a3"],
       },
       steps: [{ content: actionContent, id: 100n, kind: "investigation" }],
     });
 
-    expect(results).toHaveLength(3);
+    expect(results).toHaveLength(2);
     expect(results[0]?.isCorrect).toBe(true); // critical
-    expect(results[1]?.isCorrect).toBe(true); // useful
-    expect(results[2]?.isCorrect).toBe(false); // weak
+    expect(results[1]?.isCorrect).toBe(false); // weak
   });
 
-  test("all 3 share the same stepId", () => {
+  test("all experiments share the same stepId", () => {
     const results = buildInvestigationActionResults({
       investigationLoop: {
-        actionTimings: [baseTiming, baseTiming, baseTiming],
-        usedActionIds: ["a1", "a2", "a3"],
+        actionTimings: [baseTiming, baseTiming],
+        usedActionIds: ["a1", "a2"],
       },
       steps: [{ content: actionContent, id: 42n, kind: "investigation" }],
     });
@@ -49,20 +48,18 @@ describe(buildInvestigationActionResults, () => {
     const timings = [
       { answeredAt: 1000, dayOfWeek: 1, durationSeconds: 5, hourOfDay: 9 },
       { answeredAt: 2000, dayOfWeek: 1, durationSeconds: 8, hourOfDay: 9 },
-      { answeredAt: 3000, dayOfWeek: 1, durationSeconds: 12, hourOfDay: 9 },
     ];
 
     const results = buildInvestigationActionResults({
       investigationLoop: {
         actionTimings: timings,
-        usedActionIds: ["a1", "a2", "a3"],
+        usedActionIds: ["a1", "a2"],
       },
       steps: [{ content: actionContent, id: 1n, kind: "investigation" }],
     });
 
     expect(results[0]?.durationSeconds).toBe(5);
     expect(results[1]?.durationSeconds).toBe(8);
-    expect(results[2]?.durationSeconds).toBe(12);
   });
 
   test("stores selectedActionId in the answer", () => {

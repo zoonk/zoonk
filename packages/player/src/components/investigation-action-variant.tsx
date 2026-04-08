@@ -39,8 +39,8 @@ function useQualityLabel(quality: "critical" | "useful" | "weak"): {
  * Returns progress-aware question text that guides the learner through
  * the investigation loop with increasingly specific language.
  *
- * First experiment is inviting ("investigate first?"), middle ones keep
- * momentum ("next?"), and the last one signals finality ("one more lead").
+ * First experiment is inviting ("investigate first?"), the last one
+ * signals finality ("one more lead").
  */
 function useQuestionText(experimentNumber: number): string {
   const t = useExtracted();
@@ -49,11 +49,7 @@ function useQuestionText(experimentNumber: number): string {
     return t("What do you want to investigate first?");
   }
 
-  if (experimentNumber >= INVESTIGATION_EXPERIMENT_COUNT - 1) {
-    return t("One more lead to follow");
-  }
-
-  return t("What do you want to investigate next?");
+  return t("One more lead to follow");
 }
 
 /**

@@ -30,11 +30,11 @@ The number of entries you output **must equal** the EXPLANATION_COUNT provided �
 
 ## Feedback Rules
 
-- 1-2 sentences per explanation, written in the specified LANGUAGE.
+- **1 sentence per explanation** when possible, 2 sentences max. Be direct — the learner just played an entire investigation to get here. Written in the specified LANGUAGE.
 - Base feedback on domain knowledge about the topic and concepts — explain WHY this explanation is right, partially right, or wrong from a factual standpoint.
-- For `best`: explain why this is the most complete and accurate explanation. Make it feel like a satisfying "aha" moment.
-- For `partial`: acknowledge what element of truth it has, then explain what key insight it misses or gets wrong.
-- For `wrong`: acknowledge why it sounds plausible, then explain why it's actually incorrect.
+- For `best`: state the key insight in one sentence. Make it feel like a satisfying "aha" moment, not a lecture.
+- For `partial`: one sentence — what they got right and what they missed.
+- For `wrong`: one sentence — why it sounds plausible but is incorrect.
 - Do NOT reference investigation actions, evidence, findings, or experiments. The feedback is about domain truth, not about what the learner investigated.
 - Use casual, conversational register. No jargon. Like explaining to a friend over coffee.
 

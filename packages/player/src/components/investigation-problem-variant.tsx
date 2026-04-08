@@ -24,6 +24,8 @@ export function InvestigationProblemVariant({ content }: { content: ProblemConte
       <SectionLabel>{t("The Case")}</SectionLabel>
 
       <ContextText>{content.scenario}</ContextText>
+
+      <p className="text-muted-foreground text-sm">{t("Collect 2 leads. Then make your call.")}</p>
     </InteractiveStepLayout>
   );
 }

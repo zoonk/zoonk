@@ -222,11 +222,6 @@ msgid "Weak signal"
 msgstr "Weak signal"
 
 #: ../../packages/player/src/components/investigation-action-variant.tsx
-msgctxt "hoKNDb"
-msgid "What do you want to investigate next?"
-msgstr "What do you want to investigate next?"
-
-#: ../../packages/player/src/components/investigation-action-variant.tsx
 msgctxt "LrUFLN"
 msgid "One more lead to follow"
 msgstr "One more lead to follow"
@@ -267,6 +262,11 @@ msgstr "Review evidence"
 msgctxt "4Xsz3M"
 msgid "The Case"
 msgstr "The Case"
+
+#: ../../packages/player/src/components/investigation-problem-variant.tsx
+msgctxt "kW2sOl"
+msgid "Collect 2 leads. Then make your call."
+msgstr "Collect 2 leads. Then make your call."
 
 #: ../../packages/player/src/components/listening-step.tsx
 #: ../../packages/player/src/components/reading-step.tsx

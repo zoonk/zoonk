@@ -259,7 +259,7 @@ describe(computeLocalCompletion, () => {
       variant: "call" as const,
     };
 
-    test("counts action qualities and call accuracy: 2 correct actions + wrong call = 2/4", () => {
+    test("counts action qualities and call accuracy: 1 correct action + wrong call = 1/3", () => {
       const steps = [
         buildStep({ content: actionContent, id: "action-1", kind: "investigation" }),
         buildStep({ content: callContent, id: "call-1", kind: "investigation" }),
@@ -271,18 +271,18 @@ describe(computeLocalCompletion, () => {
 
       const investigationLoop = {
         actionTimings: [],
-        usedActionIds: ["a1", "a2", "a3"], // critical, useful, weak
+        usedActionIds: ["a1", "a3"], // critical, weak
       };
 
       const completion = computeLocalCompletion(
         buildState({ investigationLoop, results: {}, selectedAnswers, steps }),
       );
-      expect(completion.correctCount).toBe(2);
+      expect(completion.correctCount).toBe(1);
       expect(completion.incorrectCount).toBe(2);
       expect(completion.brainPower).toBe(100);
     });
 
-    test("perfect investigation: 3 correct actions + best call = 4/4", () => {
+    test("perfect investigation: 2 correct actions + best call = 3/3", () => {
       const steps = [
         buildStep({ content: actionContent, id: "action-1", kind: "investigation" }),
         buildStep({ content: callContent, id: "call-1", kind: "investigation" }),
@@ -294,13 +294,13 @@ describe(computeLocalCompletion, () => {
 
       const investigationLoop = {
         actionTimings: [],
-        usedActionIds: ["a1", "a1", "a2"], // critical, critical, useful — all correct
+        usedActionIds: ["a1", "a2"], // critical, useful — all correct
       };
 
       const completion = computeLocalCompletion(
         buildState({ investigationLoop, results: {}, selectedAnswers, steps }),
       );
-      expect(completion.correctCount).toBe(4);
+      expect(completion.correctCount).toBe(3);
       expect(completion.incorrectCount).toBe(0);
     });
   });

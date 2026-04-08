@@ -4,4 +4,4 @@
  * - The content schema to enforce a minimum action count
  * - The player to control the investigation loop
  */
-export const INVESTIGATION_EXPERIMENT_COUNT = 3;
+export const INVESTIGATION_EXPERIMENT_COUNT = 2;

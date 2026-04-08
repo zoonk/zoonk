@@ -222,11 +222,6 @@ msgid "Weak signal"
 msgstr "Señal débil"
 
 #: ../../packages/player/src/components/investigation-action-variant.tsx
-msgctxt "hoKNDb"
-msgid "What do you want to investigate next?"
-msgstr "¿Qué quieres investigar después?"
-
-#: ../../packages/player/src/components/investigation-action-variant.tsx
 msgctxt "LrUFLN"
 msgid "One more lead to follow"
 msgstr "Un indicio más para seguir"
@@ -267,6 +262,11 @@ msgstr "Revisar evidencias"
 msgctxt "4Xsz3M"
 msgid "The Case"
 msgstr "El caso"
+
+#: ../../packages/player/src/components/investigation-problem-variant.tsx
+msgctxt "kW2sOl"
+msgid "Collect 2 leads. Then make your call."
+msgstr "Consigue 2 evidencias y luego toma tu decisión."
 
 #: ../../packages/player/src/components/listening-step.tsx
 #: ../../packages/player/src/components/reading-step.tsx

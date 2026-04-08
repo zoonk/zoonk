@@ -178,10 +178,10 @@ describe(computeActivityScore, () => {
 });
 
 describe("computeActivityScore (investigation)", () => {
-  test("perfect run: 3 critical actions + best call = 4/4 correct, +12 energy", () => {
+  test("perfect run: 2 critical actions + best call = 3/3 correct, +10 energy", () => {
     const result = computeActivityScore({
       investigation: {
-        actionQualities: ["critical", "critical", "critical"],
+        actionQualities: ["critical", "critical"],
         callAccuracy: "best",
       },
       kind: "investigation",
@@ -189,16 +189,16 @@ describe("computeActivityScore (investigation)", () => {
 
     expect(result).toEqual({
       brainPower: 100,
-      correctCount: 4,
-      energyDelta: 12,
+      correctCount: 3,
+      energyDelta: 10,
       incorrectCount: 0,
     });
   });
 
-  test("mediocre run: 3 useful actions + partial call = 3/4 correct, +6 energy", () => {
+  test("mediocre run: 2 useful actions + partial call = 2/3 correct, +5 energy", () => {
     const result = computeActivityScore({
       investigation: {
-        actionQualities: ["useful", "useful", "useful"],
+        actionQualities: ["useful", "useful"],
         callAccuracy: "partial",
       },
       kind: "investigation",
@@ -206,16 +206,16 @@ describe("computeActivityScore (investigation)", () => {
 
     expect(result).toEqual({
       brainPower: 100,
-      correctCount: 3,
-      energyDelta: 6,
+      correctCount: 2,
+      energyDelta: 5,
       incorrectCount: 1,
     });
   });
 
-  test("worst run: 3 weak actions + wrong call = 0/4 correct, 0 energy", () => {
+  test("worst run: 2 weak actions + wrong call = 0/3 correct, 0 energy", () => {
     const result = computeActivityScore({
       investigation: {
-        actionQualities: ["weak", "weak", "weak"],
+        actionQualities: ["weak", "weak"],
         callAccuracy: "wrong",
       },
       kind: "investigation",
@@ -225,14 +225,14 @@ describe("computeActivityScore (investigation)", () => {
       brainPower: 100,
       correctCount: 0,
       energyDelta: 0,
-      incorrectCount: 4,
+      incorrectCount: 3,
     });
   });
 
-  test("mixed actions: critical + useful + weak + best call = 3/4 correct, +9 energy", () => {
+  test("mixed actions: critical + useful + best call = 3/3 correct, +9 energy", () => {
     const result = computeActivityScore({
       investigation: {
-        actionQualities: ["critical", "useful", "weak"],
+        actionQualities: ["critical", "useful"],
         callAccuracy: "best",
       },
       kind: "investigation",
@@ -242,14 +242,14 @@ describe("computeActivityScore (investigation)", () => {
       brainPower: 100,
       correctCount: 3,
       energyDelta: 9,
-      incorrectCount: 1,
+      incorrectCount: 0,
     });
   });
 
-  test("mixed actions + wrong call: critical + useful + weak + wrong = 2/4 correct", () => {
+  test("mixed actions + wrong call: critical + weak + wrong = 1/3 correct", () => {
     const result = computeActivityScore({
       investigation: {
-        actionQualities: ["critical", "useful", "weak"],
+        actionQualities: ["critical", "weak"],
         callAccuracy: "wrong",
       },
       kind: "investigation",
@@ -257,8 +257,8 @@ describe("computeActivityScore (investigation)", () => {
 
     expect(result).toEqual({
       brainPower: 100,
-      correctCount: 2,
-      energyDelta: 3,
+      correctCount: 1,
+      energyDelta: 2,
       incorrectCount: 2,
     });
   });

@@ -24,7 +24,7 @@ export function getInvestigationVariant(step: SerializedStep | undefined) {
 /**
  * Initializes the investigation loop state when the problem step
  * is checked. The loop tracks which actions the learner has used
- * across the 3 fixed experiments.
+ * across the fixed experiments.
  */
 function initInvestigationLoop(): InvestigationLoopState {
   return { actionTimings: [], usedActionIds: [] };
@@ -96,7 +96,7 @@ export function continueFromProblem(state: PlayerState): PlayerState {
  * Handles continuation from the action step after the evidence
  * feedback has been shown.
  *
- * If 3 experiments are done: advance to the call step.
+ * If all experiments are done: advance to the call step.
  * Otherwise: clear the action answer and stay on the action step
  * so it re-renders with fewer available actions.
  */
