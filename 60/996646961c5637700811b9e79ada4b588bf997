@@ -1,0 +1,33 @@
+packages/player/src/compute-score.ts
+  40403981bfc6f338 1-6,100-101
+packages/player/src/components/investigation-action-variant.tsx
+  40403981bfc6f338 3-6,24
+packages/core/src/steps/contract/investigation.ts
+  40403981bfc6f338 75-76
+packages/core/src/steps/contract/content.ts
+  40403981bfc6f338 27-31
+packages/player/src/investigation.ts
+  40403981bfc6f338 2,53,55
+packages/player/src/components/investigation-call-variant.tsx
+  40403981bfc6f338 4-5,37,62,79
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.6",
+  "base_commit_sha": "60996646961c5637700811b9e79ada4b588bf997",
+  "prompts": {
+    "40403981bfc6f338": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "061907b2-b288-4476-9abf-dc4cfaf4d2dd",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 29,
+      "total_deletions": 12,
+      "accepted_lines": 28,
+      "overriden_lines": 0
+    }
+  }
+}
