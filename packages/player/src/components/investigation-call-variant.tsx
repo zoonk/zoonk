@@ -5,19 +5,13 @@ import {
   parseStepContent,
 } from "@zoonk/core/steps/contract/content";
 import { useExtracted } from "next-intl";
-import { useMemo } from "react";
-import {
-  type JourneyNarrativeData,
-  type JourneyOutcome,
-  buildJourneyData,
-  getInvestigationStepByVariant,
-} from "../investigation";
+import { getInvestigationStepByVariant } from "../investigation";
 import { usePlayerRuntime } from "../player-context";
 import { type SelectedAnswer, type StepResult } from "../player-reducer";
 import { type SerializedStep } from "../prepare-activity-data";
 import { useOptionKeyboard } from "../use-option-keyboard";
 import { OptionCard } from "./option-card";
-import { ContextText, QuestionText } from "./question-text";
+import { QuestionText } from "./question-text";
 import { SectionLabel } from "./section-label";
 import { InteractiveStepLayout } from "./step-layouts";
 
@@ -49,102 +43,108 @@ function getResultState({
   return undefined;
 }
 
-function useOutcomeText(outcome: JourneyOutcome) {
+/**
+ * Renders a translated quality label for an action.
+ * Extracted as a component so it can call useExtracted internally
+ * instead of receiving `t` as a function argument.
+ */
+function QualityText({ quality }: { quality: "critical" | "useful" | "weak" }) {
   const t = useExtracted();
 
-  if (outcome === "changedCorrect") {
-    return t(
-      "You started elsewhere, but the evidence changed your mind. That's exactly how investigation works.",
-    );
+  if (quality === "critical") {
+    return <>{t("strong lead")}</>;
   }
 
-  if (outcome === "changedIncorrect") {
-    return t(
-      "You changed your mind during the investigation. The evidence was tricky — that's part of the process.",
-    );
+  if (quality === "useful") {
+    return <>{t("useful clue")}</>;
   }
 
-  if (outcome === "stayedCorrect") {
-    return t("Your instinct was right — and the evidence backs it up.");
-  }
-
-  return t(
-    "The evidence pointed in a different direction, but you held your ground. Sometimes the hardest part is letting go of your first idea.",
-  );
+  return <>{t("weak signal")}</>;
 }
 
-function JourneyNarrative({ data }: { data: JourneyNarrativeData }) {
+type GatheredEvidence = {
+  finding: string;
+  label: string;
+  quality: "critical" | "useful" | "weak";
+};
+
+/**
+ * Builds the list of evidence the learner gathered during investigation.
+ * Reads from the action step content using the tracked action indices.
+ */
+function useGatheredEvidence(): GatheredEvidence[] {
+  const { state } = usePlayerRuntime();
+  const loop = state.investigationLoop;
+
+  if (!loop) {
+    return [];
+  }
+
+  const actionStep = getInvestigationStepByVariant(state.steps, "action");
+
+  if (!actionStep) {
+    return [];
+  }
+
+  const actionContent = parseStepContent("investigation", actionStep.content);
+
+  if (actionContent.variant !== "action") {
+    return [];
+  }
+
+  return loop.usedActionIndices.flatMap((index) => {
+    const action = actionContent.actions[index];
+
+    if (!action) {
+      return [];
+    }
+
+    return [{ finding: action.finding, label: action.label, quality: action.quality }];
+  });
+}
+
+/**
+ * Compact evidence summary shown before the learner makes their call.
+ * Lists each gathered finding with its action label and quality indicator.
+ */
+function EvidenceSummary({ evidence }: { evidence: GatheredEvidence[] }) {
   const t = useExtracted();
-  const outcomeText = useOutcomeText(data.outcome);
+
+  if (evidence.length === 0) {
+    return null;
+  }
 
   return (
-    <div className="flex flex-col gap-2">
-      <p className="text-sm font-semibold">{t("Your journey")}</p>
-
-      <p className="text-muted-foreground text-sm leading-relaxed">
-        {t("You started with:")}{" "}
-        <span className="text-foreground font-medium">&ldquo;{data.hunchText}&rdquo;</span>
+    <div className="bg-muted/30 flex flex-col gap-3 rounded-lg px-4 py-3">
+      <p className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
+        {t("Your evidence")}
       </p>
 
-      <p className="text-muted-foreground text-sm leading-relaxed">
-        {t("You checked:")}{" "}
-        <span className="text-foreground font-medium">{data.actionLabels.join(", ")}</span>
-      </p>
+      {evidence.map((item) => (
+        <div className="flex flex-col gap-0.5" key={item.label}>
+          <div className="flex items-baseline justify-between gap-2">
+            <p className="text-sm font-semibold">{item.label}</p>
+            <p className="text-muted-foreground text-xs font-medium">
+              <QualityText quality={item.quality} />
+            </p>
+          </div>
 
-      <p className="text-muted-foreground text-sm leading-relaxed">{outcomeText}</p>
+          <p className="text-muted-foreground line-clamp-2 text-sm leading-relaxed">
+            {item.finding}
+          </p>
+        </div>
+      ))}
     </div>
   );
 }
 
 /**
  * Debrief section shown after the call step is checked.
- * Displays the full explanation reveal and a journey narrative
- * summarizing the learner's investigation path.
+ * Displays the full explanation reveal and a summary of which actions
+ * the learner chose during investigation.
  */
-function CallDebrief({ result }: { result: StepResult }) {
+function CallDebrief({ evidence, result }: { evidence: GatheredEvidence[]; result: StepResult }) {
   const t = useExtracted();
-  const { state } = usePlayerRuntime();
-  const loop = state.investigationLoop;
-
-  const journeyData = useMemo((): JourneyNarrativeData | null => {
-    if (!loop) {
-      return null;
-    }
-
-    const problemStep = getInvestigationStepByVariant(state.steps, "problem");
-    const actionStep = getInvestigationStepByVariant(state.steps, "action");
-
-    if (!problemStep || !actionStep) {
-      return null;
-    }
-
-    const problemContent = parseStepContent("investigation", problemStep.content);
-    const actionContent = parseStepContent("investigation", actionStep.content);
-
-    if (problemContent.variant !== "problem" || actionContent.variant !== "action") {
-      return null;
-    }
-
-    const hunchText = problemContent.explanations[loop.hunchIndex]?.text ?? "";
-
-    const actionLabels = loop.usedActionIndices.flatMap((index) => {
-      const action = actionContent.actions[index];
-      return action ? [action.label] : [];
-    });
-
-    const callAnswer = result.answer;
-    const callSelectedIndex =
-      callAnswer?.kind === "investigation" && callAnswer.variant === "call"
-        ? callAnswer.selectedExplanationIndex
-        : -1;
-
-    return buildJourneyData({
-      actionLabels,
-      hunchText,
-      isCallCorrect: result.result.isCorrect,
-      mindChanged: callSelectedIndex !== loop.hunchIndex,
-    });
-  }, [loop, result, state.steps]);
 
   return (
     <div className="flex flex-col gap-4">
@@ -155,16 +155,31 @@ function CallDebrief({ result }: { result: StepResult }) {
         </div>
       )}
 
-      {journeyData && <JourneyNarrative data={journeyData} />}
+      {evidence.length > 0 && (
+        <div className="flex flex-col gap-2">
+          <p className="text-sm font-semibold">{t("You checked")}</p>
+
+          <ul className="flex flex-col gap-1">
+            {evidence.map((item) => (
+              <li className="text-muted-foreground text-sm" key={item.label}>
+                {item.label}{" "}
+                <span className="text-muted-foreground/70">
+                  (<QualityText quality={item.quality} />)
+                </span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
 }
 
 /**
  * Renders the final call step of an investigation activity.
- * Shows the same explanations from the problem step with the
- * learner's original hunch marked. After checking, shows the
- * full debrief with the correct explanation and journey narrative.
+ * Shows gathered evidence summary, then the explanation options.
+ * After checking, shows the full debrief with the correct explanation
+ * and a summary of the learner's investigation journey.
  */
 export function InvestigationCallVariant({
   content,
@@ -180,12 +195,10 @@ export function InvestigationCallVariant({
   step: SerializedStep;
 }) {
   const t = useExtracted();
-  const { state } = usePlayerRuntime();
 
   const { explanations } = content;
-  const loop = state.investigationLoop;
-  const hunchIndex = loop?.hunchIndex ?? -1;
   const hasFeedback = result !== undefined;
+  const evidence = useGatheredEvidence();
 
   const selectedIndex =
     selectedAnswer?.kind === "investigation" && selectedAnswer.variant === "call"
@@ -221,7 +234,7 @@ export function InvestigationCallVariant({
     <InteractiveStepLayout>
       <SectionLabel>{t("Your Call")}</SectionLabel>
 
-      <ContextText>{t("You've seen the evidence.")}</ContextText>
+      <EvidenceSummary evidence={evidence} />
 
       <QuestionText>{t("What do you think happened?")}</QuestionText>
 
@@ -241,18 +254,12 @@ export function InvestigationCallVariant({
               selectedIndex,
             })}
           >
-            <div className="flex flex-col gap-1">
-              <span className="text-base leading-6">{explanation.text}</span>
-
-              {index === hunchIndex && (
-                <span className="text-muted-foreground text-xs font-medium">{t("Your hunch")}</span>
-              )}
-            </div>
+            <span className="text-base leading-6">{explanation.text}</span>
           </OptionCard>
         ))}
       </div>
 
-      {hasFeedback && result && <CallDebrief result={result} />}
+      {hasFeedback && result && <CallDebrief evidence={evidence} result={result} />}
     </InteractiveStepLayout>
   );
 }

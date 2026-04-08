@@ -482,7 +482,6 @@ describe(checkStep, () => {
     test("problem variant is always correct", () => {
       const step = buildStep({
         content: {
-          explanations: [{ accuracy: "best" as const, text: "A" }],
           scenario: "test",
           variant: "problem" as const,
           visual: { columns: ["A"], kind: "table" as const, rows: [["1"]] },
@@ -491,93 +490,35 @@ describe(checkStep, () => {
       });
       const answer: SelectedAnswer = {
         kind: "investigation",
-        selectedExplanationIndex: 0,
         variant: "problem",
       };
       const { result } = checkStep(step, answer);
       expect(result.isCorrect).toBe(true);
     });
 
-    test("action variant is always correct", () => {
+    test("action variant is always correct and returns finding as feedback", () => {
       const step = buildStep({
         content: {
-          actions: [{ label: "Check logs", quality: "critical" as const }],
+          actions: [
+            {
+              finding: "Logs show memory climbing",
+              findingVisual: { columns: ["A"], kind: "table" as const, rows: [["1"]] },
+              label: "Check logs",
+              quality: "critical" as const,
+            },
+          ],
           variant: "action" as const,
         },
         kind: "investigation",
       });
       const answer: SelectedAnswer = {
         kind: "investigation",
-        readyForCall: false,
         selectedActionIndex: 0,
         variant: "action",
       };
       const { result } = checkStep(step, answer);
       expect(result.isCorrect).toBe(true);
-    });
-
-    test("evidence variant: best tier is correct with feedback", () => {
-      const step = buildStep({
-        content: {
-          findings: [
-            {
-              interpretations: [
-                {
-                  best: { feedback: "Good read", text: "Pattern consistent" },
-                  dismissive: { feedback: "Dismissed", text: "Not relevant" },
-                  overclaims: { feedback: "Overclaimed", text: "Proves it" },
-                },
-              ],
-              text: "Finding",
-              visual: { columns: ["A"], kind: "table" as const, rows: [["1"]] },
-            },
-          ],
-          variant: "evidence" as const,
-        },
-        kind: "investigation",
-      });
-      const answer: SelectedAnswer = {
-        actionIndex: 0,
-        hunchIndex: 0,
-        kind: "investigation",
-        selectedTier: "best",
-        variant: "evidence",
-      };
-      const { result } = checkStep(step, answer);
-      expect(result.isCorrect).toBe(true);
-      expect(result.feedback).toBe("Good read");
-    });
-
-    test("evidence variant: overclaims tier is incorrect", () => {
-      const step = buildStep({
-        content: {
-          findings: [
-            {
-              interpretations: [
-                {
-                  best: { feedback: "Good read", text: "Pattern consistent" },
-                  dismissive: { feedback: "Dismissed", text: "Not relevant" },
-                  overclaims: { feedback: "Overclaimed", text: "Proves it" },
-                },
-              ],
-              text: "Finding",
-              visual: { columns: ["A"], kind: "table" as const, rows: [["1"]] },
-            },
-          ],
-          variant: "evidence" as const,
-        },
-        kind: "investigation",
-      });
-      const answer: SelectedAnswer = {
-        actionIndex: 0,
-        hunchIndex: 0,
-        kind: "investigation",
-        selectedTier: "overclaims",
-        variant: "evidence",
-      };
-      const { result } = checkStep(step, answer);
-      expect(result.isCorrect).toBe(false);
-      expect(result.feedback).toBe("Overclaimed");
+      expect(result.feedback).toBe("Logs show memory climbing");
     });
 
     test("call variant: best accuracy is correct with fullExplanation feedback", () => {
@@ -627,7 +568,6 @@ describe(checkStep, () => {
     test("mismatched answer kind returns mismatch result", () => {
       const step = buildStep({
         content: {
-          explanations: [{ accuracy: "best" as const, text: "A" }],
           scenario: "test",
           variant: "problem" as const,
           visual: { columns: ["A"], kind: "table" as const, rows: [["1"]] },

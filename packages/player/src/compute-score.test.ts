@@ -166,7 +166,6 @@ describe(computeActivityScore, () => {
       investigation: {
         actionQualities: ["critical"],
         callAccuracy: "best",
-        interpretationResults: [{ isCorrect: true }],
       },
       kind: "investigation",
     });
@@ -235,15 +234,20 @@ describe(buildScoringInput, () => {
         "call-1": { kind: "investigation", selectedExplanationIndex: 0, variant: "call" },
       },
       investigationLoop: {
-        experimentResults: [{ actionIndex: 0, isCorrect: true }],
-        hunchIndex: 0,
         usedActionIndices: [0],
       },
       stepResults: [],
       steps: [
         {
           content: {
-            actions: [{ label: "Check logs", quality: "critical" }],
+            actions: [
+              {
+                finding: "Logs show memory climbing",
+                findingVisual: { columns: ["A"], kind: "table", rows: [["1"]] },
+                label: "Check logs",
+                quality: "critical",
+              },
+            ],
             variant: "action",
           },
           id: "action-1",
@@ -269,7 +273,6 @@ describe(buildScoringInput, () => {
     if (result.kind === "investigation") {
       expect(result.investigation.actionQualities).toEqual(["critical"]);
       expect(result.investigation.callAccuracy).toBe("best");
-      expect(result.investigation.interpretationResults).toEqual([{ isCorrect: true }]);
     }
   });
 

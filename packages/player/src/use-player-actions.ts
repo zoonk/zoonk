@@ -48,23 +48,8 @@ export function usePlayerActions(
       }
 
       dispatchTransition({ answer, stepId, type: "SELECT_ANSWER" });
-
-      /**
-       * "Ready to make your call?" is a navigation action, not a quiz
-       * answer. It skips straight to the call step, so we auto-dispatch
-       * CHECK_ANSWER to advance immediately.
-       */
-      if (
-        answer.kind === "investigation" &&
-        answer.variant === "action" &&
-        answer.readyForCall &&
-        currentStep
-      ) {
-        const { result } = checkStep(currentStep, answer);
-        dispatchTransition({ result, stepId, type: "CHECK_ANSWER" });
-      }
     },
-    [currentStep, dispatchTransition],
+    [dispatchTransition],
   );
 
   const check = useCallback(() => {

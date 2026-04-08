@@ -73,8 +73,6 @@ msgstr "Cinturón {color} — Nivel {level}"
 #: ../../packages/player/src/components/choice-step-layout.tsx
 #: ../../packages/player/src/components/investigation-action-variant.tsx
 #: ../../packages/player/src/components/investigation-call-variant.tsx
-#: ../../packages/player/src/components/investigation-evidence-variant.tsx
-#: ../../packages/player/src/components/investigation-problem-variant.tsx
 #: ../../packages/player/src/components/translation-step.tsx
 msgctxt "akd+cv"
 msgid "Answer options"
@@ -206,7 +204,6 @@ msgid "Correct answer: {answer}"
 msgstr "Respuesta correcta: {answer}"
 
 #: ../../packages/player/src/components/inline-feedback.tsx
-#: ../../packages/player/src/components/investigation-score-content.tsx
 msgctxt "++l7ni"
 msgid "Not quite"
 msgstr "No del todo"
@@ -222,9 +219,20 @@ msgid "Correct!"
 msgstr "¡Correcto!"
 
 #: ../../packages/player/src/components/investigation-action-variant.tsx
-msgctxt "/Y4w1m"
-msgid "Ready to make your call?"
-msgstr "¿Listo para tomar tu decisión?"
+#: ../../packages/player/src/components/investigation-visual.tsx
+msgctxt "6g7+6N"
+msgid "Evidence"
+msgstr "Evidencia"
+
+#: ../../packages/player/src/components/investigation-action-variant.tsx
+msgctxt "dLRz0R"
+msgid "Weak signal"
+msgstr "Señal débil"
+
+#: ../../packages/player/src/components/investigation-action-variant.tsx
+msgctxt "P/5Naz"
+msgid "Useful clue"
+msgstr "Pista útil"
 
 #: ../../packages/player/src/components/investigation-action-variant.tsx
 msgctxt "SjF3aL"
@@ -241,10 +249,15 @@ msgctxt "tXxpcp"
 msgid "Investigate"
 msgstr "Investigar"
 
+#: ../../packages/player/src/components/investigation-action-variant.tsx
+msgctxt "U0rj9y"
+msgid "Strong lead"
+msgstr "Pista sólida"
+
 #: ../../packages/player/src/components/investigation-call-variant.tsx
-msgctxt "+fkABI"
-msgid "You've seen the evidence."
-msgstr "Ya viste la evidencia."
+msgctxt "++IwqM"
+msgid "You checked"
+msgstr "Revisaste"
 
 #: ../../packages/player/src/components/investigation-call-variant.tsx
 msgctxt "+rWK6b"
@@ -252,25 +265,9 @@ msgid "Here's what actually happened"
 msgstr "Esto es lo que realmente pasó"
 
 #: ../../packages/player/src/components/investigation-call-variant.tsx
-#: ../../packages/player/src/components/investigation-hunch-popover.tsx
-msgctxt "0YeERo"
-msgid "Your hunch"
-msgstr "Tu corazonada"
-
-#: ../../packages/player/src/components/investigation-call-variant.tsx
-msgctxt "4AqCBh"
-msgid "You started with:"
-msgstr "Empezaste con:"
-
-#: ../../packages/player/src/components/investigation-call-variant.tsx
-msgctxt "6MSC5d"
-msgid "Your instinct was right — and the evidence backs it up."
-msgstr "Tu instinto estaba en lo correcto — y la evidencia lo confirma."
-
-#: ../../packages/player/src/components/investigation-call-variant.tsx
-msgctxt "dObSUl"
-msgid "You started elsewhere, but the evidence changed your mind. That's exactly how investigation works."
-msgstr "Empezaste por otro lado, pero la evidencia te hizo cambiar de idea. Así funciona la investigación."
+msgctxt "9g19aR"
+msgid "weak signal"
+msgstr "señal débil"
 
 #: ../../packages/player/src/components/investigation-call-variant.tsx
 msgctxt "IE/I2y"
@@ -278,176 +275,30 @@ msgid "What do you think happened?"
 msgstr "¿Qué crees que pasó?"
 
 #: ../../packages/player/src/components/investigation-call-variant.tsx
-msgctxt "l1LIoA"
-msgid "You checked:"
-msgstr "Revisaste:"
+msgctxt "pplMXL"
+msgid "strong lead"
+msgstr "pista sólida"
 
 #: ../../packages/player/src/components/investigation-call-variant.tsx
-msgctxt "pNIVv2"
-msgid "The evidence pointed in a different direction, but you held your ground. Sometimes the hardest part is letting go of your first idea."
-msgstr "La evidencia apuntó en otra dirección, pero te mantuviste firme. A veces, lo más difícil es soltar tu primera idea."
-
-#: ../../packages/player/src/components/investigation-call-variant.tsx
-msgctxt "wC420K"
-msgid "You changed your mind during the investigation. The evidence was tricky — that's part of the process."
-msgstr "Cambiaste de opinión durante la investigación. La evidencia era confusa — eso también forma parte del proceso."
-
-#: ../../packages/player/src/components/investigation-call-variant.tsx
-msgctxt "wtZ9lM"
-msgid "Your journey"
-msgstr "Tu recorrido"
+msgctxt "VyC8N7"
+msgid "useful clue"
+msgstr "pista útil"
 
 #: ../../packages/player/src/components/investigation-call-variant.tsx
 msgctxt "XwgFvQ"
 msgid "Your Call"
 msgstr "Tu decisión"
 
-#: ../../packages/player/src/components/investigation-evidence-variant.tsx
-#: ../../packages/player/src/components/investigation-visual.tsx
-msgctxt "6g7+6N"
-msgid "Evidence"
-msgstr "Evidencia"
-
-#: ../../packages/player/src/components/investigation-evidence-variant.tsx
-msgctxt "D3wyKb"
-msgid "What does this tell you?"
-msgstr "¿Qué te dice esto?"
+#: ../../packages/player/src/components/investigation-call-variant.tsx
+msgctxt "yW6KlX"
+msgid "Your evidence"
+msgstr "Tu evidencia"
 
 #: ../../packages/player/src/components/investigation-problem-variant.tsx
-msgctxt "0hMu+/"
-msgid "What's your hunch?"
-msgstr "¿Cuál es tu corazonada?"
-
-#: ../../packages/player/src/components/investigation-problem-variant.tsx
+#: ../../packages/player/src/components/investigation-scenario-popover.tsx
 msgctxt "4Xsz3M"
 msgid "The Case"
 msgstr "El caso"
-
-#: ../../packages/player/src/components/investigation-score-content.tsx
-msgctxt "/Hzgik"
-msgid "Work on reading evidence more carefully"
-msgstr "Trabaja en leer la evidencia con más cuidado"
-
-#: ../../packages/player/src/components/investigation-score-content.tsx
-msgctxt "2aYV7x"
-msgid "Needs work"
-msgstr "Necesita trabajo"
-
-#: ../../packages/player/src/components/investigation-score-content.tsx
-msgctxt "5Ghl98"
-msgid "Solid"
-msgstr "Sólido"
-
-#: ../../packages/player/src/components/investigation-score-content.tsx
-msgctxt "5UpJs7"
-msgid "Sharp"
-msgstr "Agudo"
-
-#: ../../packages/player/src/components/investigation-score-content.tsx
-msgctxt "6xap9L"
-msgid "Good"
-msgstr "Bueno"
-
-#: ../../packages/player/src/components/investigation-score-content.tsx
-msgctxt "7WagrD"
-msgid "You interpreted evidence well"
-msgstr "Interpretaste bien la evidencia"
-
-#: ../../packages/player/src/components/investigation-score-content.tsx
-msgctxt "Bt5QWV"
-msgid "Your reads"
-msgstr "Tus lecturas"
-
-#: ../../packages/player/src/components/investigation-score-content.tsx
-msgctxt "fTpfS5"
-msgid "Fair"
-msgstr "Regular"
-
-#: ../../packages/player/src/components/investigation-score-content.tsx
-msgctxt "fx99AL"
-msgid "Weak"
-msgstr "Débil"
-
-#: ../../packages/player/src/components/investigation-score-content.tsx
-msgctxt "GDdwwv"
-msgid "Try picking actions that test your hunch more directly"
-msgstr "Intenta elegir acciones que prueben tu corazonada más directamente"
-
-#: ../../packages/player/src/components/investigation-score-content.tsx
-msgctxt "hisAgZ"
-msgid "You identified what happened"
-msgstr "Identificaste lo que pasó"
-
-#: ../../packages/player/src/components/investigation-score-content.tsx
-msgctxt "Hpv4PA"
-msgid "Excellent"
-msgstr "Excelente"
-
-#: ../../packages/player/src/components/investigation-score-content.tsx
-msgctxt "hVkNG9"
-msgid "Nailed it"
-msgstr "Le atinaste"
-
-#: ../../packages/player/src/components/investigation-score-content.tsx
-msgctxt "KczmRZ"
-msgid "Your call"
-msgstr "Tu decisión"
-
-#: ../../packages/player/src/components/investigation-score-content.tsx
-msgctxt "m7n7/y"
-msgid "Debrief"
-msgstr "Resumen"
-
-#: ../../packages/player/src/components/investigation-score-content.tsx
-#: ../../packages/player/src/components/player-header.tsx
-msgctxt "rbrahO"
-msgid "Close"
-msgstr "Cerrar"
-
-#: ../../packages/player/src/components/investigation-score-content.tsx
-msgctxt "RvU3wI"
-msgid "Focus on what the evidence actually shows"
-msgstr "Concéntrate en lo que realmente muestra la evidencia"
-
-#: ../../packages/player/src/components/investigation-score-content.tsx
-msgctxt "tlMJQX"
-msgid "The evidence pointed in a different direction"
-msgstr "La evidencia apuntó en otra dirección"
-
-#: ../../packages/player/src/components/investigation-score-content.tsx
-msgctxt "TVjD8z"
-msgid "You were on the right track but missed the full picture"
-msgstr "Ibas por buen camino, pero te faltó ver el panorama completo"
-
-#: ../../packages/player/src/components/investigation-score-content.tsx
-msgctxt "TwAyoQ"
-msgid "You read the evidence carefully"
-msgstr "Leíste la evidencia con cuidado"
-
-#: ../../packages/player/src/components/investigation-score-content.tsx
-msgctxt "Ulj6km"
-msgid "Your approach"
-msgstr "Tu enfoque"
-
-#: ../../packages/player/src/components/investigation-score-content.tsx
-msgctxt "xGtozz"
-msgid "Some of your investigation choices could improve"
-msgstr "Algunas de tus decisiones de investigación podrían mejorar"
-
-#: ../../packages/player/src/components/investigation-score-content.tsx
-msgctxt "xYYVrg"
-msgid "Developing"
-msgstr "En desarrollo"
-
-#: ../../packages/player/src/components/investigation-score-content.tsx
-msgctxt "zgEERd"
-msgid "You picked the most informative actions"
-msgstr "Elegiste las acciones más informativas"
-
-#: ../../packages/player/src/components/investigation-score-content.tsx
-msgctxt "zsgXLc"
-msgid "You picked useful actions"
-msgstr "Elegiste acciones útiles"
 
 #: ../../packages/player/src/components/investigation-visual.tsx
 msgctxt "C25NP5"
@@ -502,6 +353,11 @@ msgstr "Siguiente paso"
 msgctxt "kXUK98"
 msgid "Step navigation"
 msgstr "Navegación de pasos"
+
+#: ../../packages/player/src/components/player-header.tsx
+msgctxt "rbrahO"
+msgid "Close"
+msgstr "Cerrar"
 
 #: ../../packages/player/src/components/player-progress-bar.tsx
 msgctxt "OUZtdJ"

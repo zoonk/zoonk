@@ -1,6 +1,6 @@
 import { type StoryStaticVariant, parseStepContent } from "@zoonk/core/steps/contract/content";
 import { type CompletionResult } from "./completion-input-schema";
-import { getInvestigationHunchText, isInvestigationScoreVariant } from "./investigation";
+import { getInvestigationScenario } from "./investigation";
 import { type PlayerState } from "./player-reducer";
 import { type SerializedStep } from "./prepare-activity-data";
 import { canNavigatePrev, isStaticNavigationStep } from "./step-navigation";
@@ -83,20 +83,11 @@ export function getIsStoryActivity(state: PlayerState): boolean {
 }
 
 /**
- * Returns the hunch text for the sticky header popover, or null
- * if the current step is not an investigation step past the problem.
+ * Returns the scenario data for the sticky header recall popover,
+ * or null if the current step is not an investigation step past the problem.
  */
-export function getInvestigationHunch(state: PlayerState): string | null {
-  return getInvestigationHunchText(state);
-}
-
-/**
- * Returns true if the current step is the investigation score screen.
- * Used by the shell to show a "Continue" button instead of arrow navigation.
- */
-export function getIsInvestigationScoreStep(state: PlayerState): boolean {
-  const currentStep = state.steps[state.currentStepIndex];
-  return isInvestigationScoreVariant(currentStep);
+export function getInvestigationScenarioData(state: PlayerState) {
+  return getInvestigationScenario(state);
 }
 
 /**

@@ -358,13 +358,8 @@ describe("step content contracts", () => {
   describe("investigation", () => {
     const baseVisual = { kind: "image" as const, prompt: "A crime scene photo" };
 
-    test("parses problem variant with scenario, explanations, and visual", () => {
+    test("parses problem variant with scenario and visual", () => {
       const content = parseStepContent("investigation", {
-        explanations: [
-          { accuracy: "best", text: "The butler did it" },
-          { accuracy: "partial", text: "The maid did it" },
-          { accuracy: "wrong", text: "The dog did it" },
-        ],
         scenario: "A mysterious event occurred at the manor.",
         variant: "problem",
         visual: baseVisual,
@@ -376,7 +371,6 @@ describe("step content contracts", () => {
     test("rejects problem with extra fields", () => {
       expect(() =>
         parseStepContent("investigation", {
-          explanations: [{ accuracy: "best", text: "The butler did it" }],
           extra: "field",
           scenario: "A mysterious event.",
           variant: "problem",
@@ -385,12 +379,21 @@ describe("step content contracts", () => {
       ).toThrow();
     });
 
-    test("parses action variant with labels and quality tiers", () => {
+    test("parses action variant with labels, quality, and embedded findings", () => {
       const content = parseStepContent("investigation", {
         actions: [
-          { label: "Check the security footage", quality: "critical" },
-          { label: "Interview the gardener", quality: "useful" },
-          { label: "Inspect the flower beds", quality: "weak" },
+          {
+            finding: "The footage shows movement at 11pm.",
+            findingVisual: { kind: "image" as const, prompt: "Security camera still" },
+            label: "Check the security footage",
+            quality: "critical",
+          },
+          {
+            finding: "The gardener was in the shed.",
+            findingVisual: baseVisual,
+            label: "Interview the gardener",
+            quality: "useful",
+          },
         ],
         variant: "action",
       });
@@ -401,55 +404,15 @@ describe("step content contracts", () => {
     test("rejects invalid quality value", () => {
       expect(() =>
         parseStepContent("investigation", {
-          actions: [{ label: "Do something", quality: "excellent" }],
-          variant: "action",
-        }),
-      ).toThrow();
-    });
-
-    test("parses evidence variant with findings, interpretations, and visuals", () => {
-      const content = parseStepContent("investigation", {
-        findings: [
-          {
-            interpretations: [
-              {
-                best: {
-                  feedback:
-                    "The careful reading acknowledges both what the footage shows and its limits.",
-                  text: "The footage shows movement but doesn't identify who.",
-                },
-                dismissive: {
-                  feedback: "Dismissing the footage entirely ignores relevant evidence.",
-                  text: "The footage doesn't show anything useful.",
-                },
-                overclaims: {
-                  feedback: "The footage alone doesn't prove identity.",
-                  text: "The footage proves the butler was there.",
-                },
-              },
-            ],
-            text: "The security footage shows movement at 11pm.",
-            visual: { kind: "image" as const, prompt: "Security camera still" },
-          },
-        ],
-        variant: "evidence",
-      });
-
-      expect(content.variant).toBe("evidence");
-    });
-
-    test("rejects evidence with extra fields on findings", () => {
-      expect(() =>
-        parseStepContent("investigation", {
-          findings: [
+          actions: [
             {
-              correctTag: "supports",
-              interpretations: [],
-              text: "Some text.",
-              visual: baseVisual,
+              finding: "Something",
+              findingVisual: baseVisual,
+              label: "Do something",
+              quality: "excellent",
             },
           ],
-          variant: "evidence",
+          variant: "action",
         }),
       ).toThrow();
     });
@@ -493,25 +456,6 @@ describe("step content contracts", () => {
       expect(() =>
         parseStepContent("investigation", {
           scenario: "Something.",
-        }),
-      ).toThrow();
-    });
-  });
-
-  describe("static investigationScore", () => {
-    test("parses investigationScore variant", () => {
-      const content = parseStepContent("static", {
-        variant: "investigationScore",
-      });
-
-      expect(content.variant).toBe("investigationScore");
-    });
-
-    test("rejects extra fields", () => {
-      expect(() =>
-        parseStepContent("static", {
-          extra: "field",
-          variant: "investigationScore",
         }),
       ).toThrow();
     });

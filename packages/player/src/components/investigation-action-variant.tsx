@@ -1,34 +1,83 @@
 "use client";
 
 import { type InvestigationStepContent } from "@zoonk/core/steps/contract/content";
-import { Button } from "@zoonk/ui/components/button";
 import { useExtracted } from "next-intl";
 import { getAvailableActions } from "../investigation";
 import { usePlayerRuntime } from "../player-context";
-import { type SelectedAnswer } from "../player-reducer";
+import { type SelectedAnswer, type StepResult } from "../player-reducer";
 import { type SerializedStep } from "../prepare-activity-data";
 import { useOptionKeyboard } from "../use-option-keyboard";
+import { InvestigationVisual } from "./investigation-visual";
 import { OptionCard } from "./option-card";
-import { QuestionText } from "./question-text";
+import { ContextText, QuestionText } from "./question-text";
 import { SectionLabel } from "./section-label";
 import { InteractiveStepLayout } from "./step-layouts";
 
 type ActionContent = Extract<InvestigationStepContent, { variant: "action" }>;
 
 /**
+ * Returns a user-friendly quality label for the action's evidence.
+ * Shown as a quality indicator in the evidence feedback after checking.
+ */
+function useQualityLabel(quality: "critical" | "useful" | "weak"): {
+  className: string;
+  label: string;
+} {
+  const t = useExtracted();
+
+  if (quality === "critical") {
+    return { className: "text-success", label: t("Strong lead") };
+  }
+
+  if (quality === "useful") {
+    return { className: "text-foreground", label: t("Useful clue") };
+  }
+
+  return { className: "text-muted-foreground", label: t("Weak signal") };
+}
+
+/**
+ * Renders the evidence feedback shown after checking an action.
+ * Shows the quality indicator, finding visual, and finding text.
+ */
+type ActionItem = ActionContent["actions"][number];
+
+function ActionFeedback({ action }: { action: ActionItem }) {
+  const t = useExtracted();
+  const quality = useQualityLabel(action.quality);
+
+  return (
+    <InteractiveStepLayout>
+      <SectionLabel>{t("Evidence")}</SectionLabel>
+
+      <p className={`text-sm font-medium ${quality.className}`}>{quality.label}</p>
+
+      <InvestigationVisual content={action.findingVisual} />
+
+      <div className="bg-muted/50 rounded-lg px-4 py-3">
+        <ContextText>{action.finding}</ContextText>
+      </div>
+    </InteractiveStepLayout>
+  );
+}
+
+/**
  * Renders the action selection step of an investigation activity.
- * Shows available investigation actions (used ones filtered out)
- * and a "Ready to make your call?" button after the first experiment.
- * The player selects an action, then clicks "Check" to advance.
+ *
+ * Before checking: shows available actions (used ones filtered out).
+ * After checking: shows evidence feedback — quality indicator,
+ * finding visual, and finding text for the selected action.
  */
 export function InvestigationActionVariant({
   content,
   onSelectAnswer,
+  result,
   selectedAnswer,
   step,
 }: {
   content: ActionContent;
   onSelectAnswer: (stepId: string, answer: SelectedAnswer | null) => void;
+  result?: StepResult;
   selectedAnswer: SelectedAnswer | undefined;
   step: SerializedStep;
 }) {
@@ -37,11 +86,12 @@ export function InvestigationActionVariant({
 
   const loop = state.investigationLoop;
   const usedIndices = loop?.usedActionIndices ?? [];
-  const experimentCount = loop?.experimentResults.length ?? 0;
+  const experimentNumber = usedIndices.length;
   const availableActions = getAvailableActions(content.actions, usedIndices);
-  const showMakeCallButton = experimentCount > 0;
+  const hasFeedback = result !== undefined;
+
   const questionText =
-    experimentCount === 0 ? t("What do you check?") : t("What do you check next?");
+    experimentNumber === 0 ? t("What do you check?") : t("What do you check next?");
 
   const selectedActionIndex =
     selectedAnswer?.kind === "investigation" && selectedAnswer.variant === "action"
@@ -51,6 +101,10 @@ export function InvestigationActionVariant({
   const hasSelection = selectedActionIndex !== null;
 
   const handleSelect = (index: number) => {
+    if (hasFeedback) {
+      return;
+    }
+
     const action = availableActions[index];
 
     if (!action) {
@@ -64,26 +118,22 @@ export function InvestigationActionVariant({
 
     onSelectAnswer(step.id, {
       kind: "investigation",
-      readyForCall: false,
       selectedActionIndex: action.originalIndex,
       variant: "action",
     });
   };
 
-  const handleMakeCall = () => {
-    onSelectAnswer(step.id, {
-      kind: "investigation",
-      readyForCall: true,
-      selectedActionIndex: -1,
-      variant: "action",
-    });
-  };
-
   useOptionKeyboard({
-    enabled: true,
+    enabled: !hasFeedback,
     onSelect: handleSelect,
     optionCount: availableActions.length,
   });
+
+  const selectedAction = selectedActionIndex === null ? null : content.actions[selectedActionIndex];
+
+  if (hasFeedback && selectedAction) {
+    return <ActionFeedback action={selectedAction} />;
+  }
 
   return (
     <InteractiveStepLayout>
@@ -104,12 +154,6 @@ export function InvestigationActionVariant({
           </OptionCard>
         ))}
       </div>
-
-      {showMakeCallButton && (
-        <Button className="w-full" onClick={handleMakeCall} size="lg" variant="outline">
-          {t("Ready to make your call?")}
-        </Button>
-      )}
     </InteractiveStepLayout>
   );
 }

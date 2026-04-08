@@ -56,23 +56,13 @@ const translationAnswerSchema = z.object({
 
 const investigationProblemAnswerSchema = z.object({
   kind: z.literal("investigation"),
-  selectedExplanationIndex: z.number(),
   variant: z.literal("problem"),
 });
 
 const investigationActionAnswerSchema = z.object({
   kind: z.literal("investigation"),
-  readyForCall: z.boolean(),
   selectedActionIndex: z.number(),
   variant: z.literal("action"),
-});
-
-const investigationEvidenceAnswerSchema = z.object({
-  actionIndex: z.number(),
-  hunchIndex: z.number(),
-  kind: z.literal("investigation"),
-  selectedTier: z.enum(["best", "dismissive", "overclaims"]),
-  variant: z.literal("evidence"),
 });
 
 const investigationCallAnswerSchema = z.object({
@@ -82,7 +72,7 @@ const investigationCallAnswerSchema = z.object({
 });
 
 /**
- * Investigation has 4 answer variants sharing `kind: "investigation"`.
+ * Investigation has 3 answer variants sharing `kind: "investigation"`.
  * Since zod's discriminatedUnion requires unique discriminator values,
  * we use z.union for the full answer schema instead.
  */
@@ -90,7 +80,6 @@ const selectedAnswerSchema = z.union([
   fillBlankAnswerSchema,
   investigationProblemAnswerSchema,
   investigationActionAnswerSchema,
-  investigationEvidenceAnswerSchema,
   investigationCallAnswerSchema,
   listeningAnswerSchema,
   matchColumnsAnswerSchema,
@@ -117,8 +106,6 @@ const stepTimingSchema = z.object({
  * the full scoring input server-side.
  */
 const investigationLoopSchema = z.object({
-  experimentResults: z.array(z.object({ actionIndex: z.number(), isCorrect: z.boolean() })),
-  hunchIndex: z.number(),
   usedActionIndices: z.array(z.number()),
 });
 

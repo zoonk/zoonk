@@ -120,41 +120,25 @@ export function checkArrangeWordsAnswer(
   return { correctAnswer: null, feedback: null, isCorrect };
 }
 
-type InterpretationTier = "best" | "dismissive" | "overclaims";
-
 /**
- * Checks an investigation evidence interpretation answer.
+ * Checks an investigation action answer.
  *
- * The learner picks one of three interpretation tiers (best, dismissive,
- * overclaims) for a finding. "best" is the careful, nuanced reading —
- * selecting it counts as correct. The other two represent overclaiming
- * or dismissing evidence.
- *
- * Returns the per-tier feedback so the player can explain why the
- * selected interpretation was right or wrong.
+ * Action steps are ungraded (always "correct") because any action is
+ * a valid investigation choice. The quality tier affects scoring,
+ * not correctness. Returns the finding text as feedback so the
+ * evidence can be shown after checking.
  */
-export function checkInvestigationEvidence(
-  content: Extract<InvestigationStepContent, { variant: "evidence" }>,
-  actionIndex: number,
-  hunchIndex: number,
-  selectedTier: InterpretationTier,
+export function checkInvestigationAction(
+  content: Extract<InvestigationStepContent, { variant: "action" }>,
+  selectedActionIndex: number,
 ): AnswerResult {
-  const finding = content.findings[actionIndex];
+  const action = content.actions[selectedActionIndex];
 
-  if (!finding) {
-    return { correctAnswer: null, feedback: null, isCorrect: false };
+  if (!action) {
+    return { correctAnswer: null, feedback: null, isCorrect: true };
   }
 
-  const interpretationSet = finding.interpretations[hunchIndex];
-
-  if (!interpretationSet) {
-    return { correctAnswer: null, feedback: null, isCorrect: false };
-  }
-
-  const selected = interpretationSet[selectedTier];
-  const isCorrect = selectedTier === "best";
-
-  return { correctAnswer: null, feedback: selected.feedback, isCorrect };
+  return { correctAnswer: null, feedback: action.finding, isCorrect: true };
 }
 
 /**

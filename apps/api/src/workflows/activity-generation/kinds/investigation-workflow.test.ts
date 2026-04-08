@@ -3,7 +3,6 @@ import { generateActivityInvestigationAccuracy } from "@zoonk/ai/tasks/activitie
 import { generateActivityInvestigationActions } from "@zoonk/ai/tasks/activities/core/investigation-actions";
 import { generateActivityInvestigationDebrief } from "@zoonk/ai/tasks/activities/core/investigation-debrief";
 import { generateActivityInvestigationFindings } from "@zoonk/ai/tasks/activities/core/investigation-findings";
-import { generateActivityInvestigationInterpretations } from "@zoonk/ai/tasks/activities/core/investigation-interpretations";
 import { generateActivityInvestigationScenario } from "@zoonk/ai/tasks/activities/core/investigation-scenario";
 import { generateInvestigationVisual } from "@zoonk/ai/tasks/activities/core/investigation-visuals";
 import { prisma } from "@zoonk/db";
@@ -36,7 +35,6 @@ const {
   mockAccuracy,
   mockActions,
   mockFindings,
-  mockInterpretations,
   mockDebrief,
   mockVisual,
   mockDispatchedVisual,
@@ -67,11 +65,6 @@ const {
       "The ceiling has a small crack.",
     ],
   },
-  mockInterpretations: {
-    best: { feedback: "Good reading.", text: "This evidence points toward..." },
-    dismissive: { feedback: "You're ignoring key details.", text: "This doesn't matter..." },
-    overclaims: { feedback: "You're overreading this.", text: "This proves everything..." },
-  },
   mockScenario: {
     explanations: [
       "Explanation A is correct",
@@ -100,12 +93,6 @@ vi.mock("@zoonk/ai/tasks/activities/core/investigation-actions", () => ({
 
 vi.mock("@zoonk/ai/tasks/activities/core/investigation-findings", () => ({
   generateActivityInvestigationFindings: vi.fn().mockResolvedValue({ data: mockFindings }),
-}));
-
-vi.mock("@zoonk/ai/tasks/activities/core/investigation-interpretations", () => ({
-  generateActivityInvestigationInterpretations: vi
-    .fn()
-    .mockResolvedValue({ data: mockInterpretations }),
 }));
 
 vi.mock("@zoonk/ai/tasks/activities/core/investigation-debrief", () => ({
@@ -173,7 +160,7 @@ describe("investigation activity workflow", () => {
       where: { activityId: activity.id },
     });
 
-    expect(steps).toHaveLength(5);
+    expect(steps).toHaveLength(3);
 
     expect(steps[0]?.kind).toBe("investigation");
     expect(steps[0]?.position).toBe(0);
@@ -185,15 +172,7 @@ describe("investigation activity workflow", () => {
 
     expect(steps[2]?.kind).toBe("investigation");
     expect(steps[2]?.position).toBe(2);
-    expect(getString(steps[2]?.content, "variant")).toBe("evidence");
-
-    expect(steps[3]?.kind).toBe("investigation");
-    expect(steps[3]?.position).toBe(3);
-    expect(getString(steps[3]?.content, "variant")).toBe("call");
-
-    expect(steps[4]?.kind).toBe("static");
-    expect(steps[4]?.position).toBe(4);
-    expect(getString(steps[4]?.content, "variant")).toBe("investigationScore");
+    expect(getString(steps[2]?.content, "variant")).toBe("call");
 
     for (const step of steps) {
       expect(step.isPublished).toBe(true);
@@ -257,13 +236,6 @@ describe("investigation activity workflow", () => {
     });
 
     expect(getString(problemStep?.content, "scenario")).toBe(mockScenario.scenario);
-
-    const explanations = getArray(problemStep?.content, "explanations");
-    expect(explanations).toHaveLength(3);
-    expect(getString(explanations[0], "text")).toBe("Explanation A is correct");
-    expect(getString(explanations[0], "accuracy")).toBe("best");
-    expect(getString(explanations[1], "accuracy")).toBe("partial");
-    expect(getString(explanations[2], "accuracy")).toBe("wrong");
   });
 
   test("saves correct action step content", async () => {
@@ -297,42 +269,7 @@ describe("investigation activity workflow", () => {
     expect(actions).toHaveLength(3);
     expect(getString(actions[0], "label")).toBe("Check the logs");
     expect(getString(actions[0], "quality")).toBe("critical");
-  });
-
-  test("saves correct evidence step content with interpretations and visuals", async () => {
-    const lesson = await lessonFixture({
-      chapterId: chapter.id,
-      concepts: ["Test Concept"],
-      organizationId,
-      title: `Inv Evidence ${randomUUID()}`,
-    });
-
-    const activity = await activityFixture({
-      generationStatus: "pending",
-      kind: "investigation",
-      lessonId: lesson.id,
-      organizationId,
-      title: `Investigation ${randomUUID()}`,
-    });
-
-    const activities = await getLessonActivitiesStep(lesson.id);
-
-    await investigationActivityWorkflow({
-      activitiesToGenerate: activities,
-      workflowRunId: "test-run-id",
-    });
-
-    const evidenceStep = await prisma.step.findFirst({
-      where: { activityId: activity.id, position: 2 },
-    });
-
-    const findings = getArray(evidenceStep?.content, "findings");
-    expect(findings).toHaveLength(3);
-    expect(getString(findings[0], "text")).toBe(mockFindings.findings[0]);
-
-    // Each finding should have interpretations (one per explanation)
-    const interpretations = getArray(findings[0], "interpretations");
-    expect(interpretations).toHaveLength(3);
+    expect(getString(actions[0], "finding")).toBe(mockFindings.findings[0]);
   });
 
   test("saves correct call step content with debrief", async () => {
@@ -359,7 +296,7 @@ describe("investigation activity workflow", () => {
     });
 
     const callStep = await prisma.step.findFirst({
-      where: { activityId: activity.id, position: 3 },
+      where: { activityId: activity.id, position: 2 },
     });
 
     expect(getString(callStep?.content, "fullExplanation")).toBe(mockDebrief.fullExplanation);
@@ -514,7 +451,6 @@ describe("investigation activity workflow", () => {
     const dbActivity = await prisma.activity.findUnique({ where: { id: activity.id } });
     expect(dbActivity?.generationStatus).toBe("failed");
     expect(generateActivityInvestigationDebrief).not.toHaveBeenCalled();
-    expect(generateActivityInvestigationInterpretations).not.toHaveBeenCalled();
   });
 
   test("marks as failed when debrief generation throws in parallel tier", async () => {
@@ -527,37 +463,6 @@ describe("investigation activity workflow", () => {
       concepts: ["Test Concept"],
       organizationId,
       title: `Inv Debrief Fail ${randomUUID()}`,
-    });
-
-    const activity = await activityFixture({
-      generationStatus: "pending",
-      kind: "investigation",
-      lessonId: lesson.id,
-      organizationId,
-      title: `Investigation ${randomUUID()}`,
-    });
-
-    const activities = await getLessonActivitiesStep(lesson.id);
-
-    await investigationActivityWorkflow({
-      activitiesToGenerate: activities,
-      workflowRunId: "test-run-id",
-    });
-
-    const dbActivity = await prisma.activity.findUnique({ where: { id: activity.id } });
-    expect(dbActivity?.generationStatus).toBe("failed");
-  });
-
-  test("marks as failed when interpretations generation throws in parallel tier", async () => {
-    vi.mocked(generateActivityInvestigationInterpretations).mockRejectedValueOnce(
-      new Error("Interpretations failed"),
-    );
-
-    const lesson = await lessonFixture({
-      chapterId: chapter.id,
-      concepts: ["Test Concept"],
-      organizationId,
-      title: `Inv Interp Fail ${randomUUID()}`,
     });
 
     const activity = await activityFixture({

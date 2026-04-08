@@ -3,7 +3,6 @@ import { generateInvestigationAccuracyStep } from "../steps/generate-investigati
 import { generateInvestigationActionsStep } from "../steps/generate-investigation-actions-step";
 import { generateInvestigationDebriefStep } from "../steps/generate-investigation-debrief-step";
 import { generateInvestigationFindingsStep } from "../steps/generate-investigation-findings-step";
-import { generateInvestigationInterpretationsStep } from "../steps/generate-investigation-interpretations-step";
 import { generateInvestigationScenarioStep } from "../steps/generate-investigation-scenario-step";
 import { generateInvestigationVisualContentStep } from "../steps/generate-investigation-visual-content-step";
 import { generateInvestigationVisualsStep } from "../steps/generate-investigation-visuals-step";
@@ -15,11 +14,11 @@ import { saveInvestigationActivityStep } from "../steps/save-investigation-activ
  * Orchestrates investigation activity generation.
  *
  * Sequential chain: scenario → accuracy → actions → findings
- * Parallel tier: debrief + interpretations + visual descriptions
+ * Parallel tier: debrief + visual descriptions
  * Then: visual content dispatch → save
  *
  * The sequential chain is required because each task depends on
- * the output of the previous one. After findings, three tasks
+ * the output of the previous one. After findings, two tasks
  * run in parallel since they only read from completed data.
  * Visual content dispatch depends on visual descriptions, so it
  * runs after the parallel tier completes.
@@ -82,7 +81,7 @@ export async function investigationActivityWorkflow({
     return;
   }
 
-  const [debriefResult, interpretationsResult, visualsResult] = await Promise.allSettled([
+  const [debriefResult, visualsResult] = await Promise.allSettled([
     generateInvestigationDebriefStep({
       accuracy,
       actions,
@@ -90,13 +89,6 @@ export async function investigationActivityWorkflow({
       findings,
       language: activity.language,
       scenario,
-    }),
-    generateInvestigationInterpretationsStep({
-      activityId,
-      explanations: scenario.explanations,
-      findings: findings.findings,
-      language: activity.language,
-      scenario: scenario.scenario,
     }),
     generateInvestigationVisualsStep({
       activityId,
@@ -107,10 +99,9 @@ export async function investigationActivityWorkflow({
   ]);
 
   const debrief = settled(debriefResult, null);
-  const interpretations = settled(interpretationsResult, null);
   const visuals = settled(visualsResult, null);
 
-  if (!debrief || !interpretations || !visuals) {
+  if (!debrief || !visuals) {
     await handleActivityFailureStep({ activityId });
     return;
   }
@@ -134,7 +125,6 @@ export async function investigationActivityWorkflow({
     debrief,
     findingVisuals: visualContent.findingVisuals,
     findings,
-    interpretations,
     scenario,
     scenarioVisual: visualContent.scenarioVisual,
     workflowRunId,

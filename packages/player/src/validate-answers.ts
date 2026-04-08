@@ -8,7 +8,6 @@ import {
   checkArrangeWordsAnswer,
   checkFillBlankAnswer,
   checkInvestigationCall,
-  checkInvestigationEvidence,
   checkMatchColumnsAnswer,
   checkMultipleChoiceAnswer,
   checkSelectImageAnswer,
@@ -147,7 +146,6 @@ function validateListening(step: StepData, answer: SelectedAnswer): ValidatedSte
  * Validates an investigation answer server-side.
  *
  * Problem and action variants are always correct (ungraded).
- * Evidence checks the selected interpretation tier against "best".
  * Call checks the selected explanation's accuracy tier.
  */
 function validateInvestigation(step: StepData, answer: SelectedAnswer): ValidatedStepResult | null {
@@ -159,17 +157,6 @@ function validateInvestigation(step: StepData, answer: SelectedAnswer): Validate
 
   if (content.variant === "problem" || content.variant === "action") {
     return { answer, isCorrect: true, stepId: step.id };
-  }
-
-  if (content.variant === "evidence" && answer.variant === "evidence") {
-    const result = checkInvestigationEvidence(
-      content,
-      answer.actionIndex,
-      answer.hunchIndex,
-      answer.selectedTier,
-    );
-
-    return { answer, isCorrect: result.isCorrect, stepId: step.id };
   }
 
   if (content.variant === "call" && answer.variant === "call") {

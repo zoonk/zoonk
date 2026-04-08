@@ -8,7 +8,6 @@ import { activityInvestigationAccuracyTask } from "./activity-investigation-accu
 import { activityInvestigationActionsTask } from "./activity-investigation-actions/task";
 import { activityInvestigationDebriefTask } from "./activity-investigation-debrief/task";
 import { activityInvestigationFindingsTask } from "./activity-investigation-findings/task";
-import { activityInvestigationInterpretationsTask } from "./activity-investigation-interpretations/task";
 import { activityInvestigationScenarioTask } from "./activity-investigation-scenario/task";
 import { activityInvestigationVisualTask } from "./activity-investigation-visuals/task";
 import { activityPracticeTask } from "./activity-practice/task";
@@ -58,7 +57,7 @@ export const TASKS: readonly Task[] = [
   activityInvestigationActionsTask,
   activityInvestigationDebriefTask,
   activityInvestigationFindingsTask,
-  activityInvestigationInterpretationsTask,
+
   activityInvestigationScenarioTask,
   activityInvestigationVisualTask,
 

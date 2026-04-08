@@ -12,36 +12,27 @@ const investigationExplanationSchema = z
   })
   .strict();
 
-const investigationInterpretationTierSchema = z
-  .object({
-    feedback: z.string(),
-    text: z.string(),
-  })
-  .strict();
-
 /**
- * Interpretation set for a finding from one explanation's perspective.
- * Contains 3 tiers (best/overclaims/dismissive), each with its own
- * statement text and feedback. Per-tier feedback addresses the
- * learner's specific choice: what they overclaimed, what they
- * dismissed, or why their careful reading works.
+ * Each action carries its own finding data (text + visual) so
+ * that evidence travels with the action through server-side shuffle.
+ * When the learner checks an action, the finding is shown as feedback.
  */
-const investigationInterpretationSetSchema = z
+const investigationActionItemSchema = z
   .object({
-    best: investigationInterpretationTierSchema,
-    dismissive: investigationInterpretationTierSchema,
-    overclaims: investigationInterpretationTierSchema,
+    finding: z.string(),
+    findingVisual: visualStepContentSchema,
+    label: z.string(),
+    quality: investigationActionQualitySchema,
   })
   .strict();
 
 /**
- * Problem step: presents the scenario, a visual, and a set of possible
- * explanations the learner picks from ("What's your hunch?").
- * Array index is the identifier — no `id` fields.
+ * Problem step: presents the scenario and a visual.
+ * Read-only — the learner reads the case and taps "Investigate" to start.
+ * No hunch selection.
  */
 const investigationProblemContentSchema = z
   .object({
-    explanations: z.array(investigationExplanationSchema),
     scenario: z.string(),
     variant: z.literal("problem"),
     visual: visualStepContentSchema,
@@ -50,16 +41,10 @@ const investigationProblemContentSchema = z
 
 /**
  * Action step: the full list of actions the learner can choose from.
- * The player filters out already-picked actions using StepAttempts.
+ * The player filters out already-picked actions using the investigation loop.
+ * Each action carries its finding data for the feedback screen.
  * `quality` indicates how informative the action is for scoring.
  */
-const investigationActionItemSchema = z
-  .object({
-    label: z.string(),
-    quality: investigationActionQualitySchema,
-  })
-  .strict();
-
 const investigationActionContentSchema = z
   .object({
     actions: z.array(investigationActionItemSchema),
@@ -68,33 +53,10 @@ const investigationActionContentSchema = z
   .strict();
 
 /**
- * Evidence step: all findings indexed by action index.
- * The player shows the finding matching the learner's prior action choice.
- * Each finding has a visual and interpretation sets — one set per
- * explanation, so the player shows the interpretations matching the
- * learner's chosen hunch.
- */
-const investigationFindingItemSchema = z
-  .object({
-    interpretations: z.array(investigationInterpretationSetSchema),
-    text: z.string(),
-    visual: visualStepContentSchema,
-  })
-  .strict();
-
-const investigationEvidenceContentSchema = z
-  .object({
-    findings: z.array(investigationFindingItemSchema),
-    variant: z.literal("evidence"),
-  })
-  .strict();
-
-/**
  * Call step: the learner picks which explanation they believe is correct
- * after investigating. Shows the same explanations from the problem step.
- * The player checks the learner's pick against each explanation's `accuracy`
- * tier for scoring. `fullExplanation` is the debrief reveal shown after
- * the learner commits.
+ * after investigating. The player checks the learner's pick against each
+ * explanation's `accuracy` tier for scoring. `fullExplanation` is the
+ * debrief reveal shown after the learner commits.
  */
 const investigationCallContentSchema = z
   .object({
@@ -107,19 +69,7 @@ const investigationCallContentSchema = z
 export const investigationContentSchema = z.discriminatedUnion("variant", [
   investigationProblemContentSchema,
   investigationActionContentSchema,
-  investigationEvidenceContentSchema,
   investigationCallContentSchema,
 ]);
-
-/**
- * Score screen for an investigation activity (static step).
- * Three dimensions: investigation + analysis + final call.
- * Scoring thresholds are derived from step data at runtime — no content needed.
- */
-export const staticInvestigationScoreContentSchema = z
-  .object({
-    variant: z.literal("investigationScore"),
-  })
-  .strict();
 
 export type InvestigationStepContent = z.infer<typeof investigationContentSchema>;

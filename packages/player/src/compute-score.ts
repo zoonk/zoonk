@@ -80,40 +80,38 @@ function computeStoryScore({ alignments }: { alignments: StoryAlignment[] }): Sc
 // ---------------------------------------------------------------------------
 
 const ACTION_QUALITY_POINTS = {
-  critical: 15,
-  useful: 10,
-  weak: 5,
+  critical: 20,
+  useful: 13,
+  weak: 7,
 } as const;
 
-const INVESTIGATION_SCORE_CAP = 30;
-const ANALYSIS_POINTS_PER_CORRECT = 10;
-const ANALYSIS_SCORE_CAP = 30;
+const INVESTIGATION_SCORE_CAP = 40;
 
 const CALL_ACCURACY_POINTS = {
-  best: 40,
-  partial: 20,
+  best: 60,
+  partial: 30,
   wrong: 0,
 } as const;
 
 export type InvestigationScoreInput = {
   actionQualities: ("critical" | "useful" | "weak")[];
   callAccuracy: "best" | "partial" | "wrong";
-  interpretationResults: { isCorrect: boolean }[];
 };
 
-export type InvestigationScoreDimensions = {
-  analysisScore: number;
+type InvestigationScoreDimensions = {
   callScore: number;
   investigationScore: number;
 };
 
 /**
- * Computes the three dimension scores from the scoring input.
+ * Computes the two dimension scores from the scoring input.
  *
- * Shared by both `computeInvestigationScore` (for the ScoreResult
- * used by the completion system) and `getInvestigationScoreDimensions`
- * (for the score screen UI). Avoids duplicating the reduce/filter/cap
- * logic across both functions.
+ * - Investigation (max 40): quality of actions chosen
+ *   (critical = 20, useful = 13, weak = 7, capped at 40)
+ * - Final Call (max 60): whether the learner identified what happened
+ *   (best = 60, partial = 30, wrong = 0)
+ *
+ * Total max is 100 points.
  */
 function computeDimensionScores(input: InvestigationScoreInput): InvestigationScoreDimensions {
   const investigationRaw = input.actionQualities.reduce(
@@ -121,42 +119,29 @@ function computeDimensionScores(input: InvestigationScoreInput): InvestigationSc
     0,
   );
 
-  const analysisRaw =
-    input.interpretationResults.filter((result) => result.isCorrect).length *
-    ANALYSIS_POINTS_PER_CORRECT;
-
   return {
-    analysisScore: Math.min(analysisRaw, ANALYSIS_SCORE_CAP),
     callScore: CALL_ACCURACY_POINTS[input.callAccuracy],
     investigationScore: Math.min(investigationRaw, INVESTIGATION_SCORE_CAP),
   };
 }
 
 /**
- * Computes the investigation score across three dimensions:
+ * Computes the investigation score across two dimensions:
  *
- * - Investigation (max 30): quality of actions chosen
- *   (critical = 15, useful = 10, weak = 5, capped at 30)
- * - Analysis (max 30): interpretation accuracy
- *   (10 points per correct pick, scales with 1-3 experiments)
- * - Final Call (max 40): whether the learner identified what happened
- *   (best = 40, partial = 20, wrong = 0)
+ * - Investigation (max 40): quality of actions chosen
+ * - Final Call (max 60): whether the learner identified what happened
  *
  * Total max is 100 points. Energy is proportional to score.
  * Brain power is 100 (same as story — applied activity).
  */
 function computeInvestigationScore(input: InvestigationScoreInput): ScoreResult {
   const dimensions = computeDimensionScores(input);
-  const totalScore =
-    dimensions.investigationScore + dimensions.analysisScore + dimensions.callScore;
+  const totalScore = dimensions.investigationScore + dimensions.callScore;
   const maxScore = 100;
   const scoreRatio = totalScore / maxScore;
 
-  const correctCount =
-    input.interpretationResults.filter((result) => result.isCorrect).length +
-    (input.callAccuracy === "best" ? 1 : 0);
-  const totalSteps = input.interpretationResults.length + 1;
-  const incorrectCount = totalSteps - correctCount;
+  const correctCount = input.callAccuracy === "best" ? 1 : 0;
+  const incorrectCount = 1 - correctCount;
 
   const energyDelta = correctCount * ENERGY_PER_CORRECT + incorrectCount * ENERGY_PER_INCORRECT;
 
@@ -166,16 +151,6 @@ function computeInvestigationScore(input: InvestigationScoreInput): ScoreResult 
     energyDelta: Math.round(energyDelta * scoreRatio * 100) / 100,
     incorrectCount,
   };
-}
-
-/**
- * Returns the three dimension scores for the investigation score screen.
- * UI labels are translated in the component via useExtracted.
- */
-export function getInvestigationScoreDimensions(
-  input: InvestigationScoreInput,
-): InvestigationScoreDimensions {
-  return computeDimensionScores(input);
 }
 
 // ---------------------------------------------------------------------------
@@ -286,10 +261,6 @@ function extractInvestigationInput({
     return action ? [action.quality] : [];
   });
 
-  const interpretationResults = investigationLoop.experimentResults.map((result) => ({
-    isCorrect: result.isCorrect,
-  }));
-
   const callStep = steps.find((step) => {
     if (step.kind !== "investigation") {
       return false;
@@ -321,7 +292,7 @@ function extractInvestigationInput({
     return null;
   }
 
-  return { actionQualities, callAccuracy: selectedExplanation.accuracy, interpretationResults };
+  return { actionQualities, callAccuracy: selectedExplanation.accuracy };
 }
 
 /**

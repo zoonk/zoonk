@@ -1,9 +1,8 @@
 import { type AnswerResult } from "./check-answer";
 import { type CompletionResult } from "./completion-input-schema";
-import { type InvestigationLoopState, isInvestigationScoreVariant } from "./investigation";
+import { type InvestigationLoopState } from "./investigation";
 import {
   continueFromAction,
-  continueFromEvidence,
   continueFromProblem,
   getInvestigationVariant,
   recordActionInLoop,
@@ -18,16 +17,9 @@ export type PlayerPhase = "playing" | "feedback" | "completed";
 
 export type SelectedAnswer =
   | { kind: "fillBlank"; userAnswers: string[] }
-  | { kind: "investigation"; variant: "action"; readyForCall: boolean; selectedActionIndex: number }
+  | { kind: "investigation"; variant: "action"; selectedActionIndex: number }
   | { kind: "investigation"; variant: "call"; selectedExplanationIndex: number }
-  | {
-      kind: "investigation";
-      variant: "evidence";
-      actionIndex: number;
-      hunchIndex: number;
-      selectedTier: "best" | "dismissive" | "overclaims";
-    }
-  | { kind: "investigation"; variant: "problem"; selectedExplanationIndex: number }
+  | { kind: "investigation"; variant: "problem" }
   | { kind: "listening"; arrangedWords: string[] }
   | { kind: "matchColumns"; userPairs: { left: string; right: string }[]; mistakes: number }
   | { kind: "multipleChoice"; selectedIndex: number; selectedText: string }
@@ -140,18 +132,18 @@ function handleCheckAnswer(
   const variant = getInvestigationVariant(currentStep);
 
   /**
-   * Investigation problem steps skip the feedback phase because we
-   * don't show any feedback for the initial hunch selection. Clicking
-   * "Check" immediately advances to the action step.
+   * Investigation problem steps skip the feedback phase because
+   * the problem step is read-only. Clicking "Investigate"
+   * immediately advances to the action step.
    */
   if (variant === "problem") {
     return handleContinue(checked);
   }
 
   /**
-   * Investigation action steps skip the feedback phase because there's
-   * no right/wrong answer. Record the chosen action in the loop state,
-   * then immediately continue to the evidence step (or call if readyForCall).
+   * Investigation action steps enter the feedback phase to show
+   * evidence (the finding for the chosen action). Record the
+   * chosen action in the loop state before entering feedback.
    */
   if (variant === "action") {
     const answer = state.selectedAnswers[action.stepId];
@@ -159,10 +151,10 @@ function handleCheckAnswer(
 
     if (loop && answer) {
       const updatedLoop = recordActionInLoop(loop, answer);
-      return handleContinue({ ...checked, investigationLoop: updatedLoop });
+      return { ...checked, investigationLoop: updatedLoop };
     }
 
-    return handleContinue(checked);
+    return checked;
   }
 
   return checked;
@@ -176,12 +168,11 @@ function completeWith(state: PlayerState): PlayerState {
 /**
  * Handles the CONTINUE action for investigation steps.
  *
- * Investigation has non-linear step progression:
+ * Investigation has a looping step progression:
  * - After problem: init loop, advance to action step
- * - After action (readyForCall=false): advance to evidence step
- * - After action (readyForCall=true): jump to call step
- * - After evidence: record experiment, loop back to action step
- * - After call: advance to score step (triggers completion if last)
+ * - After action feedback: if 3 experiments done, advance to call;
+ *   otherwise clear action answer and stay on action step
+ * - After call: complete the activity
  *
  * Returns null if the current step is not an investigation step,
  * signaling the caller to use default continue behavior.
@@ -199,8 +190,6 @@ function handleInvestigationContinue(state: PlayerState): PlayerState | null {
       return continueFromProblem(state);
     case "action":
       return continueFromAction(state);
-    case "evidence":
-      return continueFromEvidence(state);
     case "call": {
       const nextIndex = state.currentStepIndex + 1;
 
@@ -272,14 +261,6 @@ function handleNavigateStep(
    * in arrow-key navigation handled by `isStaticNavigationStep`.
    */
   if (currentStep && isStoryStaticVariant(currentStep) && action.direction === "next") {
-    return advanceForward(state);
-  }
-
-  /**
-   * Investigation score step uses a "Continue" button for forward-only
-   * navigation, similar to story static variants.
-   */
-  if (currentStep && isInvestigationScoreVariant(currentStep) && action.direction === "next") {
     return advanceForward(state);
   }
 

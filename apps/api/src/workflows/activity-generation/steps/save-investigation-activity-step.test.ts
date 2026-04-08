@@ -44,33 +44,6 @@ const mockFindings = {
   findings: ["Server logs show 500 errors around 2 AM.", "Colleague says nothing changed."],
 };
 
-const mockInterpretations = [
-  [
-    {
-      best: { feedback: "f0e0 best fb", text: "f0e0 best" },
-      dismissive: { feedback: "f0e0 dismissive fb", text: "f0e0 dismissive" },
-      overclaims: { feedback: "f0e0 overclaims fb", text: "f0e0 overclaims" },
-    },
-    {
-      best: { feedback: "f0e1 best fb", text: "f0e1 best" },
-      dismissive: { feedback: "f0e1 dismissive fb", text: "f0e1 dismissive" },
-      overclaims: { feedback: "f0e1 overclaims fb", text: "f0e1 overclaims" },
-    },
-  ],
-  [
-    {
-      best: { feedback: "f1e0 best fb", text: "f1e0 best" },
-      dismissive: { feedback: "f1e0 dismissive fb", text: "f1e0 dismissive" },
-      overclaims: { feedback: "f1e0 overclaims fb", text: "f1e0 overclaims" },
-    },
-    {
-      best: { feedback: "f1e1 best fb", text: "f1e1 best" },
-      dismissive: { feedback: "f1e1 dismissive fb", text: "f1e1 dismissive" },
-      overclaims: { feedback: "f1e1 overclaims fb", text: "f1e1 overclaims" },
-    },
-  ],
-];
-
 const mockDebrief = {
   fullExplanation: "The traffic drop was caused by a CDN outage.",
 };
@@ -107,7 +80,7 @@ describe(saveInvestigationActivityStep, () => {
     vi.clearAllMocks();
   });
 
-  test("creates 5 step records with correct positions and kinds", async () => {
+  test("creates 3 step records with correct positions and kinds", async () => {
     const lesson = await lessonFixture({
       chapterId: chapter.id,
       organizationId,
@@ -130,7 +103,6 @@ describe(saveInvestigationActivityStep, () => {
       debrief: mockDebrief,
       findingVisuals: mockFindingVisuals,
       findings: mockFindings,
-      interpretations: mockInterpretations,
       scenario: mockScenario,
       scenarioVisual: mockScenarioVisual,
       workflowRunId: "workflow-1",
@@ -146,8 +118,7 @@ describe(saveInvestigationActivityStep, () => {
       }),
     ]);
 
-    // 5 steps: problem, action, evidence, call, investigationScore
-    expect(dbSteps).toHaveLength(5);
+    expect(dbSteps).toHaveLength(3);
 
     // Position 0: investigation/problem
     expect(dbSteps[0]?.kind).toBe("investigation");
@@ -155,33 +126,21 @@ describe(saveInvestigationActivityStep, () => {
     expect(getString(dbSteps[0]?.content, "variant")).toBe("problem");
     expect(getString(dbSteps[0]?.content, "scenario")).toBe(mockScenario.scenario);
 
-    // Position 1: investigation/action
+    // Position 1: investigation/action (with embedded findings)
     expect(dbSteps[1]?.kind).toBe("investigation");
     expect(dbSteps[1]?.position).toBe(1);
     expect(getString(dbSteps[1]?.content, "variant")).toBe("action");
 
-    // Position 2: investigation/evidence
+    // Position 2: investigation/call
     expect(dbSteps[2]?.kind).toBe("investigation");
     expect(dbSteps[2]?.position).toBe(2);
-    expect(getString(dbSteps[2]?.content, "variant")).toBe("evidence");
+    expect(getString(dbSteps[2]?.content, "variant")).toBe("call");
+    expect(getString(dbSteps[2]?.content, "fullExplanation")).toBe(mockDebrief.fullExplanation);
 
-    // Position 3: investigation/call
-    expect(dbSteps[3]?.kind).toBe("investigation");
-    expect(dbSteps[3]?.position).toBe(3);
-    expect(getString(dbSteps[3]?.content, "variant")).toBe("call");
-    expect(getString(dbSteps[3]?.content, "fullExplanation")).toBe(mockDebrief.fullExplanation);
-
-    // Position 4: static/investigationScore
-    expect(dbSteps[4]?.kind).toBe("static");
-    expect(dbSteps[4]?.position).toBe(4);
-    expect(getString(dbSteps[4]?.content, "variant")).toBe("investigationScore");
-
-    // All steps are published
     for (const step of dbSteps) {
       expect(step.isPublished).toBe(true);
     }
 
-    // Activity marked as completed with generationRunId
     expect(dbActivity).toMatchObject({
       generationRunId: "workflow-1",
       generationStatus: "completed",
@@ -198,7 +157,7 @@ describe(saveInvestigationActivityStep, () => {
     );
   });
 
-  test("embeds visual content in problem and evidence steps", async () => {
+  test("embeds visual content in problem and action steps", async () => {
     const lesson = await lessonFixture({
       chapterId: chapter.id,
       organizationId,
@@ -221,7 +180,6 @@ describe(saveInvestigationActivityStep, () => {
       debrief: mockDebrief,
       findingVisuals: mockFindingVisuals,
       findings: mockFindings,
-      interpretations: mockInterpretations,
       scenario: mockScenario,
       scenarioVisual: mockScenarioVisual,
       workflowRunId: "workflow-visuals",
@@ -237,16 +195,16 @@ describe(saveInvestigationActivityStep, () => {
     const visual = problemContent.visual as Record<string, unknown>;
     expect(visual.kind).toBe("chart");
 
-    // Evidence step (position 2) has finding visuals
-    const evidenceContent = dbSteps[2]?.content as Record<string, unknown>;
-    const findings = evidenceContent.findings as Record<string, unknown>[];
-    expect(findings).toHaveLength(2);
+    // Action step (position 1) has finding visuals embedded in each action
+    const actionContent = dbSteps[1]?.content as Record<string, unknown>;
+    const actions = actionContent.actions as Record<string, unknown>[];
+    expect(actions).toHaveLength(2);
 
-    const finding0Visual = findings[0]?.visual as Record<string, unknown>;
-    expect(finding0Visual.kind).toBe("table");
+    const action0Visual = actions[0]?.findingVisual as Record<string, unknown>;
+    expect(action0Visual.kind).toBe("table");
 
-    const finding1Visual = findings[1]?.visual as Record<string, unknown>;
-    expect(finding1Visual.kind).toBe("timeline");
+    const action1Visual = actions[1]?.findingVisual as Record<string, unknown>;
+    expect(action1Visual.kind).toBe("timeline");
   });
 
   test("marks activity as completed with generationRunId", async () => {
@@ -272,7 +230,6 @@ describe(saveInvestigationActivityStep, () => {
       debrief: mockDebrief,
       findingVisuals: mockFindingVisuals,
       findings: mockFindings,
-      interpretations: mockInterpretations,
       scenario: mockScenario,
       scenarioVisual: mockScenarioVisual,
       workflowRunId: "workflow-completed",
@@ -312,7 +269,6 @@ describe(saveInvestigationActivityStep, () => {
       debrief: mockDebrief,
       findingVisuals: mockFindingVisuals,
       findings: mockFindings,
-      interpretations: mockInterpretations,
       scenario: mockScenario,
       scenarioVisual: mockScenarioVisual,
       workflowRunId: "workflow-error",

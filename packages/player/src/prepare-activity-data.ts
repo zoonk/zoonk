@@ -154,6 +154,31 @@ function shuffleMultipleChoiceContent(
   return content.kind === "core" ? { ...content, options: shuffle(content.options) } : content;
 }
 
+/**
+ * Parses step content and applies server-side shuffling where needed.
+ *
+ * Multiple choice options and investigation actions are shuffled
+ * during serialization so the client receives a randomized order.
+ * This avoids client-side shuffling which can cause hydration errors.
+ */
+function parseAndShuffleContent(kind: SupportedStepKind, content: unknown) {
+  if (kind === "multipleChoice") {
+    return shuffleMultipleChoiceContent(parseStepContent("multipleChoice", content));
+  }
+
+  if (kind === "investigation") {
+    const parsed = parseStepContent("investigation", content);
+
+    if (parsed.variant === "action") {
+      return { ...parsed, actions: shuffle(parsed.actions) };
+    }
+
+    return parsed;
+  }
+
+  return parseStepContent(kind, content);
+}
+
 function buildSortOrderItems(step: SerializedStep): string[] {
   if (step.kind !== "sortOrder") {
     return [];
@@ -198,10 +223,7 @@ function serializeStep(step: StepDataInput): SerializedStep | null {
   }
 
   try {
-    const content =
-      step.kind === "multipleChoice"
-        ? shuffleMultipleChoiceContent(parseStepContent("multipleChoice", step.content))
-        : parseStepContent(step.kind, step.content);
+    const content = parseAndShuffleContent(step.kind, step.content);
 
     return {
       content,

@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { staticInvestigationScoreContentSchema } from "./investigation";
 import { staticStoryIntroContentSchema, staticStoryOutcomeContentSchema } from "./story";
 
 const staticTextContentSchema = z
@@ -32,7 +31,6 @@ export const staticContentSchema = z.discriminatedUnion("variant", [
   staticTextContentSchema,
   staticGrammarExampleContentSchema,
   staticGrammarRuleContentSchema,
-  staticInvestigationScoreContentSchema,
   staticStoryIntroContentSchema,
   staticStoryOutcomeContentSchema,
 ]);

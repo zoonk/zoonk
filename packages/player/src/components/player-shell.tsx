@@ -8,8 +8,7 @@ import {
   getCanNavigatePrev,
   getCurrentStep,
   getHasAnswer,
-  getInvestigationHunch,
-  getIsInvestigationScoreStep,
+  getInvestigationScenarioData,
   getIsStaticStep,
   getIsStoryActivity,
   getProgressValue,
@@ -32,7 +31,6 @@ function BottomBarContent({
   buttonLabel,
   canNavigatePrev,
   hasAnswer,
-  isInvestigationScore,
   isStaticStep,
   phase,
   storyStaticVariant,
@@ -41,7 +39,6 @@ function BottomBarContent({
   buttonLabel: string;
   canNavigatePrev: boolean;
   hasAnswer: boolean;
-  isInvestigationScore: boolean;
   isStaticStep: boolean;
   phase: PlayerPhase;
   storyStaticVariant: StoryStaticVariant | null;
@@ -55,12 +52,6 @@ function BottomBarContent({
   }
 
   if (storyStaticVariant === "storyOutcome") {
-    return (
-      <PlayerBottomBarAction onClick={actions.navigateNext}>{t("Continue")}</PlayerBottomBarAction>
-    );
-  }
-
-  if (isInvestigationScore) {
     return (
       <PlayerBottomBarAction onClick={actions.navigateNext}>{t("Continue")}</PlayerBottomBarAction>
     );
@@ -94,8 +85,7 @@ export function PlayerShell() {
   const canNavigatePrev = getCanNavigatePrev(state);
   const currentStep = getCurrentStep(state);
   const hasAnswer = getHasAnswer(state);
-  const investigationHunch = getInvestigationHunch(state);
-  const isInvestigationScore = getIsInvestigationScoreStep(state);
+  const investigationScenario = getInvestigationScenarioData(state);
   const isStaticStep = getIsStaticStep(state);
   const isStoryActivity = getIsStoryActivity(state);
   const progressValue = getProgressValue(state);
@@ -120,7 +110,7 @@ export function PlayerShell() {
       {showChrome && (
         <InPlayStickyHeader
           currentStepIndex={state.currentStepIndex}
-          investigationHunch={investigationHunch}
+          investigationScenario={investigationScenario}
           lessonHref={lessonHref}
           progressValue={progressValue}
           storyBriefing={storyBriefing}
@@ -141,7 +131,6 @@ export function PlayerShell() {
             buttonLabel={buttonLabel}
             canNavigatePrev={canNavigatePrev}
             hasAnswer={hasAnswer}
-            isInvestigationScore={isInvestigationScore}
             isStaticStep={isStaticStep}
             phase={state.phase}
             storyStaticVariant={storyStaticVariant}

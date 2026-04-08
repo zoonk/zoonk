@@ -337,7 +337,6 @@ describe(validateAnswers, () => {
     const steps = [
       {
         content: {
-          explanations: [{ accuracy: "best", text: "A" }],
           scenario: "test",
           variant: "problem",
           visual: { columns: ["A"], kind: "table", rows: [["1"]] },
@@ -348,7 +347,7 @@ describe(validateAnswers, () => {
     ];
 
     const results = validateAnswers(steps, {
-      "10": { kind: "investigation", selectedExplanationIndex: 0, variant: "problem" },
+      "10": { kind: "investigation", variant: "problem" },
     });
 
     expect(results).toHaveLength(1);
@@ -359,7 +358,14 @@ describe(validateAnswers, () => {
     const steps = [
       {
         content: {
-          actions: [{ label: "Check logs", quality: "critical" }],
+          actions: [
+            {
+              finding: "Logs show memory climbing",
+              findingVisual: { columns: ["A"], kind: "table", rows: [["1"]] },
+              label: "Check logs",
+              quality: "critical",
+            },
+          ],
           variant: "action",
         },
         id: 11n,
@@ -370,7 +376,6 @@ describe(validateAnswers, () => {
     const results = validateAnswers(steps, {
       "11": {
         kind: "investigation",
-        readyForCall: false,
         selectedActionIndex: 0,
         variant: "action",
       },
@@ -378,82 +383,6 @@ describe(validateAnswers, () => {
 
     expect(results).toHaveLength(1);
     expect(results[0]?.isCorrect).toBe(true);
-  });
-
-  test("validates investigation evidence: best tier is correct", () => {
-    const steps = [
-      {
-        content: {
-          findings: [
-            {
-              interpretations: [
-                {
-                  best: { feedback: "Good", text: "Pattern" },
-                  dismissive: { feedback: "Bad", text: "Not relevant" },
-                  overclaims: { feedback: "Too much", text: "Proves it" },
-                },
-              ],
-              text: "Finding",
-              visual: { columns: ["A"], kind: "table", rows: [["1"]] },
-            },
-          ],
-          variant: "evidence",
-        },
-        id: 12n,
-        kind: "investigation",
-      },
-    ];
-
-    const results = validateAnswers(steps, {
-      "12": {
-        actionIndex: 0,
-        hunchIndex: 0,
-        kind: "investigation",
-        selectedTier: "best",
-        variant: "evidence",
-      },
-    });
-
-    expect(results).toHaveLength(1);
-    expect(results[0]?.isCorrect).toBe(true);
-  });
-
-  test("validates investigation evidence: dismissive tier is incorrect", () => {
-    const steps = [
-      {
-        content: {
-          findings: [
-            {
-              interpretations: [
-                {
-                  best: { feedback: "Good", text: "Pattern" },
-                  dismissive: { feedback: "Bad", text: "Not relevant" },
-                  overclaims: { feedback: "Too much", text: "Proves it" },
-                },
-              ],
-              text: "Finding",
-              visual: { columns: ["A"], kind: "table", rows: [["1"]] },
-            },
-          ],
-          variant: "evidence",
-        },
-        id: 13n,
-        kind: "investigation",
-      },
-    ];
-
-    const results = validateAnswers(steps, {
-      "13": {
-        actionIndex: 0,
-        hunchIndex: 0,
-        kind: "investigation",
-        selectedTier: "dismissive",
-        variant: "evidence",
-      },
-    });
-
-    expect(results).toHaveLength(1);
-    expect(results[0]?.isCorrect).toBe(false);
   });
 
   test("validates investigation call: best accuracy is correct", () => {

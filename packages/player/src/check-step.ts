@@ -5,8 +5,8 @@ import {
   type AnswerResult,
   checkArrangeWordsAnswer,
   checkFillBlankAnswer,
+  checkInvestigationAction,
   checkInvestigationCall,
-  checkInvestigationEvidence,
   checkMatchColumnsAnswer,
   checkMultipleChoiceAnswer,
   checkSelectImageAnswer,
@@ -135,9 +135,8 @@ function checkListeningStep(step: SerializedStep, answer: SelectedAnswer): Check
 /**
  * Checks an investigation answer based on the step variant.
  *
- * - Problem: always correct (ungraded hunch commitment)
- * - Action: always correct (quality tracked for scoring, not per-step)
- * - Evidence: checks if the selected interpretation tier is "best"
+ * - Problem: always correct (read-only step, no real answer)
+ * - Action: always correct but returns finding as feedback
  * - Call: checks if the selected explanation has "best" accuracy
  */
 function checkInvestigation(step: SerializedStep, answer: SelectedAnswer): CheckStepResult {
@@ -147,18 +146,13 @@ function checkInvestigation(step: SerializedStep, answer: SelectedAnswer): Check
 
   const content = parseStepContent("investigation", step.content);
 
-  if (content.variant === "problem" || content.variant === "action") {
+  if (content.variant === "problem") {
     return { result: { correctAnswer: null, feedback: null, isCorrect: true } };
   }
 
-  if (content.variant === "evidence" && answer.variant === "evidence") {
+  if (content.variant === "action" && answer.variant === "action") {
     return {
-      result: checkInvestigationEvidence(
-        content,
-        answer.actionIndex,
-        answer.hunchIndex,
-        answer.selectedTier,
-      ),
+      result: checkInvestigationAction(content, answer.selectedActionIndex),
     };
   }
 
