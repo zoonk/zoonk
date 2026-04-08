@@ -296,6 +296,34 @@ test.describe("Investigation Call Step", () => {
     await expect(page.getByText(new RegExp(`unusual pattern.*${uniqueId}`))).toBeVisible();
   });
 
+  test("selects an explanation via keyboard shortcut", async ({ page }) => {
+    const { url } = await createInvestigationActivity();
+
+    await page.goto(url);
+    await page.waitForLoadState("networkidle");
+
+    await page.getByRole("button", { name: /start investigation/i }).click();
+    // Experiment 1
+    await page.getByRole("radiogroup").getByRole("radio").first().click();
+    await page.getByRole("button", { name: /check/i }).click();
+    await page.getByRole("button", { name: /continue/i }).click();
+
+    // Experiment 2
+    await page.getByRole("radiogroup").getByRole("radio").first().click();
+    await page.getByRole("button", { name: /check/i }).click();
+    await page.getByRole("button", { name: /continue/i }).click();
+
+    // Experiment 3
+    await page.getByRole("radiogroup").getByRole("radio").first().click();
+    await page.getByRole("button", { name: /check/i }).click();
+    await page.getByRole("button", { name: /continue/i }).click();
+
+    // Press "1" to select the first explanation via keyboard
+    await page.keyboard.press("1");
+    const firstRadio = page.getByRole("radiogroup").getByRole("radio").first();
+    await expect(firstRadio).toBeChecked();
+  });
+
   test("shows per-explanation feedback on feedback screen after checking call", async ({
     page,
   }) => {
@@ -320,7 +348,7 @@ test.describe("Investigation Call Step", () => {
     await page.getByRole("button", { name: /check/i }).click();
     await page.getByRole("button", { name: /continue/i }).click();
 
-    await page.keyboard.press("1");
+    await page.getByRole("radio", { name: new RegExp(`Memory leak.*${uniqueId}`) }).click();
     await page.getByRole("button", { name: /check/i }).click();
 
     const feedbackScreen = page.getByRole("status").filter({ hasText: /memory leak/ });
@@ -360,7 +388,7 @@ test.describe("Full Investigation Flow", () => {
 
     // Step 5: Call - select final answer
     await expect(page.getByText(/what do you think happened/i)).toBeVisible();
-    await page.keyboard.press("1");
+    await page.getByRole("radio", { name: new RegExp(`Memory leak.*${uniqueId}`) }).click();
     await page.getByRole("button", { name: /check/i }).click();
 
     // Debrief visible
