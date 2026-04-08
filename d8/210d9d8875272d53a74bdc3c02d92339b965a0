@@ -1,0 +1,67 @@
+apps/api/src/workflows/activity-generation/steps/save-investigation-activity-step.ts
+  b65166e45d78c402 13-16,23-24,34,95
+packages/ai/src/tasks/activities/core/activity-investigation-accuracy.prompt.md
+  b65166e45d78c402 1,5,18,20-23,31,33-40,46-55
+apps/api/src/workflows/activity-generation/steps/generate-investigation-accuracy-step.test.ts
+  b65166e45d78c402 40-44
+packages/player/src/compute-score.test.ts
+  b65166e45d78c402 362-363
+apps/main/src/lib/generation/activity-generation-phase-weights.ts
+  b65166e45d78c402 152-154,157
+packages/ai/src/tasks/activities/core/activity-investigation-findings.ts
+  b65166e45d78c402 48
+packages/core/src/steps/contract/content.test.ts
+  b65166e45d78c402 413,416-418,430
+packages/ai/src/tasks/activities/core/activity-investigation-accuracy.ts
+  b65166e45d78c402 16-20,24-31
+apps/api/src/workflows/activity-generation/kinds/investigation-workflow.test.ts
+  b65166e45d78c402 30,32-36,238,268-270
+packages/core/src/steps/contract/investigation.ts
+  b65166e45d78c402 10,55-57
+apps/main/src/lib/generation/phase-kind-steps/investigation.ts
+  b65166e45d78c402 8-9,11-12
+apps/main/src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
+  b65166e45d78c402 19
+packages/player/src/investigation.test.ts
+  b65166e45d78c402 48-50
+packages/ai/src/tasks/activities/core/activity-investigation-actions.ts
+  b65166e45d78c402 42
+apps/api/src/workflows/activity-generation/steps/save-investigation-activity-step.test.ts
+  b65166e45d78c402 33-36,122,124-126
+packages/player/src/check-step.test.ts
+  b65166e45d78c402 522,526-528,530-533,535,548,551,555-557,559-562,564,577
+packages/player/src/validate-answers.test.ts
+  b65166e45d78c402 391-392,414-415
+apps/main/e2e/investigation-step.test.ts
+  b65166e45d78c402 12-14,16-19,21-24,26,299,301
+apps/api/src/workflows/activity-generation/steps/generate-investigation-findings-step.test.ts
+  b65166e45d78c402 40-44
+apps/api/src/workflows/activity-generation/kinds/investigation-workflow.ts
+  b65166e45d78c402 11,14-15
+packages/player/src/player-selectors.test.ts
+  b65166e45d78c402 436,438
+packages/player/src/check-answer.ts
+  b65166e45d78c402 149-151,160,165
+apps/api/src/workflows/activity-generation/steps/generate-investigation-actions-step.test.ts
+  b65166e45d78c402 40-44
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.6",
+  "base_commit_sha": "d8210d9d8875272d53a74bdc3c02d92339b965a0",
+  "prompts": {
+    "b65166e45d78c402": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "e3493ff4-ec88-4fe3-a044-59d1e2054d93",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 131,
+      "total_deletions": 192,
+      "accepted_lines": 155,
+      "overriden_lines": 10
+    }
+  }
+}
