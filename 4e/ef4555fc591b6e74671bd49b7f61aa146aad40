@@ -1,0 +1,23 @@
+packages/player/src/prepare-activity-data.ts
+  9e9f14cd3e88f122 160,176-179
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.6",
+  "base_commit_sha": "4eef4555fc591b6e74671bd49b7f61aa146aad40",
+  "prompts": {
+    "9e9f14cd3e88f122": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "995ff36e-693f-44be-9cca-de2fc4d91d54",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 5,
+      "total_deletions": 1,
+      "accepted_lines": 5,
+      "overriden_lines": 0
+    }
+  }
+}
