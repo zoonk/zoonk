@@ -15,10 +15,6 @@ vi.mock("../use-word-audio", () => ({
   useWordAudio: () => ({ pause: vi.fn(), play: vi.fn() }),
 }));
 
-vi.mock("./result-announcement", () => ({
-  ResultAnnouncement: () => null,
-}));
-
 vi.mock("./step-layouts", () => ({
   InteractiveStepLayout: ({ children }: { children: React.ReactNode }) => <div>{children}</div>,
 }));

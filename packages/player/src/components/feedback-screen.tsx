@@ -9,7 +9,6 @@ import { getFeedbackRomanization } from "./_utils/feedback-romanization";
 import { CorrectAnswerBlock, IncorrectAnswerBlock } from "./feedback-answer-blocks";
 import { InvestigationCallFeedbackContent } from "./investigation-call-feedback";
 import { PlayAudioButton } from "./play-audio-button";
-import { ResultAnnouncement } from "./result-announcement";
 import { RomanizationText } from "./romanization-text";
 import { StoryFeedbackContent } from "./story-feedback-content";
 
@@ -119,8 +118,6 @@ function StandardFeedbackContent({ result, step }: { result: StepResult; step?: 
       {audioUrl && <PlayAudioButton audioUrl={audioUrl} preload={false} variant="text" />}
 
       {feedback && <FeedbackMessage>{feedback}</FeedbackMessage>}
-
-      <ResultAnnouncement verdict={isCorrect ? "correct" : "incorrect"} />
     </FeedbackScreen>
   );
 }

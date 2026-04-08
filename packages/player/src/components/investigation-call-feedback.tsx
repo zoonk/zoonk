@@ -3,7 +3,6 @@
 import { parseStepContent } from "@zoonk/core/steps/contract/content";
 import { type StepResult } from "../player-reducer";
 import { type SerializedStep } from "../prepare-activity-data";
-import { ResultAnnouncement } from "./result-announcement";
 import { type Verdict, VerdictLabel } from "./verdict-label";
 
 /**
@@ -71,8 +70,6 @@ export function InvestigationCallFeedbackContent({
       <VerdictLabel verdict={verdict} />
 
       {feedback && <p className="text-foreground text-lg leading-relaxed">{feedback}</p>}
-
-      <ResultAnnouncement verdict={verdict} />
     </div>
   );
 }

@@ -14,10 +14,10 @@ const VERDICT_CONFIG: Record<Verdict, { colorClass: string; icon: typeof CircleC
 /**
  * Returns the user-facing label for a verdict.
  *
- * Centralizes verdict text so VerdictLabel and ResultAnnouncement
- * don't duplicate translation strings.
+ * Centralizes verdict text so it can be reused across
+ * components that display feedback results.
  */
-export function useVerdictText(verdict: Verdict): string {
+function useVerdictText(verdict: Verdict): string {
   const t = useExtracted();
 
   if (verdict === "correct") {
