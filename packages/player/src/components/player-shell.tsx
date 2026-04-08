@@ -9,6 +9,7 @@ import {
   getCurrentStep,
   getHasAnswer,
   getInvestigationScenarioData,
+  getIsInvestigationProblem,
   getIsStaticStep,
   getIsStoryActivity,
   getProgressValue,
@@ -28,17 +29,17 @@ import { StoryMetricsBar } from "./story-metrics-bar";
 
 function BottomBarContent({
   actions,
-  buttonLabel,
   canNavigatePrev,
   hasAnswer,
+  isInvestigationProblem,
   isStaticStep,
   phase,
   storyStaticVariant,
 }: {
   actions: PlayerActions;
-  buttonLabel: string;
   canNavigatePrev: boolean;
   hasAnswer: boolean;
+  isInvestigationProblem: boolean;
   isStaticStep: boolean;
   phase: PlayerPhase;
   storyStaticVariant: StoryStaticVariant | null;
@@ -67,18 +68,28 @@ function BottomBarContent({
     );
   }
 
+  /**
+   * The investigation problem step shows "Investigate" because the
+   * learner is reading a scenario — "Check" would imply there's an
+   * answer to validate.
+   */
+  if (isInvestigationProblem) {
+    return (
+      <PlayerBottomBarAction onClick={actions.check}>{t("Investigate")}</PlayerBottomBarAction>
+    );
+  }
+
   return (
     <PlayerBottomBarAction
       disabled={phase === "playing" && !hasAnswer}
       onClick={phase === "feedback" ? actions.continue : actions.check}
     >
-      {buttonLabel}
+      {phase === "feedback" ? t("Continue") : t("Check")}
     </PlayerBottomBarAction>
   );
 }
 
 export function PlayerShell() {
-  const t = useExtracted();
   const { actions, state } = usePlayerRuntime();
   const { lessonHref } = usePlayerNavigation();
 
@@ -102,9 +113,9 @@ export function PlayerShell() {
   const contextRecall =
     getStoryBriefingText(state) ?? getInvestigationScenarioData(state)?.scenario ?? null;
 
+  const isInvestigationProblem = getIsInvestigationProblem(state);
   const showChrome = state.phase === "playing" || state.phase === "feedback";
   const showMetricsBar = currentStep?.kind === "story" && showChrome;
-  const buttonLabel = state.phase === "feedback" ? t("Continue") : t("Check");
 
   return (
     <main className="flex h-dvh flex-col overflow-hidden">
@@ -128,9 +139,9 @@ export function PlayerShell() {
         <PlayerBottomBar className={isStaticStep ? "lg:hidden" : undefined}>
           <BottomBarContent
             actions={actions}
-            buttonLabel={buttonLabel}
             canNavigatePrev={canNavigatePrev}
             hasAnswer={hasAnswer}
+            isInvestigationProblem={isInvestigationProblem}
             isStaticStep={isStaticStep}
             phase={state.phase}
             storyStaticVariant={storyStaticVariant}

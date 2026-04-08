@@ -57,6 +57,24 @@ export function getIsStaticStep(state: PlayerState): boolean {
   return isStaticNavigationStep(getCurrentStep(state));
 }
 
+/**
+ * Whether the current step is an investigation problem step.
+ *
+ * The problem step is read-only (the learner just reads the scenario),
+ * so the bottom bar should show "Investigate" instead of "Check"
+ * to describe the action the learner is about to take.
+ */
+export function getIsInvestigationProblem(state: PlayerState): boolean {
+  const step = getCurrentStep(state);
+
+  if (!step || step.kind !== "investigation") {
+    return false;
+  }
+
+  const content = parseStepContent("investigation", step.content);
+  return content.variant === "problem";
+}
+
 /** Returns the progress percentage (0–100), snapping to 100 when completed. */
 export function getProgressValue(state: PlayerState): number {
   if (state.phase === "completed") {

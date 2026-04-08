@@ -249,6 +249,7 @@ msgid "What do you check?"
 msgstr "O que você verifica?"
 
 #: ../../packages/player/src/components/investigation-action-variant.tsx
+#: ../../packages/player/src/components/player-shell.tsx
 msgctxt "tXxpcp"
 msgid "Investigate"
 msgstr "Investigar"

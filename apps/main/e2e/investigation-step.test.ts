@@ -150,7 +150,7 @@ test.describe("Investigation Problem Step", () => {
     await page.goto(url);
     await page.waitForLoadState("networkidle");
 
-    await expect(page.getByRole("button", { name: /check/i })).toBeEnabled();
+    await expect(page.getByRole("button", { name: /investigate/i })).toBeEnabled();
   });
 });
 
@@ -161,7 +161,7 @@ test.describe("Investigation Action Step", () => {
     await page.goto(url);
     await page.waitForLoadState("networkidle");
 
-    await page.getByRole("button", { name: /check/i }).click();
+    await page.getByRole("button", { name: /investigate/i }).click();
 
     await expect(page.getByText(/investigate/i)).toBeVisible();
     await expect(page.getByText(/what do you check/i)).toBeVisible();
@@ -176,7 +176,7 @@ test.describe("Investigation Action Step", () => {
     await page.goto(url);
     await page.waitForLoadState("networkidle");
 
-    await page.getByRole("button", { name: /check/i }).click();
+    await page.getByRole("button", { name: /investigate/i }).click();
 
     await page.getByRole("radio", { name: new RegExp(`Check server logs ${uniqueId}`) }).click();
     await page.getByRole("button", { name: /check/i }).click();
@@ -196,7 +196,7 @@ test.describe("Investigation Action Loop", () => {
     await page.waitForLoadState("networkidle");
 
     // Problem -> action
-    await page.getByRole("button", { name: /check/i }).click();
+    await page.getByRole("button", { name: /investigate/i }).click();
 
     // Select and check first action
     await page.getByRole("radio", { name: new RegExp(`Check server logs ${uniqueId}`) }).click();
@@ -223,11 +223,11 @@ test.describe("Investigation Scenario Popover", () => {
     await page.goto(url);
     await page.waitForLoadState("networkidle");
 
-    await expect(page.getByRole("button", { name: /the case/i })).not.toBeVisible();
+    await expect(page.getByRole("button", { name: /context/i })).not.toBeVisible();
 
-    await page.getByRole("button", { name: /check/i }).click();
+    await page.getByRole("button", { name: /investigate/i }).click();
 
-    await expect(page.getByRole("button", { name: /the case/i })).toBeVisible();
+    await expect(page.getByRole("button", { name: /context/i })).toBeVisible();
   });
 });
 
@@ -238,7 +238,7 @@ test.describe("Investigation Call Step", () => {
     await page.goto(url);
     await page.waitForLoadState("networkidle");
 
-    await page.getByRole("button", { name: /check/i }).click();
+    await page.getByRole("button", { name: /investigate/i }).click();
     // Experiment 1
     await page
       .getByRole("radiogroup", { name: /answer options/i })
@@ -277,7 +277,7 @@ test.describe("Investigation Call Step", () => {
     await page.goto(url);
     await page.waitForLoadState("networkidle");
 
-    await page.getByRole("button", { name: /check/i }).click();
+    await page.getByRole("button", { name: /investigate/i }).click();
     // Experiment 1
     await page
       .getByRole("radiogroup", { name: /answer options/i })
@@ -321,9 +321,9 @@ test.describe("Full Investigation Flow", () => {
     await page.goto(url);
     await page.waitForLoadState("networkidle");
 
-    // Step 1: Problem - read-only, check advances to action
+    // Step 1: Problem - read-only, "Investigate" advances to action
     await expect(page.getByText(/the case/i)).toBeVisible();
-    await page.getByRole("button", { name: /check/i }).click();
+    await page.getByRole("button", { name: /investigate/i }).click();
 
     // Steps 2-4: Three experiments (action -> evidence feedback -> continue)
     // Experiment 1
