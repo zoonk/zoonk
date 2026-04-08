@@ -85,11 +85,9 @@ export function PlayerShell() {
   const canNavigatePrev = getCanNavigatePrev(state);
   const currentStep = getCurrentStep(state);
   const hasAnswer = getHasAnswer(state);
-  const investigationScenario = getInvestigationScenarioData(state);
   const isStaticStep = getIsStaticStep(state);
   const isStoryActivity = getIsStoryActivity(state);
   const progressValue = getProgressValue(state);
-  const storyBriefing = getStoryBriefingText(state);
   const storyMetrics = getStoryMetrics(state);
   const storyStaticVariant = getStoryStaticVariant(state);
   const upcomingImages = getUpcomingImages(state);
@@ -101,6 +99,9 @@ export function PlayerShell() {
     storyStaticVariant,
   });
 
+  const contextRecall =
+    getStoryBriefingText(state) ?? getInvestigationScenarioData(state)?.scenario ?? null;
+
   const showChrome = state.phase === "playing" || state.phase === "feedback";
   const showMetricsBar = currentStep?.kind === "story" && showChrome;
   const buttonLabel = state.phase === "feedback" ? t("Continue") : t("Check");
@@ -109,11 +110,10 @@ export function PlayerShell() {
     <main className="flex h-dvh flex-col overflow-hidden">
       {showChrome && (
         <InPlayStickyHeader
+          contextRecall={contextRecall}
           currentStepIndex={state.currentStepIndex}
-          investigationScenario={investigationScenario}
           lessonHref={lessonHref}
           progressValue={progressValue}
-          storyBriefing={storyBriefing}
           totalSteps={state.steps.length}
         />
       )}

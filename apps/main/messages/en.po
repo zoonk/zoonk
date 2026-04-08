@@ -168,6 +168,11 @@ msgctxt "t2VOpl"
 msgid "Chapter Complete"
 msgstr "Chapter Complete"
 
+#: ../../packages/player/src/components/context-recall-popover.tsx
+msgctxt "V2qutI"
+msgid "Context"
+msgstr "Context"
+
 #: ../../packages/player/src/components/feedback-answer-blocks.tsx
 msgctxt "3nOd8f"
 msgid "Your answer:"
@@ -294,7 +299,6 @@ msgid "Your evidence"
 msgstr "Your evidence"
 
 #: ../../packages/player/src/components/investigation-problem-variant.tsx
-#: ../../packages/player/src/components/investigation-scenario-popover.tsx
 msgctxt "4Xsz3M"
 msgid "The Case"
 msgstr "The Case"
@@ -403,11 +407,6 @@ msgstr "Sort items"
 msgctxt "VA8c/A"
 msgid "Correct order:"
 msgstr "Correct order:"
-
-#: ../../packages/player/src/components/story-briefing-popover.tsx
-msgctxt "XyeasA"
-msgid "Briefing"
-msgstr "Briefing"
 
 #: ../../packages/player/src/components/story-feedback-content.tsx
 msgctxt "jSeUY4"

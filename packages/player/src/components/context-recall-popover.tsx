@@ -7,29 +7,29 @@ import {
   PopoverDescription,
   PopoverTrigger,
 } from "@zoonk/ui/components/popover";
-import { FileTextIcon } from "lucide-react";
+import { BookOpenTextIcon } from "lucide-react";
 import { useExtracted } from "next-intl";
 
 /**
  * A small icon button in the sticky header that opens a popover with
- * the investigation scenario.
+ * the activity's initial context (story briefing, investigation scenario, etc.).
  *
- * Shown during action and call steps so the learner can recall the
- * case without navigating back to the problem step. Uses the same
- * placement pattern as the story briefing popover.
+ * Lets learners recall the premise mid-activity without navigating back.
+ * Placed on the right side of the header, symmetrical with the close
+ * button on the left.
  */
-export function InvestigationScenarioPopover({ scenario }: { scenario: string }) {
+export function ContextRecallPopover({ content }: { content: string }) {
   const t = useExtracted();
 
   return (
     <Popover>
       <PopoverTrigger className={buttonVariants({ size: "icon", variant: "ghost" })}>
-        <FileTextIcon className="size-4" />
-        <span className="sr-only">{t("The Case")}</span>
+        <BookOpenTextIcon className="size-4" />
+        <span className="sr-only">{t("Context")}</span>
       </PopoverTrigger>
 
       <PopoverContent align="end" side="bottom" sideOffset={8}>
-        <PopoverDescription>{scenario}</PopoverDescription>
+        <PopoverDescription>{content}</PopoverDescription>
       </PopoverContent>
     </Popover>
   );

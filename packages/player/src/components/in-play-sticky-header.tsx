@@ -1,24 +1,21 @@
 "use client";
 
 import { type PlayerRoute } from "../player-context";
-import { InvestigationScenarioPopover } from "./investigation-scenario-popover";
+import { ContextRecallPopover } from "./context-recall-popover";
 import { PlayerCloseLink, PlayerHeader, PlayerStepFraction } from "./player-header";
 import { PlayerProgressBar } from "./player-progress-bar";
-import { StoryBriefingPopover } from "./story-briefing-popover";
 
 export function InPlayStickyHeader({
+  contextRecall,
   currentStepIndex,
-  investigationScenario,
   lessonHref,
   progressValue,
-  storyBriefing,
   totalSteps,
 }: {
+  contextRecall: string | null;
   currentStepIndex: number;
-  investigationScenario: { scenario: string } | null;
   lessonHref: PlayerRoute;
   progressValue: number;
-  storyBriefing: string | null;
   totalSteps: number;
 }) {
   return (
@@ -34,10 +31,7 @@ export function InPlayStickyHeader({
           </div>
         </div>
 
-        {storyBriefing && <StoryBriefingPopover intro={storyBriefing} />}
-        {investigationScenario && (
-          <InvestigationScenarioPopover scenario={investigationScenario.scenario} />
-        )}
+        {contextRecall && <ContextRecallPopover content={contextRecall} />}
       </PlayerHeader>
 
       <PlayerProgressBar value={progressValue} />

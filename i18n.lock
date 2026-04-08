@@ -222,6 +222,7 @@ checksums:
     Lesson%20Complete/singular: c2353c93f81c6ff8aab8825a73bcbb6a
     correct/singular: 0c2df4a764cea47295c0b550477e8e29
     Chapter%20Complete/singular: 93c49bef3b2cfd1305e910cd79381afd
+    Context/singular: 71588d4b2baccf54e6dc6956717b960e
     Your%20answer%3A/singular: 663abc310ccb6229c6325f8c857adce2
     Correct%20answer%3A/singular: a8b8cc0d5d0059cbfeee0ad4721540d5
     Translate%3A/singular: 0a44ccd6c0e1dd4545fd00d059eaf0a5
@@ -248,8 +249,6 @@ checksums:
     Your%20Call/singular: 0b986d5f607d615a4e4d54a1ecfc2af3
     Your%20evidence/singular: 91e5c84792d829926d15d7e33e25fd15
     The%20Case/singular: da25531981c47e8d30f64ac4e5f954d8
-    View%20full%20evidence/singular: 62308a5554f0320685aeb833d21ae0ef
-    View%20full/singular: 17a1ecf220d4a7cc87698ee8d786945f
     Translate%20this%20sentence%3A/singular: f69b2eec827b3a74bafca50e9058716f
     What%20do%20you%20hear%3F/singular: 9527d094d65c550a40108673bc67744f
     All%20pairs%20matched.%20Press%20Check%20to%20continue./singular: 0663e33ba7db53b298c5f50a2f3c7ae8
@@ -269,7 +268,6 @@ checksums:
     Drag%20items%20into%20the%20correct%20order/singular: 8ccab82ee3ba645ac23da4ca14a0dd2a
     Sort%20items/singular: 3b1072a596203b5acdc5718d38161392
     Correct%20order%3A/singular: df3f446653ec8cde9c29d8d5912636ef
-    Briefing/singular: 557fdc15cf73ec0d6d9eb4041340498a
     Metric%20changes/singular: b47eb6ffcf56070345e7783cb048b563
     Current%20status/singular: b9c587d6cd7ee919b59e75066fa4675f
     Final%20status/singular: 62c3befb232a9d290e74b84d6ddbf22c
