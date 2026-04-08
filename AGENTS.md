@@ -146,6 +146,7 @@ page.getByLabel(/email/i);
 
 - Use `getExtracted` (server) or `useExtracted` (client) for translations, don't use `getTranslations` or `useTranslations`
 - Pass string literals, never variables or keys (e.g., `getExtracted("Hello world")`, not `getExtracted(greeting)` nor `getExtracted("greeting")`)
+- **NEVER pass `t` / `getExtracted` / `useExtracted` as a function argument, prop, or store it in a variable to call later.** Always call `t("literal")` directly in the component. If you need translated text in a helper, use conditionals in the component: `verdict === "correct" ? t("Correct!") : t("Not quite")`
 - Translation strings are extracted to PO files automatically when running `pnpm --filter {app} build`
 - Never edit `i18n.lock` manually
 - Manual translation should be done only in PO entries with empty `msgstr`

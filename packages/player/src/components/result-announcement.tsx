@@ -1,13 +1,19 @@
 "use client";
 
-import { useExtracted } from "next-intl";
+import { type Verdict, useVerdictText } from "./verdict-label";
 
-export function ResultAnnouncement({ isCorrect }: { isCorrect: boolean }) {
-  const t = useExtracted();
+/**
+ * Screen-reader announcement for answer feedback.
+ *
+ * Reuses the same verdict text as VerdictLabel so visual
+ * and auditory feedback are consistent.
+ */
+export function ResultAnnouncement({ verdict }: { verdict: Verdict }) {
+  const text = useVerdictText(verdict);
 
   return (
     <div aria-live="polite" className="sr-only" role="status">
-      {isCorrect ? t("Correct") : t("Incorrect")}
+      {text}
     </div>
   );
 }

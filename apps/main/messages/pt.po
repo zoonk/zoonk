@@ -12,7 +12,6 @@ msgstr "Sua resposta"
 
 #: ../../packages/player/src/components/arrange-words-answer-area.tsx
 #: ../../packages/player/src/components/fill-blank-step.tsx
-#: ../../packages/player/src/components/result-announcement.tsx
 #: ../../packages/player/src/components/sort-order-step.tsx
 msgctxt "6NoIUl"
 msgid "Correct"
@@ -36,7 +35,6 @@ msgstr "Posição {position}: {item}. Toque para remover."
 
 #: ../../packages/player/src/components/arrange-words-answer-area.tsx
 #: ../../packages/player/src/components/fill-blank-step.tsx
-#: ../../packages/player/src/components/result-announcement.tsx
 #: ../../packages/player/src/components/sort-order-step.tsx
 msgctxt "Ypr9T5"
 msgid "Incorrect"
@@ -208,19 +206,9 @@ msgid "Correct answer: {answer}"
 msgstr "Resposta correta: {answer}"
 
 #: ../../packages/player/src/components/inline-feedback.tsx
-msgctxt "++l7ni"
-msgid "Not quite"
-msgstr "Não exatamente"
-
-#: ../../packages/player/src/components/inline-feedback.tsx
 msgctxt "HvLGEN"
 msgid "Answer feedback"
 msgstr "Resultado da resposta"
-
-#: ../../packages/player/src/components/inline-feedback.tsx
-msgctxt "xmF49T"
-msgid "Correct!"
-msgstr "Correto!"
 
 #: ../../packages/player/src/components/investigation-action-variant.tsx
 msgctxt "5jvK4n"
@@ -261,14 +249,9 @@ msgid "Strong lead"
 msgstr "Indício forte"
 
 #: ../../packages/player/src/components/investigation-call-variant.tsx
-msgctxt "++IwqM"
-msgid "You checked"
-msgstr "Você verificou"
-
-#: ../../packages/player/src/components/investigation-call-variant.tsx
-msgctxt "+rWK6b"
-msgid "Here's what actually happened"
-msgstr "Aqui está o que realmente aconteceu"
+msgctxt "6g7+6N"
+msgid "Evidence"
+msgstr "Evidências"
 
 #: ../../packages/player/src/components/investigation-call-variant.tsx
 msgctxt "IE/I2y"
@@ -276,14 +259,9 @@ msgid "What do you think happened?"
 msgstr "O que você acha que aconteceu?"
 
 #: ../../packages/player/src/components/investigation-call-variant.tsx
-msgctxt "XwgFvQ"
-msgid "Your Call"
-msgstr "Sua decisão"
-
-#: ../../packages/player/src/components/investigation-call-variant.tsx
-msgctxt "yW6KlX"
-msgid "Your evidence"
-msgstr "Sua evidência"
+msgctxt "LmlOva"
+msgid "Review evidence"
+msgstr "Revisar evidências"
 
 #: ../../packages/player/src/components/investigation-problem-variant.tsx
 msgctxt "4Xsz3M"
@@ -425,6 +403,21 @@ msgstr "Status final"
 msgctxt "MxLxkr"
 msgid "Translate this word:"
 msgstr "Traduza esta palavra:"
+
+#: ../../packages/player/src/components/verdict-label.tsx
+msgctxt "++l7ni"
+msgid "Not quite"
+msgstr "Não exatamente"
+
+#: ../../packages/player/src/components/verdict-label.tsx
+msgctxt "MxcfM1"
+msgid "Good, but..."
+msgstr "Boa, mas..."
+
+#: ../../packages/player/src/components/verdict-label.tsx
+msgctxt "xmF49T"
+msgid "Correct!"
+msgstr "Correto!"
 
 #: ../../packages/player/src/components/visual-step.tsx
 msgctxt "9bIjWj"

@@ -7,6 +7,7 @@ import { type SerializedStep } from "../prepare-activity-data";
 import { useReplaceName } from "../user-name-context";
 import { getFeedbackRomanization } from "./_utils/feedback-romanization";
 import { CorrectAnswerBlock, IncorrectAnswerBlock } from "./feedback-answer-blocks";
+import { InvestigationCallFeedbackContent } from "./investigation-call-feedback";
 import { PlayAudioButton } from "./play-audio-button";
 import { ResultAnnouncement } from "./result-announcement";
 import { RomanizationText } from "./romanization-text";
@@ -119,7 +120,7 @@ function StandardFeedbackContent({ result, step }: { result: StepResult; step?: 
 
       {feedback && <FeedbackMessage>{feedback}</FeedbackMessage>}
 
-      <ResultAnnouncement isCorrect={isCorrect} />
+      <ResultAnnouncement verdict={isCorrect ? "correct" : "incorrect"} />
     </FeedbackScreen>
   );
 }
@@ -133,6 +134,10 @@ export function FeedbackScreenContent({
 }) {
   if (result.answer?.kind === "story") {
     return <StoryFeedbackContent result={result} step={step} />;
+  }
+
+  if (result.answer?.kind === "investigation" && result.answer.variant === "call") {
+    return <InvestigationCallFeedbackContent result={result} step={step} />;
   }
 
   return <StandardFeedbackContent result={result} step={step} />;

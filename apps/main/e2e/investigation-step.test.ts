@@ -231,7 +231,7 @@ test.describe("Investigation Scenario Popover", () => {
 });
 
 test.describe("Investigation Call Step", () => {
-  test("renders explanations and evidence summary", async ({ page }) => {
+  test("renders explanations and evidence drawer trigger", async ({ page }) => {
     const { url } = await createInvestigationActivity();
 
     await page.goto(url);
@@ -253,12 +253,39 @@ test.describe("Investigation Call Step", () => {
     await page.getByRole("button", { name: /check/i }).click();
     await page.getByRole("button", { name: /continue/i }).click();
 
-    await expect(page.getByText(/your call/i)).toBeVisible();
     await expect(page.getByText(/what do you think happened/i)).toBeVisible();
-    await expect(page.getByText(/your evidence/i)).toBeVisible();
+    await expect(page.getByRole("button", { name: /review evidence/i })).toBeVisible();
   });
 
-  test("shows debrief after checking call", async ({ page }) => {
+  test("opens evidence drawer with gathered findings", async ({ page }) => {
+    const { uniqueId, url } = await createInvestigationActivity();
+
+    await page.goto(url);
+    await page.waitForLoadState("networkidle");
+
+    await page.getByRole("button", { name: /start investigation/i }).click();
+    // Experiment 1: pick a specific action to get a predictable finding
+    await page.getByRole("radio", { name: new RegExp(`Check server logs ${uniqueId}`) }).click();
+    await page.getByRole("button", { name: /check/i }).click();
+    await page.getByRole("button", { name: /continue/i }).click();
+
+    // Experiment 2
+    await page.getByRole("radiogroup").getByRole("radio").first().click();
+    await page.getByRole("button", { name: /check/i }).click();
+    await page.getByRole("button", { name: /continue/i }).click();
+
+    // Experiment 3
+    await page.getByRole("radiogroup").getByRole("radio").first().click();
+    await page.getByRole("button", { name: /check/i }).click();
+    await page.getByRole("button", { name: /continue/i }).click();
+
+    await page.getByRole("button", { name: /review evidence/i }).click();
+
+    await expect(page.getByRole("heading", { name: /evidence/i })).toBeVisible();
+    await expect(page.getByText(new RegExp(`unusual pattern.*${uniqueId}`))).toBeVisible();
+  });
+
+  test("shows debrief on feedback screen after checking call", async ({ page }) => {
     const { uniqueId, url } = await createInvestigationActivity();
 
     await page.goto(url);
@@ -283,11 +310,11 @@ test.describe("Investigation Call Step", () => {
     await page.keyboard.press("1");
     await page.getByRole("button", { name: /check/i }).click();
 
-    await expect(page.getByText(/here's what actually happened/i)).toBeVisible();
+    const feedbackScreen = page.getByRole("status").filter({ hasText: /memory leak/ });
+    await expect(feedbackScreen.getByText(/correct!/i)).toBeVisible();
     await expect(
-      page.getByText(new RegExp(`memory leak introduced in v2.2 ${uniqueId}`)),
+      feedbackScreen.getByText(new RegExp(`memory leak introduced in v2.2 ${uniqueId}`)),
     ).toBeVisible();
-    await expect(page.getByText(/you checked/i)).toBeVisible();
   });
 });
 
@@ -319,7 +346,7 @@ test.describe("Full Investigation Flow", () => {
     await page.getByRole("button", { name: /continue/i }).click();
 
     // Step 5: Call - select final answer
-    await expect(page.getByText(/your call/i)).toBeVisible();
+    await expect(page.getByText(/what do you think happened/i)).toBeVisible();
     await page.keyboard.press("1");
     await page.getByRole("button", { name: /check/i }).click();
 

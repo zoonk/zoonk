@@ -1,10 +1,10 @@
 "use client";
 
-import { CircleCheck, CircleX } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type StepResult } from "../player-reducer";
 import { useReplaceName } from "../user-name-context";
 import { ResultAnnouncement } from "./result-announcement";
+import { VerdictLabel } from "./verdict-label";
 
 export function InlineFeedback({
   children,
@@ -20,25 +20,13 @@ export function InlineFeedback({
 
   return (
     <div aria-label={t("Answer feedback")} className="flex flex-col gap-3" role="region">
-      <div className="flex items-center gap-1.5 text-sm font-medium">
-        {isCorrect ? (
-          <>
-            <CircleCheck aria-hidden="true" className="text-success size-4" />
-            <span className="text-success">{t("Correct!")}</span>
-          </>
-        ) : (
-          <>
-            <CircleX aria-hidden="true" className="text-destructive size-4" />
-            <span className="text-destructive">{t("Not quite")}</span>
-          </>
-        )}
-      </div>
+      <VerdictLabel verdict={isCorrect ? "correct" : "incorrect"} />
 
       {feedback && <p className="text-muted-foreground text-sm">{feedback}</p>}
 
       {children}
 
-      <ResultAnnouncement isCorrect={isCorrect} />
+      <ResultAnnouncement verdict={isCorrect ? "correct" : "incorrect"} />
     </div>
   );
 }

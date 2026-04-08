@@ -5,7 +5,15 @@ import {
   parseStepContent,
 } from "@zoonk/core/steps/contract/content";
 import { Badge } from "@zoonk/ui/components/badge";
-import { Separator } from "@zoonk/ui/components/separator";
+import { Button } from "@zoonk/ui/components/button";
+import {
+  Drawer,
+  DrawerContent,
+  DrawerHeader,
+  DrawerPopup,
+  DrawerTitle,
+  DrawerTrigger,
+} from "@zoonk/ui/components/drawer";
 import { useExtracted } from "next-intl";
 import { getInvestigationStepByVariant } from "../investigation";
 import { usePlayerRuntime } from "../player-context";
@@ -14,7 +22,6 @@ import { type SerializedStep } from "../prepare-activity-data";
 import { useOptionKeyboard } from "../use-option-keyboard";
 import { OptionCard } from "./option-card";
 import { QuestionText } from "./question-text";
-import { SectionLabel } from "./section-label";
 import { InteractiveStepLayout } from "./step-layouts";
 
 type CallContent = Extract<InvestigationStepContent, { variant: "call" }>;
@@ -105,11 +112,24 @@ function useGatheredEvidence(): GatheredEvidence[] {
   });
 }
 
+function EvidenceItem({ item }: { item: GatheredEvidence }) {
+  return (
+    <div className="flex flex-col gap-1">
+      <div className="flex items-start gap-2">
+        <p className="text-sm font-medium">{item.label}</p>
+        <QualityBadge quality={item.quality} />
+      </div>
+
+      <p className="text-muted-foreground text-sm leading-relaxed">{item.finding}</p>
+    </div>
+  );
+}
+
 /**
- * Compact evidence summary shown before the learner makes their call.
- * Lists each gathered finding with its action label and quality indicator.
+ * Bottom-sheet drawer showing the evidence gathered during investigation.
+ * Players can swipe to dismiss or tap the backdrop to close.
  */
-function EvidenceSummary({ evidence }: { evidence: GatheredEvidence[] }) {
+function EvidenceDrawer({ evidence }: { evidence: GatheredEvidence[] }) {
   const t = useExtracted();
 
   if (evidence.length === 0) {
@@ -117,72 +137,37 @@ function EvidenceSummary({ evidence }: { evidence: GatheredEvidence[] }) {
   }
 
   return (
-    <div className="flex flex-col gap-4">
-      <SectionLabel>{t("Your evidence")}</SectionLabel>
+    <Drawer>
+      <DrawerTrigger
+        render={
+          <Button className="self-start" variant="outline" size="sm">
+            {t("Review evidence")}
+          </Button>
+        }
+      />
 
-      <div className="flex flex-col gap-5">
-        {evidence.map((item) => (
-          <div className="flex flex-col gap-1" key={item.label}>
-            <div className="flex items-center gap-2">
-              <p className="text-sm font-medium">{item.label}</p>
-              <QualityBadge quality={item.quality} />
-            </div>
+      <DrawerPopup>
+        <DrawerHeader>
+          <DrawerTitle>{t("Evidence")}</DrawerTitle>
+        </DrawerHeader>
 
-            <p className="text-muted-foreground text-sm leading-relaxed">{item.finding}</p>
+        <DrawerContent>
+          <div className="flex flex-col gap-5">
+            {evidence.map((item) => (
+              <EvidenceItem item={item} key={item.label} />
+            ))}
           </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-/**
- * Debrief section shown after the call step is checked.
- * Displays the full explanation reveal and a summary of which actions
- * the learner chose during investigation.
- */
-function CallDebrief({ evidence, result }: { evidence: GatheredEvidence[]; result: StepResult }) {
-  const t = useExtracted();
-
-  return (
-    <div className="flex flex-col gap-6">
-      {result.result.feedback && (
-        <div className="flex flex-col gap-2">
-          <p className="text-lg font-semibold">{t("Here's what actually happened")}</p>
-
-          <p className="text-muted-foreground text-base leading-relaxed">
-            {result.result.feedback}
-          </p>
-        </div>
-      )}
-
-      {evidence.length > 0 && (
-        <>
-          <Separator />
-
-          <div className="flex flex-col gap-3">
-            <SectionLabel>{t("You checked")}</SectionLabel>
-
-            <div className="flex flex-col gap-2">
-              {evidence.map((item) => (
-                <div className="flex items-center gap-2" key={item.label}>
-                  <span className="text-muted-foreground text-sm">{item.label}</span>
-                  <QualityBadge quality={item.quality} />
-                </div>
-              ))}
-            </div>
-          </div>
-        </>
-      )}
-    </div>
+        </DrawerContent>
+      </DrawerPopup>
+    </Drawer>
   );
 }
 
 /**
  * Renders the final call step of an investigation activity.
- * Shows gathered evidence summary, then the explanation options.
- * After checking, shows the full debrief with the correct explanation
- * and a summary of the learner's investigation journey.
+ * Shows a "Review evidence" button that opens a bottom-sheet drawer,
+ * then the explanation options for the learner to make their call.
+ * After checking, feedback is shown on a dedicated feedback screen.
  */
 export function InvestigationCallVariant({
   content,
@@ -235,9 +220,7 @@ export function InvestigationCallVariant({
 
   return (
     <InteractiveStepLayout>
-      <SectionLabel>{t("Your Call")}</SectionLabel>
-
-      <EvidenceSummary evidence={evidence} />
+      <EvidenceDrawer evidence={evidence} />
 
       <QuestionText>{t("What do you think happened?")}</QuestionText>
 
@@ -261,13 +244,6 @@ export function InvestigationCallVariant({
           </OptionCard>
         ))}
       </div>
-
-      {hasFeedback && result && (
-        <>
-          <Separator />
-          <CallDebrief evidence={evidence} result={result} />
-        </>
-      )}
     </InteractiveStepLayout>
   );
 }

@@ -230,25 +230,17 @@ checksums:
     Blank%20%7Bposition%7D%3A%20%7Bitem%7D.%20%7Bresult%7D./singular: c64e721cdd1e4cc48eff9f9690f1fc6b
     Blank%20%7Bposition%7D%3A%20%7Bitem%7D.%20Tap%20to%20remove./singular: d7ab9b86256fae5fbb5187fe718afe0b
     Correct%20answer%3A%20%7Banswer%7D/singular: 7745b2664e841dffff4568203ee443b2
-    Not%20quite/singular: e570085e69662802acf485c4565e3e3e
     Answer%20feedback/singular: 9ec80a1e5b591c3d6c790b8d43266c0f
-    Correct!/singular: dda1a98dc04fd9db252887ecf1765d41
     Evidence%20complete%20%E2%80%94%20time%20to%20make%20your%20call./singular: 6f1a545162b4f3799dab45247dfc5f35
-    Evidence/singular: 49eed19c45401d0d53f3ebfd5e5e0d19
     Weak%20signal/singular: 19b95e7dfa1cb1c1f257f1812720859f
     What%20do%20you%20want%20to%20investigate%20next%3F/singular: 9ddcec8a58615e2d5c501f12c091c1dc
     One%20more%20lead%20to%20follow/singular: 8f719bae5f33676aa045aed39b080f46
     Useful%20clue/singular: 9ae26309bb851fc48999bc8455ed8f88
     What%20do%20you%20want%20to%20investigate%20first%3F/singular: 84bfc285b668f4dc31f58cb56a7d7978
     Strong%20lead/singular: 440134c4a18791b05471ce1435d27ed9
-    You%20checked/singular: b3a11092bafe3c830cd55e537a3c7814
-    Here's%20what%20actually%20happened/singular: bf1b08a2dc9d242d17f0a2d98821a3fa
-    weak%20signal/singular: 609aeedc06ef89ceb9cd2442633d240e
+    Evidence/singular: 49eed19c45401d0d53f3ebfd5e5e0d19
     What%20do%20you%20think%20happened%3F/singular: 5fcc4c51ba3f52e459f316ef4b5fc756
-    strong%20lead/singular: 388378713c879a432162188a851e1f52
-    useful%20clue/singular: bb8482bc7f4b140d75fcdbdbbb1cbdb3
-    Your%20Call/singular: 0b986d5f607d615a4e4d54a1ecfc2af3
-    Your%20evidence/singular: 91e5c84792d829926d15d7e33e25fd15
+    Review%20evidence/singular: 7edeeb02b39b1ebd65fe36986bd63407
     The%20Case/singular: da25531981c47e8d30f64ac4e5f954d8
     Translate%20this%20sentence%3A/singular: f69b2eec827b3a74bafca50e9058716f
     What%20do%20you%20hear%3F/singular: 9527d094d65c550a40108673bc67744f
@@ -275,6 +267,9 @@ checksums:
     Current%20status/singular: b9c587d6cd7ee919b59e75066fa4675f
     Final%20status/singular: 62c3befb232a9d290e74b84d6ddbf22c
     Translate%20this%20word%3A/singular: 05fede3c583e9ea39f27ac9fdf17fcc3
+    Not%20quite/singular: e570085e69662802acf485c4565e3e3e
+    Good%2C%20but.../singular: b9c6fc59b943221a2eb6aa1bce74af43
+    Correct!/singular: dda1a98dc04fd9db252887ecf1765d41
     Visual%20content/singular: 38b0261c39ebe4d775867363482225d8
     Legend/singular: 3b588fbd2fe35ded6ca38334e15400c3
     Diagram/singular: e0bc1ef7782cb0d749c9582da6775175
