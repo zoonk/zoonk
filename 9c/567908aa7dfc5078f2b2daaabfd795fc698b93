@@ -1,0 +1,63 @@
+packages/player/src/player-completion.test.ts
+  1e75e4bb2f4455d6 110-111,219-300
+packages/player/src/check-answer.ts
+  1e75e4bb2f4455d6 124,126-129,138,141
+packages/player/src/build-investigation-action-results.ts
+  1e75e4bb2f4455d6 1-79
+packages/player/src/compute-score.ts
+  1e75e4bb2f4455d6 32,109-112,121-122,126,128
+packages/player/src/check-step.test.ts
+  1e75e4bb2f4455d6 498,522-590
+packages/player/src/completion-input-schema.ts
+  1e75e4bb2f4455d6 109,127,129
+apps/main/src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/a/[position]/submit-completion-action.ts
+  1e75e4bb2f4455d6 8,148-155,164
+packages/player/src/compute-score.test.ts
+  1e75e4bb2f4455d6 2,4,6-7,26-27,46-47,66,181,192,198,209,215,228,232,243,245-255,257-262,266,277,283,361
+packages/player/src/build-investigation-action-results.test.ts
+  1e75e4bb2f4455d6 1-13,15-140
+packages/player/src/investigation.test.ts
+  1e75e4bb2f4455d6 64,72,76,85,88,95
+apps/main/e2e/investigation-step.test.ts
+  1e75e4bb2f4455d6 363,373-376,380-384,388-392,396,408,410-449,451
+packages/player/src/validate-answers.test.ts
+  1e75e4bb2f4455d6 336,352,355,381
+packages/player/src/investigation.ts
+  1e75e4bb2f4455d6 8-14,16
+packages/player/src/player-reducer.ts
+  1e75e4bb2f4455d6 146-149,156-157,159-164,166
+packages/player/src/player-selectors.test.ts
+  1e75e4bb2f4455d6 387,397,407,432
+packages/player/src/player-completion.ts
+  1e75e4bb2f4455d6 58,60
+packages/player/src/components/completion-screen.tsx
+  1e75e4bb2f4455d6 98-100,104,107
+packages/player/src/validate-answers.ts
+  1e75e4bb2f4455d6 148-151,162
+packages/player/package.json
+  1e75e4bb2f4455d6 6
+packages/player/src/player-reducer.test.ts
+  1e75e4bb2f4455d6 573,575
+packages/player/src/investigation-reducer.ts
+  1e75e4bb2f4455d6 2-6,31,35-38,40-48,55
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.6",
+  "base_commit_sha": "9c567908aa7dfc5078f2b2daaabfd795fc698b93",
+  "prompts": {
+    "1e75e4bb2f4455d6": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "711a2986-c81c-4475-913e-44c747dedc52",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 575,
+      "total_deletions": 96,
+      "accepted_lines": 571,
+      "overriden_lines": 1
+    }
+  }
+}
