@@ -1,4 +1,9 @@
-import { type StoryAlignment, parseStepContent } from "@zoonk/core/steps/contract/content";
+import {
+  type InvestigationActionQuality,
+  type InvestigationCallAccuracy,
+  type StoryAlignment,
+  parseStepContent,
+} from "@zoonk/core/steps/contract/content";
 import { APPLIED_ACTIVITY_BRAIN_POWER, BRAIN_POWER_PER_ACTIVITY } from "@zoonk/utils/brain-power";
 import { ENERGY_PER_CORRECT, ENERGY_PER_INCORRECT, ENERGY_PER_STATIC } from "@zoonk/utils/energy";
 import { type InvestigationLoopState } from "./investigation";
@@ -92,8 +97,8 @@ const INVESTIGATION_CALL_ENERGY = {
 } as const;
 
 export type InvestigationScoreInput = {
-  actionQualities: ("critical" | "useful" | "weak")[];
-  callAccuracy: "best" | "partial" | "wrong";
+  actionQualities: InvestigationActionQuality[];
+  callAccuracy: InvestigationCallAccuracy;
 };
 
 /**

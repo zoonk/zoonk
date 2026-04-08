@@ -1,6 +1,9 @@
 "use client";
 
-import { type InvestigationStepContent } from "@zoonk/core/steps/contract/content";
+import {
+  type InvestigationActionQuality,
+  type InvestigationStepContent,
+} from "@zoonk/core/steps/contract/content";
 import { INVESTIGATION_EXPERIMENT_COUNT } from "@zoonk/utils/activities";
 import { useExtracted } from "next-intl";
 import { getAvailableActions } from "../investigation";
@@ -18,7 +21,7 @@ type ActionContent = Extract<InvestigationStepContent, { variant: "action" }>;
  * Returns a user-friendly quality label for the action's evidence.
  * Shown as a quality indicator in the evidence feedback after checking.
  */
-function useQualityLabel(quality: "critical" | "useful" | "weak"): {
+function useQualityLabel(quality: InvestigationActionQuality): {
   className: string;
   label: string;
 } {

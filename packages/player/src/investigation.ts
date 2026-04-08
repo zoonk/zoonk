@@ -1,4 +1,5 @@
 import {
+  type InvestigationActionQuality,
   type InvestigationStepContent,
   parseStepContent,
 } from "@zoonk/core/steps/contract/content";
@@ -49,9 +50,9 @@ export function getInvestigationStepByVariant(
  * order-independent (safe across shuffling).
  */
 export function getAvailableActions(
-  actions: { id: string; label: string; quality: "critical" | "useful" | "weak" }[],
+  actions: { id: string; label: string; quality: InvestigationActionQuality }[],
   usedIds: string[],
-): { id: string; label: string; quality: "critical" | "useful" | "weak" }[] {
+): { id: string; label: string; quality: InvestigationActionQuality }[] {
   const usedSet = new Set(usedIds);
 
   return actions.flatMap((action) =>

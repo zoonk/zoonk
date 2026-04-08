@@ -1,6 +1,8 @@
 "use client";
 
 import {
+  type InvestigationActionQuality,
+  type InvestigationCallAccuracy,
   type InvestigationStepContent,
   parseStepContent,
 } from "@zoonk/core/steps/contract/content";
@@ -32,7 +34,7 @@ function getResultState({
   id,
   selectedId,
 }: {
-  accuracy: "best" | "partial" | "wrong";
+  accuracy: InvestigationCallAccuracy;
   hasFeedback: boolean;
   id: string;
   selectedId: string | null;
@@ -57,7 +59,7 @@ function getResultState({
  * that matches the quality tier: strong (default), useful (secondary),
  * weak (outline).
  */
-function QualityBadge({ quality }: { quality: "critical" | "useful" | "weak" }) {
+function QualityBadge({ quality }: { quality: InvestigationActionQuality }) {
   const t = useExtracted();
 
   if (quality === "critical") {
@@ -74,7 +76,7 @@ function QualityBadge({ quality }: { quality: "critical" | "useful" | "weak" }) 
 type GatheredEvidence = {
   finding: string;
   label: string;
-  quality: "critical" | "useful" | "weak";
+  quality: InvestigationActionQuality;
 };
 
 /**

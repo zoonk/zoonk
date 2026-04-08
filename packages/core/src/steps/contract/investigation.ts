@@ -72,4 +72,6 @@ export const investigationContentSchema = z.discriminatedUnion("variant", [
   investigationCallContentSchema,
 ]);
 
+export type InvestigationActionQuality = z.infer<typeof investigationActionQualitySchema>;
+export type InvestigationCallAccuracy = z.infer<typeof investigationAccuracySchema>;
 export type InvestigationStepContent = z.infer<typeof investigationContentSchema>;
