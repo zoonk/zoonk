@@ -1,0 +1,44 @@
+packages/player/src/components/investigation-action-variant.tsx
+  8dfd8bd75cf23563 78,80
+apps/main/e2e/investigation-step.test.ts
+  8dfd8bd75cf23563 183,286,290
+packages/player/src/components/investigation-call-variant.tsx
+  8dfd8bd75cf23563 49-51,53,57,61,64,120-121,123-129,131-134,148,151-155,160-175,265-270
+packages/player/src/compute-score.test.ts
+  f04d7608b1ad3810 177-280
+packages/player/src/compute-score.ts
+  f04d7608b1ad3810 82-85,88-90,100,102-103,105-107,109,112-115,117,123-124
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.6",
+  "base_commit_sha": "efe86d3e3db4a7e82e686904bb3f6d81049acfaf",
+  "prompts": {
+    "8dfd8bd75cf23563": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "09feeb3a-4f70-4493-aa04-dc6884c528da",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 57,
+      "total_deletions": 52,
+      "accepted_lines": 53,
+      "overriden_lines": 0
+    },
+    "f04d7608b1ad3810": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "1edad650-8290-4579-9689-453f4d26cd1d",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 125,
+      "total_deletions": 49,
+      "accepted_lines": 125,
+      "overriden_lines": 0
+    }
+  }
+}
