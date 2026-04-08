@@ -1,0 +1,83 @@
+packages/player/src/use-player-actions.ts
+  e7582e38064b7354 52
+packages/player/src/compute-score.ts
+  e7582e38064b7354 83-85,88,91-92,107,109-114,129,131-132,144
+packages/player/src/investigation.test.ts
+  e7582e38064b7354 2-3,34-37,39-43,46,50-54,63,68,70,76,80,89,92,99
+packages/player/src/investigation-reducer.ts
+  e7582e38064b7354 6-7,22-24,26-27,31-33,50-54,56-61,64-67,72,86-87,89-91,93-94,96-97,100,102-106,108-109,113
+packages/player/src/completion-input-schema.ts
+  e7582e38064b7354 75
+apps/api/src/workflows/activity-generation/kinds/investigation-workflow.test.ts
+  e7582e38064b7354 163,272,299
+packages/player/src/validate-answers.test.ts
+  e7582e38064b7354 350,361-368
+packages/player/src/components/investigation-scenario-popover.tsx
+  e7582e38064b7354 1-36
+packages/player/src/prepare-activity-data.ts
+  e7582e38064b7354 157-181,226
+packages/player/src/compute-score.test.ts
+  e7582e38064b7354 243-250
+packages/core/src/steps/contract/content.test.ts
+  e7582e38064b7354 361,382,385-396,407,409-412,415
+apps/main/e2e/investigation-step.test.ts
+  e7582e38064b7354 79-80,82,85-86,88,91-92,94,97-98,100,103-104,106,183,201,225,236,251,262-263,269,276,279,283,286,297,304,308,313,320-325,327,329-334,338-345,349,359-364,366,368-373,377-382,384,396,402,406-412,416-421,425-430
+packages/player/src/check-step.test.ts
+  e7582e38064b7354 499,502,504-507,510,516-517,521
+packages/player/src/components/investigation-call-variant.tsx
+  e7582e38064b7354 8,14,46-51,54-55,58-59,62-77,79-80,83,85-86,89-92,95-103,106-110,113-115,117-118,120,123-136,143-144,146,158-173,180-182,201,237,262
+apps/api/src/workflows/activity-generation/steps/save-investigation-activity-step.ts
+  e7582e38064b7354 17,30,32-34,72-77,94,97,102-103
+packages/player/src/player-reducer.ts
+  e7582e38064b7354 3,20,22,135-137,144-146,154,157,171,173-175
+packages/player/src/components/in-play-sticky-header.tsx
+  e7582e38064b7354 4,11,18,38-40
+packages/player/src/investigation.ts
+  e7582e38064b7354 56-57,59-61,63-66,91
+apps/api/src/workflows/activity-generation/steps/save-investigation-activity-step.test.ts
+  e7582e38064b7354 83,121,129,134,137-138,160,198-201,203-204,206-207
+apps/api/src/workflows/activity-generation/kinds/investigation-workflow.ts
+  e7582e38064b7354 17,21,84,104
+packages/player/src/check-answer.ts
+  e7582e38064b7354 124,126-129,131-133,135,137-138,141
+packages/player/src/check-step.ts
+  e7582e38064b7354 8,138-139,149,153,155
+apps/evals/src/tasks/index.ts
+  e7582e38064b7354 60
+packages/player/src/components/investigation-step.tsx
+  e7582e38064b7354 12,31
+packages/player/src/player-provider.tsx
+  e7582e38064b7354 60
+packages/core/src/steps/contract/investigation.ts
+  e7582e38064b7354 16-18,20,22-25,30-32,44-45,57-59
+packages/player/src/player-selectors.ts
+  e7582e38064b7354 3,86-87,89-90
+packages/player/src/components/player-shell.tsx
+  e7582e38064b7354 11,88,113
+packages/player/src/player-initial-state.ts
+  e7582e38064b7354 1,5-19,21-33
+packages/player/src/components/investigation-problem-variant.tsx
+  e7582e38064b7354 6,14-18,20
+packages/player/src/components/investigation-action-variant.tsx
+  e7582e38064b7354 7,10,12,19-63,66-69,74,80,89,91-92,94,104-107,127,132,134-137
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.5",
+  "base_commit_sha": "e2f6ecdbc5b07d8c7c887287e7a6fb034ca032e1",
+  "prompts": {
+    "e7582e38064b7354": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8055adee-7d12-4ed0-9f9f-962458fb5feb",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 758,
+      "total_deletions": 1852,
+      "accepted_lines": 637,
+      "overriden_lines": 1
+    }
+  }
+}
