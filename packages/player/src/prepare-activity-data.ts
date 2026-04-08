@@ -157,7 +157,7 @@ function shuffleMultipleChoiceContent(
 /**
  * Parses step content and applies server-side shuffling where needed.
  *
- * Multiple choice options and investigation actions are shuffled
+ * Multiple choice options, investigation actions, and call explanations are shuffled
  * during serialization so the client receives a randomized order.
  * This avoids client-side shuffling which can cause hydration errors.
  */
@@ -171,6 +171,10 @@ function parseAndShuffleContent(kind: SupportedStepKind, content: unknown) {
 
     if (parsed.variant === "action") {
       return { ...parsed, actions: shuffle(parsed.actions) };
+    }
+
+    if (parsed.variant === "call") {
+      return { ...parsed, explanations: shuffle(parsed.explanations) };
     }
 
     return parsed;
