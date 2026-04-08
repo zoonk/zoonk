@@ -78,8 +78,6 @@ export const ACTIVITY_STEPS = [
   "generateInvestigationFindings",
   "generateInvestigationInterpretations",
   "generateInvestigationDebrief",
-  "generateInvestigationVisuals",
-  "generateInvestigationVisualContent",
   "generateQuizContent",
   "generatePracticeContent",
   "generateStoryContent",

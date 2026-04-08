@@ -219,7 +219,6 @@ msgid "Correct!"
 msgstr "Correct!"
 
 #: ../../packages/player/src/components/investigation-action-variant.tsx
-#: ../../packages/player/src/components/investigation-visual.tsx
 msgctxt "6g7+6N"
 msgid "Evidence"
 msgstr "Evidence"
@@ -299,16 +298,6 @@ msgstr "Your evidence"
 msgctxt "4Xsz3M"
 msgid "The Case"
 msgstr "The Case"
-
-#: ../../packages/player/src/components/investigation-visual.tsx
-msgctxt "C25NP5"
-msgid "View full evidence"
-msgstr "View full evidence"
-
-#: ../../packages/player/src/components/investigation-visual.tsx
-msgctxt "oRrZiI"
-msgid "View full"
-msgstr "View full"
 
 #: ../../packages/player/src/components/listening-step.tsx
 #: ../../packages/player/src/components/reading-step.tsx

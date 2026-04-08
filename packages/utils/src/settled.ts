@@ -29,13 +29,3 @@ function hasValueError(value: unknown): boolean {
 export function settledValues<T>(results: PromiseSettledResult<T>[]): T[] {
   return results.flatMap((result) => (result.status === "fulfilled" ? [result.value] : []));
 }
-
-/**
- * Extracts all fulfilled values from a Promise.allSettled array,
- * returning null if any result was rejected. Use this when every
- * result is required — a single failure means the batch is invalid.
- */
-export function settledAll<T>(results: PromiseSettledResult<T>[]): T[] | null {
-  const values = settledValues(results);
-  return values.length === results.length ? values : null;
-}

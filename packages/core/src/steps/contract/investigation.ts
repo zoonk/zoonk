@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { visualStepContentSchema } from "./visual";
 
 const investigationActionQualitySchema = z.enum(["critical", "useful", "weak"]);
 
@@ -13,29 +12,26 @@ const investigationExplanationSchema = z
   .strict();
 
 /**
- * Each action carries its own finding data (text + visual) so
- * that evidence travels with the action through server-side shuffle.
+ * Each action carries its own finding data so that evidence
+ * travels with the action through server-side shuffle.
  * When the learner checks an action, the finding is shown as feedback.
  */
 const investigationActionItemSchema = z
   .object({
     finding: z.string(),
-    findingVisual: visualStepContentSchema,
     label: z.string(),
     quality: investigationActionQualitySchema,
   })
   .strict();
 
 /**
- * Problem step: presents the scenario and a visual.
+ * Problem step: presents the scenario.
  * Read-only — the learner reads the case and taps "Investigate" to start.
- * No hunch selection.
  */
 const investigationProblemContentSchema = z
   .object({
     scenario: z.string(),
     variant: z.literal("problem"),
-    visual: visualStepContentSchema,
   })
   .strict();
 

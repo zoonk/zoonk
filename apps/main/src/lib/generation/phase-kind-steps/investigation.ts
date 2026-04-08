@@ -5,12 +5,10 @@ import { type PhaseName } from "../activity-generation-phase-config";
 /**
  * Investigation phase step config.
  *
- * Investigation runs 7 AI tasks in a dependency chain:
- * scenario → accuracy → actions → findings → {debrief, interpretations, visuals} (parallel)
- * Then visual content dispatch → save.
- * Each AI call gets its own phase. The parallel tier (analyzingEvidence,
- * writingTheReveal, preparingVisuals) may complete out of order — same
- * behavior as listening's parallel phases.
+ * Investigation runs 5 AI tasks in a dependency chain:
+ * scenario → accuracy → actions → findings → debrief → save
+ *
+ * Each AI call gets its own phase.
  *
  * See activity-generation-phase-config.ts for the phase grouping rules.
  */
@@ -24,18 +22,14 @@ type InvestigationSteps =
   | "generateInvestigationFindings"
   | "generateInvestigationInterpretations"
   | "generateInvestigationDebrief"
-  | "generateInvestigationVisuals"
-  | "generateInvestigationVisualContent"
   | "saveInvestigationActivity";
 
 export const INVESTIGATION_PHASE_STEPS = {
   analyzingEvidence: ["generateInvestigationInterpretations"],
   classifyingExplanations: ["generateInvestigationAccuracy"],
-  creatingVisuals: ["generateInvestigationVisualContent"],
   designingActions: ["generateInvestigationActions"],
   gatheringEvidence: ["generateInvestigationFindings"],
   gettingStarted: ["getLessonActivities", "setActivityAsRunning"],
-  preparingVisuals: ["generateInvestigationVisuals"],
   saving: ["saveInvestigationActivity"],
   settingTheScene: ["generateInvestigationScenario"],
   writingTheReveal: ["generateInvestigationDebrief"],
@@ -56,7 +50,5 @@ export const INVESTIGATION_PHASE_ORDER: PhaseName[] = [
   "gatheringEvidence",
   "analyzingEvidence",
   "writingTheReveal",
-  "preparingVisuals",
-  "creatingVisuals",
   "saving",
 ];

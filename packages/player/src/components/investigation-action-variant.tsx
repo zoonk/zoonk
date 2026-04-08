@@ -7,7 +7,6 @@ import { usePlayerRuntime } from "../player-context";
 import { type SelectedAnswer, type StepResult } from "../player-reducer";
 import { type SerializedStep } from "../prepare-activity-data";
 import { useOptionKeyboard } from "../use-option-keyboard";
-import { InvestigationVisual } from "./investigation-visual";
 import { OptionCard } from "./option-card";
 import { ContextText, QuestionText } from "./question-text";
 import { SectionLabel } from "./section-label";
@@ -38,7 +37,7 @@ function useQualityLabel(quality: "critical" | "useful" | "weak"): {
 
 /**
  * Renders the evidence feedback shown after checking an action.
- * Shows the quality indicator, finding visual, and finding text.
+ * Shows the quality indicator and finding text.
  */
 type ActionItem = ActionContent["actions"][number];
 
@@ -52,8 +51,6 @@ function ActionFeedback({ action }: { action: ActionItem }) {
 
       <p className={`text-sm font-medium ${quality.className}`}>{quality.label}</p>
 
-      <InvestigationVisual content={action.findingVisual} />
-
       <div className="bg-muted/50 rounded-lg px-4 py-3">
         <ContextText>{action.finding}</ContextText>
       </div>
@@ -65,8 +62,8 @@ function ActionFeedback({ action }: { action: ActionItem }) {
  * Renders the action selection step of an investigation activity.
  *
  * Before checking: shows available actions (used ones filtered out).
- * After checking: shows evidence feedback — quality indicator,
- * finding visual, and finding text for the selected action.
+ * After checking: shows evidence feedback — quality indicator
+ * and finding text for the selected action.
  */
 export function InvestigationActionVariant({
   content,

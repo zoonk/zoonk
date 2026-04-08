@@ -484,7 +484,6 @@ describe(checkStep, () => {
         content: {
           scenario: "test",
           variant: "problem" as const,
-          visual: { columns: ["A"], kind: "table" as const, rows: [["1"]] },
         },
         kind: "investigation",
       });
@@ -502,7 +501,6 @@ describe(checkStep, () => {
           actions: [
             {
               finding: "Logs show memory climbing",
-              findingVisual: { columns: ["A"], kind: "table" as const, rows: [["1"]] },
               label: "Check logs",
               quality: "critical" as const,
             },
@@ -570,7 +568,6 @@ describe(checkStep, () => {
         content: {
           scenario: "test",
           variant: "problem" as const,
-          visual: { columns: ["A"], kind: "table" as const, rows: [["1"]] },
         },
         kind: "investigation",
       });

@@ -8,64 +8,6 @@ import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { expect, test } from "./fixtures";
 
 function buildInvestigationContent(uniqueId: string) {
-  const tableVisual = {
-    caption: `Server Metrics ${uniqueId}`,
-    columns: ["Metric", "Value"],
-    kind: "table" as const,
-    rows: [
-      ["Response Time", "450ms"],
-      ["Error Rate", "12%"],
-    ],
-  };
-
-  const findingVisuals = [
-    {
-      caption: `Log Analysis ${uniqueId}`,
-      columns: ["Time", "Status"],
-      kind: "table" as const,
-      rows: [
-        ["10:00", "OK"],
-        ["10:05", "ERROR"],
-      ],
-    },
-    {
-      caption: `Resource Usage ${uniqueId}`,
-      columns: ["Service", "Load"],
-      kind: "table" as const,
-      rows: [
-        ["API", "95%"],
-        ["DB", "40%"],
-      ],
-    },
-    {
-      caption: `Error Distribution ${uniqueId}`,
-      columns: ["Route", "Errors"],
-      kind: "table" as const,
-      rows: [
-        ["/api/users", "150"],
-        ["/api/orders", "0"],
-      ],
-    },
-    {
-      caption: `Deploy History ${uniqueId}`,
-      columns: ["Version", "Status"],
-      kind: "table" as const,
-      rows: [
-        ["v2.1", "Stable"],
-        ["v2.2", "Failing"],
-      ],
-    },
-    {
-      caption: `DB Queries ${uniqueId}`,
-      columns: ["Query", "Time"],
-      kind: "table" as const,
-      rows: [
-        ["SELECT users", "2ms"],
-        ["SELECT orders", "1500ms"],
-      ],
-    },
-  ];
-
   const explanations = [
     { accuracy: "best" as const, text: `Memory leak in the API service ${uniqueId}` },
     { accuracy: "partial" as const, text: `Database connection pool exhausted ${uniqueId}` },
@@ -77,31 +19,26 @@ function buildInvestigationContent(uniqueId: string) {
       actions: [
         {
           finding: `Finding 0: The data shows an unusual pattern ${uniqueId}`,
-          findingVisual: findingVisuals[0],
           label: `Check server logs ${uniqueId}`,
           quality: "critical" as const,
         },
         {
           finding: `Finding 1: Resource usage is abnormally high ${uniqueId}`,
-          findingVisual: findingVisuals[1],
           label: `Monitor resource usage ${uniqueId}`,
           quality: "critical" as const,
         },
         {
           finding: `Finding 2: Errors concentrated on one route ${uniqueId}`,
-          findingVisual: findingVisuals[2],
           label: `Review error distribution ${uniqueId}`,
           quality: "useful" as const,
         },
         {
           finding: `Finding 3: Recent deploy introduced a regression ${uniqueId}`,
-          findingVisual: findingVisuals[3],
           label: `Check deploy history ${uniqueId}`,
           quality: "useful" as const,
         },
         {
           finding: `Finding 4: One query taking 1500ms ${uniqueId}`,
-          findingVisual: findingVisuals[4],
           label: `Run database queries ${uniqueId}`,
           quality: "weak" as const,
         },
@@ -116,7 +53,6 @@ function buildInvestigationContent(uniqueId: string) {
     problem: {
       scenario: `Your team's API has been experiencing intermittent 500 errors since this morning ${uniqueId}`,
       variant: "problem" as const,
-      visual: tableVisual,
     },
   };
 }
@@ -198,7 +134,7 @@ async function createInvestigationActivity() {
 }
 
 test.describe("Investigation Problem Step", () => {
-  test("renders scenario and visual preview as read-only", async ({ page }) => {
+  test("renders scenario as read-only", async ({ page }) => {
     const { uniqueId, url } = await createInvestigationActivity();
 
     await page.goto(url);
@@ -206,20 +142,6 @@ test.describe("Investigation Problem Step", () => {
 
     await expect(page.getByText(/the case/i)).toBeVisible();
     await expect(page.getByText(new RegExp(`intermittent 500 errors.*${uniqueId}`))).toBeVisible();
-    await expect(page.getByRole("button", { name: /view full evidence/i })).toBeVisible();
-  });
-
-  test("opens dialog with full visual when tapping view full", async ({ page }) => {
-    const { uniqueId, url } = await createInvestigationActivity();
-
-    await page.goto(url);
-    await page.waitForLoadState("networkidle");
-
-    await page.getByRole("button", { name: /view full evidence/i }).click();
-
-    const dialog = page.getByRole("dialog");
-    await expect(dialog).toBeVisible();
-    await expect(dialog.getByText(new RegExp(`Server Metrics ${uniqueId}`))).toBeVisible();
   });
 
   test("check button enabled immediately (read-only step)", async ({ page }) => {

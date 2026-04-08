@@ -1,27 +1,18 @@
-import { settled } from "@zoonk/utils/settled";
 import { generateInvestigationAccuracyStep } from "../steps/generate-investigation-accuracy-step";
 import { generateInvestigationActionsStep } from "../steps/generate-investigation-actions-step";
 import { generateInvestigationDebriefStep } from "../steps/generate-investigation-debrief-step";
 import { generateInvestigationFindingsStep } from "../steps/generate-investigation-findings-step";
 import { generateInvestigationScenarioStep } from "../steps/generate-investigation-scenario-step";
-import { generateInvestigationVisualContentStep } from "../steps/generate-investigation-visual-content-step";
-import { generateInvestigationVisualsStep } from "../steps/generate-investigation-visuals-step";
 import { type LessonActivity } from "../steps/get-lesson-activities-step";
-import { handleActivityFailureStep } from "../steps/handle-failure-step";
 import { saveInvestigationActivityStep } from "../steps/save-investigation-activity-step";
 
 /**
  * Orchestrates investigation activity generation.
  *
- * Sequential chain: scenario → accuracy → actions → findings
- * Parallel tier: debrief + visual descriptions
- * Then: visual content dispatch → save
+ * Sequential chain: scenario → accuracy → actions → findings → debrief → save
  *
  * The sequential chain is required because each task depends on
- * the output of the previous one. After findings, two tasks
- * run in parallel since they only read from completed data.
- * Visual content dispatch depends on visual descriptions, so it
- * runs after the parallel tier completes.
+ * the output of the previous one.
  *
  * Uses lesson concepts directly — investigation generation is
  * independent of explanation results, so it runs in wave 1
@@ -81,40 +72,16 @@ export async function investigationActivityWorkflow({
     return;
   }
 
-  const [debriefResult, visualsResult] = await Promise.allSettled([
-    generateInvestigationDebriefStep({
-      accuracy,
-      actions,
-      activityId,
-      findings,
-      language: activity.language,
-      scenario,
-    }),
-    generateInvestigationVisualsStep({
-      activityId,
-      findings: findings.findings,
-      language: activity.language,
-      scenario: scenario.scenario,
-    }),
-  ]);
-
-  const debrief = settled(debriefResult, null);
-  const visuals = settled(visualsResult, null);
-
-  if (!debrief || !visuals) {
-    await handleActivityFailureStep({ activityId });
-    return;
-  }
-
-  const visualContent = await generateInvestigationVisualContentStep({
+  const debrief = await generateInvestigationDebriefStep({
+    accuracy,
+    actions,
     activityId,
-    findingVisuals: visuals.findingVisuals,
+    findings,
     language: activity.language,
-    orgSlug: activity.lesson.chapter.course.organization?.slug,
-    scenarioVisual: visuals.scenarioVisual,
+    scenario,
   });
 
-  if (!visualContent) {
+  if (!debrief) {
     return;
   }
 
@@ -123,10 +90,8 @@ export async function investigationActivityWorkflow({
     actions,
     activityId,
     debrief,
-    findingVisuals: visualContent.findingVisuals,
     findings,
     scenario,
-    scenarioVisual: visualContent.scenarioVisual,
     workflowRunId,
   });
 }

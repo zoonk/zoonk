@@ -9,7 +9,6 @@ import { activityInvestigationActionsTask } from "./activity-investigation-actio
 import { activityInvestigationDebriefTask } from "./activity-investigation-debrief/task";
 import { activityInvestigationFindingsTask } from "./activity-investigation-findings/task";
 import { activityInvestigationScenarioTask } from "./activity-investigation-scenario/task";
-import { activityInvestigationVisualTask } from "./activity-investigation-visuals/task";
 import { activityPracticeTask } from "./activity-practice/task";
 import { activityPronunciationTask } from "./activity-pronunciation/task";
 import { activityQuizTask } from "./activity-quiz/task";
@@ -59,8 +58,6 @@ export const TASKS: readonly Task[] = [
   activityInvestigationFindingsTask,
 
   activityInvestigationScenarioTask,
-  activityInvestigationVisualTask,
-
   activityRomanizationTask,
   activityVocabularyTask,
   appliedActivityKindTask,

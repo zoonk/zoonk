@@ -10,8 +10,6 @@ import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { handleActivityFailureStep } from "./handle-failure-step";
 
-type DispatchedVisual = { kind: string } & Record<string, unknown>;
-
 /**
  * Zips scenario explanations with accuracy tiers to produce the
  * explanations array used in the call step.
@@ -29,8 +27,8 @@ function buildExplanationsWithAccuracy(
 /**
  * Builds the 3 step records for an investigation activity from AI outputs.
  *
- * - Position 0: investigation/problem — scenario and visual
- * - Position 1: investigation/action — actions with embedded findings and visuals
+ * - Position 0: investigation/problem — scenario
+ * - Position 1: investigation/action — actions with embedded findings
  * - Position 2: investigation/call — explanations with accuracy, fullExplanation
  */
 function buildInvestigationStepRecords({
@@ -39,18 +37,14 @@ function buildInvestigationStepRecords({
   actions,
   debrief,
   findings,
-  findingVisuals,
   scenario,
-  scenarioVisual,
 }: {
   accuracy: ActivityInvestigationAccuracySchema;
   activityId: number;
   actions: ActivityInvestigationActionsSchema;
   debrief: ActivityInvestigationDebriefSchema;
   findings: ActivityInvestigationFindingsSchema;
-  findingVisuals: DispatchedVisual[];
   scenario: ActivityInvestigationScenarioSchema;
-  scenarioVisual: DispatchedVisual;
 }) {
   const explanations = buildExplanationsWithAccuracy(scenario, accuracy);
 
@@ -59,7 +53,6 @@ function buildInvestigationStepRecords({
     content: assertStepContent("investigation", {
       scenario: scenario.scenario,
       variant: "problem" as const,
-      visual: scenarioVisual,
     }),
     isPublished: true,
     kind: "investigation" as const,
@@ -71,7 +64,6 @@ function buildInvestigationStepRecords({
     content: assertStepContent("investigation", {
       actions: actions.actions.map((action, index) => ({
         finding: findings.findings[index] ?? "",
-        findingVisual: findingVisuals[index] ?? { kind: "image" as const, prompt: "" },
         label: action.label,
         quality: action.quality,
       })),
@@ -99,7 +91,7 @@ function buildInvestigationStepRecords({
 
 /**
  * Persists all generated investigation data in one transaction:
- * - Problem step with scenario and visual
+ * - Problem step with scenario
  * - Action step with all investigation actions and embedded findings
  * - Call step with explanations and debrief
  * - Marks the activity as completed
@@ -114,9 +106,7 @@ export async function saveInvestigationActivityStep({
   actions,
   debrief,
   findings,
-  findingVisuals,
   scenario,
-  scenarioVisual,
   workflowRunId,
 }: {
   accuracy: ActivityInvestigationAccuracySchema;
@@ -124,9 +114,7 @@ export async function saveInvestigationActivityStep({
   actions: ActivityInvestigationActionsSchema;
   debrief: ActivityInvestigationDebriefSchema;
   findings: ActivityInvestigationFindingsSchema;
-  findingVisuals: DispatchedVisual[];
   scenario: ActivityInvestigationScenarioSchema;
-  scenarioVisual: DispatchedVisual;
   workflowRunId: string;
 }): Promise<void> {
   "use step";
@@ -140,10 +128,8 @@ export async function saveInvestigationActivityStep({
     actions,
     activityId,
     debrief,
-    findingVisuals,
     findings,
     scenario,
-    scenarioVisual,
   });
 
   const { error } = await safeAsync(() =>

@@ -339,7 +339,6 @@ describe(validateAnswers, () => {
         content: {
           scenario: "test",
           variant: "problem",
-          visual: { columns: ["A"], kind: "table", rows: [["1"]] },
         },
         id: 10n,
         kind: "investigation",
@@ -361,7 +360,6 @@ describe(validateAnswers, () => {
           actions: [
             {
               finding: "Logs show memory climbing",
-              findingVisual: { columns: ["A"], kind: "table", rows: [["1"]] },
               label: "Check logs",
               quality: "critical",
             },

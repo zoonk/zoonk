@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { rejected, settled, settledAll, settledValues } from "./settled";
+import { rejected, settled, settledValues } from "./settled";
 
 describe(settled, () => {
   test("returns fulfilled value", () => {
@@ -92,40 +92,5 @@ describe(settledValues, () => {
 
   test("returns an empty array for empty input", () => {
     expect(settledValues([])).toEqual([]);
-  });
-});
-
-describe(settledAll, () => {
-  test("returns all values when every result is fulfilled", () => {
-    const results: PromiseSettledResult<number>[] = [
-      { status: "fulfilled", value: 1 },
-      { status: "fulfilled", value: 2 },
-      { status: "fulfilled", value: 3 },
-    ];
-
-    expect(settledAll(results)).toEqual([1, 2, 3]);
-  });
-
-  test("returns null when any result is rejected", () => {
-    const results: PromiseSettledResult<number>[] = [
-      { status: "fulfilled", value: 1 },
-      { reason: new Error("fail"), status: "rejected" },
-      { status: "fulfilled", value: 3 },
-    ];
-
-    expect(settledAll(results)).toBeNull();
-  });
-
-  test("returns null when all results are rejected", () => {
-    const results: PromiseSettledResult<string>[] = [
-      { reason: new Error("a"), status: "rejected" },
-      { reason: new Error("b"), status: "rejected" },
-    ];
-
-    expect(settledAll(results)).toBeNull();
-  });
-
-  test("returns an empty array for empty input", () => {
-    expect(settledAll([])).toEqual([]);
   });
 });

@@ -48,18 +48,6 @@ const mockDebrief = {
   fullExplanation: "The traffic drop was caused by a CDN outage.",
 };
 
-const mockScenarioVisual = {
-  chartType: "line" as const,
-  data: [{ name: "Mon", value: 100 }],
-  kind: "chart",
-  title: "Traffic over time",
-};
-
-const mockFindingVisuals = [
-  { columns: ["Time", "Code"], kind: "table", rows: [["2AM", "500"]] },
-  { events: [{ date: "2025-01-01", description: "CDN down", title: "Outage" }], kind: "timeline" },
-];
-
 describe(saveInvestigationActivityStep, () => {
   let organizationId: number;
   let chapter: Awaited<ReturnType<typeof chapterFixture>>;
@@ -101,10 +89,8 @@ describe(saveInvestigationActivityStep, () => {
       actions: mockActions,
       activityId: Number(activity.id),
       debrief: mockDebrief,
-      findingVisuals: mockFindingVisuals,
       findings: mockFindings,
       scenario: mockScenario,
-      scenarioVisual: mockScenarioVisual,
       workflowRunId: "workflow-1",
     });
 
@@ -157,56 +143,6 @@ describe(saveInvestigationActivityStep, () => {
     );
   });
 
-  test("embeds visual content in problem and action steps", async () => {
-    const lesson = await lessonFixture({
-      chapterId: chapter.id,
-      organizationId,
-      title: `Save Investigation Visuals ${randomUUID()}`,
-    });
-
-    const activity = await activityFixture({
-      generationStatus: "pending",
-      kind: "investigation",
-      language: "en",
-      lessonId: lesson.id,
-      organizationId,
-      title: `Investigation ${randomUUID()}`,
-    });
-
-    await saveInvestigationActivityStep({
-      accuracy: mockAccuracy,
-      actions: mockActions,
-      activityId: Number(activity.id),
-      debrief: mockDebrief,
-      findingVisuals: mockFindingVisuals,
-      findings: mockFindings,
-      scenario: mockScenario,
-      scenarioVisual: mockScenarioVisual,
-      workflowRunId: "workflow-visuals",
-    });
-
-    const dbSteps = await prisma.step.findMany({
-      orderBy: { position: "asc" },
-      where: { activityId: activity.id },
-    });
-
-    // Problem step (position 0) has the scenario visual
-    const problemContent = dbSteps[0]?.content as Record<string, unknown>;
-    const visual = problemContent.visual as Record<string, unknown>;
-    expect(visual.kind).toBe("chart");
-
-    // Action step (position 1) has finding visuals embedded in each action
-    const actionContent = dbSteps[1]?.content as Record<string, unknown>;
-    const actions = actionContent.actions as Record<string, unknown>[];
-    expect(actions).toHaveLength(2);
-
-    const action0Visual = actions[0]?.findingVisual as Record<string, unknown>;
-    expect(action0Visual.kind).toBe("table");
-
-    const action1Visual = actions[1]?.findingVisual as Record<string, unknown>;
-    expect(action1Visual.kind).toBe("timeline");
-  });
-
   test("marks activity as completed with generationRunId", async () => {
     const lesson = await lessonFixture({
       chapterId: chapter.id,
@@ -228,10 +164,8 @@ describe(saveInvestigationActivityStep, () => {
       actions: mockActions,
       activityId: Number(activity.id),
       debrief: mockDebrief,
-      findingVisuals: mockFindingVisuals,
       findings: mockFindings,
       scenario: mockScenario,
-      scenarioVisual: mockScenarioVisual,
       workflowRunId: "workflow-completed",
     });
 
@@ -267,10 +201,8 @@ describe(saveInvestigationActivityStep, () => {
       actions: mockActions,
       activityId: Number(activity.id),
       debrief: mockDebrief,
-      findingVisuals: mockFindingVisuals,
       findings: mockFindings,
       scenario: mockScenario,
-      scenarioVisual: mockScenarioVisual,
       workflowRunId: "workflow-error",
     });
 

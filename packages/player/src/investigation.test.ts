@@ -25,20 +25,17 @@ function buildStep(overrides: Partial<SerializedStep> = {}): SerializedStep {
 const problemContent = {
   scenario: "API errors",
   variant: "problem" as const,
-  visual: { columns: ["A"], kind: "table" as const, rows: [["1"]] },
 };
 
 const actionContent = {
   actions: [
     {
       finding: "Logs show memory climbing",
-      findingVisual: { columns: ["A"], kind: "table" as const, rows: [["1"]] },
       label: "Check logs",
       quality: "critical" as const,
     },
     {
       finding: "Witness saw restart",
-      findingVisual: { columns: ["B"], kind: "table" as const, rows: [["2"]] },
       label: "Ask witness",
       quality: "useful" as const,
     },

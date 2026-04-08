@@ -151,16 +151,14 @@ export function getPhaseWeights(kind: ActivityKind): Record<PhaseName, number> {
   if (kind === "investigation") {
     return {
       ...ZERO_WEIGHTS,
-      analyzingEvidence: 17,
-      classifyingExplanations: 4,
-      creatingVisuals: 13,
-      designingActions: 11,
-      gatheringEvidence: 28,
+      analyzingEvidence: 20,
+      classifyingExplanations: 5,
+      designingActions: 14,
+      gatheringEvidence: 33,
       gettingStarted: 1,
-      preparingVisuals: 7,
       saving: 1,
-      settingTheScene: 13,
-      writingTheReveal: 5,
+      settingTheScene: 16,
+      writingTheReveal: 10,
     };
   }
 

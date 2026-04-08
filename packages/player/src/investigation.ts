@@ -62,7 +62,6 @@ export function getAvailableActions(
  */
 export function getInvestigationScenario(state: PlayerState): {
   scenario: string;
-  visual: unknown;
 } | null {
   const currentStep = state.steps[state.currentStepIndex];
 
@@ -88,5 +87,5 @@ export function getInvestigationScenario(state: PlayerState): {
     return null;
   }
 
-  return { scenario: problemContent.scenario, visual: problemContent.visual };
+  return { scenario: problemContent.scenario };
 }

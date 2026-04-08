@@ -38,7 +38,7 @@ export type VisualChartParams = {
 /**
  * Generates structured chart data from a textual description.
  * Takes a visual description (from a kind-selection task like
- * `generateInvestigationVisual`) and produces chart content
+ * `generateVisualDescriptions`) and produces chart content
  * matching `chartVisualContentSchema`: chart type, data points,
  * and a title.
  */

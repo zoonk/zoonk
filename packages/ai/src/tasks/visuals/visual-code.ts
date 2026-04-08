@@ -51,7 +51,7 @@ export type VisualCodeParams = {
 /**
  * Generates structured code snippet data from a textual description.
  * Takes a visual description (from a kind-selection task like
- * `generateInvestigationVisual`) and produces code content
+ * `generateVisualDescriptions`) and produces code content
  * matching `codeVisualContentSchema`: the code snippet,
  * programming language, and optional line annotations.
  *

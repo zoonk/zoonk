@@ -356,13 +356,10 @@ describe("step content contracts", () => {
   });
 
   describe("investigation", () => {
-    const baseVisual = { kind: "image" as const, prompt: "A crime scene photo" };
-
-    test("parses problem variant with scenario and visual", () => {
+    test("parses problem variant with scenario", () => {
       const content = parseStepContent("investigation", {
         scenario: "A mysterious event occurred at the manor.",
         variant: "problem",
-        visual: baseVisual,
       });
 
       expect(content.variant).toBe("problem");
@@ -374,7 +371,6 @@ describe("step content contracts", () => {
           extra: "field",
           scenario: "A mysterious event.",
           variant: "problem",
-          visual: baseVisual,
         }),
       ).toThrow();
     });
@@ -384,13 +380,11 @@ describe("step content contracts", () => {
         actions: [
           {
             finding: "The footage shows movement at 11pm.",
-            findingVisual: { kind: "image" as const, prompt: "Security camera still" },
             label: "Check the security footage",
             quality: "critical",
           },
           {
             finding: "The gardener was in the shed.",
-            findingVisual: baseVisual,
             label: "Interview the gardener",
             quality: "useful",
           },
@@ -407,7 +401,6 @@ describe("step content contracts", () => {
           actions: [
             {
               finding: "Something",
-              findingVisual: baseVisual,
               label: "Do something",
               quality: "excellent",
             },

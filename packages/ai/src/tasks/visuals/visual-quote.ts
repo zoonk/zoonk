@@ -33,7 +33,7 @@ export type VisualQuoteParams = {
 /**
  * Generates structured quote data from a textual description.
  * Takes a visual description (from a kind-selection task like
- * `generateInvestigationVisual`) and produces quote content
+ * `generateVisualDescriptions`) and produces quote content
  * matching `quoteVisualContentSchema`: the quote text, its
  * attribution to a real, identifiable person, and whether
  * the model believes that attribution is verifiable.

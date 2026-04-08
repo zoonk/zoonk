@@ -243,7 +243,6 @@ describe(buildScoringInput, () => {
             actions: [
               {
                 finding: "Logs show memory climbing",
-                findingVisual: { columns: ["A"], kind: "table", rows: [["1"]] },
                 label: "Check logs",
                 quality: "critical",
               },
