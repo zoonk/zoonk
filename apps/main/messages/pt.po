@@ -337,7 +337,7 @@ msgstr "Continuar"
 #: ../../packages/player/src/components/player-shell.tsx
 msgctxt "EqkwlK"
 msgid "evidence"
-msgstr "evidência"
+msgstr "evidências"
 
 #: ../../packages/player/src/components/player-shell.tsx
 msgctxt "PVe26p"

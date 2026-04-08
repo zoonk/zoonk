@@ -261,7 +261,7 @@ msgstr "¿Qué crees que pasó?"
 #: ../../packages/player/src/components/investigation-call-variant.tsx
 msgctxt "LmlOva"
 msgid "Review evidence"
-msgstr "Revisar evidencia"
+msgstr "Revisar evidencias"
 
 #: ../../packages/player/src/components/investigation-problem-variant.tsx
 msgctxt "4Xsz3M"
@@ -337,7 +337,7 @@ msgstr "Continuar"
 #: ../../packages/player/src/components/player-shell.tsx
 msgctxt "EqkwlK"
 msgid "evidence"
-msgstr "evidencia"
+msgstr "evidencias"
 
 #: ../../packages/player/src/components/player-shell.tsx
 msgctxt "PVe26p"
