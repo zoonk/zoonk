@@ -24,6 +24,7 @@ export type PlayerCheckBehavior =
 
 type PlayerFeedbackBehavior = "inline" | "none" | "screen";
 type PlayerLayoutBehavior = "default" | "navigable";
+type PlayerSceneBehavior = "choice" | "read" | "visual";
 
 export type PlayerRenderBehavior =
   | "fillBlank"
@@ -58,6 +59,7 @@ type PlayerStepBehavior = {
   feedback: PlayerFeedbackBehavior;
   layout: PlayerLayoutBehavior;
   render: PlayerRenderBehavior;
+  scene: PlayerSceneBehavior;
   validation: PlayerValidationBehavior;
 };
 
@@ -67,6 +69,7 @@ const STEP_BEHAVIOR_BY_KIND: Record<PlayerStepKind, PlayerStepBehavior> = {
     feedback: "inline",
     layout: "default",
     render: "fillBlank",
+    scene: "choice",
     validation: "fillBlank",
   },
   investigationAction: {
@@ -74,6 +77,7 @@ const STEP_BEHAVIOR_BY_KIND: Record<PlayerStepKind, PlayerStepBehavior> = {
     feedback: "inline",
     layout: "default",
     render: "investigation",
+    scene: "choice",
     validation: "none",
   },
   investigationCall: {
@@ -81,6 +85,7 @@ const STEP_BEHAVIOR_BY_KIND: Record<PlayerStepKind, PlayerStepBehavior> = {
     feedback: "screen",
     layout: "default",
     render: "investigation",
+    scene: "choice",
     validation: "investigationCall",
   },
   investigationProblem: {
@@ -88,6 +93,7 @@ const STEP_BEHAVIOR_BY_KIND: Record<PlayerStepKind, PlayerStepBehavior> = {
     feedback: "none",
     layout: "default",
     render: "investigation",
+    scene: "read",
     validation: "none",
   },
   listening: {
@@ -95,6 +101,7 @@ const STEP_BEHAVIOR_BY_KIND: Record<PlayerStepKind, PlayerStepBehavior> = {
     feedback: "screen",
     layout: "default",
     render: "listening",
+    scene: "choice",
     validation: "listening",
   },
   matchColumns: {
@@ -102,6 +109,7 @@ const STEP_BEHAVIOR_BY_KIND: Record<PlayerStepKind, PlayerStepBehavior> = {
     feedback: "inline",
     layout: "default",
     render: "matchColumns",
+    scene: "choice",
     validation: "matchColumns",
   },
   multipleChoice: {
@@ -109,6 +117,7 @@ const STEP_BEHAVIOR_BY_KIND: Record<PlayerStepKind, PlayerStepBehavior> = {
     feedback: "screen",
     layout: "default",
     render: "multipleChoice",
+    scene: "choice",
     validation: "multipleChoice",
   },
   reading: {
@@ -116,6 +125,7 @@ const STEP_BEHAVIOR_BY_KIND: Record<PlayerStepKind, PlayerStepBehavior> = {
     feedback: "screen",
     layout: "default",
     render: "reading",
+    scene: "choice",
     validation: "reading",
   },
   selectImage: {
@@ -123,6 +133,7 @@ const STEP_BEHAVIOR_BY_KIND: Record<PlayerStepKind, PlayerStepBehavior> = {
     feedback: "inline",
     layout: "default",
     render: "selectImage",
+    scene: "choice",
     validation: "selectImage",
   },
   sortOrder: {
@@ -130,6 +141,7 @@ const STEP_BEHAVIOR_BY_KIND: Record<PlayerStepKind, PlayerStepBehavior> = {
     feedback: "inline",
     layout: "default",
     render: "sortOrder",
+    scene: "choice",
     validation: "sortOrder",
   },
   staticGrammarExample: {
@@ -137,6 +149,7 @@ const STEP_BEHAVIOR_BY_KIND: Record<PlayerStepKind, PlayerStepBehavior> = {
     feedback: "none",
     layout: "navigable",
     render: "static",
+    scene: "read",
     validation: "none",
   },
   staticGrammarRule: {
@@ -144,6 +157,7 @@ const STEP_BEHAVIOR_BY_KIND: Record<PlayerStepKind, PlayerStepBehavior> = {
     feedback: "none",
     layout: "navigable",
     render: "static",
+    scene: "read",
     validation: "none",
   },
   staticText: {
@@ -151,6 +165,7 @@ const STEP_BEHAVIOR_BY_KIND: Record<PlayerStepKind, PlayerStepBehavior> = {
     feedback: "none",
     layout: "navigable",
     render: "static",
+    scene: "read",
     validation: "none",
   },
   storyDecision: {
@@ -158,6 +173,7 @@ const STEP_BEHAVIOR_BY_KIND: Record<PlayerStepKind, PlayerStepBehavior> = {
     feedback: "screen",
     layout: "default",
     render: "story",
+    scene: "choice",
     validation: "story",
   },
   storyIntro: {
@@ -165,6 +181,7 @@ const STEP_BEHAVIOR_BY_KIND: Record<PlayerStepKind, PlayerStepBehavior> = {
     feedback: "none",
     layout: "default",
     render: "static",
+    scene: "read",
     validation: "none",
   },
   storyOutcome: {
@@ -172,6 +189,7 @@ const STEP_BEHAVIOR_BY_KIND: Record<PlayerStepKind, PlayerStepBehavior> = {
     feedback: "none",
     layout: "default",
     render: "static",
+    scene: "read",
     validation: "none",
   },
   translation: {
@@ -179,6 +197,7 @@ const STEP_BEHAVIOR_BY_KIND: Record<PlayerStepKind, PlayerStepBehavior> = {
     feedback: "screen",
     layout: "default",
     render: "translation",
+    scene: "choice",
     validation: "translation",
   },
   visual: {
@@ -186,6 +205,7 @@ const STEP_BEHAVIOR_BY_KIND: Record<PlayerStepKind, PlayerStepBehavior> = {
     feedback: "none",
     layout: "navigable",
     render: "visual",
+    scene: "visual",
     validation: "none",
   },
   vocabulary: {
@@ -193,6 +213,7 @@ const STEP_BEHAVIOR_BY_KIND: Record<PlayerStepKind, PlayerStepBehavior> = {
     feedback: "none",
     layout: "navigable",
     render: "vocabulary",
+    scene: "read",
     validation: "none",
   },
 };
@@ -229,6 +250,19 @@ export function usesStaticNavigation(descriptor: PlayerStepDescriptor | null | u
  */
 export function usesFeedbackScreen(descriptor: PlayerStepDescriptor | null | undefined): boolean {
   return getPlayerStepBehavior(descriptor)?.feedback === "screen";
+}
+
+/**
+ * Groups the player's many step kinds into a smaller set of UI scenes.
+ *
+ * Story and investigation still keep their domain-specific step kinds for
+ * scoring and validation, but the shell can now reason about a simpler
+ * family of screens: read, choice, or visual.
+ */
+export function getPlayerStepScene(
+  descriptor: PlayerStepDescriptor | null | undefined,
+): PlayerSceneBehavior | null {
+  return getPlayerStepBehavior(descriptor)?.scene ?? null;
 }
 
 /**

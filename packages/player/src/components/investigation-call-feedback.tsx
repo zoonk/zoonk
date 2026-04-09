@@ -3,6 +3,7 @@
 import { getInvestigationCallVerdict } from "../investigation-call-verdict";
 import { type StepResult } from "../player-reducer";
 import { type SerializedStep } from "../prepare-activity-data";
+import { PlayerFeedbackScene, PlayerFeedbackSceneMessage } from "./player-feedback-scene";
 import { type Verdict, VerdictLabel } from "./verdict-label";
 
 /** Maps investigation call accuracy to the shared UI verdict vocabulary. */
@@ -41,14 +42,10 @@ export function InvestigationCallFeedbackContent({
   const verdict = getCallVerdict({ result, step });
 
   return (
-    <div
-      aria-live="polite"
-      className="animate-in fade-in slide-in-from-bottom-1 mx-auto my-auto flex w-full max-w-lg flex-col gap-6 duration-200 ease-out motion-reduce:animate-none"
-      role="status"
-    >
+    <PlayerFeedbackScene>
       <VerdictLabel verdict={verdict} />
 
-      {feedback && <p className="text-foreground text-lg leading-relaxed">{feedback}</p>}
-    </div>
+      {feedback && <PlayerFeedbackSceneMessage>{feedback}</PlayerFeedbackSceneMessage>}
+    </PlayerFeedbackScene>
   );
 }

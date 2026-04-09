@@ -2,6 +2,12 @@
 
 import { useExtracted } from "next-intl";
 import { METRIC_AVERAGE_THRESHOLD } from "../story";
+import {
+  PlayerReadSceneBody,
+  PlayerReadSceneDivider,
+  PlayerReadSceneMetaLabel,
+  PlayerReadSceneStack,
+} from "./player-read-scene";
 import { StoryMetricPill } from "./story-metric-pill";
 
 /**
@@ -21,15 +27,13 @@ export function StoryIntroContent({ intro, metrics }: { intro: string; metrics: 
 
   return (
     <div className="flex flex-col gap-10">
-      <p className="text-xl leading-relaxed sm:text-2xl sm:leading-relaxed">{intro}</p>
+      <PlayerReadSceneBody>{intro}</PlayerReadSceneBody>
 
-      <div className="flex flex-col gap-4">
-        <div className="bg-border h-px" />
+      <PlayerReadSceneStack className="gap-4">
+        <PlayerReadSceneDivider />
 
         <div className="flex flex-col gap-3">
-          <p className="text-muted-foreground text-xs font-medium tracking-widest uppercase">
-            {t("Current status")}
-          </p>
+          <PlayerReadSceneMetaLabel>{t("Current status")}</PlayerReadSceneMetaLabel>
 
           <div className="-ml-1 flex flex-wrap gap-2">
             {metrics.map((metric) => (
@@ -37,7 +41,7 @@ export function StoryIntroContent({ intro, metrics }: { intro: string; metrics: 
             ))}
           </div>
         </div>
-      </div>
+      </PlayerReadSceneStack>
     </div>
   );
 }

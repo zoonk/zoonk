@@ -5,6 +5,7 @@ import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
+import { expectMinimumVerticalGap } from "./_utils/layout-contracts";
 import { expect, test } from "./fixtures";
 
 function buildInvestigationContent(uniqueId: string) {
@@ -203,6 +204,49 @@ test.describe("Investigation Action Step", () => {
     await expect(
       page.getByText(new RegExp(`Finding 0.*unusual pattern.*${uniqueId}`)),
     ).toBeVisible();
+  });
+
+  test("mobile choice screens keep breathing room below the sticky header", async ({ page }) => {
+    const { url } = await createInvestigationActivity();
+
+    await page.setViewportSize({ height: 844, width: 390 });
+    await page.goto(url);
+    await page.waitForLoadState("networkidle");
+
+    const progressBar = page.getByRole("progressbar", { name: /activity progress/i });
+    await expect(progressBar).toBeVisible();
+
+    await page.getByRole("button", { name: /start investigation/i }).click();
+
+    const actionQuestion = page.getByRole("heading", {
+      name: /what do you want to investigate first/i,
+    });
+    await expect(actionQuestion).toBeVisible();
+
+    await expectMinimumVerticalGap({
+      lowerDescription: "investigation action question",
+      lowerLocator: actionQuestion,
+      upperDescription: "mobile activity progress bar",
+      upperLocator: progressBar,
+    });
+
+    await page.getByRole("radiogroup").getByRole("radio").first().click();
+    await page.getByRole("button", { name: /check/i }).click();
+    await page.getByRole("button", { name: /continue/i }).click();
+
+    await page.getByRole("radiogroup").getByRole("radio").first().click();
+    await page.getByRole("button", { name: /check/i }).click();
+    await page.getByRole("button", { name: /continue/i }).click();
+
+    const callQuestion = page.getByRole("heading", { name: /what do you think happened/i });
+    await expect(callQuestion).toBeVisible();
+
+    await expectMinimumVerticalGap({
+      lowerDescription: "investigation call question",
+      lowerLocator: callQuestion,
+      upperDescription: "mobile activity progress bar",
+      upperLocator: progressBar,
+    });
   });
 });
 

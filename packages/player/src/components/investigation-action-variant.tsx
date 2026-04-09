@@ -10,10 +10,20 @@ import { getAvailableActions } from "../investigation";
 import { usePlayerRuntime } from "../player-context";
 import { type SelectedAnswer, type StepResult } from "../player-reducer";
 import { type SerializedStep } from "../prepare-activity-data";
-import { useOptionKeyboard } from "../use-option-keyboard";
-import { OptionCard } from "./option-card";
-import { ContextText, QuestionText } from "./question-text";
-import { InteractiveStepLayout } from "./step-layouts";
+import {
+  PlayerChoiceScene,
+  PlayerChoiceSceneOptionText,
+  PlayerChoiceSceneOptions,
+  PlayerChoiceScenePrompt,
+  PlayerChoiceSceneQuestion,
+} from "./player-choice-scene";
+import {
+  PlayerReadScene,
+  PlayerReadSceneBody,
+  PlayerReadSceneTitle,
+  type PlayerReadSceneTitleTone,
+} from "./player-read-scene";
+import { PlayerSupportingText } from "./player-supporting-text";
 
 type ActionContent = Extract<InvestigationStepContent, { variant: "action" }>;
 
@@ -22,20 +32,20 @@ type ActionContent = Extract<InvestigationStepContent, { variant: "action" }>;
  * Shown as a quality indicator in the evidence feedback after checking.
  */
 function useQualityLabel(quality: InvestigationActionQuality): {
-  className: string;
   label: string;
+  tone: PlayerReadSceneTitleTone;
 } {
   const t = useExtracted();
 
   if (quality === "critical") {
-    return { className: "text-success", label: t("Strong lead") };
+    return { label: t("Strong lead"), tone: "success" };
   }
 
   if (quality === "useful") {
-    return { className: "text-foreground", label: t("Useful clue") };
+    return { label: t("Useful clue"), tone: "foreground" };
   }
 
-  return { className: "text-muted-foreground", label: t("Weak signal") };
+  return { label: t("Weak signal"), tone: "muted" };
 }
 
 /**
@@ -73,17 +83,17 @@ function ActionFeedback({
   const quality = useQualityLabel(action.quality);
 
   return (
-    <InteractiveStepLayout>
-      <p className={`text-lg font-semibold ${quality.className}`}>{quality.label}</p>
+    <PlayerReadScene>
+      <PlayerReadSceneTitle tone={quality.tone}>{quality.label}</PlayerReadSceneTitle>
 
-      <ContextText>{action.finding}</ContextText>
+      <PlayerReadSceneBody>{action.finding}</PlayerReadSceneBody>
 
       {isLastExperiment && (
-        <p className="text-muted-foreground text-sm">
+        <PlayerSupportingText>
           {t("Evidence complete — time to make your call.")}
-        </p>
+        </PlayerSupportingText>
       )}
-    </InteractiveStepLayout>
+    </PlayerReadScene>
   );
 }
 
@@ -147,12 +157,6 @@ export function InvestigationActionVariant({
     });
   };
 
-  useOptionKeyboard({
-    enabled: !hasFeedback,
-    onSelect: handleSelect,
-    optionCount: availableActions.length,
-  });
-
   const selectedAction =
     selectedActionId === null
       ? null
@@ -168,22 +172,22 @@ export function InvestigationActionVariant({
   }
 
   return (
-    <InteractiveStepLayout>
-      <QuestionText>{questionText}</QuestionText>
+    <PlayerChoiceScene>
+      <PlayerChoiceScenePrompt>
+        <PlayerChoiceSceneQuestion>{questionText}</PlayerChoiceSceneQuestion>
+      </PlayerChoiceScenePrompt>
 
-      <div aria-label={questionText} className="flex flex-col gap-3" role="radiogroup">
-        {availableActions.map((action, index) => (
-          <OptionCard
-            index={index}
-            isDimmed={hasSelection && selectedActionId !== action.id}
-            isSelected={selectedActionId === action.id}
-            key={action.id}
-            onSelect={() => handleSelect(index)}
-          >
-            <span className="text-base leading-6">{action.label}</span>
-          </OptionCard>
-        ))}
-      </div>
-    </InteractiveStepLayout>
+      <PlayerChoiceSceneOptions
+        ariaLabel={questionText}
+        keyboardEnabled={!hasFeedback}
+        onSelect={handleSelect}
+        options={availableActions.map((action) => ({
+          content: <PlayerChoiceSceneOptionText>{action.label}</PlayerChoiceSceneOptionText>,
+          isDimmed: hasSelection && selectedActionId !== action.id,
+          isSelected: selectedActionId === action.id,
+          key: action.id,
+        }))}
+      />
+    </PlayerChoiceScene>
   );
 }

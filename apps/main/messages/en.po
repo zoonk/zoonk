@@ -68,13 +68,6 @@ msgctxt "xiSVL4"
 msgid "{color} Belt — Level {level}"
 msgstr "{color} Belt — Level {level}"
 
-#: ../../packages/player/src/components/choice-step-layout.tsx
-#: ../../packages/player/src/components/investigation-call-variant.tsx
-#: ../../packages/player/src/components/translation-step.tsx
-msgctxt "akd+cv"
-msgid "Answer options"
-msgstr "Answer options"
-
 #: ../../packages/player/src/components/completion-auth-branch.tsx
 msgctxt "9+Ddtu"
 msgid "Next"
@@ -311,6 +304,11 @@ msgstr "Next step"
 msgctxt "kXUK98"
 msgid "Step navigation"
 msgstr "Step navigation"
+
+#: ../../packages/player/src/components/player-choice-scene.tsx
+msgctxt "akd+cv"
+msgid "Answer options"
+msgstr "Answer options"
 
 #: ../../packages/player/src/components/player-header.tsx
 msgctxt "rbrahO"

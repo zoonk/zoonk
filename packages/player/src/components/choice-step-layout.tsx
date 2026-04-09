@@ -1,11 +1,13 @@
 "use client";
 
-import { useExtracted } from "next-intl";
-import { useOptionKeyboard } from "../use-option-keyboard";
-import { useReplaceName } from "../user-name-context";
-import { OptionCard } from "./option-card";
-import { ContextText, QuestionText } from "./question-text";
-import { InteractiveStepLayout } from "./step-layouts";
+import {
+  PlayerChoiceScene,
+  PlayerChoiceSceneContext,
+  PlayerChoiceSceneOptionText,
+  PlayerChoiceSceneOptions,
+  PlayerChoiceScenePrompt,
+  PlayerChoiceSceneQuestion,
+} from "./player-choice-scene";
 
 /**
  * Shared layout for choice-based steps (multiple choice, story decisions).
@@ -27,38 +29,26 @@ export function ChoiceStepLayout({
   question?: string | null;
   selectedIndex: number | null;
 }) {
-  const t = useExtracted();
-  const replaceName = useReplaceName();
   const hasSelection = selectedIndex !== null;
 
-  useOptionKeyboard({
-    enabled: true,
-    onSelect,
-    optionCount: options.length,
-  });
-
   return (
-    <InteractiveStepLayout>
+    <PlayerChoiceScene>
       {(context || question) && (
-        <div className="flex flex-col gap-2 sm:gap-6">
-          {context && <ContextText>{replaceName(context)}</ContextText>}
-          {question && <QuestionText>{replaceName(question)}</QuestionText>}
-        </div>
+        <PlayerChoiceScenePrompt>
+          <PlayerChoiceSceneContext>{context}</PlayerChoiceSceneContext>
+          <PlayerChoiceSceneQuestion>{question}</PlayerChoiceSceneQuestion>
+        </PlayerChoiceScenePrompt>
       )}
 
-      <div aria-label={t("Answer options")} className="flex flex-col gap-3" role="radiogroup">
-        {options.map((option, index) => (
-          <OptionCard
-            index={index}
-            isDimmed={hasSelection && selectedIndex !== index}
-            isSelected={selectedIndex === index}
-            key={option.key}
-            onSelect={() => onSelect(index)}
-          >
-            <span className="text-base leading-6">{option.text}</span>
-          </OptionCard>
-        ))}
-      </div>
-    </InteractiveStepLayout>
+      <PlayerChoiceSceneOptions
+        onSelect={onSelect}
+        options={options.map((option, index) => ({
+          content: <PlayerChoiceSceneOptionText>{option.text}</PlayerChoiceSceneOptionText>,
+          isDimmed: hasSelection && selectedIndex !== index,
+          isSelected: selectedIndex === index,
+          key: option.key,
+        }))}
+      />
+    </PlayerChoiceScene>
   );
 }

@@ -1,6 +1,5 @@
 "use client";
 
-import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { type StepResult } from "../player-reducer";
 import { type SerializedStep } from "../prepare-activity-data";
@@ -9,33 +8,10 @@ import { getFeedbackRomanization } from "./_utils/feedback-romanization";
 import { CorrectAnswerBlock, IncorrectAnswerBlock } from "./feedback-answer-blocks";
 import { InvestigationCallFeedbackContent } from "./investigation-call-feedback";
 import { PlayAudioButton } from "./play-audio-button";
+import { PlayerFeedbackScene, PlayerFeedbackSceneMessage } from "./player-feedback-scene";
+import { PlayerSupportingText } from "./player-supporting-text";
 import { RomanizationText } from "./romanization-text";
 import { StoryFeedbackContent } from "./story-feedback-content";
-
-function FeedbackScreen({ className, ...props }: React.ComponentProps<"div">) {
-  return (
-    <div
-      aria-live="polite"
-      className={cn(
-        "animate-in fade-in slide-in-from-bottom-1 mx-auto my-auto flex w-full max-w-lg flex-col gap-6 duration-200 ease-out motion-reduce:animate-none",
-        className,
-      )}
-      data-slot="feedback-screen"
-      role="status"
-      {...props}
-    />
-  );
-}
-
-function FeedbackMessage({ className, ...props }: React.ComponentProps<"p">) {
-  return (
-    <p
-      className={cn("text-foreground max-w-md text-lg leading-relaxed", className)}
-      data-slot="feedback-message"
-      {...props}
-    />
-  );
-}
 
 function getArrangeWordsSelectedText(result: StepResult): string | null {
   if (result.answer?.kind === "reading" || result.answer?.kind === "listening") {
@@ -91,13 +67,13 @@ function StandardFeedbackContent({ result, step }: { result: StepResult; step?: 
   const audioUrl = getFeedbackAudioUrl(step);
 
   return (
-    <FeedbackScreen>
+    <PlayerFeedbackScene>
       <div className="flex flex-col gap-2">
         {questionText && (
-          <div className="text-muted-foreground text-sm">
-            <p>
+          <div className="flex flex-col gap-1">
+            <PlayerSupportingText>
               {t("Translate:")} <span className="text-foreground font-medium">{questionText}</span>
-            </p>
+            </PlayerSupportingText>
             <RomanizationText>{rom.translate}</RomanizationText>
           </div>
         )}
@@ -117,8 +93,8 @@ function StandardFeedbackContent({ result, step }: { result: StepResult; step?: 
 
       {audioUrl && <PlayAudioButton audioUrl={audioUrl} preload={false} variant="text" />}
 
-      {feedback && <FeedbackMessage>{feedback}</FeedbackMessage>}
-    </FeedbackScreen>
+      {feedback && <PlayerFeedbackSceneMessage>{feedback}</PlayerFeedbackSceneMessage>}
+    </PlayerFeedbackScene>
   );
 }
 

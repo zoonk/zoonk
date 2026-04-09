@@ -5,6 +5,7 @@ import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
+import { expectWidthToMatch, getRenderedWidth } from "./_utils/layout-contracts";
 import { expect, test } from "./fixtures";
 
 function buildStoryContent(uniqueId: string) {
@@ -215,6 +216,56 @@ test.describe("Story Intro Screen", () => {
     await expect(
       page.getByText(new RegExp(`A crisis hits the factory floor ${uniqueId}`)),
     ).toBeVisible();
+  });
+
+  test("reuses the same mobile content width across intro, decision, and outcome", async ({
+    page,
+  }) => {
+    const { uniqueId, url } = await createStoryActivity();
+
+    await page.setViewportSize({ height: 844, width: 390 });
+    await page.goto(url);
+    await page.waitForLoadState("networkidle");
+
+    const beginButton = page.getByRole("button", { name: /begin/i });
+    await expect(beginButton).toBeVisible();
+
+    const introActionWidth = await getRenderedWidth({
+      description: "story intro action button",
+      locator: beginButton,
+    });
+
+    await beginButton.click();
+
+    const answerOptions = page.getByRole("radiogroup", { name: /answer options/i });
+    await expect(answerOptions).toBeVisible();
+
+    const decisionWidth = await getRenderedWidth({
+      description: "story decision options",
+      locator: answerOptions,
+    });
+
+    await expectWidthToMatch({
+      description: "story decision options",
+      expectedDescription: "story intro action button",
+      expectedWidth: introActionWidth,
+      locator: answerOptions,
+    });
+
+    await page.getByRole("radio", { name: new RegExp(`Invest in training ${uniqueId}`) }).click();
+    await page.getByRole("button", { name: /check/i }).click();
+    await page.getByRole("button", { name: /continue/i }).click();
+
+    await expect(
+      page.getByRole("heading", { name: new RegExp(`Great Manager ${uniqueId}`) }),
+    ).toBeVisible();
+
+    await expectWidthToMatch({
+      description: "story outcome action button",
+      expectedDescription: "story decision options",
+      expectedWidth: decisionWidth,
+      locator: page.getByRole("button", { name: /continue/i }),
+    });
   });
 });
 
