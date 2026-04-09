@@ -166,10 +166,11 @@ function buildAccessibleDescription(content: DiagramVisualContent): string {
 function DiagramSvg({ layout, markerId }: { layout: DiagramLayout; markerId: string }) {
   return (
     <svg
-      className="block h-auto max-w-full"
+      className="block flex-none"
       height={layout.height}
       preserveAspectRatio="xMidYMid meet"
       role="img"
+      style={{ height: layout.height, width: layout.width }}
       viewBox={layout.viewBox}
       width={layout.width}
     >
@@ -183,18 +184,18 @@ function DiagramSvg({ layout, markerId }: { layout: DiagramLayout; markerId: str
 export function DiagramVisual({ content }: { content: DiagramVisualContent }) {
   const t = useExtracted();
   const markerId = useId();
-
   const layout = useMemo(
     () => computeDiagramLayout(content.nodes, content.edges),
     [content.nodes, content.edges],
   );
-
-  const description = useMemo(() => buildAccessibleDescription(content), [content]);
+  const description = buildAccessibleDescription(content);
 
   return (
     <figure aria-label={t("Diagram")} className="w-full max-w-full min-w-0">
-      <div className="flex w-full justify-center">
-        <DiagramSvg layout={layout} markerId={markerId} />
+      <div className="w-full overflow-x-auto overscroll-x-contain">
+        <div className="flex w-max min-w-full justify-center">
+          <DiagramSvg layout={layout} markerId={markerId} />
+        </div>
       </div>
 
       <figcaption className="sr-only">{description}</figcaption>

@@ -28,6 +28,17 @@ export type DiagramLayout = {
   width: number;
 };
 
+type DiagramNodeInput = {
+  id: string;
+  label: string;
+};
+
+type DiagramEdgeInput = {
+  label?: string;
+  source: string;
+  target: string;
+};
+
 const MIN_NODE_WIDTH = 100;
 const NODE_HEIGHT = 40;
 const NODE_PADDING = 32;
@@ -40,47 +51,20 @@ const EDGE_LABEL_PADDING_Y = 3;
 const EDGE_LABEL_HEIGHT = EDGE_LABEL_FONT_SIZE + EDGE_LABEL_PADDING_Y * 2;
 
 const NODE_FONT_SIZE = 14;
-const NODE_FONT_WEIGHT = 500;
-const NODE_FONT = `${NODE_FONT_WEIGHT} ${NODE_FONT_SIZE}px Inter, system-ui, sans-serif`;
-const EDGE_FONT = `${EDGE_LABEL_FONT_SIZE}px Inter, system-ui, sans-serif`;
 
 /**
- * Cached OffscreenCanvas context for text measurement.
- * `undefined` = not yet initialized, `null` = unavailable
- * (e.g. test environments without canvas support).
+ * Estimates text width without consulting browser-only APIs.
+ *
+ * The diagram layout is part of the prerendered HTML for a Client Component,
+ * so server and client must compute the same numbers during hydration.
+ * Using `OffscreenCanvas` in the browser but not on the server causes the SVG
+ * geometry to diverge, which React correctly reports as a hydration mismatch.
+ *
+ * A small deterministic estimate is enough here because dagre only needs
+ * stable relative widths to avoid overlaps; it does not require pixel-perfect
+ * typography metrics.
  */
-let canvasCtx: OffscreenCanvasRenderingContext2D | null | undefined;
-
-function getCanvasContext(): OffscreenCanvasRenderingContext2D | null {
-  if (canvasCtx !== undefined) {
-    return canvasCtx;
-  }
-
-  if (typeof OffscreenCanvas === "undefined") {
-    canvasCtx = null;
-    return null;
-  }
-
-  const canvas = new OffscreenCanvas(1, 1);
-  canvasCtx = canvas.getContext("2d");
-  return canvasCtx;
-}
-
-/**
- * Measures text width using OffscreenCanvas when available (browser),
- * falling back to a character-count heuristic in environments without
- * canvas support (e.g. jsdom in tests). Using actual measurement
- * produces accurate node sizing for proportional fonts, mixed-width
- * characters, and non-Latin scripts.
- */
-function measureText(text: string, font: string, fontSize: number): number {
-  const ctx = getCanvasContext();
-
-  if (ctx) {
-    ctx.font = font;
-    return ctx.measureText(text).width;
-  }
-
+function estimateTextWidth({ fontSize, text }: { fontSize: number; text: string }): number {
   // Fallback: average character width for proportional
   // sans-serif fonts like Inter is ~55% of the font size.
   const averageCharWidthRatio = 0.55;
@@ -88,11 +72,42 @@ function measureText(text: string, font: string, fontSize: number): number {
 }
 
 function measureNodeWidth(label: string): number {
-  return Math.max(MIN_NODE_WIDTH, measureText(label, NODE_FONT, NODE_FONT_SIZE) + NODE_PADDING);
+  return Math.max(
+    MIN_NODE_WIDTH,
+    estimateTextWidth({ fontSize: NODE_FONT_SIZE, text: label }) + NODE_PADDING,
+  );
 }
 
 function measureEdgeLabelWidth(label: string): number {
-  return measureText(label, EDGE_FONT, EDGE_LABEL_FONT_SIZE) + EDGE_LABEL_PADDING_X * 2;
+  return (
+    estimateTextWidth({ fontSize: EDGE_LABEL_FONT_SIZE, text: label }) + EDGE_LABEL_PADDING_X * 2
+  );
+}
+
+/**
+ * Precomputes node widths once so dagre layout and the rendered SVG use the
+ * same dimensions. This avoids duplicated sizing logic drifting over time.
+ */
+function sizeNode(node: DiagramNodeInput): DiagramNodeInput & { width: number } {
+  return {
+    ...node,
+    width: measureNodeWidth(node.label),
+  };
+}
+
+/**
+ * Precomputes edge label dimensions once so dagre reserves space for the same
+ * label box that the SVG later renders.
+ */
+function sizeEdge(edge: DiagramEdgeInput): DiagramEdgeInput & {
+  labelHeight?: number;
+  labelWidth?: number;
+} {
+  return {
+    ...edge,
+    labelHeight: edge.label ? EDGE_LABEL_HEIGHT : undefined,
+    labelWidth: edge.label ? measureEdgeLabelWidth(edge.label) : undefined,
+  };
 }
 
 function readNodePosition(
@@ -180,59 +195,44 @@ function computeViewBox({ edges, nodes }: { edges: PositionedEdge[]; nodes: Posi
 }
 
 export function computeDiagramLayout(
-  nodes: {
-    id: string;
-    label: string;
-  }[],
-  edges: {
-    label?: string;
-    source: string;
-    target: string;
-  }[],
+  nodes: DiagramNodeInput[],
+  edges: DiagramEdgeInput[],
 ): DiagramLayout {
   const graph = new Graph<GraphLabel, NodeLabel, EdgeLabel>();
+  const sizedNodes = nodes.map((node) => sizeNode(node));
+  const sizedEdges = edges.map((edge) => sizeEdge(edge));
 
   graph.setGraph({ nodesep: NODE_SEP, rankdir: "TB", ranksep: RANK_SEP });
   graph.setDefaultEdgeLabel(() => ({}));
 
-  for (const node of nodes) {
+  for (const node of sizedNodes) {
     graph.setNode(node.id, {
       height: NODE_HEIGHT,
       label: node.label,
-      width: measureNodeWidth(node.label),
+      width: node.width,
     });
   }
 
-  for (const edge of edges) {
+  for (const edge of sizedEdges) {
     graph.setEdge(edge.source, edge.target, {
-      height: edge.label ? EDGE_LABEL_HEIGHT : 0,
+      height: edge.labelHeight ?? 0,
       label: edge.label,
-      width: edge.label ? measureEdgeLabelWidth(edge.label) : 0,
+      width: edge.labelWidth ?? 0,
     });
   }
 
   layout(graph);
 
-  const positionedNodes = nodes.map((node) => ({
+  const positionedNodes = sizedNodes.map((node) => ({
     ...readNodePosition(graph, node.id),
     id: node.id,
     label: node.label,
   }));
 
-  const positionedEdges = edges.map((edge) => {
-    const edgeData = readEdge(graph, edge.source, edge.target);
-
-    return {
-      label: edge.label,
-      labelHeight: edge.label ? EDGE_LABEL_HEIGHT : undefined,
-      labelWidth: edge.label ? measureEdgeLabelWidth(edge.label) : undefined,
-      labelX: edgeData.labelX,
-      labelY: edgeData.labelY,
-      points: edgeData.points,
-      source: edge.source,
-      target: edge.target,
-    };
-  });
+  const positionedEdges = sizedEdges.map((edge) => ({
+    ...edge,
+    ...readEdge(graph, edge.source, edge.target),
+  }));
 
   const { height, viewBox, width } = computeViewBox({
     edges: positionedEdges,

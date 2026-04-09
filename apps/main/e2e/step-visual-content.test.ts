@@ -84,6 +84,47 @@ function buildWideTable(uniqueId: string) {
   };
 }
 
+function buildWideDiagram(uniqueId: string) {
+  return {
+    edges: [
+      {
+        label: `routes requests ${uniqueId}`,
+        source: "incoming",
+        target: "queue",
+      },
+      {
+        label: `overloads approvals ${uniqueId}`,
+        source: "urgent",
+        target: "queue",
+      },
+      {
+        label: `delivers updates ${uniqueId}`,
+        source: "queue",
+        target: "delivery",
+      },
+    ],
+    kind: "diagram" as const,
+    nodes: [
+      {
+        id: "incoming",
+        label: `Incoming enterprise procurement requests ${uniqueId}`,
+      },
+      {
+        id: "urgent",
+        label: `High-priority compliance escalations ${uniqueId}`,
+      },
+      {
+        id: "queue",
+        label: `Awaiting approval from operations ${uniqueId}`,
+      },
+      {
+        id: "delivery",
+        label: `Delivery to the requesting team ${uniqueId}`,
+      },
+    ],
+  };
+}
+
 async function getVisualContentMetrics(page: Page) {
   return page.getByRole("region", { name: /visual content/i }).evaluate((element) => ({
     clientHeight: element.clientHeight,
@@ -526,6 +567,58 @@ test.describe("Visual Step Content", () => {
     await page.mouse.wheel(500, 0);
 
     await expect.poll(() => getHorizontalScrollLeft(table)).toBeGreaterThan(0);
+    await expect.poll(() => getVisualContentScrollLeft(page)).toBe(0);
+
+    expect(await page.evaluate(() => window.scrollY)).toBe(initialWindowScrollY);
+    expect(Math.abs((await getViewportTop(closeButton)) - initialCloseTop)).toBeLessThan(1);
+    expect(Math.abs((await getViewportTop(nextButton)) - initialNextTop)).toBeLessThan(1);
+  });
+
+  test("wide diagrams keep horizontal scroll on the diagram", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const { url } = await createVisualActivity({
+      steps: [
+        {
+          content: buildWideDiagram(uniqueId),
+          kind: "visual",
+          position: 0,
+        },
+        {
+          content: {
+            text: `Next step body ${uniqueId}`,
+            title: `Wide Diagram Step2 ${uniqueId}`,
+            variant: "text",
+          },
+          position: 1,
+        },
+      ],
+    });
+
+    await page.setViewportSize({ height: 700, width: 390 });
+    await page.goto(url);
+
+    const closeButton = page.getByRole("link", { name: /close/i });
+    const nextButton = page.getByRole("button", { name: /next step/i });
+    const figure = page.getByRole("figure", { name: /diagram/i });
+    const diagram = figure.getByRole("img");
+    const visualContent = page.getByRole("region", { name: /visual content/i });
+
+    await expect(figure).toBeVisible();
+    await expect(visualContent).toBeVisible();
+    await expect(nextButton).toBeVisible();
+
+    const initialDiagramMetrics = await getHorizontalScrollMetrics(diagram);
+
+    expect(initialDiagramMetrics.scrollWidth).toBeGreaterThan(initialDiagramMetrics.clientWidth);
+
+    const initialWindowScrollY = await page.evaluate(() => window.scrollY);
+    const initialCloseTop = await getViewportTop(closeButton);
+    const initialNextTop = await getViewportTop(nextButton);
+
+    await diagram.hover();
+    await page.mouse.wheel(500, 0);
+
+    await expect.poll(() => getHorizontalScrollLeft(diagram)).toBeGreaterThan(0);
     await expect.poll(() => getVisualContentScrollLeft(page)).toBe(0);
 
     expect(await page.evaluate(() => window.scrollY)).toBe(initialWindowScrollY);
