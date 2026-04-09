@@ -1,0 +1,96 @@
+packages/player/src/components/story-metrics-bar.tsx
+  a69bd7d8adbcb062 5,22,24,30
+packages/player/src/components/stage-content.tsx
+  a69bd7d8adbcb062 11,15-17,19-20,22-27,30-35,60,62,68,84,86
+packages/player/src/components/story-outcome-content.tsx
+  a69bd7d8adbcb062 9-14,130,132,134,137-138,149
+packages/player/src/components/story-feedback-content.tsx
+  a69bd7d8adbcb062 11,80,82,92
+packages/player/src/components/feedback-screen.tsx
+  a69bd7d8adbcb062 11,69,95-100
+packages/player/src/components/static-step.tsx
+  a69bd7d8adbcb062 7-12,21-24,40,47-48,54-57,107,109
+packages/player/src/components/player-bottom-bar.tsx
+  a69bd7d8adbcb062 7,12-14,21,25
+apps/main/messages/en.po
+  a69bd7d8adbcb062 308-311
+packages/player/src/components/investigation-action-variant.tsx
+  a69bd7d8adbcb062 13-19,79,82,89,168-184
+packages/player/src/components/step-renderer.tsx
+  a69bd7d8adbcb062 167
+packages/player/src/player-step-behavior.ts
+  a69bd7d8adbcb062 27,62,72,80,88,96,104,112,120,128,136,144,152,160,168,176,184,192,200,208,216,255-265
+apps/main/e2e/_utils/layout-contracts.ts
+  a69bd7d8adbcb062 1-96
+packages/player/src/player-screen.ts
+  a69bd7d8adbcb062 6,14,39,51,60,87,220-239,278,283,292
+packages/player/src/components/player-stage.tsx
+  a69bd7d8adbcb062 8,13,18-19,23
+packages/player/src/components/step-layouts.tsx
+  a69bd7d8adbcb062 3-21,35-38,41-42
+packages/player/src/components/investigation-call-feedback.tsx
+  a69bd7d8adbcb062 6,45,48-49
+packages/player/src/components/choice-step-layout.tsx
+  a69bd7d8adbcb062 3-9,34,36-39,42-51
+apps/main/messages/pt.po
+  a69bd7d8adbcb062 308-311
+packages/player/src/components/player-feedback-scene.tsx
+  a69bd7d8adbcb062 1-50
+apps/main/messages/es.po
+  a69bd7d8adbcb062 308-311
+packages/player/src/components/vocabulary-step.tsx
+  a69bd7d8adbcb062 6,18-23,26,34,36,38
+packages/player/src/components/player-shell.tsx
+  a69bd7d8adbcb062 99
+packages/player/src/components/player-choice-scene.tsx
+  a69bd7d8adbcb062 1-136
+packages/player/src/components/player-read-scene.tsx
+  a69bd7d8adbcb062 1-120
+apps/main/e2e/story-step.test.ts
+  a69bd7d8adbcb062 8,220-268
+packages/player/src/components/story-intro-content.tsx
+  a69bd7d8adbcb062 5-9,29,31-32,45
+packages/player/src/components/investigation-call-variant.tsx
+  a69bd7d8adbcb062 24-29,226,229-250
+packages/player/src/components/investigation-problem-variant.tsx
+  a69bd7d8adbcb062 5-10,26-30,33
+packages/player/src/components/translation-step.tsx
+  a69bd7d8adbcb062 7-13,83-87,89-98
+apps/main/e2e/investigation-step.test.ts
+  a69bd7d8adbcb062 8,208-249
+packages/player/src/components/completion-screen.tsx
+  a69bd7d8adbcb062 9,11-14,17,19,84
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.6",
+  "base_commit_sha": "8de29fb5f451ebe3058115314c9812607627d33b",
+  "prompts": {
+    "982baca56ddc6fb7": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d7251-cbe1-78b2-bc30-b22578a53d0e",
+        "model": "unknown"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 17,
+      "overriden_lines": 0
+    },
+    "a69bd7d8adbcb062": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d73eb-83af-7831-a143-49eba88b95a0",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 871,
+      "total_deletions": 307,
+      "accepted_lines": 833,
+      "overriden_lines": 0
+    }
+  }
+}
