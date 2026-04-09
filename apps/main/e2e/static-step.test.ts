@@ -509,6 +509,47 @@ test.describe("Static Step Navigation", () => {
     await expect(page.getByRole("status")).toBeVisible();
     await expect(page.getByText(/completed/i)).toBeVisible();
   });
+
+  test("desktop next button keeps focus when navigating between static steps", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const { url } = await createStaticActivity({
+      steps: [
+        {
+          content: {
+            text: `Focus 1 body ${uniqueId}`,
+            title: `Focus 1 ${uniqueId}`,
+            variant: "text",
+          },
+          position: 0,
+        },
+        {
+          content: {
+            text: `Focus 2 body ${uniqueId}`,
+            title: `Focus 2 ${uniqueId}`,
+            variant: "text",
+          },
+          position: 1,
+        },
+      ],
+    });
+
+    await page.setViewportSize({ height: 900, width: 1280 });
+    await page.goto(url);
+    await page.waitForLoadState("networkidle");
+
+    const nav = page.getByRole("navigation", { name: /step navigation/i });
+    const nextButton = nav.getByRole("button", { name: /next step/i });
+
+    await nextButton.focus();
+    await expect(nextButton).toBeFocused();
+
+    await page.keyboard.press("Enter");
+
+    await expect(
+      page.getByRole("heading", { name: new RegExp(`Focus 2 ${uniqueId}`) }),
+    ).toBeVisible();
+    await expect(nextButton).toBeFocused();
+  });
 });
 
 test.describe("Completion Screen", () => {

@@ -66,21 +66,16 @@ export function StageContent() {
       />
     );
 
-    return (
-      <div
-        className="animate-in fade-in flex min-h-0 w-full min-w-0 flex-1 flex-col items-center duration-150 ease-out motion-reduce:animate-none"
-        key={`step-${state.currentStepIndex}`}
-      >
-        {showInlineAction ? (
-          <div className="my-auto flex w-full flex-col items-center gap-6">
-            {stepContent}
-            <StepActionButton className="hidden max-w-2xl lg:inline-flex" />
-          </div>
-        ) : (
-          stepContent
-        )}
-      </div>
-    );
+    if (showInlineAction) {
+      return (
+        <div className="my-auto flex w-full flex-col items-center gap-6">
+          {stepContent}
+          <StepActionButton className="hidden max-w-2xl lg:inline-flex" />
+        </div>
+      );
+    }
+
+    return stepContent;
   }
 
   return null;
