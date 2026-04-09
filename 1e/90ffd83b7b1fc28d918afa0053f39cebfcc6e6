@@ -1,0 +1,27 @@
+packages/player/src/diagram-layout.test.ts
+  134916bd34d8878d 1,220-263
+packages/player/src/components/visuals/diagram-visual.tsx
+  134916bd34d8878d 169,173,191,195-198
+packages/player/src/diagram-layout.ts
+  134916bd34d8878d 31-41,56-65,67,75-78,82-110,198-199,202-203,208,212,216,218,220,226,232-235
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.6",
+  "base_commit_sha": "1e90ffd83b7b1fc28d918afa0053f39cebfcc6e6",
+  "prompts": {
+    "134916bd34d8878d": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d724f-1532-7e81-99b1-455f2aecd014",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 126,
+      "total_deletions": 80,
+      "accepted_lines": 122,
+      "overriden_lines": 0
+    }
+  }
+}
