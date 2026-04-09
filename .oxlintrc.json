@@ -98,7 +98,6 @@
     "unicorn/no-array-reduce": "off",
     "unicorn/no-null": "off",
     "unicorn/prefer-bigint-literals": "off",
-    "unicorn/prefer-import-meta-properties": "off",
     "unicorn/prefer-native-coercion-functions": "off",
     "unicorn/prefer-ternary": "off",
     "unicorn/switch-case-braces": ["error", "avoid"],
