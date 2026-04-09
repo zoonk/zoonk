@@ -1,9 +1,9 @@
 import {
   type InvestigationActionQuality,
   type InvestigationStepContent,
-  parseStepContent,
 } from "@zoonk/core/steps/contract/content";
 import { type PlayerState } from "./player-reducer";
+import { describePlayerStep } from "./player-step";
 import { type SerializedStep } from "./prepare-activity-data";
 
 export type ActionTiming = {
@@ -34,12 +34,21 @@ export function getInvestigationStepByVariant(
   variant: InvestigationVariant,
 ): SerializedStep | undefined {
   return steps.find((step) => {
-    if (step.kind !== "investigation") {
-      return false;
+    const descriptor = describePlayerStep(step);
+
+    if (descriptor?.kind === "investigationAction") {
+      return variant === "action";
     }
 
-    const content = parseStepContent("investigation", step.content);
-    return content.variant === variant;
+    if (descriptor?.kind === "investigationCall") {
+      return variant === "call";
+    }
+
+    if (descriptor?.kind === "investigationProblem") {
+      return variant === "problem";
+    }
+
+    return false;
   });
 }
 
@@ -71,29 +80,26 @@ export function getAvailableActions(
 export function getInvestigationScenario(state: PlayerState): {
   scenario: string;
 } | null {
-  const currentStep = state.steps[state.currentStepIndex];
+  const descriptor = describePlayerStep(state.steps[state.currentStepIndex]);
 
-  if (!currentStep || currentStep.kind !== "investigation") {
+  if (
+    descriptor?.kind !== "investigationAction" &&
+    descriptor?.kind !== "investigationCall" &&
+    descriptor?.kind !== "investigationProblem"
+  ) {
     return null;
   }
 
-  const currentContent = parseStepContent("investigation", currentStep.content);
-
-  if (currentContent.variant === "problem") {
+  if (descriptor.kind === "investigationProblem") {
     return null;
   }
 
   const problemStep = getInvestigationStepByVariant(state.steps, "problem");
+  const problemDescriptor = describePlayerStep(problemStep);
 
-  if (!problemStep) {
+  if (problemDescriptor?.kind !== "investigationProblem") {
     return null;
   }
 
-  const problemContent = parseStepContent("investigation", problemStep.content);
-
-  if (problemContent.variant !== "problem") {
-    return null;
-  }
-
-  return { scenario: problemContent.scenario };
+  return { scenario: problemDescriptor.content.scenario };
 }

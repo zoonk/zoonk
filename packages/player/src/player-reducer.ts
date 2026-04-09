@@ -4,14 +4,13 @@ import { type InvestigationLoopState } from "./investigation";
 import {
   continueFromAction,
   continueFromProblem,
-  getInvestigationVariant,
   recordActionInLoop,
 } from "./investigation-reducer";
 import { computeLocalCompletion } from "./player-completion";
 import { buildInitialAnswers } from "./player-initial-state";
+import { getInvestigationVariant, getStoryStaticVariant } from "./player-step";
 import { type SerializedStep } from "./prepare-activity-data";
 import { canNavigatePrev, isStaticNavigationStep } from "./step-navigation";
-import { isStoryStaticVariant } from "./story";
 
 export type PlayerPhase = "playing" | "feedback" | "completed";
 
@@ -273,7 +272,7 @@ function handleNavigateStep(
    * navigation via the bottom bar action buttons. They don't participate
    * in arrow-key navigation handled by `isStaticNavigationStep`.
    */
-  if (currentStep && isStoryStaticVariant(currentStep) && action.direction === "next") {
+  if (currentStep && getStoryStaticVariant(currentStep) && action.direction === "next") {
     return advanceForward(state);
   }
 

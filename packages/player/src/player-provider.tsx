@@ -11,12 +11,7 @@ import {
 } from "./player-context";
 import { type InitialStateInput } from "./player-initial-state";
 import { createInitialState, playerReducer } from "./player-reducer";
-import {
-  getCanNavigatePrev,
-  getHasAnswer,
-  getIsStaticStep,
-  getStoryStaticVariant,
-} from "./player-selectors";
+import { getPlayerScreenModel } from "./player-screen";
 import { type SerializedActivity } from "./prepare-activity-data";
 import { usePlayerActions } from "./use-player-actions";
 import { usePlayerKeyboard } from "./use-player-keyboard";
@@ -49,16 +44,14 @@ export function PlayerProvider({
   );
   const [state, dispatch] = useReducer(playerReducer, initInput, createInitialState);
   const actions = usePlayerActions(state, dispatch, onComplete, viewer.isAuthenticated);
+  const screen = useMemo(() => getPlayerScreenModel(state), [state]);
 
   const handleNext = useCallback(() => {
     onNext?.();
   }, [onNext]);
 
   usePlayerKeyboard({
-    canNavigatePrev: getCanNavigatePrev(state),
-    hasAnswer: getHasAnswer(state),
-
-    isStaticStep: getIsStaticStep(state),
+    keyboard: screen.keyboard,
     onCheck: actions.check,
     onContinue: actions.continue,
     onEscape,
@@ -66,8 +59,6 @@ export function PlayerProvider({
     onNavigatePrev: actions.navigatePrev,
     onNext: onNext ? handleNext : null,
     onRestart: actions.restart,
-    phase: state.phase,
-    storyStaticVariant: getStoryStaticVariant(state),
   });
 
   const configValue = useMemo(
@@ -84,9 +75,10 @@ export function PlayerProvider({
   const runtimeValue = useMemo(
     () => ({
       actions,
+      screen,
       state,
     }),
-    [actions, state],
+    [actions, screen, state],
   );
 
   return (

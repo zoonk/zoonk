@@ -1,15 +1,17 @@
 // @vitest-environment jsdom
 import { renderHook } from "@testing-library/react";
 import { afterEach, describe, expect, test, vi } from "vitest";
-import { type PlayerPhase } from "./player-reducer";
+import { type PlayerKeyboardModel } from "./player-screen";
 import { usePlayerKeyboard } from "./use-player-keyboard";
 
 function buildOptions(overrides: Partial<Parameters<typeof usePlayerKeyboard>[0]> = {}) {
   return {
-    canNavigatePrev: false,
-    hasAnswer: false,
-    isInvestigationScore: false,
-    isStaticStep: false,
+    keyboard: {
+      canRestart: false,
+      enterAction: null,
+      leftAction: null,
+      rightAction: null,
+    } as PlayerKeyboardModel,
     onCheck: vi.fn(),
     onContinue: vi.fn(),
     onEscape: vi.fn(),
@@ -17,8 +19,6 @@ function buildOptions(overrides: Partial<Parameters<typeof usePlayerKeyboard>[0]
     onNavigatePrev: vi.fn(),
     onNext: null as (() => void) | null,
     onRestart: vi.fn(),
-    phase: "playing" as PlayerPhase,
-    storyStaticVariant: null as Parameters<typeof usePlayerKeyboard>[0]["storyStaticVariant"],
     ...overrides,
   };
 }
@@ -34,8 +34,15 @@ describe(usePlayerKeyboard, () => {
   });
 
   describe("Enter key", () => {
-    test("calls onCheck when playing and hasAnswer", () => {
-      const opts = buildOptions({ hasAnswer: true, phase: "playing" });
+    test("calls onCheck when the screen model exposes a check action", () => {
+      const opts = buildOptions({
+        keyboard: {
+          canRestart: false,
+          enterAction: "check",
+          leftAction: null,
+          rightAction: null,
+        },
+      });
       renderHook(() => usePlayerKeyboard(opts));
 
       fireKey("Enter");
@@ -43,8 +50,15 @@ describe(usePlayerKeyboard, () => {
       expect(opts.onCheck).toHaveBeenCalledOnce();
     });
 
-    test("calls onContinue when feedback", () => {
-      const opts = buildOptions({ phase: "feedback" });
+    test("calls onContinue when the screen model exposes a continue action", () => {
+      const opts = buildOptions({
+        keyboard: {
+          canRestart: false,
+          enterAction: "continue",
+          leftAction: null,
+          rightAction: null,
+        },
+      });
       renderHook(() => usePlayerKeyboard(opts));
 
       fireKey("Enter");
@@ -52,8 +66,8 @@ describe(usePlayerKeyboard, () => {
       expect(opts.onContinue).toHaveBeenCalledOnce();
     });
 
-    test("no-op when playing and no answer", () => {
-      const opts = buildOptions({ hasAnswer: false, phase: "playing" });
+    test("no-op when Enter has no mapped action", () => {
+      const opts = buildOptions();
       renderHook(() => usePlayerKeyboard(opts));
 
       fireKey("Enter");
@@ -62,9 +76,17 @@ describe(usePlayerKeyboard, () => {
       expect(opts.onContinue).not.toHaveBeenCalled();
     });
 
-    test("calls onNext when completed and onNext is provided", () => {
+    test("calls onNext when completion Enter action prefers next", () => {
       const onNext = vi.fn();
-      const opts = buildOptions({ onNext, phase: "completed" });
+      const opts = buildOptions({
+        keyboard: {
+          canRestart: true,
+          enterAction: "nextOrEscape",
+          leftAction: null,
+          rightAction: null,
+        },
+        onNext,
+      });
       renderHook(() => usePlayerKeyboard(opts));
 
       fireKey("Enter");
@@ -73,8 +95,16 @@ describe(usePlayerKeyboard, () => {
       expect(opts.onEscape).not.toHaveBeenCalled();
     });
 
-    test("calls onEscape when completed and onNext is null", () => {
-      const opts = buildOptions({ onNext: null, phase: "completed" });
+    test("calls onEscape when completion Enter action has no next callback", () => {
+      const opts = buildOptions({
+        keyboard: {
+          canRestart: true,
+          enterAction: "nextOrEscape",
+          leftAction: null,
+          rightAction: null,
+        },
+        onNext: null,
+      });
       renderHook(() => usePlayerKeyboard(opts));
 
       fireKey("Enter");
@@ -85,30 +115,16 @@ describe(usePlayerKeyboard, () => {
     });
   });
 
-  describe("Enter key — story static variants", () => {
-    test("calls onNavigateNext on story intro", () => {
-      const opts = buildOptions({ phase: "playing", storyStaticVariant: "storyIntro" });
-      renderHook(() => usePlayerKeyboard(opts));
-
-      fireKey("Enter");
-
-      expect(opts.onNavigateNext).toHaveBeenCalledOnce();
-      expect(opts.onCheck).not.toHaveBeenCalled();
-    });
-
-    test("calls onNavigateNext on story outcome", () => {
-      const opts = buildOptions({ phase: "playing", storyStaticVariant: "storyOutcome" });
-      renderHook(() => usePlayerKeyboard(opts));
-
-      fireKey("Enter");
-
-      expect(opts.onNavigateNext).toHaveBeenCalledOnce();
-    });
-  });
-
-  describe("Arrow keys", () => {
-    test("ArrowRight calls onNavigateNext when playing and static step", () => {
-      const opts = buildOptions({ isStaticStep: true, phase: "playing" });
+  describe("Navigation keys", () => {
+    test("ArrowRight calls onNavigateNext when the screen model enables it", () => {
+      const opts = buildOptions({
+        keyboard: {
+          canRestart: false,
+          enterAction: null,
+          leftAction: null,
+          rightAction: "navigateNext",
+        },
+      });
       renderHook(() => usePlayerKeyboard(opts));
 
       fireKey("ArrowRight");
@@ -116,8 +132,15 @@ describe(usePlayerKeyboard, () => {
       expect(opts.onNavigateNext).toHaveBeenCalledOnce();
     });
 
-    test("ArrowLeft calls onNavigatePrev when playing and static step", () => {
-      const opts = buildOptions({ canNavigatePrev: true, isStaticStep: true, phase: "playing" });
+    test("ArrowLeft calls onNavigatePrev when the screen model enables it", () => {
+      const opts = buildOptions({
+        keyboard: {
+          canRestart: false,
+          enterAction: null,
+          leftAction: "navigatePrev",
+          rightAction: null,
+        },
+      });
       renderHook(() => usePlayerKeyboard(opts));
 
       fireKey("ArrowLeft");
@@ -125,8 +148,8 @@ describe(usePlayerKeyboard, () => {
       expect(opts.onNavigatePrev).toHaveBeenCalledOnce();
     });
 
-    test("ArrowLeft no-ops when previous step is not navigable", () => {
-      const opts = buildOptions({ canNavigatePrev: false, isStaticStep: true, phase: "playing" });
+    test("ArrowLeft no-ops when no previous action is mapped", () => {
+      const opts = buildOptions();
       renderHook(() => usePlayerKeyboard(opts));
 
       fireKey("ArrowLeft");
@@ -134,41 +157,19 @@ describe(usePlayerKeyboard, () => {
       expect(opts.onNavigatePrev).not.toHaveBeenCalled();
     });
 
-    test("no-op for non-static steps", () => {
-      const opts = buildOptions({ isStaticStep: false, phase: "playing" });
+    test("ArrowRight no-ops when no next action is mapped", () => {
+      const opts = buildOptions();
       renderHook(() => usePlayerKeyboard(opts));
 
       fireKey("ArrowRight");
-      fireKey("ArrowLeft");
 
       expect(opts.onNavigateNext).not.toHaveBeenCalled();
-      expect(opts.onNavigatePrev).not.toHaveBeenCalled();
-    });
-
-    test("no-op during feedback", () => {
-      const opts = buildOptions({ isStaticStep: true, phase: "feedback" });
-      renderHook(() => usePlayerKeyboard(opts));
-
-      fireKey("ArrowRight");
-      fireKey("ArrowLeft");
-
-      expect(opts.onNavigateNext).not.toHaveBeenCalled();
-      expect(opts.onNavigatePrev).not.toHaveBeenCalled();
     });
   });
 
   describe("Escape key", () => {
-    test("calls onEscape during playing phase", () => {
-      const opts = buildOptions({ phase: "playing" });
-      renderHook(() => usePlayerKeyboard(opts));
-
-      fireKey("Escape");
-
-      expect(opts.onEscape).toHaveBeenCalledOnce();
-    });
-
-    test("calls onEscape during feedback phase", () => {
-      const opts = buildOptions({ phase: "feedback" });
+    test("calls onEscape regardless of screen mode", () => {
+      const opts = buildOptions();
       renderHook(() => usePlayerKeyboard(opts));
 
       fireKey("Escape");
@@ -178,8 +179,15 @@ describe(usePlayerKeyboard, () => {
   });
 
   describe("R key", () => {
-    test("calls onRestart when completed", () => {
-      const opts = buildOptions({ phase: "completed" });
+    test("calls onRestart when restart is enabled", () => {
+      const opts = buildOptions({
+        keyboard: {
+          canRestart: true,
+          enterAction: "nextOrEscape",
+          leftAction: null,
+          rightAction: null,
+        },
+      });
       renderHook(() => usePlayerKeyboard(opts));
 
       fireKey("r");
@@ -187,17 +195,8 @@ describe(usePlayerKeyboard, () => {
       expect(opts.onRestart).toHaveBeenCalledOnce();
     });
 
-    test("no-op when playing", () => {
-      const opts = buildOptions({ phase: "playing" });
-      renderHook(() => usePlayerKeyboard(opts));
-
-      fireKey("r");
-
-      expect(opts.onRestart).not.toHaveBeenCalled();
-    });
-
-    test("no-op when feedback", () => {
-      const opts = buildOptions({ phase: "feedback" });
+    test("no-op when restart is disabled", () => {
+      const opts = buildOptions();
       renderHook(() => usePlayerKeyboard(opts));
 
       fireKey("r");
@@ -206,7 +205,14 @@ describe(usePlayerKeyboard, () => {
     });
 
     test("no-op when target is an input element", () => {
-      const opts = buildOptions({ phase: "completed" });
+      const opts = buildOptions({
+        keyboard: {
+          canRestart: true,
+          enterAction: "nextOrEscape",
+          leftAction: null,
+          rightAction: null,
+        },
+      });
       renderHook(() => usePlayerKeyboard(opts));
 
       const input = document.createElement("input");
@@ -222,7 +228,14 @@ describe(usePlayerKeyboard, () => {
 
   describe("modifier keys", () => {
     test("all keys are no-op with metaKey", () => {
-      const opts = buildOptions({ hasAnswer: true, isStaticStep: true, phase: "playing" });
+      const opts = buildOptions({
+        keyboard: {
+          canRestart: false,
+          enterAction: "check",
+          leftAction: null,
+          rightAction: "navigateNext",
+        },
+      });
       renderHook(() => usePlayerKeyboard(opts));
 
       fireKey("Enter", { metaKey: true });
@@ -233,7 +246,14 @@ describe(usePlayerKeyboard, () => {
     });
 
     test("all keys are no-op with ctrlKey", () => {
-      const opts = buildOptions({ hasAnswer: true, isStaticStep: true, phase: "playing" });
+      const opts = buildOptions({
+        keyboard: {
+          canRestart: false,
+          enterAction: "check",
+          leftAction: null,
+          rightAction: null,
+        },
+      });
       renderHook(() => usePlayerKeyboard(opts));
 
       fireKey("Enter", { ctrlKey: true });
@@ -242,7 +262,14 @@ describe(usePlayerKeyboard, () => {
     });
 
     test("all keys are no-op with shiftKey", () => {
-      const opts = buildOptions({ hasAnswer: true, isStaticStep: true, phase: "playing" });
+      const opts = buildOptions({
+        keyboard: {
+          canRestart: false,
+          enterAction: "check",
+          leftAction: null,
+          rightAction: null,
+        },
+      });
       renderHook(() => usePlayerKeyboard(opts));
 
       fireKey("Enter", { shiftKey: true });
@@ -251,7 +278,14 @@ describe(usePlayerKeyboard, () => {
     });
 
     test("all keys are no-op with altKey", () => {
-      const opts = buildOptions({ hasAnswer: true, isStaticStep: true, phase: "playing" });
+      const opts = buildOptions({
+        keyboard: {
+          canRestart: false,
+          enterAction: "check",
+          leftAction: null,
+          rightAction: null,
+        },
+      });
       renderHook(() => usePlayerKeyboard(opts));
 
       fireKey("Enter", { altKey: true });
@@ -261,7 +295,14 @@ describe(usePlayerKeyboard, () => {
   });
 
   test("cleans up listener on unmount", () => {
-    const opts = buildOptions({ hasAnswer: true, phase: "playing" });
+    const opts = buildOptions({
+      keyboard: {
+        canRestart: false,
+        enterAction: "check",
+        leftAction: null,
+        rightAction: null,
+      },
+    });
     const { unmount } = renderHook(() => usePlayerKeyboard(opts));
 
     unmount();

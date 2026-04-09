@@ -1,37 +1,3 @@
-import { type StoryStaticVariant, parseStepContent } from "@zoonk/core/steps/contract/content";
-import { type SerializedStep } from "./prepare-activity-data";
-
-/**
- * Returns the story-specific static variant ("storyIntro" or "storyOutcome")
- * of a step, or null if the step is not a story static screen.
- *
- * Shared by `isStoryStaticVariant` (boolean gate for reducer/navigation)
- * and `getStoryStaticVariant` (selector that lifts this to PlayerState level).
- */
-export function getStepStoryVariant(step: SerializedStep | undefined): StoryStaticVariant | null {
-  if (!step || step.kind !== "static") {
-    return null;
-  }
-
-  const content = parseStepContent("static", step.content);
-
-  if (content.variant === "storyIntro" || content.variant === "storyOutcome") {
-    return content.variant;
-  }
-
-  return null;
-}
-
-/**
- * Checks whether a step is a story-specific static variant (storyIntro
- * or storyOutcome). These steps use action buttons for forward-only
- * navigation instead of arrow keys, and need special handling in the
- * reducer and navigation guards.
- */
-export function isStoryStaticVariant(step: SerializedStep): boolean {
-  return getStepStoryVariant(step) !== null;
-}
-
 /**
  * Shared threshold values for story metric feedback.
  *

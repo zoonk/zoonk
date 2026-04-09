@@ -3,19 +3,14 @@
 import { useExtracted } from "next-intl";
 import { usePlayerNavigation, usePlayerRuntime } from "../player-context";
 import {
-  getCanNavigatePrev,
-  getCurrentStep,
   getInvestigationProgress,
   getInvestigationScenarioData,
-  getIsStaticStep,
   getIsStoryActivity,
   getProgressValue,
   getStoryBriefingText,
   getStoryMetrics,
-  getStoryStaticVariant,
   getUpcomingImages,
 } from "../player-selectors";
-import { type PlayerActions } from "../use-player-actions";
 import { useStoryHaptics } from "../use-story-haptics";
 import { InPlayStickyHeader } from "./in-play-sticky-header";
 import { PlayerBottomBar, PlayerBottomBarNav } from "./player-bottom-bar";
@@ -27,25 +22,17 @@ import { StepImagePreloader } from "./step-image-preloader";
 import { StoryMetricsBar } from "./story-metrics-bar";
 
 /**
- * Renders the content inside the bottom bar.
- *
- * Static navigation steps (static, visual, vocabulary) show prev/next arrows.
- * Everything else (story static, interactive, investigation) uses
- * StepActionButton — the single source of truth for action button logic.
+ * Mobile bottom-bar content switches between arrow navigation and the shared
+ * step action button. The screen model decides which mode is active; this
+ * component only renders the matching mobile control.
  */
-function BottomBarContent({
-  actions,
-  canNavigatePrev,
-  isStaticStep,
-}: {
-  actions: PlayerActions;
-  canNavigatePrev: boolean;
-  isStaticStep: boolean;
-}) {
-  if (isStaticStep) {
+function BottomBarContent() {
+  const { actions, screen } = usePlayerRuntime();
+
+  if (screen.bottomBar?.kind === "navigation") {
     return (
       <PlayerBottomBarNav
-        canNavigatePrev={canNavigatePrev}
+        canNavigatePrev={screen.bottomBar.canNavigatePrev}
         onNavigateNext={actions.navigateNext}
         onNavigatePrev={actions.navigatePrev}
       />
@@ -57,31 +44,25 @@ function BottomBarContent({
 
 export function PlayerShell() {
   const t = useExtracted();
-  const { actions, state } = usePlayerRuntime();
+  const { screen, state } = usePlayerRuntime();
   const { lessonHref } = usePlayerNavigation();
 
-  const canNavigatePrev = getCanNavigatePrev(state);
-  const currentStep = getCurrentStep(state);
-  const isStaticStep = getIsStaticStep(state);
   const isStoryActivity = getIsStoryActivity(state);
   const progressValue = getProgressValue(state);
   const storyMetrics = getStoryMetrics(state);
-  const storyStaticVariant = getStoryStaticVariant(state);
   const upcomingImages = getUpcomingImages(state);
 
   useStoryHaptics({
     isStoryActivity,
     metrics: storyMetrics,
     phase: state.phase,
-    storyStaticVariant,
+    storyStaticVariant: screen.storyStaticVariant,
   });
 
   const contextRecall =
     getStoryBriefingText(state) ?? getInvestigationScenarioData(state)?.scenario ?? null;
 
   const investigationProgress = getInvestigationProgress(state);
-  const showChrome = state.phase === "playing" || state.phase === "feedback";
-  const showMetricsBar = currentStep?.kind === "story" && showChrome;
 
   const evidencePill = investigationProgress ? (
     <StatusPill animationKey={investigationProgress.collected}>
@@ -95,7 +76,7 @@ export function PlayerShell() {
 
   return (
     <main className="flex h-dvh flex-col overflow-hidden">
-      {showChrome && (
+      {screen.showChrome && (
         <InPlayStickyHeader
           centerContent={evidencePill}
           contextRecall={contextRecall}
@@ -106,19 +87,15 @@ export function PlayerShell() {
         />
       )}
 
-      {showMetricsBar && <StoryMetricsBar metrics={storyMetrics} />}
+      {screen.showMetricsBar && <StoryMetricsBar metrics={storyMetrics} />}
 
-      <PlayerStage isStatic={isStaticStep && state.phase === "playing"} phase={state.phase}>
+      <PlayerStage isStatic={screen.stageIsStatic} phase={state.phase}>
         <StageContent />
       </PlayerStage>
 
-      {showChrome && (
+      {screen.showChrome && screen.bottomBar && (
         <PlayerBottomBar className="lg:hidden">
-          <BottomBarContent
-            actions={actions}
-            canNavigatePrev={canNavigatePrev}
-            isStaticStep={isStaticStep}
-          />
+          <BottomBarContent />
         </PlayerBottomBar>
       )}
 

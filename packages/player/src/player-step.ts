@@ -1,0 +1,280 @@
+import {
+  type InvestigationStepContent,
+  type StoryStaticVariant,
+} from "@zoonk/core/steps/contract/content";
+import { type SerializedStep } from "./prepare-activity-data";
+
+type StepDescriptorBase<Kind extends SerializedStep["kind"], Name extends string> = {
+  content: SerializedStep<Kind>["content"];
+  kind: Name;
+  step: SerializedStep<Kind>;
+};
+
+type StaticTextStepDescriptor = StepDescriptorBase<"static", "staticText"> & {
+  content: Extract<SerializedStep<"static">["content"], { variant: "text" }>;
+};
+
+type StaticGrammarExampleStepDescriptor = StepDescriptorBase<"static", "staticGrammarExample"> & {
+  content: Extract<SerializedStep<"static">["content"], { variant: "grammarExample" }>;
+};
+
+type StaticGrammarRuleStepDescriptor = StepDescriptorBase<"static", "staticGrammarRule"> & {
+  content: Extract<SerializedStep<"static">["content"], { variant: "grammarRule" }>;
+};
+
+type StoryIntroStepDescriptor = StepDescriptorBase<"static", "storyIntro"> & {
+  content: Extract<SerializedStep<"static">["content"], { variant: "storyIntro" }>;
+};
+
+type StoryOutcomeStepDescriptor = StepDescriptorBase<"static", "storyOutcome"> & {
+  content: Extract<SerializedStep<"static">["content"], { variant: "storyOutcome" }>;
+};
+
+type InvestigationProblemStepDescriptor = StepDescriptorBase<
+  "investigation",
+  "investigationProblem"
+> & {
+  content: Extract<SerializedStep<"investigation">["content"], { variant: "problem" }>;
+};
+
+type InvestigationActionStepDescriptor = StepDescriptorBase<
+  "investigation",
+  "investigationAction"
+> & {
+  content: Extract<SerializedStep<"investigation">["content"], { variant: "action" }>;
+};
+
+type InvestigationCallStepDescriptor = StepDescriptorBase<"investigation", "investigationCall"> & {
+  content: Extract<SerializedStep<"investigation">["content"], { variant: "call" }>;
+};
+
+export type PlayerStepDescriptor =
+  | StepDescriptorBase<"fillBlank", "fillBlank">
+  | InvestigationActionStepDescriptor
+  | InvestigationCallStepDescriptor
+  | InvestigationProblemStepDescriptor
+  | StepDescriptorBase<"listening", "listening">
+  | StepDescriptorBase<"matchColumns", "matchColumns">
+  | StepDescriptorBase<"multipleChoice", "multipleChoice">
+  | StepDescriptorBase<"reading", "reading">
+  | StepDescriptorBase<"selectImage", "selectImage">
+  | StepDescriptorBase<"sortOrder", "sortOrder">
+  | StaticGrammarExampleStepDescriptor
+  | StaticGrammarRuleStepDescriptor
+  | StaticTextStepDescriptor
+  | StepDescriptorBase<"story", "storyDecision">
+  | StoryIntroStepDescriptor
+  | StoryOutcomeStepDescriptor
+  | StepDescriptorBase<"translation", "translation">
+  | StepDescriptorBase<"visual", "visual">
+  | StepDescriptorBase<"vocabulary", "vocabulary">;
+
+/**
+ * `SerializedStep` loses some of its `kind` to `content` correlation once it
+ * moves through arrays and reducer state. This guard restores that link so the
+ * descriptor layer can narrow safely without unsafe assertions.
+ */
+function hasStepKind<Kind extends SerializedStep["kind"]>(
+  step: SerializedStep,
+  kind: Kind,
+): step is SerializedStep<Kind> {
+  return step.kind === kind;
+}
+
+/**
+ * Static steps share the same physical kind, but they behave differently
+ * depending on their content variant. This helper names those variants once
+ * so the rest of the player can switch on a canonical descriptor instead of
+ * repeating `step.kind` plus `content.variant` checks.
+ */
+function describeStaticStep(step: SerializedStep<"static">): PlayerStepDescriptor {
+  const content = step.content;
+
+  switch (content.variant) {
+    case "grammarExample":
+      return { content, kind: "staticGrammarExample", step };
+    case "grammarRule":
+      return { content, kind: "staticGrammarRule", step };
+    case "storyIntro":
+      return { content, kind: "storyIntro", step };
+    case "storyOutcome":
+      return { content, kind: "storyOutcome", step };
+    case "text":
+      return { content, kind: "staticText", step };
+    default:
+      return { content, kind: "staticText", step };
+  }
+}
+
+/**
+ * Investigation steps also share one physical kind while representing three
+ * distinct phases of the investigation flow. A canonical descriptor lets the
+ * reducer, shell, and renderers talk about those phases with one vocabulary.
+ */
+function describeInvestigationStep(step: SerializedStep<"investigation">): PlayerStepDescriptor {
+  const content = step.content;
+
+  switch (content.variant) {
+    case "action":
+      return { content, kind: "investigationAction", step };
+    case "call":
+      return { content, kind: "investigationCall", step };
+    case "problem":
+      return { content, kind: "investigationProblem", step };
+    default:
+      return { content, kind: "investigationProblem", step };
+  }
+}
+
+/**
+ * Returns the canonical player step descriptor for a serialized step.
+ *
+ * This exists so the player package can classify steps once and reuse that
+ * meaning everywhere else, instead of rebuilding the same `kind` and `variant`
+ * decisions in each UI and reducer file.
+ */
+export function describePlayerStep(
+  step: SerializedStep | null | undefined,
+): PlayerStepDescriptor | null {
+  if (!step) {
+    return null;
+  }
+
+  if (hasStepKind(step, "fillBlank")) {
+    return { content: step.content, kind: "fillBlank", step };
+  }
+
+  if (hasStepKind(step, "investigation")) {
+    return describeInvestigationStep(step);
+  }
+
+  if (hasStepKind(step, "listening")) {
+    return { content: step.content, kind: "listening", step };
+  }
+
+  if (hasStepKind(step, "matchColumns")) {
+    return { content: step.content, kind: "matchColumns", step };
+  }
+
+  if (hasStepKind(step, "multipleChoice")) {
+    return { content: step.content, kind: "multipleChoice", step };
+  }
+
+  if (hasStepKind(step, "reading")) {
+    return { content: step.content, kind: "reading", step };
+  }
+
+  if (hasStepKind(step, "selectImage")) {
+    return { content: step.content, kind: "selectImage", step };
+  }
+
+  if (hasStepKind(step, "sortOrder")) {
+    return { content: step.content, kind: "sortOrder", step };
+  }
+
+  if (hasStepKind(step, "static")) {
+    return describeStaticStep(step);
+  }
+
+  if (hasStepKind(step, "story")) {
+    return { content: step.content, kind: "storyDecision", step };
+  }
+
+  if (hasStepKind(step, "translation")) {
+    return { content: step.content, kind: "translation", step };
+  }
+
+  if (hasStepKind(step, "visual")) {
+    return { content: step.content, kind: "visual", step };
+  }
+
+  if (hasStepKind(step, "vocabulary")) {
+    return { content: step.content, kind: "vocabulary", step };
+  }
+
+  return null;
+}
+
+/**
+ * Story intro and outcome screens are the only static variants that replace
+ * side-navigation with a primary action button. Keeping that distinction here
+ * prevents the rest of the package from repeating story-specific checks.
+ */
+export function getStoryStaticVariant(
+  step: SerializedStep | null | undefined,
+): StoryStaticVariant | null {
+  const descriptor = describePlayerStep(step);
+
+  if (descriptor?.kind === "storyIntro") {
+    return "storyIntro";
+  }
+
+  if (descriptor?.kind === "storyOutcome") {
+    return "storyOutcome";
+  }
+
+  return null;
+}
+
+/**
+ * Investigation variants drive special reducer transitions, sticky-header
+ * recall, and button labeling. This helper exposes the current investigation
+ * phase without making each caller know how investigation content is shaped.
+ */
+export function getInvestigationVariant(
+  step: SerializedStep | null | undefined,
+): InvestigationStepContent["variant"] | null {
+  const descriptor = describePlayerStep(step);
+
+  if (descriptor?.kind === "investigationAction") {
+    return "action";
+  }
+
+  if (descriptor?.kind === "investigationCall") {
+    return "call";
+  }
+
+  if (descriptor?.kind === "investigationProblem") {
+    return "problem";
+  }
+
+  return null;
+}
+
+/**
+ * Only a subset of steps participate in side-navigation. Centralizing that
+ * rule keeps navigation, layout, and keyboard handling aligned as new step
+ * variants are added later.
+ */
+export function usesStaticNavigation(descriptor: PlayerStepDescriptor | null): boolean {
+  if (!descriptor) {
+    return false;
+  }
+
+  return (
+    descriptor.kind === "staticText" ||
+    descriptor.kind === "staticGrammarExample" ||
+    descriptor.kind === "staticGrammarRule" ||
+    descriptor.kind === "visual" ||
+    descriptor.kind === "vocabulary"
+  );
+}
+
+/**
+ * Some steps keep feedback inline, while others swap to a dedicated feedback
+ * screen. This helper gives the screen model one place to ask that question.
+ */
+export function usesFeedbackScreen(descriptor: PlayerStepDescriptor | null): boolean {
+  if (!descriptor) {
+    return false;
+  }
+
+  return (
+    descriptor.kind === "investigationCall" ||
+    descriptor.kind === "listening" ||
+    descriptor.kind === "multipleChoice" ||
+    descriptor.kind === "reading" ||
+    descriptor.kind === "storyDecision" ||
+    descriptor.kind === "translation"
+  );
+}

@@ -1,6 +1,6 @@
 "use client";
 
-import { parseStepContent } from "@zoonk/core/steps/contract/content";
+import { describePlayerStep } from "../player-step";
 import { type SerializedStep } from "../prepare-activity-data";
 import { useReplaceName } from "../user-name-context";
 import { HighlightText } from "./highlight-text";
@@ -54,32 +54,47 @@ function GrammarRuleVariant({ ruleName, ruleSummary }: { ruleName: string; ruleS
 }
 
 function StaticStepContent({ step }: { step: SerializedStep }) {
-  const content = parseStepContent("static", step.content);
+  const descriptor = describePlayerStep(step);
 
-  if (content.variant === "grammarExample") {
+  if (!descriptor) {
+    return null;
+  }
+
+  if (descriptor.kind === "staticGrammarExample") {
     return (
       <GrammarExampleVariant
-        highlight={content.highlight}
-        romanization={content.romanization}
-        sentence={content.sentence}
-        translation={content.translation}
+        highlight={descriptor.content.highlight}
+        romanization={descriptor.content.romanization}
+        sentence={descriptor.content.sentence}
+        translation={descriptor.content.translation}
       />
     );
   }
 
-  if (content.variant === "grammarRule") {
-    return <GrammarRuleVariant ruleName={content.ruleName} ruleSummary={content.ruleSummary} />;
+  if (descriptor.kind === "staticGrammarRule") {
+    return (
+      <GrammarRuleVariant
+        ruleName={descriptor.content.ruleName}
+        ruleSummary={descriptor.content.ruleSummary}
+      />
+    );
   }
 
-  if (content.variant === "storyIntro") {
-    return <StoryIntroContent intro={content.intro} metrics={content.metrics} />;
+  if (descriptor.kind === "storyIntro") {
+    return (
+      <StoryIntroContent intro={descriptor.content.intro} metrics={descriptor.content.metrics} />
+    );
   }
 
-  if (content.variant === "storyOutcome") {
-    return <StoryOutcomeContent outcomes={content.outcomes} />;
+  if (descriptor.kind === "storyOutcome") {
+    return <StoryOutcomeContent outcomes={descriptor.content.outcomes} />;
   }
 
-  return <TextVariant text={content.text} title={content.title} />;
+  if (descriptor.kind !== "staticText") {
+    return null;
+  }
+
+  return <TextVariant text={descriptor.content.text} title={descriptor.content.title} />;
 }
 
 export function StaticStep({ step }: { step: SerializedStep }) {

@@ -1,4 +1,3 @@
-import { parseStepContent } from "@zoonk/core/steps/contract/content";
 import { INVESTIGATION_EXPERIMENT_COUNT } from "@zoonk/utils/activities";
 import {
   type ActionTiming,
@@ -6,20 +5,6 @@ import {
   getInvestigationStepByVariant,
 } from "./investigation";
 import { type PlayerState, type SelectedAnswer } from "./player-reducer";
-import { type SerializedStep } from "./prepare-activity-data";
-
-/**
- * Returns the investigation variant of the current step, or null
- * if the step is not an investigation step.
- */
-export function getInvestigationVariant(step: SerializedStep | undefined) {
-  if (!step || step.kind !== "investigation") {
-    return null;
-  }
-
-  const content = parseStepContent("investigation", step.content);
-  return content.variant;
-}
 
 /**
  * Initializes the investigation loop state when the problem step

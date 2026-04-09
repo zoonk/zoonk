@@ -1,8 +1,8 @@
 /* oxlint-disable max-lines-per-function, max-statements */
 "use client";
 
-import { parseStepContent } from "@zoonk/core/steps/contract/content";
 import { type SelectedAnswer, type StepResult } from "../player-reducer";
+import { describePlayerStep } from "../player-step";
 import { type SerializedStep } from "../prepare-activity-data";
 import { FillBlankStep } from "./fill-blank-step";
 import { InvestigationStep } from "./investigation-step";
@@ -37,12 +37,10 @@ export function StepRenderer({
   selectedAnswer: SelectedAnswer | undefined;
   step: SerializedStep;
 }) {
-  if (step.kind === "static") {
-    const staticContent = parseStepContent("static", step.content);
-    const isStoryStatic =
-      staticContent.variant === "storyIntro" || staticContent.variant === "storyOutcome";
+  const descriptor = describePlayerStep(step);
 
-    if (isStoryStatic) {
+  if (step.kind === "static") {
+    if (descriptor?.kind === "storyIntro" || descriptor?.kind === "storyOutcome") {
       return <StaticStep step={step} />;
     }
 
