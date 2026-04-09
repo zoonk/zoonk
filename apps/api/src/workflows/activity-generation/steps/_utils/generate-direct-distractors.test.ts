@@ -66,9 +66,9 @@ describe(generateDirectDistractors, () => {
       shape: "single-word",
     });
 
-    expect(result["k1"]!.length).toBeGreaterThan(0);
-    expect(result["k2"]).toEqual([]);
-    expect(result["k3"]!.length).toBeGreaterThan(0);
+    expect(result.k1!.length).toBeGreaterThan(0);
+    expect(result.k2).toEqual([]);
+    expect(result.k3!.length).toBeGreaterThan(0);
   });
 
   test("returns empty array when AI returns null data", async () => {

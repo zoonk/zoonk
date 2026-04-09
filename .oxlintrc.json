@@ -87,7 +87,6 @@
     "typescript/no-misused-promises": ["error", { "checksVoidReturn": false }],
     "no-unnecessary-type-arguments": "off",
     "typescript/consistent-return": "off",
-    "typescript/dot-notation": "off",
     "typescript/no-unnecessary-type-conversion": "off",
     "typescript/no-unsafe-type-assertion": "error",
     "typescript/prefer-nullish-coalescing": "off",
