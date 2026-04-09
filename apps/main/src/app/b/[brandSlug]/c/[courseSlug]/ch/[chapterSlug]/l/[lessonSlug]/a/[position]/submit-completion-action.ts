@@ -78,6 +78,13 @@ export async function submitCompletion(rawInput: CompletionInput): Promise<void>
   const userId = Number(session.user.id);
   const activityId = BigInt(input.activityId);
 
+  // Revalidate outside after() so the signal is included in the RSC response.
+  // This tells the client Router Cache to purge "/", ensuring the next
+  // client-side navigation fetches fresh data from the server.
+  // Placing it inside after() would run it after the response is sent,
+  // meaning the client never receives the invalidation signal.
+  revalidatePath("/");
+
   after(async () => {
     try {
       const activity = await prisma.activity.findUnique({
@@ -165,7 +172,6 @@ export async function submitCompletion(rawInput: CompletionInput): Promise<void>
         userId,
       });
 
-      revalidatePath("/");
       await preloadNextLesson(activityId, reqHeaders.get("cookie") ?? "");
     } catch (error) {
       logError("[submitCompletion] Failed to persist activity completion:", error);
