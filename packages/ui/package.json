@@ -55,9 +55,9 @@
     "vitest": "catalog:"
   },
   "peerDependencies": {
-    "@tabler/icons-react": ">=3",
-    "lucide-react": ">=0.562.0",
-    "react": ">=19",
-    "react-dom": ">=19"
+    "@tabler/icons-react": "catalog:",
+    "lucide-react": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:"
   }
 }

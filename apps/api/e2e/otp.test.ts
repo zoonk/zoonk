@@ -102,14 +102,14 @@ test.describe("OTP Login Flow", () => {
     // waitForRequest only captures requests after registration,
     // so registering after click risks missing fast redirects.
     const redirectPromise = page.waitForRequest((req) => {
-      const url = String(req.url());
+      const url = req.url();
       return url.startsWith("http://localhost:49152/test/") && url.length > 28;
     });
 
     await page.getByRole("button", { name: /^continue$/i }).click();
 
     const redirectRequest = await redirectPromise;
-    const redirectUrl = new URL(String(redirectRequest.url()));
+    const redirectUrl = new URL(redirectRequest.url());
 
     // Verify no double slashes in the path
     expect(redirectUrl.pathname).not.toContain("//");

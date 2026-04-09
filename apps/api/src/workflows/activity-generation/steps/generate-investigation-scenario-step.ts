@@ -61,5 +61,5 @@ export async function generateInvestigationScenarioStep(
 
   await stream.status({ status: "completed", step: "generateInvestigationScenario" });
 
-  return { activityId: Number(investigationActivity.id), scenario: result.data };
+  return { activityId: investigationActivity.id, scenario: result.data };
 }

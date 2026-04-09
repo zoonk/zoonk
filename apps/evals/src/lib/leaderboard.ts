@@ -89,7 +89,7 @@ function compareEntries(a: LeaderboardEntry, b: LeaderboardEntry, key: SortKey):
   }
 
   // LocaleCompare for string fields
-  return String(a[key]).localeCompare(String(b[key]));
+  return a[key].localeCompare(b[key]);
 }
 
 /**

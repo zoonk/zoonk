@@ -21,10 +21,10 @@
     "@zoonk/tsconfig": "workspace:*"
   },
   "peerDependencies": {
-    "next": ">=16",
-    "next-intl": ">=4.6",
-    "react": ">=19",
-    "react-dom": ">=19"
+    "next": "catalog:",
+    "next-intl": "catalog:",
+    "react": "catalog:",
+    "react-dom": "catalog:"
   },
   "peerDependenciesMeta": {
     "next-intl": {

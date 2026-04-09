@@ -33,11 +33,11 @@
     "react": "catalog:",
     "react-dom": "catalog:",
     "server-only": "catalog:",
-    "workflow": "4.2.0-beta.76",
+    "workflow": "4.2.0",
     "zod": "catalog:"
   },
   "devDependencies": {
-    "@scalar/nextjs-api-reference": "0.10.5",
+    "@scalar/nextjs-api-reference": "0.10.6",
     "@types/node": "catalog:",
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",

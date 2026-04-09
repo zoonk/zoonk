@@ -64,7 +64,7 @@ function SectionSkeleton() {
 
 export default async function UserDetailPage({ params }: PageProps<"/users/[id]">) {
   const { id: rawId } = await params;
-  const userId = parseNumericId(String(rawId));
+  const userId = parseNumericId(rawId);
 
   if (!userId) {
     notFound();

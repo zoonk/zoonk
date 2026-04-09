@@ -117,10 +117,10 @@ function readNodePosition(
   const node = graph.node(id);
 
   return {
-    height: Number(node.height),
-    width: Number(node.width),
-    x: Number(node.x),
-    y: Number(node.y),
+    height: node.height,
+    width: node.width,
+    x: node.x ?? 0,
+    y: node.y ?? 0,
   };
 }
 

@@ -62,14 +62,14 @@ test.describe("Profile Setup Flow", () => {
     await expect(page.getByText(/is available/i)).toBeVisible();
 
     const redirectPromise = page.waitForRequest((req) => {
-      const url = String(req.url());
+      const url = req.url();
       return url.startsWith(REDIRECT_URL) && url.split("/").length > 4;
     });
 
     await page.getByRole("button", { name: /^continue$/i }).click();
 
     const redirectRequest = await redirectPromise;
-    const redirectUrl = new URL(String(redirectRequest.url()));
+    const redirectUrl = new URL(redirectRequest.url());
     const pathSegments = redirectUrl.pathname.split("/").filter(Boolean);
 
     expect(`${redirectUrl.origin}/${pathSegments[0]}`).toBe(REDIRECT_URL);

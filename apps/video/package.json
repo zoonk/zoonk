@@ -7,12 +7,12 @@
     "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
-    "@remotion/cli": "4.0.301",
-    "@remotion/fonts": "4.0.301",
+    "@remotion/cli": "4.0.447",
+    "@remotion/fonts": "4.0.447",
     "@tabler/icons-react": "catalog:",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "remotion": "4.0.301",
+    "remotion": "4.0.447",
     "zod": "catalog:"
   },
   "devDependencies": {

@@ -64,5 +64,5 @@ export async function generatePracticeContentStep(
   }
 
   await stream.status({ status: "completed", step: "generatePracticeContent" });
-  return { activityId: Number(practiceActivity.id), steps: result.data.steps };
+  return { activityId: practiceActivity.id, steps: result.data.steps };
 }

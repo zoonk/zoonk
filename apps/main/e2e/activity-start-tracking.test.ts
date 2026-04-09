@@ -103,7 +103,7 @@ test.describe("Activity Start Tracking", () => {
 
     const user = await prisma.user.findFirst({ where: { email } });
     expect(user).not.toBeNull();
-    const userId = Number(user!.id);
+    const userId = user!.id;
 
     const before = await prisma.activityProgress.findUnique({
       where: { userActivity: { activityId: activity.id, userId } },

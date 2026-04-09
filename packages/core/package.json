@@ -60,9 +60,9 @@
     "vitest": "catalog:"
   },
   "peerDependencies": {
-    "next": ">=16",
-    "react": ">=19",
-    "server-only": ">=0.0.1",
+    "next": "catalog:",
+    "react": "catalog:",
+    "server-only": "catalog:",
     "sharp": ">=0.34"
   }
 }

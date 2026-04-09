@@ -64,5 +64,5 @@ export async function generateQuizContentStep(
   }
 
   await stream.status({ status: "completed", step: "generateQuizContent" });
-  return { activityId: Number(quizActivity.id), questions: result.data.questions };
+  return { activityId: quizActivity.id, questions: result.data.questions };
 }

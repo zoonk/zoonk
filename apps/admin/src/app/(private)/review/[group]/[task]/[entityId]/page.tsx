@@ -67,13 +67,13 @@ export default async function FlaggedItemPage({
   params,
 }: PageProps<"/review/[group]/[task]/[entityId]">) {
   const { group, task, entityId: rawEntityId } = await params;
-  const taskType = resolveTaskType(String(group), String(task));
+  const taskType = resolveTaskType(group, task);
 
   if (!taskType) {
     notFound();
   }
 
-  const entityId = parseBigIntId(String(rawEntityId));
+  const entityId = parseBigIntId(rawEntityId);
 
   if (!entityId) {
     notFound();
