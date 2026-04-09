@@ -8,8 +8,10 @@ import {
   getSelectedAnswer,
 } from "../player-selectors";
 import { type SerializedStep } from "../prepare-activity-data";
+import { isStaticNavigationStep } from "../step-navigation";
 import { CompletionScreenContent } from "./completion-screen";
 import { FeedbackScreenContent } from "./feedback-screen";
+import { StepActionButton } from "./step-action-button";
 import { StepRenderer } from "./step-renderer";
 
 /**
@@ -46,6 +48,22 @@ function needsFeedbackScreen(step: SerializedStep): boolean {
   );
 }
 
+/**
+ * Whether the step has an action button (Begin, Check, Continue,
+ * Start Investigation) — as opposed to static navigation arrows
+ * handled by StepSideNav.
+ *
+ * When true, we render the action button inline on large screens
+ * so it sits close to the content instead of fixed at the viewport bottom.
+ */
+function needsInlineAction(step: SerializedStep | undefined): boolean {
+  if (!step) {
+    return false;
+  }
+
+  return !isStaticNavigationStep(step);
+}
+
 export function StageContent() {
   const { actions, state } = usePlayerRuntime();
   const { lessonHref, nextActivityHref } = usePlayerNavigation();
@@ -72,24 +90,42 @@ export function StageContent() {
     currentResult &&
     (!currentStep || needsFeedbackScreen(currentStep))
   ) {
-    return <FeedbackScreenContent result={currentResult} step={currentStep} />;
+    return (
+      <div className="my-auto flex w-full flex-col items-center gap-6">
+        <FeedbackScreenContent result={currentResult} step={currentStep} />
+        <StepActionButton className="hidden max-w-lg lg:inline-flex" />
+      </div>
+    );
   }
 
   if ((state.phase === "playing" || state.phase === "feedback") && currentStep) {
+    const showInlineAction = needsInlineAction(currentStep);
+
+    const stepContent = (
+      <StepRenderer
+        canNavigatePrev={canNavigatePrev}
+        onNavigateNext={actions.navigateNext}
+        onNavigatePrev={actions.navigatePrev}
+        onSelectAnswer={actions.selectAnswer}
+        result={state.phase === "feedback" ? currentResult : undefined}
+        selectedAnswer={selectedAnswer}
+        step={currentStep}
+      />
+    );
+
     return (
       <div
         className="animate-in fade-in flex min-h-0 w-full min-w-0 flex-1 flex-col items-center duration-150 ease-out motion-reduce:animate-none"
         key={`step-${state.currentStepIndex}`}
       >
-        <StepRenderer
-          canNavigatePrev={canNavigatePrev}
-          onNavigateNext={actions.navigateNext}
-          onNavigatePrev={actions.navigatePrev}
-          onSelectAnswer={actions.selectAnswer}
-          result={state.phase === "feedback" ? currentResult : undefined}
-          selectedAnswer={selectedAnswer}
-          step={currentStep}
-        />
+        {showInlineAction ? (
+          <div className="my-auto flex w-full flex-col items-center gap-6">
+            {stepContent}
+            <StepActionButton className="hidden max-w-2xl lg:inline-flex" />
+          </div>
+        ) : (
+          stepContent
+        )}
       </div>
     );
   }

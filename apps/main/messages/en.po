@@ -323,31 +323,9 @@ msgid "Activity progress"
 msgstr "Activity progress"
 
 #: ../../packages/player/src/components/player-shell.tsx
-msgctxt "9p9JgX"
-msgid "Start Investigation"
-msgstr "Start Investigation"
-
-#: ../../packages/player/src/components/player-shell.tsx
-#: src/app/(catalog)/(home)/continue-learning-card.tsx
-#: src/components/catalog/continue-activity-link.tsx
-msgctxt "acrOoz"
-msgid "Continue"
-msgstr "Continue"
-
-#: ../../packages/player/src/components/player-shell.tsx
 msgctxt "EqkwlK"
 msgid "evidence"
 msgstr "evidence"
-
-#: ../../packages/player/src/components/player-shell.tsx
-msgctxt "PVe26p"
-msgid "Begin"
-msgstr "Begin"
-
-#: ../../packages/player/src/components/player-shell.tsx
-msgctxt "RDZVQL"
-msgid "Check"
-msgstr "Check"
 
 #: ../../packages/player/src/components/reward-badges.tsx
 #: src/app/(performance)/level/level-stats.tsx
@@ -382,6 +360,28 @@ msgstr "Sort items"
 msgctxt "VA8c/A"
 msgid "Correct order:"
 msgstr "Correct order:"
+
+#: ../../packages/player/src/components/step-action-button.tsx
+msgctxt "9p9JgX"
+msgid "Start Investigation"
+msgstr "Start Investigation"
+
+#: ../../packages/player/src/components/step-action-button.tsx
+#: src/app/(catalog)/(home)/continue-learning-card.tsx
+#: src/components/catalog/continue-activity-link.tsx
+msgctxt "acrOoz"
+msgid "Continue"
+msgstr "Continue"
+
+#: ../../packages/player/src/components/step-action-button.tsx
+msgctxt "PVe26p"
+msgid "Begin"
+msgstr "Begin"
+
+#: ../../packages/player/src/components/step-action-button.tsx
+msgctxt "RDZVQL"
+msgid "Check"
+msgstr "Check"
 
 #: ../../packages/player/src/components/story-feedback-content.tsx
 msgctxt "jSeUY4"
