@@ -1,0 +1,23 @@
+.oxlintrc.json
+  69f42d4af61c3ee8 72,89-91,101,114
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.6",
+  "base_commit_sha": "080c483444c10c163b5a90104e9c01c7bd00c1c4",
+  "prompts": {
+    "69f42d4af61c3ee8": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a0aa1273-7536-44c3-a16e-7ed0d2300b86",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 6,
+      "total_deletions": 0,
+      "accepted_lines": 6,
+      "overriden_lines": 0
+    }
+  }
+}
