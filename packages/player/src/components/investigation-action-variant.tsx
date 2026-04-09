@@ -18,6 +18,7 @@ import {
   PlayerChoiceSceneQuestion,
 } from "./player-choice-scene";
 import { PlayerReadScene, PlayerReadSceneBody } from "./player-read-scene";
+import { PlayerSupportingText } from "./player-supporting-text";
 
 type ActionContent = Extract<InvestigationStepContent, { variant: "action" }>;
 
@@ -83,9 +84,9 @@ function ActionFeedback({
       <PlayerReadSceneBody>{action.finding}</PlayerReadSceneBody>
 
       {isLastExperiment && (
-        <p className="text-muted-foreground text-sm">
+        <PlayerSupportingText>
           {t("Evidence complete — time to make your call.")}
-        </p>
+        </PlayerSupportingText>
       )}
     </PlayerReadScene>
   );

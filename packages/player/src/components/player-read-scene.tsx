@@ -61,6 +61,24 @@ export function PlayerReadSceneEyebrow({ children }: { children: React.ReactNode
 }
 
 /**
+ * Gives read scenes one shared visual treatment for small section labels.
+ *
+ * Story intro and outcome both show a short uppercase label above metrics.
+ * Keeping that copy style here prevents those static/read screens from
+ * quietly drifting apart when spacing or typography changes later.
+ */
+export function PlayerReadSceneMetaLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <p
+      className="text-muted-foreground text-xs font-medium tracking-widest uppercase"
+      data-slot="player-read-scene-meta-label"
+    >
+      {children}
+    </p>
+  );
+}
+
+/**
  * Shared read-scene title styling.
  *
  * Static text, investigation setup, and story outcomes all need a readable

@@ -8,6 +8,7 @@ import {
   PlayerReadSceneEyebrow,
   PlayerReadSceneStack,
 } from "./player-read-scene";
+import { PlayerSupportingText } from "./player-supporting-text";
 
 type ProblemContent = Extract<InvestigationStepContent, { variant: "problem" }>;
 
@@ -29,7 +30,7 @@ export function InvestigationProblemVariant({ content }: { content: ProblemConte
         <PlayerReadSceneBody>{content.scenario}</PlayerReadSceneBody>
       </PlayerReadSceneStack>
 
-      <p className="text-muted-foreground text-sm">{t("Collect 2 leads. Then make your call.")}</p>
+      <PlayerSupportingText>{t("Collect 2 leads. Then make your call.")}</PlayerSupportingText>
     </PlayerReadScene>
   );
 }

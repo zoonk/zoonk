@@ -8,6 +8,7 @@ import { type SerializedStep } from "../prepare-activity-data";
 import {
   PlayerReadSceneBody,
   PlayerReadSceneDivider,
+  PlayerReadSceneMetaLabel,
   PlayerReadSceneStack,
   PlayerReadSceneTitle,
 } from "./player-read-scene";
@@ -134,9 +135,7 @@ export function StoryOutcomeContent({ outcomes }: { outcomes: StoryOutcome[] }) 
         <PlayerReadSceneStack className="gap-3">
           <PlayerReadSceneDivider />
 
-          <p className="text-muted-foreground text-xs font-medium tracking-widest uppercase">
-            {t("Final status")}
-          </p>
+          <PlayerReadSceneMetaLabel>{t("Final status")}</PlayerReadSceneMetaLabel>
 
           <div className="-ml-1 flex flex-wrap gap-2">
             {storyMetrics.map((entry) => (

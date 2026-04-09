@@ -5,6 +5,7 @@ import { METRIC_AVERAGE_THRESHOLD } from "../story";
 import {
   PlayerReadSceneBody,
   PlayerReadSceneDivider,
+  PlayerReadSceneMetaLabel,
   PlayerReadSceneStack,
 } from "./player-read-scene";
 import { StoryMetricPill } from "./story-metric-pill";
@@ -32,9 +33,7 @@ export function StoryIntroContent({ intro, metrics }: { intro: string; metrics: 
         <PlayerReadSceneDivider />
 
         <div className="flex flex-col gap-3">
-          <p className="text-muted-foreground text-xs font-medium tracking-widest uppercase">
-            {t("Current status")}
-          </p>
+          <PlayerReadSceneMetaLabel>{t("Current status")}</PlayerReadSceneMetaLabel>
 
           <div className="-ml-1 flex flex-wrap gap-2">
             {metrics.map((metric) => (

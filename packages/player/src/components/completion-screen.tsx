@@ -6,6 +6,7 @@ import { useExtracted } from "next-intl";
 import { type CompletionResult } from "../completion-input-schema";
 import { type PlayerRoute, usePlayerMilestone, usePlayerViewer } from "../player-context";
 import { AuthBranch } from "./completion-auth-branch";
+import { PlayerSupportingText } from "./player-supporting-text";
 import { PlayerContentFrame } from "./step-layouts";
 
 /**
@@ -108,7 +109,7 @@ export function CompletionScreenContent({
           <p className="text-5xl font-bold tracking-tight tabular-nums">
             {completionResult.correctCount}/{totalCount}
           </p>
-          <p className="text-muted-foreground text-sm">{t("correct")}</p>
+          <PlayerSupportingText>{t("correct")}</PlayerSupportingText>
         </CompletionScore>
       ) : (
         <CompletionSignal />
