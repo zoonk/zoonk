@@ -4,11 +4,6 @@ import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { usePlayerRuntime } from "../player-context";
-import {
-  getHasAnswer,
-  getIsInvestigationProblem,
-  getStoryStaticVariant,
-} from "../player-selectors";
 
 /**
  * Single source of truth for the step action button
@@ -29,55 +24,33 @@ export function StepActionButton({
   ...props
 }: Omit<React.ComponentProps<typeof Button>, "children" | "onClick" | "size">) {
   const t = useExtracted();
-  const { actions, state } = usePlayerRuntime();
+  const { actions, screen } = usePlayerRuntime();
+  const model = screen.bottomBar;
 
-  const hasAnswer = getHasAnswer(state);
-  const isInvestigationProblem = getIsInvestigationProblem(state);
-  const storyStaticVariant = getStoryStaticVariant(state);
-
-  if (storyStaticVariant === "storyIntro") {
-    return (
-      <Button
-        className={cn("w-full", className)}
-        onClick={actions.navigateNext}
-        size="lg"
-        {...props}
-      >
-        {t("Begin")}
-      </Button>
-    );
+  if (!model || model.kind === "navigation") {
+    return null;
   }
 
-  if (storyStaticVariant === "storyOutcome") {
-    return (
-      <Button
-        className={cn("w-full", className)}
-        onClick={actions.navigateNext}
-        size="lg"
-        {...props}
-      >
-        {t("Continue")}
-      </Button>
-    );
-  }
+  const actionByRun = {
+    check: actions.check,
+    continue: actions.continue,
+    navigateNext: actions.navigateNext,
+  } as const;
 
-  if (isInvestigationProblem) {
-    return (
-      <Button className={cn("w-full", className)} onClick={actions.check} size="lg" {...props}>
-        {t("Start Investigation")}
-      </Button>
-    );
-  }
+  const labelByButton = {
+    begin: t("Begin"),
+    check: t("Check"),
+    continue: t("Continue"),
+    startInvestigation: t("Start Investigation"),
+  } as const;
 
-  return (
-    <Button
-      className={cn("w-full", className)}
-      disabled={state.phase === "playing" && !hasAnswer}
-      onClick={state.phase === "feedback" ? actions.continue : actions.check}
-      size="lg"
-      {...props}
-    >
-      {state.phase === "feedback" ? t("Continue") : t("Check")}
-    </Button>
-  );
+  const buttonProps = {
+    ...props,
+    className: cn("w-full", className),
+    disabled: model.disabled,
+    onClick: actionByRun[model.run],
+    size: "lg" as const,
+  };
+
+  return <Button {...buttonProps}>{labelByButton[model.button]}</Button>;
 }

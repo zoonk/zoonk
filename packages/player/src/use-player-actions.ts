@@ -10,6 +10,7 @@ import {
   type SelectedAnswer,
   type playerReducer,
 } from "./player-reducer";
+import { getPlayerCheckBehavior } from "./player-step-behavior";
 
 export type PlayerActions = {
   check: () => void;
@@ -19,6 +20,10 @@ export type PlayerActions = {
   restart: () => void;
   selectAnswer: (stepId: string, answer: SelectedAnswer | null) => void;
 };
+
+const READ_ONLY_CHECK_RESULT = {
+  result: { correctAnswer: null, feedback: null, isCorrect: true },
+} as const;
 
 export function usePlayerActions(
   state: PlayerState,
@@ -54,6 +59,15 @@ export function usePlayerActions(
 
   const check = useCallback(() => {
     if (!currentStep) {
+      return;
+    }
+
+    if (getPlayerCheckBehavior(currentStep) === "investigationProblem") {
+      dispatchTransition({
+        result: READ_ONLY_CHECK_RESULT.result,
+        stepId: currentStep.id,
+        type: "CHECK_ANSWER",
+      });
       return;
     }
 

@@ -1,8 +1,4 @@
-import {
-  type SupportedStepKind,
-  isSupportedStepKind,
-  parseStepContent,
-} from "@zoonk/core/steps/contract/content";
+import { parseStepContent } from "@zoonk/core/steps/contract/content";
 import { buildAcceptedArrangeWordSequences } from "./arrange-words-answers";
 import {
   checkArrangeWordsAnswer,
@@ -16,6 +12,7 @@ import {
   checkTranslationAnswer,
 } from "./check-answer";
 import { type SelectedAnswer } from "./player-reducer";
+import { type PlayerValidationBehavior, getPlayerValidationBehavior } from "./player-step-behavior";
 
 /**
  * Step data for server-side validation. Translations live directly
@@ -182,22 +179,20 @@ function validateStory(step: StepData, answer: SelectedAnswer): ValidatedStepRes
 }
 
 const validators: Record<
-  SupportedStepKind,
+  PlayerValidationBehavior,
   (step: StepData, answer: SelectedAnswer) => ValidatedStepResult | null
 > = {
   fillBlank: validateFillBlank,
-  investigation: validateInvestigation,
+  investigationCall: validateInvestigation,
   listening: validateListening,
   matchColumns: validateMatchColumns,
   multipleChoice: validateMultipleChoice,
+  none: () => null,
   reading: validateReading,
   selectImage: validateSelectImage,
   sortOrder: validateSortOrder,
-  static: () => null,
   story: validateStory,
   translation: validateTranslation,
-  visual: () => null,
-  vocabulary: () => null,
 };
 
 export function validateAnswers(
@@ -207,11 +202,17 @@ export function validateAnswers(
   return steps.flatMap((step) => {
     const answer = clientAnswers[String(step.id)];
 
-    if (!answer || !isSupportedStepKind(step.kind)) {
+    if (!answer) {
       return [];
     }
 
-    const validator = validators[step.kind];
+    const behavior = getPlayerValidationBehavior(step);
+
+    if (!behavior || behavior === "none") {
+      return [];
+    }
+
+    const validator = validators[behavior];
     const result = validator(step, answer);
     return result ? [result] : [];
   });

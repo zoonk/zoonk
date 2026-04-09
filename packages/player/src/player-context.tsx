@@ -2,6 +2,7 @@
 
 import { createContext, useContext } from "react";
 import { type PlayerState } from "./player-reducer";
+import { type PlayerScreenModel } from "./player-screen";
 import { type PlayerActions } from "./use-player-actions";
 
 export type PlayerRoute = string | URL;
@@ -37,6 +38,7 @@ export type PlayerMilestone = { kind: "activity" } | ReviewMilestone | CourseMil
 
 type PlayerRuntimeContextValue = {
   actions: PlayerActions;
+  screen: PlayerScreenModel;
   state: PlayerState;
 };
 

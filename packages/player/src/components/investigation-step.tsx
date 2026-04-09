@@ -1,7 +1,7 @@
 "use client";
 
-import { parseStepContent } from "@zoonk/core/steps/contract/content";
 import { type SelectedAnswer, type StepResult } from "../player-reducer";
+import { describePlayerStep } from "../player-step";
 import { type SerializedStep } from "../prepare-activity-data";
 import { InvestigationActionVariant } from "./investigation-action-variant";
 import { InvestigationCallVariant } from "./investigation-call-variant";
@@ -25,16 +25,16 @@ export function InvestigationStep({
   selectedAnswer: SelectedAnswer | undefined;
   step: SerializedStep;
 }) {
-  const content = parseStepContent("investigation", step.content);
+  const descriptor = describePlayerStep(step);
 
-  if (content.variant === "problem") {
-    return <InvestigationProblemVariant content={content} />;
+  if (descriptor?.kind === "investigationProblem") {
+    return <InvestigationProblemVariant content={descriptor.content} />;
   }
 
-  if (content.variant === "action") {
+  if (descriptor?.kind === "investigationAction") {
     return (
       <InvestigationActionVariant
-        content={content}
+        content={descriptor.content}
         onSelectAnswer={onSelectAnswer}
         result={result}
         selectedAnswer={selectedAnswer}
@@ -43,10 +43,10 @@ export function InvestigationStep({
     );
   }
 
-  if (content.variant === "call") {
+  if (descriptor?.kind === "investigationCall") {
     return (
       <InvestigationCallVariant
-        content={content}
+        content={descriptor.content}
         onSelectAnswer={onSelectAnswer}
         result={result}
         selectedAnswer={selectedAnswer}

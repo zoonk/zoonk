@@ -6,7 +6,6 @@ import {
   getIsStoryActivity,
   getStoryBriefingText,
   getStoryMetrics,
-  getStoryStaticVariant,
   getUpcomingImages,
 } from "./player-selectors";
 import { type SerializedStep } from "./prepare-activity-data";
@@ -118,52 +117,6 @@ describe(getIsStoryActivity, () => {
     });
 
     expect(getIsStoryActivity(state)).toBe(false);
-  });
-});
-
-describe(getStoryStaticVariant, () => {
-  test("returns storyIntro when current step is a story intro", () => {
-    const state = buildState({
-      currentStepIndex: 0,
-      steps: [buildStoryIntroStep(), buildStoryStep("s1", 1)],
-    });
-
-    expect(getStoryStaticVariant(state)).toBe("storyIntro");
-  });
-
-  test("returns storyOutcome when current step is a story outcome", () => {
-    const state = buildState({
-      currentStepIndex: 0,
-      steps: [
-        buildStep({
-          content: {
-            metrics: ["Production"],
-            outcomes: [{ minStrongChoices: 0, narrative: "Result.", title: "Outcome" }],
-            variant: "storyOutcome" as const,
-          },
-          id: "outcome",
-          kind: "static",
-        }),
-      ],
-    });
-
-    expect(getStoryStaticVariant(state)).toBe("storyOutcome");
-  });
-
-  test("returns null when current step is a regular static step", () => {
-    const state = buildState({
-      steps: [buildStep({ content: { text: "Hello", title: "Intro", variant: "text" as const } })],
-    });
-
-    expect(getStoryStaticVariant(state)).toBeNull();
-  });
-
-  test("returns null when current step is a story decision step", () => {
-    const state = buildState({
-      steps: [buildStoryStep("s1", 0)],
-    });
-
-    expect(getStoryStaticVariant(state)).toBeNull();
   });
 });
 

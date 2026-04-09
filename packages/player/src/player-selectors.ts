@@ -1,12 +1,10 @@
-import { type StoryStaticVariant, parseStepContent } from "@zoonk/core/steps/contract/content";
 import { INVESTIGATION_EXPERIMENT_COUNT } from "@zoonk/utils/activities";
 import { type CompletionResult } from "./completion-input-schema";
 import { getInvestigationScenario } from "./investigation";
-import { getInvestigationVariant } from "./investigation-reducer";
 import { type PlayerState } from "./player-reducer";
+import { describePlayerStep, getInvestigationVariant } from "./player-step";
 import { type SerializedStep } from "./prepare-activity-data";
-import { canNavigatePrev, isStaticNavigationStep } from "./step-navigation";
-import { EFFECT_DELTA_MAP, METRIC_AVERAGE_THRESHOLD, getStepStoryVariant } from "./story";
+import { EFFECT_DELTA_MAP, METRIC_AVERAGE_THRESHOLD } from "./story";
 
 /** Converts a 0-based step index to a 1-based percentage (0–100). */
 function computeProgress(currentIndex: number, total: number): number {
@@ -15,11 +13,6 @@ function computeProgress(currentIndex: number, total: number): number {
   }
 
   return Math.round(((currentIndex + 1) / total) * 100);
-}
-
-/** Whether the player can navigate to the previous step. */
-export function getCanNavigatePrev(state: PlayerState): boolean {
-  return canNavigatePrev(state.steps, state.currentStepIndex);
 }
 
 /** Returns the completion payload once the activity is finished, or null while still playing. */
@@ -41,40 +34,6 @@ export function getCurrentResult(state: PlayerState) {
 /** Returns the step at the current index. */
 export function getCurrentStep(state: PlayerState) {
   return state.steps[state.currentStepIndex];
-}
-
-/** Whether the player has selected an answer for the current step. */
-export function getHasAnswer(state: PlayerState): boolean {
-  const currentStep = getCurrentStep(state);
-
-  if (!currentStep) {
-    return false;
-  }
-
-  return Boolean(state.selectedAnswers[currentStep.id]);
-}
-
-/** Whether the current step uses static (auto-advance) navigation. */
-export function getIsStaticStep(state: PlayerState): boolean {
-  return isStaticNavigationStep(getCurrentStep(state));
-}
-
-/**
- * Whether the current step is an investigation problem step.
- *
- * The problem step is read-only (the learner just reads the scenario),
- * so the bottom bar should show "Investigate" instead of "Check"
- * to describe the action the learner is about to take.
- */
-export function getIsInvestigationProblem(state: PlayerState): boolean {
-  const step = getCurrentStep(state);
-
-  if (!step || step.kind !== "investigation") {
-    return false;
-  }
-
-  const content = parseStepContent("investigation", step.content);
-  return content.variant === "problem";
 }
 
 type InvestigationProgress = {
@@ -145,9 +104,9 @@ export function getInvestigationScenarioData(state: PlayerState) {
  * decision-making, so players can recall the premise without navigating back.
  */
 export function getStoryBriefingText(state: PlayerState): string | null {
-  const currentStep = getCurrentStep(state);
+  const currentDescriptor = describePlayerStep(getCurrentStep(state));
 
-  if (!currentStep || currentStep.kind !== "story") {
+  if (currentDescriptor?.kind !== "storyDecision") {
     return null;
   }
 
@@ -158,17 +117,6 @@ export function getStoryBriefingText(state: PlayerState): string | null {
   }
 
   return introContent.intro;
-}
-
-/**
- * Returns the story-specific static variant of the current step, or null
- * if the current step is not a story static screen.
- *
- * Used by PlayerShell to pick the correct bottom bar (Begin, Continue)
- * and by keyboard handlers for Enter key behavior.
- */
-export function getStoryStaticVariant(state: PlayerState): StoryStaticVariant | null {
-  return getStepStoryVariant(getCurrentStep(state));
 }
 
 export type StoryMetric = {
@@ -186,12 +134,10 @@ export type StoryMetric = {
  */
 function findStoryIntroContent(steps: SerializedStep[]) {
   for (const step of steps) {
-    if (step.kind === "static") {
-      const content = parseStepContent("static", step.content);
+    const descriptor = describePlayerStep(step);
 
-      if (content.variant === "storyIntro") {
-        return content;
-      }
+    if (descriptor?.kind === "storyIntro") {
+      return descriptor.content;
     }
   }
 
@@ -212,17 +158,20 @@ export function findSelectedChoice({
   step: SerializedStep;
   results: PlayerState["results"];
 }) {
+  const descriptor = describePlayerStep(step);
   const result = results[step.id];
   const answer = result?.answer;
 
-  if (!answer || answer.kind !== "story" || !answer.selectedChoiceId) {
+  if (
+    descriptor?.kind !== "storyDecision" ||
+    !answer ||
+    answer.kind !== "story" ||
+    !answer.selectedChoiceId
+  ) {
     return null;
   }
 
-  const choiceId = answer.selectedChoiceId;
-  const content = parseStepContent("story", step.content);
-
-  return content.choices.find((option) => option.id === choiceId) ?? null;
+  return descriptor.content.choices.find((option) => option.id === answer.selectedChoiceId) ?? null;
 }
 
 /**
@@ -289,20 +238,18 @@ const DEFAULT_LOOKAHEAD = 3;
  * have one URL per option.
  */
 function getStepImages(step: SerializedStep): PreloadableImage[] {
-  if (step.kind === "visual") {
-    const content = parseStepContent("visual", step.content);
+  const descriptor = describePlayerStep(step);
 
-    if (content.kind !== "image" || !content.url) {
+  if (descriptor?.kind === "visual") {
+    if (descriptor.content.kind !== "image" || !descriptor.content.url) {
       return [];
     }
 
-    return [{ kind: "visual", url: content.url }];
+    return [{ kind: "visual", url: descriptor.content.url }];
   }
 
-  if (step.kind === "selectImage") {
-    const content = parseStepContent("selectImage", step.content);
-
-    return content.options.flatMap((option) =>
+  if (descriptor?.kind === "selectImage") {
+    return descriptor.content.options.flatMap((option) =>
       option.url ? [{ kind: "selectImage" as const, url: option.url }] : [],
     );
   }

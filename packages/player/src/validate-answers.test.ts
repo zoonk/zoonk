@@ -429,4 +429,28 @@ describe(validateAnswers, () => {
     expect(results).toHaveLength(1);
     expect(results[0]?.isCorrect).toBe(false);
   });
+
+  test("skips malformed unanswered static steps instead of throwing", () => {
+    const steps = [{ content: { text: "Legacy static step" }, id: 16n, kind: "static" }];
+
+    const runValidation = () => validateAnswers(steps, {});
+
+    expect(runValidation).not.toThrow();
+    expect(runValidation()).toEqual([]);
+  });
+
+  test("skips malformed unanswered investigation steps instead of throwing", () => {
+    const steps = [
+      {
+        content: { scenario: "Legacy investigation step" },
+        id: 17n,
+        kind: "investigation",
+      },
+    ];
+
+    const runValidation = () => validateAnswers(steps, {});
+
+    expect(runValidation).not.toThrow();
+    expect(runValidation()).toEqual([]);
+  });
 });

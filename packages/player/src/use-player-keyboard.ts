@@ -1,13 +1,10 @@
 "use client";
 
-import { type StoryStaticVariant } from "@zoonk/core/steps/contract/content";
 import { useKeyboardCallback } from "@zoonk/ui/hooks/keyboard";
-import { type PlayerPhase } from "./player-reducer";
+import { type PlayerKeyboardModel } from "./player-screen";
 
 type PlayerKeyboardParams = {
-  canNavigatePrev: boolean;
-  hasAnswer: boolean;
-  isStaticStep: boolean;
+  keyboard: PlayerKeyboardModel;
   onCheck: () => void;
   onContinue: () => void;
   onEscape: () => void;
@@ -15,53 +12,57 @@ type PlayerKeyboardParams = {
   onNavigatePrev: () => void;
   onNext: (() => void) | null;
   onRestart: () => void;
-  phase: PlayerPhase;
-  storyStaticVariant: StoryStaticVariant | null;
 };
 
-function getEnterAction({
-  hasAnswer,
+/**
+ * Keyboard behavior is derived from the shared screen model. This helper maps
+ * those declarative action identifiers back to the live callbacks exposed by
+ * the provider so Enter and arrow keys stay aligned with the current screen.
+ */
+function runKeyboardAction({
+  action,
   onCheck,
   onContinue,
   onEscape,
   onNavigateNext,
+  onNavigatePrev,
   onNext,
-  phase,
-  storyStaticVariant,
-}: Pick<
+}: {
+  action:
+    | PlayerKeyboardModel["enterAction"]
+    | PlayerKeyboardModel["leftAction"]
+    | PlayerKeyboardModel["rightAction"];
+} & Pick<
   PlayerKeyboardParams,
-  | "hasAnswer"
-  | "onCheck"
-  | "onContinue"
-  | "onEscape"
-  | "onNavigateNext"
-  | "onNext"
-  | "phase"
-  | "storyStaticVariant"
->): (() => void) | null {
-  if (phase === "playing" && storyStaticVariant) {
-    return onNavigateNext;
+  "onCheck" | "onContinue" | "onEscape" | "onNavigateNext" | "onNavigatePrev" | "onNext"
+>) {
+  if (!action) {
+    return false;
   }
 
-  if (phase === "playing" && hasAnswer) {
-    return onCheck;
+  switch (action) {
+    case "check":
+      onCheck();
+      return;
+    case "continue":
+      onContinue();
+      return;
+    case "navigateNext":
+      onNavigateNext();
+      return;
+    case "navigatePrev":
+      onNavigatePrev();
+      return;
+    case "nextOrEscape":
+      (onNext ?? onEscape)();
+      return;
+    default:
+      return false;
   }
-
-  if (phase === "feedback") {
-    return onContinue;
-  }
-
-  if (phase === "completed") {
-    return onNext ?? onEscape;
-  }
-
-  return null;
 }
 
 export function usePlayerKeyboard({
-  canNavigatePrev,
-  hasAnswer,
-  isStaticStep,
+  keyboard,
   onCheck,
   onContinue,
   onEscape,
@@ -69,37 +70,29 @@ export function usePlayerKeyboard({
   onNavigatePrev,
   onNext,
   onRestart,
-  phase,
-  storyStaticVariant,
 }: PlayerKeyboardParams) {
   useKeyboardCallback(
     "Enter",
-    () => {
-      const action = getEnterAction({
-        hasAnswer,
+    () =>
+      runKeyboardAction({
+        action: keyboard.enterAction,
         onCheck,
         onContinue,
         onEscape,
         onNavigateNext,
+        onNavigatePrev,
         onNext,
-        phase,
-        storyStaticVariant,
-      });
-
-      if (!action) {
-        return false;
-      }
-      action();
-    },
+      }),
     { mode: "none" },
   );
 
   useKeyboardCallback(
     "r",
     () => {
-      if (phase !== "completed") {
+      if (!keyboard.canRestart) {
         return false;
       }
+
       onRestart();
     },
     { ignoreEditable: true, mode: "none" },
@@ -107,23 +100,31 @@ export function usePlayerKeyboard({
 
   useKeyboardCallback(
     "ArrowRight",
-    () => {
-      if (phase !== "playing" || !isStaticStep) {
-        return false;
-      }
-      onNavigateNext();
-    },
+    () =>
+      runKeyboardAction({
+        action: keyboard.rightAction,
+        onCheck,
+        onContinue,
+        onEscape,
+        onNavigateNext,
+        onNavigatePrev,
+        onNext,
+      }),
     { mode: "none" },
   );
 
   useKeyboardCallback(
     "ArrowLeft",
-    () => {
-      if (phase !== "playing" || !canNavigatePrev) {
-        return false;
-      }
-      onNavigatePrev();
-    },
+    () =>
+      runKeyboardAction({
+        action: keyboard.leftAction,
+        onCheck,
+        onContinue,
+        onEscape,
+        onNavigateNext,
+        onNavigatePrev,
+        onNext,
+      }),
     { mode: "none" },
   );
 
