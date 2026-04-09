@@ -1,0 +1,25 @@
+packages/player/src/components/stage-content.tsx
+  2eeb773cc9152b75 69-78
+packages/player/src/components/step-renderer.tsx
+  2eeb773cc9152b75 165-173,175,185
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.6",
+  "base_commit_sha": "7910798018b96a94d072194ef70269336ebf3b40",
+  "prompts": {
+    "2eeb773cc9152b75": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d739b-e495-7a83-ac83-083a84504779",
+        "model": "gpt-5.4-mini"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 21,
+      "total_deletions": 17,
+      "accepted_lines": 21,
+      "overriden_lines": 0
+    }
+  }
+}
