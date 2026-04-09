@@ -1,0 +1,23 @@
+apps/main/src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/a/[position]/submit-completion-action.ts
+  f1098fedc277b0e2 81-87
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.6",
+  "base_commit_sha": "eede6d109e987618f91def2d3f28497fc4299a21",
+  "prompts": {
+    "f1098fedc277b0e2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "bece1739-6a47-4b44-a3ed-f5b141508c80",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 7,
+      "total_deletions": 1,
+      "accepted_lines": 7,
+      "overriden_lines": 0
+    }
+  }
+}
