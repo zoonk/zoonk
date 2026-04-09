@@ -1,0 +1,40 @@
+packages/player/src/components/step-action-button.tsx
+  16668dd06318aa69 7-11,14-15,17-19,24-25,27,36-62
+packages/player/src/components/player-shell.tsx
+  16668dd06318aa69 21,25,29-35,55,116
+packages/player/src/components/stage-content.tsx
+  16668dd06318aa69 11,14,51-66,93-98,102-115,121-128
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.6",
+  "base_commit_sha": "f7cfd715890e8a5e64a6b16e39fbc08dae6a2d80",
+  "prompts": {
+    "16668dd06318aa69": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5e957427-d2d9-41b0-848b-ca72ce2dba41",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 202,
+      "total_deletions": 92,
+      "accepted_lines": 97,
+      "overriden_lines": 0
+    },
+    "3b95621e1b18a2c5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a6da674d-8475-4048-aa38-daef3905971e",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 4,
+      "overriden_lines": 0
+    }
+  }
+}
