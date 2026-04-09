@@ -9,6 +9,7 @@ import { CorrectAnswerBlock, IncorrectAnswerBlock } from "./feedback-answer-bloc
 import { InvestigationCallFeedbackContent } from "./investigation-call-feedback";
 import { PlayAudioButton } from "./play-audio-button";
 import { PlayerFeedbackScene, PlayerFeedbackSceneMessage } from "./player-feedback-scene";
+import { PlayerSupportingText } from "./player-supporting-text";
 import { RomanizationText } from "./romanization-text";
 import { StoryFeedbackContent } from "./story-feedback-content";
 
@@ -69,10 +70,10 @@ function StandardFeedbackContent({ result, step }: { result: StepResult; step?: 
     <PlayerFeedbackScene>
       <div className="flex flex-col gap-2">
         {questionText && (
-          <div className="text-muted-foreground text-sm">
-            <p>
+          <div className="flex flex-col gap-1">
+            <PlayerSupportingText>
               {t("Translate:")} <span className="text-foreground font-medium">{questionText}</span>
-            </p>
+            </PlayerSupportingText>
             <RomanizationText>{rom.translate}</RomanizationText>
           </div>
         )}
@@ -92,11 +93,7 @@ function StandardFeedbackContent({ result, step }: { result: StepResult; step?: 
 
       {audioUrl && <PlayAudioButton audioUrl={audioUrl} preload={false} variant="text" />}
 
-      {feedback && (
-        <PlayerFeedbackSceneMessage data-slot="feedback-message">
-          {feedback}
-        </PlayerFeedbackSceneMessage>
-      )}
+      {feedback && <PlayerFeedbackSceneMessage>{feedback}</PlayerFeedbackSceneMessage>}
     </PlayerFeedbackScene>
   );
 }

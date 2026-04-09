@@ -17,7 +17,12 @@ import {
   PlayerChoiceScenePrompt,
   PlayerChoiceSceneQuestion,
 } from "./player-choice-scene";
-import { PlayerReadScene, PlayerReadSceneBody } from "./player-read-scene";
+import {
+  PlayerReadScene,
+  PlayerReadSceneBody,
+  PlayerReadSceneTitle,
+  type PlayerReadSceneTitleTone,
+} from "./player-read-scene";
 import { PlayerSupportingText } from "./player-supporting-text";
 
 type ActionContent = Extract<InvestigationStepContent, { variant: "action" }>;
@@ -27,20 +32,20 @@ type ActionContent = Extract<InvestigationStepContent, { variant: "action" }>;
  * Shown as a quality indicator in the evidence feedback after checking.
  */
 function useQualityLabel(quality: InvestigationActionQuality): {
-  className: string;
   label: string;
+  tone: PlayerReadSceneTitleTone;
 } {
   const t = useExtracted();
 
   if (quality === "critical") {
-    return { className: "text-success", label: t("Strong lead") };
+    return { label: t("Strong lead"), tone: "success" };
   }
 
   if (quality === "useful") {
-    return { className: "text-foreground", label: t("Useful clue") };
+    return { label: t("Useful clue"), tone: "foreground" };
   }
 
-  return { className: "text-muted-foreground", label: t("Weak signal") };
+  return { label: t("Weak signal"), tone: "muted" };
 }
 
 /**
@@ -79,7 +84,7 @@ function ActionFeedback({
 
   return (
     <PlayerReadScene>
-      <p className={`text-lg font-semibold ${quality.className}`}>{quality.label}</p>
+      <PlayerReadSceneTitle tone={quality.tone}>{quality.label}</PlayerReadSceneTitle>
 
       <PlayerReadSceneBody>{action.finding}</PlayerReadSceneBody>
 

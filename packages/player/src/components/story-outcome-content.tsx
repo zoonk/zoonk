@@ -11,6 +11,7 @@ import {
   PlayerReadSceneMetaLabel,
   PlayerReadSceneStack,
   PlayerReadSceneTitle,
+  type PlayerReadSceneTitleTone,
 } from "./player-read-scene";
 import { StoryMetricPill } from "./story-metric-pill";
 
@@ -89,28 +90,28 @@ function selectOutcome({
 }
 
 /**
- * Returns the color class for the outcome title based on its position
+ * Returns the semantic title tone for the outcome based on its position
  * in the ranked list.
  *
  * First (best) = green, last (worst) = destructive, middle = warning.
  */
-function getOutcomeTierColor({ index, total }: RankedOutcome): string {
+function getOutcomeTierTone({ index, total }: RankedOutcome): PlayerReadSceneTitleTone {
   if (index === 0) {
-    return "text-success";
+    return "success";
   }
 
   if (index === total - 1) {
-    return "text-destructive";
+    return "destructive";
   }
 
-  return "text-warning";
+  return "warning";
 }
 
 /**
  * Outcome screen shown after the final decision step's consequence.
  *
  * Displays the narrative result of the player's decisions with a
- * color-coded title reflecting how well they did.
+ * tone-coded title reflecting how well they did.
  */
 export function StoryOutcomeContent({ outcomes }: { outcomes: StoryOutcome[] }) {
   const t = useExtracted();
@@ -123,11 +124,11 @@ export function StoryOutcomeContent({ outcomes }: { outcomes: StoryOutcome[] }) 
     return null;
   }
 
-  const titleColor = getOutcomeTierColor(ranked);
+  const titleTone = getOutcomeTierTone(ranked);
 
   return (
     <div className="flex flex-col gap-6">
-      <PlayerReadSceneTitle className={titleColor}>{ranked.outcome.title}</PlayerReadSceneTitle>
+      <PlayerReadSceneTitle tone={titleTone}>{ranked.outcome.title}</PlayerReadSceneTitle>
 
       <PlayerReadSceneBody>{ranked.outcome.narrative}</PlayerReadSceneBody>
 

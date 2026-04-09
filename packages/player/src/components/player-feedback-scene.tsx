@@ -35,12 +35,11 @@ export function PlayerFeedbackScene({
  */
 export function PlayerFeedbackSceneMessage({
   children,
-  className,
   ...props
-}: React.ComponentProps<"p">) {
+}: Omit<React.ComponentProps<"p">, "className">) {
   return (
     <p
-      className={cn("text-foreground text-lg leading-relaxed", className)}
+      className="text-foreground text-lg leading-relaxed"
       data-slot="player-feedback-scene-message"
       {...props}
     >

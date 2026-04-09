@@ -1,6 +1,5 @@
 "use client";
 
-import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useOptionKeyboard } from "../use-option-keyboard";
 import { useReplaceName } from "../user-name-context";
@@ -94,18 +93,9 @@ export function PlayerChoiceSceneQuestion({ children }: { children?: string | nu
  * here prevents each adapter from quietly diverging when option typography
  * changes in the future.
  */
-export function PlayerChoiceSceneOptionText({
-  children,
-  className,
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) {
+export function PlayerChoiceSceneOptionText({ children }: { children: React.ReactNode }) {
   return (
-    <span
-      className={cn("text-base leading-6", className)}
-      data-slot="player-choice-scene-option-text"
-    >
+    <span className="text-base leading-6" data-slot="player-choice-scene-option-text">
       {children}
     </span>
   );

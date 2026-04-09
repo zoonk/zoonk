@@ -2,6 +2,21 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { SectionLabel } from "./section-label";
 import { PlayerContentFrame } from "./step-layouts";
 
+export type PlayerReadSceneTitleTone =
+  | "destructive"
+  | "foreground"
+  | "muted"
+  | "success"
+  | "warning";
+
+const PLAYER_READ_SCENE_TITLE_TONE_CLASS: Record<PlayerReadSceneTitleTone, string> = {
+  destructive: "text-destructive",
+  foreground: "text-foreground",
+  muted: "text-muted-foreground",
+  success: "text-success",
+  warning: "text-warning",
+};
+
 /**
  * Shared read-only scene shell for centered player content.
  *
@@ -86,16 +101,16 @@ export function PlayerReadSceneMetaLabel({ children }: { children: React.ReactNo
  */
 export function PlayerReadSceneTitle({
   children,
-  className,
+  tone = "muted",
 }: {
   children: React.ReactNode;
-  className?: string;
+  tone?: PlayerReadSceneTitleTone;
 }) {
   return (
     <h2
       className={cn(
-        "text-muted-foreground text-lg font-semibold tracking-tight sm:text-xl",
-        className,
+        "text-lg font-semibold tracking-tight sm:text-xl",
+        PLAYER_READ_SCENE_TITLE_TONE_CLASS[tone],
       )}
       data-slot="player-read-scene-title"
     >
@@ -110,16 +125,10 @@ export function PlayerReadSceneTitle({
  * Story narrative, static explanations, and investigation setup copy should
  * stay visually aligned, so the baseline body typography lives here.
  */
-export function PlayerReadSceneBody({
-  children,
-  className,
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) {
+export function PlayerReadSceneBody({ children }: { children: React.ReactNode }) {
   return (
     <p
-      className={cn("text-lg leading-relaxed sm:text-xl sm:leading-relaxed", className)}
+      className="text-lg leading-relaxed sm:text-xl sm:leading-relaxed"
       data-slot="player-read-scene-body"
     >
       {children}

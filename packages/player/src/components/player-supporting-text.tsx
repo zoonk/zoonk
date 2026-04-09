@@ -1,5 +1,3 @@
-import { cn } from "@zoonk/ui/lib/utils";
-
 /**
  * Provides one shared style for short, muted helper copy across the player.
  *
@@ -8,18 +6,9 @@ import { cn } from "@zoonk/ui/lib/utils";
  * that treatment here reduces drift without forcing unrelated scenes to share
  * larger layout primitives.
  */
-export function PlayerSupportingText({
-  children,
-  className,
-}: {
-  children: React.ReactNode;
-  className?: string;
-}) {
+export function PlayerSupportingText({ children }: { children: React.ReactNode }) {
   return (
-    <p
-      className={cn("text-muted-foreground text-sm", className)}
-      data-slot="player-supporting-text"
-    >
+    <p className="text-muted-foreground text-sm" data-slot="player-supporting-text">
       {children}
     </p>
   );
