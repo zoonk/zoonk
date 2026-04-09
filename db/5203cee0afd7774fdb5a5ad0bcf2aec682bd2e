@@ -1,0 +1,23 @@
+packages/player/src/components/player-feedback-scene.tsx
+  a69bd7d8adbcb062 39,42
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.6",
+  "base_commit_sha": "db5203cee0afd7774fdb5a5ad0bcf2aec682bd2e",
+  "prompts": {
+    "a69bd7d8adbcb062": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d73eb-83af-7831-a143-49eba88b95a0",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 2,
+      "total_deletions": 3,
+      "accepted_lines": 2,
+      "overriden_lines": 0
+    }
+  }
+}
