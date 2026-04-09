@@ -1,0 +1,23 @@
+packages/ui/src/components/sidebar.tsx
+  f91bfc6cac88e138 590
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.6",
+  "base_commit_sha": "78cc969fa995c362f163a5897ca237e6eb5533b9",
+  "prompts": {
+    "f91bfc6cac88e138": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "21ed26e1-7485-43a2-9858-1950374b193f",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 1,
+      "total_deletions": 1,
+      "accepted_lines": 1,
+      "overriden_lines": 0
+    }
+  }
+}
