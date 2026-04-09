@@ -54,9 +54,9 @@
     "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
-    "@ai-sdk/gateway": "3.0.85",
-    "@ai-sdk/openai": "3.0.49",
-    "@google/genai": "1.48.0",
+    "@ai-sdk/gateway": "3.0.94",
+    "@ai-sdk/openai": "3.0.52",
+    "@google/genai": "1.49.0",
     "@zoonk/utils": "workspace:*",
     "ai": "catalog:"
   },
@@ -67,7 +67,7 @@
     "vitest": "catalog:"
   },
   "peerDependencies": {
-    "server-only": ">=0.0.1",
-    "zod": ">=4"
+    "server-only": "catalog:",
+    "zod": "catalog:"
   }
 }
