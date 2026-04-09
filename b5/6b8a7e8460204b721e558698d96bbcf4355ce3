@@ -1,0 +1,21 @@
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.6",
+  "base_commit_sha": "b56b8a7e8460204b721e558698d96bbcf4355ce3",
+  "prompts": {
+    "982baca56ddc6fb7": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d7251-cbe1-78b2-bc30-b22578a53d0e",
+        "model": "unknown"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 17,
+      "overriden_lines": 0
+    }
+  }
+}
