@@ -1,0 +1,36 @@
+packages/player/src/components/player-bottom-bar.tsx
+  16668dd06318aa69 8-15,21,24-26
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.6",
+  "base_commit_sha": "35cd5e6951500e4f4d0363794fd517e43919415a",
+  "prompts": {
+    "16668dd06318aa69": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "5e957427-d2d9-41b0-848b-ca72ce2dba41",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 69,
+      "total_deletions": 4,
+      "accepted_lines": 12,
+      "overriden_lines": 0
+    },
+    "3b95621e1b18a2c5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a6da674d-8475-4048-aa38-daef3905971e",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 4,
+      "overriden_lines": 0
+    }
+  }
+}
