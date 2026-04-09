@@ -2,6 +2,7 @@
 
 import { useExtracted } from "next-intl";
 import { type StoryMetric } from "../player-selectors";
+import { PlayerContentFrame } from "./step-layouts";
 import { StoryMetricPill } from "./story-metric-pill";
 
 /**
@@ -18,14 +19,14 @@ export function StoryMetricsBar({ metrics }: { metrics: StoryMetric[] }) {
   }
 
   return (
-    <div
+    <PlayerContentFrame
       aria-label={t("Current status")}
-      className="mx-auto flex w-full max-w-2xl flex-wrap items-center justify-center gap-2 p-4"
+      className="flex flex-wrap items-center justify-center gap-2 py-4"
       role="status"
     >
       {metrics.map((metric) => (
         <StoryMetricPill key={metric.metric} metric={metric.metric} value={metric.value} />
       ))}
-    </div>
+    </PlayerContentFrame>
   );
 }

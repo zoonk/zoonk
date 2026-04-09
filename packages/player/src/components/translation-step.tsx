@@ -3,13 +3,15 @@
 import { useExtracted } from "next-intl";
 import { type SelectedAnswer } from "../player-reducer";
 import { type SerializedStep, type TranslationOption } from "../prepare-activity-data";
-import { useOptionKeyboard } from "../use-option-keyboard";
 import { useWordAudio } from "../use-word-audio";
-import { OptionCard } from "./option-card";
-import { QuestionText } from "./question-text";
+import {
+  PlayerChoiceScene,
+  PlayerChoiceSceneEyebrow,
+  PlayerChoiceSceneOptions,
+  PlayerChoiceScenePrompt,
+  PlayerChoiceSceneQuestion,
+} from "./player-choice-scene";
 import { RomanizationText } from "./romanization-text";
-import { SectionLabel } from "./section-label";
-import { InteractiveStepLayout } from "./step-layouts";
 
 function getSelectedWordId(selectedAnswer: SelectedAnswer | undefined): string | null {
   if (selectedAnswer?.kind !== "translation") {
@@ -73,35 +75,26 @@ export function TranslationStep({
     });
   };
 
-  useOptionKeyboard({
-    enabled: !selectedAnswer || selectedAnswer.kind === "translation",
-    onSelect: handleSelect,
-    optionCount: options.length,
-  });
-
   if (!correctWord) {
     return null;
   }
 
   return (
-    <InteractiveStepLayout>
-      <div className="flex flex-col gap-2">
-        <SectionLabel>{t("Translate this word:")}</SectionLabel>
-        <QuestionText>{correctWord.translation}</QuestionText>
-      </div>
+    <PlayerChoiceScene>
+      <PlayerChoiceScenePrompt>
+        <PlayerChoiceSceneEyebrow>{t("Translate this word:")}</PlayerChoiceSceneEyebrow>
+        <PlayerChoiceSceneQuestion>{correctWord.translation}</PlayerChoiceSceneQuestion>
+      </PlayerChoiceScenePrompt>
 
-      <div aria-label={t("Answer options")} className="flex flex-col gap-3" role="radiogroup">
-        {options.map((word, index) => (
-          <OptionCard
-            index={index}
-            isSelected={selectedWordId === word.id}
-            key={word.id}
-            onSelect={() => handleSelect(index)}
-          >
-            <TranslationOptionContent isSelected={selectedWordId === word.id} word={word} />
-          </OptionCard>
-        ))}
-      </div>
-    </InteractiveStepLayout>
+      <PlayerChoiceSceneOptions
+        keyboardEnabled={!selectedAnswer || selectedAnswer.kind === "translation"}
+        onSelect={handleSelect}
+        options={options.map((word) => ({
+          content: <TranslationOptionContent isSelected={selectedWordId === word.id} word={word} />,
+          isSelected: selectedWordId === word.id,
+          key: word.id,
+        }))}
+      />
+    </PlayerChoiceScene>
   );
 }

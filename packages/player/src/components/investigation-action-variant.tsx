@@ -10,10 +10,13 @@ import { getAvailableActions } from "../investigation";
 import { usePlayerRuntime } from "../player-context";
 import { type SelectedAnswer, type StepResult } from "../player-reducer";
 import { type SerializedStep } from "../prepare-activity-data";
-import { useOptionKeyboard } from "../use-option-keyboard";
-import { OptionCard } from "./option-card";
-import { ContextText, QuestionText } from "./question-text";
-import { InteractiveStepLayout } from "./step-layouts";
+import {
+  PlayerChoiceScene,
+  PlayerChoiceSceneOptions,
+  PlayerChoiceScenePrompt,
+  PlayerChoiceSceneQuestion,
+} from "./player-choice-scene";
+import { PlayerReadScene, PlayerReadSceneBody } from "./player-read-scene";
 
 type ActionContent = Extract<InvestigationStepContent, { variant: "action" }>;
 
@@ -73,17 +76,17 @@ function ActionFeedback({
   const quality = useQualityLabel(action.quality);
 
   return (
-    <InteractiveStepLayout>
+    <PlayerReadScene>
       <p className={`text-lg font-semibold ${quality.className}`}>{quality.label}</p>
 
-      <ContextText>{action.finding}</ContextText>
+      <PlayerReadSceneBody>{action.finding}</PlayerReadSceneBody>
 
       {isLastExperiment && (
         <p className="text-muted-foreground text-sm">
           {t("Evidence complete — time to make your call.")}
         </p>
       )}
-    </InteractiveStepLayout>
+    </PlayerReadScene>
   );
 }
 
@@ -147,12 +150,6 @@ export function InvestigationActionVariant({
     });
   };
 
-  useOptionKeyboard({
-    enabled: !hasFeedback,
-    onSelect: handleSelect,
-    optionCount: availableActions.length,
-  });
-
   const selectedAction =
     selectedActionId === null
       ? null
@@ -168,22 +165,22 @@ export function InvestigationActionVariant({
   }
 
   return (
-    <InteractiveStepLayout>
-      <QuestionText>{questionText}</QuestionText>
+    <PlayerChoiceScene>
+      <PlayerChoiceScenePrompt>
+        <PlayerChoiceSceneQuestion>{questionText}</PlayerChoiceSceneQuestion>
+      </PlayerChoiceScenePrompt>
 
-      <div aria-label={questionText} className="flex flex-col gap-3" role="radiogroup">
-        {availableActions.map((action, index) => (
-          <OptionCard
-            index={index}
-            isDimmed={hasSelection && selectedActionId !== action.id}
-            isSelected={selectedActionId === action.id}
-            key={action.id}
-            onSelect={() => handleSelect(index)}
-          >
-            <span className="text-base leading-6">{action.label}</span>
-          </OptionCard>
-        ))}
-      </div>
-    </InteractiveStepLayout>
+      <PlayerChoiceSceneOptions
+        ariaLabel={questionText}
+        keyboardEnabled={!hasFeedback}
+        onSelect={handleSelect}
+        options={availableActions.map((action) => ({
+          content: <span className="text-base leading-6">{action.label}</span>,
+          isDimmed: hasSelection && selectedActionId !== action.id,
+          isSelected: selectedActionId === action.id,
+          key: action.id,
+        }))}
+      />
+    </PlayerChoiceScene>
   );
 }

@@ -8,18 +8,31 @@ import {
 import { CompletionScreenContent } from "./completion-screen";
 import { FeedbackScreenContent } from "./feedback-screen";
 import { StepActionButton } from "./step-action-button";
+import { PlayerContentFrame } from "./step-layouts";
 import { StepRenderer } from "./step-renderer";
 
 /**
- * Whether the step has an action button (Begin, Check, Continue,
- * Start Investigation) — as opposed to static navigation arrows
- * handled by StepSideNav.
+ * Renders the desktop inline action inside the shared player frame so the
+ * button stays aligned with the step content instead of growing to the full
+ * stage width.
  *
- * When true, we render the action button inline on large screens
- * so it sits close to the content instead of fixed at the viewport bottom.
+ * Mobile still uses the sticky bottom bar. Large screens keep the same action
+ * close to the content, but now both placements share one width source.
  */
-function needsInlineAction(screen: ReturnType<typeof usePlayerRuntime>["screen"]) {
-  return screen.kind === "step" && screen.bottomBar.kind === "primaryAction";
+function DesktopInlineAction() {
+  return (
+    <PlayerContentFrame className="hidden lg:flex">
+      <StepActionButton />
+    </PlayerContentFrame>
+  );
+}
+
+/**
+ * Primary-action screens render the shared action inline on desktop, while
+ * navigable screens rely on side arrows or the mobile bottom bar.
+ */
+function usesDesktopInlineAction(screen: ReturnType<typeof usePlayerRuntime>["screen"]) {
+  return screen.kind !== "completed" && screen.bottomBar?.kind === "primaryAction";
 }
 
 export function StageContent() {
@@ -44,15 +57,15 @@ export function StageContent() {
 
   if (screen.kind === "feedbackScreen" && currentResult) {
     return (
-      <div className="my-auto flex w-full flex-col items-center gap-6">
+      <div className="my-auto flex w-full flex-col gap-6">
         <FeedbackScreenContent result={currentResult} step={currentStep} />
-        <StepActionButton className="hidden max-w-lg lg:inline-flex" />
+        <DesktopInlineAction />
       </div>
     );
   }
 
   if (screen.kind === "step" && currentStep) {
-    const showInlineAction = needsInlineAction(screen);
+    const showInlineAction = usesDesktopInlineAction(screen);
 
     const stepContent = (
       <StepRenderer
@@ -68,9 +81,9 @@ export function StageContent() {
 
     if (showInlineAction) {
       return (
-        <div className="my-auto flex w-full flex-col items-center gap-6">
+        <div className="my-auto flex w-full flex-col gap-6">
           {stepContent}
-          <StepActionButton className="hidden max-w-2xl lg:inline-flex" />
+          <DesktopInlineAction />
         </div>
       );
     }

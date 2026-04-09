@@ -8,6 +8,7 @@ import { type StepResult } from "../player-reducer";
 import { type SerializedStep } from "../prepare-activity-data";
 import { EFFECT_DELTA_MAP } from "../story";
 import { useReplaceName } from "../user-name-context";
+import { PlayerFeedbackScene, PlayerFeedbackSceneMessage } from "./player-feedback-scene";
 
 type MetricDelta = {
   delta: number;
@@ -76,13 +77,9 @@ export function StoryFeedbackContent({
       : [];
 
   return (
-    <div
-      aria-live="polite"
-      className="animate-in fade-in slide-in-from-bottom-1 mx-auto my-auto flex w-full max-w-lg flex-col gap-6 duration-200 ease-out motion-reduce:animate-none"
-      role="status"
-    >
+    <PlayerFeedbackScene>
       {consequence && (
-        <p className="text-foreground text-lg leading-relaxed">{replaceName(consequence)}</p>
+        <PlayerFeedbackSceneMessage>{replaceName(consequence)}</PlayerFeedbackSceneMessage>
       )}
 
       {metricDeltas.length > 0 && (
@@ -92,6 +89,6 @@ export function StoryFeedbackContent({
           ))}
         </div>
       )}
-    </div>
+    </PlayerFeedbackScene>
   );
 }

@@ -96,7 +96,7 @@ export function PlayerShell() {
 
       {screen.showMetricsBar && <StoryMetricsBar metrics={storyMetrics} />}
 
-      <PlayerStage isStatic={screen.stageIsStatic} phase={state.phase}>
+      <PlayerStage isStatic={screen.stageIsStatic} phase={state.phase} scene={screen.scene}>
         <StageContent />
       </PlayerStage>
 

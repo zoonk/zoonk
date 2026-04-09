@@ -164,7 +164,7 @@ export function StepRenderer({
 
   const stepContent = (
     <div
-      className="animate-in fade-in flex min-h-0 w-full min-w-0 flex-1 flex-col items-center duration-150 ease-out motion-reduce:animate-none"
+      className="flex min-h-0 w-full min-w-0 flex-1 flex-col items-center"
       key={`step-${step.id}`}
     >
       {content}

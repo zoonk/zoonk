@@ -3,6 +3,7 @@ import { type PlayerState } from "./player-reducer";
 import { type PlayerStepDescriptor, describePlayerStep } from "./player-step";
 import {
   getPlayerStepBehavior,
+  getPlayerStepScene,
   usesFeedbackScreen,
   usesStaticNavigation,
 } from "./player-step-behavior";
@@ -10,6 +11,7 @@ import { canNavigatePrev as getCanNavigatePrev } from "./step-navigation";
 
 type PlayerPrimaryActionKind = "begin" | "check" | "continue" | "startInvestigation";
 type PlayerPrimaryActionRun = "check" | "continue" | "navigateNext";
+type InPlayScreenScene = "choice" | "feedback" | "read" | "visual";
 
 type PlayerBottomBarModel =
   | {
@@ -34,6 +36,7 @@ type InPlayScreenModel = {
   bottomBar: PlayerBottomBarModel;
   canNavigatePrev: boolean;
   keyboard: PlayerKeyboardModel;
+  scene: InPlayScreenScene;
   showChrome: true;
   showMetricsBar: boolean;
   stageIsStatic: boolean;
@@ -45,6 +48,7 @@ export type PlayerCompletedScreenModel = {
   bottomBar: null;
   keyboard: PlayerKeyboardModel;
   kind: "completed";
+  scene: "completion";
   showChrome: false;
   showMetricsBar: false;
   stageIsStatic: false;
@@ -53,6 +57,7 @@ export type PlayerCompletedScreenModel = {
 
 export type PlayerFeedbackScreenModel = InPlayScreenModel & {
   kind: "feedbackScreen";
+  scene: "feedback";
 };
 
 export type PlayerStepScreenModel = InPlayScreenModel & {
@@ -79,6 +84,7 @@ function getCompletedScreenModel(): PlayerCompletedScreenModel {
       rightAction: null,
     },
     kind: "completed",
+    scene: "completion",
     showChrome: false,
     showMetricsBar: false,
     stageIsStatic: false,
@@ -211,6 +217,27 @@ function getStoryStaticVariant(step: PlayerStepDescriptor): StoryStaticVariant |
 }
 
 /**
+ * Reduces the player's screen routing to a small set of UI scenes.
+ *
+ * This lets the shell think in broad layouts like read, choice, feedback, and
+ * completion without erasing the domain-specific step kinds that scoring and
+ * validation still need.
+ */
+function getPlayerScreenScene({
+  phase,
+  step,
+}: {
+  phase: PlayerState["phase"];
+  step: PlayerStepDescriptor;
+}): InPlayScreenScene {
+  if (phase === "feedback") {
+    return "feedback";
+  }
+
+  return getPlayerStepScene(step) ?? "read";
+}
+
+/**
  * Returns the player's canonical screen model from raw reducer state.
  *
  * This is the shared UI/control source of truth for shell layout, keyboard
@@ -248,10 +275,12 @@ export function getPlayerScreenModel(state: PlayerState): PlayerScreenModel {
     phase: state.phase,
     step,
   });
+  const scene = getPlayerScreenScene({ phase: state.phase, step });
   const model = {
     bottomBar,
     canNavigatePrev: canMovePrev,
     keyboard,
+    scene,
     showChrome: true as const,
     showMetricsBar: step.kind === "storyDecision",
     stageIsStatic: state.phase === "playing" && usesStaticNavigation(step),
@@ -260,7 +289,7 @@ export function getPlayerScreenModel(state: PlayerState): PlayerScreenModel {
   };
 
   if (state.phase === "feedback" && usesFeedbackScreen(step)) {
-    return { ...model, kind: "feedbackScreen" };
+    return { ...model, kind: "feedbackScreen", scene: "feedback" };
   }
 
   return { ...model, kind: "step" };

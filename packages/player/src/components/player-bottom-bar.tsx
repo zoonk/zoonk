@@ -4,25 +4,25 @@ import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useExtracted } from "next-intl";
+import { PlayerContentFrame } from "./step-layouts";
 
 /**
  * Fixed bottom bar for the player's action buttons on mobile.
  *
- * Uses px-4 horizontal padding to match PlayerStage's p-4, with
- * max-w-2xl on the inner content area. This ensures the button
- * aligns with InteractiveStepLayout's max-w-2xl content above —
- * both use the same padding-outside-constraint structure.
+ * The inner content uses the same shared player frame as the stage content.
+ * That keeps mobile actions aligned with the centered step container instead
+ * of relying on duplicated width classes.
  */
 export function PlayerBottomBar({ className, ...props }: React.ComponentProps<"div">) {
   return (
     <div
       className={cn(
         "bg-background/95 sticky bottom-0 z-30 backdrop-blur-sm",
-        "w-full px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]",
+        "w-full py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]",
         className,
       )}
     >
-      <div className="mx-auto w-full max-w-2xl" data-slot="player-bottom-bar" {...props} />
+      <PlayerContentFrame data-slot="player-bottom-bar" {...props} />
     </div>
   );
 }

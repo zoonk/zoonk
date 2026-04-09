@@ -2,9 +2,12 @@
 
 import { type InvestigationStepContent } from "@zoonk/core/steps/contract/content";
 import { useExtracted } from "next-intl";
-import { ContextText } from "./question-text";
-import { SectionLabel } from "./section-label";
-import { InteractiveStepLayout } from "./step-layouts";
+import {
+  PlayerReadScene,
+  PlayerReadSceneBody,
+  PlayerReadSceneEyebrow,
+  PlayerReadSceneStack,
+} from "./player-read-scene";
 
 type ProblemContent = Extract<InvestigationStepContent, { variant: "problem" }>;
 
@@ -20,12 +23,13 @@ export function InvestigationProblemVariant({ content }: { content: ProblemConte
   const t = useExtracted();
 
   return (
-    <InteractiveStepLayout>
-      <SectionLabel>{t("The Case")}</SectionLabel>
-
-      <ContextText>{content.scenario}</ContextText>
+    <PlayerReadScene>
+      <PlayerReadSceneStack>
+        <PlayerReadSceneEyebrow>{t("The Case")}</PlayerReadSceneEyebrow>
+        <PlayerReadSceneBody>{content.scenario}</PlayerReadSceneBody>
+      </PlayerReadSceneStack>
 
       <p className="text-muted-foreground text-sm">{t("Collect 2 leads. Then make your call.")}</p>
-    </InteractiveStepLayout>
+    </PlayerReadScene>
   );
 }

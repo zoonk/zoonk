@@ -21,10 +21,12 @@ import { getInvestigationStepByVariant } from "../investigation";
 import { usePlayerRuntime } from "../player-context";
 import { type SelectedAnswer, type StepResult } from "../player-reducer";
 import { type SerializedStep } from "../prepare-activity-data";
-import { useOptionKeyboard } from "../use-option-keyboard";
-import { OptionCard } from "./option-card";
-import { QuestionText } from "./question-text";
-import { InteractiveStepLayout } from "./step-layouts";
+import {
+  PlayerChoiceScene,
+  PlayerChoiceSceneOptions,
+  PlayerChoiceScenePrompt,
+  PlayerChoiceSceneQuestion,
+} from "./player-choice-scene";
 
 type CallContent = Extract<InvestigationStepContent, { variant: "call" }>;
 
@@ -220,38 +222,31 @@ export function InvestigationCallVariant({
     });
   };
 
-  useOptionKeyboard({
-    enabled: !hasFeedback,
-    onSelect: handleSelect,
-    optionCount: explanations.length,
-  });
-
   return (
-    <InteractiveStepLayout>
+    <PlayerChoiceScene>
       <EvidenceDrawer evidence={evidence} />
 
-      <QuestionText>{t("What do you think happened?")}</QuestionText>
+      <PlayerChoiceScenePrompt>
+        <PlayerChoiceSceneQuestion>{t("What do you think happened?")}</PlayerChoiceSceneQuestion>
+      </PlayerChoiceScenePrompt>
 
-      <div aria-label={t("Answer options")} className="flex flex-col gap-3" role="radiogroup">
-        {explanations.map((explanation, index) => (
-          <OptionCard
-            disabled={hasFeedback}
-            index={index}
-            isDimmed={hasSelection && selectedId !== explanation.id}
-            isSelected={selectedId === explanation.id}
-            key={explanation.id}
-            onSelect={() => handleSelect(index)}
-            resultState={getResultState({
-              accuracy: explanation.accuracy,
-              hasFeedback,
-              id: explanation.id,
-              selectedId,
-            })}
-          >
-            <span className="text-base leading-6">{explanation.text}</span>
-          </OptionCard>
-        ))}
-      </div>
-    </InteractiveStepLayout>
+      <PlayerChoiceSceneOptions
+        keyboardEnabled={!hasFeedback}
+        onSelect={handleSelect}
+        options={explanations.map((explanation) => ({
+          content: <span className="text-base leading-6">{explanation.text}</span>,
+          disabled: hasFeedback,
+          isDimmed: hasSelection && selectedId !== explanation.id,
+          isSelected: selectedId === explanation.id,
+          key: explanation.id,
+          resultState: getResultState({
+            accuracy: explanation.accuracy,
+            hasFeedback,
+            id: explanation.id,
+            selectedId,
+          }),
+        }))}
+      />
+    </PlayerChoiceScene>
   );
 }

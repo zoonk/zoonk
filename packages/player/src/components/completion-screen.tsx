@@ -6,15 +6,17 @@ import { useExtracted } from "next-intl";
 import { type CompletionResult } from "../completion-input-schema";
 import { type PlayerRoute, usePlayerMilestone, usePlayerViewer } from "../player-context";
 import { AuthBranch } from "./completion-auth-branch";
+import { PlayerContentFrame } from "./step-layouts";
 
+/**
+ * Completion lives on the same centered frame as the rest of the player so
+ * score summaries and follow-up actions don't introduce another width system.
+ */
 function CompletionScreen({ className, ...props }: React.ComponentProps<"div">) {
   return (
-    <div
+    <PlayerContentFrame
       aria-live="polite"
-      className={cn(
-        "animate-in fade-in mx-auto my-auto flex w-full max-w-lg flex-col items-center gap-6 duration-200 ease-out motion-reduce:animate-none",
-        className,
-      )}
+      className={cn("my-auto flex flex-col items-center gap-6", className)}
       data-slot="completion-screen"
       role="status"
       {...props}
@@ -79,7 +81,7 @@ export function CompletionScreenContent({
 
   if (milestone.kind !== "activity") {
     return (
-      <CompletionScreen className="min-h-[60vh] max-w-sm justify-center gap-10 px-6 sm:gap-12">
+      <CompletionScreen className="min-h-[60vh] justify-center gap-10 sm:gap-12">
         <MilestoneHeading />
 
         <div className="flex w-full flex-col gap-3">

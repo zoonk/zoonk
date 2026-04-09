@@ -6,6 +6,12 @@ import { usePlayerRuntime } from "../player-context";
 import { type PlayerState } from "../player-reducer";
 import { findSelectedChoice, getStoryMetrics } from "../player-selectors";
 import { type SerializedStep } from "../prepare-activity-data";
+import {
+  PlayerReadSceneBody,
+  PlayerReadSceneDivider,
+  PlayerReadSceneStack,
+  PlayerReadSceneTitle,
+} from "./player-read-scene";
 import { StoryMetricPill } from "./story-metric-pill";
 
 type StoryOutcome = {
@@ -121,15 +127,15 @@ export function StoryOutcomeContent({ outcomes }: { outcomes: StoryOutcome[] }) 
 
   return (
     <div className="flex flex-col gap-6">
-      <h2 className={cn("text-2xl font-semibold tracking-tight", titleColor)}>
+      <PlayerReadSceneTitle className={cn("text-2xl font-semibold", titleColor)}>
         {ranked.outcome.title}
-      </h2>
+      </PlayerReadSceneTitle>
 
-      <p className="text-lg leading-relaxed">{ranked.outcome.narrative}</p>
+      <PlayerReadSceneBody>{ranked.outcome.narrative}</PlayerReadSceneBody>
 
       {storyMetrics.length > 0 && (
-        <div className="flex flex-col gap-3">
-          <div className="bg-border h-px" />
+        <PlayerReadSceneStack className="gap-3">
+          <PlayerReadSceneDivider />
 
           <p className="text-muted-foreground text-xs font-medium tracking-widest uppercase">
             {t("Final status")}
@@ -140,7 +146,7 @@ export function StoryOutcomeContent({ outcomes }: { outcomes: StoryOutcome[] }) 
               <StoryMetricPill key={entry.metric} metric={entry.metric} value={entry.value} />
             ))}
           </div>
-        </div>
+        </PlayerReadSceneStack>
       )}
     </div>
   );
