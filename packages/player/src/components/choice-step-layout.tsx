@@ -3,6 +3,7 @@
 import {
   PlayerChoiceScene,
   PlayerChoiceSceneContext,
+  PlayerChoiceSceneOptionText,
   PlayerChoiceSceneOptions,
   PlayerChoiceScenePrompt,
   PlayerChoiceSceneQuestion,
@@ -42,7 +43,7 @@ export function ChoiceStepLayout({
       <PlayerChoiceSceneOptions
         onSelect={onSelect}
         options={options.map((option, index) => ({
-          content: <span className="text-base leading-6">{option.text}</span>,
+          content: <PlayerChoiceSceneOptionText>{option.text}</PlayerChoiceSceneOptionText>,
           isDimmed: hasSelection && selectedIndex !== index,
           isSelected: selectedIndex === index,
           key: option.key,

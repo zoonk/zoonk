@@ -1,6 +1,5 @@
 "use client";
 
-import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { usePlayerRuntime } from "../player-context";
 import { type PlayerState } from "../player-reducer";
@@ -127,9 +126,7 @@ export function StoryOutcomeContent({ outcomes }: { outcomes: StoryOutcome[] }) 
 
   return (
     <div className="flex flex-col gap-6">
-      <PlayerReadSceneTitle className={cn("text-2xl font-semibold", titleColor)}>
-        {ranked.outcome.title}
-      </PlayerReadSceneTitle>
+      <PlayerReadSceneTitle className={titleColor}>{ranked.outcome.title}</PlayerReadSceneTitle>
 
       <PlayerReadSceneBody>{ranked.outcome.narrative}</PlayerReadSceneBody>
 

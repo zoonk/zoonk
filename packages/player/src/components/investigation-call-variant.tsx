@@ -23,6 +23,7 @@ import { type SelectedAnswer, type StepResult } from "../player-reducer";
 import { type SerializedStep } from "../prepare-activity-data";
 import {
   PlayerChoiceScene,
+  PlayerChoiceSceneOptionText,
   PlayerChoiceSceneOptions,
   PlayerChoiceScenePrompt,
   PlayerChoiceSceneQuestion,
@@ -234,7 +235,7 @@ export function InvestigationCallVariant({
         keyboardEnabled={!hasFeedback}
         onSelect={handleSelect}
         options={explanations.map((explanation) => ({
-          content: <span className="text-base leading-6">{explanation.text}</span>,
+          content: <PlayerChoiceSceneOptionText>{explanation.text}</PlayerChoiceSceneOptionText>,
           disabled: hasFeedback,
           isDimmed: hasSelection && selectedId !== explanation.id,
           isSelected: selectedId === explanation.id,

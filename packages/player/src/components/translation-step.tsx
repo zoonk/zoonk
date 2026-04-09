@@ -7,6 +7,7 @@ import { useWordAudio } from "../use-word-audio";
 import {
   PlayerChoiceScene,
   PlayerChoiceSceneEyebrow,
+  PlayerChoiceSceneOptionText,
   PlayerChoiceSceneOptions,
   PlayerChoiceScenePrompt,
   PlayerChoiceSceneQuestion,
@@ -30,7 +31,7 @@ function TranslationOptionContent({
 }) {
   return (
     <>
-      <span className="text-base leading-6">{word.word}</span>
+      <PlayerChoiceSceneOptionText>{word.word}</PlayerChoiceSceneOptionText>
 
       <RomanizationText>{word.romanization}</RomanizationText>
 
