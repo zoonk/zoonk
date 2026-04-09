@@ -3,8 +3,7 @@ import {
   describePlayerStep,
   getInvestigationVariant,
   getStoryStaticVariant,
-  usesFeedbackScreen,
-  usesStaticNavigation,
+  parsePlayerStepKind,
 } from "./player-step";
 import { type SerializedStep } from "./prepare-activity-data";
 
@@ -40,11 +39,10 @@ describe(describePlayerStep, () => {
     );
 
     expect(descriptor?.kind).toBe("storyIntro");
-    expect(descriptor && usesStaticNavigation(descriptor)).toBe(false);
     expect(getStoryStaticVariant(descriptor?.step)).toBe("storyIntro");
   });
 
-  test("describes investigation call and marks it as feedback-screen content", () => {
+  test("describes investigation call and preserves its investigation variant", () => {
     const descriptor = describePlayerStep(
       buildStep({
         content: {
@@ -63,15 +61,31 @@ describe(describePlayerStep, () => {
     );
 
     expect(descriptor?.kind).toBe("investigationCall");
-    expect(descriptor && usesFeedbackScreen(descriptor)).toBe(true);
     expect(getInvestigationVariant(descriptor?.step)).toBe("call");
   });
 
-  test("keeps regular static text in static navigation mode", () => {
+  test("keeps regular static text as the canonical staticText kind", () => {
     const descriptor = describePlayerStep(buildStep());
 
     expect(descriptor?.kind).toBe("staticText");
-    expect(descriptor && usesStaticNavigation(descriptor)).toBe(true);
-    expect(descriptor && usesFeedbackScreen(descriptor)).toBe(false);
+  });
+
+  test("parses raw server step data into the same canonical step kind", () => {
+    expect(
+      parsePlayerStepKind({
+        content: {
+          explanations: [
+            {
+              accuracy: "best" as const,
+              feedback: "Correct",
+              id: "exp-1",
+              text: "It was DNS",
+            },
+          ],
+          variant: "call" as const,
+        },
+        kind: "investigation",
+      }),
+    ).toBe("investigationCall");
   });
 });

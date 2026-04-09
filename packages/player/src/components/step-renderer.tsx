@@ -3,6 +3,7 @@
 
 import { type SelectedAnswer, type StepResult } from "../player-reducer";
 import { describePlayerStep } from "../player-step";
+import { type PlayerRenderBehavior, getPlayerStepBehavior } from "../player-step-behavior";
 import { type SerializedStep } from "../prepare-activity-data";
 import { FillBlankStep } from "./fill-blank-step";
 import { InvestigationStep } from "./investigation-step";
@@ -20,6 +21,119 @@ import { TranslationStep } from "./translation-step";
 import { VisualStep } from "./visual-step";
 import { VocabularyStep } from "./vocabulary-step";
 
+type StepRendererProps = {
+  canNavigatePrev: boolean;
+  onNavigateNext: () => void;
+  onNavigatePrev: () => void;
+  onSelectAnswer: (stepId: string, answer: SelectedAnswer | null) => void;
+  result?: StepResult;
+  selectedAnswer: SelectedAnswer | undefined;
+  step: SerializedStep;
+};
+
+function renderStepContent({
+  render,
+  onSelectAnswer,
+  result,
+  selectedAnswer,
+  step,
+}: Pick<StepRendererProps, "onSelectAnswer" | "result" | "selectedAnswer" | "step"> & {
+  render: PlayerRenderBehavior;
+}) {
+  switch (render) {
+    case "fillBlank":
+      return (
+        <FillBlankStep
+          onSelectAnswer={onSelectAnswer}
+          result={result}
+          selectedAnswer={selectedAnswer}
+          step={step}
+        />
+      );
+    case "investigation":
+      return (
+        <InvestigationStep
+          onSelectAnswer={onSelectAnswer}
+          result={result}
+          selectedAnswer={selectedAnswer}
+          step={step}
+        />
+      );
+    case "listening":
+      return (
+        <ListeningStep
+          onSelectAnswer={onSelectAnswer}
+          result={result}
+          selectedAnswer={selectedAnswer}
+          step={step}
+        />
+      );
+    case "matchColumns":
+      return (
+        <MatchColumnsStep
+          onSelectAnswer={onSelectAnswer}
+          selectedAnswer={selectedAnswer}
+          step={step}
+        />
+      );
+    case "multipleChoice":
+      return (
+        <MultipleChoiceStep
+          onSelectAnswer={onSelectAnswer}
+          selectedAnswer={selectedAnswer}
+          step={step}
+        />
+      );
+    case "reading":
+      return (
+        <ReadingStep
+          onSelectAnswer={onSelectAnswer}
+          result={result}
+          selectedAnswer={selectedAnswer}
+          step={step}
+        />
+      );
+    case "selectImage":
+      return (
+        <SelectImageStep
+          onSelectAnswer={onSelectAnswer}
+          result={result}
+          selectedAnswer={selectedAnswer}
+          step={step}
+        />
+      );
+    case "sortOrder":
+      return (
+        <SortOrderStep
+          onSelectAnswer={onSelectAnswer}
+          result={result}
+          selectedAnswer={selectedAnswer}
+          step={step}
+        />
+      );
+    case "static":
+      return <StaticStep step={step} />;
+    case "story":
+      return (
+        <StoryStep onSelectAnswer={onSelectAnswer} selectedAnswer={selectedAnswer} step={step} />
+      );
+    case "translation":
+      return (
+        <TranslationStep
+          onSelectAnswer={onSelectAnswer}
+          selectedAnswer={selectedAnswer}
+          step={step}
+        />
+      );
+    case "visual":
+      return <VisualStep step={step} />;
+    case "vocabulary":
+      return <VocabularyStep step={step} />;
+    default:
+      return null;
+  }
+}
+
 export function StepRenderer({
   canNavigatePrev,
   onNavigateNext,
@@ -28,161 +142,38 @@ export function StepRenderer({
   result,
   selectedAnswer,
   step,
-}: {
-  canNavigatePrev: boolean;
-  onNavigateNext: () => void;
-  onNavigatePrev: () => void;
-  onSelectAnswer: (stepId: string, answer: SelectedAnswer | null) => void;
-  result?: StepResult;
-  selectedAnswer: SelectedAnswer | undefined;
-  step: SerializedStep;
-}) {
+}: StepRendererProps) {
   const descriptor = describePlayerStep(step);
+  const behavior = getPlayerStepBehavior(descriptor);
 
-  if (step.kind === "static") {
-    if (descriptor?.kind === "storyIntro" || descriptor?.kind === "storyOutcome") {
-      return <StaticStep step={step} />;
-    }
-
-    return (
-      <NavigableStepLayout>
-        <StepSideNav
-          canNavigatePrev={canNavigatePrev}
-          onNavigateNext={onNavigateNext}
-          onNavigatePrev={onNavigatePrev}
-        />
-        <StaticStep step={step} />
-      </NavigableStepLayout>
-    );
+  if (!behavior) {
+    return null;
   }
 
-  if (step.kind === "visual") {
-    return (
-      <NavigableStepLayout>
-        <StepSideNav
-          canNavigatePrev={canNavigatePrev}
-          onNavigateNext={onNavigateNext}
-          onNavigatePrev={onNavigatePrev}
-        />
-        <VisualStep step={step} />
-      </NavigableStepLayout>
-    );
+  const content = renderStepContent({
+    onSelectAnswer,
+    render: behavior.render,
+    result,
+    selectedAnswer,
+    step,
+  });
+
+  if (!content) {
+    return null;
   }
 
-  if (step.kind === "multipleChoice") {
-    return (
-      <MultipleChoiceStep
-        onSelectAnswer={onSelectAnswer}
-        selectedAnswer={selectedAnswer}
-        step={step}
+  if (behavior.layout !== "navigable") {
+    return content;
+  }
+
+  return (
+    <NavigableStepLayout>
+      <StepSideNav
+        canNavigatePrev={canNavigatePrev}
+        onNavigateNext={onNavigateNext}
+        onNavigatePrev={onNavigatePrev}
       />
-    );
-  }
-
-  if (step.kind === "fillBlank") {
-    return (
-      <FillBlankStep
-        onSelectAnswer={onSelectAnswer}
-        result={result}
-        selectedAnswer={selectedAnswer}
-        step={step}
-      />
-    );
-  }
-
-  if (step.kind === "matchColumns") {
-    return (
-      <MatchColumnsStep
-        onSelectAnswer={onSelectAnswer}
-        selectedAnswer={selectedAnswer}
-        step={step}
-      />
-    );
-  }
-
-  if (step.kind === "selectImage") {
-    return (
-      <SelectImageStep
-        onSelectAnswer={onSelectAnswer}
-        result={result}
-        selectedAnswer={selectedAnswer}
-        step={step}
-      />
-    );
-  }
-
-  if (step.kind === "sortOrder") {
-    return (
-      <SortOrderStep
-        onSelectAnswer={onSelectAnswer}
-        result={result}
-        selectedAnswer={selectedAnswer}
-        step={step}
-      />
-    );
-  }
-
-  if (step.kind === "vocabulary") {
-    return (
-      <NavigableStepLayout>
-        <StepSideNav
-          canNavigatePrev={canNavigatePrev}
-          onNavigateNext={onNavigateNext}
-          onNavigatePrev={onNavigatePrev}
-        />
-        <VocabularyStep step={step} />
-      </NavigableStepLayout>
-    );
-  }
-
-  if (step.kind === "translation") {
-    return (
-      <TranslationStep
-        onSelectAnswer={onSelectAnswer}
-        selectedAnswer={selectedAnswer}
-        step={step}
-      />
-    );
-  }
-
-  if (step.kind === "reading") {
-    return (
-      <ReadingStep
-        onSelectAnswer={onSelectAnswer}
-        result={result}
-        selectedAnswer={selectedAnswer}
-        step={step}
-      />
-    );
-  }
-
-  if (step.kind === "listening") {
-    return (
-      <ListeningStep
-        onSelectAnswer={onSelectAnswer}
-        result={result}
-        selectedAnswer={selectedAnswer}
-        step={step}
-      />
-    );
-  }
-
-  if (step.kind === "story") {
-    return (
-      <StoryStep onSelectAnswer={onSelectAnswer} selectedAnswer={selectedAnswer} step={step} />
-    );
-  }
-
-  if (step.kind === "investigation") {
-    return (
-      <InvestigationStep
-        onSelectAnswer={onSelectAnswer}
-        result={result}
-        selectedAnswer={selectedAnswer}
-        step={step}
-      />
-    );
-  }
-
-  return null;
+      {content}
+    </NavigableStepLayout>
+  );
 }

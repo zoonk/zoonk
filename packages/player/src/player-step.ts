@@ -1,6 +1,7 @@
 import {
   type InvestigationStepContent,
   type StoryStaticVariant,
+  parseStepContent,
 } from "@zoonk/core/steps/contract/content";
 import { type SerializedStep } from "./prepare-activity-data";
 
@@ -69,6 +70,25 @@ export type PlayerStepDescriptor =
   | StepDescriptorBase<"visual", "visual">
   | StepDescriptorBase<"vocabulary", "vocabulary">;
 
+export type PlayerStepKind = PlayerStepDescriptor["kind"];
+
+const IDENTITY_PLAYER_STEP_KINDS = [
+  "fillBlank",
+  "listening",
+  "matchColumns",
+  "multipleChoice",
+  "reading",
+  "selectImage",
+  "sortOrder",
+  "translation",
+  "visual",
+  "vocabulary",
+] as const satisfies readonly PlayerStepKind[];
+
+const IDENTITY_PLAYER_STEP_KIND_SET: ReadonlySet<string> = new Set(IDENTITY_PLAYER_STEP_KINDS);
+
+type IdentityPlayerStepKind = (typeof IDENTITY_PLAYER_STEP_KINDS)[number];
+
 /**
  * `SerializedStep` loses some of its `kind` to `content` correlation once it
  * moves through arrays and reducer state. This guard restores that link so the
@@ -87,22 +107,20 @@ function hasStepKind<Kind extends SerializedStep["kind"]>(
  * so the rest of the player can switch on a canonical descriptor instead of
  * repeating `step.kind` plus `content.variant` checks.
  */
-function describeStaticStep(step: SerializedStep<"static">): PlayerStepDescriptor {
-  const content = step.content;
-
+function getStaticStepKind(content: SerializedStep<"static">["content"]): PlayerStepKind {
   switch (content.variant) {
     case "grammarExample":
-      return { content, kind: "staticGrammarExample", step };
+      return "staticGrammarExample";
     case "grammarRule":
-      return { content, kind: "staticGrammarRule", step };
+      return "staticGrammarRule";
     case "storyIntro":
-      return { content, kind: "storyIntro", step };
+      return "storyIntro";
     case "storyOutcome":
-      return { content, kind: "storyOutcome", step };
+      return "storyOutcome";
     case "text":
-      return { content, kind: "staticText", step };
+      return "staticText";
     default:
-      return { content, kind: "staticText", step };
+      return "staticText";
   }
 }
 
@@ -111,19 +129,96 @@ function describeStaticStep(step: SerializedStep<"static">): PlayerStepDescripto
  * distinct phases of the investigation flow. A canonical descriptor lets the
  * reducer, shell, and renderers talk about those phases with one vocabulary.
  */
+function getInvestigationStepKind(
+  content: SerializedStep<"investigation">["content"],
+): PlayerStepKind {
+  switch (content.variant) {
+    case "action":
+      return "investigationAction";
+    case "call":
+      return "investigationCall";
+    case "problem":
+      return "investigationProblem";
+    default:
+      return "investigationProblem";
+  }
+}
+
+/**
+ * Most raw server step kinds already match the canonical player step kind.
+ * This helper isolates that identity mapping so parsePlayerStepKind only
+ * needs to special-case the variants that truly diverge (`static`,
+ * `investigation`, and `story`).
+ */
+function isIdentityPlayerStepKind(kind: string): kind is IdentityPlayerStepKind {
+  return IDENTITY_PLAYER_STEP_KIND_SET.has(kind);
+}
+
+function describeStaticStep(step: SerializedStep<"static">): PlayerStepDescriptor {
+  const content = step.content;
+
+  if (content.variant === "grammarExample") {
+    return { content, kind: "staticGrammarExample", step };
+  }
+
+  if (content.variant === "grammarRule") {
+    return { content, kind: "staticGrammarRule", step };
+  }
+
+  if (content.variant === "storyIntro") {
+    return { content, kind: "storyIntro", step };
+  }
+
+  if (content.variant === "storyOutcome") {
+    return { content, kind: "storyOutcome", step };
+  }
+
+  return { content, kind: "staticText", step };
+}
+
 function describeInvestigationStep(step: SerializedStep<"investigation">): PlayerStepDescriptor {
   const content = step.content;
 
-  switch (content.variant) {
-    case "action":
-      return { content, kind: "investigationAction", step };
-    case "call":
-      return { content, kind: "investigationCall", step };
-    case "problem":
-      return { content, kind: "investigationProblem", step };
-    default:
-      return { content, kind: "investigationProblem", step };
+  if (content.variant === "action") {
+    return { content, kind: "investigationAction", step };
   }
+
+  if (content.variant === "call") {
+    return { content, kind: "investigationCall", step };
+  }
+
+  return { content, kind: "investigationProblem", step };
+}
+
+/**
+ * Some server-side callers only have raw `{ kind, content }` data instead of a
+ * fully typed `SerializedStep`. This parser keeps those callers on the same
+ * canonical step-kind vocabulary as the client descriptor layer.
+ */
+export function parsePlayerStepKind(
+  step: { content: unknown; kind: string } | null | undefined,
+): PlayerStepKind | null {
+  if (!step) {
+    return null;
+  }
+
+  if (step.kind === "investigation") {
+    return getInvestigationStepKind(parseStepContent("investigation", step.content));
+  }
+
+  if (step.kind === "static") {
+    return getStaticStepKind(parseStepContent("static", step.content));
+  }
+
+  if (step.kind === "story") {
+    return "storyDecision";
+  }
+
+  if (isIdentityPlayerStepKind(step.kind)) {
+    return step.kind;
+  }
+
+  return null;
 }
 
 /**
@@ -239,42 +334,4 @@ export function getInvestigationVariant(
   }
 
   return null;
-}
-
-/**
- * Only a subset of steps participate in side-navigation. Centralizing that
- * rule keeps navigation, layout, and keyboard handling aligned as new step
- * variants are added later.
- */
-export function usesStaticNavigation(descriptor: PlayerStepDescriptor | null): boolean {
-  if (!descriptor) {
-    return false;
-  }
-
-  return (
-    descriptor.kind === "staticText" ||
-    descriptor.kind === "staticGrammarExample" ||
-    descriptor.kind === "staticGrammarRule" ||
-    descriptor.kind === "visual" ||
-    descriptor.kind === "vocabulary"
-  );
-}
-
-/**
- * Some steps keep feedback inline, while others swap to a dedicated feedback
- * screen. This helper gives the screen model one place to ask that question.
- */
-export function usesFeedbackScreen(descriptor: PlayerStepDescriptor | null): boolean {
-  if (!descriptor) {
-    return false;
-  }
-
-  return (
-    descriptor.kind === "investigationCall" ||
-    descriptor.kind === "listening" ||
-    descriptor.kind === "multipleChoice" ||
-    descriptor.kind === "reading" ||
-    descriptor.kind === "storyDecision" ||
-    descriptor.kind === "translation"
-  );
 }

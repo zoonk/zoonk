@@ -1,11 +1,11 @@
 import { type StoryStaticVariant } from "@zoonk/core/steps/contract/content";
 import { type PlayerState } from "./player-reducer";
+import { type PlayerStepDescriptor, describePlayerStep } from "./player-step";
 import {
-  type PlayerStepDescriptor,
-  describePlayerStep,
+  getPlayerStepBehavior,
   usesFeedbackScreen,
   usesStaticNavigation,
-} from "./player-step";
+} from "./player-step-behavior";
 import { canNavigatePrev as getCanNavigatePrev } from "./step-navigation";
 
 type PlayerPrimaryActionKind = "begin" | "check" | "continue" | "startInvestigation";
@@ -102,6 +102,12 @@ function getBottomBarModel({
   phase: PlayerState["phase"];
   step: PlayerStepDescriptor;
 }): PlayerBottomBarModel {
+  const behavior = getPlayerStepBehavior(step);
+
+  if (!behavior) {
+    return { canNavigatePrev: canMovePrev, kind: "navigation" };
+  }
+
   if (phase === "feedback") {
     return {
       button: "continue",
@@ -129,7 +135,7 @@ function getBottomBarModel({
     };
   }
 
-  if (usesStaticNavigation(step)) {
+  if (behavior.layout === "navigable") {
     return { canNavigatePrev: canMovePrev, kind: "navigation" };
   }
 
@@ -177,12 +183,13 @@ function getKeyboardModel({
 
   const enterAction =
     bottomBar.kind === "primaryAction" && !bottomBar.disabled ? bottomBar.run : null;
+  const behavior = getPlayerStepBehavior(step);
 
   return {
     canRestart: false,
     enterAction,
     leftAction: phase === "playing" && canMovePrev ? "navigatePrev" : null,
-    rightAction: phase === "playing" && usesStaticNavigation(step) ? "navigateNext" : null,
+    rightAction: phase === "playing" && behavior?.layout === "navigable" ? "navigateNext" : null,
   };
 }
 

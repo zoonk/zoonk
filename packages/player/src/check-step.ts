@@ -5,7 +5,7 @@ import {
   type AnswerResult,
   checkArrangeWordsAnswer,
   checkFillBlankAnswer,
-  checkInvestigationAction,
+  checkInvestigationAction as checkInvestigationActionAnswer,
   checkInvestigationCall,
   checkMatchColumnsAnswer,
   checkMultipleChoiceAnswer,
@@ -15,6 +15,7 @@ import {
   checkTranslationAnswer,
 } from "./check-answer";
 import { type SelectedAnswer } from "./player-reducer";
+import { type PlayerCheckBehavior, getPlayerCheckBehavior } from "./player-step-behavior";
 import { type SerializedStep } from "./prepare-activity-data";
 
 type CheckStepResult = {
@@ -139,30 +140,53 @@ function checkListeningStep(step: SerializedStep, answer: SelectedAnswer): Check
  * - Action: correct unless weak quality (critical/useful = correct, weak = incorrect)
  * - Call: checks if the selected explanation has "best" accuracy
  */
-function checkInvestigation(step: SerializedStep, answer: SelectedAnswer): CheckStepResult {
+function checkInvestigationProblem(step: SerializedStep, answer: SelectedAnswer): CheckStepResult {
+  if (answer.kind !== "investigation" || answer.variant !== "problem") {
+    return MISMATCH_RESULT;
+  }
+
+  const content = parseStepContent("investigation", step.content);
+
+  if (content.variant !== "problem") {
+    return MISMATCH_RESULT;
+  }
+
+  return { result: { correctAnswer: null, feedback: null, isCorrect: true } };
+}
+
+function checkInvestigationActionStep(
+  step: SerializedStep,
+  answer: SelectedAnswer,
+): CheckStepResult {
   if (answer.kind !== "investigation") {
     return MISMATCH_RESULT;
   }
 
   const content = parseStepContent("investigation", step.content);
 
-  if (content.variant === "problem") {
-    return { result: { correctAnswer: null, feedback: null, isCorrect: true } };
+  if (content.variant !== "action" || answer.variant !== "action") {
+    return MISMATCH_RESULT;
   }
 
-  if (content.variant === "action" && answer.variant === "action") {
-    return {
-      result: checkInvestigationAction(content, answer.selectedActionId),
-    };
+  return {
+    result: checkInvestigationActionAnswer(content, answer.selectedActionId),
+  };
+}
+
+function checkInvestigationCallStep(step: SerializedStep, answer: SelectedAnswer): CheckStepResult {
+  if (answer.kind !== "investigation") {
+    return MISMATCH_RESULT;
   }
 
-  if (content.variant === "call" && answer.variant === "call") {
-    return {
-      result: checkInvestigationCall(content, answer.selectedExplanationId),
-    };
+  const content = parseStepContent("investigation", step.content);
+
+  if (content.variant !== "call" || answer.variant !== "call") {
+    return MISMATCH_RESULT;
   }
 
-  return MISMATCH_RESULT;
+  return {
+    result: checkInvestigationCall(content, answer.selectedExplanationId),
+  };
 }
 
 function checkStory(step: SerializedStep, answer: SelectedAnswer): CheckStepResult {
@@ -175,44 +199,26 @@ function checkStory(step: SerializedStep, answer: SelectedAnswer): CheckStepResu
   return { result: checkStoryAnswer(content, answer.selectedChoiceId) };
 }
 
+const CHECKERS: Record<
+  PlayerCheckBehavior,
+  (step: SerializedStep, answer: SelectedAnswer) => CheckStepResult
+> = {
+  fillBlank: checkFillBlank,
+  investigationAction: checkInvestigationActionStep,
+  investigationCall: checkInvestigationCallStep,
+  investigationProblem: checkInvestigationProblem,
+  listening: checkListeningStep,
+  matchColumns: checkMatchColumns,
+  multipleChoice: checkMultipleChoice,
+  none: () => MISMATCH_RESULT,
+  reading: checkReadingStep,
+  selectImage: checkSelectImage,
+  sortOrder: checkSortOrder,
+  story: checkStory,
+  translation: checkTranslationStep,
+};
+
 export function checkStep(step: SerializedStep, answer: SelectedAnswer): CheckStepResult {
-  switch (step.kind) {
-    case "multipleChoice":
-      return checkMultipleChoice(step, answer);
-
-    case "fillBlank":
-      return checkFillBlank(step, answer);
-
-    case "matchColumns":
-      return checkMatchColumns(step, answer);
-
-    case "sortOrder":
-      return checkSortOrder(step, answer);
-
-    case "selectImage":
-      return checkSelectImage(step, answer);
-
-    case "translation":
-      return checkTranslationStep(step, answer);
-
-    case "reading":
-      return checkReadingStep(step, answer);
-
-    case "listening":
-      return checkListeningStep(step, answer);
-
-    case "story":
-      return checkStory(step, answer);
-
-    case "investigation":
-      return checkInvestigation(step, answer);
-
-    case "static":
-    case "visual":
-    case "vocabulary":
-      return MISMATCH_RESULT;
-
-    default:
-      return MISMATCH_RESULT;
-  }
+  const behavior = getPlayerCheckBehavior(step) ?? "none";
+  return CHECKERS[behavior](step, answer);
 }

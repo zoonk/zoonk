@@ -10,7 +10,7 @@ import {
   type SelectedAnswer,
   type playerReducer,
 } from "./player-reducer";
-import { describePlayerStep } from "./player-step";
+import { getPlayerCheckBehavior } from "./player-step-behavior";
 
 export type PlayerActions = {
   check: () => void;
@@ -62,7 +62,7 @@ export function usePlayerActions(
       return;
     }
 
-    if (describePlayerStep(currentStep)?.kind === "investigationProblem") {
+    if (getPlayerCheckBehavior(currentStep) === "investigationProblem") {
       dispatchTransition({
         result: READ_ONLY_CHECK_RESULT.result,
         stepId: currentStep.id,

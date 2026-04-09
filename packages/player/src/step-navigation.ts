@@ -1,4 +1,5 @@
-import { describePlayerStep, usesStaticNavigation } from "./player-step";
+import { describePlayerStep } from "./player-step";
+import { usesStaticNavigation } from "./player-step-behavior";
 import { type SerializedStep } from "./prepare-activity-data";
 
 /**
