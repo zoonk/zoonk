@@ -1,0 +1,51 @@
+apps/evals/src/lib/output-generator.ts
+  6be8da878e4004d5 85
+apps/evals/src/lib/leaderboard.ts
+  6be8da878e4004d5 92
+apps/api/e2e/setup.test.ts
+  6be8da878e4004d5 65,72
+apps/api/src/workflows/activity-generation/steps/generate-practice-content-step.ts
+  6be8da878e4004d5 67
+apps/evals/src/lib/eval-runner.ts
+  6be8da878e4004d5 88
+apps/api/src/workflows/activity-generation/steps/generate-story-content-step.ts
+  6be8da878e4004d5 66
+apps/api/src/workflows/activity-generation/steps/generate-investigation-scenario-step.ts
+  6be8da878e4004d5 64
+apps/api/src/workflows/activity-generation/steps/generate-quiz-content-step.ts
+  6be8da878e4004d5 67
+apps/api/e2e/otp.test.ts
+  6be8da878e4004d5 105,112
+packages/player/src/diagram-layout.ts
+  6be8da878e4004d5 120-123
+apps/admin/src/app/(private)/users/[id]/page.tsx
+  6be8da878e4004d5 67
+apps/main/e2e/activity-start-tracking.test.ts
+  6be8da878e4004d5 106
+apps/main/src/app/(performance)/score/score-chart-client.tsx
+  6be8da878e4004d5 70
+apps/admin/src/app/(private)/review/[group]/[task]/[entityId]/page.tsx
+  6be8da878e4004d5 70,76
+apps/main/src/app/(performance)/energy/energy-chart-client.tsx
+  6be8da878e4004d5 70
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.6",
+  "base_commit_sha": "7075d604fe5372c23927c0d8ae6291a2a263d3e7",
+  "prompts": {
+    "6be8da878e4004d5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "6005b545-0c4e-4f62-b640-23563dbf6ddc",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 23,
+      "total_deletions": 23,
+      "accepted_lines": 21,
+      "overriden_lines": 0
+    }
+  }
+}
