@@ -201,9 +201,14 @@ export function validateAnswers(
 ): ValidatedStepResult[] {
   return steps.flatMap((step) => {
     const answer = clientAnswers[String(step.id)];
+
+    if (!answer) {
+      return [];
+    }
+
     const behavior = getPlayerValidationBehavior(step);
 
-    if (!answer || !behavior || behavior === "none") {
+    if (!behavior || behavior === "none") {
       return [];
     }
 
