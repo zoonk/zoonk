@@ -83,11 +83,6 @@ export function getSelectedAnswer(state: PlayerState) {
   return state.selectedAnswers[currentStep.id];
 }
 
-/** Returns true when the activity contains at least one story decision step. */
-export function getIsStoryActivity(state: PlayerState): boolean {
-  return state.steps.some((step) => step.kind === "story");
-}
-
 /**
  * Returns the scenario data for the sticky header recall popover,
  * or null if the current step is not an investigation step past the problem.

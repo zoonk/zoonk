@@ -4,6 +4,7 @@ import { parseStepContent } from "@zoonk/core/steps/contract/content";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { Fragment, useCallback, useMemo, useRef, useState } from "react";
+import { useWebHaptics } from "web-haptics/react";
 import { checkSingleMatchPair } from "../check-answer";
 import { type SelectedAnswer } from "../player-reducer";
 import { type SerializedStep } from "../prepare-activity-data";
@@ -152,6 +153,7 @@ export function MatchColumnsStep({
   const content = useMemo(() => parseStepContent("matchColumns", step.content), [step.content]);
   const replaceName = useReplaceName();
   const t = useExtracted();
+  const { trigger } = useWebHaptics();
 
   const leftItems = useMemo(() => content.pairs.map((pair) => pair.left), [content.pairs]);
 
@@ -190,6 +192,7 @@ export function MatchColumnsStep({
 
       if (isCorrectPair) {
         const nextCorrect = [...correctPairs, pair];
+        void trigger("light");
         setCorrectPairs(nextCorrect);
         setSelected(null);
 
@@ -201,6 +204,7 @@ export function MatchColumnsStep({
           });
         }
       } else {
+        void trigger("warning");
         setMistakes((prev) => prev + 1);
         setFlashingPair(pair);
         setSelected(null);
@@ -215,7 +219,7 @@ export function MatchColumnsStep({
         }, FLASH_DURATION);
       }
     },
-    [content, correctPairs, flashingPair, mistakes, onSelectAnswer, selected, step.id],
+    [content, correctPairs, flashingPair, mistakes, onSelectAnswer, selected, step.id, trigger],
   );
 
   const allMatched = correctPairs.length === content.pairs.length;

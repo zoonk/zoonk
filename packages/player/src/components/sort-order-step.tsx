@@ -24,6 +24,7 @@ import { parseStepContent } from "@zoonk/core/steps/contract/content";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useCallback, useId, useMemo, useState } from "react";
+import { useWebHaptics } from "web-haptics/react";
 import { type SelectedAnswer, type StepResult } from "../player-reducer";
 import { type SerializedStep } from "../prepare-activity-data";
 import { useReplaceName } from "../user-name-context";
@@ -104,6 +105,7 @@ function SortableItemList({
   const t = useExtracted();
   const dndId = useId();
   const [activeId, setActiveId] = useState<string | null>(null);
+  const { trigger } = useWebHaptics();
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
@@ -111,13 +113,13 @@ function SortableItemList({
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
   );
 
-  const handleDragStart = useCallback((event: DragStartEvent) => {
-    if (typeof navigator !== "undefined" && navigator.vibrate) {
-      navigator.vibrate(10);
-    }
-
-    setActiveId(String(event.active.id));
-  }, []);
+  const handleDragStart = useCallback(
+    (event: DragStartEvent) => {
+      void trigger("selection");
+      setActiveId(String(event.active.id));
+    },
+    [trigger],
+  );
 
   const handleDragEnd = useCallback(
     (event: DragEndEvent) => {

@@ -1,17 +1,18 @@
 "use client";
 
 import { useExtracted } from "next-intl";
-import { usePlayerNavigation, usePlayerRuntime } from "../player-context";
+import { usePlayerMilestone, usePlayerNavigation, usePlayerRuntime } from "../player-context";
 import {
+  getCurrentResult,
+  getCurrentStep,
   getInvestigationProgress,
   getInvestigationScenarioData,
-  getIsStoryActivity,
   getProgressValue,
   getStoryBriefingText,
   getStoryMetrics,
   getUpcomingImages,
 } from "../player-selectors";
-import { useStoryHaptics } from "../use-story-haptics";
+import { usePlayerHaptics } from "../use-player-haptics";
 import { InPlayStickyHeader } from "./in-play-sticky-header";
 import { PlayerBottomBar, PlayerBottomBarNav } from "./player-bottom-bar";
 import { PlayerStage } from "./player-stage";
@@ -46,17 +47,23 @@ export function PlayerShell() {
   const t = useExtracted();
   const { screen, state } = usePlayerRuntime();
   const { lessonHref } = usePlayerNavigation();
+  const milestone = usePlayerMilestone();
 
-  const isStoryActivity = getIsStoryActivity(state);
+  const currentResult = getCurrentResult(state);
+  const currentStep = getCurrentStep(state);
   const progressValue = getProgressValue(state);
   const storyMetrics = getStoryMetrics(state);
   const upcomingImages = getUpcomingImages(state);
 
-  useStoryHaptics({
-    isStoryActivity,
-    metrics: storyMetrics,
-    phase: state.phase,
-    storyStaticVariant: screen.storyStaticVariant,
+  usePlayerHaptics({
+    current: {
+      metrics: storyMetrics,
+      phase: state.phase,
+      result: currentResult,
+      step: currentStep,
+      storyStaticVariant: screen.storyStaticVariant,
+    },
+    milestoneKind: milestone.kind,
   });
 
   const contextRecall =

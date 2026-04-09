@@ -1,41 +1,19 @@
 "use client";
 
-import { parseStepContent } from "@zoonk/core/steps/contract/content";
+import { getInvestigationCallVerdict } from "../investigation-call-verdict";
 import { type StepResult } from "../player-reducer";
 import { type SerializedStep } from "../prepare-activity-data";
 import { type Verdict, VerdictLabel } from "./verdict-label";
 
-/**
- * Derives the verdict from the step content and the learner's answer.
- *
- * Looks up the selected explanation's accuracy tier ("best", "partial",
- * "wrong") from the step content to differentiate all three outcomes.
- * Falls back to binary correct/incorrect when the step data is
- * unavailable.
- */
+/** Maps investigation call accuracy to the shared UI verdict vocabulary. */
 function getCallVerdict({ result, step }: { result: StepResult; step?: SerializedStep }): Verdict {
-  if (!step || result.answer?.kind !== "investigation" || result.answer.variant !== "call") {
-    return result.result.isCorrect ? "correct" : "incorrect";
-  }
+  const verdict = getInvestigationCallVerdict({ result, step });
 
-  const content = parseStepContent("investigation", step.content);
-
-  if (content.variant !== "call") {
-    return result.result.isCorrect ? "correct" : "incorrect";
-  }
-
-  const { selectedExplanationId } = result.answer;
-  const explanation = content.explanations.find((exp) => exp.id === selectedExplanationId);
-
-  if (!explanation) {
-    return "incorrect";
-  }
-
-  if (explanation.accuracy === "best") {
+  if (verdict === "best") {
     return "correct";
   }
 
-  if (explanation.accuracy === "partial") {
+  if (verdict === "partial") {
     return "partial";
   }
 

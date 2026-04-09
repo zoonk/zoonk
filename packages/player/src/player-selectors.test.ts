@@ -3,7 +3,6 @@ import { type PlayerState, type StepResult } from "./player-reducer";
 import {
   findSelectedChoice,
   getInvestigationProgress,
-  getIsStoryActivity,
   getStoryBriefingText,
   getStoryMetrics,
   getUpcomingImages,
@@ -101,24 +100,6 @@ function buildStoryResult(stepId: string, selectedChoiceId: string): StepResult 
     stepId,
   };
 }
-
-describe(getIsStoryActivity, () => {
-  test("returns true when activity has story steps", () => {
-    const state = buildState({
-      steps: [buildStoryIntroStep(), buildStoryStep("s1", 1)],
-    });
-
-    expect(getIsStoryActivity(state)).toBe(true);
-  });
-
-  test("returns false when activity has no story steps", () => {
-    const state = buildState({
-      steps: [buildStep({ id: "s1" }), buildStep({ id: "s2", position: 1 })],
-    });
-
-    expect(getIsStoryActivity(state)).toBe(false);
-  });
-});
 
 describe(getStoryBriefingText, () => {
   test("returns intro text when current step is a story decision step", () => {
