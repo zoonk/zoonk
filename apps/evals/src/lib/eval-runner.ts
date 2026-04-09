@@ -85,7 +85,7 @@ function isAlreadyScored(existingResults: ScoredResult[], testCaseId: string): b
 }
 
 export async function runEval(task: Task, modelId: string): Promise<TaskEvalResults> {
-  const safeModelId = String(modelId).replaceAll(/[\r\n]/g, "");
+  const safeModelId = modelId.replaceAll(/[\r\n]/g, "");
 
   logInfo(`\nStarting eval for task: ${task.name}, model: [${safeModelId}]`);
 

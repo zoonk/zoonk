@@ -82,7 +82,7 @@ function createModelOutputs(taskId: string, modelId: string, outputs: OutputEntr
 }
 
 export async function generateOutputs(task: Task, modelId: string): Promise<ModelOutputs> {
-  const safeModelId = String(modelId).replaceAll(/[\r\n]/g, "");
+  const safeModelId = modelId.replaceAll(/[\r\n]/g, "");
   logInfo(`\nGenerating outputs for task: ${task.name}, model: [${safeModelId}]`);
   logInfo(
     `Total test cases: ${task.testCases.length} (${task.testCases.length * RUNS_PER_TEST_CASE} runs)`,

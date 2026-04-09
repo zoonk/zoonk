@@ -63,5 +63,5 @@ export async function generateStoryContentStep(
 
   await stream.status({ status: "completed", step: "generateStoryContent" });
 
-  return { activityId: Number(storyActivity.id), storySteps: result.data };
+  return { activityId: storyActivity.id, storySteps: result.data };
 }
