@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { computeDiagramLayout } from "./diagram-layout";
 
 function parseViewBox(viewBox: string) {
@@ -216,5 +216,50 @@ describe(computeDiagramLayout, () => {
     expect(edge!.label).toBeUndefined();
     expect(edge!.labelX).toBeUndefined();
     expect(edge!.labelY).toBeUndefined();
+  });
+
+  it("returns the same layout when browser canvas APIs are available", async () => {
+    const nodes = [
+      { id: "incoming", label: "Pedidos recebidos" },
+      { id: "urgent", label: "Muitas solicitações urgentes" },
+      { id: "queue", label: "Aguardando aprovação" },
+    ];
+    const edges = [
+      { label: "inicia", source: "incoming", target: "queue" },
+      { label: "sobrecarrega", source: "urgent", target: "queue" },
+    ];
+
+    try {
+      vi.stubGlobal("OffscreenCanvas", {});
+      vi.resetModules();
+
+      const { computeDiagramLayout: computeLayoutWithoutCanvas } = await import("./diagram-layout");
+      const fallbackLayout = computeLayoutWithoutCanvas(nodes, edges);
+
+      vi.stubGlobal(
+        "OffscreenCanvas",
+        class {
+          context = {
+            font: "",
+            measureText(text: string) {
+              return { width: text.length * 3 };
+            },
+          };
+
+          getContext() {
+            return this.context;
+          }
+        },
+      );
+      vi.resetModules();
+
+      const { computeDiagramLayout: computeLayoutWithCanvas } = await import("./diagram-layout");
+      const canvasLayout = computeLayoutWithCanvas(nodes, edges);
+
+      expect(canvasLayout).toEqual(fallbackLayout);
+    } finally {
+      vi.unstubAllGlobals();
+      vi.resetModules();
+    }
   });
 });
