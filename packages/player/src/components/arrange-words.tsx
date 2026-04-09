@@ -5,6 +5,7 @@ import { arrayMove } from "@dnd-kit/sortable";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useCallback, useRef, useState } from "react";
+import { useWebHaptics } from "web-haptics/react";
 import { type SelectedAnswer, type StepResult } from "../player-reducer";
 import { type WordBankOption } from "../prepare-activity-data";
 import { useWordAudio } from "../use-word-audio";
@@ -105,6 +106,7 @@ export function ArrangeWordsInteraction({
   wordBankOptions: WordBankOption[];
 }) {
   const idCounter = useRef(0);
+  const { trigger } = useWebHaptics();
 
   const [placedWords, setPlacedWords] = useState<PlacedWord[]>(() => {
     if (result?.answer?.kind === answerKind && "arrangedWords" in result.answer) {
@@ -167,10 +169,8 @@ export function ArrangeWordsInteraction({
   );
 
   const handleDragStart = useCallback(() => {
-    if (typeof navigator !== "undefined" && navigator.vibrate) {
-      navigator.vibrate(10);
-    }
-  }, []);
+    void trigger("selection");
+  }, [trigger]);
 
   const handleDragEnd = useCallback(
     (event: DragEndEvent) => {

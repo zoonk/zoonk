@@ -27,22 +27,6 @@
 - **Think from first principles.** Don't accept patterns just because they're common. For every piece of code, ask: "What is this actually doing? Is there a simpler, more declarative way?" For every test, ask: "Am I testing my business logic or just testing that React/the browser works?" Before finishing any change, review everything again: "Is this the best way to implement this? Is this the best way to test this? Am I missing anything?" Think like a top 0.1% engineer who deeply cares about quality and details, not just getting things working. Think like the best engineer in the world
 - **Verify before fixing.** When evaluating review comments (AI or human), trace the actual code path to determine if the reported issue can happen in practice. Answer "can this actually happen?" before "should we fix it?" Distinguish real bugs from theoretical issues from code style — and say which one it is upfront. Don't default to agreement; apply the same rigor you'd apply to your own code
 
-## Quality Control
-
-**IMPORTANT**: Before completing a task, make sure to run the following commands:
-
-- `pnpm format:fix`
-- `pnpm db:generate` (always run this from the root of the monorepo)
-- `pnpm typecheck`
-- `pnpm lint:fix` (only run linting AFTER `typecheck`)
-- `pnpm knip --production`
-- `pnpm test`
-- `pnpm build --filter {app}` (eg `pnpm build --filter main`)
-- `pnpm e2e --filter {app}` (eg `pnpm e2e --filter main`)
-
-- Always run e2e tests for ALL apps (`main`, `editor`, `api`), not just the one you changed
-- After e2e changes, run your tests multiple times to check for flakiness
-
 ## Engineering Mindset
 
 - **Build for growth, not current size.** "We only have N of X" is NEVER a valid reason to skip proper patterns. Early-stage projects grow. Build infrastructure that scales with the project from the start.
@@ -52,7 +36,6 @@
 - **Principles override plans.** If a plan marks something as "optional" but skipping it would violate core principles (like single source of truth), do it anyway. Plans are guidance; principles are non-negotiable. When in doubt, ask: "Does skipping this create duplicate sources of truth or technical debt?"
 - **Plans must include tests.** Every implementation plan should identify which tests need to be added or updated — integration tests for data/workflow logic, e2e tests for UI flows, and unit tests for utilities. If a plan doesn't mention tests, it's incomplete. Tests must give us the confidence that everything is working as expected and help prevent regressions in the future.
 - **Zero tolerance for flakiness.** If a test fails once in any number of runs, it's broken — investigate and fix it. Never dismiss failures as "intermittent" or "pre-existing". A flaky test is worse than no test because it erodes trust in the entire suite. Run e2e tests multiple times before considering them done. Zero tolerance for flakiness means fixing ALL failures, not just the ones in your plan.
-- **Own the whole build.** When making changes, run ALL quality checks across ALL apps — not just the ones you modified. A change to a shared package can break any consumer. "I didn't modify that file" is never an excuse for leaving something broken. Always leave the codebase better than you found it, even if it's outside your direct change area.
 - **Never copy bad patterns.** When existing code has a bad pattern, fix it instead of replicating it. Always evaluate whether existing patterns are correct before following them. "Leave the codebase better than you found it" means actively fixing bad patterns you encounter, not propagating them.
 - In review/assessment mode, do not defer confirmed bugs as “low priority.” Classify each finding as real bug, non-bug, or behavior-dependent. Fix confirmed bugs unless the user explicitly asks for triage only or the fix has meaningful product/architecture risk.
 
