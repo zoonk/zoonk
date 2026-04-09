@@ -1,0 +1,35 @@
+packages/player/src/components/player-supporting-text.tsx
+  a69bd7d8adbcb062 1-26
+packages/player/src/components/story-outcome-content.tsx
+  a69bd7d8adbcb062 11,138
+packages/player/src/components/completion-screen.tsx
+  a69bd7d8adbcb062 9,112
+packages/player/src/components/story-intro-content.tsx
+  a69bd7d8adbcb062 8,36
+packages/player/src/components/investigation-problem-variant.tsx
+  a69bd7d8adbcb062 11,33
+packages/player/src/components/player-read-scene.tsx
+  a69bd7d8adbcb062 64-80
+packages/player/src/components/investigation-action-variant.tsx
+  a69bd7d8adbcb062 21,87,89
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.6",
+  "base_commit_sha": "cc8215b739a3da878c2dc7f20488984e51cb3a86",
+  "prompts": {
+    "a69bd7d8adbcb062": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d73eb-83af-7831-a143-49eba88b95a0",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 57,
+      "total_deletions": 12,
+      "accepted_lines": 56,
+      "overriden_lines": 0
+    }
+  }
+}
