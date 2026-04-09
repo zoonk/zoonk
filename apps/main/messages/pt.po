@@ -2787,7 +2787,7 @@ msgstr "Investigue {topic} reunindo evidências, avaliando os resultados e tiran
 #: src/lib/activities.ts
 msgctxt "MfGqY2"
 msgid "{lesson} {activity}"
-msgstr "{lesson} {activity}"
+msgstr "{activity}: {lesson}"
 
 #: src/lib/activities.ts
 msgctxt "MOK/yK"
