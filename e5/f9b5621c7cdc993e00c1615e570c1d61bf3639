@@ -1,0 +1,54 @@
+packages/player/src/player-step-behavior.ts
+  94806d9f529c419e 1-265
+packages/player/src/player-step-behavior.test.ts
+  94806d9f529c419e 1-131
+packages/player/src/use-player-actions.ts
+  94806d9f529c419e 13,65
+packages/player/src/check-step.ts
+  94806d9f529c419e 8,18,143-160,167-168,171-174,176-178,181,183-184,187-189,202-219,221-223
+packages/player/src/step-navigation.ts
+  94806d9f529c419e 1-2
+packages/player/src/components/step-renderer.tsx
+  94806d9f529c419e 6,24,32,34-50,52-59,61-84,86-111,113-133,135,137-147,149-150,153-159,161-162,165-166,169-178
+packages/player/src/validate-answers.ts
+  94806d9f529c419e 1,15,182,186,190,204,206,210
+packages/player/src/player-screen.ts
+  94806d9f529c419e 3,5,8,105-110,138,186,192
+packages/player/src/player-step.test.ts
+  94806d9f529c419e 6,45,67,71-89
+packages/player/src/player-step.ts
+  94806d9f529c419e 4,73-91,110,113,115,117,119,121,123,132-134,137,139,141,143,147-214,216-221
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.6",
+  "base_commit_sha": "e5f9b5621c7cdc993e00c1615e570c1d61bf3639",
+  "prompts": {
+    "94806d9f529c419e": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d7251-bed9-7c80-b1bc-4da90ab35d2d",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 786,
+      "total_deletions": 318,
+      "accepted_lines": 748,
+      "overriden_lines": 0
+    },
+    "982baca56ddc6fb7": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d7251-cbe1-78b2-bc30-b22578a53d0e",
+        "model": "unknown"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 17,
+      "overriden_lines": 0
+    }
+  }
+}
