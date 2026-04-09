@@ -73,7 +73,7 @@ function SidebarProvider({
   const isOpen = openProp ?? open;
   const setIsOpen = useCallback(
     (value: boolean | ((value: boolean) => boolean)) => {
-      const openState = typeof value === "function" ? value(open) : value;
+      const openState = typeof value === "function" ? value(isOpen) : value;
       if (setOpenProp) {
         setOpenProp(openState);
       } else {
@@ -83,7 +83,7 @@ function SidebarProvider({
       // This sets the cookie to keep the sidebar state.
       setCookie(SIDEBAR_COOKIE_NAME, String(openState), { maxAge: SIDEBAR_COOKIE_MAX_AGE });
     },
-    [setOpenProp, open],
+    [setOpenProp, isOpen],
   );
 
   // Helper to toggle the sidebar.
