@@ -48,10 +48,3 @@ export function PlayerBottomBarNav({
     </nav>
   );
 }
-
-export function PlayerBottomBarAction({
-  className,
-  ...props
-}: React.ComponentProps<typeof Button>) {
-  return <Button className={cn("w-full", className)} size="lg" {...props} />;
-}
