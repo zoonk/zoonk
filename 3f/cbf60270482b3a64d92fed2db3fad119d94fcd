@@ -1,0 +1,47 @@
+apps/api/src/workflows/lesson-regeneration/lesson-regeneration-workflow.test.ts
+  c907dc44a7ce196a 96,253-280
+apps/api/src/workflows/lesson-regeneration/steps/cleanup-draft-lesson-step.ts
+  c907dc44a7ce196a 6-8,13
+apps/api/src/workflows/lesson-generation/lesson-generation-workflow.ts
+  c907dc44a7ce196a 15-18,23-36,40,52,58-63,65,76,84,108,116,122,131,141-142,144-151
+packages/core/src/content/management.test.ts
+  c907dc44a7ce196a 12-19,21-22,25,33,36,44,47,163
+apps/main/src/data/progress/trigger-lesson-preload.ts
+  c907dc44a7ce196a 2,14,22-29
+apps/api/src/workflows/chapter-generation/chapter-generation-workflow.ts
+  c907dc44a7ce196a 60-64
+apps/api/src/workflows/lesson-regeneration/lesson-regeneration-workflow.ts
+  c907dc44a7ce196a 24-31
+apps/api/src/workflows/lesson-regeneration/steps/cleanup-draft-lesson-step.test.ts
+  c907dc44a7ce196a 1-37,39-47
+apps/api/src/workflows/lesson-preload/lesson-preload-workflow.test.ts
+  c907dc44a7ce196a 18,90,105-111
+apps/api/src/workflows/lesson-generation/lesson-generation-workflow.test.ts
+  c907dc44a7ce196a 314-347
+packages/db/src/prisma/seed/courses.ts
+  c907dc44a7ce196a 103,119
+apps/api/src/workflows/lesson-preload/lesson-preload-workflow.ts
+  c907dc44a7ce196a 46-50
+packages/core/src/content/management.ts
+  c907dc44a7ce196a 78-79,96
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.8",
+  "base_commit_sha": "3fcbf60270482b3a64d92fed2db3fad119d94fcd",
+  "prompts": {
+    "c907dc44a7ce196a": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d7881-9922-7b50-98b3-7592931e3ddb",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 248,
+      "total_deletions": 66,
+      "accepted_lines": 222,
+      "overriden_lines": 1
+    }
+  }
+}
