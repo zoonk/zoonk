@@ -1,0 +1,45 @@
+apps/api/src/workflows/course-generation/steps/get-course-chapters-step.test.ts
+  7067897d17bedaf8 77-119
+apps/api/src/workflows/activity-generation/steps/get-neighboring-concepts-step.ts
+  7067897d17bedaf8 3,13-20,22
+apps/api/src/workflows/lesson-generation/steps/get-lesson-step.test.ts
+  7067897d17bedaf8 79-90
+apps/api/src/workflows/lesson-generation/steps/get-lesson-step.ts
+  7067897d17bedaf8 3,7,12-14
+apps/api/src/workflows/activity-generation/steps/get-lesson-activities-step.ts
+  7067897d17bedaf8 5,7,16
+apps/api/src/workflows/activity-generation/steps/get-lesson-activities-step.test.ts
+  7067897d17bedaf8 114-148
+apps/api/src/workflows/activity-generation/steps/get-neighboring-concepts-step.test.ts
+  7067897d17bedaf8 127-189
+apps/api/src/workflows/course-generation/steps/get-course-chapters-step.ts
+  7067897d17bedaf8 3,16-18
+apps/api/src/workflows/lesson-generation/steps/determine-applied-activity-step.ts
+  7067897d17bedaf8 4,24-34
+apps/api/src/workflows/chapter-generation/steps/get-chapter-step.test.ts
+  7067897d17bedaf8 92-134,142-152
+apps/api/src/workflows/chapter-generation/steps/get-chapter-step.ts
+  7067897d17bedaf8 3,7,12-14,24-31,33
+apps/api/src/workflows/lesson-generation/steps/determine-applied-activity-step.test.ts
+  7067897d17bedaf8 169-232
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.6",
+  "base_commit_sha": "6d73d6b224c34aeab22843a0131fc2d8e7821320",
+  "prompts": {
+    "7067897d17bedaf8": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d745b-97a1-71c1-9998-48e92b02a2af",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 356,
+      "total_deletions": 70,
+      "accepted_lines": 320,
+      "overriden_lines": 0
+    }
+  }
+}
