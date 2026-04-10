@@ -1,0 +1,27 @@
+apps/editor/src/data/chapters/delete-chapter.test.ts
+  7067897d17bedaf8 1,285-335
+apps/editor/src/data/courses/delete-course.test.ts
+  7067897d17bedaf8 1,7,269-333
+apps/editor/src/data/lessons/delete-lesson.test.ts
+  7067897d17bedaf8 1,315-365
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.6",
+  "base_commit_sha": "b95401700f1ab24d03c2266df246742765442ef5",
+  "prompts": {
+    "7067897d17bedaf8": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d745b-97a1-71c1-9998-48e92b02a2af",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 177,
+      "total_deletions": 1,
+      "accepted_lines": 177,
+      "overriden_lines": 0
+    }
+  }
+}
