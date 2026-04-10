@@ -12,8 +12,10 @@ function activityAttrs(
     kind: "explanation",
     language: "en",
     lessonId: 0,
+    managementMode: "manual",
     organizationId: 0,
     position: 0,
+    staleAt: null,
     title: null,
     ...attrs,
   };

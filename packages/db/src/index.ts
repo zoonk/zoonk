@@ -21,6 +21,7 @@ if (process.env.NODE_ENV !== "production") {
 /** @public */
 export type {
   ContentReview,
+  ContentManagementMode,
   Activity,
   ActivityKind,
   ActivityProgress,

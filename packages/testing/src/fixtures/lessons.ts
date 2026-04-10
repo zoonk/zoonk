@@ -19,10 +19,12 @@ export function lessonAttrs(
     isPublished: false,
     kind: "core",
     language: "en",
+    managementMode: "manual",
     normalizedTitle,
     organizationId: 0,
     position: 0,
     slug: `test-lesson-${randomUUID()}`,
+    staleAt: null,
     title,
     ...attrs,
   };

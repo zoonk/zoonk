@@ -58,6 +58,7 @@ export async function createActivity(params: {
           kind: params.kind,
           language: lesson.language,
           lessonId: params.lessonId,
+          managementMode: "manual",
           organizationId: lesson.organizationId,
           position: params.position,
           title: params.title,

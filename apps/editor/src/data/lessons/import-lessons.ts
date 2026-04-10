@@ -92,6 +92,7 @@ async function resolveLesson(
       isPublished: !params.chapterIsPublished,
       kind: params.kind,
       language: params.language,
+      managementMode: "manual",
       normalizedTitle: params.normalizedTitle,
       organizationId: params.organizationId,
       position: params.position,

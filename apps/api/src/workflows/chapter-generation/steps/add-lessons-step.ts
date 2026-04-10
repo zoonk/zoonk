@@ -23,6 +23,7 @@ export async function addLessonsStep(input: {
       generationStatus: "pending" as const,
       isPublished: true,
       language: input.context.language,
+      managementMode: "ai" as const,
       normalizedTitle: normalizeString(lesson.title),
       organizationId: input.context.organizationId,
       position: index,

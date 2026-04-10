@@ -17,10 +17,12 @@ export function chapterAttrs(
     isLocked: false,
     isPublished: false,
     language: "en",
+    managementMode: "manual",
     normalizedTitle,
     organizationId: 0,
     position: 0,
     slug: `test-chapter-${randomUUID()}`,
+    staleAt: null,
     title,
     ...attrs,
   };

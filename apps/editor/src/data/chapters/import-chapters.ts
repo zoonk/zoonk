@@ -93,6 +93,7 @@ async function resolveChapter(
       description: params.description,
       isPublished: !params.courseIsPublished,
       language: params.language,
+      managementMode: "manual",
       normalizedTitle: params.normalizedTitle,
       organizationId: params.organizationId,
       position: params.position,

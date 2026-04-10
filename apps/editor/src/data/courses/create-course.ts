@@ -48,6 +48,7 @@ export async function createCourse(params: {
       data: {
         description: params.description,
         language: params.language,
+        managementMode: "manual",
         normalizedTitle,
         organizationId: org.id,
         slug: courseSlug,

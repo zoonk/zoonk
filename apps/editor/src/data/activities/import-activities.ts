@@ -135,6 +135,7 @@ export async function importActivities(params: {
             kind: activityData.kind,
             language: lesson.language,
             lessonId: params.lessonId,
+            managementMode: "manual",
             organizationId: lesson.organizationId,
             position: startPosition + i,
             title: activityData.title,

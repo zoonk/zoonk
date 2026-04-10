@@ -1,24 +1,26 @@
 model Lesson {
-  id               Int              @id @default(autoincrement())
-  organizationId   Int?             @map("organization_id")
-  organization     Organization?    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  chapterId        Int              @map("chapter_id")
-  chapter          Chapter          @relation(fields: [chapterId], references: [id], onDelete: Cascade)
-  isLocked         Boolean          @default(false) @map("is_locked")
-  isPublished      Boolean          @default(false) @map("is_published")
-  language         String           @db.VarChar(10)
-  kind             LessonKind       @default(core)
+  id               Int                   @id @default(autoincrement())
+  organizationId   Int?                  @map("organization_id")
+  organization     Organization?         @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  chapterId        Int                   @map("chapter_id")
+  chapter          Chapter               @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  isLocked         Boolean               @default(false) @map("is_locked")
+  isPublished      Boolean               @default(false) @map("is_published")
+  language         String                @db.VarChar(10)
+  kind             LessonKind            @default(core)
   slug             String
   title            String
-  normalizedTitle  String           @map("normalized_title")
+  normalizedTitle  String                @map("normalized_title")
   description      String
-  concepts         String[]         @default([])
-  generationStatus GenerationStatus @default(pending) @map("generation_status")
-  generationRunId  String?          @map("generation_run_id")
+  concepts         String[]              @default([])
+  generationStatus GenerationStatus      @default(pending) @map("generation_status")
+  generationRunId  String?               @map("generation_run_id")
+  managementMode   ContentManagementMode @default(manual) @map("management_mode")
+  staleAt          DateTime?             @map("stale_at")
   position         Int
-  archivedAt       DateTime?        @map("archived_at")
-  createdAt        DateTime         @default(now()) @map("created_at")
-  updatedAt        DateTime         @default(now()) @updatedAt @map("updated_at")
+  archivedAt       DateTime?             @map("archived_at")
+  createdAt        DateTime              @default(now()) @map("created_at")
+  updatedAt        DateTime              @default(now()) @updatedAt @map("updated_at")
   activities       Activity[]
   words            LessonWord[]
   sentences        LessonSentence[]
@@ -31,22 +33,24 @@ model Lesson {
 }
 
 model Activity {
-  id               BigInt             @id @default(autoincrement())
-  organizationId   Int?               @map("organization_id")
-  organization     Organization?      @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  lessonId         Int                @map("lesson_id")
-  lesson           Lesson             @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-  isPublished      Boolean            @default(false) @map("is_published")
-  language         String             @db.VarChar(10)
-  kind             ActivityKind       @default(custom)
+  id               BigInt                @id @default(autoincrement())
+  organizationId   Int?                  @map("organization_id")
+  organization     Organization?         @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  lessonId         Int                   @map("lesson_id")
+  lesson           Lesson                @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  isPublished      Boolean               @default(false) @map("is_published")
+  language         String                @db.VarChar(10)
+  kind             ActivityKind          @default(custom)
   title            String?
   description      String?
-  generationStatus GenerationStatus   @default(pending) @map("generation_status")
-  generationRunId  String?            @map("generation_run_id")
+  generationStatus GenerationStatus      @default(pending) @map("generation_status")
+  generationRunId  String?               @map("generation_run_id")
+  managementMode   ContentManagementMode @default(manual) @map("management_mode")
+  staleAt          DateTime?             @map("stale_at")
   position         Int
-  archivedAt       DateTime?          @map("archived_at")
-  createdAt        DateTime           @default(now()) @map("created_at")
-  updatedAt        DateTime           @default(now()) @updatedAt @map("updated_at")
+  archivedAt       DateTime?             @map("archived_at")
+  createdAt        DateTime              @default(now()) @map("created_at")
+  updatedAt        DateTime              @default(now()) @updatedAt @map("updated_at")
   steps            Step[]
   progress         ActivityProgress[]
 

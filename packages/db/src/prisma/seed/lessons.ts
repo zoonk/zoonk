@@ -340,6 +340,7 @@ export async function seedLessons(prisma: PrismaClient, org: Organization): Prom
                 isPublished: lessonData.isPublished,
                 kind: lessonData.kind ?? "core",
                 language: data.language,
+                managementMode: "ai",
                 normalizedTitle: normalizeString(lessonData.title),
                 organizationId: org.id,
                 position,

@@ -35,6 +35,7 @@ export async function addActivitiesStep(input: {
     kind: activity.kind,
     language: input.context.language,
     lessonId: input.context.id,
+    managementMode: "ai",
     organizationId: input.context.organizationId,
     position: index,
     title: activity.title,

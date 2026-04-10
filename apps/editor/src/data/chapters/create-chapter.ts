@@ -60,6 +60,7 @@ export async function createChapter(params: {
           description: params.description,
           isPublished: !course.isPublished,
           language: course.language,
+          managementMode: "manual",
           normalizedTitle,
           organizationId: course.organizationId,
           position: params.position,

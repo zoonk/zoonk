@@ -73,6 +73,7 @@ export async function createLesson(params: {
           isPublished: !chapter.isPublished,
           kind,
           language: chapter.language,
+          managementMode: "manual",
           normalizedTitle,
           organizationId: chapter.organizationId,
           position: params.position,
