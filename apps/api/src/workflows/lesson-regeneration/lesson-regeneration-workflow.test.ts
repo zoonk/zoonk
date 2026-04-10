@@ -164,7 +164,7 @@ describe(lessonRegenerationWorkflow, () => {
     expect(promotedLesson.generationVersion).toBe(1);
   });
 
-  test("hard-deletes untouched live lessons before promoting the draft", async () => {
+  test("archives untouched live lessons before promoting the draft", async () => {
     const liveLesson = await lessonFixture({
       chapterId,
       generationStatus: "completed",
@@ -189,8 +189,8 @@ describe(lessonRegenerationWorkflow, () => {
       liveLesson: await getLessonContext(liveLesson.id),
     });
 
-    const [deletedLiveLesson, promotedLesson] = await Promise.all([
-      prisma.lesson.findUnique({ where: { id: liveLesson.id } }),
+    const [archivedLiveLesson, promotedLesson] = await Promise.all([
+      prisma.lesson.findUniqueOrThrow({ where: { id: liveLesson.id } }),
       prisma.lesson.findFirstOrThrow({
         where: {
           archivedAt: null,
@@ -200,7 +200,10 @@ describe(lessonRegenerationWorkflow, () => {
       }),
     ]);
 
-    expect(deletedLiveLesson).toBeNull();
+    expect(archivedLiveLesson.archivedAt).toBeTruthy();
+    expect(archivedLiveLesson.isPublished).toBe(false);
+    expect(archivedLiveLesson.generationVersion).toBe(0);
+    expect(archivedLiveLesson.slug).toContain(`archived-${liveLesson.id}`);
     expect(promotedLesson.id).not.toBe(liveLesson.id);
     expect(promotedLesson.generationVersion).toBe(1);
   });

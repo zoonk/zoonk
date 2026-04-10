@@ -4,9 +4,9 @@ import { retireLiveLesson } from "./_utils/retire-live-lesson";
 
 /**
  * This step exists so the new lesson becomes live only after its replacement
- * content is fully ready. We either archive or hard-delete the previous lesson
- * according to the lifecycle rules, then move the draft lesson onto the live
- * slug inside the same transaction so learners never see a half-promoted state.
+ * content is fully ready. We always archive the previous live lesson before
+ * moving the draft onto the public slug, which keeps regeneration predictable
+ * and ensures learners never see a half-promoted state.
  */
 export async function promoteRegeneratedLessonStep(input: {
   draftLessonId: number;

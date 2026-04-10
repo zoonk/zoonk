@@ -1,5 +1,4 @@
 import { type LessonContext } from "@/workflows/lesson-generation/steps/get-lesson-step";
-import { getContentDeleteDecision } from "@zoonk/core/content/lifecycle";
 import { type TransactionClient } from "@zoonk/db";
 
 /**
@@ -14,38 +13,25 @@ function getArchivedLessonSlug(input: { lessonId: number; slug: string }) {
 
 /**
  * This helper exists so every regeneration outcome uses the same lifecycle
- * policy for the live lesson. Promotion and safety-filter removal both need to
- * archive learner-touched lessons and hard-delete untouched lessons, and this
- * keeps that rule in one place instead of duplicating it in multiple steps.
+ * policy for the live lesson. Regeneration is intentionally archive-only,
+ * even when a lesson looks untouched, because the workflow is rare and the
+ * simpler rule avoids archive-vs-delete races while keeping history intact.
  */
 export async function retireLiveLesson(input: {
   liveLesson: LessonContext;
   tx: TransactionClient;
 }): Promise<void> {
-  const deleteDecision = await getContentDeleteDecision({
-    entityType: "lesson",
-    lesson: { id: input.liveLesson.id },
-  });
-
-  if (deleteDecision.mode === "archive") {
-    await input.tx.lesson.update({
-      data: {
-        archivedAt: new Date(),
-        generationRunId: null,
-        generationStatus: "completed",
-        isPublished: false,
-        slug: getArchivedLessonSlug({
-          lessonId: input.liveLesson.id,
-          slug: input.liveLesson.slug,
-        }),
-      },
-      where: { id: input.liveLesson.id },
-    });
-
-    return;
-  }
-
-  await input.tx.lesson.delete({
+  await input.tx.lesson.update({
+    data: {
+      archivedAt: new Date(),
+      generationRunId: null,
+      generationStatus: "completed",
+      isPublished: false,
+      slug: getArchivedLessonSlug({
+        lessonId: input.liveLesson.id,
+        slug: input.liveLesson.slug,
+      }),
+    },
     where: { id: input.liveLesson.id },
   });
 }
