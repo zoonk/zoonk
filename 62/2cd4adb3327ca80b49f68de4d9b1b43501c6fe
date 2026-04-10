@@ -1,0 +1,149 @@
+packages/db/src/index.ts
+  7067897d17bedaf8 56-67
+apps/main/src/data/sitemaps/courses.test.ts
+  7067897d17bedaf8 53-68
+apps/main/src/data/lessons/get-lesson.ts
+  7067897d17bedaf8 2,13-17,19-20
+apps/editor/src/data/courses/search-courses.test.ts
+  7067897d17bedaf8 155-173
+apps/editor/src/data/chapters/get-chapter.test.ts
+  7067897d17bedaf8 170-188
+apps/main/src/data/courses/list-user-courses.ts
+  7067897d17bedaf8 4,25,27
+apps/main/src/data/lessons/get-lesson.test.ts
+  7067897d17bedaf8 212-231
+apps/editor/src/data/chapters/search-org-chapters.test.ts
+  7067897d17bedaf8 205-226
+apps/main/src/data/activities/list-lesson-activities.ts
+  7067897d17bedaf8 2,9-11
+apps/editor/src/data/courses/search-courses.ts
+  7067897d17bedaf8 4,21,24
+apps/main/src/data/chapters/list-course-chapters.ts
+  7067897d17bedaf8 2,9-11
+apps/main/src/data/courses/list-courses.ts
+  7067897d17bedaf8 2,29,35
+packages/core/src/activities/get-next-activity-in-course.ts
+  7067897d17bedaf8 2,40-48,50-54,56-59,61-62,64-65
+packages/core/src/progress/get-lesson-progress.test.ts
+  7067897d17bedaf8 266-314
+apps/editor/src/data/lessons/list-chapter-lessons.test.ts
+  7067897d17bedaf8 168-192
+apps/main/src/data/courses/get-continue-learning.ts
+  7067897d17bedaf8 171-174
+packages/core/src/activities/find-last-completed.ts
+  7067897d17bedaf8 2,20,22-24,28-30,33-35,70
+packages/core/src/courses/search-courses.test.ts
+  7067897d17bedaf8 199-216
+packages/core/src/courses/search-courses.ts
+  7067897d17bedaf8 2,25,27
+apps/editor/e2e/org-home.test.ts
+  7067897d17bedaf8 47,55,63-68,78,94-99
+apps/editor/src/data/lessons/get-lesson.ts
+  7067897d17bedaf8 4,18-22,24-28
+apps/main/src/data/activities/get-activity.test.ts
+  7067897d17bedaf8 1,307-362
+apps/main/src/data/sitemaps/lessons.test.ts
+  7067897d17bedaf8 82-109,189-200,243-249
+apps/main/src/data/courses/get-course.test.ts
+  7067897d17bedaf8 104-119
+apps/editor/src/data/courses/get-course.ts
+  7067897d17bedaf8 4,22,25
+apps/main/src/data/chapters/get-chapter.ts
+  7067897d17bedaf8 2,8-10,14
+apps/main/src/data/sitemaps/lessons.ts
+  7067897d17bedaf8 2,7-9,11,35-37,39
+apps/editor/src/data/chapters/search-org-chapters.ts
+  7067897d17bedaf8 4,37-43,45
+apps/editor/src/data/lessons/search-org-lessons.test.ts
+  7067897d17bedaf8 232-258
+apps/main/src/data/activities/list-lesson-activities.test.ts
+  7067897d17bedaf8 134-150
+apps/main/src/data/progress/get-next-lesson.ts
+  7067897d17bedaf8 1,18,24-34,51-54,60-71,73
+apps/editor/src/data/courses/list-draft-courses.ts
+  7067897d17bedaf8 4,23,27
+apps/main/src/data/chapters/get-chapter.test.ts
+  7067897d17bedaf8 159-176
+packages/core/src/progress/get-chapter-progress.ts
+  7067897d17bedaf8 48-49,51,62
+packages/core/src/progress/get-chapter-progress.test.ts
+  7067897d17bedaf8 373-421
+apps/editor/src/data/lessons/search-org-lessons.ts
+  7067897d17bedaf8 4,39-45,47
+apps/editor/src/data/courses/get-course.test.ts
+  7067897d17bedaf8 147-163
+apps/editor/src/data/activities/list-lesson-activities.test.ts
+  7067897d17bedaf8 194-223
+apps/main/src/data/courses/get-course.ts
+  7067897d17bedaf8 2,11,18
+apps/main/src/data/lessons/list-chapter-lessons.test.ts
+  7067897d17bedaf8 108-123
+apps/main/src/data/activities/get-activity.ts
+  7067897d17bedaf8 2,11,15-17
+apps/editor/src/data/chapters/get-chapter.ts
+  7067897d17bedaf8 4,17-19,23
+apps/editor/src/data/chapters/list-course-chapters.test.ts
+  7067897d17bedaf8 126-146
+apps/main/src/data/courses/list-user-courses.test.ts
+  7067897d17bedaf8 174-194
+apps/main/src/data/sitemaps/chapters.ts
+  7067897d17bedaf8 2,7-8,11,30-31,34
+apps/main/src/data/chapters/list-course-chapters.test.ts
+  7067897d17bedaf8 87-102
+packages/core/src/progress/get-lesson-progress.ts
+  7067897d17bedaf8 39,41
+apps/main/src/data/courses/list-courses.test.ts
+  7067897d17bedaf8 59-71
+apps/editor/src/data/courses/list-draft-courses.test.ts
+  7067897d17bedaf8 112-127
+packages/db/src/curriculum-filters.ts
+  7067897d17bedaf8 1-202
+apps/main/e2e/home.test.ts
+  7067897d17bedaf8 137-196
+apps/editor/src/data/chapters/list-course-chapters.ts
+  7067897d17bedaf8 4,23-25
+apps/editor/src/data/activities/list-lesson-activities.ts
+  7067897d17bedaf8 4,27-29
+packages/core/src/progress/get-next-activity.ts
+  7067897d17bedaf8 7,11,13-15,19-21,24-26,55,74,76,80,83,98-110,113-115
+apps/main/src/data/sitemaps/chapters.test.ts
+  7067897d17bedaf8 68-89,150-156
+apps/editor/src/data/lessons/get-lesson.test.ts
+  7067897d17bedaf8 203-222
+apps/main/src/data/courses/get-continue-learning.test.ts
+  7067897d17bedaf8 1,457-479
+apps/main/src/data/lessons/list-chapter-lessons.ts
+  7067897d17bedaf8 2,9-11
+apps/main/src/data/sitemaps/courses.ts
+  7067897d17bedaf8 2,8,10,26,28
+packages/core/src/progress/get-next-activity.test.ts
+  7067897d17bedaf8 956-1021
+apps/main/e2e/course-progress.test.ts
+  7067897d17bedaf8 223-283,472-487
+apps/editor/src/data/lessons/list-chapter-lessons.ts
+  7067897d17bedaf8 4,27-29
+apps/main/e2e/course-chapters.test.ts
+  7067897d17bedaf8 82-91,171-179
+apps/main/src/data/progress/get-next-sibling.ts
+  7067897d17bedaf8 1,47-58,60,87-92
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.6",
+  "base_commit_sha": "622cd4adb3327ca80b49f68de4d9b1b43501c6fe",
+  "prompts": {
+    "7067897d17bedaf8": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d745b-97a1-71c1-9998-48e92b02a2af",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 1403,
+      "total_deletions": 255,
+      "accepted_lines": 1396,
+      "overriden_lines": 0
+    }
+  }
+}
