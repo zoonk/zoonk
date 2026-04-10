@@ -31,6 +31,16 @@ export async function getCurriculumDeletePlan({
 }
 
 /**
+ * Archived rows should stop reserving the public slug they used while active.
+ * We rewrite the slug to a deterministic archived-only value so editors can
+ * create new active curriculum with the original slug without changing DB
+ * uniqueness rules.
+ */
+export function getArchivedSlug({ id, slug }: { id: number; slug: string }) {
+  return `${slug}--archived-${id}`;
+}
+
+/**
  * Preserves the current published-content privilege boundary while still requiring
  * the same UX regardless of whether the underlying mutation archives or hard
  * deletes. Published content still requires `delete`, while unpublished content

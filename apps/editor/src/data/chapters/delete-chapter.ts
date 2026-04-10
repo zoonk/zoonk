@@ -3,7 +3,7 @@ import { ErrorCode } from "@/lib/app-error";
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
 import { type Chapter, prisma } from "@zoonk/db";
 import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
-import { getCurriculumDeletePlan } from "../curriculum-delete";
+import { getArchivedSlug, getCurriculumDeletePlan } from "../curriculum-delete";
 
 /**
  * Deletes untouched draft chapters, but archives chapters once learner history
@@ -72,7 +72,13 @@ function removeChapter({
 }) {
   if (mode === "archive") {
     return prisma.chapter.update({
-      data: { archivedAt: new Date() },
+      data: {
+        archivedAt: new Date(),
+        slug: getArchivedSlug({
+          id: chapter.id,
+          slug: chapter.slug,
+        }),
+      },
       where: { id: chapter.id },
     });
   }

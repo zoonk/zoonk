@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { ErrorCode } from "@/lib/app-error";
 import { prisma } from "@zoonk/db";
 import { activityFixture, activityProgressFixture } from "@zoonk/testing/fixtures/activities";
@@ -309,6 +310,59 @@ describe("owners", () => {
 
     expect(archivedLesson?.archivedAt).not.toBeNull();
     expect(unchangedActivity).not.toBeNull();
+  });
+
+  test("releases the lesson slug when archiving", async () => {
+    const user = await userFixture();
+    const originalSlug = `reusable-lesson-slug-${randomUUID().slice(0, 8)}`;
+    const course = await courseFixture({ organizationId: organization.id });
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      language: course.language,
+      organizationId: organization.id,
+    });
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      isPublished: false,
+      language: chapter.language,
+      organizationId: organization.id,
+      slug: originalSlug,
+    });
+    const activity = await activityFixture({
+      lessonId: lesson.id,
+      organizationId: organization.id,
+    });
+
+    await activityProgressFixture({
+      activityId: activity.id,
+      completedAt: new Date(),
+      durationSeconds: 45,
+      userId: Number(user.id),
+    });
+
+    const result = await deleteLesson({
+      headers,
+      lessonId: lesson.id,
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data?.archivedAt).not.toBeNull();
+    expect(result.data?.slug).not.toBe(originalSlug);
+
+    const [archivedLesson, replacementLesson] = await Promise.all([
+      prisma.lesson.findUnique({
+        where: { id: lesson.id },
+      }),
+      lessonFixture({
+        chapterId: chapter.id,
+        language: chapter.language,
+        organizationId: organization.id,
+        slug: originalSlug,
+      }),
+    ]);
+
+    expect(archivedLesson?.slug).not.toBe(originalSlug);
+    expect(replacementLesson.slug).toBe(originalSlug);
   });
 
   test("returns Forbidden for lesson in different organization", async () => {

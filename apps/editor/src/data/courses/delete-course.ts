@@ -3,7 +3,7 @@ import { ErrorCode } from "@/lib/app-error";
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
 import { type Course, prisma } from "@zoonk/db";
 import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
-import { getCurriculumDeletePlan } from "../curriculum-delete";
+import { getArchivedSlug, getCurriculumDeletePlan } from "../curriculum-delete";
 
 /**
  * Deletes draft courses with no learner history, but archives historically
@@ -72,9 +72,21 @@ function removeCourse({
   mode: Awaited<ReturnType<typeof getCurriculumDeletePlan>>["mode"];
 }) {
   if (mode === "archive") {
-    return prisma.course.update({
-      data: { archivedAt: new Date() },
-      where: { id: course.id },
+    return prisma.$transaction(async (tx) => {
+      await tx.courseAlternativeTitle.deleteMany({
+        where: { courseId: course.id },
+      });
+
+      return tx.course.update({
+        data: {
+          archivedAt: new Date(),
+          slug: getArchivedSlug({
+            id: course.id,
+            slug: course.slug,
+          }),
+        },
+        where: { id: course.id },
+      });
     });
   }
 

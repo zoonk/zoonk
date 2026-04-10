@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { ErrorCode } from "@/lib/app-error";
 import { prisma } from "@zoonk/db";
 import { activityFixture, activityProgressFixture } from "@zoonk/testing/fixtures/activities";
@@ -279,6 +280,59 @@ describe("owners", () => {
 
     expect(archivedChapter?.archivedAt).not.toBeNull();
     expect(unchangedLesson).not.toBeNull();
+  });
+
+  test("releases the chapter slug when archiving", async () => {
+    const user = await userFixture();
+    const originalSlug = `reusable-chapter-slug-${randomUUID().slice(0, 8)}`;
+    const course = await courseFixture({ organizationId: organization.id });
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      isPublished: false,
+      language: course.language,
+      organizationId: organization.id,
+      slug: originalSlug,
+    });
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      language: chapter.language,
+      organizationId: organization.id,
+    });
+    const activity = await activityFixture({
+      lessonId: lesson.id,
+      organizationId: organization.id,
+    });
+
+    await activityProgressFixture({
+      activityId: activity.id,
+      completedAt: new Date(),
+      durationSeconds: 45,
+      userId: Number(user.id),
+    });
+
+    const result = await deleteChapter({
+      chapterId: chapter.id,
+      headers,
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data?.archivedAt).not.toBeNull();
+    expect(result.data?.slug).not.toBe(originalSlug);
+
+    const [archivedChapter, replacementChapter] = await Promise.all([
+      prisma.chapter.findUnique({
+        where: { id: chapter.id },
+      }),
+      chapterFixture({
+        courseId: course.id,
+        language: course.language,
+        organizationId: organization.id,
+        slug: originalSlug,
+      }),
+    ]);
+
+    expect(archivedChapter?.slug).not.toBe(originalSlug);
+    expect(replacementChapter.slug).toBe(originalSlug);
   });
 
   test("cascades deletion to lessons", async () => {

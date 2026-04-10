@@ -3,7 +3,7 @@ import { ErrorCode } from "@/lib/app-error";
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
 import { type Lesson, prisma } from "@zoonk/db";
 import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
-import { getCurriculumDeletePlan } from "../curriculum-delete";
+import { getArchivedSlug, getCurriculumDeletePlan } from "../curriculum-delete";
 
 /**
  * Deletes untouched draft lessons, but archives lessons with learner history so
@@ -72,7 +72,13 @@ function removeLesson({
 }) {
   if (mode === "archive") {
     return prisma.lesson.update({
-      data: { archivedAt: new Date() },
+      data: {
+        archivedAt: new Date(),
+        slug: getArchivedSlug({
+          id: lesson.id,
+          slug: lesson.slug,
+        }),
+      },
       where: { id: lesson.id },
     });
   }
