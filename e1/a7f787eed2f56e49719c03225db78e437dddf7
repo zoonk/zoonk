@@ -1,0 +1,27 @@
+packages/db/src/prisma/models/courses.prisma
+  7067897d17bedaf8 73-76
+packages/db/src/prisma/models/chapters.prisma
+  7067897d17bedaf8 23-24
+packages/db/src/prisma/models/lessons.prisma
+  7067897d17bedaf8 27-28,53-54,76-77
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.6",
+  "base_commit_sha": "e1a7f787eed2f56e49719c03225db78e437dddf7",
+  "prompts": {
+    "7067897d17bedaf8": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d745b-97a1-71c1-9998-48e92b02a2af",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 12,
+      "total_deletions": 8,
+      "accepted_lines": 12,
+      "overriden_lines": 0
+    }
+  }
+}
