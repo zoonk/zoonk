@@ -5,7 +5,6 @@ import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, describe, expect, test } from "vitest";
 import {
-  getContentManagementState,
   getDefaultContentManagementMode,
   getLessonGenerationState,
   getTargetLessonGenerationVersion,
@@ -25,11 +24,12 @@ describe("content management", () => {
       organizationId,
     });
 
-    expect(getContentManagementState({ content: course })).toEqual({
+    expect(
+      getLessonGenerationState({
+        lesson: { ...course, generationStatus: "completed", generationVersion: 1, kind: "core" },
+      }),
+    ).toMatchObject({
       allowsAutomaticRegeneration: true,
-      isAiManaged: true,
-      isManual: false,
-      isPinned: false,
       managementMode: "ai",
     });
   });
@@ -44,11 +44,12 @@ describe("content management", () => {
       organizationId,
     });
 
-    expect(getContentManagementState({ content: activity })).toEqual({
+    expect(
+      getLessonGenerationState({
+        lesson: { ...activity, generationVersion: 1, kind: "core" },
+      }),
+    ).toMatchObject({
       allowsAutomaticRegeneration: false,
-      isAiManaged: false,
-      isManual: true,
-      isPinned: false,
       managementMode: "manual",
     });
   });
@@ -59,11 +60,12 @@ describe("content management", () => {
       organizationId,
     });
 
-    expect(getContentManagementState({ content: course })).toEqual({
+    expect(
+      getLessonGenerationState({
+        lesson: { ...course, generationStatus: "completed", generationVersion: 1, kind: "core" },
+      }),
+    ).toMatchObject({
       allowsAutomaticRegeneration: false,
-      isAiManaged: false,
-      isManual: false,
-      isPinned: true,
       managementMode: "pinned",
     });
   });
@@ -99,6 +101,8 @@ describe("lesson generation state", () => {
         isOutdated: false,
         isPinned: false,
         managementMode: "ai",
+        needsInitialGeneration: false,
+        shouldAutoEnqueueRegeneration: false,
         targetGenerationVersion: 1,
       });
     },
@@ -126,7 +130,36 @@ describe("lesson generation state", () => {
         isOutdated: true,
         isPinned: false,
         managementMode: "ai",
+        needsInitialGeneration: true,
+        shouldAutoEnqueueRegeneration: false,
         targetGenerationVersion: 1,
+      });
+    },
+  );
+
+  test.each([
+    { generationStatus: "completed" as const, shouldAutoEnqueueRegeneration: true },
+    { generationStatus: "failed" as const, shouldAutoEnqueueRegeneration: true },
+    { generationStatus: "pending" as const, shouldAutoEnqueueRegeneration: true },
+    { generationStatus: "running" as const, shouldAutoEnqueueRegeneration: false },
+  ])(
+    "routes outdated versioned ai lessons with status $generationStatus into the right regeneration path",
+    async ({ generationStatus, shouldAutoEnqueueRegeneration }) => {
+      const course = await courseFixture({ organizationId });
+      const chapter = await chapterFixture({ courseId: course.id, organizationId });
+      const lesson = await lessonFixture({
+        chapterId: chapter.id,
+        generationStatus,
+        generationVersion: 0,
+        kind: "core",
+        managementMode: "ai",
+        organizationId,
+      });
+
+      expect(getLessonGenerationState({ lesson })).toMatchObject({
+        isOutdated: true,
+        needsInitialGeneration: false,
+        shouldAutoEnqueueRegeneration,
       });
     },
   );
@@ -151,6 +184,8 @@ describe("lesson generation state", () => {
       isOutdated: false,
       isPinned: false,
       managementMode: "manual",
+      needsInitialGeneration: false,
+      shouldAutoEnqueueRegeneration: false,
       targetGenerationVersion: 1,
     });
   });

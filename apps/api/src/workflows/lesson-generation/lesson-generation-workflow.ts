@@ -31,8 +31,17 @@ async function getCustomActivities(
 async function generateActivities(
   context: Awaited<ReturnType<typeof getLessonStep>>,
   lessonId: number,
+  options: {
+    preserveLessonKind: boolean;
+  },
 ): Promise<LessonKind | "filtered"> {
-  const lessonKind = await determineLessonKindStep(context);
+  const lessonKind = options.preserveLessonKind
+    ? context.kind
+    : await determineLessonKindStep(context);
+
+  if (options.preserveLessonKind) {
+    await streamSkipStep("determineLessonKind");
+  }
 
   const appliedActivityKind =
     lessonKind === "core" ? await determineAppliedActivityStep(context) : null;
@@ -41,11 +50,18 @@ async function generateActivities(
     await streamSkipStep("determineAppliedActivity");
   }
 
-  await updateLessonKindStep({ kind: lessonKind, lessonId });
+  if (options.preserveLessonKind) {
+    await streamSkipStep("updateLessonKind");
+  } else {
+    await updateLessonKindStep({ kind: lessonKind, lessonId });
+  }
 
   // The AI sometimes classifies a language-course lesson as "core" or "custom"
   // (e.g., "Culture of Spain"). Delete it — these would get inappropriate activities.
-  if (isNonLanguageLesson(context.chapter.course.targetLanguage, lessonKind)) {
+  if (
+    !options.preserveLessonKind &&
+    isNonLanguageLesson(context.chapter.course.targetLanguage, lessonKind)
+  ) {
     await removeNonLanguageLessonStep({ lessonId });
     return "filtered";
   }
@@ -64,7 +80,12 @@ async function generateActivities(
   return lessonKind;
 }
 
-export async function lessonGenerationWorkflow(lessonId: number): Promise<void> {
+export async function lessonGenerationWorkflow(
+  lessonId: number,
+  options: {
+    preserveLessonKind?: boolean;
+  } = {},
+): Promise<void> {
   "use workflow";
 
   const { workflowRunId } = getWorkflowMetadata();
@@ -93,7 +114,9 @@ export async function lessonGenerationWorkflow(lessonId: number): Promise<void> 
   await setLessonAsRunningStep({ lessonId, workflowRunId });
 
   try {
-    const result = await generateActivities(context, lessonId);
+    const result = await generateActivities(context, lessonId, {
+      preserveLessonKind: options.preserveLessonKind ?? false,
+    });
 
     if (result !== "filtered") {
       await setLessonAsCompletedStep({

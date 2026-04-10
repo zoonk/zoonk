@@ -10,7 +10,10 @@ import {
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 
 type ManagedContent = Pick<Activity | Chapter | Course | Lesson, "managementMode">;
-type VersionedLesson = Pick<Lesson, "generationVersion" | "kind" | "managementMode">;
+type VersionedLesson = Pick<
+  Lesson,
+  "generationStatus" | "generationVersion" | "kind" | "managementMode"
+>;
 
 const lessonGenerationVersions: Record<LessonKind, number> = {
   core: 1,
@@ -18,7 +21,7 @@ const lessonGenerationVersions: Record<LessonKind, number> = {
   language: 1,
 };
 
-export type ContentManagementState = {
+type ContentManagementState = {
   allowsAutomaticRegeneration: boolean;
   isAiManaged: boolean;
   isManual: boolean;
@@ -26,9 +29,11 @@ export type ContentManagementState = {
   managementMode: ContentManagementMode;
 };
 
-export type LessonGenerationState = ContentManagementState & {
+type LessonGenerationState = ContentManagementState & {
   currentGenerationVersion: number | null;
   hasGenerationVersionMismatch: boolean;
+  needsInitialGeneration: boolean;
+  shouldAutoEnqueueRegeneration: boolean;
   isOutdated: boolean;
   targetGenerationVersion: number;
 };
@@ -39,7 +44,7 @@ export type LessonGenerationState = ContentManagementState & {
  * incidental signals. Only AI-managed content is eligible for automatic
  * regeneration; manual and pinned content stay protected.
  */
-export function getContentManagementState({
+function getContentManagementState({
   content,
 }: {
   content: ManagedContent;
@@ -72,11 +77,24 @@ export function getLessonGenerationState({
   const targetGenerationVersion = getTargetLessonGenerationVersion(lesson.kind);
   const hasGenerationVersionMismatch = lesson.generationVersion !== targetGenerationVersion;
 
+  const needsInitialGeneration =
+    managementState.isAiManaged &&
+    lesson.generationVersion === null &&
+    lesson.generationStatus !== "running";
+
+  const shouldAutoEnqueueRegeneration =
+    managementState.isAiManaged &&
+    lesson.generationVersion !== null &&
+    hasGenerationVersionMismatch &&
+    lesson.generationStatus !== "running";
+
   return {
     ...managementState,
     currentGenerationVersion: lesson.generationVersion,
     hasGenerationVersionMismatch,
     isOutdated: managementState.isAiManaged && hasGenerationVersionMismatch,
+    needsInitialGeneration,
+    shouldAutoEnqueueRegeneration,
     targetGenerationVersion,
   };
 }
