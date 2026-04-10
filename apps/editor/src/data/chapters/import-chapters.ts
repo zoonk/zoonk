@@ -3,9 +3,11 @@ import { ErrorCode } from "@/lib/app-error";
 import { type ImportMode } from "@/lib/import-mode";
 import { deduplicateImportSlugs, resolveImportSlug } from "@/lib/import-slug";
 import { parseJsonFile } from "@/lib/parse-json-file";
+import { getDefaultContentManagementMode } from "@zoonk/core/content/management";
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
 import {
   type Chapter,
+  type ContentManagementMode,
   type TransactionClient,
   getActiveChapterWhere,
   getActiveCourseWhere,
@@ -57,6 +59,7 @@ async function resolveChapter(
     hasExplicitSlug: boolean;
     index: number;
     language: string;
+    managementMode: ContentManagementMode;
     normalizedTitle: string;
     organizationId: number | null;
     position: number;
@@ -93,6 +96,7 @@ async function resolveChapter(
       description: params.description,
       isPublished: !params.courseIsPublished,
       language: params.language,
+      managementMode: params.managementMode,
       normalizedTitle: params.normalizedTitle,
       organizationId: params.organizationId,
       position: params.position,
@@ -122,6 +126,7 @@ export async function importChapters(params: {
 
   const { data: course, error: findError } = await safeAsync(() =>
     prisma.course.findFirst({
+      include: { organization: true },
       where: getActiveCourseWhere({ id: params.courseId }),
     }),
   );
@@ -205,6 +210,9 @@ export async function importChapters(params: {
           hasExplicitSlug: item.hasExplicitSlug,
           index: item.index,
           language: course.language,
+          managementMode: getDefaultContentManagementMode({
+            organizationSlug: course.organization?.slug,
+          }),
           normalizedTitle: item.normalizedTitle,
           organizationId: course.organizationId,
           position: startPosition + i,

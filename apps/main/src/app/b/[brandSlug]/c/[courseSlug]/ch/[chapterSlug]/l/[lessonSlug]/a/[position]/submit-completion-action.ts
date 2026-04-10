@@ -2,6 +2,7 @@
 
 import { getReviewValidationSteps } from "@/data/activities/get-review-steps";
 import { preloadNextLesson } from "@/data/progress/preload-next-lesson";
+import { queueLessonRegeneration } from "@/data/progress/queue-lesson-regeneration";
 import { submitActivityCompletion } from "@/data/progress/submit-activity-completion";
 import { auth } from "@zoonk/core/auth";
 import { type LessonSentence, prisma } from "@zoonk/db";
@@ -172,7 +173,15 @@ export async function submitCompletion(rawInput: CompletionInput): Promise<void>
         userId,
       });
 
-      await preloadNextLesson(activityId, reqHeaders.get("cookie") ?? "");
+      const cookieHeader = reqHeaders.get("cookie") ?? "";
+
+      await Promise.allSettled([
+        queueLessonRegeneration({
+          cookieHeader,
+          lesson: activity.lesson,
+        }),
+        preloadNextLesson(activityId, cookieHeader),
+      ]);
     } catch (error) {
       logError("[submitCompletion] Failed to persist activity completion:", error);
     }

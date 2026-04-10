@@ -21,8 +21,12 @@ export async function addLessonsStep(input: {
       concepts: lesson.concepts,
       description: lesson.description,
       generationStatus: "pending" as const,
+      // New lessons start as placeholders with no completed generated revision yet.
+      // The lesson workflow stamps generationVersion only after generation succeeds.
+      generationVersion: null,
       isPublished: true,
       language: input.context.language,
+      managementMode: "ai" as const,
       normalizedTitle: normalizeString(lesson.title),
       organizationId: input.context.organizationId,
       position: index,

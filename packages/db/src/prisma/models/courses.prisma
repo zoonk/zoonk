@@ -58,6 +58,7 @@ model Course {
   targetLanguage    String?                  @map("target_language") @db.VarChar(10)
   generationStatus  GenerationStatus         @default(completed) @map("generation_status")
   generationRunId   String?                  @map("generation_run_id")
+  managementMode    ContentManagementMode    @default(manual) @map("management_mode")
   imageUrl          String?                  @map("image_url")
   userCount         Int                      @default(0) @map("user_count")
   archivedAt        DateTime?                @map("archived_at")

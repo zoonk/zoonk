@@ -28,6 +28,7 @@ export type {
   Course,
   CourseAlternativeTitle,
   CourseCategory,
+  ContentManagementMode,
   CourseSuggestion,
   CourseUser,
   GenerationStatus,

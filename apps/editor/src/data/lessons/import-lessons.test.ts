@@ -862,6 +862,7 @@ describe("admins", () => {
 
       expect(result.error).toBeNull();
       expect(result.data?.[0]?.kind).toBe("language");
+      expect(result.data?.[0]?.managementMode).toBe("ai");
     });
 
     test("sets kind to 'core' for AI org without languages category", async () => {

@@ -230,6 +230,7 @@ describe(getNextLesson, () => {
           chapterId: testChapter.id,
           generationStatus: "pending",
           isPublished: true,
+          managementMode: "ai",
           organizationId: testOrg.id,
           position: 1,
         }),
@@ -267,6 +268,7 @@ describe(getNextLesson, () => {
           chapterId: testChapter.id,
           generationStatus: "failed",
           isPublished: true,
+          managementMode: "ai",
           organizationId: testOrg.id,
           position: 1,
         }),
@@ -354,6 +356,7 @@ describe(getNextLesson, () => {
           chapterId: testChapter.id,
           generationStatus: "running",
           isPublished: true,
+          managementMode: "ai",
           organizationId: testOrg.id,
           position: 1,
         }),
@@ -368,6 +371,100 @@ describe(getNextLesson, () => {
 
       const result = await getNextLesson(testActivity.id);
       expect(result).toEqual({ id: runningLesson.id, needsGeneration: false });
+    });
+
+    test("returns needsGeneration true for outdated completed ai lessons", async () => {
+      const testOrg = await organizationFixture({ kind: "brand" });
+      const testCourse = await courseFixture({ isPublished: true, organizationId: testOrg.id });
+      const testChapter = await chapterFixture({
+        courseId: testCourse.id,
+        isPublished: true,
+        organizationId: testOrg.id,
+        position: 0,
+      });
+
+      const [currentLesson, outdatedLesson] = await Promise.all([
+        lessonFixture({
+          chapterId: testChapter.id,
+          isPublished: true,
+          organizationId: testOrg.id,
+          position: 0,
+        }),
+        lessonFixture({
+          chapterId: testChapter.id,
+          generationStatus: "completed",
+          generationVersion: 0,
+          isPublished: true,
+          kind: "core",
+          managementMode: "ai",
+          organizationId: testOrg.id,
+          position: 1,
+        }),
+      ]);
+
+      await activityFixture({
+        generationStatus: "completed",
+        isPublished: true,
+        lessonId: outdatedLesson.id,
+        organizationId: testOrg.id,
+      });
+
+      const testActivity = await activityFixture({
+        isPublished: true,
+        lessonId: currentLesson.id,
+        organizationId: testOrg.id,
+        position: 0,
+      });
+
+      const result = await getNextLesson(testActivity.id);
+      expect(result).toEqual({ id: outdatedLesson.id, needsGeneration: true });
+    });
+
+    test("returns needsGeneration true for outdated failed ai lessons", async () => {
+      const testOrg = await organizationFixture({ kind: "brand" });
+      const testCourse = await courseFixture({ isPublished: true, organizationId: testOrg.id });
+      const testChapter = await chapterFixture({
+        courseId: testCourse.id,
+        isPublished: true,
+        organizationId: testOrg.id,
+        position: 0,
+      });
+
+      const [currentLesson, failedLesson] = await Promise.all([
+        lessonFixture({
+          chapterId: testChapter.id,
+          isPublished: true,
+          organizationId: testOrg.id,
+          position: 0,
+        }),
+        lessonFixture({
+          chapterId: testChapter.id,
+          generationStatus: "failed",
+          generationVersion: 0,
+          isPublished: true,
+          kind: "core",
+          managementMode: "ai",
+          organizationId: testOrg.id,
+          position: 1,
+        }),
+      ]);
+
+      await activityFixture({
+        generationStatus: "completed",
+        isPublished: true,
+        lessonId: failedLesson.id,
+        organizationId: testOrg.id,
+      });
+
+      const testActivity = await activityFixture({
+        isPublished: true,
+        lessonId: currentLesson.id,
+        organizationId: testOrg.id,
+        position: 0,
+      });
+
+      const result = await getNextLesson(testActivity.id);
+      expect(result).toEqual({ id: failedLesson.id, needsGeneration: true });
     });
   });
 });

@@ -1,3 +1,4 @@
+import { getLessonGenerationState } from "@zoonk/core/content/management";
 import { getPublishedLessonWhere, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 
@@ -8,10 +9,9 @@ type NextLesson = { id: number; needsGeneration: boolean };
  * Returns the lesson id and whether it still needs generation,
  * or null if no next lesson exists.
  *
- * `needsGeneration` is true when the lesson itself is pending/failed
- * or when any of its activities are pending/failed. This allows
- * callers to skip triggering the preload workflow when generation
- * is already complete or in progress.
+ * `needsGeneration` is true when the next lesson still needs its initial
+ * generation work, has descendant activities still generating, or is an
+ * outdated AI-managed lesson that can be safely regenerated now.
  */
 export async function getNextLesson(activityId: bigint): Promise<NextLesson | null> {
   const { data: activity, error } = await safeAsync(() =>
@@ -78,10 +78,13 @@ export async function getNextLesson(activityId: bigint): Promise<NextLesson | nu
     return null;
   }
 
+  const generationState = getLessonGenerationState({ lesson: nextLesson });
+  const hasActivitiesAwaitingGeneration = nextLesson._count.activities > 0;
+
   const needsGeneration =
-    nextLesson.generationStatus === "pending" ||
-    nextLesson.generationStatus === "failed" ||
-    nextLesson._count.activities > 0;
+    generationState.needsInitialGeneration ||
+    generationState.shouldAutoEnqueueRegeneration ||
+    hasActivitiesAwaitingGeneration;
 
   return { id: nextLesson.id, needsGeneration };
 }

@@ -244,6 +244,7 @@ async function seedChaptersForCourse(
         generationStatus: chapterData.generationStatus,
         isPublished: chapterData.isPublished,
         language: data.language,
+        managementMode: "ai",
         normalizedTitle: normalizeString(chapterData.title),
         organizationId: org.id,
         position,

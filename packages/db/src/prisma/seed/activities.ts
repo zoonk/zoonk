@@ -208,6 +208,7 @@ export async function seedActivities(prisma: PrismaClient, org: Organization): P
                 kind: activityData.kind,
                 language: data.language,
                 lessonId: lesson.id,
+                managementMode: "ai",
                 organizationId: org.id,
                 position,
                 title: activityData.title,

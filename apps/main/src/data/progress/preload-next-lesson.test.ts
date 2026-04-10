@@ -1,22 +1,23 @@
-import { API_URL } from "@zoonk/utils/url";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { getNextLesson } from "./get-next-lesson";
 import { preloadNextLesson } from "./preload-next-lesson";
+import { triggerLessonPreload } from "./trigger-lesson-preload";
 
 vi.mock("./get-next-lesson", () => ({
   getNextLesson: vi.fn(),
 }));
 
-describe(preloadNextLesson, () => {
-  const mockFetch = vi.fn().mockResolvedValue({ ok: true });
+vi.mock("./trigger-lesson-preload", () => ({
+  triggerLessonPreload: vi.fn(),
+}));
 
+describe(preloadNextLesson, () => {
   beforeEach(() => {
-    vi.stubGlobal("fetch", mockFetch);
+    vi.mocked(triggerLessonPreload).mockResolvedValue();
   });
 
   afterEach(() => {
     vi.clearAllMocks();
-    vi.unstubAllGlobals();
   });
 
   test("calls API with correct lessonId and cookie when next lesson needs generation", async () => {
@@ -24,13 +25,9 @@ describe(preloadNextLesson, () => {
 
     await preloadNextLesson(BigInt(1), "session=abc123");
 
-    expect(mockFetch).toHaveBeenCalledWith(`${API_URL}/v1/workflows/lesson-preload/trigger`, {
-      body: JSON.stringify({ lessonId: 42 }),
-      headers: {
-        "Content-Type": "application/json",
-        Cookie: "session=abc123",
-      },
-      method: "POST",
+    expect(triggerLessonPreload).toHaveBeenCalledWith({
+      cookieHeader: "session=abc123",
+      lessonId: 42,
     });
   });
 
@@ -39,7 +36,7 @@ describe(preloadNextLesson, () => {
 
     await preloadNextLesson(BigInt(1), "session=abc123");
 
-    expect(mockFetch).not.toHaveBeenCalled();
+    expect(triggerLessonPreload).not.toHaveBeenCalled();
   });
 
   test("does not call API when next lesson does not need generation", async () => {
@@ -47,12 +44,12 @@ describe(preloadNextLesson, () => {
 
     await preloadNextLesson(BigInt(1), "session=abc123");
 
-    expect(mockFetch).not.toHaveBeenCalled();
+    expect(triggerLessonPreload).not.toHaveBeenCalled();
   });
 
   test("silently handles fetch errors without throwing", async () => {
     vi.mocked(getNextLesson).mockResolvedValue({ id: 42, needsGeneration: true });
-    mockFetch.mockRejectedValue(new Error("network error"));
+    vi.mocked(triggerLessonPreload).mockRejectedValue(new Error("network error"));
 
     await expect(preloadNextLesson(BigInt(1), "session=abc123")).resolves.toBeUndefined();
   });
