@@ -1,0 +1,65 @@
+apps/main/src/data/progress/preload-next-lesson.test.ts
+  c907dc44a7ce196a 4,10-12,14,16,28-30,39,47,52
+apps/api/src/workflows/lesson-regeneration/steps/claim-live-lesson-regeneration-step.ts
+  c907dc44a7ce196a 1-36
+packages/core/src/content/management.test.ts
+  c907dc44a7ce196a 27-31,47-51,63-67,104-105,133-134,140-166,187-188
+apps/api/src/workflows/lesson-regeneration/steps/cleanup-draft-lesson-step.ts
+  c907dc44a7ce196a 1-14
+apps/main/src/data/progress/trigger-lesson-preload.ts
+  c907dc44a7ce196a 1-21
+apps/main/src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/a/[position]/submit-completion-action.ts
+  c907dc44a7ce196a 5,176-184
+apps/api/src/workflows/lesson-generation/lesson-generation-workflow.ts
+  c907dc44a7ce196a 34-36,38-44,53-57,61-64,83-88,117-119
+apps/api/src/workflows/lesson-preload/lesson-preload-workflow.ts
+  c907dc44a7ce196a 3-5,7-24,28-45
+apps/api/src/workflows/lesson-preload/lesson-preload-workflow.test.ts
+  c907dc44a7ce196a 1,3-6,9-10,13-17,21,25-26,30-39,42-82,96,98-100
+apps/main/src/data/progress/get-next-lesson.test.ts
+  c907dc44a7ce196a 233,271,359,375-467
+apps/main/src/data/progress/preload-next-lesson.ts
+  c907dc44a7ce196a 2,6-7,18
+apps/api/src/workflows/lesson-regeneration/lesson-regeneration-workflow.test.ts
+  c907dc44a7ce196a 1-252
+apps/api/src/workflows/lesson-regeneration/lesson-regeneration-workflow.ts
+  c907dc44a7ce196a 1-66
+apps/api/src/workflows/lesson-regeneration/steps/claim-live-lesson-regeneration-step.test.ts
+  c907dc44a7ce196a 1-136
+apps/api/src/workflows/lesson-regeneration/steps/create-draft-lesson-step.ts
+  c907dc44a7ce196a 1-41
+apps/api/src/workflows/lesson-regeneration/steps/promote-regenerated-lesson-step.ts
+  c907dc44a7ce196a 1-64
+AGENTS.md
+  c907dc44a7ce196a 29
+apps/main/src/data/progress/queue-lesson-regeneration.ts
+  c907dc44a7ce196a 1-33
+apps/api/src/workflows/lesson-generation/steps/set-lesson-as-completed-step.test.ts
+  c907dc44a7ce196a 3,54-60,85-89,95
+apps/main/src/data/progress/queue-lesson-regeneration.test.ts
+  c907dc44a7ce196a 1-83
+packages/core/src/content/management.ts
+  c907dc44a7ce196a 13-16,24,32,35-36,47,80-90,96-97
+apps/main/src/data/progress/get-next-lesson.ts
+  c907dc44a7ce196a 1,12-14,81-83,85-87
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.8",
+  "base_commit_sha": "2403ad5fffd45688ca1e9187c70155027bae71f0",
+  "prompts": {
+    "c907dc44a7ce196a": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d7881-9922-7b50-98b3-7592931e3ddb",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 1319,
+      "total_deletions": 239,
+      "accepted_lines": 1104,
+      "overriden_lines": 3
+    }
+  }
+}
