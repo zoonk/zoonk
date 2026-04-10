@@ -1,0 +1,37 @@
+apps/editor/src/data/lessons/delete-lesson.test.ts
+  7067897d17bedaf8 3,9,115-116,125-158,185,237,246,264-311
+apps/editor/src/data/courses/delete-course.test.ts
+  7067897d17bedaf8 3,9,87-88,90-132,151,193-197,212-265
+apps/editor/src/data/courses/delete-course.ts
+  7067897d17bedaf8 6,8-11,30-36,41,48-53,55,59-78,81
+apps/editor/src/data/chapters/delete-chapter.test.ts
+  7067897d17bedaf8 3,9,100-101,105-143,165,212,216,234-281
+apps/editor/src/data/chapters/delete-chapter.ts
+  7067897d17bedaf8 6,8-11,30-36,41,48-51,55,59-82
+apps/editor/src/data/lessons/delete-lesson.ts
+  7067897d17bedaf8 6,8-11,30-36,41,48-51,55,59-82
+apps/editor/src/data/curriculum-delete.ts
+  7067897d17bedaf8 1-49
+apps/editor/e2e/course-delete.test.ts
+  7067897d17bedaf8 4-5,7,21-57,98,101,139-151
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.6",
+  "base_commit_sha": "1820332c6ea90fcc214f72507d248a041c5555fc",
+  "prompts": {
+    "7067897d17bedaf8": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d745b-97a1-71c1-9998-48e92b02a2af",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 635,
+      "total_deletions": 49,
+      "accepted_lines": 609,
+      "overriden_lines": 0
+    }
+  }
+}
