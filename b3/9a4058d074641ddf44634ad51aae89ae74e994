@@ -1,0 +1,87 @@
+packages/db/src/prisma/seed/courses.ts
+  c907dc44a7ce196a 103,119
+apps/editor/src/data/lessons/import-lessons.test.ts
+  c907dc44a7ce196a 865
+apps/api/src/workflows/chapter-generation/steps/add-lessons-step.ts
+  c907dc44a7ce196a 26,29
+apps/editor/src/data/lessons/create-lesson.ts
+  c907dc44a7ce196a 4,77-79
+packages/testing/src/fixtures/activities.ts
+  c907dc44a7ce196a 15
+apps/editor/src/data/activities/create-activity.ts
+  c907dc44a7ce196a 3,18,63-65
+packages/core/package.json
+  c907dc44a7ce196a 18
+apps/editor/src/data/activities/import-activities.ts
+  c907dc44a7ce196a 5,86,140-142
+apps/editor/src/data/lessons/import-lessons.ts
+  c907dc44a7ce196a 98
+apps/editor/src/data/chapters/create-chapter.ts
+  c907dc44a7ce196a 3,19,65-67
+apps/editor/src/data/chapters/import-chapters.ts
+  c907dc44a7ce196a 6,10,62,99,129,213-215
+apps/api/src/workflows/lesson-generation/steps/add-activities-step.ts
+  c907dc44a7ce196a 38
+packages/core/src/content/management.ts
+  c907dc44a7ce196a 1-131
+packages/db/src/prisma/enums.prisma
+  c907dc44a7ce196a 58-63
+packages/testing/src/fixtures/chapters.ts
+  c907dc44a7ce196a 20
+packages/testing/src/fixtures/courses.ts
+  c907dc44a7ce196a 27
+apps/api/src/workflows/course-generation/steps/add-chapters-step.ts
+  c907dc44a7ce196a 26
+packages/db/src/prisma/seed/lessons.ts
+  c907dc44a7ce196a 317-329,353-355,359
+apps/editor/src/data/courses/create-course.test.ts
+  c907dc44a7ce196a 2,5-9,71-93
+packages/db/src/prisma/seed/chapters.ts
+  c907dc44a7ce196a 247
+apps/api/src/workflows/lesson-generation/steps/set-lesson-as-completed-step.ts
+  c907dc44a7ce196a 2,4,10,24
+packages/testing/src/fixtures/lessons.ts
+  c907dc44a7ce196a 18,23
+packages/db/src/prisma/migrations/20260410193650_add_content_management_and_lesson_generation_version/migration.sql
+  c907dc44a7ce196a 1-45
+apps/editor/src/data/courses/create-course.ts
+  c907dc44a7ce196a 3,52
+packages/db/src/index.ts
+  c907dc44a7ce196a 31
+packages/db/src/prisma/models/courses.prisma
+  c907dc44a7ce196a 61
+packages/db/src/prisma/models/lessons.prisma
+  c907dc44a7ce196a 2-26,36-43,46-48,50-52
+packages/db/src/prisma/seed/activities.ts
+  c907dc44a7ce196a 211
+apps/api/src/workflows/lesson-generation/lesson-generation-workflow.ts
+  c907dc44a7ce196a 2,15,21,34,64,85-89,98-103
+packages/db/src/prisma/models/chapters.prisma
+  c907dc44a7ce196a 2-9,12,14-16,18-20
+apps/api/src/workflows/course-generation/steps/initialize-course-step.ts
+  c907dc44a7ce196a 77
+packages/core/src/content/management.test.ts
+  c907dc44a7ce196a 1-171
+apps/editor/src/data/activities/import-activities.test.ts
+  c907dc44a7ce196a 8-12,167-200
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.8",
+  "base_commit_sha": "b39a4058d074641ddf44634ad51aae89ae74e994",
+  "prompts": {
+    "c907dc44a7ce196a": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d7881-9922-7b50-98b3-7592931e3ddb",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 563,
+      "total_deletions": 60,
+      "accepted_lines": 571,
+      "overriden_lines": 0
+    }
+  }
+}
