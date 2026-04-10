@@ -24,8 +24,8 @@ model Lesson {
   sentences        LessonSentence[]
 
   @@unique([chapterId, slug], name: "chapterLessonSlug")
-  @@index([organizationId, normalizedTitle])
-  @@index([chapterId, position])
+  @@index([organizationId, archivedAt, normalizedTitle])
+  @@index([chapterId, archivedAt, position])
   @@index([organizationId, kind])
   @@map("lessons")
 }
@@ -50,7 +50,8 @@ model Activity {
   steps            Step[]
   progress         ActivityProgress[]
 
-  @@index([lessonId, position])
+  @@index([lessonId, archivedAt, position])
+  @@index([lessonId, archivedAt, generationStatus])
   @@index([organizationId, kind])
   @@map("activities")
 }
@@ -72,7 +73,8 @@ model Step {
   updatedAt   DateTime      @default(now()) @updatedAt @map("updated_at")
   attempts    StepAttempt[]
 
-  @@index([activityId, position])
+  @@index([activityId, archivedAt, position])
+  @@index([activityId, kind, archivedAt, position])
   @@index([wordId])
   @@index([sentenceId])
   @@map("steps")

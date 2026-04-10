@@ -20,7 +20,7 @@ model Chapter {
   lessons          Lesson[]
 
   @@unique([courseId, slug], name: "courseChapterSlug")
-  @@index([organizationId, normalizedTitle])
-  @@index([courseId, position])
+  @@index([organizationId, archivedAt, normalizedTitle])
+  @@index([courseId, archivedAt, position])
   @@map("chapters")
 }
