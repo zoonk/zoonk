@@ -1,7 +1,7 @@
 import "server-only";
 import { ErrorCode } from "@/lib/app-error";
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
-import { prisma } from "@zoonk/db";
+import { getActiveChapterWhere, getActiveLessonWhere, prisma } from "@zoonk/db";
 import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
 
 type ExportedLesson = {
@@ -19,8 +19,10 @@ export async function exportLessons(params: { chapterId: number; headers?: Heade
   }>
 > {
   const { data: chapter, error: findError } = await safeAsync(() =>
-    prisma.chapter.findUnique({
-      where: { id: params.chapterId },
+    prisma.chapter.findFirst({
+      where: getActiveChapterWhere({
+        chapterWhere: { id: params.chapterId },
+      }),
     }),
   );
 
@@ -45,7 +47,9 @@ export async function exportLessons(params: { chapterId: number; headers?: Heade
   const { data: lessons, error: lessonsError } = await safeAsync(() =>
     prisma.lesson.findMany({
       orderBy: { position: "asc" },
-      where: { chapterId: params.chapterId },
+      where: getActiveLessonWhere({
+        lessonWhere: { chapterId: params.chapterId },
+      }),
     }),
   );
 

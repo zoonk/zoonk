@@ -1,5 +1,6 @@
 import { ErrorCode } from "@/lib/app-error";
 import { prisma } from "@zoonk/db";
+import { activityFixture, activityProgressFixture } from "@zoonk/testing/fixtures/activities";
 import { signInAs } from "@zoonk/testing/fixtures/auth";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseCategoryFixture, courseFixture } from "@zoonk/testing/fixtures/courses";
@@ -9,6 +10,7 @@ import {
   memberFixture,
   organizationFixture,
 } from "@zoonk/testing/fixtures/orgs";
+import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeAll, describe, expect, test } from "vitest";
 import { importLessons } from "./import-lessons";
 
@@ -131,6 +133,28 @@ describe("admins", () => {
 
     const result = await importLessons({
       chapterId: 999_999,
+      file,
+      headers,
+    });
+
+    expect(result.error?.message).toBe(ErrorCode.chapterNotFound);
+    expect(result.data).toBeNull();
+  });
+
+  test("returns Chapter not found for archived chapter", async () => {
+    const course = await courseFixture({ organizationId: organization.id });
+
+    const archivedChapter = await chapterFixture({
+      archivedAt: new Date(),
+      courseId: course.id,
+      language: course.language,
+      organizationId: organization.id,
+    });
+
+    const file = createImportFile([{ description: "Desc", title: "Test" }]);
+
+    const result = await importLessons({
+      chapterId: archivedChapter.id,
       file,
       headers,
     });
@@ -431,6 +455,104 @@ describe("admins", () => {
       expect(result.error).toBeNull();
       expect(result.data).toHaveLength(1);
     });
+
+    test("archives learner-touched lessons and hard-deletes untouched lessons", async () => {
+      const user = await userFixture();
+      const course = await courseFixture({ organizationId: organization.id });
+      const newChapter = await chapterFixture({
+        courseId: course.id,
+        language: course.language,
+        organizationId: organization.id,
+      });
+
+      const [touchedLesson, untouchedLesson] = await Promise.all([
+        lessonFixture({
+          chapterId: newChapter.id,
+          language: newChapter.language,
+          organizationId: organization.id,
+          position: 0,
+          slug: "touched-lesson",
+          title: "Touched",
+        }),
+        lessonFixture({
+          chapterId: newChapter.id,
+          language: newChapter.language,
+          organizationId: organization.id,
+          position: 1,
+          slug: "untouched-lesson",
+          title: "Untouched",
+        }),
+      ]);
+
+      const activity = await activityFixture({
+        lessonId: touchedLesson.id,
+        organizationId: organization.id,
+      });
+
+      await activityProgressFixture({
+        activityId: activity.id,
+        completedAt: new Date(),
+        durationSeconds: 30,
+        userId: Number(user.id),
+      });
+
+      const file = createImportFile([{ description: "Desc", title: "New Lesson" }]);
+
+      const result = await importLessons({
+        chapterId: newChapter.id,
+        file,
+        headers,
+        mode: "replace",
+      });
+
+      expect(result.error).toBeNull();
+      expect(result.data).toHaveLength(1);
+
+      const [archivedLesson, deletedLesson, activeLessons] = await Promise.all([
+        prisma.lesson.findUnique({ where: { id: touchedLesson.id } }),
+        prisma.lesson.findUnique({ where: { id: untouchedLesson.id } }),
+        prisma.lesson.findMany({
+          orderBy: { position: "asc" },
+          where: { archivedAt: null, chapterId: newChapter.id },
+        }),
+      ]);
+
+      expect(archivedLesson?.archivedAt).not.toBeNull();
+      expect(archivedLesson?.slug).toBe(`touched-lesson--archived-${touchedLesson.id}`);
+      expect(deletedLesson).toBeNull();
+      expect(activeLessons).toHaveLength(1);
+      expect(activeLessons[0]?.title).toBe("New Lesson");
+      expect(activeLessons[0]?.position).toBe(0);
+    });
+  });
+
+  test("ignores archived lessons when assigning merge positions", async () => {
+    const course = await courseFixture({ organizationId: organization.id });
+    const newChapter = await chapterFixture({
+      courseId: course.id,
+      language: course.language,
+      organizationId: organization.id,
+    });
+
+    await lessonFixture({
+      archivedAt: new Date(),
+      chapterId: newChapter.id,
+      language: newChapter.language,
+      organizationId: organization.id,
+      position: 7,
+      slug: "archived-lesson",
+    });
+
+    const file = createImportFile([{ description: "Desc", title: "Imported" }]);
+
+    const result = await importLessons({
+      chapterId: newChapter.id,
+      file,
+      headers,
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data?.[0]?.position).toBe(0);
   });
 
   describe("file validation", () => {

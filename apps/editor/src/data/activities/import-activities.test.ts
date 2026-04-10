@@ -1,11 +1,12 @@
 import { ErrorCode } from "@/lib/app-error";
 import { prisma } from "@zoonk/db";
-import { activityFixture } from "@zoonk/testing/fixtures/activities";
+import { activityFixture, activityProgressFixture } from "@zoonk/testing/fixtures/activities";
 import { signInAs } from "@zoonk/testing/fixtures/auth";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { memberFixture, organizationFixture } from "@zoonk/testing/fixtures/orgs";
+import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeAll, describe, expect, test } from "vitest";
 import { importActivities } from "./import-activities";
 
@@ -166,6 +167,31 @@ describe("admins", () => {
       file,
       headers,
       lessonId: 999_999,
+    });
+
+    expect(result.error?.message).toBe(ErrorCode.lessonNotFound);
+    expect(result.data).toBeNull();
+  });
+
+  test("returns Lesson not found for archived lesson", async () => {
+    const course = await courseFixture({ organizationId: organization.id });
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      language: course.language,
+      organizationId: organization.id,
+    });
+    const archivedLesson = await lessonFixture({
+      archivedAt: new Date(),
+      chapterId: chapter.id,
+      language: course.language,
+      organizationId: organization.id,
+    });
+    const file = createImportFile([{ kind: "explanation", title: "Test" }]);
+
+    const result = await importActivities({
+      file,
+      headers,
+      lessonId: archivedLesson.id,
     });
 
     expect(result.error?.message).toBe(ErrorCode.lessonNotFound);
@@ -392,6 +418,106 @@ describe("admins", () => {
       expect(result.error).toBeNull();
       expect(result.data).toHaveLength(1);
     });
+
+    test("archives learner-touched activities and hard-deletes untouched activities", async () => {
+      const user = await userFixture();
+      const course = await courseFixture({ organizationId: organization.id });
+      const chapter = await chapterFixture({
+        courseId: course.id,
+        language: course.language,
+        organizationId: organization.id,
+      });
+      const newLesson = await lessonFixture({
+        chapterId: chapter.id,
+        language: course.language,
+        organizationId: organization.id,
+      });
+
+      const [touchedActivity, untouchedActivity] = await Promise.all([
+        activityFixture({
+          language: course.language,
+          lessonId: newLesson.id,
+          organizationId: organization.id,
+          position: 0,
+          title: "Touched",
+        }),
+        activityFixture({
+          language: course.language,
+          lessonId: newLesson.id,
+          organizationId: organization.id,
+          position: 1,
+          title: "Untouched",
+        }),
+      ]);
+
+      await activityProgressFixture({
+        activityId: touchedActivity.id,
+        completedAt: new Date(),
+        durationSeconds: 30,
+        userId: Number(user.id),
+      });
+
+      const file = createImportFile([{ kind: "explanation", title: "New Activity" }]);
+
+      const result = await importActivities({
+        file,
+        headers,
+        lessonId: newLesson.id,
+        mode: "replace",
+      });
+
+      expect(result.error).toBeNull();
+      expect(result.data).toHaveLength(1);
+
+      const [archivedActivity, deletedActivity, activeActivities] = await Promise.all([
+        prisma.activity.findUnique({ where: { id: touchedActivity.id } }),
+        prisma.activity.findUnique({ where: { id: untouchedActivity.id } }),
+        prisma.activity.findMany({
+          orderBy: { position: "asc" },
+          where: { archivedAt: null, lessonId: newLesson.id },
+        }),
+      ]);
+
+      expect(archivedActivity?.archivedAt).not.toBeNull();
+      expect(deletedActivity).toBeNull();
+      expect(activeActivities).toHaveLength(1);
+      expect(activeActivities[0]?.title).toBe("New Activity");
+      expect(activeActivities[0]?.position).toBe(0);
+    });
+  });
+
+  test("ignores archived activities when assigning merge positions", async () => {
+    const course = await courseFixture({ organizationId: organization.id });
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      language: course.language,
+      organizationId: organization.id,
+    });
+    const newLesson = await lessonFixture({
+      chapterId: chapter.id,
+      language: course.language,
+      organizationId: organization.id,
+    });
+
+    await activityFixture({
+      archivedAt: new Date(),
+      language: course.language,
+      lessonId: newLesson.id,
+      organizationId: organization.id,
+      position: 6,
+      title: "Archived",
+    });
+
+    const file = createImportFile([{ kind: "explanation", title: "Imported" }]);
+
+    const result = await importActivities({
+      file,
+      headers,
+      lessonId: newLesson.id,
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data?.[0]?.position).toBe(0);
   });
 
   describe("file validation", () => {
