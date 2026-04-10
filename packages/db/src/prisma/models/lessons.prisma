@@ -16,6 +16,7 @@ model Lesson {
   generationStatus GenerationStatus @default(pending) @map("generation_status")
   generationRunId  String?          @map("generation_run_id")
   position         Int
+  archivedAt       DateTime?        @map("archived_at")
   createdAt        DateTime         @default(now()) @map("created_at")
   updatedAt        DateTime         @default(now()) @updatedAt @map("updated_at")
   activities       Activity[]
@@ -43,6 +44,7 @@ model Activity {
   generationStatus GenerationStatus   @default(pending) @map("generation_status")
   generationRunId  String?            @map("generation_run_id")
   position         Int
+  archivedAt       DateTime?          @map("archived_at")
   createdAt        DateTime           @default(now()) @map("created_at")
   updatedAt        DateTime           @default(now()) @updatedAt @map("updated_at")
   steps            Step[]
@@ -65,6 +67,7 @@ model Step {
   position    Int
   isPublished Boolean       @default(false) @map("is_published")
   content     Json
+  archivedAt  DateTime?     @map("archived_at")
   createdAt   DateTime      @default(now()) @map("created_at")
   updatedAt   DateTime      @default(now()) @updatedAt @map("updated_at")
   attempts    StepAttempt[]

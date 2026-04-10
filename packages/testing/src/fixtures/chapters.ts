@@ -9,6 +9,7 @@ export function chapterAttrs(
   const normalizedTitle = attrs?.normalizedTitle ?? normalizeString(title);
 
   return {
+    archivedAt: null,
     courseId: 0,
     description: "Test chapter description",
     generationRunId: null,

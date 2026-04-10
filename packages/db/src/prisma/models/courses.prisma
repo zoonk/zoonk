@@ -60,6 +60,7 @@ model Course {
   generationRunId   String?                  @map("generation_run_id")
   imageUrl          String?                  @map("image_url")
   userCount         Int                      @default(0) @map("user_count")
+  archivedAt        DateTime?                @map("archived_at")
   createdAt         DateTime                 @default(now()) @map("created_at")
   updatedAt         DateTime                 @default(now()) @updatedAt @map("updated_at")
   alternativeTitles CourseAlternativeTitle[]
