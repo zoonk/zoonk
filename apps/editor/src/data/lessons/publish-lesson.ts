@@ -1,7 +1,7 @@
 import "server-only";
 import { ErrorCode } from "@/lib/app-error";
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
-import { type Lesson, prisma } from "@zoonk/db";
+import { type Lesson, getActiveLessonWhere, prisma } from "@zoonk/db";
 import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
 
 export async function toggleLessonPublished(params: {
@@ -10,8 +10,10 @@ export async function toggleLessonPublished(params: {
   isPublished: boolean;
 }): Promise<SafeReturn<Lesson>> {
   const { data: lesson, error: findError } = await safeAsync(() =>
-    prisma.lesson.findUnique({
-      where: { id: params.lessonId },
+    prisma.lesson.findFirst({
+      where: getActiveLessonWhere({
+        lessonWhere: { id: params.lessonId },
+      }),
     }),
   );
 

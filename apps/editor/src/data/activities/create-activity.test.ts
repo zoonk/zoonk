@@ -138,6 +138,31 @@ describe("admins", () => {
     expect(result.data).toBeNull();
   });
 
+  test("returns Lesson not found when the lesson is archived", async () => {
+    const course = await courseFixture({ organizationId: organization.id });
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      language: course.language,
+      organizationId: organization.id,
+    });
+    const archivedLesson = await lessonFixture({
+      archivedAt: new Date(),
+      chapterId: chapter.id,
+      language: course.language,
+      organizationId: organization.id,
+    });
+
+    const result = await createActivity({
+      headers,
+      kind: "custom",
+      lessonId: archivedLesson.id,
+      position: 0,
+    });
+
+    expect(result.error?.message).toBe(ErrorCode.lessonNotFound);
+    expect(result.data).toBeNull();
+  });
+
   test("don't allow to create activity for a different organization", async () => {
     const otherOrg = await organizationFixture();
     const otherCourse = await courseFixture({ organizationId: otherOrg.id });
@@ -296,6 +321,55 @@ describe("admins", () => {
     expect(activities[2]?.position).toBe(2);
     expect(activities[3]?.id).toBe(activity3.id);
     expect(activities[3]?.position).toBe(3);
+  });
+
+  test("does not shift archived activities when inserting active content", async () => {
+    const course = await courseFixture({ organizationId: organization.id });
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      language: course.language,
+      organizationId: organization.id,
+    });
+    const newLesson = await lessonFixture({
+      chapterId: chapter.id,
+      language: course.language,
+      organizationId: organization.id,
+    });
+
+    const [activeActivity, archivedActivity] = await Promise.all([
+      activityFixture({
+        language: course.language,
+        lessonId: newLesson.id,
+        organizationId: organization.id,
+        position: 0,
+      }),
+      activityFixture({
+        archivedAt: new Date(),
+        language: course.language,
+        lessonId: newLesson.id,
+        organizationId: organization.id,
+        position: 1,
+      }),
+    ]);
+
+    const result = await createActivity({
+      headers,
+      kind: "custom",
+      lessonId: newLesson.id,
+      position: 0,
+    });
+
+    expect(result.error).toBeNull();
+
+    const [updatedActive, unchangedArchived] = await Promise.all([
+      prisma.activity.findUniqueOrThrow({ where: { id: activeActivity.id } }),
+      prisma.activity.findUniqueOrThrow({ where: { id: archivedActivity.id } }),
+    ]);
+
+    expect(result.data?.position).toBe(0);
+    expect(updatedActive.position).toBe(1);
+    expect(unchangedArchived.position).toBe(1);
+    expect(unchangedArchived.archivedAt).not.toBeNull();
   });
 
   test("does not shift activities when creating at end", async () => {

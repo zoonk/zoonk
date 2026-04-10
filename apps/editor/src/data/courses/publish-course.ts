@@ -1,7 +1,7 @@
 import "server-only";
 import { ErrorCode } from "@/lib/app-error";
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
-import { type Course, prisma } from "@zoonk/db";
+import { type Course, getActiveCourseWhere, prisma } from "@zoonk/db";
 import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
 
 export async function toggleCoursePublished(params: {
@@ -10,8 +10,8 @@ export async function toggleCoursePublished(params: {
   isPublished: boolean;
 }): Promise<SafeReturn<Course>> {
   const { data: course, error: findError } = await safeAsync(() =>
-    prisma.course.findUnique({
-      where: { id: params.courseId },
+    prisma.course.findFirst({
+      where: getActiveCourseWhere({ id: params.courseId }),
     }),
   );
 
@@ -44,19 +44,46 @@ export async function toggleCoursePublished(params: {
           await Promise.all([
             tx.chapter.updateMany({
               data: { isPublished: true },
-              where: { courseId: course.id },
+              where: { archivedAt: null, courseId: course.id },
             }),
             tx.lesson.updateMany({
               data: { isPublished: true },
-              where: { chapter: { courseId: course.id } },
+              where: {
+                archivedAt: null,
+                chapter: {
+                  archivedAt: null,
+                  courseId: course.id,
+                },
+              },
             }),
             tx.activity.updateMany({
               data: { isPublished: true },
-              where: { lesson: { chapter: { courseId: course.id } } },
+              where: {
+                archivedAt: null,
+                lesson: {
+                  archivedAt: null,
+                  chapter: {
+                    archivedAt: null,
+                    courseId: course.id,
+                  },
+                },
+              },
             }),
             tx.step.updateMany({
               data: { isPublished: true },
-              where: { activity: { lesson: { chapter: { courseId: course.id } } } },
+              where: {
+                activity: {
+                  archivedAt: null,
+                  lesson: {
+                    archivedAt: null,
+                    chapter: {
+                      archivedAt: null,
+                      courseId: course.id,
+                    },
+                  },
+                },
+                archivedAt: null,
+              },
             }),
           ]);
 

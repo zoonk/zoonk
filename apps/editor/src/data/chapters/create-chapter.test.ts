@@ -133,6 +133,26 @@ describe("admins", () => {
     expect(result.data).toBeNull();
   });
 
+  test("returns Course not found when the course is archived", async () => {
+    const archivedCourse = await courseFixture({
+      archivedAt: new Date(),
+      organizationId: organization.id,
+    });
+
+    const result = await createChapter({
+      ...chapterAttrs({
+        courseId: archivedCourse.id,
+        organizationId: organization.id,
+      }),
+      courseId: archivedCourse.id,
+      headers,
+      position: 0,
+    });
+
+    expect(result.error?.message).toBe(ErrorCode.courseNotFound);
+    expect(result.data).toBeNull();
+  });
+
   test("don't allow to create chapter for a different organization", async () => {
     const otherOrg = await organizationFixture();
     const otherCourse = await courseFixture({ organizationId: otherOrg.id });
@@ -325,6 +345,48 @@ describe("admins", () => {
     expect(chapters[2]?.position).toBe(2);
     expect(chapters[3]?.id).toBe(chapter3.id);
     expect(chapters[3]?.position).toBe(3);
+  });
+
+  test("does not shift archived chapters when inserting active content", async () => {
+    const newCourse = await courseFixture({ organizationId: organization.id });
+
+    const [activeChapter, archivedChapter] = await Promise.all([
+      chapterFixture({
+        courseId: newCourse.id,
+        language: newCourse.language,
+        organizationId: organization.id,
+        position: 0,
+      }),
+      chapterFixture({
+        archivedAt: new Date(),
+        courseId: newCourse.id,
+        language: newCourse.language,
+        organizationId: organization.id,
+        position: 1,
+      }),
+    ]);
+
+    const result = await createChapter({
+      ...chapterAttrs({
+        courseId: newCourse.id,
+        organizationId: organization.id,
+      }),
+      courseId: newCourse.id,
+      headers,
+      position: 0,
+    });
+
+    expect(result.error).toBeNull();
+
+    const [updatedActive, unchangedArchived] = await Promise.all([
+      prisma.chapter.findUniqueOrThrow({ where: { id: activeChapter.id } }),
+      prisma.chapter.findUniqueOrThrow({ where: { id: archivedChapter.id } }),
+    ]);
+
+    expect(result.data?.position).toBe(0);
+    expect(updatedActive.position).toBe(1);
+    expect(unchangedArchived.position).toBe(1);
+    expect(unchangedArchived.archivedAt).not.toBeNull();
   });
 
   test("does not shift chapters when creating at end", async () => {

@@ -1,7 +1,7 @@
 import "server-only";
 import { ErrorCode } from "@/lib/app-error";
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
-import { prisma } from "@zoonk/db";
+import { getActiveLessonWhere, prisma } from "@zoonk/db";
 import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
 
 export async function reorderActivities(params: {
@@ -13,8 +13,10 @@ export async function reorderActivities(params: {
   headers?: Headers;
 }): Promise<SafeReturn<{ updated: number }>> {
   const { data: lesson, error: findError } = await safeAsync(() =>
-    prisma.lesson.findUnique({
-      where: { id: params.lessonId },
+    prisma.lesson.findFirst({
+      where: getActiveLessonWhere({
+        lessonWhere: { id: params.lessonId },
+      }),
     }),
   );
 
@@ -42,6 +44,7 @@ export async function reorderActivities(params: {
         prisma.activity.updateMany({
           data: { position: activity.position },
           where: {
+            archivedAt: null,
             id: activity.activityId,
             lessonId: params.lessonId,
           },

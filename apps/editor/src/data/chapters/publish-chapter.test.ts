@@ -111,6 +111,24 @@ describe("admins", () => {
     expect(result.data).toBeNull();
   });
 
+  test("returns Chapter not found when the chapter is archived", async () => {
+    const archivedChapter = await chapterFixture({
+      archivedAt: new Date(),
+      courseId: course.id,
+      language: course.language,
+      organizationId: organization.id,
+    });
+
+    const result = await toggleChapterPublished({
+      chapterId: archivedChapter.id,
+      headers,
+      isPublished: true,
+    });
+
+    expect(result.error?.message).toBe(ErrorCode.chapterNotFound);
+    expect(result.data).toBeNull();
+  });
+
   test("returns Forbidden for chapter in different organization", async () => {
     const otherOrg = await organizationFixture();
     const otherCourse = await courseFixture({ organizationId: otherOrg.id });

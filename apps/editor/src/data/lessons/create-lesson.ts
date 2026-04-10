@@ -2,7 +2,7 @@ import "server-only";
 import { ErrorCode } from "@/lib/app-error";
 import { getLessonKind } from "@/lib/lesson-kind";
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
-import { type Lesson, prisma } from "@zoonk/db";
+import { type Lesson, getActiveChapterWhere, prisma } from "@zoonk/db";
 import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { normalizeString, toSlug } from "@zoonk/utils/string";
 
@@ -15,12 +15,14 @@ export async function createLesson(params: {
   title: string;
 }): Promise<SafeReturn<Lesson>> {
   const { data: chapter, error: findError } = await safeAsync(() =>
-    prisma.chapter.findUnique({
+    prisma.chapter.findFirst({
       include: {
         course: { include: { categories: true } },
         organization: true,
       },
-      where: { id: params.chapterId },
+      where: getActiveChapterWhere({
+        chapterWhere: { id: params.chapterId },
+      }),
     }),
   );
 
@@ -58,6 +60,7 @@ export async function createLesson(params: {
       await tx.lesson.updateMany({
         data: { position: { increment: 1 } },
         where: {
+          archivedAt: null,
           chapterId: params.chapterId,
           position: { gte: params.position },
         },
