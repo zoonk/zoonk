@@ -1,0 +1,29 @@
+apps/main/src/data/activities/get-review-steps.test.ts
+  7067897d17bedaf8 1,690-716,729-739,750-761,817,837-841,843-846
+apps/main/src/data/activities/get-review-steps.ts
+  7067897d17bedaf8 2,10-14
+apps/main/src/data/courses/find-existing-course.test.ts
+  7067897d17bedaf8 123-168
+apps/main/src/data/courses/find-existing-course.ts
+  7067897d17bedaf8 2,30,33,35,42-46
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.6",
+  "base_commit_sha": "bc5cc17f95f5050fa4b83bcd0c3e5de12b8720bf",
+  "prompts": {
+    "7067897d17bedaf8": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d745b-97a1-71c1-9998-48e92b02a2af",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 370,
+      "total_deletions": 35,
+      "accepted_lines": 188,
+      "overriden_lines": 8
+    }
+  }
+}
