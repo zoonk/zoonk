@@ -1,7 +1,7 @@
 import "server-only";
 import { ErrorCode } from "@/lib/app-error";
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
-import { type Chapter, prisma } from "@zoonk/db";
+import { type Chapter, getActiveChapterWhere, prisma } from "@zoonk/db";
 import { AppError, safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
 
@@ -20,7 +20,9 @@ const cachedListCourseChapters = cache(
         }),
         prisma.chapter.findMany({
           orderBy: { position: "asc" },
-          where: { courseId },
+          where: getActiveChapterWhere({
+            chapterWhere: { courseId },
+          }),
         }),
       ]),
     );

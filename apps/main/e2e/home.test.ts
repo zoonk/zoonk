@@ -134,6 +134,66 @@ test.describe("Home Page - Authenticated", () => {
 
     await ctx.close();
   });
+
+  test("does not show archived courses in continue learning", async ({
+    authenticatedPage,
+    withProgressUser,
+  }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const org = await getAiOrganization();
+
+    const course = await courseFixture({
+      archivedAt: new Date(),
+      isPublished: true,
+      organizationId: org.id,
+      slug: `e2e-archived-home-course-${uniqueId}`,
+      title: `E2E Archived Home Course ${uniqueId}`,
+    });
+
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      isPublished: true,
+      organizationId: org.id,
+      position: 0,
+    });
+
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      isPublished: true,
+      organizationId: org.id,
+      position: 0,
+    });
+
+    const activity = await activityFixture({
+      generationStatus: "completed",
+      isPublished: true,
+      lessonId: lesson.id,
+      organizationId: org.id,
+      position: 0,
+    });
+
+    await Promise.all([
+      activityProgressFixture({
+        activityId: activity.id,
+        completedAt: new Date(),
+        durationSeconds: 60,
+        userId: withProgressUser.id,
+      }),
+      prisma.courseUser.create({
+        data: {
+          courseId: course.id,
+          userId: withProgressUser.id,
+        },
+      }),
+    ]);
+
+    await authenticatedPage.goto("/");
+
+    await expect(
+      authenticatedPage.getByRole("heading", { name: /continue learning/i }).first(),
+    ).toBeVisible();
+    await expect(authenticatedPage.getByText(course.title)).not.toBeVisible();
+  });
 });
 
 test.describe("Home Page - Performance Section", () => {

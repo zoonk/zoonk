@@ -1,7 +1,7 @@
 import "server-only";
 import { ErrorCode } from "@/lib/app-error";
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
-import { type Course, prisma } from "@zoonk/db";
+import { type Course, getActiveCourseWhere, prisma } from "@zoonk/db";
 import { clampQueryItems } from "@zoonk/db/utils";
 import { AppError, safeAsync } from "@zoonk/utils/error";
 import { DEFAULT_SEARCH_LIMIT, mergeSearchResults } from "@zoonk/utils/search";
@@ -18,10 +18,10 @@ const cachedSearchCourses = cache(
   ): Promise<{ data: Course[]; error: Error | null }> => {
     const normalizedSearch = normalizeString(title);
 
-    const baseWhere = {
+    const baseWhere = getActiveCourseWhere({
       organization: { slug: orgSlug },
       ...(language && { language }),
-    };
+    });
 
     const { data, error } = await safeAsync(() =>
       Promise.all([

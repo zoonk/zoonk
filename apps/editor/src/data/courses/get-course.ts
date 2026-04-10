@@ -1,7 +1,7 @@
 import "server-only";
 import { ErrorCode } from "@/lib/app-error";
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
-import { type Course, prisma } from "@zoonk/db";
+import { type Course, getActiveCourseWhere, prisma } from "@zoonk/db";
 import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
 
@@ -19,10 +19,10 @@ const cachedGetCourse = cache(
           permission: "update",
         }),
         prisma.course.findFirst({
-          where: {
+          where: getActiveCourseWhere({
             organization: { slug: orgSlug },
             slug: courseSlug,
-          },
+          }),
         }),
       ]),
     );

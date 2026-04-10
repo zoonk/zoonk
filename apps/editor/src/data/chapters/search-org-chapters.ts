@@ -1,7 +1,7 @@
 import "server-only";
 import { ErrorCode } from "@/lib/app-error";
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
-import { type Chapter, type Course, prisma } from "@zoonk/db";
+import { type Chapter, type Course, getActiveChapterWhere, prisma } from "@zoonk/db";
 import { clampQueryItems } from "@zoonk/db/utils";
 import { AppError, safeAsync } from "@zoonk/utils/error";
 import { DEFAULT_SEARCH_LIMIT } from "@zoonk/utils/search";
@@ -34,13 +34,15 @@ const cachedSearchOrgChapters = cache(
           },
           orderBy: { createdAt: "desc" },
           take: limit,
-          where: {
-            normalizedTitle: {
-              contains: normalizedSearch,
-              mode: "insensitive",
+          where: getActiveChapterWhere({
+            chapterWhere: {
+              normalizedTitle: {
+                contains: normalizedSearch,
+                mode: "insensitive",
+              },
+              organization: { slug: orgSlug },
             },
-            organization: { slug: orgSlug },
-          },
+          }),
         }),
       ]),
     );

@@ -1,5 +1,5 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { getPublishedLessonWhere, prisma } from "@zoonk/db";
 import { cache } from "react";
 
 const cachedGetLesson = cache(
@@ -10,19 +10,14 @@ const cachedGetLesson = cache(
           include: { course: true },
         },
       },
-      where: {
-        chapter: {
-          course: {
-            isPublished: true,
-            organization: { kind: "brand", slug: brandSlug },
-            slug: courseSlug,
-          },
-          isPublished: true,
-          slug: chapterSlug,
+      where: getPublishedLessonWhere({
+        chapterWhere: { slug: chapterSlug },
+        courseWhere: {
+          organization: { kind: "brand", slug: brandSlug },
+          slug: courseSlug,
         },
-        isPublished: true,
-        slug: lessonSlug,
-      },
+        lessonWhere: { slug: lessonSlug },
+      }),
     }),
 );
 

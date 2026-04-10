@@ -1,7 +1,7 @@
 import "server-only";
 import { ErrorCode } from "@/lib/app-error";
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
-import { type Course, prisma } from "@zoonk/db";
+import { type Course, getActiveCourseWhere, prisma } from "@zoonk/db";
 import { AppError, safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
 
@@ -20,11 +20,11 @@ const cachedListDraftCourses = cache(
         }),
         prisma.course.findMany({
           orderBy: { createdAt: "desc" },
-          where: {
+          where: getActiveCourseWhere({
             isPublished: false,
             organization: { slug: orgSlug },
             ...(language && { language }),
-          },
+          }),
         }),
       ]),
     );

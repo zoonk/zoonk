@@ -7,7 +7,7 @@ import { stepAttemptFixture } from "@zoonk/testing/fixtures/step-attempts";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeAll, describe, expect, test } from "vitest";
-import { getContentDeleteDecision, getContentLifecycleState } from "./lifecycle";
+import { getContentDeleteDecision } from "./lifecycle";
 
 describe("content lifecycle", () => {
   let organizationId: number;
@@ -226,10 +226,5 @@ describe("content lifecycle", () => {
       constraints: ["learnerData"],
       mode: "archive",
     });
-  });
-
-  test("maps archivedAt to an explicit lifecycle state", () => {
-    expect(getContentLifecycleState({ archivedAt: null })).toBe("active");
-    expect(getContentLifecycleState({ archivedAt: new Date() })).toBe("archived");
   });
 });

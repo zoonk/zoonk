@@ -45,10 +45,10 @@ export async function getChapterProgress({
           COUNT(DISTINCT a.id)::int AS total_activities,
           COUNT(DISTINCT CASE WHEN ap.completed_at IS NOT NULL THEN a.id END)::int AS completed_activities
         FROM lessons l
-        JOIN chapters ch ON ch.id = l.chapter_id AND ch.course_id = ${courseId} AND ch.is_published = true
-        LEFT JOIN activities a ON a.lesson_id = l.id AND a.is_published = true
+        JOIN chapters ch ON ch.id = l.chapter_id AND ch.course_id = ${courseId} AND ch.is_published = true AND ch.archived_at IS NULL
+        LEFT JOIN activities a ON a.lesson_id = l.id AND a.is_published = true AND a.archived_at IS NULL
         LEFT JOIN activity_progress ap ON ap.activity_id = a.id AND ap.user_id = ${userId}
-        WHERE l.is_published = true
+        WHERE l.is_published = true AND l.archived_at IS NULL
         GROUP BY l.id, l.chapter_id
       )
       SELECT
@@ -59,7 +59,7 @@ export async function getChapterProgress({
         END)::int AS "completedLessons"
       FROM chapters ch
       LEFT JOIN lesson_status ls ON ls.chapter_id = ch.id
-      WHERE ch.course_id = ${courseId} AND ch.is_published = true
+      WHERE ch.course_id = ${courseId} AND ch.is_published = true AND ch.archived_at IS NULL
       GROUP BY ch.id
       ORDER BY ch.position
     `,

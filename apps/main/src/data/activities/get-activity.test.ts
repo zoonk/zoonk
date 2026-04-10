@@ -1,3 +1,4 @@
+import { prisma } from "@zoonk/db";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
@@ -302,5 +303,62 @@ describe(getActivity, () => {
     const result = await getActivity({ lessonId: draftLesson.id, position: 0 });
 
     expect(result?.steps).toHaveLength(0);
+  });
+
+  test("returns null for archived activity", async () => {
+    const archivedActivity = await activityFixture({
+      archivedAt: new Date(),
+      generationStatus: "completed",
+      isPublished: true,
+      lessonId: lesson.id,
+      organizationId: org.id,
+      position: 99,
+    });
+
+    const result = await getActivity({ lessonId: lesson.id, position: archivedActivity.position });
+
+    expect(result).toBeNull();
+  });
+
+  test("excludes archived steps", async () => {
+    const archivedStepLesson = await lessonFixture({
+      chapterId: chapter.id,
+      isPublished: true,
+      language: "en",
+      organizationId: org.id,
+    });
+
+    const archivedStepActivity = await activityFixture({
+      generationStatus: "completed",
+      isPublished: true,
+      lessonId: archivedStepLesson.id,
+      organizationId: org.id,
+      position: 0,
+    });
+
+    const [activeStep, archivedStep] = await Promise.all([
+      stepFixture({
+        activityId: archivedStepActivity.id,
+        content: { text: "Active step", title: "Active" },
+        isPublished: true,
+        position: 0,
+      }),
+      stepFixture({
+        activityId: archivedStepActivity.id,
+        content: { text: "Archived step", title: "Archived" },
+        isPublished: true,
+        position: 1,
+      }),
+    ]);
+
+    await prisma.step.update({
+      data: { archivedAt: new Date() },
+      where: { id: archivedStep.id },
+    });
+
+    const result = await getActivity({ lessonId: archivedStepLesson.id, position: 0 });
+
+    expect(result?.steps).toHaveLength(1);
+    expect(result?.steps[0]?.id).toBe(activeStep.id);
   });
 });

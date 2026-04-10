@@ -1,5 +1,5 @@
 import "server-only";
-import { type ActivityKind, prisma } from "@zoonk/db";
+import { type ActivityKind, getPublishedActivityWhere, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
 
@@ -37,37 +37,32 @@ const cachedGetNextActivity = cache(
           { lesson: { position: "asc" } },
           { position: "asc" },
         ],
-        where: {
-          OR: [
-            {
-              lesson: {
-                chapter: { position: chapterPosition },
-                id: lessonId,
+        where: getPublishedActivityWhere({
+          activityWhere: {
+            OR: [
+              {
+                lesson: {
+                  chapter: { position: chapterPosition },
+                  id: lessonId,
+                },
+                position: { gt: activityPosition },
               },
-              position: { gt: activityPosition },
-            },
-            {
-              lesson: {
-                chapter: { id: chapterId, position: chapterPosition },
-                position: { gt: lessonPosition },
+              {
+                lesson: {
+                  chapter: { id: chapterId, position: chapterPosition },
+                  position: { gt: lessonPosition },
+                },
               },
-            },
-            {
-              lesson: {
-                chapter: { position: { gt: chapterPosition } },
+              {
+                lesson: {
+                  chapter: { position: { gt: chapterPosition } },
+                },
               },
-            },
-          ],
-          generationStatus: "completed",
-          isPublished: true,
-          lesson: {
-            chapter: {
-              course: { id: courseId },
-              isPublished: true,
-            },
-            isPublished: true,
+            ],
+            generationStatus: "completed",
           },
-        },
+          courseWhere: { id: courseId },
+        }),
       }),
     );
 

@@ -168,10 +168,10 @@ export const getContinueLearning = cache(
             l.chapter_id,
             ch.position as chapter_position
           FROM activity_progress ap
-          JOIN activities a ON a.id = ap.activity_id AND a.is_published = true
-          JOIN lessons l ON l.id = a.lesson_id AND l.is_published = true
-          JOIN chapters ch ON ch.id = l.chapter_id AND ch.is_published = true
-          JOIN courses c ON c.id = ch.course_id
+          JOIN activities a ON a.id = ap.activity_id AND a.is_published = true AND a.archived_at IS NULL
+          JOIN lessons l ON l.id = a.lesson_id AND l.is_published = true AND l.archived_at IS NULL
+          JOIN chapters ch ON ch.id = l.chapter_id AND ch.is_published = true AND ch.archived_at IS NULL
+          JOIN courses c ON c.id = ch.course_id AND c.is_published = true AND c.archived_at IS NULL
           LEFT JOIN organizations o ON o.id = c.organization_id
           WHERE ap.user_id = ${userId} AND ap.completed_at IS NOT NULL AND (o.kind = 'brand' OR o.id IS NULL)
           ORDER BY ch.course_id, ap.completed_at DESC

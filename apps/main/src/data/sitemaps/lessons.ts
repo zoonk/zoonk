@@ -1,19 +1,14 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { getPublishedLessonWhere, prisma } from "@zoonk/db";
 import { SITEMAP_BATCH_SIZE } from "./courses";
 
 export async function countSitemapLessons(): Promise<number> {
   return prisma.lesson.count({
-    where: {
-      chapter: {
-        course: {
-          isPublished: true,
-          organization: { kind: "brand" },
-        },
-        isPublished: true,
+    where: getPublishedLessonWhere({
+      courseWhere: {
+        organization: { kind: "brand" },
       },
-      isPublished: true,
-    },
+    }),
   });
 }
 
@@ -37,16 +32,11 @@ export async function listSitemapLessons(page: number): Promise<
     orderBy: { id: "asc" },
     skip: page * SITEMAP_BATCH_SIZE,
     take: SITEMAP_BATCH_SIZE,
-    where: {
-      chapter: {
-        course: {
-          isPublished: true,
-          organization: { kind: "brand" },
-        },
-        isPublished: true,
+    where: getPublishedLessonWhere({
+      courseWhere: {
+        organization: { kind: "brand" },
       },
-      isPublished: true,
-    },
+    }),
   });
 
   return lessons.map((lesson) => ({

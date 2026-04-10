@@ -1,4 +1,4 @@
-import { prisma } from "@zoonk/db";
+import { getPublishedLessonWhere, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 
 type NextLesson = { id: number; needsGeneration: boolean };
@@ -15,13 +15,23 @@ type NextLesson = { id: number; needsGeneration: boolean };
  */
 export async function getNextLesson(activityId: bigint): Promise<NextLesson | null> {
   const { data: activity, error } = await safeAsync(() =>
-    prisma.activity.findUnique({
+    prisma.activity.findFirst({
       include: {
         lesson: {
           include: { chapter: true },
         },
       },
-      where: { id: activityId },
+      where: {
+        archivedAt: null,
+        id: activityId,
+        lesson: {
+          archivedAt: null,
+          chapter: {
+            archivedAt: null,
+            course: { archivedAt: null },
+          },
+        },
+      },
     }),
   );
 
@@ -38,28 +48,29 @@ export async function getNextLesson(activityId: bigint): Promise<NextLesson | nu
         _count: {
           select: {
             activities: {
-              where: { generationStatus: { in: ["pending", "failed"] } },
+              where: {
+                archivedAt: null,
+                generationStatus: { in: ["pending", "failed"] },
+              },
             },
           },
         },
       },
       orderBy: [{ chapter: { position: "asc" } }, { position: "asc" }],
-      where: {
-        OR: [
-          {
-            chapter: { id: chapter.id },
-            position: { gt: lesson.position },
-          },
-          {
-            chapter: { position: { gt: chapter.position } },
-          },
-        ],
-        chapter: {
-          course: { id: chapter.courseId },
-          isPublished: true,
+      where: getPublishedLessonWhere({
+        courseWhere: { id: chapter.courseId },
+        lessonWhere: {
+          OR: [
+            {
+              chapter: { id: chapter.id },
+              position: { gt: lesson.position },
+            },
+            {
+              chapter: { position: { gt: chapter.position } },
+            },
+          ],
         },
-        isPublished: true,
-      },
+      }),
     }),
   );
 

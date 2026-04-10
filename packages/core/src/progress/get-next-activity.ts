@@ -4,27 +4,26 @@ import {
   findLastCompleted,
 } from "@zoonk/core/activities/last-completed";
 import { getNextActivityInCourse } from "@zoonk/core/activities/next-in-course";
-import { prisma } from "@zoonk/db";
+import { getPublishedActivityWhere, getPublishedLessonWhere, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { getSession } from "../users/get-user-session";
 
-function scopeWhere(scope: ActivityScope) {
+function getScopeActivityWhere(scope: ActivityScope) {
   if ("courseId" in scope) {
-    return {
-      lesson: { chapter: { courseId: scope.courseId, isPublished: true }, isPublished: true },
-    };
+    return getPublishedActivityWhere({
+      courseWhere: { id: scope.courseId },
+    });
   }
 
   if ("chapterId" in scope) {
-    return {
-      lesson: { chapter: { isPublished: true }, chapterId: scope.chapterId, isPublished: true },
-    };
+    return getPublishedActivityWhere({
+      chapterWhere: { id: scope.chapterId },
+    });
   }
 
-  return {
-    lesson: { chapter: { isPublished: true }, isPublished: true },
-    lessonId: scope.lessonId,
-  };
+  return getPublishedActivityWhere({
+    lessonWhere: { id: scope.lessonId },
+  });
 }
 
 async function findFirstActivity(scope: ActivityScope): Promise<{
@@ -53,7 +52,7 @@ async function findFirstActivity(scope: ActivityScope): Promise<{
         { lesson: { position: "asc" } },
         { position: "asc" },
       ],
-      where: { isPublished: true, ...scopeWhere(scope) },
+      where: getScopeActivityWhere(scope),
     }),
   );
 
@@ -72,16 +71,16 @@ async function findFirstActivity(scope: ActivityScope): Promise<{
 }
 
 async function findFirstPendingLesson(scope: ActivityScope) {
-  const chapterFilter = (() => {
+  const scopeWhere = (() => {
     if ("courseId" in scope) {
-      return { courseId: scope.courseId, isPublished: true };
+      return { courseWhere: { id: scope.courseId } };
     }
 
     if ("chapterId" in scope) {
-      return { id: scope.chapterId, isPublished: true };
+      return { chapterWhere: { id: scope.chapterId } };
     }
 
-    return { isPublished: true };
+    return {};
   })();
 
   const lessonIdFilter = "lessonId" in scope ? { id: scope.lessonId } : {};
@@ -96,22 +95,24 @@ async function findFirstPendingLesson(scope: ActivityScope) {
         },
       },
       orderBy: [{ chapter: { position: "asc" } }, { position: "asc" }],
-      where: {
-        ...lessonIdFilter,
-        OR: [
-          { generationStatus: { not: "completed" } },
-          {
-            activities: {
-              some: {
-                generationStatus: { not: "completed" },
-                isPublished: true,
+      where: getPublishedLessonWhere({
+        ...scopeWhere,
+        lessonWhere: {
+          ...lessonIdFilter,
+          OR: [
+            { generationStatus: { not: "completed" } },
+            {
+              activities: {
+                some: getPublishedActivityWhere({
+                  activityWhere: {
+                    generationStatus: { not: "completed" },
+                  },
+                }),
               },
             },
-          },
-        ],
-        chapter: chapterFilter,
-        isPublished: true,
-      },
+          ],
+        },
+      }),
     }),
   );
 

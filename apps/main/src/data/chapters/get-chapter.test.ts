@@ -156,4 +156,22 @@ describe(getChapter, () => {
 
     expect(result).toBeNull();
   });
+
+  test("returns null for archived chapter", async () => {
+    const archivedChapter = await chapterFixture({
+      archivedAt: new Date(),
+      courseId: publishedCourse.id,
+      isPublished: true,
+      language: "en",
+      organizationId: brandOrg.id,
+    });
+
+    const result = await getChapter({
+      brandSlug: brandOrg.slug,
+      chapterSlug: archivedChapter.slug,
+      courseSlug: publishedCourse.slug,
+    });
+
+    expect(result).toBeNull();
+  });
 });

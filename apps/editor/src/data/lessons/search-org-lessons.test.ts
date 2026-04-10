@@ -229,6 +229,33 @@ describe("admins", () => {
     expect(lesson?.chapter.course.slug).toBe(course.slug);
   });
 
+  test("excludes archived lessons", async () => {
+    const course = await courseFixture({ organizationId: organization.id });
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      language: course.language,
+      organizationId: organization.id,
+    });
+
+    const archivedLesson = await lessonFixture({
+      archivedAt: new Date(),
+      chapterId: chapter.id,
+      language: chapter.language,
+      organizationId: organization.id,
+      position: 0,
+      title: "Archived Search Lesson",
+    });
+
+    const result = await searchOrgLessons({
+      headers,
+      orgSlug: organization.slug,
+      title: "Archived Search",
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data.find((lesson) => lesson.id === archivedLesson.id)).toBeUndefined();
+  });
+
   test("limits results to default of 10", async () => {
     const course = await courseFixture({ organizationId: organization.id });
     const chapter = await chapterFixture({

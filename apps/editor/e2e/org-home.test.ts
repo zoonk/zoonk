@@ -44,6 +44,7 @@ test.describe("Org Home - Permissions", () => {
 
 test.describe("Org Home - Course Filtering", () => {
   let draftCourseTitle: string;
+  let archivedDraftCourseTitle: string;
   let publishedCourseTitle: string;
 
   test.beforeAll(async () => {
@@ -51,12 +52,19 @@ test.describe("Org Home - Course Filtering", () => {
 
     const uniqueId = randomUUID().slice(0, 8);
 
-    const [draftCourse, publishedCourse] = await Promise.all([
+    const [draftCourse, archivedDraftCourse, publishedCourse] = await Promise.all([
       courseFixture({
         isPublished: false,
         organizationId: org.id,
         slug: `e2e-draft-${uniqueId}`,
         title: `E2E Draft ${uniqueId}`,
+      }),
+      courseFixture({
+        archivedAt: new Date(),
+        isPublished: false,
+        organizationId: org.id,
+        slug: `e2e-archived-draft-${uniqueId}`,
+        title: `E2E Archived Draft ${uniqueId}`,
       }),
       courseFixture({
         isPublished: true,
@@ -67,6 +75,7 @@ test.describe("Org Home - Course Filtering", () => {
     ]);
 
     draftCourseTitle = draftCourse.title;
+    archivedDraftCourseTitle = archivedDraftCourse.title;
     publishedCourseTitle = publishedCourse.title;
   });
 
@@ -81,6 +90,13 @@ test.describe("Org Home - Course Filtering", () => {
 
     await expect(ownerPage.getByText(draftCourseTitle)).toBeVisible();
     await expect(ownerPage.getByText(publishedCourseTitle)).not.toBeVisible();
+  });
+
+  test("hides archived draft courses", async ({ ownerPage }) => {
+    await ownerPage.goto(`/${AI_ORG_SLUG}`);
+
+    await expect(ownerPage.getByText(draftCourseTitle)).toBeVisible();
+    await expect(ownerPage.getByText(archivedDraftCourseTitle)).not.toBeVisible();
   });
 });
 

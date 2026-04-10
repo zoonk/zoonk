@@ -200,4 +200,24 @@ describe("admins", () => {
     expect(result.error?.message).toBe(ErrorCode.forbidden);
     expect(result.data).toBeNull();
   });
+
+  test("returns null for archived lesson", async () => {
+    const archivedLesson = await lessonFixture({
+      archivedAt: new Date(),
+      chapterId: chapter.id,
+      language: chapter.language,
+      organizationId: organization.id,
+    });
+
+    const result = await getLesson({
+      chapterSlug: chapter.slug,
+      courseSlug: course.slug,
+      headers,
+      lessonSlug: archivedLesson.slug,
+      orgSlug: organization.slug,
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data).toBeNull();
+  });
 });

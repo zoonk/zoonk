@@ -16,7 +16,6 @@ import { type Activity, type Chapter, type Course, type Lesson, prisma } from "@
  * status because publication alone does not create the history-retention problem
  * we are protecting against.
  */
-export type ContentLifecycleState = "active" | "archived";
 export type ContentDeleteMode = "archive" | "hardDelete";
 export type ContentDeleteConstraint = "learnerData";
 
@@ -55,23 +54,6 @@ export type ContentDeleteDecision = {
   constraints: ContentDeleteConstraint[];
   mode: ContentDeleteMode;
 };
-
-/**
- * Converts nullable archive timestamps into the lifecycle wording the rest of the
- * product uses. This keeps later queries and UI code from each inventing their own
- * `archivedAt ? ... : ...` checks with slightly different terminology.
- */
-export function getContentLifecycleState({
-  archivedAt,
-}: {
-  archivedAt: Date | null;
-}): ContentLifecycleState {
-  if (archivedAt) {
-    return "archived";
-  }
-
-  return "active";
-}
 
 /**
  * Centralizes the rules for when curriculum can be physically deleted.

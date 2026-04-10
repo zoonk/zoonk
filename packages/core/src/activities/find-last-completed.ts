@@ -1,5 +1,5 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { getPublishedActivityWhere, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 
 export type ActivityScope = { courseId: number } | { chapterId: number } | { lessonId: number };
@@ -17,23 +17,22 @@ export type LastCompletedActivity = {
   orgSlug: string | null;
 };
 
-function scopeFilter(scope: ActivityScope) {
+function getScopeActivityWhere(scope: ActivityScope) {
   if ("courseId" in scope) {
-    return {
-      lesson: { chapter: { courseId: scope.courseId, isPublished: true }, isPublished: true },
-    };
+    return getPublishedActivityWhere({
+      courseWhere: { id: scope.courseId },
+    });
   }
 
   if ("chapterId" in scope) {
-    return {
-      lesson: { chapter: { isPublished: true }, chapterId: scope.chapterId, isPublished: true },
-    };
+    return getPublishedActivityWhere({
+      chapterWhere: { id: scope.chapterId },
+    });
   }
 
-  return {
-    lesson: { chapter: { isPublished: true }, isPublished: true },
-    lessonId: scope.lessonId,
-  };
+  return getPublishedActivityWhere({
+    lessonWhere: { id: scope.lessonId },
+  });
 }
 
 /**
@@ -68,10 +67,7 @@ export async function findLastCompleted(
         { activity: { position: "desc" } },
       ],
       where: {
-        activity: {
-          isPublished: true,
-          ...scopeFilter(scope),
-        },
+        activity: getScopeActivityWhere(scope),
         completedAt: { not: null },
         userId,
       },

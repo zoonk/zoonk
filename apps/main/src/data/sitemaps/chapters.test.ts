@@ -65,6 +65,28 @@ describe(listSitemapChapters, () => {
     expect(found).toBeUndefined();
   });
 
+  test("excludes archived chapters", async () => {
+    const org = await organizationFixture({ kind: "brand" });
+
+    const course = await courseFixture({
+      isPublished: true,
+      organizationId: org.id,
+    });
+
+    const chapter = await chapterFixture({
+      archivedAt: new Date(),
+      courseId: course.id,
+      isPublished: true,
+      organizationId: org.id,
+    });
+
+    const count = await countSitemapChapters();
+    const chapters = await listSitemapChapters(lastPage(count));
+    const found = chapters.find((item) => item.chapterSlug === chapter.slug);
+
+    expect(found).toBeUndefined();
+  });
+
   test("excludes chapters from personal courses without an organization", async () => {
     const course = await courseFixture({
       isPublished: true,
@@ -110,6 +132,28 @@ describe(listSitemapChapters, () => {
 
     const course = await courseFixture({
       isPublished: false,
+      organizationId: org.id,
+    });
+
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      isPublished: true,
+      organizationId: org.id,
+    });
+
+    const count = await countSitemapChapters();
+    const chapters = await listSitemapChapters(lastPage(count));
+    const found = chapters.find((item) => item.chapterSlug === chapter.slug);
+
+    expect(found).toBeUndefined();
+  });
+
+  test("excludes chapters from archived courses", async () => {
+    const org = await organizationFixture({ kind: "brand" });
+
+    const course = await courseFixture({
+      archivedAt: new Date(),
+      isPublished: true,
       organizationId: org.id,
     });
 
