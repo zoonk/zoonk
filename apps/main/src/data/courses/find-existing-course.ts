@@ -1,5 +1,5 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { getActiveCourseWhere, prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { ensureLocaleSuffix, toSlug } from "@zoonk/utils/string";
@@ -27,19 +27,23 @@ const cachedFindExistingCourse = cache(
       Promise.all([
         prisma.course.findFirst({
           include: courseInclude,
-          where: {
+          where: getActiveCourseWhere({
             organization: { slug: AI_ORG_SLUG },
             slug: ensureLocaleSuffix(normalizedSlug, language),
-          },
+          }),
         }),
-        prisma.courseAlternativeTitle.findUnique({
+        prisma.courseAlternativeTitle.findFirst({
           include: {
             course: {
               include: courseInclude,
             },
           },
           where: {
-            languageSlug: { language, slug: normalizedSlug },
+            course: getActiveCourseWhere({
+              organization: { slug: AI_ORG_SLUG },
+            }),
+            language,
+            slug: normalizedSlug,
           },
         }),
       ]),

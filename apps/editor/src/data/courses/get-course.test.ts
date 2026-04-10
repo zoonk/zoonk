@@ -144,4 +144,21 @@ describe("org admins", () => {
     expect(result.error).toBeNull();
     expect(result.data).toBeNull();
   });
+
+  test("returns null for archived course", async () => {
+    const archivedCourse = await courseFixture({
+      archivedAt: new Date(),
+      isPublished: false,
+      organizationId: organization.id,
+    });
+
+    const result = await getCourse({
+      courseSlug: archivedCourse.slug,
+      headers,
+      orgSlug: organization.slug,
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data).toBeNull();
+  });
 });

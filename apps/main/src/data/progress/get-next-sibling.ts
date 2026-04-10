@@ -1,4 +1,4 @@
-import { prisma } from "@zoonk/db";
+import { getPublishedChapterWhere, getPublishedLessonWhere, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 
 type LessonScope = {
@@ -44,22 +44,20 @@ async function getNextLessonSibling(scope: LessonScope): Promise<LessonResult | 
         },
       },
       orderBy: [{ chapter: { position: "asc" } }, { position: "asc" }],
-      where: {
-        OR: [
-          {
-            chapter: { id: scope.chapterId },
-            position: { gt: scope.lessonPosition },
-          },
-          {
-            chapter: { position: { gt: scope.chapterPosition } },
-          },
-        ],
-        chapter: {
-          course: { id: scope.courseId },
-          isPublished: true,
+      where: getPublishedLessonWhere({
+        courseWhere: { id: scope.courseId },
+        lessonWhere: {
+          OR: [
+            {
+              chapter: { id: scope.chapterId },
+              position: { gt: scope.lessonPosition },
+            },
+            {
+              chapter: { position: { gt: scope.chapterPosition } },
+            },
+          ],
         },
-        isPublished: true,
-      },
+      }),
     }),
   );
 
@@ -86,11 +84,12 @@ async function getNextChapterSibling(scope: ChapterScope): Promise<ChapterResult
         course: { include: { organization: true } },
       },
       orderBy: { position: "asc" },
-      where: {
-        courseId: scope.courseId,
-        isPublished: true,
-        position: { gt: scope.chapterPosition },
-      },
+      where: getPublishedChapterWhere({
+        chapterWhere: {
+          courseId: scope.courseId,
+          position: { gt: scope.chapterPosition },
+        },
+      }),
     }),
   );
 

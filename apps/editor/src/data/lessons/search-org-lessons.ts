@@ -1,7 +1,7 @@
 import "server-only";
 import { ErrorCode } from "@/lib/app-error";
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
-import { type Chapter, type Course, type Lesson, prisma } from "@zoonk/db";
+import { type Chapter, type Course, type Lesson, getActiveLessonWhere, prisma } from "@zoonk/db";
 import { clampQueryItems } from "@zoonk/db/utils";
 import { AppError, safeAsync } from "@zoonk/utils/error";
 import { DEFAULT_SEARCH_LIMIT } from "@zoonk/utils/search";
@@ -36,13 +36,15 @@ const cachedSearchOrgLessons = cache(
           },
           orderBy: { createdAt: "desc" },
           take: limit,
-          where: {
-            normalizedTitle: {
-              contains: normalizedSearch,
-              mode: "insensitive",
+          where: getActiveLessonWhere({
+            lessonWhere: {
+              normalizedTitle: {
+                contains: normalizedSearch,
+                mode: "insensitive",
+              },
+              organization: { slug: orgSlug },
             },
-            organization: { slug: orgSlug },
-          },
+          }),
         }),
       ]),
     );

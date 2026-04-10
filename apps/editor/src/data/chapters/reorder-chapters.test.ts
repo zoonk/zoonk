@@ -116,6 +116,22 @@ describe("admins", () => {
     expect(result.data).toBeNull();
   });
 
+  test("returns Course not found when the course is archived", async () => {
+    const archivedCourse = await courseFixture({
+      archivedAt: new Date(),
+      organizationId: organization.id,
+    });
+
+    const result = await reorderChapters({
+      chapters: [],
+      courseId: archivedCourse.id,
+      headers,
+    });
+
+    expect(result.error?.message).toBe(ErrorCode.courseNotFound);
+    expect(result.data).toBeNull();
+  });
+
   test("returns Forbidden for course in different organization", async () => {
     const otherOrg = await organizationFixture();
     const otherCourse = await courseFixture({ organizationId: otherOrg.id });
@@ -170,5 +186,45 @@ describe("admins", () => {
     });
 
     expect(updatedChapter?.position).toBe(expectedPosition);
+  });
+
+  test("ignores archived chapters when reordering", async () => {
+    const newCourse = await courseFixture({ organizationId: organization.id });
+
+    const [activeChapter, archivedChapter] = await Promise.all([
+      chapterFixture({
+        courseId: newCourse.id,
+        language: newCourse.language,
+        organizationId: organization.id,
+        position: 0,
+      }),
+      chapterFixture({
+        archivedAt: new Date(),
+        courseId: newCourse.id,
+        language: newCourse.language,
+        organizationId: organization.id,
+        position: 1,
+      }),
+    ]);
+
+    const result = await reorderChapters({
+      chapters: [
+        { chapterId: activeChapter.id, position: 5 },
+        { chapterId: archivedChapter.id, position: 9 },
+      ],
+      courseId: newCourse.id,
+      headers,
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data?.updated).toBe(1);
+
+    const [updatedActive, unchangedArchived] = await Promise.all([
+      prisma.chapter.findUniqueOrThrow({ where: { id: activeChapter.id } }),
+      prisma.chapter.findUniqueOrThrow({ where: { id: archivedChapter.id } }),
+    ]);
+
+    expect(updatedActive.position).toBe(5);
+    expect(unchangedArchived.position).toBe(1);
   });
 });

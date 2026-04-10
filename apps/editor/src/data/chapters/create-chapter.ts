@@ -1,7 +1,7 @@
 import "server-only";
 import { ErrorCode } from "@/lib/app-error";
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
-import { type Chapter, prisma } from "@zoonk/db";
+import { type Chapter, getActiveCourseWhere, prisma } from "@zoonk/db";
 import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { normalizeString, toSlug } from "@zoonk/utils/string";
 
@@ -14,8 +14,8 @@ export async function createChapter(params: {
   title: string;
 }): Promise<SafeReturn<Chapter>> {
   const { data: course, error: findError } = await safeAsync(() =>
-    prisma.course.findUnique({
-      where: { id: params.courseId },
+    prisma.course.findFirst({
+      where: getActiveCourseWhere({ id: params.courseId }),
     }),
   );
 
@@ -48,6 +48,7 @@ export async function createChapter(params: {
       await tx.chapter.updateMany({
         data: { position: { increment: 1 } },
         where: {
+          archivedAt: null,
           courseId: params.courseId,
           position: { gte: params.position },
         },

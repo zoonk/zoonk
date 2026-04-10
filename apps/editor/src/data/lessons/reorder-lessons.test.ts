@@ -139,6 +139,25 @@ describe("admins", () => {
     expect(result.data).toBeNull();
   });
 
+  test("returns Chapter not found when the chapter is archived", async () => {
+    const course = await courseFixture({ organizationId: organization.id });
+    const archivedChapter = await chapterFixture({
+      archivedAt: new Date(),
+      courseId: course.id,
+      language: course.language,
+      organizationId: organization.id,
+    });
+
+    const result = await reorderLessons({
+      chapterId: archivedChapter.id,
+      headers,
+      lessons: [],
+    });
+
+    expect(result.error?.message).toBe(ErrorCode.chapterNotFound);
+    expect(result.data).toBeNull();
+  });
+
   test("returns Forbidden for chapter in different organization", async () => {
     const otherOrg = await organizationFixture();
     const otherCourse = await courseFixture({ organizationId: otherOrg.id });
@@ -203,5 +222,50 @@ describe("admins", () => {
     });
 
     expect(updatedLesson?.position).toBe(expectedPosition);
+  });
+
+  test("ignores archived lessons when reordering", async () => {
+    const course = await courseFixture({ organizationId: organization.id });
+    const newChapter = await chapterFixture({
+      courseId: course.id,
+      language: course.language,
+      organizationId: organization.id,
+    });
+
+    const [activeLesson, archivedLesson] = await Promise.all([
+      lessonFixture({
+        chapterId: newChapter.id,
+        language: newChapter.language,
+        organizationId: organization.id,
+        position: 0,
+      }),
+      lessonFixture({
+        archivedAt: new Date(),
+        chapterId: newChapter.id,
+        language: newChapter.language,
+        organizationId: organization.id,
+        position: 1,
+      }),
+    ]);
+
+    const result = await reorderLessons({
+      chapterId: newChapter.id,
+      headers,
+      lessons: [
+        { lessonId: activeLesson.id, position: 5 },
+        { lessonId: archivedLesson.id, position: 9 },
+      ],
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data?.updated).toBe(1);
+
+    const [updatedActive, unchangedArchived] = await Promise.all([
+      prisma.lesson.findUniqueOrThrow({ where: { id: activeLesson.id } }),
+      prisma.lesson.findUniqueOrThrow({ where: { id: archivedLesson.id } }),
+    ]);
+
+    expect(updatedActive.position).toBe(5);
+    expect(unchangedArchived.position).toBe(1);
   });
 });

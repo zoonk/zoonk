@@ -120,6 +120,52 @@ describe(findExistingCourse, () => {
     expect(result.data).toBeNull();
   });
 
+  test("returns null for archived direct course matches", async () => {
+    const uniqueSlug = `archived-direct-${randomUUID()}`;
+
+    await courseFixture({
+      archivedAt: new Date(),
+      language: "en",
+      organizationId: aiOrg.id,
+      slug: uniqueSlug,
+    });
+
+    const result = await findExistingCourse({
+      language: "en",
+      slug: uniqueSlug,
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data).toBeNull();
+  });
+
+  test("returns null for archived alternative-title matches", async () => {
+    const uniqueSlug = `archived-alt-${randomUUID()}`;
+    const altSlug = `archived-alt-title-${randomUUID()}`;
+
+    const course = await courseFixture({
+      archivedAt: new Date(),
+      generationStatus: "completed",
+      language: "en",
+      organizationId: aiOrg.id,
+      slug: uniqueSlug,
+    });
+
+    await courseAlternativeTitleFixture({
+      courseId: course.id,
+      language: "en",
+      slug: altSlug,
+    });
+
+    const result = await findExistingCourse({
+      language: "en",
+      slug: altSlug,
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data).toBeNull();
+  });
+
   test("prioritizes direct course match over alternative title match", async () => {
     const uniqueSlug = `prio-${randomUUID()}`;
 

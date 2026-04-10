@@ -1,7 +1,7 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
 import { generateAppliedActivityKind } from "@zoonk/ai/tasks/lessons/applied-activity-kind";
 import { type AppliedActivityKind, type LessonStepName } from "@zoonk/core/workflows/steps";
-import { prisma } from "@zoonk/db";
+import { getActiveActivityWhere, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { type LessonContext } from "./get-lesson-step";
 
@@ -21,10 +21,17 @@ async function getRecentAppliedKinds(
     orderBy: { lesson: { position: "desc" } },
     select: { kind: true },
     take: MAX_RECENT_KINDS,
-    where: {
-      kind: { in: ["story", "investigation"] },
-      lesson: { chapterId, position: { lt: currentPosition } },
-    },
+    where: getActiveActivityWhere({
+      activityWhere: {
+        kind: { in: ["story", "investigation"] },
+      },
+      chapterWhere: {
+        id: chapterId,
+      },
+      lessonWhere: {
+        position: { lt: currentPosition },
+      },
+    }),
   });
 
   return previousActivities.map((activity) => activity.kind);

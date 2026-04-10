@@ -1,15 +1,17 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
 import { type LessonStepName } from "@zoonk/core/workflows/steps";
-import { prisma } from "@zoonk/db";
+import { getActiveLessonWhere, prisma } from "@zoonk/db";
 import { FatalError } from "workflow";
 
 async function getLessonForGeneration(lessonId: number) {
-  return prisma.lesson.findUnique({
+  return prisma.lesson.findFirst({
     include: {
       _count: { select: { activities: true } },
       chapter: { include: { course: true } },
     },
-    where: { id: lessonId },
+    where: getActiveLessonWhere({
+      lessonWhere: { id: lessonId },
+    }),
   });
 }
 

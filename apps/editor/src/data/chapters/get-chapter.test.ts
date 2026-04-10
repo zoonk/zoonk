@@ -167,4 +167,23 @@ describe("admins", () => {
     expect(result.error?.message).toBe(ErrorCode.forbidden);
     expect(result.data).toBeNull();
   });
+
+  test("returns null for archived chapter", async () => {
+    const archivedChapter = await chapterFixture({
+      archivedAt: new Date(),
+      courseId: course.id,
+      language: course.language,
+      organizationId: organization.id,
+    });
+
+    const result = await getChapter({
+      chapterSlug: archivedChapter.slug,
+      courseSlug: course.slug,
+      headers,
+      orgSlug: organization.slug,
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data).toBeNull();
+  });
 });

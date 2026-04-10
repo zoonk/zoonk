@@ -89,11 +89,66 @@ describe(getChapterStep, () => {
     expect(neighborTitles).not.toContain(middleChapter.title);
   });
 
+  test("excludes archived neighboring chapters", async () => {
+    const isolatedCourse = await courseFixture({ organizationId });
+
+    const chapters = await Promise.all([
+      chapterFixture({
+        courseId: isolatedCourse.id,
+        organizationId,
+        position: 0,
+        title: `Neighbor A ${randomUUID()}`,
+      }),
+      chapterFixture({
+        archivedAt: new Date(),
+        courseId: isolatedCourse.id,
+        organizationId,
+        position: 1,
+        title: `Archived Neighbor ${randomUUID()}`,
+      }),
+      chapterFixture({
+        courseId: isolatedCourse.id,
+        organizationId,
+        position: 2,
+        title: `Target ${randomUUID()}`,
+      }),
+      chapterFixture({
+        courseId: isolatedCourse.id,
+        organizationId,
+        position: 3,
+        title: `Neighbor B ${randomUUID()}`,
+      }),
+    ]);
+
+    const targetChapter = chapters[2];
+
+    const result = await getChapterStep(targetChapter.id);
+
+    const neighborTitles = result.neighboringChapters.map((chapter) => chapter.title);
+
+    expect(neighborTitles).toHaveLength(2);
+    expect(neighborTitles).toContain(chapters[0].title);
+    expect(neighborTitles).toContain(chapters[3].title);
+    expect(neighborTitles).not.toContain(chapters[1].title);
+  });
+
   test("throws FatalError when chapter does not exist", async () => {
     await expect(getChapterStep(999_999_999)).rejects.toThrow("Chapter not found");
 
     const events = getStreamedEvents(writeMock);
 
     expect(events).toContainEqual(expect.objectContaining({ status: "error", step: "getChapter" }));
+  });
+
+  test("throws FatalError when chapter is archived", async () => {
+    const chapter = await chapterFixture({
+      archivedAt: new Date(),
+      courseId,
+      organizationId,
+      position: 0,
+      title: `Archived Chapter ${randomUUID()}`,
+    });
+
+    await expect(getChapterStep(chapter.id)).rejects.toThrow("Chapter not found");
   });
 });

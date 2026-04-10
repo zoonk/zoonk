@@ -16,6 +16,7 @@ export function courseAttrs(attrs?: Partial<Course>): Omit<
   const { description, ...rest } = attrs ?? {};
 
   return {
+    archivedAt: null,
     completedAt: null,
     description: description ?? "Test course description",
     generationRunId: null,

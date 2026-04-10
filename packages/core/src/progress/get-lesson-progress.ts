@@ -36,9 +36,9 @@ export async function getLessonProgress({
         COUNT(DISTINCT a.id)::int AS "totalActivities",
         COUNT(DISTINCT CASE WHEN ap.completed_at IS NOT NULL THEN a.id END)::int AS "completedActivities"
       FROM lessons l
-      JOIN activities a ON a.lesson_id = l.id AND a.is_published = true
+      JOIN activities a ON a.lesson_id = l.id AND a.is_published = true AND a.archived_at IS NULL
       LEFT JOIN activity_progress ap ON ap.activity_id = a.id AND ap.user_id = ${userId}
-      WHERE l.chapter_id = ${chapterId} AND l.is_published = true
+      WHERE l.chapter_id = ${chapterId} AND l.is_published = true AND l.archived_at IS NULL
       GROUP BY l.id
       ORDER BY l.position
     `,

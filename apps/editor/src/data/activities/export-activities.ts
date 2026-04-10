@@ -1,7 +1,7 @@
 import "server-only";
 import { ErrorCode } from "@/lib/app-error";
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
-import { type ActivityKind, prisma } from "@zoonk/db";
+import { type ActivityKind, getActiveActivityWhere, getActiveLessonWhere, prisma } from "@zoonk/db";
 import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
 
 type ExportedActivity = {
@@ -19,8 +19,10 @@ export async function exportActivities(params: { lessonId: number; headers?: Hea
   }>
 > {
   const { data: lesson, error: findError } = await safeAsync(() =>
-    prisma.lesson.findUnique({
-      where: { id: params.lessonId },
+    prisma.lesson.findFirst({
+      where: getActiveLessonWhere({
+        lessonWhere: { id: params.lessonId },
+      }),
     }),
   );
 
@@ -45,7 +47,9 @@ export async function exportActivities(params: { lessonId: number; headers?: Hea
   const { data: activities, error: activitiesError } = await safeAsync(() =>
     prisma.activity.findMany({
       orderBy: { position: "asc" },
-      where: { lessonId: params.lessonId },
+      where: getActiveActivityWhere({
+        activityWhere: { lessonId: params.lessonId },
+      }),
     }),
   );
 

@@ -1,19 +1,17 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { getPublishedChapterWhere, prisma } from "@zoonk/db";
 import { cache } from "react";
 
 const cachedGetChapter = cache(async (brandSlug: string, courseSlug: string, chapterSlug: string) =>
   prisma.chapter.findFirst({
     include: { course: true },
-    where: {
-      course: {
-        isPublished: true,
+    where: getPublishedChapterWhere({
+      chapterWhere: { slug: chapterSlug },
+      courseWhere: {
         organization: { kind: "brand", slug: brandSlug },
         slug: courseSlug,
       },
-      isPublished: true,
-      slug: chapterSlug,
-    },
+    }),
   }),
 );
 

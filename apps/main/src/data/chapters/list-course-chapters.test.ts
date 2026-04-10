@@ -84,4 +84,20 @@ describe(listCourseChapters, () => {
 
     expect(result).toEqual([]);
   });
+
+  test("excludes archived chapters", async () => {
+    const archivedChapter = await chapterFixture({
+      archivedAt: new Date(),
+      courseId: publishedCourse.id,
+      isPublished: true,
+      language: "en",
+      organizationId: brandOrg.id,
+      position: 3,
+      title: "Archived Chapter",
+    });
+
+    const result = await listCourseChapters({ courseId: publishedCourse.id });
+
+    expect(result.find((chapter) => chapter.id === archivedChapter.id)).toBeUndefined();
+  });
 });

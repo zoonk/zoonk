@@ -4,10 +4,17 @@ import { type ImportMode } from "@/lib/import-mode";
 import { deduplicateImportSlugs, resolveImportSlug } from "@/lib/import-slug";
 import { parseJsonFile } from "@/lib/parse-json-file";
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
-import { type Chapter, type TransactionClient, prisma } from "@zoonk/db";
+import {
+  type Chapter,
+  type TransactionClient,
+  getActiveChapterWhere,
+  getActiveCourseWhere,
+  prisma,
+} from "@zoonk/db";
 import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { isJsonObject } from "@zoonk/utils/json";
 import { normalizeString, toSlug } from "@zoonk/utils/string";
+import { replaceCourseChapters } from "../curriculum-replace";
 
 type ChapterImportData = {
   description: string;
@@ -38,12 +45,6 @@ function validateImportData(data: unknown): data is {
   }
 
   return data.chapters.every(validateChapterData);
-}
-
-async function removeExistingChapters(tx: TransactionClient, courseId: number): Promise<void> {
-  await tx.chapter.deleteMany({
-    where: { courseId },
-  });
 }
 
 async function resolveChapter(
@@ -120,8 +121,8 @@ export async function importChapters(params: {
   }
 
   const { data: course, error: findError } = await safeAsync(() =>
-    prisma.course.findUnique({
-      where: { id: params.courseId },
+    prisma.course.findFirst({
+      where: getActiveCourseWhere({ id: params.courseId }),
     }),
   );
 
@@ -148,12 +149,17 @@ export async function importChapters(params: {
       let startPosition = 0;
 
       if (mode === "replace") {
-        await removeExistingChapters(tx, params.courseId);
+        await replaceCourseChapters({
+          courseId: params.courseId,
+          tx,
+        });
       } else {
         const existingChapters = await tx.chapter.findMany({
           orderBy: { position: "desc" },
           take: 1,
-          where: { courseId: params.courseId },
+          where: getActiveChapterWhere({
+            chapterWhere: { courseId: params.courseId },
+          }),
         });
 
         startPosition = (existingChapters[0]?.position ?? -1) + 1;
@@ -176,10 +182,12 @@ export async function importChapters(params: {
       const allSlugs = chaptersToImport.map((item) => item.slug);
 
       const existingChaptersInCourse = await tx.chapter.findMany({
-        where: {
-          courseId: params.courseId,
-          slug: { in: allSlugs },
-        },
+        where: getActiveChapterWhere({
+          chapterWhere: {
+            courseId: params.courseId,
+            slug: { in: allSlugs },
+          },
+        }),
       });
 
       const existingChapterMap = new Map(

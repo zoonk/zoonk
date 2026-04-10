@@ -1,6 +1,11 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
 import { type CourseWorkflowStepName } from "@zoonk/core/workflows/steps";
-import { type CourseGetPayload, type CourseSuggestion, prisma } from "@zoonk/db";
+import {
+  type CourseGetPayload,
+  type CourseSuggestion,
+  getActiveCourseWhere,
+  prisma,
+} from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { ensureLocaleSuffix, toSlug } from "@zoonk/utils/string";
@@ -32,17 +37,21 @@ export async function checkExistingCourseStep(
     Promise.all([
       prisma.course.findFirst({
         include: courseInclude,
-        where: {
+        where: getActiveCourseWhere({
           organization: { slug: AI_ORG_SLUG },
           slug: ensureLocaleSuffix(normalizedSlug, suggestion.language),
-        },
+        }),
       }),
-      prisma.courseAlternativeTitle.findUnique({
+      prisma.courseAlternativeTitle.findFirst({
         include: {
           course: { include: courseInclude },
         },
         where: {
-          languageSlug: { language: suggestion.language, slug: normalizedSlug },
+          course: getActiveCourseWhere({
+            organization: { slug: AI_ORG_SLUG },
+          }),
+          language: suggestion.language,
+          slug: normalizedSlug,
         },
       }),
     ]),

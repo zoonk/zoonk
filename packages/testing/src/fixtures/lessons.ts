@@ -9,6 +9,7 @@ export function lessonAttrs(
   const normalizedTitle = attrs?.normalizedTitle ?? normalizeString(title);
 
   return {
+    archivedAt: null,
     chapterId: 0,
     concepts: [],
     description: "Test lesson description",

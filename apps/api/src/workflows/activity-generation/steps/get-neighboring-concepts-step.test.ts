@@ -1,11 +1,11 @@
 import { randomUUID } from "node:crypto";
-import { fetchLessonActivities } from "@/workflows/_test-utils/fetch-lesson-activities";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { fetchLessonActivities } from "./_utils/fetch-lesson-activities";
 import { getNeighboringConceptsStep } from "./get-neighboring-concepts-step";
 
 vi.mock("workflow", () => ({
@@ -123,5 +123,68 @@ describe(getNeighboringConceptsStep, () => {
     const result = await getNeighboringConceptsStep(activities);
 
     expect(result).toEqual([]);
+  });
+
+  test("excludes archived neighboring lessons", async () => {
+    const id = randomUUID().slice(0, 8);
+
+    const course = await courseFixture({ organizationId });
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      organizationId,
+      title: `Archived Neighbor Chapter ${randomUUID()}`,
+    });
+
+    const lessons = await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
+        concepts: [`concept-${id}-left`],
+        kind: "language",
+        organizationId,
+        position: 0,
+        title: `Left Neighbor ${randomUUID()}`,
+      }),
+      lessonFixture({
+        archivedAt: new Date(),
+        chapterId: chapter.id,
+        concepts: [`concept-${id}-archived`],
+        kind: "language",
+        organizationId,
+        position: 1,
+        title: `Archived Neighbor ${randomUUID()}`,
+      }),
+      lessonFixture({
+        chapterId: chapter.id,
+        concepts: [`concept-${id}-target`],
+        kind: "language",
+        organizationId,
+        position: 2,
+        title: `Target Lesson ${randomUUID()}`,
+      }),
+      lessonFixture({
+        chapterId: chapter.id,
+        concepts: [`concept-${id}-right`],
+        kind: "language",
+        organizationId,
+        position: 3,
+        title: `Right Neighbor ${randomUUID()}`,
+      }),
+    ]);
+
+    await activityFixture({
+      generationStatus: "pending",
+      kind: "vocabulary",
+      lessonId: lessons[2].id,
+      organizationId,
+      position: 0,
+      title: `Target Activity ${randomUUID()}`,
+    });
+
+    const activities = await fetchLessonActivities(lessons[2].id);
+    const result = await getNeighboringConceptsStep(activities);
+
+    expect(result).toContain(`concept-${id}-left`);
+    expect(result).toContain(`concept-${id}-right`);
+    expect(result).not.toContain(`concept-${id}-archived`);
   });
 });

@@ -1,5 +1,5 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { getPublishedActivityWhere, getPublishedStepWhere, prisma } from "@zoonk/db";
 import { cache } from "react";
 
 const cachedGetActivity = cache(async (lessonId: number, position: number) =>
@@ -8,11 +8,13 @@ const cachedGetActivity = cache(async (lessonId: number, position: number) =>
       steps: {
         include: { sentence: true, word: true },
         orderBy: { position: "asc" },
-        where: { isPublished: true },
+        where: getPublishedStepWhere(),
       },
     },
     orderBy: { position: "asc" },
-    where: { isPublished: true, lessonId, position },
+    where: getPublishedActivityWhere({
+      activityWhere: { lessonId, position },
+    }),
   }),
 );
 

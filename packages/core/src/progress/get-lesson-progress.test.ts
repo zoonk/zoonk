@@ -263,4 +263,53 @@ describe(getLessonProgress, () => {
     ]);
     expect(result.find((row) => row.lessonId === lessonWithoutActivities.id)).toBeUndefined();
   });
+
+  test("excludes archived activities from lesson totals", async () => {
+    const [user, course] = await Promise.all([
+      userFixture(),
+      courseFixture({ isPublished: true, organizationId: organization.id }),
+    ]);
+
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      isPublished: true,
+      organizationId: organization.id,
+      position: 0,
+    });
+
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      isPublished: true,
+      organizationId: organization.id,
+      position: 0,
+    });
+
+    const [activeActivity] = await Promise.all([
+      activityFixture({
+        isPublished: true,
+        lessonId: lesson.id,
+        organizationId: organization.id,
+        position: 0,
+      }),
+      activityFixture({
+        archivedAt: new Date(),
+        isPublished: true,
+        lessonId: lesson.id,
+        organizationId: organization.id,
+        position: 1,
+      }),
+    ]);
+
+    await activityProgressFixture({
+      activityId: activeActivity.id,
+      completedAt: new Date(),
+      durationSeconds: 60,
+      userId: Number(user.id),
+    });
+
+    const headers = await signInAs(user.email, user.password);
+    const result = await getLessonProgress({ chapterId: chapter.id, headers });
+
+    expect(result).toEqual([{ completedActivities: 1, lessonId: lesson.id, totalActivities: 1 }]);
+  });
 });

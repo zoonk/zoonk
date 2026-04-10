@@ -1,7 +1,7 @@
 import "server-only";
 import { ErrorCode } from "@/lib/app-error";
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
-import { type Chapter, prisma } from "@zoonk/db";
+import { type Chapter, getActiveChapterWhere, prisma } from "@zoonk/db";
 import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
 
 export async function toggleChapterPublished(params: {
@@ -10,8 +10,10 @@ export async function toggleChapterPublished(params: {
   isPublished: boolean;
 }): Promise<SafeReturn<Chapter>> {
   const { data: chapter, error: findError } = await safeAsync(() =>
-    prisma.chapter.findUnique({
-      where: { id: params.chapterId },
+    prisma.chapter.findFirst({
+      where: getActiveChapterWhere({
+        chapterWhere: { id: params.chapterId },
+      }),
     }),
   );
 

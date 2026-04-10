@@ -286,6 +286,29 @@ describe("admins", () => {
     expect(result.data).toBeNull();
   });
 
+  test("returns Chapter not found when the chapter is archived", async () => {
+    const archivedCourse = await courseFixture({ organizationId: organization.id });
+    const archivedChapter = await chapterFixture({
+      archivedAt: new Date(),
+      courseId: archivedCourse.id,
+      language: archivedCourse.language,
+      organizationId: organization.id,
+    });
+
+    const result = await createLesson({
+      ...lessonAttrs({
+        chapterId: archivedChapter.id,
+        organizationId: organization.id,
+      }),
+      chapterId: archivedChapter.id,
+      headers,
+      position: 0,
+    });
+
+    expect(result.error?.message).toBe(ErrorCode.chapterNotFound);
+    expect(result.data).toBeNull();
+  });
+
   test("don't allow to create lesson for a different organization", async () => {
     const otherOrg = await organizationFixture();
     const otherCourse = await courseFixture({ organizationId: otherOrg.id });
@@ -494,6 +517,53 @@ describe("admins", () => {
     expect(lessons[2]?.position).toBe(2);
     expect(lessons[3]?.id).toBe(lesson3.id);
     expect(lessons[3]?.position).toBe(3);
+  });
+
+  test("does not shift archived lessons when inserting active content", async () => {
+    const newCourse = await courseFixture({ organizationId: organization.id });
+    const newChapter = await chapterFixture({
+      courseId: newCourse.id,
+      language: newCourse.language,
+      organizationId: organization.id,
+    });
+
+    const [activeLesson, archivedLesson] = await Promise.all([
+      lessonFixture({
+        chapterId: newChapter.id,
+        language: newChapter.language,
+        organizationId: organization.id,
+        position: 0,
+      }),
+      lessonFixture({
+        archivedAt: new Date(),
+        chapterId: newChapter.id,
+        language: newChapter.language,
+        organizationId: organization.id,
+        position: 1,
+      }),
+    ]);
+
+    const result = await createLesson({
+      ...lessonAttrs({
+        chapterId: newChapter.id,
+        organizationId: organization.id,
+      }),
+      chapterId: newChapter.id,
+      headers,
+      position: 0,
+    });
+
+    expect(result.error).toBeNull();
+
+    const [updatedActive, unchangedArchived] = await Promise.all([
+      prisma.lesson.findUniqueOrThrow({ where: { id: activeLesson.id } }),
+      prisma.lesson.findUniqueOrThrow({ where: { id: archivedLesson.id } }),
+    ]);
+
+    expect(result.data?.position).toBe(0);
+    expect(updatedActive.position).toBe(1);
+    expect(unchangedArchived.position).toBe(1);
+    expect(unchangedArchived.archivedAt).not.toBeNull();
   });
 
   test("does not shift lessons when creating at end", async () => {

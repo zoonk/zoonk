@@ -5,10 +5,18 @@ import { deduplicateImportSlugs, resolveImportSlug } from "@/lib/import-slug";
 import { getLessonKind } from "@/lib/lesson-kind";
 import { parseJsonFile } from "@/lib/parse-json-file";
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
-import { type Lesson, type LessonKind, type TransactionClient, prisma } from "@zoonk/db";
+import {
+  type Lesson,
+  type LessonKind,
+  type TransactionClient,
+  getActiveChapterWhere,
+  getActiveLessonWhere,
+  prisma,
+} from "@zoonk/db";
 import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { isJsonObject } from "@zoonk/utils/json";
 import { normalizeString, toSlug } from "@zoonk/utils/string";
+import { replaceChapterLessons } from "../curriculum-replace";
 
 type LessonImportData = {
   description: string;
@@ -39,12 +47,6 @@ function validateImportData(data: unknown): data is {
   }
 
   return data.lessons.every(validateLessonData);
-}
-
-async function removeExistingLessons(tx: TransactionClient, chapterId: number): Promise<void> {
-  await tx.lesson.deleteMany({
-    where: { chapterId },
-  });
 }
 
 async function resolveLesson(
@@ -118,12 +120,14 @@ export async function importLessons(params: {
   }
 
   const { data: chapter, error: findError } = await safeAsync(() =>
-    prisma.chapter.findUnique({
+    prisma.chapter.findFirst({
       include: {
         course: { include: { categories: true } },
         organization: true,
       },
-      where: { id: params.chapterId },
+      where: getActiveChapterWhere({
+        chapterWhere: { id: params.chapterId },
+      }),
     }),
   );
 
@@ -155,12 +159,17 @@ export async function importLessons(params: {
       let startPosition = 0;
 
       if (mode === "replace") {
-        await removeExistingLessons(tx, params.chapterId);
+        await replaceChapterLessons({
+          chapterId: params.chapterId,
+          tx,
+        });
       } else {
         const existingLessons = await tx.lesson.findMany({
           orderBy: { position: "desc" },
           take: 1,
-          where: { chapterId: params.chapterId },
+          where: getActiveLessonWhere({
+            lessonWhere: { chapterId: params.chapterId },
+          }),
         });
 
         startPosition = (existingLessons[0]?.position ?? -1) + 1;
@@ -183,10 +192,12 @@ export async function importLessons(params: {
       const allSlugs = lessonsToImport.map((item) => item.slug);
 
       const existingLessonsInChapter = await tx.lesson.findMany({
-        where: {
-          chapterId: params.chapterId,
-          slug: { in: allSlugs },
-        },
+        where: getActiveLessonWhere({
+          lessonWhere: {
+            chapterId: params.chapterId,
+            slug: { in: allSlugs },
+          },
+        }),
       });
 
       const existingLessonMap = new Map(

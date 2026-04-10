@@ -50,6 +50,22 @@ describe(listSitemapCourses, () => {
     expect(found).toBeUndefined();
   });
 
+  test("excludes archived courses", async () => {
+    const org = await organizationFixture({ kind: "brand" });
+
+    const course = await courseFixture({
+      archivedAt: new Date(),
+      isPublished: true,
+      organizationId: org.id,
+    });
+
+    const count = await countSitemapCourses();
+    const courses = await listSitemapCourses(lastPage(count));
+    const found = courses.find((item) => item.courseSlug === course.slug);
+
+    expect(found).toBeUndefined();
+  });
+
   test("excludes non-brand organization courses", async () => {
     const org = await organizationFixture({ kind: "personal" });
 

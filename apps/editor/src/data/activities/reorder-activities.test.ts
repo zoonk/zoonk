@@ -164,6 +164,30 @@ describe("admins", () => {
     expect(result.data).toBeNull();
   });
 
+  test("returns Lesson not found when the lesson is archived", async () => {
+    const course = await courseFixture({ organizationId: organization.id });
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      language: course.language,
+      organizationId: organization.id,
+    });
+    const archivedLesson = await lessonFixture({
+      archivedAt: new Date(),
+      chapterId: chapter.id,
+      language: course.language,
+      organizationId: organization.id,
+    });
+
+    const result = await reorderActivities({
+      activities: [],
+      headers,
+      lessonId: archivedLesson.id,
+    });
+
+    expect(result.error?.message).toBe(ErrorCode.lessonNotFound);
+    expect(result.data).toBeNull();
+  });
+
   test("returns Forbidden for lesson in different organization", async () => {
     const otherOrg = await organizationFixture();
     const otherCourse = await courseFixture({ organizationId: otherOrg.id });
@@ -238,5 +262,55 @@ describe("admins", () => {
     });
 
     expect(updatedActivity?.position).toBe(expectedPosition);
+  });
+
+  test("ignores archived activities when reordering", async () => {
+    const course = await courseFixture({ organizationId: organization.id });
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      language: course.language,
+      organizationId: organization.id,
+    });
+    const newLesson = await lessonFixture({
+      chapterId: chapter.id,
+      language: course.language,
+      organizationId: organization.id,
+    });
+
+    const [activeActivity, archivedActivity] = await Promise.all([
+      activityFixture({
+        language: course.language,
+        lessonId: newLesson.id,
+        organizationId: organization.id,
+        position: 0,
+      }),
+      activityFixture({
+        archivedAt: new Date(),
+        language: course.language,
+        lessonId: newLesson.id,
+        organizationId: organization.id,
+        position: 1,
+      }),
+    ]);
+
+    const result = await reorderActivities({
+      activities: [
+        { activityId: activeActivity.id, position: 5 },
+        { activityId: archivedActivity.id, position: 9 },
+      ],
+      headers,
+      lessonId: newLesson.id,
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data?.updated).toBe(1);
+
+    const [updatedActive, unchangedArchived] = await Promise.all([
+      prisma.activity.findUniqueOrThrow({ where: { id: activeActivity.id } }),
+      prisma.activity.findUniqueOrThrow({ where: { id: archivedActivity.id } }),
+    ]);
+
+    expect(updatedActive.position).toBe(5);
+    expect(unchangedArchived.position).toBe(1);
   });
 });

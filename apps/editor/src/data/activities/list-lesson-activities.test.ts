@@ -191,4 +191,34 @@ describe("admins", () => {
     expect(result.error).toBeNull();
     expect(result.data).toEqual([]);
   });
+
+  test("excludes archived activities", async () => {
+    const course = await courseFixture({ organizationId: organization.id });
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      language: course.language,
+      organizationId: organization.id,
+    });
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      language: course.language,
+      organizationId: organization.id,
+    });
+
+    const archivedActivity = await activityFixture({
+      archivedAt: new Date(),
+      language: course.language,
+      lessonId: lesson.id,
+      organizationId: organization.id,
+    });
+
+    const result = await listLessonActivities({
+      headers,
+      lessonId: lesson.id,
+      orgId: organization.id,
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data.find((activity) => activity.id === archivedActivity.id)).toBeUndefined();
+  });
 });

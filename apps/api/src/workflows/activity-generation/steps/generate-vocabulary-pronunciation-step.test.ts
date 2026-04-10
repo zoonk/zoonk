@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
-import { fetchLessonActivities } from "@/workflows/_test-utils/fetch-lesson-activities";
 import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
+import { fetchLessonActivities } from "@/workflows/activity-generation/steps/_utils/fetch-lesson-activities";
 import { generateActivityPronunciation } from "@zoonk/ai/tasks/activities/language/pronunciation";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";

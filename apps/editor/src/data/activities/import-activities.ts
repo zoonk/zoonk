@@ -3,9 +3,16 @@ import { ErrorCode } from "@/lib/app-error";
 import { type ImportMode } from "@/lib/import-mode";
 import { parseJsonFile } from "@/lib/parse-json-file";
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
-import { type Activity, type ActivityKind, type TransactionClient, prisma } from "@zoonk/db";
+import {
+  type Activity,
+  type ActivityKind,
+  getActiveActivityWhere,
+  getActiveLessonWhere,
+  prisma,
+} from "@zoonk/db";
 import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { isJsonObject } from "@zoonk/utils/json";
+import { replaceLessonActivities } from "../curriculum-replace";
 
 const validActivityKinds = new Set<ActivityKind>([
   "custom",
@@ -55,12 +62,6 @@ function validateImportData(data: unknown): data is {
   return data.activities.every(validateActivityData);
 }
 
-async function removeExistingActivities(tx: TransactionClient, lessonId: number): Promise<void> {
-  await tx.activity.deleteMany({
-    where: { lessonId },
-  });
-}
-
 export async function importActivities(params: {
   file: File;
   headers?: Headers;
@@ -80,8 +81,10 @@ export async function importActivities(params: {
   }
 
   const { data: lesson, error: findError } = await safeAsync(() =>
-    prisma.lesson.findUnique({
-      where: { id: params.lessonId },
+    prisma.lesson.findFirst({
+      where: getActiveLessonWhere({
+        lessonWhere: { id: params.lessonId },
+      }),
     }),
   );
 
@@ -108,12 +111,17 @@ export async function importActivities(params: {
       let startPosition = 0;
 
       if (mode === "replace") {
-        await removeExistingActivities(tx, params.lessonId);
+        await replaceLessonActivities({
+          lessonId: params.lessonId,
+          tx,
+        });
       } else {
         const existingActivities = await tx.activity.findMany({
           orderBy: { position: "desc" },
           take: 1,
-          where: { lessonId: params.lessonId },
+          where: getActiveActivityWhere({
+            activityWhere: { lessonId: params.lessonId },
+          }),
         });
 
         startPosition = (existingActivities[0]?.position ?? -1) + 1;

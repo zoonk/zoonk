@@ -1,16 +1,14 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { getPublishedChapterWhere, prisma } from "@zoonk/db";
 import { SITEMAP_BATCH_SIZE } from "./courses";
 
 export async function countSitemapChapters(): Promise<number> {
   return prisma.chapter.count({
-    where: {
-      course: {
-        isPublished: true,
+    where: getPublishedChapterWhere({
+      courseWhere: {
         organization: { kind: "brand" },
       },
-      isPublished: true,
-    },
+    }),
   });
 }
 
@@ -29,13 +27,11 @@ export async function listSitemapChapters(page: number): Promise<
     orderBy: { id: "asc" },
     skip: page * SITEMAP_BATCH_SIZE,
     take: SITEMAP_BATCH_SIZE,
-    where: {
-      course: {
-        isPublished: true,
+    where: getPublishedChapterWhere({
+      courseWhere: {
         organization: { kind: "brand" },
       },
-      isPublished: true,
-    },
+    }),
   });
 
   return chapters.map((chapter) => ({

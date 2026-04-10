@@ -123,4 +123,25 @@ describe("admins", () => {
     expect(result.error?.message).toBe(ErrorCode.forbidden);
     expect(result.data).toEqual([]);
   });
+
+  test("excludes archived chapters", async () => {
+    const course = await courseFixture({ organizationId: organization.id });
+
+    const archivedChapter = await chapterFixture({
+      archivedAt: new Date(),
+      courseId: course.id,
+      language: course.language,
+      organizationId: organization.id,
+      position: 0,
+    });
+
+    const result = await listCourseChapters({
+      courseId: course.id,
+      headers,
+      orgId: organization.id,
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data.find((chapter) => chapter.id === archivedChapter.id)).toBeUndefined();
+  });
 });

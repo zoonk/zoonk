@@ -1,3 +1,4 @@
+import { prisma } from "@zoonk/db";
 import { activityFixture, activityProgressFixture } from "@zoonk/testing/fixtures/activities";
 import { signInAs } from "@zoonk/testing/fixtures/auth";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
@@ -452,5 +453,29 @@ describe("authenticated users", () => {
       lesson: null,
       status: "pending",
     });
+  });
+
+  test("excludes archived courses from continue learning", async () => {
+    const user = await userFixture();
+    const headers = await signInAs(user.email, user.password);
+
+    const { activity1, course } = await createCourseWithActivities(organization.id);
+
+    await Promise.all([
+      activityProgressFixture({
+        activityId: activity1.id,
+        completedAt: new Date(),
+        durationSeconds: 60,
+        userId: Number(user.id),
+      }),
+      prisma.course.update({
+        data: { archivedAt: new Date() },
+        where: { id: course.id },
+      }),
+    ]);
+
+    const result = await getContinueLearning(headers);
+
+    expect(result.find((item) => item.course.id === course.id)).toBeUndefined();
   });
 });

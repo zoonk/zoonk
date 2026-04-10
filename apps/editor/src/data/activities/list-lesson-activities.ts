@@ -1,7 +1,7 @@
 import "server-only";
 import { ErrorCode } from "@/lib/app-error";
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
-import { type Activity, prisma } from "@zoonk/db";
+import { type Activity, getActiveActivityWhere, prisma } from "@zoonk/db";
 import { AppError, safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
 
@@ -24,7 +24,9 @@ const cachedListLessonActivities = cache(
         }),
         prisma.activity.findMany({
           orderBy: { position: "asc" },
-          where: { lessonId, organizationId: orgId },
+          where: getActiveActivityWhere({
+            activityWhere: { lessonId, organizationId: orgId },
+          }),
         }),
       ]),
     );

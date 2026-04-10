@@ -165,4 +165,29 @@ describe("admins", () => {
     expect(result.error).toBeNull();
     expect(result.data).toEqual([]);
   });
+
+  test("excludes archived lessons", async () => {
+    const course = await courseFixture({ organizationId: organization.id });
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      language: course.language,
+      organizationId: organization.id,
+    });
+
+    const archivedLesson = await lessonFixture({
+      archivedAt: new Date(),
+      chapterId: chapter.id,
+      language: chapter.language,
+      organizationId: organization.id,
+    });
+
+    const result = await listChapterLessons({
+      chapterId: chapter.id,
+      headers,
+      orgId: organization.id,
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data.find((lesson) => lesson.id === archivedLesson.id)).toBeUndefined();
+  });
 });

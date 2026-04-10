@@ -111,6 +111,21 @@ describe("admins", () => {
     expect(result.data).toBeNull();
   });
 
+  test("returns Course not found for archived course", async () => {
+    const archivedCourse = await courseFixture({
+      archivedAt: new Date(),
+      organizationId: organization.id,
+    });
+
+    const result = await exportChapters({
+      courseId: archivedCourse.id,
+      headers,
+    });
+
+    expect(result.error?.message).toBe(ErrorCode.courseNotFound);
+    expect(result.data).toBeNull();
+  });
+
   test("don't allow exporting chapters from a different organization", async () => {
     const otherOrg = await organizationFixture();
     const otherCourse = await courseFixture({ organizationId: otherOrg.id });
@@ -192,5 +207,36 @@ describe("admins", () => {
       slug: "test-slug",
       title: "Test Title",
     });
+  });
+
+  test("excludes archived chapters from exports", async () => {
+    const newCourse = await courseFixture({ organizationId: organization.id });
+
+    await Promise.all([
+      chapterFixture({
+        courseId: newCourse.id,
+        language: newCourse.language,
+        organizationId: organization.id,
+        position: 0,
+        title: "Active Chapter",
+      }),
+      chapterFixture({
+        archivedAt: new Date(),
+        courseId: newCourse.id,
+        language: newCourse.language,
+        organizationId: organization.id,
+        position: 1,
+        title: "Archived Chapter",
+      }),
+    ]);
+
+    const result = await exportChapters({
+      courseId: newCourse.id,
+      headers,
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data?.chapters).toHaveLength(1);
+    expect(result.data?.chapters[0]?.title).toBe("Active Chapter");
   });
 });

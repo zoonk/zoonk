@@ -1,10 +1,13 @@
+import { randomUUID } from "node:crypto";
 import { ErrorCode } from "@/lib/app-error";
 import { prisma } from "@zoonk/db";
+import { activityFixture, activityProgressFixture } from "@zoonk/testing/fixtures/activities";
 import { signInAs } from "@zoonk/testing/fixtures/auth";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
-import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { courseAlternativeTitleFixture, courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { memberFixture, organizationFixture } from "@zoonk/testing/fixtures/orgs";
+import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeAll, describe, expect, test } from "vitest";
 import { deleteCourse } from "./delete-course";
 
@@ -82,7 +85,52 @@ describe("admins", () => {
     expect(deletedCourse).toBeNull();
   });
 
-  test("returns Forbidden for published course", async () => {
+  test("archives a learner-touched course without returning an error", async () => {
+    const user = await userFixture();
+    const course = await courseFixture({
+      isPublished: false,
+      organizationId: organization.id,
+    });
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      language: course.language,
+      organizationId: organization.id,
+    });
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      language: chapter.language,
+      organizationId: organization.id,
+    });
+    const activity = await activityFixture({
+      lessonId: lesson.id,
+      organizationId: organization.id,
+    });
+
+    await activityProgressFixture({
+      activityId: activity.id,
+      completedAt: new Date(),
+      durationSeconds: 30,
+      userId: Number(user.id),
+    });
+
+    const result = await deleteCourse({
+      courseId: course.id,
+      headers,
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data?.id).toBe(course.id);
+    expect(result.data?.archivedAt).not.toBeNull();
+
+    const unchangedCourse = await prisma.course.findUnique({
+      where: { id: course.id },
+    });
+
+    expect(unchangedCourse).not.toBeNull();
+    expect(unchangedCourse?.archivedAt).not.toBeNull();
+  });
+
+  test("returns Forbidden for a published course", async () => {
     const course = await courseFixture({
       isPublished: true,
       organizationId: organization.id,
@@ -101,6 +149,7 @@ describe("admins", () => {
     });
 
     expect(unchangedCourse).not.toBeNull();
+    expect(unchangedCourse?.archivedAt).toBeNull();
   });
 });
 
@@ -140,6 +189,148 @@ describe("owners", () => {
     });
 
     expect(deletedCourse).toBeNull();
+  });
+
+  test("hard deletes a published course with no learner history", async () => {
+    const course = await courseFixture({
+      isPublished: true,
+      organizationId: organization.id,
+    });
+
+    const result = await deleteCourse({
+      courseId: course.id,
+      headers,
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data?.id).toBe(course.id);
+
+    const deletedCourse = await prisma.course.findUnique({
+      where: { id: course.id },
+    });
+
+    expect(deletedCourse).toBeNull();
+  });
+
+  test("archives learner-touched courses instead of deleting them", async () => {
+    const user = await userFixture();
+    const course = await courseFixture({
+      isPublished: false,
+      organizationId: organization.id,
+    });
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      language: course.language,
+      organizationId: organization.id,
+    });
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      language: chapter.language,
+      organizationId: organization.id,
+    });
+    const activity = await activityFixture({
+      lessonId: lesson.id,
+      organizationId: organization.id,
+    });
+
+    await activityProgressFixture({
+      activityId: activity.id,
+      completedAt: new Date(),
+      durationSeconds: 45,
+      userId: Number(user.id),
+    });
+
+    const result = await deleteCourse({
+      courseId: course.id,
+      headers,
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data?.id).toBe(course.id);
+    expect(result.data?.archivedAt).not.toBeNull();
+
+    const [archivedCourse, unchangedChapter, unchangedLesson] = await Promise.all([
+      prisma.course.findUnique({
+        where: { id: course.id },
+      }),
+      prisma.chapter.findUnique({
+        where: { id: chapter.id },
+      }),
+      prisma.lesson.findUnique({
+        where: { id: lesson.id },
+      }),
+    ]);
+
+    expect(archivedCourse?.archivedAt).not.toBeNull();
+    expect(unchangedChapter).not.toBeNull();
+    expect(unchangedLesson).not.toBeNull();
+  });
+
+  test("releases the course slug and deletes alternative titles when archiving", async () => {
+    const user = await userFixture();
+    const id = randomUUID().slice(0, 8);
+    const originalSlug = `reusable-course-slug-${id}`;
+    const alternativeSlug = `reusable-course-alt-slug-${id}`;
+
+    const course = await courseFixture({
+      isPublished: false,
+      organizationId: organization.id,
+      slug: originalSlug,
+    });
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      language: course.language,
+      organizationId: organization.id,
+    });
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      language: chapter.language,
+      organizationId: organization.id,
+    });
+    const activity = await activityFixture({
+      lessonId: lesson.id,
+      organizationId: organization.id,
+    });
+
+    await Promise.all([
+      courseAlternativeTitleFixture({
+        courseId: course.id,
+        language: course.language,
+        slug: alternativeSlug,
+      }),
+      activityProgressFixture({
+        activityId: activity.id,
+        completedAt: new Date(),
+        durationSeconds: 45,
+        userId: Number(user.id),
+      }),
+    ]);
+
+    const result = await deleteCourse({
+      courseId: course.id,
+      headers,
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data?.archivedAt).not.toBeNull();
+    expect(result.data?.slug).not.toBe(originalSlug);
+
+    const [archivedCourse, alternativeTitles, replacementCourse] = await Promise.all([
+      prisma.course.findUnique({
+        where: { id: course.id },
+      }),
+      prisma.courseAlternativeTitle.findMany({
+        where: { courseId: course.id },
+      }),
+      courseFixture({
+        organizationId: organization.id,
+        slug: originalSlug,
+      }),
+    ]);
+
+    expect(archivedCourse?.slug).not.toBe(originalSlug);
+    expect(alternativeTitles).toEqual([]);
+    expect(replacementCourse.slug).toBe(originalSlug);
   });
 
   test("returns Forbidden for course in different organization", async () => {

@@ -128,6 +128,24 @@ describe("admins", () => {
     expect(result.data).toBeNull();
   });
 
+  test("returns Lesson not found when the lesson is archived", async () => {
+    const archivedLesson = await lessonFixture({
+      archivedAt: new Date(),
+      chapterId: chapter.id,
+      language: chapter.language,
+      organizationId: organization.id,
+    });
+
+    const result = await toggleLessonPublished({
+      headers,
+      isPublished: true,
+      lessonId: archivedLesson.id,
+    });
+
+    expect(result.error?.message).toBe(ErrorCode.lessonNotFound);
+    expect(result.data).toBeNull();
+  });
+
   test("returns Forbidden for lesson in different organization", async () => {
     const otherOrg = await organizationFixture();
     const otherCourse = await courseFixture({ organizationId: otherOrg.id });

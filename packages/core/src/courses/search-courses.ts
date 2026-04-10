@@ -1,5 +1,5 @@
 import "server-only";
-import { type Course, type Organization, prisma } from "@zoonk/db";
+import { type Course, type Organization, getPublishedCourseWhere, prisma } from "@zoonk/db";
 import { MAX_QUERY_ITEMS, clampQueryItems } from "@zoonk/db/utils";
 import { DEFAULT_SEARCH_LIMIT, mergeSearchResults } from "@zoonk/utils/search";
 import { normalizeString } from "@zoonk/utils/string";
@@ -22,10 +22,9 @@ export async function searchCourses(params: {
     return [];
   }
 
-  const baseWhere = {
-    isPublished: true,
+  const baseWhere = getPublishedCourseWhere({
     organization: { kind: "brand" } as const,
-  };
+  });
 
   const [exactMatch, containsMatches] = await Promise.all([
     prisma.course.findFirst({

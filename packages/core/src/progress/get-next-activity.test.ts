@@ -953,4 +953,70 @@ describe("getNextActivity - lesson scope", () => {
       lessonSlug: lesson1.slug,
     });
   });
+
+  test("skips archived activities when choosing the next activity", async () => {
+    const [user, course] = await Promise.all([
+      userFixture(),
+      courseFixture({ isPublished: true, organizationId: organization.id }),
+    ]);
+
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      isPublished: true,
+      organizationId: organization.id,
+      position: 0,
+    });
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      isPublished: true,
+      organizationId: organization.id,
+      position: 0,
+    });
+
+    const [completedActivity, , nextActiveActivity] = await Promise.all([
+      activityFixture({
+        generationStatus: "completed",
+        isPublished: true,
+        lessonId: lesson.id,
+        organizationId: organization.id,
+        position: 0,
+      }),
+      activityFixture({
+        archivedAt: new Date(),
+        generationStatus: "completed",
+        isPublished: true,
+        lessonId: lesson.id,
+        organizationId: organization.id,
+        position: 1,
+      }),
+      activityFixture({
+        generationStatus: "completed",
+        isPublished: true,
+        lessonId: lesson.id,
+        organizationId: organization.id,
+        position: 2,
+      }),
+    ]);
+
+    await activityProgressFixture({
+      activityId: completedActivity.id,
+      completedAt: new Date(),
+      durationSeconds: 60,
+      userId: Number(user.id),
+    });
+
+    const headers = await signInAs(user.email, user.password);
+    const result = await getNextActivity({ headers, scope: { courseId: course.id } });
+
+    expect(result).toEqual({
+      activityPosition: nextActiveActivity.position,
+      brandSlug: organization.slug,
+      canPrefetch: true,
+      chapterSlug: chapter.slug,
+      completed: false,
+      courseSlug: course.slug,
+      hasStarted: true,
+      lessonSlug: lesson.slug,
+    });
+  });
 });

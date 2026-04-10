@@ -4,6 +4,7 @@ function activityAttrs(
   attrs?: Partial<Activity>,
 ): Omit<Activity, "id" | "createdAt" | "updatedAt"> {
   return {
+    archivedAt: null,
     description: null,
     generationRunId: null,
     generationStatus: "completed",

@@ -159,6 +159,29 @@ describe("admins", () => {
     expect(result.data).toBeNull();
   });
 
+  test("returns Lesson not found for archived lesson", async () => {
+    const course = await courseFixture({ organizationId: organization.id });
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      language: course.language,
+      organizationId: organization.id,
+    });
+    const archivedLesson = await lessonFixture({
+      archivedAt: new Date(),
+      chapterId: chapter.id,
+      language: course.language,
+      organizationId: organization.id,
+    });
+
+    const result = await exportActivities({
+      headers,
+      lessonId: archivedLesson.id,
+    });
+
+    expect(result.error?.message).toBe(ErrorCode.lessonNotFound);
+    expect(result.data).toBeNull();
+  });
+
   test("don't allow exporting activities from a different organization", async () => {
     const otherOrg = await organizationFixture();
     const otherCourse = await courseFixture({ organizationId: otherOrg.id });
@@ -270,5 +293,48 @@ describe("admins", () => {
       position: 0,
       title: "Test Title",
     });
+  });
+
+  test("excludes archived activities from exports", async () => {
+    const course = await courseFixture({ organizationId: organization.id });
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      language: course.language,
+      organizationId: organization.id,
+    });
+    const newLesson = await lessonFixture({
+      chapterId: chapter.id,
+      language: course.language,
+      organizationId: organization.id,
+    });
+
+    await Promise.all([
+      activityFixture({
+        kind: "explanation",
+        language: course.language,
+        lessonId: newLesson.id,
+        organizationId: organization.id,
+        position: 0,
+        title: "Active Activity",
+      }),
+      activityFixture({
+        archivedAt: new Date(),
+        kind: "quiz",
+        language: course.language,
+        lessonId: newLesson.id,
+        organizationId: organization.id,
+        position: 1,
+        title: "Archived Activity",
+      }),
+    ]);
+
+    const result = await exportActivities({
+      headers,
+      lessonId: newLesson.id,
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data?.activities).toHaveLength(1);
+    expect(result.data?.activities[0]?.title).toBe("Active Activity");
   });
 });

@@ -171,6 +171,27 @@ describe("authenticated users", () => {
     expect(result.data?.some((item) => item.id === personalCourse.id)).toBe(true);
   });
 
+  test("excludes archived courses", async () => {
+    const testUser = await userFixture();
+    const testHeaders = await signInAs(testUser.email, testUser.password);
+
+    const archivedCourse = await courseFixture({
+      archivedAt: new Date(),
+      isPublished: true,
+      organizationId: organization.id,
+    });
+
+    await courseUserFixture({
+      courseId: archivedCourse.id,
+      userId: Number(testUser.id),
+    });
+
+    const result = await listUserCourses(testHeaders);
+
+    expect(result.error).toBeNull();
+    expect(result.data?.some((item) => item.id === archivedCourse.id)).toBe(false);
+  });
+
   test("does not return other users courses", async () => {
     const [otherUser, testUser] = await Promise.all([userFixture(), userFixture()]);
 

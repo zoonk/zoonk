@@ -134,6 +134,24 @@ describe("admins", () => {
     expect(result.data).toBeNull();
   });
 
+  test("returns Chapter not found for archived chapter", async () => {
+    const course = await courseFixture({ organizationId: organization.id });
+    const archivedChapter = await chapterFixture({
+      archivedAt: new Date(),
+      courseId: course.id,
+      language: course.language,
+      organizationId: organization.id,
+    });
+
+    const result = await exportLessons({
+      chapterId: archivedChapter.id,
+      headers,
+    });
+
+    expect(result.error?.message).toBe(ErrorCode.chapterNotFound);
+    expect(result.data).toBeNull();
+  });
+
   test("don't allow exporting lessons from a different organization", async () => {
     const otherOrg = await organizationFixture();
     const otherCourse = await courseFixture({ organizationId: otherOrg.id });
@@ -230,5 +248,41 @@ describe("admins", () => {
       slug: "test-slug",
       title: "Test Title",
     });
+  });
+
+  test("excludes archived lessons from exports", async () => {
+    const course = await courseFixture({ organizationId: organization.id });
+    const newChapter = await chapterFixture({
+      courseId: course.id,
+      language: course.language,
+      organizationId: organization.id,
+    });
+
+    await Promise.all([
+      lessonFixture({
+        chapterId: newChapter.id,
+        language: newChapter.language,
+        organizationId: organization.id,
+        position: 0,
+        title: "Active Lesson",
+      }),
+      lessonFixture({
+        archivedAt: new Date(),
+        chapterId: newChapter.id,
+        language: newChapter.language,
+        organizationId: organization.id,
+        position: 1,
+        title: "Archived Lesson",
+      }),
+    ]);
+
+    const result = await exportLessons({
+      chapterId: newChapter.id,
+      headers,
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data?.lessons).toHaveLength(1);
+    expect(result.data?.lessons[0]?.title).toBe("Active Lesson");
   });
 });

@@ -109,6 +109,22 @@ describe("org admins", () => {
     expect(result.data.find((course) => course.id === publishedCourse.id)).toBeUndefined();
   });
 
+  test("excludes archived draft courses", async () => {
+    const archivedCourse = await courseFixture({
+      archivedAt: new Date(),
+      isPublished: false,
+      organizationId: organization.id,
+    });
+
+    const result = await listDraftCourses({
+      headers,
+      orgSlug: organization.slug,
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data.find((course) => course.id === archivedCourse.id)).toBeUndefined();
+  });
+
   test("filters by language", async () => {
     await courseFixture({
       isPublished: false,

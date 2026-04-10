@@ -152,6 +152,25 @@ describe("org admins", () => {
     expect(hasPtCourse).toBe(false);
   });
 
+  test("excludes archived courses", async () => {
+    const archivedCourse = await courseFixture({
+      archivedAt: new Date(),
+      isPublished: false,
+      normalizedTitle: "admin archived course",
+      organizationId: organization.id,
+      title: "Admin Archived Course",
+    });
+
+    const result = await searchCourses({
+      headers,
+      orgSlug: organization.slug,
+      title: "admin",
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data.find((course) => course.id === archivedCourse.id)).toBeUndefined();
+  });
+
   test("does not include organization data in results", async () => {
     const result = await searchCourses({
       headers,

@@ -1,7 +1,7 @@
 import "server-only";
 import { ErrorCode } from "@/lib/app-error";
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
-import { type Lesson, prisma } from "@zoonk/db";
+import { type Lesson, getActiveLessonWhere, prisma } from "@zoonk/db";
 import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
 
@@ -15,14 +15,17 @@ const cachedGetLesson = cache(
   ): Promise<SafeReturn<Lesson | null>> => {
     const { data: lesson, error: findError } = await safeAsync(() =>
       prisma.lesson.findFirst({
-        where: {
-          chapter: {
-            course: { slug: courseSlug },
-            slug: chapterSlug,
+        where: getActiveLessonWhere({
+          chapterWhere: { slug: chapterSlug },
+          courseWhere: {
+            organization: { slug: orgSlug },
+            slug: courseSlug,
           },
-          organization: { slug: orgSlug },
-          slug: lessonSlug,
-        },
+          lessonWhere: {
+            organization: { slug: orgSlug },
+            slug: lessonSlug,
+          },
+        }),
       }),
     );
 

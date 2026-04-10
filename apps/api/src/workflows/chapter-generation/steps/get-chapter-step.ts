@@ -1,15 +1,17 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
 import { type ChapterStepName } from "@zoonk/core/workflows/steps";
-import { prisma } from "@zoonk/db";
+import { getActiveChapterWhere, prisma } from "@zoonk/db";
 import { FatalError } from "workflow";
 
 async function getChapterForGeneration(chapterId: number) {
-  return prisma.chapter.findUnique({
+  return prisma.chapter.findFirst({
     include: {
       _count: { select: { lessons: true } },
       course: true,
     },
-    where: { id: chapterId },
+    where: getActiveChapterWhere({
+      chapterWhere: { id: chapterId },
+    }),
   });
 }
 
@@ -19,14 +21,16 @@ async function getNeighboringChapters(courseId: number, position: number) {
   return prisma.chapter.findMany({
     orderBy: { position: "asc" },
     select: { description: true, title: true },
-    where: {
-      courseId,
-      position: {
-        gte: position - NEIGHBOR_RANGE,
-        lte: position + NEIGHBOR_RANGE,
-        not: position,
+    where: getActiveChapterWhere({
+      chapterWhere: {
+        courseId,
+        position: {
+          gte: position - NEIGHBOR_RANGE,
+          lte: position + NEIGHBOR_RANGE,
+          not: position,
+        },
       },
-    },
+    }),
   });
 }
 

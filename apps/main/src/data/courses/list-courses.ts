@@ -1,5 +1,5 @@
 import "server-only";
-import { type Course, prisma } from "@zoonk/db";
+import { type Course, getPublishedCourseWhere, prisma } from "@zoonk/db";
 import { clampQueryItems } from "@zoonk/db/utils";
 import { type CourseCategory } from "@zoonk/utils/categories";
 import { cache } from "react";
@@ -26,14 +26,13 @@ const cachedListCourses = cache(
       orderBy: [{ userCount: "desc" }, { id: "desc" }],
       take: limit,
       ...(cursor && { cursor: { id: cursor }, skip: 1 }),
-      where: {
-        isPublished: true,
+      where: getPublishedCourseWhere({
         language,
         organization: { kind: "brand" },
         ...(category && {
           categories: { some: { category } },
         }),
-      },
+      }),
     });
 
     return courses;
