@@ -1,3 +1,4 @@
+import { prisma } from "@zoonk/db";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
@@ -686,6 +687,33 @@ describe(getReviewSteps, () => {
     const resultIds = result.map((step) => step.id);
     expect(new Set(resultIds).size).toBe(REVIEW_TARGET_COUNT);
   });
+
+  test("excludes steps from archived activities", async () => {
+    const newLesson = await createLessonWithSteps(org.id, 2);
+    const newUser = await userFixture();
+
+    await stepAttemptFixture({
+      answer: {},
+      dayOfWeek: 1,
+      durationSeconds: 10,
+      hourOfDay: 12,
+      isCorrect: false,
+      stepId: newLesson.steps[0]!.id,
+      userId: Number(newUser.id),
+    });
+
+    await prisma.activity.update({
+      data: { archivedAt: new Date() },
+      where: { id: newLesson.activity.id },
+    });
+
+    const result = await getReviewSteps({
+      lessonId: newLesson.lesson.id,
+      userId: Number(newUser.id),
+    });
+
+    expect(result).toEqual([]);
+  });
 });
 
 describe(getReviewValidationSteps, () => {
@@ -698,9 +726,17 @@ describe(getReviewValidationSteps, () => {
   beforeAll(async () => {
     const org = await organizationFixture();
     organizationId = org.id;
-    const course = await courseFixture({ organizationId: org.id });
-    const chapter = await chapterFixture({ courseId: course.id, organizationId: org.id });
-    lesson = await lessonFixture({ chapterId: chapter.id, organizationId: org.id });
+    const course = await courseFixture({ isPublished: true, organizationId: org.id });
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      isPublished: true,
+      organizationId: org.id,
+    });
+    lesson = await lessonFixture({
+      chapterId: chapter.id,
+      isPublished: true,
+      organizationId: org.id,
+    });
 
     const mcContent = {
       kind: "core",
@@ -711,8 +747,18 @@ describe(getReviewValidationSteps, () => {
     };
 
     const [quizActivity, reviewActivity] = await Promise.all([
-      activityFixture({ kind: "quiz", lessonId: lesson.id, organizationId: org.id }),
-      activityFixture({ kind: "review", lessonId: lesson.id, organizationId: org.id }),
+      activityFixture({
+        isPublished: true,
+        kind: "quiz",
+        lessonId: lesson.id,
+        organizationId: org.id,
+      }),
+      activityFixture({
+        isPublished: true,
+        kind: "review",
+        lessonId: lesson.id,
+        organizationId: org.id,
+      }),
     ]);
 
     [quizStep, reviewStep, staticStep] = await Promise.all([
@@ -768,6 +814,7 @@ describe(getReviewValidationSteps, () => {
     });
 
     const readingActivity = await activityFixture({
+      isPublished: true,
       kind: "reading",
       lessonId: lesson.id,
       organizationId,
@@ -786,6 +833,17 @@ describe(getReviewValidationSteps, () => {
     expect(steps[0]?.sentence).toMatchObject({
       sentence: sentence.sentence,
     });
+  });
+
+  test("excludes steps from archived activities during validation", async () => {
+    await prisma.activity.update({
+      data: { archivedAt: new Date() },
+      where: { id: quizStep.activityId },
+    });
+
+    const steps = await getReviewValidationSteps(lesson.id, [quizStep.id]);
+
+    expect(steps).toEqual([]);
   });
 });
 

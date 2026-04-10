@@ -1,5 +1,5 @@
 import "server-only";
-import { type ActivityKind, type StepKind, prisma } from "@zoonk/db";
+import { type ActivityKind, type StepKind, getPublishedStepWhere, prisma } from "@zoonk/db";
 import { shuffle } from "@zoonk/utils/shuffle";
 
 const REVIEW_TARGET_COUNT = 10;
@@ -7,11 +7,11 @@ const EXCLUDED_ACTIVITY_KINDS: ActivityKind[] = ["review"];
 const NON_REVIEWABLE_STEP_KINDS: StepKind[] = ["investigation", "static", "story", "visual"];
 
 function reviewableStepFilter(lessonId: number) {
-  return {
-    activity: { kind: { notIn: EXCLUDED_ACTIVITY_KINDS }, lessonId },
-    isPublished: true,
-    kind: { notIn: NON_REVIEWABLE_STEP_KINDS },
-  };
+  return getPublishedStepWhere({
+    activityWhere: { kind: { notIn: EXCLUDED_ACTIVITY_KINDS } },
+    lessonWhere: { id: lessonId },
+    stepWhere: { kind: { notIn: NON_REVIEWABLE_STEP_KINDS } },
+  });
 }
 
 /**
