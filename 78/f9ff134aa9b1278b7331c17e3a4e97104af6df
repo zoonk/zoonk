@@ -1,0 +1,43 @@
+packages/db/src/prisma/migrations/20260409233514_add_content_archive_metadata/migration.sql
+  7067897d17bedaf8 1-14
+packages/testing/src/fixtures/chapters.ts
+  7067897d17bedaf8 12
+packages/db/src/prisma/models/courses.prisma
+  7067897d17bedaf8 63
+packages/db/src/prisma/models/lessons.prisma
+  7067897d17bedaf8 19,47,70
+packages/core/package.json
+  7067897d17bedaf8 18
+packages/testing/src/fixtures/activities.ts
+  7067897d17bedaf8 7
+packages/core/src/content/lifecycle.test.ts
+  7067897d17bedaf8 1-235
+packages/core/src/content/lifecycle.ts
+  7067897d17bedaf8 1-208
+packages/db/src/prisma/models/chapters.prisma
+  7067897d17bedaf8 17
+packages/testing/src/fixtures/courses.ts
+  7067897d17bedaf8 19
+packages/testing/src/fixtures/lessons.ts
+  7067897d17bedaf8 12
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.6",
+  "base_commit_sha": "78f9ff134aa9b1278b7331c17e3a4e97104af6df",
+  "prompts": {
+    "7067897d17bedaf8": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d745b-97a1-71c1-9998-48e92b02a2af",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 727,
+      "total_deletions": 260,
+      "accepted_lines": 467,
+      "overriden_lines": 0
+    }
+  }
+}
