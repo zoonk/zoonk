@@ -1,0 +1,33 @@
+apps/main/src/app/terms/en.mdx
+  7067897d17bedaf8 3,84,87-89
+apps/main/src/app/terms/pt.mdx
+  7067897d17bedaf8 3,82,85-87
+apps/main/src/app/privacy/es.mdx
+  7067897d17bedaf8 3,43-47
+apps/main/src/app/privacy/pt.mdx
+  7067897d17bedaf8 3,43-47
+apps/main/src/app/terms/es.mdx
+  7067897d17bedaf8 3,82,85-87
+apps/main/src/app/privacy/en.mdx
+  7067897d17bedaf8 3,43-47
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.6",
+  "base_commit_sha": "ad9fe45f7abd093ccc1325dade3b10a9b98c5ea6",
+  "prompts": {
+    "7067897d17bedaf8": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d745b-97a1-71c1-9998-48e92b02a2af",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 33,
+      "total_deletions": 12,
+      "accepted_lines": 33,
+      "overriden_lines": 0
+    }
+  }
+}
