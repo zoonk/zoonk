@@ -43,6 +43,9 @@ export async function lessonPreloadWorkflow(lessonId: number): Promise<void> {
     return;
   }
 
-  await lessonGenerationWorkflow(lessonId);
-  await activityGenerationWorkflow(lessonId);
+  const lessonGenerationResult = await lessonGenerationWorkflow(lessonId);
+
+  if (lessonGenerationResult === "ready") {
+    await activityGenerationWorkflow(lessonId);
+  }
 }

@@ -93,6 +93,7 @@ describe(lessonRegenerationWorkflow, () => {
     vi.clearAllMocks();
     lessonGenerationWorkflowMock.mockImplementation(async (lessonId: number) => {
       await completeDraftLesson(lessonId);
+      return "ready";
     });
     activityGenerationWorkflowMock.mockImplementation(async (lessonId: number) => {
       const draftLesson = await prisma.lesson.findUniqueOrThrow({ where: { id: lessonId } });
@@ -248,5 +249,34 @@ describe(lessonRegenerationWorkflow, () => {
     expect(updatedLiveLesson.generationVersion).toBe(0);
     expect(updatedLiveLesson.slug).toBe(liveLesson.slug);
     expect(lessons).toHaveLength(1);
+  });
+
+  test("marks the live lesson as failed when the regenerated draft is filtered out", async () => {
+    lessonGenerationWorkflowMock.mockResolvedValueOnce("filtered");
+
+    const liveLesson = await lessonFixture({
+      chapterId,
+      generationStatus: "completed",
+      generationVersion: 0,
+      isPublished: true,
+      kind: "core",
+      managementMode: "ai",
+      organizationId,
+      title: `Filtered Live Lesson ${randomUUID()}`,
+    });
+
+    await expect(
+      lessonRegenerationWorkflow({
+        liveLesson: await getLessonContext(liveLesson.id),
+      }),
+    ).rejects.toThrow("Regenerated lesson draft was filtered out");
+
+    const updatedLiveLesson = await prisma.lesson.findUniqueOrThrow({
+      where: { id: liveLesson.id },
+    });
+
+    expect(updatedLiveLesson.generationStatus).toBe("failed");
+    expect(updatedLiveLesson.generationVersion).toBe(0);
+    expect(updatedLiveLesson.slug).toBe(liveLesson.slug);
   });
 });

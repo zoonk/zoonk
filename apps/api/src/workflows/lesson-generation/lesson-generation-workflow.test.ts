@@ -311,5 +311,39 @@ describe(lessonGenerationWorkflow, () => {
 
       expect(generateAppliedActivityKind).not.toHaveBeenCalled();
     });
+
+    test("does not preserve a known-invalid kind when regenerating a language-course lesson", async () => {
+      vi.mocked(generateLessonKind).mockResolvedValueOnce({
+        data: { kind: "language" },
+      } as Awaited<ReturnType<typeof generateLessonKind>>);
+
+      const languageCourse = await courseFixture({
+        organizationId,
+        targetLanguage: "es",
+      });
+
+      const languageChapter = await chapterFixture({
+        courseId: languageCourse.id,
+        organizationId,
+        title: `Regenerated Language Chapter ${randomUUID()}`,
+      });
+
+      const lesson = await lessonFixture({
+        chapterId: languageChapter.id,
+        generationStatus: "pending",
+        kind: "core",
+        organizationId,
+        title: `Preserved Invalid Lesson ${randomUUID()}`,
+      });
+
+      await lessonGenerationWorkflow(lesson.id, { preserveLessonKind: true });
+
+      const updatedLesson = await prisma.lesson.findUniqueOrThrow({
+        where: { id: lesson.id },
+      });
+
+      expect(generateLessonKind).toHaveBeenCalled();
+      expect(updatedLesson.kind).toBe("language");
+    });
   });
 });

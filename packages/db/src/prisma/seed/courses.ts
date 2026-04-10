@@ -100,9 +100,9 @@ export async function seedCourses(prisma: PrismaClient, orgs: SeedOrganizations)
     ...coursesData.map((course) =>
       prisma.course.upsert({
         create: {
+          ...course,
           managementMode: "ai",
           organizationId: orgs.ai.id,
-          ...course,
         },
         update: {},
         where: {
@@ -116,9 +116,9 @@ export async function seedCourses(prisma: PrismaClient, orgs: SeedOrganizations)
     ...testOrgCoursesData.map((course) =>
       prisma.course.upsert({
         create: {
+          ...course,
           managementMode: "manual",
           organizationId: orgs.testOrg.id,
-          ...course,
         },
         update: {},
         where: {

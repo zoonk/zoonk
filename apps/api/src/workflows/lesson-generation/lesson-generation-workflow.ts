@@ -12,12 +12,32 @@ import { setLessonAsCompletedStep } from "./steps/set-lesson-as-completed-step";
 import { setLessonAsRunningStep } from "./steps/set-lesson-as-running-step";
 import { updateLessonKindStep } from "./steps/update-lesson-kind-step";
 
+type LessonGenerationContext = Awaited<ReturnType<typeof getLessonStep>>;
+
+type LessonGenerationResult = "filtered" | "ready";
+
 function isNonLanguageLesson(targetLanguage: string | null, lessonKind: LessonKind): boolean {
   return targetLanguage !== null && lessonKind !== "language";
 }
 
+/**
+ * This helper exists so regeneration can preserve the stored lesson kind only
+ * when that kind is still valid for the course. Language courses must never
+ * preserve a known-invalid "core" or "custom" kind, because doing so would
+ * generate the wrong activity set instead of re-entering the safety filter.
+ */
+function shouldPreserveLessonKind(input: {
+  context: LessonGenerationContext;
+  preserveLessonKind: boolean;
+}) {
+  return (
+    input.preserveLessonKind &&
+    !isNonLanguageLesson(input.context.chapter.course.targetLanguage, input.context.kind)
+  );
+}
+
 async function getCustomActivities(
-  context: Awaited<ReturnType<typeof getLessonStep>>,
+  context: LessonGenerationContext,
   lessonKind: LessonKind,
 ): Promise<Awaited<ReturnType<typeof generateCustomActivitiesStep>>> {
   if (lessonKind === "custom") {
@@ -29,17 +49,20 @@ async function getCustomActivities(
 }
 
 async function generateActivities(
-  context: Awaited<ReturnType<typeof getLessonStep>>,
+  context: LessonGenerationContext,
   lessonId: number,
   options: {
     preserveLessonKind: boolean;
   },
 ): Promise<LessonKind | "filtered"> {
-  const lessonKind = options.preserveLessonKind
-    ? context.kind
-    : await determineLessonKindStep(context);
+  const preservesLessonKind = shouldPreserveLessonKind({
+    context,
+    preserveLessonKind: options.preserveLessonKind,
+  });
 
-  if (options.preserveLessonKind) {
+  const lessonKind = preservesLessonKind ? context.kind : await determineLessonKindStep(context);
+
+  if (preservesLessonKind) {
     await streamSkipStep("determineLessonKind");
   }
 
@@ -50,7 +73,7 @@ async function generateActivities(
     await streamSkipStep("determineAppliedActivity");
   }
 
-  if (options.preserveLessonKind) {
+  if (preservesLessonKind) {
     await streamSkipStep("updateLessonKind");
   } else {
     await updateLessonKindStep({ kind: lessonKind, lessonId });
@@ -58,10 +81,7 @@ async function generateActivities(
 
   // The AI sometimes classifies a language-course lesson as "core" or "custom"
   // (e.g., "Culture of Spain"). Delete it — these would get inappropriate activities.
-  if (
-    !options.preserveLessonKind &&
-    isNonLanguageLesson(context.chapter.course.targetLanguage, lessonKind)
-  ) {
+  if (isNonLanguageLesson(context.chapter.course.targetLanguage, lessonKind)) {
     await removeNonLanguageLessonStep({ lessonId });
     return "filtered";
   }
@@ -85,7 +105,7 @@ export async function lessonGenerationWorkflow(
   options: {
     preserveLessonKind?: boolean;
   } = {},
-): Promise<void> {
+): Promise<LessonGenerationResult> {
   "use workflow";
 
   const { workflowRunId } = getWorkflowMetadata();
@@ -93,13 +113,13 @@ export async function lessonGenerationWorkflow(
 
   // Skip if actively running to avoid conflicts with another workflow instance.
   if (context.generationStatus === "running") {
-    return;
+    return "ready";
   }
 
   // Already completed with activities — stream the completion step so the client can redirect.
   if (context.generationStatus === "completed" && context._count.activities > 0) {
     await streamSkipStep("setLessonAsCompleted");
-    return;
+    return "ready";
   }
 
   if (context._count.activities > 0) {
@@ -108,7 +128,7 @@ export async function lessonGenerationWorkflow(
       lessonKind: context.kind,
       workflowRunId,
     });
-    return;
+    return "ready";
   }
 
   await setLessonAsRunningStep({ lessonId, workflowRunId });
@@ -118,13 +138,17 @@ export async function lessonGenerationWorkflow(
       preserveLessonKind: options.preserveLessonKind ?? false,
     });
 
-    if (result !== "filtered") {
-      await setLessonAsCompletedStep({
-        context,
-        lessonKind: result,
-        workflowRunId,
-      });
+    if (result === "filtered") {
+      return "filtered";
     }
+
+    await setLessonAsCompletedStep({
+      context,
+      lessonKind: result,
+      workflowRunId,
+    });
+
+    return "ready";
   } catch (error) {
     await handleLessonFailureStep({ lessonId });
     throw error;

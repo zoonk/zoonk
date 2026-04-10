@@ -21,7 +21,14 @@ async function regenerateDraftLesson(input: {
   const draftLesson = await createDraftLessonStep({ lesson: input.liveLesson });
 
   try {
-    await lessonGenerationWorkflow(draftLesson.id, { preserveLessonKind: true });
+    const lessonGenerationResult = await lessonGenerationWorkflow(draftLesson.id, {
+      preserveLessonKind: true,
+    });
+
+    if (lessonGenerationResult === "filtered") {
+      throw new Error("Regenerated lesson draft was filtered out");
+    }
+
     await activityGenerationWorkflow(draftLesson.id);
 
     await promoteRegeneratedLessonStep({

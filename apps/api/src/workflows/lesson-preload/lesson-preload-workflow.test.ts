@@ -15,7 +15,7 @@ vi.mock("@zoonk/core/content/management", () => ({
 }));
 
 vi.mock("../lesson-generation/lesson-generation-workflow", () => ({
-  lessonGenerationWorkflow: vi.fn().mockImplementation(async () => {}),
+  lessonGenerationWorkflow: vi.fn().mockResolvedValue("ready"),
 }));
 
 vi.mock("../activity-generation/activity-generation-workflow", () => ({
@@ -87,6 +87,7 @@ describe(lessonPreloadWorkflow, () => {
 
     vi.mocked(lessonGenerationWorkflow).mockImplementation(async () => {
       callOrder.push("lessonGeneration");
+      return "ready";
     });
 
     vi.mocked(activityGenerationWorkflow).mockImplementation(async () => {
@@ -99,6 +100,15 @@ describe(lessonPreloadWorkflow, () => {
     expect(lessonGenerationWorkflow).toHaveBeenCalledWith(initialLesson.id);
     expect(activityGenerationWorkflow).toHaveBeenCalledWith(initialLesson.id);
     expect(callOrder).toEqual(["lessonGeneration", "activityGeneration"]);
+  });
+
+  test("skips activity generation when lesson generation filters the lesson", async () => {
+    vi.mocked(lessonGenerationWorkflow).mockResolvedValueOnce("filtered");
+
+    await lessonPreloadWorkflow(initialLesson.id);
+
+    expect(lessonGenerationWorkflow).toHaveBeenCalledWith(initialLesson.id);
+    expect(activityGenerationWorkflow).not.toHaveBeenCalled();
   });
 
   test("propagates errors from lessonGenerationWorkflow", async () => {

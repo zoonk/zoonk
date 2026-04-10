@@ -75,7 +75,8 @@ export function getLessonGenerationState({
 }): LessonGenerationState {
   const managementState = getContentManagementState({ content: lesson });
   const targetGenerationVersion = getTargetLessonGenerationVersion(lesson.kind);
-  const hasGenerationVersionMismatch = lesson.generationVersion !== targetGenerationVersion;
+  const hasGenerationVersionMismatch =
+    managementState.isAiManaged && lesson.generationVersion !== targetGenerationVersion;
 
   const needsInitialGeneration =
     managementState.isAiManaged &&
@@ -92,7 +93,7 @@ export function getLessonGenerationState({
     ...managementState,
     currentGenerationVersion: lesson.generationVersion,
     hasGenerationVersionMismatch,
-    isOutdated: managementState.isAiManaged && hasGenerationVersionMismatch,
+    isOutdated: hasGenerationVersionMismatch,
     needsInitialGeneration,
     shouldAutoEnqueueRegeneration,
     targetGenerationVersion,

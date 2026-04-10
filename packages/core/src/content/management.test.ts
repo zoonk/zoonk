@@ -1,4 +1,3 @@
-import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
@@ -10,23 +9,20 @@ import {
   getTargetLessonGenerationVersion,
 } from "./management";
 
+function createLessonEligibilityInput(input: { managementMode: "ai" | "manual" | "pinned" }) {
+  return {
+    generationStatus: "completed" as const,
+    generationVersion: 1,
+    kind: "core" as const,
+    managementMode: input.managementMode,
+  };
+}
+
 describe("content management", () => {
-  let organizationId: number;
-
-  beforeAll(async () => {
-    const organization = await organizationFixture({ kind: "brand" });
-    organizationId = organization.id;
-  });
-
-  test("treats ai-managed content as eligible for automatic regeneration", async () => {
-    const course = await courseFixture({
-      managementMode: "ai",
-      organizationId,
-    });
-
+  test("treats ai-managed lessons as eligible for automatic regeneration", () => {
     expect(
       getLessonGenerationState({
-        lesson: { ...course, generationStatus: "completed", generationVersion: 1, kind: "core" },
+        lesson: createLessonEligibilityInput({ managementMode: "ai" }),
       }),
     ).toMatchObject({
       allowsAutomaticRegeneration: true,
@@ -34,19 +30,10 @@ describe("content management", () => {
     });
   });
 
-  test("keeps manual content out of automatic regeneration", async () => {
-    const course = await courseFixture({ organizationId });
-    const chapter = await chapterFixture({ courseId: course.id, organizationId });
-    const lesson = await lessonFixture({ chapterId: chapter.id, organizationId });
-    const activity = await activityFixture({
-      lessonId: lesson.id,
-      managementMode: "manual",
-      organizationId,
-    });
-
+  test("keeps manual lessons out of automatic regeneration", () => {
     expect(
       getLessonGenerationState({
-        lesson: { ...activity, generationVersion: 1, kind: "core" },
+        lesson: createLessonEligibilityInput({ managementMode: "manual" }),
       }),
     ).toMatchObject({
       allowsAutomaticRegeneration: false,
@@ -54,15 +41,10 @@ describe("content management", () => {
     });
   });
 
-  test("keeps pinned content protected from automatic regeneration", async () => {
-    const course = await courseFixture({
-      managementMode: "pinned",
-      organizationId,
-    });
-
+  test("keeps pinned lessons protected from automatic regeneration", () => {
     expect(
       getLessonGenerationState({
-        lesson: { ...course, generationStatus: "completed", generationVersion: 1, kind: "core" },
+        lesson: createLessonEligibilityInput({ managementMode: "pinned" }),
       }),
     ).toMatchObject({
       allowsAutomaticRegeneration: false,
@@ -178,7 +160,7 @@ describe("lesson generation state", () => {
     expect(getLessonGenerationState({ lesson })).toEqual({
       allowsAutomaticRegeneration: false,
       currentGenerationVersion: null,
-      hasGenerationVersionMismatch: true,
+      hasGenerationVersionMismatch: false,
       isAiManaged: false,
       isManual: true,
       isOutdated: false,

@@ -57,7 +57,10 @@ export async function chapterGenerationWorkflow(chapterId: number): Promise<void
   const firstLesson = createdLessons[0];
 
   if (firstLesson) {
-    await lessonGenerationWorkflow(firstLesson.id);
-    await activityGenerationWorkflow(firstLesson.id);
+    const lessonGenerationResult = await lessonGenerationWorkflow(firstLesson.id);
+
+    if (lessonGenerationResult === "ready") {
+      await activityGenerationWorkflow(firstLesson.id);
+    }
   }
 }
