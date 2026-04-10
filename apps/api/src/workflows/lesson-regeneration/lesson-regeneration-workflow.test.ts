@@ -251,8 +251,9 @@ describe(lessonRegenerationWorkflow, () => {
     expect(lessons).toHaveLength(1);
   });
 
-  test("marks the live lesson as failed when the regenerated draft is filtered out", async () => {
+  test("archives learner-touched live lessons when the regenerated draft is filtered out", async () => {
     lessonGenerationWorkflowMock.mockResolvedValueOnce("filtered");
+    const user = await userFixture();
 
     const liveLesson = await lessonFixture({
       chapterId,
@@ -265,18 +266,35 @@ describe(lessonRegenerationWorkflow, () => {
       title: `Filtered Live Lesson ${randomUUID()}`,
     });
 
-    await expect(
-      lessonRegenerationWorkflow({
-        liveLesson: await getLessonContext(liveLesson.id),
-      }),
-    ).rejects.toThrow("Regenerated lesson draft was filtered out");
+    const liveActivity = await activityFixture({
+      generationStatus: "completed",
+      isPublished: true,
+      lessonId: liveLesson.id,
+      managementMode: "ai",
+      organizationId,
+      position: 0,
+      title: `Filtered Live Activity ${randomUUID()}`,
+    });
+
+    await activityProgressFixture({
+      activityId: liveActivity.id,
+      completedAt: new Date(),
+      durationSeconds: 30,
+      userId: Number(user.id),
+    });
+
+    await lessonRegenerationWorkflow({
+      liveLesson: await getLessonContext(liveLesson.id),
+    });
 
     const updatedLiveLesson = await prisma.lesson.findUniqueOrThrow({
       where: { id: liveLesson.id },
     });
 
-    expect(updatedLiveLesson.generationStatus).toBe("failed");
+    expect(updatedLiveLesson.archivedAt).toBeTruthy();
+    expect(updatedLiveLesson.generationStatus).toBe("completed");
     expect(updatedLiveLesson.generationVersion).toBe(0);
-    expect(updatedLiveLesson.slug).toBe(liveLesson.slug);
+    expect(updatedLiveLesson.isPublished).toBe(false);
+    expect(updatedLiveLesson.slug).toContain(`archived-${liveLesson.id}`);
   });
 });

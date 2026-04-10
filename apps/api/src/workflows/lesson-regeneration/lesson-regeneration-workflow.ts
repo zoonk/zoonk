@@ -7,6 +7,7 @@ import { claimLiveLessonRegenerationStep } from "./steps/claim-live-lesson-regen
 import { cleanupDraftLessonStep } from "./steps/cleanup-draft-lesson-step";
 import { createDraftLessonStep } from "./steps/create-draft-lesson-step";
 import { promoteRegeneratedLessonStep } from "./steps/promote-regenerated-lesson-step";
+import { removeLiveLessonStep } from "./steps/remove-live-lesson-step";
 
 /**
  * This helper exists so draft lesson cleanup stays attached to the part of the
@@ -26,7 +27,14 @@ async function regenerateDraftLesson(input: {
     });
 
     if (lessonGenerationResult === "filtered") {
-      throw new Error("Regenerated lesson draft was filtered out");
+      /**
+       * A filtered draft means the lesson is no longer valid for the active
+       * course shape, not that generation crashed. We remove or archive the
+       * current live lesson using the normal lifecycle rules so the invalid
+       * lesson stops requeueing forever.
+       */
+      await removeLiveLessonStep({ liveLesson: input.liveLesson });
+      return;
     }
 
     await activityGenerationWorkflow(draftLesson.id);
