@@ -1,0 +1,57 @@
+apps/editor/src/data/chapters/publish-chapter.test.ts
+  7067897d17bedaf8 114-131
+apps/editor/src/data/chapters/reorder-chapters.test.ts
+  7067897d17bedaf8 119-134,190-228
+apps/editor/src/data/chapters/create-chapter.ts
+  7067897d17bedaf8 4,17-18,51
+apps/editor/src/data/lessons/create-lesson.test.ts
+  7067897d17bedaf8 289-311,520-566
+apps/editor/src/data/lessons/publish-lesson.test.ts
+  7067897d17bedaf8 131-148
+apps/editor/src/data/courses/publish-course.ts
+  7067897d17bedaf8 4,13-14,47,51-57,61-70,74-86
+apps/editor/src/data/chapters/publish-chapter.ts
+  7067897d17bedaf8 4,13-16
+apps/editor/src/data/chapters/create-chapter.test.ts
+  7067897d17bedaf8 136-155,350-389
+apps/editor/src/data/activities/reorder-activities.ts
+  7067897d17bedaf8 4,16-19,47
+apps/editor/src/data/activities/create-activity.test.ts
+  7067897d17bedaf8 141-165,326-372
+apps/editor/src/data/lessons/reorder-lessons.test.ts
+  7067897d17bedaf8 142-160,226-269
+apps/editor/src/data/lessons/create-lesson.ts
+  7067897d17bedaf8 5,18,23-25,63
+apps/editor/src/data/courses/publish-course.test.ts
+  7067897d17bedaf8 73-89,173-290
+apps/editor/src/data/activities/reorder-activities.test.ts
+  7067897d17bedaf8 167-190,266-314
+apps/editor/src/data/lessons/publish-lesson.ts
+  7067897d17bedaf8 4,13-16
+apps/editor/src/data/activities/create-activity.ts
+  7067897d17bedaf8 4,16-19,48
+apps/editor/src/data/lessons/reorder-lessons.ts
+  7067897d17bedaf8 4,16-19,47
+apps/editor/src/data/chapters/reorder-chapters.ts
+  7067897d17bedaf8 4,16-17,45
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.6",
+  "base_commit_sha": "92337fb807efbc36e95433d96d6c43c655478b25",
+  "prompts": {
+    "7067897d17bedaf8": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d745b-97a1-71c1-9998-48e92b02a2af",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 649,
+      "total_deletions": 31,
+      "accepted_lines": 649,
+      "overriden_lines": 0
+    }
+  }
+}
