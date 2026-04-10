@@ -98,4 +98,50 @@ describe(checkExistingCourseStep, () => {
     expect(result).not.toBeNull();
     expect(result!.id).toBe(course.id);
   });
+
+  test("ignores archived direct course matches", async () => {
+    const title = `Archived Course ${randomUUID()}`;
+    const slug = ensureLocaleSuffix(toSlug(title), "en");
+
+    await courseFixture({
+      archivedAt: new Date(),
+      organizationId,
+      slug,
+      title,
+    });
+
+    const suggestion = await courseSuggestionFixture({ language: "en", slug, title });
+
+    const result = await checkExistingCourseStep(suggestion);
+
+    expect(result).toBeNull();
+  });
+
+  test("ignores archived alternative title matches", async () => {
+    const title = `Archived Alt Course ${randomUUID()}`;
+    const altTitle = `Archived Alt ${randomUUID()}`;
+    const altSlug = toSlug(altTitle);
+
+    const course = await courseFixture({
+      archivedAt: new Date(),
+      organizationId,
+      title,
+    });
+
+    await courseAlternativeTitleFixture({
+      courseId: course.id,
+      language: "en",
+      slug: altSlug,
+    });
+
+    const suggestion = await courseSuggestionFixture({
+      language: "en",
+      slug: altSlug,
+      title: altTitle,
+    });
+
+    const result = await checkExistingCourseStep(suggestion);
+
+    expect(result).toBeNull();
+  });
 });
