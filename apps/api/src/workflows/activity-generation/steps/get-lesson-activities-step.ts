@@ -1,32 +1,10 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
 import { type ActivityStepName } from "@zoonk/core/workflows/steps";
-import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { FatalError } from "workflow";
+import { fetchLessonActivities } from "./_utils/fetch-lesson-activities";
 
-async function getLessonActivities(lessonId: number) {
-  const activities = await prisma.activity.findMany({
-    include: {
-      _count: { select: { steps: true } },
-      lesson: {
-        include: {
-          chapter: {
-            include: {
-              course: { include: { organization: true } },
-            },
-          },
-        },
-      },
-    },
-    orderBy: { position: "asc" },
-    where: { lessonId },
-  });
-
-  // Convert bigint IDs to number for JSON serialization in workflow steps
-  return activities.map((activity) => ({ ...activity, id: Number(activity.id) }));
-}
-
-export type LessonActivity = Awaited<ReturnType<typeof getLessonActivities>>[number];
+export type LessonActivity = Awaited<ReturnType<typeof fetchLessonActivities>>[number];
 
 export async function getLessonActivitiesStep(lessonId: number): Promise<LessonActivity[]> {
   "use step";
@@ -35,7 +13,7 @@ export async function getLessonActivitiesStep(lessonId: number): Promise<LessonA
 
   await stream.status({ status: "started", step: "getLessonActivities" });
 
-  const { data: activities, error } = await safeAsync(() => getLessonActivities(lessonId));
+  const { data: activities, error } = await safeAsync(() => fetchLessonActivities(lessonId));
 
   if (error) {
     await stream.error({ reason: "dbFetchFailed", step: "getLessonActivities" });

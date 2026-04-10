@@ -166,4 +166,68 @@ describe(determineAppliedActivityStep, () => {
       }),
     );
   });
+
+  test("ignores archived applied activities from preceding lessons", async () => {
+    generateAppliedActivityKindMock.mockResolvedValue({
+      data: { appliedActivityKind: "story" },
+    });
+
+    const isolatedCourse = await courseFixture({ organizationId });
+    const isolatedChapter = await chapterFixture({
+      courseId: isolatedCourse.id,
+      organizationId,
+      title: `Archived Applied Chapter ${randomUUID()}`,
+    });
+    const targetLesson = await lessonFixture({
+      chapterId: isolatedChapter.id,
+      concepts: context.concepts,
+      organizationId,
+      position: 60,
+      title: `Target Applied Lesson ${randomUUID()}`,
+    });
+
+    const [activeLesson, archivedLesson] = await Promise.all([
+      lessonFixture({
+        chapterId: isolatedChapter.id,
+        organizationId,
+        position: 40,
+        title: `Active Applied Lesson ${randomUUID()}`,
+      }),
+      lessonFixture({
+        archivedAt: new Date(),
+        chapterId: isolatedChapter.id,
+        organizationId,
+        position: 50,
+        title: `Archived Applied Lesson ${randomUUID()}`,
+      }),
+    ]);
+
+    await Promise.all([
+      activityFixture({
+        kind: "story",
+        lessonId: activeLesson.id,
+        organizationId,
+      }),
+      activityFixture({
+        archivedAt: new Date(),
+        kind: "investigation",
+        lessonId: archivedLesson.id,
+        organizationId,
+      }),
+    ]);
+
+    const laterContext: LessonContext = {
+      ...targetLesson,
+      _count: { activities: 0 },
+      chapter: { ...isolatedChapter, course: isolatedCourse },
+    };
+
+    await determineAppliedActivityStep(laterContext);
+
+    expect(generateAppliedActivityKindMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        recentAppliedKinds: ["story"],
+      }),
+    );
+  });
 });

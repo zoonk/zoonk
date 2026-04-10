@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { fetchLessonActivities } from "@/workflows/_test-utils/fetch-lesson-activities";
+import { fetchLessonActivities } from "@/workflows/activity-generation/steps/_utils/fetch-lesson-activities";
 import { prisma } from "@zoonk/db";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
