@@ -1,4 +1,5 @@
 import { streamSkipStep } from "@/workflows/_shared/stream-skip-step";
+import { type LessonKind } from "@zoonk/db";
 import { getWorkflowMetadata } from "workflow";
 import { addActivitiesStep } from "./steps/add-activities-step";
 import { determineAppliedActivityStep } from "./steps/determine-applied-activity-step";
@@ -11,13 +12,13 @@ import { setLessonAsCompletedStep } from "./steps/set-lesson-as-completed-step";
 import { setLessonAsRunningStep } from "./steps/set-lesson-as-running-step";
 import { updateLessonKindStep } from "./steps/update-lesson-kind-step";
 
-function isNonLanguageLesson(targetLanguage: string | null, lessonKind: string): boolean {
+function isNonLanguageLesson(targetLanguage: string | null, lessonKind: LessonKind): boolean {
   return targetLanguage !== null && lessonKind !== "language";
 }
 
 async function getCustomActivities(
   context: Awaited<ReturnType<typeof getLessonStep>>,
-  lessonKind: string,
+  lessonKind: LessonKind,
 ): Promise<Awaited<ReturnType<typeof generateCustomActivitiesStep>>> {
   if (lessonKind === "custom") {
     return generateCustomActivitiesStep(context);
@@ -30,7 +31,7 @@ async function getCustomActivities(
 async function generateActivities(
   context: Awaited<ReturnType<typeof getLessonStep>>,
   lessonId: number,
-): Promise<"filtered" | "completed"> {
+): Promise<LessonKind | "filtered"> {
   const lessonKind = await determineLessonKindStep(context);
 
   const appliedActivityKind =
@@ -60,7 +61,7 @@ async function generateActivities(
     targetLanguage: context.chapter.course.targetLanguage,
   });
 
-  return "completed";
+  return lessonKind;
 }
 
 export async function lessonGenerationWorkflow(lessonId: number): Promise<void> {
@@ -81,7 +82,11 @@ export async function lessonGenerationWorkflow(lessonId: number): Promise<void> 
   }
 
   if (context._count.activities > 0) {
-    await setLessonAsCompletedStep({ context, workflowRunId });
+    await setLessonAsCompletedStep({
+      context,
+      lessonKind: context.kind,
+      workflowRunId,
+    });
     return;
   }
 
@@ -90,8 +95,12 @@ export async function lessonGenerationWorkflow(lessonId: number): Promise<void> 
   try {
     const result = await generateActivities(context, lessonId);
 
-    if (result === "completed") {
-      await setLessonAsCompletedStep({ context, workflowRunId });
+    if (result !== "filtered") {
+      await setLessonAsCompletedStep({
+        context,
+        lessonKind: result,
+        workflowRunId,
+      });
     }
   } catch (error) {
     await handleLessonFailureStep({ lessonId });

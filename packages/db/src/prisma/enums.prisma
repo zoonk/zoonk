@@ -55,3 +55,9 @@ enum CourseMode {
   personalized
   examPrep     @map("exam_prep")
 }
+
+enum ContentManagementMode {
+  ai
+  manual
+  pinned
+}

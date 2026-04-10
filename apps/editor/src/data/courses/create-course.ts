@@ -1,5 +1,6 @@
 import "server-only";
 import { ErrorCode } from "@/lib/app-error";
+import { getDefaultContentManagementMode } from "@zoonk/core/content/management";
 import { getOrganization } from "@zoonk/core/orgs/get";
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
 import { getSession } from "@zoonk/core/users/session/get";
@@ -48,6 +49,7 @@ export async function createCourse(params: {
       data: {
         description: params.description,
         language: params.language,
+        managementMode: getDefaultContentManagementMode({ organizationSlug: params.orgSlug }),
         normalizedTitle,
         organizationId: org.id,
         slug: courseSlug,

@@ -314,6 +314,19 @@ const lessonsData: {
   },
 ];
 
+/**
+ * This helper exists because generation versions should only describe lessons
+ * that already have a completed live revision. Pending lessons are still
+ * placeholders, so they must keep a null generation version.
+ */
+function getSeedLessonGenerationVersion({
+  generationStatus,
+}: {
+  generationStatus: GenerationStatus;
+}) {
+  return generationStatus === "completed" ? 1 : null;
+}
+
 export async function seedLessons(prisma: PrismaClient, org: Organization): Promise<void> {
   const allLessonPromises = lessonsData.flatMap((data) =>
     prisma.chapter
@@ -337,9 +350,13 @@ export async function seedLessons(prisma: PrismaClient, org: Organization): Prom
                 concepts: lessonData.concepts,
                 description: lessonData.description,
                 generationStatus: lessonData.generationStatus,
+                generationVersion: getSeedLessonGenerationVersion({
+                  generationStatus: lessonData.generationStatus,
+                }),
                 isPublished: lessonData.isPublished,
                 kind: lessonData.kind ?? "core",
                 language: data.language,
+                managementMode: "ai",
                 normalizedTitle: normalizeString(lessonData.title),
                 organizationId: org.id,
                 position,

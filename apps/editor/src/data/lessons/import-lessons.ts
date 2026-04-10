@@ -4,8 +4,10 @@ import { type ImportMode } from "@/lib/import-mode";
 import { deduplicateImportSlugs, resolveImportSlug } from "@/lib/import-slug";
 import { getLessonKind } from "@/lib/lesson-kind";
 import { parseJsonFile } from "@/lib/parse-json-file";
+import { getDefaultContentManagementMode } from "@zoonk/core/content/management";
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
 import {
+  type ContentManagementMode,
   type Lesson,
   type LessonKind,
   type TransactionClient,
@@ -60,6 +62,7 @@ async function resolveLesson(
     index: number;
     kind: LessonKind;
     language: string;
+    managementMode: ContentManagementMode;
     normalizedTitle: string;
     organizationId: number | null;
     position: number;
@@ -92,6 +95,7 @@ async function resolveLesson(
       isPublished: !params.chapterIsPublished,
       kind: params.kind,
       language: params.language,
+      managementMode: params.managementMode,
       normalizedTitle: params.normalizedTitle,
       organizationId: params.organizationId,
       position: params.position,
@@ -216,6 +220,9 @@ export async function importLessons(params: {
           index: item.index,
           kind,
           language: chapter.language,
+          managementMode: getDefaultContentManagementMode({
+            organizationSlug: chapter.organization?.slug,
+          }),
           normalizedTitle: item.normalizedTitle,
           organizationId: chapter.organizationId,
           position: startPosition + i,

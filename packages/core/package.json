@@ -15,6 +15,7 @@
     "./auth/next": "./src/auth/next.ts",
     "./auth/stripe-prices": "./src/auth/stripe-prices.ts",
     "./auth/subscription": "./src/auth/subscription.ts",
+    "./content/management": "./src/content/management.ts",
     "./content/lifecycle": "./src/content/lifecycle.ts",
     "./courses/image": "./src/courses/course-image.ts",
     "./courses/search": "./src/courses/search-courses.ts",
