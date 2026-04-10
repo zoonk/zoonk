@@ -1,10 +1,12 @@
 import { ErrorCode } from "@/lib/app-error";
 import { prisma } from "@zoonk/db";
+import { activityFixture, activityProgressFixture } from "@zoonk/testing/fixtures/activities";
 import { signInAs } from "@zoonk/testing/fixtures/auth";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { memberFixture, organizationFixture } from "@zoonk/testing/fixtures/orgs";
+import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeAll, describe, expect, test } from "vitest";
 import { deleteChapter } from "./delete-chapter";
 
@@ -95,7 +97,50 @@ describe("admins", () => {
     expect(deletedChapter).toBeNull();
   });
 
-  test("returns Forbidden for published chapter", async () => {
+  test("archives a learner-touched chapter without returning an error", async () => {
+    const user = await userFixture();
+    const course = await courseFixture({ organizationId: organization.id });
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      isPublished: false,
+      language: course.language,
+      organizationId: organization.id,
+    });
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      language: chapter.language,
+      organizationId: organization.id,
+    });
+    const activity = await activityFixture({
+      lessonId: lesson.id,
+      organizationId: organization.id,
+    });
+
+    await activityProgressFixture({
+      activityId: activity.id,
+      completedAt: new Date(),
+      durationSeconds: 30,
+      userId: Number(user.id),
+    });
+
+    const result = await deleteChapter({
+      chapterId: chapter.id,
+      headers,
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data?.id).toBe(chapter.id);
+    expect(result.data?.archivedAt).not.toBeNull();
+
+    const unchangedChapter = await prisma.chapter.findUnique({
+      where: { id: chapter.id },
+    });
+
+    expect(unchangedChapter).not.toBeNull();
+    expect(unchangedChapter?.archivedAt).not.toBeNull();
+  });
+
+  test("returns Forbidden for a published chapter", async () => {
     const course = await courseFixture({ organizationId: organization.id });
     const chapter = await chapterFixture({
       courseId: course.id,
@@ -117,6 +162,7 @@ describe("admins", () => {
     });
 
     expect(unchangedChapter).not.toBeNull();
+    expect(unchangedChapter?.archivedAt).toBeNull();
   });
 });
 
@@ -161,6 +207,78 @@ describe("owners", () => {
     });
 
     expect(deletedChapter).toBeNull();
+  });
+
+  test("hard deletes a published chapter with no learner history", async () => {
+    const course = await courseFixture({ organizationId: organization.id });
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      isPublished: true,
+      language: course.language,
+      organizationId: organization.id,
+    });
+
+    const result = await deleteChapter({
+      chapterId: chapter.id,
+      headers,
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data?.id).toBe(chapter.id);
+
+    const deletedChapter = await prisma.chapter.findUnique({
+      where: { id: chapter.id },
+    });
+
+    expect(deletedChapter).toBeNull();
+  });
+
+  test("archives learner-touched chapters instead of deleting them", async () => {
+    const user = await userFixture();
+    const course = await courseFixture({ organizationId: organization.id });
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      isPublished: false,
+      language: course.language,
+      organizationId: organization.id,
+    });
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      language: chapter.language,
+      organizationId: organization.id,
+    });
+    const activity = await activityFixture({
+      lessonId: lesson.id,
+      organizationId: organization.id,
+    });
+
+    await activityProgressFixture({
+      activityId: activity.id,
+      completedAt: new Date(),
+      durationSeconds: 45,
+      userId: Number(user.id),
+    });
+
+    const result = await deleteChapter({
+      chapterId: chapter.id,
+      headers,
+    });
+
+    expect(result.error).toBeNull();
+    expect(result.data?.id).toBe(chapter.id);
+    expect(result.data?.archivedAt).not.toBeNull();
+
+    const [archivedChapter, unchangedLesson] = await Promise.all([
+      prisma.chapter.findUnique({
+        where: { id: chapter.id },
+      }),
+      prisma.lesson.findUnique({
+        where: { id: lesson.id },
+      }),
+    ]);
+
+    expect(archivedChapter?.archivedAt).not.toBeNull();
+    expect(unchangedLesson).not.toBeNull();
   });
 
   test("cascades deletion to lessons", async () => {

@@ -16,9 +16,9 @@ import { type Activity, type Chapter, type Course, type Lesson, prisma } from "@
  * status because publication alone does not create the history-retention problem
  * we are protecting against.
  */
-type ContentLifecycleState = "active" | "archived";
-type ContentDeleteMode = "archive" | "hardDelete";
-type ContentDeleteConstraint = "learnerData";
+export type ContentLifecycleState = "active" | "archived";
+export type ContentDeleteMode = "archive" | "hardDelete";
+export type ContentDeleteConstraint = "learnerData";
 
 type CourseDeleteTarget = {
   course: Pick<Course, "id">;
@@ -40,7 +40,7 @@ type ActivityDeleteTarget = {
   entityType: "activity";
 };
 
-type ContentDeleteTarget =
+export type ContentDeleteTarget =
   | CourseDeleteTarget
   | ChapterDeleteTarget
   | LessonDeleteTarget
@@ -51,7 +51,7 @@ type ContentDeleteTarget =
  * without re-implementing lifecycle policy. `constraints` explains why an entity is
  * archive-only.
  */
-type ContentDeleteDecision = {
+export type ContentDeleteDecision = {
   constraints: ContentDeleteConstraint[];
   mode: ContentDeleteMode;
 };

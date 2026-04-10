@@ -3,7 +3,12 @@ import { ErrorCode } from "@/lib/app-error";
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
 import { type Chapter, prisma } from "@zoonk/db";
 import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
+import { getCurriculumDeletePlan } from "../curriculum-delete";
 
+/**
+ * Deletes untouched draft chapters, but archives chapters once learner history
+ * exists under them so the delete action no longer cascades through that history.
+ */
 export async function deleteChapter(params: {
   chapterId: number;
   headers?: Headers;
@@ -22,25 +27,57 @@ export async function deleteChapter(params: {
     return { data: null, error: new AppError(ErrorCode.chapterNotFound) };
   }
 
+  const deletePlan = await getCurriculumDeletePlan({
+    isPublished: chapter.isPublished,
+    target: {
+      chapter,
+      entityType: "chapter",
+    },
+  });
+
   const hasPermission = await hasCoursePermission({
     headers: params.headers,
     orgId: chapter.organizationId,
-    permission: chapter.isPublished ? "delete" : "update",
+    permission: deletePlan.permission,
   });
 
   if (!hasPermission) {
     return { data: null, error: new AppError(ErrorCode.forbidden) };
   }
 
-  const { error } = await safeAsync(() =>
-    prisma.chapter.delete({
-      where: { id: chapter.id },
+  const { data: deletedChapter, error } = await safeAsync(() =>
+    removeChapter({
+      chapter,
+      mode: deletePlan.mode,
     }),
   );
 
-  if (error) {
+  if (error || !deletedChapter) {
     return { data: null, error };
   }
 
-  return { data: chapter, error: null };
+  return { data: deletedChapter, error: null };
+}
+
+/**
+ * Switches chapter deletes to archive mode when the lifecycle plan says the
+ * subtree contains protected learner history.
+ */
+function removeChapter({
+  chapter,
+  mode,
+}: {
+  chapter: Chapter;
+  mode: Awaited<ReturnType<typeof getCurriculumDeletePlan>>["mode"];
+}) {
+  if (mode === "archive") {
+    return prisma.chapter.update({
+      data: { archivedAt: new Date() },
+      where: { id: chapter.id },
+    });
+  }
+
+  return prisma.chapter.delete({
+    where: { id: chapter.id },
+  });
 }

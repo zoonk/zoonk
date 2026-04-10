@@ -3,7 +3,12 @@ import { ErrorCode } from "@/lib/app-error";
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
 import { type Course, prisma } from "@zoonk/db";
 import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
+import { getCurriculumDeletePlan } from "../curriculum-delete";
 
+/**
+ * Deletes draft courses with no learner history, but archives historically
+ * significant courses instead so we do not cascade away learner facts.
+ */
 export async function deleteCourse(params: {
   courseId: number;
   headers?: Headers;
@@ -22,22 +27,56 @@ export async function deleteCourse(params: {
     return { data: null, error: new AppError(ErrorCode.courseNotFound) };
   }
 
+  const deletePlan = await getCurriculumDeletePlan({
+    isPublished: course.isPublished,
+    target: {
+      course,
+      entityType: "course",
+    },
+  });
+
   const hasPermission = await hasCoursePermission({
     headers: params.headers,
     orgId: course.organizationId,
-    permission: course.isPublished ? "delete" : "update",
+    permission: deletePlan.permission,
   });
 
   if (!hasPermission) {
     return { data: null, error: new AppError(ErrorCode.forbidden) };
   }
 
-  // Chapters and lessons cascade delete automatically via FK constraints
-  const { error } = await safeAsync(() => prisma.course.delete({ where: { id: course.id } }));
+  const { data: deletedCourse, error } = await safeAsync(() =>
+    removeCourse({
+      course,
+      mode: deletePlan.mode,
+    }),
+  );
 
-  if (error) {
+  if (error || !deletedCourse) {
     return { data: null, error };
   }
 
-  return { data: course, error: null };
+  return { data: deletedCourse, error: null };
+}
+
+/**
+ * Uses hard delete only when the lifecycle plan says the course has no protected
+ * learner history. Otherwise we mark it archived and keep descendants intact for
+ * later read-path filtering work.
+ */
+function removeCourse({
+  course,
+  mode,
+}: {
+  course: Course;
+  mode: Awaited<ReturnType<typeof getCurriculumDeletePlan>>["mode"];
+}) {
+  if (mode === "archive") {
+    return prisma.course.update({
+      data: { archivedAt: new Date() },
+      where: { id: course.id },
+    });
+  }
+
+  return prisma.course.delete({ where: { id: course.id } });
 }
