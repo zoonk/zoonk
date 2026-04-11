@@ -1,0 +1,125 @@
+packages/ai/src/tasks/activities/core/activity-investigation-scenario.ts
+  528bb1ae0c29bf93 60
+packages/ai/src/tasks/courses/course-categories.ts
+  528bb1ae0c29bf93 45
+packages/ai/src/tasks/activities/core/activity-story-steps.ts
+  528bb1ae0c29bf93 81
+packages/ai/src/tasks/activities/language/activity-vocabulary.ts
+  528bb1ae0c29bf93 64
+packages/ai/src/tasks/activities/language/activity-romanization.ts
+  528bb1ae0c29bf93 49
+packages/ai/src/tasks/activities/language/activity-grammar-content.ts
+  528bb1ae0c29bf93 72
+packages/ai/src/tasks/lessons/lesson-activities.ts
+  528bb1ae0c29bf93 53
+packages/ai/src/tasks/visuals/visual-chart.ts
+  528bb1ae0c29bf93 61
+packages/ai/src/tasks/visuals/visual-quote.ts
+  528bb1ae0c29bf93 57
+packages/ai/src/tasks/visuals/visual-formula.ts
+  528bb1ae0c29bf93 55
+packages/ai/src/tasks/courses/course-chapters.ts
+  528bb1ae0c29bf93 46
+packages/ai/src/tasks/visuals/visual-table.ts
+  528bb1ae0c29bf93 58
+packages/ai/src/provider-options.ts
+  528bb1ae0c29bf93 98
+packages/ai/src/tasks/activities/core/activity-investigation-accuracy.ts
+  528bb1ae0c29bf93 91
+packages/ai/src/tasks/activities/core/activity-investigation-actions.ts
+  528bb1ae0c29bf93 77
+packages/ai/src/tasks/visuals/visual-diagram.ts
+  528bb1ae0c29bf93 81
+packages/ai/src/tasks/steps/step-visual-descriptions.ts
+  528bb1ae0c29bf93 96
+packages/ai/src/tasks/activities/language/activity-sentences.ts
+  528bb1ae0c29bf93 65
+packages/ai/src/tasks/activities/language/activity-distractors.ts
+  528bb1ae0c29bf93 52
+packages/ai/src/tasks/lessons/applied-activity-kind.ts
+  528bb1ae0c29bf93 59
+packages/ai/src/tasks/courses/course-suggestions.ts
+  528bb1ae0c29bf93 46
+packages/ai/src/tasks/activities/custom/activity-custom.ts
+  528bb1ae0c29bf93 58
+packages/ai/src/tasks/activities/language/activity-translation.ts
+  528bb1ae0c29bf93 49
+packages/ai/src/tasks/courses/course-description.ts
+  528bb1ae0c29bf93 40
+packages/ai/src/tasks/courses/language-course-chapters.ts
+  528bb1ae0c29bf93 48
+packages/ai/src/tasks/chapters/chapter-lessons.ts
+  528bb1ae0c29bf93 67
+packages/ai/src/tasks/visuals/visual-music.ts
+  528bb1ae0c29bf93 56
+packages/ai/src/tasks/activities/core/activity-quiz.ts
+  528bb1ae0c29bf93 117
+packages/ai/src/tasks/lessons/lesson-kind.ts
+  528bb1ae0c29bf93 52
+packages/ai/src/tasks/activities/core/activity-story-debrief.ts
+  528bb1ae0c29bf93 104
+packages/ai/src/tasks/activities/language/activity-pronunciation.ts
+  528bb1ae0c29bf93 46
+packages/ai/src/tasks/visuals/visual-timeline.ts
+  528bb1ae0c29bf93 60
+packages/ai/src/tasks/activities/core/activity-investigation-findings.ts
+  528bb1ae0c29bf93 88
+packages/ai/src/tasks/chapters/language-chapter-lessons.ts
+  528bb1ae0c29bf93 51
+packages/ai/src/tasks/activities/core/activity-practice.ts
+  528bb1ae0c29bf93 70
+packages/ai/src/tasks/activities/language/activity-grammar-user-content.ts
+  528bb1ae0c29bf93 85
+packages/ai/src/tasks/courses/alternative-titles.ts
+  528bb1ae0c29bf93 40
+packages/ai/src/tasks/activities/core/activity-explanation.ts
+  528bb1ae0c29bf93 58
+packages/ai/src/tasks/visuals/visual-code.ts
+  528bb1ae0c29bf93 79
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.8",
+  "base_commit_sha": "4f2800ed6077610083e323e41089548011629036",
+  "prompts": {
+    "528bb1ae0c29bf93": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d7e4f-af84-7970-a6b9-cfe445c4a201",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 108,
+      "total_deletions": 70,
+      "accepted_lines": 40,
+      "overriden_lines": 0
+    },
+    "c907dc44a7ce196a": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d7881-9922-7b50-98b3-7592931e3ddb",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 3,
+      "overriden_lines": 0
+    },
+    "ef439b46a67bb34a": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d7991-a230-7b82-8adb-8f52cb75675a",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 188,
+      "overriden_lines": 0
+    }
+  }
+}
