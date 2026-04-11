@@ -1,0 +1,23 @@
+packages/ai/src/tasks/activities/core/activity-quiz.ts
+  2cd4dceea2151ac7 62
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.8",
+  "base_commit_sha": "4fea5d1bfa831039716065aea5e6bc886f3ca78b",
+  "prompts": {
+    "2cd4dceea2151ac7": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "56686d94-f177-4304-9c76-ad4591b2a295",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 1,
+      "total_deletions": 1,
+      "accepted_lines": 1,
+      "overriden_lines": 0
+    }
+  }
+}
