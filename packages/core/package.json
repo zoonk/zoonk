@@ -30,6 +30,7 @@
     "./progress/chapters": "./src/progress/get-chapter-progress.ts",
     "./progress/lessons": "./src/progress/get-lesson-progress.ts",
     "./progress/next-activity": "./src/progress/get-next-activity.ts",
+    "./progress/next-activity-state": "./src/progress/get-next-activity-state.ts",
     "./steps/image": "./src/steps/step-image.ts",
     "./steps/contract/content": "./src/steps/contract/content.ts",
     "./steps/contract/visual": "./src/steps/contract/visual.ts",

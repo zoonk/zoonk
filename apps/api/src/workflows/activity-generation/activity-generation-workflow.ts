@@ -14,13 +14,22 @@ import { streamCompletionEventsStep } from "./steps/stream-completion-events-ste
  * Decides up front which activities need generation (pending/failed) vs which are
  * already completed, so downstream generate steps never check generationStatus.
  */
-export async function activityGenerationWorkflow(lessonId: number): Promise<void> {
+export async function activityGenerationWorkflow(
+  lessonId: number,
+  options: {
+    regeneration?: boolean;
+  } = {},
+): Promise<void> {
   "use workflow";
 
   const { workflowRunId } = getWorkflowMetadata();
 
   try {
-    const activities = await getLessonActivitiesStep(lessonId);
+    const activities = await getLessonActivitiesStep({
+      lessonId,
+      regeneration: options.regeneration,
+    });
+
     const firstActivity = activities[0];
 
     if (!firstActivity) {
@@ -89,7 +98,10 @@ export async function activityGenerationWorkflow(lessonId: number): Promise<void
       workflowRunId,
     });
   } catch (error) {
-    await handleWorkflowFailureStep(lessonId, workflowRunId);
+    if (!options.regeneration) {
+      await handleWorkflowFailureStep({ lessonId });
+    }
+
     throw error;
   }
 }

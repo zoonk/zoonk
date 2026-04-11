@@ -1,3 +1,4 @@
+import { prisma } from "@zoonk/db";
 import { activityFixture, activityProgressFixture } from "@zoonk/testing/fixtures/activities";
 import { signInAs } from "@zoonk/testing/fixtures/auth";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
@@ -314,6 +315,103 @@ describe("getNextActivity - course scope", () => {
       courseSlug: course.slug,
       hasStarted: true,
       lessonSlug: lessonB.slug,
+    });
+  });
+
+  test("skips newly added lessons inside a durably completed chapter", async () => {
+    const [user, course] = await Promise.all([
+      userFixture(),
+      courseFixture({ isPublished: true, organizationId: organization.id }),
+    ]);
+
+    const [completedChapter, nextChapter] = await Promise.all([
+      chapterFixture({
+        courseId: course.id,
+        isPublished: true,
+        organizationId: organization.id,
+        position: 0,
+      }),
+      chapterFixture({
+        courseId: course.id,
+        isPublished: true,
+        organizationId: organization.id,
+        position: 1,
+      }),
+    ]);
+
+    const [completedLesson, addedLesson, nextLesson] = await Promise.all([
+      lessonFixture({
+        chapterId: completedChapter.id,
+        isPublished: true,
+        organizationId: organization.id,
+        position: 0,
+      }),
+      lessonFixture({
+        chapterId: completedChapter.id,
+        isPublished: true,
+        organizationId: organization.id,
+        position: 1,
+      }),
+      lessonFixture({
+        chapterId: nextChapter.id,
+        isPublished: true,
+        organizationId: organization.id,
+        position: 0,
+      }),
+    ]);
+
+    const [completedActivity, nextActivity] = await Promise.all([
+      activityFixture({
+        generationStatus: "completed",
+        isPublished: true,
+        lessonId: completedLesson.id,
+        organizationId: organization.id,
+        position: 0,
+      }),
+      activityFixture({
+        generationStatus: "completed",
+        isPublished: true,
+        lessonId: nextLesson.id,
+        organizationId: organization.id,
+        position: 0,
+      }),
+    ]);
+
+    await activityFixture({
+      generationStatus: "completed",
+      isPublished: true,
+      lessonId: addedLesson.id,
+      organizationId: organization.id,
+      position: 0,
+    });
+
+    await Promise.all([
+      activityProgressFixture({
+        activityId: completedActivity.id,
+        completedAt: new Date(),
+        durationSeconds: 60,
+        userId: Number(user.id),
+      }),
+      prisma.chapterCompletion.create({
+        data: {
+          chapterId: completedChapter.id,
+          userId: Number(user.id),
+        },
+      }),
+    ]);
+
+    const headers = await signInAs(user.email, user.password);
+    const result = await getNextActivity({ headers, scope: { courseId: course.id } });
+
+    expect(result).toEqual({
+      activityPosition: nextActivity.position,
+      brandSlug: organization.slug,
+      canPrefetch: true,
+      chapterSlug: nextChapter.slug,
+      completed: false,
+      courseSlug: course.slug,
+      hasStarted: true,
+      lessonSlug: nextLesson.slug,
     });
   });
 

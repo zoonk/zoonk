@@ -1,32 +1,35 @@
 // Better Auth models for Prisma
 
 model User {
-  id               Int                  @id @default(autoincrement())
-  name             String
-  email            String
-  emailVerified    Boolean              @default(false) @map("email_verified")
-  image            String?
-  createdAt        DateTime             @default(now()) @map("created_at")
-  updatedAt        DateTime             @updatedAt @map("updated_at")
-  role             String?
-  banned           Boolean?             @default(false)
-  banReason        String?              @map("ban_reason")
-  banExpires       DateTime?            @map("ban_expires")
-  stripeCustomerId String?              @map("stripe_customer_id")
-  username         String?
-  displayUsername  String?              @map("display_username")
-  sessions         Session[]
-  accounts         Account[]
-  members          Member[]
-  invitations      Invitation[]
-  courses          CourseUser[]
-  ownedCourses     Course[]
-  learningProfile  UserLearningProfile?
-  activityProgress ActivityProgress[]
-  stepAttempts     StepAttempt[]
-  progress         UserProgress?
-  dailyProgress    DailyProgress[]
-  contentReviews   ContentReview[]
+  id                 Int                  @id @default(autoincrement())
+  name               String
+  email              String
+  emailVerified      Boolean              @default(false) @map("email_verified")
+  image              String?
+  createdAt          DateTime             @default(now()) @map("created_at")
+  updatedAt          DateTime             @updatedAt @map("updated_at")
+  role               String?
+  banned             Boolean?             @default(false)
+  banReason          String?              @map("ban_reason")
+  banExpires         DateTime?            @map("ban_expires")
+  stripeCustomerId   String?              @map("stripe_customer_id")
+  username           String?
+  displayUsername    String?              @map("display_username")
+  sessions           Session[]
+  accounts           Account[]
+  members            Member[]
+  invitations        Invitation[]
+  courses            CourseUser[]
+  ownedCourses       Course[]
+  learningProfile    UserLearningProfile?
+  activityProgress   ActivityProgress[]
+  chapterCompletions ChapterCompletion[]
+  courseCompletions  CourseCompletion[]
+  lessonCompletions  LessonCompletion[]
+  stepAttempts       StepAttempt[]
+  progress           UserProgress?
+  dailyProgress      DailyProgress[]
+  contentReviews     ContentReview[]
 
   @@unique([email])
   @@unique([username])

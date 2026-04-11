@@ -51,6 +51,7 @@ export async function getNextLesson(activityId: bigint): Promise<NextLesson | nu
               where: {
                 archivedAt: null,
                 generationStatus: { in: ["pending", "failed"] },
+                isPublished: true,
               },
             },
           },

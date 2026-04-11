@@ -10,6 +10,8 @@ export async function addActivitiesStep(input: {
   appliedActivityKind: AppliedActivityKind;
   concepts: string[];
   context: LessonContext;
+  generationRunId: string;
+  isPublished: boolean;
   lessonKind: LessonKind;
   customActivities: GeneratedActivity[];
   targetLanguage: string | null;
@@ -30,8 +32,9 @@ export async function addActivitiesStep(input: {
 
   const activitiesData: ActivityCreateManyInput[] = activitiesToCreate.map((activity, index) => ({
     description: activity.description,
+    generationRunId: input.generationRunId,
     generationStatus: activity.kind === "review" ? "completed" : "pending",
-    isPublished: true,
+    isPublished: input.isPublished,
     kind: activity.kind,
     language: input.context.language,
     lessonId: input.context.id,

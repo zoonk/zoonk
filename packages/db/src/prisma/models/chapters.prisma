@@ -18,6 +18,7 @@ model Chapter {
   archivedAt       DateTime?             @map("archived_at")
   createdAt        DateTime              @default(now()) @map("created_at")
   updatedAt        DateTime              @default(now()) @updatedAt @map("updated_at")
+  completions      ChapterCompletion[]
   lessons          Lesson[]
 
   @@unique([courseId, slug], name: "courseChapterSlug")

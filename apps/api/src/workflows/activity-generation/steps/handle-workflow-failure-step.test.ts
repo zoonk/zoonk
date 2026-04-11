@@ -43,10 +43,7 @@ describe(handleWorkflowFailureStep, () => {
     vi.clearAllMocks();
   });
 
-  test("marks running activities matching the workflow run ID as failed", async () => {
-    const workflowRunId = `run-${randomUUID()}`;
-    const otherRunId = `run-${randomUUID()}`;
-
+  test("marks running published activities as failed during normal generation", async () => {
     const lesson = await lessonFixture({
       chapterId,
       kind: "language",
@@ -57,8 +54,9 @@ describe(handleWorkflowFailureStep, () => {
     const [runningMatchingActivity, runningOtherActivity, completedMatchingActivity] =
       await Promise.all([
         activityFixture({
-          generationRunId: workflowRunId,
+          generationRunId: `run-${randomUUID()}`,
           generationStatus: "running",
+          isPublished: true,
           kind: "vocabulary",
           lessonId: lesson.id,
           organizationId,
@@ -66,8 +64,9 @@ describe(handleWorkflowFailureStep, () => {
           title: `Running Matching ${randomUUID()}`,
         }),
         activityFixture({
-          generationRunId: otherRunId,
+          generationRunId: `run-${randomUUID()}`,
           generationStatus: "running",
+          isPublished: false,
           kind: "reading",
           lessonId: lesson.id,
           organizationId,
@@ -75,8 +74,9 @@ describe(handleWorkflowFailureStep, () => {
           title: `Running Other ${randomUUID()}`,
         }),
         activityFixture({
-          generationRunId: workflowRunId,
+          generationRunId: `run-${randomUUID()}`,
           generationStatus: "completed",
+          isPublished: true,
           kind: "translation",
           lessonId: lesson.id,
           organizationId,
@@ -85,7 +85,7 @@ describe(handleWorkflowFailureStep, () => {
         }),
       ]);
 
-    await handleWorkflowFailureStep(lesson.id, workflowRunId);
+    await handleWorkflowFailureStep({ lessonId: lesson.id });
 
     const [updatedRunningMatching, updatedRunningOther, updatedCompletedMatching] =
       await Promise.all([
@@ -95,24 +95,21 @@ describe(handleWorkflowFailureStep, () => {
       ]);
 
     expect(updatedRunningMatching).toMatchObject({
-      generationRunId: null,
       generationStatus: "failed",
+      isPublished: true,
     });
 
     expect(updatedRunningOther).toMatchObject({
-      generationRunId: otherRunId,
       generationStatus: "running",
+      isPublished: false,
     });
 
     expect(updatedCompletedMatching).toMatchObject({
-      generationRunId: workflowRunId,
       generationStatus: "completed",
     });
   });
 
   test("streams error event", async () => {
-    const workflowRunId = `run-${randomUUID()}`;
-
     const lesson = await lessonFixture({
       chapterId,
       kind: "language",
@@ -120,7 +117,7 @@ describe(handleWorkflowFailureStep, () => {
       title: `Workflow Failure Stream ${randomUUID()}`,
     });
 
-    await handleWorkflowFailureStep(lesson.id, workflowRunId);
+    await handleWorkflowFailureStep({ lessonId: lesson.id });
 
     const events = getStreamedEvents(writeMock);
 

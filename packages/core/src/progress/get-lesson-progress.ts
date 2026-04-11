@@ -1,6 +1,7 @@
-import { prisma } from "@zoonk/db";
-import { safeAsync } from "@zoonk/utils/error";
 import { getSession } from "../users/get-user-session";
+import { listDurableLessonCompletionIds } from "./_utils/durable-completion-queries";
+import { toEffectiveLessonProgressRows } from "./_utils/published-lesson-progress";
+import { listPublishedLessonProgressRows } from "./_utils/published-lesson-progress-queries";
 
 export async function getLessonProgress({
   chapterId,
@@ -22,35 +23,24 @@ export async function getLessonProgress({
     return [];
   }
 
-  const { data, error } = await safeAsync(
-    () =>
-      prisma.$queryRaw<
-        {
-          lessonId: number;
-          totalActivities: number | null;
-          completedActivities: number | null;
-        }[]
-      >`
-      SELECT
-        l.id AS "lessonId",
-        COUNT(DISTINCT a.id)::int AS "totalActivities",
-        COUNT(DISTINCT CASE WHEN ap.completed_at IS NOT NULL THEN a.id END)::int AS "completedActivities"
-      FROM lessons l
-      JOIN activities a ON a.lesson_id = l.id AND a.is_published = true AND a.archived_at IS NULL
-      LEFT JOIN activity_progress ap ON ap.activity_id = a.id AND ap.user_id = ${userId}
-      WHERE l.chapter_id = ${chapterId} AND l.is_published = true AND l.archived_at IS NULL
-      GROUP BY l.id
-      ORDER BY l.position
-    `,
-  );
+  const rows = await listPublishedLessonProgressRows({
+    scope: { chapterId },
+    userId,
+  });
 
-  if (error || !data) {
-    return [];
-  }
+  const durableLessonIds = await listDurableLessonCompletionIds({
+    lessonIds: [...new Set(rows.map((row) => row.lessonId))],
+    userId,
+  });
 
-  return data.map((row) => ({
-    completedActivities: row.completedActivities ?? 0,
-    lessonId: row.lessonId,
-    totalActivities: row.totalActivities ?? 0,
-  }));
+  return toEffectiveLessonProgressRows({
+    durablyCompletedLessonIds: durableLessonIds,
+    rows,
+  })
+    .filter((row) => row.totalActivities > 0)
+    .map((row) => ({
+      completedActivities: row.isDurablyCompleted ? row.totalActivities : row.completedActivities,
+      lessonId: row.lessonId,
+      totalActivities: row.totalActivities,
+    }));
 }

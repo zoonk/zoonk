@@ -1,14 +1,12 @@
 import "server-only";
 import { getLessonGenerationState } from "@zoonk/core/content/management";
+import { type Lesson } from "@zoonk/db";
 import { triggerLessonPreload } from "./trigger-lesson-preload";
 
-type LessonRegenerationCandidate = {
-  generationStatus: "completed" | "failed" | "pending" | "running";
-  generationVersion: number | null;
-  id: number;
-  kind: "core" | "custom" | "language";
-  managementMode: "ai" | "manual" | "pinned";
-};
+type LessonRegenerationCandidate = Pick<
+  Lesson,
+  "generationVersion" | "id" | "isRegenerating" | "kind" | "managementMode"
+>;
 
 /**
  * This helper exists so completion flows can enqueue regeneration with the

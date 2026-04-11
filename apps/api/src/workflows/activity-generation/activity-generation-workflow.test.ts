@@ -247,6 +247,68 @@ describe(activityGenerationWorkflow, () => {
       expect(generateActivityCustom).not.toHaveBeenCalled();
     });
 
+    test("regenerates only the hidden replacement activities", async () => {
+      const testLesson = await lessonFixture({
+        chapterId: chapter.id,
+        kind: "core",
+        organizationId,
+        title: `Hidden Regen Lesson ${randomUUID()}`,
+      });
+
+      const [publishedActivity, replacementActivity, archivedReplacementActivity] =
+        await Promise.all([
+          activityFixture({
+            generationStatus: "completed",
+            isPublished: true,
+            kind: "explanation",
+            lessonId: testLesson.id,
+            organizationId,
+            position: 0,
+            title: `Published ${randomUUID()}`,
+          }),
+          activityFixture({
+            generationRunId: "regen-run-1",
+            generationStatus: "pending",
+            isPublished: false,
+            kind: "explanation",
+            lessonId: testLesson.id,
+            organizationId,
+            position: 1,
+            title: `Replacement ${randomUUID()}`,
+          }),
+          activityFixture({
+            archivedAt: new Date(),
+            generationRunId: "old-regen-run",
+            generationStatus: "pending",
+            isPublished: false,
+            kind: "explanation",
+            lessonId: testLesson.id,
+            organizationId,
+            position: 2,
+            title: `Archived Replacement ${randomUUID()}`,
+          }),
+        ]);
+
+      await activityGenerationWorkflow(testLesson.id, { regeneration: true });
+
+      const [
+        updatedPublishedActivity,
+        updatedReplacementActivity,
+        updatedArchivedReplacementActivity,
+      ] = await Promise.all([
+        prisma.activity.findUniqueOrThrow({ where: { id: publishedActivity.id } }),
+        prisma.activity.findUniqueOrThrow({ where: { id: replacementActivity.id } }),
+        prisma.activity.findUniqueOrThrow({ where: { id: archivedReplacementActivity.id } }),
+      ]);
+
+      expect(generateActivityExplanation).toHaveBeenCalledOnce();
+      expect(updatedPublishedActivity.generationStatus).toBe("completed");
+      expect(updatedReplacementActivity.generationStatus).toBe("completed");
+      expect(updatedReplacementActivity.isPublished).toBe(false);
+      expect(updatedArchivedReplacementActivity.generationStatus).toBe("pending");
+      expect(updatedArchivedReplacementActivity.archivedAt).not.toBeNull();
+    });
+
     test("streams completion events when all activities are completed", async () => {
       const testLesson = await lessonFixture({
         chapterId: chapter.id,
@@ -387,7 +449,7 @@ describe(activityGenerationWorkflow, () => {
   });
 
   describe("workflow failure handling", () => {
-    test("marks running activities as failed and re-throws on workflow crash", async () => {
+    test("marks running published activities as failed and re-throws on workflow crash", async () => {
       const testLesson = await lessonFixture({
         chapterId: chapter.id,
         organizationId,
@@ -397,6 +459,7 @@ describe(activityGenerationWorkflow, () => {
       const runningActivity = await activityFixture({
         generationRunId: "test-run-id",
         generationStatus: "running",
+        isPublished: true,
         kind: "explanation",
         lessonId: testLesson.id,
         organizationId,
@@ -406,6 +469,7 @@ describe(activityGenerationWorkflow, () => {
       const completedActivity = await activityFixture({
         generationRunId: "test-run-id",
         generationStatus: "completed",
+        isPublished: true,
         kind: "quiz",
         lessonId: testLesson.id,
         organizationId,
@@ -446,46 +510,7 @@ describe(activityGenerationWorkflow, () => {
       expect(running?.generationStatus).toBe("failed");
       expect(completed?.generationStatus).toBe("completed");
       expect(pending?.generationStatus).toBe("pending");
-    });
-
-    test("only marks activities matching the current workflowRunId", async () => {
-      const testLesson = await lessonFixture({
-        chapterId: chapter.id,
-        organizationId,
-        title: `Wrong RunId Lesson ${randomUUID()}`,
-      });
-
-      const otherRunActivity = await activityFixture({
-        generationRunId: "different-run-id",
-        generationStatus: "running",
-        kind: "explanation",
-        lessonId: testLesson.id,
-        organizationId,
-        title: `Other Run Activity ${randomUUID()}`,
-      });
-
-      const originalFindMany = prisma.activity.findMany.bind(prisma.activity);
-      let callCount = 0;
-
-      prisma.activity.findMany = ((...args: Parameters<typeof originalFindMany>) => {
-        callCount += 1;
-
-        if (callCount === 1) {
-          return Promise.reject(new Error("DB connection lost"));
-        }
-
-        return originalFindMany(...args);
-      }) as typeof originalFindMany;
-
-      await expect(activityGenerationWorkflow(testLesson.id)).rejects.toThrow("DB connection lost");
-
-      prisma.activity.findMany = originalFindMany;
-
-      const activity = await prisma.activity.findUnique({
-        where: { id: otherRunActivity.id },
-      });
-
-      expect(activity?.generationStatus).toBe("running");
+      expect(running?.generationRunId).toBe("test-run-id");
     });
   });
 });

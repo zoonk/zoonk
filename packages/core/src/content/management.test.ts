@@ -13,6 +13,7 @@ function createLessonEligibilityInput(input: { managementMode: "ai" | "manual" |
   return {
     generationStatus: "completed" as const,
     generationVersion: 1,
+    isRegenerating: false,
     kind: "core" as const,
     managementMode: input.managementMode,
   };
@@ -69,6 +70,7 @@ describe("lesson generation state", () => {
       const lesson = await lessonFixture({
         chapterId: chapter.id,
         generationVersion: getTargetLessonGenerationVersion(kind),
+        isRegenerating: false,
         kind,
         managementMode: "ai",
         organizationId,
@@ -98,6 +100,7 @@ describe("lesson generation state", () => {
       const lesson = await lessonFixture({
         chapterId: chapter.id,
         generationVersion: null,
+        isRegenerating: false,
         kind,
         managementMode: "ai",
         organizationId,
@@ -120,19 +123,18 @@ describe("lesson generation state", () => {
   );
 
   test.each([
-    { generationStatus: "completed" as const, shouldAutoEnqueueRegeneration: true },
-    { generationStatus: "failed" as const, shouldAutoEnqueueRegeneration: true },
-    { generationStatus: "pending" as const, shouldAutoEnqueueRegeneration: true },
-    { generationStatus: "running" as const, shouldAutoEnqueueRegeneration: false },
+    { isRegenerating: false, shouldAutoEnqueueRegeneration: true },
+    { isRegenerating: true, shouldAutoEnqueueRegeneration: false },
   ])(
-    "routes outdated versioned ai lessons with status $generationStatus into the right regeneration path",
-    async ({ generationStatus, shouldAutoEnqueueRegeneration }) => {
+    "routes outdated versioned ai lessons with isRegenerating $isRegenerating into the right regeneration path",
+    async ({ isRegenerating, shouldAutoEnqueueRegeneration }) => {
       const course = await courseFixture({ organizationId });
       const chapter = await chapterFixture({ courseId: course.id, organizationId });
       const lesson = await lessonFixture({
         chapterId: chapter.id,
-        generationStatus,
+        generationStatus: "completed",
         generationVersion: 0,
+        isRegenerating,
         kind: "core",
         managementMode: "ai",
         organizationId,
@@ -152,6 +154,7 @@ describe("lesson generation state", () => {
     const lesson = await lessonFixture({
       chapterId: chapter.id,
       generationVersion: null,
+      isRegenerating: false,
       kind: "core",
       managementMode: "manual",
       organizationId,

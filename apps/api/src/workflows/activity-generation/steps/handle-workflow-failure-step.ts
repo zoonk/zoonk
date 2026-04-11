@@ -4,23 +4,25 @@ import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 
 /**
- * Marks activities left in "running" state by this workflow as failed.
- * Completed activities stay completed, pending ones stay pending.
- * Streams an error event so the frontend shows retry UI.
+ * Marks published activities left in "running" state by initial generation as
+ * failed.
+ *
+ * Regeneration intentionally does not go through this path. Hidden replacement
+ * activities belong to the outer lesson-regeneration workflow, which deletes
+ * that temporary replacement set on failure instead of keeping failed rows
+ * around.
  */
-export async function handleWorkflowFailureStep(
-  lessonId: number,
-  workflowRunId: string,
-): Promise<void> {
+export async function handleWorkflowFailureStep(input: { lessonId: number }): Promise<void> {
   "use step";
 
   await safeAsync(() =>
     prisma.activity.updateMany({
-      data: { generationRunId: null, generationStatus: "failed" },
+      data: { generationStatus: "failed" },
       where: {
-        generationRunId: workflowRunId,
+        archivedAt: null,
         generationStatus: "running",
-        lessonId,
+        isPublished: true,
+        lessonId: input.lessonId,
       },
     }),
   );

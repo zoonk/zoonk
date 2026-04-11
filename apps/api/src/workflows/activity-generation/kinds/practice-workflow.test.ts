@@ -100,7 +100,7 @@ describe("practice activity workflow", () => {
       title: `Practice ${randomUUID()}`,
     });
 
-    const activities = await getLessonActivitiesStep(testLesson.id);
+    const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
     const explanationResults = buildExplanationResults(Number(expActivity.id));
 
     await practiceActivityWorkflow({
@@ -156,7 +156,7 @@ describe("practice activity workflow", () => {
       title: `Practice ${randomUUID()}`,
     });
 
-    const activities = await getLessonActivitiesStep(testLesson.id);
+    const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
     const explanationResults = buildExplanationResults(Number(expActivity.id));
 
     await practiceActivityWorkflow({
@@ -202,7 +202,7 @@ describe("practice activity workflow", () => {
       title: `Practice ${randomUUID()}`,
     });
 
-    const activities = await getLessonActivitiesStep(testLesson.id);
+    const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
     const explanationResults = buildExplanationResults(Number(expActivity.id));
 
     await practiceActivityWorkflow({
@@ -235,7 +235,7 @@ describe("practice activity workflow", () => {
       title: `Practice ${randomUUID()}`,
     });
 
-    const activities = await getLessonActivitiesStep(testLesson.id);
+    const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
 
     await practiceActivityWorkflow({
       activitiesToGenerate: activities,
@@ -287,7 +287,7 @@ describe("practice activity workflow", () => {
       position: 0,
     });
 
-    const activities = await getLessonActivitiesStep(testLesson.id);
+    const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
     const explanationResults = buildExplanationResults(Number(expActivity.id));
 
     await practiceActivityWorkflow({
@@ -364,7 +364,7 @@ describe("practice activity workflow", () => {
         }),
       ]);
 
-      const activities = await getLessonActivitiesStep(testLesson.id);
+      const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
       const explanationResults: ExplanationResult[] = [
         { activityId: Number(expS1.id), concept: "S1", steps: [{ text: "S1 text", title: "S1" }] },
         { activityId: Number(expS2.id), concept: "S2", steps: [{ text: "S2 text", title: "S2" }] },
@@ -445,7 +445,7 @@ describe("practice activity workflow", () => {
         }),
       ]);
 
-      const activities = await getLessonActivitiesStep(testLesson.id);
+      const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
       const explanationResults: ExplanationResult[] = [
         {
           activityId: Number(expH1A.id),
@@ -536,7 +536,7 @@ describe("practice activity workflow", () => {
         title: `Single Practice ${randomUUID()}`,
       });
 
-      const activities = await getLessonActivitiesStep(testLesson.id);
+      const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
       const explanationResults: ExplanationResult[] = [
         {
           activityId: Number(expSA.id),
@@ -630,7 +630,7 @@ describe("practice activity workflow", () => {
         }),
       ]);
 
-      const activities = await getLessonActivitiesStep(testLesson.id);
+      const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
       const explanationResults: ExplanationResult[] = [
         {
           activityId: Number(expSC1.id),
@@ -734,7 +734,7 @@ describe("practice activity workflow", () => {
       ]);
 
       // practice0 is completed → only practice1 in activitiesToGenerate
-      const allActivities = await getLessonActivitiesStep(testLesson.id);
+      const allActivities = await getLessonActivitiesStep({ lessonId: testLesson.id });
       const activitiesToGenerate = allActivities.filter((a) => a.id === Number(practice1.id));
 
       const explanationResults: ExplanationResult[] = [
@@ -824,7 +824,7 @@ describe("practice activity workflow", () => {
         }),
       ]);
 
-      const activities = await getLessonActivitiesStep(testLesson.id);
+      const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
       const explanationResults: ExplanationResult[] = [
         {
           activityId: Number(expOnly.id),

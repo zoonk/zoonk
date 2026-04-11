@@ -18,6 +18,7 @@ export function lessonAttrs(
     generationVersion: null,
     isLocked: false,
     isPublished: false,
+    isRegenerating: false,
     kind: "core",
     language: "en",
     managementMode: "manual",

@@ -111,7 +111,7 @@ describe("investigation activity workflow", () => {
       title: `Investigation ${randomUUID()}`,
     });
 
-    const activities = await getLessonActivitiesStep(lesson.id);
+    const activities = await getLessonActivitiesStep({ lessonId: lesson.id });
 
     await investigationActivityWorkflow({
       activitiesToGenerate: activities,
@@ -158,7 +158,7 @@ describe("investigation activity workflow", () => {
       title: `Investigation ${randomUUID()}`,
     });
 
-    const activities = await getLessonActivitiesStep(lesson.id);
+    const activities = await getLessonActivitiesStep({ lessonId: lesson.id });
 
     await investigationActivityWorkflow({
       activitiesToGenerate: activities,
@@ -187,7 +187,7 @@ describe("investigation activity workflow", () => {
       title: `Investigation ${randomUUID()}`,
     });
 
-    const activities = await getLessonActivitiesStep(lesson.id);
+    const activities = await getLessonActivitiesStep({ lessonId: lesson.id });
 
     await investigationActivityWorkflow({
       activitiesToGenerate: activities,
@@ -217,7 +217,7 @@ describe("investigation activity workflow", () => {
       title: `Investigation ${randomUUID()}`,
     });
 
-    const activities = await getLessonActivitiesStep(lesson.id);
+    const activities = await getLessonActivitiesStep({ lessonId: lesson.id });
 
     await investigationActivityWorkflow({
       activitiesToGenerate: activities,
@@ -251,7 +251,7 @@ describe("investigation activity workflow", () => {
       title: `Investigation ${randomUUID()}`,
     });
 
-    const activities = await getLessonActivitiesStep(lesson.id);
+    const activities = await getLessonActivitiesStep({ lessonId: lesson.id });
 
     await investigationActivityWorkflow({
       activitiesToGenerate: activities,
@@ -286,7 +286,7 @@ describe("investigation activity workflow", () => {
       title: `Explanation ${randomUUID()}`,
     });
 
-    const activities = await getLessonActivitiesStep(lesson.id);
+    const activities = await getLessonActivitiesStep({ lessonId: lesson.id });
 
     await investigationActivityWorkflow({
       activitiesToGenerate: activities,
@@ -314,7 +314,7 @@ describe("investigation activity workflow", () => {
       title: `Investigation ${randomUUID()}`,
     });
 
-    const activities = await getLessonActivitiesStep(lesson.id);
+    const activities = await getLessonActivitiesStep({ lessonId: lesson.id });
 
     await investigationActivityWorkflow({
       activitiesToGenerate: activities,
@@ -344,7 +344,7 @@ describe("investigation activity workflow", () => {
       title: `Investigation ${randomUUID()}`,
     });
 
-    const activities = await getLessonActivitiesStep(lesson.id);
+    const activities = await getLessonActivitiesStep({ lessonId: lesson.id });
 
     await investigationActivityWorkflow({
       activitiesToGenerate: activities,
@@ -375,7 +375,7 @@ describe("investigation activity workflow", () => {
       title: `Investigation ${randomUUID()}`,
     });
 
-    const activities = await getLessonActivitiesStep(lesson.id);
+    const activities = await getLessonActivitiesStep({ lessonId: lesson.id });
 
     await investigationActivityWorkflow({
       activitiesToGenerate: activities,
@@ -405,7 +405,7 @@ describe("investigation activity workflow", () => {
       title: `Investigation ${randomUUID()}`,
     });
 
-    const activities = await getLessonActivitiesStep(lesson.id);
+    const activities = await getLessonActivitiesStep({ lessonId: lesson.id });
 
     await investigationActivityWorkflow({
       activitiesToGenerate: activities,

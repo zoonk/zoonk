@@ -1,4 +1,4 @@
-import { prisma } from "@zoonk/db";
+import { getPublishedActivityWhere, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { getSession } from "../users/get-user-session";
 
@@ -16,10 +16,36 @@ export async function getActivityProgress({
     return [];
   }
 
+  const { data: lessonCompletion } = await safeAsync(() =>
+    prisma.lessonCompletion.findUnique({
+      where: {
+        userLessonCompletion: {
+          lessonId,
+          userId,
+        },
+      },
+    }),
+  );
+
+  if (lessonCompletion) {
+    const { data: activities } = await safeAsync(() =>
+      prisma.activity.findMany({
+        orderBy: { position: "asc" },
+        where: getPublishedActivityWhere({
+          lessonWhere: { id: lessonId },
+        }),
+      }),
+    );
+
+    return (activities ?? []).map((activity) => String(activity.id));
+  }
+
   const { data, error } = await safeAsync(() =>
     prisma.activityProgress.findMany({
       where: {
-        activity: { isPublished: true, lessonId },
+        activity: getPublishedActivityWhere({
+          lessonWhere: { id: lessonId },
+        }),
         completedAt: { not: null },
         userId,
       },

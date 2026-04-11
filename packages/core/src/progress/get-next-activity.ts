@@ -4,9 +4,10 @@ import {
   findLastCompleted,
 } from "@zoonk/core/activities/last-completed";
 import { getNextActivityInCourse } from "@zoonk/core/activities/next-in-course";
-import { getPublishedActivityWhere, getPublishedLessonWhere, prisma } from "@zoonk/db";
+import { getPublishedActivityWhere, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { getSession } from "../users/get-user-session";
+import { getNextActivityStateForUser } from "./get-next-activity-state";
 
 function getScopeActivityWhere(scope: ActivityScope) {
   if ("courseId" in scope) {
@@ -38,13 +39,7 @@ async function findFirstActivity(scope: ActivityScope): Promise<{
     prisma.activity.findFirst({
       include: {
         lesson: {
-          include: {
-            chapter: {
-              include: {
-                course: { include: { organization: true } },
-              },
-            },
-          },
+          include: { chapter: { include: { course: { include: { organization: true } } } } },
         },
       },
       orderBy: [
@@ -67,66 +62,6 @@ async function findFirstActivity(scope: ActivityScope): Promise<{
     chapterSlug: activity.lesson.chapter.slug,
     courseSlug: activity.lesson.chapter.course.slug,
     lessonSlug: activity.lesson.slug,
-  };
-}
-
-async function findFirstPendingLesson(scope: ActivityScope) {
-  const scopeWhere = (() => {
-    if ("courseId" in scope) {
-      return { courseWhere: { id: scope.courseId } };
-    }
-
-    if ("chapterId" in scope) {
-      return { chapterWhere: { id: scope.chapterId } };
-    }
-
-    return {};
-  })();
-
-  const lessonIdFilter = "lessonId" in scope ? { id: scope.lessonId } : {};
-
-  const { data: lesson, error } = await safeAsync(() =>
-    prisma.lesson.findFirst({
-      include: {
-        chapter: {
-          include: {
-            course: { include: { organization: true } },
-          },
-        },
-      },
-      orderBy: [{ chapter: { position: "asc" } }, { position: "asc" }],
-      where: getPublishedLessonWhere({
-        ...scopeWhere,
-        lessonWhere: {
-          ...lessonIdFilter,
-          OR: [
-            { generationStatus: { not: "completed" } },
-            {
-              activities: {
-                some: getPublishedActivityWhere({
-                  activityWhere: {
-                    generationStatus: { not: "completed" },
-                  },
-                }),
-              },
-            },
-          ],
-        },
-      }),
-    }),
-  );
-
-  if (error || !lesson) {
-    return null;
-  }
-
-  return {
-    activityPosition: 0,
-    brandSlug: lesson.chapter.course.organization?.slug ?? null,
-    canPrefetch: false,
-    chapterSlug: lesson.chapter.slug,
-    courseSlug: lesson.chapter.course.slug,
-    lessonSlug: lesson.slug,
   };
 }
 
@@ -172,39 +107,65 @@ export async function getNextActivity({
 
   const lastCompleted = await findLastCompleted(userId, scope);
 
-  if (!lastCompleted) {
+  if (lastCompleted) {
+    const next = await getNextActivityInCourse({
+      activityPosition: lastCompleted.activityPosition,
+      chapterId: lastCompleted.chapterId,
+      chapterPosition: lastCompleted.chapterPosition,
+      courseId: lastCompleted.courseId,
+      lessonId: lastCompleted.lessonId,
+      lessonPosition: lastCompleted.lessonPosition,
+    });
+
+    if (next && isWithinScope(next, scope, lastCompleted)) {
+      const { data: completedChapter } = await safeAsync(() =>
+        prisma.chapterCompletion.findUnique({
+          where: {
+            userChapterCompletion: {
+              chapterId: next.chapterId,
+              userId,
+            },
+          },
+        }),
+      );
+
+      if (!completedChapter) {
+        return {
+          activityPosition: next.activityPosition,
+          brandSlug: lastCompleted.orgSlug,
+          canPrefetch: true,
+          chapterSlug: next.chapterSlug,
+          completed: false,
+          courseSlug: lastCompleted.courseSlug,
+          hasStarted: true,
+          lessonSlug: next.lessonSlug,
+        };
+      }
+    }
+  }
+
+  const state = await getNextActivityStateForUser({ scope, userId });
+
+  if (!state) {
+    return null;
+  }
+
+  if (state.completed) {
     const first = await findFirstActivity(scope);
-    return first ? { ...first, completed: false, hasStarted: false } : null;
+
+    if (!first) {
+      return null;
+    }
   }
 
-  const next = await getNextActivityInCourse({
-    activityPosition: lastCompleted.activityPosition,
-    chapterId: lastCompleted.chapterId,
-    chapterPosition: lastCompleted.chapterPosition,
-    courseId: lastCompleted.courseId,
-    lessonId: lastCompleted.lessonId,
-    lessonPosition: lastCompleted.lessonPosition,
-  });
-
-  if (next && isWithinScope(next, scope, lastCompleted)) {
-    return {
-      activityPosition: next.activityPosition,
-      brandSlug: lastCompleted.orgSlug,
-      canPrefetch: true,
-      chapterSlug: next.chapterSlug,
-      completed: false,
-      courseSlug: lastCompleted.courseSlug,
-      hasStarted: true,
-      lessonSlug: next.lessonSlug,
-    };
-  }
-
-  const pending = await findFirstPendingLesson(scope);
-
-  if (pending) {
-    return { ...pending, completed: false, hasStarted: true };
-  }
-
-  const first = await findFirstActivity(scope);
-  return first ? { ...first, completed: true, hasStarted: true } : null;
+  return {
+    activityPosition: state.activityPosition,
+    brandSlug: state.brandSlug,
+    canPrefetch: state.canPrefetch,
+    chapterSlug: state.chapterSlug,
+    completed: state.completed,
+    courseSlug: state.courseSlug,
+    hasStarted: state.hasStarted,
+    lessonSlug: state.lessonSlug,
+  };
 }
