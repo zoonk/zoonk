@@ -1,0 +1,51 @@
+apps/main/src/data/courses/get-continue-learning.test.ts
+  15aff758171b1418 186-288
+apps/main/src/data/courses/_utils/continue-learning-candidates.ts
+  15aff758171b1418 25-34,54-55,65-67,70,72-73,96-117,138-140,142,148-149,151-152,155-195,197-218,220-229,231-241,243,246,252-299,301-320,337-342,355-370
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.8",
+  "base_commit_sha": "1d8e55d9a8ec57ac40b9c7abddfe41b24da27fa6",
+  "prompts": {
+    "15aff758171b1418": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d7db0-4217-7450-9734-cb4c683f02d9",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 373,
+      "total_deletions": 67,
+      "accepted_lines": 342,
+      "overriden_lines": 0
+    },
+    "c907dc44a7ce196a": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d7881-9922-7b50-98b3-7592931e3ddb",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 3,
+      "overriden_lines": 0
+    },
+    "ef439b46a67bb34a": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d7991-a230-7b82-8adb-8f52cb75675a",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 188,
+      "overriden_lines": 0
+    }
+  }
+}
