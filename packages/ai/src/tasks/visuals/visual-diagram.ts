@@ -5,7 +5,7 @@ import { z } from "zod";
 import { buildVisualDiagramOutput } from "./_utils/diagram-output";
 import systemPrompt from "./visual-diagram.prompt.md";
 
-const DEFAULT_MODEL = process.env.AI_MODEL_VISUAL_DIAGRAM ?? "google/gemini-3.1-flash-lite-preview";
+const DEFAULT_MODEL = "google/gemini-3.1-flash-lite-preview";
 const FALLBACK_MODELS = ["anthropic/claude-sonnet-4.6", "openai/gpt-5.4-nano"];
 
 /**
@@ -76,6 +76,7 @@ export async function generateVisualDiagram({
 
   const providerOptions = buildProviderOptions({
     fallbackModels: FALLBACK_MODELS,
+    model,
     reasoningEffort,
     useFallback,
   });

@@ -4,7 +4,7 @@ import { Output, generateText } from "ai";
 import { z } from "zod";
 import systemPrompt from "./activity-quiz.prompt.md";
 
-const DEFAULT_MODEL = process.env.AI_MODEL_ACTIVITY_QUIZ ?? "openai/gpt-5.4";
+const DEFAULT_MODEL = "openai/gpt-5.4";
 const FALLBACK_MODELS = ["anthropic/claude-opus-4.6"];
 
 const multipleChoiceSchema = z.object({
@@ -112,6 +112,7 @@ ${formattedExplanationSteps}`;
 
   const providerOptions = buildProviderOptions({
     fallbackModels: FALLBACK_MODELS,
+    model,
     reasoningEffort,
     useFallback,
   });

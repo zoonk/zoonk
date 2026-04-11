@@ -4,7 +4,7 @@ import { Output, generateText } from "ai";
 import { z } from "zod";
 import systemPrompt from "./activity-romanization.prompt.md";
 
-const DEFAULT_MODEL = process.env.AI_MODEL_ACTIVITY_ROMANIZATION ?? "openai/gpt-5.4";
+const DEFAULT_MODEL = "openai/gpt-5.4";
 const FALLBACK_MODELS = ["anthropic/claude-opus-4.6", "google/gemini-3.1-pro-preview"];
 
 const schema = z.object({
@@ -44,6 +44,7 @@ Romanize each text using the standard romanization system for the target languag
 
   const providerOptions = buildProviderOptions({
     fallbackModels: FALLBACK_MODELS,
+    model,
     reasoningEffort,
     useFallback,
   });

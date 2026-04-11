@@ -4,7 +4,7 @@ import { Output, generateText } from "ai";
 import { z } from "zod";
 import systemPrompt from "./activity-story-steps.prompt.md";
 
-const DEFAULT_MODEL = process.env.AI_MODEL_ACTIVITY_STORY_STEPS ?? "openai/gpt-5.4";
+const DEFAULT_MODEL = "openai/gpt-5.4";
 
 const storyAlignmentSchema = z.enum(["strong", "partial", "weak"]);
 const storyMetricEffectSchema = z.enum(["positive", "neutral", "negative"]);
@@ -76,6 +76,7 @@ export async function generateActivityStorySteps({
 
   const providerOptions = buildProviderOptions({
     fallbackModels: [],
+    model,
     reasoningEffort,
     useFallback,
   });

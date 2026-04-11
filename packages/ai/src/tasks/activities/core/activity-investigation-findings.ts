@@ -7,7 +7,7 @@ import { type ActivityInvestigationActionsSchema } from "./activity-investigatio
 import systemPrompt from "./activity-investigation-findings.prompt.md";
 import { type ActivityInvestigationScenarioSchema } from "./activity-investigation-scenario";
 
-const DEFAULT_MODEL = process.env.AI_MODEL_ACTIVITY_INVESTIGATION_FINDINGS ?? "openai/gpt-5.4";
+const DEFAULT_MODEL = "openai/gpt-5.4";
 const FALLBACK_MODELS = ["google/gemini-3.1-pro-preview", "anthropic/claude-sonnet-4.6"];
 
 /**
@@ -83,6 +83,7 @@ export async function generateActivityInvestigationFindings({
 
   const providerOptions = buildProviderOptions({
     fallbackModels: FALLBACK_MODELS,
+    model,
     reasoningEffort,
     useFallback,
   });

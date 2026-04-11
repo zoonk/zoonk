@@ -6,7 +6,7 @@ import { formatConceptLines } from "../config";
 import { getLanguagePromptContext } from "./_utils/language-prompt-context";
 import systemPrompt from "./activity-vocabulary.prompt.md";
 
-const DEFAULT_MODEL = process.env.AI_MODEL_ACTIVITY_VOCABULARY ?? "google/gemini-3-flash";
+const DEFAULT_MODEL = "google/gemini-3-flash";
 const FALLBACK_MODELS = ["google/gemini-3.1-pro-preview", "openai/gpt-5.4"];
 
 const schema = z.object({
@@ -59,6 +59,7 @@ Generate a focused, representative vocabulary list for this language lesson. Inc
 
   const providerOptions = buildProviderOptions({
     fallbackModels: FALLBACK_MODELS,
+    model,
     reasoningEffort,
     useFallback,
   });
