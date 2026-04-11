@@ -4,8 +4,7 @@ import { z } from "zod";
 import { type ReasoningEffort, buildProviderOptions } from "../../provider-options";
 import systemPrompt from "./applied-activity-kind.prompt.md";
 
-const DEFAULT_MODEL =
-  process.env.AI_MODEL_APPLIED_ACTIVITY_KIND ?? "google/gemini-3.1-flash-lite-preview";
+const DEFAULT_MODEL = "google/gemini-3.1-flash-lite-preview";
 const FALLBACK_MODELS = ["openai/gpt-5.4-nano", "anthropic/claude-haiku-4.5"];
 
 const schema = z.object({
@@ -55,7 +54,9 @@ export async function generateAppliedActivityKind({
 
   const providerOptions = buildProviderOptions({
     fallbackModels: FALLBACK_MODELS,
+    model,
     reasoningEffort,
+    taskName: "applied-activity-kind",
     useFallback,
   });
 

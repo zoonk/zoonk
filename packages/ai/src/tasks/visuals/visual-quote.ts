@@ -4,7 +4,7 @@ import { Output, generateText } from "ai";
 import { z } from "zod";
 import systemPrompt from "./visual-quote.prompt.md";
 
-const DEFAULT_MODEL = process.env.AI_MODEL_VISUAL_QUOTE ?? "google/gemini-3.1-pro-preview";
+const DEFAULT_MODEL = "google/gemini-3.1-pro-preview";
 const FALLBACK_MODELS = ["openai/gpt-5.4", "anthropic/claude-opus-4.6"];
 
 /**
@@ -52,7 +52,9 @@ export async function generateVisualQuote({
 
   const providerOptions = buildProviderOptions({
     fallbackModels: FALLBACK_MODELS,
+    model,
     reasoningEffort,
+    taskName: "visual-quote",
     useFallback,
   });
 

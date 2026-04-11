@@ -5,7 +5,7 @@ import { z } from "zod";
 import { buildVisualCodeOutput } from "./_utils/code-annotations";
 import systemPrompt from "./visual-code.prompt.md";
 
-const DEFAULT_MODEL = process.env.AI_MODEL_VISUAL_CODE ?? "openai/gpt-5.4";
+const DEFAULT_MODEL = "openai/gpt-5.4";
 const FALLBACK_MODELS = ["google/gemini-3.1-flash-lite-preview", "anthropic/claude-opus-4.6"];
 
 /**
@@ -74,7 +74,9 @@ export async function generateVisualCode({
 
   const providerOptions = buildProviderOptions({
     fallbackModels: FALLBACK_MODELS,
+    model,
     reasoningEffort,
+    taskName: "visual-code",
     useFallback,
   });
 

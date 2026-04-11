@@ -4,7 +4,7 @@ import { z } from "zod";
 import { type ReasoningEffort, buildProviderOptions } from "../../provider-options";
 import systemPrompt from "./lesson-kind.prompt.md";
 
-const DEFAULT_MODEL = process.env.AI_MODEL_LESSON_KIND ?? "openai/gpt-5.4-nano";
+const DEFAULT_MODEL = "openai/gpt-5.4-nano";
 
 const FALLBACK_MODELS = [
   "google/gemini-3.1-flash-lite-preview",
@@ -47,7 +47,9 @@ LANGUAGE: ${language}`;
 
   const providerOptions = buildProviderOptions({
     fallbackModels: FALLBACK_MODELS,
+    model,
     reasoningEffort,
+    taskName: "lesson-kind",
     useFallback,
   });
 

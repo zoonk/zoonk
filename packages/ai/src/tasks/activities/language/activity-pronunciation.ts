@@ -5,7 +5,7 @@ import { z } from "zod";
 import { getLanguagePromptContext } from "./_utils/language-prompt-context";
 import systemPrompt from "./activity-pronunciation.prompt.md";
 
-const DEFAULT_MODEL = process.env.AI_MODEL_ACTIVITY_PRONUNCIATION ?? "google/gemini-3-flash";
+const DEFAULT_MODEL = "google/gemini-3-flash";
 const FALLBACK_MODELS = ["anthropic/claude-sonnet-4.6", "openai/gpt-5.1-instant"];
 
 const schema = z.object({
@@ -41,7 +41,9 @@ Generate a pronunciation guide for this word using only sounds from the native l
 
   const providerOptions = buildProviderOptions({
     fallbackModels: FALLBACK_MODELS,
+    model,
     reasoningEffort,
+    taskName: "activity-pronunciation",
     useFallback,
   });
 

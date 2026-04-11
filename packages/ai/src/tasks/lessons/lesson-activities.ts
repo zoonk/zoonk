@@ -4,7 +4,7 @@ import { z } from "zod";
 import { type ReasoningEffort, buildProviderOptions } from "../../provider-options";
 import systemPrompt from "./lesson-activities.prompt.md";
 
-const DEFAULT_MODEL = process.env.AI_MODEL_LESSON_ACTIVITIES ?? "google/gemini-3-flash";
+const DEFAULT_MODEL = "google/gemini-3-flash";
 const FALLBACK_MODELS = ["anthropic/claude-opus-4.6", "openai/gpt-5.4"];
 
 const schema = z.object({
@@ -48,7 +48,9 @@ LANGUAGE: ${language}`;
 
   const providerOptions = buildProviderOptions({
     fallbackModels: FALLBACK_MODELS,
+    model,
     reasoningEffort,
+    taskName: "lesson-activities",
     useFallback,
   });
 

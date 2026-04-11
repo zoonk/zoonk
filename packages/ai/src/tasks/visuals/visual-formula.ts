@@ -4,7 +4,7 @@ import { Output, generateText } from "ai";
 import { z } from "zod";
 import systemPrompt from "./visual-formula.prompt.md";
 
-const DEFAULT_MODEL = process.env.AI_MODEL_VISUAL_FORMULA ?? "openai/gpt-5.4-mini";
+const DEFAULT_MODEL = "openai/gpt-5.4-mini";
 const FALLBACK_MODELS = ["anthropic/claude-haiku-4.5", "google/gemini-3.1-flash-lite-preview"];
 
 /**
@@ -50,7 +50,9 @@ export async function generateVisualFormula({
 
   const providerOptions = buildProviderOptions({
     fallbackModels: FALLBACK_MODELS,
+    model,
     reasoningEffort,
+    taskName: "visual-formula",
     useFallback,
   });
 

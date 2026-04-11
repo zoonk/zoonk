@@ -4,7 +4,7 @@ import { Output, generateText } from "ai";
 import { z } from "zod";
 import systemPrompt from "./activity-custom.prompt.md";
 
-const DEFAULT_MODEL = process.env.AI_MODEL_ACTIVITY_CUSTOM ?? "google/gemini-3-flash";
+const DEFAULT_MODEL = "google/gemini-3-flash";
 const FALLBACK_MODELS = ["anthropic/claude-opus-4.6", "openai/gpt-5.4"];
 
 const schema = z.object({
@@ -53,7 +53,9 @@ ACTIVITY_DESCRIPTION: ${activityDescription}`;
 
   const providerOptions = buildProviderOptions({
     fallbackModels: FALLBACK_MODELS,
+    model,
     reasoningEffort,
+    taskName: "activity-custom",
     useFallback,
   });
 

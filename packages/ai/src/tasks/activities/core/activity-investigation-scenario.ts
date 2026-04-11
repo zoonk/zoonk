@@ -4,7 +4,7 @@ import { Output, generateText } from "ai";
 import { z } from "zod";
 import systemPrompt from "./activity-investigation-scenario.prompt.md";
 
-const DEFAULT_MODEL = process.env.AI_MODEL_ACTIVITY_INVESTIGATION_SCENARIO ?? "openai/gpt-5.4";
+const DEFAULT_MODEL = "openai/gpt-5.4";
 const FALLBACK_MODELS = ["anthropic/claude-sonnet-4.6"];
 
 const schema = z.object({
@@ -55,7 +55,9 @@ export async function generateActivityInvestigationScenario({
 
   const providerOptions = buildProviderOptions({
     fallbackModels: FALLBACK_MODELS,
+    model,
     reasoningEffort,
+    taskName: "activity-investigation-scenario",
     useFallback,
   });
 

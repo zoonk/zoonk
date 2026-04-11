@@ -5,7 +5,7 @@ import { z } from "zod";
 import systemPrompt from "./activity-investigation-accuracy.prompt.md";
 import { type ActivityInvestigationScenarioSchema } from "./activity-investigation-scenario";
 
-const DEFAULT_MODEL = process.env.AI_MODEL_ACTIVITY_INVESTIGATION_ACCURACY ?? "openai/gpt-5.4-mini";
+const DEFAULT_MODEL = "openai/gpt-5.4-mini";
 const FALLBACK_MODELS = ["google/gemini-3.1-flash-lite-preview", "anthropic/claude-sonnet-4.6"];
 
 /**
@@ -86,7 +86,9 @@ export async function generateActivityInvestigationAccuracy({
 
   const providerOptions = buildProviderOptions({
     fallbackModels: FALLBACK_MODELS,
+    model,
     reasoningEffort,
+    taskName: "activity-investigation-accuracy",
     useFallback,
   });
 
