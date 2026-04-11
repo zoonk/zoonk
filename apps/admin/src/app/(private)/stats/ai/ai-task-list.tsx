@@ -15,7 +15,7 @@ export async function AiTaskList() {
   return (
     <div className="flex flex-col gap-4">
       <p className="text-muted-foreground text-sm">
-        Request counts for gateway-tagged AI text tasks in the last 30 days.
+        Request counts and fallback usage for gateway-tagged AI text tasks in the last 30 days.
       </p>
 
       {tasks.length > 0 ? (

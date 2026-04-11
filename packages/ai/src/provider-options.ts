@@ -1,5 +1,6 @@
 import { type GatewayProviderOptions } from "@ai-sdk/gateway";
 import { type OpenAILanguageModelResponsesOptions } from "@ai-sdk/openai";
+import { buildGatewayReportingTags } from "./reporting-tags";
 
 export type ReasoningEffort = "auto" | "low" | "medium" | "high";
 
@@ -33,12 +34,14 @@ function buildGatewayProviderOptions({
   useFallback: boolean;
 }): ProviderOptionsResult["gateway"] {
   const order = getGatewayProviderOrder(model);
-  const tags = buildGatewayTags(taskName);
+  const tags = shouldAddGatewayTags(useFallback)
+    ? buildGatewayTags({ model, taskName })
+    : undefined;
 
   return {
     models: useFallback ? fallbackModels : [],
     ...(order ? { order } : {}),
-    tags,
+    ...(tags ? { tags } : {}),
   };
 }
 
@@ -72,8 +75,17 @@ function isSupportedModelPrefix(value: string): value is SupportedModelPrefix {
  * We keep the format in one place so custom reporting queries can rely on a
  * stable `task:*` prefix instead of every caller inventing its own shape.
  */
-function buildGatewayTags(taskName: string): string[] {
-  return [`task:${taskName}`];
+function buildGatewayTags({ model, taskName }: { model: string; taskName: string }): string[] {
+  return buildGatewayReportingTags({ model, taskName });
+}
+
+/**
+ * We only want analytics for tasks that actually participate in fallback
+ * routing. This keeps eval runs out of Gateway reports while still tracking the
+ * normal task path, even for tasks whose fallback list is currently empty.
+ */
+function shouldAddGatewayTags(useFallback: boolean): boolean {
+  return useFallback;
 }
 
 /**

@@ -1,4 +1,5 @@
 import { type AiTaskModelReport } from "@/data/stats/ai/get-ai-task-report";
+import { Badge } from "@zoonk/ui/components/badge";
 import {
   Table,
   TableBody,
@@ -19,6 +20,7 @@ export function AiTaskModelTable({ models }: { models: AiTaskModelReport[] }) {
       <TableHeader>
         <TableRow>
           <TableHead>Model</TableHead>
+          <TableHead>Status</TableHead>
           <TableHead className="text-right">Requests</TableHead>
           <TableHead className="text-right">Total Cost</TableHead>
           <TableHead className="text-right">Market Cost</TableHead>
@@ -43,6 +45,11 @@ function AiTaskModelRow({ model }: { model: AiTaskModelReport }) {
   return (
     <TableRow>
       <TableCell className="font-medium">{model.model}</TableCell>
+      <TableCell>
+        <Badge variant={model.isFallback ? "secondary" : "outline"}>
+          {model.isFallback ? "Fallback" : "Default"}
+        </Badge>
+      </TableCell>
       <TableCell className="text-right tabular-nums">
         {model.requestCount.toLocaleString()}
       </TableCell>

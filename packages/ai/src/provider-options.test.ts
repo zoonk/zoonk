@@ -2,7 +2,7 @@ import { describe, expect, test } from "vitest";
 import { buildProviderOptions } from "./provider-options";
 
 describe(buildProviderOptions, () => {
-  test("adds the openai provider order and reasoning effort for openai models", () => {
+  test("adds provider order, default-model tags, and reasoning effort for fallback-enabled openai models", () => {
     expect(
       buildProviderOptions({
         fallbackModels: ["google/gemini-3-flash", "anthropic/claude-haiku-4.5"],
@@ -15,13 +15,13 @@ describe(buildProviderOptions, () => {
       gateway: {
         models: ["google/gemini-3-flash", "anthropic/claude-haiku-4.5"],
         order: ["openai", "azure", "google", "anthropic", "vertex"],
-        tags: ["task:activity-explanation"],
+        tags: ["task:activity-explanation", "default-model:openai/gpt-5.4"],
       },
       openai: { reasoningEffort: "high" },
     });
   });
 
-  test("adds the google provider order without openai-specific options", () => {
+  test("skips reporting tags when fallback routing is disabled", () => {
     expect(
       buildProviderOptions({
         fallbackModels: ["openai/gpt-5.4-mini"],
@@ -33,7 +33,6 @@ describe(buildProviderOptions, () => {
       gateway: {
         models: [],
         order: ["google", "vertex", "openai", "azure", "anthropic"],
-        tags: ["task:activity-vocabulary"],
       },
     });
   });
@@ -50,7 +49,7 @@ describe(buildProviderOptions, () => {
       gateway: {
         models: ["openai/gpt-5.4-mini"],
         order: ["anthropic", "vertex", "openai", "azure", "google"],
-        tags: ["task:activity-story-steps"],
+        tags: ["task:activity-story-steps", "default-model:anthropic/claude-opus-4.6"],
       },
     });
   });
@@ -66,7 +65,24 @@ describe(buildProviderOptions, () => {
     ).toEqual({
       gateway: {
         models: ["openai/gpt-5.4-mini"],
-        tags: ["task:course-description"],
+        tags: ["task:course-description", "default-model:xai/grok-4"],
+      },
+    });
+  });
+
+  test("still adds reporting tags when fallback tracking is enabled without fallback models", () => {
+    expect(
+      buildProviderOptions({
+        fallbackModels: [],
+        model: "openai/gpt-5.4",
+        taskName: "activity-story-steps",
+        useFallback: true,
+      }),
+    ).toEqual({
+      gateway: {
+        models: [],
+        order: ["openai", "azure", "google", "anthropic", "vertex"],
+        tags: ["task:activity-story-steps", "default-model:openai/gpt-5.4"],
       },
     });
   });

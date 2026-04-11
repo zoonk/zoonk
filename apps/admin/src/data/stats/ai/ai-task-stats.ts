@@ -1,7 +1,12 @@
+import {
+  buildGatewayTaskTag,
+  extractGatewayDefaultModel,
+  extractGatewayTaskName,
+} from "@zoonk/core/ai";
 import { MS_PER_DAY, parseLocalDate } from "@zoonk/utils/date";
 
-const AI_TASK_TAG_PREFIX = "task:";
 const AI_TASK_NAME_PATTERN = /^[a-z0-9-]+$/;
+const AI_MODEL_ID_PATTERN = /^[a-z0-9.-]+\/[a-z0-9.-]+$/;
 const DATE_INPUT_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 const DEFAULT_LOOKBACK_DAYS = 30;
 const DEFAULT_ESTIMATE_RUN_COUNT = 1000;
@@ -19,12 +24,18 @@ type AiTaskDateRange = {
  * any future non-task tags that might be added for other reporting dimensions.
  */
 export function extractAiTaskName(tag?: string): string | null {
-  if (!tag?.startsWith(AI_TASK_TAG_PREFIX)) {
-    return null;
-  }
-
-  const taskName = tag.slice(AI_TASK_TAG_PREFIX.length);
+  const taskName = extractGatewayTaskName(tag);
   return isAiTaskName(taskName) ? taskName : null;
+}
+
+/**
+ * Default-model tags come from Gateway reporting and should look like provider
+ * model ids such as `openai/gpt-5.4`. We validate the shape before using them
+ * so malformed tags cannot affect fallback comparisons in the admin UI.
+ */
+export function extractAiDefaultModel(tag?: string): string | null {
+  const model = extractGatewayDefaultModel(tag);
+  return isAiModelId(model) ? model : null;
 }
 
 /**
@@ -45,15 +56,42 @@ export function formatAiTaskLabel(taskName: string): string {
  * prefix in one place and avoids string concatenation drift across callers.
  */
 export function buildAiTaskTag(taskName: string): string {
-  return `${AI_TASK_TAG_PREFIX}${taskName}`;
+  return buildGatewayTaskTag(taskName);
 }
 
 /**
  * The task detail route receives a free-form path segment. We validate it before
  * sending it to the gateway so malformed values cannot become reporting filters.
  */
-export function isAiTaskName(value: string): boolean {
-  return AI_TASK_NAME_PATTERN.test(value);
+export function isAiTaskName(value: string | null | undefined): value is string {
+  return value !== null && value !== undefined && AI_TASK_NAME_PATTERN.test(value);
+}
+
+/**
+ * Gateway model ids always have a provider prefix and a model name separated by
+ * `/`. This small validator is enough for reporting tags without pulling in a
+ * broader schema dependency into the admin package.
+ */
+function isAiModelId(value: string | null | undefined): value is string {
+  return value !== null && value !== undefined && AI_MODEL_ID_PATTERN.test(value);
+}
+
+/**
+ * A model row counts as fallback when Gateway served a model that is not listed
+ * among the task's tagged default models for the selected time range.
+ */
+export function isFallbackModel({
+  defaultModels,
+  model,
+}: {
+  defaultModels: string[];
+  model: string;
+}): boolean {
+  if (defaultModels.length === 0) {
+    return false;
+  }
+
+  return !defaultModels.includes(model);
 }
 
 /**

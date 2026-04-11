@@ -5,6 +5,7 @@
   "exports": {
     "./gateway": "./src/gateway.ts",
     "./provider-options": "./src/provider-options.ts",
+    "./reporting-tags": "./src/reporting-tags.ts",
     "./tasks/activities/core/explanation": "./src/tasks/activities/core/activity-explanation.ts",
     "./tasks/activities/core/practice": "./src/tasks/activities/core/activity-practice.ts",
     "./tasks/activities/core/quiz": "./src/tasks/activities/core/activity-quiz.ts",

@@ -59,6 +59,23 @@ export async function AiTaskReport({
           {report.models.length.toLocaleString()} models.
         </p>
 
+        {report.hasFallbackTracking ? (
+          <p className="text-muted-foreground text-sm">
+            Default model{report.defaultModels.length === 1 ? "" : "s"}:{" "}
+            <span className="text-foreground font-medium">{report.defaultModels.join(", ")}</span>.{" "}
+            Fallback requests in this range:{" "}
+            <span className="text-foreground font-medium tabular-nums">
+              {report.fallbackRequestCount.toLocaleString()}
+            </span>
+            .
+          </p>
+        ) : (
+          <p className="text-muted-foreground text-sm">
+            No default-model tags were reported for this time range yet, so fallback rows cannot be
+            identified here.
+          </p>
+        )}
+
         <p className="text-muted-foreground text-sm">
           Based on the current average market cost of{" "}
           <span className="text-foreground font-medium tabular-nums">

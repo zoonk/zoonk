@@ -2,8 +2,11 @@ import "server-only";
 import { zoonkGateway } from "@zoonk/core/ai";
 import { safeAsync } from "@zoonk/utils/error";
 import { extractAiTaskName, formatAiTaskLabel } from "./ai-task-stats";
+import { getAiTaskModelUsage } from "./get-ai-task-model-usage";
 
 export type AiTaskSummary = {
+  fallbackRequestCount: number;
+  hasFallbackTracking: boolean;
   requestCount: number;
   taskLabel: string;
   taskName: string;
@@ -43,6 +46,8 @@ export async function getAiTaskSummaries({
       const requestCount = row.requestCount ?? 0;
 
       summariesByTask.set(taskName, {
+        fallbackRequestCount: existingSummary?.fallbackRequestCount ?? 0,
+        hasFallbackTracking: existingSummary?.hasFallbackTracking ?? false,
         requestCount: (existingSummary?.requestCount ?? 0) + requestCount,
         taskLabel: existingSummary?.taskLabel ?? formatAiTaskLabel(taskName),
         taskName,
@@ -50,11 +55,29 @@ export async function getAiTaskSummaries({
     }
   }
 
-  return [...summariesByTask.values()].toSorted((left, right) => {
+  const tasks = [...summariesByTask.values()].toSorted((left, right) => {
     if (right.requestCount !== left.requestCount) {
       return right.requestCount - left.requestCount;
     }
 
     return left.taskLabel.localeCompare(right.taskLabel);
   });
+
+  const enrichedTasks = await Promise.all(
+    tasks.map(async (task) => {
+      const usage = await getAiTaskModelUsage({
+        endDate,
+        startDate,
+        taskName: task.taskName,
+      });
+
+      return {
+        ...task,
+        fallbackRequestCount: usage.fallbackRequestCount,
+        hasFallbackTracking: usage.hasFallbackTracking,
+      } satisfies AiTaskSummary;
+    }),
+  );
+
+  return enrichedTasks;
 }

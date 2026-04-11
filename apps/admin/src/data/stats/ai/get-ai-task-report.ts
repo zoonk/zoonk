@@ -1,24 +1,18 @@
-import "server-only";
-import { zoonkGateway } from "@zoonk/core/ai";
-import { safeAsync } from "@zoonk/utils/error";
 import {
-  buildAiTaskTag,
   calculateAverageMarketCostPerRequest,
   calculateEstimatedMarketCost,
   formatAiTaskLabel,
 } from "./ai-task-stats";
+import { type AiTaskModelUsageRow, getAiTaskModelUsage } from "./get-ai-task-model-usage";
 
-export type AiTaskModelReport = {
-  averageMarketCostPerRequest: number;
-  marketCost: number;
-  model: string;
-  requestCount: number;
-  totalCost: number;
-};
+export type AiTaskModelReport = AiTaskModelUsageRow;
 
 type AiTaskReport = {
   averageMarketCostPerRequest: number;
+  defaultModels: string[];
   estimatedMarketCost: number;
+  fallbackRequestCount: number;
+  hasFallbackTracking: boolean;
   models: AiTaskModelReport[];
   taskLabel: string;
   taskName: string;
@@ -42,72 +36,26 @@ export async function getAiTaskReport({
   startDate: string;
   taskName: string;
 }): Promise<AiTaskReport> {
-  const { data, error } = await safeAsync(() =>
-    zoonkGateway.getSpendReport({
-      endDate,
-      groupBy: "model",
-      startDate,
-      tags: [buildAiTaskTag(taskName)],
-    }),
-  );
-
-  if (error) {
-    throw new Error(`Failed to load AI stats for ${taskName}`, { cause: error });
-  }
-
-  const models = data.results
-    .flatMap((row) => {
-      if (!row.model) {
-        return [];
-      }
-
-      const requestCount = row.requestCount ?? 0;
-      const marketCost = row.marketCost ?? 0;
-
-      return [
-        {
-          averageMarketCostPerRequest: calculateAverageMarketCostPerRequest({
-            marketCost,
-            requestCount,
-          }),
-          marketCost,
-          model: row.model,
-          requestCount,
-          totalCost: row.totalCost,
-        } satisfies AiTaskModelReport,
-      ];
-    })
-    .toSorted((left, right) => {
-      if (right.requestCount !== left.requestCount) {
-        return right.requestCount - left.requestCount;
-      }
-
-      return left.model.localeCompare(right.model);
-    });
-
-  const totals = models.reduce(
-    (currentTotals, model) => ({
-      totalMarketCost: currentTotals.totalMarketCost + model.marketCost,
-      totalRequests: currentTotals.totalRequests + model.requestCount,
-    }),
-    { totalMarketCost: 0, totalRequests: 0 },
-  );
+  const usage = await getAiTaskModelUsage({ endDate, startDate, taskName });
 
   const averageMarketCostPerRequest = calculateAverageMarketCostPerRequest({
-    marketCost: totals.totalMarketCost,
-    requestCount: totals.totalRequests,
+    marketCost: usage.totalMarketCost,
+    requestCount: usage.totalRequests,
   });
 
   return {
     averageMarketCostPerRequest,
+    defaultModels: usage.defaultModels,
     estimatedMarketCost: calculateEstimatedMarketCost({
       averageMarketCostPerRequest,
       runCount,
     }),
-    models,
+    fallbackRequestCount: usage.fallbackRequestCount,
+    hasFallbackTracking: usage.hasFallbackTracking,
+    models: usage.models,
     taskLabel: formatAiTaskLabel(taskName),
     taskName,
-    totalMarketCost: totals.totalMarketCost,
-    totalRequests: totals.totalRequests,
+    totalMarketCost: usage.totalMarketCost,
+    totalRequests: usage.totalRequests,
   };
 }
