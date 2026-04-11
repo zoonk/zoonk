@@ -63,6 +63,57 @@ describe("getNextActivity - course scope", () => {
     });
   });
 
+  test("returns the first lesson shell when an unauthenticated course starts with a shell-only lesson", async () => {
+    const course = await courseFixture({ isPublished: true, organizationId: organization.id });
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      isPublished: true,
+      organizationId: organization.id,
+      position: 0,
+    });
+
+    const [shellLesson, generatedLesson] = await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
+        generationStatus: "completed",
+        isPublished: true,
+        organizationId: organization.id,
+        position: 0,
+      }),
+      lessonFixture({
+        chapterId: chapter.id,
+        generationStatus: "completed",
+        isPublished: true,
+        organizationId: organization.id,
+        position: 1,
+      }),
+    ]);
+
+    await activityFixture({
+      generationStatus: "completed",
+      isPublished: true,
+      lessonId: generatedLesson.id,
+      organizationId: organization.id,
+      position: 0,
+    });
+
+    const result = await getNextActivity({
+      headers: new Headers(),
+      scope: { courseId: course.id },
+    });
+
+    expect(result).toEqual({
+      activityPosition: 0,
+      brandSlug: organization.slug,
+      canPrefetch: false,
+      chapterSlug: chapter.slug,
+      completed: false,
+      courseSlug: course.slug,
+      hasStarted: false,
+      lessonSlug: shellLesson.slug,
+    });
+  });
+
   test("returns first activity when user has no completions", async () => {
     const [user, course] = await Promise.all([
       userFixture(),
@@ -479,6 +530,73 @@ describe("getNextActivity - course scope", () => {
     });
   });
 
+  test("returns the next lesson shell after the latest completed lesson", async () => {
+    const [user, course] = await Promise.all([
+      userFixture(),
+      courseFixture({ isPublished: true, organizationId: organization.id }),
+    ]);
+
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      isPublished: true,
+      organizationId: organization.id,
+      position: 0,
+    });
+
+    const [, completedLesson, nextLesson] = await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
+        generationStatus: "completed",
+        isPublished: true,
+        organizationId: organization.id,
+        position: 0,
+      }),
+      lessonFixture({
+        chapterId: chapter.id,
+        generationStatus: "completed",
+        isPublished: true,
+        organizationId: organization.id,
+        position: 1,
+      }),
+      lessonFixture({
+        chapterId: chapter.id,
+        generationStatus: "completed",
+        isPublished: true,
+        organizationId: organization.id,
+        position: 2,
+      }),
+    ]);
+
+    const completedActivity = await activityFixture({
+      generationStatus: "completed",
+      isPublished: true,
+      lessonId: completedLesson.id,
+      organizationId: organization.id,
+      position: 0,
+    });
+
+    await activityProgressFixture({
+      activityId: completedActivity.id,
+      completedAt: new Date(),
+      durationSeconds: 60,
+      userId: Number(user.id),
+    });
+
+    const headers = await signInAs(user.email, user.password);
+    const result = await getNextActivity({ headers, scope: { courseId: course.id } });
+
+    expect(result).toEqual({
+      activityPosition: 0,
+      brandSlug: organization.slug,
+      canPrefetch: false,
+      chapterSlug: chapter.slug,
+      completed: false,
+      courseSlug: course.slug,
+      hasStarted: true,
+      lessonSlug: nextLesson.slug,
+    });
+  });
+
   test("returns pending lesson when all generated activities are completed but a lesson is ungenerated", async () => {
     const [user, course] = await Promise.all([
       userFixture(),
@@ -605,7 +723,7 @@ describe("getNextActivity - course scope", () => {
     });
   });
 
-  test("returns null when no published activities exist", async () => {
+  test("returns the first lesson shell when no published activities exist yet", async () => {
     const course = await courseFixture({ isPublished: true, organizationId: organization.id });
     const chapter = await chapterFixture({
       courseId: course.id,
@@ -632,7 +750,16 @@ describe("getNextActivity - course scope", () => {
       scope: { courseId: course.id },
     });
 
-    expect(result).toBeNull();
+    expect(result).toEqual({
+      activityPosition: 0,
+      brandSlug: organization.slug,
+      canPrefetch: false,
+      chapterSlug: chapter.slug,
+      completed: false,
+      courseSlug: course.slug,
+      hasStarted: false,
+      lessonSlug: lesson.slug,
+    });
   });
 
   test("skips unpublished chapters", async () => {

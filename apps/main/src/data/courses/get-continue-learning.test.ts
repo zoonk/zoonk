@@ -663,6 +663,72 @@ describe("authenticated users", () => {
     });
   });
 
+  test("returns the next lesson shell after the latest completed lesson", async () => {
+    const user = await userFixture();
+    const headers = await signInAs(user.email, user.password);
+
+    const course = await courseFixture({
+      isPublished: true,
+      organizationId: organization.id,
+    });
+
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      isPublished: true,
+      organizationId: organization.id,
+      position: 0,
+    });
+
+    const [, completedLesson, nextLesson] = await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
+        generationStatus: "completed",
+        isPublished: true,
+        organizationId: organization.id,
+        position: 0,
+      }),
+      lessonFixture({
+        chapterId: chapter.id,
+        generationStatus: "completed",
+        isPublished: true,
+        organizationId: organization.id,
+        position: 1,
+      }),
+      lessonFixture({
+        chapterId: chapter.id,
+        generationStatus: "pending",
+        isPublished: true,
+        organizationId: organization.id,
+        position: 2,
+      }),
+    ]);
+
+    const activity = await activityFixture({
+      generationStatus: "completed",
+      isPublished: true,
+      lessonId: completedLesson.id,
+      organizationId: organization.id,
+      position: 0,
+    });
+
+    await activityProgressFixture({
+      activityId: activity.id,
+      completedAt: new Date(),
+      durationSeconds: 60,
+      userId: Number(user.id),
+    });
+
+    const result = await getContinueLearning(headers);
+
+    expect(result).toHaveLength(1);
+    expect(result[0]).toMatchObject({
+      chapter: { id: chapter.id, slug: chapter.slug },
+      course: { id: course.id },
+      lesson: { id: nextLesson.id, slug: nextLesson.slug, title: nextLesson.title },
+      status: "pending",
+    });
+  });
+
   test("returns pending item linking to chapter when no next published lesson", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);

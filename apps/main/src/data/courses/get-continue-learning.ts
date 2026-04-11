@@ -11,9 +11,9 @@ import {
 import { cache } from "react";
 import {
   type ContinueLearningCandidate,
-  type ContinueLearningState,
   listContinueLearningCandidates,
 } from "./_utils/continue-learning-candidates";
+import { type ContinueLearningState } from "./_utils/continue-learning-next-state";
 import {
   type ContinueLearningRow,
   listRecentContinueLearningRows,

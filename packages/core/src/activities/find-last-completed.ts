@@ -4,7 +4,7 @@ import { safeAsync } from "@zoonk/utils/error";
 
 export type ActivityScope = { courseId: number } | { chapterId: number } | { lessonId: number };
 
-export type LastCompletedActivity = {
+type LastCompletedActivity = {
   activityPosition: number;
   chapterId: number;
   chapterPosition: number;

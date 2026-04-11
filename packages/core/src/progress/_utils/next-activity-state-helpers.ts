@@ -3,6 +3,12 @@ import {
   type PublishedLessonProgressScope,
 } from "./published-lesson-progress";
 
+export type NextActivityStateAnchor = {
+  chapterPosition: number;
+  lessonId: number;
+  lessonPosition: number;
+};
+
 /**
  * Catalog buttons only distinguish "start" from "continue" after at least one
  * durable or direct completion exists. Started-but-unfinished attempts have not
@@ -28,10 +34,6 @@ export function getHasStartedState({
  * Durable chapter and course completion should win over the current curriculum
  * tree. Without this guard, adding one new lesson or chapter would reopen a
  * scope the learner had already earned and undo the whole durability model.
- *
- * Navigation intentionally ignores published lessons that have no current
- * activities and no pending generation work. Those rows still matter for
- * chapter progress, but they should not block continue links ahead of real work.
  */
 export function isScopeCompleted({
   courseCompleted,
@@ -45,13 +47,12 @@ export function isScopeCompleted({
   scope: PublishedLessonProgressScope;
 }) {
   if ("lessonId" in scope) {
-    return rows.every((row) => row.isEffectivelyCompleted || !isNavigableLesson({ row }));
+    return rows.every((row) => row.isEffectivelyCompleted);
   }
 
   if ("chapterId" in scope) {
     return (
-      durableChapterIds.has(scope.chapterId) ||
-      rows.every((row) => row.isEffectivelyCompleted || !isNavigableLesson({ row }))
+      durableChapterIds.has(scope.chapterId) || rows.every((row) => row.isEffectivelyCompleted)
     );
   }
 
@@ -64,7 +65,7 @@ export function isScopeCompleted({
   return chapterRows.every(
     (chapter) =>
       durableChapterIds.has(chapter.chapterId) ||
-      chapter.rows.every((row) => row.isEffectivelyCompleted || !isNavigableLesson({ row })),
+      chapter.rows.every((row) => row.isEffectivelyCompleted),
   );
 }
 
@@ -85,7 +86,7 @@ export function getScopeDurablyCompleted({
   scope: PublishedLessonProgressScope;
 }) {
   if ("lessonId" in scope) {
-    return rows.every((row) => row.isDurablyCompleted || !isNavigableLesson({ row }));
+    return rows.every((row) => row.isDurablyCompleted);
   }
 
   if ("chapterId" in scope) {
@@ -114,13 +115,66 @@ export function getFirstIncompleteLesson({
   }
 
   return (
-    rows.find(
-      (row) =>
-        !durableChapterIds.has(row.chapterId) &&
-        !row.isEffectivelyCompleted &&
-        isNavigableLesson({ row }),
+    rows.find((row) => !durableChapterIds.has(row.chapterId) && !row.isEffectivelyCompleted) ?? null
+  );
+}
+
+/**
+ * Started learners should continue from their latest lesson position, not jump
+ * back to earlier skipped shells. This helper keeps the current lesson when it
+ * still has open work, otherwise it scans only later lessons in tree order.
+ */
+export function getForwardLesson({
+  after,
+  courseCompleted,
+  durableChapterIds,
+  rows,
+}: {
+  after: NextActivityStateAnchor;
+  courseCompleted: boolean;
+  durableChapterIds: Set<number>;
+  rows: EffectiveLessonProgressRow[];
+}) {
+  if (courseCompleted) {
+    return null;
+  }
+
+  const currentLesson = getLessonById({ lessonId: after.lessonId, rows });
+
+  if (currentLesson && isForwardLessonOpen({ durableChapterIds, row: currentLesson })) {
+    return currentLesson;
+  }
+
+  return (
+    getRowsAfterAnchor({ after, rows }).find((row) =>
+      isForwardLessonOpen({ durableChapterIds, row }),
     ) ?? null
   );
+}
+
+/**
+ * When a learner reaches the end of the forward path inside a scope, review
+ * should stay anchored to the lesson they were actually on instead of falling
+ * back to the first lesson in the tree.
+ */
+export function getReviewLesson({
+  after,
+  rows,
+}: {
+  after: NextActivityStateAnchor;
+  rows: EffectiveLessonProgressRow[];
+}) {
+  return getLessonById({ lessonId: after.lessonId, rows });
+}
+
+/**
+ * Continue links should only deep-link into an activity when the current
+ * structural lesson already has a fully generated published activity set. If
+ * the lesson is still just a shell, callers should stay on the lesson page and
+ * let that page handle generation or empty-state messaging.
+ */
+export function canPrefetchLesson({ row }: { row: EffectiveLessonProgressRow }) {
+  return row.totalActivities > 0 && row.pendingActivities === 0;
 }
 
 /**
@@ -133,16 +187,6 @@ export function hasPendingLessonContent({ row }: { row: EffectiveLessonProgressR
     row.pendingActivities > 0 ||
     (row.totalActivities === 0 && row.lessonGenerationStatus !== "completed")
   );
-}
-
-/**
- * A lesson only blocks navigation when the learner can actually do something
- * with it right now: open an activity or wait for pending generation to finish.
- * Empty completed lessons still count in chapter stats, but they should not
- * trap continue links ahead of real content.
- */
-function isNavigableLesson({ row }: { row: EffectiveLessonProgressRow }) {
-  return row.totalActivities > 0 || hasPendingLessonContent({ row });
 }
 
 /**
@@ -163,4 +207,64 @@ function groupRowsByChapter({ rows }: { rows: EffectiveLessonProgressRow[] }) {
   }
 
   return [...grouped.values()];
+}
+
+/**
+ * Anchor-aware navigation only needs lessons at or after one structural
+ * position. Extracting that filter keeps the forward-only rule readable.
+ */
+function getRowsAfterAnchor({
+  after,
+  rows,
+}: {
+  after: NextActivityStateAnchor;
+  rows: EffectiveLessonProgressRow[];
+}) {
+  return rows.filter((row) => isRowAfterAnchor({ after, row }));
+}
+
+/**
+ * A row is "after" the anchor only when it belongs to a later lesson in the
+ * published tree. The current lesson is handled separately by getForwardLesson.
+ */
+function isRowAfterAnchor({
+  after,
+  row,
+}: {
+  after: NextActivityStateAnchor;
+  row: EffectiveLessonProgressRow;
+}) {
+  return (
+    row.chapterPosition > after.chapterPosition ||
+    (row.chapterPosition === after.chapterPosition && row.lessonPosition > after.lessonPosition)
+  );
+}
+
+/**
+ * Forward navigation should only stop on lessons that still matter for the
+ * learner: not durably completed at the chapter level and not already complete
+ * in the lesson itself.
+ */
+function isForwardLessonOpen({
+  durableChapterIds,
+  row,
+}: {
+  durableChapterIds: Set<number>;
+  row: EffectiveLessonProgressRow;
+}) {
+  return !durableChapterIds.has(row.chapterId) && !row.isEffectivelyCompleted;
+}
+
+/**
+ * Looking up the anchored lesson by id is clearer as a named helper than as an
+ * inline array search repeated in multiple branches.
+ */
+function getLessonById({
+  lessonId,
+  rows,
+}: {
+  lessonId: number;
+  rows: EffectiveLessonProgressRow[];
+}) {
+  return rows.find((row) => row.lessonId === lessonId) ?? null;
 }
