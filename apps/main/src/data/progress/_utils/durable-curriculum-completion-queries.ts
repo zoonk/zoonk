@@ -55,29 +55,6 @@ export async function getActivityCurriculumContext({
 }
 
 /**
- * Durable completion is append-only, so two overlapping completions in the
- * same course for the same learner must not evaluate the snapshot at the same
- * time. A transaction-scoped advisory lock keeps that completion boundary
- * linear without blocking unrelated learners or unrelated courses.
- */
-export async function lockCourseCompletionSync({
-  courseId,
-  tx,
-  userId,
-}: {
-  courseId: number;
-  tx: TransactionClient;
-  userId: number;
-}): Promise<void> {
-  await tx.$queryRaw`
-    WITH completion_lock AS (
-      SELECT pg_advisory_xact_lock(${userId}, ${courseId})
-    )
-    SELECT 1
-  `;
-}
-
-/**
  * Durable completion writes need one current course snapshot with direct
  * activity completion counts for the learner. Keeping that aggregation in one
  * query avoids reloading overlapping lesson trees for lesson, chapter, and

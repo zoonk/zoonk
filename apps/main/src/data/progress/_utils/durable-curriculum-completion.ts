@@ -5,7 +5,6 @@ import {
   listDurableCourseLessonIds,
   listPublishedCourseChapters,
   listPublishedCourseLessonCompletionRows,
-  lockCourseCompletionSync,
 } from "./durable-curriculum-completion-queries";
 import {
   getEffectiveDurableChapterIds,
@@ -21,7 +20,7 @@ import {
  * Durable completion is append-only and intentionally does not copy or rewrite
  * raw activity progress rows. It simply adds lesson, chapter, and course
  * completion rows once the current published curriculum crosses a completion
- * boundary for the learner.
+ * boundary for the learner during a normal completion write.
  */
 export async function syncDurableCurriculumCompletion(
   tx: TransactionClient,
@@ -31,7 +30,6 @@ export async function syncDurableCurriculumCompletion(
   },
 ): Promise<{ courseId: number }> {
   const context = await getActivityCurriculumContext({ activityId: params.activityId, tx });
-  await lockCourseCompletionSync({ courseId: context.courseId, tx, userId: params.userId });
 
   const [chapters, rows, durableLessonIds, durableChapterIds] = await Promise.all([
     listPublishedCourseChapters({ courseId: context.courseId, tx }),
