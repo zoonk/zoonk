@@ -1,134 +1,16 @@
 import "server-only";
-import { type TransactionClient, prisma } from "@zoonk/db";
+import { prisma } from "@zoonk/db";
 import { type ScoreResult } from "@zoonk/player/compute-score";
 import { type BeltLevelResult, calculateBeltLevel } from "@zoonk/utils/belt-level";
 import { MS_PER_DAY, parseLocalDate } from "@zoonk/utils/date";
-import {
-  DAILY_DECAY,
-  MIN_ENERGY,
-  clampEnergy,
-  computeDecayedEnergy,
-  toUTCMidnight,
-} from "@zoonk/utils/energy";
+import { clampEnergy, computeDecayedEnergy, toUTCMidnight } from "@zoonk/utils/energy";
+import { fillDecayGaps, getCompletionField, upsertDailyProgress } from "./_utils/daily-progress";
+import { syncDurableCurriculumCompletion } from "./_utils/durable-curriculum-completion";
 
 const MAX_LOCAL_DATE_DRIFT_MS = 2 * MS_PER_DAY;
 
-function getCompletionField(input: {
-  stepResults: unknown[];
-}): "interactiveCompleted" | "staticCompleted" {
-  if (input.stepResults.length === 0) {
-    return "staticCompleted";
-  }
-
-  return "interactiveCompleted";
-}
-
-// Decay is org-independent: a user's energy decays globally regardless of
-// which organization they were active in, so gap records use organizationId: null.
-async function fillDecayGaps(
-  tx: TransactionClient,
-  userId: number,
-  currentEnergy: number,
-  lastActiveDate: Date,
-  todayDate: Date,
-): Promise<void> {
-  const dayDiff = Math.round((todayDate.getTime() - lastActiveDate.getTime()) / MS_PER_DAY);
-
-  if (dayDiff <= 1) {
-    return;
-  }
-
-  const records = Array.from({ length: dayDiff - 1 }, (_, i) => {
-    const date = new Date(lastActiveDate.getTime() + (i + 1) * MS_PER_DAY);
-    const decayedEnergy = Math.max(MIN_ENERGY, currentEnergy - (i + 1) * DAILY_DECAY);
-
-    return {
-      date,
-      dayOfWeek: date.getUTCDay(),
-      energyAtEnd: decayedEnergy,
-      organizationId: null as number | null,
-      userId,
-    };
-  });
-
-  await tx.dailyProgress.createMany({ data: records, skipDuplicates: true });
-}
-
-async function upsertDailyProgress(
-  tx: TransactionClient,
-  params: {
-    clampedEnergy: number;
-    date: Date;
-    dayOfWeek: number;
-    durationSeconds: number;
-    field: "interactiveCompleted" | "staticCompleted";
-    organizationId: number | null;
-    score: ScoreResult;
-    userId: number;
-  },
-): Promise<void> {
-  const createData = {
-    brainPowerEarned: params.score.brainPower,
-    correctAnswers: params.score.correctCount,
-    date: params.date,
-    dayOfWeek: params.dayOfWeek,
-    energyAtEnd: params.clampedEnergy,
-    incorrectAnswers: params.score.incorrectCount,
-    interactiveCompleted: params.field === "interactiveCompleted" ? 1 : 0,
-    organizationId: params.organizationId,
-    staticCompleted: params.field === "staticCompleted" ? 1 : 0,
-    timeSpentSeconds: params.durationSeconds,
-    userId: params.userId,
-  };
-
-  const updateData = {
-    brainPowerEarned: { increment: params.score.brainPower },
-    correctAnswers: { increment: params.score.correctCount },
-    energyAtEnd: params.clampedEnergy,
-    incorrectAnswers: { increment: params.score.incorrectCount },
-    timeSpentSeconds: { increment: params.durationSeconds },
-    [params.field]: { increment: 1 },
-  };
-
-  if (params.organizationId) {
-    await tx.dailyProgress.upsert({
-      create: createData,
-      update: updateData,
-      where: {
-        userDateOrg: {
-          date: params.date,
-          organizationId: params.organizationId,
-          userId: params.userId,
-        },
-      },
-    });
-
-    return;
-  }
-
-  // When organizationId is null, the compound unique can't be used.
-  // Find an existing record by individual fields instead.
-  const existing = await tx.dailyProgress.findFirst({
-    where: {
-      date: params.date,
-      organizationId: null,
-      userId: params.userId,
-    },
-  });
-
-  if (existing) {
-    await tx.dailyProgress.update({
-      data: updateData,
-      where: { id: existing.id },
-    });
-  } else {
-    await tx.dailyProgress.create({ data: createData });
-  }
-}
-
 export async function submitActivityCompletion(input: {
   activityId: bigint;
-  courseId: number;
   durationSeconds: number;
   localDate: string;
   organizationId: number | null;
@@ -199,16 +81,21 @@ export async function submitActivityCompletion(input: {
       },
     });
 
+    const { courseId } = await syncDurableCurriculumCompletion(tx, {
+      activityId: input.activityId,
+      userId: input.userId,
+    });
+
     // CourseUser + userCount (only on first completion per course)
     const { count } = await tx.courseUser.createMany({
-      data: [{ courseId: input.courseId, userId: input.userId }],
+      data: [{ courseId, userId: input.userId }],
       skipDuplicates: true,
     });
 
     if (count > 0) {
       await tx.course.update({
         data: { userCount: { increment: 1 } },
-        where: { id: input.courseId },
+        where: { id: courseId },
       });
     }
 
@@ -224,7 +111,13 @@ export async function submitActivityCompletion(input: {
     // Fill DailyProgress records for inactive days
     if (existingProgress) {
       const lastActiveDate = toUTCMidnight(existingProgress.lastActiveAt);
-      await fillDecayGaps(tx, input.userId, existingProgress.currentEnergy, lastActiveDate, today);
+      await fillDecayGaps({
+        currentEnergy: existingProgress.currentEnergy,
+        lastActiveDate,
+        todayDate: today,
+        tx,
+        userId: input.userId,
+      });
     }
 
     const clampedEnergy = clampEnergy(decayedBase + input.score.energyDelta);

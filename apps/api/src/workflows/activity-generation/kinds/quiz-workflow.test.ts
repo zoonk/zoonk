@@ -115,7 +115,7 @@ describe("quiz activity workflow", () => {
       }),
     ]);
 
-    const activities = await getLessonActivitiesStep(testLesson.id);
+    const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
     const explanationResults = buildExplanationResults(Number(explanationActivity.id));
 
     await quizActivityWorkflow({
@@ -164,7 +164,7 @@ describe("quiz activity workflow", () => {
       }),
     ]);
 
-    const activities = await getLessonActivitiesStep(testLesson.id);
+    const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
     const explanationResults = buildExplanationResults(Number(explanationActivity.id));
 
     await quizActivityWorkflow({
@@ -207,7 +207,7 @@ describe("quiz activity workflow", () => {
       }),
     ]);
 
-    const activities = await getLessonActivitiesStep(testLesson.id);
+    const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
     const explanationResults = buildExplanationResults(Number(explanationActivity.id));
 
     await quizActivityWorkflow({
@@ -238,7 +238,7 @@ describe("quiz activity workflow", () => {
       title: `Quiz ${randomUUID()}`,
     });
 
-    const activities = await getLessonActivitiesStep(testLesson.id);
+    const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
 
     await quizActivityWorkflow({
       activitiesToGenerate: activities,
@@ -277,7 +277,7 @@ describe("quiz activity workflow", () => {
       }),
     ]);
 
-    const activities = await getLessonActivitiesStep(testLesson.id);
+    const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
     const explanationResults = buildExplanationResults(Number(explanationActivity.id));
 
     await quizActivityWorkflow({

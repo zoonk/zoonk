@@ -163,7 +163,6 @@ export async function submitCompletion(rawInput: CompletionInput): Promise<void>
 
       await submitActivityCompletion({
         activityId: activity.id,
-        courseId: activity.lesson.chapter.courseId,
         durationSeconds,
         localDate: input.localDate,
         organizationId: activity.organizationId,

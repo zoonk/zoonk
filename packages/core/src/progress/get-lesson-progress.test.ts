@@ -1,3 +1,4 @@
+import { prisma } from "@zoonk/db";
 import { activityFixture, activityProgressFixture } from "@zoonk/testing/fixtures/activities";
 import { signInAs } from "@zoonk/testing/fixtures/auth";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
@@ -311,5 +312,63 @@ describe(getLessonProgress, () => {
     const result = await getLessonProgress({ chapterId: chapter.id, headers });
 
     expect(result).toEqual([{ completedActivities: 1, lessonId: lesson.id, totalActivities: 1 }]);
+  });
+
+  test("marks regenerated activities as fully completed when the lesson is durably completed", async () => {
+    const [user, course] = await Promise.all([
+      userFixture(),
+      courseFixture({ isPublished: true, organizationId: organization.id }),
+    ]);
+
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      isPublished: true,
+      organizationId: organization.id,
+      position: 0,
+    });
+
+    const currentLesson = await lessonFixture({
+      chapterId: chapter.id,
+      isPublished: true,
+      organizationId: organization.id,
+      position: 0,
+      slug: "lesson-progress",
+    });
+
+    await Promise.all([
+      activityFixture({
+        archivedAt: new Date(),
+        isPublished: false,
+        lessonId: currentLesson.id,
+        organizationId: organization.id,
+        position: 0,
+      }),
+      activityFixture({
+        isPublished: true,
+        lessonId: currentLesson.id,
+        organizationId: organization.id,
+        position: 1,
+      }),
+      activityFixture({
+        isPublished: true,
+        lessonId: currentLesson.id,
+        organizationId: organization.id,
+        position: 2,
+      }),
+    ]);
+
+    await prisma.lessonCompletion.create({
+      data: {
+        lessonId: currentLesson.id,
+        userId: Number(user.id),
+      },
+    });
+
+    const headers = await signInAs(user.email, user.password);
+    const result = await getLessonProgress({ chapterId: chapter.id, headers });
+
+    expect(result).toEqual([
+      { completedActivities: 2, lessonId: currentLesson.id, totalActivities: 2 },
+    ]);
   });
 });

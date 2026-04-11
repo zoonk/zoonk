@@ -134,7 +134,7 @@ describe("explanation activity workflow", () => {
       title: "Concept A",
     });
 
-    const activities = await getLessonActivitiesStep(testLesson.id);
+    const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
     const concepts = activities[0]?.lesson?.concepts ?? [];
 
     await explanationActivityWorkflow({
@@ -197,7 +197,7 @@ describe("explanation activity workflow", () => {
       title: "Concept B",
     });
 
-    const activities = await getLessonActivitiesStep(testLesson.id);
+    const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
     const concepts = activities[0]?.lesson?.concepts ?? [];
 
     await explanationActivityWorkflow({
@@ -235,7 +235,7 @@ describe("explanation activity workflow", () => {
       title: "Concept C",
     });
 
-    const activities = await getLessonActivitiesStep(testLesson.id);
+    const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
     const concepts = activities[0]?.lesson?.concepts ?? [];
 
     await explanationActivityWorkflow({
@@ -270,7 +270,7 @@ describe("explanation activity workflow", () => {
       title: "Concept Dispatch Failure",
     });
 
-    const activities = await getLessonActivitiesStep(testLesson.id);
+    const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
     const concepts = activities[0]?.lesson?.concepts ?? [];
 
     await explanationActivityWorkflow({
@@ -313,7 +313,7 @@ describe("explanation activity workflow", () => {
       title: "Concept Without Visuals",
     });
 
-    const activities = await getLessonActivitiesStep(testLesson.id);
+    const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
     const concepts = activities[0]?.lesson?.concepts ?? [];
 
     await explanationActivityWorkflow({
@@ -355,7 +355,7 @@ describe("explanation activity workflow", () => {
       title: "Concept D",
     });
 
-    const activities = await getLessonActivitiesStep(testLesson.id);
+    const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
     const concepts = activities[0]?.lesson?.concepts ?? [];
 
     const { results } = await explanationActivityWorkflow({
@@ -396,7 +396,7 @@ describe("explanation activity workflow", () => {
       position: 0,
     });
 
-    const activities = await getLessonActivitiesStep(testLesson.id);
+    const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
     const concepts = activities[0]?.lesson?.concepts ?? [];
 
     await explanationActivityWorkflow({
@@ -446,7 +446,7 @@ describe("explanation activity workflow", () => {
         }),
       ]);
 
-      const activities = await getLessonActivitiesStep(testLesson.id);
+      const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
       const concepts = activities[0]?.lesson?.concepts ?? [];
 
       await explanationActivityWorkflow({
@@ -518,7 +518,7 @@ describe("explanation activity workflow", () => {
         }),
       ]);
 
-      const activities = await getLessonActivitiesStep(testLesson.id);
+      const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
       const concepts = activities[0]?.lesson?.concepts ?? [];
 
       await explanationActivityWorkflow({
@@ -571,7 +571,7 @@ describe("explanation activity workflow", () => {
         }),
       ]);
 
-      const activities = await getLessonActivitiesStep(testLesson.id);
+      const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
       const concepts = activities[0]?.lesson?.concepts ?? [];
 
       await explanationActivityWorkflow({
@@ -652,7 +652,7 @@ describe("explanation activity workflow", () => {
         }),
       ]);
 
-      const activities = await getLessonActivitiesStep(testLesson.id);
+      const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
       const concepts = activities[0]?.lesson?.concepts ?? [];
 
       await explanationActivityWorkflow({
@@ -701,7 +701,7 @@ describe("explanation activity workflow", () => {
         }),
       ]);
 
-      const activities = await getLessonActivitiesStep(testLesson.id);
+      const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
       const concepts = activities[0]?.lesson?.concepts ?? [];
 
       await explanationActivityWorkflow({
@@ -733,7 +733,7 @@ describe("explanation activity workflow", () => {
         title: "Image Exp Concept",
       });
 
-      const activities = await getLessonActivitiesStep(testLesson.id);
+      const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
       const concepts = activities[0]?.lesson?.concepts ?? [];
 
       await explanationActivityWorkflow({
@@ -800,7 +800,7 @@ describe("explanation activity workflow", () => {
         }),
       ]);
 
-      const activities = await getLessonActivitiesStep(testLesson.id);
+      const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
       const concepts = activities[0]?.lesson?.concepts ?? [];
 
       await explanationActivityWorkflow({
@@ -885,7 +885,7 @@ describe("explanation activity workflow", () => {
         }),
       ]);
 
-      const activities = await getLessonActivitiesStep(testLesson.id);
+      const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
       const concepts = activities[0]?.lesson?.concepts ?? [];
 
       await explanationActivityWorkflow({
@@ -942,7 +942,7 @@ describe("explanation activity workflow", () => {
       );
 
       try {
-        const activities = await getLessonActivitiesStep(testLesson.id);
+        const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
         const concepts = activities[0]?.lesson?.concepts ?? [];
 
         await explanationActivityWorkflow({

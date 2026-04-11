@@ -1,5 +1,5 @@
 import { prisma } from "@zoonk/db";
-import { activityFixture } from "@zoonk/testing/fixtures/activities";
+import { activityFixture, activityProgressFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
@@ -67,7 +67,6 @@ describe(submitActivityCompletion, () => {
 
     await submitActivityCompletion({
       activityId: activity.id,
-      courseId: course.id,
       durationSeconds: 10,
 
       localDate: todayLocalDate(),
@@ -95,7 +94,6 @@ describe(submitActivityCompletion, () => {
 
     await submitActivityCompletion({
       activityId: activity.id,
-      courseId: course.id,
       durationSeconds: 15,
 
       localDate: todayLocalDate(),
@@ -115,13 +113,99 @@ describe(submitActivityCompletion, () => {
     expect(progress?.durationSeconds).toBe(15);
   });
 
+  test("marks lesson, chapter, and course as durably completed when the final activity is completed", async () => {
+    const user = await userFixture();
+    const userId = Number(user.id);
+
+    const publishedCourse = await courseFixture({
+      isPublished: true,
+      organizationId: org.id,
+    });
+    const chapter = await chapterFixture({
+      courseId: publishedCourse.id,
+      isPublished: true,
+      organizationId: org.id,
+    });
+    const [firstLesson, secondLesson] = await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
+        isPublished: true,
+        organizationId: org.id,
+        position: 0,
+      }),
+      lessonFixture({
+        chapterId: chapter.id,
+        isPublished: true,
+        organizationId: org.id,
+        position: 1,
+      }),
+    ]);
+
+    const [firstActivity, secondActivity] = await Promise.all([
+      activityFixture({
+        isPublished: true,
+        kind: "quiz",
+        lessonId: firstLesson.id,
+        organizationId: org.id,
+        position: 0,
+      }),
+      activityFixture({
+        isPublished: true,
+        kind: "quiz",
+        lessonId: secondLesson.id,
+        organizationId: org.id,
+        position: 0,
+      }),
+    ]);
+
+    await activityProgressFixture({
+      activityId: firstActivity.id,
+      completedAt: new Date(),
+      durationSeconds: 20,
+      userId,
+    });
+
+    await prisma.lessonCompletion.create({
+      data: {
+        lessonId: firstLesson.id,
+        userId,
+      },
+    });
+
+    await submitActivityCompletion({
+      activityId: secondActivity.id,
+      durationSeconds: 15,
+      localDate: todayLocalDate(),
+      organizationId: org.id,
+      score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
+      startedAt: new Date(Date.now() - 15_000),
+      stepResults: [stepResult(true)],
+      userId,
+    });
+
+    const [lessonCompletion, chapterCompletion, courseCompletion] = await Promise.all([
+      prisma.lessonCompletion.findUnique({
+        where: { userLessonCompletion: { lessonId: secondLesson.id, userId } },
+      }),
+      prisma.chapterCompletion.findUnique({
+        where: { userChapterCompletion: { chapterId: chapter.id, userId } },
+      }),
+      prisma.courseCompletion.findUnique({
+        where: { userCourseCompletion: { courseId: publishedCourse.id, userId } },
+      }),
+    ]);
+
+    expect(lessonCompletion).not.toBeNull();
+    expect(chapterCompletion).not.toBeNull();
+    expect(courseCompletion).not.toBeNull();
+  });
+
   test("creates UserProgress with correct BP increment and energy delta", async () => {
     const user = await userFixture();
     const userId = Number(user.id);
 
     await submitActivityCompletion({
       activityId: activity.id,
-      courseId: course.id,
       durationSeconds: 10,
 
       localDate: todayLocalDate(),
@@ -145,7 +229,6 @@ describe(submitActivityCompletion, () => {
 
     await submitActivityCompletion({
       activityId: activity.id,
-      courseId: course.id,
       durationSeconds: 10,
 
       localDate: todayLocalDate(),
@@ -176,7 +259,6 @@ describe(submitActivityCompletion, () => {
 
     const result = await submitActivityCompletion({
       activityId: activity.id,
-      courseId: course.id,
       durationSeconds: 10,
 
       localDate: todayLocalDate(),
@@ -199,7 +281,6 @@ describe(submitActivityCompletion, () => {
 
     await submitActivityCompletion({
       activityId: activity.id,
-      courseId: course.id,
       durationSeconds: 10,
 
       localDate: todayLocalDate(),
@@ -220,7 +301,6 @@ describe(submitActivityCompletion, () => {
 
     const baseInput = {
       activityId: activity.id,
-      courseId: course.id,
       durationSeconds: 10,
 
       localDate: todayLocalDate(),
@@ -255,7 +335,6 @@ describe(submitActivityCompletion, () => {
 
     await submitActivityCompletion({
       activityId: staticActivity.id,
-      courseId: course.id,
       durationSeconds: 5,
 
       localDate: todayLocalDate(),
@@ -281,7 +360,6 @@ describe(submitActivityCompletion, () => {
 
     const result = await submitActivityCompletion({
       activityId: activity.id,
-      courseId: course.id,
       durationSeconds: 10,
 
       localDate: todayLocalDate(),
@@ -303,7 +381,6 @@ describe(submitActivityCompletion, () => {
 
     await submitActivityCompletion({
       activityId: activity.id,
-      courseId: course.id,
       durationSeconds: 10,
 
       localDate: todayLocalDate(),
@@ -331,7 +408,6 @@ describe(submitActivityCompletion, () => {
 
     const baseInput = {
       activityId: activity.id,
-      courseId: course.id,
       durationSeconds: 10,
 
       localDate: todayLocalDate(),
@@ -361,7 +437,6 @@ describe(submitActivityCompletion, () => {
 
     await submitActivityCompletion({
       activityId: activity.id,
-      courseId: course.id,
       durationSeconds: 10,
 
       localDate: todayLocalDate(),
@@ -388,7 +463,6 @@ describe(submitActivityCompletion, () => {
 
     await submitActivityCompletion({
       activityId: activity.id,
-      courseId: course.id,
       durationSeconds: 10,
 
       localDate: todayLocalDate(),
@@ -414,7 +488,6 @@ describe(submitActivityCompletion, () => {
 
     const baseInput = {
       activityId: activity.id,
-      courseId: course.id,
       durationSeconds: 10,
 
       localDate: todayLocalDate(),
@@ -460,7 +533,6 @@ describe(submitActivityCompletion, () => {
 
     await submitActivityCompletion({
       activityId: activity.id,
-      courseId: course.id,
       durationSeconds: 10,
 
       localDate: todayLocalDate(),
@@ -498,7 +570,6 @@ describe(submitActivityCompletion, () => {
 
     await submitActivityCompletion({
       activityId: activity.id,
-      courseId: course.id,
       durationSeconds: 20,
 
       localDate: todayLocalDate(),
@@ -532,7 +603,6 @@ describe(submitActivityCompletion, () => {
 
     await submitActivityCompletion({
       activityId: activity.id,
-      courseId: course.id,
       durationSeconds: 10,
 
       localDate,
@@ -562,7 +632,6 @@ describe(submitActivityCompletion, () => {
     await expect(
       submitActivityCompletion({
         activityId: activity.id,
-        courseId: course.id,
         durationSeconds: 10,
 
         localDate: "9999-12-31",
@@ -582,7 +651,6 @@ describe(submitActivityCompletion, () => {
     await expect(
       submitActivityCompletion({
         activityId: activity.id,
-        courseId: course.id,
         durationSeconds: 10,
 
         localDate: "2020-01-01",
@@ -611,7 +679,6 @@ describe(submitActivityCompletion, () => {
 
     await submitActivityCompletion({
       activityId: activity.id,
-      courseId: course.id,
       durationSeconds: 10,
 
       localDate,
@@ -663,7 +730,6 @@ describe(submitActivityCompletion, () => {
 
     await submitActivityCompletion({
       activityId: activity.id,
-      courseId: course.id,
       durationSeconds: 10,
 
       localDate: todayLocalDate(),

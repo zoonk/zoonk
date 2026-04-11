@@ -8,7 +8,6 @@ import { type LessonContext } from "./get-lesson-step";
 export async function setLessonAsCompletedStep(input: {
   context: LessonContext;
   lessonKind: LessonKind;
-  workflowRunId: string;
 }): Promise<void> {
   "use step";
 
@@ -19,7 +18,6 @@ export async function setLessonAsCompletedStep(input: {
   const { error } = await safeAsync(() =>
     prisma.lesson.update({
       data: {
-        generationRunId: input.workflowRunId,
         generationStatus: "completed",
         generationVersion: getTargetLessonGenerationVersion(input.lessonKind),
       },

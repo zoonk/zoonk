@@ -19,9 +19,9 @@ describe(queueLessonRegeneration, () => {
     await queueLessonRegeneration({
       cookieHeader: "session=abc123",
       lesson: {
-        generationStatus: "completed",
         generationVersion: 0,
         id: 42,
+        isRegenerating: false,
         kind: "core",
         managementMode: "ai",
       },
@@ -37,9 +37,9 @@ describe(queueLessonRegeneration, () => {
     await queueLessonRegeneration({
       cookieHeader: "session=abc123",
       lesson: {
-        generationStatus: "completed",
         generationVersion: 1,
         id: 42,
+        isRegenerating: false,
         kind: "core",
         managementMode: "ai",
       },
@@ -52,9 +52,9 @@ describe(queueLessonRegeneration, () => {
     await queueLessonRegeneration({
       cookieHeader: "session=abc123",
       lesson: {
-        generationStatus: "failed",
         generationVersion: 0,
         id: 42,
+        isRegenerating: false,
         kind: "core",
         managementMode: "ai",
       },
@@ -70,11 +70,26 @@ describe(queueLessonRegeneration, () => {
     await queueLessonRegeneration({
       cookieHeader: "session=abc123",
       lesson: {
-        generationStatus: "completed",
         generationVersion: 0,
         id: 42,
+        isRegenerating: false,
         kind: "core",
         managementMode: "manual",
+      },
+    });
+
+    expect(triggerLessonPreload).not.toHaveBeenCalled();
+  });
+
+  test("does not call lesson preload while a regeneration run is already in flight", async () => {
+    await queueLessonRegeneration({
+      cookieHeader: "session=abc123",
+      lesson: {
+        generationVersion: 0,
+        id: 42,
+        isRegenerating: true,
+        kind: "core",
+        managementMode: "ai",
       },
     });
 

@@ -74,6 +74,8 @@ describe(addActivitiesStep, () => {
       concepts: [],
       context: lessonContext,
       customActivities: [],
+      generationRunId: "test-run-id",
+      isPublished: true,
       lessonKind: "language",
       targetLanguage: "es",
     });
@@ -85,6 +87,7 @@ describe(addActivitiesStep, () => {
 
     expect(activities.length).toBeGreaterThanOrEqual(5);
     expect(activities[0]!.kind).toBe("vocabulary");
+    expect(activities[0]!.generationRunId).toBe("test-run-id");
     expect(activities[0]!.isPublished).toBe(true);
     expect(activities[0]!.language).toBe(lesson.language);
     expect(activities[0]!.organizationId).toBe(organizationId);
@@ -119,6 +122,8 @@ describe(addActivitiesStep, () => {
       concepts: ["Concept A", "Concept B"],
       context: lessonContext,
       customActivities: [],
+      generationRunId: "test-run-id",
+      isPublished: true,
       lessonKind: "core",
       targetLanguage: null,
     });
@@ -147,6 +152,8 @@ describe(addActivitiesStep, () => {
         concepts: [],
         context: brokenContext,
         customActivities: [],
+        generationRunId: "test-run-id",
+        isPublished: true,
         lessonKind: "language",
         targetLanguage: "es",
       }),
@@ -178,6 +185,8 @@ describe(addActivitiesStep, () => {
       concepts: [],
       context: lessonContext,
       customActivities: [],
+      generationRunId: "test-run-id",
+      isPublished: true,
       lessonKind: "language",
       targetLanguage: "es",
     });

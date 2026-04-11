@@ -1,3 +1,4 @@
+import { prisma } from "@zoonk/db";
 import { activityFixture, activityProgressFixture } from "@zoonk/testing/fixtures/activities";
 import { signInAs } from "@zoonk/testing/fixtures/auth";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
@@ -245,5 +246,68 @@ describe(getActivityProgress, () => {
     const headers = await signInAs(user.email, user.password);
     const result = await getActivityProgress({ headers, lessonId: lesson1.id });
     expect(result).toEqual([String(activityInLesson1.id)]);
+  });
+
+  test("returns all current activities when the learner durably completed the lesson", async () => {
+    const [user, course] = await Promise.all([
+      userFixture(),
+      courseFixture({ isPublished: true, organizationId: organization.id }),
+    ]);
+
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      isPublished: true,
+      organizationId: organization.id,
+      position: 0,
+    });
+
+    const currentLesson = await lessonFixture({
+      chapterId: chapter.id,
+      isPublished: true,
+      organizationId: organization.id,
+      position: 0,
+      slug: "durable-lesson",
+    });
+
+    const [archivedActivity, currentActivity1, currentActivity2] = await Promise.all([
+      activityFixture({
+        archivedAt: new Date(),
+        isPublished: false,
+        lessonId: currentLesson.id,
+        organizationId: organization.id,
+        position: 0,
+      }),
+      activityFixture({
+        isPublished: true,
+        lessonId: currentLesson.id,
+        organizationId: organization.id,
+        position: 1,
+      }),
+      activityFixture({
+        isPublished: true,
+        lessonId: currentLesson.id,
+        organizationId: organization.id,
+        position: 2,
+      }),
+    ]);
+
+    await activityProgressFixture({
+      activityId: archivedActivity.id,
+      completedAt: new Date(),
+      durationSeconds: 60,
+      userId: Number(user.id),
+    });
+
+    await prisma.lessonCompletion.create({
+      data: {
+        lessonId: currentLesson.id,
+        userId: Number(user.id),
+      },
+    });
+
+    const headers = await signInAs(user.email, user.password);
+    const result = await getActivityProgress({ headers, lessonId: currentLesson.id });
+
+    expect(result).toEqual([String(currentActivity1.id), String(currentActivity2.id)]);
   });
 });

@@ -1,8 +1,5 @@
 import "server-only";
-import {
-  type NextActivityInCourse,
-  getNextActivityInCourse,
-} from "@zoonk/core/activities/next-in-course";
+import { type NextActivityInCourse } from "@zoonk/core/activities/next-in-course";
 import { getSession } from "@zoonk/core/users/session/get";
 import {
   type Activity,
@@ -10,30 +7,25 @@ import {
   type Course,
   type Lesson,
   type Organization,
-  prisma,
 } from "@zoonk/db";
-import { safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
-import { getNextSibling } from "../progress/get-next-sibling";
+import {
+  type ContinueLearningCandidate,
+  listContinueLearningCandidates,
+} from "./_utils/continue-learning-candidates";
+import { type ContinueLearningState } from "./_utils/continue-learning-next-state";
+import {
+  type ContinueLearningRow,
+  listRecentContinueLearningRows,
+} from "./_utils/continue-learning-queries";
 
 export const MAX_CONTINUE_LEARNING_ITEMS = 4;
 
-/**
- * Over-fetch to account for completed courses being filtered out.
- */
-const SQL_LIMIT = 10;
+type ContinueLearningResolvedState = NonNullable<ContinueLearningState>;
 
-type ContinueLearningRow = {
-  courseId: number;
-  courseSlug: string;
-  courseTitle: string;
-  courseImageUrl: string | null;
-  orgSlug: string | null;
-  activityPosition: number;
-  lessonId: number;
-  lessonPosition: number;
-  chapterId: number;
-  chapterPosition: number;
+type PrefetchableContinueLearningState = ContinueLearningResolvedState & {
+  activityId: bigint;
+  activityKind: NonNullable<ContinueLearningResolvedState["activityKind"]>;
 };
 
 type ContinueLearningActivity = Pick<Activity, "id" | "kind" | "title" | "position">;
@@ -63,6 +55,11 @@ export type ContinueLearningPendingItem = {
 
 export type ContinueLearningItem = ContinueLearningCompletedItem | ContinueLearningPendingItem;
 
+/**
+ * The feed only shows lightweight course metadata, so this helper converts the
+ * SQL row into the nested course shape once and keeps the rest of the item
+ * builders free from row field naming details.
+ */
 function toCourse(row: ContinueLearningRow): ContinueLearningCourse {
   return {
     id: row.courseId,
@@ -73,10 +70,51 @@ function toCourse(row: ContinueLearningRow): ContinueLearningCourse {
   };
 }
 
-function toCompletedItem(
-  row: ContinueLearningRow,
-  next: NextActivityInCourse,
-): ContinueLearningCompletedItem {
+/**
+ * When the shared next-state already points at a current activity, the feed can
+ * rebuild the card directly from that state without any extra course-specific
+ * navigation logic.
+ */
+function toCompletedItemFromState({
+  row,
+  state,
+}: {
+  row: ContinueLearningRow;
+  state: PrefetchableContinueLearningState;
+}): ContinueLearningCompletedItem {
+  return {
+    activity: {
+      id: state.activityId,
+      kind: state.activityKind,
+      position: state.activityPosition,
+      title: state.activityTitle,
+    },
+    chapter: {
+      id: state.chapterId,
+      slug: state.chapterSlug,
+    },
+    course: toCourse(row),
+    lesson: {
+      description: state.lessonDescription,
+      id: state.lessonId,
+      slug: state.lessonSlug,
+      title: state.lessonTitle,
+    },
+    status: "completed",
+  };
+}
+
+/**
+ * The feed prefers the natural sequential next activity whenever that target
+ * still belongs to an open chapter in the current course tree.
+ */
+function toCompletedItemFromNext({
+  next,
+  row,
+}: {
+  next: NextActivityInCourse;
+  row: ContinueLearningRow;
+}): ContinueLearningCompletedItem {
   return {
     activity: {
       id: next.activityId,
@@ -99,48 +137,142 @@ function toCompletedItem(
   };
 }
 
-type PendingTarget = {
-  chapter: ContinueLearningChapter;
-  lesson: ContinueLearningLesson | null;
-};
-
-async function findPendingTarget(row: ContinueLearningRow): Promise<PendingTarget | null> {
-  const nextLesson = await getNextSibling({
-    chapterId: row.chapterId,
-    chapterPosition: row.chapterPosition,
-    courseId: row.courseId,
-    lessonPosition: row.lessonPosition,
-    level: "lesson",
-  });
-
-  if (nextLesson) {
-    return {
-      chapter: { id: nextLesson.chapterId, slug: nextLesson.chapterSlug },
-      lesson: {
-        description: nextLesson.lessonDescription,
-        id: nextLesson.lessonId,
-        slug: nextLesson.lessonSlug,
-        title: nextLesson.lessonTitle,
-      },
-    };
-  }
-
-  const nextChapter = await getNextSibling({
-    chapterPosition: row.chapterPosition,
-    courseId: row.courseId,
-    level: "chapter",
-  });
-
-  if (nextChapter) {
-    return {
-      chapter: { id: nextChapter.chapterId, slug: nextChapter.chapterSlug },
-      lesson: null,
-    };
-  }
-
-  return null;
+/**
+ * A completed course should disappear from the feed entirely, even if the
+ * learner's last historical completion in that course is still recent.
+ */
+function shouldHideCandidate({ state }: { state: ContinueLearningResolvedState }) {
+  return state.scopeDurablyCompleted;
 }
 
+/**
+ * Some states are best rendered as lesson or chapter shells instead of direct
+ * activity links. Keeping that card shape in one helper avoids rebuilding the
+ * pending payload inline inside the main item-selection branch.
+ */
+function toPendingItem({
+  chapter,
+  course,
+  lesson,
+}: {
+  chapter: ContinueLearningChapter;
+  course: ContinueLearningCourse;
+  lesson: ContinueLearningLesson | null;
+}): ContinueLearningPendingItem {
+  return {
+    chapter,
+    course,
+    lesson,
+    status: "pending",
+  };
+}
+
+/**
+ * When the next actionable state has no ready activity yet, the feed should
+ * still point at the current lesson shell so the learner can see that work is
+ * pending or continue once generation finishes.
+ */
+function toPendingItemFromState({
+  row,
+  state,
+}: {
+  row: ContinueLearningRow;
+  state: ContinueLearningResolvedState;
+}): ContinueLearningPendingItem {
+  return toPendingItem({
+    chapter: { id: state.chapterId, slug: state.chapterSlug },
+    course: toCourse(row),
+    lesson: {
+      description: state.lessonDescription,
+      id: state.lessonId,
+      slug: state.lessonSlug,
+      title: state.lessonTitle,
+    },
+  });
+}
+
+/**
+ * A completed shared next-state only becomes a useful pending card when the
+ * candidate loader already found a next lesson or chapter shell to point at.
+ */
+function toPendingItemFromTarget({
+  course,
+  pendingTarget,
+}: {
+  course: ContinueLearningCourse;
+  pendingTarget: NonNullable<ContinueLearningCandidate["pendingTarget"]>;
+}): ContinueLearningPendingItem {
+  return toPendingItem({
+    chapter: pendingTarget.chapter,
+    course,
+    lesson: pendingTarget.lesson,
+  });
+}
+
+/**
+ * The shared next-state only produces a completed activity card when it can
+ * deep-link into a real current activity. Making that guard explicit keeps the
+ * item-selection branch honest about when those fields are actually present.
+ */
+function hasPrefetchableActivity(
+  state: ContinueLearningResolvedState,
+): state is PrefetchableContinueLearningState {
+  return Boolean(state.canPrefetch && state.activityId && state.activityKind);
+}
+
+/**
+ * Continue-learning always chooses exactly one card shape per course anchor:
+ * sequential activity, pending fallback target, current activity from the
+ * shared state, or a pending lesson shell. Returning null here means the course
+ * should not appear in the feed at all.
+ */
+function toContinueLearningItem({
+  candidate,
+}: {
+  candidate: ContinueLearningCandidate;
+}): ContinueLearningItem | null {
+  const state = candidate.state;
+
+  if (!state || shouldHideCandidate({ state })) {
+    return null;
+  }
+
+  const course = toCourse(candidate.row);
+
+  if (candidate.sequentialNext && !candidate.isSequentialNextBlocked) {
+    return toCompletedItemFromNext({
+      next: candidate.sequentialNext,
+      row: candidate.row,
+    });
+  }
+
+  if (state.completed) {
+    return candidate.pendingTarget
+      ? toPendingItemFromTarget({
+          course,
+          pendingTarget: candidate.pendingTarget,
+        })
+      : null;
+  }
+
+  if (hasPrefetchableActivity(state)) {
+    return toCompletedItemFromState({
+      row: candidate.row,
+      state,
+    });
+  }
+
+  return toPendingItemFromState({
+    row: candidate.row,
+    state,
+  });
+}
+
+/**
+ * The cacheable continue-learning loader now reads like a pipeline: fetch
+ * recent course anchors, enrich them with current navigation state, and then
+ * convert those candidates into the final cards shown on the home feed.
+ */
 export const getContinueLearning = cache(
   async (headers?: Headers): Promise<ContinueLearningItem[]> => {
     const session = await getSession(headers);
@@ -150,88 +282,20 @@ export const getContinueLearning = cache(
     }
 
     const userId = Number(session.user.id);
+    const rows = await listRecentContinueLearningRows({ userId });
 
-    const { data: rows, error } = await safeAsync(
-      () =>
-        prisma.$queryRaw<ContinueLearningRow[]>`
-        WITH last_per_course AS (
-          SELECT DISTINCT ON (ch.course_id)
-            ch.course_id,
-            ap.completed_at,
-            c.slug as course_slug,
-            c.title as course_title,
-            c.image_url as course_image_url,
-            o.slug as org_slug,
-            a.position as activity_position,
-            a.lesson_id,
-            l.position as lesson_position,
-            l.chapter_id,
-            ch.position as chapter_position
-          FROM activity_progress ap
-          JOIN activities a ON a.id = ap.activity_id AND a.is_published = true AND a.archived_at IS NULL
-          JOIN lessons l ON l.id = a.lesson_id AND l.is_published = true AND l.archived_at IS NULL
-          JOIN chapters ch ON ch.id = l.chapter_id AND ch.is_published = true AND ch.archived_at IS NULL
-          JOIN courses c ON c.id = ch.course_id AND c.is_published = true AND c.archived_at IS NULL
-          LEFT JOIN organizations o ON o.id = c.organization_id
-          WHERE ap.user_id = ${userId} AND ap.completed_at IS NOT NULL AND (o.kind = 'brand' OR o.id IS NULL)
-          ORDER BY ch.course_id, ap.completed_at DESC
-        )
-        SELECT
-          lpc.course_id as "courseId",
-          lpc.course_slug as "courseSlug",
-          lpc.course_title as "courseTitle",
-          lpc.course_image_url as "courseImageUrl",
-          lpc.org_slug as "orgSlug",
-          lpc.activity_position as "activityPosition",
-          lpc.lesson_id as "lessonId",
-          lpc.lesson_position as "lessonPosition",
-          lpc.chapter_id as "chapterId",
-          lpc.chapter_position as "chapterPosition"
-        FROM last_per_course lpc
-        ORDER BY lpc.completed_at DESC
-        LIMIT ${SQL_LIMIT}
-      `,
-    );
-
-    if (error || !rows) {
+    if (rows.length === 0) {
       return [];
     }
 
-    const nextActivities = await Promise.all(
-      rows.map((row) =>
-        getNextActivityInCourse({
-          activityPosition: row.activityPosition,
-          chapterId: row.chapterId,
-          chapterPosition: row.chapterPosition,
-          courseId: row.courseId,
-          lessonId: row.lessonId,
-          lessonPosition: row.lessonPosition,
-        }),
-      ),
-    );
+    const candidates = await listContinueLearningCandidates({
+      rows,
+      userId,
+    });
 
-    const pendingTargets = await Promise.all(
-      rows.map((row, idx) =>
-        nextActivities[idx] ? Promise.resolve(null) : findPendingTarget(row),
-      ),
-    );
-
-    return rows
-      .flatMap<ContinueLearningItem>((row, idx) => {
-        const next = nextActivities[idx];
-
-        if (next) {
-          return [toCompletedItem(row, next)];
-        }
-
-        const target = pendingTargets[idx];
-
-        if (!target) {
-          return [];
-        }
-
-        return [{ ...target, course: toCourse(row), status: "pending" as const }];
-      })
+    return candidates
+      .map((candidate) => toContinueLearningItem({ candidate }))
+      .filter((item): item is ContinueLearningItem => item !== null)
       .slice(0, MAX_CONTINUE_LEARNING_ITEMS);
   },
 );

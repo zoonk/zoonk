@@ -65,16 +65,18 @@ describe(claimLiveLessonRegenerationStep, () => {
 
       expect(firstClaim).toBe(true);
       expect(secondClaim).toBe(false);
-      expect(updated.generationStatus).toBe("running");
+      expect(updated.generationStatus).toBe(generationStatus);
       expect(updated.generationRunId).toBe("run-1");
+      expect(updated.isRegenerating).toBe(true);
     },
   );
 
-  test("does not claim running outdated lessons", async () => {
+  test("does not claim outdated lessons that already have an in-flight regeneration run", async () => {
     const lesson = await lessonFixture({
       chapterId,
-      generationStatus: "running",
+      generationStatus: "completed",
       generationVersion: 0,
+      isRegenerating: true,
       managementMode: "ai",
       organizationId,
       title: `running ${randomUUID()}`,
@@ -88,8 +90,9 @@ describe(claimLiveLessonRegenerationStep, () => {
     const updated = await prisma.lesson.findUniqueOrThrow({ where: { id: lesson.id } });
 
     expect(claimed).toBe(false);
-    expect(updated.generationStatus).toBe("running");
+    expect(updated.generationStatus).toBe("completed");
     expect(updated.generationRunId).toBeNull();
+    expect(updated.isRegenerating).toBe(true);
   });
 
   test("does not claim current or manual lessons", async () => {
@@ -132,5 +135,9 @@ describe(claimLiveLessonRegenerationStep, () => {
     expect(manualClaimed).toBe(false);
     expect(updatedCurrent.generationStatus).toBe("completed");
     expect(updatedManual.generationStatus).toBe("completed");
+    expect(updatedCurrent.generationRunId).toBeNull();
+    expect(updatedManual.generationRunId).toBeNull();
+    expect(updatedCurrent.isRegenerating).toBe(false);
+    expect(updatedManual.isRegenerating).toBe(false);
   });
 });

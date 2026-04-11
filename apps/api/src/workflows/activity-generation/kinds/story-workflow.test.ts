@@ -135,7 +135,7 @@ describe("story activity workflow", () => {
       title: `Story ${randomUUID()}`,
     });
 
-    const activities = await getLessonActivitiesStep(testLesson.id);
+    const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
 
     await storyActivityWorkflow({
       activitiesToGenerate: activities,
@@ -198,7 +198,7 @@ describe("story activity workflow", () => {
       title: `Story ${randomUUID()}`,
     });
 
-    const activities = await getLessonActivitiesStep(testLesson.id);
+    const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
 
     await storyActivityWorkflow({
       activitiesToGenerate: activities,
@@ -229,7 +229,7 @@ describe("story activity workflow", () => {
       title: `Explanation ${randomUUID()}`,
     });
 
-    const activities = await getLessonActivitiesStep(testLesson.id);
+    const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
 
     await storyActivityWorkflow({
       activitiesToGenerate: activities,
@@ -258,7 +258,7 @@ describe("story activity workflow", () => {
       title: `Story ${randomUUID()}`,
     });
 
-    const activities = await getLessonActivitiesStep(testLesson.id);
+    const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
 
     await storyActivityWorkflow({
       activitiesToGenerate: activities,
@@ -291,7 +291,7 @@ describe("story activity workflow", () => {
       title: `Story ${randomUUID()}`,
     });
 
-    const activities = await getLessonActivitiesStep(testLesson.id);
+    const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
 
     await storyActivityWorkflow({
       activitiesToGenerate: activities,

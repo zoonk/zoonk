@@ -55,7 +55,6 @@ describe(setLessonAsCompletedStep, () => {
       setLessonAsCompletedStep({
         context,
         lessonKind: "core",
-        workflowRunId: "run-id",
       }),
     ).rejects.toThrow();
 
@@ -69,12 +68,11 @@ describe(setLessonAsCompletedStep, () => {
   test("updates lesson generation status to completed", async () => {
     const lesson = await lessonFixture({
       chapterId,
+      generationRunId: "old-run-id",
       generationStatus: "running",
       organizationId,
       title: `Set Completed ${randomUUID()}`,
     });
-
-    const workflowRunId = `run-${randomUUID()}`;
 
     const context: LessonContext = {
       ...lesson,
@@ -85,13 +83,12 @@ describe(setLessonAsCompletedStep, () => {
     await setLessonAsCompletedStep({
       context,
       lessonKind: lesson.kind,
-      workflowRunId,
     });
 
     const updated = await prisma.lesson.findUniqueOrThrow({ where: { id: lesson.id } });
 
     expect(updated.generationStatus).toBe("completed");
-    expect(updated.generationRunId).toBe(workflowRunId);
+    expect(updated.generationRunId).toBe("old-run-id");
     expect(updated.generationVersion).toBe(getTargetLessonGenerationVersion(lesson.kind));
 
     const events = getStreamedEvents(writeMock);

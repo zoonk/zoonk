@@ -1,3 +1,4 @@
+import { prisma } from "@zoonk/db";
 import { activityFixture, activityProgressFixture } from "@zoonk/testing/fixtures/activities";
 import { signInAs } from "@zoonk/testing/fixtures/auth";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
@@ -59,6 +60,57 @@ describe("getNextActivity - course scope", () => {
       courseSlug: course.slug,
       hasStarted: false,
       lessonSlug: lesson.slug,
+    });
+  });
+
+  test("returns the first lesson shell when an unauthenticated course starts with a shell-only lesson", async () => {
+    const course = await courseFixture({ isPublished: true, organizationId: organization.id });
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      isPublished: true,
+      organizationId: organization.id,
+      position: 0,
+    });
+
+    const [shellLesson, generatedLesson] = await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
+        generationStatus: "completed",
+        isPublished: true,
+        organizationId: organization.id,
+        position: 0,
+      }),
+      lessonFixture({
+        chapterId: chapter.id,
+        generationStatus: "completed",
+        isPublished: true,
+        organizationId: organization.id,
+        position: 1,
+      }),
+    ]);
+
+    await activityFixture({
+      generationStatus: "completed",
+      isPublished: true,
+      lessonId: generatedLesson.id,
+      organizationId: organization.id,
+      position: 0,
+    });
+
+    const result = await getNextActivity({
+      headers: new Headers(),
+      scope: { courseId: course.id },
+    });
+
+    expect(result).toEqual({
+      activityPosition: 0,
+      brandSlug: organization.slug,
+      canPrefetch: false,
+      chapterSlug: chapter.slug,
+      completed: false,
+      courseSlug: course.slug,
+      hasStarted: false,
+      lessonSlug: shellLesson.slug,
     });
   });
 
@@ -317,6 +369,103 @@ describe("getNextActivity - course scope", () => {
     });
   });
 
+  test("skips newly added lessons inside a durably completed chapter", async () => {
+    const [user, course] = await Promise.all([
+      userFixture(),
+      courseFixture({ isPublished: true, organizationId: organization.id }),
+    ]);
+
+    const [completedChapter, nextChapter] = await Promise.all([
+      chapterFixture({
+        courseId: course.id,
+        isPublished: true,
+        organizationId: organization.id,
+        position: 0,
+      }),
+      chapterFixture({
+        courseId: course.id,
+        isPublished: true,
+        organizationId: organization.id,
+        position: 1,
+      }),
+    ]);
+
+    const [completedLesson, addedLesson, nextLesson] = await Promise.all([
+      lessonFixture({
+        chapterId: completedChapter.id,
+        isPublished: true,
+        organizationId: organization.id,
+        position: 0,
+      }),
+      lessonFixture({
+        chapterId: completedChapter.id,
+        isPublished: true,
+        organizationId: organization.id,
+        position: 1,
+      }),
+      lessonFixture({
+        chapterId: nextChapter.id,
+        isPublished: true,
+        organizationId: organization.id,
+        position: 0,
+      }),
+    ]);
+
+    const [completedActivity, nextActivity] = await Promise.all([
+      activityFixture({
+        generationStatus: "completed",
+        isPublished: true,
+        lessonId: completedLesson.id,
+        organizationId: organization.id,
+        position: 0,
+      }),
+      activityFixture({
+        generationStatus: "completed",
+        isPublished: true,
+        lessonId: nextLesson.id,
+        organizationId: organization.id,
+        position: 0,
+      }),
+    ]);
+
+    await activityFixture({
+      generationStatus: "completed",
+      isPublished: true,
+      lessonId: addedLesson.id,
+      organizationId: organization.id,
+      position: 0,
+    });
+
+    await Promise.all([
+      activityProgressFixture({
+        activityId: completedActivity.id,
+        completedAt: new Date(),
+        durationSeconds: 60,
+        userId: Number(user.id),
+      }),
+      prisma.chapterCompletion.create({
+        data: {
+          chapterId: completedChapter.id,
+          userId: Number(user.id),
+        },
+      }),
+    ]);
+
+    const headers = await signInAs(user.email, user.password);
+    const result = await getNextActivity({ headers, scope: { courseId: course.id } });
+
+    expect(result).toEqual({
+      activityPosition: nextActivity.position,
+      brandSlug: organization.slug,
+      canPrefetch: true,
+      chapterSlug: nextChapter.slug,
+      completed: false,
+      courseSlug: course.slug,
+      hasStarted: true,
+      lessonSlug: nextLesson.slug,
+    });
+  });
+
   test("returns first activity with completed=true when all completed", async () => {
     const [user, course] = await Promise.all([
       userFixture(),
@@ -378,6 +527,73 @@ describe("getNextActivity - course scope", () => {
       courseSlug: course.slug,
       hasStarted: true,
       lessonSlug: lesson.slug,
+    });
+  });
+
+  test("returns the next lesson shell after the latest completed lesson", async () => {
+    const [user, course] = await Promise.all([
+      userFixture(),
+      courseFixture({ isPublished: true, organizationId: organization.id }),
+    ]);
+
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      isPublished: true,
+      organizationId: organization.id,
+      position: 0,
+    });
+
+    const [, completedLesson, nextLesson] = await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
+        generationStatus: "completed",
+        isPublished: true,
+        organizationId: organization.id,
+        position: 0,
+      }),
+      lessonFixture({
+        chapterId: chapter.id,
+        generationStatus: "completed",
+        isPublished: true,
+        organizationId: organization.id,
+        position: 1,
+      }),
+      lessonFixture({
+        chapterId: chapter.id,
+        generationStatus: "completed",
+        isPublished: true,
+        organizationId: organization.id,
+        position: 2,
+      }),
+    ]);
+
+    const completedActivity = await activityFixture({
+      generationStatus: "completed",
+      isPublished: true,
+      lessonId: completedLesson.id,
+      organizationId: organization.id,
+      position: 0,
+    });
+
+    await activityProgressFixture({
+      activityId: completedActivity.id,
+      completedAt: new Date(),
+      durationSeconds: 60,
+      userId: Number(user.id),
+    });
+
+    const headers = await signInAs(user.email, user.password);
+    const result = await getNextActivity({ headers, scope: { courseId: course.id } });
+
+    expect(result).toEqual({
+      activityPosition: 0,
+      brandSlug: organization.slug,
+      canPrefetch: false,
+      chapterSlug: chapter.slug,
+      completed: false,
+      courseSlug: course.slug,
+      hasStarted: true,
+      lessonSlug: nextLesson.slug,
     });
   });
 
@@ -507,7 +723,7 @@ describe("getNextActivity - course scope", () => {
     });
   });
 
-  test("returns null when no published activities exist", async () => {
+  test("returns the first lesson shell when no published activities exist yet", async () => {
     const course = await courseFixture({ isPublished: true, organizationId: organization.id });
     const chapter = await chapterFixture({
       courseId: course.id,
@@ -534,7 +750,16 @@ describe("getNextActivity - course scope", () => {
       scope: { courseId: course.id },
     });
 
-    expect(result).toBeNull();
+    expect(result).toEqual({
+      activityPosition: 0,
+      brandSlug: organization.slug,
+      canPrefetch: false,
+      chapterSlug: chapter.slug,
+      completed: false,
+      courseSlug: course.slug,
+      hasStarted: false,
+      lessonSlug: lesson.slug,
+    });
   });
 
   test("skips unpublished chapters", async () => {

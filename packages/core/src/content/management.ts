@@ -12,7 +12,7 @@ import { AI_ORG_SLUG } from "@zoonk/utils/org";
 type ManagedContent = Pick<Activity | Chapter | Course | Lesson, "managementMode">;
 type VersionedLesson = Pick<
   Lesson,
-  "generationStatus" | "generationVersion" | "kind" | "managementMode"
+  "generationVersion" | "isRegenerating" | "kind" | "managementMode"
 >;
 
 const lessonGenerationVersions: Record<LessonKind, number> = {
@@ -65,8 +65,13 @@ function getContentManagementState({
 /**
  * This helper exists so the app and workflow code share one definition of what
  * it means for an AI-managed lesson to be behind the current manual rollout.
+ *
  * A version mismatch only matters for AI-managed lessons; manual and pinned
  * lessons should stay protected even if their stored version is different.
+ *
+ * `isRegenerating` only means "a background refresh is currently in flight";
+ * freshness still comes entirely from comparing the stored version to the
+ * target version for that lesson kind.
  */
 export function getLessonGenerationState({
   lesson,
@@ -75,19 +80,24 @@ export function getLessonGenerationState({
 }): LessonGenerationState {
   const managementState = getContentManagementState({ content: lesson });
   const targetGenerationVersion = getTargetLessonGenerationVersion(lesson.kind);
-  const hasGenerationVersionMismatch =
-    managementState.isAiManaged && lesson.generationVersion !== targetGenerationVersion;
 
-  const needsInitialGeneration =
-    managementState.isAiManaged &&
-    lesson.generationVersion === null &&
-    lesson.generationStatus !== "running";
+  if (!managementState.isAiManaged) {
+    return {
+      ...managementState,
+      currentGenerationVersion: lesson.generationVersion,
+      hasGenerationVersionMismatch: false,
+      isOutdated: false,
+      needsInitialGeneration: false,
+      shouldAutoEnqueueRegeneration: false,
+      targetGenerationVersion,
+    };
+  }
 
+  const isNewLesson = lesson.generationVersion === null;
+  const hasGenerationVersionMismatch = lesson.generationVersion !== targetGenerationVersion;
+  const needsInitialGeneration = isNewLesson;
   const shouldAutoEnqueueRegeneration =
-    managementState.isAiManaged &&
-    lesson.generationVersion !== null &&
-    hasGenerationVersionMismatch &&
-    lesson.generationStatus !== "running";
+    !isNewLesson && hasGenerationVersionMismatch && !lesson.isRegenerating;
 
   return {
     ...managementState,

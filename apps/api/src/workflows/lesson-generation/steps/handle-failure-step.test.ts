@@ -42,7 +42,7 @@ describe(handleLessonFailureStep, () => {
     vi.clearAllMocks();
   });
 
-  test("marks lesson as failed and clears run ID", async () => {
+  test("marks lesson as failed and keeps the last run ID for debugging", async () => {
     const lesson = await lessonFixture({
       chapterId,
       generationRunId: "old-run-id",
@@ -56,7 +56,7 @@ describe(handleLessonFailureStep, () => {
     const updated = await prisma.lesson.findUniqueOrThrow({ where: { id: lesson.id } });
 
     expect(updated.generationStatus).toBe("failed");
-    expect(updated.generationRunId).toBeNull();
+    expect(updated.generationRunId).toBe("old-run-id");
 
     const events = getStreamedEvents(writeMock);
 

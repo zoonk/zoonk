@@ -1,3 +1,4 @@
+import { prisma } from "@zoonk/db";
 import { activityFixture, activityProgressFixture } from "@zoonk/testing/fixtures/activities";
 import { signInAs } from "@zoonk/testing/fixtures/auth";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
@@ -418,5 +419,61 @@ describe(getChapterProgress, () => {
     const result = await getChapterProgress({ courseId: course.id, headers });
 
     expect(result).toEqual([{ chapterId: chapter.id, completedLessons: 1, totalLessons: 1 }]);
+  });
+
+  test("keeps a durably completed chapter completed when a new lesson is added later", async () => {
+    const [user, course] = await Promise.all([
+      userFixture(),
+      courseFixture({ isPublished: true, organizationId: organization.id }),
+    ]);
+
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      isPublished: true,
+      organizationId: organization.id,
+      position: 0,
+    });
+
+    const [originalLesson, newLesson] = await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
+        isPublished: true,
+        organizationId: organization.id,
+        position: 0,
+      }),
+      lessonFixture({
+        chapterId: chapter.id,
+        isPublished: true,
+        organizationId: organization.id,
+        position: 1,
+      }),
+    ]);
+
+    await Promise.all([
+      activityFixture({
+        isPublished: true,
+        lessonId: originalLesson.id,
+        organizationId: organization.id,
+        position: 0,
+      }),
+      activityFixture({
+        isPublished: true,
+        lessonId: newLesson.id,
+        organizationId: organization.id,
+        position: 0,
+      }),
+    ]);
+
+    await prisma.chapterCompletion.create({
+      data: {
+        chapterId: chapter.id,
+        userId: Number(user.id),
+      },
+    });
+
+    const headers = await signInAs(user.email, user.password);
+    const result = await getChapterProgress({ courseId: course.id, headers });
+
+    expect(result).toEqual([{ chapterId: chapter.id, completedLessons: 2, totalLessons: 2 }]);
   });
 });

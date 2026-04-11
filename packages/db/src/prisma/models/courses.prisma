@@ -67,6 +67,7 @@ model Course {
   alternativeTitles CourseAlternativeTitle[]
   categories        CourseCategory[]
   chapters          Chapter[]
+  completions       CourseCompletion[]
   users             CourseUser[]
 
   @@unique([organizationId, slug], name: "orgSlug")

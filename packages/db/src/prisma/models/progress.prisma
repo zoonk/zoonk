@@ -15,6 +15,48 @@ model ActivityProgress {
   @@map("activity_progress")
 }
 
+model LessonCompletion {
+  id          BigInt   @id @default(autoincrement())
+  userId      Int      @map("user_id")
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  lessonId    Int      @map("lesson_id")
+  lesson      Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
+  completedAt DateTime @default(now()) @map("completed_at")
+
+  @@unique([userId, lessonId], name: "userLessonCompletion")
+  @@index([lessonId])
+  @@index([userId, completedAt])
+  @@map("lesson_completions")
+}
+
+model ChapterCompletion {
+  id          BigInt   @id @default(autoincrement())
+  userId      Int      @map("user_id")
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  chapterId   Int      @map("chapter_id")
+  chapter     Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+  completedAt DateTime @default(now()) @map("completed_at")
+
+  @@unique([userId, chapterId], name: "userChapterCompletion")
+  @@index([chapterId])
+  @@index([userId, completedAt])
+  @@map("chapter_completions")
+}
+
+model CourseCompletion {
+  id          BigInt   @id @default(autoincrement())
+  userId      Int      @map("user_id")
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  courseId    Int      @map("course_id")
+  course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  completedAt DateTime @default(now()) @map("completed_at")
+
+  @@unique([userId, courseId], name: "userCourseCompletion")
+  @@index([courseId])
+  @@index([userId, completedAt])
+  @@map("course_completions")
+}
+
 model StepAttempt {
   id              BigInt        @id @default(autoincrement())
   userId          Int           @map("user_id")
