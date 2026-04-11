@@ -183,6 +183,109 @@ describe("authenticated users", () => {
     });
   });
 
+  test("does not reopen a durably completed lesson after regeneration adds more activities", async () => {
+    const user = await userFixture();
+    const headers = await signInAs(user.email, user.password);
+    const userId = Number(user.id);
+
+    const course = await courseFixture({
+      isPublished: true,
+      organizationId: organization.id,
+    });
+
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      isPublished: true,
+      organizationId: organization.id,
+      position: 0,
+    });
+
+    const [completedLesson, nextLesson] = await Promise.all([
+      lessonFixture({
+        chapterId: chapter.id,
+        isPublished: true,
+        organizationId: organization.id,
+        position: 0,
+      }),
+      lessonFixture({
+        chapterId: chapter.id,
+        isPublished: true,
+        organizationId: organization.id,
+        position: 1,
+      }),
+    ]);
+
+    const [
+      archivedCompletedActivity,
+      regeneratedFirstActivity,
+      regeneratedSecondActivity,
+      nextActivity,
+    ] = await Promise.all([
+      activityFixture({
+        archivedAt: new Date(),
+        generationStatus: "completed",
+        isPublished: false,
+        lessonId: completedLesson.id,
+        organizationId: organization.id,
+        position: 0,
+      }),
+      activityFixture({
+        generationStatus: "completed",
+        isPublished: true,
+        lessonId: completedLesson.id,
+        organizationId: organization.id,
+        position: 0,
+      }),
+      activityFixture({
+        generationStatus: "completed",
+        isPublished: true,
+        lessonId: completedLesson.id,
+        organizationId: organization.id,
+        position: 1,
+      }),
+      activityFixture({
+        generationStatus: "completed",
+        isPublished: true,
+        lessonId: nextLesson.id,
+        organizationId: organization.id,
+        position: 0,
+      }),
+    ]);
+
+    await Promise.all([
+      activityProgressFixture({
+        activityId: archivedCompletedActivity.id,
+        completedAt: new Date(),
+        durationSeconds: 60,
+        userId,
+      }),
+      prisma.lessonCompletion.create({
+        data: {
+          lessonId: completedLesson.id,
+          userId,
+        },
+      }),
+    ]);
+
+    const result = await getContinueLearning(headers);
+
+    expect(result).toHaveLength(1);
+    expect(result[0]).toMatchObject({
+      activity: { id: nextActivity.id },
+      chapter: { id: chapter.id },
+      course: { id: course.id },
+      lesson: { id: nextLesson.id },
+      status: "completed",
+    });
+
+    expect(result[0]).not.toMatchObject({
+      activity: { id: regeneratedSecondActivity.id },
+      lesson: { id: completedLesson.id },
+    });
+
+    expect(regeneratedFirstActivity.id).not.toBe(nextActivity.id);
+  });
+
   test("orders by most recent completion", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);

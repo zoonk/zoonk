@@ -22,6 +22,16 @@ export type ContinueLearningCandidate = {
   state: ContinueLearningState;
 };
 
+type BlockedSequentialTargetIds = {
+  chapterIds: Set<number>;
+  lessonIds: Set<number>;
+};
+
+type SequentialTargetIds = {
+  chapterIds: number[];
+  lessonIds: number[];
+};
+
 /**
  * The feed needs several derived signals per course anchor: the sequential
  * next activity, the durable-completion-aware next state, whether that
@@ -41,8 +51,8 @@ export async function listContinueLearningCandidates({
     listNextActivityStates({ rows, userId }),
   ]);
 
-  const [blockedChapterIds, pendingTargets] = await Promise.all([
-    listBlockedSequentialChapterIds({
+  const [blockedSequentialTargetIds, pendingTargets] = await Promise.all([
+    listBlockedSequentialTargetIds({
       sequentialNextActivities,
       userId,
     }),
@@ -52,19 +62,15 @@ export async function listContinueLearningCandidates({
     }),
   ]);
 
-  return rows.map((row, idx) => {
-    const sequentialNext = sequentialNextActivities[idx] ?? null;
-
-    return {
-      isSequentialNextBlocked: sequentialNext
-        ? blockedChapterIds.has(sequentialNext.chapterId)
-        : false,
+  return rows.map((row, idx) =>
+    toContinueLearningCandidate({
+      blockedSequentialTargetIds,
       pendingTarget: pendingTargets[idx] ?? null,
       row,
-      sequentialNext,
+      sequentialNext: sequentialNextActivities[idx] ?? null,
       state: nextStates[idx] ?? null,
-    };
-  });
+    }),
+  );
 }
 
 /**
@@ -88,6 +94,30 @@ async function listSequentialNextActivities({ rows }: { rows: ContinueLearningRo
 }
 
 /**
+ * Candidate assembly is a pure merge of already-loaded signals. Keeping this
+ * object construction in one place avoids rebuilding the same blocked-state
+ * logic inline inside the main list loader.
+ */
+function toContinueLearningCandidate(input: {
+  blockedSequentialTargetIds: BlockedSequentialTargetIds;
+  pendingTarget: PendingTarget | null;
+  row: ContinueLearningRow;
+  sequentialNext: NextActivityInCourse | null;
+  state: ContinueLearningState;
+}): ContinueLearningCandidate {
+  return {
+    isSequentialNextBlocked: isSequentialTargetBlocked({
+      blockedSequentialTargetIds: input.blockedSequentialTargetIds,
+      sequentialNext: input.sequentialNext,
+    }),
+    pendingTarget: input.pendingTarget,
+    row: input.row,
+    sequentialNext: input.sequentialNext,
+    state: input.state,
+  };
+}
+
+/**
  * Durable completion can reopen the notion of "what is next" even when the
  * historical sequential target is no longer actionable. The shared next-state
  * helper keeps continue-learning aligned with catalog buttons and lesson pages.
@@ -105,33 +135,189 @@ async function listNextActivityStates({
 }
 
 /**
- * A sequential next activity should not win if it belongs to a chapter the
- * learner already completed durably. Loading those chapter completions in bulk
- * avoids one database query per course card.
+ * A structural sequential target only makes sense while that lesson and chapter
+ * are still genuinely open for the learner. Once either scope has durable
+ * completion, the shared next-state is the more trustworthy source of truth.
  */
-async function listBlockedSequentialChapterIds({
+async function listBlockedSequentialTargetIds({
   sequentialNextActivities,
   userId,
 }: {
   sequentialNextActivities: (NextActivityInCourse | null)[];
   userId: number;
-}) {
-  const chapterIds = [
-    ...new Set(sequentialNextActivities.flatMap((next) => (next ? [next.chapterId] : []))),
-  ];
+}): Promise<BlockedSequentialTargetIds> {
+  const targetIds = getSequentialTargetIds({ sequentialNextActivities });
 
-  if (chapterIds.length === 0) {
-    return new Set<number>();
+  if (hasNoSequentialTargetIds({ targetIds })) {
+    return getEmptyBlockedSequentialTargetIds();
   }
 
-  const completions = await prisma.chapterCompletion.findMany({
+  const [chapterCompletions, lessonCompletions] = await Promise.all([
+    listBlockedSequentialChapterIds({
+      chapterIds: targetIds.chapterIds,
+      userId,
+    }),
+    listBlockedSequentialLessonIds({
+      lessonIds: targetIds.lessonIds,
+      userId,
+    }),
+  ]);
+
+  return {
+    chapterIds: toBlockedChapterIdSet({ chapterCompletions }),
+    lessonIds: toBlockedLessonIdSet({ lessonCompletions }),
+  };
+}
+
+/**
+ * Sequential navigation only cares about ids from real next targets. Extracting
+ * them once up front keeps the completion queries small and makes the blocking
+ * rule easier to read.
+ */
+function getSequentialTargetIds({
+  sequentialNextActivities,
+}: {
+  sequentialNextActivities: (NextActivityInCourse | null)[];
+}): SequentialTargetIds {
+  return {
+    chapterIds: getUniqueSequentialChapterIds({ sequentialNextActivities }),
+    lessonIds: getUniqueSequentialLessonIds({ sequentialNextActivities }),
+  };
+}
+
+/**
+ * Chapter-level durable completion should prevent a sequential activity from
+ * reopening content inside that chapter.
+ */
+function getUniqueSequentialChapterIds({
+  sequentialNextActivities,
+}: {
+  sequentialNextActivities: (NextActivityInCourse | null)[];
+}) {
+  return [...new Set(sequentialNextActivities.flatMap((next) => (next ? [next.chapterId] : [])))];
+}
+
+/**
+ * Lesson-level durable completion is the new guard for regenerated lessons
+ * that gained more current activities after the learner already finished them.
+ */
+function getUniqueSequentialLessonIds({
+  sequentialNextActivities,
+}: {
+  sequentialNextActivities: (NextActivityInCourse | null)[];
+}) {
+  return [...new Set(sequentialNextActivities.flatMap((next) => (next ? [next.lessonId] : [])))];
+}
+
+/**
+ * The loader can skip all durable-completion queries when there are no
+ * sequential targets at all.
+ */
+function hasNoSequentialTargetIds({ targetIds }: { targetIds: SequentialTargetIds }) {
+  return targetIds.chapterIds.length === 0 && targetIds.lessonIds.length === 0;
+}
+
+/**
+ * Returning the same empty shape keeps the no-target branch obvious and avoids
+ * inline object literals inside the main query helper.
+ */
+function getEmptyBlockedSequentialTargetIds(): BlockedSequentialTargetIds {
+  return {
+    chapterIds: new Set<number>(),
+    lessonIds: new Set<number>(),
+  };
+}
+
+/**
+ * Chapter completions are loaded in bulk so continue-learning does not need
+ * one database query per course card.
+ */
+async function listBlockedSequentialChapterIds({
+  chapterIds,
+  userId,
+}: {
+  chapterIds: number[];
+  userId: number;
+}) {
+  if (chapterIds.length === 0) {
+    return [];
+  }
+
+  return prisma.chapterCompletion.findMany({
     where: {
       chapterId: { in: chapterIds },
       userId,
     },
   });
+}
 
-  return new Set(completions.map((completion) => completion.chapterId));
+/**
+ * Lesson completions are loaded alongside chapter completions so regenerated
+ * lessons that are already durably completed do not win the sequential branch.
+ */
+async function listBlockedSequentialLessonIds({
+  lessonIds,
+  userId,
+}: {
+  lessonIds: number[];
+  userId: number;
+}) {
+  if (lessonIds.length === 0) {
+    return [];
+  }
+
+  return prisma.lessonCompletion.findMany({
+    where: {
+      lessonId: { in: lessonIds },
+      userId,
+    },
+  });
+}
+
+/**
+ * Converting rows to sets in dedicated helpers keeps the main bulk loader
+ * focused on orchestration instead of low-level collection details.
+ */
+function toBlockedChapterIdSet({
+  chapterCompletions,
+}: {
+  chapterCompletions: { chapterId: number }[];
+}) {
+  return new Set(chapterCompletions.map((completion) => completion.chapterId));
+}
+
+/**
+ * Lesson completion is stored separately from raw activity progress, so this
+ * helper turns the bulk query rows into a fast membership check.
+ */
+function toBlockedLessonIdSet({
+  lessonCompletions,
+}: {
+  lessonCompletions: { lessonId: number }[];
+}) {
+  return new Set(lessonCompletions.map((completion) => completion.lessonId));
+}
+
+/**
+ * A sequential target is only valid when both its lesson and chapter are still
+ * open for the learner. Otherwise continue-learning should trust the shared
+ * durable-aware next-state instead.
+ */
+function isSequentialTargetBlocked({
+  blockedSequentialTargetIds,
+  sequentialNext,
+}: {
+  blockedSequentialTargetIds: BlockedSequentialTargetIds;
+  sequentialNext: NextActivityInCourse | null;
+}) {
+  if (!sequentialNext) {
+    return false;
+  }
+
+  return (
+    blockedSequentialTargetIds.chapterIds.has(sequentialNext.chapterId) ||
+    blockedSequentialTargetIds.lessonIds.has(sequentialNext.lessonId)
+  );
 }
 
 /**
@@ -148,13 +334,12 @@ async function listPendingTargets({
   states: ContinueLearningState[];
 }) {
   return Promise.all(
-    rows.map((row, idx) => {
-      const state = states[idx] ?? null;
-
-      return shouldLoadPendingTarget({ state })
-        ? findPendingTarget({ row })
-        : Promise.resolve(null);
-    }),
+    rows.map((row, idx) =>
+      listPendingTarget({
+        row,
+        state: states[idx] ?? null,
+      }),
+    ),
   );
 }
 
@@ -165,6 +350,24 @@ async function listPendingTargets({
  */
 function shouldLoadPendingTarget({ state }: { state: ContinueLearningState }) {
   return Boolean(state?.completed && !state.scopeDurablyCompleted);
+}
+
+/**
+ * This tiny orchestration helper keeps the Promise.all callback declarative and
+ * avoids embedding branching logic directly inside the array mapping step.
+ */
+async function listPendingTarget({
+  row,
+  state,
+}: {
+  row: ContinueLearningRow;
+  state: ContinueLearningState;
+}) {
+  if (!shouldLoadPendingTarget({ state })) {
+    return null;
+  }
+
+  return findPendingTarget({ row });
 }
 
 /**
