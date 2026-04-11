@@ -59,7 +59,7 @@ const selectImageSchema = z.object({
   question: z.string(),
 });
 
-const quizQuestionSchema = z.discriminatedUnion("format", [
+const quizQuestionSchema = z.union([
   multipleChoiceSchema,
   fillBlankSchema,
   matchColumnsSchema,
