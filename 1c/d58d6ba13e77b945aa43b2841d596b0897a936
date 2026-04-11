@@ -1,0 +1,67 @@
+packages/ai/src/reporting-tags.ts
+  ad126dc2c1f5c4f2 24
+apps/admin/src/app/(private)/stats/ai/[task]/ai-task-report.tsx
+  ad126dc2c1f5c4f2 62-78
+packages/ai/src/provider-options.test.ts
+  ad126dc2c1f5c4f2 73,85
+apps/admin/src/app/(private)/stats/ai/ai-task-list.tsx
+  ad126dc2c1f5c4f2 18
+apps/admin/src/app/(private)/stats/ai/ai-task-table.tsx
+  ad126dc2c1f5c4f2 3
+packages/core/src/ai.ts
+  ad126dc2c1f5c4f2 2
+apps/admin/src/data/stats/ai/get-ai-task-model-usage.ts
+  ad126dc2c1f5c4f2 20
+packages/ai/src/reporting-tags.test.ts
+  ad126dc2c1f5c4f2 26
+apps/admin/src/data/stats/ai/ai-task-stats.ts
+  ad126dc2c1f5c4f2 66-67,75-76
+packages/ai/src/provider-options.ts
+  ad126dc2c1f5c4f2 37-39,84-85,87-88
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.8",
+  "base_commit_sha": "1cd58d6ba13e77b945aa43b2841d596b0897a936",
+  "prompts": {
+    "ad126dc2c1f5c4f2": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d7eb1-ab35-7431-a969-a2abaaf62ec8",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 38,
+      "total_deletions": 35,
+      "accepted_lines": 36,
+      "overriden_lines": 0
+    },
+    "c907dc44a7ce196a": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d7881-9922-7b50-98b3-7592931e3ddb",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 3,
+      "overriden_lines": 0
+    },
+    "ef439b46a67bb34a": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d7991-a230-7b82-8adb-8f52cb75675a",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 188,
+      "overriden_lines": 0
+    }
+  }
+}
