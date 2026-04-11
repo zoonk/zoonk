@@ -82,6 +82,7 @@ ${JSON.stringify(exercises, null, 2)}`;
     fallbackModels: FALLBACK_MODELS,
     model,
     reasoningEffort,
+    taskName: "activity-grammar-user-content",
     useFallback,
   });
 

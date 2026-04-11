@@ -56,6 +56,7 @@ export async function generateAppliedActivityKind({
     fallbackModels: FALLBACK_MODELS,
     model,
     reasoningEffort,
+    taskName: "applied-activity-kind",
     useFallback,
   });
 

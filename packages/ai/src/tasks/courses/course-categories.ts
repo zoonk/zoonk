@@ -42,6 +42,7 @@ export async function generateCourseCategories({
     fallbackModels: FALLBACK_MODELS,
     model,
     reasoningEffort,
+    taskName: "course-categories",
     useFallback,
   });
 

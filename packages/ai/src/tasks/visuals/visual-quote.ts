@@ -54,6 +54,7 @@ export async function generateVisualQuote({
     fallbackModels: FALLBACK_MODELS,
     model,
     reasoningEffort,
+    taskName: "visual-quote",
     useFallback,
   });
 

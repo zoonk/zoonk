@@ -37,6 +37,7 @@ export async function generateAlternativeTitles({
     fallbackModels: FALLBACK_MODELS,
     model,
     reasoningEffort,
+    taskName: "alternative-titles",
     useFallback,
   });
 

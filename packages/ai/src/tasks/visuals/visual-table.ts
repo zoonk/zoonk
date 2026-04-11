@@ -55,6 +55,7 @@ export async function generateVisualTable({
     fallbackModels: FALLBACK_MODELS,
     model,
     reasoningEffort,
+    taskName: "visual-table",
     useFallback,
   });
 

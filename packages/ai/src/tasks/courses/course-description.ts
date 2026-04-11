@@ -37,6 +37,7 @@ export async function generateCourseDescription({
     fallbackModels: FALLBACK_MODELS,
     model,
     reasoningEffort,
+    taskName: "course-description",
     useFallback,
   });
 

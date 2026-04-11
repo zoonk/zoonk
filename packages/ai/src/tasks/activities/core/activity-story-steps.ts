@@ -78,6 +78,7 @@ export async function generateActivityStorySteps({
     fallbackModels: [],
     model,
     reasoningEffort,
+    taskName: "activity-story-steps",
     useFallback,
   });
 

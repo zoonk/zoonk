@@ -43,6 +43,7 @@ export async function generateCourseSuggestions({
     fallbackModels: FALLBACK_MODELS,
     model,
     reasoningEffort,
+    taskName: "course-suggestions",
     useFallback,
   });
 

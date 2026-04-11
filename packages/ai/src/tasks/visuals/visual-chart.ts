@@ -58,6 +58,7 @@ export async function generateVisualChart({
     fallbackModels: FALLBACK_MODELS,
     model,
     reasoningEffort,
+    taskName: "visual-chart",
     useFallback,
   });
 

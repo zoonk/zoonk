@@ -76,6 +76,7 @@ export async function generateVisualCode({
     fallbackModels: FALLBACK_MODELS,
     model,
     reasoningEffort,
+    taskName: "visual-code",
     useFallback,
   });
 

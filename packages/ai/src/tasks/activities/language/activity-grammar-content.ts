@@ -69,6 +69,7 @@ ${formatConceptLines(concepts, neighboringConcepts)}`;
     fallbackModels: FALLBACK_MODELS,
     model,
     reasoningEffort,
+    taskName: "activity-grammar-content",
     useFallback,
   });
 

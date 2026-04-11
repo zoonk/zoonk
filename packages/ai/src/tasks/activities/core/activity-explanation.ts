@@ -55,6 +55,7 @@ NEIGHBORING_CONCEPTS: ${neighboringConcepts.join(", ")}`;
     fallbackModels: FALLBACK_MODELS,
     model,
     reasoningEffort,
+    taskName: "activity-explanation",
     useFallback,
   });
 

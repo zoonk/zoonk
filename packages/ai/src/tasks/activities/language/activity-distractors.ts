@@ -49,6 +49,7 @@ export async function generateActivityDistractors({
     fallbackModels: FALLBACK_MODELS,
     model,
     reasoningEffort,
+    taskName: "activity-distractors",
     useFallback,
   });
 

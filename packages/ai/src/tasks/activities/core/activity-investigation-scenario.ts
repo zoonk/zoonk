@@ -57,6 +57,7 @@ export async function generateActivityInvestigationScenario({
     fallbackModels: FALLBACK_MODELS,
     model,
     reasoningEffort,
+    taskName: "activity-investigation-scenario",
     useFallback,
   });
 

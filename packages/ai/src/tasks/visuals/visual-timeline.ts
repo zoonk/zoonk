@@ -57,6 +57,7 @@ export async function generateVisualTimeline({
     fallbackModels: FALLBACK_MODELS,
     model,
     reasoningEffort,
+    taskName: "visual-timeline",
     useFallback,
   });
 

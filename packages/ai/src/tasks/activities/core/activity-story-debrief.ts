@@ -101,6 +101,7 @@ export async function generateActivityStoryDebrief({
     fallbackModels: FALLBACK_MODELS,
     model,
     reasoningEffort,
+    taskName: "activity-story-debrief",
     useFallback,
   });
 

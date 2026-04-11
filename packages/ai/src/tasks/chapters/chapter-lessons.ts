@@ -64,6 +64,7 @@ export async function generateChapterLessons({
     fallbackModels: FALLBACK_MODELS,
     model,
     reasoningEffort,
+    taskName: "chapter-lessons",
     useFallback,
   });
 

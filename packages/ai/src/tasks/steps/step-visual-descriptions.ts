@@ -93,6 +93,7 @@ ${formattedSteps}`;
     fallbackModels: FALLBACK_MODELS,
     model,
     reasoningEffort,
+    taskName: "step-visual-descriptions",
     useFallback,
   });
 

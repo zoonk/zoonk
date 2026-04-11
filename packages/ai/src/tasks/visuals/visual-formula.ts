@@ -52,6 +52,7 @@ export async function generateVisualFormula({
     fallbackModels: FALLBACK_MODELS,
     model,
     reasoningEffort,
+    taskName: "visual-formula",
     useFallback,
   });
 

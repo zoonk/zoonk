@@ -61,6 +61,7 @@ Generate a focused, representative vocabulary list for this language lesson. Inc
     fallbackModels: FALLBACK_MODELS,
     model,
     reasoningEffort,
+    taskName: "activity-vocabulary",
     useFallback,
   });
 

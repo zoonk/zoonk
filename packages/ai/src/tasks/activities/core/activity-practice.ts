@@ -67,6 +67,7 @@ ${formattedExplanationSteps}`;
     fallbackModels: FALLBACK_MODELS,
     model,
     reasoningEffort,
+    taskName: "activity-practice",
     useFallback,
   });
 

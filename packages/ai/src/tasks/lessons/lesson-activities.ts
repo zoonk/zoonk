@@ -50,6 +50,7 @@ LANGUAGE: ${language}`;
     fallbackModels: FALLBACK_MODELS,
     model,
     reasoningEffort,
+    taskName: "lesson-activities",
     useFallback,
   });
 

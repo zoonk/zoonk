@@ -45,6 +45,7 @@ export async function generateLanguageCourseChapters({
     fallbackModels: FALLBACK_MODELS,
     model,
     reasoningEffort,
+    taskName: "language-course-chapters",
     useFallback,
   });
 

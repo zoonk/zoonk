@@ -55,6 +55,7 @@ ACTIVITY_DESCRIPTION: ${activityDescription}`;
     fallbackModels: FALLBACK_MODELS,
     model,
     reasoningEffort,
+    taskName: "activity-custom",
     useFallback,
   });
 

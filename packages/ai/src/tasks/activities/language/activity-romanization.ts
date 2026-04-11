@@ -46,6 +46,7 @@ Romanize each text using the standard romanization system for the target languag
     fallbackModels: FALLBACK_MODELS,
     model,
     reasoningEffort,
+    taskName: "activity-romanization",
     useFallback,
   });
 

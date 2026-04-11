@@ -12,7 +12,7 @@ const providerOrderByModelPrefix = {
 type SupportedModelPrefix = keyof typeof providerOrderByModelPrefix;
 
 type ProviderOptionsResult = {
-  gateway: Pick<GatewayProviderOptions, "models" | "order">;
+  gateway: Pick<GatewayProviderOptions, "models" | "order" | "tags">;
   openai?: Pick<OpenAILanguageModelResponsesOptions, "reasoningEffort">;
 };
 
@@ -24,17 +24,21 @@ type ProviderOptionsResult = {
 function buildGatewayProviderOptions({
   fallbackModels,
   model,
+  taskName,
   useFallback,
 }: {
   fallbackModels: string[];
   model: string;
+  taskName: string;
   useFallback: boolean;
 }): ProviderOptionsResult["gateway"] {
   const order = getGatewayProviderOrder(model);
+  const tags = buildGatewayTags(taskName);
 
   return {
     models: useFallback ? fallbackModels : [],
     ...(order ? { order } : {}),
+    tags,
   };
 }
 
@@ -64,6 +68,15 @@ function isSupportedModelPrefix(value: string): value is SupportedModelPrefix {
 }
 
 /**
+ * Builds the reporting tags attached to every gateway-backed task request.
+ * We keep the format in one place so custom reporting queries can rely on a
+ * stable `task:*` prefix instead of every caller inventing its own shape.
+ */
+function buildGatewayTags(taskName: string): string[] {
+  return [`task:${taskName}`];
+}
+
+/**
  * Builds the shared provider options object for text-generation tasks.
  * This exists so fallback models, gateway routing, and provider-specific
  * reasoning settings stay consistent across every task in this package.
@@ -73,14 +86,16 @@ export function buildProviderOptions({
   useFallback,
   fallbackModels,
   reasoningEffort,
+  taskName,
 }: {
   model: string;
   useFallback: boolean;
   fallbackModels: string[];
   reasoningEffort?: ReasoningEffort;
+  taskName: string;
 }): ProviderOptionsResult {
   const options: ProviderOptionsResult = {
-    gateway: buildGatewayProviderOptions({ fallbackModels, model, useFallback }),
+    gateway: buildGatewayProviderOptions({ fallbackModels, model, taskName, useFallback }),
   };
 
   if (reasoningEffort && reasoningEffort !== "auto") {

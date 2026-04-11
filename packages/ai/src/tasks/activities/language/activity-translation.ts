@@ -46,6 +46,7 @@ USER_LANGUAGE: ${promptContext.userLanguage}`;
     fallbackModels: FALLBACK_MODELS,
     model,
     reasoningEffort,
+    taskName: "activity-translation",
     useFallback,
   });
 

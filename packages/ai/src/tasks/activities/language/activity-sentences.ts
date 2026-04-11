@@ -62,6 +62,7 @@ Generate practice sentences using these vocabulary words in everyday situations.
     fallbackModels: FALLBACK_MODELS,
     model,
     reasoningEffort,
+    taskName: "activity-sentences",
     useFallback,
   });
 

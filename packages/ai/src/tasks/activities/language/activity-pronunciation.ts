@@ -43,6 +43,7 @@ Generate a pronunciation guide for this word using only sounds from the native l
     fallbackModels: FALLBACK_MODELS,
     model,
     reasoningEffort,
+    taskName: "activity-pronunciation",
     useFallback,
   });
 

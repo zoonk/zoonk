@@ -88,6 +88,7 @@ export async function generateActivityInvestigationAccuracy({
     fallbackModels: FALLBACK_MODELS,
     model,
     reasoningEffort,
+    taskName: "activity-investigation-accuracy",
     useFallback,
   });
 

@@ -78,6 +78,7 @@ export async function generateVisualDiagram({
     fallbackModels: FALLBACK_MODELS,
     model,
     reasoningEffort,
+    taskName: "visual-diagram",
     useFallback,
   });
 

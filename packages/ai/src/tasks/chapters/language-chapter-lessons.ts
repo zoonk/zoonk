@@ -48,6 +48,7 @@ export async function generateLanguageChapterLessons({
     fallbackModels: FALLBACK_MODELS,
     model,
     reasoningEffort,
+    taskName: "language-chapter-lessons",
     useFallback,
   });
 

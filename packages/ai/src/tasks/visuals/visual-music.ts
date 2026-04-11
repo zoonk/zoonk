@@ -53,6 +53,7 @@ export async function generateVisualMusic({
     fallbackModels: FALLBACK_MODELS,
     model,
     reasoningEffort,
+    taskName: "visual-music",
     useFallback,
   });
 

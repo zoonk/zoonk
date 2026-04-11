@@ -85,6 +85,7 @@ export async function generateActivityInvestigationFindings({
     fallbackModels: FALLBACK_MODELS,
     model,
     reasoningEffort,
+    taskName: "activity-investigation-findings",
     useFallback,
   });
 
