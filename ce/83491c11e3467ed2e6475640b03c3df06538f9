@@ -1,0 +1,178 @@
+packages/ai/src/tasks/lessons/lesson-activities.ts
+  528bb1ae0c29bf93 51
+  eec18651f35e4ec2 7
+packages/ai/src/tasks/chapters/language-chapter-lessons.ts
+  528bb1ae0c29bf93 49
+  eec18651f35e4ec2 8
+turbo.json
+  eec18651f35e4ec2 8
+packages/ai/src/tasks/activities/language/activity-sentences.ts
+  eec18651f35e4ec2 9
+  528bb1ae0c29bf93 63
+packages/ai/src/tasks/activities/language/activity-romanization.ts
+  eec18651f35e4ec2 7
+  528bb1ae0c29bf93 47
+packages/ai/src/tasks/courses/alternative-titles.ts
+  eec18651f35e4ec2 7
+  528bb1ae0c29bf93 38
+packages/ai/src/tasks/steps/step-visual-descriptions.ts
+  eec18651f35e4ec2 7
+  528bb1ae0c29bf93 94
+packages/ai/src/tasks/activities/core/activity-story-steps.ts
+  528bb1ae0c29bf93 79
+  eec18651f35e4ec2 7
+packages/ai/src/tasks/activities/language/activity-vocabulary.ts
+  eec18651f35e4ec2 9
+  528bb1ae0c29bf93 62
+packages/ai/src/tasks/activities/core/activity-explanation.ts
+  eec18651f35e4ec2 7
+  528bb1ae0c29bf93 56
+packages/ai/src/tasks/chapters/chapter-lessons.ts
+  eec18651f35e4ec2 7
+  528bb1ae0c29bf93 65
+packages/ai/src/tasks/activities/core/activity-investigation-scenario.ts
+  eec18651f35e4ec2 7
+  528bb1ae0c29bf93 58
+packages/ai/src/tasks/activities/language/activity-pronunciation.ts
+  eec18651f35e4ec2 8
+  528bb1ae0c29bf93 44
+packages/ai/src/tasks/visuals/visual-quote.ts
+  eec18651f35e4ec2 7
+  528bb1ae0c29bf93 55
+packages/ai/src/tasks/visuals/visual-code.ts
+  eec18651f35e4ec2 8
+  528bb1ae0c29bf93 77
+packages/ai/src/tasks/courses/language-course-chapters.ts
+  eec18651f35e4ec2 8
+  528bb1ae0c29bf93 46
+packages/ai/src/tasks/activities/core/activity-practice.ts
+  eec18651f35e4ec2 8
+  528bb1ae0c29bf93 68
+packages/ai/src/tasks/courses/course-suggestions.ts
+  eec18651f35e4ec2 7
+  528bb1ae0c29bf93 44
+packages/ai/src/tasks/visuals/visual-formula.ts
+  eec18651f35e4ec2 7
+  528bb1ae0c29bf93 53
+packages/ai/src/tasks/activities/language/activity-grammar-user-content.ts
+  eec18651f35e4ec2 8
+  528bb1ae0c29bf93 83
+packages/ai/src/tasks/activities/core/activity-investigation-actions.ts
+  528bb1ae0c29bf93 75
+  eec18651f35e4ec2 10
+packages/ai/src/tasks/activities/core/activity-story-debrief.ts
+  528bb1ae0c29bf93 102
+  eec18651f35e4ec2 8
+packages/ai/src/tasks/visuals/visual-diagram.ts
+  528bb1ae0c29bf93 79
+  eec18651f35e4ec2 8
+packages/ai/src/tasks/visuals/visual-timeline.ts
+  eec18651f35e4ec2 7
+  528bb1ae0c29bf93 58
+packages/ai/src/tasks/visuals/visual-table.ts
+  eec18651f35e4ec2 7
+  528bb1ae0c29bf93 56
+packages/ai/src/tasks/activities/core/activity-investigation-findings.ts
+  eec18651f35e4ec2 10
+  528bb1ae0c29bf93 86
+packages/ai/src/tasks/lessons/applied-activity-kind.ts
+  eec18651f35e4ec2 7
+  528bb1ae0c29bf93 57
+packages/ai/src/tasks/visuals/visual-music.ts
+  528bb1ae0c29bf93 54
+  eec18651f35e4ec2 8
+packages/ai/src/provider-options.ts
+  528bb1ae0c29bf93 12-13,48,50-53,55-63
+packages/ai/src/tasks/activities/language/activity-grammar-content.ts
+  eec18651f35e4ec2 9
+  528bb1ae0c29bf93 70
+packages/ai/src/tasks/courses/course-description.ts
+  eec18651f35e4ec2 7
+  528bb1ae0c29bf93 38
+packages/ai/src/tasks/activities/core/activity-quiz.ts
+  528bb1ae0c29bf93 115
+  eec18651f35e4ec2 7
+packages/ai/src/tasks/visuals/visual-chart.ts
+  528bb1ae0c29bf93 59
+  eec18651f35e4ec2 7
+packages/ai/src/tasks/activities/custom/activity-custom.ts
+  eec18651f35e4ec2 7
+  528bb1ae0c29bf93 56
+packages/ai/src/tasks/courses/course-categories.ts
+  eec18651f35e4ec2 8
+  528bb1ae0c29bf93 43
+packages/ai/src/tasks/activities/core/activity-investigation-accuracy.ts
+  eec18651f35e4ec2 8
+  528bb1ae0c29bf93 89
+packages/ai/src/tasks/lessons/lesson-kind.ts
+  528bb1ae0c29bf93 50
+  eec18651f35e4ec2 7
+packages/ai/src/tasks/courses/course-chapters.ts
+  eec18651f35e4ec2 7
+  528bb1ae0c29bf93 44
+packages/ai/src/tasks/activities/language/activity-translation.ts
+  eec18651f35e4ec2 8
+  528bb1ae0c29bf93 47
+packages/ai/src/tasks/activities/language/activity-distractors.ts
+  eec18651f35e4ec2 9
+  528bb1ae0c29bf93 50
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.8",
+  "base_commit_sha": "ce83491c11e3467ed2e6475640b03c3df06538f9",
+  "prompts": {
+    "528bb1ae0c29bf93": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d7e4f-af84-7970-a6b9-cfe445c4a201",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 92,
+      "total_deletions": 39,
+      "accepted_lines": 54,
+      "overriden_lines": 0
+    },
+    "c907dc44a7ce196a": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d7881-9922-7b50-98b3-7592931e3ddb",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 3,
+      "overriden_lines": 0
+    },
+    "eec18651f35e4ec2": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "16dd612e-138c-41e3-909a-7e0ca1b6e27e",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 39,
+      "total_deletions": 81,
+      "accepted_lines": 39,
+      "overriden_lines": 0
+    },
+    "ef439b46a67bb34a": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d7991-a230-7b82-8adb-8f52cb75675a",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 188,
+      "overriden_lines": 0
+    }
+  }
+}
