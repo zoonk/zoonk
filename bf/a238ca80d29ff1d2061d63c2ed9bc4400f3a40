@@ -1,0 +1,120 @@
+packages/testing/src/fixtures/lessons.ts
+  ef439b46a67bb34a 21
+apps/main/src/data/courses/get-continue-learning.test.ts
+  ef439b46a67bb34a 101-185
+packages/core/src/progress/get-lesson-progress.ts
+  ef439b46a67bb34a 2-4
+apps/main/src/data/progress/queue-lesson-regeneration.ts
+  ef439b46a67bb34a 3,6-9
+apps/api/src/workflows/activity-generation/steps/get-lesson-activities-step.test.ts
+  ef439b46a67bb34a 74,104,143,178-188,199
+apps/api/src/workflows/lesson-generation/steps/handle-failure-step.ts
+  ef439b46a67bb34a 12
+apps/api/src/workflows/lesson-generation/steps/handle-failure-step.test.ts
+  ef439b46a67bb34a 45,59
+apps/api/src/workflows/activity-generation/steps/_utils/fetch-lesson-activities.ts
+  ef439b46a67bb34a 10-13,17-19,21-34,36,53-60
+apps/api/src/workflows/lesson-generation/steps/set-lesson-as-completed-step.test.ts
+  ef439b46a67bb34a 91
+packages/core/src/progress/get-next-activity-state.ts
+  ef439b46a67bb34a 4-8,20
+packages/db/src/prisma/models/courses.prisma
+  ef439b46a67bb34a 70
+apps/api/src/workflows/activity-generation/kinds/explanation-workflow.test.ts
+  ef439b46a67bb34a 137,200,238,273,316,358,399,449,521,574,655,704,736,803,888,945
+apps/api/src/workflows/activity-generation/activity-generation-workflow.test.ts
+  ef439b46a67bb34a 250,258-290,292,294-298,301,308-309,452,462,472,513
+packages/db/src/prisma/migrations/20260411151357_add_durable_completion_tables/migration.sql
+  ef439b46a67bb34a 1-77
+apps/api/src/workflows/lesson-regeneration/lesson-regeneration-workflow.ts
+  ef439b46a67bb34a 21-22,25,32,34,36-38
+packages/db/src/prisma/models/accounts.prisma
+  ef439b46a67bb34a 4-32
+apps/main/src/data/progress/submit-activity-completion.ts
+  ef439b46a67bb34a 84,91,98
+packages/db/src/prisma/models/chapters.prisma
+  ef439b46a67bb34a 21
+apps/api/src/workflows/activity-generation/activity-generation-workflow.ts
+  ef439b46a67bb34a 20,30,101-104
+apps/api/src/workflows/activity-generation/kinds/practice-workflow.test.ts
+  ef439b46a67bb34a 103,159,205,238,290,367,448,539,633,737,827
+apps/api/src/workflows/activity-generation/steps/get-lesson-activities-step.ts
+  ef439b46a67bb34a 7,10,12-26,33-35
+apps/api/src/workflows/lesson-regeneration/steps/promote-regenerated-lesson-step.ts
+  ef439b46a67bb34a 8-9,36
+apps/api/src/workflows/lesson-regeneration/steps/cleanup-regenerated-activities-step.test.ts
+  ef439b46a67bb34a 27,37,88-92
+apps/main/src/data/progress/submit-activity-completion.test.ts
+  ef439b46a67bb34a 125
+apps/main/src/data/courses/_utils/continue-learning-candidates.ts
+  ef439b46a67bb34a 1-214
+apps/main/src/data/courses/get-continue-learning.ts
+  ef439b46a67bb34a 2,14,24-28,83,144-145,180,217-219,234-236,249,258,261,267,285,287,291-294,296-298
+apps/api/src/workflows/lesson-regeneration/steps/cleanup-regenerated-activities-step.ts
+  ef439b46a67bb34a 5-8,15
+apps/api/src/workflows/activity-generation/kinds/investigation-workflow.test.ts
+  ef439b46a67bb34a 114,161,190,220,254,289,317,347,378,408
+apps/api/src/workflows/activity-generation/kinds/quiz-workflow.test.ts
+  ef439b46a67bb34a 118,167,210,241,280
+apps/api/src/workflows/lesson-regeneration/lesson-regeneration-workflow.test.ts
+  ef439b46a67bb34a 81,102,180,183,196,204-215,225,232-294,297-298,300-339,343-357,408-420,429,439,442-446,448-466
+packages/core/src/progress/get-chapter-progress.ts
+  ef439b46a67bb34a 5-8,10
+apps/main/src/data/progress/get-next-lesson.test.ts
+  ef439b46a67bb34a 360,363
+packages/core/src/progress/get-next-activity.ts
+  ef439b46a67bb34a 42
+apps/main/src/data/progress/_utils/durable-curriculum-completion.ts
+  ef439b46a67bb34a 1-56,58,60-64,66-70,72-173
+apps/api/src/workflows/lesson-generation/lesson-generation-workflow.ts
+  ef439b46a67bb34a 21,24-29,31,34-38,44-46,48-75,77-84,104,106-108,110-117,121-123,125,135-142,144-152,154-161,163-176,179-181,183-186,190-200,204,209,211-212,217-220,223-226,229-231,234-235,238-244,247-248,253,257-306,308-313
+apps/api/src/workflows/activity-generation/steps/handle-workflow-failure-step.ts
+  ef439b46a67bb34a 7-13,15,24
+packages/core/src/content/management.ts
+  ef439b46a67bb34a 71,84-94,96-98,100
+packages/db/src/prisma/models/progress.prisma
+  ef439b46a67bb34a 18-59
+apps/api/src/workflows/lesson-generation/lesson-generation-workflow.test.ts
+  ef439b46a67bb34a 165,172,182,184,208,358,360,363-386,407-410,420-454
+apps/main/src/data/courses/_utils/continue-learning-queries.ts
+  ef439b46a67bb34a 1-86
+apps/api/src/workflows/lesson-generation/steps/add-activities-step.ts
+  ef439b46a67bb34a 13-14,35,37
+apps/api/src/workflows/activity-generation/kinds/story-workflow.test.ts
+  ef439b46a67bb34a 138,201,232,261,294
+apps/api/src/workflows/lesson-generation/steps/add-activities-step.test.ts
+  ef439b46a67bb34a 77-78,90,125-126,155-156,188-189
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.8",
+  "base_commit_sha": "bfa238ca80d29ff1d2061d63c2ed9bc4400f3a40",
+  "prompts": {
+    "c907dc44a7ce196a": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d7881-9922-7b50-98b3-7592931e3ddb",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 3,
+      "overriden_lines": 0
+    },
+    "ef439b46a67bb34a": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d7991-a230-7b82-8adb-8f52cb75675a",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 2768,
+      "total_deletions": 1511,
+      "accepted_lines": 1732,
+      "overriden_lines": 1
+    }
+  }
+}
