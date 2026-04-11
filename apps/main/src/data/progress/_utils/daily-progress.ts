@@ -23,33 +23,35 @@ export function getCompletionField(input: {
  * When the learner skips days, we materialize those missing daily progress rows
  * so charts and streak-like summaries can show the decay instead of jumping.
  */
-export async function fillDecayGaps(
-  tx: TransactionClient,
-  userId: number,
-  currentEnergy: number,
-  lastActiveDate: Date,
-  todayDate: Date,
-): Promise<void> {
-  const dayDiff = Math.round((todayDate.getTime() - lastActiveDate.getTime()) / MS_PER_DAY);
+export async function fillDecayGaps(params: {
+  currentEnergy: number;
+  lastActiveDate: Date;
+  todayDate: Date;
+  tx: TransactionClient;
+  userId: number;
+}): Promise<void> {
+  const dayDiff = Math.round(
+    (params.todayDate.getTime() - params.lastActiveDate.getTime()) / MS_PER_DAY,
+  );
 
   if (dayDiff <= 1) {
     return;
   }
 
   const records = Array.from({ length: dayDiff - 1 }, (_, i) => {
-    const date = new Date(lastActiveDate.getTime() + (i + 1) * MS_PER_DAY);
-    const decayedEnergy = Math.max(MIN_ENERGY, currentEnergy - (i + 1) * DAILY_DECAY);
+    const date = new Date(params.lastActiveDate.getTime() + (i + 1) * MS_PER_DAY);
+    const decayedEnergy = Math.max(MIN_ENERGY, params.currentEnergy - (i + 1) * DAILY_DECAY);
 
     return {
       date,
       dayOfWeek: date.getUTCDay(),
       energyAtEnd: decayedEnergy,
       organizationId: null as number | null,
-      userId,
+      userId: params.userId,
     };
   });
 
-  await tx.dailyProgress.createMany({ data: records, skipDuplicates: true });
+  await params.tx.dailyProgress.createMany({ data: records, skipDuplicates: true });
 }
 
 /**

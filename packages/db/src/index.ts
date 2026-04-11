@@ -1,7 +1,7 @@
 import { PrismaPg } from "@prisma/adapter-pg";
 import { attachDatabasePool } from "@vercel/functions";
 import { Pool } from "pg";
-import { PrismaClient } from "./generated/prisma/client";
+import { Prisma, PrismaClient } from "./generated/prisma/client";
 
 declare global {
   var prisma: PrismaClient | undefined;
@@ -55,6 +55,8 @@ export type { LessonCreateManyInput } from "./generated/prisma/models/Lesson";
 export type { BatchPayload } from "./generated/prisma/internal/prismaNamespace";
 
 export { prisma };
+export const sql = Prisma.sql;
+export type Sql = Prisma.Sql;
 
 export type TransactionClient = Parameters<Parameters<typeof prisma.$transaction>[0]>[0];
 

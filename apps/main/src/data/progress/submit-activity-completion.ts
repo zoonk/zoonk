@@ -111,7 +111,13 @@ export async function submitActivityCompletion(input: {
     // Fill DailyProgress records for inactive days
     if (existingProgress) {
       const lastActiveDate = toUTCMidnight(existingProgress.lastActiveAt);
-      await fillDecayGaps(tx, input.userId, existingProgress.currentEnergy, lastActiveDate, today);
+      await fillDecayGaps({
+        currentEnergy: existingProgress.currentEnergy,
+        lastActiveDate,
+        todayDate: today,
+        tx,
+        userId: input.userId,
+      });
     }
 
     const clampedEnergy = clampEnergy(decayedBase + input.score.energyDelta);
