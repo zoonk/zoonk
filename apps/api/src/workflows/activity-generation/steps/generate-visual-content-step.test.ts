@@ -204,4 +204,50 @@ describe(generateVisualContentForActivityStep, () => {
       }),
     );
   });
+
+  test("rethrows dispatcher failures so workflow retries can run", async () => {
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      organizationId,
+      title: `Visual Content Retry ${randomUUID()}`,
+    });
+
+    await activityFixture({
+      generationStatus: "pending",
+      kind: "explanation",
+      language: "en",
+      lessonId: lesson.id,
+      organizationId,
+      title: `Explanation ${randomUUID()}`,
+    });
+
+    const activities = await fetchLessonActivities(lesson.id);
+    const activity = activities[0]!;
+
+    dispatchVisualContentMock.mockRejectedValueOnce(new Error("Dispatch failed"));
+
+    await expect(
+      generateVisualContentForActivityStep(activity, [
+        { description: "A failing image", kind: "image" as const },
+      ]),
+    ).rejects.toThrow("Dispatch failed");
+
+    const events = getStreamedEvents(writeMock);
+
+    expect(events).toContainEqual(
+      expect.objectContaining({
+        entityId: activity.id,
+        status: "started",
+        step: "generateVisualContent",
+      }),
+    );
+
+    expect(events).not.toContainEqual(
+      expect.objectContaining({
+        entityId: activity.id,
+        status: "completed",
+        step: "generateVisualContent",
+      }),
+    );
+  });
 });

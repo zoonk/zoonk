@@ -8,6 +8,7 @@ import { generateVisualQuote } from "@zoonk/ai/tasks/visuals/quote";
 import { generateVisualTable } from "@zoonk/ai/tasks/visuals/table";
 import { generateVisualTimeline } from "@zoonk/ai/tasks/visuals/timeline";
 import { generateVisualStepImage } from "@zoonk/core/steps/visual-image";
+import { toError } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 
 /**
@@ -40,6 +41,79 @@ const structuredGenerators: Record<
   timeline: generateVisualTimeline,
 };
 
+type DispatchFailure = {
+  description: VisualDescription;
+  error: Error;
+};
+
+/**
+ * Image visuals must return a real uploaded URL.
+ * Throwing here is intentional: storing `{ kind: "image", url: null }` looks like
+ * success to the workflow layer, which prevents the step runtime from retrying
+ * transient gateway and network failures.
+ */
+function getImageUrlOrThrow({ error, url }: { error: Error | null; url: string | null }): string {
+  if (error) {
+    throw error;
+  }
+
+  if (!url) {
+    throw new Error("Image generation returned no URL");
+  }
+
+  return url;
+}
+
+/**
+ * Finds the first rejected image dispatch so the caller can abort the whole
+ * step and let Workflow's built-in retries handle transient image failures.
+ * Structured visuals still fall back to prompt-only images because they do not
+ * depend on an external uploaded asset being present.
+ */
+function getImageDispatchFailure({
+  descriptions,
+  results,
+}: {
+  descriptions: VisualDescription[];
+  results: PromiseSettledResult<DispatchedVisual | null>[];
+}): DispatchFailure | null {
+  for (const [index, description] of descriptions.entries()) {
+    const result = results[index];
+
+    if (description.kind === "image" && result?.status === "rejected") {
+      return { description, error: toError(result.reason) };
+    }
+  }
+
+  return null;
+}
+
+/**
+ * Re-throws image dispatch failures so the surrounding `"use step"` function
+ * fails loudly. Workflow retries only happen when the step throws, so this
+ * guard preserves retries for transient image-generation outages.
+ */
+function throwIfImageDispatchFailed({
+  descriptions,
+  results,
+}: {
+  descriptions: VisualDescription[];
+  results: PromiseSettledResult<DispatchedVisual | null>[];
+}): void {
+  const failure = getImageDispatchFailure({ descriptions, results });
+
+  if (!failure) {
+    return;
+  }
+
+  logError("Image visual dispatch failed, rethrowing to allow workflow retry", {
+    description: failure.description.description,
+    kind: failure.description.kind,
+  });
+
+  throw failure.error;
+}
+
 /**
  * Generates structured visual content for a single description by
  * calling the appropriate per-kind task. For image kinds, generates
@@ -55,12 +129,17 @@ async function dispatchSingle({
   orgSlug?: string;
 }): Promise<DispatchedVisual | null> {
   if (description.kind === "image") {
-    const { data: url } = await generateVisualStepImage({
+    const { data: url, error } = await generateVisualStepImage({
       language,
       orgSlug,
       prompt: description.description,
     });
-    return { kind: "image", prompt: description.description, url };
+
+    return {
+      kind: "image",
+      prompt: description.description,
+      url: getImageUrlOrThrow({ error, url }),
+    };
   }
 
   const generator = structuredGenerators[description.kind];
@@ -96,6 +175,8 @@ export async function dispatchVisualContent({
   const results = await Promise.allSettled(
     descriptions.map((description) => dispatchSingle({ description, language, orgSlug })),
   );
+
+  throwIfImageDispatchFailed({ descriptions, results });
 
   return results.map((result, index) => {
     if (result.status === "fulfilled" && result.value) {
