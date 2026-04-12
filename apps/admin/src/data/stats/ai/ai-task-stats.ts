@@ -10,6 +10,13 @@ const AI_MODEL_ID_PATTERN = /^[a-z0-9.-]+\/[a-z0-9.-]+$/;
 const DATE_INPUT_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 const DEFAULT_LOOKBACK_DAYS = 30;
 const DEFAULT_ESTIMATE_RUN_COUNT = 1000;
+const DEFAULT_WORD_AUDIO_SECONDS = 0.75;
+const AVERAGE_SPOKEN_WORDS_PER_SECOND = 2.5;
+const AVERAGE_WORDS_PER_100_TEXT_TOKENS = 70;
+const GEMINI_TTS_AUDIO_TOKENS_PER_SECOND = 32;
+const GEMINI_TTS_INPUT_COST_PER_1M_TOKENS = 0.5;
+const GEMINI_TTS_OUTPUT_COST_PER_1M_TOKENS = 10;
+const ONE_MILLION_TOKENS = 1_000_000;
 
 type AiTaskDateRange = {
   end: Date;
@@ -17,6 +24,15 @@ type AiTaskDateRange = {
   start: Date;
   startInput: string;
 };
+
+export type TaskUsageSummary = {
+  averageMarketCostPerRequest: number;
+  requestCount: number;
+  taskName: string;
+  totalMarketCost: number;
+};
+
+export type TaskUsageByName = Record<string, TaskUsageSummary>;
 
 /**
  * AI Gateway reporting groups tagged generations under a raw `task:*` string.
@@ -137,6 +153,15 @@ export function resolveEstimateRunCount(value?: string): number {
 }
 
 /**
+ * App Router search params can be missing or repeated. The AI stats views only
+ * support one value per field, so this helper safely narrows those values
+ * before the date-range and run-count parsers consume them.
+ */
+export function getSingleSearchParamValue(value?: string | string[]): string | undefined {
+  return typeof value === "string" ? value : undefined;
+}
+
+/**
  * Gateway reporting returns accumulated market cost and request counts. The
  * calculator and per-model table both need the normalized per-request cost.
  */
@@ -166,6 +191,69 @@ export function calculateEstimatedMarketCost({
   runCount: number;
 }): number {
   return averageMarketCostPerRequest * runCount;
+}
+
+/**
+ * Some lesson and course estimates need a normalized "requests per entity" ratio.
+ * Returning zero when the denominator is missing keeps those estimates partial
+ * instead of throwing on empty ranges.
+ */
+export function calculateAverageRequestsPerEntity({
+  entityCount,
+  requestCount,
+}: {
+  entityCount: number;
+  requestCount: number;
+}): number {
+  if (entityCount <= 0) {
+    return 0;
+  }
+
+  return requestCount / entityCount;
+}
+
+/**
+ * The language audio estimate uses a speech-duration heuristic because Gateway does
+ * not report TTS usage. Single-word clips are usually longer than a naive words-per-
+ * second formula would suggest, so we keep a small minimum duration per clip.
+ */
+export function estimateWordAudioSeconds(itemCount: number): number {
+  return itemCount * DEFAULT_WORD_AUDIO_SECONDS;
+}
+
+/**
+ * Sentence clips scale better with spoken word count than with raw character count.
+ * A steady words-per-second heuristic keeps the estimate simple and stable while
+ * still responding to longer or shorter generated reading sentences.
+ */
+export function estimateSentenceAudioSeconds(totalWordCount: number): number {
+  if (totalWordCount <= 0) {
+    return 0;
+  }
+
+  return totalWordCount / AVERAGE_SPOKEN_WORDS_PER_SECOND;
+}
+
+/**
+ * Gemini bills TTS on both text input tokens and audio output tokens. We only
+ * have persisted words and generated audio assets, so this helper converts the
+ * observed word count into approximate text tokens and the estimated duration
+ * into audio tokens using Google's published tokenization rates.
+ */
+export function estimateGeminiTtsCost({
+  totalAudioSeconds,
+  totalInputWordCount,
+}: {
+  totalAudioSeconds: number;
+  totalInputWordCount: number;
+}): number {
+  const estimatedInputTokenCount = estimateTextTokenCountFromWords(totalInputWordCount);
+  const estimatedAudioTokenCount = totalAudioSeconds * GEMINI_TTS_AUDIO_TOKENS_PER_SECOND;
+
+  return (
+    (estimatedInputTokenCount / ONE_MILLION_TOKENS) * GEMINI_TTS_INPUT_COST_PER_1M_TOKENS +
+    (estimatedAudioTokenCount / ONE_MILLION_TOKENS) * GEMINI_TTS_OUTPUT_COST_PER_1M_TOKENS
+  );
 }
 
 /**
@@ -249,4 +337,17 @@ function buildAiTaskDateRange({ end, start }: { end: Date; start: Date }): AiTas
  */
 function capitalizeWord(value: string): string {
   return value.charAt(0).toUpperCase() + value.slice(1);
+}
+
+/**
+ * Google's token guide only gives an English text range of 60-80 words per 100
+ * tokens. Using the midpoint keeps the TTS input-side estimate simple while
+ * still accounting for the fact that speech requests pay for prompt text too.
+ */
+function estimateTextTokenCountFromWords(totalWordCount: number): number {
+  if (totalWordCount <= 0) {
+    return 0;
+  }
+
+  return (totalWordCount / AVERAGE_WORDS_PER_100_TEXT_TOKENS) * 100;
 }

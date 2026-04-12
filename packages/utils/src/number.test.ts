@@ -42,6 +42,17 @@ describe(parseNumericId, () => {
     expect(parseNumericId("999999")).toBe(999_999);
   });
 
+  test("parses numeric strings with surrounding whitespace", () => {
+    expect(parseNumericId(" 123")).toBe(123);
+    expect(parseNumericId("123 ")).toBe(123);
+    expect(parseNumericId(" 123 ")).toBe(123);
+  });
+
+  test("parses valid integer numbers directly", () => {
+    expect(parseNumericId(123)).toBe(123);
+    expect(parseNumericId(0)).toBe(0);
+  });
+
   test("returns null for strings with letters", () => {
     expect(parseNumericId("123abc")).toBeNull();
     expect(parseNumericId("abc123")).toBeNull();
@@ -56,15 +67,16 @@ describe(parseNumericId, () => {
     expect(parseNumericId("-123")).toBeNull();
   });
 
-  test("returns null for strings with whitespace", () => {
-    expect(parseNumericId(" 123")).toBeNull();
-    expect(parseNumericId("123 ")).toBeNull();
-    expect(parseNumericId(" 123 ")).toBeNull();
+  test("returns null for malformed whitespace-delimited strings", () => {
     expect(parseNumericId("12 34")).toBeNull();
   });
 
-  test("returns null for empty string", () => {
+  test("returns null for empty or unsupported values", () => {
     expect(parseNumericId("")).toBeNull();
+    expect(parseNumericId("   ")).toBeNull();
+    expect(parseNumericId(3.7)).toBeNull();
+    expect(parseNumericId(null)).toBeNull();
+    expect(parseNumericId()).toBeNull();
   });
 });
 

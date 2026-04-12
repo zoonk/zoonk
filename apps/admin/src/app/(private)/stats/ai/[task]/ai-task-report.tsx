@@ -1,4 +1,6 @@
 import {
+  getAiTaskHref,
+  getSingleSearchParamValue,
   isAiTaskName,
   resolveAiTaskDateRange,
   resolveEstimateRunCount,
@@ -6,8 +8,8 @@ import {
 import { getAiTaskReport } from "@/data/stats/ai/get-ai-task-report";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { notFound } from "next/navigation";
+import { AiStatsFilters } from "../ai-stats-filters";
 import { formatAiCost, formatAiStatsDate } from "../format-ai-cost";
-import { AiTaskFilters } from "./ai-task-filters";
 import { AiTaskModelTable } from "./ai-task-model-table";
 
 /**
@@ -32,10 +34,10 @@ export async function AiTaskReport({
 
   const resolvedSearchParams = await searchParams;
   const range = resolveAiTaskDateRange({
-    from: getSingleSearchParam(resolvedSearchParams.from),
-    to: getSingleSearchParam(resolvedSearchParams.to),
+    from: getSingleSearchParamValue(resolvedSearchParams.from),
+    to: getSingleSearchParamValue(resolvedSearchParams.to),
   });
-  const runCount = resolveEstimateRunCount(getSingleSearchParam(resolvedSearchParams.runs));
+  const runCount = resolveEstimateRunCount(getSingleSearchParamValue(resolvedSearchParams.runs));
   const report = await getAiTaskReport({
     endDate: range.endInput,
     runCount,
@@ -45,11 +47,11 @@ export async function AiTaskReport({
 
   return (
     <div className="flex flex-col gap-8">
-      <AiTaskFilters
+      <AiStatsFilters
+        actionHref={getAiTaskHref(taskName)}
         endDate={range.endInput}
         runCount={runCount}
         startDate={range.startInput}
-        taskName={taskName}
       />
 
       <div className="flex flex-col gap-2">
@@ -122,13 +124,4 @@ export function AiTaskReportSkeleton() {
       <Skeleton className="h-72 w-full rounded-lg" />
     </div>
   );
-}
-
-/**
- * Next search params can arrive as `string | string[] | undefined`. The AI stats
- * view only supports one value per filter, so this helper safely narrows those
- * fields before the date and run-count validators consume them.
- */
-function getSingleSearchParam(value?: string | string[]): string | undefined {
-  return typeof value === "string" ? value : undefined;
 }

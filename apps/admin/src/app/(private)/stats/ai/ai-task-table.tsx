@@ -16,7 +16,15 @@ import Link from "next/link";
  * the clearest way to compare request counts and gives each task a predictable
  * link target into its detail view.
  */
-export function AiTaskTable({ tasks }: { tasks: AiTaskSummary[] }) {
+export function AiTaskTable({
+  endDate,
+  startDate,
+  tasks,
+}: {
+  endDate: string;
+  startDate: string;
+  tasks: AiTaskSummary[];
+}) {
   return (
     <Table>
       <TableHeader>
@@ -29,7 +37,7 @@ export function AiTaskTable({ tasks }: { tasks: AiTaskSummary[] }) {
 
       <TableBody>
         {tasks.map((task) => (
-          <AiTaskRow key={task.taskName} task={task} />
+          <AiTaskRow endDate={endDate} key={task.taskName} startDate={startDate} task={task} />
         ))}
       </TableBody>
     </Table>
@@ -37,12 +45,20 @@ export function AiTaskTable({ tasks }: { tasks: AiTaskSummary[] }) {
 }
 
 /**
- * Each summary row links to the task detail view while preserving the 30-day
- * window shown on the index page. That way the detail view opens in the same
- * context the admin just inspected.
+ * Each summary row links to the task detail view while preserving the selected
+ * report range. That way the detail page opens in the same context the admin
+ * just inspected on the index view.
  */
-function AiTaskRow({ task }: { task: AiTaskSummary }) {
-  const href = getAiTaskHref(task.taskName);
+function AiTaskRow({
+  endDate,
+  startDate,
+  task,
+}: {
+  endDate: string;
+  startDate: string;
+  task: AiTaskSummary;
+}) {
+  const href = buildTaskHref({ endDate, startDate, taskName: task.taskName });
 
   return (
     <TableRow>
@@ -76,4 +92,22 @@ function FallbackCount({ task }: { task: AiTaskSummary }) {
   }
 
   return <span className="tabular-nums">{task.fallbackRequestCount.toLocaleString()}</span>;
+}
+
+/**
+ * The detail page reads its filters from the query string. Building the href in
+ * one place keeps the index links aligned with that contract and avoids hand-
+ * written query strings drifting across call sites.
+ */
+function buildTaskHref({
+  endDate,
+  startDate,
+  taskName,
+}: {
+  endDate: string;
+  startDate: string;
+  taskName: string;
+}): string {
+  const searchParams = new URLSearchParams({ from: startDate, to: endDate });
+  return `${getAiTaskHref(taskName)}?${searchParams.toString()}`;
 }
