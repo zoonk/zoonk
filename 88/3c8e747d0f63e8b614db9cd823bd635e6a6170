@@ -1,0 +1,58 @@
+apps/main/src/data/progress/_utils/daily-progress.test.ts
+  efeea5d1c6ae62f4 1-63
+apps/main/src/data/progress/get-best-time.test.ts
+  efeea5d1c6ae62f4 109,111,137,139,161,163,184,204,231,233
+apps/main/src/data/progress/_utils/daily-progress.ts
+  efeea5d1c6ae62f4 57-59,95-97,99-102
+apps/main/src/data/progress/get-bp-history.test.ts
+  efeea5d1c6ae62f4 29,60,90,122,153,190,223,256,280,310,330
+packages/db/src/prisma/migrations/20260412124352_remove_progress_organization_scope/migration.sql
+  efeea5d1c6ae62f4 1-26
+apps/main/src/data/progress/get-energy-history.test.ts
+  efeea5d1c6ae62f4 29,61,92,123,160,193,225,249,279,300,327,374,419,454,488
+packages/db/src/prisma/seed/progress.ts
+  efeea5d1c6ae62f4 174,182
+packages/db/src/prisma/models/accounts.prisma
+  efeea5d1c6ae62f4 91,95,97,104
+apps/main/src/data/progress/submit-activity-completion.test.ts
+  efeea5d1c6ae62f4 238,340,456-458,460-462,524,600,602,605-609,645,648,655-656
+apps/main/src/data/progress/get-score-history.test.ts
+  efeea5d1c6ae62f4 28,48,84,107,140,179,212,249,283,308,340,360,388
+packages/db/src/prisma/models/progress.prisma
+  efeea5d1c6ae62f4 61-66,69-72,94-105,107
+packages/e2e/src/helpers.ts
+  efeea5d1c6ae62f4 208,224,227,327,329
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.8",
+  "base_commit_sha": "883c8e747d0f63e8b614db9cd823bd635e6a6170",
+  "prompts": {
+    "3b95621e1b18a2c5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a6da674d-8475-4048-aa38-daef3905971e",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 4,
+      "overriden_lines": 0
+    },
+    "efeea5d1c6ae62f4": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d8244-0621-7ec0-a76d-51e345b7f10c",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 1946,
+      "total_deletions": 2126,
+      "accepted_lines": 1749,
+      "overriden_lines": 0
+    }
+  }
+}
