@@ -1,15 +1,15 @@
-import { getActivity } from "@/data/activities/get-activity";
-import { getActivityDistractorWords } from "@/data/activities/get-activity-distractor-words";
-import { getLessonSentences } from "@/data/activities/get-lesson-sentences";
-import { getLessonWords } from "@/data/activities/get-lesson-words";
-import { getSentenceWords } from "@/data/activities/get-sentence-words";
 import { getLesson } from "@/data/lessons/get-lesson";
-import { getTotalBrainPower } from "@/data/progress/get-total-brain-power";
-import { startActivity } from "@/data/progress/start-activity";
 import { getActivitySeoMeta } from "@/lib/activities";
 import { getNextActivityInCourse } from "@zoonk/core/activities/next-in-course";
+import { startActivity } from "@zoonk/core/player/commands/start-activity";
+import { prepareLessonActivityData } from "@zoonk/core/player/contracts/prepare-activity-data";
+import { getActivity } from "@zoonk/core/player/queries/get-activity";
+import { getActivityDistractorWords } from "@zoonk/core/player/queries/get-activity-distractor-words";
+import { getLessonSentences } from "@zoonk/core/player/queries/get-lesson-sentences";
+import { getLessonWords } from "@zoonk/core/player/queries/get-lesson-words";
+import { getSentenceWords } from "@zoonk/core/player/queries/get-sentence-words";
+import { getTotalBrainPower } from "@zoonk/core/player/queries/get-total-brain-power";
 import { getSession } from "@zoonk/core/users/session/get";
-import { prepareLessonActivityData } from "@zoonk/player/prepare-activity-data";
 import { parseNumericId } from "@zoonk/utils/number";
 import { type Metadata } from "next";
 import { notFound } from "next/navigation";
@@ -112,7 +112,7 @@ export default async function ActivityPage({ params }: Props) {
   });
 
   if (session) {
-    after(() => startActivity(Number(session.user.id), activity.id));
+    after(() => startActivity({ activityId: activity.id, userId: Number(session.user.id) }));
   }
 
   return (

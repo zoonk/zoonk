@@ -1,9 +1,9 @@
+import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
 import {
   type InvestigationStepContent,
   type StoryStaticVariant,
   parseStepContent,
 } from "@zoonk/core/steps/contract/content";
-import { type SerializedStep } from "./prepare-activity-data";
 
 type StepDescriptorBase<Kind extends SerializedStep["kind"], Name extends string> = {
   content: SerializedStep<Kind>["content"];
@@ -188,37 +188,6 @@ function describeInvestigationStep(step: SerializedStep<"investigation">): Playe
   }
 
   return { content, kind: "investigationProblem", step };
-}
-
-/**
- * Some server-side callers only have raw `{ kind, content }` data instead of a
- * fully typed `SerializedStep`. This parser keeps those callers on the same
- * canonical step-kind vocabulary as the client descriptor layer.
- */
-export function parsePlayerStepKind(
-  step: { content: unknown; kind: string } | null | undefined,
-): PlayerStepKind | null {
-  if (!step) {
-    return null;
-  }
-
-  if (step.kind === "investigation") {
-    return getInvestigationStepKind(parseStepContent("investigation", step.content));
-  }
-
-  if (step.kind === "static") {
-    return getStaticStepKind(parseStepContent("static", step.content));
-  }
-
-  if (step.kind === "story") {
-    return "storyDecision";
-  }
-
-  if (isIdentityPlayerStepKind(step.kind)) {
-    return step.kind;
-  }
-
-  return null;
 }
 
 /**

@@ -1,8 +1,8 @@
 "use client";
 
+import { type CompletionInput } from "@zoonk/core/player/contracts/completion-input-schema";
 import { type Dispatch, useCallback } from "react";
 import { checkStep } from "./check-step";
-import { type CompletionInput } from "./completion-input-schema";
 import { buildCompletionInput, getPlayerTransition } from "./player-controller";
 import {
   type PlayerAction,

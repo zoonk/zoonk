@@ -1,10 +1,10 @@
 /* oxlint-disable max-lines-per-function, max-statements */
 "use client";
 
+import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
 import { type SelectedAnswer, type StepResult } from "../player-reducer";
 import { describePlayerStep } from "../player-step";
 import { type PlayerRenderBehavior, getPlayerStepBehavior } from "../player-step-behavior";
-import { type SerializedStep } from "../prepare-activity-data";
 import { FillBlankStep } from "./fill-blank-step";
 import { InvestigationStep } from "./investigation-step";
 import { ListeningStep } from "./listening-step";

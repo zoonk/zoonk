@@ -1,6 +1,6 @@
+import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
 import { parseStepContent } from "@zoonk/core/steps/contract/content";
 import { type StepResult } from "./player-reducer";
-import { type SerializedStep } from "./prepare-activity-data";
 
 type InvestigationCallVerdict = "best" | "partial" | "wrong";
 

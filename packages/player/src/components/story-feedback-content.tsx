@@ -1,11 +1,11 @@
 "use client";
 
+import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
 import { type StoryStepContent, parseStepContent } from "@zoonk/core/steps/contract/content";
 import { cn } from "@zoonk/ui/lib/utils";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import { useExtracted } from "next-intl";
 import { type StepResult } from "../player-reducer";
-import { type SerializedStep } from "../prepare-activity-data";
 import { EFFECT_DELTA_MAP } from "../story";
 import { useReplaceName } from "../user-name-context";
 import { PlayerFeedbackScene, PlayerFeedbackSceneMessage } from "./player-feedback-scene";

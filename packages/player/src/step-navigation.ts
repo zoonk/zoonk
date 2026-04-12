@@ -1,6 +1,6 @@
+import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
 import { describePlayerStep } from "./player-step";
 import { usesStaticNavigation } from "./player-step-behavior";
-import { type SerializedStep } from "./prepare-activity-data";
 
 /**
  * Navigation chrome, layout, and keyboard shortcuts all need the same answer

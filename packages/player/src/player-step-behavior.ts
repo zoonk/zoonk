@@ -1,11 +1,9 @@
-import { isSupportedStepKind } from "@zoonk/core/steps/contract/content";
+import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
 import {
   type PlayerStepDescriptor,
   type PlayerStepKind,
   describePlayerStep,
-  parsePlayerStepKind,
 } from "./player-step";
-import { type SerializedStep } from "./prepare-activity-data";
 
 export type PlayerCheckBehavior =
   | "fillBlank"
@@ -41,7 +39,7 @@ export type PlayerRenderBehavior =
   | "visual"
   | "vocabulary";
 
-export type PlayerValidationBehavior =
+type PlayerValidationBehavior =
   | "fillBlank"
   | "investigationCall"
   | "listening"
@@ -274,26 +272,4 @@ export function getPlayerCheckBehavior(
   step: SerializedStep | null | undefined,
 ): PlayerCheckBehavior | null {
   return getPlayerStepBehavior(describePlayerStep(step))?.check ?? null;
-}
-
-/**
- * Server-side validation only has raw `{ kind, content }` rows. Reusing the
- * canonical parsed step kind keeps validation policy in sync with the client
- * behavior table even when step variants share one physical kind.
- */
-export function getPlayerValidationBehavior(step: {
-  content: unknown;
-  kind: string;
-}): PlayerValidationBehavior | null {
-  if (!isSupportedStepKind(step.kind)) {
-    return null;
-  }
-
-  const stepKind = parsePlayerStepKind(step);
-
-  if (!stepKind) {
-    return null;
-  }
-
-  return STEP_BEHAVIOR_BY_KIND[stepKind].validation;
 }

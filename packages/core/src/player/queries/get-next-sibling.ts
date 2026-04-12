@@ -1,3 +1,4 @@
+import "server-only";
 import { getPublishedChapterWhere, getPublishedLessonWhere, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 

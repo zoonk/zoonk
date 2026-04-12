@@ -1,10 +1,10 @@
 "use client";
 
+import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
 import { useExtracted } from "next-intl";
 import { usePlayerRuntime } from "../player-context";
 import { type PlayerState } from "../player-reducer";
 import { findSelectedChoice, getStoryMetrics } from "../player-selectors";
-import { type SerializedStep } from "../prepare-activity-data";
 import {
   PlayerReadSceneBody,
   PlayerReadSceneDivider,

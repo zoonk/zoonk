@@ -2,12 +2,12 @@
 
 import { type DragEndEvent } from "@dnd-kit/core";
 import { arrayMove } from "@dnd-kit/sortable";
+import { type WordBankOption } from "@zoonk/core/player/contracts/prepare-activity-data";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useCallback, useRef, useState } from "react";
 import { useWebHaptics } from "web-haptics/react";
 import { type SelectedAnswer, type StepResult } from "../player-reducer";
-import { type WordBankOption } from "../prepare-activity-data";
 import { useWordAudio } from "../use-word-audio";
 import { ArrangeWordsAnswerArea, type PlacedWord } from "./arrange-words-answer-area";
 import { RomanizationText } from "./romanization-text";

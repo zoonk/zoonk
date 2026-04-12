@@ -1,7 +1,7 @@
 import { type TransactionClient } from "@zoonk/db";
-import { type ScoreResult } from "@zoonk/player/compute-score";
 import { MS_PER_DAY } from "@zoonk/utils/date";
 import { DAILY_DECAY, MIN_ENERGY } from "@zoonk/utils/energy";
+import { type ScoreResult } from "../../contracts/compute-score";
 
 /**
  * Daily progress tracks static and interactive completions separately so the

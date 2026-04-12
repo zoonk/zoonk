@@ -1,8 +1,8 @@
 "use client";
 
 import { ContentFeedback } from "@/components/feedback/content-feedback";
-import { type CompletionInput } from "@zoonk/player/completion-input-schema";
-import { type SerializedActivity } from "@zoonk/player/prepare-activity-data";
+import { type CompletionInput } from "@zoonk/core/player/contracts/completion-input-schema";
+import { type SerializedActivity } from "@zoonk/core/player/contracts/prepare-activity-data";
 import { PlayerProvider } from "@zoonk/player/provider";
 import { PlayerShell } from "@zoonk/player/shell";
 import { useRouter } from "next/navigation";

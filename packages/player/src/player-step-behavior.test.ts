@@ -1,12 +1,11 @@
+import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
 import { describe, expect, test } from "vitest";
 import { describePlayerStep } from "./player-step";
 import {
   getPlayerStepBehavior,
-  getPlayerValidationBehavior,
   usesFeedbackScreen,
   usesStaticNavigation,
 } from "./player-step-behavior";
-import { type SerializedStep } from "./prepare-activity-data";
 
 function buildStep(overrides: Partial<SerializedStep> = {}): SerializedStep {
   return {
@@ -91,9 +90,6 @@ describe(getPlayerStepBehavior, () => {
       validation: "investigationCall",
     });
     expect(descriptor && usesFeedbackScreen(descriptor)).toBe(true);
-    expect(getPlayerValidationBehavior({ content: step.content, kind: step.kind })).toBe(
-      "investigationCall",
-    );
   });
 
   test("skips validation for investigation action while keeping its check behavior", () => {
@@ -126,6 +122,5 @@ describe(getPlayerStepBehavior, () => {
       render: "investigation",
       validation: "none",
     });
-    expect(getPlayerValidationBehavior({ content: step.content, kind: step.kind })).toBe("none");
   });
 });

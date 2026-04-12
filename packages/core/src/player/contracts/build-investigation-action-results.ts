@@ -1,5 +1,5 @@
 import { parseStepContent } from "@zoonk/core/steps/contract/content";
-import { type InvestigationLoopState } from "./investigation";
+import { type InvestigationLoopState } from "./completion-input-schema";
 
 type ActionStepResult = {
   answer: object;

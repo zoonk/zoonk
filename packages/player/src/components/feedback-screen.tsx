@@ -1,8 +1,8 @@
 "use client";
 
+import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
 import { useExtracted } from "next-intl";
 import { type StepResult } from "../player-reducer";
-import { type SerializedStep } from "../prepare-activity-data";
 import { useReplaceName } from "../user-name-context";
 import { getFeedbackRomanization } from "./_utils/feedback-romanization";
 import { CorrectAnswerBlock, IncorrectAnswerBlock } from "./feedback-answer-blocks";

@@ -76,7 +76,7 @@ const investigationCallAnswerSchema = z.object({
  * Since zod's discriminatedUnion requires unique discriminator values,
  * we use z.union for the full answer schema instead.
  */
-const selectedAnswerSchema = z.union([
+export const selectedAnswerSchema = z.union([
   fillBlankAnswerSchema,
   investigationProblemAnswerSchema,
   investigationActionAnswerSchema,
@@ -119,6 +119,8 @@ export const completionInputSchema = z.object({
   stepTimings: z.record(z.string(), stepTimingSchema),
 });
 
+export type SelectedAnswer = z.infer<typeof selectedAnswerSchema>;
+export type InvestigationLoopState = z.infer<typeof investigationLoopSchema>;
 export type CompletionInput = z.infer<typeof completionInputSchema>;
 
 export type CompletionResult = {

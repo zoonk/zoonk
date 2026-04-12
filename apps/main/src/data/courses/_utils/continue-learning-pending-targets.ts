@@ -1,5 +1,5 @@
+import { getNextSibling } from "@zoonk/core/player/queries/get-next-sibling";
 import { type Chapter, type Lesson } from "@zoonk/db";
-import { getNextSibling } from "../../progress/get-next-sibling";
 import { type ContinueLearningState } from "./continue-learning-next-state";
 import { type ContinueLearningRow } from "./continue-learning-queries";
 

@@ -28,7 +28,7 @@ describe(startActivity, () => {
     const user = await userFixture();
     const userId = Number(user.id);
 
-    await startActivity(userId, activity.id);
+    await startActivity({ activityId: activity.id, userId });
 
     const progress = await prisma.activityProgress.findUnique({
       where: { userActivity: { activityId: activity.id, userId } },
@@ -44,13 +44,13 @@ describe(startActivity, () => {
     const user = await userFixture();
     const userId = Number(user.id);
 
-    await startActivity(userId, activity.id);
+    await startActivity({ activityId: activity.id, userId });
 
     const first = await prisma.activityProgress.findUnique({
       where: { userActivity: { activityId: activity.id, userId } },
     });
 
-    await startActivity(userId, activity.id);
+    await startActivity({ activityId: activity.id, userId });
 
     const second = await prisma.activityProgress.findUnique({
       where: { userActivity: { activityId: activity.id, userId } },
@@ -71,7 +71,7 @@ describe(startActivity, () => {
       userId,
     });
 
-    await startActivity(userId, activity.id);
+    await startActivity({ activityId: activity.id, userId });
 
     const progress = await prisma.activityProgress.findUnique({
       where: { userActivity: { activityId: activity.id, userId } },

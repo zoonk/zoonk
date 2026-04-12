@@ -3,14 +3,8 @@
   "private": true,
   "type": "module",
   "exports": {
-    "./build-investigation-action-results": "./src/build-investigation-action-results.ts",
-    "./check-answer": "./src/check-answer.ts",
-    "./completion-input-schema": "./src/completion-input-schema.ts",
-    "./compute-score": "./src/compute-score.ts",
-    "./prepare-activity-data": "./src/prepare-activity-data.ts",
     "./provider": "./src/player-provider.tsx",
-    "./shell": "./src/components/player-shell.tsx",
-    "./validate-answers": "./src/validate-answers.ts"
+    "./shell": "./src/components/player-shell.tsx"
   },
   "scripts": {
     "test": "vitest run",

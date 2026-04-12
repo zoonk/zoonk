@@ -1,10 +1,10 @@
-import { calculateBeltLevel } from "@zoonk/utils/belt-level";
-import { type CompletionResult } from "./completion-input-schema";
+import { type CompletionResult } from "@zoonk/core/player/contracts/completion-input-schema";
 import {
   type ActivityScoringInput,
   buildScoringInput,
   computeActivityScore,
-} from "./compute-score";
+} from "@zoonk/core/player/contracts/compute-score";
+import { calculateBeltLevel } from "@zoonk/utils/belt-level";
 import { type PlayerState } from "./player-reducer";
 
 /**

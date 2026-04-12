@@ -1,13 +1,13 @@
 "use client";
 
+import { checkSingleMatchPair } from "@zoonk/core/player/contracts/check-answer";
+import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
 import { parseStepContent } from "@zoonk/core/steps/contract/content";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { Fragment, useCallback, useMemo, useRef, useState } from "react";
 import { useWebHaptics } from "web-haptics/react";
-import { checkSingleMatchPair } from "../check-answer";
 import { type SelectedAnswer } from "../player-reducer";
-import { type SerializedStep } from "../prepare-activity-data";
 import { useReplaceName } from "../user-name-context";
 import { QuestionText } from "./question-text";
 import { InteractiveStepLayout } from "./step-layouts";

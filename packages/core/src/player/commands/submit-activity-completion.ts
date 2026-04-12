@@ -1,9 +1,9 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
-import { type ScoreResult } from "@zoonk/player/compute-score";
 import { type BeltLevelResult, calculateBeltLevel } from "@zoonk/utils/belt-level";
 import { MS_PER_DAY, parseLocalDate } from "@zoonk/utils/date";
 import { clampEnergy, computeDecayedEnergy, toUTCMidnight } from "@zoonk/utils/energy";
+import { type ScoreResult } from "../contracts/compute-score";
 import { fillDecayGaps, getCompletionField, upsertDailyProgress } from "./_utils/daily-progress";
 import { syncDurableCurriculumCompletion } from "./_utils/durable-curriculum-completion";
 
@@ -122,7 +122,6 @@ export async function submitActivityCompletion(input: {
 
     // Absolute write is safe: the interactive transaction serializes row access,
     // so concurrent requests block until the prior commit completes.
-
     const updatedProgress = await tx.userProgress.upsert({
       create: {
         currentEnergy: clampedEnergy,

@@ -1,11 +1,6 @@
+import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
 import { describe, expect, test } from "vitest";
-import {
-  describePlayerStep,
-  getInvestigationVariant,
-  getStoryStaticVariant,
-  parsePlayerStepKind,
-} from "./player-step";
-import { type SerializedStep } from "./prepare-activity-data";
+import { describePlayerStep, getInvestigationVariant, getStoryStaticVariant } from "./player-step";
 
 function buildStep(overrides: Partial<SerializedStep> = {}): SerializedStep {
   return {
@@ -68,24 +63,5 @@ describe(describePlayerStep, () => {
     const descriptor = describePlayerStep(buildStep());
 
     expect(descriptor?.kind).toBe("staticText");
-  });
-
-  test("parses raw server step data into the same canonical step kind", () => {
-    expect(
-      parsePlayerStepKind({
-        content: {
-          explanations: [
-            {
-              accuracy: "best" as const,
-              feedback: "Correct",
-              id: "exp-1",
-              text: "It was DNS",
-            },
-          ],
-          variant: "call" as const,
-        },
-        kind: "investigation",
-      }),
-    ).toBe("investigationCall");
   });
 });

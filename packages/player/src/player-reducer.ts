@@ -1,5 +1,6 @@
-import { type AnswerResult } from "./check-answer";
-import { type CompletionResult } from "./completion-input-schema";
+import { type AnswerResult } from "@zoonk/core/player/contracts/check-answer";
+import { type CompletionResult } from "@zoonk/core/player/contracts/completion-input-schema";
+import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
 import { type InvestigationLoopState } from "./investigation";
 import {
   continueFromAction,
@@ -9,7 +10,6 @@ import {
 import { computeLocalCompletion } from "./player-completion";
 import { buildInitialAnswers } from "./player-initial-state";
 import { getInvestigationVariant, getStoryStaticVariant } from "./player-step";
-import { type SerializedStep } from "./prepare-activity-data";
 import { canNavigatePrev, isStaticNavigationStep } from "./step-navigation";
 
 export type PlayerPhase = "playing" | "feedback" | "completed";

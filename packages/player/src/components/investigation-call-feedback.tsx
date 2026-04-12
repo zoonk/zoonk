@@ -1,8 +1,8 @@
 "use client";
 
+import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
 import { getInvestigationCallVerdict } from "../investigation-call-verdict";
 import { type StepResult } from "../player-reducer";
-import { type SerializedStep } from "../prepare-activity-data";
 import { PlayerFeedbackScene, PlayerFeedbackSceneMessage } from "./player-feedback-scene";
 import { type Verdict, VerdictLabel } from "./verdict-label";
 

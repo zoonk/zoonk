@@ -1,10 +1,16 @@
+import {
+  checkInvestigationAction,
+  checkInvestigationCall,
+} from "@zoonk/core/player/contracts/check-answer";
+import {
+  type InvestigationScoreInput,
+  computeActivityScore,
+} from "@zoonk/core/player/contracts/compute-score";
+import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
 import { parseStepContent } from "@zoonk/core/steps/contract/content";
 import { shuffle } from "@zoonk/utils/shuffle";
 import { describe, expect, test } from "vitest";
-import { checkInvestigationAction, checkInvestigationCall } from "./check-answer";
-import { type InvestigationScoreInput, computeActivityScore } from "./compute-score";
 import { getAvailableActions, getInvestigationStepByVariant } from "./investigation";
-import { type SerializedStep } from "./prepare-activity-data";
 
 function buildStep(overrides: Partial<SerializedStep> = {}): SerializedStep {
   return {

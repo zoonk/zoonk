@@ -13,11 +13,11 @@ import {
 } from "@dnd-kit/core";
 import { SortableContext, rectSortingStrategy, useSortable } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { type WordBankOption } from "@zoonk/core/player/contracts/prepare-activity-data";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useCallback, useId, useMemo, useState } from "react";
 import { type StepResult } from "../player-reducer";
-import { type WordBankOption } from "../prepare-activity-data";
 import { RomanizationText } from "./romanization-text";
 
 export type PlacedWord = WordBankOption & { id: string };

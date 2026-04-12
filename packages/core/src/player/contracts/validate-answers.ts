@@ -11,8 +11,7 @@ import {
   checkStoryAnswer,
   checkTranslationAnswer,
 } from "./check-answer";
-import { type SelectedAnswer } from "./player-reducer";
-import { type PlayerValidationBehavior, getPlayerValidationBehavior } from "./player-step-behavior";
+import { type SelectedAnswer } from "./completion-input-schema";
 
 /**
  * Step data for server-side validation. Translations live directly
@@ -37,6 +36,54 @@ type ValidatedStepResult = {
   isCorrect: boolean;
   stepId: bigint;
 };
+
+type ServerValidationBehavior =
+  | "fillBlank"
+  | "investigationCall"
+  | "listening"
+  | "matchColumns"
+  | "multipleChoice"
+  | "none"
+  | "reading"
+  | "selectImage"
+  | "sortOrder"
+  | "story"
+  | "translation";
+
+/**
+ * Server validation should follow the semantic step contract directly instead
+ * of depending on the React player's render behavior table. The raw step kind
+ * and, for investigation, the parsed variant are enough to decide whether the
+ * submission should emit a StepAttempt.
+ */
+function getValidationBehavior(step: StepData): ServerValidationBehavior {
+  switch (step.kind) {
+    case "fillBlank":
+      return "fillBlank";
+    case "listening":
+      return "listening";
+    case "matchColumns":
+      return "matchColumns";
+    case "multipleChoice":
+      return "multipleChoice";
+    case "reading":
+      return "reading";
+    case "selectImage":
+      return "selectImage";
+    case "sortOrder":
+      return "sortOrder";
+    case "story":
+      return "story";
+    case "translation":
+      return "translation";
+    case "investigation": {
+      const content = parseStepContent("investigation", step.content);
+      return content.variant === "call" ? "investigationCall" : "none";
+    }
+    default:
+      return "none";
+  }
+}
 
 function validateMultipleChoice(
   step: StepData,
@@ -179,7 +226,7 @@ function validateStory(step: StepData, answer: SelectedAnswer): ValidatedStepRes
 }
 
 const validators: Record<
-  PlayerValidationBehavior,
+  ServerValidationBehavior,
   (step: StepData, answer: SelectedAnswer) => ValidatedStepResult | null
 > = {
   fillBlank: validateFillBlank,
@@ -206,7 +253,7 @@ export function validateAnswers(
       return [];
     }
 
-    const behavior = getPlayerValidationBehavior(step);
+    const behavior = getValidationBehavior(step);
 
     if (!behavior || behavior === "none") {
       return [];

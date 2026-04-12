@@ -1,8 +1,8 @@
 // @vitest-environment jsdom
 import { act, renderHook } from "@testing-library/react";
+import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
 import { describe, expect, test, vi } from "vitest";
 import { type PlayerState } from "./player-reducer";
-import { type SerializedStep } from "./prepare-activity-data";
 import { usePlayerActions } from "./use-player-actions";
 
 function buildStep(overrides: Partial<SerializedStep> = {}): SerializedStep {

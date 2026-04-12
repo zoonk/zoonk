@@ -5,9 +5,9 @@ import {
   ContinueActivityLink,
   ContinueActivityLinkSkeleton,
 } from "@/components/catalog/continue-activity-link";
-import { listLessonActivities } from "@/data/activities/list-lesson-activities";
 import { getLesson } from "@/data/lessons/get-lesson";
-import { getNextSibling } from "@/data/progress/get-next-sibling";
+import { getNextSibling } from "@zoonk/core/player/queries/get-next-sibling";
+import { listLessonActivities } from "@zoonk/core/player/queries/list-lesson-activities";
 import { getSession } from "@zoonk/core/users/session/get";
 import { type Metadata } from "next";
 import { notFound, redirect } from "next/navigation";

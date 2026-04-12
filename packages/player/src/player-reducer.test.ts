@@ -1,3 +1,7 @@
+import {
+  type SerializedActivity,
+  type SerializedStep,
+} from "@zoonk/core/player/contracts/prepare-activity-data";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import {
   type PlayerState,
@@ -6,7 +10,6 @@ import {
   createInitialState,
   playerReducer,
 } from "./player-reducer";
-import { type SerializedActivity, type SerializedStep } from "./prepare-activity-data";
 
 const coreMultipleChoiceContent = {
   kind: "core" as const,

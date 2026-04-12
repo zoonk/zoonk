@@ -1,7 +1,7 @@
-import { getActivity } from "@/data/activities/get-activity";
-import { getReviewSteps } from "@/data/activities/get-review-steps";
-import { getNextSibling } from "@/data/progress/get-next-sibling";
 import { getNextActivityInCourse } from "@zoonk/core/activities/next-in-course";
+import { getActivity } from "@zoonk/core/player/queries/get-activity";
+import { getNextSibling } from "@zoonk/core/player/queries/get-next-sibling";
+import { getReviewSteps } from "@zoonk/core/player/queries/get-review-steps";
 import { getSession } from "@zoonk/core/users/session/get";
 
 export async function fetchReviewSteps(lessonId: number, activityPosition: number) {

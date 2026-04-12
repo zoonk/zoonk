@@ -1,7 +1,8 @@
 "use client";
 
+import { type CompletionInput } from "@zoonk/core/player/contracts/completion-input-schema";
+import { type SerializedActivity } from "@zoonk/core/player/contracts/prepare-activity-data";
 import { useCallback, useMemo, useReducer } from "react";
-import { type CompletionInput } from "./completion-input-schema";
 import {
   PlayerConfigContext,
   type PlayerMilestone,
@@ -12,7 +13,6 @@ import {
 import { type InitialStateInput } from "./player-initial-state";
 import { createInitialState, playerReducer } from "./player-reducer";
 import { getPlayerScreenModel } from "./player-screen";
-import { type SerializedActivity } from "./prepare-activity-data";
 import { usePlayerActions } from "./use-player-actions";
 import { usePlayerKeyboard } from "./use-player-keyboard";
 import { UserNameProvider } from "./user-name-context";
