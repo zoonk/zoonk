@@ -1,0 +1,59 @@
+apps/admin/src/data/stats/ai/get-ai-task-usage-map.ts
+  b656cba3e57dc167 1-65
+apps/admin/src/app/(private)/stats/ai/estimates/page.tsx
+  b656cba3e57dc167 1-51
+apps/admin/src/app/(private)/stats/ai/ai-estimate-breakdown.tsx
+  b656cba3e57dc167 1-172
+apps/admin/src/data/stats/ai/_utils/build-ai-course-cost-estimates.ts
+  b656cba3e57dc167 1-147
+apps/admin/src/data/stats/ai/_utils/ai-cost-estimate-constants.ts
+  b656cba3e57dc167 1-34
+apps/admin/src/app/(private)/stats/ai/[task]/ai-task-report.tsx
+  b656cba3e57dc167 2-3,11,37-38,40,50-51
+apps/admin/src/app/(private)/stats/ai/ai-estimate-dashboard.tsx
+  b656cba3e57dc167 1-176
+apps/admin/src/data/stats/ai/_utils/ai-cost-estimate-helpers.ts
+  b656cba3e57dc167 1-225
+apps/admin/src/data/stats/ai/_utils/ai-course-estimate-inputs.ts
+  b656cba3e57dc167 1-138
+apps/admin/src/data/stats/ai/_utils/get-ai-cost-estimate-structure.ts
+  b656cba3e57dc167 1-358
+apps/admin/src/app/(private)/stats/ai/ai-estimate-filters.tsx
+  b656cba3e57dc167 1-215
+apps/admin/src/app/(private)/stats/ai/ai-task-list.tsx
+  b656cba3e57dc167 2,4,6,9-11,13-14,17-22,24-30,34,44-45,49-53,58-65
+apps/admin/src/data/stats/ai/ai-task-stats.ts
+  b656cba3e57dc167 13-19,28-36,156-163,196-256,341-352
+apps/admin/src/data/stats/ai/get-ai-cost-estimates.ts
+  b656cba3e57dc167 1-76
+apps/admin/src/app/(private)/stats/ai/ai-task-table.tsx
+  b656cba3e57dc167 19-27,40,48-50,52-61,96-112
+apps/admin/src/app/(private)/stats/ai/page.tsx
+  b656cba3e57dc167 1,5,14-15,17-23,25-35,37
+apps/admin/src/data/stats/ai/_utils/build-ai-lesson-cost-estimates.ts
+  b656cba3e57dc167 1-256
+apps/admin/src/app/(private)/stats/ai/ai-stats-filters.tsx
+  b656cba3e57dc167 7-9,11-12,17,19,23,32-36,43,52-54
+apps/admin/src/data/stats/ai/_utils/ai-cost-estimate-types.ts
+  b656cba3e57dc167 1-81
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.8",
+  "base_commit_sha": "7a557035357cd96aa206187323273fd8f3f859be",
+  "prompts": {
+    "b656cba3e57dc167": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d81e6-d72d-7473-afe2-7cc747e2c8c7",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 3503,
+      "total_deletions": 1269,
+      "accepted_lines": 2294,
+      "overriden_lines": 0
+    }
+  }
+}
