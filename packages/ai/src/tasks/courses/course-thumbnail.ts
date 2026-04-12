@@ -1,6 +1,7 @@
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 import { type GeneratedFile, type ImageModel, generateImage } from "ai";
+import { type ImageGenerationQuality, buildImageProviderOptions } from "../../provider-options";
 import promptTemplate from "./course-thumbnail.prompt.md";
 
 const DEFAULT_MODEL = "openai/gpt-image-1.5";
@@ -13,7 +14,7 @@ function getCourseThumbnailPrompt(title: string) {
 export type CourseThumbnailParams = {
   title: string;
   model?: ImageModel;
-  quality?: "auto" | "low" | "medium" | "high";
+  quality?: ImageGenerationQuality;
 };
 
 export async function generateCourseThumbnail({
@@ -26,9 +27,11 @@ export async function generateCourseThumbnail({
       maxImagesPerCall: 1,
       model,
       prompt: getCourseThumbnailPrompt(title),
-      providerOptions: {
-        openai: { output_format: "webp", quality },
-      },
+      providerOptions: buildImageProviderOptions({
+        model,
+        quality,
+        taskName: "course-thumbnail",
+      }),
       size: "1024x1024",
     }),
   );

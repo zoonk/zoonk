@@ -1,8 +1,10 @@
 import { type GatewayProviderOptions } from "@ai-sdk/gateway";
 import { type OpenAILanguageModelResponsesOptions } from "@ai-sdk/openai";
+import { type ImageModel } from "ai";
 import { buildGatewayReportingTags } from "./reporting-tags";
 
 export type ReasoningEffort = "auto" | "low" | "medium" | "high";
+export type ImageGenerationQuality = "auto" | "low" | "medium" | "high";
 
 const providerOrderByModelPrefix = {
   anthropic: ["anthropic", "vertex", "openai", "azure", "google"],
@@ -15,6 +17,14 @@ type SupportedModelPrefix = keyof typeof providerOrderByModelPrefix;
 type ProviderOptionsResult = {
   gateway: Pick<GatewayProviderOptions, "models" | "order" | "tags">;
   openai?: Pick<OpenAILanguageModelResponsesOptions, "reasoningEffort">;
+};
+
+type ImageProviderOptionsResult = {
+  gateway: Pick<GatewayProviderOptions, "tags">;
+  openai: {
+    output_format: "webp";
+    quality: ImageGenerationQuality;
+  };
 };
 
 /**
@@ -77,6 +87,45 @@ function isSupportedModelPrefix(value: string): value is SupportedModelPrefix {
  */
 function buildGatewayTags({ model, taskName }: { model: string; taskName: string }): string[] {
   return buildGatewayReportingTags({ model, taskName });
+}
+
+/**
+ * Image tasks accept either a plain `provider/model` string or a provider model
+ * instance. Custom Reporting needs a stable string tag, so this helper converts
+ * either shape into the same `provider/model` identifier before we build tags.
+ */
+function getImageReportingModel(model: ImageModel): string {
+  if (typeof model === "string") {
+    return model;
+  }
+
+  return model.modelId.includes("/") ? model.modelId : `${model.provider}/${model.modelId}`;
+}
+
+/**
+ * Builds the provider options shared by image-generation tasks.
+ * Image requests do not use the text fallback helper, so they need their own
+ * small wrapper to keep Custom Reporting tags and the OpenAI image output
+ * format in one place instead of drifting across each task entry point.
+ */
+export function buildImageProviderOptions({
+  model,
+  quality,
+  taskName,
+}: {
+  model: ImageModel;
+  quality: ImageGenerationQuality;
+  taskName: string;
+}): ImageProviderOptionsResult {
+  return {
+    gateway: {
+      tags: buildGatewayTags({ model: getImageReportingModel(model), taskName }),
+    },
+    openai: {
+      output_format: "webp",
+      quality,
+    },
+  };
 }
 
 /**

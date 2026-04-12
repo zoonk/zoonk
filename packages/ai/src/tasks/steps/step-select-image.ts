@@ -1,6 +1,7 @@
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 import { type GeneratedFile, type ImageModel, generateImage } from "ai";
+import { type ImageGenerationQuality, buildImageProviderOptions } from "../../provider-options";
 import promptTemplate from "./step-select-image.prompt.md";
 
 const DEFAULT_MODEL = "openai/gpt-image-1-mini";
@@ -14,7 +15,7 @@ export type SelectImageStepParams = {
   prompt: string;
   language: string;
   model?: ImageModel;
-  quality?: "auto" | "low" | "medium" | "high";
+  quality?: ImageGenerationQuality;
 };
 
 export async function generateSelectImageStep({
@@ -28,9 +29,11 @@ export async function generateSelectImageStep({
       maxImagesPerCall: 1,
       model,
       prompt: getSelectImageStepPrompt(prompt, language),
-      providerOptions: {
-        openai: { output_format: "webp", quality },
-      },
+      providerOptions: buildImageProviderOptions({
+        model,
+        quality,
+        taskName: "step-select-image",
+      }),
       size: "1024x1024",
     }),
   );
