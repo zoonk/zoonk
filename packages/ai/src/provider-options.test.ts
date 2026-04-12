@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { buildProviderOptions } from "./provider-options";
+import { buildImageProviderOptions, buildProviderOptions } from "./provider-options";
 
 describe(buildProviderOptions, () => {
   test("adds provider order, default-model tags, and reasoning effort for fallback-enabled openai models", () => {
@@ -83,6 +83,26 @@ describe(buildProviderOptions, () => {
         models: [],
         order: ["openai", "azure", "google", "anthropic", "vertex"],
         tags: ["task:activity-story-steps", "default-model:openai/gpt-5.4"],
+      },
+    });
+  });
+});
+
+describe(buildImageProviderOptions, () => {
+  test("adds gateway reporting tags while preserving the openai image settings", () => {
+    expect(
+      buildImageProviderOptions({
+        model: "openai/gpt-image-1.5",
+        quality: "low",
+        taskName: "course-thumbnail",
+      }),
+    ).toEqual({
+      gateway: {
+        tags: ["task:course-thumbnail", "default-model:openai/gpt-image-1.5"],
+      },
+      openai: {
+        output_format: "webp",
+        quality: "low",
       },
     });
   });

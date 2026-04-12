@@ -1,6 +1,7 @@
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 import { type GeneratedFile, type ImageModel, generateImage } from "ai";
+import { type ImageGenerationQuality, buildImageProviderOptions } from "../../provider-options";
 import promptTemplate from "./step-visual-image.prompt.md";
 
 const DEFAULT_MODEL = "openai/gpt-image-1.5";
@@ -14,7 +15,7 @@ export type StepVisualImageParams = {
   prompt: string;
   language: string;
   model?: ImageModel;
-  quality?: "auto" | "low" | "medium" | "high";
+  quality?: ImageGenerationQuality;
 };
 
 export async function generateStepVisualImage({
@@ -28,9 +29,11 @@ export async function generateStepVisualImage({
       maxImagesPerCall: 1,
       model,
       prompt: getStepVisualImagePrompt(prompt, language),
-      providerOptions: {
-        openai: { output_format: "webp", quality },
-      },
+      providerOptions: buildImageProviderOptions({
+        model,
+        quality,
+        taskName: "step-visual-image",
+      }),
       size: "1024x1024",
     }),
   );
