@@ -13,7 +13,6 @@ export async function submitActivityCompletion(input: {
   activityId: bigint;
   durationSeconds: number;
   localDate: string;
-  organizationId: number | null;
   score: ScoreResult;
   startedAt: Date;
   stepResults: {
@@ -53,7 +52,6 @@ export async function submitActivityCompletion(input: {
           durationSeconds: step.durationSeconds,
           hourOfDay: step.hourOfDay,
           isCorrect: step.isCorrect,
-          organizationId: input.organizationId,
           stepId: step.stepId,
           userId: input.userId,
         })),
@@ -149,7 +147,6 @@ export async function submitActivityCompletion(input: {
       dayOfWeek: today.getUTCDay(),
       durationSeconds: input.durationSeconds,
       field,
-      organizationId: input.organizationId,
       score: input.score,
       userId: input.userId,
     });

@@ -58,25 +58,21 @@ model CourseCompletion {
 }
 
 model StepAttempt {
-  id              BigInt        @id @default(autoincrement())
-  userId          Int           @map("user_id")
-  user            User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  stepId          BigInt        @map("step_id")
-  step            Step          @relation(fields: [stepId], references: [id], onDelete: Cascade)
-  organizationId  Int?          @map("organization_id")
-  organization    Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  isCorrect       Boolean       @map("is_correct")
+  id              BigInt   @id @default(autoincrement())
+  userId          Int      @map("user_id")
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  stepId          BigInt   @map("step_id")
+  step            Step     @relation(fields: [stepId], references: [id], onDelete: Cascade)
+  isCorrect       Boolean  @map("is_correct")
   answer          Json
   effects         Json?
-  durationSeconds Int           @map("duration_seconds")
-  answeredAt      DateTime      @default(now()) @map("answered_at")
-  hourOfDay       Int           @map("hour_of_day") @db.SmallInt
-  dayOfWeek       Int           @map("day_of_week") @db.SmallInt
+  durationSeconds Int      @map("duration_seconds")
+  answeredAt      DateTime @default(now()) @map("answered_at")
+  hourOfDay       Int      @map("hour_of_day") @db.SmallInt
+  dayOfWeek       Int      @map("day_of_week") @db.SmallInt
 
   @@index([userId, answeredAt])
   @@index([stepId])
-  @@index([organizationId])
-  @@index([userId, organizationId])
   @@index([userId, dayOfWeek])
   @@index([userId, hourOfDay])
   @@index([answeredAt])
@@ -95,24 +91,21 @@ model UserProgress {
 }
 
 model DailyProgress {
-  id                   BigInt        @id @default(autoincrement())
-  userId               Int           @map("user_id")
-  user                 User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  date                 DateTime      @db.Date
-  dayOfWeek            Int           @map("day_of_week") @db.SmallInt
-  organizationId       Int?          @map("organization_id")
-  organization         Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  correctAnswers       Int           @default(0) @map("correct_answers")
-  incorrectAnswers     Int           @default(0) @map("incorrect_answers")
-  staticCompleted      Int           @default(0) @map("static_completed")
-  interactiveCompleted Int           @default(0) @map("interactive_completed")
-  brainPowerEarned     Int           @default(0) @map("brain_power_earned")
-  timeSpentSeconds     Int           @default(0) @map("time_spent_seconds")
-  energyAtEnd          Float         @default(0) @map("energy_at_end")
+  id                   BigInt   @id @default(autoincrement())
+  userId               Int      @map("user_id")
+  user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  date                 DateTime @db.Date
+  dayOfWeek            Int      @map("day_of_week") @db.SmallInt
+  correctAnswers       Int      @default(0) @map("correct_answers")
+  incorrectAnswers     Int      @default(0) @map("incorrect_answers")
+  staticCompleted      Int      @default(0) @map("static_completed")
+  interactiveCompleted Int      @default(0) @map("interactive_completed")
+  brainPowerEarned     Int      @default(0) @map("brain_power_earned")
+  timeSpentSeconds     Int      @default(0) @map("time_spent_seconds")
+  energyAtEnd          Float    @default(0) @map("energy_at_end")
 
-  @@unique([userId, date, organizationId], name: "userDateOrg")
+  @@unique([userId, date], name: "userDate")
   @@index([userId, dayOfWeek])
-  @@index([organizationId])
   @@index([date])
   @@map("daily_progress")
 }

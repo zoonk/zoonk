@@ -9,7 +9,6 @@ function seededRandom(seed: number) {
 
 function buildOwnerDailyProgress(
   today: Date,
-  orgId: number,
   userId: number,
 ): {
   brainPowerEarned: number;
@@ -19,7 +18,6 @@ function buildOwnerDailyProgress(
   energyAtEnd: number;
   incorrectAnswers: number;
   interactiveCompleted: number;
-  organizationId: number;
   staticCompleted: number;
   timeSpentSeconds: number;
   userId: number;
@@ -47,7 +45,6 @@ function buildOwnerDailyProgress(
         energyAtEnd: Math.max(20, Math.min(95, baseEnergy + energyVariation)),
         incorrectAnswers: 1 + Math.floor(seededRandom(seed + 5) * 6),
         interactiveCompleted: 6 + Math.floor(seededRandom(seed + 6) * 12),
-        organizationId: orgId,
         staticCompleted: 3 + Math.floor(seededRandom(seed + 7) * 10),
         timeSpentSeconds: 900 + Math.floor(seededRandom(seed + 8) * 2100),
         userId,
@@ -138,7 +135,6 @@ async function seedStepAttempts(
     durationSeconds: 15 + Math.floor(Math.random() * 30),
     hourOfDay: now.getHours(),
     isCorrect: index !== 1,
-    organizationId: org.id,
     stepId: step.id,
     userId: users.owner.id,
   }));
@@ -175,7 +171,7 @@ export async function seedProgress(
 
   await seedUserProgress(prisma, users, now);
 
-  const dailyProgressData = buildOwnerDailyProgress(today, org.id, users.owner.id);
+  const dailyProgressData = buildOwnerDailyProgress(today, users.owner.id);
 
   await Promise.all(
     dailyProgressData.map((data) =>
@@ -183,9 +179,8 @@ export async function seedProgress(
         create: data,
         update: {},
         where: {
-          userDateOrg: {
+          userDate: {
             date: data.date,
-            organizationId: data.organizationId,
             userId: data.userId,
           },
         },

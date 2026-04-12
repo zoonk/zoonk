@@ -70,7 +70,6 @@ describe(submitActivityCompletion, () => {
       durationSeconds: 10,
 
       localDate: todayLocalDate(),
-      organizationId: org.id,
       score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
       startedAt: new Date(Date.now() - 10_000),
       stepResults: [stepResult(true)],
@@ -97,7 +96,6 @@ describe(submitActivityCompletion, () => {
       durationSeconds: 15,
 
       localDate: todayLocalDate(),
-      organizationId: org.id,
       score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
       startedAt: new Date(Date.now() - 15_000),
       stepResults: [stepResult(true)],
@@ -176,7 +174,6 @@ describe(submitActivityCompletion, () => {
       activityId: secondActivity.id,
       durationSeconds: 15,
       localDate: todayLocalDate(),
-      organizationId: org.id,
       score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
       startedAt: new Date(Date.now() - 15_000),
       stepResults: [stepResult(true)],
@@ -209,7 +206,6 @@ describe(submitActivityCompletion, () => {
       durationSeconds: 10,
 
       localDate: todayLocalDate(),
-      organizationId: org.id,
       score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
       startedAt: new Date(Date.now() - 10_000),
       stepResults: [stepResult(true)],
@@ -232,7 +228,6 @@ describe(submitActivityCompletion, () => {
       durationSeconds: 10,
 
       localDate: todayLocalDate(),
-      organizationId: org.id,
       score: { brainPower: 10, correctCount: 3, energyDelta: 0.4, incorrectCount: 2 },
       startedAt: new Date(Date.now() - 10_000),
       stepResults: [stepResult(true)],
@@ -240,7 +235,7 @@ describe(submitActivityCompletion, () => {
     });
 
     const daily = await prisma.dailyProgress.findFirst({
-      where: { organizationId: org.id, userId },
+      where: { userId },
     });
 
     expect(daily).not.toBeNull();
@@ -262,7 +257,6 @@ describe(submitActivityCompletion, () => {
       durationSeconds: 10,
 
       localDate: todayLocalDate(),
-      organizationId: org.id,
       score: { brainPower: 10, correctCount: 5, energyDelta: 1, incorrectCount: 0 },
       startedAt: new Date(Date.now() - 10_000),
       stepResults: [stepResult(true)],
@@ -284,7 +278,6 @@ describe(submitActivityCompletion, () => {
       durationSeconds: 10,
 
       localDate: todayLocalDate(),
-      organizationId: org.id,
       score: { brainPower: 10, correctCount: 0, energyDelta: -0.5, incorrectCount: 5 },
       startedAt: new Date(Date.now() - 10_000),
       stepResults: [stepResult(false)],
@@ -304,7 +297,6 @@ describe(submitActivityCompletion, () => {
       durationSeconds: 10,
 
       localDate: todayLocalDate(),
-      organizationId: org.id,
       score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
       startedAt: new Date(Date.now() - 10_000),
       stepResults: [stepResult(true)],
@@ -338,7 +330,6 @@ describe(submitActivityCompletion, () => {
       durationSeconds: 5,
 
       localDate: todayLocalDate(),
-      organizationId: org.id,
       score: { brainPower: 10, correctCount: 0, energyDelta: 0.1, incorrectCount: 0 },
       startedAt: new Date(Date.now() - 5000),
       stepResults: [],
@@ -346,7 +337,7 @@ describe(submitActivityCompletion, () => {
     });
 
     const daily = await prisma.dailyProgress.findFirst({
-      where: { organizationId: org.id, userId },
+      where: { userId },
     });
 
     expect(daily).not.toBeNull();
@@ -363,7 +354,6 @@ describe(submitActivityCompletion, () => {
       durationSeconds: 10,
 
       localDate: todayLocalDate(),
-      organizationId: org.id,
       score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
       startedAt: new Date(Date.now() - 10_000),
       stepResults: [stepResult(true)],
@@ -373,86 +363,6 @@ describe(submitActivityCompletion, () => {
     expect(result.belt.color).toBe("white");
     expect(result.belt.level).toBe(1);
     expect(result.newTotalBp).toBe(10);
-  });
-
-  test("null organizationId: creates DailyProgress without org", async () => {
-    const user = await userFixture();
-    const userId = Number(user.id);
-
-    await submitActivityCompletion({
-      activityId: activity.id,
-      durationSeconds: 10,
-
-      localDate: todayLocalDate(),
-      organizationId: null,
-      score: { brainPower: 10, correctCount: 2, energyDelta: 0.3, incorrectCount: 1 },
-      startedAt: new Date(Date.now() - 10_000),
-      stepResults: [stepResult(true)],
-      userId,
-    });
-
-    const daily = await prisma.dailyProgress.findFirst({
-      where: { organizationId: null, userId },
-    });
-
-    expect(daily).not.toBeNull();
-    expect(daily?.correctAnswers).toBe(2);
-    expect(daily?.incorrectAnswers).toBe(1);
-    expect(daily?.brainPowerEarned).toBe(10);
-    expect(daily?.interactiveCompleted).toBe(1);
-  });
-
-  test("null organizationId: increments existing DailyProgress on second completion", async () => {
-    const user = await userFixture();
-    const userId = Number(user.id);
-
-    const baseInput = {
-      activityId: activity.id,
-      durationSeconds: 10,
-
-      localDate: todayLocalDate(),
-      organizationId: null as number | null,
-      score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
-      startedAt: new Date(Date.now() - 10_000),
-      stepResults: [stepResult(true)],
-      userId,
-    };
-
-    await submitActivityCompletion(baseInput);
-    await submitActivityCompletion(baseInput);
-
-    const dailyRecords = await prisma.dailyProgress.findMany({
-      where: { organizationId: null, userId },
-    });
-
-    expect(dailyRecords).toHaveLength(1);
-    expect(dailyRecords[0]?.brainPowerEarned).toBe(20);
-    expect(dailyRecords[0]?.correctAnswers).toBe(2);
-    expect(dailyRecords[0]?.interactiveCompleted).toBe(2);
-  });
-
-  test("null organizationId: creates StepAttempt without org", async () => {
-    const user = await userFixture();
-    const userId = Number(user.id);
-
-    await submitActivityCompletion({
-      activityId: activity.id,
-      durationSeconds: 10,
-
-      localDate: todayLocalDate(),
-      organizationId: null,
-      score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
-      startedAt: new Date(Date.now() - 10_000),
-      stepResults: [stepResult(true)],
-      userId,
-    });
-
-    const attempts = await prisma.stepAttempt.findMany({
-      where: { organizationId: null, stepId: step.id, userId },
-    });
-
-    expect(attempts).toHaveLength(1);
-    expect(attempts[0]?.organizationId).toBeNull();
   });
 
   test("creates CourseUser and increments userCount on first activity completion", async () => {
@@ -466,7 +376,6 @@ describe(submitActivityCompletion, () => {
       durationSeconds: 10,
 
       localDate: todayLocalDate(),
-      organizationId: org.id,
       score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
       startedAt: new Date(Date.now() - 10_000),
       stepResults: [stepResult(true)],
@@ -491,7 +400,6 @@ describe(submitActivityCompletion, () => {
       durationSeconds: 10,
 
       localDate: todayLocalDate(),
-      organizationId: org.id,
       score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
       startedAt: new Date(Date.now() - 10_000),
       stepResults: [stepResult(true)],
@@ -536,7 +444,6 @@ describe(submitActivityCompletion, () => {
       durationSeconds: 10,
 
       localDate: todayLocalDate(),
-      organizationId: org.id,
       score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
       startedAt: new Date(Date.now() - 10_000),
       stepResults: [stepResult(true)],
@@ -546,11 +453,13 @@ describe(submitActivityCompletion, () => {
     const userProgress = await prisma.userProgress.findUnique({ where: { userId } });
     expect(userProgress?.currentEnergy).toBeCloseTo(50.2);
 
-    // No decay gap records should exist (only today's org-scoped record)
-    const decayRecords = await prisma.dailyProgress.findMany({
-      where: { organizationId: null, userId },
+    const dailyRecords = await prisma.dailyProgress.findMany({
+      orderBy: { date: "asc" },
+      where: { userId },
     });
-    expect(decayRecords).toHaveLength(0);
+    expect(dailyRecords).toHaveLength(1);
+    expect(dailyRecords[0]?.date).toEqual(parseLocalDate(todayLocalDate()));
+    expect(dailyRecords[0]?.energyAtEnd).toBeCloseTo(50.2);
   });
 
   test("completes a pre-started record: sets completedAt and durationSeconds, preserves startedAt", async () => {
@@ -573,7 +482,6 @@ describe(submitActivityCompletion, () => {
       durationSeconds: 20,
 
       localDate: todayLocalDate(),
-      organizationId: org.id,
       score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
       startedAt: new Date(Date.now() - 20_000),
       stepResults: [stepResult(true)],
@@ -606,7 +514,6 @@ describe(submitActivityCompletion, () => {
       durationSeconds: 10,
 
       localDate,
-      organizationId: org.id,
       score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
       startedAt: new Date(Date.now() - 10_000),
       stepResults: [stepResult(true)],
@@ -614,7 +521,7 @@ describe(submitActivityCompletion, () => {
     });
 
     const daily = await prisma.dailyProgress.findFirst({
-      where: { organizationId: org.id, userId },
+      where: { userId },
     });
 
     expect(daily).not.toBeNull();
@@ -635,7 +542,6 @@ describe(submitActivityCompletion, () => {
         durationSeconds: 10,
 
         localDate: "9999-12-31",
-        organizationId: org.id,
         score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
         startedAt: new Date(Date.now() - 10_000),
         stepResults: [stepResult(true)],
@@ -654,7 +560,6 @@ describe(submitActivityCompletion, () => {
         durationSeconds: 10,
 
         localDate: "2020-01-01",
-        organizationId: org.id,
         score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
         startedAt: new Date(Date.now() - 10_000),
         stepResults: [stepResult(true)],
@@ -682,7 +587,6 @@ describe(submitActivityCompletion, () => {
       durationSeconds: 10,
 
       localDate,
-      organizationId: org.id,
       score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
       startedAt: new Date(Date.now() - 10_000),
       stepResults: [stepResult(true)],
@@ -693,23 +597,16 @@ describe(submitActivityCompletion, () => {
     const userProgress = await prisma.userProgress.findUnique({ where: { userId } });
     expect(userProgress?.currentEnergy).toBeCloseTo(46.2);
 
-    // 4 gap records (one per inactive day)
-    const gapRecords = await prisma.dailyProgress.findMany({
+    const dailyRecords = await prisma.dailyProgress.findMany({
       orderBy: { date: "asc" },
-      where: { organizationId: null, userId },
+      where: { userId },
     });
 
-    expect(gapRecords).toHaveLength(4);
-    expect(gapRecords[0]?.energyAtEnd).toBe(49);
-    expect(gapRecords[3]?.energyAtEnd).toBe(46);
-
-    // Today's record uses localDate
-    const todayRecord = await prisma.dailyProgress.findFirst({
-      where: { organizationId: org.id, userId },
-    });
-
-    expect(todayRecord?.date).toEqual(parseLocalDate(localDate));
-    expect(todayRecord?.energyAtEnd).toBeCloseTo(46.2);
+    expect(dailyRecords).toHaveLength(5);
+    expect(dailyRecords[0]?.energyAtEnd).toBe(49);
+    expect(dailyRecords[3]?.energyAtEnd).toBe(46);
+    expect(dailyRecords[4]?.date).toEqual(parseLocalDate(localDate));
+    expect(dailyRecords[4]?.energyAtEnd).toBeCloseTo(46.2);
   });
 
   test("applies decay and fills DailyProgress gaps for inactive days", async () => {
@@ -733,7 +630,6 @@ describe(submitActivityCompletion, () => {
       durationSeconds: 10,
 
       localDate: todayLocalDate(),
-      organizationId: org.id,
       score: { brainPower: 10, correctCount: 1, energyDelta: 0.2, incorrectCount: 0 },
       startedAt: new Date(Date.now() - 10_000),
       stepResults: [stepResult(true)],
@@ -744,24 +640,19 @@ describe(submitActivityCompletion, () => {
     const userProgress = await prisma.userProgress.findUnique({ where: { userId } });
     expect(userProgress?.currentEnergy).toBeCloseTo(46.2);
 
-    // Should have 4 decay DailyProgress records (one per inactive day) + 1 for today
     const dailyRecords = await prisma.dailyProgress.findMany({
       orderBy: { date: "asc" },
-      where: { organizationId: null, userId },
+      where: { userId },
     });
 
-    expect(dailyRecords).toHaveLength(4);
+    expect(dailyRecords).toHaveLength(5);
 
     // Decay records: energy decreases by 1 each day
     expect(dailyRecords[0]?.energyAtEnd).toBe(49);
     expect(dailyRecords[1]?.energyAtEnd).toBe(48);
     expect(dailyRecords[2]?.energyAtEnd).toBe(47);
     expect(dailyRecords[3]?.energyAtEnd).toBe(46);
-
-    // Today's record is in the org-scoped DailyProgress
-    const todayRecord = await prisma.dailyProgress.findFirst({
-      where: { organizationId: org.id, userId },
-    });
-    expect(todayRecord?.energyAtEnd).toBeCloseTo(46.2);
+    expect(dailyRecords[4]?.date).toEqual(parseLocalDate(todayLocalDate()));
+    expect(dailyRecords[4]?.energyAtEnd).toBeCloseTo(46.2);
   });
 });

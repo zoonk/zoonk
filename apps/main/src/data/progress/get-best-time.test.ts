@@ -13,7 +13,6 @@ type StepAttemptParams = {
   answeredAt?: Date;
   hourOfDay: number;
   isCorrect: boolean;
-  orgId: number;
   stepId: bigint;
   userId: number;
 };
@@ -27,7 +26,6 @@ function buildStepAttemptData(params: StepAttemptParams) {
     durationSeconds: 15,
     hourOfDay: params.hourOfDay,
     isCorrect: params.isCorrect,
-    organizationId: params.orgId,
     stepId: params.stepId,
     userId: params.userId,
   };
@@ -104,14 +102,13 @@ describe("authenticated users", () => {
     ]);
 
     const userId = Number(user.id);
-    const orgId = org.id;
     const stepId = step.id;
 
     await Promise.all([
       // Morning (hour 9): 9 correct, 1 incorrect = 90%
-      createStepAttempts({ hourOfDay: 9, orgId, stepId, userId }, 9, 1),
+      createStepAttempts({ hourOfDay: 9, stepId, userId }, 9, 1),
       // Afternoon (hour 15): 8 correct, 2 incorrect = 80%
-      createStepAttempts({ hourOfDay: 15, orgId, stepId, userId }, 8, 2),
+      createStepAttempts({ hourOfDay: 15, stepId, userId }, 8, 2),
     ]);
 
     const result = await getBestTime({ headers });
@@ -133,14 +130,13 @@ describe("authenticated users", () => {
     oldDate.setDate(oldDate.getDate() - 91);
 
     const userId = Number(user.id);
-    const orgId = org.id;
     const stepId = step.id;
 
     await Promise.all([
       // Recent Morning attempts: 80%
-      createStepAttempts({ answeredAt: now, hourOfDay: 9, orgId, stepId, userId }, 8, 2),
+      createStepAttempts({ answeredAt: now, hourOfDay: 9, stepId, userId }, 8, 2),
       // Old Afternoon attempts: 100% (should be excluded)
-      createStepAttempts({ answeredAt: oldDate, hourOfDay: 15, orgId, stepId, userId }, 10, 0),
+      createStepAttempts({ answeredAt: oldDate, hourOfDay: 15, stepId, userId }, 10, 0),
     ]);
 
     const result = await getBestTime({ headers });
@@ -158,14 +154,13 @@ describe("authenticated users", () => {
     ]);
 
     const userId = Number(user.id);
-    const orgId = org.id;
     const stepId = step.id;
 
     await Promise.all([
       // Morning (hour 9): 9 correct, 1 incorrect = 90%
-      createStepAttempts({ hourOfDay: 9, orgId, stepId, userId }, 9, 1),
+      createStepAttempts({ hourOfDay: 9, stepId, userId }, 9, 1),
       // Afternoon (hour 15): 18 correct, 2 incorrect = 90% (more answers)
-      createStepAttempts({ hourOfDay: 15, orgId, stepId, userId }, 18, 2),
+      createStepAttempts({ hourOfDay: 15, stepId, userId }, 18, 2),
     ]);
 
     const result = await getBestTime({ headers });
@@ -183,11 +178,10 @@ describe("authenticated users", () => {
     ]);
 
     const userId = Number(user.id);
-    const orgId = org.id;
     const stepId = step.id;
 
     // 17 correct, 3 incorrect = 85%
-    await createStepAttempts({ hourOfDay: 21, orgId, stepId, userId }, 17, 3);
+    await createStepAttempts({ hourOfDay: 21, stepId, userId }, 17, 3);
 
     const result = await getBestTime({ headers });
 
@@ -204,11 +198,10 @@ describe("authenticated users", () => {
     ]);
 
     const userId = Number(user.id);
-    const orgId = org.id;
     const stepId = step.id;
 
     // Night (hour 3): 100%
-    await createStepAttempts({ hourOfDay: 3, orgId, stepId, userId }, 1, 0);
+    await createStepAttempts({ hourOfDay: 3, stepId, userId }, 1, 0);
 
     const result = await getBestTime({ headers });
 
@@ -231,14 +224,13 @@ describe("authenticated users", () => {
     twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
 
     const userId = Number(user.id);
-    const orgId = org.id;
     const stepId = step.id;
 
     await Promise.all([
       // Recent Morning attempts: 80%
-      createStepAttempts({ answeredAt: now, hourOfDay: 9, orgId, stepId, userId }, 8, 2),
+      createStepAttempts({ answeredAt: now, hourOfDay: 9, stepId, userId }, 8, 2),
       // Older Afternoon attempts: 100% (should be excluded with custom range)
-      createStepAttempts({ answeredAt: twoWeeksAgo, hourOfDay: 15, orgId, stepId, userId }, 10, 0),
+      createStepAttempts({ answeredAt: twoWeeksAgo, hourOfDay: 15, stepId, userId }, 10, 0),
     ]);
 
     // Filter to only include data from the past week
