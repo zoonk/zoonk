@@ -7,7 +7,6 @@ export async function dailyProgressFixtureMany(
     date: Date;
     energyAtEnd?: number;
     incorrectAnswers?: number;
-    organizationId: number;
     userId: number;
   }[],
 ) {
@@ -19,7 +18,6 @@ export async function dailyProgressFixtureMany(
       dayOfWeek: input.date.getDay(),
       energyAtEnd: input.energyAtEnd ?? 0,
       incorrectAnswers: input.incorrectAnswers ?? 0,
-      organizationId: input.organizationId,
       userId: input.userId,
     })),
   });

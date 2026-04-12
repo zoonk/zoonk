@@ -1,6 +1,5 @@
 import { prisma } from "@zoonk/db";
 import { signInAs } from "@zoonk/testing/fixtures/auth";
-import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, test } from "vitest";
 import { getScore } from "./get-score";
@@ -24,7 +23,6 @@ describe("authenticated users", () => {
   test("returns score when user has DailyProgress records", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
-    const org = await organizationFixture();
 
     const today = new Date();
     const yesterday = new Date(today);
@@ -37,7 +35,6 @@ describe("authenticated users", () => {
           date: today,
           dayOfWeek: today.getDay(),
           incorrectAnswers: 3,
-          organizationId: org.id,
           userId: Number(user.id),
         },
         {
@@ -45,7 +42,6 @@ describe("authenticated users", () => {
           date: yesterday,
           dayOfWeek: yesterday.getDay(),
           incorrectAnswers: 2,
-          organizationId: org.id,
           userId: Number(user.id),
         },
       ],
@@ -61,7 +57,6 @@ describe("authenticated users", () => {
   test("excludes records older than 3 months", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
-    const org = await organizationFixture();
 
     const today = new Date();
     const oldDate = new Date(today);
@@ -74,7 +69,6 @@ describe("authenticated users", () => {
           date: today,
           dayOfWeek: today.getDay(),
           incorrectAnswers: 0,
-          organizationId: org.id,
           userId: Number(user.id),
         },
         {
@@ -82,7 +76,6 @@ describe("authenticated users", () => {
           date: oldDate,
           dayOfWeek: oldDate.getDay(),
           incorrectAnswers: 100,
-          organizationId: org.id,
           userId: Number(user.id),
         },
       ],
@@ -98,7 +91,6 @@ describe("authenticated users", () => {
   test("filters by custom date range when startDate and endDate are provided", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
-    const org = await organizationFixture();
 
     const now = new Date();
     const oneWeekAgo = new Date(now);
@@ -113,7 +105,6 @@ describe("authenticated users", () => {
           date: now,
           dayOfWeek: now.getDay(),
           incorrectAnswers: 0,
-          organizationId: org.id,
           userId: Number(user.id),
         },
         {
@@ -121,7 +112,6 @@ describe("authenticated users", () => {
           date: oneWeekAgo,
           dayOfWeek: oneWeekAgo.getDay(),
           incorrectAnswers: 5,
-          organizationId: org.id,
           userId: Number(user.id),
         },
         {
@@ -129,7 +119,6 @@ describe("authenticated users", () => {
           date: twoWeeksAgo,
           dayOfWeek: twoWeeksAgo.getDay(),
           incorrectAnswers: 10,
-          organizationId: org.id,
           userId: Number(user.id),
         },
       ],

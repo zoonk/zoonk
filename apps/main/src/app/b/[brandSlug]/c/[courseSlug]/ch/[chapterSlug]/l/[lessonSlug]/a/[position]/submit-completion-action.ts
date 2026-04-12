@@ -165,7 +165,6 @@ export async function submitCompletion(rawInput: CompletionInput): Promise<void>
         activityId: activity.id,
         durationSeconds,
         localDate: input.localDate,
-        organizationId: activity.organizationId,
         score,
         startedAt: new Date(input.startedAt),
         stepResults: [...mergedStepResults, ...investigationActionResults],

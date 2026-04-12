@@ -1,6 +1,5 @@
 import { prisma } from "@zoonk/db";
 import { signInAs } from "@zoonk/testing/fixtures/auth";
-import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, test } from "vitest";
 import { getBestDay } from "./get-best-day";
@@ -24,7 +23,6 @@ describe("authenticated users", () => {
   test("returns best day when user has data for multiple days", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
-    const org = await organizationFixture();
 
     await prisma.dailyProgress.createMany({
       data: [
@@ -33,7 +31,6 @@ describe("authenticated users", () => {
           date: new Date("2025-01-05T12:00:00Z"),
           dayOfWeek: 0, // Sunday
           incorrectAnswers: 2,
-          organizationId: org.id,
           userId: Number(user.id),
         },
         {
@@ -41,7 +38,6 @@ describe("authenticated users", () => {
           date: new Date("2025-01-06T12:00:00Z"),
           dayOfWeek: 1, // Monday
           incorrectAnswers: 5,
-          organizationId: org.id,
           userId: Number(user.id),
         },
       ],
@@ -60,7 +56,6 @@ describe("authenticated users", () => {
   test("excludes records older than 90 days", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
-    const org = await organizationFixture();
 
     const today = new Date();
     const oldDate = new Date(today);
@@ -73,7 +68,6 @@ describe("authenticated users", () => {
           date: today,
           dayOfWeek: today.getDay(),
           incorrectAnswers: 2,
-          organizationId: org.id,
           userId: Number(user.id),
         },
         {
@@ -81,7 +75,6 @@ describe("authenticated users", () => {
           date: oldDate,
           dayOfWeek: oldDate.getDay(),
           incorrectAnswers: 0,
-          organizationId: org.id,
           userId: Number(user.id),
         },
       ],
@@ -96,7 +89,6 @@ describe("authenticated users", () => {
   test("uses day with most answers as tiebreaker", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
-    const org = await organizationFixture();
 
     await prisma.dailyProgress.createMany({
       data: [
@@ -105,7 +97,6 @@ describe("authenticated users", () => {
           date: new Date("2025-01-05T12:00:00Z"),
           dayOfWeek: 0, // Sunday
           incorrectAnswers: 1,
-          organizationId: org.id,
           userId: Number(user.id),
         },
         {
@@ -113,7 +104,6 @@ describe("authenticated users", () => {
           date: new Date("2025-01-12T12:00:00Z"),
           dayOfWeek: 0, // Next Sunday
           incorrectAnswers: 1,
-          organizationId: org.id,
           userId: Number(user.id),
         },
         {
@@ -121,7 +111,6 @@ describe("authenticated users", () => {
           date: new Date("2025-01-06T12:00:00Z"),
           dayOfWeek: 1, // Monday
           incorrectAnswers: 2,
-          organizationId: org.id,
           userId: Number(user.id),
         },
       ],
@@ -140,7 +129,6 @@ describe("authenticated users", () => {
   test("returns correct score calculation", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
-    const org = await organizationFixture();
 
     const today = new Date();
 
@@ -150,7 +138,6 @@ describe("authenticated users", () => {
         date: today,
         dayOfWeek: today.getDay(),
         incorrectAnswers: 3,
-        organizationId: org.id,
         userId: Number(user.id),
       },
     });

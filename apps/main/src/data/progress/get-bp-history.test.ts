@@ -1,7 +1,6 @@
 import { prisma } from "@zoonk/db";
 import { signInAs } from "@zoonk/testing/fixtures/auth";
 import { createSafeDate } from "@zoonk/testing/fixtures/dates";
-import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { describe, expect, test } from "vitest";
 import { getBpHistory } from "./get-bp-history";
@@ -27,7 +26,7 @@ describe("authenticated users", () => {
 
   describe("month period", () => {
     test("returns daily data points with BP values", async () => {
-      const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
+      const user = await userFixture();
       const headers = await signInAs(user.email, user.password);
 
       const today = createSafeDate(0);
@@ -39,14 +38,12 @@ describe("authenticated users", () => {
             brainPowerEarned: 100,
             date: today,
             dayOfWeek: today.getDay(),
-            organizationId: org.id,
             userId: Number(user.id),
           },
           {
             brainPowerEarned: 50,
             date: yesterday,
             dayOfWeek: yesterday.getDay(),
-            organizationId: org.id,
             userId: Number(user.id),
           },
         ],
@@ -60,7 +57,7 @@ describe("authenticated users", () => {
     });
 
     test("calculates period total correctly", async () => {
-      const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
+      const user = await userFixture();
       const headers = await signInAs(user.email, user.password);
 
       const today = createSafeDate(0);
@@ -72,14 +69,12 @@ describe("authenticated users", () => {
             brainPowerEarned: 200,
             date: today,
             dayOfWeek: today.getDay(),
-            organizationId: org.id,
             userId: Number(user.id),
           },
           {
             brainPowerEarned: 300,
             date: yesterday,
             dayOfWeek: yesterday.getDay(),
-            organizationId: org.id,
             userId: Number(user.id),
           },
         ],
@@ -92,7 +87,7 @@ describe("authenticated users", () => {
     });
 
     test("includes current belt level", async () => {
-      const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
+      const user = await userFixture();
       const headers = await signInAs(user.email, user.password);
 
       await prisma.userProgress.upsert({
@@ -112,7 +107,6 @@ describe("authenticated users", () => {
           brainPowerEarned: 100,
           date,
           dayOfWeek: date.getDay(),
-          organizationId: org.id,
           userId: Number(user.id),
         },
       });
@@ -125,7 +119,7 @@ describe("authenticated users", () => {
     });
 
     test("calculates comparison with previous month", async () => {
-      const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
+      const user = await userFixture();
       const headers = await signInAs(user.email, user.password);
 
       const currentMonth = createSafeDate(0);
@@ -137,14 +131,12 @@ describe("authenticated users", () => {
             brainPowerEarned: 200,
             date: currentMonth,
             dayOfWeek: currentMonth.getDay(),
-            organizationId: org.id,
             userId: Number(user.id),
           },
           {
             brainPowerEarned: 100,
             date: lastMonth,
             dayOfWeek: lastMonth.getDay(),
-            organizationId: org.id,
             userId: Number(user.id),
           },
         ],
@@ -158,7 +150,7 @@ describe("authenticated users", () => {
     });
 
     test("navigates to previous month with offset", async () => {
-      const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
+      const user = await userFixture();
       const headers = await signInAs(user.email, user.password);
 
       const currentMonth = createSafeDate(0);
@@ -170,14 +162,12 @@ describe("authenticated users", () => {
             brainPowerEarned: 300,
             date: currentMonth,
             dayOfWeek: currentMonth.getDay(),
-            organizationId: org.id,
             userId: Number(user.id),
           },
           {
             brainPowerEarned: 150,
             date: lastMonth,
             dayOfWeek: lastMonth.getDay(),
-            organizationId: org.id,
             userId: Number(user.id),
           },
         ],
@@ -197,7 +187,7 @@ describe("authenticated users", () => {
 
   describe("6months period", () => {
     test("returns weekly aggregated data points", async () => {
-      const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
+      const user = await userFixture();
       const headers = await signInAs(user.email, user.password);
 
       const today = createSafeDate(0);
@@ -209,14 +199,12 @@ describe("authenticated users", () => {
             brainPowerEarned: 100,
             date: today,
             dayOfWeek: today.getDay(),
-            organizationId: org.id,
             userId: Number(user.id),
           },
           {
             brainPowerEarned: 80,
             date: oneWeekAgo,
             dayOfWeek: oneWeekAgo.getDay(),
-            organizationId: org.id,
             userId: Number(user.id),
           },
         ],
@@ -232,7 +220,7 @@ describe("authenticated users", () => {
 
   describe("year period", () => {
     test("returns monthly aggregated data points", async () => {
-      const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
+      const user = await userFixture();
       const headers = await signInAs(user.email, user.password);
 
       const today = createSafeDate(0);
@@ -244,14 +232,12 @@ describe("authenticated users", () => {
             brainPowerEarned: 250,
             date: today,
             dayOfWeek: today.getDay(),
-            organizationId: org.id,
             userId: Number(user.id),
           },
           {
             brainPowerEarned: 150,
             date: yesterday,
             dayOfWeek: yesterday.getDay(),
-            organizationId: org.id,
             userId: Number(user.id),
           },
         ],
@@ -267,7 +253,7 @@ describe("authenticated users", () => {
 
   describe("all period", () => {
     test("returns yearly aggregated data points", async () => {
-      const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
+      const user = await userFixture();
       const headers = await signInAs(user.email, user.password);
 
       const today = createSafeDate(0);
@@ -277,7 +263,6 @@ describe("authenticated users", () => {
           brainPowerEarned: 200,
           date: today,
           dayOfWeek: today.getDay(),
-          organizationId: org.id,
           userId: Number(user.id),
         },
       });
@@ -292,7 +277,7 @@ describe("authenticated users", () => {
 
   describe("navigation flags", () => {
     test("hasPreviousPeriod is true when historical data exists", async () => {
-      const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
+      const user = await userFixture();
       const headers = await signInAs(user.email, user.password);
 
       const currentMonth = createSafeDate(0);
@@ -304,14 +289,12 @@ describe("authenticated users", () => {
             brainPowerEarned: 100,
             date: currentMonth,
             dayOfWeek: currentMonth.getDay(),
-            organizationId: org.id,
             userId: Number(user.id),
           },
           {
             brainPowerEarned: 50,
             date: twoMonthsAgo,
             dayOfWeek: twoMonthsAgo.getDay(),
-            organizationId: org.id,
             userId: Number(user.id),
           },
         ],
@@ -324,7 +307,7 @@ describe("authenticated users", () => {
     });
 
     test("hasNextPeriod is false when on current period (offset=0)", async () => {
-      const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
+      const user = await userFixture();
       const headers = await signInAs(user.email, user.password);
 
       const date = createSafeDate(0);
@@ -333,7 +316,6 @@ describe("authenticated users", () => {
           brainPowerEarned: 100,
           date,
           dayOfWeek: date.getDay(),
-          organizationId: org.id,
           userId: Number(user.id),
         },
       });
@@ -345,7 +327,7 @@ describe("authenticated users", () => {
     });
 
     test("hasNextPeriod is true when offset > 0", async () => {
-      const [user, org] = await Promise.all([userFixture(), organizationFixture()]);
+      const user = await userFixture();
       const headers = await signInAs(user.email, user.password);
 
       const lastMonth = createSafeDate(1);
@@ -355,7 +337,6 @@ describe("authenticated users", () => {
           brainPowerEarned: 75,
           date: lastMonth,
           dayOfWeek: lastMonth.getDay(),
-          organizationId: org.id,
           userId: Number(user.id),
         },
       });

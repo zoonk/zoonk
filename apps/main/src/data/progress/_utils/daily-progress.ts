@@ -46,7 +46,6 @@ export async function fillDecayGaps(params: {
       date,
       dayOfWeek: date.getUTCDay(),
       energyAtEnd: decayedEnergy,
-      organizationId: null as number | null,
       userId: params.userId,
     };
   });
@@ -55,10 +54,9 @@ export async function fillDecayGaps(params: {
 }
 
 /**
- * Daily progress rows use a nullable organization id, which means the regular
- * compound unique only works for organization-scoped records. This helper keeps
- * the two write paths aligned so completion writes do not have to repeat that
- * null-handling branch every time.
+ * Daily progress is a global learner timeline, so there is exactly one row per
+ * user and day. Keeping the upsert logic here prevents every completion write
+ * from rebuilding the same counter and energy updates inline.
  */
 export async function upsertDailyProgress(
   tx: TransactionClient,
@@ -68,7 +66,6 @@ export async function upsertDailyProgress(
     dayOfWeek: number;
     durationSeconds: number;
     field: "interactiveCompleted" | "staticCompleted";
-    organizationId: number | null;
     score: ScoreResult;
     userId: number;
   },
@@ -81,7 +78,6 @@ export async function upsertDailyProgress(
     energyAtEnd: params.clampedEnergy,
     incorrectAnswers: params.score.incorrectCount,
     interactiveCompleted: params.field === "interactiveCompleted" ? 1 : 0,
-    organizationId: params.organizationId,
     staticCompleted: params.field === "staticCompleted" ? 1 : 0,
     timeSpentSeconds: params.durationSeconds,
     userId: params.userId,
@@ -96,38 +92,14 @@ export async function upsertDailyProgress(
     [params.field]: { increment: 1 },
   };
 
-  if (params.organizationId) {
-    await tx.dailyProgress.upsert({
-      create: createData,
-      update: updateData,
-      where: {
-        userDateOrg: {
-          date: params.date,
-          organizationId: params.organizationId,
-          userId: params.userId,
-        },
-      },
-    });
-
-    return;
-  }
-
-  const existing = await tx.dailyProgress.findFirst({
+  await tx.dailyProgress.upsert({
+    create: createData,
+    update: updateData,
     where: {
-      date: params.date,
-      organizationId: null,
-      userId: params.userId,
+      userDate: {
+        date: params.date,
+        userId: params.userId,
+      },
     },
   });
-
-  if (existing) {
-    await tx.dailyProgress.update({
-      data: updateData,
-      where: { id: existing.id },
-    });
-
-    return;
-  }
-
-  await tx.dailyProgress.create({ data: createData });
 }

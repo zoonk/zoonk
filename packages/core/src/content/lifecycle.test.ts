@@ -79,7 +79,6 @@ describe("content lifecycle", () => {
       durationSeconds: 30,
       hourOfDay: 9,
       isCorrect: true,
-      organizationId,
       stepId: step.id,
       userId: Number(user.id),
     });
@@ -212,7 +211,6 @@ describe("content lifecycle", () => {
       durationSeconds: 22,
       hourOfDay: 13,
       isCorrect: false,
-      organizationId,
       stepId: step.id,
       userId: Number(user.id),
     });

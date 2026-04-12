@@ -8,7 +8,6 @@ export async function stepAttemptFixture(attrs: {
   effects?: object;
   hourOfDay: number;
   isCorrect: boolean;
-  organizationId?: number;
   stepId: bigint;
   userId: number;
 }) {
@@ -21,7 +20,6 @@ export async function stepAttemptFixture(attrs: {
       effects: attrs.effects,
       hourOfDay: attrs.hourOfDay,
       isCorrect: attrs.isCorrect,
-      organizationId: attrs.organizationId,
       stepId: attrs.stepId,
       userId: attrs.userId,
     },

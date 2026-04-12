@@ -205,7 +205,7 @@ function buildGroupDates(today: Date, range: { start: Date; end: Date }, isCurre
   }).filter((entry): entry is NonNullable<typeof entry> => entry !== null);
 }
 
-function buildDailyProgressInputs(today: Date, orgId: number, userId: number) {
+function buildDailyProgressInputs(today: Date, userId: number) {
   const dateEntries = ALL_PERIODS.flatMap((period) => {
     const { current, previous } = calculateDateRanges(period, 0);
     return [...buildGroupDates(today, current, true), ...buildGroupDates(today, previous, false)];
@@ -221,15 +221,10 @@ function buildDailyProgressInputs(today: Date, orgId: number, userId: number) {
       seen.add(key);
       return true;
     })
-    .map((entry) => ({ ...entry, organizationId: orgId, userId }));
+    .map((entry) => ({ ...entry, userId }));
 }
 
-async function createStepAttempts(
-  stepId: bigint,
-  orgId: number,
-  userId: number,
-  now: Date,
-): Promise<void> {
+async function createStepAttempts(stepId: bigint, userId: number, now: Date): Promise<void> {
   const configs = [
     { correct: 9, hourOfDay: 9, incorrect: 1 },
     { correct: 8, hourOfDay: 15, incorrect: 2 },
@@ -244,7 +239,6 @@ async function createStepAttempts(
       durationSeconds: 15,
       hourOfDay: config.hourOfDay,
       isCorrect: true,
-      organizationId: orgId,
       stepId,
       userId,
     })),
@@ -255,7 +249,6 @@ async function createStepAttempts(
       durationSeconds: 15,
       hourOfDay: config.hourOfDay,
       isCorrect: false,
-      organizationId: orgId,
       stepId,
       userId,
     })),
@@ -331,9 +324,9 @@ async function createE2EProgressData(userId: number): Promise<void> {
     userId,
   });
 
-  await dailyProgressFixtureMany(buildDailyProgressInputs(today, org.id, userId));
+  await dailyProgressFixtureMany(buildDailyProgressInputs(today, userId));
 
-  await createStepAttempts(step.id, org.id, userId, now);
+  await createStepAttempts(step.id, userId, now);
 
   const activityDurationSeconds = 120;
   const activityStartOffsetSeconds = 180;
