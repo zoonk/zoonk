@@ -95,6 +95,22 @@ describe(dispatchVisualContent, () => {
     });
   });
 
+  test("throws when image generation returns an error", async () => {
+    const { generateVisualStepImage } = await import("@zoonk/core/steps/visual-image");
+
+    vi.mocked(generateVisualStepImage).mockResolvedValueOnce({
+      data: null,
+      error: new Error("Image generation failed"),
+    });
+
+    await expect(
+      dispatchVisualContent({
+        descriptions: [{ description: "A broken image", kind: "image" }],
+        language: "en",
+      }),
+    ).rejects.toThrow("Image generation failed");
+  });
+
   test("returns results in same order as input descriptions", async () => {
     const results = await dispatchVisualContent({
       descriptions: [
