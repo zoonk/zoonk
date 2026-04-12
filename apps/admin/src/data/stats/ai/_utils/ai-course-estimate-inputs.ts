@@ -1,3 +1,4 @@
+import { parseNumericId } from "@zoonk/utils/number";
 import { calculateAverageRequestsPerEntity } from "../ai-task-stats";
 import { type AiCourseEstimateInputs, type StructureStats } from "./ai-cost-estimate-types";
 
@@ -128,9 +129,9 @@ function normalizeInteger({
   minimum: number;
   value: CourseInputOverride;
 }) {
-  const parsedValue = typeof value === "number" ? value : Number.parseInt(value ?? "", 10);
+  const parsedValue = parseNumericId(value);
 
-  if (!Number.isInteger(parsedValue) || parsedValue < minimum) {
+  if (parsedValue === null || parsedValue < minimum) {
     return fallback;
   }
 
