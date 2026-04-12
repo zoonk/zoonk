@@ -1,6 +1,6 @@
+import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
 import { describe, expect, it } from "vitest";
 import { type StepResult } from "../../player-reducer";
-import { type SerializedStep } from "../../prepare-activity-data";
 import { getFeedbackRomanization } from "./feedback-romanization";
 
 /**

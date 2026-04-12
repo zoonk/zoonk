@@ -1,12 +1,12 @@
 "use client";
 
-import { useExtracted } from "next-intl";
 import {
   buildAcceptedArrangeWordSequences,
   getAcceptedArrangeWordLengths,
-} from "../arrange-words-answers";
+} from "@zoonk/core/player/contracts/arrange-words-answers";
+import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
+import { useExtracted } from "next-intl";
 import { type SelectedAnswer, type StepResult } from "../player-reducer";
-import { type SerializedStep } from "../prepare-activity-data";
 import { ArrangeWordsInteraction } from "./arrange-words";
 import { PlayAudioButton } from "./play-audio-button";
 import { QuestionText } from "./question-text";

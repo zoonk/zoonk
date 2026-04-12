@@ -1,5 +1,8 @@
+import {
+  type SerializedActivity,
+  type SerializedStep,
+} from "@zoonk/core/player/contracts/prepare-activity-data";
 import { type PlayerPhase, type PlayerState, type SelectedAnswer } from "./player-reducer";
-import { type SerializedActivity, type SerializedStep } from "./prepare-activity-data";
 
 export function buildInitialAnswers(steps: SerializedStep[]): Record<string, SelectedAnswer> {
   const entries: [string, SelectedAnswer][] = [];

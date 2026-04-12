@@ -1,9 +1,8 @@
+import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
 import {
   type InvestigationStepContent,
   type StoryStaticVariant,
-  parseStepContent,
 } from "@zoonk/core/steps/contract/content";
-import { type SerializedStep } from "./prepare-activity-data";
 
 type StepDescriptorBase<Kind extends SerializedStep["kind"], Name extends string> = {
   content: SerializedStep<Kind>["content"];
@@ -72,23 +71,6 @@ export type PlayerStepDescriptor =
 
 export type PlayerStepKind = PlayerStepDescriptor["kind"];
 
-const IDENTITY_PLAYER_STEP_KINDS = [
-  "fillBlank",
-  "listening",
-  "matchColumns",
-  "multipleChoice",
-  "reading",
-  "selectImage",
-  "sortOrder",
-  "translation",
-  "visual",
-  "vocabulary",
-] as const satisfies readonly PlayerStepKind[];
-
-const IDENTITY_PLAYER_STEP_KIND_SET: ReadonlySet<string> = new Set(IDENTITY_PLAYER_STEP_KINDS);
-
-type IdentityPlayerStepKind = (typeof IDENTITY_PLAYER_STEP_KINDS)[number];
-
 /**
  * `SerializedStep` loses some of its `kind` to `content` correlation once it
  * moves through arrays and reducer state. This guard restores that link so the
@@ -99,59 +81,6 @@ function hasStepKind<Kind extends SerializedStep["kind"]>(
   kind: Kind,
 ): step is SerializedStep<Kind> {
   return step.kind === kind;
-}
-
-/**
- * Static steps share the same physical kind, but they behave differently
- * depending on their content variant. This helper names those variants once
- * so the rest of the player can switch on a canonical descriptor instead of
- * repeating `step.kind` plus `content.variant` checks.
- */
-function getStaticStepKind(content: SerializedStep<"static">["content"]): PlayerStepKind {
-  switch (content.variant) {
-    case "grammarExample":
-      return "staticGrammarExample";
-    case "grammarRule":
-      return "staticGrammarRule";
-    case "storyIntro":
-      return "storyIntro";
-    case "storyOutcome":
-      return "storyOutcome";
-    case "text":
-      return "staticText";
-    default:
-      return "staticText";
-  }
-}
-
-/**
- * Investigation steps also share one physical kind while representing three
- * distinct phases of the investigation flow. A canonical descriptor lets the
- * reducer, shell, and renderers talk about those phases with one vocabulary.
- */
-function getInvestigationStepKind(
-  content: SerializedStep<"investigation">["content"],
-): PlayerStepKind {
-  switch (content.variant) {
-    case "action":
-      return "investigationAction";
-    case "call":
-      return "investigationCall";
-    case "problem":
-      return "investigationProblem";
-    default:
-      return "investigationProblem";
-  }
-}
-
-/**
- * Most raw server step kinds already match the canonical player step kind.
- * This helper isolates that identity mapping so parsePlayerStepKind only
- * needs to special-case the variants that truly diverge (`static`,
- * `investigation`, and `story`).
- */
-function isIdentityPlayerStepKind(kind: string): kind is IdentityPlayerStepKind {
-  return IDENTITY_PLAYER_STEP_KIND_SET.has(kind);
 }
 
 function describeStaticStep(step: SerializedStep<"static">): PlayerStepDescriptor {
@@ -188,37 +117,6 @@ function describeInvestigationStep(step: SerializedStep<"investigation">): Playe
   }
 
   return { content, kind: "investigationProblem", step };
-}
-
-/**
- * Some server-side callers only have raw `{ kind, content }` data instead of a
- * fully typed `SerializedStep`. This parser keeps those callers on the same
- * canonical step-kind vocabulary as the client descriptor layer.
- */
-export function parsePlayerStepKind(
-  step: { content: unknown; kind: string } | null | undefined,
-): PlayerStepKind | null {
-  if (!step) {
-    return null;
-  }
-
-  if (step.kind === "investigation") {
-    return getInvestigationStepKind(parseStepContent("investigation", step.content));
-  }
-
-  if (step.kind === "static") {
-    return getStaticStepKind(parseStepContent("static", step.content));
-  }
-
-  if (step.kind === "story") {
-    return "storyDecision";
-  }
-
-  if (isIdentityPlayerStepKind(step.kind)) {
-    return step.kind;
-  }
-
-  return null;
 }
 
 /**

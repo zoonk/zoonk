@@ -93,9 +93,9 @@ export async function getReviewSteps({
  * Only returns steps that are eligible for review — excludes
  * steps from review activities and static steps.
  */
-export async function getReviewValidationSteps(lessonId: number, stepIds: bigint[]) {
+export async function getReviewValidationSteps(params: { lessonId: number; stepIds: bigint[] }) {
   return prisma.step.findMany({
     include: { sentence: true, word: true },
-    where: { ...reviewableStepFilter(lessonId), id: { in: stepIds } },
+    where: { ...reviewableStepFilter(params.lessonId), id: { in: params.stepIds } },
   });
 }

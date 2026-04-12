@@ -259,16 +259,11 @@ export function buildWordBankOptions(
     return [];
   }
 
+  const distractors = removeCanonicalWordCollisions(config.distractors, config.correctWords);
+  const words = shuffle([...config.correctWords, ...distractors]);
   const buildOption = config.usesTargetLanguageMetadata
     ? createWordOptionBuilder({ distractorWords, lessonWords, sentenceWordMap })
     : emptyWordOption;
-  const distractorWordsForBank = removeCanonicalWordCollisions(
-    config.distractors,
-    config.correctWords,
-  );
 
-  return shuffle([
-    ...config.correctWords.map((word) => buildOption(word)),
-    ...distractorWordsForBank.map((word) => buildOption(word)),
-  ]);
+  return words.map((word) => buildOption(word));
 }

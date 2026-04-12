@@ -1,5 +1,6 @@
 "use client";
 
+import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
 import {
   type InvestigationActionQuality,
   type InvestigationCallAccuracy,
@@ -20,7 +21,6 @@ import { useExtracted } from "next-intl";
 import { getInvestigationStepByVariant } from "../investigation";
 import { usePlayerRuntime } from "../player-context";
 import { type SelectedAnswer, type StepResult } from "../player-reducer";
-import { type SerializedStep } from "../prepare-activity-data";
 import {
   PlayerChoiceScene,
   PlayerChoiceSceneOptionText,

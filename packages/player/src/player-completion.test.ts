@@ -1,7 +1,7 @@
+import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
 import { describe, expect, test } from "vitest";
 import { computeLocalCompletion } from "./player-completion";
 import { type PlayerState, type SelectedAnswer, type StepResult } from "./player-reducer";
-import { type SerializedStep } from "./prepare-activity-data";
 
 function buildStep(overrides: Partial<SerializedStep> = {}): SerializedStep {
   return {

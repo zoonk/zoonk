@@ -1,9 +1,9 @@
 "use client";
 
+import { type CompletionResult } from "@zoonk/core/player/contracts/completion-input-schema";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
-import { type CompletionResult } from "../completion-input-schema";
 import {
   type PlayerRoute,
   usePlayerMilestone,

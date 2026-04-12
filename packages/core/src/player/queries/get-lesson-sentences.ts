@@ -11,9 +11,7 @@ const cachedGetLessonSentences = cache(async (lessonId: number) =>
 
 /**
  * Returns all `LessonSentence` records for a lesson, each including
- * the associated sentence. Translations now live on `LessonSentence`
- * itself rather than a separate `SentenceTranslation` table, so the
- * caller gets translation + sentence surface form in one object.
+ * the canonical sentence row used for audio and romanization.
  */
 export function getLessonSentences(params: { lessonId: number }) {
   return cachedGetLessonSentences(params.lessonId);

@@ -1,3 +1,4 @@
+import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
 import { type StoryStaticVariant, parseStepContent } from "@zoonk/core/steps/contract/content";
 import { type HapticInput } from "web-haptics";
 import { getInvestigationCallVerdict } from "./investigation-call-verdict";
@@ -5,7 +6,6 @@ import { type PlayerMilestone } from "./player-context";
 import { type PlayerPhase, type StepResult } from "./player-reducer";
 import { type StoryMetric } from "./player-selectors";
 import { describePlayerStep } from "./player-step";
-import { type SerializedStep } from "./prepare-activity-data";
 import { METRIC_CRITICAL_THRESHOLD, METRIC_DANGER_THRESHOLD } from "./story";
 
 type ConsequenceHaptic = "error" | "nudge" | "success";

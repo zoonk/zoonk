@@ -20,13 +20,13 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
 import { parseStepContent } from "@zoonk/core/steps/contract/content";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useCallback, useId, useMemo, useState } from "react";
 import { useWebHaptics } from "web-haptics/react";
 import { type SelectedAnswer, type StepResult } from "../player-reducer";
-import { type SerializedStep } from "../prepare-activity-data";
 import { useReplaceName } from "../user-name-context";
 import { InlineFeedback } from "./inline-feedback";
 import { QuestionText } from "./question-text";

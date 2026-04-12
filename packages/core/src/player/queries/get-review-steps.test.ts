@@ -784,7 +784,10 @@ describe(getReviewValidationSteps, () => {
   });
 
   test("excludes steps from review activities", async () => {
-    const steps = await getReviewValidationSteps(lesson.id, [quizStep.id, reviewStep.id]);
+    const steps = await getReviewValidationSteps({
+      lessonId: lesson.id,
+      stepIds: [quizStep.id, reviewStep.id],
+    });
 
     const stepIds = steps.map((step) => step.id);
 
@@ -793,7 +796,10 @@ describe(getReviewValidationSteps, () => {
   });
 
   test("excludes static steps", async () => {
-    const steps = await getReviewValidationSteps(lesson.id, [quizStep.id, staticStep.id]);
+    const steps = await getReviewValidationSteps({
+      lessonId: lesson.id,
+      stepIds: [quizStep.id, staticStep.id],
+    });
 
     const stepIds = steps.map((step) => step.id);
 
@@ -828,7 +834,10 @@ describe(getReviewValidationSteps, () => {
       sentenceId: sentence.id,
     });
 
-    const steps = await getReviewValidationSteps(lesson.id, [readingStep.id]);
+    const steps = await getReviewValidationSteps({
+      lessonId: lesson.id,
+      stepIds: [readingStep.id],
+    });
 
     expect(steps[0]?.sentence).toMatchObject({
       sentence: sentence.sentence,
@@ -841,7 +850,10 @@ describe(getReviewValidationSteps, () => {
       where: { id: quizStep.activityId },
     });
 
-    const steps = await getReviewValidationSteps(lesson.id, [quizStep.id]);
+    const steps = await getReviewValidationSteps({
+      lessonId: lesson.id,
+      stepIds: [quizStep.id],
+    });
 
     expect(steps).toEqual([]);
   });

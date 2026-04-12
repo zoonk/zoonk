@@ -1,9 +1,9 @@
 "use client";
 
+import { type CompletionResult } from "@zoonk/core/player/contracts/completion-input-schema";
 import { cn } from "@zoonk/ui/lib/utils";
 import { CircleCheck } from "lucide-react";
 import { useExtracted } from "next-intl";
-import { type CompletionResult } from "../completion-input-schema";
 import { type PlayerRoute, usePlayerMilestone, usePlayerViewer } from "../player-context";
 import { AuthBranch } from "./completion-auth-branch";
 import { PlayerSupportingText } from "./player-supporting-text";

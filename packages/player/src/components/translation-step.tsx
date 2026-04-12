@@ -1,8 +1,11 @@
 "use client";
 
+import {
+  type SerializedStep,
+  type TranslationOption,
+} from "@zoonk/core/player/contracts/prepare-activity-data";
 import { useExtracted } from "next-intl";
 import { type SelectedAnswer } from "../player-reducer";
-import { type SerializedStep, type TranslationOption } from "../prepare-activity-data";
 import { useWordAudio } from "../use-word-audio";
 import {
   PlayerChoiceScene,

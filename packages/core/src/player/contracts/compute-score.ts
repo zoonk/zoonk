@@ -6,8 +6,7 @@ import {
 } from "@zoonk/core/steps/contract/content";
 import { APPLIED_ACTIVITY_BRAIN_POWER, BRAIN_POWER_PER_ACTIVITY } from "@zoonk/utils/brain-power";
 import { ENERGY_PER_CORRECT, ENERGY_PER_INCORRECT, ENERGY_PER_STATIC } from "@zoonk/utils/energy";
-import { type InvestigationLoopState } from "./investigation";
-import { type SelectedAnswer } from "./player-reducer";
+import { type InvestigationLoopState, type SelectedAnswer } from "./completion-input-schema";
 
 // ---------------------------------------------------------------------------
 // ScoreResult — the universal output of all scoring functions
@@ -268,24 +267,27 @@ function extractInvestigationInput({
   }
 
   const selectedExplanation = callContent.explanations.find(
-    (explanation) => explanation.id === callAnswer.selectedExplanationId,
+    (exp) => exp.id === callAnswer.selectedExplanationId,
   );
 
   if (!selectedExplanation) {
     return null;
   }
 
-  return { actionQualities, callAccuracy: selectedExplanation.accuracy };
+  return {
+    actionQualities,
+    callAccuracy: selectedExplanation.accuracy,
+  };
 }
 
 /**
- * Builds the scoring input from activity data and answers.
+ * Builds the normalized scoring input from raw steps, answers,
+ * stepResults, and optional investigation loop data.
  *
- * Used by the server to produce the same ActivityScoringInput that
- * the client builds from PlayerState. This ensures both sides call
- * computeActivityScore with equivalent data and get the same result.
- *
- * Steps must have string IDs (call String(step.id) for bigint DB IDs).
+ * Both client and server call this so all score branching logic
+ * lives in one place. The caller tells us the activity kind
+ * explicitly because some activities (review) are scored as
+ * generic even when their steps mix multiple concrete step kinds.
  */
 export function buildScoringInput({
   activityKind,
@@ -301,10 +303,17 @@ export function buildScoringInput({
   steps: { id: string; kind: string; content: unknown }[];
 }): ActivityScoringInput {
   if (activityKind === "investigation" && investigationLoop) {
-    const input = extractInvestigationInput({ answers, investigationLoop, steps });
+    const investigation = extractInvestigationInput({
+      answers,
+      investigationLoop,
+      steps,
+    });
 
-    if (input) {
-      return { investigation: input, kind: "investigation" };
+    if (investigation) {
+      return {
+        investigation,
+        kind: "investigation",
+      };
     }
   }
 
@@ -312,9 +321,15 @@ export function buildScoringInput({
     const alignments = extractStoryAlignments({ answers, steps });
 
     if (alignments.length > 0) {
-      return { alignments, kind: "story" };
+      return {
+        alignments,
+        kind: "story",
+      };
     }
   }
 
-  return { kind: "generic", results: stepResults };
+  return {
+    kind: "generic",
+    results: stepResults,
+  };
 }

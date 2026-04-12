@@ -1,8 +1,8 @@
 "use client";
 
+import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
 import { type SelectedAnswer, type StepResult } from "../player-reducer";
 import { describePlayerStep } from "../player-step";
-import { type SerializedStep } from "../prepare-activity-data";
 import { InvestigationActionVariant } from "./investigation-action-variant";
 import { InvestigationCallVariant } from "./investigation-call-variant";
 import { InvestigationProblemVariant } from "./investigation-problem-variant";

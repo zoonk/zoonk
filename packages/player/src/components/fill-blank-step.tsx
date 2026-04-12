@@ -1,11 +1,14 @@
 "use client";
 
+import {
+  type SerializedStep,
+  type WordBankOption,
+} from "@zoonk/core/player/contracts/prepare-activity-data";
 import { parseStepContent } from "@zoonk/core/steps/contract/content";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
 import { useCallback, useMemo, useState } from "react";
 import { type SelectedAnswer, type StepResult } from "../player-reducer";
-import { type SerializedStep, type WordBankOption } from "../prepare-activity-data";
 import { useReplaceName } from "../user-name-context";
 import { getTemplateRomanization } from "./_utils/template-romanization";
 import { InlineFeedback } from "./inline-feedback";

@@ -30,6 +30,7 @@ import {
   buildTranslationOptions,
   serializeDistractorWord,
 } from "./translation-options";
+
 export type { TranslationOption } from "./translation-options";
 
 export type SerializedWord = {
@@ -261,10 +262,11 @@ function prepareActivityData(
   },
   lessonWords: WordDataInput[],
   lessonSentences: SentenceDataInput[],
-  sentenceWords: WordDataInput[] = [],
-  distractorWords: DistractorWordDataInput[] = [],
+  sentenceWords: WordDataInput[],
+  distractorWords: DistractorWordDataInput[],
 ): SerializedActivity {
   const serializedLessonWords = serializeWords(lessonWords);
+  const serializedLessonSentences = lessonSentences.map((sentence) => serializeSentence(sentence));
   const serializedDistractorWords = distractorWords.map((word) => serializeDistractorWord(word));
   const distractorLookup = buildDistractorWordLookup(serializedDistractorWords);
   const sentenceWordMap = new Map(
@@ -297,6 +299,7 @@ function prepareActivityData(
           kind: step.kind,
           word: step.word,
         }),
+        vocabularyOptions: serializedLessonWords,
         wordBankOptions: buildWordBankOptions(
           step,
           serializedLessonWords,
@@ -312,7 +315,7 @@ function prepareActivityData(
     id: String(activity.id),
     kind: activity.kind,
     language: activity.language,
-    lessonSentences: lessonSentences.map((sentence) => serializeSentence(sentence)),
+    lessonSentences: serializedLessonSentences,
     lessonWords: serializedLessonWords,
     organizationId: activity.organizationId,
     steps,
@@ -322,8 +325,8 @@ function prepareActivityData(
 
 /**
  * The app should only fetch the raw lesson activity inputs. This helper keeps the entire
- * preparation pipeline inside the player package so the app does not need to know about
- * translation attachment, mapper ordering, or the serializer's internal input shapes.
+ * preparation pipeline inside the shared player contract so apps do not need to know about
+ * serialization, shuffling, or derived option building.
  */
 export function prepareLessonActivityData(params: PrepareLessonActivityInput): SerializedActivity {
   const steps = params.steps ?? params.activity.steps;

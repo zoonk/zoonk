@@ -1,5 +1,5 @@
+import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
 import { type StepResult } from "../../player-reducer";
-import { type SerializedStep } from "../../prepare-activity-data";
 
 /**
  * Returns romanization only when it differs from the displayed text.

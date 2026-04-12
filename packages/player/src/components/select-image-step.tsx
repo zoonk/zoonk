@@ -1,5 +1,6 @@
 "use client";
 
+import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
 import { type SelectImageStepContent, parseStepContent } from "@zoonk/core/steps/contract/content";
 import { cn } from "@zoonk/ui/lib/utils";
 import { useExtracted } from "next-intl";
@@ -7,7 +8,6 @@ import Image from "next/image";
 import { useState } from "react";
 import { SELECT_IMAGE_PROPS } from "../image-config";
 import { type SelectedAnswer, type StepResult } from "../player-reducer";
-import { type SerializedStep } from "../prepare-activity-data";
 import { useOptionKeyboard } from "../use-option-keyboard";
 import { InlineFeedback } from "./inline-feedback";
 import { QuestionText } from "./question-text";

@@ -1,10 +1,10 @@
+import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
 import {
   type InvestigationActionQuality,
   type InvestigationStepContent,
 } from "@zoonk/core/steps/contract/content";
 import { type PlayerState } from "./player-reducer";
 import { describePlayerStep } from "./player-step";
-import { type SerializedStep } from "./prepare-activity-data";
 
 export type ActionTiming = {
   answeredAt: number;

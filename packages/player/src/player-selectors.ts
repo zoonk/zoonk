@@ -1,9 +1,9 @@
+import { type CompletionResult } from "@zoonk/core/player/contracts/completion-input-schema";
+import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
 import { INVESTIGATION_EXPERIMENT_COUNT } from "@zoonk/utils/activities";
-import { type CompletionResult } from "./completion-input-schema";
 import { getInvestigationScenario } from "./investigation";
 import { type PlayerState } from "./player-reducer";
 import { describePlayerStep, getInvestigationVariant } from "./player-step";
-import { type SerializedStep } from "./prepare-activity-data";
 import { EFFECT_DELTA_MAP, METRIC_AVERAGE_THRESHOLD } from "./story";
 
 /** Converts a 0-based step index to a 1-based percentage (0–100). */

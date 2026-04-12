@@ -1,7 +1,7 @@
 "use client";
 
+import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
 import { describePlayerStep } from "../player-step";
-import { type SerializedStep } from "../prepare-activity-data";
 import { useReplaceName } from "../user-name-context";
 import { HighlightText } from "./highlight-text";
 import {

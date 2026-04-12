@@ -1,6 +1,4 @@
-import { parseStepContent } from "@zoonk/core/steps/contract/content";
-import { segmentWords } from "@zoonk/utils/string";
-import { buildAcceptedArrangeWordSequences } from "./arrange-words-answers";
+import { buildAcceptedArrangeWordSequences } from "@zoonk/core/player/contracts/arrange-words-answers";
 import {
   type AnswerResult,
   checkArrangeWordsAnswer,
@@ -13,10 +11,12 @@ import {
   checkSortOrderAnswer,
   checkStoryAnswer,
   checkTranslationAnswer,
-} from "./check-answer";
+} from "@zoonk/core/player/contracts/check-answer";
+import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
+import { parseStepContent } from "@zoonk/core/steps/contract/content";
+import { segmentWords } from "@zoonk/utils/string";
 import { type SelectedAnswer } from "./player-reducer";
 import { type PlayerCheckBehavior, getPlayerCheckBehavior } from "./player-step-behavior";
-import { type SerializedStep } from "./prepare-activity-data";
 
 type CheckStepResult = {
   result: AnswerResult;

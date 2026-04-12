@@ -1,4 +1,4 @@
-import { type CompletionInput } from "./completion-input-schema";
+import { type CompletionInput } from "@zoonk/core/player/contracts/completion-input-schema";
 import { type PlayerAction, type PlayerState, playerReducer } from "./player-reducer";
 
 function getLocalDate(now: Date): string {

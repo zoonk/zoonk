@@ -1,3 +1,4 @@
+import "server-only";
 import { getLessonGenerationState } from "@zoonk/core/content/management";
 import { getPublishedLessonWhere, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
