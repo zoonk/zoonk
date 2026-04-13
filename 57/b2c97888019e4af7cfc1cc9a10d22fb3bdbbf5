@@ -1,0 +1,66 @@
+apps/api/src/workflows/chapter-generation/chapter-generation-workflow.test.ts
+  04f7de5bb677b057 2,11,80-81,83,103-104,106,246-247,249
+apps/api/src/workflows/activity-generation/core-activity-workflow.test.ts
+  04f7de5bb677b057 16
+apps/api/src/workflows/activity-generation/activity-generation-workflow.test.ts
+  04f7de5bb677b057 2,12,327-328,330,363-364,366
+apps/api/src/workflows/activity-generation/kinds/explanation-workflow.test.ts
+  04f7de5bb677b057 2,13,50
+apps/api/src/workflows/activity-generation/kinds/quiz-workflow.test.ts
+  04f7de5bb677b057 10
+apps/api/src/workflows/course-generation/course-generation-workflow.test.ts
+  04f7de5bb677b057 2,20,150-151,153,171-172,174,203-204,206,235-236,238,387-388,390,413-414,416
+apps/api/src/workflows/activity-generation/kinds/grammar-workflow.test.ts
+  04f7de5bb677b057 10
+apps/api/src/workflows/lesson-generation/lesson-generation-workflow.test.ts
+  04f7de5bb677b057 2,12,96-97,99,192-193,195
+apps/api/setup-tests.ts
+  04f7de5bb677b057 2,8
+apps/api/src/workflows/activity-generation/custom-activity-workflow.test.ts
+  04f7de5bb677b057 10
+apps/api/src/workflows/activity-generation/kinds/practice-workflow.test.ts
+  04f7de5bb677b057 10
+apps/api/src/workflows/activity-generation/kinds/listening-workflow.test.ts
+  04f7de5bb677b057 11
+apps/api/src/workflows/activity-generation/kinds/story-workflow.test.ts
+  04f7de5bb677b057 11
+apps/api/src/workflows/activity-generation/kinds/custom-workflow.test.ts
+  04f7de5bb677b057 10
+apps/api/src/workflows/activity-generation/kinds/investigation-workflow.test.ts
+  04f7de5bb677b057 13
+apps/api/src/workflows/_test-utils/parse-stream-events.ts
+  04f7de5bb677b057 2,18-22
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.8",
+  "base_commit_sha": "57b2c97888019e4af7cfc1cc9a10d22fb3bdbbf5",
+  "prompts": {
+    "04f7de5bb677b057": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d8768-3156-72b2-bef9-a23e99f7fb87",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 72,
+      "total_deletions": 332,
+      "accepted_lines": 67,
+      "overriden_lines": 0
+    },
+    "3b95621e1b18a2c5": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "a6da674d-8475-4048-aa38-daef3905971e",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 4,
+      "overriden_lines": 0
+    }
+  }
+}
