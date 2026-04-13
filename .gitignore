@@ -45,6 +45,8 @@ yarn-error.log*
 .DS_Store
 *.pem
 .playwright-mcp
+.vitest-attachments
+__screenshots__
 
 # VSCode
 tasks.json

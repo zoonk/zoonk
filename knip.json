@@ -32,6 +32,11 @@
       "entry": ["src/app/privacy/*.mdx", "src/app/terms/*.mdx"],
       "project": ["src/**/*.{ts,tsx}!", "e2e/**/*.ts"]
     },
+    "apps/video": {
+      "entry": ["src/index.ts!", "remotion.config.ts"],
+      "ignoreDependencies": ["@remotion/cli!"],
+      "project": ["src/**/*.{ts,tsx}!"]
+    },
     "packages/core": {
       "project": ["src/**/*.ts!"]
     },
@@ -41,10 +46,8 @@
       "ignoreDependencies": ["@zoonk/utils"],
       "prisma": false
     },
-    "apps/video": {
-      "entry": ["src/index.ts!", "remotion.config.ts"],
-      "ignoreDependencies": ["@remotion/cli!"],
-      "project": ["src/**/*.{ts,tsx}!"]
+    "packages/player": {
+      "project": ["src/**/*.{ts,tsx}!", "!**/_test-utils/**!"]
     },
     "packages/ui": {
       "includeEntryExports": false
