@@ -7,7 +7,7 @@ import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, describe, expect, test, vi } from "vitest";
 import { activityGenerationWorkflow } from "./activity-generation-workflow";
 import { type dispatchVisualContent } from "./steps/_utils/dispatch-visual-content";
 
@@ -37,18 +37,6 @@ function createDispatchResult(
       : { annotations: null, code: "const x = 1;", kind: "code", language: "typescript" },
   );
 }
-
-vi.mock("workflow", () => ({
-  FatalError: class FatalError extends Error {},
-  getWorkflowMetadata: vi.fn().mockReturnValue({ workflowRunId: "test-run-id" }),
-  getWritable: vi.fn().mockReturnValue({
-    getWriter: () => ({
-      releaseLock: vi.fn(),
-      write: vi.fn().mockResolvedValue(null),
-    }),
-  }),
-  workflowStep: vi.fn().mockImplementation((_name: string, fn: unknown) => fn),
-}));
 
 vi.mock("@zoonk/ai/tasks/activities/core/explanation", () => ({
   generateActivityExplanation: vi.fn().mockResolvedValue({
@@ -113,10 +101,6 @@ describe("custom activity workflow", () => {
       organizationId,
       title: `Test Chapter ${randomUUID()}`,
     });
-  });
-
-  beforeEach(() => {
-    vi.clearAllMocks();
   });
 
   test("one custom activity fails while others still complete", async () => {

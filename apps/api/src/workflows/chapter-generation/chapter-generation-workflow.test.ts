@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
 import { activityGenerationWorkflow } from "@/workflows/activity-generation/activity-generation-workflow";
 import { generateChapterLessons } from "@zoonk/ai/tasks/chapters/lessons";
 import { CHAPTER_COMPLETION_STEP } from "@zoonk/core/workflows/steps";
@@ -7,21 +8,8 @@ import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, describe, expect, test, vi } from "vitest";
 import { chapterGenerationWorkflow } from "./chapter-generation-workflow";
-
-const writeMock = vi.fn().mockResolvedValue(null);
-
-vi.mock("workflow", () => ({
-  FatalError: class FatalError extends Error {},
-  getWorkflowMetadata: vi.fn().mockReturnValue({ workflowRunId: "test-run-id" }),
-  getWritable: vi.fn().mockReturnValue({
-    getWriter: () => ({
-      releaseLock: vi.fn(),
-      write: writeMock,
-    }),
-  }),
-}));
 
 vi.mock("@zoonk/ai/tasks/chapters/lessons", () => ({
   generateChapterLessons: vi.fn().mockResolvedValue({
@@ -71,10 +59,6 @@ describe(chapterGenerationWorkflow, () => {
     course = await courseFixture({ organizationId });
   });
 
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
   describe("early returns", () => {
     test("returns early when generationStatus is 'running' without streaming completion", async () => {
       const chapter = await chapterFixture({
@@ -93,12 +77,10 @@ describe(chapterGenerationWorkflow, () => {
       expect(dbChapter?.generationStatus).toBe("running");
       expect(generateChapterLessons).not.toHaveBeenCalled();
 
-      const completionCall = writeMock.mock.calls.find(
-        (call: string[]) =>
-          call[0]?.includes(`"step":"${CHAPTER_COMPLETION_STEP}"`) &&
-          call[0]?.includes('"status":"completed"'),
+      const completionEvent = getStreamedEvents().find(
+        (event) => event.step === CHAPTER_COMPLETION_STEP && event.status === "completed",
       );
-      expect(completionCall).toBeUndefined();
+      expect(completionEvent).toBeUndefined();
     });
 
     test("streams completion when generationStatus is 'completed'", async () => {
@@ -118,12 +100,10 @@ describe(chapterGenerationWorkflow, () => {
       expect(dbChapter?.generationStatus).toBe("completed");
       expect(generateChapterLessons).not.toHaveBeenCalled();
 
-      const completionCall = writeMock.mock.calls.find(
-        (call: string[]) =>
-          call[0]?.includes(`"step":"${CHAPTER_COMPLETION_STEP}"`) &&
-          call[0]?.includes('"status":"completed"'),
+      const completionEvent = getStreamedEvents().find(
+        (event) => event.step === CHAPTER_COMPLETION_STEP && event.status === "completed",
       );
-      expect(completionCall).toBeDefined();
+      expect(completionEvent).toBeDefined();
     });
 
     test("sets as completed and returns when chapter has existing lessons", async () => {
@@ -263,11 +243,10 @@ describe(chapterGenerationWorkflow, () => {
       expect(dbChapter?.generationStatus).toBe("failed");
       expect(dbChapter?.generationRunId).toBeNull();
 
-      const errorCall = writeMock.mock.calls.find(
-        (call: string[]) =>
-          call[0]?.includes('"status":"error"') && call[0]?.includes('"step":"workflowError"'),
+      const errorEvent = getStreamedEvents().find(
+        (event) => event.status === "error" && event.step === "workflowError",
       );
-      expect(errorCall).toBeDefined();
+      expect(errorEvent).toBeDefined();
     });
 
     test("throws FatalError when chapter not found", async () => {

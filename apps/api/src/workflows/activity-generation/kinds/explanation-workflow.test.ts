@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
 import { generateActivityExplanation } from "@zoonk/ai/tasks/activities/core/explanation";
 import { generateStepVisualDescriptions } from "@zoonk/ai/tasks/steps/visual-descriptions";
 import { prisma } from "@zoonk/db";
@@ -9,12 +10,10 @@ import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { getString } from "@zoonk/utils/json";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, describe, expect, test, vi } from "vitest";
 import { dispatchVisualContent } from "../steps/_utils/dispatch-visual-content";
 import { getLessonActivitiesStep } from "../steps/get-lesson-activities-step";
 import { explanationActivityWorkflow } from "./explanation-workflow";
-
-const mockStreamWrite = vi.hoisted(() => vi.fn().mockResolvedValue(null));
 
 function createDescriptionsResult(
   steps: { title: string; text: string }[],
@@ -48,22 +47,8 @@ function createDispatchResult(
 }
 
 function getStreamedMessages(): Record<string, string>[] {
-  return mockStreamWrite.mock.calls.map(
-    (call: string[]) => JSON.parse(call[0]!.replace("data: ", "").trim()) as Record<string, string>,
-  );
+  return getStreamedEvents() as Record<string, string>[];
 }
-
-vi.mock("workflow", () => ({
-  FatalError: class FatalError extends Error {},
-  getWorkflowMetadata: vi.fn().mockReturnValue({ workflowRunId: "test-run-id" }),
-  getWritable: vi.fn().mockReturnValue({
-    getWriter: () => ({
-      releaseLock: vi.fn(),
-      write: mockStreamWrite,
-    }),
-  }),
-  workflowStep: vi.fn().mockImplementation((_name: string, fn: unknown) => fn),
-}));
 
 vi.mock("@zoonk/ai/tasks/activities/core/explanation", () => ({
   generateActivityExplanation: vi.fn().mockResolvedValue({
@@ -112,10 +97,6 @@ describe("explanation activity workflow", () => {
       organizationId,
       title: `Exp WF Chapter ${randomUUID()}`,
     });
-  });
-
-  beforeEach(() => {
-    vi.clearAllMocks();
   });
 
   test("creates explanation steps in database for each concept", async () => {

@@ -7,22 +7,10 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, describe, expect, test, vi } from "vitest";
 import { type ExplanationResult } from "../steps/generate-explanation-content-step";
 import { getLessonActivitiesStep } from "../steps/get-lesson-activities-step";
 import { practiceActivityWorkflow } from "./practice-workflow";
-
-vi.mock("workflow", () => ({
-  FatalError: class FatalError extends Error {},
-  getWorkflowMetadata: vi.fn().mockReturnValue({ workflowRunId: "test-run-id" }),
-  getWritable: vi.fn().mockReturnValue({
-    getWriter: () => ({
-      releaseLock: vi.fn(),
-      write: vi.fn().mockResolvedValue(null),
-    }),
-  }),
-  workflowStep: vi.fn().mockImplementation((_name: string, fn: unknown) => fn),
-}));
 
 vi.mock("@zoonk/ai/tasks/activities/core/practice", () => ({
   generateActivityPractice: vi.fn().mockResolvedValue({
@@ -70,10 +58,6 @@ describe("practice activity workflow", () => {
       organizationId,
       title: `Practice WF Chapter ${randomUUID()}`,
     });
-  });
-
-  beforeEach(() => {
-    vi.clearAllMocks();
   });
 
   test("creates practice steps with multipleChoice kind", async () => {

@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
 import { generateLessonActivities } from "@zoonk/ai/tasks/lessons/activities";
 import { generateAppliedActivityKind } from "@zoonk/ai/tasks/lessons/applied-activity-kind";
 import { generateLessonKind } from "@zoonk/ai/tasks/lessons/kind";
@@ -8,21 +9,8 @@ import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, describe, expect, test, vi } from "vitest";
 import { lessonGenerationWorkflow } from "./lesson-generation-workflow";
-
-const writeMock = vi.fn().mockResolvedValue(null);
-
-vi.mock("workflow", () => ({
-  FatalError: class FatalError extends Error {},
-  getWorkflowMetadata: vi.fn().mockReturnValue({ workflowRunId: "test-run-id" }),
-  getWritable: vi.fn().mockReturnValue({
-    getWriter: () => ({
-      releaseLock: vi.fn(),
-      write: writeMock,
-    }),
-  }),
-}));
 
 vi.mock("@zoonk/ai/tasks/lessons/kind", () => ({
   generateLessonKind: vi.fn().mockResolvedValue({
@@ -61,10 +49,6 @@ describe(lessonGenerationWorkflow, () => {
       organizationId,
       title: `Test Chapter ${randomUUID()}`,
     });
-  });
-
-  beforeEach(() => {
-    vi.clearAllMocks();
   });
 
   describe("early returns", () => {
@@ -109,12 +93,10 @@ describe(lessonGenerationWorkflow, () => {
       expect(dbLesson?.generationStatus).toBe("completed");
       expect(generateLessonKind).not.toHaveBeenCalled();
 
-      const completionCall = writeMock.mock.calls.find(
-        (call: string[]) =>
-          call[0]?.includes('"step":"setLessonAsCompleted"') &&
-          call[0]?.includes('"status":"completed"'),
+      const completionEvent = getStreamedEvents().find(
+        (event) => event.step === "setLessonAsCompleted" && event.status === "completed",
       );
-      expect(completionCall).toBeDefined();
+      expect(completionEvent).toBeDefined();
     });
 
     test("sets as completed and returns when lesson has existing activities but status not completed", async () => {
@@ -207,11 +189,10 @@ describe(lessonGenerationWorkflow, () => {
       expect(dbLesson?.generationStatus).toBe("failed");
       expect(dbLesson?.generationRunId).toBe("test-run-id");
 
-      const errorCall = writeMock.mock.calls.find(
-        (call: string[]) =>
-          call[0]?.includes('"status":"error"') && call[0]?.includes('"step":"workflowError"'),
+      const errorEvent = getStreamedEvents().find(
+        (event) => event.status === "error" && event.step === "workflowError",
       );
-      expect(errorCall).toBeDefined();
+      expect(errorEvent).toBeDefined();
     });
 
     test("marks lesson as 'failed' when custom activities generation throws", async () => {

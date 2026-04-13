@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
 import { generateChapterLessons } from "@zoonk/ai/tasks/chapters/lessons";
 import { generateAlternativeTitles } from "@zoonk/ai/tasks/courses/alternative-titles";
 import { generateCourseCategories } from "@zoonk/ai/tasks/courses/categories";
@@ -16,22 +17,9 @@ import {
 } from "@zoonk/testing/fixtures/courses";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { toSlug } from "@zoonk/utils/string";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, describe, expect, test, vi } from "vitest";
 import { getOrCreateCourse } from "./_internal/get-or-create-course";
 import { courseGenerationWorkflow } from "./course-generation-workflow";
-
-const writeMock = vi.fn().mockResolvedValue(null);
-
-vi.mock("workflow", () => ({
-  FatalError: class FatalError extends Error {},
-  getWorkflowMetadata: vi.fn().mockReturnValue({ workflowRunId: "test-run-id" }),
-  getWritable: vi.fn().mockReturnValue({
-    getWriter: () => ({
-      releaseLock: vi.fn(),
-      write: writeMock,
-    }),
-  }),
-}));
 
 vi.mock("@zoonk/ai/tasks/courses/description", () => ({
   generateCourseDescription: vi.fn().mockResolvedValue({
@@ -133,10 +121,6 @@ describe(courseGenerationWorkflow, () => {
     organizationId = org.id;
   });
 
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
   describe("early returns", () => {
     test("returns when suggestion not found", async () => {
       const nonExistentId = 999_999_999;
@@ -163,12 +147,10 @@ describe(courseGenerationWorkflow, () => {
       expect(dbSuggestion?.generationStatus).toBe("running");
       expect(generateCourseDescription).not.toHaveBeenCalled();
 
-      const completionCall = writeMock.mock.calls.find(
-        (call: string[]) =>
-          call[0]?.includes(`"step":"${COURSE_COMPLETION_STEP}"`) &&
-          call[0]?.includes('"status":"completed"'),
+      const completionEvent = getStreamedEvents().find(
+        (event) => event.step === COURSE_COMPLETION_STEP && event.status === "completed",
       );
-      expect(completionCall).toBeUndefined();
+      expect(completionEvent).toBeUndefined();
     });
 
     test("streams completion when suggestion status is 'completed'", async () => {
@@ -186,12 +168,10 @@ describe(courseGenerationWorkflow, () => {
       expect(dbSuggestion?.generationStatus).toBe("completed");
       expect(generateCourseDescription).not.toHaveBeenCalled();
 
-      const completionCall = writeMock.mock.calls.find(
-        (call: string[]) =>
-          call[0]?.includes(`"step":"${COURSE_COMPLETION_STEP}"`) &&
-          call[0]?.includes('"status":"completed"'),
+      const completionEvent = getStreamedEvents().find(
+        (event) => event.step === COURSE_COMPLETION_STEP && event.status === "completed",
       );
-      expect(completionCall).toBeDefined();
+      expect(completionEvent).toBeDefined();
     });
 
     test("returns when existing course status is 'running' without streaming completion", async () => {
@@ -220,12 +200,10 @@ describe(courseGenerationWorkflow, () => {
       expect(dbSuggestion?.generationStatus).toBe("pending");
       expect(generateCourseDescription).not.toHaveBeenCalled();
 
-      const completionCall = writeMock.mock.calls.find(
-        (call: string[]) =>
-          call[0]?.includes(`"step":"${COURSE_COMPLETION_STEP}"`) &&
-          call[0]?.includes('"status":"completed"'),
+      const completionEvent = getStreamedEvents().find(
+        (event) => event.step === COURSE_COMPLETION_STEP && event.status === "completed",
       );
-      expect(completionCall).toBeUndefined();
+      expect(completionEvent).toBeUndefined();
     });
 
     test("streams completion when existing course status is 'completed'", async () => {
@@ -254,12 +232,10 @@ describe(courseGenerationWorkflow, () => {
       expect(dbSuggestion?.generationStatus).toBe("pending");
       expect(generateCourseDescription).not.toHaveBeenCalled();
 
-      const completionCall = writeMock.mock.calls.find(
-        (call: string[]) =>
-          call[0]?.includes(`"step":"${COURSE_COMPLETION_STEP}"`) &&
-          call[0]?.includes('"status":"completed"'),
+      const completionEvent = getStreamedEvents().find(
+        (event) => event.step === COURSE_COMPLETION_STEP && event.status === "completed",
       );
-      expect(completionCall).toBeDefined();
+      expect(completionEvent).toBeDefined();
     });
   });
 
@@ -408,11 +384,10 @@ describe(courseGenerationWorkflow, () => {
       expect(dbSuggestion?.generationStatus).toBe("failed");
       expect(dbSuggestion?.generationRunId).toBeNull();
 
-      const errorCall = writeMock.mock.calls.find(
-        (call: string[]) =>
-          call[0]?.includes('"status":"error"') && call[0]?.includes('"step":"workflowError"'),
+      const errorEvent = getStreamedEvents().find(
+        (event) => event.status === "error" && event.step === "workflowError",
       );
-      expect(errorCall).toBeDefined();
+      expect(errorEvent).toBeDefined();
     });
 
     test("marks suggestion as 'failed' when getOrCreateCourse fails", async () => {
@@ -435,11 +410,10 @@ describe(courseGenerationWorkflow, () => {
 
       expect(dbSuggestion?.generationStatus).toBe("failed");
 
-      const errorCall = writeMock.mock.calls.find(
-        (call: string[]) =>
-          call[0]?.includes('"status":"error"') && call[0]?.includes('"step":"workflowError"'),
+      const errorEvent = getStreamedEvents().find(
+        (event) => event.status === "error" && event.step === "workflowError",
       );
-      expect(errorCall).toBeDefined();
+      expect(errorEvent).toBeDefined();
     });
 
     test("chapter generation errors don't mark course as failed", async () => {
