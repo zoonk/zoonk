@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
 import { generateActivityExplanation } from "@zoonk/ai/tasks/activities/core/explanation";
 import { generateActivityCustom } from "@zoonk/ai/tasks/activities/custom";
 import { type generateStepVisualDescriptions } from "@zoonk/ai/tasks/steps/visual-descriptions";
@@ -8,7 +9,7 @@ import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, describe, expect, test, vi } from "vitest";
 import { activityGenerationWorkflow } from "./activity-generation-workflow";
 import { type dispatchVisualContent } from "./steps/_utils/dispatch-visual-content";
 
@@ -38,20 +39,6 @@ function createDispatchResult(
       : { annotations: null, code: "const x = 1;", kind: "code", language: "typescript" },
   );
 }
-
-const writeMock = vi.fn().mockResolvedValue(null);
-
-vi.mock("workflow", () => ({
-  FatalError: class FatalError extends Error {},
-  getWorkflowMetadata: vi.fn().mockReturnValue({ workflowRunId: "test-run-id" }),
-  getWritable: vi.fn().mockReturnValue({
-    getWriter: () => ({
-      releaseLock: vi.fn(),
-      write: writeMock,
-    }),
-  }),
-  workflowStep: vi.fn().mockImplementation((_name: string, fn: unknown) => fn),
-}));
 
 vi.mock("@zoonk/ai/tasks/activities/core/explanation", () => ({
   generateActivityExplanation: vi.fn().mockResolvedValue({
@@ -158,10 +145,6 @@ describe(activityGenerationWorkflow, () => {
       organizationId,
       title: `Test Chapter ${randomUUID()}`,
     });
-  });
-
-  beforeEach(() => {
-    vi.clearAllMocks();
   });
 
   describe("lesson validation", () => {
@@ -341,12 +324,10 @@ describe(activityGenerationWorkflow, () => {
       expect(generateActivityExplanation).not.toHaveBeenCalled();
       expect(generateActivityCustom).not.toHaveBeenCalled();
 
-      const completionCall = writeMock.mock.calls.find(
-        (call: string[]) =>
-          call[0]?.includes('"step":"saveExplanationActivity"') &&
-          call[0]?.includes('"status":"completed"'),
+      const completionEvent = getStreamedEvents().find(
+        (event) => event.step === "saveExplanationActivity" && event.status === "completed",
       );
-      expect(completionCall).toBeDefined();
+      expect(completionEvent).toBeDefined();
     });
 
     test("returns early without streaming completion when activities are completed or running", async () => {
@@ -379,12 +360,10 @@ describe(activityGenerationWorkflow, () => {
       expect(generateActivityExplanation).not.toHaveBeenCalled();
       expect(generateActivityCustom).not.toHaveBeenCalled();
 
-      const completionCall = writeMock.mock.calls.find(
-        (call: string[]) =>
-          call[0]?.includes('"step":"saveExplanationActivity"') &&
-          call[0]?.includes('"status":"completed"'),
+      const completionEvent = getStreamedEvents().find(
+        (event) => event.step === "saveExplanationActivity" && event.status === "completed",
       );
-      expect(completionCall).toBeUndefined();
+      expect(completionEvent).toBeUndefined();
     });
 
     test("does not skip when some activities are pending", async () => {

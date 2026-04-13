@@ -8,21 +8,9 @@ import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { sentenceFixture } from "@zoonk/testing/fixtures/sentences";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, describe, expect, test } from "vitest";
 import { type LessonActivity } from "../steps/get-lesson-activities-step";
 import { listeningActivityWorkflow } from "./listening-workflow";
-
-vi.mock("workflow", () => ({
-  FatalError: class FatalError extends Error {},
-  getWorkflowMetadata: vi.fn().mockReturnValue({ workflowRunId: "test-run-id" }),
-  getWritable: vi.fn().mockReturnValue({
-    getWriter: () => ({
-      releaseLock: vi.fn(),
-      write: vi.fn().mockResolvedValue(null),
-    }),
-  }),
-  workflowStep: vi.fn().mockImplementation((_name: string, fn: unknown) => fn),
-}));
 
 async function fetchLessonActivities(lessonId: number): Promise<LessonActivity[]> {
   const activities = await prisma.activity.findMany({
@@ -59,10 +47,6 @@ describe(listeningActivityWorkflow, () => {
       organizationId,
       title: `Listening Chapter ${randomUUID()}`,
     });
-  });
-
-  beforeEach(() => {
-    vi.clearAllMocks();
   });
 
   test("copies reading steps to listening activity", async () => {

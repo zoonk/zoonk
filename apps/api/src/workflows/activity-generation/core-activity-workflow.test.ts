@@ -13,7 +13,7 @@ import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { getString } from "@zoonk/utils/json";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, describe, expect, test, vi } from "vitest";
 import { activityGenerationWorkflow } from "./activity-generation-workflow";
 import { dispatchVisualContent } from "./steps/_utils/dispatch-visual-content";
 import { getNeighboringConceptsStep } from "./steps/get-neighboring-concepts-step";
@@ -21,8 +21,6 @@ import { getNeighboringConceptsStep } from "./steps/get-neighboring-concepts-ste
 vi.mock("./steps/get-neighboring-concepts-step", () => ({
   getNeighboringConceptsStep: vi.fn().mockResolvedValue([]),
 }));
-
-const mockStreamWrite = vi.hoisted(() => vi.fn().mockResolvedValue(null));
 
 function createDescriptionsResult(
   steps: { title: string; text: string }[],
@@ -50,18 +48,6 @@ function createDispatchResult(
       : { annotations: null, code: "const x = 1;", kind: "code", language: "typescript" },
   );
 }
-
-vi.mock("workflow", () => ({
-  FatalError: class FatalError extends Error {},
-  getWorkflowMetadata: vi.fn().mockReturnValue({ workflowRunId: "test-run-id" }),
-  getWritable: vi.fn().mockReturnValue({
-    getWriter: () => ({
-      releaseLock: vi.fn(),
-      write: mockStreamWrite,
-    }),
-  }),
-  workflowStep: vi.fn().mockImplementation((_name: string, fn: unknown) => fn),
-}));
 
 vi.mock("@zoonk/ai/tasks/activities/core/explanation", () => ({
   generateActivityExplanation: vi.fn().mockResolvedValue({
@@ -210,10 +196,6 @@ describe("core activity workflow", () => {
       organizationId,
       title: `Test Chapter ${randomUUID()}`,
     });
-  });
-
-  beforeEach(() => {
-    vi.clearAllMocks();
   });
 
   describe("resumption", () => {

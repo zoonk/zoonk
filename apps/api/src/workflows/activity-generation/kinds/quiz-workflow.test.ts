@@ -7,22 +7,10 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, describe, expect, test, vi } from "vitest";
 import { type ExplanationResult } from "../steps/generate-explanation-content-step";
 import { getLessonActivitiesStep } from "../steps/get-lesson-activities-step";
 import { quizActivityWorkflow } from "./quiz-workflow";
-
-vi.mock("workflow", () => ({
-  FatalError: class FatalError extends Error {},
-  getWorkflowMetadata: vi.fn().mockReturnValue({ workflowRunId: "test-run-id" }),
-  getWritable: vi.fn().mockReturnValue({
-    getWriter: () => ({
-      releaseLock: vi.fn(),
-      write: vi.fn().mockResolvedValue(null),
-    }),
-  }),
-  workflowStep: vi.fn().mockImplementation((_name: string, fn: unknown) => fn),
-}));
 
 vi.mock("@zoonk/ai/tasks/activities/core/quiz", () => ({
   generateActivityQuiz: vi.fn().mockResolvedValue({
@@ -84,10 +72,6 @@ describe("quiz activity workflow", () => {
       organizationId,
       title: `Quiz WF Chapter ${randomUUID()}`,
     });
-  });
-
-  beforeEach(() => {
-    vi.clearAllMocks();
   });
 
   test("creates quiz steps from explanation results", async () => {

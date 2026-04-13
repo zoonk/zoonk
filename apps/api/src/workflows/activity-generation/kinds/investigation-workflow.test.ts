@@ -10,22 +10,10 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { getString } from "@zoonk/utils/json";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, describe, expect, test, vi } from "vitest";
 import { getArray } from "../../_test-utils/json-helpers";
 import { getLessonActivitiesStep } from "../steps/get-lesson-activities-step";
 import { investigationActivityWorkflow } from "./investigation-workflow";
-
-vi.mock("workflow", () => ({
-  FatalError: class FatalError extends Error {},
-  getWorkflowMetadata: vi.fn().mockReturnValue({ workflowRunId: "test-run-id" }),
-  getWritable: vi.fn().mockReturnValue({
-    getWriter: () => ({
-      releaseLock: vi.fn(),
-      write: vi.fn().mockResolvedValue(null),
-    }),
-  }),
-  workflowStep: vi.fn().mockImplementation((_name: string, fn: unknown) => fn),
-}));
 
 const { mockScenario, mockAccuracy, mockActions, mockFindings } = vi.hoisted(() => ({
   mockAccuracy: {
@@ -89,10 +77,6 @@ describe("investigation activity workflow", () => {
       organizationId,
       title: `Inv WF Chapter ${randomUUID()}`,
     });
-  });
-
-  beforeEach(() => {
-    vi.clearAllMocks();
   });
 
   test("creates investigation steps with correct structure", async () => {

@@ -11,19 +11,6 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { lessonRegenerationWorkflow } from "./lesson-regeneration-workflow";
 
-const writeMock = vi.fn().mockResolvedValue(null);
-
-vi.mock("workflow", () => ({
-  FatalError: class FatalError extends Error {},
-  getWorkflowMetadata: vi.fn().mockReturnValue({ workflowRunId: "test-run-id" }),
-  getWritable: vi.fn().mockReturnValue({
-    getWriter: () => ({
-      releaseLock: vi.fn(),
-      write: writeMock,
-    }),
-  }),
-}));
-
 const { activityGenerationWorkflowMock } = vi.hoisted(() => ({
   activityGenerationWorkflowMock: vi.fn(),
 }));

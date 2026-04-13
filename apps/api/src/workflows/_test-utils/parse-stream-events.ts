@@ -1,4 +1,5 @@
 import { isJsonObject } from "@zoonk/utils/json";
+import { getWorkflowWriteMock } from "./workflow-mock";
 
 /**
  * Safely parses a JSON string into a Record<string, unknown>.
@@ -14,8 +15,10 @@ function parseEvent(raw: unknown): Record<string, unknown> {
  * Each write call contains a string like `data: {"status":"started","step":"..."}\n\n`.
  * This parses them into objects for easy assertion.
  */
-export function getStreamedEvents(writeMock: {
-  mock: { calls: unknown[][] };
-}): Record<string, unknown>[] {
+export function getStreamedEvents(
+  writeMock: {
+    mock: { calls: unknown[][] };
+  } = getWorkflowWriteMock(),
+): Record<string, unknown>[] {
   return writeMock.mock.calls.map(([raw]) => parseEvent(raw));
 }

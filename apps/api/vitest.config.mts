@@ -11,6 +11,11 @@ export default defineConfig({
         replacement: resolve(import.meta.dirname, "../../packages/auth/src/testing.ts"),
       },
       {
+        // Provide one shared workflow mock so workflow integration tests can reuse the same plumbing.
+        find: /^workflow$/,
+        replacement: resolve(import.meta.dirname, "./mocks/workflow.ts"),
+      },
+      {
         // Mock server-only module
         find: /^server-only$/,
         replacement: resolve(import.meta.dirname, "./mocks/server-only.ts"),

@@ -8,21 +8,9 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { getString } from "@zoonk/utils/json";
-import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { beforeAll, describe, expect, test, vi } from "vitest";
 import { getLessonActivitiesStep } from "../steps/get-lesson-activities-step";
 import { storyActivityWorkflow } from "./story-workflow";
-
-vi.mock("workflow", () => ({
-  FatalError: class FatalError extends Error {},
-  getWorkflowMetadata: vi.fn().mockReturnValue({ workflowRunId: "test-run-id" }),
-  getWritable: vi.fn().mockReturnValue({
-    getWriter: () => ({
-      releaseLock: vi.fn(),
-      write: vi.fn().mockResolvedValue(null),
-    }),
-  }),
-  workflowStep: vi.fn().mockImplementation((_name: string, fn: unknown) => fn),
-}));
 
 const { mockStorySteps, mockDebriefData } = vi.hoisted(() => ({
   mockDebriefData: {
@@ -113,10 +101,6 @@ describe("story activity workflow", () => {
       organizationId,
       title: `Story WF Chapter ${randomUUID()}`,
     });
-  });
-
-  beforeEach(() => {
-    vi.clearAllMocks();
   });
 
   test("creates story steps with intro, decisions, and debrief", async () => {
