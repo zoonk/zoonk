@@ -4,7 +4,7 @@ import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { DEFAULT_IMAGE_ACCEPTED_TYPES } from "@zoonk/utils/upload";
 import { ImageIcon, Loader2Icon, UploadIcon } from "lucide-react";
-import { useRef, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 
 type UploadAction = (formData: FormData) => Promise<{ error: string | null }>;
 
@@ -38,6 +38,15 @@ export function SimpleImageUpload({
   const [isPending, startTransition] = useTransition();
   const blobUrlRef = useRef<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(
+    () => () => {
+      if (blobUrlRef.current) {
+        URL.revokeObjectURL(blobUrlRef.current);
+      }
+    },
+    [],
+  );
 
   const handleUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
