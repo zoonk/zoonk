@@ -14,22 +14,22 @@ export async function uploadStepImageAction(
     imageTarget: "visual" | number;
   },
   formData: FormData,
-): Promise<{ error: string | null }> {
+): Promise<{ error: string | null; imageUrl: string | null }> {
   if (!(await isAdmin())) {
-    return { error: "Unauthorized" };
+    return { error: "Unauthorized", imageUrl: null };
   }
 
   const stepId = parseBigIntId(params.stepId);
 
   if (!stepId) {
-    return { error: "Invalid step ID" };
+    return { error: "Invalid step ID", imageUrl: null };
   }
 
   const { imageTarget } = params;
   const file = formData.get("file");
 
   if (!(file && file instanceof File)) {
-    return { error: "No file provided" };
+    return { error: "No file provided", imageUrl: null };
   }
 
   const targetLabel = imageTarget === "visual" ? "visual" : `option-${imageTarget}`;
@@ -46,13 +46,13 @@ export async function uploadStepImageAction(
       uploadFailed: "Failed to upload image. Please try again.",
     };
 
-    return { error: errorMessages[uploadError] };
+    return { error: errorMessages[uploadError], imageUrl: null };
   }
 
   const step = await prisma.step.findUnique({ where: { id: stepId } });
 
   if (!step) {
-    return { error: "Step not found" };
+    return { error: "Step not found", imageUrl: null };
   }
 
   const { error: updateError } = await safeAsync(() => {
@@ -76,9 +76,9 @@ export async function uploadStepImageAction(
   });
 
   if (updateError) {
-    return { error: "Failed to update step. Please try again." };
+    return { error: "Failed to update step. Please try again.", imageUrl: null };
   }
 
   revalidatePath("/review");
-  return { error: null };
+  return { error: null, imageUrl };
 }

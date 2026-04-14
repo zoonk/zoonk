@@ -4,9 +4,12 @@ import { Button } from "@zoonk/ui/components/button";
 import { cn } from "@zoonk/ui/lib/utils";
 import { DEFAULT_IMAGE_ACCEPTED_TYPES } from "@zoonk/utils/upload";
 import { ImageIcon, Loader2Icon, UploadIcon } from "lucide-react";
-import { useEffect, useRef, useState, useTransition } from "react";
+import { useRef, useState, useTransition } from "react";
 
-type UploadAction = (formData: FormData) => Promise<{ error: string | null }>;
+type UploadAction = (formData: FormData) => Promise<{
+  error: string | null;
+  imageUrl: string | null;
+}>;
 
 /**
  * Keeps the admin review image editing flow simple.
@@ -36,19 +39,15 @@ export function SimpleImageUpload({
   const [currentImageUrl, setCurrentImageUrl] = useState(initialImageUrl ?? null);
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
-  const blobUrlRef = useRef<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  useEffect(
-    () => () => {
-      if (blobUrlRef.current) {
-        URL.revokeObjectURL(blobUrlRef.current);
-      }
-    },
-    [],
-  );
-
-  const handleUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+  /**
+   * Replaces the preview with the URL returned by the server after upload.
+   *
+   * This keeps the admin UI aligned with the optimized asset we actually stored
+   * instead of rendering a local blob URL derived from the raw user-selected file.
+   */
+  function handleUpload(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
 
     if (!file) {
@@ -65,27 +64,21 @@ export function SimpleImageUpload({
 
       if (result.error) {
         setError(result.error);
-      } else {
-        if (blobUrlRef.current) {
-          URL.revokeObjectURL(blobUrlRef.current);
-        }
-
-        const nextImageUrl = URL.createObjectURL(file);
-        blobUrlRef.current = nextImageUrl;
-        setCurrentImageUrl(nextImageUrl);
+      } else if (result.imageUrl) {
+        setCurrentImageUrl(result.imageUrl);
       }
 
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
       }
     });
-  };
+  }
 
   return (
     <div className="flex flex-col gap-3">
       {currentImageUrl ? (
         <div className={cn(imageWrapperClassName)}>
-          {/* oxlint-disable-next-line next/no-img-element -- internal admin preview needs direct blob URL support */}
+          {/* oxlint-disable-next-line next/no-img-element -- internal admin review preview does not need next/image optimization */}
           <img alt={alt} className={imageClassName} src={currentImageUrl} />
         </div>
       ) : (
