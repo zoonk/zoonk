@@ -1,21 +1,19 @@
 import "server-only";
-import { zoonkGateway } from "@zoonk/core/ai";
-import { safeAsync } from "@zoonk/utils/error";
-import { extractAiTaskName, formatAiTaskLabel } from "./ai-task-stats";
-import { getAiTaskModelUsage } from "./get-ai-task-model-usage";
+import { formatAiTaskLabel } from "./ai-task-stats";
+import { getAiTaskUsageMap } from "./get-ai-task-usage-map";
 
 export type AiTaskSummary = {
-  fallbackRequestCount: number;
-  hasFallbackTracking: boolean;
+  averageMarketCostPerRequest: number;
   requestCount: number;
   taskLabel: string;
   taskName: string;
+  totalMarketCost: number;
 };
 
 /**
- * The stats index groups spend-report rows by tag so admins can see which AI
- * tasks ran most often in the last 30 days. We filter the response down to our
- * `task:*` tags and sort by request volume so the busiest tasks appear first.
+ * The index summary should be one billed reporting query, not one query plus a
+ * follow-up for every task. This loader reuses the shared task-usage map and
+ * only formats the active tasks for the selected date range.
  */
 export async function getAiTaskSummaries({
   endDate,
@@ -24,60 +22,28 @@ export async function getAiTaskSummaries({
   endDate: string;
   startDate: string;
 }): Promise<AiTaskSummary[]> {
-  const { data, error } = await safeAsync(() =>
-    zoonkGateway.getSpendReport({
-      endDate,
-      groupBy: "tag",
-      startDate,
-    }),
-  );
+  const usageByTask = await getAiTaskUsageMap({ endDate, startDate });
 
-  if (error) {
-    throw new Error("Failed to load AI task summaries", { cause: error });
+  return Object.values(usageByTask)
+    .map((task) => ({
+      averageMarketCostPerRequest: task.averageMarketCostPerRequest,
+      requestCount: task.requestCount,
+      taskLabel: formatAiTaskLabel(task.taskName),
+      taskName: task.taskName,
+      totalMarketCost: task.totalMarketCost,
+    }))
+    .toSorted(compareAiTaskSummaries);
+}
+
+/**
+ * Request volume is the fastest way to see which tasks mattered most in the
+ * selected period, so the summary stays sorted by traffic before falling back
+ * to a stable alphabetical label order.
+ */
+function compareAiTaskSummaries(left: AiTaskSummary, right: AiTaskSummary) {
+  if (right.requestCount !== left.requestCount) {
+    return right.requestCount - left.requestCount;
   }
 
-  const summariesByTask = new Map<string, AiTaskSummary>();
-
-  for (const row of data.results) {
-    const taskName = extractAiTaskName(row.tag);
-
-    if (taskName) {
-      const existingSummary = summariesByTask.get(taskName);
-      const requestCount = row.requestCount ?? 0;
-
-      summariesByTask.set(taskName, {
-        fallbackRequestCount: existingSummary?.fallbackRequestCount ?? 0,
-        hasFallbackTracking: existingSummary?.hasFallbackTracking ?? false,
-        requestCount: (existingSummary?.requestCount ?? 0) + requestCount,
-        taskLabel: existingSummary?.taskLabel ?? formatAiTaskLabel(taskName),
-        taskName,
-      });
-    }
-  }
-
-  const tasks = [...summariesByTask.values()].toSorted((left, right) => {
-    if (right.requestCount !== left.requestCount) {
-      return right.requestCount - left.requestCount;
-    }
-
-    return left.taskLabel.localeCompare(right.taskLabel);
-  });
-
-  const enrichedTasks = await Promise.all(
-    tasks.map(async (task) => {
-      const usage = await getAiTaskModelUsage({
-        endDate,
-        startDate,
-        taskName: task.taskName,
-      });
-
-      return {
-        ...task,
-        fallbackRequestCount: usage.fallbackRequestCount,
-        hasFallbackTracking: usage.hasFallbackTracking,
-      } satisfies AiTaskSummary;
-    }),
-  );
-
-  return enrichedTasks;
+  return left.taskLabel.localeCompare(right.taskLabel);
 }

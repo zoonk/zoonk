@@ -1,7 +1,5 @@
 import { getAiTaskSummaries } from "@/data/stats/ai/get-ai-task-summaries";
-import { buttonVariants } from "@zoonk/ui/components/button";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import Link from "next/link";
 import { AiTaskTable } from "./ai-task-table";
 import { formatAiStatsDate } from "./format-ai-cost";
 
@@ -14,29 +12,34 @@ export async function AiTaskList({ endDate, startDate }: { endDate: string; star
   const tasks = await getAiTaskSummaries({ endDate, startDate });
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex flex-wrap items-start justify-between gap-3">
-        <p className="text-muted-foreground max-w-3xl text-sm">
-          Request counts and fallback usage for gateway-tagged AI tasks from{" "}
-          {formatAiStatsDate(startDate)} to {formatAiStatsDate(endDate)}.
+    <section className="flex flex-col gap-6">
+      <div className="flex max-w-3xl flex-col gap-1">
+        <h2 className="text-base font-semibold tracking-tight">Live Summary</h2>
+        <p className="text-muted-foreground text-sm">
+          One on-demand snapshot of gateway-tagged task traffic from {formatAiStatsDate(startDate)}{" "}
+          to {formatAiStatsDate(endDate)}. Open a task for model-level breakdowns only when you need
+          them.
         </p>
-
-        <Link
-          className={buttonVariants({ variant: "outline" })}
-          href={buildEstimateHref({ endDate, startDate })}
-        >
-          Cost Estimates
-        </Link>
       </div>
 
       {tasks.length > 0 ? (
-        <div className="rounded-lg border">
-          <AiTaskTable endDate={endDate} startDate={startDate} tasks={tasks} />
-        </div>
+        <>
+          <p className="text-muted-foreground text-sm">
+            {tasks.length.toLocaleString()} active task{tasks.length === 1 ? "" : "s"} reported in
+            this range.
+          </p>
+
+          <div className="rounded-lg border">
+            <AiTaskTable endDate={endDate} startDate={startDate} tasks={tasks} />
+          </div>
+        </>
       ) : (
-        <p className="text-muted-foreground text-sm">No AI task requests were reported yet.</p>
+        <p className="text-muted-foreground text-sm">
+          No AI task requests were reported from {formatAiStatsDate(startDate)} to{" "}
+          {formatAiStatsDate(endDate)}.
+        </p>
       )}
-    </div>
+    </section>
   );
 }
 
@@ -46,21 +49,13 @@ export async function AiTaskList({ endDate, startDate }: { endDate: string; star
  */
 export function AiTaskListSkeleton() {
   return (
-    <div className="flex flex-col gap-6">
-      <div className="flex flex-wrap items-start justify-between gap-3">
+    <section className="flex flex-col gap-6">
+      <div className="flex flex-col gap-1">
+        <Skeleton className="h-5 w-32" />
         <Skeleton className="h-4 w-96" />
-        <Skeleton className="h-10 w-36 rounded-full" />
       </div>
+      <Skeleton className="h-4 w-40" />
       <Skeleton className="h-64 w-full rounded-lg" />
-    </div>
+    </section>
   );
-}
-
-/**
- * The estimates page reads its period from the query string. Building the href
- * in one place keeps the task page link aligned with that route contract.
- */
-function buildEstimateHref({ endDate, startDate }: { endDate: string; startDate: string }) {
-  const searchParams = new URLSearchParams({ from: startDate, to: endDate });
-  return `/stats/ai/estimates?${searchParams.toString()}`;
 }

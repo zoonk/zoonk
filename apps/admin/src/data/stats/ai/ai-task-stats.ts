@@ -8,7 +8,7 @@ import { MS_PER_DAY, parseLocalDate } from "@zoonk/utils/date";
 const AI_TASK_NAME_PATTERN = /^[a-z0-9-]+$/;
 const AI_MODEL_ID_PATTERN = /^[a-z0-9.-]+\/[a-z0-9.-]+$/;
 const DATE_INPUT_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
-const DEFAULT_LOOKBACK_DAYS = 30;
+const DEFAULT_LOOKBACK_DAYS = 1;
 const DEFAULT_ESTIMATE_RUN_COUNT = 1000;
 const DEFAULT_WORD_AUDIO_SECONDS = 0.75;
 const AVERAGE_SPOKEN_WORDS_PER_SECOND = 2.5;
@@ -111,7 +111,7 @@ export function isFallbackModel({
 }
 
 /**
- * The AI stats pages default to the last 30 calendar days, including today.
+ * The AI stats pages default to the current calendar day.
  * When the user supplies only one side of the range, we keep the experience
  * predictable by filling the missing side instead of dropping back to an empty
  * or invalid query.
@@ -277,7 +277,7 @@ export function getAiTaskHref(taskName: string): `/stats/ai/${string}` {
 }
 
 /**
- * The default task list and task detail pages share the same last-30-days window.
+ * The default task list and task detail pages share the same single-day window.
  * This helper keeps that convention centralized so those pages do not drift.
  */
 function getDefaultAiTaskDateRange(now: Date): AiTaskDateRange {
