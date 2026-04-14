@@ -19,7 +19,10 @@ import { UserNameProvider } from "./user-name-context";
 
 export function PlayerProvider({
   activity,
+  chapterTitle,
   children,
+  lessonDescription,
+  lessonTitle,
   milestone,
   navigation,
   onComplete,
@@ -29,7 +32,10 @@ export function PlayerProvider({
   viewer,
 }: {
   activity: SerializedActivity;
+  chapterTitle: string;
   children: React.ReactNode;
+  lessonDescription: string;
+  lessonTitle: string;
   milestone: PlayerMilestone;
   navigation: PlayerNavigation;
   onComplete: (input: CompletionInput) => void;
@@ -63,13 +69,31 @@ export function PlayerProvider({
 
   const configValue = useMemo(
     () => ({
+      activityMeta: {
+        chapterTitle,
+        kind: activity.kind,
+        lessonDescription,
+        lessonTitle,
+        title: activity.title,
+      },
       escape: onEscape,
       milestone,
       navigation,
       next: handleNext,
       viewer,
     }),
-    [handleNext, milestone, navigation, onEscape, viewer],
+    [
+      activity.kind,
+      activity.title,
+      chapterTitle,
+      handleNext,
+      lessonDescription,
+      lessonTitle,
+      milestone,
+      navigation,
+      onEscape,
+      viewer,
+    ],
   );
 
   const runtimeValue = useMemo(

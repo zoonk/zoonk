@@ -1,5 +1,6 @@
 "use client";
 
+import { type ActivityKind } from "@zoonk/core/steps/contract/content";
 import { createContext, useContext } from "react";
 import { type PlayerState } from "./player-reducer";
 import { type PlayerScreenModel } from "./player-screen";
@@ -42,7 +43,16 @@ type PlayerRuntimeContextValue = {
   state: PlayerState;
 };
 
+type PlayerActivityMeta = {
+  chapterTitle: string;
+  kind: ActivityKind;
+  lessonDescription: string;
+  lessonTitle: string;
+  title: string | null;
+};
+
 type PlayerConfigContextValue = {
+  activityMeta: PlayerActivityMeta;
   escape: () => void;
   milestone: PlayerMilestone;
   navigation: PlayerNavigation;
@@ -61,6 +71,10 @@ function usePlayerConfig(): PlayerConfigContextValue {
   }
 
   return context;
+}
+
+export function usePlayerActivityMeta(): PlayerActivityMeta {
+  return usePlayerConfig().activityMeta;
 }
 
 export function usePlayerMilestone(): PlayerMilestone {

@@ -136,7 +136,7 @@ test.describe("Activity Detail Page", () => {
     await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}/a/0`);
 
     await expect(page.getByRole("link", { name: /close/i })).toBeVisible();
-    await expect(page.getByText(/1 \/ 1/)).toBeVisible();
+    await expect(page.getByRole("button", { name: /lesson info/i })).toBeVisible();
 
     const progressbar = page.getByRole("progressbar", { name: /activity progress/i });
     await expect(progressbar).toBeVisible();
