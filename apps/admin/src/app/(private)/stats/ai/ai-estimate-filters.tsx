@@ -1,8 +1,8 @@
 import { type AiCourseEstimateInputs } from "@/data/stats/ai/get-ai-cost-estimates";
 import { Button, buttonVariants } from "@zoonk/ui/components/button";
 import { Input } from "@zoonk/ui/components/input";
-import { Label } from "@zoonk/ui/components/label";
 import Link from "next/link";
+import { AiFilterField } from "./ai-filter-field";
 
 /**
  * Course estimates need both the reporting window and the planned course shape.
@@ -34,13 +34,13 @@ export function AiEstimateFilters({
 
       <form action={actionHref} className="flex flex-col gap-6">
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <FilterField htmlFor="from" label="From">
+          <AiFilterField htmlFor="from" label="From">
             <Input defaultValue={startDate} id="from" name="from" type="date" />
-          </FilterField>
+          </AiFilterField>
 
-          <FilterField htmlFor="to" label="To">
+          <AiFilterField htmlFor="to" label="To">
             <Input defaultValue={endDate} id="to" name="to" type="date" />
-          </FilterField>
+          </AiFilterField>
         </div>
 
         <div className="grid gap-6 lg:grid-cols-2">
@@ -65,28 +65,6 @@ export function AiEstimateFilters({
         </div>
       </form>
     </section>
-  );
-}
-
-/**
- * The estimate form repeats the same label-plus-input structure across both
- * course types. This wrapper keeps the layout readable and ensures each field
- * stays properly labeled for semantic queries and keyboard users.
- */
-function FilterField({
-  children,
-  htmlFor,
-  label,
-}: {
-  children: React.ReactNode;
-  htmlFor: string;
-  label: string;
-}) {
-  return (
-    <div className="flex min-w-32 flex-col gap-1.5">
-      <Label htmlFor={htmlFor}>{label}</Label>
-      {children}
-    </div>
   );
 }
 
@@ -208,8 +186,8 @@ function EstimateNumberField({
   value: number;
 }) {
   return (
-    <FilterField htmlFor={htmlFor} label={label}>
+    <AiFilterField htmlFor={htmlFor} label={label}>
       <Input defaultValue={String(value)} id={htmlFor} min={min} name={name} type="number" />
-    </FilterField>
+    </AiFilterField>
   );
 }
