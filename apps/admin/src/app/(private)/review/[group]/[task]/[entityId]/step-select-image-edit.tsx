@@ -1,19 +1,8 @@
 "use client";
 
 import { Badge } from "@zoonk/ui/components/badge";
-import {
-  ImageUploadActionButton,
-  ImageUploadLoading,
-  ImageUploadOverlay,
-  ImageUploadPlaceholder,
-  ImageUploadProvider,
-  ImageUploadTrigger,
-} from "@zoonk/ui/components/image-upload";
-import { ImageIcon, UploadIcon } from "lucide-react";
-import Image from "next/image";
 import { uploadStepImageAction } from "./_actions/step-image";
-
-const noopRemove = async () => ({ error: null });
+import { SimpleImageUpload } from "./simple-image-upload";
 
 function SelectImageOption({
   option,
@@ -28,43 +17,14 @@ function SelectImageOption({
 
   return (
     <div className="flex flex-col gap-2 rounded-md border p-3">
-      <ImageUploadProvider
-        currentImageUrl={option.url ?? null}
-        onRemove={noopRemove}
-        onUpload={uploadStepImageAction.bind(null, params)}
-      >
-        <ImageUploadTrigger
-          aria-label={
-            option.url
-              ? `Replace image for "${option.prompt}"`
-              : `Upload image for "${option.prompt}"`
-          }
-          className="aspect-square w-full"
-          size={undefined}
-        >
-          {option.url ? (
-            <Image
-              alt={option.prompt}
-              className="object-contain transition-opacity group-hover:opacity-80"
-              fill
-              sizes="300px"
-              src={option.url}
-            />
-          ) : (
-            <ImageUploadPlaceholder>
-              <ImageIcon />
-            </ImageUploadPlaceholder>
-          )}
-
-          <ImageUploadOverlay>
-            <ImageUploadActionButton>
-              <UploadIcon />
-            </ImageUploadActionButton>
-          </ImageUploadOverlay>
-
-          <ImageUploadLoading />
-        </ImageUploadTrigger>
-      </ImageUploadProvider>
+      <SimpleImageUpload
+        alt={option.prompt}
+        buttonLabel="Upload replacement image"
+        imageClassName="aspect-square w-full rounded-md object-contain"
+        initialImageUrl={option.url}
+        placeholderClassName="aspect-square w-full"
+        uploadAction={uploadStepImageAction.bind(null, params)}
+      />
 
       <p className="text-muted-foreground text-sm">{option.prompt}</p>
       <p className="text-muted-foreground text-xs italic">{option.feedback}</p>
