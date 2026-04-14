@@ -1,19 +1,8 @@
 "use client";
 
 import { Badge } from "@zoonk/ui/components/badge";
-import {
-  ImageUploadActionButton,
-  ImageUploadLoading,
-  ImageUploadOverlay,
-  ImageUploadPlaceholder,
-  ImageUploadProvider,
-  ImageUploadTrigger,
-} from "@zoonk/ui/components/image-upload";
-import { ImageIcon, UploadIcon } from "lucide-react";
-import Image from "next/image";
 import { uploadStepImageAction } from "./_actions/step-image";
-
-const noopRemove = async () => ({ error: null });
+import { SimpleImageUpload } from "./simple-image-upload";
 
 export function StepVisualImageEdit({
   item,
@@ -35,39 +24,15 @@ export function StepVisualImageEdit({
 
       <p className="text-muted-foreground font-mono text-sm">{item.content.prompt}</p>
 
-      <ImageUploadProvider
-        currentImageUrl={item.content.url ?? null}
-        onRemove={noopRemove}
-        onUpload={uploadStepImageAction.bind(null, params)}
-      >
-        <ImageUploadTrigger
-          aria-label={item.content.url ? "Replace image" : "Upload image"}
-          className="h-96 w-full max-w-150"
-          size={undefined}
-        >
-          {item.content.url ? (
-            <Image
-              alt={item.content.prompt}
-              className="object-contain transition-opacity group-hover:opacity-80"
-              fill
-              sizes="600px"
-              src={item.content.url}
-            />
-          ) : (
-            <ImageUploadPlaceholder>
-              <ImageIcon />
-            </ImageUploadPlaceholder>
-          )}
-
-          <ImageUploadOverlay>
-            <ImageUploadActionButton>
-              <UploadIcon />
-            </ImageUploadActionButton>
-          </ImageUploadOverlay>
-
-          <ImageUploadLoading />
-        </ImageUploadTrigger>
-      </ImageUploadProvider>
+      <SimpleImageUpload
+        alt={item.content.prompt}
+        buttonLabel="Upload replacement image"
+        imageClassName="max-h-96 rounded-md object-contain"
+        imageWrapperClassName="flex justify-center"
+        initialImageUrl={item.content.url}
+        placeholderClassName="h-96 w-full max-w-[600px]"
+        uploadAction={uploadStepImageAction.bind(null, params)}
+      />
     </div>
   );
 }
