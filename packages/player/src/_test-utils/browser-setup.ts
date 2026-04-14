@@ -33,45 +33,9 @@ const MockAudio = vi.fn(function MockAudio(this: MockAudioInstance) {
   this.removeAttribute = () => null;
 });
 
-/**
- * The player package ships Tailwind utility class names, but browser tests do
- * not boot a full app stylesheet pipeline. This tiny shim restores the
- * visibility rules that decide whether desktop or mobile controls are active.
- */
-function mountResponsiveVisibilityStyles() {
-  const style = document.createElement("style");
-
-  style.textContent = `
-    .hidden {
-      display: none !important;
-    }
-
-    @media (min-width: 1024px) {
-      .lg\\:hidden {
-        display: none !important;
-      }
-
-      .lg\\:flex {
-        display: flex !important;
-      }
-
-      .lg\\:inline-flex {
-        display: inline-flex !important;
-      }
-
-      .lg\\:grid {
-        display: grid !important;
-      }
-    }
-  `;
-
-  document.head.append(style);
-}
-
 beforeAll(() => {
   vi.stubGlobal("Audio", MockAudio);
   vi.stubGlobal("process", { env: { NODE_ENV: "test" } });
-  mountResponsiveVisibilityStyles();
 });
 
 afterEach(() => {

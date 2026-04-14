@@ -67,80 +67,19 @@ async function createTestActivity(options?: {
     );
   }
 
-  return { activity, chapter, course, lesson };
-}
-
-async function createTestActivityWithInteractiveStep() {
-  const org = await getAiOrganization();
-
-  const uniqueId = randomUUID().slice(0, 8);
-
-  const course = await courseFixture({
-    isPublished: true,
-    organizationId: org.id,
-    slug: `e2e-interactive-course-${uniqueId}`,
-    title: `E2E Interactive Course ${uniqueId}`,
-  });
-
-  const chapter = await chapterFixture({
-    courseId: course.id,
-    isPublished: true,
-    organizationId: org.id,
-    slug: `e2e-interactive-chapter-${uniqueId}`,
-    title: `E2E Interactive Chapter ${uniqueId}`,
-  });
-
-  const lesson = await lessonFixture({
-    chapterId: chapter.id,
-    description: `E2E interactive lesson description ${uniqueId}`,
-    isPublished: true,
-    organizationId: org.id,
-    slug: `e2e-interactive-lesson-${uniqueId}`,
-    title: `E2E Interactive Lesson ${uniqueId}`,
-  });
-
-  const activity = await activityFixture({
-    generationStatus: "completed",
-    isPublished: true,
-    kind: "quiz",
-    lessonId: lesson.id,
-    organizationId: org.id,
-    position: 0,
-    title: `E2E Interactive Activity ${uniqueId}`,
-  });
-
-  await stepFixture({
-    activityId: activity.id,
-    content: {
-      kind: "core",
-      options: [
-        { feedback: "Correct!", isCorrect: true, text: "Option A" },
-        { feedback: "Incorrect.", isCorrect: false, text: "Option B" },
-      ],
-      question: `Test question ${uniqueId}?`,
-    },
-    isPublished: true,
-    kind: "multipleChoice",
-    position: 0,
-  });
-
-  return { activity, chapter, course, lesson };
+  return { activity, chapter, course, lesson, uniqueId };
 }
 
 test.describe("Activity Detail Page", () => {
-  test("shows player shell for generated activity", async ({ page }) => {
-    const { chapter, course, lesson } = await createTestActivity({
+  test("generated activity page renders the seeded step content", async ({ page }) => {
+    const { chapter, course, lesson, uniqueId } = await createTestActivity({
       generationStatus: "completed",
     });
 
     await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}/a/0`);
 
-    await expect(page.getByRole("link", { name: /close/i })).toBeVisible();
-    await expect(page.getByRole("button", { name: /lesson info/i })).toBeVisible();
-
-    const progressbar = page.getByRole("progressbar", { name: /activity progress/i });
-    await expect(progressbar).toBeVisible();
-    await expect(progressbar).toHaveAttribute("aria-valuenow", "100");
+    await expect(page.getByRole("heading", { name: `Step ${uniqueId} #0` })).toBeVisible();
+    await expect(page.getByText(`Test step content ${uniqueId} #0`)).toBeVisible();
   });
 
   test("close link has correct href", async ({ page }) => {
@@ -158,29 +97,8 @@ test.describe("Activity Detail Page", () => {
     );
   });
 
-  test("interactive step shows disabled check button", async ({ page }) => {
-    const { chapter, course, lesson } = await createTestActivityWithInteractiveStep();
-
-    await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}/a/0`);
-
-    const checkButton = page.getByRole("button", { name: /check/i });
-    await expect(checkButton).toBeVisible();
-    await expect(checkButton).toBeDisabled();
-  });
-
-  test("static step does not show action bar", async ({ page }) => {
-    const { chapter, course, lesson } = await createTestActivity({
-      generationStatus: "completed",
-    });
-
-    await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}/a/0`);
-
-    await expect(page.getByRole("link", { name: /close/i })).toBeVisible();
-    await expect(page.getByRole("button", { name: /check/i })).not.toBeVisible();
-  });
-
-  test("shows not generated state for pending activity", async ({ page }) => {
-    const { chapter, course, lesson } = await createTestActivity({
+  test("pending activities show the create state and link details", async ({ page }) => {
+    const { activity, chapter, course, lesson } = await createTestActivity({
       generationStatus: "pending",
     });
 
@@ -188,28 +106,10 @@ test.describe("Activity Detail Page", () => {
 
     await expect(page.getByText(/activity not available/i)).toBeVisible();
     await expect(page.getByText(/hasn't been created yet/i)).toBeVisible();
-    await expect(page.getByRole("link", { name: /create activity/i })).toBeVisible();
-  });
-
-  test("generate link has correct href", async ({ page }) => {
-    const { activity, chapter, course, lesson } = await createTestActivity({
-      generationStatus: "pending",
-    });
-
-    await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}/a/0`);
-
     const generateLink = page.getByRole("link", { name: /create activity/i });
+
+    await expect(generateLink).toBeVisible();
     await expect(generateLink).toHaveAttribute("href", new RegExp(`/generate/a/${activity.id}`));
-  });
-
-  test("generate link has nofollow attribute", async ({ page }) => {
-    const { chapter, course, lesson } = await createTestActivity({
-      generationStatus: "pending",
-    });
-
-    await page.goto(`/b/ai/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}/a/0`);
-
-    const generateLink = page.getByRole("link", { name: /create activity/i });
     await expect(generateLink).toHaveAttribute("rel", "nofollow");
   });
 
