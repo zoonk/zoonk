@@ -1,0 +1,23 @@
+apps/admin/src/app/(private)/review/[group]/[task]/[entityId]/simple-image-upload.tsx
+  86940d438948fa80 79
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.8",
+  "base_commit_sha": "2b5398ecc0558d74a00002bf80648bea773ebdd1",
+  "prompts": {
+    "86940d438948fa80": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d8c9b-508d-78c2-9b86-fc75ff3624c7",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 2,
+      "total_deletions": 5,
+      "accepted_lines": 2,
+      "overriden_lines": 0
+    }
+  }
+}
