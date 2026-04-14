@@ -1,0 +1,62 @@
+apps/main/e2e/step-visual-content.test.ts
+  aebc08c9e43d948b 406,475,678,779,932,1028
+packages/player/src/_browser-tests/player-header-info.browser.test.tsx
+  aebc08c9e43d948b 1-43
+packages/player/src/components/player-shell.tsx
+  aebc08c9e43d948b 4
+apps/main/src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/a/[position]/page.tsx
+  aebc08c9e43d948b 122,126,128
+apps/main/e2e/activity-detail.test.ts
+  aebc08c9e43d948b 139
+packages/ui/src/components/popover.tsx
+  aebc08c9e43d948b 60
+apps/main/src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/a/[position]/activity-player-client.tsx
+  aebc08c9e43d948b 16,20,22,31,35,37,75-77
+packages/player/src/player-context.tsx
+  aebc08c9e43d948b 3,46-53,55,76-79
+apps/main/src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/a/[position]/loading.tsx
+  aebc08c9e43d948b 8
+packages/player/src/components/in-play-sticky-header.tsx
+  aebc08c9e43d948b 3-4,6-7,19-23,32,37-41
+packages/player/src/player-provider.tsx
+  aebc08c9e43d948b 22,24-25,35,37-38,72-78,85-96
+packages/player/src/_test-utils/render-player.tsx
+  aebc08c9e43d948b 19-21,31-33,45-47
+packages/player/src/components/lesson-info-popover.tsx
+  aebc08c9e43d948b 1-47
+packages/player/src/use-activity-kind-label.ts
+  aebc08c9e43d948b 1-28
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.8",
+  "base_commit_sha": "64265e83f1ba1fa16f28c6e922a08dc4f3d34937",
+  "prompts": {
+    "aebc08c9e43d948b": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "14f33e96-c993-4a08-9b32-41dd81fe010a",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 394,
+      "total_deletions": 245,
+      "accepted_lines": 207,
+      "overriden_lines": 1
+    },
+    "b656cba3e57dc167": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d81e6-d72d-7473-afe2-7cc747e2c8c7",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 42,
+      "overriden_lines": 6
+    }
+  }
+}
