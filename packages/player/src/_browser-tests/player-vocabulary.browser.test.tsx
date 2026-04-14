@@ -78,4 +78,37 @@ describe("player browser integration: vocabulary", () => {
     await page.getByRole("button", { name: /previous step/i }).click();
     await expect.element(page.getByText("Sol")).toBeInTheDocument();
   });
+
+  test("completes flashcard vocabulary activities through the shared rewards flow", async () => {
+    renderPlayer({
+      activity: buildSerializedActivity({
+        kind: "vocabulary",
+        steps: [
+          buildSerializedStep({
+            content: {},
+            kind: "vocabulary",
+            word: buildSerializedWord({
+              id: "word-1",
+              translation: "Cat",
+              word: "Gato",
+            }),
+          }),
+        ],
+      }),
+      navigation: buildNavigation({ nextActivityHref: null }),
+      viewer: buildAuthenticatedViewer(),
+    });
+
+    await expect.element(page.getByText("Gato")).toBeInTheDocument();
+
+    await page.getByRole("button", { name: /next/i }).click();
+
+    const completionScreen = page.getByRole("status");
+
+    await expect.element(completionScreen).toBeInTheDocument();
+    await expect.element(completionScreen.getByText(/\+10\s*BP/i)).toBeInTheDocument();
+    await expect
+      .element(completionScreen.getByRole("progressbar", { name: /level progress/i }))
+      .toBeInTheDocument();
+  });
 });
