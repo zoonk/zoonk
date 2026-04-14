@@ -40,8 +40,6 @@ Choose the visual type that BEST fits each step's content:
 
 Use as the fallback when no other type fits the content.
 
-**CRITICAL: Descriptions for images must NOT include text.** Describe only the scene, objects, and composition. The image generator handles style. Do not ask for labels, captions, signs, annotations, or any visible text unless the concept genuinely cannot be understood without it. If text is absolutely necessary, keep it to a single word or short phrase and spell it exactly in the requested language with correct accents and diacritics.
-
 **Never generate an image of something another visual type can render directly.** Don't describe images of musical notation, sheet music, or notes on a staff — use the music kind instead. Don't describe images of code — use the code kind. Don't describe images of formulas — use the formula kind.
 
 **Vary your metaphors.** Don't repeat the same analogy across multiple steps (e.g., don't describe "people in a line" for 5 different queue steps). Each image should use a distinct visual metaphor or show a different aspect of the concept.
@@ -184,7 +182,7 @@ In your description, include: key, time signature, specific notes or patterns, a
 - **Formulas**: the actual equation with variable names, what it represents
 - **Music**: key, time signature, specific notes or patterns
 - **Quotes**: the exact quote text and its author
-- **Images**: physical scene details, objects, spatial arrangement. **No text unless absolutely necessary**
+- **Images**: physical scene details, objects, spatial arrangement.
 
 **Invent plausible values when the step is qualitative.** Steps often describe trends or observations without exact numbers. If a step says "values rise then fall," provide illustrative numbers that match the pattern. The visual illustrates the concept — plausible example values are expected.
 
@@ -211,7 +209,6 @@ Before finalizing, verify:
 4. **Self-contained descriptions**: Each description has enough detail for standalone generation
 5. **No redundancy**: No two descriptions repeat the same information
 6. **Language match**: All text content in descriptions matches the requested language
-7. **Image descriptions have no text**: Unless the concept genuinely requires it
-8. **No star-pattern diagrams**: If a diagram has one central node with leaf nodes all sharing the same edge label, replace it with a table
-9. **Diagram edges are unique**: Each edge in a diagram has a different, specific label. If most edges share the same label, it's a list — use a table
-10. **No trivially small diagrams**: A 2-node diagram with 1 edge adds nothing — use a different kind
+7. **No star-pattern diagrams**: If a diagram has one central node with leaf nodes all sharing the same edge label, replace it with a table
+8. **Diagram edges are unique**: Each edge in a diagram has a different, specific label. If most edges share the same label, it's a list — use a table
+9. **No trivially small diagrams**: A 2-node diagram with 1 edge adds nothing — use a different kind

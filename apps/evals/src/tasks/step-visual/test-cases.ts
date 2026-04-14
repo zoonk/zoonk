@@ -37,25 +37,20 @@ You are evaluating the VISUAL DESCRIPTION stage — the model selects a visual k
    - Formula descriptions lack the actual equation
    - Image descriptions are vague (e.g., "an image about the topic")
 
-5. IMAGE TEXT CONTAMINATION: Image descriptions should describe ONLY the scene, objects, and composition — NOT text to display. PENALIZE if:
-   - An image description asks for labels, captions, signs, annotations, or visible text that isn't strictly necessary to understand the concept
-   - The only way to understand the described image is by reading text within it
-   - Exception: a single word or short phrase is acceptable when the concept genuinely requires it
-
-6. DIAGRAM COMPLEXITY: Diagrams should be focused and reveal non-obvious structure. PENALIZE if:
+5. DIAGRAM COMPLEXITY: Diagrams should be focused and reveal non-obvious structure. PENALIZE if:
    - A diagram description has more than 7 nodes
    - A diagram just restates the text as boxes with arrows
    - A diagram uses abstract platitude nodes connected by generic verbs
    - A diagram is used for a simple list (should be a table)
 
-7. LANGUAGE CONSISTENCY: All text in descriptions — including image descriptions — must match the specified language. PENALIZE any mixed-language content (except JSON field names and enum values like "chart", "table").
+6. LANGUAGE CONSISTENCY: All text in descriptions — including image descriptions — must match the specified language. PENALIZE any mixed-language content (except JSON field names and enum values like "chart", "table").
 
 ANTI-CHECKLIST GUIDANCE (CRITICAL):
 - Do NOT expect specific visual kinds based on topic
 - Do NOT penalize for using "image" as the kind
 - Do NOT penalize for using the same kind multiple times IF each adds unique information
 - Do NOT require variety in kinds
-- ONLY penalize for: redundant information, kind that cannot represent the content, vague descriptions, image text contamination, diagram overcomplexity, language errors, missing steps
+- ONLY penalize for: redundant information, kind that cannot represent the content, vague descriptions, diagram overcomplexity, language errors, missing steps
 `;
 
 export const TEST_CASES = [
