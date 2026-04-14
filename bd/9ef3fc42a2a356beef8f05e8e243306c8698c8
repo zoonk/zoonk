@@ -1,0 +1,25 @@
+apps/admin/src/app/(private)/review/[group]/[task]/[entityId]/_actions/step-image.ts
+  4a8722ef2da9c64a 17,19,25,32,49,55,79,83
+apps/admin/src/app/(private)/review/[group]/[task]/[entityId]/simple-image-upload.tsx
+  4a8722ef2da9c64a 7,9-12,44-50,67-68,75,81
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.8",
+  "base_commit_sha": "bd9ef3fc42a2a356beef8f05e8e243306c8698c8",
+  "prompts": {
+    "4a8722ef2da9c64a": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d8d45-fcfd-7641-a48b-c46d4511e773",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 24,
+      "total_deletions": 31,
+      "accepted_lines": 24,
+      "overriden_lines": 0
+    }
+  }
+}
