@@ -1,0 +1,49 @@
+apps/admin/src/data/stats/ai/ai-task-catalog.ts
+  6e74267bd13bb23e 1-309
+apps/admin/src/data/stats/ai/get-ai-fallback-task-summaries.ts
+  6e74267bd13bb23e 1-328
+apps/admin/src/app/(private)/stats/ai/ai-task-directory-controls.tsx
+  6e74267bd13bb23e 7-8,15,19,24-26,32-33,51-56,58-66,73-77
+apps/admin/src/data/stats/ai/get-ai-task-overview.ts
+  6e74267bd13bb23e 86,101-103
+apps/admin/src/app/(private)/stats/ai/ai-filter-field.tsx
+  6e74267bd13bb23e 1-23
+apps/admin/src/app/(private)/stats/ai/ai-fallback-task-list.tsx
+  6e74267bd13bb23e 1-190
+apps/admin/src/app/(private)/stats/ai/[task]/ai-task-report.tsx
+  6e74267bd13bb23e 9,14,16-36,47,54-55,66-73,75-79,84-95,126-136,141-143,145
+apps/admin/src/app/(private)/stats/ai/ai-task-table.tsx
+  6e74267bd13bb23e 74-76
+apps/admin/src/app/(private)/stats/ai/page.tsx
+  6e74267bd13bb23e 5,15-17,25,31,36,42-47,53-62
+apps/admin/src/app/(private)/stats/ai/ai-task-directory.tsx
+  6e74267bd13bb23e 13,19-20
+apps/admin/src/app/(private)/stats/ai/ai-task-list.tsx
+  6e74267bd13bb23e 16-21,53-54
+apps/admin/src/app/(private)/stats/ai/[task]/ai-task-report-sections.tsx
+  6e74267bd13bb23e 1-198
+apps/admin/src/data/stats/ai/ai-task-stats.ts
+  6e74267bd13bb23e 11,114,280
+apps/admin/src/data/stats/ai/ai-task-hrefs.ts
+  6e74267bd13bb23e 1-125
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.8",
+  "base_commit_sha": "d61b457ec4ef64d19a5a0a93421712070b1ee1b0",
+  "prompts": {
+    "6e74267bd13bb23e": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d8c0e-4484-72b1-9f10-518c87dfd63e",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 1605,
+      "total_deletions": 466,
+      "accepted_lines": 1331,
+      "overriden_lines": 0
+    }
+  }
+}
