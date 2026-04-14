@@ -13,10 +13,13 @@ import { submitCompletion } from "./submit-completion-action";
 export function ActivityPlayerClient({
   activity,
   brandSlug,
+  chapterTitle,
   courseSlug,
   chapterSlug,
   isAuthenticated,
+  lessonDescription,
   lessonSlug,
+  lessonTitle,
   nextActivity,
   nextSibling,
   totalBrainPower,
@@ -25,10 +28,13 @@ export function ActivityPlayerClient({
 }: {
   activity: SerializedActivity;
   brandSlug: string;
+  chapterTitle: string;
   courseSlug: string;
   chapterSlug: string;
   isAuthenticated: boolean;
+  lessonDescription: string;
   lessonSlug: string;
+  lessonTitle: string;
   nextActivity: {
     chapterSlug: string;
     lessonSlug: string;
@@ -66,6 +72,9 @@ export function ActivityPlayerClient({
   return (
     <PlayerProvider
       activity={activity}
+      chapterTitle={chapterTitle}
+      lessonDescription={lessonDescription}
+      lessonTitle={lessonTitle}
       milestone={model.milestone}
       navigation={model.navigation}
       onComplete={handleComplete}

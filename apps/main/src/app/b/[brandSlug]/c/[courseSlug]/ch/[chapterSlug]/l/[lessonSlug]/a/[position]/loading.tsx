@@ -5,7 +5,7 @@ export default function ActivityPlayerLoading() {
     <main className="flex min-h-dvh flex-col">
       <header className="flex items-center justify-between px-3 py-1.5 sm:p-4">
         <Skeleton className="size-9 rounded-full" />
-        <Skeleton className="h-4 w-12" />
+        <Skeleton className="h-4 w-24" />
       </header>
 
       <Skeleton className="h-0.5 w-full rounded-none" />

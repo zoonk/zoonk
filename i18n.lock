@@ -206,7 +206,6 @@ checksums:
     Level%20progress/singular: 286f095acd17006787247db0b69270e3
     "%7Bvalue%7D%20BP%20to%20level%20up/singular": 755c2fe6e435645cb35b57bf92af09d3
     "%7Bcolor%7D%20Belt%20%E2%80%94%20Level%20%7Blevel%7D/singular": 367f2e902d39199c8507aaad09e8907a
-    Answer%20options/singular: acb0b378cefcb8a8d50a7c43ce77ae39
     Next/singular: 89ddbcf710eba274963494f312bdc8a9
     Login/singular: f4f219abeb5a465ecb1c7efaf50246de
     All%20Activities/singular: 9eee26b7ca58444c6d0db6bcd7ea7eda
@@ -230,10 +229,21 @@ checksums:
     Blank%20%7Bposition%7D%3A%20%7Bitem%7D.%20%7Bresult%7D./singular: c64e721cdd1e4cc48eff9f9690f1fc6b
     Blank%20%7Bposition%7D%3A%20%7Bitem%7D.%20Tap%20to%20remove./singular: d7ab9b86256fae5fbb5187fe718afe0b
     Correct%20answer%3A%20%7Banswer%7D/singular: 7745b2664e841dffff4568203ee443b2
+    Translation/singular: 9276816e7bc1a6ff00f388faa0863986
+    Listening/singular: 9e680c44cd88a178b953349ed8881ef2
+    Story/singular: fabac3f62af801d429e2cd7115bf14c9
+    Explanation/singular: f6b595df4ffb1a5b0cbbe1dda5993522
+    Practice/singular: ea10afa88a3687e6c40d1bfb3e0f4f20
+    Vocabulary/singular: 2c8127af4c194fa05463e82d5e414c62
+    Reading/singular: 9d93f1dff4a01a9e1566f23b401b8868
+    Quiz/singular: 22bce287f7a90d3b41b418108eaab43b
+    Grammar/singular: 1d97aca351a45df1d6eb27adbee04832
+    Review/singular: 299f75db25382980b2895622d7712927
+    Investigation/singular: 89bc005c971ce9ded2848561258095d8
+    Activity/singular: 1948763de8e531483a798b68195e297e
     Answer%20feedback/singular: 9ec80a1e5b591c3d6c790b8d43266c0f
     Evidence%20complete%20%E2%80%94%20time%20to%20make%20your%20call./singular: 6f1a545162b4f3799dab45247dfc5f35
     Weak%20signal/singular: 19b95e7dfa1cb1c1f257f1812720859f
-    What%20do%20you%20want%20to%20investigate%20next%3F/singular: 9ddcec8a58615e2d5c501f12c091c1dc
     One%20more%20lead%20to%20follow/singular: 8f719bae5f33676aa045aed39b080f46
     Useful%20clue/singular: 9ae26309bb851fc48999bc8455ed8f88
     What%20do%20you%20want%20to%20investigate%20first%3F/singular: 84bfc285b668f4dc31f58cb56a7d7978
@@ -242,6 +252,8 @@ checksums:
     What%20do%20you%20think%20happened%3F/singular: 5fcc4c51ba3f52e459f316ef4b5fc756
     Review%20evidence/singular: 7edeeb02b39b1ebd65fe36986bd63407
     The%20Case/singular: da25531981c47e8d30f64ac4e5f954d8
+    Collect%202%20leads.%20Then%20make%20your%20call./singular: bf64acfc31f90c0cdfbb4e9593af265d
+    Lesson%20info/singular: fa3040672119e9b5babd1a8d54bd7d17
     Translate%20this%20sentence%3A/singular: f69b2eec827b3a74bafca50e9058716f
     What%20do%20you%20hear%3F/singular: 9527d094d65c550a40108673bc67744f
     All%20pairs%20matched.%20Press%20Check%20to%20continue./singular: 0663e33ba7db53b298c5f50a2f3c7ae8
@@ -250,19 +262,20 @@ checksums:
     Previous%20step/singular: 96b31ec6dab003c2bbfbbca10a8a9826
     Next%20step/singular: 712c63650b5180cbc14d6246b5d558c2
     Step%20navigation/singular: ec328f28051577e1c0aab044c89b138c
+    Answer%20options/singular: acb0b378cefcb8a8d50a7c43ce77ae39
     Close/singular: 2c2e22f8424a1031de89063bd0022e16
     Activity%20progress/singular: 8ff2fb7372b8a2525f2955c851c4fa42
-    Start%20Investigation/singular: 597f9ca357f5bfb78aa995ce49660ca9
-    Continue/singular: 3cfba90b4600131e82fc4260c568d044
     evidence/singular: e79d4526b88aca84fbc283178ed61264
-    Begin/singular: cc2a17a662cb60dd2d8335a2e8440997
-    Check/singular: 023cc2ba432775c38e3efc004ad7b9ef
     BP/singular: 842ed01b3a4d0efa6fe96ae8c595726c
     Energy/singular: 958809db5050650b97519e0f1f3e1951
     Image%20options/singular: 64a1aee44b26dbaff851cb846eb4274d
     Drag%20items%20into%20the%20correct%20order/singular: 8ccab82ee3ba645ac23da4ca14a0dd2a
     Sort%20items/singular: 3b1072a596203b5acdc5718d38161392
     Correct%20order%3A/singular: df3f446653ec8cde9c29d8d5912636ef
+    Start%20Investigation/singular: 597f9ca357f5bfb78aa995ce49660ca9
+    Continue/singular: 3cfba90b4600131e82fc4260c568d044
+    Begin/singular: cc2a17a662cb60dd2d8335a2e8440997
+    Check/singular: 023cc2ba432775c38e3efc004ad7b9ef
     Metric%20changes/singular: b47eb6ffcf56070345e7783cb048b563
     Current%20status/singular: b9c587d6cd7ee919b59e75066fa4675f
     Final%20status/singular: 62c3befb232a9d290e74b84d6ddbf22c
@@ -274,7 +287,6 @@ checksums:
     Legend/singular: 3b588fbd2fe35ded6ca38334e15400c3
     Diagram/singular: e0bc1ef7782cb0d749c9582da6775175
     Timeline/singular: 342b1e646f0634e47112092db1a24f49
-    Vocabulary/singular: 2c8127af4c194fa05463e82d5e414c62
     Green/singular: 482ff383a4258357ba404f283682471d
     Yellow/singular: 15d533755d35af887dfa584975549fda
     Red/singular: bace0083b78cdb188523bc4abc7b55c6
@@ -316,7 +328,6 @@ checksums:
     Evening/singular: d401caa89963f8017a148bcdd1749c2d
     "%7Bperiod%7D%20with%20%7Bvalue%7D%25/singular": 958bc2c65d9a6823edee6f2585fd6501
     Next%3A%20%7Bactivity%7D/singular: 9208679843466247d2161793249e5eda
-    Activity/singular: 1948763de8e531483a798b68195e297e
     Continue%20learning/singular: ff5ff528cbacf657af36fb9b711431d6
     Your%20energy%20is%20%7Bvalue%7D%25/singular: d5ae9aecd778267fbc44c9e681c91637
     Keep%20learning%20to%20increase%20it/singular: a3c3f15ac29089d9448b0971126cabf7
@@ -697,7 +708,6 @@ checksums:
     Send%20feedback/singular: 9631cc08d49da04475b30a0d320ce97c
     More%20options/singular: 53d90eae6a9b0243b5bc043b3d9de169
     Start/singular: dbe56303d9a6d3fad1a8d4cbcc97f365
-    Review/singular: 299f75db25382980b2895622d7712927
     Please%20provide%20as%20much%20detail%20as%20possible./singular: 3c8b231283c751d4beae059a6ffc3643
     Failed%20to%20send%20message.%20Please%20try%20again%20or%20email%20us%20directly%20at%20hello%40zoonk.com/singular: 7f36bcd5ba5dad4b9981f85488ff794c
     Email%20address/singular: 3ba3f099b1b9be6c35ad797da660cb9f
@@ -715,26 +725,17 @@ checksums:
     Upgrade/singular: 63c3b52882e0d779859307d672c178c2
     Upgrade%20to%20create/singular: d8be0e2d204b5a7601612cc44cca5cd5
     Creating%20content%20with%20AI%20requires%20an%20active%20subscription./singular: 7a1e2747c5271495f525ae7360db6fe0
-    Translation/singular: 9276816e7bc1a6ff00f388faa0863986
-    Listening/singular: 9e680c44cd88a178b953349ed8881ef2
     Learn%20new%20%7Btopic%7D%20words%20with%20flashcards%20%E2%80%94%20see%20each%20word%2C%20its%20translation%2C%20and%20pronunciation./singular: 923933ba274d61fc2ffb279cf64aceba
-    Story/singular: fabac3f62af801d429e2cd7115bf14c9
     Review%20everything%20you%20learned%20about%20%7Btopic%7D%20with%20a%20comprehensive%20quiz./singular: 8acf9006cabdcbaac217c7565943f068
-    Explanation/singular: f6b595df4ffb1a5b0cbbe1dda5993522
     Sharpen%20your%20%7Btopic%7D%20listening%20skills%20by%20translating%20audio%20sentences./singular: b624ceffbbfc91a29cec43a0037b067f
     Test%20your%20understanding%20of%20%7Btopic%7D%20with%20questions%20designed%20to%20check%20real%20comprehension%2C%20not%20just%20memorization./singular: d9f3e39d19b1c6969b481bc8aec8fc10
-    Practice/singular: ea10afa88a3687e6c40d1bfb3e0f4f20
     Investigate%20%7Btopic%7D%20by%20gathering%20evidence%2C%20evaluating%20findings%2C%20and%20drawing%20your%20own%20conclusions./singular: 00493764f0b0552779c71e990ec3be5c
     "%7Blesson%7D%20%7Bactivity%7D/singular": d959fed1ee77dca493e8cf0a3b3129c0
-    Reading/singular: 9d93f1dff4a01a9e1566f23b401b8868
-    Quiz/singular: 22bce287f7a90d3b41b418108eaab43b
     Test%20your%20%7Btopic%7D%20vocabulary%20by%20translating%20words%20you've%20learned./singular: d81da859633df4dd0b03711f48cc1cdd
-    Grammar/singular: 1d97aca351a45df1d6eb27adbee04832
     Learn%20about%20%7Btopic%7D%20through%20an%20interactive%20activity./singular: 94f8ca153ea2ee6b539f507266548201
     Experience%20%7Btopic%7D%20through%20an%20interactive%20story%20where%20your%20decisions%20shape%20the%20outcome./singular: 56069dcd1f836d241ab23c4a19d7d208
     Understand%20what%20%7Btopic%7D%20is%20%E2%80%94%20core%20concepts%20and%20definitions%20explained%20with%20clear%20metaphors%20and%20analogies./singular: ec3b49a710ebac5f592523bdaa68ceff
     Practice%20%7Btopic%7D%20grammar%20rules%20with%20exercises%20designed%20to%20help%20you%20remember%20and%20apply%20them./singular: 107adae09992e8b4deb051afa38da3bd
-    Investigation/singular: 89bc005c971ce9ded2848561258095d8
     "%7Bactivity%7D%20-%20%7Blesson%7D/singular": 0aad8d82851f799d79c052a0f2b90d67
     Improve%20your%20%7Btopic%7D%20reading%20comprehension%20by%20translating%20sentences%20and%20passages./singular: 60baac4222f76009cc1eb1b6065b403b
     Apply%20%7Btopic%7D%20through%20a%20real-world%20dialogue%20scenario./singular: e170c3bd82d42f0972d0f447f10379f0

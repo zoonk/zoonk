@@ -119,10 +119,13 @@ export default async function ActivityPage({ params }: Props) {
     <ActivityPlayerClient
       activity={serialized}
       brandSlug={brandSlug}
+      chapterTitle={lesson.chapter.title}
       courseSlug={courseSlug}
       chapterSlug={chapterSlug}
       isAuthenticated={Boolean(session)}
+      lessonDescription={lesson.description}
       lessonSlug={lessonSlug}
+      lessonTitle={lesson.title}
       nextActivity={nextActivity}
       nextSibling={nextSibling}
       totalBrainPower={totalBrainPower}

@@ -16,6 +16,9 @@ const noop = () => null;
  */
 export function renderPlayer({
   activity,
+  chapterTitle = "Test Chapter",
+  lessonDescription = "Test lesson description",
+  lessonTitle = "Test Lesson",
   milestone = { kind: "activity" },
   navigation = buildNavigation(),
   onComplete = noop,
@@ -25,6 +28,9 @@ export function renderPlayer({
   viewer = { isAuthenticated: false, userName: null },
 }: {
   activity: SerializedActivity;
+  chapterTitle?: string;
+  lessonDescription?: string;
+  lessonTitle?: string;
   milestone?: PlayerMilestone;
   navigation?: PlayerNavigation;
   onComplete?: (input: CompletionInput) => void;
@@ -36,6 +42,9 @@ export function renderPlayer({
   return render(
     <PlayerProvider
       activity={activity}
+      chapterTitle={chapterTitle}
+      lessonDescription={lessonDescription}
+      lessonTitle={lessonTitle}
       milestone={milestone}
       navigation={navigation}
       onComplete={onComplete}

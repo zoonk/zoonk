@@ -1,7 +1,7 @@
 "use client";
 
 import { useExtracted } from "next-intl";
-import { usePlayerMilestone, usePlayerNavigation, usePlayerRuntime } from "../player-context";
+import { usePlayerMilestone, usePlayerRuntime } from "../player-context";
 import {
   getCurrentResult,
   getCurrentStep,
@@ -46,7 +46,6 @@ function BottomBarContent() {
 export function PlayerShell() {
   const t = useExtracted();
   const { screen, state } = usePlayerRuntime();
-  const { lessonHref } = usePlayerNavigation();
   const milestone = usePlayerMilestone();
 
   const currentResult = getCurrentResult(state);
@@ -87,10 +86,7 @@ export function PlayerShell() {
         <InPlayStickyHeader
           centerContent={evidencePill}
           contextRecall={contextRecall}
-          currentStepIndex={state.currentStepIndex}
-          lessonHref={lessonHref}
           progressValue={progressValue}
-          totalSteps={state.steps.length}
         />
       )}
 

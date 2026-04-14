@@ -33,13 +33,3 @@ export function PlayerCloseLink({ className, href }: { className?: string; href:
     </PlayerLink>
   );
 }
-
-export function PlayerStepFraction({ className, ...props }: React.ComponentProps<"span">) {
-  return (
-    <span
-      className={cn("text-muted-foreground text-sm tabular-nums", className)}
-      data-slot="player-step-fraction"
-      {...props}
-    />
-  );
-}

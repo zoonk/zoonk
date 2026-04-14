@@ -261,6 +261,11 @@ msgctxt "kW2sOl"
 msgid "Collect 2 leads. Then make your call."
 msgstr "Collect 2 leads. Then make your call."
 
+#: ../../packages/player/src/components/lesson-info-popover.tsx
+msgctxt "RwePAQ"
+msgid "Lesson info"
+msgstr "Lesson info"
+
 #: ../../packages/player/src/components/listening-step.tsx
 #: ../../packages/player/src/components/reading-step.tsx
 msgctxt "19nXyC"
@@ -438,10 +443,79 @@ msgid "Timeline"
 msgstr "Timeline"
 
 #: ../../packages/player/src/components/vocabulary-step.tsx
+#: ../../packages/player/src/use-activity-kind-label.ts
 #: src/lib/activities.ts
 msgctxt "lqtP+R"
 msgid "Vocabulary"
 msgstr "Vocabulary"
+
+#: ../../packages/player/src/use-activity-kind-label.ts
+#: src/lib/activities.ts
+msgctxt "/vCXIP"
+msgid "Translation"
+msgstr "Translation"
+
+#: ../../packages/player/src/use-activity-kind-label.ts
+#: src/lib/activities.ts
+msgctxt "1TOMnj"
+msgid "Listening"
+msgstr "Listening"
+
+#: ../../packages/player/src/use-activity-kind-label.ts
+#: src/lib/activities.ts
+msgctxt "Bfq+7w"
+msgid "Story"
+msgstr "Story"
+
+#: ../../packages/player/src/use-activity-kind-label.ts
+#: src/lib/activities.ts
+msgctxt "E1bF/X"
+msgid "Explanation"
+msgstr "Explanation"
+
+#: ../../packages/player/src/use-activity-kind-label.ts
+#: src/lib/activities.ts
+msgctxt "KV+O0y"
+msgid "Practice"
+msgstr "Practice"
+
+#: ../../packages/player/src/use-activity-kind-label.ts
+#: src/lib/activities.ts
+msgctxt "MOK/yK"
+msgid "Reading"
+msgstr "Reading"
+
+#: ../../packages/player/src/use-activity-kind-label.ts
+#: src/lib/activities.ts
+msgctxt "OuR/Ij"
+msgid "Quiz"
+msgstr "Quiz"
+
+#: ../../packages/player/src/use-activity-kind-label.ts
+#: src/lib/activities.ts
+msgctxt "QzTY8x"
+msgid "Grammar"
+msgstr "Grammar"
+
+#: ../../packages/player/src/use-activity-kind-label.ts
+#: src/components/catalog/continue-activity-link.tsx
+#: src/lib/activities.ts
+msgctxt "R+J5ox"
+msgid "Review"
+msgstr "Review"
+
+#: ../../packages/player/src/use-activity-kind-label.ts
+#: src/lib/activities.ts
+msgctxt "tNseQe"
+msgid "Investigation"
+msgstr "Investigation"
+
+#: ../../packages/player/src/use-activity-kind-label.ts
+#: src/app/(catalog)/(home)/continue-learning-card.tsx
+#: src/app/generate/a/[id]/generate-activity-content.tsx
+msgctxt "ZmlNQ3"
+msgid "Activity"
+msgstr "Activity"
 
 #: ../../packages/player/src/use-belt-color-label.ts
 #: src/lib/belt-colors.ts
@@ -688,12 +762,6 @@ msgstr "{period} with {value}%"
 msgctxt "TyANVg"
 msgid "Next: {activity}"
 msgstr "Next: {activity}"
-
-#: src/app/(catalog)/(home)/continue-learning-card.tsx
-#: src/app/generate/a/[id]/generate-activity-content.tsx
-msgctxt "ZmlNQ3"
-msgid "Activity"
-msgstr "Activity"
 
 #: src/app/(catalog)/(home)/continue-learning.tsx
 msgctxt "0X+xfW"
@@ -2641,12 +2709,6 @@ msgctxt "mOFG3K"
 msgid "Start"
 msgstr "Start"
 
-#: src/components/catalog/continue-activity-link.tsx
-#: src/lib/activities.ts
-msgctxt "R+J5ox"
-msgid "Review"
-msgstr "Review"
-
 #: src/components/feedback/contact-form.tsx
 msgctxt "+5vOOu"
 msgid "Please provide as much detail as possible."
@@ -2733,34 +2795,14 @@ msgid "Creating content with AI requires an active subscription."
 msgstr "Creating content with AI requires an active subscription."
 
 #: src/lib/activities.ts
-msgctxt "/vCXIP"
-msgid "Translation"
-msgstr "Translation"
-
-#: src/lib/activities.ts
-msgctxt "1TOMnj"
-msgid "Listening"
-msgstr "Listening"
-
-#: src/lib/activities.ts
 msgctxt "3198Ew"
 msgid "Learn new {topic} words with flashcards — see each word, its translation, and pronunciation."
 msgstr "Learn new {topic} words with flashcards — see each word, its translation, and pronunciation."
 
 #: src/lib/activities.ts
-msgctxt "Bfq+7w"
-msgid "Story"
-msgstr "Story"
-
-#: src/lib/activities.ts
 msgctxt "bzFQEy"
 msgid "Review everything you learned about {topic} with a comprehensive quiz."
 msgstr "Review everything you learned about {topic} with a comprehensive quiz."
-
-#: src/lib/activities.ts
-msgctxt "E1bF/X"
-msgid "Explanation"
-msgstr "Explanation"
 
 #: src/lib/activities.ts
 msgctxt "gAYlHX"
@@ -2773,11 +2815,6 @@ msgid "Test your understanding of {topic} with questions designed to check real 
 msgstr "Test your understanding of {topic} with questions designed to check real comprehension, not just memorization."
 
 #: src/lib/activities.ts
-msgctxt "KV+O0y"
-msgid "Practice"
-msgstr "Practice"
-
-#: src/lib/activities.ts
 msgctxt "lLtcKR"
 msgid "Investigate {topic} by gathering evidence, evaluating findings, and drawing your own conclusions."
 msgstr "Investigate {topic} by gathering evidence, evaluating findings, and drawing your own conclusions."
@@ -2788,24 +2825,9 @@ msgid "{lesson} {activity}"
 msgstr "{lesson} {activity}"
 
 #: src/lib/activities.ts
-msgctxt "MOK/yK"
-msgid "Reading"
-msgstr "Reading"
-
-#: src/lib/activities.ts
-msgctxt "OuR/Ij"
-msgid "Quiz"
-msgstr "Quiz"
-
-#: src/lib/activities.ts
 msgctxt "pDtxFt"
 msgid "Test your {topic} vocabulary by translating words you've learned."
 msgstr "Test your {topic} vocabulary by translating words you've learned."
-
-#: src/lib/activities.ts
-msgctxt "QzTY8x"
-msgid "Grammar"
-msgstr "Grammar"
 
 #: src/lib/activities.ts
 msgctxt "RtjVBh"
@@ -2826,11 +2848,6 @@ msgstr "Understand what {topic} is — core concepts and definitions explained w
 msgctxt "tlgfSZ"
 msgid "Practice {topic} grammar rules with exercises designed to help you remember and apply them."
 msgstr "Practice {topic} grammar rules with exercises designed to help you remember and apply them."
-
-#: src/lib/activities.ts
-msgctxt "tNseQe"
-msgid "Investigation"
-msgstr "Investigation"
 
 #: src/lib/activities.ts
 msgctxt "UDijXW"

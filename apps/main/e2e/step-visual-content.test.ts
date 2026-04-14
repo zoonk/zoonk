@@ -403,7 +403,7 @@ test.describe("Visual Step Content", () => {
       await expect(page.getByRole("figure", { name: /diagram/i })).toBeVisible();
     }).toPass();
 
-    await expect(page.getByText(/1 \/ 2/)).toBeVisible();
+    await expect(page.getByRole("button", { name: /lesson info/i })).toBeVisible();
 
     await page.waitForLoadState("networkidle");
 
@@ -413,8 +413,6 @@ test.describe("Visual Step Content", () => {
         page.getByRole("heading", { name: new RegExp(`Diagram Step2 ${uniqueId}`) }),
       ).toBeVisible();
     }).toPass();
-
-    await expect(page.getByText(/2 \/ 2/)).toBeVisible();
   });
 
   test("visual step renders code and language label", async ({ page }) => {
@@ -474,7 +472,7 @@ test.describe("Visual Step Content", () => {
       await expect(page.getByRole("figure", { name: /typescript/i })).toBeVisible();
     }).toPass();
 
-    await expect(page.getByText(/1 \/ 2/)).toBeVisible();
+    await expect(page.getByRole("button", { name: /lesson info/i })).toBeVisible();
 
     await page.waitForLoadState("networkidle");
 
@@ -484,8 +482,6 @@ test.describe("Visual Step Content", () => {
         page.getByRole("heading", { name: new RegExp(`Code Step2 ${uniqueId}`) }),
       ).toBeVisible();
     }).toPass();
-
-    await expect(page.getByText(/2 \/ 2/)).toBeVisible();
   });
 
   test("visual step renders table headers and cell data", async ({ page }) => {
@@ -679,7 +675,7 @@ test.describe("Visual Step Content", () => {
     await expect(
       page.getByRole("columnheader", { name: new RegExp(`Col A ${uniqueId}`) }),
     ).toBeVisible();
-    await expect(page.getByText(/1 \/ 2/)).toBeVisible();
+    await expect(page.getByRole("button", { name: /lesson info/i })).toBeVisible();
 
     await page.waitForLoadState("networkidle");
 
@@ -689,8 +685,6 @@ test.describe("Visual Step Content", () => {
         page.getByRole("heading", { name: new RegExp(`Table Step2 ${uniqueId}`) }),
       ).toBeVisible();
     }).toPass();
-
-    await expect(page.getByText(/2 \/ 2/)).toBeVisible();
   });
 
   test("visual step renders timeline event dates, titles, and descriptions", async ({ page }) => {
@@ -782,7 +776,7 @@ test.describe("Visual Step Content", () => {
     await page.goto(url);
 
     await expect(page.getByRole("figure", { name: /timeline/i })).toBeVisible();
-    await expect(page.getByText(/1 \/ 2/)).toBeVisible();
+    await expect(page.getByRole("button", { name: /lesson info/i })).toBeVisible();
 
     await page.waitForLoadState("networkidle");
 
@@ -792,8 +786,6 @@ test.describe("Visual Step Content", () => {
         page.getByRole("heading", { name: new RegExp(`Timeline Step2 ${uniqueId}`) }),
       ).toBeVisible();
     }).toPass();
-
-    await expect(page.getByText(/2 \/ 2/)).toBeVisible();
   });
 
   test("visual step renders bar chart title and category labels", async ({ page }) => {
@@ -937,7 +929,7 @@ test.describe("Visual Step Content", () => {
       await expect(page.getByRole("figure", { name: chartTitle })).toBeVisible();
     }).toPass();
 
-    await expect(page.getByText(/1 \/ 2/)).toBeVisible();
+    await expect(page.getByRole("button", { name: /lesson info/i })).toBeVisible();
 
     await page.waitForLoadState("networkidle");
 
@@ -947,8 +939,6 @@ test.describe("Visual Step Content", () => {
         page.getByRole("heading", { name: new RegExp(`Chart Step2 ${uniqueId}`) }),
       ).toBeVisible();
     }).toPass();
-
-    await expect(page.getByText(/2 \/ 2/)).toBeVisible();
   });
 
   test("visual step renders code annotations", async ({ page }) => {
@@ -1035,7 +1025,7 @@ test.describe("Visual Step Content", () => {
       await expect(page.getByRole("figure", { name: description })).toBeVisible();
     }).toPass();
 
-    await expect(page.getByText(/1 \/ 2/)).toBeVisible();
+    await expect(page.getByRole("button", { name: /lesson info/i })).toBeVisible();
 
     await page.waitForLoadState("networkidle");
 
@@ -1045,7 +1035,5 @@ test.describe("Visual Step Content", () => {
         page.getByRole("heading", { name: new RegExp(`Formula Next ${uniqueId}`) }),
       ).toBeVisible();
     }).toPass();
-
-    await expect(page.getByText(/2 \/ 2/)).toBeVisible();
   });
 });
