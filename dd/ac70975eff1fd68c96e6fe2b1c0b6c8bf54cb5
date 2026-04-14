@@ -1,0 +1,44 @@
+packages/player/src/_browser-tests/player-story.browser.test.tsx
+  b96aa95b162d6206 173-176
+packages/player/src/_browser-tests/player-visual.browser.test.tsx
+  b96aa95b162d6206 1-19,21,23-41,45-58,61-62,66-83,86-88,91-93,95-96,99-102,105-107,109,111,113,115,119-120,123-124,126,129-130,132-134,137,139,141,145-147,149,151,154-155,157,159-160,164,168,170-174,177-178,180,182-183,186-187,190,194-198,201-239,241-246,249-250,252,256-258,261-263,268,272-275,278-279,281,285-286,289,291-293,297-298,301,303-306,310-312,315,317-319,323-324,326,328-329,331-335,338-339,341,343-351,354,358,360-361,363-367,369-386,388-391,393-394,396,398-401,403-406,409-459,461,463-473,475-480,483-484,486,488-489,492,496,498-500
+apps/main/e2e/activity-detail.test.ts
+  b96aa95b162d6206 70,74-75,81-82,100-101,111-112
+packages/player/src/_browser-tests/player-vocabulary.browser.test.tsx
+  b96aa95b162d6206 81-113
+packages/player/postcss.config.mjs
+  b96aa95b162d6206 1
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.8",
+  "base_commit_sha": "ddac70975eff1fd68c96e6fe2b1c0b6c8bf54cb5",
+  "prompts": {
+    "b3e2cf6cad4819a0": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d8d5d-7cba-70b1-8c17-ad7d6dff43e7",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 377,
+      "total_deletions": 42,
+      "accepted_lines": 126,
+      "overriden_lines": 0
+    },
+    "b96aa95b162d6206": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d8db2-0332-7d93-84f8-0f778f7df0ff",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 1179,
+      "total_deletions": 1682,
+      "accepted_lines": 559,
+      "overriden_lines": 0
+    }
+  }
+}
