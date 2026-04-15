@@ -4,6 +4,7 @@ import { createChapter } from "@/data/chapters/create-chapter";
 import { exportChapters } from "@/data/chapters/export-chapters";
 import { importChapters } from "@/data/chapters/import-chapters";
 import { reorderChapters } from "@/data/chapters/reorder-chapters";
+import { getAuthorizedActiveCourse } from "@/data/courses/get-authorized-course";
 import { getErrorMessage } from "@/lib/error-messages";
 import { isImportMode } from "@/lib/import-mode";
 import { getExtracted } from "next-intl/server";
@@ -73,17 +74,54 @@ export async function exportChaptersAction(courseId: number): Promise<{
   return { data, error: null };
 }
 
-type CourseRouteParams = {
+type CourseActionParams = {
   courseId: number;
-  courseSlug: string;
-  orgSlug: string;
 };
 
+/**
+ * Chapter page actions only make sense while the course page is still active, so
+ * this helper resolves the canonical route on the server before we revalidate or
+ * redirect instead of trusting route params captured at render time.
+ */
+async function getAuthorizedCoursePagePath(courseId: number): Promise<
+  | {
+      error: string;
+      path: null;
+    }
+  | {
+      error: null;
+      path: `/${string}/c/${string}`;
+    }
+> {
+  const { data: course, error } = await getAuthorizedActiveCourse({ courseId });
+
+  if (error) {
+    return { error: await getErrorMessage(error), path: null };
+  }
+
+  return {
+    error: null,
+    path: `/${course.organization.slug}/c/${course.slug}` as const,
+  };
+}
+
 export async function insertChapterAction(
-  params: CourseRouteParams,
+  params: CourseActionParams,
   position: number,
 ): Promise<void> {
-  const { courseId, courseSlug, orgSlug } = params;
+  const { courseId } = params;
+  const coursePage = await getAuthorizedCoursePagePath(courseId);
+
+  if (coursePage.error) {
+    throw new Error(coursePage.error);
+  }
+
+  const path = coursePage.path;
+
+  if (!path) {
+    throw new Error("Failed to resolve course path");
+  }
+
   const { slug, error } = await createChapterAction(courseId, position);
 
   if (error) {
@@ -91,31 +129,55 @@ export async function insertChapterAction(
   }
 
   if (slug) {
-    revalidatePath(`/${orgSlug}/c/${courseSlug}`);
-    redirect(`/${orgSlug}/c/${courseSlug}/ch/${slug}`);
+    const chapterPath = `${path}/ch/${slug}` as const;
+    revalidatePath(path);
+    redirect(chapterPath);
   }
 }
 
 export async function handleImportChaptersAction(
-  params: CourseRouteParams,
+  params: CourseActionParams,
   formData: FormData,
 ): Promise<{ error: string | null }> {
-  const { courseId, courseSlug, orgSlug } = params;
+  const { courseId } = params;
+  const coursePage = await getAuthorizedCoursePagePath(courseId);
+
+  if (coursePage.error) {
+    return { error: coursePage.error };
+  }
+
+  const path = coursePage.path;
+
+  if (!path) {
+    return { error: "Failed to resolve course path" };
+  }
+
   const { error } = await importChaptersAction(courseId, formData);
 
   if (error) {
     return { error };
   }
 
-  revalidatePath(`/${orgSlug}/c/${courseSlug}`);
+  revalidatePath(path);
   return { error: null };
 }
 
 export async function reorderChaptersAction(
-  params: CourseRouteParams,
+  params: CourseActionParams,
   chapters: { id: number; position: number }[],
 ): Promise<{ error: string | null }> {
-  const { courseId, courseSlug, orgSlug } = params;
+  const { courseId } = params;
+  const coursePage = await getAuthorizedCoursePagePath(courseId);
+
+  if (coursePage.error) {
+    return { error: coursePage.error };
+  }
+
+  const path = coursePage.path;
+
+  if (!path) {
+    return { error: "Failed to resolve course path" };
+  }
 
   const { error } = await reorderChapters({
     chapters: chapters.map((chapter) => ({ chapterId: chapter.id, position: chapter.position })),
@@ -126,6 +188,6 @@ export async function reorderChaptersAction(
     return { error: await getErrorMessage(error) };
   }
 
-  revalidatePath(`/${orgSlug}/c/${courseSlug}`);
+  revalidatePath(path);
   return { error: null };
 }

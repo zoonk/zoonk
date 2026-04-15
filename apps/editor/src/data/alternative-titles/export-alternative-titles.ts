@@ -1,7 +1,7 @@
 import "server-only";
 import { prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
-import { getAuthorizedAlternativeTitleCourse } from "./get-authorized-course";
+import { getAuthorizedCourse } from "../courses/get-authorized-course";
 
 /**
  * Export needs the same authorization boundary as mutations because the action
@@ -17,7 +17,7 @@ export async function exportAlternativeTitles(params: {
     version: number;
   }>
 > {
-  const { error: courseError } = await getAuthorizedAlternativeTitleCourse({
+  const { error: courseError } = await getAuthorizedCourse({
     courseId: params.courseId,
     headers: params.headers,
   });

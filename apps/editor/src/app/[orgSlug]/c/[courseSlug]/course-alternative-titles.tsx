@@ -28,19 +28,17 @@ export async function CourseAlternativeTitles({
 
   const titles = await listAlternativeTitles({ courseId: course.id });
 
-  const routeParams = {
+  const actionParams = {
     courseId: course.id,
-    courseSlug,
     language: course.language,
-    orgSlug,
   };
 
   return (
     <AlternativeTitlesEditor
-      onAdd={addAlternativeTitleAction.bind(null, routeParams)}
-      onDelete={deleteAlternativeTitleAction.bind(null, routeParams)}
+      onAdd={addAlternativeTitleAction.bind(null, actionParams)}
+      onDelete={deleteAlternativeTitleAction.bind(null, actionParams)}
       onExport={exportAlternativeTitlesAction.bind(null, course.id)}
-      onImport={importAlternativeTitlesAction.bind(null, routeParams)}
+      onImport={importAlternativeTitlesAction.bind(null, actionParams)}
       titles={titles}
     />
   );

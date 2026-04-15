@@ -1,8 +1,7 @@
 import "server-only";
-import { ErrorCode } from "@/lib/app-error";
-import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
-import { getActiveChapterWhere, getActiveCourseWhere, prisma } from "@zoonk/db";
-import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
+import { getAuthorizedActiveCourse } from "@/data/courses/get-authorized-course";
+import { getActiveChapterWhere, prisma } from "@zoonk/db";
+import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 
 type ExportedChapter = {
   description: string;
@@ -18,35 +17,20 @@ export async function exportChapters(params: { courseId: number; headers?: Heade
     version: number;
   }>
 > {
-  const { data: course, error: findError } = await safeAsync(() =>
-    prisma.course.findFirst({
-      where: getActiveCourseWhere({ id: params.courseId }),
-    }),
-  );
-
-  if (findError) {
-    return { data: null, error: findError };
-  }
-
-  if (!course) {
-    return { data: null, error: new AppError(ErrorCode.courseNotFound) };
-  }
-
-  const hasPermission = await hasCoursePermission({
+  const { data: course, error: courseError } = await getAuthorizedActiveCourse({
+    courseId: params.courseId,
     headers: params.headers,
-    orgId: course.organizationId,
-    permission: "update",
   });
 
-  if (!hasPermission) {
-    return { data: null, error: new AppError(ErrorCode.forbidden) };
+  if (courseError) {
+    return { data: null, error: courseError };
   }
 
   const { data: chapters, error: chaptersError } = await safeAsync(() =>
     prisma.chapter.findMany({
       orderBy: { position: "asc" },
       where: getActiveChapterWhere({
-        chapterWhere: { courseId: params.courseId },
+        chapterWhere: { courseId: course.id },
       }),
     }),
   );

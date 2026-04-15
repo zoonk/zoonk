@@ -2,7 +2,7 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { toSlug } from "@zoonk/utils/string";
-import { getAuthorizedAlternativeTitleCourse } from "./get-authorized-course";
+import { getAuthorizedCourse } from "../courses/get-authorized-course";
 
 /**
  * Deleting alternative titles changes duplicate-detection data, so this helper
@@ -13,7 +13,7 @@ export async function deleteAlternativeTitles(params: {
   headers?: Headers;
   titles: string[];
 }): Promise<SafeReturn<null>> {
-  const { error: courseError } = await getAuthorizedAlternativeTitleCourse({
+  const { error: courseError } = await getAuthorizedCourse({
     courseId: params.courseId,
     headers: params.headers,
   });

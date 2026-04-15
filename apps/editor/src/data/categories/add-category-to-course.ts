@@ -1,6 +1,6 @@
 import "server-only";
+import { getAuthorizedCourse } from "@/data/courses/get-authorized-course";
 import { ErrorCode } from "@/lib/app-error";
-import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
 import { type CourseCategory, prisma } from "@zoonk/db";
 import { isUniqueConstraintError } from "@zoonk/db/utils";
 import { isValidCategory } from "@zoonk/utils/categories";
@@ -15,35 +15,20 @@ export async function addCategoryToCourse(params: {
     return { data: null, error: new AppError(ErrorCode.invalidCategory) };
   }
 
-  const { data: course, error: findError } = await safeAsync(() =>
-    prisma.course.findUnique({
-      where: { id: params.courseId },
-    }),
-  );
-
-  if (findError) {
-    return { data: null, error: findError };
-  }
-
-  if (!course) {
-    return { data: null, error: new AppError(ErrorCode.courseNotFound) };
-  }
-
-  const hasPermission = await hasCoursePermission({
+  const { data: course, error: courseError } = await getAuthorizedCourse({
+    courseId: params.courseId,
     headers: params.headers,
-    orgId: course.organizationId,
-    permission: "update",
   });
 
-  if (!hasPermission) {
-    return { data: null, error: new AppError(ErrorCode.forbidden) };
+  if (courseError) {
+    return { data: null, error: courseError };
   }
 
   const { data: courseCategory, error } = await safeAsync(() =>
     prisma.courseCategory.create({
       data: {
         category: params.category,
-        courseId: params.courseId,
+        courseId: course.id,
       },
     }),
   );

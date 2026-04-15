@@ -19,19 +19,15 @@ export async function CourseCategories({
 
   const { data: categories } = await listCourseCategories({ courseId: course.id });
 
-  const routeParams = {
-    courseId: course.id,
-    courseSlug,
-    orgSlug,
-  };
+  const actionParams = { courseId: course.id };
 
   const categoryStrings = categories?.map((item) => item.category) ?? [];
 
   return (
     <CategoryEditor
       categories={categoryStrings}
-      onAdd={addCourseCategoryAction.bind(null, routeParams)}
-      onRemove={removeCourseCategoryAction.bind(null, routeParams)}
+      onAdd={addCourseCategoryAction.bind(null, actionParams)}
+      onRemove={removeCourseCategoryAction.bind(null, actionParams)}
     />
   );
 }

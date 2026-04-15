@@ -2,7 +2,7 @@ import "server-only";
 import { addAlternativeTitles as createAlternativeTitles } from "@zoonk/core/alternative-titles/add";
 import { type BatchPayload } from "@zoonk/db";
 import { type SafeReturn } from "@zoonk/utils/error";
-import { getAuthorizedAlternativeTitleCourse } from "./get-authorized-course";
+import { getAuthorizedCourse } from "../courses/get-authorized-course";
 
 /**
  * The editor needs an authenticated wrapper around the shared alternative-title
@@ -14,7 +14,7 @@ export async function addAlternativeTitles(params: {
   language: string;
   titles: string[];
 }): Promise<SafeReturn<BatchPayload | null>> {
-  const { error } = await getAuthorizedAlternativeTitleCourse({
+  const { error } = await getAuthorizedCourse({
     courseId: params.courseId,
     headers: params.headers,
   });
