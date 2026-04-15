@@ -18,7 +18,6 @@ export async function checkCourseSlugExists(params: {
 
   return courseSlugExistsForUpdate({
     courseId: params.courseId,
-    language: params.language,
     slug: params.slug,
   });
 }

@@ -172,7 +172,6 @@ describe("courseSlugExistsForUpdate()", () => {
     const exists = await courseSlugExistsForUpdate({
       courseId: course.id,
       headers,
-      language: course.language,
       slug: course.slug,
     });
 
@@ -188,7 +187,6 @@ describe("courseSlugExistsForUpdate()", () => {
     const exists = await courseSlugExistsForUpdate({
       courseId: otherCourse.id,
       headers,
-      language: otherCourse.language,
       slug: otherCourse.slug,
     });
 

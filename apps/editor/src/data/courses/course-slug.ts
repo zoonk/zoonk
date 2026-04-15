@@ -80,7 +80,6 @@ export async function courseSlugExistsForCreate(params: {
 export async function courseSlugExistsForUpdate(params: {
   courseId: number;
   headers?: Headers;
-  language: string;
   slug: string;
 }): Promise<boolean> {
   if (!params.slug.trim()) {
