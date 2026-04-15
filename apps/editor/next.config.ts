@@ -30,6 +30,7 @@ const nextConfig: NextConfig = {
     },
     typedEnv: true,
   },
+  headers: getPublicAppSecurityHeaders,
   images: {
     minimumCacheTTL: 60 * 60 * 24 * CACHE_IMAGE_DAYS,
     remotePatterns: [
@@ -40,7 +41,6 @@ const nextConfig: NextConfig = {
     ],
   },
   reactCompiler: true,
-  headers: getPublicAppSecurityHeaders,
   turbopack: {
     resolveAlias: {
       ...e2eAliases,

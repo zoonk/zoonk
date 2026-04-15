@@ -1,10 +1,10 @@
 import path from "node:path";
 import createMDX from "@next/mdx";
 import { withSentryConfig } from "@sentry/nextjs";
+import { getPublicAppSecurityHeaders } from "@zoonk/next/security/headers";
 import { withBotId } from "botid/next/config";
 import { type NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
-import { getPublicAppSecurityHeaders } from "@zoonk/next/security/headers";
 
 const CACHE_IMAGE_DAYS = 30;
 
@@ -27,6 +27,7 @@ const nextConfig: NextConfig = {
     },
     typedEnv: true,
   },
+  headers: getPublicAppSecurityHeaders,
   images: {
     minimumCacheTTL: 60 * 60 * 24 * CACHE_IMAGE_DAYS,
     remotePatterns: [
@@ -39,7 +40,6 @@ const nextConfig: NextConfig = {
   logging: {
     browserToTerminal: true,
   },
-  headers: getPublicAppSecurityHeaders,
   pageExtensions: ["js", "jsx", "mdx", "ts", "tsx"],
   reactCompiler: true,
   turbopack: {
