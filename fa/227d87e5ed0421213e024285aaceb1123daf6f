@@ -1,0 +1,57 @@
+apps/main/next.config.ts
+  bab3aac18db292c8 7,42
+packages/next/src/security/headers.ts
+  bab3aac18db292c8 1-59
+apps/editor/next.config.ts
+  bab3aac18db292c8 3,43
+packages/next/package.json
+  bab3aac18db292c8 8-9
+apps/api/next.config.ts
+  bab3aac18db292c8 3,24
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.8",
+  "base_commit_sha": "fa227d87e5ed0421213e024285aaceb1123daf6f",
+  "prompts": {
+    "5a8108263f54ab4d": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d922d-d5bd-7a32-bf54-9353a309fce8",
+        "model": "unknown"
+      },
+      "human_author": null,
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 0,
+      "overriden_lines": 0
+    },
+    "b656cba3e57dc167": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d81e6-d72d-7473-afe2-7cc747e2c8c7",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 48,
+      "overriden_lines": 0
+    },
+    "bab3aac18db292c8": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d9221-b14c-7962-b808-35b63b111baa",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 102,
+      "total_deletions": 1,
+      "accepted_lines": 67,
+      "overriden_lines": 0
+    }
+  }
+}
