@@ -285,6 +285,7 @@ test.describe("Lesson Detail Page", () => {
         name: `Non AI Lesson ${uniqueId}`,
       }),
     ).toBeVisible();
+    await expect(page.getByRole("link", { name: /^start$/i })).not.toBeVisible();
   });
 
   test("shows not-completed indicators for unauthenticated user", async ({ page }) => {

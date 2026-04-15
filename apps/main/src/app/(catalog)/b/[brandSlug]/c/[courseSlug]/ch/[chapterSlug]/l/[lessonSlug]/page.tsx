@@ -72,6 +72,10 @@ export default async function LessonPage({
     ? (`/b/${nextSibling.brandSlug}/c/${nextSibling.courseSlug}/ch/${nextSibling.chapterSlug}/l/${nextSibling.lessonSlug}` as const)
     : undefined;
 
+  const fallbackHref = activities[0]
+    ? (`/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}/a/${activities[0].position}` as const)
+    : undefined;
+
   return (
     <main className="flex flex-1 flex-col">
       <LessonHeader
@@ -86,7 +90,7 @@ export default async function LessonPage({
           <Suspense fallback={<ContinueActivityLinkSkeleton />}>
             <ContinueActivityLink
               completedHref={completedHref}
-              fallbackHref={`/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}/a/${activities[0]?.position}`}
+              fallbackHref={fallbackHref}
               lessonId={lesson.id}
             />
           </Suspense>

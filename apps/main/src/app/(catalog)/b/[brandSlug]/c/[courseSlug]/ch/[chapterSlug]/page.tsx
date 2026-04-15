@@ -68,6 +68,10 @@ export default async function ChapterPage({
     ? (`/b/${nextSibling.brandSlug}/c/${nextSibling.courseSlug}/ch/${nextSibling.chapterSlug}` as const)
     : undefined;
 
+  const fallbackHref = lessons[0]
+    ? (`/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}/l/${lessons[0].slug}` as const)
+    : undefined;
+
   return (
     <main className="flex flex-1 flex-col">
       <ChapterHeader brandSlug={brandSlug} chapter={chapter} courseSlug={courseSlug} />
@@ -78,7 +82,7 @@ export default async function ChapterPage({
             <ContinueActivityLink
               chapterId={chapter.id}
               completedHref={completedHref}
-              fallbackHref={`/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}/l/${lessons[0]?.slug}`}
+              fallbackHref={fallbackHref}
             />
           </Suspense>
           <CatalogActions

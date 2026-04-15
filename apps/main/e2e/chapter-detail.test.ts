@@ -303,5 +303,6 @@ test.describe("Chapter - No Lessons", () => {
         name: `Non AI Chapter ${nonAiUniqueId}`,
       }),
     ).toBeVisible();
+    await expect(page.getByRole("link", { name: /^start$/i })).not.toBeVisible();
   });
 });

@@ -55,6 +55,10 @@ export default async function CoursePage({ params }: PageProps<"/b/[brandSlug]/c
     redirect(`/generate/c/${course.slug}`);
   }
 
+  const fallbackHref = chapters[0]
+    ? (`/b/${brandSlug}/c/${courseSlug}/ch/${chapters[0].slug}` as const)
+    : undefined;
+
   return (
     <main className="flex flex-1 flex-col">
       <CourseHeader brandSlug={brandSlug} course={course} />
@@ -62,10 +66,7 @@ export default async function CoursePage({ params }: PageProps<"/b/[brandSlug]/c
       <CatalogContainer>
         <CatalogToolbar>
           <Suspense fallback={<ContinueActivityLinkSkeleton />}>
-            <ContinueActivityLink
-              courseId={course.id}
-              fallbackHref={`/b/${brandSlug}/c/${courseSlug}/ch/${chapters[0]?.slug}`}
-            />
+            <ContinueActivityLink courseId={course.id} fallbackHref={fallbackHref} />
           </Suspense>
           <CatalogActions contentId={courseSlug} defaultEmail={session?.user.email} kind="course" />
         </CatalogToolbar>
