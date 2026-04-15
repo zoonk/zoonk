@@ -136,7 +136,7 @@ describe("admins", () => {
       activityId: activity.id,
       completedAt: new Date(),
       durationSeconds: 30,
-      userId: Number(user.id),
+      userId: user.id,
     });
 
     const result = await deleteLesson({
@@ -287,7 +287,7 @@ describe("owners", () => {
       activityId: activity.id,
       completedAt: new Date(),
       durationSeconds: 45,
-      userId: Number(user.id),
+      userId: user.id,
     });
 
     const result = await deleteLesson({
@@ -337,7 +337,7 @@ describe("owners", () => {
       activityId: activity.id,
       completedAt: new Date(),
       durationSeconds: 45,
-      userId: Number(user.id),
+      userId: user.id,
     });
 
     const result = await deleteLesson({

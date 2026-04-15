@@ -101,7 +101,7 @@ describe("authenticated users", () => {
       createTestStep(org.id),
     ]);
 
-    const userId = Number(user.id);
+    const userId = user.id;
     const stepId = step.id;
 
     await Promise.all([
@@ -129,7 +129,7 @@ describe("authenticated users", () => {
     const oldDate = new Date(now);
     oldDate.setDate(oldDate.getDate() - 91);
 
-    const userId = Number(user.id);
+    const userId = user.id;
     const stepId = step.id;
 
     await Promise.all([
@@ -153,7 +153,7 @@ describe("authenticated users", () => {
       createTestStep(org.id),
     ]);
 
-    const userId = Number(user.id);
+    const userId = user.id;
     const stepId = step.id;
 
     await Promise.all([
@@ -177,7 +177,7 @@ describe("authenticated users", () => {
       createTestStep(org.id),
     ]);
 
-    const userId = Number(user.id);
+    const userId = user.id;
     const stepId = step.id;
 
     // 17 correct, 3 incorrect = 85%
@@ -197,7 +197,7 @@ describe("authenticated users", () => {
       createTestStep(org.id),
     ]);
 
-    const userId = Number(user.id);
+    const userId = user.id;
     const stepId = step.id;
 
     // Night (hour 3): 100%
@@ -223,7 +223,7 @@ describe("authenticated users", () => {
     const twoWeeksAgo = new Date(now);
     twoWeeksAgo.setDate(twoWeeksAgo.getDate() - 14);
 
-    const userId = Number(user.id);
+    const userId = user.id;
     const stepId = step.id;
 
     await Promise.all([

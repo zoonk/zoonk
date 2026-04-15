@@ -39,13 +39,13 @@ describe("authenticated users", () => {
             date: today,
             dayOfWeek: today.getDay(),
             energyAtEnd: 85.5,
-            userId: Number(user.id),
+            userId: user.id,
           },
           {
             date: yesterday,
             dayOfWeek: yesterday.getDay(),
             energyAtEnd: 80,
-            userId: Number(user.id),
+            userId: user.id,
           },
         ],
       });
@@ -71,13 +71,13 @@ describe("authenticated users", () => {
             date: today,
             dayOfWeek: today.getDay(),
             energyAtEnd: 100,
-            userId: Number(user.id),
+            userId: user.id,
           },
           {
             date: yesterday,
             dayOfWeek: yesterday.getDay(),
             energyAtEnd: 50,
-            userId: Number(user.id),
+            userId: user.id,
           },
         ],
       });
@@ -101,13 +101,13 @@ describe("authenticated users", () => {
             date: currentMonth,
             dayOfWeek: currentMonth.getDay(),
             energyAtEnd: 80,
-            userId: Number(user.id),
+            userId: user.id,
           },
           {
             date: lastMonth,
             dayOfWeek: lastMonth.getDay(),
             energyAtEnd: 60,
-            userId: Number(user.id),
+            userId: user.id,
           },
         ],
       });
@@ -132,13 +132,13 @@ describe("authenticated users", () => {
             date: currentMonth,
             dayOfWeek: currentMonth.getDay(),
             energyAtEnd: 80,
-            userId: Number(user.id),
+            userId: user.id,
           },
           {
             date: lastMonth,
             dayOfWeek: lastMonth.getDay(),
             energyAtEnd: 60,
-            userId: Number(user.id),
+            userId: user.id,
           },
         ],
       });
@@ -170,13 +170,13 @@ describe("authenticated users", () => {
             date: today,
             dayOfWeek: today.getDay(),
             energyAtEnd: 80,
-            userId: Number(user.id),
+            userId: user.id,
           },
           {
             date: oneWeekAgo,
             dayOfWeek: oneWeekAgo.getDay(),
             energyAtEnd: 70,
-            userId: Number(user.id),
+            userId: user.id,
           },
         ],
       });
@@ -202,13 +202,13 @@ describe("authenticated users", () => {
             date: currentMonth,
             dayOfWeek: currentMonth.getDay(),
             energyAtEnd: 85,
-            userId: Number(user.id),
+            userId: user.id,
           },
           {
             date: lastMonth,
             dayOfWeek: lastMonth.getDay(),
             energyAtEnd: 75,
-            userId: Number(user.id),
+            userId: user.id,
           },
         ],
       });
@@ -232,7 +232,7 @@ describe("authenticated users", () => {
           date: today,
           dayOfWeek: today.getDay(),
           energyAtEnd: 85,
-          userId: Number(user.id),
+          userId: user.id,
         },
       });
 
@@ -258,13 +258,13 @@ describe("authenticated users", () => {
             date: currentMonth,
             dayOfWeek: currentMonth.getDay(),
             energyAtEnd: 80,
-            userId: Number(user.id),
+            userId: user.id,
           },
           {
             date: twoMonthsAgo,
             dayOfWeek: twoMonthsAgo.getDay(),
             energyAtEnd: 60,
-            userId: Number(user.id),
+            userId: user.id,
           },
         ],
       });
@@ -286,7 +286,7 @@ describe("authenticated users", () => {
           date: today,
           dayOfWeek: today.getDay(),
           energyAtEnd: 80,
-          userId: Number(user.id),
+          userId: user.id,
         },
       });
 
@@ -307,7 +307,7 @@ describe("authenticated users", () => {
           date: lastMonth,
           dayOfWeek: lastMonth.getDay(),
           energyAtEnd: 70,
-          userId: Number(user.id),
+          userId: user.id,
         },
       });
 
@@ -339,13 +339,13 @@ describe("authenticated users", () => {
             date: day1,
             dayOfWeek: day1.getDay(),
             energyAtEnd: 75,
-            userId: Number(user.id),
+            userId: user.id,
           },
           {
             date: day5,
             dayOfWeek: day5.getDay(),
             energyAtEnd: 76,
-            userId: Number(user.id),
+            userId: user.id,
           },
         ],
       });
@@ -386,13 +386,13 @@ describe("authenticated users", () => {
             date: day1,
             dayOfWeek: day1.getDay(),
             energyAtEnd: 3,
-            userId: Number(user.id),
+            userId: user.id,
           },
           {
             date: day6,
             dayOfWeek: day6.getDay(),
             energyAtEnd: 50,
-            userId: Number(user.id),
+            userId: user.id,
           },
         ],
       });
@@ -431,13 +431,13 @@ describe("authenticated users", () => {
             date: day1,
             dayOfWeek: day1.getDay(),
             energyAtEnd: 90,
-            userId: Number(user.id),
+            userId: user.id,
           },
           {
             date: day3,
             dayOfWeek: day3.getDay(),
             energyAtEnd: 95,
-            userId: Number(user.id),
+            userId: user.id,
           },
         ],
       });
@@ -463,13 +463,13 @@ describe("authenticated users", () => {
             date: day1,
             dayOfWeek: day1.getDay(),
             energyAtEnd: 80,
-            userId: Number(user.id),
+            userId: user.id,
           },
           {
             date: day3,
             dayOfWeek: day3.getDay(),
             energyAtEnd: 90,
-            userId: Number(user.id),
+            userId: user.id,
           },
         ],
       });
@@ -500,13 +500,13 @@ describe("authenticated users", () => {
             date: day1,
             dayOfWeek: day1.getDay(),
             energyAtEnd: 100,
-            userId: Number(user.id),
+            userId: user.id,
           },
           {
             date: day4,
             dayOfWeek: day4.getDay(),
             energyAtEnd: 100,
-            userId: Number(user.id),
+            userId: user.id,
           },
         ],
       });

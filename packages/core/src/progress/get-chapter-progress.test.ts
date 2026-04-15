@@ -97,7 +97,7 @@ describe(getChapterProgress, () => {
       activityId: activity1.id,
       completedAt: new Date(),
       durationSeconds: 60,
-      userId: Number(user.id),
+      userId: user.id,
     });
 
     const headers = await signInAs(user.email, user.password);
@@ -109,7 +109,7 @@ describe(getChapterProgress, () => {
       activityId: activity2.id,
       completedAt: new Date(),
       durationSeconds: 60,
-      userId: Number(user.id),
+      userId: user.id,
     });
 
     const result2 = await getChapterProgress({ courseId: course.id, headers });
@@ -172,7 +172,7 @@ describe(getChapterProgress, () => {
       activityId: activity1.id,
       completedAt: new Date(),
       durationSeconds: 60,
-      userId: Number(user.id),
+      userId: user.id,
     });
 
     const headers = await signInAs(user.email, user.password);
@@ -215,7 +215,7 @@ describe(getChapterProgress, () => {
       activityId: activity.id,
       completedAt: null,
       durationSeconds: 30,
-      userId: Number(user.id),
+      userId: user.id,
     });
 
     const headers = await signInAs(user.email, user.password);
@@ -270,7 +270,7 @@ describe(getChapterProgress, () => {
       activityId: publishedActivity.id,
       completedAt: new Date(),
       durationSeconds: 60,
-      userId: Number(user.id),
+      userId: user.id,
     });
 
     const headers = await signInAs(user.email, user.password);
@@ -363,7 +363,7 @@ describe(getChapterProgress, () => {
       activityId: activity.id,
       completedAt: new Date(),
       durationSeconds: 60,
-      userId: Number(user.id),
+      userId: user.id,
     });
 
     const headers = await signInAs(user.email, user.password);
@@ -412,7 +412,7 @@ describe(getChapterProgress, () => {
       activityId: activity.id,
       completedAt: new Date(),
       durationSeconds: 60,
-      userId: Number(user.id),
+      userId: user.id,
     });
 
     const headers = await signInAs(user.email, user.password);
@@ -467,7 +467,7 @@ describe(getChapterProgress, () => {
     await prisma.chapterCompletion.create({
       data: {
         chapterId: chapter.id,
-        userId: Number(user.id),
+        userId: user.id,
       },
     });
 

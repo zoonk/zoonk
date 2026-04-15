@@ -15,7 +15,7 @@ export const listUserCourses = cache(
       return { data: null, error: new AppError(ErrorCode.unauthorized) };
     }
 
-    const userId = Number(session.user.id);
+    const userId = session.user.id;
 
     const { data, error } = await safeAsync(() =>
       prisma.courseUser.findMany({

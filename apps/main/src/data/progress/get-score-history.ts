@@ -136,7 +136,7 @@ const cachedGetScoreHistory = cache(
       return null;
     }
 
-    const userId = Number(session.user.id);
+    const userId = session.user.id;
     const { current, previous } = calculateDateRanges(period, offset);
 
     const [currentResult, previousResult] = await Promise.all([

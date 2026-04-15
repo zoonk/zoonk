@@ -14,7 +14,7 @@ describe(findLastCompleted, () => {
   beforeAll(async () => {
     const [org, user] = await Promise.all([organizationFixture({ kind: "brand" }), userFixture()]);
     orgId = org.id;
-    userId = Number(user.id);
+    userId = user.id;
   });
 
   test("returns null when user has no completions", async () => {
@@ -82,7 +82,7 @@ describe(findLastCompleted, () => {
 
   test("returns the most recently completed activity", async () => {
     const user = await userFixture();
-    const uid = Number(user.id);
+    const uid = user.id;
 
     const course = await courseFixture({ isPublished: true, organizationId: orgId });
     const chapter = await chapterFixture({
@@ -148,7 +148,7 @@ describe(findLastCompleted, () => {
 
   test("tiebreaker: returns furthest activity when completedAt is identical", async () => {
     const user = await userFixture();
-    const uid = Number(user.id);
+    const uid = user.id;
 
     const course = await courseFixture({ isPublished: true, organizationId: orgId });
     const chapter = await chapterFixture({
@@ -206,7 +206,7 @@ describe(findLastCompleted, () => {
   describe("course scope", () => {
     test("finds completions across chapters", async () => {
       const user = await userFixture();
-      const uid = Number(user.id);
+      const uid = user.id;
 
       const course = await courseFixture({ isPublished: true, organizationId: orgId });
 
@@ -283,7 +283,7 @@ describe(findLastCompleted, () => {
 
     test("ignores completions from other courses", async () => {
       const user = await userFixture();
-      const uid = Number(user.id);
+      const uid = user.id;
 
       const [course1, course2] = await Promise.all([
         courseFixture({ isPublished: true, organizationId: orgId }),
@@ -364,7 +364,7 @@ describe(findLastCompleted, () => {
   describe("chapter scope", () => {
     test("finds completions only within the given chapter", async () => {
       const user = await userFixture();
-      const uid = Number(user.id);
+      const uid = user.id;
 
       const course = await courseFixture({ isPublished: true, organizationId: orgId });
 
@@ -442,7 +442,7 @@ describe(findLastCompleted, () => {
   describe("lesson scope", () => {
     test("finds completions only within the given lesson", async () => {
       const user = await userFixture();
-      const uid = Number(user.id);
+      const uid = user.id;
 
       const course = await courseFixture({ isPublished: true, organizationId: orgId });
       const chapter = await chapterFixture({
@@ -510,7 +510,7 @@ describe(findLastCompleted, () => {
 
   test("skips completions for unpublished activities", async () => {
     const user = await userFixture();
-    const uid = Number(user.id);
+    const uid = user.id;
 
     const course = await courseFixture({ isPublished: true, organizationId: orgId });
     const chapter = await chapterFixture({
@@ -565,7 +565,7 @@ describe(findLastCompleted, () => {
 
   test("skips completions in unpublished lessons", async () => {
     const user = await userFixture();
-    const uid = Number(user.id);
+    const uid = user.id;
 
     const course = await courseFixture({ isPublished: true, organizationId: orgId });
     const chapter = await chapterFixture({
@@ -632,7 +632,7 @@ describe(findLastCompleted, () => {
 
   test("skips completions in unpublished chapters", async () => {
     const user = await userFixture();
-    const uid = Number(user.id);
+    const uid = user.id;
 
     const course = await courseFixture({ isPublished: true, organizationId: orgId });
 
@@ -741,10 +741,10 @@ describe(findLastCompleted, () => {
       activityId: activity.id,
       completedAt: new Date(),
       durationSeconds: 60,
-      userId: Number(user2.id),
+      userId: user2.id,
     });
 
-    const result = await findLastCompleted(Number(user1.id), { courseId: course.id });
+    const result = await findLastCompleted(user1.id, { courseId: course.id });
 
     expect(result).toBeNull();
   });

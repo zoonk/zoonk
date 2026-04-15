@@ -18,7 +18,7 @@ const cachedGetBestTime = cache(
       return null;
     }
 
-    const userId = Number(session.user.id);
+    const userId = session.user.id;
     const startDate = getDefaultStartDate(startDateIso);
 
     const { data: results, error } = await safeAsync(

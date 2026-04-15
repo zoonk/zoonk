@@ -281,7 +281,7 @@ export const getContinueLearning = cache(
       return [];
     }
 
-    const userId = Number(session.user.id);
+    const userId = session.user.id;
     const rows = await listRecentContinueLearningRows({ userId });
 
     if (rows.length === 0) {

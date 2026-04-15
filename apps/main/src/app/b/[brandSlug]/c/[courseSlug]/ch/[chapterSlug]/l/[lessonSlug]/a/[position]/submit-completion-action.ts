@@ -1,12 +1,12 @@
 "use server";
 
 import { triggerLessonPreload } from "@/data/progress/trigger-lesson-preload";
-import { auth } from "@zoonk/core/auth";
 import { submitPlayerCompletion } from "@zoonk/core/player/commands/submit-player-completion";
 import {
   type CompletionInput,
   completionInputSchema,
 } from "@zoonk/core/player/contracts/completion-input-schema";
+import { getSession } from "@zoonk/core/users/session/get";
 import { logError } from "@zoonk/utils/logger";
 import { revalidatePath } from "next/cache";
 import { headers } from "next/headers";
@@ -29,13 +29,13 @@ export async function submitCompletion(rawInput: CompletionInput): Promise<void>
   const input = parsed.data;
 
   const reqHeaders = await headers();
-  const session = await auth.api.getSession({ headers: reqHeaders });
+  const session = await getSession(reqHeaders);
 
   if (!session) {
     return;
   }
 
-  const userId = Number(session.user.id);
+  const userId = session.user.id;
   const activityId = BigInt(input.activityId);
 
   // Revalidate outside after() so the signal is included in the RSC response.

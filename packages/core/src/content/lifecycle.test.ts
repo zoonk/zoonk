@@ -80,7 +80,7 @@ describe("content lifecycle", () => {
       hourOfDay: 9,
       isCorrect: true,
       stepId: step.id,
-      userId: Number(user.id),
+      userId: user.id,
     });
 
     const result = await getContentDeleteDecision({
@@ -115,7 +115,7 @@ describe("content lifecycle", () => {
       activityId: activity.id,
       completedAt: new Date(),
       durationSeconds: 45,
-      userId: Number(user.id),
+      userId: user.id,
     });
 
     const result = await getContentDeleteDecision({
@@ -167,7 +167,7 @@ describe("content lifecycle", () => {
       activityId: activity.id,
       completedAt: new Date(),
       durationSeconds: 30,
-      userId: Number(user.id),
+      userId: user.id,
     });
 
     const result = await getContentDeleteDecision({
@@ -212,7 +212,7 @@ describe("content lifecycle", () => {
       hourOfDay: 13,
       isCorrect: false,
       stepId: step.id,
-      userId: Number(user.id),
+      userId: user.id,
     });
 
     const result = await getContentDeleteDecision({

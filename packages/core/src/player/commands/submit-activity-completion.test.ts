@@ -63,7 +63,7 @@ describe(submitActivityCompletion, () => {
 
   test("creates StepAttempt records with correct fields", async () => {
     const user = await userFixture();
-    const userId = Number(user.id);
+    const userId = user.id;
 
     await submitActivityCompletion({
       activityId: activity.id,
@@ -89,7 +89,7 @@ describe(submitActivityCompletion, () => {
 
   test("creates ActivityProgress with completedAt and durationSeconds", async () => {
     const user = await userFixture();
-    const userId = Number(user.id);
+    const userId = user.id;
 
     await submitActivityCompletion({
       activityId: activity.id,
@@ -113,7 +113,7 @@ describe(submitActivityCompletion, () => {
 
   test("marks lesson, chapter, and course as durably completed when the final activity is completed", async () => {
     const user = await userFixture();
-    const userId = Number(user.id);
+    const userId = user.id;
 
     const publishedCourse = await courseFixture({
       isPublished: true,
@@ -199,7 +199,7 @@ describe(submitActivityCompletion, () => {
 
   test("creates UserProgress with correct BP increment and energy delta", async () => {
     const user = await userFixture();
-    const userId = Number(user.id);
+    const userId = user.id;
 
     await submitActivityCompletion({
       activityId: activity.id,
@@ -221,7 +221,7 @@ describe(submitActivityCompletion, () => {
 
   test("creates DailyProgress with correct counters", async () => {
     const user = await userFixture();
-    const userId = Number(user.id);
+    const userId = user.id;
 
     await submitActivityCompletion({
       activityId: activity.id,
@@ -249,7 +249,7 @@ describe(submitActivityCompletion, () => {
 
   test("energy clamps at 100", async () => {
     const user = await userFixture();
-    const userId = Number(user.id);
+    const userId = user.id;
     await userProgressFixture({ currentEnergy: 99.5, lastActiveAt: new Date(), userId });
 
     const result = await submitActivityCompletion({
@@ -270,7 +270,7 @@ describe(submitActivityCompletion, () => {
 
   test("energy clamps at 0", async () => {
     const user = await userFixture();
-    const userId = Number(user.id);
+    const userId = user.id;
     await userProgressFixture({ currentEnergy: 0.05, lastActiveAt: new Date(), userId });
 
     await submitActivityCompletion({
@@ -290,7 +290,7 @@ describe(submitActivityCompletion, () => {
 
   test("re-completion: new StepAttempts, updated BP", async () => {
     const user = await userFixture();
-    const userId = Number(user.id);
+    const userId = user.id;
 
     const baseInput = {
       activityId: activity.id,
@@ -317,7 +317,7 @@ describe(submitActivityCompletion, () => {
 
   test("static activity increments staticCompleted, not interactiveCompleted", async () => {
     const user = await userFixture();
-    const userId = Number(user.id);
+    const userId = user.id;
 
     const staticActivity = await activityFixture({
       kind: "explanation",
@@ -347,7 +347,7 @@ describe(submitActivityCompletion, () => {
 
   test("returns correct belt level based on new total BP", async () => {
     const user = await userFixture();
-    const userId = Number(user.id);
+    const userId = user.id;
 
     const result = await submitActivityCompletion({
       activityId: activity.id,
@@ -367,7 +367,7 @@ describe(submitActivityCompletion, () => {
 
   test("creates CourseUser and increments userCount on first activity completion", async () => {
     const user = await userFixture();
-    const userId = Number(user.id);
+    const userId = user.id;
 
     const courseBefore = await prisma.course.findUniqueOrThrow({ where: { id: course.id } });
 
@@ -393,7 +393,7 @@ describe(submitActivityCompletion, () => {
 
   test("does not duplicate CourseUser or increment userCount on re-completion", async () => {
     const user = await userFixture();
-    const userId = Number(user.id);
+    const userId = user.id;
 
     const baseInput = {
       activityId: activity.id,
@@ -424,7 +424,7 @@ describe(submitActivityCompletion, () => {
 
   test("1-day gap: no decay, no gap records", async () => {
     const user = await userFixture();
-    const userId = Number(user.id);
+    const userId = user.id;
 
     // Anchor to UTC midnight so a midnight rollover can't shift the day count
     const today = new Date();
@@ -464,7 +464,7 @@ describe(submitActivityCompletion, () => {
 
   test("completes a pre-started record: sets completedAt and durationSeconds, preserves startedAt", async () => {
     const user = await userFixture();
-    const userId = Number(user.id);
+    const userId = user.id;
 
     // Simulate startActivity() creating a start-only record
     await prisma.activityProgress.create({
@@ -499,7 +499,7 @@ describe(submitActivityCompletion, () => {
 
   test("stores DailyProgress date from localDate, not server UTC", async () => {
     const user = await userFixture();
-    const userId = Number(user.id);
+    const userId = user.id;
 
     // Use yesterday's date so it's always within the ±48h drift window
     // but different from today to prove we use localDate, not server UTC.
@@ -534,7 +534,7 @@ describe(submitActivityCompletion, () => {
 
   test("rejects localDate too far in the future", async () => {
     const user = await userFixture();
-    const userId = Number(user.id);
+    const userId = user.id;
 
     await expect(
       submitActivityCompletion({
@@ -552,7 +552,7 @@ describe(submitActivityCompletion, () => {
 
   test("rejects localDate too far in the past", async () => {
     const user = await userFixture();
-    const userId = Number(user.id);
+    const userId = user.id;
 
     await expect(
       submitActivityCompletion({
@@ -570,7 +570,7 @@ describe(submitActivityCompletion, () => {
 
   test("decay uses localDate so gaps and energy stay consistent", async () => {
     const user = await userFixture();
-    const userId = Number(user.id);
+    const userId = user.id;
 
     const localDate = todayLocalDate();
     const todayMs = parseLocalDate(localDate).getTime();
@@ -611,7 +611,7 @@ describe(submitActivityCompletion, () => {
 
   test("applies decay and fills DailyProgress gaps for inactive days", async () => {
     const user = await userFixture();
-    const userId = Number(user.id);
+    const userId = user.id;
 
     const today = new Date();
     const todayMidnight = new Date(

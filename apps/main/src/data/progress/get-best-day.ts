@@ -17,7 +17,7 @@ const cachedGetBestDay = cache(
       return null;
     }
 
-    const userId = Number(session.user.id);
+    const userId = session.user.id;
     const startDate = getDefaultStartDate(startDateIso);
 
     const results = await prisma.dailyProgress.groupBy({

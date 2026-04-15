@@ -104,13 +104,13 @@ describe(getLessonProgress, () => {
         activityId: activity1.id,
         completedAt: new Date(),
         durationSeconds: 60,
-        userId: Number(user.id),
+        userId: user.id,
       }),
       activityProgressFixture({
         activityId: activity2.id,
         completedAt: new Date(),
         durationSeconds: 60,
-        userId: Number(user.id),
+        userId: user.id,
       }),
     ]);
 
@@ -159,13 +159,13 @@ describe(getLessonProgress, () => {
         activityId: completedActivity.id,
         completedAt: new Date(),
         durationSeconds: 60,
-        userId: Number(user.id),
+        userId: user.id,
       }),
       activityProgressFixture({
         activityId: startedActivity.id,
         completedAt: null,
         durationSeconds: 30,
-        userId: Number(user.id),
+        userId: user.id,
       }),
     ]);
 
@@ -213,7 +213,7 @@ describe(getLessonProgress, () => {
       activityId: publishedActivity.id,
       completedAt: new Date(),
       durationSeconds: 60,
-      userId: Number(user.id),
+      userId: user.id,
     });
 
     const headers = await signInAs(user.email, user.password);
@@ -305,7 +305,7 @@ describe(getLessonProgress, () => {
       activityId: activeActivity.id,
       completedAt: new Date(),
       durationSeconds: 60,
-      userId: Number(user.id),
+      userId: user.id,
     });
 
     const headers = await signInAs(user.email, user.password);
@@ -360,7 +360,7 @@ describe(getLessonProgress, () => {
     await prisma.lessonCompletion.create({
       data: {
         lessonId: currentLesson.id,
-        userId: Number(user.id),
+        userId: user.id,
       },
     });
 

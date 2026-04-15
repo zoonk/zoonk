@@ -20,7 +20,7 @@ export async function markNeedsChangesAction(formData: FormData) {
   if (!taskType || !entityId || !isValidTaskType(taskType)) {
     throw new Error("Invalid form data");
   }
-  const userId = Number(session.user.id);
+  const userId = session.user.id;
 
   const { error } = await safeAsync(() =>
     prisma.contentReview.upsert({

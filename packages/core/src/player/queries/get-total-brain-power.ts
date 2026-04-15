@@ -19,7 +19,7 @@ export const getTotalBrainPower = cache(async (headers?: Headers): Promise<numbe
 
   const progress = await prisma.userProgress.findUnique({
     select: { totalBrainPower: true },
-    where: { userId: Number(session.user.id) },
+    where: { userId: session.user.id },
   });
 
   return Number(progress?.totalBrainPower ?? 0);

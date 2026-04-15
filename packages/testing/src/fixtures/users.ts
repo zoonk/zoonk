@@ -23,9 +23,8 @@ function userAttrs(attrs?: Partial<UserAttrs>): UserAttrs {
  * Tests need a user row plus a credential account row so `signInAs()` can
  * authenticate through Better Auth. Writing the same database shape directly
  * keeps this fixture fast and avoids pulling the auth runtime into callers
- * that only need seeded data. We still return `id` as a string for backwards
- * compatibility because many existing tests expect Better Auth's session/user
- * shape instead of Prisma's numeric id shape.
+ * that only need seeded data. Returning the raw Prisma user shape keeps test
+ * data aligned with the numeric ids used throughout the database layer.
  */
 export async function userFixture(attrs?: Partial<UserAttrs>) {
   const params = userAttrs(attrs);
@@ -44,5 +43,5 @@ export async function userFixture(attrs?: Partial<UserAttrs>) {
     },
   });
 
-  return { ...user, id: String(user.id), password: params.password };
+  return { ...user, password: params.password };
 }

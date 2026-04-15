@@ -120,7 +120,7 @@ describe(lessonRegenerationWorkflow, () => {
       activityId: liveActivity.id,
       completedAt: new Date(),
       durationSeconds: 30,
-      userId: Number(user.id),
+      userId: user.id,
     });
 
     await lessonRegenerationWorkflow({
@@ -144,7 +144,7 @@ describe(lessonRegenerationWorkflow, () => {
           where: {
             userActivity: {
               activityId: liveActivity.id,
-              userId: Number(user.id),
+              userId: user.id,
             },
           },
         }),

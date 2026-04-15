@@ -172,7 +172,7 @@ describe("admins", () => {
         data: {
           organizationId: aiOrg.id,
           role: "admin",
-          userId: Number(fixture.user.id),
+          userId: fixture.user.id,
         },
       }),
       signInAs(fixture.user.email, fixture.user.password),
@@ -494,7 +494,7 @@ describe("admins", () => {
         activityId: touchedActivity.id,
         completedAt: new Date(),
         durationSeconds: 30,
-        userId: Number(user.id),
+        userId: user.id,
       });
 
       const file = createImportFile([{ kind: "explanation", title: "New Activity" }]);

@@ -35,7 +35,7 @@ describe("authenticated users", () => {
         date,
         dayOfWeek: date.getDay(),
         incorrectAnswers: 0,
-        userId: Number(user.id),
+        userId: user.id,
       },
     });
 
@@ -59,7 +59,7 @@ describe("authenticated users", () => {
             dayOfWeek: today.getDay(),
 
             incorrectAnswers: 2,
-            userId: Number(user.id),
+            userId: user.id,
           },
           {
             correctAnswers: 6,
@@ -67,7 +67,7 @@ describe("authenticated users", () => {
             dayOfWeek: yesterday.getDay(),
 
             incorrectAnswers: 4,
-            userId: Number(user.id),
+            userId: user.id,
           },
         ],
       });
@@ -92,7 +92,7 @@ describe("authenticated users", () => {
           date: today,
           dayOfWeek: today.getDay(),
           incorrectAnswers: 3,
-          userId: Number(user.id),
+          userId: user.id,
         },
       });
 
@@ -117,14 +117,14 @@ describe("authenticated users", () => {
             date: currentMonth,
             dayOfWeek: currentMonth.getDay(),
             incorrectAnswers: 1,
-            userId: Number(user.id),
+            userId: user.id,
           },
           {
             correctAnswers: 7,
             date: lastMonth,
             dayOfWeek: lastMonth.getDay(),
             incorrectAnswers: 3,
-            userId: Number(user.id),
+            userId: user.id,
           },
         ],
       });
@@ -150,14 +150,14 @@ describe("authenticated users", () => {
             date: currentMonth,
             dayOfWeek: currentMonth.getDay(),
             incorrectAnswers: 1,
-            userId: Number(user.id),
+            userId: user.id,
           },
           {
             correctAnswers: 6,
             date: lastMonth,
             dayOfWeek: lastMonth.getDay(),
             incorrectAnswers: 4,
-            userId: Number(user.id),
+            userId: user.id,
           },
         ],
       });
@@ -190,14 +190,14 @@ describe("authenticated users", () => {
             date: today,
             dayOfWeek: today.getDay(),
             incorrectAnswers: 2,
-            userId: Number(user.id),
+            userId: user.id,
           },
           {
             correctAnswers: 7,
             date: oneWeekAgo,
             dayOfWeek: oneWeekAgo.getDay(),
             incorrectAnswers: 3,
-            userId: Number(user.id),
+            userId: user.id,
           },
         ],
       });
@@ -224,14 +224,14 @@ describe("authenticated users", () => {
             date: day1,
             dayOfWeek: day1.getDay(),
             incorrectAnswers: 2,
-            userId: Number(user.id),
+            userId: user.id,
           },
           {
             correctAnswers: 6,
             date: day2,
             dayOfWeek: day2.getDay(),
             incorrectAnswers: 4,
-            userId: Number(user.id),
+            userId: user.id,
           },
         ],
       });
@@ -259,14 +259,14 @@ describe("authenticated users", () => {
             date: currentMonth,
             dayOfWeek: currentMonth.getDay(),
             incorrectAnswers: 1,
-            userId: Number(user.id),
+            userId: user.id,
           },
           {
             correctAnswers: 8,
             date: lastMonth,
             dayOfWeek: lastMonth.getDay(),
             incorrectAnswers: 2,
-            userId: Number(user.id),
+            userId: user.id,
           },
         ],
       });
@@ -291,7 +291,7 @@ describe("authenticated users", () => {
           date: today,
           dayOfWeek: today.getDay(),
           incorrectAnswers: 1,
-          userId: Number(user.id),
+          userId: user.id,
         },
       });
 
@@ -318,14 +318,14 @@ describe("authenticated users", () => {
             date: currentMonth,
             dayOfWeek: currentMonth.getDay(),
             incorrectAnswers: 2,
-            userId: Number(user.id),
+            userId: user.id,
           },
           {
             correctAnswers: 6,
             date: twoMonthsAgo,
             dayOfWeek: twoMonthsAgo.getDay(),
             incorrectAnswers: 4,
-            userId: Number(user.id),
+            userId: user.id,
           },
         ],
       });
@@ -346,7 +346,7 @@ describe("authenticated users", () => {
           date: new Date(),
           dayOfWeek: new Date().getDay(),
           incorrectAnswers: 2,
-          userId: Number(user.id),
+          userId: user.id,
         },
       });
 
@@ -368,7 +368,7 @@ describe("authenticated users", () => {
           date: lastMonth,
           dayOfWeek: lastMonth.getDay(),
           incorrectAnswers: 3,
-          userId: Number(user.id),
+          userId: user.id,
         },
       });
 
@@ -398,14 +398,14 @@ describe("authenticated users", () => {
             date: today,
             dayOfWeek: today.getDay(),
             incorrectAnswers: 0,
-            userId: Number(user.id),
+            userId: user.id,
           },
           {
             correctAnswers: 0,
             date: yesterday,
             dayOfWeek: yesterday.getDay(),
             incorrectAnswers: 0,
-            userId: Number(user.id),
+            userId: user.id,
           },
         ],
       });

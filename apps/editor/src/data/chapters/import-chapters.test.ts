@@ -531,7 +531,7 @@ describe("admins", () => {
         activityId: activity.id,
         completedAt: new Date(),
         durationSeconds: 30,
-        userId: Number(user.id),
+        userId: user.id,
       });
 
       const file = createImportFile([{ description: "Desc", title: "New Chapter" }]);
