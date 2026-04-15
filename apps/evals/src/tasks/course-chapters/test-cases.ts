@@ -3,28 +3,31 @@ const SHARED_EXPECTATIONS = `
   - Should create a progressive learning path going from beginner foundations to deep mastery of the subject
   - Should stay tightly focused on the course title instead of drifting into generic academic or professional content
   - Early chapters should cover canonical topics learners would reasonably expect from the course title
+  - The opening chapter should hook the learner by showing the subject in action — real problems, questions, or scenarios. Opening chapters that describe, taxonomize, or survey the field from the outside (e.g., "What is X", "Overview of X", "Panorama of X", "The Territory of X") are a major error
   - Should include the essential knowledge and practical skills needed to become highly capable in the field
   - Should follow the language specified by language parameter
-  - Should follow title and description guidelines: no fluff, be concise, straight to the point
+  - Should follow title and description guidelines: no fluff, be concise, straight to the point. Titles that hint at purpose or a question the chapter answers are preferred over academic catalog-style titles. Longer titles are acceptable when they communicate purpose clearly
   - Should keep the curriculum modern and relevant without replacing canonical foundations with trends
   - If supporting topics like research methods, communication, statistics, ethics, regulation, or career are included, they should be clearly scoped to the course title rather than generic
   - Generic cross-disciplinary chapters that could be copied unchanged into many different courses are a major error unless they are explicitly the subject of the course
+  - Meta-chapters that describe, taxonomize, or survey the field from the outside instead of teaching it are a major error. If a chapter's lessons would mostly be about what the field contains or how it is organized, it is a meta-chapter
+  - Survey chapters that list many applied areas as bullet points without teaching any of them are a major error. Each topic that matters should have its own chapter with real depth
   - Prefer concept names over vendor names in chapter titles/descriptions (e.g., "Package management" instead of "npm"). Ecosystem-level tools (npm, yarn, Redux, Zustand) should be avoided in titles
     - Exception: foundational tools that ARE the course subject matter are allowed (e.g., "Git" in a programming course, "Node.js" in a web dev course, "Docker" in a DevOps course). The test: would a chapter about this subject be incomplete without mentioning this tool?
     - Vendor name usage is a minor issue — it affects title quality but not pedagogical content. Do NOT treat it as a major error
   - For professional fields, practical readiness refers to knowledge and skills, not legal licenses or credentials. That's not important here
   - You don't need to evaluate the output format here, just focus on the chapter content quality.
-  - Titles should be concise and straight to the point, no fluff/filler words. For example:
-    - Just "HTML" is better than "HTML Structure and Semantics" (structure and semantics are implied if this is the only HTML chapter). Similarly, if we only have one CSS chapter, just "CSS" is better than "CSS Styling and Layout".
+  - Titles should avoid fluff/filler words and unnecessary verbosity. For example:
     - "Front-end frameworks" is better than "Front-End UI Frameworks Overview" (too verbose) or "Front-End Frameworks: Core Concepts" (core concepts is unnecessary fluff)
-    - "Relational Databases" is better than "Relational Databases and SQL" (SQL is implied, no need to mention)
-    - "Introduction to Java" is better than "Introduction to Java and Setting Up Your Development Environment" (too verbose)
     - "Lean Startup" is better than "The Lean Startup Methodology: An Overview" (too verbose)
+    - "Introduction to Java" is better than "Introduction to Java and Setting Up Your Development Environment" (too verbose)
+    - However, titles that hint at purpose or pose a question are preferred even if slightly longer. "When Algorithms Break at Scale" is more engaging than just "Algorithms". The goal is purpose, not minimum character count
     - "Introduction to X" is valid for titles of introductory chapters but we should avoid those words in descriptions
   - Similarly, descriptions should be concise and straight to the point, no fluff/filler words. For example:
     - "Styling with CSS: Selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles." is better than "Master styling and layout with CSS, including selectors, properties, the box model, Flexbox, CSS Grid, and cascade principles." - "Master" is fluff, and so are words like "learn", "understand", "explore", etc.
     - "Properties of matter, states, and phase transitions." is better than "Explore the definition of Chemistry, properties of matter, states, and phase transitions." - "Explore the definition of Chemistry" are filler/unnecessary words.
   - Don't add assessment-style chapters: no final projects, capstone assignments, exercises, quizzes, or "test your knowledge" chapters. A theoretical synthesis chapter (e.g., "Design Patterns in Architecture") is fine even if it synthesizes prior material — the rule targets assessment/project chapters, not synthesis of knowledge. If a chapter uses the word "capstone" but is theoretical (not an assignment), treat it as a minor issue at most, not a major error
+  - A closing chapter about career paths, next steps, and how to enter the field is allowed and expected when the course covers a full field or profession — as long as it is specific to the course subject, not generic advice. This is NOT the same as a generic professional-development chapter. For pop culture or hobby courses, career chapters are not expected
   - It shouldn't mention in title or description prompt instructions or performance claims about the learner
 `;
 

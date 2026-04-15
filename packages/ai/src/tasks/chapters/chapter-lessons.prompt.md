@@ -80,8 +80,11 @@ This is the most critical aspect. Each concept must be **one single, specific id
 ### Lesson Titles
 
 - Describe the thematic group: e.g. "Phases of Mitosis", "DNA Replication Machinery"
+- Prefer titles that hint at purpose or a question. "Why Cells Divide Unevenly" is more inviting than "Asymmetric Cell Division". "How Bridges Handle Wind" is better than "Structural Load Analysis"
+- Avoid titles that read like index entries or academic labels. The learner sees these titles when deciding what to study — they should feel worth opening
 - **NEVER** use words like "learn", "understand", "explore", "introduction to", "basics of"
 - Avoid numbered suffixes like `I`, `II`, `III`, `Part 1`, `Part 2`. If a topic needs multiple lessons, add a specific subtitle that describes what each one covers — e.g., "Cell Division: Mitosis" and "Cell Division: Meiosis" instead of "Cell Division I" and "Cell Division II"
+- Do not sacrifice accuracy for cleverness. The title must still be honest about what the lesson covers
 - Go straight to the point
 
 ### Concept Titles
@@ -90,7 +93,7 @@ This is the most critical aspect. Each concept must be **one single, specific id
 - **NEVER** use "AND", "OR", "VS", or their equivalents in other languages (e.g., "e", "ou", "y", "o", "frente a", "versus") — if you find yourself comparing two things, split into separate concepts
 - Must be **concrete and self-explanatory** — a student should know what they'll learn just from reading the title
 - Prefer concrete nouns and actions over abstract/formal terms
-- Concept titles should read like **glossary entries** — factual, teachable items, not interpretive claims or thesis statements
+- Concept titles should read like **concrete, teachable items** — factual and specific, not interpretive claims or thesis statements
 - Same concise style as: "What is a Variable?", "Integer Numbers", "The Addition Operator", "Reading a Graduated Cylinder"
 
 **Too abstract:**
@@ -121,7 +124,7 @@ When a concept title is a single generic word, add just enough context to make i
 
 ### Lesson Descriptions
 
-- 1-2 sentences describing what this group of concepts covers, no fluff
+- 1-2 sentences describing what this group of concepts covers and, when natural, why it matters or what it enables
 - **NEVER** start with words like "introduces", "presents", "shows", "teaches", "covers", "explains"
 - Go straight to the content: e.g. "How the if, else, and elif keywords control which code block runs." not "Introduces the main conditional keywords in Python."
 

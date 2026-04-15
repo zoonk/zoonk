@@ -6,6 +6,8 @@ Build the strongest chapter sequence that the real scope of the subject justifie
 
 This is not a lightweight overview. It should feel serious, complete, and worth a learner's time.
 
+But serious does not mean dry or academic. Every chapter must make the learner feel that the topic matters — to their life, their curiosity, or their ability to build things. A curriculum that is rigorous but boring fails just as much as one that is shallow.
+
 # Inputs
 
 - `COURSE_TITLE`: name of the subject
@@ -29,9 +31,11 @@ A beginner should feel guided into the field, not dropped into the middle of it.
 
 If a learner mastered this curriculum and performed very well, serious people in the field should find that genuinely impressive and want to bet on that learner.
 
-Optimize for quality, substance, breadth, and progression.
+Optimize for quality, substance, breadth, progression, and engagement.
 
 Do not optimize for shortness, symmetry, or a tidy-looking chapter count.
+
+Engagement matters as much as rigor. A learner who drops out in chapter 3 because every title sounds like a university catalog entry learns nothing. Every chapter should answer an implicit "why should I care?" from its title and description alone.
 
 # Internal Planning
 
@@ -44,6 +48,7 @@ Before writing chapters, reason through these steps internally:
 5. Separate major pillars from supporting details.
 6. Decide chapter boundaries based on substance, not aesthetics.
 7. Build a chapter arc from entry point to advanced practice, applications, or specializations.
+8. Verify coverage: go back to every pillar from step 3. For each pillar classified as `core trunk` or `important extension`, confirm there is at least one chapter that teaches it. If a pillar has no corresponding chapter, you dropped it — add it back. This step is mandatory and must not be skipped.
 
 Important:
 
@@ -53,6 +58,9 @@ Important:
 - Ask, what would experts consider the core trunk of this field?
 - Ask, which topics are central, which are important extensions, and which are specialized or frontier areas?
 - Ask, would this curriculum still feel serious if I removed the niche or fashionable chapters and kept only the core?
+- Ask, would a beginner look at each chapter title and understand why it matters to them?
+- Ask, can the learner see what they will be able to DO or UNDERSTAND after each chapter?
+- Ask, does the chapter sequence build motivation alongside knowledge, or does it front-load abstract foundations and defer the payoff?
 
 ## Step 1: Infer Subject Shape
 
@@ -76,24 +84,24 @@ Judge whether the subject is:
 - a medium-sized domain
 - a broad field with many canonical pillars
 
-The curriculum size must follow the true size of the subject.
+The curriculum size must follow the true size of the subject. Let the number of canonical pillars decide the chapter count — do not aim for a specific number.
 
-Do not try to keep different subjects at similar lengths.
+Do not try to keep different subjects at similar lengths. Broad fields should have as many chapters as their pillars require. Narrow methods or tools should have fewer.
 
-Broad fields should often be much larger than narrower methods or tools.
-
-As a rough guide:
-
-- focused subset: often `10-18` chapters
-- narrow but operationally deep subject: often `12-20` chapters
-- medium-sized domain: often `15-25` chapters
-- broad field with many canonical pillars: often `22-35` chapters or more
-
-These are guide rails, not quotas.
+Do not sacrifice breadth for tidiness. Making a curriculum more engaging does not mean making it shorter. If a broad field has 30 canonical pillars, it needs 30 chapters — cutting specialized areas just to keep the course compact produces a course that looks approachable but leaves the learner unprepared.
 
 ## Step 3: Enumerate Canonical Pillars
 
 Identify the major areas that a serious learner would be expected to know.
+
+Enumerate from at least two perspectives and merge the results:
+
+1. **Academic**: What would a comprehensive textbook, degree program, or certification framework for this subject include? What are the recognized subfields, systems, and foundations?
+2. **Professional**: What do practitioners actually work on, specialize in, or encounter in real practice? Which areas generate significant professional activity, even if textbooks underweight them?
+
+Topics that are prominent in professional practice but underrepresented in academic outlines are often the ones most relevant to learners. Do not discard them just because textbooks treat them as subsections of something else.
+
+After merging, do an adversarial check: imagine an expert in this field reviewing your pillar list. What would they immediately say is missing? Add it.
 
 Examples of canonical pillars:
 
@@ -104,6 +112,7 @@ Examples of canonical pillars:
 - formal foundations
 - essential methods
 - production, clinical, institutional, or operational realities
+- major areas of professional specialization or practice
 - applications or specializations that complete the picture
 
 Do not confuse supporting details with pillars.
@@ -129,6 +138,8 @@ Rules:
 - If experts would notice a missing central pillar and immediately doubt the seriousness of the course, that pillar belongs in the `core trunk`.
 - Do not let fashionable, impressive-sounding, or peripheral topics displace the foundations that most shape real expertise.
 - If you must choose what to cut, cut `specialized or frontier` topics before cutting the `core trunk`.
+- `important extension` pillars still deserve their own chapters when they are substantial. Do not compress them into survey chapters or bullet points inside other chapters just to keep the course compact. A curriculum that covers only the core trunk and skips important extensions will leave the learner unprepared for the real breadth of the field.
+- Do not classify a topic as `specialized or frontier` just because textbooks treat it as a subsection of something else. If it is a major area of professional practice, research, or public impact, rank it by its real-world weight, not its textbook prominence.
 
 ## Step 5: Decide Chapter Boundaries
 
@@ -142,6 +153,8 @@ Rules:
 - Closely coupled topics can share a chapter when they naturally belong together.
 - Supporting details should live inside the right pillar instead of becoming their own thin chapter.
 - Avoid catch-all chapters like `Advanced Topics`, `Special Topics`, or `Areas and Specializations` when they simply bundle unrelated domains.
+- Do not create survey chapters that list many areas as bullet points instead of teaching any of them. Each topic that matters should have its own chapter with real depth.
+- Do not bundle unrelated topics into one chapter just because they share a vague theme. If two topics require different mental models, different vocabulary, and different skills, they are different chapters — even if they sound related at a distance.
 - For broad fields, prefer separating central pillars over bundling them into elegant survey chapters.
 - If a chapter combines one core pillar with one extension or frontier pillar, split them unless they are inseparable in practice.
 
@@ -166,7 +179,8 @@ Rules:
 
 - Preserve the field's real breadth instead of compressing it into a smart survey.
 - Cover foundations, mechanisms, systems or domains, methods, analysis, and real applied or translational paths.
-- The opening should connect the field to real phenomena, systems, or problems, not just taxonomy.
+- Do not open with a meta-chapter that surveys or classifies the field. Start with the real subject — concrete problems, systems, or phenomena that the field addresses.
+- If the field has a hands-on or applied dimension (experiments, programming, building, designing), reach it within the first two chapters. Learners who DO something early stay motivated to learn the theory behind it.
 - A strong learner should come out looking serious to researchers, engineers, clinicians, or other experts in the field.
 - When relevant, cover the full chain from small-scale foundations to larger systems, behavior or function, methods of inquiry, pathology or failure, and intervention or application.
 
@@ -197,50 +211,56 @@ Rules:
 - Avoid overlap. If two chapters would naturally contain many of the same lessons, merge them or sharpen their scopes.
 - Keep the curriculum modern and relevant, but do not replace canonical foundations with trends.
 - Be vendor neutral unless a vendor, platform, or branded method is the subject itself.
-- No capstones, projects, portfolios, quizzes, study-skills chapters, or generic professional-development chapters.
+- No capstones, projects, portfolios, quizzes, or study-skills chapters.
+- No generic professional-development chapters. However, when a course covers a full field or profession, a closing chapter about career paths, next steps, and how to enter the field is valuable — as long as it is specific to `COURSE_TITLE`, not generic advice. A learner who finishes a comprehensive course should know: what career options exist, what matters for getting hired or advancing (portfolio, certifications, research, open source), and what to do next.
 - Prefer the central reality of the field over prestige, novelty, or trendiness.
 - If a field has a strong practical spine, do not underweight it in favor of abstract overview or niche topics.
 - Context and history are not filler when they help the learner understand why the field exists, what pressures shaped it, and why its pillars matter.
+- Every chapter should have a visible reason to exist from the learner's perspective, not just from the field's internal logic. If a learner would ask "why do I need to learn this?", the chapter's title and description should already hint at the answer.
+- Do not include meta-chapters that describe, taxonomize, or survey the field from the outside. If a chapter's lessons would mostly be about what the field contains, how it is organized, or what its subfields are, it is a meta-chapter. Teach the field by getting into it, not by describing it.
+- When a topic has both a theoretical and a practical dimension, position the chapter where the learner can see the practical payoff, not where it fits in the logical taxonomy of the field.
 
 ## Opening
 
-The opening chapters matter most.
+The opening chapters matter most. They determine whether a learner keeps going or gives up.
 
 They should make the learner feel oriented, curious, and capable without making the field softer than it really is.
 
 The opening should clarify:
 
-- what this subject is really about
-- why it matters
-- how it emerged, when that context helps explain the field
+- what this subject is really about, through concrete problems and examples
+- why it matters to real people, not just to the field's practitioners
 - what real problems, systems, phenomena, or practices define it
-- what mental map the learner needs for the rest of the course
+- how it emerged, when that context helps explain the field
 
 Rules for the opening:
 
-- Start with the real subject, not detached generic meta.
-- Do not open a broad field with a vague chapter like `What is X` or `What X solves`.
-- If historical context helps a beginner stop feeling lost, include it early.
-- When relevant, explain how the subject emerged, what problems or constraints gave rise to it, and which turning points shaped its current form.
-- Treat history as part of orientation when it explains the present structure of the field, not as a detached chronology lesson.
-- Reach actual subject matter immediately.
-- By chapter 2, the learner should already be inside the field's real mechanics, systems, or practice.
+- The first chapter must hook the learner by showing the subject in action — real problems, real questions, real things they can relate to. Not a taxonomy, survey, or panorama of the field.
+- Do not open a broad field with a chapter that describes or classifies the field from the outside. Chapters like `What is X`, `Overview of X`, `Panorama of X`, or `The Territory of X` are the number one engagement killer. They make the learner feel like they are reading a course catalog, not starting a journey.
+- The opening chapter should make the learner think "I want to learn how to do this" or "I never thought about it that way", not "OK, now I know what the field contains."
+- If the subject has a hands-on dimension (programming, lab work, building, creating), reach it by chapter 2 at the latest. Learners need to DO something before they are motivated to learn the abstract foundations behind it.
+- Do not front-load all foundational theory before any practical chapter. Interleave foundations with practice when dependencies allow.
+- If historical context helps a beginner stop feeling lost, include it early, but as part of the hook or orientation, not as a detached chronology lesson.
 - Do not turn chapter 1 into an encyclopedia of the whole field.
 - For methods, frameworks, and systems of work, explain origin and purpose early when they are part of understanding the method.
-- For broad fields, the opening can use concrete historical context to make the field legible before diving deeper into foundations.
 
 ## Progression
 
 The course should feel like a real arc:
 
-- orientation and entry point
-- foundational building blocks
+- a hook that shows why this field matters through real problems or questions
+- hands-on entry into the field's core activity, when the subject has one
+- foundational building blocks, motivated by the problems they solve
 - core pillars of the field
 - deeper systems, mechanisms, methods, or practice
 - advanced domains
 - applications, contexts, or specializations that make the course feel complete
 
 Each chapter should make the next chapter feel natural.
+
+Position practical and immediately useful chapters near the topics that motivate them, not at the end. When a theoretical chapter exists to serve a practical need, put it close to that need rather than in a detached foundational block.
+
+Avoid long runs of abstract or theoretical chapters with no practical payoff in sight. If the learner has gone through three chapters of formalism, the next chapter should let them apply what they learned to something concrete.
 
 ## Scope
 
@@ -257,15 +277,18 @@ That means:
 ## Title
 
 - Short, specific, and concrete
+- Prefer titles that hint at purpose or a question the chapter answers. "Why Some Wounds Leave Scars" is more engaging than "Wound Healing and Tissue Repair". "How Courts Decide What's Fair" is better than "Principles of Equity in Jurisprudence"
+- Avoid titles that read like university course catalog entries. If every title could be copied from a college transcript, the curriculum will feel academic and alienating to self-directed learners
 - Avoid rhetorical or bird's-eye-view titles that talk about the field from outside
 - Avoid numbered suffixes like `I`, `II`, `III`, `Part 1`, `Part 2`. If a topic needs multiple chapters, add a specific subtitle that describes what each one covers — e.g., "Organic Chemistry: Functional Groups" and "Organic Chemistry: Reaction Mechanisms" instead of "Organic Chemistry I" and "Organic Chemistry II"
 - If a shorter title is clear enough, prefer the shorter title
+- Do not sacrifice clarity for cleverness. The title must still be accurate about what the chapter covers
 
 ## Description
 
 - `1-2` sentences
 - Straight to the point
-- Describe what the chapter covers, not what the learner will do
+- Describe what the chapter covers and, when natural, why it matters or what it enables
 - Do not use filler like `learn`, `understand`, `explore`, `introduction to`, `basics of`, `comprehensive guide to`
 - If the chapter is broad, use the description to narrow it
 
@@ -275,15 +298,22 @@ Before finishing, verify:
 
 - Does this course cover the real breadth of `COURSE_TITLE`?
 - Does the chapter count match the true scope of the subject instead of an arbitrary target?
-- Will a beginner feel oriented after the first one or two chapters?
-- Does the opening give context without becoming generic meta or a taxonomy dump?
-- Have I fully covered the `core trunk` of the field before spending chapters on extensions or frontier areas?
+- Does the opening hook the learner with real problems or questions, not a taxonomy or survey of the field?
+- Does the first chapter make the learner think "I want to learn this" rather than "OK, now I know what this field contains"?
+- If the subject has a hands-on dimension, does the learner reach it by chapter 2?
+- Go back to the pillar list from step 3. Is every `core trunk` and `important extension` pillar covered by at least one chapter? If any pillar is missing, the curriculum has a gap — add it.
 - Would serious experts see any obvious missing core pillar?
 - Have I preserved major canonical pillars instead of merging them for convenience?
+- Are there any chapters that bundle unrelated topics under a vague shared theme? If so, split them.
+- Is there any survey chapter that lists many areas as bullet points without teaching any of them? If so, either give the important ones their own chapters or remove the survey.
 - Does each chapter have a distinct job in the curriculum?
 - Does the curriculum feel serious rather than shallow?
 - Does the course have a real beginning, middle, and end?
 - If a strong learner mastered this curriculum, would serious people in the field be impressed?
+- Would a self-directed learner look at each chapter title and feel motivated to start it?
+- Does every chapter's title and description hint at why it matters, not just what it covers?
+- Is there a visible practical payoff within every few chapters, or are there long stretches of pure theory with no application in sight?
+- Read every title in sequence. Do they sound like a learning journey, or like a university course catalog?
 
 # Output Format
 
