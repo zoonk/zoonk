@@ -1,0 +1,52 @@
+apps/main/e2e/chapter-detail.test.ts
+  adc264ee2d29cada 2,279-280,284-285,289,292-293,303
+apps/main/src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/a/[position]/page.tsx
+  adc264ee2d29cada 100
+apps/main/e2e/lesson-detail.test.ts
+  adc264ee2d29cada 2,256
+packages/testing/src/fixtures/orgs.ts
+  adc264ee2d29cada 35-37
+packages/testing/src/fixtures/users.ts
+  adc264ee2d29cada 2,21-29,32-45,47
+apps/api/e2e/workflows-chapter-generation.test.ts
+  adc264ee2d29cada 5,169
+apps/api/e2e/workflows-lesson-generation.test.ts
+  adc264ee2d29cada 5,150
+apps/main/e2e/activity-detail.test.ts
+  adc264ee2d29cada 2,118
+apps/api/e2e/workflows-activity-generation.test.ts
+  adc264ee2d29cada 5,163
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.8",
+  "base_commit_sha": "69408a665b072937e6cce2bb20b7d0c8bf4bb38b",
+  "prompts": {
+    "adc264ee2d29cada": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d9254-3367-7421-ae9f-2a2eaffdd567",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 652,
+      "total_deletions": 337,
+      "accepted_lines": 349,
+      "overriden_lines": 0
+    },
+    "b656cba3e57dc167": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d81e6-d72d-7473-afe2-7cc747e2c8c7",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 48,
+      "overriden_lines": 0
+    }
+  }
+}
