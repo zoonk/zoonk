@@ -1,0 +1,61 @@
+packages/next/package.json
+  7b1fb8e5c05f0cf0 9
+packages/next/vitest.config.mts
+  7b1fb8e5c05f0cf0 1,7-8
+packages/next/src/security/headers.test.ts
+  7b1fb8e5c05f0cf0 1-97
+apps/editor/next.config.ts
+  7b1fb8e5c05f0cf0 6
+packages/next/src/security/headers.ts
+  7b1fb8e5c05f0cf0 6-25,31-37,40-44,60-62,86-185,188-246,249,251-254,258-277
+apps/main/next.config.ts
+  7b1fb8e5c05f0cf0 5,8,32
+packages/next/src/security/asset-sources.ts
+  7b1fb8e5c05f0cf0 1-35
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.8",
+  "base_commit_sha": "d6edca830bf84f6842f0a7b53a9e8bfaefe9e6d8",
+  "prompts": {
+    "7b1fb8e5c05f0cf0": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d9251-195b-7c32-b32f-4c20dbe3a5f3",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 497,
+      "total_deletions": 79,
+      "accepted_lines": 366,
+      "overriden_lines": 0
+    },
+    "b3e2cf6cad4819a0": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d8d5d-7cba-70b1-8c17-ad7d6dff43e7",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 135,
+      "overriden_lines": 0
+    },
+    "b96aa95b162d6206": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d8db2-0332-7d93-84f8-0f778f7df0ff",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 1,
+      "overriden_lines": 0
+    }
+  }
+}
