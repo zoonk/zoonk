@@ -1,6 +1,6 @@
 "use server";
 
-import { courseSlugExists } from "@/data/courses/course-slug";
+import { courseSlugExistsForCreate } from "@/data/courses/course-slug";
 import { createCourse } from "@/data/courses/create-course";
 import { getErrorMessage } from "@/lib/error-messages";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
@@ -19,14 +19,7 @@ export async function checkSlugExists({
   orgSlug: string;
   slug: string;
 }): Promise<boolean> {
-  if (!slug.trim()) {
-    return false;
-  }
-
-  const isAiOrg = orgSlug === AI_ORG_SLUG;
-  const normalizedSlug = isAiOrg ? ensureLocaleSuffix(toSlug(slug), language) : toSlug(slug);
-
-  return courseSlugExists({ language, orgSlug, slug: normalizedSlug });
+  return courseSlugExistsForCreate({ language, orgSlug, slug });
 }
 
 export async function createCourseAction(formData: CourseFormData, orgSlug: string) {
