@@ -51,9 +51,9 @@ const PUBLIC_APP_SECURITY_HEADERS = [
  * Keeps the baseline security headers for our public apps in one place so the
  * policy stays consistent across `main`, `api`, and `editor`. The list is
  * intentionally limited to low-risk headers while CSP is handled separately.
+ *
+ * @public
  */
 export async function getPublicAppSecurityHeaders() {
   return PUBLIC_APP_SECURITY_HEADERS;
 }
-
-export { PUBLIC_APP_PERMISSIONS_POLICY };
