@@ -5,7 +5,8 @@
   "type": "module",
   "exports": {
     "./i18n/codec": "./src/i18n/next-intl-codec.ts",
-    "./navigation/external-redirect": "./src/navigation/external-redirect.ts"
+    "./navigation/external-redirect": "./src/navigation/external-redirect.ts",
+    "./security/headers": "./src/security/headers.ts"
   },
   "scripts": {
     "typecheck": "tsgo --noEmit"

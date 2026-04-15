@@ -4,6 +4,7 @@ import { withSentryConfig } from "@sentry/nextjs";
 import { withBotId } from "botid/next/config";
 import { type NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
+import { getPublicAppSecurityHeaders } from "@zoonk/next/security/headers";
 
 const CACHE_IMAGE_DAYS = 30;
 
@@ -38,6 +39,7 @@ const nextConfig: NextConfig = {
   logging: {
     browserToTerminal: true,
   },
+  headers: getPublicAppSecurityHeaders,
   pageExtensions: ["js", "jsx", "mdx", "ts", "tsx"],
   reactCompiler: true,
   turbopack: {
