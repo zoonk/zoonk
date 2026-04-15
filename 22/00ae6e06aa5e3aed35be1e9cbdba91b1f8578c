@@ -1,0 +1,53 @@
+apps/main/src/components/feedback/contact-form-action.ts
+  c27b8976fdc5457c 17
+packages/auth/src/plugins/otp.ts
+  c27b8976fdc5457c 18,27
+packages/mailer/src/client.ts
+  c27b8976fdc5457c 11-12,17-18,23,31-32
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.8",
+  "base_commit_sha": "2200ae6e06aa5e3aed35be1e9cbdba91b1f8578c",
+  "prompts": {
+    "b3e2cf6cad4819a0": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d8d5d-7cba-70b1-8c17-ad7d6dff43e7",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 135,
+      "overriden_lines": 0
+    },
+    "b96aa95b162d6206": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d8db2-0332-7d93-84f8-0f778f7df0ff",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 1,
+      "overriden_lines": 0
+    },
+    "c27b8976fdc5457c": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "3e823af4-3f2b-4d15-b298-b3c87b8a4c6c",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 46,
+      "total_deletions": 15,
+      "accepted_lines": 10,
+      "overriden_lines": 0
+    }
+  }
+}
