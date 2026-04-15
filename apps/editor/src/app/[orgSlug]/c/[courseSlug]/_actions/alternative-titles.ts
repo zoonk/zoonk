@@ -4,27 +4,34 @@ import { addAlternativeTitles } from "@/data/alternative-titles/add-alternative-
 import { deleteAlternativeTitles } from "@/data/alternative-titles/delete-alternative-titles";
 import { exportAlternativeTitles } from "@/data/alternative-titles/export-alternative-titles";
 import { importAlternativeTitles } from "@/data/alternative-titles/import-alternative-titles";
+import { getAuthorizedActiveCourse } from "@/data/courses/get-authorized-course";
 import { getErrorMessage } from "@/lib/error-messages";
 import { isImportMode } from "@/lib/import-mode";
 import { getExtracted } from "next-intl/server";
 import { revalidatePath } from "next/cache";
 
-type CourseRouteParams = {
+type CourseActionParams = {
   courseId: number;
-  courseSlug: string;
   language: string;
-  orgSlug: string;
 };
 
 export async function addAlternativeTitleAction(
-  params: CourseRouteParams,
+  params: CourseActionParams,
   title: string,
 ): Promise<{ error: string | null }> {
-  const { courseId, courseSlug, language, orgSlug } = params;
+  const { courseId, language } = params;
   const t = await getExtracted();
 
   if (!title.trim()) {
     return { error: t("Title is required") };
+  }
+
+  const { data: course, error: courseError } = await getAuthorizedActiveCourse({
+    courseId,
+  });
+
+  if (courseError) {
+    return { error: await getErrorMessage(courseError) };
   }
 
   const { error } = await addAlternativeTitles({
@@ -37,15 +44,22 @@ export async function addAlternativeTitleAction(
     return { error: t("Failed to add alternative title") };
   }
 
-  revalidatePath(`/${orgSlug}/c/${courseSlug}`);
+  revalidatePath(`/${course.organization.slug}/c/${course.slug}`);
   return { error: null };
 }
 
 export async function deleteAlternativeTitleAction(
-  params: CourseRouteParams,
+  params: CourseActionParams,
   slug: string,
 ): Promise<{ error: string | null }> {
-  const { courseId, courseSlug, orgSlug } = params;
+  const { courseId } = params;
+  const { data: course, error: courseError } = await getAuthorizedActiveCourse({
+    courseId,
+  });
+
+  if (courseError) {
+    return { error: await getErrorMessage(courseError) };
+  }
 
   const { error } = await deleteAlternativeTitles({
     courseId,
@@ -56,15 +70,15 @@ export async function deleteAlternativeTitleAction(
     return { error: await getErrorMessage(error) };
   }
 
-  revalidatePath(`/${orgSlug}/c/${courseSlug}`);
+  revalidatePath(`/${course.organization.slug}/c/${course.slug}`);
   return { error: null };
 }
 
 export async function importAlternativeTitlesAction(
-  params: CourseRouteParams,
+  params: CourseActionParams,
   formData: FormData,
 ): Promise<{ error: string | null }> {
-  const { courseId, courseSlug, language, orgSlug } = params;
+  const { courseId, language } = params;
   const file = formData.get("file");
   const modeValue = formData.get("mode");
   const mode = isImportMode(modeValue) ? modeValue : "merge";
@@ -72,6 +86,14 @@ export async function importAlternativeTitlesAction(
   if (!(file && file instanceof File)) {
     const t = await getExtracted();
     return { error: t("No file provided") };
+  }
+
+  const { data: course, error: courseError } = await getAuthorizedActiveCourse({
+    courseId,
+  });
+
+  if (courseError) {
+    return { error: await getErrorMessage(courseError) };
   }
 
   const { error } = await importAlternativeTitles({
@@ -85,7 +107,7 @@ export async function importAlternativeTitlesAction(
     return { error: await getErrorMessage(error) };
   }
 
-  revalidatePath(`/${orgSlug}/c/${courseSlug}`);
+  revalidatePath(`/${course.organization.slug}/c/${course.slug}`);
   return { error: null };
 }
 

@@ -6,7 +6,7 @@ import { prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { isJsonObject } from "@zoonk/utils/json";
 import { toSlug } from "@zoonk/utils/string";
-import { getAuthorizedAlternativeTitleCourse } from "./get-authorized-course";
+import { getAuthorizedCourse } from "../courses/get-authorized-course";
 
 function validateTitleData(title: unknown): title is string {
   return typeof title === "string" && title.trim().length > 0;
@@ -45,7 +45,7 @@ export async function importAlternativeTitles(params: {
     return { data: null, error: parseError };
   }
 
-  const { error: courseError } = await getAuthorizedAlternativeTitleCourse({
+  const { error: courseError } = await getAuthorizedCourse({
     courseId: params.courseId,
     headers: params.headers,
   });

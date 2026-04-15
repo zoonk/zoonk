@@ -1,36 +1,20 @@
 import "server-only";
-import { ErrorCode } from "@/lib/app-error";
-import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
-import { type Course, getActiveCourseWhere, prisma } from "@zoonk/db";
-import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
+import { getAuthorizedActiveCourse } from "@/data/courses/get-authorized-course";
+import { type Course, prisma } from "@zoonk/db";
+import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 
 export async function toggleCoursePublished(params: {
   courseId: number;
   headers?: Headers;
   isPublished: boolean;
 }): Promise<SafeReturn<Course>> {
-  const { data: course, error: findError } = await safeAsync(() =>
-    prisma.course.findFirst({
-      where: getActiveCourseWhere({ id: params.courseId }),
-    }),
-  );
-
-  if (findError) {
-    return { data: null, error: findError };
-  }
-
-  if (!course) {
-    return { data: null, error: new AppError(ErrorCode.courseNotFound) };
-  }
-
-  const hasPermission = await hasCoursePermission({
+  const { data: course, error: courseError } = await getAuthorizedActiveCourse({
+    courseId: params.courseId,
     headers: params.headers,
-    orgId: course.organizationId,
-    permission: "update",
   });
 
-  if (!hasPermission) {
-    return { data: null, error: new AppError(ErrorCode.forbidden) };
+  if (courseError) {
+    return { data: null, error: courseError };
   }
 
   const { data, error } = await safeAsync(() =>

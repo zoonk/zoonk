@@ -2,20 +2,26 @@
 
 import { addCategoryToCourse } from "@/data/categories/add-category-to-course";
 import { removeCategoryFromCourse } from "@/data/categories/remove-category-from-course";
+import { getAuthorizedActiveCourse } from "@/data/courses/get-authorized-course";
 import { getErrorMessage } from "@/lib/error-messages";
 import { revalidatePath } from "next/cache";
 
-type CourseRouteParams = {
+type CourseActionParams = {
   courseId: number;
-  courseSlug: string;
-  orgSlug: string;
 };
 
 export async function addCourseCategoryAction(
-  params: CourseRouteParams,
+  params: CourseActionParams,
   category: string,
 ): Promise<{ error: string | null }> {
-  const { courseId, courseSlug, orgSlug } = params;
+  const { courseId } = params;
+  const { data: course, error: courseError } = await getAuthorizedActiveCourse({
+    courseId,
+  });
+
+  if (courseError) {
+    return { error: await getErrorMessage(courseError) };
+  }
 
   const { error } = await addCategoryToCourse({
     category,
@@ -26,16 +32,23 @@ export async function addCourseCategoryAction(
     return { error: await getErrorMessage(error) };
   }
 
-  revalidatePath(`/${orgSlug}/c/${courseSlug}`);
+  revalidatePath(`/${course.organization.slug}/c/${course.slug}`);
 
   return { error: null };
 }
 
 export async function removeCourseCategoryAction(
-  params: CourseRouteParams,
+  params: CourseActionParams,
   category: string,
 ): Promise<{ error: string | null }> {
-  const { courseId, courseSlug, orgSlug } = params;
+  const { courseId } = params;
+  const { data: course, error: courseError } = await getAuthorizedActiveCourse({
+    courseId,
+  });
+
+  if (courseError) {
+    return { error: await getErrorMessage(courseError) };
+  }
 
   const { error } = await removeCategoryFromCourse({
     category,
@@ -46,7 +59,7 @@ export async function removeCourseCategoryAction(
     return { error: await getErrorMessage(error) };
   }
 
-  revalidatePath(`/${orgSlug}/c/${courseSlug}`);
+  revalidatePath(`/${course.organization.slug}/c/${course.slug}`);
 
   return { error: null };
 }

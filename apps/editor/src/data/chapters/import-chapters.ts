@@ -1,19 +1,18 @@
 import "server-only";
+import { getAuthorizedActiveCourse } from "@/data/courses/get-authorized-course";
 import { ErrorCode } from "@/lib/app-error";
 import { type ImportMode } from "@/lib/import-mode";
 import { deduplicateImportSlugs, resolveImportSlug } from "@/lib/import-slug";
 import { parseJsonFile } from "@/lib/parse-json-file";
 import { getDefaultContentManagementMode } from "@zoonk/core/content/management";
-import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
 import {
   type Chapter,
   type ContentManagementMode,
   type TransactionClient,
   getActiveChapterWhere,
-  getActiveCourseWhere,
   prisma,
 } from "@zoonk/db";
-import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
+import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { isJsonObject } from "@zoonk/utils/json";
 import { normalizeString, toSlug } from "@zoonk/utils/string";
 import { replaceCourseChapters } from "../curriculum-replace";
@@ -124,29 +123,13 @@ export async function importChapters(params: {
     return { data: null, error: parseError };
   }
 
-  const { data: course, error: findError } = await safeAsync(() =>
-    prisma.course.findFirst({
-      include: { organization: true },
-      where: getActiveCourseWhere({ id: params.courseId }),
-    }),
-  );
-
-  if (findError) {
-    return { data: null, error: findError };
-  }
-
-  if (!course) {
-    return { data: null, error: new AppError(ErrorCode.courseNotFound) };
-  }
-
-  const hasPermission = await hasCoursePermission({
+  const { data: course, error: courseError } = await getAuthorizedActiveCourse({
+    courseId: params.courseId,
     headers: params.headers,
-    orgId: course.organizationId,
-    permission: "update",
   });
 
-  if (!hasPermission) {
-    return { data: null, error: new AppError(ErrorCode.forbidden) };
+  if (courseError) {
+    return { data: null, error: courseError };
   }
 
   const { data: result, error: importError } = await safeAsync(() =>
@@ -155,7 +138,7 @@ export async function importChapters(params: {
 
       if (mode === "replace") {
         await replaceCourseChapters({
-          courseId: params.courseId,
+          courseId: course.id,
           tx,
         });
       } else {
@@ -163,7 +146,7 @@ export async function importChapters(params: {
           orderBy: { position: "desc" },
           take: 1,
           where: getActiveChapterWhere({
-            chapterWhere: { courseId: params.courseId },
+            chapterWhere: { courseId: course.id },
           }),
         });
 
@@ -189,7 +172,7 @@ export async function importChapters(params: {
       const existingChaptersInCourse = await tx.chapter.findMany({
         where: getActiveChapterWhere({
           chapterWhere: {
-            courseId: params.courseId,
+            courseId: course.id,
             slug: { in: allSlugs },
           },
         }),
@@ -203,7 +186,7 @@ export async function importChapters(params: {
 
       const chapterOperations = deduplicatedChapters.map(async (item, i) => {
         const chapter = await resolveChapter(tx, {
-          courseId: params.courseId,
+          courseId: course.id,
           courseIsPublished: course.isPublished,
           description: item.chapterData.description,
           existingChapter: existingChapterMap.get(item.slug),
@@ -211,7 +194,7 @@ export async function importChapters(params: {
           index: item.index,
           language: course.language,
           managementMode: getDefaultContentManagementMode({
-            organizationSlug: course.organization?.slug,
+            organizationSlug: course.organization.slug,
           }),
           normalizedTitle: item.normalizedTitle,
           organizationId: course.organizationId,

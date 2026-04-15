@@ -1,9 +1,8 @@
 import "server-only";
-import { ErrorCode } from "@/lib/app-error";
+import { getAuthorizedActiveCourse } from "@/data/courses/get-authorized-course";
 import { getDefaultContentManagementMode } from "@zoonk/core/content/management";
-import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
-import { type Chapter, getActiveCourseWhere, prisma } from "@zoonk/db";
-import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
+import { type Chapter, prisma } from "@zoonk/db";
+import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { normalizeString, toSlug } from "@zoonk/utils/string";
 
 export async function createChapter(params: {
@@ -14,29 +13,13 @@ export async function createChapter(params: {
   slug: string;
   title: string;
 }): Promise<SafeReturn<Chapter>> {
-  const { data: course, error: findError } = await safeAsync(() =>
-    prisma.course.findFirst({
-      include: { organization: true },
-      where: getActiveCourseWhere({ id: params.courseId }),
-    }),
-  );
-
-  if (findError) {
-    return { data: null, error: findError };
-  }
-
-  if (!course) {
-    return { data: null, error: new AppError(ErrorCode.courseNotFound) };
-  }
-
-  const hasPermission = await hasCoursePermission({
+  const { data: course, error: courseError } = await getAuthorizedActiveCourse({
+    courseId: params.courseId,
     headers: params.headers,
-    orgId: course.organizationId,
-    permission: "update",
   });
 
-  if (!hasPermission) {
-    return { data: null, error: new AppError(ErrorCode.forbidden) };
+  if (courseError) {
+    return { data: null, error: courseError };
   }
 
   const chapterSlug = toSlug(params.slug);
@@ -45,25 +28,25 @@ export async function createChapter(params: {
   const { data: chapter, error } = await safeAsync(() =>
     prisma.$transaction(async (tx) => {
       // Lock course row to prevent race conditions with concurrent position updates
-      await tx.$queryRaw`SELECT id FROM courses WHERE id = ${params.courseId} FOR UPDATE`;
+      await tx.$queryRaw`SELECT id FROM courses WHERE id = ${course.id} FOR UPDATE`;
 
       await tx.chapter.updateMany({
         data: { position: { increment: 1 } },
         where: {
           archivedAt: null,
-          courseId: params.courseId,
+          courseId: course.id,
           position: { gte: params.position },
         },
       });
 
       return tx.chapter.create({
         data: {
-          courseId: params.courseId,
+          courseId: course.id,
           description: params.description,
           isPublished: !course.isPublished,
           language: course.language,
           managementMode: getDefaultContentManagementMode({
-            organizationSlug: course.organization?.slug,
+            organizationSlug: course.organization.slug,
           }),
           normalizedTitle,
           organizationId: course.organizationId,

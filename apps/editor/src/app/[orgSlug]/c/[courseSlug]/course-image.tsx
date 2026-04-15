@@ -34,7 +34,7 @@ export async function CourseImage({
     return notFound();
   }
 
-  const routeParams = { courseId: course.id, courseSlug, orgSlug };
+  const actionParams = { courseId: course.id };
   const maxSizeMB = DEFAULT_IMAGE_MAX_SIZE / BYTES_PER_MB;
   const acceptedFormats = DEFAULT_IMAGE_ACCEPTED_TYPES.map((type) =>
     type.replace("image/", "").toUpperCase(),
@@ -54,8 +54,8 @@ export async function CourseImage({
           }),
           uploadSuccess: t("Image uploaded"),
         }}
-        onRemove={removeCourseImageAction.bind(null, routeParams)}
-        onUpload={uploadCourseImageAction.bind(null, routeParams)}
+        onRemove={removeCourseImageAction.bind(null, actionParams)}
+        onUpload={uploadCourseImageAction.bind(null, actionParams)}
       >
         <ImageUploadTrigger
           aria-label={course.imageUrl ? t("Change course image") : t("Upload course image")}

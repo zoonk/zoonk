@@ -1,22 +1,21 @@
 "use server";
 
+import { getAuthorizedCourse } from "@/data/courses/get-authorized-course";
 import { updateCourse } from "@/data/courses/update-course";
 import { getErrorMessage } from "@/lib/error-messages";
 import { processAndUploadImage } from "@zoonk/core/images/process-and-upload";
 import { getExtracted } from "next-intl/server";
 import { revalidatePath } from "next/cache";
 
-type CourseRouteParams = {
+type CourseActionParams = {
   courseId: number;
-  courseSlug: string;
-  orgSlug: string;
 };
 
 export async function uploadCourseImageAction(
-  params: CourseRouteParams,
+  params: CourseActionParams,
   formData: FormData,
 ): Promise<{ error: string | null }> {
-  const { courseId, courseSlug, orgSlug } = params;
+  const { courseId } = params;
   const file = formData.get("file");
   const t = await getExtracted();
 
@@ -24,9 +23,17 @@ export async function uploadCourseImageAction(
     return { error: t("No file provided") };
   }
 
+  const { data: course, error: courseError } = await getAuthorizedCourse({
+    courseId,
+  });
+
+  if (courseError) {
+    return { error: await getErrorMessage(courseError) };
+  }
+
   const { data: imageUrl, error: uploadError } = await processAndUploadImage({
     file,
-    fileName: `courses/${orgSlug}/${courseSlug}.webp`,
+    fileName: `courses/${course.organization.slug}/${course.slug}.webp`,
   });
 
   if (uploadError) {
@@ -41,7 +48,7 @@ export async function uploadCourseImageAction(
   }
 
   const { error: updateError } = await updateCourse({
-    courseId,
+    courseId: course.id,
     imageUrl,
   });
 
@@ -49,16 +56,24 @@ export async function uploadCourseImageAction(
     return { error: await getErrorMessage(updateError) };
   }
 
-  revalidatePath(`/${orgSlug}/c/${courseSlug}`);
+  revalidatePath(`/${course.organization.slug}/c/${course.slug}`);
   return { error: null };
 }
 
 export async function removeCourseImageAction(
-  params: CourseRouteParams,
+  params: CourseActionParams,
 ): Promise<{ error: string | null }> {
-  const { courseId, courseSlug, orgSlug } = params;
-  const { error } = await updateCourse({
+  const { courseId } = params;
+  const { data: course, error: courseError } = await getAuthorizedCourse({
     courseId,
+  });
+
+  if (courseError) {
+    return { error: await getErrorMessage(courseError) };
+  }
+
+  const { error } = await updateCourse({
+    courseId: course.id,
     imageUrl: null,
   });
 
@@ -66,6 +81,6 @@ export async function removeCourseImageAction(
     return { error: await getErrorMessage(error) };
   }
 
-  revalidatePath(`/${orgSlug}/c/${courseSlug}`);
+  revalidatePath(`/${course.organization.slug}/c/${course.slug}`);
   return { error: null };
 }

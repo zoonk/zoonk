@@ -53,14 +53,13 @@ export async function ChapterList({
   }
 
   const courseId = course.id;
-
-  const routeParams = { courseId, courseSlug, orgSlug };
+  const actionParams = { courseId };
 
   const lastChapter = chapters.at(-1);
   const endPosition = lastChapter ? lastChapter.position + 1 : 0;
 
   return (
-    <EditorListProvider onInsert={insertChapterAction.bind(null, routeParams)}>
+    <EditorListProvider onInsert={insertChapterAction.bind(null, actionParams)}>
       <EditorListSpinner />
 
       <EditorListHeader>
@@ -69,14 +68,14 @@ export async function ChapterList({
         <EntityListActions
           entityType="chapters"
           onExport={exportChaptersAction.bind(null, courseId)}
-          onImport={handleImportChaptersAction.bind(null, routeParams)}
+          onImport={handleImportChaptersAction.bind(null, actionParams)}
         />
       </EditorListHeader>
 
       {chapters.length > 0 && (
         <EditorSortableList
           items={chapters}
-          onReorder={reorderChaptersAction.bind(null, routeParams)}
+          onReorder={reorderChaptersAction.bind(null, actionParams)}
         >
           <EditorListContent>
             {chapters.map((chapter, index) => (
