@@ -1,0 +1,36 @@
+packages/next/src/security/headers.ts
+  13d1171dd3752a1f 54-55
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.8",
+  "base_commit_sha": "57c68843a0e42d5027f7c58f695dcb7a38688dc2",
+  "prompts": {
+    "13d1171dd3752a1f": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d922e-16bd-7440-91a9-7ae05445478b",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 2,
+      "total_deletions": 2,
+      "accepted_lines": 2,
+      "overriden_lines": 0
+    },
+    "b656cba3e57dc167": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d81e6-d72d-7473-afe2-7cc747e2c8c7",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 48,
+      "overriden_lines": 0
+    }
+  }
+}
