@@ -15,7 +15,7 @@ export const sendVerificationOTP: EmailOTPOptions["sendVerificationOTP"] = async
 
   const subject = t.otpSubject;
 
-  const text = `
+  const htmlBody = `
       <p>${t.otpIntro}</p>
       <h2>${otp}</h2>
       <p>${t.otpExpiry}</p>
@@ -24,8 +24,8 @@ export const sendVerificationOTP: EmailOTPOptions["sendVerificationOTP"] = async
 
   after(() => {
     void sendEmail({
+      htmlBody,
       subject,
-      text,
       to: email,
     });
   });
