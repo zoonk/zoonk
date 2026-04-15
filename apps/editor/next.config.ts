@@ -1,5 +1,6 @@
 import path from "node:path";
 import { withSentryConfig } from "@sentry/nextjs";
+import { getPublicAppSecurityHeaders } from "@zoonk/next/security/headers";
 import { type NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 
@@ -29,6 +30,7 @@ const nextConfig: NextConfig = {
     },
     typedEnv: true,
   },
+  headers: getPublicAppSecurityHeaders,
   images: {
     minimumCacheTTL: 60 * 60 * 24 * CACHE_IMAGE_DAYS,
     remotePatterns: [

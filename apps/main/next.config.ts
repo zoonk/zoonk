@@ -1,6 +1,7 @@
 import path from "node:path";
 import createMDX from "@next/mdx";
 import { withSentryConfig } from "@sentry/nextjs";
+import { getPublicAppSecurityHeaders } from "@zoonk/next/security/headers";
 import { withBotId } from "botid/next/config";
 import { type NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
@@ -26,6 +27,7 @@ const nextConfig: NextConfig = {
     },
     typedEnv: true,
   },
+  headers: getPublicAppSecurityHeaders,
   images: {
     minimumCacheTTL: 60 * 60 * 24 * CACHE_IMAGE_DAYS,
     remotePatterns: [

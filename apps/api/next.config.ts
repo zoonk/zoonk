@@ -1,5 +1,6 @@
 import path from "node:path";
 import { withSentryConfig } from "@sentry/nextjs";
+import { getPublicAppSecurityHeaders } from "@zoonk/next/security/headers";
 import { withBotId } from "botid/next/config";
 import { type NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
@@ -20,6 +21,7 @@ const nextConfig: NextConfig = {
     authInterrupts: true,
     typedEnv: true,
   },
+  headers: getPublicAppSecurityHeaders,
   reactCompiler: true,
   turbopack: {
     resolveAlias: { ...e2eAliases },
