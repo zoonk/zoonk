@@ -8,17 +8,19 @@ const sendEmailDisabled = !apiKey;
 export async function sendEmail({
   to,
   subject,
-  text,
+  htmlBody,
+  textBody,
   replyTo,
 }: {
   to: string;
   subject: string;
-  text: string;
+  htmlBody?: string;
+  textBody?: string;
   replyTo?: string;
 }): Promise<SafeReturn<Response>> {
   if (sendEmailDisabled) {
     logInfo("Email sending is disabled.");
-    logInfo({ subject, text, to });
+    logInfo({ subject, textBody: textBody ?? htmlBody, to });
     return { data: Response.json({ ok: true }), error: null };
   }
 
@@ -26,7 +28,8 @@ export async function sendEmail({
     const response = await fetch(apiUrl, {
       body: JSON.stringify({
         from: { address: "hello@zoonk.com", name: "Zoonk" },
-        htmlBody: text,
+        ...(htmlBody && { htmlBody }),
+        ...(textBody && { textbody: textBody }),
         ...(replyTo && { reply_to: [{ address: replyTo }] }),
         subject,
         to: [{ email_address: { address: to } }],
