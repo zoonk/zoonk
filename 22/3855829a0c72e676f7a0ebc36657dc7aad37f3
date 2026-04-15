@@ -1,0 +1,54 @@
+apps/editor/src/data/alternative-titles/add-alternative-titles.test.ts
+  bab3aac18db292c8 1-86
+apps/editor/src/data/alternative-titles/export-alternative-titles.ts
+  bab3aac18db292c8 3-4,6-13,20-23,25-26
+apps/editor/src/data/alternative-titles/import-alternative-titles.test.ts
+  bab3aac18db292c8 4,6,23-58,63-64,71,92-93,98,110-111,126,147-148,163,183-184,206,236-237,249,267-268,275,287-288,296,306-307,316,326-327,334,344-345,352,362-363,374,384-385,396,406-407,418,429-430,441,449-465
+apps/editor/src/data/alternative-titles/delete-alternative-titles.test.ts
+  bab3aac18db292c8 2,5,7,12-43,47-48,61,63,67-68,81-82,92,94,98-99,111-112,122,124,128,141-142,152,154,158-159,172-173,189,191,195-196,209-223
+apps/editor/src/app/[orgSlug]/c/[courseSlug]/_actions/alternative-titles.ts
+  bab3aac18db292c8 3,50,55-57
+apps/editor/src/data/alternative-titles/add-alternative-titles.ts
+  bab3aac18db292c8 1-31
+apps/editor/src/data/alternative-titles/get-authorized-course.ts
+  bab3aac18db292c8 1-42
+apps/editor/src/data/alternative-titles/delete-alternative-titles.ts
+  bab3aac18db292c8 3,5,7-10,13,15-24,28,31-44
+apps/editor/src/data/alternative-titles/export-alternative-titles.test.ts
+  bab3aac18db292c8 4,6,11-40,42-44,47,58-59,74,87-88,92,103-104,124,134-147
+apps/editor/src/data/alternative-titles/import-alternative-titles.ts
+  bab3aac18db292c8 6,9,32,48-51,53-54
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.8",
+  "base_commit_sha": "223855829a0c72e676f7a0ebc36657dc7aad37f3",
+  "prompts": {
+    "b656cba3e57dc167": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d81e6-d72d-7473-afe2-7cc747e2c8c7",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 48,
+      "overriden_lines": 0
+    },
+    "bab3aac18db292c8": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d9221-b14c-7962-b808-35b63b111baa",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 464,
+      "total_deletions": 44,
+      "accepted_lines": 464,
+      "overriden_lines": 0
+    }
+  }
+}
