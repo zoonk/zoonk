@@ -1,26 +1,24 @@
 "use server";
 
-import { courseSlugExists } from "@/data/courses/course-slug";
+import { courseSlugExistsForUpdate } from "@/data/courses/course-slug";
 import { updateCourse } from "@/data/courses/update-course";
 import { getErrorMessage } from "@/lib/error-messages";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
-import { ensureLocaleSuffix, toSlug } from "@zoonk/utils/string";
+import { ensureLocaleSuffix } from "@zoonk/utils/string";
 
 export async function checkCourseSlugExists(params: {
+  courseId?: number;
   language: string;
   orgSlug: string;
   slug: string;
 }): Promise<boolean> {
-  const isAiOrg = params.orgSlug === AI_ORG_SLUG;
+  if (!params.courseId) {
+    return false;
+  }
 
-  const normalizedSlug = isAiOrg
-    ? ensureLocaleSuffix(toSlug(params.slug), params.language)
-    : toSlug(params.slug);
-
-  return courseSlugExists({
-    language: params.language,
-    orgSlug: params.orgSlug,
-    slug: normalizedSlug,
+  return courseSlugExistsForUpdate({
+    courseId: params.courseId,
+    slug: params.slug,
   });
 }
 

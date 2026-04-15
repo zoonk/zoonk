@@ -18,6 +18,7 @@ export async function CourseSlug({
   return (
     <SlugEditor
       checkFn={checkCourseSlugExists}
+      courseId={course.id}
       entityId={course.id}
       initialSlug={course.slug}
       language={course.language}

@@ -3,6 +3,7 @@ import { ErrorCode } from "@/lib/app-error";
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
 import { type CourseGetPayload, getActiveCourseWhere, prisma } from "@zoonk/db";
 import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
+import { cache } from "react";
 
 const courseWithOrganizationSlug = {
   include: {
@@ -62,48 +63,69 @@ async function toAuthorizedCourseResult(params: {
   };
 }
 
+const cachedGetAuthorizedCourse = cache(
+  async (
+    courseId: number,
+    headers?: Headers,
+  ): Promise<SafeReturn<AuthorizedCourseWithOrganization>> => {
+    const { data: course, error } = await safeAsync(() =>
+      prisma.course.findUnique({
+        ...courseWithOrganizationSlug,
+        where: { id: courseId },
+      }),
+    );
+
+    return toAuthorizedCourseResult({
+      course,
+      error,
+      headers,
+    });
+  },
+);
+
 /**
  * Course mutations receive a client-provided course id, so this helper exists to
  * resolve the canonical course record on the server and confirm the caller can
  * still update that course before any mutation or derived path uses its data.
+ * Wrapping the lookup in React cache deduplicates repeated authorization reads
+ * for the same course within a single request.
  */
-export async function getAuthorizedCourse(params: {
+export function getAuthorizedCourse(params: {
   courseId: number;
   headers?: Headers;
 }): Promise<SafeReturn<AuthorizedCourseWithOrganization>> {
-  const { data: course, error } = await safeAsync(() =>
-    prisma.course.findUnique({
-      ...courseWithOrganizationSlug,
-      where: { id: params.courseId },
-    }),
-  );
-
-  return toAuthorizedCourseResult({
-    course,
-    error,
-    headers: params.headers,
-  });
+  return cachedGetAuthorizedCourse(params.courseId, params.headers);
 }
+
+const cachedGetAuthorizedActiveCourse = cache(
+  async (
+    courseId: number,
+    headers?: Headers,
+  ): Promise<SafeReturn<AuthorizedCourseWithOrganization>> => {
+    const { data: course, error } = await safeAsync(() =>
+      prisma.course.findFirst({
+        ...courseWithOrganizationSlug,
+        where: getActiveCourseWhere({ id: courseId }),
+      }),
+    );
+
+    return toAuthorizedCourseResult({
+      course,
+      error,
+      headers,
+    });
+  },
+);
 
 /**
  * Some course write paths should treat archived courses as unavailable, so this
  * helper preserves the shared authorization behavior while enforcing the active
- * course filter those mutations already rely on.
+ * course filter those mutations already rely on. React cache keeps repeated
+ * authorized reads for the same active course from re-running in one request.
  */
-export async function getAuthorizedActiveCourse(params: {
+export function getAuthorizedActiveCourse(params: {
   courseId: number;
   headers?: Headers;
 }): Promise<SafeReturn<AuthorizedCourseWithOrganization>> {
-  const { data: course, error } = await safeAsync(() =>
-    prisma.course.findFirst({
-      ...courseWithOrganizationSlug,
-      where: getActiveCourseWhere({ id: params.courseId }),
-    }),
-  );
-
-  return toAuthorizedCourseResult({
-    course,
-    error,
-    headers: params.headers,
-  });
+  return cachedGetAuthorizedActiveCourse(params.courseId, params.headers);
 }
