@@ -8,7 +8,7 @@ if (process.env.NODE_ENV === "production") {
   init({
     dsn: process.env.NEXT_PUBLIC_SENTRY_DSN,
     enableLogs: true,
-    sendDefaultPii: true,
+    sendDefaultPii: false,
     tracesSampleRate: 0.1,
   });
 }
