@@ -18,7 +18,7 @@ describe("authenticated users", () => {
   beforeAll(async () => {
     const user = await userFixture();
     headers = await signInAs(user.email, user.password);
-    userId = Number(user.id);
+    userId = user.id;
   });
 
   test("returns 0 when user has no progress record", async () => {

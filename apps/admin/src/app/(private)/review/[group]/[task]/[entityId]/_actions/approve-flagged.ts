@@ -20,7 +20,7 @@ export async function approveFlaggedAction(taskType: ReviewTaskType, rawEntityId
     throw new Error("Invalid entity ID");
   }
 
-  const userId = Number(session.user.id);
+  const userId = session.user.id;
 
   const { error } = await safeAsync(() =>
     prisma.contentReview.upsert({

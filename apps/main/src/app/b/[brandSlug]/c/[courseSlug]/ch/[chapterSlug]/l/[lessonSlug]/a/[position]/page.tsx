@@ -112,7 +112,7 @@ export default async function ActivityPage({ params }: Props) {
   });
 
   if (session) {
-    after(() => startActivity({ activityId: activity.id, userId: Number(session.user.id) }));
+    after(() => startActivity({ activityId: activity.id, userId: session.user.id }));
   }
 
   return (

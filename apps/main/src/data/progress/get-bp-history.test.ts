@@ -38,13 +38,13 @@ describe("authenticated users", () => {
             brainPowerEarned: 100,
             date: today,
             dayOfWeek: today.getDay(),
-            userId: Number(user.id),
+            userId: user.id,
           },
           {
             brainPowerEarned: 50,
             date: yesterday,
             dayOfWeek: yesterday.getDay(),
-            userId: Number(user.id),
+            userId: user.id,
           },
         ],
       });
@@ -69,13 +69,13 @@ describe("authenticated users", () => {
             brainPowerEarned: 200,
             date: today,
             dayOfWeek: today.getDay(),
-            userId: Number(user.id),
+            userId: user.id,
           },
           {
             brainPowerEarned: 300,
             date: yesterday,
             dayOfWeek: yesterday.getDay(),
-            userId: Number(user.id),
+            userId: user.id,
           },
         ],
       });
@@ -93,12 +93,12 @@ describe("authenticated users", () => {
       await prisma.userProgress.upsert({
         create: {
           totalBrainPower: 5000,
-          userId: Number(user.id),
+          userId: user.id,
         },
         update: {
           totalBrainPower: 5000,
         },
-        where: { userId: Number(user.id) },
+        where: { userId: user.id },
       });
 
       const date = createSafeDate(0);
@@ -107,7 +107,7 @@ describe("authenticated users", () => {
           brainPowerEarned: 100,
           date,
           dayOfWeek: date.getDay(),
-          userId: Number(user.id),
+          userId: user.id,
         },
       });
 
@@ -131,13 +131,13 @@ describe("authenticated users", () => {
             brainPowerEarned: 200,
             date: currentMonth,
             dayOfWeek: currentMonth.getDay(),
-            userId: Number(user.id),
+            userId: user.id,
           },
           {
             brainPowerEarned: 100,
             date: lastMonth,
             dayOfWeek: lastMonth.getDay(),
-            userId: Number(user.id),
+            userId: user.id,
           },
         ],
       });
@@ -162,13 +162,13 @@ describe("authenticated users", () => {
             brainPowerEarned: 300,
             date: currentMonth,
             dayOfWeek: currentMonth.getDay(),
-            userId: Number(user.id),
+            userId: user.id,
           },
           {
             brainPowerEarned: 150,
             date: lastMonth,
             dayOfWeek: lastMonth.getDay(),
-            userId: Number(user.id),
+            userId: user.id,
           },
         ],
       });
@@ -199,13 +199,13 @@ describe("authenticated users", () => {
             brainPowerEarned: 100,
             date: today,
             dayOfWeek: today.getDay(),
-            userId: Number(user.id),
+            userId: user.id,
           },
           {
             brainPowerEarned: 80,
             date: oneWeekAgo,
             dayOfWeek: oneWeekAgo.getDay(),
-            userId: Number(user.id),
+            userId: user.id,
           },
         ],
       });
@@ -232,13 +232,13 @@ describe("authenticated users", () => {
             brainPowerEarned: 250,
             date: today,
             dayOfWeek: today.getDay(),
-            userId: Number(user.id),
+            userId: user.id,
           },
           {
             brainPowerEarned: 150,
             date: yesterday,
             dayOfWeek: yesterday.getDay(),
-            userId: Number(user.id),
+            userId: user.id,
           },
         ],
       });
@@ -263,7 +263,7 @@ describe("authenticated users", () => {
           brainPowerEarned: 200,
           date: today,
           dayOfWeek: today.getDay(),
-          userId: Number(user.id),
+          userId: user.id,
         },
       });
 
@@ -289,13 +289,13 @@ describe("authenticated users", () => {
             brainPowerEarned: 100,
             date: currentMonth,
             dayOfWeek: currentMonth.getDay(),
-            userId: Number(user.id),
+            userId: user.id,
           },
           {
             brainPowerEarned: 50,
             date: twoMonthsAgo,
             dayOfWeek: twoMonthsAgo.getDay(),
-            userId: Number(user.id),
+            userId: user.id,
           },
         ],
       });
@@ -316,7 +316,7 @@ describe("authenticated users", () => {
           brainPowerEarned: 100,
           date,
           dayOfWeek: date.getDay(),
-          userId: Number(user.id),
+          userId: user.id,
         },
       });
 
@@ -337,7 +337,7 @@ describe("authenticated users", () => {
           brainPowerEarned: 75,
           date: lastMonth,
           dayOfWeek: lastMonth.getDay(),
-          userId: Number(user.id),
+          userId: user.id,
         },
       });
 

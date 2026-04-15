@@ -19,7 +19,7 @@ export async function getNextActivity({
   lessonSlug: string;
 } | null> {
   const session = await getSession(headers);
-  const userId = session ? Number(session.user.id) : 0;
+  const userId = session ? session.user.id : 0;
   const lastCompleted = userId === 0 ? null : await findLastCompleted(userId, scope);
 
   const state = await getNextActivityStateForUser({

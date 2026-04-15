@@ -15,7 +15,7 @@ export async function fetchReviewSteps(lessonId: number, activityPosition: numbe
 
   return getReviewSteps({
     lessonId,
-    userId: session ? Number(session.user.id) : null,
+    userId: session ? session.user.id : null,
   });
 }
 

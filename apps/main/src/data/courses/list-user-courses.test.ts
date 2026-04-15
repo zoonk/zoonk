@@ -45,7 +45,7 @@ describe("authenticated users", () => {
 
     await courseUserFixture({
       courseId: course.id,
-      userId: Number(user.id),
+      userId: user.id,
     });
 
     const result = await listUserCourses(headers);
@@ -66,7 +66,7 @@ describe("authenticated users", () => {
 
     await courseUserFixture({
       courseId: course.id,
-      userId: Number(testUser.id),
+      userId: testUser.id,
     });
 
     const result = await listUserCourses(testHeaders);
@@ -100,17 +100,17 @@ describe("authenticated users", () => {
         {
           courseId: course1.id,
           startedAt: twoHoursAgo,
-          userId: Number(testUser.id),
+          userId: testUser.id,
         },
         {
           courseId: course2.id,
           startedAt: now,
-          userId: Number(testUser.id),
+          userId: testUser.id,
         },
         {
           courseId: course3.id,
           startedAt: oneHourAgo,
-          userId: Number(testUser.id),
+          userId: testUser.id,
         },
       ],
     });
@@ -139,8 +139,8 @@ describe("authenticated users", () => {
     ]);
 
     await Promise.all([
-      courseUserFixture({ courseId: brandCourse.id, userId: Number(testUser.id) }),
-      courseUserFixture({ courseId: schoolCourse.id, userId: Number(testUser.id) }),
+      courseUserFixture({ courseId: brandCourse.id, userId: testUser.id }),
+      courseUserFixture({ courseId: schoolCourse.id, userId: testUser.id }),
     ]);
 
     const result = await listUserCourses(testHeaders);
@@ -157,12 +157,12 @@ describe("authenticated users", () => {
     const personalCourse = await courseFixture({
       isPublished: true,
       organizationId: null,
-      userId: Number(testUser.id),
+      userId: testUser.id,
     });
 
     await courseUserFixture({
       courseId: personalCourse.id,
-      userId: Number(testUser.id),
+      userId: testUser.id,
     });
 
     const result = await listUserCourses(testHeaders);
@@ -183,7 +183,7 @@ describe("authenticated users", () => {
 
     await courseUserFixture({
       courseId: archivedCourse.id,
-      userId: Number(testUser.id),
+      userId: testUser.id,
     });
 
     const result = await listUserCourses(testHeaders);
@@ -205,11 +205,11 @@ describe("authenticated users", () => {
     await Promise.all([
       courseUserFixture({
         courseId: otherUserCourse.id,
-        userId: Number(otherUser.id),
+        userId: otherUser.id,
       }),
       courseUserFixture({
         courseId: testUserCourse.id,
-        userId: Number(testUser.id),
+        userId: testUser.id,
       }),
     ]);
 

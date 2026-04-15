@@ -41,7 +41,7 @@ const cachedGetScore = cache(
       return null;
     }
 
-    const userId = Number(session.user.id);
+    const userId = session.user.id;
     const { startDate, endDate } = getDateRange(startDateIso, endDateIso);
 
     const { data: result, error } = await safeAsync(() =>

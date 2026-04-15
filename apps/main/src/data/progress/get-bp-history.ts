@@ -110,7 +110,7 @@ const cachedGetBpHistory = cache(
       return null;
     }
 
-    const userId = Number(session.user.id);
+    const userId = session.user.id;
     const { current, previous } = calculateDateRanges(period, offset);
 
     const [currentResult, previousResult, progressResult] = await Promise.all([

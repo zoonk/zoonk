@@ -6,7 +6,7 @@ import { fillDecayGaps } from "./daily-progress";
 describe(fillDecayGaps, () => {
   test("keeps one daily progress row per user and day", async () => {
     const user = await userFixture();
-    const userId = Number(user.id);
+    const userId = user.id;
     const date = new Date(Date.UTC(2026, 0, 2));
 
     await prisma.dailyProgress.create({
@@ -32,7 +32,7 @@ describe(fillDecayGaps, () => {
 
   test("skips decay rows for days that already have progress", async () => {
     const user = await userFixture();
-    const userId = Number(user.id);
+    const userId = user.id;
     const gapDate = new Date(Date.UTC(2026, 0, 2));
 
     await prisma.dailyProgress.create({

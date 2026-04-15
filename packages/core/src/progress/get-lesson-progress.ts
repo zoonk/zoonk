@@ -17,7 +17,7 @@ export async function getLessonProgress({
   }[]
 > {
   const session = await getSession(headers);
-  const userId = session ? Number(session.user.id) : 0;
+  const userId = session ? session.user.id : 0;
 
   if (userId === 0) {
     return [];

@@ -1,6 +1,7 @@
 "use server";
 
 import { auth } from "@zoonk/core/auth";
+import { getSession } from "@zoonk/core/users/session/get";
 import { safeAsync } from "@zoonk/utils/error";
 import { parseFormField } from "@zoonk/utils/form";
 import { logError } from "@zoonk/utils/logger";
@@ -15,7 +16,7 @@ export async function profileFormAction(_prevState: unknown, formData: FormData)
   }
 
   const reqHeaders = await headers();
-  const session = await auth.api.getSession({ headers: reqHeaders });
+  const session = await getSession(reqHeaders);
   const usernameChanged = session?.user.username !== username;
 
   const body: { name: string; username?: string } = { name };

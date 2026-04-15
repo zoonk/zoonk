@@ -26,7 +26,7 @@ describe(startActivity, () => {
 
   test("creates ActivityProgress with completedAt null and durationSeconds null", async () => {
     const user = await userFixture();
-    const userId = Number(user.id);
+    const userId = user.id;
 
     await startActivity({ activityId: activity.id, userId });
 
@@ -42,7 +42,7 @@ describe(startActivity, () => {
 
   test("idempotent: second call preserves original startedAt", async () => {
     const user = await userFixture();
-    const userId = Number(user.id);
+    const userId = user.id;
 
     await startActivity({ activityId: activity.id, userId });
 
@@ -61,7 +61,7 @@ describe(startActivity, () => {
 
   test("does not overwrite a completed record", async () => {
     const user = await userFixture();
-    const userId = Number(user.id);
+    const userId = user.id;
     const completedAt = new Date();
 
     await activityProgressFixture({

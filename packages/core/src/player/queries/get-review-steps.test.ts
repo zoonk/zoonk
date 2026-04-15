@@ -91,14 +91,14 @@ describe(getReviewSteps, () => {
           hourOfDay: 12,
           isCorrect: false,
           stepId: step.id,
-          userId: Number(newUser.id),
+          userId: newUser.id,
         }),
       ),
     );
 
     const result = await getReviewSteps({
       lessonId: newLesson.lesson.id,
-      userId: Number(newUser.id),
+      userId: newUser.id,
     });
 
     // Should have 10 total (3 mistakes + 7 fillers)
@@ -125,7 +125,7 @@ describe(getReviewSteps, () => {
           hourOfDay: 12,
           isCorrect: false,
           stepId: step.id,
-          userId: Number(newUser.id),
+          userId: newUser.id,
         }),
       ),
     );
@@ -140,7 +140,7 @@ describe(getReviewSteps, () => {
           hourOfDay: 12,
           isCorrect: false,
           stepId: step.id,
-          userId: Number(newUser.id),
+          userId: newUser.id,
         }),
         stepAttemptFixture({
           answer: {},
@@ -149,14 +149,14 @@ describe(getReviewSteps, () => {
           hourOfDay: 12,
           isCorrect: true,
           stepId: step.id,
-          userId: Number(newUser.id),
+          userId: newUser.id,
         }),
       ]),
     );
 
     const result = await getReviewSteps({
       lessonId: newLesson.lesson.id,
-      userId: Number(newUser.id),
+      userId: newUser.id,
     });
 
     // Should have 10 total (5 mistakes + 5 fillers)
@@ -183,7 +183,7 @@ describe(getReviewSteps, () => {
           hourOfDay: 12,
           isCorrect: false,
           stepId: step.id,
-          userId: Number(newUser.id),
+          userId: newUser.id,
         }),
       ),
     );
@@ -198,7 +198,7 @@ describe(getReviewSteps, () => {
           hourOfDay: 12,
           isCorrect: false,
           stepId: step.id,
-          userId: Number(newUser.id),
+          userId: newUser.id,
         }),
         stepAttemptFixture({
           answer: {},
@@ -207,14 +207,14 @@ describe(getReviewSteps, () => {
           hourOfDay: 12,
           isCorrect: true,
           stepId: step.id,
-          userId: Number(newUser.id),
+          userId: newUser.id,
         }),
       ]),
     );
 
     const result = await getReviewSteps({
       lessonId: newLesson.lesson.id,
-      userId: Number(newUser.id),
+      userId: newUser.id,
     });
 
     const resultIds = result.map((step) => step.id);
@@ -241,7 +241,7 @@ describe(getReviewSteps, () => {
           hourOfDay: 12,
           isCorrect: false,
           stepId: step.id,
-          userId: Number(newUser.id),
+          userId: newUser.id,
         }),
       ),
     );
@@ -255,7 +255,7 @@ describe(getReviewSteps, () => {
         hourOfDay: 12,
         isCorrect: false,
         stepId: newLesson.steps[11]!.id,
-        userId: Number(newUser.id),
+        userId: newUser.id,
       }),
       stepAttemptFixture({
         answer: {},
@@ -264,13 +264,13 @@ describe(getReviewSteps, () => {
         hourOfDay: 12,
         isCorrect: true,
         stepId: newLesson.steps[11]!.id,
-        userId: Number(newUser.id),
+        userId: newUser.id,
       }),
     ]);
 
     const result = await getReviewSteps({
       lessonId: newLesson.lesson.id,
-      userId: Number(newUser.id),
+      userId: newUser.id,
     });
 
     // Should only have the 11 tier 1 steps, not the tier 2 step
@@ -292,7 +292,7 @@ describe(getReviewSteps, () => {
         hourOfDay: 12,
         isCorrect: false,
         stepId: newLesson.steps[0]!.id,
-        userId: Number(newUser.id),
+        userId: newUser.id,
       }),
       stepAttemptFixture({
         answer: {},
@@ -301,13 +301,13 @@ describe(getReviewSteps, () => {
         hourOfDay: 12,
         isCorrect: false,
         stepId: newLesson.steps[0]!.id,
-        userId: Number(newUser.id),
+        userId: newUser.id,
       }),
     ]);
 
     const result = await getReviewSteps({
       lessonId: newLesson.lesson.id,
-      userId: Number(newUser.id),
+      userId: newUser.id,
     });
 
     // The step should only appear once
@@ -470,14 +470,14 @@ describe(getReviewSteps, () => {
           hourOfDay: 12,
           isCorrect: false,
           stepId: step.id,
-          userId: Number(newUser.id),
+          userId: newUser.id,
         }),
       ),
     );
 
     const result = await getReviewSteps({
       lessonId: newLesson.lesson.id,
-      userId: Number(newUser.id),
+      userId: newUser.id,
     });
 
     // Should have exactly REVIEW_TARGET_COUNT (10) unique steps
@@ -511,7 +511,7 @@ describe(getReviewSteps, () => {
 
     const result = await getReviewSteps({
       lessonId: lesson.id,
-      userId: Number(newUser.id),
+      userId: newUser.id,
     });
 
     // No attempts means all steps are fillers, capped at REVIEW_TARGET_COUNT
@@ -569,7 +569,7 @@ describe(getReviewSteps, () => {
           hourOfDay: 12,
           isCorrect: false,
           stepId: step.id,
-          userId: Number(newUser.id),
+          userId: newUser.id,
         }),
       ),
     );
@@ -584,7 +584,7 @@ describe(getReviewSteps, () => {
           hourOfDay: 12,
           isCorrect: false,
           stepId: step.id,
-          userId: Number(newUser.id),
+          userId: newUser.id,
         }),
         stepAttemptFixture({
           answer: {},
@@ -593,14 +593,14 @@ describe(getReviewSteps, () => {
           hourOfDay: 12,
           isCorrect: true,
           stepId: step.id,
-          userId: Number(newUser.id),
+          userId: newUser.id,
         }),
       ]),
     );
 
     const result = await getReviewSteps({
       lessonId: newLesson.lesson.id,
-      userId: Number(newUser.id),
+      userId: newUser.id,
     });
 
     // Exactly 10 tier 1 hits the >= threshold, so tier 2 should be excluded
@@ -629,7 +629,7 @@ describe(getReviewSteps, () => {
       hourOfDay: 12,
       isCorrect: false,
       stepId: newLesson.steps[0]!.id,
-      userId: Number(newUser.id),
+      userId: newUser.id,
     });
 
     // 1 step with only correct attempts (should NOT be tier 1 or tier 2)
@@ -640,12 +640,12 @@ describe(getReviewSteps, () => {
       hourOfDay: 12,
       isCorrect: true,
       stepId: newLesson.steps[1]!.id,
-      userId: Number(newUser.id),
+      userId: newUser.id,
     });
 
     const result = await getReviewSteps({
       lessonId: newLesson.lesson.id,
-      userId: Number(newUser.id),
+      userId: newUser.id,
     });
 
     // Should have 10 steps (1 prioritized + 9 fillers)
@@ -671,14 +671,14 @@ describe(getReviewSteps, () => {
           hourOfDay: 12,
           isCorrect: false,
           stepId: step.id,
-          userId: Number(newUser.id),
+          userId: newUser.id,
         }),
       ),
     );
 
     const result = await getReviewSteps({
       lessonId: newLesson.lesson.id,
-      userId: Number(newUser.id),
+      userId: newUser.id,
     });
 
     // 5 prioritized + 5 fillers = 10, all unique
@@ -699,7 +699,7 @@ describe(getReviewSteps, () => {
       hourOfDay: 12,
       isCorrect: false,
       stepId: newLesson.steps[0]!.id,
-      userId: Number(newUser.id),
+      userId: newUser.id,
     });
 
     await prisma.activity.update({
@@ -709,7 +709,7 @@ describe(getReviewSteps, () => {
 
     const result = await getReviewSteps({
       lessonId: newLesson.lesson.id,
-      userId: Number(newUser.id),
+      userId: newUser.id,
     });
 
     expect(result).toEqual([]);

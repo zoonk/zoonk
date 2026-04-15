@@ -76,7 +76,7 @@ describe("admins", () => {
         data: {
           organizationId: aiOrg.id,
           role: "admin",
-          userId: Number(fixture.user.id),
+          userId: fixture.user.id,
         },
       }),
       signInAs(fixture.user.email, fixture.user.password),

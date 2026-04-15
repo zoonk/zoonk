@@ -31,14 +31,14 @@ describe("authenticated users", () => {
           date: new Date("2025-01-05T12:00:00Z"),
           dayOfWeek: 0, // Sunday
           incorrectAnswers: 2,
-          userId: Number(user.id),
+          userId: user.id,
         },
         {
           correctAnswers: 15,
           date: new Date("2025-01-06T12:00:00Z"),
           dayOfWeek: 1, // Monday
           incorrectAnswers: 5,
-          userId: Number(user.id),
+          userId: user.id,
         },
       ],
     });
@@ -68,14 +68,14 @@ describe("authenticated users", () => {
           date: today,
           dayOfWeek: today.getDay(),
           incorrectAnswers: 2,
-          userId: Number(user.id),
+          userId: user.id,
         },
         {
           correctAnswers: 20,
           date: oldDate,
           dayOfWeek: oldDate.getDay(),
           incorrectAnswers: 0,
-          userId: Number(user.id),
+          userId: user.id,
         },
       ],
     });
@@ -97,21 +97,21 @@ describe("authenticated users", () => {
           date: new Date("2025-01-05T12:00:00Z"),
           dayOfWeek: 0, // Sunday
           incorrectAnswers: 1,
-          userId: Number(user.id),
+          userId: user.id,
         },
         {
           correctAnswers: 9,
           date: new Date("2025-01-12T12:00:00Z"),
           dayOfWeek: 0, // Next Sunday
           incorrectAnswers: 1,
-          userId: Number(user.id),
+          userId: user.id,
         },
         {
           correctAnswers: 8,
           date: new Date("2025-01-06T12:00:00Z"),
           dayOfWeek: 1, // Monday
           incorrectAnswers: 2,
-          userId: Number(user.id),
+          userId: user.id,
         },
       ],
     });
@@ -138,7 +138,7 @@ describe("authenticated users", () => {
         date: today,
         dayOfWeek: today.getDay(),
         incorrectAnswers: 3,
-        userId: Number(user.id),
+        userId: user.id,
       },
     });
 

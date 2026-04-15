@@ -154,7 +154,7 @@ describe(submitPlayerCompletion, () => {
         activityId: activity.id,
         stepId: step.id,
       }),
-      userId: Number(user.id),
+      userId: user.id,
     });
 
     const [activityProgress, stepAttempts] = await Promise.all([
@@ -162,14 +162,14 @@ describe(submitPlayerCompletion, () => {
         where: {
           userActivity: {
             activityId: activity.id,
-            userId: Number(user.id),
+            userId: user.id,
           },
         },
       }),
       prisma.stepAttempt.findMany({
         where: {
           stepId: step.id,
-          userId: Number(user.id),
+          userId: user.id,
         },
       }),
     ]);
@@ -205,7 +205,7 @@ describe(submitPlayerCompletion, () => {
         activityId: activity.id,
         stepId: step.id,
       }),
-      userId: Number(user.id),
+      userId: user.id,
     });
 
     expect(result).toEqual({

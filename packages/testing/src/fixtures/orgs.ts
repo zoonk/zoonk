@@ -49,7 +49,7 @@ export async function memberFixture(
       createdAt: new Date(),
       organizationId: memberAttrs?.organizationId || org.id,
       role: memberAttrs?.role || "member",
-      userId: memberAttrs?.userId || Number(user.id),
+      userId: memberAttrs?.userId || user.id,
       ...memberAttrs,
     },
   });

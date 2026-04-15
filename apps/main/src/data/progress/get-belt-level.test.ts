@@ -27,7 +27,7 @@ describe("authenticated users", () => {
     await prisma.userProgress.create({
       data: {
         totalBrainPower: BigInt(15_000),
-        userId: Number(user.id),
+        userId: user.id,
       },
     });
 
@@ -49,7 +49,7 @@ describe("authenticated users", () => {
     await prisma.userProgress.create({
       data: {
         totalBrainPower: BigInt(0),
-        userId: Number(user.id),
+        userId: user.id,
       },
     });
 

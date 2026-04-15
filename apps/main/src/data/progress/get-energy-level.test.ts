@@ -28,7 +28,7 @@ describe("authenticated users", () => {
       data: {
         currentEnergy: 85.5,
         lastActiveAt: new Date(),
-        userId: Number(user.id),
+        userId: user.id,
       },
     });
 
@@ -51,7 +51,7 @@ describe("authenticated users", () => {
       data: {
         currentEnergy: 50,
         lastActiveAt: fiveDaysAgo,
-        userId: Number(user.id),
+        userId: user.id,
       },
     });
 
@@ -73,7 +73,7 @@ describe("authenticated users", () => {
       data: {
         currentEnergy: 20,
         lastActiveAt: longAgo,
-        userId: Number(user.id),
+        userId: user.id,
       },
     });
 

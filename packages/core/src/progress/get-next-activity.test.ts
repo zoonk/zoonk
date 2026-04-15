@@ -252,7 +252,7 @@ describe("getNextActivity - course scope", () => {
       activityId: activity1.id,
       completedAt: new Date(),
       durationSeconds: 60,
-      userId: Number(user.id),
+      userId: user.id,
     });
 
     const headers = await signInAs(user.email, user.password);
@@ -344,13 +344,13 @@ describe("getNextActivity - course scope", () => {
         activityId: activityA1.id,
         completedAt: new Date(now.getTime() - 1000),
         durationSeconds: 60,
-        userId: Number(user.id),
+        userId: user.id,
       }),
       activityProgressFixture({
         activityId: activityB1.id,
         completedAt: now,
         durationSeconds: 60,
-        userId: Number(user.id),
+        userId: user.id,
       }),
     ]);
 
@@ -441,12 +441,12 @@ describe("getNextActivity - course scope", () => {
         activityId: completedActivity.id,
         completedAt: new Date(),
         durationSeconds: 60,
-        userId: Number(user.id),
+        userId: user.id,
       }),
       prisma.chapterCompletion.create({
         data: {
           chapterId: completedChapter.id,
-          userId: Number(user.id),
+          userId: user.id,
         },
       }),
     ]);
@@ -505,13 +505,13 @@ describe("getNextActivity - course scope", () => {
         activityId: activity1.id,
         completedAt: new Date("2024-01-01"),
         durationSeconds: 60,
-        userId: Number(user.id),
+        userId: user.id,
       }),
       activityProgressFixture({
         activityId: activity2.id,
         completedAt: new Date("2024-01-02"),
         durationSeconds: 60,
-        userId: Number(user.id),
+        userId: user.id,
       }),
     ]);
 
@@ -579,7 +579,7 @@ describe("getNextActivity - course scope", () => {
       activityId: completedActivity.id,
       completedAt: new Date(),
       durationSeconds: 60,
-      userId: Number(user.id),
+      userId: user.id,
     });
 
     const headers = await signInAs(user.email, user.password);
@@ -638,7 +638,7 @@ describe("getNextActivity - course scope", () => {
       activityId: activity1.id,
       completedAt: new Date(),
       durationSeconds: 60,
-      userId: Number(user.id),
+      userId: user.id,
     });
 
     const headers = await signInAs(user.email, user.password);
@@ -705,7 +705,7 @@ describe("getNextActivity - course scope", () => {
       activityId: activity1.id,
       completedAt: new Date(),
       durationSeconds: 60,
-      userId: Number(user.id),
+      userId: user.id,
     });
 
     const headers = await signInAs(user.email, user.password);
@@ -906,7 +906,7 @@ describe("getNextActivity - chapter scope", () => {
       activityId: activity1.id,
       completedAt: new Date(),
       durationSeconds: 60,
-      userId: Number(user.id),
+      userId: user.id,
     });
 
     const headers = await signInAs(user.email, user.password);
@@ -981,7 +981,7 @@ describe("getNextActivity - chapter scope", () => {
       activityId: activity1.id,
       completedAt: new Date(),
       durationSeconds: 60,
-      userId: Number(user.id),
+      userId: user.id,
     });
 
     const headers = await signInAs(user.email, user.password);
@@ -1094,7 +1094,7 @@ describe("getNextActivity - lesson scope", () => {
       activityId: activity1.id,
       completedAt: new Date(),
       durationSeconds: 60,
-      userId: Number(user.id),
+      userId: user.id,
     });
 
     const headers = await signInAs(user.email, user.password);
@@ -1161,7 +1161,7 @@ describe("getNextActivity - lesson scope", () => {
       activityId: activity1.id,
       completedAt: new Date(),
       durationSeconds: 60,
-      userId: Number(user.id),
+      userId: user.id,
     });
 
     const headers = await signInAs(user.email, user.password);
@@ -1227,7 +1227,7 @@ describe("getNextActivity - lesson scope", () => {
       activityId: completedActivity.id,
       completedAt: new Date(),
       durationSeconds: 60,
-      userId: Number(user.id),
+      userId: user.id,
     });
 
     const headers = await signInAs(user.email, user.password);

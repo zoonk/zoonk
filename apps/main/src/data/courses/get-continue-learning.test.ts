@@ -83,7 +83,7 @@ describe("authenticated users", () => {
       activityId: activity1.id,
       completedAt: new Date(),
       durationSeconds: 60,
-      userId: Number(user.id),
+      userId: user.id,
     });
 
     const result = await getContinueLearning(headers);
@@ -101,7 +101,7 @@ describe("authenticated users", () => {
   test("keeps a course in continue learning when the latest completion was archived by regeneration", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
-    const userId = Number(user.id);
+    const userId = user.id;
 
     const course = await courseFixture({
       isPublished: true,
@@ -186,7 +186,7 @@ describe("authenticated users", () => {
   test("does not reopen a durably completed lesson after regeneration adds more activities", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
-    const userId = Number(user.id);
+    const userId = user.id;
 
     const course = await courseFixture({
       isPublished: true,
@@ -300,13 +300,13 @@ describe("authenticated users", () => {
         activityId: data1.activity1.id,
         completedAt: new Date(now.getTime() - 1000),
         durationSeconds: 60,
-        userId: Number(user.id),
+        userId: user.id,
       }),
       activityProgressFixture({
         activityId: data2.activity1.id,
         completedAt: now,
         durationSeconds: 60,
-        userId: Number(user.id),
+        userId: user.id,
       }),
     ]);
 
@@ -335,7 +335,7 @@ describe("authenticated users", () => {
           activityId: data.activity1.id,
           completedAt: new Date(now.getTime() + idx * 1000),
           durationSeconds: 60,
-          userId: Number(user.id),
+          userId: user.id,
         }),
       ),
     );
@@ -356,13 +356,13 @@ describe("authenticated users", () => {
         activityId: activity1.id,
         completedAt: new Date("2024-01-01"),
         durationSeconds: 60,
-        userId: Number(user.id),
+        userId: user.id,
       }),
       activityProgressFixture({
         activityId: activity2.id,
         completedAt: new Date("2024-01-02"),
         durationSeconds: 60,
-        userId: Number(user.id),
+        userId: user.id,
       }),
     ]);
 
@@ -432,12 +432,12 @@ describe("authenticated users", () => {
         activityId: completedActivity.id,
         completedAt: new Date(),
         durationSeconds: 60,
-        userId: Number(user.id),
+        userId: user.id,
       }),
       prisma.courseCompletion.create({
         data: {
           courseId: course.id,
-          userId: Number(user.id),
+          userId: user.id,
         },
       }),
     ]);
@@ -507,7 +507,7 @@ describe("authenticated users", () => {
       activityId: activity1.id,
       completedAt: new Date(),
       durationSeconds: 60,
-      userId: Number(user.id),
+      userId: user.id,
     });
 
     const result = await getContinueLearning(headers);
@@ -532,13 +532,13 @@ describe("authenticated users", () => {
         activityId: activity1.id,
         completedAt: new Date(),
         durationSeconds: 60,
-        userId: Number(user.id),
+        userId: user.id,
       }),
       activityProgressFixture({
         activityId: activity2.id,
         completedAt: new Date(),
         durationSeconds: 60,
-        userId: Number(user.id),
+        userId: user.id,
       }),
     ]);
 
@@ -555,7 +555,7 @@ describe("authenticated users", () => {
       isPublished: true,
       mode: "quickLesson",
       organizationId: null,
-      userId: Number(user.id),
+      userId: user.id,
     });
 
     const chapter = await chapterFixture({
@@ -593,7 +593,7 @@ describe("authenticated users", () => {
       activityId: activity1.id,
       completedAt: new Date(),
       durationSeconds: 60,
-      userId: Number(user.id),
+      userId: user.id,
     });
 
     const result = await getContinueLearning(headers);
@@ -649,7 +649,7 @@ describe("authenticated users", () => {
       activityId: activity.id,
       completedAt: new Date(),
       durationSeconds: 60,
-      userId: Number(user.id),
+      userId: user.id,
     });
 
     const result = await getContinueLearning(headers);
@@ -715,7 +715,7 @@ describe("authenticated users", () => {
       activityId: activity.id,
       completedAt: new Date(),
       durationSeconds: 60,
-      userId: Number(user.id),
+      userId: user.id,
     });
 
     const result = await getContinueLearning(headers);
@@ -771,7 +771,7 @@ describe("authenticated users", () => {
       activityId: activity.id,
       completedAt: new Date(),
       durationSeconds: 60,
-      userId: Number(user.id),
+      userId: user.id,
     });
 
     const result = await getContinueLearning(headers);
@@ -796,7 +796,7 @@ describe("authenticated users", () => {
         activityId: activity1.id,
         completedAt: new Date(),
         durationSeconds: 60,
-        userId: Number(user.id),
+        userId: user.id,
       }),
       prisma.course.update({
         data: { archivedAt: new Date() },
