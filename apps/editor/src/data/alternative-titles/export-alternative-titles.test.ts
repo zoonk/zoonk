@@ -1,15 +1,50 @@
 import { randomUUID } from "node:crypto";
 import { ErrorCode } from "@/lib/app-error";
 import { prisma } from "@zoonk/db";
+import { signInAs } from "@zoonk/testing/fixtures/auth";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
-import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
+import { memberFixture, organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { describe, expect, test } from "vitest";
 import { exportAlternativeTitles } from "./export-alternative-titles";
 
 describe(exportAlternativeTitles, () => {
+  test("returns Forbidden for unauthenticated users", async () => {
+    const organization = await organizationFixture();
+    const course = await courseFixture({ organizationId: organization.id });
+
+    const result = await exportAlternativeTitles({
+      courseId: course.id,
+      headers: new Headers(),
+    });
+
+    expect(result.error?.message).toBe(ErrorCode.forbidden);
+    expect(result.data).toBeNull();
+  });
+
+  test("returns Forbidden for org members", async () => {
+    const { organization, user } = await memberFixture({ role: "member" });
+
+    const [headers, course] = await Promise.all([
+      signInAs(user.email, user.password),
+      courseFixture({ organizationId: organization.id }),
+    ]);
+
+    const result = await exportAlternativeTitles({
+      courseId: course.id,
+      headers,
+    });
+
+    expect(result.error?.message).toBe(ErrorCode.forbidden);
+    expect(result.data).toBeNull();
+  });
+
   test("returns courseNotFound for non-existent course", async () => {
+    const { user } = await memberFixture({ role: "admin" });
+    const headers = await signInAs(user.email, user.password);
+
     const result = await exportAlternativeTitles({
       courseId: 999_999,
+      headers,
     });
 
     expect(result.error?.message).toBe(ErrorCode.courseNotFound);
@@ -20,6 +55,8 @@ describe(exportAlternativeTitles, () => {
     const suffix = randomUUID().slice(0, 8);
     const organization = await organizationFixture();
     const course = await courseFixture({ organizationId: organization.id });
+    const { user } = await memberFixture({ organizationId: organization.id, role: "admin" });
+    const headers = await signInAs(user.email, user.password);
 
     await prisma.courseAlternativeTitle.createMany({
       data: [
@@ -34,6 +71,7 @@ describe(exportAlternativeTitles, () => {
 
     const result = await exportAlternativeTitles({
       courseId: course.id,
+      headers,
     });
 
     expect(result.error).toBeNull();
@@ -46,9 +84,12 @@ describe(exportAlternativeTitles, () => {
   test("exports empty array when no titles exist", async () => {
     const organization = await organizationFixture();
     const course = await courseFixture({ organizationId: organization.id });
+    const { user } = await memberFixture({ organizationId: organization.id, role: "admin" });
+    const headers = await signInAs(user.email, user.password);
 
     const result = await exportAlternativeTitles({
       courseId: course.id,
+      headers,
     });
 
     expect(result.error).toBeNull();
@@ -59,6 +100,8 @@ describe(exportAlternativeTitles, () => {
     const suffix = randomUUID().slice(0, 8);
     const organization = await organizationFixture();
     const course = await courseFixture({ organizationId: organization.id });
+    const { user } = await memberFixture({ organizationId: organization.id, role: "admin" });
+    const headers = await signInAs(user.email, user.password);
 
     await prisma.courseAlternativeTitle.createMany({
       data: [
@@ -78,6 +121,7 @@ describe(exportAlternativeTitles, () => {
 
     const result = await exportAlternativeTitles({
       courseId: course.id,
+      headers,
     });
 
     expect(result.error).toBeNull();
@@ -86,5 +130,20 @@ describe(exportAlternativeTitles, () => {
       `beta-training-${suffix}`,
       `zebra-learning-${suffix}`,
     ]);
+  });
+
+  test("returns Forbidden for courses in a different organization", async () => {
+    const { user } = await memberFixture({ role: "admin" });
+    const headers = await signInAs(user.email, user.password);
+    const otherOrg = await organizationFixture();
+    const otherCourse = await courseFixture({ organizationId: otherOrg.id });
+
+    const result = await exportAlternativeTitles({
+      courseId: otherCourse.id,
+      headers,
+    });
+
+    expect(result.error?.message).toBe(ErrorCode.forbidden);
+    expect(result.data).toBeNull();
   });
 });

@@ -1,11 +1,11 @@
 "use server";
 
+import { addAlternativeTitles } from "@/data/alternative-titles/add-alternative-titles";
 import { deleteAlternativeTitles } from "@/data/alternative-titles/delete-alternative-titles";
 import { exportAlternativeTitles } from "@/data/alternative-titles/export-alternative-titles";
 import { importAlternativeTitles } from "@/data/alternative-titles/import-alternative-titles";
 import { getErrorMessage } from "@/lib/error-messages";
 import { isImportMode } from "@/lib/import-mode";
-import { addAlternativeTitles } from "@zoonk/core/alternative-titles/add";
 import { getExtracted } from "next-intl/server";
 import { revalidatePath } from "next/cache";
 
@@ -47,10 +47,14 @@ export async function deleteAlternativeTitleAction(
 ): Promise<{ error: string | null }> {
   const { courseId, courseSlug, orgSlug } = params;
 
-  await deleteAlternativeTitles({
+  const { error } = await deleteAlternativeTitles({
     courseId,
     titles: [slug],
   });
+
+  if (error) {
+    return { error: await getErrorMessage(error) };
+  }
 
   revalidatePath(`/${orgSlug}/c/${courseSlug}`);
   return { error: null };

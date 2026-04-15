@@ -3,9 +3,10 @@ import { ErrorCode } from "@/lib/app-error";
 import { type ImportMode } from "@/lib/import-mode";
 import { parseJsonFile } from "@/lib/parse-json-file";
 import { prisma } from "@zoonk/db";
-import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
+import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { isJsonObject } from "@zoonk/utils/json";
 import { toSlug } from "@zoonk/utils/string";
+import { getAuthorizedAlternativeTitleCourse } from "./get-authorized-course";
 
 function validateTitleData(title: unknown): title is string {
   return typeof title === "string" && title.trim().length > 0;
@@ -28,6 +29,7 @@ function validateImportData(data: unknown): data is {
 export async function importAlternativeTitles(params: {
   courseId: number;
   file: File;
+  headers?: Headers;
   language: string;
   mode?: ImportMode;
 }): Promise<SafeReturn<string[]>> {
@@ -43,18 +45,13 @@ export async function importAlternativeTitles(params: {
     return { data: null, error: parseError };
   }
 
-  const { data: course, error: findError } = await safeAsync(() =>
-    prisma.course.findUnique({
-      where: { id: params.courseId },
-    }),
-  );
+  const { error: courseError } = await getAuthorizedAlternativeTitleCourse({
+    courseId: params.courseId,
+    headers: params.headers,
+  });
 
-  if (findError) {
-    return { data: null, error: findError };
-  }
-
-  if (!course) {
-    return { data: null, error: new AppError(ErrorCode.courseNotFound) };
+  if (courseError) {
+    return { data: null, error: courseError };
   }
 
   const uniqueSlugs = [
