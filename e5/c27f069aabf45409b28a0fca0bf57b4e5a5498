@@ -1,0 +1,163 @@
+apps/main/src/data/progress/get-score-history.test.ts
+  e121ac05599a2e7d 38,62,70,95,120,127,153,160,193,200,227,234,262,269,294,321,328,349,371,401,408
+packages/core/src/progress/get-chapter-progress.test.ts
+  e121ac05599a2e7d 100,112,175,218,273,366,415,470
+apps/admin/src/app/(private)/review/_actions/mark-reviewed.ts
+  e121ac05599a2e7d 23
+apps/main/src/data/progress/get-score.test.ts
+  e121ac05599a2e7d 38,45,72,79,108,115,122
+packages/core/src/progress/get-activity-progress.ts
+  e121ac05599a2e7d 13
+apps/main/src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/a/[position]/activity-data-loaders.ts
+  e121ac05599a2e7d 18
+apps/main/src/data/progress/get-energy-history.ts
+  e121ac05599a2e7d 78
+packages/testing/src/fixtures/users.ts
+  e121ac05599a2e7d 26-27,46
+packages/core/src/progress/get-activity-progress.test.ts
+  e121ac05599a2e7d 118,124,173,179,236,242,298,304
+apps/main/src/app/(settings)/profile/actions.ts
+  e121ac05599a2e7d 4,19
+apps/admin/src/app/(private)/review/_actions/mark-needs-changes.ts
+  e121ac05599a2e7d 23
+apps/editor/src/data/chapters/delete-chapter.test.ts
+  e121ac05599a2e7d 124,260,310
+apps/editor/src/data/lessons/delete-lesson.test.ts
+  e121ac05599a2e7d 139,290,340
+packages/core/src/player/queries/get-total-brain-power.ts
+  e121ac05599a2e7d 22
+apps/main/src/data/progress/get-score-history.ts
+  e121ac05599a2e7d 139
+apps/main/src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/a/[position]/page.tsx
+  e121ac05599a2e7d 115
+apps/admin/src/app/(private)/review/[group]/[task]/[entityId]/_actions/approve-flagged.ts
+  e121ac05599a2e7d 23
+packages/testing/src/fixtures/orgs.ts
+  e121ac05599a2e7d 52
+packages/core/src/users/get-user-session.test.ts
+  e121ac05599a2e7d 1-24
+apps/main/src/data/progress/get-belt-level.test.ts
+  e121ac05599a2e7d 30,52
+packages/core/src/player/queries/get-review-steps.test.ts
+  e121ac05599a2e7d 94,101,128,143,152,159,186,201,210,217,244,258,267,273,295,304,310,473,480,514,572,587,596,603,632,643,648,674,681,702,712
+apps/main/src/data/progress/get-best-time.test.ts
+  e121ac05599a2e7d 104,132,156,180,200,226
+packages/core/src/progress/get-chapter-progress.ts
+  e121ac05599a2e7d 76
+apps/editor/src/data/chapters/import-chapters.test.ts
+  e121ac05599a2e7d 534
+apps/main/src/data/courses/get-continue-learning.test.ts
+  e121ac05599a2e7d 86,104,189,303,309,338,359,365,435,440,510,535,541,558,596,652,718,774,799
+apps/editor/src/data/lessons/create-lesson.test.ts
+  e121ac05599a2e7d 131
+apps/main/src/data/progress/get-energy-history.test.ts
+  e121ac05599a2e7d 42,48,74,80,104,110,135,141,173,179,205,211,235,261,267,289,310,342,348,389,395,434,440,466,472,503,509
+apps/main/src/data/courses/list-user-courses.test.ts
+  e121ac05599a2e7d 48,69,103,108,113,142-143,160,165,186,208,212
+apps/editor/src/data/courses/delete-course.test.ts
+  e121ac05599a2e7d 113,240,305
+apps/main/src/data/progress/get-bp-history.test.ts
+  e121ac05599a2e7d 41,47,72,78,96,101,110,134,140,165,171,202,208,235,241,266,292,298,319,340
+apps/main/src/data/progress/get-energy-level.ts
+  e121ac05599a2e7d 20
+packages/core/src/activities/find-last-completed.test.ts
+  e121ac05599a2e7d 17,85,151,209,286,367,445,513,568,635,744,747
+packages/core/src/progress/get-lesson-progress.ts
+  e121ac05599a2e7d 20
+apps/editor/src/data/courses/create-course.test.ts
+  e121ac05599a2e7d 79
+packages/core/src/player/commands/submit-player-completion.test.ts
+  e121ac05599a2e7d 157,165,172,208
+apps/main/src/data/courses/get-continue-learning.ts
+  e121ac05599a2e7d 284
+apps/main/src/data/progress/get-energy-level.test.ts
+  e121ac05599a2e7d 31,54,76
+apps/editor/src/data/lessons/import-lessons.test.ts
+  e121ac05599a2e7d 496,814
+packages/core/src/player/commands/submit-activity-completion.test.ts
+  e121ac05599a2e7d 66,92,116,202,224,252,273,293,320,350,370,396,427,467,502,537,555,573,614
+packages/core/src/users/serialize-user-session.ts
+  e121ac05599a2e7d 1-58
+packages/core/src/player/commands/start-activity.test.ts
+  e121ac05599a2e7d 29,45,64
+apps/editor/src/data/activities/import-activities.test.ts
+  e121ac05599a2e7d 175,497
+apps/main/src/data/progress/get-belt-level.ts
+  e121ac05599a2e7d 15
+apps/main/src/data/courses/list-user-courses.ts
+  e121ac05599a2e7d 18
+packages/core/src/progress/get-next-activity.test.ts
+  e121ac05599a2e7d 255,347,353,444,449,508,514,582,641,708,909,984,1097,1164,1230
+apps/main/src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/a/[position]/submit-completion-action.ts
+  e121ac05599a2e7d 9,32,38
+packages/core/src/progress/get-lesson-progress.test.ts
+  e121ac05599a2e7d 107,113,162,168,216,308,363
+apps/main/src/data/progress/get-bp-history.ts
+  e121ac05599a2e7d 113
+packages/core/src/users/get-user-session.ts
+  e121ac05599a2e7d 5,7-14,20
+packages/core/src/player/commands/_utils/daily-progress.test.ts
+  e121ac05599a2e7d 9,35
+apps/api/src/workflows/lesson-regeneration/lesson-regeneration-workflow.test.ts
+  e121ac05599a2e7d 123,147
+packages/core/src/content/lifecycle.test.ts
+  e121ac05599a2e7d 83,118,170,215
+packages/core/src/player/queries/get-total-brain-power.test.ts
+  e121ac05599a2e7d 21
+apps/main/src/data/progress/get-best-day.test.ts
+  e121ac05599a2e7d 34,41,71,78,100,107,114,141
+apps/main/src/data/progress/get-score.ts
+  e121ac05599a2e7d 44
+packages/core/src/progress/get-next-activity.ts
+  e121ac05599a2e7d 22
+apps/main/src/data/progress/get-best-day.ts
+  e121ac05599a2e7d 20
+apps/main/src/data/progress/get-best-time.ts
+  e121ac05599a2e7d 21
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.8",
+  "base_commit_sha": "e5c27f069aabf45409b28a0fca0bf57b4e5a5498",
+  "prompts": {
+    "b3e2cf6cad4819a0": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d8d5d-7cba-70b1-8c17-ad7d6dff43e7",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 133,
+      "overriden_lines": 0
+    },
+    "b96aa95b162d6206": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d8db2-0332-7d93-84f8-0f778f7df0ff",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 1,
+      "overriden_lines": 0
+    },
+    "e121ac05599a2e7d": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d92e0-e4b6-78b3-8f0d-561aeed5d3a4",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 476,
+      "total_deletions": 296,
+      "accepted_lines": 469,
+      "overriden_lines": 0
+    }
+  }
+}
