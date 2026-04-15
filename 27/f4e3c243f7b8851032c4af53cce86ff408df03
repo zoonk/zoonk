@@ -1,0 +1,40 @@
+packages/ai/src/tasks/courses/course-chapters.prompt.md
+  77b3386b13c29078 9-10,34,38,51,61-63,87,89,91,97,99-100,102-104,115,141-142,156-157,182-183,214-215,219-221,225,231-232,234,238-243,251-253,261-263,280-281,285,291,301-304,307-308,313-316
+packages/ai/src/tasks/chapters/chapter-lessons.prompt.md
+  77b3386b13c29078 83-84,87,96,127
+apps/evals/src/tasks/course-chapters/test-cases.ts
+  77b3386b13c29078 6,9,13-14,20,23-24,30
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.8",
+  "base_commit_sha": "27f4e3c243f7b8851032c4af53cce86ff408df03",
+  "prompts": {
+    "77b3386b13c29078": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b84bd188-472b-486f-b523-dbedd637ba33",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 86,
+      "total_deletions": 49,
+      "accepted_lines": 78,
+      "overriden_lines": 0
+    },
+    "b656cba3e57dc167": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d81e6-d72d-7473-afe2-7cc747e2c8c7",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 48,
+      "overriden_lines": 0
+    }
+  }
+}
