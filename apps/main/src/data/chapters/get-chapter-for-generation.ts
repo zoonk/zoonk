@@ -1,12 +1,14 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { getAiGenerationChapterWhere, prisma } from "@zoonk/db";
 
 export async function getChapterForGeneration(chapterId: number) {
-  return prisma.chapter.findUnique({
+  return prisma.chapter.findFirst({
     include: {
       _count: { select: { lessons: true } },
       course: true,
     },
-    where: { id: chapterId },
+    where: getAiGenerationChapterWhere({
+      chapterWhere: { id: chapterId },
+    }),
   });
 }

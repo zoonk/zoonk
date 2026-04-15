@@ -97,7 +97,7 @@ export default async function ActivityPage({ params }: Props) {
   if (activity.generationStatus !== "completed") {
     return (
       <main className="flex min-h-[calc(100vh-8rem)] flex-col items-center justify-center p-4">
-        <ActivityNotGenerated activityId={activity.id} />
+        <ActivityNotGenerated activityId={activity.id} brandSlug={brandSlug} />
       </main>
     );
   }

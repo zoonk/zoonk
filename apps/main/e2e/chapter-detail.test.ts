@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { getAiOrganization } from "@zoonk/e2e/helpers";
+import { createOrganization, getAiOrganization } from "@zoonk/e2e/helpers";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
@@ -273,5 +273,36 @@ test.describe("Chapter - No Lessons", () => {
     await page.goto(noLessonsChapterUrl);
 
     await page.waitForURL(new RegExp(`/generate/ch/${noLessonsChapterId}`));
+  });
+
+  test("non-AI chapters with no lessons stay on the chapter page", async ({ page }) => {
+    const nonAiUniqueId = randomUUID().slice(0, 8);
+    const org = await createOrganization();
+    const course = await courseFixture({
+      isPublished: true,
+      organizationId: org.id,
+      slug: `non-ai-chapter-course-${nonAiUniqueId}`,
+      title: `Non AI Chapter Course ${nonAiUniqueId}`,
+    });
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      description: `Non AI chapter ${nonAiUniqueId}`,
+      isPublished: true,
+      organizationId: org.id,
+      slug: `non-ai-chapter-${nonAiUniqueId}`,
+      title: `Non AI Chapter ${nonAiUniqueId}`,
+    });
+    const url = `/b/${org.slug}/c/${course.slug}/ch/${chapter.slug}`;
+
+    await page.goto(url);
+
+    await expect(page).toHaveURL(url);
+    await expect(
+      page.getByRole("heading", {
+        level: 1,
+        name: `Non AI Chapter ${nonAiUniqueId}`,
+      }),
+    ).toBeVisible();
+    await expect(page.getByRole("link", { name: /^start$/i })).not.toBeVisible();
   });
 });

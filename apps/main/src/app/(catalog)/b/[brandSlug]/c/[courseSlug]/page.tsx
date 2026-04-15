@@ -8,6 +8,7 @@ import {
 import { listCourseChapters } from "@/data/chapters/list-course-chapters";
 import { getCourse } from "@/data/courses/get-course";
 import { getSession } from "@zoonk/core/users/session/get";
+import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { type Metadata } from "next";
 import { getExtracted } from "next-intl/server";
 import { notFound, redirect } from "next/navigation";
@@ -50,9 +51,13 @@ export default async function CoursePage({ params }: PageProps<"/b/[brandSlug]/c
 
   const chapters = await listCourseChapters({ courseId: course.id });
 
-  if (chapters.length === 0) {
+  if (brandSlug === AI_ORG_SLUG && chapters.length === 0) {
     redirect(`/generate/c/${course.slug}`);
   }
+
+  const fallbackHref = chapters[0]
+    ? (`/b/${brandSlug}/c/${courseSlug}/ch/${chapters[0].slug}` as const)
+    : undefined;
 
   return (
     <main className="flex flex-1 flex-col">
@@ -61,10 +66,7 @@ export default async function CoursePage({ params }: PageProps<"/b/[brandSlug]/c
       <CatalogContainer>
         <CatalogToolbar>
           <Suspense fallback={<ContinueActivityLinkSkeleton />}>
-            <ContinueActivityLink
-              courseId={course.id}
-              fallbackHref={`/b/${brandSlug}/c/${courseSlug}/ch/${chapters[0]?.slug}`}
-            />
+            <ContinueActivityLink courseId={course.id} fallbackHref={fallbackHref} />
           </Suspense>
           <CatalogActions contentId={courseSlug} defaultEmail={session?.user.email} kind="course" />
         </CatalogToolbar>

@@ -1,7 +1,7 @@
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
-import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
+import { aiOrganizationFixture, organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, describe, expect, test } from "vitest";
 import { getChapterForGeneration } from "./get-chapter-for-generation";
 
@@ -66,6 +66,19 @@ describe(getChapterForGeneration, () => {
 
   test("returns null for non-existent chapter", async () => {
     const result = await getChapterForGeneration(999_999);
+    expect(result).toBeNull();
+  });
+
+  test("returns null for chapters outside the AI organization", async () => {
+    const otherOrg = await organizationFixture();
+    const otherCourse = await courseFixture({ organizationId: otherOrg.id });
+    const otherChapter = await chapterFixture({
+      courseId: otherCourse.id,
+      organizationId: otherOrg.id,
+    });
+
+    const result = await getChapterForGeneration(otherChapter.id);
+
     expect(result).toBeNull();
   });
 });

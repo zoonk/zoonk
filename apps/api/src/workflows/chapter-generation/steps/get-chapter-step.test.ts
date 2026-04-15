@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
-import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
+import { aiOrganizationFixture, organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { getChapterStep } from "./get-chapter-step";
 
@@ -147,6 +147,19 @@ describe(getChapterStep, () => {
       organizationId,
       position: 0,
       title: `Archived Chapter ${randomUUID()}`,
+    });
+
+    await expect(getChapterStep(chapter.id)).rejects.toThrow("Chapter not found");
+  });
+
+  test("throws FatalError when chapter is outside the AI organization", async () => {
+    const otherOrg = await organizationFixture();
+    const otherCourse = await courseFixture({ organizationId: otherOrg.id });
+    const chapter = await chapterFixture({
+      courseId: otherCourse.id,
+      organizationId: otherOrg.id,
+      position: 0,
+      title: `Manual Chapter ${randomUUID()}`,
     });
 
     await expect(getChapterStep(chapter.id)).rejects.toThrow("Chapter not found");

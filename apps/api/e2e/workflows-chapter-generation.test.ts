@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { request } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
-import { getAiOrganization } from "@zoonk/e2e/helpers";
+import { createOrganization, getAiOrganization } from "@zoonk/e2e/helpers";
 import { normalizeString } from "@zoonk/utils/string";
 
 test.describe("Chapter Generation Workflow API", () => {
@@ -160,6 +160,46 @@ test.describe("Chapter Generation Workflow API", () => {
 
     expect(body.message).toBe("Workflow started");
     expect(body.runId).toBeDefined();
+
+    await apiContext.dispose();
+  });
+
+  test("returns 404 for chapters outside the AI organization", async () => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const org = await createOrganization();
+
+    const course = await prisma.course.create({
+      data: {
+        description: "Non-AI course should not allow chapter generation",
+        isPublished: true,
+        language: "en",
+        normalizedTitle: normalizeString(`Non AI Chapter Test ${uniqueId}`),
+        organizationId: org.id,
+        slug: `non-ai-chapter-test-${uniqueId}`,
+        title: `Non AI Chapter Test ${uniqueId}`,
+      },
+    });
+
+    const chapter = await prisma.chapter.create({
+      data: {
+        courseId: course.id,
+        description: "Non-AI first chapter",
+        isPublished: true,
+        language: "en",
+        normalizedTitle: normalizeString("Non AI First Chapter"),
+        organizationId: org.id,
+        position: 0,
+        slug: `non-ai-first-chapter-${uniqueId}`,
+        title: "Non AI First Chapter",
+      },
+    });
+
+    const apiContext = await request.newContext({ baseURL });
+    const response = await apiContext.post("/v1/workflows/chapter-generation/trigger", {
+      data: { chapterId: chapter.id },
+    });
+
+    expect(response.status()).toBe(404);
 
     await apiContext.dispose();
   });

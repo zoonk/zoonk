@@ -1,6 +1,6 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
 import { type ChapterStepName } from "@zoonk/core/workflows/steps";
-import { getActiveChapterWhere, prisma } from "@zoonk/db";
+import { getAiGenerationChapterWhere, prisma } from "@zoonk/db";
 import { FatalError } from "workflow";
 
 async function getChapterForGeneration(chapterId: number) {
@@ -9,7 +9,7 @@ async function getChapterForGeneration(chapterId: number) {
       _count: { select: { lessons: true } },
       course: true,
     },
-    where: getActiveChapterWhere({
+    where: getAiGenerationChapterWhere({
       chapterWhere: { id: chapterId },
     }),
   });
@@ -21,7 +21,7 @@ async function getNeighboringChapters(courseId: number, position: number) {
   return prisma.chapter.findMany({
     orderBy: { position: "asc" },
     select: { description: true, title: true },
-    where: getActiveChapterWhere({
+    where: getAiGenerationChapterWhere({
       chapterWhere: {
         courseId,
         position: {

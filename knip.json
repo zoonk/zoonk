@@ -43,7 +43,6 @@
     "packages/db": {
       "entry": ["prisma.config.ts"],
       "ignore": ["src/prisma/seed.ts", "src/prisma/seed/**"],
-      "ignoreDependencies": ["@zoonk/utils"],
       "prisma": false
     },
     "packages/player": {

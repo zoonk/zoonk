@@ -9,6 +9,7 @@ import { getLesson } from "@/data/lessons/get-lesson";
 import { getNextSibling } from "@zoonk/core/player/queries/get-next-sibling";
 import { listLessonActivities } from "@zoonk/core/player/queries/list-lesson-activities";
 import { getSession } from "@zoonk/core/users/session/get";
+import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { type Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
@@ -63,12 +64,16 @@ export default async function LessonPage({
     }),
   ]);
 
-  if (activities.length === 0) {
+  if (brandSlug === AI_ORG_SLUG && activities.length === 0) {
     redirect(`/generate/l/${lesson.id}`);
   }
 
   const completedHref = nextSibling
     ? (`/b/${nextSibling.brandSlug}/c/${nextSibling.courseSlug}/ch/${nextSibling.chapterSlug}/l/${nextSibling.lessonSlug}` as const)
+    : undefined;
+
+  const fallbackHref = activities[0]
+    ? (`/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}/a/${activities[0].position}` as const)
     : undefined;
 
   return (
@@ -85,7 +90,7 @@ export default async function LessonPage({
           <Suspense fallback={<ContinueActivityLinkSkeleton />}>
             <ContinueActivityLink
               completedHref={completedHref}
-              fallbackHref={`/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}/a/${activities[0]?.position}`}
+              fallbackHref={fallbackHref}
               lessonId={lesson.id}
             />
           </Suspense>

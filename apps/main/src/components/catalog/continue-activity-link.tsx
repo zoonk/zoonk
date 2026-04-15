@@ -33,7 +33,7 @@ export async function ContinueActivityLink<Href extends string, CompletedHref ex
   chapterId?: number;
   completedHref?: Route<CompletedHref>;
   courseId?: number;
-  fallbackHref: Route<Href>;
+  fallbackHref?: Route<Href>;
   lessonId?: number;
 }) {
   const t = await getExtracted();
@@ -42,18 +42,31 @@ export async function ContinueActivityLink<Href extends string, CompletedHref ex
   const className = cn(buttonVariants(), "min-w-0 flex-1 gap-2");
 
   /**
+   * Some catalog pages can compute a safe first-child route, while others may
+   * legitimately have no child route at all. Centralizing the fallback render
+   * keeps that "render nothing when no safe fallback exists" rule in one place.
+   */
+  function renderFallback({ label }: { label: string }) {
+    if (!fallbackHref) {
+      return null;
+    }
+
+    return (
+      <Link className={className} href={fallbackHref} prefetch={false}>
+        {label}
+        <ChevronRightIcon aria-hidden="true" />
+      </Link>
+    );
+  }
+
+  /**
    * When we cannot compute a next activity at all, the parent page already has
    * the safest fallback for its own level: first chapter, first lesson, or
    * first activity. Reusing that fallback avoids duplicating page-specific
    * routing rules here.
    */
   if (!data) {
-    return (
-      <Link className={className} href={fallbackHref} prefetch={false}>
-        {t("Start")}
-        <ChevronRightIcon aria-hidden="true" />
-      </Link>
-    );
+    return renderFallback({ label: t("Start") });
   }
 
   const getLabel = () => {
@@ -90,12 +103,7 @@ export async function ContinueActivityLink<Href extends string, CompletedHref ex
    * already knows is valid.
    */
   if (!data.brandSlug) {
-    return (
-      <Link className={className} href={fallbackHref} prefetch={false}>
-        {label}
-        <ChevronRightIcon aria-hidden="true" />
-      </Link>
-    );
+    return renderFallback({ label });
   }
 
   /**
@@ -121,12 +129,7 @@ export async function ContinueActivityLink<Href extends string, CompletedHref ex
    * self-link that happens when the first activity exists but is still pending.
    */
   if (lessonId) {
-    return (
-      <Link className={className} href={fallbackHref} prefetch={false}>
-        {label}
-        <ChevronRightIcon aria-hidden="true" />
-      </Link>
-    );
+    return renderFallback({ label });
   }
 
   /**

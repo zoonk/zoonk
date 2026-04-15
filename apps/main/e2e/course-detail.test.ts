@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { type Route } from "@playwright/test";
-import { getAiOrganization, setLocale } from "@zoonk/e2e/helpers";
+import { createOrganization, getAiOrganization, setLocale } from "@zoonk/e2e/helpers";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseSuggestionFixture } from "@zoonk/testing/fixtures/course-suggestions";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
@@ -178,6 +178,28 @@ test.describe("Course Detail Page", () => {
     await expect(page.getByText(/creating your course/i)).toBeVisible({
       timeout: 10_000,
     });
+  });
+
+  test("non-AI courses with no chapters stay on the course page", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, UUID_SHORT_LENGTH);
+    const org = await createOrganization();
+    const course = await courseFixture({
+      isPublished: true,
+      language: "en",
+      normalizedTitle: normalizeString(`Non AI Empty Course ${uniqueId}`),
+      organizationId: org.id,
+      slug: `non-ai-empty-course-${uniqueId}`,
+      title: `Non AI Empty Course ${uniqueId}`,
+    });
+    const url = `/b/${org.slug}/c/${course.slug}`;
+
+    await page.goto(url);
+
+    await expect(page).toHaveURL(url);
+    await expect(
+      page.getByRole("heading", { level: 1, name: `Non AI Empty Course ${uniqueId}` }),
+    ).toBeVisible();
+    await expect(page.getByRole("link", { name: /^start$/i })).not.toBeVisible();
   });
 
   test("shows fallback icon when course has no image", async ({ page }) => {

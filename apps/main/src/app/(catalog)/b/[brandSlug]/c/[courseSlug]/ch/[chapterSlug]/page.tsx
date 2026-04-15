@@ -9,6 +9,7 @@ import { getChapter } from "@/data/chapters/get-chapter";
 import { listChapterLessons } from "@/data/lessons/list-chapter-lessons";
 import { getNextSibling } from "@zoonk/core/player/queries/get-next-sibling";
 import { getSession } from "@zoonk/core/users/session/get";
+import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { type Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
@@ -59,12 +60,16 @@ export default async function ChapterPage({
     }),
   ]);
 
-  if (lessons.length === 0) {
+  if (brandSlug === AI_ORG_SLUG && lessons.length === 0) {
     redirect(`/generate/ch/${chapter.id}`);
   }
 
   const completedHref = nextSibling
     ? (`/b/${nextSibling.brandSlug}/c/${nextSibling.courseSlug}/ch/${nextSibling.chapterSlug}` as const)
+    : undefined;
+
+  const fallbackHref = lessons[0]
+    ? (`/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}/l/${lessons[0].slug}` as const)
     : undefined;
 
   return (
@@ -77,7 +82,7 @@ export default async function ChapterPage({
             <ContinueActivityLink
               chapterId={chapter.id}
               completedHref={completedHref}
-              fallbackHref={`/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}/l/${lessons[0]?.slug}`}
+              fallbackHref={fallbackHref}
             />
           </Suspense>
           <CatalogActions

@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { getAiOrganization } from "@zoonk/e2e/helpers";
+import { createOrganization, getAiOrganization } from "@zoonk/e2e/helpers";
 import { activityFixture, activityProgressFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
@@ -249,6 +249,43 @@ test.describe("Lesson Detail Page", () => {
     await page.goto(`/b/${AI_ORG_SLUG}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`);
 
     await page.waitForURL(new RegExp(`/generate/l/${lesson.id}`));
+  });
+
+  test("non-AI lessons without activities stay on the lesson page", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const org = await createOrganization();
+    const course = await courseFixture({
+      isPublished: true,
+      organizationId: org.id,
+      slug: `non-ai-lesson-course-${uniqueId}`,
+      title: `Non AI Lesson Course ${uniqueId}`,
+    });
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      isPublished: true,
+      organizationId: org.id,
+      slug: `non-ai-lesson-chapter-${uniqueId}`,
+      title: `Non AI Lesson Chapter ${uniqueId}`,
+    });
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      isPublished: true,
+      organizationId: org.id,
+      slug: `non-ai-lesson-${uniqueId}`,
+      title: `Non AI Lesson ${uniqueId}`,
+    });
+    const url = `/b/${org.slug}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}`;
+
+    await page.goto(url);
+
+    await expect(page).toHaveURL(url);
+    await expect(
+      page.getByRole("heading", {
+        level: 1,
+        name: `Non AI Lesson ${uniqueId}`,
+      }),
+    ).toBeVisible();
+    await expect(page.getByRole("link", { name: /^start$/i })).not.toBeVisible();
   });
 
   test("shows not-completed indicators for unauthenticated user", async ({ page }) => {

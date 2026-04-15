@@ -2,7 +2,7 @@ import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
-import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
+import { aiOrganizationFixture, organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, describe, expect, expectTypeOf, test } from "vitest";
 import { getActivityForGeneration } from "./get-activity-for-generation";
 
@@ -14,7 +14,7 @@ describe(getActivityForGeneration, () => {
   let activity: Awaited<ReturnType<typeof activityFixture>>;
 
   beforeAll(async () => {
-    org = await organizationFixture({ kind: "brand" });
+    org = await aiOrganizationFixture();
 
     course = await courseFixture({
       isPublished: true,
@@ -102,5 +102,33 @@ describe(getActivityForGeneration, () => {
     if (lessonData) {
       expectTypeOf(lessonData.id).toBeNumber();
     }
+  });
+
+  test("returns null for activities outside the AI organization", async () => {
+    const otherOrg = await organizationFixture();
+    const otherCourse = await courseFixture({
+      isPublished: true,
+      organizationId: otherOrg.id,
+    });
+    const otherChapter = await chapterFixture({
+      courseId: otherCourse.id,
+      isPublished: true,
+      organizationId: otherOrg.id,
+    });
+    const otherLesson = await lessonFixture({
+      chapterId: otherChapter.id,
+      isPublished: true,
+      organizationId: otherOrg.id,
+    });
+    const otherActivity = await activityFixture({
+      isPublished: true,
+      lessonId: otherLesson.id,
+      organizationId: otherOrg.id,
+      position: 0,
+    });
+
+    const result = await getActivityForGeneration(otherActivity.id);
+
+    expect(result).toBeNull();
   });
 });

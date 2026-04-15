@@ -4,7 +4,7 @@ import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
-import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
+import { aiOrganizationFixture, organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, beforeEach, describe, expect, expectTypeOf, test, vi } from "vitest";
 import { getLessonActivitiesStep } from "./get-lesson-activities-step";
 
@@ -197,5 +197,34 @@ describe(getLessonActivitiesStep, () => {
     expect(result[0]?.isPublished).toBe(false);
     expect(result[0]?.kind).toBe("reading");
     expect(result[0]?.archivedAt).toBeNull();
+  });
+
+  test("throws FatalError when the lesson is outside the AI organization", async () => {
+    const otherOrg = await organizationFixture();
+    const otherCourse = await courseFixture({ organizationId: otherOrg.id });
+    const otherChapter = await chapterFixture({
+      courseId: otherCourse.id,
+      organizationId: otherOrg.id,
+      title: `Manual Activities Chapter ${randomUUID()}`,
+    });
+    const lesson = await lessonFixture({
+      chapterId: otherChapter.id,
+      kind: "language",
+      organizationId: otherOrg.id,
+      title: `Manual Activities Lesson ${randomUUID()}`,
+    });
+
+    await activityFixture({
+      generationStatus: "pending",
+      kind: "vocabulary",
+      lessonId: lesson.id,
+      organizationId: otherOrg.id,
+      position: 0,
+      title: `Manual Activity ${randomUUID()}`,
+    });
+
+    await expect(getLessonActivitiesStep({ lessonId: lesson.id })).rejects.toThrow(
+      "No activities found for lesson",
+    );
   });
 });
