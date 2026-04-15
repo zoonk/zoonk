@@ -1,8 +1,9 @@
 import { randomUUID } from "node:crypto";
 import { ErrorCode } from "@/lib/app-error";
 import { prisma } from "@zoonk/db";
+import { signInAs } from "@zoonk/testing/fixtures/auth";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
-import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
+import { memberFixture, organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { describe, expect, test } from "vitest";
 import { importAlternativeTitles } from "./import-alternative-titles";
 
@@ -19,16 +20,55 @@ function createImportFile(alternativeTitles: string[]): File {
 }
 
 describe(importAlternativeTitles, () => {
+  test("returns Forbidden for unauthenticated users", async () => {
+    const file = createImportFile(["Test Title"]);
+    const organization = await organizationFixture();
+    const course = await courseFixture({ organizationId: organization.id });
+
+    const result = await importAlternativeTitles({
+      courseId: course.id,
+      file,
+      headers: new Headers(),
+      language: "en",
+    });
+
+    expect(result.error?.message).toBe(ErrorCode.forbidden);
+    expect(result.data).toBeNull();
+  });
+
+  test("returns Forbidden for org members", async () => {
+    const file = createImportFile(["Test Title"]);
+    const { organization, user } = await memberFixture({ role: "member" });
+
+    const [headers, course] = await Promise.all([
+      signInAs(user.email, user.password),
+      courseFixture({ organizationId: organization.id }),
+    ]);
+
+    const result = await importAlternativeTitles({
+      courseId: course.id,
+      file,
+      headers,
+      language: "en",
+    });
+
+    expect(result.error?.message).toBe(ErrorCode.forbidden);
+    expect(result.data).toBeNull();
+  });
+
   test("imports titles successfully", async () => {
     const suffix = randomUUID().slice(0, 8);
     const organization = await organizationFixture();
     const course = await courseFixture({ organizationId: organization.id });
+    const { user } = await memberFixture({ organizationId: organization.id, role: "admin" });
+    const headers = await signInAs(user.email, user.password);
 
     const file = createImportFile([`Machine Learning ${suffix}`, `ML Basics ${suffix}`]);
 
     const result = await importAlternativeTitles({
       courseId: course.id,
       file,
+      headers,
       language: "en",
     });
 
@@ -49,10 +89,13 @@ describe(importAlternativeTitles, () => {
   test("returns courseNotFound for non-existent course", async () => {
     const suffix = randomUUID().slice(0, 8);
     const file = createImportFile([`Test Title ${suffix}`]);
+    const { user } = await memberFixture({ role: "admin" });
+    const headers = await signInAs(user.email, user.password);
 
     const result = await importAlternativeTitles({
       courseId: 999_999,
       file,
+      headers,
       language: "en",
     });
 
@@ -64,6 +107,8 @@ describe(importAlternativeTitles, () => {
     const suffix = randomUUID().slice(0, 8);
     const organization = await organizationFixture();
     const course = await courseFixture({ organizationId: organization.id });
+    const { user } = await memberFixture({ organizationId: organization.id, role: "admin" });
+    const headers = await signInAs(user.email, user.password);
 
     await prisma.courseAlternativeTitle.create({
       data: {
@@ -78,6 +123,7 @@ describe(importAlternativeTitles, () => {
     const result = await importAlternativeTitles({
       courseId: course.id,
       file,
+      headers,
       language: "en",
     });
 
@@ -98,6 +144,8 @@ describe(importAlternativeTitles, () => {
     const suffix = randomUUID().slice(0, 8);
     const organization = await organizationFixture();
     const course = await courseFixture({ organizationId: organization.id });
+    const { user } = await memberFixture({ organizationId: organization.id, role: "admin" });
+    const headers = await signInAs(user.email, user.password);
 
     await prisma.courseAlternativeTitle.create({
       data: {
@@ -112,6 +160,7 @@ describe(importAlternativeTitles, () => {
     const result = await importAlternativeTitles({
       courseId: course.id,
       file,
+      headers,
       language: "en",
       mode: "replace",
     });
@@ -131,6 +180,8 @@ describe(importAlternativeTitles, () => {
     const suffix = randomUUID().slice(0, 8);
     const organization = await organizationFixture();
     const course = await courseFixture({ organizationId: organization.id });
+    const { user } = await memberFixture({ organizationId: organization.id, role: "admin" });
+    const headers = await signInAs(user.email, user.password);
 
     await prisma.courseAlternativeTitle.createMany({
       data: [
@@ -152,6 +203,7 @@ describe(importAlternativeTitles, () => {
     const result = await importAlternativeTitles({
       courseId: course.id,
       file,
+      headers,
       language: "en",
       mode: "replace",
     });
@@ -181,6 +233,8 @@ describe(importAlternativeTitles, () => {
     const suffix = randomUUID().slice(0, 8);
     const organization = await organizationFixture();
     const course = await courseFixture({ organizationId: organization.id });
+    const { user } = await memberFixture({ organizationId: organization.id, role: "admin" });
+    const headers = await signInAs(user.email, user.password);
 
     const file = createImportFile([
       `Same Title ${suffix}`,
@@ -192,6 +246,7 @@ describe(importAlternativeTitles, () => {
     const result = await importAlternativeTitles({
       courseId: course.id,
       file,
+      headers,
       language: "en",
     });
 
@@ -209,12 +264,15 @@ describe(importAlternativeTitles, () => {
   test("returns empty array when all titles are empty", async () => {
     const organization = await organizationFixture();
     const course = await courseFixture({ organizationId: organization.id });
+    const { user } = await memberFixture({ organizationId: organization.id, role: "admin" });
+    const headers = await signInAs(user.email, user.password);
 
     const file = createMockFile(JSON.stringify({ alternativeTitles: [] }));
 
     const result = await importAlternativeTitles({
       courseId: course.id,
       file,
+      headers,
       language: "en",
     });
 
@@ -226,6 +284,8 @@ describe(importAlternativeTitles, () => {
     test("rejects file larger than 5MB", async () => {
       const organization = await organizationFixture();
       const course = await courseFixture({ organizationId: organization.id });
+      const { user } = await memberFixture({ organizationId: organization.id, role: "admin" });
+      const headers = await signInAs(user.email, user.password);
 
       const largeContent = "x".repeat(6 * 1024 * 1024);
       const file = createMockFile(largeContent);
@@ -233,6 +293,7 @@ describe(importAlternativeTitles, () => {
       const result = await importAlternativeTitles({
         courseId: course.id,
         file,
+        headers,
         language: "en",
       });
 
@@ -242,6 +303,8 @@ describe(importAlternativeTitles, () => {
     test("rejects non-JSON file", async () => {
       const organization = await organizationFixture();
       const course = await courseFixture({ organizationId: organization.id });
+      const { user } = await memberFixture({ organizationId: organization.id, role: "admin" });
+      const headers = await signInAs(user.email, user.password);
 
       const file = new File(["test content"], "titles.txt", {
         type: "text/plain",
@@ -250,6 +313,7 @@ describe(importAlternativeTitles, () => {
       const result = await importAlternativeTitles({
         courseId: course.id,
         file,
+        headers,
         language: "en",
       });
 
@@ -259,12 +323,15 @@ describe(importAlternativeTitles, () => {
     test("rejects invalid JSON", async () => {
       const organization = await organizationFixture();
       const course = await courseFixture({ organizationId: organization.id });
+      const { user } = await memberFixture({ organizationId: organization.id, role: "admin" });
+      const headers = await signInAs(user.email, user.password);
 
       const file = createMockFile("{ invalid json }");
 
       const result = await importAlternativeTitles({
         courseId: course.id,
         file,
+        headers,
         language: "en",
       });
 
@@ -274,12 +341,15 @@ describe(importAlternativeTitles, () => {
     test("rejects JSON without alternativeTitles array", async () => {
       const organization = await organizationFixture();
       const course = await courseFixture({ organizationId: organization.id });
+      const { user } = await memberFixture({ organizationId: organization.id, role: "admin" });
+      const headers = await signInAs(user.email, user.password);
 
       const file = createMockFile(JSON.stringify({ foo: "bar" }));
 
       const result = await importAlternativeTitles({
         courseId: course.id,
         file,
+        headers,
         language: "en",
       });
 
@@ -289,6 +359,8 @@ describe(importAlternativeTitles, () => {
     test("rejects non-string titles", async () => {
       const organization = await organizationFixture();
       const course = await courseFixture({ organizationId: organization.id });
+      const { user } = await memberFixture({ organizationId: organization.id, role: "admin" });
+      const headers = await signInAs(user.email, user.password);
 
       const file = createMockFile(
         JSON.stringify({
@@ -299,6 +371,7 @@ describe(importAlternativeTitles, () => {
       const result = await importAlternativeTitles({
         courseId: course.id,
         file,
+        headers,
         language: "en",
       });
 
@@ -308,6 +381,8 @@ describe(importAlternativeTitles, () => {
     test("rejects empty string titles", async () => {
       const organization = await organizationFixture();
       const course = await courseFixture({ organizationId: organization.id });
+      const { user } = await memberFixture({ organizationId: organization.id, role: "admin" });
+      const headers = await signInAs(user.email, user.password);
 
       const file = createMockFile(
         JSON.stringify({
@@ -318,6 +393,7 @@ describe(importAlternativeTitles, () => {
       const result = await importAlternativeTitles({
         courseId: course.id,
         file,
+        headers,
         language: "en",
       });
 
@@ -327,6 +403,8 @@ describe(importAlternativeTitles, () => {
     test("rejects whitespace-only titles", async () => {
       const organization = await organizationFixture();
       const course = await courseFixture({ organizationId: organization.id });
+      const { user } = await memberFixture({ organizationId: organization.id, role: "admin" });
+      const headers = await signInAs(user.email, user.password);
 
       const file = createMockFile(
         JSON.stringify({
@@ -337,6 +415,7 @@ describe(importAlternativeTitles, () => {
       const result = await importAlternativeTitles({
         courseId: course.id,
         file,
+        headers,
         language: "en",
       });
 
@@ -347,6 +426,8 @@ describe(importAlternativeTitles, () => {
       const suffix = randomUUID().slice(0, 8);
       const organization = await organizationFixture();
       const course = await courseFixture({ organizationId: organization.id });
+      const { user } = await memberFixture({ organizationId: organization.id, role: "admin" });
+      const headers = await signInAs(user.email, user.password);
 
       const file = new File(
         [JSON.stringify({ alternativeTitles: [`Test Title ${suffix}`] })],
@@ -357,11 +438,30 @@ describe(importAlternativeTitles, () => {
       const result = await importAlternativeTitles({
         courseId: course.id,
         file,
+        headers,
         language: "en",
       });
 
       expect(result.error).toBeNull();
       expect(result.data).toHaveLength(1);
     });
+  });
+
+  test("returns Forbidden for courses in a different organization", async () => {
+    const { user } = await memberFixture({ role: "admin" });
+    const headers = await signInAs(user.email, user.password);
+    const otherOrg = await organizationFixture();
+    const otherCourse = await courseFixture({ organizationId: otherOrg.id });
+    const file = createImportFile(["Test Title"]);
+
+    const result = await importAlternativeTitles({
+      courseId: otherCourse.id,
+      file,
+      headers,
+      language: "en",
+    });
+
+    expect(result.error?.message).toBe(ErrorCode.forbidden);
+    expect(result.data).toBeNull();
   });
 });

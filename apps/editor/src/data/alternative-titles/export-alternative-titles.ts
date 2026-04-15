@@ -1,27 +1,29 @@
 import "server-only";
-import { ErrorCode } from "@/lib/app-error";
 import { prisma } from "@zoonk/db";
-import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
+import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
+import { getAuthorizedAlternativeTitleCourse } from "./get-authorized-course";
 
-export async function exportAlternativeTitles(params: { courseId: number }): Promise<
+/**
+ * Export needs the same authorization boundary as mutations because the action
+ * can be replayed directly and exposes internal duplicate-detection data.
+ */
+export async function exportAlternativeTitles(params: {
+  courseId: number;
+  headers?: Headers;
+}): Promise<
   SafeReturn<{
     alternativeTitles: string[];
     exportedAt: string;
     version: number;
   }>
 > {
-  const { data: course, error: findError } = await safeAsync(() =>
-    prisma.course.findUnique({
-      where: { id: params.courseId },
-    }),
-  );
+  const { error: courseError } = await getAuthorizedAlternativeTitleCourse({
+    courseId: params.courseId,
+    headers: params.headers,
+  });
 
-  if (findError) {
-    return { data: null, error: findError };
-  }
-
-  if (!course) {
-    return { data: null, error: new AppError(ErrorCode.courseNotFound) };
+  if (courseError) {
+    return { data: null, error: courseError };
   }
 
   const { data: titles, error: titlesError } = await safeAsync(() =>
