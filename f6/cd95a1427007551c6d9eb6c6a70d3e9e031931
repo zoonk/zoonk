@@ -1,0 +1,48 @@
+apps/main/e2e/course-detail.test.ts
+  adc264ee2d29cada 3,183-202
+apps/main/e2e/lesson-detail.test.ts
+  adc264ee2d29cada 288
+apps/main/src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/page.tsx
+  adc264ee2d29cada 58-61,69
+apps/main/src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/page.tsx
+  adc264ee2d29cada 71-74,85
+apps/main/src/components/catalog/continue-activity-link.tsx
+  adc264ee2d29cada 36,45-47,49-53,56,62-69,106,132
+apps/main/src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/page.tsx
+  adc264ee2d29cada 75-78,93
+apps/main/e2e/chapter-detail.test.ts
+  adc264ee2d29cada 306
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.2.8",
+  "base_commit_sha": "f6cd95a1427007551c6d9eb6c6a70d3e9e031931",
+  "prompts": {
+    "adc264ee2d29cada": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d9254-3367-7421-ae9f-2a2eaffdd567",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 70,
+      "total_deletions": 34,
+      "accepted_lines": 361,
+      "overriden_lines": 0
+    },
+    "b656cba3e57dc167": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d81e6-d72d-7473-afe2-7cc747e2c8c7",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 48,
+      "overriden_lines": 0
+    }
+  }
+}
