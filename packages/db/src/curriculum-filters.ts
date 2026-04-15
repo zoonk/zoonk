@@ -1,3 +1,4 @@
+import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { type Prisma } from "./generated/prisma/client";
 
 type CourseWhere = Omit<Prisma.CourseWhereInput, "archivedAt">;
@@ -5,6 +6,18 @@ type ChapterWhere = Omit<Prisma.ChapterWhereInput, "archivedAt" | "course">;
 type LessonWhere = Omit<Prisma.LessonWhereInput, "archivedAt" | "chapter">;
 type ActivityWhere = Omit<Prisma.ActivityWhereInput, "archivedAt" | "lesson">;
 type StepWhere = Omit<Prisma.StepWhereInput, "archivedAt" | "activity">;
+
+/**
+ * Generation entry points are only supposed to operate on the public AI
+ * curriculum. Centralizing that constraint here keeps route handlers, server
+ * pages, and workflow steps aligned when they load raw ids for generation.
+ */
+function getAiCourseWhere(where: CourseWhere = {}): Prisma.CourseWhereInput {
+  return {
+    ...where,
+    organization: { slug: AI_ORG_SLUG },
+  };
+}
 
 /**
  * A course stops being part of the active curriculum as soon as it is archived.
@@ -50,6 +63,24 @@ export function getActiveChapterWhere({
 }
 
 /**
+ * Raw-id generation routes must only load chapters that belong to the public
+ * AI organization. Without this helper, any active chapter id could be treated
+ * as eligible for lesson generation just because the row exists.
+ */
+export function getAiGenerationChapterWhere({
+  chapterWhere = {},
+  courseWhere = {},
+}: {
+  chapterWhere?: ChapterWhere;
+  courseWhere?: CourseWhere;
+} = {}): Prisma.ChapterWhereInput {
+  return getActiveChapterWhere({
+    chapterWhere,
+    courseWhere: getAiCourseWhere(courseWhere),
+  });
+}
+
+/**
  * Public chapter reads should only see chapters that are still visible in the
  * live catalog, which means both the chapter and its parent course must remain
  * published and unarchived.
@@ -91,6 +122,27 @@ export function getActiveLessonWhere({
       courseWhere,
     }),
   };
+}
+
+/**
+ * Lesson generation is also keyed by raw ids, so every entry point needs one
+ * shared definition of "AI-owned lesson". Tying the org check to the full
+ * ancestor chain avoids route-level drift when lessons are loaded indirectly.
+ */
+export function getAiGenerationLessonWhere({
+  chapterWhere = {},
+  courseWhere = {},
+  lessonWhere = {},
+}: {
+  chapterWhere?: ChapterWhere;
+  courseWhere?: CourseWhere;
+  lessonWhere?: LessonWhere;
+} = {}): Prisma.LessonWhereInput {
+  return getActiveLessonWhere({
+    chapterWhere,
+    courseWhere: getAiCourseWhere(courseWhere),
+    lessonWhere,
+  });
 }
 
 /**
@@ -141,6 +193,30 @@ export function getActiveActivityWhere({
       lessonWhere,
     }),
   };
+}
+
+/**
+ * Activity generation loads activities from a lesson id rather than a branded
+ * URL. This helper ensures those background reads only see activity rows that
+ * live under the public AI curriculum branch.
+ */
+export function getAiGenerationActivityWhere({
+  activityWhere = {},
+  chapterWhere = {},
+  courseWhere = {},
+  lessonWhere = {},
+}: {
+  activityWhere?: ActivityWhere;
+  chapterWhere?: ChapterWhere;
+  courseWhere?: CourseWhere;
+  lessonWhere?: LessonWhere;
+} = {}): Prisma.ActivityWhereInput {
+  return getActiveActivityWhere({
+    activityWhere,
+    chapterWhere,
+    courseWhere: getAiCourseWhere(courseWhere),
+    lessonWhere,
+  });
 }
 
 /**

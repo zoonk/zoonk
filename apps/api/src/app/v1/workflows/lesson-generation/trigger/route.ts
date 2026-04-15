@@ -3,6 +3,7 @@ import { parseBody } from "@/lib/body-parser";
 import { lessonGenerationTriggerSchema } from "@/lib/openapi/schemas/workflows";
 import { lessonGenerationWorkflow } from "@/workflows/lesson-generation/lesson-generation-workflow";
 import { hasActiveSubscription } from "@zoonk/core/auth/subscription";
+import { getAiGenerationLessonWhere, prisma } from "@zoonk/db";
 import { type NextRequest, NextResponse } from "next/server";
 import { start } from "workflow/api";
 
@@ -11,6 +12,17 @@ export async function POST(request: NextRequest) {
 
   if (!parsed.success) {
     return errors.validation(parsed.error);
+  }
+
+  const lesson = await prisma.lesson.findFirst({
+    select: { id: true },
+    where: getAiGenerationLessonWhere({
+      lessonWhere: { id: parsed.data.lessonId },
+    }),
+  });
+
+  if (!lesson) {
+    return errors.notFound();
   }
 
   const hasSubscription = await hasActiveSubscription(request.headers);

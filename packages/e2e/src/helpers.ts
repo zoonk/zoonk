@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { type Locator, type Page, expect, request } from "@playwright/test";
-import { prisma } from "@zoonk/db";
+import { type Organization, prisma } from "@zoonk/db";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
@@ -40,6 +40,26 @@ export async function getAiOrganization() {
     create: { kind: "brand", name: "Zoonk AI", slug: AI_ORG_SLUG },
     update: {},
     where: { slug: AI_ORG_SLUG },
+  });
+}
+
+/**
+ * Create a non-AI organization for Playwright tests without importing auth fixtures.
+ * Some browser tests only need a second org to verify routing and authorization rules.
+ * Using Prisma directly keeps the e2e environment isolated from better-auth and Next.js
+ * server-only imports that are not available in the Playwright runtime.
+ */
+export async function createOrganization(
+  attrs?: Partial<Pick<Organization, "kind" | "name" | "slug">>,
+) {
+  const uniqueId = randomUUID().slice(0, UUID_SHORT_LENGTH);
+
+  return prisma.organization.create({
+    data: {
+      kind: attrs?.kind ?? "brand",
+      name: attrs?.name ?? `E2E Organization ${uniqueId}`,
+      slug: attrs?.slug ?? `e2e-org-${uniqueId}`,
+    },
   });
 }
 

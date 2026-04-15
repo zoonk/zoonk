@@ -3,7 +3,7 @@ import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
-import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
+import { aiOrganizationFixture, organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
 import { getLessonStep } from "./get-lesson-step";
 
@@ -84,6 +84,24 @@ describe(getLessonStep, () => {
       kind: "language",
       organizationId,
       title: `Archived Lesson ${randomUUID()}`,
+    });
+
+    await expect(getLessonStep(lesson.id)).rejects.toThrow("Lesson not found");
+  });
+
+  test("throws FatalError when lesson is outside the AI organization", async () => {
+    const otherOrg = await organizationFixture();
+    const otherCourse = await courseFixture({ organizationId: otherOrg.id });
+    const otherChapter = await chapterFixture({
+      courseId: otherCourse.id,
+      organizationId: otherOrg.id,
+      title: `Manual Lesson Chapter ${randomUUID()}`,
+    });
+    const lesson = await lessonFixture({
+      chapterId: otherChapter.id,
+      kind: "language",
+      organizationId: otherOrg.id,
+      title: `Manual Lesson ${randomUUID()}`,
     });
 
     await expect(getLessonStep(lesson.id)).rejects.toThrow("Lesson not found");

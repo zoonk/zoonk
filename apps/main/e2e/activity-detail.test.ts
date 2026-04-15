@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { getAiOrganization } from "@zoonk/e2e/helpers";
+import { createOrganization, getAiOrganization } from "@zoonk/e2e/helpers";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
@@ -111,6 +111,44 @@ test.describe("Activity Detail Page", () => {
     await expect(generateLink).toBeVisible();
     await expect(generateLink).toHaveAttribute("href", new RegExp(`/generate/a/${activity.id}`));
     await expect(generateLink).toHaveAttribute("rel", "nofollow");
+  });
+
+  test("pending non-AI activities do not show a generate link", async ({ page }) => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const org = await createOrganization();
+    const course = await courseFixture({
+      isPublished: true,
+      organizationId: org.id,
+      slug: `non-ai-activity-course-${uniqueId}`,
+      title: `Non AI Activity Course ${uniqueId}`,
+    });
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      isPublished: true,
+      organizationId: org.id,
+      slug: `non-ai-activity-chapter-${uniqueId}`,
+      title: `Non AI Activity Chapter ${uniqueId}`,
+    });
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      isPublished: true,
+      organizationId: org.id,
+      slug: `non-ai-activity-lesson-${uniqueId}`,
+      title: `Non AI Activity Lesson ${uniqueId}`,
+    });
+    await activityFixture({
+      generationStatus: "pending",
+      isPublished: true,
+      lessonId: lesson.id,
+      organizationId: org.id,
+      position: 0,
+      title: `Non AI Activity ${uniqueId}`,
+    });
+
+    await page.goto(`/b/${org.slug}/c/${course.slug}/ch/${chapter.slug}/l/${lesson.slug}/a/0`);
+
+    await expect(page.getByText(/activity not available/i)).toBeVisible();
+    await expect(page.getByRole("link", { name: /create activity/i })).not.toBeVisible();
   });
 
   test("pressing escape navigates to lesson page", async ({ page }) => {

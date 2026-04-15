@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { auth } from "@zoonk/auth/testing";
+import { prisma } from "@zoonk/db";
 
 type UserAttrs = {
   email: string;
@@ -18,9 +18,31 @@ function userAttrs(attrs?: Partial<UserAttrs>): UserAttrs {
   };
 }
 
+/**
+ * Create a credential user directly with Prisma for tests.
+ * Tests need a user row plus a credential account row so `signInAs()` can
+ * authenticate through Better Auth. Writing the same database shape directly
+ * keeps this fixture fast and avoids pulling the auth runtime into callers
+ * that only need seeded data. We still return `id` as a string for backwards
+ * compatibility because many existing tests expect Better Auth's session/user
+ * shape instead of Prisma's numeric id shape.
+ */
 export async function userFixture(attrs?: Partial<UserAttrs>) {
   const params = userAttrs(attrs);
-  const result = await auth.api.createUser({ body: params });
+  const user = await prisma.user.create({
+    data: {
+      accounts: {
+        create: {
+          accountId: params.email,
+          password: params.password,
+          providerId: "credential",
+        },
+      },
+      email: params.email,
+      name: params.name,
+      role: params.role,
+    },
+  });
 
-  return { ...result.user, password: params.password };
+  return { ...user, id: String(user.id), password: params.password };
 }

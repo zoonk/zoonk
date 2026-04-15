@@ -9,6 +9,7 @@ import { getChapter } from "@/data/chapters/get-chapter";
 import { listChapterLessons } from "@/data/lessons/list-chapter-lessons";
 import { getNextSibling } from "@zoonk/core/player/queries/get-next-sibling";
 import { getSession } from "@zoonk/core/users/session/get";
+import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { type Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
@@ -59,7 +60,7 @@ export default async function ChapterPage({
     }),
   ]);
 
-  if (lessons.length === 0) {
+  if (brandSlug === AI_ORG_SLUG && lessons.length === 0) {
     redirect(`/generate/ch/${chapter.id}`);
   }
 

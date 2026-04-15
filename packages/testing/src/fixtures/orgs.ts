@@ -30,6 +30,12 @@ export async function organizationFixture(attrs?: Partial<Organization>) {
   return org;
 }
 
+/**
+ * Create a member when a test needs both a user and an organization.
+ * Many permission tests operate at the membership level, so this fixture keeps
+ * user, organization, and member creation in one place instead of repeating the
+ * same setup in every test.
+ */
 export async function memberFixture(
   attrs?: {
     orgKind?: Organization["kind"];

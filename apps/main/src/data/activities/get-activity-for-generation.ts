@@ -1,8 +1,8 @@
 import "server-only";
-import { prisma } from "@zoonk/db";
+import { getAiGenerationActivityWhere, prisma } from "@zoonk/db";
 
 export async function getActivityForGeneration(activityId: bigint) {
-  return prisma.activity.findUnique({
+  return prisma.activity.findFirst({
     include: {
       lesson: {
         include: {
@@ -12,6 +12,8 @@ export async function getActivityForGeneration(activityId: bigint) {
         },
       },
     },
-    where: { id: activityId },
+    where: getAiGenerationActivityWhere({
+      activityWhere: { id: activityId },
+    }),
   });
 }

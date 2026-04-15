@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { request } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
-import { getAiOrganization } from "@zoonk/e2e/helpers";
+import { createOrganization, getAiOrganization } from "@zoonk/e2e/helpers";
 import { normalizeString } from "@zoonk/utils/string";
 
 test.describe("Activity Generation Workflow API", () => {
@@ -154,6 +154,60 @@ test.describe("Activity Generation Workflow API", () => {
 
     expect(body.error).toBeDefined();
     expect(body.error.code).toBe("VALIDATION_ERROR");
+
+    await apiContext.dispose();
+  });
+
+  test("returns 404 for lessons outside the AI organization", async () => {
+    const uniqueId = randomUUID().slice(0, 8);
+    const org = await createOrganization();
+
+    const course = await prisma.course.create({
+      data: {
+        description: "Non-AI course should not allow activity generation",
+        isPublished: true,
+        language: "en",
+        normalizedTitle: normalizeString(`Non AI Activity Test ${uniqueId}`),
+        organizationId: org.id,
+        slug: `non-ai-activity-test-${uniqueId}`,
+        title: `Non AI Activity Test ${uniqueId}`,
+      },
+    });
+
+    const chapter = await prisma.chapter.create({
+      data: {
+        courseId: course.id,
+        description: "Non-AI chapter",
+        isPublished: true,
+        language: "en",
+        normalizedTitle: normalizeString("Non AI Activity Chapter"),
+        organizationId: org.id,
+        position: 0,
+        slug: `non-ai-activity-chapter-${uniqueId}`,
+        title: "Non AI Activity Chapter",
+      },
+    });
+
+    const lesson = await prisma.lesson.create({
+      data: {
+        chapterId: chapter.id,
+        description: "Non-AI lesson",
+        isPublished: true,
+        language: "en",
+        normalizedTitle: normalizeString("Non AI Activity Lesson"),
+        organizationId: org.id,
+        position: 0,
+        slug: `non-ai-activity-lesson-${uniqueId}`,
+        title: "Non AI Activity Lesson",
+      },
+    });
+
+    const apiContext = await request.newContext({ baseURL });
+    const response = await apiContext.post("/v1/workflows/activity-generation/trigger", {
+      data: { lessonId: lesson.id },
+    });
+
+    expect(response.status()).toBe(404);
 
     await apiContext.dispose();
   });

@@ -1,4 +1,4 @@
-import { getActiveActivityWhere, prisma } from "@zoonk/db";
+import { getAiGenerationActivityWhere, prisma } from "@zoonk/db";
 
 /**
  * Workflow steps and workflow test helpers both need the same "current lesson
@@ -49,7 +49,7 @@ async function fetchActivitiesForLesson(input: {
       },
     },
     orderBy: { position: "asc" },
-    where: getActiveActivityWhere({
+    where: getAiGenerationActivityWhere({
       activityWhere: input.replacementActivities
         ? {
             isPublished: false,

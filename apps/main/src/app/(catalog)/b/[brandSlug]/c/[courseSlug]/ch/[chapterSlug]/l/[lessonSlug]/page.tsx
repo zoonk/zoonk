@@ -9,6 +9,7 @@ import { getLesson } from "@/data/lessons/get-lesson";
 import { getNextSibling } from "@zoonk/core/player/queries/get-next-sibling";
 import { listLessonActivities } from "@zoonk/core/player/queries/list-lesson-activities";
 import { getSession } from "@zoonk/core/users/session/get";
+import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { type Metadata } from "next";
 import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
@@ -63,7 +64,7 @@ export default async function LessonPage({
     }),
   ]);
 
-  if (activities.length === 0) {
+  if (brandSlug === AI_ORG_SLUG && activities.length === 0) {
     redirect(`/generate/l/${lesson.id}`);
   }
 
