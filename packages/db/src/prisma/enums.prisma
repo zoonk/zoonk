@@ -61,3 +61,10 @@ enum ContentManagementMode {
   manual
   pinned
 }
+
+enum SubscriptionProvider {
+  stripe
+  google
+  apple
+  zoonk
+}

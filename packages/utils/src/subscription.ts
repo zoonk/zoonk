@@ -1,6 +1,9 @@
 const PLAN_NAMES = ["free", "hobby", "plus", "pro"] as const;
 type PlanName = (typeof PLAN_NAMES)[number];
 
+export const SUBSCRIPTION_PROVIDERS = ["stripe", "google", "apple", "zoonk"] as const;
+export type SubscriptionProvider = (typeof SUBSCRIPTION_PROVIDERS)[number];
+
 const PLAN_LOOKUP_KEYS: Record<Exclude<PlanName, "free">, { monthly: string; yearly: string }> = {
   hobby: { monthly: "hobby_monthly", yearly: "hobby_yearly" },
   plus: { monthly: "plus_monthly", yearly: "plus_yearly" },
@@ -65,4 +68,24 @@ export function getPlanTier(planName: string | null): number {
     return 0;
   }
   return ALL_SUBSCRIPTION_PLANS.find((plan) => plan.name === planName)?.tier ?? 0;
+}
+
+/**
+ * The web billing page should only expose direct plan controls when Stripe owns
+ * the subscription. Every other provider needs a different handoff.
+ */
+export function isWebManagedSubscriptionProvider(
+  provider: SubscriptionProvider | null | undefined,
+): provider is "stripe" {
+  return provider === "stripe";
+}
+
+/**
+ * Apple and Google purchases must be managed in the original store instead of
+ * pretending the web app can cancel or change them.
+ */
+export function isStoreSubscriptionProvider(
+  provider: SubscriptionProvider | null | undefined,
+): provider is "apple" | "google" {
+  return provider === "apple" || provider === "google";
 }

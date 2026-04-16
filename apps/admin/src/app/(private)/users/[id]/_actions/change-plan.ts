@@ -24,8 +24,8 @@ export async function changePlanAction(formData: FormData) {
 
   const existing = findUserActiveSubscription(subscriptions);
 
-  if (existing?.stripeSubscriptionId) {
-    throw new Error("Cannot change plan for Stripe-managed subscriptions");
+  if (existing && existing.provider !== "zoonk") {
+    throw new Error("Cannot change plan unless the subscription is Zoonk-managed");
   }
 
   const { error } = await safeAsync(() => {
@@ -41,6 +41,7 @@ export async function changePlanAction(formData: FormData) {
         id: randomUUID(),
         periodStart: new Date(),
         plan,
+        provider: "zoonk",
         referenceId: userId,
         status: "active",
       },

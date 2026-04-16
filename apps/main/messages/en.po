@@ -1514,6 +1514,36 @@ msgctxt "yNHZ+a"
 msgid "Your profile has been updated successfully!"
 msgstr "Your profile has been updated successfully!"
 
+#: src/app/(settings)/subscription/managed-subscription.tsx
+msgctxt "3iCRcP"
+msgid "Manage in App Store"
+msgstr "Manage in App Store"
+
+#: src/app/(settings)/subscription/managed-subscription.tsx
+msgctxt "5CI3KH"
+msgid "Contact support"
+msgstr "Contact support"
+
+#: src/app/(settings)/subscription/managed-subscription.tsx
+msgctxt "P0ZHma"
+msgid "This subscription is managed by Zoonk. Contact support if you need help changing or canceling it."
+msgstr "This subscription is managed by Zoonk. Contact support if you need help changing or canceling it."
+
+#: src/app/(settings)/subscription/managed-subscription.tsx
+msgctxt "tiFovn"
+msgid "Manage in Google Play"
+msgstr "Manage in Google Play"
+
+#: src/app/(settings)/subscription/managed-subscription.tsx
+msgctxt "Tp4wJB"
+msgid "This subscription is managed through the App Store. To change or cancel it, use Apple's subscription settings."
+msgstr "This subscription is managed through the App Store. To change or cancel it, use Apple's subscription settings."
+
+#: src/app/(settings)/subscription/managed-subscription.tsx
+msgctxt "unNUPf"
+msgid "This subscription is managed through Google Play. To change or cancel it, use Google Play."
+msgstr "This subscription is managed through Google Play. To change or cancel it, use Google Play."
+
 #: src/app/(settings)/subscription/page.tsx
 msgctxt "NBEnVd"
 msgid "Compare plans and manage your subscription."
@@ -1619,6 +1649,11 @@ msgstr "Pro"
 msgctxt "uNQcTY"
 msgid "Limited lessons with ads"
 msgstr "Limited lessons with ads"
+
+#: src/app/(settings)/subscription/subscription-plans.tsx
+msgctxt "vaN1qz"
+msgid "Current billing period ends on {date}."
+msgstr "Current billing period ends on {date}."
 
 #: src/app/(settings)/support/page.tsx
 #: src/app/(settings)/support/support-content.tsx
