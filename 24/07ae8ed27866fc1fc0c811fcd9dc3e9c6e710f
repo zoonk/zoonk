@@ -1,0 +1,755 @@
+apps/editor/src/app/[orgSlug]/c/[courseSlug]/_actions/slug.ts
+  fa664d5b30342b95 10,29
+apps/api/src/workflows/activity-generation/steps/save-quiz-activity-step.ts
+  fa664d5b30342b95 16,49
+apps/api/src/workflows/activity-generation/steps/save-listening-activity-step.ts
+  fa664d5b30342b95 17,52-53
+apps/main/src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/activity-list.tsx
+  fa664d5b30342b95 28,42,48
+apps/api/src/workflows/chapter-generation/steps/get-chapter-step.ts
+  fa664d5b30342b95 6,20,41
+apps/main/src/data/courses/course-suggestions.ts
+  fa664d5b30342b95 6,35,133,160-169
+packages/db/src/prisma/migrations/20260416024906_use_uuid_v7_auth_ids/migration.sql
+  h_1cda88fc21fe9c 1-875
+packages/core/src/player/queries/list-lesson-activities.test.ts
+  fa664d5b30342b95 1,131
+apps/main/src/app/generate/a/[id]/generate-activity-content.tsx
+  fa664d5b30342b95 23,57
+packages/core/src/player/contracts/translation-options.ts
+  fa664d5b30342b95 35,43
+apps/editor/src/data/courses/delete-course.test.ts
+  fa664d5b30342b95 168
+apps/editor/src/data/courses/publish-course.test.ts
+  fa664d5b30342b95 64
+apps/api/src/workflows/activity-generation/steps/save-practice-activity-step.ts
+  fa664d5b30342b95 13,43
+packages/core/src/player/commands/_utils/durable-curriculum-completion-rules.ts
+  fa664d5b30342b95 24,36,56,71,91-93,113-114,137-139
+apps/api/src/workflows/activity-generation/steps/handle-workflow-failure-step.ts
+  fa664d5b30342b95 15
+apps/editor/e2e/course-categories.test.ts
+  fa664d5b30342b95 34,43
+packages/testing/src/fixtures/words.ts
+  fa664d5b30342b95 22,36-37
+packages/ui/src/patterns/courses/course-list.tsx
+  fa664d5b30342b95 16
+apps/admin/src/app/(private)/review/[group]/[task]/[entityId]/page.tsx
+  h_1cda88fc21fe9c 68,79,88
+apps/api/src/app/v1/progress/next-activity/route.ts
+  fa664d5b30342b95 9-11,21
+packages/core/src/player/queries/get-activity.test.ts
+  fa664d5b30342b95 1,122
+apps/api/src/workflows/activity-generation/steps/_utils/save-reading-target-words.test.ts
+  fa664d5b30342b95 41
+apps/api/src/workflows/chapter-generation/chapter-generation-workflow.ts
+  fa664d5b30342b95 18
+apps/editor/src/data/curriculum-replace.ts
+  fa664d5b30342b95 49,90,137,180,215,251
+apps/api/src/app/v1/workflows/chapter-generation/trigger/route.ts
+  fa664d5b30342b95 14
+apps/editor/src/data/lessons/create-lesson.ts
+  fa664d5b30342b95 11
+packages/core/src/player/commands/_utils/durable-curriculum-completion-rules.test.ts
+  fa664d5b30342b95 13-16,25,27,38-39,41,52-53,80-84,86-88,93-94,98-101,103-104,108-110,115-119,121,126-130,136-139,142-153,159-160,167,175,183-185,189,193,197,205-209,212-223,229-230,238-239,256-259,262-273,279,281
+apps/api/src/workflows/lesson-generation/steps/get-lesson-step.ts
+  fa664d5b30342b95 6,20
+apps/api/src/workflows/activity-generation/activity-generation-workflow.ts
+  fa664d5b30342b95 18
+apps/api/src/workflows/course-generation/steps/initialize-course-step.ts
+  fa664d5b30342b95 9,30
+apps/api/src/workflows/lesson-generation/steps/handle-failure-step.ts
+  fa664d5b30342b95 5
+apps/editor/src/app/[orgSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/activity-list-item-link.tsx
+  fa664d5b30342b95 21
+apps/main/src/app/generate/l/[id]/generate-lesson-content.tsx
+  fa664d5b30342b95 22,61
+apps/main/src/app/generate/cs/[id]/generation-client.tsx
+  fa664d5b30342b95 34
+packages/core/src/player/queries/get-sentence-words.ts
+  fa664d5b30342b95 6,49
+apps/editor/src/data/chapters/export-chapters.test.ts
+  fa664d5b30342b95 106
+apps/admin/src/app/(private)/review/[group]/[task]/[entityId]/_actions/upload-audio.ts
+  h_1cda88fc21fe9c 45,62,69
+apps/editor/src/app/[orgSlug]/c/[courseSlug]/_actions/image.ts
+  fa664d5b30342b95 11
+packages/db/src/prisma/models/lessons.prisma
+  fa664d5b30342b95 2-3,5,38-39,41,65-66,68,70
+apps/editor/e2e/chapter-delete.test.ts
+  fa664d5b30342b95 60,65
+apps/api/src/workflows/activity-generation/steps/generate-explanation-content-step.ts
+  fa664d5b30342b95 9
+apps/api/src/workflows/activity-generation/steps/save-quiz-activity-step.test.ts
+  fa664d5b30342b95 86,156
+apps/editor/src/data/activities/list-lesson-activities.ts
+  fa664d5b30342b95 10,50
+apps/editor/src/data/chapters/delete-chapter.test.ts
+  fa664d5b30342b95 182
+packages/core/src/progress/_utils/published-lesson-progress-queries.ts
+  h_1cda88fc21fe9c 66
+  fa664d5b30342b95 19,34-35,62,65,102
+apps/editor/src/app/[orgSlug]/@navbarActions/c/[courseSlug]/ch/[chapterSlug]/actions.ts
+  fa664d5b30342b95 11,31
+apps/editor/src/data/lessons/update-lesson.test.ts
+  fa664d5b30342b95 167
+apps/api/src/workflows/course-generation/steps/handle-failure-step.test.ts
+  fa664d5b30342b95 97
+apps/api/src/workflows/activity-generation/steps/save-explanation-activity-step.test.ts
+  fa664d5b30342b95 69,110
+apps/admin/src/app/(private)/review/_actions/mark-reviewed.ts
+  fa664d5b30342b95 15
+apps/main/src/data/chapters/get-chapter-for-generation.test.ts
+  fa664d5b30342b95 1,69-74
+apps/api/src/workflows/activity-generation/steps/handle-failure-step.ts
+  fa664d5b30342b95 5
+apps/editor/src/data/chapters/update-chapter.test.ts
+  fa664d5b30342b95 150
+apps/api/src/workflows/activity-generation/steps/_utils/save-reading-target-words.ts
+  fa664d5b30342b95 26,142
+apps/api/src/workflows/course-generation/steps/generate-alternative-titles-step.test.ts
+  fa664d5b30342b95 29
+apps/main/src/data/chapters/get-chapter-for-generation.ts
+  fa664d5b30342b95 3-13
+apps/api/src/workflows/course-generation/steps/get-course-chapters-step.ts
+  fa664d5b30342b95 6
+apps/editor/src/components/content-editor.tsx
+  fa664d5b30342b95 33,36,38
+apps/editor/src/components/editor-list/editor-sortable-context.ts
+  fa664d5b30342b95 6,11
+apps/admin/src/data/review/count-pending-reviews.ts
+  fa664d5b30342b95 14,23,34,44,67
+apps/editor/src/data/activities/export-activities.test.ts
+  fa664d5b30342b95 155
+apps/editor/src/data/courses/delete-course.ts
+  fa664d5b30342b95 13
+apps/editor/src/data/lessons/reorder-lessons.ts
+  fa664d5b30342b95 9,12
+apps/api/src/workflows/activity-generation/steps/generate-story-debrief-step.ts
+  fa664d5b30342b95 25
+apps/api/src/workflows/activity-generation/steps/_utils/find-activity-by-kind.test.ts
+  fa664d5b30342b95 6,12-14,20-21,26-27,37-40,46
+apps/editor/src/data/alternative-titles/import-alternative-titles.test.ts
+  fa664d5b30342b95 96
+apps/api/src/workflows/course-generation/_internal/get-or-create-course.ts
+  fa664d5b30342b95 27
+apps/editor/src/data/activities/reorder-activities.ts
+  fa664d5b30342b95 9,12
+apps/editor/src/data/activities/create-activity.ts
+  fa664d5b30342b95 12
+apps/editor/src/data/courses/course-slug.ts
+  fa664d5b30342b95 81
+apps/api/src/workflows/activity-generation/steps/generate-investigation-actions-step.ts
+  fa664d5b30342b95 24
+apps/editor/src/data/courses/publish-course.ts
+  fa664d5b30342b95 7
+packages/core/src/progress/_utils/next-activity-state-helpers.ts
+  fa664d5b30342b95 8,23,45,84,110,135,197,252,266
+apps/main/src/app/(catalog)/_components/search-courses-action.ts
+  fa664d5b30342b95 6
+apps/admin/src/data/review/get-next-review-item.ts
+  fa664d5b30342b95 10,20,33
+apps/api/src/workflows/chapter-generation/steps/set-chapter-as-running-step.ts
+  fa664d5b30342b95 7
+apps/editor/src/data/categories/add-category-to-course.ts
+  fa664d5b30342b95 11
+apps/main/src/data/lessons/get-lesson-for-generation.test.ts
+  fa664d5b30342b95 1,57-59,61-62
+packages/core/src/player/commands/_utils/durable-curriculum-completion.ts
+  fa664d5b30342b95 28,31,112-113
+apps/editor/src/data/lessons/import-lessons.test.ts
+  fa664d5b30342b95 136
+packages/core/src/player/contracts/prepare-activity-data.ts
+  fa664d5b30342b95 94,113,119,144,236,255,315,329
+packages/db/src/prisma/models/content-review.prisma
+  fa664d5b30342b95 2,4,7
+apps/api/src/workflows/activity-generation/steps/generate-story-content-step.test.ts
+  fa664d5b30342b95 197,235
+apps/editor/src/data/categories/add-category-to-course.test.ts
+  fa664d5b30342b95 116
+.github/workflows/code-quality.yml
+  fa664d5b30342b95 23
+apps/api/src/workflows/activity-generation/steps/mark-all-activities-as-running-step.test.ts
+  fa664d5b30342b95 30
+apps/editor/src/app/[orgSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/actions.ts
+  fa664d5b30342b95 9,21,41,61
+apps/admin/src/app/(private)/review/[group]/[task]/[entityId]/remove-suggestion-button.tsx
+  fa664d5b30342b95 22-23,30-31
+apps/editor/src/app/[orgSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/activity-actions.ts
+  fa664d5b30342b95 15,17,39,64,80,119,125
+apps/api/src/workflows/activity-generation/steps/_utils/content-step-helpers.test.ts
+  fa664d5b30342b95 25
+apps/editor/src/app/[orgSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/activity-list-row.tsx
+  fa664d5b30342b95 20,34
+apps/admin/src/app/(private)/review/[group]/[task]/[entityId]/flagged-item-content.tsx
+  fa664d5b30342b95 16,27,38,49,65,82,93
+apps/api/src/workflows/activity-generation/steps/save-grammar-steps-step.ts
+  fa664d5b30342b95 48
+apps/main/src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/chapter-list.tsx
+  fa664d5b30342b95 26
+apps/main/src/app/generate/ch/[id]/generation-client.tsx
+  fa664d5b30342b95 32
+apps/main/src/data/courses/_utils/continue-learning-candidates.ts
+  fa664d5b30342b95 19-20,24-25,201,212,235,257,269
+packages/testing/src/fixtures/sentences.ts
+  fa664d5b30342b95 22-23
+packages/core/src/player/queries/get-activity.ts
+  fa664d5b30342b95 5,21
+apps/api/src/workflows/course-generation/steps/generate-description-step.test.ts
+  fa664d5b30342b95 29
+packages/utils/src/uuid.test.ts
+  fa664d5b30342b95 1-16
+apps/api/src/workflows/course-generation/steps/update-course-step.test.ts
+  fa664d5b30342b95 38
+packages/db/src/prisma/models/user-learning-profiles.prisma
+  fa664d5b30342b95 2-3
+apps/api/src/workflows/lesson-preload/lesson-preload-workflow.test.ts
+  fa664d5b30342b95 32,117,124-125
+packages/core/src/activities/find-last-completed.ts
+  fa664d5b30342b95 5,9,12,14
+apps/editor/src/data/lessons/lesson-slug.ts
+  fa664d5b30342b95 7,23
+packages/testing/src/fixtures/activities.ts
+  fa664d5b30342b95 14
+packages/core/src/player/contracts/validate-answers.test.ts
+  fa664d5b30342b95 21,29,33,44,56-57,65,72,74,95,97,118,122,142,146,166,170,190,194,214,218,255,286,317,327,343,371,397,420,434,446
+apps/api/src/workflows/course-generation/steps/generate-categories-step.test.ts
+  fa664d5b30342b95 29
+apps/editor/src/data/chapters/delete-chapter.ts
+  fa664d5b30342b95 13
+apps/api/src/workflows/activity-generation/steps/generate-custom-visual-content-step.ts
+  fa664d5b30342b95 10
+packages/core/src/player/queries/get-activity-distractor-words.ts
+  fa664d5b30342b95 8,55
+apps/editor/src/data/courses/update-course.test.ts
+  fa664d5b30342b95 147
+apps/editor/src/data/chapters/import-chapters.ts
+  fa664d5b30342b95 54,109
+apps/editor/e2e/lesson-delete.test.ts
+  fa664d5b30342b95 74,79
+apps/main/src/data/chapters/list-course-chapters.ts
+  fa664d5b30342b95 6,15
+packages/core/src/player/commands/submit-player-completion.test.ts
+  fa664d5b30342b95 1,51,85,89,92,95,120-121,178
+apps/editor/src/data/chapters/get-authorized-chapter.ts
+  fa664d5b30342b95 9,47
+apps/api/src/workflows/activity-generation/steps/save-custom-activity-step.test.ts
+  fa664d5b30342b95 65,129
+apps/admin/src/data/review/get-review-item.ts
+  fa664d5b30342b95 7,20,24,35,44
+apps/editor/src/app/[orgSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list-row.tsx
+  fa664d5b30342b95 21
+apps/api/src/workflows/activity-generation/steps/generate-custom-visuals-step.ts
+  fa664d5b30342b95 12
+apps/editor/src/data/categories/list-course-categories.ts
+  fa664d5b30342b95 7,24
+packages/core/src/progress/get-next-activity-state.ts
+  fa664d5b30342b95 27,33,36,40,59,207,305-306,308-309,316-324
+apps/api/src/workflows/course-generation/steps/complete-course-setup-step.ts
+  fa664d5b30342b95 7-8
+apps/editor/e2e/course-delete.test.ts
+  fa664d5b30342b95 90,95,100
+apps/editor/src/components/navbar/command-palette.tsx
+  fa664d5b30342b95 240
+apps/main/src/app/generate/l/[id]/generation-client.tsx
+  fa664d5b30342b95 37
+packages/core/src/player/queries/get-sentence-words.test.ts
+  fa664d5b30342b95 1,90
+packages/testing/src/fixtures/step-attempts.ts
+  fa664d5b30342b95 11
+apps/api/src/lib/openapi/schemas/progress.ts
+  h_1cda88fc21fe9c 3-4,7,21,30,41,51,61-63
+apps/api/src/app/v1/courses/search/route.ts
+  fa664d5b30342b95 11,18
+apps/api/src/workflows/activity-generation/steps/save-investigation-activity-step.ts
+  fa664d5b30342b95 46,114
+apps/api/src/workflows/activity-generation/kinds/custom-workflow.test.ts
+  fa664d5b30342b95 70,88
+apps/api/src/workflows/activity-generation/steps/save-reading-activity-step.ts
+  fa664d5b30342b95 129,131,227
+apps/editor/src/app/[orgSlug]/@navbarActions/c/[courseSlug]/actions.ts
+  fa664d5b30342b95 11,34
+apps/api/src/workflows/activity-generation/steps/generate-investigation-findings-step.test.ts
+  fa664d5b30342b95 102,131,169,183,211,225,253,262,270
+apps/editor/src/data/lessons/publish-lesson.test.ts
+  fa664d5b30342b95 124
+apps/api/src/workflows/course-generation/steps/set-course-as-running-step.test.ts
+  fa664d5b30342b95 39-40
+apps/api/src/workflows/course-generation/steps/generate-chapters-step.test.ts
+  fa664d5b30342b95 34
+apps/editor/src/data/lessons/list-chapter-lessons.test.ts
+  fa664d5b30342b95 134
+apps/editor/src/data/chapters/export-chapters.ts
+  fa664d5b30342b95 13
+apps/api/src/workflows/course-generation/steps/set-course-as-running-step.ts
+  fa664d5b30342b95 7-8
+packages/core/src/player/contracts/_utils/activity-data-mappers.ts
+  fa664d5b30342b95 6,14,37,47,58,66,75,205,225
+apps/api/src/workflows/activity-generation/steps/handle-workflow-failure-step.test.ts
+  fa664d5b30342b95 28
+.github/workflows/e2e-api.yml
+  fa664d5b30342b95 38
+apps/editor/src/data/alternative-titles/delete-alternative-titles.ts
+  fa664d5b30342b95 12
+apps/api/src/workflows/activity-generation/steps/_utils/content-step-helpers.ts
+  fa664d5b30342b95 11
+apps/api/src/workflows/activity-generation/steps/generate-investigation-findings-step.ts
+  fa664d5b30342b95 26
+apps/main/src/app/generate/ch/[id]/generate-chapter-content.tsx
+  fa664d5b30342b95 22,59
+apps/main/src/data/activities/get-activity-for-generation.ts
+  fa664d5b30342b95 3-13
+packages/core/src/player/contracts/build-investigation-action-results.test.ts
+  fa664d5b30342b95 27,41,44,58,71,89,104,119,132
+packages/core/src/workflows/steps.ts
+  fa664d5b30342b95 20
+apps/editor/src/data/lessons/publish-lesson.ts
+  fa664d5b30342b95 8
+apps/api/src/workflows/activity-generation/steps/save-explanation-activity-step.ts
+  fa664d5b30342b95 15,45
+apps/editor/src/components/slug-editor.tsx
+  fa664d5b30342b95 29,31-32,37-38,42
+packages/db/src/prisma/seed/orgs.ts
+  h_1cda88fc21fe9c 19-22,34
+packages/core/src/content/lifecycle.ts
+  fa664d5b30342b95 104,121,138,151
+apps/api/src/workflows/lesson-regeneration/steps/release-live-lesson-regeneration-step.test.ts
+  fa664d5b30342b95 11
+apps/editor/src/data/lessons/delete-lesson.ts
+  fa664d5b30342b95 13
+apps/editor/src/data/activities/import-activities.ts
+  fa664d5b30342b95 69
+apps/editor/src/data/search-content.ts
+  fa664d5b30342b95 10,19
+packages/core/src/player/queries/get-review-steps.ts
+  fa664d5b30342b95 9,33,96
+packages/core/src/progress/get-lesson-progress.ts
+  fa664d5b30342b95 10,15
+apps/api/src/workflows/chapter-generation/steps/add-lessons-step.test.ts
+  fa664d5b30342b95 55
+apps/api/src/workflows/course-generation/_internal/setup-course.ts
+  fa664d5b30342b95 11,25
+apps/api/src/workflows/activity-generation/steps/generate-story-debrief-step.test.ts
+  fa664d5b30342b95 104,139,171,184,213,226,255,263,271
+apps/api/src/workflows/_shared/stream-status.ts
+  fa664d5b30342b95 100
+apps/api/src/workflows/activity-generation/steps/_utils/visual-rows.test.ts
+  fa664d5b30342b95 6,17,22,30,41
+apps/editor/src/lib/use-slug-check.ts
+  fa664d5b30342b95 7-8
+packages/core/src/progress/_utils/durable-completion-queries.ts
+  fa664d5b30342b95 14-17,42-45,70-71,73-76
+apps/editor/src/components/editor-list/editor-sortable-list.tsx
+  fa664d5b30342b95 38,42,67,109-110
+apps/api/src/workflows/lesson-generation/steps/set-lesson-as-completed-step.test.ts
+  fa664d5b30342b95 29,50-55,57-61
+packages/core/src/progress/_utils/published-lesson-progress.ts
+  fa664d5b30342b95 2-4,8,12,16,38
+apps/api/src/workflows/activity-generation/steps/_utils/visual-rows.ts
+  fa664d5b30342b95 10,25,100,120
+packages/core/src/player/queries/get-next-lesson.test.ts
+  fa664d5b30342b95 1,12,14-15,17-19,21-23,109
+apps/editor/src/data/alternative-titles/export-alternative-titles.test.ts
+  fa664d5b30342b95 46
+apps/main/src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/lesson-list.tsx
+  fa664d5b30342b95 26
+apps/api/src/workflows/course-generation/steps/get-course-suggestion-step.ts
+  fa664d5b30342b95 12
+packages/db/src/prisma/models/accounts.prisma
+  h_1cda88fc21fe9c 4,41,48,50-51,59,62,79,91,113-114,116,127-128,135,144,146,168,178
+.github/workflows/e2e-editor.yml
+  fa664d5b30342b95 37
+apps/editor/src/app/[orgSlug]/c/[courseSlug]/_actions/categories.ts
+  fa664d5b30342b95 10
+apps/main/src/data/courses/_utils/continue-learning-queries.ts
+  fa664d5b30342b95 11,13,17
+apps/main/src/app/(catalog)/learn/[prompt]/course-suggestion-item.tsx
+  fa664d5b30342b95 18
+packages/core/src/player/queries/get-review-steps.test.ts
+  fa664d5b30342b95 19
+apps/main/src/app/(catalog)/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/activity-path.tsx
+  fa664d5b30342b95 21,41,46
+apps/editor/src/data/lessons/export-lessons.ts
+  fa664d5b30342b95 14
+packages/core/src/player/commands/_utils/durable-curriculum-completion-queries.ts
+  fa664d5b30342b95 4-6,10,12,26,68,107,130,133,162,165
+apps/editor/src/data/alternative-titles/list-alternative-titles.ts
+  fa664d5b30342b95 5,24
+apps/editor/src/data/activities/reorder-activities.test.ts
+  fa664d5b30342b95 160,251
+.github/workflows/e2e-main.yml
+  fa664d5b30342b95 41
+apps/admin/src/app/(private)/review/[group]/[task]/[entityId]/course-suggestion-edit.tsx
+  fa664d5b30342b95 21,54
+apps/editor/src/data/lessons/list-chapter-lessons.ts
+  fa664d5b30342b95 10,49
+apps/api/src/lib/openapi/schemas/workflows.ts
+  h_1cda88fc21fe9c 3-4,7,13,19,25,31
+packages/utils/package.json
+  fa664d5b30342b95 35
+packages/core/src/progress/get-activity-progress.test.ts
+  fa664d5b30342b95 130,185,248,311
+apps/api/src/workflows/activity-generation/steps/generate-practice-content-step.ts
+  fa664d5b30342b95 29
+apps/editor/src/data/courses/update-course.ts
+  fa664d5b30342b95 8
+apps/editor/src/app/[orgSlug]/c/[courseSlug]/chapter-list-row.tsx
+  fa664d5b30342b95 17
+packages/core/src/player/commands/submit-activity-completion.ts
+  fa664d5b30342b95 13,25
+apps/api/src/workflows/course-generation/steps/initialize-course-step.test.ts
+  fa664d5b30342b95 33-36,38-40,42,66
+apps/editor/src/data/activities/export-activities.ts
+  fa664d5b30342b95 14
+apps/api/src/workflows/activity-generation/steps/_utils/upsert-word-with-pronunciation.ts
+  fa664d5b30342b95 26
+apps/api/src/workflows/course-generation/course-generation-workflow.ts
+  fa664d5b30342b95 12
+apps/main/src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/a/[position]/activity-not-generated.tsx
+  fa664d5b30342b95 19
+packages/testing/src/fixtures/steps.ts
+  fa664d5b30342b95 4,9-10
+packages/db/src/prisma/models/progress.prisma
+  fa664d5b30342b95 2-3,5,19-20,22,33-34,36,47-48,50,61-62,64,83-84,94-95
+apps/main/src/data/lessons/list-chapter-lessons.ts
+  fa664d5b30342b95 6,15
+apps/main/e2e/lesson-completion.test.ts
+  fa664d5b30342b95 44
+apps/editor/src/data/chapters/import-chapters.test.ts
+  fa664d5b30342b95 111
+apps/editor/src/app/[orgSlug]/c/[courseSlug]/_actions/chapters.ts
+  fa664d5b30342b95 15,39,64,78,86,167
+packages/testing/src/fixtures/chapters.ts
+  fa664d5b30342b95 13
+apps/editor/src/data/lessons/export-lessons.test.ts
+  fa664d5b30342b95 129
+README.md
+  h_1cda88fc21fe9c 52
+apps/editor/src/data/alternative-titles/import-alternative-titles.ts
+  fa664d5b30342b95 30
+apps/main/src/app/generate/cs/[id]/generate-course-suggestion-content.tsx
+  fa664d5b30342b95 24,53
+apps/main/src/data/courses/get-continue-learning.ts
+  fa664d5b30342b95 27
+packages/auth/src/server.ts
+  h_1cda88fc21fe9c 40-42
+packages/core/src/player/queries/get-next-lesson.ts
+  fa664d5b30342b95 6,17
+apps/api/src/workflows/lesson-generation/steps/get-lesson-step.test.ts
+  fa664d5b30342b95 26-27,73
+apps/api/src/workflows/lesson-generation/steps/set-lesson-as-running-step.test.ts
+  fa664d5b30342b95 27,47
+packages/db/src/prisma/models/courses.prisma
+  fa664d5b30342b95 2,14,31-32,34,45-46,48,84-85,97-98,109-110,112
+apps/api/src/workflows/activity-generation/steps/_utils/get-explanation-steps-for-practice.test.ts
+  fa664d5b30342b95 5,15,23-26,36-39,49-53,69
+apps/editor/src/data/chapters/reorder-chapters.ts
+  fa664d5b30342b95 8,11
+apps/api/src/workflows/activity-generation/steps/get-lesson-activities-step.test.ts
+  fa664d5b30342b95 27-28,81
+apps/main/src/data/courses/course-suggestions.test.ts
+  fa664d5b30342b95 71,230-236
+apps/api/src/workflows/chapter-generation/steps/get-chapter-step.test.ts
+  fa664d5b30342b95 25,136
+apps/main/e2e/chapter-detail.test.ts
+  fa664d5b30342b95 17
+apps/editor/e2e/alternative-titles.test.ts
+  fa664d5b30342b95 37,45
+apps/editor/src/data/categories/remove-category-from-course.ts
+  fa664d5b30342b95 9
+packages/core/src/activities/get-next-activity-in-course.test.ts
+  fa664d5b30342b95 10,13,15,18,20,22,25-27,208
+packages/core/src/player/commands/start-activity.ts
+  fa664d5b30342b95 10
+apps/api/src/workflows/activity-generation/kinds/explanation-workflow.test.ts
+  fa664d5b30342b95 567,582,922
+packages/core/src/player/queries/get-lesson-sentences.ts
+  fa664d5b30342b95 5,16
+apps/api/src/workflows/activity-generation/steps/generate-investigation-scenario-step.test.ts
+  fa664d5b30342b95 184,222
+apps/editor/src/data/activities/import-activities.test.ts
+  fa664d5b30342b95 211
+packages/core/src/player/queries/get-lesson-words.ts
+  fa664d5b30342b95 5,34
+packages/core/src/player/queries/get-next-sibling.test.ts
+  fa664d5b30342b95 10,13,15,172
+apps/editor/src/data/activities/create-activity.test.ts
+  fa664d5b30342b95 133
+apps/api/src/workflows/activity-generation/kinds/grammar-workflow.test.ts
+  fa664d5b30342b95 61,79
+apps/api/src/workflows/activity-generation/steps/handle-failure-step.test.ts
+  fa664d5b30342b95 25
+apps/editor/src/data/alternative-titles/add-alternative-titles.ts
+  fa664d5b30342b95 12
+apps/editor/src/data/courses/get-authorized-course.ts
+  fa664d5b30342b95 68,94,102,127
+packages/core/src/player/commands/submit-player-completion.ts
+  fa664d5b30342b95 20,23-24,28-29,65,91,107,116
+apps/api/src/workflows/activity-generation/steps/get-lesson-activities-step.ts
+  fa664d5b30342b95 24
+apps/editor/src/data/lessons/create-lesson.test.ts
+  fa664d5b30342b95 279,282
+apps/api/src/workflows/course-generation/_internal/generate-missing-content.test.ts
+  fa664d5b30342b95 62
+apps/editor/src/data/chapters/publish-chapter.ts
+  fa664d5b30342b95 8
+packages/core/src/alternative-titles/add-alternative-titles.ts
+  fa664d5b30342b95 7
+apps/api/src/workflows/activity-generation/steps/save-story-activity-step.test.ts
+  fa664d5b30342b95 123,211
+apps/admin/src/app/(private)/review/_components/content/step-visual-image-review.tsx
+  fa664d5b30342b95 18
+apps/api/src/workflows/course-generation/steps/add-chapters-step.test.ts
+  fa664d5b30342b95 50
+apps/api/src/workflows/course-generation/steps/get-course-suggestion-step.test.ts
+  fa664d5b30342b95 48
+apps/api/src/workflows/chapter-generation/steps/set-chapter-as-running-step.test.ts
+  fa664d5b30342b95 26,41
+apps/editor/src/data/lessons/update-lesson.ts
+  fa664d5b30342b95 9
+packages/core/src/player/queries/list-lesson-activities.ts
+  fa664d5b30342b95 6,15
+apps/editor/src/app/[orgSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/activity-list.tsx
+  fa664d5b30342b95 96,106
+apps/editor/src/data/chapters/publish-chapter.test.ts
+  fa664d5b30342b95 105
+apps/admin/src/app/(private)/review/[group]/[task]/[entityId]/_actions/course-suggestion.ts
+  h_1cda88fc21fe9c 13,17,38-39,41,61
+apps/editor/src/app/[orgSlug]/@navbarActions/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/actions.ts
+  fa664d5b30342b95 12,30
+apps/admin/src/app/(private)/review/_actions/mark-needs-changes.ts
+  fa664d5b30342b95 15
+apps/api/src/workflows/activity-generation/steps/generate-investigation-actions-step.test.ts
+  fa664d5b30342b95 95,123,159,173,200,214,241,250,258
+apps/api/src/workflows/lesson-generation/steps/determine-applied-activity-step.ts
+  fa664d5b30342b95 17
+apps/api/src/workflows/lesson-preload/lesson-preload-workflow.ts
+  fa664d5b30342b95 26
+apps/editor/src/data/chapters/list-course-chapters.ts
+  fa664d5b30342b95 10,45
+apps/main/src/lib/workflow/use-workflow-generation.ts
+  fa664d5b30342b95 21
+packages/core/src/player/queries/get-lesson-sentences.test.ts
+  fa664d5b30342b95 1,123
+apps/api/src/workflows/lesson-regeneration/steps/cleanup-regenerated-activities-step.test.ts
+  fa664d5b30342b95 12
+apps/editor/src/data/chapters/update-chapter.ts
+  fa664d5b30342b95 9
+apps/api/src/workflows/course-generation/_internal/get-or-create-course.test.ts
+  fa664d5b30342b95 46
+apps/editor/src/data/lessons/import-lessons.ts
+  fa664d5b30342b95 57,109
+packages/core/src/player/queries/get-lesson-words.test.ts
+  fa664d5b30342b95 1,134
+apps/editor/src/data/alternative-titles/export-alternative-titles.ts
+  fa664d5b30342b95 11
+apps/api/src/workflows/activity-generation/steps/generate-investigation-scenario-step.ts
+  fa664d5b30342b95 13
+apps/main/src/data/lessons/get-lesson-for-generation.ts
+  fa664d5b30342b95 3-13
+packages/core/src/player/contracts/prepare-activity-data.test.ts
+  fa664d5b30342b95 21,34,44,54,99,110,122,150,153,167,177,190,238,259,270,281,309,313,321,323,326,328,347,356,358,364,370,413,416,438,457,465,467,470,472,478,550,557,559,567,593,600,602,611,621,682,689,691,719,723,728
+apps/admin/src/app/(private)/review/_components/content/step-select-image-review.tsx
+  fa664d5b30342b95 9
+apps/main/src/app/(catalog)/courses/course-list-client.tsx
+  fa664d5b30342b95 46
+apps/editor/src/lib/import-slug.test.ts
+  fa664d5b30342b95 9,33
+packages/testing/src/fixtures/lessons.ts
+  fa664d5b30342b95 13
+apps/api/src/workflows/course-generation/steps/handle-failure-step.ts
+  fa664d5b30342b95 7-8,36
+apps/api/src/workflows/activity-generation/steps/generate-custom-content-step.ts
+  fa664d5b30342b95 8
+apps/api/src/workflows/lesson-generation/steps/handle-failure-step.test.ts
+  fa664d5b30342b95 27
+packages/core/src/player/contracts/validate-answers.ts
+  fa664d5b30342b95 23,26,28,37,157,250
+apps/editor/src/app/[orgSlug]/c/[courseSlug]/_actions/alternative-titles.ts
+  fa664d5b30342b95 14,114
+apps/api/src/workflows/activity-generation/kinds/practice-workflow.test.ts
+  fa664d5b30342b95 34,88,144,190,275,353-356,435,440,445,450,526,531,620,625,630,635,722,726,731,736,741,814
+apps/api/src/workflows/activity-generation/steps/generate-story-content-step.ts
+  fa664d5b30342b95 13
+apps/api/src/workflows/course-generation/course-generation-workflow.test.ts
+  fa664d5b30342b95 126
+apps/editor/src/data/chapters/reorder-chapters.test.ts
+  fa664d5b30342b95 111,175
+apps/api/src/workflows/activity-generation/steps/_utils/fetch-lesson-activities.ts
+  fa664d5b30342b95 9,21,35,64
+apps/main/src/data/progress/trigger-lesson-preload.ts
+  fa664d5b30342b95 12
+packages/e2e/src/fixtures/progress.ts
+  fa664d5b30342b95 87
+apps/admin/src/app/(private)/review/_components/content/audio-review.tsx
+  fa664d5b30342b95 8
+apps/api/src/workflows/activity-generation/steps/generate-investigation-accuracy-step.ts
+  fa664d5b30342b95 25
+apps/api/src/workflows/lesson-generation/steps/update-lesson-kind-step.test.ts
+  fa664d5b30342b95 27,47
+apps/api/src/workflows/lesson-generation/steps/update-lesson-kind-step.ts
+  fa664d5b30342b95 7
+apps/editor/src/app/[orgSlug]/c/[courseSlug]/ch/[chapterSlug]/actions.ts
+  fa664d5b30342b95 16,29,49,68,84,108,133,147,187
+apps/api/src/workflows/lesson-generation/steps/determine-applied-activity-step.test.ts
+  fa664d5b30342b95 37
+apps/editor/src/data/lessons/delete-lesson.test.ts
+  fa664d5b30342b95 203
+packages/core/src/progress/get-next-activity.ts
+  fa664d5b30342b95 22
+apps/main/src/app/(catalog)/courses/actions.ts
+  fa664d5b30342b95 8
+apps/editor/src/data/lessons/reorder-lessons.test.ts
+  fa664d5b30342b95 133,213
+apps/admin/src/app/(private)/review/[group]/[task]/[entityId]/_actions/step-image.ts
+  fa664d5b30342b95 21
+apps/editor/src/app/[orgSlug]/c/[courseSlug]/_actions/image.test.ts
+  fa664d5b30342b95 56,59,68,79,83,91
+apps/api/src/workflows/activity-generation/kinds/custom-workflow.ts
+  fa664d5b30342b95 16
+apps/api/src/workflows/lesson-generation/steps/add-activities-step.test.ts
+  fa664d5b30342b95 146
+apps/main/src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/a/[position]/activity-data-loaders.ts
+  fa664d5b30342b95 7,23,26
+apps/editor/src/data/chapters/chapter-slug.ts
+  fa664d5b30342b95 7,23
+apps/api/src/workflows/activity-generation/steps/get-neighboring-concepts-step.test.ts
+  fa664d5b30342b95 25
+packages/core/src/activities/find-last-completed.test.ts
+  fa664d5b30342b95 1,711
+apps/api/src/workflows/lesson-regeneration/steps/cleanup-regenerated-activities-step.ts
+  fa664d5b30342b95 10
+apps/api/src/workflows/course-generation/steps/complete-course-setup-step.test.ts
+  fa664d5b30342b95 39-40
+apps/editor/src/app/[orgSlug]/c/[courseSlug]/_actions/content.ts
+  fa664d5b30342b95 7,23
+apps/api/src/workflows/chapter-generation/steps/set-chapter-as-completed-step.test.ts
+  fa664d5b30342b95 40-45,47-52
+packages/utils/src/uuid.ts
+  h_1cda88fc21fe9c 1-15
+apps/api/src/workflows/course-generation/steps/generate-image-step.test.ts
+  fa664d5b30342b95 29
+apps/api/src/workflows/lesson-generation/steps/set-lesson-as-running-step.ts
+  fa664d5b30342b95 7
+apps/api/src/workflows/lesson-generation/steps/remove-non-language-lesson-step.ts
+  fa664d5b30342b95 6
+apps/main/src/data/courses/list-courses.ts
+  fa664d5b30342b95 2,10,33-34,37
+apps/api/src/workflows/chapter-generation/chapter-generation-workflow.test.ts
+  fa664d5b30342b95 253
+apps/main/src/components/catalog/continue-activity-link.tsx
+  fa664d5b30342b95 11-13,23-27,37,39,41
+apps/admin/src/app/(private)/review/[group]/[task]/flagged-list.tsx
+  fa664d5b30342b95 76-77
+apps/api/src/workflows/activity-generation/steps/save-vocabulary-activity-step.ts
+  fa664d5b30342b95 167,173,176,260
+apps/main/src/app/generate/a/[id]/generation-client.tsx
+  fa664d5b30342b95 37,43
+apps/api/src/workflows/activity-generation/steps/generate-investigation-accuracy-step.test.ts
+  fa664d5b30342b95 94,100,134,140,180,186,199,232,238,246,254
+packages/core/src/player/contracts/build-investigation-action-results.ts
+  fa664d5b30342b95 11,30
+packages/core/src/player/contracts/_utils/activity-data-mappers.test.ts
+  fa664d5b30342b95 16,31,49,61,79,93,110,131,141,156,162,169,174,187,200,213,220,229,236,252,258,265,270,284,291,300,307
+packages/core/src/progress/get-chapter-progress.ts
+  fa664d5b30342b95 23-24,27,66,70
+apps/api/src/workflows/activity-generation/steps/save-investigation-activity-step.test.ts
+  fa664d5b30342b95 94,186,222
+packages/db/src/prisma/models/chapters.prisma
+  fa664d5b30342b95 2-3,5
+apps/api/src/workflows/activity-generation/steps/save-practice-activity-step.test.ts
+  fa664d5b30342b95 87,158
+apps/admin/src/app/(private)/review/[group]/[task]/unflag-action.ts
+  fa664d5b30342b95 21
+apps/editor/src/data/chapters/create-chapter.ts
+  fa664d5b30342b95 9
+packages/core/src/player/queries/get-next-sibling.ts
+  fa664d5b30342b95 6,8,15,21,25,32
+apps/api/src/workflows/lesson-generation/lesson-generation-workflow.test.ts
+  fa664d5b30342b95 227
+apps/api/src/workflows/activity-generation/steps/get-neighboring-concepts-step.ts
+  fa664d5b30342b95 9
+packages/core/src/activities/get-next-activity-in-course.ts
+  fa664d5b30342b95 7,11,14,22,24-25,94,96-97
+apps/main/src/lib/workflow/generation-store.ts
+  fa664d5b30342b95 97-98,114
+packages/utils/src/number.test.ts
+  fa664d5b30342b95 2
+apps/api/src/workflows/lesson-regeneration/steps/claim-live-lesson-regeneration-step.test.ts
+  fa664d5b30342b95 16,27
+apps/api/src/workflows/activity-generation/steps/save-custom-activity-step.ts
+  fa664d5b30342b95 15,45
+apps/api/src/workflows/lesson-regeneration/lesson-regeneration-workflow.test.ts
+  fa664d5b30342b95 35,46,65,85,237,279,396
+apps/api/src/workflows/activity-generation/steps/generate-quiz-content-step.ts
+  fa664d5b30342b95 30
+apps/api/src/workflows/activity-generation/kinds/listening-workflow.test.ts
+  fa664d5b30342b95 15,33
+apps/api/src/workflows/activity-generation/kinds/quiz-workflow.test.ts
+  fa664d5b30342b95 48,103,152,195,265,323
+apps/api/src/workflows/lesson-generation/lesson-generation-workflow.ts
+  fa664d5b30342b95 126,149,197,266,293
+apps/main/src/app/b/[brandSlug]/c/[courseSlug]/ch/[chapterSlug]/l/[lessonSlug]/a/[position]/submit-completion-action.ts
+  fa664d5b30342b95 39
+apps/main/src/data/lessons/list-chapter-lessons.test.ts
+  fa664d5b30342b95 103
+apps/main/src/data/progress/get-best-time.test.ts
+  fa664d5b30342b95 16
+apps/admin/src/app/(private)/review/[group]/[task]/review-queue.tsx
+  fa664d5b30342b95 18,63,81
+apps/api/src/workflows/activity-generation/steps/save-story-activity-step.ts
+  fa664d5b30342b95 19,91
+packages/core/src/progress/get-activity-progress.ts
+  fa664d5b30342b95 9,40,59
+apps/api/src/workflows/activity-generation/steps/generate-reading-content-step.ts
+  fa664d5b30342b95 27,71,100
+apps/editor/src/components/editor-list/editor-sortable-item.tsx
+  fa664d5b30342b95 12
+apps/api/src/workflows/course-generation/steps/add-alternative-titles-step.test.ts
+  fa664d5b30342b95 38
+packages/db/README.md
+  h_1cda88fc21fe9c 7,10-17
+apps/editor/src/data/activities/list-lesson-activities.test.ts
+  fa664d5b30342b95 156
+apps/main/src/lib/workflow/generation-store.test.ts
+  fa664d5b30342b95 170-171,182-183,194,217-218,231-232,245,259,272-273,287-288,301,327,329,344,346,360
+apps/editor/src/data/chapters/create-chapter.test.ts
+  fa664d5b30342b95 124,127
+packages/db/src/prisma/models/vocabulary.prisma
+  fa664d5b30342b95 2-3,28-29,40-41,63-64,66,90-91,93
+apps/main/src/data/activities/get-activity-for-generation.test.ts
+  fa664d5b30342b95 75-77,79-80,107
+apps/api/src/workflows/lesson-generation/steps/remove-non-language-lesson-step.test.ts
+  fa664d5b30342b95 27,46
+apps/editor/src/data/curriculum-delete.ts
+  fa664d5b30342b95 39
+apps/api/src/workflows/lesson-regeneration/steps/release-live-lesson-regeneration-step.ts
+  fa664d5b30342b95 11
+apps/admin/src/app/(private)/review/[group]/[task]/[entityId]/_actions/approve-flagged.ts
+  h_1cda88fc21fe9c 9
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.0",
+  "base_commit_sha": "2407ae8ed27866fc1fc0c811fcd9dc3e9c6e710f",
+  "prompts": {
+    "fa664d5b30342b95": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d9403-2f05-7590-9efb-35d0b2c7e10e",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 1500,
+      "total_deletions": 1225,
+      "accepted_lines": 1445,
+      "overriden_lines": 0
+    }
+  },
+  "humans": {
+    "h_1cda88fc21fe9c": {
+      "author": "ceolinwill"
+    }
+  }
+}
