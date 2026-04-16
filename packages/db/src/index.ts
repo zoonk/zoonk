@@ -42,6 +42,7 @@ export type {
   Member,
   Organization,
   Sentence,
+  Subscription,
   StepKind,
   Word,
   WordPronunciation,

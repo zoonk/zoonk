@@ -1,6 +1,7 @@
 import "server-only";
+import { findUserActiveSubscription } from "@/data/users/find-active-subscription";
 import { isAdmin } from "@/lib/admin-guard";
-import { prisma } from "@zoonk/db";
+import { type Subscription, prisma } from "@zoonk/db";
 import { cache } from "react";
 
 const cachedListUsers = cache(async function cachedListUsers(
@@ -37,18 +38,15 @@ const cachedListUsers = cache(async function cachedListUsers(
   const subscriptions =
     userIds.length > 0
       ? await prisma.subscription.findMany({
-          distinct: ["referenceId"],
-          orderBy: { id: "desc" },
-          select: { plan: true, referenceId: true },
           where: { referenceId: { in: userIds } },
         })
       : [];
 
-  const subscriptionByUserId = new Map(subscriptions.map((sub) => [sub.referenceId, sub.plan]));
+  const subscriptionsByUserId = groupSubscriptionsByUser({ subscriptions });
 
   const usersWithPlan = users.map((user) => ({
     ...user,
-    plan: subscriptionByUserId.get(user.id) ?? "free",
+    plan: findUserActiveSubscription(subscriptionsByUserId.get(user.id) ?? [])?.plan ?? "free",
   }));
 
   return { total, users: usersWithPlan };
@@ -56,4 +54,20 @@ const cachedListUsers = cache(async function cachedListUsers(
 
 export async function listUsers(params: { limit: number; offset: number; search?: string }) {
   return cachedListUsers(params.limit, params.offset, params.search);
+}
+
+/**
+ * The user table only needs the subscriptions that belong to each listed user.
+ * Grouping them once keeps the render step simple and lets us reuse the same
+ * active-subscription selection rule for every row.
+ */
+function groupSubscriptionsByUser({ subscriptions }: { subscriptions: Subscription[] }) {
+  const subscriptionsByUserId = new Map<string, Subscription[]>();
+
+  for (const subscription of subscriptions) {
+    const userSubscriptions = subscriptionsByUserId.get(subscription.referenceId) ?? [];
+    subscriptionsByUserId.set(subscription.referenceId, [...userSubscriptions, subscription]);
+  }
+
+  return subscriptionsByUserId;
 }

@@ -1,6 +1,7 @@
 "use server";
 
 import { randomUUID } from "node:crypto";
+import { findUserActiveSubscription } from "@/data/users/find-active-subscription";
 import { assertAdmin } from "@/lib/admin-guard";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
@@ -17,10 +18,11 @@ export async function changePlanAction(formData: FormData) {
     throw new Error("Invalid form data");
   }
 
-  const existing = await prisma.subscription.findFirst({
-    orderBy: { id: "desc" },
+  const subscriptions = await prisma.subscription.findMany({
     where: { referenceId: userId },
   });
+
+  const existing = findUserActiveSubscription(subscriptions);
 
   if (existing?.stripeSubscriptionId) {
     throw new Error("Cannot change plan for Stripe-managed subscriptions");
