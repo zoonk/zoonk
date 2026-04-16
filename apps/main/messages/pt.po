@@ -1514,6 +1514,36 @@ msgctxt "yNHZ+a"
 msgid "Your profile has been updated successfully!"
 msgstr "Seu perfil foi atualizado com sucesso!"
 
+#: src/app/(settings)/subscription/managed-subscription.tsx
+msgctxt "3iCRcP"
+msgid "Manage in App Store"
+msgstr "Gerenciar na App Store"
+
+#: src/app/(settings)/subscription/managed-subscription.tsx
+msgctxt "5CI3KH"
+msgid "Contact support"
+msgstr "Entrar em contato com o suporte"
+
+#: src/app/(settings)/subscription/managed-subscription.tsx
+msgctxt "P0ZHma"
+msgid "This subscription is managed by Zoonk. Contact support if you need help changing or canceling it."
+msgstr "Esta assinatura é gerenciada pelo Zoonk. Entre em contato com o suporte se precisar de ajuda para alterá-la ou cancelá-la."
+
+#: src/app/(settings)/subscription/managed-subscription.tsx
+msgctxt "tiFovn"
+msgid "Manage in Google Play"
+msgstr "Gerenciar no Google Play"
+
+#: src/app/(settings)/subscription/managed-subscription.tsx
+msgctxt "Tp4wJB"
+msgid "This subscription is managed through the App Store. To change or cancel it, use Apple's subscription settings."
+msgstr "Esta assinatura é gerenciada pela App Store. Para alterá-la ou cancelá-la, use os ajustes de assinaturas da Apple."
+
+#: src/app/(settings)/subscription/managed-subscription.tsx
+msgctxt "unNUPf"
+msgid "This subscription is managed through Google Play. To change or cancel it, use Google Play."
+msgstr "Esta assinatura é gerenciada pelo Google Play. Para alterá-la ou cancelá-la, use o Google Play."
+
 #: src/app/(settings)/subscription/page.tsx
 msgctxt "NBEnVd"
 msgid "Compare plans and manage your subscription."
@@ -1619,6 +1649,11 @@ msgstr "Pro"
 msgctxt "uNQcTY"
 msgid "Limited lessons with ads"
 msgstr "Aulas limitadas com anúncios"
+
+#: src/app/(settings)/subscription/subscription-plans.tsx
+msgctxt "vaN1qz"
+msgid "Current billing period ends on {date}."
+msgstr "O período de cobrança atual termina em {date}."
 
 #: src/app/(settings)/support/page.tsx
 #: src/app/(settings)/support/support-content.tsx

@@ -1,11 +1,13 @@
 import { getStripePrices } from "@zoonk/core/auth/stripe-prices";
 import { getActiveSubscription } from "@zoonk/core/auth/subscription";
+import { prisma } from "@zoonk/db";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
 import { countryToCurrency } from "@zoonk/utils/currency";
 import { getCountryFromAcceptLanguage } from "@zoonk/utils/locale";
-import { SUBSCRIPTION_PLANS } from "@zoonk/utils/subscription";
+import { SUBSCRIPTION_PLANS, isWebManagedSubscriptionProvider } from "@zoonk/utils/subscription";
 import { getExtracted, getFormatter } from "next-intl/server";
 import { headers } from "next/headers";
+import { ManagedSubscription } from "./managed-subscription";
 import { PlanList } from "./plan-list";
 
 export async function SubscriptionPlans() {
@@ -24,20 +26,47 @@ export async function SubscriptionPlans() {
   );
 
   const [subscription, priceMap] = await Promise.all([
-    getActiveSubscription(requestHeaders),
+    getCurrentSubscription(requestHeaders),
     getStripePrices(lookupKeys, currency),
   ]);
+
+  const titles: Record<string, string> = {
+    free: t("Free"),
+    hobby: t("Hobby"),
+    plus: t("Plus"),
+    pro: t("Pro"),
+  };
+
   const currentPlan = subscription?.plan ?? null;
 
-  const cancelMessage = subscription?.cancelAt
-    ? t("Your subscription will end on {date}.", {
-        date: format.dateTime(new Date(subscription.cancelAt), {
-          day: "numeric",
-          month: "long",
-          year: "numeric",
-        }),
-      })
+  const cancelDate = getSubscriptionDate({
+    date: subscription?.cancelAt ?? null,
+    format,
+  });
+
+  const periodEndDate = getSubscriptionDate({
+    date: subscription?.cancelAt ? null : (subscription?.periodEnd ?? null),
+    format,
+  });
+
+  const cancelMessage = cancelDate
+    ? t("Your subscription will end on {date}.", { date: cancelDate })
     : null;
+
+  const periodMessage = periodEndDate
+    ? t("Current billing period ends on {date}.", { date: periodEndDate })
+    : null;
+
+  if (subscription && !isWebManagedSubscriptionProvider(subscription.provider)) {
+    return (
+      <ManagedSubscription
+        cancelMessage={cancelMessage}
+        periodMessage={periodMessage}
+        planTitle={titles[subscription.plan] ?? subscription.plan}
+        provider={subscription.provider}
+      />
+    );
+  }
 
   const plans = SUBSCRIPTION_PLANS.map((plan) => {
     const monthlyPrice = plan.lookupKey ? (priceMap.get(plan.lookupKey) ?? null) : null;
@@ -52,13 +81,6 @@ export async function SubscriptionPlans() {
       yearlyPrice,
     };
   });
-
-  const titles: Record<string, string> = {
-    free: t("Free"),
-    hobby: t("Hobby"),
-    plus: t("Plus"),
-    pro: t("Pro"),
-  };
 
   const descriptions: Record<string, string> = {
     free: t("Limited lessons with ads"),
@@ -76,6 +98,44 @@ export async function SubscriptionPlans() {
       titles={titles}
     />
   );
+}
+
+/**
+ * Better Auth still decides which row is currently active. Once we know that
+ * row, Prisma can read the extra provider field we added around Better Auth's schema.
+ */
+async function getCurrentSubscription(requestHeaders: Headers) {
+  const activeSubscription = await getActiveSubscription(requestHeaders);
+
+  if (!activeSubscription) {
+    return null;
+  }
+
+  return prisma.subscription.findUnique({
+    where: { id: activeSubscription.id },
+  });
+}
+
+/**
+ * Formatting the subscription date in one place keeps the billing copy focused
+ * on the state change instead of repeating date-shape details in each message.
+ */
+function getSubscriptionDate({
+  date,
+  format,
+}: {
+  date: Date | null;
+  format: Awaited<ReturnType<typeof getFormatter>>;
+}) {
+  if (!date) {
+    return null;
+  }
+
+  return format.dateTime(new Date(date), {
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
 }
 
 export function SubscriptionPlansSkeleton() {

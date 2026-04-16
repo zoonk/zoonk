@@ -4,10 +4,16 @@ import { prisma } from "@zoonk/db";
 import { request } from "@zoonk/e2e/fixtures";
 import { expect, test } from "./fixtures";
 
+type TestSubscriptionProvider = "apple" | "google" | "stripe" | "zoonk";
+
+/**
+ * Billing page tests need to create subscriptions owned by different billing
+ * systems so we can verify the page only shows actions that actually work.
+ */
 async function createUserWithSubscription(
   baseURL: string,
   plan: string,
-  options?: { cancelAt?: Date },
+  options?: { cancelAt?: Date; provider?: TestSubscriptionProvider },
 ) {
   const uniqueId = randomUUID().slice(0, 8);
   const email = `e2e-sub-${uniqueId}@zoonk.test`;
@@ -28,10 +34,13 @@ async function createUserWithSubscription(
       cancelAt: options?.cancelAt,
       id: randomUUID(),
       plan,
+      provider: options?.provider ?? "stripe",
       referenceId: user.id,
       status: "active",
-      stripeCustomerId: `cus_test_e2e_${uniqueId}`,
-      stripeSubscriptionId: `sub_test_e2e_${uniqueId}`,
+      ...getStripeSubscriptionFields({
+        provider: options?.provider ?? "stripe",
+        uniqueId,
+      }),
     },
   });
 
@@ -52,6 +61,27 @@ async function createAuthenticatedPage(browser: Browser, baseURL: string, email:
   const page = await browserContext.newPage();
 
   return { browserContext, page };
+}
+
+/**
+ * Only Stripe-backed test subscriptions should carry Stripe identifiers.
+ * Store-managed and Zoonk-managed rows need to look like non-Stripe records.
+ */
+function getStripeSubscriptionFields({
+  provider,
+  uniqueId,
+}: {
+  provider: TestSubscriptionProvider;
+  uniqueId: string;
+}) {
+  if (provider !== "stripe") {
+    return {};
+  }
+
+  return {
+    stripeCustomerId: `cus_test_e2e_${uniqueId}`,
+    stripeSubscriptionId: `sub_test_e2e_${uniqueId}`,
+  };
 }
 
 test.describe("Subscription Page - Unauthenticated", () => {
@@ -194,6 +224,53 @@ test.describe("Subscription Page - With Pro Subscription", () => {
 
     await page.getByRole("radio", { name: /free/i }).click();
     await expect(page.getByRole("button", { name: /cancel/i })).toBeVisible();
+
+    await browserContext.close();
+  });
+});
+
+test.describe("Subscription Page - Provider Managed", () => {
+  test("Apple subscriptions direct users to App Store support instead of Stripe controls", async ({
+    browser,
+    baseURL,
+  }) => {
+    const email = await createUserWithSubscription(baseURL!, "hobby", { provider: "apple" });
+    const { browserContext, page } = await createAuthenticatedPage(browser, baseURL!, email);
+
+    await page.goto("/subscription");
+
+    await expect(page.getByText(/managed through the app store/i)).toBeVisible();
+    await expect(page.getByRole("link", { name: /manage in app store/i })).toBeVisible();
+    await expect(page.getByRole("link", { name: /manage in app store/i })).toHaveAttribute(
+      "href",
+      /support\.apple\.com/,
+    );
+    await expect(page.getByRole("link", { name: /contact support/i })).toHaveAttribute(
+      "href",
+      "/support",
+    );
+    await expect(page.getByRole("radio", { name: /free/i })).not.toBeVisible();
+    await expect(page.getByRole("button", { name: /manage/i })).not.toBeVisible();
+
+    await browserContext.close();
+  });
+
+  test("Zoonk-managed subscriptions send users to support instead of plan controls", async ({
+    browser,
+    baseURL,
+  }) => {
+    const email = await createUserWithSubscription(baseURL!, "hobby", { provider: "zoonk" });
+    const { browserContext, page } = await createAuthenticatedPage(browser, baseURL!, email);
+
+    await page.goto("/subscription");
+
+    await expect(page.getByText(/managed by zoonk/i)).toBeVisible();
+    await expect(page.getByRole("link", { name: /contact support/i })).toHaveAttribute(
+      "href",
+      "/support",
+    );
+    await expect(page.getByRole("radio", { name: /free/i })).not.toBeVisible();
+    await expect(page.getByRole("button", { name: /manage/i })).not.toBeVisible();
 
     await browserContext.close();
   });

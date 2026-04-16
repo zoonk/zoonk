@@ -17,6 +17,7 @@ export async function seedSubscriptions(prisma: PrismaClient, users: SeedUsers):
     periodEnd: oneYearFromNow,
     periodStart: now,
     plan: "hobby",
+    provider: "zoonk" as const,
     referenceId: user.id,
     status: "active",
     stripeCustomerId: null,

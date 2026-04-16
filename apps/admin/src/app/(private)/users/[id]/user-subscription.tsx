@@ -5,13 +5,14 @@ import { DetailField } from "./detail-field";
 
 export async function UserSubscription({ userId }: { userId: string }) {
   const subscription = await getUserSubscription(userId);
-  const isStripeManaged = Boolean(subscription?.stripeSubscriptionId);
+  const canChangePlan = !subscription || subscription.provider === "zoonk";
+  const providerLabel = subscription ? getSubscriptionProviderLabel(subscription.provider) : "—";
 
   return (
     <section>
       <div className="mb-2 flex items-center justify-between">
         <h3 className="text-sm font-semibold">Subscription</h3>
-        {!isStripeManaged && (
+        {canChangePlan && (
           <ChangePlanDialog userId={userId} currentPlan={subscription?.plan ?? "free"} />
         )}
       </div>
@@ -22,6 +23,8 @@ export async function UserSubscription({ userId }: { userId: string }) {
         <DetailField label="Plan">
           <span className="capitalize">{subscription?.plan ?? "Free"}</span>
         </DetailField>
+
+        <DetailField label="Provider">{providerLabel}</DetailField>
 
         <DetailField label="Status">
           <span className="capitalize">{subscription?.status ?? "—"}</span>
@@ -46,4 +49,24 @@ export async function UserSubscription({ userId }: { userId: string }) {
       </dl>
     </section>
   );
+}
+
+/**
+ * Admin users need readable provider labels so they can tell at a glance
+ * whether a subscription is managed by Stripe, the app stores, or Zoonk.
+ */
+function getSubscriptionProviderLabel(provider: string) {
+  if (provider === "apple") {
+    return "Apple";
+  }
+
+  if (provider === "google") {
+    return "Google";
+  }
+
+  if (provider === "stripe") {
+    return "Stripe";
+  }
+
+  return "Zoonk";
 }
