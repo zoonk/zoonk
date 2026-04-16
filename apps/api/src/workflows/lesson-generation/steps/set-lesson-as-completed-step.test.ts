@@ -25,7 +25,7 @@ vi.mock("workflow", () => ({
 }));
 
 describe(setLessonAsCompletedStep, () => {
-  let organizationId: number;
+  let organizationId: string;
   let chapterId: number;
   let course: Awaited<ReturnType<typeof courseFixture>>;
   let chapter: Awaited<ReturnType<typeof chapterFixture>>;

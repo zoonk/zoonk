@@ -32,7 +32,7 @@ vi.mock("@zoonk/ai/tasks/activities/custom", () => ({
 }));
 
 describe(generateCustomContentStep, () => {
-  let organizationId: number;
+  let organizationId: string;
   let chapter: Awaited<ReturnType<typeof chapterFixture>>;
 
   beforeAll(async () => {

@@ -31,7 +31,7 @@ vi.mock("@zoonk/ai/tasks/activities/language/pronunciation", () => ({
 }));
 
 describe(generateSentenceWordPronunciationStep, () => {
-  let organizationId: number;
+  let organizationId: string;
 
   beforeAll(async () => {
     const organization = await aiOrganizationFixture();

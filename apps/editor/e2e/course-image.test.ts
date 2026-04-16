@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import path from "node:path";
-import { getAiOrganization } from "@zoonk/e2e/helpers";
+import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { type Page, expect, test } from "./fixtures";

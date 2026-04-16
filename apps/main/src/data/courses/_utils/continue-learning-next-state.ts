@@ -16,7 +16,7 @@ export async function listNextActivityStates({
   userId,
 }: {
   rows: ContinueLearningRow[];
-  userId: number;
+  userId: string;
 }) {
   return Promise.all(
     rows.map((row) =>

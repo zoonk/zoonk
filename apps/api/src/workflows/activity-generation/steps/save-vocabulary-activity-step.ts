@@ -165,7 +165,7 @@ async function saveOneVocabularyWord(params: {
   distractors: Record<string, string[]>;
   existingCasing: Record<string, string>;
   lessonId: number;
-  organizationId: number;
+  organizationId: string;
   position: number;
   pronunciations: Record<string, string>;
   romanizations: Record<string, string>;

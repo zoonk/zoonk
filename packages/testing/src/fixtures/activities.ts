@@ -13,7 +13,7 @@ function activityAttrs(
     language: "en",
     lessonId: 0,
     managementMode: "manual",
-    organizationId: 0,
+    organizationId: null,
     position: 0,
     title: null,
     ...attrs,

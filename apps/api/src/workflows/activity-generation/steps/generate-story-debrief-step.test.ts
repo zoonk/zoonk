@@ -60,7 +60,7 @@ const mockDebriefData = {
 };
 
 describe(generateStoryDebriefStep, () => {
-  let organizationId: number;
+  let organizationId: string;
   let chapter: Awaited<ReturnType<typeof chapterFixture>>;
 
   beforeAll(async () => {

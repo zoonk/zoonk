@@ -73,9 +73,9 @@ export async function getChapterProgress({
   }[]
 > {
   const session = await getSession(headers);
-  const userId = session ? session.user.id : 0;
+  const userId = session?.user.id;
 
-  if (userId === 0) {
+  if (!userId) {
     return [];
   }
 

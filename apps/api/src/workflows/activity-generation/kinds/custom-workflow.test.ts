@@ -89,7 +89,7 @@ async function fetchLessonActivities(lessonId: number): Promise<LessonActivity[]
 }
 
 describe(customActivityWorkflow, () => {
-  let organizationId: number;
+  let organizationId: string;
   let course: Awaited<ReturnType<typeof courseFixture>>;
   let chapter: Awaited<ReturnType<typeof chapterFixture>>;
 

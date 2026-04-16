@@ -1,7 +1,7 @@
 // Better Auth models for Prisma
 
 model User {
-  id                 Int                  @id @default(autoincrement())
+  id                 String               @id
   name               String
   email              String
   emailVerified      Boolean              @default(false) @map("email_verified")
@@ -38,14 +38,14 @@ model User {
 }
 
 model Session {
-  id                   Int      @id @default(autoincrement())
+  id                   String   @id
   expiresAt            DateTime @map("expires_at")
   token                String
   createdAt            DateTime @default(now()) @map("created_at")
   updatedAt            DateTime @updatedAt @map("updated_at")
   ipAddress            String?  @map("ip_address")
   userAgent            String?  @map("user_agent")
-  userId               Int      @map("user_id")
+  userId               String   @map("user_id")
   user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   impersonatedBy       String?  @map("impersonated_by")
   activeOrganizationId String?  @map("active_organization_id")
@@ -56,10 +56,10 @@ model Session {
 }
 
 model Account {
-  id                    Int       @id @default(autoincrement())
+  id                    String    @id
   accountId             String    @map("account_id")
   providerId            String    @map("provider_id")
-  userId                Int       @map("user_id")
+  userId                String    @map("user_id")
   user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   accessToken           String?   @map("access_token")
   refreshToken          String?   @map("refresh_token")
@@ -76,7 +76,7 @@ model Account {
 }
 
 model Verification {
-  id         Int      @id @default(autoincrement())
+  id         String   @id
   identifier String
   value      String
   expiresAt  DateTime @map("expires_at")
@@ -88,7 +88,7 @@ model Verification {
 }
 
 model Organization {
-  id               Int          @id @default(autoincrement())
+  id               String       @id
   name             String
   slug             String
   logo             String?
@@ -110,10 +110,10 @@ model Organization {
 }
 
 model Member {
-  id             Int          @id @default(autoincrement())
-  organizationId Int          @map("organization_id")
+  id             String       @id
+  organizationId String       @map("organization_id")
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  userId         Int          @map("user_id")
+  userId         String       @map("user_id")
   user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   role           String       @default("member")
   createdAt      DateTime     @default(now()) @map("created_at")
@@ -124,15 +124,15 @@ model Member {
 }
 
 model Invitation {
-  id             Int          @id @default(autoincrement())
-  organizationId Int          @map("organization_id")
+  id             String       @id
+  organizationId String       @map("organization_id")
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   email          String
   role           String?
   status         String       @default("pending")
   expiresAt      DateTime     @map("expires_at")
   createdAt      DateTime     @default(now()) @map("created_at")
-  inviterId      Int          @map("inviter_id")
+  inviterId      String       @map("inviter_id")
   user           User         @relation(fields: [inviterId], references: [id], onDelete: Cascade)
 
   @@index([organizationId])
@@ -141,7 +141,7 @@ model Invitation {
 }
 
 model Subscription {
-  id                   Int       @id @default(autoincrement())
+  id                   String    @id
   plan                 String
   referenceId          String    @map("reference_id")
   stripeCustomerId     String?   @map("stripe_customer_id")
@@ -165,7 +165,7 @@ model Subscription {
 }
 
 model RateLimit {
-  id          Int     @id @default(autoincrement())
+  id          String  @id
   key         String?
   count       Int?
   lastRequest BigInt? @map("last_request")
@@ -175,7 +175,7 @@ model RateLimit {
 }
 
 model Jwks {
-  id         Int       @id @default(autoincrement())
+  id         String    @id
   publicKey  String    @map("public_key")
   privateKey String    @map("private_key")
   createdAt  DateTime  @default(now()) @map("created_at")

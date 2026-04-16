@@ -183,7 +183,7 @@ vi.mock("@zoonk/core/steps/image", () => ({
 }));
 
 describe("core activity workflow", () => {
-  let organizationId: number;
+  let organizationId: string;
   let course: Awaited<ReturnType<typeof courseFixture>>;
   let chapter: Awaited<ReturnType<typeof chapterFixture>>;
 

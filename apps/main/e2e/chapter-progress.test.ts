@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { getAiOrganization } from "@zoonk/e2e/helpers";
+import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
 import { activityFixture, activityProgressFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
@@ -15,7 +15,7 @@ import { expect, test } from "./fixtures";
  * - Lesson 2: 3 activities
  * - Lesson 3: 2 activities
  */
-async function createTestChapterWithLessons(userId: number) {
+async function createTestChapterWithLessons(userId: string) {
   const org = await getAiOrganization();
   const uniqueId = randomUUID().slice(0, 8);
 

@@ -45,7 +45,7 @@ const mockAccuracyData = {
 };
 
 describe(generateInvestigationAccuracyStep, () => {
-  let organizationId: number;
+  let organizationId: string;
   let chapter: Awaited<ReturnType<typeof chapterFixture>>;
 
   beforeAll(async () => {

@@ -15,7 +15,7 @@ vi.mock("@zoonk/core/audio/generate", () => ({
 }));
 
 describe(generateWordAudioUrls, () => {
-  let organizationId: number;
+  let organizationId: string;
   let orgSlug: string;
 
   beforeAll(async () => {

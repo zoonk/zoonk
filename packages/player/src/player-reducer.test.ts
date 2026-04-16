@@ -50,7 +50,7 @@ function buildActivity(overrides: Partial<SerializedActivity> = {}): SerializedA
     language: "en",
     lessonSentences: [],
     lessonWords: [],
-    organizationId: 1,
+    organizationId: "org-1",
     steps: [buildStep()],
     title: "Test Activity",
     ...overrides,

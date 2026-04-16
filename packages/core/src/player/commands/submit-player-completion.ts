@@ -60,7 +60,7 @@ function attachSentenceTranslationsToSteps(
  */
 export async function submitPlayerCompletion(params: {
   input: CompletionInput;
-  userId: number;
+  userId: string;
 }): Promise<PlayerCompletionEffects | null> {
   const activityId = BigInt(params.input.activityId);
   const activity = await prisma.activity.findUnique({

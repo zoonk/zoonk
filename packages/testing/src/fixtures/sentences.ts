@@ -1,7 +1,7 @@
 import { prisma } from "@zoonk/db";
 
 export async function sentenceFixture(attrs: {
-  organizationId: number;
+  organizationId: string;
   sentence?: string;
   targetLanguage?: string;
   romanization?: string | null;

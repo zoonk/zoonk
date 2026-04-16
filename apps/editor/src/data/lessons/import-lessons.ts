@@ -64,7 +64,7 @@ async function resolveLesson(
     language: string;
     managementMode: ContentManagementMode;
     normalizedTitle: string;
-    organizationId: number | null;
+    organizationId: string | null;
     position: number;
     slug: string;
     title: string;

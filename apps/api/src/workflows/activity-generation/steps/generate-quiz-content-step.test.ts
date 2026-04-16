@@ -33,7 +33,7 @@ vi.mock("@zoonk/ai/tasks/activities/core/quiz", () => ({
 }));
 
 describe(generateQuizContentStep, () => {
-  let organizationId: number;
+  let organizationId: string;
   let chapter: Awaited<ReturnType<typeof chapterFixture>>;
 
   beforeAll(async () => {

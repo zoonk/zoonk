@@ -54,7 +54,7 @@ function getPreviousAverage(
   return processed.length > 0 ? calculateAverage(processed) : null;
 }
 
-async function hasEarlierData(userId: number, beforeDate: Date): Promise<boolean> {
+async function hasEarlierData(userId: string, beforeDate: Date): Promise<boolean> {
   const { data } = await safeAsync(() =>
     prisma.dailyProgress.findFirst({
       where: { date: { lt: beforeDate }, userId },
@@ -121,7 +121,7 @@ export function getEnergyHistory(params: {
 }
 
 async function fetchDailyData(
-  userId: number,
+  userId: string,
   start: Date,
   end: Date,
 ): Promise<{ data: RawDataPoint[] | null; error: unknown }> {

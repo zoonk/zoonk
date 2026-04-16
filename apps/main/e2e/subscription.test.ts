@@ -26,8 +26,9 @@ async function createUserWithSubscription(
   await prisma.subscription.create({
     data: {
       cancelAt: options?.cancelAt,
+      id: randomUUID(),
       plan,
-      referenceId: String(user.id),
+      referenceId: user.id,
       status: "active",
       stripeCustomerId: `cus_test_e2e_${uniqueId}`,
       stripeSubscriptionId: `sub_test_e2e_${uniqueId}`,

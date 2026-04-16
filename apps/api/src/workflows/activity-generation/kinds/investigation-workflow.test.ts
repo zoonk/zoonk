@@ -64,7 +64,7 @@ vi.mock("@zoonk/ai/tasks/activities/core/investigation-findings", () => ({
 }));
 
 describe("investigation activity workflow", () => {
-  let organizationId: number;
+  let organizationId: string;
   let course: Awaited<ReturnType<typeof courseFixture>>;
   let chapter: Awaited<ReturnType<typeof chapterFixture>>;
 

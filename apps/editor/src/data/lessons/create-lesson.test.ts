@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { ErrorCode } from "@/lib/app-error";
 import { prisma } from "@zoonk/db";
 import { signInAs } from "@zoonk/testing/fixtures/auth";
@@ -126,6 +127,7 @@ describe("admins", () => {
       const [, testHeaders] = await Promise.all([
         prisma.member.create({
           data: {
+            id: randomUUID(),
             organizationId: aiOrg.id,
             role: "admin",
             userId: fixture.user.id,

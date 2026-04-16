@@ -12,7 +12,7 @@ export async function listDurableLessonCompletionIds({
   userId,
 }: {
   lessonIds: number[];
-  userId: number;
+  userId: string;
 }): Promise<Set<number>> {
   if (lessonIds.length === 0) {
     return new Set();
@@ -40,7 +40,7 @@ export async function listDurableChapterCompletionIds({
   userId,
 }: {
   chapterIds: number[];
-  userId: number;
+  userId: string;
 }): Promise<Set<number>> {
   if (chapterIds.length === 0) {
     return new Set();
@@ -68,7 +68,7 @@ export async function hasDurableCourseCompletion({
   userId,
 }: {
   courseId: number;
-  userId: number;
+  userId: string;
 }): Promise<boolean> {
   const { data } = await safeAsync(() =>
     prisma.courseCompletion.findUnique({

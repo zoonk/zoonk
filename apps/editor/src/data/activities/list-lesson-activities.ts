@@ -8,7 +8,7 @@ import { cache } from "react";
 const cachedListLessonActivities = cache(
   async (
     lessonId: number,
-    orgId: number | null,
+    orgId: string | null,
     headers?: Headers,
   ): Promise<{ data: Activity[]; error: Error | null }> => {
     if (!orgId) {
@@ -48,7 +48,7 @@ const cachedListLessonActivities = cache(
 export function listLessonActivities(params: {
   headers?: Headers;
   lessonId: number;
-  orgId: number | null;
+  orgId: string | null;
 }): Promise<{ data: Activity[]; error: Error | null }> {
   return cachedListLessonActivities(params.lessonId, params.orgId, params.headers);
 }

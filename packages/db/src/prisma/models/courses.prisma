@@ -43,9 +43,9 @@ model SearchPromptSuggestion {
 
 model Course {
   id                Int                      @id @default(autoincrement())
-  organizationId    Int?                     @map("organization_id")
+  organizationId    String?                  @map("organization_id")
   organization      Organization?            @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  userId            Int?                     @map("user_id")
+  userId            String?                  @map("user_id")
   user              User?                    @relation(fields: [userId], references: [id], onDelete: Cascade)
   mode              CourseMode               @default(full)
   completedAt       DateTime?                @map("completed_at")
@@ -109,7 +109,7 @@ model CourseUser {
   id        Int      @id @default(autoincrement())
   courseId  Int      @map("course_id")
   course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  userId    Int      @map("user_id")
+  userId    String   @map("user_id")
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   startedAt DateTime @default(now()) @map("started_at")
 

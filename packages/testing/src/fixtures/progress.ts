@@ -7,7 +7,7 @@ export async function dailyProgressFixtureMany(
     date: Date;
     energyAtEnd?: number;
     incorrectAnswers?: number;
-    userId: number;
+    userId: string;
   }[],
 ) {
   return prisma.dailyProgress.createMany({
@@ -29,7 +29,7 @@ export async function userProgressFixture(attrs: {
   currentEnergy?: number;
   lastActiveAt?: Date;
   totalBrainPower?: bigint;
-  userId: number;
+  userId: string;
 }) {
   return prisma.userProgress.create({
     data: {

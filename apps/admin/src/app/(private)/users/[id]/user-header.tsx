@@ -6,7 +6,7 @@ import { BanUserDialog } from "./ban-user-dialog";
 import { RevokeSessionsDialog } from "./revoke-sessions-dialog";
 import { UnbanUserDialog } from "./unban-user-dialog";
 
-export async function UserHeader({ userId }: { userId: number }) {
+export async function UserHeader({ userId }: { userId: string }) {
   const user = await getUser(userId);
 
   if (!user) {

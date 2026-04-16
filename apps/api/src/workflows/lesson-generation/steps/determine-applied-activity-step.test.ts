@@ -33,7 +33,7 @@ vi.mock("@zoonk/ai/tasks/lessons/applied-activity-kind", () => ({
 
 describe(determineAppliedActivityStep, () => {
   let context: LessonContext;
-  let organizationId: number;
+  let organizationId: string;
   let chapterId: number;
 
   beforeAll(async () => {

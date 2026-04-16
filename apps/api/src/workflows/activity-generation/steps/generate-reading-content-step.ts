@@ -25,7 +25,7 @@ export type ReadingSentence = ActivitySentencesSchema["sentences"][number];
  */
 async function getLessonWords(params: {
   lessonId: number;
-  organizationId: number | null;
+  organizationId: string | null;
   targetLanguage: string;
 }): Promise<SourceWord[]> {
   if (!params.organizationId) {
@@ -69,7 +69,7 @@ function hasValidSentences(sentences: ReadingSentence[]): boolean {
 async function resolveSourceWords(input: {
   currentRunWords: SourceWord[];
   lessonId: number;
-  organizationId: number | null;
+  organizationId: string | null;
   targetLanguage: string;
 }): Promise<{ error: Error; words: [] } | { error: null; words: SourceWord[] }> {
   if (input.currentRunWords.length > 0) {

@@ -37,9 +37,6 @@ export const baseAuthConfig: Omit<BetterAuthOptions, "rateLimit"> = {
   account: {
     accountLinking: { enabled: true },
   },
-  advanced: {
-    database: { generateId: "serial" },
-  },
   appName: "Zoonk",
   basePath: BETTER_AUTH_BASE_PATH,
   baseURL: {

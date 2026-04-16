@@ -2,12 +2,12 @@ import { randomUUID } from "node:crypto";
 import { request } from "@playwright/test";
 import { prisma } from "@zoonk/db";
 import { expect, test } from "@zoonk/e2e/fixtures";
-import { createOrganization, getAiOrganization } from "@zoonk/e2e/helpers";
+import { createOrganization, getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
 import { normalizeString } from "@zoonk/utils/string";
 
 test.describe("Chapter Generation Workflow API", () => {
   let baseURL: string;
-  let aiOrgId: number;
+  let aiOrgId: string;
 
   test.beforeAll(async () => {
     baseURL = process.env.E2E_BASE_URL ?? "";
@@ -236,8 +236,9 @@ test.describe("Chapter Generation Workflow API", () => {
     const user = await prisma.user.findUniqueOrThrow({ where: { email } });
     await prisma.subscription.create({
       data: {
+        id: randomUUID(),
         plan: "hobby",
-        referenceId: String(user.id),
+        referenceId: user.id,
         status: "active",
         stripeCustomerId: `cus_test_${uniqueId}`,
         stripeSubscriptionId: `sub_test_${uniqueId}`,

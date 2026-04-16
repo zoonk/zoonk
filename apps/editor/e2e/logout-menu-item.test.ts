@@ -1,4 +1,5 @@
-import { createE2EUser, getBaseURL } from "@zoonk/e2e/helpers";
+import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
+import { createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { type Page, expect, test } from "./fixtures";
 

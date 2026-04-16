@@ -16,7 +16,7 @@ import { prisma } from "@zoonk/db";
  */
 export async function upsertWordWithPronunciation(params: {
   audioUrl: string | null;
-  organizationId: number;
+  organizationId: string;
   pronunciation: string | null;
   romanization: string | null;
   romanizationUpdate: { romanization?: string | null };

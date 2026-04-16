@@ -19,7 +19,7 @@ export function chapterAttrs(
     language: "en",
     managementMode: "manual",
     normalizedTitle,
-    organizationId: 0,
+    organizationId: null,
     position: 0,
     slug: `test-chapter-${randomUUID()}`,
     title,

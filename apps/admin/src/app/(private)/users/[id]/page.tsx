@@ -13,7 +13,6 @@ import {
   ContainerHeaderGroup,
 } from "@zoonk/ui/components/container";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { parseNumericId } from "@zoonk/utils/number";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
@@ -63,8 +62,7 @@ function SectionSkeleton() {
 }
 
 export default async function UserDetailPage({ params }: PageProps<"/users/[id]">) {
-  const { id: rawId } = await params;
-  const userId = parseNumericId(rawId);
+  const { id: userId } = await params;
 
   if (!userId) {
     notFound();

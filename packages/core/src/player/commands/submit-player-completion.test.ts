@@ -48,7 +48,7 @@ async function createPublishedChapterContext() {
  */
 async function createMultipleChoiceActivity(params: {
   lessonId: number;
-  organizationId: number;
+  organizationId: string;
   position?: number;
 }) {
   const activity = await activityFixture({
@@ -119,7 +119,7 @@ describe(submitPlayerCompletion, () => {
         activityId: "999999999",
         stepId: "999999999",
       }),
-      userId: 1,
+      userId: "missing-user-id",
     });
 
     expect(result).toBeNull();

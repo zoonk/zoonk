@@ -26,7 +26,7 @@ vi.mock("workflow", () => ({
 }));
 
 describe(markAllActivitiesAsRunningStep, () => {
-  let organizationId: number;
+  let organizationId: string;
   let chapterId: number;
 
   beforeAll(async () => {

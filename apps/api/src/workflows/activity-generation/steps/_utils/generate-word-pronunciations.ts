@@ -15,7 +15,7 @@ type PronunciationEntry = {
  * lets the workflow enrich words before it knows which database IDs will be reused.
  */
 export async function generateWordPronunciations(params: {
-  organizationId: number;
+  organizationId: string;
   targetLanguage: string;
   userLanguage: string;
   words: string[];
@@ -49,7 +49,7 @@ export async function generateWordPronunciations(params: {
 }
 
 async function fetchExistingPronunciations(params: {
-  organizationId: number;
+  organizationId: string;
   targetLanguage: string;
   userLanguage: string;
   words: string[];

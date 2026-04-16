@@ -1,5 +1,6 @@
 import { randomUUID } from "node:crypto";
-import { getAiOrganization, setLocale } from "@zoonk/e2e/helpers";
+import { setLocale } from "@zoonk/e2e/fixtures/locale";
+import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";

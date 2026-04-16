@@ -37,7 +37,7 @@ export async function listContinueLearningCandidates({
   userId,
 }: {
   rows: ContinueLearningRow[];
-  userId: number;
+  userId: string;
 }): Promise<ContinueLearningCandidate[]> {
   const [sequentialNextActivities, nextStates] = await Promise.all([
     listSequentialNextActivities({ rows }),
@@ -120,7 +120,7 @@ async function listBlockedSequentialTargetIds({
   userId,
 }: {
   sequentialNextActivities: (NextActivityInCourse | null)[];
-  userId: number;
+  userId: string;
 }): Promise<BlockedSequentialTargetIds> {
   const targetIds = getSequentialTargetIds({ sequentialNextActivities });
 
@@ -210,7 +210,7 @@ async function listBlockedSequentialChapterIds({
   userId,
 }: {
   chapterIds: number[];
-  userId: number;
+  userId: string;
 }) {
   if (chapterIds.length === 0) {
     return [];
@@ -233,7 +233,7 @@ async function listBlockedSequentialLessonIds({
   userId,
 }: {
   lessonIds: number[];
-  userId: number;
+  userId: string;
 }) {
   if (lessonIds.length === 0) {
     return [];

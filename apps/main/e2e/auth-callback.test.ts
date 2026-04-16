@@ -1,4 +1,5 @@
-import { createE2EUser, generateOneTimeToken, getBaseURL } from "@zoonk/e2e/helpers";
+import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
+import { createE2EUser, generateOneTimeToken } from "@zoonk/e2e/fixtures/users";
 import { expect, test } from "./fixtures";
 
 test.describe("Auth Callback", () => {

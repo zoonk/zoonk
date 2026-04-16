@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { type Page, type Route } from "@zoonk/e2e/fixtures";
-import { getAiOrganization } from "@zoonk/e2e/helpers";
+import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
@@ -152,13 +152,14 @@ async function createPendingLesson() {
 /**
  * Creates a test subscription for the given user.
  */
-async function createTestSubscription(userId: number) {
+async function createTestSubscription(userId: string) {
   const uniqueId = randomUUID();
 
   const subscription = await prisma.subscription.create({
     data: {
+      id: randomUUID(),
       plan: "hobby",
-      referenceId: String(userId),
+      referenceId: userId,
       status: "active",
       stripeCustomerId: `cus_test_e2e_lesson_${uniqueId}`,
       stripeSubscriptionId: `sub_test_e2e_lesson_${uniqueId}`,

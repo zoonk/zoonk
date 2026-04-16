@@ -2,7 +2,7 @@ import { getUser } from "@/data/users/get-user";
 import { Separator } from "@zoonk/ui/components/separator";
 import { DetailField } from "./detail-field";
 
-export async function UserActivity({ userId }: { userId: number }) {
+export async function UserActivity({ userId }: { userId: string }) {
   const user = await getUser(userId);
 
   if (!user) {

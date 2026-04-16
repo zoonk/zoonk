@@ -32,7 +32,7 @@ vi.mock("./_utils/dispatch-visual-content", () => ({
 }));
 
 describe(generateCustomVisualContentStep, () => {
-  let organizationId: number;
+  let organizationId: string;
   let chapter: Awaited<ReturnType<typeof chapterFixture>>;
 
   beforeAll(async () => {

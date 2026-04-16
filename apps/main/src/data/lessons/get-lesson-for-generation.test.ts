@@ -6,7 +6,7 @@ import { beforeAll, describe, expect, test } from "vitest";
 import { getLessonForGeneration } from "./get-lesson-for-generation";
 
 describe(getLessonForGeneration, () => {
-  let organizationId: number;
+  let organizationId: string;
   let course: Awaited<ReturnType<typeof courseFixture>>;
   let chapter: Awaited<ReturnType<typeof chapterFixture>>;
 

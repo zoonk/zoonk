@@ -1,4 +1,4 @@
-import { getBaseURL } from "@zoonk/e2e/helpers";
+import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
 import { expect, test } from "./fixtures";
 
 test.describe("robots.txt", () => {

@@ -1,4 +1,4 @@
-import { openDialog } from "@zoonk/e2e/helpers";
+import { openDialog } from "@zoonk/e2e/fixtures/dialog";
 import { expect, test } from "./fixtures";
 
 test.describe("Support page", () => {

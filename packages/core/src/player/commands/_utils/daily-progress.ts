@@ -28,7 +28,7 @@ export async function fillDecayGaps(params: {
   lastActiveDate: Date;
   todayDate: Date;
   tx: TransactionClient;
-  userId: number;
+  userId: string;
 }): Promise<void> {
   const dayDiff = Math.round(
     (params.todayDate.getTime() - params.lastActiveDate.getTime()) / MS_PER_DAY,
@@ -67,7 +67,7 @@ export async function upsertDailyProgress(
     durationSeconds: number;
     field: "interactiveCompleted" | "staticCompleted";
     score: ScoreResult;
-    userId: number;
+    userId: string;
   },
 ): Promise<void> {
   const createData = {

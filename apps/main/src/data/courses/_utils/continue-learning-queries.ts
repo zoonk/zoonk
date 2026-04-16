@@ -34,7 +34,7 @@ const SQL_LIMIT = 10;
 export async function listRecentContinueLearningRows({
   userId,
 }: {
-  userId: number;
+  userId: string;
 }): Promise<ContinueLearningRow[]> {
   const { data, error } = await safeAsync(
     () =>

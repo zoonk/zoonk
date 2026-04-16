@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
-import { createE2EUser, getAiOrganization } from "@zoonk/e2e/helpers";
+import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
+import { createE2EUser } from "@zoonk/e2e/fixtures/users";
 import { activityFixture, activityProgressFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";

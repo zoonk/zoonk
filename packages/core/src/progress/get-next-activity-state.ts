@@ -56,7 +56,7 @@ export async function getNextActivityStateForUser({
 }: {
   after?: NextActivityStateAnchor;
   scope: PublishedLessonProgressScope;
-  userId: number;
+  userId: string;
 }): Promise<NextActivityState | null> {
   const rows = await listPublishedLessonProgressRows({ scope, userId });
 
@@ -204,7 +204,7 @@ async function buildOpenLessonState({
 }: {
   hasStarted: boolean;
   lesson: EffectiveLessonProgressRow;
-  userId: number;
+  userId: string;
 }) {
   if (hasPendingLessonContent({ row: lesson })) {
     return toLessonShellState({
@@ -303,7 +303,7 @@ async function findFirstIncompleteActivity({
   userId,
 }: {
   lessonId: number;
-  userId: number;
+  userId: string;
 }) {
   return prisma.activity.findFirst({
     orderBy: { position: "asc" },

@@ -26,7 +26,7 @@ export async function syncDurableCurriculumCompletion(
   tx: TransactionClient,
   params: {
     activityId: bigint;
-    userId: number;
+    userId: string;
   },
 ): Promise<{ courseId: number }> {
   const context = await getActivityCurriculumContext({ activityId: params.activityId, tx });
@@ -113,7 +113,7 @@ function getDurableCompletionWrites({
   durableLessonIds: Set<number>;
   lessonRow: NonNullable<ReturnType<typeof getLessonRow>>;
   tx: TransactionClient;
-  userId: number;
+  userId: string;
 }) {
   return [
     ...(isCurrentLessonCompleted({ row: lessonRow }) && !durableLessonIds.has(context.lessonId)

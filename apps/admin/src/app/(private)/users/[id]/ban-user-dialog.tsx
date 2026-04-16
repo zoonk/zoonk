@@ -17,7 +17,7 @@ import { Label } from "@zoonk/ui/components/label";
 import { Textarea } from "@zoonk/ui/components/textarea";
 import { banUserAction } from "./_actions/ban-user";
 
-export function BanUserDialog({ userId, userName }: { userId: number; userName: string }) {
+export function BanUserDialog({ userId, userName }: { userId: string; userName: string }) {
   return (
     <AlertDialog>
       <AlertDialogTrigger render={<Button variant="outline" size="sm" />}>

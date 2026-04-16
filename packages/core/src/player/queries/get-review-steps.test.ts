@@ -718,7 +718,7 @@ describe(getReviewSteps, () => {
 
 describe(getReviewValidationSteps, () => {
   let lesson: Awaited<ReturnType<typeof lessonFixture>>;
-  let organizationId: number;
+  let organizationId: string;
   let quizStep: Awaited<ReturnType<typeof stepFixture>>;
   let reviewStep: Awaited<ReturnType<typeof stepFixture>>;
   let staticStep: Awaited<ReturnType<typeof stepFixture>>;
@@ -862,7 +862,7 @@ describe(getReviewValidationSteps, () => {
 /**
  * Helper to create an isolated lesson with a given number of interactive steps.
  */
-async function createLessonWithSteps(orgId: number, stepCount: number) {
+async function createLessonWithSteps(orgId: string, stepCount: number) {
   const course = await courseFixture({
     isPublished: true,
     language: "en",

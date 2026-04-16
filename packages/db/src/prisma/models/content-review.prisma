@@ -4,7 +4,7 @@ model ContentReview {
   entityId   BigInt   @map("entity_id")
   status     String   @default("approved") @map("status")
   reviewedAt DateTime @default(now()) @map("reviewed_at")
-  userId     Int      @map("user_id")
+  userId     String   @map("user_id")
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([taskType, entityId], name: "taskEntity")

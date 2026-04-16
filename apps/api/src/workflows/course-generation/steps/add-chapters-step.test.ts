@@ -22,7 +22,7 @@ vi.mock("workflow", () => ({
 }));
 
 describe(addChaptersStep, () => {
-  let organizationId: number;
+  let organizationId: string;
   let courseContext: CourseContext;
 
   beforeAll(async () => {

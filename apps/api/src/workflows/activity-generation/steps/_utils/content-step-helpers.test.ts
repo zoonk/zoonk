@@ -21,7 +21,7 @@ vi.mock("workflow", () => ({
 }));
 
 describe(getExistingContentSteps, () => {
-  let organizationId: number;
+  let organizationId: string;
   let chapterId: number;
 
   beforeAll(async () => {

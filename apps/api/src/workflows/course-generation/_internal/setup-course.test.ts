@@ -57,7 +57,7 @@ vi.mock("@zoonk/ai/tasks/courses/chapters", () => ({
 }));
 
 describe(setupCourse, () => {
-  let organizationId: number;
+  let organizationId: string;
 
   beforeAll(async () => {
     const organization = await aiOrganizationFixture();

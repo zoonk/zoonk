@@ -38,7 +38,7 @@ vi.mock("@zoonk/ai/tasks/activities/language/sentences", () => ({
 }));
 
 describe(generateReadingContentStep, () => {
-  let organizationId: number;
+  let organizationId: string;
   let course: Awaited<ReturnType<typeof courseFixture>>;
   let chapter: Awaited<ReturnType<typeof chapterFixture>>;
 

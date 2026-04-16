@@ -44,7 +44,7 @@ async function getLessonContext(lessonId: number): Promise<LessonContext> {
 
 describe(lessonRegenerationWorkflow, () => {
   let chapterId: number;
-  let organizationId: number;
+  let organizationId: string;
 
   beforeAll(async () => {
     const organization = await aiOrganizationFixture();

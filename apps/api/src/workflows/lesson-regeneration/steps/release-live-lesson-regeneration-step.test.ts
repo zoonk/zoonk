@@ -9,7 +9,7 @@ import { releaseLiveLessonRegenerationStep } from "./release-live-lesson-regener
 
 describe(releaseLiveLessonRegenerationStep, () => {
   let chapterId: number;
-  let organizationId: number;
+  let organizationId: string;
 
   beforeAll(async () => {
     const organization = await aiOrganizationFixture();

@@ -3,7 +3,7 @@ import { Separator } from "@zoonk/ui/components/separator";
 import { ChangePlanDialog } from "./change-plan-dialog";
 import { DetailField } from "./detail-field";
 
-export async function UserSubscription({ userId }: { userId: number }) {
+export async function UserSubscription({ userId }: { userId: string }) {
   const subscription = await getUserSubscription(userId);
   const isStripeManaged = Boolean(subscription?.stripeSubscriptionId);
 

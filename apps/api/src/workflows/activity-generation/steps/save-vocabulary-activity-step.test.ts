@@ -23,7 +23,7 @@ vi.mock("workflow", () => ({
 }));
 
 describe(saveVocabularyActivityStep, () => {
-  let organizationId: number;
+  let organizationId: string;
   let course: Awaited<ReturnType<typeof courseFixture>>;
   let chapter: Awaited<ReturnType<typeof chapterFixture>>;
 

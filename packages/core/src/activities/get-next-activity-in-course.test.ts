@@ -8,7 +8,7 @@ import { getNextActivityInCourse } from "./get-next-activity-in-course";
 
 describe(getNextActivityInCourse, () => {
   let courseId: number;
-  let orgId: number;
+  let orgId: string;
 
   let chapter1Id: number;
   let chapter1Slug: string;

@@ -83,7 +83,7 @@ export type SerializedActivity = {
   title: string | null;
   description: string | null;
   language: string;
-  organizationId: number | null;
+  organizationId: string | null;
   steps: SerializedStep[];
   lessonWords: SerializedWord[];
   lessonSentences: SerializedSentence[];
@@ -94,7 +94,7 @@ type PrepareLessonActivitySource = {
   id: bigint;
   kind: ActivityKind;
   language: string;
-  organizationId: number | null;
+  organizationId: string | null;
   steps: ActivityStepInput[];
   title: string | null;
 };
@@ -257,7 +257,7 @@ function prepareActivityData(
     title: string | null;
     description: string | null;
     language: string;
-    organizationId: number | null;
+    organizationId: string | null;
     steps: StepDataInput[];
   },
   lessonWords: WordDataInput[],

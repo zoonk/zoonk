@@ -1,6 +1,8 @@
+import { randomUUID } from "node:crypto";
 import { type Page, test as base } from "@playwright/test";
 import { prisma } from "@zoonk/db";
-import { type E2EUser, createE2EUser, getBaseURL } from "@zoonk/e2e/helpers";
+import { getBaseURL } from "@zoonk/e2e/fixtures/base-url";
+import { type E2EUser, createE2EUser } from "@zoonk/e2e/fixtures/users";
 
 export const test = base.extend<
   {
@@ -85,6 +87,7 @@ export const test = base.extend<
 
       await prisma.member.create({
         data: {
+          id: randomUUID(),
           organizationId: testOrg.id,
           role: "owner",
           userId: user.id,

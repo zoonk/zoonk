@@ -7,7 +7,7 @@ import { beforeAll, describe, expect, test } from "vitest";
 import { getNextLesson } from "./get-next-lesson";
 
 describe(getNextLesson, () => {
-  let orgId: number;
+  let orgId: string;
   let courseId: number;
 
   let chapter1Id: number;

@@ -1,6 +1,6 @@
 model Word {
   id             BigInt              @id @default(autoincrement())
-  organizationId Int                 @map("organization_id")
+  organizationId String              @map("organization_id")
   organization   Organization        @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   targetLanguage String              @map("target_language") @db.VarChar(10)
   word           String
@@ -38,7 +38,7 @@ model WordPronunciation {
 
 model Sentence {
   id             BigInt           @id @default(autoincrement())
-  organizationId Int              @map("organization_id")
+  organizationId String           @map("organization_id")
   organization   Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   targetLanguage String           @map("target_language") @db.VarChar(10)
   sentence       String

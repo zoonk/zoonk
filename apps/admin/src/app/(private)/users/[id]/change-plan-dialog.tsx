@@ -46,7 +46,7 @@ function PlanSelect({
   );
 }
 
-export function ChangePlanDialog({ userId, currentPlan }: { userId: number; currentPlan: string }) {
+export function ChangePlanDialog({ userId, currentPlan }: { userId: string; currentPlan: string }) {
   const [open, setOpen] = useState(false);
   const [plan, setPlan] = useState(currentPlan);
 

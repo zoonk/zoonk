@@ -10,9 +10,9 @@ export async function getActivityProgress({
   headers?: Headers;
 }): Promise<string[]> {
   const session = await getSession(headers);
-  const userId = session ? session.user.id : 0;
+  const userId = session?.user.id;
 
-  if (userId === 0) {
+  if (!userId) {
     return [];
   }
 

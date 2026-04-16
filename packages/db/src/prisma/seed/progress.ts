@@ -9,7 +9,7 @@ function seededRandom(seed: number) {
 
 function buildOwnerDailyProgress(
   today: Date,
-  userId: number,
+  userId: string,
 ): {
   brainPowerEarned: number;
   correctAnswers: number;
@@ -20,7 +20,7 @@ function buildOwnerDailyProgress(
   interactiveCompleted: number;
   staticCompleted: number;
   timeSpentSeconds: number;
-  userId: number;
+  userId: string;
 }[] {
   const indices = Array.from({ length: 90 }, (_, i) => 89 - i);
 

@@ -23,7 +23,7 @@ export function lessonAttrs(
     language: "en",
     managementMode: "manual",
     normalizedTitle,
-    organizationId: 0,
+    organizationId: null,
     position: 0,
     slug: `test-lesson-${randomUUID()}`,
     title,

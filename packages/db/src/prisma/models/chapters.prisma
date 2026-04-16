@@ -1,6 +1,6 @@
 model Chapter {
   id               Int                   @id @default(autoincrement())
-  organizationId   Int?                  @map("organization_id")
+  organizationId   String?               @map("organization_id")
   organization     Organization?         @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   courseId         Int                   @map("course_id")
   course           Course                @relation(fields: [courseId], references: [id], onDelete: Cascade)

@@ -114,7 +114,7 @@ vi.mock("./_internal/get-or-create-course", async (importOriginal) => {
 });
 
 describe(courseGenerationWorkflow, () => {
-  let organizationId: number;
+  let organizationId: string;
 
   beforeAll(async () => {
     const org = await aiOrganizationFixture();

@@ -25,7 +25,7 @@ vi.mock("workflow", () => ({
 }));
 
 describe(saveCustomActivityStep, () => {
-  let organizationId: number;
+  let organizationId: string;
   let chapter: Awaited<ReturnType<typeof chapterFixture>>;
 
   beforeAll(async () => {

@@ -12,7 +12,7 @@ import { generateAudioForText } from "./generate-audio-for-text";
  * in the workflow (`fetchExistingWordCasing`, `generateWordPronunciations`).
  */
 export async function generateWordAudioUrls(params: {
-  organizationId: number;
+  organizationId: string;
   orgSlug: string;
   targetLanguage: string;
   words: string[];
