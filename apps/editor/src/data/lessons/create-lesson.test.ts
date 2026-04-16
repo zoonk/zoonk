@@ -276,10 +276,10 @@ describe("admins", () => {
   test("returns Chapter not found", async () => {
     const result = await createLesson({
       ...lessonAttrs({
-        chapterId: 999_999,
+        chapterId: randomUUID(),
         organizationId: organization.id,
       }),
-      chapterId: 999_999,
+      chapterId: randomUUID(),
       headers,
       position: 0,
     });

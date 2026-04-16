@@ -13,7 +13,7 @@ import { cn } from "@zoonk/ui/lib/utils";
 import { ChevronRightIcon, NotebookPenIcon } from "lucide-react";
 
 export type CourseListItem = {
-  id: number;
+  id: string;
   description: string | null;
   imageUrl: string | null;
   slug: string;

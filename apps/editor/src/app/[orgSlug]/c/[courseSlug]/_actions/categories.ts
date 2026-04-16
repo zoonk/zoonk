@@ -7,7 +7,7 @@ import { getErrorMessage } from "@/lib/error-messages";
 import { revalidatePath } from "next/cache";
 
 type CourseActionParams = {
-  courseId: number;
+  courseId: string;
 };
 
 export async function addCourseCategoryAction(

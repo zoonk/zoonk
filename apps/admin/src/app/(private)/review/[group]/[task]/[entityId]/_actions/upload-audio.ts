@@ -3,7 +3,6 @@
 import { isAdmin } from "@/lib/admin-guard";
 import { uploadAudio } from "@zoonk/core/audio/upload";
 import { prisma } from "@zoonk/db";
-import { parseBigIntId } from "@zoonk/utils/number";
 import { DEFAULT_AUDIO_ACCEPTED_TYPES, DEFAULT_AUDIO_MAX_SIZE } from "@zoonk/utils/upload";
 import { revalidatePath } from "next/cache";
 
@@ -43,16 +42,10 @@ async function uploadEntityAudio({
   entityId: string;
   entityType: string;
   formData: FormData;
-  updateEntity: (audioUrl: string, id: bigint) => Promise<unknown>;
+  updateEntity: (audioUrl: string, id: string) => Promise<unknown>;
 }): Promise<{ error: string | null }> {
   if (!(await isAdmin())) {
     return { error: "Unauthorized" };
-  }
-
-  const id = parseBigIntId(entityId);
-
-  if (!id) {
-    return { error: `Invalid ${entityType} ID` };
   }
 
   const validation = validateAudioFile(formData);
@@ -66,14 +59,14 @@ async function uploadEntityAudio({
 
   const { data: audioUrl, error: uploadError } = await uploadAudio({
     audio: buffer,
-    fileName: `audio/admin-review/${entityType}-${id}.${extension}`,
+    fileName: `audio/admin-review/${entityType}-${entityId}.${extension}`,
   });
 
   if (uploadError) {
     return { error: "Failed to upload audio. Please try again." };
   }
 
-  await updateEntity(audioUrl, id);
+  await updateEntity(audioUrl, entityId);
 
   revalidatePath("/review");
   return { error: null };

@@ -15,7 +15,7 @@ import { streamCompletionEventsStep } from "./steps/stream-completion-events-ste
  * already completed, so downstream generate steps never check generationStatus.
  */
 export async function activityGenerationWorkflow(
-  lessonId: number,
+  lessonId: string,
   options: {
     regeneration?: boolean;
   } = {},

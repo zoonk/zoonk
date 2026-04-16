@@ -23,7 +23,7 @@ function usesRegenerationPath(input: {
   );
 }
 
-export async function lessonPreloadWorkflow(lessonId: number): Promise<void> {
+export async function lessonPreloadWorkflow(lessonId: string): Promise<void> {
   "use workflow";
 
   const lesson = await getLessonStep(lessonId);

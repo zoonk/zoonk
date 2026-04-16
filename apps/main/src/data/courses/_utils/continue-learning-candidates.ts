@@ -16,13 +16,13 @@ export type ContinueLearningCandidate = {
 };
 
 type BlockedSequentialTargetIds = {
-  chapterIds: Set<number>;
-  lessonIds: Set<number>;
+  chapterIds: Set<string>;
+  lessonIds: Set<string>;
 };
 
 type SequentialTargetIds = {
-  chapterIds: number[];
-  lessonIds: number[];
+  chapterIds: string[];
+  lessonIds: string[];
 };
 
 /**
@@ -198,7 +198,7 @@ function hasNoSequentialTargetIds({ targetIds }: { targetIds: SequentialTargetId
  * inline object literals inside the main query helper.
  */
 function getEmptyBlockedSequentialTargetIds(): BlockedSequentialTargetIds {
-  return { chapterIds: new Set<number>(), lessonIds: new Set<number>() };
+  return { chapterIds: new Set<string>(), lessonIds: new Set<string>() };
 }
 
 /**
@@ -209,7 +209,7 @@ async function listBlockedSequentialChapterIds({
   chapterIds,
   userId,
 }: {
-  chapterIds: number[];
+  chapterIds: string[];
   userId: string;
 }) {
   if (chapterIds.length === 0) {
@@ -232,7 +232,7 @@ async function listBlockedSequentialLessonIds({
   lessonIds,
   userId,
 }: {
-  lessonIds: number[];
+  lessonIds: string[];
   userId: string;
 }) {
   if (lessonIds.length === 0) {
@@ -254,7 +254,7 @@ async function listBlockedSequentialLessonIds({
 function toBlockedChapterIdSet({
   chapterCompletions,
 }: {
-  chapterCompletions: { chapterId: number }[];
+  chapterCompletions: { chapterId: string }[];
 }) {
   return new Set(chapterCompletions.map((completion) => completion.chapterId));
 }
@@ -266,7 +266,7 @@ function toBlockedChapterIdSet({
 function toBlockedLessonIdSet({
   lessonCompletions,
 }: {
-  lessonCompletions: { lessonId: number }[];
+  lessonCompletions: { lessonId: string }[];
 }) {
   return new Set(lessonCompletions.map((completion) => completion.lessonId));
 }

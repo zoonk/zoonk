@@ -133,7 +133,7 @@ describe("admins", () => {
     const file = createImportFile([{ description: "Desc", title: "Test" }]);
 
     const result = await importLessons({
-      chapterId: 999_999,
+      chapterId: randomUUID(),
       file,
       headers,
     });

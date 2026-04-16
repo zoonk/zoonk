@@ -24,7 +24,7 @@ vi.mock("workflow", () => ({
 
 describe(setLessonAsRunningStep, () => {
   let organizationId: string;
-  let chapterId: number;
+  let chapterId: string;
 
   beforeAll(async () => {
     const organization = await aiOrganizationFixture();
@@ -44,7 +44,7 @@ describe(setLessonAsRunningStep, () => {
 
   test("streams error and throws when lesson does not exist", async () => {
     await expect(
-      setLessonAsRunningStep({ lessonId: 999_999_999, workflowRunId: "run-id" }),
+      setLessonAsRunningStep({ lessonId: randomUUID(), workflowRunId: "run-id" }),
     ).rejects.toThrow();
 
     const events = getStreamedEvents(writeMock);

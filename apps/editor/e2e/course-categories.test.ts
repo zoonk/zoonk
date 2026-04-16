@@ -31,7 +31,7 @@ function getCategoryOption(page: Page, name: RegExp) {
   return dialog.getByText(name);
 }
 
-async function expectCategoryInDB(courseId: number, category: string) {
+async function expectCategoryInDB(courseId: string, category: string) {
   await expect(async () => {
     const record = await prisma.courseCategory.findUnique({
       where: { courseCategory: { category, courseId } },
@@ -40,7 +40,7 @@ async function expectCategoryInDB(courseId: number, category: string) {
   }).toPass({ timeout: 10_000 });
 }
 
-async function expectCategoryNotInDB(courseId: number, category: string) {
+async function expectCategoryNotInDB(courseId: string, category: string) {
   await expect(async () => {
     const record = await prisma.courseCategory.findUnique({
       where: { courseCategory: { category, courseId } },

@@ -10,7 +10,7 @@ import { handleActivityFailureStep } from "./handle-failure-step";
  * Builds multipleChoice step records from practice steps.
  * Each practice step becomes a multipleChoice step with `kind: "core"`.
  */
-function buildPracticeStepRecords(activityId: number, steps: PracticeStep[]) {
+function buildPracticeStepRecords(activityId: string, steps: PracticeStep[]) {
   return steps.map((step, index) => {
     const content = assertStepContent("multipleChoice", {
       context: step.context,
@@ -40,7 +40,7 @@ export async function savePracticeActivityStep({
   steps,
   workflowRunId,
 }: {
-  activityId: number;
+  activityId: string;
   steps: PracticeStep[];
   workflowRunId: string;
 }): Promise<void> {

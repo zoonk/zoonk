@@ -24,7 +24,7 @@ export const MAX_CONTINUE_LEARNING_ITEMS = 4;
 type ContinueLearningResolvedState = NonNullable<ContinueLearningState>;
 
 type PrefetchableContinueLearningState = ContinueLearningResolvedState & {
-  activityId: bigint;
+  activityId: string;
   activityKind: NonNullable<ContinueLearningResolvedState["activityKind"]>;
 };
 

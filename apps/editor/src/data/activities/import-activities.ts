@@ -66,7 +66,7 @@ function validateImportData(data: unknown): data is {
 export async function importActivities(params: {
   file: File;
   headers?: Headers;
-  lessonId: number;
+  lessonId: string;
   mode?: ImportMode;
 }): Promise<SafeReturn<Activity[]>> {
   const mode = params.mode ?? "merge";

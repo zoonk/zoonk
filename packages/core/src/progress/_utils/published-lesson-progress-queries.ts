@@ -16,7 +16,7 @@ export async function listPublishedLessonProgressRows({
   userId,
 }: {
   scope: PublishedLessonProgressScope;
-  userId: string;
+  userId?: string;
 }): Promise<PublishedLessonProgressRow[]> {
   return queryPublishedLessonProgressRows({
     scope,
@@ -31,8 +31,8 @@ export async function listPublishedLessonProgressRows({
 export async function listPublishedChaptersForCourse({
   courseId,
 }: {
-  courseId: number;
-}): Promise<{ chapterId: number }[]> {
+  courseId: string;
+}): Promise<{ chapterId: string }[]> {
   const { data } = await safeAsync(() =>
     prisma.chapter.findMany({
       orderBy: { position: "asc" },
@@ -59,9 +59,11 @@ async function queryPublishedLessonProgressRows({
   userId,
 }: {
   scope: PublishedLessonProgressScope;
-  userId: string;
+  userId?: string;
 }) {
   const scopeFilter = getPublishedLessonProgressScopeFilter({ scope });
+  const progressUserFilter = userId ? sql`ap.user_id = ${userId}` : sql`FALSE`;
+
   const { data } = await safeAsync(
     () =>
       prisma.$queryRaw<PublishedLessonProgressRow[]>`
@@ -97,7 +99,7 @@ async function queryPublishedLessonProgressRows({
           AND a.archived_at IS NULL
         LEFT JOIN activity_progress ap
           ON ap.activity_id = a.id
-          AND ap.user_id = ${userId}
+          AND ${progressUserFilter}
           AND ap.completed_at IS NOT NULL
         WHERE l.is_published = true
           AND l.archived_at IS NULL

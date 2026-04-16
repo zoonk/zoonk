@@ -19,7 +19,7 @@ export async function wordFixture(attrs: {
 }
 
 export async function wordPronunciationFixture(attrs: {
-  wordId: bigint;
+  wordId: string;
   userLanguage?: string;
   pronunciation?: string;
 }) {
@@ -33,8 +33,8 @@ export async function wordPronunciationFixture(attrs: {
 }
 
 export async function lessonWordFixture(attrs: {
-  lessonId: number;
-  wordId: bigint;
+  lessonId: string;
+  wordId: string;
   userLanguage?: string;
   translation?: string;
   distractors?: string[];

@@ -43,7 +43,7 @@ describe(getOrCreateCourse, () => {
     const result = await getOrCreateCourse(null, suggestion, suggestion.id, workflowRunId);
 
     expect(result.course.courseTitle).toBe(suggestion.title);
-    expect(result.course.courseId).toBeGreaterThan(0);
+    expect(result.course.courseId).toEqual(expect.any(String));
 
     expect(result.existing).toEqual({
       description: null,

@@ -18,7 +18,7 @@ export function ActivityListItemLink({
   orgSlug,
   title,
 }: {
-  activityId: bigint;
+  activityId: string;
   chapterSlug: string;
   courseSlug: string;
   description: string | null;

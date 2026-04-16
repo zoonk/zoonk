@@ -126,7 +126,7 @@ describe("admins", () => {
 
   test("returns Chapter not found for non-existent chapter", async () => {
     const result = await exportLessons({
-      chapterId: 999_999,
+      chapterId: "00000000-0000-7000-8000-000000000001",
       headers,
     });
 

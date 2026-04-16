@@ -25,10 +25,10 @@ import {
 export async function syncDurableCurriculumCompletion(
   tx: TransactionClient,
   params: {
-    activityId: bigint;
+    activityId: string;
     userId: string;
   },
-): Promise<{ courseId: number }> {
+): Promise<{ courseId: string }> {
   const context = await getActivityCurriculumContext({ activityId: params.activityId, tx });
 
   const [chapters, rows, durableLessonIds, durableChapterIds] = await Promise.all([
@@ -109,8 +109,8 @@ function getDurableCompletionWrites({
   chapterCompleted: boolean;
   context: Awaited<ReturnType<typeof getActivityCurriculumContext>>;
   courseCompleted: boolean;
-  durableChapterIds: Set<number>;
-  durableLessonIds: Set<number>;
+  durableChapterIds: Set<string>;
+  durableLessonIds: Set<string>;
   lessonRow: NonNullable<ReturnType<typeof getLessonRow>>;
   tx: TransactionClient;
   userId: string;

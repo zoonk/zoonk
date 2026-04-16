@@ -5,7 +5,6 @@ import { getTaskPath, isValidTaskType } from "@/lib/review-utils";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { parseFormField } from "@zoonk/utils/form";
-import { parseBigIntId } from "@zoonk/utils/number";
 import { redirect } from "next/navigation";
 
 /**
@@ -19,9 +18,7 @@ export async function unflagAction(formData: FormData) {
   await assertAdmin();
 
   const taskType = parseFormField(formData, "taskType");
-  const entityIdRaw = parseFormField(formData, "entityId");
-
-  const entityId = entityIdRaw ? parseBigIntId(entityIdRaw) : null;
+  const entityId = parseFormField(formData, "entityId");
 
   if (!taskType || !entityId || !isValidTaskType(taskType)) {
     throw new Error("Invalid form data");

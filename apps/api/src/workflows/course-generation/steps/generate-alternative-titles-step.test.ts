@@ -26,7 +26,7 @@ vi.mock("@zoonk/ai/tasks/courses/alternative-titles", () => ({
 }));
 
 const course: CourseContext = {
-  courseId: 1,
+  courseId: "1",
   courseSlug: "test-course",
   courseTitle: "Test Course",
   language: "en",

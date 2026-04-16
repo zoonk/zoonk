@@ -26,7 +26,7 @@ vi.mock("workflow", () => ({
 
 describe(setLessonAsCompletedStep, () => {
   let organizationId: string;
-  let chapterId: number;
+  let chapterId: string;
   let course: Awaited<ReturnType<typeof courseFixture>>;
   let chapter: Awaited<ReturnType<typeof chapterFixture>>;
 
@@ -47,9 +47,18 @@ describe(setLessonAsCompletedStep, () => {
   });
 
   test("streams error and throws when lesson does not exist", async () => {
+    const lesson = await lessonFixture({
+      chapterId,
+      organizationId,
+      title: `Broken Lesson ${randomUUID()}`,
+    });
+
     const context: LessonContext = {
-      id: 999_999_999,
-    } as LessonContext;
+      ...lesson,
+      _count: { activities: 0 },
+      chapter: { ...chapter, course },
+      id: randomUUID(),
+    };
 
     await expect(
       setLessonAsCompletedStep({

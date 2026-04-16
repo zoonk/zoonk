@@ -13,7 +13,7 @@ import { CourseSuggestionEdit } from "./course-suggestion-edit";
 import { StepSelectImageEdit } from "./step-select-image-edit";
 import { StepVisualImageEdit } from "./step-visual-image-edit";
 
-async function renderWordAudio(entityId: bigint) {
+async function renderWordAudio(entityId: string) {
   const item = await getWordAudioReview(entityId);
 
   if (!item) {
@@ -24,7 +24,7 @@ async function renderWordAudio(entityId: bigint) {
     <AudioEdit
       item={{
         audioUrl: item.audioUrl,
-        id: item.id.toString(),
+        id: item.id,
         label: "word",
         romanization: item.romanization,
         targetLanguage: item.targetLanguage,
@@ -35,7 +35,7 @@ async function renderWordAudio(entityId: bigint) {
   );
 }
 
-async function renderSentenceAudio(entityId: bigint) {
+async function renderSentenceAudio(entityId: string) {
   const item = await getSentenceAudioReview(entityId);
 
   if (!item) {
@@ -46,7 +46,7 @@ async function renderSentenceAudio(entityId: bigint) {
     <AudioEdit
       item={{
         audioUrl: item.audioUrl,
-        id: item.id.toString(),
+        id: item.id,
         label: "sentence",
         romanization: item.romanization,
         targetLanguage: item.targetLanguage,
@@ -62,7 +62,7 @@ export async function FlaggedItemContent({
   entityId,
 }: {
   taskType: ReviewTaskType;
-  entityId: bigint;
+  entityId: string;
 }) {
   const visualKind = getVisualKindFromTaskType(taskType);
 
@@ -79,11 +79,7 @@ export async function FlaggedItemContent({
       notFound();
     }
 
-    return (
-      <StepVisualImageEdit
-        item={{ activity: step.activity, content: visual, id: step.id.toString() }}
-      />
-    );
+    return <StepVisualImageEdit item={{ activity: step.activity, content: visual, id: step.id }} />;
   }
 
   if (taskType === "stepSelectImage") {
@@ -94,9 +90,7 @@ export async function FlaggedItemContent({
     }
 
     const content = parseStepContent("selectImage", step.content);
-    return (
-      <StepSelectImageEdit item={{ activity: step.activity, content, id: step.id.toString() }} />
-    );
+    return <StepSelectImageEdit item={{ activity: step.activity, content, id: step.id }} />;
   }
 
   if (taskType === "courseSuggestions") {

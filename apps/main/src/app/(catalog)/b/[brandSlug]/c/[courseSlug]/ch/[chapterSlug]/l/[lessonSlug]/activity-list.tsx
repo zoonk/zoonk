@@ -25,7 +25,7 @@ export async function ActivityList({
   brandSlug: string;
   chapterSlug: string;
   courseSlug: string;
-  lessonId: number;
+  lessonId: string;
   lessonSlug: string;
 }) {
   if (activities.length === 0) {
@@ -39,13 +39,13 @@ export async function ActivityList({
     <CatalogList>
       <CatalogListContent aria-label={t("Activities")}>
         {activities.map((activity) => {
-          const completed = completedIds.includes(String(activity.id));
+          const completed = completedIds.includes(activity.id);
 
           return (
             <CatalogListItem
               href={`/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}/a/${activity.position}`}
               id={activity.id}
-              key={String(activity.id)}
+              key={activity.id}
               prefetch={activity.generationStatus === "completed"}
             >
               <CatalogListItemPosition>{formatPosition(activity.position)}</CatalogListItemPosition>

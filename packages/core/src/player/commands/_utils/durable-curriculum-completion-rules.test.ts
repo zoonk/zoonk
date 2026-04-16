@@ -10,6 +10,10 @@ import {
   isCurrentLessonCompleted,
 } from "./durable-curriculum-completion-rules";
 
+function createTestUuid(id: number): string {
+  return `00000000-0000-7000-8000-${String(id).padStart(12, "0")}`;
+}
+
 /**
  * These rule tests only care about lesson/chapter completion counts, so this
  * helper builds the smallest row shape that still exercises the pure logic.
@@ -18,9 +22,9 @@ function createRow(
   overrides: Partial<PublishedLessonCompletionRow> = {},
 ): PublishedLessonCompletionRow {
   return {
-    chapterId: 1,
+    chapterId: createTestUuid(1),
     completedActivities: 0,
-    lessonId: 1,
+    lessonId: createTestUuid(101),
     totalActivities: 1,
     ...overrides,
   };
@@ -31,10 +35,10 @@ function createRow(
  * Returning the full inferred type keeps the tests aligned with the real
  * function signature without needing database fixtures.
  */
-function createChapters(ids: number[]): Parameters<typeof isCurrentCourseCompleted>[0]["chapters"] {
-  return ids.map((id) => ({
+function createChapters(ids: string[]): Parameters<typeof isCurrentCourseCompleted>[0]["chapters"] {
+  return ids.map((id, index) => ({
     archivedAt: null,
-    courseId: 1,
+    courseId: createTestUuid(900),
     createdAt: new Date(),
     description: `Description ${id}`,
     generationRunId: null,
@@ -45,8 +49,8 @@ function createChapters(ids: number[]): Parameters<typeof isCurrentCourseComplet
     language: "en",
     managementMode: "manual" as const,
     normalizedTitle: `chapter ${id}`,
-    organizationId: `org-${id}`,
-    position: id - 1,
+    organizationId: createTestUuid(901),
+    position: index,
     slug: `chapter-${id}`,
     title: `Chapter ${id}`,
     updatedAt: new Date(),
@@ -73,62 +77,94 @@ describe("durable curriculum completion rules", () => {
   });
 
   test("groupRowsByChapter groups rows by chapter id", () => {
+    const chapter1 = createTestUuid(1);
+    const chapter2 = createTestUuid(2);
+    const lesson10 = createTestUuid(10);
+    const lesson11 = createTestUuid(11);
+    const lesson20 = createTestUuid(20);
     const rows = [
-      createRow({ chapterId: 1, lessonId: 10 }),
-      createRow({ chapterId: 1, lessonId: 11 }),
-      createRow({ chapterId: 2, lessonId: 20 }),
+      createRow({ chapterId: chapter1, lessonId: lesson10 }),
+      createRow({ chapterId: chapter1, lessonId: lesson11 }),
+      createRow({ chapterId: chapter2, lessonId: lesson20 }),
     ];
 
     const grouped = groupRowsByChapter({ rows });
 
-    expect(grouped.get(1)?.map((row) => row.lessonId)).toEqual([10, 11]);
-    expect(grouped.get(2)?.map((row) => row.lessonId)).toEqual([20]);
+    expect(grouped.get(chapter1)?.map((row) => row.lessonId)).toEqual([lesson10, lesson11]);
+    expect(grouped.get(chapter2)?.map((row) => row.lessonId)).toEqual([lesson20]);
   });
 
   test("getLessonRow returns the matching lesson or null", () => {
-    const rows = [createRow({ lessonId: 10 }), createRow({ lessonId: 11 })];
+    const lesson10 = createTestUuid(10);
+    const lesson11 = createTestUuid(11);
+    const missingLesson = createTestUuid(99);
+    const rows = [createRow({ lessonId: lesson10 }), createRow({ lessonId: lesson11 })];
 
-    expect(getLessonRow({ lessonId: 11, rows })?.lessonId).toBe(11);
-    expect(getLessonRow({ lessonId: 99, rows })).toBeNull();
+    expect(getLessonRow({ lessonId: lesson11, rows })?.lessonId).toBe(lesson11);
+    expect(getLessonRow({ lessonId: missingLesson, rows })).toBeNull();
   });
 
   test("getEffectiveDurableLessonIds adds the current lesson only when it is complete", () => {
-    const durableLessonIds = new Set([3]);
+    const durableLessonId = createTestUuid(3);
+    const currentLessonId = createTestUuid(9);
+    const durableLessonIds = new Set([durableLessonId]);
 
     expect(
       getEffectiveDurableLessonIds({
         durableLessonIds,
-        lessonRow: createRow({ completedActivities: 1, lessonId: 9, totalActivities: 1 }),
+        lessonRow: createRow({
+          completedActivities: 1,
+          lessonId: currentLessonId,
+          totalActivities: 1,
+        }),
       }),
-    ).toEqual(new Set([3, 9]));
+    ).toEqual(new Set([durableLessonId, currentLessonId]));
 
     expect(
       getEffectiveDurableLessonIds({
         durableLessonIds,
-        lessonRow: createRow({ completedActivities: 0, lessonId: 9, totalActivities: 1 }),
+        lessonRow: createRow({
+          completedActivities: 0,
+          lessonId: currentLessonId,
+          totalActivities: 1,
+        }),
       }),
     ).toBe(durableLessonIds);
   });
 
   test("isCurrentChapterCompleted accepts direct or durable lesson completion but rejects empty chapters", () => {
+    const chapterId = createTestUuid(1);
+    const lesson10 = createTestUuid(10);
+    const lesson11 = createTestUuid(11);
+    const missingChapterId = createTestUuid(99);
     const rowsByChapter = groupRowsByChapter({
       rows: [
-        createRow({ chapterId: 1, completedActivities: 1, lessonId: 10, totalActivities: 1 }),
-        createRow({ chapterId: 1, completedActivities: 0, lessonId: 11, totalActivities: 2 }),
+        createRow({
+          chapterId,
+          completedActivities: 1,
+          lessonId: lesson10,
+          totalActivities: 1,
+        }),
+        createRow({
+          chapterId,
+          completedActivities: 0,
+          lessonId: lesson11,
+          totalActivities: 2,
+        }),
       ],
     });
 
     expect(
       isCurrentChapterCompleted({
-        chapterId: 1,
-        durableLessonIds: new Set([11]),
+        chapterId,
+        durableLessonIds: new Set([lesson11]),
         rowsByChapter,
       }),
     ).toBe(true);
 
     expect(
       isCurrentChapterCompleted({
-        chapterId: 1,
+        chapterId,
         durableLessonIds: new Set(),
         rowsByChapter,
       }),
@@ -136,7 +172,7 @@ describe("durable curriculum completion rules", () => {
 
     expect(
       isCurrentChapterCompleted({
-        chapterId: 99,
+        chapterId: missingChapterId,
         durableLessonIds: new Set(),
         rowsByChapter,
       }),
@@ -144,19 +180,21 @@ describe("durable curriculum completion rules", () => {
   });
 
   test("getEffectiveDurableChapterIds adds the current chapter only when it is complete", () => {
-    const durableChapterIds = new Set([2]);
+    const durableChapterId = createTestUuid(2);
+    const currentChapterId = createTestUuid(5);
+    const durableChapterIds = new Set([durableChapterId]);
 
     expect(
       getEffectiveDurableChapterIds({
-        chapterId: 5,
+        chapterId: currentChapterId,
         durableChapterIds,
         isChapterCompleted: true,
       }),
-    ).toEqual(new Set([2, 5]));
+    ).toEqual(new Set([durableChapterId, currentChapterId]));
 
     expect(
       getEffectiveDurableChapterIds({
-        chapterId: 5,
+        chapterId: currentChapterId,
         durableChapterIds,
         isChapterCompleted: false,
       }),
@@ -164,17 +202,32 @@ describe("durable curriculum completion rules", () => {
   });
 
   test("isCurrentCourseCompleted requires every chapter to be covered by durable or effective completion", () => {
+    const chapter1 = createTestUuid(1);
+    const chapter2 = createTestUuid(2);
+    const chapter3 = createTestUuid(3);
+    const lesson10 = createTestUuid(10);
+    const lesson20 = createTestUuid(20);
     const rowsByChapter = groupRowsByChapter({
       rows: [
-        createRow({ chapterId: 1, completedActivities: 1, lessonId: 10, totalActivities: 1 }),
-        createRow({ chapterId: 2, completedActivities: 0, lessonId: 20, totalActivities: 2 }),
+        createRow({
+          chapterId: chapter1,
+          completedActivities: 1,
+          lessonId: lesson10,
+          totalActivities: 1,
+        }),
+        createRow({
+          chapterId: chapter2,
+          completedActivities: 0,
+          lessonId: lesson20,
+          totalActivities: 2,
+        }),
       ],
     });
 
     expect(
       isCurrentCourseCompleted({
-        chapters: createChapters([1, 2]),
-        durableChapterIds: new Set([2]),
+        chapters: createChapters([chapter1, chapter2]),
+        durableChapterIds: new Set([chapter2]),
         durableLessonIds: new Set(),
         rowsByChapter,
       }),
@@ -182,8 +235,8 @@ describe("durable curriculum completion rules", () => {
 
     expect(
       isCurrentCourseCompleted({
-        chapters: createChapters([1, 2, 3]),
-        durableChapterIds: new Set([2]),
+        chapters: createChapters([chapter1, chapter2, chapter3]),
+        durableChapterIds: new Set([chapter2]),
         durableLessonIds: new Set(),
         rowsByChapter,
       }),
@@ -200,18 +253,32 @@ describe("durable curriculum completion rules", () => {
   });
 
   test("isCurrentCourseCompleted can finish a course through durable lessons without a chapter badge yet", () => {
+    const chapter1 = createTestUuid(1);
+    const chapter2 = createTestUuid(2);
+    const lesson10 = createTestUuid(10);
+    const lesson20 = createTestUuid(20);
     const rowsByChapter = groupRowsByChapter({
       rows: [
-        createRow({ chapterId: 1, completedActivities: 1, lessonId: 10, totalActivities: 1 }),
-        createRow({ chapterId: 2, completedActivities: 0, lessonId: 20, totalActivities: 2 }),
+        createRow({
+          chapterId: chapter1,
+          completedActivities: 1,
+          lessonId: lesson10,
+          totalActivities: 1,
+        }),
+        createRow({
+          chapterId: chapter2,
+          completedActivities: 0,
+          lessonId: lesson20,
+          totalActivities: 2,
+        }),
       ],
     });
 
     expect(
       isCurrentCourseCompleted({
-        chapters: createChapters([1, 2]),
+        chapters: createChapters([chapter1, chapter2]),
         durableChapterIds: new Set(),
-        durableLessonIds: new Set([20]),
+        durableLessonIds: new Set([lesson20]),
         rowsByChapter,
       }),
     ).toBe(true);

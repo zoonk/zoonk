@@ -24,8 +24,8 @@ vi.mock("workflow", () => ({
 
 describe(getLessonActivitiesStep, () => {
   let organizationId: string;
-  let chapterId: number;
-  let courseId: number;
+  let chapterId: string;
+  let courseId: string;
 
   beforeAll(async () => {
     const organization = await aiOrganizationFixture();
@@ -78,7 +78,7 @@ describe(getLessonActivitiesStep, () => {
     expect(result[0]!.lesson.chapter.id).toBe(chapterId);
     expect(result[0]!.lesson.chapter.course.id).toBe(courseId);
     expect(result[0]!.lesson.chapter.course.organization!.id).toBe(organizationId);
-    expectTypeOf(result[0]!.id).toBeNumber();
+    expectTypeOf(result[0]!.id).toBeString();
     expect(result[0]!.position).toBe(0);
     expect(result[1]!.position).toBe(1);
 

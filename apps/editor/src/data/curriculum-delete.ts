@@ -36,7 +36,7 @@ export async function getCurriculumDeletePlan({
  * create new active curriculum with the original slug without changing DB
  * uniqueness rules.
  */
-export function getArchivedSlug({ id, slug }: { id: number; slug: string }) {
+export function getArchivedSlug({ id, slug }: { id: string; slug: string }) {
   return `${slug}--archived-${id}`;
 }
 

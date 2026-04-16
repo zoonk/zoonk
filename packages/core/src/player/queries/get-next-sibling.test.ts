@@ -7,12 +7,12 @@ import { getNextSibling } from "./get-next-sibling";
 
 describe("getNextSibling - lesson level", () => {
   let orgSlug: string;
-  let courseId: number;
+  let courseId: string;
   let courseSlug: string;
 
-  let chapter1Id: number;
+  let chapter1Id: string;
   let chapter1Position: number;
-  let chapter2Id: number;
+  let chapter2Id: string;
   let chapter2Position: number;
   let chapter2Slug: string;
 
@@ -169,7 +169,7 @@ describe("getNextSibling - lesson level", () => {
 
 describe("getNextSibling - chapter level", () => {
   let orgSlug: string;
-  let courseId: number;
+  let courseId: string;
   let courseSlug: string;
   let chapter2Slug: string;
 

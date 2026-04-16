@@ -17,7 +17,7 @@ export async function ActivityListRow({
   orgSlug,
 }: {
   activity: {
-    id: bigint;
+    id: string;
     kind: string;
     title: string | null;
     description: string | null;
@@ -31,7 +31,7 @@ export async function ActivityListRow({
   const t = await getExtracted();
 
   return (
-    <EditorSortableItem id={Number(activity.id)} key={String(activity.id)}>
+    <EditorSortableItem id={activity.id} key={activity.id}>
       <EditorListItem>
         <EditorSortableItemRow>
           <EditorDragHandle aria-label={t("Drag to reorder")}>{index + 1}</EditorDragHandle>

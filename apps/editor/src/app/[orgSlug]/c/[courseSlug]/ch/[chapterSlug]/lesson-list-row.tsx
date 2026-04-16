@@ -18,7 +18,7 @@ export async function LessonListRow({
   chapterSlug: string;
   courseSlug: string;
   index: number;
-  lesson: { id: number; slug: string; title: string; description: string | null };
+  lesson: { id: string; slug: string; title: string; description: string | null };
   orgSlug: string;
 }) {
   const t = await getExtracted();

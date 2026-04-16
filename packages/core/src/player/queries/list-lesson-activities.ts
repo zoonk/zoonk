@@ -3,7 +3,7 @@ import { type Activity, getPublishedActivityWhere, prisma } from "@zoonk/db";
 import { cache } from "react";
 
 const cachedListLessonActivities = cache(
-  async (lessonId: number): Promise<Activity[]> =>
+  async (lessonId: string): Promise<Activity[]> =>
     prisma.activity.findMany({
       orderBy: { position: "asc" },
       where: getPublishedActivityWhere({
@@ -12,6 +12,6 @@ const cachedListLessonActivities = cache(
     }),
 );
 
-export function listLessonActivities(params: { lessonId: number }): Promise<Activity[]> {
+export function listLessonActivities(params: { lessonId: string }): Promise<Activity[]> {
   return cachedListLessonActivities(params.lessonId);
 }

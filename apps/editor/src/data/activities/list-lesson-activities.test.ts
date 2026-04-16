@@ -153,7 +153,7 @@ describe("admins", () => {
   test("returns empty array when lessonId does not exist", async () => {
     const result = await listLessonActivities({
       headers,
-      lessonId: 999_999_999,
+      lessonId: "00000000-0000-7000-8000-000000000001",
       orgId: organization.id,
     });
 

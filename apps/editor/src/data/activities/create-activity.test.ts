@@ -130,7 +130,7 @@ describe("admins", () => {
     const result = await createActivity({
       headers,
       kind: "custom",
-      lessonId: 999_999,
+      lessonId: "00000000-0000-7000-8000-000000000001",
       position: 0,
     });
 

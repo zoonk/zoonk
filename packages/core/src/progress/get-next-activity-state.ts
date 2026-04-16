@@ -24,20 +24,20 @@ import {
 import { listPublishedLessonProgressRows } from "./_utils/published-lesson-progress-queries";
 
 export type NextActivityState = {
-  activityId: bigint | null;
+  activityId: string | null;
   activityKind: ActivityKind | null;
   activityPosition: number;
   activityTitle: string | null;
   brandSlug: string | null;
   canPrefetch: boolean;
-  chapterId: number;
+  chapterId: string;
   chapterSlug: string;
   completed: boolean;
-  courseId: number;
+  courseId: string;
   courseSlug: string;
   hasStarted: boolean;
   lessonDescription: string;
-  lessonId: number;
+  lessonId: string;
   lessonHasPendingContent: boolean;
   lessonSlug: string;
   lessonTitle: string;
@@ -56,7 +56,7 @@ export async function getNextActivityStateForUser({
 }: {
   after?: NextActivityStateAnchor;
   scope: PublishedLessonProgressScope;
-  userId: string;
+  userId?: string;
 }): Promise<NextActivityState | null> {
   const rows = await listPublishedLessonProgressRows({ scope, userId });
 
@@ -204,7 +204,7 @@ async function buildOpenLessonState({
 }: {
   hasStarted: boolean;
   lesson: EffectiveLessonProgressRow;
-  userId: string;
+  userId?: string;
 }) {
   if (hasPendingLessonContent({ row: lesson })) {
     return toLessonShellState({
@@ -302,20 +302,26 @@ async function findFirstIncompleteActivity({
   lessonId,
   userId,
 }: {
-  lessonId: number;
-  userId: string;
+  lessonId: string;
+  userId?: string;
 }) {
-  return prisma.activity.findFirst({
-    orderBy: { position: "asc" },
-    where: getPublishedActivityWhere({
-      activityWhere: {
-        generationStatus: "completed",
+  const progressFilter = userId
+    ? {
         progress: {
           none: {
             completedAt: { not: null },
             userId,
           },
         },
+      }
+    : {};
+
+  return prisma.activity.findFirst({
+    orderBy: { position: "asc" },
+    where: getPublishedActivityWhere({
+      activityWhere: {
+        generationStatus: "completed",
+        ...progressFilter,
       },
       lessonWhere: { id: lessonId },
     }),

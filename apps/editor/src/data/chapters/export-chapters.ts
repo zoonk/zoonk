@@ -10,7 +10,7 @@ type ExportedChapter = {
   title: string;
 };
 
-export async function exportChapters(params: { courseId: number; headers?: Headers }): Promise<
+export async function exportChapters(params: { courseId: string; headers?: Headers }): Promise<
   SafeReturn<{
     chapters: ExportedChapter[];
     exportedAt: string;

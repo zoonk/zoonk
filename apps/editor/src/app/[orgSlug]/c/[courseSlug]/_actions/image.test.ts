@@ -53,10 +53,10 @@ describe(uploadCourseImageAction, () => {
       error: new Error("forbidden"),
     });
 
-    const result = await uploadCourseImageAction({ courseId: 42 }, createFormData());
+    const result = await uploadCourseImageAction({ courseId: "course-42" }, createFormData());
 
     expect(result).toEqual({ error: "Forbidden" });
-    expect(mocks.getAuthorizedCourse).toHaveBeenCalledWith({ courseId: 42 });
+    expect(mocks.getAuthorizedCourse).toHaveBeenCalledWith({ courseId: "course-42" });
     expect(mocks.processAndUploadImage).not.toHaveBeenCalled();
     expect(mocks.updateCourse).not.toHaveBeenCalled();
     expect(mocks.revalidatePath).not.toHaveBeenCalled();
@@ -65,7 +65,7 @@ describe(uploadCourseImageAction, () => {
   test("derives the upload path from the authorized course record", async () => {
     mocks.getAuthorizedCourse.mockResolvedValue({
       data: {
-        id: 42,
+        id: "course-42",
         organization: { slug: "real-org" },
         slug: "real-course",
       },
@@ -76,11 +76,11 @@ describe(uploadCourseImageAction, () => {
       error: null,
     });
     mocks.updateCourse.mockResolvedValue({
-      data: { id: 42, imageUrl: "https://example.com/course.webp" },
+      data: { id: "course-42", imageUrl: "https://example.com/course.webp" },
       error: null,
     });
 
-    const result = await uploadCourseImageAction({ courseId: 42 }, createFormData());
+    const result = await uploadCourseImageAction({ courseId: "course-42" }, createFormData());
 
     expect(result).toEqual({ error: null });
     expect(mocks.processAndUploadImage).toHaveBeenCalledWith({
@@ -88,7 +88,7 @@ describe(uploadCourseImageAction, () => {
       fileName: "courses/real-org/real-course.webp",
     });
     expect(mocks.updateCourse).toHaveBeenCalledWith({
-      courseId: 42,
+      courseId: "course-42",
       imageUrl: "https://example.com/course.webp",
     });
     expect(mocks.revalidatePath).toHaveBeenCalledWith("/real-org/c/real-course");

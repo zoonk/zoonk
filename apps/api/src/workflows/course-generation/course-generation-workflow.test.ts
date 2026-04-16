@@ -123,7 +123,7 @@ describe(courseGenerationWorkflow, () => {
 
   describe("early returns", () => {
     test("returns when suggestion not found", async () => {
-      const nonExistentId = 999_999_999;
+      const nonExistentId = randomUUID();
 
       await expect(courseGenerationWorkflow(nonExistentId)).rejects.toThrow(
         "Course suggestion not found",

@@ -8,7 +8,7 @@ import { getAuthorizedCourse } from "../courses/get-authorized-course";
  * can be replayed directly and exposes internal duplicate-detection data.
  */
 export async function exportAlternativeTitles(params: {
-  courseId: number;
+  courseId: string;
   headers?: Headers;
 }): Promise<
   SafeReturn<{

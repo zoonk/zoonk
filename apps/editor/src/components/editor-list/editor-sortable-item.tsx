@@ -9,7 +9,7 @@ import {
   type SortableItemContextValue,
 } from "./editor-sortable-item-context";
 
-export function EditorSortableItem({ children, id }: { children: React.ReactNode; id: number }) {
+export function EditorSortableItem({ children, id }: { children: React.ReactNode; id: string }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id,
   });

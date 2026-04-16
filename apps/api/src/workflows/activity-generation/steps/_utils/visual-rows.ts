@@ -7,7 +7,7 @@ type VisualWithStepIndex = { stepIndex: number };
  * (without stepIndex) and the computed position for database insertion.
  */
 type VisualRow<TVisual extends VisualWithStepIndex> = {
-  activityId: bigint | number;
+  activityId: string;
   content: Omit<TVisual, "stepIndex">;
   isPublished: true;
   kind: "visual";
@@ -22,7 +22,7 @@ type JsonValue = string | number | boolean | null | JsonValue[] | { [key: string
  * it's stored as JSON in the database.
  */
 export type VisualStepRow = {
-  activityId: bigint | number;
+  activityId: string;
   content: Record<string, JsonValue>;
   isPublished: true;
   kind: "visual";
@@ -97,7 +97,7 @@ export function buildVisualStepRows({
   activityId,
   visuals,
 }: {
-  activityId: bigint | number;
+  activityId: string;
   visuals: Record<string, unknown>[];
 }): VisualStepRow[] {
   const visualsWithIndex = visuals.map((visual, index) => ({ ...visual, stepIndex: index }));
@@ -117,7 +117,7 @@ function buildVisualRows<TVisual extends VisualWithStepIndex>({
   dbSteps,
   visuals,
 }: {
-  activityId: bigint | number;
+  activityId: string;
   dbSteps: DbStep[];
   visuals: TVisual[];
 }): VisualRow<TVisual>[] | null {

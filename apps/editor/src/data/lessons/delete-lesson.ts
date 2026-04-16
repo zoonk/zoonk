@@ -10,7 +10,7 @@ import { getArchivedSlug, getCurriculumDeletePlan } from "../curriculum-delete";
  * activity and attempt data are not removed by cascading lesson deletes.
  */
 export async function deleteLesson(params: {
-  lessonId: number;
+  lessonId: string;
   headers?: Headers;
 }): Promise<SafeReturn<Lesson>> {
   const { data: lesson, error: findError } = await safeAsync(() =>

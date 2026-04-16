@@ -6,7 +6,7 @@ vi.mock("server-only", () => ({}));
 describe(resolveImportSlug, () => {
   it("preserves explicit slugs even when a record exists", () => {
     const result = resolveImportSlug({
-      existingRecord: { id: 1 },
+      existingRecord: { id: "1" },
       hasExplicitSlug: true,
       index: 0,
       slug: "my-slug",
@@ -30,7 +30,7 @@ describe(resolveImportSlug, () => {
     vi.spyOn(Date, "now").mockReturnValue(1_234_567_890);
 
     const result = resolveImportSlug({
-      existingRecord: { id: 1 },
+      existingRecord: { id: "1" },
       hasExplicitSlug: false,
       index: 3,
       slug: "my-slug",

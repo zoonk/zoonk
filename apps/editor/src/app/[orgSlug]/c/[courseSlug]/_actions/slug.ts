@@ -7,7 +7,7 @@ import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { ensureLocaleSuffix } from "@zoonk/utils/string";
 
 export async function checkCourseSlugExists(params: {
-  courseId?: number;
+  courseId?: string;
   language: string;
   orgSlug: string;
   slug: string;
@@ -26,7 +26,7 @@ export async function updateCourseSlugAction(
   currentSlug: string,
   language: string,
   orgSlug: string,
-  courseId: number,
+  courseId: string,
   data: { slug: string },
 ): Promise<{ error: string | null; newSlug?: string }> {
   const isAiOrg = orgSlug === AI_ORG_SLUG;

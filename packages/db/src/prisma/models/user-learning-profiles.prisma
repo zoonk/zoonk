@@ -1,6 +1,6 @@
 model UserLearningProfile {
-  id           Int      @id @default(autoincrement())
-  userId       String   @unique @map("user_id")
+  id           String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId       String   @unique @map("user_id") @db.Uuid
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   interests    Json?
   preferences  Json?

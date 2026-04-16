@@ -7,7 +7,7 @@ import { prisma } from "@zoonk/db";
  * the published learner-facing activities untouched. Regeneration is already
  * serialized at the lesson level, so we do not need a workflow run id here.
  */
-export async function cleanupRegeneratedActivitiesStep(input: { lessonId: number }): Promise<void> {
+export async function cleanupRegeneratedActivitiesStep(input: { lessonId: string }): Promise<void> {
   "use step";
 
   await prisma.activity.deleteMany({

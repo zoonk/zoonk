@@ -1,48 +1,34 @@
 import { z } from "zod";
 
+const uuidParam = (description: string) => z.uuid().meta({ description });
+
 export const courseGenerationTriggerSchema = z
   .object({
-    courseSuggestionId: z
-      .number()
-      .int()
-      .positive()
-      .meta({ description: "Course suggestion ID to generate from" }),
+    courseSuggestionId: uuidParam("Course suggestion ID to generate from"),
   })
   .meta({ id: "CourseGenerationTrigger" });
 
 export const chapterGenerationTriggerSchema = z
   .object({
-    chapterId: z
-      .number()
-      .int()
-      .positive()
-      .meta({ description: "Chapter ID to generate content for" }),
+    chapterId: uuidParam("Chapter ID to generate content for"),
   })
   .meta({ id: "ChapterGenerationTrigger" });
 
 export const lessonGenerationTriggerSchema = z
   .object({
-    lessonId: z
-      .number()
-      .int()
-      .positive()
-      .meta({ description: "Lesson ID to generate activities for" }),
+    lessonId: uuidParam("Lesson ID to generate activities for"),
   })
   .meta({ id: "LessonGenerationTrigger" });
 
 export const activityGenerationTriggerSchema = z
   .object({
-    lessonId: z
-      .number()
-      .int()
-      .positive()
-      .meta({ description: "Lesson ID to generate activities for" }),
+    lessonId: uuidParam("Lesson ID to generate activities for"),
   })
   .meta({ id: "ActivityGenerationTrigger" });
 
 export const lessonPreloadTriggerSchema = z
   .object({
-    lessonId: z.number().int().positive().meta({ description: "Lesson ID to preload content for" }),
+    lessonId: uuidParam("Lesson ID to preload content for"),
   })
   .meta({ id: "LessonPreloadTrigger" });
 

@@ -62,7 +62,7 @@ describe(saveCustomActivityStep, () => {
       title: `Custom ${randomUUID()}`,
     });
 
-    const activityId = Number(customActivity.id);
+    const activityId = customActivity.id;
 
     const contentSteps = [
       { text: `First step text ${id}`, title: `First title ${id}` },
@@ -126,7 +126,7 @@ describe(saveCustomActivityStep, () => {
   });
 
   test("streams error when DB transaction fails", async () => {
-    const invalidActivityId = 999_999_999;
+    const invalidActivityId = randomUUID();
 
     await saveCustomActivityStep({
       activityId: invalidActivityId,

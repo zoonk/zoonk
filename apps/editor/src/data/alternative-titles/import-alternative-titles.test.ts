@@ -93,7 +93,7 @@ describe(importAlternativeTitles, () => {
     const headers = await signInAs(user.email, user.password);
 
     const result = await importAlternativeTitles({
-      courseId: 999_999,
+      courseId: "00000000-0000-7000-8000-000000000001",
       file,
       headers,
       language: "en",

@@ -73,8 +73,8 @@ export async function FlaggedList({
           <TableBody>
             {items.map((item) => (
               <FlaggedRow
-                key={item.id.toString()}
-                entityId={item.entityId.toString()}
+                key={item.id}
+                entityId={item.entityId}
                 flaggedBy={item.user.name}
                 flaggedAt={item.reviewedAt.toLocaleDateString()}
                 taskPath={taskPath}

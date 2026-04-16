@@ -7,7 +7,7 @@ import { cache } from "react";
 
 const cachedListChapterLessons = cache(
   async (
-    chapterId: number,
+    chapterId: string,
     orgId: string | null,
     headers?: Headers,
   ): Promise<{ data: Lesson[]; error: Error | null }> => {
@@ -46,7 +46,7 @@ const cachedListChapterLessons = cache(
 );
 
 export function listChapterLessons(params: {
-  chapterId: number;
+  chapterId: string;
   headers?: Headers;
   orgId: string | null;
 }): Promise<{ data: Lesson[]; error: Error | null }> {

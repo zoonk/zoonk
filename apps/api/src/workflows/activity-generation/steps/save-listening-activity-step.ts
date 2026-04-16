@@ -14,7 +14,7 @@ import { handleActivityFailureStep } from "./handle-failure-step";
  */
 async function fetchReadingSourceSteps(
   activities: LessonActivity[],
-): Promise<{ position: number; sentenceId: bigint | null }[] | null> {
+): Promise<{ position: number; sentenceId: string | null }[] | null> {
   const reading = findActivityByKind(activities, "reading");
 
   if (!reading) {
@@ -49,8 +49,8 @@ async function fetchReadingSourceSteps(
  * Returns true on success, false on failure.
  */
 async function createListeningStepsAndComplete(params: {
-  listeningId: number;
-  readingSteps: { position: number; sentenceId: bigint | null }[];
+  listeningId: string;
+  readingSteps: { position: number; sentenceId: string | null }[];
   workflowRunId: string;
 }): Promise<boolean> {
   const { error } = await safeAsync(() =>

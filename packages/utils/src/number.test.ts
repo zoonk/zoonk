@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { formatPosition, parseBigIntId, parseNumericId, validateOffset } from "./number";
+import { formatPosition, parseNumericId, validateOffset } from "./number";
 
 describe(validateOffset, () => {
   test("parses valid positive integer", () => {
@@ -77,44 +77,6 @@ describe(parseNumericId, () => {
     expect(parseNumericId(3.7)).toBeNull();
     expect(parseNumericId(null)).toBeNull();
     expect(parseNumericId()).toBeNull();
-  });
-});
-
-describe(parseBigIntId, () => {
-  test("parses valid numeric strings as BigInt", () => {
-    expect(parseBigIntId("123")).toBe(BigInt(123));
-    expect(parseBigIntId("0")).toBe(BigInt(0));
-    expect(parseBigIntId("999999")).toBe(BigInt(999_999));
-  });
-
-  test("parses large numbers that exceed Number.MAX_SAFE_INTEGER", () => {
-    const largeNum = "9007199254740993";
-    expect(parseBigIntId(largeNum)).toBe(BigInt(largeNum));
-  });
-
-  test("returns null for strings with letters", () => {
-    expect(parseBigIntId("123abc")).toBeNull();
-    expect(parseBigIntId("abc123")).toBeNull();
-    expect(parseBigIntId("1a2b3c")).toBeNull();
-  });
-
-  test("returns null for strings with special characters", () => {
-    expect(parseBigIntId("123.45")).toBeNull();
-    expect(parseBigIntId("123-45")).toBeNull();
-    expect(parseBigIntId("123_45")).toBeNull();
-    expect(parseBigIntId("+123")).toBeNull();
-    expect(parseBigIntId("-123")).toBeNull();
-  });
-
-  test("returns null for strings with whitespace", () => {
-    expect(parseBigIntId(" 123")).toBeNull();
-    expect(parseBigIntId("123 ")).toBeNull();
-    expect(parseBigIntId(" 123 ")).toBeNull();
-    expect(parseBigIntId("12 34")).toBeNull();
-  });
-
-  test("returns null for empty string", () => {
-    expect(parseBigIntId("")).toBeNull();
   });
 });
 

@@ -34,13 +34,13 @@ export function GenerationClient({
   lessonSlug,
   position,
 }: {
-  activityId: number;
+  activityId: string;
   activityKind: ActivityKind;
   chapterSlug: string;
   courseSlug: string;
   generationRunId: string | null;
   initialStatus: GenerationStatus;
-  lessonId: number;
+  lessonId: string;
   lessonSlug: string;
   position: number;
 }) {

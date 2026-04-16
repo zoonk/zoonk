@@ -10,7 +10,7 @@ import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
 
 type StoryContentResult = {
-  activityId: number | null;
+  activityId: string | null;
   storySteps: ActivityStoryStepsSchema | null;
 };
 

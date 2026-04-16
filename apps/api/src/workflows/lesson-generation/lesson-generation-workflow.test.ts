@@ -224,7 +224,7 @@ describe(lessonGenerationWorkflow, () => {
     });
 
     test("throws FatalError when lesson not found", async () => {
-      const nonExistentId = 999_999_999;
+      const nonExistentId = randomUUID();
 
       await expect(lessonGenerationWorkflow(nonExistentId)).rejects.toThrow("Lesson not found");
     });

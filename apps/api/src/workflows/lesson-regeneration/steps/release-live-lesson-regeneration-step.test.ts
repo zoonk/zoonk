@@ -8,7 +8,7 @@ import { beforeAll, describe, expect, test } from "vitest";
 import { releaseLiveLessonRegenerationStep } from "./release-live-lesson-regeneration-step";
 
 describe(releaseLiveLessonRegenerationStep, () => {
-  let chapterId: number;
+  let chapterId: string;
   let organizationId: string;
 
   beforeAll(async () => {

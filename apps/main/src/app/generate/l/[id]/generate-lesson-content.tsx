@@ -12,7 +12,6 @@ import {
   ContainerTitle,
 } from "@zoonk/ui/components/container";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { parseNumericId } from "@zoonk/utils/number";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { getExtracted } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -20,13 +19,7 @@ import { GenerationClient } from "./generation-client";
 
 export async function GenerateLessonContent({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const lessonId = parseNumericId(id);
-
-  if (lessonId === null) {
-    notFound();
-  }
-
-  const [session, lesson] = await Promise.all([getSession(), getLessonForGeneration(lessonId)]);
+  const [session, lesson] = await Promise.all([getSession(), getLessonForGeneration(id)]);
 
   if (!lesson) {
     notFound();
@@ -65,7 +58,7 @@ export async function GenerateLessonContent({ params }: { params: Promise<{ id: 
             courseSlug={lesson.chapter.course.slug}
             generationRunId={lesson.generationRunId}
             initialStatus={initialStatus}
-            lessonId={lessonId}
+            lessonId={id}
             lessonSlug={lesson.slug}
           />
         </SubscriptionGate>

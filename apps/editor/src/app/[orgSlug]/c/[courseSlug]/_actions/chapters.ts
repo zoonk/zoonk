@@ -12,7 +12,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 async function createChapterAction(
-  courseId: number,
+  courseId: string,
   position: number,
 ): Promise<{ error: string | null; slug?: string }> {
   const t = await getExtracted();
@@ -36,7 +36,7 @@ async function createChapterAction(
 }
 
 async function importChaptersAction(
-  courseId: number,
+  courseId: string,
   formData: FormData,
 ): Promise<{ error: string | null }> {
   const file = formData.get("file");
@@ -61,7 +61,7 @@ async function importChaptersAction(
   return { error: null };
 }
 
-export async function exportChaptersAction(courseId: number): Promise<{
+export async function exportChaptersAction(courseId: string): Promise<{
   data: object | null;
   error: Error | null;
 }> {
@@ -75,7 +75,7 @@ export async function exportChaptersAction(courseId: number): Promise<{
 }
 
 type CourseActionParams = {
-  courseId: number;
+  courseId: string;
 };
 
 /**
@@ -83,7 +83,7 @@ type CourseActionParams = {
  * this helper resolves the canonical route on the server before we revalidate or
  * redirect instead of trusting route params captured at render time.
  */
-async function getAuthorizedCoursePagePath(courseId: number): Promise<
+async function getAuthorizedCoursePagePath(courseId: string): Promise<
   | {
       error: string;
       path: null;
@@ -164,7 +164,7 @@ export async function handleImportChaptersAction(
 
 export async function reorderChaptersAction(
   params: CourseActionParams,
-  chapters: { id: number; position: number }[],
+  chapters: { id: string; position: number }[],
 ): Promise<{ error: string | null }> {
   const { courseId } = params;
   const coursePage = await getAuthorizedCoursePagePath(courseId);

@@ -23,7 +23,7 @@ export async function generateInvestigationFindingsStep({
   language,
   scenario,
 }: {
-  activityId: number;
+  activityId: string;
   accuracy: ActivityInvestigationAccuracySchema;
   actions: ActivityInvestigationActionsSchema;
   language: string;

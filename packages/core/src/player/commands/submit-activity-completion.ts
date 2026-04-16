@@ -10,7 +10,7 @@ import { syncDurableCurriculumCompletion } from "./_utils/durable-curriculum-com
 const MAX_LOCAL_DATE_DRIFT_MS = 2 * MS_PER_DAY;
 
 export async function submitActivityCompletion(input: {
-  activityId: bigint;
+  activityId: string;
   durationSeconds: number;
   localDate: string;
   score: ScoreResult;
@@ -22,7 +22,7 @@ export async function submitActivityCompletion(input: {
     durationSeconds: number;
     hourOfDay: number;
     isCorrect: boolean;
-    stepId: bigint;
+    stepId: string;
   }[];
   userId: string;
 }): Promise<{

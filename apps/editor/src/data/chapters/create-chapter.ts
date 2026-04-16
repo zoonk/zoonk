@@ -6,7 +6,7 @@ import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { normalizeString, toSlug } from "@zoonk/utils/string";
 
 export async function createChapter(params: {
-  courseId: number;
+  courseId: string;
   description: string;
   headers?: Headers;
   position: number;

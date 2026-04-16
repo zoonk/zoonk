@@ -2,16 +2,16 @@ import "server-only";
 import { getPublishedActivityWhere, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 
-export type ActivityScope = { courseId: number } | { chapterId: number } | { lessonId: number };
+export type ActivityScope = { courseId: string } | { chapterId: string } | { lessonId: string };
 
 type LastCompletedActivity = {
   activityPosition: number;
-  chapterId: number;
+  chapterId: string;
   chapterPosition: number;
   chapterSlug: string;
-  courseId: number;
+  courseId: string;
   courseSlug: string;
-  lessonId: number;
+  lessonId: string;
   lessonPosition: number;
   lessonSlug: string;
   orgSlug: string | null;

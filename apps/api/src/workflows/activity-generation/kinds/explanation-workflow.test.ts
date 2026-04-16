@@ -564,7 +564,7 @@ describe("explanation activity workflow", () => {
       });
 
       const streamedMessages = getStreamedMessages();
-      const activityIds = new Set([Number(expA.id), Number(expB.id)]);
+      const activityIds = new Set([expA.id, expB.id]);
 
       // Per-entity steps must include entityId matching one of the activity IDs
       const perEntitySteps = [
@@ -579,7 +579,7 @@ describe("explanation activity workflow", () => {
 
         for (const msg of stepMessages) {
           expect(msg.entityId).toBeDefined();
-          expect(activityIds.has(Number(msg.entityId))).toBe(true);
+          expect(activityIds.has(msg.entityId!)).toBe(true);
         }
       }
 
@@ -919,7 +919,7 @@ describe("explanation activity workflow", () => {
       const constraintName = `prevent_completion_${randomUUID().replaceAll("-", "")}`;
 
       await prisma.$executeRawUnsafe(
-        `ALTER TABLE activities ADD CONSTRAINT ${constraintName} CHECK (NOT (id = ${String(activity.id)} AND generation_status = 'completed'))`,
+        `ALTER TABLE activities ADD CONSTRAINT ${constraintName} CHECK (NOT (id = '${activity.id}' AND generation_status = 'completed'))`,
       );
 
       try {

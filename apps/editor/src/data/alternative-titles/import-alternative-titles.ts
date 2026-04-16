@@ -27,7 +27,7 @@ function validateImportData(data: unknown): data is {
 }
 
 export async function importAlternativeTitles(params: {
-  courseId: number;
+  courseId: string;
   file: File;
   headers?: Headers;
   language: string;

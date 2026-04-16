@@ -143,7 +143,7 @@ describe(addActivitiesStep, () => {
   test("streams error and throws when DB save fails", async () => {
     const brokenContext: LessonContext = {
       ...context,
-      id: 999_999_999,
+      id: randomUUID(),
     };
 
     await expect(

@@ -87,17 +87,17 @@ async function confirmDelete(page: Page) {
   await getConfirmDeleteButton(page).click();
 }
 
-async function verifyCourseDeleted(courseId: number) {
+async function verifyCourseDeleted(courseId: string) {
   const course = await prisma.course.findUnique({ where: { id: courseId } });
   expect(course).toBeNull();
 }
 
-async function verifyCourseExists(courseId: number) {
+async function verifyCourseExists(courseId: string) {
   const course = await prisma.course.findUnique({ where: { id: courseId } });
   expect(course).not.toBeNull();
 }
 
-async function verifyCourseArchived(courseId: number) {
+async function verifyCourseArchived(courseId: string) {
   const course = await prisma.course.findUnique({ where: { id: courseId } });
   expect(course).not.toBeNull();
   expect(course?.archivedAt).not.toBeNull();

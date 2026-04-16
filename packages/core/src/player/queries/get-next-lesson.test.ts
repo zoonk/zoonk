@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
@@ -8,18 +9,18 @@ import { getNextLesson } from "./get-next-lesson";
 
 describe(getNextLesson, () => {
   let orgId: string;
-  let courseId: number;
+  let courseId: string;
 
-  let chapter1Id: number;
-  let chapter2Id: number;
+  let chapter1Id: string;
+  let chapter2Id: string;
 
-  let lesson1Id: number;
-  let lesson2Id: number;
-  let lesson3Id: number;
+  let lesson1Id: string;
+  let lesson2Id: string;
+  let lesson3Id: string;
 
-  let activity1Id: bigint;
-  let activity2Id: bigint;
-  let activity3Id: bigint;
+  let activity1Id: string;
+  let activity2Id: string;
+  let activity3Id: string;
 
   beforeAll(async () => {
     const org = await organizationFixture({ kind: "brand" });
@@ -105,7 +106,7 @@ describe(getNextLesson, () => {
   });
 
   test("returns null for non-existent activity", async () => {
-    const result = await getNextLesson(BigInt(999_999_999));
+    const result = await getNextLesson(randomUUID());
     expect(result).toBeNull();
   });
 

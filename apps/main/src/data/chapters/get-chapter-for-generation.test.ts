@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
@@ -65,7 +66,12 @@ describe(getChapterForGeneration, () => {
   });
 
   test("returns null for non-existent chapter", async () => {
-    const result = await getChapterForGeneration(999_999);
+    const result = await getChapterForGeneration(randomUUID());
+    expect(result).toBeNull();
+  });
+
+  test("returns null for malformed chapter ids", async () => {
+    const result = await getChapterForGeneration("invalid-id");
     expect(result).toBeNull();
   });
 

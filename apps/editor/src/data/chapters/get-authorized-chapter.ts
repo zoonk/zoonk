@@ -6,7 +6,7 @@ import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
 
 const cachedGetAuthorizedActiveChapter = cache(
-  async (chapterId: number, headers?: Headers): Promise<SafeReturn<Chapter>> => {
+  async (chapterId: string, headers?: Headers): Promise<SafeReturn<Chapter>> => {
     const { data: chapter, error: findError } = await safeAsync(() =>
       prisma.chapter.findFirst({
         where: getActiveChapterWhere({
@@ -44,7 +44,7 @@ const cachedGetAuthorizedActiveChapter = cache(
  * React cache deduplicates repeated authorized chapter reads in the same request.
  */
 export function getAuthorizedActiveChapter(params: {
-  chapterId: number;
+  chapterId: string;
   headers?: Headers;
 }): Promise<SafeReturn<Chapter>> {
   return cachedGetAuthorizedActiveChapter(params.chapterId, params.headers);

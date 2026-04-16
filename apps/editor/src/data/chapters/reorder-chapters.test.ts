@@ -108,7 +108,7 @@ describe("admins", () => {
   test("returns Course not found", async () => {
     const result = await reorderChapters({
       chapters: [],
-      courseId: 999_999,
+      courseId: "00000000-0000-7000-8000-000000000001",
       headers,
     });
 
@@ -172,7 +172,7 @@ describe("admins", () => {
     const result = await reorderChapters({
       chapters: [
         { chapterId: chapter.id, position: expectedPosition },
-        { chapterId: 999_999, position: 0 },
+        { chapterId: "00000000-0000-7000-8000-000000000001", position: 0 },
       ],
       courseId: newCourse.id,
       headers,

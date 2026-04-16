@@ -120,7 +120,7 @@ describe(saveStoryActivityStep, () => {
     });
 
     await saveStoryActivityStep({
-      activityId: Number(activity.id),
+      activityId: activity.id,
       debriefData,
       storySteps,
       workflowRunId: "workflow-1",
@@ -208,7 +208,7 @@ describe(saveStoryActivityStep, () => {
     await prisma.activity.delete({ where: { id: activity.id } });
 
     await saveStoryActivityStep({
-      activityId: Number(activity.id),
+      activityId: activity.id,
       debriefData,
       storySteps,
       workflowRunId: "workflow-error",

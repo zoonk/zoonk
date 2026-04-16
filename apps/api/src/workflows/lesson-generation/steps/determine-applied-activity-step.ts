@@ -14,7 +14,7 @@ const MAX_RECENT_KINDS = 5;
  * so it can avoid repeating the same kind when the topic is ambiguous.
  */
 async function getRecentAppliedKinds(
-  chapterId: number,
+  chapterId: string,
   currentPosition: number,
 ): Promise<string[]> {
   const previousActivities = await prisma.activity.findMany({

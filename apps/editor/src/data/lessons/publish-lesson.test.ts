@@ -121,7 +121,7 @@ describe("admins", () => {
     const result = await toggleLessonPublished({
       headers,
       isPublished: true,
-      lessonId: 999_999,
+      lessonId: "00000000-0000-7000-8000-000000000001",
     });
 
     expect(result.error?.message).toBe(ErrorCode.lessonNotFound);

@@ -6,7 +6,7 @@ import { type LessonActivity } from "./get-lesson-activities-step";
 
 const NEIGHBOR_RANGE = 3;
 
-async function getNeighboringConcepts(chapterId: number, position: number): Promise<string[]> {
+async function getNeighboringConcepts(chapterId: string, position: number): Promise<string[]> {
   const neighbors = await prisma.lesson.findMany({
     orderBy: { position: "asc" },
     select: { concepts: true },

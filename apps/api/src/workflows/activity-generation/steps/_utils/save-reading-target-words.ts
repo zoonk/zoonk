@@ -23,7 +23,7 @@ export type WordMetadataEntry = {
  */
 export async function saveReadingTargetWords(params: {
   distractors: Record<string, string[]>;
-  lessonId: number;
+  lessonId: string;
   organizationId: string;
   pronunciations: Record<string, string>;
   sentences: ReadingSentence[];
@@ -139,7 +139,7 @@ function getRomanizationUpdate(metadata: WordMetadataEntry | undefined): {
  */
 async function saveCanonicalSentenceWord(params: {
   existingCasing: Record<string, string>;
-  lessonId: number;
+  lessonId: string;
   organizationId: string;
   pronunciations: Record<string, string>;
   targetLanguage: string;

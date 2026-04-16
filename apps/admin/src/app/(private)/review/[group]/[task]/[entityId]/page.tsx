@@ -19,7 +19,6 @@ import {
   ContainerHeaderGroup,
 } from "@zoonk/ui/components/container";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { parseBigIntId } from "@zoonk/utils/number";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
@@ -66,16 +65,10 @@ function ContentSkeleton() {
 export default async function FlaggedItemPage({
   params,
 }: PageProps<"/review/[group]/[task]/[entityId]">) {
-  const { group, task, entityId: rawEntityId } = await params;
+  const { group, task, entityId } = await params;
   const taskType = resolveTaskType(group, task);
 
   if (!taskType) {
-    notFound();
-  }
-
-  const entityId = parseBigIntId(rawEntityId);
-
-  if (!entityId) {
     notFound();
   }
 
@@ -83,7 +76,7 @@ export default async function FlaggedItemPage({
     <Container>
       <ContainerHeader variant="sidebar">
         <ContainerHeaderGroup>
-          <FlaggedItemBreadcrumb taskType={taskType} entityId={entityId.toString()} />
+          <FlaggedItemBreadcrumb taskType={taskType} entityId={entityId} />
         </ContainerHeaderGroup>
       </ContainerHeader>
 
@@ -92,7 +85,7 @@ export default async function FlaggedItemPage({
           <FlaggedItemContent taskType={taskType} entityId={entityId} />
         </Suspense>
 
-        <FlaggedItemActions taskType={taskType} entityId={entityId.toString()} />
+        <FlaggedItemActions taskType={taskType} entityId={entityId} />
       </ContainerBody>
     </Container>
   );

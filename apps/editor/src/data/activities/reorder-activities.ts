@@ -6,10 +6,10 @@ import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
 
 export async function reorderActivities(params: {
   activities: {
-    activityId: bigint;
+    activityId: string;
     position: number;
   }[];
-  lessonId: number;
+  lessonId: string;
   headers?: Headers;
 }): Promise<SafeReturn<{ updated: number }>> {
   const { data: lesson, error: findError } = await safeAsync(() =>

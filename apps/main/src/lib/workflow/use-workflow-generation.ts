@@ -18,7 +18,7 @@ const MAX_STREAM_RECONNECTS = 5;
 export function useWorkflowGeneration<TStep extends string = string>(config: {
   autoTrigger?: boolean;
   completionStep?: TStep;
-  entityId?: number;
+  entityId?: string;
   initialRunId?: string | null;
   initialStatus?: GenerationStatus;
   statusUrl: string;

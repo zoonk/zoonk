@@ -8,7 +8,7 @@ import { type ActivitySteps, parseActivitySteps } from "./get-activity-steps";
  * (e.g., practice/quiz need explanation steps). Instead of re-generating,
  * we read what was already persisted.
  */
-export async function getExistingContentSteps(activityId: bigint | number): Promise<ActivitySteps> {
+export async function getExistingContentSteps(activityId: string): Promise<ActivitySteps> {
   "use step";
   const { data: existingSteps } = await safeAsync(() =>
     prisma.step.findMany({

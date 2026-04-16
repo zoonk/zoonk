@@ -194,7 +194,7 @@ describe(generateStoryContentStep, () => {
 
     expect(events).toContainEqual(
       expect.objectContaining({
-        entityId: Number(dbActivity.id),
+        entityId: dbActivity.id,
         status: "error",
         step: "generateStoryContent",
       }),
@@ -232,7 +232,7 @@ describe(generateStoryContentStep, () => {
 
     expect(events).toContainEqual(
       expect.objectContaining({
-        entityId: Number(dbActivity.id),
+        entityId: dbActivity.id,
         status: "error",
         step: "generateStoryContent",
       }),

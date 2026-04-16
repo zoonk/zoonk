@@ -6,9 +6,9 @@ import { getNextActivity } from "@zoonk/core/progress/next-activity";
 import { NextResponse } from "next/server";
 
 function getScope(params: {
-  chapterId?: number;
-  courseId?: number;
-  lessonId?: number;
+  chapterId?: string;
+  courseId?: string;
+  lessonId?: string;
 }): ActivityScope {
   if (params.courseId) {
     return { courseId: params.courseId };
@@ -18,7 +18,7 @@ function getScope(params: {
     return { chapterId: params.chapterId };
   }
 
-  return { lessonId: params.lessonId ?? 0 };
+  return { lessonId: params.lessonId ?? "" };
 }
 
 export async function GET(request: Request) {

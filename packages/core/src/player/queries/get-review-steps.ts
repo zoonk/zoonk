@@ -6,7 +6,7 @@ const REVIEW_TARGET_COUNT = 10;
 const EXCLUDED_ACTIVITY_KINDS: ActivityKind[] = ["review"];
 const NON_REVIEWABLE_STEP_KINDS: StepKind[] = ["investigation", "static", "story", "visual"];
 
-function reviewableStepFilter(lessonId: number) {
+function reviewableStepFilter(lessonId: string) {
   return getPublishedStepWhere({
     activityWhere: { kind: { notIn: EXCLUDED_ACTIVITY_KINDS } },
     lessonWhere: { id: lessonId },
@@ -30,7 +30,7 @@ export async function getReviewSteps({
   lessonId,
   userId,
 }: {
-  lessonId: number;
+  lessonId: string;
   userId: string | null;
 }) {
   const lessonStepFilter = reviewableStepFilter(lessonId);
@@ -93,7 +93,7 @@ export async function getReviewSteps({
  * Only returns steps that are eligible for review — excludes
  * steps from review activities and static steps.
  */
-export async function getReviewValidationSteps(params: { lessonId: number; stepIds: bigint[] }) {
+export async function getReviewValidationSteps(params: { lessonId: string; stepIds: string[] }) {
   return prisma.step.findMany({
     include: { sentence: true, word: true },
     where: { ...reviewableStepFilter(params.lessonId), id: { in: params.stepIds } },

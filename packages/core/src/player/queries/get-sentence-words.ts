@@ -3,7 +3,7 @@ import { prisma } from "@zoonk/db";
 import { extractUniqueSentenceWords } from "@zoonk/utils/string";
 import { cache } from "react";
 
-const cachedGetSentenceWords = cache(async (lessonId: number) => {
+const cachedGetSentenceWords = cache(async (lessonId: string) => {
   const lessonSentences = await prisma.lessonSentence.findMany({
     include: { sentence: true },
     where: { lessonId },
@@ -46,6 +46,6 @@ const cachedGetSentenceWords = cache(async (lessonId: number) => {
  * Word table with text matching. This keeps the return type consistent
  * with getLessonWords, which prepareActivityData also consumes.
  */
-export function getSentenceWords(params: { lessonId: number }) {
+export function getSentenceWords(params: { lessonId: string }) {
   return cachedGetSentenceWords(params.lessonId);
 }

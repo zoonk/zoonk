@@ -39,9 +39,6 @@
   - [Prerequisites](#prerequisites)
   - [Installation](#installation)
   - [Local Development](#local-development)
-- [Overview](#overview)
-  - [Apps](#apps)
-  - [Packages](#packages)
 - [Translations](#translations)
 - [Remote Caching](#remote-caching)
 - [Supporters](#supporters)
@@ -52,7 +49,7 @@
 
 - Node.js v24
 - pnpm v10
-- PostgreSQL v17
+- PostgreSQL v18
 
 We recommend using [mise](https://mise.jdx.dev/) to manage your Node.js and pnpm versions.
 
@@ -71,31 +68,6 @@ We recommend using [mise](https://mise.jdx.dev/) to manage your Node.js and pnpm
 - `pnpm knip --production` to check for unused code
 - `pnpm test` to run tests with Vitest
 - `pnpm e2e` to run end-to-end tests with Playwright
-
-## Overview
-
-### Apps
-
-- [main](./apps/main): Public web app (`zoonk.com`)
-- [admin](./apps/admin): Dashboard for managing users and organizations (`admin.zoonk.com`)
-- [api](./apps/api): Centralized API and authentication UI (`api.zoonk.com`)
-- [editor](./apps/editor): Visual editor for building courses and activities (`editor.zoonk.com`)
-- [evals](./apps/evals): Local-only tool for evaluating AI-generated content
-
-### Packages
-
-- [ai](./packages/ai): AI prompts, tasks, and helpers for content generation
-- [auth](./packages/auth): Shared Better Auth setup and plugins
-- [core](./packages/core): Shared server utilities
-- [db](./packages/db): Prisma schema and client
-- [e2e](./packages/e2e): Shared Playwright config and test fixtures
-- [oxlint-plugin](./packages/oxlint-plugin): Custom oxlint rules
-- [mailer](./packages/mailer): Email-sending utilities
-- [next](./packages/next): Shared Next.js utilities
-- [testing](./packages/testing): Shared testing utilities
-- [tsconfig](./packages/tsconfig): Shared TypeScript config
-- [ui](./packages/ui): Shared React components, patterns, hooks, and styles
-- [utils](./packages/utils): Shared utilities and helpers
 
 ## i18n
 

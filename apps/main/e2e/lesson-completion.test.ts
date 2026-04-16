@@ -41,7 +41,7 @@ async function createAuthenticatedPage(browser: Browser, baseURL: string, email:
   return { browserContext, page };
 }
 
-async function createQuizActivity(lessonId: number, orgId: string, uniqueId: string) {
+async function createQuizActivity(lessonId: string, orgId: string, uniqueId: string) {
   const activity = await activityFixture({
     generationStatus: "completed",
     isPublished: true,

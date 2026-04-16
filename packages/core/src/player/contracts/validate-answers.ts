@@ -20,12 +20,12 @@ import { type SelectedAnswer } from "./completion-input-schema";
  * by listening validation.
  */
 type StepData = {
-  id: bigint;
+  id: string;
   kind: string;
   content: unknown;
-  word?: { id: bigint } | null;
+  word?: { id: string } | null;
   sentence?: {
-    id: bigint;
+    id: string;
     sentence: string;
     translation: string;
   } | null;
@@ -34,7 +34,7 @@ type StepData = {
 type ValidatedStepResult = {
   answer: object;
   isCorrect: boolean;
-  stepId: bigint;
+  stepId: string;
 };
 
 type ServerValidationBehavior =
@@ -154,7 +154,7 @@ function validateTranslation(step: StepData, answer: SelectedAnswer): ValidatedS
     return null;
   }
 
-  const result = checkTranslationAnswer(String(step.word.id), answer.selectedWordId);
+  const result = checkTranslationAnswer(step.word.id, answer.selectedWordId);
   return { answer, isCorrect: result.isCorrect, stepId: step.id };
 }
 
@@ -247,7 +247,7 @@ export function validateAnswers(
   clientAnswers: Record<string, SelectedAnswer>,
 ): ValidatedStepResult[] {
   return steps.flatMap((step) => {
-    const answer = clientAnswers[String(step.id)];
+    const answer = clientAnswers[step.id];
 
     if (!answer) {
       return [];

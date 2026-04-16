@@ -4,11 +4,17 @@ This package contains all schemas the DB client for interacting with our databas
 
 ### PostgreSQL Setup
 
-For macOS users, you can install PostgreSQL using Homebrew:
+For macOS users, install PostgreSQL 18 using Homebrew:
 
 ```bash
-brew install postgresql
-brew services start postgresql
+brew install postgresql@18
+brew services start postgresql@18
+```
+
+If `createdb` or `psql` are not available after installation, add PostgreSQL 18 to your shell `PATH`:
+
+```bash
+export PATH="$(brew --prefix postgresql@18)/bin:$PATH"
 ```
 
 Then, create a new database:

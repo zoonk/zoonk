@@ -6,7 +6,7 @@ import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { normalizeString, toSlug } from "@zoonk/utils/string";
 
 export async function updateLesson(params: {
-  lessonId: number;
+  lessonId: string;
   description?: string;
   headers?: Headers;
   slug?: string;

@@ -250,7 +250,7 @@ describe(chapterGenerationWorkflow, () => {
     });
 
     test("throws FatalError when chapter not found", async () => {
-      const nonExistentId = 999_999_999;
+      const nonExistentId = randomUUID();
 
       await expect(chapterGenerationWorkflow(nonExistentId)).rejects.toThrow("Chapter not found");
     });

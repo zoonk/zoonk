@@ -84,7 +84,7 @@ function buildDailyProgressInputs(today: Date, userId: string) {
  * The progress summaries depend on answer counts and hour-of-day buckets, so
  * this helper creates that coverage once instead of repeating it in browser setup.
  */
-async function createStepAttempts(stepId: bigint, userId: string, now: Date) {
+async function createStepAttempts(stepId: string, userId: string, now: Date) {
   const configs = [
     { correct: 9, hourOfDay: 9, incorrect: 1 },
     { correct: 8, hourOfDay: 15, incorrect: 2 },

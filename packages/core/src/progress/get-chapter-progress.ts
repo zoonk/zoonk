@@ -20,11 +20,11 @@ function getChapterProgressRows({
   durableChapterIds,
   rows,
 }: {
-  chapterIds: { chapterId: number }[];
-  durableChapterIds: Set<number>;
+  chapterIds: { chapterId: string }[];
+  durableChapterIds: Set<string>;
   rows: ReturnType<typeof toEffectiveLessonProgressRows>;
 }) {
-  const rowsByChapter = new Map<number, typeof rows>();
+  const rowsByChapter = new Map<string, typeof rows>();
 
   for (const row of rows) {
     const chapterRows = rowsByChapter.get(row.chapterId) ?? [];
@@ -63,11 +63,11 @@ export async function getChapterProgress({
   courseId,
   headers,
 }: {
-  courseId: number;
+  courseId: string;
   headers?: Headers;
 }): Promise<
   {
-    chapterId: number;
+    chapterId: string;
     completedLessons: number;
     totalLessons: number;
   }[]

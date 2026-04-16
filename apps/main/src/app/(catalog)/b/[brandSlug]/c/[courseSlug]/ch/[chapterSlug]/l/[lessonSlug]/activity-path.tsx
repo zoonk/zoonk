@@ -18,7 +18,7 @@ export async function ActivityPath({
   brandSlug: string;
   chapterSlug: string;
   courseSlug: string;
-  lessonId: number;
+  lessonId: string;
   lessonSlug: string;
 }) {
   if (activities.length === 0) {
@@ -38,12 +38,12 @@ export async function ActivityPath({
       {activities.map((activity, index) => {
         const meta = kindMeta.get(activity.kind);
         const Icon = getActivityIcon(activity.kind);
-        const completed = completedIds.includes(String(activity.id));
+        const completed = completedIds.includes(activity.id);
         const isLast = index === activities.length - 1;
         const title = activity.title ?? meta?.label;
 
         return (
-          <li key={String(activity.id)}>
+          <li key={activity.id}>
             <Link
               className="hover:bg-muted/30 -mx-3 flex items-center gap-3 rounded-lg px-3 py-2.5 transition-colors"
               href={`/b/${brandSlug}/c/${courseSlug}/ch/${chapterSlug}/l/${lessonSlug}/a/${activity.position}`}

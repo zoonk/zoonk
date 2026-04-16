@@ -164,16 +164,16 @@ export async function saveVocabularyActivityStep(params: {
 async function saveOneVocabularyWord(params: {
   distractors: Record<string, string[]>;
   existingCasing: Record<string, string>;
-  lessonId: number;
+  lessonId: string;
   organizationId: string;
   position: number;
   pronunciations: Record<string, string>;
   romanizations: Record<string, string>;
   targetLanguage: string;
-  translationActivityId: number | null;
+  translationActivityId: string | null;
   userLanguage: string;
   vocabWord: VocabularyWord;
-  vocabularyActivityId: number;
+  vocabularyActivityId: string;
   wordAudioUrls: Record<string, string>;
 }): Promise<void> {
   const {
@@ -257,7 +257,7 @@ async function saveOneVocabularyWord(params: {
  * Uses updateMany so "no matching row" (already completed) returns count=0
  * instead of throwing. Real DB errors still propagate to the caller.
  */
-async function markActivityAsCompleted(activityId: number, workflowRunId: string): Promise<void> {
+async function markActivityAsCompleted(activityId: string, workflowRunId: string): Promise<void> {
   await prisma.activity.updateMany({
     data: { generationRunId: workflowRunId, generationStatus: "completed" },
     where: { generationStatus: { not: "completed" }, id: activityId },

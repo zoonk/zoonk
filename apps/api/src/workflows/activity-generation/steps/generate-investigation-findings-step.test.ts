@@ -99,7 +99,7 @@ describe(generateInvestigationFindingsStep, () => {
     const result = await generateInvestigationFindingsStep({
       accuracy: mockAccuracy,
       actions: mockActions,
-      activityId: Number(dbActivity.id),
+      activityId: dbActivity.id,
       language: "en",
       scenario: mockScenario,
     });
@@ -128,7 +128,7 @@ describe(generateInvestigationFindingsStep, () => {
     await generateInvestigationFindingsStep({
       accuracy: mockAccuracy,
       actions: mockActions,
-      activityId: Number(dbActivity.id),
+      activityId: dbActivity.id,
       language: "pt",
       scenario: mockScenario,
     });
@@ -166,7 +166,7 @@ describe(generateInvestigationFindingsStep, () => {
     const result = await generateInvestigationFindingsStep({
       accuracy: mockAccuracy,
       actions: mockActions,
-      activityId: Number(dbActivity.id),
+      activityId: dbActivity.id,
       language: "en",
       scenario: mockScenario,
     });
@@ -180,7 +180,7 @@ describe(generateInvestigationFindingsStep, () => {
 
     expect(events).toContainEqual(
       expect.objectContaining({
-        entityId: Number(dbActivity.id),
+        entityId: dbActivity.id,
         status: "error",
         step: "generateInvestigationFindings",
       }),
@@ -208,7 +208,7 @@ describe(generateInvestigationFindingsStep, () => {
     const result = await generateInvestigationFindingsStep({
       accuracy: mockAccuracy,
       actions: mockActions,
-      activityId: Number(dbActivity.id),
+      activityId: dbActivity.id,
       language: "en",
       scenario: mockScenario,
     });
@@ -222,7 +222,7 @@ describe(generateInvestigationFindingsStep, () => {
 
     expect(events).toContainEqual(
       expect.objectContaining({
-        entityId: Number(dbActivity.id),
+        entityId: dbActivity.id,
         status: "error",
         step: "generateInvestigationFindings",
       }),
@@ -250,7 +250,7 @@ describe(generateInvestigationFindingsStep, () => {
     await generateInvestigationFindingsStep({
       accuracy: mockAccuracy,
       actions: mockActions,
-      activityId: Number(dbActivity.id),
+      activityId: dbActivity.id,
       language: "en",
       scenario: mockScenario,
     });
@@ -259,7 +259,7 @@ describe(generateInvestigationFindingsStep, () => {
 
     expect(events).toContainEqual(
       expect.objectContaining({
-        entityId: Number(dbActivity.id),
+        entityId: dbActivity.id,
         status: "started",
         step: "generateInvestigationFindings",
       }),
@@ -267,7 +267,7 @@ describe(generateInvestigationFindingsStep, () => {
 
     expect(events).toContainEqual(
       expect.objectContaining({
-        entityId: Number(dbActivity.id),
+        entityId: dbActivity.id,
         status: "completed",
         step: "generateInvestigationFindings",
       }),

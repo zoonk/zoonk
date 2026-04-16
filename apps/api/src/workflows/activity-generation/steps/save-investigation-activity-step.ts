@@ -43,7 +43,7 @@ function buildInvestigationStepRecords({
   scenario,
 }: {
   accuracy: ActivityInvestigationAccuracySchema;
-  activityId: number;
+  activityId: string;
   actions: ActivityInvestigationActionsSchema;
   findings: ActivityInvestigationFindingsSchema;
   scenario: ActivityInvestigationScenarioSchema;
@@ -111,7 +111,7 @@ export async function saveInvestigationActivityStep({
   workflowRunId,
 }: {
   accuracy: ActivityInvestigationAccuracySchema;
-  activityId: number;
+  activityId: string;
   actions: ActivityInvestigationActionsSchema;
   findings: ActivityInvestigationFindingsSchema;
   scenario: ActivityInvestigationScenarioSchema;

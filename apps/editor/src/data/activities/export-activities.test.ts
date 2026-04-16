@@ -152,7 +152,7 @@ describe("admins", () => {
   test("returns Lesson not found for non-existent lesson", async () => {
     const result = await exportActivities({
       headers,
-      lessonId: 999_999,
+      lessonId: "00000000-0000-7000-8000-000000000001",
     });
 
     expect(result.error?.message).toBe(ErrorCode.lessonNotFound);

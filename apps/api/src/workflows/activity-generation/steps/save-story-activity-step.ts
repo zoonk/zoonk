@@ -16,7 +16,7 @@ import { handleActivityFailureStep } from "./handle-failure-step";
  * - Positions N+2..N+2+M: static text steps, one per debrief concept
  */
 function buildStoryStepRecords(
-  activityId: number,
+  activityId: string,
   storySteps: ActivityStoryStepsSchema,
   debriefData: ActivityStoryDebriefSchema,
 ) {
@@ -88,7 +88,7 @@ export async function saveStoryActivityStep({
   storySteps,
   workflowRunId,
 }: {
-  activityId: number;
+  activityId: string;
   debriefData: ActivityStoryDebriefSchema;
   storySteps: ActivityStoryStepsSchema;
   workflowRunId: string;

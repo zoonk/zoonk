@@ -5,7 +5,7 @@ import { rejected, settledValues } from "@zoonk/utils/settled";
 import { type ActivitySteps } from "./_utils/get-activity-steps";
 import { type LessonActivity } from "./get-lesson-activities-step";
 
-export type CustomContentResult = { activityId: number; steps: ActivitySteps };
+export type CustomContentResult = { activityId: string; steps: ActivitySteps };
 
 /**
  * Calls AI to generate custom activity content.

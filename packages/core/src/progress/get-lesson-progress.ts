@@ -7,12 +7,12 @@ export async function getLessonProgress({
   chapterId,
   headers,
 }: {
-  chapterId: number;
+  chapterId: string;
   headers?: Headers;
 }): Promise<
   {
     completedActivities: number;
-    lessonId: number;
+    lessonId: string;
     totalActivities: number;
   }[]
 > {

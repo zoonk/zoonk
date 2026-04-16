@@ -45,7 +45,7 @@ describe(getCourseSuggestionStep, () => {
   });
 
   test("throws FatalError when suggestion does not exist", async () => {
-    await expect(getCourseSuggestionStep(999_999_999)).rejects.toThrow(
+    await expect(getCourseSuggestionStep(randomUUID())).rejects.toThrow(
       "Course suggestion not found",
     );
 

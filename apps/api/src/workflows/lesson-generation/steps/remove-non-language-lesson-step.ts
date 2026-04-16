@@ -3,7 +3,7 @@ import { type LessonStepName } from "@zoonk/core/workflows/steps";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 
-export async function removeNonLanguageLessonStep(input: { lessonId: number }): Promise<void> {
+export async function removeNonLanguageLessonStep(input: { lessonId: string }): Promise<void> {
   "use step";
 
   await using stream = createStepStream<LessonStepName>();

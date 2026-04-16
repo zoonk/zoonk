@@ -7,7 +7,7 @@ import { headers } from "next/headers";
 import { cache } from "react";
 
 export type ResultWithImage = {
-  id: number;
+  id: string;
   type: "course";
   title: string;
   description: string | null;
@@ -16,7 +16,7 @@ export type ResultWithImage = {
 };
 
 export type ResultWithPosition = {
-  id: number;
+  id: string;
   type: "chapter" | "lesson";
   title: string;
   description: string | null;

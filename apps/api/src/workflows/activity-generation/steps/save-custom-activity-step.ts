@@ -12,7 +12,7 @@ import { handleActivityFailureStep } from "./handle-failure-step";
  * Static steps are placed at even positions (index * 2)
  * to leave room for visual steps at odd positions.
  */
-function buildStaticStepRecords(activityId: number, steps: ActivitySteps) {
+function buildStaticStepRecords(activityId: string, steps: ActivitySteps) {
   return steps.map((step, index) => ({
     activityId,
     content: assertStepContent("static", {
@@ -42,7 +42,7 @@ export async function saveCustomActivityStep({
   contentSteps,
   workflowRunId,
 }: {
-  activityId: number;
+  activityId: string;
   completedRows: VisualStepRow[];
   contentSteps: ActivitySteps;
   workflowRunId: string;

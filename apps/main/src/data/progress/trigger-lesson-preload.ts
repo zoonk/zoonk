@@ -9,7 +9,7 @@ import { API_URL } from "@zoonk/utils/url";
  */
 export async function triggerLessonPreload(input: {
   cookieHeader: string;
-  lessonId: number;
+  lessonId: string;
 }): Promise<void> {
   const response = await fetch(`${API_URL}/v1/workflows/lesson-preload/trigger`, {
     body: JSON.stringify({ lessonId: input.lessonId }),

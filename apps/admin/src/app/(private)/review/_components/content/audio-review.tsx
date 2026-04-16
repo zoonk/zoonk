@@ -5,7 +5,7 @@ export function AudioReview({
   item,
 }: {
   item: {
-    id: bigint;
+    id: string;
     text: string;
     label: string;
     audioUrl: string | null;

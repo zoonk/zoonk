@@ -45,7 +45,7 @@ function buildOptionRomanizations(
  * matching the learner flow of "see pattern → test intuition → learn rule → practice."
  */
 function buildGrammarSteps(
-  activityId: bigint | number,
+  activityId: string,
   content: ActivityGrammarContentSchema,
   userContent: ActivityGrammarUserContentSchema,
   romanizations: Record<string, string> | null,

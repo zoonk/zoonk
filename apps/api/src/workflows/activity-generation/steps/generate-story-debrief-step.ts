@@ -22,7 +22,7 @@ export async function generateStoryDebriefStep({
   activitiesToGenerate,
   storySteps,
 }: {
-  activityId: number;
+  activityId: string;
   activitiesToGenerate: LessonActivity[];
   storySteps: ActivityStoryStepsSchema;
 }): Promise<ActivityStoryDebriefSchema | null> {

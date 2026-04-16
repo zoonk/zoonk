@@ -2,7 +2,7 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { cache } from "react";
 
-const cachedGetLessonWords = cache(async (lessonId: number) => {
+const cachedGetLessonWords = cache(async (lessonId: string) => {
   const firstLesson = await prisma.lessonWord.findFirst({
     select: { userLanguage: true },
     where: { lessonId },
@@ -31,6 +31,6 @@ const cachedGetLessonWords = cache(async (lessonId: number) => {
  * separate `WordTranslation` table, so the caller gets translation +
  * word surface form in one object.
  */
-export function getLessonWords(params: { lessonId: number }) {
+export function getLessonWords(params: { lessonId: string }) {
   return cachedGetLessonWords(params.lessonId);
 }

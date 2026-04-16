@@ -101,7 +101,7 @@ describe(generateStoryDebriefStep, () => {
 
     const result = await generateStoryDebriefStep({
       activitiesToGenerate: activities,
-      activityId: Number(storyActivity.id),
+      activityId: storyActivity.id,
       storySteps: mockStorySteps,
     });
 
@@ -136,7 +136,7 @@ describe(generateStoryDebriefStep, () => {
 
     const result = await generateStoryDebriefStep({
       activitiesToGenerate: activities,
-      activityId: 999,
+      activityId: "999",
       storySteps: mockStorySteps,
     });
 
@@ -168,7 +168,7 @@ describe(generateStoryDebriefStep, () => {
 
     const result = await generateStoryDebriefStep({
       activitiesToGenerate: activities,
-      activityId: Number(storyActivity.id),
+      activityId: storyActivity.id,
       storySteps: mockStorySteps,
     });
 
@@ -181,7 +181,7 @@ describe(generateStoryDebriefStep, () => {
 
     expect(events).toContainEqual(
       expect.objectContaining({
-        entityId: Number(storyActivity.id),
+        entityId: storyActivity.id,
         status: "error",
         step: "generateStoryDebrief",
       }),
@@ -210,7 +210,7 @@ describe(generateStoryDebriefStep, () => {
 
     const result = await generateStoryDebriefStep({
       activitiesToGenerate: activities,
-      activityId: Number(storyActivity.id),
+      activityId: storyActivity.id,
       storySteps: mockStorySteps,
     });
 
@@ -223,7 +223,7 @@ describe(generateStoryDebriefStep, () => {
 
     expect(events).toContainEqual(
       expect.objectContaining({
-        entityId: Number(storyActivity.id),
+        entityId: storyActivity.id,
         status: "error",
         step: "generateStoryDebrief",
       }),
@@ -252,7 +252,7 @@ describe(generateStoryDebriefStep, () => {
 
     await generateStoryDebriefStep({
       activitiesToGenerate: activities,
-      activityId: Number(storyActivity.id),
+      activityId: storyActivity.id,
       storySteps: mockStorySteps,
     });
 
@@ -260,7 +260,7 @@ describe(generateStoryDebriefStep, () => {
 
     expect(events).toContainEqual(
       expect.objectContaining({
-        entityId: Number(storyActivity.id),
+        entityId: storyActivity.id,
         status: "started",
         step: "generateStoryDebrief",
       }),
@@ -268,7 +268,7 @@ describe(generateStoryDebriefStep, () => {
 
     expect(events).toContainEqual(
       expect.objectContaining({
-        entityId: Number(storyActivity.id),
+        entityId: storyActivity.id,
         status: "completed",
         step: "generateStoryDebrief",
       }),

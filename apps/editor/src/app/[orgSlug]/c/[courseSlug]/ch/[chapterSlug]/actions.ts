@@ -13,7 +13,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 export async function checkChapterSlugExists(params: {
-  courseId?: number;
+  courseId?: string;
   language: string;
   orgSlug: string;
   slug: string;
@@ -26,7 +26,7 @@ export async function checkChapterSlugExists(params: {
 
 export async function updateChapterTitleAction(
   slugs: { courseSlug: string; orgSlug: string },
-  chapterId: number,
+  chapterId: string,
   data: { title: string },
 ): Promise<{ error: string | null }> {
   const { courseSlug, orgSlug } = slugs;
@@ -46,7 +46,7 @@ export async function updateChapterTitleAction(
 
 export async function updateChapterDescriptionAction(
   slugs: { courseSlug: string; orgSlug: string },
-  chapterId: number,
+  chapterId: string,
   data: { description: string },
 ): Promise<{ error: string | null }> {
   const { courseSlug, orgSlug } = slugs;
@@ -65,7 +65,7 @@ export async function updateChapterDescriptionAction(
 }
 
 export async function updateChapterSlugAction(
-  chapterId: number,
+  chapterId: string,
   data: { slug: string },
 ): Promise<{ error: string | null; newSlug?: string }> {
   const { data: chapter, error } = await updateChapter({
@@ -81,7 +81,7 @@ export async function updateChapterSlugAction(
 }
 
 async function createLessonAction(
-  chapterId: number,
+  chapterId: string,
   position: number,
 ): Promise<{ error: string | null; slug?: string }> {
   const t = await getExtracted();
@@ -105,7 +105,7 @@ async function createLessonAction(
 }
 
 async function importLessonsAction(
-  chapterId: number,
+  chapterId: string,
   formData: FormData,
 ): Promise<{ error: string | null }> {
   const file = formData.get("file");
@@ -130,7 +130,7 @@ async function importLessonsAction(
   return { error: null };
 }
 
-export async function exportLessonsAction(chapterId: number): Promise<{
+export async function exportLessonsAction(chapterId: string): Promise<{
   data: object | null;
   error: Error | null;
 }> {
@@ -144,7 +144,7 @@ export async function exportLessonsAction(chapterId: number): Promise<{
 }
 
 type LessonRouteParams = {
-  chapterId: number;
+  chapterId: string;
   chapterSlug: string;
   courseSlug: string;
   orgSlug: string;
@@ -184,7 +184,7 @@ export async function handleImportLessonsAction(
 
 export async function reorderLessonsAction(
   params: LessonRouteParams,
-  lessons: { id: number; position: number }[],
+  lessons: { id: string; position: number }[],
 ): Promise<{ error: string | null }> {
   const { chapterId, chapterSlug, courseSlug, orgSlug } = params;
 

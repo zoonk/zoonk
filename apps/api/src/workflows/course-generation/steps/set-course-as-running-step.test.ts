@@ -36,8 +36,8 @@ describe(setCourseAsRunningStep, () => {
   test("streams error and throws when DB save fails", async () => {
     await expect(
       setCourseAsRunningStep({
-        courseId: 999_999_999,
-        courseSuggestionId: 999_999_999,
+        courseId: randomUUID(),
+        courseSuggestionId: randomUUID(),
         workflowRunId: "run-id",
       }),
     ).rejects.toThrow("DB save failed in setCourseAsRunning");

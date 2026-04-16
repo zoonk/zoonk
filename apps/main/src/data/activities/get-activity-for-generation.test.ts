@@ -72,8 +72,12 @@ describe(getActivityForGeneration, () => {
   });
 
   test("returns null for non-existent activity", async () => {
-    const result = await getActivityForGeneration(BigInt(999_999_999));
+    const result = await getActivityForGeneration("00000000-0000-7000-8000-000000000001");
+    expect(result).toBeNull();
+  });
 
+  test("returns null for malformed activity ids", async () => {
+    const result = await getActivityForGeneration("invalid-id");
     expect(result).toBeNull();
   });
 
@@ -100,7 +104,7 @@ describe(getActivityForGeneration, () => {
     const lessonData = result?.lesson;
     expect(lessonData?.id).toBe(lesson.id);
     if (lessonData) {
-      expectTypeOf(lessonData.id).toBeNumber();
+      expectTypeOf(lessonData.id).toBeString();
     }
   });
 

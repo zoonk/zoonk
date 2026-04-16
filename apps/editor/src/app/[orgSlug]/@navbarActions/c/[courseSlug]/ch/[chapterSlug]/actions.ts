@@ -8,7 +8,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 export async function togglePublishAction(
-  params: { chapterId: number; chapterUrl: string },
+  params: { chapterId: string; chapterUrl: string },
   isPublished: boolean,
 ): Promise<{ error: string | null }> {
   const { chapterId, chapterUrl } = params;
@@ -28,7 +28,7 @@ export async function togglePublishAction(
 }
 
 export async function deleteChapterAction(
-  chapterId: number,
+  chapterId: string,
   courseUrl: Route,
 ): Promise<{ error: string | null }> {
   const { error } = await deleteChapter({ chapterId });

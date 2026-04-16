@@ -5,7 +5,7 @@ import { type Lesson, getActiveLessonWhere, prisma } from "@zoonk/db";
 import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
 
 export async function toggleLessonPublished(params: {
-  lessonId: number;
+  lessonId: string;
   headers?: Headers;
   isPublished: boolean;
 }): Promise<SafeReturn<Lesson>> {

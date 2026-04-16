@@ -30,13 +30,16 @@ describe(initializeCourseStep, () => {
   });
 
   test("streams error and throws when suggestion update fails", async () => {
+    const suggestion = await courseSuggestionFixture({
+      title: `Missing Suggestion ${randomUUID()}`,
+    });
+
     const fakeSuggestion = {
-      id: 999_999_999,
-      language: "en",
-      slug: "nonexistent",
-      targetLanguage: null,
+      ...suggestion,
+      id: randomUUID(),
+      slug: `nonexistent-${randomUUID()}`,
       title: "Nonexistent",
-    } as Awaited<ReturnType<typeof courseSuggestionFixture>>;
+    };
 
     await expect(
       initializeCourseStep({ suggestion: fakeSuggestion, workflowRunId: "run-id" }),
@@ -60,7 +63,7 @@ describe(initializeCourseStep, () => {
 
     expect(result.courseTitle).toBe(suggestion.title);
     expect(result.language).toBe(suggestion.language);
-    expect(result.courseId).toBeGreaterThan(0);
+    expect(result.courseId).toEqual(expect.any(String));
 
     const [updatedSuggestion, createdCourse] = await Promise.all([
       prisma.courseSuggestion.findUniqueOrThrow({ where: { id: suggestion.id } }),

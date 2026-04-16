@@ -8,7 +8,7 @@ import { type ExistingCourseContent } from "./get-or-create-course";
 import { persistGeneratedContent } from "./persist-generated-content";
 
 async function getChapters(
-  courseId: number,
+  courseId: string,
   createdChapters: Chapter[],
   hasChapters: boolean,
 ): Promise<Chapter[]> {
@@ -22,7 +22,7 @@ async function getChapters(
 
 export async function setupCourse(
   course: CourseContext,
-  courseSuggestionId: number,
+  courseSuggestionId: string,
   existing: ExistingCourseContent,
 ): Promise<Chapter[]> {
   const content = await generateMissingContent(course, existing);

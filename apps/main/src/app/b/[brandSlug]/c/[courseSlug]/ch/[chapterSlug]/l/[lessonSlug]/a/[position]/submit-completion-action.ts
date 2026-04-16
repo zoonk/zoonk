@@ -36,7 +36,7 @@ export async function submitCompletion(rawInput: CompletionInput): Promise<void>
   }
 
   const userId = session.user.id;
-  const activityId = BigInt(input.activityId);
+  const activityId = input.activityId;
 
   // Revalidate outside after() so the signal is included in the RSC response.
   // This tells the client Router Cache to purge "/", ensuring the next

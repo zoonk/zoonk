@@ -7,24 +7,24 @@ import { beforeAll, describe, expect, test } from "vitest";
 import { getNextActivityInCourse } from "./get-next-activity-in-course";
 
 describe(getNextActivityInCourse, () => {
-  let courseId: number;
+  let courseId: string;
   let orgId: string;
 
-  let chapter1Id: number;
+  let chapter1Id: string;
   let chapter1Slug: string;
-  let chapter2Id: number;
+  let chapter2Id: string;
   let chapter2Slug: string;
 
-  let lesson1Id: number;
+  let lesson1Id: string;
   let lesson1Slug: string;
-  let lesson2Id: number;
+  let lesson2Id: string;
   let lesson2Slug: string;
-  let lesson3Id: number;
+  let lesson3Id: string;
   let lesson3Slug: string;
 
-  let activity2Id: bigint;
-  let activity3Id: bigint;
-  let activity4Id: bigint;
+  let activity2Id: string;
+  let activity3Id: string;
+  let activity4Id: string;
 
   beforeAll(async () => {
     const org = await organizationFixture({ kind: "brand" });
@@ -205,7 +205,7 @@ describe(getNextActivityInCourse, () => {
       activityPosition: 0,
       chapterId: chapter1Id,
       chapterPosition: 0,
-      courseId: 999_999,
+      courseId: "missing-course-id",
       lessonId: lesson1Id,
       lessonPosition: 0,
     });

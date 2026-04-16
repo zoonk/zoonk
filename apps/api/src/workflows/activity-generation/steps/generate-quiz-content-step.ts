@@ -27,7 +27,7 @@ export async function generateQuizContentStep(
   explanationSteps: ActivitySteps,
   workflowRunId: string,
   quizIndex = 0,
-): Promise<{ activityId: number | null; questions: QuizQuestion[] }> {
+): Promise<{ activityId: string | null; questions: QuizQuestion[] }> {
   "use step";
 
   const quizActivity = findActivitiesByKind(activities, "quiz")[quizIndex];

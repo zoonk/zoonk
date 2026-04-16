@@ -7,7 +7,7 @@ import { type CustomVisualDescriptionResult } from "./generate-custom-visuals-st
 import { type LessonActivity } from "./get-lesson-activities-step";
 
 type CustomVisualContentResult = {
-  activityId: number;
+  activityId: string;
   completedRows: VisualStepRow[];
 };
 

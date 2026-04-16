@@ -66,7 +66,7 @@ describe(saveExplanationActivityStep, () => {
     ];
 
     await saveExplanationActivityStep({
-      activityId: Number(activity.id),
+      activityId: activity.id,
       completedRows: [],
       contentSteps,
       workflowRunId: "workflow-1",
@@ -107,7 +107,7 @@ describe(saveExplanationActivityStep, () => {
   });
 
   test("streams error when DB transaction fails", async () => {
-    const invalidActivityId = 999_999_999;
+    const invalidActivityId = randomUUID();
 
     await saveExplanationActivityStep({
       activityId: invalidActivityId,

@@ -21,7 +21,7 @@ function isEffectivelyCompleted({
   durableLessonIds,
   row,
 }: {
-  durableLessonIds: Set<number>;
+  durableLessonIds: Set<string>;
   row: PublishedLessonCompletionRow;
 }) {
   return durableLessonIds.has(row.lessonId) || isCurrentLessonCompleted({ row });
@@ -33,7 +33,7 @@ function isEffectivelyCompleted({
  * avoids embedding grouping logic inside later predicates.
  */
 export function groupRowsByChapter({ rows }: { rows: PublishedLessonCompletionRow[] }) {
-  const grouped = new Map<number, PublishedLessonCompletionRow[]>();
+  const grouped = new Map<string, PublishedLessonCompletionRow[]>();
 
   for (const row of rows) {
     const chapterRows = grouped.get(row.chapterId) ?? [];
@@ -53,7 +53,7 @@ export function getLessonRow({
   lessonId,
   rows,
 }: {
-  lessonId: number;
+  lessonId: string;
   rows: PublishedLessonCompletionRow[];
 }) {
   return rows.find((row) => row.lessonId === lessonId) ?? null;
@@ -68,7 +68,7 @@ export function getEffectiveDurableLessonIds({
   durableLessonIds,
   lessonRow,
 }: {
-  durableLessonIds: Set<number>;
+  durableLessonIds: Set<string>;
   lessonRow: PublishedLessonCompletionRow | null;
 }) {
   if (!lessonRow || !isCurrentLessonCompleted({ row: lessonRow })) {
@@ -88,9 +88,9 @@ export function isCurrentChapterCompleted({
   durableLessonIds,
   rowsByChapter,
 }: {
-  chapterId: number;
-  durableLessonIds: Set<number>;
-  rowsByChapter: Map<number, PublishedLessonCompletionRow[]>;
+  chapterId: string;
+  durableLessonIds: Set<string>;
+  rowsByChapter: Map<string, PublishedLessonCompletionRow[]>;
 }) {
   const chapterRows = rowsByChapter.get(chapterId) ?? [];
 
@@ -110,8 +110,8 @@ export function getEffectiveDurableChapterIds({
   durableChapterIds,
   isChapterCompleted,
 }: {
-  chapterId: number;
-  durableChapterIds: Set<number>;
+  chapterId: string;
+  durableChapterIds: Set<string>;
   isChapterCompleted: boolean;
 }) {
   if (!isChapterCompleted) {
@@ -134,9 +134,9 @@ export function isCurrentCourseCompleted({
   rowsByChapter,
 }: {
   chapters: Awaited<ReturnType<typeof listPublishedCourseChapters>>;
-  durableChapterIds: Set<number>;
-  durableLessonIds: Set<number>;
-  rowsByChapter: Map<number, PublishedLessonCompletionRow[]>;
+  durableChapterIds: Set<string>;
+  durableLessonIds: Set<string>;
+  rowsByChapter: Map<string, PublishedLessonCompletionRow[]>;
 }) {
   if (chapters.length === 0) {
     return false;

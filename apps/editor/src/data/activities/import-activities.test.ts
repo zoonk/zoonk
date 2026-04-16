@@ -208,7 +208,7 @@ describe("admins", () => {
     const result = await importActivities({
       file,
       headers,
-      lessonId: 999_999,
+      lessonId: randomUUID(),
     });
 
     expect(result.error?.message).toBe(ErrorCode.lessonNotFound);

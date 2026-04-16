@@ -5,10 +5,10 @@ import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 
 export async function reorderChapters(params: {
   chapters: {
-    chapterId: number;
+    chapterId: string;
     position: number;
   }[];
-  courseId: number;
+  courseId: string;
   headers?: Headers;
 }): Promise<SafeReturn<{ updated: number }>> {
   const { data: course, error: courseError } = await getAuthorizedActiveCourse({

@@ -2,7 +2,7 @@ import { describe, expect, test } from "vitest";
 import { type ExplanationResult } from "../generate-explanation-content-step";
 import { getExplanationStepsForPractice } from "./get-explanation-steps-for-practice";
 
-function makeResult(activityId: number, steps: string[]): ExplanationResult {
+function makeResult(activityId: string, steps: string[]): ExplanationResult {
   return {
     activityId,
     concept: `concept-${activityId}`,
@@ -12,7 +12,7 @@ function makeResult(activityId: number, steps: string[]): ExplanationResult {
 
 describe(getExplanationStepsForPractice, () => {
   test("returns all steps when there is only one practice", () => {
-    const results = [makeResult(1, ["a", "b"]), makeResult(2, ["c", "d"])];
+    const results = [makeResult("1", ["a", "b"]), makeResult("2", ["c", "d"])];
     const steps = getExplanationStepsForPractice(results, 0, 1);
 
     expect(steps.map((step) => step.text)).toEqual(["a", "b", "c", "d"]);
@@ -20,10 +20,10 @@ describe(getExplanationStepsForPractice, () => {
 
   test("returns first half for practice index 0 when there are two practices", () => {
     const results = [
-      makeResult(1, ["a"]),
-      makeResult(2, ["b"]),
-      makeResult(3, ["c"]),
-      makeResult(4, ["d"]),
+      makeResult("1", ["a"]),
+      makeResult("2", ["b"]),
+      makeResult("3", ["c"]),
+      makeResult("4", ["d"]),
     ];
 
     const steps = getExplanationStepsForPractice(results, 0, 2);
@@ -33,10 +33,10 @@ describe(getExplanationStepsForPractice, () => {
 
   test("returns second half for practice index 1 when there are two practices", () => {
     const results = [
-      makeResult(1, ["a"]),
-      makeResult(2, ["b"]),
-      makeResult(3, ["c"]),
-      makeResult(4, ["d"]),
+      makeResult("1", ["a"]),
+      makeResult("2", ["b"]),
+      makeResult("3", ["c"]),
+      makeResult("4", ["d"]),
     ];
 
     const steps = getExplanationStepsForPractice(results, 1, 2);
@@ -46,11 +46,11 @@ describe(getExplanationStepsForPractice, () => {
 
   test("splits 5 results into groups of 2 and 3", () => {
     const results = [
-      makeResult(1, ["a"]),
-      makeResult(2, ["b"]),
-      makeResult(3, ["c"]),
-      makeResult(4, ["d"]),
-      makeResult(5, ["e"]),
+      makeResult("1", ["a"]),
+      makeResult("2", ["b"]),
+      makeResult("3", ["c"]),
+      makeResult("4", ["d"]),
+      makeResult("5", ["e"]),
     ];
 
     const first = getExplanationStepsForPractice(results, 0, 2);
@@ -66,7 +66,7 @@ describe(getExplanationStepsForPractice, () => {
   });
 
   test("ensures split index is at least 1 for two practices with single result", () => {
-    const results = [makeResult(1, ["a", "b"])];
+    const results = [makeResult("1", ["a", "b"])];
 
     const first = getExplanationStepsForPractice(results, 0, 2);
     const second = getExplanationStepsForPractice(results, 1, 2);

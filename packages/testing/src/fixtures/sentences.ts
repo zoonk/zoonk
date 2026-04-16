@@ -19,8 +19,8 @@ export async function sentenceFixture(attrs: {
 }
 
 export async function lessonSentenceFixture(attrs: {
-  lessonId: number;
-  sentenceId: bigint;
+  lessonId: string;
+  sentenceId: string;
   userLanguage?: string;
   translation?: string;
   distractors?: string[];

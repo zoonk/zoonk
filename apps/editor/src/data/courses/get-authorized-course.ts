@@ -65,7 +65,7 @@ async function toAuthorizedCourseResult(params: {
 
 const cachedGetAuthorizedCourse = cache(
   async (
-    courseId: number,
+    courseId: string,
     headers?: Headers,
   ): Promise<SafeReturn<AuthorizedCourseWithOrganization>> => {
     const { data: course, error } = await safeAsync(() =>
@@ -91,7 +91,7 @@ const cachedGetAuthorizedCourse = cache(
  * for the same course within a single request.
  */
 export function getAuthorizedCourse(params: {
-  courseId: number;
+  courseId: string;
   headers?: Headers;
 }): Promise<SafeReturn<AuthorizedCourseWithOrganization>> {
   return cachedGetAuthorizedCourse(params.courseId, params.headers);
@@ -99,7 +99,7 @@ export function getAuthorizedCourse(params: {
 
 const cachedGetAuthorizedActiveCourse = cache(
   async (
-    courseId: number,
+    courseId: string,
     headers?: Headers,
   ): Promise<SafeReturn<AuthorizedCourseWithOrganization>> => {
     const { data: course, error } = await safeAsync(() =>
@@ -124,7 +124,7 @@ const cachedGetAuthorizedActiveCourse = cache(
  * authorized reads for the same active course from re-running in one request.
  */
 export function getAuthorizedActiveCourse(params: {
-  courseId: number;
+  courseId: string;
   headers?: Headers;
 }): Promise<SafeReturn<AuthorizedCourseWithOrganization>> {
   return cachedGetAuthorizedActiveCourse(params.courseId, params.headers);

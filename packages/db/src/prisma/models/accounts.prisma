@@ -1,7 +1,7 @@
 // Better Auth models for Prisma
 
 model User {
-  id                 String               @id
+  id                 String               @id @default(dbgenerated("uuidv7()")) @db.Uuid
   name               String
   email              String
   emailVerified      Boolean              @default(false) @map("email_verified")
@@ -38,17 +38,17 @@ model User {
 }
 
 model Session {
-  id                   String   @id
+  id                   String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
   expiresAt            DateTime @map("expires_at")
   token                String
   createdAt            DateTime @default(now()) @map("created_at")
   updatedAt            DateTime @updatedAt @map("updated_at")
   ipAddress            String?  @map("ip_address")
   userAgent            String?  @map("user_agent")
-  userId               String   @map("user_id")
+  userId               String   @map("user_id") @db.Uuid
   user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  impersonatedBy       String?  @map("impersonated_by")
-  activeOrganizationId String?  @map("active_organization_id")
+  impersonatedBy       String?  @map("impersonated_by") @db.Uuid
+  activeOrganizationId String?  @map("active_organization_id") @db.Uuid
 
   @@unique([token])
   @@index([userId])
@@ -56,10 +56,10 @@ model Session {
 }
 
 model Account {
-  id                    String    @id
+  id                    String    @id @default(dbgenerated("uuidv7()")) @db.Uuid
   accountId             String    @map("account_id")
   providerId            String    @map("provider_id")
-  userId                String    @map("user_id")
+  userId                String    @map("user_id") @db.Uuid
   user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   accessToken           String?   @map("access_token")
   refreshToken          String?   @map("refresh_token")
@@ -76,7 +76,7 @@ model Account {
 }
 
 model Verification {
-  id         String   @id
+  id         String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
   identifier String
   value      String
   expiresAt  DateTime @map("expires_at")
@@ -88,7 +88,7 @@ model Verification {
 }
 
 model Organization {
-  id               String       @id
+  id               String       @id @default(dbgenerated("uuidv7()")) @db.Uuid
   name             String
   slug             String
   logo             String?
@@ -110,10 +110,10 @@ model Organization {
 }
 
 model Member {
-  id             String       @id
-  organizationId String       @map("organization_id")
+  id             String       @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  organizationId String       @map("organization_id") @db.Uuid
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  userId         String       @map("user_id")
+  userId         String       @map("user_id") @db.Uuid
   user           User         @relation(fields: [userId], references: [id], onDelete: Cascade)
   role           String       @default("member")
   createdAt      DateTime     @default(now()) @map("created_at")
@@ -124,15 +124,15 @@ model Member {
 }
 
 model Invitation {
-  id             String       @id
-  organizationId String       @map("organization_id")
+  id             String       @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  organizationId String       @map("organization_id") @db.Uuid
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   email          String
   role           String?
   status         String       @default("pending")
   expiresAt      DateTime     @map("expires_at")
   createdAt      DateTime     @default(now()) @map("created_at")
-  inviterId      String       @map("inviter_id")
+  inviterId      String       @map("inviter_id") @db.Uuid
   user           User         @relation(fields: [inviterId], references: [id], onDelete: Cascade)
 
   @@index([organizationId])
@@ -141,9 +141,9 @@ model Invitation {
 }
 
 model Subscription {
-  id                   String    @id
+  id                   String    @id @default(dbgenerated("uuidv7()")) @db.Uuid
   plan                 String
-  referenceId          String    @map("reference_id")
+  referenceId          String    @map("reference_id") @db.Uuid
   stripeCustomerId     String?   @map("stripe_customer_id")
   stripeSubscriptionId String?   @map("stripe_subscription_id")
   status               String?   @default("incomplete")
@@ -165,7 +165,7 @@ model Subscription {
 }
 
 model RateLimit {
-  id          String  @id
+  id          String  @id @default(dbgenerated("uuidv7()")) @db.Uuid
   key         String?
   count       Int?
   lastRequest BigInt? @map("last_request")
@@ -175,7 +175,7 @@ model RateLimit {
 }
 
 model Jwks {
-  id         String    @id
+  id         String    @id @default(dbgenerated("uuidv7()")) @db.Uuid
   publicKey  String    @map("public_key")
   privateKey String    @map("private_key")
   createdAt  DateTime  @default(now()) @map("created_at")

@@ -147,7 +147,7 @@ describe("admins", () => {
 
   test("returns Chapter not found", async () => {
     const result = await updateChapter({
-      chapterId: 999_999,
+      chapterId: "00000000-0000-7000-8000-000000000001",
       headers,
       title: "Updated Title",
     });

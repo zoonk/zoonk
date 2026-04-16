@@ -126,9 +126,9 @@ export async function saveReadingActivityStep(params: {
  * lesson-scoped exercise data.
  */
 async function saveOneSentence(params: {
-  activityId: number;
+  activityId: string;
   distractors: Record<string, string[]>;
-  lessonId: number;
+  lessonId: string;
   organizationId: string;
   position: number;
   readingSentence: ReadingSentence;
@@ -224,7 +224,7 @@ async function saveOneSentence(params: {
  * Uses updateMany so "no matching row" (already completed) returns count=0
  * instead of throwing. Real DB errors still propagate to the caller.
  */
-async function markActivityAsCompleted(activityId: number, workflowRunId: string): Promise<void> {
+async function markActivityAsCompleted(activityId: string, workflowRunId: string): Promise<void> {
   await prisma.activity.updateMany({
     data: { generationRunId: workflowRunId, generationStatus: "completed" },
     where: { generationStatus: { not: "completed" }, id: activityId },

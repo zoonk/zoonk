@@ -29,7 +29,7 @@ export function GenerationClient({
   generationRunId,
   initialStatus,
 }: {
-  chapterId: number;
+  chapterId: string;
   chapterSlug: string;
   courseSlug: string;
   generationRunId: string | null;

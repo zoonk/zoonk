@@ -17,16 +17,16 @@ function clampDuration(startedAt: number): number {
 }
 
 type StepWithSentence = {
-  id: bigint;
+  id: string;
   kind: string;
   content: unknown;
-  word: { id: bigint } | null;
-  sentence: { id: bigint; sentence: string } | null;
+  word: { id: string } | null;
+  sentence: { id: string; sentence: string } | null;
 };
 
 type PlayerCompletionEffects = {
-  preloadLessonId: number | null;
-  regenerateLessonId: number | null;
+  preloadLessonId: string | null;
+  regenerateLessonId: string | null;
 };
 
 /**
@@ -62,7 +62,7 @@ export async function submitPlayerCompletion(params: {
   input: CompletionInput;
   userId: string;
 }): Promise<PlayerCompletionEffects | null> {
-  const activityId = BigInt(params.input.activityId);
+  const activityId = params.input.activityId;
   const activity = await prisma.activity.findUnique({
     include: {
       lesson: { include: { chapter: true } },
@@ -88,7 +88,7 @@ export async function submitPlayerCompletion(params: {
       ? attachSentenceTranslationsToSteps(
           await getReviewValidationSteps({
             lessonId: activity.lessonId,
-            stepIds: Object.keys(params.input.answers).map(BigInt),
+            stepIds: Object.keys(params.input.answers),
           }),
           lessonSentences,
         )
@@ -104,7 +104,7 @@ export async function submitPlayerCompletion(params: {
       stepResults: stepResults.map((step) => ({ isCorrect: step.isCorrect })),
       steps: activity.steps.map((step) => ({
         content: step.content,
-        id: String(step.id),
+        id: step.id,
         kind: step.kind,
       })),
     }),
@@ -113,7 +113,7 @@ export async function submitPlayerCompletion(params: {
   const durationSeconds = clampDuration(params.input.startedAt);
 
   const mergedStepResults = stepResults.map((validated) => {
-    const stepId = String(validated.stepId);
+    const stepId = validated.stepId;
     const timing = params.input.stepTimings[stepId];
 
     return {

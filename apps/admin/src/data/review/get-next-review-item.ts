@@ -7,7 +7,7 @@ import { cache } from "react";
 import { reviewedEntityIds } from "./count-pending-reviews";
 
 type ReviewQueueResult = {
-  entityId: bigint | null;
+  entityId: string | null;
   remaining: number;
 };
 
@@ -17,7 +17,7 @@ async function getNextCourseSuggestion(): Promise<ReviewQueueResult> {
   const excludeIds = await reviewedEntityIds("courseSuggestions");
 
   const where = {
-    NOT: { id: { in: excludeIds.map(Number) } },
+    NOT: { id: { in: excludeIds } },
     suggestions: { some: {} },
   };
 
@@ -30,7 +30,7 @@ async function getNextCourseSuggestion(): Promise<ReviewQueueResult> {
     prisma.searchPrompt.count({ where }),
   ]);
 
-  return { entityId: next ? BigInt(next.id) : null, remaining };
+  return { entityId: next?.id ?? null, remaining };
 }
 
 async function getNextStepVisualByKind(

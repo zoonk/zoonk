@@ -15,7 +15,7 @@ export function StepVisualImageReview({
   item,
 }: {
   item: {
-    id: bigint;
+    id: string;
     content: unknown;
     activity: { title: string | null };
   };

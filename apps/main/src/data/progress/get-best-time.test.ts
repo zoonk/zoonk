@@ -13,7 +13,7 @@ type StepAttemptParams = {
   answeredAt?: Date;
   hourOfDay: number;
   isCorrect: boolean;
-  stepId: bigint;
+  stepId: string;
   userId: string;
 };
 

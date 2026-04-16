@@ -3,33 +3,33 @@ import { getPublishedChapterWhere, getPublishedLessonWhere, prisma } from "@zoon
 import { safeAsync } from "@zoonk/utils/error";
 
 type LessonScope = {
-  chapterId: number;
+  chapterId: string;
   chapterPosition: number;
-  courseId: number;
+  courseId: string;
   lessonPosition: number;
   level: "lesson";
 };
 
 type ChapterScope = {
   chapterPosition: number;
-  courseId: number;
+  courseId: string;
   level: "chapter";
 };
 
 type LessonResult = {
   brandSlug: string;
-  chapterId: number;
+  chapterId: string;
   chapterSlug: string;
   courseSlug: string;
   lessonDescription: string;
-  lessonId: number;
+  lessonId: string;
   lessonSlug: string;
   lessonTitle: string;
 };
 
 type ChapterResult = {
   brandSlug: string;
-  chapterId: number;
+  chapterId: string;
   chapterSlug: string;
   courseSlug: string;
 };

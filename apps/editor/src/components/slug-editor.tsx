@@ -26,20 +26,20 @@ export function SlugEditor({
   redirectPrefix,
   redirectSuffix = "",
 }: {
-  chapterId?: number;
+  chapterId?: string;
   checkFn: (params: {
-    chapterId?: number;
-    courseId?: number;
+    chapterId?: string;
+    courseId?: string;
     language: string;
     orgSlug: string;
     slug: string;
   }) => Promise<boolean>;
-  courseId?: number;
-  entityId: number;
+  courseId?: string;
+  entityId: string;
   initialSlug: string;
   language: string;
   onSave: (
-    id: number,
+    id: string,
     data: { slug: string },
   ) => Promise<{ error: string | null; newSlug?: string }>;
   orgSlug: string;

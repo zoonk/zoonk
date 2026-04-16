@@ -71,12 +71,12 @@ async function confirmDelete(page: Page) {
   await getConfirmDeleteButton(page).click();
 }
 
-async function verifyLessonDeleted(lessonId: number) {
+async function verifyLessonDeleted(lessonId: string) {
   const lesson = await prisma.lesson.findUnique({ where: { id: lessonId } });
   expect(lesson).toBeNull();
 }
 
-async function verifyLessonExists(lessonId: number) {
+async function verifyLessonExists(lessonId: string) {
   const lesson = await prisma.lesson.findUnique({ where: { id: lessonId } });
   expect(lesson).not.toBeNull();
 }

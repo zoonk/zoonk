@@ -2,7 +2,7 @@ import "server-only";
 import { prisma } from "@zoonk/db";
 import { cache } from "react";
 
-const cachedListAlternativeTitlesById = cache(async (courseId: number): Promise<string[]> => {
+const cachedListAlternativeTitlesById = cache(async (courseId: string): Promise<string[]> => {
   const results = await prisma.courseAlternativeTitle.findMany({
     orderBy: { slug: "asc" },
     where: { courseId },
@@ -21,7 +21,7 @@ const cachedListAlternativeTitlesBySlug = cache(async (courseSlug: string): Prom
 });
 
 export function listAlternativeTitles(
-  params: { courseId: number } | { courseSlug: string },
+  params: { courseId: string } | { courseSlug: string },
 ): Promise<string[]> {
   if ("courseId" in params) {
     return cachedListAlternativeTitlesById(params.courseId);

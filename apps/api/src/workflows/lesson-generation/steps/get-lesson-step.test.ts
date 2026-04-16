@@ -23,8 +23,8 @@ vi.mock("workflow", () => ({
 
 describe(getLessonStep, () => {
   let organizationId: string;
-  let chapterId: number;
-  let courseId: number;
+  let chapterId: string;
+  let courseId: string;
 
   beforeAll(async () => {
     const organization = await aiOrganizationFixture();
@@ -70,7 +70,7 @@ describe(getLessonStep, () => {
   });
 
   test("throws FatalError when lesson does not exist", async () => {
-    await expect(getLessonStep(999_999_999)).rejects.toThrow("Lesson not found");
+    await expect(getLessonStep(randomUUID())).rejects.toThrow("Lesson not found");
 
     const events = getStreamedEvents(writeMock);
 

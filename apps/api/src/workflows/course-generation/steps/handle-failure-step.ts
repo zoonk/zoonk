@@ -4,8 +4,8 @@ import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 
 export async function handleCourseFailureStep(input: {
-  courseId: number | null;
-  courseSuggestionId: number;
+  courseId: string | null;
+  courseSuggestionId: string;
 }): Promise<void> {
   "use step";
 
@@ -33,7 +33,7 @@ export async function handleCourseFailureStep(input: {
   await stream.error({ reason: "aiGenerationFailed", step: "workflowError" });
 }
 
-export async function handleChapterFailureStep(input: { chapterId: number }): Promise<void> {
+export async function handleChapterFailureStep(input: { chapterId: string }): Promise<void> {
   "use step";
 
   await safeAsync(() =>

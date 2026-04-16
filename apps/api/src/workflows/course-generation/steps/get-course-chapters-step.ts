@@ -3,7 +3,7 @@ import { type CourseWorkflowStepName } from "@zoonk/core/workflows/steps";
 import { type Chapter, getActiveChapterWhere, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 
-export async function getCourseChaptersStep(courseId: number): Promise<Chapter[]> {
+export async function getCourseChaptersStep(courseId: string): Promise<Chapter[]> {
   "use step";
 
   await using stream = createStepStream<CourseWorkflowStepName>();

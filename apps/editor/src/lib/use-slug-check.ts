@@ -4,8 +4,8 @@ import { useDebounce } from "@zoonk/ui/hooks/debounce";
 import { useEffect, useEffectEvent, useState, useTransition } from "react";
 
 type SlugCheckParams = {
-  chapterId?: number;
-  courseId?: number;
+  chapterId?: string;
+  courseId?: string;
   language: string;
   orgSlug: string;
   slug: string;

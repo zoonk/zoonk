@@ -5,7 +5,7 @@ import {
 
 export type NextActivityStateAnchor = {
   chapterPosition: number;
-  lessonId: number;
+  lessonId: string;
   lessonPosition: number;
 };
 
@@ -20,7 +20,7 @@ export function getHasStartedState({
   rows,
 }: {
   courseCompleted: boolean;
-  durableChapterIds: Set<number>;
+  durableChapterIds: Set<string>;
   rows: EffectiveLessonProgressRow[];
 }) {
   return (
@@ -42,7 +42,7 @@ export function isScopeCompleted({
   scope,
 }: {
   courseCompleted: boolean;
-  durableChapterIds: Set<number>;
+  durableChapterIds: Set<string>;
   rows: EffectiveLessonProgressRow[];
   scope: PublishedLessonProgressScope;
 }) {
@@ -81,7 +81,7 @@ export function getScopeDurablyCompleted({
   scope,
 }: {
   courseCompleted: boolean;
-  durableChapterIds: Set<number>;
+  durableChapterIds: Set<string>;
   rows: EffectiveLessonProgressRow[];
   scope: PublishedLessonProgressScope;
 }) {
@@ -107,7 +107,7 @@ export function getFirstIncompleteLesson({
   rows,
 }: {
   courseCompleted: boolean;
-  durableChapterIds: Set<number>;
+  durableChapterIds: Set<string>;
   rows: EffectiveLessonProgressRow[];
 }) {
   if (courseCompleted) {
@@ -132,7 +132,7 @@ export function getForwardLesson({
 }: {
   after: NextActivityStateAnchor;
   courseCompleted: boolean;
-  durableChapterIds: Set<number>;
+  durableChapterIds: Set<string>;
   rows: EffectiveLessonProgressRow[];
 }) {
   if (courseCompleted) {
@@ -194,7 +194,7 @@ export function hasPendingLessonContent({ row }: { row: EffectiveLessonProgressR
  * a durably completed chapter from a chapter that still has open lessons now.
  */
 function groupRowsByChapter({ rows }: { rows: EffectiveLessonProgressRow[] }) {
-  const grouped = new Map<number, { chapterId: number; rows: EffectiveLessonProgressRow[] }>();
+  const grouped = new Map<string, { chapterId: string; rows: EffectiveLessonProgressRow[] }>();
 
   for (const row of rows) {
     const current = grouped.get(row.chapterId);
@@ -249,7 +249,7 @@ function isForwardLessonOpen({
   durableChapterIds,
   row,
 }: {
-  durableChapterIds: Set<number>;
+  durableChapterIds: Set<string>;
   row: EffectiveLessonProgressRow;
 }) {
   return !durableChapterIds.has(row.chapterId) && !row.isEffectivelyCompleted;
@@ -263,7 +263,7 @@ function getLessonById({
   lessonId,
   rows,
 }: {
-  lessonId: number;
+  lessonId: string;
   rows: EffectiveLessonProgressRow[];
 }) {
   return rows.find((row) => row.lessonId === lessonId) ?? null;

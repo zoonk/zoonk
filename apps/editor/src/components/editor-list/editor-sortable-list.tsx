@@ -35,11 +35,11 @@ export function EditorSortableList<T extends SortableItem>({
 }: {
   children: React.ReactNode;
   items: T[];
-  onReorder: (items: { id: number; position: number }[]) => Promise<{ error: string | null }>;
+  onReorder: (items: { id: string; position: number }[]) => Promise<{ error: string | null }>;
   renderOverlay?: (activeItem: T) => React.ReactNode;
 }) {
   const dndId = useId();
-  const [activeId, setActiveId] = useState<number | null>(null);
+  const [activeId, setActiveId] = useState<string | null>(null);
   const [optimisticItems, setOptimisticItems] = useOptimistic(initialItems);
   const [pending, startTransition] = useTransition();
 
@@ -64,7 +64,7 @@ export function EditorSortableList<T extends SortableItem>({
     if (typeof navigator !== "undefined" && navigator.vibrate) {
       navigator.vibrate(10);
     }
-    setActiveId(Number(event.active.id));
+    setActiveId(String(event.active.id));
   }, []);
 
   const handleDragEnd = useCallback(
@@ -106,7 +106,8 @@ export function EditorSortableList<T extends SortableItem>({
     setActiveId(null);
   }, []);
 
-  const activeItem = activeId ? optimisticItems.find((item) => item.id === activeId) : null;
+  const activeItem =
+    activeId === null ? null : optimisticItems.find((item) => item.id === activeId);
 
   const contextValue = useMemo<EditorSortableContextValue>(
     () => ({

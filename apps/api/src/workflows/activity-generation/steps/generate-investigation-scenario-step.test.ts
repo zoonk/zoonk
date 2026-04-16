@@ -181,7 +181,7 @@ describe(generateInvestigationScenarioStep, () => {
 
     expect(events).toContainEqual(
       expect.objectContaining({
-        entityId: Number(dbActivity.id),
+        entityId: dbActivity.id,
         status: "error",
         step: "generateInvestigationScenario",
       }),
@@ -219,7 +219,7 @@ describe(generateInvestigationScenarioStep, () => {
 
     expect(events).toContainEqual(
       expect.objectContaining({
-        entityId: Number(dbActivity.id),
+        entityId: dbActivity.id,
         status: "error",
         step: "generateInvestigationScenario",
       }),

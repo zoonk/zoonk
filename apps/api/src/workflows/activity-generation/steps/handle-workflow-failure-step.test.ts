@@ -25,7 +25,7 @@ vi.mock("workflow", () => ({
 
 describe(handleWorkflowFailureStep, () => {
   let organizationId: string;
-  let chapterId: number;
+  let chapterId: string;
 
   beforeAll(async () => {
     const organization = await aiOrganizationFixture();
