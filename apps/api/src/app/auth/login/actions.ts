@@ -2,6 +2,7 @@
 
 import { sendVerificationOTP } from "@zoonk/core/users/otp/send";
 import { parseFormField } from "@zoonk/utils/form";
+import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 
 export async function sendVerificationOTPAction(formData: FormData) {
@@ -12,7 +13,10 @@ export async function sendVerificationOTPAction(formData: FormData) {
     return;
   }
 
-  await sendVerificationOTP(email);
+  await sendVerificationOTP({
+    email,
+    headers: await headers(),
+  });
 
   const params = new URLSearchParams({ email });
 
