@@ -243,7 +243,7 @@ test.describe("Subscription Page - Provider Managed", () => {
     await expect(page.getByRole("link", { name: /manage in app store/i })).toBeVisible();
     await expect(page.getByRole("link", { name: /manage in app store/i })).toHaveAttribute(
       "href",
-      /support\.apple\.com/,
+      "https://support.apple.com/billing",
     );
     await expect(page.getByRole("link", { name: /contact support/i })).toHaveAttribute(
       "href",
