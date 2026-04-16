@@ -1,0 +1,54 @@
+apps/lab/src/components/ClientApp.tsx
+  8e3f344b6309b978 109-122,243-257,259-267
+apps/lab/src/lib/generate/chapters.ts
+  8e3f344b6309b978 6,29-47,55-138,141-142,145-146,148-156,159-167
+  h_1cda88fc21fe9c 139,157-158
+apps/lab/src/app/api/generate/all-lessons/route.ts
+  8e3f344b6309b978 1-36
+apps/lab/src/lib/generate/orchestrate.ts
+  8e3f344b6309b978 29-35,39-93
+apps/lab/.lab-data/biologia.json
+  8e3f344b6309b978 9-10,14-15,19-20,24-25,29-30,34-35,39-40,44-45,49-50,54-55,59-60,64-217
+apps/lab/.lab-data/kanban.json
+  8e3f344b6309b978 9-10,14-15,19-20,24-25,29-30,34-35,39-40,44-45,49-50,54-55,59-60,64-65,69-145
+apps/lab/.lab-data/ciencia-da-computacao.json
+  8e3f344b6309b978 5,10,14-15,19-20,24-25,29-30,34-35,39-40,44-45,51-94,98-141,145-198,202-255,259-312,316-369,373-416,420-473,477-530,534-692,695-748,752-805,809-862,866-919,923-976,980-1764
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.0",
+  "base_commit_sha": "5f508c4fcf0b7eea1c93c494a43397b69de3b8fb",
+  "prompts": {
+    "8e3f344b6309b978": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "eb99faec-dc77-4e5e-9734-1148d875c0ea",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 2352,
+      "total_deletions": 3399,
+      "accepted_lines": 2306,
+      "overriden_lines": 2
+    },
+    "fad2f0d2a1114b34": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b05fda29-46b3-48c5-adf9-e066a0b8e798",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 2,
+      "overriden_lines": 0
+    }
+  },
+  "humans": {
+    "h_1cda88fc21fe9c": {
+      "author": "ceolinwill"
+    }
+  }
+}
