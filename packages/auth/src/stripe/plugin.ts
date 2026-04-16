@@ -19,9 +19,6 @@ export function stripePlugin({ createCustomerOnSignUp = true }: StripePluginOpti
       getCheckoutSessionParams: () => ({
         params: {
           allow_promotion_codes: true,
-          billing_address_collection: "required",
-          customer_update: { name: "never" },
-          tax_id_collection: { enabled: true },
         },
       }),
       plans: PAID_PLANS.map((plan) => ({
