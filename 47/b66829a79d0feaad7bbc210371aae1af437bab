@@ -1,0 +1,599 @@
+apps/api/src/workflows/activity-generation/steps/generate-vocabulary-distractors-step.test.ts
+  07b8a9cb04c82c91 33
+apps/api/src/workflows/activity-generation/steps/generate-sentence-word-audio-step.test.ts
+  07b8a9cb04c82c91 33
+apps/api/src/workflows/activity-generation/steps/handle-failure-step.test.ts
+  07b8a9cb04c82c91 24
+apps/main/e2e/course-detail.test.ts
+  07b8a9cb04c82c91 3-4
+apps/api/src/workflows/activity-generation/steps/save-explanation-activity-step.test.ts
+  07b8a9cb04c82c91 27
+apps/api/src/workflows/activity-generation/steps/save-listening-activity-step.test.ts
+  07b8a9cb04c82c91 28
+packages/db/src/prisma/models/accounts.prisma
+  07b8a9cb04c82c91 4,41,48,59,62,79,91,113-114,116,127-128,135,144,168,178
+apps/editor/e2e/course-content.test.ts
+  07b8a9cb04c82c91 2
+apps/main/e2e/fixtures.ts
+  07b8a9cb04c82c91 2-3
+apps/api/src/workflows/activity-generation/steps/generate-grammar-romanization-step.test.ts
+  07b8a9cb04c82c91 32
+packages/core/src/player/commands/submit-player-completion.test.ts
+  07b8a9cb04c82c91 51,122
+apps/api/src/workflows/activity-generation/steps/generate-practice-content-step.test.ts
+  07b8a9cb04c82c91 36
+apps/api/src/workflows/activity-generation/steps/generate-vocabulary-pronunciation-step.test.ts
+  07b8a9cb04c82c91 34
+packages/core/src/player/commands/_utils/durable-curriculum-completion-queries.ts
+  07b8a9cb04c82c91 70,132,164
+packages/e2e/src/fixtures/users.ts
+  07b8a9cb04c82c91 7-8,34
+  h_1cda88fc21fe9c 1-6,9-33,35-135
+apps/api/src/workflows/chapter-generation/steps/add-lessons-step.test.ts
+  07b8a9cb04c82c91 26
+apps/api/src/workflows/activity-generation/steps/generate-reading-romanization-step.test.ts
+  07b8a9cb04c82c91 34
+apps/main/e2e/subscription.test.ts
+  07b8a9cb04c82c91 29,31
+packages/e2e/src/fixtures/progress.ts
+  07b8a9cb04c82c91 12,20-21,128,199-200
+  h_1cda88fc21fe9c 2,10,25-30,55-60,67,71,75,82-87,120-126
+packages/testing/src/fixtures/activities.ts
+  07b8a9cb04c82c91 16
+apps/main/e2e/command-palette.test.ts
+  07b8a9cb04c82c91 2
+apps/api/src/workflows/activity-generation/steps/_utils/upsert-word-with-pronunciation.ts
+  07b8a9cb04c82c91 19
+packages/core/src/progress/_utils/durable-completion-queries.ts
+  07b8a9cb04c82c91 15,43,71
+apps/editor/e2e/auth-callback.test.ts
+  07b8a9cb04c82c91 1-2
+apps/api/src/workflows/activity-generation/steps/_utils/generate-word-pronunciations.ts
+  07b8a9cb04c82c91 18,52
+apps/main/src/data/progress/get-best-time.test.ts
+  07b8a9cb04c82c91 17,52
+packages/core/src/player/commands/_utils/daily-progress.ts
+  07b8a9cb04c82c91 31,70
+apps/main/src/data/lessons/get-lesson-for-generation.test.ts
+  07b8a9cb04c82c91 9
+apps/api/src/workflows/course-generation/steps/check-existing-course-step.test.ts
+  07b8a9cb04c82c91 25
+apps/api/src/workflows/course-generation/steps/get-ai-organization-step.test.ts
+  07b8a9cb04c82c91 18
+packages/e2e/src/fixtures/dialog.ts
+  07b8a9cb04c82c91 1-17
+apps/editor/e2e/chapter-list.test.ts
+  07b8a9cb04c82c91 4
+apps/main/src/data/courses/_utils/continue-learning-candidates.ts
+  07b8a9cb04c82c91 40,123,213,236
+packages/player/src/player-reducer.test.ts
+  07b8a9cb04c82c91 53
+apps/api/src/workflows/activity-generation/steps/generate-custom-content-step.test.ts
+  07b8a9cb04c82c91 35
+apps/api/src/workflows/activity-generation/steps/_utils/content-step-helpers.test.ts
+  07b8a9cb04c82c91 24
+apps/admin/src/app/(private)/users/[id]/user-activity.tsx
+  07b8a9cb04c82c91 5
+apps/main/src/data/progress/get-bp-history.ts
+  07b8a9cb04c82c91 32,92
+apps/editor/e2e/course-categories.test.ts
+  07b8a9cb04c82c91 3-4
+apps/api/src/workflows/activity-generation/steps/_utils/generate-word-pronunciations.test.ts
+  07b8a9cb04c82c91 16
+apps/api/src/workflows/chapter-generation/steps/set-chapter-as-completed-step.test.ts
+  07b8a9cb04c82c91 26
+apps/api/src/workflows/course-generation/steps/add-chapters-step.test.ts
+  07b8a9cb04c82c91 25
+apps/main/src/data/progress/get-energy-history.ts
+  07b8a9cb04c82c91 57,124
+apps/api/src/workflows/activity-generation/steps/_utils/fetch-existing-word-casing.ts
+  07b8a9cb04c82c91 4
+apps/editor/e2e/lesson-list.test.ts
+  07b8a9cb04c82c91 4
+apps/main/e2e/chapter-detail.test.ts
+  07b8a9cb04c82c91 2
+packages/db/src/prisma/models/chapters.prisma
+  07b8a9cb04c82c91 3
+apps/main/e2e/lesson-completion.test.ts
+  07b8a9cb04c82c91 4,44
+apps/api/e2e/workflows-chapter-generation.test.ts
+  07b8a9cb04c82c91 5,10,239,241
+apps/api/src/workflows/activity-generation/kinds/story-workflow.test.ts
+  07b8a9cb04c82c91 91
+apps/api/src/workflows/activity-generation/steps/generate-reading-audio-step.test.ts
+  07b8a9cb04c82c91 33
+apps/editor/src/data/courses/create-course.test.ts
+  07b8a9cb04c82c91 1,78
+apps/editor/src/data/lessons/import-lessons.test.ts
+  07b8a9cb04c82c91 1,813
+apps/api/src/workflows/lesson-generation/steps/remove-non-language-lesson-step.test.ts
+  07b8a9cb04c82c91 26
+packages/core/src/player/queries/get-review-steps.test.ts
+  07b8a9cb04c82c91 721,865
+apps/api/src/workflows/course-generation/steps/add-alternative-titles-step.test.ts
+  07b8a9cb04c82c91 25
+apps/editor/src/data/chapters/import-chapters.ts
+  07b8a9cb04c82c91 63
+packages/db/src/prisma/models/courses.prisma
+  07b8a9cb04c82c91 46,48,112
+packages/db/src/prisma/models/lessons.prisma
+  07b8a9cb04c82c91 3,39
+packages/core/src/player/queries/get-next-lesson.test.ts
+  07b8a9cb04c82c91 10
+apps/api/src/workflows/course-generation/steps/generate-description-step.test.ts
+  07b8a9cb04c82c91 33
+apps/api/src/workflows/activity-generation/steps/generate-investigation-findings-step.test.ts
+  07b8a9cb04c82c91 62
+apps/api/src/workflows/activity-generation/steps/save-translation-from-existing-vocabulary-step.test.ts
+  07b8a9cb04c82c91 27
+apps/api/src/workflows/activity-generation/steps/generate-quiz-content-step.test.ts
+  07b8a9cb04c82c91 36
+apps/api/src/workflows/course-generation/steps/generate-alternative-titles-step.test.ts
+  07b8a9cb04c82c91 33
+apps/main/e2e/course-chapters.test.ts
+  07b8a9cb04c82c91 2-3
+apps/main/e2e/content-feedback.test.ts
+  07b8a9cb04c82c91 1
+apps/editor/src/data/chapters/list-course-chapters.ts
+  07b8a9cb04c82c91 11,47
+apps/admin/src/app/(private)/users/[id]/_actions/unban-user.ts
+  07b8a9cb04c82c91 12
+apps/admin/src/app/(private)/users/[id]/user-subscription.tsx
+  07b8a9cb04c82c91 6
+apps/api/src/workflows/activity-generation/steps/generate-vocabulary-romanization-step.test.ts
+  07b8a9cb04c82c91 34
+apps/admin/src/app/(private)/users/[id]/unban-user-dialog.tsx
+  07b8a9cb04c82c91 17
+apps/api/src/workflows/activity-generation/steps/save-story-activity-step.test.ts
+  07b8a9cb04c82c91 87
+packages/core/src/orgs/org-permissions.ts
+  07b8a9cb04c82c91 13,15,31,44,62
+apps/api/src/workflows/course-generation/steps/add-categories-step.test.ts
+  07b8a9cb04c82c91 25
+apps/api/src/workflows/activity-generation/kinds/explanation-workflow.test.ts
+  07b8a9cb04c82c91 87
+packages/db/src/prisma/models/user-learning-profiles.prisma
+  07b8a9cb04c82c91 3
+apps/api/src/workflows/course-generation/steps/generate-categories-step.test.ts
+  07b8a9cb04c82c91 33
+apps/main/e2e/locale.test.ts
+  07b8a9cb04c82c91 1
+apps/main/e2e/activity-detail.test.ts
+  07b8a9cb04c82c91 2
+packages/testing/src/fixtures/sentences.ts
+  07b8a9cb04c82c91 4
+apps/editor/e2e/alternative-titles.test.ts
+  07b8a9cb04c82c91 4
+apps/editor/e2e/org-home.test.ts
+  07b8a9cb04c82c91 2
+apps/api/src/workflows/activity-generation/core-activity-workflow.test.ts
+  07b8a9cb04c82c91 186
+apps/api/src/workflows/activity-generation/steps/generate-vocabulary-content-step.test.ts
+  07b8a9cb04c82c91 42
+apps/main/e2e/generate-lesson.test.ts
+  07b8a9cb04c82c91 4,155,160,162
+apps/main/e2e/home.test.ts
+  07b8a9cb04c82c91 3-4
+apps/main/e2e/course-progress.test.ts
+  07b8a9cb04c82c91 2,18,175,228
+packages/core/src/activities/find-last-completed.ts
+  07b8a9cb04c82c91 43
+apps/api/src/workflows/activity-generation/steps/generate-visual-content-step.test.ts
+  07b8a9cb04c82c91 36
+apps/api/src/workflows/activity-generation/steps/mark-all-activities-as-running-step.test.ts
+  07b8a9cb04c82c91 29
+apps/api/src/workflows/lesson-regeneration/lesson-regeneration-workflow.test.ts
+  07b8a9cb04c82c91 47
+apps/editor/e2e/new-course.test.ts
+  07b8a9cb04c82c91 2
+apps/api/src/workflows/activity-generation/steps/generate-quiz-images-step.test.ts
+  07b8a9cb04c82c91 35
+apps/api/src/workflows/activity-generation/steps/save-practice-activity-step.test.ts
+  07b8a9cb04c82c91 28
+packages/core/src/player/commands/submit-player-completion.ts
+  07b8a9cb04c82c91 63
+apps/api/src/workflows/activity-generation/kinds/listening-workflow.test.ts
+  07b8a9cb04c82c91 37
+apps/api/src/workflows/activity-generation/steps/get-lesson-activities-step.test.ts
+  07b8a9cb04c82c91 26
+apps/api/e2e/next-activity.test.ts
+  07b8a9cb04c82c91 8,15
+apps/api/src/workflows/activity-generation/kinds/quiz-workflow.test.ts
+  07b8a9cb04c82c91 62
+apps/api/src/workflows/course-generation/_internal/setup-course.test.ts
+  07b8a9cb04c82c91 60
+packages/e2e/src/fixtures/locale.ts
+  h_1cda88fc21fe9c 1-13
+apps/editor/e2e/lesson-publish.test.ts
+  07b8a9cb04c82c91 3
+apps/api/src/workflows/activity-generation/steps/generate-story-content-step.test.ts
+  07b8a9cb04c82c91 62
+packages/core/src/player/commands/submit-activity-completion.ts
+  07b8a9cb04c82c91 27
+apps/main/e2e/sitemap.test.ts
+  07b8a9cb04c82c91 1
+apps/api/src/workflows/activity-generation/steps/generate-sentence-word-metadata-step.ts
+  07b8a9cb04c82c91 29,115
+apps/api/src/workflows/chapter-generation/steps/set-chapter-as-running-step.test.ts
+  07b8a9cb04c82c91 25
+apps/api/src/workflows/course-generation/steps/complete-course-setup-step.test.ts
+  07b8a9cb04c82c91 25
+apps/api/src/workflows/course-generation/_internal/generate-missing-content.test.ts
+  07b8a9cb04c82c91 66
+apps/editor/e2e/global-setup.ts
+  07b8a9cb04c82c91 1,3,9
+apps/main/e2e/activity-start-tracking.test.ts
+  07b8a9cb04c82c91 5
+packages/core/src/activities/find-last-completed.test.ts
+  07b8a9cb04c82c91 11-12
+packages/core/src/progress/get-next-activity-state.ts
+  07b8a9cb04c82c91 59,207,306
+packages/db/src/prisma/seed/progress.ts
+  07b8a9cb04c82c91 12,23
+packages/testing/src/fixtures/lessons.ts
+  07b8a9cb04c82c91 26
+apps/api/src/workflows/lesson-generation/steps/determine-applied-activity-step.test.ts
+  07b8a9cb04c82c91 36
+apps/api/src/workflows/activity-generation/steps/save-reading-activity-step.test.ts
+  07b8a9cb04c82c91 26
+apps/api/src/workflows/activity-generation/steps/generate-custom-visual-content-step.test.ts
+  07b8a9cb04c82c91 35
+apps/api/src/workflows/activity-generation/steps/save-investigation-activity-step.test.ts
+  07b8a9cb04c82c91 56
+packages/db/src/prisma/models/progress.prisma
+  07b8a9cb04c82c91 3,20,34,48,62,84,95
+apps/api/src/workflows/course-generation/steps/get-ai-organization-step.ts
+  07b8a9cb04c82c91 5
+apps/admin/src/data/users/list-users.ts
+  h_1cda88fc21fe9c 35,51
+apps/api/src/workflows/activity-generation/steps/generate-sentence-word-pronunciation-step.test.ts
+  07b8a9cb04c82c91 34
+apps/main/src/data/courses/_utils/continue-learning-next-state.ts
+  07b8a9cb04c82c91 19
+apps/api/src/workflows/activity-generation/steps/save-reading-activity-step.ts
+  07b8a9cb04c82c91 132
+apps/api/e2e/course-search.test.ts
+  07b8a9cb04c82c91 9,17,344
+packages/testing/src/fixtures/courses.ts
+  07b8a9cb04c82c91 30
+apps/main/e2e/chapter-progress.test.ts
+  07b8a9cb04c82c91 2,18
+packages/testing/src/fixtures/orgs.ts
+  07b8a9cb04c82c91 27,51,66
+apps/api/src/workflows/course-generation/steps/get-course-chapters-step.test.ts
+  07b8a9cb04c82c91 24
+apps/api/src/workflows/course-generation/steps/generate-chapters-step.test.ts
+  07b8a9cb04c82c91 38
+packages/core/src/orgs/find-org.ts
+  07b8a9cb04c82c91 7
+apps/api/src/workflows/course-generation/course-generation-workflow.test.ts
+  07b8a9cb04c82c91 117
+apps/api/src/workflows/lesson-generation/steps/set-lesson-as-completed-step.test.ts
+  07b8a9cb04c82c91 28
+apps/main/e2e/generate-activity.test.ts
+  07b8a9cb04c82c91 4,218,223,225
+apps/admin/src/app/(private)/users/[id]/user-header.tsx
+  07b8a9cb04c82c91 9
+apps/api/src/workflows/lesson-regeneration/steps/claim-live-lesson-regeneration-step.test.ts
+  07b8a9cb04c82c91 28
+apps/main/src/data/courses/get-continue-learning.test.ts
+  07b8a9cb04c82c91 12
+apps/api/src/workflows/activity-generation/steps/save-grammar-steps-step.test.ts
+  07b8a9cb04c82c91 28
+packages/db/src/prisma/migrations/20260416000743_auth_string_ids/migration.sql
+  07b8a9cb04c82c91 1-277
+packages/core/src/player/contracts/prepare-activity-data.test.ts
+  07b8a9cb04c82c91 125,192,203
+apps/api/src/workflows/lesson-generation/steps/add-activities-step.test.ts
+  07b8a9cb04c82c91 27
+apps/api/src/workflows/lesson-generation/steps/get-lesson-step.test.ts
+  07b8a9cb04c82c91 25
+apps/admin/src/app/(private)/users/[id]/_actions/change-plan.ts
+  07b8a9cb04c82c91 3,39
+  h_1cda88fc21fe9c 13,22,42-43
+apps/api/src/workflows/activity-generation/steps/generate-vocabulary-audio-step.test.ts
+  07b8a9cb04c82c91 33
+apps/api/src/workflows/activity-generation/steps/_utils/fetch-existing-word-casing.test.ts
+  07b8a9cb04c82c91 8
+apps/api/src/workflows/course-generation/steps/generate-image-step.test.ts
+  07b8a9cb04c82c91 33
+packages/core/src/progress/get-next-activity.ts
+  07b8a9cb04c82c91 22-23
+apps/api/src/workflows/activity-generation/steps/generate-explanation-content-step.test.ts
+  07b8a9cb04c82c91 35
+apps/admin/src/data/users/get-user-subscription.ts
+  07b8a9cb04c82c91 6,13
+apps/admin/src/app/(private)/users/[id]/ban-user-dialog.tsx
+  07b8a9cb04c82c91 20
+packages/db/src/prisma/models/vocabulary.prisma
+  07b8a9cb04c82c91 3,41
+packages/core/src/content/management.test.ts
+  07b8a9cb04c82c91 58
+packages/testing/src/fixtures/users.ts
+  07b8a9cb04c82c91 26-27,36,42
+packages/core/src/progress/get-activity-progress.ts
+  07b8a9cb04c82c91 13,15
+apps/main/e2e/generate-chapter.test.ts
+  07b8a9cb04c82c91 4,145,150,152
+packages/e2e/package.json
+  h_1cda88fc21fe9c 8-12
+apps/editor/e2e/lesson-delete.test.ts
+  07b8a9cb04c82c91 3-4
+packages/db/src/prisma/models/content-review.prisma
+  07b8a9cb04c82c91 7
+apps/main/e2e/continue-activity-link.test.ts
+  07b8a9cb04c82c91 2
+apps/api/src/workflows/activity-generation/kinds/practice-workflow.test.ts
+  07b8a9cb04c82c91 48
+apps/api/src/workflows/activity-generation/steps/generate-reading-content-step.test.ts
+  07b8a9cb04c82c91 41
+apps/api/src/workflows/activity-generation/steps/generate-sentence-word-metadata-step.test.ts
+  07b8a9cb04c82c91 43
+apps/api/src/workflows/lesson-generation/steps/handle-failure-step.test.ts
+  07b8a9cb04c82c91 26
+apps/api/src/workflows/activity-generation/kinds/investigation-workflow.test.ts
+  07b8a9cb04c82c91 67
+packages/core/src/player/queries/get-review-steps.ts
+  07b8a9cb04c82c91 34
+packages/core/src/player/commands/_utils/durable-curriculum-completion-rules.test.ts
+  07b8a9cb04c82c91 48
+apps/editor/src/data/lessons/list-chapter-lessons.ts
+  07b8a9cb04c82c91 11,51
+apps/admin/src/app/(private)/users/[id]/page.tsx
+  07b8a9cb04c82c91 65
+apps/api/src/workflows/activity-generation/kinds/grammar-workflow.test.ts
+  07b8a9cb04c82c91 83
+apps/main/e2e/catalog-actions.test.ts
+  07b8a9cb04c82c91 3
+packages/core/src/player/commands/_utils/durable-curriculum-completion.ts
+  07b8a9cb04c82c91 29,116
+apps/api/src/workflows/activity-generation/steps/generate-custom-visuals-step.test.ts
+  07b8a9cb04c82c91 35
+apps/api/src/workflows/lesson-generation/steps/set-lesson-as-running-step.test.ts
+  07b8a9cb04c82c91 26
+apps/editor/e2e/course-delete.test.ts
+  07b8a9cb04c82c91 3-4,45
+apps/api/src/workflows/activity-generation/steps/save-vocabulary-activity-step.test.ts
+  07b8a9cb04c82c91 26
+packages/testing/src/fixtures/progress.ts
+  07b8a9cb04c82c91 10,32
+apps/api/src/workflows/course-generation/steps/initialize-course-step.ts
+  07b8a9cb04c82c91 13,60
+apps/editor/e2e/activity-list.test.ts
+  07b8a9cb04c82c91 4
+packages/core/src/content/lifecycle.test.ts
+  07b8a9cb04c82c91 13
+apps/api/src/workflows/activity-generation/steps/_utils/generate-word-audio-urls.test.ts
+  07b8a9cb04c82c91 18
+apps/api/src/workflows/lesson-regeneration/steps/cleanup-regenerated-activities-step.test.ts
+  07b8a9cb04c82c91 13
+apps/editor/e2e/fixtures.ts
+  07b8a9cb04c82c91 1,4-5,90
+apps/api/src/workflows/activity-generation/steps/save-quiz-activity-step.test.ts
+  07b8a9cb04c82c91 28
+packages/core/src/progress/get-lesson-progress.ts
+  07b8a9cb04c82c91 20,22
+apps/api/src/workflows/activity-generation/steps/generate-investigation-actions-step.test.ts
+  07b8a9cb04c82c91 56
+packages/player/src/_test-utils/player-test-data.ts
+  07b8a9cb04c82c91 83
+packages/e2e/src/fixtures/orgs.ts
+  07b8a9cb04c82c91 5,28
+  h_1cda88fc21fe9c 1-3,8-10,12-17,21-23,25-27,30-37
+apps/editor/e2e/chapter-content.test.ts
+  07b8a9cb04c82c91 2
+packages/e2e/src/fixtures/base-url.ts
+  h_1cda88fc21fe9c 1-14
+apps/main/src/data/courses/find-existing-course.test.ts
+  07b8a9cb04c82c91 12
+apps/admin/src/app/(private)/users/[id]/_actions/revoke-sessions.ts
+  07b8a9cb04c82c91 12
+apps/api/src/workflows/activity-generation/steps/save-vocabulary-activity-step.ts
+  07b8a9cb04c82c91 168
+apps/main/e2e/global-setup.ts
+  07b8a9cb04c82c91 2
+apps/api/src/workflows/course-generation/_internal/persist-generated-content.test.ts
+  07b8a9cb04c82c91 27
+apps/editor/e2e/lesson-content.test.ts
+  07b8a9cb04c82c91 2
+apps/api/src/workflows/course-generation/steps/handle-failure-step.test.ts
+  07b8a9cb04c82c91 26,96
+apps/api/src/workflows/activity-generation/steps/generate-visuals-step.test.ts
+  07b8a9cb04c82c91 35
+apps/api/src/workflows/chapter-generation/chapter-generation-workflow.test.ts
+  07b8a9cb04c82c91 53
+apps/main/e2e/courses.test.ts
+  07b8a9cb04c82c91 2-3
+apps/main/src/data/progress/get-score-history.ts
+  07b8a9cb04c82c91 51,114
+apps/api/src/workflows/activity-generation/steps/save-custom-activity-step.test.ts
+  07b8a9cb04c82c91 28
+apps/api/src/workflows/activity-generation/activity-generation-workflow.test.ts
+  07b8a9cb04c82c91 135
+apps/admin/src/app/(private)/users/[id]/change-plan-dialog.tsx
+  07b8a9cb04c82c91 49
+apps/api/src/workflows/chapter-generation/steps/get-chapter-step.test.ts
+  07b8a9cb04c82c91 24
+packages/testing/src/fixtures/words.ts
+  07b8a9cb04c82c91 4
+apps/api/src/workflows/lesson-generation/steps/update-lesson-kind-step.test.ts
+  07b8a9cb04c82c91 26
+apps/api/src/workflows/activity-generation/kinds/custom-workflow.test.ts
+  07b8a9cb04c82c91 92
+apps/api/src/workflows/activity-generation/steps/generate-investigation-accuracy-step.test.ts
+  07b8a9cb04c82c91 48
+apps/api/src/workflows/activity-generation/steps/generate-sentence-distractors-step.test.ts
+  07b8a9cb04c82c91 33
+apps/api/src/workflows/lesson-generation/lesson-generation-workflow.test.ts
+  07b8a9cb04c82c91 39
+packages/core/src/progress/get-chapter-progress.ts
+  07b8a9cb04c82c91 76,78
+apps/editor/e2e/chapter-delete.test.ts
+  07b8a9cb04c82c91 3-4
+apps/main/e2e/lesson-detail.test.ts
+  07b8a9cb04c82c91 2
+apps/api/src/workflows/activity-generation/steps/_utils/generate-word-audio-urls.ts
+  07b8a9cb04c82c91 15
+packages/core/src/player/commands/start-activity.ts
+  07b8a9cb04c82c91 10
+apps/api/src/workflows/course-generation/steps/update-course-step.test.ts
+  07b8a9cb04c82c91 25
+apps/editor/src/data/lessons/import-lessons.ts
+  07b8a9cb04c82c91 67
+packages/core/src/player/contracts/prepare-activity-data.ts
+  07b8a9cb04c82c91 86,97,260
+apps/editor/e2e/logout-menu-item.test.ts
+  07b8a9cb04c82c91 1-2
+apps/api/src/workflows/activity-generation/steps/generate-grammar-content-step.test.ts
+  07b8a9cb04c82c91 40
+apps/api/src/workflows/activity-generation/steps/generate-story-debrief-step.test.ts
+  07b8a9cb04c82c91 63
+apps/api/src/workflows/activity-generation/steps/generate-grammar-user-content-step.test.ts
+  07b8a9cb04c82c91 58
+apps/api/src/workflows/course-generation/_internal/get-or-create-course.test.ts
+  07b8a9cb04c82c91 25
+apps/main/src/data/courses/_utils/continue-learning-queries.ts
+  07b8a9cb04c82c91 37
+apps/api/src/workflows/activity-generation/steps/_utils/save-reading-target-words.ts
+  07b8a9cb04c82c91 27,143
+apps/main/e2e/auth-callback.test.ts
+  07b8a9cb04c82c91 1-2
+apps/api/src/workflows/activity-generation/steps/get-neighboring-concepts-step.test.ts
+  07b8a9cb04c82c91 24
+apps/admin/src/app/(private)/users/[id]/revoke-sessions-dialog.tsx
+  07b8a9cb04c82c91 17
+packages/db/src/prisma/seed/subscriptions.ts
+  07b8a9cb04c82c91 1,7,18,22
+packages/core/src/activities/get-next-activity-in-course.test.ts
+  07b8a9cb04c82c91 11
+apps/main/e2e/continue-learning-revalidation.test.ts
+  07b8a9cb04c82c91 3-4
+apps/main/e2e/support.test.ts
+  07b8a9cb04c82c91 1
+apps/api/src/workflows/activity-generation/steps/generate-reading-content-step.ts
+  07b8a9cb04c82c91 28,72
+apps/api/src/workflows/course-generation/steps/set-course-as-running-step.test.ts
+  07b8a9cb04c82c91 25
+apps/admin/src/app/(private)/users/[id]/user-account.tsx
+  07b8a9cb04c82c91 5
+apps/editor/e2e/command-palette.test.ts
+  07b8a9cb04c82c91 2
+apps/main/e2e/review-step.test.ts
+  07b8a9cb04c82c91 3
+apps/editor/src/data/activities/import-activities.test.ts
+  07b8a9cb04c82c91 1,174
+apps/admin/src/data/users/get-user.ts
+  07b8a9cb04c82c91 6
+apps/editor/src/data/activities/list-lesson-activities.ts
+  07b8a9cb04c82c91 11,51
+apps/main/src/data/chapters/get-chapter-for-generation.test.ts
+  07b8a9cb04c82c91 9
+apps/editor/e2e/course-image.test.ts
+  07b8a9cb04c82c91 3
+packages/core/src/player/queries/get-total-brain-power.test.ts
+  07b8a9cb04c82c91 16
+apps/editor/src/data/courses/course-slug.test.ts
+  07b8a9cb04c82c91 1,12,101,125
+apps/editor/e2e/chapter-publish.test.ts
+  07b8a9cb04c82c91 3
+packages/testing/src/fixtures/step-attempts.ts
+  07b8a9cb04c82c91 12
+apps/api/src/workflows/activity-generation/steps/handle-workflow-failure-step.test.ts
+  07b8a9cb04c82c91 27
+apps/admin/src/app/(private)/users/[id]/_actions/ban-user.ts
+  07b8a9cb04c82c91 12
+apps/api/e2e/workflows-lesson-generation.test.ts
+  07b8a9cb04c82c91 5,10,218,220
+apps/api/src/workflows/activity-generation/custom-activity-workflow.test.ts
+  07b8a9cb04c82c91 91
+packages/core/src/orgs/org-permissions.test.ts
+  07b8a9cb04c82c91 88
+apps/api/e2e/workflows-course-generation.test.ts
+  07b8a9cb04c82c91 5
+packages/testing/src/fixtures/chapters.ts
+  07b8a9cb04c82c91 22
+apps/editor/e2e/course-publish.test.ts
+  07b8a9cb04c82c91 3
+apps/editor/e2e/import-replace-warning.test.ts
+  07b8a9cb04c82c91 1
+apps/main/e2e/generate-course.test.ts
+  07b8a9cb04c82c91 3
+apps/api/e2e/workflows-activity-generation.test.ts
+  07b8a9cb04c82c91 5,10,231,233
+apps/editor/src/data/lessons/create-lesson.test.ts
+  07b8a9cb04c82c91 1,130
+packages/core/src/progress/_utils/published-lesson-progress-queries.ts
+  07b8a9cb04c82c91 19,62
+packages/core/src/users/get-user-session.ts
+  h_1cda88fc21fe9c 7,9-10,12,15
+packages/core/src/users/get-user-session.test.ts
+  07b8a9cb04c82c91 7,20,22
+apps/api/src/workflows/activity-generation/steps/generate-investigation-scenario-step.test.ts
+  07b8a9cb04c82c91 45
+apps/api/src/workflows/lesson-regeneration/steps/release-live-lesson-regeneration-step.test.ts
+  07b8a9cb04c82c91 12
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.0",
+  "base_commit_sha": "47b66829a79d0feaad7bbc210371aae1af437bab",
+  "prompts": {
+    "07b8a9cb04c82c91": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d937d-f5f9-7460-8094-f53458e39bf0",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 1277,
+      "total_deletions": 972,
+      "accepted_lines": 1245,
+      "overriden_lines": 0
+    },
+    "b3e2cf6cad4819a0": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d8d5d-7cba-70b1-8c17-ad7d6dff43e7",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 133,
+      "overriden_lines": 0
+    },
+    "b96aa95b162d6206": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d8db2-0332-7d93-84f8-0f778f7df0ff",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 1,
+      "overriden_lines": 0
+    },
+    "e121ac05599a2e7d": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d92e0-e4b6-78b3-8f0d-561aeed5d3a4",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 91,
+      "overriden_lines": 0
+    }
+  },
+  "humans": {
+    "h_1cda88fc21fe9c": {
+      "author": "ceolinwill"
+    }
+  }
+}
