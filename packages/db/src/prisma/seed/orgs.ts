@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { type Organization, type PrismaClient } from "../../generated/prisma/client";
 import { type SeedUsers } from "./users";
@@ -14,12 +15,13 @@ export async function seedOrganizations(
   const [ai, testOrg] = await Promise.all([
     prisma.organization.upsert({
       create: {
+        id: randomUUID(),
         members: {
           create: [
-            { role: "owner", userId: users.owner.id },
-            { role: "admin", userId: users.admin.id },
-            { role: "member", userId: users.member.id },
-            { role: "admin", userId: users.multiOrg.id },
+            { id: randomUUID(), role: "owner", userId: users.owner.id },
+            { id: randomUUID(), role: "admin", userId: users.admin.id },
+            { id: randomUUID(), role: "member", userId: users.member.id },
+            { id: randomUUID(), role: "admin", userId: users.multiOrg.id },
           ],
         },
         name: "Zoonk AI",
@@ -30,8 +32,9 @@ export async function seedOrganizations(
     }),
     prisma.organization.upsert({
       create: {
+        id: randomUUID(),
         members: {
-          create: [{ role: "owner", userId: users.multiOrg.id }],
+          create: [{ id: randomUUID(), role: "owner", userId: users.multiOrg.id }],
         },
         name: "Test Org",
         slug: "test-org",

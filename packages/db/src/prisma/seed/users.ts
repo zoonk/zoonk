@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { type PrismaClient, type User } from "../../generated/prisma/client";
 
 export type SeedUsers = {
@@ -13,6 +14,7 @@ export async function seedUsers(prisma: PrismaClient): Promise<SeedUsers> {
     create: {
       email: "owner@zoonk.test",
       emailVerified: true,
+      id: randomUUID(),
       name: "Owner User",
       role: "admin",
       username: "owner_user",
@@ -25,6 +27,7 @@ export async function seedUsers(prisma: PrismaClient): Promise<SeedUsers> {
     create: {
       email: "admin@zoonk.test",
       emailVerified: true,
+      id: randomUUID(),
       name: "Admin User",
       role: "admin",
       username: "admin_user",
@@ -37,6 +40,7 @@ export async function seedUsers(prisma: PrismaClient): Promise<SeedUsers> {
     create: {
       email: "member@zoonk.test",
       emailVerified: true,
+      id: randomUUID(),
       name: "Member User",
       role: "member",
       username: "member_user",
@@ -49,6 +53,7 @@ export async function seedUsers(prisma: PrismaClient): Promise<SeedUsers> {
     create: {
       email: "logout-test@zoonk.test",
       emailVerified: true,
+      id: randomUUID(),
       name: "Logout Test User",
       role: "member",
       username: "logout_test",
@@ -61,6 +66,7 @@ export async function seedUsers(prisma: PrismaClient): Promise<SeedUsers> {
     create: {
       email: "multi-org@zoonk.test",
       emailVerified: true,
+      id: randomUUID(),
       name: "Multi Org User",
       role: "admin",
       username: "multi_org",
