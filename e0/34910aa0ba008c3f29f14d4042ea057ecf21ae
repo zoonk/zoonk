@@ -1,0 +1,41 @@
+packages/auth/src/stripe/plugin.ts
+  h_1cda88fc21fe9c 23
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.0",
+  "base_commit_sha": "e034910aa0ba008c3f29f14d4042ea057ecf21ae",
+  "prompts": {
+    "adc264ee2d29cada": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d9254-3367-7421-ae9f-2a2eaffdd567",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 293,
+      "overriden_lines": 5
+    },
+    "b656cba3e57dc167": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d81e6-d72d-7473-afe2-7cc747e2c8c7",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 48,
+      "overriden_lines": 0
+    }
+  },
+  "humans": {
+    "h_1cda88fc21fe9c": {
+      "author": "ceolinwill"
+    }
+  }
+}
