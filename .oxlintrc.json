@@ -62,7 +62,6 @@
     ],
     "import/prefer-default-export": "off",
     "jest/no-untyped-mock-factory": "off",
-    "jest/prefer-ending-with-an-expect": "off",
     "jsx-max-depth": ["error", { "max": 5 }],
     "jsx-a11y/no-autofocus": "off",
     "oxc/no-async-await": "off",
