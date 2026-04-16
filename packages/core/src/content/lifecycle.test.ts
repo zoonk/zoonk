@@ -10,7 +10,7 @@ import { beforeAll, describe, expect, test } from "vitest";
 import { getContentDeleteDecision } from "./lifecycle";
 
 describe("content lifecycle", () => {
-  let organizationId: number;
+  let organizationId: string;
 
   beforeAll(async () => {
     const organization = await organizationFixture({ kind: "brand" });

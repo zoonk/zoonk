@@ -14,7 +14,7 @@ import { Button } from "@zoonk/ui/components/button";
 import { useState } from "react";
 import { revokeSessionsAction } from "./_actions/revoke-sessions";
 
-export function RevokeSessionsDialog({ userId, userName }: { userId: number; userName: string }) {
+export function RevokeSessionsDialog({ userId, userName }: { userId: string; userName: string }) {
   const [open, setOpen] = useState(false);
 
   return (

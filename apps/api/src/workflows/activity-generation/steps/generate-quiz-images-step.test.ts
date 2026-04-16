@@ -32,7 +32,7 @@ vi.mock("@zoonk/core/steps/image", () => ({
 }));
 
 describe(generateQuizImagesStep, () => {
-  let organizationId: number;
+  let organizationId: string;
   let chapter: Awaited<ReturnType<typeof chapterFixture>>;
 
   beforeAll(async () => {

@@ -21,7 +21,7 @@ vi.mock("workflow", () => ({
 }));
 
 describe(handleActivityFailureStep, () => {
-  let organizationId: number;
+  let organizationId: string;
   let chapterId: number;
 
   beforeAll(async () => {

@@ -63,7 +63,7 @@ const course: CourseContext = {
   courseSlug: "test-course",
   courseTitle: "Test Course",
   language: "en",
-  organizationId: 1,
+  organizationId: "org-1",
   targetLanguage: null,
 };
 

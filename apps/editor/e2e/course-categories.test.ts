@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
-import { getAiOrganization, openDialog } from "@zoonk/e2e/helpers";
+import { openDialog } from "@zoonk/e2e/fixtures/dialog";
+import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
 import { courseCategoryFixture, courseFixture } from "@zoonk/testing/fixtures/courses";
 import { LOCALE_COOKIE } from "@zoonk/utils/locale";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";

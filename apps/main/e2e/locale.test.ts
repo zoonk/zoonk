@@ -1,4 +1,4 @@
-import { setLocale } from "@zoonk/e2e/helpers";
+import { setLocale } from "@zoonk/e2e/fixtures/locale";
 import { expect, test } from "./fixtures";
 
 test.describe("Locale Behavior - English", () => {

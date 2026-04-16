@@ -10,7 +10,7 @@ export type CourseContext = {
   courseSlug: string;
   courseTitle: string;
   language: string;
-  organizationId: number;
+  organizationId: string;
   targetLanguage: string | null;
 };
 
@@ -57,7 +57,7 @@ async function createCourseEntity({
   suggestion,
   workflowRunId,
 }: {
-  organizationId: number;
+  organizationId: string;
   stream: {
     error: (params: { reason: WorkflowErrorReason; step: CourseWorkflowStepName }) => Promise<void>;
   };

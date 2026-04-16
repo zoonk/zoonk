@@ -14,7 +14,7 @@ import {
 import { Button } from "@zoonk/ui/components/button";
 import { unbanUserAction } from "./_actions/unban-user";
 
-export function UnbanUserDialog({ userId, userName }: { userId: number; userName: string }) {
+export function UnbanUserDialog({ userId, userName }: { userId: string; userName: string }) {
   return (
     <AlertDialog>
       <AlertDialogTrigger render={<Button variant="outline" size="sm" />}>

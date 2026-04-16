@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { type Browser, type Page } from "@playwright/test";
 import { request } from "@zoonk/e2e/fixtures";
-import { getAiOrganization } from "@zoonk/e2e/helpers";
+import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
 import { activityFixture, activityProgressFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
@@ -41,7 +41,7 @@ async function createAuthenticatedPage(browser: Browser, baseURL: string, email:
   return { browserContext, page };
 }
 
-async function createQuizActivity(lessonId: number, orgId: number, uniqueId: string) {
+async function createQuizActivity(lessonId: number, orgId: string, uniqueId: string) {
   const activity = await activityFixture({
     generationStatus: "completed",
     isPublished: true,

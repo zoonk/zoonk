@@ -24,7 +24,7 @@ export async function submitActivityCompletion(input: {
     isCorrect: boolean;
     stepId: bigint;
   }[];
-  userId: number;
+  userId: string;
 }): Promise<{
   belt: BeltLevelResult;
   brainPower: number;

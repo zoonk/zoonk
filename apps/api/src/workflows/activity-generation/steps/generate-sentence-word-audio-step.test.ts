@@ -30,7 +30,7 @@ vi.mock("@zoonk/core/audio/generate", () => ({
 }));
 
 describe(generateSentenceWordAudioStep, () => {
-  let organizationId: number;
+  let organizationId: string;
 
   beforeAll(async () => {
     const organization = await aiOrganizationFixture();

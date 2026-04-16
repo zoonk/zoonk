@@ -23,7 +23,7 @@ vi.mock("workflow", () => ({
 }));
 
 describe(setChapterAsCompletedStep, () => {
-  let organizationId: number;
+  let organizationId: string;
   let course: Awaited<ReturnType<typeof courseFixture>>;
 
   beforeAll(async () => {

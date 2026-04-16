@@ -33,7 +33,7 @@ vi.mock("@zoonk/ai/tasks/activities/core/practice", () => ({
 }));
 
 describe(generatePracticeContentStep, () => {
-  let organizationId: number;
+  let organizationId: string;
   let chapter: Awaited<ReturnType<typeof chapterFixture>>;
 
   beforeAll(async () => {

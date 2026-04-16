@@ -32,7 +32,7 @@ const cachedListUsers = cache(async function cachedListUsers(
     prisma.user.count({ where }),
   ]);
 
-  const userIds = users.map((user) => String(user.id));
+  const userIds = users.map((user) => user.id);
 
   const subscriptions =
     userIds.length > 0
@@ -48,7 +48,7 @@ const cachedListUsers = cache(async function cachedListUsers(
 
   const usersWithPlan = users.map((user) => ({
     ...user,
-    plan: subscriptionByUserId.get(String(user.id)) ?? "free",
+    plan: subscriptionByUserId.get(user.id) ?? "free",
   }));
 
   return { total, users: usersWithPlan };

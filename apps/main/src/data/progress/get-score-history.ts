@@ -48,7 +48,7 @@ function calculateAverage(dataPoints: { score: number }[]): number {
 }
 
 async function fetchDailyData(
-  userId: number,
+  userId: string,
   start: Date,
   end: Date,
 ): Promise<{ data: RawDataPoint[] | null; error: unknown }> {
@@ -111,7 +111,7 @@ function getPreviousAverage(
   return processed.length > 0 ? calculateAverage(processed) : null;
 }
 
-async function hasEarlierScoreData(userId: number, beforeDate: Date): Promise<boolean> {
+async function hasEarlierScoreData(userId: string, beforeDate: Date): Promise<boolean> {
   const { data } = await safeAsync(() =>
     prisma.dailyProgress.findFirst({
       where: {

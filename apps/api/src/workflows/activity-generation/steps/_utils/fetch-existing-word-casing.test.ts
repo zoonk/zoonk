@@ -5,7 +5,7 @@ import { beforeAll, describe, expect, test } from "vitest";
 import { fetchExistingWordCasing } from "./fetch-existing-word-casing";
 
 describe(fetchExistingWordCasing, () => {
-  let organizationId: number;
+  let organizationId: string;
 
   beforeAll(async () => {
     const organization = await aiOrganizationFixture();

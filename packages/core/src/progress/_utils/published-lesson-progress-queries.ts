@@ -16,7 +16,7 @@ export async function listPublishedLessonProgressRows({
   userId,
 }: {
   scope: PublishedLessonProgressScope;
-  userId: number;
+  userId: string;
 }): Promise<PublishedLessonProgressRow[]> {
   return queryPublishedLessonProgressRows({
     scope,
@@ -59,7 +59,7 @@ async function queryPublishedLessonProgressRows({
   userId,
 }: {
   scope: PublishedLessonProgressScope;
-  userId: number;
+  userId: string;
 }) {
   const scopeFilter = getPublishedLessonProgressScopeFilter({ scope });
   const { data } = await safeAsync(

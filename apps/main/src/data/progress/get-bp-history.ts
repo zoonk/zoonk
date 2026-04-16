@@ -29,7 +29,7 @@ type BpHistoryData = {
 type RawDataPoint = { date: Date; bp: number };
 
 async function fetchDailyBpData(
-  userId: number,
+  userId: string,
   start: Date,
   end: Date,
 ): Promise<{ data: RawDataPoint[] | null; error: unknown }> {
@@ -89,7 +89,7 @@ function getPreviousPeriodTotal(previousData: RawDataPoint[] | null): number | n
   return sumBp(previousData);
 }
 
-async function hasEarlierData(userId: number, beforeDate: Date): Promise<boolean> {
+async function hasEarlierData(userId: string, beforeDate: Date): Promise<boolean> {
   const { data } = await safeAsync(() =>
     prisma.dailyProgress.findFirst({
       where: { date: { lt: beforeDate }, userId },

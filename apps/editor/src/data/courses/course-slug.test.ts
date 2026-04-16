@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { signInAs } from "@zoonk/testing/fixtures/auth";
 import { courseAlternativeTitleFixture, courseFixture } from "@zoonk/testing/fixtures/courses";
@@ -8,7 +9,7 @@ import { courseSlugExistsForCreate, courseSlugExistsForUpdate } from "./course-s
 
 async function getOrCreateAIOrg() {
   return prisma.organization.upsert({
-    create: { name: "AI", slug: AI_ORG_SLUG },
+    create: { id: randomUUID(), name: "AI", slug: AI_ORG_SLUG },
     update: {},
     where: { slug: AI_ORG_SLUG },
   });
@@ -97,6 +98,7 @@ describe("courseSlugExistsForCreate()", () => {
 
       await prisma.member.create({
         data: {
+          id: randomUUID(),
           organizationId: aiOrg.id,
           role: "admin",
           userId: fixture.user.id,
@@ -120,6 +122,7 @@ describe("courseSlugExistsForCreate()", () => {
 
       await prisma.member.create({
         data: {
+          id: randomUUID(),
           organizationId: aiOrg.id,
           role: "admin",
           userId: fixture.user.id,

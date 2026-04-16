@@ -80,7 +80,7 @@ export function buildSerializedActivity(
     language: "en",
     lessonSentences: [],
     lessonWords: [],
-    organizationId: 1,
+    organizationId: "org-1",
     steps: [buildSerializedStep()],
     title: "Test Activity",
     ...overrides,

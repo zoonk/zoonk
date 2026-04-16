@@ -5,7 +5,11 @@
   "exports": {
     "./base.config": "./src/base.config.ts",
     "./fixtures": "./src/fixtures.ts",
-    "./helpers": "./src/helpers.ts"
+    "./fixtures/base-url": "./src/fixtures/base-url.ts",
+    "./fixtures/dialog": "./src/fixtures/dialog.ts",
+    "./fixtures/locale": "./src/fixtures/locale.ts",
+    "./fixtures/orgs": "./src/fixtures/orgs.ts",
+    "./fixtures/users": "./src/fixtures/users.ts"
   },
   "scripts": {
     "typecheck": "tsgo --noEmit"

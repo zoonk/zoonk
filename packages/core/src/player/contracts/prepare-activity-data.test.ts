@@ -122,7 +122,7 @@ function makeActivity(steps: RawStep[], overrides: Partial<ActivityInput> = {}):
     id: 1n,
     kind: "quiz",
     language: "en",
-    organizationId: 1,
+    organizationId: "org-1",
     steps,
     title: "Activity",
     ...overrides,
@@ -189,7 +189,7 @@ describe(prepareLessonActivityData, () => {
           description: "Description",
           id: 99n,
           kind: "review",
-          organizationId: 42,
+          organizationId: "org-42",
         },
       ),
       lessonSentences: [sentence],
@@ -200,7 +200,7 @@ describe(prepareLessonActivityData, () => {
       description: "Description",
       kind: "review",
       language: "en",
-      organizationId: 42,
+      organizationId: "org-42",
       title: "Activity",
     });
     expect(result.lessonWords).toEqual([

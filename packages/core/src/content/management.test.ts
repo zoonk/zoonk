@@ -55,7 +55,7 @@ describe("content management", () => {
 });
 
 describe("lesson generation state", () => {
-  let organizationId: number;
+  let organizationId: string;
 
   beforeAll(async () => {
     const organization = await organizationFixture({ kind: "brand" });

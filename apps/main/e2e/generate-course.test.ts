@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { type Page, type Route } from "@zoonk/e2e/fixtures";
-import { getAiOrganization } from "@zoonk/e2e/helpers";
+import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseSuggestionFixture } from "@zoonk/testing/fixtures/course-suggestions";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";

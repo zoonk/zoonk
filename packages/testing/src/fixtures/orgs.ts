@@ -24,6 +24,7 @@ export async function organizationFixture(attrs?: Partial<Organization>) {
     data: {
       ...params,
       createdAt: new Date(),
+      id: randomUUID(),
     },
   });
 
@@ -47,6 +48,7 @@ export async function memberFixture(
   const member = await prisma.member.create({
     data: {
       createdAt: new Date(),
+      id: randomUUID(),
       organizationId: memberAttrs?.organizationId || org.id,
       role: memberAttrs?.role || "member",
       userId: memberAttrs?.userId || user.id,
@@ -61,6 +63,7 @@ export async function aiOrganizationFixture() {
   try {
     return await prisma.organization.upsert({
       create: {
+        id: randomUUID(),
         kind: "brand",
         name: "Zoonk AI",
         slug: AI_ORG_SLUG,

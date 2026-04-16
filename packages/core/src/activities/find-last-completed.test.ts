@@ -8,8 +8,8 @@ import { beforeAll, describe, expect, test } from "vitest";
 import { findLastCompleted } from "./find-last-completed";
 
 describe(findLastCompleted, () => {
-  let orgId: number;
-  let userId: number;
+  let orgId: string;
+  let userId: string;
 
   beforeAll(async () => {
     const [org, user] = await Promise.all([organizationFixture({ kind: "brand" }), userFixture()]);

@@ -15,7 +15,7 @@ vi.mock("workflow", () => ({
 }));
 
 describe(getAIOrganizationStep, () => {
-  let expectedOrgId: number;
+  let expectedOrgId: string;
 
   beforeAll(async () => {
     const organization = await aiOrganizationFixture();

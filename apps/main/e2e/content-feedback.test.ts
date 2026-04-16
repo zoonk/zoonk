@@ -1,4 +1,4 @@
-import { openDialog } from "@zoonk/e2e/helpers";
+import { openDialog } from "@zoonk/e2e/fixtures/dialog";
 import { searchPromptWithSuggestionsFixture } from "@zoonk/testing/fixtures/course-suggestions";
 import { expect, test } from "./fixtures";
 

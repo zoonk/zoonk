@@ -5,13 +5,14 @@ import { expect, test } from "@zoonk/e2e/fixtures";
 
 test.describe("Next Activity API", () => {
   let baseURL: string;
-  let brandOrgId: number;
+  let brandOrgId: string;
 
   test.beforeAll(async () => {
     baseURL = process.env.E2E_BASE_URL ?? "";
 
     const org = await prisma.organization.create({
       data: {
+        id: randomUUID(),
         kind: "brand",
         name: "E2E Next Activity Org",
         slug: `e2e-next-activity-${randomUUID()}`,

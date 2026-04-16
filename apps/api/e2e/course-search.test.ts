@@ -6,7 +6,7 @@ import { normalizeString } from "@zoonk/utils/string";
 
 test.describe("Course Search API", () => {
   let baseURL: string;
-  let brandOrgId: number;
+  let brandOrgId: string;
 
   test.beforeAll(async () => {
     baseURL = process.env.E2E_BASE_URL ?? "";
@@ -14,6 +14,7 @@ test.describe("Course Search API", () => {
     // Create a brand organization for tests
     const org = await prisma.organization.create({
       data: {
+        id: randomUUID(),
         kind: "brand",
         name: "E2E Test Organization",
         slug: `e2e-test-org-${randomUUID()}`,
@@ -340,6 +341,7 @@ test.describe("Course Search API", () => {
 
     const schoolOrg = await prisma.organization.create({
       data: {
+        id: randomUUID(),
         kind: "school",
         name: "E2E School Organization",
         slug: `e2e-school-${uniqueId}`,

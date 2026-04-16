@@ -13,7 +13,7 @@ describe("unauthenticated users", () => {
 
 describe("authenticated users", () => {
   let headers: Headers;
-  let userId: number;
+  let userId: string;
 
   beforeAll(async () => {
     const user = await userFixture();

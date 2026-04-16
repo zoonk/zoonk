@@ -8,7 +8,7 @@ import { cache } from "react";
 const cachedListCourseChapters = cache(
   async (
     courseId: number,
-    orgId: number | null,
+    orgId: string | null,
     headers?: Headers,
   ): Promise<{ data: Chapter[]; error: Error | null }> => {
     const { data, error } = await safeAsync(() =>
@@ -44,7 +44,7 @@ const cachedListCourseChapters = cache(
 export function listCourseChapters(params: {
   courseId: number;
   headers?: Headers;
-  orgId: number | null;
+  orgId: string | null;
 }): Promise<{ data: Chapter[]; error: Error | null }> {
   return cachedListCourseChapters(params.courseId, params.orgId, params.headers);
 }

@@ -29,7 +29,7 @@ vi.mock("@zoonk/ai/tasks/activities/language/romanization", () => ({
 }));
 
 describe(generateGrammarRomanizationStep, () => {
-  let organizationId: number;
+  let organizationId: string;
 
   beforeAll(async () => {
     const organization = await aiOrganizationFixture();

@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { getAiOrganization } from "@zoonk/e2e/helpers";
+import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
 import { activityFixture, activityProgressFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
@@ -15,7 +15,7 @@ import { expect, test } from "./fixtures";
  * - Chapter 2: 2 lessons × 1 activity each
  * - Chapter 3: 2 lessons × 1 activity each
  */
-async function createTestCourseWithChapters(userId: number) {
+async function createTestCourseWithChapters(userId: string) {
   const org = await getAiOrganization();
   const uniqueId = randomUUID().slice(0, 8);
 
@@ -172,7 +172,7 @@ async function createTestCourseWithChapters(userId: number) {
  * activities yet. The course page should keep the chapter in progress and show
  * a fraction instead of a completed checkmark.
  */
-async function createCourseWithChapterWaitingOnAnotherLesson(userId: number) {
+async function createCourseWithChapterWaitingOnAnotherLesson(userId: string) {
   const org = await getAiOrganization();
   const uniqueId = randomUUID().slice(0, 8);
 
@@ -225,7 +225,7 @@ async function createCourseWithChapterWaitingOnAnotherLesson(userId: number) {
  * An archived lesson should no longer count toward the current chapter total,
  * or the learner sees a stale fraction for content that no longer exists.
  */
-async function createCourseWithArchivedLesson(userId: number) {
+async function createCourseWithArchivedLesson(userId: string) {
   const org = await getAiOrganization();
   const uniqueId = randomUUID().slice(0, 8);
 

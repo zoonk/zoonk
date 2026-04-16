@@ -40,7 +40,7 @@ function getScopeActivityWhere(scope: ActivityScope) {
  * Returns position info needed for `getNextActivityInCourse` + slugs for the API response.
  */
 export async function findLastCompleted(
-  userId: number,
+  userId: string,
   scope: ActivityScope,
 ): Promise<LastCompletedActivity | null> {
   const { data: progress, error } = await safeAsync(() =>

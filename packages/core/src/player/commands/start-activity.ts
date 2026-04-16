@@ -7,7 +7,7 @@ import { prisma } from "@zoonk/db";
  * upsert keeps repeated page visits idempotent and preserves any existing
  * completion metadata instead of resetting progress.
  */
-export async function startActivity(params: { activityId: bigint; userId: number }): Promise<void> {
+export async function startActivity(params: { activityId: bigint; userId: string }): Promise<void> {
   await prisma.activityProgress.upsert({
     create: { activityId: params.activityId, userId: params.userId },
     update: {},

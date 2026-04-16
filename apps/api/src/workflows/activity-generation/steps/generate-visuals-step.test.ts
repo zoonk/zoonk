@@ -32,7 +32,7 @@ vi.mock("@zoonk/ai/tasks/steps/visual-descriptions", () => ({
 }));
 
 describe(generateVisualDescriptionsForActivityStep, () => {
-  let organizationId: number;
+  let organizationId: string;
   let chapter: Awaited<ReturnType<typeof chapterFixture>>;
 
   beforeAll(async () => {

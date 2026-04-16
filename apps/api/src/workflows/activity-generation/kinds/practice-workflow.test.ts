@@ -45,7 +45,7 @@ function buildExplanationResults(activityId: number): ExplanationResult[] {
 }
 
 describe("practice activity workflow", () => {
-  let organizationId: number;
+  let organizationId: string;
   let course: Awaited<ReturnType<typeof courseFixture>>;
   let chapter: Awaited<ReturnType<typeof chapterFixture>>;
 

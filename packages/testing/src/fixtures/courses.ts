@@ -27,7 +27,7 @@ export function courseAttrs(attrs?: Partial<Course>): Omit<
     managementMode: "manual",
     mode: "full" as const,
     normalizedTitle: "test course",
-    organizationId: 0,
+    organizationId: null,
     slug: `test-course-${randomUUID()}`,
     targetLanguage: null,
     title: "Test Course",

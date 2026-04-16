@@ -1,7 +1,7 @@
 import { prisma } from "@zoonk/db";
 
 export async function fetchExistingWordCasing(params: {
-  organizationId: number;
+  organizationId: string;
   targetLanguage: string;
   words: string[];
 }): Promise<Record<string, string>> {

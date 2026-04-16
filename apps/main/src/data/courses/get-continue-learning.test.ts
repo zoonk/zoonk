@@ -9,7 +9,7 @@ import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeAll, describe, expect, test } from "vitest";
 import { MAX_CONTINUE_LEARNING_ITEMS, getContinueLearning } from "./get-continue-learning";
 
-async function createCourseWithActivities(organizationId: number) {
+async function createCourseWithActivities(organizationId: string) {
   const course = await courseFixture({
     isPublished: true,
     organizationId,

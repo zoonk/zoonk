@@ -22,7 +22,7 @@ vi.mock("workflow", () => ({
 }));
 
 describe(updateCourseStep, () => {
-  let organizationId: number;
+  let organizationId: string;
 
   beforeAll(async () => {
     const organization = await aiOrganizationFixture();

@@ -22,7 +22,7 @@ vi.mock("workflow", () => ({
 }));
 
 describe(getLessonStep, () => {
-  let organizationId: number;
+  let organizationId: string;
   let chapterId: number;
   let courseId: number;
 

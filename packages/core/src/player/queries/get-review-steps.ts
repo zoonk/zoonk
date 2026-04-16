@@ -31,7 +31,7 @@ export async function getReviewSteps({
   userId,
 }: {
   lessonId: number;
-  userId: number | null;
+  userId: string | null;
 }) {
   const lessonStepFilter = reviewableStepFilter(lessonId);
 

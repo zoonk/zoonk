@@ -26,7 +26,7 @@ type WordMetadataEntry = {
  * polysemous words.
  */
 async function fetchExistingWordRomanizations(params: {
-  organizationId: number;
+  organizationId: string;
   targetLanguage: string;
   words: string[];
 }): Promise<Record<string, string | null>> {
@@ -112,7 +112,7 @@ async function generateWordRomanizations(
  * Romanizations are only generated for non-Roman script languages.
  */
 async function buildWordMetadata(params: {
-  organizationId: number;
+  organizationId: string;
   sentences: ReadingSentence[];
   targetLanguage: string;
   targetWords: string[];

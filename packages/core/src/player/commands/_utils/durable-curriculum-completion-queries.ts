@@ -67,7 +67,7 @@ export async function listPublishedCourseLessonCompletionRows({
 }: {
   courseId: number;
   tx: TransactionClient;
-  userId: number;
+  userId: string;
 }): Promise<PublishedLessonCompletionRow[]> {
   return tx.$queryRaw<PublishedLessonCompletionRow[]>`
     SELECT
@@ -129,7 +129,7 @@ export async function listDurableCourseLessonIds({
 }: {
   courseId: number;
   tx: TransactionClient;
-  userId: number;
+  userId: string;
 }): Promise<Set<number>> {
   const rows = await tx.lessonCompletion.findMany({
     where: {
@@ -161,7 +161,7 @@ export async function listDurableCourseChapterIds({
 }: {
   courseId: number;
   tx: TransactionClient;
-  userId: number;
+  userId: string;
 }): Promise<Set<number>> {
   const rows = await tx.chapterCompletion.findMany({
     where: {

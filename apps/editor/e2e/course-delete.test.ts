@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
-import { getAiOrganization, openDialog } from "@zoonk/e2e/helpers";
+import { openDialog } from "@zoonk/e2e/fixtures/dialog";
+import { getAiOrganization } from "@zoonk/e2e/fixtures/orgs";
 import { activityFixture, activityProgressFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
@@ -41,6 +42,7 @@ async function createLearnerTouchedCourse() {
     data: {
       email: `e2e-delete-${randomUUID().slice(0, 8)}@example.test`,
       emailVerified: true,
+      id: randomUUID(),
       name: "E2E Delete User",
     },
   });

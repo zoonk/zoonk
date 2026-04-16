@@ -45,7 +45,7 @@ function createChapters(ids: number[]): Parameters<typeof isCurrentCourseComplet
     language: "en",
     managementMode: "manual" as const,
     normalizedTitle: `chapter ${id}`,
-    organizationId: 1,
+    organizationId: `org-${id}`,
     position: id - 1,
     slug: `chapter-${id}`,
     title: `Chapter ${id}`,

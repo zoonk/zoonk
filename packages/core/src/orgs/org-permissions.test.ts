@@ -85,7 +85,7 @@ describe("unauthenticated users", () => {
   test("returns false when orgId does not exist", async () => {
     const canCreate = await hasCoursePermission({
       headers: new Headers(),
-      orgId: -1,
+      orgId: "non-existent-org-id",
       permission: "create",
     });
 

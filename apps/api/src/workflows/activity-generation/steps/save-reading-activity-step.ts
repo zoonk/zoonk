@@ -129,7 +129,7 @@ async function saveOneSentence(params: {
   activityId: number;
   distractors: Record<string, string[]>;
   lessonId: number;
-  organizationId: number;
+  organizationId: string;
   position: number;
   readingSentence: ReadingSentence;
   sentenceAudioUrls: Record<string, string>;

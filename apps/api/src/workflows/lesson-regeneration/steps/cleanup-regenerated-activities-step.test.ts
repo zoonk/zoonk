@@ -10,7 +10,7 @@ import { cleanupRegeneratedActivitiesStep } from "./cleanup-regenerated-activiti
 
 describe(cleanupRegeneratedActivitiesStep, () => {
   let chapterId: number;
-  let organizationId: number;
+  let organizationId: string;
 
   beforeAll(async () => {
     const organization = await aiOrganizationFixture();

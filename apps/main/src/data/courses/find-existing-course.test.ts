@@ -9,7 +9,7 @@ import { findExistingCourse } from "./find-existing-course";
 
 async function getOrCreateAIOrg() {
   return prisma.organization.upsert({
-    create: { name: "AI", slug: AI_ORG_SLUG },
+    create: { id: randomUUID(), name: "AI", slug: AI_ORG_SLUG },
     update: {},
     where: { slug: AI_ORG_SLUG },
   });

@@ -10,9 +10,9 @@ async function getOrganizationId({
   orgId,
   orgSlug,
 }: {
-  orgId?: number | null;
+  orgId?: string | null;
   orgSlug?: string;
-}): Promise<number | null> {
+}): Promise<string | null> {
   if (orgId) {
     return orgId;
   }
@@ -28,7 +28,7 @@ async function getOrganizationId({
 const cachedHasCoursePermission = cache(
   async (
     permission: CoursePermission,
-    orgId: number | null | undefined,
+    orgId: string | null | undefined,
     orgSlug: string | undefined,
     reqHeaders?: Headers,
   ): Promise<boolean> => {
@@ -41,7 +41,7 @@ const cachedHasCoursePermission = cache(
     const { data } = await safeAsync(async () =>
       auth.api.hasPermission({
         body: {
-          organizationId: String(organizationId),
+          organizationId,
           permissions: { course: [permission] },
         },
         headers: reqHeaders ?? (await headers()),
@@ -59,7 +59,7 @@ const cachedHasCoursePermission = cache(
 export function hasCoursePermission(opts: {
   permission: CoursePermission;
   headers?: Headers;
-  orgId?: number | null;
+  orgId?: string | null;
   orgSlug?: string;
 }): Promise<boolean> {
   return cachedHasCoursePermission(opts.permission, opts.orgId, opts.orgSlug, opts.headers);

@@ -14,7 +14,7 @@ type StepAttemptParams = {
   hourOfDay: number;
   isCorrect: boolean;
   stepId: bigint;
-  userId: number;
+  userId: string;
 };
 
 function buildStepAttemptData(params: StepAttemptParams) {
@@ -49,7 +49,7 @@ async function createStepAttempts(
   await Promise.all(allAttempts.map((data) => prisma.stepAttempt.create({ data })));
 }
 
-async function createTestStep(orgId: number) {
+async function createTestStep(orgId: string) {
   const course = await courseFixture({ organizationId: orgId });
   const chapter = await chapterFixture({
     courseId: course.id,
