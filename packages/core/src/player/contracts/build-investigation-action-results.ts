@@ -8,7 +8,7 @@ type ActionStepResult = {
   durationSeconds: number;
   hourOfDay: number;
   isCorrect: boolean;
-  stepId: bigint;
+  stepId: string;
 };
 
 /**
@@ -27,7 +27,7 @@ export function buildInvestigationActionResults({
   steps,
 }: {
   investigationLoop: InvestigationLoopState | undefined;
-  steps: { id: bigint; kind: string; content: unknown }[];
+  steps: { id: string; kind: string; content: unknown }[];
 }): ActionStepResult[] {
   if (!investigationLoop) {
     return [];

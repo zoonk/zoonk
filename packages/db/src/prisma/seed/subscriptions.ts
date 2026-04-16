@@ -1,4 +1,3 @@
-import { randomUUID } from "node:crypto";
 import { type PrismaClient } from "../../generated/prisma/client";
 import { type SeedUsers } from "./users";
 
@@ -15,7 +14,6 @@ export async function seedSubscriptions(prisma: PrismaClient, users: SeedUsers):
   oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1);
 
   const subscriptionData = allUsers.map((user) => ({
-    id: randomUUID(),
     periodEnd: oneYearFromNow,
     periodStart: now,
     plan: "hobby",

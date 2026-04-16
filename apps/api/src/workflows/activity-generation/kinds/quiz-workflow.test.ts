@@ -45,7 +45,7 @@ vi.mock("@zoonk/core/steps/image", () => ({
   }),
 }));
 
-function buildExplanationResults(activityId: number): ExplanationResult[] {
+function buildExplanationResults(activityId: string): ExplanationResult[] {
   return [
     {
       activityId,
@@ -100,7 +100,7 @@ describe("quiz activity workflow", () => {
     ]);
 
     const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
-    const explanationResults = buildExplanationResults(Number(explanationActivity.id));
+    const explanationResults = buildExplanationResults(explanationActivity.id);
 
     await quizActivityWorkflow({
       activitiesToGenerate: activities,
@@ -149,7 +149,7 @@ describe("quiz activity workflow", () => {
     ]);
 
     const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
-    const explanationResults = buildExplanationResults(Number(explanationActivity.id));
+    const explanationResults = buildExplanationResults(explanationActivity.id);
 
     await quizActivityWorkflow({
       activitiesToGenerate: activities,
@@ -192,7 +192,7 @@ describe("quiz activity workflow", () => {
     ]);
 
     const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
-    const explanationResults = buildExplanationResults(Number(explanationActivity.id));
+    const explanationResults = buildExplanationResults(explanationActivity.id);
 
     await quizActivityWorkflow({
       activitiesToGenerate: activities,
@@ -262,7 +262,7 @@ describe("quiz activity workflow", () => {
     ]);
 
     const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
-    const explanationResults = buildExplanationResults(Number(explanationActivity.id));
+    const explanationResults = buildExplanationResults(explanationActivity.id);
 
     await quizActivityWorkflow({
       activitiesToGenerate: activities,
@@ -320,7 +320,7 @@ describe("quiz activity workflow", () => {
       position: 0,
     });
 
-    const explanationResults = buildExplanationResults(Number(explanationActivity.id));
+    const explanationResults = buildExplanationResults(explanationActivity.id);
 
     await quizActivityWorkflow({
       activitiesToGenerate: [],

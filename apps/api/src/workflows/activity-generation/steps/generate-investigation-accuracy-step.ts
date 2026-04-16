@@ -22,7 +22,7 @@ export async function generateInvestigationAccuracyStep({
   activity,
   scenario,
 }: {
-  activityId: number;
+  activityId: string;
   activity: LessonActivity;
   scenario: ActivityInvestigationScenarioSchema;
 }): Promise<ActivityInvestigationAccuracySchema | null> {

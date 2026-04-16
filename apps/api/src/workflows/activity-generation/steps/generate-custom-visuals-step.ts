@@ -9,7 +9,7 @@ import { type CustomContentResult } from "./generate-custom-content-step";
 import { type LessonActivity } from "./get-lesson-activities-step";
 
 export type CustomVisualDescriptionResult = {
-  activityId: number;
+  activityId: string;
   descriptions: VisualDescription[];
 };
 

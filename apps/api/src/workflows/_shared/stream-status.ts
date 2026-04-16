@@ -97,7 +97,7 @@ export function createStepStream<T extends string>(): StepStream<T> {
  * }
  * ```
  */
-export function createEntityStepStream<T extends string>(entityId: number): StepStream<T> {
+export function createEntityStepStream<T extends string>(entityId: string): StepStream<T> {
   const writer = getWritable<string>().getWriter();
 
   return {

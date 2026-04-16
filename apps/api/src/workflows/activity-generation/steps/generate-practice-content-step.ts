@@ -26,7 +26,7 @@ export async function generatePracticeContentStep(
   explanationSteps: ActivitySteps,
   workflowRunId: string,
   practiceIndex = 0,
-): Promise<{ activityId: number | null; steps: PracticeStep[] }> {
+): Promise<{ activityId: string | null; steps: PracticeStep[] }> {
   "use step";
 
   const practiceActivity = findActivitiesByKind(activities, "practice")[practiceIndex];

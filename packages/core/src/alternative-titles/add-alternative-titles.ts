@@ -4,7 +4,7 @@ import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { toSlug } from "@zoonk/utils/string";
 
 export async function addAlternativeTitles(params: {
-  courseId: number;
+  courseId: string;
   titles: string[];
   language: string;
 }): Promise<SafeReturn<BatchPayload | null>> {

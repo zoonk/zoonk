@@ -91,7 +91,7 @@ export type SerializedActivity = {
 
 type PrepareLessonActivitySource = {
   description: string | null;
-  id: bigint;
+  id: string;
   kind: ActivityKind;
   language: string;
   organizationId: string | null;
@@ -110,13 +110,13 @@ type PrepareLessonActivityInput = {
 
 /**
  * Canonical lesson words travel through the player with lesson-scoped translations and
- * distractor arrays. This serializer converts bigint IDs and copies arrays defensively.
+ * distractor arrays. This serializer keeps string IDs stable and copies arrays defensively.
  */
 function serializeWord(word: WordDataInput): SerializedWord {
   return {
     audioUrl: word.audioUrl,
     distractors: [...word.distractors],
-    id: String(word.id),
+    id: word.id,
     pronunciation: word.pronunciation,
     romanization: word.romanization,
     translation: word.translation,
@@ -141,7 +141,7 @@ function serializeSentence(sentence: SentenceDataInput): SerializedSentence {
     audioUrl: sentence.audioUrl,
     distractors: [...sentence.distractors],
     explanation: sentence.explanation,
-    id: String(sentence.id),
+    id: sentence.id,
     romanization: sentence.romanization,
     sentence: sentence.sentence,
     translation: sentence.translation,
@@ -233,7 +233,7 @@ function serializeStep(step: StepDataInput): SerializedStep | null {
     return {
       content,
       fillBlankOptions: [],
-      id: String(step.id),
+      id: step.id,
       kind: step.kind,
       matchColumnsRightItems: [],
       position: step.position,
@@ -252,7 +252,7 @@ function serializeStep(step: StepDataInput): SerializedStep | null {
 
 function prepareActivityData(
   activity: {
-    id: bigint;
+    id: string;
     kind: ActivityKind;
     title: string | null;
     description: string | null;
@@ -312,7 +312,7 @@ function prepareActivityData(
 
   return {
     description: activity.description,
-    id: String(activity.id),
+    id: activity.id,
     kind: activity.kind,
     language: activity.language,
     lessonSentences: serializedLessonSentences,
@@ -326,7 +326,7 @@ function prepareActivityData(
 /**
  * The app should only fetch the raw lesson activity inputs. This helper keeps the entire
  * preparation pipeline inside the shared player contract so apps do not need to know about
- * serialization, shuffling, or derived option building.
+ * serialization, shuffling, or derived option building after ids were standardized to UUIDs.
  */
 export function prepareLessonActivityData(params: PrepareLessonActivityInput): SerializedActivity {
   const steps = params.steps ?? params.activity.steps;

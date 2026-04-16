@@ -9,7 +9,7 @@ import { beforeAll, describe, expect, test } from "vitest";
 import { cleanupRegeneratedActivitiesStep } from "./cleanup-regenerated-activities-step";
 
 describe(cleanupRegeneratedActivitiesStep, () => {
-  let chapterId: number;
+  let chapterId: string;
   let organizationId: string;
 
   beforeAll(async () => {

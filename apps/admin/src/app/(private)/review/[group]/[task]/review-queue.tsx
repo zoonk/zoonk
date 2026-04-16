@@ -6,7 +6,6 @@ import {
   getWordAudioReview,
 } from "@/data/review/get-review-item";
 import { type ReviewTaskType, getTaskPath, getVisualKindFromTaskType } from "@/lib/review-utils";
-import { parseBigIntId } from "@zoonk/utils/number";
 import { redirect } from "next/navigation";
 import { AudioReview } from "../../_components/content/audio-review";
 import { CourseSuggestionReview } from "../../_components/content/course-suggestion-review";
@@ -16,7 +15,7 @@ import { ReviewActions } from "../../_components/review-actions";
 import { ReviewEmpty } from "../../_components/review-empty";
 import { ReviewProgress } from "../../_components/review-progress";
 
-async function renderContent(taskType: ReviewTaskType, entityId: bigint) {
+async function renderContent(taskType: ReviewTaskType, entityId: string) {
   const visualKind = getVisualKindFromTaskType(taskType);
 
   if (visualKind) {
@@ -61,7 +60,7 @@ export async function ReviewQueue({
   currentId: string | undefined;
 }) {
   const queue = await getNextReviewItem(taskType);
-  const entityId = (currentId ? parseBigIntId(currentId) : null) ?? queue.entityId;
+  const entityId = currentId ?? queue.entityId;
 
   if (!entityId) {
     return <ReviewEmpty />;
@@ -79,7 +78,7 @@ export async function ReviewQueue({
 
       {content}
 
-      <ReviewActions taskType={taskType} entityId={entityId.toString()} />
+      <ReviewActions taskType={taskType} entityId={entityId} />
     </div>
   );
 }

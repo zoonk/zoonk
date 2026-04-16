@@ -18,7 +18,7 @@ function SuggestionForm({
   searchPromptId,
 }: {
   suggestion: CourseSuggestionReviewData["suggestions"][number]["courseSuggestion"];
-  searchPromptId: number;
+  searchPromptId: string;
 }) {
   return (
     <div className="flex flex-col gap-3 border-b pb-4 last:border-b-0">
@@ -51,7 +51,7 @@ function AddSuggestionForm({
   searchPromptId,
   language,
 }: {
-  searchPromptId: number;
+  searchPromptId: string;
   language: string;
 }) {
   return (

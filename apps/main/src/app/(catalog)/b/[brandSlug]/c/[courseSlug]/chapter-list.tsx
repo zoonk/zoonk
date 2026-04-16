@@ -23,7 +23,7 @@ export async function ChapterList({
 }: {
   brandSlug: string;
   chapters: Chapter[];
-  courseId: number;
+  courseId: string;
   courseSlug: string;
 }) {
   if (chapters.length === 0) {

@@ -10,7 +10,7 @@ import { getArchivedSlug, getCurriculumDeletePlan } from "../curriculum-delete";
  * exists under them so the delete action no longer cascades through that history.
  */
 export async function deleteChapter(params: {
-  chapterId: number;
+  chapterId: string;
   headers?: Headers;
 }): Promise<SafeReturn<Chapter>> {
   const { data: chapter, error: findError } = await safeAsync(() =>

@@ -8,7 +8,7 @@ import { prisma } from "@zoonk/db";
  * content as current.
  */
 export async function releaseLiveLessonRegenerationStep(input: {
-  lessonId: number;
+  lessonId: string;
 }): Promise<void> {
   "use step";
 

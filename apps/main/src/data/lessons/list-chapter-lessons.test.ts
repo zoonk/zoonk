@@ -100,7 +100,7 @@ describe(listChapterLessons, () => {
   });
 
   test("returns empty array for non-existent chapter", async () => {
-    const result = await listChapterLessons({ chapterId: 999_999 });
+    const result = await listChapterLessons({ chapterId: "00000000-0000-7000-8000-000000000001" });
 
     expect(result).toEqual([]);
   });

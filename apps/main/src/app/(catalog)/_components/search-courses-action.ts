@@ -3,7 +3,7 @@
 import { searchCourses } from "@zoonk/core/courses/search";
 
 export type CourseSearchResult = {
-  id: number;
+  id: string;
   title: string;
   description: string | null;
   slug: string;

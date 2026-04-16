@@ -10,7 +10,6 @@ import {
 } from "@zoonk/ui/components/container";
 import { Empty, EmptyContent, EmptyHeader } from "@zoonk/ui/components/empty";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { parseNumericId } from "@zoonk/utils/number";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { ensureLocaleSuffix } from "@zoonk/utils/string";
 import { notFound, redirect } from "next/navigation";
@@ -22,13 +21,7 @@ export async function GenerateCourseSuggestionContent({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const suggestionId = parseNumericId(id);
-
-  if (suggestionId === null) {
-    notFound();
-  }
-
-  const suggestion = await getCourseSuggestionById(suggestionId);
+  const suggestion = await getCourseSuggestionById(id);
 
   if (!suggestion) {
     notFound();
@@ -57,7 +50,7 @@ export async function GenerateCourseSuggestionContent({
           courseSlug={ensureLocaleSuffix(suggestion.slug, suggestion.language)}
           generationRunId={suggestion.generationRunId}
           generationStatus={suggestion.generationStatus}
-          suggestionId={suggestionId}
+          suggestionId={id}
         />
       </ContainerBody>
     </Container>

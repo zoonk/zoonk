@@ -34,7 +34,7 @@ async function openAlternativeTitles(page: Page) {
   await page.getByRole("button", { name: /alternative titles/i }).click();
 }
 
-async function createAlternativeTitleFixture(courseId: number, baseSlug: string) {
+async function createAlternativeTitleFixture(courseId: string, baseSlug: string) {
   const slug = `${baseSlug}-${randomUUID().slice(0, 8)}`;
   await prisma.courseAlternativeTitle.create({
     data: { courseId, language: "en", slug },
@@ -42,7 +42,7 @@ async function createAlternativeTitleFixture(courseId: number, baseSlug: string)
   return slug;
 }
 
-async function createManyAlternativeTitleFixtures(courseId: number, count: number) {
+async function createManyAlternativeTitleFixtures(courseId: string, count: number) {
   const prefix = randomUUID().slice(0, 8);
   const slugs = Array.from(
     { length: count },

@@ -10,7 +10,7 @@ export function chapterAttrs(
 
   return {
     archivedAt: null,
-    courseId: 0,
+    courseId: "",
     description: "Test chapter description",
     generationRunId: null,
     generationStatus: "completed",

@@ -11,7 +11,7 @@ type ExportedActivity = {
   title: string | null;
 };
 
-export async function exportActivities(params: { lessonId: number; headers?: Headers }): Promise<
+export async function exportActivities(params: { lessonId: string; headers?: Headers }): Promise<
   SafeReturn<{
     activities: ExportedActivity[];
     exportedAt: string;

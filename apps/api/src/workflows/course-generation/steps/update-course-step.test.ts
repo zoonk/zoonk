@@ -35,7 +35,7 @@ describe(updateCourseStep, () => {
 
   test("streams error and throws when course does not exist", async () => {
     const brokenContext: CourseContext = {
-      courseId: 999_999_999,
+      courseId: randomUUID(),
       courseSlug: "broken",
       courseTitle: "Broken",
       language: "en",

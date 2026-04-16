@@ -37,9 +37,19 @@ describe(setChapterAsCompletedStep, () => {
   });
 
   test("streams error and throws when chapter does not exist", async () => {
+    const chapter = await chapterFixture({
+      courseId: course.id,
+      organizationId,
+      title: `Broken Chapter ${randomUUID()}`,
+    });
+
     const brokenContext: ChapterContext = {
-      id: 999_999_999,
-    } as ChapterContext;
+      ...chapter,
+      _count: { lessons: 0 },
+      course,
+      id: randomUUID(),
+      neighboringChapters: [],
+    };
 
     await expect(
       setChapterAsCompletedStep({ context: brokenContext, workflowRunId: "run-id" }),

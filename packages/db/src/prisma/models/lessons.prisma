@@ -1,8 +1,8 @@
 model Lesson {
-  id                Int                   @id @default(autoincrement())
-  organizationId    String?               @map("organization_id")
+  id                String                @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  organizationId    String?               @map("organization_id") @db.Uuid
   organization      Organization?         @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  chapterId         Int                   @map("chapter_id")
+  chapterId         String                @map("chapter_id") @db.Uuid
   chapter           Chapter               @relation(fields: [chapterId], references: [id], onDelete: Cascade)
   isLocked          Boolean               @default(false) @map("is_locked")
   isPublished       Boolean               @default(false) @map("is_published")
@@ -35,10 +35,10 @@ model Lesson {
 }
 
 model Activity {
-  id               BigInt                @id @default(autoincrement())
-  organizationId   String?               @map("organization_id")
+  id               String                @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  organizationId   String?               @map("organization_id") @db.Uuid
   organization     Organization?         @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  lessonId         Int                   @map("lesson_id")
+  lessonId         String                @map("lesson_id") @db.Uuid
   lesson           Lesson                @relation(fields: [lessonId], references: [id], onDelete: Cascade)
   isPublished      Boolean               @default(false) @map("is_published")
   language         String                @db.VarChar(10)
@@ -62,12 +62,12 @@ model Activity {
 }
 
 model Step {
-  id          BigInt        @id @default(autoincrement())
-  activityId  BigInt        @map("activity_id")
+  id          String        @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  activityId  String        @map("activity_id") @db.Uuid
   activity    Activity      @relation(fields: [activityId], references: [id], onDelete: Cascade)
-  wordId      BigInt?       @map("word_id")
+  wordId      String?       @map("word_id") @db.Uuid
   word        Word?         @relation(fields: [wordId], references: [id], onDelete: Cascade)
-  sentenceId  BigInt?       @map("sentence_id")
+  sentenceId  String?       @map("sentence_id") @db.Uuid
   sentence    Sentence?     @relation(fields: [sentenceId], references: [id], onDelete: Cascade)
   kind        StepKind
   position    Int

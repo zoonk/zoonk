@@ -57,12 +57,12 @@ async function confirmDelete(page: Page) {
   await getConfirmDeleteButton(page).click();
 }
 
-async function verifyChapterDeleted(chapterId: number) {
+async function verifyChapterDeleted(chapterId: string) {
   const chapter = await prisma.chapter.findUnique({ where: { id: chapterId } });
   expect(chapter).toBeNull();
 }
 
-async function verifyChapterExists(chapterId: number) {
+async function verifyChapterExists(chapterId: string) {
   const chapter = await prisma.chapter.findUnique({ where: { id: chapterId } });
   expect(chapter).not.toBeNull();
 }

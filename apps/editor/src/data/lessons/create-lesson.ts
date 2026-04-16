@@ -8,7 +8,7 @@ import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { normalizeString, toSlug } from "@zoonk/utils/string";
 
 export async function createLesson(params: {
-  chapterId: number;
+  chapterId: string;
   description: string;
   headers?: Headers;
   position: number;

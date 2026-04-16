@@ -8,14 +8,14 @@ import { NextResponse } from "next/server";
 export async function GET(request: Request): Promise<
   | NextResponse<
       PaginatedResponse<{
-        id: number;
+        id: string;
         slug: string;
         title: string;
         description: string | null;
         imageUrl: string | null;
         language: string;
         organization: {
-          id: number;
+          id: string;
           slug: string;
           name: string;
           logo: string | null;

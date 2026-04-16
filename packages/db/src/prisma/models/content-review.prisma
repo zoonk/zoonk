@@ -1,10 +1,10 @@
 model ContentReview {
-  id         BigInt   @id @default(autoincrement())
+  id         String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
   taskType   String   @map("task_type")
-  entityId   BigInt   @map("entity_id")
+  entityId   String   @map("entity_id") @db.Uuid
   status     String   @default("approved") @map("status")
   reviewedAt DateTime @default(now()) @map("reviewed_at")
-  userId     String   @map("user_id")
+  userId     String   @map("user_id") @db.Uuid
   user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([taskType, entityId], name: "taskEntity")

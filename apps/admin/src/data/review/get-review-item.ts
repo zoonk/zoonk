@@ -4,7 +4,7 @@ import { prisma } from "@zoonk/db";
 import { cache } from "react";
 
 export const getCourseSuggestionReview = cache(async function getCourseSuggestionReview(
-  entityId: bigint,
+  entityId: string,
 ) {
   if (!(await isAdmin())) {
     return null;
@@ -17,11 +17,11 @@ export const getCourseSuggestionReview = cache(async function getCourseSuggestio
         orderBy: { position: "asc" },
       },
     },
-    where: { id: Number(entityId) },
+    where: { id: entityId },
   });
 });
 
-export const getStepVisualReview = cache(async function getStepVisualReview(entityId: bigint) {
+export const getStepVisualReview = cache(async function getStepVisualReview(entityId: string) {
   if (!(await isAdmin())) {
     return null;
   }
@@ -32,7 +32,7 @@ export const getStepVisualReview = cache(async function getStepVisualReview(enti
   });
 });
 
-export const getWordAudioReview = cache(async function getWordAudioReview(entityId: bigint) {
+export const getWordAudioReview = cache(async function getWordAudioReview(entityId: string) {
   if (!(await isAdmin())) {
     return null;
   }
@@ -41,7 +41,7 @@ export const getWordAudioReview = cache(async function getWordAudioReview(entity
 });
 
 export const getSentenceAudioReview = cache(async function getSentenceAudioReview(
-  entityId: bigint,
+  entityId: string,
 ) {
   if (!(await isAdmin())) {
     return null;

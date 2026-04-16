@@ -94,7 +94,7 @@ describe(handleCourseFailureStep, () => {
 
 describe(handleChapterFailureStep, () => {
   let organizationId: string;
-  let courseId: number;
+  let courseId: string;
 
   beforeAll(async () => {
     const organization = await aiOrganizationFixture();

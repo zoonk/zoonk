@@ -17,7 +17,7 @@ export type WorkflowErrorReason =
  * This is the contract between the workflow streaming layer and the client.
  */
 export type StepStreamMessage<TStep extends string = string> = {
-  entityId?: number;
+  entityId?: string;
   reason?: WorkflowErrorReason;
   status: StepStatus;
   step: TStep;

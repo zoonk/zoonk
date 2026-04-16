@@ -3,7 +3,7 @@ import { type Chapter, getPublishedChapterWhere, prisma } from "@zoonk/db";
 import { cache } from "react";
 
 const cachedListCourseChapters = cache(
-  async (courseId: number): Promise<Chapter[]> =>
+  async (courseId: string): Promise<Chapter[]> =>
     prisma.chapter.findMany({
       orderBy: { position: "asc" },
       where: getPublishedChapterWhere({
@@ -12,6 +12,6 @@ const cachedListCourseChapters = cache(
     }),
 );
 
-export function listCourseChapters(params: { courseId: number }): Promise<Chapter[]> {
+export function listCourseChapters(params: { courseId: string }): Promise<Chapter[]> {
   return cachedListCourseChapters(params.courseId);
 }

@@ -36,8 +36,8 @@ describe(completeCourseSetupStep, () => {
   test("streams error and throws when DB save fails", async () => {
     await expect(
       completeCourseSetupStep({
-        courseId: 999_999_999,
-        courseSuggestionId: 999_999_999,
+        courseId: randomUUID(),
+        courseSuggestionId: randomUUID(),
       }),
     ).rejects.toThrow("DB save failed in completeCourseSetup");
 

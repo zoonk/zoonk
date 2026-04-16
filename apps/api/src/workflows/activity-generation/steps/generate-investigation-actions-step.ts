@@ -21,7 +21,7 @@ export async function generateInvestigationActionsStep({
   language,
   scenario,
 }: {
-  activityId: number;
+  activityId: string;
   accuracy: ActivityInvestigationAccuracySchema;
   language: string;
   scenario: ActivityInvestigationScenarioSchema;

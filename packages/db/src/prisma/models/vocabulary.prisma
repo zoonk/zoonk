@@ -1,6 +1,6 @@
 model Word {
-  id             BigInt              @id @default(autoincrement())
-  organizationId String              @map("organization_id")
+  id             String              @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  organizationId String              @map("organization_id") @db.Uuid
   organization   Organization        @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   targetLanguage String              @map("target_language") @db.VarChar(10)
   word           String
@@ -25,8 +25,8 @@ model Word {
 /// (wordId, userLanguage) rather than on `Word` (no user language)
 /// or `LessonWord` (would duplicate the same value across lessons).
 model WordPronunciation {
-  id            BigInt   @id @default(autoincrement())
-  wordId        BigInt   @map("word_id")
+  id            String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  wordId        String   @map("word_id") @db.Uuid
   word          Word     @relation(fields: [wordId], references: [id], onDelete: Cascade)
   userLanguage  String   @map("user_language") @db.VarChar(10)
   pronunciation String
@@ -37,8 +37,8 @@ model WordPronunciation {
 }
 
 model Sentence {
-  id             BigInt           @id @default(autoincrement())
-  organizationId String           @map("organization_id")
+  id             String           @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  organizationId String           @map("organization_id") @db.Uuid
   organization   Organization     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   targetLanguage String           @map("target_language") @db.VarChar(10)
   sentence       String
@@ -60,10 +60,10 @@ model Sentence {
 /// furniture lesson. A global translation would be overwritten by whichever
 /// lesson saved last.
 model LessonWord {
-  id           BigInt   @id @default(autoincrement())
-  lessonId     Int      @map("lesson_id")
+  id           String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  lessonId     String   @map("lesson_id") @db.Uuid
   lesson       Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-  wordId       BigInt   @map("word_id")
+  wordId       String   @map("word_id") @db.Uuid
   word         Word     @relation(fields: [wordId], references: [id], onDelete: Cascade)
   userLanguage String   @map("user_language") @db.VarChar(10)
   translation  String   @default("")
@@ -87,10 +87,10 @@ model LessonWord {
 /// vocabulary lesson), and fixing the schema pre-launch is far cheaper
 /// than migrating production data later.
 model LessonSentence {
-  id                     BigInt   @id @default(autoincrement())
-  lessonId               Int      @map("lesson_id")
+  id                     String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  lessonId               String   @map("lesson_id") @db.Uuid
   lesson                 Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
-  sentenceId             BigInt   @map("sentence_id")
+  sentenceId             String   @map("sentence_id") @db.Uuid
   sentence               Sentence @relation(fields: [sentenceId], references: [id], onDelete: Cascade)
   userLanguage           String   @map("user_language") @db.VarChar(10)
   translation            String   @default("")

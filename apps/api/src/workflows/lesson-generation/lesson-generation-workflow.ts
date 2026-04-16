@@ -123,7 +123,7 @@ async function getLessonKindForRegeneration(context: LessonGenerationContext): P
  * generated activity set that was just created.
  */
 async function syncLessonKindForInitialGeneration(input: {
-  lessonId: number;
+  lessonId: string;
   lessonKind: LessonKind;
 }): Promise<void> {
   await updateLessonKindStep({
@@ -146,7 +146,7 @@ async function skipLessonKindSyncForRegeneration(): Promise<void> {
  * actually a language lesson. In that case we delete the lesson instead of
  * saving an invalid activity set under it.
  */
-async function handleFilteredInitialLesson(input: { lessonId: number }): Promise<"filtered"> {
+async function handleFilteredInitialLesson(input: { lessonId: string }): Promise<"filtered"> {
   await removeNonLanguageLessonStep({ lessonId: input.lessonId });
   return "filtered";
 }
@@ -194,7 +194,7 @@ async function addGeneratedActivities(input: {
  */
 async function runInitialLessonGeneration(input: {
   context: LessonGenerationContext;
-  lessonId: number;
+  lessonId: string;
   workflowRunId: string;
 }): Promise<LessonGenerationResult> {
   if (shouldSkipRunningInitialGeneration(input.context)) {
@@ -263,7 +263,7 @@ async function runInitialLessonGeneration(input: {
 async function runLessonRegeneration(input: {
   context: LessonGenerationContext;
   generationRunId: string;
-  lessonId: number;
+  lessonId: string;
 }): Promise<LessonGenerationResult> {
   const lessonKind = await getLessonKindForRegeneration(input.context);
 
@@ -290,7 +290,7 @@ async function runLessonRegeneration(input: {
 }
 
 export async function lessonGenerationWorkflow(
-  lessonId: number,
+  lessonId: string,
   options: LessonGenerationOptions = {},
 ): Promise<LessonGenerationResult> {
   "use workflow";

@@ -10,7 +10,7 @@ export function lessonAttrs(
 
   return {
     archivedAt: null,
-    chapterId: 0,
+    chapterId: "",
     concepts: [],
     description: "Test lesson description",
     generationRunId: null,

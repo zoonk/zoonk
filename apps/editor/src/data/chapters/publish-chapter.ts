@@ -5,7 +5,7 @@ import { type Chapter, getActiveChapterWhere, prisma } from "@zoonk/db";
 import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
 
 export async function toggleChapterPublished(params: {
-  chapterId: number;
+  chapterId: string;
   headers?: Headers;
   isPublished: boolean;
 }): Promise<SafeReturn<Chapter>> {

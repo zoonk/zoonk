@@ -24,7 +24,7 @@ const DEFAULT_EXISTING_CONTENT: ExistingCourseContent = {
 export async function getOrCreateCourse(
   existingCourse: ExistingCourse | null,
   suggestion: CourseSuggestion,
-  courseSuggestionId: number,
+  courseSuggestionId: string,
   workflowRunId: string,
 ): Promise<{
   course: CourseContext;

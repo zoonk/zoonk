@@ -35,7 +35,7 @@ describe(addAlternativeTitlesStep, () => {
 
   test("streams error and throws when DB save fails", async () => {
     const brokenContext: CourseContext = {
-      courseId: 999_999_999,
+      courseId: randomUUID(),
       courseSlug: "broken",
       courseTitle: "Broken",
       language: "en",

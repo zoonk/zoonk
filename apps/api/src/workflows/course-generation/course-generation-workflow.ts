@@ -9,7 +9,7 @@ import { checkExistingCourseStep } from "./steps/check-existing-course-step";
 import { getCourseSuggestionStep } from "./steps/get-course-suggestion-step";
 import { handleCourseFailureStep } from "./steps/handle-failure-step";
 
-export async function courseGenerationWorkflow(courseSuggestionId: number): Promise<void> {
+export async function courseGenerationWorkflow(courseSuggestionId: string): Promise<void> {
   "use workflow";
 
   const { workflowRunId } = getWorkflowMetadata();

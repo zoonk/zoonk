@@ -83,7 +83,7 @@ describe(saveQuizActivityStep, () => {
     ];
 
     await saveQuizActivityStep({
-      activityId: Number(activity.id),
+      activityId: activity.id,
       questions,
       workflowRunId: "workflow-1",
     });
@@ -153,7 +153,7 @@ describe(saveQuizActivityStep, () => {
     ];
 
     await saveQuizActivityStep({
-      activityId: Number(activity.id),
+      activityId: activity.id,
       questions,
       workflowRunId: "workflow-error",
     });

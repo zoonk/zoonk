@@ -5,7 +5,7 @@ import { normalizeString, toSlug } from "@zoonk/utils/string";
 import { getAuthorizedCourse } from "./get-authorized-course";
 
 export async function updateCourse(params: {
-  courseId: number;
+  courseId: string;
   description?: string;
   headers?: Headers;
   imageUrl?: string | null;

@@ -11,10 +11,10 @@ export async function listDurableLessonCompletionIds({
   lessonIds,
   userId,
 }: {
-  lessonIds: number[];
-  userId: string;
-}): Promise<Set<number>> {
-  if (lessonIds.length === 0) {
+  lessonIds: string[];
+  userId?: string;
+}): Promise<Set<string>> {
+  if (lessonIds.length === 0 || !userId) {
     return new Set();
   }
 
@@ -39,10 +39,10 @@ export async function listDurableChapterCompletionIds({
   chapterIds,
   userId,
 }: {
-  chapterIds: number[];
-  userId: string;
-}): Promise<Set<number>> {
-  if (chapterIds.length === 0) {
+  chapterIds: string[];
+  userId?: string;
+}): Promise<Set<string>> {
+  if (chapterIds.length === 0 || !userId) {
     return new Set();
   }
 
@@ -67,9 +67,13 @@ export async function hasDurableCourseCompletion({
   courseId,
   userId,
 }: {
-  courseId: number;
-  userId: string;
+  courseId: string;
+  userId?: string;
 }): Promise<boolean> {
+  if (!userId) {
+    return false;
+  }
+
   const { data } = await safeAsync(() =>
     prisma.courseCompletion.findUnique({
       where: { userCourseCompletion: { courseId, userId } },

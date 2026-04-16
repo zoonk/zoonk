@@ -131,7 +131,7 @@ describe("admins", () => {
 
   test("returns empty array when chapterId does not exist", async () => {
     const result = await listChapterLessons({
-      chapterId: 999_999_999,
+      chapterId: "00000000-0000-7000-8000-000000000001",
       headers,
       orgId: organization.id,
     });

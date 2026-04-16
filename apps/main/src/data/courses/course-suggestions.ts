@@ -3,6 +3,7 @@ import { generateCourseSuggestions as generateTask } from "@zoonk/ai/tasks/cours
 import { type CourseSuggestion, prisma } from "@zoonk/db";
 import { getLanguageName } from "@zoonk/utils/languages";
 import { normalizeString, removeLocaleSuffix, toSlug } from "@zoonk/utils/string";
+import { isUuid } from "@zoonk/utils/uuid";
 
 type SuggestionResult = Pick<CourseSuggestion, "id" | "title" | "description" | "targetLanguage">;
 
@@ -31,7 +32,7 @@ async function upsertSearchPromptWithSuggestions(input: {
   language: string;
   prompt: string;
   suggestions: SuggestionInput[];
-}): Promise<{ id: number; suggestions: SuggestionResult[] }> {
+}): Promise<{ id: string; suggestions: SuggestionResult[] }> {
   const { language, prompt: rawPrompt, suggestions } = input;
   const prompt = normalizeString(rawPrompt);
 
@@ -129,7 +130,7 @@ export async function generateCourseSuggestions({
 }: {
   language: string;
   prompt: string;
-}): Promise<{ id: number; suggestions: SuggestionResult[] }> {
+}): Promise<{ id: string; suggestions: SuggestionResult[] }> {
   const record = await findSearchPrompt({ language, prompt });
 
   if (record && record.suggestions.length > 0) {
@@ -156,7 +157,16 @@ export async function generateCourseSuggestions({
   });
 }
 
-export async function getCourseSuggestionById(id: number): Promise<CourseSuggestion | null> {
+/**
+ * Course suggestion pages render a 404 when the suggestion lookup returns
+ * `null`. Returning `null` for malformed ids preserves that behavior for bad
+ * route params instead of surfacing a Prisma UUID parsing error.
+ */
+export async function getCourseSuggestionById(id: string): Promise<CourseSuggestion | null> {
+  if (!isUuid(id)) {
+    return null;
+  }
+
   return prisma.courseSuggestion.findUnique({
     where: { id },
   });

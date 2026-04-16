@@ -6,7 +6,7 @@ import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
 
 export async function removeCategoryFromCourse(params: {
   category: string;
-  courseId: number;
+  courseId: string;
   headers?: Headers;
 }): Promise<SafeReturn<CourseCategory>> {
   const { data: courseCategory, error: findError } = await safeAsync(() =>

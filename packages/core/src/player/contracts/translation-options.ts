@@ -32,7 +32,7 @@ type TranslationSourceWord = {
  * Direct distractor words do not need lesson translations, only render metadata.
  */
 export function serializeDistractorWord(word: {
-  id: bigint;
+  id: string;
   word: string;
   pronunciation: string | null;
   romanization: string | null;
@@ -40,7 +40,7 @@ export function serializeDistractorWord(word: {
 }): DistractorWord {
   return {
     audioUrl: word.audioUrl,
-    id: String(word.id),
+    id: word.id,
     pronunciation: word.pronunciation,
     romanization: word.romanization,
     word: word.word,

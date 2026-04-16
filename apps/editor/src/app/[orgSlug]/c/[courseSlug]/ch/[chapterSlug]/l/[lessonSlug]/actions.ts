@@ -6,7 +6,7 @@ import { getErrorMessage } from "@/lib/error-messages";
 import { revalidatePath } from "next/cache";
 
 export async function checkLessonSlugExists(params: {
-  chapterId?: number;
+  chapterId?: string;
   slug: string;
 }): Promise<boolean> {
   if (!params.chapterId) {
@@ -18,7 +18,7 @@ export async function checkLessonSlugExists(params: {
 
 export async function updateLessonTitleAction(
   slugs: { chapterSlug: string; courseSlug: string; orgSlug: string },
-  lessonId: number,
+  lessonId: string,
   data: { title: string },
 ): Promise<{ error: string | null }> {
   const { chapterSlug, courseSlug, orgSlug } = slugs;
@@ -38,7 +38,7 @@ export async function updateLessonTitleAction(
 
 export async function updateLessonDescriptionAction(
   slugs: { chapterSlug: string; courseSlug: string; orgSlug: string },
-  lessonId: number,
+  lessonId: string,
   data: { description: string },
 ): Promise<{ error: string | null }> {
   const { chapterSlug, courseSlug, orgSlug } = slugs;
@@ -58,7 +58,7 @@ export async function updateLessonDescriptionAction(
 
 export async function updateLessonSlugAction(
   slugs: { lessonSlug: string; chapterSlug: string; courseSlug: string },
-  lessonId: number,
+  lessonId: string,
   data: { slug: string },
 ): Promise<{ error: string | null; newSlug?: string }> {
   const { data: lesson, error } = await updateLesson({

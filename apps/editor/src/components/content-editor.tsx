@@ -30,12 +30,12 @@ export function ContentEditor({
   titleLabel,
   descriptionLabel,
 }: {
-  entityId: number;
+  entityId: string;
   initialTitle: string;
   initialDescription: string;
-  onSaveTitle: (id: number, data: { title: string }) => Promise<{ error: string | null }>;
+  onSaveTitle: (id: string, data: { title: string }) => Promise<{ error: string | null }>;
   onSaveDescription: (
-    id: number,
+    id: string,
     data: { description: string },
   ) => Promise<{ error: string | null }>;
   titlePlaceholder: string;

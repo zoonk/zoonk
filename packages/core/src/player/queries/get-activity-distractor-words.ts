@@ -5,7 +5,7 @@ import { cache } from "react";
 import { getLessonSentences } from "./get-lesson-sentences";
 import { getLessonWords } from "./get-lesson-words";
 
-const cachedGetActivityDistractorWords = cache(async (lessonId: number) => {
+const cachedGetActivityDistractorWords = cache(async (lessonId: string) => {
   const [lessonWords, lessonSentences] = await Promise.all([
     getLessonWords({ lessonId }),
     getLessonSentences({ lessonId }),
@@ -52,6 +52,6 @@ const cachedGetActivityDistractorWords = cache(async (lessonId: number) => {
  * matching `Word` records for that lesson's language pair. Listening-side
  * `translationDistractors` are intentionally ignored because they stay plain strings.
  */
-export function getActivityDistractorWords(params: { lessonId: number }) {
+export function getActivityDistractorWords(params: { lessonId: string }) {
   return cachedGetActivityDistractorWords(params.lessonId);
 }

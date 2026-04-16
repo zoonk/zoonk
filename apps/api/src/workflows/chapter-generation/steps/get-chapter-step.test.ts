@@ -22,7 +22,7 @@ vi.mock("workflow", () => ({
 
 describe(getChapterStep, () => {
   let organizationId: string;
-  let courseId: number;
+  let courseId: string;
 
   beforeAll(async () => {
     const organization = await aiOrganizationFixture();
@@ -133,7 +133,7 @@ describe(getChapterStep, () => {
   });
 
   test("throws FatalError when chapter does not exist", async () => {
-    await expect(getChapterStep(999_999_999)).rejects.toThrow("Chapter not found");
+    await expect(getChapterStep(randomUUID())).rejects.toThrow("Chapter not found");
 
     const events = getStreamedEvents(writeMock);
 

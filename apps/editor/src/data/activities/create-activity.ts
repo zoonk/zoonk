@@ -9,7 +9,7 @@ export async function createActivity(params: {
   description?: string;
   headers?: Headers;
   kind: ActivityKind;
-  lessonId: number;
+  lessonId: string;
   position: number;
   title?: string;
 }): Promise<SafeReturn<Activity>> {

@@ -130,7 +130,7 @@ describe("admins", () => {
 
   test("returns Chapter not found", async () => {
     const result = await reorderLessons({
-      chapterId: 999_999,
+      chapterId: "00000000-0000-7000-8000-000000000001",
       headers,
       lessons: [],
     });
@@ -210,7 +210,7 @@ describe("admins", () => {
       headers,
       lessons: [
         { lessonId: lesson.id, position: expectedPosition },
-        { lessonId: 999_999, position: 0 },
+        { lessonId: "00000000-0000-7000-8000-000000000001", position: 0 },
       ],
     });
 

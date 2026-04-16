@@ -13,7 +13,7 @@ import { saveCustomActivityStep } from "../steps/save-custom-activity-step";
  */
 async function markDroppedCustomActivitiesAsFailed(
   activitiesToGenerate: LessonActivity[],
-  contentResults: { activityId: number }[],
+  contentResults: { activityId: string }[],
 ): Promise<void> {
   const customActivitiesToGenerate = activitiesToGenerate.filter((a) => a.kind === "custom");
   const resultActivityIds = new Set(contentResults.map((result) => result.activityId));

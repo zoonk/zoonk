@@ -9,7 +9,7 @@ import { redirect } from "next/navigation";
 
 export async function togglePublishAction(
   lessonUrl: string,
-  lessonId: number,
+  lessonId: string,
   isPublished: boolean,
 ): Promise<{ error: string | null }> {
   const { error } = await toggleLessonPublished({
@@ -27,7 +27,7 @@ export async function togglePublishAction(
 }
 
 export async function deleteLessonAction(
-  lessonId: number,
+  lessonId: string,
   chapterUrl: Route,
 ): Promise<{ error: string | null }> {
   const { error } = await deleteLesson({ lessonId });

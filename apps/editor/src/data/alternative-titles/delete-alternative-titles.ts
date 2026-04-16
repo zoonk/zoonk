@@ -9,7 +9,7 @@ import { getAuthorizedCourse } from "../courses/get-authorized-course";
  * exists to enforce course update permission before removing any stored slugs.
  */
 export async function deleteAlternativeTitles(params: {
-  courseId: number;
+  courseId: string;
   headers?: Headers;
   titles: string[];
 }): Promise<SafeReturn<null>> {

@@ -157,7 +157,7 @@ describe("admins", () => {
     const result = await reorderActivities({
       activities: [],
       headers,
-      lessonId: 999_999,
+      lessonId: "00000000-0000-7000-8000-000000000001",
     });
 
     expect(result.error?.message).toBe(ErrorCode.lessonNotFound);
@@ -248,7 +248,7 @@ describe("admins", () => {
     const result = await reorderActivities({
       activities: [
         { activityId: activity.id, position: expectedPosition },
-        { activityId: BigInt(999_999), position: 0 },
+        { activityId: "00000000-0000-7000-8000-000000000001", position: 0 },
       ],
       headers,
       lessonId: newLesson.id,

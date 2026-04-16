@@ -68,7 +68,7 @@ describe("course-suggestions", () => {
 
     expect(result.suggestions).toHaveLength(1);
     expect(result.suggestions[0]?.title).toBe("Vitest");
-    expect(result.suggestions[0]?.id).toBeTypeOf("number");
+    expect(result.suggestions[0]?.id).toBeTypeOf("string");
     expect(spy).toHaveBeenCalledOnce();
 
     // Verify item was created in database
@@ -227,7 +227,13 @@ describe("course-suggestions", () => {
   });
 
   test("getCourseSuggestionById returns null for non-existent id", async () => {
-    const result = await getCourseSuggestionById(999_999);
+    const result = await getCourseSuggestionById(randomUUID());
+    expect(result).toBeNull();
+  });
+
+  test("getCourseSuggestionById returns null for malformed ids", async () => {
+    const result = await getCourseSuggestionById("invalid-id");
+
     expect(result).toBeNull();
   });
 

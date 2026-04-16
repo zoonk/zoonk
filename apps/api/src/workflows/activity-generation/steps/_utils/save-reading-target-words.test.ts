@@ -38,7 +38,7 @@ async function createLessonContext() {
  * Lesson words are the observable output for canonical sentence tokens, so most tests
  * assert against this joined query instead of lower-level individual rows.
  */
-async function getLessonWordsWithWords(lessonId: number) {
+async function getLessonWordsWithWords(lessonId: string) {
   return prisma.lessonWord.findMany({
     include: { word: true },
     orderBy: { word: { word: "asc" } },

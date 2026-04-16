@@ -1,19 +1,19 @@
 export type PublishedLessonProgressScope =
-  | { chapterId: number }
-  | { courseId: number }
-  | { lessonId: number };
+  | { chapterId: string }
+  | { courseId: string }
+  | { lessonId: string };
 
 export type PublishedLessonProgressRow = {
   brandSlug: string | null;
-  chapterId: number;
+  chapterId: string;
   chapterPosition: number;
   chapterSlug: string;
   completedActivities: number;
-  courseId: number;
+  courseId: string;
   courseSlug: string;
   lessonDescription: string;
   lessonGenerationStatus: "completed" | "failed" | "pending" | "running";
-  lessonId: number;
+  lessonId: string;
   lessonPosition: number;
   lessonSlug: string;
   lessonTitle: string;
@@ -35,7 +35,7 @@ export function toEffectiveLessonProgressRows({
   durablyCompletedLessonIds,
   rows,
 }: {
-  durablyCompletedLessonIds: Set<number>;
+  durablyCompletedLessonIds: Set<string>;
   rows: PublishedLessonProgressRow[];
 }): EffectiveLessonProgressRow[] {
   return rows.map((row) => {

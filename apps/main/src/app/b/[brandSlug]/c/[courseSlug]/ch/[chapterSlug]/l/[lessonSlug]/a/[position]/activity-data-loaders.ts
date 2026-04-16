@@ -4,7 +4,7 @@ import { getNextSibling } from "@zoonk/core/player/queries/get-next-sibling";
 import { getReviewSteps } from "@zoonk/core/player/queries/get-review-steps";
 import { getSession } from "@zoonk/core/users/session/get";
 
-export async function fetchReviewSteps(lessonId: number, activityPosition: number) {
+export async function fetchReviewSteps(lessonId: string, activityPosition: number) {
   const activity = await getActivity({ lessonId, position: activityPosition });
 
   if (activity?.kind !== "review") {
@@ -20,10 +20,10 @@ export async function fetchReviewSteps(lessonId: number, activityPosition: numbe
 }
 
 export async function fetchNextSibling(
-  lessonId: number,
+  lessonId: string,
   activityPosition: number,
   lessonSlug: string,
-  chapter: { id: number; position: number; course: { id: number } },
+  chapter: { id: string; position: number; course: { id: string } },
   lessonPosition: number,
 ) {
   const nextActivity = await getNextActivityInCourse({

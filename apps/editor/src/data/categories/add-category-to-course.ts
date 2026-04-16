@@ -8,7 +8,7 @@ import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
 
 export async function addCategoryToCourse(params: {
   category: string;
-  courseId: number;
+  courseId: string;
   headers?: Headers;
 }): Promise<SafeReturn<CourseCategory>> {
   if (!isValidCategory(params.category)) {

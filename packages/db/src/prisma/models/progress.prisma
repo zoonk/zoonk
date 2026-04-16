@@ -1,8 +1,8 @@
 model ActivityProgress {
-  id              BigInt    @id @default(autoincrement())
-  userId          String    @map("user_id")
+  id              String    @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId          String    @map("user_id") @db.Uuid
   user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  activityId      BigInt    @map("activity_id")
+  activityId      String    @map("activity_id") @db.Uuid
   activity        Activity  @relation(fields: [activityId], references: [id], onDelete: Cascade)
   startedAt       DateTime  @default(now()) @map("started_at")
   completedAt     DateTime? @map("completed_at")
@@ -16,10 +16,10 @@ model ActivityProgress {
 }
 
 model LessonCompletion {
-  id          BigInt   @id @default(autoincrement())
-  userId      String   @map("user_id")
+  id          String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId      String   @map("user_id") @db.Uuid
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  lessonId    Int      @map("lesson_id")
+  lessonId    String   @map("lesson_id") @db.Uuid
   lesson      Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
   completedAt DateTime @default(now()) @map("completed_at")
 
@@ -30,10 +30,10 @@ model LessonCompletion {
 }
 
 model ChapterCompletion {
-  id          BigInt   @id @default(autoincrement())
-  userId      String   @map("user_id")
+  id          String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId      String   @map("user_id") @db.Uuid
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  chapterId   Int      @map("chapter_id")
+  chapterId   String   @map("chapter_id") @db.Uuid
   chapter     Chapter  @relation(fields: [chapterId], references: [id], onDelete: Cascade)
   completedAt DateTime @default(now()) @map("completed_at")
 
@@ -44,10 +44,10 @@ model ChapterCompletion {
 }
 
 model CourseCompletion {
-  id          BigInt   @id @default(autoincrement())
-  userId      String   @map("user_id")
+  id          String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId      String   @map("user_id") @db.Uuid
   user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  courseId    Int      @map("course_id")
+  courseId    String   @map("course_id") @db.Uuid
   course      Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
   completedAt DateTime @default(now()) @map("completed_at")
 
@@ -58,10 +58,10 @@ model CourseCompletion {
 }
 
 model StepAttempt {
-  id              BigInt   @id @default(autoincrement())
-  userId          String   @map("user_id")
+  id              String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId          String   @map("user_id") @db.Uuid
   user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  stepId          BigInt   @map("step_id")
+  stepId          String   @map("step_id") @db.Uuid
   step            Step     @relation(fields: [stepId], references: [id], onDelete: Cascade)
   isCorrect       Boolean  @map("is_correct")
   answer          Json
@@ -80,8 +80,8 @@ model StepAttempt {
 }
 
 model UserProgress {
-  id              Int      @id @default(autoincrement())
-  userId          String   @unique @map("user_id")
+  id              String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId          String   @unique @map("user_id") @db.Uuid
   user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   currentEnergy   Float    @default(0) @map("current_energy")
   totalBrainPower BigInt   @default(0) @map("total_brain_power")
@@ -91,8 +91,8 @@ model UserProgress {
 }
 
 model DailyProgress {
-  id                   BigInt   @id @default(autoincrement())
-  userId               String   @map("user_id")
+  id                   String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  userId               String   @map("user_id") @db.Uuid
   user                 User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   date                 DateTime @db.Date
   dayOfWeek            Int      @map("day_of_week") @db.SmallInt

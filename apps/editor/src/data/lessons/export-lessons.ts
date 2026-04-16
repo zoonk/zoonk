@@ -11,7 +11,7 @@ type ExportedLesson = {
   title: string;
 };
 
-export async function exportLessons(params: { chapterId: number; headers?: Headers }): Promise<
+export async function exportLessons(params: { chapterId: string; headers?: Headers }): Promise<
   SafeReturn<{
     lessons: ExportedLesson[];
     exportedAt: string;

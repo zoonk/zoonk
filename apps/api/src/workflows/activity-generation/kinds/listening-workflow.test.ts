@@ -12,7 +12,7 @@ import { beforeAll, describe, expect, test } from "vitest";
 import { type LessonActivity } from "../steps/get-lesson-activities-step";
 import { listeningActivityWorkflow } from "./listening-workflow";
 
-async function fetchLessonActivities(lessonId: number): Promise<LessonActivity[]> {
+async function fetchLessonActivities(lessonId: string): Promise<LessonActivity[]> {
   const activities = await prisma.activity.findMany({
     include: {
       _count: { select: { steps: true } },
@@ -30,7 +30,7 @@ async function fetchLessonActivities(lessonId: number): Promise<LessonActivity[]
     where: { lessonId },
   });
 
-  return activities.map((activity) => ({ ...activity, id: Number(activity.id) }));
+  return activities.map((activity) => ({ ...activity, id: activity.id }));
 }
 
 describe(listeningActivityWorkflow, () => {

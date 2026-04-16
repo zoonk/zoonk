@@ -6,7 +6,7 @@ import { getAiGenerationActivityWhere, prisma } from "@zoonk/db";
  * activities or archived ancestors from leaking back into generation context
  * when one caller gets updated and the other does not.
  */
-export async function fetchLessonActivities(lessonId: number) {
+export async function fetchLessonActivities(lessonId: string) {
   return fetchActivitiesForLesson({
     lessonId,
     replacementActivities: false,
@@ -18,7 +18,7 @@ export async function fetchLessonActivities(lessonId: number) {
  * This helper loads only that unpublished set so the background workflow can
  * regenerate activities without touching the published learner-facing ones.
  */
-export async function fetchReplacementLessonActivities(input: { lessonId: number }) {
+export async function fetchReplacementLessonActivities(input: { lessonId: string }) {
   return fetchActivitiesForLesson({
     lessonId: input.lessonId,
     replacementActivities: true,
@@ -32,7 +32,7 @@ export async function fetchReplacementLessonActivities(input: { lessonId: number
  * replacement set used during regeneration.
  */
 async function fetchActivitiesForLesson(input: {
-  lessonId: number;
+  lessonId: string;
   replacementActivities: boolean;
 }) {
   const activities = await prisma.activity.findMany({
@@ -61,5 +61,5 @@ async function fetchActivitiesForLesson(input: {
     }),
   });
 
-  return activities.map((activity) => ({ ...activity, id: Number(activity.id) }));
+  return activities;
 }

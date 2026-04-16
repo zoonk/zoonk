@@ -11,7 +11,7 @@ import { start } from "workflow/api";
  * The first-chapter free path is intentionally public, so this lookup must
  * also prove the chapter belongs to the AI curriculum before we skip auth.
  */
-async function getChapterPosition(chapterId: number) {
+async function getChapterPosition(chapterId: string) {
   const chapter = await prisma.chapter.findFirst({
     select: { position: true },
     where: getAiGenerationChapterWhere({

@@ -3,7 +3,7 @@ import { type LessonStepName } from "@zoonk/core/workflows/steps";
 import { getAiGenerationLessonWhere, prisma } from "@zoonk/db";
 import { FatalError } from "workflow";
 
-async function getLessonForGeneration(lessonId: number) {
+async function getLessonForGeneration(lessonId: string) {
   return prisma.lesson.findFirst({
     include: {
       _count: { select: { activities: true } },
@@ -17,7 +17,7 @@ async function getLessonForGeneration(lessonId: number) {
 
 export type LessonContext = NonNullable<Awaited<ReturnType<typeof getLessonForGeneration>>>;
 
-export async function getLessonStep(lessonId: number): Promise<LessonContext> {
+export async function getLessonStep(lessonId: string): Promise<LessonContext> {
   "use step";
 
   await using stream = createStepStream<LessonStepName>();

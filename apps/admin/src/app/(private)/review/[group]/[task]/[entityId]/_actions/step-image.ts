@@ -5,7 +5,6 @@ import { processAndUploadImage } from "@zoonk/core/images/process-and-upload";
 import { parseStepContent } from "@zoonk/core/steps/contract/content";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
-import { parseBigIntId } from "@zoonk/utils/number";
 import { revalidatePath } from "next/cache";
 
 export async function uploadStepImageAction(
@@ -19,11 +18,7 @@ export async function uploadStepImageAction(
     return { error: "Unauthorized", imageUrl: null };
   }
 
-  const stepId = parseBigIntId(params.stepId);
-
-  if (!stepId) {
-    return { error: "Invalid step ID", imageUrl: null };
-  }
+  const stepId = params.stepId;
 
   const { imageTarget } = params;
   const file = formData.get("file");

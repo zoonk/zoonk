@@ -91,7 +91,7 @@ describe(saveInvestigationActivityStep, () => {
     await saveInvestigationActivityStep({
       accuracy: mockAccuracy,
       actions: mockActions,
-      activityId: Number(activity.id),
+      activityId: activity.id,
       findings: mockFindings,
       scenario: mockScenario,
       workflowRunId: "workflow-1",
@@ -183,7 +183,7 @@ describe(saveInvestigationActivityStep, () => {
     await saveInvestigationActivityStep({
       accuracy: mockAccuracy,
       actions: mockActions,
-      activityId: Number(activity.id),
+      activityId: activity.id,
       findings: mockFindings,
       scenario: mockScenario,
       workflowRunId: "workflow-completed",
@@ -219,7 +219,7 @@ describe(saveInvestigationActivityStep, () => {
     await saveInvestigationActivityStep({
       accuracy: mockAccuracy,
       actions: mockActions,
-      activityId: Number(activity.id),
+      activityId: activity.id,
       findings: mockFindings,
       scenario: mockScenario,
       workflowRunId: "workflow-error",

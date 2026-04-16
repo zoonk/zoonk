@@ -3,7 +3,7 @@ import { getLessonGenerationState } from "@zoonk/core/content/management";
 import { getPublishedLessonWhere, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 
-type NextLesson = { id: number; needsGeneration: boolean };
+type NextLesson = { id: string; needsGeneration: boolean };
 
 /**
  * Given an activityId, finds the next lesson in course order.
@@ -14,7 +14,7 @@ type NextLesson = { id: number; needsGeneration: boolean };
  * generation work, has descendant activities still generating, or is an
  * outdated AI-managed lesson that can be safely regenerated now.
  */
-export async function getNextLesson(activityId: bigint): Promise<NextLesson | null> {
+export async function getNextLesson(activityId: string): Promise<NextLesson | null> {
   const { data: activity, error } = await safeAsync(() =>
     prisma.activity.findFirst({
       include: {

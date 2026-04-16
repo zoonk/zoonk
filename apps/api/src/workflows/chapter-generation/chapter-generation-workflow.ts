@@ -15,7 +15,7 @@ async function generateAndAddLessons(context: Awaited<ReturnType<typeof getChapt
   return addLessonsStep({ context, lessons });
 }
 
-export async function chapterGenerationWorkflow(chapterId: number): Promise<void> {
+export async function chapterGenerationWorkflow(chapterId: string): Promise<void> {
   "use workflow";
 
   const { workflowRunId } = getWorkflowMetadata();

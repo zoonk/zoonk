@@ -14,7 +14,7 @@ let courseSlug: string;
 let courseTitle: string;
 let chapterTitle: string;
 let unpublishedChapterSlug: string;
-let noLessonsChapterId: number;
+let noLessonsChapterId: string;
 let noLessonsChapterUrl: string;
 let lessonNames: { first: string; second: string };
 let lessonSlugs: { first: string; second: string };

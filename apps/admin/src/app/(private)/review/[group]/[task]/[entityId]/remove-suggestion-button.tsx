@@ -19,16 +19,16 @@ export function RemoveSuggestionButton({
   searchPromptId,
   courseSuggestionId,
 }: {
-  searchPromptId: number;
-  courseSuggestionId: number;
+  searchPromptId: string;
+  courseSuggestionId: string;
 }) {
   const [pending, startTransition] = useTransition();
 
   function handleRemove() {
     startTransition(async () => {
       const formData = new FormData();
-      formData.append("searchPromptId", String(searchPromptId));
-      formData.append("courseSuggestionId", String(courseSuggestionId));
+      formData.append("searchPromptId", searchPromptId);
+      formData.append("courseSuggestionId", courseSuggestionId);
       await removeCourseSuggestionAction(formData);
     });
   }

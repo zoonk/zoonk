@@ -51,7 +51,7 @@ function validateImportData(data: unknown): data is {
 async function resolveChapter(
   tx: TransactionClient,
   params: {
-    courseId: number;
+    courseId: string;
     courseIsPublished: boolean;
     description: string;
     existingChapter: Chapter | undefined;
@@ -106,7 +106,7 @@ async function resolveChapter(
 }
 
 export async function importChapters(params: {
-  courseId: number;
+  courseId: string;
   file: File;
   headers?: Headers;
   mode?: ImportMode;

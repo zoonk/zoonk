@@ -46,7 +46,7 @@ async function getReplaceDecisions<Item>({
  * per-record lifecycle work. This keeps replace-mode imports efficient while
  * still letting archive paths do the extra slug rewrite work they need.
  */
-async function deleteChapters({ chapterIds, tx }: { chapterIds: number[]; tx: TransactionClient }) {
+async function deleteChapters({ chapterIds, tx }: { chapterIds: string[]; tx: TransactionClient }) {
   if (chapterIds.length === 0) {
     return;
   }
@@ -87,7 +87,7 @@ async function archiveChapters({ chapters, tx }: { chapters: Chapter[]; tx: Tran
  * Lesson replace imports follow the same historical-integrity rule as chapter
  * imports, including slug release for archived rows.
  */
-async function deleteLessons({ lessonIds, tx }: { lessonIds: number[]; tx: TransactionClient }) {
+async function deleteLessons({ lessonIds, tx }: { lessonIds: string[]; tx: TransactionClient }) {
   if (lessonIds.length === 0) {
     return;
   }
@@ -134,7 +134,7 @@ async function deleteActivities({
   activityIds,
   tx,
 }: {
-  activityIds: bigint[];
+  activityIds: string[];
   tx: TransactionClient;
 }) {
   if (activityIds.length === 0) {
@@ -177,7 +177,7 @@ export async function replaceCourseChapters({
   courseId,
   tx,
 }: {
-  courseId: number;
+  courseId: string;
   tx: TransactionClient;
 }) {
   const chapters = await tx.chapter.findMany({
@@ -212,7 +212,7 @@ export async function replaceChapterLessons({
   chapterId,
   tx,
 }: {
-  chapterId: number;
+  chapterId: string;
   tx: TransactionClient;
 }) {
   const lessons = await tx.lesson.findMany({
@@ -248,7 +248,7 @@ export async function replaceLessonActivities({
   lessonId,
   tx,
 }: {
-  lessonId: number;
+  lessonId: string;
   tx: TransactionClient;
 }) {
   const activities = await tx.activity.findMany({

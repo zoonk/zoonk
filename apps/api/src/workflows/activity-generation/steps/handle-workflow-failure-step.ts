@@ -12,7 +12,7 @@ import { safeAsync } from "@zoonk/utils/error";
  * that temporary replacement set on failure instead of keeping failed rows
  * around.
  */
-export async function handleWorkflowFailureStep(input: { lessonId: number }): Promise<void> {
+export async function handleWorkflowFailureStep(input: { lessonId: string }): Promise<void> {
   "use step";
 
   await safeAsync(() =>

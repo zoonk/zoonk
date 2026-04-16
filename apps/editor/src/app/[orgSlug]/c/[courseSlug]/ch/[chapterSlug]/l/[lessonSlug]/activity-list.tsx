@@ -93,7 +93,7 @@ export async function ActivityList({
 
       {activities.length > 0 && (
         <EditorSortableList
-          items={activities.map((a) => ({ ...a, id: Number(a.id) }))}
+          items={activities}
           onReorder={reorderActivitiesAction.bind(null, routeParams)}
         >
           <EditorListContent>
@@ -103,7 +103,7 @@ export async function ActivityList({
                 chapterSlug={chapterSlug}
                 courseSlug={courseSlug}
                 index={index}
-                key={String(activity.id)}
+                key={activity.id}
                 lessonSlug={lessonSlug}
                 orgSlug={orgSlug}
               />

@@ -167,8 +167,8 @@ describe(handleStepStreamMessage, () => {
     handleStepStreamMessage({
       completionStep: "done",
       dispatch: (a) => actions.push(a),
-      entityId: 42,
-      message: { entityId: 42, status: "completed", step: "done" },
+      entityId: "42",
+      message: { entityId: "42", status: "completed", step: "done" },
     });
     const state = applyActions(actions, initialGenerationState({ status: "streaming" }));
     expect(state.status).toBe("completed");
@@ -179,8 +179,8 @@ describe(handleStepStreamMessage, () => {
     handleStepStreamMessage({
       completionStep: "done",
       dispatch: (a) => actions.push(a),
-      entityId: 42,
-      message: { entityId: 99, status: "completed", step: "done" },
+      entityId: "42",
+      message: { entityId: "99", status: "completed", step: "done" },
     });
     const state = applyActions(actions, initialGenerationState({ status: "streaming" }));
     expect(state.status).toBe("streaming");
@@ -191,7 +191,7 @@ describe(handleStepStreamMessage, () => {
     handleStepStreamMessage({
       completionStep: "done",
       dispatch: (a) => actions.push(a),
-      message: { entityId: 99, status: "completed", step: "done" },
+      message: { entityId: "99", status: "completed", step: "done" },
     });
     const state = applyActions(actions, initialGenerationState({ status: "streaming" }));
     expect(state.status).toBe("completed");
@@ -214,8 +214,8 @@ describe(handleStepStreamMessage, () => {
 
       handleStepStreamMessage({
         dispatch: (a) => actions.push(a),
-        entityId: 235,
-        message: { entityId: 238, status: "completed", step: "generateVisuals" },
+        entityId: "235",
+        message: { entityId: "238", status: "completed", step: "generateVisuals" },
       });
 
       const state = applyActions(actions, initialGenerationState());
@@ -228,8 +228,8 @@ describe(handleStepStreamMessage, () => {
 
       handleStepStreamMessage({
         dispatch: (a) => actions.push(a),
-        entityId: 235,
-        message: { entityId: 235, status: "completed", step: "generateVisuals" },
+        entityId: "235",
+        message: { entityId: "235", status: "completed", step: "generateVisuals" },
       });
 
       const state = applyActions(actions, initialGenerationState());
@@ -242,7 +242,7 @@ describe(handleStepStreamMessage, () => {
 
       handleStepStreamMessage({
         dispatch: (a) => actions.push(a),
-        entityId: 235,
+        entityId: "235",
         message: { status: "completed", step: "generateExplanationContent" },
       });
 
@@ -256,7 +256,7 @@ describe(handleStepStreamMessage, () => {
 
       handleStepStreamMessage({
         dispatch: (a) => actions.push(a),
-        message: { entityId: 99, status: "completed", step: "stepA" },
+        message: { entityId: "99", status: "completed", step: "stepA" },
       });
 
       const state = applyActions(actions, initialGenerationState());
@@ -269,8 +269,8 @@ describe(handleStepStreamMessage, () => {
 
       handleStepStreamMessage({
         dispatch: (a) => actions.push(a),
-        entityId: 235,
-        message: { entityId: 238, status: "started", step: "generateVisuals" },
+        entityId: "235",
+        message: { entityId: "238", status: "started", step: "generateVisuals" },
       });
 
       const state = applyActions(actions, initialGenerationState());
@@ -284,8 +284,8 @@ describe(handleStepStreamMessage, () => {
 
       handleStepStreamMessage({
         dispatch: (a) => actions.push(a),
-        entityId: 235,
-        message: { entityId: 235, status: "started", step: "generateVisuals" },
+        entityId: "235",
+        message: { entityId: "235", status: "started", step: "generateVisuals" },
       });
 
       const state = applyActions(actions, initialGenerationState());
@@ -298,7 +298,7 @@ describe(handleStepStreamMessage, () => {
 
       handleStepStreamMessage({
         dispatch: (a) => actions.push(a),
-        entityId: 235,
+        entityId: "235",
         message: { status: "started", step: "getLessonActivities" },
       });
 
@@ -324,9 +324,9 @@ describe(handleStepStreamMessage, () => {
     const actions: GenerationAction[] = [];
     handleStepStreamMessage({
       dispatch: (a) => actions.push(a),
-      entityId: 100,
+      entityId: "100",
       message: {
-        entityId: 200,
+        entityId: "200",
         reason: "aiGenerationFailed",
         status: "error",
         step: "generateVisuals",
@@ -341,9 +341,9 @@ describe(handleStepStreamMessage, () => {
     const actions: GenerationAction[] = [];
     handleStepStreamMessage({
       dispatch: (a) => actions.push(a),
-      entityId: 100,
+      entityId: "100",
       message: {
-        entityId: 100,
+        entityId: "100",
         reason: "aiGenerationFailed",
         status: "error",
         step: "generateVisuals",
@@ -357,7 +357,7 @@ describe(handleStepStreamMessage, () => {
     const actions: GenerationAction[] = [];
     handleStepStreamMessage({
       dispatch: (a) => actions.push(a),
-      entityId: 100,
+      entityId: "100",
       message: {
         reason: "aiGenerationFailed",
         status: "error",

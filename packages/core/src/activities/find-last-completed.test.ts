@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { activityFixture, activityProgressFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
@@ -707,7 +708,7 @@ describe(findLastCompleted, () => {
   });
 
   test("returns null for non-existent course", async () => {
-    const result = await findLastCompleted(userId, { courseId: 999_999 });
+    const result = await findLastCompleted(userId, { courseId: randomUUID() });
 
     expect(result).toBeNull();
   });

@@ -18,7 +18,7 @@ type DistractorWord = NonNullable<PrepareLessonActivityInput["distractorWords"]>
 function makeWordRecord(overrides: Partial<LessonWord["word"]> = {}): LessonWord["word"] {
   return {
     audioUrl: null,
-    id: 1n,
+    id: "1",
     pronunciations: [],
     romanization: null,
     word: "word",
@@ -31,7 +31,7 @@ function makeSentenceRecord(
 ): LessonSentence["sentence"] {
   return {
     audioUrl: null,
-    id: 1n,
+    id: "1",
     romanization: null,
     sentence: "sentence",
     ...overrides,
@@ -41,7 +41,7 @@ function makeSentenceRecord(
 function makeStepWord(overrides: Partial<RawStepWord> = {}): RawStepWord {
   return {
     audioUrl: null,
-    id: 1n,
+    id: "1",
     romanization: null,
     word: "word",
     ...overrides,
@@ -51,7 +51,7 @@ function makeStepWord(overrides: Partial<RawStepWord> = {}): RawStepWord {
 function makeStepSentence(overrides: Partial<RawStepSentence> = {}): RawStepSentence {
   return {
     audioUrl: null,
-    id: 1n,
+    id: "1",
     romanization: null,
     sentence: "sentence",
     ...overrides,
@@ -96,7 +96,7 @@ function makeSentenceWord(overrides: Partial<SentenceWord> = {}): SentenceWord {
 function makeDistractorWord(overrides: Partial<DistractorWord> = {}): DistractorWord {
   return {
     audioUrl: null,
-    id: 1n,
+    id: "1",
     pronunciations: [],
     romanization: null,
     word: "word",
@@ -107,7 +107,7 @@ function makeDistractorWord(overrides: Partial<DistractorWord> = {}): Distractor
 function makeStep(overrides: Partial<RawStep> = {}): RawStep {
   return {
     content: {},
-    id: 1n,
+    id: "1",
     kind: "static",
     position: 0,
     sentence: null,
@@ -119,7 +119,7 @@ function makeStep(overrides: Partial<RawStep> = {}): RawStep {
 function makeActivity(steps: RawStep[], overrides: Partial<ActivityInput> = {}): ActivityInput {
   return {
     description: null,
-    id: 1n,
+    id: "1",
     kind: "quiz",
     language: "en",
     organizationId: "org-1",
@@ -147,10 +147,10 @@ describe(prepareLessonActivityData, () => {
         [
           makeStep({
             content: { text: "Hello world", title: "Intro", variant: "text" },
-            id: 42n,
+            id: "42",
           }),
         ],
-        { id: 99n },
+        { id: "99" },
       ),
     });
 
@@ -164,7 +164,7 @@ describe(prepareLessonActivityData, () => {
       translation: "good evening",
       word: makeWordRecord({
         audioUrl: "/audio/boa-noite.mp3",
-        id: 10n,
+        id: "10",
         pronunciations: [{ pronunciation: "boa noite" }],
         word: "boa noite",
       }),
@@ -174,7 +174,7 @@ describe(prepareLessonActivityData, () => {
       explanation: "Greeting",
       sentence: makeSentenceRecord({
         audioUrl: "/audio/guten-morgen.mp3",
-        id: 20n,
+        id: "20",
         romanization: "guten morgen",
         sentence: "Guten Morgen",
       }),
@@ -187,7 +187,7 @@ describe(prepareLessonActivityData, () => {
         [makeStep({ content: { text: "Hello world", title: "Intro", variant: "text" } })],
         {
           description: "Description",
-          id: 99n,
+          id: "99",
           kind: "review",
           organizationId: "org-42",
         },
@@ -235,7 +235,7 @@ describe(prepareLessonActivityData, () => {
           content: { text: "Hello world", title: "Intro", variant: "text" },
           kind: "static",
         }),
-        makeStep({ id: 2n, kind: "not-supported" }),
+        makeStep({ id: "2", kind: "not-supported" }),
       ]),
     });
 
@@ -256,7 +256,7 @@ describe(prepareLessonActivityData, () => {
             items: ["first", "second", "third"],
             question: "Sort these",
           },
-          id: 1n,
+          id: "1",
           kind: "sortOrder",
         }),
         makeStep({
@@ -267,7 +267,7 @@ describe(prepareLessonActivityData, () => {
             romanizations: { ground: "ground-rom" },
             template: "The ___ is blue",
           },
-          id: 2n,
+          id: "2",
           kind: "fillBlank",
         }),
         makeStep({
@@ -278,7 +278,7 @@ describe(prepareLessonActivityData, () => {
             ],
             question: "Match the pairs",
           },
-          id: 3n,
+          id: "3",
           kind: "matchColumns",
         }),
       ]),
@@ -306,11 +306,11 @@ describe(prepareLessonActivityData, () => {
     const word = makeLessonWord({
       distractors: ["boa tarde", "bom dia"],
       translation: "good evening",
-      word: makeWordRecord({ id: 10n, word: "boa noite" }),
+      word: makeWordRecord({ id: "10", word: "boa noite" }),
     });
     const sentence = makeLessonSentence({
       distractors: ["Abend", "Fenster"],
-      sentence: makeSentenceRecord({ id: 20n, sentence: "Guten Morgen, Lara." }),
+      sentence: makeSentenceRecord({ id: "20", sentence: "Guten Morgen, Lara." }),
       translation: "Bom dia, Lara.",
       translationDistractors: ["tchau", "logo"],
     });
@@ -318,14 +318,14 @@ describe(prepareLessonActivityData, () => {
     const result = prepare({
       activity: makeActivity([
         makeStep({
-          id: 11n,
+          id: "11",
           kind: "translation",
-          word: makeStepWord({ id: 10n, word: "boa noite" }),
+          word: makeStepWord({ id: "10", word: "boa noite" }),
         }),
         makeStep({
-          id: 12n,
+          id: "12",
           kind: "reading",
-          sentence: makeStepSentence({ id: 20n, sentence: "Guten Morgen, Lara." }),
+          sentence: makeStepSentence({ id: "20", sentence: "Guten Morgen, Lara." }),
         }),
       ]),
       lessonSentences: [sentence],
@@ -344,7 +344,7 @@ describe(prepareLessonActivityData, () => {
       distractors: ["boa tarde", "bom dia", "até logo"],
       translation: "good evening",
       word: makeWordRecord({
-        id: 10n,
+        id: "10",
         pronunciations: [{ pronunciation: "boa noite" }],
         word: "boa noite",
       }),
@@ -353,21 +353,21 @@ describe(prepareLessonActivityData, () => {
     const result = prepare({
       activity: makeActivity([
         makeStep({
-          id: 11n,
+          id: "11",
           kind: "translation",
-          word: makeStepWord({ id: 10n, word: "boa noite" }),
+          word: makeStepWord({ id: "10", word: "boa noite" }),
         }),
       ]),
       distractorWords: [
         makeDistractorWord({
           audioUrl: "/audio/boa-tarde.mp3",
-          id: 101n,
+          id: "101",
           pronunciations: [{ pronunciation: "boa tarde" }],
           word: "boa tarde",
         }),
         makeDistractorWord({
           audioUrl: "/audio/bom-dia.mp3",
-          id: 102n,
+          id: "102",
           pronunciations: [{ pronunciation: "bom dia" }],
           word: "bom dia",
         }),
@@ -410,10 +410,10 @@ describe(prepareLessonActivityData, () => {
   test("drops supported steps whose content does not match the content contract", () => {
     const result = prepare({
       activity: makeActivity([
-        makeStep({ content: {}, id: 1n, kind: "static" }),
+        makeStep({ content: {}, id: "1", kind: "static" }),
         makeStep({
           content: { text: "Hello world", title: "Intro", variant: "text" },
-          id: 2n,
+          id: "2",
           kind: "static",
         }),
       ]),
@@ -435,7 +435,7 @@ describe(prepareLessonActivityData, () => {
             ],
             question: "Pick one",
           },
-          id: 30n,
+          id: "30",
           kind: "multipleChoice",
         }),
       ]),
@@ -454,7 +454,7 @@ describe(prepareLessonActivityData, () => {
   test("builds reading and listening word banks from stored distractors only", () => {
     const sentence = makeLessonSentence({
       distractors: ["Abend", "Fenster", "Guten Tag"],
-      sentence: makeSentenceRecord({ id: 20n, sentence: "Guten Morgen, Lara." }),
+      sentence: makeSentenceRecord({ id: "20", sentence: "Guten Morgen, Lara." }),
       translation: "Bom dia, Lara.",
       translationDistractors: ["tchau", "boa noite"],
     });
@@ -462,20 +462,20 @@ describe(prepareLessonActivityData, () => {
     const result = prepare({
       activity: makeActivity([
         makeStep({
-          id: 12n,
+          id: "12",
           kind: "reading",
-          sentence: makeStepSentence({ id: 20n, sentence: "Guten Morgen, Lara." }),
+          sentence: makeStepSentence({ id: "20", sentence: "Guten Morgen, Lara." }),
         }),
         makeStep({
-          id: 13n,
+          id: "13",
           kind: "listening",
-          sentence: makeStepSentence({ id: 20n, sentence: "Guten Morgen, Lara." }),
+          sentence: makeStepSentence({ id: "20", sentence: "Guten Morgen, Lara." }),
         }),
       ]),
       distractorWords: [
         makeDistractorWord({
           audioUrl: "/audio/abend.mp3",
-          id: 201n,
+          id: "201",
           pronunciations: [{ pronunciation: "abend" }],
           romanization: "abend",
           word: "Abend",
@@ -547,16 +547,16 @@ describe(prepareLessonActivityData, () => {
 
   test("populates sentenceWordOptions from canonical sentence tokens", () => {
     const sentence = makeLessonSentence({
-      sentence: makeSentenceRecord({ id: 20n, sentence: "Guten Morgen" }),
+      sentence: makeSentenceRecord({ id: "20", sentence: "Guten Morgen" }),
       translation: "Good morning",
     });
 
     const result = prepare({
       activity: makeActivity([
         makeStep({
-          id: 12n,
+          id: "12",
           kind: "reading",
-          sentence: makeStepSentence({ id: 20n, sentence: "Guten Morgen" }),
+          sentence: makeStepSentence({ id: "20", sentence: "Guten Morgen" }),
         }),
       ]),
       lessonSentences: [sentence],
@@ -564,7 +564,7 @@ describe(prepareLessonActivityData, () => {
         makeLessonWord({
           translation: "good morning",
           word: makeWordRecord({
-            id: 10n,
+            id: "10",
             romanization: "guten morgen",
             word: "Guten Morgen",
           }),
@@ -590,16 +590,16 @@ describe(prepareLessonActivityData, () => {
 
   test("keeps sentence word metadata from sentence words when available", () => {
     const sentence = makeLessonSentence({
-      sentence: makeSentenceRecord({ id: 20n, sentence: "gato bonito" }),
+      sentence: makeSentenceRecord({ id: "20", sentence: "gato bonito" }),
       translation: "pretty cat",
     });
 
     const result = prepare({
       activity: makeActivity([
         makeStep({
-          id: 40n,
+          id: "40",
           kind: "reading",
-          sentence: makeStepSentence({ id: 20n, sentence: "gato bonito" }),
+          sentence: makeStepSentence({ id: "20", sentence: "gato bonito" }),
         }),
       ]),
       lessonSentences: [sentence],
@@ -608,7 +608,7 @@ describe(prepareLessonActivityData, () => {
           translation: "cat (lesson)",
           word: makeWordRecord({
             audioUrl: "/audio/lesson-gato.mp3",
-            id: 10n,
+            id: "10",
             word: "gato",
           }),
         }),
@@ -618,7 +618,7 @@ describe(prepareLessonActivityData, () => {
           translation: "cat (sentence)",
           word: makeWordRecord({
             audioUrl: "/audio/sentence-gato.mp3",
-            id: 11n,
+            id: "11",
             romanization: "ga-to",
             word: "gato",
           }),
@@ -679,16 +679,16 @@ describe(prepareLessonActivityData, () => {
   test("allows sanitation underflow without fallback top-up", () => {
     const sentence = makeLessonSentence({
       distractors: ["Hola", "Buenos dias"],
-      sentence: makeSentenceRecord({ id: 20n, sentence: "Hola mundo" }),
+      sentence: makeSentenceRecord({ id: "20", sentence: "Hola mundo" }),
       translation: "Hello world",
     });
 
     const result = prepare({
       activity: makeActivity([
         makeStep({
-          id: 12n,
+          id: "12",
           kind: "reading",
-          sentence: makeStepSentence({ id: 20n, sentence: "Hola mundo" }),
+          sentence: makeStepSentence({ id: "20", sentence: "Hola mundo" }),
         }),
       ]),
       lessonSentences: [sentence],
@@ -716,16 +716,16 @@ describe(prepareLessonActivityData, () => {
         [
           makeStep({
             content: { text: "from activity", title: "Ignored", variant: "text" },
-            id: 10n,
+            id: "10",
             kind: "static",
           }),
         ],
-        { id: 99n },
+        { id: "99" },
       ),
       steps: [
         makeStep({
           content: { text: "from override", title: "Used", variant: "text" },
-          id: 11n,
+          id: "11",
           kind: "static",
         }),
       ],

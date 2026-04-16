@@ -34,7 +34,7 @@ export function GenerationClient({
   courseSlug: string;
   generationRunId: string | null;
   initialStatus: GenerationStatus;
-  lessonId: number;
+  lessonId: string;
   lessonSlug: string;
 }) {
   const t = useExtracted();

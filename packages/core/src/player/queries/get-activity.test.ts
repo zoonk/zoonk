@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
@@ -118,7 +119,7 @@ describe(getActivity, () => {
   });
 
   test("returns null for non-existent lesson", async () => {
-    const result = await getActivity({ lessonId: 999_999, position: 0 });
+    const result = await getActivity({ lessonId: randomUUID(), position: 0 });
 
     expect(result).toBeNull();
   });

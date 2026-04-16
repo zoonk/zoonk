@@ -9,7 +9,7 @@ import { FatalError } from "workflow";
  * based on the generation status (e.g., skip if running, stream completion if completed).
  */
 export async function getCourseSuggestionStep(
-  courseSuggestionId: number,
+  courseSuggestionId: string,
 ): Promise<CourseSuggestion> {
   "use step";
 

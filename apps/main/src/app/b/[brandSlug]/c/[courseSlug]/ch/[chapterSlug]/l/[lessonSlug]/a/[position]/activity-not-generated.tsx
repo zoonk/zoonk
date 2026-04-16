@@ -16,7 +16,7 @@ export async function ActivityNotGenerated({
   activityId,
   brandSlug,
 }: {
-  activityId: bigint;
+  activityId: string;
   brandSlug: string;
 }) {
   const t = await getExtracted();

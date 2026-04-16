@@ -6,7 +6,7 @@ export async function getActivityProgress({
   lessonId,
   headers,
 }: {
-  lessonId: number;
+  lessonId: string;
   headers?: Headers;
 }): Promise<string[]> {
   const session = await getSession(headers);
@@ -37,7 +37,7 @@ export async function getActivityProgress({
       }),
     );
 
-    return (activities ?? []).map((activity) => String(activity.id));
+    return (activities ?? []).map((activity) => activity.id);
   }
 
   const { data, error } = await safeAsync(() =>
@@ -56,5 +56,5 @@ export async function getActivityProgress({
     return [];
   }
 
-  return data.map((row) => String(row.activityId));
+  return data.map((row) => row.activityId);
 }

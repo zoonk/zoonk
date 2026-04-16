@@ -12,7 +12,6 @@ import {
   ContainerTitle,
 } from "@zoonk/ui/components/container";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { parseNumericId } from "@zoonk/utils/number";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { getExtracted } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -20,13 +19,7 @@ import { GenerationClient } from "./generation-client";
 
 export async function GenerateChapterContent({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const chapterId = parseNumericId(id);
-
-  if (chapterId === null) {
-    notFound();
-  }
-
-  const [session, chapter] = await Promise.all([getSession(), getChapterForGeneration(chapterId)]);
+  const [session, chapter] = await Promise.all([getSession(), getChapterForGeneration(id)]);
 
   if (!chapter) {
     notFound();
@@ -63,7 +56,7 @@ export async function GenerateChapterContent({ params }: { params: Promise<{ id:
       <ContainerBody>
         <SubscriptionGate backHref={backHref} backLabel={backLabel} bypass={bypassAuth}>
           <GenerationClient
-            chapterId={chapterId}
+            chapterId={id}
             chapterSlug={chapter.slug}
             courseSlug={chapter.course.slug}
             generationRunId={chapter.generationRunId}

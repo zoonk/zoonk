@@ -4,7 +4,7 @@ import { updateCourse } from "@/data/courses/update-course";
 import { getErrorMessage } from "@/lib/error-messages";
 
 export async function updateCourseTitleAction(
-  courseId: number,
+  courseId: string,
   data: { title: string },
 ): Promise<{ error: string | null }> {
   const { error } = await updateCourse({
@@ -20,7 +20,7 @@ export async function updateCourseTitleAction(
 }
 
 export async function updateCourseDescriptionAction(
-  courseId: number,
+  courseId: string,
   data: { description: string },
 ): Promise<{ error: string | null }> {
   const { error } = await updateCourse({

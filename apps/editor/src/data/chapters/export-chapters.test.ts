@@ -103,7 +103,7 @@ describe("admins", () => {
 
   test("returns Course not found for non-existent course", async () => {
     const result = await exportChapters({
-      courseId: 999_999,
+      courseId: "00000000-0000-7000-8000-000000000001",
       headers,
     });
 

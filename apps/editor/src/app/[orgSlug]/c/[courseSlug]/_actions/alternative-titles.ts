@@ -11,7 +11,7 @@ import { getExtracted } from "next-intl/server";
 import { revalidatePath } from "next/cache";
 
 type CourseActionParams = {
-  courseId: number;
+  courseId: string;
   language: string;
 };
 
@@ -111,7 +111,7 @@ export async function importAlternativeTitlesAction(
   return { error: null };
 }
 
-export async function exportAlternativeTitlesAction(courseId: number): Promise<{
+export async function exportAlternativeTitlesAction(courseId: string): Promise<{
   data: object | null;
   error: Error | null;
 }> {

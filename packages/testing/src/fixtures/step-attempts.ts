@@ -8,7 +8,7 @@ export async function stepAttemptFixture(attrs: {
   effects?: object;
   hourOfDay: number;
   isCorrect: boolean;
-  stepId: bigint;
+  stepId: string;
   userId: string;
 }) {
   return prisma.stepAttempt.create({

@@ -4,7 +4,7 @@ import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 
 export async function setLessonAsRunningStep(input: {
-  lessonId: number;
+  lessonId: string;
   workflowRunId: string;
 }): Promise<void> {
   "use step";

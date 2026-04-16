@@ -24,7 +24,7 @@ export type ReadingSentence = ActivitySentencesSchema["sentences"][number];
  * workflow resumable without reintroducing any distractor-specific coupling.
  */
 async function getLessonWords(params: {
-  lessonId: number;
+  lessonId: string;
   organizationId: string | null;
   targetLanguage: string;
 }): Promise<SourceWord[]> {
@@ -68,7 +68,7 @@ function hasValidSentences(sentences: ReadingSentence[]): boolean {
  */
 async function resolveSourceWords(input: {
   currentRunWords: SourceWord[];
-  lessonId: number;
+  lessonId: string;
   organizationId: string | null;
   targetLanguage: string;
 }): Promise<{ error: Error; words: [] } | { error: null; words: SourceWord[] }> {
@@ -97,7 +97,7 @@ async function resolveSourceWords(input: {
  */
 async function handleReadingGenerationFailure(
   stream: StepStream<ActivityStepName>,
-  activityId: number,
+  activityId: string,
   reason: WorkflowErrorReason,
 ): Promise<{ sentences: ReadingSentence[] }> {
   await stream.error({ reason, step: "generateSentences" });

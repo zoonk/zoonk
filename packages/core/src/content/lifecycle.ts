@@ -101,7 +101,7 @@ async function hasLearnerDataConstraint(target: ContentDeleteTarget): Promise<bo
  * completion or step attempt exists, because those rows are the historical facts
  * later analytics and performance pages need to preserve.
  */
-async function hasLearnerDataInCourse({ courseId }: { courseId: number }) {
+async function hasLearnerDataInCourse({ courseId }: { courseId: string }) {
   const [activityProgressCount, stepAttemptCount] = await Promise.all([
     prisma.activityProgress.count({
       where: { activity: { lesson: { chapter: { courseId } } } },
@@ -118,7 +118,7 @@ async function hasLearnerDataInCourse({ courseId }: { courseId: number }) {
  * Chapters share the same learner-history rule as courses, but their scope is
  * limited to activities and steps nested under that chapter.
  */
-async function hasLearnerDataInChapter({ chapterId }: { chapterId: number }) {
+async function hasLearnerDataInChapter({ chapterId }: { chapterId: string }) {
   const [activityProgressCount, stepAttemptCount] = await Promise.all([
     prisma.activityProgress.count({
       where: { activity: { lesson: { chapterId } } },
@@ -135,7 +135,7 @@ async function hasLearnerDataInChapter({ chapterId }: { chapterId: number }) {
  * Lessons need the same protection as higher levels because a later archive or
  * regeneration must not erase attempts and completions tied to that lesson.
  */
-async function hasLearnerDataInLesson({ lessonId }: { lessonId: number }) {
+async function hasLearnerDataInLesson({ lessonId }: { lessonId: string }) {
   const [activityProgressCount, stepAttemptCount] = await Promise.all([
     prisma.activityProgress.count({ where: { activity: { lessonId } } }),
     prisma.stepAttempt.count({ where: { step: { activity: { lessonId } } } }),
@@ -148,7 +148,7 @@ async function hasLearnerDataInLesson({ lessonId }: { lessonId: number }) {
  * Activities can accumulate two kinds of learner history today: direct activity
  * completions and step-level attempts. Either one is enough to block hard delete.
  */
-async function hasLearnerDataInActivity({ activityId }: { activityId: bigint }) {
+async function hasLearnerDataInActivity({ activityId }: { activityId: string }) {
   const [activityProgressCount, stepAttemptCount] = await Promise.all([
     prisma.activityProgress.count({ where: { activityId } }),
     prisma.stepAttempt.count({ where: { step: { activityId } } }),

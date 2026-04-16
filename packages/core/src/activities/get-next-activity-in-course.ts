@@ -4,14 +4,14 @@ import { safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
 
 export type NextActivityInCourse = {
-  activityId: bigint;
+  activityId: string;
   activityKind: ActivityKind;
   activityPosition: number;
   activityTitle: string | null;
-  chapterId: number;
+  chapterId: string;
   chapterSlug: string;
   lessonDescription: string;
-  lessonId: number;
+  lessonId: string;
   lessonSlug: string;
   lessonTitle: string;
 };
@@ -19,10 +19,10 @@ export type NextActivityInCourse = {
 const cachedGetNextActivity = cache(
   async (
     activityPosition: number,
-    chapterId: number,
+    chapterId: string,
     chapterPosition: number,
-    courseId: number,
-    lessonId: number,
+    courseId: string,
+    lessonId: string,
     lessonPosition: number,
   ): Promise<NextActivityInCourse | null> => {
     const { data: activity, error } = await safeAsync(() =>
@@ -91,10 +91,10 @@ const cachedGetNextActivity = cache(
  */
 export function getNextActivityInCourse(params: {
   activityPosition: number;
-  chapterId: number;
+  chapterId: string;
   chapterPosition: number;
-  courseId: number;
-  lessonId: number;
+  courseId: string;
+  lessonId: string;
   lessonPosition: number;
 }): Promise<NextActivityInCourse | null> {
   return cachedGetNextActivity(

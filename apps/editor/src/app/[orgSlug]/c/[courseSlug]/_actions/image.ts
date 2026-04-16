@@ -8,7 +8,7 @@ import { getExtracted } from "next-intl/server";
 import { revalidatePath } from "next/cache";
 
 type CourseActionParams = {
-  courseId: number;
+  courseId: string;
 };
 
 export async function uploadCourseImageAction(

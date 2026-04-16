@@ -237,7 +237,7 @@ function PositionedItem({
 }: {
   description: string | null;
   icon: LucideIcon;
-  id: number;
+  id: string;
   onSelect: () => void;
   position: number;
   title: string;

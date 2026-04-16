@@ -1,15 +1,15 @@
 import { type TransactionClient } from "@zoonk/db";
 
 type ActivityCurriculumContext = {
-  chapterId: number;
-  courseId: number;
-  lessonId: number;
+  chapterId: string;
+  courseId: string;
+  lessonId: string;
 };
 
 export type PublishedLessonCompletionRow = {
-  chapterId: number;
+  chapterId: string;
   completedActivities: number;
-  lessonId: number;
+  lessonId: string;
   totalActivities: number;
 };
 
@@ -23,7 +23,7 @@ export async function getActivityCurriculumContext({
   activityId,
   tx,
 }: {
-  activityId: bigint;
+  activityId: string;
   tx: TransactionClient;
 }): Promise<ActivityCurriculumContext> {
   const activity = await tx.activity.findUnique({
@@ -65,7 +65,7 @@ export async function listPublishedCourseLessonCompletionRows({
   tx,
   userId,
 }: {
-  courseId: number;
+  courseId: string;
   tx: TransactionClient;
   userId: string;
 }): Promise<PublishedLessonCompletionRow[]> {
@@ -104,7 +104,7 @@ export async function listPublishedCourseChapters({
   courseId,
   tx,
 }: {
-  courseId: number;
+  courseId: string;
   tx: TransactionClient;
 }) {
   return tx.chapter.findMany({
@@ -127,10 +127,10 @@ export async function listDurableCourseLessonIds({
   tx,
   userId,
 }: {
-  courseId: number;
+  courseId: string;
   tx: TransactionClient;
   userId: string;
-}): Promise<Set<number>> {
+}): Promise<Set<string>> {
   const rows = await tx.lessonCompletion.findMany({
     where: {
       lesson: {
@@ -159,10 +159,10 @@ export async function listDurableCourseChapterIds({
   tx,
   userId,
 }: {
-  courseId: number;
+  courseId: string;
   tx: TransactionClient;
   userId: string;
-}): Promise<Set<number>> {
+}): Promise<Set<string>> {
   const rows = await tx.chapterCompletion.findMany({
     where: {
       chapter: {

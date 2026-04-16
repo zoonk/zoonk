@@ -4,7 +4,7 @@ import { type Course, prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 
 export async function toggleCoursePublished(params: {
-  courseId: number;
+  courseId: string;
   headers?: Headers;
   isPublished: boolean;
 }): Promise<SafeReturn<Course>> {

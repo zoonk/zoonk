@@ -16,7 +16,7 @@ const REVIEW_TARGET_COUNT = 10;
 describe(getReviewSteps, () => {
   let lesson: Awaited<ReturnType<typeof lessonFixture>>;
   let org: Awaited<ReturnType<typeof organizationFixture>>;
-  let unpublishedStepId: bigint;
+  let unpublishedStepId: string;
 
   beforeAll(async () => {
     org = await organizationFixture({ kind: "brand" });

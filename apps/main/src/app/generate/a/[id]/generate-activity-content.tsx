@@ -12,7 +12,6 @@ import {
   ContainerTitle,
 } from "@zoonk/ui/components/container";
 import { Skeleton } from "@zoonk/ui/components/skeleton";
-import { parseBigIntId } from "@zoonk/utils/number";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { getExtracted } from "next-intl/server";
 import { notFound } from "next/navigation";
@@ -20,16 +19,8 @@ import { GenerationClient } from "./generation-client";
 
 export async function GenerateActivityContent({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const activityId = parseBigIntId(id);
 
-  if (activityId === null) {
-    notFound();
-  }
-
-  const [session, activity] = await Promise.all([
-    getSession(),
-    getActivityForGeneration(activityId),
-  ]);
+  const [session, activity] = await Promise.all([getSession(), getActivityForGeneration(id)]);
 
   if (!activity || !activity.lesson) {
     notFound();
@@ -63,7 +54,7 @@ export async function GenerateActivityContent({ params }: { params: Promise<{ id
       <ContainerBody>
         <SubscriptionGate backHref={backHref} backLabel={backLabel} bypass={hasStarted}>
           <GenerationClient
-            activityId={Number(activityId)}
+            activityId={id}
             activityKind={activity.kind}
             chapterSlug={activity.lesson.chapter.slug}
             courseSlug={activity.lesson.chapter.course.slug}

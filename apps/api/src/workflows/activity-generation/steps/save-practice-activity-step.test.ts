@@ -84,7 +84,7 @@ describe(savePracticeActivityStep, () => {
     ];
 
     await savePracticeActivityStep({
-      activityId: Number(activity.id),
+      activityId: activity.id,
       steps,
       workflowRunId: "workflow-1",
     });
@@ -155,7 +155,7 @@ describe(savePracticeActivityStep, () => {
     ];
 
     await savePracticeActivityStep({
-      activityId: Number(activity.id),
+      activityId: activity.id,
       steps,
       workflowRunId: "workflow-error",
     });

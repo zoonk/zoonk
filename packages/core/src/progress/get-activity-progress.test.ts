@@ -127,7 +127,7 @@ describe(getActivityProgress, () => {
 
     const headers = await signInAs(user.email, user.password);
     const result = await getActivityProgress({ headers, lessonId: lesson.id });
-    expect(result).toEqual(expect.arrayContaining([String(activity1.id), String(activity2.id)]));
+    expect(result).toEqual(expect.arrayContaining([activity1.id, activity2.id]));
     expect(result).toHaveLength(2);
   });
 
@@ -182,7 +182,7 @@ describe(getActivityProgress, () => {
 
     const headers = await signInAs(user.email, user.password);
     const result = await getActivityProgress({ headers, lessonId: lesson.id });
-    expect(result).toEqual([String(completedActivity.id)]);
+    expect(result).toEqual([completedActivity.id]);
   });
 
   test("only returns activities for the specified lesson", async () => {
@@ -245,7 +245,7 @@ describe(getActivityProgress, () => {
 
     const headers = await signInAs(user.email, user.password);
     const result = await getActivityProgress({ headers, lessonId: lesson1.id });
-    expect(result).toEqual([String(activityInLesson1.id)]);
+    expect(result).toEqual([activityInLesson1.id]);
   });
 
   test("returns all current activities when the learner durably completed the lesson", async () => {
@@ -308,6 +308,6 @@ describe(getActivityProgress, () => {
     const headers = await signInAs(user.email, user.password);
     const result = await getActivityProgress({ headers, lessonId: currentLesson.id });
 
-    expect(result).toEqual([String(currentActivity1.id), String(currentActivity2.id)]);
+    expect(result).toEqual([currentActivity1.id, currentActivity2.id]);
   });
 });

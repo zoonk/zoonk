@@ -14,7 +14,7 @@ export async function ChapterListRow({
   index,
   orgSlug,
 }: {
-  chapter: { id: number; slug: string; title: string; description: string | null };
+  chapter: { id: string; slug: string; title: string; description: string | null };
   courseSlug: string;
   index: number;
   orgSlug: string;

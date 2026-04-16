@@ -13,7 +13,7 @@ import { handleActivityFailureStep } from "./handle-failure-step";
  * The `format` field from AI output maps to the step `kind` in the DB.
  */
 function buildQuizStepRecords(
-  activityId: number,
+  activityId: string,
   questions: (QuizQuestion | QuizQuestionWithUrls)[],
 ) {
   return questions.map((question, index) => {
@@ -46,7 +46,7 @@ export async function saveQuizActivityStep({
   questions,
   workflowRunId,
 }: {
-  activityId: number;
+  activityId: string;
   questions: (QuizQuestion | QuizQuestionWithUrls)[];
   workflowRunId: string;
 }): Promise<void> {

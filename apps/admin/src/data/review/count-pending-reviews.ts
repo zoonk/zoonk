@@ -11,7 +11,7 @@ import { cache } from "react";
 
 export const reviewedEntityIds = cache(async function reviewedEntityIds(
   taskType: ReviewTaskType,
-): Promise<bigint[]> {
+): Promise<string[]> {
   const reviews = await prisma.contentReview.findMany({
     select: { entityId: true },
     where: { taskType },
@@ -20,7 +20,7 @@ export const reviewedEntityIds = cache(async function reviewedEntityIds(
   return reviews.map((review) => review.entityId);
 });
 
-function countPendingStepVisual(kind: string, excludeIds: bigint[]): Promise<number> {
+function countPendingStepVisual(kind: string, excludeIds: string[]): Promise<number> {
   return prisma.step.count({
     where: {
       NOT: { id: { in: excludeIds } },
@@ -31,7 +31,7 @@ function countPendingStepVisual(kind: string, excludeIds: bigint[]): Promise<num
   });
 }
 
-function countPendingWordAudio(excludeIds: bigint[]): Promise<number> {
+function countPendingWordAudio(excludeIds: string[]): Promise<number> {
   return prisma.word.count({
     where: {
       NOT: { id: { in: excludeIds } },
@@ -41,7 +41,7 @@ function countPendingWordAudio(excludeIds: bigint[]): Promise<number> {
   });
 }
 
-function countPendingSentenceAudio(excludeIds: bigint[]): Promise<number> {
+function countPendingSentenceAudio(excludeIds: string[]): Promise<number> {
   return prisma.sentence.count({
     where: {
       NOT: { id: { in: excludeIds } },
@@ -64,7 +64,7 @@ export const countPendingForTask = cache(async function countPendingForTask(
   if (taskType === "courseSuggestions") {
     return prisma.searchPrompt.count({
       where: {
-        NOT: { id: { in: excludeIds.map(Number) } },
+        NOT: { id: { in: excludeIds } },
         suggestions: { some: {} },
       },
     });

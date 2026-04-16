@@ -23,7 +23,7 @@ export async function LessonList({
   lessons,
 }: {
   brandSlug: string;
-  chapterId: number;
+  chapterId: string;
   chapterSlug: string;
   courseSlug: string;
   lessons: Lesson[];

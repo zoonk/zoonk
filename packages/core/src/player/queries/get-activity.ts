@@ -2,7 +2,7 @@ import "server-only";
 import { getPublishedActivityWhere, getPublishedStepWhere, prisma } from "@zoonk/db";
 import { cache } from "react";
 
-const cachedGetActivity = cache(async (lessonId: number, position: number) =>
+const cachedGetActivity = cache(async (lessonId: string, position: number) =>
   prisma.activity.findFirst({
     include: {
       steps: {
@@ -18,6 +18,6 @@ const cachedGetActivity = cache(async (lessonId: number, position: number) =>
   }),
 );
 
-export function getActivity(params: { lessonId: number; position: number }) {
+export function getActivity(params: { lessonId: string; position: number }) {
   return cachedGetActivity(params.lessonId, params.position);
 }

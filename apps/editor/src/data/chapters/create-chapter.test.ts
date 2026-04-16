@@ -121,10 +121,10 @@ describe("admins", () => {
   test("returns Course not found", async () => {
     const result = await createChapter({
       ...chapterAttrs({
-        courseId: 999_999,
+        courseId: "00000000-0000-7000-8000-000000000001",
         organizationId: organization.id,
       }),
-      courseId: 999_999,
+      courseId: "00000000-0000-7000-8000-000000000001",
       headers,
       position: 0,
     });

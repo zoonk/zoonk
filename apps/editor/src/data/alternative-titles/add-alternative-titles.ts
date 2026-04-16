@@ -9,7 +9,7 @@ import { getAuthorizedCourse } from "../courses/get-authorized-course";
  * insert helper so every mutation reuses the same org-level permission check.
  */
 export async function addAlternativeTitles(params: {
-  courseId: number;
+  courseId: string;
   headers?: Headers;
   language: string;
   titles: string[];

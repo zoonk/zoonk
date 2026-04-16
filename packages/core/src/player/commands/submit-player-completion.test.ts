@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { prisma } from "@zoonk/db";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
@@ -47,7 +48,7 @@ async function createPublishedChapterContext() {
  * follow-up effect planning without dragging in unrelated player variants.
  */
 async function createMultipleChoiceActivity(params: {
-  lessonId: number;
+  lessonId: string;
   organizationId: string;
   position?: number;
 }) {
@@ -81,17 +82,17 @@ async function createMultipleChoiceActivity(params: {
  * validation path for a multiple-choice step.
  */
 function buildCompletionInput(params: {
-  activityId: bigint | string;
+  activityId: string;
   selectedIndex?: number;
   selectedText?: string;
   startedAt?: number;
-  stepId: bigint | string;
+  stepId: string;
 }): CompletionInput {
   const startedAt = params.startedAt ?? Date.now() - 10_000;
-  const stepId = String(params.stepId);
+  const stepId = params.stepId;
 
   return {
-    activityId: String(params.activityId),
+    activityId: params.activityId,
     answers: {
       [stepId]: {
         kind: "multipleChoice",
@@ -116,8 +117,8 @@ describe(submitPlayerCompletion, () => {
   test("returns null when the submitted activity no longer exists", async () => {
     const result = await submitPlayerCompletion({
       input: buildCompletionInput({
-        activityId: "999999999",
-        stepId: "999999999",
+        activityId: randomUUID(),
+        stepId: randomUUID(),
       }),
       userId: "missing-user-id",
     });
@@ -174,7 +175,7 @@ describe(submitPlayerCompletion, () => {
       }),
     ]);
 
-    expect(nextLesson.id).toBeGreaterThan(currentLesson.id);
+    expect(nextLesson.position).toBeGreaterThan(currentLesson.position);
     expect(result).toEqual({
       preloadLessonId: nextLesson.id,
       regenerateLessonId: null,

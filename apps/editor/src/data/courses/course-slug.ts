@@ -78,7 +78,7 @@ export async function courseSlugExistsForCreate(params: {
  * organization scope for the duplicate lookup.
  */
 export async function courseSlugExistsForUpdate(params: {
-  courseId: number;
+  courseId: string;
   headers?: Headers;
   slug: string;
 }): Promise<boolean> {

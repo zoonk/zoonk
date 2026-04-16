@@ -23,7 +23,7 @@ export async function upsertWordWithPronunciation(params: {
   targetLanguage: string;
   userLanguage: string;
   word: string;
-}): Promise<bigint> {
+}): Promise<string> {
   const {
     audioUrl,
     organizationId,

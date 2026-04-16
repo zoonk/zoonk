@@ -6,7 +6,7 @@ export function StepSelectImageReview({
   item,
 }: {
   item: {
-    id: bigint;
+    id: string;
     content: unknown;
     activity: { title: string | null };
   };

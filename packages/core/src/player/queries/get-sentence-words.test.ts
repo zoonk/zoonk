@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
@@ -86,7 +87,7 @@ describe(getSentenceWords, () => {
   });
 
   test("returns empty array for non-existent lesson", async () => {
-    const result = await getSentenceWords({ lessonId: 999_999 });
+    const result = await getSentenceWords({ lessonId: randomUUID() });
     expect(result).toEqual([]);
   });
 

@@ -8,13 +8,13 @@ import { safeAsync } from "@zoonk/utils/error";
  */
 export type ContinueLearningRow = {
   activityPosition: number;
-  chapterId: number;
+  chapterId: string;
   chapterPosition: number;
-  courseId: number;
+  courseId: string;
   courseImageUrl: string | null;
   courseSlug: string;
   courseTitle: string;
-  lessonId: number;
+  lessonId: string;
   lessonPosition: number;
   orgSlug: string | null;
 };

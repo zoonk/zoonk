@@ -10,7 +10,7 @@ import { getArchivedSlug, getCurriculumDeletePlan } from "../curriculum-delete";
  * significant courses instead so we do not cascade away learner facts.
  */
 export async function deleteCourse(params: {
-  courseId: number;
+  courseId: string;
   headers?: Headers;
 }): Promise<SafeReturn<Course>> {
   const { data: course, error: findError } = await safeAsync(() =>

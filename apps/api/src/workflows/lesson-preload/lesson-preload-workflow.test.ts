@@ -29,7 +29,7 @@ vi.mock("../lesson-regeneration/lesson-regeneration-workflow", () => ({
 describe(lessonPreloadWorkflow, () => {
   const initialLesson = {
     generationVersion: null,
-    id: 42,
+    id: "42",
     managementMode: "ai",
   };
   const outdatedLesson = {
@@ -114,14 +114,14 @@ describe(lessonPreloadWorkflow, () => {
   test("propagates errors from lessonGenerationWorkflow", async () => {
     vi.mocked(lessonGenerationWorkflow).mockRejectedValueOnce(new Error("lesson gen failed"));
 
-    await expect(lessonPreloadWorkflow(1)).rejects.toThrow("lesson gen failed");
+    await expect(lessonPreloadWorkflow(initialLesson.id)).rejects.toThrow("lesson gen failed");
     expect(activityGenerationWorkflow).not.toHaveBeenCalled();
   });
 
   test("propagates errors from activityGenerationWorkflow", async () => {
     vi.mocked(activityGenerationWorkflow).mockRejectedValueOnce(new Error("activity gen failed"));
 
-    await expect(lessonPreloadWorkflow(1)).rejects.toThrow("activity gen failed");
-    expect(lessonGenerationWorkflow).toHaveBeenCalledWith(1);
+    await expect(lessonPreloadWorkflow(initialLesson.id)).rejects.toThrow("activity gen failed");
+    expect(lessonGenerationWorkflow).toHaveBeenCalledWith(initialLesson.id);
   });
 });

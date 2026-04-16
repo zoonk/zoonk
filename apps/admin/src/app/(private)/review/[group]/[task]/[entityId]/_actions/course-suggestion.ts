@@ -10,15 +10,13 @@ import { revalidatePath } from "next/cache";
 export async function updateCourseSuggestionAction(formData: FormData) {
   await assertAdmin();
 
-  const suggestionIdRaw = parseFormField(formData, "suggestionId");
+  const suggestionId = parseFormField(formData, "suggestionId");
   const title = parseFormField(formData, "title");
   const description = parseFormField(formData, "description");
 
-  if (!suggestionIdRaw || !title || !description) {
+  if (!suggestionId || !title || !description) {
     throw new Error("Invalid form data");
   }
-
-  const suggestionId = Number(suggestionIdRaw);
 
   const { error } = await safeAsync(() =>
     prisma.courseSuggestion.update({
@@ -37,15 +35,12 @@ export async function updateCourseSuggestionAction(formData: FormData) {
 export async function removeCourseSuggestionAction(formData: FormData) {
   await assertAdmin();
 
-  const searchPromptIdRaw = parseFormField(formData, "searchPromptId");
-  const courseSuggestionIdRaw = parseFormField(formData, "courseSuggestionId");
+  const searchPromptId = parseFormField(formData, "searchPromptId");
+  const courseSuggestionId = parseFormField(formData, "courseSuggestionId");
 
-  if (!searchPromptIdRaw || !courseSuggestionIdRaw) {
+  if (!searchPromptId || !courseSuggestionId) {
     throw new Error("Invalid form data");
   }
-
-  const searchPromptId = Number(searchPromptIdRaw);
-  const courseSuggestionId = Number(courseSuggestionIdRaw);
 
   const { error } = await safeAsync(() =>
     prisma.searchPromptSuggestion.delete({
@@ -63,13 +58,11 @@ export async function removeCourseSuggestionAction(formData: FormData) {
 export async function addCourseSuggestionAction(formData: FormData) {
   await assertAdmin();
 
-  const searchPromptIdRaw = parseFormField(formData, "searchPromptId");
+  const searchPromptId = parseFormField(formData, "searchPromptId");
   const title = parseFormField(formData, "title");
   const description = parseFormField(formData, "description");
   const language = parseFormField(formData, "language");
   const targetLanguage = parseFormField(formData, "targetLanguage");
-
-  const searchPromptId = searchPromptIdRaw ? Number(searchPromptIdRaw) : null;
 
   if (!searchPromptId || !title || !description || !language) {
     throw new Error("Invalid form data");

@@ -8,7 +8,7 @@ import { redirect } from "next/navigation";
 
 export async function togglePublishAction(
   params: {
-    courseId: number;
+    courseId: string;
     courseUrl: string;
   },
   isPublished: boolean,
@@ -31,7 +31,7 @@ export async function togglePublishAction(
 
 export async function deleteCourseAction(
   orgSlug: string,
-  courseId: number,
+  courseId: string,
 ): Promise<{ error: string | null }> {
   const { error } = await deleteCourse({ courseId });
 

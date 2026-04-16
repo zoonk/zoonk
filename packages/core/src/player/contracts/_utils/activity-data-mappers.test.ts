@@ -13,7 +13,7 @@ function makeLessonWord(overrides: Record<string, unknown> = {}) {
     translation: "translation",
     word: {
       audioUrl: null,
-      id: 1n,
+      id: "1",
       pronunciations: [],
       romanization: null,
       word: "word",
@@ -28,7 +28,7 @@ function makeLessonSentence(overrides: Record<string, unknown> = {}) {
     explanation: null,
     sentence: {
       audioUrl: null,
-      id: 1n,
+      id: "1",
       romanization: null,
       sentence: "sentence",
     },
@@ -46,7 +46,7 @@ describe(toLessonWordInputs, () => {
         translation: "good evening",
         word: {
           audioUrl: "/audio/boa-noite.mp3",
-          id: 1n,
+          id: "1",
           pronunciations: [{ pronunciation: "boa noite" }],
           romanization: null,
           word: "boa noite",
@@ -58,7 +58,7 @@ describe(toLessonWordInputs, () => {
       {
         audioUrl: "/audio/boa-noite.mp3",
         distractors: ["boa tarde"],
-        id: 1n,
+        id: "1",
         pronunciation: "boa noite",
         romanization: null,
         translation: "good evening",
@@ -76,7 +76,7 @@ describe(toLessonSentenceInputs, () => {
         explanation: "Greeting sentence",
         sentence: {
           audioUrl: "/audio/sentence.mp3",
-          id: 2n,
+          id: "2",
           romanization: null,
           sentence: "Guten Morgen",
         },
@@ -90,7 +90,7 @@ describe(toLessonSentenceInputs, () => {
         audioUrl: "/audio/sentence.mp3",
         distractors: ["abend"],
         explanation: "Greeting sentence",
-        id: 2n,
+        id: "2",
         romanization: null,
         sentence: "Guten Morgen",
         translation: "Good morning",
@@ -107,7 +107,7 @@ describe(toSentenceWordInputs, () => {
         translation: "cat",
         word: {
           audioUrl: null,
-          id: 3n,
+          id: "3",
           pronunciations: [{ pronunciation: "katze" }],
           romanization: null,
           word: "Katze",
@@ -128,7 +128,7 @@ describe(toDistractorWordInputs, () => {
     const result = toDistractorWordInputs([
       {
         audioUrl: "/audio/abend.mp3",
-        id: 4n,
+        id: "4",
         pronunciations: [{ pronunciation: "abend" }],
         romanization: null,
         word: "Abend",
@@ -138,7 +138,7 @@ describe(toDistractorWordInputs, () => {
     expect(result).toEqual([
       {
         audioUrl: "/audio/abend.mp3",
-        id: 4n,
+        id: "4",
         pronunciation: "abend",
         romanization: null,
         word: "Abend",
@@ -153,25 +153,25 @@ describe(attachTranslationsToSteps, () => {
       [
         {
           content: {},
-          id: 1n,
+          id: "1",
           kind: "translation",
           position: 0,
           sentence: null,
           word: {
             audioUrl: "/audio/boa-noite.mp3",
-            id: 1n,
+            id: "1",
             romanization: null,
             word: "boa noite",
           },
         },
         {
           content: {},
-          id: 2n,
+          id: "2",
           kind: "reading",
           position: 1,
           sentence: {
             audioUrl: "/audio/sentence.mp3",
-            id: 2n,
+            id: "2",
             romanization: null,
             sentence: "Guten Morgen",
           },
@@ -184,7 +184,7 @@ describe(attachTranslationsToSteps, () => {
           translation: "good evening",
           word: {
             audioUrl: "/audio/boa-noite.mp3",
-            id: 1n,
+            id: "1",
             pronunciations: [{ pronunciation: "boa noite" }],
             romanization: null,
             word: "boa noite",
@@ -197,7 +197,7 @@ describe(attachTranslationsToSteps, () => {
           explanation: "Greeting sentence",
           sentence: {
             audioUrl: "/audio/sentence.mp3",
-            id: 2n,
+            id: "2",
             romanization: null,
             sentence: "Guten Morgen",
           },
@@ -210,14 +210,14 @@ describe(attachTranslationsToSteps, () => {
     expect(result).toEqual([
       {
         content: {},
-        id: 1n,
+        id: "1",
         kind: "translation",
         position: 0,
         sentence: null,
         word: {
           audioUrl: "/audio/boa-noite.mp3",
           distractors: ["boa tarde"],
-          id: 1n,
+          id: "1",
           pronunciation: "boa noite",
           romanization: null,
           translation: "good evening",
@@ -226,14 +226,14 @@ describe(attachTranslationsToSteps, () => {
       },
       {
         content: {},
-        id: 2n,
+        id: "2",
         kind: "reading",
         position: 1,
         sentence: {
           audioUrl: "/audio/sentence.mp3",
           distractors: ["abend"],
           explanation: "Greeting sentence",
-          id: 2n,
+          id: "2",
           romanization: null,
           sentence: "Guten Morgen",
           translation: "Good morning",
@@ -249,25 +249,25 @@ describe(attachTranslationsToSteps, () => {
       [
         {
           content: {},
-          id: 1n,
+          id: "1",
           kind: "translation",
           position: 0,
           sentence: null,
           word: {
             audioUrl: null,
-            id: 1n,
+            id: "1",
             romanization: null,
             word: "hola",
           },
         },
         {
           content: {},
-          id: 2n,
+          id: "2",
           kind: "reading",
           position: 1,
           sentence: {
             audioUrl: null,
-            id: 2n,
+            id: "2",
             romanization: null,
             sentence: "hola mundo",
           },
@@ -281,14 +281,14 @@ describe(attachTranslationsToSteps, () => {
     expect(result).toEqual([
       {
         content: {},
-        id: 1n,
+        id: "1",
         kind: "translation",
         position: 0,
         sentence: null,
         word: {
           audioUrl: null,
           distractors: [],
-          id: 1n,
+          id: "1",
           pronunciation: null,
           romanization: null,
           translation: "",
@@ -297,14 +297,14 @@ describe(attachTranslationsToSteps, () => {
       },
       {
         content: {},
-        id: 2n,
+        id: "2",
         kind: "reading",
         position: 1,
         sentence: {
           audioUrl: null,
           distractors: [],
           explanation: null,
-          id: 2n,
+          id: "2",
           romanization: null,
           sentence: "hola mundo",
           translation: "",

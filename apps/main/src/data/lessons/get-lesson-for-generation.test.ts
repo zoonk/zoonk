@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
@@ -53,8 +54,12 @@ describe(getLessonForGeneration, () => {
   });
 
   test("returns null for non-existent lessons", async () => {
-    const result = await getLessonForGeneration(999_999);
+    const result = await getLessonForGeneration(randomUUID());
+    expect(result).toBeNull();
+  });
 
+  test("returns null for malformed lesson ids", async () => {
+    const result = await getLessonForGeneration("invalid-id");
     expect(result).toBeNull();
   });
 

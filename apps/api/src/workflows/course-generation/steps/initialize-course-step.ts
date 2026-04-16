@@ -6,7 +6,7 @@ import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { ensureLocaleSuffix, normalizeString, toSlug } from "@zoonk/utils/string";
 
 export type CourseContext = {
-  courseId: number;
+  courseId: string;
   courseSlug: string;
   courseTitle: string;
   language: string;
@@ -27,7 +27,7 @@ async function updateCourseSuggestionToRunning({
   stream: {
     error: (params: { reason: WorkflowErrorReason; step: CourseWorkflowStepName }) => Promise<void>;
   };
-  suggestionId: number;
+  suggestionId: string;
   workflowRunId: string;
 }): Promise<{ error: Error | null }> {
   const { error } = await safeAsync(() =>

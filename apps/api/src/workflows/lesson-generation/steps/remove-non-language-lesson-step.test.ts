@@ -24,7 +24,7 @@ vi.mock("workflow", () => ({
 
 describe(removeNonLanguageLessonStep, () => {
   let organizationId: string;
-  let chapterId: number;
+  let chapterId: string;
 
   beforeAll(async () => {
     const organization = await aiOrganizationFixture();
@@ -43,7 +43,7 @@ describe(removeNonLanguageLessonStep, () => {
   });
 
   test("streams error and throws when lesson does not exist", async () => {
-    await expect(removeNonLanguageLessonStep({ lessonId: 999_999_999 })).rejects.toThrow();
+    await expect(removeNonLanguageLessonStep({ lessonId: randomUUID() })).rejects.toThrow();
 
     const events = getStreamedEvents(writeMock);
 

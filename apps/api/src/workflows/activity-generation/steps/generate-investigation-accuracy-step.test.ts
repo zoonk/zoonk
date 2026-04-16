@@ -91,13 +91,13 @@ describe(generateInvestigationAccuracyStep, () => {
       where: { id: dbActivity.id },
     });
 
-    const activityWithNumericId = { ...activity, id: Number(activity.id) };
+    const activityWithNumericId = { ...activity, id: activity.id };
 
     generateActivityInvestigationAccuracyMock.mockResolvedValue({ data: mockAccuracyData });
 
     const result = await generateInvestigationAccuracyStep({
       activity: activityWithNumericId,
-      activityId: Number(dbActivity.id),
+      activityId: dbActivity.id,
       scenario: mockScenario,
     });
 
@@ -131,13 +131,13 @@ describe(generateInvestigationAccuracyStep, () => {
       where: { id: dbActivity.id },
     });
 
-    const activityWithNumericId = { ...activity, id: Number(activity.id) };
+    const activityWithNumericId = { ...activity, id: activity.id };
 
     generateActivityInvestigationAccuracyMock.mockResolvedValue({ data: mockAccuracyData });
 
     await generateInvestigationAccuracyStep({
       activity: activityWithNumericId,
-      activityId: Number(dbActivity.id),
+      activityId: dbActivity.id,
       scenario: mockScenario,
     });
 
@@ -177,13 +177,13 @@ describe(generateInvestigationAccuracyStep, () => {
       where: { id: dbActivity.id },
     });
 
-    const activityWithNumericId = { ...activity, id: Number(activity.id) };
+    const activityWithNumericId = { ...activity, id: activity.id };
 
     generateActivityInvestigationAccuracyMock.mockRejectedValue(new Error("AI failed"));
 
     const result = await generateInvestigationAccuracyStep({
       activity: activityWithNumericId,
-      activityId: Number(dbActivity.id),
+      activityId: dbActivity.id,
       scenario: mockScenario,
     });
 
@@ -196,7 +196,7 @@ describe(generateInvestigationAccuracyStep, () => {
 
     expect(events).toContainEqual(
       expect.objectContaining({
-        entityId: Number(dbActivity.id),
+        entityId: dbActivity.id,
         status: "error",
         step: "generateInvestigationAccuracy",
       }),
@@ -229,13 +229,13 @@ describe(generateInvestigationAccuracyStep, () => {
       where: { id: dbActivity.id },
     });
 
-    const activityWithNumericId = { ...activity, id: Number(activity.id) };
+    const activityWithNumericId = { ...activity, id: activity.id };
 
     generateActivityInvestigationAccuracyMock.mockResolvedValue({ data: mockAccuracyData });
 
     await generateInvestigationAccuracyStep({
       activity: activityWithNumericId,
-      activityId: Number(dbActivity.id),
+      activityId: dbActivity.id,
       scenario: mockScenario,
     });
 
@@ -243,7 +243,7 @@ describe(generateInvestigationAccuracyStep, () => {
 
     expect(events).toContainEqual(
       expect.objectContaining({
-        entityId: Number(dbActivity.id),
+        entityId: dbActivity.id,
         status: "started",
         step: "generateInvestigationAccuracy",
       }),
@@ -251,7 +251,7 @@ describe(generateInvestigationAccuracyStep, () => {
 
     expect(events).toContainEqual(
       expect.objectContaining({
-        entityId: Number(dbActivity.id),
+        entityId: dbActivity.id,
         status: "completed",
         step: "generateInvestigationAccuracy",
       }),

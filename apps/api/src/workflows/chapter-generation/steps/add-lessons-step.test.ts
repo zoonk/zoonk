@@ -52,7 +52,7 @@ describe(addLessonsStep, () => {
   test("streams error and throws when DB save fails", async () => {
     const brokenContext: ChapterContext = {
       ...context,
-      id: 999_999_999,
+      id: randomUUID(),
     };
 
     const lessons = [{ concepts: ["A"], description: "Desc", title: `Lesson ${randomUUID()}` }];

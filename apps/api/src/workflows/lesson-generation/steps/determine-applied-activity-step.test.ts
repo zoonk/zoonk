@@ -34,7 +34,7 @@ vi.mock("@zoonk/ai/tasks/lessons/applied-activity-kind", () => ({
 describe(determineAppliedActivityStep, () => {
   let context: LessonContext;
   let organizationId: string;
-  let chapterId: number;
+  let chapterId: string;
 
   beforeAll(async () => {
     const organization = await aiOrganizationFixture();

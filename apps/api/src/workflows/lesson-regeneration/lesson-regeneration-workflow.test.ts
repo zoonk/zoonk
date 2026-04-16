@@ -32,7 +32,7 @@ vi.mock("../lesson-generation/lesson-generation-workflow", () => ({
  * use the same query shape so promotion and cleanup assertions run against the
  * exact data contract the workflow consumes in production.
  */
-async function getLessonContext(lessonId: number): Promise<LessonContext> {
+async function getLessonContext(lessonId: string): Promise<LessonContext> {
   return prisma.lesson.findUniqueOrThrow({
     include: {
       _count: { select: { activities: true } },
@@ -43,7 +43,7 @@ async function getLessonContext(lessonId: number): Promise<LessonContext> {
 }
 
 describe(lessonRegenerationWorkflow, () => {
-  let chapterId: number;
+  let chapterId: string;
   let organizationId: string;
 
   beforeAll(async () => {
@@ -62,7 +62,7 @@ describe(lessonRegenerationWorkflow, () => {
     vi.clearAllMocks();
     lessonGenerationWorkflowMock.mockImplementation(
       async (
-        lessonId: number,
+        lessonId: string,
         options?: {
           generationRunId?: string;
           regeneration?: boolean;
@@ -82,7 +82,7 @@ describe(lessonRegenerationWorkflow, () => {
         return "ready";
       },
     );
-    activityGenerationWorkflowMock.mockImplementation(async (lessonId: number) => {
+    activityGenerationWorkflowMock.mockImplementation(async (lessonId: string) => {
       await prisma.activity.updateMany({
         data: { generationStatus: "completed" },
         where: {
@@ -234,7 +234,7 @@ describe(lessonRegenerationWorkflow, () => {
   test("publishes regenerated activities with fresh zero-based positions", async () => {
     lessonGenerationWorkflowMock.mockImplementationOnce(
       async (
-        lessonId: number,
+        lessonId: string,
         options?: {
           generationRunId?: string;
           regeneration?: boolean;
@@ -276,7 +276,7 @@ describe(lessonRegenerationWorkflow, () => {
         return "ready";
       },
     );
-    activityGenerationWorkflowMock.mockImplementationOnce(async (lessonId: number) => {
+    activityGenerationWorkflowMock.mockImplementationOnce(async (lessonId: string) => {
       await prisma.activity.updateMany({
         data: { generationStatus: "completed" },
         where: {
@@ -393,7 +393,7 @@ describe(lessonRegenerationWorkflow, () => {
   });
 
   test("deletes hidden replacement activities when activity regeneration fails", async () => {
-    activityGenerationWorkflowMock.mockImplementationOnce(async (lessonId: number) => {
+    activityGenerationWorkflowMock.mockImplementationOnce(async (lessonId: string) => {
       await prisma.activity.updateMany({
         data: { generationStatus: "running" },
         where: {

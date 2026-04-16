@@ -8,9 +8,9 @@ import { getExtracted } from "next-intl/server";
 import Link from "next/link";
 
 function getScope(props: {
-  chapterId?: number;
-  courseId?: number;
-  lessonId?: number;
+  chapterId?: string;
+  courseId?: string;
+  lessonId?: string;
 }): ActivityScope {
   if (props.courseId) {
     return { courseId: props.courseId };
@@ -20,7 +20,11 @@ function getScope(props: {
     return { chapterId: props.chapterId };
   }
 
-  return { lessonId: props.lessonId ?? 0 };
+  if (props.lessonId) {
+    return { lessonId: props.lessonId };
+  }
+
+  throw new Error("ContinueActivityLink requires a course, chapter, or lesson id.");
 }
 
 export async function ContinueActivityLink<Href extends string, CompletedHref extends string>({
@@ -30,11 +34,11 @@ export async function ContinueActivityLink<Href extends string, CompletedHref ex
   fallbackHref,
   lessonId,
 }: {
-  chapterId?: number;
+  chapterId?: string;
   completedHref?: Route<CompletedHref>;
-  courseId?: number;
+  courseId?: string;
   fallbackHref?: Route<Href>;
-  lessonId?: number;
+  lessonId?: string;
 }) {
   const t = await getExtracted();
   const scope = getScope({ chapterId, courseId, lessonId });

@@ -4,8 +4,8 @@ import { prisma } from "@zoonk/db";
 import { rejected } from "@zoonk/utils/settled";
 
 export async function completeCourseSetupStep(input: {
-  courseSuggestionId: number;
-  courseId: number;
+  courseSuggestionId: string;
+  courseId: string;
 }): Promise<void> {
   "use step";
 

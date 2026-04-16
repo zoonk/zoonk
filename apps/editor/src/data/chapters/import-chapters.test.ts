@@ -108,7 +108,7 @@ describe("admins", () => {
     const file = createImportFile([{ description: "Desc", title: "Test" }]);
 
     const result = await importChapters({
-      courseId: 999_999,
+      courseId: "00000000-0000-7000-8000-000000000001",
       file,
       headers,
     });

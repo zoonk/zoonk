@@ -1,13 +1,13 @@
 import { type StepKind, prisma } from "@zoonk/db";
 
 export async function stepFixture(attrs: {
-  activityId: bigint;
+  activityId: string;
   content?: object;
   isPublished?: boolean;
   kind?: StepKind;
   position?: number;
-  sentenceId?: bigint;
-  wordId?: bigint;
+  sentenceId?: string;
+  wordId?: string;
 }) {
   const step = await prisma.step.create({
     data: {

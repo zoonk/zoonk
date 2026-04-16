@@ -6,7 +6,7 @@ import { type ActivitySteps } from "./_utils/get-activity-steps";
 import { type LessonActivity } from "./get-lesson-activities-step";
 
 export type ExplanationResult = {
-  activityId: number;
+  activityId: string;
   concept: string;
   steps: ActivitySteps;
 };

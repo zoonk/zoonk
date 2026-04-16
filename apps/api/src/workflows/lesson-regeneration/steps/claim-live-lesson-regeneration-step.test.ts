@@ -13,7 +13,7 @@ import { claimLiveLessonRegenerationStep } from "./claim-live-lesson-regeneratio
  * passes in after loading the live lesson. Keeping that query in the test
  * avoids inventing a partial object that would diverge from production.
  */
-async function getLessonContext(lessonId: number): Promise<LessonContext> {
+async function getLessonContext(lessonId: string): Promise<LessonContext> {
   return prisma.lesson.findUniqueOrThrow({
     include: {
       _count: { select: { activities: true } },
@@ -24,7 +24,7 @@ async function getLessonContext(lessonId: number): Promise<LessonContext> {
 }
 
 describe(claimLiveLessonRegenerationStep, () => {
-  let chapterId: number;
+  let chapterId: string;
   let organizationId: string;
 
   beforeAll(async () => {

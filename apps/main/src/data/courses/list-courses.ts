@@ -1,22 +1,13 @@
 import "server-only";
-import { type Course, getPublishedCourseWhere, prisma } from "@zoonk/db";
+import { getPublishedCourseWhere, prisma } from "@zoonk/db";
 import { clampQueryItems } from "@zoonk/db/utils";
 import { type CourseCategory } from "@zoonk/utils/categories";
 import { cache } from "react";
 
 export const LIST_COURSES_LIMIT = 20;
 
-export type CourseWithOrg = Course & {
-  organization: { slug: string } | null;
-};
-
 const cachedListCourses = cache(
-  async (
-    language: string,
-    limit: number,
-    category?: CourseCategory,
-    cursor?: number,
-  ): Promise<CourseWithOrg[]> => {
+  async (language: string, limit: number, category?: CourseCategory, cursor?: string) => {
     const courses = await prisma.course.findMany({
       include: {
         organization: {
@@ -39,9 +30,11 @@ const cachedListCourses = cache(
   },
 );
 
+export type CourseWithOrg = Awaited<ReturnType<typeof cachedListCourses>>[number];
+
 export function listCourses(params: {
   category?: CourseCategory;
-  cursor?: number;
+  cursor?: string;
   language: string;
   limit?: number;
 }): Promise<CourseWithOrg[]> {

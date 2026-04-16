@@ -32,6 +32,7 @@
     "./string": "./src/string.ts",
     "./subscription": "./src/subscription.ts",
     "./upload": "./src/upload.ts",
+    "./uuid": "./src/uuid.ts",
     "./url": "./src/url.ts"
   },
   "scripts": {

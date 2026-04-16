@@ -3,7 +3,7 @@ import { type ChapterStepName } from "@zoonk/core/workflows/steps";
 import { getAiGenerationChapterWhere, prisma } from "@zoonk/db";
 import { FatalError } from "workflow";
 
-async function getChapterForGeneration(chapterId: number) {
+async function getChapterForGeneration(chapterId: string) {
   return prisma.chapter.findFirst({
     include: {
       _count: { select: { lessons: true } },
@@ -17,7 +17,7 @@ async function getChapterForGeneration(chapterId: number) {
 
 const NEIGHBOR_RANGE = 3;
 
-async function getNeighboringChapters(courseId: number, position: number) {
+async function getNeighboringChapters(courseId: string, position: number) {
   return prisma.chapter.findMany({
     orderBy: { position: "asc" },
     select: { description: true, title: true },
@@ -38,7 +38,7 @@ export type ChapterContext = NonNullable<Awaited<ReturnType<typeof getChapterFor
   neighboringChapters: { description: string; title: string }[];
 };
 
-export async function getChapterStep(chapterId: number): Promise<ChapterContext> {
+export async function getChapterStep(chapterId: string): Promise<ChapterContext> {
   "use step";
 
   await using stream = createStepStream<ChapterStepName>();

@@ -94,8 +94,8 @@ export function generationReducer<TStep extends string>(
  * When the viewer has no entityId (non-activity workflows), everything matches.
  */
 function isEventRelevantToViewer(
-  messageEntityId: number | undefined,
-  viewerEntityId: number | undefined,
+  messageEntityId: string | undefined,
+  viewerEntityId: string | undefined,
 ): boolean {
   if (messageEntityId === undefined) {
     return true;
@@ -111,7 +111,7 @@ function isEventRelevantToViewer(
 export function handleStepStreamMessage<TStep extends string>(params: {
   completionStep?: TStep;
   dispatch: (action: GenerationAction<TStep>) => void;
-  entityId?: number;
+  entityId?: string;
   message: StepStreamMessage<TStep>;
 }) {
   const { completionStep, dispatch, entityId, message } = params;

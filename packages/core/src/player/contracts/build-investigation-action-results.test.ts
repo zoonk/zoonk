@@ -24,7 +24,7 @@ describe(buildInvestigationActionResults, () => {
         actionTimings: [baseTiming, baseTiming],
         usedActionIds: ["a1", "a3"],
       },
-      steps: [{ content: actionContent, id: 100n, kind: "investigation" }],
+      steps: [{ content: actionContent, id: "100", kind: "investigation" }],
     });
 
     expect(results).toHaveLength(2);
@@ -38,10 +38,10 @@ describe(buildInvestigationActionResults, () => {
         actionTimings: [baseTiming, baseTiming],
         usedActionIds: ["a1", "a2"],
       },
-      steps: [{ content: actionContent, id: 42n, kind: "investigation" }],
+      steps: [{ content: actionContent, id: "42", kind: "investigation" }],
     });
 
-    expect(results.every((result) => result.stepId === 42n)).toBe(true);
+    expect(results.every((result) => result.stepId === "42")).toBe(true);
   });
 
   test("uses per-experiment timing from actionTimings", () => {
@@ -55,7 +55,7 @@ describe(buildInvestigationActionResults, () => {
         actionTimings: timings,
         usedActionIds: ["a1", "a2"],
       },
-      steps: [{ content: actionContent, id: 1n, kind: "investigation" }],
+      steps: [{ content: actionContent, id: "1", kind: "investigation" }],
     });
 
     expect(results[0]?.durationSeconds).toBe(5);
@@ -68,7 +68,7 @@ describe(buildInvestigationActionResults, () => {
         actionTimings: [baseTiming, baseTiming],
         usedActionIds: ["a3", "a1"],
       },
-      steps: [{ content: actionContent, id: 1n, kind: "investigation" }],
+      steps: [{ content: actionContent, id: "1", kind: "investigation" }],
     });
 
     expect(results[0]?.answer).toEqual({
@@ -86,7 +86,7 @@ describe(buildInvestigationActionResults, () => {
   test("returns empty array when investigationLoop is undefined", () => {
     const results = buildInvestigationActionResults({
       investigationLoop: undefined,
-      steps: [{ content: actionContent, id: 1n, kind: "investigation" }],
+      steps: [{ content: actionContent, id: "1", kind: "investigation" }],
     });
 
     expect(results).toEqual([]);
@@ -101,7 +101,7 @@ describe(buildInvestigationActionResults, () => {
       steps: [
         {
           content: { scenario: "A mystery", variant: "problem" as const },
-          id: 1n,
+          id: "1",
           kind: "investigation",
         },
       ],
@@ -116,7 +116,7 @@ describe(buildInvestigationActionResults, () => {
         actionTimings: [baseTiming], // Only 1 timing
         usedActionIds: ["a1", "a2", "a3"], // 3 IDs
       },
-      steps: [{ content: actionContent, id: 1n, kind: "investigation" }],
+      steps: [{ content: actionContent, id: "1", kind: "investigation" }],
     });
 
     expect(results).toHaveLength(1);
@@ -129,7 +129,7 @@ describe(buildInvestigationActionResults, () => {
         actionTimings: [],
         usedActionIds: [],
       },
-      steps: [{ content: actionContent, id: 1n, kind: "investigation" }],
+      steps: [{ content: actionContent, id: "1", kind: "investigation" }],
     });
 
     expect(results).toEqual([]);

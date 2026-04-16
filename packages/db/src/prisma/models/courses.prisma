@@ -1,5 +1,5 @@
 model SearchPrompt {
-  id          Int                      @id @default(autoincrement())
+  id          String                   @id @default(dbgenerated("uuidv7()")) @db.Uuid
   language    String                   @db.VarChar(10)
   prompt      String
   suggestions SearchPromptSuggestion[]
@@ -11,7 +11,7 @@ model SearchPrompt {
 }
 
 model CourseSuggestion {
-  id               Int                      @id @default(autoincrement())
+  id               String                   @id @default(dbgenerated("uuidv7()")) @db.Uuid
   language         String                   @db.VarChar(10)
   slug             String
   title            String
@@ -28,10 +28,10 @@ model CourseSuggestion {
 }
 
 model SearchPromptSuggestion {
-  id                 Int              @id @default(autoincrement())
-  searchPromptId     Int              @map("search_prompt_id")
+  id                 String           @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  searchPromptId     String           @map("search_prompt_id") @db.Uuid
   searchPrompt       SearchPrompt     @relation(fields: [searchPromptId], references: [id], onDelete: Cascade)
-  courseSuggestionId Int              @map("course_suggestion_id")
+  courseSuggestionId String           @map("course_suggestion_id") @db.Uuid
   courseSuggestion   CourseSuggestion @relation(fields: [courseSuggestionId], references: [id], onDelete: Cascade)
   position           Int              @default(0)
   createdAt          DateTime         @default(now()) @map("created_at")
@@ -42,10 +42,10 @@ model SearchPromptSuggestion {
 }
 
 model Course {
-  id                Int                      @id @default(autoincrement())
-  organizationId    String?                  @map("organization_id")
+  id                String                   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  organizationId    String?                  @map("organization_id") @db.Uuid
   organization      Organization?            @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  userId            String?                  @map("user_id")
+  userId            String?                  @map("user_id") @db.Uuid
   user              User?                    @relation(fields: [userId], references: [id], onDelete: Cascade)
   mode              CourseMode               @default(full)
   completedAt       DateTime?                @map("completed_at")
@@ -81,8 +81,8 @@ model Course {
 }
 
 model CourseAlternativeTitle {
-  id        Int      @id @default(autoincrement())
-  courseId  Int      @map("course_id")
+  id        String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  courseId  String   @map("course_id") @db.Uuid
   course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
   slug      String
   language  String   @db.VarChar(10)
@@ -94,8 +94,8 @@ model CourseAlternativeTitle {
 }
 
 model CourseCategory {
-  id        Int      @id @default(autoincrement())
-  courseId  Int      @map("course_id")
+  id        String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  courseId  String   @map("course_id") @db.Uuid
   course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
   category  String   @db.VarChar(50)
   createdAt DateTime @default(now()) @map("created_at")
@@ -106,10 +106,10 @@ model CourseCategory {
 }
 
 model CourseUser {
-  id        Int      @id @default(autoincrement())
-  courseId  Int      @map("course_id")
+  id        String   @id @default(dbgenerated("uuidv7()")) @db.Uuid
+  courseId  String   @map("course_id") @db.Uuid
   course    Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
-  userId    String   @map("user_id")
+  userId    String   @map("user_id") @db.Uuid
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   startedAt DateTime @default(now()) @map("started_at")
 

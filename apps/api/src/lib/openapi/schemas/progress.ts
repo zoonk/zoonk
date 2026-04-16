@@ -1,8 +1,10 @@
 import { z } from "zod";
 
+const uuidQuery = (description: string) => z.uuid().meta({ description });
+
 export const activityCompletionQuerySchema = z
   .object({
-    lessonId: z.coerce.number().int().positive().meta({ description: "Lesson ID" }),
+    lessonId: uuidQuery("Lesson ID"),
   })
   .meta({ id: "ActivityCompletionQuery" });
 
@@ -16,7 +18,7 @@ export const activityCompletionResponseSchema = z
 
 export const courseCompletionQuerySchema = z
   .object({
-    courseId: z.coerce.number().int().positive().meta({ description: "Course ID" }),
+    courseId: uuidQuery("Course ID"),
   })
   .meta({ id: "CourseCompletionQuery" });
 
@@ -25,7 +27,7 @@ export const courseCompletionResponseSchema = z
     chapters: z
       .array(
         z.object({
-          chapterId: z.number().meta({ description: "Chapter ID" }),
+          chapterId: z.string().meta({ description: "Chapter ID" }),
           completedLessons: z.number().meta({ description: "Number of completed lessons" }),
           totalLessons: z.number().meta({ description: "Total number of lessons" }),
         }),
@@ -36,7 +38,7 @@ export const courseCompletionResponseSchema = z
 
 export const chapterCompletionQuerySchema = z
   .object({
-    chapterId: z.coerce.number().int().positive().meta({ description: "Chapter ID" }),
+    chapterId: uuidQuery("Chapter ID"),
   })
   .meta({ id: "ChapterCompletionQuery" });
 
@@ -46,7 +48,7 @@ export const chapterCompletionResponseSchema = z
       .array(
         z.object({
           completedActivities: z.number().meta({ description: "Number of completed activities" }),
-          lessonId: z.number().meta({ description: "Lesson ID" }),
+          lessonId: z.string().meta({ description: "Lesson ID" }),
           totalActivities: z.number().meta({ description: "Total number of activities" }),
         }),
       )
@@ -56,9 +58,9 @@ export const chapterCompletionResponseSchema = z
 
 export const nextActivityQuerySchema = z
   .object({
-    chapterId: z.coerce.number().int().positive().optional().meta({ description: "Chapter ID" }),
-    courseId: z.coerce.number().int().positive().optional().meta({ description: "Course ID" }),
-    lessonId: z.coerce.number().int().positive().optional().meta({ description: "Lesson ID" }),
+    chapterId: uuidQuery("Chapter ID").optional(),
+    courseId: uuidQuery("Course ID").optional(),
+    lessonId: uuidQuery("Lesson ID").optional(),
   })
   .refine(
     (data) => {

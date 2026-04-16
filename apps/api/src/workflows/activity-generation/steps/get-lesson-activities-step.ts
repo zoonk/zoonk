@@ -21,7 +21,7 @@ export type LessonActivity = Awaited<ReturnType<typeof fetchReplacementLessonAct
  * lesson id and others passed extra flags.
  */
 export async function getLessonActivitiesStep(input: {
-  lessonId: number;
+  lessonId: string;
   regeneration?: boolean;
 }): Promise<LessonActivity[]> {
   "use step";

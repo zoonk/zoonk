@@ -3,7 +3,7 @@ export type ActivityPronunciationInput = {
 };
 
 export type ActivityWordInput = {
-  id: bigint;
+  id: string;
   word: string;
   romanization: string | null;
   audioUrl: string | null;
@@ -11,7 +11,7 @@ export type ActivityWordInput = {
 };
 
 export type ActivitySentenceInput = {
-  id: bigint;
+  id: string;
   sentence: string;
   romanization: string | null;
   audioUrl: string | null;
@@ -34,7 +34,7 @@ export type LessonSentenceInput = {
 export type ActivityDistractorWordInput = ActivityWordInput;
 
 export type WordDataInput = {
-  id: bigint;
+  id: string;
   word: string;
   romanization: string | null;
   audioUrl: string | null;
@@ -44,7 +44,7 @@ export type WordDataInput = {
 };
 
 export type SentenceDataInput = {
-  id: bigint;
+  id: string;
   sentence: string;
   distractors: string[];
   romanization: string | null;
@@ -55,7 +55,7 @@ export type SentenceDataInput = {
 };
 
 export type DistractorWordDataInput = {
-  id: bigint;
+  id: string;
   word: string;
   romanization: string | null;
   audioUrl: string | null;
@@ -63,7 +63,7 @@ export type DistractorWordDataInput = {
 };
 
 export type StepDataInput = {
-  id: bigint;
+  id: string;
   content: unknown;
   kind: string;
   position: number;
@@ -72,7 +72,7 @@ export type StepDataInput = {
 };
 
 export type ActivityStepInput = {
-  id: bigint;
+  id: string;
   content: unknown;
   kind: string;
   position: number;
@@ -202,7 +202,7 @@ export function attachTranslationsToSteps(
  */
 function mergeWordWithTranslation(
   word: Omit<ActivityWordInput, "pronunciations">,
-  wordMap: Map<bigint, LessonWordInput>,
+  wordMap: Map<string, LessonWordInput>,
 ): WordDataInput {
   const lessonWord = wordMap.get(word.id);
 
@@ -222,7 +222,7 @@ function mergeWordWithTranslation(
  */
 function mergeSentenceWithTranslation(
   sentence: ActivitySentenceInput,
-  sentenceMap: Map<bigint, LessonSentenceInput>,
+  sentenceMap: Map<string, LessonSentenceInput>,
 ): SentenceDataInput {
   const lessonSentence = sentenceMap.get(sentence.id);
 

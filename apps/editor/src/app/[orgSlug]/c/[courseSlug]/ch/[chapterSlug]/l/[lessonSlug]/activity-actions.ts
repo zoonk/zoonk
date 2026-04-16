@@ -12,9 +12,9 @@ import { redirect } from "next/navigation";
 
 async function createActivityAction(
   lessonSlug: string,
-  lessonId: number,
+  lessonId: string,
   position: number,
-): Promise<{ activityId: bigint | null; error: string | null }> {
+): Promise<{ activityId: string | null; error: string | null }> {
   const t = await getExtracted();
   const title = t("Untitled activity");
   const description = t("Add a description…");
@@ -36,7 +36,7 @@ async function createActivityAction(
 
 async function importActivitiesAction(
   lessonSlug: string,
-  lessonId: number,
+  lessonId: string,
   formData: FormData,
 ): Promise<{ error: string | null }> {
   const file = formData.get("file");
@@ -61,7 +61,7 @@ async function importActivitiesAction(
   return { error: null };
 }
 
-export async function exportActivitiesAction(lessonId: number): Promise<{
+export async function exportActivitiesAction(lessonId: string): Promise<{
   data: object | null;
   error: Error | null;
 }> {
@@ -77,7 +77,7 @@ export async function exportActivitiesAction(lessonId: number): Promise<{
 type ActivityRouteParams = {
   chapterSlug: string;
   courseSlug: string;
-  lessonId: number;
+  lessonId: string;
   lessonSlug: string;
   orgSlug: string;
 };
@@ -116,13 +116,13 @@ export async function handleImportActivitiesAction(
 
 export async function reorderActivitiesAction(
   params: ActivityRouteParams,
-  activities: { id: number; position: number }[],
+  activities: { id: string; position: number }[],
 ): Promise<{ error: string | null }> {
   const { chapterSlug, courseSlug, lessonId, lessonSlug, orgSlug } = params;
 
   const { error } = await reorderActivities({
     activities: activities.map((a) => ({
-      activityId: BigInt(a.id),
+      activityId: a.id,
       position: a.position,
     })),
     lessonId,

@@ -31,7 +31,7 @@ vi.mock("@zoonk/ai/tasks/activities/core/practice", () => ({
   }),
 }));
 
-function buildExplanationResults(activityId: number): ExplanationResult[] {
+function buildExplanationResults(activityId: string): ExplanationResult[] {
   return [
     {
       activityId,
@@ -85,7 +85,7 @@ describe("practice activity workflow", () => {
     });
 
     const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
-    const explanationResults = buildExplanationResults(Number(expActivity.id));
+    const explanationResults = buildExplanationResults(expActivity.id);
 
     await practiceActivityWorkflow({
       activitiesToGenerate: activities,
@@ -141,7 +141,7 @@ describe("practice activity workflow", () => {
     });
 
     const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
-    const explanationResults = buildExplanationResults(Number(expActivity.id));
+    const explanationResults = buildExplanationResults(expActivity.id);
 
     await practiceActivityWorkflow({
       activitiesToGenerate: activities,
@@ -187,7 +187,7 @@ describe("practice activity workflow", () => {
     });
 
     const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
-    const explanationResults = buildExplanationResults(Number(expActivity.id));
+    const explanationResults = buildExplanationResults(expActivity.id);
 
     await practiceActivityWorkflow({
       activitiesToGenerate: activities,
@@ -272,7 +272,7 @@ describe("practice activity workflow", () => {
     });
 
     const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
-    const explanationResults = buildExplanationResults(Number(expActivity.id));
+    const explanationResults = buildExplanationResults(expActivity.id);
 
     await practiceActivityWorkflow({
       activitiesToGenerate: [],
@@ -350,10 +350,10 @@ describe("practice activity workflow", () => {
 
       const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
       const explanationResults: ExplanationResult[] = [
-        { activityId: Number(expS1.id), concept: "S1", steps: [{ text: "S1 text", title: "S1" }] },
-        { activityId: Number(expS2.id), concept: "S2", steps: [{ text: "S2 text", title: "S2" }] },
-        { activityId: Number(expS3.id), concept: "S3", steps: [{ text: "S3 text", title: "S3" }] },
-        { activityId: Number(expS4.id), concept: "S4", steps: [{ text: "S4 text", title: "S4" }] },
+        { activityId: expS1.id, concept: "S1", steps: [{ text: "S1 text", title: "S1" }] },
+        { activityId: expS2.id, concept: "S2", steps: [{ text: "S2 text", title: "S2" }] },
+        { activityId: expS3.id, concept: "S3", steps: [{ text: "S3 text", title: "S3" }] },
+        { activityId: expS4.id, concept: "S4", steps: [{ text: "S4 text", title: "S4" }] },
       ];
 
       await practiceActivityWorkflow({
@@ -432,22 +432,22 @@ describe("practice activity workflow", () => {
       const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
       const explanationResults: ExplanationResult[] = [
         {
-          activityId: Number(expH1A.id),
+          activityId: expH1A.id,
           concept: "Half1A",
           steps: [{ text: "H1A text", title: "H1A" }],
         },
         {
-          activityId: Number(expH1B.id),
+          activityId: expH1B.id,
           concept: "Half1B",
           steps: [{ text: "H1B text", title: "H1B" }],
         },
         {
-          activityId: Number(expH2A.id),
+          activityId: expH2A.id,
           concept: "Half2A",
           steps: [{ text: "H2A text", title: "H2A" }],
         },
         {
-          activityId: Number(expH2B.id),
+          activityId: expH2B.id,
           concept: "Half2B",
           steps: [{ text: "H2B text", title: "H2B" }],
         },
@@ -523,12 +523,12 @@ describe("practice activity workflow", () => {
       const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
       const explanationResults: ExplanationResult[] = [
         {
-          activityId: Number(expSA.id),
+          activityId: expSA.id,
           concept: "Single A",
           steps: [{ text: "SA text", title: "SA" }],
         },
         {
-          activityId: Number(expSB.id),
+          activityId: expSB.id,
           concept: "Single B",
           steps: [{ text: "SB text", title: "SB" }],
         },
@@ -617,22 +617,22 @@ describe("practice activity workflow", () => {
       const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
       const explanationResults: ExplanationResult[] = [
         {
-          activityId: Number(expSC1.id),
+          activityId: expSC1.id,
           concept: "SC1",
           steps: [{ text: "SC1 text", title: "SC1" }],
         },
         {
-          activityId: Number(expSC2.id),
+          activityId: expSC2.id,
           concept: "SC2",
           steps: [{ text: "SC2 text", title: "SC2" }],
         },
         {
-          activityId: Number(expSC3.id),
+          activityId: expSC3.id,
           concept: "SC3",
           steps: [{ text: "SC3 text", title: "SC3" }],
         },
         {
-          activityId: Number(expSC4.id),
+          activityId: expSC4.id,
           concept: "SC4",
           steps: [{ text: "SC4 text", title: "SC4" }],
         },
@@ -719,26 +719,26 @@ describe("practice activity workflow", () => {
 
       // practice0 is completed → only practice1 in activitiesToGenerate
       const allActivities = await getLessonActivitiesStep({ lessonId: testLesson.id });
-      const activitiesToGenerate = allActivities.filter((a) => a.id === Number(practice1.id));
+      const activitiesToGenerate = allActivities.filter((a) => a.id === practice1.id);
 
       const explanationResults: ExplanationResult[] = [
         {
-          activityId: Number(expIdxA.id),
+          activityId: expIdxA.id,
           concept: "IdxA",
           steps: [{ text: "IdxA text", title: "IdxA" }],
         },
         {
-          activityId: Number(expIdxB.id),
+          activityId: expIdxB.id,
           concept: "IdxB",
           steps: [{ text: "IdxB text", title: "IdxB" }],
         },
         {
-          activityId: Number(expIdxC.id),
+          activityId: expIdxC.id,
           concept: "IdxC",
           steps: [{ text: "IdxC text", title: "IdxC" }],
         },
         {
-          activityId: Number(expIdxD.id),
+          activityId: expIdxD.id,
           concept: "IdxD",
           steps: [{ text: "IdxD text", title: "IdxD" }],
         },
@@ -811,7 +811,7 @@ describe("practice activity workflow", () => {
       const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
       const explanationResults: ExplanationResult[] = [
         {
-          activityId: Number(expOnly.id),
+          activityId: expOnly.id,
           concept: "OnlyConcept",
           steps: [{ text: "Only text", title: "Only" }],
         },

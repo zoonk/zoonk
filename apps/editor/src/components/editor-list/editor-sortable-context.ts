@@ -3,12 +3,12 @@
 import { createContext } from "react";
 
 export type SortableItem = {
-  id: number;
+  id: string;
   position: number;
 };
 
 export type EditorSortableContextValue = {
-  activeId: number | null;
+  activeId: string | null;
   isDragging: boolean;
 };
 

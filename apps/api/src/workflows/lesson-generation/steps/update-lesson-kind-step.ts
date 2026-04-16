@@ -4,7 +4,7 @@ import { type LessonKind, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 
 export async function updateLessonKindStep(input: {
-  lessonId: number;
+  lessonId: string;
   kind: LessonKind;
 }): Promise<void> {
   "use step";

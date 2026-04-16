@@ -15,7 +15,7 @@ export async function CourseSuggestionItem({
   course,
   isLast,
 }: {
-  course: { id: number; title: string; description: string };
+  course: { id: string; title: string; description: string };
   isLast: boolean;
 }) {
   const t = await getExtracted();

@@ -25,13 +25,6 @@ export function parseNumericId(value?: number | string | null): number | null {
   return Number.parseInt(normalizedValue, 10);
 }
 
-export function parseBigIntId(value: string): bigint | null {
-  if (!NUMERIC_ID_PATTERN.test(value)) {
-    return null;
-  }
-  return BigInt(value);
-}
-
 /**
  * Formats a 0-indexed position as a 2-digit display string.
  * @example formatPosition(0) // "01"

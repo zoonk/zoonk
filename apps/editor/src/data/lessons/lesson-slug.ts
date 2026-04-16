@@ -4,7 +4,7 @@ import { safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
 import { getAuthorizedActiveChapter } from "../chapters/get-authorized-chapter";
 
-const cachedLessonSlugExists = cache(async (chapterId: number, slug: string): Promise<boolean> => {
+const cachedLessonSlugExists = cache(async (chapterId: string, slug: string): Promise<boolean> => {
   const { data } = await safeAsync(() =>
     prisma.lesson.findFirst({
       where: { chapterId, slug },
@@ -20,7 +20,7 @@ const cachedLessonSlugExists = cache(async (chapterId: number, slug: string): Pr
  * the existence query inside that chapter.
  */
 export async function lessonSlugExists(params: {
-  chapterId: number;
+  chapterId: string;
   headers?: Headers;
   slug: string;
 }): Promise<boolean> {
