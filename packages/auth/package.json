@@ -18,14 +18,14 @@
     "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
-    "@better-auth/prisma-adapter": "1.6.2",
-    "@better-auth/stripe": "1.6.2",
+    "@better-auth/prisma-adapter": "1.6.5",
+    "@better-auth/stripe": "1.6.5",
     "@zoonk/db": "workspace:*",
     "@zoonk/mailer": "workspace:*",
     "@zoonk/utils": "workspace:*",
-    "better-auth": "1.6.2",
+    "better-auth": "1.6.5",
     "jose": "6.2.2",
-    "stripe": "^20",
+    "stripe": "^22.0.1",
     "zod": "catalog:"
   },
   "devDependencies": {

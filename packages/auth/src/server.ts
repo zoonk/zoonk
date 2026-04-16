@@ -1,7 +1,7 @@
 import { prismaAdapter } from "@better-auth/prisma-adapter";
 import { prisma } from "@zoonk/db";
 import { isLocalhostSupported } from "@zoonk/utils/environment";
-import { getAllowedHosts } from "@zoonk/utils/origin";
+import { getAllowedHosts, getBaseUrl } from "@zoonk/utils/origin";
 import { nextCookies } from "better-auth/next-js";
 import {
   admin as adminPlugin,
@@ -44,6 +44,7 @@ export const baseAuthConfig: Omit<BetterAuthOptions, "rateLimit"> = {
   basePath: BETTER_AUTH_BASE_PATH,
   baseURL: {
     allowedHosts: getAllowedHosts(),
+    fallback: getBaseUrl(),
     protocol: isLocalhostSupported() ? "http" : "https",
   },
   database: prismaAdapter(prisma, { provider: "postgresql" }),

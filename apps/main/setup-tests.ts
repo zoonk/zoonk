@@ -1,3 +1,5 @@
+// oxlint-disable jest/prefer-ending-with-an-expect
+
 import { AsyncLocalStorage } from "node:async_hooks";
 import { beforeEach, vi } from "vitest";
 

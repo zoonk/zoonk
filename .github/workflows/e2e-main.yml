@@ -1,13 +1,6 @@
 name: E2E Tests (Main App)
 
-on:
-  push:
-    paths:
-      - "apps/main/**"
-      - "packages/**"
-      - "pnpm-lock.yaml"
-      - ".github/workflows/e2e-main.yml"
-      - "turbo.json"
+on: push
 
 permissions:
   contents: read
