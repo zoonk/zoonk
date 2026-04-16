@@ -206,7 +206,7 @@ async function getVisualUsageRows({
         AND s.archived_at IS NULL
         AND a.archived_at IS NULL
         AND l.archived_at IS NULL
-        AND l.management_mode = 'ai'
+        AND l.generation_run_id IS NOT NULL
         AND l.generation_status = 'completed'
         AND l.created_at >= ${dateWindow.startAt}
         AND l.created_at < ${dateWindow.endExclusive}
@@ -242,7 +242,7 @@ async function getLanguageAudioUsage({
         JOIN courses c ON c.id = ch.course_id
         WHERE l.kind = 'language'
           AND l.archived_at IS NULL
-          AND l.management_mode = 'ai'
+          AND l.generation_run_id IS NOT NULL
           AND l.generation_status = 'completed'
           AND l.created_at >= ${dateWindow.startAt}
           AND l.created_at < ${dateWindow.endExclusive}
@@ -310,6 +310,7 @@ function countActivities({
   return prisma.activity.count({
     where: {
       archivedAt: null,
+      generationRunId: { not: null },
       generationStatus: "completed",
       kind: activityKind,
       lesson: { ...where, kind: lessonKind },
@@ -317,12 +318,21 @@ function countActivities({
   });
 }
 
+/**
+ * A row counts as "AI-generated" only when it carries a workflow run id. That
+ * id is written when the generation workflow marks the entity as running, so
+ * it cleanly excludes seed data, fixtures, and manually-added content — all of
+ * which can share the same `management_mode` or `generation_status` values but
+ * never flow through a workflow. Pairing the run id with `generation_status =
+ * 'completed'` narrows further to runs that finished successfully, which is
+ * the only shape the cost-per-unit math can divide against honestly.
+ */
 function buildCompletedLessonWhere({ dateWindow }: { dateWindow: DateWindow }) {
   return {
     archivedAt: null,
     createdAt: { gte: dateWindow.startAt, lt: dateWindow.endExclusive },
+    generationRunId: { not: null },
     generationStatus: "completed" as const,
-    managementMode: "ai" as const,
   };
 }
 
@@ -336,8 +346,8 @@ function buildCompletedCourseWhere({
   return {
     archivedAt: null,
     createdAt: { gte: dateWindow.startAt, lt: dateWindow.endExclusive },
+    generationRunId: { not: null },
     generationStatus: "completed" as const,
-    managementMode: "ai" as const,
     targetLanguage,
   };
 }
@@ -346,7 +356,7 @@ function buildChapterShellWhere({ dateWindow }: { dateWindow: DateWindow }) {
   return {
     archivedAt: null,
     createdAt: { gte: dateWindow.startAt, lt: dateWindow.endExclusive },
-    managementMode: "ai" as const,
+    generationRunId: { not: null },
   };
 }
 
