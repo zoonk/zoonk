@@ -1,0 +1,43 @@
+apps/lab/src/lib/schemas.ts
+  8e3f344b6309b978 56-61,125,274,317,350
+apps/lab/src/lib/generate/orchestrate.ts
+  8e3f344b6309b978 117-120,146-151,160-171,173-190,193-198
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.0",
+  "base_commit_sha": "bd07fa1b2fe8b7a1f00b670af9524cffca29866a",
+  "prompts": {
+    "8e3f344b6309b978": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "eb99faec-dc77-4e5e-9734-1148d875c0ea",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 56,
+      "total_deletions": 42,
+      "accepted_lines": 56,
+      "overriden_lines": 0
+    },
+    "fad2f0d2a1114b34": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b05fda29-46b3-48c5-adf9-e066a0b8e798",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 2,
+      "overriden_lines": 0
+    }
+  },
+  "humans": {
+    "h_1cda88fc21fe9c": {
+      "author": "ceolinwill"
+    }
+  }
+}
