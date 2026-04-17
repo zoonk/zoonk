@@ -190,9 +190,19 @@ export const navItems: NavItem<Route>[] = [
 ];
 ```
 
-## Plan Mode
+## Quality Checks
 
-- Before completing your plan, make sure you identified which tests need to be added or updated. A plan without tests is incomplete.
+How to verify your work:
+
+- pnpm turbo format:fix
+- pnpm turbo lint:fix
+- pnpm typecheck
+- pnpm knip --production
+- pnpm db:generate (update prisma client when you change prisma schema)
+- pnpm --filter @zoonk/db db:migrate
+- pnpm build --filter <app>
+- pnpm test --filter <app>
+- pnpm e2e --filter <app>
 
 <!-- BEGIN:nextjs-agent-rules -->
 

@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
-import { generateLessonActivities } from "@zoonk/ai/tasks/lessons/activities";
 import { generateAppliedActivityKind } from "@zoonk/ai/tasks/lessons/applied-activity-kind";
+import { generateLessonCustomActivities } from "@zoonk/ai/tasks/lessons/custom-activities";
 import { generateLessonKind } from "@zoonk/ai/tasks/lessons/kind";
 import { prisma } from "@zoonk/db";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
@@ -24,8 +24,8 @@ vi.mock("@zoonk/ai/tasks/lessons/applied-activity-kind", () => ({
   }),
 }));
 
-vi.mock("@zoonk/ai/tasks/lessons/activities", () => ({
-  generateLessonActivities: vi.fn().mockResolvedValue({
+vi.mock("@zoonk/ai/tasks/lessons/custom-activities", () => ({
+  generateLessonCustomActivities: vi.fn().mockResolvedValue({
     data: {
       activities: [
         { description: "Custom activity 1 description", title: "Custom Activity 1" },
@@ -200,7 +200,7 @@ describe(lessonGenerationWorkflow, () => {
         data: { kind: "custom" },
       } as Awaited<ReturnType<typeof generateLessonKind>>);
 
-      vi.mocked(generateLessonActivities).mockRejectedValueOnce(
+      vi.mocked(generateLessonCustomActivities).mockRejectedValueOnce(
         new Error("Activities generation failed"),
       );
 

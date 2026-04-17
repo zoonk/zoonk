@@ -1,4 +1,4 @@
-import { type GeneratedActivity } from "@zoonk/ai/tasks/lessons/activities";
+import { type GeneratedCustomActivity } from "@zoonk/ai/tasks/lessons/custom-activities";
 import { type AppliedActivityKind } from "@zoonk/core/workflows/steps";
 import { type ActivityKind, type LessonKind } from "@zoonk/db";
 import { isTTSSupportedLanguage } from "@zoonk/utils/languages";
@@ -93,7 +93,7 @@ function getLanguageActivities(targetLanguage: string | null): ActivityKind[] {
  */
 export function getActivitiesForKind(
   lessonKind: LessonKind,
-  customActivities: GeneratedActivity[],
+  customActivities: GeneratedCustomActivity[],
   targetLanguage: string | null,
   concepts: string[],
   appliedActivityKind: AppliedActivityKind = null,

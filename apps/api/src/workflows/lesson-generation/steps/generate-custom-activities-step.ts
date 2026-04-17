@@ -1,15 +1,15 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
 import {
-  type GeneratedActivity,
-  generateLessonActivities,
-} from "@zoonk/ai/tasks/lessons/activities";
+  type GeneratedCustomActivity,
+  generateLessonCustomActivities,
+} from "@zoonk/ai/tasks/lessons/custom-activities";
 import { type LessonStepName } from "@zoonk/core/workflows/steps";
 import { safeAsync } from "@zoonk/utils/error";
 import { type LessonContext } from "./get-lesson-step";
 
 export async function generateCustomActivitiesStep(
   context: LessonContext,
-): Promise<GeneratedActivity[]> {
+): Promise<GeneratedCustomActivity[]> {
   "use step";
 
   await using stream = createStepStream<LessonStepName>();
@@ -17,7 +17,7 @@ export async function generateCustomActivitiesStep(
   await stream.status({ status: "started", step: "generateCustomActivities" });
 
   const { data: result, error } = await safeAsync(() =>
-    generateLessonActivities({
+    generateLessonCustomActivities({
       chapterTitle: context.chapter.title,
       courseTitle: context.chapter.course.title,
       language: context.language,
