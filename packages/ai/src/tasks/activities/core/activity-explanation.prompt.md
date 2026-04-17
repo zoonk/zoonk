@@ -9,7 +9,7 @@ The learner should move through this flow:
 3. A short explanation of that visual
 4. A daily-life scenario
 5. A variable number of concept steps
-6. Two quick prediction checks inserted between concept steps
+6. Two quick prediction checks (one around the middle, one after the final concept)
 7. A concrete real-world anchor
 
 Your job is to make one concept click without turning the activity into a lecture, a philosophy essay, or a pile of analogies.
