@@ -3,6 +3,7 @@ import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-o
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import { ACTIVITY_OPTIONS_COUNT } from "../config";
+import { formatExplanationStepsForPrompt } from "./_utils/format-explanation-steps";
 import systemPrompt from "./activity-practice.prompt.md";
 
 const DEFAULT_MODEL = "openai/gpt-5.4";
@@ -51,9 +52,7 @@ export async function generateActivityPractice({
   useFallback = true,
   reasoningEffort,
 }: ActivityPracticeParams) {
-  const formattedExplanationSteps = explanationSteps
-    .map((step, index) => `${index + 1}. ${step.title}: ${step.text}`)
-    .join("\n");
+  const formattedExplanationSteps = formatExplanationStepsForPrompt(explanationSteps);
 
   const userPrompt = `LESSON_TITLE: ${lessonTitle}
 LESSON_DESCRIPTION: ${lessonDescription}

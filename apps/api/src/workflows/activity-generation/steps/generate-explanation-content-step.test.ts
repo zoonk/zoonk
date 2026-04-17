@@ -31,6 +31,85 @@ vi.mock("@zoonk/ai/tasks/activities/core/explanation", () => ({
   generateActivityExplanation: generateActivityExplanationMock,
 }));
 
+/**
+ * The explanation task returns a structured object now, and multiple tests
+ * need the same realistic payload. Keeping it at module scope avoids
+ * recreating the helper per test while making the expected learner flow easy
+ * to reuse.
+ */
+function createExplanationResult() {
+  return {
+    data: {
+      anchor: {
+        text: "This is why Google Maps can recalculate your route quickly.",
+        title: "Fast route updates",
+      },
+      concepts: [
+        {
+          text: "Packets travel as smaller chunks so each network step can handle them reliably.",
+          title: "Small chunks",
+          visual: null,
+        },
+        {
+          text: "Each layer adds its own label for a different job.",
+          title: "Layer labels",
+          visual: {
+            description: "A diagram of one packet with stacked layer labels.",
+            kind: "diagram" as const,
+          },
+        },
+      ],
+      initialQuestion: {
+        explanation:
+          "The message gets wrapped in layers of instructions so each part of the network knows what to do next.",
+        question: "Why doesn't internet data travel as one giant unlabeled blob?",
+        visual: {
+          description: "An image of a message turning into a labeled packet.",
+          kind: "image" as const,
+        },
+      },
+      predict: [
+        {
+          concept: "Small chunks",
+          options: [
+            {
+              feedback: "Right. Smaller chunks are easier for the network to handle.",
+              isCorrect: true,
+              text: "Because the network handles smaller pieces more predictably",
+            },
+            {
+              feedback: "No. The goal is handling and routing, not decoration.",
+              isCorrect: false,
+              text: "Because it looks more organized on screen",
+            },
+          ],
+          question: "Why break the message into packets?",
+        },
+        {
+          concept: "Layer labels",
+          options: [
+            {
+              feedback: "Yes. Different layers need different details.",
+              isCorrect: true,
+              text: "Because each layer needs its own information",
+            },
+            {
+              feedback: "Not this one. The point is function, not aesthetics.",
+              isCorrect: false,
+              text: "Because more labels make the packet prettier",
+            },
+          ],
+          question: "Why add more than one label?",
+        },
+      ],
+      scenario: {
+        text: "You send a photo on WhatsApp while riding the bus and it still reaches your friend after passing through many network points.",
+        title: "On WhatsApp",
+      },
+    },
+  };
+}
+
 describe(generateExplanationContentStep, () => {
   let organizationId: string;
   let chapter: Awaited<ReturnType<typeof chapterFixture>>;
@@ -80,14 +159,7 @@ describe(generateExplanationContentStep, () => {
 
     const activities = await fetchLessonActivities(lesson.id);
 
-    generateActivityExplanationMock.mockResolvedValue({
-      data: {
-        steps: [
-          { text: "Step text", title: "Step title" },
-          { text: "Step text 2", title: "Step title 2" },
-        ],
-      },
-    });
+    generateActivityExplanationMock.mockResolvedValue(createExplanationResult());
 
     const concepts = activities.map((a) => a.title ?? "");
     const neighboringConcepts = ["neighbor1"];
@@ -97,8 +169,42 @@ describe(generateExplanationContentStep, () => {
     expect(result.results).toHaveLength(2);
     expect(result.results[0]?.activityId).toBe(activities[0]?.id);
     expect(result.results[0]?.steps).toEqual([
-      { text: "Step text", title: "Step title" },
-      { text: "Step text 2", title: "Step title 2" },
+      {
+        text: "Why doesn't internet data travel as one giant unlabeled blob?",
+        title: "",
+      },
+      {
+        text: "The message gets wrapped in layers of instructions so each part of the network knows what to do next.",
+        title: "",
+      },
+      {
+        text: "You send a photo on WhatsApp while riding the bus and it still reaches your friend after passing through many network points.",
+        title: "On WhatsApp",
+      },
+      {
+        text: "Packets travel as smaller chunks so each network step can handle them reliably.",
+        title: "Small chunks",
+      },
+      {
+        text: "Each layer adds its own label for a different job.",
+        title: "Layer labels",
+      },
+      {
+        text: "This is why Google Maps can recalculate your route quickly.",
+        title: "Fast route updates",
+      },
+    ]);
+    expect(result.results[0]?.plan.map((entry) => entry.kind)).toEqual([
+      "static",
+      "visual",
+      "static",
+      "static",
+      "static",
+      "multipleChoice",
+      "static",
+      "visual",
+      "multipleChoice",
+      "static",
     ]);
     expect(result.results[1]?.activityId).toBe(activities[1]?.id);
   });
@@ -126,9 +232,7 @@ describe(generateExplanationContentStep, () => {
 
     const activities = await fetchLessonActivities(lesson.id);
 
-    generateActivityExplanationMock.mockResolvedValue({
-      data: { steps: [{ text: "text", title: "title" }] },
-    });
+    generateActivityExplanationMock.mockResolvedValue(createExplanationResult());
 
     await generateExplanationContentStep(activities, ["concept"], []);
 
@@ -174,7 +278,7 @@ describe(generateExplanationContentStep, () => {
 
     generateActivityExplanationMock
       .mockResolvedValueOnce({
-        data: { steps: [{ text: "ok", title: "ok" }] },
+        data: createExplanationResult().data,
       })
       .mockRejectedValueOnce(new Error("AI failure"));
 

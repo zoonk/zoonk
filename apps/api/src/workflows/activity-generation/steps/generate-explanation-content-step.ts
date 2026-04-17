@@ -2,6 +2,10 @@ import { createStepStream } from "@/workflows/_shared/stream-status";
 import { generateActivityExplanation } from "@zoonk/ai/tasks/activities/core/explanation";
 import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { rejected, settledValues } from "@zoonk/utils/settled";
+import {
+  type ExplanationActivityPlanEntry,
+  buildExplanationActivityPlan,
+} from "./_utils/build-explanation-activity-plan";
 import { type ActivitySteps } from "./_utils/get-activity-steps";
 import { type LessonActivity } from "./get-lesson-activities-step";
 
@@ -9,6 +13,10 @@ export type ExplanationResult = {
   activityId: string;
   concept: string;
   steps: ActivitySteps;
+};
+
+export type GeneratedExplanationResult = ExplanationResult & {
+  plan: ExplanationActivityPlanEntry[];
 };
 
 /**
@@ -23,7 +31,7 @@ async function generateSingleExplanation(
   activity: LessonActivity,
   concept: string,
   neighboringConcepts: string[],
-): Promise<ExplanationResult> {
+): Promise<GeneratedExplanationResult> {
   const result = await generateActivityExplanation({
     chapterTitle: activity.lesson.chapter.title,
     concept,
@@ -34,11 +42,22 @@ async function generateSingleExplanation(
     neighboringConcepts,
   });
 
-  if (!result?.data?.steps || result.data.steps.length === 0) {
+  if (!result?.data) {
     throw new Error("Empty AI result for explanation content");
   }
 
-  return { activityId: activity.id, concept, steps: result.data.steps };
+  const plan = buildExplanationActivityPlan(result.data);
+
+  if (plan.entries.length === 0 || plan.sourceSteps.length === 0) {
+    throw new Error("Empty explanation activity plan");
+  }
+
+  return {
+    activityId: activity.id,
+    concept,
+    plan: plan.entries,
+    steps: plan.sourceSteps,
+  };
 }
 
 /**
@@ -52,7 +71,7 @@ export async function generateExplanationContentStep(
   activities: LessonActivity[],
   concepts: string[],
   neighboringConcepts: string[],
-): Promise<{ results: ExplanationResult[] }> {
+): Promise<{ results: GeneratedExplanationResult[] }> {
   "use step";
 
   if (activities.length === 0) {

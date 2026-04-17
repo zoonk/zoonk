@@ -38,10 +38,73 @@ function createDispatchResult(
   );
 }
 
+function createExplanationResult() {
+  return {
+    data: {
+      anchor: {
+        text: "This is why Google Maps can recalculate your route quickly.",
+        title: "Fast route updates",
+      },
+      concepts: [
+        {
+          text: "Packets travel as smaller chunks so each network step can handle them reliably.",
+          title: "Small chunks",
+          visual: null,
+        },
+      ],
+      initialQuestion: {
+        explanation:
+          "The message gets wrapped in layers of instructions so each part of the network knows what to do next.",
+        question: "Why doesn't internet data travel as one giant unlabeled blob?",
+        visual: {
+          description: "An image of a message turning into a labeled packet.",
+          kind: "image" as const,
+        },
+      },
+      predict: [
+        {
+          concept: "Small chunks",
+          options: [
+            {
+              feedback: "Right. Smaller chunks are easier for the network to handle.",
+              isCorrect: true,
+              text: "Because the network handles smaller pieces more predictably",
+            },
+            {
+              feedback: "No. The goal is handling and routing, not decoration.",
+              isCorrect: false,
+              text: "Because it looks more organized on screen",
+            },
+          ],
+          question: "Why break the message into packets?",
+        },
+        {
+          concept: "Small chunks",
+          options: [
+            {
+              feedback: "Yes. The same chunk still needs different labels for different jobs.",
+              isCorrect: true,
+              text: "To give each layer the information it needs",
+            },
+            {
+              feedback: "Not this one. The labels are functional, not decorative.",
+              isCorrect: false,
+              text: "To make the packet look tidier",
+            },
+          ],
+          question: "Why can one packet still carry more than one label?",
+        },
+      ],
+      scenario: {
+        text: "You send a photo on WhatsApp while riding the bus and it still reaches your friend after crossing many network points.",
+        title: "On WhatsApp",
+      },
+    },
+  };
+}
+
 vi.mock("@zoonk/ai/tasks/activities/core/explanation", () => ({
-  generateActivityExplanation: vi.fn().mockResolvedValue({
-    data: { steps: [{ text: "Explanation step 1 text", title: "Explanation Step 1" }] },
-  }),
+  generateActivityExplanation: vi.fn().mockResolvedValue(createExplanationResult()),
 }));
 
 vi.mock("@zoonk/ai/tasks/activities/core/practice", () => ({

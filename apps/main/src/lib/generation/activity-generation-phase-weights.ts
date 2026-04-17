@@ -109,9 +109,8 @@ export function getPhaseWeights(kind: ActivityKind): Record<PhaseName, number> {
       ...ZERO_WEIGHTS,
       creatingVisuals: 35,
       gettingStarted: 3,
-      preparingVisuals: 44,
       saving: 4,
-      writingContent: 14,
+      writingContent: 58,
     };
   }
 

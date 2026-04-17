@@ -19,7 +19,7 @@ const visualKindSchema = z.enum([
   "timeline",
 ]);
 
-const visualDescriptionSchema = z.object({
+export const visualDescriptionSchema = z.object({
   description: z.string(),
   kind: visualKindSchema,
 });

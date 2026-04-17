@@ -12,6 +12,7 @@ function buildAnnotationMap(
         line: number;
         text: string;
       }[]
+    | null
     | undefined,
 ): Map<number, string> {
   const map = new Map<number, string>();
