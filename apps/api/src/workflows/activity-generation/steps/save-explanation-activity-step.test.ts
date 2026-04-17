@@ -43,7 +43,7 @@ describe(saveExplanationActivityStep, () => {
     vi.clearAllMocks();
   });
 
-  test("saves static content steps and marks activity as completed", async () => {
+  test("saves the mixed explanation flow and marks activity as completed", async () => {
     const lesson = await lessonFixture({
       chapterId: chapter.id,
       organizationId,
@@ -59,16 +59,51 @@ describe(saveExplanationActivityStep, () => {
       title: `Explanation ${randomUUID()}`,
     });
 
-    const contentSteps = [
-      { text: `First step text ${randomUUID()}`, title: "Step 1" },
-      { text: `Second step text ${randomUUID()}`, title: "Step 2" },
-      { text: `Third step text ${randomUUID()}`, title: "Step 3" },
+    const plan = [
+      {
+        kind: "static" as const,
+        text: `Why does this happen? ${randomUUID()}`,
+        title: "",
+      },
+      {
+        description: {
+          description: "An image of a packet with labels added around it.",
+          kind: "image" as const,
+        },
+        kind: "visual" as const,
+      },
+      {
+        kind: "static" as const,
+        text: `Each layer adds a different label. ${randomUUID()}`,
+        title: "",
+      },
+      {
+        kind: "multipleChoice" as const,
+        options: [
+          { feedback: "Correct.", isCorrect: true, text: "The network label" },
+          { feedback: "Nope.", isCorrect: false, text: "The app meaning" },
+        ],
+        question: "Which part does a router mainly read?",
+      },
+      {
+        kind: "static" as const,
+        text: `This is why Google Maps can update your route. ${randomUUID()}`,
+        title: "This is why",
+      },
+    ];
+
+    const visuals = [
+      {
+        kind: "image",
+        prompt: "An image of a packet with labels added around it.",
+        url: "https://example.com/packet.webp",
+      },
     ];
 
     await saveExplanationActivityStep({
       activityId: activity.id,
-      completedRows: [],
-      contentSteps,
+      plan,
+      visuals,
       workflowRunId: "workflow-1",
     });
 
@@ -82,13 +117,21 @@ describe(saveExplanationActivityStep, () => {
       }),
     ]);
 
-    expect(steps).toHaveLength(3);
+    expect(steps).toHaveLength(5);
 
     expect(steps.map((step) => [step.position, step.kind])).toEqual([
       [0, "static"],
+      [1, "visual"],
       [2, "static"],
+      [3, "multipleChoice"],
       [4, "static"],
     ]);
+
+    expect(steps[1]?.content).toEqual({
+      kind: "image",
+      prompt: "An image of a packet with labels added around it.",
+      url: "https://example.com/packet.webp",
+    });
 
     expect(dbActivity).toMatchObject({
       generationRunId: "workflow-1",
@@ -98,11 +141,17 @@ describe(saveExplanationActivityStep, () => {
     const events = getStreamedEvents(writeMock);
 
     expect(events).toContainEqual(
-      expect.objectContaining({ status: "started", step: "saveExplanationActivity" }),
+      expect.objectContaining({
+        status: "started",
+        step: "saveExplanationActivity",
+      }),
     );
 
     expect(events).toContainEqual(
-      expect.objectContaining({ status: "completed", step: "saveExplanationActivity" }),
+      expect.objectContaining({
+        status: "completed",
+        step: "saveExplanationActivity",
+      }),
     );
   });
 
@@ -111,15 +160,18 @@ describe(saveExplanationActivityStep, () => {
 
     await saveExplanationActivityStep({
       activityId: invalidActivityId,
-      completedRows: [],
-      contentSteps: [{ text: "some text", title: "Title" }],
+      plan: [{ kind: "static", text: "some text", title: "Title" }],
+      visuals: [],
       workflowRunId: "workflow-2",
     });
 
     const events = getStreamedEvents(writeMock);
 
     expect(events).toContainEqual(
-      expect.objectContaining({ status: "error", step: "saveExplanationActivity" }),
+      expect.objectContaining({
+        status: "error",
+        step: "saveExplanationActivity",
+      }),
     );
   });
 });

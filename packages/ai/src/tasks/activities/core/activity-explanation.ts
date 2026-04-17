@@ -2,19 +2,67 @@ import "server-only";
 import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
 import { Output, generateText } from "ai";
 import { z } from "zod";
+import { visualDescriptionSchema } from "../../steps/step-visual-descriptions";
 import systemPrompt from "./activity-explanation.prompt.md";
 
 const DEFAULT_MODEL = "openai/gpt-5.4";
 const FALLBACK_MODELS = ["anthropic/claude-opus-4.6", "google/gemini-3.1-pro-preview"];
 
-const schema = z.object({
-  steps: z.array(
-    z.object({
-      text: z.string(),
-      title: z.string(),
-    }),
-  ),
-});
+const predictOptionSchema = z
+  .object({
+    feedback: z.string(),
+    isCorrect: z.boolean(),
+    text: z.string(),
+  })
+  .strict();
+
+const anchorSchema = z
+  .object({
+    text: z.string(),
+    title: z.string(),
+  })
+  .strict();
+
+const conceptSchema = z
+  .object({
+    text: z.string(),
+    title: z.string(),
+    visual: visualDescriptionSchema.nullable(),
+  })
+  .strict();
+
+const initialQuestionSchema = z
+  .object({
+    explanation: z.string(),
+    question: z.string(),
+    visual: visualDescriptionSchema,
+  })
+  .strict();
+
+const predictSchema = z
+  .object({
+    concept: z.string(),
+    options: z.array(predictOptionSchema),
+    question: z.string(),
+  })
+  .strict();
+
+const scenarioSchema = z
+  .object({
+    text: z.string(),
+    title: z.string(),
+  })
+  .strict();
+
+const schema = z
+  .object({
+    anchor: anchorSchema,
+    concepts: z.array(conceptSchema),
+    initialQuestion: initialQuestionSchema,
+    predict: z.array(predictSchema),
+    scenario: scenarioSchema,
+  })
+  .strict();
 
 export type ActivityExplanationSchema = z.infer<typeof schema>;
 

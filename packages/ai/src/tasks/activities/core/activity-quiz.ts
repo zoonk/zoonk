@@ -2,6 +2,7 @@ import "server-only";
 import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
 import { Output, generateText } from "ai";
 import { z } from "zod";
+import { formatExplanationStepsForPrompt } from "./_utils/format-explanation-steps";
 import systemPrompt from "./activity-quiz.prompt.md";
 
 const DEFAULT_MODEL = "openai/gpt-5.4";
@@ -98,9 +99,7 @@ export async function generateActivityQuiz({
   useFallback = true,
   reasoningEffort,
 }: ActivityQuizParams) {
-  const formattedExplanationSteps = explanationSteps
-    .map((step, index) => `${index + 1}. ${step.title}: ${step.text}`)
-    .join("\n");
+  const formattedExplanationSteps = formatExplanationStepsForPrompt(explanationSteps);
 
   const userPrompt = `LESSON_TITLE: ${lessonTitle}
 LESSON_DESCRIPTION: ${lessonDescription}

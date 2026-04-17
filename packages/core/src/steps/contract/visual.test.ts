@@ -32,6 +32,22 @@ describe("visual content contracts", () => {
     });
   });
 
+  test("parses code visual content with null annotations", () => {
+    const content = visualStepContentSchema.parse({
+      annotations: null,
+      code: "const x = 1;",
+      kind: "code",
+      language: "typescript",
+    });
+
+    expect(content).toEqual({
+      annotations: null,
+      code: "const x = 1;",
+      kind: "code",
+      language: "typescript",
+    });
+  });
+
   test("parses chart visual content", () => {
     const content = visualStepContentSchema.parse({
       chartType: "bar",

@@ -7,14 +7,12 @@ type ExplanationSteps =
   | "getNeighboringConcepts"
   | "setActivityAsRunning"
   | "generateExplanationContent"
-  | "generateVisualDescriptions"
   | "generateVisualContent"
   | "saveExplanationActivity";
 
 export const EXPLANATION_PHASE_STEPS = {
   creatingVisuals: ["generateVisualContent"],
   gettingStarted: ["getLessonActivities", "getNeighboringConcepts", "setActivityAsRunning"],
-  preparingVisuals: ["generateVisualDescriptions"],
   saving: ["saveExplanationActivity"],
   writingContent: ["generateExplanationContent"],
 } as const satisfies Record<string, readonly ActivityStepName[]>;
@@ -29,7 +27,6 @@ type _ValidateExplanation = AssertAllCovered<
 export const EXPLANATION_PHASE_ORDER: PhaseName[] = [
   "gettingStarted",
   "writingContent",
-  "preparingVisuals",
   "creatingVisuals",
   "saving",
 ];

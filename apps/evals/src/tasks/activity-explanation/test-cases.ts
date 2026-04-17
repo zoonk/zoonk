@@ -1,32 +1,36 @@
 const SHARED_EXPECTATIONS = `
 EVALUATION CRITERIA:
 
-1. FACTUAL ACCURACY: Any scientific processes, mechanisms, or technical details must be correct. Penalize hallucinations, made-up components, or incorrect cause-effect relationships.
+1. FACTUAL ACCURACY: The explanation must be technically correct for the topic. Penalize invented mechanisms, wrong cause-effect chains, or misleading simplifications.
 
-2. DEPTH: Complex topics require multi-layered explanations. Penalize superficial overviews that skip essential mechanisms.
+2. REQUIRED STRUCTURE: The output must contain:
+   - initialQuestion { question, visual, explanation }
+   - scenario { title, text }
+   - concepts[] with title, text, visual
+   - predict[] with exactly 2 checks
+   - anchor { title, text }
 
-3. CLARITY: Steps should build understanding progressively, explaining concepts in accessible language.
+3. HOOK QUALITY: initialQuestion should create curiosity before teaching. Penalize dry definitions, obvious trivia questions, or hooks that already explain the answer.
 
-4. FORMAT: Each step must have a title (max 50 chars) and text (max 300 chars).
+4. SCENARIO QUALITY: scenario.text must open inside a concrete daily-life situation. Penalize domain jargon, "imagine that...", abstract framing, or scenarios that feel like an educational exercise instead of real life.
 
-5. TONE: Conversational, warm, and plainspoken, like an expert explaining to a complete beginner. It should feel human and friendly, not academic.
+5. CONCEPT QUALITY: concepts should do the real teaching. Penalize repetition, vague filler, or concept texts that stay so shallow the learner only gets a slogan.
 
-6. CONCRETE CLARITY: Explanations should start concrete and objective, then use well-chosen comparisons, mini-scenarios, or analogies when they help.
+6. VISUAL QUALITY: initialQuestion.visual is required and must be an instructional visual brief, not decorative art. concept visuals should appear only when they clarify something. Penalize vague visuals, decorative visuals, or visuals that do not help explain the concept.
 
-7. FOCUS: Explains WHAT something IS, not history or origin stories.
+7. PREDICT QUALITY: predict checks should reinforce understanding, not act like tricky exams. Penalize gotcha wording, obviously silly distractors, generic feedback, or checks that are disconnected from nearby concepts. Feedback must add real explanatory value: penalize feedback that only says the learner is right/wrong, merely paraphrases the chosen option, or fails to explain the reasoning behind the answer. The first check should land around the middle of concepts, and the second should land after the final concept via the concept title reference.
 
-8. SCOPE: Content matches the lesson scope exactly.
+8. ANCHOR QUALITY: anchor must tie back to a real product, system, or daily behavior. Penalize abstract "this matters" endings, metaphors, or fake/non-concrete examples.
+
+9. STYLE: Keep every section short, distinct, and readable. Penalize long paragraphs, heavy redundancy, academic tone, or repeated explanations across hook, scenario, concepts, and anchor.
 
 ANTI-CHECKLIST GUIDANCE (CRITICAL):
-- Do NOT penalize for missing components, phases, or concepts you might expect
-- Do NOT require a specific number of steps
-- Do NOT check against an imagined "complete" explanation
-- Do NOT penalize for output format or structure (e.g., JSON wrapping, key names, array nesting). We use structured outputs, so focus exclusively on content quality
-- Do NOT penalize for the ordering of explanation steps. Different valid structures and sequences exist
-- Do NOT require a specific number of analogies or comparisons
-- Penalize if the explanation reads like lecture notes, uses only one weak throwaway analogy, swings back to an analogy in nearly every step, or relies on canned explainer phrases that do not sound like real speech
-- ONLY penalize for: factual errors, superficial treatment of complex topics, not using the warm/conversational tone we asked for, canned or robotic phrasing, weak or unhelpful concrete comparisons, or poor explanation structure
-- Different valid explanatory approaches exist - assess the quality of what IS provided
+- Do NOT require a fixed number of concepts. Some topics need fewer, some need more
+- Do NOT penalize for omitting concept visuals when the explanation is already clear without them
+- Do NOT require specific title wording, specific real-world products, or a specific visual kind
+- Do NOT penalize for creative daily-life scenarios if they stay concrete and jargon-free
+- Do NOT focus on JSON wrapping or formatting trivia. Evaluate the content and structural fit
+- ONLY penalize for: wrong structure, factual errors, weak hook/scenario/anchor design, vague or decorative visuals, shallow concept teaching, bad predict checks, redundancy, or breaking the writing constraints
 `;
 
 export const TEST_CASES = [
@@ -34,28 +38,27 @@ export const TEST_CASES = [
     expectations: `
 TOPIC-SPECIFIC GUIDANCE:
 
-1. ACCURACY CHECK: Network data movement involves specific concepts like encapsulation, protocol layers, and hop-by-hop forwarding. Penalize if:
-   - Encapsulation is confused with encryption (encapsulation wraps data with headers at each layer)
+1. ACCURACY CHECK: Encapsulation is about wrapping data with protocol-specific headers as it moves through layers. Penalize if:
+   - Encapsulation is confused with encryption
+   - It implies routers see the whole application message unchanged at every stage
 
-2. DEPTH CHECK: Penalize if the explanation treats data movement as simply "data goes from A to B" without showing how encapsulation and forwarding constraints work together.
+2. DEPTH CHECK: Penalize if the concepts reduce everything to "data goes from A to B" without showing that each layer adds structure for a different job.
 
 ${SHARED_EXPECTATIONS}
     `,
-    id: "en-web-data-movement",
+    id: "en-web-encapsulation",
     userInput: {
       chapterTitle: "Networking fundamentals",
       concept: "Encapsulation",
       courseTitle: "Web Development",
       language: "en",
       lessonDescription:
-        "Core building blocks for how data moves across networks, from encapsulation to hop-by-hop forwarding constraints.",
-      lessonTitle: "How Data Moves on Networks",
+        "How network data gets wrapped with layer-specific information so different parts of the network know what to do with it.",
+      lessonTitle: "Encapsulation",
       neighboringConcepts: [
         "DNS Resolution",
         "TCP Handshake",
-        "Socket Programming",
         "Hop-by-Hop Forwarding",
-        "Maximum Transmission Unit",
         "Packet Fragmentation",
       ],
     },
@@ -66,59 +69,28 @@ LANGUAGE REQUIREMENT: Titles and text must be in Portuguese.
 
 TOPIC-SPECIFIC GUIDANCE:
 
-1. ACCURACY CHECK: Python numeric types involve specific relationships between float, bool, and int. Penalize if:
-   - bool is described as unrelated to int (bool is a subclass of int in Python)
+1. ACCURACY CHECK: Python numeric types have a specific relationship. Penalize if:
+   - bool is treated as unrelated to int
+   - floating-point numbers are described as exact decimal storage
 
-2. DEPTH CHECK: Penalize if the explanation treats floats and bools as simple "number types" without showing the structural relationship between bool and int, or the significance of floating-point representation.
+2. DEPTH CHECK: Penalize if the explanation only says "float has decimals and bool is true/false" without addressing representation or the bool-int relationship.
 
 ${SHARED_EXPECTATIONS}
     `,
     id: "pt-python-float-bool",
     userInput: {
       chapterTitle: "Tipos numéricos e valores especiais",
-      concept: "Ponto Flutuante",
+      concept: "Float e bool como tipos numéricos",
       courseTitle: "Python",
       language: "pt",
       lessonDescription:
-        "Valores de ponto flutuante e booleanos, sintaxe de literais e a relação estrutural entre bool e int.",
+        "Como floats representam números com casas decimais e como bool se encaixa na hierarquia numérica do Python.",
       lessonTitle: "Float e bool como tipos numéricos",
       neighboringConcepts: [
         "Conversão de Tipos",
         "Operadores Aritméticos",
         "Comparação de Valores",
         "Booleanos como Inteiros",
-        "Literais Numéricos",
-        "Hierarquia de Tipos",
-      ],
-    },
-  },
-  {
-    expectations: `
-TOPIC-SPECIFIC GUIDANCE:
-
-1. ACCURACY CHECK: Labor market aggregates involve specific empirical patterns during business cycles. Penalize if:
-   - Unemployment is described as moving inversely with output without acknowledging lags (unemployment typically lags GDP changes)
-
-2. DEPTH CHECK: Penalize if the explanation treats labor markets during downturns as simply "people lose jobs" without showing the empirical regularities in employment, hours, and participation rates.
-
-${SHARED_EXPECTATIONS}
-    `,
-    id: "en-economics-labor-cycles",
-    userInput: {
-      chapterTitle: "Business cycles",
-      concept: "Unemployment Rate",
-      courseTitle: "Economics",
-      language: "en",
-      lessonDescription:
-        "Empirical regularities linking downturns to labor market outcomes at the level of aggregate fluctuations, without modeling search or wage-setting mechanisms.",
-      lessonTitle: "Labor market aggregates over the cycle",
-      neighboringConcepts: [
-        "GDP Growth Rate",
-        "Inflation Targeting",
-        "Fiscal Multiplier",
-        "Hours Worked",
-        "Labor Force Participation",
-        "Discouraged Workers",
       ],
     },
   },
@@ -128,30 +100,57 @@ LANGUAGE REQUIREMENT: Titles and text must be in Spanish.
 
 TOPIC-SPECIFIC GUIDANCE:
 
-1. ACCURACY CHECK: α-acidity and enolate chemistry involve specific chemical concepts. Penalize if:
-   - Enolates are described as electrophiles (they are nucleophiles)
-   - α-hydrogen acidity is attributed to inductive effects alone (resonance stabilization of the enolate is the primary factor)
+1. ACCURACY CHECK: Enolate chemistry depends on resonance-stabilized nucleophiles. Penalize if:
+   - The enolate is described as an electrophile
+   - The alpha position is explained only through inductive effects
 
-2. DEPTH CHECK: Penalize if the explanation treats enolate formation as simply "removing a hydrogen" without showing why the α-position is specifically acidic and how the resulting enolate acts as a nucleophile.
+2. DEPTH CHECK: Penalize if the concepts never explain why the alpha hydrogen is unusually acidic or what the resulting enolate can do.
 
 ${SHARED_EXPECTATIONS}
     `,
-    id: "es-quimica-acidez-enolatos",
+    id: "es-quimica-enolatos",
     userInput: {
       chapterTitle: "Carbonilos y enolatos",
-      concept: "Acidez en Posición Alfa",
+      concept: "Acidez en posición alfa",
       courseTitle: "Química",
       language: "es",
       lessonDescription:
-        "Origen de la acidez en α y cómo se forma el enolato como nucleófilo clave en reacciones de construcción C–C.",
-      lessonTitle: "Acidez en α y formación de enolatos",
+        "Por qué ciertos hidrógenos junto al carbonilo salen con más facilidad y cómo eso forma un enolato útil para construir enlaces C-C.",
+      lessonTitle: "Acidez en posición alfa",
       neighboringConcepts: [
-        "Adición Nucleofílica",
-        "Reducción de Carbonilos",
-        "Protección de Grupos Funcionales",
-        "Estabilización por Resonancia",
-        "Enolato como Nucleófilo",
-        "Condensación Aldólica",
+        "Adición nucleofílica",
+        "Estabilización por resonancia",
+        "Enolato como nucleófilo",
+        "Condensación aldólica",
+      ],
+    },
+  },
+  {
+    expectations: `
+TOPIC-SPECIFIC GUIDANCE:
+
+1. ACCURACY CHECK: Labor-market indicators react differently over the business cycle. Penalize if:
+   - Unemployment is treated as moving instantly with GDP
+   - Participation is described as always moving in the same direction for the same reason
+
+2. DEPTH CHECK: Penalize if the concepts collapse the topic into "recession means job loss" without explaining the different aggregates and lags.
+
+${SHARED_EXPECTATIONS}
+    `,
+    id: "en-economics-labor-aggregates",
+    userInput: {
+      chapterTitle: "Business cycles",
+      concept: "Labor market aggregates over the cycle",
+      courseTitle: "Economics",
+      language: "en",
+      lessonDescription:
+        "How employment, unemployment, hours, and participation move during booms and downturns, including important timing differences.",
+      lessonTitle: "Labor market aggregates over the cycle",
+      neighboringConcepts: [
+        "GDP Growth Rate",
+        "Inflation Targeting",
+        "Hours Worked",
+        "Labor Force Participation",
       ],
     },
   },
@@ -161,29 +160,28 @@ LANGUAGE REQUIREMENT: Titles and text must be in Portuguese.
 
 TOPIC-SPECIFIC GUIDANCE:
 
-1. ACCURACY CHECK: Automation measurement in legal tech involves specific operational metrics. Penalize if:
-   - Metrics are described without connection to quality or safety concerns (the focus should be on quality assurance and audit trails)
+1. ACCURACY CHECK: Document automation monitoring in legal tech should stay tied to quality and auditability. Penalize if:
+   - Metrics are framed only as speed or cost
+   - Audit trails are ignored when talking about quality control
 
-2. DEPTH CHECK: Penalize if the explanation treats automation monitoring as simply "checking if it works" without showing what specific metrics matter for document quality and safety.
+2. DEPTH CHECK: Penalize if the concepts never identify what is being measured or why those measurements matter for safety and review.
 
 ${SHARED_EXPECTATIONS}
     `,
-    id: "pt-direito-medicao-automacao",
+    id: "pt-legaltech-quality-metrics",
     userInput: {
-      chapterTitle: "Legal tech e automação de documentos",
-      concept: "Métricas de Qualidade Documental",
+      chapterTitle: "Legal tech e automação documental",
+      concept: "Métricas de qualidade documental",
       courseTitle: "Direito",
       language: "pt",
       lessonDescription:
-        "Métricas operacionais focadas em qualidade e segurança da automação documental, com rastros para auditoria.",
-      lessonTitle: "Medição e monitoramento da automação",
+        "Como acompanhar qualidade, consistência e rastreabilidade na automação de documentos jurídicos.",
+      lessonTitle: "Métricas de qualidade documental",
       neighboringConcepts: [
         "Templates Jurídicos",
-        "Integração com Sistemas Judiciais",
         "Assinatura Digital",
         "Rastros de Auditoria",
         "Classificação de Erros",
-        "Indicadores de Segurança",
       ],
     },
   },
@@ -191,28 +189,26 @@ ${SHARED_EXPECTATIONS}
     expectations: `
 TOPIC-SPECIFIC GUIDANCE:
 
-1. ACCURACY CHECK: Connectivity debugging involves systematic layer-by-layer reasoning. Penalize if:
-   - Debugging is described as starting from the application layer down (systematic models typically start from physical/link layer up)
-   - Mental models are confused with specific tool outputs (the focus is on reasoning frameworks, not tool usage)
+1. ACCURACY CHECK: Layer-by-layer isolation is a debugging method for narrowing where connectivity breaks. Penalize if:
+   - It turns into a list of tool commands instead of a reasoning model
+   - It implies you should start with the application and guess downward
 
-2. DEPTH CHECK: Penalize if the explanation treats debugging as simply "check if it works" without showing how to systematically narrow a connectivity problem to a specific layer — host, subnet, gateway, path, or service.
+2. DEPTH CHECK: Penalize if the concepts never separate host, subnet, gateway, path, and service-level possibilities.
 
 ${SHARED_EXPECTATIONS}
     `,
-    id: "en-web-debugging-mental-models",
+    id: "en-web-layer-isolation",
     userInput: {
       chapterTitle: "Networking fundamentals",
-      concept: "Layer-by-Layer Isolation",
+      concept: "Layer-by-layer isolation",
       courseTitle: "Web Development",
       language: "en",
       lessonDescription:
-        "Practical mental models for narrowing a problem to host, subnet, gateway, path, or service-layer reachability without relying on protocol-specific details.",
-      lessonTitle: "Connectivity Debugging Mental Models",
+        "A practical mental model for narrowing connectivity problems by checking one layer of the path at a time.",
+      lessonTitle: "Layer-by-layer isolation",
       neighboringConcepts: [
         "Latency Measurement",
-        "Load Balancing",
         "Network Address Translation",
-        "Host Configuration Check",
         "Gateway Reachability",
         "Service-Layer Diagnosis",
       ],

@@ -3,48 +3,162 @@ import { assertStepContent } from "@zoonk/core/steps/contract/content";
 import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
-import { type ActivitySteps } from "./_utils/get-activity-steps";
-import { type VisualStepRow } from "./_utils/visual-rows";
+import { type ExplanationActivityPlanEntry } from "./_utils/build-explanation-activity-plan";
 import { handleActivityFailureStep } from "./handle-failure-step";
 
+type StepCreateManyData = NonNullable<Parameters<typeof prisma.step.createMany>[0]>["data"];
+
+type ArrayItem<T> = T extends readonly (infer Item)[] ? Item : T extends (infer Item)[] ? Item : T;
+
+type StepRecord = ArrayItem<StepCreateManyData>;
+
 /**
- * Builds static step records from content data.
- * Static steps are placed at even positions (index * 2)
- * to leave room for visual steps at odd positions.
+ * Explanation activities have an explicit ordered plan with optional
+ * visuals and inline predict checks. Saving directly from that plan keeps the
+ * database order identical to the learner flow instead of rebuilding positions
+ * from separate static and visual arrays.
  */
-function buildStaticStepRecords(activityId: string, steps: ActivitySteps) {
-  return steps.map((step, index) => ({
-    activityId,
-    content: assertStepContent("static", {
-      text: step.text,
-      title: step.title,
-      variant: "text",
+function buildExplanationStepRecords({
+  activityId,
+  plan,
+  visuals,
+}: {
+  activityId: string;
+  plan: ExplanationActivityPlanEntry[];
+  visuals: Record<string, unknown>[];
+}) {
+  const visualContentByPosition = buildVisualContentByPosition({ plan, visuals });
+
+  return plan.map((entry, position) =>
+    buildExplanationStepRecord({
+      activityId,
+      entry,
+      position,
+      visualContentByPosition,
     }),
-    isPublished: true,
-    kind: "static" as const,
-    position: index * 2,
-  }));
+  );
 }
 
 /**
- * Persists all generated data for a single explanation activity in one batch:
- * - Static content steps (at even positions)
- * - Visual steps with image URLs (at odd positions)
- * - Marks the activity as completed
- *
- * This is the single save point for an explanation entity.
- * All upstream generate steps (content, visuals, images) produce data only;
- * this step writes everything to the database at once.
+ * Explanation visuals are generated separately from the text plan, but the
+ * database needs one exact ordered sequence. This helper reattaches each
+ * generated visual to the visual slot it belongs to before any records are
+ * created, so the save code stays simple and deterministic.
+ */
+function buildVisualContentByPosition({
+  plan,
+  visuals,
+}: {
+  plan: ExplanationActivityPlanEntry[];
+  visuals: Record<string, unknown>[];
+}) {
+  const visualPositions = plan.flatMap((entry, position) =>
+    entry.kind === "visual" ? [position] : [],
+  );
+
+  if (visualPositions.length !== visuals.length) {
+    throw new Error("Generated visual count does not match explanation plan");
+  }
+
+  return new Map(
+    visualPositions.map((position, index) => [position, getVisualContent({ index, visuals })]),
+  );
+}
+
+/**
+ * The visual generator returns raw payloads because the concrete shape depends
+ * on the chosen visual kind. Validating each payload here gives the save step
+ * one trusted visual type before we write anything to the database.
+ */
+function getVisualContent({
+  index,
+  visuals,
+}: {
+  index: number;
+  visuals: Record<string, unknown>[];
+}) {
+  const visual = visuals[index];
+
+  if (!visual) {
+    throw new Error("Missing generated visual for explanation plan");
+  }
+
+  return assertStepContent("visual", visual);
+}
+
+/**
+ * Every explanation plan entry becomes exactly one persisted step record. This
+ * helper keeps the branching for static copy, predict checks, and visuals in
+ * one place so the main save function reads like a straight pipeline.
+ */
+function buildExplanationStepRecord({
+  activityId,
+  entry,
+  position,
+  visualContentByPosition,
+}: {
+  activityId: string;
+  entry: ExplanationActivityPlanEntry;
+  position: number;
+  visualContentByPosition: Map<number, StepRecord["content"]>;
+}): StepRecord {
+  if (entry.kind === "static") {
+    return {
+      activityId,
+      content: assertStepContent("static", {
+        text: entry.text,
+        title: entry.title,
+        variant: "text",
+      }),
+      isPublished: true,
+      kind: "static" as const,
+      position,
+    };
+  }
+
+  if (entry.kind === "multipleChoice") {
+    return {
+      activityId,
+      content: assertStepContent("multipleChoice", {
+        kind: "core",
+        options: entry.options,
+        question: entry.question,
+      }),
+      isPublished: true,
+      kind: "multipleChoice" as const,
+      position,
+    };
+  }
+
+  const visualContent = visualContentByPosition.get(position);
+
+  if (!visualContent) {
+    throw new Error("Missing generated visual for explanation plan");
+  }
+
+  return {
+    activityId,
+    content: visualContent,
+    isPublished: true,
+    kind: "visual" as const,
+    position,
+  };
+}
+
+/**
+ * Persists the full explanation activity plan in one transaction and marks the
+ * activity as completed. Upstream steps only produce structured data; this is
+ * the single write point that turns that plan into real DB rows.
  */
 export async function saveExplanationActivityStep({
   activityId,
-  completedRows,
-  contentSteps,
+  plan,
+  visuals,
   workflowRunId,
 }: {
   activityId: string;
-  completedRows: VisualStepRow[];
-  contentSteps: ActivitySteps;
+  plan: ExplanationActivityPlanEntry[];
+  visuals: Record<string, unknown>[];
   workflowRunId: string;
 }): Promise<void> {
   "use step";
@@ -53,12 +167,19 @@ export async function saveExplanationActivityStep({
 
   await stream.status({ status: "started", step: "saveExplanationActivity" });
 
-  const staticRecords = buildStaticStepRecords(activityId, contentSteps);
-  const allStepRecords = [...staticRecords, ...completedRows];
+  const { data: stepRecords, error: buildError } = await safeAsync(async () =>
+    buildExplanationStepRecords({ activityId, plan, visuals }),
+  );
+
+  if (buildError || !stepRecords) {
+    await stream.error({ reason: "dbSaveFailed", step: "saveExplanationActivity" });
+    await handleActivityFailureStep({ activityId });
+    return;
+  }
 
   const { error } = await safeAsync(() =>
     prisma.$transaction([
-      prisma.step.createMany({ data: allStepRecords }),
+      prisma.step.createMany({ data: stepRecords }),
       prisma.activity.update({
         data: { generationRunId: workflowRunId, generationStatus: "completed" },
         where: { id: activityId },

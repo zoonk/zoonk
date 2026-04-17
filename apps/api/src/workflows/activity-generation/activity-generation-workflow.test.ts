@@ -40,15 +40,81 @@ function createDispatchResult(
   );
 }
 
-vi.mock("@zoonk/ai/tasks/activities/core/explanation", () => ({
-  generateActivityExplanation: vi.fn().mockResolvedValue({
+function createExplanationResult(): Awaited<ReturnType<typeof generateActivityExplanation>> {
+  return {
     data: {
-      steps: [
-        { text: "Explanation step 1 text", title: "Explanation Step 1" },
-        { text: "Explanation step 2 text", title: "Explanation Step 2" },
+      anchor: {
+        text: "This is why Google Maps can recalculate your route quickly.",
+        title: "Fast route updates",
+      },
+      concepts: [
+        {
+          text: "Packets travel as smaller chunks so each network step can handle them reliably.",
+          title: "Small chunks",
+          visual: null,
+        },
+        {
+          text: "Each layer adds its own label for a different job.",
+          title: "Layer labels",
+          visual: null,
+        },
       ],
+      initialQuestion: {
+        explanation:
+          "The message gets wrapped in layers of instructions so each part of the network knows what to do next.",
+        question: "Why doesn't internet data travel as one giant unlabeled blob?",
+        visual: {
+          description: "An image of a message turning into a labeled packet.",
+          kind: "image" as const,
+        },
+      },
+      predict: [
+        {
+          concept: "Small chunks",
+          options: [
+            {
+              feedback: "Right. Smaller chunks are easier for the network to handle.",
+              isCorrect: true,
+              text: "Because the network handles smaller pieces more predictably",
+            },
+            {
+              feedback: "No. The goal is handling and routing, not decoration.",
+              isCorrect: false,
+              text: "Because it looks more organized on screen",
+            },
+          ],
+          question: "Why break the message into packets?",
+        },
+        {
+          concept: "Layer labels",
+          options: [
+            {
+              feedback: "Yes. Different layers need different details.",
+              isCorrect: true,
+              text: "Because each layer needs its own information",
+            },
+            {
+              feedback: "Not this one. The point is function, not aesthetics.",
+              isCorrect: false,
+              text: "Because more labels make the packet prettier",
+            },
+          ],
+          question: "Why add more than one label?",
+        },
+      ],
+      scenario: {
+        text: "You send a photo on WhatsApp while riding the bus and it still reaches your friend after passing through many network points.",
+        title: "On WhatsApp",
+      },
     },
-  }),
+    systemPrompt: "test",
+    usage: {} as Awaited<ReturnType<typeof generateActivityExplanation>>["usage"],
+    userPrompt: "test",
+  };
+}
+
+vi.mock("@zoonk/ai/tasks/activities/core/explanation", () => ({
+  generateActivityExplanation: vi.fn().mockResolvedValue(createExplanationResult()),
 }));
 
 vi.mock("@zoonk/ai/tasks/steps/visual-descriptions", () => ({

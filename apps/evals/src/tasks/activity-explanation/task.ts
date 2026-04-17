@@ -8,7 +8,7 @@ import { TEST_CASES } from "./test-cases";
 
 export const activityExplanationTask: Task<ActivityExplanationParams, ActivityExplanationSchema> = {
   description:
-    "Generate an explanation activity for a lesson that explains what a topic is and how it works conceptually",
+    "Generate a structured explanation activity with a hook, daily-life scenario, concept steps, inline predict checks, and a concrete anchor",
   generate: generateActivityExplanation,
   id: "activity-explanation",
   name: "Activity Explanation",

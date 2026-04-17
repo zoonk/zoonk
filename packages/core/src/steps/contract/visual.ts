@@ -9,7 +9,7 @@ const codeAnnotationSchema = z
 
 export const codeVisualContentSchema = z
   .object({
-    annotations: z.array(codeAnnotationSchema).optional(),
+    annotations: z.array(codeAnnotationSchema).nullable().optional(),
     code: z.string(),
     language: z.string(),
   })

@@ -2,13 +2,22 @@ import { getExistingContentSteps } from "../steps/_utils/content-step-helpers";
 import { findActivitiesByKind } from "../steps/_utils/find-activity-by-kind";
 import {
   type ExplanationResult,
+  type GeneratedExplanationResult,
   generateExplanationContentStep,
 } from "../steps/generate-explanation-content-step";
-import { generateVisualContentForActivityStep } from "../steps/generate-visual-content-step";
-import { generateVisualDescriptionsForActivityStep } from "../steps/generate-visuals-step";
+import { generateExplanationVisualContentStep } from "../steps/generate-explanation-visual-content-step";
 import { type LessonActivity } from "../steps/get-lesson-activities-step";
 import { handleActivityFailureStep } from "../steps/handle-failure-step";
 import { saveExplanationActivityStep } from "../steps/save-explanation-activity-step";
+
+/**
+ * Explanation visuals now come inline from the explanation task. Pulling the
+ * visual briefs out of the ordered plan keeps the rest of the workflow focused
+ * on execution instead of re-deriving where visuals belong.
+ */
+function getVisualDescriptions(result: GeneratedExplanationResult) {
+  return result.plan.flatMap((entry) => (entry.kind === "visual" ? [entry.description] : []));
+}
 
 /**
  * Marks explanation activities as failed when the content generation step
@@ -18,7 +27,7 @@ import { saveExplanationActivityStep } from "../steps/save-explanation-activity-
  */
 async function markDroppedExplanationsAsFailed(
   activitiesToGenerate: LessonActivity[],
-  results: ExplanationResult[],
+  results: GeneratedExplanationResult[],
 ): Promise<void> {
   const explanationsToGenerate = findActivitiesByKind(activitiesToGenerate, "explanation");
   const resultActivityIds = new Set(results.map((result) => result.activityId));
@@ -61,11 +70,11 @@ async function getResultsFromCompletedActivities(
  * Orchestrates explanation activity generation with per-entity save.
  *
  * Flow per entity:
- *   generateContent -> generateVisualDescriptions -> generateVisualContent -> save.
+ *   generateContent -> generateVisualContent -> save.
  *
- * Visual descriptions (stage 1) select the best visual kind for each step.
- * Visual content (stage 2) dispatches to per-kind tasks in parallel,
- * including image generation for image kinds.
+ * The main explanation task now writes the visual briefs inline with the rest
+ * of the activity structure, so the workflow only needs a separate execution
+ * step for producing the final visual payloads.
  *
  * Each entity is independent — if one fails, others continue.
  * The save step writes all data (content + visuals) at once
@@ -106,24 +115,20 @@ export async function explanationActivityWorkflow({
     generatedResults.map(async (result) => {
       const activity = explanationsToGenerate.find((a) => a.id === result.activityId);
 
-      if (!activity || result.steps.length === 0) {
+      if (!activity || result.plan.length === 0) {
         return;
       }
 
       try {
-        const { descriptions } = await generateVisualDescriptionsForActivityStep(
+        const { visuals } = await generateExplanationVisualContentStep(
           activity,
-          result.steps,
-        );
-        const { completedRows } = await generateVisualContentForActivityStep(
-          activity,
-          descriptions,
+          getVisualDescriptions(result),
         );
 
         await saveExplanationActivityStep({
           activityId: result.activityId,
-          completedRows,
-          contentSteps: result.steps,
+          plan: result.plan,
+          visuals,
           workflowRunId,
         });
       } catch {
