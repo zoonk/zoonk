@@ -10,11 +10,7 @@ async function generateOutputForTestCase(
   modelId: string,
   runNumber: number,
 ): Promise<OutputEntry> {
-  const inputSummary = Object.entries(testCase.userInput)
-    .map(([key, value]) => `${key}=${String(value)}`)
-    .join(", ");
-
-  logInfo(`Generating output for: ${inputSummary} (run ${runNumber})`);
+  logInfo(`Generating output for: ${testCase.id} (run ${runNumber})`);
 
   const model = getModelById(modelId);
   const gatewayModelId = getGatewayModelId(modelId);
