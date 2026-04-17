@@ -1,0 +1,187 @@
+apps/evals/eval-results/outputs/lesson-custom-activities/meta-llama-4-maverick.json
+  25f39c822d13540a 114
+apps/evals/src/tasks/lesson-custom-activities/test-cases.ts
+  25f39c822d13540a 1-230
+apps/evals/eval-results/outputs/lesson-custom-activities/anthropic-claude-opus-4.5.json
+  25f39c822d13540a 114
+apps/evals/eval-results/results/lesson-custom-activities/anthropic-claude-haiku-4.5.json
+  25f39c822d13540a 365
+apps/evals/eval-results/battles/lesson-custom-activities/en-music-guitar-setup-1.json
+  25f39c822d13540a 201
+apps/evals/eval-results/results/lesson-custom-activities/openai-gpt-5.1-instant.json
+  25f39c822d13540a 365
+apps/admin/src/data/stats/ai/_utils/build-ai-lesson-cost-estimates.ts
+  25f39c822d13540a 157-161
+apps/evals/eval-results/battles/lesson-custom-activities/en-fitness-squat-1.json
+  25f39c822d13540a 201
+apps/evals/eval-results/battles/lesson-custom-activities/en-cooking-pasta-1.json
+  25f39c822d13540a 201
+apps/evals/eval-results/battles/lesson-custom-activities/en-edge-simple-task-1.json
+  25f39c822d13540a 201
+apps/evals/eval-results/results/lesson-custom-activities/google-gemini-3-flash.json
+  25f39c822d13540a 365
+apps/evals/eval-results/outputs/lesson-custom-activities/xai-grok-4.1-fast-reasoning.json
+  25f39c822d13540a 114
+apps/evals/eval-results/battles/lesson-custom-activities/es-craft-origami-1.json
+  25f39c822d13540a 201
+apps/evals/eval-results/battles/lesson-custom-activities/en-science-volcano-1.json
+  25f39c822d13540a 201
+apps/evals/eval-results/results/lesson-custom-activities/meta-llama-4-maverick.json
+  25f39c822d13540a 370
+apps/evals/eval-results/outputs/lesson-custom-activities/anthropic-claude-haiku-4.5.json
+  25f39c822d13540a 114
+apps/evals/src/tasks/lesson-custom-activities/task.ts
+  25f39c822d13540a 3-6,9-12,15-17
+apps/evals/eval-results/battles/lesson-custom-activities/en-diy-paint-wall-1.json
+  25f39c822d13540a 201
+packages/ai/package.json
+  25f39c822d13540a 37
+AGENTS.md
+  h_1cda88fc21fe9c 193,195-205
+apps/evals/eval-results/outputs/lesson-custom-activities/google-gemini-2.5-flash-lite.json
+  25f39c822d13540a 114
+apps/evals/eval-results/outputs/lesson-custom-activities/openai-gpt-5.1-instant.json
+  25f39c822d13540a 114
+apps/evals/eval-results/results/lesson-custom-activities/google-gemini-3-pro-preview.json
+  25f39c822d13540a 370
+apps/api/src/workflows/lesson-generation/steps/generate-custom-activities-step.test.ts
+  25f39c822d13540a 25-26,29-30,70,76,96
+apps/api/src/workflows/lesson-generation/steps/generate-custom-activities-step.ts
+  25f39c822d13540a 3-5,12,20
+apps/evals/eval-results/battles/lesson-custom-activities/pt-tech-git-setup-1.json
+  25f39c822d13540a 201
+apps/evals/eval-results/outputs/lesson-custom-activities/google-gemini-3-pro-preview.json
+  25f39c822d13540a 114
+apps/evals/eval-results/results/lesson-custom-activities/xai-grok-4.1-fast-reasoning.json
+  25f39c822d13540a 365
+apps/evals/eval-results/outputs/lesson-custom-activities/openai-gpt-5.2.json
+  25f39c822d13540a 114
+apps/api/src/workflows/chapter-generation/chapter-generation-workflow.test.ts
+  25f39c822d13540a 46-47
+apps/evals/eval-results/results/lesson-custom-activities/anthropic-claude-opus-4.5.json
+  25f39c822d13540a 375
+apps/evals/eval-results/battles/lesson-custom-activities/en-photo-portrait-1.json
+  25f39c822d13540a 201
+apps/api/src/workflows/lesson-generation/steps/_utils/get-activities-for-kind.ts
+  25f39c822d13540a 1,96
+apps/evals/eval-results/battles/lesson-custom-activities/en-edge-complex-process-1.json
+  25f39c822d13540a 201
+apps/evals/eval-results/battles/lesson-custom-activities/pt-gardening-tomatoes-1.json
+  25f39c822d13540a 201
+apps/evals/eval-results/outputs/lesson-custom-activities/google-gemini-3-flash.json
+  25f39c822d13540a 114
+packages/ai/src/tasks/lessons/lesson-custom-activities.prompt.md
+  25f39c822d13540a 1-154
+apps/evals/src/tasks/index.ts
+  25f39c822d13540a 29,67
+apps/api/src/workflows/lesson-generation/steps/add-activities-step.ts
+  25f39c822d13540a 2,16
+apps/admin/src/data/stats/ai/ai-task-catalog.ts
+  25f39c822d13540a 127,218
+apps/evals/eval-results/outputs/lesson-custom-activities/openai-gpt-5-mini.json
+  25f39c822d13540a 114
+apps/api/src/workflows/course-generation/course-generation-workflow.test.ts
+  25f39c822d13540a 101-102
+apps/evals/eval-results/results/lesson-custom-activities/openai-gpt-5.2.json
+  25f39c822d13540a 370
+apps/evals/eval-results/results/lesson-custom-activities/google-gemini-2.5-flash-lite.json
+  25f39c822d13540a 395
+apps/evals/eval-results/results/lesson-custom-activities/openai-gpt-5-mini.json
+  25f39c822d13540a 370
+apps/evals/eval-results/battles/lesson-custom-activities/en-finance-budget-1.json
+  25f39c822d13540a 201
+packages/ai/src/tasks/lessons/lesson-custom-activities.ts
+  25f39c822d13540a 5,19-20,22,33,42,53
+apps/api/src/workflows/lesson-generation/lesson-generation-workflow.test.ts
+  25f39c822d13540a 4,27-28,203
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.0",
+  "base_commit_sha": "c07b54ee244f700300dd87970b451e5ced7291fc",
+  "prompts": {
+    "07b8a9cb04c82c91": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d937d-f5f9-7460-8094-f53458e39bf0",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 551,
+      "overriden_lines": 0
+    },
+    "25f39c822d13540a": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d9c83-f75d-7c50-8bbe-8f8a84b108c9",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 7960,
+      "total_deletions": 190,
+      "accepted_lines": 7867,
+      "overriden_lines": 0
+    },
+    "5895dcfdb08b13e6": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d93c7-a14d-78d2-b075-4579420632b7",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 5,
+      "overriden_lines": 0
+    },
+    "b3e2cf6cad4819a0": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d8d5d-7cba-70b1-8c17-ad7d6dff43e7",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 133,
+      "overriden_lines": 0
+    },
+    "b96aa95b162d6206": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d8db2-0332-7d93-84f8-0f778f7df0ff",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 1,
+      "overriden_lines": 0
+    },
+    "e121ac05599a2e7d": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d92e0-e4b6-78b3-8f0d-561aeed5d3a4",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 84,
+      "overriden_lines": 0
+    }
+  },
+  "humans": {
+    "h_1cda88fc21fe9c": {
+      "author": "ceolinwill"
+    }
+  }
+}
