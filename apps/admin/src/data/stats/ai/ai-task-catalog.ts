@@ -124,7 +124,7 @@ const AI_TASK_METADATA = {
     defaultModel: "openai/gpt-5.4",
     supportsFallbackReporting: true,
   },
-  "lesson-activities": {
+  "lesson-custom-activities": {
     defaultModel: "google/gemini-3-flash",
     supportsFallbackReporting: true,
   },
@@ -215,7 +215,7 @@ const AI_TASK_CATALOG_GROUP_DEFINITIONS = [
   {
     description:
       "Lesson scaffolding tasks that shape the structure before activity generation starts.",
-    taskNames: ["lesson-kind", "lesson-activities", "applied-activity-kind"],
+    taskNames: ["lesson-kind", "lesson-custom-activities", "applied-activity-kind"],
     title: "Lesson Flow",
   },
   {

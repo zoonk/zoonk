@@ -22,12 +22,12 @@ vi.mock("workflow", () => ({
   workflowStep: vi.fn().mockImplementation((_name: string, fn: unknown) => fn),
 }));
 
-const { generateLessonActivitiesMock } = vi.hoisted(() => ({
-  generateLessonActivitiesMock: vi.fn(),
+const { generateLessonCustomActivitiesMock } = vi.hoisted(() => ({
+  generateLessonCustomActivitiesMock: vi.fn(),
 }));
 
-vi.mock("@zoonk/ai/tasks/lessons/activities", () => ({
-  generateLessonActivities: generateLessonActivitiesMock,
+vi.mock("@zoonk/ai/tasks/lessons/custom-activities", () => ({
+  generateLessonCustomActivities: generateLessonCustomActivitiesMock,
 }));
 
 describe(generateCustomActivitiesStep, () => {
@@ -67,13 +67,13 @@ describe(generateCustomActivitiesStep, () => {
       { description: "Practice drills", title: "Practice" },
     ];
 
-    generateLessonActivitiesMock.mockResolvedValue({ data: { activities } });
+    generateLessonCustomActivitiesMock.mockResolvedValue({ data: { activities } });
 
     const result = await generateCustomActivitiesStep(context);
 
     expect(result).toEqual(activities);
 
-    expect(generateLessonActivitiesMock).toHaveBeenCalledWith({
+    expect(generateLessonCustomActivitiesMock).toHaveBeenCalledWith({
       chapterTitle: context.chapter.title,
       courseTitle: context.chapter.course.title,
       language: context.language,
@@ -93,7 +93,7 @@ describe(generateCustomActivitiesStep, () => {
   });
 
   test("throws and streams error when AI generation fails", async () => {
-    generateLessonActivitiesMock.mockRejectedValue(new Error("AI failure"));
+    generateLessonCustomActivitiesMock.mockRejectedValue(new Error("AI failure"));
 
     await expect(generateCustomActivitiesStep(context)).rejects.toThrow("AI failure");
 

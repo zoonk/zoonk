@@ -1,5 +1,5 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
-import { type GeneratedActivity } from "@zoonk/ai/tasks/lessons/activities";
+import { type GeneratedCustomActivity } from "@zoonk/ai/tasks/lessons/custom-activities";
 import { type AppliedActivityKind, type LessonStepName } from "@zoonk/core/workflows/steps";
 import { type ActivityCreateManyInput, type LessonKind, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
@@ -13,7 +13,7 @@ export async function addActivitiesStep(input: {
   generationRunId: string;
   isPublished: boolean;
   lessonKind: LessonKind;
-  customActivities: GeneratedActivity[];
+  customActivities: GeneratedCustomActivity[];
   targetLanguage: string | null;
 }): Promise<void> {
   "use step";

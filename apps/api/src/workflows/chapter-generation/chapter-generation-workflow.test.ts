@@ -43,8 +43,8 @@ vi.mock("@/workflows/activity-generation/activity-generation-workflow", () => ({
   activityGenerationWorkflow: vi.fn().mockResolvedValue({}),
 }));
 
-vi.mock("@zoonk/ai/tasks/lessons/activities", () => ({
-  generateLessonActivities: vi.fn().mockResolvedValue({
+vi.mock("@zoonk/ai/tasks/lessons/custom-activities", () => ({
+  generateLessonCustomActivities: vi.fn().mockResolvedValue({
     data: { activities: [] },
   }),
 }));

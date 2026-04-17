@@ -154,7 +154,11 @@ export function buildCustomLessonEstimate({
   });
   const lineItems = [
     buildGatewayLineItem({ averageRequestsPerRun: 1, taskName: "lesson-kind", usageByTask }),
-    buildGatewayLineItem({ averageRequestsPerRun: 1, taskName: "lesson-activities", usageByTask }),
+    buildGatewayLineItem({
+      averageRequestsPerRun: 1,
+      taskName: "lesson-custom-activities",
+      usageByTask,
+    }),
     buildGatewayLineItem({
       averageRequestsPerRun: averageCustomActivities,
       taskName: "activity-custom",
