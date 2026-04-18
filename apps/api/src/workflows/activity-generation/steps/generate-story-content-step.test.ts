@@ -56,6 +56,7 @@ const mockStoryData = {
       situation: "Your supplier went bankrupt.",
     },
   ],
+  title: "The night the labels got swapped",
 };
 
 describe(generateStoryContentStep, () => {
@@ -103,6 +104,7 @@ describe(generateStoryContentStep, () => {
 
     expect(result.activityId).toBe(activities.find((a) => a.kind === "story")?.id);
     expect(result.storySteps).toEqual(mockStoryData);
+    expect(result.title).toBe("The night the labels got swapped");
   });
 
   test("passes lesson concepts and context to the AI task", async () => {
@@ -157,7 +159,7 @@ describe(generateStoryContentStep, () => {
 
     const result = await generateStoryContentStep(activities);
 
-    expect(result).toEqual({ activityId: null, storySteps: null });
+    expect(result).toEqual({ activityId: null, storySteps: null, title: null });
     expect(generateActivityStoryStepsMock).not.toHaveBeenCalled();
   });
 
@@ -180,12 +182,17 @@ describe(generateStoryContentStep, () => {
     const activities = await fetchLessonActivities(lesson.id);
 
     generateActivityStoryStepsMock.mockResolvedValue({
-      data: { intro: "Intro", metrics: ["M"], steps: [] },
+      data: {
+        intro: "Intro",
+        metrics: ["M"],
+        steps: [],
+        title: "The night the labels got swapped",
+      },
     });
 
     const result = await generateStoryContentStep(activities);
 
-    expect(result).toEqual({ activityId: null, storySteps: null });
+    expect(result).toEqual({ activityId: null, storySteps: null, title: null });
 
     const updated = await prisma.activity.findUniqueOrThrow({ where: { id: dbActivity.id } });
     expect(updated.generationStatus).toBe("failed");
@@ -223,7 +230,7 @@ describe(generateStoryContentStep, () => {
 
     const result = await generateStoryContentStep(activities);
 
-    expect(result).toEqual({ activityId: null, storySteps: null });
+    expect(result).toEqual({ activityId: null, storySteps: null, title: null });
 
     const updated = await prisma.activity.findUniqueOrThrow({ where: { id: dbActivity.id } });
     expect(updated.generationStatus).toBe("failed");

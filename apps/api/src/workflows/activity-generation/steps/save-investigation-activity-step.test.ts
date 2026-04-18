@@ -27,6 +27,7 @@ vi.mock("workflow", () => ({
 const mockScenario = {
   explanations: ["Best explanation text", "Wrong explanation text"],
   scenario: "A mysterious drop in website traffic occurred overnight.",
+  title: "Who froze the payment queue?",
 };
 
 const mockAccuracy = {
@@ -85,7 +86,7 @@ describe(saveInvestigationActivityStep, () => {
       language: "en",
       lessonId: lesson.id,
       organizationId,
-      title: `Investigation ${randomUUID()}`,
+      title: null,
     });
 
     await saveInvestigationActivityStep({
@@ -94,6 +95,7 @@ describe(saveInvestigationActivityStep, () => {
       activityId: activity.id,
       findings: mockFindings,
       scenario: mockScenario,
+      title: mockScenario.title,
       workflowRunId: "workflow-1",
     });
 
@@ -151,6 +153,7 @@ describe(saveInvestigationActivityStep, () => {
     expect(dbActivity).toMatchObject({
       generationRunId: "workflow-1",
       generationStatus: "completed",
+      title: mockScenario.title,
     });
 
     const events = getStreamedEvents(writeMock);
@@ -186,6 +189,7 @@ describe(saveInvestigationActivityStep, () => {
       activityId: activity.id,
       findings: mockFindings,
       scenario: mockScenario,
+      title: mockScenario.title,
       workflowRunId: "workflow-completed",
     });
 
@@ -195,6 +199,7 @@ describe(saveInvestigationActivityStep, () => {
 
     expect(dbActivity.generationRunId).toBe("workflow-completed");
     expect(dbActivity.generationStatus).toBe("completed");
+    expect(dbActivity.title).toBe(mockScenario.title);
   });
 
   test("streams error when DB transaction fails", async () => {
@@ -222,6 +227,7 @@ describe(saveInvestigationActivityStep, () => {
       activityId: activity.id,
       findings: mockFindings,
       scenario: mockScenario,
+      title: mockScenario.title,
       workflowRunId: "workflow-error",
     });
 

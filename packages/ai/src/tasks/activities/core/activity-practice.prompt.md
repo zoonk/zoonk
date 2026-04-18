@@ -57,6 +57,24 @@ Each step must have:
   - `isCorrect`: Boolean. Exactly 1 option must be `true`
   - `feedback`: Maximum 300 characters
 
+## Activity Title
+
+Also generate a `title` for the whole activity.
+
+- It must be a short, memorable title based on the specific scenario/dialogue you created.
+- It should feel like a practical case, incident, or real situation, not a textbook heading.
+- Do NOT use generic titles like "Practice", "Applying the lesson", "Conversation practice", or the lesson title copied back unchanged.
+- The title should be specific enough that, if someone sees it in an activity list, they can picture the situation immediately.
+- Write the title in the requested `LANGUAGE`, even though the examples below are in English.
+
+Good example styles:
+
+- The checkout line that stopped moving
+- Maya's last-minute inventory problem
+- Why the refund numbers do not match
+- The game store signup mix-up
+- Who changed the shipping labels?
+
 ## Feedback Rules
 
 Feedback should feel like the other person's immediate response, not a score report.
@@ -235,10 +253,12 @@ Before finalizing, verify:
 
 # Output Format
 
-Return an array of steps, each with:
+Return one object with:
 
-- `context`
-- `question`
-- `options`: exactly 4 objects with `text`, `isCorrect`, and `feedback`
+- `title`
+- `steps`: an array of steps, each with:
+  - `context`
+  - `question`
+  - `options`: exactly 4 objects with `text`, `isCorrect`, and `feedback`
 
 Use 7-20 steps to tell a complete, coherent, natural-feeling story.

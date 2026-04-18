@@ -38,10 +38,12 @@ function buildPracticeStepRecords(activityId: string, steps: PracticeStep[]) {
 export async function savePracticeActivityStep({
   activityId,
   steps,
+  title,
   workflowRunId,
 }: {
   activityId: string;
   steps: PracticeStep[];
+  title: string;
   workflowRunId: string;
 }): Promise<void> {
   "use step";
@@ -56,7 +58,7 @@ export async function savePracticeActivityStep({
     prisma.$transaction([
       prisma.step.createMany({ data: stepRecords }),
       prisma.activity.update({
-        data: { generationRunId: workflowRunId, generationStatus: "completed" },
+        data: { generationRunId: workflowRunId, generationStatus: "completed", title },
         where: { id: activityId },
       }),
     ]),

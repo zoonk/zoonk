@@ -24,9 +24,9 @@ export async function storyActivityWorkflow({
 }): Promise<void> {
   "use workflow";
 
-  const { activityId, storySteps } = await generateStoryContentStep(activitiesToGenerate);
+  const { activityId, storySteps, title } = await generateStoryContentStep(activitiesToGenerate);
 
-  if (!activityId || !storySteps) {
+  if (!activityId || !storySteps || !title) {
     return;
   }
 
@@ -40,5 +40,5 @@ export async function storyActivityWorkflow({
     return;
   }
 
-  await saveStoryActivityStep({ activityId, debriefData, storySteps, workflowRunId });
+  await saveStoryActivityStep({ activityId, debriefData, storySteps, title, workflowRunId });
 }

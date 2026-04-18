@@ -108,7 +108,9 @@ vi.mock("@zoonk/ai/tasks/activities/core/explanation", () => ({
 }));
 
 vi.mock("@zoonk/ai/tasks/activities/core/practice", () => ({
-  generateActivityPractice: vi.fn().mockResolvedValue({ data: { steps: [] } }),
+  generateActivityPractice: vi.fn().mockResolvedValue({
+    data: { steps: [], title: "The game store signup mix-up" },
+  }),
 }));
 
 vi.mock("@zoonk/ai/tasks/activities/core/quiz", () => ({

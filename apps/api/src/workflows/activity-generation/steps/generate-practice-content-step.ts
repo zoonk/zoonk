@@ -26,18 +26,18 @@ export async function generatePracticeContentStep(
   explanationSteps: ActivitySteps,
   workflowRunId: string,
   practiceIndex = 0,
-): Promise<{ activityId: string | null; steps: PracticeStep[] }> {
+): Promise<{ activityId: string | null; steps: PracticeStep[]; title: string | null }> {
   "use step";
 
   const practiceActivity = findActivitiesByKind(activities, "practice")[practiceIndex];
 
   if (!practiceActivity) {
-    return { activityId: null, steps: [] };
+    return { activityId: null, steps: [], title: null };
   }
 
   if (explanationSteps.length === 0) {
     await handleActivityFailureStep({ activityId: practiceActivity.id });
-    return { activityId: null, steps: [] };
+    return { activityId: null, steps: [], title: null };
   }
 
   await using stream = createEntityStepStream<ActivityStepName>(practiceActivity.id);
@@ -60,9 +60,13 @@ export async function generatePracticeContentStep(
     const reason = getAIResultErrorReason({ error, result });
     await stream.error({ reason, step: "generatePracticeContent" });
     await handleActivityFailureStep({ activityId: practiceActivity.id });
-    return { activityId: null, steps: [] };
+    return { activityId: null, steps: [], title: null };
   }
 
   await stream.status({ status: "completed", step: "generatePracticeContent" });
-  return { activityId: practiceActivity.id, steps: result.data.steps };
+  return {
+    activityId: practiceActivity.id,
+    steps: result.data.steps,
+    title: result.data.title,
+  };
 }

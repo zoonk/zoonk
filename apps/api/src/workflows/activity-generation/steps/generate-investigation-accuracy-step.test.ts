@@ -34,6 +34,7 @@ vi.mock("@zoonk/ai/tasks/activities/core/investigation-accuracy", () => ({
 const mockScenario = {
   explanations: ["Best explanation", "Partial explanation", "Wrong explanation"],
   scenario: "A mysterious drop in website traffic occurred overnight.",
+  title: "Who froze the payment queue?",
 };
 
 const mockAccuracyData = {

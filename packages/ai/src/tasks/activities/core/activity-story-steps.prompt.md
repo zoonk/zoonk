@@ -17,6 +17,7 @@ Games teach physics by letting you fall off a cliff, not by explaining gravity. 
 
 A scenario with **as many steps as needed** to cover ALL the lesson's concepts. Each step has:
 
+- A **title** for the whole activity: short, vivid, and based on the specific scenario
 - A **situation** (what's happening RIGHT NOW)
 - **3 choices** (actions the learner can take)
 - A **consequence** for each choice (what happens as a result)
@@ -24,6 +25,21 @@ A scenario with **as many steps as needed** to cover ALL the lesson's concepts. 
 - An **alignment** tag for each choice: "strong" (aligns with lesson concepts), "partial" (partially right), or "weak" (goes against concepts)
 
 Plus **3 metrics** that track the world state (e.g., "Production", "Morale", "Cash").
+
+## Activity Title Rules
+
+- The title must feel like a real case, situation, or incident inside the story.
+- It must NOT sound like a lesson heading, textbook chapter, or generic label like "Story", "Scenario", or "Decision practice".
+- Prefer concrete nouns, people, places, or the central problem.
+- Write the title in the requested `LANGUAGE`, even though the examples below are in English.
+
+Good example styles:
+
+- The night the labels got swapped
+- Yara and the missing test results
+- Who froze the payment queue?
+- The strawberry patch mystery
+- Why the totals suddenly broke
 
 ## Step Count
 

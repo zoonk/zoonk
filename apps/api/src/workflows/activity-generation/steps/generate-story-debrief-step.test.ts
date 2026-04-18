@@ -49,6 +49,7 @@ const mockStorySteps = {
       situation: "Your supplier went bankrupt.",
     },
   ],
+  title: "The night the labels got swapped",
 };
 
 const mockDebriefData = {

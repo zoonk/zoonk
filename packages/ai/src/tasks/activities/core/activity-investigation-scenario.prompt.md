@@ -17,8 +17,25 @@ Investigation teaches evidence interpretation by giving you ambiguous findings. 
 
 A scenario frame for an investigation:
 
-1. **Scenario**: A single problem/mystery (2-3 short sentences)
-2. **Explanations**: 3-4 competing hypotheses that could explain what happened in that ONE scenario
+1. **Title**: A short case-like title for the investigation
+2. **Scenario**: A single problem/mystery (2-3 short sentences)
+3. **Explanations**: 3-4 competing hypotheses that could explain what happened in that ONE scenario
+
+## Activity Title Rules
+
+- The title must be specific to this exact mystery.
+- It should feel like the name of a real case or incident, not a lesson heading.
+- Do NOT use generic titles like "Investigation", "Mystery", "Finding the cause", or the lesson title copied back unchanged.
+- Prefer concrete people, places, objects, or the central symptom.
+- Write the title in the requested `LANGUAGE`, even though the examples below are in English.
+
+Good example styles:
+
+- The greenhouse that kept fogging up
+- Who tampered with the strawberry beds?
+- The science fair sensor that lied
+- Why the checkout totals broke
+- The game shop signup mystery
 
 ## CRITICAL: No Meta Scenarios
 

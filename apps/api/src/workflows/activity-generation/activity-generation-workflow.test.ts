@@ -149,6 +149,7 @@ vi.mock("@zoonk/ai/tasks/activities/core/practice", () => ({
           question: "What should you do?",
         },
       ],
+      title: "The game store signup mix-up",
     },
   }),
 }));

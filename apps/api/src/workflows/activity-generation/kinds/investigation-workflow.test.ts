@@ -44,6 +44,7 @@ const { mockScenario, mockAccuracy, mockActions, mockFindings } = vi.hoisted(() 
       "Explanation C is wrong",
     ],
     scenario: "A mysterious event happened in a factory.",
+    title: "Who froze the payment queue?",
   },
 }));
 
@@ -153,6 +154,7 @@ describe("investigation activity workflow", () => {
 
     expect(dbActivity?.generationStatus).toBe("completed");
     expect(dbActivity?.generationRunId).toBe("test-run-id");
+    expect(dbActivity?.title).toBe(mockScenario.title);
   });
 
   test("saves correct problem step content", async () => {

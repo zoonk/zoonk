@@ -12,6 +12,7 @@ import { handleActivityFailureStep } from "./handle-failure-step";
 type InvestigationScenarioResult = {
   activityId: string | null;
   scenario: ActivityInvestigationScenarioSchema | null;
+  title: string | null;
 };
 
 /**
@@ -30,7 +31,7 @@ export async function generateInvestigationScenarioStep(
   const investigationActivity = findActivityByKind(activities, "investigation");
 
   if (!investigationActivity) {
-    return { activityId: null, scenario: null };
+    return { activityId: null, scenario: null, title: null };
   }
 
   await using stream = createEntityStepStream<ActivityStepName>(investigationActivity.id);
@@ -56,10 +57,14 @@ export async function generateInvestigationScenarioStep(
     await stream.error({ reason, step: "generateInvestigationScenario" });
     await handleActivityFailureStep({ activityId: investigationActivity.id });
 
-    return { activityId: null, scenario: null };
+    return { activityId: null, scenario: null, title: null };
   }
 
   await stream.status({ status: "completed", step: "generateInvestigationScenario" });
 
-  return { activityId: investigationActivity.id, scenario: result.data };
+  return {
+    activityId: investigationActivity.id,
+    scenario: result.data,
+    title: result.data.title,
+  };
 }

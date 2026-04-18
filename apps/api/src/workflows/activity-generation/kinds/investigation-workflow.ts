@@ -27,9 +27,10 @@ export async function investigationActivityWorkflow({
 }): Promise<void> {
   "use workflow";
 
-  const { activityId, scenario } = await generateInvestigationScenarioStep(activitiesToGenerate);
+  const { activityId, scenario, title } =
+    await generateInvestigationScenarioStep(activitiesToGenerate);
 
-  if (!activityId || !scenario) {
+  if (!activityId || !scenario || !title) {
     return;
   }
 
@@ -78,6 +79,7 @@ export async function investigationActivityWorkflow({
     activityId,
     findings,
     scenario,
+    title,
     workflowRunId,
   });
 }

@@ -31,6 +31,7 @@ const schema = z.object({
   intro: z.string(),
   metrics: z.array(z.string()).min(1),
   steps: z.array(storyStepSchema).min(1),
+  title: z.string().min(1),
 });
 
 export type ActivityStoryStepsSchema = z.infer<typeof schema>;
