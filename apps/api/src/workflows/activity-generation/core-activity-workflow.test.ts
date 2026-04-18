@@ -48,68 +48,78 @@ function createExplanationResult(): Awaited<ReturnType<typeof generateActivityEx
   return {
     data: {
       anchor: {
-        text: "This is why Google Maps can recalculate your route quickly.",
-        title: "Fast route updates",
+        text: "Every photo you send on WhatsApp uses this exact layering — you hit send, it runs.",
+        title: "Every send",
       },
-      concepts: [
+      explanation: [
         {
-          text: "Packets travel as smaller chunks so each network step can handle them reliably.",
-          title: "Small chunks",
-          visual: null,
+          text: "You send a photo on WhatsApp. In under a second, it appears on your friend's screen, even if you're on the bus.",
+          title: "O envio",
+          visual: {
+            description:
+              "Two frames: your thumb tapping send, then the photo visible in the friend's chat.",
+            kind: "image" as const,
+          },
         },
         {
-          text: "Each layer adds its own label for a different job.",
-          title: "Layer labels",
-          visual: null,
+          text: "Between the tap and the delivered photo, the message passes through several hidden points. Each one wraps it with a different kind of label.",
+          title: "Os rótulos escondidos",
+          visual: {
+            description: "Same two frames with a blurred row of unlabeled wrappers between them.",
+            kind: "image" as const,
+          },
+        },
+        {
+          text: "Here are the wrappers, in the order they get added: the app wrapper, the transport wrapper, the network wrapper. Each layer adds a label for a different job.",
+          title: "A pilha",
+          visual: {
+            description: "Nested packet with stacked layer labels: app, transport, network.",
+            kind: "diagram" as const,
+          },
+        },
+        {
+          text: "Zoom in on the network wrapper: it only carries routing info — where to send next. The chat content stays sealed inside, untouched by routers.",
+          title: "O rótulo de rede",
+          visual: {
+            description: "Close-up of the network wrapper with a routing address highlighted.",
+            kind: "diagram" as const,
+          },
         },
       ],
-      initialQuestion: {
-        explanation:
-          "The message gets wrapped in layers of instructions so each part of the network knows what to do next.",
-        question: "Why doesn't internet data travel as one giant unlabeled blob?",
-        visual: {
-          description: "An image of a message turning into a labeled packet.",
-          kind: "image" as const,
-        },
-      },
       predict: [
         {
-          concept: "Small chunks",
           options: [
             {
-              feedback: "Right. Smaller chunks are easier for the network to handle.",
-              isCorrect: true,
-              text: "Because the network handles smaller pieces more predictably",
-            },
-            {
-              feedback: "No. The goal is handling and routing, not decoration.",
-              isCorrect: false,
-              text: "Because it looks more organized on screen",
-            },
-          ],
-          question: "Why break the message into packets?",
-        },
-        {
-          concept: "Layer labels",
-          options: [
-            {
-              feedback: "Yes. Different layers need different details.",
+              feedback: "Yes. Each wrapper handles a different job during the trip.",
               isCorrect: true,
               text: "Because each layer needs its own information",
             },
             {
-              feedback: "Not this one. The point is function, not aesthetics.",
+              feedback: "Not this. Layers are functional, not decorative.",
               isCorrect: false,
-              text: "Because more labels make the packet prettier",
+              text: "Because extra labels make the packet prettier",
             },
           ],
-          question: "Why add more than one label?",
+          question: "Why wrap the same photo with several labels?",
+          step: "Os rótulos escondidos",
+        },
+        {
+          options: [
+            {
+              feedback: "Right. Routers only read where the packet goes next.",
+              isCorrect: true,
+              text: "The network label",
+            },
+            {
+              feedback: "No. Routers do not open the full chat message.",
+              isCorrect: false,
+              text: "The full chat content",
+            },
+          ],
+          question: "Which part does a router mainly use?",
+          step: "O rótulo de rede",
         },
       ],
-      scenario: {
-        text: "You send a photo on WhatsApp while riding the bus and it still reaches your friend after passing through many network points.",
-        title: "On WhatsApp",
-      },
     },
     systemPrompt: "test",
     usage: {} as Awaited<ReturnType<typeof generateActivityExplanation>>["usage"],
@@ -699,28 +709,24 @@ describe("core activity workflow", () => {
         expect.objectContaining({
           explanationSteps: [
             {
-              text: "Why doesn't internet data travel as one giant unlabeled blob?",
-              title: "",
+              text: "You send a photo on WhatsApp. In under a second, it appears on your friend's screen, even if you're on the bus.",
+              title: "O envio",
             },
             {
-              text: "The message gets wrapped in layers of instructions so each part of the network knows what to do next.",
-              title: "",
+              text: "Between the tap and the delivered photo, the message passes through several hidden points. Each one wraps it with a different kind of label.",
+              title: "Os rótulos escondidos",
             },
             {
-              text: "You send a photo on WhatsApp while riding the bus and it still reaches your friend after passing through many network points.",
-              title: "On WhatsApp",
+              text: "Here are the wrappers, in the order they get added: the app wrapper, the transport wrapper, the network wrapper. Each layer adds a label for a different job.",
+              title: "A pilha",
             },
             {
-              text: "Packets travel as smaller chunks so each network step can handle them reliably.",
-              title: "Small chunks",
+              text: "Zoom in on the network wrapper: it only carries routing info — where to send next. The chat content stays sealed inside, untouched by routers.",
+              title: "O rótulo de rede",
             },
             {
-              text: "Each layer adds its own label for a different job.",
-              title: "Layer labels",
-            },
-            {
-              text: "This is why Google Maps can recalculate your route quickly.",
-              title: "Fast route updates",
+              text: "Every photo you send on WhatsApp uses this exact layering — you hit send, it runs.",
+              title: "Every send",
             },
           ],
         }),
@@ -902,16 +908,16 @@ describe("core activity workflow", () => {
           explanationSteps: expect.arrayContaining([
             { text: "Completed explanation text", title: "CompletedExp" },
             {
-              text: "Why doesn't internet data travel as one giant unlabeled blob?",
-              title: "",
+              text: "You send a photo on WhatsApp. In under a second, it appears on your friend's screen, even if you're on the bus.",
+              title: "O envio",
             },
             {
-              text: "Packets travel as smaller chunks so each network step can handle them reliably.",
-              title: "Small chunks",
+              text: "Here are the wrappers, in the order they get added: the app wrapper, the transport wrapper, the network wrapper. Each layer adds a label for a different job.",
+              title: "A pilha",
             },
             {
-              text: "This is why Google Maps can recalculate your route quickly.",
-              title: "Fast route updates",
+              text: "Every photo you send on WhatsApp uses this exact layering — you hit send, it runs.",
+              title: "Every send",
             },
           ]),
         }),

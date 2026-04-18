@@ -19,48 +19,31 @@ const predictOptionSchema = z
 const anchorSchema = z
   .object({
     text: z.string(),
-    title: z.string(),
+    title: z.string().min(1),
   })
   .strict();
 
-const conceptSchema = z
+const explanationStepSchema = z
   .object({
     text: z.string(),
-    title: z.string(),
-    visual: visualDescriptionSchema.nullable(),
-  })
-  .strict();
-
-const initialQuestionSchema = z
-  .object({
-    explanation: z.string(),
-    question: z.string(),
+    title: z.string().min(1),
     visual: visualDescriptionSchema,
   })
   .strict();
 
 const predictSchema = z
   .object({
-    concept: z.string(),
     options: z.array(predictOptionSchema),
     question: z.string(),
-  })
-  .strict();
-
-const scenarioSchema = z
-  .object({
-    text: z.string(),
-    title: z.string(),
+    step: z.string().min(1),
   })
   .strict();
 
 const schema = z
   .object({
     anchor: anchorSchema,
-    concepts: z.array(conceptSchema),
-    initialQuestion: initialQuestionSchema,
+    explanation: z.array(explanationStepSchema),
     predict: z.array(predictSchema),
-    scenario: scenarioSchema,
   })
   .strict();
 

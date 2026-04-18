@@ -25,46 +25,46 @@ type ExplanationPlan = {
 };
 
 /**
- * The explanation task returns prediction insert points by concept title so the
- * save pipeline can keep concept teaching and quick checks coherent. This
- * helper centralizes the fallback behavior when the model returns a title that
- * does not exactly match any concept.
+ * The explanation task points each predict check at the step title after which
+ * it should be inserted. If the model echoes a title that does not exactly
+ * match any step, we fall back to the last step so the check is never dropped
+ * silently — the activity still benefits from the intended reinforcement.
  */
-function getPredictionInsertionConcept({
-  conceptTitles,
-  predictionConcept,
+function getPredictionInsertionStep({
+  predictionStep,
+  stepTitles,
 }: {
-  conceptTitles: string[];
-  predictionConcept: string;
+  predictionStep: string;
+  stepTitles: string[];
 }) {
-  if (conceptTitles.includes(predictionConcept)) {
-    return predictionConcept;
+  if (stepTitles.includes(predictionStep)) {
+    return predictionStep;
   }
 
-  return conceptTitles.at(-1) ?? null;
+  return stepTitles.at(-1) ?? null;
 }
 
 /**
- * Prediction checks need to stay attached to their surrounding concept even if
- * the model misses the exact title once. Grouping them up front lets the main
- * plan builder read like the learner flow instead of interleaving lookup logic
- * inside each concept iteration.
+ * Predict checks stay attached to their surrounding step even if the model
+ * misses the exact title once. Grouping them up front lets the main plan
+ * builder read as a linear walk over the explanation array instead of
+ * interleaving lookup logic inside each step iteration.
  */
 function buildPredictionMap(
   content: ActivityExplanationSchema,
 ): Map<string, ActivityExplanationSchema["predict"]> {
-  const conceptTitles = content.concepts.map((concept) => concept.title);
+  const stepTitles = content.explanation.map((step) => step.title);
   const predictionMap = new Map<string, ActivityExplanationSchema["predict"]>();
 
   for (const prediction of content.predict) {
-    const insertionConcept = getPredictionInsertionConcept({
-      conceptTitles,
-      predictionConcept: prediction.concept,
+    const insertionStep = getPredictionInsertionStep({
+      predictionStep: prediction.step,
+      stepTitles,
     });
 
-    if (insertionConcept) {
-      const existing = predictionMap.get(insertionConcept) ?? [];
-      predictionMap.set(insertionConcept, [...existing, prediction]);
+    if (insertionStep) {
+      const existing = predictionMap.get(insertionStep) ?? [];
+      predictionMap.set(insertionStep, [...existing, prediction]);
     }
   }
 
@@ -72,67 +72,41 @@ function buildPredictionMap(
 }
 
 /**
- * Static explanation screens, prediction checks, and visual placeholders all
- * travel through the same ordered plan so the later save step can persist the
- * exact learner sequence without reconstructing it from separate arrays.
+ * Every narrative step expands into a static step (the prose), a visual step
+ * (the illustration), and any predict checks that belong after this step.
+ * Keeping all three side-by-side here matches the learner's experienced order
+ * and avoids reconstructing the sequence elsewhere in the pipeline.
  */
-function buildConceptEntries({
-  concept,
+function buildStepEntries({
   predictionMap,
+  step,
 }: {
-  concept: ActivityExplanationSchema["concepts"][number];
   predictionMap: Map<string, ActivityExplanationSchema["predict"]>;
-}) {
-  const entries: ExplanationActivityPlanEntry[] = [
-    {
-      kind: "static",
-      text: concept.text,
-      title: concept.title,
-    },
-  ];
+  step: ActivityExplanationSchema["explanation"][number];
+}): ExplanationActivityPlanEntry[] {
+  const predictions = predictionMap.get(step.title) ?? [];
 
-  if (concept.visual) {
-    entries.push({
-      description: concept.visual,
-      kind: "visual",
-    });
-  }
-
-  const predictions = predictionMap.get(concept.title) ?? [];
-
-  for (const prediction of predictions) {
-    entries.push({
+  return [
+    { kind: "static", text: step.text, title: step.title },
+    { description: step.visual, kind: "visual" },
+    ...predictions.map<ExplanationActivityPlanEntry>((prediction) => ({
       kind: "multipleChoice",
       options: prediction.options,
       question: prediction.question,
-    });
-  }
-
-  return entries;
+    })),
+  ];
 }
 
 /**
  * Practice and quiz generation only need the text teaching surfaces, not the
- * visual placeholders or prediction checks. This helper keeps that downstream
- * source list aligned with the new explanation structure in one place.
+ * visual placeholders or predict checks. This helper keeps that downstream
+ * source list aligned with the explanation structure in one place.
  */
 function buildSourceSteps(content: ActivityExplanationSchema): ActivitySteps {
   return [
-    {
-      text: content.initialQuestion.question,
-      title: "",
-    },
-    {
-      text: content.initialQuestion.explanation,
-      title: "",
-    },
-    {
-      text: content.scenario.text,
-      title: content.scenario.title,
-    },
-    ...content.concepts.map((concept) => ({
-      text: concept.text,
-      title: concept.title,
+    ...content.explanation.map((step) => ({
+      text: step.text,
+      title: step.title,
     })),
     {
       text: content.anchor.text,
@@ -150,32 +124,13 @@ function buildSourceSteps(content: ActivityExplanationSchema): ActivitySteps {
 export function buildExplanationActivityPlan(content: ActivityExplanationSchema): ExplanationPlan {
   const predictionMap = buildPredictionMap(content);
 
-  const conceptEntries = content.concepts.flatMap((concept) =>
-    buildConceptEntries({ concept, predictionMap }),
+  const stepEntries = content.explanation.flatMap((step) =>
+    buildStepEntries({ predictionMap, step }),
   );
 
   return {
     entries: [
-      {
-        kind: "static",
-        text: content.initialQuestion.question,
-        title: "",
-      },
-      {
-        description: content.initialQuestion.visual,
-        kind: "visual",
-      },
-      {
-        kind: "static",
-        text: content.initialQuestion.explanation,
-        title: "",
-      },
-      {
-        kind: "static",
-        text: content.scenario.text,
-        title: content.scenario.title,
-      },
-      ...conceptEntries,
+      ...stepEntries,
       {
         kind: "static",
         text: content.anchor.text,
