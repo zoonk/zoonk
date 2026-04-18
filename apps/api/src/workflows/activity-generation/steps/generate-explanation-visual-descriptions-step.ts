@@ -27,8 +27,6 @@ export async function generateExplanationVisualDescriptionsStep(
     return { descriptions: [] };
   }
 
-  await stream.status({ status: "started", step: "generateVisualDescriptions" });
-
   const result = await generateStepVisualDescriptions({
     chapterTitle: activity.lesson.chapter.title,
     courseTitle: activity.lesson.chapter.course.title,
