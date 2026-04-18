@@ -1,0 +1,241 @@
+apps/evals/eval-results/battles/lesson-core-activities/es-exoplanetas-vida-sin-exagerar-1.json
+  ad88363283526c0f 1-185
+apps/api/src/workflows/lesson-generation/steps/generate-core-activities-step.test.ts
+  h_1cda88fc21fe9c 1-113
+packages/ai/src/tasks/activities/core/activity-explanation.ts
+  h_1cda88fc21fe9c 76-78,91-93,103,105-106
+  75d198cdd2a4071c 75,90,104
+packages/core/src/workflows/steps.ts
+  h_1cda88fc21fe9c 57
+packages/ai/package.json
+  75d198cdd2a4071c 37
+packages/ai/src/tasks/lessons/lesson-core-activities.prompt.md
+  75d198cdd2a4071c 5,33,37-44,92-93,101,107-108,146,152,154-157,159,161-164,176-190,194-201,204,206,208-209,217,219-222
+  h_1cda88fc21fe9c 1-4,6-32,34-36,45-91,94-100,102-106,109-145,147-151,153,158,160,165-175,191-193,202-203,205,207,210-216,218,223
+apps/api/src/workflows/activity-generation/kinds/explanation-workflow.ts
+  h_1cda88fc21fe9c 89,94,104-108
+apps/evals/eval-results/battles/lesson-core-activities/pt-direito-regras-do-jogo-1.json
+  ad88363283526c0f 1-185
+apps/evals/eval-results/battles/lesson-core-activities/en-brazilian-history-warfare-1.json
+  ad88363283526c0f 1-185
+apps/evals/eval-results/battles/lesson-core-activities/en-javascript-turning-repeated-code-1.json
+  ad88363283526c0f 1-185
+apps/admin/src/data/stats/ai/_utils/build-ai-lesson-cost-estimates.ts
+  75d198cdd2a4071c 43-45,132
+packages/ai/src/tasks/activities/core/activity-explanation.prompt.md
+  h_1cda88fc21fe9c 3,10,15,24-27,37,39-43,48-50,89,99-101,111-113,119,127-128,150,175,181-183,189-191,195
+apps/api/src/workflows/lesson-generation/steps/add-activities-step.test.ts
+  h_1cda88fc21fe9c 75,106,123-136,150,152-165,178,211
+apps/evals/eval-results/battles/lesson-core-activities/en-transformers-training-stability-1.json
+  ad88363283526c0f 1-185
+apps/evals/src/tasks/lesson-core-activities/task.ts
+  h_1cda88fc21fe9c 1-18
+apps/evals/eval-results/outputs/lesson-core-activities/anthropic-claude-opus-4.7.json
+  ad88363283526c0f 1-52
+apps/evals/eval-results/outputs/lesson-core-activities/anthropic-claude-sonnet-4.6.json
+  ad88363283526c0f 1-52
+apps/evals/eval-results/results/lesson-core-activities/anthropic-claude-sonnet-4.6.json
+  ad88363283526c0f 1-187
+apps/evals/eval-results/outputs/lesson-core-activities/google-gemini-3-flash.json
+  ad88363283526c0f 1-52
+apps/evals/eval-results/outputs/lesson-core-activities/openai-gpt-5.4-nano.json
+  ad88363283526c0f 1-52
+apps/evals/eval-results/results/lesson-core-activities/google-gemini-3.1-pro-preview.json
+  ad88363283526c0f 1-187
+apps/evals/eval-results/outputs/lesson-core-activities/google-gemini-3.1-pro-preview.json
+  ad88363283526c0f 1-52
+apps/api/src/workflows/activity-generation/kinds/explanation-workflow.test.ts
+  75d198cdd2a4071c 171,271,311,345,359-360,398,442
+apps/main/src/lib/generation/phase-kind-steps/explanation.ts
+  75d198cdd2a4071c 14
+apps/api/src/workflows/activity-generation/core-activity-workflow.test.ts
+  h_1cda88fc21fe9c 1012-1013,1016,1018,1023-1029,1031,1036-1037,1044,1053-1056
+apps/evals/eval-results/results/lesson-core-activities/anthropic-claude-opus-4.7.json
+  ad88363283526c0f 1-187
+apps/evals/eval-results/results/lesson-core-activities/openai-gpt-5.4-mini.json
+  ad88363283526c0f 1-187
+apps/evals/eval-results/results/lesson-core-activities/openai-gpt-5.4-nano.json
+  ad88363283526c0f 1-187
+apps/api/src/workflows/activity-generation/steps/generate-explanation-content-step.ts
+  75d198cdd2a4071c 23-26,28-39,41-42,46,49,64,70-90,98-106,118-127
+apps/evals/eval-results/outputs/lesson-core-activities/openai-gpt-5.4-mini.json
+  ad88363283526c0f 1-52
+apps/api/src/workflows/activity-generation/steps/generate-explanation-content-step.test.ts
+  h_1cda88fc21fe9c 142,151,166,168-170,213-221,225-229,253,255-257,305,307-309
+apps/evals/eval-results/results/lesson-core-activities/google-gemini-3.1-flash-lite-preview.json
+  ad88363283526c0f 1-187
+apps/main/src/lib/generation/phase-kind-steps/quiz.ts
+  h_1cda88fc21fe9c 15
+apps/evals/eval-results/results/lesson-core-activities/openai-gpt-5.4.json
+  75d198cdd2a4071c 1-63,65-186
+  ad88363283526c0f 64,187
+apps/admin/src/data/stats/ai/ai-task-catalog.ts
+  h_1cda88fc21fe9c 127-130,224,226
+packages/ai/src/tasks/lessons/lesson-core-activities.ts
+  h_1cda88fc21fe9c 1-10,17-34,39-55,57-77
+  75d198cdd2a4071c 11-16,35-38
+apps/main/src/lib/generation/phase-kind-steps/practice.ts
+  75d198cdd2a4071c 13
+packages/player/src/_browser-tests/player-header-info.browser.test.tsx
+  h_1cda88fc21fe9c 26,28-30,41,45-59
+apps/api/src/workflows/lesson-generation/steps/_utils/get-activities-for-kind.ts
+  75d198cdd2a4071c 22,69
+  h_1cda88fc21fe9c 1,24-34,37-41,43-54,56-57,60-63,66,72-75,79-82,85,87-90,111,116-130,132-136,140,144,148
+apps/main/src/app/generate/l/[id]/generation-phases.ts
+  75d198cdd2a4071c 29
+apps/api/src/workflows/lesson-generation/lesson-generation-workflow.ts
+  h_1cda88fc21fe9c 7,101-116,194,200
+apps/evals/src/tasks/activity-explanation/test-cases.ts
+  h_1cda88fc21fe9c 51-53,57-58,64-67,86-88,92-93,99-102,121-123,127-128,134-137,154-156,160-161,167-170,189-191,195-196,202-205,222-224,228-229,235-238
+apps/api/src/workflows/chapter-generation/chapter-generation-workflow.test.ts
+  75d198cdd2a4071c 52-64
+apps/evals/eval-results/outputs/lesson-core-activities/openai-gpt-5.4.json
+  ad88363283526c0f 52
+  75d198cdd2a4071c 1-51
+apps/evals/eval-results/outputs/lesson-core-activities/google-gemini-3.1-flash-lite-preview.json
+  ad88363283526c0f 1-52
+apps/api/src/workflows/activity-generation/core-activity-workflow.ts
+  h_1cda88fc21fe9c 30,37
+apps/evals/eval-results/results/lesson-core-activities/anthropic-claude-haiku-4.5.json
+  ad88363283526c0f 1-187
+apps/evals/src/tasks/lesson-core-activities/test-cases.ts
+  h_1cda88fc21fe9c 1-166
+apps/evals/src/tasks/index.ts
+  h_1cda88fc21fe9c 29,68
+apps/api/src/workflows/lesson-generation/steps/add-activities-step.ts
+  h_1cda88fc21fe9c 2,12,26-33
+packages/player/src/player-provider.tsx
+  h_1cda88fc21fe9c 20-39,74-77,99,114
+apps/api/src/workflows/lesson-generation/steps/_utils/get-activities-for-kind.test.ts
+  h_1cda88fc21fe9c 5-11,13-20,23,28-29,32-43,45-52,56,58-63,65-68,71-78,81-87,90-93
+apps/api/src/workflows/lesson-generation/steps/generate-core-activities-step.ts
+  h_1cda88fc21fe9c 1-43
+apps/evals/src/lib/models.ts
+  h_1cda88fc21fe9c 11,13
+apps/evals/src/lib/battle-runner.ts
+  h_1cda88fc21fe9c 18
+apps/evals/eval-results/outputs/lesson-core-activities/anthropic-claude-haiku-4.5.json
+  ad88363283526c0f 1-52
+apps/evals/eval-results/results/lesson-core-activities/google-gemini-3-flash.json
+  ad88363283526c0f 1-187
+apps/api/src/workflows/lesson-generation/lesson-generation-workflow.test.ts
+  h_1cda88fc21fe9c 4,28-44,244-262
+apps/api/src/workflows/course-generation/course-generation-workflow.test.ts
+  75d198cdd2a4071c 107-119
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.0",
+  "base_commit_sha": "6330b241a600e8295207b6795fc8d34d3e3378b5",
+  "prompts": {
+    "07b8a9cb04c82c91": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d937d-f5f9-7460-8094-f53458e39bf0",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 551,
+      "overriden_lines": 0
+    },
+    "25f39c822d13540a": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d9c83-f75d-7c50-8bbe-8f8a84b108c9",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 7775,
+      "overriden_lines": 0
+    },
+    "5895dcfdb08b13e6": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d93c7-a14d-78d2-b075-4579420632b7",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 5,
+      "overriden_lines": 0
+    },
+    "75d198cdd2a4071c": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019da1be-6c1f-7751-add2-4015768668c6",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 430,
+      "total_deletions": 83,
+      "accepted_lines": 414,
+      "overriden_lines": 4
+    },
+    "ad88363283526c0f": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019da20f-9c46-7020-b3c8-1051384e38ed",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 2840,
+      "total_deletions": 8,
+      "accepted_lines": 2840,
+      "overriden_lines": 0
+    },
+    "b3e2cf6cad4819a0": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d8d5d-7cba-70b1-8c17-ad7d6dff43e7",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 133,
+      "overriden_lines": 0
+    },
+    "b96aa95b162d6206": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d8db2-0332-7d93-84f8-0f778f7df0ff",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 1,
+      "overriden_lines": 0
+    },
+    "e121ac05599a2e7d": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d92e0-e4b6-78b3-8f0d-561aeed5d3a4",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 84,
+      "overriden_lines": 0
+    }
+  },
+  "humans": {
+    "h_1cda88fc21fe9c": {
+      "author": "ceolinwill"
+    }
+  }
+}
