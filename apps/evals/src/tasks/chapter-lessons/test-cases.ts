@@ -3,412 +3,235 @@ const SHARED_EXPECTATIONS = `
 
   You are evaluating a CURRICULUM, not a glossary. Think like a curriculum designer reviewing a colleague's work — use domain expertise and professional judgment, not mechanical rule-checking.
 
-  ## Structure
+  **Only three things should meaningfully drive the score down. Everything else is minor.**
 
-  Output is organized into LESSON UNITS (thematic groups) containing CONCEPTS (individual teachable items).
-  - Each concept should be a single, specific idea — something a domain expert would consider one teachable unit
-  - Lesson sizes should be 3-6 concepts and should vary naturally across lessons
-  - Total concept coverage should be exhaustive for the chapter's scope
+  # Major penalties
 
-  ## Evaluating concept quality
+  ## 1. Dry, textbook lesson titles
 
-  Ask: "Is this ONE teachable thing, or is it secretly a bundle of separate things?"
-  - A concept is too broad only if it genuinely bundles multiple DISTINCT teachable items that a student would need separate lessons for
-  - Use domain expertise: terms that sound broad to a generalist may be a single well-defined concept in the field
-  - Conjunctions (AND/OR/VS and equivalents in any language) signal potential broadness, but only penalize when they join genuinely separate topics — not when the comparison itself IS the concept, or when "and" connects an entity to its work
-  - Concept titles should be concrete and self-explanatory, not interpretive thesis statements or vague abstractions
+  Titles must be **active and hands-on** — a learner action, a question, or a concrete outcome. Noun-phrase categories that read like a table of contents are a major failure even when the content underneath is correct.
 
-  ## Evaluating scope
+  - Dry (major issue): "Types of levers", "Warfare and conflict", "Landmark model families", "Fundamentals of catalysts", "Modalidades de pedido"
+  - Active (good): "Picking a lever for heavy loads", "Why communities went to war", "How BERT, GPT, and T5 differ", "Speeding up a reaction with a catalyst", "Escolhendo o tipo certo de pedido"
 
-  The chapter description is the SOURCE OF TRUTH. Neighboring chapters are guardrails against scope creep, not vetoes.
+  Ask: would a learner pick this title feeling pulled in, or like they're pushing through a syllabus? A curriculum dominated by dry titles is a major penalty, not a style nit.
 
-  The key principle: **judge by framing, not by keywords.** A concept belongs in THIS chapter if its primary teaching purpose serves THIS chapter's learning goals — even if the concept mentions words that appear in a neighboring chapter's title. Ask: "What is this concept primarily TEACHING?" not "Does this concept MENTION a neighboring topic?"
+  ## 2. Factual errors
 
-  When in doubt, favor the chapter description. If a concept is framed through this chapter's lens and serves its learning goals, it is in-scope.
+  Anything in a lesson title, description, or concept that is factually wrong, historically inaccurate, technically incorrect, or would mislead a learner. Use your domain expertise — if a practitioner would catch it as wrong, it is a major penalty.
 
-  ## Evaluating lesson quality
+  ## 3. Important missing topics
 
-  - Lesson descriptions should be concise and go straight to the content — no filler words like "introduces", "presents", "teaches", "explores"
-  - Logical progression from foundational to advanced
-  - No summary, review, or assessment lessons
-  - Should follow the specified language (proper nouns and established technical terms may remain in their original language)
+  The curriculum must cover:
 
-  ## Coverage
+  - **Canonical fundamentals** of the chapter's topic — the pillars a serious learner must know, whether or not the description lists them explicitly. If a junior practitioner would be embarrassed on day 1 because a pillar is missing, that is a major penalty.
+  - **Modern practice** — the tools, idioms, and conventions actually in use today. If the topic has evolved meaningfully in the last 15–20 years and the curriculum teaches only the pre-change textbook version, that is a major penalty.
+  - **Specific named entities** that populate the domain — people, missions, tools, models, compounds, works, peoples, landmark systems — must appear as concepts, not only abstract category labels. An exoplanets chapter that names no specific exoplanet or mission, or a catalysts chapter that names no specific catalyst, has this failure.
 
-  Completeness is the key metric. Are all topics in the chapter description covered with sufficient granularity? Don't penalize for fewer concepts if the chapter's scope is inherently narrow.
+  # Minor notes
 
-  ## Proportionality
+  Everything else is a minor note and should NOT dominate the score:
 
-  Weight your scoring proportionally. A curriculum that covers the chapter exhaustively with good structure but has a few overly-broad concept titles is fundamentally different from one that misses entire topics or systematically violates scope. Minor title-phrasing issues should not dominate the score when the overall curriculum quality is strong.
+  - Lesson sizes (ideal is 3–6 concepts with natural variation)
+  - Concept title wording: abstract bare terms, verbosity, thesis-style framing
+  - Conjunctions (AND/OR/VS) inside concept titles — flag them, but minor
+  - Description openers and style — "introduces / covers / explores", "You will..."
+  - Progression polish, summary/review lessons, minor scope bleed into neighboring chapters
+
+  Mention these in a single consolidated minor-issues note. A curriculum that nails active titles, accurate facts, and comprehensive coverage of fundamentals and modern practice is strong even with wording nits.
+
+  # Scope and neighboring chapters
+
+  Neighboring chapters are guardrails against scope creep, not vetoes. Judge by framing, not by keywords — a lesson belongs here if its primary teaching purpose serves this chapter's goals, even if it mentions words that appear in a neighbor's title.
 `;
 
 export const TEST_CASES = [
-  // Initial chapters (beginning of courses)
+  // Initial chapter: beginner-level programming
   {
     expectations: `
       - MUST be in US English
 
       ${SHARED_EXPECTATIONS}
     `,
-    id: "en-web-networking-fundamentals",
+    id: "en-javascript-functions-arrays-objects",
     userInput: {
       chapterDescription:
-        "IP addressing, routing, NAT, TCP vs UDP, latency and bandwidth tradeoffs, and common failure modes. Practical mental models for debugging connectivity issues.",
-      chapterTitle: "Networking fundamentals",
-      courseTitle: "Web Development",
+        "Break code into reusable pieces, return results, and manage data with arrays and objects. You begin writing code that stays readable as it grows.",
+      chapterTitle: "Functions, Arrays, and Objects",
+      courseTitle: "JavaScript",
       language: "en",
       neighboringChapters: [
         {
           description:
-            "Roles, responsibilities, and interfaces across front-end, back-end, full-stack, QA, DevOps, security, design, and product. How standards bodies and browser vendors shape the platform.",
-          title: "Web development landscape",
+            "Start by making a tiny program that reacts to a click, changes text on the page, and keeps score. You touch real JavaScript right away: variables, functions, events, and the browser console.",
+          title: "Make a Click Counter",
         },
         {
           description:
-            "DNS records, resolvers, caching, propagation, and common configurations for web apps. Domain strategy, subdomains, and pitfalls with split-horizon DNS.",
-          title: "DNS and domains",
+            "Write values, combine them, compare them, and control what happens next. This chapter builds the core habits behind almost every JavaScript program.",
+          title: "Values, Conditions, and Repetition",
         },
         {
           description:
-            "HTTP methods, status codes, headers, content negotiation, caching semantics, cookies, and redirects. HTTP/2 and HTTP/3 concepts and performance implications.",
-          title: "HTTP",
+            "Use the DOM to read page content, change styles, create elements, and respond to user actions. This is the bridge from small scripts to real browser behavior.",
+          title: "Changing a Web Page with JavaScript",
         },
         {
           description:
-            "TLS handshakes, certificate chains, HSTS, OCSP stapling, and modern TLS configuration choices. Secure transport patterns for browsers, APIs, and internal services.",
-          title: "HTTPS and TLS",
+            "Handle forms, validate input, save data in the browser, and build interactions that feel complete to a user. The work here looks much closer to everyday front-end tasks.",
+          title: "Forms, Validation, and Local Storage",
         },
       ],
     },
   },
+  // Initial chapter: beginner-level humanities
+  {
+    expectations: `
+      - MUST be in US English (proper nouns of Brazilian institutions and places remain in Portuguese)
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "en-brazilian-history-indigenous-before-colonization",
+    userInput: {
+      chapterDescription:
+        "This chapter follows the many peoples already living in the land before 1500, including language families, trade networks, farming, warfare, and belief systems. It also shows how archaeologists, oral traditions, and colonial records help rebuild histories that were often erased.",
+      chapterTitle: "Indigenous Brazil Before Colonization",
+      courseTitle: "Brazilian History",
+      language: "en",
+      neighboringChapters: [
+        {
+          description:
+            "Start with a close look at the letter Pero Vaz de Caminha wrote in 1500 and other early accounts of first contact. The learner works with real words from the period to spot power, curiosity, religion, trade, and misunderstanding at the beginning of Brazil's written history.",
+          title: "Reading the First Portuguese Accounts",
+        },
+        {
+          description:
+            "See how Portugal claimed, mapped, and tried to control the territory through captaincies, forts, missions, and coastal settlements. The chapter connects imperial policy with the hard realities of distance, labor, and resistance on the ground.",
+          title: "Claiming and Settling the Colony",
+        },
+        {
+          description:
+            "Sugar mills, enslaved labor, Atlantic shipping, and merchant credit turned colonial Brazil into a major plantation zone. This chapter shows how the sugar economy worked day to day and how wealth and violence were built together.",
+          title: "Sugar, Land, and the Atlantic System",
+        },
+        {
+          description:
+            "This chapter centers the forced migration of Africans, the slave trade, labor regimes, family formation, religion, revolt, and cultural survival. It treats slavery as a core structure of Brazilian history, not a side topic.",
+          title: "Slavery and African Diaspora in Brazil",
+        },
+      ],
+    },
+  },
+  // Mid-course chapter: mid-level domain depth
   {
     expectations: `
       - MUST be in Brazilian Portuguese
 
       ${SHARED_EXPECTATIONS}
     `,
-    id: "pt-python-tipos-numericos",
+    id: "pt-direito-processo-civil",
     userInput: {
       chapterDescription:
-        "Inteiros, floats, complexos, bool, None; conversões, precisão numérica, erros de arredondamento e uso de decimal/fractions.",
-      chapterTitle: "Tipos numéricos e valores especiais",
-      courseTitle: "Python",
+        "Cobre princípios processuais, competência, partes, atos processuais, provas, tutelas, sentença e recursos no processo civil. É a espinha dorsal para transformar direitos em pedidos eficazes perante o Judiciário.",
+      chapterTitle: "Processo Civil",
+      courseTitle: "Direito",
       language: "pt",
       neighboringChapters: [
         {
           description:
-            "Instalação e configuração do Python, múltiplas versões, PATH, virtual environments, VS Code/IDEs, REPL, Jupyter e boas práticas de organização local.",
-          title: "Ambiente de desenvolvimento",
+            "Apresenta tributos, competências, limitações ao poder de tributar, obrigação tributária, lançamento, crédito e defesa do contribuinte. Conecta a teoria tributária à vida de pessoas, empresas e governo.",
+          title: "Direito Tributário",
         },
         {
           description:
-            "Execução em REPL, scripts e módulos; shebang, codificação, argumentos de linha de comando e status de saída do processo.",
-          title: "Execução de programas",
+            "Trabalha vínculo de emprego, jornada, salário, férias, FGTS, rescisão, negociação coletiva e rotina das relações de trabalho. Mostra como prevenir passivos e lidar com conflitos trabalhistas.",
+          title: "Direito do Trabalho",
         },
         {
           description:
-            "Regras de indentação, nomes, comentários, docstrings, literais, operadores e precedência; diferenças entre Python interativo e arquivo.",
-          title: "Sintaxe e convenções",
+            "Mostra inquérito, ação penal, crimes, penas, provas, garantias e recursos no processo penal. Dá base para atuar com acusação, defesa e controle da legalidade da persecução penal.",
+          title: "Direito Penal e Processo Penal",
         },
         {
           description:
-            "Strings, bytes e bytearray; Unicode, normalização, encodings, f-strings, formatação avançada e manipulação eficiente.",
-          title: "Texto e codificação",
-        },
-        {
-          description:
-            "Listas, tuplas, dicionários e conjuntos; mutabilidade, cópia rasa vs profunda, hashing, ordenação e complexidade de operações.",
-          title: "Estruturas de dados fundamentais",
-        },
-        {
-          description:
-            "if/elif/else, match/case, loops, break/continue, compreensão de escopo e padrões comuns de controle.",
-          title: "Controle de fluxo",
+            "Apresenta proteção ao consumidor, oferta, publicidade, vício, defeito, responsabilidade do fornecedor e tutela coletiva. Mostra um dos campos mais presentes no dia a dia forense e consultivo.",
+          title: "Direito do Consumidor",
         },
       ],
     },
   },
-  // Mid-course chapters
+  // Late chapter: expert-level scientific depth
   {
     expectations: `
       - MUST be in Latin American Spanish
 
       ${SHARED_EXPECTATIONS}
     `,
-    id: "es-quimica-carbonilos-enolatos",
+    id: "es-astronomia-exoplanetas",
     userInput: {
       chapterDescription:
-        "Adición nucleofílica a carbonilos, química de enoles/enolatos, aldol, Claisen, Michael y control de selectividad.",
-      chapterTitle: "Carbonilos y enolatos",
-      courseTitle: "Química",
+        "Seguirás la revolución de los exoplanetas: métodos de detección, tránsito, velocidad radial, atmósferas y búsqueda de mundos habitables. También revisarás qué pueden y qué no pueden decir hoy los datos sobre vida fuera de la Tierra.",
+      chapterTitle: "Exoplanetas",
+      courseTitle: "Astronomía",
       language: "es",
       neighboringChapters: [
         {
           description:
-            "SN1/SN2, E1/E2, reactividad, solventes, nucleófilos/bases, rearrangements y control de selectividad.",
-          title: "Sustitución y eliminación",
+            "Estudiarás el gran cambio reciente de la disciplina: detección de ondas gravitacionales, qué eventos las producen y cómo se combinan con señales de luz. Verás cómo nació la astronomía multimensajero y qué problemas permitió resolver.",
+          title: "Ondas gravitacionales",
         },
         {
           description:
-            "Hidrogenación, halogenación, hidratación, hidroboración-oxidación, adiciones conjugadas y química de alquinos.",
-          title: "Adiciones a alquenos y alquinos",
+            "Verás otro pilar nuevo: neutrinos cósmicos, rayos cósmicos y cómo se conectan con explosiones, agujeros negros y objetos extremos. Este capítulo completa la visión moderna del universo observada con mensajeros no tradicionales.",
+          title: "Neutrinos y partículas del cosmos",
         },
         {
           description:
-            "Aromaticidad, sustitución electrofílica/nucleofílica aromática, directores, y reactividad de sistemas aromáticos extendidos.",
-          title: "Química aromática",
+            "Aquí aparecen las grandes encuestas del cielo, la astronomía de datos y el uso actual de IA para clasificar, detectar anomalías y manejar volúmenes masivos de observaciones. Es ya parte normal de la práctica moderna, no un tema opcional.",
+          title: "Astronomía de datos e inteligencia artificial",
         },
         {
           description:
-            "Reactividad de ácidos carboxílicos, derivados acílicos, química de amidas/ésteres/anhídridos y estrategias de activación.",
-          title: "Ácidos carboxílicos y derivados",
-        },
-        {
-          description:
-            "Síntesis y reactividad de heterociclos aromáticos y saturados; aplicaciones en fármacos y materiales.",
-          title: "Heterociclos",
-        },
-        {
-          description:
-            "Mecanismos radicalarios, iniciación/propagación/terminación, selectividad, y reacciones fotoquímicas orgánicas.",
-          title: "Radicales y fotoquímica orgánica",
+            "Verás cómo se diseña y ejecuta una investigación astronómica completa: pregunta, propuesta de observación, toma de datos, reducción, análisis, interpretación y publicación. Esto une la teoría con la práctica real de la disciplina.",
+          title: "De una pregunta a un resultado científico",
         },
       ],
     },
   },
+  // Late chapter: expert-level technical depth
   {
     expectations: `
       - MUST be in US English
 
       ${SHARED_EXPECTATIONS}
     `,
-    id: "en-economics-business-cycles",
+    id: "en-machine-learning-transformers",
     userInput: {
       chapterDescription:
-        "Business cycle facts, stylized patterns in output, inflation, unemployment, productivity, and comovements across sectors.",
-      chapterTitle: "Business cycles",
-      courseTitle: "Economics",
+        "Transformers changed how ML handles language, vision, audio, and multimodal data. This chapter covers attention, encoder-decoder designs, pretraining patterns, and why transformers replaced many older architectures.",
+      chapterTitle: "Transformers",
+      courseTitle: "Machine Learning",
       language: "en",
       neighboringChapters: [
         {
           description:
-            "Behavioral biases, bounded rationality, time inconsistency, social preferences, and policy design with behavioral responses.",
-          title: "Behavioral economics",
+            "Models in production need packaging, serving, scaling, rollback plans, observability, and incident handling. This chapter covers deployment patterns for batch, streaming, and real-time inference.",
+          title: "Serving Models",
         },
         {
           description:
-            "Laboratory and field experiments, incentive design, external validity, and behavioral/market design evidence.",
-          title: "Experimental economics",
+            "Once models are live, teams need monitoring, retraining rules, feature stores, lineage, governance, and automation. This chapter covers the operational side of ML systems that people now call MLOps.",
+          title: "MLOps",
         },
         {
           description:
-            "National income and product accounts, sectoral balances, price indices, productivity, and flow-of-funds concepts.",
-          title: "Macroeconomic accounting",
+            "Foundation models and large language models created new ways to build products and research systems. This chapter covers prompting, context windows, tool use, evaluation, and the strengths and limits of LLM-based systems.",
+          title: "Large Language Models",
         },
         {
           description:
-            "Consumption-saving, life-cycle and permanent income models, liquidity constraints, and empirical puzzles.",
-          title: "Consumption and savings",
-        },
-        {
-          description:
-            "Investment theory, q-models, adjustment costs, irreversibility, and firm-level investment dynamics.",
-          title: "Investment and capital",
-        },
-        {
-          description:
-            "Labor markets in macro, search and matching, wage setting, unemployment dynamics, and Beveridge curve analysis.",
-          title: "Unemployment and labor in macro",
-        },
-      ],
-    },
-  },
-  {
-    expectations: `
-      - MUST be in Brazilian Portuguese
-
-      ${SHARED_EXPECTATIONS}
-    `,
-    id: "pt-agile-arquitetura-agil",
-    userInput: {
-      chapterDescription:
-        "Arquitetura evolutiva, modularidade, acoplamento/cohesão, fitness functions e decisões arquiteturais compatíveis com mudanças frequentes.",
-      chapterTitle: "Arquitetura em ambientes ágeis",
-      courseTitle: "Metodologias Ágeis",
-      language: "pt",
-      neighboringChapters: [
-        {
-          description:
-            "Dual Track (Discovery/Delivery), discovery contínuo, e prevenção de 'teatro ágil' com entrega sem aprendizado.",
-          title: "Discovery e Delivery integrados",
-        },
-        {
-          description:
-            "DevOps: colaboração Dev+Ops, automação, pipelines, IaC, e redução de handoffs para acelerar e estabilizar entregas.",
-          title: "DevOps e entrega contínua",
-        },
-        {
-          description:
-            "SRE: SLIs/SLOs, error budget, confiabilidade como requisito, e equilíbrio entre velocidade e estabilidade.",
-          title: "SRE e confiabilidade em produtos digitais",
-        },
-        {
-          description:
-            "Gestão de dívida técnica, qualidade interna, refatoração estratégica, e mecanismos de priorização junto ao valor de negócio.",
-          title: "Dívida técnica e sustentabilidade",
-        },
-        {
-          description:
-            "Qualidade e testes: pirâmide de testes, testes automatizados, testes exploratórios, e estratégias para sistemas distribuídos.",
-          title: "Estratégias modernas de testes",
-        },
-        {
-          description:
-            "Segurança no ciclo ágil: threat modeling, DevSecOps, shift-left, gestão de vulnerabilidades e resposta a incidentes.",
-          title: "Segurança e DevSecOps",
-        },
-      ],
-    },
-  },
-  {
-    expectations: `
-      - MUST be in US English
-      - Even though this is pop culture, concepts should still be focused and granular
-
-      ${SHARED_EXPECTATIONS}
-    `,
-    id: "en-harry-potter-alchemy-horcruxes",
-    userInput: {
-      chapterDescription:
-        "Alchemy, immortality myths, and the Philosopher's Stone as symbol. Horcrux metaphysics and the costs of soul fragmentation.",
-      chapterTitle: "Alchemy, Horcruxes, and immortality",
-      courseTitle: "Harry Potter",
-      language: "en",
-      neighboringChapters: [
-        {
-          description:
-            "Defense curriculum across eras and how teaching reflects politics. Practical spell selection, threat models, and the pedagogy of fear.",
-          title: "Defense Against the Dark Arts",
-        },
-        {
-          description:
-            "Divination's ambiguity, self-fulfilling prophecy, and narrative foreshadowing. Symbol systems: tea leaves, dreams, centaurs, and astronomy.",
-          title: "Divination and prophecy",
-        },
-        {
-          description:
-            "Mind magic: Legilimency, Occlumency, memory charms, and Pensieve ethics. Consent, epistemology, and the reliability of recollection.",
-          title: "Mind magic and memory",
-        },
-        {
-          description:
-            "Wand woods, cores, allegiance, and the Elder Wand's legend. Comparative magical foci and what wandlore implies about power and identity.",
-          title: "Wandlore",
-        },
-        {
-          description:
-            "Magical healing, St Mungo's, and the boundaries of restorative magic. Disability, trauma, and long-term consequences in the series.",
-          title: "Healing and magical medicine",
-        },
-        {
-          description:
-            "Werewolves, vampires, giants, goblins, house-elves, centaurs, and merpeople as political subjects. Rights, stereotypes, and allegory across species.",
-          title: "Beings, creatures, and species politics",
-        },
-      ],
-    },
-  },
-  // Late/final chapters
-  {
-    expectations: `
-      - MUST be in Brazilian Portuguese
-
-      ${SHARED_EXPECTATIONS}
-    `,
-    id: "pt-direito-legal-tech",
-    userInput: {
-      chapterDescription:
-        "Automação jurídica e qualidade: templates, revisão assistida, gestão documental e padronização. Riscos de automação, controle de versões e governança de conhecimento.",
-      chapterTitle: "Legal tech e automação de documentos",
-      courseTitle: "Direito",
-      language: "pt",
-      neighboringChapters: [
-        {
-          description:
-            "Programas de integridade em terceiros: due diligence, cláusulas anticorrupção e monitoramento. Gestão de contratos, auditoria e encerramento por inadimplemento de compliance.",
-          title: "Gestão de terceiros e due diligence",
-        },
-        {
-          description:
-            "Estratégia de litígio: seleção de teses, definição de foro, gestão de portfólio e negociação de acordos. Monitoramento de precedentes, risco financeiro e comunicação com stakeholders.",
-          title: "Estratégia contenciosa e gestão de disputas",
-        },
-        {
-          description:
-            "Gestão de escritórios e departamentos jurídicos: triagem, SLAs, indicadores e orçamento. Precificação, honorários, contratação de correspondentes e qualidade.",
-          title: "Legal operations e gestão jurídica",
-        },
-        {
-          description:
-            "Gestão de contratos: ciclo de vida, cláusulas padrão, aprovações e controle de obrigações. CLM, auditoria contratual e prevenção de disputas.",
-          title: "Operações contratuais",
-        },
-        {
-          description:
-            "Negociação e mediação avançadas: BATNA, ZOPA, técnicas de influência e gestão de impasses. Construção de acordos complexos e multiparte.",
-          title: "Negociação estratégica",
-        },
-        {
-          description:
-            "Oratória e atuação em audiência: teoria do caso, exame e contrainterrogatório, sustentação oral e postura profissional. Comunicação com juízes, jurados e peritos.",
-          title: "Advocacia oral e persuasão",
-        },
-      ],
-    },
-  },
-  {
-    expectations: `
-      - MUST be in US English (proper nouns of Brazilian institutions remain in Portuguese)
-
-      ${SHARED_EXPECTATIONS}
-    `,
-    id: "en-brazilian-history-health-disease",
-    userInput: {
-      chapterDescription:
-        "Public health, epidemics, health systems, and biomedical politics from the 19th century to COVID-19; sanitation campaigns and inequality.",
-      chapterTitle: "Health and disease",
-      courseTitle: "Brazilian History",
-      language: "en",
-      neighboringChapters: [
-        {
-          description:
-            "Football history, race and class in sport, club cultures, mega-events, and stadium politics; sport as national narrative.",
-          title: "Sports and society",
-        },
-        {
-          description:
-            "Urbanization, housing, sanitation, policing, and informal settlements; favelas, segregation, and metropolitan governance.",
-          title: "Cities and urban inequality",
-        },
-        {
-          description:
-            "Amazon, Cerrado, and Atlantic Forest histories: extraction, conservation, Indigenous stewardship, climate politics, and environmental governance.",
-          title: "Environmental history and the Amazon",
-        },
-        {
-          description:
-            "Professionalization of the armed forces, coups, doctrine, and defense policy; civil-military relations in democracy.",
-          title: "Military and national security",
-        },
-        {
-          description:
-            "Diplomacy from empire to present: borders, regional leadership, multilateralism, South–South ties, and great-power relations.",
-          title: "Foreign policy and international relations",
-        },
-        {
-          description:
-            "How Brazil's past is narrated and contested: schools, monuments, museums, reparations debates, transitional justice, and public history.",
-          title: "Historiography and public memory",
+            "Many modern applications improve LLMs by connecting them to external knowledge. This chapter covers embeddings, chunking, indexing, retrieval, reranking, grounding, and failure modes in retrieval-augmented generation systems.",
+          title: "RAG Systems",
         },
       ],
     },
