@@ -9,9 +9,10 @@ import { useEffect, useRef } from "react";
  * Renders a LaTeX math expression using KaTeX.
  *
  * KaTeX renders math into MathML + HTML, which provides native screen reader
- * support. The `description` field is shown as a caption for additional context.
- * We use `useEffect` + `useRef` to imperatively render KaTeX into the DOM,
- * matching the same pattern used by `code-visual.tsx` with shiki.
+ * support. The description stays visible as a caption for extra context.
+ *
+ * This renderer stays intentionally simple: formulas should behave like a
+ * centered visual, not a nested scroll area or an auto-scaling widget.
  */
 export function FormulaVisual({ content }: { content: FormulaVisualContent }) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -32,10 +33,10 @@ export function FormulaVisual({ content }: { content: FormulaVisualContent }) {
   return (
     <figure
       aria-label={content.description}
-      className="flex w-full max-w-xl flex-col items-center gap-4 px-6 sm:gap-5 sm:px-8"
+      className="flex w-full max-w-xl flex-col items-center gap-4 px-4 sm:gap-5 sm:px-5"
     >
       <div
-        className="text-foreground w-full min-w-0 overflow-x-auto text-2xl sm:text-3xl"
+        className="text-foreground w-full min-w-0 text-lg sm:text-xl"
         ref={containerRef}
         role="math"
       />
