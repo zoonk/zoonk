@@ -8,10 +8,13 @@ EVALUATION CRITERIA:
 3. PLOT COHERENCE: Steps must flow naturally as a continuous practice where each step builds from the previous dialogue. Near the end (within the final 2-3 steps), the practice should introduce a fun, surprising twist that reframes the narrative — the best twists subvert an assumption the practice has been building. A mere escalation or a new requirement from a teacher, boss, or client is not enough to count as a twist. Strong twists usually reinterpret earlier details rather than just adding a late surprise. The final step must resolve the problem AND reinforce the main learning takeaway. Do NOT penalize for exact twist placement (e.g., 2nd-to-last vs 3rd-to-last) as long as the narrative flow is good.
 
 4. FORMAT COMPLIANCE: Verify these constraints:
+   - scenario.title: 1-3 words
+   - scenario.text: Maximum 300 characters, one short paragraph, first person
    - context: Maximum 500 characters of pure dialogue
    - question: Maximum 100 characters
    - options: Exactly 4 objects, each with: text (max 50 chars, allow up to 55 without penalty), isCorrect (boolean), feedback (max 300 chars)
    - Exactly 1 option must have isCorrect: true, the other 3 must have isCorrect: false
+   - The recurring person or situation introduced in scenario.text should stay consistent across the dialogue unless the story deliberately reveals a reason for the change
    - Do NOT penalize for output being wrapped in {"steps": [...]} vs a raw array — both are valid formats
 
 5. PERSONALIZATION: The {{NAME}} placeholder must be used appropriately in dialogue to personalize the experience.

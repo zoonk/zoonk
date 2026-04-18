@@ -32,6 +32,11 @@ vi.mock("@zoonk/ai/tasks/activities/core/practice", () => ({
   generateActivityPractice: generateActivityPracticeMock,
 }));
 
+const practiceScenario = {
+  text: "I'm closing the support queue with Maya, and one customer report still does not line up with the refund totals.",
+  title: "Night shift",
+};
+
 describe(generatePracticeContentStep, () => {
   let organizationId: string;
   let chapter: Awaited<ReturnType<typeof chapterFixture>>;
@@ -83,6 +88,7 @@ describe(generatePracticeContentStep, () => {
 
     generateActivityPracticeMock.mockResolvedValue({
       data: {
+        scenario: practiceScenario,
         steps: practiceSteps,
         title: "The game store signup mix-up",
       },
@@ -93,6 +99,7 @@ describe(generatePracticeContentStep, () => {
     const result = await generatePracticeContentStep(activities, explanationSteps, "run-1");
 
     expect(result.activityId).toBe(activities.find((a) => a.kind === "practice")?.id);
+    expect(result.scenario).toEqual(practiceScenario);
     expect(result.steps).toEqual(practiceSteps);
     expect(result.title).toBe("The game store signup mix-up");
   });
@@ -121,7 +128,12 @@ describe(generatePracticeContentStep, () => {
       "run-2",
     );
 
-    expect(result).toEqual({ activityId: null, steps: [], title: null });
+    expect(result).toEqual({
+      activityId: null,
+      scenario: null,
+      steps: [],
+      title: null,
+    });
     expect(generateActivityPracticeMock).not.toHaveBeenCalled();
   });
 
@@ -145,9 +157,16 @@ describe(generatePracticeContentStep, () => {
 
     const result = await generatePracticeContentStep(activities, [], "run-3");
 
-    expect(result).toEqual({ activityId: null, steps: [], title: null });
+    expect(result).toEqual({
+      activityId: null,
+      scenario: null,
+      steps: [],
+      title: null,
+    });
 
-    const updated = await prisma.activity.findUniqueOrThrow({ where: { id: dbActivity.id } });
+    const updated = await prisma.activity.findUniqueOrThrow({
+      where: { id: dbActivity.id },
+    });
     expect(updated.generationStatus).toBe("failed");
   });
 
@@ -170,7 +189,11 @@ describe(generatePracticeContentStep, () => {
     const activities = await fetchLessonActivities(lesson.id);
 
     generateActivityPracticeMock.mockResolvedValue({
-      data: { steps: [], title: "The game store signup mix-up" },
+      data: {
+        scenario: practiceScenario,
+        steps: [],
+        title: "The game store signup mix-up",
+      },
     });
 
     const result = await generatePracticeContentStep(
@@ -179,9 +202,16 @@ describe(generatePracticeContentStep, () => {
       "run-4",
     );
 
-    expect(result).toEqual({ activityId: null, steps: [], title: null });
+    expect(result).toEqual({
+      activityId: null,
+      scenario: null,
+      steps: [],
+      title: null,
+    });
 
-    const updated = await prisma.activity.findUniqueOrThrow({ where: { id: dbActivity.id } });
+    const updated = await prisma.activity.findUniqueOrThrow({
+      where: { id: dbActivity.id },
+    });
     expect(updated.generationStatus).toBe("failed");
   });
 
@@ -206,6 +236,7 @@ describe(generatePracticeContentStep, () => {
 
     generateActivityPracticeMock.mockResolvedValue({
       data: {
+        scenario: practiceScenario,
         steps: [
           {
             context: "ctx",
@@ -265,9 +296,16 @@ describe(generatePracticeContentStep, () => {
       "run-6",
     );
 
-    expect(result).toEqual({ activityId: null, steps: [], title: null });
+    expect(result).toEqual({
+      activityId: null,
+      scenario: null,
+      steps: [],
+      title: null,
+    });
 
-    const updated = await prisma.activity.findUniqueOrThrow({ where: { id: dbActivity.id } });
+    const updated = await prisma.activity.findUniqueOrThrow({
+      where: { id: dbActivity.id },
+    });
     expect(updated.generationStatus).toBe("failed");
 
     const events = getStreamedEvents(writeMock);

@@ -15,6 +15,10 @@ import { practiceActivityWorkflow } from "./practice-workflow";
 vi.mock("@zoonk/ai/tasks/activities/core/practice", () => ({
   generateActivityPractice: vi.fn().mockResolvedValue({
     data: {
+      scenario: {
+        text: "I'm closing the support queue with Maya, and one customer report still does not line up with the refund totals.",
+        title: "Night shift",
+      },
       steps: [
         {
           context: "Your colleague turns to you during a meeting...",
@@ -61,7 +65,7 @@ describe("practice activity workflow", () => {
     });
   });
 
-  test("creates practice steps with multipleChoice kind", async () => {
+  test("creates a leading static scenario step before practice questions", async () => {
     const testLesson = await lessonFixture({
       chapterId: chapter.id,
       concepts: ["Test Concept"],
@@ -101,10 +105,16 @@ describe("practice activity workflow", () => {
       where: { activityId: activity.id },
     });
 
-    expect(steps).toHaveLength(1);
+    expect(steps).toHaveLength(2);
     expect(steps[0]?.isPublished).toBe(true);
-    expect(steps[0]?.kind).toBe("multipleChoice");
+    expect(steps[0]?.kind).toBe("static");
     expect(steps[0]?.content).toEqual({
+      text: "I'm closing the support queue with Maya, and one customer report still does not line up with the refund totals.",
+      title: "Night shift",
+      variant: "text",
+    });
+    expect(steps[1]?.kind).toBe("multipleChoice");
+    expect(steps[1]?.content).toEqual({
       context: "Your colleague turns to you during a meeting...",
       kind: "core",
       options: [

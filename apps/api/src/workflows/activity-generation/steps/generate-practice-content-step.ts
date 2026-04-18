@@ -10,12 +10,13 @@ import { type ActivitySteps } from "./_utils/get-activity-steps";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
 
+export type PracticeScenario = ActivityPracticeSchema["scenario"];
 export type PracticeStep = ActivityPracticeSchema["steps"][number];
 
 /**
- * Generates practice questions from explanation content via AI.
- * Returns the raw steps data without saving to the database.
- * The steps will be passed to `savePracticeActivityStep` for persistence.
+ * Generates the practice scenario and question steps from explanation content via AI.
+ * Returns the raw activity payload without saving to the database.
+ * The scenario and steps will be passed to `savePracticeActivityStep` for persistence.
  *
  * No status checks — the caller only passes activities that need generation.
  * Like the quiz step, this uses safeAsync because empty explanations
@@ -26,18 +27,23 @@ export async function generatePracticeContentStep(
   explanationSteps: ActivitySteps,
   workflowRunId: string,
   practiceIndex = 0,
-): Promise<{ activityId: string | null; steps: PracticeStep[]; title: string | null }> {
+): Promise<{
+  activityId: string | null;
+  scenario: PracticeScenario | null;
+  steps: PracticeStep[];
+  title: string | null;
+}> {
   "use step";
 
   const practiceActivity = findActivitiesByKind(activities, "practice")[practiceIndex];
 
   if (!practiceActivity) {
-    return { activityId: null, steps: [], title: null };
+    return { activityId: null, scenario: null, steps: [], title: null };
   }
 
   if (explanationSteps.length === 0) {
     await handleActivityFailureStep({ activityId: practiceActivity.id });
-    return { activityId: null, steps: [], title: null };
+    return { activityId: null, scenario: null, steps: [], title: null };
   }
 
   await using stream = createEntityStepStream<ActivityStepName>(practiceActivity.id);
@@ -60,12 +66,13 @@ export async function generatePracticeContentStep(
     const reason = getAIResultErrorReason({ error, result });
     await stream.error({ reason, step: "generatePracticeContent" });
     await handleActivityFailureStep({ activityId: practiceActivity.id });
-    return { activityId: null, steps: [], title: null };
+    return { activityId: null, scenario: null, steps: [], title: null };
   }
 
   await stream.status({ status: "completed", step: "generatePracticeContent" });
   return {
     activityId: practiceActivity.id,
+    scenario: result.data.scenario,
     steps: result.data.steps,
     title: result.data.title,
   };

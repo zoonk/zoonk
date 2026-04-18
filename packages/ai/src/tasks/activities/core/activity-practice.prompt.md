@@ -46,6 +46,22 @@ The learner should feel like they are inside a real conversation, not reading a 
 
 # Requirements
 
+## Scenario
+
+Also generate a `scenario` object that sets up the practice before the dialogue starts.
+
+- `scenario.title`: 1-3 words
+- `scenario.text`: Maximum 300 characters
+
+Scenario rules:
+
+- Write `scenario.text` in first person.
+- Make it one short paragraph.
+- Set up one realistic situation where the lesson concepts matter.
+- Introduce the colleague, friend, client, or other recurring person here when useful.
+- Keep that same person and situation consistent across ALL dialogue steps.
+- This is setup only. The actual `steps` should continue inside the same situation instead of restarting with a different scene.
+
 ## Step Structure
 
 Each step must have:
@@ -60,6 +76,10 @@ Each step must have:
 ## Activity Title
 
 Also generate a `title` for the whole activity.
+
+- This is the activity title, not the `scenario.title`.
+- `scenario.title` is a tiny label for the opening static setup step.
+- `title` is the memorable name shown in the activity list.
 
 - It must be a short, memorable title based on the specific scenario/dialogue you created.
 - It should feel like a practical case, incident, or real situation, not a textbook heading.
@@ -89,7 +109,7 @@ Feedback should feel like the other person's immediate response, not a score rep
 
 Your story must follow this structure:
 
-1. **Opening Step**: Start in the middle of the action. No setup exposition.
+1. **Opening Step**: Start in the middle of the action. The setup already lives in `scenario`, so do not spend the first dialogue step re-explaining it.
 2. **Rising Complexity**: Each step builds from the previous one.
 3. **Twist or Reframe**: Near the end, introduce a real surprise or reframing that changes how the learner sees the situation.
 4. **Resolution**: Solve the problem and reinforce the lesson's main takeaway.
@@ -164,6 +184,8 @@ Ask:
 **Where would someone at this level most naturally face this problem?**
 
 Use that setting and choose the most natural dialogue partner for it.
+
+If you name a colleague, friend, client, or partner in `scenario.text`, keep that same person present throughout the dialogue unless the story explicitly reveals a reason for the shift.
 
 ## The `{{NAME}}` Placeholder
 
@@ -250,15 +272,3 @@ Before finalizing, verify:
 - [ ] Does every option have feedback that explains the reasoning?
 - [ ] Are all limits respected?
 - [ ] Is the story between 7 and 20 steps?
-
-# Output Format
-
-Return one object with:
-
-- `title`
-- `steps`: an array of steps, each with:
-  - `context`
-  - `question`
-  - `options`: exactly 4 objects with `text`, `isCorrect`, and `feedback`
-
-Use 7-20 steps to tell a complete, coherent, natural-feeling story.
