@@ -1,0 +1,61 @@
+apps/api/src/workflows/activity-generation/steps/generate-explanation-content-step.test.ts
+  03e1e4835506d70d 44-45,47,49-63,66-67,69,73-79,81,86,88,91,93,96-97,102,104,107,109,112-113,183-184,187-188,191-192,195-196,199-200,207
+apps/api/src/workflows/activity-generation/activity-generation-workflow.test.ts
+  03e1e4835506d70d 47-48,50,52-58,61-66,68-74,76-84,89,91,94,96,99-100,105,107,110,112,115-116
+apps/api/src/workflows/activity-generation/steps/_utils/build-explanation-activity-plan.ts
+  03e1e4835506d70d 28-31,33-35,37-38,40-41,44,48-51,56,60-62,65-67,75-78,80,82,85-87,89-92,96-97,102-103,107-109,127-128,133
+apps/api/src/workflows/activity-generation/kinds/explanation-workflow.test.ts
+  03e1e4835506d70d 23-24,26,28-34,37-38,40-48,53-58,65,70,72,75-76,81,86,88,92,189-190,193-194,200-201,205-206,209,211-212,218-222
+packages/ai/src/tasks/activities/core/activity-explanation.ts
+  h_1cda88fc21fe9c 26,45
+  03e1e4835506d70d 22,29,38
+apps/api/src/workflows/activity-generation/core-activity-workflow.test.ts
+  03e1e4835506d70d 51-52,54,56-62,65-70,72-78,80-88,93,95,98,100,103-104,109,111,114,116,119-120,712-713,716-717,720-721,724-725,728-729,911-912,915-916,919-920
+apps/api/src/workflows/activity-generation/steps/_utils/build-explanation-activity-plan.test.ts
+  03e1e4835506d70d 7-8,10,12-17,20-21,23-31,36-41,43-49,51-60,65,67,70,72,75-76,81-82,84,87,89,92-93,100,107-108,110,112,117,123-124,127-128,131-132,135-136,139-140,143-144,147-148,153,157,167-168
+apps/api/src/workflows/activity-generation/custom-activity-workflow.test.ts
+  03e1e4835506d70d 45-46,48,50-56,58-64,66-82,87,89,92,94,97-98,103,105,108,110,113-114
+apps/evals/src/tasks/activity-explanation/test-cases.ts
+  03e1e4835506d70d 6-9,11,13-16,18,20-23,25-28,30-34,36-46,49,51,53
+packages/ai/src/tasks/activities/core/activity-explanation.prompt.md
+  03e1e4835506d70d 3,5,7,9-11,13,15,17,19,21-23,25,27,29,31,33,35,37-39,41-53,55,57-58,60-61,63,65,67,69-72,74,76-78,80,82,84,86-89,91,93,95-100,102,104-114,116,118,120,122,124-126,128-130,132,134-142,144,146-148,150,152-155,159-161,165-176,182-191
+  h_1cda88fc21fe9c 59
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.0",
+  "base_commit_sha": "d1538cb7ac9018a7653bfb97b4da969ee460a0d6",
+  "prompts": {
+    "03e1e4835506d70d": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "8c69dccb-10e5-47bb-bb2f-6db030b72a79",
+        "model": "claude-opus-4-7"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 965,
+      "total_deletions": 685,
+      "accepted_lines": 563,
+      "overriden_lines": 3
+    },
+    "fad2f0d2a1114b34": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b05fda29-46b3-48c5-adf9-e066a0b8e798",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 2,
+      "overriden_lines": 0
+    }
+  },
+  "humans": {
+    "h_1cda88fc21fe9c": {
+      "author": "ceolinwill"
+    }
+  }
+}
