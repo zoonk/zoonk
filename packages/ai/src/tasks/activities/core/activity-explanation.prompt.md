@@ -106,13 +106,18 @@ The closing step. `anchor` has `text` and `title`. **No visual.** The absence of
 
 The anchor must:
 
-- Callback the opening scene or generalize it to "every time you do X". Not a new scenario.
-- Reference a real product, system, or daily behavior the learner actually uses.
+- Callback the opening scene by **naming a specific real thing** and what it does there: a named consumer product, a named event/figure/case, or a concrete physical action the learner has actually done. Not a new scenario.
+- **Anchor to the learner's daily life, not the expert's.** The learner uses the end product; they don't operate the mechanism. Pick the surface the learner actually touches, then route back through it to the concept. If your anchor names a tool/technique (a library, a telescope, a training step, a lab procedure) without naming what it produces in the world the learner lives in, you're only halfway there — name both.
+- Be concrete enough that a reader could point to it in the world. If you catch yourself writing generic placeholders ("a real app", "a real case", "an exoplanet", "a training run", "every time a button does X") — stop. Name the specific thing.
 - Be 1–2 short sentences. Direct. No "this is why it matters" philosophy.
 
-> ❌ "Understanding how computers execute instructions is foundational to programming."
+> ❌ "Understanding how computers execute instructions is foundational to programming." (abstract philosophy)
 >
-> ✅ "Every heart that turns red in any app — it's a line someone wrote, running in that moment. You tapped, it ran."
+> ❌ "Every time a button in a real app does the same little job in three places, someone pulled it into one named block." (hedges into a pattern — no named product, no named action)
+>
+> ❌ "During any fermentation run, this is what yeast is doing over several hours." (expert's framing — "fermentation run" isn't the learner's daily life)
+>
+> ✅ "The next time you smell bread rising on the kitchen counter — that warm, slightly sour smell is yeast doing exactly this, quietly, for hours."
 
 # Inputs
 
@@ -171,5 +176,5 @@ Before answering, verify:
 - Predict #1 lands after the mystery, before the reveal. Predict #2 lands after the zoom, before the payoff. Both `step` fields exactly match a step `title`.
 - No static step contains only a rhetorical question or restates the predict. The step right after each predict is the reveal.
 - The final `explanation` step is a payoff that calls back to step 1.
-- Anchor references a real product/system/daily behavior and echoes the opening, not a new scenario.
+- Anchor names a specific real product, event, figure, or case (not "a real app", "an exoplanet", or "every time X") and echoes the opening, not a new scenario.
 - Every section is short. Language is fully in `LANGUAGE`.
