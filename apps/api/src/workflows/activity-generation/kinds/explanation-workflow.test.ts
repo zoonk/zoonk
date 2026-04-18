@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
 import { generateActivityExplanation } from "@zoonk/ai/tasks/activities/core/explanation";
+import { generateStepVisualDescriptions } from "@zoonk/ai/tasks/steps/visual-descriptions";
 import { prisma } from "@zoonk/db";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
@@ -16,6 +17,23 @@ function getStreamedMessages(): Record<string, string>[] {
   return getStreamedEvents() as Record<string, string>[];
 }
 
+function createDescriptionsResult(
+  steps: { title: string; text: string }[],
+): Awaited<ReturnType<typeof generateStepVisualDescriptions>> {
+  return {
+    data: {
+      descriptions: steps.map((step, index) =>
+        index === 0
+          ? { description: `A visual prompt for ${step.title}`, kind: "image" as const }
+          : { description: `A diagram for ${step.title}`, kind: "diagram" as const },
+      ),
+    },
+    systemPrompt: "test",
+    usage: {} as Awaited<ReturnType<typeof generateStepVisualDescriptions>>["usage"],
+    userPrompt: "test",
+  };
+}
+
 function createExplanationResult(): Awaited<ReturnType<typeof generateActivityExplanation>> {
   return {
     data: {
@@ -27,35 +45,18 @@ function createExplanationResult(): Awaited<ReturnType<typeof generateActivityEx
         {
           text: "You send a photo on WhatsApp. In under a second, it appears on your friend's screen, even if you're on the bus.",
           title: "O envio",
-          visual: {
-            description:
-              "Two frames: your thumb tapping send, then the photo visible in the friend's chat.",
-            kind: "image" as const,
-          },
         },
         {
           text: "Between the tap and the delivered photo, the message passes through several hidden points. Each one wraps it with a different kind of label.",
           title: "Os rótulos escondidos",
-          visual: {
-            description: "Same two frames with a blurred row of unlabeled wrappers between them.",
-            kind: "image" as const,
-          },
         },
         {
           text: "Here are the wrappers, in the order they get added: the app wrapper, the transport wrapper, the network wrapper. Each layer adds a label for a different job.",
           title: "A pilha",
-          visual: {
-            description: "Nested packet with stacked layer labels: app, transport, network.",
-            kind: "diagram" as const,
-          },
         },
         {
           text: "Zoom in on the network wrapper: it only carries routing info — where to send next. The chat content stays sealed inside, untouched by routers.",
           title: "O rótulo de rede",
-          visual: {
-            description: "Close-up of the network wrapper with a routing address highlighted.",
-            kind: "diagram" as const,
-          },
         },
       ],
       predict: [
@@ -101,6 +102,14 @@ function createExplanationResult(): Awaited<ReturnType<typeof generateActivityEx
 
 vi.mock("@zoonk/ai/tasks/activities/core/explanation", () => ({
   generateActivityExplanation: vi.fn().mockResolvedValue(createExplanationResult()),
+}));
+
+vi.mock("@zoonk/ai/tasks/steps/visual-descriptions", () => ({
+  generateStepVisualDescriptions: vi
+    .fn()
+    .mockImplementation(({ steps }: { steps: { title: string; text: string }[] }) =>
+      Promise.resolve(createDescriptionsResult(steps)),
+    ),
 }));
 
 vi.mock("../steps/_utils/dispatch-visual-content", () => ({
@@ -221,6 +230,38 @@ describe("explanation activity workflow", () => {
       "O rótulo de rede",
       "Every send",
     ]);
+    expect(vi.mocked(generateStepVisualDescriptions)).toHaveBeenCalledWith(
+      expect.objectContaining({
+        steps: [
+          {
+            text: "You send a photo on WhatsApp. In under a second, it appears on your friend's screen, even if you're on the bus.",
+            title: "O envio",
+          },
+          {
+            text: "Between the tap and the delivered photo, the message passes through several hidden points. Each one wraps it with a different kind of label.",
+            title: "Os rótulos escondidos",
+          },
+          {
+            text: "Here are the wrappers, in the order they get added: the app wrapper, the transport wrapper, the network wrapper. Each layer adds a label for a different job.",
+            title: "A pilha",
+          },
+          {
+            text: "Zoom in on the network wrapper: it only carries routing info — where to send next. The chat content stays sealed inside, untouched by routers.",
+            title: "O rótulo de rede",
+          },
+        ],
+      }),
+    );
+    expect(vi.mocked(dispatchVisualContent)).toHaveBeenCalledWith({
+      descriptions: [
+        { description: "A visual prompt for O envio", kind: "image" },
+        { description: "A diagram for Os rótulos escondidos", kind: "diagram" },
+        { description: "A diagram for A pilha", kind: "diagram" },
+        { description: "A diagram for O rótulo de rede", kind: "diagram" },
+      ],
+      language: activity.language,
+      orgSlug: activities[0]?.lesson.chapter.course.organization?.slug,
+    });
   });
 
   test("returns existing static explanation steps for already completed activities", async () => {
@@ -445,7 +486,11 @@ describe("explanation activity workflow", () => {
     const streamedMessages = getStreamedMessages();
     const activityIds = new Set([firstActivity.id, secondActivity.id]);
 
-    for (const stepName of ["generateVisualContent", "saveExplanationActivity"]) {
+    for (const stepName of [
+      "generateVisualDescriptions",
+      "generateVisualContent",
+      "saveExplanationActivity",
+    ]) {
       const stepMessages = streamedMessages.filter((message) => message.step === stepName);
       expect(stepMessages.length).toBeGreaterThan(0);
 

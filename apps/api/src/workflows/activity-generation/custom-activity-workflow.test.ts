@@ -49,35 +49,18 @@ function createExplanationResult() {
         {
           text: "You send a photo on WhatsApp. In under a second, it appears on your friend's screen, even if you're on the bus.",
           title: "O envio",
-          visual: {
-            description:
-              "Two frames: your thumb tapping send, then the photo visible in the friend's chat.",
-            kind: "image" as const,
-          },
         },
         {
           text: "Between the tap and the delivered photo, the message passes through several hidden points. Each one wraps it with a different kind of label.",
           title: "Os rótulos escondidos",
-          visual: {
-            description: "Same two frames with a blurred row of unlabeled wrappers between them.",
-            kind: "image" as const,
-          },
         },
         {
           text: "Here are the wrappers, in the order they get added: the app wrapper, the transport wrapper, the network wrapper. Each layer adds a label for a different job.",
           title: "A pilha",
-          visual: {
-            description: "Nested packet with stacked layer labels: app, transport, network.",
-            kind: "diagram" as const,
-          },
         },
         {
           text: "Zoom in on the network wrapper: it only carries routing info — where to send next. The chat content stays sealed inside, untouched by routers.",
           title: "O rótulo de rede",
-          visual: {
-            description: "Close-up of the network wrapper with a routing address highlighted.",
-            kind: "diagram" as const,
-          },
         },
       ],
       predict: [

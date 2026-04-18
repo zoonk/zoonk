@@ -5,10 +5,10 @@ import { dispatchVisualContent } from "./_utils/dispatch-visual-content";
 import { type LessonActivity } from "./get-lesson-activities-step";
 
 /**
- * Explanation activities choose their visual briefs during the main content
- * generation step. This workflow step only turns those stored briefs into real
- * visual payloads and keeps the per-entity streaming and retry behavior around
- * the expensive visual generation work.
+ * Explanation activities reuse the shared visual-description task before this
+ * step runs. This workflow step turns those chosen briefs into real visual
+ * payloads and keeps the per-entity streaming and retry behavior around the
+ * expensive visual generation work.
  */
 export async function generateExplanationVisualContentStep(
   activity: LessonActivity,

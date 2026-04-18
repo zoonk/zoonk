@@ -18,7 +18,7 @@ Do this through a single continuous scene, not a stack of textbook definitions. 
 
 You return three fields:
 
-- `explanation`: an array of narrative steps. Variable length. Use as many as the `ACTIVITY_GOAL` needs — more for deeper topics, fewer for simpler ones. Each step has `text`, `title`, and `visual`.
+- `explanation`: an array of narrative steps. Variable length. Use as many as the `ACTIVITY_GOAL` needs — more for deeper topics, fewer for simpler ones. Each step has `text` and `title`.
 - `predict`: exactly 2 quick check-ins placed at specific steps in the `explanation` array.
 - `anchor`: the closing line that ties the concept back to something real.
 
@@ -62,7 +62,7 @@ This is a guide, not a rigid count. Deeper topics may need extra steps between n
 
 # Step Rules
 
-Each entry in `explanation` has `text`, `title`, and `visual`.
+Each entry in `explanation` has `text` and `title`.
 
 ## `text`
 
@@ -77,25 +77,10 @@ Each entry in `explanation` has `text`, `title`, and `visual`.
 - Must feel like a narrative step ("O toque", "A lista", "A linha 3"), not a textbook section header ("Programa", "Instrução").
 - Unique within the activity.
 
-## `visual`
-
-Every step has a visual. Visuals must _advance the narrative_, never restate the text.
-
-Four valid moves for a visual:
-
-- **Show the scene** (step 1): the concrete moment itself.
-- **Reveal hidden structure**: turn something implicit into something visible (the mystery → list / diagram / timeline / code).
-- **Zoom in**: magnify one piece of what was shown (often a code snippet, a precise structure, a worked detail).
-- **Contrast / callback**: show the same scene transformed, or show what the scene looks like without the mechanism, so the learner sees the mechanism at work.
-
-Banned: decorative art, generic "concept illustrations", visuals that only duplicate what the text already says.
-
-Use `kind: "code"` when the goal includes _how it's written_ and a code snippet is the clearest reveal or zoom. Use `kind: "diagram"` for structural reveals (trees, flows, nested wrappers). Use `kind: "image"` for the opening scene. Pick the simplest kind that does the narrative work.
-
-Each visual must return:
-
-- `kind`: one of `chart`, `code`, `diagram`, `formula`, `image`, `music`, `quote`, `table`, `timeline`
-- `description`: a concrete production brief
+Do not generate visuals in this task. A downstream workflow will create one
+visual per explanation step from the narrative you write here. That means the
+scene, reveals, zooms, and payoff still need to be concrete enough that another
+task can clearly infer what should be illustrated.
 
 # Predict Rules
 
@@ -169,7 +154,6 @@ The anchor must:
 - Empty or trivial titles. Every `title` must be a real narrative marker.
 - Static steps whose `text` is only a rhetorical question. Questions belong in `predict`, never in `explanation[].text`.
 - Filler steps between a predict and the reveal. The reveal must come immediately after the predict.
-- Visuals that restate the text.
 - Anchor as abstract "why this matters" wrap-up.
 - Listing `LESSON_CONCEPTS` as a visible checklist.
 - Covering sibling activities from `OTHER_EXPLANATION_ACTIVITY_TITLES`.
@@ -183,7 +167,7 @@ Before answering, verify:
 - Step 1 is a cold open inside a concrete scene. No resolution, no definition.
 - Every subsequent step refers to or builds on that same scene. No new scenarios.
 - Definitions emerge by pointing at something already shown.
-- Each visual advances the narrative (shows the scene, reveals, zooms, or contrasts) — none restate the text. Code visuals used when the goal requires showing how something is written.
+- The narrative is concrete enough that a downstream visual-planning task can infer what to show at each explanation step.
 - Predict #1 lands after the mystery, before the reveal. Predict #2 lands after the zoom, before the payoff. Both `step` fields exactly match a step `title`.
 - No static step contains only a rhetorical question or restates the predict. The step right after each predict is the reveal.
 - The final `explanation` step is a payoff that calls back to step 1.
