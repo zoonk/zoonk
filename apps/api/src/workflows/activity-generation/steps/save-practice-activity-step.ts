@@ -3,14 +3,46 @@ import { assertStepContent } from "@zoonk/core/steps/contract/content";
 import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
-import { type PracticeStep } from "./generate-practice-content-step";
+import { type PracticeScenario, type PracticeStep } from "./generate-practice-content-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
 
 /**
- * Builds multipleChoice step records from practice steps.
- * Each practice step becomes a multipleChoice step with `kind: "core"`.
+ * Practice activities now open with a static scenario screen so the player can
+ * reuse the generic static-step renderer instead of learning a practice-only
+ * intro shape.
  */
-function buildPracticeStepRecords(activityId: string, steps: PracticeStep[]) {
+function buildPracticeScenarioRecord({
+  activityId,
+  scenario,
+}: {
+  activityId: string;
+  scenario: PracticeScenario;
+}) {
+  return {
+    activityId,
+    content: assertStepContent("static", {
+      text: scenario.text,
+      title: scenario.title,
+      variant: "text" as const,
+    }),
+    isPublished: true,
+    kind: "static" as const,
+    position: 0,
+  };
+}
+
+/**
+ * Practice questions stay as the existing `multipleChoice` core steps. Their
+ * positions start after the static scenario so navigation and completion stay
+ * aligned with the visible player order.
+ */
+function buildPracticeQuestionRecords({
+  activityId,
+  steps,
+}: {
+  activityId: string;
+  steps: PracticeStep[];
+}) {
   return steps.map((step, index) => {
     const content = assertStepContent("multipleChoice", {
       context: step.context,
@@ -24,9 +56,29 @@ function buildPracticeStepRecords(activityId: string, steps: PracticeStep[]) {
       content,
       isPublished: true,
       kind: "multipleChoice" as const,
-      position: index,
+      position: index + 1,
     };
   });
+}
+
+/**
+ * Saving practice activity content needs one ordered record list because the DB
+ * write happens through a single `createMany` call. Building the full list here
+ * keeps the persistence order obvious: scenario first, then questions.
+ */
+function buildPracticeStepRecords({
+  activityId,
+  scenario,
+  steps,
+}: {
+  activityId: string;
+  scenario: PracticeScenario;
+  steps: PracticeStep[];
+}) {
+  return [
+    buildPracticeScenarioRecord({ activityId, scenario }),
+    ...buildPracticeQuestionRecords({ activityId, steps }),
+  ];
 }
 
 /**
@@ -37,11 +89,13 @@ function buildPracticeStepRecords(activityId: string, steps: PracticeStep[]) {
  */
 export async function savePracticeActivityStep({
   activityId,
+  scenario,
   steps,
   title,
   workflowRunId,
 }: {
   activityId: string;
+  scenario: PracticeScenario;
   steps: PracticeStep[];
   title: string;
   workflowRunId: string;
@@ -52,7 +106,7 @@ export async function savePracticeActivityStep({
 
   await stream.status({ status: "started", step: "savePracticeActivity" });
 
-  const stepRecords = buildPracticeStepRecords(activityId, steps);
+  const stepRecords = buildPracticeStepRecords({ activityId, scenario, steps });
 
   const { error } = await safeAsync(() =>
     prisma.$transaction([

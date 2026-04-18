@@ -10,6 +10,10 @@ const DEFAULT_MODEL = "openai/gpt-5.4";
 const FALLBACK_MODELS = ["anthropic/claude-opus-4.6", "google/gemini-3.1-pro-preview"];
 
 const schema = z.object({
+  scenario: z.object({
+    text: z.string(),
+    title: z.string(),
+  }),
   steps: z.array(
     z.object({
       context: z.string(),

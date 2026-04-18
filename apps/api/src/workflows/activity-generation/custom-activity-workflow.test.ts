@@ -124,7 +124,14 @@ vi.mock("@zoonk/ai/tasks/activities/core/explanation", () => ({
 
 vi.mock("@zoonk/ai/tasks/activities/core/practice", () => ({
   generateActivityPractice: vi.fn().mockResolvedValue({
-    data: { steps: [], title: "The game store signup mix-up" },
+    data: {
+      scenario: {
+        text: "I'm closing the support queue with Maya, and one customer report still does not line up with the refund totals.",
+        title: "Night shift",
+      },
+      steps: [],
+      title: "The game store signup mix-up",
+    },
   }),
 }));
 

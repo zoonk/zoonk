@@ -24,6 +24,11 @@ vi.mock("workflow", () => ({
   workflowStep: vi.fn().mockImplementation((_name: string, fn: unknown) => fn),
 }));
 
+const practiceScenario = {
+  text: "I'm closing the support queue with Maya, and one customer report still does not line up with the refund totals.",
+  title: "Night shift",
+};
+
 describe(savePracticeActivityStep, () => {
   let organizationId: string;
   let chapter: Awaited<ReturnType<typeof chapterFixture>>;
@@ -85,6 +90,7 @@ describe(savePracticeActivityStep, () => {
 
     await savePracticeActivityStep({
       activityId: activity.id,
+      scenario: practiceScenario,
       steps,
       title: "The game store signup mix-up",
       workflowRunId: "workflow-1",
@@ -100,12 +106,19 @@ describe(savePracticeActivityStep, () => {
       }),
     ]);
 
-    expect(dbSteps).toHaveLength(2);
+    expect(dbSteps).toHaveLength(3);
 
     expect(dbSteps.map((step) => [step.position, step.kind])).toEqual([
-      [0, "multipleChoice"],
+      [0, "static"],
       [1, "multipleChoice"],
+      [2, "multipleChoice"],
     ]);
+
+    expect(dbSteps[0]?.content).toEqual({
+      text: practiceScenario.text,
+      title: practiceScenario.title,
+      variant: "text",
+    });
 
     expect(dbActivity).toMatchObject({
       generationRunId: "workflow-1",
@@ -158,6 +171,7 @@ describe(savePracticeActivityStep, () => {
 
     await savePracticeActivityStep({
       activityId: activity.id,
+      scenario: practiceScenario,
       steps,
       title: "The game store signup mix-up",
       workflowRunId: "workflow-error",
