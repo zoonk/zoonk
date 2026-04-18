@@ -45,7 +45,8 @@ export function TimelineVisual({ content }: { content: TimelineVisualContent }) 
             date={event.date}
             description={event.description}
             hasLine={hasMultipleEvents && index < content.events.length - 1}
-            key={event.date}
+            // oxlint-disable-next-line react/no-array-index-key -- timeline events can intentionally reuse the same generated date label
+            key={index}
             title={event.title}
           />
         ))}

@@ -26,8 +26,9 @@ export function TableVisual({ content }: { content: TableVisualContent }) {
         </TableHeader>
 
         <TableBody>
-          {content.rows.map((row) => (
-            <TableRow key={row.join("-")}>
+          {content.rows.map((row, rowIndex) => (
+            // oxlint-disable-next-line react/no-array-index-key -- AI-generated tables can intentionally repeat the same row values
+            <TableRow key={rowIndex}>
               {content.columns.map((column, columnIndex) => (
                 // oxlint-disable-next-line react/no-array-index-key -- AI-generated columns can have duplicate names
                 <TableCell className="whitespace-normal" key={columnIndex}>
