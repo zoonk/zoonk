@@ -1,0 +1,187 @@
+{
+  "modelId": "anthropic/claude-haiku-4.5",
+  "results": [
+    {
+      "steps": [
+        {
+          "conclusion": "None. The response covers all important concepts from CONCEPTS: function declaration, function name, and function body are addressed in the first activity; function call is covered in the second; return statement is covered in the third. There is no major redundancy, and the titles are generally practical and learner-facing rather than dry glossary labels. The count of three activities fits the lesson complexity and expectations.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "One minor issue is that the first title includes the somewhat academic phrase 'function declaration,' which the prompt explicitly warned against as a standalone-style label. However, it is softened by the rest of the title and remains understandable and practical overall. Another small issue is that the first goal is a bit dense because it bundles declaration syntax, naming, and function body into one sentence, though it is still concrete and testable.",
+          "kind": "minorErrors",
+          "score": 8.8
+        },
+        {
+          "conclusion": "The plan could be improved by making the first title slightly more natural and less terminology-forward, for example emphasizing turning repeated lines into one reusable block without leading with 'function declaration.' The first goal could also be tightened so it reads a bit more cleanly while still covering name and body. Otherwise, the grouping and progression are strong.",
+          "kind": "potentialImprovements",
+          "score": 9.1
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      Titles must be in US English.\n      This lesson should likely land around 1-3 explanation activities.\n      Avoid raw academic titles like \"Function Declaration\", \"Function Call\", or \"Return Statement\" as standalone activity titles.\n\n      \n  EVALUATION CRITERIA:\n\n  PRIORITY ORDER:\n  - The most important checks are COMPLETE COVERAGE, NO REDUNDANCY, and PRACTICAL TITLE STYLE\n  - If the plan misses important concepts, repeats the same teaching move twice, or uses dry academic titles, that is a MAJOR ERROR\n  - Everything else is secondary and should usually be treated as minor or stylistic unless it is severe\n\n  1. COMPLETE COVERAGE (MAJOR):\n     - The full set of activities must cover the lesson's scope\n     - Important concepts from the lesson must be represented somewhere in the plan\n     - If a concept is missing entirely, that is a major error even if the titles sound good\n\n  2. NO REDUNDANCY (MAJOR):\n     - Activities should complement each other instead of repeating the same move\n     - If two activities are duplicated, overlapping, or differ only by wording, that is a major error\n\n  3. PRACTICAL TITLE STYLE (MAJOR):\n     - Titles must feel learner-facing, concrete, and useful\n     - Dry textbook or glossary-style titles are a major error\n     - Penalize titles that just restate raw concept labels\n     - Penalize generic filler such as \"Introduction\", \"Review\", \"Summary\", or \"Key Concepts\"\n\n  4. COHERENT GROUPING:\n     - Activities should group concepts into meaningful explanation chunks\n     - Penalize one-title-per-concept breakdowns when concepts naturally belong together\n     - Penalize disconnected titles that do not feel like part of one lesson flow\n\n  5. RIGHT NUMBER OF ACTIVITIES:\n     - Must return 1-5 explanation activities\n     - The count should match lesson complexity\n     - Do not create extra activities just to hit a higher number\n\n  6. GOAL QUALITY:\n     - Each activity must include a short, clear, one-sentence goal\n     - Penalize vague goals like \"understand the concept better\"\n     - Penalize broad, untestable goals that cover the whole lesson instead of that activity\n\n  7. OUTPUT SHAPE:\n     - Each activity should include only title and goal\n     - Do not reward filler metadata or extra fields\n\n    ",
+        "id": "en-javascript-turning-repeated-code-1",
+        "userInput": {
+          "chapterTitle": "Functions, Arrays, and Objects",
+          "concepts": [
+            "Function Declaration",
+            "Function Call",
+            "Function Body",
+            "Function Name",
+            "Return Statement"
+          ],
+          "courseTitle": "JavaScript",
+          "language": "en",
+          "lessonDescription": "Break a repeated task into a named block of code and run it when needed. These ideas make code shorter, easier to read, and easier to change later.",
+          "lessonTitle": "Turning repeated code into a function"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None. The response covers all four important concepts from CONCEPTS: war captivity, revenge warfare, raiding practices, and war leadership. It stays within the required 1-5 activity range, uses English as requested, and avoids obvious filler sections. There are no clear factual or instruction-breaking major issues such as missing concept coverage, redundant duplicate activities, or dry glossary-like headings severe enough to count as major errors.",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The plan is a bit more segmented than ideal given the expectation to avoid flattening the lesson into separate glossary-style titles for War Captivity, Revenge Warfare, and War Leadership. Although the titles are more concrete than raw concept labels, the structure still maps fairly directly one activity per concept, which slightly weakens coherent grouping. Also, some goals lean a little explanatory/recognition-oriented rather than fully concrete learner actions, though they remain clear and testable overall.",
+          "kind": "minorErrors",
+          "score": 8.4
+        },
+        {
+          "conclusion": "A stronger version could combine some concepts into 2-3 broader explanatory moves so the lesson feels more like a connected story about how warfare operated beyond colonial stereotypes—for example, linking captivity and revenge into one activity about the logic of conflict, and pairing raiding with leadership in another about how war was actually carried out. This would better match the stated expectation of practical grouping and reduce the one-concept-per-activity feel.",
+          "kind": "potentialImprovements",
+          "score": 8.3
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      Titles must be in US English.\n      This lesson should likely land around 2-4 explanation activities.\n      Avoid flattening the plan into separate glossary-style titles for \"War Captivity\", \"Revenge Warfare\", or \"War Leadership\".\n\n      \n  EVALUATION CRITERIA:\n\n  PRIORITY ORDER:\n  - The most important checks are COMPLETE COVERAGE, NO REDUNDANCY, and PRACTICAL TITLE STYLE\n  - If the plan misses important concepts, repeats the same teaching move twice, or uses dry academic titles, that is a MAJOR ERROR\n  - Everything else is secondary and should usually be treated as minor or stylistic unless it is severe\n\n  1. COMPLETE COVERAGE (MAJOR):\n     - The full set of activities must cover the lesson's scope\n     - Important concepts from the lesson must be represented somewhere in the plan\n     - If a concept is missing entirely, that is a major error even if the titles sound good\n\n  2. NO REDUNDANCY (MAJOR):\n     - Activities should complement each other instead of repeating the same move\n     - If two activities are duplicated, overlapping, or differ only by wording, that is a major error\n\n  3. PRACTICAL TITLE STYLE (MAJOR):\n     - Titles must feel learner-facing, concrete, and useful\n     - Dry textbook or glossary-style titles are a major error\n     - Penalize titles that just restate raw concept labels\n     - Penalize generic filler such as \"Introduction\", \"Review\", \"Summary\", or \"Key Concepts\"\n\n  4. COHERENT GROUPING:\n     - Activities should group concepts into meaningful explanation chunks\n     - Penalize one-title-per-concept breakdowns when concepts naturally belong together\n     - Penalize disconnected titles that do not feel like part of one lesson flow\n\n  5. RIGHT NUMBER OF ACTIVITIES:\n     - Must return 1-5 explanation activities\n     - The count should match lesson complexity\n     - Do not create extra activities just to hit a higher number\n\n  6. GOAL QUALITY:\n     - Each activity must include a short, clear, one-sentence goal\n     - Penalize vague goals like \"understand the concept better\"\n     - Penalize broad, untestable goals that cover the whole lesson instead of that activity\n\n  7. OUTPUT SHAPE:\n     - Each activity should include only title and goal\n     - Do not reward filler metadata or extra fields\n\n    ",
+        "id": "en-brazilian-history-warfare-1",
+        "userInput": {
+          "chapterTitle": "Indigenous Brazil Before Colonization",
+          "concepts": ["War Captivity", "Revenge Warfare", "Raiding Practices", "War Leadership"],
+          "courseTitle": "Brazilian History",
+          "language": "en",
+          "lessonDescription": "Examine conflict on its own terms instead of through colonial stereotypes. Warfare often followed rules tied to honor, memory, alliance, and the taking of captives.",
+          "lessonTitle": "Understanding warfare beyond colonial stereotypes"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "There is a small coverage/grouping weakness: due process legal is only paired with isonomia in the last activity, so its broader role as the framework that structures and limits procedure is not made very explicit. Also, the title 'O juiz não começa sozinho: o princípio da inércia' includes a somewhat academic label at the end, though the overall title remains practical and learner-facing. These issues slightly reduce clarity but do not materially break the plan.",
+          "kind": "minorErrors",
+          "score": 8.7
+        },
+        {
+          "conclusion": "The plan could be improved by making the due process activity a bit more concrete and central, for example framing it as the rule set that prevents the process from going off-track, rather than mentioning 'devido processo legal' only indirectly with isonomia. It might also slightly tighten conceptual flow by making the progression from inércia/exceções to guarantees between the parties to the overall fairness framework even more explicit. Still, the current 4-activity structure is appropriate and cohesive.",
+          "kind": "potentialImprovements",
+          "score": 8.8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      Titles must be in Brazilian Portuguese.\n      This lesson should likely land around 3-5 explanation activities.\n      Avoid dry law-school headings like \"Princípios Processuais\", \"Contraditório\", or \"Ampla Defesa\" as standalone activity titles.\n\n      \n  EVALUATION CRITERIA:\n\n  PRIORITY ORDER:\n  - The most important checks are COMPLETE COVERAGE, NO REDUNDANCY, and PRACTICAL TITLE STYLE\n  - If the plan misses important concepts, repeats the same teaching move twice, or uses dry academic titles, that is a MAJOR ERROR\n  - Everything else is secondary and should usually be treated as minor or stylistic unless it is severe\n\n  1. COMPLETE COVERAGE (MAJOR):\n     - The full set of activities must cover the lesson's scope\n     - Important concepts from the lesson must be represented somewhere in the plan\n     - If a concept is missing entirely, that is a major error even if the titles sound good\n\n  2. NO REDUNDANCY (MAJOR):\n     - Activities should complement each other instead of repeating the same move\n     - If two activities are duplicated, overlapping, or differ only by wording, that is a major error\n\n  3. PRACTICAL TITLE STYLE (MAJOR):\n     - Titles must feel learner-facing, concrete, and useful\n     - Dry textbook or glossary-style titles are a major error\n     - Penalize titles that just restate raw concept labels\n     - Penalize generic filler such as \"Introduction\", \"Review\", \"Summary\", or \"Key Concepts\"\n\n  4. COHERENT GROUPING:\n     - Activities should group concepts into meaningful explanation chunks\n     - Penalize one-title-per-concept breakdowns when concepts naturally belong together\n     - Penalize disconnected titles that do not feel like part of one lesson flow\n\n  5. RIGHT NUMBER OF ACTIVITIES:\n     - Must return 1-5 explanation activities\n     - The count should match lesson complexity\n     - Do not create extra activities just to hit a higher number\n\n  6. GOAL QUALITY:\n     - Each activity must include a short, clear, one-sentence goal\n     - Penalize vague goals like \"understand the concept better\"\n     - Penalize broad, untestable goals that cover the whole lesson instead of that activity\n\n  7. OUTPUT SHAPE:\n     - Each activity should include only title and goal\n     - Do not reward filler metadata or extra fields\n\n    ",
+        "id": "pt-direito-regras-do-jogo-1",
+        "userInput": {
+          "chapterTitle": "Processo Civil",
+          "concepts": [
+            "Inércia da Jurisdição",
+            "Ação de Ofício",
+            "Devido Processo Legal",
+            "Contraditório",
+            "Ampla Defesa",
+            "Isonomia Processual"
+          ],
+          "courseTitle": "Direito",
+          "language": "pt",
+          "lessonDescription": "Entenda as regras básicas que dão forma ao processo civil e limitam o poder do juiz e das partes. Esse bloco ajuda a ler qualquer procedimento sem se perder no caminho.",
+          "lessonTitle": "Lendo o processo pelas regras do jogo"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "There is a small terminology mismatch: the lesson concepts include both 'Biosignatura' and 'Biofirma espectral', while the plan mostly uses 'biosignatura' plus 'firma espectral' rather than explicitly preserving the exact 'biofirma espectral' wording. Coverage is still effectively present, but the mapping could be slightly clearer. Otherwise, the activities are non-redundant, practical, and fit the lesson well.",
+          "kind": "minorErrors",
+          "score": 9.2
+        },
+        {
+          "conclusion": "The plan is strong and fits the requested 3-5 activity range well. A minor improvement would be to make the coverage of 'biofirma espectral' even more explicit in the second title or goal, and perhaps tighten the relation between 'biosignatura' and 'falso positivo biológico' by naming the false-positive risk in the title more directly. These are refinements rather than substantive problems.",
+          "kind": "potentialImprovements",
+          "score": 9.3
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      Titles must be in Latin American Spanish.\n      This lesson should likely land around 3-5 explanation activities.\n      Avoid turning each concept label into its own title such as \"Biosignatura\" or \"Oxígeno atmosférico\".\n\n      \n  EVALUATION CRITERIA:\n\n  PRIORITY ORDER:\n  - The most important checks are COMPLETE COVERAGE, NO REDUNDANCY, and PRACTICAL TITLE STYLE\n  - If the plan misses important concepts, repeats the same teaching move twice, or uses dry academic titles, that is a MAJOR ERROR\n  - Everything else is secondary and should usually be treated as minor or stylistic unless it is severe\n\n  1. COMPLETE COVERAGE (MAJOR):\n     - The full set of activities must cover the lesson's scope\n     - Important concepts from the lesson must be represented somewhere in the plan\n     - If a concept is missing entirely, that is a major error even if the titles sound good\n\n  2. NO REDUNDANCY (MAJOR):\n     - Activities should complement each other instead of repeating the same move\n     - If two activities are duplicated, overlapping, or differ only by wording, that is a major error\n\n  3. PRACTICAL TITLE STYLE (MAJOR):\n     - Titles must feel learner-facing, concrete, and useful\n     - Dry textbook or glossary-style titles are a major error\n     - Penalize titles that just restate raw concept labels\n     - Penalize generic filler such as \"Introduction\", \"Review\", \"Summary\", or \"Key Concepts\"\n\n  4. COHERENT GROUPING:\n     - Activities should group concepts into meaningful explanation chunks\n     - Penalize one-title-per-concept breakdowns when concepts naturally belong together\n     - Penalize disconnected titles that do not feel like part of one lesson flow\n\n  5. RIGHT NUMBER OF ACTIVITIES:\n     - Must return 1-5 explanation activities\n     - The count should match lesson complexity\n     - Do not create extra activities just to hit a higher number\n\n  6. GOAL QUALITY:\n     - Each activity must include a short, clear, one-sentence goal\n     - Penalize vague goals like \"understand the concept better\"\n     - Penalize broad, untestable goals that cover the whole lesson instead of that activity\n\n  7. OUTPUT SHAPE:\n     - Each activity should include only title and goal\n     - Do not reward filler metadata or extra fields\n\n    ",
+        "id": "es-exoplanetas-vida-sin-exagerar-1",
+        "userInput": {
+          "chapterTitle": "Exoplanetas",
+          "concepts": [
+            "Biosignatura",
+            "Oxígeno atmosférico",
+            "Ozono atmosférico",
+            "Desequilibrio químico",
+            "Biofirma espectral",
+            "Falso positivo biológico"
+          ],
+          "courseTitle": "Astronomía",
+          "language": "es",
+          "lessonDescription": "Aclara qué señal podría sugerir vida y por qué ninguna se interpreta sola. La clave está en leer el contexto completo antes de hacer afirmaciones grandes.",
+          "lessonTitle": "Buscando señales de vida sin exagerar"
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "There is one major coverage error: the plan does not explicitly cover AdamW, which is a required concept in CONCEPTS. The first activity mentions learning-rate behavior and instability, but not the optimizer choice itself, and the second activity incorrectly introduces layer normalization, which was not in the provided concepts. This means the lesson scope is not fully covered as instructed. There is no major redundancy, and the titles are generally practical rather than academic.",
+          "kind": "majorErrors",
+          "score": 7
+        },
+        {
+          "conclusion": "One minor issue is the inclusion of 'layer normalization patterns' in the second goal even though layer normalization was not listed in the lesson concepts, which weakens fidelity to the prompt. Another minor issue is that the first goal is slightly broad ('Understand why transformer training can become unstable') rather than tightly testable around the specific move. Otherwise, the activity count is appropriate, the titles are learner-facing, and the activities are reasonably grouped.",
+          "kind": "minorErrors",
+          "score": 8.1
+        },
+        {
+          "conclusion": "The response would be stronger if one activity explicitly incorporated AdamW, ideally grouped with warmup as part of the optimization setup for stable transformer training. It should also avoid adding unrequested concepts like layer normalization, and the goals could be made more concrete and testable by focusing on what the learner should be able to explain or choose. A small refinement to ensure every listed concept is clearly represented would substantially improve the plan.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      Titles must be in US English.\n      This lesson should likely land around 3-5 explanation activities.\n      Avoid one title per optimizer trick such as \"AdamW\", \"Label Smoothing\", or \"Gradient Clipping\".\n\n      \n  EVALUATION CRITERIA:\n\n  PRIORITY ORDER:\n  - The most important checks are COMPLETE COVERAGE, NO REDUNDANCY, and PRACTICAL TITLE STYLE\n  - If the plan misses important concepts, repeats the same teaching move twice, or uses dry academic titles, that is a MAJOR ERROR\n  - Everything else is secondary and should usually be treated as minor or stylistic unless it is severe\n\n  1. COMPLETE COVERAGE (MAJOR):\n     - The full set of activities must cover the lesson's scope\n     - Important concepts from the lesson must be represented somewhere in the plan\n     - If a concept is missing entirely, that is a major error even if the titles sound good\n\n  2. NO REDUNDANCY (MAJOR):\n     - Activities should complement each other instead of repeating the same move\n     - If two activities are duplicated, overlapping, or differ only by wording, that is a major error\n\n  3. PRACTICAL TITLE STYLE (MAJOR):\n     - Titles must feel learner-facing, concrete, and useful\n     - Dry textbook or glossary-style titles are a major error\n     - Penalize titles that just restate raw concept labels\n     - Penalize generic filler such as \"Introduction\", \"Review\", \"Summary\", or \"Key Concepts\"\n\n  4. COHERENT GROUPING:\n     - Activities should group concepts into meaningful explanation chunks\n     - Penalize one-title-per-concept breakdowns when concepts naturally belong together\n     - Penalize disconnected titles that do not feel like part of one lesson flow\n\n  5. RIGHT NUMBER OF ACTIVITIES:\n     - Must return 1-5 explanation activities\n     - The count should match lesson complexity\n     - Do not create extra activities just to hit a higher number\n\n  6. GOAL QUALITY:\n     - Each activity must include a short, clear, one-sentence goal\n     - Penalize vague goals like \"understand the concept better\"\n     - Penalize broad, untestable goals that cover the whole lesson instead of that activity\n\n  7. OUTPUT SHAPE:\n     - Each activity should include only title and goal\n     - Do not reward filler metadata or extra fields\n\n    ",
+        "id": "en-transformers-training-stability-1",
+        "userInput": {
+          "chapterTitle": "Transformers",
+          "concepts": [
+            "Dropout in Attention",
+            "Label Smoothing",
+            "Learning Rate Warmup",
+            "AdamW",
+            "Gradient Clipping"
+          ],
+          "courseTitle": "Machine Learning",
+          "language": "en",
+          "lessonDescription": "Training transformers well depends on a handful of optimization choices that became standard for a reason. These pieces help large models learn stably instead of blowing up or stalling.",
+          "lessonTitle": "Training transformers without instability"
+        }
+      }
+    }
+  ],
+  "taskId": "lesson-core-activities"
+}

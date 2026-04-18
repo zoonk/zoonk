@@ -16,11 +16,6 @@ import { getString } from "@zoonk/utils/json";
 import { beforeAll, describe, expect, test, vi } from "vitest";
 import { activityGenerationWorkflow } from "./activity-generation-workflow";
 import { dispatchVisualContent } from "./steps/_utils/dispatch-visual-content";
-import { getNeighboringConceptsStep } from "./steps/get-neighboring-concepts-step";
-
-vi.mock("./steps/get-neighboring-concepts-step", () => ({
-  getNeighboringConceptsStep: vi.fn().mockResolvedValue([]),
-}));
 
 function createDescriptionsResult(
   steps: { title: string; text: string }[],
@@ -1014,30 +1009,39 @@ describe("core activity workflow", () => {
     });
   });
 
-  describe("neighboring concepts", () => {
-    test("passes neighboring concepts to all wave 1 generation steps", async () => {
-      vi.mocked(getNeighboringConceptsStep).mockResolvedValueOnce(["Neighbor A"]);
-
+  describe("explanation planning context", () => {
+    test("passes lesson concepts and sibling explanation titles to explanation generation", async () => {
       const testLesson = await lessonFixture({
         chapterId: chapter.id,
-        concepts: ["Main Concept"],
+        concepts: ["Main Concept", "Backup Concept"],
         organizationId,
-        title: `Neighboring Concepts Lesson ${randomUUID()}`,
+        title: `Explanation Planning Lesson ${randomUUID()}`,
       });
 
       await Promise.all([
         activityFixture({
+          description: "figure out what the repeated pattern is really saying",
           generationStatus: "pending",
           kind: "explanation",
           lessonId: testLesson.id,
           organizationId,
-          title: "Main Concept",
+          title: "Reading the pattern",
+        }),
+        activityFixture({
+          description: "check whether the explanation still holds when the evidence changes",
+          generationStatus: "pending",
+          kind: "explanation",
+          lessonId: testLesson.id,
+          organizationId,
+          position: 1,
+          title: "Testing the explanation",
         }),
         activityFixture({
           generationStatus: "pending",
           kind: "practice",
           lessonId: testLesson.id,
           organizationId,
+          position: 2,
           title: `Practice ${randomUUID()}`,
         }),
       ]);
@@ -1045,7 +1049,12 @@ describe("core activity workflow", () => {
       await activityGenerationWorkflow(testLesson.id);
 
       expect(generateActivityExplanation).toHaveBeenCalledWith(
-        expect.objectContaining({ neighboringConcepts: ["Neighbor A"] }),
+        expect.objectContaining({
+          activityGoal: "figure out what the repeated pattern is really saying",
+          activityTitle: "Reading the pattern",
+          lessonConcepts: ["Main Concept", "Backup Concept"],
+          otherActivityTitles: ["Testing the explanation"],
+        }),
       );
     });
   });

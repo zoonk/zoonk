@@ -1,0 +1,185 @@
+{
+  "expectations": "\n      Titles must be in US English.\n      This lesson should likely land around 1-3 explanation activities.\n      Avoid raw academic titles like \"Function Declaration\", \"Function Call\", or \"Return Statement\" as standalone activity titles.\n\n      \n  EVALUATION CRITERIA:\n\n  PRIORITY ORDER:\n  - The most important checks are COMPLETE COVERAGE, NO REDUNDANCY, and PRACTICAL TITLE STYLE\n  - If the plan misses important concepts, repeats the same teaching move twice, or uses dry academic titles, that is a MAJOR ERROR\n  - Everything else is secondary and should usually be treated as minor or stylistic unless it is severe\n\n  1. COMPLETE COVERAGE (MAJOR):\n     - The full set of activities must cover the lesson's scope\n     - Important concepts from the lesson must be represented somewhere in the plan\n     - If a concept is missing entirely, that is a major error even if the titles sound good\n\n  2. NO REDUNDANCY (MAJOR):\n     - Activities should complement each other instead of repeating the same move\n     - If two activities are duplicated, overlapping, or differ only by wording, that is a major error\n\n  3. PRACTICAL TITLE STYLE (MAJOR):\n     - Titles must feel learner-facing, concrete, and useful\n     - Dry textbook or glossary-style titles are a major error\n     - Penalize titles that just restate raw concept labels\n     - Penalize generic filler such as \"Introduction\", \"Review\", \"Summary\", or \"Key Concepts\"\n\n  4. COHERENT GROUPING:\n     - Activities should group concepts into meaningful explanation chunks\n     - Penalize one-title-per-concept breakdowns when concepts naturally belong together\n     - Penalize disconnected titles that do not feel like part of one lesson flow\n\n  5. RIGHT NUMBER OF ACTIVITIES:\n     - Must return 1-5 explanation activities\n     - The count should match lesson complexity\n     - Do not create extra activities just to hit a higher number\n\n  6. GOAL QUALITY:\n     - Each activity must include a short, clear, one-sentence goal\n     - Penalize vague goals like \"understand the concept better\"\n     - Penalize broad, untestable goals that cover the whole lesson instead of that activity\n\n  7. OUTPUT SHAPE:\n     - Each activity should include only title and goal\n     - Do not reward filler metadata or extra fields\n\n    ",
+  "judgedAt": "2026-04-18T19:41:28.505Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.7",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Strong concrete titles with a clear narrative arc (spotting repetition → declaring/calling → returning). Goals are specific and testable, and all five concepts are covered without redundancy.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Titles are practical and learner-facing, covering all concepts coherently across three complementary moves. Goals are concrete and testable.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Clean, concrete titles with good coverage of name, body, call, and return. Slightly generic but practical and non-redundant.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Concrete learner-facing titles covering all key concepts with testable goals. Solid grouping though similar to several others.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Good coverage and clear goals, but the first title 'Creating a named block with function declaration' leans toward academic by including the raw concept label.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Practical titles and clear goals covering all concepts. Solid execution though unremarkable.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Three activities but the first two ('Giving repeated code a name' and 'Packing the repeated work into the function') overlap heavily—both are about wrapping repeated code into a named block, which is redundant.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Only two activities with strong titles, but the second activity bundles declaration, body, return, and calling into one goal—too much for one chunk and underweights the return concept.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "First title 'Spot the pieces: name, body, and what return gives back' feels like a glossary/parts-list approach, and the goal mentions parameters which aren't in the concepts. Slight academic flavor.",
+          "score": 6
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Model F provides excellent, learner-facing titles that perfectly match the practical, conversational style requested in the examples. The concepts are grouped logically into meaningful explanatory moves (declaration, call, return) without feeling like a textbook. The goals are highly concrete, testable, and use strong pedagogical verbs.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Model E successfully translates the academic concepts into clear, action-oriented titles. The division of activities (creating, running, returning) represents a coherent learning flow without redundancy. The goals are precise and actionable.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model H groups the concepts effectively into three distinct, practical moves. The titles avoid dry jargon and focus heavily on the learner's perspective. The goals are concise and cover all required concepts flawlessly.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model I delivers strong, practical titles that avoid academic jargon while fully covering the required concepts. The grouping of creating, calling, and returning is logical, avoids redundancy, and feels like a coherent story.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Model A provides conversational titles, but the grouping is slightly disjointed. 'Spotting repeated code and wrapping it up' and 'Naming a block of code' overlap significantly, as wrapping code into a function inherently involves naming it. Despite this minor redundancy, the overall quality is solid.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Model D covers all concepts well and has good goals, but the first title ('Creating a named block with function declaration') leans slightly too close to the academic phrasing the prompt warned against. Otherwise, it is a very functional and clear plan.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model C adopts a good, practical tone for the first title, but relies on a more academic phrase ('Declaring a function') for the second. Additionally, cramming the declaration, body, call, and return concepts all into the second activity makes its goal overloaded compared to better-paced models.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Model G violates the core rule against splitting concepts that naturally belong together. Separating 'Giving repeated code a name' and 'Packing the repeated work into the function' into two distinct activities is an unnatural division of a single explanatory move (function declaration).",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Model B commits major errors by creating a taxonomy bucket activity ('Spot the pieces: name, body...'), which was explicitly forbidden in the prompt. Furthermore, it introduces severe redundancy by covering the 'return' concept in both the first and third activities.",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "This plan uses the right 2-activity count for the lesson and groups concepts into coherent teaching moves without feeling fragmented. Titles are practical and learner-facing, and all required concepts are covered, though the second goal is slightly dense by bundling several ideas together.",
+          "score": 9.4
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Strong coverage with clear, practical titles and minimal redundancy, and the 3-part flow makes sense for this lesson. The first two activities overlap a bit around creating/naming the function, which makes the grouping slightly less efficient than the best answer.",
+          "score": 9.1
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Complete and accurate coverage with concrete titles and solid goals, especially around repeated tasks and using returned values. It is a bit more concept-list-like than the top answers, and mentioning parameters introduces an extra idea not present in the lesson concepts.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Clear, practical titles and a coherent progression from defining to running to returning values. However, 'declared shape' is slightly awkward/jargony, and function declaration/name/body coverage is a bit less direct than in the strongest responses.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Good coverage and clear learner-facing titles, with each activity mapping cleanly to a distinct move in the lesson. The wording is a little generic in places, and 'code flows back to the main program' is less crisp than the stronger treatments of function calls and returns.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "This is accurate, concise, and uses practical titles that avoid academic headings. Its main weakness is that function declaration as a concept is only implied rather than explicitly covered, making it slightly less complete than stronger answers.",
+          "score": 8.3
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "The titles are practical and the structure is clear, with good separation between defining, calling, and returning. Still, it mostly implies rather than clearly teaches function declaration, and 'hidden steps' is a less precise way to describe execution.",
+          "score": 8.1
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Coverage is complete and the goals are concrete, but the first title violates the prompt's style guidance by using the academic term 'function declaration' directly. That dry phrasing is a meaningful prompt-following issue even though the rest is solid.",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "The output is accurate and generally learner-facing, but the first two activities are too split up and feel like a one-concept-at-a-time breakdown of naming versus body. That weak grouping makes the plan more fragmented and redundant than it should be for this lesson.",
+          "score": 7.1
+        }
+      ]
+    }
+  ],
+  "taskId": "lesson-core-activities",
+  "testCaseId": "en-javascript-turning-repeated-code-1"
+}

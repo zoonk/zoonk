@@ -20,26 +20,33 @@ export type GeneratedExplanationResult = ExplanationResult & {
 };
 
 /**
- * Generates explanation content for a single activity via AI.
- * Pure data producer: no DB writes. On failure, throws to let
- * the workflow framework retry. The orchestration level handles
- * failure marking via `handleActivityFailureStep`.
- *
- * No status checks — the caller only passes activities that need generation.
+ * Explanation activities are planned before this step runs, so the AI call
+ * needs the current activity title, its short goal, and the lesson's concept
+ * pool. This helper keeps that translation in one place before the workflow
+ * fans out.
  */
-async function generateSingleExplanation(
-  activity: LessonActivity,
-  concept: string,
-  neighboringConcepts: string[],
-): Promise<GeneratedExplanationResult> {
+async function generateSingleExplanation({
+  activity,
+  lessonConcepts,
+  otherExplanationTitles,
+}: {
+  activity: LessonActivity;
+  lessonConcepts: string[];
+  otherExplanationTitles: string[];
+}): Promise<GeneratedExplanationResult> {
+  const activityTitle = activity.title ?? activity.lesson.title;
+  const activityGoal = activity.description ?? activityTitle;
+
   const result = await generateActivityExplanation({
+    activityGoal,
+    activityTitle,
     chapterTitle: activity.lesson.chapter.title,
-    concept,
     courseTitle: activity.lesson.chapter.course.title,
     language: activity.language,
+    lessonConcepts,
     lessonDescription: activity.lesson.description ?? "",
     lessonTitle: activity.lesson.title,
-    neighboringConcepts,
+    otherActivityTitles: otherExplanationTitles,
   });
 
   if (!result?.data) {
@@ -54,10 +61,31 @@ async function generateSingleExplanation(
 
   return {
     activityId: activity.id,
-    concept,
+    concept: activityTitle,
     plan: plan.entries,
     steps: plan.sourceSteps,
   };
+}
+
+/**
+ * Sibling explanation titles help the model stay in its lane instead of
+ * re-explaining the same angle with slightly different wording.
+ */
+function getOtherExplanationTitles({
+  activities,
+  currentActivityId,
+}: {
+  activities: LessonActivity[];
+  currentActivityId: string;
+}): string[] {
+  return activities.flatMap((activity) =>
+    activity.kind === "explanation" &&
+    activity.id !== currentActivityId &&
+    typeof activity.title === "string" &&
+    activity.title.length > 0
+      ? [activity.title]
+      : [],
+  );
 }
 
 /**
@@ -67,11 +95,15 @@ async function generateSingleExplanation(
  *
  * Only receives activities that need generation — no status checks needed.
  */
-export async function generateExplanationContentStep(
-  activities: LessonActivity[],
-  concepts: string[],
-  neighboringConcepts: string[],
-): Promise<{ results: GeneratedExplanationResult[] }> {
+export async function generateExplanationContentStep({
+  activities,
+  allActivities,
+  lessonConcepts,
+}: {
+  activities: LessonActivity[];
+  allActivities: LessonActivity[];
+  lessonConcepts: string[];
+}): Promise<{ results: GeneratedExplanationResult[] }> {
   "use step";
 
   if (activities.length === 0) {
@@ -83,15 +115,16 @@ export async function generateExplanationContentStep(
   await stream.status({ status: "started", step: "generateExplanationContent" });
 
   const allSettled = await Promise.allSettled(
-    activities.map((activity) => {
-      const concept = activity.title ?? "";
-      const otherLessonConcepts = concepts.filter((item) => item !== concept);
-
-      return generateSingleExplanation(activity, concept, [
-        ...otherLessonConcepts,
-        ...neighboringConcepts,
-      ]);
-    }),
+    activities.map((activity) =>
+      generateSingleExplanation({
+        activity,
+        lessonConcepts,
+        otherExplanationTitles: getOtherExplanationTitles({
+          activities: allActivities,
+          currentActivityId: activity.id,
+        }),
+      }),
+    ),
   );
 
   await stream.status({

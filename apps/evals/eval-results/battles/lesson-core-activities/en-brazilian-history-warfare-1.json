@@ -1,0 +1,185 @@
+{
+  "expectations": "\n      Titles must be in US English.\n      This lesson should likely land around 2-4 explanation activities.\n      Avoid flattening the plan into separate glossary-style titles for \"War Captivity\", \"Revenge Warfare\", or \"War Leadership\".\n\n      \n  EVALUATION CRITERIA:\n\n  PRIORITY ORDER:\n  - The most important checks are COMPLETE COVERAGE, NO REDUNDANCY, and PRACTICAL TITLE STYLE\n  - If the plan misses important concepts, repeats the same teaching move twice, or uses dry academic titles, that is a MAJOR ERROR\n  - Everything else is secondary and should usually be treated as minor or stylistic unless it is severe\n\n  1. COMPLETE COVERAGE (MAJOR):\n     - The full set of activities must cover the lesson's scope\n     - Important concepts from the lesson must be represented somewhere in the plan\n     - If a concept is missing entirely, that is a major error even if the titles sound good\n\n  2. NO REDUNDANCY (MAJOR):\n     - Activities should complement each other instead of repeating the same move\n     - If two activities are duplicated, overlapping, or differ only by wording, that is a major error\n\n  3. PRACTICAL TITLE STYLE (MAJOR):\n     - Titles must feel learner-facing, concrete, and useful\n     - Dry textbook or glossary-style titles are a major error\n     - Penalize titles that just restate raw concept labels\n     - Penalize generic filler such as \"Introduction\", \"Review\", \"Summary\", or \"Key Concepts\"\n\n  4. COHERENT GROUPING:\n     - Activities should group concepts into meaningful explanation chunks\n     - Penalize one-title-per-concept breakdowns when concepts naturally belong together\n     - Penalize disconnected titles that do not feel like part of one lesson flow\n\n  5. RIGHT NUMBER OF ACTIVITIES:\n     - Must return 1-5 explanation activities\n     - The count should match lesson complexity\n     - Do not create extra activities just to hit a higher number\n\n  6. GOAL QUALITY:\n     - Each activity must include a short, clear, one-sentence goal\n     - Penalize vague goals like \"understand the concept better\"\n     - Penalize broad, untestable goals that cover the whole lesson instead of that activity\n\n  7. OUTPUT SHAPE:\n     - Each activity should include only title and goal\n     - Do not reward filler metadata or extra fields\n\n    ",
+  "judgedAt": "2026-04-18T19:41:38.225Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.7",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Strong coverage of all four concepts with concrete, learner-facing titles. 'Rules the colonizers didn't see' nicely frames the lesson's core anti-stereotype angle without being filler, and goals are specific and testable.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Clean coverage with vivid, complementary titles tied directly to the lesson's framing. Slight risk that the opening 'Seeing warfare on its own terms' overlaps with the overall lesson framing rather than teaching a distinct chunk, but goals are concrete.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Three well-grouped activities covering all concepts with concrete, practical titles and testable goals. Compact and coherent, though leadership is bundled with raiding rather than highlighted separately.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Good coverage and concrete goals, but titles lean slightly academic with colon-subtitle structure ('Captivity and incorporation:', 'Raiding as strategy:') that edges toward textbook headings.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Three coherent activities with concrete titles and clear goals covering all concepts. Compact and well-framed, though raiding practices are somewhat folded into leadership rather than fully developed.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Concise three-activity plan with practical titles, but the first title 'Why war was about more than just fighting' is a bit vague and overlaps conceptually with the others, slightly redundant framing.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Covers all concepts with reasonable titles, but the first activity ('Why these conflicts look different when you stop using colonial stereotypes') feels like meta-framing/intro rather than a distinct teaching chunk, edging toward filler.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Three activities with concrete titles, but bundling leadership with the long-term cycle of revenge feels forced, and the goals are slightly abstract ('Analyze the role of...'). Coverage is present but uneven.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Three concrete titles cover the concepts, but 'The ritual transformation of the captive' is somewhat narrow and the plan doesn't clearly address raiding practices as a distinct move—raiding is folded only into the honor/revenge title.",
+          "score": 6.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "This model provides an outstanding set of activities. It perfectly avoids the 1-to-1 concept mapping by naturally grouping 'Raiding Practices' and 'War Leadership' together. The titles ('Gathering the fighters and planning the raid') are highly evocative, practical, and learner-facing, completely avoiding textbook taxonomy. The goals are exceptionally clear and testable.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model E also delivers a perfect response. It groups raiding and leadership seamlessly, effectively avoiding the trap of isolated concepts. The titles are written in plain, engaging English without sounding overly academic, and the goals are concrete, one-sentence actions.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Excellent grouping and narrative flow. The final activity ('Rules the colonizers didn\\'t see') is a great way to synthesize the overarching theme of the lesson without resorting to generic filler. The titles are engaging, though 'The captive\\'s role: honor, ritual, and belonging' borders slightly on a textbook heading.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Strong coverage and solid grouping of concepts. The goals are well-crafted. However, the heavy reliance on the 'Title: Subtitle' format makes the activities feel slightly more like textbook chapters than dynamic, practical chunks.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Covers all concepts well and follows the constraints. However, some titles are a bit wordy ('Why these conflicts look different when you stop using colonial stereotypes'), and Activity 4 awkwardly jams leadership and captives into the same title in a way that feels a bit forced.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Meets all baseline requirements and covers the concepts, but the titles lean heavily toward an academic tone ('The ritual transformation of the captive', 'Restoring the balance of honor'). It misses the 'practical, learner-facing' mark required by the prompt.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "The model flattens the remaining concepts into isolated titles after starting with an activity ('Seeing warfare on its own terms') that functions largely as an introduction—which borders on the 'no filler' constraint.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "The first activity is essentially an introduction/summary that lists three concepts at once ('Explain how captivity, revenge, and raiding worked together'). This violates the strict 'No filler' rule against introduction and overview activities.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "This model explicitly violates a primary negative constraint in the user prompt: 'Avoid flattening the plan into separate glossary-style titles for War Captivity, Revenge Warfare...' by doing exactly that. Additionally, the goals use untestable verbs like 'Understand' and 'Recognize', which the prompt specifically calls out as bad.",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Covers all key concepts with 3 coherent, non-redundant activities and consistently practical, learner-facing titles. The grouping is strong and the goals are concrete, though a touch broad in places.",
+          "score": 9.3
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Excellent coverage and clear, complementary chunks that fit the lesson well. Titles are vivid and mostly practical, though the last activity leans slightly more interpretive and the captivity goal adds detail not clearly grounded in the prompt.",
+          "score": 9.1
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Very strong adherence to the prompt with full concept coverage, good flow, and practical titles. The first activity is useful but a bit broad, and captivity is covered less directly than in the top entries.",
+          "score": 8.9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Covers the full lesson and uses clear, non-academic titles with sensible progression. It is slightly more segmented than ideal, and the first activity risks functioning as framing rather than a distinct explanatory move.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "The titles are practical and the grouping feels cohesive, especially around leadership and captivity. However, revenge warfare is only indirectly covered and the first activity is somewhat vague, which weakens completeness.",
+          "score": 8.1
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Compact and coherent with strong practical titles and good goals. But it underrepresents the broader anti-stereotype framing and does not cover captivity, raiding, leadership, and revenge quite as fully as stronger answers.",
+          "score": 7.8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Reasonable structure and mostly good coverage, with clear attention to leadership, revenge, and captivity. Still, some titles are more abstract or academic than requested, and raiding is not as concretely developed as it should be.",
+          "score": 7.4
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "It covers all concepts, but several titles read more like textbook headings than learner-facing activity titles. The goals also slip into less testable phrasing like 'understand' and 'recognize,' which weakens prompt adherence.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "The writing is polished and the titles are engaging, but it relies on specific claims not supported by the prompt and weakens accuracy as a result. It also treats concepts more separately and misses the broader lesson framing about seeing warfare beyond colonial stereotypes.",
+          "score": 5.8
+        }
+      ]
+    }
+  ],
+  "taskId": "lesson-core-activities",
+  "testCaseId": "en-brazilian-history-warfare-1"
+}

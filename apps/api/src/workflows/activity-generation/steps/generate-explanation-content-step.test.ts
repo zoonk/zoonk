@@ -139,6 +139,7 @@ describe(generateExplanationContentStep, () => {
 
     await Promise.all([
       activityFixture({
+        description: "figure out what the repeated pattern is really saying",
         generationStatus: "pending",
         kind: "explanation",
         language: "en",
@@ -147,6 +148,7 @@ describe(generateExplanationContentStep, () => {
         title: `Concept A ${randomUUID()}`,
       }),
       activityFixture({
+        description: "test whether the explanation still holds in a new case",
         generationStatus: "pending",
         kind: "explanation",
         language: "en",
@@ -161,10 +163,11 @@ describe(generateExplanationContentStep, () => {
 
     generateActivityExplanationMock.mockResolvedValue(createExplanationResult());
 
-    const concepts = activities.map((a) => a.title ?? "");
-    const neighboringConcepts = ["neighbor1"];
-
-    const result = await generateExplanationContentStep(activities, concepts, neighboringConcepts);
+    const result = await generateExplanationContentStep({
+      activities,
+      allActivities: activities,
+      lessonConcepts: lesson.concepts,
+    });
 
     expect(result.results).toHaveLength(2);
     expect(result.results[0]?.activityId).toBe(activities[0]?.id);
@@ -207,10 +210,23 @@ describe(generateExplanationContentStep, () => {
       "static",
     ]);
     expect(result.results[1]?.activityId).toBe(activities[1]?.id);
+    expect(generateActivityExplanationMock).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({
+        activityGoal: activities[0]?.description,
+        activityTitle: activities[0]?.title,
+        lessonConcepts: lesson.concepts,
+        otherActivityTitles: [activities[1]?.title],
+      }),
+    );
   });
 
   test("returns empty results when activities list is empty", async () => {
-    const result = await generateExplanationContentStep([], ["concept"], ["neighbor"]);
+    const result = await generateExplanationContentStep({
+      activities: [],
+      allActivities: [],
+      lessonConcepts: ["concept"],
+    });
     expect(result).toEqual({ results: [] });
   });
 
@@ -234,7 +250,11 @@ describe(generateExplanationContentStep, () => {
 
     generateActivityExplanationMock.mockResolvedValue(createExplanationResult());
 
-    await generateExplanationContentStep(activities, ["concept"], []);
+    await generateExplanationContentStep({
+      activities,
+      allActivities: activities,
+      lessonConcepts: lesson.concepts,
+    });
 
     const events = getStreamedEvents(writeMock);
 
@@ -282,9 +302,11 @@ describe(generateExplanationContentStep, () => {
       })
       .mockRejectedValueOnce(new Error("AI failure"));
 
-    const concepts = activities.map((a) => a.title ?? "");
-
-    const result = await generateExplanationContentStep(activities, concepts, []);
+    const result = await generateExplanationContentStep({
+      activities,
+      allActivities: activities,
+      lessonConcepts: lesson.concepts,
+    });
 
     expect(result.results).toHaveLength(1);
     expect(result.results[0]?.activityId).toBe(activities[0]?.id);

@@ -26,7 +26,7 @@ const PHASE_STEPS = {
   finishing: ["setLessonAsCompleted"],
   gettingStarted: ["getLesson", "setLessonAsRunning"],
   personalizingLesson: ["determineAppliedActivity"],
-  settingUpActivities: ["generateCustomActivities", "addActivities"],
+  settingUpActivities: ["generateCoreActivities", "generateCustomActivities", "addActivities"],
 } as const satisfies Record<PhaseName, readonly LessonStepName[]>;
 
 // Compile-time check: typecheck fails with the exact missing step names.

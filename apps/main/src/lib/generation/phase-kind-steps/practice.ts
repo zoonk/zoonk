@@ -4,14 +4,13 @@ import { type PhaseName } from "../activity-generation-phase-config";
 
 type PracticeSteps =
   | "getLessonActivities"
-  | "getNeighboringConcepts"
   | "setActivityAsRunning"
   | "generateExplanationContent"
   | "generatePracticeContent"
   | "savePracticeActivity";
 
 export const PRACTICE_PHASE_STEPS = {
-  gettingStarted: ["getLessonActivities", "getNeighboringConcepts", "setActivityAsRunning"],
+  gettingStarted: ["getLessonActivities", "setActivityAsRunning"],
   saving: ["savePracticeActivity"],
   writingContent: ["generatePracticeContent"],
   writingExplanation: ["generateExplanationContent"],

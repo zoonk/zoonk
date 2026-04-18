@@ -1,0 +1,185 @@
+{
+  "expectations": "\n      Titles must be in US English.\n      This lesson should likely land around 3-5 explanation activities.\n      Avoid one title per optimizer trick such as \"AdamW\", \"Label Smoothing\", or \"Gradient Clipping\".\n\n      \n  EVALUATION CRITERIA:\n\n  PRIORITY ORDER:\n  - The most important checks are COMPLETE COVERAGE, NO REDUNDANCY, and PRACTICAL TITLE STYLE\n  - If the plan misses important concepts, repeats the same teaching move twice, or uses dry academic titles, that is a MAJOR ERROR\n  - Everything else is secondary and should usually be treated as minor or stylistic unless it is severe\n\n  1. COMPLETE COVERAGE (MAJOR):\n     - The full set of activities must cover the lesson's scope\n     - Important concepts from the lesson must be represented somewhere in the plan\n     - If a concept is missing entirely, that is a major error even if the titles sound good\n\n  2. NO REDUNDANCY (MAJOR):\n     - Activities should complement each other instead of repeating the same move\n     - If two activities are duplicated, overlapping, or differ only by wording, that is a major error\n\n  3. PRACTICAL TITLE STYLE (MAJOR):\n     - Titles must feel learner-facing, concrete, and useful\n     - Dry textbook or glossary-style titles are a major error\n     - Penalize titles that just restate raw concept labels\n     - Penalize generic filler such as \"Introduction\", \"Review\", \"Summary\", or \"Key Concepts\"\n\n  4. COHERENT GROUPING:\n     - Activities should group concepts into meaningful explanation chunks\n     - Penalize one-title-per-concept breakdowns when concepts naturally belong together\n     - Penalize disconnected titles that do not feel like part of one lesson flow\n\n  5. RIGHT NUMBER OF ACTIVITIES:\n     - Must return 1-5 explanation activities\n     - The count should match lesson complexity\n     - Do not create extra activities just to hit a higher number\n\n  6. GOAL QUALITY:\n     - Each activity must include a short, clear, one-sentence goal\n     - Penalize vague goals like \"understand the concept better\"\n     - Penalize broad, untestable goals that cover the whole lesson instead of that activity\n\n  7. OUTPUT SHAPE:\n     - Each activity should include only title and goal\n     - Do not reward filler metadata or extra fields\n\n    ",
+  "judgedAt": "2026-04-18T19:41:45.038Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.7",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Covers all five concepts with concrete, learner-facing titles and clear, testable goals. Groups attention dropout with label smoothing logically and gives each technique appropriate space without redundancy.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Strong practical titles, all five concepts covered, and goals are concrete and testable. Tight three-activity structure works well for the lesson's complexity.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Solid coverage of all five concepts with practical titles and concrete goals. Groupings are coherent and the three-activity count fits the lesson well.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Good coverage of all concepts with concrete titles and testable goals. The AdamW title is slightly more academic but still learner-facing.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Covers all concepts with practical titles, though grouping three optimizer tricks into one activity may be too dense. Goals are clear and concrete.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Covers all five concepts with reasonably concrete titles. Grouping warmup, AdamW, and clipping into one activity is dense but defensible; titles are practical.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Covers all concepts but the label smoothing title uses smart quotes and feels slightly more academic. Otherwise solid groupings and goals.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Covers all concepts but titles use colons in a somewhat textbook-heading style ('Starting smooth:', 'Staying general:'), making them feel less learner-facing.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Introduces layer normalization which is NOT in the concept list (hallucination), and the first activity goal starts with 'Understand' which is vague. AdamW coverage is unclear/missing as a distinct discussion.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Model C perfectly captures the intended practical, learner-facing style. It smartly groups the optimizer and stability tricks (AdamW, Warmup, Clipping) into a single cohesive activity about the first training steps, which directly addresses the prompt's instruction to combine concepts for the same situation. The titles are highly engaging and completely avoid dry academic jargon.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Model G also provides excellent, conversational titles and smart grouping, combining the three stability controls into one cohesive activity. The only minor weakness compared to Model C is the structural order—putting the early training stability controls at the end of the lesson feels slightly less natural chronologically.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model H offers very strong, concrete titles and logical grouping. While it separates AdamW from the other stability tricks, the titles explicitly focus on practical mechanisms (e.g., 'keeping weights from growing out of control') rather than just naming the concepts. The goals are action-oriented and clear.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Model B features highly readable, conversational titles that feel like a story. However, it separates Warmup, AdamW, and Clipping into three individual activities. While the titles themselves aren't dry, this structure borders on the penalized 'one-title-per-concept' pattern for tricks that all address early training stability.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Model F creates good, conversational titles but relies heavily on a somewhat repetitive 'Concept: why it works' pattern. Like Model B, it separates the optimization tricks into individual activities rather than grouping them by the shared problem they solve.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Model A successfully groups the concepts into a logical structure of three activities, which fits the complexity well. However, the titles follow a very repetitive, formulaic structure ('Doing X with [Concept]'), making it feel closer to a standard syllabus than an engaging story.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Model E correctly groups the concepts but uses a dry, textbook-style colon format for its titles ('Starting smooth: Warmup...'). This violates the constraint to avoid academic, syllabus-style headings and feels slightly like filler.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Model D uses clunky titles that read more like direct commands or textbook sections ('Warm up the learning rate and use AdamW the right way'). It relies too heavily on raw concept labels and fails to create an engaging narrative flow.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Model I completely misses the required concept 'AdamW' and hallucinates 'layer normalization', which was not in the inputs. Additionally, the first goal uses the explicitly forbidden vague phrasing 'Understand why...'. This is a major failure of core constraints.",
+          "score": 2
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "This plan covers all required concepts with strong grouping: stability tools are combined coherently, and the regularization ideas are separated into distinct, non-overlapping moves. The titles are practical and learner-facing, and the 3-activity count fits the lesson well.",
+          "score": 9.3
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "It covers every concept and groups them into sensible chunks that match the lesson’s main stability story. Titles are concrete and mostly practical, though the standalone AdamW activity is a bit closer to a concept-specific breakdown than ideal.",
+          "score": 8.9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Coverage is complete and the grouping is efficient, especially the combined stability-controls activity. The titles feel practical, though the first two activities split related regularization ideas more than necessary and one goal is slightly more abstract than the best answers.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "This covers all concepts with a clean 3-part structure and generally practical titles. It loses some precision because “dropout” is not explicitly tied to attention in the title, and the phrasing is a bit more generic than the top-ranked responses.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "All required concepts are present, and the activities feel coherent with a sensible 3-chunk structure. However, the AdamW title is somewhat misleadingly framed, and “dropped connections” is less accurate than directly describing attention dropout.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "The content is accurate and complete, with strong goals and practical wording. But it violates the prompt’s grouping preference by reverting to near one-title-per-concept for warmup, AdamW, and gradient clipping, making the plan feel more fragmented than necessary.",
+          "score": 7.6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "It is complete and mostly clear, but it also leans too hard into one-title-per-concept, which the prompt explicitly warned against. The titles are engaging, though the structure feels more like a concept list than a compact explanatory flow.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Coverage is complete and the goals are concrete, but the plan is the most textbook-like among the stronger answers. It breaks the lesson into largely concept-by-concept sections, and some titles are more direct labels than practical explanatory moves.",
+          "score": 7.2
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "This has a practical tone, but it misses AdamW entirely and introduces layer normalization, which is not in the concept list. That combination of missing required coverage and adding unrelated content is a major prompt-following failure.",
+          "score": 3.2
+        }
+      ]
+    }
+  ],
+  "taskId": "lesson-core-activities",
+  "testCaseId": "en-transformers-training-stability-1"
+}

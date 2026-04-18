@@ -40,6 +40,11 @@ export function buildCoreLessonEstimate({
     buildGatewayLineItem({ averageRequestsPerRun: 1, taskName: "lesson-kind", usageByTask }),
     buildGatewayLineItem({
       averageRequestsPerRun: 1,
+      taskName: "lesson-core-activities",
+      usageByTask,
+    }),
+    buildGatewayLineItem({
+      averageRequestsPerRun: 1,
       taskName: "applied-activity-kind",
       usageByTask,
     }),
@@ -124,7 +129,7 @@ export function buildCoreLessonEstimate({
 
   return {
     description:
-      "Lesson classification, explanation/practice/quiz generation, explanation visuals, quiz image generation, and one weighted applied activity.",
+      "Lesson classification, core activity planning, explanation/practice/quiz generation, explanation visuals, quiz image generation, and one weighted applied activity.",
     kind: "coreLesson",
     lineItems,
     notes: [],

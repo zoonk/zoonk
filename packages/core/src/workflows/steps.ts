@@ -54,6 +54,7 @@ export const LESSON_STEPS = [
   "determineAppliedActivity",
   "updateLessonKind",
   "removeNonLanguageLesson",
+  "generateCoreActivities",
   "generateCustomActivities",
   "addActivities",
   "setLessonAsCompleted",

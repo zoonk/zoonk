@@ -168,8 +168,7 @@ describe("explanation activity workflow", () => {
     const { results } = await explanationActivityWorkflow({
       activitiesToGenerate: activities,
       allActivities: activities,
-      concepts: activities[0]?.lesson?.concepts ?? [],
-      neighboringConcepts: [],
+      lessonConcepts: activities[0]?.lesson?.concepts ?? [],
       workflowRunId: "test-run-id",
     });
 
@@ -269,8 +268,7 @@ describe("explanation activity workflow", () => {
     const { results } = await explanationActivityWorkflow({
       activitiesToGenerate: [],
       allActivities: activities,
-      concepts: activities[0]?.lesson?.concepts ?? [],
-      neighboringConcepts: [],
+      lessonConcepts: activities[0]?.lesson?.concepts ?? [],
       workflowRunId: "test-run-id",
     });
 
@@ -310,8 +308,7 @@ describe("explanation activity workflow", () => {
     await explanationActivityWorkflow({
       activitiesToGenerate: activities,
       allActivities: activities,
-      concepts: activities[0]?.lesson?.concepts ?? [],
-      neighboringConcepts: [],
+      lessonConcepts: activities[0]?.lesson?.concepts ?? [],
       workflowRunId: "test-run-id",
     });
 
@@ -345,8 +342,7 @@ describe("explanation activity workflow", () => {
     await explanationActivityWorkflow({
       activitiesToGenerate: activities,
       allActivities: activities,
-      concepts: activities[0]?.lesson?.concepts ?? [],
-      neighboringConcepts: [],
+      lessonConcepts: activities[0]?.lesson?.concepts ?? [],
       workflowRunId: "test-run-id",
     });
 
@@ -360,8 +356,8 @@ describe("explanation activity workflow", () => {
   });
 
   test("keeps other explanation activities running when one fails", async () => {
-    vi.mocked(generateActivityExplanation).mockImplementation(async ({ concept }) => {
-      if (concept === "Broken Concept") {
+    vi.mocked(generateActivityExplanation).mockImplementation(async ({ activityTitle }) => {
+      if (activityTitle === "Broken Concept") {
         throw new Error("broken");
       }
 
@@ -399,8 +395,7 @@ describe("explanation activity workflow", () => {
     await explanationActivityWorkflow({
       activitiesToGenerate: activities,
       allActivities: activities,
-      concepts: activities[0]?.lesson?.concepts ?? [],
-      neighboringConcepts: [],
+      lessonConcepts: activities[0]?.lesson?.concepts ?? [],
       workflowRunId: "test-run-id",
     });
 
@@ -444,8 +439,7 @@ describe("explanation activity workflow", () => {
     await explanationActivityWorkflow({
       activitiesToGenerate: activities,
       allActivities: activities,
-      concepts: activities[0]?.lesson?.concepts ?? [],
-      neighboringConcepts: [],
+      lessonConcepts: activities[0]?.lesson?.concepts ?? [],
       workflowRunId: "test-run-id",
     });
 

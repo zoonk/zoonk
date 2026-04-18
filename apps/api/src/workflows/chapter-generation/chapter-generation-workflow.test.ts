@@ -49,6 +49,19 @@ vi.mock("@zoonk/ai/tasks/lessons/custom-activities", () => ({
   }),
 }));
 
+vi.mock("@zoonk/ai/tasks/lessons/core-activities", () => ({
+  generateLessonCoreActivities: vi.fn().mockResolvedValue({
+    data: {
+      activities: [
+        {
+          goal: "spot the repeated pattern before turning it into a reusable rule",
+          title: "Reading the pattern",
+        },
+      ],
+    },
+  }),
+}));
+
 describe(chapterGenerationWorkflow, () => {
   let organizationId: string;
   let course: Awaited<ReturnType<typeof courseFixture>>;

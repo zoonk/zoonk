@@ -8,9 +8,9 @@ export type ModelConfig = {
 
 export const EVAL_MODELS: ModelConfig[] = [
   {
-    id: "anthropic/claude-opus-4.6",
+    id: "anthropic/claude-opus-4.7",
     inputCost: 5,
-    name: "claude-opus-4.6",
+    name: "claude-opus-4.7",
     outputCost: 25,
   },
   {

@@ -104,6 +104,19 @@ vi.mock("@zoonk/ai/tasks/lessons/custom-activities", () => ({
   }),
 }));
 
+vi.mock("@zoonk/ai/tasks/lessons/core-activities", () => ({
+  generateLessonCoreActivities: vi.fn().mockResolvedValue({
+    data: {
+      activities: [
+        {
+          goal: "spot the repeated pattern before turning it into a reusable rule",
+          title: "Reading the pattern",
+        },
+      ],
+    },
+  }),
+}));
+
 vi.mock("./_internal/get-or-create-course", async (importOriginal) => {
   const mod = await importOriginal();
   return {

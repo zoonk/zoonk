@@ -1,0 +1,185 @@
+{
+  "expectations": "\n      Titles must be in Latin American Spanish.\n      This lesson should likely land around 3-5 explanation activities.\n      Avoid turning each concept label into its own title such as \"Biosignatura\" or \"Oxígeno atmosférico\".\n\n      \n  EVALUATION CRITERIA:\n\n  PRIORITY ORDER:\n  - The most important checks are COMPLETE COVERAGE, NO REDUNDANCY, and PRACTICAL TITLE STYLE\n  - If the plan misses important concepts, repeats the same teaching move twice, or uses dry academic titles, that is a MAJOR ERROR\n  - Everything else is secondary and should usually be treated as minor or stylistic unless it is severe\n\n  1. COMPLETE COVERAGE (MAJOR):\n     - The full set of activities must cover the lesson's scope\n     - Important concepts from the lesson must be represented somewhere in the plan\n     - If a concept is missing entirely, that is a major error even if the titles sound good\n\n  2. NO REDUNDANCY (MAJOR):\n     - Activities should complement each other instead of repeating the same move\n     - If two activities are duplicated, overlapping, or differ only by wording, that is a major error\n\n  3. PRACTICAL TITLE STYLE (MAJOR):\n     - Titles must feel learner-facing, concrete, and useful\n     - Dry textbook or glossary-style titles are a major error\n     - Penalize titles that just restate raw concept labels\n     - Penalize generic filler such as \"Introduction\", \"Review\", \"Summary\", or \"Key Concepts\"\n\n  4. COHERENT GROUPING:\n     - Activities should group concepts into meaningful explanation chunks\n     - Penalize one-title-per-concept breakdowns when concepts naturally belong together\n     - Penalize disconnected titles that do not feel like part of one lesson flow\n\n  5. RIGHT NUMBER OF ACTIVITIES:\n     - Must return 1-5 explanation activities\n     - The count should match lesson complexity\n     - Do not create extra activities just to hit a higher number\n\n  6. GOAL QUALITY:\n     - Each activity must include a short, clear, one-sentence goal\n     - Penalize vague goals like \"understand the concept better\"\n     - Penalize broad, untestable goals that cover the whole lesson instead of that activity\n\n  7. OUTPUT SHAPE:\n     - Each activity should include only title and goal\n     - Do not reward filler metadata or extra fields\n\n    ",
+  "judgedAt": "2026-04-18T19:41:55.521Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.7",
+      "rankings": [
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Excellent coverage of all concepts with vivid, learner-facing titles that complement each other without redundancy. Goals are concrete and testable, and the framing ('atmosphere as a system') captures the lesson's spirit well.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Strong, concrete titles with a clear narrative arc and good coverage of all concepts. Goals are short and testable; the falso positivo activity is well framed.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Clear, practical titles that cover all concepts with distinct teaching moves. Goals are concrete, though the third title slightly bundles two ideas.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Good practical titles with strong coverage, though biofirma espectral is mentioned only briefly in a goal rather than getting clear focus. Titles feel coherent and avoid academic phrasing.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Concrete and engaging titles with a nice 'sospechoso al culpable' arc. However, the first title lists raw concept labels (oxígeno, ozono, desequilibrio químico), which slightly violates the avoid-glossary-style rule.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Solid coverage and reasonably concrete titles, though 'falsos positivos biológicos' in the last title leans toward labeling. Goals are clear and the flow works well.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Vivid, story-like titles with good coverage, though 'biofirma espectral' is folded into the first activity's goal somewhat lightly. Coherent flow with no redundancy.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "Good practical titles but biofirma espectral is not clearly addressed as its own move—only mentioned in the third goal. Coverage is slightly weaker than top entries.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "First title uses the dry 'X vs Y' glossary format with raw concept labels, violating the academic-titles rule. The fourth activity also feels close to a 'putting it all together' synthesis, which the prompt warns against.",
+          "score": 5.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "This model provides exceptional, practical titles that perfectly match the requested style ('Rastreando huellas químicas en la luz de un planeta'). It comprehensively covers all the required concepts without using dry glossary labels, and the goals are clear, testable, and specific.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "This output is very strong with great coverage of all concepts exactly as requested. The titles are engaging and learner-facing, though the final title borders slightly on reading like a generic conclusion ('sacar conclusiones').",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "The titles are very well written and follow the practical style rules nicely. It conceptually covers the lesson well, though it misses the exact terminology for a few concepts ('biosignatura', 'desequilibrio químico') in the goals, which is helpful for downstream generation.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "The model provides strong, concrete titles that complement each other well. However, it fails to explicitly include the concept 'biosignatura' anywhere in the plan.",
+          "score": 7.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "The coverage is good and the goals are actionable. However, the third title ('biofirmas espectrales y falsos positivos') violates the negative constraint against using dry concept labels or taxonomy buckets as titles.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "While the goals are solid, the first title blatantly lists three concept labels ('oxígeno, ozono y desequilibrio químico'), violating the rule against glossary-style or list-based titles. It also misses explicit mention of 'biofirma espectral'.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "The titles are engaging and practical, but the plan has major gaps in concept coverage. It fails to explicitly mention 'biosignatura', 'biofirma espectral', and 'falso positivo biológico' in the goals.",
+          "score": 5.5
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "The plan suffers from significant coverage gaps, entirely missing 'biosignatura' and 'biofirma espectral'. The titles are adequate but the lack of required concepts is a major error.",
+          "score": 5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "This model completely ignores the core style constraints. Titles like 'biosignaturas vs biofirmas espectrales' and 'la historia del desequilibrio químico' read exactly like the academic textbook headings and taxonomy buckets the prompt explicitly forbade.",
+          "score": 3.5
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.4",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-haiku-4.5",
+          "reasoning": "Covers all required concepts cleanly in 3 coherent, non-redundant activities with practical, learner-facing titles. Goals are concise, concrete, and strongly aligned to the lesson’s core idea of interpreting signals through context.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model E",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Very strong coverage and grouping, with practical titles and clear progression from candidate signals to context and caution. Slightly less precise than the best answer because the first two activities overlap a bit around molecules and imbalance.",
+          "score": 9.1
+        },
+        {
+          "anonymousId": "Model H",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Good 4-part structure with concrete titles and solid emphasis on context, oxygen/ozone, disequilibrium, and false positives. It likely covers the spectral-signature idea only indirectly, so concept coverage is a touch less explicit.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "anthropic/claude-sonnet-4.6",
+          "reasoning": "Strong thematic coherence and excellent learner-facing tone, especially around not overclaiming. However, oxygen and ozone are only mentioned inside one goal and not reflected as clearly in the plan structure, making coverage feel a bit less balanced.",
+          "score": 8.7
+        },
+        {
+          "anonymousId": "Model G",
+          "modelId": "openai/gpt-5.4-mini",
+          "reasoning": "Clear, practical titles and good separation of explanatory moves, with all key concepts represented across the set. It is slightly more generic than the top answers, especially in the first activity and in how biosignatures are framed.",
+          "score": 8.6
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Covers the main concepts well and has vivid, engaging titles that avoid textbook language. The second activity over-centers oxygen and ozone as the ‘main suspects,’ which narrows the lesson more than the prompt suggests and makes the plan a bit less balanced.",
+          "score": 8.4
+        },
+        {
+          "anonymousId": "Model I",
+          "modelId": "google/gemini-3-flash",
+          "reasoning": "Complete and well-organized, with mostly practical titles and solid concept coverage. The final title leans more academic by using the raw label 'falsos positivos biológicos,' and the set feels a bit more like a concept checklist than a story-like lesson flow.",
+          "score": 8.2
+        },
+        {
+          "anonymousId": "Model F",
+          "modelId": "google/gemini-3.1-flash-lite-preview",
+          "reasoning": "The activities are concrete and readable, and the titles mostly feel learner-facing. But it never clearly covers biosignature/biofirma espectral as its own idea, so important concept coverage is incomplete.",
+          "score": 7.1
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "openai/gpt-5.4-nano",
+          "reasoning": "Coverage is comprehensive, but the titles and goals are noticeably more academic and label-driven, especially with direct concept naming and contrast framing. There is also some redundancy between the false-positive activity and the final 'context complete' activity.",
+          "score": 6.8
+        }
+      ]
+    }
+  ],
+  "taskId": "lesson-core-activities",
+  "testCaseId": "es-exoplanetas-vida-sin-exagerar-1"
+}

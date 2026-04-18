@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
 import { generateAppliedActivityKind } from "@zoonk/ai/tasks/lessons/applied-activity-kind";
+import { generateLessonCoreActivities } from "@zoonk/ai/tasks/lessons/core-activities";
 import { generateLessonCustomActivities } from "@zoonk/ai/tasks/lessons/custom-activities";
 import { generateLessonKind } from "@zoonk/ai/tasks/lessons/kind";
 import { prisma } from "@zoonk/db";
@@ -21,6 +22,23 @@ vi.mock("@zoonk/ai/tasks/lessons/kind", () => ({
 vi.mock("@zoonk/ai/tasks/lessons/applied-activity-kind", () => ({
   generateAppliedActivityKind: vi.fn().mockResolvedValue({
     data: { appliedActivityKind: "story" },
+  }),
+}));
+
+vi.mock("@zoonk/ai/tasks/lessons/core-activities", () => ({
+  generateLessonCoreActivities: vi.fn().mockResolvedValue({
+    data: {
+      activities: [
+        {
+          goal: "spot the repeated pattern before turning it into a reusable rule",
+          title: "Reading the pattern",
+        },
+        {
+          goal: "turn the pattern into a rule you can apply to new cases",
+          title: "Turning it into a rule",
+        },
+      ],
+    },
   }),
 }));
 
@@ -214,6 +232,34 @@ describe(lessonGenerationWorkflow, () => {
 
       await expect(lessonGenerationWorkflow(lesson.id)).rejects.toThrow(
         "Activities generation failed",
+      );
+
+      const dbLesson = await prisma.lesson.findUnique({
+        where: { id: lesson.id },
+      });
+
+      expect(dbLesson?.generationStatus).toBe("failed");
+    });
+
+    test("marks lesson as 'failed' when core activities generation throws", async () => {
+      vi.mocked(generateLessonKind).mockResolvedValueOnce({
+        data: { kind: "core" },
+      } as Awaited<ReturnType<typeof generateLessonKind>>);
+
+      vi.mocked(generateLessonCoreActivities).mockRejectedValueOnce(
+        new Error("Core activities generation failed"),
+      );
+
+      const title = `Core Error Lesson ${randomUUID()}`;
+      const lesson = await lessonFixture({
+        chapterId: chapter.id,
+        generationStatus: "pending",
+        organizationId,
+        title,
+      });
+
+      await expect(lessonGenerationWorkflow(lesson.id)).rejects.toThrow(
+        "Core activities generation failed",
       );
 
       const dbLesson = await prisma.lesson.findUnique({

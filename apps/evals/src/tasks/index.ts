@@ -26,6 +26,7 @@ import { courseDescriptionTask } from "./course-description/task";
 import { courseSuggestionsTask } from "./course-suggestions/task";
 import { languageChapterLessonsTask } from "./language-chapter-lessons/task";
 import { languageCourseChaptersTask } from "./language-course-chapters/task";
+import { lessonCoreActivitiesTask } from "./lesson-core-activities/task";
 import { lessonCustomActivitiesTask } from "./lesson-custom-activities/task";
 import { lessonKindTask } from "./lesson-kind/task";
 import { stepVisualTask } from "./step-visual/task";
@@ -64,6 +65,7 @@ export const TASKS: readonly Task[] = [
   courseChaptersTask,
   courseDescriptionTask,
   courseSuggestionsTask,
+  lessonCoreActivitiesTask,
   lessonCustomActivitiesTask,
   languageChapterLessonsTask,
   languageCourseChaptersTask,

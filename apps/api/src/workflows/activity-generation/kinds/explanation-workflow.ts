@@ -86,14 +86,12 @@ async function getResultsFromCompletedActivities(
 export async function explanationActivityWorkflow({
   activitiesToGenerate,
   allActivities,
-  concepts,
-  neighboringConcepts,
+  lessonConcepts,
   workflowRunId,
 }: {
   activitiesToGenerate: LessonActivity[];
   allActivities: LessonActivity[];
-  concepts: string[];
-  neighboringConcepts: string[];
+  lessonConcepts: string[];
   workflowRunId: string;
 }): Promise<{ results: ExplanationResult[] }> {
   "use workflow";
@@ -103,7 +101,11 @@ export async function explanationActivityWorkflow({
   const [completedResults, generatedData] = await Promise.all([
     getResultsFromCompletedActivities(allActivities, activitiesToGenerate),
     explanationsToGenerate.length > 0
-      ? generateExplanationContentStep(explanationsToGenerate, concepts, neighboringConcepts)
+      ? generateExplanationContentStep({
+          activities: explanationsToGenerate,
+          allActivities,
+          lessonConcepts,
+        })
       : { results: [] },
   ]);
 
