@@ -62,34 +62,6 @@ export const EVAL_MODELS: ModelConfig[] = [
     name: "gpt-5.4-nano",
     outputCost: 1.25,
   },
-  {
-    id: "openai/gpt-5.2:high",
-    inputCost: 1.75,
-    name: "gpt-5.2",
-    outputCost: 14,
-    reasoningEffort: "high",
-  },
-  {
-    id: "openai/gpt-5.2",
-    inputCost: 1.75,
-    name: "gpt-5.2",
-    outputCost: 14,
-    reasoningEffort: "auto",
-  },
-  {
-    id: "openai/gpt-5.1-instant",
-    inputCost: 1.25,
-    name: "gpt-5.1-instant",
-    outputCost: 10,
-    reasoningEffort: "auto",
-  },
-  {
-    id: "openai/gpt-5-mini",
-    inputCost: 0.25,
-    name: "gpt-5-mini",
-    outputCost: 2,
-    reasoningEffort: "auto",
-  },
 ];
 
 export function getModelDisplayName(model: ModelConfig): string {
