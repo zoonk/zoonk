@@ -20,77 +20,78 @@ function createExplanationResult(): Awaited<ReturnType<typeof generateActivityEx
   return {
     data: {
       anchor: {
-        text: "This is why Google Maps can keep recalculating your route while you move.",
-        title: "This is why",
+        text: "Every photo you send on WhatsApp uses this exact layering — you hit send, it runs.",
+        title: "Every send",
       },
-      concepts: [
+      explanation: [
         {
-          text: "Packets travel as smaller chunks so the network can handle them predictably.",
-          title: "Small chunks",
-          visual: null,
-        },
-        {
-          text: "Each layer adds its own label for a different job.",
-          title: "Layer labels",
+          text: "You send a photo on WhatsApp. In under a second, it appears on your friend's screen, even if you're on the bus.",
+          title: "O envio",
           visual: {
             description:
-              "A diagram of one packet with stacked labels for different network layers.",
+              "Two frames: your thumb tapping send, then the photo visible in the friend's chat.",
+            kind: "image" as const,
+          },
+        },
+        {
+          text: "Between the tap and the delivered photo, the message passes through several hidden points. Each one wraps it with a different kind of label.",
+          title: "Os rótulos escondidos",
+          visual: {
+            description: "Same two frames with a blurred row of unlabeled wrappers between them.",
+            kind: "image" as const,
+          },
+        },
+        {
+          text: "Here are the wrappers, in the order they get added: the app wrapper, the transport wrapper, the network wrapper. Each layer adds a label for a different job.",
+          title: "A pilha",
+          visual: {
+            description: "Nested packet with stacked layer labels: app, transport, network.",
             kind: "diagram" as const,
           },
         },
         {
-          text: "Routers look at the network label, not the whole app meaning.",
-          title: "Router focus",
-          visual: null,
+          text: "Zoom in on the network wrapper: it only carries routing info — where to send next. The chat content stays sealed inside, untouched by routers.",
+          title: "O rótulo de rede",
+          visual: {
+            description: "Close-up of the network wrapper with a routing address highlighted.",
+            kind: "diagram" as const,
+          },
         },
       ],
-      initialQuestion: {
-        explanation:
-          "The packet keeps gaining focused labels so each part of the network knows what to do next.",
-        question: "Why doesn't internet data travel as one giant unlabeled blob?",
-        visual: {
-          description: "An image of a message turning into a packet with labels wrapped around it.",
-          kind: "image" as const,
-        },
-      },
       predict: [
         {
-          concept: "Layer labels",
           options: [
             {
-              feedback: "Right. Different layers need different details.",
+              feedback: "Yes. Each wrapper handles a different job during the trip.",
               isCorrect: true,
               text: "Because each layer needs its own information",
             },
             {
-              feedback: "Not this one. The labels are functional, not decorative.",
+              feedback: "Not this. Layers are functional, not decorative.",
               isCorrect: false,
-              text: "Because extra labels make packets look neater",
+              text: "Because extra labels make the packet prettier",
             },
           ],
-          question: "Why add more than one label to the same packet?",
+          question: "Why wrap the same photo with several labels?",
+          step: "Os rótulos escondidos",
         },
         {
-          concept: "Router focus",
           options: [
             {
-              feedback: "Yes. Routers mainly care about where the packet goes next.",
+              feedback: "Right. Routers only read where the packet goes next.",
               isCorrect: true,
               text: "The network label",
             },
             {
-              feedback: "No. Routers are not reading the full chat message.",
+              feedback: "No. Routers do not open the full chat message.",
               isCorrect: false,
-              text: "The app's full message",
+              text: "The full chat content",
             },
           ],
           question: "Which part does a router mainly use?",
+          step: "O rótulo de rede",
         },
       ],
-      scenario: {
-        text: "You send a WhatsApp photo on the bus and it still reaches your friend after crossing many network points.",
-        title: "On WhatsApp",
-      },
     },
     systemPrompt: "test",
     usage: {} as Awaited<ReturnType<typeof generateActivityExplanation>>["usage"],
@@ -185,42 +186,40 @@ describe("explanation activity workflow", () => {
       [0, "static"],
       [1, "visual"],
       [2, "static"],
-      [3, "static"],
-      [4, "static"],
+      [3, "visual"],
+      [4, "multipleChoice"],
       [5, "static"],
       [6, "visual"],
-      [7, "multipleChoice"],
-      [8, "static"],
+      [7, "static"],
+      [8, "visual"],
       [9, "multipleChoice"],
       [10, "static"],
     ]);
 
     expect(steps[0]?.content).toEqual({
-      text: "Why doesn't internet data travel as one giant unlabeled blob?",
-      title: "",
+      text: "You send a photo on WhatsApp. In under a second, it appears on your friend's screen, even if you're on the bus.",
+      title: "O envio",
       variant: "text",
     });
     expect(steps[2]?.content).toEqual({
-      text: "The packet keeps gaining focused labels so each part of the network knows what to do next.",
-      title: "",
+      text: "Between the tap and the delivered photo, the message passes through several hidden points. Each one wraps it with a different kind of label.",
+      title: "Os rótulos escondidos",
       variant: "text",
     });
-    expect(steps[7]?.kind).toBe("multipleChoice");
+    expect(steps[4]?.kind).toBe("multipleChoice");
     expect(steps[10]?.content).toEqual({
-      text: "This is why Google Maps can keep recalculating your route while you move.",
-      title: "This is why",
+      text: "Every photo you send on WhatsApp uses this exact layering — you hit send, it runs.",
+      title: "Every send",
       variant: "text",
     });
 
     expect(results).toHaveLength(1);
     expect(results[0]?.steps.map((step) => step.title || step.text)).toEqual([
-      "Why doesn't internet data travel as one giant unlabeled blob?",
-      "The packet keeps gaining focused labels so each part of the network knows what to do next.",
-      "On WhatsApp",
-      "Small chunks",
-      "Layer labels",
-      "Router focus",
-      "This is why",
+      "O envio",
+      "Os rótulos escondidos",
+      "A pilha",
+      "O rótulo de rede",
+      "Every send",
     ]);
   });
 

@@ -3,34 +3,54 @@ EVALUATION CRITERIA:
 
 1. FACTUAL ACCURACY: The explanation must be technically correct for the topic. Penalize invented mechanisms, wrong cause-effect chains, or misleading simplifications.
 
-2. REQUIRED STRUCTURE: The output must contain:
-   - initialQuestion { question, visual, explanation }
-   - scenario { title, text }
-   - concepts[] with title, text, visual
-   - predict[] with exactly 2 checks
-   - anchor { title, text }
+2. REQUIRED STRUCTURE: The output must contain exactly three top-level fields:
+   - explanation[]: an array of narrative steps, each with title, text, and visual
+   - predict[]: exactly 2 quick checks, each with step (matching an explanation title), question, options
+   - anchor: { title, text } (no visual)
 
-3. HOOK QUALITY: initialQuestion should create curiosity before teaching. Penalize dry definitions, obvious trivia questions, or hooks that already explain the answer.
+3. GOAL DELIVERY: The activity must actually deliver on ACTIVITY_GOAL. The learner should finish the activity knowing what the thing is, why it exists or is used (when the goal implies it), and how it works or is written in practice (when the goal implies it). Penalize activities that stay surface-level and leave the learner still unsure what the thing is, why it matters, or how it's written when the goal required these.
 
-4. SCENARIO QUALITY: scenario.text must open inside a concrete daily-life situation. Penalize domain jargon, "imagine that...", abstract framing, or scenarios that feel like an educational exercise instead of real life.
+4. SCENE SPINE: The entire activity must revolve around ONE concrete moment (e.g. tapping a button, sending a message, opening a contact list). Every step refers back to or deepens that same moment. The single scene is the vehicle for covering what/why/how when the goal requires all three. Penalize:
+   - Activities that jump between multiple unrelated scenarios
+   - An opening scenario that gets abandoned after step 1
+   - Definitions that float in abstractly instead of pointing at something already shown in the scene
 
-5. CONCEPT QUALITY: concepts should do the real teaching. Penalize repetition, vague filler, or concept texts that stay so shallow the learner only gets a slogan.
+5. COLD OPEN: Step 1 must land the learner inside a concrete sensory moment with no question-as-hook, no "Imagine...", no resolution, and no definition. Penalize steps that answer their own setup within the same step, or that open with abstract framing.
 
-6. VISUAL QUALITY: initialQuestion.visual is required and must be an instructional visual brief, not decorative art. concept visuals should appear only when they clarify something. Penalize vague visuals, decorative visuals, or visuals that do not help explain the concept.
+6. NARRATIVE ARC: The explanation[] array should unfold a clear arc: cold open → mystery (something hidden) → reveal (what was hidden) → naming (from inside the scene) → zoom (into one piece, often "how") → optional stakes (why, when the goal calls for it) → payoff (callback to the opening). Step count is flexible — deeper topics need more steps, simpler topics fewer — but these narrative functions should be present in order. Penalize:
+   - A structure that reads as stacked definitions rather than a single unfolding story
+   - Missing a payoff/callback as the last step
+   - Naming a term before showing an example of it in the scene
 
-7. PREDICT QUALITY: predict checks should reinforce understanding, not act like tricky exams. Penalize gotcha wording, obviously silly distractors, generic feedback, or checks that are disconnected from nearby concepts. Feedback must add real explanatory value: penalize feedback that only says the learner is right/wrong, merely paraphrases the chosen option, or fails to explain the reasoning behind the answer. The first check should land around the middle of concepts, and the second should land after the final concept via the concept title reference.
+7. STEP QUALITY: Each step.text is 1–3 short sentences of prose. Step titles are short (1–3 words), narrative markers (not textbook section headers), and unique within the activity. Penalize:
+   - Long paragraphs
+   - Titles like "Programa", "Instrução", "Encapsulation" that sound like chapter headers
+   - Repetition between steps
 
-8. ANCHOR QUALITY: anchor must tie back to a real product, system, or daily behavior. Penalize abstract "this matters" endings, metaphors, or fake/non-concrete examples.
+8. VISUAL QUALITY: Every explanation step has a visual, and each visual must advance the narrative — showing the scene, revealing hidden structure, zooming in, or showing a contrast/callback. When the goal includes "how it's written", code or structural visuals should appear at the reveal or zoom moment. Penalize:
+   - Decorative art or generic concept illustrations
+   - Visuals that only restate what the text already said
+   - Missing visuals on explanation steps
+   - Missing a code/structural visual when the goal calls for showing how the thing is written
 
-9. STYLE: Keep every section short, distinct, and readable. Penalize long paragraphs, heavy redundancy, academic tone, or repeated explanations across hook, scenario, concepts, and anchor.
+9. PREDICT QUALITY: Exactly 2 checks. Predict #1 lands after a mystery step, before the reveal (commit-before-reveal). Predict #2 lands after the zoom, before the payoff (raise-stakes-before-callback). Each predict.step must exactly match an existing explanation title. Feedback must teach — after reading feedback alone, the learner should better understand the concept. Penalize:
+   - Checks placed outside these two slots (e.g., after the payoff)
+   - step fields that don't match any explanation title
+   - Gotcha wording, silly distractors, or feedback that only says "correct/incorrect" without teaching the reasoning
+
+10. ANCHOR QUALITY: anchor has no visual. It callbacks the opening scene or generalizes it ("every time you do X"), referencing a real product, system, or daily behavior. Penalize:
+   - Abstract "this is why it matters" wrap-ups
+   - Brand new scenarios unrelated to the opening
+   - Metaphors or vague generalities
+
+11. STYLE: Clear, short, concrete, beginner-friendly. Penalize academic tone, filler lines, and redundancy across steps and anchor.
 
 ANTI-CHECKLIST GUIDANCE (CRITICAL):
-- Do NOT require a fixed number of concepts. Some topics need fewer, some need more
-- Do NOT penalize for omitting concept visuals when the explanation is already clear without them
+- Do NOT require a fixed number of steps. Complex topics need more; simple topics fewer. Both are fine as long as the arc is present and the goal is delivered
 - Do NOT require specific title wording, specific real-world products, or a specific visual kind
-- Do NOT penalize for creative daily-life scenarios if they stay concrete and jargon-free
+- Do NOT penalize creative scenes as long as they stay concrete and the same scene threads through every step
 - Do NOT focus on JSON wrapping or formatting trivia. Evaluate the content and structural fit
-- ONLY penalize for: wrong structure, factual errors, weak hook/scenario/anchor design, vague or decorative visuals, shallow concept teaching, bad predict checks, redundancy, or breaking the writing constraints
+- ONLY penalize for: wrong top-level structure, factual errors, failing to deliver ACTIVITY_GOAL, broken scene continuity, weak cold open, missing arc, bad visuals, misplaced or weak predict checks, anchor drift, or broken writing constraints
 `;
 
 export const TEST_CASES = [
