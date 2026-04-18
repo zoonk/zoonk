@@ -107,10 +107,11 @@ export function getPhaseWeights(kind: ActivityKind): Record<PhaseName, number> {
   if (kind === "explanation") {
     return {
       ...ZERO_WEIGHTS,
-      creatingVisuals: 35,
+      creatingVisuals: 33,
       gettingStarted: 3,
+      preparingVisuals: 40,
       saving: 4,
-      writingContent: 58,
+      writingContent: 20,
     };
   }
 

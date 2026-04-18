@@ -2,7 +2,6 @@ import "server-only";
 import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
 import { Output, generateText } from "ai";
 import { z } from "zod";
-import { visualDescriptionSchema } from "../../steps/step-visual-descriptions";
 import systemPrompt from "./activity-explanation.prompt.md";
 
 const DEFAULT_MODEL = "openai/gpt-5.4";
@@ -27,7 +26,6 @@ const explanationStepSchema = z
   .object({
     text: z.string(),
     title: z.string().min(1),
-    visual: visualDescriptionSchema,
   })
   .strict();
 

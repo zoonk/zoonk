@@ -4,7 +4,7 @@ EVALUATION CRITERIA:
 1. FACTUAL ACCURACY: The explanation must be technically correct for the topic. Penalize invented mechanisms, wrong cause-effect chains, or misleading simplifications.
 
 2. REQUIRED STRUCTURE: The output must contain exactly three top-level fields:
-   - explanation[]: an array of narrative steps, each with title, text, and visual
+   - explanation[]: an array of narrative steps, each with title and text
    - predict[]: exactly 2 quick checks, each with step (matching an explanation title), question, options
    - anchor: { title, text } (no visual)
 
@@ -27,11 +27,10 @@ EVALUATION CRITERIA:
    - Titles like "Programa", "Instrução", "Encapsulation" that sound like chapter headers
    - Repetition between steps
 
-8. VISUAL QUALITY: Every explanation step has a visual, and each visual must advance the narrative — showing the scene, revealing hidden structure, zooming in, or showing a contrast/callback. When the goal includes "how it's written", code or structural visuals should appear at the reveal or zoom moment. Penalize:
-   - Decorative art or generic concept illustrations
-   - Visuals that only restate what the text already said
-   - Missing visuals on explanation steps
-   - Missing a code/structural visual when the goal calls for showing how the thing is written
+8. STEP CONCRETENESS: The explanation steps must be specific enough that a downstream visual-planning task could clearly infer what should be shown. Penalize:
+   - Vague prose that never makes the scene or reveal concrete
+   - Mechanism steps that stay too abstract to picture
+   - "How it's written" goals that never describe the structure or code detail clearly enough to visualize
 
 9. PREDICT QUALITY: Exactly 2 checks. Predict #1 lands after a mystery step, before the reveal (commit-before-reveal). Predict #2 lands after the zoom, before the payoff (raise-stakes-before-callback). Each predict.step must exactly match an existing explanation title. Feedback must teach — after reading feedback alone, the learner should better understand the concept. Penalize:
    - Checks placed outside these two slots (e.g., after the payoff)

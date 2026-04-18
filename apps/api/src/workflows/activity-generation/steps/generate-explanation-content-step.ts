@@ -17,6 +17,7 @@ export type ExplanationResult = {
 
 export type GeneratedExplanationResult = ExplanationResult & {
   plan: ExplanationActivityPlanEntry[];
+  visualSteps: ActivitySteps;
 };
 
 /**
@@ -64,6 +65,7 @@ async function generateSingleExplanation({
     concept: activityTitle,
     plan: plan.entries,
     steps: plan.sourceSteps,
+    visualSteps: plan.visualSteps,
   };
 }
 

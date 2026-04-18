@@ -1,5 +1,4 @@
 import { type ActivityExplanationSchema } from "@zoonk/ai/tasks/activities/core/explanation";
-import { type VisualDescription } from "@zoonk/ai/tasks/steps/visual-descriptions";
 import { type MultipleChoiceStepContent } from "@zoonk/core/steps/contract/content";
 import { type ActivitySteps } from "./get-activity-steps";
 
@@ -14,14 +13,12 @@ export type ExplanationActivityPlanEntry =
       text: string;
       title: string;
     }
-  | {
-      description: VisualDescription;
-      kind: "visual";
-    };
+  | { kind: "visual" };
 
 type ExplanationPlan = {
   entries: ExplanationActivityPlanEntry[];
   sourceSteps: ActivitySteps;
+  visualSteps: ActivitySteps;
 };
 
 /**
@@ -88,7 +85,7 @@ function buildStepEntries({
 
   return [
     { kind: "static", text: step.text, title: step.title },
-    { description: step.visual, kind: "visual" },
+    { kind: "visual" },
     ...predictions.map<ExplanationActivityPlanEntry>((prediction) => ({
       kind: "multipleChoice",
       options: prediction.options,
@@ -98,9 +95,20 @@ function buildStepEntries({
 }
 
 /**
- * Practice and quiz generation only need the text teaching surfaces, not the
- * visual placeholders or predict checks. This helper keeps that downstream
- * source list aligned with the explanation structure in one place.
+ * The shared visual-description generator should only see explanation prose
+ * steps. Predict checks and the closing anchor do not need visuals.
+ */
+function buildVisualSteps(content: ActivityExplanationSchema): ActivitySteps {
+  return content.explanation.map((step) => ({
+    text: step.text,
+    title: step.title,
+  }));
+}
+
+/**
+ * Practice and quiz generation need the explanation prose plus the anchor, but
+ * not the visual placeholders or predict checks. This helper keeps that
+ * downstream source list aligned with the explanation structure in one place.
  */
 function buildSourceSteps(content: ActivityExplanationSchema): ActivitySteps {
   return [
@@ -138,5 +146,6 @@ export function buildExplanationActivityPlan(content: ActivityExplanationSchema)
       },
     ],
     sourceSteps: buildSourceSteps(content),
+    visualSteps: buildVisualSteps(content),
   };
 }
