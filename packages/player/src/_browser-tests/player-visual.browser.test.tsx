@@ -1,5 +1,5 @@
 import { type VisualStepContent } from "@zoonk/core/steps/contract/visual";
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 import { page } from "vitest/browser";
 import { buildSerializedActivity, buildSerializedStep } from "../_test-utils/player-test-data";
 import { buildAuthenticatedViewer } from "../_test-utils/player-test-viewer";
@@ -273,6 +273,112 @@ describe("player browser integration: visual steps", () => {
     await expect.element(page.getByText("1956")).toBeVisible();
     await expect.element(page.getByText("Dartmouth Conference")).toBeVisible();
     await expect.element(page.getByText(/deep blue defeats kasparov/i)).toBeVisible();
+  });
+
+  test("renders repeated timeline labels without duplicate-key warnings", async () => {
+    const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    try {
+      renderVisualActivity({
+        steps: [
+          buildVisualStep({
+            content: {
+              events: [
+                {
+                  date: "Ao longo do tempo",
+                  description: "Primeiro marco dessa ideia.",
+                  title: "Primeiro momento",
+                },
+                {
+                  date: "Ao longo do tempo",
+                  description: "Segundo marco dessa ideia.",
+                  title: "Segundo momento",
+                },
+              ],
+              kind: "timeline",
+            },
+          }),
+        ],
+      });
+
+      await expect.element(page.getByRole("figure", { name: /timeline/i })).toBeVisible();
+      await expect.element(page.getByText(/primeiro marco dessa ideia/i)).toBeVisible();
+      await expect.element(page.getByText(/segundo marco dessa ideia/i)).toBeVisible();
+
+      const duplicateKeyWarnings = consoleErrorSpy.mock.calls.filter((args: unknown[]) =>
+        String(args[0]).includes("Encountered two children with the same key"),
+      );
+
+      expect(duplicateKeyWarnings).toStrictEqual([]);
+    } finally {
+      consoleErrorSpy.mockRestore();
+    }
+  });
+
+  test("renders duplicate chart legend labels without duplicate-key warnings", async () => {
+    const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    try {
+      renderVisualActivity({
+        steps: [
+          buildVisualStep({
+            content: {
+              chartType: "pie",
+              data: [
+                { name: "Ao longo do tempo", value: 60 },
+                { name: "Ao longo do tempo", value: 40 },
+              ],
+              kind: "chart",
+              title: "Repeated legend labels",
+            },
+          }),
+        ],
+      });
+
+      await expect
+        .element(page.getByRole("figure", { name: /repeated legend labels/i }))
+        .toBeVisible();
+
+      const duplicateKeyWarnings = consoleErrorSpy.mock.calls.filter((args: unknown[]) =>
+        String(args[0]).includes("Encountered two children with the same key"),
+      );
+
+      expect(duplicateKeyWarnings).toStrictEqual([]);
+    } finally {
+      consoleErrorSpy.mockRestore();
+    }
+  });
+
+  test("renders duplicate table rows without duplicate-key warnings", async () => {
+    const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    try {
+      renderVisualActivity({
+        steps: [
+          buildVisualStep({
+            content: {
+              caption: "Duplicate rows",
+              columns: ["Column A", "Column B"],
+              kind: "table",
+              rows: [
+                ["Same", "Row"],
+                ["Same", "Row"],
+              ],
+            },
+          }),
+        ],
+      });
+
+      await expect.element(page.getByRole("figure", { name: /duplicate rows/i })).toBeVisible();
+
+      const duplicateKeyWarnings = consoleErrorSpy.mock.calls.filter((args: unknown[]) =>
+        String(args[0]).includes("Encountered two children with the same key"),
+      );
+
+      expect(duplicateKeyWarnings).toStrictEqual([]);
+    } finally {
+      consoleErrorSpy.mockRestore();
+    }
   });
 
   test("renders bar, line, and pie charts through the shared chart renderer", async () => {

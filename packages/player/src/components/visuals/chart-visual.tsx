@@ -146,8 +146,12 @@ function PieChartVisual({ data }: { data: ChartDataPoint[] }) {
       </ResponsiveContainer>
 
       <ul aria-label={t("Legend")} className="mt-3 flex flex-wrap justify-center gap-x-4 gap-y-1">
-        {coloredData.map((entry) => (
-          <li className="flex items-center gap-1.5 text-sm" key={entry.name}>
+        {coloredData.map((entry, index) => (
+          <li
+            className="flex items-center gap-1.5 text-sm"
+            // oxlint-disable-next-line react/no-array-index-key -- pie-chart legends can intentionally repeat the same generated label
+            key={index}
+          >
             <span
               aria-hidden="true"
               className="size-2 shrink-0 rounded-full"
