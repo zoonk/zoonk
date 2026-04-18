@@ -76,6 +76,7 @@ const { mockStorySteps, mockDebriefData } = vi.hoisted(() => ({
         situation: "Production is halted without parts.",
       },
     ],
+    title: "The night the labels got swapped",
   },
 }));
 
@@ -195,6 +196,7 @@ describe("story activity workflow", () => {
 
     expect(dbActivity?.generationStatus).toBe("completed");
     expect(dbActivity?.generationRunId).toBe("test-run-id");
+    expect(dbActivity?.title).toBe(mockStorySteps.title);
   });
 
   test("skips when no story activity exists", async () => {

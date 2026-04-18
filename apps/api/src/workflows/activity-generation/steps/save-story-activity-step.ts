@@ -86,11 +86,13 @@ export async function saveStoryActivityStep({
   activityId,
   debriefData,
   storySteps,
+  title,
   workflowRunId,
 }: {
   activityId: string;
   debriefData: ActivityStoryDebriefSchema;
   storySteps: ActivityStoryStepsSchema;
+  title: string;
   workflowRunId: string;
 }): Promise<void> {
   "use step";
@@ -105,7 +107,7 @@ export async function saveStoryActivityStep({
     prisma.$transaction([
       prisma.step.createMany({ data: stepRecords }),
       prisma.activity.update({
-        data: { generationRunId: workflowRunId, generationStatus: "completed" },
+        data: { generationRunId: workflowRunId, generationStatus: "completed", title },
         where: { id: activityId },
       }),
     ]),

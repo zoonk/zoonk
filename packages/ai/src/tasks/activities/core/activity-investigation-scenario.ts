@@ -10,6 +10,7 @@ const FALLBACK_MODELS = ["anthropic/claude-sonnet-4.6"];
 const schema = z.object({
   explanations: z.array(z.string()),
   scenario: z.string(),
+  title: z.string().min(1),
 });
 
 export type ActivityInvestigationScenarioSchema = z.infer<typeof schema>;

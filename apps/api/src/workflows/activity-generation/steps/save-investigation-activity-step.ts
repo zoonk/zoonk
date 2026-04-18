@@ -108,6 +108,7 @@ export async function saveInvestigationActivityStep({
   actions,
   findings,
   scenario,
+  title,
   workflowRunId,
 }: {
   accuracy: ActivityInvestigationAccuracySchema;
@@ -115,6 +116,7 @@ export async function saveInvestigationActivityStep({
   actions: ActivityInvestigationActionsSchema;
   findings: ActivityInvestigationFindingsSchema;
   scenario: ActivityInvestigationScenarioSchema;
+  title: string;
   workflowRunId: string;
 }): Promise<void> {
   "use step";
@@ -135,7 +137,7 @@ export async function saveInvestigationActivityStep({
     prisma.$transaction([
       prisma.step.createMany({ data: stepRecords }),
       prisma.activity.update({
-        data: { generationRunId: workflowRunId, generationStatus: "completed" },
+        data: { generationRunId: workflowRunId, generationStatus: "completed", title },
         where: { id: activityId },
       }),
     ]),

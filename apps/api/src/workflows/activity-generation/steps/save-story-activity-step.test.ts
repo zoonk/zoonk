@@ -70,6 +70,7 @@ const storySteps = {
       situation: "Production is halted.",
     },
   ],
+  title: "The night the labels got swapped",
 };
 
 const debriefData = {
@@ -116,13 +117,14 @@ describe(saveStoryActivityStep, () => {
       language: "en",
       lessonId: lesson.id,
       organizationId,
-      title: `Story ${randomUUID()}`,
+      title: null,
     });
 
     await saveStoryActivityStep({
       activityId: activity.id,
       debriefData,
       storySteps,
+      title: storySteps.title,
       workflowRunId: "workflow-1",
     });
 
@@ -175,6 +177,7 @@ describe(saveStoryActivityStep, () => {
     expect(dbActivity).toMatchObject({
       generationRunId: "workflow-1",
       generationStatus: "completed",
+      title: storySteps.title,
     });
 
     const events = getStreamedEvents(writeMock);
@@ -211,6 +214,7 @@ describe(saveStoryActivityStep, () => {
       activityId: activity.id,
       debriefData,
       storySteps,
+      title: storySteps.title,
       workflowRunId: "workflow-error",
     });
 

@@ -81,7 +81,12 @@ describe(generatePracticeContentStep, () => {
       },
     ];
 
-    generateActivityPracticeMock.mockResolvedValue({ data: { steps: practiceSteps } });
+    generateActivityPracticeMock.mockResolvedValue({
+      data: {
+        steps: practiceSteps,
+        title: "The game store signup mix-up",
+      },
+    });
 
     const explanationSteps = [{ text: "Explanation text", title: "Explanation title" }];
 
@@ -89,6 +94,7 @@ describe(generatePracticeContentStep, () => {
 
     expect(result.activityId).toBe(activities.find((a) => a.kind === "practice")?.id);
     expect(result.steps).toEqual(practiceSteps);
+    expect(result.title).toBe("The game store signup mix-up");
   });
 
   test("returns null activityId when no practice activity exists", async () => {
@@ -115,7 +121,7 @@ describe(generatePracticeContentStep, () => {
       "run-2",
     );
 
-    expect(result).toEqual({ activityId: null, steps: [] });
+    expect(result).toEqual({ activityId: null, steps: [], title: null });
     expect(generateActivityPracticeMock).not.toHaveBeenCalled();
   });
 
@@ -139,7 +145,7 @@ describe(generatePracticeContentStep, () => {
 
     const result = await generatePracticeContentStep(activities, [], "run-3");
 
-    expect(result).toEqual({ activityId: null, steps: [] });
+    expect(result).toEqual({ activityId: null, steps: [], title: null });
 
     const updated = await prisma.activity.findUniqueOrThrow({ where: { id: dbActivity.id } });
     expect(updated.generationStatus).toBe("failed");
@@ -163,7 +169,9 @@ describe(generatePracticeContentStep, () => {
 
     const activities = await fetchLessonActivities(lesson.id);
 
-    generateActivityPracticeMock.mockResolvedValue({ data: { steps: [] } });
+    generateActivityPracticeMock.mockResolvedValue({
+      data: { steps: [], title: "The game store signup mix-up" },
+    });
 
     const result = await generatePracticeContentStep(
       activities,
@@ -171,7 +179,7 @@ describe(generatePracticeContentStep, () => {
       "run-4",
     );
 
-    expect(result).toEqual({ activityId: null, steps: [] });
+    expect(result).toEqual({ activityId: null, steps: [], title: null });
 
     const updated = await prisma.activity.findUniqueOrThrow({ where: { id: dbActivity.id } });
     expect(updated.generationStatus).toBe("failed");
@@ -205,6 +213,7 @@ describe(generatePracticeContentStep, () => {
             question: "q",
           },
         ],
+        title: "The game store signup mix-up",
       },
     });
 
@@ -256,7 +265,7 @@ describe(generatePracticeContentStep, () => {
       "run-6",
     );
 
-    expect(result).toEqual({ activityId: null, steps: [] });
+    expect(result).toEqual({ activityId: null, steps: [], title: null });
 
     const updated = await prisma.activity.findUniqueOrThrow({ where: { id: dbActivity.id } });
     expect(updated.generationStatus).toBe("failed");

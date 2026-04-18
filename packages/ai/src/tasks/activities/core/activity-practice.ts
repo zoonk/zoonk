@@ -25,6 +25,7 @@ const schema = z.object({
       question: z.string(),
     }),
   ),
+  title: z.string().min(1),
 });
 
 export type ActivityPracticeSchema = z.infer<typeof schema>;

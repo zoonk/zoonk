@@ -153,6 +153,7 @@ vi.mock("@zoonk/ai/tasks/activities/core/practice", () => ({
           question: "What should you do?",
         },
       ],
+      title: "The game store signup mix-up",
     },
   }),
 }));
@@ -209,6 +210,7 @@ vi.mock("@zoonk/ai/tasks/activities/core/story-steps", () => ({
           situation: "Your supplier went bankrupt.",
         },
       ],
+      title: "The night the labels got swapped",
     },
   }),
 }));

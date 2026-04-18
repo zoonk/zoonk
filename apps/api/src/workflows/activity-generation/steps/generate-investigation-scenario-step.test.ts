@@ -39,6 +39,7 @@ const mockScenarioData = {
     "Explanation C is wrong",
   ],
   scenario: "A mysterious drop in website traffic occurred overnight.",
+  title: "Who froze the payment queue?",
 };
 
 describe(generateInvestigationScenarioStep, () => {
@@ -87,6 +88,7 @@ describe(generateInvestigationScenarioStep, () => {
 
     expect(result.activityId).toBe(activities.find((a) => a.kind === "investigation")?.id);
     expect(result.scenario).toEqual(mockScenarioData);
+    expect(result.title).toBe("Who froze the payment queue?");
   });
 
   test("passes lesson context to AI task", async () => {
@@ -144,7 +146,7 @@ describe(generateInvestigationScenarioStep, () => {
 
     const result = await generateInvestigationScenarioStep(activities);
 
-    expect(result).toEqual({ activityId: null, scenario: null });
+    expect(result).toEqual({ activityId: null, scenario: null, title: null });
     expect(generateActivityInvestigationScenarioMock).not.toHaveBeenCalled();
   });
 
@@ -167,12 +169,12 @@ describe(generateInvestigationScenarioStep, () => {
     const activities = await fetchLessonActivities(lesson.id);
 
     generateActivityInvestigationScenarioMock.mockResolvedValue({
-      data: { explanations: [], scenario: "A scenario" },
+      data: { explanations: [], scenario: "A scenario", title: "Who froze the payment queue?" },
     });
 
     const result = await generateInvestigationScenarioStep(activities);
 
-    expect(result).toEqual({ activityId: null, scenario: null });
+    expect(result).toEqual({ activityId: null, scenario: null, title: null });
 
     const updated = await prisma.activity.findUniqueOrThrow({ where: { id: dbActivity.id } });
     expect(updated.generationStatus).toBe("failed");
@@ -210,7 +212,7 @@ describe(generateInvestigationScenarioStep, () => {
 
     const result = await generateInvestigationScenarioStep(activities);
 
-    expect(result).toEqual({ activityId: null, scenario: null });
+    expect(result).toEqual({ activityId: null, scenario: null, title: null });
 
     const updated = await prisma.activity.findUniqueOrThrow({ where: { id: dbActivity.id } });
     expect(updated.generationStatus).toBe("failed");

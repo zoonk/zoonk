@@ -27,6 +27,7 @@ vi.mock("@zoonk/ai/tasks/activities/core/practice", () => ({
           question: "What should you do?",
         },
       ],
+      title: "The game store signup mix-up",
     },
   }),
 }));
@@ -156,6 +157,7 @@ describe("practice activity workflow", () => {
     });
     expect(dbActivity?.generationStatus).toBe("completed");
     expect(dbActivity?.generationRunId).toBe("test-run-id");
+    expect(dbActivity?.title).toBe("The game store signup mix-up");
   });
 
   test("sets practice status to 'failed' when AI throws", async () => {

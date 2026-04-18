@@ -57,7 +57,7 @@ describe(savePracticeActivityStep, () => {
       language: "en",
       lessonId: lesson.id,
       organizationId,
-      title: `Practice ${randomUUID()}`,
+      title: null,
     });
 
     const steps: PracticeStep[] = [
@@ -86,6 +86,7 @@ describe(savePracticeActivityStep, () => {
     await savePracticeActivityStep({
       activityId: activity.id,
       steps,
+      title: "The game store signup mix-up",
       workflowRunId: "workflow-1",
     });
 
@@ -109,6 +110,7 @@ describe(savePracticeActivityStep, () => {
     expect(dbActivity).toMatchObject({
       generationRunId: "workflow-1",
       generationStatus: "completed",
+      title: "The game store signup mix-up",
     });
 
     const events = getStreamedEvents(writeMock);
@@ -157,6 +159,7 @@ describe(savePracticeActivityStep, () => {
     await savePracticeActivityStep({
       activityId: activity.id,
       steps,
+      title: "The game store signup mix-up",
       workflowRunId: "workflow-error",
     });
 

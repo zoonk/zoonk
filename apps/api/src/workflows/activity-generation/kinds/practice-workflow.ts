@@ -41,20 +41,21 @@ export async function practiceActivityWorkflow({
         return;
       }
 
-      const { activityId, steps } = await generatePracticeContentStep(
+      const { activityId, steps, title } = await generatePracticeContentStep(
         allActivities,
         getExplanationStepsForPractice(explanationResults, practiceIndex, totalPractices),
         workflowRunId,
         practiceIndex,
       );
 
-      if (!activityId || steps.length === 0) {
+      if (!activityId || steps.length === 0 || !title) {
         return;
       }
 
       await savePracticeActivityStep({
         activityId,
         steps,
+        title,
         workflowRunId,
       });
     }),
