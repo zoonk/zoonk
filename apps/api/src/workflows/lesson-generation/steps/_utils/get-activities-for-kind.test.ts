@@ -2,196 +2,95 @@ import { describe, expect, test } from "vitest";
 import { getActivitiesForKind } from "./get-activities-for-kind";
 
 describe(getActivitiesForKind, () => {
-  describe("core lessons", () => {
-    test("returns fallback explanation when concepts are empty", () => {
-      const result = getActivitiesForKind("core", [], null, []);
-
-      expect(result.map((a) => a.kind)).toEqual(["explanation", "practice", "quiz", "review"]);
-      expect(result[0]?.title).toBeNull();
+  test("creates one practice activity when a core lesson has fewer than three explanations", () => {
+    const activities = getActivitiesForKind({
+      coreActivities: [
+        {
+          goal: "spot the repeated pattern before turning it into a reusable rule",
+          title: "Reading the pattern",
+        },
+        {
+          goal: "turn the pattern into a rule you can apply to new cases",
+          title: "Turning it into a rule",
+        },
+      ],
+      customActivities: [],
+      lessonKind: "core",
+      lessonTitle: "Reading the pattern",
+      targetLanguage: null,
     });
 
-    test("returns one explanation per concept with single practice for 1-3 concepts", () => {
-      const result = getActivitiesForKind("core", [], null, ["A", "B", "C"]);
-
-      expect(result.map((a) => a.kind)).toEqual([
-        "explanation",
-        "explanation",
-        "explanation",
-        "practice",
-        "quiz",
-        "review",
-      ]);
-      expect(result.map((a) => a.title)).toEqual(["A", "B", "C", null, null, null]);
-    });
-
-    test("inserts two practices when there are 4 concepts", () => {
-      const result = getActivitiesForKind("core", [], null, ["A", "B", "C", "D"]);
-
-      expect(result.map((a) => a.kind)).toEqual([
-        "explanation",
-        "explanation",
-        "practice",
-        "explanation",
-        "explanation",
-        "practice",
-        "quiz",
-        "review",
-      ]);
-    });
-
-    test("splits 5 concepts into groups of 2 and 3", () => {
-      const result = getActivitiesForKind("core", [], null, ["A", "B", "C", "D", "E"]);
-
-      expect(result.map((a) => a.kind)).toEqual([
-        "explanation",
-        "explanation",
-        "practice",
-        "explanation",
-        "explanation",
-        "explanation",
-        "practice",
-        "quiz",
-        "review",
-      ]);
-      expect(result[0]?.title).toBe("A");
-      expect(result[1]?.title).toBe("B");
-      expect(result[3]?.title).toBe("C");
-      expect(result[4]?.title).toBe("D");
-      expect(result[5]?.title).toBe("E");
-    });
-
-    test("returns single concept with single practice", () => {
-      const result = getActivitiesForKind("core", [], null, ["Solo"]);
-
-      expect(result.map((a) => a.kind)).toEqual(["explanation", "practice", "quiz", "review"]);
-      expect(result[0]?.title).toBe("Solo");
-    });
+    expect(activities.map((activity) => activity.kind)).toEqual([
+      "explanation",
+      "explanation",
+      "practice",
+      "quiz",
+      "review",
+    ]);
   });
 
-  describe("language lessons", () => {
-    test("includes listening for TTS-supported language", () => {
-      const result = getActivitiesForKind("language", [], "en", []);
-
-      expect(result.map((a) => a.kind)).toEqual([
-        "vocabulary",
-        "translation",
-        "grammar",
-        "reading",
-        "listening",
-        "review",
-      ]);
-      expect(result.every((a) => a.title === null)).toBe(true);
+  test("creates two practice activities when a core lesson has three explanations", () => {
+    const activities = getActivitiesForKind({
+      appliedActivityKind: "story",
+      coreActivities: [
+        {
+          goal: "spot the repeated pattern before turning it into a reusable rule",
+          title: "Reading the pattern",
+        },
+        {
+          goal: "connect each clue to the mechanism that produced it",
+          title: "Connecting clue to mechanism",
+        },
+        {
+          goal: "check whether the explanation still holds when the evidence changes",
+          title: "Testing the explanation",
+        },
+      ],
+      customActivities: [],
+      lessonKind: "core",
+      lessonTitle: "Reading the pattern",
+      targetLanguage: null,
     });
 
-    test("excludes listening for non-TTS language", () => {
-      const result = getActivitiesForKind("language", [], "xx-unsupported", []);
-
-      expect(result.map((a) => a.kind)).not.toContain("listening");
-      expect(result.map((a) => a.kind)).toEqual([
-        "vocabulary",
-        "translation",
-        "grammar",
-        "reading",
-        "review",
-      ]);
-    });
-
-    test("excludes listening when targetLanguage is null", () => {
-      const result = getActivitiesForKind("language", [], null, []);
-
-      expect(result.map((a) => a.kind)).not.toContain("listening");
-    });
+    expect(
+      activities.map((activity) => [activity.kind, activity.title, activity.description]),
+    ).toEqual([
+      [
+        "explanation",
+        "Reading the pattern",
+        "spot the repeated pattern before turning it into a reusable rule",
+      ],
+      ["practice", null, null],
+      [
+        "explanation",
+        "Connecting clue to mechanism",
+        "connect each clue to the mechanism that produced it",
+      ],
+      [
+        "explanation",
+        "Testing the explanation",
+        "check whether the explanation still holds when the evidence changes",
+      ],
+      ["practice", null, null],
+      ["quiz", null, null],
+      ["story", null, null],
+      ["review", null, null],
+    ]);
   });
 
-  describe("applied activity", () => {
-    test("inserts story after quiz before review with 3 concepts", () => {
-      const result = getActivitiesForKind("core", [], null, ["A", "B", "C"], "story");
-
-      expect(result.map((a) => a.kind)).toEqual([
-        "explanation",
-        "explanation",
-        "explanation",
-        "practice",
-        "quiz",
-        "story",
-        "review",
-      ]);
+  test("falls back to the lesson title when core planning returns no explanation titles", () => {
+    const activities = getActivitiesForKind({
+      coreActivities: [],
+      customActivities: [],
+      lessonKind: "core",
+      lessonTitle: "Fallback lesson title",
+      targetLanguage: null,
     });
 
-    test("inserts story after quiz before review with 5 concepts", () => {
-      const result = getActivitiesForKind("core", [], null, ["A", "B", "C", "D", "E"], "story");
-
-      expect(result.map((a) => a.kind)).toEqual([
-        "explanation",
-        "explanation",
-        "practice",
-        "explanation",
-        "explanation",
-        "explanation",
-        "practice",
-        "quiz",
-        "story",
-        "review",
-      ]);
-    });
-
-    test("inserts story with 0 concepts", () => {
-      const result = getActivitiesForKind("core", [], null, [], "story");
-
-      expect(result.map((a) => a.kind)).toEqual([
-        "explanation",
-        "practice",
-        "quiz",
-        "story",
-        "review",
-      ]);
-    });
-
-    test("inserts story with 1 concept", () => {
-      const result = getActivitiesForKind("core", [], null, ["Solo"], "story");
-
-      expect(result.map((a) => a.kind)).toEqual([
-        "explanation",
-        "practice",
-        "quiz",
-        "story",
-        "review",
-      ]);
-    });
-
-    test("does not insert story when appliedActivityKind is null", () => {
-      const result = getActivitiesForKind("core", [], null, ["A", "B", "C"], null);
-
-      expect(result.map((a) => a.kind)).toEqual([
-        "explanation",
-        "explanation",
-        "explanation",
-        "practice",
-        "quiz",
-        "review",
-      ]);
-    });
-
-    test("defaults to no applied activity when parameter is omitted", () => {
-      const result = getActivitiesForKind("core", [], null, ["A", "B", "C"]);
-
-      expect(result.map((a) => a.kind)).not.toContain("story");
-    });
-  });
-
-  describe("custom lessons", () => {
-    test("returns custom activities from AI-generated definitions", () => {
-      const customActivities = [
-        { description: "Desc 1", title: "Custom 1" },
-        { description: "Desc 2", title: "Custom 2" },
-      ];
-
-      const result = getActivitiesForKind("custom", customActivities, null, []);
-
-      expect(result).toEqual([
-        { description: "Desc 1", kind: "custom", title: "Custom 1" },
-        { description: "Desc 2", kind: "custom", title: "Custom 2" },
-      ]);
+    expect(activities[0]).toEqual({
+      description: null,
+      kind: "explanation",
+      title: "Fallback lesson title",
     });
   });
 });

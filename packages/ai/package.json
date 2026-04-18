@@ -34,6 +34,7 @@
     "./tasks/courses/language-chapters": "./src/tasks/courses/language-course-chapters.ts",
     "./tasks/courses/suggestions": "./src/tasks/courses/course-suggestions.ts",
     "./tasks/courses/thumbnail": "./src/tasks/courses/course-thumbnail.ts",
+    "./tasks/lessons/core-activities": "./src/tasks/lessons/lesson-core-activities.ts",
     "./tasks/lessons/custom-activities": "./src/tasks/lessons/lesson-custom-activities.ts",
     "./tasks/lessons/applied-activity-kind": "./src/tasks/lessons/applied-activity-kind.ts",
     "./tasks/lessons/kind": "./src/tasks/lessons/lesson-kind.ts",

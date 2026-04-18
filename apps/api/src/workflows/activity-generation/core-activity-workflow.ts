@@ -6,7 +6,6 @@ import { quizActivityWorkflow } from "./kinds/quiz-workflow";
 import { storyActivityWorkflow } from "./kinds/story-workflow";
 import { findActivitiesByKind } from "./steps/_utils/find-activity-by-kind";
 import { type LessonActivity } from "./steps/get-lesson-activities-step";
-import { getNeighboringConceptsStep } from "./steps/get-neighboring-concepts-step";
 
 /**
  * Orchestrates core activity generation (explanation, practice, quiz, story, investigation).
@@ -28,16 +27,14 @@ export async function coreActivityWorkflow({
   allActivities: LessonActivity[];
   workflowRunId: string;
 }): Promise<void> {
-  const concepts = allActivities[0]?.lesson?.concepts ?? [];
+  const lessonConcepts = allActivities[0]?.lesson?.concepts ?? [];
   const totalPractices = findActivitiesByKind(allActivities, "practice").length;
-  const neighboringConcepts = await getNeighboringConceptsStep(allActivities);
 
   const [explanationResult] = await Promise.allSettled([
     explanationActivityWorkflow({
       activitiesToGenerate,
       allActivities,
-      concepts,
-      neighboringConcepts,
+      lessonConcepts,
       workflowRunId,
     }),
     storyActivityWorkflow({

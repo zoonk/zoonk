@@ -48,19 +48,23 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "en-web-encapsulation",
     userInput: {
+      activityGoal:
+        "explain how data gains layer-specific headers as it moves through the network and why each layer needs different information",
+      activityTitle: "Encapsulation",
       chapterTitle: "Networking fundamentals",
-      concept: "Encapsulation",
       courseTitle: "Web Development",
       language: "en",
-      lessonDescription:
-        "How network data gets wrapped with layer-specific information so different parts of the network know what to do with it.",
-      lessonTitle: "Encapsulation",
-      neighboringConcepts: [
+      lessonConcepts: [
+        "Encapsulation",
         "DNS Resolution",
         "TCP Handshake",
         "Hop-by-Hop Forwarding",
         "Packet Fragmentation",
       ],
+      lessonDescription:
+        "How network data gets wrapped with layer-specific information so different parts of the network know what to do with it.",
+      lessonTitle: "Encapsulation",
+      otherActivityTitles: [],
     },
   },
   {
@@ -79,19 +83,23 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "pt-python-float-bool",
     userInput: {
+      activityGoal:
+        "comparar como float e bool funcionam como tipos numéricos em Python e explicar os limites de cada representação",
+      activityTitle: "Float e bool como tipos numéricos",
       chapterTitle: "Tipos numéricos e valores especiais",
-      concept: "Float e bool como tipos numéricos",
       courseTitle: "Python",
       language: "pt",
-      lessonDescription:
-        "Como floats representam números com casas decimais e como bool se encaixa na hierarquia numérica do Python.",
-      lessonTitle: "Float e bool como tipos numéricos",
-      neighboringConcepts: [
+      lessonConcepts: [
+        "Float e bool como tipos numéricos",
         "Conversão de Tipos",
         "Operadores Aritméticos",
         "Comparação de Valores",
         "Booleanos como Inteiros",
       ],
+      lessonDescription:
+        "Como floats representam números com casas decimais e como bool se encaixa na hierarquia numérica do Python.",
+      lessonTitle: "Float e bool como tipos numéricos",
+      otherActivityTitles: [],
     },
   },
   {
@@ -110,19 +118,23 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "es-quimica-enolatos",
     userInput: {
+      activityGoal:
+        "explicar por qué el hidrógeno alfa junto al carbonilo sale con más facilidad y cómo eso forma un enolato útil",
+      activityTitle: "Acidez en posición alfa",
       chapterTitle: "Carbonilos y enolatos",
-      concept: "Acidez en posición alfa",
       courseTitle: "Química",
       language: "es",
-      lessonDescription:
-        "Por qué ciertos hidrógenos junto al carbonilo salen con más facilidad y cómo eso forma un enolato útil para construir enlaces C-C.",
-      lessonTitle: "Acidez en posición alfa",
-      neighboringConcepts: [
+      lessonConcepts: [
+        "Acidez en posición alfa",
         "Adición nucleofílica",
         "Estabilización por resonancia",
         "Enolato como nucleófilo",
         "Condensación aldólica",
       ],
+      lessonDescription:
+        "Por qué ciertos hidrógenos junto al carbonilo salen con más facilidad y cómo eso forma un enolato útil para construir enlaces C-C.",
+      lessonTitle: "Acidez en posición alfa",
+      otherActivityTitles: [],
     },
   },
   {
@@ -139,19 +151,23 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "en-economics-labor-aggregates",
     userInput: {
+      activityGoal:
+        "compare how employment, unemployment, hours, and participation move over the business cycle and why they do not move together",
+      activityTitle: "Labor market aggregates over the cycle",
       chapterTitle: "Business cycles",
-      concept: "Labor market aggregates over the cycle",
       courseTitle: "Economics",
       language: "en",
-      lessonDescription:
-        "How employment, unemployment, hours, and participation move during booms and downturns, including important timing differences.",
-      lessonTitle: "Labor market aggregates over the cycle",
-      neighboringConcepts: [
+      lessonConcepts: [
+        "Labor market aggregates over the cycle",
         "GDP Growth Rate",
         "Inflation Targeting",
         "Hours Worked",
         "Labor Force Participation",
       ],
+      lessonDescription:
+        "How employment, unemployment, hours, and participation move during booms and downturns, including important timing differences.",
+      lessonTitle: "Labor market aggregates over the cycle",
+      otherActivityTitles: [],
     },
   },
   {
@@ -170,19 +186,23 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "pt-legaltech-quality-metrics",
     userInput: {
+      activityGoal:
+        "identificar quais métricas mostram a qualidade documental e explicar como elas ajudam na revisão e na rastreabilidade",
+      activityTitle: "Métricas de qualidade documental",
       chapterTitle: "Legal tech e automação documental",
-      concept: "Métricas de qualidade documental",
       courseTitle: "Direito",
       language: "pt",
-      lessonDescription:
-        "Como acompanhar qualidade, consistência e rastreabilidade na automação de documentos jurídicos.",
-      lessonTitle: "Métricas de qualidade documental",
-      neighboringConcepts: [
+      lessonConcepts: [
+        "Métricas de qualidade documental",
         "Templates Jurídicos",
         "Assinatura Digital",
         "Rastros de Auditoria",
         "Classificação de Erros",
       ],
+      lessonDescription:
+        "Como acompanhar qualidade, consistência e rastreabilidade na automação de documentos jurídicos.",
+      lessonTitle: "Métricas de qualidade documental",
+      otherActivityTitles: [],
     },
   },
   {
@@ -199,19 +219,23 @@ ${SHARED_EXPECTATIONS}
     `,
     id: "en-web-layer-isolation",
     userInput: {
+      activityGoal:
+        "narrow a connectivity problem by checking one layer of the path at a time instead of guessing everywhere at once",
+      activityTitle: "Layer-by-layer isolation",
       chapterTitle: "Networking fundamentals",
-      concept: "Layer-by-layer isolation",
       courseTitle: "Web Development",
       language: "en",
-      lessonDescription:
-        "A practical mental model for narrowing connectivity problems by checking one layer of the path at a time.",
-      lessonTitle: "Layer-by-layer isolation",
-      neighboringConcepts: [
+      lessonConcepts: [
+        "Layer-by-layer isolation",
         "Latency Measurement",
         "Network Address Translation",
         "Gateway Reachability",
         "Service-Layer Diagnosis",
       ],
+      lessonDescription:
+        "A practical mental model for narrowing connectivity problems by checking one layer of the path at a time.",
+      lessonTitle: "Layer-by-layer isolation",
+      otherActivityTitles: [],
     },
   },
 ];

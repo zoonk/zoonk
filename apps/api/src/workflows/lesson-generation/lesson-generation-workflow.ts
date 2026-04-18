@@ -4,6 +4,7 @@ import { getWorkflowMetadata } from "workflow";
 import { addActivitiesStep } from "./steps/add-activities-step";
 import { determineAppliedActivityStep } from "./steps/determine-applied-activity-step";
 import { determineLessonKindStep } from "./steps/determine-lesson-kind-step";
+import { generateCoreActivitiesStep } from "./steps/generate-core-activities-step";
 import { generateCustomActivitiesStep } from "./steps/generate-custom-activities-step";
 import { getLessonStep } from "./steps/get-lesson-step";
 import { handleLessonFailureStep } from "./steps/handle-failure-step";
@@ -97,6 +98,23 @@ async function getCustomActivities(
 }
 
 /**
+ * Core lessons need a planned set of explanation titles before we create the
+ * standard explanation/practice/quiz shell. Other lesson kinds explicitly skip
+ * this step so the streamed trace matches the real workflow path.
+ */
+async function getCoreActivities(
+  context: LessonGenerationContext,
+  lessonKind: LessonKind,
+): Promise<Awaited<ReturnType<typeof generateCoreActivitiesStep>>> {
+  if (lessonKind === "core") {
+    return generateCoreActivitiesStep(context);
+  }
+
+  await streamSkipStep("generateCoreActivities");
+  return [];
+}
+
+/**
  * Regeneration should keep the lesson's existing classification. The lesson
  * row is the stable identity, so background refreshes only replace its
  * activities. Initial generation is the only path that reclassifies a lesson.
@@ -173,12 +191,13 @@ async function addGeneratedActivities(input: {
   isPublished: boolean;
   lessonKind: LessonKind;
 }): Promise<void> {
+  const coreActivities = await getCoreActivities(input.context, input.lessonKind);
   const customActivities = await getCustomActivities(input.context, input.lessonKind);
 
   await addActivitiesStep({
     appliedActivityKind: input.appliedActivityKind,
-    concepts: input.context.concepts,
     context: input.context,
+    coreActivities,
     customActivities,
     generationRunId: input.generationRunId,
     isPublished: input.isPublished,

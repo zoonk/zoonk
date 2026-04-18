@@ -4,7 +4,6 @@ import { type PhaseName } from "../activity-generation-phase-config";
 
 type ExplanationSteps =
   | "getLessonActivities"
-  | "getNeighboringConcepts"
   | "setActivityAsRunning"
   | "generateExplanationContent"
   | "generateVisualContent"
@@ -12,7 +11,7 @@ type ExplanationSteps =
 
 export const EXPLANATION_PHASE_STEPS = {
   creatingVisuals: ["generateVisualContent"],
-  gettingStarted: ["getLessonActivities", "getNeighboringConcepts", "setActivityAsRunning"],
+  gettingStarted: ["getLessonActivities", "setActivityAsRunning"],
   saving: ["saveExplanationActivity"],
   writingContent: ["generateExplanationContent"],
 } as const satisfies Record<string, readonly ActivityStepName[]>;

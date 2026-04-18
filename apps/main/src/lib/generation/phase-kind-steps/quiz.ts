@@ -4,7 +4,6 @@ import { type PhaseName } from "../activity-generation-phase-config";
 
 type QuizSteps =
   | "getLessonActivities"
-  | "getNeighboringConcepts"
   | "setActivityAsRunning"
   | "generateExplanationContent"
   | "generateQuizContent"
@@ -13,7 +12,7 @@ type QuizSteps =
 
 export const QUIZ_PHASE_STEPS = {
   creatingImages: ["generateQuizImages"],
-  gettingStarted: ["getLessonActivities", "getNeighboringConcepts", "setActivityAsRunning"],
+  gettingStarted: ["getLessonActivities", "setActivityAsRunning"],
   saving: ["saveQuizActivity"],
   writingContent: ["generateQuizContent"],
   writingExplanation: ["generateExplanationContent"],

@@ -71,8 +71,8 @@ describe(addActivitiesStep, () => {
 
     await addActivitiesStep({
       appliedActivityKind: null,
-      concepts: [],
       context: lessonContext,
+      coreActivities: [],
       customActivities: [],
       generationRunId: "test-run-id",
       isPublished: true,
@@ -103,7 +103,7 @@ describe(addActivitiesStep, () => {
     );
   });
 
-  test("creates core activities with explanation per concept", async () => {
+  test("creates core activities from planned explanation titles", async () => {
     const lesson = await lessonFixture({
       chapterId: context.chapter.id,
       kind: "core",
@@ -119,8 +119,21 @@ describe(addActivitiesStep, () => {
 
     await addActivitiesStep({
       appliedActivityKind: null,
-      concepts: ["Concept A", "Concept B"],
       context: lessonContext,
+      coreActivities: [
+        {
+          goal: "spot the repeated pattern before turning it into a reusable rule",
+          title: "Reading the pattern",
+        },
+        {
+          goal: "connect each clue to the mechanism that produced it",
+          title: "Connecting clue to mechanism",
+        },
+        {
+          goal: "check whether the explanation still holds when the evidence changes",
+          title: "Testing the explanation",
+        },
+      ],
       customActivities: [],
       generationRunId: "test-run-id",
       isPublished: true,
@@ -134,10 +147,22 @@ describe(addActivitiesStep, () => {
     });
 
     const explanations = activities.filter((a) => a.kind === "explanation");
+    const practices = activities.filter((a) => a.kind === "practice");
 
-    expect(explanations).toHaveLength(2);
-    expect(explanations[0]!.title).toBe("Concept A");
-    expect(explanations[1]!.title).toBe("Concept B");
+    expect(explanations).toHaveLength(3);
+    expect(explanations[0]!.title).toBe("Reading the pattern");
+    expect(explanations[0]!.description).toBe(
+      "spot the repeated pattern before turning it into a reusable rule",
+    );
+    expect(explanations[1]!.title).toBe("Connecting clue to mechanism");
+    expect(explanations[1]!.description).toBe(
+      "connect each clue to the mechanism that produced it",
+    );
+    expect(explanations[2]!.title).toBe("Testing the explanation");
+    expect(explanations[2]!.description).toBe(
+      "check whether the explanation still holds when the evidence changes",
+    );
+    expect(practices).toHaveLength(2);
   });
 
   test("streams error and throws when DB save fails", async () => {
@@ -149,8 +174,8 @@ describe(addActivitiesStep, () => {
     await expect(
       addActivitiesStep({
         appliedActivityKind: null,
-        concepts: [],
         context: brokenContext,
+        coreActivities: [],
         customActivities: [],
         generationRunId: "test-run-id",
         isPublished: true,
@@ -182,8 +207,8 @@ describe(addActivitiesStep, () => {
 
     await addActivitiesStep({
       appliedActivityKind: null,
-      concepts: [],
       context: lessonContext,
+      coreActivities: [],
       customActivities: [],
       generationRunId: "test-run-id",
       isPublished: true,
