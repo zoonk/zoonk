@@ -1,0 +1,126 @@
+apps/api/src/workflows/activity-generation/steps/_utils/build-explanation-activity-plan.ts
+  h_1cda88fc21fe9c 16,21,88,98-105,109-111,149
+packages/ai/src/tasks/activities/core/activity-explanation.prompt.md
+  h_1cda88fc21fe9c 21,65,80-83,170
+apps/api/src/workflows/activity-generation/steps/generate-explanation-visual-content-step.ts
+  h_1cda88fc21fe9c 8-11
+apps/main/src/lib/generation/phase-kind-steps/explanation.ts
+  7eb6b35bac165847 9,16,31
+apps/evals/src/tasks/activity-explanation/test-cases.ts
+  h_1cda88fc21fe9c 7,30-33
+apps/main/src/lib/generation/activity-generation-phase-weights.ts
+  h_1cda88fc21fe9c 110,112,114
+apps/api/src/workflows/activity-generation/steps/generate-explanation-visual-descriptions-step.ts
+  h_1cda88fc21fe9c 1-48
+apps/api/src/workflows/activity-generation/steps/generate-explanation-content-step.test.ts
+  7eb6b35bac165847 199-215
+apps/api/src/workflows/activity-generation/kinds/explanation-workflow.ts
+  h_1cda88fc21fe9c 9,65,67-68,116,118,121
+apps/api/src/workflows/activity-generation/steps/generate-explanation-content-step.ts
+  h_1cda88fc21fe9c 20,68
+apps/api/src/workflows/activity-generation/kinds/explanation-workflow.test.ts
+  h_1cda88fc21fe9c 4,20-36,107-114,233-264,490,492
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.0",
+  "base_commit_sha": "3e5a9fb611120c348395eb530674db13e033d0fd",
+  "prompts": {
+    "07b8a9cb04c82c91": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d937d-f5f9-7460-8094-f53458e39bf0",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 551,
+      "overriden_lines": 0
+    },
+    "25f39c822d13540a": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d9c83-f75d-7c50-8bbe-8f8a84b108c9",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 7775,
+      "overriden_lines": 0
+    },
+    "5895dcfdb08b13e6": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d93c7-a14d-78d2-b075-4579420632b7",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 5,
+      "overriden_lines": 0
+    },
+    "7eb6b35bac165847": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019da2c3-9ea6-7383-bc46-003057bd681c",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 21,
+      "total_deletions": 70,
+      "accepted_lines": 21,
+      "overriden_lines": 0
+    },
+    "b3e2cf6cad4819a0": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d8d5d-7cba-70b1-8c17-ad7d6dff43e7",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 133,
+      "overriden_lines": 0
+    },
+    "b96aa95b162d6206": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d8db2-0332-7d93-84f8-0f778f7df0ff",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 1,
+      "overriden_lines": 0
+    },
+    "e121ac05599a2e7d": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019d92e0-e4b6-78b3-8f0d-561aeed5d3a4",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 84,
+      "overriden_lines": 0
+    }
+  },
+  "humans": {
+    "h_1cda88fc21fe9c": {
+      "author": "ceolinwill"
+    }
+  }
+}
