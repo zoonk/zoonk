@@ -26,12 +26,10 @@ export function InPlayStickyHeader({
       <PlayerHeader>
         <PlayerCloseLink href={lessonHref} />
 
-        <div className="pointer-events-none absolute inset-x-0 flex justify-center">
-          <div className="pointer-events-auto max-w-50 sm:max-w-75">
-            {centerContent ?? (
-              <span className="text-muted-foreground truncate text-sm">{displayTitle}</span>
-            )}
-          </div>
+        <div className="min-w-0 flex-1 text-center">
+          {centerContent ?? (
+            <p className="text-muted-foreground truncate text-sm">{displayTitle}</p>
+          )}
         </div>
 
         <div className="flex items-center gap-1">
