@@ -1,8 +1,32 @@
-import { describe, expect, test } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 import { buildImageProviderOptions, buildProviderOptions } from "./provider-options";
 
 describe(buildProviderOptions, () => {
-  test("adds provider order, default-model tags, and reasoning effort for fallback-enabled openai models", () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  test("skips reporting tags by default even for fallback-enabled models", () => {
+    expect(
+      buildProviderOptions({
+        fallbackModels: ["google/gemini-3-flash", "anthropic/claude-haiku-4.5"],
+        model: "openai/gpt-5.4",
+        reasoningEffort: "high",
+        taskName: "activity-explanation",
+        useFallback: true,
+      }),
+    ).toEqual({
+      gateway: {
+        models: ["google/gemini-3-flash", "anthropic/claude-haiku-4.5"],
+        order: ["openai", "azure", "google", "anthropic", "vertex"],
+      },
+      openai: { reasoningEffort: "high" },
+    });
+  });
+
+  test("adds provider order, default-model tags, and reasoning effort when gateway tags are enabled", () => {
+    vi.stubEnv("ENABLE_AI_GATEWAY_TAGS", "true");
+
     expect(
       buildProviderOptions({
         fallbackModels: ["google/gemini-3-flash", "anthropic/claude-haiku-4.5"],
@@ -38,6 +62,8 @@ describe(buildProviderOptions, () => {
   });
 
   test("adds the anthropic provider order for anthropic models", () => {
+    vi.stubEnv("ENABLE_AI_GATEWAY_TAGS", "true");
+
     expect(
       buildProviderOptions({
         fallbackModels: ["openai/gpt-5.4-mini"],
@@ -55,6 +81,8 @@ describe(buildProviderOptions, () => {
   });
 
   test("leaves provider order unset for unsupported model prefixes", () => {
+    vi.stubEnv("ENABLE_AI_GATEWAY_TAGS", "true");
+
     expect(
       buildProviderOptions({
         fallbackModels: ["openai/gpt-5.4-mini"],
@@ -71,6 +99,8 @@ describe(buildProviderOptions, () => {
   });
 
   test("still adds reporting tags when fallback tracking is enabled without fallback models", () => {
+    vi.stubEnv("ENABLE_AI_GATEWAY_TAGS", "true");
+
     expect(
       buildProviderOptions({
         fallbackModels: [],
@@ -89,7 +119,29 @@ describe(buildProviderOptions, () => {
 });
 
 describe(buildImageProviderOptions, () => {
-  test("adds gateway reporting tags while preserving the openai image settings", () => {
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  test("skips gateway reporting tags by default while preserving the openai image settings", () => {
+    expect(
+      buildImageProviderOptions({
+        model: "openai/gpt-image-1.5",
+        quality: "low",
+        taskName: "course-thumbnail",
+      }),
+    ).toEqual({
+      gateway: {},
+      openai: {
+        output_format: "webp",
+        quality: "low",
+      },
+    });
+  });
+
+  test("adds gateway reporting tags for image tasks when enabled", () => {
+    vi.stubEnv("ENABLE_AI_GATEWAY_TAGS", "true");
+
     expect(
       buildImageProviderOptions({
         model: "openai/gpt-image-1.5",

@@ -117,10 +117,12 @@ export function buildImageProviderOptions({
   quality: ImageGenerationQuality;
   taskName: string;
 }): ImageProviderOptionsResult {
+  const tags = isGatewayTaggingEnabled()
+    ? buildGatewayTags({ model: getImageReportingModel(model), taskName })
+    : undefined;
+
   return {
-    gateway: {
-      tags: buildGatewayTags({ model: getImageReportingModel(model), taskName }),
-    },
+    gateway: tags ? { tags } : {},
     openai: {
       output_format: "webp",
       quality,
@@ -129,12 +131,22 @@ export function buildImageProviderOptions({
 }
 
 /**
+ * Gateway request tags power our cost reporting, but tagged Gateway requests
+ * cost money. We keep this behind an explicit env opt-in so environments that
+ * do not need reporting can avoid the extra charge by default.
+ */
+function isGatewayTaggingEnabled(): boolean {
+  return process.env.ENABLE_AI_GATEWAY_TAGS === "true";
+}
+
+/**
  * We only want analytics for tasks that actually participate in fallback
- * routing. This keeps eval runs out of Gateway reports while still tracking the
- * normal task path, even for tasks whose fallback list is currently empty.
+ * routing, and only in environments that explicitly opted into paid Gateway
+ * tags. This keeps eval runs out of Gateway reports while still letting opted-
+ * in fallback flows report against the normal task path.
  */
 function shouldAddGatewayTags(useFallback: boolean): boolean {
-  return useFallback;
+  return useFallback && isGatewayTaggingEnabled();
 }
 
 /**
