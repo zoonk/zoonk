@@ -130,7 +130,7 @@ describe("player browser integration: completion", () => {
   test("shows guest activity completion login prompt without rewards and falls back to /login", async () => {
     renderPlayer({
       activity: buildCompletionQuizActivity(),
-      navigation: buildNavigation({ loginHref: undefined }),
+      navigation: buildNavigation({ loginHref: undefined, nextActivityHref: "/lesson/a/2" }),
       viewer: { isAuthenticated: false, userName: null },
     });
 
@@ -138,11 +138,14 @@ describe("player browser integration: completion", () => {
 
     const completionScreen = page.getByRole("status");
     const loginLink = completionScreen.getByRole("link", { name: /login/i });
+    const nextLink = completionScreen.getByRole("link", { name: "Next" });
 
     await expect.element(completionScreen.getByText("1/1")).toBeInTheDocument();
     await expect
       .element(completionScreen.getByText(/sign up to track your progress/i))
       .toBeInTheDocument();
+    await expect.element(nextLink).toBeInTheDocument();
+    await expect.element(nextLink).toHaveAttribute("href", "/lesson/a/2");
     await expect.element(loginLink).toBeInTheDocument();
     await expect.element(loginLink).toHaveAttribute("href", "/login");
     await expect

@@ -143,10 +143,12 @@ function AuthenticatedContent({
 function UnauthenticatedContent({
   lessonHref,
   loginHref,
+  nextActivityHref,
   onRestart,
 }: {
   lessonHref: PlayerRoute;
   loginHref: PlayerRoute;
+  nextActivityHref: PlayerRoute | null;
   onRestart: () => void;
 }) {
   const t = useExtracted();
@@ -161,9 +163,21 @@ function UnauthenticatedContent({
       <p className="text-muted-foreground text-sm">{t("Sign up to track your progress")}</p>
 
       <CompletionActions>
-        <PlayerLink className={cn(buttonVariants(), "w-full")} href={loginHref}>
+        <PlayerLink
+          className={cn(
+            buttonVariants({ variant: nextActivityHref ? "outline" : undefined }),
+            "w-full",
+          )}
+          href={loginHref}
+        >
           {t("Login")}
         </PlayerLink>
+
+        {nextActivityHref && (
+          <PrimaryActionLink href={nextActivityHref} shortcut="Enter">
+            {t("Next")}
+          </PrimaryActionLink>
+        )}
 
         <SecondaryActions lessonHref={lessonHref} onRestart={onRestart} variant="inline" />
       </CompletionActions>
@@ -192,6 +206,7 @@ export function AuthBranch({
       <UnauthenticatedContent
         lessonHref={lessonHref}
         loginHref={loginHref ?? "/login"}
+        nextActivityHref={nextActivityHref}
         onRestart={onRestart}
       />
     );
