@@ -78,7 +78,7 @@ export function SetupProfileForm({
       <SetupField>
         <SetupLabel htmlFor="name">{t("Name")}</SetupLabel>
         <SetupInput
-          autoComplete="name"
+          autoComplete="off"
           defaultValue={defaultName}
           id="name"
           name="name"
@@ -93,7 +93,7 @@ export function SetupProfileForm({
 
           <InputGroupInput
             autoCapitalize="none"
-            autoComplete="username"
+            autoComplete="off"
             autoCorrect="off"
             id="username"
             maxLength={USERNAME_MAX_LENGTH}
