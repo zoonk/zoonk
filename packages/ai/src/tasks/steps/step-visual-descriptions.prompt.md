@@ -107,21 +107,23 @@ In your description, specify: column headers, row data with actual values. **Eve
 
 ## Code
 
-Use when the step describes something that can be **concretely demonstrated** in code — algorithms, data structure operations, syntax, APIs, logic, or type behavior.
+Use ONLY when the step itself is about **real code written in a real programming language** — code a learner would type into a file or REPL. The decision is driven by the step content, not by the course, chapter, or lesson title. A step inside a programming course that is conceptual, historical, or procedural (without any real code to show) should not use code; a step that literally demonstrates syntax, an algorithm, or language behavior should.
 
-**Prefer code over tables for programming topics.** If the lesson is about a programming language and a step discusses types, values, operators, or behavior that could be shown in a REPL or short snippet, use code. A code snippet showing `type(2)` vs `type(2.0)` or `0.1 + 0.1 + 0.1 == 0.3` teaches more than a table listing the same facts. **Code is the native medium for programming concepts** — don't avoid it in favor of tables when the topic is programming.
+**Prefer code over tables when the step itself shows code.** A snippet showing `type(2)` vs `type(2.0)` or `0.1 + 0.1 + 0.1 == 0.3` teaches more than a table listing the same facts. **Code is the native medium for programming concepts** — don't avoid it in favor of tables when the step is literally about writing code.
 
 **When to use code:**
 
 - The step explains type behavior, value comparisons, or operator results in a programming language — show it as a runnable snippet
-- The step describes an algorithm or procedure with concrete steps
-- The step describes a data structure operation (insert, delete, lookup, push, pop)
+- The step walks through an algorithm or data structure operation (insert, delete, lookup, push, pop) in a real language
 - The step discusses syntax, APIs, or language features
-- The step describes logic (conditionals, loops, recursion) where seeing the code is more precise than prose
+- The step teaches logic (conditionals, loops, recursion) where seeing real code is more precise than prose
 
 **When NOT to use code:**
 
-- **Only for programming content.** Don't use code for non-programming topics (design, biology, history, etc.) even as a metaphor.
+- **The step itself must contain real code.** Code is only appropriate when the step teaches or shows actual code in a real programming language. A step that mentions software, a tool, or a platform but has no real snippet to display is NOT a code step — even inside a programming course. If the step is conceptual ("what is an algorithm?"), historical ("who invented Python?"), or about using software rather than writing it, pick a different visual.
+- **Pseudo-code, fake types, and made-up schemas are NOT code.** Do not invent a TypeScript interface, JSON object, pseudo-class, or imaginary snippet to describe something that isn't itself real code. If there's no real snippet a learner would actually write, code is the wrong visual.
+- **Never use code to represent UIs, configuration, or non-code artifacts.** A snippet describing a tool's login screen, admin panel, form fields, user profile, or the state of any non-code thing is a UI mockup or comparison table wearing a code costume. Use **image** for screens and **table** for structured fields or settings.
+- **Don't use code as a metaphor.** For design, biology, history, business processes, end-user software workflows, or any non-programming topic, code is never the right visual — even if structuring the idea as code would look tidy.
 - **Never use code for mathematical notation.** If the content is a mathematical expression (derivatives, integrals, equations), use the formula kind instead. Code is for executable programs, not for displaying math.
 
 In your description, specify: the programming language, what the code should demonstrate, and what key lines should be highlighted. Keep descriptions focused — the generated code should be concise.
