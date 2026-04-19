@@ -64,6 +64,36 @@ function getVerticalSpacing({
 }
 
 /**
+ * Long formulas are allowed to be wider than the visible stage, but the
+ * horizontal scrolling must stay inside the formula renderer. Walking upward
+ * from the math node lets this test verify that behavior without depending on
+ * one exact wrapper element.
+ */
+function findHorizontalScrollContainer({
+  mathElement,
+  stopAt,
+}: {
+  mathElement: HTMLElement;
+  stopAt: HTMLElement;
+}) {
+  let current: HTMLElement | null = mathElement;
+
+  while (current) {
+    if (globalThis.getComputedStyle(current).overflowX === "auto") {
+      return current;
+    }
+
+    if (current === stopAt) {
+      return null;
+    }
+
+    current = current.parentElement;
+  }
+
+  return null;
+}
+
+/**
  * Several layout tests only need a restore callback after conditionally sizing
  * the rendered player root. Using one shared no-op keeps those tests simple and
  * satisfies lint without recreating the same fallback function in each case.
@@ -101,6 +131,8 @@ function setRenderRootSize({ height, width }: { height?: string; width?: string 
     root.style.height = previous.height;
   };
 }
+
+const LONG_FORMULA = String.raw`\text{ocular lens} + \text{body tube} + \text{revolving nosepiece} + \text{low-power objective} + \text{high-power objective} + \text{stage clips} + \text{diaphragm} + \text{condenser} + \text{illuminator}`;
 
 describe("player browser integration: visual steps", () => {
   test("renders quote text and author", async () => {
@@ -604,5 +636,66 @@ describe("player browser integration: visual steps", () => {
     await expect.element(figure).toBeVisible();
     expect(figure.element().querySelector('[role="math"]')).not.toBeNull();
     await expect.element(page.getByText("Pythagorean theorem")).toBeVisible();
+  });
+
+  test("keeps long formula overflow on a nested formula container", async () => {
+    let restoreRenderRootSize = restoreNothing;
+
+    try {
+      renderVisualActivity({
+        steps: [
+          buildVisualStep({
+            content: {
+              description: "Microscope parts formula",
+              formula: LONG_FORMULA,
+              kind: "formula",
+            },
+          }),
+        ],
+      });
+
+      restoreRenderRootSize = setRenderRootSize({ width: "390px" });
+
+      const figure = page.getByRole("figure", {
+        name: "Microscope parts formula",
+      });
+      const visualContent = page.getByRole("region", {
+        name: /visual content/i,
+      });
+
+      await expect.element(figure).toBeVisible();
+
+      const figureElement = figure.element();
+
+      if (!(figureElement instanceof HTMLElement)) {
+        throw new Error("Expected the formula to render inside a figure");
+      }
+
+      const mathElement = figureElement.querySelector('[role="math"]');
+
+      if (!(mathElement instanceof HTMLElement)) {
+        throw new Error("Expected the formula to render a math region");
+      }
+
+      const scrollContainer = findHorizontalScrollContainer({
+        mathElement,
+        stopAt: figureElement,
+      });
+
+      if (!(scrollContainer instanceof HTMLElement)) {
+        throw new Error("Expected the formula to render inside a scroll container");
+      }
+
+      const scrollContainerBox = scrollContainer.getBoundingClientRect();
+      const visualContentBox = visualContent.element().getBoundingClientRect();
+
+      expect(scrollContainer.scrollWidth).toBeGreaterThan(scrollContainer.clientWidth);
+      expect(globalThis.getComputedStyle(scrollContainer).overflowX).toBe("auto");
+      expect(scrollContainerBox.left).toBeGreaterThanOrEqual(visualContentBox.left - 1);
+      expect(scrollContainerBox.right).toBeLessThanOrEqual(visualContentBox.right + 1);
+      expect(globalThis.getComputedStyle(visualContent.element()).overflowX).toBe("hidden");
+    } finally {
+      restoreRenderRootSize();
+    }
   });
 });
