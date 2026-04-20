@@ -39,6 +39,18 @@ type DiagramEdgeInput = {
   target: string;
 };
 
+type SizedDiagramNode = DiagramNodeInput & {
+  dagreId: string;
+  width: number;
+};
+
+type SizedDiagramEdge = DiagramEdgeInput & {
+  dagreSource: string;
+  dagreTarget: string;
+  labelHeight?: number;
+  labelWidth?: number;
+};
+
 const MIN_NODE_WIDTH = 100;
 const NODE_HEIGHT = 40;
 const NODE_PADDING = 32;
@@ -51,6 +63,7 @@ const EDGE_LABEL_PADDING_Y = 3;
 const EDGE_LABEL_HEIGHT = EDGE_LABEL_FONT_SIZE + EDGE_LABEL_PADDING_Y * 2;
 
 const NODE_FONT_SIZE = 14;
+const EMPTY_DIAGRAM_NODE_PREFIX = "__diagram-empty-node__";
 
 /**
  * Estimates text width without consulting browser-only APIs.
@@ -88,8 +101,9 @@ function measureEdgeLabelWidth(label: string): number {
  * Precomputes node widths once so dagre layout and the rendered SVG use the
  * same dimensions. This avoids duplicated sizing logic drifting over time.
  */
-function sizeNode(node: DiagramNodeInput): DiagramNodeInput & { width: number } {
+function sizeNode({ index, node }: { index: number; node: DiagramNodeInput }): SizedDiagramNode {
   return {
+    dagreId: toDagreNodeId({ id: node.id, index }),
     ...node,
     width: measureNodeWidth(node.label),
   };
@@ -99,15 +113,57 @@ function sizeNode(node: DiagramNodeInput): DiagramNodeInput & { width: number } 
  * Precomputes edge label dimensions once so dagre reserves space for the same
  * label box that the SVG later renders.
  */
-function sizeEdge(edge: DiagramEdgeInput): DiagramEdgeInput & {
-  labelHeight?: number;
-  labelWidth?: number;
-} {
+function sizeEdge({
+  edge,
+  nodeIds,
+}: {
+  edge: DiagramEdgeInput;
+  nodeIds: Map<string, string>;
+}): SizedDiagramEdge {
   return {
+    dagreSource: readDagreNodeId({ id: edge.source, nodeIds }),
+    dagreTarget: readDagreNodeId({ id: edge.target, nodeIds }),
     ...edge,
     labelHeight: edge.label ? EDGE_LABEL_HEIGHT : undefined,
     labelWidth: edge.label ? measureEdgeLabelWidth(edge.label) : undefined,
   };
+}
+
+/**
+ * Dagre crashes when a node id is the empty string, but our diagram contract
+ * allows punctuation-only nodes such as `( )` to use that id. We keep the
+ * external diagram ids unchanged and give dagre a safe internal id instead.
+ */
+function toDagreNodeId({ id, index }: { id: string; index: number }): string {
+  if (id !== "") {
+    return id;
+  }
+
+  return `${EMPTY_DIAGRAM_NODE_PREFIX}-${index}`;
+}
+
+/**
+ * All edges need to target the same internal dagre ids that we assigned to
+ * nodes above. Without this mapping, diagrams that contain empty-string ids can
+ * still reach dagre's crash path during layout.
+ */
+function readDagreNodeId({ id, nodeIds }: { id: string; nodeIds: Map<string, string> }): string {
+  const nodeId = nodeIds.get(id);
+
+  if (nodeId !== undefined) {
+    return nodeId;
+  }
+
+  return id === "" ? `${EMPTY_DIAGRAM_NODE_PREFIX}-missing` : id;
+}
+
+/**
+ * The layout step should have a single source of truth for the ids that dagre
+ * sees. Building the lookup from the sized nodes keeps node and edge
+ * normalization in sync and avoids duplicating the empty-id rule.
+ */
+function buildDagreNodeIdMap(nodes: SizedDiagramNode[]): Map<string, string> {
+  return new Map(nodes.map((node) => [node.id, node.dagreId]));
 }
 
 function readNodePosition(
@@ -199,14 +255,15 @@ export function computeDiagramLayout(
   edges: DiagramEdgeInput[],
 ): DiagramLayout {
   const graph = new Graph<GraphLabel, NodeLabel, EdgeLabel>();
-  const sizedNodes = nodes.map((node) => sizeNode(node));
-  const sizedEdges = edges.map((edge) => sizeEdge(edge));
+  const sizedNodes = nodes.map((node, index) => sizeNode({ index, node }));
+  const dagreNodeIds = buildDagreNodeIdMap(sizedNodes);
+  const sizedEdges = edges.map((edge) => sizeEdge({ edge, nodeIds: dagreNodeIds }));
 
   graph.setGraph({ nodesep: NODE_SEP, rankdir: "TB", ranksep: RANK_SEP });
   graph.setDefaultEdgeLabel(() => ({}));
 
   for (const node of sizedNodes) {
-    graph.setNode(node.id, {
+    graph.setNode(node.dagreId, {
       height: NODE_HEIGHT,
       label: node.label,
       width: node.width,
@@ -214,7 +271,7 @@ export function computeDiagramLayout(
   }
 
   for (const edge of sizedEdges) {
-    graph.setEdge(edge.source, edge.target, {
+    graph.setEdge(edge.dagreSource, edge.dagreTarget, {
       height: edge.labelHeight ?? 0,
       label: edge.label,
       width: edge.labelWidth ?? 0,
@@ -224,14 +281,14 @@ export function computeDiagramLayout(
   layout(graph);
 
   const positionedNodes = sizedNodes.map((node) => ({
-    ...readNodePosition(graph, node.id),
+    ...readNodePosition(graph, node.dagreId),
     id: node.id,
     label: node.label,
   }));
 
-  const positionedEdges = sizedEdges.map((edge) => ({
+  const positionedEdges = sizedEdges.map(({ dagreSource, dagreTarget, ...edge }) => ({
     ...edge,
-    ...readEdge(graph, edge.source, edge.target),
+    ...readEdge(graph, dagreSource, dagreTarget),
   }));
 
   const { height, viewBox, width } = computeViewBox({

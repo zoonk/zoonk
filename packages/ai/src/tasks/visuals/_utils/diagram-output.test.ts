@@ -55,4 +55,38 @@ describe(buildVisualDiagramOutput, () => {
       ],
     });
   });
+
+  test("creates a non-empty id for punctuation-only node labels", () => {
+    expect(
+      buildVisualDiagramOutput({
+        edges: [
+          { from: "print", label: "chama a ação", to: "( )" },
+          { from: "( )", label: "envolve o argumento", to: '"Olá"' },
+        ],
+        nodes: [{ label: "print" }, { label: "( )" }, { label: '"Olá"' }],
+      }),
+    ).toEqual({
+      edges: [
+        { label: "chama a ação", source: "print", target: "diagram-node-2" },
+        { label: "envolve o argumento", source: "diagram-node-2", target: "ola" },
+      ],
+      nodes: [
+        { id: "print", label: "print" },
+        { id: "diagram-node-2", label: "( )" },
+        { id: "ola", label: '"Olá"' },
+      ],
+    });
+  });
+
+  test("falls back to a non-empty id when an unmatched edge label slug is empty", () => {
+    expect(
+      buildVisualDiagramOutput({
+        edges: [{ from: "( )", label: null, to: "Known State" }],
+        nodes: [{ label: "Known State" }],
+      }),
+    ).toEqual({
+      edges: [{ label: null, source: "unmatched-diagram-node", target: "known-state" }],
+      nodes: [{ id: "known-state", label: "Known State" }],
+    });
+  });
 });

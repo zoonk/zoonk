@@ -109,6 +109,29 @@ describe(computeDiagramLayout, () => {
     expect(edge!.points.length).toBeGreaterThan(0);
   });
 
+  it("handles diagrams whose node ids include an empty string", () => {
+    const nodes = [
+      { id: "print", label: "print" },
+      { id: "", label: "( )" },
+      { id: "ola", label: '"Olá"' },
+    ];
+    const edges = [
+      { label: "chama a ação", source: "print", target: "" },
+      { label: "envolve o argumento", source: "", target: "ola" },
+    ];
+
+    const layout = computeDiagramLayout(nodes, edges);
+    const punctuationNode = layout.nodes.find((node) => node.id === "");
+
+    expect(punctuationNode).toBeDefined();
+    expect(punctuationNode!.label).toBe("( )");
+    expect(layout.edges).toHaveLength(2);
+
+    for (const edge of layout.edges) {
+      expect(edge.points.length).toBeGreaterThan(0);
+    }
+  });
+
   it("scales node width with label length", () => {
     const shortLabel = "Hi";
     const longLabel = "This is a significantly longer label";
