@@ -504,6 +504,37 @@ describe("player browser integration: visual steps", () => {
     await expect.element(diagram.getByText("routes requests")).toBeVisible();
   });
 
+  test("renders diagrams whose node ids include an empty string", async () => {
+    renderVisualActivity({
+      steps: [
+        buildVisualStep({
+          content: {
+            edges: [
+              { label: "chama a ação", source: "print", target: "" },
+              { label: "envolve o argumento", source: "", target: "ola" },
+            ],
+            kind: "diagram",
+            nodes: [
+              { id: "print", label: "print" },
+              { id: "", label: "( )" },
+              { id: "ola", label: '"Olá"' },
+            ],
+          },
+        }),
+      ],
+    });
+
+    const figure = page.getByRole("figure", { name: /diagram/i });
+    const diagram = figure.getByRole("img");
+
+    await expect.element(figure).toBeVisible();
+    await expect.element(diagram.getByText("print")).toBeVisible();
+    await expect.element(diagram.getByText("( )")).toBeVisible();
+    await expect.element(diagram.getByText('"Olá"')).toBeVisible();
+    await expect.element(diagram.getByText("chama a ação")).toBeVisible();
+    await expect.element(diagram.getByText("envolve o argumento")).toBeVisible();
+  });
+
   test("keeps small diagrams vertically centered inside the visual region", async () => {
     let restoreRenderRootSize = restoreNothing;
 
