@@ -20,12 +20,17 @@ import { StageContent } from "./stage-content";
 import { StatusPill } from "./status-pill";
 import { StepActionButton } from "./step-action-button";
 import { StepImagePreloader } from "./step-image-preloader";
+import { PlayerContentFrame } from "./step-layouts";
 import { StoryMetricsBar } from "./story-metrics-bar";
 
 /**
  * Mobile bottom-bar content switches between arrow navigation and the shared
  * step action button. The screen model decides which mode is active; this
  * component only renders the matching mobile control.
+ *
+ * Navigation arrows span the full viewport so they stick to the screen edges
+ * on tablet. The action button uses the shared player frame so it stays
+ * aligned with the centered step container and doesn't stretch past it.
  */
 function BottomBarContent() {
   const { actions, screen } = usePlayerRuntime();
@@ -40,7 +45,11 @@ function BottomBarContent() {
     );
   }
 
-  return <StepActionButton />;
+  return (
+    <PlayerContentFrame>
+      <StepActionButton />
+    </PlayerContentFrame>
+  );
 }
 
 export function PlayerShell() {
