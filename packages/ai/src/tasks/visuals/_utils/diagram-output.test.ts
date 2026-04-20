@@ -89,4 +89,16 @@ describe(buildVisualDiagramOutput, () => {
       nodes: [{ id: "known-state", label: "Known State" }],
     });
   });
+
+  test("does not let unmatched fallback ids collide with real node ids", () => {
+    expect(
+      buildVisualDiagramOutput({
+        edges: [{ from: "( )", label: null, to: "Known State" }],
+        nodes: [{ label: "Known State" }, { label: "Unmatched Diagram Node" }],
+      }),
+    ).toEqual({
+      edges: [{ label: null, source: "unmatched-diagram-node-2", target: "known-state" }],
+      nodes: [{ id: "known-state", label: "Known State" }],
+    });
+  });
 });

@@ -106,9 +106,13 @@ function isWholeWordExtensionMatch({
 function resolveNodeId({
   edgeLabel,
   nodeMap,
+  takenIds,
+  unmatchedNodeIds,
 }: {
   edgeLabel: string;
   nodeMap: Map<string, string>;
+  takenIds: Set<string>;
+  unmatchedNodeIds: Map<string, string>;
 }): string {
   const directMatch = nodeMap.get(edgeLabel);
 
@@ -131,7 +135,24 @@ function resolveNodeId({
     isWholeWordExtensionMatch({ candidateLabel: label, edgeLabel }),
   );
 
-  return substringMatch?.[1] ?? createUnmatchedDiagramNodeId({ label: edgeLabel });
+  if (substringMatch) {
+    return substringMatch[1];
+  }
+
+  const existingUnmatchedId = unmatchedNodeIds.get(edgeLabel);
+
+  if (existingUnmatchedId) {
+    return existingUnmatchedId;
+  }
+
+  const unmatchedNodeId = claimUniqueDiagramNodeId({
+    baseId: createUnmatchedDiagramNodeId({ label: edgeLabel }),
+    takenIds,
+  });
+
+  unmatchedNodeIds.set(edgeLabel, unmatchedNodeId);
+
+  return unmatchedNodeId;
 }
 
 /**
@@ -151,11 +172,12 @@ export function buildVisualDiagramOutput({
   }));
 
   const nodeMap = new Map(allNodes.map((node) => [node.label, node.id]));
+  const unmatchedNodeIds = new Map<string, string>();
 
   const resolvedEdges = edges.map((edge) => ({
     label: edge.label,
-    source: resolveNodeId({ edgeLabel: edge.from, nodeMap }),
-    target: resolveNodeId({ edgeLabel: edge.to, nodeMap }),
+    source: resolveNodeId({ edgeLabel: edge.from, nodeMap, takenIds, unmatchedNodeIds }),
+    target: resolveNodeId({ edgeLabel: edge.to, nodeMap, takenIds, unmatchedNodeIds }),
   }));
 
   const referencedIds = new Set(resolvedEdges.flatMap((edge) => [edge.source, edge.target]));
