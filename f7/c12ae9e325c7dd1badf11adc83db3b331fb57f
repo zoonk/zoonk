@@ -1,0 +1,51 @@
+packages/ai/src/tasks/visuals/_utils/diagram-output.test.ts
+  eae88bc254d036d4 58-91
+packages/ai/src/tasks/visuals/_utils/diagram-output.ts
+  eae88bc254d036d4 13-72,134,147-149
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.0",
+  "base_commit_sha": "f7c12ae9e325c7dd1badf11adc83db3b331fb57f",
+  "prompts": {
+    "a3288c765116e821": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019da805-b7ae-74d0-8583-b505d351dfbe",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 184,
+      "overriden_lines": 0
+    },
+    "eae88bc254d036d4": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019da834-4020-7450-9402-1c6d5e8a17ce",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 98,
+      "total_deletions": 3,
+      "accepted_lines": 98,
+      "overriden_lines": 0
+    },
+    "fad2f0d2a1114b34": {
+      "agent_id": {
+        "tool": "claude",
+        "id": "b05fda29-46b3-48c5-adf9-e066a0b8e798",
+        "model": "claude-opus-4-6"
+      },
+      "human_author": null,
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 0,
+      "accepted_lines": 2,
+      "overriden_lines": 0
+    }
+  }
+}
