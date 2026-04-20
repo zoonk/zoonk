@@ -33,6 +33,22 @@ Use the owning app or package name as scope when working in this monorepo.
 3. Only use an inferred scope like `deps`, `ci`, or `agents` when the change truly spans multiple workspaces or does not belong to a single app/package.
 4. Do not pick a scope based on the kind of code changed (eg `data`) when the files clearly belong to one app/package. The workspace owner wins.
 
+### Multi-package Changes
+
+When one commit touches multiple apps/packages, use the **primary owner** as the scope.
+
+Pick the primary owner in this order:
+
+1. The app/package where the user-facing bug or behavior lives
+2. The app/package containing the main implementation change
+3. The app/package a reviewer would most naturally inspect first
+
+Supporting changes in other packages do **not** change the scope.
+
+Example:
+
+- A player runtime bug requires a fix in `packages/player` plus an upstream safeguard in `packages/ai` -> use `fix(player): ...`
+
 **Inferred scopes** (when change doesn't fit an app/package):
 
 - `agents` - CLAUDE.md, AGENTS.md, `.claude/` folder
@@ -50,6 +66,9 @@ Use the owning app or package name as scope when working in this monorepo.
 - `fix(ui): improve belt progress contrast` when the change is in `packages/player`
 - `fix(data): update main progress query` when the change is only in `apps/main`
 - `fix(ui): restyle main level card` when the change is only in `apps/main`
+- `fix(diagrams): avoid empty diagram node ids` when `player` is the clear primary owner
+
+Never invent thematic scopes like `diagrams`, `auth`, or `visuals` when an owning app/package is clear.
 
 ## Examples
 
