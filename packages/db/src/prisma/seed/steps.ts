@@ -38,7 +38,7 @@ const stepsData: {
               "A simple diagram showing data and rules combining into an output in traditional programming",
           },
           text: "Traditional programming required explicit rules for every scenario. But what if computers could learn patterns from data instead?",
-          title: "The Problem",
+          title: "The Limits of Rules",
           variant: "text",
         },
         kind: "static",
@@ -50,7 +50,7 @@ const stepsData: {
               "An educational illustration showing examples feeding into a machine learning model that discovers patterns",
           },
           text: "Machine learning flips the script: instead of programming rules, we provide examples and let the computer discover the patterns.",
-          title: "A New Approach",
+          title: "Learning From Examples",
           variant: "text",
         },
         kind: "static",
@@ -61,54 +61,12 @@ const stepsData: {
             prompt:
               "A clean comparison graphic showing supervised, unsupervised, and reinforcement learning with their data and goals",
           },
-          text: "Each type of machine learning has distinct characteristics, strengths, and typical applications.",
-          title: "Comparing ML Types",
+          text: "Supervised learning learns from labeled examples, unsupervised learning finds structure on its own, and reinforcement learning improves through feedback from actions.",
+          title: "Three Common Styles",
           variant: "text",
         },
         kind: "static",
       },
-      {
-        content: {
-          image: {
-            prompt:
-              "A bar chart comparing labeled data requirements across supervised, semi-supervised, unsupervised, and reinforcement learning",
-          },
-          text: "Different types of ML require different amounts of labeled data to achieve good performance.",
-          title: "Data Requirements",
-          variant: "text",
-        },
-        kind: "static",
-      },
-
-      // --- Code image ---
-      {
-        content: {
-          image: {
-            prompt:
-              "A clean illustration of a simple neural network for image classification with input, hidden, and output layers",
-          },
-          text: "A simple neural network can be built in just a few lines of Python using popular ML libraries.",
-          title: "Building a Neural Network",
-          variant: "text",
-        },
-        kind: "static",
-      },
-
-      // --- Formula image ---
-      {
-        content: {
-          image: {
-            prompt:
-              "An educational illustration of mean squared error as distances between predictions and actual values on a chart",
-          },
-          text: "The loss function measures how far the model's predictions are from the actual values. Mean Squared Error is one of the most common choices for regression tasks.",
-          title: "Loss Function",
-          variant: "text",
-        },
-        kind: "static",
-      },
-
-      // --- Image example ---
       {
         content: {
           image: {
@@ -116,106 +74,20 @@ const stepsData: {
               "A clean diagram showing a neural network with input layer, two hidden layers, and output layer, with nodes connected by weighted edges",
             url: "https://to3kaoi21m60hzgu.public.blob.vercel-storage.com/courses/machine_learning-jmaDwiS0MptNV2EGCZzYWU7RBJs3Qg.webp",
           },
-          text: "Neural networks are inspired by the structure of the human brain, with layers of interconnected nodes.",
-          title: "Visual Representation",
+          text: "Many modern ML systems use neural networks: layers of connected units that gradually transform raw input into useful predictions.",
+          title: "Neural Networks in Practice",
           variant: "text",
         },
         kind: "static",
       },
-
-      // --- Image example without URL (fallback test) ---
       {
         content: {
           image: {
             prompt:
               "A diagram showing a pre-trained model being fine-tuned for a specific classification task with a small dataset",
           },
-          text: "Transfer learning allows models trained on large datasets to be adapted for specific tasks with minimal additional training.",
-          title: "Transfer Learning",
-          variant: "text",
-        },
-        kind: "static",
-      },
-
-      // --- Line chart ---
-      {
-        content: {
-          image: {
-            prompt:
-              "A line chart showing model accuracy rising as training sample size increases with diminishing returns",
-          },
-          text: "Model accuracy typically improves with more training data, but with diminishing returns after a certain point.",
-          title: "Training Data vs. Accuracy",
-          variant: "text",
-        },
-        kind: "static",
-      },
-
-      // --- Pie chart image ---
-      {
-        content: {
-          image: {
-            prompt:
-              "A pie chart showing AI adoption across healthcare, finance, retail, manufacturing, transportation, and other sectors",
-          },
-          text: "The global AI market is distributed across several key sectors, each with different adoption rates.",
-          title: "AI Market Distribution",
-          variant: "text",
-        },
-        kind: "static",
-      },
-
-      // --- Large diagram image ---
-      {
-        content: {
-          image: {
-            prompt:
-              "A diagram of a machine learning pipeline from data collection through deployment and monitoring",
-          },
-          text: "A complete ML pipeline involves multiple interconnected stages, from data collection to deployment and monitoring.",
-          title: "ML Pipeline Architecture",
-          variant: "text",
-        },
-        kind: "static",
-      },
-
-      // --- Wide table image ---
-      {
-        content: {
-          image: {
-            prompt:
-              "A comparison chart of machine learning algorithms showing complexity, interpretability, training speed, and best use cases",
-          },
-          text: "Different ML algorithms have distinct trade-offs in terms of complexity, interpretability, and performance characteristics.",
-          title: "Algorithm Comparison",
-          variant: "text",
-        },
-        kind: "static",
-      },
-
-      // --- Long timeline image ---
-      {
-        content: {
-          image: {
-            prompt:
-              "A timeline of major deep learning milestones from the first neural model through the LLM era",
-          },
-          text: "The evolution of deep learning has been marked by key breakthroughs spanning several decades.",
-          title: "Deep Learning History",
-          variant: "text",
-        },
-        kind: "static",
-      },
-
-      // --- Data preprocessing image ---
-      {
-        content: {
-          image: {
-            prompt:
-              "An illustration of a data preprocessing pipeline with cleaning, scaling, encoding, and train-test split",
-          },
-          text: "Data preprocessing is a critical step that can make or break your model's performance.",
-          title: "Data Preprocessing",
+          text: "Instead of starting from zero every time, teams often adapt an existing model to a new task. That shortcut is one reason ML is so practical today.",
+          title: "Why It Matters Now",
           variant: "text",
         },
         kind: "static",

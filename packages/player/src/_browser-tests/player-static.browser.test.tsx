@@ -1,6 +1,7 @@
 import { fireEvent } from "@testing-library/react";
 import { describe, expect, test, vi } from "vitest";
 import { page } from "vitest/browser";
+import { buildInlineImageUrl } from "../_test-utils/build-inline-image-url";
 import { buildSerializedActivity, buildSerializedStep } from "../_test-utils/player-test-data";
 import { buildAuthenticatedViewer } from "../_test-utils/player-test-viewer";
 import { buildNavigation, renderPlayer } from "../_test-utils/render-player";
@@ -87,7 +88,7 @@ describe("player browser integration: static steps", () => {
             content: {
               image: {
                 prompt: "A lantern lighting up one idea at a time",
-                url: "https://example.com/lantern.webp",
+                url: buildInlineImageUrl({ label: "A lantern lighting up one idea at a time" }),
               },
               text: "An image can now live inside the same readable step.",
               title: "One step, one image",

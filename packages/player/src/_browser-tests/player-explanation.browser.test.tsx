@@ -1,5 +1,6 @@
 import { describe, expect, test } from "vitest";
 import { page } from "vitest/browser";
+import { buildInlineImageUrl } from "../_test-utils/build-inline-image-url";
 import { buildSerializedActivity, buildSerializedStep } from "../_test-utils/player-test-data";
 import { buildAuthenticatedViewer } from "../_test-utils/player-test-viewer";
 import { renderPlayer } from "../_test-utils/render-player";
@@ -14,7 +15,9 @@ describe("player browser integration: explanation activity flow", () => {
             content: {
               image: {
                 prompt: "A wrapped network packet moving through layered labels",
-                url: "https://example.com/hook-question.webp",
+                url: buildInlineImageUrl({
+                  label: "A wrapped network packet moving through layered labels",
+                }),
               },
               text: "",
               title: "Why doesn't the whole message travel as one blob?",
@@ -26,7 +29,9 @@ describe("player browser integration: explanation activity flow", () => {
             content: {
               image: {
                 prompt: "Different network layers adding their own labels to the same payload",
-                url: "https://example.com/hook-explanation.webp",
+                url: buildInlineImageUrl({
+                  label: "Different network layers adding their own labels to the same payload",
+                }),
               },
               text: "Each layer adds its own label so the next part of the network knows what job to do.",
               title: "",
@@ -61,7 +66,10 @@ describe("player browser integration: explanation activity flow", () => {
               image: {
                 prompt:
                   "A message reaching its destination after moving through several network hops",
-                url: "https://example.com/anchor-step.webp",
+                url: buildInlineImageUrl({
+                  label:
+                    "A message reaching its destination after moving through several network hops",
+                }),
               },
               text: "This is why apps like WhatsApp can send one message through many network hops without each hop needing the whole chat history.",
               title: "This is why",
