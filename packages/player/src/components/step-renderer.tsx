@@ -2,6 +2,7 @@
 "use client";
 
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
+import { Fragment } from "react";
 import { type SelectedAnswer, type StepResult } from "../player-reducer";
 import { describePlayerStep } from "../player-step";
 import { type PlayerRenderBehavior, getPlayerStepBehavior } from "../player-step-behavior";
@@ -14,9 +15,8 @@ import { ReadingStep } from "./reading-step";
 import { SelectImageStep } from "./select-image-step";
 import { SortOrderStep } from "./sort-order-step";
 import { StaticStep } from "./static-step";
-import { NavigableStepLayout } from "./step-layouts";
-import { StepSideNav } from "./step-side-nav";
 import { StoryStep } from "./story-step";
+import { SwipeNavigableStepLayout } from "./swipe-navigable-step-layout";
 import { TranslationStep } from "./translation-step";
 import { VocabularyStep } from "./vocabulary-step";
 
@@ -159,27 +159,18 @@ export function StepRenderer({
     return null;
   }
 
-  const stepContent = (
-    <div
-      className="flex min-h-0 w-full min-w-0 flex-1 flex-col items-center"
-      key={`step-${step.id}`}
-    >
-      {content}
-    </div>
-  );
-
   if (behavior.layout !== "navigable") {
-    return stepContent;
+    return <Fragment key={`step-${step.id}`}>{content}</Fragment>;
   }
 
   return (
-    <NavigableStepLayout>
-      <StepSideNav
-        canNavigatePrev={canNavigatePrev}
-        onNavigateNext={onNavigateNext}
-        onNavigatePrev={onNavigatePrev}
-      />
-      {stepContent}
-    </NavigableStepLayout>
+    <SwipeNavigableStepLayout
+      canNavigatePrev={canNavigatePrev}
+      key={`step-${step.id}`}
+      onNavigateNext={onNavigateNext}
+      onNavigatePrev={onNavigatePrev}
+    >
+      {content}
+    </SwipeNavigableStepLayout>
   );
 }

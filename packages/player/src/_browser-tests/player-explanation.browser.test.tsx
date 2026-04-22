@@ -1,3 +1,4 @@
+import { fireEvent } from "@testing-library/react";
 import { describe, expect, test } from "vitest";
 import { page } from "vitest/browser";
 import { buildInlineImageUrl } from "../_test-utils/build-inline-image-url";
@@ -94,13 +95,13 @@ describe("player browser integration: explanation activity flow", () => {
       .element(page.getByAltText(/wrapped network packet moving through layered labels/i))
       .toBeInTheDocument();
 
-    await page.getByRole("button", { name: /next step/i }).click();
+    fireEvent.keyDown(globalThis.window, { key: "ArrowRight" });
     await expect.element(page.getByText(/each layer adds its own label/i)).toBeInTheDocument();
     await expect
       .element(page.getByAltText(/different network layers adding their own labels/i))
       .toBeInTheDocument();
 
-    await page.getByRole("button", { name: /next step/i }).click();
+    fireEvent.keyDown(globalThis.window, { key: "ArrowRight" });
     await expect
       .element(
         page.getByText(/which label helps the network decide where to send the packet next/i),

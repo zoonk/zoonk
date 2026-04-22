@@ -1,3 +1,4 @@
+import { fireEvent } from "@testing-library/react";
 import { describe, expect, test } from "vitest";
 import { page } from "vitest/browser";
 import { buildSerializedActivity, buildSerializedStep } from "../_test-utils/player-test-data";
@@ -92,7 +93,7 @@ describe("player browser integration: story", () => {
       .element(page.getByRole("heading", { name: "Resource Allocation" }))
       .toBeInTheDocument();
 
-    await page.getByRole("button", { name: /next step/i }).click();
+    fireEvent.keyDown(globalThis.window, { key: "ArrowRight" });
     await expect.element(page.getByRole("status")).toBeInTheDocument();
   });
 

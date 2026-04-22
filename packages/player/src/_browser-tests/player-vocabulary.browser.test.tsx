@@ -1,3 +1,4 @@
+import { fireEvent } from "@testing-library/react";
 import { describe, expect, test } from "vitest";
 import { page } from "vitest/browser";
 import {
@@ -72,10 +73,10 @@ describe("player browser integration: vocabulary", () => {
     await expect.element(page.getByRole("radiogroup")).not.toBeInTheDocument();
     await expect.element(page.getByRole("button", { name: /check/i })).not.toBeInTheDocument();
 
-    await page.getByRole("button", { name: /next step/i }).click();
+    fireEvent.keyDown(globalThis.window, { key: "ArrowRight" });
     await expect.element(page.getByText("Luna")).toBeInTheDocument();
 
-    await page.getByRole("button", { name: /previous step/i }).click();
+    fireEvent.keyDown(globalThis.window, { key: "ArrowLeft" });
     await expect.element(page.getByText("Sol")).toBeInTheDocument();
   });
 
@@ -101,7 +102,7 @@ describe("player browser integration: vocabulary", () => {
 
     await expect.element(page.getByText("Gato")).toBeInTheDocument();
 
-    await page.getByRole("button", { name: /next/i }).click();
+    fireEvent.keyDown(globalThis.window, { key: "ArrowRight" });
 
     const completionScreen = page.getByRole("status");
 

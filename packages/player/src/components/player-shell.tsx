@@ -14,7 +14,7 @@ import {
 } from "../player-selectors";
 import { usePlayerHaptics } from "../use-player-haptics";
 import { InPlayStickyHeader } from "./in-play-sticky-header";
-import { PlayerBottomBar, PlayerBottomBarNav } from "./player-bottom-bar";
+import { PlayerBottomBar } from "./player-bottom-bar";
 import { PlayerStage } from "./player-stage";
 import { StageContent } from "./stage-content";
 import { StatusPill } from "./status-pill";
@@ -24,27 +24,11 @@ import { PlayerContentFrame } from "./step-layouts";
 import { StoryMetricsBar } from "./story-metrics-bar";
 
 /**
- * Mobile bottom-bar content switches between arrow navigation and the shared
- * step action button. The screen model decides which mode is active; this
- * component only renders the matching mobile control.
- *
- * Navigation arrows span the full viewport so they stick to the screen edges
- * on tablet. The action button uses the shared player frame so it stays
- * aligned with the centered step container and doesn't stretch past it.
+ * The mobile bottom bar only exists for primary actions like Check or Continue.
+ * Navigable read screens now rely on swipe and keyboard input instead of a
+ * second row of visible navigation controls.
  */
 function BottomBarContent() {
-  const { actions, screen } = usePlayerRuntime();
-
-  if (screen.bottomBar?.kind === "navigation") {
-    return (
-      <PlayerBottomBarNav
-        canNavigatePrev={screen.bottomBar.canNavigatePrev}
-        onNavigateNext={actions.navigateNext}
-        onNavigatePrev={actions.navigatePrev}
-      />
-    );
-  }
-
   return (
     <PlayerContentFrame>
       <StepActionButton />
@@ -105,7 +89,7 @@ export function PlayerShell() {
         <StageContent />
       </PlayerStage>
 
-      {screen.showChrome && screen.bottomBar && (
+      {screen.showChrome && screen.bottomBar?.kind === "primaryAction" && (
         <PlayerBottomBar className="lg:hidden">
           <BottomBarContent />
         </PlayerBottomBar>

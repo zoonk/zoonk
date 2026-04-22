@@ -1,11 +1,21 @@
 /**
- * Shared image dimension constants for embedded step illustrations. Used by both the rendering
- * components and the preloader to ensure the browser fetches the exact same
- * optimized `/_next/image` URL — guaranteeing a cache hit when the step mounts.
+ * Static-step images now render inside a flexible media stage instead of a
+ * fixed square tile. Keeping the shared responsive `sizes` string here lets
+ * the visible image and the hidden preloader ask Next.js for comparable image
+ * candidates even though the on-screen layout changes between mobile and
+ * desktop.
  */
-export const STEP_IMAGE_PROPS = {
-  height: 1024,
-  sizes: "(max-width: 640px) calc(100vw - 2rem), 448px",
+export const STEP_IMAGE_SIZES = "(max-width: 1024px) calc(100vw - 1rem), 50vw";
+
+/**
+ * The preloader still needs explicit dimensions because hidden Next.js images
+ * cannot use `fill`. A portrait-friendly request shape better matches the new
+ * player layout and avoids prefetching a tiny square derivative for imagery
+ * that now fills a taller stage.
+ */
+export const STEP_IMAGE_PRELOAD_PROPS = {
+  height: 1280,
+  sizes: STEP_IMAGE_SIZES,
   width: 1024,
 } as const;
 

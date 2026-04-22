@@ -3,11 +3,11 @@
 import { type StepImage } from "@zoonk/core/steps/contract/image";
 import Image from "next/image";
 import { useState } from "react";
-import { STEP_IMAGE_PROPS } from "../image-config";
+import { STEP_IMAGE_SIZES } from "../image-config";
 
 function StepImageFallback({ prompt }: { prompt: string }) {
   return (
-    <div className="bg-muted flex aspect-square w-full max-w-md items-center justify-center rounded-2xl p-6">
+    <div className="flex h-full w-full items-center justify-center p-6">
       <span className="text-muted-foreground text-center text-sm font-medium">{prompt}</span>
     </div>
   );
@@ -26,13 +26,16 @@ export function StepImageView({ image }: { image: StepImage }) {
   }
 
   return (
-    <Image
-      alt={image.prompt}
-      className="aspect-square w-full max-w-md rounded-2xl object-cover"
-      loading="eager"
-      onError={() => setErrorUrl(image.url ?? null)}
-      src={image.url}
-      {...STEP_IMAGE_PROPS}
-    />
+    <div className="relative h-full w-full" data-slot="step-image-view">
+      <Image
+        alt={image.prompt}
+        className="object-contain"
+        fill
+        loading="eager"
+        onError={() => setErrorUrl(image.url ?? null)}
+        sizes={STEP_IMAGE_SIZES}
+        src={image.url}
+      />
+    </div>
   );
 }

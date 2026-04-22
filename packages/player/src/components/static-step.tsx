@@ -11,7 +11,7 @@ import {
   PlayerReadSceneTitle,
 } from "./player-read-scene";
 import { RomanizationText } from "./romanization-text";
-import { StepImageView } from "./step-image";
+import { StaticStepLayout } from "./static-step-layout";
 import { StoryIntroContent } from "./story-intro-content";
 import { StoryOutcomeContent } from "./story-outcome-content";
 
@@ -117,15 +117,15 @@ function StaticStepContent({ step }: { step: SerializedStep }) {
 
 export function StaticStep({ step }: { step: SerializedStep }) {
   const image = getStaticDescriptorImage(describePlayerStep(step));
+  const content = <StaticStepContent step={step} />;
+
+  if (!image) {
+    return <PlayerReadScene className="w-full">{content}</PlayerReadScene>;
+  }
 
   return (
-    <PlayerReadScene className="w-full">
-      {image ? (
-        <div className="flex w-full justify-center">
-          <StepImageView image={image} />
-        </div>
-      ) : null}
-      <StaticStepContent step={step} />
-    </PlayerReadScene>
+    <div className="flex h-full w-full flex-1">
+      <StaticStepLayout image={image}>{content}</StaticStepLayout>
+    </div>
   );
 }
