@@ -3,9 +3,8 @@ EVALUATION CRITERIA:
 
 1. FACTUAL ACCURACY: The explanation must be technically correct for the topic. Penalize invented mechanisms, wrong cause-effect chains, or misleading simplifications.
 
-2. REQUIRED STRUCTURE: The output must contain exactly three top-level fields:
+2. REQUIRED STRUCTURE: The output must contain exactly two top-level fields:
    - explanation[]: an array of narrative steps, each with title and text
-   - predict[]: exactly 2 quick checks, each with step (matching an explanation title), question, options
    - anchor: { title, text } (no visual)
 
 3. GOAL DELIVERY: The activity must actually deliver on ACTIVITY_GOAL. The learner should finish the activity knowing what the thing is, why it exists or is used (when the goal implies it), and how it works or is written in practice (when the goal implies it). Penalize activities that stay surface-level and leave the learner still unsure what the thing is, why it matters, or how it's written when the goal required these.
@@ -34,10 +33,10 @@ EVALUATION CRITERIA:
    - Mechanism steps that stay too abstract to picture
    - "How it's written" goals that never describe the structure or code detail clearly enough to visualize
 
-10. PREDICT QUALITY: Exactly 2 checks. Predict #1 lands after a mystery step, before the reveal (commit-before-reveal). Predict #2 lands after the zoom, before the payoff (raise-stakes-before-callback). Each predict.step must exactly match an existing explanation title. Feedback must teach — after reading feedback alone, the learner should better understand the concept. Penalize:
-   - Checks placed outside these two slots (e.g., after the payoff)
-   - step fields that don't match any explanation title
-   - Gotcha wording, silly distractors, or feedback that only says "correct/incorrect" without teaching the reasoning
+10. STATIC-ONLY DELIVERY: The activity should stay entirely within narrative explanation steps plus the closing anchor. Penalize:
+   - Quiz-like interruptions, option lists, or explicit "guess before continuing" instructions
+   - Steps that stop the narrative to ask the learner to choose instead of revealing the next beat
+   - Rhetorical-question-only steps that replace a real explanation move
 
 11. ANCHOR QUALITY: anchor has no visual. It callbacks the opening scene by naming a specific real thing — a named product (e.g., Instagram, WhatsApp), a named event/figure/case, or a concrete physical action the learner has actually done — and what it does there. Penalize:
    - Abstract "this is why it matters" wrap-ups
@@ -52,7 +51,7 @@ ANTI-CHECKLIST GUIDANCE (CRITICAL):
 - Do NOT require specific title wording, a particular choice of product or event, or a specific visual kind. The anchor must name some specific real thing, but any reasonable choice is fine — do not penalize the model for picking Instagram over WhatsApp, or one named case over another
 - Do NOT penalize creative scenes as long as they stay concrete and the same scene threads through every step
 - Do NOT focus on JSON wrapping or formatting trivia. Evaluate the content and structural fit
-- ONLY penalize for: wrong top-level structure, factual errors, failing to deliver ACTIVITY_GOAL, drifting into sibling activities, broken scene continuity, weak cold open, missing arc, bad visuals, misplaced or weak predict checks, anchor drift, or broken writing constraints
+- ONLY penalize for: wrong top-level structure, factual errors, failing to deliver ACTIVITY_GOAL, drifting into sibling activities, broken scene continuity, weak cold open, missing arc, bad visuals, anchor drift, or broken writing constraints
 `;
 
 export const TEST_CASES = [

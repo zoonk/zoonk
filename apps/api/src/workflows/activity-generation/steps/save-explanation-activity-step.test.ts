@@ -43,7 +43,7 @@ describe(saveExplanationActivityStep, () => {
     vi.clearAllMocks();
   });
 
-  test("saves the mixed explanation flow and marks activity as completed", async () => {
+  test("saves the ordered explanation flow and marks activity as completed", async () => {
     const lesson = await lessonFixture({
       chapterId: chapter.id,
       organizationId,
@@ -78,14 +78,6 @@ describe(saveExplanationActivityStep, () => {
         title: "",
       },
       {
-        kind: "multipleChoice" as const,
-        options: [
-          { feedback: "Correct.", isCorrect: true, text: "The network label" },
-          { feedback: "Nope.", isCorrect: false, text: "The app meaning" },
-        ],
-        question: "Which part does a router mainly read?",
-      },
-      {
         kind: "static" as const,
         text: `This is why Google Maps can update your route. ${randomUUID()}`,
         title: "This is why",
@@ -117,14 +109,13 @@ describe(saveExplanationActivityStep, () => {
       }),
     ]);
 
-    expect(steps).toHaveLength(5);
+    expect(steps).toHaveLength(4);
 
     expect(steps.map((step) => [step.position, step.kind])).toEqual([
       [0, "static"],
       [1, "visual"],
       [2, "static"],
-      [3, "multipleChoice"],
-      [4, "static"],
+      [3, "static"],
     ]);
 
     expect(steps[1]?.content).toEqual({

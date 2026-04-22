@@ -1,13 +1,7 @@
 import { type ActivityExplanationSchema } from "@zoonk/ai/tasks/activities/core/explanation";
-import { type MultipleChoiceStepContent } from "@zoonk/core/steps/contract/content";
 import { type ActivitySteps } from "./get-activity-steps";
 
 export type ExplanationActivityPlanEntry =
-  | {
-      kind: "multipleChoice";
-      options: MultipleChoiceStepContent["options"];
-      question: string;
-    }
   | {
       kind: "static";
       text: string;
@@ -22,81 +16,19 @@ type ExplanationPlan = {
 };
 
 /**
- * The explanation task points each predict check at the step title after which
- * it should be inserted. If the model echoes a title that does not exactly
- * match any step, we fall back to the last step so the check is never dropped
- * silently — the activity still benefits from the intended reinforcement.
+ * Each explanation beat becomes one prose step followed by one visual slot.
+ * Keeping that pairing in one helper makes the learner-facing order obvious
+ * and prevents the save step from re-deriving layout rules later.
  */
-function getPredictionInsertionStep({
-  predictionStep,
-  stepTitles,
-}: {
-  predictionStep: string;
-  stepTitles: string[];
-}) {
-  if (stepTitles.includes(predictionStep)) {
-    return predictionStep;
-  }
-
-  return stepTitles.at(-1) ?? null;
-}
-
-/**
- * Predict checks stay attached to their surrounding step even if the model
- * misses the exact title once. Grouping them up front lets the main plan
- * builder read as a linear walk over the explanation array instead of
- * interleaving lookup logic inside each step iteration.
- */
-function buildPredictionMap(
-  content: ActivityExplanationSchema,
-): Map<string, ActivityExplanationSchema["predict"]> {
-  const stepTitles = content.explanation.map((step) => step.title);
-  const predictionMap = new Map<string, ActivityExplanationSchema["predict"]>();
-
-  for (const prediction of content.predict) {
-    const insertionStep = getPredictionInsertionStep({
-      predictionStep: prediction.step,
-      stepTitles,
-    });
-
-    if (insertionStep) {
-      const existing = predictionMap.get(insertionStep) ?? [];
-      predictionMap.set(insertionStep, [...existing, prediction]);
-    }
-  }
-
-  return predictionMap;
-}
-
-/**
- * Every narrative step expands into a static step (the prose), a visual step
- * (the illustration), and any predict checks that belong after this step.
- * Keeping all three side-by-side here matches the learner's experienced order
- * and avoids reconstructing the sequence elsewhere in the pipeline.
- */
-function buildStepEntries({
-  predictionMap,
-  step,
-}: {
-  predictionMap: Map<string, ActivityExplanationSchema["predict"]>;
-  step: ActivityExplanationSchema["explanation"][number];
-}): ExplanationActivityPlanEntry[] {
-  const predictions = predictionMap.get(step.title) ?? [];
-
-  return [
-    { kind: "static", text: step.text, title: step.title },
-    { kind: "visual" },
-    ...predictions.map<ExplanationActivityPlanEntry>((prediction) => ({
-      kind: "multipleChoice",
-      options: prediction.options,
-      question: prediction.question,
-    })),
-  ];
+function buildStepEntries(
+  step: ActivityExplanationSchema["explanation"][number],
+): ExplanationActivityPlanEntry[] {
+  return [{ kind: "static", text: step.text, title: step.title }, { kind: "visual" }];
 }
 
 /**
  * The shared visual-description generator should only see explanation prose
- * steps. Predict checks and the closing anchor do not need visuals.
+ * steps. The closing anchor does not need a visual.
  */
 function buildVisualSteps(content: ActivityExplanationSchema): ActivitySteps {
   return content.explanation.map((step) => ({
@@ -107,8 +39,8 @@ function buildVisualSteps(content: ActivityExplanationSchema): ActivitySteps {
 
 /**
  * Practice and quiz generation need the explanation prose plus the anchor, but
- * not the visual placeholders or predict checks. This helper keeps that
- * downstream source list aligned with the explanation structure in one place.
+ * not the visual placeholders. This helper keeps that downstream source list
+ * aligned with the explanation structure in one place.
  */
 function buildSourceSteps(content: ActivityExplanationSchema): ActivitySteps {
   return [
@@ -124,17 +56,14 @@ function buildSourceSteps(content: ActivityExplanationSchema): ActivitySteps {
 }
 
 /**
- * The explanation activity mixes read-only copy, visuals, and quick checks
- * in one experience. Building one canonical ordered plan keeps the workflow,
- * save step, and downstream content reuse all anchored to the same source of
- * truth instead of re-deriving the sequence in multiple places.
+ * Explanation activities now have one simple structure: narrative copy, one
+ * visual per explanation beat, then the closing anchor. Building one canonical
+ * ordered plan keeps the workflow, save step, and downstream content reuse
+ * anchored to the same source of truth instead of re-deriving the sequence in
+ * multiple places.
  */
 export function buildExplanationActivityPlan(content: ActivityExplanationSchema): ExplanationPlan {
-  const predictionMap = buildPredictionMap(content);
-
-  const stepEntries = content.explanation.flatMap((step) =>
-    buildStepEntries({ predictionMap, step }),
-  );
+  const stepEntries = content.explanation.flatMap((step) => buildStepEntries(step));
 
   return {
     entries: [

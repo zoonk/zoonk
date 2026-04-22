@@ -33,41 +33,6 @@ function buildContent() {
         title: "O retorno",
       },
     ],
-    predict: [
-      {
-        options: [
-          {
-            feedback: "Right. Detection of the tap is always the first link in the chain.",
-            isCorrect: true,
-            text: "Register that you tapped the icon",
-          },
-          {
-            feedback: "This is the visible result, so it happens later, not first.",
-            isCorrect: false,
-            text: "Change the heart colour to red",
-          },
-        ],
-        question: "Which of these was the FIRST thing the phone did?",
-        step: "O que está escondido",
-      },
-      {
-        options: [
-          {
-            feedback:
-              "Exactly. The phone executes the line as written — it does not guess what you meant.",
-            isCorrect: true,
-            text: "The heart would turn green when you like",
-          },
-          {
-            feedback: "The phone does not correct an instruction that looks odd. It just runs it.",
-            isCorrect: false,
-            text: "The phone would keep it red anyway",
-          },
-        ],
-        question: "If line 3 said 'change colour to green' instead, what would happen?",
-        step: "A linha 3",
-      },
-    ],
   };
 }
 
@@ -80,14 +45,12 @@ describe(buildExplanationActivityPlan, () => {
       "visual",
       "static",
       "visual",
-      "multipleChoice",
       "static",
       "visual",
       "static",
       "visual",
       "static",
       "visual",
-      "multipleChoice",
       "static",
       "visual",
       "static",
@@ -122,25 +85,6 @@ describe(buildExplanationActivityPlan, () => {
         text: "Every heart that turns red in any app is a line someone wrote, running in that moment.",
         title: "In every app",
       },
-    ]);
-  });
-
-  test("falls back to the final step when a predict insertion title does not match", () => {
-    const content = buildContent();
-    content.predict[0] = {
-      ...content.predict[0]!,
-      step: "Does not exist",
-    };
-
-    const result = buildExplanationActivityPlan(content);
-
-    const finalChecks = result.entries
-      .filter((entry) => entry.kind === "multipleChoice")
-      .map((entry) => entry.question);
-
-    expect(finalChecks).toEqual([
-      "If line 3 said 'change colour to green' instead, what would happen?",
-      "Which of these was the FIRST thing the phone did?",
     ]);
   });
 });
