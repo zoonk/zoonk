@@ -4,7 +4,7 @@ import { type GeneratedFile, type ImageModel, generateImage } from "ai";
 import { type ImageGenerationQuality, buildImageProviderOptions } from "../../provider-options";
 import promptTemplate from "./course-thumbnail.prompt.md";
 
-const DEFAULT_MODEL = "openai/gpt-image-1.5";
+const DEFAULT_MODEL = "openai/gpt-image-2";
 const DEFAULT_QUALITY = "low";
 
 function getCourseThumbnailPrompt(title: string) {

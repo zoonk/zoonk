@@ -126,7 +126,7 @@ describe(buildImageProviderOptions, () => {
   test("skips gateway reporting tags by default while preserving the openai image settings", () => {
     expect(
       buildImageProviderOptions({
-        model: "openai/gpt-image-1.5",
+        model: "openai/gpt-image-2",
         quality: "low",
         taskName: "course-thumbnail",
       }),
@@ -144,13 +144,13 @@ describe(buildImageProviderOptions, () => {
 
     expect(
       buildImageProviderOptions({
-        model: "openai/gpt-image-1.5",
+        model: "openai/gpt-image-2",
         quality: "low",
         taskName: "course-thumbnail",
       }),
     ).toEqual({
       gateway: {
-        tags: ["task:course-thumbnail", "default-model:openai/gpt-image-1.5"],
+        tags: ["task:course-thumbnail", "default-model:openai/gpt-image-2"],
       },
       openai: {
         output_format: "webp",

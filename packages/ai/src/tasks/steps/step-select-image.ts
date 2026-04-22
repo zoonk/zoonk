@@ -4,7 +4,7 @@ import { type GeneratedFile, type ImageModel, generateImage } from "ai";
 import { type ImageGenerationQuality, buildImageProviderOptions } from "../../provider-options";
 import promptTemplate from "./step-select-image.prompt.md";
 
-const DEFAULT_MODEL = "openai/gpt-image-1-mini";
+const DEFAULT_MODEL = "openai/gpt-image-2";
 const DEFAULT_QUALITY = "low";
 
 function getSelectImageStepPrompt(prompt: string, language: string) {
