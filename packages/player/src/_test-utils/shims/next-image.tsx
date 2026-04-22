@@ -9,11 +9,23 @@ import { type ComponentProps } from "react";
  */
 export default function NextImage({
   alt,
+  fill,
   src,
+  style,
   ...props
 }: Omit<ComponentProps<"img">, "src"> & {
   alt: string;
+  fill?: boolean;
   src: string;
 }) {
-  return <img {...props} alt={alt} src={src} />;
+  const fillStyle = fill
+    ? {
+        height: "100%",
+        inset: 0,
+        position: "absolute" as const,
+        width: "100%",
+      }
+    : undefined;
+
+  return <img {...props} alt={alt} src={src} style={{ ...fillStyle, ...style }} />;
 }

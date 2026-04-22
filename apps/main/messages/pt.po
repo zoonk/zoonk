@@ -292,24 +292,6 @@ msgctxt "WGft2H"
 msgid "Pause pronunciation"
 msgstr "Pausar pronúncia"
 
-#: ../../packages/player/src/components/player-bottom-bar.tsx
-#: ../../packages/player/src/components/step-side-nav.tsx
-msgctxt "aNzy1T"
-msgid "Previous step"
-msgstr "Passo anterior"
-
-#: ../../packages/player/src/components/player-bottom-bar.tsx
-#: ../../packages/player/src/components/step-side-nav.tsx
-msgctxt "d+qgix"
-msgid "Next step"
-msgstr "Próximo passo"
-
-#: ../../packages/player/src/components/player-bottom-bar.tsx
-#: ../../packages/player/src/components/step-side-nav.tsx
-msgctxt "kXUK98"
-msgid "Step navigation"
-msgstr "Navegação de etapas"
-
 #: ../../packages/player/src/components/player-choice-scene.tsx
 msgctxt "akd+cv"
 msgid "Answer options"

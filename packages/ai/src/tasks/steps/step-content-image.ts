@@ -6,6 +6,7 @@ import promptTemplate from "./step-content-image.prompt.md";
 
 const DEFAULT_MODEL = "openai/gpt-image-2";
 const DEFAULT_QUALITY = "low";
+const STEP_CONTENT_IMAGE_SIZE = "1024x1280";
 
 function getStepContentImagePrompt(prompt: string, language: string) {
   return promptTemplate.replace("{{PROMPT}}", () => prompt).replace("{{LANGUAGE}}", () => language);
@@ -34,7 +35,7 @@ export async function generateStepContentImage({
         quality,
         taskName: "step-content-image",
       }),
-      size: "1024x1024",
+      size: STEP_CONTENT_IMAGE_SIZE,
     }),
   );
 
