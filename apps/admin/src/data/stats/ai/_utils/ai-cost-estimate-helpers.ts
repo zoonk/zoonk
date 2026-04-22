@@ -4,11 +4,11 @@ import {
   estimateGeminiTtsCost,
   formatAiTaskLabel,
 } from "../ai-task-stats";
-import { LANGUAGE_TTS_HEURISTIC_NOTE, VISUAL_TASK_BY_KIND } from "./ai-cost-estimate-constants";
+import { LANGUAGE_TTS_HEURISTIC_NOTE, STEP_CONTENT_IMAGE_TASK } from "./ai-cost-estimate-constants";
 import {
   type EstimateLineItem,
+  type StepImageUsageRow,
   type StructureStats,
-  type VisualUsageRow,
 } from "./ai-cost-estimate-types";
 
 /**
@@ -102,11 +102,11 @@ export function buildTtsLineItem({
 }
 
 /**
- * Visual dispatch requests map one-to-one to persisted visual rows, so the
- * database is the most reliable way to attribute those shared tasks back to
- * core explanations versus custom activities.
+ * Step image generation runs once per saved readable step, so persisted static
+ * steps with embedded images are the cleanest way to attribute those requests
+ * back to explanation versus custom workflows.
  */
-export function buildVisualLineItems({
+export function buildStepImageLineItem({
   activityKind,
   entityCount,
   structureStats,
@@ -116,19 +116,15 @@ export function buildVisualLineItems({
   entityCount: number;
   structureStats: StructureStats;
   usageByTask: TaskUsageByName;
-}): EstimateLineItem[] {
-  return Object.entries(VISUAL_TASK_BY_KIND)
-    .map(([visualKind, taskName]) =>
-      buildGatewayLineItem({
-        averageRequestsPerRun: calculateAverageRequestsPerEntity({
-          entityCount,
-          requestCount: structureStats.visualCountsByKey[`${activityKind}:${visualKind}`] ?? 0,
-        }),
-        taskName,
-        usageByTask,
-      }),
-    )
-    .filter((item): item is EstimateLineItem => item !== null);
+}): EstimateLineItem | null {
+  return buildGatewayLineItem({
+    averageRequestsPerRun: calculateAverageRequestsPerEntity({
+      entityCount,
+      requestCount: structureStats.stepImageCountsByActivityKind[activityKind] ?? 0,
+    }),
+    taskName: STEP_CONTENT_IMAGE_TASK,
+    usageByTask,
+  });
 }
 
 /**
@@ -194,18 +190,16 @@ export function isEstimateLineItem(item: EstimateLineItem | null): item is Estim
 }
 
 /**
- * The SQL visual query returns one row per activity-kind and visual-kind pair.
- * Flattening that into a predictable key-value map keeps the estimate builders
- * free from row-scanning logic and makes missing combinations naturally fall
- * back to zero.
+ * The SQL step-image query returns one row per activity kind. Flattening that
+ * into a predictable key-value map keeps the estimate builders free from
+ * row-scanning logic and makes missing combinations naturally fall back to
+ * zero.
  */
-export function buildVisualCountMap(rows: VisualUsageRow[]): Record<string, number> {
+export function buildStepImageCountMap(rows: StepImageUsageRow[]): Record<string, number> {
   const counts: Record<string, number> = {};
 
   for (const row of rows) {
-    const visualKind = row.visualKind ?? "image";
-    const key = `${row.activityKind}:${visualKind}`;
-    counts[key] = toNumber(row.count);
+    counts[row.activityKind] = toNumber(row.count);
   }
 
   return counts;

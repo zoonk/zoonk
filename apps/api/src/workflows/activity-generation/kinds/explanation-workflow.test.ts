@@ -1,7 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
 import { generateActivityExplanation } from "@zoonk/ai/tasks/activities/core/explanation";
-import { generateStepVisualDescriptions } from "@zoonk/ai/tasks/steps/visual-descriptions";
+import { generateStepImagePrompts } from "@zoonk/ai/tasks/steps/image-prompts";
 import { prisma } from "@zoonk/db";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
@@ -9,7 +9,7 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
-import { dispatchVisualContent } from "../steps/_utils/dispatch-visual-content";
+import { generateStepImages } from "../steps/_utils/generate-step-images";
 import { getLessonActivitiesStep } from "../steps/get-lesson-activities-step";
 import { explanationActivityWorkflow } from "./explanation-workflow";
 
@@ -17,21 +17,24 @@ function getStreamedMessages(): Record<string, string>[] {
   return getStreamedEvents() as Record<string, string>[];
 }
 
-function createDescriptionsResult(
+function createPromptResult(
   steps: { title: string; text: string }[],
-): Awaited<ReturnType<typeof generateStepVisualDescriptions>> {
+): Awaited<ReturnType<typeof generateStepImagePrompts>> {
   return {
     data: {
-      descriptions: steps.map((step, index) =>
-        index === 0
-          ? { description: `A visual prompt for ${step.title}`, kind: "image" as const }
-          : { description: `A diagram for ${step.title}`, kind: "diagram" as const },
-      ),
+      prompts: steps.map((step) => `A lesson illustration for ${step.title}`),
     },
     systemPrompt: "test",
-    usage: {} as Awaited<ReturnType<typeof generateStepVisualDescriptions>>["usage"],
+    usage: {} as Awaited<ReturnType<typeof generateStepImagePrompts>>["usage"],
     userPrompt: "test",
   };
+}
+
+function createImageResult(prompts: string[]): Awaited<ReturnType<typeof generateStepImages>> {
+  return prompts.map((prompt, index) => ({
+    prompt,
+    url: `https://example.com/explanation-image-${index}.webp`,
+  }));
 }
 
 function createExplanationResult(): Awaited<ReturnType<typeof generateActivityExplanation>> {
@@ -70,37 +73,19 @@ vi.mock("@zoonk/ai/tasks/activities/core/explanation", () => ({
   generateActivityExplanation: vi.fn().mockResolvedValue(createExplanationResult()),
 }));
 
-vi.mock("@zoonk/ai/tasks/steps/visual-descriptions", () => ({
-  generateStepVisualDescriptions: vi
+vi.mock("@zoonk/ai/tasks/steps/image-prompts", () => ({
+  generateStepImagePrompts: vi
     .fn()
     .mockImplementation(({ steps }: { steps: { title: string; text: string }[] }) =>
-      Promise.resolve(createDescriptionsResult(steps)),
+      Promise.resolve(createPromptResult(steps)),
     ),
 }));
 
-vi.mock("../steps/_utils/dispatch-visual-content", () => ({
-  dispatchVisualContent: vi
+vi.mock("../steps/_utils/generate-step-images", () => ({
+  generateStepImages: vi
     .fn()
-    .mockImplementation(
-      ({ descriptions }: { descriptions: { description: string; kind: string }[] }) =>
-        Promise.resolve(
-          descriptions.map((description, index) =>
-            index === 0
-              ? {
-                  kind: "image",
-                  prompt: description.description,
-                  url: "https://example.com/packet.webp",
-                }
-              : {
-                  edges: [{ source: "message", target: "packet" }],
-                  kind: "diagram",
-                  nodes: [
-                    { id: "message", label: "Message" },
-                    { id: "packet", label: "Packet with labels" },
-                  ],
-                },
-          ),
-        ),
+    .mockImplementation(({ prompts }: { prompts: string[] }) =>
+      Promise.resolve(createImageResult(prompts)),
     ),
 }));
 
@@ -123,7 +108,7 @@ describe("explanation activity workflow", () => {
     vi.clearAllMocks();
   });
 
-  test("creates the ordered explanation flow with static and visual steps", async () => {
+  test("creates the ordered explanation flow with embedded step images", async () => {
     const lesson = await lessonFixture({
       chapterId: chapter.id,
       concepts: ["Encapsulation"],
@@ -159,27 +144,35 @@ describe("explanation activity workflow", () => {
     expect(dbActivity.generationStatus).toBe("completed");
     expect(steps.map((step) => [step.position, step.kind])).toEqual([
       [0, "static"],
-      [1, "visual"],
+      [1, "static"],
       [2, "static"],
-      [3, "visual"],
+      [3, "static"],
       [4, "static"],
-      [5, "visual"],
-      [6, "static"],
-      [7, "visual"],
-      [8, "static"],
     ]);
 
     expect(steps[0]?.content).toEqual({
+      image: {
+        prompt: "A lesson illustration for O envio",
+        url: "https://example.com/explanation-image-0.webp",
+      },
       text: "You send a photo on WhatsApp. In under a second, it appears on your friend's screen, even if you're on the bus.",
       title: "O envio",
       variant: "text",
     });
-    expect(steps[2]?.content).toEqual({
+    expect(steps[1]?.content).toEqual({
+      image: {
+        prompt: "A lesson illustration for Os rótulos escondidos",
+        url: "https://example.com/explanation-image-1.webp",
+      },
       text: "Between the tap and the delivered photo, the message passes through several hidden points. Each one wraps it with a different kind of label.",
       title: "Os rótulos escondidos",
       variant: "text",
     });
-    expect(steps[8]?.content).toEqual({
+    expect(steps[4]?.content).toEqual({
+      image: {
+        prompt: "A lesson illustration for Every send",
+        url: "https://example.com/explanation-image-4.webp",
+      },
       text: "Every photo you send on WhatsApp uses this exact layering — you hit send, it runs.",
       title: "Every send",
       variant: "text",
@@ -193,7 +186,7 @@ describe("explanation activity workflow", () => {
       "O rótulo de rede",
       "Every send",
     ]);
-    expect(vi.mocked(generateStepVisualDescriptions)).toHaveBeenCalledWith(
+    expect(vi.mocked(generateStepImagePrompts)).toHaveBeenCalledWith(
       expect.objectContaining({
         steps: [
           {
@@ -212,18 +205,23 @@ describe("explanation activity workflow", () => {
             text: "Zoom in on the network wrapper: it only carries routing info — where to send next. The chat content stays sealed inside, untouched by routers.",
             title: "O rótulo de rede",
           },
+          {
+            text: "Every photo you send on WhatsApp uses this exact layering — you hit send, it runs.",
+            title: "Every send",
+          },
         ],
       }),
     );
-    expect(vi.mocked(dispatchVisualContent)).toHaveBeenCalledWith({
-      descriptions: [
-        { description: "A visual prompt for O envio", kind: "image" },
-        { description: "A diagram for Os rótulos escondidos", kind: "diagram" },
-        { description: "A diagram for A pilha", kind: "diagram" },
-        { description: "A diagram for O rótulo de rede", kind: "diagram" },
-      ],
+    expect(vi.mocked(generateStepImages)).toHaveBeenCalledWith({
       language: activity.language,
       orgSlug: activities[0]?.lesson.chapter.course.organization?.slug,
+      prompts: [
+        "A lesson illustration for O envio",
+        "A lesson illustration for Os rótulos escondidos",
+        "A lesson illustration for A pilha",
+        "A lesson illustration for O rótulo de rede",
+        "A lesson illustration for Every send",
+      ],
     });
   });
 
@@ -322,14 +320,14 @@ describe("explanation activity workflow", () => {
     expect(dbActivity.generationStatus).toBe("failed");
   });
 
-  test("marks the activity as failed when visual generation throws", async () => {
-    vi.mocked(dispatchVisualContent).mockRejectedValueOnce(new Error("visual failure"));
+  test("marks the activity as failed when step image generation throws", async () => {
+    vi.mocked(generateStepImages).mockRejectedValueOnce(new Error("image failure"));
 
     const lesson = await lessonFixture({
       chapterId: chapter.id,
-      concepts: ["Visual Failure"],
+      concepts: ["Image Failure"],
       organizationId,
-      title: `Visual Failure Lesson ${randomUUID()}`,
+      title: `Image Failure Lesson ${randomUUID()}`,
     });
 
     const activity = await activityFixture({
@@ -337,7 +335,7 @@ describe("explanation activity workflow", () => {
       kind: "explanation",
       lessonId: lesson.id,
       organizationId,
-      title: "Visual Failure",
+      title: "Image Failure",
     });
 
     const activities = await getLessonActivitiesStep({ lessonId: lesson.id });
@@ -411,7 +409,7 @@ describe("explanation activity workflow", () => {
     expect(healthyResult.generationStatus).toBe("completed");
   });
 
-  test("streams entity ids for visual generation and save steps, but not for batch content generation", async () => {
+  test("streams entity ids for image generation and save steps, but not for batch content generation", async () => {
     const lesson = await lessonFixture({
       chapterId: chapter.id,
       concepts: ["First Concept", "Second Concept"],
@@ -450,8 +448,8 @@ describe("explanation activity workflow", () => {
     const activityIds = new Set([firstActivity.id, secondActivity.id]);
 
     for (const stepName of [
-      "generateVisualDescriptions",
-      "generateVisualContent",
+      "generateImagePrompts",
+      "generateStepImages",
       "saveExplanationActivity",
     ]) {
       const stepMessages = streamedMessages.filter((message) => message.step === stepName);

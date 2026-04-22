@@ -18,7 +18,6 @@ import { NavigableStepLayout } from "./step-layouts";
 import { StepSideNav } from "./step-side-nav";
 import { StoryStep } from "./story-step";
 import { TranslationStep } from "./translation-step";
-import { VisualStep } from "./visual-step";
 import { VocabularyStep } from "./vocabulary-step";
 
 type StepRendererProps = {
@@ -125,8 +124,6 @@ function renderStepContent({
           step={step}
         />
       );
-    case "visual":
-      return <VisualStep step={step} />;
     case "vocabulary":
       return <VocabularyStep step={step} />;
     default:

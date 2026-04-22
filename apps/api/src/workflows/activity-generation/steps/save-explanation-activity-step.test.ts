@@ -59,43 +59,33 @@ describe(saveExplanationActivityStep, () => {
       title: `Explanation ${randomUUID()}`,
     });
 
-    const plan = [
+    const stepsToSave = [
+      { text: `Why does this happen? ${randomUUID()}`, title: "" },
+      { text: `Each layer adds a different label. ${randomUUID()}`, title: "" },
       {
-        kind: "static" as const,
-        text: `Why does this happen? ${randomUUID()}`,
-        title: "",
-      },
-      {
-        description: {
-          description: "An image of a packet with labels added around it.",
-          kind: "image" as const,
-        },
-        kind: "visual" as const,
-      },
-      {
-        kind: "static" as const,
-        text: `Each layer adds a different label. ${randomUUID()}`,
-        title: "",
-      },
-      {
-        kind: "static" as const,
         text: `This is why Google Maps can update your route. ${randomUUID()}`,
         title: "This is why",
       },
     ];
-
-    const visuals = [
+    const images = [
       {
-        kind: "image",
         prompt: "An image of a packet with labels added around it.",
         url: "https://example.com/packet.webp",
+      },
+      {
+        prompt: "A second image showing each layer adding a label.",
+        url: "https://example.com/labels.webp",
+      },
+      {
+        prompt: "A route update illustration in Google Maps.",
+        url: "https://example.com/maps.webp",
       },
     ];
 
     await saveExplanationActivityStep({
       activityId: activity.id,
-      plan,
-      visuals,
+      images,
+      steps: stepsToSave,
       workflowRunId: "workflow-1",
     });
 
@@ -109,19 +99,31 @@ describe(saveExplanationActivityStep, () => {
       }),
     ]);
 
-    expect(steps).toHaveLength(4);
+    expect(steps).toHaveLength(3);
 
     expect(steps.map((step) => [step.position, step.kind])).toEqual([
       [0, "static"],
-      [1, "visual"],
+      [1, "static"],
       [2, "static"],
-      [3, "static"],
     ]);
 
+    expect(steps[0]?.content).toEqual({
+      image: images[0],
+      text: stepsToSave[0]?.text,
+      title: stepsToSave[0]?.title,
+      variant: "text",
+    });
     expect(steps[1]?.content).toEqual({
-      kind: "image",
-      prompt: "An image of a packet with labels added around it.",
-      url: "https://example.com/packet.webp",
+      image: images[1],
+      text: stepsToSave[1]?.text,
+      title: stepsToSave[1]?.title,
+      variant: "text",
+    });
+    expect(steps[2]?.content).toEqual({
+      image: images[2],
+      text: stepsToSave[2]?.text,
+      title: stepsToSave[2]?.title,
+      variant: "text",
     });
 
     expect(dbActivity).toMatchObject({
@@ -151,8 +153,8 @@ describe(saveExplanationActivityStep, () => {
 
     await saveExplanationActivityStep({
       activityId: invalidActivityId,
-      plan: [{ kind: "static", text: "some text", title: "Title" }],
-      visuals: [],
+      images: [{ prompt: "A step image", url: "https://example.com/image.webp" }],
+      steps: [{ text: "some text", title: "Title" }],
       workflowRunId: "workflow-2",
     });
 

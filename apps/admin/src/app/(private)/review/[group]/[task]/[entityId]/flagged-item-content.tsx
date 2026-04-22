@@ -1,17 +1,17 @@
 import {
   getCourseSuggestionReview,
   getSentenceAudioReview,
-  getStepVisualReview,
+  getStepImageReview,
   getWordAudioReview,
 } from "@/data/review/get-review-item";
-import { type ReviewTaskType, getVisualKindFromTaskType } from "@/lib/review-utils";
+import { type ReviewTaskType } from "@/lib/review-utils";
 import { parseStepContent } from "@zoonk/core/steps/contract/content";
 import { notFound } from "next/navigation";
 import { uploadSentenceAudioAction, uploadWordAudioAction } from "./_actions/upload-audio";
 import { AudioEdit } from "./audio-edit";
 import { CourseSuggestionEdit } from "./course-suggestion-edit";
+import { StepImageEdit } from "./step-image-edit";
 import { StepSelectImageEdit } from "./step-select-image-edit";
-import { StepVisualImageEdit } from "./step-visual-image-edit";
 
 async function renderWordAudio(entityId: string) {
   const item = await getWordAudioReview(entityId);
@@ -64,26 +64,26 @@ export async function FlaggedItemContent({
   taskType: ReviewTaskType;
   entityId: string;
 }) {
-  const visualKind = getVisualKindFromTaskType(taskType);
-
-  if (visualKind) {
-    const step = await getStepVisualReview(entityId);
+  if (taskType === "stepImage") {
+    const step = await getStepImageReview(entityId);
 
     if (!step) {
       notFound();
     }
 
-    const visual = parseStepContent("visual", step.content);
+    const content = parseStepContent("static", step.content);
 
-    if (visual.kind !== "image") {
+    if (!content.image) {
       notFound();
     }
 
-    return <StepVisualImageEdit item={{ activity: step.activity, content: visual, id: step.id }} />;
+    return (
+      <StepImageEdit item={{ activity: step.activity, content: content.image, id: step.id }} />
+    );
   }
 
   if (taskType === "stepSelectImage") {
-    const step = await getStepVisualReview(entityId);
+    const step = await getStepImageReview(entityId);
 
     if (!step) {
       notFound();

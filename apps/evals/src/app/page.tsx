@@ -61,12 +61,14 @@ export default function Home() {
 
         <Item variant="outline">
           <ItemContent>
-            <ItemTitle>Visual Image Test</ItemTitle>
-            <ItemDescription>Test AI-generated images for step visual resources</ItemDescription>
+            <ItemTitle>Step Image Test</ItemTitle>
+            <ItemDescription>
+              Test AI-generated images for lesson step illustrations
+            </ItemDescription>
           </ItemContent>
 
           <ItemActions>
-            <Link className={buttonVariants({ variant: "outline" })} href="/visual-image-test">
+            <Link className={buttonVariants({ variant: "outline" })} href="/step-image-test">
               Test Images
             </Link>
           </ItemActions>

@@ -28,7 +28,7 @@ EVALUATION CRITERIA:
    - Titles like "Programa", "Instrução", "Encapsulation" that sound like chapter headers
    - Repetition between steps
 
-9. STEP CONCRETENESS: The explanation steps must be specific enough that a downstream visual-planning task could clearly infer what should be shown. Penalize:
+9. STEP CONCRETENESS: The explanation steps must be specific enough that a downstream image-prompt task could clearly infer what should be shown. Penalize:
    - Vague prose that never makes the scene or reveal concrete
    - Mechanism steps that stay too abstract to picture
    - "How it's written" goals that never describe the structure or code detail clearly enough to visualize
@@ -51,7 +51,7 @@ ANTI-CHECKLIST GUIDANCE (CRITICAL):
 - Do NOT require specific title wording, a particular choice of product or event, or a specific visual kind. The anchor must name some specific real thing, but any reasonable choice is fine — do not penalize the model for picking Instagram over WhatsApp, or one named case over another
 - Do NOT penalize creative scenes as long as they stay concrete and the same scene threads through every step
 - Do NOT focus on JSON wrapping or formatting trivia. Evaluate the content and structural fit
-- ONLY penalize for: wrong top-level structure, factual errors, failing to deliver ACTIVITY_GOAL, drifting into sibling activities, broken scene continuity, weak cold open, missing arc, bad visuals, anchor drift, or broken writing constraints
+- ONLY penalize for: wrong top-level structure, factual errors, failing to deliver ACTIVITY_GOAL, drifting into sibling activities, broken scene continuity, weak cold open, missing arc, weak imagery cues, anchor drift, or broken writing constraints
 `;
 
 export const TEST_CASES = [

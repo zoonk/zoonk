@@ -11,8 +11,8 @@ import {
 } from "./ai-cost-estimate-constants";
 import {
   buildGatewayLineItem,
+  buildStepImageLineItem,
   buildTtsLineItem,
-  buildVisualLineItems,
   getAppliedActivityShares,
   getAverageTaskRequestsPerRun,
   isEstimateLineItem,
@@ -22,7 +22,8 @@ import { type AiGenerationCostEstimate, type StructureStats } from "./ai-cost-es
 
 /**
  * Core lessons combine lesson classification, a fixed explanation/practice/quiz
- * pipeline, explanation-specific visuals, and exactly one applied activity slot.
+ * pipeline, explanation-specific image prompts/images, and exactly one applied
+ * activity slot.
  */
 export function buildCoreLessonEstimate({
   structureStats,
@@ -77,10 +78,10 @@ export function buildCoreLessonEstimate({
         entityCount: coreLessonCount,
         totalCount: structureStats.coreLessonExplanationCount,
       }),
-      taskName: "step-visual-descriptions",
+      taskName: "step-image-prompts",
       usageByTask,
     }),
-    ...buildVisualLineItems({
+    buildStepImageLineItem({
       activityKind: "explanation",
       entityCount: coreLessonCount,
       structureStats,
@@ -129,7 +130,7 @@ export function buildCoreLessonEstimate({
 
   return {
     description:
-      "Lesson classification, core activity planning, explanation/practice/quiz generation, explanation visuals, quiz image generation, and one weighted applied activity.",
+      "Lesson classification, core activity planning, explanation/practice/quiz generation, explanation step images, quiz image generation, and one weighted applied activity.",
     kind: "coreLesson",
     lineItems,
     notes: [],
@@ -142,7 +143,7 @@ export function buildCoreLessonEstimate({
 
 /**
  * Custom lessons use a simpler workflow: classify the lesson, plan the custom
- * activities, generate each activity, then run the visual pass for those
+ * activities, generate each activity, then run the step-image pass for those
  * activities.
  */
 export function buildCustomLessonEstimate({
@@ -171,10 +172,10 @@ export function buildCustomLessonEstimate({
     }),
     buildGatewayLineItem({
       averageRequestsPerRun: averageCustomActivities,
-      taskName: "step-visual-descriptions",
+      taskName: "step-image-prompts",
       usageByTask,
     }),
-    ...buildVisualLineItems({
+    buildStepImageLineItem({
       activityKind: "custom",
       entityCount: customLessonCount,
       structureStats,
@@ -184,7 +185,7 @@ export function buildCustomLessonEstimate({
 
   return {
     description:
-      "Lesson classification, custom activity planning, custom activity generation, and the visual pass for those activities.",
+      "Lesson classification, custom activity planning, custom activity generation, and the step-image pass for those activities.",
     kind: "customLesson",
     lineItems,
     notes: [],

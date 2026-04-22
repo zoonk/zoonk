@@ -221,7 +221,7 @@ export function getStoryMetrics(state: PlayerState): StoryMetric[] {
 }
 
 export type PreloadableImage = {
-  kind: "selectImage" | "visual";
+  kind: "selectImage" | "step";
   url: string;
 };
 
@@ -229,18 +229,22 @@ const DEFAULT_LOOKAHEAD = 3;
 
 /**
  * Extracts image URLs from a step so they can be preloaded before the user
- * navigates to it. Visual image steps have a single URL; selectImage steps
- * have one URL per option.
+ * navigates to it. Readable steps can carry one embedded illustration, and
+ * selectImage steps can carry one URL per option.
  */
 function getStepImages(step: SerializedStep): PreloadableImage[] {
   const descriptor = describePlayerStep(step);
 
-  if (descriptor?.kind === "visual") {
-    if (descriptor.content.kind !== "image" || !descriptor.content.url) {
-      return [];
-    }
-
-    return [{ kind: "visual", url: descriptor.content.url }];
+  if (
+    descriptor?.kind === "staticText" ||
+    descriptor?.kind === "staticGrammarExample" ||
+    descriptor?.kind === "staticGrammarRule" ||
+    descriptor?.kind === "storyIntro" ||
+    descriptor?.kind === "storyOutcome"
+  ) {
+    return descriptor.content.image?.url
+      ? [{ kind: "step", url: descriptor.content.image.url }]
+      : [];
   }
 
   if (descriptor?.kind === "selectImage") {

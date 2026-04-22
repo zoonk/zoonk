@@ -1,11 +1,11 @@
 import { prisma, sql } from "@zoonk/db";
 import { MS_PER_DAY, parseLocalDate } from "@zoonk/utils/date";
 import { safeAsync } from "@zoonk/utils/error";
-import { buildVisualCountMap, toNumber } from "./ai-cost-estimate-helpers";
+import { buildStepImageCountMap, toNumber } from "./ai-cost-estimate-helpers";
 import {
   type LanguageAudioUsageRow,
+  type StepImageUsageRow,
   type StructureStats,
-  type VisualUsageRow,
 } from "./ai-cost-estimate-types";
 
 type DateWindow = {
@@ -26,11 +26,11 @@ export async function getStructureStats({
   startDate: string;
 }): Promise<StructureStats> {
   const dateWindow = buildDateWindow({ endDate, startDate });
-  const [lessonAndActivityCounts, courseShapeCounts, visualRows, languageAudioUsage] =
+  const [lessonAndActivityCounts, courseShapeCounts, stepImageRows, languageAudioUsage] =
     await Promise.all([
       getLessonAndActivityCounts({ dateWindow }),
       getCourseShapeCounts({ dateWindow }),
-      getVisualUsageRows({ dateWindow }),
+      getStepImageUsageRows({ dateWindow }),
       getLanguageAudioUsage({ dateWindow }),
     ]);
 
@@ -39,7 +39,7 @@ export async function getStructureStats({
     ...courseShapeCounts,
     languageAudioSentenceWordCount: toNumber(languageAudioUsage.sentenceWordCount),
     languageAudioWordClipCount: toNumber(languageAudioUsage.wordClipCount),
-    visualCountsByKey: buildVisualCountMap(visualRows),
+    stepImageCountsByActivityKind: buildStepImageCountMap(stepImageRows),
   };
 }
 
@@ -183,26 +183,26 @@ async function getCourseShapeCounts({ dateWindow }: { dateWindow: DateWindow }) 
 }
 
 /**
- * Explanation and custom activities share the same visual task family, so
+ * Explanation and custom activities share the same step-image task family, so
  * Gateway counts alone cannot tell us which workflow those requests belonged
- * to. Grouping the persisted visual steps by parent activity kind lets each
- * lesson estimate claim only its own visual workload.
+ * to. Grouping persisted readable steps with embedded images by parent activity
+ * kind lets each lesson estimate claim only its own image workload.
  */
-async function getVisualUsageRows({
+async function getStepImageUsageRows({
   dateWindow,
 }: {
   dateWindow: DateWindow;
-}): Promise<VisualUsageRow[]> {
+}): Promise<StepImageUsageRow[]> {
   const { data, error } = await safeAsync(() =>
-    prisma.$queryRaw<VisualUsageRow[]>(sql`
+    prisma.$queryRaw<StepImageUsageRow[]>(sql`
       SELECT
         a.kind AS "activityKind",
-        COALESCE(s.content->>'kind', 'image') AS "visualKind",
         COUNT(*)::bigint AS "count"
       FROM steps s
       JOIN activities a ON a.id = s.activity_id
       JOIN lessons l ON l.id = a.lesson_id
-      WHERE s.kind = 'visual'
+      WHERE s.kind = 'static'
+        AND s.content->'image' IS NOT NULL
         AND s.archived_at IS NULL
         AND a.archived_at IS NULL
         AND l.archived_at IS NULL
@@ -211,12 +211,12 @@ async function getVisualUsageRows({
         AND l.created_at >= ${dateWindow.startAt}
         AND l.created_at < ${dateWindow.endExclusive}
         AND a.kind IN ('explanation', 'custom')
-      GROUP BY a.kind, COALESCE(s.content->>'kind', 'image')
+      GROUP BY a.kind
     `),
   );
 
   if (error) {
-    throw new Error("Failed to load visual usage for AI estimates", { cause: error });
+    throw new Error("Failed to load step image usage for AI estimates", { cause: error });
   }
 
   return data;

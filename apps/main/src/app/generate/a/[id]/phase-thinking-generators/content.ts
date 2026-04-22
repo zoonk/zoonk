@@ -4,7 +4,7 @@ import { type PhaseName } from "@/lib/generation/activity-generation-phase-confi
 import { type ThinkingMessageGenerator, cycleMessage } from "@/lib/workflow/use-thinking-messages";
 import { useExtracted } from "next-intl";
 
-/** Thinking generators for content, visual, and lifecycle phases. */
+/** Thinking generators for content, image, and lifecycle phases. */
 export function useContentPhaseGenerators(): Partial<Record<PhaseName, ThinkingMessageGenerator>> {
   const t = useExtracted();
 
@@ -43,7 +43,7 @@ export function useContentPhaseGenerators(): Partial<Record<PhaseName, ThinkingM
       cycleMessage(
         [
           t("Drawing an illustration..."),
-          t("Working on the visuals..."),
+          t("Generating the images..."),
           t("Adding some color..."),
           t("Refining the details..."),
           t("Finishing the artwork..."),
@@ -60,17 +60,6 @@ export function useContentPhaseGenerators(): Partial<Record<PhaseName, ThinkingM
         ],
         index,
       ),
-    creatingVisuals: (index) =>
-      cycleMessage(
-        [
-          t("Drawing an illustration..."),
-          t("Creating the visual..."),
-          t("Working on the details..."),
-          t("Building the graphic..."),
-          t("Rendering the visual..."),
-        ],
-        index,
-      ),
     gettingStarted: (index) =>
       cycleMessage(
         [
@@ -81,13 +70,13 @@ export function useContentPhaseGenerators(): Partial<Record<PhaseName, ThinkingM
         ],
         index,
       ),
-    preparingVisuals: (index) =>
+    preparingImages: (index) =>
       cycleMessage(
         [
           t("Thinking about what to illustrate..."),
-          t("Sketching out ideas..."),
-          t("Choosing the right style..."),
-          t("Planning the layout..."),
+          t("Planning each image..."),
+          t("Choosing the right scenes..."),
+          t("Planning the illustrations..."),
         ],
         index,
       ),

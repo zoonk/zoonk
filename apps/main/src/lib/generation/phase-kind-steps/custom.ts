@@ -6,14 +6,14 @@ type CustomSteps =
   | "getLessonActivities"
   | "setActivityAsRunning"
   | "generateCustomContent"
-  | "generateVisualDescriptions"
-  | "generateVisualContent"
+  | "generateImagePrompts"
+  | "generateStepImages"
   | "saveCustomActivity";
 
 export const CUSTOM_PHASE_STEPS = {
-  creatingVisuals: ["generateVisualContent"],
+  creatingImages: ["generateStepImages"],
   gettingStarted: ["getLessonActivities", "setActivityAsRunning"],
-  preparingVisuals: ["generateVisualDescriptions"],
+  preparingImages: ["generateImagePrompts"],
   saving: ["saveCustomActivity"],
   writingContent: ["generateCustomContent"],
 } as const satisfies Record<string, readonly ActivityStepName[]>;
@@ -25,7 +25,7 @@ type _ValidateCustom = AssertAllCovered<
 export const CUSTOM_PHASE_ORDER: PhaseName[] = [
   "gettingStarted",
   "writingContent",
-  "preparingVisuals",
-  "creatingVisuals",
+  "preparingImages",
+  "creatingImages",
   "saving",
 ];

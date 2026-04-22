@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
 import { generateActivityCustom } from "@zoonk/ai/tasks/activities/custom";
-import { type generateStepVisualDescriptions } from "@zoonk/ai/tasks/steps/visual-descriptions";
+import { type generateStepImagePrompts } from "@zoonk/ai/tasks/steps/image-prompts";
 import { prisma } from "@zoonk/db";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
@@ -8,35 +8,28 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, describe, expect, test, vi } from "vitest";
-import { type dispatchVisualContent } from "../steps/_utils/dispatch-visual-content";
+import { type generateStepImages } from "../steps/_utils/generate-step-images";
 import { type LessonActivity } from "../steps/get-lesson-activities-step";
 import { customActivityWorkflow } from "./custom-workflow";
 
-function createDescriptionsResult(
+function createPromptResult(
   steps: { title: string; text: string }[],
-): Awaited<ReturnType<typeof generateStepVisualDescriptions>> {
+): Awaited<ReturnType<typeof generateStepImagePrompts>> {
   return {
     data: {
-      descriptions: steps.map((step, index) =>
-        index === 0
-          ? { description: `A visual prompt for ${step.title}`, kind: "image" as const }
-          : { description: `A code snippet for ${step.title}`, kind: "code" as const },
-      ),
+      prompts: steps.map((step) => `A lesson illustration for ${step.title}`),
     },
     systemPrompt: "test",
-    usage: {} as Awaited<ReturnType<typeof generateStepVisualDescriptions>>["usage"],
+    usage: {} as Awaited<ReturnType<typeof generateStepImagePrompts>>["usage"],
     userPrompt: "test",
   };
 }
 
-function createDispatchResult(
-  descriptions: { kind: string; description: string }[],
-): Awaited<ReturnType<typeof dispatchVisualContent>> {
-  return descriptions.map((desc, index) =>
-    index === 0
-      ? { kind: "image", prompt: desc.description, url: "https://example.com/image.webp" }
-      : { annotations: null, code: "const x = 1;", kind: "code", language: "typescript" },
-  );
+function createImageResult(prompts: string[]): Awaited<ReturnType<typeof generateStepImages>> {
+  return prompts.map((prompt, index) => ({
+    prompt,
+    url: `https://example.com/custom-workflow-${index}.webp`,
+  }));
 }
 
 vi.mock("@zoonk/ai/tasks/activities/custom", () => ({
@@ -50,20 +43,19 @@ vi.mock("@zoonk/ai/tasks/activities/custom", () => ({
   }),
 }));
 
-vi.mock("@zoonk/ai/tasks/steps/visual-descriptions", () => ({
-  generateStepVisualDescriptions: vi
+vi.mock("@zoonk/ai/tasks/steps/image-prompts", () => ({
+  generateStepImagePrompts: vi
     .fn()
     .mockImplementation(({ steps }: { steps: { title: string; text: string }[] }) =>
-      Promise.resolve(createDescriptionsResult(steps)),
+      Promise.resolve(createPromptResult(steps)),
     ),
 }));
 
-vi.mock("../steps/_utils/dispatch-visual-content", () => ({
-  dispatchVisualContent: vi
+vi.mock("../steps/_utils/generate-step-images", () => ({
+  generateStepImages: vi
     .fn()
-    .mockImplementation(
-      ({ descriptions }: { descriptions: { kind: string; description: string }[] }) =>
-        Promise.resolve(createDispatchResult(descriptions)),
+    .mockImplementation(({ prompts }: { prompts: string[] }) =>
+      Promise.resolve(createImageResult(prompts)),
     ),
 }));
 
@@ -104,7 +96,7 @@ describe(customActivityWorkflow, () => {
     });
   });
 
-  test("creates steps with visuals and images for custom activity", async () => {
+  test("creates readable steps with embedded images for custom activity", async () => {
     const lesson = await lessonFixture({
       chapterId: chapter.id,
       kind: "custom",
@@ -130,14 +122,15 @@ describe(customActivityWorkflow, () => {
       orderBy: { position: "asc" },
       where: { activityId: activity.id },
     });
-
     const staticSteps = steps.filter((step) => step.kind === "static");
-    const visualSteps = steps.filter((step) => step.kind === "visual");
 
-    expect(staticSteps).toHaveLength(2);
-    expect(visualSteps).toHaveLength(2);
+    expect(steps).toHaveLength(2);
 
     expect(staticSteps[0]?.content).toEqual({
+      image: {
+        prompt: "A lesson illustration for Custom Step 1",
+        url: "https://example.com/custom-workflow-0.webp",
+      },
       text: "Custom step 1 text",
       title: "Custom Step 1",
       variant: "text",
@@ -145,17 +138,15 @@ describe(customActivityWorkflow, () => {
     expect(staticSteps[0]?.position).toBe(0);
 
     expect(staticSteps[1]?.content).toEqual({
+      image: {
+        prompt: "A lesson illustration for Custom Step 2",
+        url: "https://example.com/custom-workflow-1.webp",
+      },
       text: "Custom step 2 text",
       title: "Custom Step 2",
       variant: "text",
     });
-    expect(staticSteps[1]?.position).toBe(2);
-
-    expect(visualSteps[0]?.content).toEqual(expect.objectContaining({ kind: "image" }));
-    expect(visualSteps[0]?.position).toBe(1);
-
-    expect(visualSteps[1]?.content).toEqual(expect.objectContaining({ kind: "code" }));
-    expect(visualSteps[1]?.position).toBe(3);
+    expect(staticSteps[1]?.position).toBe(1);
   });
 
   test("sets custom status to 'completed' after saving", async () => {

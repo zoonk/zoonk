@@ -223,7 +223,7 @@ describe(enforcePhaseProgression, () => {
     expect(result.at(2)?.status).toBe("pending");
   });
 
-  it("handles visuals scenario: promotes pending and clamps last", () => {
+  it("handles image-generation scenario: promotes pending and clamps last", () => {
     const input = [
       makePhase("completed"),
       makePhase("completed"),

@@ -71,11 +71,11 @@ Each entry in `explanation` has `text` and `title`.
 
 ## `title`
 
-- Short (1–3 words). Used as a mental marker for the learner and by downstream workflows that attach visuals to each explanation beat.
+- Short (1–3 words). Used as a mental marker for the learner and by downstream workflows that attach images to each explanation beat.
 - Must feel like a narrative step ("O toque", "A lista", "A linha 3"), not a textbook section header ("Programa", "Instrução").
 - Unique within the activity.
 
-Do not generate visuals in this task. A downstream workflow will create one
+Do not generate image prompts in this task. A downstream workflow will create one
 visual per explanation step from the narrative you write here. That means the
 scene, reveals, zooms, and payoff still need to be concrete enough that another
 task can clearly infer what should be illustrated.
@@ -160,7 +160,7 @@ Before answering, verify:
 - Step 1 is a cold open inside a concrete scene. No resolution, no definition.
 - Every subsequent step refers to or builds on that same scene. No new scenarios.
 - Definitions emerge by pointing at something already shown.
-- The narrative is concrete enough that a downstream visual-planning task can infer what to show at each explanation step.
+- The narrative is concrete enough that a downstream image-prompt task can infer what to show at each explanation step.
 - The activity stays fully static: explanation steps plus the closing anchor, with no quiz-like interjections.
 - No static step contains only a rhetorical question.
 - The final `explanation` step is a payoff that calls back to step 1.

@@ -418,21 +418,25 @@ describe(getUpcomingImages, () => {
     expect(getUpcomingImages(state)).toEqual([]);
   });
 
-  test("extracts URL from a visual image step", () => {
+  test("extracts URL from a static step image", () => {
     const state = buildState({
       steps: [
         buildStep({ id: "s1" }),
         buildStep({
-          content: { kind: "image", prompt: "A cat", url: "https://example.com/cat.jpg" },
+          content: {
+            image: { prompt: "A cat", url: "https://example.com/cat.jpg" },
+            text: "Cat step",
+            title: "Cat",
+            variant: "text",
+          },
           id: "s2",
-          kind: "visual",
           position: 1,
         }),
       ],
     });
 
     expect(getUpcomingImages(state)).toEqual([
-      { kind: "visual", url: "https://example.com/cat.jpg" },
+      { kind: "step", url: "https://example.com/cat.jpg" },
     ]);
   });
 
@@ -476,27 +480,43 @@ describe(getUpcomingImages, () => {
       steps: [
         buildStep({ id: "s1" }),
         buildStep({
-          content: { kind: "image", prompt: "One", url: "https://example.com/1.jpg" },
+          content: {
+            image: { prompt: "One", url: "https://example.com/1.jpg" },
+            text: "One",
+            title: "One",
+            variant: "text",
+          },
           id: "s2",
-          kind: "visual",
           position: 1,
         }),
         buildStep({
-          content: { kind: "image", prompt: "Two", url: "https://example.com/2.jpg" },
+          content: {
+            image: { prompt: "Two", url: "https://example.com/2.jpg" },
+            text: "Two",
+            title: "Two",
+            variant: "text",
+          },
           id: "s3",
-          kind: "visual",
           position: 2,
         }),
         buildStep({
-          content: { kind: "image", prompt: "Three", url: "https://example.com/3.jpg" },
+          content: {
+            image: { prompt: "Three", url: "https://example.com/3.jpg" },
+            text: "Three",
+            title: "Three",
+            variant: "text",
+          },
           id: "s4",
-          kind: "visual",
           position: 3,
         }),
         buildStep({
-          content: { kind: "image", prompt: "Four", url: "https://example.com/4.jpg" },
+          content: {
+            image: { prompt: "Four", url: "https://example.com/4.jpg" },
+            text: "Four",
+            title: "Four",
+            variant: "text",
+          },
           id: "s5",
-          kind: "visual",
           position: 4,
         }),
       ],
@@ -505,9 +525,9 @@ describe(getUpcomingImages, () => {
     const result = getUpcomingImages(state);
     expect(result).toHaveLength(3);
     expect(result).toEqual([
-      { kind: "visual", url: "https://example.com/1.jpg" },
-      { kind: "visual", url: "https://example.com/2.jpg" },
-      { kind: "visual", url: "https://example.com/3.jpg" },
+      { kind: "step", url: "https://example.com/1.jpg" },
+      { kind: "step", url: "https://example.com/2.jpg" },
+      { kind: "step", url: "https://example.com/3.jpg" },
     ]);
   });
 
@@ -516,49 +536,58 @@ describe(getUpcomingImages, () => {
       currentStepIndex: 2,
       steps: [
         buildStep({
-          content: { kind: "image", prompt: "Behind", url: "https://example.com/behind.jpg" },
+          content: {
+            image: { prompt: "Behind", url: "https://example.com/behind.jpg" },
+            text: "Behind",
+            title: "Behind",
+            variant: "text",
+          },
           id: "s1",
-          kind: "visual",
         }),
         buildStep({
           content: {
-            kind: "image",
-            prompt: "Also behind",
-            url: "https://example.com/also-behind.jpg",
+            image: {
+              prompt: "Also behind",
+              url: "https://example.com/also-behind.jpg",
+            },
+            text: "Also behind",
+            title: "Also behind",
+            variant: "text",
           },
           id: "s2",
-          kind: "visual",
           position: 1,
         }),
         buildStep({ id: "s3", position: 2 }),
         buildStep({
-          content: { kind: "image", prompt: "Ahead", url: "https://example.com/ahead.jpg" },
+          content: {
+            image: { prompt: "Ahead", url: "https://example.com/ahead.jpg" },
+            text: "Ahead",
+            title: "Ahead",
+            variant: "text",
+          },
           id: "s4",
-          kind: "visual",
           position: 3,
         }),
       ],
     });
 
     expect(getUpcomingImages(state)).toEqual([
-      { kind: "visual", url: "https://example.com/ahead.jpg" },
+      { kind: "step", url: "https://example.com/ahead.jpg" },
     ]);
   });
 
-  test("skips visual steps that are not image kind", () => {
+  test("skips static steps without an embedded image", () => {
     const state = buildState({
       steps: [
         buildStep({ id: "s1" }),
         buildStep({
-          content: { code: "console.log('hi')", kind: "code", language: "javascript" },
+          content: { text: "No image yet", title: "Step 1", variant: "text" },
           id: "s2",
-          kind: "visual",
           position: 1,
         }),
         buildStep({
-          content: { author: "Author", kind: "quote", text: "Quote" },
+          content: { text: "Still no image", title: "Step 2", variant: "text" },
           id: "s3",
-          kind: "visual",
           position: 2,
         }),
       ],
@@ -572,9 +601,13 @@ describe(getUpcomingImages, () => {
       steps: [
         buildStep({ id: "s1" }),
         buildStep({
-          content: { kind: "image", prompt: "No URL" },
+          content: {
+            image: { prompt: "No URL" },
+            text: "Missing URL",
+            title: "Missing URL",
+            variant: "text",
+          },
           id: "s2",
-          kind: "visual",
           position: 1,
         }),
         buildStep({
@@ -611,16 +644,20 @@ describe(getUpcomingImages, () => {
         buildStep({ id: "s3", position: 2 }),
         buildStep({ id: "s4", position: 3 }),
         buildStep({
-          content: { kind: "image", prompt: "Last", url: "https://example.com/last.jpg" },
+          content: {
+            image: { prompt: "Last", url: "https://example.com/last.jpg" },
+            text: "Last",
+            title: "Last",
+            variant: "text",
+          },
           id: "s5",
-          kind: "visual",
           position: 4,
         }),
       ],
     });
 
     expect(getUpcomingImages(state)).toEqual([
-      { kind: "visual", url: "https://example.com/last.jpg" },
+      { kind: "step", url: "https://example.com/last.jpg" },
     ]);
   });
 });

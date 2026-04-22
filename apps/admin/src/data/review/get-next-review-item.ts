@@ -1,6 +1,7 @@
 import "server-only";
 import { isAdmin } from "@/lib/admin-guard";
-import { type ReviewTaskType, getVisualKindFromTaskType } from "@/lib/review-utils";
+import { type ReviewTaskType } from "@/lib/review-utils";
+import { parseStepContent } from "@zoonk/core/steps/contract/content";
 import { prisma } from "@zoonk/db";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { cache } from "react";
@@ -12,6 +13,14 @@ type ReviewQueueResult = {
 };
 
 const EMPTY_RESULT: ReviewQueueResult = { entityId: null, remaining: 0 };
+
+function hasStepImage(content: unknown): boolean {
+  try {
+    return Boolean(parseStepContent("static", content).image?.url);
+  } catch {
+    return false;
+  }
+}
 
 async function getNextCourseSuggestion(): Promise<ReviewQueueResult> {
   const excludeIds = await reviewedEntityIds("courseSuggestions");
@@ -33,25 +42,20 @@ async function getNextCourseSuggestion(): Promise<ReviewQueueResult> {
   return { entityId: next?.id ?? null, remaining };
 }
 
-async function getNextStepVisualByKind(
-  kind: string,
-  taskType: ReviewTaskType,
-): Promise<ReviewQueueResult> {
-  const excludeIds = await reviewedEntityIds(taskType);
+async function getNextStepImage(): Promise<ReviewQueueResult> {
+  const excludeIds = await reviewedEntityIds("stepImage");
+  const steps = await prisma.step.findMany({
+    orderBy: { createdAt: "asc" },
+    select: { content: true, id: true },
+    where: {
+      NOT: { id: { in: excludeIds } },
+      activity: { organization: { slug: AI_ORG_SLUG } },
+      kind: "static",
+    },
+  });
 
-  const where = {
-    NOT: { id: { in: excludeIds } },
-    activity: { organization: { slug: AI_ORG_SLUG } },
-    content: { equals: kind, path: ["kind"] },
-    kind: "visual" as const,
-  };
-
-  const [next, remaining] = await Promise.all([
-    prisma.step.findFirst({ orderBy: { createdAt: "asc" }, select: { id: true }, where }),
-    prisma.step.count({ where }),
-  ]);
-
-  return { entityId: next?.id ?? null, remaining };
+  const pending = steps.filter((step) => hasStepImage(step.content));
+  return { entityId: pending[0]?.id ?? null, remaining: pending.length };
 }
 
 async function getNextWordAudio(): Promise<ReviewQueueResult> {
@@ -112,14 +116,12 @@ export const getNextReviewItem = cache(async function getNextReviewItem(
     return EMPTY_RESULT;
   }
 
-  const visualKind = getVisualKindFromTaskType(taskType);
-
-  if (visualKind) {
-    return getNextStepVisualByKind(visualKind, taskType);
-  }
-
   if (taskType === "courseSuggestions") {
     return getNextCourseSuggestion();
+  }
+
+  if (taskType === "stepImage") {
+    return getNextStepImage();
   }
 
   if (taskType === "stepSelectImage") {

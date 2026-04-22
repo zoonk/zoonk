@@ -66,7 +66,6 @@ export type PlayerStepDescriptor =
   | StoryIntroStepDescriptor
   | StoryOutcomeStepDescriptor
   | StepDescriptorBase<"translation", "translation">
-  | StepDescriptorBase<"visual", "visual">
   | StepDescriptorBase<"vocabulary", "vocabulary">;
 
 export type PlayerStepKind = PlayerStepDescriptor["kind"];
@@ -175,10 +174,6 @@ export function describePlayerStep(
 
   if (hasStepKind(step, "translation")) {
     return { content: step.content, kind: "translation", step };
-  }
-
-  if (hasStepKind(step, "visual")) {
-    return { content: step.content, kind: "visual", step };
   }
 
   if (hasStepKind(step, "vocabulary")) {

@@ -78,6 +78,37 @@ describe("player browser integration: static steps", () => {
     await expect.element(page.getByText("Add -ed to regular verbs")).toBeInTheDocument();
   });
 
+  test("renders embedded step images inside the shared static shell", async () => {
+    renderPlayer({
+      activity: buildSerializedActivity({
+        kind: "explanation",
+        steps: [
+          buildSerializedStep({
+            content: {
+              image: {
+                prompt: "A lantern lighting up one idea at a time",
+                url: "https://example.com/lantern.webp",
+              },
+              text: "An image can now live inside the same readable step.",
+              title: "One step, one image",
+              variant: "text" as const,
+            },
+            id: "static-image",
+          }),
+        ],
+      }),
+      navigation: buildNavigation({ nextActivityHref: null }),
+      viewer: buildAuthenticatedViewer(),
+    });
+
+    await expect
+      .element(page.getByRole("heading", { name: "One step, one image" }))
+      .toBeInTheDocument();
+    await expect
+      .element(page.getByAltText(/lantern lighting up one idea at a time/i))
+      .toBeInTheDocument();
+  });
+
   test("supports keyboard navigation on static steps and keyboard completion actions", async () => {
     const onEscape = vi.fn();
 

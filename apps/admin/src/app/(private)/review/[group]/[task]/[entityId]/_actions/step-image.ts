@@ -10,7 +10,7 @@ import { revalidatePath } from "next/cache";
 export async function uploadStepImageAction(
   params: {
     stepId: string;
-    imageTarget: "visual" | number;
+    imageTarget: "step" | number;
   },
   formData: FormData,
 ): Promise<{ error: string | null; imageUrl: string | null }> {
@@ -27,7 +27,7 @@ export async function uploadStepImageAction(
     return { error: "No file provided", imageUrl: null };
   }
 
-  const targetLabel = imageTarget === "visual" ? "visual" : `option-${imageTarget}`;
+  const targetLabel = imageTarget === "step" ? "step" : `option-${imageTarget}`;
   const { data: imageUrl, error: uploadError } = await processAndUploadImage({
     file,
     fileName: `steps/admin-review/${stepId}-${targetLabel}.webp`,
@@ -51,10 +51,10 @@ export async function uploadStepImageAction(
   }
 
   const { error: updateError } = await safeAsync(() => {
-    if (imageTarget === "visual") {
-      const visual = parseStepContent("visual", step.content);
+    if (imageTarget === "step") {
+      const content = parseStepContent("static", step.content);
       return prisma.step.update({
-        data: { content: { ...visual, url: imageUrl } },
+        data: { content: { ...content, image: { ...content.image, url: imageUrl } } },
         where: { id: stepId },
       });
     }

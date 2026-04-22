@@ -45,10 +45,9 @@ export type AiCostEstimateReport = {
   estimates: AiGenerationCostEstimate[];
 };
 
-export type VisualUsageRow = {
+export type StepImageUsageRow = {
   activityKind: "custom" | "explanation";
   count: bigint;
-  visualKind: string | null;
 };
 
 export type LanguageAudioUsageRow = {
@@ -77,5 +76,5 @@ export type StructureStats = {
   regularCourseChapterCount: number;
   regularCourseCount: number;
   regularCustomLessonCountInCourses: number;
-  visualCountsByKey: Record<string, number>;
+  stepImageCountsByActivityKind: Record<string, number>;
 };

@@ -149,35 +149,6 @@ describe(generateExplanationContentStep, () => {
         title: "Every send",
       },
     ]);
-    expect(result.results[0]?.plan.map((entry) => entry.kind)).toEqual([
-      "static",
-      "visual",
-      "static",
-      "visual",
-      "static",
-      "visual",
-      "static",
-      "visual",
-      "static",
-    ]);
-    expect(result.results[0]?.visualSteps).toEqual([
-      {
-        text: "You send a photo on WhatsApp. In under a second, it appears on your friend's screen, even if you're on the bus.",
-        title: "O envio",
-      },
-      {
-        text: "Between the tap and the delivered photo, the message passes through several hidden points. Each one wraps it with a different kind of label.",
-        title: "Os rótulos escondidos",
-      },
-      {
-        text: "Here are the wrappers, in the order they get added: the app wrapper, the transport wrapper, the network wrapper. Each layer adds a label for a different job.",
-        title: "A pilha",
-      },
-      {
-        text: "Zoom in on the network wrapper: it only carries routing info — where to send next. The chat content stays sealed inside, untouched by routers.",
-        title: "O rótulo de rede",
-      },
-    ]);
     expect(result.results[1]?.activityId).toBe(activities[1]?.id);
     expect(generateActivityExplanationMock).toHaveBeenNthCalledWith(
       1,

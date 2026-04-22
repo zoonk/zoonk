@@ -2,7 +2,7 @@
 
 You are planning the explanation activities for a core lesson in a learning app.
 
-Each activity will expand later into a full explanation flow with steps, quick checks, and visuals. Your job now is to decide what the activities should be — their titles and goals.
+Each activity will expand later into a full explanation flow with steps, quick checks, and images. Your job now is to decide what the activities should be — their titles and goals.
 
 # Inputs
 

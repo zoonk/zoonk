@@ -5,8 +5,8 @@ import {
   type GeneratedExplanationResult,
   generateExplanationContentStep,
 } from "../steps/generate-explanation-content-step";
-import { generateExplanationVisualContentStep } from "../steps/generate-explanation-visual-content-step";
-import { generateExplanationVisualDescriptionsStep } from "../steps/generate-explanation-visual-descriptions-step";
+import { generateExplanationImagePromptsStep } from "../steps/generate-explanation-image-prompts-step";
+import { generateExplanationStepImagesStep } from "../steps/generate-explanation-step-images-step";
 import { type LessonActivity } from "../steps/get-lesson-activities-step";
 import { handleActivityFailureStep } from "../steps/handle-failure-step";
 import { saveExplanationActivityStep } from "../steps/save-explanation-activity-step";
@@ -62,13 +62,13 @@ async function getResultsFromCompletedActivities(
  * Orchestrates explanation activity generation with per-entity save.
  *
  * Flow per entity:
- *   generateContent -> generateVisualDescriptions -> generateVisualContent -> save.
+ *   generateContent -> generateImagePrompts -> generateStepImages -> save.
  *
  * The explanation task produces the ordered learner flow, while the shared
- * visual-description task decides what to illustrate for each explanation step.
+ * image-prompt task decides what to illustrate for each step.
  *
  * Each entity is independent — if one fails, others continue.
- * The save step writes all data (content + visuals) at once
+ * The save step writes all data (content + step images) at once
  * and marks the activity as completed.
  *
  * Returns results from BOTH generated and completed activities so downstream
@@ -108,22 +108,18 @@ export async function explanationActivityWorkflow({
     generatedResults.map(async (result) => {
       const activity = explanationsToGenerate.find((a) => a.id === result.activityId);
 
-      if (!activity || result.plan.length === 0) {
+      if (!activity || result.steps.length === 0) {
         return;
       }
 
       try {
-        const { descriptions } = await generateExplanationVisualDescriptionsStep(
-          activity,
-          result.visualSteps,
-        );
-
-        const { visuals } = await generateExplanationVisualContentStep(activity, descriptions);
+        const { prompts } = await generateExplanationImagePromptsStep(activity, result.steps);
+        const { images } = await generateExplanationStepImagesStep(activity, prompts);
 
         await saveExplanationActivityStep({
           activityId: result.activityId,
-          plan: result.plan,
-          visuals,
+          images,
+          steps: result.steps,
           workflowRunId,
         });
       } catch {

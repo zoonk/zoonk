@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { Activity } from "react";
-import { SELECT_IMAGE_PROPS, VISUAL_IMAGE_PROPS } from "../image-config";
+import { SELECT_IMAGE_PROPS, STEP_IMAGE_PROPS } from "../image-config";
 import { type PreloadableImage } from "../player-selectors";
 
 /**
@@ -23,7 +23,7 @@ export function StepImagePreloader({ images }: { images: PreloadableImage[] }) {
   return (
     <Activity mode="hidden">
       {images.map((image) => {
-        const props = image.kind === "visual" ? VISUAL_IMAGE_PROPS : SELECT_IMAGE_PROPS;
+        const props = image.kind === "step" ? STEP_IMAGE_PROPS : SELECT_IMAGE_PROPS;
         return <Image alt="" key={image.url} loading="eager" src={image.url} {...props} />;
       })}
     </Activity>
