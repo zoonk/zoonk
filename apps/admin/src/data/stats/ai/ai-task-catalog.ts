@@ -113,7 +113,7 @@ const AI_TASK_METADATA = {
     supportsFallbackReporting: true,
   },
   "course-thumbnail": {
-    defaultModel: "openai/gpt-image-1.5",
+    defaultModel: "openai/gpt-image-2",
     supportsFallbackReporting: false,
   },
   "language-chapter-lessons": {
@@ -145,7 +145,7 @@ const AI_TASK_METADATA = {
     supportsFallbackReporting: true,
   },
   "step-select-image": {
-    defaultModel: "openai/gpt-image-1-mini",
+    defaultModel: "openai/gpt-image-2",
     supportsFallbackReporting: false,
   },
 } satisfies Record<string, AiTaskMetadata>;
