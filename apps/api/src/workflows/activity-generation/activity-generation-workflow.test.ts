@@ -65,40 +65,6 @@ function createExplanationResult(): Awaited<ReturnType<typeof generateActivityEx
           title: "O rótulo de rede",
         },
       ],
-      predict: [
-        {
-          options: [
-            {
-              feedback: "Yes. Each wrapper handles a different job during the trip.",
-              isCorrect: true,
-              text: "Because each layer needs its own information",
-            },
-            {
-              feedback: "Not this. Layers are functional, not decorative.",
-              isCorrect: false,
-              text: "Because extra labels make the packet prettier",
-            },
-          ],
-          question: "Why wrap the same photo with several labels?",
-          step: "Os rótulos escondidos",
-        },
-        {
-          options: [
-            {
-              feedback: "Right. Routers only read where the packet goes next.",
-              isCorrect: true,
-              text: "The network label",
-            },
-            {
-              feedback: "No. Routers do not open the full chat message.",
-              isCorrect: false,
-              text: "The full chat content",
-            },
-          ],
-          question: "Which part does a router mainly use?",
-          step: "O rótulo de rede",
-        },
-      ],
     },
     systemPrompt: "test",
     usage: {} as Awaited<ReturnType<typeof generateActivityExplanation>>["usage"],

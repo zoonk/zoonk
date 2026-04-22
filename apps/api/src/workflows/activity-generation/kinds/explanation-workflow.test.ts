@@ -59,40 +59,6 @@ function createExplanationResult(): Awaited<ReturnType<typeof generateActivityEx
           title: "O rótulo de rede",
         },
       ],
-      predict: [
-        {
-          options: [
-            {
-              feedback: "Yes. Each wrapper handles a different job during the trip.",
-              isCorrect: true,
-              text: "Because each layer needs its own information",
-            },
-            {
-              feedback: "Not this. Layers are functional, not decorative.",
-              isCorrect: false,
-              text: "Because extra labels make the packet prettier",
-            },
-          ],
-          question: "Why wrap the same photo with several labels?",
-          step: "Os rótulos escondidos",
-        },
-        {
-          options: [
-            {
-              feedback: "Right. Routers only read where the packet goes next.",
-              isCorrect: true,
-              text: "The network label",
-            },
-            {
-              feedback: "No. Routers do not open the full chat message.",
-              isCorrect: false,
-              text: "The full chat content",
-            },
-          ],
-          question: "Which part does a router mainly use?",
-          step: "O rótulo de rede",
-        },
-      ],
     },
     systemPrompt: "test",
     usage: {} as Awaited<ReturnType<typeof generateActivityExplanation>>["usage"],
@@ -157,7 +123,7 @@ describe("explanation activity workflow", () => {
     vi.clearAllMocks();
   });
 
-  test("creates the ordered explanation flow with static, visual, and predict steps", async () => {
+  test("creates the ordered explanation flow with static and visual steps", async () => {
     const lesson = await lessonFixture({
       chapterId: chapter.id,
       concepts: ["Encapsulation"],
@@ -196,13 +162,11 @@ describe("explanation activity workflow", () => {
       [1, "visual"],
       [2, "static"],
       [3, "visual"],
-      [4, "multipleChoice"],
-      [5, "static"],
-      [6, "visual"],
-      [7, "static"],
-      [8, "visual"],
-      [9, "multipleChoice"],
-      [10, "static"],
+      [4, "static"],
+      [5, "visual"],
+      [6, "static"],
+      [7, "visual"],
+      [8, "static"],
     ]);
 
     expect(steps[0]?.content).toEqual({
@@ -215,8 +179,7 @@ describe("explanation activity workflow", () => {
       title: "Os rótulos escondidos",
       variant: "text",
     });
-    expect(steps[4]?.kind).toBe("multipleChoice");
-    expect(steps[10]?.content).toEqual({
+    expect(steps[8]?.content).toEqual({
       text: "Every photo you send on WhatsApp uses this exact layering — you hit send, it runs.",
       title: "Every send",
       variant: "text",

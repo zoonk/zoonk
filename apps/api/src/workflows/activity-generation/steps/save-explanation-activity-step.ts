@@ -13,10 +13,10 @@ type ArrayItem<T> = T extends readonly (infer Item)[] ? Item : T extends (infer 
 type StepRecord = ArrayItem<StepCreateManyData>;
 
 /**
- * Explanation activities have an explicit ordered plan with optional
- * visuals and inline predict checks. Saving directly from that plan keeps the
- * database order identical to the learner flow instead of rebuilding positions
- * from separate static and visual arrays.
+ * Explanation activities have an explicit ordered plan with narrative steps,
+ * generated visuals, and a closing anchor. Saving directly from that plan
+ * keeps the database order identical to the learner flow instead of rebuilding
+ * positions from separate static and visual arrays.
  */
 function buildExplanationStepRecords({
   activityId,
@@ -88,8 +88,8 @@ function getVisualContent({
 
 /**
  * Every explanation plan entry becomes exactly one persisted step record. This
- * helper keeps the branching for static copy, predict checks, and visuals in
- * one place so the main save function reads like a straight pipeline.
+ * helper keeps the branching for static copy and visuals in one place so the
+ * main save function reads like a straight pipeline.
  */
 function buildExplanationStepRecord({
   activityId,
@@ -112,20 +112,6 @@ function buildExplanationStepRecord({
       }),
       isPublished: true,
       kind: "static" as const,
-      position,
-    };
-  }
-
-  if (entry.kind === "multipleChoice") {
-    return {
-      activityId,
-      content: assertStepContent("multipleChoice", {
-        kind: "core",
-        options: entry.options,
-        question: entry.question,
-      }),
-      isPublished: true,
-      kind: "multipleChoice" as const,
       position,
     };
   }

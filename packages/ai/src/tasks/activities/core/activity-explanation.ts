@@ -7,14 +7,6 @@ import systemPrompt from "./activity-explanation.prompt.md";
 const DEFAULT_MODEL = "openai/gpt-5.4";
 const FALLBACK_MODELS = ["anthropic/claude-opus-4.6", "google/gemini-3.1-pro-preview"];
 
-const predictOptionSchema = z
-  .object({
-    feedback: z.string(),
-    isCorrect: z.boolean(),
-    text: z.string(),
-  })
-  .strict();
-
 const anchorSchema = z
   .object({
     text: z.string(),
@@ -29,19 +21,10 @@ const explanationStepSchema = z
   })
   .strict();
 
-const predictSchema = z
-  .object({
-    options: z.array(predictOptionSchema),
-    question: z.string(),
-    step: z.string().min(1),
-  })
-  .strict();
-
 const schema = z
   .object({
     anchor: anchorSchema,
     explanation: z.array(explanationStepSchema),
-    predict: z.array(predictSchema),
   })
   .strict();
 

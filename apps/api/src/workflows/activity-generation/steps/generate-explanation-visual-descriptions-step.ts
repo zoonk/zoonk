@@ -10,8 +10,8 @@ import { type LessonActivity } from "./get-lesson-activities-step";
 /**
  * Explanation activities still use the shared visual-description task so the
  * visual-planning logic stays consistent with custom activities. We only pass
- * the explanation prose steps here because predict checks and the closing
- * anchor do not need visuals.
+ * the explanation prose steps here because the closing anchor does not need a
+ * visual.
  */
 export async function generateExplanationVisualDescriptionsStep(
   activity: LessonActivity,

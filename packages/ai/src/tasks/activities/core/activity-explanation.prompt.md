@@ -16,10 +16,9 @@ Do this through a single continuous scene, not a stack of textbook definitions. 
 
 # Output Shape
 
-You return three fields:
+You return two fields:
 
 - `explanation`: an array of narrative steps. Variable length. Use as many as the `ACTIVITY_GOAL` needs — more for deeper topics, fewer for simpler ones. Each step has `text` and `title`.
-- `predict`: exactly 2 quick check-ins placed at specific steps in the `explanation` array.
 - `anchor`: the closing line that ties the concept back to something real.
 
 # Core Principle: The Scene Is the Spine
@@ -56,7 +55,6 @@ This is a guide, not a rigid count. Deeper topics may need extra steps between n
 
 - The first step MUST be a cold open (no resolution, no definition).
 - The last step in `explanation` MUST be a payoff that callbacks the opening scene.
-- The two predictions land _inside_ the arc: the first after the mystery but before the reveal (commit-before-reveal), the second after the zoom but before the payoff (raise-stakes-before-callback).
 - No step introduces a new scenario. The scene from step 1 threads through every step.
 - The activity must actually deliver on `ACTIVITY_GOAL`. If the goal is "explain a binary tree", the learner should finish the activity knowing what it is, why anyone uses it, and roughly how it's written. A beautifully written arc that doesn't land the goal is a failure.
 
@@ -73,7 +71,7 @@ Each entry in `explanation` has `text` and `title`.
 
 ## `title`
 
-- Short (1–3 words). Used as an anchor for the predict checks and as a mental marker for the learner.
+- Short (1–3 words). Used as a mental marker for the learner and by downstream workflows that attach visuals to each explanation beat.
 - Must feel like a narrative step ("O toque", "A lista", "A linha 3"), not a textbook section header ("Programa", "Instrução").
 - Unique within the activity.
 
@@ -82,23 +80,13 @@ visual per explanation step from the narrative you write here. That means the
 scene, reveals, zooms, and payoff still need to be concrete enough that another
 task can clearly infer what should be illustrated.
 
-# Predict Rules
+# Static-Only Explanation Rules
 
-Two quick checks. They are commitments the learner makes before the scene reveals more.
+This activity is explanation-only.
 
-- Return exactly 2.
-- `step` MUST exactly match the `title` of an `explanation` step. The check is inserted _after_ that step.
-- First check: place it after the **mystery** step, before the **reveal**. The learner commits to a guess before seeing the answer.
-- Second check: place it after the **zoom**, before the **payoff**. Raise the stakes — e.g., "if we changed X, what would happen?"
-- Questions should be short and readable.
-- Exactly one option is correct.
-- Wrong options must be plausible mix-ups a real learner would make, not silly distractors.
-- Feedback must teach. After reading feedback alone, the learner should understand the underlying point.
-  - Correct options: a quick "why this fits" tied to the scene.
-  - Wrong options: name the specific mix-up and point toward the right reasoning.
-  - Never just restate the option or say "correct/incorrect".
-
-**Only predict checks ask questions.** Static explanation steps never pose rhetorical questions or restate the predict. The step immediately after a predict MUST be the reveal — go directly to showing what was hidden, not another setup or rephrased question.
+- Do not add quiz checks, options, multiple-choice moments, or any other interactive structure.
+- If you want tension, create it through the mystery step and resolve it in the next explanation step. Do not pause for a learner choice before continuing.
+- Avoid steps whose `text` is only a rhetorical question. Move the narrative forward with a concrete reveal, mechanism, or consequence.
 
 # Anchor Rules
 
@@ -157,8 +145,8 @@ The anchor must:
 - Definitions before the learner has seen an example.
 - Titles that sound like textbook section headers.
 - Empty or trivial titles. Every `title` must be a real narrative marker.
-- Static steps whose `text` is only a rhetorical question. Questions belong in `predict`, never in `explanation[].text`.
-- Filler steps between a predict and the reveal. The reveal must come immediately after the predict.
+- Static steps whose `text` is only a rhetorical question.
+- Quiz-like interruptions, option lists, or "guess before you keep reading" moments.
 - Anchor as abstract "why this matters" wrap-up.
 - Listing `LESSON_CONCEPTS` as a visible checklist.
 - Covering sibling activities from `OTHER_EXPLANATION_ACTIVITY_TITLES`.
@@ -173,8 +161,8 @@ Before answering, verify:
 - Every subsequent step refers to or builds on that same scene. No new scenarios.
 - Definitions emerge by pointing at something already shown.
 - The narrative is concrete enough that a downstream visual-planning task can infer what to show at each explanation step.
-- Predict #1 lands after the mystery, before the reveal. Predict #2 lands after the zoom, before the payoff. Both `step` fields exactly match a step `title`.
-- No static step contains only a rhetorical question or restates the predict. The step right after each predict is the reveal.
+- The activity stays fully static: explanation steps plus the closing anchor, with no quiz-like interjections.
+- No static step contains only a rhetorical question.
 - The final `explanation` step is a payoff that calls back to step 1.
 - Anchor names a specific real product, event, figure, or case (not "a real app", "an exoplanet", or "every time X") and echoes the opening, not a new scenario.
 - Every section is short. Language is fully in `LANGUAGE`.
