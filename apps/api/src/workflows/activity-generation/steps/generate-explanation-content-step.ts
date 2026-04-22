@@ -2,10 +2,7 @@ import { createStepStream } from "@/workflows/_shared/stream-status";
 import { generateActivityExplanation } from "@zoonk/ai/tasks/activities/core/explanation";
 import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { rejected, settledValues } from "@zoonk/utils/settled";
-import {
-  type ExplanationActivityPlanEntry,
-  buildExplanationActivityPlan,
-} from "./_utils/build-explanation-activity-plan";
+import { buildExplanationActivitySteps } from "./_utils/build-explanation-activity-plan";
 import { type ActivitySteps } from "./_utils/get-activity-steps";
 import { type LessonActivity } from "./get-lesson-activities-step";
 
@@ -14,11 +11,7 @@ export type ExplanationResult = {
   concept: string;
   steps: ActivitySteps;
 };
-
-export type GeneratedExplanationResult = ExplanationResult & {
-  plan: ExplanationActivityPlanEntry[];
-  visualSteps: ActivitySteps;
-};
+export type GeneratedExplanationResult = ExplanationResult;
 
 /**
  * Explanation activities are planned before this step runs, so the AI call
@@ -54,18 +47,16 @@ async function generateSingleExplanation({
     throw new Error("Empty AI result for explanation content");
   }
 
-  const plan = buildExplanationActivityPlan(result.data);
+  const steps = buildExplanationActivitySteps(result.data);
 
-  if (plan.entries.length === 0 || plan.sourceSteps.length === 0) {
-    throw new Error("Empty explanation activity plan");
+  if (steps.length === 0) {
+    throw new Error("Empty explanation activity steps");
   }
 
   return {
     activityId: activity.id,
     concept: activityTitle,
-    plan: plan.entries,
-    steps: plan.sourceSteps,
-    visualSteps: plan.visualSteps,
+    steps,
   };
 }
 

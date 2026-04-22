@@ -1,6 +1,7 @@
 import { fireEvent } from "@testing-library/react";
 import { describe, expect, test, vi } from "vitest";
 import { page } from "vitest/browser";
+import { buildInlineImageUrl } from "../_test-utils/build-inline-image-url";
 import { buildSerializedActivity, buildSerializedStep } from "../_test-utils/player-test-data";
 import { buildAuthenticatedViewer } from "../_test-utils/player-test-viewer";
 import { buildNavigation, renderPlayer } from "../_test-utils/render-player";
@@ -76,6 +77,37 @@ describe("player browser integration: static steps", () => {
 
     await expect.element(page.getByRole("heading", { name: "Past tense" })).toBeInTheDocument();
     await expect.element(page.getByText("Add -ed to regular verbs")).toBeInTheDocument();
+  });
+
+  test("renders embedded step images inside the shared static shell", async () => {
+    renderPlayer({
+      activity: buildSerializedActivity({
+        kind: "explanation",
+        steps: [
+          buildSerializedStep({
+            content: {
+              image: {
+                prompt: "A lantern lighting up one idea at a time",
+                url: buildInlineImageUrl({ label: "A lantern lighting up one idea at a time" }),
+              },
+              text: "An image can now live inside the same readable step.",
+              title: "One step, one image",
+              variant: "text" as const,
+            },
+            id: "static-image",
+          }),
+        ],
+      }),
+      navigation: buildNavigation({ nextActivityHref: null }),
+      viewer: buildAuthenticatedViewer(),
+    });
+
+    await expect
+      .element(page.getByRole("heading", { name: "One step, one image" }))
+      .toBeInTheDocument();
+    await expect
+      .element(page.getByAltText(/lantern lighting up one idea at a time/i))
+      .toBeInTheDocument();
   });
 
   test("supports keyboard navigation on static steps and keyboard completion actions", async () => {

@@ -136,49 +136,17 @@ const AI_TASK_METADATA = {
     defaultModel: "openai/gpt-5.4-nano",
     supportsFallbackReporting: true,
   },
+  "step-content-image": {
+    defaultModel: "openai/gpt-image-2",
+    supportsFallbackReporting: false,
+  },
+  "step-image-prompts": {
+    defaultModel: "openai/gpt-5.4",
+    supportsFallbackReporting: true,
+  },
   "step-select-image": {
     defaultModel: "openai/gpt-image-1-mini",
     supportsFallbackReporting: false,
-  },
-  "step-visual-descriptions": {
-    defaultModel: "openai/gpt-5.4",
-    supportsFallbackReporting: true,
-  },
-  "step-visual-image": {
-    defaultModel: "openai/gpt-image-1.5",
-    supportsFallbackReporting: false,
-  },
-  "visual-chart": {
-    defaultModel: "google/gemini-3.1-flash-lite-preview",
-    supportsFallbackReporting: true,
-  },
-  "visual-code": {
-    defaultModel: "openai/gpt-5.4",
-    supportsFallbackReporting: true,
-  },
-  "visual-diagram": {
-    defaultModel: "google/gemini-3.1-flash-lite-preview",
-    supportsFallbackReporting: true,
-  },
-  "visual-formula": {
-    defaultModel: "openai/gpt-5.4-mini",
-    supportsFallbackReporting: true,
-  },
-  "visual-music": {
-    defaultModel: "google/gemini-3.1-pro-preview",
-    supportsFallbackReporting: true,
-  },
-  "visual-quote": {
-    defaultModel: "google/gemini-3.1-pro-preview",
-    supportsFallbackReporting: true,
-  },
-  "visual-table": {
-    defaultModel: "google/gemini-3.1-flash-lite-preview",
-    supportsFallbackReporting: true,
-  },
-  "visual-timeline": {
-    defaultModel: "openai/gpt-5.4-mini",
-    supportsFallbackReporting: true,
   },
 } satisfies Record<string, AiTaskMetadata>;
 
@@ -260,24 +228,9 @@ const AI_TASK_CATALOG_GROUP_DEFINITIONS = [
     title: "Language Activities",
   },
   {
-    description: "Image-selection and visual-description tasks used inside lesson steps.",
-    taskNames: ["step-select-image", "step-visual-descriptions", "step-visual-image"],
+    description: "Image-selection, step image prompt, and step image generation tasks.",
+    taskNames: ["step-select-image", "step-image-prompts", "step-content-image"],
     title: "Step Media",
-  },
-  {
-    description:
-      "Standalone visual generation tasks for charts, diagrams, code, tables, and other assets.",
-    taskNames: [
-      "visual-chart",
-      "visual-code",
-      "visual-diagram",
-      "visual-formula",
-      "visual-music",
-      "visual-quote",
-      "visual-table",
-      "visual-timeline",
-    ],
-    title: "Visual Assets",
   },
 ] satisfies AiTaskCatalogGroupDefinition[];
 

@@ -38,17 +38,9 @@
     "./tasks/lessons/custom-activities": "./src/tasks/lessons/lesson-custom-activities.ts",
     "./tasks/lessons/applied-activity-kind": "./src/tasks/lessons/applied-activity-kind.ts",
     "./tasks/lessons/kind": "./src/tasks/lessons/lesson-kind.ts",
-    "./tasks/steps/select-image": "./src/tasks/steps/step-select-image.ts",
-    "./tasks/steps/visual-image": "./src/tasks/steps/step-visual-image.ts",
-    "./tasks/steps/visual-descriptions": "./src/tasks/steps/step-visual-descriptions.ts",
-    "./tasks/visuals/chart": "./src/tasks/visuals/visual-chart.ts",
-    "./tasks/visuals/code": "./src/tasks/visuals/visual-code.ts",
-    "./tasks/visuals/diagram": "./src/tasks/visuals/visual-diagram.ts",
-    "./tasks/visuals/formula": "./src/tasks/visuals/visual-formula.ts",
-    "./tasks/visuals/music": "./src/tasks/visuals/visual-music.ts",
-    "./tasks/visuals/quote": "./src/tasks/visuals/visual-quote.ts",
-    "./tasks/visuals/table": "./src/tasks/visuals/visual-table.ts",
-    "./tasks/visuals/timeline": "./src/tasks/visuals/visual-timeline.ts"
+    "./tasks/steps/content-image": "./src/tasks/steps/step-content-image.ts",
+    "./tasks/steps/image-prompts": "./src/tasks/steps/step-image-prompts.ts",
+    "./tasks/steps/select-image": "./src/tasks/steps/step-select-image.ts"
   },
   "scripts": {
     "test": "vitest run",

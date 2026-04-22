@@ -3,8 +3,8 @@ type ReviewGroup = "text" | "image" | "audio";
 type ReviewTaskType =
   | "courseSuggestions"
   | "sentenceAudio"
+  | "stepImage"
   | "stepSelectImage"
-  | "stepVisualImage"
   | "wordAudio";
 
 const REVIEW_TASKS: Record<ReviewTaskType, { group: ReviewGroup; label: string; path: string }> = {
@@ -18,15 +18,15 @@ const REVIEW_TASKS: Record<ReviewTaskType, { group: ReviewGroup; label: string; 
     label: "Sentence Audio",
     path: "/review/audio/sentence-audio",
   },
+  stepImage: {
+    group: "image",
+    label: "Step Images",
+    path: "/review/image/step-image",
+  },
   stepSelectImage: {
     group: "image",
     label: "Select Images",
     path: "/review/image/step-select-image",
-  },
-  stepVisualImage: {
-    group: "image",
-    label: "Visual Images",
-    path: "/review/image/step-visual-image",
   },
   wordAudio: {
     group: "audio",
@@ -75,34 +75,6 @@ function getTasksByGroup(group: ReviewGroup): ReviewTaskType[] {
   return REVIEW_TASK_TYPES.filter((taskType) => REVIEW_TASKS[taskType].group === group);
 }
 
-const VISUAL_KINDS: readonly string[] = [
-  "code",
-  "image",
-  "table",
-  "chart",
-  "diagram",
-  "timeline",
-  "quote",
-  "audio",
-  "video",
-];
-
-const VISUAL_KIND_SET: ReadonlySet<string> = new Set(VISUAL_KINDS);
-
-function isVisualKind(value: string): boolean {
-  return VISUAL_KIND_SET.has(value);
-}
-
-function getVisualKindFromTaskType(taskType: string): string | null {
-  const match = /^stepVisual(.+)$/.exec(taskType);
-  if (!match?.[1]) {
-    return null;
-  }
-
-  const kind = match[1].toLowerCase();
-  return isVisualKind(kind) ? kind : null;
-}
-
 const REVIEW_GROUPS: { group: ReviewGroup; label: string }[] = [
   { group: "text", label: "Text" },
   { group: "image", label: "Image" },
@@ -115,7 +87,6 @@ export {
   getTaskLabel,
   getTaskPath,
   getTasksByGroup,
-  getVisualKindFromTaskType,
   isValidTaskType,
   resolveTaskType,
 };

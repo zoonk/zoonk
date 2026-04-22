@@ -18,7 +18,7 @@ export type PlayerCheckBehavior =
 
 type PlayerFeedbackBehavior = "inline" | "none" | "screen";
 type PlayerLayoutBehavior = "default" | "navigable";
-type PlayerSceneBehavior = "choice" | "read" | "visual";
+type PlayerSceneBehavior = "choice" | "read";
 
 export type PlayerRenderBehavior =
   | "fillBlank"
@@ -32,7 +32,6 @@ export type PlayerRenderBehavior =
   | "static"
   | "story"
   | "translation"
-  | "visual"
   | "vocabulary";
 
 type PlayerValidationBehavior =
@@ -194,14 +193,6 @@ const STEP_BEHAVIOR_BY_KIND: Record<PlayerStepKind, PlayerStepBehavior> = {
     scene: "choice",
     validation: "translation",
   },
-  visual: {
-    check: "none",
-    feedback: "none",
-    layout: "navigable",
-    render: "visual",
-    scene: "visual",
-    validation: "none",
-  },
   vocabulary: {
     check: "none",
     feedback: "none",
@@ -251,7 +242,7 @@ export function usesFeedbackScreen(descriptor: PlayerStepDescriptor | null | und
  *
  * Story and investigation still keep their domain-specific step kinds for
  * scoring and validation, but the shell can now reason about a simpler
- * family of screens: read, choice, or visual.
+ * family of screens: read or choice.
  */
 export function getPlayerStepScene(
   descriptor: PlayerStepDescriptor | null | undefined,

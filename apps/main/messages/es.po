@@ -422,26 +422,6 @@ msgctxt "xmF49T"
 msgid "Correct!"
 msgstr "¡Correcto!"
 
-#: ../../packages/player/src/components/visual-step.tsx
-msgctxt "9bIjWj"
-msgid "Visual content"
-msgstr "Contenido visual"
-
-#: ../../packages/player/src/components/visuals/chart-visual.tsx
-msgctxt "iZuO+L"
-msgid "Legend"
-msgstr "Leyenda"
-
-#: ../../packages/player/src/components/visuals/diagram-visual.tsx
-msgctxt "PBUs06"
-msgid "Diagram"
-msgstr "Diagrama"
-
-#: ../../packages/player/src/components/visuals/timeline-visual.tsx
-msgctxt "zWkvNO"
-msgid "Timeline"
-msgstr "Línea de tiempo"
-
 #: ../../packages/player/src/components/vocabulary-step.tsx
 #: ../../packages/player/src/use-activity-kind-label.ts
 #: src/lib/activities.ts
@@ -1808,6 +1788,11 @@ msgid "Connecting choices to concepts..."
 msgstr "Conectando las opciones con los conceptos..."
 
 #: src/app/generate/a/[id]/phase-thinking-generators/content.ts
+msgctxt "2Tovpk"
+msgid "Planning each image..."
+msgstr "Planificando cada imagen..."
+
+#: src/app/generate/a/[id]/phase-thinking-generators/content.ts
 msgctxt "4wkMNX"
 msgid "Getting answer options ready..."
 msgstr "Preparando las opciones de respuesta..."
@@ -1842,14 +1827,9 @@ msgid "Designing practice exercises..."
 msgstr "Diseñando ejercicios de práctica..."
 
 #: src/app/generate/a/[id]/phase-thinking-generators/content.ts
-msgctxt "8lInA7"
-msgid "Sketching out ideas..."
-msgstr "Esbozando ideas..."
-
-#: src/app/generate/a/[id]/phase-thinking-generators/content.ts
-msgctxt "abtOR3"
-msgid "Planning the layout..."
-msgstr "Planificando el diseño..."
+msgctxt "a08k7g"
+msgid "Generating the images..."
+msgstr "Generando las imágenes..."
 
 #: src/app/generate/a/[id]/phase-thinking-generators/content.ts
 msgctxt "BBwnPG"
@@ -1867,11 +1847,6 @@ msgid "Adding some color..."
 msgstr "Agregando algo de color..."
 
 #: src/app/generate/a/[id]/phase-thinking-generators/content.ts
-msgctxt "bslhjb"
-msgid "Creating the visual..."
-msgstr "Creando el visual..."
-
-#: src/app/generate/a/[id]/phase-thinking-generators/content.ts
 msgctxt "C05+tM"
 msgid "Building interactive tasks..."
 msgstr "Creando tareas interactivas..."
@@ -1885,11 +1860,6 @@ msgstr "Preparando el escenario..."
 msgctxt "cVoRCh"
 msgid "Preparing options..."
 msgstr "Preparando opciones..."
-
-#: src/app/generate/a/[id]/phase-thinking-generators/content.ts
-msgctxt "dQnsCW"
-msgid "Choosing the right style..."
-msgstr "Eligiendo el estilo correcto..."
 
 #: src/app/generate/a/[id]/phase-thinking-generators/content.ts
 msgctxt "EAqAX/"
@@ -1910,6 +1880,11 @@ msgstr "Construyendo la base..."
 msgctxt "GyThaR"
 msgid "Preparing background context..."
 msgstr "Preparando el contexto..."
+
+#: src/app/generate/a/[id]/phase-thinking-generators/content.ts
+msgctxt "iUUJom"
+msgid "Planning the illustrations..."
+msgstr "Planificando las ilustraciones..."
 
 #: src/app/generate/a/[id]/phase-thinking-generators/content.ts
 msgctxt "Izq6mP"
@@ -1952,29 +1927,9 @@ msgid "Checking what we need..."
 msgstr "Verificando lo que necesitamos..."
 
 #: src/app/generate/a/[id]/phase-thinking-generators/content.ts
-msgctxt "NRdY6u"
-msgid "Building the graphic..."
-msgstr "Creando el gráfico..."
-
-#: src/app/generate/a/[id]/phase-thinking-generators/content.ts
 msgctxt "nwi1Ym"
 msgid "Crafting the content..."
 msgstr "Creando el contenido..."
-
-#: src/app/generate/a/[id]/phase-thinking-generators/content.ts
-msgctxt "O8xr9p"
-msgid "Working on the visuals..."
-msgstr "Trabajando en las imágenes..."
-
-#: src/app/generate/a/[id]/phase-thinking-generators/content.ts
-msgctxt "O9szRw"
-msgid "Working on the details..."
-msgstr "Trabajando en los detalles..."
-
-#: src/app/generate/a/[id]/phase-thinking-generators/content.ts
-msgctxt "OMoSv+"
-msgid "Rendering the visual..."
-msgstr "Renderizando el visual..."
 
 #: src/app/generate/a/[id]/phase-thinking-generators/content.ts
 msgctxt "r8xznK"
@@ -1990,6 +1945,11 @@ msgstr "Dando forma a los resultados..."
 msgctxt "SHIHyL"
 msgid "Creating reading passages..."
 msgstr "Creando textos de lectura..."
+
+#: src/app/generate/a/[id]/phase-thinking-generators/content.ts
+msgctxt "sQsQbH"
+msgid "Choosing the right scenes..."
+msgstr "Eligiendo las escenas correctas..."
 
 #: src/app/generate/a/[id]/phase-thinking-generators/content.ts
 msgctxt "txIcop"
@@ -2300,11 +2260,6 @@ msgid "Adding pronunciation for each word..."
 msgstr "Añadiendo pronunciación para cada palabra..."
 
 #: src/app/generate/a/[id]/use-phase-labels.ts
-msgctxt "/1ijBZ"
-msgid "Creating illustrations"
-msgstr "Creando ilustraciones"
-
-#: src/app/generate/a/[id]/use-phase-labels.ts
 msgctxt "0zeST/"
 msgid "Looking up words"
 msgstr "Buscando palabras"
@@ -2391,11 +2346,6 @@ msgid "Building word list"
 msgstr "Armando lista de palabras"
 
 #: src/app/generate/a/[id]/use-phase-labels.ts
-msgctxt "sLBFa0"
-msgid "Preparing illustrations"
-msgstr "Preparando ilustraciones"
-
-#: src/app/generate/a/[id]/use-phase-labels.ts
 msgctxt "T00GEW"
 msgid "Recording audio"
 msgstr "Grabando audio"
@@ -2424,6 +2374,11 @@ msgstr "Grabando audio de vocabulario"
 msgctxt "v4iFHN"
 msgid "Writing the content"
 msgstr "Escribiendo el contenido"
+
+#: src/app/generate/a/[id]/use-phase-labels.ts
+msgctxt "v7HGj3"
+msgid "Planning the images"
+msgstr "Planificando las imágenes"
 
 #: src/app/generate/a/[id]/use-phase-labels.ts
 msgctxt "viluaR"

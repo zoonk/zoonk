@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
 import { generateActivityExplanation } from "@zoonk/ai/tasks/activities/core/explanation";
 import { generateActivityCustom } from "@zoonk/ai/tasks/activities/custom";
-import { type generateStepVisualDescriptions } from "@zoonk/ai/tasks/steps/visual-descriptions";
+import { type generateStepImagePrompts } from "@zoonk/ai/tasks/steps/image-prompts";
 import { prisma } from "@zoonk/db";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
@@ -11,33 +11,26 @@ import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, describe, expect, test, vi } from "vitest";
 import { activityGenerationWorkflow } from "./activity-generation-workflow";
-import { type dispatchVisualContent } from "./steps/_utils/dispatch-visual-content";
+import { type generateStepImages } from "./steps/_utils/generate-step-images";
 
-function createDescriptionsResult(
+function createPromptResult(
   steps: { title: string; text: string }[],
-): Awaited<ReturnType<typeof generateStepVisualDescriptions>> {
+): Awaited<ReturnType<typeof generateStepImagePrompts>> {
   return {
     data: {
-      descriptions: steps.map((step, index) =>
-        index === 0
-          ? { description: `A visual prompt for ${step.title}`, kind: "image" as const }
-          : { description: `A code snippet for ${step.title}`, kind: "code" as const },
-      ),
+      prompts: steps.map((step) => `A lesson illustration for ${step.title}`),
     },
     systemPrompt: "test",
-    usage: {} as Awaited<ReturnType<typeof generateStepVisualDescriptions>>["usage"],
+    usage: {} as Awaited<ReturnType<typeof generateStepImagePrompts>>["usage"],
     userPrompt: "test",
   };
 }
 
-function createDispatchResult(
-  descriptions: { kind: string; description: string }[],
-): Awaited<ReturnType<typeof dispatchVisualContent>> {
-  return descriptions.map((desc, index) =>
-    index === 0
-      ? { kind: "image", prompt: desc.description, url: "https://example.com/image.webp" }
-      : { annotations: null, code: "const x = 1;", kind: "code", language: "typescript" },
-  );
+function createImageResult(prompts: string[]): Awaited<ReturnType<typeof generateStepImages>> {
+  return prompts.map((prompt, index) => ({
+    prompt,
+    url: `https://example.com/step-image-${index}.webp`,
+  }));
 }
 
 function createExplanationResult(): Awaited<ReturnType<typeof generateActivityExplanation>> {
@@ -76,20 +69,19 @@ vi.mock("@zoonk/ai/tasks/activities/core/explanation", () => ({
   generateActivityExplanation: vi.fn().mockResolvedValue(createExplanationResult()),
 }));
 
-vi.mock("@zoonk/ai/tasks/steps/visual-descriptions", () => ({
-  generateStepVisualDescriptions: vi
+vi.mock("@zoonk/ai/tasks/steps/image-prompts", () => ({
+  generateStepImagePrompts: vi
     .fn()
     .mockImplementation(({ steps }: { steps: { title: string; text: string }[] }) =>
-      Promise.resolve(createDescriptionsResult(steps)),
+      Promise.resolve(createPromptResult(steps)),
     ),
 }));
 
-vi.mock("./steps/_utils/dispatch-visual-content", () => ({
-  dispatchVisualContent: vi
+vi.mock("./steps/_utils/generate-step-images", () => ({
+  generateStepImages: vi
     .fn()
-    .mockImplementation(
-      ({ descriptions }: { descriptions: { kind: string; description: string }[] }) =>
-        Promise.resolve(createDispatchResult(descriptions)),
+    .mockImplementation(({ prompts }: { prompts: string[] }) =>
+      Promise.resolve(createImageResult(prompts)),
     ),
 }));
 

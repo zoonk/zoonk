@@ -11,8 +11,21 @@ import {
   PlayerReadSceneTitle,
 } from "./player-read-scene";
 import { RomanizationText } from "./romanization-text";
+import { StepImageView } from "./step-image";
 import { StoryIntroContent } from "./story-intro-content";
 import { StoryOutcomeContent } from "./story-outcome-content";
+
+function getStaticDescriptorImage(descriptor: ReturnType<typeof describePlayerStep>) {
+  if (
+    descriptor?.kind === "staticText" ||
+    descriptor?.kind === "staticGrammarExample" ||
+    descriptor?.kind === "staticGrammarRule" ||
+    descriptor?.kind === "storyIntro" ||
+    descriptor?.kind === "storyOutcome"
+  ) {
+    return descriptor.content.image;
+  }
+}
 
 function TextVariant({ title, text }: { title: string; text: string }) {
   const replaceName = useReplaceName();
@@ -103,8 +116,15 @@ function StaticStepContent({ step }: { step: SerializedStep }) {
 }
 
 export function StaticStep({ step }: { step: SerializedStep }) {
+  const image = getStaticDescriptorImage(describePlayerStep(step));
+
   return (
-    <PlayerReadScene>
+    <PlayerReadScene className="w-full">
+      {image ? (
+        <div className="flex w-full justify-center">
+          <StepImageView image={image} />
+        </div>
+      ) : null}
       <StaticStepContent step={step} />
     </PlayerReadScene>
   );

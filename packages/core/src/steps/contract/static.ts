@@ -1,38 +1,43 @@
 import { z } from "zod";
+import { stepImageSchema } from "./image";
 import { staticStoryIntroContentSchema, staticStoryOutcomeContentSchema } from "./story";
 
-const staticTextContentSchema = z
-  .object({
-    text: z.string(),
-    title: z.string(),
-    variant: z.literal("text"),
-  })
-  .strict();
+/**
+ * Static steps are the readable teaching surface for explanation and custom
+ * activities. They can optionally carry a generated illustration so the player
+ * can render text and image together inside one step instead of splitting them
+ * across separate rows.
+ */
+function withOptionalImage<TSchema extends z.ZodRawShape>(shape: TSchema) {
+  return z.object({ ...shape, image: stepImageSchema.optional() }).strict();
+}
 
-const staticGrammarExampleContentSchema = z
-  .object({
-    highlight: z.string(),
-    romanization: z.string().min(1).nullable(),
-    sentence: z.string(),
-    translation: z.string(),
-    variant: z.literal("grammarExample"),
-  })
-  .strict();
+const staticTextContentSchema = withOptionalImage({
+  text: z.string(),
+  title: z.string(),
+  variant: z.literal("text"),
+});
 
-const staticGrammarRuleContentSchema = z
-  .object({
-    ruleName: z.string(),
-    ruleSummary: z.string(),
-    variant: z.literal("grammarRule"),
-  })
-  .strict();
+const staticGrammarExampleContentSchema = withOptionalImage({
+  highlight: z.string(),
+  romanization: z.string().min(1).nullable(),
+  sentence: z.string(),
+  translation: z.string(),
+  variant: z.literal("grammarExample"),
+});
+
+const staticGrammarRuleContentSchema = withOptionalImage({
+  ruleName: z.string(),
+  ruleSummary: z.string(),
+  variant: z.literal("grammarRule"),
+});
 
 export const staticContentSchema = z.discriminatedUnion("variant", [
   staticTextContentSchema,
   staticGrammarExampleContentSchema,
   staticGrammarRuleContentSchema,
-  staticStoryIntroContentSchema,
-  staticStoryOutcomeContentSchema,
+  withOptionalImage(staticStoryIntroContentSchema.shape),
+  withOptionalImage(staticStoryOutcomeContentSchema.shape),
 ]);
 
 export type StaticStepContent = z.infer<typeof staticContentSchema>;

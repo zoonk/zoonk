@@ -229,18 +229,6 @@ checksums:
     Blank%20%7Bposition%7D%3A%20%7Bitem%7D.%20%7Bresult%7D./singular: c64e721cdd1e4cc48eff9f9690f1fc6b
     Blank%20%7Bposition%7D%3A%20%7Bitem%7D.%20Tap%20to%20remove./singular: d7ab9b86256fae5fbb5187fe718afe0b
     Correct%20answer%3A%20%7Banswer%7D/singular: 7745b2664e841dffff4568203ee443b2
-    Translation/singular: 9276816e7bc1a6ff00f388faa0863986
-    Listening/singular: 9e680c44cd88a178b953349ed8881ef2
-    Story/singular: fabac3f62af801d429e2cd7115bf14c9
-    Explanation/singular: f6b595df4ffb1a5b0cbbe1dda5993522
-    Practice/singular: ea10afa88a3687e6c40d1bfb3e0f4f20
-    Vocabulary/singular: 2c8127af4c194fa05463e82d5e414c62
-    Reading/singular: 9d93f1dff4a01a9e1566f23b401b8868
-    Quiz/singular: 22bce287f7a90d3b41b418108eaab43b
-    Grammar/singular: 1d97aca351a45df1d6eb27adbee04832
-    Review/singular: 299f75db25382980b2895622d7712927
-    Investigation/singular: 89bc005c971ce9ded2848561258095d8
-    Activity/singular: 1948763de8e531483a798b68195e297e
     Answer%20feedback/singular: 9ec80a1e5b591c3d6c790b8d43266c0f
     Evidence%20complete%20%E2%80%94%20time%20to%20make%20your%20call./singular: 6f1a545162b4f3799dab45247dfc5f35
     Weak%20signal/singular: 19b95e7dfa1cb1c1f257f1812720859f
@@ -283,10 +271,18 @@ checksums:
     Not%20quite/singular: e570085e69662802acf485c4565e3e3e
     Good%2C%20but.../singular: b9c6fc59b943221a2eb6aa1bce74af43
     Correct!/singular: dda1a98dc04fd9db252887ecf1765d41
-    Visual%20content/singular: 38b0261c39ebe4d775867363482225d8
-    Legend/singular: 3b588fbd2fe35ded6ca38334e15400c3
-    Diagram/singular: e0bc1ef7782cb0d749c9582da6775175
-    Timeline/singular: 342b1e646f0634e47112092db1a24f49
+    Vocabulary/singular: 2c8127af4c194fa05463e82d5e414c62
+    Translation/singular: 9276816e7bc1a6ff00f388faa0863986
+    Listening/singular: 9e680c44cd88a178b953349ed8881ef2
+    Story/singular: fabac3f62af801d429e2cd7115bf14c9
+    Explanation/singular: f6b595df4ffb1a5b0cbbe1dda5993522
+    Practice/singular: ea10afa88a3687e6c40d1bfb3e0f4f20
+    Reading/singular: 9d93f1dff4a01a9e1566f23b401b8868
+    Quiz/singular: 22bce287f7a90d3b41b418108eaab43b
+    Grammar/singular: 1d97aca351a45df1d6eb27adbee04832
+    Review/singular: 299f75db25382980b2895622d7712927
+    Investigation/singular: 89bc005c971ce9ded2848561258095d8
+    Activity/singular: 1948763de8e531483a798b68195e297e
     Green/singular: 482ff383a4258357ba404f283682471d
     Yellow/singular: 15d533755d35af887dfa584975549fda
     Red/singular: bace0083b78cdb188523bc4abc7b55c6
@@ -474,6 +470,12 @@ checksums:
     Failed%20to%20update%20your%20profile.%20Please%20try%20again%20or%20contact%20hello%40zoonk.com/singular: bd7a0ae0d6061d6c480c3f85047b4342
     Save%20changes/singular: 53dd9f4f0a4accc822fa5c1f2f6d118a
     Your%20profile%20has%20been%20updated%20successfully!/singular: e0c2b89add5324306f5d7b7e0b38f670
+    Manage%20in%20App%20Store/singular: 152340e6c607f65377ff1589ffe3521e
+    Contact%20support/singular: 32a4dee2033635e334a5f4d34724e3e0
+    This%20subscription%20is%20managed%20by%20Zoonk.%20Contact%20support%20if%20you%20need%20help%20changing%20or%20canceling%20it./singular: 83e6be88ac50af35dbbf7f4e27ff17dc
+    Manage%20in%20Google%20Play/singular: 09298518a5a3812fce1f5e9d3ed5af12
+    This%20subscription%20is%20managed%20through%20the%20App%20Store.%20To%20change%20or%20cancel%20it%2C%20use%20Apple's%20subscription%20settings./singular: 19690ddae82b88994eeb69d1b1f2733e
+    This%20subscription%20is%20managed%20through%20Google%20Play.%20To%20change%20or%20cancel%20it%2C%20use%20Google%20Play./singular: 826b644f8a3928f57fd10f8210295eeb
     Compare%20plans%20and%20manage%20your%20subscription./singular: 91697440112212fb005c401f3f09ce55
     Compare%20plans%20and%20manage%20your%20Zoonk%20subscription.%20See%20pricing%2C%20switch%20plans%2C%20or%20update%20billing./singular: bb91a0c0ed2b8edc2433123a61dfb96f
     Upgrade%20to%20%7Bplan%7D/singular: 5b209bc2780222a04aa65972a03599c5
@@ -495,6 +497,7 @@ checksums:
     Personalized%20lessons%2C%20smartest%20AI/singular: dd47be03b3e0ac3cfc5fa4ee6e5c7385
     Pro/singular: 682b3c9feab30112b4454cb5bb7974b1
     Limited%20lessons%20with%20ads/singular: 097a2f4c222453a4c31f04cc1cee1532
+    Current%20billing%20period%20ends%20on%20%7Bdate%7D./singular: dbcc0f65f036810277efd909586412a6
     Share%20feedback%2C%20ask%20questions%2C%20or%20get%20help%20with%20your%20account%20and%20courses./singular: 2d00ecd0a071929acb727e7562739fb0
     Connect%20with%20the%20community%20and%20get%20answers/singular: ddbaaadbe1d98d93c6ceb40231559402
     GitHub%20Discussions/singular: ac9e45aca17511aa133bbae5f13bcf18
@@ -523,26 +526,25 @@ checksums:
     Making%20it%20clear.../singular: 1ed081f030c3683c04585adc47488b17
     Wrapping%20things%20up.../singular: c6343ae3437b730bc961c2a319a617e7
     Connecting%20choices%20to%20concepts.../singular: 671d2ecd83a2a4d11730f2d8ff6e2015
+    Planning%20each%20image.../singular: 852bdee6fd98378755805af15110fe52
     Getting%20answer%20options%20ready.../singular: d37e6efe3c82d8ddee1e3b1f537ed4f5
     Getting%20ready%20for%20the%20next%20step.../singular: 44d64fd2747ac6b2d6e5beb1538a0c1f
     Getting%20everything%20ready.../singular: 8695db1d7ae8e0b7774c0a2b57a26e99
     Putting%20together%20the%20lesson.../singular: 928ff34048d45b6b52b94d2aecc02211
     Creating%20examples%20to%20try.../singular: 213697f83fdb307b6970c91d187763ec
     Designing%20practice%20exercises.../singular: 9f1ddddd3324e1586eb427a2c96ee399
-    Sketching%20out%20ideas.../singular: 26ec605c90c1c3b83e6d489330a8f623
-    Planning%20the%20layout.../singular: 034a73e1a9ece4ec350cbcd36dd16f99
+    Generating%20the%20images.../singular: 77f141e4203a1feb20e4bff8ec2d5260
     Adding%20more%20options.../singular: b1e8049193158e8334935d0d366ea537
     Almost%20done.../singular: 2937988598ae31bed9b52d2876980db4
     Adding%20some%20color.../singular: 80aec5cf210399ff202a166190660fa2
-    Creating%20the%20visual.../singular: 5aa4a567a20fc7f55e9624094b60bd70
     Building%20interactive%20tasks.../singular: cd08796577042526d8ac1ef9608480a7
     Setting%20the%20scene.../singular: 1d1dafcdd21594e1cbaac7f7e7973bad
     Preparing%20options.../singular: c4fcd4a9e3b72550c86c62e79d7e9408
-    Choosing%20the%20right%20style.../singular: 7c273483546943a1553fbc762646c079
     Thinking%20about%20what%20to%20illustrate.../singular: fe3a341a8fba909f02f4a26fb4510637
     Adding%20consequences.../singular: 1ab324dbe6d4d9b2bd3e846b6a990756
     Building%20the%20foundation.../singular: b8101b6b421f014348465a4842ed718e
     Preparing%20background%20context.../singular: 58e1f7945a362d5e67665efc67304f15
+    Planning%20the%20illustrations.../singular: ceffe72212c4d2a9b72748c8e9d47f41
     Saving%20vocabulary%20and%20grammar.../singular: 9f48bcf4386f791ddb51ceccc05af6f0
     Drawing%20an%20illustration.../singular: 5b6fbaeca062dc204a246839c499d5d4
     Building%20natural%20sentences.../singular: 92c13a96c696fbed730a9a0692a0221e
@@ -551,14 +553,11 @@ checksums:
     Creating%20your%20story.../singular: 234c96be1ed372c81ea7d27817f30a9a
     Writing%20fill-in-the-blanks.../singular: b3d5f34c982c68c1bfac3e03acfda523
     Checking%20what%20we%20need.../singular: 95e10b20508fe4531a247695871b7775
-    Building%20the%20graphic.../singular: fa41faecc354e826196d2137fb470864
     Crafting%20the%20content.../singular: c3cf56b8895a11aae6d11de3be5a5073
-    Working%20on%20the%20visuals.../singular: 21d3d631b915edf6c2c2c1882f387a12
-    Working%20on%20the%20details.../singular: f335012c5890f25d175c198f6e82b958
-    Rendering%20the%20visual.../singular: 0b33a8c0efa4863482aee2783cd7fe21
     Researching%20the%20topic.../singular: 54c9981da59b1efccfbba3c40bb1fdd5
     Crafting%20the%20outcomes.../singular: b009f6b2355e6fbe991570e478675c82
     Creating%20reading%20passages.../singular: 1f4ecba76f3c5421292dfb8e2bafbea9
+    Choosing%20the%20right%20scenes.../singular: ecc40ec16ba2d893375211d4b7490ab9
     Loading%20lesson%20data.../singular: 2c749f89c60b8ca01418fc23f4fea0e1
     Writing%20example%20sentences.../singular: 2402bca017d147a796b7f1bc47cf62e3
     Preparing%20the%20word%20bank.../singular: 87c5f53472bbc0e5120e338f491087ff
@@ -620,7 +619,6 @@ checksums:
     Selecting%20important%20terms.../singular: 74d7c5283c1071c3a5906260b01c72d4
     Detailing%20the%20word%20sounds.../singular: 75e4509b4a016e935d3bb7729aa932b2
     Adding%20pronunciation%20for%20each%20word.../singular: 436346889e0b93b3f16cecf518678f70
-    Creating%20illustrations/singular: 7e8a4a626e8d6c11753208628f00cbac
     Looking%20up%20words/singular: 3175ee5b66e9f68484b3ce3856d7b8a1
     Adding%20word%20pronunciation/singular: f5bbf4b6efb18872caa92df58f62d9c2
     Adding%20grammar%20romanization/singular: aec7227120d75a046352755b221cb078
@@ -638,13 +636,13 @@ checksums:
     Preparing%20the%20wrap-up/singular: 28cfda9388f052a4391705ec7ad01511
     Creating%20sentences/singular: a9f832408dd259bd6458708c84b34ff0
     Building%20word%20list/singular: 9a9b5271981383a36db347f286054e02
-    Preparing%20illustrations/singular: ebb0d8d739dd029c1ac7327ab6adf8b7
     Recording%20audio/singular: 528bf44d9d7b8a1c8be7ec526307a703
     Adding%20pronunciation/singular: f4a57ae308d27a1b5d4214f4cbf0370c
     Designing%20investigation%20paths/singular: acad6279b00df087d81fab9e3792a7dc
     Adding%20romanization/singular: e0b8ab2412f64db09f1d07b1ae3df80f
     Recording%20vocabulary%20audio/singular: aacb135ed225a0b5cc7854b25a2919c9
     Writing%20the%20content/singular: 8c98570945250d1750e3b95270cbecae
+    Planning%20the%20images/singular: 9888cf52074aa73e7e9fb499bfa1d064
     Preparing%20options/singular: 62f984059e903150a341e8775f897d84
     Writing%20the%20explanation/singular: 9019a6d759ed0983454bc40f281e6c45
     Create%20Chapter/singular: eff367b47e651ac3234f8b4655d5a078

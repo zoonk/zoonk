@@ -1,6 +1,5 @@
 import { randomUUID } from "node:crypto";
 import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
-import { assertStepContent } from "@zoonk/core/steps/contract/content";
 import { prisma } from "@zoonk/db";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
@@ -69,22 +68,15 @@ describe(saveCustomActivityStep, () => {
       { text: `Second step text ${id}`, title: `Second title ${id}` },
     ];
 
-    const visualRow = {
-      activityId,
-      content: assertStepContent("visual", {
-        kind: "image",
-        prompt: `A diagram showing ${id}`,
-        url: `/images/${id}.png`,
-      }),
-      isPublished: true as const,
-      kind: "visual" as const,
-      position: 1,
-    };
+    const images = [
+      { prompt: `A diagram showing ${id}`, url: `/images/${id}-1.png` },
+      { prompt: `A close-up showing ${id}`, url: `/images/${id}-2.png` },
+    ];
 
     await saveCustomActivityStep({
       activityId,
-      completedRows: [visualRow],
       contentSteps,
+      images,
       workflowRunId: "workflow-custom-1",
     });
 
@@ -98,16 +90,26 @@ describe(saveCustomActivityStep, () => {
       }),
     ]);
 
-    // 2 static steps at positions 0, 2 + 1 visual step at position 1
-    expect(steps).toHaveLength(3);
+    expect(steps).toHaveLength(2);
 
     expect(steps.map((step) => ({ kind: step.kind, position: step.position }))).toEqual([
       { kind: "static", position: 0 },
-      { kind: "visual", position: 1 },
-      { kind: "static", position: 2 },
+      { kind: "static", position: 1 },
     ]);
 
     expect(steps.every((step) => step.isPublished)).toBe(true);
+    expect(steps[0]?.content).toEqual({
+      image: images[0],
+      text: contentSteps[0]?.text,
+      title: contentSteps[0]?.title,
+      variant: "text",
+    });
+    expect(steps[1]?.content).toEqual({
+      image: images[1],
+      text: contentSteps[1]?.text,
+      title: contentSteps[1]?.title,
+      variant: "text",
+    });
 
     expect(dbActivity).toMatchObject({
       generationRunId: "workflow-custom-1",
@@ -130,8 +132,8 @@ describe(saveCustomActivityStep, () => {
 
     await saveCustomActivityStep({
       activityId: invalidActivityId,
-      completedRows: [],
       contentSteps: [{ text: "Step text", title: "Step title" }],
+      images: [{ prompt: "A step image", url: "https://example.com/image.webp" }],
       workflowRunId: "workflow-error",
     });
 

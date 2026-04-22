@@ -1,10 +1,7 @@
 import "server-only";
 import { isAdmin } from "@/lib/admin-guard";
-import {
-  REVIEW_TASK_TYPES,
-  type ReviewTaskType,
-  getVisualKindFromTaskType,
-} from "@/lib/review-utils";
+import { REVIEW_TASK_TYPES, type ReviewTaskType } from "@/lib/review-utils";
+import { parseStepContent } from "@zoonk/core/steps/contract/content";
 import { prisma } from "@zoonk/db";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { cache } from "react";
@@ -20,15 +17,26 @@ export const reviewedEntityIds = cache(async function reviewedEntityIds(
   return reviews.map((review) => review.entityId);
 });
 
-function countPendingStepVisual(kind: string, excludeIds: string[]): Promise<number> {
-  return prisma.step.count({
+function hasStepImage(content: unknown): boolean {
+  try {
+    return Boolean(parseStepContent("static", content).image?.url);
+  } catch {
+    return false;
+  }
+}
+
+async function countPendingStepImage(excludeIds: string[]): Promise<number> {
+  const steps = await prisma.step.findMany({
+    orderBy: { createdAt: "asc" },
+    select: { content: true },
     where: {
       NOT: { id: { in: excludeIds } },
       activity: { organization: { slug: AI_ORG_SLUG } },
-      content: { equals: kind, path: ["kind"] },
-      kind: "visual",
+      kind: "static",
     },
   });
+
+  return steps.filter((step) => hasStepImage(step.content)).length;
 }
 
 function countPendingWordAudio(excludeIds: string[]): Promise<number> {
@@ -55,11 +63,6 @@ export const countPendingForTask = cache(async function countPendingForTask(
   taskType: ReviewTaskType,
 ): Promise<number> {
   const excludeIds = await reviewedEntityIds(taskType);
-  const visualKind = getVisualKindFromTaskType(taskType);
-
-  if (visualKind) {
-    return countPendingStepVisual(visualKind, excludeIds);
-  }
 
   if (taskType === "courseSuggestions") {
     return prisma.searchPrompt.count({
@@ -68,6 +71,10 @@ export const countPendingForTask = cache(async function countPendingForTask(
         suggestions: { some: {} },
       },
     });
+  }
+
+  if (taskType === "stepImage") {
+    return countPendingStepImage(excludeIds);
   }
 
   if (taskType === "stepSelectImage") {

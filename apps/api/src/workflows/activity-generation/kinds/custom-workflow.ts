@@ -1,6 +1,6 @@
 import { generateCustomContentStep } from "../steps/generate-custom-content-step";
-import { generateCustomVisualContentStep } from "../steps/generate-custom-visual-content-step";
-import { generateCustomVisualDescriptionsStep } from "../steps/generate-custom-visuals-step";
+import { generateCustomImagePromptsStep } from "../steps/generate-custom-image-prompts-step";
+import { generateCustomStepImagesStep } from "../steps/generate-custom-step-images-step";
 import { type LessonActivity } from "../steps/get-lesson-activities-step";
 import { handleActivityFailureStep } from "../steps/handle-failure-step";
 import { saveCustomActivityStep } from "../steps/save-custom-activity-step";
@@ -28,11 +28,7 @@ async function markDroppedCustomActivitiesAsFailed(
 /**
  * Orchestrates custom activity generation with per-entity save.
  *
- * Flow: generateContent -> generateVisualDescriptions -> generateVisualContent -> save per entity.
- *
- * Visual descriptions (stage 1) select the best visual kind for each step.
- * Visual content (stage 2) dispatches to per-kind tasks in parallel,
- * including image generation for image kinds.
+ * Flow: generateContent -> generateImagePrompts -> generateStepImages -> save per entity.
  *
  * Each entity is independent — if one fails, others continue.
  * Only generates for custom activities in the activitiesToGenerate list.
@@ -56,25 +52,27 @@ export async function customActivityWorkflow({
 
   await markDroppedCustomActivitiesAsFailed(activitiesToGenerate, customContent);
 
-  const customDescriptions = await generateCustomVisualDescriptionsStep(
+  const customPrompts = await generateCustomImagePromptsStep(
     customActivitiesToGenerate,
     customContent,
   );
-  const customVisuals = await generateCustomVisualContentStep(
+  const customImages = await generateCustomStepImagesStep(
     customActivitiesToGenerate,
-    customDescriptions,
+    customPrompts,
   );
 
   await Promise.allSettled(
     customContent.map(async (contentResult) => {
-      const visualResult = customVisuals.find((vis) => vis.activityId === contentResult.activityId);
-      const completedRows = visualResult?.completedRows ?? [];
+      const imageResult = customImages.find(
+        (image) => image.activityId === contentResult.activityId,
+      );
+      const images = imageResult?.images ?? [];
 
       try {
         await saveCustomActivityStep({
           activityId: contentResult.activityId,
-          completedRows,
           contentSteps: contentResult.steps,
+          images,
           workflowRunId,
         });
       } catch {

@@ -66,8 +66,7 @@ export type PhaseName =
   | "addingWordPronunciation"
   | "writingExplanation"
   | "savingPrerequisites"
-  | "preparingVisuals"
-  | "creatingVisuals"
+  | "preparingImages"
   | "creatingImages"
   | "saving";
 
@@ -113,12 +112,11 @@ function toFullPhaseSteps(
     creatingExercises: EMPTY,
     creatingImages: EMPTY,
     creatingSentences: EMPTY,
-    creatingVisuals: EMPTY,
     designingActions: EMPTY,
     gatheringEvidence: EMPTY,
     gettingStarted: EMPTY,
     lookingUpWords: EMPTY,
-    preparingVisuals: EMPTY,
+    preparingImages: EMPTY,
     recordingAudio: EMPTY,
     recordingVocabularyAudio: EMPTY,
     recordingWordAudio: EMPTY,

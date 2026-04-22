@@ -12,18 +12,14 @@
     "typecheck": "tsgo --noEmit"
   },
   "dependencies": {
-    "@dagrejs/dagre": "3.0.0",
     "@dnd-kit/core": "catalog:",
     "@dnd-kit/sortable": "catalog:",
     "@dnd-kit/utilities": "catalog:",
     "@zoonk/core": "workspace:*",
     "@zoonk/ui": "workspace:*",
     "@zoonk/utils": "workspace:*",
-    "abcjs": "6.6.2",
-    "katex": "0.16.45",
     "react": "catalog:",
     "react-dom": "catalog:",
-    "shiki": "4.0.2",
     "web-haptics": "0.0.6"
   },
   "devDependencies": {

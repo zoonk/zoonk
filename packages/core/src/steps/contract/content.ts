@@ -14,7 +14,6 @@ import {
 import { type InvestigationStepContent, investigationContentSchema } from "./investigation";
 import { type StaticStepContent, staticContentSchema } from "./static";
 import { type StoryStepContent, storyContentSchema } from "./story";
-import { type VisualStepContent, visualStepContentSchema } from "./visual";
 
 export type { ActivityKind } from "@zoonk/db";
 export type {
@@ -31,7 +30,6 @@ export type {
 } from "./investigation";
 export type { StaticStepContent } from "./static";
 export type { StoryAlignment, StoryStaticVariant, StoryStepContent } from "./story";
-export type { VisualStepContent } from "./visual";
 
 const vocabularyContentSchema = z.object({}).strict();
 const translationContentSchema = z.object({}).strict();
@@ -50,7 +48,6 @@ const stepContentSchemas = {
   static: staticContentSchema,
   story: storyContentSchema,
   translation: translationContentSchema,
-  visual: visualStepContentSchema,
   vocabulary: vocabularyContentSchema,
 } as const;
 
@@ -73,7 +70,6 @@ export type StepContentByKind = {
   static: StaticStepContent;
   story: StoryStepContent;
   translation: TranslationStepContent;
-  visual: VisualStepContent;
   vocabulary: VocabularyStepContent;
 };
 
@@ -95,7 +91,6 @@ export function parseStepContent(kind: "sortOrder", content: unknown): SortOrder
 export function parseStepContent(kind: "static", content: unknown): StaticStepContent;
 export function parseStepContent(kind: "story", content: unknown): StoryStepContent;
 export function parseStepContent(kind: "translation", content: unknown): TranslationStepContent;
-export function parseStepContent(kind: "visual", content: unknown): VisualStepContent;
 export function parseStepContent(kind: "vocabulary", content: unknown): VocabularyStepContent;
 export function parseStepContent(
   kind: SupportedStepKind,
@@ -122,7 +117,6 @@ export function assertStepContent(kind: "sortOrder", content: unknown): SortOrde
 export function assertStepContent(kind: "static", content: unknown): StaticStepContent;
 export function assertStepContent(kind: "story", content: unknown): StoryStepContent;
 export function assertStepContent(kind: "translation", content: unknown): TranslationStepContent;
-export function assertStepContent(kind: "visual", content: unknown): VisualStepContent;
 export function assertStepContent(kind: "vocabulary", content: unknown): VocabularyStepContent;
 export function assertStepContent(
   kind: SupportedStepKind,

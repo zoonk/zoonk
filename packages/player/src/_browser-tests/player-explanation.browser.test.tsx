@@ -1,17 +1,24 @@
 import { describe, expect, test } from "vitest";
 import { page } from "vitest/browser";
+import { buildInlineImageUrl } from "../_test-utils/build-inline-image-url";
 import { buildSerializedActivity, buildSerializedStep } from "../_test-utils/player-test-data";
 import { buildAuthenticatedViewer } from "../_test-utils/player-test-viewer";
 import { renderPlayer } from "../_test-utils/render-player";
 
 describe("player browser integration: explanation activity flow", () => {
-  test("handles title-only hooks, body-only explanations, visuals, and predict checks in one flow", async () => {
+  test("handles title-only hooks, body-only explanations, step images, and predict checks in one flow", async () => {
     renderPlayer({
       activity: buildSerializedActivity({
         kind: "explanation",
         steps: [
           buildSerializedStep({
             content: {
+              image: {
+                prompt: "A wrapped network packet moving through layered labels",
+                url: buildInlineImageUrl({
+                  label: "A wrapped network packet moving through layered labels",
+                }),
+              },
               text: "",
               title: "Why doesn't the whole message travel as one blob?",
               variant: "text" as const,
@@ -20,25 +27,18 @@ describe("player browser integration: explanation activity flow", () => {
           }),
           buildSerializedStep({
             content: {
-              edges: [{ source: "message", target: "packet" }],
-              kind: "diagram",
-              nodes: [
-                { id: "message", label: "Message" },
-                { id: "packet", label: "Packet with labels" },
-              ],
-            },
-            id: "hook-visual",
-            kind: "visual",
-            position: 1,
-          }),
-          buildSerializedStep({
-            content: {
+              image: {
+                prompt: "Different network layers adding their own labels to the same payload",
+                url: buildInlineImageUrl({
+                  label: "Different network layers adding their own labels to the same payload",
+                }),
+              },
               text: "Each layer adds its own label so the next part of the network knows what job to do.",
               title: "",
               variant: "text" as const,
             },
             id: "hook-explanation",
-            position: 2,
+            position: 1,
           }),
           buildSerializedStep({
             content: {
@@ -59,16 +59,24 @@ describe("player browser integration: explanation activity flow", () => {
             },
             id: "predict-check",
             kind: "multipleChoice",
-            position: 3,
+            position: 2,
           }),
           buildSerializedStep({
             content: {
+              image: {
+                prompt:
+                  "A message reaching its destination after moving through several network hops",
+                url: buildInlineImageUrl({
+                  label:
+                    "A message reaching its destination after moving through several network hops",
+                }),
+              },
               text: "This is why apps like WhatsApp can send one message through many network hops without each hop needing the whole chat history.",
               title: "This is why",
               variant: "text" as const,
             },
             id: "anchor-step",
-            position: 4,
+            position: 3,
           }),
         ],
       }),
@@ -82,12 +90,15 @@ describe("player browser integration: explanation activity flow", () => {
         }),
       )
       .toBeInTheDocument();
-
-    await page.getByRole("button", { name: /next step/i }).click();
-    await expect.element(page.getByRole("figure", { name: /diagram/i })).toBeInTheDocument();
+    await expect
+      .element(page.getByAltText(/wrapped network packet moving through layered labels/i))
+      .toBeInTheDocument();
 
     await page.getByRole("button", { name: /next step/i }).click();
     await expect.element(page.getByText(/each layer adds its own label/i)).toBeInTheDocument();
+    await expect
+      .element(page.getByAltText(/different network layers adding their own labels/i))
+      .toBeInTheDocument();
 
     await page.getByRole("button", { name: /next step/i }).click();
     await expect
@@ -102,5 +113,12 @@ describe("player browser integration: explanation activity flow", () => {
 
     await expect.element(page.getByRole("heading", { name: "This is why" })).toBeInTheDocument();
     await expect.element(page.getByText(/whatsapp/i)).toBeInTheDocument();
+    await expect
+      .element(
+        page.getByAltText(
+          /message reaching its destination after moving through several network hops/i,
+        ),
+      )
+      .toBeInTheDocument();
   });
 });

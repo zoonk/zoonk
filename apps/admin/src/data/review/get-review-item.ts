@@ -21,7 +21,7 @@ export const getCourseSuggestionReview = cache(async function getCourseSuggestio
   });
 });
 
-export const getStepVisualReview = cache(async function getStepVisualReview(entityId: string) {
+export const getStepImageReview = cache(async function getStepImageReview(entityId: string) {
   if (!(await isAdmin())) {
     return null;
   }

@@ -2,28 +2,34 @@ import { getNextReviewItem } from "@/data/review/get-next-review-item";
 import {
   getCourseSuggestionReview,
   getSentenceAudioReview,
-  getStepVisualReview,
+  getStepImageReview,
   getWordAudioReview,
 } from "@/data/review/get-review-item";
-import { type ReviewTaskType, getTaskPath, getVisualKindFromTaskType } from "@/lib/review-utils";
+import { type ReviewTaskType, getTaskPath } from "@/lib/review-utils";
+import { parseStepContent } from "@zoonk/core/steps/contract/content";
 import { redirect } from "next/navigation";
 import { AudioReview } from "../../_components/content/audio-review";
 import { CourseSuggestionReview } from "../../_components/content/course-suggestion-review";
+import { StepImageReview } from "../../_components/content/step-image-review";
 import { StepSelectImageReview } from "../../_components/content/step-select-image-review";
-import { StepVisualImageReview } from "../../_components/content/step-visual-image-review";
 import { ReviewActions } from "../../_components/review-actions";
 import { ReviewEmpty } from "../../_components/review-empty";
 import { ReviewProgress } from "../../_components/review-progress";
 
 async function renderContent(taskType: ReviewTaskType, entityId: string) {
-  const visualKind = getVisualKindFromTaskType(taskType);
-
-  if (visualKind) {
-    const item = await getStepVisualReview(entityId);
+  if (taskType === "stepImage") {
+    const item = await getStepImageReview(entityId);
     if (!item) {
       return null;
     }
-    return <StepVisualImageReview item={item} />;
+
+    const content = parseStepContent("static", item.content);
+
+    if (!content.image) {
+      return null;
+    }
+
+    return <StepImageReview item={{ ...item, content: content.image }} />;
   }
 
   if (taskType === "courseSuggestions") {
@@ -32,7 +38,7 @@ async function renderContent(taskType: ReviewTaskType, entityId: string) {
   }
 
   if (taskType === "stepSelectImage") {
-    const item = await getStepVisualReview(entityId);
+    const item = await getStepImageReview(entityId);
     if (!item) {
       return null;
     }

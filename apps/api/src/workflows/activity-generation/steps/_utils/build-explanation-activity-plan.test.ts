@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { buildExplanationActivityPlan } from "./build-explanation-activity-plan";
+import { buildExplanationActivitySteps } from "./build-explanation-activity-plan";
 
 function buildContent() {
   return {
@@ -36,27 +36,11 @@ function buildContent() {
   };
 }
 
-describe(buildExplanationActivityPlan, () => {
-  test("builds the ordered learner flow from the narrative explanation content", () => {
-    const result = buildExplanationActivityPlan(buildContent());
+describe(buildExplanationActivitySteps, () => {
+  test("builds the ordered readable steps from the narrative explanation content", () => {
+    const result = buildExplanationActivitySteps(buildContent());
 
-    expect(result.entries.map((entry) => entry.kind)).toEqual([
-      "static",
-      "visual",
-      "static",
-      "visual",
-      "static",
-      "visual",
-      "static",
-      "visual",
-      "static",
-      "visual",
-      "static",
-      "visual",
-      "static",
-    ]);
-
-    expect(result.sourceSteps).toEqual([
+    expect(result).toEqual([
       {
         text: "You tap the heart on a photo. A moment later, it is red and the counter jumped from 42 to 43.",
         title: "O toque",

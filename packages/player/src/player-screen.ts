@@ -11,7 +11,7 @@ import { canNavigatePrev as getCanNavigatePrev } from "./step-navigation";
 
 type PlayerPrimaryActionKind = "begin" | "check" | "continue" | "startInvestigation";
 type PlayerPrimaryActionRun = "check" | "continue" | "navigateNext";
-type InPlayScreenScene = "choice" | "feedback" | "read" | "visual";
+type InPlayScreenScene = "choice" | "feedback" | "read";
 
 type PlayerBottomBarModel =
   | {

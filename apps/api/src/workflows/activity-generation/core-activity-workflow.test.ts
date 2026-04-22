@@ -4,7 +4,8 @@ import { generateActivityPractice } from "@zoonk/ai/tasks/activities/core/practi
 import { generateActivityQuiz } from "@zoonk/ai/tasks/activities/core/quiz";
 import { generateActivityStoryDebrief } from "@zoonk/ai/tasks/activities/core/story-debrief";
 import { generateActivityStorySteps } from "@zoonk/ai/tasks/activities/core/story-steps";
-import { generateStepVisualDescriptions } from "@zoonk/ai/tasks/steps/visual-descriptions";
+import { generateStepImagePrompts } from "@zoonk/ai/tasks/steps/image-prompts";
+import { parseStepContent } from "@zoonk/core/steps/contract/content";
 import { prisma } from "@zoonk/db";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
@@ -12,36 +13,28 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
-import { getString } from "@zoonk/utils/json";
 import { beforeAll, describe, expect, test, vi } from "vitest";
 import { activityGenerationWorkflow } from "./activity-generation-workflow";
-import { dispatchVisualContent } from "./steps/_utils/dispatch-visual-content";
+import { generateStepImages } from "./steps/_utils/generate-step-images";
 
-function createDescriptionsResult(
+function createPromptResult(
   steps: { title: string; text: string }[],
-): Awaited<ReturnType<typeof generateStepVisualDescriptions>> {
+): Awaited<ReturnType<typeof generateStepImagePrompts>> {
   return {
     data: {
-      descriptions: steps.map((step, index) =>
-        index === 0
-          ? { description: `A visual prompt for ${step.title}`, kind: "image" as const }
-          : { description: `A code snippet for ${step.title}`, kind: "code" as const },
-      ),
+      prompts: steps.map((step) => `A lesson illustration for ${step.title}`),
     },
     systemPrompt: "test",
-    usage: {} as Awaited<ReturnType<typeof generateStepVisualDescriptions>>["usage"],
+    usage: {} as Awaited<ReturnType<typeof generateStepImagePrompts>>["usage"],
     userPrompt: "test",
   };
 }
 
-function createDispatchResult(
-  descriptions: { kind: string; description: string }[],
-): Awaited<ReturnType<typeof dispatchVisualContent>> {
-  return descriptions.map((desc, index) =>
-    index === 0
-      ? { kind: "image", prompt: desc.description, url: "https://example.com/image.webp" }
-      : { annotations: null, code: "const x = 1;", kind: "code", language: "typescript" },
-  );
+function createImageResult(prompts: string[]): Awaited<ReturnType<typeof generateStepImages>> {
+  return prompts.map((prompt, index) => ({
+    prompt,
+    url: `https://example.com/core-step-image-${index}.webp`,
+  }));
 }
 
 function createExplanationResult(): Awaited<ReturnType<typeof generateActivityExplanation>> {
@@ -80,20 +73,19 @@ vi.mock("@zoonk/ai/tasks/activities/core/explanation", () => ({
   generateActivityExplanation: vi.fn().mockResolvedValue(createExplanationResult()),
 }));
 
-vi.mock("@zoonk/ai/tasks/steps/visual-descriptions", () => ({
-  generateStepVisualDescriptions: vi
+vi.mock("@zoonk/ai/tasks/steps/image-prompts", () => ({
+  generateStepImagePrompts: vi
     .fn()
     .mockImplementation(({ steps }: { steps: { title: string; text: string }[] }) =>
-      Promise.resolve(createDescriptionsResult(steps)),
+      Promise.resolve(createPromptResult(steps)),
     ),
 }));
 
-vi.mock("./steps/_utils/dispatch-visual-content", () => ({
-  dispatchVisualContent: vi
+vi.mock("./steps/_utils/generate-step-images", () => ({
+  generateStepImages: vi
     .fn()
-    .mockImplementation(
-      ({ descriptions }: { descriptions: { kind: string; description: string }[] }) =>
-        Promise.resolve(createDispatchResult(descriptions)),
+    .mockImplementation(({ prompts }: { prompts: string[] }) =>
+      Promise.resolve(createImageResult(prompts)),
     ),
 }));
 
@@ -290,7 +282,7 @@ describe("core activity workflow", () => {
       expect(generateActivityQuiz).toHaveBeenCalled();
     });
 
-    test("skips visuals if ALL DB steps already have visual data", async () => {
+    test("skips image prompt generation if completed steps already exist", async () => {
       const testLesson = await lessonFixture({
         chapterId: chapter.id,
         organizationId,
@@ -305,27 +297,24 @@ describe("core activity workflow", () => {
         title: `Exp With Visuals ${randomUUID()}`,
       });
 
-      await Promise.all([
-        stepFixture({
-          activityId: explanationActivity.id,
-          content: { text: "Step text", title: "Step", variant: "text" },
-          position: 0,
-        }),
-        stepFixture({
-          activityId: explanationActivity.id,
-          content: { kind: "image", prompt: "A prompt", url: "https://example.com/existing.webp" },
-          kind: "visual",
-          position: 1,
-        }),
-      ]);
+      await stepFixture({
+        activityId: explanationActivity.id,
+        content: {
+          image: { prompt: "A prompt", url: "https://example.com/existing.webp" },
+          text: "Step text",
+          title: "Step",
+          variant: "text",
+        },
+        position: 0,
+      });
 
       await activityGenerationWorkflow(testLesson.id);
 
       expect(generateActivityExplanation).not.toHaveBeenCalled();
-      expect(generateStepVisualDescriptions).not.toHaveBeenCalled();
+      expect(generateStepImagePrompts).not.toHaveBeenCalled();
     });
 
-    test("skips images if ALL image steps already have URLs", async () => {
+    test("skips step image generation if completed steps already have image URLs", async () => {
       const testLesson = await lessonFixture({
         chapterId: chapter.id,
         organizationId,
@@ -340,23 +329,20 @@ describe("core activity workflow", () => {
         title: `Exp With Images ${randomUUID()}`,
       });
 
-      await Promise.all([
-        stepFixture({
-          activityId: explanationActivity.id,
-          content: { text: "Step text", title: "Step", variant: "text" },
-          position: 0,
-        }),
-        stepFixture({
-          activityId: explanationActivity.id,
-          content: { kind: "image", prompt: "A prompt", url: "https://example.com/existing.webp" },
-          kind: "visual",
-          position: 1,
-        }),
-      ]);
+      await stepFixture({
+        activityId: explanationActivity.id,
+        content: {
+          image: { prompt: "A prompt", url: "https://example.com/existing.webp" },
+          text: "Step text",
+          title: "Step",
+          variant: "text",
+        },
+        position: 0,
+      });
 
       await activityGenerationWorkflow(testLesson.id);
 
-      expect(dispatchVisualContent).not.toHaveBeenCalled();
+      expect(generateStepImages).not.toHaveBeenCalled();
     });
 
     test("skips quiz content if quiz steps already exist in DB", async () => {
@@ -787,13 +773,21 @@ describe("core activity workflow", () => {
       expect(practiceSteps.length).toBeGreaterThan(0);
 
       for (const steps of [expSteps]) {
-        const imageSteps = steps.filter(
-          (step) => step.kind === "visual" && getString(step.content, "kind") === "image",
-        );
-        expect(imageSteps.length).toBeGreaterThan(0);
+        const illustratedSteps = steps.filter((step) => {
+          if (step.kind !== "static") {
+            return false;
+          }
 
-        for (const step of imageSteps) {
-          expect(step.content).toEqual(expect.objectContaining({ url: expect.any(String) }));
+          return Boolean(parseStepContent("static", step.content).image?.url);
+        });
+        expect(illustratedSteps.length).toBeGreaterThan(0);
+
+        for (const step of illustratedSteps) {
+          expect(step.content).toEqual(
+            expect.objectContaining({
+              image: expect.objectContaining({ url: expect.any(String) }),
+            }),
+          );
         }
       }
     });
