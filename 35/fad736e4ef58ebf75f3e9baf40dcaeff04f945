@@ -1,0 +1,185 @@
+apps/evals/src/app/step-image-test/page.tsx
+  70cdecb1782483b0 1-11,13,15-21,23-35
+apps/api/src/workflows/activity-generation/steps/generate-explanation-image-prompts-step.ts
+  70cdecb1782483b0 2,8-11,13,16,20,23-24,27,37,40,42
+apps/admin/src/app/(private)/review/[group]/[task]/[entityId]/_actions/step-image.ts
+  70cdecb1782483b0 13,30,54-55,57
+apps/evals/src/app/step-image-test/form.tsx
+  70cdecb1782483b0 3-27,29,32-42,46-77
+packages/player/src/player-selectors.ts
+  70cdecb1782483b0 224,232-233,238-247
+apps/main/messages/pt.po
+  70cdecb1782483b0 1790-1794,1830-1832,1884-1888,1949-1953,2378-2381
+apps/api/src/workflows/activity-generation/steps/generate-explanation-step-images-step.ts
+  70cdecb1782483b0 2,4,8-10,12,14-15,19,21-23,26,29,32,34
+packages/core/src/steps/contract/static.ts
+  70cdecb1782483b0 2,5-13,15-19,21-33,39-40
+apps/api/src/workflows/activity-generation/custom-activity-workflow.test.ts
+  70cdecb1782483b0 3,12,14,16,19,22,27-31,95-96,99,103-104,106-107
+apps/api/src/workflows/activity-generation/steps/save-custom-activity-step.test.ts
+  70cdecb1782483b0 71-74,79,93,97,101-112,136
+apps/main/src/lib/generation/phase-kind-steps/explanation.ts
+  70cdecb1782483b0 9-10,14,16,31-32
+packages/ai/src/tasks/steps/step-image-prompts.ts
+  70cdecb1782483b0 4-5,7-10,13-15,17-21,23-27,29,36-38,40-44,46,50-61,67,73
+apps/api/src/workflows/activity-generation/kinds/explanation-workflow.ts
+  70cdecb1782483b0 8-9,65,68,71,111,116-117,121-122
+apps/admin/src/app/(private)/review/_components/content/step-image-review.tsx
+  70cdecb1782483b0 1-3,5-8,10-15,17-21,23-25,27-30,33-42,45-46
+apps/api/src/workflows/activity-generation/steps/generate-custom-image-prompts-step.ts
+  70cdecb1782483b0 1-8,10,14-15,17-22,25-32,34-35,38,42-43,45-53,55,57,59-61,63-68,70-72,74-76,78-79
+apps/api/src/workflows/activity-generation/steps/_utils/generate-step-images.ts
+  70cdecb1782483b0 1-2,4-14,17-18,21,25-27,29,31-51
+apps/main/src/lib/generation/phase-kind-steps/custom.ts
+  70cdecb1782483b0 9-10,14,16,28-29
+packages/player/src/components/step-image.tsx
+  70cdecb1782483b0 3,6,8,16-21,24-25,30,33-35
+apps/api/src/workflows/activity-generation/steps/save-custom-activity-step.ts
+  70cdecb1782483b0 2,6,12,14-15,20,25,34-42,46
+apps/admin/src/data/stats/ai/_utils/ai-cost-estimate-constants.ts
+  70cdecb1782483b0 13
+apps/main/src/lib/generation/activity-generation-phase-config.ts
+  70cdecb1782483b0 69,119
+packages/player/src/player-selectors.test.ts
+  70cdecb1782483b0 421,426-431,439,483-488,493-498,503-508,513-518,528-530,539-544,549-555,562-567,575,579,584,589,604-609,647-652,660
+apps/admin/src/app/(private)/review/[group]/[task]/[entityId]/flagged-item-content.tsx
+  70cdecb1782483b0 4,7,13,67-68,74,76,80-82,86
+apps/api/src/workflows/activity-generation/steps/_utils/build-static-step-records.test.ts
+  70cdecb1782483b0 2,4-10,15-16,18-25,28-59,62-72
+apps/evals/src/tasks/activity-explanation/test-cases.ts
+  70cdecb1782483b0 31,54
+apps/api/src/workflows/activity-generation/activity-generation-workflow.test.ts
+  70cdecb1782483b0 5,14,16,18,21,24,29-33,72-73,76,80-81,83-84
+apps/admin/src/data/stats/ai/ai-task-catalog.ts
+  h_1cda88fc21fe9c 139-140,143,147-148,231-232
+apps/main/src/lib/generation/activity-generation-phase-weights.ts
+  70cdecb1782483b0 22,98,100,109,111,162,164
+packages/db/src/prisma/seed/steps.ts
+  70cdecb1782483b0 24-27,36-39,48-51,60-63,72-75,83,86-89,97,100-103,111,114-118,126,129-132,143-146,154,157-160,168,171-174,182,185-188,196,199-202,210,213-216
+apps/main/src/app/generate/a/[id]/use-phase-labels.ts
+  70cdecb1782483b0 27
+apps/api/src/workflows/activity-generation/steps/generate-explanation-content-step.ts
+  70cdecb1782483b0 5,14,50,52-53,59
+packages/ai/src/tasks/lessons/lesson-core-activities.prompt.md
+  70cdecb1782483b0 5
+packages/player/src/player-screen.ts
+  70cdecb1782483b0 14
+packages/ai/src/tasks/activities/core/activity-explanation.prompt.md
+  70cdecb1782483b0 74,78,163
+apps/api/src/workflows/activity-generation/kinds/explanation-workflow.test.ts
+  70cdecb1782483b0 4,12,20,22,25,28,33-39,76-77,80,84-85,87-88,111,147,149,154-157,162-166,171-175,189,208-211,215,218-224,323-324,328,330,338,412,451-452
+apps/api/src/workflows/activity-generation/steps/generate-custom-image-prompts-step.test.ts
+  70cdecb1782483b0 1-10,12,14-24,26-28,30-32,34-36,38-41,43-46,50-51,54-58,61-67,70-71,73-78,80-81,84-91,94-98,101-107,110,112-114,117-121,124-130,133-134,136-141,144-148,151-157,160-161,163-164,167-178,181-195,197-223,225-228
+apps/main/messages/en.po
+  70cdecb1782483b0 1790-1794,1830-1832,1884-1888,1949-1953,2378-2381
+apps/main/messages/es.po
+  70cdecb1782483b0 1790-1794,1830-1832,1884-1888,1949-1953,2378-2381
+apps/admin/src/data/stats/ai/_utils/build-ai-lesson-cost-estimates.ts
+  70cdecb1782483b0 14,25-26,81,84,133,146,175,178,188
+apps/api/src/workflows/activity-generation/steps/_utils/build-static-step-records.ts
+  70cdecb1782483b0 1-43
+apps/main/src/lib/generation-phases.test.ts
+  70cdecb1782483b0 226
+packages/core/src/steps/contract/image.test.ts
+  70cdecb1782483b0 2,4-23,27,29-30,32
+apps/admin/src/data/stats/ai/_utils/ai-cost-estimate-types.ts
+  70cdecb1782483b0 48,79
+apps/api/src/workflows/activity-generation/core-activity-workflow.test.ts
+  70cdecb1782483b0 7-8,18,20,22,25,28,33-37,76-77,80,84-85,87-88,285,300-309,314,317,332-341,345,776-790
+apps/admin/src/data/review/get-review-item.ts
+  70cdecb1782483b0 24
+packages/ai/src/tasks/steps/step-content-image.ts
+  h_1cda88fc21fe9c 1-5,7-8,10-12,14-15,17-18,21-22,25-39,41-44,46
+packages/player/src/_browser-tests/player-static.browser.test.tsx
+  70cdecb1782483b0 81-111
+packages/player/src/image-config.ts
+  70cdecb1782483b0 2,6
+packages/ai/package.json
+  70cdecb1782483b0 41-43
+apps/admin/src/app/(private)/review/[group]/[task]/[entityId]/step-image-edit.tsx
+  70cdecb1782483b0 3-5,7-16,19-22,24-35
+apps/admin/src/data/stats/ai/_utils/ai-cost-estimate-helpers.ts
+  70cdecb1782483b0 7,10,105-107,109,119-127,193-196,198,202
+apps/api/src/workflows/activity-generation/steps/_utils/build-explanation-activity-plan.ts
+  70cdecb1782483b0 5-8,10
+apps/api/src/workflows/activity-generation/steps/save-explanation-activity-step.ts
+  70cdecb1782483b0 2,6-7,11-14,18-19,23-24,34
+apps/evals/src/app/page.tsx
+  70cdecb1782483b0 64-67,71
+packages/ai/src/tasks/steps/step-content-image.prompt.md
+  h_1cda88fc21fe9c 1-9
+apps/admin/src/data/stats/ai/_utils/get-ai-cost-estimate-structure.ts
+  70cdecb1782483b0 4,7,29,33,42,186,188-189,191,195,197,204-205,214,219
+apps/api/src/workflows/activity-generation/steps/generate-custom-step-images-step.test.ts
+  70cdecb1782483b0 1-46,50-58,60-97,100-113,115-120,123-136,138-147,150-163,165-187,190-194,196-240
+packages/player/src/_browser-tests/player-explanation.browser.test.tsx
+  70cdecb1782483b0 8,15-18,27-30,36,57,61-65,71,85-87,91-93,108-114
+packages/core/src/workflows/steps.ts
+  70cdecb1782483b0 99-100
+apps/main/src/app/generate/a/[id]/phase-thinking-generators/content.ts
+  70cdecb1782483b0 7,46,73,77-79
+packages/player/src/components/step-image-preloader.tsx
+  70cdecb1782483b0 5,26
+packages/core/package.json
+  70cdecb1782483b0 53,56
+packages/player/src/player-step-behavior.ts
+  70cdecb1782483b0 21,245
+apps/admin/src/data/review/get-next-review-item.ts
+  70cdecb1782483b0 3-4,17-24,45-58,123-124
+apps/api/src/workflows/activity-generation/steps/save-explanation-activity-step.test.ts
+  70cdecb1782483b0 62-64,70,75-82,87-88,102,106,110-115,117-126,156-157
+apps/api/src/workflows/activity-generation/steps/_utils/build-explanation-activity-plan.test.ts
+  70cdecb1782483b0 2,39-41,43
+packages/player/src/components/static-step.tsx
+  70cdecb1782483b0 14,18-29,119-120,122-127
+packages/core/src/steps/contract/image.ts
+  70cdecb1782483b0 4-7,9,11-12,16
+packages/ai/src/tasks/steps/step-image-prompts.prompt.md
+  70cdecb1782483b0 8,12,17,19,24-27,29,38,40
+  h_1cda88fc21fe9c 1-7,9-11,13-16,18,20-23,28,30-37,39
+apps/admin/src/app/(private)/review/[group]/[task]/review-queue.tsx
+  70cdecb1782483b0 5,8-9,13,20-21,25-32,41
+apps/api/src/workflows/activity-generation/kinds/custom-workflow.test.ts
+  70cdecb1782483b0 3,11,15,17,20,23,28-32,46-47,50,54-55,57-58,99,127,130-133,141-144,149
+apps/api/src/workflows/activity-generation/steps/_utils/generate-step-images.test.ts
+  70cdecb1782483b0 2,4-5,8-9,12-24,26-27,30-34,36-37,39,41-42,47,53,55,60-63,66-71
+packages/core/src/steps/step-content-image.ts
+  h_1cda88fc21fe9c 1-55
+apps/main/src/lib/generation/activity-generation-phases.ts
+  70cdecb1782483b0 51
+apps/api/src/workflows/activity-generation/kinds/custom-workflow.ts
+  70cdecb1782483b0 2-3,31,55,59,61,66-69,75
+apps/admin/src/lib/review-utils.ts
+  70cdecb1782483b0 6,21-25
+apps/admin/src/data/review/count-pending-reviews.ts
+  70cdecb1782483b0 3-4,20-31,35,38-39,76-77
+apps/api/src/workflows/activity-generation/steps/generate-custom-step-images-step.ts
+  70cdecb1782483b0 2,5-6,9,11,15,18,20-23,26,29,32,36,39,41-42,45,51,54-56,59-60,63-64,70
+apps/evals/src/app/step-image-test/actions.ts
+  70cdecb1782483b0 1,3-5,7-8,10-11,14-17,20-22,25
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.2",
+  "base_commit_sha": "35fad736e4ef58ebf75f3e9baf40dcaeff04f945",
+  "prompts": {
+    "70cdecb1782483b0": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019db685-c83b-7062-9b78-7e9fee565368",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 2271,
+      "total_deletions": 7644,
+      "accepted_lines": 2217,
+      "overriden_lines": 1
+    }
+  },
+  "humans": {
+    "h_1cda88fc21fe9c": {
+      "author": "ceolinwill"
+    }
+  }
+}
