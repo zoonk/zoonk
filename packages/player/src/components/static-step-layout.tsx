@@ -30,7 +30,7 @@ export function StaticStepLayout({
       </div>
 
       <div
-        className="shrink-0 px-4 pt-3 pb-4 sm:px-6 sm:pb-6 lg:flex lg:min-h-0 lg:items-center lg:px-10 lg:py-6"
+        className="min-h-0 overflow-y-auto overscroll-contain px-4 pt-3 pb-4 sm:px-6 sm:pb-6 lg:flex lg:items-center lg:px-10 lg:py-6"
         data-slot="static-step-copy"
       >
         <div className="mx-auto w-full max-w-2xl">{children}</div>

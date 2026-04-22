@@ -1,6 +1,6 @@
 "use client";
 
-import { type TouchEvent, useRef } from "react";
+import { type TouchEvent, useEffect, useRef } from "react";
 import { NavigableStepLayout } from "./step-layouts";
 
 const SWIPE_DISTANCE_THRESHOLD = 48;
@@ -244,6 +244,19 @@ export function SwipeNavigableStepLayout({
     globalThis.addEventListener("touchend", handleWindowTouchEnd, { passive: true });
     globalThis.addEventListener("touchcancel", handleWindowTouchCancel, { passive: true });
   }
+
+  /**
+   * Gesture listeners are attached to `window` so fast swipes still resolve
+   * even if the finger leaves the player bounds. They must be removed when the
+   * component unmounts so a torn-down step cannot keep stale handlers alive.
+   */
+  useEffect(
+    () => () => {
+      detachWindowTouchListeners();
+      resetSwipeGesture();
+    },
+    [],
+  );
 
   return (
     <NavigableStepLayout onTouchStart={handleTouchStart}>
