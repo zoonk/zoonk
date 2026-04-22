@@ -1,0 +1,30 @@
+packages/player/src/components/static-step-layout.tsx
+  h_1cda88fc21fe9c 33
+packages/player/src/components/swipe-navigable-step-layout.tsx
+  f5433ab67e86327b 3,248-259
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.2",
+  "base_commit_sha": "53a4dc007eb0f6845a8cba8d6acce2fbcb74758c",
+  "prompts": {
+    "f5433ab67e86327b": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019db6ec-cc2c-7830-90b3-423d8e22e6da",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 14,
+      "total_deletions": 1,
+      "accepted_lines": 14,
+      "overriden_lines": 0
+    }
+  },
+  "humans": {
+    "h_1cda88fc21fe9c": {
+      "author": "ceolinwill"
+    }
+  }
+}
