@@ -5,6 +5,7 @@ import {
   getCurrentStep,
   getSelectedAnswer,
 } from "../player-selectors";
+import { describePlayerStep } from "../player-step";
 import { CompletionScreenContent } from "./completion-screen";
 import { FeedbackScreenContent } from "./feedback-screen";
 import { StepActionButton } from "./step-action-button";
@@ -33,6 +34,19 @@ function DesktopInlineAction() {
  */
 function usesDesktopInlineAction(screen: ReturnType<typeof usePlayerRuntime>["screen"]) {
   return screen.kind !== "completed" && screen.bottomBar?.kind === "primaryAction";
+}
+
+/**
+ * Image-led multiple-choice practice steps own their desktop action placement.
+ *
+ * Those scenes need the button inside the right-hand decision column so the
+ * artifact, question, options, and action read as one compact unit. The global
+ * desktop action slot still serves every other primary-action screen.
+ */
+function usesEmbeddedDesktopAction(step: ReturnType<typeof getCurrentStep>) {
+  const descriptor = describePlayerStep(step);
+
+  return descriptor?.kind === "multipleChoice" && Boolean(descriptor.content.image);
 }
 
 export function StageContent() {
@@ -65,7 +79,8 @@ export function StageContent() {
   }
 
   if (screen.kind === "step" && currentStep) {
-    const showInlineAction = usesDesktopInlineAction(screen);
+    const showInlineAction =
+      usesDesktopInlineAction(screen) && !usesEmbeddedDesktopAction(currentStep);
 
     const stepContent = (
       <StepRenderer

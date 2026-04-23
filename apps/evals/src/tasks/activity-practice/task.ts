@@ -8,7 +8,7 @@ import { TEST_CASES } from "./test-cases";
 
 export const activityPracticeTask: Task<ActivityPracticeParams, ActivityPracticeSchema> = {
   description:
-    "Generate a practice activity where learners solve problems through dialogue with a colleague",
+    "Generate a visual-first practice activity where learners solve real problems with a colleague",
   generate: generateActivityPractice,
   id: "activity-practice",
   name: "Activity Practice",

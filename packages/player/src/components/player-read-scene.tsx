@@ -1,4 +1,5 @@
 import { cn } from "@zoonk/ui/lib/utils";
+import { stripWrappingQuotes } from "./_utils/strip-wrapping-quotes";
 import { SectionLabel } from "./section-label";
 import { PlayerContentFrame } from "./step-layouts";
 
@@ -126,12 +127,14 @@ export function PlayerReadSceneTitle({
  * stay visually aligned, so the baseline body typography lives here.
  */
 export function PlayerReadSceneBody({ children }: { children: React.ReactNode }) {
+  const content = typeof children === "string" ? stripWrappingQuotes(children) : children;
+
   return (
     <p
       className="text-lg leading-relaxed sm:text-xl sm:leading-relaxed"
       data-slot="player-read-scene-body"
     >
-      {children}
+      {content}
     </p>
   );
 }

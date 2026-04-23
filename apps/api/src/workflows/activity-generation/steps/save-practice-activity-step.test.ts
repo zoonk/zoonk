@@ -25,6 +25,7 @@ vi.mock("workflow", () => ({
 }));
 
 const practiceScenario = {
+  imagePrompt: "Opening support desk scene with Maya and a refund dashboard",
   text: "I'm closing the support queue with Maya, and one customer report still does not line up with the refund totals.",
   title: "Night shift",
 };
@@ -49,6 +50,21 @@ describe(savePracticeActivityStep, () => {
     vi.clearAllMocks();
   });
 
+  const practiceImages = [
+    {
+      prompt: "Opening support desk scene with Maya and a refund dashboard",
+      url: "https://example.com/practice-scenario.webp",
+    },
+    {
+      prompt: "A refund dashboard filtered to discounted orders with one outlier row highlighted",
+      url: "https://example.com/practice-step-1.webp",
+    },
+    {
+      prompt: "A spreadsheet comparing manual discounts against refund totals",
+      url: "https://example.com/practice-step-2.webp",
+    },
+  ];
+
   test("saves multipleChoice steps and marks activity as completed", async () => {
     const lesson = await lessonFixture({
       chapterId: chapter.id,
@@ -68,6 +84,8 @@ describe(savePracticeActivityStep, () => {
     const steps: PracticeStep[] = [
       {
         context: "Context for question 1",
+        imagePrompt:
+          "A refund dashboard filtered to discounted orders with one outlier row highlighted",
         options: [
           { feedback: "Correct!", isCorrect: true, text: "Option A" },
           { feedback: "Incorrect.", isCorrect: false, text: "Option B" },
@@ -78,6 +96,7 @@ describe(savePracticeActivityStep, () => {
       },
       {
         context: "Context for question 2",
+        imagePrompt: "A spreadsheet comparing manual discounts against refund totals",
         options: [
           { feedback: "Incorrect.", isCorrect: false, text: "Option A" },
           { feedback: "Correct!", isCorrect: true, text: "Option B" },
@@ -90,6 +109,7 @@ describe(savePracticeActivityStep, () => {
 
     await savePracticeActivityStep({
       activityId: activity.id,
+      images: practiceImages,
       scenario: practiceScenario,
       steps,
       title: "The game store signup mix-up",
@@ -115,9 +135,36 @@ describe(savePracticeActivityStep, () => {
     ]);
 
     expect(dbSteps[0]?.content).toEqual({
+      image: practiceImages[0],
       text: practiceScenario.text,
       title: practiceScenario.title,
       variant: "text",
+    });
+
+    expect(dbSteps[1]?.content).toEqual({
+      context: "Context for question 1",
+      image: practiceImages[1],
+      kind: "core",
+      options: [
+        { feedback: "Correct!", isCorrect: true, text: "Option A" },
+        { feedback: "Incorrect.", isCorrect: false, text: "Option B" },
+        { feedback: "Incorrect.", isCorrect: false, text: "Option C" },
+        { feedback: "Incorrect.", isCorrect: false, text: "Option D" },
+      ],
+      question: steps[0]?.question,
+    });
+
+    expect(dbSteps[2]?.content).toEqual({
+      context: "Context for question 2",
+      image: practiceImages[2],
+      kind: "core",
+      options: [
+        { feedback: "Incorrect.", isCorrect: false, text: "Option A" },
+        { feedback: "Correct!", isCorrect: true, text: "Option B" },
+        { feedback: "Incorrect.", isCorrect: false, text: "Option C" },
+        { feedback: "Incorrect.", isCorrect: false, text: "Option D" },
+      ],
+      question: steps[1]?.question,
     });
 
     expect(dbActivity).toMatchObject({
@@ -129,11 +176,17 @@ describe(savePracticeActivityStep, () => {
     const events = getStreamedEvents(writeMock);
 
     expect(events).toContainEqual(
-      expect.objectContaining({ status: "started", step: "savePracticeActivity" }),
+      expect.objectContaining({
+        status: "started",
+        step: "savePracticeActivity",
+      }),
     );
 
     expect(events).toContainEqual(
-      expect.objectContaining({ status: "completed", step: "savePracticeActivity" }),
+      expect.objectContaining({
+        status: "completed",
+        step: "savePracticeActivity",
+      }),
     );
   });
 
@@ -159,6 +212,7 @@ describe(savePracticeActivityStep, () => {
     const steps: PracticeStep[] = [
       {
         context: "Context",
+        imagePrompt: "A dashboard with one highlighted mismatch",
         options: [
           { feedback: "Correct!", isCorrect: true, text: "Option A" },
           { feedback: "Incorrect.", isCorrect: false, text: "Option B" },
@@ -171,6 +225,7 @@ describe(savePracticeActivityStep, () => {
 
     await savePracticeActivityStep({
       activityId: activity.id,
+      images: practiceImages.slice(0, 2),
       scenario: practiceScenario,
       steps,
       title: "The game store signup mix-up",
@@ -180,7 +235,10 @@ describe(savePracticeActivityStep, () => {
     const events = getStreamedEvents(writeMock);
 
     expect(events).toContainEqual(
-      expect.objectContaining({ status: "error", step: "savePracticeActivity" }),
+      expect.objectContaining({
+        status: "error",
+        step: "savePracticeActivity",
+      }),
     );
   });
 });

@@ -8,20 +8,31 @@ import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { stepFixture } from "@zoonk/testing/fixtures/steps";
 import { beforeAll, describe, expect, test, vi } from "vitest";
+import { generateStepImages } from "../steps/_utils/generate-step-images";
 import { type ExplanationResult } from "../steps/generate-explanation-content-step";
 import { getLessonActivitiesStep } from "../steps/get-lesson-activities-step";
 import { practiceActivityWorkflow } from "./practice-workflow";
+
+function createImageResult(prompts: string[]) {
+  return prompts.map((prompt, index) => ({
+    prompt,
+    url: `https://example.com/practice-step-image-${index}.webp`,
+  }));
+}
 
 vi.mock("@zoonk/ai/tasks/activities/core/practice", () => ({
   generateActivityPractice: vi.fn().mockResolvedValue({
     data: {
       scenario: {
+        imagePrompt: "Opening support desk scene with Maya and a refund dashboard",
         text: "I'm closing the support queue with Maya, and one customer report still does not line up with the refund totals.",
         title: "Night shift",
       },
       steps: [
         {
           context: "Your colleague turns to you during a meeting...",
+          imagePrompt:
+            "A refund dashboard filtered to discounted orders with one outlier row highlighted",
           options: [
             { feedback: "Great choice!", isCorrect: true, text: "Option A" },
             { feedback: "Not quite.", isCorrect: false, text: "Option B" },
@@ -34,6 +45,14 @@ vi.mock("@zoonk/ai/tasks/activities/core/practice", () => ({
       title: "The game store signup mix-up",
     },
   }),
+}));
+
+vi.mock("../steps/_utils/generate-step-images", () => ({
+  generateStepImages: vi
+    .fn()
+    .mockImplementation(({ prompts }: { prompts: string[] }) =>
+      Promise.resolve(createImageResult(prompts)),
+    ),
 }));
 
 function buildExplanationResults(activityId: string): ExplanationResult[] {
@@ -89,7 +108,9 @@ describe("practice activity workflow", () => {
       title: `Practice ${randomUUID()}`,
     });
 
-    const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
+    const activities = await getLessonActivitiesStep({
+      lessonId: testLesson.id,
+    });
     const explanationResults = buildExplanationResults(expActivity.id);
 
     await practiceActivityWorkflow({
@@ -109,6 +130,10 @@ describe("practice activity workflow", () => {
     expect(steps[0]?.isPublished).toBe(true);
     expect(steps[0]?.kind).toBe("static");
     expect(steps[0]?.content).toEqual({
+      image: {
+        prompt: "Opening support desk scene with Maya and a refund dashboard",
+        url: "https://example.com/practice-step-image-0.webp",
+      },
       text: "I'm closing the support queue with Maya, and one customer report still does not line up with the refund totals.",
       title: "Night shift",
       variant: "text",
@@ -116,6 +141,10 @@ describe("practice activity workflow", () => {
     expect(steps[1]?.kind).toBe("multipleChoice");
     expect(steps[1]?.content).toEqual({
       context: "Your colleague turns to you during a meeting...",
+      image: {
+        prompt: "A refund dashboard filtered to discounted orders with one outlier row highlighted",
+        url: "https://example.com/practice-step-image-1.webp",
+      },
       kind: "core",
       options: [
         { feedback: "Great choice!", isCorrect: true, text: "Option A" },
@@ -151,7 +180,9 @@ describe("practice activity workflow", () => {
       title: `Practice ${randomUUID()}`,
     });
 
-    const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
+    const activities = await getLessonActivitiesStep({
+      lessonId: testLesson.id,
+    });
     const explanationResults = buildExplanationResults(expActivity.id);
 
     await practiceActivityWorkflow({
@@ -198,13 +229,59 @@ describe("practice activity workflow", () => {
       title: `Practice ${randomUUID()}`,
     });
 
-    const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
+    const activities = await getLessonActivitiesStep({
+      lessonId: testLesson.id,
+    });
     const explanationResults = buildExplanationResults(expActivity.id);
 
     await practiceActivityWorkflow({
       activitiesToGenerate: activities,
       allActivities: activities,
       explanationResults,
+      totalPractices: 1,
+      workflowRunId: "test-run-id",
+    });
+
+    const dbPractice = await prisma.activity.findFirst({
+      where: { kind: "practice", lessonId: testLesson.id },
+    });
+    expect(dbPractice?.generationStatus).toBe("failed");
+  });
+
+  test("sets practice status to 'failed' when step image generation throws", async () => {
+    vi.mocked(generateStepImages).mockRejectedValueOnce(new Error("Practice images failed"));
+
+    const testLesson = await lessonFixture({
+      chapterId: chapter.id,
+      concepts: ["Test Concept"],
+      organizationId,
+      title: `Practice Image Failure Lesson ${randomUUID()}`,
+    });
+
+    await activityFixture({
+      generationStatus: "completed",
+      kind: "explanation",
+      lessonId: testLesson.id,
+      organizationId,
+      title: "Test Concept",
+    });
+
+    await activityFixture({
+      generationStatus: "pending",
+      kind: "practice",
+      lessonId: testLesson.id,
+      organizationId,
+      title: `Practice ${randomUUID()}`,
+    });
+
+    const activities = await getLessonActivitiesStep({
+      lessonId: testLesson.id,
+    });
+
+    await practiceActivityWorkflow({
+      activitiesToGenerate: activities,
+      allActivities: activities,
+      explanationResults: buildExplanationResults("unused"),
       totalPractices: 1,
       workflowRunId: "test-run-id",
     });
@@ -231,7 +308,9 @@ describe("practice activity workflow", () => {
       title: `Practice ${randomUUID()}`,
     });
 
-    const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
+    const activities = await getLessonActivitiesStep({
+      lessonId: testLesson.id,
+    });
 
     await practiceActivityWorkflow({
       activitiesToGenerate: activities,
@@ -283,7 +362,9 @@ describe("practice activity workflow", () => {
       position: 0,
     });
 
-    const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
+    const activities = await getLessonActivitiesStep({
+      lessonId: testLesson.id,
+    });
     const explanationResults = buildExplanationResults(expActivity.id);
 
     await practiceActivityWorkflow({
@@ -360,12 +441,30 @@ describe("practice activity workflow", () => {
         }),
       ]);
 
-      const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
+      const activities = await getLessonActivitiesStep({
+        lessonId: testLesson.id,
+      });
       const explanationResults: ExplanationResult[] = [
-        { activityId: expS1.id, concept: "S1", steps: [{ text: "S1 text", title: "S1" }] },
-        { activityId: expS2.id, concept: "S2", steps: [{ text: "S2 text", title: "S2" }] },
-        { activityId: expS3.id, concept: "S3", steps: [{ text: "S3 text", title: "S3" }] },
-        { activityId: expS4.id, concept: "S4", steps: [{ text: "S4 text", title: "S4" }] },
+        {
+          activityId: expS1.id,
+          concept: "S1",
+          steps: [{ text: "S1 text", title: "S1" }],
+        },
+        {
+          activityId: expS2.id,
+          concept: "S2",
+          steps: [{ text: "S2 text", title: "S2" }],
+        },
+        {
+          activityId: expS3.id,
+          concept: "S3",
+          steps: [{ text: "S3 text", title: "S3" }],
+        },
+        {
+          activityId: expS4.id,
+          concept: "S4",
+          steps: [{ text: "S4 text", title: "S4" }],
+        },
       ];
 
       await practiceActivityWorkflow({
@@ -441,7 +540,9 @@ describe("practice activity workflow", () => {
         }),
       ]);
 
-      const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
+      const activities = await getLessonActivitiesStep({
+        lessonId: testLesson.id,
+      });
       const explanationResults: ExplanationResult[] = [
         {
           activityId: expH1A.id,
@@ -532,7 +633,9 @@ describe("practice activity workflow", () => {
         title: `Single Practice ${randomUUID()}`,
       });
 
-      const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
+      const activities = await getLessonActivitiesStep({
+        lessonId: testLesson.id,
+      });
       const explanationResults: ExplanationResult[] = [
         {
           activityId: expSA.id,
@@ -626,7 +729,9 @@ describe("practice activity workflow", () => {
         }),
       ]);
 
-      const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
+      const activities = await getLessonActivitiesStep({
+        lessonId: testLesson.id,
+      });
       const explanationResults: ExplanationResult[] = [
         {
           activityId: expSC1.id,
@@ -730,7 +835,9 @@ describe("practice activity workflow", () => {
       ]);
 
       // practice0 is completed → only practice1 in activitiesToGenerate
-      const allActivities = await getLessonActivitiesStep({ lessonId: testLesson.id });
+      const allActivities = await getLessonActivitiesStep({
+        lessonId: testLesson.id,
+      });
       const activitiesToGenerate = allActivities.filter((a) => a.id === practice1.id);
 
       const explanationResults: ExplanationResult[] = [
@@ -820,7 +927,9 @@ describe("practice activity workflow", () => {
         }),
       ]);
 
-      const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
+      const activities = await getLessonActivitiesStep({
+        lessonId: testLesson.id,
+      });
       const explanationResults: ExplanationResult[] = [
         {
           activityId: expOnly.id,

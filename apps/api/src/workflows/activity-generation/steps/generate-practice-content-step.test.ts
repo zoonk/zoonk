@@ -33,6 +33,7 @@ vi.mock("@zoonk/ai/tasks/activities/core/practice", () => ({
 }));
 
 const practiceScenario = {
+  imagePrompt: "Opening support desk scene with Maya and a refund dashboard",
   text: "I'm closing the support queue with Maya, and one customer report still does not line up with the refund totals.",
   title: "Night shift",
 };
@@ -78,6 +79,8 @@ describe(generatePracticeContentStep, () => {
     const practiceSteps = [
       {
         context: "Context 1",
+        imagePrompt:
+          "A refund dashboard filtered to discounted orders with one outlier row highlighted",
         options: [
           { feedback: "Correct!", isCorrect: true, text: "A" },
           { feedback: "Wrong", isCorrect: false, text: "B" },
@@ -240,6 +243,7 @@ describe(generatePracticeContentStep, () => {
         steps: [
           {
             context: "ctx",
+            imagePrompt: "A support dashboard with one suspicious refund highlighted",
             options: [{ feedback: "f", isCorrect: true, text: "t" }],
             question: "q",
           },

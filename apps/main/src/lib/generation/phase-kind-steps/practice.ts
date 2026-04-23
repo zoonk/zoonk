@@ -7,9 +7,11 @@ type PracticeSteps =
   | "setActivityAsRunning"
   | "generateExplanationContent"
   | "generatePracticeContent"
+  | "generateStepImages"
   | "savePracticeActivity";
 
 export const PRACTICE_PHASE_STEPS = {
+  creatingImages: ["generateStepImages"],
   gettingStarted: ["getLessonActivities", "setActivityAsRunning"],
   saving: ["savePracticeActivity"],
   writingContent: ["generatePracticeContent"],
@@ -24,5 +26,6 @@ export const PRACTICE_PHASE_ORDER: PhaseName[] = [
   "gettingStarted",
   "writingExplanation",
   "writingContent",
+  "creatingImages",
   "saving",
 ];

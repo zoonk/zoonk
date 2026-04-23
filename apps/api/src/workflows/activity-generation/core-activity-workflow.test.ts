@@ -93,12 +93,15 @@ vi.mock("@zoonk/ai/tasks/activities/core/practice", () => ({
   generateActivityPractice: vi.fn().mockResolvedValue({
     data: {
       scenario: {
+        imagePrompt: "Opening support desk scene with Maya and a refund dashboard",
         text: "I'm closing the support queue with Maya, and one customer report still does not line up with the refund totals.",
         title: "Night shift",
       },
       steps: [
         {
           context: "Your colleague turns to you during a meeting...",
+          imagePrompt:
+            "A refund dashboard filtered to discounted orders with one outlier row highlighted",
           options: [
             { feedback: "Great choice!", isCorrect: true, text: "Option A" },
             { feedback: "Not quite.", isCorrect: false, text: "Option B" },
@@ -129,8 +132,16 @@ vi.mock("@zoonk/ai/tasks/activities/core/quiz", () => ({
         {
           format: "selectImage",
           options: [
-            { feedback: "This is correct", isCorrect: true, prompt: "A cat sitting" },
-            { feedback: "This is incorrect", isCorrect: false, prompt: "A dog running" },
+            {
+              feedback: "This is correct",
+              isCorrect: true,
+              prompt: "A cat sitting",
+            },
+            {
+              feedback: "This is incorrect",
+              isCorrect: false,
+              prompt: "A dog running",
+            },
           ],
           question: "Which image shows a cat?",
         },
@@ -264,7 +275,11 @@ describe("core activity workflow", () => {
 
       await stepFixture({
         activityId: explanationActivity.id,
-        content: { text: "Existing Exp text", title: "Existing Exp", variant: "text" },
+        content: {
+          text: "Existing Exp text",
+          title: "Existing Exp",
+          variant: "text",
+        },
         position: 0,
       });
 
@@ -300,7 +315,10 @@ describe("core activity workflow", () => {
       await stepFixture({
         activityId: explanationActivity.id,
         content: {
-          image: { prompt: "A prompt", url: "https://example.com/existing.webp" },
+          image: {
+            prompt: "A prompt",
+            url: "https://example.com/existing.webp",
+          },
           text: "Step text",
           title: "Step",
           variant: "text",
@@ -332,7 +350,10 @@ describe("core activity workflow", () => {
       await stepFixture({
         activityId: explanationActivity.id,
         content: {
-          image: { prompt: "A prompt", url: "https://example.com/existing.webp" },
+          image: {
+            prompt: "A prompt",
+            url: "https://example.com/existing.webp",
+          },
           text: "Step text",
           title: "Step",
           variant: "text",
@@ -408,7 +429,11 @@ describe("core activity workflow", () => {
 
       await stepFixture({
         activityId: explanationActivity.id,
-        content: { text: "Explanation content", title: "Explanation", variant: "text" },
+        content: {
+          text: "Explanation content",
+          title: "Explanation",
+          variant: "text",
+        },
         position: 0,
       });
 

@@ -1,16 +1,20 @@
 import { findActivitiesByKind } from "../steps/_utils/find-activity-by-kind";
 import { getExplanationStepsForPractice } from "../steps/_utils/get-explanation-steps-for-practice";
+import { getPracticeImagePrompts } from "../steps/_utils/get-practice-image-prompts";
+import { generateActivityStepImagesStep } from "../steps/generate-activity-step-images-step";
 import { type ExplanationResult } from "../steps/generate-explanation-content-step";
 import { generatePracticeContentStep } from "../steps/generate-practice-content-step";
 import { type LessonActivity } from "../steps/get-lesson-activities-step";
+import { handleActivityFailureStep } from "../steps/handle-failure-step";
 import { savePracticeActivityStep } from "../steps/save-practice-activity-step";
 
 /**
  * Orchestrates practice activity generation.
  *
- * Flow per practice: generateContent -> save.
+ * Flow per practice: generateContent -> generateStepImages -> save.
  * Each practice is independent — if one fails, others continue.
- * The save step writes steps and marks the activity as completed.
+ * The save step writes the image-led scenario/question steps and marks the
+ * activity as completed.
  *
  * Iterates over ALL practice activities (from allActivities) to compute
  * the correct explanation slice per practice index. Only generates content
@@ -41,24 +45,34 @@ export async function practiceActivityWorkflow({
         return;
       }
 
-      const { activityId, scenario, steps, title } = await generatePracticeContentStep(
-        allActivities,
-        getExplanationStepsForPractice(explanationResults, practiceIndex, totalPractices),
-        workflowRunId,
-        practiceIndex,
-      );
+      try {
+        const { activityId, scenario, steps, title } = await generatePracticeContentStep(
+          allActivities,
+          getExplanationStepsForPractice(explanationResults, practiceIndex, totalPractices),
+          workflowRunId,
+          practiceIndex,
+        );
 
-      if (!activityId || !scenario || steps.length === 0 || !title) {
-        return;
+        if (!activityId || !scenario || steps.length === 0 || !title) {
+          return;
+        }
+
+        const { images } = await generateActivityStepImagesStep(
+          practice,
+          getPracticeImagePrompts({ scenario, steps }),
+        );
+
+        await savePracticeActivityStep({
+          activityId,
+          images,
+          scenario,
+          steps,
+          title,
+          workflowRunId,
+        });
+      } catch {
+        await handleActivityFailureStep({ activityId: practice.id });
       }
-
-      await savePracticeActivityStep({
-        activityId,
-        scenario,
-        steps,
-        title,
-        workflowRunId,
-      });
     }),
   );
 }

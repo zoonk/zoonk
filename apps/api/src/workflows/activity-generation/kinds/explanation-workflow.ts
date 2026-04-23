@@ -1,12 +1,12 @@
 import { getExistingContentSteps } from "../steps/_utils/content-step-helpers";
 import { findActivitiesByKind } from "../steps/_utils/find-activity-by-kind";
+import { generateActivityStepImagesStep } from "../steps/generate-activity-step-images-step";
 import {
   type ExplanationResult,
   type GeneratedExplanationResult,
   generateExplanationContentStep,
 } from "../steps/generate-explanation-content-step";
 import { generateExplanationImagePromptsStep } from "../steps/generate-explanation-image-prompts-step";
-import { generateExplanationStepImagesStep } from "../steps/generate-explanation-step-images-step";
 import { type LessonActivity } from "../steps/get-lesson-activities-step";
 import { handleActivityFailureStep } from "../steps/handle-failure-step";
 import { saveExplanationActivityStep } from "../steps/save-explanation-activity-step";
@@ -114,7 +114,7 @@ export async function explanationActivityWorkflow({
 
       try {
         const { prompts } = await generateExplanationImagePromptsStep(activity, result.steps);
-        const { images } = await generateExplanationStepImagesStep(activity, prompts);
+        const { images } = await generateActivityStepImagesStep(activity, prompts);
 
         await saveExplanationActivityStep({
           activityId: result.activityId,

@@ -1,5 +1,6 @@
 import {
   type StepContentImageParams,
+  type StepContentImagePreset,
   generateStepContentImage,
 } from "@zoonk/ai/tasks/steps/content-image";
 import { type SafeReturn } from "@zoonk/utils/error";
@@ -9,10 +10,10 @@ import { optimizeImage } from "../images/optimize-image";
 import { uploadImage } from "../images/upload-image";
 
 /**
- * Content-step illustrations share the same upload pipeline as quiz images,
- * but they use a different prompt template tuned for explanatory artwork.
- * Keeping that wrapper separate avoids mixing quiz-style prompts with lesson
- * illustration prompts.
+ * Step images share the same optimize-and-upload pipeline, but not every
+ * learner-visible image wants the same generation preset. Explanation steps
+ * use the illustration preset, while practice steps can opt into a more
+ * realistic preset without forking the storage flow.
  */
 export async function generateContentStepImage({
   orgSlug,
@@ -53,3 +54,5 @@ export async function generateContentStepImage({
 
   return { data: url, error: null };
 }
+
+export type { StepContentImagePreset };

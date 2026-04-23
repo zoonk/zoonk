@@ -17,6 +17,10 @@ describe("step content contracts", () => {
   test("parses core multipleChoice with all fields", () => {
     const content = parseStepContent("multipleChoice", {
       context: "Some context",
+      image: {
+        prompt: "A refund dashboard with one outlier row",
+        url: "https://example.com/refund.webp",
+      },
       kind: "core",
       options: [
         { feedback: "Correct!", isCorrect: true, text: "A" },
@@ -27,6 +31,10 @@ describe("step content contracts", () => {
 
     expect(content).toEqual({
       context: "Some context",
+      image: {
+        prompt: "A refund dashboard with one outlier row",
+        url: "https://example.com/refund.webp",
+      },
       kind: "core",
       options: [
         { feedback: "Correct!", isCorrect: true, text: "A" },
@@ -178,12 +186,26 @@ describe("step content contracts", () => {
 
   test("parses selectImage", () => {
     const content = parseStepContent("selectImage", {
-      options: [{ feedback: "Correct", isCorrect: true, prompt: "A cat", url: "https://a.co/x" }],
+      options: [
+        {
+          feedback: "Correct",
+          isCorrect: true,
+          prompt: "A cat",
+          url: "https://a.co/x",
+        },
+      ],
       question: "Which image shows a cat?",
     });
 
     expect(content).toEqual({
-      options: [{ feedback: "Correct", isCorrect: true, prompt: "A cat", url: "https://a.co/x" }],
+      options: [
+        {
+          feedback: "Correct",
+          isCorrect: true,
+          prompt: "A cat",
+          url: "https://a.co/x",
+        },
+      ],
       question: "Which image shows a cat?",
     });
   });
@@ -335,8 +357,16 @@ describe("step content contracts", () => {
       const content = parseStepContent("static", {
         metrics: ["Production", "Morale"],
         outcomes: [
-          { minStrongChoices: 4, narrative: "Your factory thrives.", title: "Master Manager" },
-          { minStrongChoices: 0, narrative: "Things fell apart.", title: "Learning Moment" },
+          {
+            minStrongChoices: 4,
+            narrative: "Your factory thrives.",
+            title: "Master Manager",
+          },
+          {
+            minStrongChoices: 0,
+            narrative: "Things fell apart.",
+            title: "Learning Moment",
+          },
         ],
         variant: "storyOutcome",
       });
@@ -390,7 +420,12 @@ describe("step content contracts", () => {
             label: "Interview the gardener",
             quality: "useful",
           },
-          { finding: "No clues here.", id: "a3", label: "Check the attic", quality: "weak" },
+          {
+            finding: "No clues here.",
+            id: "a3",
+            label: "Check the attic",
+            quality: "weak",
+          },
         ],
         variant: "action",
       });
@@ -402,9 +437,24 @@ describe("step content contracts", () => {
       expect(() =>
         parseStepContent("investigation", {
           actions: [
-            { finding: "Something", id: "a1", label: "Do something", quality: "excellent" },
-            { finding: "Something", id: "a2", label: "Do more", quality: "critical" },
-            { finding: "Something", id: "a3", label: "Do other", quality: "useful" },
+            {
+              finding: "Something",
+              id: "a1",
+              label: "Do something",
+              quality: "excellent",
+            },
+            {
+              finding: "Something",
+              id: "a2",
+              label: "Do more",
+              quality: "critical",
+            },
+            {
+              finding: "Something",
+              id: "a3",
+              label: "Do other",
+              quality: "useful",
+            },
           ],
           variant: "action",
         }),
@@ -444,7 +494,12 @@ describe("step content contracts", () => {
         parseStepContent("investigation", {
           correctExplanationIndex: 0,
           explanations: [
-            { accuracy: "best", feedback: "Correct.", id: "e1", text: "Explanation." },
+            {
+              accuracy: "best",
+              feedback: "Correct.",
+              id: "e1",
+              text: "Explanation.",
+            },
           ],
           variant: "call",
         }),

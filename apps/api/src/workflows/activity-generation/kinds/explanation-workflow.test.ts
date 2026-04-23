@@ -215,6 +215,7 @@ describe("explanation activity workflow", () => {
     expect(vi.mocked(generateStepImages)).toHaveBeenCalledWith({
       language: activity.language,
       orgSlug: activities[0]?.lesson.chapter.course.organization?.slug,
+      preset: "illustration",
       prompts: [
         "A lesson illustration for O envio",
         "A lesson illustration for Os rótulos escondidos",

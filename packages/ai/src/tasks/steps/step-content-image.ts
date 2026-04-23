@@ -2,40 +2,69 @@ import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 import { type GeneratedFile, type ImageModel, generateImage } from "ai";
 import { type ImageGenerationQuality, buildImageProviderOptions } from "../../provider-options";
-import promptTemplate from "./step-content-image.prompt.md";
+import illustrationPromptTemplate from "./step-content-image.prompt.md";
+import practicePromptTemplate from "./step-content-practice-image.prompt.md";
 
 const DEFAULT_MODEL = "openai/gpt-image-2";
 const DEFAULT_QUALITY = "low";
-const STEP_CONTENT_IMAGE_SIZE = "1024x1280";
+const STEP_CONTENT_IMAGE_PRESETS = {
+  illustration: {
+    promptTemplate: illustrationPromptTemplate,
+    size: "1024x1280",
+    taskName: "step-content-image",
+  },
+  practice: {
+    promptTemplate: practicePromptTemplate,
+    size: "1024x1024",
+    taskName: "practice-step-image",
+  },
+} as const;
 
-function getStepContentImagePrompt(prompt: string, language: string) {
-  return promptTemplate.replace("{{PROMPT}}", () => prompt).replace("{{LANGUAGE}}", () => language);
+export type StepContentImagePreset = keyof typeof STEP_CONTENT_IMAGE_PRESETS;
+
+const DEFAULT_PRESET: StepContentImagePreset = "illustration";
+
+function getStepContentImagePrompt({
+  language,
+  preset,
+  prompt,
+}: {
+  language: string;
+  preset: StepContentImagePreset;
+  prompt: string;
+}) {
+  return STEP_CONTENT_IMAGE_PRESETS[preset].promptTemplate
+    .replace("{{PROMPT}}", () => prompt)
+    .replace("{{LANGUAGE}}", () => language);
 }
 
 export type StepContentImageParams = {
-  prompt: string;
   language: string;
   model?: ImageModel;
+  preset?: StepContentImagePreset;
+  prompt: string;
   quality?: ImageGenerationQuality;
 };
 
 export async function generateStepContentImage({
-  prompt,
   language,
   model = DEFAULT_MODEL,
+  preset = DEFAULT_PRESET,
+  prompt,
   quality = DEFAULT_QUALITY,
 }: StepContentImageParams): Promise<SafeReturn<GeneratedFile>> {
+  const imagePreset = STEP_CONTENT_IMAGE_PRESETS[preset];
   const { data, error } = await safeAsync(() =>
     generateImage({
       maxImagesPerCall: 1,
       model,
-      prompt: getStepContentImagePrompt(prompt, language),
+      prompt: getStepContentImagePrompt({ language, preset, prompt }),
       providerOptions: buildImageProviderOptions({
         model,
         quality,
-        taskName: "step-content-image",
+        taskName: imagePreset.taskName,
       }),
-      size: STEP_CONTENT_IMAGE_SIZE,
+      size: imagePreset.size,
     }),
   );
 

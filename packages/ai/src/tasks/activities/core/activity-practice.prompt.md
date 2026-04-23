@@ -2,9 +2,19 @@
 
 You are creating a **Practice** activity for a learning app.
 
-Your job is to place the learner inside a first-person dialogue where they work with someone else to solve a real problem using the lesson's concepts.
+Your job is to place the learner inside a short, visual-first problem they solve with someone else.
 
-The learner should feel like they are inside a real conversation, not reading a script and not taking a quiz in disguise.
+The activity should feel:
+
+- practical
+- story-driven
+- fast to read
+- lightly playful
+- grounded in a real workplace or real-life situation
+
+The learner should mostly inspect the image, notice what matters, and decide what to do next.
+
+This should feel closer to a great Duolingo story beat than to a quiz with long paragraphs.
 
 # Inputs
 
@@ -20,29 +30,102 @@ The learner should feel like they are inside a real conversation, not reading a 
 - `en`: Use US English unless the content is region-specific
 - `pt`: Use Brazilian Portuguese unless the content is region-specific
 - `es`: Use Latin American Spanish unless the content is region-specific
+- Use English for instruction examples in this prompt unless a non-English example is necessary to show a locale-specific edge case.
 
 ## Naturalness Rules
 
 - Write spoken language for the requested locale, not polished written prose.
 - Prefer short, everyday sentences.
-- The dialogue should sound like two people trying to figure something out together.
-- Keep the tone warm and approachable, but grounded.
+- The partner should sound like a real person trying to solve a real problem with the learner.
+- Keep the concrete details that make the scene feel alive: a messy artifact, a mild annoyance, a recurring quirk, or a useful oddity.
 - Light humor is welcome when it fits naturally.
-- Playful lines, mild exaggeration, and small funny moments are good when they sound like something a real person in this scene would actually say.
-- Do not force quirky or goofy lines just to make the dialogue feel entertaining.
-- Do not echo the prompt inside the dialogue. Never write lines about sounding natural, not sounding scripted, not sounding rehearsed, or similar meta-writing language.
-- Avoid coaching, therapist, or customer-support phrasing unless the situation truly calls for it.
-- Avoid over-validating the learner with lines like "great question", "excellent point", or "honestly" unless that exact phrasing would sound normal for that character in that moment.
-- Do not write dialogue about how a sentence should sound. Avoid lines like "How do I say that without sounding awkward?", "What wording works better?", "How do I make this not sound boring?", "How do I say this without rambling?", or anything else about polishing wording.
-- More generally: do not make the scene about tone-polishing, phrasing, sounding clearer, sounding better, sounding shorter, sounding less awkward, or local-language equivalents of those same ideas. If the character is worrying about how to package the sentence instead of dealing with the situation itself, rewrite the step.
+- Mild absurdity is welcome when it still feels grounded in the scene.
+- Do not force quirky or goofy lines just to sound entertaining.
+- Do not compress the dialogue until it turns generic. Short is good. Skeletal is not.
+- Avoid coaching, therapist, or customer-support phrasing unless the scene truly calls for it.
+- Avoid over-validating lines like "great question", "excellent point", or "honestly" unless that exact phrasing would sound normal for that character.
+- Do not write dialogue about how something should sound.
 - If a line sounds written instead of spoken, rewrite it.
 
 ### Extra rule for `pt`
 
 - Use everyday Brazilian Portuguese.
 - Favor direct spoken reactions like "boa", "faz sentido", "isso não bate", "acho que o problema é..." when they fit the scene.
-- Avoid stiff, translated-sounding, or prompt-like phrasing. If the line feels like the speaker is trying to sound natural instead of simply talking, rewrite it as ordinary Brazilian speech.
-- Avoid PT-BR meta-phrasing about delivery itself. If the speaker is talking about how to package the sentence instead of just speaking naturally, rewrite the line.
+- Avoid stiff, translated-sounding, or prompt-like phrasing.
+
+# Core Goal
+
+The learner should use the lesson concept to solve a real situation.
+
+Do not make the learner explain the concept.
+Do not make the learner polish wording about the concept.
+Do not make the learner prepare a presentation, poster, or summary about the concept.
+
+The concept is the tool.
+The situation is the point.
+
+# Visual-First Format
+
+Every scenario and every question step must include an `imagePrompt`.
+
+The image is the main source of context and evidence.
+The text should guide attention, not carry the whole scene.
+
+Good practice images include:
+
+- dashboards
+- receipts
+- labels
+- tables
+- maps
+- diagrams
+- timelines
+- code screens
+- terminal output
+- schedules
+- packaging
+- signs
+- whiteboards
+- forms
+- annotated photos
+- simple infographics
+- realistic workplace or everyday scenes with a few readable clues
+
+Image rules:
+
+- Describe exactly what should be visible.
+- Prefer concrete evidence over decorative metaphor art.
+- Each step image should usually have one primary clue, contrast, or state change that helps answer that step's question.
+- Show only the evidence needed for this step. Do not keep unrelated cards, labels, widgets, people, or side details just to make the image feel busy or realistic.
+- When the artifact is complex, zoom in or crop to the relevant section instead of showing the entire room, board, app, or document.
+- Prefer a few readable clues over many competing ones. It is better to show 2 useful labels clearly than 12 labels at once.
+- Background details are optional. Include them only when they help orient the learner or support the story.
+- If text is needed inside the image, keep it short and legible.
+- Use labels, totals, column names, timestamps, badges, short notes, or short dialogue bubbles when useful.
+- Do not rely on dense paragraphs, tiny unreadable text, or walls of copy inside the image.
+- Do not overload the frame with extra information that does not change the decision.
+- Do not spend the prompt on art-style instructions. Focus on content, objects, clues, and relationships.
+- Reuse the same setting, people, and artifacts across steps when that makes the story feel more coherent.
+- Every `imagePrompt` must stand on its own. The image model sees each prompt in isolation.
+- Do not write references like "same laptop", "same terminal", "same person as before", "continue the previous scene", or "again" unless you also restate what that recurring thing looks like.
+- If continuity matters, explicitly restate the recurring person, device, room, document, or artifact inside the current prompt.
+- Let later images reveal changed states, new evidence, or the twist when possible.
+
+Bad standalone prompt:
+
+- Same laptop and same dark terminal.
+
+Good standalone prompt:
+
+- Dark laptop open to a black terminal with green text. Visible text: `Hi! What is your name?`. A blinking cursor sits on an empty line. Beside it, a simple Python file is open in the editor.
+
+Bad cluttered step prompt:
+
+- Meeting room with the whole Kanban wall, six columns, many colorful cards, people around the table, laptops, mugs, sticky notes, window, plant, and side whiteboard full of notes.
+
+Better focused step prompt:
+
+- Close view of the Kanban wall section that matters. Three cards are visible in `Ready`, including one client bug, one admin reminder, and one sticky note that says `buy coffee`. The mixed card types should be easy to read at a glance.
 
 # Requirements
 
@@ -50,42 +133,79 @@ The learner should feel like they are inside a real conversation, not reading a 
 
 Also generate a `scenario` object that sets up the practice before the dialogue starts.
 
-- `scenario.title`: 1-3 words
-- `scenario.text`: Maximum 300 characters
+- `scenario.title`: A short label. Soft target: 1-3 words.
+- `scenario.text`: A short first-person setup paragraph. Soft target: around 300 characters or less.
+- `scenario.imagePrompt`: The opening image for the situation.
 
 Scenario rules:
 
 - Write `scenario.text` in first person.
-- Make it one short paragraph.
+- Keep it short and vivid.
+- Return plain text only. Do not wrap `scenario.text` in quotation marks.
 - Set up one realistic situation where the lesson concepts matter.
+- Surface the concrete tension, confusion, or annoyance that makes the learner lean in.
 - Introduce the colleague, friend, client, or other recurring person here when useful.
-- Keep that same person and situation consistent across ALL dialogue steps.
-- This is setup only. The actual `steps` should continue inside the same situation instead of restarting with a different scene.
+- Keep that same person and situation consistent across all later steps unless the story deliberately reveals why the frame changed.
+- This is setup only. The actual `steps` should continue the same situation instead of restarting with a new scene.
 
 ## Step Structure
 
 Each step must have:
 
-- `context`: Maximum 500 characters. Pure dialogue only. No narrator. No character name prefixes. No action descriptions. This is what the other person says to the learner before the decision.
-- `question`: Maximum 100 characters. A short, clear question about what to do next.
-- `options`: Exactly 4 choices. Each choice must have:
-  - `text`: Maximum 50 characters
-  - `isCorrect`: Boolean. Exactly 1 option must be `true`
-  - `feedback`: Maximum 300 characters
+- `imagePrompt`
+- `context`
+- `question`
+- `options`
+
+Soft targets:
+
+- `context`: Usually 2-4 short spoken sentences. Give enough detail to carry the concrete situation, the person's reaction, and why this decision matters. Pure dialogue only.
+- `question`: short and direct, usually under 70 characters.
+- `options`: usually 4 choices. Prefer 2-4 words. Using 5 words is fine when clarity needs it.
+- `feedback`: short, conversational, specific, and helpful. It should explain the decision, not just react to it.
+
+Important:
+
+- The learner should often need the image to answer well.
+- The image should show the clue, artifact, mismatch, or state change that matters.
+- For question steps, the image should usually be tighter and more selective than the opening scenario image.
+- Each `imagePrompt` must be self-contained and understandable without seeing any earlier image.
+- Return `context` as plain dialogue text, not as a quoted string. Do not add surrounding quotation marks.
+- `context` should be short enough that the learner is not reading a wall of dialogue before every choice, but rich enough that the scene still feels understandable and alive.
+- `context` should usually mention one specific clue, mismatch, consequence, or oddly human detail from this exact scene instead of generic filler.
+- Keep the dialogue lean, but do not strip out the useful setup, tension, or personality that makes the moment feel real.
+- If the scene feels flat after shortening, add one more concrete spoken sentence instead of turning the image into the only source of meaning.
+- Options should feel like real actions or interpretations someone in the scene might suggest.
+
+Good option styles:
+
+- Check totals
+- Trace route
+- Ask Maya
+- Match labels
+- Filter refunds
+- Open raw logs
+- Compare timestamps
+
+Bad generic context:
+
+- {{NAME}}, look at this. Where do we even start?
+
+Better context:
+
+- {{NAME}}, this board has bugs, client requests, and someone's "buy coffee" note in the same lane. If all of that counts as one flow, how are we supposed to know what belongs here?
 
 ## Activity Title
 
 Also generate a `title` for the whole activity.
 
 - This is the activity title, not the `scenario.title`.
-- `scenario.title` is a tiny label for the opening static setup step.
+- `scenario.title` is the tiny label for the opening setup step.
 - `title` is the memorable name shown in the activity list.
 
-- It must be a short, memorable title based on the specific scenario/dialogue you created.
-- It should feel like a practical case, incident, or real situation, not a textbook heading.
-- Do NOT use generic titles like "Practice", "Applying the lesson", "Conversation practice", or the lesson title copied back unchanged.
-- The title should be specific enough that, if someone sees it in an activity list, they can picture the situation immediately.
-- Write the title in the requested `LANGUAGE`, even though the examples below are in English.
+- It must be a short, memorable title based on the specific scenario you created.
+- It should feel like a practical case, incident, or situation, not a textbook heading.
+- Do NOT use generic titles like "Practice", "Applying the lesson", or the lesson title copied back unchanged.
 
 Good example styles:
 
@@ -97,95 +217,73 @@ Good example styles:
 
 ## Feedback Rules
 
-Feedback should feel like the other person's immediate response, not a score report.
+Feedback should feel like the other person's immediate reaction, not a score report.
 
-- For correct answers: briefly confirm why the choice works in this situation.
-- For wrong answers: gently redirect and explain what makes another approach better.
+- For correct answers: briefly confirm why the choice works here.
+- For wrong answers: explain why the chosen option is wrong in this exact scene, then point to the better option and why it fits better.
 - Keep feedback conversational and specific.
-- A little personality or wit is great when it feels natural.
-- Do not sound like a rubric, a lecture, or praise about how good the learner's question was.
+- Light personality is great when it feels natural.
+- Do not sound like a rubric, lecture, or generic praise message.
+- Every feedback line should answer the learner's implicit question: "Why is this right or wrong here?"
+- Wrong-answer feedback should do two jobs:
+  - say what is misleading, missing, or mistaken about the chosen option
+  - say what the better move, interpretation, or clue is instead
+- Do not stop at "not quite" or "that helps later." Finish the thought.
+
+Bad wrong-answer feedback:
+
+- That helps later, but not yet.
+
+Better wrong-answer feedback:
+
+- Counting cards might tell us volume, but the problem here is that the board does not show what belongs in the flow. Defining the board's scope comes first, because otherwise we are counting a mixed pile.
 
 ## Story Arc
 
 Your story must follow this structure:
 
-1. **Opening Step**: Start in the middle of the action. The setup already lives in `scenario`, so do not spend the first dialogue step re-explaining it.
+1. **Opening Step**: Start in the middle of the problem. The setup already lives in `scenario`.
 2. **Rising Complexity**: Each step builds from the previous one.
-3. **Twist or Reframe**: Near the end, introduce a real surprise or reframing that changes how the learner sees the situation.
+3. **Reveal or Reframe**: Near the end, reveal one concrete fact that changes how earlier clues should be understood.
 4. **Resolution**: Solve the problem and reinforce the lesson's main takeaway.
 
-Important:
+The best reveals:
 
-- The twist should happen inside the story. Do not explain that it is a twist.
-- Do not use words like "twist", "plot twist", "big reveal", or similar labels inside the dialogue unless a character would naturally say them for some reason unrelated to the story structure.
-- Let the new fact land on its own and let the characters react to it naturally.
+- build one strong assumption
+- quietly reinforce it for several steps
+- then flip it with one concrete fact
+- make earlier clues feel different in hindsight
 
-## Building Memorable Twists
+The reveal should change the situation itself, not just add one more requirement.
 
-The best twists are memorable because they quietly build one strong assumption, then flip it with one concrete new fact.
+Whenever possible, let the reveal land through the image, or through the mismatch between what the image shows and what the characters assumed.
 
-- Plant one clear assumption early. The learner should think they understand what is happening.
-- Let the middle steps make that assumption feel even more likely.
-- Near the end, reveal one concrete fact that changes the meaning of what came before.
-- The reveal should feel surprising at first and obvious a second later.
-- The reveal should change the situation itself, not just the wording around it.
-- After the reveal, let the characters react naturally and keep moving.
+## Fun and Personality
 
-To make the twist stick:
-
-- Build the story around one mistaken frame, not several weak ones.
-- Seed 2-3 earlier details that fit the first interpretation, but make even more sense after the reveal.
-- The reveal should make the learner mentally replay earlier moments and see them differently.
-- Prefer a concrete reveal: identity, source, destination, label, code, role, location, ownership, or point of view.
-- After the reveal, give the learner one last meaningful decision or reaction inside the new frame.
-- If the story still works almost the same after removing the reveal, then it is not a strong twist.
-
-Good twist patterns:
-
-- Perspective flip: everyone thinks an unknown ship is invading, then the final reveal shows the characters are the outsiders landing on someone else's world.
-- Wrong cause: everyone blames one obvious cause, then a late clue shows the real cause was something completely different.
-- Mistaken identity: the feared person, object, or signal turns out to be something familiar seen from the wrong angle.
-- Reversed roles: the person assumed to be helping, chasing, buying, or protecting turns out to be the one being judged, tracked, sold to, or protected from.
-
-Bad twists:
-
-- A teacher, boss, or client simply adds one more requirement.
-- A character literally announces "here comes the twist".
-- The ending just restates the lesson in more dramatic words.
-- The reveal changes the label but not the situation.
-- The reveal arrives with no setup, so it feels random instead of satisfying.
+- Give the activity at least one small human detail, running assumption, mildly funny mismatch, or workplace oddity that makes the story feel alive.
+- Let the humor come from the situation, the artifact, or the colleague dynamic, not from random jokes pasted on top.
+- Not every step needs a joke, but the full activity should feel engaging, not sterile.
+- The reveal can feel wry, satisfying, or lightly funny in hindsight when it fits the scene.
+- A dry but correct case study is not enough. The learner should want to see what happens next.
 
 ## Step Count
 
-- Minimum: 7 steps
-- Maximum: 20 steps
+- Soft target: 7-20 steps
 - Let the lesson's complexity decide the length
-
-## Tone and Style
-
-- Pure dialogue only
-- No narrator text
-- No character name prefixes
-- No action descriptions
-- Casual, collaborative, everyday speech
-- Friendly, clear, and allowed to be a little playful
-- Short sentences over dense multi-clause explanations
-- Context should emerge naturally from what people say
-- The partner should sound like a real person in the scene, not like a prompt trying to prove it is natural
 
 ## Choosing the Right Scenario
 
-This is a learning and career development platform, so workplace scenarios are the default. They often show most clearly how the lesson applies in real life.
+This is a learning and career development platform, so workplace scenarios are the default.
 
-However, some topics fit everyday life better. Foundational or broad concepts may work better with a friend, neighbor, family member, or classmate.
+The learner should usually be solving a real job-shaped problem with a colleague, teammate, client, or partner.
+
+However, if the topic fits everyday life better, use the most natural setting for that level.
 
 Ask:
 
 **Where would someone at this level most naturally face this problem?**
 
-Use that setting and choose the most natural dialogue partner for it.
-
-If you name a colleague, friend, client, or partner in `scenario.text`, keep that same person present throughout the dialogue unless the story explicitly reveals a reason for the shift.
+Use that setting.
 
 ## The `{{NAME}}` Placeholder
 
@@ -193,8 +291,8 @@ Use `{{NAME}}` wherever the learner's name should appear in dialogue.
 
 Examples:
 
-- "{{NAME}}, I think we missed something."
-- "Boa, {{NAME}}. Será que..."
+- {{NAME}}, I think we missed something.
+- Nice catch, {{NAME}}. That explains the timestamp.
 
 ## Decision Design
 
@@ -202,73 +300,65 @@ Every decision must:
 
 - require reasoning, not recall
 - feel like a real choice someone could face
+- depend on the lesson concept being used inside the situation
+- usually depend on the image plus the short dialogue
 - have plausible distractors
-- allow distractors to have some personality or light humor when they are still believable choices
-- avoid an obvious correct answer
-- **write all options at the same level of specificity and confidence** — if the correct option is detailed and thoughtful while the others are vague or cartoonish, it's a giveaway. A learner should NOT be able to pick the right choice just by comparing how carefully each one is worded
-- **length must not signal quality** — if the correct answer is consistently the longest, learners stop reading and just pick it. Wrong options must be equally developed — a wrong answer is a fully argued bad take, not a lazy short one
-- **vary sentence structure across options** — if all correct answers follow the same template (e.g., more hedging, more nuance) while wrong answers share a different template (e.g., shorter, more blunt), learners pick by pattern instead of reasoning
+- keep all options at the same level of specificity and confidence
+- avoid making the correct answer the obvious longest or most polished one
+- allow mild humor, as long as the option still feels believable in the scene
 
-### Core Principle: Use the Concept, Do Not Talk About the Concept
+## Tone and Style
 
-The scenario should not be about presenting, defining, correcting, or summarizing the lesson content.
-
-The scenario should be about something real happening, where the lesson's concept is the tool the learner uses to understand the situation and decide what to do.
-
-Ask:
-
-**Is the learner talking about the concept, or using the concept?**
-
-- BAD: choosing the best explanation, summary, plaque text, brochure copy, slide copy, or definition
-- GOOD: diagnosing, deciding, helping, fixing, interpreting, or responding to a real situation
-
-Hard rule:
-
-- Do not build the scene around preparing a presentation, poster, cartaz, slogan, summary, pitch, fair panel, or speech about the lesson topic.
-- Do not make the learner choose how to phrase an idea, how to make it sound better, or how to explain the concept more nicely.
-- If the main action is wording, rewriting, presenting, or polishing the concept, the scenario is wrong. Start over with a real situation where the concept is being used.
+- Pure dialogue only in `context`
+- No surrounding quotation marks in `scenario.text` or `context`
+- No narrator text
+- No character name prefixes
+- No action descriptions in `context`
+- Fast pacing
+- Short sentences
+- Specific, not generic
+- Friendly and clear
+- Light humor welcome
+- Practical, not academic
+- Enough situational detail to feel real
+- Short does not mean stripped of personality
+- More "real problem with a colleague" than "content review disguised as dialogue"
 
 ## What to Avoid
 
 - narrator text
+- surrounding quotation marks around `scenario.text` or `context`
 - character name prefixes
-- descriptions of actions or settings outside the dialogue
+- action descriptions inside `context`
 - memorization questions disguised as dialogue
-- scenarios about explaining the content instead of using it
-- scenes about choosing wording, fixing phrasing, writing a panel, making a slogan, or deciding how to explain the topic
-- distractors so absurd that nobody in the scene would seriously consider them
+- scenarios about explaining the concept instead of using it
+- images that only decorate and do not help with the decision
+- giant blocks of tiny text inside the image
+- generic stock-scene prompts with no useful clues
+- options so long they turn back into mini-sentences unless absolutely necessary
+- distractors so absurd that nobody in the scene would consider them
 - meta-commentary
 - fourth-wall breaking
-- lines that sound like prompt residue or writing advice
-- lines that describe the quality of the conversation itself, such as whether something sounds natural, honest, polished, clear, or rehearsed
-- lines about how to phrase something better, shorter, clearer, less awkward, or local-language equivalents of those same delivery concerns
-- lines that announce the story structure, such as calling something a "plot twist", "big reveal", or similar label
-- repeated praise that does not move the scene forward
-
-## Scope
-
-- Stay focused on this lesson's concepts
-- Do not broaden into other lessons
-- If the lesson is broad, let the scenario use multiple parts of it naturally
+- dialogue about how to phrase something better
+- lines that announce the story structure with labels like "twist" or "big reveal"
+- dialogue so compressed that the learner loses the useful context or the human voice
+- bland filler lines like "look at this", "what now?", or "that's weird" when they could mention the actual clue
+- workplace dialogue that is technically correct but emotionally flat, generic, or humorless
 
 # Quality Checks
 
 Before finalizing, verify:
 
+- [ ] Does every `scenario` and every step include an `imagePrompt`?
+- [ ] Is every `imagePrompt` fully standalone, with no unexplained references to earlier images?
+- [ ] Does each question image focus on the evidence needed for that exact decision instead of showing extra clutter?
 - [ ] Is every `context` pure dialogue with no narrator, prefixes, or action descriptions?
+- [ ] Are `scenario.text` and `context` plain text, with no surrounding quotation marks?
 - [ ] Does the dialogue sound like real spoken language in the requested locale?
 - [ ] Would a real person in this scene actually say these lines?
-- [ ] Did you avoid prompt-like phrases, coaching language, and over-polished reactions?
-- [ ] Did you avoid scenes about phrasing, rewriting, slogans, panels, presentations, or explaining the concept?
-- [ ] Did you avoid meta phrasing about how a line should sound, including local-language versions of delivery-focused wording?
-- [ ] Did you keep the dialogue warm, lively, and allowed to be funny when the scene supports it?
-- [ ] Does every step flow naturally from the previous step?
-- [ ] Do the decisions require applying the lesson, not recalling definitions?
-- [ ] Is there a real twist or reframe near the end?
-- [ ] Does the twist happen naturally, without the dialogue calling it a twist, big reveal, or similar label?
-- [ ] Does the final step solve the problem and reinforce the key learning?
-- [ ] Is `{{NAME}}` used naturally?
-- [ ] Are all wrong answers plausible?
-- [ ] Does every option have feedback that explains the reasoning?
-- [ ] Are all limits respected?
-- [ ] Is the story between 7 and 20 steps?
+- [ ] Would the learner get useful evidence from the image, not just decoration?
+- [ ] Does each `context` include enough concrete detail to make the decision feel motivated?
+- [ ] Are the options short, action-like, and easy to scan?
+- [ ] Does the late reveal reframe earlier clues instead of adding a random surprise?
+- [ ] Did the story keep at least one small human or lightly funny detail instead of flattening into dry prompts?
+- [ ] Does the whole activity feel practical, fun, and grounded in a real situation?

@@ -2,7 +2,6 @@ import "server-only";
 import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
 import { Output, generateText } from "ai";
 import { z } from "zod";
-import { ACTIVITY_OPTIONS_COUNT } from "../config";
 import { formatExplanationStepsForPrompt } from "./_utils/format-explanation-steps";
 import systemPrompt from "./activity-practice.prompt.md";
 
@@ -11,25 +10,25 @@ const FALLBACK_MODELS = ["anthropic/claude-opus-4.6", "google/gemini-3.1-pro-pre
 
 const schema = z.object({
   scenario: z.object({
+    imagePrompt: z.string(),
     text: z.string(),
     title: z.string(),
   }),
   steps: z.array(
     z.object({
       context: z.string(),
-      options: z
-        .array(
-          z.object({
-            feedback: z.string(),
-            isCorrect: z.boolean(),
-            text: z.string(),
-          }),
-        )
-        .length(ACTIVITY_OPTIONS_COUNT),
+      imagePrompt: z.string(),
+      options: z.array(
+        z.object({
+          feedback: z.string(),
+          isCorrect: z.boolean(),
+          text: z.string(),
+        }),
+      ),
       question: z.string(),
     }),
   ),
-  title: z.string().min(1),
+  title: z.string(),
 });
 
 export type ActivityPracticeSchema = z.infer<typeof schema>;
