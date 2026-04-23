@@ -3,6 +3,7 @@
 - Always prefer the **simplest solution**. If something feels complex, refactor
 - **Simplicity ≠ laziness.** Creating a reusable component for repeated patterns IS the simple solution—it maintains consistency and quality. Leaving duplication "because it's only N files" leads to inconsistency (bugs). DRY is about having a single source of truth, not just reducing typing. When you see the same pattern repeated, extract it
 - Favor **clarity and minimalism** in both code and UI
+- **Do not create formatting-only diffs.** Preserve existing formatting unless a line needs a semantic change. Formatting is handled by `oxfmt`, so never manually reflow unrelated code, expand one-line calls/types/objects into multiline, or collapse multiline code into one line unless that exact code is being changed for behavior.
 - Follow design inspirations from Apple, Linear, Vercel
 - Code must be modular, following SOLID and DRY principles
 - Avoid nested conditionals and complex logic

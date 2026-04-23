@@ -89,12 +89,15 @@ vi.mock("@zoonk/ai/tasks/activities/core/practice", () => ({
   generateActivityPractice: vi.fn().mockResolvedValue({
     data: {
       scenario: {
+        imagePrompt: "Opening support desk scene with Maya and a refund dashboard",
         text: "I'm closing the support queue with Maya, and one customer report still does not line up with the refund totals.",
         title: "Night shift",
       },
       steps: [
         {
           context: "Your colleague turns to you during a meeting...",
+          imagePrompt:
+            "A refund dashboard filtered to discounted orders with one outlier row highlighted",
           options: [
             { feedback: "Great choice!", isCorrect: true, text: "Option A" },
             { feedback: "Not quite.", isCorrect: false, text: "Option B" },

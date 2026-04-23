@@ -70,4 +70,24 @@ describe(generateStepImages, () => {
       }),
     ).rejects.toThrow("Image generation returned no URL for prompt: Missing URL prompt");
   });
+
+  test("passes the requested image preset through to the generator", async () => {
+    generateContentStepImageMock.mockResolvedValueOnce({
+      data: "https://example.com/practice-step.webp",
+      error: null,
+    });
+
+    await generateStepImages({
+      language: "en",
+      preset: "practice",
+      prompts: ["Practice prompt"],
+    });
+
+    expect(generateContentStepImageMock).toHaveBeenCalledWith({
+      language: "en",
+      orgSlug: undefined,
+      preset: "practice",
+      prompt: "Practice prompt",
+    });
+  });
 });

@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { stepImageSchema } from "./image";
 
 const coreOptionSchema = z
   .object({
@@ -11,6 +12,7 @@ const coreOptionSchema = z
 const coreMultipleChoiceContentSchema = z
   .object({
     context: z.string().optional(),
+    image: stepImageSchema.optional(),
     kind: z.literal("core"),
     options: z.array(coreOptionSchema).min(1),
     question: z.string().optional(),

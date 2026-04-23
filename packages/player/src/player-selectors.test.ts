@@ -440,6 +440,33 @@ describe(getUpcomingImages, () => {
     ]);
   });
 
+  test("extracts URL from a multipleChoice step image", () => {
+    const state = buildState({
+      steps: [
+        buildStep({ id: "s1" }),
+        buildStep({
+          content: {
+            context: "Maya points at the refund dashboard.",
+            image: {
+              prompt: "A refund dashboard with one mismatched total highlighted",
+              url: "https://example.com/refund-dashboard.jpg",
+            },
+            kind: "core",
+            options: [{ feedback: "Yes", isCorrect: true, text: "Check totals" }],
+            question: "What should we inspect?",
+          },
+          id: "s2",
+          kind: "multipleChoice",
+          position: 1,
+        }),
+      ],
+    });
+
+    expect(getUpcomingImages(state)).toEqual([
+      { kind: "step", url: "https://example.com/refund-dashboard.jpg" },
+    ]);
+  });
+
   test("extracts URLs from a selectImage step", () => {
     const state = buildState({
       steps: [

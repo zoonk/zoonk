@@ -1,6 +1,7 @@
 import { fireEvent } from "@testing-library/react";
 import { describe, expect, test } from "vitest";
 import { page } from "vitest/browser";
+import { buildInlineImageUrl } from "../_test-utils/build-inline-image-url";
 import { buildSerializedActivity, buildSerializedStep } from "../_test-utils/player-test-data";
 import { buildAuthenticatedViewer } from "../_test-utils/player-test-viewer";
 import { buildNavigation, renderPlayer } from "../_test-utils/render-player";
@@ -22,6 +23,14 @@ describe("player browser integration: practice activities", () => {
           buildSerializedStep({
             content: {
               context: "Maya says the mismatch only appears on orders with manual discounts.",
+              image: {
+                prompt:
+                  "A refund dashboard filtered to discounted orders with one outlier row highlighted",
+                url: buildInlineImageUrl({
+                  label:
+                    "A refund dashboard filtered to discounted orders with one outlier row highlighted",
+                }),
+              },
               kind: "core" as const,
               options: [
                 {
@@ -60,6 +69,9 @@ describe("player browser integration: practice activities", () => {
 
     await expect
       .element(page.getByRole("heading", { name: "What should I check first?" }))
+      .toBeInTheDocument();
+    await expect
+      .element(page.getByAltText(/refund dashboard filtered to discounted orders/i))
       .toBeInTheDocument();
 
     await page.getByRole("radio", { name: "Check the discounted orders first" }).click();

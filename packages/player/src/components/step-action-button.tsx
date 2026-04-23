@@ -14,10 +14,10 @@ import { usePlayerRuntime } from "../player-context";
  *
  * Rendered in two places with different visibility:
  * - Inside the PlayerBottomBar for mobile (visible below lg)
- * - Inline below step content for desktop (visible at lg+)
+ * - Inline on desktop, either below the step or inside a media choice column
  *
  * This avoids duplicating button logic across the bottom bar
- * and the desktop inline slot.
+ * and the desktop action slots.
  */
 export function StepActionButton({
   className,

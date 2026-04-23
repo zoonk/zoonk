@@ -38,6 +38,7 @@ export function MultipleChoiceStep({
   return (
     <ChoiceStepLayout
       context={content.context}
+      image={content.image}
       onSelect={handleSelect}
       options={content.options.map((option) => ({ key: option.text, text: option.text }))}
       question={content.question}

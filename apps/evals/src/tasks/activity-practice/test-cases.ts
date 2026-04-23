@@ -3,29 +3,32 @@ EVALUATION CRITERIA:
 
 1. PRACTICE AUTHENTICITY: Dialogue must be pure conversation between colleagues with no narrator text, no character name prefixes (like "Sarah:"), and no action descriptions. The learner should feel immersed in a real workplace conversation.
 
-2. EDUCATIONAL ALIGNMENT: Every decision point must require applying lesson concepts through reasoning, not memorizing facts. Wrong options should be plausible but flawed for specific conceptual reasons. Penalize meta-scenarios where the main action is preparing a presentation, poster, cartaz, slogan, summary, or wording about the lesson topic instead of using the concept in a real situation.
+2. VISUAL GROUNDING: Every scenario and every step should include an imagePrompt that gives useful evidence, not decoration. The image should help the learner reason about the decision through an artifact, screen, diagram, label, table, document, or concrete scene clue. Penalize generic image prompts that add no value.
 
-3. PLOT COHERENCE: Steps must flow naturally as a continuous practice where each step builds from the previous dialogue. Near the end (within the final 2-3 steps), the practice should introduce a fun, surprising twist that reframes the narrative — the best twists subvert an assumption the practice has been building. A mere escalation or a new requirement from a teacher, boss, or client is not enough to count as a twist. Strong twists usually reinterpret earlier details rather than just adding a late surprise. The final step must resolve the problem AND reinforce the main learning takeaway. Do NOT penalize for exact twist placement (e.g., 2nd-to-last vs 3rd-to-last) as long as the narrative flow is good.
+3. EDUCATIONAL ALIGNMENT: Every decision point must require applying lesson concepts through reasoning, not memorizing facts. Wrong options should be plausible but flawed for specific conceptual reasons. Penalize meta-scenarios where the main action is preparing a presentation, poster, cartaz, slogan, summary, or wording about the lesson topic instead of using the concept in a real situation.
 
-4. FORMAT COMPLIANCE: Verify these constraints:
-   - scenario.title: 1-3 words
-   - scenario.text: Maximum 300 characters, one short paragraph, first person
-   - context: Maximum 500 characters of pure dialogue
-   - question: Maximum 100 characters
-   - options: Exactly 4 objects, each with: text (max 50 chars, allow up to 55 without penalty), isCorrect (boolean), feedback (max 300 chars)
-   - Exactly 1 option must have isCorrect: true, the other 3 must have isCorrect: false
+4. PLOT COHERENCE: Steps must flow naturally as a continuous practice where each step builds from the previous dialogue. Near the end (within the final 2-3 steps), the practice should introduce a fun, surprising twist that reframes the narrative — the best twists subvert an assumption the practice has been building. A mere escalation or a new requirement from a teacher, boss, or client is not enough to count as a twist. Strong twists usually reinterpret earlier details rather than just adding a late surprise. The final step must resolve the problem AND reinforce the main learning takeaway. Do NOT penalize for exact twist placement (e.g., 2nd-to-last vs 3rd-to-last) as long as the narrative flow is good.
+
+5. FORMAT COMPLIANCE: Verify these constraints:
+   - scenario has: title, text, imagePrompt
+   - every step has: imagePrompt, context, question, options
+   - scenario.text is first person and short
+   - context is pure dialogue and should stay short enough to scan quickly
+   - question should be short and direct
+   - option text should usually be short and action-like
+   - Exactly 1 option must have isCorrect: true
    - The recurring person or situation introduced in scenario.text should stay consistent across the dialogue unless the story deliberately reveals a reason for the change
    - Do NOT penalize for output being wrapped in {"steps": [...]} vs a raw array — both are valid formats
 
-5. PERSONALIZATION: The {{NAME}} placeholder must be used appropriately in dialogue to personalize the experience.
+6. PERSONALIZATION: The {{NAME}} placeholder must be used appropriately in dialogue to personalize the experience.
 
-6. FEEDBACK QUALITY: Each option must have feedback explaining WHY it's right (with insight) or WHY it's wrong (and what would be correct). Feedback should help learners understand the reasoning, not just state correctness.
+7. FEEDBACK QUALITY: Each option must have feedback explaining WHY it's right (with insight) or WHY it's wrong (and what would be correct). Feedback should help learners understand the reasoning, not just state correctness.
 
-7. STEP COUNT: Practice must have between 7 and 20 steps. Let problem complexity dictate length.
+8. STEP COUNT: Practice should usually have between 7 and 20 steps. Let problem complexity dictate length. Do not over-penalize a small miss if the activity is otherwise strong.
 
-8. DISTRACTOR QUALITY: All wrong options must be plausible choices someone might consider. Do not penalize light humor, playful wording, or a mildly funny option if it is still believable in the scene. Penalize distractors that are so silly or absurd that no reasonable person would choose them.
+9. DISTRACTOR QUALITY: All wrong options must be plausible choices someone might consider. Do not penalize light humor, playful wording, or a mildly funny option if it is still believable in the scene. Penalize distractors that are so silly or absurd that no reasonable person would choose them.
 
-9. DIALOGUE NATURALNESS: Penalize dialogue that sounds like prompt residue, coaching language, polished writing advice, or translated corporate speech instead of something a real person in the scene would say. This includes lines that comment on how a question or sentence sounds rather than moving the scene forward. Examples of suspicious phrasing include things like "great question", "honestly", "without sounding rehearsed", "How do I say that without sounding awkward?", "What wording works better?", or local-language equivalents of that same delivery-focused wording when they feel copied from instructions rather than motivated by the scene. Also penalize dialogue that announces the story structure with labels like "twist", "plot twist", "big reveal", or local-language equivalents instead of letting the surprise happen naturally. Do not penalize light humor, playful exchanges, or a mildly silly twist when they still feel natural for the scene.
+10. DIALOGUE NATURALNESS: Penalize dialogue that sounds like prompt residue, coaching language, polished writing advice, or translated corporate speech instead of something a real person in the scene would say. This includes lines that comment on how a question or sentence sounds rather than moving the scene forward. Examples of suspicious phrasing include things like "great question", "honestly", "without sounding rehearsed", "How do I say that without sounding awkward?", "What wording works better?", or local-language equivalents of that same delivery-focused wording when they feel copied from instructions rather than motivated by the scene. Also penalize dialogue that announces the story structure with labels like "twist", "plot twist", "big reveal", or local-language equivalents instead of letting the surprise happen naturally. Do not penalize light humor, playful exchanges, or a mildly silly twist when they still feel natural for the scene.
 
 ANTI-CHECKLIST GUIDANCE (CRITICAL):
 - Do NOT penalize for specific plot choices, character names, or scenario settings you might expect
@@ -33,11 +36,13 @@ ANTI-CHECKLIST GUIDANCE (CRITICAL):
 - Do NOT check against an imagined "ideal" practice structure
 - Do NOT penalize for exact twist placement — if the twist occurs anywhere in the final third of the story, that's fine
 - Do NOT penalize for output being wrapped in {"steps": [...]} instead of a raw array
-- Do NOT penalize option text that is 55 characters or fewer — only penalize options clearly exceeding 55 characters
+- Do NOT penalize a small overrun on text length if the step is still fast and readable
+- Do NOT penalize 3-5 options if the step quality stays high and there is no filler
 - Do NOT penalize light humor, a playful tone, or slightly silly moments when they still sound natural and scene-appropriate
 - Do penalize scenes whose main task is choosing wording, polishing phrasing, or presenting the concept instead of using it
+- Do penalize image prompts that are generic decoration instead of useful evidence
 - Do penalize lines that feel like prompt instructions leaking into dialogue, even if grammar and structure are otherwise correct
-- ONLY penalize for: format violations (option text over 55 chars, context over 500 chars, etc.), narrator/description text in dialogue, decisions that test memorization instead of reasoning, complete absence of any twist or surprise, poor distractor quality, or factually incorrect lesson application
+- ONLY penalize for: major format violations, missing or low-value image prompts, narrator/description text in dialogue, decisions that test memorization instead of reasoning, complete absence of any twist or surprise, poor distractor quality, or factually incorrect lesson application
 - Different valid practice approaches exist - assess the quality of what IS provided
 `;
 

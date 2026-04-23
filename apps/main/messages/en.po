@@ -2827,14 +2827,14 @@ msgid "{activity} - {lesson}"
 msgstr "{activity} - {lesson}"
 
 #: src/lib/activities.ts
+msgctxt "wHBT6R"
+msgid "Apply {topic} through a visual real-world problem with short decisions."
+msgstr "Apply {topic} through a visual real-world problem with short decisions."
+
+#: src/lib/activities.ts
 msgctxt "XzxpBZ"
 msgid "Improve your {topic} reading comprehension by translating sentences and passages."
 msgstr "Improve your {topic} reading comprehension by translating sentences and passages."
-
-#: src/lib/activities.ts
-msgctxt "YfgUQS"
-msgid "Apply {topic} through a real-world dialogue scenario."
-msgstr "Apply {topic} through a real-world dialogue scenario."
 
 #: src/lib/categories/category.ts
 msgctxt "4HKnmB"

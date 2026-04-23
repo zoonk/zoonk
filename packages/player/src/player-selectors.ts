@@ -229,8 +229,9 @@ const DEFAULT_LOOKAHEAD = 3;
 
 /**
  * Extracts image URLs from a step so they can be preloaded before the user
- * navigates to it. Readable steps can carry one embedded illustration, and
- * selectImage steps can carry one URL per option.
+ * navigates to it. Readable steps can carry one embedded illustration,
+ * image-led practice questions can own one artifact image, and selectImage
+ * steps can carry one URL per option.
  */
 function getStepImages(step: SerializedStep): PreloadableImage[] {
   const descriptor = describePlayerStep(step);
@@ -242,6 +243,12 @@ function getStepImages(step: SerializedStep): PreloadableImage[] {
     descriptor?.kind === "storyIntro" ||
     descriptor?.kind === "storyOutcome"
   ) {
+    return descriptor.content.image?.url
+      ? [{ kind: "step", url: descriptor.content.image.url }]
+      : [];
+  }
+
+  if (descriptor?.kind === "multipleChoice") {
     return descriptor.content.image?.url
       ? [{ kind: "step", url: descriptor.content.image.url }]
       : [];

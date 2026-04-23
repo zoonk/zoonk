@@ -54,7 +54,9 @@ async function getSeoDescription(kind: ActivityKind, topic: string): Promise<str
     listening: t("Sharpen your {topic} listening skills by translating audio sentences.", {
       topic,
     }),
-    practice: t("Apply {topic} through a real-world dialogue scenario.", { topic }),
+    practice: t("Apply {topic} through a visual real-world problem with short decisions.", {
+      topic,
+    }),
     quiz: t(
       "Test your understanding of {topic} with questions designed to check real comprehension, not just memorization.",
       { topic },

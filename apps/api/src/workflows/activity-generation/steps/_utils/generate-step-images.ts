@@ -1,4 +1,7 @@
-import { generateContentStepImage } from "@zoonk/core/steps/content-image";
+import {
+  type StepContentImagePreset,
+  generateContentStepImage,
+} from "@zoonk/core/steps/content-image";
 import { type StepImage } from "@zoonk/core/steps/contract/image";
 
 function getImageUrlOrThrow({
@@ -29,10 +32,12 @@ function getImageUrlOrThrow({
 export async function generateStepImages({
   language,
   orgSlug,
+  preset,
   prompts,
 }: {
   language: string;
   orgSlug?: string;
+  preset?: StepContentImagePreset;
   prompts: string[];
 }): Promise<StepImage[]> {
   return Promise.all(
@@ -40,6 +45,7 @@ export async function generateStepImages({
       const { data: url, error } = await generateContentStepImage({
         language,
         orgSlug,
+        preset,
         prompt,
       });
 

@@ -17,6 +17,10 @@ describe("step content contracts", () => {
   test("parses core multipleChoice with all fields", () => {
     const content = parseStepContent("multipleChoice", {
       context: "Some context",
+      image: {
+        prompt: "A refund dashboard with one outlier row",
+        url: "https://example.com/refund.webp",
+      },
       kind: "core",
       options: [
         { feedback: "Correct!", isCorrect: true, text: "A" },
@@ -27,6 +31,10 @@ describe("step content contracts", () => {
 
     expect(content).toEqual({
       context: "Some context",
+      image: {
+        prompt: "A refund dashboard with one outlier row",
+        url: "https://example.com/refund.webp",
+      },
       kind: "core",
       options: [
         { feedback: "Correct!", isCorrect: true, text: "A" },
