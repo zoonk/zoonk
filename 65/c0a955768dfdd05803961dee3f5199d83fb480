@@ -1,0 +1,122 @@
+packages/player/src/components/question-text.tsx
+  h_1cda88fc21fe9c 1-2,4-6
+packages/player/src/components/player-read-scene.tsx
+  h_1cda88fc21fe9c 2,130-131,137
+packages/ai/src/tasks/activities/core/activity-practice.prompt.md
+  ccfaee228b74cbf6 40,44,109-111,114-121,144,146,162,165,172-177,190-196,223,227-231,233,235,237,239,261,263-267,294-295,313,319,323-324,330,344-346,353,356,360,363
+  h_1cda88fc21fe9c 5,7,9-17,33,39,42-43,45,47,55-108,112,122-128,136-138,143,148-149,155-161,163-164,166-171,178,180,182-189,203,220,222,225-226,245,247,250,252-255,257,259,271,276,278,280,303-304,306-308,310,312,314-318,320-322,325,332,334-338,342-343,352,354,359,361-362,364
+apps/api/src/workflows/activity-generation/steps/_utils/get-practice-image-prompts.ts
+  ccfaee228b74cbf6 1-97
+apps/api/src/workflows/activity-generation/kinds/explanation-workflow.test.ts
+  ccfaee228b74cbf6 218
+apps/api/src/workflows/activity-generation/steps/save-practice-activity-step.ts
+  ccfaee228b74cbf6 3,10-37,41-42,46,50,56,70-71,75,79,83-88,91,114,119,123-127,129-134,146,153,165-176,182-186,193-196
+apps/main/src/lib/generation/phase-kind-steps/practice.ts
+  ccfaee228b74cbf6 10,14,29
+packages/player/src/components/_utils/strip-wrapping-quotes.test.ts
+  h_1cda88fc21fe9c 1-15
+packages/player/src/components/choice-step-layout.tsx
+  ccfaee228b74cbf6 3,16-18,20,36,53-57,60-63,67,69-71,73-75,123-157
+  h_1cda88fc21fe9c 12-13,58-59,64-66,68,72,76-118,121-122,158
+apps/main/src/lib/generation/activity-generation-phase-weights.ts
+  ccfaee228b74cbf6 131,134-135
+packages/player/src/components/stage-content.tsx
+  ccfaee228b74cbf6 8,39-51,82-83
+packages/ai/src/tasks/steps/step-content-image.prompt.md
+  h_1cda88fc21fe9c 1,3,5-12,14
+packages/ai/src/tasks/activities/core/activity-practice.ts
+  ccfaee228b74cbf6 13,20-27,31
+packages/player/src/components/_utils/strip-wrapping-quotes.ts
+  h_1cda88fc21fe9c 1-26
+packages/player/src/components/static-step-layout.tsx
+  ccfaee228b74cbf6 4,19-20,23
+apps/api/src/workflows/activity-generation/core-activity-workflow.test.ts
+  ccfaee228b74cbf6 96,103-104,135-144,278-282,318-321,353-356,432-436
+apps/main/src/lib/activities.ts
+  ccfaee228b74cbf6 41-43,59-61,86-90,108-111,118-121
+apps/api/src/workflows/activity-generation/steps/generate-activity-step-images-step.ts
+  h_1cda88fc21fe9c 9-11,23
+  ccfaee228b74cbf6 2,12-13,15-22,40
+packages/ai/src/tasks/steps/step-content-practice-image.prompt.md
+  ccfaee228b74cbf6 9-12,14,16,20
+  h_1cda88fc21fe9c 1-8,13,15,17-19,21-24
+packages/player/src/_browser-tests/player-practice.browser.test.tsx
+  ccfaee228b74cbf6 4,26-33,73-74
+apps/api/src/workflows/activity-generation/steps/_utils/generate-step-images.test.ts
+  ccfaee228b74cbf6 73-92
+apps/main/messages/es.po
+  ccfaee228b74cbf6 2830-2833
+apps/api/src/workflows/activity-generation/kinds/practice-workflow.test.ts
+  ccfaee228b74cbf6 11,16-22,27,34-35,50-57,111-113,133-136,144-147,183-185,232-234,251-294,311-313,365-367,444-446,448-467,543-545,636-638,732-734,838-840,930-932
+packages/core/src/steps/step-content-image.ts
+  ccfaee228b74cbf6 3,13-16,57-58
+packages/player/src/components/multiple-choice-step.tsx
+  ccfaee228b74cbf6 35-39,45,47-50
+apps/api/src/workflows/activity-generation/steps/_utils/generate-step-images.ts
+  h_1cda88fc21fe9c 2-3,35,40,48
+apps/api/src/workflows/activity-generation/steps/_utils/get-practice-image-prompts.test.ts
+  ccfaee228b74cbf6 1-60
+apps/api/src/workflows/activity-generation/steps/generate-practice-content-step.test.ts
+  ccfaee228b74cbf6 36,82-83,246
+apps/api/src/workflows/activity-generation/kinds/explanation-workflow.ts
+  h_1cda88fc21fe9c 3,117
+packages/player/src/components/step-media-layout.tsx
+  h_1cda88fc21fe9c 26
+  ccfaee228b74cbf6 1-25,27-41
+apps/api/src/workflows/activity-generation/custom-activity-workflow.test.ts
+  ccfaee228b74cbf6 71
+apps/main/messages/pt.po
+  ccfaee228b74cbf6 2830-2833
+apps/api/src/workflows/activity-generation/kinds/practice-workflow.ts
+  h_1cda88fc21fe9c 51
+  ccfaee228b74cbf6 3-4,8,14,16-17,48-50,52-54,56-58,60-75
+packages/core/src/steps/contract/exercise.ts
+  ccfaee228b74cbf6 2,15
+apps/api/src/workflows/activity-generation/activity-generation-workflow.test.ts
+  ccfaee228b74cbf6 92,99-100,131-140,315-323
+apps/evals/src/tasks/activity-practice/task.ts
+  ccfaee228b74cbf6 11
+packages/player/src/player-selectors.test.ts
+  ccfaee228b74cbf6 99-103,148-152,174-178,192-196,220-224,325-342,388-391,481-504
+apps/main/messages/en.po
+  ccfaee228b74cbf6 2830-2833
+apps/api/src/workflows/activity-generation/steps/generate-activity-step-images-step.test.ts
+  h_1cda88fc21fe9c 1-72
+apps/api/src/workflows/activity-generation/steps/save-practice-activity-step.test.ts
+  ccfaee228b74cbf6 28,53-67,87-88,99,112,138,144-169,179-182,186-189,215,228,238-241
+apps/evals/src/tasks/activity-practice/test-cases.ts
+  h_1cda88fc21fe9c 6,8,10,12-19,23,25,27,29,31,39-40,43,45
+packages/player/src/components/step-action-button.tsx
+  h_1cda88fc21fe9c 17,20
+packages/ai/src/tasks/steps/step-content-image.ts
+  h_1cda88fc21fe9c 5-6,10-21,23-36,44-45,52-53,56,61,65,67
+packages/player/src/player-selectors.ts
+  ccfaee228b74cbf6 232-234,251
+packages/core/src/steps/contract/content.test.ts
+  ccfaee228b74cbf6 20-23,34-37,189-196,201-208,360-369,423-428,440-457,497-502
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.2",
+  "base_commit_sha": "65c0a955768dfdd05803961dee3f5199d83fb480",
+  "prompts": {
+    "ccfaee228b74cbf6": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019db740-ac0d-77f3-94b9-37da0fe7d6ef",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 1473,
+      "total_deletions": 667,
+      "accepted_lines": 1094,
+      "overriden_lines": 13
+    }
+  },
+  "humans": {
+    "h_1cda88fc21fe9c": {
+      "author": "ceolinwill"
+    }
+  }
+}
