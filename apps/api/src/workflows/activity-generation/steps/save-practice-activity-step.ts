@@ -167,10 +167,7 @@ export async function savePracticeActivityStep({
   );
 
   if (buildError || !stepRecords) {
-    await stream.error({
-      reason: "dbSaveFailed",
-      step: "savePracticeActivity",
-    });
+    await stream.error({ reason: "dbSaveFailed", step: "savePracticeActivity" });
     await handleActivityFailureStep({ activityId });
     return;
   }

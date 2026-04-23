@@ -19,12 +19,23 @@ describe(stripWrappingQuotes, () => {
     expect(stripWrappingQuotes('  "  ')).toBe('  "  ');
   });
 
+  test("strips outer single quotes when the inner text only has apostrophes", () => {
+    expect(stripWrappingQuotes("'It's ready'")).toBe("It's ready");
+    expect(stripWrappingQuotes("‘It’s ready’")).toBe("It’s ready");
+  });
+
   test("preserves quotes around the first and last words", () => {
     expect(stripWrappingQuotes('"this" should preserve quotes in the first and last "words"')).toBe(
       '"this" should preserve quotes in the first and last "words"',
     );
     expect(stripWrappingQuotes("“this” should preserve quotes in the first and last “words”")).toBe(
       "“this” should preserve quotes in the first and last “words”",
+    );
+    expect(stripWrappingQuotes("'this' should preserve quotes in the first and last 'words'")).toBe(
+      "'this' should preserve quotes in the first and last 'words'",
+    );
+    expect(stripWrappingQuotes("‘this’ should preserve quotes in the first and last ‘words’")).toBe(
+      "‘this’ should preserve quotes in the first and last ‘words’",
     );
   });
 });

@@ -1,25 +1,17 @@
-const WRAPPING_QUOTE_PAIRS = [
-  ['"', '"'],
-  ["'", "'"],
-  ["“", "”"],
-  ["‘", "’"],
-] as const;
+const QUOTE_PAIRS: Record<string, string> = {
+  '"': '"',
+  "'": "'",
+  "‘": "’",
+  "“": "”",
+};
 
-function hasInnerQuotePair({
-  closingQuote,
-  innerValue,
-  openingQuote,
-}: {
-  closingQuote: string;
-  innerValue: string;
-  openingQuote: string;
-}) {
-  if (openingQuote === closingQuote) {
-    return innerValue.includes(openingQuote);
-  }
-
-  return innerValue.includes(openingQuote) || innerValue.includes(closingQuote);
-}
+/**
+ * Matches any quote character that has at least one non-word neighbor (or sits
+ * at a string edge). This is how we detect an intentional inner quote while
+ * ignoring apostrophes inside words like "it's", where both neighbors are
+ * letters.
+ */
+const NESTED_QUOTE_PATTERN = /(?<![\p{L}\p{N}])['"‘’“”]|['"‘’“”](?![\p{L}\p{N}])/u;
 
 /**
  * AI-authored copy sometimes arrives wrapped in one unnecessary outer quote
@@ -27,29 +19,14 @@ function hasInnerQuotePair({
  * app copy, while leaving inner quoted phrases untouched.
  */
 export function stripWrappingQuotes(value: string): string {
-  const trimmedValue = value.trim();
+  const trimmed = value.trim();
+  const opener = trimmed[0];
+  const closer = opener && QUOTE_PAIRS[opener];
 
-  const matchingPair = WRAPPING_QUOTE_PAIRS.find(
-    ([openingQuote, closingQuote]) =>
-      trimmedValue.length >= openingQuote.length + closingQuote.length &&
-      trimmedValue.startsWith(openingQuote) &&
-      trimmedValue.endsWith(closingQuote),
-  );
-
-  if (!matchingPair) {
+  if (!closer || trimmed.length < 2 || !trimmed.endsWith(closer)) {
     return value;
   }
 
-  const [openingQuote, closingQuote] = matchingPair;
-
-  const innerValue = trimmedValue.slice(
-    openingQuote.length,
-    trimmedValue.length - closingQuote.length,
-  );
-
-  if (hasInnerQuotePair({ closingQuote, innerValue, openingQuote })) {
-    return value;
-  }
-
-  return innerValue.trim();
+  const inner = trimmed.slice(1, -1);
+  return NESTED_QUOTE_PATTERN.test(inner) ? value : inner.trim();
 }
