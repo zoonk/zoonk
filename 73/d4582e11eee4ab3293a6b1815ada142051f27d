@@ -1,0 +1,45 @@
+packages/ai/src/tasks/activities/core/activity-practice.ts
+  h_1cda88fc21fe9c 11,15-23,30
+apps/api/src/workflows/activity-generation/steps/_utils/get-practice-image-prompts.ts
+  h_1cda88fc21fe9c 4-6,8,11-12,15,30-31,34-36
+apps/api/src/workflows/activity-generation/kinds/practice-workflow.test.ts
+  ccfaee228b74cbf6 228,271,303,355,432,434-437,513,604,698,802,892
+packages/player/src/components/_utils/strip-wrapping-quotes.ts
+  ccfaee228b74cbf6 8-23,45-54
+  h_1cda88fc21fe9c 31,34-35,44
+packages/player/src/components/_utils/strip-wrapping-quotes.test.ts
+  h_1cda88fc21fe9c 15-29
+apps/api/src/workflows/activity-generation/core-activity-workflow.test.ts
+  ccfaee228b74cbf6 135-136,270,306,338,414
+apps/api/src/workflows/activity-generation/activity-generation-workflow.test.ts
+  ccfaee228b74cbf6 131-132,307-309
+apps/api/src/workflows/activity-generation/steps/save-practice-activity-step.test.ts
+  ccfaee228b74cbf6 179,183,232
+apps/api/src/workflows/activity-generation/steps/_utils/get-practice-image-prompts.test.ts
+  ccfaee228b74cbf6 5,8,16,32-38,40-43,45-65
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.2",
+  "base_commit_sha": "73d4582e11eee4ab3293a6b1815ada142051f27d",
+  "prompts": {
+    "ccfaee228b74cbf6": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019db740-ac0d-77f3-94b9-37da0fe7d6ef",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 90,
+      "total_deletions": 234,
+      "accepted_lines": 102,
+      "overriden_lines": 0
+    }
+  },
+  "humans": {
+    "h_1cda88fc21fe9c": {
+      "author": "ceolinwill"
+    }
+  }
+}
