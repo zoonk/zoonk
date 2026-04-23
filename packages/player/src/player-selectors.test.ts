@@ -96,11 +96,7 @@ function buildStoryIntroStep(): SerializedStep {
 function buildStoryResult(stepId: string, selectedChoiceId: string): StepResult {
   return {
     answer: { kind: "story", selectedChoiceId, selectedText: "choice" },
-    result: {
-      correctAnswer: null,
-      feedback: null,
-      isCorrect: selectedChoiceId !== "c3",
-    },
+    result: { correctAnswer: null, feedback: null, isCorrect: selectedChoiceId !== "c3" },
     stepId,
   };
 }
@@ -145,11 +141,7 @@ describe(getStoryBriefingText, () => {
       currentStepIndex: 2,
       steps: [
         buildStep({
-          content: {
-            text: "Welcome",
-            title: "Preamble",
-            variant: "text" as const,
-          },
+          content: { text: "Welcome", title: "Preamble", variant: "text" as const },
           id: "text-static",
           kind: "static",
           position: 0,
@@ -171,11 +163,7 @@ describe(findSelectedChoice, () => {
     const choice = findSelectedChoice({ results, step });
 
     expect(choice).toEqual(
-      expect.objectContaining({
-        alignment: "strong",
-        id: "c1",
-        text: "Strong choice",
-      }),
+      expect.objectContaining({ alignment: "strong", id: "c1", text: "Strong choice" }),
     );
   });
 
@@ -189,11 +177,7 @@ describe(findSelectedChoice, () => {
     const step = buildStoryStep("s1", 0);
     const results = {
       s1: {
-        answer: {
-          kind: "multipleChoice" as const,
-          selectedIndex: 0,
-          selectedText: "A",
-        },
+        answer: { kind: "multipleChoice" as const, selectedIndex: 0, selectedText: "A" },
         result: { correctAnswer: null, feedback: null, isCorrect: true },
         stepId: "s1",
       },
@@ -217,11 +201,7 @@ describe("findStoryIntroContent (via getStoryMetrics)", () => {
     const state = buildState({
       steps: [
         buildStep({
-          content: {
-            text: "Welcome",
-            title: "Preamble",
-            variant: "text" as const,
-          },
+          content: { text: "Welcome", title: "Preamble", variant: "text" as const },
           id: "text-static",
           kind: "static",
           position: 0,
@@ -322,24 +302,9 @@ function buildInvestigationActionStep(): SerializedStep {
   return buildStep({
     content: {
       actions: [
-        {
-          finding: "Clue A",
-          id: "a1",
-          label: "Check logs",
-          quality: "critical" as const,
-        },
-        {
-          finding: "Clue B",
-          id: "a2",
-          label: "Ask witness",
-          quality: "useful" as const,
-        },
-        {
-          finding: "Clue C",
-          id: "a3",
-          label: "Check camera",
-          quality: "weak" as const,
-        },
+        { finding: "Clue A", id: "a1", label: "Check logs", quality: "critical" as const },
+        { finding: "Clue B", id: "a2", label: "Ask witness", quality: "useful" as const },
+        { finding: "Clue C", id: "a3", label: "Check camera", quality: "weak" as const },
       ],
       variant: "action" as const,
     },
@@ -385,10 +350,7 @@ describe(getInvestigationProgress, () => {
       currentStepIndex: 0,
       steps: [
         buildStep({
-          content: {
-            scenario: "A mystery occurred.",
-            variant: "problem" as const,
-          },
+          content: { scenario: "A mystery occurred.", variant: "problem" as const },
           id: "problem-step",
           kind: "investigation",
         }),

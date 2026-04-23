@@ -32,11 +32,7 @@ export function MultipleChoiceStep({
     }
 
     const selectedText = content.options[index]?.text ?? "";
-    onSelectAnswer(step.id, {
-      kind: "multipleChoice",
-      selectedIndex: index,
-      selectedText,
-    });
+    onSelectAnswer(step.id, { kind: "multipleChoice", selectedIndex: index, selectedText });
   };
 
   return (
@@ -44,10 +40,7 @@ export function MultipleChoiceStep({
       context={content.context}
       image={content.image}
       onSelect={handleSelect}
-      options={content.options.map((option) => ({
-        key: option.text,
-        text: option.text,
-      }))}
+      options={content.options.map((option) => ({ key: option.text, text: option.text }))}
       question={content.question}
       selectedIndex={selectedIndex}
     />

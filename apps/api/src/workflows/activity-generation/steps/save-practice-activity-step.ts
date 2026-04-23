@@ -179,21 +179,14 @@ export async function savePracticeActivityStep({
     prisma.$transaction([
       prisma.step.createMany({ data: stepRecords }),
       prisma.activity.update({
-        data: {
-          generationRunId: workflowRunId,
-          generationStatus: "completed",
-          title,
-        },
+        data: { generationRunId: workflowRunId, generationStatus: "completed", title },
         where: { id: activityId },
       }),
     ]),
   );
 
   if (error) {
-    await stream.error({
-      reason: "dbSaveFailed",
-      step: "savePracticeActivity",
-    });
+    await stream.error({ reason: "dbSaveFailed", step: "savePracticeActivity" });
     await handleActivityFailureStep({ activityId });
     return;
   }
