@@ -8,26 +8,26 @@ import systemPrompt from "./activity-practice.prompt.md";
 const DEFAULT_MODEL = "openai/gpt-5.4";
 const FALLBACK_MODELS = ["anthropic/claude-opus-4.6", "google/gemini-3.1-pro-preview"];
 
+const practiceOptionSchema = z.object({
+  feedback: z.string(),
+  isCorrect: z.boolean(),
+  text: z.string(),
+});
+
+const practiceStepSchema = z.object({
+  context: z.string(),
+  imagePrompt: z.string(),
+  options: z.array(practiceOptionSchema).min(1),
+  question: z.string(),
+});
+
 const schema = z.object({
   scenario: z.object({
     imagePrompt: z.string(),
     text: z.string(),
     title: z.string(),
   }),
-  steps: z.array(
-    z.object({
-      context: z.string(),
-      imagePrompt: z.string(),
-      options: z.array(
-        z.object({
-          feedback: z.string(),
-          isCorrect: z.boolean(),
-          text: z.string(),
-        }),
-      ),
-      question: z.string(),
-    }),
-  ),
+  steps: z.array(practiceStepSchema),
   title: z.string(),
 });
 

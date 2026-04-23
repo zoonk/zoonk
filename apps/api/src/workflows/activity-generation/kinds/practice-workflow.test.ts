@@ -108,9 +108,7 @@ describe("practice activity workflow", () => {
       title: `Practice ${randomUUID()}`,
     });
 
-    const activities = await getLessonActivitiesStep({
-      lessonId: testLesson.id,
-    });
+    const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
     const explanationResults = buildExplanationResults(expActivity.id);
 
     await practiceActivityWorkflow({
@@ -180,9 +178,7 @@ describe("practice activity workflow", () => {
       title: `Practice ${randomUUID()}`,
     });
 
-    const activities = await getLessonActivitiesStep({
-      lessonId: testLesson.id,
-    });
+    const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
     const explanationResults = buildExplanationResults(expActivity.id);
 
     await practiceActivityWorkflow({
@@ -229,9 +225,7 @@ describe("practice activity workflow", () => {
       title: `Practice ${randomUUID()}`,
     });
 
-    const activities = await getLessonActivitiesStep({
-      lessonId: testLesson.id,
-    });
+    const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
     const explanationResults = buildExplanationResults(expActivity.id);
 
     await practiceActivityWorkflow({
@@ -274,9 +268,7 @@ describe("practice activity workflow", () => {
       title: `Practice ${randomUUID()}`,
     });
 
-    const activities = await getLessonActivitiesStep({
-      lessonId: testLesson.id,
-    });
+    const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
 
     await practiceActivityWorkflow({
       activitiesToGenerate: activities,
@@ -308,9 +300,7 @@ describe("practice activity workflow", () => {
       title: `Practice ${randomUUID()}`,
     });
 
-    const activities = await getLessonActivitiesStep({
-      lessonId: testLesson.id,
-    });
+    const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
 
     await practiceActivityWorkflow({
       activitiesToGenerate: activities,
@@ -362,9 +352,7 @@ describe("practice activity workflow", () => {
       position: 0,
     });
 
-    const activities = await getLessonActivitiesStep({
-      lessonId: testLesson.id,
-    });
+    const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
     const explanationResults = buildExplanationResults(expActivity.id);
 
     await practiceActivityWorkflow({
@@ -441,30 +429,12 @@ describe("practice activity workflow", () => {
         }),
       ]);
 
-      const activities = await getLessonActivitiesStep({
-        lessonId: testLesson.id,
-      });
+      const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
       const explanationResults: ExplanationResult[] = [
-        {
-          activityId: expS1.id,
-          concept: "S1",
-          steps: [{ text: "S1 text", title: "S1" }],
-        },
-        {
-          activityId: expS2.id,
-          concept: "S2",
-          steps: [{ text: "S2 text", title: "S2" }],
-        },
-        {
-          activityId: expS3.id,
-          concept: "S3",
-          steps: [{ text: "S3 text", title: "S3" }],
-        },
-        {
-          activityId: expS4.id,
-          concept: "S4",
-          steps: [{ text: "S4 text", title: "S4" }],
-        },
+        { activityId: expS1.id, concept: "S1", steps: [{ text: "S1 text", title: "S1" }] },
+        { activityId: expS2.id, concept: "S2", steps: [{ text: "S2 text", title: "S2" }] },
+        { activityId: expS3.id, concept: "S3", steps: [{ text: "S3 text", title: "S3" }] },
+        { activityId: expS4.id, concept: "S4", steps: [{ text: "S4 text", title: "S4" }] },
       ];
 
       await practiceActivityWorkflow({
@@ -540,9 +510,7 @@ describe("practice activity workflow", () => {
         }),
       ]);
 
-      const activities = await getLessonActivitiesStep({
-        lessonId: testLesson.id,
-      });
+      const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
       const explanationResults: ExplanationResult[] = [
         {
           activityId: expH1A.id,
@@ -633,9 +601,7 @@ describe("practice activity workflow", () => {
         title: `Single Practice ${randomUUID()}`,
       });
 
-      const activities = await getLessonActivitiesStep({
-        lessonId: testLesson.id,
-      });
+      const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
       const explanationResults: ExplanationResult[] = [
         {
           activityId: expSA.id,
@@ -729,9 +695,7 @@ describe("practice activity workflow", () => {
         }),
       ]);
 
-      const activities = await getLessonActivitiesStep({
-        lessonId: testLesson.id,
-      });
+      const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
       const explanationResults: ExplanationResult[] = [
         {
           activityId: expSC1.id,
@@ -835,9 +799,7 @@ describe("practice activity workflow", () => {
       ]);
 
       // practice0 is completed → only practice1 in activitiesToGenerate
-      const allActivities = await getLessonActivitiesStep({
-        lessonId: testLesson.id,
-      });
+      const allActivities = await getLessonActivitiesStep({ lessonId: testLesson.id });
       const activitiesToGenerate = allActivities.filter((a) => a.id === practice1.id);
 
       const explanationResults: ExplanationResult[] = [
@@ -927,9 +889,7 @@ describe("practice activity workflow", () => {
         }),
       ]);
 
-      const activities = await getLessonActivitiesStep({
-        lessonId: testLesson.id,
-      });
+      const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
       const explanationResults: ExplanationResult[] = [
         {
           activityId: expOnly.id,

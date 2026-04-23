@@ -176,17 +176,11 @@ describe(savePracticeActivityStep, () => {
     const events = getStreamedEvents(writeMock);
 
     expect(events).toContainEqual(
-      expect.objectContaining({
-        status: "started",
-        step: "savePracticeActivity",
-      }),
+      expect.objectContaining({ status: "started", step: "savePracticeActivity" }),
     );
 
     expect(events).toContainEqual(
-      expect.objectContaining({
-        status: "completed",
-        step: "savePracticeActivity",
-      }),
+      expect.objectContaining({ status: "completed", step: "savePracticeActivity" }),
     );
   });
 
@@ -235,10 +229,7 @@ describe(savePracticeActivityStep, () => {
     const events = getStreamedEvents(writeMock);
 
     expect(events).toContainEqual(
-      expect.objectContaining({
-        status: "error",
-        step: "savePracticeActivity",
-      }),
+      expect.objectContaining({ status: "error", step: "savePracticeActivity" }),
     );
   });
 });

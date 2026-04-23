@@ -128,16 +128,8 @@ vi.mock("@zoonk/ai/tasks/activities/core/quiz", () => ({
         {
           format: "selectImage",
           options: [
-            {
-              feedback: "This is correct",
-              isCorrect: true,
-              prompt: "A cat sitting",
-            },
-            {
-              feedback: "This is incorrect",
-              isCorrect: false,
-              prompt: "A dog running",
-            },
+            { feedback: "This is correct", isCorrect: true, prompt: "A cat sitting" },
+            { feedback: "This is incorrect", isCorrect: false, prompt: "A dog running" },
           ],
           question: "Which image shows a cat?",
         },
@@ -312,15 +304,9 @@ describe(activityGenerationWorkflow, () => {
         updatedReplacementActivity,
         updatedArchivedReplacementActivity,
       ] = await Promise.all([
-        prisma.activity.findUniqueOrThrow({
-          where: { id: publishedActivity.id },
-        }),
-        prisma.activity.findUniqueOrThrow({
-          where: { id: replacementActivity.id },
-        }),
-        prisma.activity.findUniqueOrThrow({
-          where: { id: archivedReplacementActivity.id },
-        }),
+        prisma.activity.findUniqueOrThrow({ where: { id: publishedActivity.id } }),
+        prisma.activity.findUniqueOrThrow({ where: { id: replacementActivity.id } }),
+        prisma.activity.findUniqueOrThrow({ where: { id: archivedReplacementActivity.id } }),
       ]);
 
       expect(generateActivityExplanation).toHaveBeenCalledOnce();

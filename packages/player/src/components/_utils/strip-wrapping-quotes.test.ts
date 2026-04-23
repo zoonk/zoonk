@@ -12,4 +12,19 @@ describe(stripWrappingQuotes, () => {
     expect(stripWrappingQuotes('"hello there')).toBe('"hello there');
     expect(stripWrappingQuotes('He said "wait" and left.')).toBe('He said "wait" and left.');
   });
+
+  test("leaves lone quote characters alone", () => {
+    expect(stripWrappingQuotes('"')).toBe('"');
+    expect(stripWrappingQuotes("'")).toBe("'");
+    expect(stripWrappingQuotes('  "  ')).toBe('  "  ');
+  });
+
+  test("preserves quotes around the first and last words", () => {
+    expect(stripWrappingQuotes('"this" should preserve quotes in the first and last "words"')).toBe(
+      '"this" should preserve quotes in the first and last "words"',
+    );
+    expect(stripWrappingQuotes("“this” should preserve quotes in the first and last “words”")).toBe(
+      "“this” should preserve quotes in the first and last “words”",
+    );
+  });
 });

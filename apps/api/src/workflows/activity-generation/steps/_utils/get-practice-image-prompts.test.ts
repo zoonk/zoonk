@@ -2,10 +2,10 @@ import { describe, expect, test } from "vitest";
 import { getPracticeImagePrompts } from "./get-practice-image-prompts";
 
 describe(getPracticeImagePrompts, () => {
-  test("returns authored prompts in visible practice order", () => {
+  test("returns trimmed authored prompts in visible practice order", () => {
     const prompts = getPracticeImagePrompts({
       scenario: {
-        imagePrompt: "Opening support desk scene with Maya and a refund dashboard",
+        imagePrompt: "  Opening support desk scene with Maya and a refund dashboard  ",
         text: "I'm closing the support queue with Maya, and one refund total still looks wrong.",
         title: "Night shift",
       },
@@ -13,7 +13,7 @@ describe(getPracticeImagePrompts, () => {
         {
           context: "The discounted orders are the only ones acting weird.",
           imagePrompt:
-            "A refund dashboard filtered to discounted orders with one outlier row highlighted",
+            "  A refund dashboard filtered to discounted orders with one outlier row highlighted  ",
           options: [
             { feedback: "Yes", isCorrect: true, text: "Check discounts" },
             { feedback: "No", isCorrect: false, text: "Ignore it" },
@@ -29,32 +29,39 @@ describe(getPracticeImagePrompts, () => {
     ]);
   });
 
-  test("fills blank prompts with concrete fallbacks", () => {
-    const prompts = getPracticeImagePrompts({
-      scenario: {
-        imagePrompt: "   ",
-        text: "I'm checking one last shipping issue with Leo before the warehouse closes.",
-        title: "Late label",
-      },
-      steps: [
-        {
-          context: "These two labels look almost the same, but the destination scan disagrees.",
-          imagePrompt: "",
-          options: [
-            { feedback: "Yes", isCorrect: true, text: "Match labels" },
-            { feedback: "No", isCorrect: false, text: "Guess city" },
-          ],
-          question: "What should we compare?",
+  test("throws when the scenario image prompt is blank", () => {
+    expect(() =>
+      getPracticeImagePrompts({
+        scenario: {
+          imagePrompt: "   ",
+          text: "I'm checking one last shipping issue with Leo before the warehouse closes.",
+          title: "Late label",
         },
-      ],
-    });
+        steps: [],
+      }),
+    ).toThrow("Missing practice image prompt for scenario");
+  });
 
-    expect(prompts[0]).toContain("Short scene label: Late label.");
-    expect(prompts[0]).toContain(
-      "Situation: I'm checking one last shipping issue with Leo before the warehouse closes.",
-    );
-    expect(prompts[1]).toContain("Dialogue: These two labels look almost the same");
-    expect(prompts[1]).toContain("Question: What should we compare?");
-    expect(prompts[1]).toContain("Possible actions: Match labels, Guess city.");
+  test("throws when a step image prompt is blank", () => {
+    expect(() =>
+      getPracticeImagePrompts({
+        scenario: {
+          imagePrompt: "Opening shipping desk scene",
+          text: "I'm checking one last shipping issue with Leo before the warehouse closes.",
+          title: "Late label",
+        },
+        steps: [
+          {
+            context: "These two labels look almost the same, but the destination scan disagrees.",
+            imagePrompt: "",
+            options: [
+              { feedback: "Yes", isCorrect: true, text: "Match labels" },
+              { feedback: "No", isCorrect: false, text: "Guess city" },
+            ],
+            question: "What should we compare?",
+          },
+        ],
+      }),
+    ).toThrow("Missing practice image prompt for step 1");
   });
 });
