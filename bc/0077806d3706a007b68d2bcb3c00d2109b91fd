@@ -1,0 +1,38 @@
+packages/player/src/player-selectors.test.ts
+  ccfaee228b74cbf6 99,144,166,180,204,305-307,353
+apps/main/src/lib/activities.ts
+  h_1cda88fc21fe9c 41,84,102,109
+AGENTS.md
+  h_1cda88fc21fe9c 6
+packages/player/src/components/multiple-choice-step.tsx
+  h_1cda88fc21fe9c 35,43
+apps/api/src/workflows/activity-generation/steps/save-practice-activity-step.ts
+  h_1cda88fc21fe9c 182,189
+packages/core/src/steps/contract/content.test.ts
+  ccfaee228b74cbf6 189,194,346-347,401,413-415,455
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.2",
+  "base_commit_sha": "bc0077806d3706a007b68d2bcb3c00d2109b91fd",
+  "prompts": {
+    "ccfaee228b74cbf6": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019db740-ac0d-77f3-94b9-37da0fe7d6ef",
+        "model": "gpt-5.4"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 18,
+      "total_deletions": 103,
+      "accepted_lines": 30,
+      "overriden_lines": 0
+    }
+  },
+  "humans": {
+    "h_1cda88fc21fe9c": {
+      "author": "ceolinwill"
+    }
+  }
+}
