@@ -29,7 +29,7 @@ export type {
   InvestigationStepContent,
 } from "./investigation";
 export type { StaticStepContent } from "./static";
-export type { StoryAlignment, StoryStaticVariant, StoryStepContent } from "./story";
+export type { StoryAlignment, StoryStepContent } from "./story";
 
 const vocabularyContentSchema = z.object({}).strict();
 const translationContentSchema = z.object({}).strict();

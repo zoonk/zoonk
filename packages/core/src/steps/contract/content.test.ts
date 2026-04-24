@@ -252,16 +252,18 @@ describe("step content contracts", () => {
       consequence: "Things improve.",
       id: "1a",
       metricEffects: [{ effect: "positive" as const, metric: "Production" }],
+      stateImage: { prompt: "World state after the helpful action" },
       text: "Do the right thing",
     };
 
-    test("parses step with situation and choices", () => {
+    test("parses step with problem and choices", () => {
       const content = parseStepContent("story", {
         choices: [baseChoice, { ...baseChoice, alignment: "weak", id: "1b" }],
-        situation: "You face a decision.",
+        image: { prompt: "Story decision scene" },
+        problem: "You face a decision.",
       });
 
-      expect(content.situation).toBe("You face a decision.");
+      expect(content.problem).toBe("You face a decision.");
       expect(content.choices).toHaveLength(2);
     });
 
@@ -273,7 +275,8 @@ describe("step content contracts", () => {
 
       const content = parseStepContent("story", {
         choices,
-        situation: "Many options available.",
+        image: { prompt: "Crowded decision scene" },
+        problem: "Many options available.",
       });
 
       expect(content.choices).toHaveLength(5);
@@ -283,7 +286,7 @@ describe("step content contracts", () => {
       expect(() =>
         parseStepContent("story", {
           choices: [baseChoice],
-          situation: "Only one option.",
+          problem: "Only one option.",
         }),
       ).toThrow();
     });
@@ -293,7 +296,7 @@ describe("step content contracts", () => {
         parseStepContent("story", {
           choices: [baseChoice, { ...baseChoice, id: "1b" }],
           intro: "Not allowed here.",
-          situation: "Test.",
+          problem: "Test.",
         }),
       ).toThrow();
     });
@@ -302,12 +305,12 @@ describe("step content contracts", () => {
       expect(() =>
         parseStepContent("story", {
           choices: [{ ...baseChoice, extra: "field" }],
-          situation: "Test.",
+          problem: "Test.",
         }),
       ).toThrow();
     });
 
-    test("rejects missing situation", () => {
+    test("rejects missing problem", () => {
       expect(() =>
         parseStepContent("story", {
           choices: [baseChoice, { ...baseChoice, id: "1b" }],
@@ -316,23 +319,37 @@ describe("step content contracts", () => {
     });
   });
 
-  describe("static storyIntro", () => {
-    test("parses intro with metrics", () => {
+  describe("static intro", () => {
+    test("parses generic intro without story metrics", () => {
       const content = parseStepContent("static", {
-        intro: "You are a factory manager in 1950.",
-        metrics: ["Production", "Morale", "Cash"],
-        variant: "storyIntro",
+        text: "You arrive in the middle of the problem.",
+        title: "Opening",
+        variant: "intro",
       });
 
-      expect(content.variant).toBe("storyIntro");
+      expect(content).toEqual({
+        text: "You arrive in the middle of the problem.",
+        title: "Opening",
+        variant: "intro",
+      });
     });
 
-    test("rejects empty metrics", () => {
+    test("rejects intro without title", () => {
       expect(() =>
         parseStepContent("static", {
-          intro: "You are a factory manager.",
-          metrics: [],
-          variant: "storyIntro",
+          text: "You arrive in the middle of the problem.",
+          variant: "intro",
+        }),
+      ).toThrow();
+    });
+
+    test("rejects intro with story metrics", () => {
+      expect(() =>
+        parseStepContent("static", {
+          metrics: [{ label: "Production" }, { label: "Morale" }],
+          text: "You are a factory manager.",
+          title: "Factory crisis",
+          variant: "intro",
         }),
       ).toThrow();
     });
@@ -341,22 +358,82 @@ describe("step content contracts", () => {
   describe("static storyOutcome", () => {
     test("parses outcome with metrics", () => {
       const content = parseStepContent("static", {
-        metrics: ["Production", "Morale"],
-        outcomes: [
-          { minStrongChoices: 4, narrative: "Your factory thrives.", title: "Master Manager" },
-          { minStrongChoices: 0, narrative: "Things fell apart.", title: "Learning Moment" },
-        ],
+        metrics: [{ label: "Production" }, { label: "Morale" }],
+        outcomes: {
+          bad: {
+            image: { prompt: "Strained factory" },
+            narrative: "The factory barely holds together.",
+            title: "Hard Lesson",
+          },
+          good: {
+            image: { prompt: "Stable factory" },
+            narrative: "Your factory stabilizes.",
+            title: "Solid Manager",
+          },
+          ok: {
+            image: { prompt: "Uneven factory" },
+            narrative: "Your factory recovers unevenly.",
+            title: "Mixed Shift",
+          },
+          perfect: {
+            image: { prompt: "Thriving factory" },
+            narrative: "Your factory thrives.",
+            title: "Master Manager",
+          },
+          terrible: {
+            image: { prompt: "Falling apart factory" },
+            narrative: "Things fell apart.",
+            title: "Learning Moment",
+          },
+        },
         variant: "storyOutcome",
       });
 
       expect(content.variant).toBe("storyOutcome");
     });
 
-    test("rejects negative minStrongChoices", () => {
+    test("rejects empty metrics", () => {
       expect(() =>
         parseStepContent("static", {
-          metrics: ["Production"],
-          outcomes: [{ minStrongChoices: -1, narrative: "Bad.", title: "Bad" }],
+          metrics: [],
+          outcomes: {
+            bad: { narrative: "Bad.", title: "Bad" },
+            good: { narrative: "Good.", title: "Good" },
+            ok: { narrative: "Ok.", title: "Ok" },
+            perfect: { narrative: "Perfect.", title: "Perfect" },
+            terrible: { narrative: "Terrible.", title: "Terrible" },
+          },
+          variant: "storyOutcome",
+        }),
+      ).toThrow();
+    });
+
+    test("rejects stories with only one metric", () => {
+      expect(() =>
+        parseStepContent("static", {
+          metrics: [{ label: "Production" }],
+          outcomes: {
+            bad: { narrative: "Bad.", title: "Bad" },
+            good: { narrative: "Good.", title: "Good" },
+            ok: { narrative: "Ok.", title: "Ok" },
+            perfect: { narrative: "Perfect.", title: "Perfect" },
+            terrible: { narrative: "Terrible.", title: "Terrible" },
+          },
+          variant: "storyOutcome",
+        }),
+      ).toThrow();
+    });
+
+    test("rejects missing outcome tiers", () => {
+      expect(() =>
+        parseStepContent("static", {
+          metrics: [{ label: "Production" }, { label: "Morale" }],
+          outcomes: {
+            bad: { narrative: "Bad.", title: "Bad" },
+            good: { narrative: "Good.", title: "Good" },
+            ok: { narrative: "Ok.", title: "Ok" },
+            perfect: { narrative: "Perfect.", title: "Perfect" },
+          },
           variant: "storyOutcome",
         }),
       ).toThrow();

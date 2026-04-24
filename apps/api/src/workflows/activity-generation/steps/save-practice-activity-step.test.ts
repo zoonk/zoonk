@@ -138,7 +138,7 @@ describe(savePracticeActivityStep, () => {
       image: practiceImages[0],
       text: practiceScenario.text,
       title: practiceScenario.title,
-      variant: "text",
+      variant: "intro",
     });
 
     expect(dbSteps[1]?.content).toEqual({

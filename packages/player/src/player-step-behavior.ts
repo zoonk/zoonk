@@ -17,7 +17,7 @@ export type PlayerCheckBehavior =
   | "translation";
 
 type PlayerFeedbackBehavior = "inline" | "none" | "screen";
-type PlayerLayoutBehavior = "default" | "navigable";
+type PlayerLayoutBehavior = "default" | "hero" | "navigable";
 type PlayerSceneBehavior = "choice" | "read";
 
 export type PlayerRenderBehavior =
@@ -64,6 +64,14 @@ const STEP_BEHAVIOR_BY_KIND: Record<PlayerStepKind, PlayerStepBehavior> = {
     render: "fillBlank",
     scene: "choice",
     validation: "fillBlank",
+  },
+  intro: {
+    check: "none",
+    feedback: "none",
+    layout: "hero",
+    render: "static",
+    scene: "read",
+    validation: "none",
   },
   investigationAction: {
     check: "investigationAction",
@@ -169,18 +177,10 @@ const STEP_BEHAVIOR_BY_KIND: Record<PlayerStepKind, PlayerStepBehavior> = {
     scene: "choice",
     validation: "story",
   },
-  storyIntro: {
-    check: "none",
-    feedback: "none",
-    layout: "default",
-    render: "static",
-    scene: "read",
-    validation: "none",
-  },
   storyOutcome: {
     check: "none",
     feedback: "none",
-    layout: "default",
+    layout: "hero",
     render: "static",
     scene: "read",
     validation: "none",
@@ -210,7 +210,7 @@ const STEP_BEHAVIOR_BY_KIND: Record<PlayerStepKind, PlayerStepBehavior> = {
  * answers in one place so new step kinds become additive instead of scattered.
  */
 export function getPlayerStepBehavior(
-  descriptor: PlayerStepDescriptor | null | undefined,
+  descriptor?: PlayerStepDescriptor | null,
 ): PlayerStepBehavior | null {
   if (!descriptor) {
     return null;
@@ -224,7 +224,7 @@ export function getPlayerStepBehavior(
  * left/right static navigation. Deriving that from the shared behavior keeps
  * the layout contract aligned with render routing.
  */
-export function usesStaticNavigation(descriptor: PlayerStepDescriptor | null | undefined): boolean {
+export function hasStaticNavigation(descriptor?: PlayerStepDescriptor | null): boolean {
   return getPlayerStepBehavior(descriptor)?.layout === "navigable";
 }
 
@@ -233,7 +233,7 @@ export function usesStaticNavigation(descriptor: PlayerStepDescriptor | null | u
  * inline. The screen model should ask the behavior layer this question rather
  * than re-encoding a list of step kinds.
  */
-export function usesFeedbackScreen(descriptor: PlayerStepDescriptor | null | undefined): boolean {
+export function hasFeedbackScreen(descriptor?: PlayerStepDescriptor | null): boolean {
   return getPlayerStepBehavior(descriptor)?.feedback === "screen";
 }
 
@@ -245,7 +245,7 @@ export function usesFeedbackScreen(descriptor: PlayerStepDescriptor | null | und
  * family of screens: read or choice.
  */
 export function getPlayerStepScene(
-  descriptor: PlayerStepDescriptor | null | undefined,
+  descriptor?: PlayerStepDescriptor | null,
 ): PlayerSceneBehavior | null {
   return getPlayerStepBehavior(descriptor)?.scene ?? null;
 }
@@ -255,8 +255,6 @@ export function getPlayerStepScene(
  * reuse the canonical descriptor directly and then dispatch to the matching
  * check strategy.
  */
-export function getPlayerCheckBehavior(
-  step: SerializedStep | null | undefined,
-): PlayerCheckBehavior | null {
+export function getPlayerCheckBehavior(step?: SerializedStep | null): PlayerCheckBehavior | null {
   return getPlayerStepBehavior(describePlayerStep(step))?.check ?? null;
 }

@@ -37,7 +37,7 @@ type CourseMilestone = {
 
 export type PlayerMilestone = { kind: "activity" } | ReviewMilestone | CourseMilestone;
 
-type PlayerRuntimeContextValue = {
+export type PlayerRuntimeContextValue = {
   actions: PlayerActions;
   screen: PlayerScreenModel;
   state: PlayerState;

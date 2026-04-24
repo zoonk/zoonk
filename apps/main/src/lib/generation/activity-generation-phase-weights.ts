@@ -139,10 +139,11 @@ export function getPhaseWeights(kind: ActivityKind): Record<PhaseName, number> {
   if (kind === "story") {
     return {
       ...ZERO_WEIGHTS,
-      buildingScenario: 55,
+      buildingScenario: 35,
+      creatingAnswerOptions: 25,
+      creatingImages: 25,
       gettingStarted: 5,
       saving: 10,
-      writingDebrief: 30,
     };
   }
 

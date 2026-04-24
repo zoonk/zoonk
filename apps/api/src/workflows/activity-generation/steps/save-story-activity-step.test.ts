@@ -12,6 +12,20 @@ import { saveStoryActivityStep } from "./save-story-activity-step";
 
 const writeMock = vi.fn().mockResolvedValue(null);
 
+type StepContentWithChoices = {
+  choices?: { id?: string; text?: string }[];
+  image?: { url?: string };
+};
+
+type StepContentWithImage = {
+  image?: { url?: string };
+};
+
+type StepContentWithOutcomes = {
+  metrics?: { label?: string }[];
+  outcomes?: { perfect?: { image?: { url?: string } } };
+};
+
 vi.mock("workflow", () => ({
   FatalError: class FatalError extends Error {},
   getWorkflowMetadata: vi.fn().mockReturnValue({ workflowRunId: "test-run-id" }),
@@ -24,65 +38,115 @@ vi.mock("workflow", () => ({
   workflowStep: vi.fn().mockImplementation((_name: string, fn: unknown) => fn),
 }));
 
-const storySteps = {
+const storyData = {
   intro: "You are a factory manager facing a crisis.",
+  introImagePrompt: "Factory floor with anxious workers waiting for direction",
   metrics: ["Production", "Morale", "Cash"],
+  outcomes: {
+    bad: {
+      imagePrompt: "Factory floor mixed between wins and unresolved trouble spots",
+      narrative: "Some decisions landed well, but the system still feels uneven.",
+      title: "Mixed recovery",
+    },
+    good: {
+      imagePrompt: "Factory floor stabilizing with some strain still visible",
+      narrative: "You regained control with a few scars left from the crisis.",
+      title: "Solid recovery",
+    },
+    ok: {
+      imagePrompt: "Factory floor partly moving while the team still clears delays",
+      narrative: "You kept the crisis contained, but recovery is uneven.",
+      title: "Partial recovery",
+    },
+    perfect: {
+      imagePrompt: "Recovered factory floor with confident workers and steady output",
+      narrative: "You turned crisis into opportunity.",
+      title: "Excellent",
+    },
+    terrible: {
+      imagePrompt: "Factory floor still strained with missed output and tired workers",
+      narrative: "The crisis overwhelmed you.",
+      title: "Needs work",
+    },
+  },
   steps: [
     {
       choices: [
         {
           alignment: "strong" as const,
           consequence: "Workers rally behind you.",
-          id: "c1a",
+          label: "Address the team directly",
           metricEffects: [{ effect: "positive" as const, metric: "Morale" }],
-          text: "Address the team directly",
+          stateImagePrompt: "Factory floor after a direct address calms the team",
         },
         {
           alignment: "weak" as const,
           consequence: "Rumors spread.",
-          id: "c1b",
+          label: "Send an email",
           metricEffects: [{ effect: "negative" as const, metric: "Morale" }],
-          text: "Send an email",
+          stateImagePrompt: "Factory floor after a vague email leaves workers confused",
         },
       ],
-      situation: "Your supplier went bankrupt.",
+      imagePrompt: "Factory floor with halted lines and empty parts bins",
+      problem: "Your supplier went bankrupt.",
     },
     {
       choices: [
         {
           alignment: "partial" as const,
           consequence: "Reasonable alternative found.",
-          id: "c2a",
+          label: "Contact backup suppliers",
           metricEffects: [{ effect: "positive" as const, metric: "Production" }],
-          text: "Contact backup suppliers",
+          stateImagePrompt: "Temporary supply shipment arriving at the factory loading dock",
         },
         {
           alignment: "strong" as const,
           consequence: "Innovation emerges.",
-          id: "c2b",
+          label: "Redesign the product",
           metricEffects: [
             { effect: "positive" as const, metric: "Production" },
             { effect: "positive" as const, metric: "Cash" },
           ],
-          text: "Redesign the product",
+          stateImagePrompt:
+            "Factory team adapting the product with new materials and renewed momentum",
         },
       ],
-      situation: "Production is halted.",
+      imagePrompt: "Production area paused while engineers debate how to proceed without parts",
+      problem: "Production is halted.",
     },
   ],
   title: "The night the labels got swapped",
 };
 
-const debriefData = {
-  debrief: [
-    { explanation: "Communication builds trust.", name: "Crisis Communication" },
-    { explanation: "Constraints drive innovation.", name: "Supply Chain Resilience" },
+const storyImages = {
+  choiceStateImages: [
+    [
+      { prompt: "State 1A", url: "https://example.com/state-1a.webp" },
+      { prompt: "State 1B", url: "https://example.com/state-1b.webp" },
+    ],
+    [
+      { prompt: "State 2A", url: "https://example.com/state-2a.webp" },
+      { prompt: "State 2B", url: "https://example.com/state-2b.webp" },
+    ],
   ],
-  outcomes: [
-    { minStrongChoices: 2, narrative: "You turned crisis into opportunity.", title: "Excellent" },
-    { minStrongChoices: 0, narrative: "The crisis overwhelmed you.", title: "Needs work" },
+  introImage: {
+    prompt: "Story intro",
+    url: "https://example.com/story-intro.webp",
+  },
+  outcomeImages: {
+    bad: { prompt: "Outcome bad", url: "https://example.com/outcome-bad.webp" },
+    good: { prompt: "Outcome good", url: "https://example.com/outcome-good.webp" },
+    ok: { prompt: "Outcome ok", url: "https://example.com/outcome-ok.webp" },
+    perfect: { prompt: "Outcome perfect", url: "https://example.com/outcome-perfect.webp" },
+    terrible: { prompt: "Outcome terrible", url: "https://example.com/outcome-terrible.webp" },
+  },
+  stepImages: [
+    { prompt: "Story step 1", url: "https://example.com/step-1.webp" },
+    { prompt: "Story step 2", url: "https://example.com/step-2.webp" },
   ],
 };
+
+const uuidPattern = /^[\da-f]{8}(?:-[\da-f]{4}){3}-[\da-f]{12}$/i;
 
 describe(saveStoryActivityStep, () => {
   let organizationId: string;
@@ -104,7 +168,11 @@ describe(saveStoryActivityStep, () => {
     vi.clearAllMocks();
   });
 
-  test("saves intro, decision steps, and debrief with correct kinds and positions", async () => {
+  /**
+   * Creates a fresh story activity, runs the save step, and returns the
+   * persisted records so assertions can focus on output instead of setup.
+   */
+  async function saveGeneratedStory() {
     const lesson = await lessonFixture({
       chapterId: chapter.id,
       organizationId,
@@ -122,9 +190,8 @@ describe(saveStoryActivityStep, () => {
 
     await saveStoryActivityStep({
       activityId: activity.id,
-      debriefData,
-      storySteps,
-      title: storySteps.title,
+      storyData,
+      storyImages,
       workflowRunId: "workflow-1",
     });
 
@@ -138,35 +205,53 @@ describe(saveStoryActivityStep, () => {
       }),
     ]);
 
-    // 1 intro + 2 decision steps + 1 outcome + 2 debrief concepts = 6
-    expect(dbSteps).toHaveLength(6);
+    return { dbActivity, dbSteps };
+  }
 
-    // Intro: static with storyIntro variant at position 0
-    expect(dbSteps[0]?.kind).toBe("static");
-    expect(dbSteps[0]?.position).toBe(0);
-    expect(getString(dbSteps[0]?.content, "variant")).toBe("storyIntro");
+  test("saves intro, decision steps, and outcome with correct kinds and positions", async () => {
+    const { dbActivity, dbSteps } = await saveGeneratedStory();
+    const introStep = dbSteps[0]!;
+    const firstDecisionStep = dbSteps[1]!;
+    const secondDecisionStep = dbSteps[2]!;
+    const outcomeStep = dbSteps[3]!;
+    const introContent = introStep.content as StepContentWithImage;
+    const firstDecisionContent = firstDecisionStep.content as StepContentWithChoices;
+    const outcomeContent = outcomeStep.content as StepContentWithOutcomes;
+
+    // 1 intro + 2 decision steps + 1 outcome = 4
+    expect(dbSteps).toHaveLength(4);
+
+    // Intro: static with intro variant at position 0
+    expect(introStep.kind).toBe("static");
+    expect(introStep.position).toBe(0);
+    expect(getString(introStep.content, "variant")).toBe("intro");
+    expect(getString(introStep.content, "title")).toBe(storyData.title);
+    expect(introStep.content).not.toHaveProperty("metrics");
+    expect(introContent.image?.url).toBe("https://example.com/story-intro.webp");
 
     // Decision steps: story kind at positions 1 and 2
-    expect(dbSteps[1]?.kind).toBe("story");
-    expect(dbSteps[1]?.position).toBe(1);
-    expect(dbSteps[2]?.kind).toBe("story");
-    expect(dbSteps[2]?.position).toBe(2);
+    expect(firstDecisionStep.kind).toBe("story");
+    expect(firstDecisionStep.position).toBe(1);
+    expect(firstDecisionContent.image?.url).toBe("https://example.com/step-1.webp");
+    expect(firstDecisionContent.choices?.map((choice) => choice.id)).toEqual([
+      expect.stringMatching(uuidPattern),
+      expect.stringMatching(uuidPattern),
+    ]);
+    expect(firstDecisionContent.choices?.map((choice) => choice.text)).toEqual([
+      "Address the team directly",
+      "Send an email",
+    ]);
+    expect(secondDecisionStep.kind).toBe("story");
+    expect(secondDecisionStep.position).toBe(2);
 
     // Outcome: static with storyOutcome variant at position 3
-    expect(dbSteps[3]?.kind).toBe("static");
-    expect(dbSteps[3]?.position).toBe(3);
-    expect(getString(dbSteps[3]?.content, "variant")).toBe("storyOutcome");
-
-    // Debrief concepts: individual text steps at positions 4 and 5
-    expect(dbSteps[4]?.kind).toBe("static");
-    expect(dbSteps[4]?.position).toBe(4);
-    expect(getString(dbSteps[4]?.content, "variant")).toBe("text");
-    expect(getString(dbSteps[4]?.content, "title")).toBe("Crisis Communication");
-
-    expect(dbSteps[5]?.kind).toBe("static");
-    expect(dbSteps[5]?.position).toBe(5);
-    expect(getString(dbSteps[5]?.content, "variant")).toBe("text");
-    expect(getString(dbSteps[5]?.content, "title")).toBe("Supply Chain Resilience");
+    expect(outcomeStep.kind).toBe("static");
+    expect(outcomeStep.position).toBe(3);
+    expect(getString(outcomeStep.content, "variant")).toBe("storyOutcome");
+    expect(outcomeContent.metrics?.map((metric) => metric.label)).toEqual(storyData.metrics);
+    expect(outcomeContent.outcomes?.perfect?.image?.url).toBe(
+      "https://example.com/outcome-perfect.webp",
+    );
 
     // All steps are published
     for (const step of dbSteps) {
@@ -177,7 +262,7 @@ describe(saveStoryActivityStep, () => {
     expect(dbActivity).toMatchObject({
       generationRunId: "workflow-1",
       generationStatus: "completed",
-      title: storySteps.title,
+      title: storyData.title,
     });
 
     const events = getStreamedEvents(writeMock);
@@ -212,9 +297,8 @@ describe(saveStoryActivityStep, () => {
 
     await saveStoryActivityStep({
       activityId: activity.id,
-      debriefData,
-      storySteps,
-      title: storySteps.title,
+      storyData,
+      storyImages,
       workflowRunId: "workflow-error",
     });
 

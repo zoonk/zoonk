@@ -1,8 +1,10 @@
-import { describe, expect, test, vi } from "vitest";
+import { shuffle } from "@zoonk/utils/shuffle";
+import { beforeEach, describe, expect, test, vi } from "vitest";
+import { parseStepContent } from "../../steps/contract/content";
 import { prepareLessonActivityData } from "./prepare-activity-data";
 
 vi.mock("@zoonk/utils/shuffle", () => ({
-  shuffle: <T>(items: T[]) => items,
+  shuffle: vi.fn(<T>(items: T[]) => items),
 }));
 
 type PrepareLessonActivityInput = Parameters<typeof prepareLessonActivityData>[0];
@@ -14,6 +16,7 @@ type LessonWord = PrepareLessonActivityInput["lessonWords"][number];
 type LessonSentence = PrepareLessonActivityInput["lessonSentences"][number];
 type SentenceWord = NonNullable<PrepareLessonActivityInput["sentenceWords"]>[number];
 type DistractorWord = NonNullable<PrepareLessonActivityInput["distractorWords"]>[number];
+const shuffleMock = vi.mocked(shuffle);
 
 function makeWordRecord(overrides: Partial<LessonWord["word"]> = {}): LessonWord["word"] {
   return {
@@ -141,6 +144,11 @@ function prepare(params: Partial<PrepareLessonActivityInput> = {}) {
 }
 
 describe(prepareLessonActivityData, () => {
+  beforeEach(() => {
+    shuffleMock.mockReset();
+    shuffleMock.mockImplementation(<T>(items: readonly T[]) => [...items]);
+  });
+
   test("serializes activity and step ids to strings", () => {
     const result = prepare({
       activity: makeActivity(
@@ -449,6 +457,60 @@ describe(prepareLessonActivityData, () => {
       ],
       question: "Pick one",
     });
+  });
+
+  test("shuffles story choices during serialization", () => {
+    shuffleMock.mockImplementationOnce((items) => items.toReversed());
+
+    const result = prepare({
+      activity: makeActivity([
+        makeStep({
+          content: {
+            choices: [
+              {
+                alignment: "strong",
+                consequence: "Best outcome",
+                id: "choice-1",
+                metricEffects: [{ effect: "positive", metric: "Trust" }],
+                stateImage: { prompt: "Best outcome state" },
+                text: "Alpha",
+              },
+              {
+                alignment: "partial",
+                consequence: "Mixed outcome",
+                id: "choice-2",
+                metricEffects: [{ effect: "neutral", metric: "Trust" }],
+                stateImage: { prompt: "Mixed outcome state" },
+                text: "Beta",
+              },
+              {
+                alignment: "weak",
+                consequence: "Worst outcome",
+                id: "choice-3",
+                metricEffects: [{ effect: "negative", metric: "Trust" }],
+                stateImage: { prompt: "Worst outcome state" },
+                text: "Gamma",
+              },
+            ],
+            problem: "What do you do?",
+          },
+          id: "31",
+          kind: "story",
+        }),
+      ]),
+    });
+
+    const storyStep = result.steps[0];
+
+    expect(storyStep?.kind).toBe("story");
+
+    if (storyStep?.kind !== "story") {
+      return;
+    }
+
+    const storyContent = parseStepContent("story", storyStep.content);
+
+    expect(storyContent.choices.map(({ id }) => id)).toEqual(["choice-3", "choice-2", "choice-1"]);
   });
 
   test("builds reading and listening word banks from stored distractors only", () => {

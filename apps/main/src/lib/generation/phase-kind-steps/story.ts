@@ -6,14 +6,16 @@ type StorySteps =
   | "getLessonActivities"
   | "setActivityAsRunning"
   | "generateStoryContent"
-  | "generateStoryDebrief"
+  | "generateStoryChoices"
+  | "generateStepImages"
   | "saveStoryActivity";
 
 export const STORY_PHASE_STEPS = {
   buildingScenario: ["generateStoryContent"],
+  creatingAnswerOptions: ["generateStoryChoices"],
+  creatingImages: ["generateStepImages"],
   gettingStarted: ["getLessonActivities", "setActivityAsRunning"],
   saving: ["saveStoryActivity"],
-  writingDebrief: ["generateStoryDebrief"],
 } as const satisfies Record<string, readonly ActivityStepName[]>;
 
 type _ValidateStory = AssertAllCovered<
@@ -23,6 +25,7 @@ type _ValidateStory = AssertAllCovered<
 export const STORY_PHASE_ORDER: PhaseName[] = [
   "gettingStarted",
   "buildingScenario",
-  "writingDebrief",
+  "creatingAnswerOptions",
+  "creatingImages",
   "saving",
 ];

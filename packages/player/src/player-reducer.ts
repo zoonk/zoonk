@@ -1,6 +1,7 @@
 import { type AnswerResult } from "@zoonk/core/player/contracts/check-answer";
 import { type CompletionResult } from "@zoonk/core/player/contracts/completion-input-schema";
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
+import { type ActivityKind } from "@zoonk/core/steps/contract/content";
 import { type InvestigationLoopState } from "./investigation";
 import {
   continueFromAction,
@@ -9,8 +10,9 @@ import {
 } from "./investigation-reducer";
 import { computeLocalCompletion } from "./player-completion";
 import { buildInitialAnswers } from "./player-initial-state";
-import { getInvestigationVariant, getStoryStaticVariant } from "./player-step";
-import { canNavigatePrev, isStaticNavigationStep } from "./step-navigation";
+import { describePlayerStep, getInvestigationVariant } from "./player-step";
+import { getPlayerStepBehavior } from "./player-step-behavior";
+import { canNavigatePrev } from "./step-navigation";
 
 export type PlayerPhase = "playing" | "feedback" | "completed";
 
@@ -43,6 +45,7 @@ export type StepTiming = {
 
 export type PlayerState = {
   activityId: string;
+  activityKind: ActivityKind;
   completion: CompletionResult | null;
   currentStepIndex: number;
   investigationLoop: InvestigationLoopState | null;
@@ -266,22 +269,23 @@ function handleNavigateStep(
   }
 
   const currentStep = state.steps[state.currentStepIndex];
+  const currentBehavior = getPlayerStepBehavior(describePlayerStep(currentStep));
 
   /**
-   * Story static steps (intro, outcome, debrief) allow forward-only
-   * navigation via the bottom bar action buttons. They don't participate
-   * in arrow-key navigation handled by `isStaticNavigationStep`.
+   * Hero screens own their CTA inside the step content and only move forward.
+   * They do not participate in static left/right navigation, but their primary
+   * action still dispatches the same next-step transition as read screens.
    */
-  if (currentStep && getStoryStaticVariant(currentStep) && action.direction === "next") {
+  if (currentBehavior?.layout === "hero" && action.direction === "next") {
     return advanceForward(state);
   }
 
-  if (!isStaticNavigationStep(currentStep)) {
+  if (currentBehavior?.layout !== "navigable") {
     return state;
   }
 
   if (action.direction === "prev") {
-    if (!canNavigatePrev(state.steps, state.currentStepIndex)) {
+    if (!canNavigatePrev({ currentStepIndex: state.currentStepIndex, steps: state.steps })) {
       return state;
     }
 

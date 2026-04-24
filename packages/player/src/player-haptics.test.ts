@@ -37,7 +37,6 @@ function buildSnapshot(overrides: Partial<PlayerHapticSnapshot> = {}): PlayerHap
     phase: "playing",
     result: undefined,
     step: buildStep(),
-    storyStaticVariant: null,
     ...overrides,
   };
 }
@@ -52,10 +51,11 @@ describe(getPlayerHapticSequence, () => {
             consequence: "Things improve.",
             id: "choice-1",
             metricEffects: [{ effect: "positive" as const, metric: "Morale" }],
+            stateImage: { prompt: "State after the helpful choice" },
             text: "Help",
           },
         ],
-        situation: "Choose",
+        problem: "Choose",
       },
       id: "story-1",
       kind: "story",
@@ -146,7 +146,19 @@ describe(getPlayerHapticSequence, () => {
     const sequence = getPlayerHapticSequence({
       current: buildSnapshot({
         phase: "playing",
-        storyStaticVariant: "storyOutcome",
+        step: buildStep({
+          content: {
+            metrics: [{ label: "Production" }, { label: "Morale" }],
+            outcomes: {
+              bad: { narrative: "Bad.", title: "Bad" },
+              good: { narrative: "Good.", title: "Good" },
+              ok: { narrative: "Ok.", title: "Ok" },
+              perfect: { narrative: "Result.", title: "Outcome" },
+              terrible: { narrative: "Terrible.", title: "Terrible" },
+            },
+            variant: "storyOutcome" as const,
+          },
+        }),
       }),
       milestoneKind: "activity",
       previous: buildSnapshot({ phase: "feedback" }),

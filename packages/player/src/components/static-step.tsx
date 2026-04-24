@@ -12,16 +12,14 @@ import {
 } from "./player-read-scene";
 import { RomanizationText } from "./romanization-text";
 import { StaticStepLayout } from "./static-step-layout";
-import { StoryIntroContent } from "./story-intro-content";
+import { StepIntroHero } from "./step-intro-hero-layout";
 import { StoryOutcomeContent } from "./story-outcome-content";
 
 function getStaticDescriptorImage(descriptor: ReturnType<typeof describePlayerStep>) {
   if (
     descriptor?.kind === "staticText" ||
     descriptor?.kind === "staticGrammarExample" ||
-    descriptor?.kind === "staticGrammarRule" ||
-    descriptor?.kind === "storyIntro" ||
-    descriptor?.kind === "storyOutcome"
+    descriptor?.kind === "staticGrammarRule"
   ) {
     return descriptor.content.image;
   }
@@ -98,16 +96,6 @@ function StaticStepContent({ step }: { step: SerializedStep }) {
     );
   }
 
-  if (descriptor.kind === "storyIntro") {
-    return (
-      <StoryIntroContent intro={descriptor.content.intro} metrics={descriptor.content.metrics} />
-    );
-  }
-
-  if (descriptor.kind === "storyOutcome") {
-    return <StoryOutcomeContent outcomes={descriptor.content.outcomes} />;
-  }
-
   if (descriptor.kind !== "staticText") {
     return null;
   }
@@ -116,7 +104,23 @@ function StaticStepContent({ step }: { step: SerializedStep }) {
 }
 
 export function StaticStep({ step }: { step: SerializedStep }) {
-  const image = getStaticDescriptorImage(describePlayerStep(step));
+  const descriptor = describePlayerStep(step);
+  const image = getStaticDescriptorImage(descriptor);
+
+  if (descriptor?.kind === "intro") {
+    return (
+      <StepIntroHero
+        image={descriptor.intro.image}
+        text={descriptor.intro.text}
+        title={descriptor.intro.title}
+      />
+    );
+  }
+
+  if (descriptor?.kind === "storyOutcome") {
+    return <StoryOutcomeContent outcomes={descriptor.content.outcomes} />;
+  }
+
   const content = <StaticStepContent step={step} />;
 
   if (!image) {

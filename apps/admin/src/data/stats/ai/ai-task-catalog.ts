@@ -68,11 +68,11 @@ const AI_TASK_METADATA = {
     defaultModel: "openai/gpt-5.4",
     supportsFallbackReporting: true,
   },
-  "activity-story-debrief": {
+  "activity-story": {
     defaultModel: "openai/gpt-5.4",
-    supportsFallbackReporting: true,
+    supportsFallbackReporting: false,
   },
-  "activity-story-steps": {
+  "activity-story-choices": {
     defaultModel: "openai/gpt-5.4",
     supportsFallbackReporting: false,
   },
@@ -202,8 +202,8 @@ const AI_TASK_CATALOG_GROUP_DEFINITIONS = [
       "activity-explanation",
       "activity-practice",
       "activity-quiz",
-      "activity-story-steps",
-      "activity-story-debrief",
+      "activity-story",
+      "activity-story-choices",
       "activity-investigation-scenario",
       "activity-investigation-accuracy",
       "activity-investigation-actions",

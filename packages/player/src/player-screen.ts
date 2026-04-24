@@ -1,11 +1,10 @@
-import { type StoryStaticVariant } from "@zoonk/core/steps/contract/content";
 import { type PlayerState } from "./player-reducer";
 import { type PlayerStepDescriptor, describePlayerStep } from "./player-step";
 import {
   getPlayerStepBehavior,
   getPlayerStepScene,
-  usesFeedbackScreen,
-  usesStaticNavigation,
+  hasFeedbackScreen,
+  hasStaticNavigation,
 } from "./player-step-behavior";
 import { canNavigatePrev as getCanNavigatePrev } from "./step-navigation";
 
@@ -39,9 +38,9 @@ type InPlayScreenModel = {
   scene: InPlayScreenScene;
   showChrome: true;
   showMetricsBar: boolean;
+  stageIsFullBleed: boolean;
   stageIsStatic: boolean;
   step: PlayerStepDescriptor;
-  storyStaticVariant: StoryStaticVariant | null;
 };
 
 export type PlayerCompletedScreenModel = {
@@ -51,8 +50,8 @@ export type PlayerCompletedScreenModel = {
   scene: "completion";
   showChrome: false;
   showMetricsBar: false;
+  stageIsFullBleed: false;
   stageIsStatic: false;
-  storyStaticVariant: null;
 };
 
 export type PlayerFeedbackScreenModel = InPlayScreenModel & {
@@ -87,8 +86,8 @@ function getCompletedScreenModel(): PlayerCompletedScreenModel {
     scene: "completion",
     showChrome: false,
     showMetricsBar: false,
+    stageIsFullBleed: false,
     stageIsStatic: false,
-    storyStaticVariant: null,
   };
 }
 
@@ -123,7 +122,7 @@ function getBottomBarModel({
     };
   }
 
-  if (step.kind === "storyIntro") {
+  if (step.kind === "intro") {
     return {
       button: "begin",
       disabled: false,
@@ -200,23 +199,6 @@ function getKeyboardModel({
 }
 
 /**
- * Story intro and outcome are the only step descriptors that need a dedicated
- * story-static signal. The haptics layer consumes this when feedback advances
- * into the outcome screen.
- */
-function getStoryStaticVariant(step: PlayerStepDescriptor): StoryStaticVariant | null {
-  if (step.kind === "storyIntro") {
-    return "storyIntro";
-  }
-
-  if (step.kind === "storyOutcome") {
-    return "storyOutcome";
-  }
-
-  return null;
-}
-
-/**
  * Reduces the player's screen routing to a small set of UI scenes.
  *
  * This lets the shell think in broad layouts like read, choice, feedback, and
@@ -262,20 +244,29 @@ export function getPlayerScreenModel(state: PlayerState): PlayerScreenModel {
   }
 
   const hasAnswer = Boolean(state.selectedAnswers[currentStep.id]);
-  const canMovePrev = getCanNavigatePrev(state.steps, state.currentStepIndex);
+
+  const canMovePrev = getCanNavigatePrev({
+    currentStepIndex: state.currentStepIndex,
+    steps: state.steps,
+  });
+
   const bottomBar = getBottomBarModel({
     canMovePrev,
     hasAnswer,
     phase: state.phase,
     step,
   });
+
   const keyboard = getKeyboardModel({
     bottomBar,
     canMovePrev,
     phase: state.phase,
     step,
   });
+
   const scene = getPlayerScreenScene({ phase: state.phase, step });
+  const behavior = getPlayerStepBehavior(step);
+
   const model = {
     bottomBar,
     canNavigatePrev: canMovePrev,
@@ -283,12 +274,12 @@ export function getPlayerScreenModel(state: PlayerState): PlayerScreenModel {
     scene,
     showChrome: true as const,
     showMetricsBar: step.kind === "storyDecision",
-    stageIsStatic: state.phase === "playing" && usesStaticNavigation(step),
+    stageIsFullBleed: behavior?.layout === "hero",
+    stageIsStatic: state.phase === "playing" && hasStaticNavigation(step),
     step,
-    storyStaticVariant: getStoryStaticVariant(step),
   };
 
-  if (state.phase === "feedback" && usesFeedbackScreen(step)) {
+  if (state.phase === "feedback" && hasFeedbackScreen(step)) {
     return { ...model, kind: "feedbackScreen", scene: "feedback" };
   }
 

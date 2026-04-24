@@ -205,6 +205,10 @@ How to verify your work:
 - pnpm test --filter <app>
 - pnpm e2e --filter <app>
 
+## Docs
+
+- Workflow docs are in the `api` app: `apps/api/node_modules/workflow/docs/`
+
 <!-- BEGIN:nextjs-agent-rules -->
 
 # Next.js: ALWAYS read docs before coding

@@ -5,6 +5,45 @@ import { buildSerializedActivity, buildSerializedStep } from "../_test-utils/pla
 import { buildAuthenticatedViewer } from "../_test-utils/player-test-viewer";
 import { renderPlayer } from "../_test-utils/render-player";
 
+const STORY_METRICS = [{ label: "Production" }, { label: "Morale" }];
+
+const STORY_OUTCOMES = {
+  bad: {
+    narrative: "The factory barely holds together",
+    title: "Hard Lesson",
+  },
+  good: {
+    narrative: "The factory stabilizes",
+    title: "Solid Manager",
+  },
+  ok: {
+    narrative: "The factory recovers unevenly",
+    title: "Mixed Shift",
+  },
+  perfect: {
+    image: {
+      prompt: "Recovered factory floor with a confident team and stable output",
+      url: "https://example.com/story-outcome.jpg",
+    },
+    narrative: "Excellent leadership",
+    title: "Great Manager",
+  },
+  terrible: {
+    narrative: "The factory falls apart",
+    title: "Learning Moment",
+  },
+};
+const STORY_CONTEXT_OUTCOMES = {
+  ...STORY_OUTCOMES,
+  perfect: {
+    ...STORY_OUTCOMES.perfect,
+    image: {
+      prompt: "Recovered factory floor with a confident team and stable output",
+      url: "https://example.com/story-outcome-context.jpg",
+    },
+  },
+};
+
 describe("player browser integration: story", () => {
   test("runs the shared story flow from intro to completion", async () => {
     renderPlayer({
@@ -13,9 +52,13 @@ describe("player browser integration: story", () => {
         steps: [
           buildSerializedStep({
             content: {
-              intro: "You are leading the factory team.",
-              metrics: ["Production", "Morale"],
-              variant: "storyIntro" as const,
+              image: {
+                prompt: "Factory floor at sunrise with anxious workers waiting for instructions",
+                url: "https://example.com/story-intro.jpg",
+              },
+              text: "You are leading the factory team.",
+              title: "Factory trouble",
+              variant: "intro" as const,
             },
             id: "story-intro",
             kind: "static",
@@ -31,6 +74,10 @@ describe("player browser integration: story", () => {
                     { effect: "positive" as const, metric: "Production" },
                     { effect: "positive" as const, metric: "Morale" },
                   ],
+                  stateImage: {
+                    prompt: "Factory floor after training begins and the team regains confidence",
+                    url: "https://example.com/story-state-train.jpg",
+                  },
                   text: "Invest in training",
                 },
                 {
@@ -41,10 +88,19 @@ describe("player browser integration: story", () => {
                     { effect: "negative" as const, metric: "Production" },
                     { effect: "negative" as const, metric: "Morale" },
                   ],
+                  stateImage: {
+                    prompt:
+                      "Factory floor after cuts with workers frustrated and stations falling behind",
+                    url: "https://example.com/story-state-cut.jpg",
+                  },
                   text: "Cut costs",
                 },
               ],
-              situation: "A crisis hits the factory floor",
+              image: {
+                prompt: "Factory floor in crisis with stalled stations and workers waiting",
+                url: "https://example.com/story-step.jpg",
+              },
+              problem: "A crisis hits the factory floor",
             },
             id: "story-decision",
             kind: "story",
@@ -52,14 +108,8 @@ describe("player browser integration: story", () => {
           }),
           buildSerializedStep({
             content: {
-              metrics: ["Production", "Morale"],
-              outcomes: [
-                {
-                  minStrongChoices: 1,
-                  narrative: "Excellent leadership",
-                  title: "Great Manager",
-                },
-              ],
+              metrics: STORY_METRICS,
+              outcomes: STORY_OUTCOMES,
               variant: "storyOutcome" as const,
             },
             id: "story-outcome",
@@ -81,12 +131,28 @@ describe("player browser integration: story", () => {
       viewer: buildAuthenticatedViewer(),
     });
 
+    await expect
+      .element(
+        page.getByAltText("Factory floor at sunrise with anxious workers waiting for instructions"),
+      )
+      .toBeInTheDocument();
+
     await page.getByRole("button", { name: /begin/i }).click();
     await page.getByRole("radio", { name: /invest in training/i }).click();
     await page.getByRole("button", { name: /check/i }).click();
+
+    await expect
+      .element(
+        page.getByAltText("Factory floor after training begins and the team regains confidence"),
+      )
+      .toBeInTheDocument();
+
     await page.getByRole("button", { name: /continue/i }).click();
 
     await expect.element(page.getByRole("heading", { name: "Great Manager" })).toBeInTheDocument();
+    await expect
+      .element(page.getByAltText("Recovered factory floor with a confident team and stable output"))
+      .toBeInTheDocument();
 
     await page.getByRole("button", { name: /continue/i }).click();
     await expect
@@ -104,9 +170,13 @@ describe("player browser integration: story", () => {
         steps: [
           buildSerializedStep({
             content: {
-              intro: "You are leading the factory team.",
-              metrics: ["Production", "Morale"],
-              variant: "storyIntro" as const,
+              image: {
+                prompt: "Factory floor at sunrise with anxious workers waiting for instructions",
+                url: "https://example.com/story-intro-context.jpg",
+              },
+              text: "You are leading the factory team.",
+              title: "Factory trouble",
+              variant: "intro" as const,
             },
             id: "story-intro-context",
             kind: "static",
@@ -122,6 +192,10 @@ describe("player browser integration: story", () => {
                     { effect: "positive" as const, metric: "Production" },
                     { effect: "positive" as const, metric: "Morale" },
                   ],
+                  stateImage: {
+                    prompt: "Factory floor after training begins and the team regains confidence",
+                    url: "https://example.com/story-state-train-context.jpg",
+                  },
                   text: "Invest in training",
                 },
                 {
@@ -132,10 +206,19 @@ describe("player browser integration: story", () => {
                     { effect: "negative" as const, metric: "Production" },
                     { effect: "negative" as const, metric: "Morale" },
                   ],
+                  stateImage: {
+                    prompt:
+                      "Factory floor after cuts with workers frustrated and stations falling behind",
+                    url: "https://example.com/story-state-cut-context.jpg",
+                  },
                   text: "Cut costs",
                 },
               ],
-              situation: "A crisis hits the factory floor",
+              image: {
+                prompt: "Factory floor in crisis with stalled stations and workers waiting",
+                url: "https://example.com/story-step-context.jpg",
+              },
+              problem: "A crisis hits the factory floor",
             },
             id: "story-decision-context",
             kind: "story",
@@ -143,14 +226,8 @@ describe("player browser integration: story", () => {
           }),
           buildSerializedStep({
             content: {
-              metrics: ["Production", "Morale"],
-              outcomes: [
-                {
-                  minStrongChoices: 1,
-                  narrative: "Excellent leadership",
-                  title: "Great Manager",
-                },
-              ],
+              metrics: STORY_METRICS,
+              outcomes: STORY_CONTEXT_OUTCOMES,
               variant: "storyOutcome" as const,
             },
             id: "story-outcome-context",

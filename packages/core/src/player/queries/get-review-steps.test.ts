@@ -400,7 +400,7 @@ describe(getReviewSteps, () => {
             text: "Choice A",
           },
         ],
-        situation: "A scenario",
+        problem: "A scenario",
       },
       isPublished: true,
       kind: "story",

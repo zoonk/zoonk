@@ -1,6 +1,5 @@
 import {
   type ActivityKind,
-  type MultipleChoiceStepContent,
   type StepContentByKind,
   type SupportedStepKind,
   isSupportedStepKind,
@@ -149,22 +148,26 @@ function serializeSentence(sentence: SentenceDataInput): SerializedSentence {
   };
 }
 
-function shuffleMultipleChoiceContent(
-  content: MultipleChoiceStepContent,
-): MultipleChoiceStepContent {
-  return content.kind === "core" ? { ...content, options: shuffle(content.options) } : content;
-}
-
 /**
  * Parses step content and applies server-side shuffling where needed.
  *
- * Multiple choice options, investigation actions, and call explanations are shuffled
- * during serialization so the client receives a randomized order.
+ * Multiple choice options, story choices, investigation actions, and call
+ * explanations are shuffled during serialization so the client receives a
+ * randomized order.
  * This avoids client-side shuffling which can cause hydration errors.
  */
 function parseAndShuffleContent(kind: SupportedStepKind, content: unknown) {
   if (kind === "multipleChoice") {
-    return shuffleMultipleChoiceContent(parseStepContent("multipleChoice", content));
+    const parsedMultipleChoice = parseStepContent("multipleChoice", content);
+
+    return parsedMultipleChoice.kind === "core"
+      ? { ...parsedMultipleChoice, options: shuffle(parsedMultipleChoice.options) }
+      : parsedMultipleChoice;
+  }
+
+  if (kind === "story") {
+    const parsedStory = parseStepContent("story", content);
+    return { ...parsedStory, choices: shuffle(parsedStory.choices) };
   }
 
   if (kind === "investigation") {

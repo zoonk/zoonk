@@ -4,6 +4,7 @@ import { type GeneratedFile, type ImageModel, generateImage } from "ai";
 import { type ImageGenerationQuality, buildImageProviderOptions } from "../../provider-options";
 import illustrationPromptTemplate from "./step-content-image.prompt.md";
 import practicePromptTemplate from "./step-content-practice-image.prompt.md";
+import storyPromptTemplate from "./step-content-story-image.prompt.md";
 
 const DEFAULT_MODEL = "openai/gpt-image-2";
 const DEFAULT_QUALITY = "low";
@@ -17,6 +18,11 @@ const STEP_CONTENT_IMAGE_PRESETS = {
     promptTemplate: practicePromptTemplate,
     size: "1024x1024",
     taskName: "practice-step-image",
+  },
+  story: {
+    promptTemplate: storyPromptTemplate,
+    size: "1024x1024",
+    taskName: "story-step-image",
   },
 } as const;
 

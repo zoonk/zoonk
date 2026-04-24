@@ -7,30 +7,9 @@ import {
 import { calculateBeltLevel } from "@zoonk/utils/belt-level";
 import { type PlayerState } from "./player-reducer";
 
-/**
- * Builds the ActivityScoringInput from client-side PlayerState.
- *
- * Delegates to the shared buildScoringInput, normalizing the client's
- * data shapes (steps as SerializedStep[], results as StepResult records)
- * into the format the unified scorer expects.
- */
-function getActivityKind(steps: PlayerState["steps"]): string {
-  if (steps.some((step) => step.kind === "investigation")) {
-    return "investigation";
-  }
-
-  if (steps.some((step) => step.kind === "story")) {
-    return "story";
-  }
-
-  return "generic";
-}
-
 function buildClientScoringInput(state: PlayerState): ActivityScoringInput {
-  const activityKind = getActivityKind(state.steps);
-
   return buildScoringInput({
-    activityKind,
+    activityKind: state.activityKind,
     answers: state.selectedAnswers,
     investigationLoop: state.investigationLoop,
     stepResults: Object.values(state.results).map((stepResult) => ({

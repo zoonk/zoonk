@@ -98,12 +98,12 @@ export function buildCoreLessonEstimate({
     }),
     buildGatewayLineItem({
       averageRequestsPerRun: appliedShares.storyShare,
-      taskName: "activity-story-steps",
+      taskName: "activity-story",
       usageByTask,
     }),
     buildGatewayLineItem({
       averageRequestsPerRun: appliedShares.storyShare,
-      taskName: "activity-story-debrief",
+      taskName: "activity-story-choices",
       usageByTask,
     }),
     buildGatewayLineItem({

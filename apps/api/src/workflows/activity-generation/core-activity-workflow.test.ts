@@ -2,8 +2,8 @@ import { randomUUID } from "node:crypto";
 import { generateActivityExplanation } from "@zoonk/ai/tasks/activities/core/explanation";
 import { generateActivityPractice } from "@zoonk/ai/tasks/activities/core/practice";
 import { generateActivityQuiz } from "@zoonk/ai/tasks/activities/core/quiz";
-import { generateActivityStoryDebrief } from "@zoonk/ai/tasks/activities/core/story-debrief";
-import { generateActivityStorySteps } from "@zoonk/ai/tasks/activities/core/story-steps";
+import { generateActivityStory } from "@zoonk/ai/tasks/activities/core/story";
+import { generateActivityStoryChoices } from "@zoonk/ai/tasks/activities/core/story-choices";
 import { generateStepImagePrompts } from "@zoonk/ai/tasks/steps/image-prompts";
 import { parseStepContent } from "@zoonk/core/steps/contract/content";
 import { prisma } from "@zoonk/db";
@@ -66,6 +66,99 @@ function createExplanationResult(): Awaited<ReturnType<typeof generateActivityEx
     systemPrompt: "test",
     usage: {} as Awaited<ReturnType<typeof generateActivityExplanation>>["usage"],
     userPrompt: "test",
+  };
+}
+
+/**
+ * Story generation now plans the applied case before a second task writes
+ * choices. Keeping the mock data split like production prevents workflow tests
+ * from accidentally depending on the old single-call payload shape.
+ */
+function createStoryPlan() {
+  return {
+    intro: "You are a factory manager.",
+    introImagePrompt: "Factory floor with anxious workers waiting for direction",
+    metrics: ["Production", "Morale"],
+    outcomes: {
+      bad: {
+        imagePrompt: "Factory floor partly stabilized but still visibly strained",
+        narrative: "Mixed result.",
+        title: "Mixed",
+      },
+      good: {
+        imagePrompt: "Factory floor stabilizing with only a few delays left",
+        narrative: "Good progress.",
+        title: "Good",
+      },
+      ok: {
+        imagePrompt: "Factory floor moving again while a few stations lag behind",
+        narrative: "Some progress.",
+        title: "Okay",
+      },
+      perfect: {
+        imagePrompt: "Recovered factory floor with calm workers and steady output",
+        narrative: "Well done.",
+        title: "Great",
+      },
+      terrible: {
+        imagePrompt: "Factory floor still strained with missed output and tired workers",
+        narrative: "Needs work.",
+        title: "Okay",
+      },
+    },
+    steps: [
+      {
+        imagePrompt: "Factory floor with halted lines and empty parts bins",
+        problem: "Your supplier went bankrupt.",
+      },
+    ],
+    title: "The night the labels got swapped",
+  };
+}
+
+/**
+ * Choice mock stays separate from the story plan so the tested workflow must
+ * call the focused choice step before image generation can receive full data.
+ */
+function createStoryChoices() {
+  return {
+    steps: [
+      {
+        choices: [
+          {
+            alignment: "strong",
+            consequence: "Workers rally.",
+            label: "Address the team",
+            metricEffects: [{ effect: "positive", metric: "Morale" }],
+            stateImagePrompt: "Factory floor after a direct address calms the team",
+          },
+          {
+            alignment: "weak",
+            consequence: "Rumors spread.",
+            label: "Send an email",
+            metricEffects: [{ effect: "negative", metric: "Morale" }],
+            stateImagePrompt: "Factory floor after a vague email leaves workers confused",
+          },
+        ],
+      },
+    ],
+  };
+}
+
+/**
+ * Mirrors the production merge result so save and image tests can keep
+ * asserting the final persisted story shape.
+ */
+function createStoryResult() {
+  const storyPlan = createStoryPlan();
+  const storyChoices = createStoryChoices();
+
+  return {
+    ...storyPlan,
+    steps: storyPlan.steps.map((step, index) => ({
+      ...step,
+      choices: storyChoices.steps[index]!.choices,
+    })),
   };
 }
 
@@ -142,46 +235,32 @@ vi.mock("@zoonk/ai/tasks/activities/core/quiz", () => ({
   }),
 }));
 
-vi.mock("@zoonk/ai/tasks/activities/core/story-steps", () => ({
-  generateActivityStorySteps: vi.fn().mockResolvedValue({
-    data: {
-      intro: "You are a factory manager.",
-      metrics: ["Production", "Morale"],
-      steps: [
-        {
-          choices: [
-            {
-              alignment: "strong",
-              consequence: "Workers rally.",
-              id: "c1",
-              metricEffects: [{ effect: "positive", metric: "Morale" }],
-              text: "Address the team",
-            },
-            {
-              alignment: "weak",
-              consequence: "Rumors spread.",
-              id: "c2",
-              metricEffects: [{ effect: "negative", metric: "Morale" }],
-              text: "Send an email",
-            },
-          ],
-          situation: "Your supplier went bankrupt.",
-        },
-      ],
-      title: "The night the labels got swapped",
-    },
-  }),
+vi.mock("@zoonk/ai/tasks/activities/core/story", () => ({
+  generateActivityStory: vi.fn().mockResolvedValue({ data: createStoryPlan() }),
 }));
 
-vi.mock("@zoonk/ai/tasks/activities/core/story-debrief", () => ({
-  generateActivityStoryDebrief: vi.fn().mockResolvedValue({
-    data: {
-      debrief: [{ explanation: "Communication matters.", name: "Crisis Communication" }],
-      outcomes: [
-        { minStrongChoices: 1, narrative: "Well done.", title: "Great" },
-        { minStrongChoices: 0, narrative: "Needs work.", title: "Okay" },
+vi.mock("@zoonk/ai/tasks/activities/core/story-choices", () => ({
+  buildActivityStoryWithChoices: vi.fn().mockReturnValue(createStoryResult()),
+  generateActivityStoryChoices: vi.fn().mockResolvedValue({ data: createStoryChoices() }),
+}));
+
+vi.mock("./steps/generate-story-images-step", () => ({
+  generateStoryImagesStep: vi.fn().mockResolvedValue({
+    choiceStateImages: [
+      [
+        { prompt: "State 1", url: "https://example.com/state-1.webp" },
+        { prompt: "State 2", url: "https://example.com/state-2.webp" },
       ],
+    ],
+    introImage: { prompt: "Story intro", url: "https://example.com/story-intro.webp" },
+    outcomeImages: {
+      bad: { prompt: "Outcome bad", url: "https://example.com/outcome-bad.webp" },
+      good: { prompt: "Outcome good", url: "https://example.com/outcome-good.webp" },
+      ok: { prompt: "Outcome ok", url: "https://example.com/outcome-ok.webp" },
+      perfect: { prompt: "Outcome perfect", url: "https://example.com/outcome-perfect.webp" },
+      terrible: { prompt: "Outcome terrible", url: "https://example.com/outcome-terrible.webp" },
     },
+    stepImages: [{ prompt: "Story step 1", url: "https://example.com/step-1.webp" }],
   }),
 }));
 
@@ -531,7 +610,7 @@ describe("core activity workflow", () => {
   });
 
   describe("dependency cascade failures", () => {
-    test("explanation returns no data → quiz and practice marked as failed", async () => {
+    test("explanation returns no data → dependent activities marked as failed", async () => {
       vi.mocked(generateActivityExplanation).mockResolvedValueOnce({
         data: undefined,
         systemPrompt: "test",
@@ -545,7 +624,7 @@ describe("core activity workflow", () => {
         title: `Exp Empty Cascade Lesson ${randomUUID()}`,
       });
 
-      const [expActivity, quizActivity, practiceActivity] = await Promise.all([
+      const [expActivity, quizActivity, practiceActivity, storyActivity] = await Promise.all([
         activityFixture({
           generationStatus: "pending",
           kind: "explanation",
@@ -567,22 +646,32 @@ describe("core activity workflow", () => {
           organizationId,
           title: `Practice ${randomUUID()}`,
         }),
+        activityFixture({
+          generationStatus: "pending",
+          kind: "story",
+          lessonId: testLesson.id,
+          organizationId,
+          title: `Story ${randomUUID()}`,
+        }),
       ]);
 
       await activityGenerationWorkflow(testLesson.id);
 
-      const [dbExp, dbQuiz, dbPractice] = await Promise.all([
+      const [dbExp, dbQuiz, dbPractice, dbStory] = await Promise.all([
         prisma.activity.findUnique({ where: { id: expActivity.id } }),
         prisma.activity.findUnique({ where: { id: quizActivity.id } }),
         prisma.activity.findUnique({ where: { id: practiceActivity.id } }),
+        prisma.activity.findUnique({ where: { id: storyActivity.id } }),
       ]);
 
       expect(dbExp?.generationStatus).toBe("failed");
       expect(dbQuiz?.generationStatus).toBe("failed");
       expect(dbPractice?.generationStatus).toBe("failed");
+      expect(dbStory?.generationStatus).toBe("failed");
 
       expect(generateActivityQuiz).not.toHaveBeenCalled();
       expect(generateActivityPractice).not.toHaveBeenCalled();
+      expect(generateActivityStory).not.toHaveBeenCalled();
     });
 
     test("doesn't call generateActivityQuiz if explanation content is missing", async () => {
@@ -882,7 +971,7 @@ describe("core activity workflow", () => {
 
   describe("story isolation", () => {
     test("story failure does not affect explanation or practice completion", async () => {
-      vi.mocked(generateActivityStorySteps).mockRejectedValueOnce(new Error("Story failed"));
+      vi.mocked(generateActivityStory).mockRejectedValueOnce(new Error("Story failed"));
 
       const testLesson = await lessonFixture({
         chapterId: chapter.id,
@@ -928,12 +1017,12 @@ describe("core activity workflow", () => {
       expect(dbStory?.generationStatus).toBe("failed");
     });
 
-    test("generates story alongside explanation in wave 1", async () => {
+    test("passes explanation steps to story generation", async () => {
       const testLesson = await lessonFixture({
         chapterId: chapter.id,
         concepts: ["Test Concept"],
         organizationId,
-        title: `Story Wave 1 Lesson ${randomUUID()}`,
+        title: `Story Explanation Context Lesson ${randomUUID()}`,
       });
 
       const [expActivity, storyActivity] = await Promise.all([
@@ -962,8 +1051,35 @@ describe("core activity workflow", () => {
 
       expect(dbExp?.generationStatus).toBe("completed");
       expect(dbStory?.generationStatus).toBe("completed");
-      expect(generateActivityStorySteps).toHaveBeenCalled();
-      expect(generateActivityStoryDebrief).toHaveBeenCalled();
+      expect(generateActivityStory).toHaveBeenCalledWith(
+        expect.objectContaining({
+          explanationSteps: expect.arrayContaining([
+            {
+              text: "You send a photo on WhatsApp. In under a second, it appears on your friend's screen, even if you're on the bus.",
+              title: "O envio",
+            },
+            {
+              text: "Every photo you send on WhatsApp uses this exact layering — you hit send, it runs.",
+              title: "Every send",
+            },
+          ]),
+        }),
+      );
+      expect(generateActivityStoryChoices).toHaveBeenCalledWith(
+        expect.objectContaining({
+          explanationSteps: expect.arrayContaining([
+            {
+              text: "You send a photo on WhatsApp. In under a second, it appears on your friend's screen, even if you're on the bus.",
+              title: "O envio",
+            },
+            {
+              text: "Every photo you send on WhatsApp uses this exact layering — you hit send, it runs.",
+              title: "Every send",
+            },
+          ]),
+          storyPlan: createStoryPlan(),
+        }),
+      );
     });
   });
 

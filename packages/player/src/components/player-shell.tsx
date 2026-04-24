@@ -17,7 +17,7 @@ import { InPlayStickyHeader } from "./in-play-sticky-header";
 import { PlayerBottomBar } from "./player-bottom-bar";
 import { PlayerStage } from "./player-stage";
 import { StageContent } from "./stage-content";
-import { StatusPill } from "./status-pill";
+import { StatusPill, StatusPillLabel, StatusPillValue } from "./status-pill";
 import { StepActionButton } from "./step-action-button";
 import { StepImagePreloader } from "./step-image-preloader";
 import { PlayerContentFrame } from "./step-layouts";
@@ -43,6 +43,10 @@ export function PlayerShell() {
 
   const currentResult = getCurrentResult(state);
   const currentStep = getCurrentStep(state);
+
+  const shouldShowStickyBottomBar =
+    screen.showChrome && screen.bottomBar?.kind === "primaryAction" && !screen.stageIsFullBleed;
+
   const progressValue = getProgressValue(state);
   const storyMetrics = getStoryMetrics(state);
   const upcomingImages = getUpcomingImages(state);
@@ -53,7 +57,6 @@ export function PlayerShell() {
       phase: state.phase,
       result: currentResult,
       step: currentStep,
-      storyStaticVariant: screen.storyStaticVariant,
     },
     milestoneKind: milestone.kind,
   });
@@ -65,11 +68,11 @@ export function PlayerShell() {
 
   const evidencePill = investigationProgress ? (
     <StatusPill animationKey={investigationProgress.collected}>
-      <span className="text-muted-foreground text-xs font-semibold tabular-nums">
+      <StatusPillValue className="text-muted-foreground">
         {investigationProgress.collected} / {investigationProgress.total}
-      </span>
+      </StatusPillValue>
 
-      <span className="text-muted-foreground text-xs">{t("evidence")}</span>
+      <StatusPillLabel>{t("evidence")}</StatusPillLabel>
     </StatusPill>
   ) : undefined;
 
@@ -85,11 +88,16 @@ export function PlayerShell() {
 
       {screen.showMetricsBar && <StoryMetricsBar metrics={storyMetrics} />}
 
-      <PlayerStage isStatic={screen.stageIsStatic} phase={state.phase} scene={screen.scene}>
+      <PlayerStage
+        isFullBleed={screen.stageIsFullBleed}
+        isStatic={screen.stageIsStatic}
+        phase={state.phase}
+        scene={screen.scene}
+      >
         <StageContent />
       </PlayerStage>
 
-      {screen.showChrome && screen.bottomBar?.kind === "primaryAction" && (
+      {shouldShowStickyBottomBar && (
         <PlayerBottomBar className="lg:hidden">
           <BottomBarContent />
         </PlayerBottomBar>

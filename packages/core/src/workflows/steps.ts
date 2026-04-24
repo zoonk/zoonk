@@ -80,7 +80,7 @@ export const ACTIVITY_STEPS = [
   "generateQuizContent",
   "generatePracticeContent",
   "generateStoryContent",
-  "generateStoryDebrief",
+  "generateStoryChoices",
   "generateGrammarContent",
   "generateGrammarUserContent",
   "generateGrammarRomanization",
