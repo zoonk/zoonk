@@ -35,6 +35,6 @@ const AUTHORS: Record<string, Author> = {
 };
 
 /** Look up an author by their ID. */
-export function getAuthor(authorId: string): Author | undefined {
-  return AUTHORS[authorId];
+export function getAuthor(authorId: string): Author | null {
+  return AUTHORS[authorId] ?? null;
 }

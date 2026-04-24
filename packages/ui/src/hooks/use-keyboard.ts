@@ -47,11 +47,15 @@ function getModifierChecks(event: KeyboardEvent, modifiers: KeyboardModifiers): 
   return checks;
 }
 
-function checkModifiers(
-  event: KeyboardEvent,
-  modifiers: KeyboardModifiers | undefined,
-  mode: ModifierMode,
-): boolean {
+function checkModifiers({
+  event,
+  mode,
+  modifiers,
+}: {
+  event: KeyboardEvent;
+  mode: ModifierMode;
+  modifiers?: KeyboardModifiers;
+}): boolean {
   if (mode === "none") {
     return !hasAnyModifier(event);
   }
@@ -142,7 +146,7 @@ export function useKeyboardCallback(
 
       const mods = { altKey, ctrlKey, metaKey, shiftKey };
 
-      if (checkModifiers(event, mods, mode)) {
+      if (checkModifiers({ event, mode, modifiers: mods })) {
         onKeyPress(event);
       }
     }

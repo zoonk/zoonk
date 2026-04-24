@@ -147,7 +147,7 @@ export function MatchColumnsStep({
   step,
 }: {
   onSelectAnswer: (stepId: string, answer: SelectedAnswer | null) => void;
-  selectedAnswer: SelectedAnswer | undefined;
+  selectedAnswer?: SelectedAnswer;
   step: SerializedStep;
 }) {
   const content = useMemo(() => parseStepContent("matchColumns", step.content), [step.content]);

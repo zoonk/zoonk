@@ -122,7 +122,7 @@ function removeCanonicalWords(canonicalWords: string[], distractorWords: string[
  * word. Preserve the existing DB value in that case, but still allow explicit `null` or
  * empty strings to clear stale romanization when the metadata entry is present.
  */
-function getRomanizationUpdate(metadata: WordMetadataEntry | undefined): {
+function getRomanizationUpdate(metadata?: WordMetadataEntry): {
   romanization?: string | null;
 } {
   if (metadata === undefined) {

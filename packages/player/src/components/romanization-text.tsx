@@ -1,4 +1,4 @@
-export function RomanizationText({ children }: { children: string | null | undefined }) {
+export function RomanizationText({ children }: { children?: string | null }) {
   if (!children) {
     return null;
   }

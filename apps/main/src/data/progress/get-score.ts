@@ -10,8 +10,8 @@ type ScoreData = {
 };
 
 function getDateRange(
-  startDateIso: string | undefined,
-  endDateIso: string | undefined,
+  startDateIso?: string,
+  endDateIso?: string,
 ): { startDate: Date; endDate: Date } {
   if (startDateIso && endDateIso) {
     return { endDate: new Date(endDateIso), startDate: new Date(startDateIso) };
@@ -32,8 +32,8 @@ function calculateScoreFromTotals(correct: number, incorrect: number): number | 
 
 const cachedGetScore = cache(
   async (
-    startDateIso: string | undefined,
-    endDateIso: string | undefined,
+    startDateIso?: string,
+    endDateIso?: string,
     headers?: Headers,
   ): Promise<ScoreData | null> => {
     const session = await getSession(headers);

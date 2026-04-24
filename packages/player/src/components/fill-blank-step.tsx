@@ -20,11 +20,11 @@ function getBlankResultState(
   index: number,
   blanks: (string | null)[],
   answers: string[],
-): "correct" | "incorrect" | undefined {
+): "correct" | "incorrect" | null {
   const userAnswer = blanks[index];
 
   if (!userAnswer) {
-    return undefined;
+    return null;
   }
 
   return userAnswer.toLowerCase() === answers[index]?.toLowerCase() ? "correct" : "incorrect";
@@ -38,11 +38,11 @@ function BlankSlot({
 }: {
   index: number;
   onRemove: () => void;
-  resultState?: "correct" | "incorrect";
+  resultState: "correct" | "incorrect" | null;
   word: string | null;
 }) {
   const t = useExtracted();
-  const hasResult = resultState !== undefined;
+  const hasResult = Boolean(resultState);
 
   if (word) {
     return (
@@ -110,7 +110,7 @@ function TemplateText({
             <BlankSlot
               index={index}
               onRemove={() => onRemoveWord(index)}
-              resultState={hasResult ? getBlankResultState(index, blanks, answers) : undefined}
+              resultState={hasResult ? getBlankResultState(index, blanks, answers) : null}
               word={blanks[index] ?? null}
             />
           )}
@@ -208,7 +208,7 @@ export function FillBlankStep({
 }: {
   onSelectAnswer: (stepId: string, answer: SelectedAnswer | null) => void;
   result?: StepResult;
-  selectedAnswer: SelectedAnswer | undefined;
+  selectedAnswer?: SelectedAnswer;
   step: SerializedStep;
 }) {
   const t = useExtracted();

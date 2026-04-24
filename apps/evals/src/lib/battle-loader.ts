@@ -83,10 +83,13 @@ function aggregateScoresFromMatchups(matchups: BattleMatchup[]): {
   return { modelScores, totalJudgments };
 }
 
-function calculateModelMetrics(
-  outputs: ModelOutputs | undefined,
-  model: ModelConfig,
-): { averageDuration: number; averageCost: number } {
+function calculateModelMetrics({
+  model,
+  outputs,
+}: {
+  model: ModelConfig;
+  outputs?: ModelOutputs;
+}): { averageDuration: number; averageCost: number } {
   const numOutputs = outputs?.outputs.length ?? 0;
 
   if (numOutputs === 0 || !outputs) {
@@ -123,7 +126,7 @@ function buildLeaderboardEntry(
   }
 
   const outputs = allOutputs.get(modelId);
-  const { averageCost, averageDuration } = calculateModelMetrics(outputs, model);
+  const { averageCost, averageDuration } = calculateModelMetrics({ model, outputs });
 
   return {
     averageCost,

@@ -28,8 +28,8 @@ async function getOrganizationId({
 const cachedHasCoursePermission = cache(
   async (
     permission: CoursePermission,
-    orgId: string | null | undefined,
-    orgSlug: string | undefined,
+    orgId?: string | null,
+    orgSlug?: string,
     reqHeaders?: Headers,
   ): Promise<boolean> => {
     const organizationId = await getOrganizationId({ orgId, orgSlug });

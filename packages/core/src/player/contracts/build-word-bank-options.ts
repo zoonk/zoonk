@@ -53,10 +53,13 @@ function splitMultiWordEntries(lessonWord: SerializedWord): [string, WordMetadat
  * not carry translations. Preserve any existing translation when a later source only
  * contributes render metadata.
  */
-function mergeWordMetadata(
-  current: WordMetadata | undefined,
-  incoming: WordMetadata,
-): WordMetadata {
+function mergeWordMetadata({
+  current,
+  incoming,
+}: {
+  current?: WordMetadata;
+  incoming: WordMetadata;
+}): WordMetadata {
   return {
     audioUrl: incoming.audioUrl ?? current?.audioUrl ?? null,
     romanization: incoming.romanization ?? current?.romanization ?? null,
@@ -85,7 +88,7 @@ function getMergedWordMetadata(
   return entries
     .filter(([entryKey]) => entryKey === key)
     .map(([, metadata]) => metadata)
-    .reduce((current, incoming) => mergeWordMetadata(current, incoming));
+    .reduce((current, incoming) => mergeWordMetadata({ current, incoming }));
 }
 
 /**

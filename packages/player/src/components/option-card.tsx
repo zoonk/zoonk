@@ -16,7 +16,7 @@ export function OptionCard({
   isDimmed?: boolean;
   isSelected: boolean;
   onSelect: () => void;
-  resultState?: "correct" | "incorrect";
+  resultState: "correct" | "incorrect" | null;
 }) {
   return (
     <button
@@ -36,7 +36,7 @@ export function OptionCard({
       role="radio"
       type="button"
     >
-      <ResultKbd isSelected={isSelected} resultState={resultState}>
+      <ResultKbd isSelected={isSelected} resultState={resultState ?? undefined}>
         {index + 1}
       </ResultKbd>
 

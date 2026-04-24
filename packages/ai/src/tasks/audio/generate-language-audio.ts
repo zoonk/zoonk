@@ -30,7 +30,7 @@ type ScheduledAttempt = {
   name: string;
 };
 
-function buildInstructions(languageCode: string | undefined): string {
+function buildInstructions(languageCode?: string): string {
   const languageName = languageCode
     ? getLanguageName({ targetLanguage: languageCode, userLanguage: "en" })
     : "English";

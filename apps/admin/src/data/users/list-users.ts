@@ -7,7 +7,7 @@ import { cache } from "react";
 const cachedListUsers = cache(async function cachedListUsers(
   limit: number,
   offset: number,
-  search: string | undefined,
+  search?: string,
 ) {
   if (!(await isAdmin())) {
     return { total: 0, users: [] };

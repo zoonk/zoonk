@@ -146,7 +146,7 @@ async function getAiTaskReportState({
  * The task detail page now distinguishes the cheap overview from the more
  * expensive model drill-down with an explicit `view` flag in the URL.
  */
-function shouldShowAiTaskBreakdown(view?: string) {
+function shouldShowAiTaskBreakdown(view: string | null) {
   return view === "breakdown";
 }
 

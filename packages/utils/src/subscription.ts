@@ -75,7 +75,7 @@ export function getPlanTier(planName: string | null): number {
  * the subscription. Every other provider needs a different handoff.
  */
 export function isWebManagedSubscriptionProvider(
-  provider: SubscriptionProvider | null | undefined,
+  provider?: SubscriptionProvider | null,
 ): provider is "stripe" {
   return provider === "stripe";
 }
@@ -85,7 +85,7 @@ export function isWebManagedSubscriptionProvider(
  * pretending the web app can cancel or change them.
  */
 export function isStoreSubscriptionProvider(
-  provider: SubscriptionProvider | null | undefined,
+  provider?: SubscriptionProvider | null,
 ): provider is "apple" | "google" {
   return provider === "apple" || provider === "google";
 }

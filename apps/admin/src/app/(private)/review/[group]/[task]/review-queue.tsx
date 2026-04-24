@@ -63,7 +63,7 @@ export async function ReviewQueue({
   currentId,
 }: {
   taskType: ReviewTaskType;
-  currentId: string | undefined;
+  currentId?: string;
 }) {
   const queue = await getNextReviewItem(taskType);
   const entityId = currentId ?? queue.entityId;

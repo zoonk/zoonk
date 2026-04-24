@@ -66,8 +66,8 @@ export const TASKS: readonly Task[] = [
 // Number of times each test case should be run for more reliable results
 export const RUNS_PER_TEST_CASE = 1;
 
-export function getTaskById(taskId: string): Task | undefined {
-  return TASKS.find((t) => t.id === taskId);
+export function getTaskById(taskId: string): Task | null {
+  return TASKS.find((t) => t.id === taskId) ?? null;
 }
 
 export function getTotalTestCases(taskId: string): number {

@@ -7,10 +7,13 @@ import { type StepResult } from "../../player-reducer";
  * (bad AI generation data where the original script was copied into
  * the romanization field instead of the Latin transliteration).
  */
-function getVisibleRomanization(
-  romanization: string | null | undefined,
-  displayedText: string,
-): string | null {
+function getVisibleRomanization({
+  displayedText,
+  romanization,
+}: {
+  displayedText: string;
+  romanization?: string | null;
+}): string | null {
   if (!romanization) {
     return null;
   }
@@ -22,39 +25,59 @@ function getVisibleRomanization(
   return romanization;
 }
 
-function getCorrectReadingRomanization(
-  kind: string | undefined,
-  selectedText: string | null,
+function getCorrectReadingRomanization({
+  kind,
+  romanizations,
+  selectedText,
+}: {
+  kind?: string;
+  selectedText: string | null;
   romanizations: {
-    sentenceRomanization: string | null | undefined;
-    wordRomanization: string | null | undefined;
-  },
-): string | null {
+    sentenceRomanization?: string | null;
+    wordRomanization?: string | null;
+  };
+}): string | null {
   if (kind === "reading" && selectedText) {
-    return getVisibleRomanization(romanizations.sentenceRomanization, selectedText);
+    return getVisibleRomanization({
+      displayedText: selectedText,
+      romanization: romanizations.sentenceRomanization,
+    });
   }
 
   if (kind === "translation" && selectedText) {
-    return getVisibleRomanization(romanizations.wordRomanization, selectedText);
+    return getVisibleRomanization({
+      displayedText: selectedText,
+      romanization: romanizations.wordRomanization,
+    });
   }
 
   return null;
 }
 
-function getWrongReadingRomanization(
-  kind: string | undefined,
-  correctAnswer: string | null | undefined,
+function getWrongReadingRomanization({
+  correctAnswer,
+  kind,
+  romanizations,
+}: {
+  correctAnswer?: string | null;
+  kind?: string;
   romanizations: {
-    sentenceRomanization: string | null | undefined;
-    wordRomanization: string | null | undefined;
-  },
-): string | null {
+    sentenceRomanization?: string | null;
+    wordRomanization?: string | null;
+  };
+}): string | null {
   if (kind === "reading" && correctAnswer) {
-    return getVisibleRomanization(romanizations.sentenceRomanization, correctAnswer);
+    return getVisibleRomanization({
+      displayedText: correctAnswer,
+      romanization: romanizations.sentenceRomanization,
+    });
   }
 
   if (kind === "translation" && correctAnswer) {
-    return getVisibleRomanization(romanizations.wordRomanization, correctAnswer);
+    return getVisibleRomanization({
+      displayedText: correctAnswer,
+      romanization: romanizations.wordRomanization,
+    });
   }
 
   return null;
@@ -70,13 +93,19 @@ function getWrongReadingRomanization(
  * to prevent showing romanization that matches the displayed text
  * (bad AI data).
  */
-export function getFeedbackRomanization(
-  result: StepResult,
-  step: SerializedStep | undefined,
-  selectedText: string | null,
-  correctAnswer: string | null | undefined,
-  questionText: string | null,
-) {
+export function getFeedbackRomanization({
+  correctAnswer,
+  questionText,
+  result,
+  selectedText,
+  step,
+}: {
+  correctAnswer?: string | null;
+  questionText: string | null;
+  result: StepResult;
+  selectedText: string | null;
+  step?: SerializedStep;
+}) {
   const sentenceRomanization = step?.sentence?.romanization;
   const wordRomanization = step?.word?.romanization;
   const kind = result.answer?.kind;
@@ -86,24 +115,35 @@ export function getFeedbackRomanization(
      * Romanization for the "Your answer:" line on correct answers.
      * Used by both reading (sentence romanization) and translation (word romanization).
      */
-    correctReading: getCorrectReadingRomanization(kind, selectedText, {
-      sentenceRomanization,
-      wordRomanization,
+    correctReading: getCorrectReadingRomanization({
+      kind,
+      romanizations: {
+        sentenceRomanization,
+        wordRomanization,
+      },
+      selectedText,
     }),
 
     /** Romanization for the "Translate:" line — only for listening (shows target language sentence). */
     translate:
       kind === "listening"
-        ? getVisibleRomanization(sentenceRomanization, questionText ?? "")
+        ? getVisibleRomanization({
+            displayedText: questionText ?? "",
+            romanization: sentenceRomanization,
+          })
         : null,
 
     /**
      * Romanization for the "Correct answer:" line on wrong answers.
      * Used by both reading (sentence romanization) and translation (word romanization).
      */
-    wrongReading: getWrongReadingRomanization(kind, correctAnswer, {
-      sentenceRomanization,
-      wordRomanization,
+    wrongReading: getWrongReadingRomanization({
+      correctAnswer,
+      kind,
+      romanizations: {
+        sentenceRomanization,
+        wordRomanization,
+      },
     }),
   };
 }

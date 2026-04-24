@@ -17,7 +17,7 @@ import {
 } from "./player-choice-scene";
 import { RomanizationText } from "./romanization-text";
 
-function getSelectedWordId(selectedAnswer: SelectedAnswer | undefined): string | null {
+function getSelectedWordId(selectedAnswer?: SelectedAnswer): string | null {
   if (selectedAnswer?.kind !== "translation") {
     return null;
   }
@@ -51,7 +51,7 @@ export function TranslationStep({
   step,
 }: {
   onSelectAnswer: (stepId: string, answer: SelectedAnswer) => void;
-  selectedAnswer: SelectedAnswer | undefined;
+  selectedAnswer?: SelectedAnswer;
   step: SerializedStep;
 }) {
   const t = useExtracted();

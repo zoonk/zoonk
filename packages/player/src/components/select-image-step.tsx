@@ -13,7 +13,7 @@ import { InlineFeedback } from "./inline-feedback";
 import { QuestionText } from "./question-text";
 import { InteractiveStepLayout } from "./step-layouts";
 
-function getSelectedIndex(selectedAnswer: SelectedAnswer | undefined): number | null {
+function getSelectedIndex(selectedAnswer?: SelectedAnswer): number | null {
   if (selectedAnswer?.kind !== "selectImage") {
     return null;
   }
@@ -25,7 +25,7 @@ function getImageOptionResultState(
   index: number,
   content: SelectImageStepContent,
   selectedIndex: number,
-): "correct" | "incorrect" | undefined {
+): "correct" | "incorrect" | null {
   if (content.options[index]?.isCorrect) {
     return "correct";
   }
@@ -34,10 +34,10 @@ function getImageOptionResultState(
     return "incorrect";
   }
 
-  return undefined;
+  return null;
 }
 
-function ImageWithFallback({ alt, url }: { alt: string; url: string | undefined }) {
+function ImageWithFallback({ alt, url }: { alt: string; url?: string }) {
   const [hasError, setHasError] = useState(false);
 
   if (!url || hasError) {
@@ -74,8 +74,8 @@ function ImageOptionCard({
   isSelected: boolean;
   onSelect: () => void;
   prompt: string;
-  resultState?: "correct" | "incorrect";
-  url: string | undefined;
+  resultState: "correct" | "incorrect" | null;
+  url?: string;
 }) {
   return (
     <button
@@ -107,7 +107,7 @@ export function SelectImageStep({
 }: {
   onSelectAnswer: (stepId: string, answer: SelectedAnswer) => void;
   result?: StepResult;
-  selectedAnswer: SelectedAnswer | undefined;
+  selectedAnswer?: SelectedAnswer;
   step: SerializedStep;
 }) {
   const t = useExtracted();
@@ -138,7 +138,7 @@ export function SelectImageStep({
           const resultState =
             hasResult && selectedIndex !== null
               ? getImageOptionResultState(index, content, selectedIndex)
-              : undefined;
+              : null;
           const isDimmed = hasResult && !resultState;
 
           return (

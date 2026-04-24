@@ -93,10 +93,7 @@ export function generationReducer<TStep extends string>(
  * Events without entityId are shared/batch events that apply to all entities.
  * When the viewer has no entityId (non-activity workflows), everything matches.
  */
-function isEventRelevantToViewer(
-  messageEntityId: string | undefined,
-  viewerEntityId: string | undefined,
-): boolean {
+function isEventRelevantToViewer(messageEntityId?: string, viewerEntityId?: string): boolean {
   if (messageEntityId === undefined) {
     return true;
   }

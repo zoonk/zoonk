@@ -72,7 +72,13 @@ describe(getFeedbackRomanization, () => {
       const result = buildResult({ arrangedWords: ["こんにちは", "世界"], kind: "reading" });
       const step = buildStep({ sentenceRomanization: "konnichiwa sekai" });
 
-      const rom = getFeedbackRomanization(result, step, "こんにちは 世界", null, null);
+      const rom = getFeedbackRomanization({
+        correctAnswer: null,
+        questionText: null,
+        result,
+        selectedText: "こんにちは 世界",
+        step,
+      });
 
       expect(rom.correctReading).toBe("konnichiwa sekai");
     });
@@ -81,7 +87,13 @@ describe(getFeedbackRomanization, () => {
       const result = buildResult({ arrangedWords: ["hello", "world"], kind: "reading" });
       const step = buildStep({ sentenceRomanization: "hello world" });
 
-      const rom = getFeedbackRomanization(result, step, "hello world", null, null);
+      const rom = getFeedbackRomanization({
+        correctAnswer: null,
+        questionText: null,
+        result,
+        selectedText: "hello world",
+        step,
+      });
 
       expect(rom.correctReading).toBeNull();
     });
@@ -90,7 +102,13 @@ describe(getFeedbackRomanization, () => {
       const result = buildResult({ arrangedWords: ["世界", "こんにちは"], kind: "reading" });
       const step = buildStep({ sentenceRomanization: "konnichiwa sekai" });
 
-      const rom = getFeedbackRomanization(result, step, null, "こんにちは 世界", null);
+      const rom = getFeedbackRomanization({
+        correctAnswer: "こんにちは 世界",
+        questionText: null,
+        result,
+        selectedText: null,
+        step,
+      });
 
       expect(rom.wrongReading).toBe("konnichiwa sekai");
     });
@@ -99,7 +117,13 @@ describe(getFeedbackRomanization, () => {
       const result = buildResult({ arrangedWords: ["world", "hello"], kind: "reading" });
       const step = buildStep({ sentenceRomanization: "hello world" });
 
-      const rom = getFeedbackRomanization(result, step, null, "hello world", null);
+      const rom = getFeedbackRomanization({
+        correctAnswer: "hello world",
+        questionText: null,
+        result,
+        selectedText: null,
+        step,
+      });
 
       expect(rom.wrongReading).toBeNull();
     });
@@ -115,7 +139,13 @@ describe(getFeedbackRomanization, () => {
       });
       const step = buildStep({ wordRomanization: "konnichiwa" });
 
-      const rom = getFeedbackRomanization(result, step, "こんにちは", null, "hello");
+      const rom = getFeedbackRomanization({
+        correctAnswer: null,
+        questionText: "hello",
+        result,
+        selectedText: "こんにちは",
+        step,
+      });
 
       expect(rom.correctReading).toBe("konnichiwa");
     });
@@ -129,7 +159,13 @@ describe(getFeedbackRomanization, () => {
       });
       const step = buildStep({ wordRomanization: "konnichiwa" });
 
-      const rom = getFeedbackRomanization(result, step, "konnichiwa", null, "hello");
+      const rom = getFeedbackRomanization({
+        correctAnswer: null,
+        questionText: "hello",
+        result,
+        selectedText: "konnichiwa",
+        step,
+      });
 
       expect(rom.correctReading).toBeNull();
     });
@@ -143,7 +179,13 @@ describe(getFeedbackRomanization, () => {
       });
       const step = buildStep({ wordRomanization: "konnichiwa" });
 
-      const rom = getFeedbackRomanization(result, step, "さようなら", "こんにちは", "hello");
+      const rom = getFeedbackRomanization({
+        correctAnswer: "こんにちは",
+        questionText: "hello",
+        result,
+        selectedText: "さようなら",
+        step,
+      });
 
       expect(rom.wrongReading).toBe("konnichiwa");
     });
@@ -157,7 +199,13 @@ describe(getFeedbackRomanization, () => {
       });
       const step = buildStep({ wordRomanization: "konnichiwa" });
 
-      const rom = getFeedbackRomanization(result, step, "wrong", "konnichiwa", "hello");
+      const rom = getFeedbackRomanization({
+        correctAnswer: "konnichiwa",
+        questionText: "hello",
+        result,
+        selectedText: "wrong",
+        step,
+      });
 
       expect(rom.wrongReading).toBeNull();
     });
@@ -171,7 +219,13 @@ describe(getFeedbackRomanization, () => {
       });
       const step = buildStep({ wordRomanization: "konnichiwa" });
 
-      const rom = getFeedbackRomanization(result, step, "こんにちは", null, "hello");
+      const rom = getFeedbackRomanization({
+        correctAnswer: null,
+        questionText: "hello",
+        result,
+        selectedText: "こんにちは",
+        step,
+      });
 
       expect(rom.translate).toBeNull();
     });
@@ -185,7 +239,13 @@ describe(getFeedbackRomanization, () => {
       });
       const step = buildStep();
 
-      const rom = getFeedbackRomanization(result, step, "こんにちは", null, "hello");
+      const rom = getFeedbackRomanization({
+        correctAnswer: null,
+        questionText: "hello",
+        result,
+        selectedText: "こんにちは",
+        step,
+      });
 
       expect(rom.correctReading).toBeNull();
       expect(rom.wrongReading).toBeNull();
@@ -197,7 +257,13 @@ describe(getFeedbackRomanization, () => {
       const result = buildResult({ arrangedWords: ["hello", "world"], kind: "listening" });
       const step = buildStep({ sentenceRomanization: "konnichiwa sekai" });
 
-      const rom = getFeedbackRomanization(result, step, null, null, "こんにちは 世界");
+      const rom = getFeedbackRomanization({
+        correctAnswer: null,
+        questionText: "こんにちは 世界",
+        result,
+        selectedText: null,
+        step,
+      });
 
       expect(rom.translate).toBe("konnichiwa sekai");
     });
@@ -206,7 +272,13 @@ describe(getFeedbackRomanization, () => {
       const result = buildResult({ arrangedWords: ["hello"], kind: "listening" });
       const step = buildStep({ sentenceRomanization: "konnichiwa" });
 
-      const rom = getFeedbackRomanization(result, step, null, null, "konnichiwa");
+      const rom = getFeedbackRomanization({
+        correctAnswer: null,
+        questionText: "konnichiwa",
+        result,
+        selectedText: null,
+        step,
+      });
 
       expect(rom.translate).toBeNull();
     });
@@ -215,7 +287,13 @@ describe(getFeedbackRomanization, () => {
       const result = buildResult({ arrangedWords: ["hello"], kind: "listening" });
       const step = buildStep({ sentenceRomanization: "konnichiwa" });
 
-      const rom = getFeedbackRomanization(result, step, "hello", "world", "こんにちは");
+      const rom = getFeedbackRomanization({
+        correctAnswer: "world",
+        questionText: "こんにちは",
+        result,
+        selectedText: "hello",
+        step,
+      });
 
       expect(rom.correctReading).toBeNull();
       expect(rom.wrongReading).toBeNull();
@@ -231,7 +309,13 @@ describe(getFeedbackRomanization, () => {
       });
       const step = buildStep({ sentenceRomanization: "romaji", wordRomanization: "romaji" });
 
-      const rom = getFeedbackRomanization(result, step, "option A", null, null);
+      const rom = getFeedbackRomanization({
+        correctAnswer: null,
+        questionText: null,
+        result,
+        selectedText: "option A",
+        step,
+      });
 
       expect(rom.correctReading).toBeNull();
       expect(rom.wrongReading).toBeNull();
@@ -244,7 +328,13 @@ describe(getFeedbackRomanization, () => {
       const result = buildResult();
       const step = buildStep({ sentenceRomanization: "romaji", wordRomanization: "romaji" });
 
-      const rom = getFeedbackRomanization(result, step, null, null, null);
+      const rom = getFeedbackRomanization({
+        correctAnswer: null,
+        questionText: null,
+        result,
+        selectedText: null,
+        step,
+      });
 
       expect(rom.correctReading).toBeNull();
       expect(rom.wrongReading).toBeNull();

@@ -41,9 +41,9 @@ function getResultState({
   hasFeedback: boolean;
   id: string;
   selectedId: string | null;
-}): "correct" | "incorrect" | undefined {
+}): "correct" | "incorrect" | null {
   if (!hasFeedback) {
-    return undefined;
+    return null;
   }
 
   if (id === selectedId) {
@@ -54,7 +54,7 @@ function getResultState({
     return "correct";
   }
 
-  return undefined;
+  return null;
 }
 
 /**
@@ -184,7 +184,7 @@ export function InvestigationCallVariant({
   content: CallContent;
   onSelectAnswer: (stepId: string, answer: SelectedAnswer | null) => void;
   result?: StepResult;
-  selectedAnswer: SelectedAnswer | undefined;
+  selectedAnswer?: SelectedAnswer;
   step: SerializedStep;
 }) {
   const t = useExtracted();

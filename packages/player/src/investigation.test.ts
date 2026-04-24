@@ -165,10 +165,10 @@ describe(getInvestigationStepByVariant, () => {
     expect(step?.id).toBe("action-step");
   });
 
-  test("returns undefined when variant not found", () => {
+  test("returns null when variant not found", () => {
     const steps = [buildStep({ id: "s1", kind: "static" })];
     const step = getInvestigationStepByVariant(steps, "problem");
-    expect(step).toBeUndefined();
+    expect(step).toBeNull();
   });
 });
 

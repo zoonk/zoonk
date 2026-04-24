@@ -26,7 +26,7 @@ export function buildInvestigationActionResults({
   investigationLoop,
   steps,
 }: {
-  investigationLoop: InvestigationLoopState | undefined;
+  investigationLoop?: InvestigationLoopState;
   steps: { id: string; kind: string; content: unknown }[];
 }): ActionStepResult[] {
   if (!investigationLoop) {

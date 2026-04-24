@@ -6,7 +6,7 @@ import { cache } from "react";
 const cachedListCourses = cache(async function cachedListCourses(
   limit: number,
   offset: number,
-  search: string | undefined,
+  search?: string,
 ) {
   if (!(await isAdmin())) {
     return { courses: [], total: 0 };

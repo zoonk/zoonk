@@ -12,9 +12,9 @@ type ActiveSubscriptionCandidate = {
  */
 export function findUserActiveSubscription<T extends ActiveSubscriptionCandidate>(
   subscriptions: T[],
-): T | undefined {
+): T | null {
   const sortedSubscriptions = subscriptions.toSorted(compareSubscriptionsByStartDate);
-  return sortedSubscriptions.find((subscription) => isActiveSubscription(subscription));
+  return sortedSubscriptions.find((subscription) => isActiveSubscription(subscription)) ?? null;
 }
 
 /**

@@ -36,7 +36,7 @@ export type AiCourseEstimateInputs = {
 };
 
 export type AiCourseEstimateInputOverrides = Partial<
-  Record<keyof AiCourseEstimateInputs, number | string | undefined>
+  Record<keyof AiCourseEstimateInputs, number | string | null>
 >;
 
 export type AiCostEstimateReport = {
