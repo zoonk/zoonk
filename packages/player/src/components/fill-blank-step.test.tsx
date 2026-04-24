@@ -49,7 +49,7 @@ function ParentWithState({
 }: {
   children: (props: {
     onSelectAnswer: (stepId: string, answer: SelectedAnswer | null) => void;
-    selectedAnswer: SelectedAnswer | undefined;
+    selectedAnswer?: SelectedAnswer;
   }) => ReactNode;
 }) {
   const [answers, setAnswers] = useState<Record<string, SelectedAnswer>>({});

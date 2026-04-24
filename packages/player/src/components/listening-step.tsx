@@ -42,7 +42,7 @@ export function ListeningStep({
 }: {
   onSelectAnswer: (stepId: string, answer: SelectedAnswer | null) => void;
   result?: StepResult;
-  selectedAnswer: SelectedAnswer | undefined;
+  selectedAnswer?: SelectedAnswer;
   step: SerializedStep;
 }) {
   if (!step.sentence) {

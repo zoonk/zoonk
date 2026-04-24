@@ -56,7 +56,7 @@ export default async function AiTasksPage({ searchParams }: PageProps<"/stats/ai
  * query string to those known values keeps the page logic explicit and ignores
  * any unsupported value without throwing.
  */
-function resolveAiTaskPageView(value?: string) {
+function resolveAiTaskPageView(value: string | null) {
   if (value === "summary" || value === "fallbacks") {
     return value;
   }

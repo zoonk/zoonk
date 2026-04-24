@@ -5,10 +5,13 @@ import { parseStepContent } from "@zoonk/core/steps/contract/content";
 import { type SelectedAnswer } from "../player-reducer";
 import { ChoiceStepLayout } from "./choice-step-layout";
 
-function getSelectedIndex(
-  selectedAnswer: SelectedAnswer | undefined,
-  choices: { id: string }[],
-): number | null {
+function getSelectedIndex({
+  choices,
+  selectedAnswer,
+}: {
+  choices: { id: string }[];
+  selectedAnswer?: SelectedAnswer;
+}): number | null {
   if (selectedAnswer?.kind !== "story") {
     return null;
   }
@@ -28,11 +31,11 @@ export function StoryStep({
   step,
 }: {
   onSelectAnswer: (stepId: string, answer: SelectedAnswer | null) => void;
-  selectedAnswer: SelectedAnswer | undefined;
+  selectedAnswer?: SelectedAnswer;
   step: SerializedStep;
 }) {
   const content = parseStepContent("story", step.content);
-  const selectedIndex = getSelectedIndex(selectedAnswer, content.choices);
+  const selectedIndex = getSelectedIndex({ choices: content.choices, selectedAnswer });
 
   const handleSelect = (index: number) => {
     const choice = content.choices[index];

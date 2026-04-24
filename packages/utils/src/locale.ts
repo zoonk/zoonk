@@ -23,11 +23,11 @@ export const LOCALE_LABELS: Record<SupportedLocale, string> = {
   pt: "Português",
 } as const;
 
-function parseRegion(tag: string): string | undefined {
+function parseRegion(tag: string): string | null {
   try {
-    return new Intl.Locale(tag.split(";")[0]?.trim() ?? "").region;
+    return new Intl.Locale(tag.split(";")[0]?.trim() ?? "").region ?? null;
   } catch {
-    return undefined;
+    return null;
   }
 }
 
@@ -39,7 +39,7 @@ export function getCountryFromAcceptLanguage(acceptLanguage: string | null): str
   const region = acceptLanguage
     .split(",")
     .map((tag) => parseRegion(tag))
-    .find((found) => found !== undefined);
+    .find(Boolean);
 
   return region ?? DEFAULT_COUNTRY;
 }

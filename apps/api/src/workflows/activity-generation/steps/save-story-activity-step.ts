@@ -47,13 +47,7 @@ function buildStoryChoices({
  * turns a missing array entry into a clear save-time failure instead of a
  * silently degraded step.
  */
-function getRequiredStoryImage({
-  image,
-  label,
-}: {
-  image: StepImage | undefined;
-  label: string;
-}): StepImage {
+function getRequiredStoryImage({ image, label }: { image?: StepImage; label: string }): StepImage {
   if (!image) {
     throw new Error(`Story image is missing for ${label}`);
   }

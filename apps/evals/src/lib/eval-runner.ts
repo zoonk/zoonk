@@ -50,11 +50,11 @@ async function saveScoredResults(taskId: string, modelId: string, results: Score
   await fs.writeFile(filePath, JSON.stringify(taskResults, null, 2));
 }
 
-function findTestCaseForOutput(task: Task, testCaseId: string): TestCase | undefined {
+function findTestCaseForOutput(task: Task, testCaseId: string): TestCase | null {
   // TestCaseId format is "{baseId}-{runNumber}"
   const lastDashIndex = testCaseId.lastIndexOf("-");
   const baseId = testCaseId.slice(0, lastDashIndex);
-  return task.testCases.find((testCase) => testCase.id === baseId);
+  return task.testCases.find((testCase) => testCase.id === baseId) ?? null;
 }
 
 async function scoreOutput(output: OutputEntry, testCase: TestCase): Promise<ScoredResult> {

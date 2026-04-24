@@ -237,7 +237,7 @@ export function SortOrderStep({
 }: {
   onSelectAnswer: (stepId: string, answer: SelectedAnswer | null) => void;
   result?: StepResult;
-  selectedAnswer: SelectedAnswer | undefined;
+  selectedAnswer?: SelectedAnswer;
   step: SerializedStep;
 }) {
   const t = useExtracted();

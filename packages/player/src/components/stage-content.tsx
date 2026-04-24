@@ -53,7 +53,7 @@ function hasEmbeddedDesktopAction({
   step,
 }: {
   screen: PlayerRuntimeContextValue["screen"];
-  step: SerializedStep | undefined;
+  step?: SerializedStep;
 }) {
   if (screen.stageIsFullBleed) {
     return true;

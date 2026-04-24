@@ -16,7 +16,7 @@ type PlayerChoiceSceneOption = {
   isDimmed?: boolean;
   isSelected: boolean;
   key: string;
-  resultState?: PlayerChoiceOptionResultState;
+  resultState?: PlayerChoiceOptionResultState | null;
 };
 
 /**
@@ -142,7 +142,7 @@ export function PlayerChoiceSceneOptions({
           isSelected={option.isSelected}
           key={option.key}
           onSelect={() => onSelect(index)}
-          resultState={option.resultState}
+          resultState={option.resultState ?? null}
         >
           {option.content}
         </OptionCard>

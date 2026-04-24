@@ -79,7 +79,7 @@ export function buildAiTaskTag(taskName: string): string {
  * The task detail route receives a free-form path segment. We validate it before
  * sending it to the gateway so malformed values cannot become reporting filters.
  */
-export function isAiTaskName(value: string | null | undefined): value is string {
+export function isAiTaskName(value?: string | null): value is string {
   return value !== null && value !== undefined && AI_TASK_NAME_PATTERN.test(value);
 }
 
@@ -88,7 +88,7 @@ export function isAiTaskName(value: string | null | undefined): value is string 
  * `/`. This small validator is enough for reporting tags without pulling in a
  * broader schema dependency into the admin package.
  */
-function isAiModelId(value: string | null | undefined): value is string {
+function isAiModelId(value?: string | null): value is string {
   return value !== null && value !== undefined && AI_MODEL_ID_PATTERN.test(value);
 }
 
@@ -121,9 +121,9 @@ export function resolveAiTaskDateRange({
   now = new Date(),
   to,
 }: {
-  from?: string;
+  from?: string | null;
   now?: Date;
-  to?: string;
+  to?: string | null;
 }): AiTaskDateRange {
   const defaultRange = getDefaultAiTaskDateRange(now);
   const parsedEnd = parseDateInput(to);
@@ -145,7 +145,7 @@ export function resolveAiTaskDateRange({
  * whole numbers and fall back to a friendly default so the page can render an
  * estimate immediately without client-side state.
  */
-export function resolveEstimateRunCount(value?: string): number {
+export function resolveEstimateRunCount(value?: string | null): number {
   const parsedValue = Number.parseInt(value ?? "", 10);
   return Number.isInteger(parsedValue) && parsedValue > 0
     ? parsedValue
@@ -157,8 +157,8 @@ export function resolveEstimateRunCount(value?: string): number {
  * support one value per field, so this helper safely narrows those values
  * before the date-range and run-count parsers consume them.
  */
-export function getSingleSearchParamValue(value?: string | string[]): string | undefined {
-  return typeof value === "string" ? value : undefined;
+export function getSingleSearchParamValue(value?: string | string[]): string | null {
+  return typeof value === "string" ? value : null;
 }
 
 /**
@@ -300,7 +300,7 @@ function getUtcCalendarDay(date: Date): Date {
  * format. We add a round-trip check here so impossible values like `2026-02-31`
  * do not silently roll over to another month in the admin filters.
  */
-function parseDateInput(value?: string): Date | null {
+function parseDateInput(value?: string | null): Date | null {
   if (!value || !DATE_INPUT_PATTERN.test(value)) {
     return null;
   }

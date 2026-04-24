@@ -27,29 +27,31 @@ type InvestigationVariant = InvestigationStepContent["variant"];
  * Investigation activities store each variant as a separate physical step
  * with `kind: "investigation"`. This helper scans all steps and parses
  * their content to find the one with the requested variant. Returns
- * undefined if no matching step exists.
+ * null if no matching step exists.
  */
 export function getInvestigationStepByVariant(
   steps: SerializedStep[],
   variant: InvestigationVariant,
-): SerializedStep | undefined {
-  return steps.find((step) => {
-    const descriptor = describePlayerStep(step);
+): SerializedStep | null {
+  return (
+    steps.find((step) => {
+      const descriptor = describePlayerStep(step);
 
-    if (descriptor?.kind === "investigationAction") {
-      return variant === "action";
-    }
+      if (descriptor?.kind === "investigationAction") {
+        return variant === "action";
+      }
 
-    if (descriptor?.kind === "investigationCall") {
-      return variant === "call";
-    }
+      if (descriptor?.kind === "investigationCall") {
+        return variant === "call";
+      }
 
-    if (descriptor?.kind === "investigationProblem") {
-      return variant === "problem";
-    }
+      if (descriptor?.kind === "investigationProblem") {
+        return variant === "problem";
+      }
 
-    return false;
-  });
+      return false;
+    }) ?? null
+  );
 }
 
 /**

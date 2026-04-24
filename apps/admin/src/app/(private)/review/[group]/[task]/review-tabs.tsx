@@ -26,13 +26,7 @@ function TabLink({
   );
 }
 
-export async function ReviewTabs({
-  taskType,
-  view,
-}: {
-  taskType: ReviewTaskType;
-  view: string | undefined;
-}) {
+export async function ReviewTabs({ taskType, view }: { taskType: ReviewTaskType; view?: string }) {
   const counts = await countReviewStatuses(taskType);
   const basePath = getTaskPath(taskType);
   const isFlagged = view === "flagged";

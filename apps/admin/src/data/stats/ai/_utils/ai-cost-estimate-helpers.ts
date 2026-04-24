@@ -210,7 +210,7 @@ export function buildStepImageCountMap(rows: StepImageUsageRow[]): Record<string
  * place keeps the structure loader focused on domain values instead of database
  * transport types.
  */
-export function toNumber(value: bigint | number | null | undefined): number {
+export function toNumber(value?: bigint | number | null): number {
   if (typeof value === "bigint") {
     return Number(value);
   }

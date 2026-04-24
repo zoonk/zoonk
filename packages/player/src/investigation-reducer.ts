@@ -50,7 +50,7 @@ export function recordActionInLoop({
  */
 function clearStepAnswer(
   state: PlayerState,
-  stepId: string | undefined,
+  stepId?: string,
 ): { results: PlayerState["results"]; selectedAnswers: PlayerState["selectedAnswers"] } {
   if (!stepId) {
     return { results: state.results, selectedAnswers: state.selectedAnswers };

@@ -5,7 +5,7 @@ import { parseStepContent } from "@zoonk/core/steps/contract/content";
 import { type SelectedAnswer } from "../player-reducer";
 import { ChoiceStepLayout } from "./choice-step-layout";
 
-function getSelectedIndex(selectedAnswer: SelectedAnswer | undefined): number | null {
+function getSelectedIndex(selectedAnswer?: SelectedAnswer): number | null {
   if (selectedAnswer?.kind !== "multipleChoice") {
     return null;
   }
@@ -19,7 +19,7 @@ export function MultipleChoiceStep({
   step,
 }: {
   onSelectAnswer: (stepId: string, answer: SelectedAnswer | null) => void;
-  selectedAnswer: SelectedAnswer | undefined;
+  selectedAnswer?: SelectedAnswer;
   step: SerializedStep;
 }) {
   const content = parseStepContent("multipleChoice", step.content);

@@ -2,7 +2,7 @@ import { parseNumericId } from "@zoonk/utils/number";
 import { calculateAverageRequestsPerEntity } from "../ai-task-stats";
 import { type AiCourseEstimateInputs, type StructureStats } from "./ai-cost-estimate-types";
 
-type CourseInputOverride = number | string | undefined;
+type CourseInputOverride = number | string | null;
 
 /**
  * Course totals should be editable because course generation is on-demand and
@@ -127,7 +127,7 @@ function normalizeInteger({
 }: {
   fallback: number;
   minimum: number;
-  value: CourseInputOverride;
+  value?: CourseInputOverride;
 }) {
   const parsedValue = parseNumericId(value);
 

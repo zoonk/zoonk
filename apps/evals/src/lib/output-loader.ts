@@ -108,6 +108,6 @@ export async function getModelsWithCompleteOutputs(
 export function getOutputForTestCase(
   outputs: ModelOutputs,
   testCaseId: string,
-): OutputEntry | undefined {
-  return outputs.outputs.find((output) => output.testCaseId === testCaseId);
+): OutputEntry | null {
+  return outputs.outputs.find((output) => output.testCaseId === testCaseId) ?? null;
 }

@@ -9,9 +9,9 @@ import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { type LessonActivity } from "./get-lesson-activities-step";
 import { handleActivityFailureStep } from "./handle-failure-step";
 
-function nullableNonEmpty(value: string | null | undefined): string | undefined {
+function nullableNonEmpty(value?: string | null): string | null {
   if (!value || value.trim().length === 0) {
-    return undefined;
+    return null;
   }
 
   return value;

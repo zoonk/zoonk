@@ -101,7 +101,7 @@ export function ArrangeWordsInteraction({
   correctWords: string[];
   onSelectAnswer: (stepId: string, answer: SelectedAnswer | null) => void;
   result?: StepResult;
-  selectedAnswer: SelectedAnswer | undefined;
+  selectedAnswer?: SelectedAnswer;
   stepId: string;
   wordBankOptions: WordBankOption[];
 }) {

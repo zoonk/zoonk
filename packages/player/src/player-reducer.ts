@@ -32,7 +32,7 @@ export type SelectedAnswer =
 
 export type StepResult = {
   stepId: string;
-  answer: SelectedAnswer | undefined;
+  answer?: SelectedAnswer;
   result: AnswerResult;
 };
 

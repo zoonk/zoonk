@@ -67,7 +67,7 @@ export function IncorrectAnswerBlock({
   romanization,
   selectedText,
 }: {
-  correctAnswer: string | null | undefined;
+  correctAnswer?: string | null;
   romanization: string | null;
   selectedText: string | null;
 }) {

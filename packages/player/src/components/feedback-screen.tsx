@@ -63,7 +63,13 @@ function StandardFeedbackContent({ result, step }: { result: StepResult; step?: 
       ? result.answer.selectedText
       : getArrangeWordsSelectedText(result);
   const questionText = getQuestionText(result, step);
-  const rom = getFeedbackRomanization(result, step, selectedText, correctAnswer, questionText);
+  const rom = getFeedbackRomanization({
+    correctAnswer,
+    questionText,
+    result,
+    selectedText,
+    step,
+  });
   const audioUrl = getFeedbackAudioUrl(step);
 
   return (

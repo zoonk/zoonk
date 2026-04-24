@@ -11,7 +11,7 @@ type UseWordAudioOptions = {
  * Word banks can repeat the same audio URL or include empty entries. Normalizing the list in one
  * place keeps the preload effect focused on the small set of files that can actually be played.
  */
-function getUniqueAudioUrls(urls: (string | null)[] | undefined): string[] {
+function getUniqueAudioUrls(urls?: (string | null)[]): string[] {
   if (!urls) {
     return [];
   }

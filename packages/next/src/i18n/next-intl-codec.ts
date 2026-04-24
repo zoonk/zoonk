@@ -47,9 +47,9 @@ function localeCompare(a: string, b: string) {
   return a.localeCompare(b, "en");
 }
 
-function getUniqueReferences(references: Entry["references"]): { path: string }[] | undefined {
+function getUniqueReferences(references: Entry["references"]): { path: string }[] | null {
   if (!references || references.length === 0) {
-    return;
+    return null;
   }
 
   const uniquePaths = [...new Set(references.map((ref) => ref.path))];
@@ -110,13 +110,15 @@ export default defineCodec(() => {
         }
 
         const { description, id, message, references, ...rest } = msg;
+        const uniqueReferences = getUniqueReferences(references);
+
         return {
           ...(description && { extractedComments: [description] }),
+          ...(uniqueReferences ? { references: uniqueReferences } : {}),
           ...rest,
           msgctxt: id,
           msgid: sourceMessage,
           msgstr: message,
-          references: getUniqueReferences(references),
         };
       });
 

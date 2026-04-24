@@ -57,7 +57,7 @@ async function resolveLesson(
     chapterId: string;
     chapterIsPublished: boolean;
     description: string;
-    existingLesson: Lesson | undefined;
+    existingLesson?: Lesson;
     hasExplicitSlug: boolean;
     index: number;
     kind: LessonKind;

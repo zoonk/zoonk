@@ -54,7 +54,7 @@ async function resolveChapter(
     courseId: string;
     courseIsPublished: boolean;
     description: string;
-    existingChapter: Chapter | undefined;
+    existingChapter?: Chapter;
     hasExplicitSlug: boolean;
     index: number;
     language: string;

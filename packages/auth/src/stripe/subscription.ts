@@ -5,7 +5,7 @@ function isActiveSubscription<T extends SubscriptionStatus>(sub: T): boolean {
 }
 
 export function findActiveSubscription<T extends SubscriptionStatus>(
-  subscriptions: T[] | null | undefined,
-): T | undefined {
-  return subscriptions?.find((sub) => isActiveSubscription(sub));
+  subscriptions?: T[] | null,
+): T | null {
+  return subscriptions?.find((sub) => isActiveSubscription(sub)) ?? null;
 }

@@ -44,7 +44,7 @@ function PlacedWordTile({
   resultState?: "correct" | "incorrect";
 }) {
   const t = useExtracted();
-  const hasResult = resultState !== undefined;
+  const hasResult = Boolean(resultState);
 
   const { attributes, isDragging, listeners, setNodeRef, transform, transition } = useSortable({
     disabled: hasResult,

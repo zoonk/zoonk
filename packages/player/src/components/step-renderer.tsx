@@ -26,7 +26,7 @@ type StepRendererProps = {
   onNavigatePrev: () => void;
   onSelectAnswer: (stepId: string, answer: SelectedAnswer | null) => void;
   result?: StepResult;
-  selectedAnswer: SelectedAnswer | undefined;
+  selectedAnswer?: SelectedAnswer;
   step: SerializedStep;
 };
 
