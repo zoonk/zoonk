@@ -1,7 +1,6 @@
 import { type CompletionResult } from "@zoonk/core/player/contracts/completion-input-schema";
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
 import { INVESTIGATION_EXPERIMENT_COUNT, STORY_OUTCOME_TIERS } from "@zoonk/utils/activities";
-import { getInvestigationScenario } from "./investigation";
 import { type PlayerState } from "./player-reducer";
 import { describePlayerStep, getInvestigationVariant } from "./player-step";
 import { EFFECT_DELTA_MAP, METRIC_AVERAGE_THRESHOLD } from "./story";
@@ -83,61 +82,10 @@ export function getSelectedAnswer(state: PlayerState) {
   return state.selectedAnswers[currentStep.id];
 }
 
-/**
- * Returns the scenario data for the sticky header recall popover,
- * or null if the current step is not an investigation step past the problem.
- */
-export function getInvestigationScenarioData(state: PlayerState) {
-  return getInvestigationScenario(state);
-}
-
-/**
- * Returns the story intro text, or null if the current step is not a story
- * decision step.
- *
- * Used by the sticky header to show a briefing popover only during
- * decision-making, so players can recall the premise without navigating back.
- */
-export function getStoryBriefingText(state: PlayerState): string | null {
-  const currentDescriptor = describePlayerStep(getCurrentStep(state));
-
-  if (currentDescriptor?.kind !== "storyDecision") {
-    return null;
-  }
-
-  const introContent = findIntroContent(state.steps);
-
-  if (!introContent) {
-    return null;
-  }
-
-  return introContent.text;
-}
-
 export type StoryMetric = {
   metric: string;
   value: number;
 };
-
-/**
- * Finds the generic intro step content for activities that open with a setup
- * screen. Story and practice now share this intro variant, so the briefing
- * selector can read the setup text without knowing the activity kind.
- *
- * Scans all static steps (not just the first one) because a non-intro
- * static step could appear earlier in the list.
- */
-function findIntroContent(steps: SerializedStep[]) {
-  for (const step of steps) {
-    const descriptor = describePlayerStep(step);
-
-    if (descriptor?.kind === "intro") {
-      return descriptor.content;
-    }
-  }
-
-  return null;
-}
 
 /**
  * Story metrics describe the global scoreboard, so they live on the outcome

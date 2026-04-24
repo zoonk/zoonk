@@ -2,18 +2,15 @@
 
 import { usePlayerActivityMeta, usePlayerNavigation } from "../player-context";
 import { useActivityKindLabel } from "../use-activity-kind-label";
-import { ContextRecallPopover } from "./context-recall-popover";
 import { LessonInfoPopover } from "./lesson-info-popover";
 import { PlayerCloseLink, PlayerHeader } from "./player-header";
 import { PlayerProgressBar } from "./player-progress-bar";
 
 export function InPlayStickyHeader({
   centerContent,
-  contextRecall,
   progressValue,
 }: {
   centerContent?: React.ReactNode;
-  contextRecall: string | null;
   progressValue: number;
 }) {
   const { kind, title } = usePlayerActivityMeta();
@@ -32,11 +29,7 @@ export function InPlayStickyHeader({
           )}
         </div>
 
-        <div className="flex items-center gap-1">
-          {contextRecall && <ContextRecallPopover content={contextRecall} />}
-
-          <LessonInfoPopover />
-        </div>
+        <LessonInfoPopover />
       </PlayerHeader>
 
       <PlayerProgressBar value={progressValue} />

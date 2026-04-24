@@ -68,6 +68,19 @@ describe("player browser integration: investigation", () => {
     });
 
     await page.getByRole("button", { name: /start investigation/i }).click();
+    await expect.element(page.getByRole("button", { name: /context/i })).not.toBeInTheDocument();
+    await page.getByRole("button", { name: /lesson info/i }).click();
+
+    const lessonInfoDialog = page.getByRole("dialog", { name: "Test Lesson" });
+
+    await expect
+      .element(lessonInfoDialog)
+      .toHaveAccessibleDescription("The API has been throwing intermittent 500 errors.");
+
+    await expect
+      .element(lessonInfoDialog)
+      .not.toHaveAccessibleDescription("Test lesson description");
+    await page.getByRole("button", { name: /lesson info/i }).click();
 
     await page.getByRole("radio", { name: "Check server logs" }).click();
     await page.getByRole("button", { name: /check/i }).click();

@@ -4,7 +4,6 @@ import { type PlayerState, type StepResult } from "./player-reducer";
 import {
   findSelectedChoice,
   getInvestigationProgress,
-  getStoryBriefingText,
   getStoryMetrics,
   getUpcomingImages,
 } from "./player-selectors";
@@ -123,60 +122,6 @@ function buildStoryResult(stepId: string, selectedChoiceId: string): StepResult 
     stepId,
   };
 }
-
-describe(getStoryBriefingText, () => {
-  test("returns intro text when current step is a story decision step", () => {
-    const state = buildState({
-      currentStepIndex: 1,
-      steps: [buildStoryIntroStep(), buildStoryStep("s1", 1)],
-    });
-
-    expect(getStoryBriefingText(state)).toBe("You are a factory manager.");
-  });
-
-  test("returns null when current step is a static step", () => {
-    const state = buildState({
-      currentStepIndex: 0,
-      steps: [buildStoryIntroStep(), buildStoryStep("s1", 1)],
-    });
-
-    expect(getStoryBriefingText(state)).toBeNull();
-  });
-
-  test("returns null when current step is not a story step", () => {
-    const state = buildState({
-      steps: [buildStep({ id: "s1" })],
-    });
-
-    expect(getStoryBriefingText(state)).toBeNull();
-  });
-
-  test("returns null when there is no intro step", () => {
-    const state = buildState({
-      steps: [buildStoryStep("s1", 0)],
-    });
-
-    expect(getStoryBriefingText(state)).toBeNull();
-  });
-
-  test("finds intro even when a non-intro static step comes first", () => {
-    const state = buildState({
-      currentStepIndex: 2,
-      steps: [
-        buildStep({
-          content: { text: "Welcome", title: "Preamble", variant: "text" as const },
-          id: "text-static",
-          kind: "static",
-          position: 0,
-        }),
-        buildStoryIntroStep(),
-        buildStoryStep("s1", 2),
-      ],
-    });
-
-    expect(getStoryBriefingText(state)).toBe("You are a factory manager.");
-  });
-});
 
 describe(findSelectedChoice, () => {
   test("returns the matching choice when a story answer exists", () => {

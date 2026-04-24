@@ -164,7 +164,7 @@ describe("player browser integration: story", () => {
     await expect.element(page.getByRole("status")).toBeInTheDocument();
   });
 
-  test("shows story context recall and metrics only during active decision states", async () => {
+  test("shows story context in lesson info and metrics only during active decision states", async () => {
     renderPlayer({
       activity: buildSerializedActivity({
         kind: "story",
@@ -247,12 +247,21 @@ describe("player browser integration: story", () => {
     await page.getByRole("button", { name: /begin/i }).click();
 
     await expect.element(page.getByRole("status", { name: /current status/i })).toBeInTheDocument();
-    await page.getByRole("button", { name: /context/i }).click();
-    await expect.element(page.getByText("You are leading the factory team.")).toBeInTheDocument();
-    await page.getByRole("button", { name: /context/i }).click();
+    await expect.element(page.getByRole("button", { name: /context/i })).not.toBeInTheDocument();
+    await page.getByRole("button", { name: /lesson info/i }).click();
+
+    const lessonInfoDialog = page.getByRole("dialog", { name: "Test Lesson" });
+
     await expect
-      .element(page.getByText("You are leading the factory team."))
-      .not.toBeInTheDocument();
+      .element(lessonInfoDialog)
+      .toHaveAccessibleDescription("You are leading the factory team.");
+
+    await expect
+      .element(lessonInfoDialog)
+      .not.toHaveAccessibleDescription("Test lesson description");
+
+    await page.getByRole("button", { name: /lesson info/i }).click();
+    await expect.element(lessonInfoDialog).not.toBeInTheDocument();
 
     await page.getByRole("radio", { name: /invest in training/i }).click();
     await page.getByRole("button", { name: /check/i }).click();

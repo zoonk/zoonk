@@ -192,9 +192,9 @@ export function describePlayerStep(step?: SerializedStep | null): PlayerStepDesc
 }
 
 /**
- * Investigation variants drive special reducer transitions, sticky-header
- * recall, and button labeling. This helper exposes the current investigation
- * phase without making each caller know how investigation content is shaped.
+ * Investigation variants drive special reducer transitions and button
+ * labeling. This helper exposes the current investigation phase without making
+ * each caller know how investigation content is shaped.
  */
 export function getInvestigationVariant(
   step?: SerializedStep | null,

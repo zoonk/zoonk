@@ -158,11 +158,6 @@ msgctxt "t2VOpl"
 msgid "Chapter Complete"
 msgstr "Chapter Complete"
 
-#: ../../packages/player/src/components/context-recall-popover.tsx
-msgctxt "V2qutI"
-msgid "Context"
-msgstr "Context"
-
 #: ../../packages/player/src/components/feedback-answer-blocks.tsx
 msgctxt "3nOd8f"
 msgid "Your answer:"

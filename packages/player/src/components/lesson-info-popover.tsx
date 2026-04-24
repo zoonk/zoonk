@@ -23,7 +23,7 @@ import { usePlayerActivityMeta } from "../player-context";
  */
 export function LessonInfoPopover() {
   const t = useExtracted();
-  const { chapterTitle, lessonDescription, lessonTitle } = usePlayerActivityMeta();
+  const { chapterTitle, description, lessonTitle } = usePlayerActivityMeta();
 
   return (
     <Popover>
@@ -35,7 +35,7 @@ export function LessonInfoPopover() {
       <PopoverContent align="end" side="bottom" sideOffset={8}>
         <PopoverHeader>
           <PopoverTitle>{lessonTitle}</PopoverTitle>
-          <PopoverDescription>{lessonDescription}</PopoverDescription>
+          <PopoverDescription>{description}</PopoverDescription>
         </PopoverHeader>
 
         <Separator />
