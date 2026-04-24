@@ -11,6 +11,8 @@ const STORY_ALIGNMENT_SCORE: Record<StoryAlignment, number> = {
   weak: 0,
 };
 
+const FALLBACK_STORY_OUTCOME_TIER = "terrible" satisfies StoryOutcomeTier;
+
 const STRONG_ALIGNMENT_SCORE = STORY_ALIGNMENT_SCORE.strong;
 
 /**
@@ -18,7 +20,7 @@ const STRONG_ALIGNMENT_SCORE = STORY_ALIGNMENT_SCORE.strong;
  * writes tier narratives, but the app owns this scoring rule so endings stay
  * consistent across every generated story.
  */
-export function getStoryOutcomeTier(alignments: StoryAlignment[]): StoryOutcomeTier | null {
+function getStoryOutcomeTier(alignments: StoryAlignment[]): StoryOutcomeTier | null {
   if (alignments.length === 0) {
     return null;
   }
@@ -44,4 +46,16 @@ export function getStoryOutcomeTier(alignments: StoryAlignment[]): StoryOutcomeT
   }
 
   return "terrible";
+}
+
+/**
+ * Returns the outcome tier that the player can safely render.
+ *
+ * A valid generated story has at least one decision, but stale or malformed
+ * saved steps can still leave the outcome screen with no alignments to score.
+ * In that case the player shows the weakest authored ending so the learner
+ * still sees content and gets the Continue action instead of a blank screen.
+ */
+export function getStoryOutcomeDisplayTier(alignments: StoryAlignment[]): StoryOutcomeTier {
+  return getStoryOutcomeTier(alignments) ?? FALLBACK_STORY_OUTCOME_TIER;
 }

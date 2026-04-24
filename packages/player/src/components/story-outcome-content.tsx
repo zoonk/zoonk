@@ -8,7 +8,7 @@ import { useExtracted } from "next-intl";
 import { usePlayerRuntime } from "../player-context";
 import { type PlayerState } from "../player-reducer";
 import { findSelectedChoice, getStoryMetrics } from "../player-selectors";
-import { getStoryOutcomeTier } from "../story-outcome";
+import { getStoryOutcomeDisplayTier } from "../story-outcome";
 import {
   PlayerReadSceneBody,
   PlayerReadSceneDivider,
@@ -100,12 +100,8 @@ function getOutcomeTierTone(tier: StoryOutcomeTier): PlayerReadSceneTitleTone {
 export function StoryOutcomeContent({ outcomes }: { outcomes: StoryOutcomes }) {
   const t = useExtracted();
   const { state } = usePlayerRuntime();
-  const tier = getStoryOutcomeTier(getStoryAlignments(state));
+  const tier = getStoryOutcomeDisplayTier(getStoryAlignments(state));
   const storyMetrics = getStoryMetrics(state);
-
-  if (!tier) {
-    return null;
-  }
 
   const outcome = outcomes[tier];
   const titleTone = getOutcomeTierTone(tier);

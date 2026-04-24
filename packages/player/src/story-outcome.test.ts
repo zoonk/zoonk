@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { getStoryOutcomeTier } from "./story-outcome";
+import { getStoryOutcomeDisplayTier, getStoryOutcomeTier } from "./story-outcome";
 
 describe(getStoryOutcomeTier, () => {
   test("maps all strong choices to perfect", () => {
@@ -24,5 +24,11 @@ describe(getStoryOutcomeTier, () => {
 
   test("returns null without story choices", () => {
     expect(getStoryOutcomeTier([])).toBeNull();
+  });
+});
+
+describe(getStoryOutcomeDisplayTier, () => {
+  test("falls back to the weakest authored outcome without story choices", () => {
+    expect(getStoryOutcomeDisplayTier([])).toBe("terrible");
   });
 });

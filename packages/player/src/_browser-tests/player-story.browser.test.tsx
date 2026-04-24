@@ -1,6 +1,7 @@
 import { fireEvent } from "@testing-library/react";
 import { describe, expect, test } from "vitest";
 import { page } from "vitest/browser";
+import { buildInlineImageUrl } from "../_test-utils/build-inline-image-url";
 import { buildSerializedActivity, buildSerializedStep } from "../_test-utils/player-test-data";
 import { buildAuthenticatedViewer } from "../_test-utils/player-test-viewer";
 import { renderPlayer } from "../_test-utils/render-player";
@@ -23,7 +24,7 @@ const STORY_OUTCOMES = {
   perfect: {
     image: {
       prompt: "Recovered factory floor with a confident team and stable output",
-      url: "https://example.com/story-outcome.jpg",
+      url: buildInlineImageUrl({ label: "Story outcome" }),
     },
     narrative: "Excellent leadership",
     title: "Great Manager",
@@ -39,7 +40,7 @@ const STORY_CONTEXT_OUTCOMES = {
     ...STORY_OUTCOMES.perfect,
     image: {
       prompt: "Recovered factory floor with a confident team and stable output",
-      url: "https://example.com/story-outcome-context.jpg",
+      url: buildInlineImageUrl({ label: "Story outcome context" }),
     },
   },
 };
@@ -54,7 +55,7 @@ describe("player browser integration: story", () => {
             content: {
               image: {
                 prompt: "Factory floor at sunrise with anxious workers waiting for instructions",
-                url: "https://example.com/story-intro.jpg",
+                url: buildInlineImageUrl({ label: "Story intro" }),
               },
               text: "You are leading the factory team.",
               title: "Factory trouble",
@@ -76,7 +77,7 @@ describe("player browser integration: story", () => {
                   ],
                   stateImage: {
                     prompt: "Factory floor after training begins and the team regains confidence",
-                    url: "https://example.com/story-state-train.jpg",
+                    url: buildInlineImageUrl({ label: "Story state train" }),
                   },
                   text: "Invest in training",
                 },
@@ -91,14 +92,14 @@ describe("player browser integration: story", () => {
                   stateImage: {
                     prompt:
                       "Factory floor after cuts with workers frustrated and stations falling behind",
-                    url: "https://example.com/story-state-cut.jpg",
+                    url: buildInlineImageUrl({ label: "Story state cut" }),
                   },
                   text: "Cut costs",
                 },
               ],
               image: {
                 prompt: "Factory floor in crisis with stalled stations and workers waiting",
-                url: "https://example.com/story-step.jpg",
+                url: buildInlineImageUrl({ label: "Story step" }),
               },
               problem: "A crisis hits the factory floor",
             },
@@ -172,7 +173,7 @@ describe("player browser integration: story", () => {
             content: {
               image: {
                 prompt: "Factory floor at sunrise with anxious workers waiting for instructions",
-                url: "https://example.com/story-intro-context.jpg",
+                url: buildInlineImageUrl({ label: "Story intro context" }),
               },
               text: "You are leading the factory team.",
               title: "Factory trouble",
@@ -194,7 +195,7 @@ describe("player browser integration: story", () => {
                   ],
                   stateImage: {
                     prompt: "Factory floor after training begins and the team regains confidence",
-                    url: "https://example.com/story-state-train-context.jpg",
+                    url: buildInlineImageUrl({ label: "Story state train context" }),
                   },
                   text: "Invest in training",
                 },
@@ -209,14 +210,14 @@ describe("player browser integration: story", () => {
                   stateImage: {
                     prompt:
                       "Factory floor after cuts with workers frustrated and stations falling behind",
-                    url: "https://example.com/story-state-cut-context.jpg",
+                    url: buildInlineImageUrl({ label: "Story state cut context" }),
                   },
                   text: "Cut costs",
                 },
               ],
               image: {
                 prompt: "Factory floor in crisis with stalled stations and workers waiting",
-                url: "https://example.com/story-step-context.jpg",
+                url: buildInlineImageUrl({ label: "Story step context" }),
               },
               problem: "A crisis hits the factory floor",
             },
