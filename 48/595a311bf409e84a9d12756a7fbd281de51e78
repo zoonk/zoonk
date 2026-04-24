@@ -1,0 +1,159 @@
+packages/ui/src/hooks/use-keyboard.ts
+  4f8e52a49a3a7662 50-58,149
+apps/admin/src/app/(private)/stats/ai/[task]/ai-task-report.tsx
+  h_1cda88fc21fe9c 149
+packages/player/src/components/romanization-text.tsx
+  4f8e52a49a3a7662 1
+packages/player/src/components/select-image-step.tsx
+  4f8e52a49a3a7662 16,28,37,40,77-78,110,141
+packages/player/src/components/investigation-action-variant.tsx
+  4f8e52a49a3a7662 117
+apps/blog/src/lib/authors.ts
+  4f8e52a49a3a7662 38-39
+packages/next/src/i18n/next-intl-codec.ts
+  4f8e52a49a3a7662 50,52,113-114,117
+packages/player/src/components/_utils/feedback-romanization.ts
+  h_1cda88fc21fe9c 10-16,28-34,36-39,41-44,48-51,57-63,65-68,70-73,77-80,96-108,118-120,122-124,130-133,140,142-143,145-146
+apps/api/src/workflows/activity-generation/steps/save-story-activity-step.ts
+  4f8e52a49a3a7662 50
+packages/player/src/components/investigation-step.tsx
+  4f8e52a49a3a7662 25
+packages/player/src/components/stage-content.tsx
+  4f8e52a49a3a7662 56
+apps/admin/src/app/(private)/stats/ai/page.tsx
+  h_1cda88fc21fe9c 59
+apps/evals/src/lib/output-loader.ts
+  4f8e52a49a3a7662 111-112
+packages/player/src/components/arrange-words-answer-area.tsx
+  4f8e52a49a3a7662 47
+apps/admin/src/data/stats/ai/_utils/ai-course-estimate-inputs.ts
+  4f8e52a49a3a7662 5,130
+apps/admin/src/data/users/find-active-subscription.ts
+  4f8e52a49a3a7662 15,17
+apps/evals/src/lib/eval-runner.ts
+  4f8e52a49a3a7662 53,57
+apps/admin/src/app/(private)/review/[group]/[task]/review-tabs.tsx
+  4f8e52a49a3a7662 29
+packages/player/src/components/arrange-words.tsx
+  4f8e52a49a3a7662 104
+apps/main/src/data/progress/get-best-day.ts
+  4f8e52a49a3a7662 14
+apps/api/src/workflows/activity-generation/steps/save-grammar-steps-step.ts
+  4f8e52a49a3a7662 12,14
+packages/player/src/investigation.test.ts
+  4f8e52a49a3a7662 168,171
+apps/admin/src/data/stats/ai/_utils/ai-cost-estimate-types.ts
+  4f8e52a49a3a7662 39
+apps/admin/src/lib/parse-search-params.ts
+  4f8e52a49a3a7662 3,7
+packages/player/src/components/fill-blank-step.test.tsx
+  4f8e52a49a3a7662 52
+apps/main/src/data/progress/get-score.ts
+  4f8e52a49a3a7662 13-14,35-36
+packages/player/src/components/listening-step.tsx
+  4f8e52a49a3a7662 45
+packages/ai/src/tasks/audio/generate-language-audio.ts
+  4f8e52a49a3a7662 33
+packages/player/src/components/translation-step.tsx
+  4f8e52a49a3a7662 20,54
+packages/player/src/components/feedback-answer-blocks.tsx
+  4f8e52a49a3a7662 70
+apps/main/src/lib/workflow/generation-store.ts
+  4f8e52a49a3a7662 96
+packages/utils/src/subscription.ts
+  4f8e52a49a3a7662 78,88
+apps/evals/src/lib/battle-loader.ts
+  4f8e52a49a3a7662 86-92,129
+apps/admin/src/data/stats/ai/_utils/ai-cost-estimate-helpers.ts
+  4f8e52a49a3a7662 213
+apps/admin/src/data/stats/ai/ai-task-stats.ts
+  4f8e52a49a3a7662 82,91,124,126,161,303
+  h_1cda88fc21fe9c 148,160
+apps/evals/src/tasks/index.ts
+  4f8e52a49a3a7662 69-70
+packages/auth/src/stripe/subscription.ts
+  4f8e52a49a3a7662 8-10
+packages/player/src/components/reading-step.tsx
+  4f8e52a49a3a7662 22
+packages/utils/src/locale.ts
+  h_1cda88fc21fe9c 26,28,30
+  4f8e52a49a3a7662 42
+packages/player/src/components/step-renderer.tsx
+  4f8e52a49a3a7662 29
+packages/core/src/orgs/org-permissions.ts
+  4f8e52a49a3a7662 31-32
+packages/player/src/use-word-audio.ts
+  4f8e52a49a3a7662 14
+packages/player/src/components/multiple-choice-step.tsx
+  4f8e52a49a3a7662 8,22
+apps/api/src/workflows/activity-generation/steps/_utils/save-reading-target-words.ts
+  4f8e52a49a3a7662 125
+packages/core/src/player/contracts/build-word-bank-options.ts
+  4f8e52a49a3a7662 56-62,91
+apps/admin/src/app/(private)/review/[group]/[task]/review-queue.tsx
+  h_1cda88fc21fe9c 66
+packages/player/src/components/match-columns-step.tsx
+  4f8e52a49a3a7662 150
+apps/main/src/data/progress/get-best-time.ts
+  4f8e52a49a3a7662 15
+packages/player/src/components/player-choice-scene.tsx
+  h_1cda88fc21fe9c 145
+  4f8e52a49a3a7662 19
+apps/editor/src/data/lessons/import-lessons.ts
+  4f8e52a49a3a7662 60
+packages/player/src/components/sort-order-step.tsx
+  4f8e52a49a3a7662 240
+packages/player/src/player-reducer.ts
+  4f8e52a49a3a7662 35
+apps/admin/src/data/courses/list-courses.ts
+  4f8e52a49a3a7662 9
+packages/player/src/components/investigation-call-variant.tsx
+  4f8e52a49a3a7662 44,46,57,187
+packages/player/src/components/_utils/feedback-romanization.test.ts
+  4f8e52a49a3a7662 75-81,90-96,105-111,120-126,142-148,162-168,182-188,202-208,222-228,242-248,260-266,275-281,290-296,312-318,331-337
+packages/player/src/components/fill-blank-step.tsx
+  4f8e52a49a3a7662 23,27,41,45,113,211
+packages/player/src/investigation-reducer.ts
+  4f8e52a49a3a7662 53
+apps/evals/src/lib/models.ts
+  4f8e52a49a3a7662 75-76
+packages/player/src/components/story-step.tsx
+  4f8e52a49a3a7662 8-14,34,38
+packages/player/src/components/feedback-screen.tsx
+  4f8e52a49a3a7662 66-72
+apps/admin/src/data/users/list-users.ts
+  4f8e52a49a3a7662 10
+packages/core/src/player/contracts/build-investigation-action-results.ts
+  4f8e52a49a3a7662 29
+packages/player/src/components/option-card.tsx
+  4f8e52a49a3a7662 19,39
+packages/player/src/investigation.ts
+  4f8e52a49a3a7662 30,35-38,40-42,44-46,48-50,52-54
+apps/editor/src/data/chapters/import-chapters.ts
+  4f8e52a49a3a7662 57
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "48595a311bf409e84a9d12756a7fbd281de51e78",
+  "prompts": {
+    "4f8e52a49a3a7662": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019dc16b-986f-77f2-91a9-32f32f7e2e7a",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 339,
+      "total_deletions": 241,
+      "accepted_lines": 276,
+      "overriden_lines": 2
+    }
+  },
+  "humans": {
+    "h_1cda88fc21fe9c": {
+      "author": "ceolinwill"
+    }
+  }
+}
