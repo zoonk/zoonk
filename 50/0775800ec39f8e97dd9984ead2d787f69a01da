@@ -1,0 +1,386 @@
+packages/player/src/player-screen.test.ts
+  74e7dcba2a28dfda 29,52,72-74,91,97-101,114-115,179
+  87d99fbf622e24a1 2,45-51,53-54,57,67-68,79,92-96,102,119-120,128,141-142,154,167-168,183,189,205
+  h_1cda88fc21fe9c 82,89,105,112,192,199
+packages/player/src/components/stage-content.tsx
+  74e7dcba2a28dfda 2-6,48,51-52,58,102
+  h_1cda88fc21fe9c 1,40,55-56
+  87d99fbf622e24a1 45,47,53-54,57,59-61,64-68
+packages/ai/src/tasks/activities/core/activity-story.prompt.md
+  h_1cda88fc21fe9c 1-4,6,8,10-16,18-58,62-64,66-68,70-73,75-79,82-89,92-97,102-105,107,109,111-114,116-120,122-124,128-140,142-163,168-194,198-205,208-209,211-215
+  e5b89ea910e3bb10 5,100-101,108,115,121,125-127,141,164-167,206-207,210
+  780879cc7c46c021 7,9,17,59-61,65,69,74,80-81,90-91,98-99,106,110,195-197
+apps/api/src/workflows/activity-generation/kinds/story-workflow.test.ts
+  e5b89ea910e3bb10 20-25,27,32-35,37-42,47,67,74,85,92,116-119,125-136,140,146,216,260,287,292,356
+  h_1cda88fc21fe9c 120-124,138-139
+  74e7dcba2a28dfda 11-12,19,26,28-31,36,43-46,69,76,87,97-98,155-156,179-183,212,215,325-326,332
+  780879cc7c46c021 2-3,16-17,50-51,54-55,58-60,103-115,141-144,147,150-152,159-162,203,250,283,288,313,322,347,357
+packages/utils/src/activities.ts
+  e5b89ea910e3bb10 8-15
+packages/core/src/player/contracts/prepare-activity-data.ts
+  h_1cda88fc21fe9c 154-156,161-170
+packages/core/src/player/queries/get-review-steps.test.ts
+  87d99fbf622e24a1 403
+packages/player/src/components/story-outcome-content.tsx
+  h_1cda88fc21fe9c 122
+  87d99fbf622e24a1 5,25
+  e5b89ea910e3bb10 4,6,11,30,33-34,36,42,44,48-49,51,53,56-62,66-67,69-71,73-76,80,82-83,87,100,103,106,110-111,114,117-118
+  74e7dcba2a28dfda 20-21,115-116,121,123,125,127-133,135-137
+packages/player/src/components/static-step.tsx
+  74e7dcba2a28dfda 15,107,110,112-115,118-121
+  87d99fbf622e24a1 22,108-109,111,116-117,122-123
+apps/main/messages/es.po
+  74e7dcba2a28dfda 379
+  87d99fbf622e24a1 376-378
+AGENTS.md
+  h_1cda88fc21fe9c 208-211
+apps/api/src/workflows/activity-generation/kinds/story-workflow.ts
+  h_1cda88fc21fe9c 1,7,31,33,37,68-70
+  780879cc7c46c021 2-3,13-15,17-18,22,26,38-41,43-51,53
+  87d99fbf622e24a1 5,54-67
+packages/player/src/player-selectors.test.ts
+  e5b89ea910e3bb10 104-110
+  87d99fbf622e24a1 80,247-250
+  74e7dcba2a28dfda 34,57,65,76,90-92,100-103,111-118,222-223,234-236,243,251-270,277,289,301,313,328-333,344,742-789
+apps/main/messages/pt.po
+  74e7dcba2a28dfda 379
+  87d99fbf622e24a1 376-378
+packages/ai/src/tasks/activities/core/activity-story.ts
+  h_1cda88fc21fe9c 4-6,10,12,19,31,38,42-44,48-50,52,59,65
+  780879cc7c46c021 26-29
+apps/api/src/workflows/activity-generation/steps/generate-story-images-step.test.ts
+  h_1cda88fc21fe9c 1,28
+  87d99fbf622e24a1 2-21,23-27,29-35,42,44-47,52,59-62,64-69,71-76,78-97,99-116,118-131,139-142
+  e5b89ea910e3bb10 22,36-41,43,48-51,53-58,63,70,77,98,117,132-138
+apps/main/src/lib/generation/phase-kind-steps/story.ts
+  780879cc7c46c021 9,15,28
+  87d99fbf622e24a1 10,16,29
+apps/api/src/workflows/activity-generation/steps/save-story-activity-step.test.ts
+  74e7dcba2a28dfda 224,227,229
+  e5b89ea910e3bb10 16,25-26,41,45-49,51,56-59,61-66,71,78,85,98,105,136-142,193,228,239-242,251-254,265,300
+  87d99fbf622e24a1 15,17-24,27-28,43,50,52-55,60,67-70,80,87,90-91,100,110-111,114-115,121-130,132-135,143-145,171-175,194,208-209,211-219,221-222,225-226,230,232-235,244-245,247-250,301
+  h_1cda88fc21fe9c 149-150,236-238,243
+apps/api/src/workflows/activity-generation/steps/save-story-activity-step.ts
+  e5b89ea910e3bb10 1,3,8,14-16,24,37,40,65-78,80-106,117,119,157-160,190
+  87d99fbf622e24a1 5,10,17-23,25-36,38-39,41-64,107-108,111,116,120,124,134,137-146,156,165,168,179,184-185,189,199
+  74e7dcba2a28dfda 125-127,173,205-209
+  h_1cda88fc21fe9c 79
+apps/api/src/workflows/activity-generation/steps/_utils/generate-step-images.ts
+  h_1cda88fc21fe9c 28
+packages/player/src/step-navigation.ts
+  74e7dcba2a28dfda 11
+  780879cc7c46c021 10
+  h_1cda88fc21fe9c 3,19-20,22-25
+apps/api/src/workflows/activity-generation/steps/save-practice-activity-step.test.ts
+  e5b89ea910e3bb10 141
+packages/player/src/player-selectors.ts
+  74e7dcba2a28dfda 95-96,108,114,123-125,130,134,142-148,158-159,218,224,226,232,261,277,294,306-308,310-311,323-330,349-350,369-371,379-381
+  87d99fbf622e24a1 233,235-236,249-260,262-266,270-276,278-293,295-305,309,312-322,344,346-348,353-358,362
+  e5b89ea910e3bb10 3,267-269
+  h_1cda88fc21fe9c 149-157,230,234
+apps/api/src/workflows/activity-generation/steps/generate-story-content-step.ts
+  780879cc7c46c021 3,9,15,19-21,25,32,37-43,54,67,72
+  e5b89ea910e3bb10 4-5,50,61
+packages/player/src/story-outcome.ts
+  h_1cda88fc21fe9c 1-47
+packages/player/src/components/player-stage.tsx
+  74e7dcba2a28dfda 5-29,53
+  h_1cda88fc21fe9c 4,30-35,38,44,52
+packages/player/src/components/story-step.tsx
+  87d99fbf622e24a1 58-59
+apps/main/messages/en.po
+  87d99fbf622e24a1 376-379
+packages/player/src/_browser-tests/player-story.browser.test.tsx
+  h_1cda88fc21fe9c 9
+  87d99fbf622e24a1 8,55-58,77-80,91-95,99-103,111,134-139,143-149,153-155,173-176,195-198,209-213,217-221,229
+  74e7dcba2a28dfda 59-61,177-179
+  e5b89ea910e3bb10 10-45,112,230
+packages/player/src/components/step-image.tsx
+  74e7dcba2a28dfda 8-14,27-28,31,34,47
+  87d99fbf622e24a1 30,32-33,35-36
+packages/player/src/player-controller.test.ts
+  74e7dcba2a28dfda 28
+packages/core/src/workflows/steps.ts
+  780879cc7c46c021 83
+packages/player/src/player-screen.ts
+  74e7dcba2a28dfda 6-7,41,53,89,125,248-252,268,277-278,282
+  h_1cda88fc21fe9c 247,259,266,269
+apps/api/src/workflows/activity-generation/steps/generate-story-choices-step.test.ts
+  h_1cda88fc21fe9c 11,27-29,33-34,37,39,41-77,82,84-94,101-107,111,123,129-130,133,136,138,141,151-152,154-157,160-161,163-164,166,170-172,176,180,183,193,195,197-200,205,212,214
+  780879cc7c46c021 32
+packages/ai/src/tasks/steps/step-content-story-image.prompt.md
+  87d99fbf622e24a1 1-20
+apps/main/src/lib/generation/activity-generation-phase-weights.ts
+  87d99fbf622e24a1 144
+  780879cc7c46c021 142-143
+apps/evals/src/tasks/activity-story-choices/task.ts
+  h_1cda88fc21fe9c 3-6,9-11,13-17
+packages/ai/src/tasks/activities/core/activity-story-choices.prompt.md
+  68fbd8dcb357a40f 75,77,116,118-119,121,123-131,133,135-139,141,143,145,147-154,166-167,169,171-172,174,237-239,246-247,250
+  h_1cda88fc21fe9c 1,3,5-30,34-36,38,40-43,45,47-57,59-60,62-71,73,79,81,83-84,86-87,89-94,96,98,100,102-104,106,108,110-112,114,140,142,144,146,155-165,176,178-197,199-236,240-245,248-249,251-287,291-297,301-302
+packages/core/src/player/contracts/check-answer.test.ts
+  87d99fbf622e24a1 308
+  74e7dcba2a28dfda 288,296,304
+packages/ai/src/tasks/activities/core/activity-story-choices.ts
+  h_1cda88fc21fe9c 2,4-12,16-17,19-20,24-26,28-29,33-35,37,40-45,49-53,57-59,61-62,66,69,75
+apps/admin/src/data/stats/ai/_utils/build-ai-lesson-cost-estimates.ts
+  e5b89ea910e3bb10 101
+  780879cc7c46c021 106
+apps/api/src/workflows/activity-generation/core-activity-workflow.ts
+  h_1cda88fc21fe9c 13-16,41,45,48
+apps/api/src/workflows/activity-generation/steps/generate-story-choices-step.ts
+  4b2482f3567e6fa6 6-9
+  h_1cda88fc21fe9c 5,12,17-19,21-24,26-29,32-33,35,38-46,50,53-65,70,72
+  780879cc7c46c021 3-4
+packages/ai/package.json
+  780879cc7c46c021 17
+  e5b89ea910e3bb10 16
+packages/core/src/steps/contract/story.ts
+  e5b89ea910e3bb10 1,13-20,36
+  74e7dcba2a28dfda 27,35,58
+  87d99fbf622e24a1 3,7,21,23,30,63,67-68
+apps/admin/src/data/stats/ai/ai-task-catalog.ts
+  780879cc7c46c021 75,206
+  e5b89ea910e3bb10 71,205
+packages/player/src/player-completion.ts
+  74e7dcba2a28dfda 12
+packages/core/src/player/contracts/compute-score.test.ts
+  87d99fbf622e24a1 341,444
+  74e7dcba2a28dfda 329,337,432,440
+packages/core/src/steps/contract/static.ts
+  74e7dcba2a28dfda 3,21-26,42
+packages/core/src/steps/contract/content.ts
+  74e7dcba2a28dfda 32
+apps/evals/src/tasks/activity-story/task.ts
+  780879cc7c46c021 4,9,11-12
+  h_1cda88fc21fe9c 3,5-6,13-14
+packages/player/src/player-haptics.ts
+  h_1cda88fc21fe9c 2,308
+packages/ai/src/tasks/activities/core/activity-story-schemas.ts
+  4b2482f3567e6fa6 25,51-53,56-63,65-68,70-79
+  h_1cda88fc21fe9c 1-24,26-50,54-55,64,69,80-121
+apps/api/src/workflows/activity-generation/steps/save-practice-activity-step.ts
+  e5b89ea910e3bb10 59
+apps/api/src/workflows/activity-generation/kinds/practice-workflow.test.ts
+  e5b89ea910e3bb10 137
+packages/player/src/player-step-behavior.ts
+  74e7dcba2a28dfda 20,68-75,183,213,227
+  h_1cda88fc21fe9c 236,248,258
+packages/player/src/components/step-intro-hero-layout.tsx
+  b81f2e8781d887b5 4,9,15,17-20,23,26,30,32-34,59,69,72-74
+  74e7dcba2a28dfda 6,11,22,28,35-58,60-68,70-71,75-80,82-84,86-87,90,94-98,102-107,111-127,129,131
+  h_1cda88fc21fe9c 3,12,81,85,88-89,91-93,99-101,128,130,132-133
+packages/player/src/components/story-metric-pill.tsx
+  74e7dcba2a28dfda 7,34-36,41-42
+packages/player/src/use-player-actions.test.tsx
+  74e7dcba2a28dfda 30
+packages/core/src/player/contracts/validate-answers.test.ts
+  74e7dcba2a28dfda 242,250,275,283,308,316
+  87d99fbf622e24a1 254,287,320
+packages/core/src/player/contracts/prepare-activity-data.test.ts
+  87d99fbf622e24a1 1,3,7,19,462-474,476-482,484-490,492-513
+  780879cc7c46c021 2,147-151,475,483,491
+packages/player/src/player-reducer.test.ts
+  87d99fbf622e24a1 285,442
+  h_1cda88fc21fe9c 415,418
+  74e7dcba2a28dfda 63,273,281,410-414,416-417,419-421,435-438,454,466,486
+  e5b89ea910e3bb10 443-449
+apps/evals/src/tasks/activity-story/test-cases.ts
+  780879cc7c46c021 4,6,8,10,12,14,16,18,20,24-26,29,31,40,60-73,99-112,137-150,171-184,209-222,245-258
+  e5b89ea910e3bb10 21-22
+packages/player/src/components/player-read-scene.tsx
+  74e7dcba2a28dfda 82-83
+packages/player/src/player-step.test.ts
+  74e7dcba2a28dfda 3,25,29-31,36-47
+packages/player/src/player-step.ts
+  74e7dcba2a28dfda 2-3,23-31,71,93-95,99-101,138
+  h_1cda88fc21fe9c 96-98,200
+apps/evals/src/tasks/activity-story-choices/test-cases.ts
+  h_1cda88fc21fe9c 1-36,39-40,43-44,47-48,50-95,97-119,121-132,135-136,139-140,142-187,189-205,207-208
+packages/player/src/player-context.tsx
+  74e7dcba2a28dfda 40
+packages/player/src/player-completion.test.ts
+  h_1cda88fc21fe9c 134,152,172,188,220,242,262,315,345
+  87d99fbf622e24a1 71
+  74e7dcba2a28dfda 28,51,59,67,131-133,149-151,169-171,185-187,196-198,217-219,234-240,259-261,307-313,337-343
+packages/player/src/check-step.test.ts
+  74e7dcba2a28dfda 411,419
+  87d99fbf622e24a1 423
+packages/player/src/components/player-shell.tsx
+  047a295f3535eaec 91,93-96
+  h_1cda88fc21fe9c 46
+  87d99fbf622e24a1 47,49,100
+  74e7dcba2a28dfda 20,48,71,73,75,92
+packages/core/src/steps/contract/content.test.ts
+  87d99fbf622e24a1 255,259,262-263,266,278-279,289,299,308,313,345,347-348,361,379-382,384-387,430
+  74e7dcba2a28dfda 322-323,325-327,330-334,337,340-341,346,349-352,395-398,406-411,414,422-424
+  e5b89ea910e3bb10 362-378,383,388,399-405,415-421,427,431-436
+packages/player/src/player-reducer.ts
+  h_1cda88fc21fe9c 4,13-14,48,272,275-277,279,283,288
+packages/player/src/player-haptics.test.ts
+  87d99fbf622e24a1 58
+  74e7dcba2a28dfda 54,149-151,159-161
+  e5b89ea910e3bb10 152-158
+apps/api/src/workflows/activity-generation/core-activity-workflow.test.ts
+  e5b89ea910e3bb10 238,256-261,974
+  74e7dcba2a28dfda 247-252,254-255,263
+  780879cc7c46c021 5-6,72-164,239,242-244,613,627,649-655,660,664,670,674,1020,1025,1054-1082
+packages/player/src/story-outcome.test.ts
+  e5b89ea910e3bb10 1-28
+packages/player/src/_browser-tests/player-practice.browser.test.tsx
+  87d99fbf622e24a1 16-23,67-73,82
+  74e7dcba2a28dfda 26
+apps/evals/src/tasks/index.ts
+  780879cc7c46c021 16,45
+  e5b89ea910e3bb10 17,44
+packages/ai/src/provider-options.test.ts
+  e5b89ea910e3bb10 71,78,108,115
+apps/api/src/workflows/activity-generation/steps/generate-story-images-step.ts
+  780879cc7c46c021 1-194
+packages/player/src/player-initial-state.ts
+  74e7dcba2a28dfda 37
+packages/player/src/player-step-behavior.test.ts
+  74e7dcba2a28dfda 6-7,41-42,45,49-51,60,65-71,73-78,83,112
+  h_1cda88fc21fe9c 64,72,82,111
+packages/player/src/components/status-pill.tsx
+  74e7dcba2a28dfda 1-2,6-8,13,17,22-70
+apps/api/src/workflows/activity-generation/steps/generate-story-content-step.test.ts
+  e5b89ea910e3bb10 27,29-30,37-41,43,48-56,58,63,150,183,213-226,229-231,271
+  780879cc7c46c021 33,93,112,114-116,119,141,143-146,148-149,153,178-180,182,186,190,204-212,233-235,237,273-275,277,312,314-316
+  74e7dcba2a28dfda 35,42,44-47,57,59-62,66-67
+packages/ai/src/tasks/steps/step-content-image.ts
+  h_1cda88fc21fe9c 7,22-25
+packages/player/src/components/story-feedback-content.tsx
+  74e7dcba2a28dfda 11,14,22-23,25-33,35-38,47-50,55-56,58,81-82,84-86,88-89,92-93,97-111,114-125
+  87d99fbf622e24a1 10,12,57,80,83,90
+  h_1cda88fc21fe9c 54,59
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "500775800ec39f8e97dd9984ead2d787f69a01da",
+  "prompts": {
+    "047a295f3535eaec": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019dbc12-9d20-71e3-8f99-bf30672354fe",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 15,
+      "total_deletions": 8,
+      "accepted_lines": 5,
+      "overriden_lines": 0
+    },
+    "4b2482f3567e6fa6": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019dc117-043d-79d0-af6d-c505d716524a",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 33,
+      "total_deletions": 251,
+      "accepted_lines": 30,
+      "overriden_lines": 0
+    },
+    "68fbd8dcb357a40f": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019dc120-e7a2-7982-b736-b82fdc2d0a33",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 45,
+      "total_deletions": 36,
+      "accepted_lines": 45,
+      "overriden_lines": 0
+    },
+    "74e7dcba2a28dfda": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019dbba5-520e-7091-8675-a15e1648d6aa",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 1492,
+      "total_deletions": 12006,
+      "accepted_lines": 832,
+      "overriden_lines": 16
+    },
+    "780879cc7c46c021": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019dc078-79ab-7751-adc1-7aad9377a376",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 960,
+      "total_deletions": 410,
+      "accepted_lines": 655,
+      "overriden_lines": 4
+    },
+    "87d99fbf622e24a1": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019dba90-e611-7cf1-a194-5edeba8caa14",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 2373,
+      "total_deletions": 3098,
+      "accepted_lines": 678,
+      "overriden_lines": 10
+    },
+    "b81f2e8781d887b5": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019dbc16-8533-7743-b76a-f4e2c416a4a2",
+        "model": "unknown"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 79,
+      "total_deletions": 157,
+      "accepted_lines": 26,
+      "overriden_lines": 0
+    },
+    "dc7f7aa94c81e347": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019dbbef-a6c0-7262-9602-5e75c02f0d0f",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 12,
+      "total_deletions": 43,
+      "accepted_lines": 0,
+      "overriden_lines": 0
+    },
+    "e5b89ea910e3bb10": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019dc009-8998-7100-bbab-178d1834fc37",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 3219,
+      "total_deletions": 3531,
+      "accepted_lines": 441,
+      "overriden_lines": 10
+    }
+  },
+  "humans": {
+    "h_1cda88fc21fe9c": {
+      "author": "ceolinwill"
+    }
+  }
+}
