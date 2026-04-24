@@ -1,0 +1,46 @@
+packages/player/src/_browser-tests/player-investigation.browser.test.tsx
+  h_1cda88fc21fe9c 71-73,75-76,79-80,83
+  adec181c375f6460 74,77-78,81-82
+packages/player/src/components/in-play-sticky-header.tsx
+  adec181c375f6460 32
+packages/player/src/player-provider.tsx
+  h_1cda88fc21fe9c 73,76,87,92
+packages/player/src/player-context.tsx
+  h_1cda88fc21fe9c 49,55-57,61,162-165,167-169,176
+  adec181c375f6460 7,82-160,166,170-175
+packages/player/src/_browser-tests/player-story.browser.test.tsx
+  h_1cda88fc21fe9c 167,250-252,254,258,262-263
+  adec181c375f6460 253,256-257,259-261,264
+packages/player/src/player-step.ts
+  h_1cda88fc21fe9c 195-197
+packages/player/src/components/player-shell.tsx
+  adec181c375f6460 77
+packages/player/src/components/lesson-info-popover.tsx
+  adec181c375f6460 26
+  h_1cda88fc21fe9c 38
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "eeb338bc6c398d637e0922ee02a37c7e78cd1491",
+  "prompts": {
+    "adec181c375f6460": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019dc1b9-d013-7d71-b831-7a7a17d8ab69",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 148,
+      "total_deletions": 246,
+      "accepted_lines": 102,
+      "overriden_lines": 0
+    }
+  },
+  "humans": {
+    "h_1cda88fc21fe9c": {
+      "author": "ceolinwill"
+    }
+  }
+}
