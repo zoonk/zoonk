@@ -6,9 +6,7 @@ import {
   getCurrentResult,
   getCurrentStep,
   getInvestigationProgress,
-  getInvestigationScenarioData,
   getProgressValue,
-  getStoryBriefingText,
   getStoryMetrics,
   getUpcomingImages,
 } from "../player-selectors";
@@ -61,9 +59,6 @@ export function PlayerShell() {
     milestoneKind: milestone.kind,
   });
 
-  const contextRecall =
-    getStoryBriefingText(state) ?? getInvestigationScenarioData(state)?.scenario ?? null;
-
   const investigationProgress = getInvestigationProgress(state);
 
   const evidencePill = investigationProgress ? (
@@ -79,11 +74,7 @@ export function PlayerShell() {
   return (
     <main className="flex h-dvh flex-col overflow-hidden">
       {screen.showChrome && (
-        <InPlayStickyHeader
-          centerContent={evidencePill}
-          contextRecall={contextRecall}
-          progressValue={progressValue}
-        />
+        <InPlayStickyHeader centerContent={evidencePill} progressValue={progressValue} />
       )}
 
       {screen.showMetricsBar && <StoryMetricsBar metrics={storyMetrics} />}

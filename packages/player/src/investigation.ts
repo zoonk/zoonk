@@ -3,7 +3,6 @@ import {
   type InvestigationActionQuality,
   type InvestigationStepContent,
 } from "@zoonk/core/steps/contract/content";
-import { type PlayerState } from "./player-reducer";
 import { describePlayerStep } from "./player-step";
 
 export type ActionTiming = {
@@ -69,39 +68,4 @@ export function getAvailableActions(
   return actions.flatMap((action) =>
     usedSet.has(action.id) ? [] : [{ id: action.id, label: action.label, quality: action.quality }],
   );
-}
-
-/**
- * Returns the scenario text from the problem step for the scenario
- * recall popover in the sticky header.
- *
- * Returns null when the current step is not an investigation step
- * or when the learner is still on the problem step itself (where
- * the scenario is already visible).
- */
-export function getInvestigationScenario(state: PlayerState): {
-  scenario: string;
-} | null {
-  const descriptor = describePlayerStep(state.steps[state.currentStepIndex]);
-
-  if (
-    descriptor?.kind !== "investigationAction" &&
-    descriptor?.kind !== "investigationCall" &&
-    descriptor?.kind !== "investigationProblem"
-  ) {
-    return null;
-  }
-
-  if (descriptor.kind === "investigationProblem") {
-    return null;
-  }
-
-  const problemStep = getInvestigationStepByVariant(state.steps, "problem");
-  const problemDescriptor = describePlayerStep(problemStep);
-
-  if (problemDescriptor?.kind !== "investigationProblem") {
-    return null;
-  }
-
-  return { scenario: problemDescriptor.content.scenario };
 }

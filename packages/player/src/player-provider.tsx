@@ -17,26 +17,6 @@ import { usePlayerActions } from "./use-player-actions";
 import { usePlayerKeyboard } from "./use-player-keyboard";
 import { UserNameProvider } from "./user-name-context";
 
-/**
- * The header info popover should describe the current activity whenever that
- * row carries its own description. Core lessons now store explanation goals on
- * the activity itself, so falling back to the lesson description would hide the
- * more precise context we generated for that specific activity.
- */
-function getLessonInfoDescription({
-  activityDescription,
-  lessonDescription,
-}: {
-  activityDescription: string | null;
-  lessonDescription: string;
-}) {
-  if (activityDescription) {
-    return activityDescription;
-  }
-
-  return lessonDescription;
-}
-
 export function PlayerProvider({
   activity,
   chapterTitle,
@@ -71,10 +51,6 @@ export function PlayerProvider({
   const [state, dispatch] = useReducer(playerReducer, initInput, createInitialState);
   const actions = usePlayerActions(state, dispatch, onComplete, viewer.isAuthenticated);
   const screen = useMemo(() => getPlayerScreenModel(state), [state]);
-  const lessonInfoDescription = getLessonInfoDescription({
-    activityDescription: activity.description,
-    lessonDescription,
-  });
 
   const handleNext = useCallback(() => {
     onNext?.();
@@ -94,9 +70,10 @@ export function PlayerProvider({
   const configValue = useMemo(
     () => ({
       activityMeta: {
+        activityDescription: activity.description,
         chapterTitle,
         kind: activity.kind,
-        lessonDescription: lessonInfoDescription,
+        lessonDescription,
         lessonTitle,
         title: activity.title,
       },
@@ -107,11 +84,12 @@ export function PlayerProvider({
       viewer,
     }),
     [
+      activity.description,
       activity.kind,
       activity.title,
       chapterTitle,
       handleNext,
-      lessonInfoDescription,
+      lessonDescription,
       lessonTitle,
       milestone,
       navigation,
