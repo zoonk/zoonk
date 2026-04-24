@@ -3,8 +3,8 @@ import { describe, expect, test } from "vitest";
 import { describePlayerStep } from "./player-step";
 import {
   getPlayerStepBehavior,
-  usesFeedbackScreen,
-  usesStaticNavigation,
+  hasFeedbackScreen,
+  hasStaticNavigation,
 } from "./player-step-behavior";
 
 function buildStep(overrides: Partial<SerializedStep> = {}): SerializedStep {
@@ -38,17 +38,17 @@ describe(getPlayerStepBehavior, () => {
       render: "static",
       validation: "none",
     });
-    expect(descriptor && usesStaticNavigation(descriptor)).toBe(true);
-    expect(descriptor && usesFeedbackScreen(descriptor)).toBe(false);
+    expect(hasStaticNavigation(descriptor)).toBe(true);
+    expect(hasFeedbackScreen(descriptor)).toBe(false);
   });
 
-  test("marks story intro as a primary-action static screen", () => {
+  test("marks story intro as a hero static screen", () => {
     const descriptor = describePlayerStep(
       buildStep({
         content: {
-          intro: "Welcome",
-          metrics: ["Morale"],
-          variant: "storyIntro" as const,
+          text: "Welcome",
+          title: "Story intro",
+          variant: "intro" as const,
         },
       }),
     );
@@ -57,11 +57,30 @@ describe(getPlayerStepBehavior, () => {
     expect(behavior).toMatchObject({
       check: "none",
       feedback: "none",
-      layout: "default",
+      layout: "hero",
       render: "static",
       validation: "none",
     });
-    expect(descriptor && usesStaticNavigation(descriptor)).toBe(false);
+
+    expect(hasStaticNavigation(descriptor)).toBe(false);
+  });
+
+  test("upgrades the practice scenario intro to the hero layout", () => {
+    const descriptor = describePlayerStep(
+      buildStep({ content: { text: "Hello", title: "Intro", variant: "intro" as const } }),
+    );
+
+    const behavior = getPlayerStepBehavior(descriptor);
+
+    expect(behavior).toMatchObject({
+      check: "none",
+      feedback: "none",
+      layout: "hero",
+      render: "static",
+      validation: "none",
+    });
+
+    expect(hasStaticNavigation(descriptor)).toBe(false);
   });
 
   test("routes investigation call through shared feedback and validation behavior", () => {
@@ -89,7 +108,8 @@ describe(getPlayerStepBehavior, () => {
       render: "investigation",
       validation: "investigationCall",
     });
-    expect(descriptor && usesFeedbackScreen(descriptor)).toBe(true);
+
+    expect(hasFeedbackScreen(descriptor)).toBe(true);
   });
 
   test("skips validation for investigation action while keeping its check behavior", () => {

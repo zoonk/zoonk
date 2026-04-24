@@ -1,6 +1,6 @@
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
 import { describe, expect, test } from "vitest";
-import { describePlayerStep, getInvestigationVariant, getStoryStaticVariant } from "./player-step";
+import { describePlayerStep, getInvestigationVariant } from "./player-step";
 
 function buildStep(overrides: Partial<SerializedStep> = {}): SerializedStep {
   return {
@@ -22,19 +22,29 @@ function buildStep(overrides: Partial<SerializedStep> = {}): SerializedStep {
 }
 
 describe(describePlayerStep, () => {
-  test("describes story intro as its own canonical step", () => {
+  test("describes story intro as the canonical intro step", () => {
     const descriptor = describePlayerStep(
       buildStep({
         content: {
-          intro: "Welcome",
-          metrics: ["Morale"],
-          variant: "storyIntro" as const,
+          text: "Welcome",
+          title: "Story intro",
+          variant: "intro" as const,
         },
       }),
     );
 
-    expect(descriptor?.kind).toBe("storyIntro");
-    expect(getStoryStaticVariant(descriptor?.step)).toBe("storyIntro");
+    expect(descriptor?.kind).toBe("intro");
+    expect(descriptor?.kind === "intro" ? descriptor.intro.text : null).toBe("Welcome");
+  });
+
+  test("describes practice scenario as the canonical intro step", () => {
+    const descriptor = describePlayerStep(
+      buildStep({ content: { text: "Hello", title: "Intro", variant: "intro" as const } }),
+    );
+
+    expect(descriptor?.kind).toBe("intro");
+    expect(descriptor?.kind === "intro" ? descriptor.intro.title : null).toBe("Intro");
+    expect(descriptor?.kind === "intro" ? descriptor.intro.text : null).toBe("Hello");
   });
 
   test("describes investigation call and preserves its investigation variant", () => {

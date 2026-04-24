@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { stepImageSchema } from "./image";
-import { staticStoryIntroContentSchema, staticStoryOutcomeContentSchema } from "./story";
+import { staticStoryOutcomeContentSchema } from "./story";
 
 /**
  * Static steps are the readable teaching surface for explanation and custom
@@ -18,6 +18,12 @@ const staticTextContentSchema = withOptionalImage({
   variant: z.literal("text"),
 });
 
+const staticIntroContentSchema = withOptionalImage({
+  text: z.string(),
+  title: z.string(),
+  variant: z.literal("intro"),
+});
+
 const staticGrammarExampleContentSchema = withOptionalImage({
   highlight: z.string(),
   romanization: z.string().min(1).nullable(),
@@ -33,10 +39,10 @@ const staticGrammarRuleContentSchema = withOptionalImage({
 });
 
 export const staticContentSchema = z.discriminatedUnion("variant", [
+  staticIntroContentSchema,
   staticTextContentSchema,
   staticGrammarExampleContentSchema,
   staticGrammarRuleContentSchema,
-  withOptionalImage(staticStoryIntroContentSchema.shape),
   withOptionalImage(staticStoryOutcomeContentSchema.shape),
 ]);
 

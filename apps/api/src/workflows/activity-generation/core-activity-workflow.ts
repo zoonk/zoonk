@@ -10,9 +10,10 @@ import { type LessonActivity } from "./steps/get-lesson-activities-step";
 /**
  * Orchestrates core activity generation (explanation, practice, quiz, story, investigation).
  *
- * Wave 1 (parallel): explanation + story + investigation — story and investigation
- * use lesson concepts directly and are independent of explanation results.
- * Wave 2 (parallel): practice + quiz — both depend on explanation results.
+ * Wave 1 (parallel): explanation + investigation — investigation uses lesson
+ * concepts directly and stays independent of explanation results.
+ * Wave 2 (parallel): story + practice + quiz — these depend on explanation
+ * results so their generated content stays coherent with the taught flow.
  *
  * Receives both the full activity list and the subset that needs generation.
  * Generate steps only receive activities that need generation.
@@ -37,19 +38,14 @@ export async function coreActivityWorkflow({
       lessonConcepts,
       workflowRunId,
     }),
-    storyActivityWorkflow({
-      activitiesToGenerate,
-      workflowRunId,
-    }),
-    investigationActivityWorkflow({
-      activitiesToGenerate,
-      workflowRunId,
-    }),
+    investigationActivityWorkflow({ activitiesToGenerate, workflowRunId }),
   ]);
 
   const { results } = settled(explanationResult, { results: [] });
+  const explanationSteps = results.flatMap((result) => result.steps);
 
   await Promise.allSettled([
+    storyActivityWorkflow({ activitiesToGenerate, explanationSteps, workflowRunId }),
     practiceActivityWorkflow({
       activitiesToGenerate,
       allActivities,
@@ -57,10 +53,6 @@ export async function coreActivityWorkflow({
       totalPractices,
       workflowRunId,
     }),
-    quizActivityWorkflow({
-      activitiesToGenerate,
-      explanationResults: results,
-      workflowRunId,
-    }),
+    quizActivityWorkflow({ activitiesToGenerate, explanationResults: results, workflowRunId }),
   ]);
 }

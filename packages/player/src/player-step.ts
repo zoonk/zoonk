@@ -1,8 +1,6 @@
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
-import {
-  type InvestigationStepContent,
-  type StoryStaticVariant,
-} from "@zoonk/core/steps/contract/content";
+import { type InvestigationStepContent } from "@zoonk/core/steps/contract/content";
+import { type StepImage } from "@zoonk/core/steps/contract/image";
 
 type StepDescriptorBase<Kind extends SerializedStep["kind"], Name extends string> = {
   content: SerializedStep<Kind>["content"];
@@ -22,8 +20,15 @@ type StaticGrammarRuleStepDescriptor = StepDescriptorBase<"static", "staticGramm
   content: Extract<SerializedStep<"static">["content"], { variant: "grammarRule" }>;
 };
 
-type StoryIntroStepDescriptor = StepDescriptorBase<"static", "storyIntro"> & {
-  content: Extract<SerializedStep<"static">["content"], { variant: "storyIntro" }>;
+type IntroStepContent = Extract<SerializedStep<"static">["content"], { variant: "intro" }>;
+
+type IntroStepDescriptor = StepDescriptorBase<"static", "intro"> & {
+  content: IntroStepContent;
+  intro: {
+    image?: StepImage | null;
+    text: string;
+    title: string;
+  };
 };
 
 type StoryOutcomeStepDescriptor = StepDescriptorBase<"static", "storyOutcome"> & {
@@ -63,7 +68,7 @@ export type PlayerStepDescriptor =
   | StaticGrammarRuleStepDescriptor
   | StaticTextStepDescriptor
   | StepDescriptorBase<"story", "storyDecision">
-  | StoryIntroStepDescriptor
+  | IntroStepDescriptor
   | StoryOutcomeStepDescriptor
   | StepDescriptorBase<"translation", "translation">
   | StepDescriptorBase<"vocabulary", "vocabulary">;
@@ -85,16 +90,21 @@ function hasStepKind<Kind extends SerializedStep["kind"]>(
 function describeStaticStep(step: SerializedStep<"static">): PlayerStepDescriptor {
   const content = step.content;
 
+  if (content.variant === "intro") {
+    return {
+      content,
+      intro: { image: content.image, text: content.text, title: content.title },
+      kind: "intro",
+      step,
+    };
+  }
+
   if (content.variant === "grammarExample") {
     return { content, kind: "staticGrammarExample", step };
   }
 
   if (content.variant === "grammarRule") {
     return { content, kind: "staticGrammarRule", step };
-  }
-
-  if (content.variant === "storyIntro") {
-    return { content, kind: "storyIntro", step };
   }
 
   if (content.variant === "storyOutcome") {
@@ -125,9 +135,7 @@ function describeInvestigationStep(step: SerializedStep<"investigation">): Playe
  * meaning everywhere else, instead of rebuilding the same `kind` and `variant`
  * decisions in each UI and reducer file.
  */
-export function describePlayerStep(
-  step: SerializedStep | null | undefined,
-): PlayerStepDescriptor | null {
+export function describePlayerStep(step?: SerializedStep | null): PlayerStepDescriptor | null {
   if (!step) {
     return null;
   }
@@ -184,33 +192,12 @@ export function describePlayerStep(
 }
 
 /**
- * Story intro and outcome screens are the only static variants that replace
- * side-navigation with a primary action button. Keeping that distinction here
- * prevents the rest of the package from repeating story-specific checks.
- */
-export function getStoryStaticVariant(
-  step: SerializedStep | null | undefined,
-): StoryStaticVariant | null {
-  const descriptor = describePlayerStep(step);
-
-  if (descriptor?.kind === "storyIntro") {
-    return "storyIntro";
-  }
-
-  if (descriptor?.kind === "storyOutcome") {
-    return "storyOutcome";
-  }
-
-  return null;
-}
-
-/**
  * Investigation variants drive special reducer transitions, sticky-header
  * recall, and button labeling. This helper exposes the current investigation
  * phase without making each caller know how investigation content is shaped.
  */
 export function getInvestigationVariant(
-  step: SerializedStep | null | undefined,
+  step?: SerializedStep | null,
 ): InvestigationStepContent["variant"] | null {
   const descriptor = describePlayerStep(step);
 

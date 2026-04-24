@@ -1,6 +1,6 @@
 import { randomUUID } from "node:crypto";
-import { generateActivityStoryDebrief } from "@zoonk/ai/tasks/activities/core/story-debrief";
-import { generateActivityStorySteps } from "@zoonk/ai/tasks/activities/core/story-steps";
+import { generateActivityStory } from "@zoonk/ai/tasks/activities/core/story";
+import { generateActivityStoryChoices } from "@zoonk/ai/tasks/activities/core/story-choices";
 import { prisma } from "@zoonk/db";
 import { activityFixture } from "@zoonk/testing/fixtures/activities";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
@@ -8,85 +8,157 @@ import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
 import { aiOrganizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { getString } from "@zoonk/utils/json";
-import { beforeAll, describe, expect, test, vi } from "vitest";
+import { beforeAll, beforeEach, describe, expect, test, vi } from "vitest";
+import { generateStoryImagesStep } from "../steps/generate-story-images-step";
 import { getLessonActivitiesStep } from "../steps/get-lesson-activities-step";
 import { storyActivityWorkflow } from "./story-workflow";
 
-const { mockStorySteps, mockDebriefData } = vi.hoisted(() => ({
-  mockDebriefData: {
-    debrief: [
-      {
-        explanation: "Direct communication builds trust during crises.",
-        name: "Crisis Communication",
-      },
-      {
-        explanation: "Constraints can drive innovation when embraced.",
-        name: "Supply Chain Resilience",
-      },
-    ],
-    outcomes: [
-      { minStrongChoices: 2, narrative: "You turned crisis into opportunity.", title: "Excellent" },
-      { minStrongChoices: 1, narrative: "You navigated the crisis reasonably.", title: "Good" },
-      { minStrongChoices: 0, narrative: "The crisis overwhelmed you.", title: "Needs work" },
-    ],
-  },
-  mockStorySteps: {
+const { mockStoryChoices, mockStoryData, mockStoryImages, mockStoryPlan } = vi.hoisted(() => {
+  const storyPlan = {
     intro: "You are a factory manager facing a supply chain crisis.",
+    introImagePrompt: "Factory floor with anxious workers waiting for direction",
     metrics: ["Production", "Morale", "Cash"],
+    outcomes: {
+      bad: {
+        imagePrompt: "Factory floor mixed between progress and lingering strain",
+        narrative: "You fixed part of the system, but the team still feels the pressure.",
+        title: "Mixed",
+      },
+      good: {
+        imagePrompt: "Factory floor stabilizing with some strain still visible",
+        narrative: "You navigated the crisis with only minor rough edges left.",
+        title: "Good",
+      },
+      ok: {
+        imagePrompt: "Factory floor moving again while supervisors still watch bottlenecks",
+        narrative: "You avoided collapse, but the operation still feels fragile.",
+        title: "Uneven recovery",
+      },
+      perfect: {
+        imagePrompt: "Recovered factory floor with confident workers and steady output",
+        narrative: "You turned crisis into opportunity.",
+        title: "Excellent",
+      },
+      terrible: {
+        imagePrompt: "Factory floor still overwhelmed with frustrated workers and empty bins",
+        narrative: "The crisis overwhelmed you.",
+        title: "Needs work",
+      },
+    },
+    steps: [
+      {
+        imagePrompt: "Factory floor with halted lines and empty parts bins",
+        problem: "Your main supplier just went bankrupt.",
+      },
+      {
+        imagePrompt: "Production area paused while engineers debate how to proceed without parts",
+        problem: "Production is halted without parts.",
+      },
+    ],
+    title: "The night the labels got swapped",
+  };
+  const storyChoices = {
     steps: [
       {
         choices: [
           {
             alignment: "strong",
             consequence: "Workers rally behind you.",
-            id: "c1a",
+            label: "Address the team directly",
             metricEffects: [{ effect: "positive", metric: "Morale" }],
-            text: "Address the team directly",
+            stateImagePrompt: "Factory floor after a direct address calms the team",
           },
           {
             alignment: "weak",
             consequence: "Rumors spread unchecked.",
-            id: "c1b",
+            label: "Send an email instead",
             metricEffects: [{ effect: "negative", metric: "Morale" }],
-            text: "Send an email instead",
+            stateImagePrompt: "Factory floor after a vague email leaves workers confused",
           },
         ],
-        situation: "Your main supplier just went bankrupt.",
       },
       {
         choices: [
           {
             alignment: "partial",
             consequence: "You find a reasonable alternative.",
-            id: "c2a",
+            label: "Contact backup suppliers",
             metricEffects: [{ effect: "positive", metric: "Production" }],
-            text: "Contact backup suppliers",
+            stateImagePrompt: "Temporary supply shipment arriving at the factory loading dock",
           },
           {
             alignment: "strong",
             consequence: "Innovation emerges from constraint.",
-            id: "c2b",
+            label: "Redesign the product to use different materials",
             metricEffects: [
               { effect: "positive", metric: "Production" },
               { effect: "positive", metric: "Cash" },
             ],
-            text: "Redesign the product to use different materials",
+            stateImagePrompt:
+              "Factory team adapting the product with new materials and renewed momentum",
           },
         ],
-        situation: "Production is halted without parts.",
       },
     ],
-    title: "The night the labels got swapped",
-  },
+  };
+  const storyData = {
+    ...storyPlan,
+    steps: storyPlan.steps.map((step, index) => ({
+      ...step,
+      choices: storyChoices.steps[index]!.choices,
+    })),
+  };
+
+  return {
+    mockStoryChoices: storyChoices,
+    mockStoryData: storyData,
+    mockStoryImages: {
+      choiceStateImages: [
+        [
+          { prompt: "State 1A", url: "https://example.com/state-1a.webp" },
+          { prompt: "State 1B", url: "https://example.com/state-1b.webp" },
+        ],
+        [
+          { prompt: "State 2A", url: "https://example.com/state-2a.webp" },
+          { prompt: "State 2B", url: "https://example.com/state-2b.webp" },
+        ],
+      ],
+      introImage: {
+        prompt: "Story intro",
+        url: "https://example.com/story-intro.webp",
+      },
+      outcomeImages: {
+        bad: { prompt: "Outcome bad", url: "https://example.com/outcome-bad.webp" },
+        good: { prompt: "Outcome good", url: "https://example.com/outcome-good.webp" },
+        ok: { prompt: "Outcome ok", url: "https://example.com/outcome-ok.webp" },
+        perfect: { prompt: "Outcome perfect", url: "https://example.com/outcome-perfect.webp" },
+        terrible: { prompt: "Outcome terrible", url: "https://example.com/outcome-terrible.webp" },
+      },
+      stepImages: [
+        { prompt: "Story step 1", url: "https://example.com/step-1.webp" },
+        { prompt: "Story step 2", url: "https://example.com/step-2.webp" },
+      ],
+    },
+    mockStoryPlan: storyPlan,
+  };
+});
+
+vi.mock("@zoonk/ai/tasks/activities/core/story", () => ({
+  generateActivityStory: vi.fn().mockResolvedValue({ data: mockStoryPlan }),
 }));
 
-vi.mock("@zoonk/ai/tasks/activities/core/story-steps", () => ({
-  generateActivityStorySteps: vi.fn().mockResolvedValue({ data: mockStorySteps }),
+vi.mock("@zoonk/ai/tasks/activities/core/story-choices", () => ({
+  buildActivityStoryWithChoices: vi.fn().mockReturnValue(mockStoryData),
+  generateActivityStoryChoices: vi.fn().mockResolvedValue({ data: mockStoryChoices }),
 }));
 
-vi.mock("@zoonk/ai/tasks/activities/core/story-debrief", () => ({
-  generateActivityStoryDebrief: vi.fn().mockResolvedValue({ data: mockDebriefData }),
+vi.mock("../steps/generate-story-images-step", () => ({
+  generateStoryImagesStep: vi.fn().mockResolvedValue(mockStoryImages),
 }));
+
+const storyExplanationSteps = [
+  { text: "A useful explanation for the story activity.", title: "Story context" },
+];
 
 describe("story activity workflow", () => {
   let organizationId: string;
@@ -104,7 +176,11 @@ describe("story activity workflow", () => {
     });
   });
 
-  test("creates story steps with intro, decisions, and debrief", async () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  test("creates story steps with intro, decisions, and outcome", async () => {
     const testLesson = await lessonFixture({
       chapterId: chapter.id,
       concepts: ["Supply Chain Management", "Crisis Communication"],
@@ -124,6 +200,7 @@ describe("story activity workflow", () => {
 
     await storyActivityWorkflow({
       activitiesToGenerate: activities,
+      explanationSteps: storyExplanationSteps,
       workflowRunId: "test-run-id",
     });
 
@@ -132,35 +209,18 @@ describe("story activity workflow", () => {
       where: { activityId: storyActivity.id },
     });
 
-    // 1 intro + 2 decision steps + 1 outcome + 2 debrief concepts = 6
-    expect(steps).toHaveLength(6);
-
-    // Intro step: static with storyIntro variant
+    expect(steps).toHaveLength(4);
     expect(steps[0]?.kind).toBe("static");
     expect(steps[0]?.position).toBe(0);
-    expect(getString(steps[0]?.content, "variant")).toBe("storyIntro");
-
-    // Decision steps: story kind
+    expect(getString(steps[0]?.content, "variant")).toBe("intro");
+    expect(getString(steps[0]?.content, "title")).toBe(mockStoryData.title);
     expect(steps[1]?.kind).toBe("story");
     expect(steps[1]?.position).toBe(1);
     expect(steps[2]?.kind).toBe("story");
     expect(steps[2]?.position).toBe(2);
-
-    // Outcome step: static with storyOutcome variant
     expect(steps[3]?.kind).toBe("static");
     expect(steps[3]?.position).toBe(3);
     expect(getString(steps[3]?.content, "variant")).toBe("storyOutcome");
-
-    // Debrief concepts: individual text steps
-    expect(steps[4]?.kind).toBe("static");
-    expect(steps[4]?.position).toBe(4);
-    expect(getString(steps[4]?.content, "variant")).toBe("text");
-    expect(getString(steps[4]?.content, "title")).toBe("Crisis Communication");
-
-    expect(steps[5]?.kind).toBe("static");
-    expect(steps[5]?.position).toBe(5);
-    expect(getString(steps[5]?.content, "variant")).toBe("text");
-    expect(getString(steps[5]?.content, "title")).toBe("Supply Chain Resilience");
 
     for (const step of steps) {
       expect(step.isPublished).toBe(true);
@@ -187,6 +247,7 @@ describe("story activity workflow", () => {
 
     await storyActivityWorkflow({
       activitiesToGenerate: activities,
+      explanationSteps: storyExplanationSteps,
       workflowRunId: "test-run-id",
     });
 
@@ -196,7 +257,7 @@ describe("story activity workflow", () => {
 
     expect(dbActivity?.generationStatus).toBe("completed");
     expect(dbActivity?.generationRunId).toBe("test-run-id");
-    expect(dbActivity?.title).toBe(mockStorySteps.title);
+    expect(dbActivity?.title).toBe(mockStoryData.title);
   });
 
   test("skips when no story activity exists", async () => {
@@ -219,15 +280,16 @@ describe("story activity workflow", () => {
 
     await storyActivityWorkflow({
       activitiesToGenerate: activities,
+      explanationSteps: storyExplanationSteps,
       workflowRunId: "test-run-id",
     });
 
-    expect(generateActivityStorySteps).not.toHaveBeenCalled();
-    expect(generateActivityStoryDebrief).not.toHaveBeenCalled();
+    expect(generateActivityStory).not.toHaveBeenCalled();
+    expect(generateActivityStoryChoices).not.toHaveBeenCalled();
   });
 
   test("marks story as failed when content generation throws", async () => {
-    vi.mocked(generateActivityStorySteps).mockRejectedValueOnce(new Error("AI failed"));
+    vi.mocked(generateActivityStory).mockRejectedValueOnce(new Error("AI failed"));
 
     const testLesson = await lessonFixture({
       chapterId: chapter.id,
@@ -248,6 +310,7 @@ describe("story activity workflow", () => {
 
     await storyActivityWorkflow({
       activitiesToGenerate: activities,
+      explanationSteps: storyExplanationSteps,
       workflowRunId: "test-run-id",
     });
 
@@ -256,17 +319,17 @@ describe("story activity workflow", () => {
     });
 
     expect(dbActivity?.generationStatus).toBe("failed");
-    expect(generateActivityStoryDebrief).not.toHaveBeenCalled();
+    expect(generateActivityStoryChoices).not.toHaveBeenCalled();
   });
 
-  test("marks story as failed when debrief generation throws", async () => {
-    vi.mocked(generateActivityStoryDebrief).mockRejectedValueOnce(new Error("Debrief failed"));
+  test("marks story as failed when image generation throws", async () => {
+    vi.mocked(generateStoryImagesStep).mockRejectedValueOnce(new Error("Images failed"));
 
     const testLesson = await lessonFixture({
       chapterId: chapter.id,
       concepts: ["Test Concept"],
       organizationId,
-      title: `Story Debrief Fail ${randomUUID()}`,
+      title: `Story Images Fail ${randomUUID()}`,
     });
 
     const storyActivity = await activityFixture({
@@ -281,6 +344,7 @@ describe("story activity workflow", () => {
 
     await storyActivityWorkflow({
       activitiesToGenerate: activities,
+      explanationSteps: storyExplanationSteps,
       workflowRunId: "test-run-id",
     });
 
@@ -289,7 +353,7 @@ describe("story activity workflow", () => {
     });
 
     expect(dbActivity?.generationStatus).toBe("failed");
-    expect(generateActivityStorySteps).toHaveBeenCalled();
-    expect(generateActivityStoryDebrief).toHaveBeenCalled();
+    expect(generateActivityStory).toHaveBeenCalled();
+    expect(generateActivityStoryChoices).toHaveBeenCalled();
   });
 });

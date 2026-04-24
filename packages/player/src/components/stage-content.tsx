@@ -1,4 +1,9 @@
-import { usePlayerNavigation, usePlayerRuntime } from "../player-context";
+import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
+import {
+  type PlayerRuntimeContextValue,
+  usePlayerNavigation,
+  usePlayerRuntime,
+} from "../player-context";
 import {
   getCompletionResult,
   getCurrentResult,
@@ -32,21 +37,35 @@ function DesktopInlineAction() {
  * Primary-action screens render the shared action inline on desktop, while
  * navigable screens rely on side arrows or the mobile bottom bar.
  */
-function usesDesktopInlineAction(screen: ReturnType<typeof usePlayerRuntime>["screen"]) {
+function hasDesktopInlineAction(screen: PlayerRuntimeContextValue["screen"]) {
   return screen.kind !== "completed" && screen.bottomBar?.kind === "primaryAction";
 }
 
 /**
- * Image-led multiple-choice practice steps own their desktop action placement.
+ * Some visual steps own their CTA placement inside the content itself.
  *
- * Those scenes need the button inside the right-hand decision column so the
- * artifact, question, options, and action read as one compact unit. The global
+ * Image-led choice steps keep the action inside the right-hand column, while
+ * full-screen hero steps keep their action inside the bottom card. The global
  * desktop action slot still serves every other primary-action screen.
  */
-function usesEmbeddedDesktopAction(step: ReturnType<typeof getCurrentStep>) {
+function hasEmbeddedDesktopAction({
+  screen,
+  step,
+}: {
+  screen: PlayerRuntimeContextValue["screen"];
+  step: SerializedStep | undefined;
+}) {
+  if (screen.stageIsFullBleed) {
+    return true;
+  }
+
   const descriptor = describePlayerStep(step);
 
-  return descriptor?.kind === "multipleChoice" && Boolean(descriptor.content.image);
+  if (descriptor?.kind === "multipleChoice" || descriptor?.kind === "storyDecision") {
+    return Boolean(descriptor.content.image);
+  }
+
+  return false;
 }
 
 export function StageContent() {
@@ -80,7 +99,7 @@ export function StageContent() {
 
   if (screen.kind === "step" && currentStep) {
     const showInlineAction =
-      usesDesktopInlineAction(screen) && !usesEmbeddedDesktopAction(currentStep);
+      hasDesktopInlineAction(screen) && !hasEmbeddedDesktopAction({ screen, step: currentStep });
 
     const stepContent = (
       <StepRenderer

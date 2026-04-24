@@ -60,6 +60,7 @@ function buildActivity(overrides: Partial<SerializedActivity> = {}): SerializedA
 function buildState(overrides: Partial<PlayerState> = {}): PlayerState {
   return {
     activityId: "activity-1",
+    activityKind: "quiz",
     completion: null,
     currentStepIndex: 0,
     investigationLoop: null,
@@ -269,6 +270,7 @@ describe("CHECK_ANSWER", () => {
           consequence: "Things improve.",
           id: "1a",
           metricEffects: [{ effect: "positive" as const, metric: "Production" }],
+          stateImage: { prompt: "State after the strong choice" },
           text: "Do the right thing",
         },
         {
@@ -276,10 +278,11 @@ describe("CHECK_ANSWER", () => {
           consequence: "Things get worse.",
           id: "1b",
           metricEffects: [{ effect: "negative" as const, metric: "Production" }],
+          stateImage: { prompt: "State after the weak choice" },
           text: "Do the wrong thing",
         },
       ],
-      situation: "You face a decision.",
+      problem: "You face a decision.",
     };
 
     const steps = [
@@ -404,6 +407,18 @@ describe("NAVIGATE_STEP", () => {
     expect(next).toBe(state);
   });
 
+  test("next advances on practice intro hero step", () => {
+    const steps = [
+      buildStep({ id: "practice-intro", kind: "static", position: 0 }),
+      buildMultipleChoiceStep({ id: "question-1", position: 1 }),
+    ];
+
+    const state = buildState({ activityKind: "practice", steps });
+    const next = playerReducer(state, { direction: "next", type: "NAVIGATE_STEP" });
+
+    expect(next.currentStepIndex).toBe(1);
+  });
+
   test("no-ops in feedback phase", () => {
     const state = buildState({ phase: "feedback", steps: staticSteps });
     const next = playerReducer(state, { direction: "next", type: "NAVIGATE_STEP" });
@@ -417,20 +432,26 @@ describe("NAVIGATE_STEP", () => {
   });
 
   describe("story static steps", () => {
-    const storyIntroContent = {
-      intro: "You are a factory manager.",
-      metrics: ["Production", "Morale"],
-      variant: "storyIntro" as const,
+    const introContent = {
+      text: "You are a factory manager.",
+      title: "Factory crisis",
+      variant: "intro" as const,
     };
 
     const storyOutcomeContent = {
-      metrics: ["Production"],
-      outcomes: [{ minStrongChoices: 0, narrative: "Result.", title: "Outcome" }],
+      metrics: [{ label: "Production" }, { label: "Morale" }],
+      outcomes: {
+        bad: { narrative: "Bad.", title: "Bad" },
+        good: { narrative: "Good.", title: "Good" },
+        ok: { narrative: "Ok.", title: "Ok" },
+        perfect: { narrative: "Result.", title: "Outcome" },
+        terrible: { narrative: "Terrible.", title: "Terrible" },
+      },
       variant: "storyOutcome" as const,
     };
 
     function buildStoryIntroStep(overrides: Partial<SerializedStep> = {}): SerializedStep {
-      return buildStep({ content: storyIntroContent, id: "intro", kind: "static", ...overrides });
+      return buildStep({ content: introContent, id: "intro", kind: "static", ...overrides });
     }
 
     function buildStoryOutcomeStep(overrides: Partial<SerializedStep> = {}): SerializedStep {
@@ -442,7 +463,7 @@ describe("NAVIGATE_STEP", () => {
       });
     }
 
-    test("next advances on storyIntro step", () => {
+    test("next advances on story intro step", () => {
       const steps = [
         buildStoryIntroStep({ position: 0 }),
         buildStep({ id: "s2", kind: "static", position: 1 }),
@@ -462,7 +483,7 @@ describe("NAVIGATE_STEP", () => {
       expect(next.currentStepIndex).toBe(1);
     });
 
-    test("next on last storyIntro step transitions to completed", () => {
+    test("next on last story intro step transitions to completed", () => {
       const steps = [buildStoryIntroStep()];
       const state = buildState({ currentStepIndex: 0, steps, totalBrainPower: 50 });
       const next = playerReducer(state, { direction: "next", type: "NAVIGATE_STEP" });

@@ -31,6 +31,7 @@ function buildStep(overrides: Partial<SerializedStep> = {}): SerializedStep {
 function buildState(overrides: Partial<PlayerState> = {}): PlayerState {
   return {
     activityId: "activity-1",
+    activityKind: "quiz",
     completion: null,
     currentStepIndex: 0,
     investigationLoop: null,
@@ -53,6 +54,7 @@ const storyStepContent = {
       consequence: "Things improve.",
       id: "c1",
       metricEffects: [{ effect: "positive" as const, metric: "Production" }],
+      stateImage: { prompt: "State after the strong choice" },
       text: "Strong choice",
     },
     {
@@ -60,6 +62,7 @@ const storyStepContent = {
       consequence: "Mixed results.",
       id: "c2",
       metricEffects: [{ effect: "neutral" as const, metric: "Production" }],
+      stateImage: { prompt: "State after the partial choice" },
       text: "Partial choice",
     },
     {
@@ -70,10 +73,11 @@ const storyStepContent = {
         { effect: "negative" as const, metric: "Production" },
         { effect: "negative" as const, metric: "Morale" },
       ],
+      stateImage: { prompt: "State after the weak choice" },
       text: "Weak choice",
     },
   ],
-  situation: "You face a decision.",
+  problem: "You face a decision.",
 };
 
 function buildStoryStep(id: string, position: number): SerializedStep {
@@ -83,13 +87,32 @@ function buildStoryStep(id: string, position: number): SerializedStep {
 function buildStoryIntroStep(): SerializedStep {
   return buildStep({
     content: {
-      intro: "You are a factory manager.",
-      metrics: ["Production", "Morale"],
-      variant: "storyIntro" as const,
+      text: "You are a factory manager.",
+      title: "Factory crisis",
+      variant: "intro" as const,
     },
     id: "intro",
     kind: "static",
     position: 0,
+  });
+}
+
+function buildStoryOutcomeStep(position: number): SerializedStep {
+  return buildStep({
+    content: {
+      metrics: [{ label: "Production" }, { label: "Morale" }],
+      outcomes: {
+        bad: { narrative: "Bad.", title: "Bad" },
+        good: { narrative: "Good.", title: "Good" },
+        ok: { narrative: "Ok.", title: "Ok" },
+        perfect: { narrative: "Result.", title: "Outcome" },
+        terrible: { narrative: "Terrible.", title: "Terrible" },
+      },
+      variant: "storyOutcome" as const,
+    },
+    id: "outcome",
+    kind: "static",
+    position,
   });
 }
 
@@ -196,8 +219,8 @@ describe(findSelectedChoice, () => {
   });
 });
 
-describe("findStoryIntroContent (via getStoryMetrics)", () => {
-  test("finds storyIntro even when a non-intro static step comes first", () => {
+describe("findStoryMetricDefinitions (via getStoryMetrics)", () => {
+  test("finds outcome metrics even when another static step comes first", () => {
     const state = buildState({
       steps: [
         buildStep({
@@ -208,26 +231,50 @@ describe("findStoryIntroContent (via getStoryMetrics)", () => {
         }),
         buildStep({
           content: {
-            intro: "You are a factory manager.",
-            metrics: ["Production"],
-            variant: "storyIntro" as const,
+            text: "You are a factory manager.",
+            title: "Factory crisis",
+            variant: "intro" as const,
           },
           id: "intro",
           kind: "static",
           position: 1,
         }),
         buildStoryStep("s1", 2),
+        buildStoryOutcomeStep(3),
       ],
     });
 
-    expect(getStoryMetrics(state)).toEqual([{ metric: "Production", value: 50 }]);
+    expect(getStoryMetrics(state)).toEqual([
+      { metric: "Production", value: 50 },
+      { metric: "Morale", value: 50 },
+    ]);
+  });
+
+  test("returns no story metrics when the outcome step is missing", () => {
+    const state = buildState({
+      steps: [
+        buildStep({
+          content: {
+            text: "You are practicing a scenario.",
+            title: "Practice setup",
+            variant: "intro" as const,
+          },
+          id: "intro",
+          kind: "static",
+          position: 0,
+        }),
+        buildStoryStep("s1", 1),
+      ],
+    });
+
+    expect(getStoryMetrics(state)).toEqual([]);
   });
 });
 
 describe(getStoryMetrics, () => {
   test("returns initial values when no story steps are answered", () => {
     const state = buildState({
-      steps: [buildStoryIntroStep(), buildStoryStep("s1", 1)],
+      steps: [buildStoryIntroStep(), buildStoryStep("s1", 1), buildStoryOutcomeStep(2)],
     });
 
     expect(getStoryMetrics(state)).toEqual([
@@ -239,7 +286,7 @@ describe(getStoryMetrics, () => {
   test("accumulates positive effects (+15)", () => {
     const state = buildState({
       results: { s1: buildStoryResult("s1", "c1") },
-      steps: [buildStoryIntroStep(), buildStoryStep("s1", 1)],
+      steps: [buildStoryIntroStep(), buildStoryStep("s1", 1), buildStoryOutcomeStep(2)],
     });
 
     expect(getStoryMetrics(state)).toEqual([
@@ -251,7 +298,7 @@ describe(getStoryMetrics, () => {
   test("accumulates negative effects (-15)", () => {
     const state = buildState({
       results: { s1: buildStoryResult("s1", "c3") },
-      steps: [buildStoryIntroStep(), buildStoryStep("s1", 1)],
+      steps: [buildStoryIntroStep(), buildStoryStep("s1", 1), buildStoryOutcomeStep(2)],
     });
 
     expect(getStoryMetrics(state)).toEqual([
@@ -263,7 +310,7 @@ describe(getStoryMetrics, () => {
   test("neutral effects leave value unchanged", () => {
     const state = buildState({
       results: { s1: buildStoryResult("s1", "c2") },
-      steps: [buildStoryIntroStep(), buildStoryStep("s1", 1)],
+      steps: [buildStoryIntroStep(), buildStoryStep("s1", 1), buildStoryOutcomeStep(2)],
     });
 
     expect(getStoryMetrics(state)).toEqual([
@@ -278,7 +325,12 @@ describe(getStoryMetrics, () => {
         s1: buildStoryResult("s1", "c1"),
         s2: buildStoryResult("s2", "c3"),
       },
-      steps: [buildStoryIntroStep(), buildStoryStep("s1", 1), buildStoryStep("s2", 2)],
+      steps: [
+        buildStoryIntroStep(),
+        buildStoryStep("s1", 1),
+        buildStoryStep("s2", 2),
+        buildStoryOutcomeStep(3),
+      ],
     });
 
     // Production: 50 + 15 (c1) - 15 (c3) = 50
@@ -289,7 +341,7 @@ describe(getStoryMetrics, () => {
     ]);
   });
 
-  test("returns empty array when there is no intro step", () => {
+  test("returns empty array when there is no outcome step", () => {
     const state = buildState({
       steps: [buildStoryStep("s1", 0)],
     });
@@ -685,6 +737,54 @@ describe(getUpcomingImages, () => {
 
     expect(getUpcomingImages(state)).toEqual([
       { kind: "step", url: "https://example.com/last.jpg" },
+    ]);
+  });
+
+  test("includes current story feedback images and dedupes repeated URLs", () => {
+    const choices = storyStepContent.choices.map((choice, index) => ({
+      ...choice,
+      stateImage: {
+        prompt: choice.stateImage.prompt,
+        url: `https://example.com/feedback-${index}.jpg`,
+      },
+    }));
+
+    const state = buildState({
+      activityKind: "story",
+      steps: [
+        buildStep({
+          content: { ...storyStepContent, choices },
+          id: "s1",
+          kind: "story",
+        }),
+        buildStep({
+          content: {
+            image: { prompt: "Duplicate", url: "https://example.com/feedback-0.jpg" },
+            text: "Duplicate",
+            title: "Duplicate",
+            variant: "text",
+          },
+          id: "s2",
+          position: 1,
+        }),
+        buildStep({
+          content: {
+            image: { prompt: "Next", url: "https://example.com/next.jpg" },
+            text: "Next",
+            title: "Next",
+            variant: "text",
+          },
+          id: "s3",
+          position: 2,
+        }),
+      ],
+    });
+
+    expect(getUpcomingImages(state)).toEqual([
+      { kind: "step", url: "https://example.com/feedback-0.jpg" },
+      { kind: "step", url: "https://example.com/feedback-1.jpg" },
+      { kind: "step", url: "https://example.com/feedback-2.jpg" },
+      { kind: "step", url: "https://example.com/next.jpg" },
     ]);
   });
 });

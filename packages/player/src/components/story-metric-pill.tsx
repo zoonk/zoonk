@@ -1,11 +1,10 @@
-import { cn } from "@zoonk/ui/lib/utils";
 import {
   METRIC_AVERAGE_THRESHOLD,
   METRIC_CRITICAL_THRESHOLD,
   METRIC_DANGER_THRESHOLD,
   METRIC_GOOD_THRESHOLD,
 } from "../story";
-import { StatusPill } from "./status-pill";
+import { StatusPill, StatusPillLabel, StatusPillValue } from "./status-pill";
 
 /** Returns the Tailwind color class for a metric value based on threshold bands. */
 function getMetricColor(value: number): string {
@@ -32,22 +31,15 @@ function getMetricColor(value: number): string {
  * A compact pill showing a metric label and its color-coded value inline
  * (e.g., "Morale 72").
  *
- * Reused across the story metrics bar, intro screen, and outcome screen
- * to ensure consistent metric presentation. The pill pulses on value
- * change via a CSS animation triggered by a key remount.
+ * Reused across the story metrics bar and outcome screen to ensure consistent
+ * metric presentation. The pill pulses on value change via a CSS animation
+ * triggered by a key remount.
  */
 export function StoryMetricPill({ metric, value }: { metric: string; value: number }) {
   return (
     <StatusPill animationKey={value}>
-      <span className="text-muted-foreground text-xs">{metric}</span>
-      <span
-        className={cn(
-          "text-xs font-semibold tabular-nums transition-colors duration-500",
-          getMetricColor(value),
-        )}
-      >
-        {value}
-      </span>
+      <StatusPillLabel>{metric}</StatusPillLabel>
+      <StatusPillValue className={getMetricColor(value)}>{value}</StatusPillValue>
     </StatusPill>
   );
 }

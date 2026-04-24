@@ -25,7 +25,7 @@ function getImageUrlOrThrow({
 }
 
 /**
- * Step images are now the only supported illustration output for explanation
+ * Step images are the only supported illustration output for explanation
  * and custom activities. Throwing on the first missing image keeps workflow
  * retries intact so we do not silently save half-finished activities.
  */

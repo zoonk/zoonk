@@ -1,33 +1,39 @@
+import { type StoryOutcomeTier } from "@zoonk/utils/activities";
 import { z } from "zod";
+import { stepImageSchema } from "./image";
 
 const storyOutcomeSchema = z
   .object({
-    minStrongChoices: z.number().int().min(0),
+    image: stepImageSchema.optional(),
     narrative: z.string(),
     title: z.string(),
   })
   .strict();
 
-/**
- * Intro screen for a story activity (static step, first position).
- * Sets the scene and defines the metrics the player will track.
- */
-export const staticStoryIntroContentSchema = z
+const storyOutcomeSchemaShape = {
+  bad: storyOutcomeSchema,
+  good: storyOutcomeSchema,
+  ok: storyOutcomeSchema,
+  perfect: storyOutcomeSchema,
+  terrible: storyOutcomeSchema,
+} satisfies Record<StoryOutcomeTier, typeof storyOutcomeSchema>;
+
+const storyMetricSchema = z
   .object({
-    intro: z.string(),
-    metrics: z.array(z.string()).min(1),
-    variant: z.literal("storyIntro"),
+    label: z.string(),
   })
   .strict();
 
+const storyMetricsSchema = z.array(storyMetricSchema).min(2);
+
 /**
- * Outcome screen for a story activity (static step, second-to-last position).
+ * Outcome screen for a story activity (static step, final position).
  * Shows the narrative result of the player's decisions alongside final metric values.
  */
 export const staticStoryOutcomeContentSchema = z
   .object({
-    metrics: z.array(z.string()).min(1),
-    outcomes: z.array(storyOutcomeSchema).min(1),
+    metrics: storyMetricsSchema,
+    outcomes: z.object(storyOutcomeSchemaShape),
     variant: z.literal("storyOutcome"),
   })
   .strict();
@@ -49,20 +55,19 @@ const storyChoiceSchema = z
     consequence: z.string(),
     id: z.string(),
     metricEffects: z.array(storyMetricEffectEntrySchema),
+    stateImage: stepImageSchema,
     text: z.string(),
   })
   .strict();
 
-/** Schema for a story decision step's content (situation + choices). */
+/** Schema for a story decision step's content (problem + choices). */
 export const storyContentSchema = z
   .object({
     choices: z.array(storyChoiceSchema).min(2),
-    situation: z.string(),
+    image: stepImageSchema.optional(),
+    problem: z.string(),
   })
   .strict();
 
 export type StoryAlignment = z.infer<typeof storyAlignmentSchema>;
-export type StoryStaticVariant =
-  | z.infer<typeof staticStoryIntroContentSchema>["variant"]
-  | z.infer<typeof staticStoryOutcomeContentSchema>["variant"];
 export type StoryStepContent = z.infer<typeof storyContentSchema>;

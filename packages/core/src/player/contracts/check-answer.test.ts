@@ -285,6 +285,7 @@ describe(checkStoryAnswer, () => {
         consequence: "Things improve.",
         id: "1a",
         metricEffects: [{ effect: "positive" as const, metric: "Production" }],
+        stateImage: { prompt: "State after the strong choice" },
         text: "Strong choice",
       },
       {
@@ -292,6 +293,7 @@ describe(checkStoryAnswer, () => {
         consequence: "Mixed results.",
         id: "1b",
         metricEffects: [{ effect: "neutral" as const, metric: "Production" }],
+        stateImage: { prompt: "State after the partial choice" },
         text: "Partial choice",
       },
       {
@@ -299,10 +301,11 @@ describe(checkStoryAnswer, () => {
         consequence: "Things get worse.",
         id: "1c",
         metricEffects: [{ effect: "negative" as const, metric: "Production" }],
+        stateImage: { prompt: "State after the weak choice" },
         text: "Weak choice",
       },
     ],
-    situation: "You face a decision.",
+    problem: "You face a decision.",
   };
 
   test("strong alignment is correct with consequence as feedback", () => {

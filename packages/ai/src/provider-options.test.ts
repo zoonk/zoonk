@@ -68,14 +68,14 @@ describe(buildProviderOptions, () => {
       buildProviderOptions({
         fallbackModels: ["openai/gpt-5.4-mini"],
         model: "anthropic/claude-opus-4.6",
-        taskName: "activity-story-steps",
+        taskName: "activity-story",
         useFallback: true,
       }),
     ).toEqual({
       gateway: {
         models: ["openai/gpt-5.4-mini"],
         order: ["anthropic", "vertex", "openai", "azure", "google"],
-        tags: ["task:activity-story-steps", "default-model:anthropic/claude-opus-4.6"],
+        tags: ["task:activity-story", "default-model:anthropic/claude-opus-4.6"],
       },
     });
   });
@@ -105,14 +105,14 @@ describe(buildProviderOptions, () => {
       buildProviderOptions({
         fallbackModels: [],
         model: "openai/gpt-5.4",
-        taskName: "activity-story-steps",
+        taskName: "activity-story",
         useFallback: true,
       }),
     ).toEqual({
       gateway: {
         models: [],
         order: ["openai", "azure", "google", "anthropic", "vertex"],
-        tags: ["task:activity-story-steps", "default-model:openai/gpt-5.4"],
+        tags: ["task:activity-story", "default-model:openai/gpt-5.4"],
       },
     });
   });

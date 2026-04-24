@@ -56,7 +56,7 @@ function buildPracticeScenarioRecord({
       image,
       text: scenario.text,
       title: scenario.title,
-      variant: "text" as const,
+      variant: "intro" as const,
     }),
     isPublished: true,
     kind: "static" as const,

@@ -55,7 +55,8 @@ export function StoryStep({
 
   return (
     <ChoiceStepLayout
-      context={content.situation}
+      context={content.problem}
+      image={content.image}
       onSelect={handleSelect}
       options={content.choices.map((choice) => ({ key: choice.id, text: choice.text }))}
       selectedIndex={selectedIndex}

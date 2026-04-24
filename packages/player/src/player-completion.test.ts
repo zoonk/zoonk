@@ -25,6 +25,7 @@ function buildStep(overrides: Partial<SerializedStep> = {}): SerializedStep {
 function buildState(overrides: Partial<PlayerState> = {}): PlayerState {
   return {
     activityId: "activity-1",
+    activityKind: "quiz",
     completion: null,
     currentStepIndex: 0,
     investigationLoop: null,
@@ -47,6 +48,7 @@ const storyStepContent = {
       consequence: "Things improve.",
       id: "1a",
       metricEffects: [{ effect: "positive" as const, metric: "Production" }],
+      stateImage: { prompt: "State after the strong choice" },
       text: "Strong choice",
     },
     {
@@ -54,6 +56,7 @@ const storyStepContent = {
       consequence: "Mixed results.",
       id: "1b",
       metricEffects: [{ effect: "neutral" as const, metric: "Production" }],
+      stateImage: { prompt: "State after the partial choice" },
       text: "Partial choice",
     },
     {
@@ -61,10 +64,11 @@ const storyStepContent = {
       consequence: "Things get worse.",
       id: "1c",
       metricEffects: [{ effect: "negative" as const, metric: "Production" }],
+      stateImage: { prompt: "State after the weak choice" },
       text: "Weak choice",
     },
   ],
-  situation: "You face a decision.",
+  problem: "You face a decision.",
 };
 
 function buildStoryStep(id: string, position: number): SerializedStep {
@@ -124,7 +128,10 @@ describe(computeLocalCompletion, () => {
         s2: buildStoryAnswer("1a"),
       };
 
-      const completion = computeLocalCompletion(buildState({ results, selectedAnswers, steps }));
+      const completion = computeLocalCompletion(
+        buildState({ activityKind: "story", results, selectedAnswers, steps }),
+      );
+
       expect(completion.brainPower).toBe(100);
     });
 
@@ -139,7 +146,10 @@ describe(computeLocalCompletion, () => {
         s2: buildStoryAnswer("1a"),
       };
 
-      const completion = computeLocalCompletion(buildState({ results, selectedAnswers, steps }));
+      const completion = computeLocalCompletion(
+        buildState({ activityKind: "story", results, selectedAnswers, steps }),
+      );
+
       expect(completion.energyDelta).toBe(6);
     });
 
@@ -156,7 +166,10 @@ describe(computeLocalCompletion, () => {
         s3: buildStoryAnswer("1c"),
       };
 
-      const completion = computeLocalCompletion(buildState({ results, selectedAnswers, steps }));
+      const completion = computeLocalCompletion(
+        buildState({ activityKind: "story", results, selectedAnswers, steps }),
+      );
+
       expect(completion.energyDelta).toBe(4);
     });
 
@@ -169,7 +182,10 @@ describe(computeLocalCompletion, () => {
         s1: buildStoryAnswer("1a"),
       };
 
-      const completion = computeLocalCompletion(buildState({ results, selectedAnswers, steps }));
+      const completion = computeLocalCompletion(
+        buildState({ activityKind: "story", results, selectedAnswers, steps }),
+      );
+
       expect(completion.energyDelta).toBe(3);
     });
 
@@ -177,9 +193,9 @@ describe(computeLocalCompletion, () => {
       const steps = [
         buildStep({
           content: {
-            intro: "You are a manager.",
-            metrics: ["Production", "Morale"],
-            variant: "storyIntro" as const,
+            text: "You are a manager.",
+            title: "Factory crisis",
+            variant: "intro" as const,
           },
           id: "intro",
           kind: "static",
@@ -198,7 +214,10 @@ describe(computeLocalCompletion, () => {
         s2: buildStoryAnswer("1b"),
       };
 
-      const completion = computeLocalCompletion(buildState({ results, selectedAnswers, steps }));
+      const completion = computeLocalCompletion(
+        buildState({ activityKind: "story", results, selectedAnswers, steps }),
+      );
+
       expect(completion.brainPower).toBe(100);
     });
 
@@ -212,8 +231,15 @@ describe(computeLocalCompletion, () => {
       };
 
       const completion = computeLocalCompletion(
-        buildState({ results, selectedAnswers, steps, totalBrainPower: 500 }),
+        buildState({
+          activityKind: "story",
+          results,
+          selectedAnswers,
+          steps,
+          totalBrainPower: 500,
+        }),
       );
+
       expect(completion.newTotalBp).toBe(600);
     });
 
@@ -230,7 +256,10 @@ describe(computeLocalCompletion, () => {
         s3: buildStoryAnswer("1c"),
       };
 
-      const completion = computeLocalCompletion(buildState({ results, selectedAnswers, steps }));
+      const completion = computeLocalCompletion(
+        buildState({ activityKind: "story", results, selectedAnswers, steps }),
+      );
+
       expect(completion.correctCount).toBe(2);
       expect(completion.incorrectCount).toBe(1);
     });
@@ -275,8 +304,15 @@ describe(computeLocalCompletion, () => {
       };
 
       const completion = computeLocalCompletion(
-        buildState({ investigationLoop, results: {}, selectedAnswers, steps }),
+        buildState({
+          activityKind: "investigation",
+          investigationLoop,
+          results: {},
+          selectedAnswers,
+          steps,
+        }),
       );
+
       expect(completion.correctCount).toBe(1);
       expect(completion.incorrectCount).toBe(2);
       expect(completion.brainPower).toBe(100);
@@ -298,8 +334,15 @@ describe(computeLocalCompletion, () => {
       };
 
       const completion = computeLocalCompletion(
-        buildState({ investigationLoop, results: {}, selectedAnswers, steps }),
+        buildState({
+          activityKind: "investigation",
+          investigationLoop,
+          results: {},
+          selectedAnswers,
+          steps,
+        }),
       );
+
       expect(completion.correctCount).toBe(3);
       expect(completion.incorrectCount).toBe(0);
     });

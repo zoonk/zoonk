@@ -1,4 +1,3 @@
-import { fireEvent } from "@testing-library/react";
 import { describe, expect, test } from "vitest";
 import { page } from "vitest/browser";
 import { buildInlineImageUrl } from "../_test-utils/build-inline-image-url";
@@ -14,9 +13,17 @@ describe("player browser integration: practice activities", () => {
         steps: [
           buildSerializedStep({
             content: {
+              image: {
+                prompt:
+                  "Late-night support war room with a refund dashboard on a laptop and a teammate reviewing notes",
+                url: buildInlineImageUrl({
+                  label:
+                    "Late-night support war room with a refund dashboard on a laptop and a teammate reviewing notes",
+                }),
+              },
               text: "I'm closing the support queue with Maya, and one customer report still does not line up with the refund totals.",
               title: "Night shift",
-              variant: "text" as const,
+              variant: "intro" as const,
             },
             id: "practice-scenario",
           }),
@@ -59,13 +66,20 @@ describe("player browser integration: practice activities", () => {
     await expect.element(page.getByRole("heading", { name: "Night shift" })).toBeInTheDocument();
     await expect
       .element(
+        page.getByAltText(
+          /late-night support war room with a refund dashboard on a laptop and a teammate reviewing notes/i,
+        ),
+      )
+      .toBeInTheDocument();
+    await expect
+      .element(
         page.getByText(
           "I'm closing the support queue with Maya, and one customer report still does not line up with the refund totals.",
         ),
       )
       .toBeInTheDocument();
 
-    fireEvent.keyDown(globalThis.window, { key: "ArrowRight" });
+    await page.getByRole("button", { name: /begin/i }).click();
 
     await expect
       .element(page.getByRole("heading", { name: "What should I check first?" }))

@@ -1,6 +1,6 @@
 import { type CompletionResult } from "@zoonk/core/player/contracts/completion-input-schema";
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
-import { INVESTIGATION_EXPERIMENT_COUNT } from "@zoonk/utils/activities";
+import { INVESTIGATION_EXPERIMENT_COUNT, STORY_OUTCOME_TIERS } from "@zoonk/utils/activities";
 import { getInvestigationScenario } from "./investigation";
 import { type PlayerState } from "./player-reducer";
 import { describePlayerStep, getInvestigationVariant } from "./player-step";
@@ -92,8 +92,8 @@ export function getInvestigationScenarioData(state: PlayerState) {
 }
 
 /**
- * Returns the intro text from the storyIntro step, or null if the current
- * step is not a story decision step.
+ * Returns the story intro text, or null if the current step is not a story
+ * decision step.
  *
  * Used by the sticky header to show a briefing popover only during
  * decision-making, so players can recall the premise without navigating back.
@@ -105,13 +105,13 @@ export function getStoryBriefingText(state: PlayerState): string | null {
     return null;
   }
 
-  const introContent = findStoryIntroContent(state.steps);
+  const introContent = findIntroContent(state.steps);
 
   if (!introContent) {
     return null;
   }
 
-  return introContent.intro;
+  return introContent.text;
 }
 
 export type StoryMetric = {
@@ -120,23 +120,41 @@ export type StoryMetric = {
 };
 
 /**
- * Finds the storyIntro step and returns its parsed content, or null if
- * no intro step exists. Shared by getStoryMetrics (needs metrics) and
- * getStoryBriefingText (needs intro text).
+ * Finds the generic intro step content for activities that open with a setup
+ * screen. Story and practice now share this intro variant, so the briefing
+ * selector can read the setup text without knowing the activity kind.
  *
  * Scans all static steps (not just the first one) because a non-intro
  * static step could appear earlier in the list.
  */
-function findStoryIntroContent(steps: SerializedStep[]) {
+function findIntroContent(steps: SerializedStep[]) {
   for (const step of steps) {
     const descriptor = describePlayerStep(step);
 
-    if (descriptor?.kind === "storyIntro") {
+    if (descriptor?.kind === "intro") {
       return descriptor.content;
     }
   }
 
   return null;
+}
+
+/**
+ * Story metrics describe the global scoreboard, so they live on the outcome
+ * step instead of the intro's visible setup content. The player still has all
+ * steps locally, which lets gameplay screens compute current metric values
+ * before the learner reaches the final outcome.
+ */
+function findStoryMetricDefinitions(steps: SerializedStep[]) {
+  for (const step of steps) {
+    const descriptor = describePlayerStep(step);
+
+    if (descriptor?.kind === "storyOutcome") {
+      return descriptor.content.metrics;
+    }
+  }
+
+  return [];
 }
 
 /**
@@ -197,24 +215,25 @@ function getStepMetricDelta({
  * Computes the current value of each story metric by summing deltas
  * from all completed story steps.
  *
- * Reads metric names from the storyIntro step (first step), then for each
+ * Reads metric names from the story outcome step, then for each
  * answered story step, looks up the selected choice's metricEffects and
  * accumulates deltas (positive = +15, neutral = 0, negative = -15) starting
  * from 50.
  */
 export function getStoryMetrics(state: PlayerState): StoryMetric[] {
-  const introContent = findStoryIntroContent(state.steps);
+  const metrics = findStoryMetricDefinitions(state.steps);
 
-  if (!introContent) {
+  if (metrics.length === 0) {
     return [];
   }
 
-  const storySteps = state.steps.filter((step) => step.kind === "story");
+  const steps = state.steps.filter((step) => step.kind === "story");
 
-  return introContent.metrics.map((name) => ({
-    metric: name,
-    value: storySteps.reduce(
-      (sum, step) => sum + getStepMetricDelta({ metric: name, results: state.results, step }),
+  return metrics.map((metric) => ({
+    metric: metric.label,
+    value: steps.reduce(
+      (sum, step) =>
+        sum + getStepMetricDelta({ metric: metric.label, results: state.results, step }),
       METRIC_AVERAGE_THRESHOLD,
     ),
   }));
@@ -226,6 +245,88 @@ export type PreloadableImage = {
 };
 
 const DEFAULT_LOOKAHEAD = 3;
+
+/**
+ * Converts one optional step image into the common preload format.
+ */
+function getOptionalStepImage(url?: string): PreloadableImage[] {
+  return url ? [{ kind: "step", url }] : [];
+}
+
+/**
+ * Story outcome screens reuse branch-specific ending illustrations, so those
+ * assets are worth warming up together with the hero image.
+ */
+function getStoryOutcomeImages(step: SerializedStep): PreloadableImage[] {
+  const descriptor = describePlayerStep(step);
+
+  if (descriptor?.kind !== "storyOutcome") {
+    return [];
+  }
+
+  return STORY_OUTCOME_TIERS.flatMap((tier) =>
+    getOptionalStepImage(descriptor.content.outcomes[tier].image?.url),
+  );
+}
+
+/**
+ * Story decision steps preload the main scene plus the consequence image for
+ * every option so feedback transitions stay instant.
+ */
+function getStoryDecisionImages(step: SerializedStep): PreloadableImage[] {
+  const descriptor = describePlayerStep(step);
+
+  if (descriptor?.kind !== "storyDecision") {
+    return [];
+  }
+
+  return [
+    ...getOptionalStepImage(descriptor.content.image?.url),
+    ...descriptor.content.choices.flatMap((choice) => getOptionalStepImage(choice.stateImage?.url)),
+  ];
+}
+
+/**
+ * Select-image steps store their visuals on each option rather than a single
+ * shared field, so they need a separate preload shape.
+ */
+function getSelectImageOptionImages(step: SerializedStep): PreloadableImage[] {
+  const descriptor = describePlayerStep(step);
+
+  if (descriptor?.kind !== "selectImage") {
+    return [];
+  }
+
+  return descriptor.content.options.flatMap((option) =>
+    option.url ? [{ kind: "selectImage" as const, url: option.url }] : [],
+  );
+}
+
+/**
+ * Story consequence screens are reached from the current decision before the
+ * step index advances. They must be part of the preload set even though they
+ * do not belong to an upcoming step.
+ */
+function getCurrentStoryFeedbackImages(state: PlayerState): PreloadableImage[] {
+  const descriptor = describePlayerStep(getCurrentStep(state));
+
+  if (state.phase !== "playing" || descriptor?.kind !== "storyDecision") {
+    return [];
+  }
+
+  return descriptor.content.choices.flatMap((choice) =>
+    choice.stateImage?.url ? [{ kind: "step" as const, url: choice.stateImage.url }] : [],
+  );
+}
+
+/**
+ * Removes duplicate URLs so the preloader receives one request per image even
+ * when the same asset is reachable through the current feedback transition and
+ * the lookahead window.
+ */
+function dedupeImagesByUrl(images: PreloadableImage[]): PreloadableImage[] {
+  return [...new Map(images.map((image) => [image.url, image])).values()];
+}
 
 /**
  * Extracts image URLs from a step so they can be preloaded before the user
@@ -240,33 +341,34 @@ function getStepImages(step: SerializedStep): PreloadableImage[] {
     descriptor?.kind === "staticText" ||
     descriptor?.kind === "staticGrammarExample" ||
     descriptor?.kind === "staticGrammarRule" ||
-    descriptor?.kind === "storyIntro" ||
-    descriptor?.kind === "storyOutcome"
+    descriptor?.kind === "multipleChoice"
   ) {
-    return descriptor.content.image?.url
-      ? [{ kind: "step", url: descriptor.content.image.url }]
-      : [];
+    return getOptionalStepImage(descriptor.content.image?.url);
   }
 
-  if (descriptor?.kind === "multipleChoice") {
-    return descriptor.content.image?.url
-      ? [{ kind: "step", url: descriptor.content.image.url }]
-      : [];
+  if (descriptor?.kind === "intro") {
+    return getOptionalStepImage(descriptor.intro.image?.url);
+  }
+
+  if (descriptor?.kind === "storyOutcome") {
+    return getStoryOutcomeImages(step);
+  }
+
+  if (descriptor?.kind === "storyDecision") {
+    return getStoryDecisionImages(step);
   }
 
   if (descriptor?.kind === "selectImage") {
-    return descriptor.content.options.flatMap((option) =>
-      option.url ? [{ kind: "selectImage" as const, url: option.url }] : [],
-    );
+    return getSelectImageOptionImages(step);
   }
 
   return [];
 }
 
 /**
- * Collects image URLs from the next few steps so they can be preloaded in the
- * background. This eliminates the 1-2 second delay users experience when
- * navigating to steps that contain images.
+ * Collects image URLs that can be needed next so they can be preloaded in the
+ * background. This includes upcoming steps and immediate feedback transitions
+ * that can happen from the current screen without advancing the step index.
  */
 export function getUpcomingImages(
   state: PlayerState,
@@ -274,5 +376,7 @@ export function getUpcomingImages(
 ): PreloadableImage[] {
   const start = state.currentStepIndex + 1;
   const upcoming = state.steps.slice(start, start + lookahead);
-  return upcoming.flatMap((step) => getStepImages(step));
+  const upcomingImages = upcoming.flatMap((step) => getStepImages(step));
+
+  return dedupeImagesByUrl([...getCurrentStoryFeedbackImages(state), ...upcomingImages]);
 }

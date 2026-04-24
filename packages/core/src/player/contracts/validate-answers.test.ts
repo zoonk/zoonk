@@ -239,6 +239,7 @@ describe(validateAnswers, () => {
           consequence: "Things improve.",
           id: "1a",
           metricEffects: [{ effect: "positive", metric: "Production" }],
+          stateImage: { prompt: "State after the strong choice" },
           text: "Do the right thing",
         },
         {
@@ -246,10 +247,11 @@ describe(validateAnswers, () => {
           consequence: "Things get worse.",
           id: "1b",
           metricEffects: [{ effect: "negative", metric: "Production" }],
+          stateImage: { prompt: "State after the weak choice" },
           text: "Do the wrong thing",
         },
       ],
-      situation: "You face a decision.",
+      problem: "You face a decision.",
     };
 
     const steps = [{ content: storyContent, id: "8", kind: "story" }];
@@ -270,6 +272,7 @@ describe(validateAnswers, () => {
           consequence: "Things improve.",
           id: "1a",
           metricEffects: [{ effect: "positive", metric: "Production" }],
+          stateImage: { prompt: "State after the strong choice" },
           text: "Do the right thing",
         },
         {
@@ -277,10 +280,11 @@ describe(validateAnswers, () => {
           consequence: "Things get worse.",
           id: "1b",
           metricEffects: [{ effect: "negative", metric: "Production" }],
+          stateImage: { prompt: "State after the weak choice" },
           text: "Do the wrong thing",
         },
       ],
-      situation: "You face a decision.",
+      problem: "You face a decision.",
     };
 
     const steps = [{ content: storyContent, id: "8", kind: "story" }];
@@ -301,6 +305,7 @@ describe(validateAnswers, () => {
           consequence: "Things improve.",
           id: "1a",
           metricEffects: [{ effect: "positive", metric: "Production" }],
+          stateImage: { prompt: "State after the strong choice" },
           text: "Do the right thing",
         },
         {
@@ -308,10 +313,11 @@ describe(validateAnswers, () => {
           consequence: "Things get worse.",
           id: "1b",
           metricEffects: [{ effect: "negative", metric: "Production" }],
+          stateImage: { prompt: "State after the weak choice" },
           text: "Do the wrong thing",
         },
       ],
-      situation: "You face a decision.",
+      problem: "You face a decision.",
     };
 
     const steps = [{ content: storyContent, id: "9", kind: "story" }];

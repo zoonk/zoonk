@@ -24,36 +24,47 @@ vi.mock("workflow", () => ({
   workflowStep: vi.fn().mockImplementation((_name: string, fn: unknown) => fn),
 }));
 
-const { generateActivityStoryStepsMock } = vi.hoisted(() => ({
-  generateActivityStoryStepsMock: vi.fn(),
+const { generateActivityStoryMock } = vi.hoisted(() => ({ generateActivityStoryMock: vi.fn() }));
+
+vi.mock("@zoonk/ai/tasks/activities/core/story", () => ({
+  generateActivityStory: generateActivityStoryMock,
 }));
 
-vi.mock("@zoonk/ai/tasks/activities/core/story-steps", () => ({
-  generateActivityStorySteps: generateActivityStoryStepsMock,
-}));
-
-const mockStoryData = {
+const mockStoryPlan = {
   intro: "You are a factory manager.",
+  introImagePrompt: "Factory floor at sunrise with workers waiting for direction",
   metrics: ["Production", "Morale"],
+  outcomes: {
+    bad: {
+      imagePrompt: "Factory floor split between partial progress and lingering confusion",
+      narrative: "Some fixes landed, but the operation still feels uneven.",
+      title: "Uneven day",
+    },
+    good: {
+      imagePrompt: "Factory floor working again with a few visible bottlenecks",
+      narrative: "The line is moving again, but the team still feels the strain.",
+      title: "Mostly steady",
+    },
+    ok: {
+      imagePrompt: "Factory floor partly stable with workers still clearing bottlenecks",
+      narrative: "You kept the line alive, but the recovery still needs attention.",
+      title: "Partial recovery",
+    },
+    perfect: {
+      imagePrompt: "Recovered factory floor with steady output and calmer workers",
+      narrative: "You stabilized the factory and restored confidence.",
+      title: "Back on track",
+    },
+    terrible: {
+      imagePrompt: "Factory floor stalled again with tired workers and missing parts",
+      narrative: "The crisis kept spreading faster than your decisions could contain it.",
+      title: "Still unraveling",
+    },
+  },
   steps: [
     {
-      choices: [
-        {
-          alignment: "strong",
-          consequence: "Workers rally.",
-          id: "c1",
-          metricEffects: [{ effect: "positive", metric: "Morale" }],
-          text: "Address the team",
-        },
-        {
-          alignment: "weak",
-          consequence: "Rumors spread.",
-          id: "c2",
-          metricEffects: [{ effect: "negative", metric: "Morale" }],
-          text: "Send an email",
-        },
-      ],
-      situation: "Your supplier went bankrupt.",
+      imagePrompt: "Factory floor with halted lines and workers looking worried",
+      problem: "Your supplier went bankrupt.",
     },
   ],
   title: "The night the labels got swapped",
@@ -79,7 +90,7 @@ describe(generateStoryContentStep, () => {
     vi.clearAllMocks();
   });
 
-  test("returns story steps data for a story activity", async () => {
+  test("returns story plan data for a story activity", async () => {
     const lesson = await lessonFixture({
       chapterId: chapter.id,
       concepts: ["Supply Chain", "Communication"],
@@ -98,13 +109,14 @@ describe(generateStoryContentStep, () => {
 
     const activities = await fetchLessonActivities(lesson.id);
 
-    generateActivityStoryStepsMock.mockResolvedValue({ data: mockStoryData });
+    generateActivityStoryMock.mockResolvedValue({ data: mockStoryPlan });
 
-    const result = await generateStoryContentStep(activities);
+    const result = await generateStoryContentStep(activities, [
+      { text: "Supply chains need backup paths.", title: "Backup paths" },
+    ]);
 
     expect(result.activityId).toBe(activities.find((a) => a.kind === "story")?.id);
-    expect(result.storySteps).toEqual(mockStoryData);
-    expect(result.title).toBe("The night the labels got swapped");
+    expect(result.storyPlan).toEqual(mockStoryPlan);
   });
 
   test("passes lesson concepts and context to the AI task", async () => {
@@ -126,13 +138,19 @@ describe(generateStoryContentStep, () => {
 
     const activities = await fetchLessonActivities(lesson.id);
 
-    generateActivityStoryStepsMock.mockResolvedValue({ data: mockStoryData });
+    generateActivityStoryMock.mockResolvedValue({ data: mockStoryPlan });
 
-    await generateStoryContentStep(activities);
+    const explanationSteps = [
+      { text: "First explanation step.", title: "First" },
+      { text: "Second explanation step.", title: "Second" },
+    ];
 
-    expect(generateActivityStoryStepsMock).toHaveBeenCalledWith(
+    await generateStoryContentStep(activities, explanationSteps);
+
+    expect(generateActivityStoryMock).toHaveBeenCalledWith(
       expect.objectContaining({
         concepts: ["Concept A", "Concept B"],
+        explanationSteps,
         language: "en",
         topic: lesson.title,
       }),
@@ -157,13 +175,42 @@ describe(generateStoryContentStep, () => {
 
     const activities = await fetchLessonActivities(lesson.id);
 
-    const result = await generateStoryContentStep(activities);
+    const result = await generateStoryContentStep(activities, [
+      { text: "Explanation content.", title: "Explanation" },
+    ]);
 
-    expect(result).toEqual({ activityId: null, storySteps: null, title: null });
-    expect(generateActivityStoryStepsMock).not.toHaveBeenCalled();
+    expect(result).toEqual({ activityId: null, storyPlan: null });
+    expect(generateActivityStoryMock).not.toHaveBeenCalled();
   });
 
-  test("marks activity as failed when AI returns empty steps", async () => {
+  test("marks story as failed when explanation steps are missing", async () => {
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      organizationId,
+      title: `Story Missing Explanation ${randomUUID()}`,
+    });
+
+    const dbActivity = await activityFixture({
+      generationStatus: "pending",
+      kind: "story",
+      language: "en",
+      lessonId: lesson.id,
+      organizationId,
+      title: `Story ${randomUUID()}`,
+    });
+
+    const activities = await fetchLessonActivities(lesson.id);
+
+    const result = await generateStoryContentStep(activities, []);
+
+    expect(result).toEqual({ activityId: null, storyPlan: null });
+    expect(generateActivityStoryMock).not.toHaveBeenCalled();
+
+    const updated = await prisma.activity.findUniqueOrThrow({ where: { id: dbActivity.id } });
+    expect(updated.generationStatus).toBe("failed");
+  });
+
+  test("marks activity as failed when AI returns no result", async () => {
     const lesson = await lessonFixture({
       chapterId: chapter.id,
       organizationId,
@@ -181,18 +228,13 @@ describe(generateStoryContentStep, () => {
 
     const activities = await fetchLessonActivities(lesson.id);
 
-    generateActivityStoryStepsMock.mockResolvedValue({
-      data: {
-        intro: "Intro",
-        metrics: ["M"],
-        steps: [],
-        title: "The night the labels got swapped",
-      },
-    });
+    generateActivityStoryMock.mockResolvedValue(null);
 
-    const result = await generateStoryContentStep(activities);
+    const result = await generateStoryContentStep(activities, [
+      { text: "Explanation content.", title: "Explanation" },
+    ]);
 
-    expect(result).toEqual({ activityId: null, storySteps: null, title: null });
+    expect(result).toEqual({ activityId: null, storyPlan: null });
 
     const updated = await prisma.activity.findUniqueOrThrow({ where: { id: dbActivity.id } });
     expect(updated.generationStatus).toBe("failed");
@@ -226,11 +268,13 @@ describe(generateStoryContentStep, () => {
 
     const activities = await fetchLessonActivities(lesson.id);
 
-    generateActivityStoryStepsMock.mockRejectedValue(new Error("AI failed"));
+    generateActivityStoryMock.mockRejectedValue(new Error("AI failed"));
 
-    const result = await generateStoryContentStep(activities);
+    const result = await generateStoryContentStep(activities, [
+      { text: "Explanation content.", title: "Explanation" },
+    ]);
 
-    expect(result).toEqual({ activityId: null, storySteps: null, title: null });
+    expect(result).toEqual({ activityId: null, storyPlan: null });
 
     const updated = await prisma.activity.findUniqueOrThrow({ where: { id: dbActivity.id } });
     expect(updated.generationStatus).toBe("failed");
@@ -265,9 +309,11 @@ describe(generateStoryContentStep, () => {
     const activities = await fetchLessonActivities(lesson.id);
     const storyActivity = activities.find((a) => a.kind === "story")!;
 
-    generateActivityStoryStepsMock.mockResolvedValue({ data: mockStoryData });
+    generateActivityStoryMock.mockResolvedValue({ data: mockStoryPlan });
 
-    await generateStoryContentStep(activities);
+    await generateStoryContentStep(activities, [
+      { text: "Explanation content.", title: "Explanation" },
+    ]);
 
     const events = getStreamedEvents(writeMock);
 

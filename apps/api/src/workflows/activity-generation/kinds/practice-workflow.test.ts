@@ -134,7 +134,7 @@ describe("practice activity workflow", () => {
       },
       text: "I'm closing the support queue with Maya, and one customer report still does not line up with the refund totals.",
       title: "Night shift",
-      variant: "text",
+      variant: "intro",
     });
     expect(steps[1]?.kind).toBe("multipleChoice");
     expect(steps[1]?.content).toEqual({

@@ -1,10 +1,14 @@
 "use client";
 
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
+import { type StoryAlignment } from "@zoonk/core/steps/contract/content";
+import { type StepImage } from "@zoonk/core/steps/contract/image";
+import { type StoryOutcomeTier } from "@zoonk/utils/activities";
 import { useExtracted } from "next-intl";
 import { usePlayerRuntime } from "../player-context";
 import { type PlayerState } from "../player-reducer";
 import { findSelectedChoice, getStoryMetrics } from "../player-selectors";
+import { getStoryOutcomeDisplayTier } from "../story-outcome";
 import {
   PlayerReadSceneBody,
   PlayerReadSceneDivider,
@@ -13,94 +17,74 @@ import {
   PlayerReadSceneTitle,
   type PlayerReadSceneTitleTone,
 } from "./player-read-scene";
+import { StepActionButton } from "./step-action-button";
+import { StepHero } from "./step-intro-hero-layout";
 import { StoryMetricPill } from "./story-metric-pill";
 
 type StoryOutcome = {
-  minStrongChoices: number;
+  image?: StepImage;
   narrative: string;
   title: string;
 };
 
-/**
- * A ranked outcome includes its position in the sorted list so we can
- * determine the tier color without re-sorting.
- */
-type RankedOutcome = {
-  index: number;
-  outcome: StoryOutcome;
-  total: number;
-};
+type StoryOutcomes = Record<StoryOutcomeTier, StoryOutcome>;
 
 /**
- * Checks whether a story step result has a "strong" alignment choice.
+ * Reads the selected alignment for one story step. Missing or stale answers
+ * count as weak so incomplete state cannot accidentally improve the ending.
  */
-function isStrongChoice({
+function getStoryStepAlignment({
   results,
   step,
 }: {
   results: PlayerState["results"];
   step: SerializedStep;
-}): boolean {
+}): StoryAlignment {
   const choice = findSelectedChoice({ results, step });
-  return choice?.alignment === "strong";
+  return choice?.alignment ?? "weak";
 }
 
 /**
- * Counts how many "strong" alignment choices the player made across all
- * story decision steps.
+ * Returns the alignment contribution for one step. Non-story steps contribute
+ * nothing because only story decisions should affect the ending tier.
  */
-function countStrongChoices({
+function getStoryAlignmentEntry({
+  results,
+  step,
+}: {
+  results: PlayerState["results"];
+  step: SerializedStep;
+}): StoryAlignment[] {
+  if (step.kind !== "story") {
+    return [];
+  }
+
+  return [getStoryStepAlignment({ results, step })];
+}
+
+/**
+ * Extracts the story decision alignments in activity order so the pure tier
+ * selector can score the ending without knowing about player state shape.
+ */
+function getStoryAlignments({
   results,
   steps,
 }: {
   results: PlayerState["results"];
   steps: SerializedStep[];
-}): number {
-  return steps.filter((step) => isStrongChoice({ results, step })).length;
+}): StoryAlignment[] {
+  return steps.flatMap((step) => getStoryAlignmentEntry({ results, step }));
 }
 
 /**
- * Sorts outcomes by minStrongChoices descending (best first, worst last)
- * and selects the first one where the player's count meets or exceeds
- * the threshold. Falls back to the last outcome if none match.
- *
- * Returns the matched outcome along with its tier index and total count
- * so the caller can determine the color without re-sorting.
+ * Returns the semantic title tone for the selected fixed outcome tier.
  */
-function selectOutcome({
-  outcomes,
-  strongCount,
-}: {
-  outcomes: StoryOutcome[];
-  strongCount: number;
-}): RankedOutcome | null {
-  const sorted = [...outcomes].toSorted(
-    (left, right) => right.minStrongChoices - left.minStrongChoices,
-  );
-
-  const index = sorted.findIndex((entry) => strongCount >= entry.minStrongChoices);
-  const resolvedIndex = index === -1 ? sorted.length - 1 : index;
-  const outcome = sorted[resolvedIndex];
-
-  if (!outcome) {
-    return null;
-  }
-
-  return { index: resolvedIndex, outcome, total: sorted.length };
-}
-
-/**
- * Returns the semantic title tone for the outcome based on its position
- * in the ranked list.
- *
- * First (best) = green, last (worst) = destructive, middle = warning.
- */
-function getOutcomeTierTone({ index, total }: RankedOutcome): PlayerReadSceneTitleTone {
-  if (index === 0) {
+function getOutcomeTierTone(tier: StoryOutcomeTier): PlayerReadSceneTitleTone {
+  if (tier === "perfect" || tier === "good") {
     return "success";
   }
 
-  if (index === total - 1) {
+  if (tier === "bad" || tier === "terrible") {
     return "destructive";
   }
 
@@ -113,38 +97,39 @@ function getOutcomeTierTone({ index, total }: RankedOutcome): PlayerReadSceneTit
  * Displays the narrative result of the player's decisions with a
  * tone-coded title reflecting how well they did.
  */
-export function StoryOutcomeContent({ outcomes }: { outcomes: StoryOutcome[] }) {
+export function StoryOutcomeContent({ outcomes }: { outcomes: StoryOutcomes }) {
   const t = useExtracted();
   const { state } = usePlayerRuntime();
-  const strongCount = countStrongChoices(state);
-  const ranked = selectOutcome({ outcomes, strongCount });
+  const tier = getStoryOutcomeDisplayTier(getStoryAlignments(state));
   const storyMetrics = getStoryMetrics(state);
 
-  if (!ranked) {
-    return null;
-  }
-
-  const titleTone = getOutcomeTierTone(ranked);
+  const outcome = outcomes[tier];
+  const titleTone = getOutcomeTierTone(tier);
 
   return (
-    <div className="flex flex-col gap-6">
-      <PlayerReadSceneTitle tone={titleTone}>{ranked.outcome.title}</PlayerReadSceneTitle>
-
-      <PlayerReadSceneBody>{ranked.outcome.narrative}</PlayerReadSceneBody>
-
-      {storyMetrics.length > 0 && (
-        <PlayerReadSceneStack className="gap-3">
-          <PlayerReadSceneDivider />
-
-          <PlayerReadSceneMetaLabel>{t("Final status")}</PlayerReadSceneMetaLabel>
-
-          <div className="-ml-1 flex flex-wrap gap-2">
-            {storyMetrics.map((entry) => (
-              <StoryMetricPill key={entry.metric} metric={entry.metric} value={entry.value} />
-            ))}
-          </div>
+    <StepHero image={outcome.image}>
+      <div className="flex flex-col gap-6">
+        <PlayerReadSceneStack>
+          <PlayerReadSceneTitle tone={titleTone}>{outcome.title}</PlayerReadSceneTitle>
+          <PlayerReadSceneBody>{outcome.narrative}</PlayerReadSceneBody>
         </PlayerReadSceneStack>
-      )}
-    </div>
+
+        {storyMetrics.length > 0 && (
+          <PlayerReadSceneStack className="gap-2">
+            <PlayerReadSceneDivider />
+
+            <PlayerReadSceneMetaLabel>{t("Final status")}</PlayerReadSceneMetaLabel>
+
+            <div className="-ml-1 flex flex-wrap gap-2">
+              {storyMetrics.map((entry) => (
+                <StoryMetricPill key={entry.metric} metric={entry.metric} value={entry.value} />
+              ))}
+            </div>
+          </PlayerReadSceneStack>
+        )}
+
+        <StepActionButton />
+      </div>
+    </StepHero>
   );
 }

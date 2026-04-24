@@ -373,7 +373,11 @@ msgctxt "jSeUY4"
 msgid "Metric changes"
 msgstr "Cambios en las métricas"
 
-#: ../../packages/player/src/components/story-intro-content.tsx
+#: ../../packages/player/src/components/story-feedback-content.tsx
+msgctxt "W2JBdp"
+msgid "Impact"
+msgstr "Impacto"
+
 #: ../../packages/player/src/components/story-metrics-bar.tsx
 msgctxt "pFm27r"
 msgid "Current status"
