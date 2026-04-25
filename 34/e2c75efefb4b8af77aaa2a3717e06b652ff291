@@ -1,0 +1,32 @@
+packages/ai/src/tasks/activities/core/activity-story-choices.prompt.md
+  h_1cda88fc21fe9c 106,243
+apps/main/e2e/lesson-completion.test.ts
+  f00025b6ce7a4c43 59-60
+packages/core/src/steps/contract/content.test.ts
+  h_1cda88fc21fe9c 63-64
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "34e2c75efefb4b8af77aaa2a3717e06b652ff291",
+  "prompts": {
+    "f00025b6ce7a4c43": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019dc5f4-edd1-7683-8755-f038b9fe7117",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 2,
+      "total_deletions": 2,
+      "accepted_lines": 2,
+      "overriden_lines": 0
+    }
+  },
+  "humans": {
+    "h_1cda88fc21fe9c": {
+      "author": "ceolinwill"
+    }
+  }
+}
