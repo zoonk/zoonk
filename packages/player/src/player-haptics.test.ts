@@ -45,10 +45,10 @@ describe(getPlayerHapticSequence, () => {
   test("keeps story consequence haptics for positive feedback", () => {
     const step = buildStep({
       content: {
-        choices: [
+        options: [
           {
             alignment: "strong" as const,
-            consequence: "Things improve.",
+            feedback: "Things improve.",
             id: "choice-1",
             metricEffects: [{ effect: "positive" as const, metric: "Morale" }],
             stateImage: { prompt: "State after the helpful choice" },
@@ -66,7 +66,7 @@ describe(getPlayerHapticSequence, () => {
         metrics: [{ metric: "Morale", value: 65 }],
         phase: "feedback",
         result: buildResult({
-          answer: { kind: "story", selectedChoiceId: "choice-1", selectedText: "Help" },
+          answer: { kind: "story", selectedOptionId: "choice-1" },
           stepId: "story-1",
         }),
         step,
@@ -116,8 +116,8 @@ describe(getPlayerHapticSequence, () => {
       content: {
         kind: "core" as const,
         options: [
-          { feedback: "Nope", isCorrect: false, text: "A" },
-          { feedback: "Yes", isCorrect: true, text: "B" },
+          { feedback: "Nope", id: "a", isCorrect: false, text: "A" },
+          { feedback: "Yes", id: "b", isCorrect: true, text: "B" },
         ],
         question: "Choose",
       },
@@ -129,7 +129,7 @@ describe(getPlayerHapticSequence, () => {
       current: buildSnapshot({
         phase: "feedback",
         result: buildResult({
-          answer: { kind: "multipleChoice", selectedIndex: 0, selectedText: "A" },
+          answer: { kind: "multipleChoice", selectedOptionId: "a" },
           result: { correctAnswer: null, feedback: "Nope", isCorrect: false },
           stepId: "mc-1",
         }),
@@ -175,9 +175,9 @@ describe(getPlayerHapticSequence, () => {
     });
     const currentStep = buildStep({
       content: {
-        actions: [
-          { finding: "CPU spiked.", id: "a1", label: "Check logs", quality: "critical" },
-          { finding: "Nothing useful.", id: "a2", label: "Refresh cache", quality: "weak" },
+        options: [
+          { feedback: "CPU spiked.", id: "a1", quality: "critical", text: "Check logs" },
+          { feedback: "Nothing useful.", id: "a2", quality: "weak", text: "Refresh cache" },
         ],
         variant: "action" as const,
       },
@@ -197,9 +197,9 @@ describe(getPlayerHapticSequence, () => {
   test("only celebrates investigation action feedback when the clue is strong", () => {
     const step = buildStep({
       content: {
-        actions: [
-          { finding: "CPU spiked.", id: "a1", label: "Check logs", quality: "critical" },
-          { finding: "Nothing useful.", id: "a2", label: "Refresh cache", quality: "weak" },
+        options: [
+          { feedback: "CPU spiked.", id: "a1", quality: "critical", text: "Check logs" },
+          { feedback: "Nothing useful.", id: "a2", quality: "weak", text: "Refresh cache" },
         ],
         variant: "action" as const,
       },
@@ -211,7 +211,7 @@ describe(getPlayerHapticSequence, () => {
       current: buildSnapshot({
         phase: "feedback",
         result: buildResult({
-          answer: { kind: "investigation", selectedActionId: "a1", variant: "action" },
+          answer: { kind: "investigation", selectedOptionId: "a1", variant: "action" },
           result: { correctAnswer: null, feedback: "CPU spiked.", isCorrect: true },
           stepId: "inv-action",
         }),
@@ -227,7 +227,7 @@ describe(getPlayerHapticSequence, () => {
   test("uses a softer haptic for a partial investigation call", () => {
     const step = buildStep({
       content: {
-        explanations: [
+        options: [
           {
             accuracy: "partial" as const,
             feedback: "Close, but not quite.",
@@ -246,7 +246,7 @@ describe(getPlayerHapticSequence, () => {
       current: buildSnapshot({
         phase: "feedback",
         result: buildResult({
-          answer: { kind: "investigation", selectedExplanationId: "exp-1", variant: "call" },
+          answer: { kind: "investigation", selectedOptionId: "exp-1", variant: "call" },
           result: { correctAnswer: null, feedback: "Close, but not quite.", isCorrect: false },
           stepId: "inv-call",
         }),

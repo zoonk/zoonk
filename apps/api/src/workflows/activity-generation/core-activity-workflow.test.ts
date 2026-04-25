@@ -128,16 +128,16 @@ function createStoryChoices() {
           {
             alignment: "strong",
             consequence: "Workers rally.",
-            label: "Address the team",
             metricEffects: [{ effect: "positive", metric: "Morale" }],
             stateImagePrompt: "Factory floor after a direct address calms the team",
+            text: "Address the team",
           },
           {
             alignment: "weak",
             consequence: "Rumors spread.",
-            label: "Send an email",
             metricEffects: [{ effect: "negative", metric: "Morale" }],
             stateImagePrompt: "Factory floor after a vague email leaves workers confused",
+            text: "Send an email",
           },
         ],
       },

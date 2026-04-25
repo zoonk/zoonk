@@ -210,7 +210,7 @@ export function describePlayerStep(step?: SerializedStep | null): PlayerStepDesc
  * Returns the one primary image attached directly to a step descriptor.
  *
  * Some steps have additional image collections, such as select-image options
- * or story choice outcomes. Those stay in their domain helpers; this function
+ * or story option outcomes. Those stay in their domain helpers; this function
  * only answers the shared "does this step have its own main image?" question.
  */
 export function getPlayerStepImage(descriptor?: PlayerStepDescriptor | null): StepImage | null {

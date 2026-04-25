@@ -94,13 +94,7 @@ function validateMultipleChoice(
   }
 
   const content = parseStepContent("multipleChoice", step.content);
-  const index = content.options.findIndex((option) => option.text === answer.selectedText);
-
-  if (index === -1) {
-    return { answer, isCorrect: false, stepId: step.id };
-  }
-
-  const result = checkMultipleChoiceAnswer(content, index);
+  const result = checkMultipleChoiceAnswer(content, answer.selectedOptionId);
 
   return { answer, isCorrect: result.isCorrect, stepId: step.id };
 }
@@ -141,7 +135,7 @@ function validateSelectImage(step: StepData, answer: SelectedAnswer): ValidatedS
   }
 
   const content = parseStepContent("selectImage", step.content);
-  const result = checkSelectImageAnswer(content, answer.selectedIndex);
+  const result = checkSelectImageAnswer(content, answer.selectedOptionId);
   return { answer, isCorrect: result.isCorrect, stepId: step.id };
 }
 
@@ -154,7 +148,7 @@ function validateTranslation(step: StepData, answer: SelectedAnswer): ValidatedS
     return null;
   }
 
-  const result = checkTranslationAnswer(step.word.id, answer.selectedWordId);
+  const result = checkTranslationAnswer(step.word.id, answer.selectedOptionId);
   return { answer, isCorrect: result.isCorrect, stepId: step.id };
 }
 
@@ -207,7 +201,7 @@ function validateInvestigation(step: StepData, answer: SelectedAnswer): Validate
   }
 
   if (content.variant === "call" && answer.variant === "call") {
-    const result = checkInvestigationCall(content, answer.selectedExplanationId);
+    const result = checkInvestigationCall(content, answer.selectedOptionId);
     return { answer, isCorrect: result.isCorrect, stepId: step.id };
   }
 
@@ -220,7 +214,7 @@ function validateStory(step: StepData, answer: SelectedAnswer): ValidatedStepRes
   }
 
   const content = parseStepContent("story", step.content);
-  const result = checkStoryAnswer(content, answer.selectedChoiceId);
+  const result = checkStoryAnswer(content, answer.selectedOptionId);
 
   return { answer, isCorrect: result.isCorrect, stepId: step.id };
 }

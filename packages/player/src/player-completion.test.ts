@@ -42,10 +42,10 @@ function buildState(overrides: Partial<PlayerState> = {}): PlayerState {
 }
 
 const storyStepContent = {
-  choices: [
+  options: [
     {
       alignment: "strong" as const,
-      consequence: "Things improve.",
+      feedback: "Things improve.",
       id: "1a",
       metricEffects: [{ effect: "positive" as const, metric: "Production" }],
       stateImage: { prompt: "State after the strong choice" },
@@ -53,7 +53,7 @@ const storyStepContent = {
     },
     {
       alignment: "partial" as const,
-      consequence: "Mixed results.",
+      feedback: "Mixed results.",
       id: "1b",
       metricEffects: [{ effect: "neutral" as const, metric: "Production" }],
       stateImage: { prompt: "State after the partial choice" },
@@ -61,7 +61,7 @@ const storyStepContent = {
     },
     {
       alignment: "weak" as const,
-      consequence: "Things get worse.",
+      feedback: "Things get worse.",
       id: "1c",
       metricEffects: [{ effect: "negative" as const, metric: "Production" }],
       stateImage: { prompt: "State after the weak choice" },
@@ -75,14 +75,14 @@ function buildStoryStep(id: string, position: number): SerializedStep {
   return buildStep({ content: storyStepContent, id, kind: "story", position });
 }
 
-function buildStoryAnswer(selectedChoiceId: string): SelectedAnswer {
-  return { kind: "story", selectedChoiceId, selectedText: "choice" };
+function buildStoryAnswer(selectedOptionId: string): SelectedAnswer {
+  return { kind: "story", selectedOptionId };
 }
 
-function buildStoryResult(stepId: string, selectedChoiceId: string): StepResult {
+function buildStoryResult(stepId: string, selectedOptionId: string): StepResult {
   return {
-    answer: buildStoryAnswer(selectedChoiceId),
-    result: { correctAnswer: null, feedback: null, isCorrect: selectedChoiceId !== "1c" },
+    answer: buildStoryAnswer(selectedOptionId),
+    result: { correctAnswer: null, feedback: null, isCorrect: selectedOptionId !== "1c" },
     stepId,
   };
 }
@@ -94,7 +94,7 @@ describe(computeLocalCompletion, () => {
         buildStep({
           content: {
             kind: "core" as const,
-            options: [{ feedback: "Yes", isCorrect: true, text: "A" }],
+            options: [{ feedback: "Yes", id: "a", isCorrect: true, text: "A" }],
           },
           id: "mc-1",
           kind: "multipleChoice",
@@ -103,7 +103,7 @@ describe(computeLocalCompletion, () => {
 
       const results: Record<string, StepResult> = {
         "mc-1": {
-          answer: { kind: "multipleChoice", selectedIndex: 0, selectedText: "A" },
+          answer: { kind: "multipleChoice", selectedOptionId: "a" },
           result: { correctAnswer: null, feedback: "Yes", isCorrect: true },
           stepId: "mc-1",
         },
@@ -267,21 +267,21 @@ describe(computeLocalCompletion, () => {
 
   describe("investigation activities", () => {
     const actionContent = {
-      actions: [
+      options: [
         {
-          finding: "Critical evidence",
+          feedback: "Critical evidence",
           id: "a1",
-          label: "Check logs",
           quality: "critical" as const,
+          text: "Check logs",
         },
-        { finding: "Useful data", id: "a2", label: "Review metrics", quality: "useful" as const },
-        { finding: "Nothing here", id: "a3", label: "Random check", quality: "weak" as const },
+        { feedback: "Useful data", id: "a2", quality: "useful" as const, text: "Review metrics" },
+        { feedback: "Nothing here", id: "a3", quality: "weak" as const, text: "Random check" },
       ],
       variant: "action" as const,
     };
 
     const callContent = {
-      explanations: [
+      options: [
         { accuracy: "best" as const, feedback: "Correct!", id: "e1", text: "Memory leak" },
         { accuracy: "wrong" as const, feedback: "Wrong.", id: "e2", text: "Network" },
       ],
@@ -295,12 +295,12 @@ describe(computeLocalCompletion, () => {
       ];
 
       const selectedAnswers: Record<string, SelectedAnswer> = {
-        "call-1": { kind: "investigation", selectedExplanationId: "e2", variant: "call" },
+        "call-1": { kind: "investigation", selectedOptionId: "e2", variant: "call" },
       };
 
       const investigationLoop = {
         actionTimings: [],
-        usedActionIds: ["a1", "a3"], // critical, weak
+        usedOptionIds: ["a1", "a3"], // critical, weak
       };
 
       const completion = computeLocalCompletion(
@@ -325,12 +325,12 @@ describe(computeLocalCompletion, () => {
       ];
 
       const selectedAnswers: Record<string, SelectedAnswer> = {
-        "call-1": { kind: "investigation", selectedExplanationId: "e1", variant: "call" },
+        "call-1": { kind: "investigation", selectedOptionId: "e1", variant: "call" },
       };
 
       const investigationLoop = {
         actionTimings: [],
-        usedActionIds: ["a1", "a2"], // critical, useful — all correct
+        usedOptionIds: ["a1", "a2"], // critical, useful — all correct
       };
 
       const completion = computeLocalCompletion(

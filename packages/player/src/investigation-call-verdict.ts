@@ -30,7 +30,7 @@ export function getInvestigationCallVerdict({
     return result.result.isCorrect ? "best" : "wrong";
   }
 
-  const explanation = content.explanations.find((item) => item.id === answer.selectedExplanationId);
+  const explanation = content.options.find((item) => item.id === answer.selectedOptionId);
 
   if (!explanation) {
     return "wrong";

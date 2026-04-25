@@ -2,10 +2,10 @@ import { describe, expect, test } from "vitest";
 import { buildInvestigationActionResults } from "./build-investigation-action-results";
 
 const actionContent = {
-  actions: [
-    { finding: "Critical evidence", id: "a1", label: "Check logs", quality: "critical" as const },
-    { finding: "Useful data", id: "a2", label: "Review metrics", quality: "useful" as const },
-    { finding: "Nothing here", id: "a3", label: "Random check", quality: "weak" as const },
+  options: [
+    { feedback: "Critical evidence", id: "a1", quality: "critical" as const, text: "Check logs" },
+    { feedback: "Useful data", id: "a2", quality: "useful" as const, text: "Review metrics" },
+    { feedback: "Nothing here", id: "a3", quality: "weak" as const, text: "Random check" },
   ],
   variant: "action" as const,
 };
@@ -22,7 +22,7 @@ describe(buildInvestigationActionResults, () => {
     const results = buildInvestigationActionResults({
       investigationLoop: {
         actionTimings: [baseTiming, baseTiming],
-        usedActionIds: ["a1", "a3"],
+        usedOptionIds: ["a1", "a3"],
       },
       steps: [{ content: actionContent, id: "100", kind: "investigation" }],
     });
@@ -36,7 +36,7 @@ describe(buildInvestigationActionResults, () => {
     const results = buildInvestigationActionResults({
       investigationLoop: {
         actionTimings: [baseTiming, baseTiming],
-        usedActionIds: ["a1", "a2"],
+        usedOptionIds: ["a1", "a2"],
       },
       steps: [{ content: actionContent, id: "42", kind: "investigation" }],
     });
@@ -53,7 +53,7 @@ describe(buildInvestigationActionResults, () => {
     const results = buildInvestigationActionResults({
       investigationLoop: {
         actionTimings: timings,
-        usedActionIds: ["a1", "a2"],
+        usedOptionIds: ["a1", "a2"],
       },
       steps: [{ content: actionContent, id: "1", kind: "investigation" }],
     });
@@ -62,23 +62,23 @@ describe(buildInvestigationActionResults, () => {
     expect(results[1]?.durationSeconds).toBe(8);
   });
 
-  test("stores selectedActionId in the answer", () => {
+  test("stores selectedOptionId in the answer", () => {
     const results = buildInvestigationActionResults({
       investigationLoop: {
         actionTimings: [baseTiming, baseTiming],
-        usedActionIds: ["a3", "a1"],
+        usedOptionIds: ["a3", "a1"],
       },
       steps: [{ content: actionContent, id: "1", kind: "investigation" }],
     });
 
     expect(results[0]?.answer).toEqual({
       kind: "investigation",
-      selectedActionId: "a3",
+      selectedOptionId: "a3",
       variant: "action",
     });
     expect(results[1]?.answer).toEqual({
       kind: "investigation",
-      selectedActionId: "a1",
+      selectedOptionId: "a1",
       variant: "action",
     });
   });
@@ -96,7 +96,7 @@ describe(buildInvestigationActionResults, () => {
     const results = buildInvestigationActionResults({
       investigationLoop: {
         actionTimings: [baseTiming],
-        usedActionIds: ["a1"],
+        usedOptionIds: ["a1"],
       },
       steps: [
         {
@@ -110,11 +110,11 @@ describe(buildInvestigationActionResults, () => {
     expect(results).toEqual([]);
   });
 
-  test("skips entries where actionTimings and usedActionIds are mismatched", () => {
+  test("skips entries where actionTimings and usedOptionIds are mismatched", () => {
     const results = buildInvestigationActionResults({
       investigationLoop: {
         actionTimings: [baseTiming], // Only 1 timing
-        usedActionIds: ["a1", "a2", "a3"], // 3 IDs
+        usedOptionIds: ["a1", "a2", "a3"], // 3 IDs
       },
       steps: [{ content: actionContent, id: "1", kind: "investigation" }],
     });
@@ -123,11 +123,11 @@ describe(buildInvestigationActionResults, () => {
     expect(results[0]?.isCorrect).toBe(true); // critical
   });
 
-  test("returns empty array when usedActionIds is empty", () => {
+  test("returns empty array when usedOptionIds is empty", () => {
     const results = buildInvestigationActionResults({
       investigationLoop: {
         actionTimings: [],
-        usedActionIds: [],
+        usedOptionIds: [],
       },
       steps: [{ content: actionContent, id: "1", kind: "investigation" }],
     });

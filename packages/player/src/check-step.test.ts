@@ -28,8 +28,8 @@ describe(checkStep, () => {
       content: {
         kind: "core" as const,
         options: [
-          { feedback: "Correct!", isCorrect: true, text: "4" },
-          { feedback: "Wrong!", isCorrect: false, text: "3" },
+          { feedback: "Correct!", id: "four", isCorrect: true, text: "4" },
+          { feedback: "Wrong!", id: "three", isCorrect: false, text: "3" },
         ],
         question: "What is 2+2?",
       },
@@ -40,8 +40,7 @@ describe(checkStep, () => {
     test("correct answer returns isCorrect true", () => {
       const answer: SelectedAnswer = {
         kind: "multipleChoice",
-        selectedIndex: 0,
-        selectedText: "4",
+        selectedOptionId: "four",
       };
       const { result } = checkStep(step, answer);
       expect(result.isCorrect).toBe(true);
@@ -51,8 +50,7 @@ describe(checkStep, () => {
     test("incorrect answer returns isCorrect false", () => {
       const answer: SelectedAnswer = {
         kind: "multipleChoice",
-        selectedIndex: 1,
-        selectedText: "3",
+        selectedOptionId: "three",
       };
       const { result } = checkStep(step, answer);
       expect(result.isCorrect).toBe(false);
@@ -159,8 +157,8 @@ describe(checkStep, () => {
     const step = buildStep({
       content: {
         options: [
-          { feedback: "Yes!", isCorrect: true, prompt: "Cat" },
-          { feedback: "No!", isCorrect: false, prompt: "Dog" },
+          { feedback: "Yes!", id: "cat", isCorrect: true, prompt: "Cat" },
+          { feedback: "No!", id: "dog", isCorrect: false, prompt: "Dog" },
         ],
         question: "Select the correct image",
       },
@@ -169,13 +167,13 @@ describe(checkStep, () => {
     });
 
     test("correct selection", () => {
-      const answer: SelectedAnswer = { kind: "selectImage", selectedIndex: 0 };
+      const answer: SelectedAnswer = { kind: "selectImage", selectedOptionId: "cat" };
       const { result } = checkStep(step, answer);
       expect(result.isCorrect).toBe(true);
     });
 
     test("incorrect selection", () => {
-      const answer: SelectedAnswer = { kind: "selectImage", selectedIndex: 1 };
+      const answer: SelectedAnswer = { kind: "selectImage", selectedOptionId: "dog" };
       const { result } = checkStep(step, answer);
       expect(result.isCorrect).toBe(false);
     });
@@ -198,23 +196,13 @@ describe(checkStep, () => {
     });
 
     test("correct word", () => {
-      const answer: SelectedAnswer = {
-        kind: "translation",
-        questionText: "hola",
-        selectedText: "hello",
-        selectedWordId: "word-1",
-      };
+      const answer: SelectedAnswer = { kind: "translation", selectedOptionId: "word-1" };
       const { result } = checkStep(step, answer);
       expect(result.isCorrect).toBe(true);
     });
 
     test("incorrect word", () => {
-      const answer: SelectedAnswer = {
-        kind: "translation",
-        questionText: "hola",
-        selectedText: "wrong",
-        selectedWordId: "word-99",
-      };
+      const answer: SelectedAnswer = { kind: "translation", selectedOptionId: "word-99" };
       const { result } = checkStep(step, answer);
       expect(result.isCorrect).toBe(false);
     });
@@ -229,9 +217,7 @@ describe(checkStep, () => {
       });
       const answer: SelectedAnswer = {
         kind: "translation",
-        questionText: "hola",
-        selectedText: "hello",
-        selectedWordId: "word-1",
+        selectedOptionId: "word-1",
       };
       const { result } = checkStep(step, answer);
       expect(result.isCorrect).toBe(false);
@@ -402,10 +388,10 @@ describe(checkStep, () => {
   describe("story", () => {
     const step = buildStep({
       content: {
-        choices: [
+        options: [
           {
             alignment: "strong",
-            consequence: "Things improve.",
+            feedback: "Things improve.",
             id: "1a",
             metricEffects: [{ effect: "positive", metric: "Production" }],
             stateImage: { prompt: "State after the strong choice" },
@@ -413,7 +399,7 @@ describe(checkStep, () => {
           },
           {
             alignment: "weak",
-            consequence: "Things get worse.",
+            feedback: "Things get worse.",
             id: "1b",
             metricEffects: [{ effect: "negative", metric: "Production" }],
             stateImage: { prompt: "State after the weak choice" },
@@ -427,29 +413,21 @@ describe(checkStep, () => {
     });
 
     test("strong alignment returns isCorrect true", () => {
-      const answer: SelectedAnswer = {
-        kind: "story",
-        selectedChoiceId: "1a",
-        selectedText: "Do the right thing",
-      };
+      const answer: SelectedAnswer = { kind: "story", selectedOptionId: "1a" };
 
       const { result } = checkStep(step, answer);
       expect(result.isCorrect).toBe(true);
     });
 
     test("weak alignment returns isCorrect false", () => {
-      const answer: SelectedAnswer = {
-        kind: "story",
-        selectedChoiceId: "1b",
-        selectedText: "Do the wrong thing",
-      };
+      const answer: SelectedAnswer = { kind: "story", selectedOptionId: "1b" };
 
       const { result } = checkStep(step, answer);
       expect(result.isCorrect).toBe(false);
     });
 
     test("returns mismatch for wrong answer kind", () => {
-      const answer: SelectedAnswer = { kind: "multipleChoice", selectedIndex: 0, selectedText: "" };
+      const answer: SelectedAnswer = { kind: "multipleChoice", selectedOptionId: "missing" };
       const { result } = checkStep(step, answer);
       expect(result.isCorrect).toBe(false);
     });
@@ -460,7 +438,7 @@ describe(checkStep, () => {
       const step = buildStep({
         content: {
           kind: "core" as const,
-          options: [{ feedback: "OK", isCorrect: true, text: "A" }],
+          options: [{ feedback: "OK", id: "a", isCorrect: true, text: "A" }],
           question: "Test",
         },
         kind: "multipleChoice",
@@ -473,7 +451,7 @@ describe(checkStep, () => {
 
     test("static step returns mismatch result", () => {
       const step = buildStep();
-      const answer: SelectedAnswer = { kind: "multipleChoice", selectedIndex: 0, selectedText: "" };
+      const answer: SelectedAnswer = { kind: "multipleChoice", selectedOptionId: "missing" };
       const { result } = checkStep(step, answer);
       expect(result.isCorrect).toBe(false);
       expect(result.feedback).toBeNull();
@@ -500,15 +478,15 @@ describe(checkStep, () => {
     test("action variant: critical quality is correct", () => {
       const step = buildStep({
         content: {
-          actions: [
+          options: [
             {
-              finding: "Logs show memory climbing",
+              feedback: "Logs show memory climbing",
               id: "a1",
-              label: "Check logs",
               quality: "critical" as const,
+              text: "Check logs",
             },
-            { finding: "Filler", id: "a2", label: "Filler 1", quality: "useful" as const },
-            { finding: "Filler", id: "a3", label: "Filler 2", quality: "weak" as const },
+            { feedback: "Filler", id: "a2", quality: "useful" as const, text: "Filler 1" },
+            { feedback: "Filler", id: "a3", quality: "weak" as const, text: "Filler 2" },
           ],
           variant: "action" as const,
         },
@@ -516,7 +494,7 @@ describe(checkStep, () => {
       });
       const answer: SelectedAnswer = {
         kind: "investigation",
-        selectedActionId: "a1",
+        selectedOptionId: "a1",
         variant: "action",
       };
       const { result } = checkStep(step, answer);
@@ -527,15 +505,15 @@ describe(checkStep, () => {
     test("action variant: useful quality is correct", () => {
       const step = buildStep({
         content: {
-          actions: [
+          options: [
             {
-              finding: "Some useful data found",
+              feedback: "Some useful data found",
               id: "a1",
-              label: "Review logs",
               quality: "useful" as const,
+              text: "Review logs",
             },
-            { finding: "Filler", id: "a2", label: "Filler 1", quality: "critical" as const },
-            { finding: "Filler", id: "a3", label: "Filler 2", quality: "weak" as const },
+            { feedback: "Filler", id: "a2", quality: "critical" as const, text: "Filler 1" },
+            { feedback: "Filler", id: "a3", quality: "weak" as const, text: "Filler 2" },
           ],
           variant: "action" as const,
         },
@@ -543,7 +521,7 @@ describe(checkStep, () => {
       });
       const answer: SelectedAnswer = {
         kind: "investigation",
-        selectedActionId: "a1",
+        selectedOptionId: "a1",
         variant: "action",
       };
       const { result } = checkStep(step, answer);
@@ -554,15 +532,15 @@ describe(checkStep, () => {
     test("action variant: weak quality is incorrect", () => {
       const step = buildStep({
         content: {
-          actions: [
+          options: [
             {
-              finding: "Nothing useful here",
+              feedback: "Nothing useful here",
               id: "a1",
-              label: "Random check",
               quality: "weak" as const,
+              text: "Random check",
             },
-            { finding: "Filler", id: "a2", label: "Filler 1", quality: "critical" as const },
-            { finding: "Filler", id: "a3", label: "Filler 2", quality: "useful" as const },
+            { feedback: "Filler", id: "a2", quality: "critical" as const, text: "Filler 1" },
+            { feedback: "Filler", id: "a3", quality: "useful" as const, text: "Filler 2" },
           ],
           variant: "action" as const,
         },
@@ -570,7 +548,7 @@ describe(checkStep, () => {
       });
       const answer: SelectedAnswer = {
         kind: "investigation",
-        selectedActionId: "a1",
+        selectedOptionId: "a1",
         variant: "action",
       };
       const { result } = checkStep(step, answer);
@@ -581,15 +559,15 @@ describe(checkStep, () => {
     test("action variant: unknown ID is incorrect", () => {
       const step = buildStep({
         content: {
-          actions: [
+          options: [
             {
-              finding: "Logs show memory climbing",
+              feedback: "Logs show memory climbing",
               id: "a1",
-              label: "Check logs",
               quality: "critical" as const,
+              text: "Check logs",
             },
-            { finding: "Filler", id: "a2", label: "Filler 1", quality: "useful" as const },
-            { finding: "Filler", id: "a3", label: "Filler 2", quality: "weak" as const },
+            { feedback: "Filler", id: "a2", quality: "useful" as const, text: "Filler 1" },
+            { feedback: "Filler", id: "a3", quality: "weak" as const, text: "Filler 2" },
           ],
           variant: "action" as const,
         },
@@ -597,7 +575,7 @@ describe(checkStep, () => {
       });
       const answer: SelectedAnswer = {
         kind: "investigation",
-        selectedActionId: "nonexistent",
+        selectedOptionId: "nonexistent",
         variant: "action",
       };
       const { result } = checkStep(step, answer);
@@ -607,7 +585,7 @@ describe(checkStep, () => {
     test("call variant: best accuracy is correct with per-explanation feedback", () => {
       const step = buildStep({
         content: {
-          explanations: [
+          options: [
             {
               accuracy: "best" as const,
               feedback: "Correct — this fully explains it.",
@@ -627,7 +605,7 @@ describe(checkStep, () => {
       });
       const answer: SelectedAnswer = {
         kind: "investigation",
-        selectedExplanationId: "e1",
+        selectedOptionId: "e1",
         variant: "call",
       };
       const { result } = checkStep(step, answer);
@@ -638,7 +616,7 @@ describe(checkStep, () => {
     test("call variant: wrong accuracy is incorrect with its own feedback", () => {
       const step = buildStep({
         content: {
-          explanations: [
+          options: [
             {
               accuracy: "best" as const,
               feedback: "Correct — this fully explains it.",
@@ -658,7 +636,7 @@ describe(checkStep, () => {
       });
       const answer: SelectedAnswer = {
         kind: "investigation",
-        selectedExplanationId: "e2",
+        selectedOptionId: "e2",
         variant: "call",
       };
       const { result } = checkStep(step, answer);
@@ -674,7 +652,7 @@ describe(checkStep, () => {
         },
         kind: "investigation",
       });
-      const answer: SelectedAnswer = { kind: "multipleChoice", selectedIndex: 0, selectedText: "" };
+      const answer: SelectedAnswer = { kind: "multipleChoice", selectedOptionId: "missing" };
       const { result } = checkStep(step, answer);
       expect(result.isCorrect).toBe(false);
     });

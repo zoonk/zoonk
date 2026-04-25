@@ -2,7 +2,7 @@ import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activi
 import { describe, expect, test } from "vitest";
 import { type PlayerState, type StepResult } from "./player-reducer";
 import {
-  findSelectedChoice,
+  findSelectedStoryOption,
   getInvestigationProgress,
   getStoryMetrics,
   getUpcomingImages,
@@ -47,10 +47,10 @@ function buildState(overrides: Partial<PlayerState> = {}): PlayerState {
 }
 
 const storyStepContent = {
-  choices: [
+  options: [
     {
       alignment: "strong" as const,
-      consequence: "Things improve.",
+      feedback: "Things improve.",
       id: "c1",
       metricEffects: [{ effect: "positive" as const, metric: "Production" }],
       stateImage: { prompt: "State after the strong choice" },
@@ -58,7 +58,7 @@ const storyStepContent = {
     },
     {
       alignment: "partial" as const,
-      consequence: "Mixed results.",
+      feedback: "Mixed results.",
       id: "c2",
       metricEffects: [{ effect: "neutral" as const, metric: "Production" }],
       stateImage: { prompt: "State after the partial choice" },
@@ -66,7 +66,7 @@ const storyStepContent = {
     },
     {
       alignment: "weak" as const,
-      consequence: "Things get worse.",
+      feedback: "Things get worse.",
       id: "c3",
       metricEffects: [
         { effect: "negative" as const, metric: "Production" },
@@ -115,22 +115,22 @@ function buildStoryOutcomeStep(position: number): SerializedStep {
   });
 }
 
-function buildStoryResult(stepId: string, selectedChoiceId: string): StepResult {
+function buildStoryResult(stepId: string, selectedOptionId: string): StepResult {
   return {
-    answer: { kind: "story", selectedChoiceId, selectedText: "choice" },
-    result: { correctAnswer: null, feedback: null, isCorrect: selectedChoiceId !== "c3" },
+    answer: { kind: "story", selectedOptionId },
+    result: { correctAnswer: null, feedback: null, isCorrect: selectedOptionId !== "c3" },
     stepId,
   };
 }
 
-describe(findSelectedChoice, () => {
-  test("returns the matching choice when a story answer exists", () => {
+describe(findSelectedStoryOption, () => {
+  test("returns the matching option when a story answer exists", () => {
     const step = buildStoryStep("s1", 0);
     const results = { s1: buildStoryResult("s1", "c1") };
 
-    const choice = findSelectedChoice({ results, step });
+    const option = findSelectedStoryOption({ results, step });
 
-    expect(choice).toEqual(
+    expect(option).toEqual(
       expect.objectContaining({ alignment: "strong", id: "c1", text: "Strong choice" }),
     );
   });
@@ -138,29 +138,29 @@ describe(findSelectedChoice, () => {
   test("returns null when the step has no result", () => {
     const step = buildStoryStep("s1", 0);
 
-    expect(findSelectedChoice({ results: {}, step })).toBeNull();
+    expect(findSelectedStoryOption({ results: {}, step })).toBeNull();
   });
 
   test("returns null when the answer is not a story kind", () => {
     const step = buildStoryStep("s1", 0);
     const results = {
       s1: {
-        answer: { kind: "multipleChoice" as const, selectedIndex: 0, selectedText: "A" },
+        answer: { kind: "multipleChoice" as const, selectedOptionId: "a" },
         result: { correctAnswer: null, feedback: null, isCorrect: true },
         stepId: "s1",
       },
     };
 
-    expect(findSelectedChoice({ results, step })).toBeNull();
+    expect(findSelectedStoryOption({ results, step })).toBeNull();
   });
 
-  test("returns null when the choice ID does not match any option", () => {
+  test("returns null when the option ID does not match any option", () => {
     const step = buildStoryStep("s1", 0);
     const results = {
       s1: buildStoryResult("s1", "nonexistent"),
     };
 
-    expect(findSelectedChoice({ results, step })).toBeNull();
+    expect(findSelectedStoryOption({ results, step })).toBeNull();
   });
 });
 
@@ -298,10 +298,10 @@ describe(getStoryMetrics, () => {
 function buildInvestigationActionStep(): SerializedStep {
   return buildStep({
     content: {
-      actions: [
-        { finding: "Clue A", id: "a1", label: "Check logs", quality: "critical" as const },
-        { finding: "Clue B", id: "a2", label: "Ask witness", quality: "useful" as const },
-        { finding: "Clue C", id: "a3", label: "Check camera", quality: "weak" as const },
+      options: [
+        { feedback: "Clue A", id: "a1", quality: "critical" as const, text: "Check logs" },
+        { feedback: "Clue B", id: "a2", quality: "useful" as const, text: "Ask witness" },
+        { feedback: "Clue C", id: "a3", quality: "weak" as const, text: "Check camera" },
       ],
       variant: "action" as const,
     },
@@ -315,7 +315,7 @@ describe(getInvestigationProgress, () => {
   test("returns progress when current step is an investigation action step", () => {
     const state = buildState({
       currentStepIndex: 0,
-      investigationLoop: { actionTimings: [], usedActionIds: ["a1"] },
+      investigationLoop: { actionTimings: [], usedOptionIds: ["a1"] },
       steps: [buildInvestigationActionStep()],
     });
 
@@ -325,7 +325,7 @@ describe(getInvestigationProgress, () => {
   test("returns 0 collected when no actions have been used", () => {
     const state = buildState({
       currentStepIndex: 0,
-      investigationLoop: { actionTimings: [], usedActionIds: [] },
+      investigationLoop: { actionTimings: [], usedOptionIds: [] },
       steps: [buildInvestigationActionStep()],
     });
 
@@ -335,7 +335,7 @@ describe(getInvestigationProgress, () => {
   test("returns 2 collected when all experiments are done", () => {
     const state = buildState({
       currentStepIndex: 0,
-      investigationLoop: { actionTimings: [], usedActionIds: ["a1", "a2"] },
+      investigationLoop: { actionTimings: [], usedOptionIds: ["a1", "a2"] },
       steps: [buildInvestigationActionStep()],
     });
 
@@ -360,11 +360,11 @@ describe(getInvestigationProgress, () => {
   test("returns collected count for investigation call step", () => {
     const state = buildState({
       currentStepIndex: 0,
-      investigationLoop: { actionTimings: [], usedActionIds: ["a1", "a2"] },
+      investigationLoop: { actionTimings: [], usedOptionIds: ["a1", "a2"] },
       steps: [
         buildStep({
           content: {
-            explanations: [
+            options: [
               {
                 accuracy: "best" as const,
                 feedback: "Correct!",
@@ -449,7 +449,9 @@ describe(getUpcomingImages, () => {
               url: "https://example.com/refund-dashboard.jpg",
             },
             kind: "core",
-            options: [{ feedback: "Yes", isCorrect: true, text: "Check totals" }],
+            options: [
+              { feedback: "Yes", id: "Check totals", isCorrect: true, text: "Check totals" },
+            ],
             question: "What should we inspect?",
           },
           id: "s2",
@@ -473,12 +475,14 @@ describe(getUpcomingImages, () => {
             options: [
               {
                 feedback: "Yes",
+                id: "cat",
                 isCorrect: true,
                 prompt: "Cat",
                 url: "https://example.com/cat.jpg",
               },
               {
                 feedback: "No",
+                id: "dog",
                 isCorrect: false,
                 prompt: "Dog",
                 url: "https://example.com/dog.jpg",
@@ -637,9 +641,10 @@ describe(getUpcomingImages, () => {
         buildStep({
           content: {
             options: [
-              { feedback: "Yes", isCorrect: true, prompt: "No URL" },
+              { feedback: "Yes", id: "no-url", isCorrect: true, prompt: "No URL" },
               {
                 feedback: "No",
+                id: "has-url",
                 isCorrect: false,
                 prompt: "Has URL",
                 url: "https://example.com/img.jpg",
@@ -686,10 +691,10 @@ describe(getUpcomingImages, () => {
   });
 
   test("includes current story feedback images and dedupes repeated URLs", () => {
-    const choices = storyStepContent.choices.map((choice, index) => ({
-      ...choice,
+    const options = storyStepContent.options.map((option, index) => ({
+      ...option,
       stateImage: {
-        prompt: choice.stateImage.prompt,
+        prompt: option.stateImage.prompt,
         url: `https://example.com/feedback-${index}.jpg`,
       },
     }));
@@ -698,7 +703,7 @@ describe(getUpcomingImages, () => {
       activityKind: "story",
       steps: [
         buildStep({
-          content: { ...storyStepContent, choices },
+          content: { ...storyStepContent, options },
           id: "s1",
           kind: "story",
         }),

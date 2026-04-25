@@ -14,8 +14,8 @@ import {
 const coreMultipleChoiceContent = {
   kind: "core" as const,
   options: [
-    { feedback: "Yes", isCorrect: true, text: "A" },
-    { feedback: "No", isCorrect: false, text: "B" },
+    { feedback: "Yes", id: "option-a", isCorrect: true, text: "A" },
+    { feedback: "No", id: "option-b", isCorrect: false, text: "B" },
   ],
 };
 
@@ -78,8 +78,7 @@ function buildState(overrides: Partial<PlayerState> = {}): PlayerState {
 
 const multipleChoiceAnswer: SelectedAnswer = {
   kind: "multipleChoice",
-  selectedIndex: 0,
-  selectedText: "Option A",
+  selectedOptionId: "option-a",
 };
 
 describe(createInitialState, () => {
@@ -154,7 +153,7 @@ describe("SELECT_ANSWER", () => {
   test("overwrites previous answer for same step", () => {
     const state = buildState({
       selectedAnswers: {
-        "step-1": { kind: "multipleChoice", selectedIndex: 1, selectedText: "Option B" },
+        "step-1": { kind: "multipleChoice", selectedOptionId: "option-b" },
       },
     });
     const next = playerReducer(state, {
@@ -264,10 +263,10 @@ describe("CHECK_ANSWER", () => {
 
   test("story step enters feedback phase instead of auto-continuing", () => {
     const storyContent = {
-      choices: [
+      options: [
         {
           alignment: "strong" as const,
-          consequence: "Things improve.",
+          feedback: "Things improve.",
           id: "1a",
           metricEffects: [{ effect: "positive" as const, metric: "Production" }],
           stateImage: { prompt: "State after the strong choice" },
@@ -275,7 +274,7 @@ describe("CHECK_ANSWER", () => {
         },
         {
           alignment: "weak" as const,
-          consequence: "Things get worse.",
+          feedback: "Things get worse.",
           id: "1b",
           metricEffects: [{ effect: "negative" as const, metric: "Production" }],
           stateImage: { prompt: "State after the weak choice" },
@@ -848,8 +847,7 @@ describe("edge cases", () => {
     const step = buildMultipleChoiceStep({ id: "mc-1" });
     const answer: SelectedAnswer = {
       kind: "multipleChoice",
-      selectedIndex: 2,
-      selectedText: "Option C",
+      selectedOptionId: "option-c",
     };
     const state = buildState({ selectedAnswers: { "mc-1": answer }, steps: [step] });
     const next = playerReducer(state, {

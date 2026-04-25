@@ -67,10 +67,10 @@ function useQuestionText(experimentNumber: number): string {
 
 /**
  * Renders the evidence feedback shown after checking an action.
- * Shows the quality indicator, finding text, and a transition message
+ * Shows the quality indicator, feedback text, and a transition message
  * after the final experiment to prepare the learner for the call step.
  */
-type ActionItem = ActionContent["actions"][number];
+type ActionItem = ActionContent["options"][number];
 
 function ActionFeedback({
   action,
@@ -86,7 +86,7 @@ function ActionFeedback({
     <PlayerReadScene>
       <PlayerReadSceneTitle tone={quality.tone}>{quality.label}</PlayerReadSceneTitle>
 
-      <PlayerReadSceneBody>{action.finding}</PlayerReadSceneBody>
+      <PlayerReadSceneBody>{action.feedback}</PlayerReadSceneBody>
 
       {isLastExperiment && (
         <PlayerSupportingText>
@@ -102,7 +102,7 @@ function ActionFeedback({
  *
  * Before checking: shows available actions (used ones filtered out).
  * After checking: shows evidence feedback — quality indicator
- * and finding text for the selected action.
+ * and feedback text for the selected action.
  */
 export function InvestigationActionVariant({
   content,
@@ -120,19 +120,19 @@ export function InvestigationActionVariant({
   const { state } = usePlayerRuntime();
 
   const loop = state.investigationLoop;
-  const usedIds = loop?.usedActionIds ?? [];
+  const usedIds = loop?.usedOptionIds ?? [];
   const experimentNumber = usedIds.length;
-  const availableActions = getAvailableActions(content.actions, usedIds);
+  const availableActions = getAvailableActions(content.options, usedIds);
   const hasFeedback = result !== undefined;
 
   const questionText = useQuestionText(experimentNumber);
 
-  const selectedActionId =
+  const selectedOptionId =
     selectedAnswer?.kind === "investigation" && selectedAnswer.variant === "action"
-      ? selectedAnswer.selectedActionId
+      ? selectedAnswer.selectedOptionId
       : null;
 
-  const hasSelection = selectedActionId !== null;
+  const hasSelection = selectedOptionId !== null;
 
   const handleSelect = (index: number) => {
     if (hasFeedback) {
@@ -145,22 +145,22 @@ export function InvestigationActionVariant({
       return;
     }
 
-    if (selectedActionId === action.id) {
+    if (selectedOptionId === action.id) {
       onSelectAnswer(step.id, null);
       return;
     }
 
     onSelectAnswer(step.id, {
       kind: "investigation",
-      selectedActionId: action.id,
+      selectedOptionId: action.id,
       variant: "action",
     });
   };
 
   const selectedAction =
-    selectedActionId === null
+    selectedOptionId === null
       ? null
-      : (content.actions.find((a) => a.id === selectedActionId) ?? null);
+      : (content.options.find((a) => a.id === selectedOptionId) ?? null);
 
   if (hasFeedback && selectedAction) {
     return (
@@ -182,9 +182,9 @@ export function InvestigationActionVariant({
         keyboardEnabled={!hasFeedback}
         onSelect={handleSelect}
         options={availableActions.map((action) => ({
-          content: <PlayerChoiceSceneOptionText>{action.label}</PlayerChoiceSceneOptionText>,
-          isDimmed: hasSelection && selectedActionId !== action.id,
-          isSelected: selectedActionId === action.id,
+          content: <PlayerChoiceSceneOptionText>{action.text}</PlayerChoiceSceneOptionText>,
+          isDimmed: hasSelection && selectedOptionId !== action.id,
+          isSelected: selectedOptionId === action.id,
           key: action.id,
         }))}
       />

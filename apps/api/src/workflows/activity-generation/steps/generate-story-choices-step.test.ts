@@ -81,17 +81,17 @@ const mockStoryChoices = {
         {
           alignment: "strong",
           consequence: "Workers rally.",
-          label: "Address the team",
           metricEffects: [{ effect: "positive", metric: "Morale" }],
           stateImagePrompt:
             "Factory floor after the leader addresses the team and confidence returns",
+          text: "Address the team",
         },
         {
           alignment: "weak",
           consequence: "Rumors spread.",
-          label: "Send an email",
           metricEffects: [{ effect: "negative", metric: "Morale" }],
           stateImagePrompt: "Factory floor after a vague email leaves workers confused",
+          text: "Send an email",
         },
       ],
     },

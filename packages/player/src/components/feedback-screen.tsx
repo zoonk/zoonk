@@ -1,6 +1,7 @@
 "use client";
 
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
+import { parseStepContent } from "@zoonk/core/steps/contract/content";
 import { useExtracted } from "next-intl";
 import { type StepResult } from "../player-reducer";
 import { useReplaceName } from "../user-name-context";
@@ -21,9 +22,49 @@ function getArrangeWordsSelectedText(result: StepResult): string | null {
   return null;
 }
 
+/**
+ * Multiple-choice submissions store the option ID so shuffled options validate
+ * against the canonical content. The feedback screen still displays learner
+ * text, so it derives that text from the step content at render time.
+ */
+function getMultipleChoiceSelectedText(result: StepResult, step?: SerializedStep): string | null {
+  if (result.answer?.kind !== "multipleChoice" || step?.kind !== "multipleChoice") {
+    return null;
+  }
+
+  const { selectedOptionId } = result.answer;
+  const content = parseStepContent("multipleChoice", step.content);
+  return content.options.find((option) => option.id === selectedOptionId)?.text ?? null;
+}
+
+/**
+ * Translation answers use the same selectedOptionId shape as other option
+ * activities. The selected display text comes from the serialized option pool.
+ */
+function getTranslationSelectedText(result: StepResult, step?: SerializedStep): string | null {
+  if (result.answer?.kind !== "translation") {
+    return null;
+  }
+
+  const { selectedOptionId } = result.answer;
+  return step?.translationOptions.find((option) => option.id === selectedOptionId)?.word ?? null;
+}
+
+function getSelectedText(result: StepResult, step?: SerializedStep): string | null {
+  if (result.answer?.kind === "multipleChoice") {
+    return getMultipleChoiceSelectedText(result, step);
+  }
+
+  if (result.answer?.kind === "translation") {
+    return getTranslationSelectedText(result, step);
+  }
+
+  return getArrangeWordsSelectedText(result);
+}
+
 function getQuestionText(result: StepResult, step?: SerializedStep): string | null {
   if (result.answer?.kind === "translation") {
-    return result.answer.questionText;
+    return step?.word?.translation ?? null;
   }
 
   if (result.answer?.kind === "reading" && step?.sentence) {
@@ -58,10 +99,7 @@ function StandardFeedbackContent({ result, step }: { result: StepResult; step?: 
   const replaceName = useReplaceName();
   const { isCorrect, feedback: rawFeedback, correctAnswer } = result.result;
   const feedback = rawFeedback ? replaceName(rawFeedback) : null;
-  const selectedText =
-    result.answer?.kind === "multipleChoice" || result.answer?.kind === "translation"
-      ? result.answer.selectedText
-      : getArrangeWordsSelectedText(result);
+  const selectedText = getSelectedText(result, step);
   const questionText = getQuestionText(result, step);
   const rom = getFeedbackRomanization({
     correctAnswer,

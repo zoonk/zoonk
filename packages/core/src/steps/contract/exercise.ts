@@ -4,6 +4,7 @@ import { stepImageSchema } from "./image";
 const coreOptionSchema = z
   .object({
     feedback: z.string(),
+    id: z.string(),
     isCorrect: z.boolean(),
     text: z.string(),
   })
@@ -59,6 +60,7 @@ export const sortOrderContentSchema = z
 const selectImageOptionSchema = z
   .object({
     feedback: z.string(),
+    id: z.string(),
     isCorrect: z.boolean(),
     prompt: z.string(),
     url: z.string().optional(),

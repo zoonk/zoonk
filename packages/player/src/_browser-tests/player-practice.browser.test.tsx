@@ -42,11 +42,13 @@ describe("player browser integration: practice activities", () => {
               options: [
                 {
                   feedback: "Yes. Start with the shared pattern before blaming a random order.",
+                  id: "check-discounted-orders",
                   isCorrect: true,
                   text: "Check the discounted orders first",
                 },
                 {
                   feedback: "That skips the one pattern we already know matters.",
+                  id: "inspect-latest-order",
                   isCorrect: false,
                   text: "Ignore discounts and inspect the latest order",
                 },

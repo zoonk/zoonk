@@ -229,7 +229,7 @@ describe("computeActivityScore (investigation)", () => {
     });
   });
 
-  test("mixed actions: critical + useful + best call = 3/3 correct, +9 energy", () => {
+  test("mixed options: critical + useful + best call = 3/3 correct, +9 energy", () => {
     const result = computeActivityScore({
       investigation: {
         actionQualities: ["critical", "useful"],
@@ -313,17 +313,15 @@ describe(buildScoringInput, () => {
   test("returns story input when activity has story steps and answers", () => {
     const result = buildScoringInput({
       activityKind: "story",
-      answers: {
-        "1": { kind: "story", selectedChoiceId: "c1", selectedText: "Strong choice" },
-      },
+      answers: { "1": { kind: "story", selectedOptionId: "c1" } },
       stepResults: [],
       steps: [
         {
           content: {
-            choices: [
+            options: [
               {
                 alignment: "strong",
-                consequence: "Good",
+                feedback: "Good",
                 id: "c1",
                 metricEffects: [],
                 stateImage: { prompt: "State after the strong choice" },
@@ -331,7 +329,7 @@ describe(buildScoringInput, () => {
               },
               {
                 alignment: "weak",
-                consequence: "Bad",
+                feedback: "Bad",
                 id: "c2",
                 metricEffects: [],
                 stateImage: { prompt: "State after the weak choice" },
@@ -357,25 +355,25 @@ describe(buildScoringInput, () => {
     const result = buildScoringInput({
       activityKind: "investigation",
       answers: {
-        "call-1": { kind: "investigation", selectedExplanationId: "e1", variant: "call" },
+        "call-1": { kind: "investigation", selectedOptionId: "e1", variant: "call" },
       },
       investigationLoop: {
         actionTimings: [],
-        usedActionIds: ["a1"],
+        usedOptionIds: ["a1"],
       },
       stepResults: [],
       steps: [
         {
           content: {
-            actions: [
+            options: [
               {
-                finding: "Logs show memory climbing",
+                feedback: "Logs show memory climbing",
                 id: "a1",
-                label: "Check logs",
                 quality: "critical",
+                text: "Check logs",
               },
-              { finding: "Filler", id: "a2", label: "Filler 1", quality: "useful" },
-              { finding: "Filler", id: "a3", label: "Filler 2", quality: "weak" },
+              { feedback: "Filler", id: "a2", quality: "useful", text: "Filler 1" },
+              { feedback: "Filler", id: "a3", quality: "weak", text: "Filler 2" },
             ],
             variant: "action",
           },
@@ -384,7 +382,7 @@ describe(buildScoringInput, () => {
         },
         {
           content: {
-            explanations: [
+            options: [
               { accuracy: "best", feedback: "Correct!", id: "e1", text: "Memory leak" },
               { accuracy: "wrong", feedback: "Incorrect.", id: "e2", text: "Network" },
             ],
@@ -423,10 +421,10 @@ describe(buildScoringInput, () => {
       steps: [
         {
           content: {
-            choices: [
+            options: [
               {
                 alignment: "strong",
-                consequence: "Good",
+                feedback: "Good",
                 id: "c1",
                 metricEffects: [],
                 stateImage: { prompt: "State after the strong choice" },
@@ -434,7 +432,7 @@ describe(buildScoringInput, () => {
               },
               {
                 alignment: "weak",
-                consequence: "Bad",
+                feedback: "Bad",
                 id: "c2",
                 metricEffects: [],
                 stateImage: { prompt: "State after the weak choice" },

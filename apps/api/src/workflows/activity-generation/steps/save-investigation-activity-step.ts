@@ -63,11 +63,11 @@ function buildInvestigationStepRecords({
   const actionStep = {
     activityId,
     content: assertStepContent("investigation", {
-      actions: actions.actions.map((action, index) => ({
-        finding: findings.findings[index] ?? "",
+      options: actions.actions.map((action, index) => ({
+        feedback: findings.findings[index] ?? "",
         id: randomUUID(),
-        label: action.label,
         quality: action.quality,
+        text: action.text,
       })),
       variant: "action" as const,
     }),
@@ -79,7 +79,7 @@ function buildInvestigationStepRecords({
   const callStep = {
     activityId,
     content: assertStepContent("investigation", {
-      explanations,
+      options: explanations,
       variant: "call" as const,
     }),
     isPublished: true,

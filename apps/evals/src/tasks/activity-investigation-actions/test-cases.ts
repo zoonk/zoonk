@@ -9,7 +9,7 @@ EVALUATION CRITERIA:
 
 4. COVERAGE: Actions should cover different investigation angles — some that would confirm the best explanation, some that test alternatives, some tangential.
 
-5. LANGUAGE: All action labels must be in the specified language.
+5. LANGUAGE: All action text must be in the specified language.
 `;
 
 export const TEST_CASES = [

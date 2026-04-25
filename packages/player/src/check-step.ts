@@ -32,7 +32,7 @@ function checkMultipleChoice(step: SerializedStep, answer: SelectedAnswer): Chec
   }
 
   const content = parseStepContent("multipleChoice", step.content);
-  const result = checkMultipleChoiceAnswer(content, answer.selectedIndex);
+  const result = checkMultipleChoiceAnswer(content, answer.selectedOptionId);
 
   return { result };
 }
@@ -72,7 +72,7 @@ function checkSelectImage(step: SerializedStep, answer: SelectedAnswer): CheckSt
   }
 
   const content = parseStepContent("selectImage", step.content);
-  return { result: checkSelectImageAnswer(content, answer.selectedIndex) };
+  return { result: checkSelectImageAnswer(content, answer.selectedOptionId) };
 }
 
 function checkTranslationStep(step: SerializedStep, answer: SelectedAnswer): CheckStepResult {
@@ -85,7 +85,7 @@ function checkTranslationStep(step: SerializedStep, answer: SelectedAnswer): Che
   }
 
   return {
-    result: checkTranslationAnswer(step.word.id, answer.selectedWordId, step.word.word),
+    result: checkTranslationAnswer(step.word.id, answer.selectedOptionId, step.word.word),
   };
 }
 
@@ -169,7 +169,7 @@ function checkInvestigationActionStep(
   }
 
   return {
-    result: checkInvestigationActionAnswer(content, answer.selectedActionId),
+    result: checkInvestigationActionAnswer(content, answer.selectedOptionId),
   };
 }
 
@@ -185,7 +185,7 @@ function checkInvestigationCallStep(step: SerializedStep, answer: SelectedAnswer
   }
 
   return {
-    result: checkInvestigationCall(content, answer.selectedExplanationId),
+    result: checkInvestigationCall(content, answer.selectedOptionId),
   };
 }
 
@@ -196,7 +196,7 @@ function checkStory(step: SerializedStep, answer: SelectedAnswer): CheckStepResu
 
   const content = parseStepContent("story", step.content);
 
-  return { result: checkStoryAnswer(content, answer.selectedChoiceId) };
+  return { result: checkStoryAnswer(content, answer.selectedOptionId) };
 }
 
 const CHECKERS: Record<

@@ -4,29 +4,67 @@ import { assertStepContent } from "@zoonk/core/steps/contract/content";
 import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
+import { addOptionIds } from "./_utils/add-option-ids";
 import { type QuizQuestionWithUrls } from "./generate-quiz-images-step";
+
+type QuizQuestionInput = QuizQuestion | QuizQuestionWithUrls;
+
+/**
+ * Select-image answers are submitted by option ID so the player can shuffle
+ * images without making server validation depend on the rendered order.
+ */
+function addSelectImageOptionIds(question: Extract<QuizQuestionInput, { format: "selectImage" }>) {
+  return {
+    ...question,
+    options: addOptionIds({ options: question.options }),
+  };
+}
+
+/**
+ * Converts AI quiz output into the stored step contract. AI output stays lean,
+ * while the database contract carries runtime-only fields like image option IDs.
+ */
+function buildQuizStepContent(question: QuizQuestionInput) {
+  if (question.format === "multipleChoice") {
+    const { format, ...rawContent } = question;
+
+    return assertStepContent(format, {
+      ...rawContent,
+      kind: "core",
+      options: addOptionIds({ options: question.options }),
+    });
+  }
+
+  if (question.format === "selectImage") {
+    const { format, ...rawContent } = addSelectImageOptionIds(question);
+    return assertStepContent(format, rawContent);
+  }
+
+  const { format, ...rawContent } = question;
+
+  return assertStepContent(format, rawContent);
+}
 
 /**
  * Builds step records from quiz questions.
  * For multipleChoice questions, adds `kind: "core"` to the content.
  * The `format` field from AI output maps to the step `kind` in the DB.
  */
-function buildQuizStepRecords(
-  activityId: string,
-  questions: (QuizQuestion | QuizQuestionWithUrls)[],
-) {
+function buildQuizStepRecords({
+  activityId,
+  questions,
+}: {
+  activityId: string;
+  questions: QuizQuestionInput[];
+}) {
   return questions.map((question, index) => {
-    const { format, ...rawContent } = question;
-    const content =
-      format === "multipleChoice"
-        ? assertStepContent(format, { ...rawContent, kind: "core" })
-        : assertStepContent(format, rawContent);
+    const content = buildQuizStepContent(question);
 
     return {
       activityId,
       content,
       isPublished: true,
-      kind: format,
+      kind: question.format,
       position: index,
     };
   });
@@ -55,7 +93,7 @@ export async function saveQuizActivityStep({
 
   await stream.status({ status: "started", step: "saveQuizActivity" });
 
-  const stepRecords = buildQuizStepRecords(activityId, questions);
+  const stepRecords = buildQuizStepRecords({ activityId, questions });
 
   const { error } = await safeAsync(() =>
     prisma.$transaction([

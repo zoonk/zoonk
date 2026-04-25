@@ -14,7 +14,7 @@ import { PlayerFeedbackScene, PlayerFeedbackSceneMessage } from "./player-feedba
 import { PlayerReadSceneDivider, PlayerReadSceneMetaLabel } from "./player-read-scene";
 import { getStoryMetricValueClass } from "./story-metric-pill";
 
-type StoryChoice = StoryStepContent["choices"][number];
+type StoryOption = StoryStepContent["options"][number];
 
 type MetricDelta = {
   delta: number;
@@ -23,43 +23,37 @@ type MetricDelta = {
 };
 
 /**
- * Finds the selected choice by id because story choices are shuffled before
+ * Finds the selected option by id because story options are shuffled before
  * they reach the player. The rendered option index is only presentation state.
  */
-function getSelectedChoice({
+function getSelectedOption({
   content,
-  selectedChoiceId,
+  selectedOptionId,
 }: {
   content: StoryStepContent;
-  selectedChoiceId: string;
+  selectedOptionId: string;
 }) {
-  return content.choices.find((choice) => choice.id === selectedChoiceId) ?? null;
+  return content.options.find((option) => option.id === selectedOptionId) ?? null;
 }
 
 /**
- * Returns the immediate effect one choice had on a metric. Metrics that were
- * not touched by the selected choice still need a row in feedback so learners
+ * Returns the immediate effect one option had on a metric. Metrics that were
+ * not touched by the selected option still need a row in feedback so learners
  * keep the full story state in view.
  */
-function getChoiceMetricDelta({ choice, metric }: { choice: StoryChoice; metric: string }) {
-  const effect = choice.metricEffects.find((entry) => entry.metric === metric);
+function getOptionMetricDelta({ metric, option }: { metric: string; option: StoryOption }) {
+  const effect = option.metricEffects.find((entry) => entry.metric === metric);
   return effect ? EFFECT_DELTA_MAP[effect.effect] : 0;
 }
 
 /**
  * Computes a full metric snapshot for feedback. Every defined story metric is
- * shown, with changed metrics first so the consequence is easy to scan before
+ * shown, with changed metrics first so the feedback is easy to scan before
  * the unchanged state rows.
  */
-function getMetricDeltas({
-  choice,
-  metrics,
-}: {
-  choice: StoryChoice;
-  metrics: StoryMetric[];
-}): MetricDelta[] {
+function getMetricDeltas({ metrics, option }: { metrics: StoryMetric[]; option: StoryOption }) {
   const metricDeltas = metrics.map((entry) => ({
-    delta: getChoiceMetricDelta({ choice, metric: entry.metric }),
+    delta: getOptionMetricDelta({ metric: entry.metric, option }),
     metric: entry.metric,
     value: entry.value,
   }));
@@ -72,7 +66,7 @@ function getMetricDeltas({
 
 /**
  * Formats metric deltas once so the visual value and accessible row label stay
- * in sync. Positive effects need the plus sign because story choices can move
+ * in sync. Positive effects need the plus sign because story options can move
  * several metrics in different directions at the same time.
  */
 function formatMetricDelta(delta: number) {
@@ -105,8 +99,8 @@ function getMetricDeltaClass(delta: number) {
 }
 
 /**
- * Renders one consequence impact as a quiet row instead of another gameplay
- * pill. The delta answers "what did my choice do?", and the final value
+ * Renders one feedback impact as a quiet row instead of another gameplay
+ * pill. The delta answers "what did my option do?", and the final value
  * answers "where does that leave the story now?"
  */
 function MetricDeltaRow({ delta, metric, value }: MetricDelta) {
@@ -131,11 +125,11 @@ function MetricDeltaRow({ delta, metric, value }: MetricDelta) {
 }
 
 /**
- * Story-specific feedback screen showing the consequence narrative and
+ * Story-specific feedback screen showing the feedback narrative and
  * metric deltas.
  *
  * Intentionally omits correct/incorrect framing — in stories, the
- * consequence IS the feedback. There are no "Your answer" / "Correct answer"
+ * feedback IS the result. There are no "Your answer" / "Correct answer"
  * blocks, no green check or red X.
  */
 export function StoryFeedbackContent({
@@ -151,35 +145,35 @@ export function StoryFeedbackContent({
   const metricChangesLabel = t("Metric changes");
   const storyContent = step ? parseStepContent("story", step.content) : null;
   const answer = result.answer?.kind === "story" ? result.answer : null;
-  const selectedChoice =
+  const selectedOption =
     storyContent && answer
-      ? getSelectedChoice({ content: storyContent, selectedChoiceId: answer.selectedChoiceId })
+      ? getSelectedOption({ content: storyContent, selectedOptionId: answer.selectedOptionId })
       : null;
 
-  if (!answer || !selectedChoice) {
+  if (!answer || !selectedOption) {
     return null;
   }
 
-  const metricDeltas = getMetricDeltas({ choice: selectedChoice, metrics: getStoryMetrics(state) });
-  const consequence = result.result.feedback;
+  const metricDeltas = getMetricDeltas({ metrics: getStoryMetrics(state), option: selectedOption });
+  const feedback = result.result.feedback;
 
   return (
     <PlayerFeedbackScene>
       <ExpandableStepImageStage
         className="aspect-square w-full rounded-3xl"
         fit="contain"
-        image={selectedChoice.stateImage}
+        image={selectedOption.stateImage}
       />
 
       <div className="flex flex-col gap-3">
         <div className="flex min-w-0 flex-col gap-1">
           <p className="text-foreground text-sm font-medium sm:text-base">
-            {replaceName(answer.selectedText)}
+            {replaceName(selectedOption.text)}
           </p>
         </div>
 
-        {consequence && (
-          <PlayerFeedbackSceneMessage>{replaceName(consequence)}</PlayerFeedbackSceneMessage>
+        {feedback && (
+          <PlayerFeedbackSceneMessage>{replaceName(feedback)}</PlayerFeedbackSceneMessage>
         )}
       </div>
 

@@ -37,31 +37,31 @@ const problemContent = {
 };
 
 const actionContent = {
-  actions: [
+  options: [
     {
-      finding: "Logs show memory climbing",
+      feedback: "Logs show memory climbing",
       id: "a1",
-      label: "Check logs",
       quality: "critical" as const,
+      text: "Check logs",
     },
     {
-      finding: "Witness saw restart",
+      feedback: "Witness saw restart",
       id: "a2",
-      label: "Ask witness",
       quality: "useful" as const,
+      text: "Ask witness",
     },
     {
-      finding: "Nothing useful here",
+      feedback: "Nothing useful here",
       id: "a3",
-      label: "Random check",
       quality: "weak" as const,
+      text: "Random check",
     },
   ],
   variant: "action" as const,
 };
 
 const callContent = {
-  explanations: [
+  options: [
     {
       accuracy: "best" as const,
       feedback: "Correct — memory leak.",
@@ -126,9 +126,9 @@ describe("computeActivityScore (investigation)", () => {
 
 describe(getAvailableActions, () => {
   const actions = [
-    { id: "a1", label: "Check logs", quality: "critical" as const },
-    { id: "a2", label: "Ask witness", quality: "useful" as const },
-    { id: "a3", label: "Read docs", quality: "weak" as const },
+    { id: "a1", quality: "critical" as const, text: "Check logs" },
+    { id: "a2", quality: "useful" as const, text: "Ask witness" },
+    { id: "a3", quality: "weak" as const, text: "Read docs" },
   ];
 
   test("returns all actions when none used", () => {
@@ -143,7 +143,7 @@ describe(getAvailableActions, () => {
     const available = getAvailableActions(actions, ["a1", "a3"]);
     expect(available).toHaveLength(1);
     expect(available[0]?.id).toBe("a2");
-    expect(available[0]?.label).toBe("Ask witness");
+    expect(available[0]?.text).toBe("Ask witness");
   });
 
   test("returns empty when all actions used", () => {
@@ -175,15 +175,15 @@ describe(getInvestigationStepByVariant, () => {
 describe("server/client agreement after shuffling", () => {
   test("action correctness is the same regardless of array order", () => {
     const original = {
-      actions: [
-        { finding: "F1", id: "a-critical", label: "Critical action", quality: "critical" as const },
-        { finding: "F2", id: "a-useful", label: "Useful action", quality: "useful" as const },
-        { finding: "F3", id: "a-weak", label: "Weak action", quality: "weak" as const },
+      options: [
+        { feedback: "F1", id: "a-critical", quality: "critical" as const, text: "Critical action" },
+        { feedback: "F2", id: "a-useful", quality: "useful" as const, text: "Useful action" },
+        { feedback: "F3", id: "a-weak", quality: "weak" as const, text: "Weak action" },
       ],
       variant: "action" as const,
     };
 
-    const shuffled = { ...original, actions: shuffle(original.actions) };
+    const shuffled = { ...original, options: shuffle(original.options) };
 
     // Pick the weak action from the shuffled array by ID
     const resultFromShuffled = checkInvestigationAction(shuffled, "a-weak");
@@ -196,14 +196,14 @@ describe("server/client agreement after shuffling", () => {
 
   test("explanation correctness is the same regardless of array order", () => {
     const original = {
-      explanations: [
+      options: [
         { accuracy: "best" as const, feedback: "Correct!", id: "e-best", text: "Best" },
         { accuracy: "wrong" as const, feedback: "Wrong.", id: "e-wrong", text: "Wrong" },
       ],
       variant: "call" as const,
     };
 
-    const shuffled = { ...original, explanations: shuffle(original.explanations) };
+    const shuffled = { ...original, options: shuffle(original.options) };
 
     const resultFromShuffled = checkInvestigationCall(shuffled, "e-best");
     const resultFromOriginal = checkInvestigationCall(original, "e-best");
@@ -218,7 +218,7 @@ describe("investigation content schema validation", () => {
   test("rejects action content with fewer than 2 actions", () => {
     expect(() =>
       parseStepContent("investigation", {
-        actions: [{ finding: "F1", id: "a1", label: "Action 1", quality: "critical" }],
+        options: [{ feedback: "F1", id: "a1", quality: "critical", text: "Action 1" }],
         variant: "action",
       }),
     ).toThrow();
@@ -226,9 +226,9 @@ describe("investigation content schema validation", () => {
 
   test("accepts action content with exactly 2 actions", () => {
     const result = parseStepContent("investigation", {
-      actions: [
-        { finding: "F1", id: "a1", label: "Action 1", quality: "critical" },
-        { finding: "F2", id: "a2", label: "Action 2", quality: "useful" },
+      options: [
+        { feedback: "F1", id: "a1", quality: "critical", text: "Action 1" },
+        { feedback: "F2", id: "a2", quality: "useful", text: "Action 2" },
       ],
       variant: "action",
     });
@@ -236,7 +236,7 @@ describe("investigation content schema validation", () => {
     expect(result.variant).toBe("action");
 
     if (result.variant === "action") {
-      expect(result.actions).toHaveLength(2);
+      expect(result.options).toHaveLength(2);
     }
   });
 });

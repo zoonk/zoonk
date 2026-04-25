@@ -21,9 +21,9 @@ const storyOutcomeSchemaShape = {
 const storyChoiceSchema = z.object({
   alignment: storyAlignmentSchema,
   consequence: z.string(),
-  label: z.string(),
   metricEffects: z.array(z.object({ effect: storyMetricEffectSchema, metric: z.string() })).min(1),
   stateImagePrompt: z.string().min(1),
+  text: z.string(),
 });
 
 const storyStepPlanSchema = z.object({

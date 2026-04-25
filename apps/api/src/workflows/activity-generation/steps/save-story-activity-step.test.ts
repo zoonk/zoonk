@@ -12,9 +12,9 @@ import { saveStoryActivityStep } from "./save-story-activity-step";
 
 const writeMock = vi.fn().mockResolvedValue(null);
 
-type StepContentWithChoices = {
-  choices?: { id?: string; text?: string }[];
+type StepContentWithOptions = {
   image?: { url?: string };
+  options?: { id?: string; text?: string }[];
 };
 
 type StepContentWithImage = {
@@ -75,16 +75,16 @@ const storyData = {
         {
           alignment: "strong" as const,
           consequence: "Workers rally behind you.",
-          label: "Address the team directly",
           metricEffects: [{ effect: "positive" as const, metric: "Morale" }],
           stateImagePrompt: "Factory floor after a direct address calms the team",
+          text: "Address the team directly",
         },
         {
           alignment: "weak" as const,
           consequence: "Rumors spread.",
-          label: "Send an email",
           metricEffects: [{ effect: "negative" as const, metric: "Morale" }],
           stateImagePrompt: "Factory floor after a vague email leaves workers confused",
+          text: "Send an email",
         },
       ],
       imagePrompt: "Factory floor with halted lines and empty parts bins",
@@ -95,20 +95,20 @@ const storyData = {
         {
           alignment: "partial" as const,
           consequence: "Reasonable alternative found.",
-          label: "Contact backup suppliers",
           metricEffects: [{ effect: "positive" as const, metric: "Production" }],
           stateImagePrompt: "Temporary supply shipment arriving at the factory loading dock",
+          text: "Contact backup suppliers",
         },
         {
           alignment: "strong" as const,
           consequence: "Innovation emerges.",
-          label: "Redesign the product",
           metricEffects: [
             { effect: "positive" as const, metric: "Production" },
             { effect: "positive" as const, metric: "Cash" },
           ],
           stateImagePrompt:
             "Factory team adapting the product with new materials and renewed momentum",
+          text: "Redesign the product",
         },
       ],
       imagePrompt: "Production area paused while engineers debate how to proceed without parts",
@@ -215,7 +215,7 @@ describe(saveStoryActivityStep, () => {
     const secondDecisionStep = dbSteps[2]!;
     const outcomeStep = dbSteps[3]!;
     const introContent = introStep.content as StepContentWithImage;
-    const firstDecisionContent = firstDecisionStep.content as StepContentWithChoices;
+    const firstDecisionContent = firstDecisionStep.content as StepContentWithOptions;
     const outcomeContent = outcomeStep.content as StepContentWithOutcomes;
 
     // 1 intro + 2 decision steps + 1 outcome = 4
@@ -233,11 +233,11 @@ describe(saveStoryActivityStep, () => {
     expect(firstDecisionStep.kind).toBe("story");
     expect(firstDecisionStep.position).toBe(1);
     expect(firstDecisionContent.image?.url).toBe("https://example.com/step-1.webp");
-    expect(firstDecisionContent.choices?.map((choice) => choice.id)).toEqual([
+    expect(firstDecisionContent.options?.map((choice) => choice.id)).toEqual([
       expect.stringMatching(uuidPattern),
       expect.stringMatching(uuidPattern),
     ]);
-    expect(firstDecisionContent.choices?.map((choice) => choice.text)).toEqual([
+    expect(firstDecisionContent.options?.map((choice) => choice.text)).toEqual([
       "Address the team directly",
       "Send an email",
     ]);

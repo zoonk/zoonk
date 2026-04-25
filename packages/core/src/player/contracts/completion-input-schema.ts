@@ -22,8 +22,7 @@ const matchColumnsAnswerSchema = z.object({
 
 const multipleChoiceAnswerSchema = z.object({
   kind: z.literal("multipleChoice"),
-  selectedIndex: z.number(),
-  selectedText: z.string(),
+  selectedOptionId: z.string(),
 });
 
 const readingAnswerSchema = z.object({
@@ -33,7 +32,7 @@ const readingAnswerSchema = z.object({
 
 const selectImageAnswerSchema = z.object({
   kind: z.literal("selectImage"),
-  selectedIndex: z.number(),
+  selectedOptionId: z.string(),
 });
 
 const sortOrderAnswerSchema = z.object({
@@ -43,15 +42,12 @@ const sortOrderAnswerSchema = z.object({
 
 const storyAnswerSchema = z.object({
   kind: z.literal("story"),
-  selectedChoiceId: z.string(),
-  selectedText: z.string(),
+  selectedOptionId: z.string(),
 });
 
 const translationAnswerSchema = z.object({
   kind: z.literal("translation"),
-  questionText: z.string(),
-  selectedText: z.string(),
-  selectedWordId: z.string(),
+  selectedOptionId: z.string(),
 });
 
 const investigationProblemAnswerSchema = z.object({
@@ -61,13 +57,13 @@ const investigationProblemAnswerSchema = z.object({
 
 const investigationActionAnswerSchema = z.object({
   kind: z.literal("investigation"),
-  selectedActionId: z.string(),
+  selectedOptionId: z.string(),
   variant: z.literal("action"),
 });
 
 const investigationCallAnswerSchema = z.object({
   kind: z.literal("investigation"),
-  selectedExplanationId: z.string(),
+  selectedOptionId: z.string(),
   variant: z.literal("call"),
 });
 
@@ -107,7 +103,7 @@ const stepTimingSchema = z.object({
  */
 const investigationLoopSchema = z.object({
   actionTimings: z.array(stepTimingSchema).default([]),
-  usedActionIds: z.array(z.string()),
+  usedOptionIds: z.array(z.string()),
 });
 
 export const completionInputSchema = z.object({

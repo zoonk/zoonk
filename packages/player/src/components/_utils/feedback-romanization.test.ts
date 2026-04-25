@@ -133,9 +133,7 @@ describe(getFeedbackRomanization, () => {
     it("returns word romanization on correct translation answer", () => {
       const result = buildResult({
         kind: "translation",
-        questionText: "hello",
-        selectedText: "こんにちは",
-        selectedWordId: "w-1",
+        selectedOptionId: "w-1",
       });
       const step = buildStep({ wordRomanization: "konnichiwa" });
 
@@ -153,9 +151,7 @@ describe(getFeedbackRomanization, () => {
     it("returns null when word romanization matches selected text (dedup)", () => {
       const result = buildResult({
         kind: "translation",
-        questionText: "hello",
-        selectedText: "konnichiwa",
-        selectedWordId: "w-1",
+        selectedOptionId: "w-1",
       });
       const step = buildStep({ wordRomanization: "konnichiwa" });
 
@@ -173,9 +169,7 @@ describe(getFeedbackRomanization, () => {
     it("returns word romanization on wrong translation's correct answer line", () => {
       const result = buildResult({
         kind: "translation",
-        questionText: "hello",
-        selectedText: "さようなら",
-        selectedWordId: "w-2",
+        selectedOptionId: "w-2",
       });
       const step = buildStep({ wordRomanization: "konnichiwa" });
 
@@ -193,9 +187,7 @@ describe(getFeedbackRomanization, () => {
     it("returns null wrongReading when word romanization matches correct answer (dedup)", () => {
       const result = buildResult({
         kind: "translation",
-        questionText: "hello",
-        selectedText: "wrong",
-        selectedWordId: "w-2",
+        selectedOptionId: "w-2",
       });
       const step = buildStep({ wordRomanization: "konnichiwa" });
 
@@ -203,7 +195,7 @@ describe(getFeedbackRomanization, () => {
         correctAnswer: "konnichiwa",
         questionText: "hello",
         result,
-        selectedText: "wrong",
+        selectedText: "さようなら",
         step,
       });
 
@@ -213,9 +205,7 @@ describe(getFeedbackRomanization, () => {
     it("returns null for translate field (only used by listening)", () => {
       const result = buildResult({
         kind: "translation",
-        questionText: "hello",
-        selectedText: "こんにちは",
-        selectedWordId: "w-1",
+        selectedOptionId: "w-1",
       });
       const step = buildStep({ wordRomanization: "konnichiwa" });
 
@@ -233,9 +223,7 @@ describe(getFeedbackRomanization, () => {
     it("returns null when step has no word", () => {
       const result = buildResult({
         kind: "translation",
-        questionText: "hello",
-        selectedText: "こんにちは",
-        selectedWordId: "w-1",
+        selectedOptionId: "w-1",
       });
       const step = buildStep();
 
@@ -291,7 +279,7 @@ describe(getFeedbackRomanization, () => {
         correctAnswer: "world",
         questionText: "こんにちは",
         result,
-        selectedText: "hello",
+        selectedText: null,
         step,
       });
 
@@ -304,8 +292,7 @@ describe(getFeedbackRomanization, () => {
     it("returns null for all fields", () => {
       const result = buildResult({
         kind: "multipleChoice",
-        selectedIndex: 0,
-        selectedText: "option A",
+        selectedOptionId: "option-a",
       });
       const step = buildStep({ sentenceRomanization: "romaji", wordRomanization: "romaji" });
 
@@ -313,7 +300,7 @@ describe(getFeedbackRomanization, () => {
         correctAnswer: null,
         questionText: null,
         result,
-        selectedText: "option A",
+        selectedText: null,
         step,
       });
 

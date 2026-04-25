@@ -25,7 +25,7 @@ describe(submitActivityCompletion, () => {
 
   function stepResult(isCorrect: boolean) {
     return {
-      answer: { kind: "multipleChoice", selectedIndex: 0 },
+      answer: { kind: "multipleChoice", selectedOptionId: "a" },
       answeredAt: new Date(),
       dayOfWeek: 1,
       durationSeconds: 5,
@@ -53,8 +53,8 @@ describe(submitActivityCompletion, () => {
       content: {
         kind: "core",
         options: [
-          { feedback: "Correct!", isCorrect: true, text: "A" },
-          { feedback: "Wrong.", isCorrect: false, text: "B" },
+          { feedback: "Correct!", id: "a", isCorrect: true, text: "A" },
+          { feedback: "Wrong.", id: "b", isCorrect: false, text: "B" },
         ],
       },
       kind: "multipleChoice",

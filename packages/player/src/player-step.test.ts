@@ -51,7 +51,7 @@ describe(describePlayerStep, () => {
     const descriptor = describePlayerStep(
       buildStep({
         content: {
-          explanations: [
+          options: [
             {
               accuracy: "best" as const,
               feedback: "Correct",
@@ -85,7 +85,7 @@ describe(describePlayerStep, () => {
         content: {
           image,
           kind: "core" as const,
-          options: [{ feedback: "Correct", isCorrect: true, text: "A" }],
+          options: [{ feedback: "Correct", id: "A", isCorrect: true, text: "A" }],
           question: "Choose",
         },
         kind: "multipleChoice",

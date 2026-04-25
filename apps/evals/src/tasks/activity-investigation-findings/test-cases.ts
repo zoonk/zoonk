@@ -23,28 +23,28 @@ export const TEST_CASES = [
       actions: {
         actions: [
           {
-            label: "Check where the delay happens between the user's browser and the app",
             quality: "critical",
+            text: "Check where the delay happens between the user's browser and the app",
           },
           {
-            label: "Compare the path requests take from the slow region versus a normal region",
             quality: "critical",
+            text: "Compare the path requests take from the slow region versus a normal region",
           },
           {
-            label: "Review network device records for dropped or delayed traffic on that route",
             quality: "useful",
+            text: "Review network device records for dropped or delayed traffic on that route",
           },
           {
-            label: "Look for signs that replies are being sent back the wrong way and retried",
             quality: "useful",
+            text: "Look for signs that replies are being sent back the wrong way and retried",
           },
           {
-            label: "Test page loads from several places outside the data center",
             quality: "useful",
+            text: "Test page loads from several places outside the data center",
           },
           {
-            label: "Recheck one busy app server just in case it's slowing every request",
             quality: "weak",
+            text: "Recheck one busy app server just in case it's slowing every request",
           },
         ],
       },
@@ -75,22 +75,22 @@ ${SHARED_EXPECTATIONS}
       actions: {
         actions: [
           {
-            label: "Ver onde os campos vazios ou inválidos entram nas contas",
             quality: "critical",
+            text: "Ver onde os campos vazios ou inválidos entram nas contas",
           },
-          { label: "Refazer o caminho dos dados nos relatórios com problema", quality: "critical" },
+          { quality: "critical", text: "Refazer o caminho dos dados nos relatórios com problema" },
           {
-            label: "Comparar pedidos aprovados, bloqueados e não avaliados para achar um padrão",
             quality: "useful",
+            text: "Comparar pedidos aprovados, bloqueados e não avaliados para achar um padrão",
           },
-          { label: "Checar em que etapa os números passam a ficar sem sentido", quality: "useful" },
+          { quality: "useful", text: "Checar em que etapa os números passam a ficar sem sentido" },
           {
-            label: "Revisar as regras que escolhem quais pedidos vão para revisão",
             quality: "useful",
+            text: "Revisar as regras que escolhem quais pedidos vão para revisão",
           },
           {
-            label: "Olhar se houve mudança recente na troca de dados com outro sistema",
             quality: "weak",
+            text: "Olhar se houve mudança recente na troca de dados com outro sistema",
           },
         ],
       },
@@ -121,29 +121,28 @@ ${SHARED_EXPECTATIONS}
       actions: {
         actions: [
           {
-            label: "Revisar qué reactivo se usó y si era más fuerte de lo normal",
             quality: "critical",
+            text: "Revisar qué reactivo se usó y si era más fuerte de lo normal",
           },
           {
-            label: "Mirar en qué momento la mezcla debió parar y si siguió cambiando después",
             quality: "critical",
+            text: "Mirar en qué momento la mezcla debió parar y si siguió cambiando después",
           },
           {
-            label:
-              "Comparar los compuestos inesperados con los que aparecen cuando la reacción se pasa de largo",
             quality: "useful",
+            text: "Comparar los compuestos inesperados con los que aparecen cuando la reacción se pasa de largo",
           },
           {
-            label: "Revisar si la transformación podía ocurrir en más de un lugar de la molécula",
             quality: "useful",
+            text: "Revisar si la transformación podía ocurrir en más de un lugar de la molécula",
           },
           {
-            label: "Ver cómo se preparó el intermedio o paso previo en esta corrida",
             quality: "useful",
+            text: "Ver cómo se preparó el intermedio o paso previo en esta corrida",
           },
           {
-            label: "Comprobar si alguna materia prima venía con una impureza pequeña",
             quality: "weak",
+            text: "Comprobar si alguna materia prima venía con una impureza pequeña",
           },
         ],
       },
@@ -170,25 +169,25 @@ ${SHARED_EXPECTATIONS}
       actions: {
         actions: [
           {
-            label: "Compare this fall's sales trend with the rest of the market",
             quality: "critical",
+            text: "Compare this fall's sales trend with the rest of the market",
           },
           {
-            label: "Check whether older stores are dropping in the same pattern as the new ones",
             quality: "critical",
+            text: "Check whether older stores are dropping in the same pattern as the new ones",
           },
-          { label: "Review what made the first half unusually strong", quality: "useful" },
+          { quality: "useful", text: "Review what made the first half unusually strong" },
           {
-            label: "Look at competitor openings and promo activity in those cities",
             quality: "useful",
+            text: "Look at competitor openings and promo activity in those cities",
           },
           {
-            label: "Check if key products were out of stock when sales started falling",
             quality: "useful",
+            text: "Check if key products were out of stock when sales started falling",
           },
           {
-            label: "Walk through store layout and staffing at the weakest new locations",
             quality: "weak",
+            text: "Walk through store layout and staffing at the weakest new locations",
           },
         ],
       },
@@ -219,32 +218,28 @@ ${SHARED_EXPECTATIONS}
       actions: {
         actions: [
           {
-            label: "Ver por onde os pedidos problemáticos estão passando em cada etapa da compra",
             quality: "critical",
+            text: "Ver por onde os pedidos problemáticos estão passando em cada etapa da compra",
           },
           {
-            label:
-              "Comparar pedidos que deram certo com os que ficaram pela metade depois da mudança recente",
             quality: "critical",
+            text: "Comparar pedidos que deram certo com os que ficaram pela metade depois da mudança recente",
           },
           {
-            label:
-              "Revisar quando o caminho novo começou a receber pedidos e o que mudou nesse momento",
             quality: "useful",
+            text: "Revisar quando o caminho novo começou a receber pedidos e o que mudou nesse momento",
           },
           {
-            label:
-              "Checar se partes diferentes estão mostrando dados diferentes para o mesmo pedido ou cliente",
             quality: "useful",
+            text: "Checar se partes diferentes estão mostrando dados diferentes para o mesmo pedido ou cliente",
           },
           {
-            label:
-              "Observar se há acúmulo de espera ou travas na conversa entre as partes do sistema",
             quality: "useful",
+            text: "Observar se há acúmulo de espera ou travas na conversa entre as partes do sistema",
           },
           {
-            label: "Olhar o volume de acessos dos últimos dias para ver se houve pico de uso",
             quality: "weak",
+            text: "Olhar o volume de acessos dos últimos dias para ver se houve pico de uso",
           },
         ],
       },
@@ -271,33 +266,28 @@ ${SHARED_EXPECTATIONS}
       actions: {
         actions: [
           {
-            label:
-              "Check whether local labs had enough trained people to run production safely at full speed",
             quality: "critical",
+            text: "Check whether local labs had enough trained people to run production safely at full speed",
           },
           {
-            label:
-              "Look at whether the labs already had working step-by-step routines that could be repeated on a larger scale",
             quality: "critical",
+            text: "Look at whether the labs already had working step-by-step routines that could be repeated on a larger scale",
           },
           {
-            label:
-              "Review how much the country was relying on imported doses when outside shipments slowed down",
             quality: "useful",
+            text: "Review how much the country was relying on imported doses when outside shipments slowed down",
           },
           {
-            label:
-              "Trace how information and materials moved between research centers, factories, and clinics",
             quality: "useful",
+            text: "Trace how information and materials moved between research centers, factories, and clinics",
           },
           {
-            label:
-              "Compare planned dose output with what local facilities had actually produced before the outbreak",
             quality: "useful",
+            text: "Compare planned dose output with what local facilities had actually produced before the outbreak",
           },
           {
-            label: "Look over public arguments and purchasing delays between officials",
             quality: "weak",
+            text: "Look over public arguments and purchasing delays between officials",
           },
         ],
       },

@@ -4,8 +4,8 @@ import { validateAnswers } from "./validate-answers";
 const coreMultipleChoiceContent = {
   kind: "core" as const,
   options: [
-    { feedback: "Correct!", isCorrect: true, text: "Option A" },
-    { feedback: "Wrong.", isCorrect: false, text: "Option B" },
+    { feedback: "Correct!", id: "option-a", isCorrect: true, text: "Option A" },
+    { feedback: "Wrong.", id: "option-b", isCorrect: false, text: "Option B" },
   ],
 };
 
@@ -21,7 +21,7 @@ describe(validateAnswers, () => {
     const steps = [{ content: coreMultipleChoiceContent, id: "1", kind: "multipleChoice" }];
 
     const results = validateAnswers(steps, {
-      "1": { kind: "multipleChoice", selectedIndex: 0, selectedText: "Option A" },
+      "1": { kind: "multipleChoice", selectedOptionId: "option-a" },
     });
 
     expect(results).toHaveLength(1);
@@ -33,7 +33,7 @@ describe(validateAnswers, () => {
     const steps = [{ content: coreMultipleChoiceContent, id: "1", kind: "multipleChoice" }];
 
     const results = validateAnswers(steps, {
-      "1": { kind: "multipleChoice", selectedIndex: 1, selectedText: "Option B" },
+      "1": { kind: "multipleChoice", selectedOptionId: "option-b" },
     });
 
     expect(results).toHaveLength(1);
@@ -58,7 +58,7 @@ describe(validateAnswers, () => {
     ];
 
     const results = validateAnswers(steps, {
-      "1": { kind: "multipleChoice", selectedIndex: 0, selectedText: "Option A" },
+      "1": { kind: "multipleChoice", selectedOptionId: "option-a" },
     });
 
     expect(results).toHaveLength(1);
@@ -76,12 +76,7 @@ describe(validateAnswers, () => {
     ];
 
     const results = validateAnswers(steps, {
-      "4": {
-        kind: "translation",
-        questionText: "palabra",
-        selectedText: "word",
-        selectedWordId: "100",
-      },
+      "4": { kind: "translation", selectedOptionId: "100" },
     });
 
     expect(results).toHaveLength(1);
@@ -99,12 +94,7 @@ describe(validateAnswers, () => {
     ];
 
     const results = validateAnswers(steps, {
-      "4": {
-        kind: "translation",
-        questionText: "palabra",
-        selectedText: "wrong",
-        selectedWordId: "999",
-      },
+      "4": { kind: "translation", selectedOptionId: "999" },
     });
 
     expect(results).toHaveLength(1);
@@ -233,10 +223,10 @@ describe(validateAnswers, () => {
 
   test("validates story strong choice as correct", () => {
     const storyContent = {
-      choices: [
+      options: [
         {
           alignment: "strong",
-          consequence: "Things improve.",
+          feedback: "Things improve.",
           id: "1a",
           metricEffects: [{ effect: "positive", metric: "Production" }],
           stateImage: { prompt: "State after the strong choice" },
@@ -244,7 +234,7 @@ describe(validateAnswers, () => {
         },
         {
           alignment: "weak",
-          consequence: "Things get worse.",
+          feedback: "Things get worse.",
           id: "1b",
           metricEffects: [{ effect: "negative", metric: "Production" }],
           stateImage: { prompt: "State after the weak choice" },
@@ -256,9 +246,7 @@ describe(validateAnswers, () => {
 
     const steps = [{ content: storyContent, id: "8", kind: "story" }];
 
-    const results = validateAnswers(steps, {
-      "8": { kind: "story", selectedChoiceId: "1a", selectedText: "Do the right thing" },
-    });
+    const results = validateAnswers(steps, { "8": { kind: "story", selectedOptionId: "1a" } });
 
     expect(results).toHaveLength(1);
     expect(results[0]?.isCorrect).toBe(true);
@@ -266,10 +254,10 @@ describe(validateAnswers, () => {
 
   test("validates story weak choice as incorrect", () => {
     const storyContent = {
-      choices: [
+      options: [
         {
           alignment: "strong",
-          consequence: "Things improve.",
+          feedback: "Things improve.",
           id: "1a",
           metricEffects: [{ effect: "positive", metric: "Production" }],
           stateImage: { prompt: "State after the strong choice" },
@@ -277,7 +265,7 @@ describe(validateAnswers, () => {
         },
         {
           alignment: "weak",
-          consequence: "Things get worse.",
+          feedback: "Things get worse.",
           id: "1b",
           metricEffects: [{ effect: "negative", metric: "Production" }],
           stateImage: { prompt: "State after the weak choice" },
@@ -289,9 +277,7 @@ describe(validateAnswers, () => {
 
     const steps = [{ content: storyContent, id: "8", kind: "story" }];
 
-    const results = validateAnswers(steps, {
-      "8": { kind: "story", selectedChoiceId: "1b", selectedText: "Do the wrong thing" },
-    });
+    const results = validateAnswers(steps, { "8": { kind: "story", selectedOptionId: "1b" } });
 
     expect(results).toHaveLength(1);
     expect(results[0]?.isCorrect).toBe(false);
@@ -299,10 +285,10 @@ describe(validateAnswers, () => {
 
   test("story validator returns empty for wrong answer kind", () => {
     const storyContent = {
-      choices: [
+      options: [
         {
           alignment: "strong",
-          consequence: "Things improve.",
+          feedback: "Things improve.",
           id: "1a",
           metricEffects: [{ effect: "positive", metric: "Production" }],
           stateImage: { prompt: "State after the strong choice" },
@@ -310,7 +296,7 @@ describe(validateAnswers, () => {
         },
         {
           alignment: "weak",
-          consequence: "Things get worse.",
+          feedback: "Things get worse.",
           id: "1b",
           metricEffects: [{ effect: "negative", metric: "Production" }],
           stateImage: { prompt: "State after the weak choice" },
@@ -323,7 +309,7 @@ describe(validateAnswers, () => {
     const steps = [{ content: storyContent, id: "9", kind: "story" }];
 
     const results = validateAnswers(steps, {
-      "9": { kind: "multipleChoice", selectedIndex: 0, selectedText: "Option A" },
+      "9": { kind: "multipleChoice", selectedOptionId: "option-a" },
     });
 
     expect(results).toHaveLength(0);
@@ -333,7 +319,7 @@ describe(validateAnswers, () => {
     const steps = [{ content: {}, id: "7", kind: "unknownKind" }];
 
     const results = validateAnswers(steps, {
-      "7": { kind: "multipleChoice", selectedIndex: 0, selectedText: "Option A" },
+      "7": { kind: "multipleChoice", selectedOptionId: "option-a" },
     });
 
     expect(results).toHaveLength(0);
@@ -362,15 +348,15 @@ describe(validateAnswers, () => {
     const steps = [
       {
         content: {
-          actions: [
+          options: [
             {
-              finding: "Logs show memory climbing",
+              feedback: "Logs show memory climbing",
               id: "a1",
-              label: "Check logs",
               quality: "critical",
+              text: "Check logs",
             },
-            { finding: "Filler", id: "a2", label: "Filler 1", quality: "useful" },
-            { finding: "Filler", id: "a3", label: "Filler 2", quality: "weak" },
+            { feedback: "Filler", id: "a2", quality: "useful", text: "Filler 1" },
+            { feedback: "Filler", id: "a3", quality: "weak", text: "Filler 2" },
           ],
           variant: "action",
         },
@@ -382,7 +368,7 @@ describe(validateAnswers, () => {
     const results = validateAnswers(steps, {
       "11": {
         kind: "investigation",
-        selectedActionId: "a1",
+        selectedOptionId: "a1",
         variant: "action",
       },
     });
@@ -394,7 +380,7 @@ describe(validateAnswers, () => {
     const steps = [
       {
         content: {
-          explanations: [
+          options: [
             { accuracy: "best", feedback: "Correct!", id: "e1", text: "Memory leak" },
             { accuracy: "wrong", feedback: "Incorrect.", id: "e2", text: "Network failure" },
           ],
@@ -406,7 +392,7 @@ describe(validateAnswers, () => {
     ];
 
     const results = validateAnswers(steps, {
-      "14": { kind: "investigation", selectedExplanationId: "e1", variant: "call" },
+      "14": { kind: "investigation", selectedOptionId: "e1", variant: "call" },
     });
 
     expect(results).toHaveLength(1);
@@ -417,7 +403,7 @@ describe(validateAnswers, () => {
     const steps = [
       {
         content: {
-          explanations: [
+          options: [
             { accuracy: "best", feedback: "Correct!", id: "e1", text: "Memory leak" },
             { accuracy: "wrong", feedback: "Incorrect.", id: "e2", text: "Network failure" },
           ],
@@ -429,7 +415,7 @@ describe(validateAnswers, () => {
     ];
 
     const results = validateAnswers(steps, {
-      "15": { kind: "investigation", selectedExplanationId: "e2", variant: "call" },
+      "15": { kind: "investigation", selectedOptionId: "e2", variant: "call" },
     });
 
     expect(results).toHaveLength(1);

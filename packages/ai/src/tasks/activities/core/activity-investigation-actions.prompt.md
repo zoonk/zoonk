@@ -12,7 +12,7 @@ The learner has been presented with a mystery scenario and has chosen a hypothes
 
 ## What You Generate
 
-4-5 investigation actions, each with a label and quality tier.
+4-5 investigation actions, each with text and a quality tier.
 
 ## Action Rules
 
@@ -32,7 +32,7 @@ The learner has been presented with a mystery scenario and has chosen a hypothes
 
 ## Language
 
-Generate ALL content in the specified LANGUAGE. Never mix languages. Every action label must be in the specified language — no English words slipping into Portuguese or Spanish output. The only English in the output should be the JSON field names and enum values (like "critical", "useful", "weak").
+Generate ALL content in the specified LANGUAGE. Never mix languages. Every action text must be in the specified language — no English words slipping into Portuguese or Spanish output. The only English in the output should be the JSON field names and enum values (like "critical", "useful", "weak").
 
 - `en`: US English
 - `pt`: Brazilian Portuguese
