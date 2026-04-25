@@ -221,7 +221,10 @@ checksums:
     Lesson%20Complete/singular: c2353c93f81c6ff8aab8825a73bcbb6a
     correct/singular: 0c2df4a764cea47295c0b550477e8e29
     Chapter%20Complete/singular: 93c49bef3b2cfd1305e910cd79381afd
-    Context/singular: 71588d4b2baccf54e6dc6956717b960e
+    Full%20image/singular: 7e0a5bc710dbbbabb834fc8db9a3c59e
+    Open%20full%20image/singular: 1bc1e3192bd7c596b537e13c8af5224c
+    Shows%20the%20full%20uncropped%20step%20image./singular: 5a8af8e3cb8532c28483cdad2539ba96
+    Close%20full%20image/singular: a2550b38090fe8e260471254b4dea4cc
     Your%20answer%3A/singular: 663abc310ccb6229c6325f8c857adce2
     Correct%20answer%3A/singular: a8b8cc0d5d0059cbfeee0ad4721540d5
     Translate%3A/singular: 0a44ccd6c0e1dd4545fd00d059eaf0a5
@@ -251,6 +254,7 @@ checksums:
     Close/singular: 2c2e22f8424a1031de89063bd0022e16
     Activity%20progress/singular: 8ff2fb7372b8a2525f2955c851c4fa42
     evidence/singular: e79d4526b88aca84fbc283178ed61264
+    Player%20screen/singular: e43d67a1c04707801ae2545c8ddf09a6
     BP/singular: 842ed01b3a4d0efa6fe96ae8c595726c
     Energy/singular: 958809db5050650b97519e0f1f3e1951
     Image%20options/singular: 64a1aee44b26dbaff851cb846eb4274d
@@ -261,10 +265,8 @@ checksums:
     Continue/singular: 3cfba90b4600131e82fc4260c568d044
     Begin/singular: cc2a17a662cb60dd2d8335a2e8440997
     Check/singular: 023cc2ba432775c38e3efc004ad7b9ef
-    Your%20move/singular: ab492491d3981122f7bd74377215ae25
     Metric%20changes/singular: b47eb6ffcf56070345e7783cb048b563
     Impact/singular: 9419c16af83da3c0cf7e536b058c235f
-    Current%20status/singular: b9c587d6cd7ee919b59e75066fa4675f
     Final%20status/singular: 62c3befb232a9d290e74b84d6ddbf22c
     Translate%20this%20word%3A/singular: 05fede3c583e9ea39f27ac9fdf17fcc3
     Not%20quite/singular: e570085e69662802acf485c4565e3e3e
