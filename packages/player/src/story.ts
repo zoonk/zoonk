@@ -10,9 +10,9 @@ export const METRIC_AVERAGE_THRESHOLD = 50;
 export const METRIC_GOOD_THRESHOLD = 60;
 
 /**
- * Fixed delta applied to a metric when a story choice has a positive,
+ * Fixed delta applied to a metric when a story option has a positive,
  * neutral, or negative effect. Used by both the metrics bar (cumulative
- * totals) and the feedback screen (per-choice badges).
+ * totals) and the feedback screen (per-option badges).
  */
 export const EFFECT_DELTA_MAP = {
   negative: -15,

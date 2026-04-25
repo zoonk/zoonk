@@ -5,12 +5,12 @@ import { parseStepContent } from "@zoonk/core/steps/contract/content";
 import { type SelectedAnswer } from "../player-reducer";
 import { ChoiceStepLayout } from "./choice-step-layout";
 
-function getSelectedIndex(selectedAnswer?: SelectedAnswer): number | null {
+function getSelectedOptionId(selectedAnswer?: SelectedAnswer): string | null {
   if (selectedAnswer?.kind !== "multipleChoice") {
     return null;
   }
 
-  return selectedAnswer.selectedIndex;
+  return selectedAnswer.selectedOptionId;
 }
 
 export function MultipleChoiceStep({
@@ -23,16 +23,15 @@ export function MultipleChoiceStep({
   step: SerializedStep;
 }) {
   const content = parseStepContent("multipleChoice", step.content);
-  const selectedIndex = getSelectedIndex(selectedAnswer);
+  const selectedOptionId = getSelectedOptionId(selectedAnswer);
 
-  const handleSelect = (index: number) => {
-    if (selectedIndex === index) {
+  const handleSelect = (optionId: string) => {
+    if (selectedOptionId === optionId) {
       onSelectAnswer(step.id, null);
       return;
     }
 
-    const selectedText = content.options[index]?.text ?? "";
-    onSelectAnswer(step.id, { kind: "multipleChoice", selectedIndex: index, selectedText });
+    onSelectAnswer(step.id, { kind: "multipleChoice", selectedOptionId: optionId });
   };
 
   return (
@@ -40,9 +39,9 @@ export function MultipleChoiceStep({
       context={content.context}
       image={content.image}
       onSelect={handleSelect}
-      options={content.options.map((option) => ({ key: option.text, text: option.text }))}
+      options={content.options.map((option) => ({ key: option.id, text: option.text }))}
       question={content.question}
-      selectedIndex={selectedIndex}
+      selectedKey={selectedOptionId}
     />
   );
 }

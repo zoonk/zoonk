@@ -1,5 +1,6 @@
 import {
   type ActivityKind,
+  type InvestigationStepContent,
   type StepContentByKind,
   type SupportedStepKind,
   isSupportedStepKind,
@@ -107,6 +108,10 @@ type PrepareLessonActivityInput = {
   steps?: ActivityStepInput[];
 };
 
+type OptionsContent = {
+  options: readonly unknown[];
+};
+
 /**
  * Canonical lesson words travel through the player with lesson-scoped translations and
  * distractor arrays. This serializer keeps string IDs stable and copies arrays defensively.
@@ -149,39 +154,47 @@ function serializeSentence(sentence: SentenceDataInput): SerializedSentence {
 }
 
 /**
+ * Option-based activity payloads share the same stored field name, so the
+ * serializer can randomize them without repeating object-copying code.
+ */
+function shuffleOptions<Content extends OptionsContent>(content: Content): Content {
+  return { ...content, options: shuffle(content.options) };
+}
+
+/**
+ * Investigation problem steps are read-only setup content. Only action and call
+ * variants have selectable options that should be randomized for the learner.
+ */
+function hasShuffleableInvestigationOptions(
+  content: InvestigationStepContent,
+): content is Extract<InvestigationStepContent, OptionsContent> {
+  return content.variant === "action" || content.variant === "call";
+}
+
+/**
  * Parses step content and applies server-side shuffling where needed.
  *
- * Multiple choice options, story choices, investigation actions, and call
- * explanations are shuffled during serialization so the client receives a
+ * Multiple choice, story, investigation action, and investigation call
+ * options are shuffled during serialization so the client receives a
  * randomized order.
  * This avoids client-side shuffling which can cause hydration errors.
  */
 function parseAndShuffleContent(kind: SupportedStepKind, content: unknown) {
   if (kind === "multipleChoice") {
-    const parsedMultipleChoice = parseStepContent("multipleChoice", content);
+    return shuffleOptions(parseStepContent("multipleChoice", content));
+  }
 
-    return parsedMultipleChoice.kind === "core"
-      ? { ...parsedMultipleChoice, options: shuffle(parsedMultipleChoice.options) }
-      : parsedMultipleChoice;
+  if (kind === "selectImage") {
+    return shuffleOptions(parseStepContent("selectImage", content));
   }
 
   if (kind === "story") {
-    const parsedStory = parseStepContent("story", content);
-    return { ...parsedStory, choices: shuffle(parsedStory.choices) };
+    return shuffleOptions(parseStepContent("story", content));
   }
 
   if (kind === "investigation") {
     const parsed = parseStepContent("investigation", content);
-
-    if (parsed.variant === "action") {
-      return { ...parsed, actions: shuffle(parsed.actions) };
-    }
-
-    if (parsed.variant === "call") {
-      return { ...parsed, explanations: shuffle(parsed.explanations) };
-    }
-
-    return parsed;
+    return hasShuffleableInvestigationOptions(parsed) ? shuffleOptions(parsed) : parsed;
   }
 
   return parseStepContent(kind, content);

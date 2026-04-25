@@ -438,8 +438,8 @@ describe(prepareLessonActivityData, () => {
           content: {
             kind: "core",
             options: [
-              { feedback: "Yes", isCorrect: true, text: "Alpha" },
-              { feedback: "No", isCorrect: false, text: "Beta" },
+              { feedback: "Yes", id: "alpha", isCorrect: true, text: "Alpha" },
+              { feedback: "No", id: "beta", isCorrect: false, text: "Beta" },
             ],
             question: "Pick one",
           },
@@ -452,8 +452,8 @@ describe(prepareLessonActivityData, () => {
     expect(result.steps[0]?.content).toEqual({
       kind: "core",
       options: [
-        { feedback: "Yes", isCorrect: true, text: "Alpha" },
-        { feedback: "No", isCorrect: false, text: "Beta" },
+        { feedback: "Yes", id: "alpha", isCorrect: true, text: "Alpha" },
+        { feedback: "No", id: "beta", isCorrect: false, text: "Beta" },
       ],
       question: "Pick one",
     });
@@ -466,10 +466,10 @@ describe(prepareLessonActivityData, () => {
       activity: makeActivity([
         makeStep({
           content: {
-            choices: [
+            options: [
               {
                 alignment: "strong",
-                consequence: "Best outcome",
+                feedback: "Best outcome",
                 id: "choice-1",
                 metricEffects: [{ effect: "positive", metric: "Trust" }],
                 stateImage: { prompt: "Best outcome state" },
@@ -477,7 +477,7 @@ describe(prepareLessonActivityData, () => {
               },
               {
                 alignment: "partial",
-                consequence: "Mixed outcome",
+                feedback: "Mixed outcome",
                 id: "choice-2",
                 metricEffects: [{ effect: "neutral", metric: "Trust" }],
                 stateImage: { prompt: "Mixed outcome state" },
@@ -485,7 +485,7 @@ describe(prepareLessonActivityData, () => {
               },
               {
                 alignment: "weak",
-                consequence: "Worst outcome",
+                feedback: "Worst outcome",
                 id: "choice-3",
                 metricEffects: [{ effect: "negative", metric: "Trust" }],
                 stateImage: { prompt: "Worst outcome state" },
@@ -510,7 +510,51 @@ describe(prepareLessonActivityData, () => {
 
     const storyContent = parseStepContent("story", storyStep.content);
 
-    expect(storyContent.choices.map(({ id }) => id)).toEqual(["choice-3", "choice-2", "choice-1"]);
+    expect(storyContent.options.map(({ id }) => id)).toEqual(["choice-3", "choice-2", "choice-1"]);
+  });
+
+  test("shuffles select image options during serialization", () => {
+    shuffleMock.mockImplementationOnce((items) => items.toReversed());
+
+    const result = prepare({
+      activity: makeActivity([
+        makeStep({
+          content: {
+            options: [
+              {
+                feedback: "Correct",
+                id: "image-1",
+                isCorrect: true,
+                prompt: "Alpha",
+                url: "/alpha.png",
+              },
+              {
+                feedback: "Wrong",
+                id: "image-2",
+                isCorrect: false,
+                prompt: "Beta",
+                url: "/beta.png",
+              },
+            ],
+            question: "Pick the matching image",
+          },
+          id: "32",
+          kind: "selectImage",
+        }),
+      ]),
+    });
+
+    const selectImageStep = result.steps[0];
+
+    expect(selectImageStep?.kind).toBe("selectImage");
+
+    if (selectImageStep?.kind !== "selectImage") {
+      return;
+    }
+
+    const selectImageContent = parseStepContent("selectImage", selectImageStep.content);
+
+    expect(selectImageContent.options.map(({ id }) => id)).toEqual(["image-2", "image-1"]);
   });
 
   test("builds reading and listening word banks from stored distractors only", () => {

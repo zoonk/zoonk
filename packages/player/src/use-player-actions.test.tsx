@@ -79,7 +79,7 @@ describe(usePlayerActions, () => {
         buildStep({
           content: {
             kind: "core" as const,
-            options: [{ feedback: "Correct", isCorrect: true, text: "A" }],
+            options: [{ feedback: "Correct", id: "A", isCorrect: true, text: "A" }],
             question: "Choose",
           },
           kind: "multipleChoice",

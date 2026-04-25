@@ -20,18 +20,18 @@ describe("player browser integration: investigation", () => {
           }),
           buildSerializedStep({
             content: {
-              actions: [
+              options: [
                 {
-                  finding: "Logs point to a memory leak.",
+                  feedback: "Logs point to a memory leak.",
                   id: "action-1",
-                  label: "Check server logs",
                   quality: "critical" as const,
+                  text: "Check server logs",
                 },
                 {
-                  finding: "The latest deploy introduced a regression.",
+                  feedback: "The latest deploy introduced a regression.",
                   id: "action-2",
-                  label: "Check deploy history",
                   quality: "critical" as const,
+                  text: "Check deploy history",
                 },
               ],
               variant: "action" as const,
@@ -42,7 +42,7 @@ describe("player browser integration: investigation", () => {
           }),
           buildSerializedStep({
             content: {
-              explanations: [
+              options: [
                 {
                   accuracy: "best" as const,
                   feedback: "Correct. The memory leak caused the failures.",
@@ -112,24 +112,24 @@ describe("player browser integration: investigation", () => {
           }),
           buildSerializedStep({
             content: {
-              actions: [
+              options: [
                 {
-                  finding: "Logs point to a memory leak.",
+                  feedback: "Logs point to a memory leak.",
                   id: "action-1",
-                  label: "Check server logs",
                   quality: "critical" as const,
+                  text: "Check server logs",
                 },
                 {
-                  finding: "The latest deploy introduced a regression.",
+                  feedback: "The latest deploy introduced a regression.",
                   id: "action-2",
-                  label: "Check deploy history",
                   quality: "useful" as const,
+                  text: "Check deploy history",
                 },
                 {
-                  finding: "A cache node restarted once.",
+                  feedback: "A cache node restarted once.",
                   id: "action-3",
-                  label: "Inspect the cache",
                   quality: "weak" as const,
+                  text: "Inspect the cache",
                 },
               ],
               variant: "action" as const,
@@ -140,7 +140,7 @@ describe("player browser integration: investigation", () => {
           }),
           buildSerializedStep({
             content: {
-              explanations: [
+              options: [
                 {
                   accuracy: "best" as const,
                   feedback: "Correct. The memory leak caused the failures.",

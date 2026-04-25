@@ -106,18 +106,21 @@ const stepsData: {
           options: [
             {
               feedback: "Both use electricity. Think about how they solve problems.",
+              id: "electricity",
               isCorrect: false,
               text: "Traditional programming uses electricity, ML uses batteries",
             },
             {
               feedback:
                 "Exactly! ML discovers patterns from examples rather than following pre-programmed rules.",
+              id: "patterns-from-data",
               isCorrect: true,
               text: "ML learns patterns from data instead of following explicit rules",
             },
             {
               feedback:
                 "Speed isn't the key difference. Consider how each approach solves problems.",
+              id: "programming-speed",
               isCorrect: false,
               text: "Traditional programming is faster than ML",
             },
@@ -173,12 +176,14 @@ const stepsData: {
           options: [
             {
               feedback: "Correct! Neural networks have interconnected layers of nodes.",
+              id: "neural-network",
               isCorrect: true,
               prompt: "A clear diagram of a neural network with connected layers of nodes",
               url: "https://to3kaoi21m60hzgu.public.blob.vercel-storage.com/courses/machine_learning-jmaDwiS0MptNV2EGCZzYWU7RBJs3Qg.webp",
             },
             {
               feedback: "This is a flowchart, not a neural network architecture.",
+              id: "flowchart",
               isCorrect: false,
               prompt: "A simple flowchart with boxes and arrows",
               url: "https://to3kaoi21m60hzgu.public.blob.vercel-storage.com/courses/astronomy-OfBov0VHGQPk98amhfAPg4UVrJH114.webp",

@@ -56,8 +56,8 @@ async function createQuizActivity(lessonId: string, orgId: string, uniqueId: str
     content: {
       kind: "core",
       options: [
-        { feedback: "Correct!", isCorrect: true, text: `Right ${uniqueId}` },
-        { feedback: "Wrong", isCorrect: false, text: `Wrong ${uniqueId}` },
+        { feedback: "Correct!", id: "right", isCorrect: true, text: `Right ${uniqueId}` },
+        { feedback: "Wrong", id: "wrong", isCorrect: false, text: `Wrong ${uniqueId}` },
       ],
       question: `Question ${uniqueId}`,
     },

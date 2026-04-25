@@ -64,16 +64,16 @@ const { mockStoryChoices, mockStoryData, mockStoryImages, mockStoryPlan } = vi.h
           {
             alignment: "strong",
             consequence: "Workers rally behind you.",
-            label: "Address the team directly",
             metricEffects: [{ effect: "positive", metric: "Morale" }],
             stateImagePrompt: "Factory floor after a direct address calms the team",
+            text: "Address the team directly",
           },
           {
             alignment: "weak",
             consequence: "Rumors spread unchecked.",
-            label: "Send an email instead",
             metricEffects: [{ effect: "negative", metric: "Morale" }],
             stateImagePrompt: "Factory floor after a vague email leaves workers confused",
+            text: "Send an email instead",
           },
         ],
       },
@@ -82,20 +82,20 @@ const { mockStoryChoices, mockStoryData, mockStoryImages, mockStoryPlan } = vi.h
           {
             alignment: "partial",
             consequence: "You find a reasonable alternative.",
-            label: "Contact backup suppliers",
             metricEffects: [{ effect: "positive", metric: "Production" }],
             stateImagePrompt: "Temporary supply shipment arriving at the factory loading dock",
+            text: "Contact backup suppliers",
           },
           {
             alignment: "strong",
             consequence: "Innovation emerges from constraint.",
-            label: "Redesign the product to use different materials",
             metricEffects: [
               { effect: "positive", metric: "Production" },
               { effect: "positive", metric: "Cash" },
             ],
             stateImagePrompt:
               "Factory team adapting the product with new materials and renewed momentum",
+            text: "Redesign the product to use different materials",
           },
         ],
       },

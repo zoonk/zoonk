@@ -49,7 +49,7 @@ function formatInputsForPrompt({
     .join("\n");
 
   const actionList = actions.actions
-    .map((action, i) => `${i}. ${action.label} (${action.quality})`)
+    .map((action, i) => `${i}. ${action.text} (${action.quality})`)
     .join("\n");
 
   return `

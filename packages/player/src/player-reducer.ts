@@ -18,17 +18,17 @@ export type PlayerPhase = "playing" | "feedback" | "completed";
 
 export type SelectedAnswer =
   | { kind: "fillBlank"; userAnswers: string[] }
-  | { kind: "investigation"; variant: "action"; selectedActionId: string }
-  | { kind: "investigation"; variant: "call"; selectedExplanationId: string }
+  | { kind: "investigation"; variant: "action"; selectedOptionId: string }
+  | { kind: "investigation"; variant: "call"; selectedOptionId: string }
   | { kind: "investigation"; variant: "problem" }
   | { kind: "listening"; arrangedWords: string[] }
   | { kind: "matchColumns"; userPairs: { left: string; right: string }[]; mistakes: number }
-  | { kind: "multipleChoice"; selectedIndex: number; selectedText: string }
+  | { kind: "multipleChoice"; selectedOptionId: string }
   | { kind: "reading"; arrangedWords: string[] }
-  | { kind: "selectImage"; selectedIndex: number }
+  | { kind: "selectImage"; selectedOptionId: string }
   | { kind: "sortOrder"; userOrder: string[] }
-  | { kind: "story"; selectedChoiceId: string; selectedText: string }
-  | { kind: "translation"; selectedWordId: string; selectedText: string; questionText: string };
+  | { kind: "story"; selectedOptionId: string }
+  | { kind: "translation"; selectedOptionId: string };
 
 export type StepResult = {
   stepId: string;
@@ -144,7 +144,7 @@ function handleCheckAnswer(
 
   /**
    * Investigation action steps enter the feedback phase to show
-   * evidence (the finding for the chosen action). Record the
+   * evidence (the feedback for the chosen action). Record the
    * chosen action and its timing in the loop state before entering
    * feedback. Per-experiment timings are stored in the loop (not
    * in stepTimings) because all experiments share the same step ID

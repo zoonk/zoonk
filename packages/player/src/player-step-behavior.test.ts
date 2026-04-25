@@ -86,7 +86,7 @@ describe(getPlayerStepBehavior, () => {
   test("routes investigation call through shared feedback and validation behavior", () => {
     const step = buildStep({
       content: {
-        explanations: [
+        options: [
           {
             accuracy: "best" as const,
             feedback: "Correct",
@@ -115,18 +115,18 @@ describe(getPlayerStepBehavior, () => {
   test("skips validation for investigation action while keeping its check behavior", () => {
     const step = buildStep({
       content: {
-        actions: [
+        options: [
           {
-            finding: "A clue",
+            feedback: "A clue",
             id: "action-1",
-            label: "Inspect the logs",
             quality: "critical" as const,
+            text: "Inspect the logs",
           },
           {
-            finding: "Another clue",
+            feedback: "Another clue",
             id: "action-2",
-            label: "Interview the witness",
             quality: "useful" as const,
+            text: "Interview the witness",
           },
         ],
         variant: "action" as const,

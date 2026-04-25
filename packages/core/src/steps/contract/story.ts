@@ -49,10 +49,10 @@ const storyMetricEffectEntrySchema = z
   })
   .strict();
 
-const storyChoiceSchema = z
+const storyOptionSchema = z
   .object({
     alignment: storyAlignmentSchema,
-    consequence: z.string(),
+    feedback: z.string(),
     id: z.string(),
     metricEffects: z.array(storyMetricEffectEntrySchema),
     stateImage: stepImageSchema,
@@ -60,11 +60,11 @@ const storyChoiceSchema = z
   })
   .strict();
 
-/** Schema for a story decision step's content (problem + choices). */
+/** Schema for a story decision step's content (problem + selectable options). */
 export const storyContentSchema = z
   .object({
-    choices: z.array(storyChoiceSchema).min(2),
     image: stepImageSchema.optional(),
+    options: z.array(storyOptionSchema).min(2),
     problem: z.string(),
   })
   .strict();

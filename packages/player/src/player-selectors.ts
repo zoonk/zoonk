@@ -58,7 +58,7 @@ export function getInvestigationProgress(state: PlayerState): InvestigationProgr
     return null;
   }
 
-  const collected = state.investigationLoop?.usedActionIds.length ?? 0;
+  const collected = state.investigationLoop?.usedOptionIds.length ?? 0;
   return { collected, total: INVESTIGATION_EXPERIMENT_COUNT };
 }
 
@@ -106,13 +106,13 @@ function findStoryMetricDefinitions(steps: SerializedStep[]) {
 }
 
 /**
- * Extracts the selected choice from a story step result, if available.
- * Returns null when the step has no result or the choice ID doesn't match.
+ * Extracts the selected option from a story step result, if available.
+ * Returns null when the step has no result or the option ID doesn't match.
  *
- * Also used by the outcome screen to determine choice alignment
+ * Also used by the outcome screen to determine option alignment
  * without duplicating the lookup logic.
  */
-export function findSelectedChoice({
+export function findSelectedStoryOption({
   step,
   results,
 }: {
@@ -127,17 +127,17 @@ export function findSelectedChoice({
     descriptor?.kind !== "storyDecision" ||
     !answer ||
     answer.kind !== "story" ||
-    !answer.selectedChoiceId
+    !answer.selectedOptionId
   ) {
     return null;
   }
 
-  return descriptor.content.choices.find((option) => option.id === answer.selectedChoiceId) ?? null;
+  return descriptor.content.options.find((option) => option.id === answer.selectedOptionId) ?? null;
 }
 
 /**
  * Returns the delta a single step contributes to a specific metric.
- * Returns 0 when the step has no result or the choice doesn't affect
+ * Returns 0 when the step has no result or the option doesn't affect
  * the given metric.
  */
 function getStepMetricDelta({
@@ -149,13 +149,13 @@ function getStepMetricDelta({
   results: PlayerState["results"];
   step: SerializedStep;
 }): number {
-  const choice = findSelectedChoice({ results, step });
+  const option = findSelectedStoryOption({ results, step });
 
-  if (!choice) {
+  if (!option) {
     return 0;
   }
 
-  const effect = choice.metricEffects.find((entry) => entry.metric === metric);
+  const effect = option.metricEffects.find((entry) => entry.metric === metric);
   return effect ? EFFECT_DELTA_MAP[effect.effect] : 0;
 }
 
@@ -164,7 +164,7 @@ function getStepMetricDelta({
  * from all completed story steps.
  *
  * Reads metric names from the story outcome step, then for each
- * answered story step, looks up the selected choice's metricEffects and
+ * answered story step, looks up the selected option's metricEffects and
  * accumulates deltas (positive = +15, neutral = 0, negative = -15) starting
  * from 50.
  */
@@ -218,7 +218,7 @@ function getStoryOutcomeImages(step: SerializedStep): PreloadableImage[] {
 }
 
 /**
- * Story decision steps preload the main scene plus the consequence image for
+ * Story decision steps preload the main scene plus the feedback image for
  * every option so feedback transitions stay instant.
  */
 function getStoryDecisionImages(step: SerializedStep): PreloadableImage[] {
@@ -230,7 +230,7 @@ function getStoryDecisionImages(step: SerializedStep): PreloadableImage[] {
 
   return [
     ...getOptionalStepImage(getPlayerStepImage(descriptor)?.url),
-    ...descriptor.content.choices.flatMap((choice) => getOptionalStepImage(choice.stateImage?.url)),
+    ...descriptor.content.options.flatMap((option) => getOptionalStepImage(option.stateImage?.url)),
   ];
 }
 
@@ -251,7 +251,7 @@ function getSelectImageOptionImages(step: SerializedStep): PreloadableImage[] {
 }
 
 /**
- * Story consequence screens are reached from the current decision before the
+ * Story feedback screens are reached from the current decision before the
  * step index advances. They must be part of the preload set even though they
  * do not belong to an upcoming step.
  */
@@ -262,8 +262,8 @@ function getCurrentStoryFeedbackImages(state: PlayerState): PreloadableImage[] {
     return [];
   }
 
-  return descriptor.content.choices.flatMap((choice) =>
-    choice.stateImage?.url ? [{ kind: "step" as const, url: choice.stateImage.url }] : [],
+  return descriptor.content.options.flatMap((option) =>
+    option.stateImage?.url ? [{ kind: "step" as const, url: option.stateImage.url }] : [],
   );
 }
 

@@ -23,29 +23,29 @@ describe(checkMultipleChoiceAnswer, () => {
     const content: MultipleChoiceStepContent = {
       kind: "core",
       options: [
-        { feedback: "Correct!", isCorrect: true, text: "A" },
-        { feedback: "Wrong.", isCorrect: false, text: "B" },
+        { feedback: "Correct!", id: "a", isCorrect: true, text: "A" },
+        { feedback: "Wrong.", id: "b", isCorrect: false, text: "B" },
       ],
     };
 
-    test("returns correct with feedback for correct index", () => {
-      expect(checkMultipleChoiceAnswer(content, 0)).toEqual({
+    test("returns correct with feedback for correct text", () => {
+      expect(checkMultipleChoiceAnswer(content, "a")).toEqual({
         correctAnswer: "A",
         feedback: "Correct!",
         isCorrect: true,
       });
     });
 
-    test("returns incorrect with feedback for wrong index", () => {
-      expect(checkMultipleChoiceAnswer(content, 1)).toEqual({
+    test("returns incorrect with feedback for wrong text", () => {
+      expect(checkMultipleChoiceAnswer(content, "b")).toEqual({
         correctAnswer: "A",
         feedback: "Wrong.",
         isCorrect: false,
       });
     });
 
-    test("returns incorrect with null feedback for out-of-bounds index", () => {
-      expect(checkMultipleChoiceAnswer(content, 5)).toEqual({
+    test("returns incorrect with null feedback for unknown text", () => {
+      expect(checkMultipleChoiceAnswer(content, "missing")).toEqual({
         correctAnswer: "A",
         feedback: null,
         isCorrect: false,
@@ -228,30 +228,30 @@ describe(checkSortOrderAnswer, () => {
 describe(checkSelectImageAnswer, () => {
   const content: SelectImageStepContent = {
     options: [
-      { feedback: "Yes, a cat!", isCorrect: true, prompt: "A cat" },
-      { feedback: "That's a dog.", isCorrect: false, prompt: "A dog" },
+      { feedback: "Yes, a cat!", id: "cat", isCorrect: true, prompt: "A cat" },
+      { feedback: "That's a dog.", id: "dog", isCorrect: false, prompt: "A dog" },
     ],
     question: "Which image shows a cat?",
   };
 
-  test("returns correct with feedback for correct index", () => {
-    expect(checkSelectImageAnswer(content, 0)).toEqual({
+  test("returns correct with feedback for correct option id", () => {
+    expect(checkSelectImageAnswer(content, "cat")).toEqual({
       correctAnswer: null,
       feedback: "Yes, a cat!",
       isCorrect: true,
     });
   });
 
-  test("returns incorrect with feedback for wrong index", () => {
-    expect(checkSelectImageAnswer(content, 1)).toEqual({
+  test("returns incorrect with feedback for wrong option id", () => {
+    expect(checkSelectImageAnswer(content, "dog")).toEqual({
       correctAnswer: null,
       feedback: "That's a dog.",
       isCorrect: false,
     });
   });
 
-  test("returns incorrect with null feedback for out-of-bounds index", () => {
-    expect(checkSelectImageAnswer(content, 99)).toEqual({
+  test("returns incorrect with null feedback for unknown option id", () => {
+    expect(checkSelectImageAnswer(content, "missing")).toEqual({
       correctAnswer: null,
       feedback: null,
       isCorrect: false,
@@ -279,10 +279,10 @@ describe(checkTranslationAnswer, () => {
 
 describe(checkStoryAnswer, () => {
   const content = {
-    choices: [
+    options: [
       {
         alignment: "strong" as const,
-        consequence: "Things improve.",
+        feedback: "Things improve.",
         id: "1a",
         metricEffects: [{ effect: "positive" as const, metric: "Production" }],
         stateImage: { prompt: "State after the strong choice" },
@@ -290,7 +290,7 @@ describe(checkStoryAnswer, () => {
       },
       {
         alignment: "partial" as const,
-        consequence: "Mixed results.",
+        feedback: "Mixed results.",
         id: "1b",
         metricEffects: [{ effect: "neutral" as const, metric: "Production" }],
         stateImage: { prompt: "State after the partial choice" },
@@ -298,7 +298,7 @@ describe(checkStoryAnswer, () => {
       },
       {
         alignment: "weak" as const,
-        consequence: "Things get worse.",
+        feedback: "Things get worse.",
         id: "1c",
         metricEffects: [{ effect: "negative" as const, metric: "Production" }],
         stateImage: { prompt: "State after the weak choice" },
@@ -308,7 +308,7 @@ describe(checkStoryAnswer, () => {
     problem: "You face a decision.",
   };
 
-  test("strong alignment is correct with consequence as feedback", () => {
+  test("strong alignment is correct with feedback text", () => {
     expect(checkStoryAnswer(content, "1a")).toEqual({
       correctAnswer: null,
       feedback: "Things improve.",
@@ -316,7 +316,7 @@ describe(checkStoryAnswer, () => {
     });
   });
 
-  test("partial alignment is correct with consequence as feedback", () => {
+  test("partial alignment is correct with feedback text", () => {
     expect(checkStoryAnswer(content, "1b")).toEqual({
       correctAnswer: null,
       feedback: "Mixed results.",
@@ -324,7 +324,7 @@ describe(checkStoryAnswer, () => {
     });
   });
 
-  test("weak alignment is incorrect with consequence as feedback", () => {
+  test("weak alignment is incorrect with feedback text", () => {
     expect(checkStoryAnswer(content, "1c")).toEqual({
       correctAnswer: null,
       feedback: "Things get worse.",
@@ -332,7 +332,7 @@ describe(checkStoryAnswer, () => {
     });
   });
 
-  test("unknown choice ID is incorrect with null feedback", () => {
+  test("unknown option ID is incorrect with null feedback", () => {
     expect(checkStoryAnswer(content, "unknown")).toEqual({
       correctAnswer: null,
       feedback: null,

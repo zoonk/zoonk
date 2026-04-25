@@ -128,10 +128,14 @@ describe("player browser integration: story", () => {
           }),
           buildSerializedStep({
             content: {
-              choices: [
+              image: {
+                prompt: "Factory floor in crisis with stalled stations and workers waiting",
+                url: buildInlineImageUrl({ label: "Story step" }),
+              },
+              options: [
                 {
                   alignment: "strong" as const,
-                  consequence: "Production surges",
+                  feedback: "Production surges",
                   id: "story-choice-1",
                   metricEffects: [
                     { effect: "positive" as const, metric: "Production" },
@@ -145,7 +149,7 @@ describe("player browser integration: story", () => {
                 },
                 {
                   alignment: "weak" as const,
-                  consequence: "Morale drops",
+                  feedback: "Morale drops",
                   id: "story-choice-2",
                   metricEffects: [
                     { effect: "negative" as const, metric: "Production" },
@@ -159,10 +163,6 @@ describe("player browser integration: story", () => {
                   text: "Cut costs",
                 },
               ],
-              image: {
-                prompt: "Factory floor in crisis with stalled stations and workers waiting",
-                url: buildInlineImageUrl({ label: "Story step" }),
-              },
               problem: "A crisis hits the factory floor",
             },
             id: "story-decision",
@@ -258,10 +258,14 @@ describe("player browser integration: story", () => {
           }),
           buildSerializedStep({
             content: {
-              choices: [
+              image: {
+                prompt: "Factory floor in crisis with stalled stations and workers waiting",
+                url: buildInlineImageUrl({ label: "Story step context" }),
+              },
+              options: [
                 {
                   alignment: "strong" as const,
-                  consequence: "Production surges",
+                  feedback: "Production surges",
                   id: "story-choice-1",
                   metricEffects: [
                     { effect: "positive" as const, metric: "Production" },
@@ -275,7 +279,7 @@ describe("player browser integration: story", () => {
                 },
                 {
                   alignment: "weak" as const,
-                  consequence: "Morale drops",
+                  feedback: "Morale drops",
                   id: "story-choice-2",
                   metricEffects: [
                     { effect: "negative" as const, metric: "Production" },
@@ -289,10 +293,6 @@ describe("player browser integration: story", () => {
                   text: "Cut costs",
                 },
               ],
-              image: {
-                prompt: "Factory floor in crisis with stalled stations and workers waiting",
-                url: buildInlineImageUrl({ label: "Story step context" }),
-              },
               problem: "A crisis hits the factory floor",
             },
             id: "story-decision-context",
@@ -376,10 +376,14 @@ describe("player browser integration: story", () => {
         steps: [
           buildSerializedStep({
             content: {
-              choices: [
+              image: {
+                prompt: "Factory floor with a broken conveyor and a long repair queue",
+                url: buildInlineImageUrl({ label: "Story scroll decision" }),
+              },
+              options: [
                 {
                   alignment: "weak" as const,
-                  consequence: "The repair backlog grows.",
+                  feedback: "The repair backlog grows.",
                   id: "story-choice-1",
                   metricEffects: [{ effect: "negative" as const, metric: "Production" }],
                   stateImage: {
@@ -390,7 +394,7 @@ describe("player browser integration: story", () => {
                 },
                 {
                   alignment: "partial" as const,
-                  consequence: "The team understands the risk but output still slips.",
+                  feedback: "The team understands the risk but output still slips.",
                   id: "story-choice-2",
                   metricEffects: [{ effect: "neutral" as const, metric: "Production" }],
                   stateImage: {
@@ -401,7 +405,7 @@ describe("player browser integration: story", () => {
                 },
                 {
                   alignment: "strong" as const,
-                  consequence:
+                  feedback:
                     "Repairs restart safely and the team sees the plan. The maintenance lead checks every station, the floor manager explains the pause, and the next batch moves only after the checklist is visible to everyone.",
                   id: "story-choice-3",
                   metricEffects: STORY_SCROLL_METRICS.map((metric) => ({
@@ -415,10 +419,6 @@ describe("player browser integration: story", () => {
                   text: "Pause the line, assign repair owners, and reopen only after the checklist passes.",
                 },
               ],
-              image: {
-                prompt: "Factory floor with a broken conveyor and a long repair queue",
-                url: buildInlineImageUrl({ label: "Story scroll decision" }),
-              },
               problem:
                 "A conveyor breaks during the busiest hour. Workers are waiting for direction, inventory is piling up, and the fastest option is buried below the first visible choices.",
             },

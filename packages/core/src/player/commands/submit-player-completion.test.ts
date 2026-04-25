@@ -64,8 +64,8 @@ async function createMultipleChoiceActivity(params: {
     content: {
       kind: "core",
       options: [
-        { feedback: "Correct!", isCorrect: true, text: "A" },
-        { feedback: "Wrong.", isCorrect: false, text: "B" },
+        { feedback: "Correct!", id: "a", isCorrect: true, text: "A" },
+        { feedback: "Wrong.", id: "b", isCorrect: false, text: "B" },
       ],
       question: "Choose",
     },
@@ -83,8 +83,7 @@ async function createMultipleChoiceActivity(params: {
  */
 function buildCompletionInput(params: {
   activityId: string;
-  selectedIndex?: number;
-  selectedText?: string;
+  selectedOptionId?: string;
   startedAt?: number;
   stepId: string;
 }): CompletionInput {
@@ -96,8 +95,7 @@ function buildCompletionInput(params: {
     answers: {
       [stepId]: {
         kind: "multipleChoice",
-        selectedIndex: params.selectedIndex ?? 0,
-        selectedText: params.selectedText ?? "A",
+        selectedOptionId: params.selectedOptionId ?? "a",
       },
     },
     localDate: todayLocalDate(),

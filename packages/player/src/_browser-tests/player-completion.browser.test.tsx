@@ -26,8 +26,8 @@ function buildCompletionQuizActivity({
         content: {
           kind: "core" as const,
           options: [
-            { feedback: "Correct!", isCorrect: true, text: correctText },
-            { feedback: "Not this one", isCorrect: false, text: wrongText },
+            { feedback: "Correct!", id: "correct", isCorrect: true, text: correctText },
+            { feedback: "Not this one", id: "wrong", isCorrect: false, text: wrongText },
           ],
           question,
         },

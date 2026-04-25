@@ -25,9 +25,9 @@ const { mockScenario, mockAccuracy, mockActions, mockFindings } = vi.hoisted(() 
   },
   mockActions: {
     actions: [
-      { label: "Check the logs", quality: "critical" as const },
-      { label: "Interview workers", quality: "useful" as const },
-      { label: "Look at the ceiling", quality: "weak" as const },
+      { quality: "critical" as const, text: "Check the logs" },
+      { quality: "useful" as const, text: "Interview workers" },
+      { quality: "weak" as const, text: "Look at the ceiling" },
     ],
   },
   mockFindings: {
@@ -214,11 +214,11 @@ describe("investigation activity workflow", () => {
       where: { activityId: activity.id, position: 1 },
     });
 
-    const actions = getArray(actionStep?.content, "actions");
+    const actions = getArray(actionStep?.content, "options");
     expect(actions).toHaveLength(3);
-    expect(getString(actions[0], "label")).toBe("Check the logs");
+    expect(getString(actions[0], "text")).toBe("Check the logs");
     expect(getString(actions[0], "quality")).toBe("critical");
-    expect(getString(actions[0], "finding")).toBe(mockFindings.findings[0]);
+    expect(getString(actions[0], "feedback")).toBe(mockFindings.findings[0]);
   });
 
   test("saves correct call step content with per-explanation feedback", async () => {
@@ -248,7 +248,7 @@ describe("investigation activity workflow", () => {
       where: { activityId: activity.id, position: 2 },
     });
 
-    const explanations = getArray(callStep?.content, "explanations");
+    const explanations = getArray(callStep?.content, "options");
     expect(explanations).toHaveLength(3);
     expect(getString(explanations[0], "accuracy")).toBe("best");
     expect(getString(explanations[0], "feedback")).toBe("This is the most complete explanation.");

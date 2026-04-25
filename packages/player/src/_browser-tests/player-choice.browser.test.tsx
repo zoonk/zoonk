@@ -21,8 +21,8 @@ describe("player browser integration: choice steps", () => {
             content: {
               kind: "core",
               options: [
-                { feedback: "Nope", isCorrect: false, text: "Paris" },
-                { feedback: "Correct", isCorrect: true, text: "Berlin" },
+                { feedback: "Nope", id: "Paris", isCorrect: false, text: "Paris" },
+                { feedback: "Correct", id: "Berlin", isCorrect: true, text: "Berlin" },
               ],
               question: "What is the capital of Germany?",
             },
@@ -116,12 +116,14 @@ describe("player browser integration: choice steps", () => {
               options: [
                 {
                   feedback: "Correct cat",
+                  id: "cat",
                   isCorrect: true,
                   prompt: "Cat",
                   url: "https://example.com/cat.png",
                 },
                 {
                   feedback: "Wrong dog",
+                  id: "dog",
                   isCorrect: false,
                   prompt: "Dog",
                   url: "https://example.com/dog.png",
@@ -152,8 +154,8 @@ describe("player browser integration: choice steps", () => {
               context: "Read the clue first",
               kind: "core",
               options: [
-                { feedback: "Nope", isCorrect: false, text: "Paris" },
-                { feedback: "Correct", isCorrect: true, text: "Berlin" },
+                { feedback: "Nope", id: "Paris", isCorrect: false, text: "Paris" },
+                { feedback: "Correct", id: "Berlin", isCorrect: true, text: "Berlin" },
               ],
               question: "What is the capital of Germany?",
             },
@@ -201,8 +203,18 @@ describe("player browser integration: choice steps", () => {
               },
               kind: "core",
               options: [
-                { feedback: "Correct", isCorrect: true, text: "March dropped sharply" },
-                { feedback: "Nope", isCorrect: false, text: "March stayed flat" },
+                {
+                  feedback: "Correct",
+                  id: "March dropped sharply",
+                  isCorrect: true,
+                  text: "March dropped sharply",
+                },
+                {
+                  feedback: "Nope",
+                  id: "March stayed flat",
+                  isCorrect: false,
+                  text: "March stayed flat",
+                },
               ],
               question: "What changed?",
             },
@@ -305,12 +317,14 @@ describe("player browser integration: choice steps", () => {
               options: [
                 {
                   feedback: "Correct cat",
+                  id: "cat",
                   isCorrect: true,
                   prompt: "Cat",
                   url: undefined,
                 },
                 {
                   feedback: "Wrong dog",
+                  id: "dog",
                   isCorrect: false,
                   prompt: "Dog",
                   url: "https://example.com/dog.png",
@@ -347,8 +361,13 @@ describe("player browser integration: choice steps", () => {
               context: "{{NAME}}, we have a situation",
               kind: "core",
               options: [
-                { feedback: "{{NAME}}, great call", isCorrect: true, text: "Investigate" },
-                { feedback: "Wrong", isCorrect: false, text: "Ignore it" },
+                {
+                  feedback: "{{NAME}}, great call",
+                  id: "Investigate",
+                  isCorrect: true,
+                  text: "Investigate",
+                },
+                { feedback: "Wrong", id: "Ignore it", isCorrect: false, text: "Ignore it" },
               ],
               question: "What should we do?",
             },
@@ -374,8 +393,13 @@ describe("player browser integration: choice steps", () => {
               context: "{{NAME}}, we have a situation",
               kind: "core",
               options: [
-                { feedback: "{{NAME}}, great call", isCorrect: true, text: "Investigate" },
-                { feedback: "Wrong", isCorrect: false, text: "Ignore it" },
+                {
+                  feedback: "{{NAME}}, great call",
+                  id: "Investigate",
+                  isCorrect: true,
+                  text: "Investigate",
+                },
+                { feedback: "Wrong", id: "Ignore it", isCorrect: false, text: "Ignore it" },
               ],
               question: "What should we do?",
             },

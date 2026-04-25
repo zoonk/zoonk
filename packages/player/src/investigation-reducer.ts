@@ -12,7 +12,7 @@ import { type PlayerState, type SelectedAnswer } from "./player-reducer";
  * across the fixed experiments.
  */
 function initInvestigationLoop(): InvestigationLoopState {
-  return { actionTimings: [], usedActionIds: [] };
+  return { actionTimings: [], usedOptionIds: [] };
 }
 
 /**
@@ -37,7 +37,7 @@ export function recordActionInLoop({
   return {
     ...loop,
     actionTimings: [...loop.actionTimings, timing],
-    usedActionIds: [...loop.usedActionIds, answer.selectedActionId],
+    usedOptionIds: [...loop.usedOptionIds, answer.selectedOptionId],
   };
 }
 
@@ -92,7 +92,7 @@ export function continueFromAction(state: PlayerState): PlayerState {
     return state;
   }
 
-  const experimentsDone = loop.usedActionIds.length;
+  const experimentsDone = loop.usedOptionIds.length;
 
   if (experimentsDone >= INVESTIGATION_EXPERIMENT_COUNT) {
     const callStep = getInvestigationStepByVariant(state.steps, "call");

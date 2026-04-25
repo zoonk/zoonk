@@ -391,10 +391,10 @@ describe(getReviewSteps, () => {
     await stepFixture({
       activityId: storyActivity.id,
       content: {
-        choices: [
+        options: [
           {
             alignment: "strong",
-            consequence: "Good outcome",
+            feedback: "Good outcome",
             id: "c1",
             metricEffects: [{ effect: "positive", metric: "Score" }],
             text: "Choice A",
@@ -434,7 +434,6 @@ describe(getReviewSteps, () => {
     await stepFixture({
       activityId: investigationActivity.id,
       content: {
-        explanations: [{ accuracy: "best", text: "Explanation A" }],
         scenario: "A mystery scenario",
         variant: "problem",
         visual: { kind: "image", url: "https://example.com/img.jpg" },
@@ -741,8 +740,8 @@ describe(getReviewValidationSteps, () => {
     const mcContent = {
       kind: "core",
       options: [
-        { feedback: "Correct!", isCorrect: true, text: "A" },
-        { feedback: "Wrong.", isCorrect: false, text: "B" },
+        { feedback: "Correct!", id: "a", isCorrect: true, text: "A" },
+        { feedback: "Wrong.", id: "b", isCorrect: false, text: "B" },
       ],
     };
 

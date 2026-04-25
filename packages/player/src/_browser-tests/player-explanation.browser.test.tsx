@@ -47,11 +47,13 @@ describe("player browser integration: explanation activity flow", () => {
               options: [
                 {
                   feedback: "Right. That label helps the network forward it.",
+                  id: "routing-label",
                   isCorrect: true,
                   text: "A routing label",
                 },
                 {
                   feedback: "Not this one. The message still needs routing information.",
+                  id: "color-tag",
                   isCorrect: false,
                   text: "A random color tag",
                 },

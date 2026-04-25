@@ -7,7 +7,7 @@ import { type StoryOutcomeTier } from "@zoonk/utils/activities";
 import { useExtracted } from "next-intl";
 import { usePlayerRuntime } from "../player-context";
 import { type PlayerState } from "../player-reducer";
-import { findSelectedChoice, getStoryMetrics } from "../player-selectors";
+import { findSelectedStoryOption, getStoryMetrics } from "../player-selectors";
 import { getStoryOutcomeDisplayTier } from "../story-outcome";
 import {
   PlayerReadSceneBody,
@@ -40,8 +40,8 @@ function getStoryStepAlignment({
   results: PlayerState["results"];
   step: SerializedStep;
 }): StoryAlignment {
-  const choice = findSelectedChoice({ results, step });
-  return choice?.alignment ?? "weak";
+  const option = findSelectedStoryOption({ results, step });
+  return option?.alignment ?? "weak";
 }
 
 /**
@@ -92,7 +92,7 @@ function getOutcomeTierTone(tier: StoryOutcomeTier): PlayerReadSceneTitleTone {
 }
 
 /**
- * Outcome screen shown after the final decision step's consequence.
+ * Outcome screen shown after the final decision step feedback.
  *
  * Displays the narrative result of the player's decisions with a
  * tone-coded title reflecting how well they did.

@@ -82,7 +82,7 @@ function getStoryConsequenceHaptic({
  * Warns when a story metric crosses into a danger or critical band.
  *
  * Threshold haptics are distinct from consequence haptics: they communicate
- * state urgency, not the immediate quality of a single choice.
+ * state urgency, not the immediate quality of a single option.
  */
 function getStoryThresholdHaptic({
   currentMetrics,
@@ -165,7 +165,7 @@ function getInvestigationActionFeedbackHaptic({
     return null;
   }
 
-  const action = content.actions.find((item) => item.id === answer.selectedActionId);
+  const action = content.options.find((item) => item.id === answer.selectedOptionId);
 
   if (!action) {
     return null;

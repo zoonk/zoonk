@@ -32,11 +32,11 @@ function buildStoryChoices({
 
     return {
       alignment: choice.alignment,
-      consequence: choice.consequence,
+      feedback: choice.consequence,
       id: randomUUID(),
       metricEffects: choice.metricEffects,
       stateImage,
-      text: choice.label,
+      text: choice.text,
     };
   });
 }
@@ -101,7 +101,7 @@ function buildStoryOutcomes({
  * generated image bundle.
  *
  * - Position 0: static intro step (scene setup + metric definitions)
- * - Positions 1..N: story decision steps (problem + choices)
+ * - Positions 1..N: story decision steps (problem + options)
  * - Position N+1: static outcome step (narrative results + final metrics)
  */
 function buildStoryStepRecords(
@@ -127,14 +127,14 @@ function buildStoryStepRecords(
   const decisionRecords = storyData.steps.map((step, index) => ({
     activityId,
     content: assertStepContent("story", {
-      choices: buildStoryChoices({
-        choiceStateImages: storyImages.choiceStateImages[index] ?? [],
-        choices: step.choices,
-        stepIndex: index,
-      }),
       image: getRequiredStoryImage({
         image: storyImages.stepImages[index],
         label: `step ${index + 1}`,
+      }),
+      options: buildStoryChoices({
+        choiceStateImages: storyImages.choiceStateImages[index] ?? [],
+        choices: step.choices,
+        stepIndex: index,
       }),
       problem: step.problem,
     }),
@@ -164,7 +164,7 @@ function buildStoryStepRecords(
 /**
  * Persists all generated story data in one transaction:
  * - Static intro step with setup title, text, and image
- * - Interactive decision steps with choices and consequences
+ * - Interactive decision steps with options and consequences
  * - Static outcome step with narrative results and final metrics
  * - Marks the activity as completed
  *

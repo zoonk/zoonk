@@ -77,9 +77,9 @@ function QualityBadge({ quality }: { quality: InvestigationActionQuality }) {
 }
 
 type GatheredEvidence = {
-  finding: string;
-  label: string;
+  feedback: string;
   quality: InvestigationActionQuality;
+  text: string;
 };
 
 /**
@@ -106,14 +106,14 @@ function useGatheredEvidence(): GatheredEvidence[] {
     return [];
   }
 
-  return loop.usedActionIds.flatMap((id) => {
-    const action = actionContent.actions.find((a) => a.id === id);
+  return loop.usedOptionIds.flatMap((id) => {
+    const action = actionContent.options.find((a) => a.id === id);
 
     if (!action) {
       return [];
     }
 
-    return [{ finding: action.finding, label: action.label, quality: action.quality }];
+    return [{ feedback: action.feedback, quality: action.quality, text: action.text }];
   });
 }
 
@@ -121,11 +121,11 @@ function EvidenceItem({ item }: { item: GatheredEvidence }) {
   return (
     <div className="flex flex-col gap-1">
       <div className="flex items-start gap-2">
-        <p className="text-sm font-medium">{item.label}</p>
+        <p className="text-sm font-medium">{item.text}</p>
         <QualityBadge quality={item.quality} />
       </div>
 
-      <p className="text-muted-foreground text-sm leading-relaxed">{item.finding}</p>
+      <p className="text-muted-foreground text-sm leading-relaxed">{item.feedback}</p>
     </div>
   );
 }
@@ -159,7 +159,7 @@ function EvidenceDrawer({ evidence }: { evidence: GatheredEvidence[] }) {
         <DrawerContent>
           <div className="flex flex-col gap-5">
             {evidence.map((item) => (
-              <EvidenceItem item={item} key={item.label} />
+              <EvidenceItem item={item} key={item.text} />
             ))}
           </div>
         </DrawerContent>
@@ -189,13 +189,13 @@ export function InvestigationCallVariant({
 }) {
   const t = useExtracted();
 
-  const { explanations } = content;
+  const { options } = content;
   const hasFeedback = result !== undefined;
   const evidence = useGatheredEvidence();
 
   const selectedId =
     selectedAnswer?.kind === "investigation" && selectedAnswer.variant === "call"
-      ? selectedAnswer.selectedExplanationId
+      ? selectedAnswer.selectedOptionId
       : null;
 
   const hasSelection = selectedId !== null;
@@ -205,7 +205,7 @@ export function InvestigationCallVariant({
       return;
     }
 
-    const explanation = explanations[index];
+    const explanation = options[index];
 
     if (!explanation) {
       return;
@@ -218,7 +218,7 @@ export function InvestigationCallVariant({
 
     onSelectAnswer(step.id, {
       kind: "investigation",
-      selectedExplanationId: explanation.id,
+      selectedOptionId: explanation.id,
       variant: "call",
     });
   };
@@ -234,7 +234,7 @@ export function InvestigationCallVariant({
       <PlayerChoiceSceneOptions
         keyboardEnabled={!hasFeedback}
         onSelect={handleSelect}
-        options={explanations.map((explanation) => ({
+        options={options.map((explanation) => ({
           content: <PlayerChoiceSceneOptionText>{explanation.text}</PlayerChoiceSceneOptionText>,
           disabled: hasFeedback,
           isDimmed: hasSelection && selectedId !== explanation.id,

@@ -14,7 +14,7 @@ export type ActionTiming = {
 
 export type InvestigationLoopState = {
   actionTimings: ActionTiming[];
-  usedActionIds: string[];
+  usedOptionIds: string[];
 };
 
 type InvestigationVariant = InvestigationStepContent["variant"];
@@ -60,12 +60,12 @@ export function getInvestigationStepByVariant(
  * order-independent (safe across shuffling).
  */
 export function getAvailableActions(
-  actions: { id: string; label: string; quality: InvestigationActionQuality }[],
+  options: { id: string; quality: InvestigationActionQuality; text: string }[],
   usedIds: string[],
-): { id: string; label: string; quality: InvestigationActionQuality }[] {
+): { id: string; quality: InvestigationActionQuality; text: string }[] {
   const usedSet = new Set(usedIds);
 
-  return actions.flatMap((action) =>
-    usedSet.has(action.id) ? [] : [{ id: action.id, label: action.label, quality: action.quality }],
+  return options.flatMap((action) =>
+    usedSet.has(action.id) ? [] : [{ id: action.id, quality: action.quality, text: action.text }],
   );
 }

@@ -5,6 +5,7 @@ import { assertStepContent } from "@zoonk/core/steps/contract/content";
 import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
+import { addOptionIds } from "./_utils/add-option-ids";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { type LessonActivity } from "./get-lesson-activities-step";
 
@@ -73,7 +74,7 @@ function buildGrammarSteps(
     content: assertStepContent("multipleChoice", {
       ...(discoveryContext ? { context: discoveryContext } : {}),
       kind: "core",
-      options: userContent.discovery.options,
+      options: addOptionIds({ options: userContent.discovery.options }),
       ...(discoveryQuestion ? { question: discoveryQuestion } : {}),
     }),
     kind: "multipleChoice" as const,

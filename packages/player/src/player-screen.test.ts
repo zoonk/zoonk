@@ -144,7 +144,7 @@ describe(getPlayerScreenModel, () => {
           buildStep({
             content: {
               kind: "core" as const,
-              options: [{ feedback: "Correct", isCorrect: true, text: "A" }],
+              options: [{ feedback: "Correct", id: "A", isCorrect: true, text: "A" }],
               question: "Choose",
             },
             kind: "multipleChoice",
@@ -170,10 +170,10 @@ describe(getPlayerScreenModel, () => {
         steps: [
           buildStep({
             content: {
-              choices: [
+              options: [
                 {
                   alignment: "strong" as const,
-                  consequence: "Good call",
+                  feedback: "Good call",
                   id: "choice-1",
                   metricEffects: [],
                   stateImage: { prompt: "State after option A" },

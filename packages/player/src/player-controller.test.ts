@@ -72,7 +72,7 @@ describe(getPlayerTransition, () => {
 
   test("does not persist completion for non-terminal actions", () => {
     const action: PlayerAction = {
-      answer: { kind: "multipleChoice", selectedIndex: 0, selectedText: "A" },
+      answer: { kind: "multipleChoice", selectedOptionId: "a" },
       stepId: "step-1",
       type: "SELECT_ANSWER",
     };
@@ -89,7 +89,7 @@ describe(buildCompletionInput, () => {
     const now = new Date("2026-03-18T18:45:00.000Z");
     const state = buildState({
       selectedAnswers: {
-        "step-1": { kind: "multipleChoice", selectedIndex: 0, selectedText: "A" },
+        "step-1": { kind: "multipleChoice", selectedOptionId: "a" },
       },
       stepTimings: {
         "step-1": {
@@ -104,8 +104,9 @@ describe(buildCompletionInput, () => {
     expect(buildCompletionInput(state, now)).toEqual({
       activityId: "activity-1",
       answers: {
-        "step-1": { kind: "multipleChoice", selectedIndex: 0, selectedText: "A" },
+        "step-1": { kind: "multipleChoice", selectedOptionId: "a" },
       },
+      investigationLoop: undefined,
       localDate: "2026-03-18",
       startedAt: 1000,
       stepTimings: {

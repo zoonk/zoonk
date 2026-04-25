@@ -5,7 +5,7 @@ const investigationActionQualitySchema = z.enum(["critical", "useful", "weak"]);
 
 const investigationAccuracySchema = z.enum(["best", "partial", "wrong"]);
 
-const investigationExplanationSchema = z
+const investigationCallOptionSchema = z
   .object({
     accuracy: investigationAccuracySchema,
     feedback: z.string(),
@@ -15,16 +15,16 @@ const investigationExplanationSchema = z
   .strict();
 
 /**
- * Each action carries its own finding data so that evidence
+ * Each action carries its own feedback data so that evidence
  * travels with the action through server-side shuffle.
- * When the learner checks an action, the finding is shown as feedback.
+ * When the learner checks an action, the feedback is shown as evidence.
  */
-const investigationActionItemSchema = z
+const investigationActionOptionSchema = z
   .object({
-    finding: z.string(),
+    feedback: z.string(),
     id: z.string(),
-    label: z.string(),
     quality: investigationActionQualitySchema,
+    text: z.string(),
   })
   .strict();
 
@@ -42,12 +42,12 @@ const investigationProblemContentSchema = z
 /**
  * Action step: the full list of actions the learner can choose from.
  * The player filters out already-picked actions using the investigation loop.
- * Each action carries its finding data for the feedback screen.
+ * Each action carries its feedback data for the feedback screen.
  * `quality` indicates how informative the action is for scoring.
  */
 const investigationActionContentSchema = z
   .object({
-    actions: z.array(investigationActionItemSchema).min(INVESTIGATION_EXPERIMENT_COUNT),
+    options: z.array(investigationActionOptionSchema).min(INVESTIGATION_EXPERIMENT_COUNT),
     variant: z.literal("action"),
   })
   .strict();
@@ -61,7 +61,7 @@ const investigationActionContentSchema = z
  */
 const investigationCallContentSchema = z
   .object({
-    explanations: z.array(investigationExplanationSchema),
+    options: z.array(investigationCallOptionSchema),
     variant: z.literal("call"),
   })
   .strict();

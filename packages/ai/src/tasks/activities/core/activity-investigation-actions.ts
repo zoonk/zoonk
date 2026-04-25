@@ -14,8 +14,8 @@ const schema = z.object({
   actions: z
     .array(
       z.object({
-        label: z.string(),
         quality: z.enum(["critical", "useful", "weak"]),
+        text: z.string(),
       }),
     )
     .min(INVESTIGATION_EXPERIMENT_COUNT),

@@ -5,11 +5,11 @@ EVALUATION CRITERIA:
 
 2. CHOICE QUALITY: Every step must have 3-4 choices. Choices must be plausible next moves in the professional workflow, not opinions, lesson summaries, or app instructions.
 
-3. ANSWER MASKING: A learner who only sees the choice labels should not be able to identify the best or worst answer by tone, breadth, professionalism, or scope. Avoid giveaway wording like only, just, single, local, final, complete, broad, quick, minimal, ignore, or translated equivalents.
+3. ANSWER MASKING: A learner who only sees the choice text should not be able to identify the best or worst answer by tone, breadth, professionalism, or scope. Avoid giveaway wording like only, just, single, local, final, complete, broad, quick, minimal, ignore, or translated equivalents.
 
 4. DISTINCT STRATEGIES: Choices should pull different decision levers: evidence source, artifact, mechanism, workflow, timing, risk control, reversibility, or constraint. Do not make all choices near-paraphrases of the same meaning.
 
-5. ALIGNMENT MIX: Each step must include one strong choice, at least one partial choice, and at least one weak choice. The alignment tags must not be hinted at by the label wording.
+5. ALIGNMENT MIX: Each step must include one strong choice, at least one partial choice, and at least one weak choice. The alignment tags must not be hinted at by the text wording.
 
 6. CONSEQUENCE QUALITY: Consequences must show what happened after the action and, for weak or partial choices, point to the better practical next move. They should not become mini-lectures.
 

@@ -192,9 +192,9 @@ function extractStoryAlignments({
     }
 
     const content = parseStepContent("story", step.content);
-    const choice = content.choices.find((option) => option.id === answer.selectedChoiceId);
+    const option = content.options.find((item) => item.id === answer.selectedOptionId);
 
-    return choice ? [choice.alignment] : [];
+    return option ? [option.alignment] : [];
   });
 }
 
@@ -236,8 +236,8 @@ function extractInvestigationInput({
     return null;
   }
 
-  const actionQualities = investigationLoop.usedActionIds.flatMap((id) => {
-    const action = actionContent.actions.find((a) => a.id === id);
+  const actionQualities = investigationLoop.usedOptionIds.flatMap((id) => {
+    const action = actionContent.options.find((a) => a.id === id);
     return action ? [action.quality] : [];
   });
 
@@ -266,8 +266,8 @@ function extractInvestigationInput({
     return null;
   }
 
-  const selectedExplanation = callContent.explanations.find(
-    (exp) => exp.id === callAnswer.selectedExplanationId,
+  const selectedExplanation = callContent.options.find(
+    (exp) => exp.id === callAnswer.selectedOptionId,
   );
 
   if (!selectedExplanation) {

@@ -67,16 +67,16 @@ describe(generateStoryImagesStep, () => {
             {
               alignment: "strong" as const,
               consequence: "Workers rally.",
-              label: "Address the team",
               metricEffects: [{ effect: "positive" as const, metric: "Morale" }],
               stateImagePrompt: "Factory floor after a direct address calms the team",
+              text: "Address the team",
             },
             {
               alignment: "weak" as const,
               consequence: "Rumors spread.",
-              label: "Send an email",
               metricEffects: [{ effect: "negative" as const, metric: "Morale" }],
               stateImagePrompt: "Factory floor after a vague email leaves workers confused",
+              text: "Send an email",
             },
           ],
           imagePrompt: "Factory floor with halted lines and empty parts bins",

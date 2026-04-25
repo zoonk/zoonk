@@ -5,24 +5,12 @@ import { parseStepContent } from "@zoonk/core/steps/contract/content";
 import { type SelectedAnswer } from "../player-reducer";
 import { ChoiceStepLayout } from "./choice-step-layout";
 
-function getSelectedIndex({
-  choices,
-  selectedAnswer,
-}: {
-  choices: { id: string }[];
-  selectedAnswer?: SelectedAnswer;
-}): number | null {
+function getSelectedOptionId(selectedAnswer?: SelectedAnswer): string | null {
   if (selectedAnswer?.kind !== "story") {
     return null;
   }
 
-  const index = choices.findIndex((choice) => choice.id === selectedAnswer.selectedChoiceId);
-
-  if (index === -1) {
-    return null;
-  }
-
-  return index;
+  return selectedAnswer.selectedOptionId;
 }
 
 export function StoryStep({
@@ -35,24 +23,23 @@ export function StoryStep({
   step: SerializedStep;
 }) {
   const content = parseStepContent("story", step.content);
-  const selectedIndex = getSelectedIndex({ choices: content.choices, selectedAnswer });
+  const selectedOptionId = getSelectedOptionId(selectedAnswer);
 
-  const handleSelect = (index: number) => {
-    const choice = content.choices[index];
+  const handleSelect = (optionId: string) => {
+    const option = content.options.find((item) => item.id === optionId);
 
-    if (!choice) {
+    if (!option) {
       return;
     }
 
-    if (selectedIndex === index) {
+    if (selectedOptionId === option.id) {
       onSelectAnswer(step.id, null);
       return;
     }
 
     onSelectAnswer(step.id, {
       kind: "story",
-      selectedChoiceId: choice.id,
-      selectedText: choice.text,
+      selectedOptionId: option.id,
     });
   };
 
@@ -61,8 +48,8 @@ export function StoryStep({
       context={content.problem}
       image={content.image}
       onSelect={handleSelect}
-      options={content.choices.map((choice) => ({ key: choice.id, text: choice.text }))}
-      selectedIndex={selectedIndex}
+      options={content.options.map((option) => ({ key: option.id, text: option.text }))}
+      selectedKey={selectedOptionId}
     />
   );
 }

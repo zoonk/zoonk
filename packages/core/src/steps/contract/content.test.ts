@@ -5,12 +5,12 @@ describe("step content contracts", () => {
   test("parses core multipleChoice with optional context/question omitted", () => {
     const content = parseStepContent("multipleChoice", {
       kind: "core",
-      options: [{ feedback: "Correct", isCorrect: true, text: "A" }],
+      options: [{ feedback: "Correct", id: "a", isCorrect: true, text: "A" }],
     });
 
     expect(content).toEqual({
       kind: "core",
-      options: [{ feedback: "Correct", isCorrect: true, text: "A" }],
+      options: [{ feedback: "Correct", id: "a", isCorrect: true, text: "A" }],
     });
   });
 
@@ -23,8 +23,8 @@ describe("step content contracts", () => {
       },
       kind: "core",
       options: [
-        { feedback: "Correct!", isCorrect: true, text: "A" },
-        { feedback: "Wrong.", isCorrect: false, text: "B" },
+        { feedback: "Correct!", id: "a", isCorrect: true, text: "A" },
+        { feedback: "Wrong.", id: "b", isCorrect: false, text: "B" },
       ],
       question: "What is correct?",
     });
@@ -37,8 +37,8 @@ describe("step content contracts", () => {
       },
       kind: "core",
       options: [
-        { feedback: "Correct!", isCorrect: true, text: "A" },
-        { feedback: "Wrong.", isCorrect: false, text: "B" },
+        { feedback: "Correct!", id: "a", isCorrect: true, text: "A" },
+        { feedback: "Wrong.", id: "b", isCorrect: false, text: "B" },
       ],
       question: "What is correct?",
     });
@@ -47,7 +47,7 @@ describe("step content contracts", () => {
   test("rejects multipleChoice without kind", () => {
     expect(() =>
       parseStepContent("multipleChoice", {
-        options: [{ feedback: "Correct", isCorrect: true, text: "A" }],
+        options: [{ feedback: "Correct", id: "a", isCorrect: true, text: "A" }],
       }),
     ).toThrow();
   });
@@ -58,8 +58,10 @@ describe("step content contracts", () => {
         kind: "core",
         options: [
           {
-            consequence: "Something",
             effects: [{ dimension: "X", impact: "positive" }],
+            feedback: "Something",
+            id: "a",
+            isCorrect: true,
             text: "A",
           },
         ],
@@ -71,7 +73,7 @@ describe("step content contracts", () => {
     expect(() =>
       parseStepContent("multipleChoice", {
         kind: "unknown",
-        options: [{ feedback: "Correct", isCorrect: true, text: "A" }],
+        options: [{ feedback: "Correct", id: "a", isCorrect: true, text: "A" }],
       }),
     ).toThrow();
   });
@@ -186,12 +188,28 @@ describe("step content contracts", () => {
 
   test("parses selectImage", () => {
     const content = parseStepContent("selectImage", {
-      options: [{ feedback: "Correct", isCorrect: true, prompt: "A cat", url: "https://a.co/x" }],
+      options: [
+        {
+          feedback: "Correct",
+          id: "image-1",
+          isCorrect: true,
+          prompt: "A cat",
+          url: "https://a.co/x",
+        },
+      ],
       question: "Which image shows a cat?",
     });
 
     expect(content).toEqual({
-      options: [{ feedback: "Correct", isCorrect: true, prompt: "A cat", url: "https://a.co/x" }],
+      options: [
+        {
+          feedback: "Correct",
+          id: "image-1",
+          isCorrect: true,
+          prompt: "A cat",
+          url: "https://a.co/x",
+        },
+      ],
       question: "Which image shows a cat?",
     });
   });
@@ -249,43 +267,43 @@ describe("step content contracts", () => {
   describe("story", () => {
     const baseChoice = {
       alignment: "strong" as const,
-      consequence: "Things improve.",
+      feedback: "Things improve.",
       id: "1a",
       metricEffects: [{ effect: "positive" as const, metric: "Production" }],
       stateImage: { prompt: "World state after the helpful action" },
       text: "Do the right thing",
     };
 
-    test("parses step with problem and choices", () => {
+    test("parses step with problem and options", () => {
       const content = parseStepContent("story", {
-        choices: [baseChoice, { ...baseChoice, alignment: "weak", id: "1b" }],
         image: { prompt: "Story decision scene" },
+        options: [baseChoice, { ...baseChoice, alignment: "weak", id: "1b" }],
         problem: "You face a decision.",
       });
 
       expect(content.problem).toBe("You face a decision.");
-      expect(content.choices).toHaveLength(2);
+      expect(content.options).toHaveLength(2);
     });
 
-    test("accepts more than 4 choices", () => {
-      const choices = Array.from({ length: 5 }, (_, i) => ({
+    test("accepts more than 4 options", () => {
+      const options = Array.from({ length: 5 }, (_, i) => ({
         ...baseChoice,
         id: `choice-${i}`,
       }));
 
       const content = parseStepContent("story", {
-        choices,
         image: { prompt: "Crowded decision scene" },
+        options,
         problem: "Many options available.",
       });
 
-      expect(content.choices).toHaveLength(5);
+      expect(content.options).toHaveLength(5);
     });
 
     test("rejects fewer than 2 choices", () => {
       expect(() =>
         parseStepContent("story", {
-          choices: [baseChoice],
+          options: [baseChoice],
           problem: "Only one option.",
         }),
       ).toThrow();
@@ -294,8 +312,8 @@ describe("step content contracts", () => {
     test("rejects extra fields on step content", () => {
       expect(() =>
         parseStepContent("story", {
-          choices: [baseChoice, { ...baseChoice, id: "1b" }],
           intro: "Not allowed here.",
+          options: [baseChoice, { ...baseChoice, id: "1b" }],
           problem: "Test.",
         }),
       ).toThrow();
@@ -304,7 +322,7 @@ describe("step content contracts", () => {
     test("rejects extra fields on choice", () => {
       expect(() =>
         parseStepContent("story", {
-          choices: [{ ...baseChoice, extra: "field" }],
+          options: [{ ...baseChoice, extra: "field" }],
           problem: "Test.",
         }),
       ).toThrow();
@@ -313,7 +331,7 @@ describe("step content contracts", () => {
     test("rejects missing problem", () => {
       expect(() =>
         parseStepContent("story", {
-          choices: [baseChoice, { ...baseChoice, id: "1b" }],
+          options: [baseChoice, { ...baseChoice, id: "1b" }],
         }),
       ).toThrow();
     });
@@ -460,22 +478,22 @@ describe("step content contracts", () => {
       ).toThrow();
     });
 
-    test("parses action variant with labels, quality, and embedded findings", () => {
+    test("parses action variant with text, quality, and embedded feedback", () => {
       const content = parseStepContent("investigation", {
-        actions: [
+        options: [
           {
-            finding: "The footage shows movement at 11pm.",
+            feedback: "The footage shows movement at 11pm.",
             id: "a1",
-            label: "Check the security footage",
             quality: "critical",
+            text: "Check the security footage",
           },
           {
-            finding: "The gardener was in the shed.",
+            feedback: "The gardener was in the shed.",
             id: "a2",
-            label: "Interview the gardener",
             quality: "useful",
+            text: "Interview the gardener",
           },
-          { finding: "No clues here.", id: "a3", label: "Check the attic", quality: "weak" },
+          { feedback: "No clues here.", id: "a3", quality: "weak", text: "Check the attic" },
         ],
         variant: "action",
       });
@@ -486,10 +504,10 @@ describe("step content contracts", () => {
     test("rejects invalid quality value", () => {
       expect(() =>
         parseStepContent("investigation", {
-          actions: [
-            { finding: "Something", id: "a1", label: "Do something", quality: "excellent" },
-            { finding: "Something", id: "a2", label: "Do more", quality: "critical" },
-            { finding: "Something", id: "a3", label: "Do other", quality: "useful" },
+          options: [
+            { feedback: "Something", id: "a1", quality: "excellent", text: "Do something" },
+            { feedback: "Something", id: "a2", quality: "critical", text: "Do more" },
+            { feedback: "Something", id: "a3", quality: "useful", text: "Do other" },
           ],
           variant: "action",
         }),
@@ -498,7 +516,7 @@ describe("step content contracts", () => {
 
     test("parses call variant with explanations and per-explanation feedback", () => {
       const content = parseStepContent("investigation", {
-        explanations: [
+        options: [
           {
             accuracy: "best",
             feedback: "Correct — the butler did it.",
@@ -528,9 +546,7 @@ describe("step content contracts", () => {
       expect(() =>
         parseStepContent("investigation", {
           correctExplanationIndex: 0,
-          explanations: [
-            { accuracy: "best", feedback: "Correct.", id: "e1", text: "Explanation." },
-          ],
+          options: [{ accuracy: "best", feedback: "Correct.", id: "e1", text: "Explanation." }],
           variant: "call",
         }),
       ).toThrow();

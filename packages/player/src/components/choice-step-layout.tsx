@@ -22,15 +22,25 @@ function ChoiceStepLayoutContent({
   onSelect,
   options,
   question,
-  selectedIndex,
+  selectedKey,
 }: {
   context?: string | null;
-  onSelect: (index: number) => void;
+  onSelect: (key: string) => void;
   options: readonly { key: string; text: string }[];
   question?: string | null;
-  selectedIndex: number | null;
+  selectedKey: string | null;
 }) {
-  const hasSelection = selectedIndex !== null;
+  const hasSelection = selectedKey !== null;
+
+  const handleSelect = (index: number) => {
+    const option = options[index];
+
+    if (!option) {
+      return;
+    }
+
+    onSelect(option.key);
+  };
 
   return (
     <>
@@ -42,11 +52,11 @@ function ChoiceStepLayoutContent({
       )}
 
       <PlayerChoiceSceneOptions
-        onSelect={onSelect}
-        options={options.map((option, index) => ({
+        onSelect={handleSelect}
+        options={options.map((option) => ({
           content: <PlayerChoiceSceneOptionText>{option.text}</PlayerChoiceSceneOptionText>,
-          isDimmed: hasSelection && selectedIndex !== index,
-          isSelected: selectedIndex === index,
+          isDimmed: hasSelection && selectedKey !== option.key,
+          isSelected: selectedKey === option.key,
           key: option.key,
         }))}
       />
@@ -126,14 +136,14 @@ export function ChoiceStepLayout({
   onSelect,
   options,
   question,
-  selectedIndex,
+  selectedKey,
 }: {
   context?: string | null;
   image?: StepImage | null;
-  onSelect: (index: number) => void;
+  onSelect: (key: string) => void;
   options: readonly { key: string; text: string }[];
   question?: string | null;
-  selectedIndex: number | null;
+  selectedKey: string | null;
 }) {
   const content = (
     <ChoiceStepLayoutContent
@@ -141,7 +151,7 @@ export function ChoiceStepLayout({
       onSelect={onSelect}
       options={options}
       question={question}
-      selectedIndex={selectedIndex}
+      selectedKey={selectedKey}
     />
   );
 

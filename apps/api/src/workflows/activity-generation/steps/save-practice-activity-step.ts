@@ -4,6 +4,7 @@ import { type StepImage } from "@zoonk/core/steps/contract/image";
 import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
+import { addOptionIds } from "./_utils/add-option-ids";
 import { type PracticeScenario, type PracticeStep } from "./generate-practice-content-step";
 
 /**
@@ -89,7 +90,7 @@ function buildPracticeQuestionRecords({
       context: step.context,
       image,
       kind: "core",
-      options: step.options,
+      options: addOptionIds({ options: step.options }),
       question: step.question,
     });
 

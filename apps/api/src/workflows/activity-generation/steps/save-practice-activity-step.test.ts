@@ -146,10 +146,10 @@ describe(savePracticeActivityStep, () => {
       image: practiceImages[1],
       kind: "core",
       options: [
-        { feedback: "Correct!", isCorrect: true, text: "Option A" },
-        { feedback: "Incorrect.", isCorrect: false, text: "Option B" },
-        { feedback: "Incorrect.", isCorrect: false, text: "Option C" },
-        { feedback: "Incorrect.", isCorrect: false, text: "Option D" },
+        { feedback: "Correct!", id: "option-1", isCorrect: true, text: "Option A" },
+        { feedback: "Incorrect.", id: "option-2", isCorrect: false, text: "Option B" },
+        { feedback: "Incorrect.", id: "option-3", isCorrect: false, text: "Option C" },
+        { feedback: "Incorrect.", id: "option-4", isCorrect: false, text: "Option D" },
       ],
       question: steps[0]?.question,
     });
@@ -159,10 +159,10 @@ describe(savePracticeActivityStep, () => {
       image: practiceImages[2],
       kind: "core",
       options: [
-        { feedback: "Incorrect.", isCorrect: false, text: "Option A" },
-        { feedback: "Correct!", isCorrect: true, text: "Option B" },
-        { feedback: "Incorrect.", isCorrect: false, text: "Option C" },
-        { feedback: "Incorrect.", isCorrect: false, text: "Option D" },
+        { feedback: "Incorrect.", id: "option-1", isCorrect: false, text: "Option A" },
+        { feedback: "Correct!", id: "option-2", isCorrect: true, text: "Option B" },
+        { feedback: "Incorrect.", id: "option-3", isCorrect: false, text: "Option C" },
+        { feedback: "Incorrect.", id: "option-4", isCorrect: false, text: "Option D" },
       ],
       question: steps[1]?.question,
     });

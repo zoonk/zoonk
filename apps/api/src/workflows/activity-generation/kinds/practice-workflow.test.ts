@@ -145,10 +145,10 @@ describe("practice activity workflow", () => {
       },
       kind: "core",
       options: [
-        { feedback: "Great choice!", isCorrect: true, text: "Option A" },
-        { feedback: "Not quite.", isCorrect: false, text: "Option B" },
-        { feedback: "Try again.", isCorrect: false, text: "Option C" },
-        { feedback: "Nope.", isCorrect: false, text: "Option D" },
+        { feedback: "Great choice!", id: "option-1", isCorrect: true, text: "Option A" },
+        { feedback: "Not quite.", id: "option-2", isCorrect: false, text: "Option B" },
+        { feedback: "Try again.", id: "option-3", isCorrect: false, text: "Option C" },
+        { feedback: "Nope.", id: "option-4", isCorrect: false, text: "Option D" },
       ],
       question: "What should you do?",
     });

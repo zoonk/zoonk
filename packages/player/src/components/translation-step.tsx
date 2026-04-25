@@ -17,12 +17,12 @@ import {
 } from "./player-choice-scene";
 import { RomanizationText } from "./romanization-text";
 
-function getSelectedWordId(selectedAnswer?: SelectedAnswer): string | null {
+function getSelectedOptionId(selectedAnswer?: SelectedAnswer): string | null {
   if (selectedAnswer?.kind !== "translation") {
     return null;
   }
 
-  return selectedAnswer.selectedWordId;
+  return selectedAnswer.selectedOptionId;
 }
 
 function TranslationOptionContent({
@@ -56,7 +56,7 @@ export function TranslationStep({
 }) {
   const t = useExtracted();
   const correctWord = step.word;
-  const selectedWordId = getSelectedWordId(selectedAnswer);
+  const selectedOptionId = getSelectedOptionId(selectedAnswer);
   const options = step.translationOptions;
 
   const { play } = useWordAudio({
@@ -71,12 +71,7 @@ export function TranslationStep({
     }
 
     play(word.audioUrl);
-    onSelectAnswer(step.id, {
-      kind: "translation",
-      questionText: correctWord?.translation ?? "",
-      selectedText: word.word,
-      selectedWordId: word.id,
-    });
+    onSelectAnswer(step.id, { kind: "translation", selectedOptionId: word.id });
   };
 
   if (!correctWord) {
@@ -94,8 +89,10 @@ export function TranslationStep({
         keyboardEnabled={!selectedAnswer || selectedAnswer.kind === "translation"}
         onSelect={handleSelect}
         options={options.map((word) => ({
-          content: <TranslationOptionContent isSelected={selectedWordId === word.id} word={word} />,
-          isSelected: selectedWordId === word.id,
+          content: (
+            <TranslationOptionContent isSelected={selectedOptionId === word.id} word={word} />
+          ),
+          isSelected: selectedOptionId === word.id,
           key: word.id,
         }))}
       />

@@ -17,13 +17,15 @@ export type AnswerResult = {
 
 export function checkMultipleChoiceAnswer(
   content: MultipleChoiceStepContent,
-  selectedIndex: number,
+  selectedOptionId: string,
 ): AnswerResult {
   const correctAnswer = content.options.find((opt) => opt.isCorrect)?.text ?? null;
-  const option = content.options[selectedIndex];
+  const option = content.options.find((item) => item.id === selectedOptionId);
+
   if (!option) {
     return { correctAnswer, feedback: null, isCorrect: false };
   }
+
   return { correctAnswer, feedback: option.feedback, isCorrect: option.isCorrect };
 }
 
@@ -74,42 +76,45 @@ export function checkSortOrderAnswer(
 
 export function checkSelectImageAnswer(
   content: SelectImageStepContent,
-  selectedIndex: number,
+  selectedOptionId: string,
 ): AnswerResult {
-  const option = content.options[selectedIndex];
+  const option = content.options.find((item) => item.id === selectedOptionId);
+
   if (!option) {
     return { correctAnswer: null, feedback: null, isCorrect: false };
   }
+
   return { correctAnswer: null, feedback: option.feedback, isCorrect: option.isCorrect };
 }
 
 export function checkTranslationAnswer(
   correctWordId: string,
-  selectedWordId: string,
+  selectedOptionId: string,
   correctWord?: string,
 ): AnswerResult {
   return {
     correctAnswer: correctWord ?? null,
     feedback: null,
-    isCorrect: correctWordId === selectedWordId,
+    isCorrect: correctWordId === selectedOptionId,
   };
 }
 
 /**
- * Check a story answer by looking up the selected choice's alignment.
+ * Check a story answer by looking up the selected option's alignment.
  *
  * Alignment is hidden from the player during play, but determines correctness
  * for analytics/metrics: strong and partial count as correct, weak as incorrect.
- * The choice's consequence text is returned as feedback for display on the
- * feedback screen — it describes what happens as a result of the player's decision.
+ * The option's feedback text describes what happens as a result of the player's
+ * decision and is returned for display on the feedback screen.
  */
 export function checkStoryAnswer(
   content: StoryStepContent,
-  selectedChoiceId: string,
+  selectedOptionId: string,
 ): AnswerResult {
-  const choice = content.choices.find((option) => option.id === selectedChoiceId);
-  const isCorrect = choice ? choice.alignment !== "weak" : false;
-  return { correctAnswer: null, feedback: choice?.consequence ?? null, isCorrect };
+  const option = content.options.find((item) => item.id === selectedOptionId);
+  const isCorrect = option ? option.alignment !== "weak" : false;
+
+  return { correctAnswer: null, feedback: option?.feedback ?? null, isCorrect };
 }
 
 export function checkArrangeWordsAnswer(
@@ -125,20 +130,20 @@ export function checkArrangeWordsAnswer(
  *
  * Critical and useful actions are correct (strong evidence choices).
  * Weak actions are incorrect (poor investigation decisions).
- * Returns the finding text as feedback so the evidence can be shown
+ * Returns the option feedback so the evidence can be shown
  * after checking.
  */
 export function checkInvestigationAction(
   content: Extract<InvestigationStepContent, { variant: "action" }>,
-  selectedActionId: string,
+  selectedOptionId: string,
 ): AnswerResult {
-  const action = content.actions.find((a) => a.id === selectedActionId);
+  const action = content.options.find((a) => a.id === selectedOptionId);
 
   if (!action) {
     return { correctAnswer: null, feedback: null, isCorrect: false };
   }
 
-  return { correctAnswer: null, feedback: action.finding, isCorrect: action.quality !== "weak" };
+  return { correctAnswer: null, feedback: action.feedback, isCorrect: action.quality !== "weak" };
 }
 
 /**
@@ -152,9 +157,9 @@ export function checkInvestigationAction(
  */
 export function checkInvestigationCall(
   content: Extract<InvestigationStepContent, { variant: "call" }>,
-  selectedExplanationId: string,
+  selectedOptionId: string,
 ): AnswerResult {
-  const explanation = content.explanations.find((exp) => exp.id === selectedExplanationId);
+  const explanation = content.options.find((exp) => exp.id === selectedOptionId);
 
   if (!explanation) {
     return { correctAnswer: null, feedback: null, isCorrect: false };

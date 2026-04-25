@@ -13,24 +13,23 @@ import { InlineFeedback } from "./inline-feedback";
 import { QuestionText } from "./question-text";
 import { InteractiveStepLayout } from "./step-layouts";
 
-function getSelectedIndex(selectedAnswer?: SelectedAnswer): number | null {
+function getSelectedOptionId(selectedAnswer?: SelectedAnswer): string | null {
   if (selectedAnswer?.kind !== "selectImage") {
     return null;
   }
 
-  return selectedAnswer.selectedIndex;
+  return selectedAnswer.selectedOptionId;
 }
 
 function getImageOptionResultState(
-  index: number,
-  content: SelectImageStepContent,
-  selectedIndex: number,
+  option: SelectImageStepContent["options"][number],
+  selectedOptionId: string,
 ): "correct" | "incorrect" | null {
-  if (content.options[index]?.isCorrect) {
+  if (option.isCorrect) {
     return "correct";
   }
 
-  if (index === selectedIndex) {
+  if (option.id === selectedOptionId) {
     return "incorrect";
   }
 
@@ -112,7 +111,7 @@ export function SelectImageStep({
 }) {
   const t = useExtracted();
   const content = parseStepContent("selectImage", step.content);
-  const selectedIndex = getSelectedIndex(selectedAnswer);
+  const selectedOptionId = getSelectedOptionId(selectedAnswer);
   const hasResult = Boolean(result);
 
   const handleSelect = (index: number) => {
@@ -120,7 +119,13 @@ export function SelectImageStep({
       return;
     }
 
-    onSelectAnswer(step.id, { kind: "selectImage", selectedIndex: index });
+    const option = content.options[index];
+
+    if (!option) {
+      return;
+    }
+
+    onSelectAnswer(step.id, { kind: "selectImage", selectedOptionId: option.id });
   };
 
   useOptionKeyboard({
@@ -136,17 +141,18 @@ export function SelectImageStep({
       <div aria-label={t("Image options")} className="grid grid-cols-2 gap-3" role="radiogroup">
         {content.options.map((option, index) => {
           const resultState =
-            hasResult && selectedIndex !== null
-              ? getImageOptionResultState(index, content, selectedIndex)
+            hasResult && selectedOptionId
+              ? getImageOptionResultState(option, selectedOptionId)
               : null;
           const isDimmed = hasResult && !resultState;
+          const isSelected = selectedOptionId === option.id;
 
           return (
             <ImageOptionCard
               disabled={hasResult}
               isDimmed={isDimmed}
-              isSelected={selectedIndex === index}
-              key={option.prompt}
+              isSelected={isSelected}
+              key={option.id}
               onSelect={() => handleSelect(index)}
               prompt={option.prompt}
               resultState={resultState}

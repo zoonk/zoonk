@@ -47,9 +47,9 @@ const mockAccuracy = {
 
 const mockActionsData = {
   actions: [
-    { label: "Check server logs", quality: "critical" as const },
-    { label: "Review DNS records", quality: "useful" as const },
-    { label: "Ask a colleague", quality: "weak" as const },
+    { quality: "critical" as const, text: "Check server logs" },
+    { quality: "useful" as const, text: "Review DNS records" },
+    { quality: "weak" as const, text: "Ask a colleague" },
   ],
 };
 

@@ -15,7 +15,7 @@ Each step has **3-4 choices**.
 
 Each choice has:
 
-- a **label**
+- **text** for the choice shown to the learner
 - a **consequence**
 - a **stateImagePrompt**
 - **metricEffects**
@@ -37,10 +37,10 @@ The player never sees the alignment tags.
 
 ## Length Limits
 
-| Element      | Max words | Max sentences |
-| ------------ | --------- | ------------- |
-| choice label | 10        | 1             |
-| consequence  | 30        | 2             |
+| Element     | Max words | Max sentences |
+| ----------- | --------- | ------------- |
+| choice text | 10        | 1             |
+| consequence | 30        | 2             |
 
 ## Choice Label Rules
 
@@ -83,15 +83,15 @@ Do not make weak choices jump to an unrelated subsystem, cosmetic layer, adminis
 Do not force choices into identical grammar if that makes them mean the same thing.
 Do not make choices differ mainly by scope words like local, regional, global, narrow, broad, current, complete, isolated, direct, or comprehensive.
 
-All choices in the same set must look similarly competent from the label alone.
+All choices in the same set must look similarly competent from the text alone.
 The learner should need the problem, image, and consequence to know which one fits.
 
-- Do not make the strong choice the only label that compares, cross-checks, validates, integrates, or uses multiple inputs.
+- Do not make the strong choice the only text that compares, cross-checks, validates, integrates, or uses multiple inputs.
 - Do not make the weak choice a refusal, shortcut, delay, obvious patch, or visibly smaller version of the strong choice.
 - Do not make weak choices fail by sounding lazy. Make them fail because they use the wrong evidence, wrong baseline, wrong timing, wrong unit, wrong threshold, wrong artifact, wrong causal direction, or wrong constraint for this specific situation.
 - If the strong choice uses a real domain term, give the partial and weak choices equally authentic domain terms.
 - If the strong choice names two or three evidence sources, the other choices should have comparable specificity, not one-word or obviously incomplete labels.
-- Do not make the correct label the longest, broadest, most polished, or most senior-sounding option by default.
+- Do not make the correct text the longest, broadest, most polished, or most senior-sounding option by default.
 
 ## Choice Set Construction
 
@@ -103,7 +103,7 @@ Start from the real decision boundary:
 - What plausible evidence would solve a nearby but incomplete version of the problem?
 - What plausible evidence would a competent person reach for if they were focused on the wrong constraint?
 
-Then write labels that hide those differences.
+Then write text that hides those differences.
 
 Use this pattern:
 
@@ -111,14 +111,14 @@ Use this pattern:
 - `partial`: concrete action or artifact that helps but leaves a named gap.
 - `weak`: concrete action or artifact that sounds reasonable but targets the wrong part of the case.
 
-The weak label should still be something a real teammate might suggest before the consequence reveals why it misses.
+The weak text should still be something a real teammate might suggest before the consequence reveals why it misses.
 
 ## Specific Competing Actions
 
-Choice labels should sound like clear instructions one competent colleague could give another.
-Do not hide the answer by making labels vague.
+Choice text should sound like clear instructions one competent colleague could give another.
+Do not hide the answer by making text vague.
 
-Each label should make the next move concrete:
+Each text should make the next move concrete:
 
 - what to change
 - what to compare
@@ -130,7 +130,7 @@ Each label should make the next move concrete:
 - what to test
 - what source to trust
 
-Avoid labels that only say:
+Avoid text that only say:
 
 - "review X"
 - "inspect X"
@@ -138,7 +138,7 @@ Avoid labels that only say:
 - "adjust X"
 - "check X"
 
-unless the label also says what about X is being reviewed, fixed, adjusted, or checked.
+unless the text also says what about X is being reviewed, fixed, adjusted, or checked.
 
 The strong choice may use precise professional language, including the property or constraint that matters, if that is how people in that role would naturally say the action.
 
@@ -149,26 +149,26 @@ The important rule is symmetry:
 - If the strong choice names a field, measurement, source, or artifact, the partial and weak choices must be equally concrete.
 - Do not make the correct choice the only one that sounds actionable.
 
-Partial and weak labels should be wrong because they apply a plausible action to the wrong field, source, timing, threshold, unit, layer, or constraint.
+Partial and weak texts should be wrong because they apply a plausible action to the wrong field, source, timing, threshold, unit, layer, or constraint.
 They should not be wrong because they are vague.
 
 ## Answer Masking
 
-The label must not reveal the alignment.
-A learner who sees only the choice labels, without the problem or image, should not be able to identify the strong or weak choice.
+The text must not reveal the alignment.
+A learner who sees only the choice text, without the problem or image, should not be able to identify the strong or weak choice.
 
 Weak choices should name a plausible evidence source or action, not its limitation.
 Partial choices should name a useful strategy, not the fact that it is incomplete.
 Strong choices should name the concrete evidence or action that solves the problem, not the lesson-shaped goal.
 
-A choice label should not paraphrase the problem's requested outcome.
+A choice text should not paraphrase the problem's requested outcome.
 
 If the problem already names the desired property, relationship, category, scale, or diagnostic direction, do not make the strong choice simply repeat that wording.
 Turn it into a specific action in the work surface.
 
 If the problem already leaks the concept, scale, or desired outcome, the choices must become competing concrete actions, not concept labels.
 
-Do not make the strong choice the only label that contains the key conceptual property.
+Do not make the strong choice the only text that contains the key conceptual property.
 If that property must appear because it is the natural professional fix, make the other choices similarly precise and plausible.
 
 If a learner could pick the strong choice by recognizing the lesson topic instead of reading the case evidence, rewrite the whole choice set so every option sounds like a specific, credible fix.
@@ -218,7 +218,7 @@ A weak choice can be wrong because it checks:
 
 Do not make the weak choice wrong because it is obviously careless, unrelated, or superficial.
 
-If the weak label sounds like no competent teammate would suggest it, rewrite it.
+If the weak text sounds like no competent teammate would suggest it, rewrite it.
 
 Bad:
 
@@ -240,14 +240,14 @@ Choices:
 
 Before finalizing each step, run these tests:
 
-- Label-only test: If the learner saw only the choice labels, could they likely pick the best answer by tone, breadth, scope, or professionalism? If yes, rewrite the labels.
+- Text-only test: If the learner saw only the choice text, could they likely pick the best answer by tone, breadth, scope, or professionalism? If yes, rewrite the text.
 - Completeness test: Is the strong choice the only one with multiple evidence sources or a more complete-sounding verb? If yes, make the decoys similarly specific.
 - Weakness test: Does the weak choice announce its limitation through words like "only", "local", "quick", "ignore", "simple", "basic", or equivalent meaning in the target language? If yes, rewrite it as a plausible but wrong professional move.
 - Mirror test: Does the strong choice merely repeat the key words from the problem? If yes, rewrite it as the concrete action that would produce that result.
 - Concept test: Would the strong choice be obvious to someone who merely recognizes the lesson concept name? If yes, make every option a similarly specific competing fix so the case evidence decides.
 - Work-surface test: Do all choices belong to the same plausible subsystem or evidence surface? If not, rewrite the outlier.
 - Near-miss test: Would the weak choice fix a plausible neighboring issue? If not, rewrite it as a better near miss.
-- Vague-label test: Could someone ask "what exactly do you want me to change or check?" after reading a label? If yes, make the label more specific.
+- Vague-text test: Could someone ask "what exactly do you want me to change or check?" after reading the text? If yes, make the text more specific.
 
 ## Consequence Rules
 
