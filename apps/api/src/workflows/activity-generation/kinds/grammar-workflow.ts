@@ -1,10 +1,9 @@
-import { settled } from "@zoonk/utils/settled";
+import { failActivityWorkflow } from "../handle-activity-workflow-error";
 import { findActivityByKind } from "../steps/_utils/find-activity-by-kind";
 import { generateGrammarContentStep } from "../steps/generate-grammar-content-step";
 import { generateGrammarRomanizationStep } from "../steps/generate-grammar-romanization-step";
 import { generateGrammarUserContentStep } from "../steps/generate-grammar-user-content-step";
 import { type LessonActivity } from "../steps/get-lesson-activities-step";
-import { handleActivityFailureStep } from "../steps/handle-failure-step";
 import { saveGrammarActivityStep } from "../steps/save-grammar-steps-step";
 
 /**
@@ -34,35 +33,35 @@ export async function grammarActivityWorkflow({
     return;
   }
 
-  const { generated, grammarContent } = await generateGrammarContentStep(
-    grammarActivity,
-    workflowRunId,
-    concepts,
-    neighboringConcepts,
-  );
+  try {
+    const { generated, grammarContent } = await generateGrammarContentStep(
+      grammarActivity,
+      workflowRunId,
+      concepts,
+      neighboringConcepts,
+    );
 
-  if (!generated || !grammarContent) {
-    return;
+    if (!generated || !grammarContent) {
+      throw new Error("Grammar content step returned no content");
+    }
+
+    const [{ userContent }, { romanizations }] = await Promise.all([
+      generateGrammarUserContentStep(activitiesToGenerate, grammarContent),
+      generateGrammarRomanizationStep(activitiesToGenerate, grammarContent),
+    ]);
+
+    if (!userContent) {
+      throw new Error("Grammar user content is missing");
+    }
+
+    await saveGrammarActivityStep(
+      activitiesToGenerate,
+      workflowRunId,
+      grammarContent,
+      userContent,
+      romanizations,
+    );
+  } catch (error) {
+    await failActivityWorkflow({ activityId: grammarActivity.id, error });
   }
-
-  const [userContentResult, romanizationResult] = await Promise.allSettled([
-    generateGrammarUserContentStep(activitiesToGenerate, grammarContent),
-    generateGrammarRomanizationStep(activitiesToGenerate, grammarContent),
-  ]);
-
-  const { userContent } = settled(userContentResult, { userContent: null });
-  const { romanizations } = settled(romanizationResult, { romanizations: null });
-
-  if (!userContent) {
-    await handleActivityFailureStep({ activityId: grammarActivity.id });
-    return;
-  }
-
-  await saveGrammarActivityStep(
-    activitiesToGenerate,
-    workflowRunId,
-    grammarContent,
-    userContent,
-    romanizations,
-  );
 }

@@ -63,11 +63,9 @@ export async function generateReadingAudioStep(
     ),
   );
 
-  const fulfilled = results.filter((result) => result !== null);
-
   const sentenceAudioUrls: Record<string, string> = {
     ...existingAudioUrls,
-    ...Object.fromEntries(fulfilled.map((result) => [result.text, result.audioUrl])),
+    ...Object.fromEntries(results.map((result) => [result.text, result.audioUrl])),
   };
 
   await stream.status({ status: "completed", step: "generateAudio" });

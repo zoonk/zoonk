@@ -33,7 +33,6 @@ export async function generateCoreActivitiesStep(
   );
 
   if (error) {
-    await stream.error({ reason: "aiGenerationFailed", step: "generateCoreActivities" });
     throw error;
   }
 

@@ -39,6 +39,12 @@ vi.mock("@zoonk/ai/tasks/lessons/kind", () => ({
   }),
 }));
 
+vi.mock("@zoonk/ai/tasks/lessons/applied-activity-kind", () => ({
+  generateAppliedActivityKind: vi.fn().mockResolvedValue({
+    data: { appliedActivityKind: "story" },
+  }),
+}));
+
 vi.mock("@/workflows/activity-generation/activity-generation-workflow", () => ({
   activityGenerationWorkflow: vi.fn().mockResolvedValue({}),
 }));
@@ -236,7 +242,7 @@ describe(chapterGenerationWorkflow, () => {
       expect(dbChapter?.generationStatus).toBe("completed");
     });
 
-    test("marks chapter as 'failed' when AI generation throws and streams error", async () => {
+    test("marks chapter as 'failed' when AI generation throws after retries", async () => {
       vi.mocked(generateChapterLessons).mockRejectedValueOnce(new Error("AI generation failed"));
 
       const title = `Error Chapter ${randomUUID()}`;

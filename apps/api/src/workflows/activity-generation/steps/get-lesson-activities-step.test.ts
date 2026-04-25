@@ -107,7 +107,7 @@ describe(getLessonActivitiesStep, () => {
 
     const events = getStreamedEvents(writeMock);
 
-    expect(events).toContainEqual(
+    expect(events).not.toContainEqual(
       expect.objectContaining({ status: "error", step: "getLessonActivities" }),
     );
   });

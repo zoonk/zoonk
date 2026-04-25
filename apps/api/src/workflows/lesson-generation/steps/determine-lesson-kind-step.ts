@@ -23,7 +23,6 @@ export async function determineLessonKindStep(context: LessonContext): Promise<L
   );
 
   if (error) {
-    await stream.error({ reason: "aiGenerationFailed", step: "determineLessonKind" });
     throw error;
   }
 

@@ -10,13 +10,13 @@ vi.mock("@zoonk/ai/tasks/activities/language/romanization", () => ({
 }));
 
 describe(generateActivityRomanizations, () => {
-  test("returns null for Roman-script languages without calling AI", async () => {
+  test("returns empty romanization map for Roman-script languages without calling AI", async () => {
     const result = await generateActivityRomanizations({
       targetLanguage: "es",
       texts: ["hola"],
     });
 
-    expect(result).toBeNull();
+    expect(result).toEqual({});
     expect(generateActivityRomanizationMock).not.toHaveBeenCalled();
   });
 
@@ -39,26 +39,26 @@ describe(generateActivityRomanizations, () => {
     });
   });
 
-  test("returns null when AI call fails", async () => {
+  test("throws when AI call fails", async () => {
     generateActivityRomanizationMock.mockRejectedValue(new Error("AI error"));
 
-    const result = await generateActivityRomanizations({
-      targetLanguage: "ja",
-      texts: ["これは猫です"],
-    });
-
-    expect(result).toBeNull();
+    await expect(
+      generateActivityRomanizations({
+        targetLanguage: "ja",
+        texts: ["これは猫です"],
+      }),
+    ).rejects.toThrow("AI error");
   });
 
-  test("returns null when AI returns no data", async () => {
+  test("throws when AI returns no data", async () => {
     generateActivityRomanizationMock.mockResolvedValue({ data: null });
 
-    const result = await generateActivityRomanizations({
-      targetLanguage: "ja",
-      texts: ["これは猫です"],
-    });
-
-    expect(result).toBeNull();
+    await expect(
+      generateActivityRomanizations({
+        targetLanguage: "ja",
+        texts: ["これは猫です"],
+      }),
+    ).rejects.toThrow("romanizationFailed");
   });
 
   test("filters out texts where AI returned undefined", async () => {

@@ -49,7 +49,7 @@ describe(addLessonsStep, () => {
     vi.clearAllMocks();
   });
 
-  test("streams error and throws when DB save fails", async () => {
+  test("throws without streaming error when DB save fails", async () => {
     const brokenContext: ChapterContext = {
       ...context,
       id: randomUUID(),
@@ -61,7 +61,9 @@ describe(addLessonsStep, () => {
 
     const events = getStreamedEvents(writeMock);
 
-    expect(events).toContainEqual(expect.objectContaining({ status: "error", step: "addLessons" }));
+    expect(events).not.toContainEqual(
+      expect.objectContaining({ status: "error", step: "addLessons" }),
+    );
   });
 
   test("creates lessons in the database and returns them", async () => {

@@ -5,10 +5,10 @@ import {
 } from "@zoonk/ai/tasks/activities/core/story";
 import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { safeAsync } from "@zoonk/utils/error";
+import { FatalError } from "workflow";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { type ActivitySteps } from "./_utils/get-activity-steps";
 import { type LessonActivity } from "./get-lesson-activities-step";
-import { handleActivityFailureStep } from "./handle-failure-step";
 
 type StoryContentResult = {
   activityId: string | null;
@@ -35,10 +35,7 @@ export async function generateStoryContentStep(
   await using stream = createEntityStepStream<ActivityStepName>(storyActivity.id);
 
   if (explanationSteps.length === 0) {
-    await stream.error({ reason: "contentValidationFailed", step: "generateStoryContent" });
-    await handleActivityFailureStep({ activityId: storyActivity.id });
-
-    return { activityId: null, storyPlan: null };
+    throw new FatalError("Story generation needs explanation steps");
   }
 
   await stream.status({ status: "started", step: "generateStoryContent" });
@@ -59,12 +56,7 @@ export async function generateStoryContentStep(
   );
 
   if (error || !result) {
-    const reason = getAIResultErrorReason({ error, result });
-
-    await stream.error({ reason, step: "generateStoryContent" });
-    await handleActivityFailureStep({ activityId: storyActivity.id });
-
-    return { activityId: null, storyPlan: null };
+    throw error ?? new Error(getAIResultErrorReason({ result }));
   }
 
   await stream.status({ status: "completed", step: "generateStoryContent" });

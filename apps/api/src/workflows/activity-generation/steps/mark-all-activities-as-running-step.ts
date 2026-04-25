@@ -59,7 +59,6 @@ export async function markAllActivitiesAsRunningStep({
   );
 
   if (error) {
-    await stream.error({ reason: "dbSaveFailed", step: "setActivityAsRunning" });
     throw error;
   }
 

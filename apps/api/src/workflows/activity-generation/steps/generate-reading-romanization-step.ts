@@ -5,7 +5,6 @@ import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { generateActivityRomanizations } from "./_utils/generate-activity-romanizations";
 import { type ReadingSentence } from "./generate-reading-content-step";
 import { type LessonActivity } from "./get-lesson-activities-step";
-import { handleActivityFailureStep } from "./handle-failure-step";
 
 /**
  * Generates romanized (Latin-script) representations of reading sentences
@@ -42,16 +41,8 @@ export async function generateReadingRomanizationStep(
     texts: sentenceStrings,
   });
 
-  if (!romanizations) {
-    await stream.error({ reason: "romanizationFailed", step: "generateReadingRomanization" });
-    await handleActivityFailureStep({ activityId: activity.id });
-    return { romanizations: {} };
-  }
-
   if (Object.keys(romanizations).length < sentences.length) {
-    await stream.error({ reason: "romanizationFailed", step: "generateReadingRomanization" });
-    await handleActivityFailureStep({ activityId: activity.id });
-    return { romanizations };
+    throw new Error("romanizationFailed");
   }
 
   await stream.status({ status: "completed", step: "generateReadingRomanization" });

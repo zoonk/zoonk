@@ -1,3 +1,4 @@
+import { serializeWorkflowError } from "@/workflows/_shared/workflow-error";
 import { FatalError, getWorkflowMetadata } from "workflow";
 import { coreActivityWorkflow } from "./core-activity-workflow";
 import { customActivityWorkflow } from "./custom-activity-workflow";
@@ -99,7 +100,10 @@ export async function activityGenerationWorkflow(
     });
   } catch (error) {
     if (!options.regeneration) {
-      await handleWorkflowFailureStep({ lessonId });
+      await handleWorkflowFailureStep({
+        error: serializeWorkflowError(error),
+        lessonId,
+      });
     }
 
     throw error;

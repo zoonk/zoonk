@@ -1,4 +1,5 @@
 import { streamSkipStep } from "@/workflows/_shared/stream-skip-step";
+import { serializeWorkflowError } from "@/workflows/_shared/workflow-error";
 import { activityGenerationWorkflow } from "@/workflows/activity-generation/activity-generation-workflow";
 import { handleChapterFailureStep } from "@/workflows/course-generation/steps/handle-failure-step";
 import { lessonGenerationWorkflow } from "@/workflows/lesson-generation/lesson-generation-workflow";
@@ -45,7 +46,11 @@ export async function chapterGenerationWorkflow(chapterId: string): Promise<void
 
   // Chapter-specific work with failure handling
   const createdLessons = await generateAndAddLessons(context).catch(async (error: unknown) => {
-    await handleChapterFailureStep({ chapterId });
+    await handleChapterFailureStep({
+      chapterId,
+      error: serializeWorkflowError(error),
+    });
+
     throw error;
   });
 

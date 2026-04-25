@@ -43,8 +43,7 @@ export async function getNeighboringConceptsStep(activities: LessonActivity[]): 
   );
 
   if (error) {
-    await stream.error({ reason: "dbFetchFailed", step: "getNeighboringConcepts" });
-    return [];
+    throw error;
   }
 
   await stream.status({ status: "completed", step: "getNeighboringConcepts" });

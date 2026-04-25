@@ -156,4 +156,20 @@ describe(languageActivityWorkflow, () => {
       workflowRunId: "workflow-3",
     });
   });
+
+  test("stops before listening when reading generation fails", async () => {
+    vi.mocked(readingActivityWorkflow).mockRejectedValueOnce(new Error("reading failed"));
+
+    const activities = [makeActivity("reading"), makeActivity("listening")];
+
+    await expect(
+      languageActivityWorkflow({
+        activitiesToGenerate: activities as never,
+        allActivities: activities as never,
+        workflowRunId: "workflow-reading-failed",
+      }),
+    ).rejects.toThrow("reading failed");
+
+    expect(listeningActivityWorkflow).not.toHaveBeenCalled();
+  });
 });

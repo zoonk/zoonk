@@ -410,7 +410,7 @@ describe("explanation activity workflow", () => {
     expect(healthyResult.generationStatus).toBe("completed");
   });
 
-  test("streams entity ids for image generation and save steps, but not for batch content generation", async () => {
+  test("streams entity ids for generated explanation steps", async () => {
     const lesson = await lessonFixture({
       chapterId: chapter.id,
       concepts: ["First Concept", "Second Concept"],
@@ -449,6 +449,7 @@ describe("explanation activity workflow", () => {
     const activityIds = new Set([firstActivity.id, secondActivity.id]);
 
     for (const stepName of [
+      "generateExplanationContent",
       "generateImagePrompts",
       "generateStepImages",
       "saveExplanationActivity",
@@ -460,16 +461,6 @@ describe("explanation activity workflow", () => {
         expect(message.entityId).toBeDefined();
         expect(activityIds.has(message.entityId!)).toBe(true);
       }
-    }
-
-    const batchMessages = streamedMessages.filter(
-      (message) => message.step === "generateExplanationContent",
-    );
-
-    expect(batchMessages.length).toBeGreaterThan(0);
-
-    for (const message of batchMessages) {
-      expect(message.entityId).toBeUndefined();
     }
   });
 });

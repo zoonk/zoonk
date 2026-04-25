@@ -27,7 +27,6 @@ export async function updateCourseStep(input: {
   );
 
   if (error) {
-    await stream.error({ reason: "dbSaveFailed", step: "updateCourse" });
     throw error;
   }
 

@@ -153,7 +153,7 @@ describe(generateGrammarUserContentStep, () => {
     expect(generateActivityGrammarUserContent).not.toHaveBeenCalled();
   });
 
-  test("marks activity as failed and streams error when AI fails", async () => {
+  test("throws AI errors without streaming an error status", async () => {
     vi.mocked(generateActivityGrammarUserContent).mockRejectedValueOnce(new Error("AI error"));
 
     const lesson = await lessonFixture({
@@ -179,21 +179,21 @@ describe(generateGrammarUserContentStep, () => {
       exercises: [{ answer: "は", distractors: ["が"], template: "test[BLANK]" }],
     };
 
-    const result = await generateGrammarUserContentStep(activities, grammarContent);
-
-    expect(result).toEqual({ userContent: null });
+    await expect(generateGrammarUserContentStep(activities, grammarContent)).rejects.toThrow(
+      "AI error",
+    );
 
     const updated = await prisma.activity.findUniqueOrThrow({ where: { id: dbActivity.id } });
-    expect(updated.generationStatus).toBe("failed");
+    expect(updated.generationStatus).toBe("pending");
 
     const events = getStreamedEvents(writeMock);
 
-    expect(events).toContainEqual(
+    expect(events).not.toContainEqual(
       expect.objectContaining({ status: "error", step: "generateGrammarUserContent" }),
     );
   });
 
-  test("marks activity as failed and streams error when AI returns empty result", async () => {
+  test("throws when AI returns empty result", async () => {
     vi.mocked(generateActivityGrammarUserContent).mockResolvedValueOnce(null as never);
 
     const lesson = await lessonFixture({
@@ -219,16 +219,16 @@ describe(generateGrammarUserContentStep, () => {
       exercises: [{ answer: "は", distractors: ["が"], template: "test[BLANK]" }],
     };
 
-    const result = await generateGrammarUserContentStep(activities, grammarContent);
-
-    expect(result).toEqual({ userContent: null });
+    await expect(generateGrammarUserContentStep(activities, grammarContent)).rejects.toThrow(
+      "aiEmptyResult",
+    );
 
     const updated = await prisma.activity.findUniqueOrThrow({ where: { id: dbActivity.id } });
-    expect(updated.generationStatus).toBe("failed");
+    expect(updated.generationStatus).toBe("pending");
 
     const events = getStreamedEvents(writeMock);
 
-    expect(events).toContainEqual(
+    expect(events).not.toContainEqual(
       expect.objectContaining({ status: "error", step: "generateGrammarUserContent" }),
     );
   });

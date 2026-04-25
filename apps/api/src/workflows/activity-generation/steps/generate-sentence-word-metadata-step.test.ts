@@ -231,7 +231,7 @@ describe(generateSentenceWordMetadataStep, () => {
     expect(generateTranslation).not.toHaveBeenCalled();
   });
 
-  test("marks activity as failed and streams error when translations are incomplete", async () => {
+  test("throws translation errors without streaming an error status", async () => {
     vi.mocked(generateTranslation).mockRejectedValue(new Error("AI error"));
 
     const course = await courseFixture({ organizationId, targetLanguage: "de" });
@@ -269,19 +269,16 @@ describe(generateSentenceWordMetadataStep, () => {
       },
     ];
 
-    const result = await generateSentenceWordMetadataStep(activities, sentences, [
-      `hallo${id}`,
-      `welt${id}`,
-    ]);
-
-    expect(result.wordMetadata).toBeDefined();
+    await expect(
+      generateSentenceWordMetadataStep(activities, sentences, [`hallo${id}`, `welt${id}`]),
+    ).rejects.toThrow("AI error");
 
     const updated = await prisma.activity.findUniqueOrThrow({ where: { id: dbActivity.id } });
-    expect(updated.generationStatus).toBe("failed");
+    expect(updated.generationStatus).toBe("pending");
 
     const events = getStreamedEvents(writeMock);
 
-    expect(events).toContainEqual(
+    expect(events).not.toContainEqual(
       expect.objectContaining({
         status: "error",
         step: "generateSentenceWordMetadata",

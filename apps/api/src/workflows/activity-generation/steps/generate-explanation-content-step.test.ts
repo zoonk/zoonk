@@ -86,7 +86,7 @@ describe(generateExplanationContentStep, () => {
     vi.clearAllMocks();
   });
 
-  test("returns explanation results for each activity", async () => {
+  test("returns explanation content for one activity", async () => {
     const lesson = await lessonFixture({
       chapterId: chapter.id,
       organizationId,
@@ -120,14 +120,13 @@ describe(generateExplanationContentStep, () => {
     generateActivityExplanationMock.mockResolvedValue(createExplanationResult());
 
     const result = await generateExplanationContentStep({
-      activities,
+      activity: activities[0]!,
       allActivities: activities,
       lessonConcepts: lesson.concepts,
     });
 
-    expect(result.results).toHaveLength(2);
-    expect(result.results[0]?.activityId).toBe(activities[0]?.id);
-    expect(result.results[0]?.steps).toEqual([
+    expect(result.activityId).toBe(activities[0]?.id);
+    expect(result.steps).toEqual([
       {
         text: "You send a photo on WhatsApp. In under a second, it appears on your friend's screen, even if you're on the bus.",
         title: "O envio",
@@ -149,7 +148,6 @@ describe(generateExplanationContentStep, () => {
         title: "Every send",
       },
     ]);
-    expect(result.results[1]?.activityId).toBe(activities[1]?.id);
     expect(generateActivityExplanationMock).toHaveBeenNthCalledWith(
       1,
       expect.objectContaining({
@@ -161,13 +159,33 @@ describe(generateExplanationContentStep, () => {
     );
   });
 
-  test("returns empty results when activities list is empty", async () => {
-    const result = await generateExplanationContentStep({
-      activities: [],
-      allActivities: [],
-      lessonConcepts: ["concept"],
+  test("throws when AI returns empty content", async () => {
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      organizationId,
+      title: `Explanation Empty ${randomUUID()}`,
     });
-    expect(result).toEqual({ results: [] });
+
+    await activityFixture({
+      generationStatus: "pending",
+      kind: "explanation",
+      language: "en",
+      lessonId: lesson.id,
+      organizationId,
+      title: `Empty Concept ${randomUUID()}`,
+    });
+
+    const activities = await fetchLessonActivities(lesson.id);
+
+    generateActivityExplanationMock.mockResolvedValue(null);
+
+    await expect(
+      generateExplanationContentStep({
+        activity: activities[0]!,
+        allActivities: activities,
+        lessonConcepts: lesson.concepts,
+      }),
+    ).rejects.toThrow("Empty AI result for explanation content");
   });
 
   test("streams started and completed events", async () => {
@@ -191,7 +209,7 @@ describe(generateExplanationContentStep, () => {
     generateActivityExplanationMock.mockResolvedValue(createExplanationResult());
 
     await generateExplanationContentStep({
-      activities,
+      activity: activities[0]!,
       allActivities: activities,
       lessonConcepts: lesson.concepts,
     });
@@ -207,49 +225,33 @@ describe(generateExplanationContentStep, () => {
     );
   });
 
-  test("streams error status when some AI calls fail", async () => {
+  test("throws AI errors without streaming an error status", async () => {
     const lesson = await lessonFixture({
       chapterId: chapter.id,
       organizationId,
       title: `Explanation Error ${randomUUID()}`,
     });
 
-    await Promise.all([
-      activityFixture({
-        generationStatus: "pending",
-        kind: "explanation",
-        language: "en",
-        lessonId: lesson.id,
-        organizationId,
-        title: `Good Concept ${randomUUID()}`,
-      }),
-      activityFixture({
-        generationStatus: "pending",
-        kind: "explanation",
-        language: "en",
-        lessonId: lesson.id,
-        organizationId,
-        position: 1,
-        title: `Bad Concept ${randomUUID()}`,
-      }),
-    ]);
+    await activityFixture({
+      generationStatus: "pending",
+      kind: "explanation",
+      language: "en",
+      lessonId: lesson.id,
+      organizationId,
+      title: `Bad Concept ${randomUUID()}`,
+    });
 
     const activities = await fetchLessonActivities(lesson.id);
 
-    generateActivityExplanationMock
-      .mockResolvedValueOnce({
-        data: createExplanationResult().data,
-      })
-      .mockRejectedValueOnce(new Error("AI failure"));
+    generateActivityExplanationMock.mockRejectedValue(new Error("AI failure"));
 
-    const result = await generateExplanationContentStep({
-      activities,
-      allActivities: activities,
-      lessonConcepts: lesson.concepts,
-    });
-
-    expect(result.results).toHaveLength(1);
-    expect(result.results[0]?.activityId).toBe(activities[0]?.id);
+    await expect(
+      generateExplanationContentStep({
+        activity: activities[0]!,
+        allActivities: activities,
+        lessonConcepts: lesson.concepts,
+      }),
+    ).rejects.toThrow("AI failure");
 
     const events = getStreamedEvents(writeMock);
 
@@ -257,7 +259,7 @@ describe(generateExplanationContentStep, () => {
       expect.objectContaining({ status: "started", step: "generateExplanationContent" }),
     );
 
-    expect(events).toContainEqual(
+    expect(events).not.toContainEqual(
       expect.objectContaining({ status: "error", step: "generateExplanationContent" }),
     );
   });

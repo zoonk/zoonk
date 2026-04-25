@@ -49,7 +49,6 @@ export async function addActivitiesStep(input: {
   const { error } = await safeAsync(() => prisma.activity.createMany({ data: activitiesData }));
 
   if (error) {
-    await stream.error({ reason: "dbSaveFailed", step: "addActivities" });
     throw error;
   }
 

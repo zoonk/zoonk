@@ -173,7 +173,7 @@ describe(generateStoryChoicesStep, () => {
     });
   });
 
-  test("marks story as failed when choice generation returns no result", async () => {
+  test("throws when choice generation returns no result", async () => {
     const lesson = await lessonFixture({
       chapterId: chapter.id,
       organizationId,
@@ -194,20 +194,20 @@ describe(generateStoryChoicesStep, () => {
 
     generateActivityStoryChoicesMock.mockResolvedValue(null);
 
-    const result = await generateStoryChoicesStep({
-      activity: storyActivity,
-      explanationSteps: [{ text: "Explanation content.", title: "Explanation" }],
-      storyPlan: mockStoryPlan,
-    });
-
-    expect(result).toBeNull();
+    await expect(
+      generateStoryChoicesStep({
+        activity: storyActivity,
+        explanationSteps: [{ text: "Explanation content.", title: "Explanation" }],
+        storyPlan: mockStoryPlan,
+      }),
+    ).rejects.toThrow("aiEmptyResult");
 
     const updated = await prisma.activity.findUniqueOrThrow({ where: { id: dbActivity.id } });
-    expect(updated.generationStatus).toBe("failed");
+    expect(updated.generationStatus).toBe("pending");
 
     const events = getStreamedEvents(writeMock);
 
-    expect(events).toContainEqual(
+    expect(events).not.toContainEqual(
       expect.objectContaining({
         entityId: dbActivity.id,
         status: "error",

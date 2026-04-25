@@ -5,7 +5,6 @@ import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { type QuizQuestionWithUrls } from "./generate-quiz-images-step";
-import { handleActivityFailureStep } from "./handle-failure-step";
 
 /**
  * Builds step records from quiz questions.
@@ -69,9 +68,7 @@ export async function saveQuizActivityStep({
   );
 
   if (error) {
-    await stream.error({ reason: "dbSaveFailed", step: "saveQuizActivity" });
-    await handleActivityFailureStep({ activityId });
-    return;
+    throw error;
   }
 
   await stream.status({ status: "completed", step: "saveQuizActivity" });

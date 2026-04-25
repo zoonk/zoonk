@@ -20,7 +20,6 @@ export async function getCourseChaptersStep(courseId: string): Promise<Chapter[]
   );
 
   if (error || !chapters) {
-    await stream.error({ reason: "dbFetchFailed", step: "getExistingChapters" });
     throw error ?? new Error("Failed to fetch existing chapters");
   }
 

@@ -19,7 +19,6 @@ export async function generateDescriptionStep(course: CourseContext): Promise<st
   );
 
   if (error) {
-    await stream.error({ reason: "aiGenerationFailed", step: "generateDescription" });
     throw error;
   }
 

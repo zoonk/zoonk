@@ -8,7 +8,6 @@ import { prisma } from "@zoonk/db";
 import { type StoryOutcomeTier } from "@zoonk/utils/activities";
 import { safeAsync } from "@zoonk/utils/error";
 import { type GeneratedStoryImages } from "./generate-story-images-step";
-import { handleActivityFailureStep } from "./handle-failure-step";
 
 /**
  * The AI only owns learner-facing story content. Runtime identity is assigned
@@ -207,9 +206,7 @@ export async function saveStoryActivityStep({
   );
 
   if (error) {
-    await stream.error({ reason: "dbSaveFailed", step: "saveStoryActivity" });
-    await handleActivityFailureStep({ activityId });
-    return;
+    throw error;
   }
 
   await stream.status({ status: "completed", step: "saveStoryActivity" });

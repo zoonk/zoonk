@@ -8,7 +8,6 @@ import { assertStepContent } from "@zoonk/core/steps/contract/content";
 import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
-import { handleActivityFailureStep } from "./handle-failure-step";
 
 /**
  * Zips scenario explanations with accuracy tiers and feedback
@@ -144,9 +143,7 @@ export async function saveInvestigationActivityStep({
   );
 
   if (error) {
-    await stream.error({ reason: "dbSaveFailed", step: "saveInvestigationActivity" });
-    await handleActivityFailureStep({ activityId });
-    return;
+    throw error;
   }
 
   await stream.status({ status: "completed", step: "saveInvestigationActivity" });

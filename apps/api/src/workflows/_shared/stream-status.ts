@@ -20,7 +20,7 @@ export function getAIResultErrorReason({
   return "contentValidationFailed";
 }
 
-export type StepStream<T extends string> = {
+type StepStream<T extends string> = {
   status: (params: StepStreamMessage<T>) => Promise<void>;
   error: (params: { reason: WorkflowErrorReason; step: T }) => Promise<void>;
   [Symbol.asyncDispose]: () => Promise<void>;

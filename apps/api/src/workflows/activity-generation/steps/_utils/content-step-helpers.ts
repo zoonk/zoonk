@@ -1,5 +1,4 @@
 import { prisma } from "@zoonk/db";
-import { safeAsync } from "@zoonk/utils/error";
 import { type ActivitySteps, parseActivitySteps } from "./get-activity-steps";
 
 /**
@@ -10,21 +9,15 @@ import { type ActivitySteps, parseActivitySteps } from "./get-activity-steps";
  */
 export async function getExistingContentSteps(activityId: string): Promise<ActivitySteps> {
   "use step";
-  const { data: existingSteps } = await safeAsync(() =>
-    prisma.step.findMany({
-      orderBy: { position: "asc" },
-      select: { content: true },
-      where: { activityId, kind: "static" },
-    }),
-  );
+  const existingSteps = await prisma.step.findMany({
+    orderBy: { position: "asc" },
+    select: { content: true },
+    where: { activityId, kind: "static" },
+  });
 
   if (!existingSteps?.length) {
     return [];
   }
 
-  try {
-    return parseActivitySteps(existingSteps);
-  } catch {
-    return [];
-  }
+  return parseActivitySteps(existingSteps);
 }

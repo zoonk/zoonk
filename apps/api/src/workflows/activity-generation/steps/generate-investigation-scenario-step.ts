@@ -7,7 +7,6 @@ import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { safeAsync } from "@zoonk/utils/error";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { type LessonActivity } from "./get-lesson-activities-step";
-import { handleActivityFailureStep } from "./handle-failure-step";
 
 type InvestigationScenarioResult = {
   activityId: string | null;
@@ -21,7 +20,8 @@ type InvestigationScenarioResult = {
  * first step in the investigation pipeline — subsequent steps (accuracy,
  * actions, findings, etc.) take this output as input.
  *
- * Returns the scenario data or null fields if generation fails.
+ * Returns null fields only when there is no investigation activity to generate.
+ * AI/provider failures throw so Workflow can retry the step.
  */
 export async function generateInvestigationScenarioStep(
   activities: LessonActivity[],
@@ -52,12 +52,7 @@ export async function generateInvestigationScenarioStep(
   );
 
   if (error || !result || result.data.explanations.length === 0) {
-    const reason = getAIResultErrorReason({ error, result });
-
-    await stream.error({ reason, step: "generateInvestigationScenario" });
-    await handleActivityFailureStep({ activityId: investigationActivity.id });
-
-    return { activityId: null, scenario: null, title: null };
+    throw error ?? new Error(getAIResultErrorReason({ result }));
   }
 
   await stream.status({ status: "completed", step: "generateInvestigationScenario" });

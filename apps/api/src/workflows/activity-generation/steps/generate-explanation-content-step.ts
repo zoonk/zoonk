@@ -1,7 +1,6 @@
-import { createStepStream } from "@/workflows/_shared/stream-status";
+import { createEntityStepStream } from "@/workflows/_shared/stream-status";
 import { generateActivityExplanation } from "@zoonk/ai/tasks/activities/core/explanation";
 import { type ActivityStepName } from "@zoonk/core/workflows/steps";
-import { rejected, settledValues } from "@zoonk/utils/settled";
 import { buildExplanationActivitySteps } from "./_utils/build-explanation-activity-plan";
 import { type ActivitySteps } from "./_utils/get-activity-steps";
 import { type LessonActivity } from "./get-lesson-activities-step";
@@ -82,48 +81,37 @@ function getOtherExplanationTitles({
 }
 
 /**
- * Generates explanation content for all explanation activities in parallel.
+ * Generates explanation content for one explanation activity.
  * Returns the raw content data without saving to the database.
- * Each activity's content will be persisted later by `saveExplanationActivityStep`.
  *
- * Only receives activities that need generation — no status checks needed.
+ * The caller fans out per activity at the workflow level so one failed
+ * explanation can be retried and marked failed without affecting sibling
+ * explanations.
  */
 export async function generateExplanationContentStep({
-  activities,
+  activity,
   allActivities,
   lessonConcepts,
 }: {
-  activities: LessonActivity[];
+  activity: LessonActivity;
   allActivities: LessonActivity[];
   lessonConcepts: string[];
-}): Promise<{ results: GeneratedExplanationResult[] }> {
+}): Promise<GeneratedExplanationResult> {
   "use step";
 
-  if (activities.length === 0) {
-    return { results: [] };
-  }
-
-  await using stream = createStepStream<ActivityStepName>();
+  await using stream = createEntityStepStream<ActivityStepName>(activity.id);
 
   await stream.status({ status: "started", step: "generateExplanationContent" });
 
-  const allSettled = await Promise.allSettled(
-    activities.map((activity) =>
-      generateSingleExplanation({
-        activity,
-        lessonConcepts,
-        otherExplanationTitles: getOtherExplanationTitles({
-          activities: allActivities,
-          currentActivityId: activity.id,
-        }),
-      }),
-    ),
-  );
-
-  await stream.status({
-    status: rejected(allSettled) ? "error" : "completed",
-    step: "generateExplanationContent",
+  const result = await generateSingleExplanation({
+    activity,
+    lessonConcepts,
+    otherExplanationTitles: getOtherExplanationTitles({
+      activities: allActivities,
+      currentActivityId: activity.id,
+    }),
   });
 
-  return { results: settledValues(allSettled) };
+  await stream.status({ status: "completed", step: "generateExplanationContent" });
+  return result;
 }

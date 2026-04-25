@@ -19,7 +19,6 @@ export async function generateAlternativeTitlesStep(course: CourseContext): Prom
   );
 
   if (error) {
-    await stream.error({ reason: "aiGenerationFailed", step: "generateAlternativeTitles" });
     throw error;
   }
 

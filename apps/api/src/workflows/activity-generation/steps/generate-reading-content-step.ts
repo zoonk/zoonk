@@ -1,18 +1,13 @@
-import {
-  type StepStream,
-  createEntityStepStream,
-  getAIResultErrorReason,
-} from "@/workflows/_shared/stream-status";
+import { createEntityStepStream, getAIResultErrorReason } from "@/workflows/_shared/stream-status";
 import {
   type ActivitySentencesSchema,
   generateActivitySentences,
 } from "@zoonk/ai/tasks/activities/language/sentences";
 import { type VocabularyWord } from "@zoonk/ai/tasks/activities/language/vocabulary";
-import { type ActivityStepName, type WorkflowErrorReason } from "@zoonk/core/workflows/steps";
+import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { type LessonActivity } from "./get-lesson-activities-step";
-import { handleActivityFailureStep } from "./handle-failure-step";
 
 type SourceWord = Pick<VocabularyWord, "word">;
 
@@ -92,20 +87,6 @@ async function resolveSourceWords(input: {
 }
 
 /**
- * Reading generation failures need to mark the activity as failed and return an empty
- * payload so the workflow can stop without leaving partially-generated sentences in play.
- */
-async function handleReadingGenerationFailure(
-  stream: StepStream<ActivityStepName>,
-  activityId: string,
-  reason: WorkflowErrorReason,
-): Promise<{ sentences: ReadingSentence[] }> {
-  await stream.error({ reason, step: "generateSentences" });
-  await handleActivityFailureStep({ activityId });
-  return { sentences: [] };
-}
-
-/**
  * Generates the canonical reading sentences for a lesson.
  *
  * This step intentionally produces only the real sentence pairs. Distractors are
@@ -139,7 +120,7 @@ export async function generateReadingContentStep(
 
   if (sourceWords.error || sourceWords.words.length === 0) {
     const reason = sourceWords.error ? "dbFetchFailed" : "noSourceData";
-    return await handleReadingGenerationFailure(stream, activity.id, reason);
+    throw sourceWords.error ?? new Error(reason);
   }
 
   const { data: result, error } = await safeAsync(() =>
@@ -158,8 +139,7 @@ export async function generateReadingContentStep(
   const sentences = result?.data.sentences ?? [];
 
   if (error || !result || sentences.length === 0 || !hasValidSentences(sentences)) {
-    const reason = getAIResultErrorReason({ error, result });
-    return await handleReadingGenerationFailure(stream, activity.id, reason);
+    throw error ?? new Error(getAIResultErrorReason({ result }));
   }
 
   await stream.status({ status: "completed", step: "generateSentences" });

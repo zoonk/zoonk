@@ -91,7 +91,7 @@ async function generateMissingPronunciations(params: {
       );
 
       if (error || !result?.data) {
-        return null;
+        throw error ?? new Error("pronunciationGenerationFailed");
       }
 
       return {
@@ -101,5 +101,5 @@ async function generateMissingPronunciations(params: {
     }),
   );
 
-  return results.filter((entry): entry is PronunciationEntry => entry !== null);
+  return results;
 }

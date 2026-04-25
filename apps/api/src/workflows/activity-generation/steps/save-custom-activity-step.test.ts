@@ -127,19 +127,21 @@ describe(saveCustomActivityStep, () => {
     );
   });
 
-  test("streams error when DB transaction fails", async () => {
+  test("throws DB errors without streaming an error status", async () => {
     const invalidActivityId = randomUUID();
 
-    await saveCustomActivityStep({
-      activityId: invalidActivityId,
-      contentSteps: [{ text: "Step text", title: "Step title" }],
-      images: [{ prompt: "A step image", url: "https://example.com/image.webp" }],
-      workflowRunId: "workflow-error",
-    });
+    await expect(
+      saveCustomActivityStep({
+        activityId: invalidActivityId,
+        contentSteps: [{ text: "Step text", title: "Step title" }],
+        images: [{ prompt: "A step image", url: "https://example.com/image.webp" }],
+        workflowRunId: "workflow-error",
+      }),
+    ).rejects.toThrow();
 
     const events = getStreamedEvents(writeMock);
 
-    expect(events).toContainEqual(
+    expect(events).not.toContainEqual(
       expect.objectContaining({ status: "error", step: "saveCustomActivity" }),
     );
   });

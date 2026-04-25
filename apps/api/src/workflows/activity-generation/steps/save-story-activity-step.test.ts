@@ -276,7 +276,7 @@ describe(saveStoryActivityStep, () => {
     );
   });
 
-  test("streams error and marks failed when DB transaction fails", async () => {
+  test("throws DB errors without streaming an error status", async () => {
     const lesson = await lessonFixture({
       chapterId: chapter.id,
       organizationId,
@@ -295,16 +295,18 @@ describe(saveStoryActivityStep, () => {
     // Delete the activity so the prisma.activity.update inside the transaction fails
     await prisma.activity.delete({ where: { id: activity.id } });
 
-    await saveStoryActivityStep({
-      activityId: activity.id,
-      storyData,
-      storyImages,
-      workflowRunId: "workflow-error",
-    });
+    await expect(
+      saveStoryActivityStep({
+        activityId: activity.id,
+        storyData,
+        storyImages,
+        workflowRunId: "workflow-error",
+      }),
+    ).rejects.toThrow();
 
     const events = getStreamedEvents(writeMock);
 
-    expect(events).toContainEqual(
+    expect(events).not.toContainEqual(
       expect.objectContaining({ status: "error", step: "saveStoryActivity" }),
     );
   });

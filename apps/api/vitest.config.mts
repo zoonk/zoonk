@@ -25,6 +25,7 @@ export default defineConfig({
   },
   test: {
     env: {
+      AI_GATEWAY_API_KEY: "",
       DATABASE_URL: "postgres://postgres:postgres@localhost:5432/zoonk_test",
       DATABASE_URL_UNPOOLED: "postgres://postgres:postgres@localhost:5432/zoonk_test",
       NEXT_PUBLIC_APP_DOMAIN: "localhost:9002",

@@ -39,7 +39,6 @@ export async function addChaptersStep(input: {
   );
 
   if (error || !createdChapters) {
-    await stream.error({ reason: "dbSaveFailed", step: "addChapters" });
     throw error ?? new Error("Failed to create chapters");
   }
 

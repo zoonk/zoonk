@@ -1,7 +1,6 @@
-import { createStepStream } from "@/workflows/_shared/stream-status";
+import { createEntityStepStream } from "@/workflows/_shared/stream-status";
 import { generateStepImagePrompts } from "@zoonk/ai/tasks/steps/image-prompts";
 import { type ActivityStepName } from "@zoonk/core/workflows/steps";
-import { rejected, settledValues } from "@zoonk/utils/settled";
 import { type CustomContentResult } from "./generate-custom-content-step";
 import { type LessonActivity } from "./get-lesson-activities-step";
 
@@ -39,42 +38,21 @@ async function generatePromptsForActivity(
 }
 
 /**
- * Generates image prompts for all custom activities in parallel.
+ * Generates image prompts for one custom activity.
  * Pure data producer: no DB writes happen here.
  */
 export async function generateCustomImagePromptsStep(
-  activities: LessonActivity[],
-  customContentResults: CustomContentResult[],
-): Promise<CustomImagePromptResult[]> {
+  activity: LessonActivity,
+  contentResult: CustomContentResult,
+): Promise<CustomImagePromptResult> {
   "use step";
 
-  if (customContentResults.length === 0) {
-    return [];
-  }
-
-  await using stream = createStepStream<ActivityStepName>();
+  await using stream = createEntityStepStream<ActivityStepName>(activity.id);
 
   await stream.status({ status: "started", step: "generateImagePrompts" });
 
-  const allSettled = await Promise.allSettled(
-    customContentResults.map((contentResult) => {
-      const activity = activities.find((act) => act.id === contentResult.activityId);
+  const result = await generatePromptsForActivity(activity, contentResult);
 
-      if (!activity) {
-        return Promise.resolve({
-          activityId: contentResult.activityId,
-          prompts: [],
-        });
-      }
-
-      return generatePromptsForActivity(activity, contentResult);
-    }),
-  );
-
-  await stream.status({
-    status: rejected(allSettled) ? "error" : "completed",
-    step: "generateImagePrompts",
-  });
-
-  return settledValues(allSettled);
+  await stream.status({ status: "completed", step: "generateImagePrompts" });
+  return result;
 }

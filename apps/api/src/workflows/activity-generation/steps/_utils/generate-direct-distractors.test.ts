@@ -34,19 +34,19 @@ describe(generateDirectDistractors, () => {
     });
   });
 
-  test("returns empty array for entries where AI call fails", async () => {
+  test("throws when an AI call fails", async () => {
     generateActivityDistractorsMock.mockRejectedValue(new Error("AI failure"));
 
-    const result = await generateDirectDistractors({
-      entries: [{ input: "hola", key: "word-1" }],
-      language: "es",
-      shape: "single-word",
-    });
-
-    expect(result["word-1"]).toEqual([]);
+    await expect(
+      generateDirectDistractors({
+        entries: [{ input: "hola", key: "word-1" }],
+        language: "es",
+        shape: "single-word",
+      }),
+    ).rejects.toThrow("AI failure");
   });
 
-  test("handles multiple entries independently", async () => {
+  test("throws when any entry fails", async () => {
     generateActivityDistractorsMock
       .mockResolvedValueOnce({
         data: { distractors: ["d1", "d2", "d3"] },
@@ -56,30 +56,28 @@ describe(generateDirectDistractors, () => {
         data: { distractors: ["d4", "d5", "d6"] },
       });
 
-    const result = await generateDirectDistractors({
-      entries: [
-        { input: "hola", key: "k1" },
-        { input: "adios", key: "k2" },
-        { input: "gracias", key: "k3" },
-      ],
-      language: "es",
-      shape: "single-word",
-    });
-
-    expect(result.k1!.length).toBeGreaterThan(0);
-    expect(result.k2).toEqual([]);
-    expect(result.k3!.length).toBeGreaterThan(0);
+    await expect(
+      generateDirectDistractors({
+        entries: [
+          { input: "hola", key: "k1" },
+          { input: "adios", key: "k2" },
+          { input: "gracias", key: "k3" },
+        ],
+        language: "es",
+        shape: "single-word",
+      }),
+    ).rejects.toThrow("fail");
   });
 
-  test("returns empty array when AI returns null data", async () => {
+  test("throws when AI returns null data", async () => {
     generateActivityDistractorsMock.mockResolvedValue({ data: null });
 
-    const result = await generateDirectDistractors({
-      entries: [{ input: "hola", key: "word-1" }],
-      language: "es",
-      shape: "single-word",
-    });
-
-    expect(result["word-1"]).toEqual([]);
+    await expect(
+      generateDirectDistractors({
+        entries: [{ input: "hola", key: "word-1" }],
+        language: "es",
+        shape: "single-word",
+      }),
+    ).rejects.toThrow("distractorGenerationFailed");
   });
 });

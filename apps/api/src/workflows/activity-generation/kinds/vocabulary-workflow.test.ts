@@ -8,6 +8,12 @@ import { saveTranslationFromExistingVocabularyStep } from "../steps/save-transla
 import { saveVocabularyActivityStep } from "../steps/save-vocabulary-activity-step";
 import { vocabularyActivityWorkflow } from "./vocabulary-workflow";
 
+vi.mock("../handle-activity-workflow-error", () => ({
+  failActivityWorkflows: vi.fn(async ({ error }: { error: unknown }) => {
+    throw error;
+  }),
+}));
+
 vi.mock("../steps/generate-vocabulary-content-step", () => ({
   generateVocabularyContentStep: vi.fn().mockResolvedValue({
     words: [{ translation: "good evening", word: "boa noite" }],
@@ -156,7 +162,7 @@ describe(vocabularyActivityWorkflow, () => {
     expect(saveVocabularyActivityStep).not.toHaveBeenCalled();
   });
 
-  test("falls back to empty enrichment maps when optional steps fail", async () => {
+  test("throws when enrichment steps fail", async () => {
     const activities = [makeActivity("vocabulary"), makeActivity("translation")];
 
     vi.mocked(generateVocabularyPronunciationStep).mockRejectedValueOnce(
@@ -167,22 +173,16 @@ describe(vocabularyActivityWorkflow, () => {
       new Error("romanization failed"),
     );
 
-    await vocabularyActivityWorkflow({
-      activitiesToGenerate: activities as never,
-      allActivities: activities as never,
-      concepts: [],
-      neighboringConcepts: [],
-      workflowRunId: "workflow-3",
-    });
-
-    expect(saveVocabularyActivityStep).toHaveBeenCalledWith(
-      expect.objectContaining({
-        activities,
-        pronunciations: {},
-        romanizations: {},
-        wordAudioUrls: {},
+    await expect(
+      vocabularyActivityWorkflow({
+        activitiesToGenerate: activities as never,
+        allActivities: activities as never,
+        concepts: [],
+        neighboringConcepts: [],
         workflowRunId: "workflow-3",
       }),
-    );
+    ).rejects.toThrow("pronunciation failed");
+
+    expect(saveVocabularyActivityStep).not.toHaveBeenCalled();
   });
 });

@@ -302,10 +302,12 @@ describe("investigation activity workflow", () => {
 
     const activities = await getLessonActivitiesStep({ lessonId: lesson.id });
 
-    await investigationActivityWorkflow({
-      activitiesToGenerate: activities,
-      workflowRunId: "test-run-id",
-    });
+    await expect(
+      investigationActivityWorkflow({
+        activitiesToGenerate: activities,
+        workflowRunId: "test-run-id",
+      }),
+    ).rejects.toThrow("AI failed");
 
     const dbActivity = await prisma.activity.findUnique({ where: { id: activity.id } });
     expect(dbActivity?.generationStatus).toBe("failed");
@@ -332,10 +334,12 @@ describe("investigation activity workflow", () => {
 
     const activities = await getLessonActivitiesStep({ lessonId: lesson.id });
 
-    await investigationActivityWorkflow({
-      activitiesToGenerate: activities,
-      workflowRunId: "test-run-id",
-    });
+    await expect(
+      investigationActivityWorkflow({
+        activitiesToGenerate: activities,
+        workflowRunId: "test-run-id",
+      }),
+    ).rejects.toThrow("AI failed");
 
     const dbActivity = await prisma.activity.findUnique({ where: { id: activity.id } });
     expect(dbActivity?.generationStatus).toBe("failed");
@@ -363,10 +367,12 @@ describe("investigation activity workflow", () => {
 
     const activities = await getLessonActivitiesStep({ lessonId: lesson.id });
 
-    await investigationActivityWorkflow({
-      activitiesToGenerate: activities,
-      workflowRunId: "test-run-id",
-    });
+    await expect(
+      investigationActivityWorkflow({
+        activitiesToGenerate: activities,
+        workflowRunId: "test-run-id",
+      }),
+    ).rejects.toThrow("AI failed");
 
     const dbActivity = await prisma.activity.findUnique({ where: { id: activity.id } });
     expect(dbActivity?.generationStatus).toBe("failed");
@@ -393,10 +399,12 @@ describe("investigation activity workflow", () => {
 
     const activities = await getLessonActivitiesStep({ lessonId: lesson.id });
 
-    await investigationActivityWorkflow({
-      activitiesToGenerate: activities,
-      workflowRunId: "test-run-id",
-    });
+    await expect(
+      investigationActivityWorkflow({
+        activitiesToGenerate: activities,
+        workflowRunId: "test-run-id",
+      }),
+    ).rejects.toThrow("AI failed");
 
     const dbActivity = await prisma.activity.findUnique({ where: { id: activity.id } });
     expect(dbActivity?.generationStatus).toBe("failed");

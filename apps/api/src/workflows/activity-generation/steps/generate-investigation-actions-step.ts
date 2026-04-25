@@ -7,13 +7,13 @@ import {
 import { type ActivityInvestigationScenarioSchema } from "@zoonk/ai/tasks/activities/core/investigation-scenario";
 import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { safeAsync } from "@zoonk/utils/error";
-import { handleActivityFailureStep } from "./handle-failure-step";
 
 /**
  * Generates investigation actions (5-6 options with quality tiers)
  * that represent different angles the learner can investigate.
  *
- * Returns the actions or null if generation fails.
+ * Throws on generation failure so Workflow can retry before the activity is
+ * marked permanently failed by the workflow catch.
  */
 export async function generateInvestigationActionsStep({
   activityId,
@@ -25,7 +25,7 @@ export async function generateInvestigationActionsStep({
   accuracy: ActivityInvestigationAccuracySchema;
   language: string;
   scenario: ActivityInvestigationScenarioSchema;
-}): Promise<ActivityInvestigationActionsSchema | null> {
+}): Promise<ActivityInvestigationActionsSchema> {
   "use step";
 
   await using stream = createEntityStepStream<ActivityStepName>(activityId);
@@ -41,12 +41,7 @@ export async function generateInvestigationActionsStep({
   );
 
   if (error || !result || result.data.actions.length === 0) {
-    const reason = getAIResultErrorReason({ error, result });
-
-    await stream.error({ reason, step: "generateInvestigationActions" });
-    await handleActivityFailureStep({ activityId });
-
-    return null;
+    throw error ?? new Error(getAIResultErrorReason({ result }));
   }
 
   await stream.status({ status: "completed", step: "generateInvestigationActions" });

@@ -23,7 +23,6 @@ export async function setChapterAsRunningStep(input: {
   );
 
   if (error) {
-    await stream.error({ reason: "dbSaveFailed", step: "setChapterAsRunning" });
     throw error;
   }
 

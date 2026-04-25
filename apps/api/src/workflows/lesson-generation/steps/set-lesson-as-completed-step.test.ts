@@ -46,7 +46,7 @@ describe(setLessonAsCompletedStep, () => {
     vi.clearAllMocks();
   });
 
-  test("streams error and throws when lesson does not exist", async () => {
+  test("throws without streaming error when lesson does not exist", async () => {
     const lesson = await lessonFixture({
       chapterId,
       organizationId,
@@ -69,7 +69,7 @@ describe(setLessonAsCompletedStep, () => {
 
     const events = getStreamedEvents(writeMock);
 
-    expect(events).toContainEqual(
+    expect(events).not.toContainEqual(
       expect.objectContaining({ status: "error", step: "setLessonAsCompleted" }),
     );
   });

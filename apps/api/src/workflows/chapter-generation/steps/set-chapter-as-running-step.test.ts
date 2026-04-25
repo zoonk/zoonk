@@ -36,14 +36,14 @@ describe(setChapterAsRunningStep, () => {
     vi.clearAllMocks();
   });
 
-  test("streams error and throws when chapter does not exist", async () => {
+  test("throws without streaming error when chapter does not exist", async () => {
     await expect(
       setChapterAsRunningStep({ chapterId: randomUUID(), workflowRunId: "run-id" }),
     ).rejects.toThrow();
 
     const events = getStreamedEvents(writeMock);
 
-    expect(events).toContainEqual(
+    expect(events).not.toContainEqual(
       expect.objectContaining({ status: "error", step: "setChapterAsRunning" }),
     );
   });

@@ -122,7 +122,7 @@ describe(saveTranslationFromExistingVocabularyStep, () => {
     });
   });
 
-  test("marks translation as failed when vocabulary steps do not exist", async () => {
+  test("throws when vocabulary steps do not exist", async () => {
     const lesson = await lessonFixture({
       chapterId: chapter.id,
       kind: "language",
@@ -153,15 +153,17 @@ describe(saveTranslationFromExistingVocabularyStep, () => {
 
     const activities = await fetchLessonActivities(lesson.id);
 
-    await saveTranslationFromExistingVocabularyStep({
-      allActivities: activities,
-      workflowRunId: "workflow-2",
-    });
+    await expect(
+      saveTranslationFromExistingVocabularyStep({
+        allActivities: activities,
+        workflowRunId: "workflow-2",
+      }),
+    ).rejects.toThrow("noSourceData");
 
     const dbActivity = await prisma.activity.findUniqueOrThrow({
       where: { id: translationActivity.id },
     });
 
-    expect(dbActivity.generationStatus).toBe("failed");
+    expect(dbActivity.generationStatus).toBe("pending");
   });
 });

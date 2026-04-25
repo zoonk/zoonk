@@ -166,7 +166,7 @@ describe(generateVocabularyPronunciationStep, () => {
     expect(result).toEqual({ pronunciations: {} });
   });
 
-  test("skips words when pronunciation AI fails and returns partial results", async () => {
+  test("throws when pronunciation AI fails", async () => {
     const course = await courseFixture({ organizationId, targetLanguage: "es" });
 
     const chapter = await chapterFixture({
@@ -202,10 +202,9 @@ describe(generateVocabularyPronunciationStep, () => {
       })
       .mockRejectedValueOnce(new Error("AI failed"));
 
-    const result = await generateVocabularyPronunciationStep(activities, words);
-
-    expect(result.pronunciations[`bueno-${id}`]).toBe(`pron-bueno-${id}`);
-    expect(result.pronunciations[`malo-${id}`]).toBeUndefined();
+    await expect(generateVocabularyPronunciationStep(activities, words)).rejects.toThrow(
+      "AI failed",
+    );
   });
 
   test("returns empty pronunciations when words array is empty", async () => {

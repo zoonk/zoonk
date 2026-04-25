@@ -7,7 +7,6 @@ import { type ActivityInvestigationScenarioSchema } from "@zoonk/ai/tasks/activi
 import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { safeAsync } from "@zoonk/utils/error";
 import { type LessonActivity } from "./get-lesson-activities-step";
-import { handleActivityFailureStep } from "./handle-failure-step";
 
 /**
  * Assigns accuracy tiers (best/partial/wrong) to each explanation
@@ -15,7 +14,8 @@ import { handleActivityFailureStep } from "./handle-failure-step";
  * to avoid length bias — the scenario task writes explanations
  * without knowing which is "best".
  *
- * Returns the accuracy tiers or null if generation fails.
+ * Throws on generation failure so Workflow can retry before the activity is
+ * marked permanently failed by the workflow catch.
  */
 export async function generateInvestigationAccuracyStep({
   activityId,
@@ -25,7 +25,7 @@ export async function generateInvestigationAccuracyStep({
   activityId: string;
   activity: LessonActivity;
   scenario: ActivityInvestigationScenarioSchema;
-}): Promise<ActivityInvestigationAccuracySchema | null> {
+}): Promise<ActivityInvestigationAccuracySchema> {
   "use step";
 
   await using stream = createEntityStepStream<ActivityStepName>(activityId);
@@ -42,12 +42,7 @@ export async function generateInvestigationAccuracyStep({
   );
 
   if (error || !result) {
-    const reason = getAIResultErrorReason({ error, result });
-
-    await stream.error({ reason, step: "generateInvestigationAccuracy" });
-    await handleActivityFailureStep({ activityId });
-
-    return null;
+    throw error ?? new Error(getAIResultErrorReason({ result }));
   }
 
   await stream.status({ status: "completed", step: "generateInvestigationAccuracy" });

@@ -146,7 +146,7 @@ describe(saveListeningActivityStep, () => {
     );
   });
 
-  test("marks listening as failed when reading activity has no steps", async () => {
+  test("throws when reading activity has no steps", async () => {
     const lesson = await lessonFixture({
       chapterId: chapter.id,
       kind: "language",
@@ -177,7 +177,9 @@ describe(saveListeningActivityStep, () => {
 
     const activities = await fetchLessonActivities(lesson.id);
 
-    await saveListeningActivityStep(activities, "workflow-listening-2");
+    await expect(saveListeningActivityStep(activities, "workflow-listening-2")).rejects.toThrow(
+      "noSourceData",
+    );
 
     const listeningActivity = activities.find((act) => act.kind === "listening")!;
 
@@ -191,11 +193,11 @@ describe(saveListeningActivityStep, () => {
     ]);
 
     expect(steps).toHaveLength(0);
-    expect(dbActivity.generationStatus).toBe("failed");
+    expect(dbActivity.generationStatus).toBe("pending");
 
     const events = getStreamedEvents(writeMock);
 
-    expect(events).toContainEqual(
+    expect(events).not.toContainEqual(
       expect.objectContaining({ status: "error", step: "saveListeningActivity" }),
     );
   });

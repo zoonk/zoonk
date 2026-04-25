@@ -1,3 +1,4 @@
+import { failActivityWorkflow } from "../handle-activity-workflow-error";
 import { findActivitiesByKind } from "../steps/_utils/find-activity-by-kind";
 import { getExplanationStepsForPractice } from "../steps/_utils/get-explanation-steps-for-practice";
 import { getPracticeImagePrompts } from "../steps/_utils/get-practice-image-prompts";
@@ -5,7 +6,6 @@ import { generateActivityStepImagesStep } from "../steps/generate-activity-step-
 import { type ExplanationResult } from "../steps/generate-explanation-content-step";
 import { generatePracticeContentStep } from "../steps/generate-practice-content-step";
 import { type LessonActivity } from "../steps/get-lesson-activities-step";
-import { handleActivityFailureStep } from "../steps/handle-failure-step";
 import { savePracticeActivityStep } from "../steps/save-practice-activity-step";
 
 /**
@@ -54,7 +54,7 @@ export async function practiceActivityWorkflow({
         );
 
         if (!activityId || !scenario || steps.length === 0 || !title) {
-          return;
+          throw new Error("Practice content step returned incomplete content");
         }
 
         const { images } = await generateActivityStepImagesStep(
@@ -70,8 +70,8 @@ export async function practiceActivityWorkflow({
           title,
           workflowRunId,
         });
-      } catch {
-        await handleActivityFailureStep({ activityId: practice.id });
+      } catch (error) {
+        await failActivityWorkflow({ activityId: practice.id, error });
       }
     }),
   );

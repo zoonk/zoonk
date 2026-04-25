@@ -196,12 +196,14 @@ describe(grammarActivityWorkflow, () => {
     });
 
     const activities = await fetchLessonActivities(lesson.id);
-    await grammarActivityWorkflow({
-      activitiesToGenerate: activities,
-      concepts: [],
-      neighboringConcepts: [],
-      workflowRunId: "test-run-id",
-    });
+    await expect(
+      grammarActivityWorkflow({
+        activitiesToGenerate: activities,
+        concepts: [],
+        neighboringConcepts: [],
+        workflowRunId: "test-run-id",
+      }),
+    ).rejects.toThrow("AI failed");
 
     const dbActivity = await prisma.activity.findUnique({ where: { id: activity.id } });
     expect(dbActivity?.generationStatus).toBe("failed");
@@ -232,12 +234,14 @@ describe(grammarActivityWorkflow, () => {
     });
 
     const activities = await fetchLessonActivities(lesson.id);
-    await grammarActivityWorkflow({
-      activitiesToGenerate: activities,
-      concepts: [],
-      neighboringConcepts: [],
-      workflowRunId: "test-run-id",
-    });
+    await expect(
+      grammarActivityWorkflow({
+        activitiesToGenerate: activities,
+        concepts: [],
+        neighboringConcepts: [],
+        workflowRunId: "test-run-id",
+      }),
+    ).rejects.toThrow("contentValidationFailed");
 
     const dbActivity = await prisma.activity.findUnique({ where: { id: activity.id } });
     expect(dbActivity?.generationStatus).toBe("failed");
@@ -265,12 +269,14 @@ describe(grammarActivityWorkflow, () => {
     });
 
     const activities = await fetchLessonActivities(lesson.id);
-    await grammarActivityWorkflow({
-      activitiesToGenerate: activities,
-      concepts: [],
-      neighboringConcepts: [],
-      workflowRunId: "test-run-id",
-    });
+    await expect(
+      grammarActivityWorkflow({
+        activitiesToGenerate: activities,
+        concepts: [],
+        neighboringConcepts: [],
+        workflowRunId: "test-run-id",
+      }),
+    ).rejects.toThrow("User content generation failed");
 
     const dbActivity = await prisma.activity.findUnique({ where: { id: activity.id } });
     expect(dbActivity?.generationStatus).toBe("failed");

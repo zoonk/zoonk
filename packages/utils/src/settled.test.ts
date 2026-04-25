@@ -1,5 +1,11 @@
 import { describe, expect, test } from "vitest";
-import { rejected, settled, settledValues } from "./settled";
+import {
+  getSettledFailureError,
+  settled,
+  settledFailures,
+  settledValues,
+  throwSettledFailures,
+} from "./settled";
 
 describe(settled, () => {
   test("returns fulfilled value", () => {
@@ -21,43 +27,58 @@ describe(settled, () => {
   });
 });
 
-describe(rejected, () => {
-  test("returns true when any result is rejected", () => {
-    const results: PromiseSettledResult<string>[] = [
+describe(settledFailures, () => {
+  test("returns every rejected reason and fulfilled error", () => {
+    const rejectedError = new Error("rejected");
+    const fulfilledError = new Error("fulfilled error");
+    const results: PromiseSettledResult<unknown>[] = [
       { status: "fulfilled", value: "ok" },
-      { reason: new Error("fail"), status: "rejected" },
+      { reason: rejectedError, status: "rejected" },
+      { status: "fulfilled", value: { data: null, error: fulfilledError } },
     ];
 
-    expect(rejected(results)).toBe(true);
+    expect(settledFailures(results)).toEqual([rejectedError, fulfilledError]);
   });
 
-  test("returns true when a fulfilled value has a truthy error property", () => {
-    const results: PromiseSettledResult<{ data: null; error: Error }>[] = [
-      { status: "fulfilled", value: { data: null, error: new Error("fail") } },
-    ];
-
-    expect(rejected(results)).toBe(true);
-  });
-
-  test("returns false when a fulfilled value has a falsy error property", () => {
-    const results: PromiseSettledResult<{ data: string; error: null }>[] = [
+  test("returns an empty array when nothing failed", () => {
+    const results: PromiseSettledResult<unknown>[] = [
+      { status: "fulfilled", value: "ok" },
       { status: "fulfilled", value: { data: "ok", error: null } },
     ];
 
-    expect(rejected(results)).toBe(false);
+    expect(settledFailures(results)).toEqual([]);
+  });
+});
+
+describe(getSettledFailureError, () => {
+  test("returns null when there are no failures", () => {
+    expect(getSettledFailureError({ failures: [], message: "failed" })).toBeNull();
   });
 
-  test("returns false when all results are fulfilled without errors", () => {
-    const results: PromiseSettledResult<string>[] = [
-      { status: "fulfilled", value: "a" },
-      { status: "fulfilled", value: "b" },
+  test("returns the original error when exactly one operation failed", () => {
+    const error = new Error("single");
+
+    expect(getSettledFailureError({ failures: [error], message: "failed" })).toBe(error);
+  });
+
+  test("returns AggregateError when multiple operations failed", () => {
+    const errors = [new Error("first"), new Error("second")];
+    const error = getSettledFailureError({ failures: errors, message: "multiple failed" });
+
+    expect(error).toBeInstanceOf(AggregateError);
+    expect(error).toMatchObject({ errors, message: "multiple failed" });
+  });
+});
+
+describe(throwSettledFailures, () => {
+  test("throws AggregateError with every failure", () => {
+    const errors = [new Error("first"), new Error("second")];
+    const results: PromiseSettledResult<unknown>[] = [
+      { reason: errors[0], status: "rejected" },
+      { reason: errors[1], status: "rejected" },
     ];
 
-    expect(rejected(results)).toBe(false);
-  });
-
-  test("returns false for an empty array", () => {
-    expect(rejected([])).toBe(false);
+    expect(() => throwSettledFailures({ message: "both failed", results })).toThrow(AggregateError);
   });
 });
 

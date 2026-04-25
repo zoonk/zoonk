@@ -42,7 +42,6 @@ export async function addLessonsStep(input: {
   );
 
   if (error) {
-    await stream.error({ reason: "dbSaveFailed", step: "addLessons" });
     throw error;
   }
 

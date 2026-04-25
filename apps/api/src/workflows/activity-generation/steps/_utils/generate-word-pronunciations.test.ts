@@ -119,19 +119,19 @@ describe(generateWordPronunciations, () => {
     expect(generateActivityPronunciationMock).toHaveBeenCalledOnce();
   });
 
-  test("omits word from result when AI call fails", async () => {
+  test("throws when an AI call fails", async () => {
     const id = randomUUID().slice(0, 8);
     const wordText = `Fallo${id}`;
 
     generateActivityPronunciationMock.mockRejectedValue(new Error("AI failure"));
 
-    const result = await generateWordPronunciations({
-      organizationId,
-      targetLanguage: "es",
-      userLanguage: "en",
-      words: [wordText],
-    });
-
-    expect(result[wordText]).toBeUndefined();
+    await expect(
+      generateWordPronunciations({
+        organizationId,
+        targetLanguage: "es",
+        userLanguage: "en",
+        words: [wordText],
+      }),
+    ).rejects.toThrow("AI failure");
   });
 });

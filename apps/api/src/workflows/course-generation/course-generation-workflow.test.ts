@@ -102,6 +102,12 @@ vi.mock("@zoonk/ai/tasks/lessons/kind", () => ({
   }),
 }));
 
+vi.mock("@zoonk/ai/tasks/lessons/applied-activity-kind", () => ({
+  generateAppliedActivityKind: vi.fn().mockResolvedValue({
+    data: { appliedActivityKind: "story" },
+  }),
+}));
+
 vi.mock("@zoonk/ai/tasks/lessons/custom-activities", () => ({
   generateLessonCustomActivities: vi.fn().mockResolvedValue({
     data: { activities: [] },
@@ -374,7 +380,7 @@ describe(courseGenerationWorkflow, () => {
   });
 
   describe("error handling", () => {
-    test("marks course and suggestion as 'failed' on error and streams error", async () => {
+    test("marks course and suggestion as 'failed' when generation fails after retries", async () => {
       vi.mocked(generateCourseDescription).mockRejectedValueOnce(new Error("AI generation failed"));
 
       const title = `Error Course ${randomUUID()}`;

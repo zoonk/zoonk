@@ -11,7 +11,6 @@ import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { safeAsync } from "@zoonk/utils/error";
 import { type ActivitySteps } from "./_utils/get-activity-steps";
 import { type LessonActivity } from "./get-lesson-activities-step";
-import { handleActivityFailureStep } from "./handle-failure-step";
 
 /**
  * Generates learner choices after the story skeleton exists.
@@ -48,12 +47,7 @@ export async function generateStoryChoicesStep({
   );
 
   if (error || !result) {
-    const reason = getAIResultErrorReason({ error, result });
-
-    await stream.error({ reason, step: "generateStoryChoices" });
-    await handleActivityFailureStep({ activityId: activity.id });
-
-    return null;
+    throw error ?? new Error(getAIResultErrorReason({ result }));
   }
 
   const { data: storyData, error: mergeError } = await safeAsync(async () =>
@@ -61,10 +55,7 @@ export async function generateStoryChoicesStep({
   );
 
   if (mergeError || !storyData) {
-    await stream.error({ reason: "contentValidationFailed", step: "generateStoryChoices" });
-    await handleActivityFailureStep({ activityId: activity.id });
-
-    return null;
+    throw mergeError ?? new Error("contentValidationFailed");
   }
 
   await stream.status({ status: "completed", step: "generateStoryChoices" });

@@ -9,6 +9,12 @@ import { generateSentenceWordPronunciationStep } from "../steps/generate-sentenc
 import { saveReadingActivityStep } from "../steps/save-reading-activity-step";
 import { readingActivityWorkflow } from "./reading-workflow";
 
+vi.mock("../handle-activity-workflow-error", () => ({
+  failActivityWorkflow: vi.fn(async ({ error }: { error: unknown }) => {
+    throw error;
+  }),
+}));
+
 vi.mock("../steps/generate-reading-content-step", () => ({
   generateReadingContentStep: vi.fn().mockResolvedValue({
     sentences: [
@@ -214,7 +220,7 @@ describe(readingActivityWorkflow, () => {
     );
   });
 
-  test("falls back to empty enrichment maps when non-critical substeps fail", async () => {
+  test("throws when enrichment substeps fail", async () => {
     vi.mocked(generateReadingAudioStep).mockRejectedValueOnce(new Error("audio failed"));
     vi.mocked(generateReadingRomanizationStep).mockRejectedValueOnce(
       new Error("romanization failed"),
@@ -226,24 +232,17 @@ describe(readingActivityWorkflow, () => {
 
     const activities = [makeActivity("reading")];
 
-    await readingActivityWorkflow({
-      activitiesToGenerate: activities as never,
-      allActivities: activities as never,
-      concepts: [],
-      neighboringConcepts: [],
-      words: [],
-      workflowRunId: "workflow-3",
-    });
-
-    expect(saveReadingActivityStep).toHaveBeenCalledWith(
-      expect.objectContaining({
-        activities,
-        pronunciations: {},
-        sentenceAudioUrls: {},
-        sentenceRomanizations: {},
-        wordAudioUrls: {},
+    await expect(
+      readingActivityWorkflow({
+        activitiesToGenerate: activities as never,
+        allActivities: activities as never,
+        concepts: [],
+        neighboringConcepts: [],
+        words: [],
         workflowRunId: "workflow-3",
       }),
-    );
+    ).rejects.toThrow("audio failed");
+
+    expect(saveReadingActivityStep).not.toHaveBeenCalled();
   });
 });

@@ -64,14 +64,14 @@ describe(generateDescriptionStep, () => {
     );
   });
 
-  test("throws and streams error when AI generation fails", async () => {
+  test("throws without streaming error when AI generation fails", async () => {
     generateCourseDescriptionMock.mockRejectedValue(new Error("AI failure"));
 
     await expect(generateDescriptionStep(course)).rejects.toThrow("AI failure");
 
     const events = getStreamedEvents(writeMock);
 
-    expect(events).toContainEqual(
+    expect(events).not.toContainEqual(
       expect.objectContaining({ status: "error", step: "generateDescription" }),
     );
   });

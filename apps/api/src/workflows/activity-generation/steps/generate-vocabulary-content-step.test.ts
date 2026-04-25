@@ -100,7 +100,7 @@ describe(generateVocabularyContentStep, () => {
     );
   });
 
-  test("marks activity as failed and streams error when AI fails", async () => {
+  test("throws AI errors without streaming an error status", async () => {
     vi.mocked(generateActivityVocabulary).mockRejectedValueOnce(new Error("AI error"));
 
     const lesson = await lessonFixture({
@@ -120,21 +120,21 @@ describe(generateVocabularyContentStep, () => {
     });
 
     const [activity] = await fetchLessonActivities(lesson.id);
-    const result = await generateVocabularyContentStep(activity!, "workflow-2");
-
-    expect(result).toEqual({ words: [] });
+    await expect(generateVocabularyContentStep(activity!, "workflow-2")).rejects.toThrow(
+      "AI error",
+    );
 
     const updated = await prisma.activity.findUniqueOrThrow({ where: { id: dbActivity.id } });
-    expect(updated.generationStatus).toBe("failed");
+    expect(updated.generationStatus).toBe("pending");
 
     const events = getStreamedEvents(writeMock);
 
-    expect(events).toContainEqual(
+    expect(events).not.toContainEqual(
       expect.objectContaining({ status: "error", step: "generateVocabularyContent" }),
     );
   });
 
-  test("marks activity as failed and streams error when AI returns empty words array", async () => {
+  test("throws when AI returns empty words array", async () => {
     vi.mocked(generateActivityVocabulary).mockResolvedValueOnce({
       data: { words: [] },
     } as never);
@@ -156,18 +156,17 @@ describe(generateVocabularyContentStep, () => {
     });
 
     const [activity] = await fetchLessonActivities(lesson.id);
-    const result = await generateVocabularyContentStep(activity!, "workflow-3");
-
-    expect(result).toEqual({ words: [] });
+    await expect(generateVocabularyContentStep(activity!, "workflow-3")).rejects.toThrow(
+      "contentValidationFailed",
+    );
 
     const updated = await prisma.activity.findUniqueOrThrow({ where: { id: dbActivity.id } });
-    expect(updated.generationStatus).toBe("failed");
+    expect(updated.generationStatus).toBe("pending");
 
     const events = getStreamedEvents(writeMock);
 
-    expect(events).toContainEqual(
+    expect(events).not.toContainEqual(
       expect.objectContaining({
-        reason: "contentValidationFailed",
         status: "error",
         step: "generateVocabularyContent",
       }),

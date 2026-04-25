@@ -148,19 +148,21 @@ describe(saveExplanationActivityStep, () => {
     );
   });
 
-  test("streams error when DB transaction fails", async () => {
+  test("throws DB errors without streaming an error status", async () => {
     const invalidActivityId = randomUUID();
 
-    await saveExplanationActivityStep({
-      activityId: invalidActivityId,
-      images: [{ prompt: "A step image", url: "https://example.com/image.webp" }],
-      steps: [{ text: "some text", title: "Title" }],
-      workflowRunId: "workflow-2",
-    });
+    await expect(
+      saveExplanationActivityStep({
+        activityId: invalidActivityId,
+        images: [{ prompt: "A step image", url: "https://example.com/image.webp" }],
+        steps: [{ text: "some text", title: "Title" }],
+        workflowRunId: "workflow-2",
+      }),
+    ).rejects.toThrow();
 
     const events = getStreamedEvents(writeMock);
 
-    expect(events).toContainEqual(
+    expect(events).not.toContainEqual(
       expect.objectContaining({
         status: "error",
         step: "saveExplanationActivity",

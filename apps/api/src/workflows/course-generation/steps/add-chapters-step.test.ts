@@ -44,7 +44,7 @@ describe(addChaptersStep, () => {
     vi.clearAllMocks();
   });
 
-  test("streams error and throws when DB save fails", async () => {
+  test("throws without streaming error when DB save fails", async () => {
     const brokenContext: CourseContext = {
       ...courseContext,
       courseId: randomUUID(),
@@ -56,7 +56,7 @@ describe(addChaptersStep, () => {
 
     const events = getStreamedEvents(writeMock);
 
-    expect(events).toContainEqual(
+    expect(events).not.toContainEqual(
       expect.objectContaining({ status: "error", step: "addChapters" }),
     );
   });

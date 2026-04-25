@@ -1,8 +1,9 @@
 import { streamSkipStep } from "@/workflows/_shared/stream-skip-step";
+import { serializeWorkflowError } from "@/workflows/_shared/workflow-error";
 import { chapterGenerationWorkflow } from "@/workflows/chapter-generation/chapter-generation-workflow";
 import { COURSE_COMPLETION_STEP } from "@zoonk/core/workflows/steps";
 import { logError } from "@zoonk/utils/logger";
-import { FatalError, getWorkflowMetadata } from "workflow";
+import { getWorkflowMetadata } from "workflow";
 import { getOrCreateCourse } from "./_internal/get-or-create-course";
 import { setupCourse } from "./_internal/setup-course";
 import { checkExistingCourseStep } from "./steps/check-existing-course-step";
@@ -49,11 +50,12 @@ export async function courseGenerationWorkflow(courseSuggestionId: string): Prom
     await handleCourseFailureStep({
       courseId: existingCourse?.id ?? null,
       courseSuggestionId,
+      error: serializeWorkflowError(error),
     });
 
     logError(`[workflow ${workflowRunId}] Course initialization failed`, error);
 
-    throw FatalError;
+    throw error;
   });
 
   const chapters = await setupCourse(course, courseSuggestionId, existing).catch(
@@ -61,11 +63,12 @@ export async function courseGenerationWorkflow(courseSuggestionId: string): Prom
       await handleCourseFailureStep({
         courseId: course.courseId,
         courseSuggestionId,
+        error: serializeWorkflowError(error),
       });
 
       logError(`[workflow ${workflowRunId}] Course generation failed`, error);
 
-      throw FatalError;
+      throw error;
     },
   );
 

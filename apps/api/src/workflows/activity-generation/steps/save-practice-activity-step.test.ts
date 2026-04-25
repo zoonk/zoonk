@@ -184,7 +184,7 @@ describe(savePracticeActivityStep, () => {
     );
   });
 
-  test("streams error when DB transaction fails", async () => {
+  test("throws DB errors without streaming an error status", async () => {
     const lesson = await lessonFixture({
       chapterId: chapter.id,
       organizationId,
@@ -217,18 +217,20 @@ describe(savePracticeActivityStep, () => {
       },
     ];
 
-    await savePracticeActivityStep({
-      activityId: activity.id,
-      images: practiceImages.slice(0, 2),
-      scenario: practiceScenario,
-      steps,
-      title: "The game store signup mix-up",
-      workflowRunId: "workflow-error",
-    });
+    await expect(
+      savePracticeActivityStep({
+        activityId: activity.id,
+        images: practiceImages.slice(0, 2),
+        scenario: practiceScenario,
+        steps,
+        title: "The game store signup mix-up",
+        workflowRunId: "workflow-error",
+      }),
+    ).rejects.toThrow();
 
     const events = getStreamedEvents(writeMock);
 
-    expect(events).toContainEqual(
+    expect(events).not.toContainEqual(
       expect.objectContaining({ status: "error", step: "savePracticeActivity" }),
     );
   });

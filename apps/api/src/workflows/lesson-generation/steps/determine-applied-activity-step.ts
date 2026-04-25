@@ -39,11 +39,9 @@ async function getRecentAppliedKinds(
 
 /**
  * Classifies whether this core lesson should include an applied activity
- * (story, investigation, etc).
- *
- * Non-fatal: if the classifier fails, the lesson proceeds without an
- * applied activity. This is an optional enhancement, not a structural
- * requirement.
+ * (story, investigation, etc). A classifier failure leaves the lesson without
+ * a reliable activity plan, so the step throws and lets Workflow retry it
+ * instead of saving a partial lesson shape.
  */
 export async function determineAppliedActivityStep(
   context: LessonContext,
@@ -68,11 +66,11 @@ export async function determineAppliedActivityStep(
     }),
   );
 
-  await stream.status({ status: "completed", step: "determineAppliedActivity" });
-
   if (error) {
-    return null;
+    throw error;
   }
+
+  await stream.status({ status: "completed", step: "determineAppliedActivity" });
 
   return result.data.appliedActivityKind;
 }

@@ -29,7 +29,6 @@ export async function generateChaptersStep(course: CourseContext): Promise<Cours
   const { data: result, error } = await safeAsync(() => generateChapters(course));
 
   if (error) {
-    await stream.error({ reason: "aiGenerationFailed", step: "generateChapters" });
     throw error;
   }
 

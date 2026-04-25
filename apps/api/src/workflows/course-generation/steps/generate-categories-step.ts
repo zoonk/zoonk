@@ -18,7 +18,6 @@ export async function generateCategoriesStep(course: CourseContext): Promise<str
   );
 
   if (error) {
-    await stream.error({ reason: "aiGenerationFailed", step: "generateCategories" });
     throw error;
   }
 

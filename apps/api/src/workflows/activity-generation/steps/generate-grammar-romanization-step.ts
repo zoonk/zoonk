@@ -5,7 +5,6 @@ import { needsRomanization } from "@zoonk/utils/languages";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { generateActivityRomanizations } from "./_utils/generate-activity-romanizations";
 import { type LessonActivity } from "./get-lesson-activities-step";
-import { handleActivityFailureStep } from "./handle-failure-step";
 
 /**
  * Builds the full sentence by replacing [BLANK] with the correct answer.
@@ -64,12 +63,6 @@ export async function generateGrammarRomanizationStep(
   await stream.status({ status: "started", step: "generateGrammarRomanization" });
 
   const romanizations = await generateActivityRomanizations({ targetLanguage, texts: allTexts });
-
-  if (!romanizations) {
-    await stream.error({ reason: "romanizationFailed", step: "generateGrammarRomanization" });
-    await handleActivityFailureStep({ activityId: activity.id });
-    return { romanizations: null };
-  }
 
   await stream.status({ status: "completed", step: "generateGrammarRomanization" });
   return { romanizations };

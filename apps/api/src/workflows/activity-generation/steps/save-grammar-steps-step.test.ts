@@ -189,7 +189,7 @@ describe(saveGrammarActivityStep, () => {
     expect(steps).toHaveLength(0);
   });
 
-  test("streams error when DB transaction fails", async () => {
+  test("throws DB errors without streaming an error status", async () => {
     const lesson = await lessonFixture({
       chapterId: chapter.id,
       kind: "language",
@@ -211,35 +211,37 @@ describe(saveGrammarActivityStep, () => {
     // Delete the activity so the prisma.activity.update inside the transaction fails
     await prisma.activity.delete({ where: { id: grammarActivity.id } });
 
-    await saveGrammarActivityStep(
-      activities,
-      "workflow-grammar-error",
-      {
-        examples: [{ highlight: "ist", sentence: "Das ist gut" }],
-        exercises: [{ answer: "ist", distractors: ["war", "hat"], template: "Das [BLANK] gut" }],
-      },
-      {
-        discovery: {
-          context: "Look at the example",
-          options: [
-            { feedback: "Correct!", isCorrect: true, text: "ist" },
-            { feedback: "Not quite", isCorrect: false, text: "war" },
-          ],
-          question: "What verb fits?",
+    await expect(
+      saveGrammarActivityStep(
+        activities,
+        "workflow-grammar-error",
+        {
+          examples: [{ highlight: "ist", sentence: "Das ist gut" }],
+          exercises: [{ answer: "ist", distractors: ["war", "hat"], template: "Das [BLANK] gut" }],
         },
-        exampleTranslations: ["That is good"],
-        exerciseFeedback: ["Because ist fits here"],
-        exerciseQuestions: ["Fill in the blank"],
-        exerciseTranslations: ["That is good"],
-        ruleName: "Present tense",
-        ruleSummary: "The verb ist is used for present tense",
-      },
-      null,
-    );
+        {
+          discovery: {
+            context: "Look at the example",
+            options: [
+              { feedback: "Correct!", isCorrect: true, text: "ist" },
+              { feedback: "Not quite", isCorrect: false, text: "war" },
+            ],
+            question: "What verb fits?",
+          },
+          exampleTranslations: ["That is good"],
+          exerciseFeedback: ["Because ist fits here"],
+          exerciseQuestions: ["Fill in the blank"],
+          exerciseTranslations: ["That is good"],
+          ruleName: "Present tense",
+          ruleSummary: "The verb ist is used for present tense",
+        },
+        null,
+      ),
+    ).rejects.toThrow();
 
     const events = getStreamedEvents(writeMock);
 
-    expect(events).toContainEqual(
+    expect(events).not.toContainEqual(
       expect.objectContaining({ status: "error", step: "saveGrammarActivity" }),
     );
   });

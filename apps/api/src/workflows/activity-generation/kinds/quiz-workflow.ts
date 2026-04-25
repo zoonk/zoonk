@@ -1,3 +1,5 @@
+import { failActivityWorkflow } from "../handle-activity-workflow-error";
+import { findActivitiesByKind } from "../steps/_utils/find-activity-by-kind";
 import { type ExplanationResult } from "../steps/generate-explanation-content-step";
 import { generateQuizContentStep } from "../steps/generate-quiz-content-step";
 import { generateQuizImagesStep } from "../steps/generate-quiz-images-step";
@@ -24,23 +26,34 @@ export async function quizActivityWorkflow({
 }): Promise<void> {
   "use workflow";
 
-  const explanationSteps = explanationResults.flatMap((result) => result.steps);
-  const { activityId, questions } = await generateQuizContentStep(
-    activitiesToGenerate,
-    explanationSteps,
-    workflowRunId,
-  );
+  const quizActivity = findActivitiesByKind(activitiesToGenerate, "quiz")[0];
 
-  if (!activityId || questions.length === 0) {
+  if (!quizActivity) {
     return;
   }
 
-  const questionsWithImages = await generateQuizImagesStep(activitiesToGenerate, questions);
-  const finalQuestions = questionsWithImages.length > 0 ? questionsWithImages : questions;
+  const explanationSteps = explanationResults.flatMap((result) => result.steps);
 
-  await saveQuizActivityStep({
-    activityId,
-    questions: finalQuestions,
-    workflowRunId,
-  });
+  try {
+    const { activityId, questions } = await generateQuizContentStep(
+      activitiesToGenerate,
+      explanationSteps,
+      workflowRunId,
+    );
+
+    if (!activityId || questions.length === 0) {
+      throw new Error("Quiz content step returned incomplete content");
+    }
+
+    const questionsWithImages = await generateQuizImagesStep(activitiesToGenerate, questions);
+    const finalQuestions = questionsWithImages.length > 0 ? questionsWithImages : questions;
+
+    await saveQuizActivityStep({
+      activityId,
+      questions: finalQuestions,
+      workflowRunId,
+    });
+  } catch (error) {
+    await failActivityWorkflow({ activityId: quizActivity.id, error });
+  }
 }

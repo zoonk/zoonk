@@ -27,7 +27,6 @@ export async function addCategoriesStep(input: {
   );
 
   if (error) {
-    await stream.error({ reason: "dbSaveFailed", step: "addCategories" });
     throw error;
   }
 

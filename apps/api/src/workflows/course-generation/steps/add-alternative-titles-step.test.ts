@@ -33,7 +33,7 @@ describe(addAlternativeTitlesStep, () => {
     vi.clearAllMocks();
   });
 
-  test("streams error and throws when DB save fails", async () => {
+  test("throws without streaming error when DB save fails", async () => {
     const brokenContext: CourseContext = {
       courseId: randomUUID(),
       courseSlug: "broken",
@@ -52,7 +52,7 @@ describe(addAlternativeTitlesStep, () => {
 
     const events = getStreamedEvents(writeMock);
 
-    expect(events).toContainEqual(
+    expect(events).not.toContainEqual(
       expect.objectContaining({ status: "error", step: "addAlternativeTitles" }),
     );
   });

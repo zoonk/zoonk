@@ -9,7 +9,6 @@ import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { type WordMetadataEntry, saveReadingTargetWords } from "./_utils/save-reading-target-words";
 import { type ReadingSentence } from "./generate-reading-content-step";
 import { type LessonActivity } from "./get-lesson-activities-step";
-import { handleActivityFailureStep } from "./handle-failure-step";
 
 /**
  * Persists canonical reading sentences, their direct distractor arrays, and the
@@ -49,14 +48,18 @@ export async function saveReadingActivityStep(params: {
 
   const activity = findActivityByKind(activities, "reading");
 
-  if (!activity || sentences.length === 0) {
+  if (!activity) {
     return;
+  }
+
+  if (sentences.length === 0) {
+    throw new Error("Reading save step received no sentences");
   }
 
   const course = activity.lesson.chapter.course;
 
   if (!course.organization) {
-    return;
+    throw new Error("Reading save step needs course organization data");
   }
 
   await using stream = createEntityStepStream<ActivityStepName>(activity.id);
@@ -88,9 +91,7 @@ export async function saveReadingActivityStep(params: {
   );
 
   if (sentenceError) {
-    await stream.error({ reason: "dbSaveFailed", step: "saveReadingActivity" });
-    await handleActivityFailureStep({ activityId: activity.id });
-    return;
+    throw sentenceError;
   }
 
   const { error: wordError } = await safeAsync(() =>
@@ -108,9 +109,7 @@ export async function saveReadingActivityStep(params: {
   );
 
   if (wordError) {
-    await stream.error({ reason: "dbSaveFailed", step: "saveReadingActivity" });
-    await handleActivityFailureStep({ activityId: activity.id });
-    return;
+    throw wordError;
   }
 
   await markActivityAsCompleted(activity.id, workflowRunId);

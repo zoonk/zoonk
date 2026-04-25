@@ -161,7 +161,7 @@ describe(listeningActivityWorkflow, () => {
     expect(dbActivity?.generationStatus).toBe("completed");
   });
 
-  test("fails gracefully when reading activity does not exist", async () => {
+  test("marks listening as failed when reading activity does not exist", async () => {
     const lesson = await lessonFixture({
       chapterId: chapter.id,
       kind: "language",
@@ -179,7 +179,9 @@ describe(listeningActivityWorkflow, () => {
     });
 
     const activities = await fetchLessonActivities(lesson.id);
-    await listeningActivityWorkflow({ allActivities: activities, workflowRunId: "test-run-id" });
+    await expect(
+      listeningActivityWorkflow({ allActivities: activities, workflowRunId: "test-run-id" }),
+    ).rejects.toThrow("noSourceData");
 
     const dbActivity = await prisma.activity.findUnique({ where: { id: listeningActivity.id } });
     expect(dbActivity?.generationStatus).toBe("failed");

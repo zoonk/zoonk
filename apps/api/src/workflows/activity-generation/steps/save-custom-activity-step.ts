@@ -5,7 +5,6 @@ import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { buildStaticStepRecords } from "./_utils/build-static-step-records";
 import { type ActivitySteps } from "./_utils/get-activity-steps";
-import { handleActivityFailureStep } from "./handle-failure-step";
 
 /**
  * Persists all generated data for a single custom activity in one batch:
@@ -36,9 +35,7 @@ export async function saveCustomActivityStep({
   );
 
   if (buildError || !stepRecords) {
-    await stream.error({ reason: "dbSaveFailed", step: "saveCustomActivity" });
-    await handleActivityFailureStep({ activityId });
-    return;
+    throw buildError ?? new Error("Failed to build custom step records");
   }
 
   const { error } = await safeAsync(() =>
@@ -52,9 +49,7 @@ export async function saveCustomActivityStep({
   );
 
   if (error) {
-    await stream.error({ reason: "dbSaveFailed", step: "saveCustomActivity" });
-    await handleActivityFailureStep({ activityId });
-    return;
+    throw error;
   }
 
   await stream.status({ status: "completed", step: "saveCustomActivity" });

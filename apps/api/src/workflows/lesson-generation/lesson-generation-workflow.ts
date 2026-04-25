@@ -1,4 +1,5 @@
 import { streamSkipStep } from "@/workflows/_shared/stream-skip-step";
+import { serializeWorkflowError } from "@/workflows/_shared/workflow-error";
 import { type LessonKind } from "@zoonk/db";
 import { getWorkflowMetadata } from "workflow";
 import { addActivitiesStep } from "./steps/add-activities-step";
@@ -269,7 +270,11 @@ async function runInitialLessonGeneration(input: {
 
     return "ready";
   } catch (error) {
-    await handleLessonFailureStep({ lessonId: input.lessonId });
+    await handleLessonFailureStep({
+      error: serializeWorkflowError(error),
+      lessonId: input.lessonId,
+    });
+
     throw error;
   }
 }

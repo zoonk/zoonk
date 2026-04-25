@@ -8,13 +8,13 @@ import {
 import { type ActivityInvestigationScenarioSchema } from "@zoonk/ai/tasks/activities/core/investigation-scenario";
 import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { safeAsync } from "@zoonk/utils/error";
-import { handleActivityFailureStep } from "./handle-failure-step";
 
 /**
  * Generates deliberately ambiguous findings for each investigation action.
  * Each finding has a complicating factor that makes interpretation non-trivial.
  *
- * Returns the findings or null if generation fails.
+ * Throws on generation failure so Workflow can retry before the activity is
+ * marked permanently failed by the workflow catch.
  */
 export async function generateInvestigationFindingsStep({
   activityId,
@@ -28,7 +28,7 @@ export async function generateInvestigationFindingsStep({
   actions: ActivityInvestigationActionsSchema;
   language: string;
   scenario: ActivityInvestigationScenarioSchema;
-}): Promise<ActivityInvestigationFindingsSchema | null> {
+}): Promise<ActivityInvestigationFindingsSchema> {
   "use step";
 
   await using stream = createEntityStepStream<ActivityStepName>(activityId);
@@ -45,12 +45,7 @@ export async function generateInvestigationFindingsStep({
   );
 
   if (error || !result || result.data.findings.length === 0) {
-    const reason = getAIResultErrorReason({ error, result });
-
-    await stream.error({ reason, step: "generateInvestigationFindings" });
-    await handleActivityFailureStep({ activityId });
-
-    return null;
+    throw error ?? new Error(getAIResultErrorReason({ result }));
   }
 
   await stream.status({ status: "completed", step: "generateInvestigationFindings" });
