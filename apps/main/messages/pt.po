@@ -327,6 +327,11 @@ msgctxt "EqkwlK"
 msgid "evidence"
 msgstr "evidências"
 
+#: ../../packages/player/src/components/player-shell.tsx
+msgctxt "tJtNzs"
+msgid "Player screen"
+msgstr "Tela do jogador"
+
 #: ../../packages/player/src/components/reward-badges.tsx
 #: src/app/(performance)/level/level-stats.tsx
 msgctxt "/Q0taG"

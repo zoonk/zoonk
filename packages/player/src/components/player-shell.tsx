@@ -33,6 +33,17 @@ function BottomBarContent() {
   );
 }
 
+/**
+ * Gives the scroll-owning stage a new DOM identity when the visible player
+ * surface changes. Inline feedback keeps the same step surface so learners
+ * stay near the answer they checked, while dedicated feedback and completion
+ * screens start from the top because their first content is a new result image
+ * or summary.
+ */
+function getStageResetKey({ screenKind, stepId }: { screenKind: string; stepId?: string }) {
+  return `${stepId ?? "completion"}:${screenKind}`;
+}
+
 export function PlayerShell() {
   const t = useExtracted();
   const { screen, state } = usePlayerRuntime();
@@ -47,6 +58,7 @@ export function PlayerShell() {
   const progressValue = getProgressValue(state);
   const storyMetrics = getStoryMetrics(state);
   const upcomingImages = getUpcomingImages(state);
+  const stageResetKey = getStageResetKey({ screenKind: screen.kind, stepId: currentStep?.id });
 
   usePlayerHaptics({
     current: {
@@ -77,8 +89,10 @@ export function PlayerShell() {
       )}
 
       <PlayerStage
+        aria-label={t("Player screen")}
         isFullBleed={screen.stageIsFullBleed}
         isStatic={screen.stageIsStatic}
+        key={stageResetKey}
         phase={state.phase}
         scene={screen.scene}
       >
