@@ -1,6 +1,6 @@
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
 import { describe, expect, test } from "vitest";
-import { describePlayerStep, getInvestigationVariant } from "./player-step";
+import { describePlayerStep, getInvestigationVariant, getPlayerStepImage } from "./player-step";
 
 function buildStep(overrides: Partial<SerializedStep> = {}): SerializedStep {
   return {
@@ -73,5 +73,27 @@ describe(describePlayerStep, () => {
     const descriptor = describePlayerStep(buildStep());
 
     expect(descriptor?.kind).toBe("staticText");
+  });
+
+  test("returns the primary image from image-backed descriptors", () => {
+    const image = { prompt: "A useful diagram", url: "data:image/svg+xml,diagram" };
+    const staticDescriptor = describePlayerStep(
+      buildStep({ content: { image, text: "Hello", title: "Intro", variant: "text" as const } }),
+    );
+    const choiceDescriptor = describePlayerStep(
+      buildStep({
+        content: {
+          image,
+          kind: "core" as const,
+          options: [{ feedback: "Correct", isCorrect: true, text: "A" }],
+          question: "Choose",
+        },
+        kind: "multipleChoice",
+      }),
+    );
+
+    expect(getPlayerStepImage(staticDescriptor)).toEqual(image);
+    expect(getPlayerStepImage(choiceDescriptor)).toEqual(image);
+    expect(getPlayerStepImage(null)).toBeNull();
   });
 });

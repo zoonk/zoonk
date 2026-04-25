@@ -14,6 +14,21 @@ type SwipeGesture = {
   touchId: number;
 };
 
+export type SwipeNavigableStepFrame = "default" | "media";
+
+/**
+ * Image-backed read steps need the swipe surface to use the full stage width
+ * so the media column can bleed to the viewport edge. Text-only read steps keep
+ * the narrower frame because long lines become harder to read at full width.
+ */
+function getNavigableFrameClass(frame: SwipeNavigableStepFrame) {
+  if (frame === "media") {
+    return "max-w-none";
+  }
+
+  return "";
+}
+
 /**
  * Buttons, links, and other controls should keep their native tap behavior.
  * The swipe layer only owns empty read-scene space so it does not steal
@@ -113,11 +128,13 @@ function findTouchById(touchList: TouchList, touchId: number) {
 export function SwipeNavigableStepLayout({
   canNavigatePrev,
   children,
+  frame = "default",
   onNavigateNext,
   onNavigatePrev,
 }: {
   canNavigatePrev: boolean;
   children: React.ReactNode;
+  frame?: SwipeNavigableStepFrame;
   onNavigateNext: () => void;
   onNavigatePrev: () => void;
 }) {
@@ -259,7 +276,7 @@ export function SwipeNavigableStepLayout({
   );
 
   return (
-    <NavigableStepLayout onTouchStart={handleTouchStart}>
+    <NavigableStepLayout className={getNavigableFrameClass(frame)} onTouchStart={handleTouchStart}>
       <div className="flex min-h-0 w-full min-w-0 flex-1 flex-col items-center">{children}</div>
     </NavigableStepLayout>
   );

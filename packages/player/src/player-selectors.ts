@@ -2,7 +2,7 @@ import { type CompletionResult } from "@zoonk/core/player/contracts/completion-i
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
 import { INVESTIGATION_EXPERIMENT_COUNT, STORY_OUTCOME_TIERS } from "@zoonk/utils/activities";
 import { type PlayerState } from "./player-reducer";
-import { describePlayerStep, getInvestigationVariant } from "./player-step";
+import { describePlayerStep, getInvestigationVariant, getPlayerStepImage } from "./player-step";
 import { EFFECT_DELTA_MAP, METRIC_AVERAGE_THRESHOLD } from "./story";
 
 /** Converts a 0-based step index to a 1-based percentage (0–100). */
@@ -229,7 +229,7 @@ function getStoryDecisionImages(step: SerializedStep): PreloadableImage[] {
   }
 
   return [
-    ...getOptionalStepImage(descriptor.content.image?.url),
+    ...getOptionalStepImage(getPlayerStepImage(descriptor)?.url),
     ...descriptor.content.choices.flatMap((choice) => getOptionalStepImage(choice.stateImage?.url)),
   ];
 }
@@ -285,19 +285,6 @@ function dedupeImagesByUrl(images: PreloadableImage[]): PreloadableImage[] {
 function getStepImages(step: SerializedStep): PreloadableImage[] {
   const descriptor = describePlayerStep(step);
 
-  if (
-    descriptor?.kind === "staticText" ||
-    descriptor?.kind === "staticGrammarExample" ||
-    descriptor?.kind === "staticGrammarRule" ||
-    descriptor?.kind === "multipleChoice"
-  ) {
-    return getOptionalStepImage(descriptor.content.image?.url);
-  }
-
-  if (descriptor?.kind === "intro") {
-    return getOptionalStepImage(descriptor.intro.image?.url);
-  }
-
   if (descriptor?.kind === "storyOutcome") {
     return getStoryOutcomeImages(step);
   }
@@ -310,7 +297,7 @@ function getStepImages(step: SerializedStep): PreloadableImage[] {
     return getSelectImageOptionImages(step);
   }
 
-  return [];
+  return getOptionalStepImage(getPlayerStepImage(descriptor)?.url);
 }
 
 /**

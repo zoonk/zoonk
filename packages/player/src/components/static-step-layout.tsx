@@ -4,9 +4,9 @@ import { type StepImage } from "@zoonk/core/steps/contract/image";
 import { StepMediaLayout } from "./step-media-layout";
 
 /**
- * Static explanation steps now combine the illustration and copy in one screen.
- * This layout keeps the existing text styling intact while giving the image the
- * remaining mobile height and a balanced 50/50 split on desktop.
+ * Static explanation steps keep their copy styling separate from the media
+ * shell. The shared media layout decides how the image bleeds; this wrapper
+ * only preserves the static-step slot used by the text renderer.
  */
 export function StaticStepLayout({
   children,
@@ -18,7 +18,7 @@ export function StaticStepLayout({
   return (
     <StepMediaLayout image={image}>
       <div className="w-full" data-slot="static-step-copy">
-        <div className="mx-auto w-full max-w-2xl">{children}</div>
+        {children}
       </div>
     </StepMediaLayout>
   );

@@ -1,6 +1,7 @@
 import { fireEvent } from "@testing-library/react";
 import { describe, expect, test, vi } from "vitest";
 import { page } from "vitest/browser";
+import { buildInlineImageUrl } from "../_test-utils/build-inline-image-url";
 import {
   buildSerializedActivity,
   buildSerializedStep,
@@ -185,6 +186,47 @@ describe("player browser integration: choice steps", () => {
     await expect.element(page.getByText(/correct answer:/i)).toBeInTheDocument();
     await expect.element(page.getByText("Paris")).toBeInTheDocument();
     await expect.element(page.getByText("Berlin")).toBeInTheDocument();
+  });
+
+  test("lets users expand image-led multiple-choice evidence", async () => {
+    renderPlayer({
+      activity: buildSerializedActivity({
+        steps: [
+          buildSerializedStep({
+            content: {
+              context: "Use the chart before choosing.",
+              image: {
+                prompt: "A sales chart with a visible drop in March",
+                url: buildInlineImageUrl({ label: "A sales chart with a visible drop in March" }),
+              },
+              kind: "core",
+              options: [
+                { feedback: "Correct", isCorrect: true, text: "March dropped sharply" },
+                { feedback: "Nope", isCorrect: false, text: "March stayed flat" },
+              ],
+              question: "What changed?",
+            },
+            kind: "multipleChoice",
+          }),
+        ],
+      }),
+      viewer: buildAuthenticatedViewer(),
+    });
+
+    await expect
+      .element(page.getByAltText(/sales chart with a visible drop in march/i))
+      .toBeInTheDocument();
+
+    await page.getByRole("button", { name: /open full image/i }).click();
+
+    const dialog = page.getByRole("dialog", { name: /full image/i });
+
+    await expect
+      .element(dialog.getByAltText(/sales chart with a visible drop in march/i))
+      .toBeInTheDocument();
+
+    await page.getByRole("button", { name: /close full image/i }).click();
+    await expect.element(dialog).not.toBeInTheDocument();
   });
 
   test("shows translation pronunciation, romanization, and feedback audio without app wiring", async () => {

@@ -1,7 +1,7 @@
 "use client";
 
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
-import { describePlayerStep } from "../player-step";
+import { describePlayerStep, getPlayerStepImage } from "../player-step";
 import { useReplaceName } from "../user-name-context";
 import { HighlightText } from "./highlight-text";
 import {
@@ -14,16 +14,6 @@ import { RomanizationText } from "./romanization-text";
 import { StaticStepLayout } from "./static-step-layout";
 import { StepIntroHero } from "./step-intro-hero-layout";
 import { StoryOutcomeContent } from "./story-outcome-content";
-
-function getStaticDescriptorImage(descriptor: ReturnType<typeof describePlayerStep>) {
-  if (
-    descriptor?.kind === "staticText" ||
-    descriptor?.kind === "staticGrammarExample" ||
-    descriptor?.kind === "staticGrammarRule"
-  ) {
-    return descriptor.content.image;
-  }
-}
 
 function TextVariant({ title, text }: { title: string; text: string }) {
   const replaceName = useReplaceName();
@@ -105,7 +95,6 @@ function StaticStepContent({ step }: { step: SerializedStep }) {
 
 export function StaticStep({ step }: { step: SerializedStep }) {
   const descriptor = describePlayerStep(step);
-  const image = getStaticDescriptorImage(descriptor);
 
   if (descriptor?.kind === "intro") {
     return (
@@ -122,6 +111,7 @@ export function StaticStep({ step }: { step: SerializedStep }) {
   }
 
   const content = <StaticStepContent step={step} />;
+  const image = getPlayerStepImage(descriptor);
 
   if (!image) {
     return <PlayerReadScene className="w-full">{content}</PlayerReadScene>;

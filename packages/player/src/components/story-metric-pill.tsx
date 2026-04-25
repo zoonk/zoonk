@@ -6,8 +6,12 @@ import {
 } from "../story";
 import { StatusPill, StatusPillLabel, StatusPillValue } from "./status-pill";
 
-/** Returns the Tailwind color class for a metric value based on threshold bands. */
-function getMetricColor(value: number): string {
+/**
+ * Returns the Tailwind color class for a metric value based on threshold bands.
+ * Story feedback and outcome screens both need the same severity language so a
+ * metric never changes color just because it moved to a different surface.
+ */
+export function getStoryMetricValueClass(value: number): string {
   if (value < METRIC_CRITICAL_THRESHOLD) {
     return "text-destructive font-bold animate-pulse";
   }
@@ -39,7 +43,7 @@ export function StoryMetricPill({ metric, value }: { metric: string; value: numb
   return (
     <StatusPill animationKey={value}>
       <StatusPillLabel>{metric}</StatusPillLabel>
-      <StatusPillValue className={getMetricColor(value)}>{value}</StatusPillValue>
+      <StatusPillValue className={getStoryMetricValueClass(value)}>{value}</StatusPillValue>
     </StatusPill>
   );
 }

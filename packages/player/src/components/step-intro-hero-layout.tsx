@@ -2,6 +2,7 @@
 
 import { type StepImage } from "@zoonk/core/steps/contract/image";
 import { useReplaceName } from "../user-name-context";
+import { ExpandableStepImageStage } from "./expandable-step-image-stage";
 import {
   PlayerReadScene,
   PlayerReadSceneBody,
@@ -9,7 +10,6 @@ import {
   PlayerReadSceneTitle,
 } from "./player-read-scene";
 import { StepActionButton } from "./step-action-button";
-import { StepImageView } from "./step-image";
 
 /**
  * Shared intro copy for story and practice opening screens.
@@ -24,7 +24,7 @@ function StepIntroHeroContent({ text, title }: { text: string; title: string }) 
 
   return (
     <div className="flex flex-col gap-6">
-      <PlayerReadSceneStack className="gap-4">
+      <PlayerReadSceneStack>
         <PlayerReadSceneTitle tone="foreground">{replaceName(title)}</PlayerReadSceneTitle>
 
         <PlayerReadSceneBody>{replaceName(text)}</PlayerReadSceneBody>
@@ -48,7 +48,7 @@ function StepHeroImage({ image }: { image: StepImage }) {
       className="bg-muted absolute inset-0 overflow-hidden lg:relative lg:inset-auto lg:aspect-square lg:w-full lg:rounded-3xl"
       data-slot="step-hero-image"
     >
-      <StepImageView fit="cover" image={image} />
+      <ExpandableStepImageStage fit="cover" image={image} />
     </div>
   );
 }

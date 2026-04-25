@@ -1,11 +1,10 @@
 /**
- * Static-step images now render inside a flexible media stage instead of a
- * fixed square tile. Keeping the shared responsive `sizes` string here lets
- * the visible image and the hidden preloader ask Next.js for comparable image
- * candidates even though the on-screen layout changes between mobile and
- * desktop.
+ * Step images now bleed to the full available player column. Keeping the
+ * shared responsive `sizes` string here lets the visible image and the hidden
+ * preloader ask Next.js for comparable image candidates across mobile and
+ * desktop layouts.
  */
-export const STEP_IMAGE_SIZES = "(max-width: 1024px) calc(100vw - 1rem), 50vw";
+export const STEP_IMAGE_SIZES = "(max-width: 1024px) 100vw, 50vw";
 
 /**
  * The preloader still needs explicit dimensions because hidden Next.js images

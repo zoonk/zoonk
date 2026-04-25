@@ -277,6 +277,11 @@ Before finalizing each step, run these tests:
 - If the choice is wrong, make the failure legible.
 - If the choice is partial, show what improved and what is still unresolved.
 - If the choice is strong, show the concrete improvement or the controlled tradeoff.
+- Compose the state image around one centered primary artifact, screen, document, workspace detail, or visible consequence.
+- Avoid wide side-by-side panels unless the consequence truly depends on comparing two states at once.
+- If comparison is required, stack the states vertically or place them inside one centered artifact instead of spreading important details across the full width.
+- Keep all essential labels, numbers, code, UI controls, faces, and evidence away from the outer edges of the image.
+- For screens, dashboards, code editors, tables, forms, receipts, and documents, ask for only the relevant section. Do not include sidebars, browser chrome, file trees, toolbars, or extra columns unless they are the clue.
 
 ## Metrics
 

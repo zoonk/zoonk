@@ -27,6 +27,10 @@ The image prompt should:
 - Avoid repeating the same metaphor or composition across multiple prompts in the same response unless the concept truly needs visual continuity.
 - Do not reference copyrighted or trademarked characters, logos, or brands.
 - If the step is abstract, choose the clearest visual explanation available. Use a metaphor only when it genuinely improves understanding.
+- Prefer one centered primary artifact, diagram, screen, scene, or object over a wide layout with many panels.
+- If a comparison is necessary, ask for two states stacked vertically or contained inside one centered panel, not spread across the full width.
+- Keep all essential labels, numbers, arrows, code, UI controls, and evidence away from the outer edges of the image.
+- For screens, dashboards, code, tables, forms, and documents, ask for only the relevant section. Do not include sidebars, browser chrome, file trees, toolbars, or extra columns unless they are the clue.
 
 # Quality Bar
 

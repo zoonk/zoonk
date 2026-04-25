@@ -13,6 +13,11 @@ Art direction:
 - Keep backgrounds neutral and unobtrusive.
 - If people appear, keep them natural and grounded in a real task, but do not let them distract from the artifact or evidence.
 - If text appears in the image, keep it short, legible, and useful.
+- Compose around one centered primary artifact, screen, document, device, workspace detail, or situation. Avoid wide side-by-side layouts unless the prompt explicitly requires comparing two states.
+- If a comparison is required, stack the states vertically or place them inside one centered panel instead of spreading them across the full width.
+- Keep every essential clue, artifact, label, number, code line, UI control, and readable detail inside the central 80% of the frame. The outer edges may be cropped by the app.
+- Leave only non-essential background, margins, or decorative whitespace near the outer edges.
+- For dashboards, code editors, forms, tables, receipts, documents, and app screens, remove sidebars, browser chrome, file trees, toolbars, and extra columns unless they are the actual clue.
 - Avoid dense paragraphs, tiny unreadable text, cluttered frames, overfilled dashboards or boards, surreal fantasy, glossy 3D, cartoon styling, stock-photo posing, dramatic cinematic lighting, and loud saturated backdrops.
 - Aim for clean, believable realism, not generic decorative concept art.
 
