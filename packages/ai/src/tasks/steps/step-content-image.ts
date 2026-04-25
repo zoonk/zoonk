@@ -8,6 +8,7 @@ import storyPromptTemplate from "./step-content-story-image.prompt.md";
 
 const DEFAULT_MODEL = "openai/gpt-image-2";
 const DEFAULT_QUALITY = "low";
+
 const STEP_CONTENT_IMAGE_PRESETS = {
   illustration: {
     promptTemplate: illustrationPromptTemplate,
@@ -16,12 +17,12 @@ const STEP_CONTENT_IMAGE_PRESETS = {
   },
   practice: {
     promptTemplate: practicePromptTemplate,
-    size: "1024x1024",
+    size: "1024x1280",
     taskName: "practice-step-image",
   },
   story: {
     promptTemplate: storyPromptTemplate,
-    size: "1024x1024",
+    size: "1024x1280",
     taskName: "story-step-image",
   },
 } as const;

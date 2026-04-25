@@ -7,6 +7,7 @@ import { buildAuthenticatedViewer } from "../_test-utils/player-test-viewer";
 import { renderPlayer } from "../_test-utils/render-player";
 
 const STORY_METRICS = [{ label: "Production" }, { label: "Morale" }];
+const STORY_CONTEXT_METRICS = [...STORY_METRICS, { label: "Safety" }];
 
 const STORY_OUTCOMES = {
   bad: {
@@ -44,6 +45,21 @@ const STORY_CONTEXT_OUTCOMES = {
     },
   },
 };
+
+/**
+ * Verifies the currently visible step image has the standard full-image escape
+ * hatch. Story steps render images in several layouts, so this keeps the
+ * behavior assertion identical while each screen keeps its own composition.
+ */
+async function expectCurrentStepImageExpands(imageAlt: string) {
+  await page.getByRole("button", { name: /open full image/i }).click();
+  const dialog = page.getByRole("dialog", { name: /full image/i });
+
+  await expect.element(dialog.getByAltText(imageAlt)).toBeInTheDocument();
+
+  await page.getByRole("button", { name: /close full image/i }).click();
+  await expect.element(dialog).not.toBeInTheDocument();
+}
 
 describe("player browser integration: story", () => {
   test("runs the shared story flow from intro to completion", async () => {
@@ -138,6 +154,10 @@ describe("player browser integration: story", () => {
       )
       .toBeInTheDocument();
 
+    await expectCurrentStepImageExpands(
+      "Factory floor at sunrise with anxious workers waiting for instructions",
+    );
+
     await page.getByRole("button", { name: /begin/i }).click();
     await page.getByRole("radio", { name: /invest in training/i }).click();
     await page.getByRole("button", { name: /check/i }).click();
@@ -148,12 +168,20 @@ describe("player browser integration: story", () => {
       )
       .toBeInTheDocument();
 
+    await expectCurrentStepImageExpands(
+      "Factory floor after training begins and the team regains confidence",
+    );
+
     await page.getByRole("button", { name: /continue/i }).click();
 
     await expect.element(page.getByRole("heading", { name: "Great Manager" })).toBeInTheDocument();
     await expect
       .element(page.getByAltText("Recovered factory floor with a confident team and stable output"))
       .toBeInTheDocument();
+
+    await expectCurrentStepImageExpands(
+      "Recovered factory floor with a confident team and stable output",
+    );
 
     await page.getByRole("button", { name: /continue/i }).click();
     await expect
@@ -164,7 +192,7 @@ describe("player browser integration: story", () => {
     await expect.element(page.getByRole("status")).toBeInTheDocument();
   });
 
-  test("shows story context in lesson info and metrics only during active decision states", async () => {
+  test("shows story context in lesson info and metric impact on feedback", async () => {
     renderPlayer({
       activity: buildSerializedActivity({
         kind: "story",
@@ -227,7 +255,7 @@ describe("player browser integration: story", () => {
           }),
           buildSerializedStep({
             content: {
-              metrics: STORY_METRICS,
+              metrics: STORY_CONTEXT_METRICS,
               outcomes: STORY_CONTEXT_OUTCOMES,
               variant: "storyOutcome" as const,
             },
@@ -246,7 +274,9 @@ describe("player browser integration: story", () => {
 
     await page.getByRole("button", { name: /begin/i }).click();
 
-    await expect.element(page.getByRole("status", { name: /current status/i })).toBeInTheDocument();
+    await expect
+      .element(page.getByRole("status", { name: /current status/i }))
+      .not.toBeInTheDocument();
     await expect.element(page.getByRole("button", { name: /context/i })).not.toBeInTheDocument();
     await page.getByRole("button", { name: /lesson info/i }).click();
 
@@ -268,7 +298,24 @@ describe("player browser integration: story", () => {
 
     await expect.element(page.getByText("Production surges")).toBeInTheDocument();
     await expect.element(page.getByText(/your answer:/i)).not.toBeInTheDocument();
-    await expect.element(page.getByRole("status", { name: /current status/i })).toBeInTheDocument();
+    const metricChanges = page.getByRole("list", { name: /metric changes/i });
+
+    await expect.element(metricChanges).toBeInTheDocument();
+    await expect.element(metricChanges).toHaveTextContent(/Production.*Morale.*Safety/s);
+
+    await expect
+      .element(page.getByRole("listitem", { name: /production \+15 65/i }))
+      .toBeInTheDocument();
+
+    await expect
+      .element(page.getByRole("listitem", { name: /morale \+15 65/i }))
+      .toBeInTheDocument();
+
+    await expect.element(page.getByRole("listitem", { name: /safety 0 50/i })).toBeInTheDocument();
+
+    await expect
+      .element(page.getByRole("status", { name: /current status/i }))
+      .not.toBeInTheDocument();
 
     await page.getByRole("button", { name: /continue/i }).click();
     await expect

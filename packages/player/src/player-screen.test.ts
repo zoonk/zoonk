@@ -198,7 +198,6 @@ describe(getPlayerScreenModel, () => {
     });
 
     expect(screen.keyboard.enterAction).toBe("continue");
-    expect(screen.showMetricsBar).toBe(true);
   });
 
   test("keeps completed state in completion mode", () => {

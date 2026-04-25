@@ -75,6 +75,21 @@ export type PlayerStepDescriptor =
 
 export type PlayerStepKind = PlayerStepDescriptor["kind"];
 
+type PlayerStepImageContent = PlayerStepDescriptor["content"] & {
+  image?: StepImage | null;
+};
+
+/**
+ * Primary step images are attached to content variants, not to player render
+ * kinds. Checking the content shape here keeps renderers and preloaders from
+ * maintaining separate lists of every step kind that can carry one image.
+ */
+function hasPlayerStepImageContent(
+  content: PlayerStepDescriptor["content"],
+): content is PlayerStepImageContent {
+  return "image" in content;
+}
+
 /**
  * `SerializedStep` loses some of its `kind` to `content` correlation once it
  * moves through arrays and reducer state. This guard restores that link so the
@@ -189,6 +204,21 @@ export function describePlayerStep(step?: SerializedStep | null): PlayerStepDesc
   }
 
   return null;
+}
+
+/**
+ * Returns the one primary image attached directly to a step descriptor.
+ *
+ * Some steps have additional image collections, such as select-image options
+ * or story choice outcomes. Those stay in their domain helpers; this function
+ * only answers the shared "does this step have its own main image?" question.
+ */
+export function getPlayerStepImage(descriptor?: PlayerStepDescriptor | null): StepImage | null {
+  if (!descriptor || !hasPlayerStepImageContent(descriptor.content)) {
+    return null;
+  }
+
+  return descriptor.content.image ?? null;
 }
 
 /**

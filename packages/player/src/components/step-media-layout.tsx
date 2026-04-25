@@ -1,13 +1,13 @@
 "use client";
 
 import { type StepImage } from "@zoonk/core/steps/contract/image";
-import { StepImageView } from "./step-image";
+import { ExpandableStepImageStage } from "./expandable-step-image-stage";
 
 /**
- * Image-led learning steps share the same media shell: one stage for the
- * generated artifact and one scrollable copy pane beside or below it. Keeping
- * that split in one component prevents practice questions and static reading
- * steps from drifting into different image layouts over time.
+ * Static image-led reading steps share one immersive media shell: the image
+ * fills the available visual area, while the copy stays anchored below it on
+ * mobile and centered beside it on desktop. Keeping that split here prevents
+ * static variants from drifting into separate image policies.
  */
 export function StepMediaLayout({
   children,
@@ -18,23 +18,18 @@ export function StepMediaLayout({
 }) {
   return (
     <div
-      className="flex h-full min-h-0 w-full flex-col lg:grid lg:grid-cols-2 lg:content-center lg:items-start"
+      className="grid h-full min-h-0 w-full grid-rows-[minmax(0,1fr)_auto] lg:grid-cols-2 lg:grid-rows-1"
       data-slot="step-media-layout"
     >
-      <div className="flex min-h-0 flex-1 px-4 pt-4 sm:px-6 sm:pt-6 lg:px-6 lg:py-6">
-        <div
-          className="relative h-full min-h-0 w-full overflow-hidden lg:ml-auto lg:h-[min(70vh,40rem)] lg:max-w-xl lg:[&_img]:object-top"
-          data-slot="step-media-stage"
-        >
-          <StepImageView image={image} />
-        </div>
+      <div className="min-h-0" data-slot="step-media-stage">
+        <ExpandableStepImageStage className="[&_img]:object-top" image={image} />
       </div>
 
       <div
-        className="min-h-0 overflow-y-auto overscroll-contain px-4 pt-3 pb-4 sm:px-6 sm:pb-6 lg:flex lg:max-h-[min(70vh,40rem)] lg:items-start lg:px-10 lg:py-6"
+        className="bg-background max-h-[45dvh] min-h-0 overflow-y-auto overscroll-contain px-4 py-4 sm:px-6 sm:py-6 lg:flex lg:max-h-none lg:items-center lg:justify-center lg:px-12 lg:py-10"
         data-slot="step-media-copy"
       >
-        {children}
+        <div className="mx-auto w-full max-w-2xl lg:mx-0 lg:max-w-md">{children}</div>
       </div>
     </div>
   );

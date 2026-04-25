@@ -19,7 +19,6 @@ import { StatusPill, StatusPillLabel, StatusPillValue } from "./status-pill";
 import { StepActionButton } from "./step-action-button";
 import { StepImagePreloader } from "./step-image-preloader";
 import { PlayerContentFrame } from "./step-layouts";
-import { StoryMetricsBar } from "./story-metrics-bar";
 
 /**
  * The mobile bottom bar only exists for primary actions like Check or Continue.
@@ -76,8 +75,6 @@ export function PlayerShell() {
       {screen.showChrome && (
         <InPlayStickyHeader centerContent={evidencePill} progressValue={progressValue} />
       )}
-
-      {screen.showMetricsBar && <StoryMetricsBar metrics={storyMetrics} />}
 
       <PlayerStage
         isFullBleed={screen.stageIsFullBleed}

@@ -100,6 +100,11 @@ Image rules:
 - When the artifact is complex, zoom in or crop to the relevant section instead of showing the entire room, board, app, or document.
 - Prefer a few readable clues over many competing ones. It is better to show 2 useful labels clearly than 12 labels at once.
 - Background details are optional. Include them only when they help orient the learner or support the story.
+- Compose each image prompt around one centered primary artifact, screen, document, device, scene detail, or clue.
+- Avoid wide side-by-side panels unless the question truly depends on comparing two states at once.
+- If the step needs comparison, stack the states vertically or place them inside one centered artifact instead of spreading important details across the full width.
+- Keep all essential labels, numbers, code, UI controls, and evidence away from the outer edges of the image.
+- For screens, dashboards, code editors, tables, forms, receipts, and documents, ask for only the relevant section. Do not include sidebars, browser chrome, file trees, toolbars, or extra columns unless they are the clue.
 - If text is needed inside the image, keep it short and legible.
 - Use labels, totals, column names, timestamps, badges, short notes, or short dialogue bubbles when useful.
 - Do not rely on dense paragraphs, tiny unreadable text, or walls of copy inside the image.

@@ -4,8 +4,12 @@
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
 import { Fragment } from "react";
 import { type SelectedAnswer, type StepResult } from "../player-reducer";
-import { describePlayerStep } from "../player-step";
-import { type PlayerRenderBehavior, getPlayerStepBehavior } from "../player-step-behavior";
+import { type PlayerStepDescriptor, describePlayerStep, getPlayerStepImage } from "../player-step";
+import {
+  type PlayerRenderBehavior,
+  getPlayerStepBehavior,
+  hasStaticNavigation,
+} from "../player-step-behavior";
 import { FillBlankStep } from "./fill-blank-step";
 import { InvestigationStep } from "./investigation-step";
 import { ListeningStep } from "./listening-step";
@@ -16,7 +20,10 @@ import { SelectImageStep } from "./select-image-step";
 import { SortOrderStep } from "./sort-order-step";
 import { StaticStep } from "./static-step";
 import { StoryStep } from "./story-step";
-import { SwipeNavigableStepLayout } from "./swipe-navigable-step-layout";
+import {
+  type SwipeNavigableStepFrame,
+  SwipeNavigableStepLayout,
+} from "./swipe-navigable-step-layout";
 import { TranslationStep } from "./translation-step";
 import { VocabularyStep } from "./vocabulary-step";
 
@@ -131,6 +138,28 @@ function renderStepContent({
   }
 }
 
+/**
+ * Static image steps render a full split media layout inside the navigable
+ * swipe wrapper. They need the wrapper to stop applying the normal reading
+ * max-width, while text-only static and vocabulary steps should keep it.
+ */
+function hasNavigableMediaFrame(descriptor: PlayerStepDescriptor) {
+  return hasStaticNavigation(descriptor) && Boolean(getPlayerStepImage(descriptor));
+}
+
+/**
+ * Converts the semantic step descriptor into the swipe wrapper frame. Keeping
+ * this decision beside render routing avoids leaking static-step image details
+ * into the lower-level gesture component.
+ */
+function getNavigableStepFrame(descriptor: PlayerStepDescriptor): SwipeNavigableStepFrame {
+  if (hasNavigableMediaFrame(descriptor)) {
+    return "media";
+  }
+
+  return "default";
+}
+
 export function StepRenderer({
   canNavigatePrev,
   onNavigateNext,
@@ -143,7 +172,7 @@ export function StepRenderer({
   const descriptor = describePlayerStep(step);
   const behavior = getPlayerStepBehavior(descriptor);
 
-  if (!behavior) {
+  if (!descriptor || !behavior) {
     return null;
   }
 
@@ -166,6 +195,7 @@ export function StepRenderer({
   return (
     <SwipeNavigableStepLayout
       canNavigatePrev={canNavigatePrev}
+      frame={getNavigableStepFrame(descriptor)}
       key={`step-${step.id}`}
       onNavigateNext={onNavigateNext}
       onNavigatePrev={onNavigatePrev}

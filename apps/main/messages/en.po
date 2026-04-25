@@ -158,6 +158,26 @@ msgctxt "t2VOpl"
 msgid "Chapter Complete"
 msgstr "Chapter Complete"
 
+#: ../../packages/player/src/components/expandable-step-image-stage.tsx
+msgctxt "3Pgbio"
+msgid "Full image"
+msgstr "Full image"
+
+#: ../../packages/player/src/components/expandable-step-image-stage.tsx
+msgctxt "pumVIo"
+msgid "Open full image"
+msgstr "Open full image"
+
+#: ../../packages/player/src/components/expandable-step-image-stage.tsx
+msgctxt "vqV+x5"
+msgid "Shows the full uncropped step image."
+msgstr "Shows the full uncropped step image."
+
+#: ../../packages/player/src/components/expandable-step-image-stage.tsx
+msgctxt "ZYZr+P"
+msgid "Close full image"
+msgstr "Close full image"
+
 #: ../../packages/player/src/components/feedback-answer-blocks.tsx
 msgctxt "3nOd8f"
 msgid "Your answer:"
@@ -372,11 +392,6 @@ msgstr "Metric changes"
 msgctxt "W2JBdp"
 msgid "Impact"
 msgstr "Impact"
-
-#: ../../packages/player/src/components/story-metrics-bar.tsx
-msgctxt "pFm27r"
-msgid "Current status"
-msgstr "Current status"
 
 #: ../../packages/player/src/components/story-outcome-content.tsx
 msgctxt "ZJ5JQC"

@@ -37,7 +37,6 @@ type InPlayScreenModel = {
   keyboard: PlayerKeyboardModel;
   scene: InPlayScreenScene;
   showChrome: true;
-  showMetricsBar: boolean;
   stageIsFullBleed: boolean;
   stageIsStatic: boolean;
   step: PlayerStepDescriptor;
@@ -49,7 +48,6 @@ export type PlayerCompletedScreenModel = {
   kind: "completed";
   scene: "completion";
   showChrome: false;
-  showMetricsBar: false;
   stageIsFullBleed: false;
   stageIsStatic: false;
 };
@@ -85,7 +83,6 @@ function getCompletedScreenModel(): PlayerCompletedScreenModel {
     kind: "completed",
     scene: "completion",
     showChrome: false,
-    showMetricsBar: false,
     stageIsFullBleed: false,
     stageIsStatic: false,
   };
@@ -273,7 +270,6 @@ export function getPlayerScreenModel(state: PlayerState): PlayerScreenModel {
     keyboard,
     scene,
     showChrome: true as const,
-    showMetricsBar: step.kind === "storyDecision",
     stageIsFullBleed: behavior?.layout === "hero",
     stageIsStatic: state.phase === "playing" && hasStaticNavigation(step),
     step,

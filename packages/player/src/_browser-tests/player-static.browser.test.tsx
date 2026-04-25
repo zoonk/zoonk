@@ -68,6 +68,25 @@ function tapRight(target: HTMLElement) {
   });
 }
 
+function tapExpandedImageBackdrop(target: HTMLElement) {
+  const x = globalThis.window.innerWidth - 8;
+  const y = 8;
+  const touch = buildTouch({ identifier: 4, target, x, y });
+
+  fireEvent.touchStart(target, {
+    changedTouches: [touch],
+    targetTouches: [touch],
+    touches: [touch],
+  });
+
+  fireEvent.touchEnd(globalThis.window, {
+    changedTouches: [touch],
+    touches: [],
+  });
+
+  fireEvent.click(target, { clientX: x, clientY: y });
+}
+
 describe("player browser integration: static steps", () => {
   test("uses keyboard navigation without visible step arrows", async () => {
     renderPlayer({
@@ -162,6 +181,11 @@ describe("player browser integration: static steps", () => {
             },
             id: "static-image",
           }),
+          buildSerializedStep({
+            content: { text: "Second body", title: "Second step", variant: "text" as const },
+            id: "static-image-second",
+            position: 1,
+          }),
         ],
       }),
       navigation: buildNavigation({ nextActivityHref: null }),
@@ -174,6 +198,31 @@ describe("player browser integration: static steps", () => {
     await expect
       .element(page.getByAltText(/lantern lighting up one idea at a time/i))
       .toBeInTheDocument();
+
+    await page.getByRole("button", { name: /open full image/i }).click();
+    const dialog = page.getByRole("dialog", { name: /full image/i });
+
+    await expect
+      .element(dialog.getByAltText(/lantern lighting up one idea at a time/i))
+      .toBeInTheDocument();
+
+    tapExpandedImageBackdrop(screen.getByRole("dialog", { name: /full image/i }));
+
+    await expect.element(dialog).not.toBeInTheDocument();
+
+    await expect
+      .element(page.getByRole("heading", { name: "One step, one image" }))
+      .toBeInTheDocument();
+
+    await page.getByRole("button", { name: /open full image/i }).click();
+    const reopenedDialog = page.getByRole("dialog", { name: /full image/i });
+
+    await expect
+      .element(reopenedDialog.getByAltText(/lantern lighting up one idea at a time/i))
+      .toBeInTheDocument();
+
+    await page.getByRole("button", { name: /close full image/i }).click();
+    await expect.element(reopenedDialog).not.toBeInTheDocument();
   });
 
   test("swipes touch navigation forward on static steps", async () => {

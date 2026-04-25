@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { STEP_IMAGE_SIZES } from "../image-config";
 
-type StepImageFit = "contain" | "cover";
+export type StepImageFit = "contain" | "cover";
 
 const IMAGE_FIT_CLASS: Record<StepImageFit, string> = {
   contain: "object-contain",

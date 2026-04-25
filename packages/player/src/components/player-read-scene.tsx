@@ -60,7 +60,7 @@ export function PlayerReadSceneStack({
 }) {
   return (
     <div
-      className={cn("flex flex-col gap-3 sm:gap-4", className)}
+      className={cn("flex flex-col gap-1 sm:gap-4", className)}
       data-slot="player-read-scene-stack"
     >
       {children}
