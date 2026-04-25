@@ -51,7 +51,7 @@ describe(generateCustomContentStep, () => {
     vi.clearAllMocks();
   });
 
-  test("returns custom content results for each activity", async () => {
+  test("returns custom content for one activity", async () => {
     const lesson = await lessonFixture({
       chapterId: chapter.id,
       organizationId,
@@ -86,17 +86,37 @@ describe(generateCustomContentStep, () => {
       },
     });
 
-    const results = await generateCustomContentStep(activities);
+    const result = await generateCustomContentStep(activities[0]!);
 
-    expect(results).toHaveLength(2);
-    expect(results[0]?.activityId).toBe(activities[0]?.id);
-    expect(results[0]?.steps).toEqual([{ text: "Custom step text", title: "Custom step title" }]);
-    expect(results[1]?.activityId).toBe(activities[1]?.id);
+    expect(result.activityId).toBe(activities[0]?.id);
+    expect(result.steps).toEqual([{ text: "Custom step text", title: "Custom step title" }]);
   });
 
-  test("returns empty array when activities list is empty", async () => {
-    const results = await generateCustomContentStep([]);
-    expect(results).toEqual([]);
+  test("throws when AI returns empty content", async () => {
+    const lesson = await lessonFixture({
+      chapterId: chapter.id,
+      organizationId,
+      title: `Custom Empty ${randomUUID()}`,
+    });
+
+    await activityFixture({
+      generationStatus: "pending",
+      kind: "custom",
+      language: "en",
+      lessonId: lesson.id,
+      organizationId,
+      title: `Custom ${randomUUID()}`,
+    });
+
+    const activities = await fetchLessonActivities(lesson.id);
+
+    generateActivityCustomMock.mockResolvedValue({
+      data: { steps: [] },
+    });
+
+    await expect(generateCustomContentStep(activities[0]!)).rejects.toThrow(
+      "Empty AI result for custom content",
+    );
   });
 
   test("streams started and completed events", async () => {
@@ -121,7 +141,7 @@ describe(generateCustomContentStep, () => {
       data: { steps: [{ text: "text", title: "title" }] },
     });
 
-    await generateCustomContentStep(activities);
+    await generateCustomContentStep(activities[0]!);
 
     const events = getStreamedEvents(writeMock);
 
@@ -134,45 +154,27 @@ describe(generateCustomContentStep, () => {
     );
   });
 
-  test("streams error status when some AI calls fail", async () => {
+  test("throws AI errors without streaming an error status", async () => {
     const lesson = await lessonFixture({
       chapterId: chapter.id,
       organizationId,
       title: `Custom Error ${randomUUID()}`,
     });
 
-    await Promise.all([
-      activityFixture({
-        generationStatus: "pending",
-        kind: "custom",
-        language: "en",
-        lessonId: lesson.id,
-        organizationId,
-        title: `Good Custom ${randomUUID()}`,
-      }),
-      activityFixture({
-        generationStatus: "pending",
-        kind: "custom",
-        language: "en",
-        lessonId: lesson.id,
-        organizationId,
-        position: 1,
-        title: `Bad Custom ${randomUUID()}`,
-      }),
-    ]);
+    await activityFixture({
+      generationStatus: "pending",
+      kind: "custom",
+      language: "en",
+      lessonId: lesson.id,
+      organizationId,
+      title: `Bad Custom ${randomUUID()}`,
+    });
 
     const activities = await fetchLessonActivities(lesson.id);
 
-    generateActivityCustomMock
-      .mockResolvedValueOnce({
-        data: { steps: [{ text: "ok", title: "ok" }] },
-      })
-      .mockRejectedValueOnce(new Error("AI failure"));
+    generateActivityCustomMock.mockRejectedValue(new Error("AI failure"));
 
-    const results = await generateCustomContentStep(activities);
-
-    expect(results).toHaveLength(1);
-    expect(results[0]?.activityId).toBe(activities[0]?.id);
+    await expect(generateCustomContentStep(activities[0]!)).rejects.toThrow("AI failure");
 
     const events = getStreamedEvents(writeMock);
 
@@ -180,7 +182,7 @@ describe(generateCustomContentStep, () => {
       expect.objectContaining({ status: "started", step: "generateCustomContent" }),
     );
 
-    expect(events).toContainEqual(
+    expect(events).not.toContainEqual(
       expect.objectContaining({ status: "error", step: "generateCustomContent" }),
     );
   });

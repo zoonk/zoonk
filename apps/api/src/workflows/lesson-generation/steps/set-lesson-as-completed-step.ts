@@ -26,7 +26,6 @@ export async function setLessonAsCompletedStep(input: {
   );
 
   if (error) {
-    await stream.error({ reason: "dbSaveFailed", step: "setLessonAsCompleted" });
     throw error;
   }
 

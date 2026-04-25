@@ -29,7 +29,7 @@ describe(initializeCourseStep, () => {
     vi.clearAllMocks();
   });
 
-  test("streams error and throws when suggestion update fails", async () => {
+  test("throws without streaming error when suggestion update fails", async () => {
     const suggestion = await courseSuggestionFixture({
       title: `Missing Suggestion ${randomUUID()}`,
     });
@@ -47,7 +47,7 @@ describe(initializeCourseStep, () => {
 
     const events = getStreamedEvents(writeMock);
 
-    expect(events).toContainEqual(
+    expect(events).not.toContainEqual(
       expect.objectContaining({ status: "error", step: "initializeCourse" }),
     );
   });

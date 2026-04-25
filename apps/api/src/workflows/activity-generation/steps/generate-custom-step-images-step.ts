@@ -1,7 +1,6 @@
-import { createStepStream } from "@/workflows/_shared/stream-status";
+import { createEntityStepStream } from "@/workflows/_shared/stream-status";
 import { type StepImage } from "@zoonk/core/steps/contract/image";
 import { type ActivityStepName } from "@zoonk/core/workflows/steps";
-import { rejected, settledValues } from "@zoonk/utils/settled";
 import { generateStepImages } from "./_utils/generate-step-images";
 import { type CustomImagePromptResult } from "./generate-custom-image-prompts-step";
 import { type LessonActivity } from "./get-lesson-activities-step";
@@ -33,42 +32,21 @@ async function generateImagesForActivity(
 }
 
 /**
- * Generates uploaded step illustrations for all custom activities in parallel.
+ * Generates uploaded step illustrations for one custom activity.
  * Pure data producer: no DB writes happen here.
  */
 export async function generateCustomStepImagesStep(
-  activities: LessonActivity[],
-  promptResults: CustomImagePromptResult[],
-): Promise<CustomStepImageResult[]> {
+  activity: LessonActivity,
+  promptResult: CustomImagePromptResult,
+): Promise<CustomStepImageResult> {
   "use step";
 
-  if (promptResults.length === 0) {
-    return [];
-  }
-
-  await using stream = createStepStream<ActivityStepName>();
+  await using stream = createEntityStepStream<ActivityStepName>(activity.id);
 
   await stream.status({ status: "started", step: "generateStepImages" });
 
-  const allSettled = await Promise.allSettled(
-    promptResults.map((promptResult) => {
-      const activity = activities.find((act) => act.id === promptResult.activityId);
+  const result = await generateImagesForActivity(activity, promptResult);
 
-      if (!activity) {
-        return Promise.resolve({
-          activityId: promptResult.activityId,
-          images: [],
-        });
-      }
-
-      return generateImagesForActivity(activity, promptResult);
-    }),
-  );
-
-  await stream.status({
-    status: rejected(allSettled) ? "error" : "completed",
-    step: "generateStepImages",
-  });
-
-  return settledValues(allSettled);
+  await stream.status({ status: "completed", step: "generateStepImages" });
+  return result;
 }

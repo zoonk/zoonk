@@ -42,14 +42,14 @@ describe(setLessonAsRunningStep, () => {
     vi.clearAllMocks();
   });
 
-  test("streams error and throws when lesson does not exist", async () => {
+  test("throws without streaming error when lesson does not exist", async () => {
     await expect(
       setLessonAsRunningStep({ lessonId: randomUUID(), workflowRunId: "run-id" }),
     ).rejects.toThrow();
 
     const events = getStreamedEvents(writeMock);
 
-    expect(events).toContainEqual(
+    expect(events).not.toContainEqual(
       expect.objectContaining({ status: "error", step: "setLessonAsRunning" }),
     );
   });

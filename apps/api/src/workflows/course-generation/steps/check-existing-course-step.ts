@@ -58,7 +58,6 @@ export async function checkExistingCourseStep(
   );
 
   if (error) {
-    await stream.error({ reason: "dbFetchFailed", step: "checkExistingCourse" });
     throw error;
   }
 

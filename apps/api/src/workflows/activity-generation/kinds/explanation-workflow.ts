@@ -1,3 +1,5 @@
+import { settledValues } from "@zoonk/utils/settled";
+import { failActivityWorkflow } from "../handle-activity-workflow-error";
 import { getExistingContentSteps } from "../steps/_utils/content-step-helpers";
 import { findActivitiesByKind } from "../steps/_utils/find-activity-by-kind";
 import { generateActivityStepImagesStep } from "../steps/generate-activity-step-images-step";
@@ -8,28 +10,7 @@ import {
 } from "../steps/generate-explanation-content-step";
 import { generateExplanationImagePromptsStep } from "../steps/generate-explanation-image-prompts-step";
 import { type LessonActivity } from "../steps/get-lesson-activities-step";
-import { handleActivityFailureStep } from "../steps/handle-failure-step";
 import { saveExplanationActivityStep } from "../steps/save-explanation-activity-step";
-
-/**
- * Marks explanation activities as failed when the content generation step
- * dropped their result (e.g., the AI call threw and Promise.allSettled
- * silently discarded the rejected promise). Without this, those activities
- * would stay "running" forever since no downstream step touches them.
- */
-async function markDroppedExplanationsAsFailed(
-  activitiesToGenerate: LessonActivity[],
-  results: GeneratedExplanationResult[],
-): Promise<void> {
-  const explanationsToGenerate = findActivitiesByKind(activitiesToGenerate, "explanation");
-  const resultActivityIds = new Set(results.map((result) => result.activityId));
-
-  await Promise.allSettled(
-    explanationsToGenerate
-      .filter((activity) => !resultActivityIds.has(activity.id))
-      .map((activity) => handleActivityFailureStep({ activityId: activity.id })),
-  );
-}
 
 /**
  * Builds explanation results from completed activities by reading their
@@ -89,44 +70,36 @@ export async function explanationActivityWorkflow({
 
   const explanationsToGenerate = findActivitiesByKind(activitiesToGenerate, "explanation");
 
-  const [completedResults, generatedData] = await Promise.all([
+  const [completedResults, generatedSettledResults] = await Promise.all([
     getResultsFromCompletedActivities(allActivities, activitiesToGenerate),
-    explanationsToGenerate.length > 0
-      ? generateExplanationContentStep({
-          activities: explanationsToGenerate,
-          allActivities,
-          lessonConcepts,
-        })
-      : { results: [] },
+    Promise.allSettled(
+      explanationsToGenerate.map(async (activity): Promise<GeneratedExplanationResult> => {
+        try {
+          const result = await generateExplanationContentStep({
+            activity,
+            allActivities,
+            lessonConcepts,
+          });
+
+          const { prompts } = await generateExplanationImagePromptsStep(activity, result.steps);
+          const { images } = await generateActivityStepImagesStep(activity, prompts);
+
+          await saveExplanationActivityStep({
+            activityId: result.activityId,
+            images,
+            steps: result.steps,
+            workflowRunId,
+          });
+
+          return result;
+        } catch (error) {
+          return failActivityWorkflow({ activityId: activity.id, error });
+        }
+      }),
+    ),
   ]);
 
-  const { results: generatedResults } = generatedData;
-
-  await markDroppedExplanationsAsFailed(activitiesToGenerate, generatedResults);
-
-  await Promise.allSettled(
-    generatedResults.map(async (result) => {
-      const activity = explanationsToGenerate.find((a) => a.id === result.activityId);
-
-      if (!activity || result.steps.length === 0) {
-        return;
-      }
-
-      try {
-        const { prompts } = await generateExplanationImagePromptsStep(activity, result.steps);
-        const { images } = await generateActivityStepImagesStep(activity, prompts);
-
-        await saveExplanationActivityStep({
-          activityId: result.activityId,
-          images,
-          steps: result.steps,
-          workflowRunId,
-        });
-      } catch {
-        await handleActivityFailureStep({ activityId: result.activityId });
-      }
-    }),
-  );
+  const generatedResults = settledValues(generatedSettledResults);
 
   return { results: [...completedResults, ...generatedResults] };
 }

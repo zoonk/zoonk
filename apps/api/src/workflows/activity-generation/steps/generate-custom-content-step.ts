@@ -1,7 +1,6 @@
-import { createStepStream } from "@/workflows/_shared/stream-status";
+import { createEntityStepStream } from "@/workflows/_shared/stream-status";
 import { generateActivityCustom } from "@zoonk/ai/tasks/activities/custom";
 import { type ActivityStepName } from "@zoonk/core/workflows/steps";
-import { rejected, settledValues } from "@zoonk/utils/settled";
 import { type ActivitySteps } from "./_utils/get-activity-steps";
 import { type LessonActivity } from "./get-lesson-activities-step";
 
@@ -43,31 +42,23 @@ async function generateForActivity(activity: LessonActivity): Promise<CustomCont
 }
 
 /**
- * Generates custom content for all custom activities in parallel.
+ * Generates custom content for one custom activity.
  * Returns the raw content data without saving to the database.
- * Each activity's content will be persisted later by `saveCustomActivityStep`.
  *
- * Only receives activities that need generation — no status checks needed.
+ * The caller fans out per activity at the workflow level so one failed custom
+ * activity can be retried and marked failed without affecting its siblings.
  */
 export async function generateCustomContentStep(
-  activities: LessonActivity[],
-): Promise<CustomContentResult[]> {
+  activity: LessonActivity,
+): Promise<CustomContentResult> {
   "use step";
 
-  if (activities.length === 0) {
-    return [];
-  }
-
-  await using stream = createStepStream<ActivityStepName>();
+  await using stream = createEntityStepStream<ActivityStepName>(activity.id);
 
   await stream.status({ status: "started", step: "generateCustomContent" });
 
-  const allSettled = await Promise.allSettled(activities.map((act) => generateForActivity(act)));
+  const result = await generateForActivity(activity);
 
-  await stream.status({
-    status: rejected(allSettled) ? "error" : "completed",
-    step: "generateCustomContent",
-  });
-
-  return settledValues(allSettled);
+  await stream.status({ status: "completed", step: "generateCustomContent" });
+  return result;
 }

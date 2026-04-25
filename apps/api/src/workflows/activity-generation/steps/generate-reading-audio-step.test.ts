@@ -203,7 +203,7 @@ describe(generateReadingAudioStep, () => {
     expect(result).toEqual({ sentenceAudioUrls: {} });
   });
 
-  test("skips sentences when TTS generation fails and returns partial results", async () => {
+  test("throws when TTS generation fails", async () => {
     const { generateLanguageAudio } = await import("@zoonk/core/audio/generate");
 
     const course = await courseFixture({ organizationId, targetLanguage: "de" });
@@ -250,10 +250,7 @@ describe(generateReadingAudioStep, () => {
       .mockResolvedValueOnce({ data: `/audio/guten-morgen-${id}.mp3`, error: null })
       .mockResolvedValueOnce({ data: null, error: new Error("TTS failed") });
 
-    const result = await generateReadingAudioStep(activities, sentences);
-
-    expect(result.sentenceAudioUrls[`Guten Morgen ${id}`]).toBe(`/audio/guten-morgen-${id}.mp3`);
-    expect(result.sentenceAudioUrls[`Gute Nacht ${id}`]).toBeUndefined();
+    await expect(generateReadingAudioStep(activities, sentences)).rejects.toThrow("TTS failed");
   });
 
   test("returns empty map for unsupported TTS languages", async () => {

@@ -48,10 +48,8 @@ export async function generateWordAudioUrls(params: {
     wordsNeedingAudio.map((word) => generateAudioForText(word, targetLanguage, orgSlug)),
   );
 
-  const fulfilled = results.filter((result) => result !== null);
-
   return {
     ...existingAudioUrls,
-    ...Object.fromEntries(fulfilled.map((result) => [result.text, result.audioUrl])),
+    ...Object.fromEntries(results.map((result) => [result.text, result.audioUrl])),
   };
 }

@@ -33,17 +33,24 @@ describe(completeCourseSetupStep, () => {
     vi.clearAllMocks();
   });
 
-  test("streams error and throws when DB save fails", async () => {
-    await expect(
-      completeCourseSetupStep({
-        courseId: randomUUID(),
-        courseSuggestionId: randomUUID(),
-      }),
-    ).rejects.toThrow("DB save failed in completeCourseSetup");
+  test("throws all DB save failures without streaming error", async () => {
+    const promise = completeCourseSetupStep({
+      courseId: randomUUID(),
+      courseSuggestionId: randomUUID(),
+    });
+
+    await expect(promise).rejects.toThrow(AggregateError);
+
+    await promise.catch((error: unknown) => {
+      expect(error).toBeInstanceOf(AggregateError);
+      if (error instanceof AggregateError) {
+        expect(error.errors).toHaveLength(2);
+      }
+    });
 
     const events = getStreamedEvents(writeMock);
 
-    expect(events).toContainEqual(
+    expect(events).not.toContainEqual(
       expect.objectContaining({ status: "error", step: "completeCourseSetup" }),
     );
   });

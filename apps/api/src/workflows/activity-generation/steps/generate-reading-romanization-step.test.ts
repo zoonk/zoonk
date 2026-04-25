@@ -170,7 +170,7 @@ describe(generateReadingRomanizationStep, () => {
     expect(generateActivityRomanization).not.toHaveBeenCalled();
   });
 
-  test("marks activity as failed and streams error when AI romanization fails", async () => {
+  test("throws AI errors without streaming an error status", async () => {
     vi.mocked(generateActivityRomanization).mockRejectedValueOnce(new Error("AI error"));
 
     const course = await courseFixture({ organizationId, targetLanguage: "ja" });
@@ -199,23 +199,23 @@ describe(generateReadingRomanizationStep, () => {
 
     const activities = await fetchLessonActivities(lesson.id);
 
-    const result = await generateReadingRomanizationStep(activities, [
-      { explanation: "test explanation", sentence: "これは猫です", translation: "This is a cat" },
-    ]);
-
-    expect(result).toEqual({ romanizations: {} });
+    await expect(
+      generateReadingRomanizationStep(activities, [
+        { explanation: "test explanation", sentence: "これは猫です", translation: "This is a cat" },
+      ]),
+    ).rejects.toThrow("AI error");
 
     const updated = await prisma.activity.findUniqueOrThrow({ where: { id: dbActivity.id } });
-    expect(updated.generationStatus).toBe("failed");
+    expect(updated.generationStatus).toBe("pending");
 
     const events = getStreamedEvents(writeMock);
 
-    expect(events).toContainEqual(
+    expect(events).not.toContainEqual(
       expect.objectContaining({ status: "error", step: "generateReadingRomanization" }),
     );
   });
 
-  test("marks activity as failed and streams error when some romanizations are missing", async () => {
+  test("throws when some romanizations are missing", async () => {
     vi.mocked(generateActivityRomanization).mockResolvedValueOnce({
       data: { romanizations: ["kore wa neko desu"] },
     } as never);
@@ -251,16 +251,16 @@ describe(generateReadingRomanizationStep, () => {
       { explanation: "test explanation", sentence: "あれは犬です", translation: "That is a dog" },
     ];
 
-    const result = await generateReadingRomanizationStep(activities, sentences);
-
-    expect(result.romanizations["これは猫です"]).toBe("kore wa neko desu");
+    await expect(generateReadingRomanizationStep(activities, sentences)).rejects.toThrow(
+      "romanizationFailed",
+    );
 
     const updated = await prisma.activity.findUniqueOrThrow({ where: { id: dbActivity.id } });
-    expect(updated.generationStatus).toBe("failed");
+    expect(updated.generationStatus).toBe("pending");
 
     const events = getStreamedEvents(writeMock);
 
-    expect(events).toContainEqual(
+    expect(events).not.toContainEqual(
       expect.objectContaining({ status: "error", step: "generateReadingRomanization" }),
     );
   });

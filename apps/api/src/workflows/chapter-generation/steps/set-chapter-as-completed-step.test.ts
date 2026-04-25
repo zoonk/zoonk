@@ -36,7 +36,7 @@ describe(setChapterAsCompletedStep, () => {
     vi.clearAllMocks();
   });
 
-  test("streams error and throws when chapter does not exist", async () => {
+  test("throws without streaming error when chapter does not exist", async () => {
     const chapter = await chapterFixture({
       courseId: course.id,
       organizationId,
@@ -57,7 +57,7 @@ describe(setChapterAsCompletedStep, () => {
 
     const events = getStreamedEvents(writeMock);
 
-    expect(events).toContainEqual(
+    expect(events).not.toContainEqual(
       expect.objectContaining({ status: "error", step: "setChapterAsCompleted" }),
     );
   });

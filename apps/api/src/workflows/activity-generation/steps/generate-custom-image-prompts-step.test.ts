@@ -70,28 +70,24 @@ describe(generateCustomImagePromptsStep, () => {
     const activities = await fetchLessonActivities(lesson.id);
     const activity = activities[0]!;
 
-    const contentResults = [
-      {
-        activityId: activity.id,
-        steps: [{ text: "Step 1 text", title: "Step 1" }],
-      },
-    ];
+    const contentResult = {
+      activityId: activity.id,
+      steps: [{ text: "Step 1 text", title: "Step 1" }],
+    };
 
     generateStepImagePromptsMock.mockResolvedValue({
       data: { prompts: ["A lesson illustration for Step 1"] },
     });
 
-    const results = await generateCustomImagePromptsStep(activities, contentResults);
+    const result = await generateCustomImagePromptsStep(activity, contentResult);
 
-    expect(results).toEqual([
-      {
-        activityId: activity.id,
-        prompts: ["A lesson illustration for Step 1"],
-      },
-    ]);
+    expect(result).toEqual({
+      activityId: activity.id,
+      prompts: ["A lesson illustration for Step 1"],
+    });
   });
 
-  test("returns empty array when content results are empty", async () => {
+  test("throws when image prompt generation returns empty output", async () => {
     const lesson = await lessonFixture({
       chapterId: chapter.id,
       organizationId,
@@ -108,10 +104,16 @@ describe(generateCustomImagePromptsStep, () => {
     });
 
     const activities = await fetchLessonActivities(lesson.id);
+    const activity = activities[0]!;
 
-    const results = await generateCustomImagePromptsStep(activities, []);
+    generateStepImagePromptsMock.mockResolvedValue(null);
 
-    expect(results).toEqual([]);
+    await expect(
+      generateCustomImagePromptsStep(activity, {
+        activityId: activity.id,
+        steps: [{ text: "text", title: "title" }],
+      }),
+    ).rejects.toThrow("Empty step image prompt result for custom activity");
   });
 
   test("returns empty prompts for an activity with empty content steps", async () => {
@@ -133,11 +135,12 @@ describe(generateCustomImagePromptsStep, () => {
     const activities = await fetchLessonActivities(lesson.id);
     const activity = activities[0]!;
 
-    const results = await generateCustomImagePromptsStep(activities, [
-      { activityId: activity.id, steps: [] },
-    ]);
+    const result = await generateCustomImagePromptsStep(activity, {
+      activityId: activity.id,
+      steps: [],
+    });
 
-    expect(results).toEqual([{ activityId: activity.id, prompts: [] }]);
+    expect(result).toEqual({ activityId: activity.id, prompts: [] });
     expect(generateStepImagePromptsMock).not.toHaveBeenCalled();
   });
 
@@ -164,9 +167,10 @@ describe(generateCustomImagePromptsStep, () => {
       data: { prompts: ["A lesson illustration for title"] },
     });
 
-    await generateCustomImagePromptsStep(activities, [
-      { activityId: activity.id, steps: [{ text: "text", title: "title" }] },
-    ]);
+    await generateCustomImagePromptsStep(activity, {
+      activityId: activity.id,
+      steps: [{ text: "text", title: "title" }],
+    });
 
     const events = getStreamedEvents(writeMock);
 
@@ -178,52 +182,36 @@ describe(generateCustomImagePromptsStep, () => {
     );
   });
 
-  test("streams error status when some AI calls fail", async () => {
+  test("throws AI errors without streaming an error status", async () => {
     const lesson = await lessonFixture({
       chapterId: chapter.id,
       organizationId,
       title: `Custom Prompts Error ${randomUUID()}`,
     });
 
-    await Promise.all([
-      activityFixture({
-        generationStatus: "pending",
-        kind: "custom",
-        language: "en",
-        lessonId: lesson.id,
-        organizationId,
-        title: `Custom OK ${randomUUID()}`,
-      }),
-      activityFixture({
-        generationStatus: "pending",
-        kind: "custom",
-        language: "en",
-        lessonId: lesson.id,
-        organizationId,
-        position: 1,
-        title: `Custom Fail ${randomUUID()}`,
-      }),
-    ]);
+    await activityFixture({
+      generationStatus: "pending",
+      kind: "custom",
+      language: "en",
+      lessonId: lesson.id,
+      organizationId,
+      title: `Custom Fail ${randomUUID()}`,
+    });
 
     const activities = await fetchLessonActivities(lesson.id);
+    const activity = activities[0]!;
 
-    generateStepImagePromptsMock
-      .mockResolvedValueOnce({
-        data: { prompts: ["A lesson illustration"] },
-      })
-      .mockRejectedValueOnce(new Error("Prompt generation failed"));
+    generateStepImagePromptsMock.mockRejectedValue(new Error("Prompt generation failed"));
 
-    const contentResults = activities.map((activity) => ({
-      activityId: activity.id,
-      steps: [{ text: "text", title: "title" }],
-    }));
-
-    const results = await generateCustomImagePromptsStep(activities, contentResults);
-
-    expect(results).toHaveLength(1);
+    await expect(
+      generateCustomImagePromptsStep(activity, {
+        activityId: activity.id,
+        steps: [{ text: "text", title: "title" }],
+      }),
+    ).rejects.toThrow("Prompt generation failed");
 
     const events = getStreamedEvents(writeMock);
-    expect(events).toContainEqual(
+    expect(events).not.toContainEqual(
       expect.objectContaining({ status: "error", step: "generateImagePrompts" }),
     );
   });

@@ -96,7 +96,7 @@ describe(getExistingContentSteps, () => {
     expect(result).toEqual([]);
   });
 
-  test("returns empty array when content cannot be parsed", async () => {
+  test("throws when content cannot be parsed", async () => {
     const lesson = await lessonFixture({
       chapterId,
       organizationId,
@@ -117,8 +117,6 @@ describe(getExistingContentSteps, () => {
       position: 0,
     });
 
-    const result = await getExistingContentSteps(activity.id);
-
-    expect(result).toEqual([]);
+    await expect(getExistingContentSteps(activity.id)).rejects.toThrow();
   });
 });

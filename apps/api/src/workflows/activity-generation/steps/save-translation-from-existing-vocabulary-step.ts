@@ -5,7 +5,6 @@ import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { type LessonActivity } from "./get-lesson-activities-step";
-import { handleActivityFailureStep } from "./handle-failure-step";
 
 /**
  * Creates translation steps from an already-completed vocabulary activity.
@@ -32,8 +31,12 @@ export async function saveTranslationFromExistingVocabularyStep({
   const vocabularyActivity = findActivityByKind(allActivities, "vocabulary");
   const translationActivity = findActivityByKind(allActivities, "translation");
 
-  if (!vocabularyActivity || !translationActivity) {
+  if (!translationActivity) {
     return;
+  }
+
+  if (!vocabularyActivity) {
+    throw new Error("Translation save step needs a completed vocabulary activity");
   }
 
   await using stream = createEntityStepStream<ActivityStepName>(translationActivity.id);
@@ -46,9 +49,7 @@ export async function saveTranslationFromExistingVocabularyStep({
   });
 
   if (vocabularySteps.length === 0) {
-    await stream.error({ reason: "noSourceData", step: "saveVocabularyActivity" });
-    await handleActivityFailureStep({ activityId: translationActivity.id });
-    return;
+    throw new Error("noSourceData");
   }
 
   const translationStepData = vocabularySteps.map((step) => ({
@@ -71,9 +72,7 @@ export async function saveTranslationFromExistingVocabularyStep({
   );
 
   if (error) {
-    await stream.error({ reason: "dbSaveFailed", step: "saveVocabularyActivity" });
-    await handleActivityFailureStep({ activityId: translationActivity.id });
-    return;
+    throw error;
   }
 
   await stream.status({ status: "completed", step: "saveVocabularyActivity" });

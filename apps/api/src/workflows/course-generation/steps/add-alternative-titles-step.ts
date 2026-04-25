@@ -20,7 +20,6 @@ export async function addAlternativeTitlesStep(input: {
   });
 
   if (error) {
-    await stream.error({ reason: "dbSaveFailed", step: "addAlternativeTitles" });
     throw error;
   }
 

@@ -1,3 +1,5 @@
+import { failActivityWorkflow } from "../handle-activity-workflow-error";
+import { findActivityByKind } from "../steps/_utils/find-activity-by-kind";
 import { type LessonActivity } from "../steps/get-lesson-activities-step";
 import { saveListeningActivityStep } from "../steps/save-listening-activity-step";
 
@@ -21,5 +23,15 @@ export async function listeningActivityWorkflow({
 }): Promise<void> {
   "use workflow";
 
-  await saveListeningActivityStep(allActivities, workflowRunId);
+  const listeningActivity = findActivityByKind(allActivities, "listening");
+
+  if (!listeningActivity) {
+    return;
+  }
+
+  try {
+    await saveListeningActivityStep(allActivities, workflowRunId);
+  } catch (error) {
+    await failActivityWorkflow({ activityId: listeningActivity.id, error });
+  }
 }

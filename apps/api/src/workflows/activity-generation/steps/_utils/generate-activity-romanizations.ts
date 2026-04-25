@@ -13,18 +13,19 @@ import { needsRomanization } from "@zoonk/utils/languages";
  * streaming events for Roman-script languages). This function checks it again
  * as defense-in-depth.
  *
- * Returns `null` when the language uses Roman script (no romanization needed)
- * or when the AI call fails. The caller decides how to interpret `null`
- * (e.g., grammar returns it directly; vocabulary/reading convert to `{}`).
+ * Returns an empty object when the language uses Roman script because there is
+ * no AI work to do. AI call failures throw the original error so the owning
+ * workflow step can be retried by Workflow instead of silently saving missing
+ * romanization.
  */
 export async function generateActivityRomanizations(params: {
   targetLanguage: string;
   texts: string[];
-}): Promise<Record<string, string> | null> {
+}): Promise<Record<string, string>> {
   const { targetLanguage, texts } = params;
 
   if (!needsRomanization(targetLanguage)) {
-    return null;
+    return {};
   }
 
   const { data: result, error } = await safeAsync(() =>
@@ -32,7 +33,7 @@ export async function generateActivityRomanizations(params: {
   );
 
   if (error || !result?.data) {
-    return null;
+    throw error ?? new Error("romanizationFailed");
   }
 
   return Object.fromEntries(

@@ -116,7 +116,7 @@ describe(generateReadingContentStep, () => {
     expect(dbActivity?.generationStatus).toBe("pending");
   });
 
-  test("marks the activity as failed when no source words are available", async () => {
+  test("throws when no source words are available", async () => {
     const lesson = await lessonFixture({
       chapterId: chapter.id,
       kind: "language",
@@ -135,15 +135,15 @@ describe(generateReadingContentStep, () => {
 
     const [activity] = await fetchLessonActivities(lesson.id);
 
-    const result = await generateReadingContentStep(activity!, "workflow-2", []);
-
-    expect(result).toEqual({ sentences: [] });
+    await expect(generateReadingContentStep(activity!, "workflow-2", [])).rejects.toThrow(
+      "noSourceData",
+    );
     expect(generateActivitySentences).not.toHaveBeenCalled();
 
     const dbActivity = await prisma.activity.findUnique({
       where: { id: readingActivity.id },
     });
 
-    expect(dbActivity?.generationStatus).toBe("failed");
+    expect(dbActivity?.generationStatus).toBe("pending");
   });
 });

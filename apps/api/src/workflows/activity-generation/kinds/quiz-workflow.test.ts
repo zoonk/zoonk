@@ -194,11 +194,13 @@ describe("quiz activity workflow", () => {
     const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
     const explanationResults = buildExplanationResults(explanationActivity.id);
 
-    await quizActivityWorkflow({
-      activitiesToGenerate: activities,
-      explanationResults,
-      workflowRunId: "test-run-id",
-    });
+    await expect(
+      quizActivityWorkflow({
+        activitiesToGenerate: activities,
+        explanationResults,
+        workflowRunId: "test-run-id",
+      }),
+    ).rejects.toThrow("Quiz generation failed");
 
     const dbActivity = await prisma.activity.findUnique({
       where: { id: quizActivity.id },
@@ -224,11 +226,13 @@ describe("quiz activity workflow", () => {
 
     const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
 
-    await quizActivityWorkflow({
-      activitiesToGenerate: activities,
-      explanationResults: [],
-      workflowRunId: "test-run-id",
-    });
+    await expect(
+      quizActivityWorkflow({
+        activitiesToGenerate: activities,
+        explanationResults: [],
+        workflowRunId: "test-run-id",
+      }),
+    ).rejects.toThrow("Quiz generation needs explanation steps");
 
     const dbActivity = await prisma.activity.findUnique({
       where: { id: quizActivity.id },

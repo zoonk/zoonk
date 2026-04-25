@@ -24,7 +24,6 @@ export async function setChapterAsCompletedStep(input: {
   );
 
   if (error) {
-    await stream.error({ reason: "dbSaveFailed", step: "setChapterAsCompleted" });
     throw error;
   }
 

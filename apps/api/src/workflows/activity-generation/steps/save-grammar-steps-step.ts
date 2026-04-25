@@ -7,7 +7,6 @@ import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { type LessonActivity } from "./get-lesson-activities-step";
-import { handleActivityFailureStep } from "./handle-failure-step";
 
 function nullableNonEmpty(value?: string | null): string | null {
   if (!value || value.trim().length === 0) {
@@ -154,9 +153,7 @@ export async function saveGrammarActivityStep(
   );
 
   if (error) {
-    await stream.error({ reason: "dbSaveFailed", step: "saveGrammarActivity" });
-    await handleActivityFailureStep({ activityId: activity.id });
-    return;
+    throw error;
   }
 
   await stream.status({ status: "completed", step: "saveGrammarActivity" });

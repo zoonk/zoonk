@@ -15,9 +15,8 @@ type DistractorEntry = {
  * - normalize and clean the output
  * - preserve per-input ordering
  *
- * Failures degrade to an empty array for that input instead of throwing, which keeps
- * the activity pipeline linear while still allowing downstream tests to assert the
- * stored distractors and hydration behavior.
+ * Failures throw the original AI error so Workflow retries the owning step
+ * instead of silently saving activities with missing distractors.
  */
 export async function generateDirectDistractors(params: {
   entries: DistractorEntry[];
@@ -35,7 +34,7 @@ export async function generateDirectDistractors(params: {
       );
 
       if (error || !result?.data) {
-        return [entry.key, []] as const;
+        throw error ?? new Error("distractorGenerationFailed");
       }
 
       return [

@@ -1,6 +1,6 @@
 import { type VocabularyWord } from "@zoonk/ai/tasks/activities/language/vocabulary";
-import { settled } from "@zoonk/utils/settled";
 import { deduplicateNormalizedTexts } from "@zoonk/utils/string";
+import { failActivityWorkflows } from "../handle-activity-workflow-error";
 import { findActivityByKind } from "../steps/_utils/find-activity-by-kind";
 import { generateVocabularyAudioStep } from "../steps/generate-vocabulary-audio-step";
 import { generateVocabularyContentStep } from "../steps/generate-vocabulary-content-step";
@@ -58,41 +58,56 @@ export async function vocabularyActivityWorkflow({
     const translationActivity = findActivityByKind(activitiesToGenerate, "translation");
 
     if (translationActivity) {
-      await saveTranslationFromExistingVocabularyStep({ allActivities, workflowRunId });
+      try {
+        await saveTranslationFromExistingVocabularyStep({ allActivities, workflowRunId });
+      } catch (error) {
+        return failActivityWorkflows({
+          activityIds: [translationActivity.id],
+          error,
+        });
+      }
     }
 
     return { words: [] };
   }
 
-  const { words } = await generateVocabularyContentStep(
-    vocabularyActivity,
-    workflowRunId,
-    concepts,
-    neighboringConcepts,
-  );
+  try {
+    const { words } = await generateVocabularyContentStep(
+      vocabularyActivity,
+      workflowRunId,
+      concepts,
+      neighboringConcepts,
+    );
 
-  const { distractors } = await generateVocabularyDistractorsStep(activitiesToGenerate, words);
-  const vocabularyTargetWords = collectVocabularyTargetWords(words, distractors);
+    const { distractors } = await generateVocabularyDistractorsStep(activitiesToGenerate, words);
+    const vocabularyTargetWords = collectVocabularyTargetWords(words, distractors);
 
-  const [pronunciationResult, audioResult, romanizationResult] = await Promise.allSettled([
-    generateVocabularyPronunciationStep(activitiesToGenerate, vocabularyTargetWords),
-    generateVocabularyAudioStep(activitiesToGenerate, vocabularyTargetWords),
-    generateVocabularyRomanizationStep(activitiesToGenerate, vocabularyTargetWords),
-  ]);
+    const [{ pronunciations }, { wordAudioUrls }, { romanizations }] = await Promise.all([
+      generateVocabularyPronunciationStep(activitiesToGenerate, vocabularyTargetWords),
+      generateVocabularyAudioStep(activitiesToGenerate, vocabularyTargetWords),
+      generateVocabularyRomanizationStep(activitiesToGenerate, vocabularyTargetWords),
+    ]);
 
-  const { pronunciations } = settled(pronunciationResult, { pronunciations: {} });
-  const { wordAudioUrls } = settled(audioResult, { wordAudioUrls: {} });
-  const { romanizations } = settled(romanizationResult, { romanizations: {} });
+    await saveVocabularyActivityStep({
+      activities: allActivities,
+      distractors,
+      pronunciations,
+      romanizations,
+      wordAudioUrls,
+      words,
+      workflowRunId,
+    });
 
-  await saveVocabularyActivityStep({
-    activities: allActivities,
-    distractors,
-    pronunciations,
-    romanizations,
-    wordAudioUrls,
-    words,
-    workflowRunId,
-  });
+    return { words };
+  } catch (error) {
+    const translationActivity = findActivityByKind(activitiesToGenerate, "translation");
 
-  return { words };
+    return failActivityWorkflows({
+      activityIds: [
+        vocabularyActivity.id,
+        ...(translationActivity ? [translationActivity.id] : []),
+      ],
+      error,
+    });
+  }
 }

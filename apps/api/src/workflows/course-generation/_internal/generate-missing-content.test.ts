@@ -142,7 +142,10 @@ describe(generateMissingContent, () => {
     generateCourseDescriptionMock.mockResolvedValue({
       data: { description: "Lang desc" },
     });
-    generateCourseImageMock.mockResolvedValue({ data: null, error: new Error("skip") });
+    generateCourseImageMock.mockResolvedValue({
+      data: "https://example.com/lang.webp",
+      error: null,
+    });
     generateAlternativeTitlesMock.mockResolvedValue({
       data: { alternatives: [] },
     });
@@ -160,7 +163,10 @@ describe(generateMissingContent, () => {
     generateCourseDescriptionMock.mockResolvedValue({
       data: { description: "desc" },
     });
-    generateCourseImageMock.mockResolvedValue({ data: null, error: new Error("skip") });
+    generateCourseImageMock.mockResolvedValue({
+      data: "https://example.com/non-lang.webp",
+      error: null,
+    });
     generateAlternativeTitlesMock.mockResolvedValue({
       data: { alternatives: [] },
     });

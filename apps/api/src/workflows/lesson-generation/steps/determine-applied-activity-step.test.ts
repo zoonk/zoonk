@@ -99,17 +99,14 @@ describe(determineAppliedActivityStep, () => {
     );
   });
 
-  test("returns null when AI generation fails (non-fatal)", async () => {
+  test("throws without streaming error when AI generation fails", async () => {
     generateAppliedActivityKindMock.mockRejectedValue(new Error("AI failure"));
 
-    const result = await determineAppliedActivityStep(context);
-
-    expect(result).toBeNull();
+    await expect(determineAppliedActivityStep(context)).rejects.toThrow("AI failure");
 
     const events = getStreamedEvents(writeMock);
 
-    // Should still stream completed (not error) since failure is non-fatal
-    expect(events).toContainEqual(
+    expect(events).not.toContainEqual(
       expect.objectContaining({ status: "completed", step: "determineAppliedActivity" }),
     );
 

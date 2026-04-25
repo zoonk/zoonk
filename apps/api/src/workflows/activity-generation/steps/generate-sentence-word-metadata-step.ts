@@ -9,7 +9,6 @@ import { extractUniqueSentenceWords } from "@zoonk/utils/string";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { type ReadingSentence } from "./generate-reading-content-step";
 import { type LessonActivity } from "./get-lesson-activities-step";
-import { handleActivityFailureStep } from "./handle-failure-step";
 
 type WordMetadataEntry = {
   romanization: string | null;
@@ -47,13 +46,13 @@ async function translateWord(
   word: string,
   userLanguage: string,
   targetLanguage: string,
-): Promise<{ translation: string; word: string } | null> {
+): Promise<{ translation: string; word: string }> {
   const { data: result, error } = await safeAsync(() =>
     generateTranslation({ targetLanguage, userLanguage, word }),
   );
 
   if (error || !result?.data) {
-    return null;
+    throw error ?? new Error("translationGenerationFailed");
   }
 
   return { translation: result.data.translation, word };
@@ -64,19 +63,11 @@ async function generateMissingTranslations(
   userLanguage: string,
   targetLanguage: string,
 ): Promise<Record<string, string>> {
-  const results = await Promise.allSettled(
+  const results = await Promise.all(
     wordsNeedingTranslation.map((word) => translateWord(word, userLanguage, targetLanguage)),
   );
 
-  return Object.fromEntries(
-    results.flatMap((result) => {
-      if (result.status !== "fulfilled" || !result.value) {
-        return [];
-      }
-
-      return [[result.value.word, result.value.translation]];
-    }),
-  );
+  return Object.fromEntries(results.map((result) => [result.word, result.translation]));
 }
 
 /**
@@ -97,7 +88,7 @@ async function generateWordRomanizations(
   );
 
   if (error || !result?.data) {
-    return {};
+    throw error ?? new Error("romanizationFailed");
   }
 
   return Object.fromEntries(
@@ -136,17 +127,13 @@ async function buildWordMetadata(params: {
     words: uniqueWords,
   });
 
-  const [translationResult, romanizationResult] = await Promise.allSettled([
+  const [translations, newRomanizations] = await Promise.all([
     generateMissingTranslations(canonicalWords, params.userLanguage, params.targetLanguage),
     generateWordRomanizations(
       uniqueWords.filter((word) => !existingRomanizations[word.toLowerCase()]),
       params.targetLanguage,
     ),
   ]);
-
-  const translations = translationResult.status === "fulfilled" ? translationResult.value : {};
-  const newRomanizations =
-    romanizationResult.status === "fulfilled" ? romanizationResult.value : {};
 
   const isComplete = Object.keys(translations).length === canonicalWords.length;
 
@@ -195,12 +182,7 @@ export async function generateSentenceWordMetadataStep(
   });
 
   if (!isComplete) {
-    await stream.error({
-      reason: "translationGenerationFailed",
-      step: "generateSentenceWordMetadata",
-    });
-    await handleActivityFailureStep({ activityId: activity.id });
-    return { wordMetadata };
+    throw new Error("translationGenerationFailed");
   }
 
   await stream.status({ status: "completed", step: "generateSentenceWordMetadata" });

@@ -27,7 +27,6 @@ export async function generateCustomActivitiesStep(
   );
 
   if (error) {
-    await stream.error({ reason: "aiGenerationFailed", step: "generateCustomActivities" });
     throw error;
   }
 

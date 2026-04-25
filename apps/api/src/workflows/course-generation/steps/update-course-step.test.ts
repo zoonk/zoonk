@@ -33,7 +33,7 @@ describe(updateCourseStep, () => {
     vi.clearAllMocks();
   });
 
-  test("streams error and throws when course does not exist", async () => {
+  test("throws without streaming error when course does not exist", async () => {
     const brokenContext: CourseContext = {
       courseId: randomUUID(),
       courseSlug: "broken",
@@ -53,7 +53,7 @@ describe(updateCourseStep, () => {
 
     const events = getStreamedEvents(writeMock);
 
-    expect(events).toContainEqual(
+    expect(events).not.toContainEqual(
       expect.objectContaining({ status: "error", step: "updateCourse" }),
     );
   });

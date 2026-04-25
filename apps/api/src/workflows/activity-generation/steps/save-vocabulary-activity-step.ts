@@ -10,7 +10,6 @@ import { fetchExistingWordCasing } from "./_utils/fetch-existing-word-casing";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { upsertWordWithPronunciation } from "./_utils/upsert-word-with-pronunciation";
 import { type LessonActivity } from "./get-lesson-activities-step";
-import { handleActivityFailureStep } from "./handle-failure-step";
 
 /**
  * Persists canonical vocabulary words, their direct distractors, and the vocabulary plus
@@ -43,14 +42,18 @@ export async function saveVocabularyActivityStep(params: {
 
   const vocabularyActivity = findActivityByKind(activities, "vocabulary");
 
-  if (!vocabularyActivity || words.length === 0) {
+  if (!vocabularyActivity) {
     return;
+  }
+
+  if (words.length === 0) {
+    throw new Error("Vocabulary save step received no words");
   }
 
   const course = vocabularyActivity.lesson.chapter.course;
 
   if (!course.organization) {
-    return;
+    throw new Error("Vocabulary save step needs course organization data");
   }
 
   await using stream = createStepStream<ActivityStepName>();
@@ -123,16 +126,7 @@ export async function saveVocabularyActivityStep(params: {
   });
 
   if (error) {
-    await stream.error({ reason: "dbSaveFailed", step: "saveVocabularyActivity" });
-
-    await Promise.all([
-      handleActivityFailureStep({ activityId: vocabularyActivity.id }),
-      translationActivity
-        ? handleActivityFailureStep({ activityId: translationActivity.id })
-        : null,
-    ]);
-
-    return;
+    throw error;
   }
 
   await markActivityAsCompleted(vocabularyActivity.id, workflowRunId);

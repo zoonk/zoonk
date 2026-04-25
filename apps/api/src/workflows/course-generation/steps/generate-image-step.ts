@@ -15,9 +15,11 @@ export async function generateImageStep(course: CourseContext): Promise<string |
   });
 
   if (error) {
-    // Image generation failure is not critical, continue without image
-    await stream.status({ status: "completed", step: "generateImage" });
-    return null;
+    throw error;
+  }
+
+  if (!imageUrl) {
+    throw new Error("Course image generation returned no URL");
   }
 
   await stream.status({ status: "completed", step: "generateImage" });

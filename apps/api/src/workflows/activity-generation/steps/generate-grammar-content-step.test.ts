@@ -97,7 +97,7 @@ describe(generateGrammarContentStep, () => {
     );
   });
 
-  test("marks activity as failed and streams error when AI fails", async () => {
+  test("throws AI errors without streaming an error status", async () => {
     vi.mocked(generateActivityGrammarContent).mockRejectedValueOnce(new Error("AI error"));
 
     const lesson = await lessonFixture({
@@ -117,21 +117,19 @@ describe(generateGrammarContentStep, () => {
     });
 
     const [activity] = await fetchLessonActivities(lesson.id);
-    const result = await generateGrammarContentStep(activity!, "workflow-2");
-
-    expect(result).toEqual({ generated: false, grammarContent: null });
+    await expect(generateGrammarContentStep(activity!, "workflow-2")).rejects.toThrow("AI error");
 
     const updated = await prisma.activity.findUniqueOrThrow({ where: { id: dbActivity.id } });
-    expect(updated.generationStatus).toBe("failed");
+    expect(updated.generationStatus).toBe("pending");
 
     const events = getStreamedEvents(writeMock);
 
-    expect(events).toContainEqual(
+    expect(events).not.toContainEqual(
       expect.objectContaining({ status: "error", step: "generateGrammarContent" }),
     );
   });
 
-  test("marks activity as failed and streams error when grammar content has no exercises", async () => {
+  test("throws when grammar content has no exercises", async () => {
     vi.mocked(generateActivityGrammarContent).mockResolvedValueOnce({
       data: { examples: [{ highlight: "は", sentence: "test" }], exercises: [] },
     } as never);
@@ -153,16 +151,16 @@ describe(generateGrammarContentStep, () => {
     });
 
     const [activity] = await fetchLessonActivities(lesson.id);
-    const result = await generateGrammarContentStep(activity!, "workflow-3");
-
-    expect(result).toEqual({ generated: false, grammarContent: null });
+    await expect(generateGrammarContentStep(activity!, "workflow-3")).rejects.toThrow(
+      "contentValidationFailed",
+    );
 
     const updated = await prisma.activity.findUniqueOrThrow({ where: { id: dbActivity.id } });
-    expect(updated.generationStatus).toBe("failed");
+    expect(updated.generationStatus).toBe("pending");
 
     const events = getStreamedEvents(writeMock);
 
-    expect(events).toContainEqual(
+    expect(events).not.toContainEqual(
       expect.objectContaining({ status: "error", step: "generateGrammarContent" }),
     );
   });

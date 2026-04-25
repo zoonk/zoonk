@@ -13,7 +13,6 @@ export async function removeNonLanguageLessonStep(input: { lessonId: string }): 
   const { error } = await safeAsync(() => prisma.lesson.delete({ where: { id: input.lessonId } }));
 
   if (error) {
-    await stream.error({ reason: "dbSaveFailed", step: "removeNonLanguageLesson" });
     throw error;
   }
 

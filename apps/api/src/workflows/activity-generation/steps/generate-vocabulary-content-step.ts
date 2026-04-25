@@ -6,7 +6,6 @@ import {
 import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { safeAsync } from "@zoonk/utils/error";
 import { type LessonActivity } from "./get-lesson-activities-step";
-import { handleActivityFailureStep } from "./handle-failure-step";
 
 /**
  * Generates vocabulary words via AI for a single vocabulary activity.
@@ -39,16 +38,11 @@ export async function generateVocabularyContentStep(
   );
 
   if (error || !result) {
-    const reason = error ? "aiGenerationFailed" : "aiEmptyResult";
-    await stream.error({ reason, step: "generateVocabularyContent" });
-    await handleActivityFailureStep({ activityId: activity.id });
-    return { words: [] };
+    throw error ?? new Error("aiEmptyResult");
   }
 
   if (result.data.words.length === 0) {
-    await stream.error({ reason: "contentValidationFailed", step: "generateVocabularyContent" });
-    await handleActivityFailureStep({ activityId: activity.id });
-    return { words: [] };
+    throw new Error("contentValidationFailed");
   }
 
   await stream.status({ status: "completed", step: "generateVocabularyContent" });

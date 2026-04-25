@@ -60,20 +60,18 @@ describe(generateImageStep, () => {
     );
   });
 
-  test("returns null when image generation fails (non-critical)", async () => {
+  test("throws without streaming error when image generation fails", async () => {
     generateCourseImageMock.mockResolvedValue({
       data: null,
       error: new Error("Image generation failed"),
     });
 
-    const result = await generateImageStep(course);
-
-    expect(result).toBeNull();
+    await expect(generateImageStep(course)).rejects.toThrow("Image generation failed");
 
     const events = getStreamedEvents(writeMock);
 
-    expect(events).toContainEqual(
-      expect.objectContaining({ status: "completed", step: "generateImage" }),
+    expect(events).not.toContainEqual(
+      expect.objectContaining({ status: "error", step: "generateImage" }),
     );
   });
 });

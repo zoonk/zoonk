@@ -5,7 +5,6 @@ import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { type LessonActivity } from "./get-lesson-activities-step";
-import { handleActivityFailureStep } from "./handle-failure-step";
 
 /**
  * Checks if the reading source data is available and valid for copying.
@@ -46,13 +45,12 @@ async function fetchReadingSourceSteps(
  * Creates listening steps from reading steps and marks the activity as completed
  * in a single transaction. This ensures steps and completion status are always
  * in sync — if either fails, both are rolled back.
- * Returns true on success, false on failure.
  */
 async function createListeningStepsAndComplete(params: {
   listeningId: string;
   readingSteps: { position: number; sentenceId: string | null }[];
   workflowRunId: string;
-}): Promise<boolean> {
+}): Promise<void> {
   const { error } = await safeAsync(() =>
     prisma.$transaction([
       prisma.step.createMany({
@@ -72,7 +70,9 @@ async function createListeningStepsAndComplete(params: {
     ]),
   );
 
-  return !error;
+  if (error) {
+    throw error;
+  }
 }
 
 /**
@@ -109,24 +109,16 @@ export async function saveListeningActivityStep(
   const readingSteps = await fetchReadingSourceSteps(activities);
 
   if (!readingSteps) {
-    await stream.error({ reason: "noSourceData", step: "saveListeningActivity" });
-    await handleActivityFailureStep({ activityId: listening.id });
-    return;
+    throw new Error("noSourceData");
   }
 
   await stream.status({ status: "started", step: "saveListeningActivity" });
 
-  const success = await createListeningStepsAndComplete({
+  await createListeningStepsAndComplete({
     listeningId: listening.id,
     readingSteps,
     workflowRunId,
   });
-
-  if (!success) {
-    await stream.error({ reason: "dbSaveFailed", step: "saveListeningActivity" });
-    await handleActivityFailureStep({ activityId: listening.id });
-    return;
-  }
 
   await stream.status({ status: "completed", step: "saveListeningActivity" });
 }

@@ -5,7 +5,6 @@ import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { buildStaticStepRecords } from "./_utils/build-static-step-records";
 import { type ActivitySteps } from "./_utils/get-activity-steps";
-import { handleActivityFailureStep } from "./handle-failure-step";
 
 /**
  * Persists explanation activity steps and their embedded images in one
@@ -35,9 +34,7 @@ export async function saveExplanationActivityStep({
   );
 
   if (buildError || !stepRecords) {
-    await stream.error({ reason: "dbSaveFailed", step: "saveExplanationActivity" });
-    await handleActivityFailureStep({ activityId });
-    return;
+    throw buildError ?? new Error("Failed to build explanation step records");
   }
 
   const { error } = await safeAsync(() =>
@@ -51,9 +48,7 @@ export async function saveExplanationActivityStep({
   );
 
   if (error) {
-    await stream.error({ reason: "dbSaveFailed", step: "saveExplanationActivity" });
-    await handleActivityFailureStep({ activityId });
-    return;
+    throw error;
   }
 
   await stream.status({ status: "completed", step: "saveExplanationActivity" });

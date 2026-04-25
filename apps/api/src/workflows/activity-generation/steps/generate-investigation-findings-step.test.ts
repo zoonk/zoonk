@@ -144,7 +144,7 @@ describe(generateInvestigationFindingsStep, () => {
     );
   });
 
-  test("returns null and marks as failed when AI returns empty findings", async () => {
+  test("throws when AI returns empty findings", async () => {
     const lesson = await lessonFixture({
       chapterId: chapter.id,
       organizationId,
@@ -164,22 +164,22 @@ describe(generateInvestigationFindingsStep, () => {
       data: { findings: [] },
     });
 
-    const result = await generateInvestigationFindingsStep({
-      accuracy: mockAccuracy,
-      actions: mockActions,
-      activityId: dbActivity.id,
-      language: "en",
-      scenario: mockScenario,
-    });
-
-    expect(result).toBeNull();
+    await expect(
+      generateInvestigationFindingsStep({
+        accuracy: mockAccuracy,
+        actions: mockActions,
+        activityId: dbActivity.id,
+        language: "en",
+        scenario: mockScenario,
+      }),
+    ).rejects.toThrow("contentValidationFailed");
 
     const updated = await prisma.activity.findUniqueOrThrow({ where: { id: dbActivity.id } });
-    expect(updated.generationStatus).toBe("failed");
+    expect(updated.generationStatus).toBe("pending");
 
     const events = getStreamedEvents(writeMock);
 
-    expect(events).toContainEqual(
+    expect(events).not.toContainEqual(
       expect.objectContaining({
         entityId: dbActivity.id,
         status: "error",
@@ -188,7 +188,7 @@ describe(generateInvestigationFindingsStep, () => {
     );
   });
 
-  test("returns null and marks as failed when AI call throws", async () => {
+  test("throws AI errors without streaming an error status", async () => {
     const lesson = await lessonFixture({
       chapterId: chapter.id,
       organizationId,
@@ -206,22 +206,22 @@ describe(generateInvestigationFindingsStep, () => {
 
     generateActivityInvestigationFindingsMock.mockRejectedValue(new Error("AI failed"));
 
-    const result = await generateInvestigationFindingsStep({
-      accuracy: mockAccuracy,
-      actions: mockActions,
-      activityId: dbActivity.id,
-      language: "en",
-      scenario: mockScenario,
-    });
-
-    expect(result).toBeNull();
+    await expect(
+      generateInvestigationFindingsStep({
+        accuracy: mockAccuracy,
+        actions: mockActions,
+        activityId: dbActivity.id,
+        language: "en",
+        scenario: mockScenario,
+      }),
+    ).rejects.toThrow("AI failed");
 
     const updated = await prisma.activity.findUniqueOrThrow({ where: { id: dbActivity.id } });
-    expect(updated.generationStatus).toBe("failed");
+    expect(updated.generationStatus).toBe("pending");
 
     const events = getStreamedEvents(writeMock);
 
-    expect(events).toContainEqual(
+    expect(events).not.toContainEqual(
       expect.objectContaining({
         entityId: dbActivity.id,
         status: "error",

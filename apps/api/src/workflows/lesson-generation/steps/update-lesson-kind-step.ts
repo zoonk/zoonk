@@ -21,7 +21,6 @@ export async function updateLessonKindStep(input: {
   );
 
   if (error) {
-    await stream.error({ reason: "dbSaveFailed", step: "updateLessonKind" });
     throw error;
   }
 

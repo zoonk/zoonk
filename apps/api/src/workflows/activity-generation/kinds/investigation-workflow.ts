@@ -1,3 +1,5 @@
+import { failActivityWorkflow } from "../handle-activity-workflow-error";
+import { findActivityByKind } from "../steps/_utils/find-activity-by-kind";
 import { generateInvestigationAccuracyStep } from "../steps/generate-investigation-accuracy-step";
 import { generateInvestigationActionsStep } from "../steps/generate-investigation-actions-step";
 import { generateInvestigationFindingsStep } from "../steps/generate-investigation-findings-step";
@@ -27,59 +29,57 @@ export async function investigationActivityWorkflow({
 }): Promise<void> {
   "use workflow";
 
-  const { activityId, scenario, title } =
-    await generateInvestigationScenarioStep(activitiesToGenerate);
+  const investigationActivity = findActivityByKind(activitiesToGenerate, "investigation");
 
-  if (!activityId || !scenario || !title) {
+  if (!investigationActivity) {
     return;
   }
 
-  const activity = activitiesToGenerate.find((a) => a.id === activityId);
+  try {
+    const { activityId, scenario, title } =
+      await generateInvestigationScenarioStep(activitiesToGenerate);
 
-  if (!activity) {
-    return;
+    if (!activityId || !scenario || !title) {
+      throw new Error("Investigation scenario step returned incomplete content");
+    }
+
+    const activity = activitiesToGenerate.find((a) => a.id === activityId);
+
+    if (!activity) {
+      throw new Error("Investigation scenario step returned an unknown activity id");
+    }
+
+    const accuracy = await generateInvestigationAccuracyStep({
+      activity,
+      activityId,
+      scenario,
+    });
+
+    const actions = await generateInvestigationActionsStep({
+      accuracy,
+      activityId,
+      language: activity.language,
+      scenario,
+    });
+
+    const findings = await generateInvestigationFindingsStep({
+      accuracy,
+      actions,
+      activityId,
+      language: activity.language,
+      scenario,
+    });
+
+    await saveInvestigationActivityStep({
+      accuracy,
+      actions,
+      activityId,
+      findings,
+      scenario,
+      title,
+      workflowRunId,
+    });
+  } catch (error) {
+    await failActivityWorkflow({ activityId: investigationActivity.id, error });
   }
-
-  const accuracy = await generateInvestigationAccuracyStep({
-    activity,
-    activityId,
-    scenario,
-  });
-
-  if (!accuracy) {
-    return;
-  }
-
-  const actions = await generateInvestigationActionsStep({
-    accuracy,
-    activityId,
-    language: activity.language,
-    scenario,
-  });
-
-  if (!actions) {
-    return;
-  }
-
-  const findings = await generateInvestigationFindingsStep({
-    accuracy,
-    actions,
-    activityId,
-    language: activity.language,
-    scenario,
-  });
-
-  if (!findings) {
-    return;
-  }
-
-  await saveInvestigationActivityStep({
-    accuracy,
-    actions,
-    activityId,
-    findings,
-    scenario,
-    title,
-    workflowRunId,
-  });
 }

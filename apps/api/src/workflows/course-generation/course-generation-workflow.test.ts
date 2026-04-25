@@ -374,7 +374,7 @@ describe(courseGenerationWorkflow, () => {
   });
 
   describe("error handling", () => {
-    test("marks course and suggestion as 'failed' on error and streams error", async () => {
+    test("marks course and suggestion as 'failed' when generation fails after retries", async () => {
       vi.mocked(generateCourseDescription).mockRejectedValueOnce(new Error("AI generation failed"));
 
       const title = `Error Course ${randomUUID()}`;

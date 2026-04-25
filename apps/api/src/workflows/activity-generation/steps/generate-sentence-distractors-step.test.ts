@@ -126,7 +126,7 @@ describe(generateSentenceDistractorsStep, () => {
     expect(generateActivityDistractors).not.toHaveBeenCalled();
   });
 
-  test("returns empty distractors for a sentence when AI fails", async () => {
+  test("throws when distractor AI fails", async () => {
     const lesson = await lessonFixture({
       chapterId: chapter.id,
       kind: "language",
@@ -161,10 +161,9 @@ describe(generateSentenceDistractorsStep, () => {
       })
       .mockRejectedValueOnce(new Error("AI failed"));
 
-    const result = await generateSentenceDistractorsStep(activities, sentences);
-
-    expect(result.distractors[`Guten Morgen ${id}`]).toEqual([`dist1-Guten`, `dist2-Guten`]);
-    expect(result.translationDistractors[`Good morning ${id}`]).toEqual([]);
+    await expect(generateSentenceDistractorsStep(activities, sentences)).rejects.toThrow(
+      "AI failed",
+    );
   });
 
   test("returns empty maps when sentences array is empty", async () => {

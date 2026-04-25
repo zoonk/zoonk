@@ -1,5 +1,5 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
-import { type CourseWorkflowStepName, type WorkflowErrorReason } from "@zoonk/core/workflows/steps";
+import { type CourseWorkflowStepName } from "@zoonk/core/workflows/steps";
 import { type CourseSuggestion, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { AI_ORG_SLUG } from "@zoonk/utils/org";
@@ -20,13 +20,9 @@ export type CourseContext = {
  * This is a pure save step — one DB operation.
  */
 async function updateCourseSuggestionToRunning({
-  stream,
   suggestionId,
   workflowRunId,
 }: {
-  stream: {
-    error: (params: { reason: WorkflowErrorReason; step: CourseWorkflowStepName }) => Promise<void>;
-  };
   suggestionId: string;
   workflowRunId: string;
 }): Promise<{ error: Error | null }> {
@@ -40,10 +36,6 @@ async function updateCourseSuggestionToRunning({
     }),
   );
 
-  if (error) {
-    await stream.error({ reason: "dbSaveFailed", step: "initializeCourse" });
-  }
-
   return { error };
 }
 
@@ -53,14 +45,10 @@ async function updateCourseSuggestionToRunning({
  */
 async function createCourseEntity({
   organizationId,
-  stream,
   suggestion,
   workflowRunId,
 }: {
   organizationId: string;
-  stream: {
-    error: (params: { reason: WorkflowErrorReason; step: CourseWorkflowStepName }) => Promise<void>;
-  };
   suggestion: CourseSuggestion;
   workflowRunId: string;
 }): Promise<{ course: CourseContext | null; error: Error | null }> {
@@ -85,7 +73,6 @@ async function createCourseEntity({
   );
 
   if (error || !course) {
-    await stream.error({ reason: "dbSaveFailed", step: "initializeCourse" });
     return { course: null, error: error ?? new Error("Failed to create course") };
   }
 
@@ -129,12 +116,10 @@ export async function initializeCourseStep(input: {
   );
 
   if (orgError || !aiOrg) {
-    await stream.error({ reason: "dbFetchFailed", step: "initializeCourse" });
     throw orgError ?? new Error("AI organization not found");
   }
 
   const { error: suggestionError } = await updateCourseSuggestionToRunning({
-    stream,
     suggestionId: suggestion.id,
     workflowRunId,
   });
@@ -145,7 +130,6 @@ export async function initializeCourseStep(input: {
 
   const { course, error: createError } = await createCourseEntity({
     organizationId: aiOrg.id,
-    stream,
     suggestion,
     workflowRunId,
   });

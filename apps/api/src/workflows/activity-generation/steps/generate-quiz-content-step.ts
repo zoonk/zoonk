@@ -6,10 +6,10 @@ import {
 } from "@zoonk/ai/tasks/activities/core/quiz";
 import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
+import { FatalError } from "workflow";
 import { findActivitiesByKind } from "./_utils/find-activity-by-kind";
 import { type ActivitySteps } from "./_utils/get-activity-steps";
 import { type LessonActivity } from "./get-lesson-activities-step";
-import { handleActivityFailureStep } from "./handle-failure-step";
 
 /**
  * Generates quiz questions from explanation content via AI.
@@ -18,9 +18,10 @@ import { handleActivityFailureStep } from "./handle-failure-step";
  * then to `saveQuizActivityStep` for persistence.
  *
  * No status checks — the caller only passes activities that need generation.
- * Uses safeAsync + handleActivityFailureStep because the quiz depends on
- * explanation data existing — if explanations are empty, that's a permanent
- * failure (not retryable).
+ * Empty explanation data is a permanent dependency failure, so the step throws
+ * `FatalError` for that case. AI/provider errors still throw the original
+ * error so Workflow can retry the step before the quiz activity is marked
+ * failed by the kind-level catch block.
  */
 export async function generateQuizContentStep(
   activities: LessonActivity[],
@@ -37,8 +38,7 @@ export async function generateQuizContentStep(
   }
 
   if (explanationSteps.length === 0) {
-    await handleActivityFailureStep({ activityId: quizActivity.id });
-    return { activityId: null, questions: [] };
+    throw new FatalError("Quiz generation needs explanation steps");
   }
 
   await using stream = createEntityStepStream<ActivityStepName>(quizActivity.id);
@@ -57,10 +57,7 @@ export async function generateQuizContentStep(
   );
 
   if (error || !result || result.data.questions.length === 0) {
-    const reason = getAIResultErrorReason({ error, result });
-    await stream.error({ reason, step: "generateQuizContent" });
-    await handleActivityFailureStep({ activityId: quizActivity.id });
-    return { activityId: null, questions: [] };
+    throw error ?? new Error(getAIResultErrorReason({ result }));
   }
 
   await stream.status({ status: "completed", step: "generateQuizContent" });

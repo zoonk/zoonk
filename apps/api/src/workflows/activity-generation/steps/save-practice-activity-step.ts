@@ -5,7 +5,6 @@ import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { type PracticeScenario, type PracticeStep } from "./generate-practice-content-step";
-import { handleActivityFailureStep } from "./handle-failure-step";
 
 /**
  * Practice now saves one image for the opening scenario plus one image for
@@ -167,9 +166,7 @@ export async function savePracticeActivityStep({
   );
 
   if (buildError || !stepRecords) {
-    await stream.error({ reason: "dbSaveFailed", step: "savePracticeActivity" });
-    await handleActivityFailureStep({ activityId });
-    return;
+    throw buildError ?? new Error("Failed to build practice step records");
   }
 
   const { error } = await safeAsync(() =>
@@ -183,9 +180,7 @@ export async function savePracticeActivityStep({
   );
 
   if (error) {
-    await stream.error({ reason: "dbSaveFailed", step: "savePracticeActivity" });
-    await handleActivityFailureStep({ activityId });
-    return;
+    throw error;
   }
 
   await stream.status({ status: "completed", step: "savePracticeActivity" });

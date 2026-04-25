@@ -308,11 +308,13 @@ describe("story activity workflow", () => {
 
     const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
 
-    await storyActivityWorkflow({
-      activitiesToGenerate: activities,
-      explanationSteps: storyExplanationSteps,
-      workflowRunId: "test-run-id",
-    });
+    await expect(
+      storyActivityWorkflow({
+        activitiesToGenerate: activities,
+        explanationSteps: storyExplanationSteps,
+        workflowRunId: "test-run-id",
+      }),
+    ).rejects.toThrow("AI failed");
 
     const dbActivity = await prisma.activity.findUnique({
       where: { id: storyActivity.id },
@@ -342,11 +344,13 @@ describe("story activity workflow", () => {
 
     const activities = await getLessonActivitiesStep({ lessonId: testLesson.id });
 
-    await storyActivityWorkflow({
-      activitiesToGenerate: activities,
-      explanationSteps: storyExplanationSteps,
-      workflowRunId: "test-run-id",
-    });
+    await expect(
+      storyActivityWorkflow({
+        activitiesToGenerate: activities,
+        explanationSteps: storyExplanationSteps,
+        workflowRunId: "test-run-id",
+      }),
+    ).rejects.toThrow("Images failed");
 
     const dbActivity = await prisma.activity.findUnique({
       where: { id: storyActivity.id },

@@ -71,6 +71,22 @@ describe(handleCourseFailureStep, () => {
     );
   });
 
+  test("throws all status update failures", async () => {
+    const promise = handleCourseFailureStep({
+      courseId: randomUUID(),
+      courseSuggestionId: randomUUID(),
+    });
+
+    await expect(promise).rejects.toThrow(AggregateError);
+
+    await promise.catch((error: unknown) => {
+      expect(error).toBeInstanceOf(AggregateError);
+      if (error instanceof AggregateError) {
+        expect(error.errors).toHaveLength(2);
+      }
+    });
+  });
+
   test("marks only suggestion as failed when courseId is null", async () => {
     const suggestion = await courseSuggestionFixture({
       generationRunId: "old-run",

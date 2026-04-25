@@ -2,7 +2,6 @@ import { createEntityStepStream } from "@/workflows/_shared/stream-status";
 import { type QuizQuestion, type SelectImageQuestion } from "@zoonk/ai/tasks/activities/core/quiz";
 import { generateStepImage } from "@zoonk/core/steps/image";
 import { type ActivityStepName } from "@zoonk/core/workflows/steps";
-import { rejected } from "@zoonk/utils/settled";
 import { findActivitiesByKind } from "./_utils/find-activity-by-kind";
 import { type LessonActivity } from "./get-lesson-activities-step";
 
@@ -34,20 +33,20 @@ async function generateOptionImages({
   language: string;
   options: SelectImageOption[];
   orgSlug?: string;
-}): Promise<{ hadFailure: boolean; updatedOptions: SelectImageOption[] }> {
-  const results = await Promise.allSettled(
-    options.map(({ prompt }) => generateStepImage({ language, orgSlug, prompt })),
+}): Promise<SelectImageOption[]> {
+  const results = await Promise.all(
+    options.map(async ({ prompt }) => {
+      const { data, error } = await generateStepImage({ language, orgSlug, prompt });
+
+      if (error || !data) {
+        throw error ?? new Error(`Image generation returned no URL for prompt: ${prompt}`);
+      }
+
+      return data;
+    }),
   );
 
-  const updatedOptions = options.map((option, index) => {
-    const result = results[index];
-    if (result?.status === "fulfilled" && !result.value.error) {
-      return { ...option, url: result.value.data };
-    }
-    return option;
-  });
-
-  return { hadFailure: rejected(results), updatedOptions };
+  return options.map((option, index) => ({ ...option, url: results[index] }));
 }
 
 /**
@@ -84,7 +83,7 @@ export async function generateQuizImagesStep(
 
   const orgSlug = activity.lesson.chapter.course.organization?.slug;
 
-  const imageResults = await Promise.allSettled(
+  const imageResults = await Promise.all(
     selectImageQuestions.map((question) =>
       generateOptionImages({
         language: activity.language,
@@ -98,9 +97,9 @@ export async function generateQuizImagesStep(
 
   selectImageQuestions.forEach((question, idx) => {
     const result = imageResults[idx];
-    if (result?.status === "fulfilled") {
+    if (result) {
       const questionIndex = questions.indexOf(question);
-      updatedSelectImageMap.set(questionIndex, result.value.updatedOptions);
+      updatedSelectImageMap.set(questionIndex, result);
     }
   });
 

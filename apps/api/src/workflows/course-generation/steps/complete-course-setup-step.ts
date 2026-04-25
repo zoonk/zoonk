@@ -1,7 +1,7 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
 import { type CourseWorkflowStepName } from "@zoonk/core/workflows/steps";
 import { prisma } from "@zoonk/db";
-import { rejected } from "@zoonk/utils/settled";
+import { throwSettledFailures } from "@zoonk/utils/settled";
 
 export async function completeCourseSetupStep(input: {
   courseSuggestionId: string;
@@ -24,10 +24,7 @@ export async function completeCourseSetupStep(input: {
     }),
   ]);
 
-  if (rejected(results)) {
-    await stream.error({ reason: "dbSaveFailed", step: "completeCourseSetup" });
-    throw new Error("DB save failed in completeCourseSetup");
-  }
+  throwSettledFailures({ message: "Failed to complete course setup", results });
 
   await stream.status({ status: "completed", step: "completeCourseSetup" });
 }

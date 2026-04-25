@@ -1,10 +1,10 @@
+import { failActivityWorkflow } from "../handle-activity-workflow-error";
 import { findActivityByKind } from "../steps/_utils/find-activity-by-kind";
 import { type ActivitySteps } from "../steps/_utils/get-activity-steps";
 import { generateStoryChoicesStep } from "../steps/generate-story-choices-step";
 import { generateStoryContentStep } from "../steps/generate-story-content-step";
 import { generateStoryImagesStep } from "../steps/generate-story-images-step";
 import { type LessonActivity } from "../steps/get-lesson-activities-step";
-import { handleActivityFailureStep } from "../steps/handle-failure-step";
 import { saveStoryActivityStep } from "../steps/save-story-activity-step";
 
 /**
@@ -41,7 +41,7 @@ export async function storyActivityWorkflow({
     );
 
     if (!activityId || !storyPlan) {
-      return;
+      throw new Error("Story content step returned incomplete content");
     }
 
     const storyData = await generateStoryChoicesStep({
@@ -51,7 +51,7 @@ export async function storyActivityWorkflow({
     });
 
     if (!storyData) {
-      return;
+      throw new Error("Story choices step returned no content");
     }
 
     const storyImages = await generateStoryImagesStep({
@@ -65,7 +65,7 @@ export async function storyActivityWorkflow({
       storyImages,
       workflowRunId,
     });
-  } catch {
-    await handleActivityFailureStep({ activityId: storyActivity.id });
+  } catch (error) {
+    await failActivityWorkflow({ activityId: storyActivity.id, error });
   }
 }

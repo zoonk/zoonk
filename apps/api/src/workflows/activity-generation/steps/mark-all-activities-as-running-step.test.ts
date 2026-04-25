@@ -165,7 +165,7 @@ describe(markAllActivitiesAsRunningStep, () => {
     ).resolves.toBeUndefined();
   });
 
-  test("streams error and throws when DB transaction fails", async () => {
+  test("throws without streaming an error status when DB transaction fails", async () => {
     const lesson = await lessonFixture({
       chapterId,
       kind: "language",
@@ -193,7 +193,7 @@ describe(markAllActivitiesAsRunningStep, () => {
 
     const events = getStreamedEvents(writeMock);
 
-    expect(events).toContainEqual(
+    expect(events).not.toContainEqual(
       expect.objectContaining({ status: "error", step: "setActivityAsRunning" }),
     );
   });

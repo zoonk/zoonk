@@ -37,12 +37,10 @@ export async function getLessonActivitiesStep(input: {
   const { data: activities, error } = await safeAsync(fetchActivities);
 
   if (error) {
-    await stream.error({ reason: "dbFetchFailed", step: "getLessonActivities" });
     throw error;
   }
 
   if (activities.length === 0) {
-    await stream.error({ reason: "noSourceData", step: "getLessonActivities" });
     throw new FatalError("No activities found for lesson");
   }
 

@@ -8,7 +8,6 @@ import { type ActivityStepName } from "@zoonk/core/workflows/steps";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { findActivityByKind } from "./_utils/find-activity-by-kind";
 import { type LessonActivity } from "./get-lesson-activities-step";
-import { handleActivityFailureStep } from "./handle-failure-step";
 
 /**
  * Generates USER_LANGUAGE content for grammar activities: translations,
@@ -49,10 +48,7 @@ export async function generateGrammarUserContentStep(
     );
 
   if (error || !result) {
-    const reason = error ? "aiGenerationFailed" : "aiEmptyResult";
-    await stream.error({ reason, step: "generateGrammarUserContent" });
-    await handleActivityFailureStep({ activityId: activity.id });
-    return { userContent: null };
+    throw error ?? new Error("aiEmptyResult");
   }
 
   await stream.status({ status: "completed", step: "generateGrammarUserContent" });

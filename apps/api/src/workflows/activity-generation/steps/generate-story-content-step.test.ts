@@ -183,7 +183,7 @@ describe(generateStoryContentStep, () => {
     expect(generateActivityStoryMock).not.toHaveBeenCalled();
   });
 
-  test("marks story as failed when explanation steps are missing", async () => {
+  test("throws when explanation steps are missing", async () => {
     const lesson = await lessonFixture({
       chapterId: chapter.id,
       organizationId,
@@ -201,16 +201,16 @@ describe(generateStoryContentStep, () => {
 
     const activities = await fetchLessonActivities(lesson.id);
 
-    const result = await generateStoryContentStep(activities, []);
-
-    expect(result).toEqual({ activityId: null, storyPlan: null });
+    await expect(generateStoryContentStep(activities, [])).rejects.toThrow(
+      "Story generation needs explanation steps",
+    );
     expect(generateActivityStoryMock).not.toHaveBeenCalled();
 
     const updated = await prisma.activity.findUniqueOrThrow({ where: { id: dbActivity.id } });
-    expect(updated.generationStatus).toBe("failed");
+    expect(updated.generationStatus).toBe("pending");
   });
 
-  test("marks activity as failed when AI returns no result", async () => {
+  test("throws when AI returns no result", async () => {
     const lesson = await lessonFixture({
       chapterId: chapter.id,
       organizationId,
@@ -230,18 +230,18 @@ describe(generateStoryContentStep, () => {
 
     generateActivityStoryMock.mockResolvedValue(null);
 
-    const result = await generateStoryContentStep(activities, [
-      { text: "Explanation content.", title: "Explanation" },
-    ]);
-
-    expect(result).toEqual({ activityId: null, storyPlan: null });
+    await expect(
+      generateStoryContentStep(activities, [
+        { text: "Explanation content.", title: "Explanation" },
+      ]),
+    ).rejects.toThrow("aiEmptyResult");
 
     const updated = await prisma.activity.findUniqueOrThrow({ where: { id: dbActivity.id } });
-    expect(updated.generationStatus).toBe("failed");
+    expect(updated.generationStatus).toBe("pending");
 
     const events = getStreamedEvents(writeMock);
 
-    expect(events).toContainEqual(
+    expect(events).not.toContainEqual(
       expect.objectContaining({
         entityId: dbActivity.id,
         status: "error",
@@ -250,7 +250,7 @@ describe(generateStoryContentStep, () => {
     );
   });
 
-  test("marks activity as failed and streams error when AI call throws", async () => {
+  test("throws AI errors without streaming an error status", async () => {
     const lesson = await lessonFixture({
       chapterId: chapter.id,
       organizationId,
@@ -270,18 +270,18 @@ describe(generateStoryContentStep, () => {
 
     generateActivityStoryMock.mockRejectedValue(new Error("AI failed"));
 
-    const result = await generateStoryContentStep(activities, [
-      { text: "Explanation content.", title: "Explanation" },
-    ]);
-
-    expect(result).toEqual({ activityId: null, storyPlan: null });
+    await expect(
+      generateStoryContentStep(activities, [
+        { text: "Explanation content.", title: "Explanation" },
+      ]),
+    ).rejects.toThrow("AI failed");
 
     const updated = await prisma.activity.findUniqueOrThrow({ where: { id: dbActivity.id } });
-    expect(updated.generationStatus).toBe("failed");
+    expect(updated.generationStatus).toBe("pending");
 
     const events = getStreamedEvents(writeMock);
 
-    expect(events).toContainEqual(
+    expect(events).not.toContainEqual(
       expect.objectContaining({
         entityId: dbActivity.id,
         status: "error",

@@ -184,7 +184,7 @@ describe(generateQuizImagesStep, () => {
     expect(result).toEqual([]);
   });
 
-  test("returns original options without URLs when image generation fails", async () => {
+  test("throws when image generation fails", async () => {
     const lesson = await lessonFixture({
       chapterId: chapter.id,
       organizationId,
@@ -215,21 +215,15 @@ describe(generateQuizImagesStep, () => {
 
     generateStepImageMock.mockRejectedValue(new Error("Image generation failed"));
 
-    const result = await generateQuizImagesStep(activities, questions);
+    await expect(generateQuizImagesStep(activities, questions)).rejects.toThrow(
+      "Image generation failed",
+    );
 
-    expect(result).toHaveLength(1);
-    expect(result[0]).toMatchObject({
-      format: "selectImage",
-      options: [
-        expect.objectContaining({ prompt: "a cat" }),
-        expect.objectContaining({ prompt: "a dog" }),
-      ],
-    });
+    const events = getStreamedEvents(writeMock);
 
-    // Options should not have URLs since generation failed
-    const options = (result[0] as { options: { url?: string }[] }).options;
-    expect(options[0]?.url).toBeUndefined();
-    expect(options[1]?.url).toBeUndefined();
+    expect(events).not.toContainEqual(
+      expect.objectContaining({ status: "error", step: "generateQuizImages" }),
+    );
   });
 
   test("streams started and completed events", async () => {

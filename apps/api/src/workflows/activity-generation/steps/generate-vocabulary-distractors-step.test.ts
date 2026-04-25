@@ -120,7 +120,7 @@ describe(generateVocabularyDistractorsStep, () => {
     expect(generateActivityDistractors).not.toHaveBeenCalled();
   });
 
-  test("returns empty distractors for a word when AI fails", async () => {
+  test("throws when distractor AI fails", async () => {
     const lesson = await lessonFixture({
       chapterId: chapter.id,
       kind: "language",
@@ -152,10 +152,7 @@ describe(generateVocabularyDistractorsStep, () => {
       })
       .mockRejectedValueOnce(new Error("AI failed"));
 
-    const result = await generateVocabularyDistractorsStep(activities, words);
-
-    expect(result.distractors[`hola-${id}`]).toEqual([`not-hola-${id}`, `fake-hola-${id}`]);
-    expect(result.distractors[`adiós-${id}`]).toEqual([]);
+    await expect(generateVocabularyDistractorsStep(activities, words)).rejects.toThrow("AI failed");
   });
 
   test("returns empty distractors when words array is empty", async () => {
