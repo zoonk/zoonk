@@ -1,0 +1,197 @@
+apps/api/src/workflows/activity-generation/steps/_utils/add-option-ids.ts
+  h_1cda88fc21fe9c 1-14
+packages/core/src/player/contracts/build-investigation-action-results.test.ts
+  f00025b6ce7a4c43 5-8,25,39,56,65,69,76,81,99,113,117,126,130
+packages/player/src/story.ts
+  f00025b6ce7a4c43 13,15
+apps/api/src/workflows/activity-generation/steps/save-practice-activity-step.test.ts
+  f00025b6ce7a4c43 149-152,162-165
+packages/core/src/steps/contract/content.test.ts
+  f00025b6ce7a4c43 8,13,26-27,40-41,50,62,74,189-197,202-210,268,275,278,283,286-287,294,298,304,314,323,332,479,481,483,486,489,492,494,505-508,517,547
+packages/player/src/player-selectors.ts
+  f00025b6ce7a4c43 61,109-110,112,115,130,135,140,152,154,158,167,221,233,254,265-266
+apps/api/src/workflows/activity-generation/kinds/investigation-workflow.test.ts
+  f00025b6ce7a4c43 28-30,217,219,221,251
+apps/evals/src/tasks/activity-investigation-actions/test-cases.ts
+  f00025b6ce7a4c43 12
+packages/core/src/steps/contract/investigation.ts
+  f00025b6ce7a4c43 8,18,20,22,24,27,45,50,64
+packages/player/src/_browser-tests/player-choice.browser.test.tsx
+  f00025b6ce7a4c43 24-25,119,126,157-158,206-209,211-215,217,320,327,364-367,369-370,396-399,401-402
+  h_1cda88fc21fe9c 210,216,368,400
+packages/player/src/investigation-call-verdict.ts
+  f00025b6ce7a4c43 33
+apps/api/src/workflows/activity-generation/core-activity-workflow.test.ts
+  h_1cda88fc21fe9c 133,140
+packages/player/src/components/story-step.tsx
+  f00025b6ce7a4c43 8,13,26,28-29,31,35,42,51-52
+packages/ai/src/tasks/activities/core/activity-investigation-actions.prompt.md
+  f00025b6ce7a4c43 15,35
+packages/player/src/_browser-tests/player-story.browser.test.tsx
+  f00025b6ce7a4c43 131-135,138,152,261-265,268,282,379-383,386,397,408
+packages/player/src/components/select-image-step.tsx
+  h_1cda88fc21fe9c 16,21,114,122-124,128,155
+  f00025b6ce7a4c43 25-26,28,32,144-145,148,154
+packages/player/src/components/multiple-choice-step.tsx
+  f00025b6ce7a4c43 8,13,26,28-29,34,42,44
+packages/core/src/player/contracts/build-investigation-action-results.ts
+  f00025b6ce7a4c43 55-56,67
+packages/ai/src/tasks/activities/core/activity-story-schemas.ts
+  f00025b6ce7a4c43 26
+packages/core/src/player/contracts/prepare-activity-data.test.ts
+  f00025b6ce7a4c43 441-442,455-456,469,472,480,488,513-557
+packages/player/src/player-haptics.ts
+  f00025b6ce7a4c43 85,168
+packages/player/src/player-reducer.test.ts
+  f00025b6ce7a4c43 17-18,81,156,266,269,277,850
+packages/core/src/steps/contract/exercise.ts
+  f00025b6ce7a4c43 7,63
+apps/api/src/workflows/activity-generation/steps/generate-story-images-step.test.ts
+  f00025b6ce7a4c43 72,79
+packages/core/src/player/contracts/check-answer.ts
+  f00025b6ce7a4c43 20,23,79,81,107-108,112,133,138,140,146,160,162
+  h_1cda88fc21fe9c 24,28,82,86,92,98,103,114-117
+packages/core/src/player/contracts/check-answer.test.ts
+  f00025b6ce7a4c43 26-27,31-32,39-40,47-48,231-232,237-238,245-246,253-254,282,285,293,301,311,319,327,335
+packages/player/src/player-controller.test.ts
+  f00025b6ce7a4c43 75,92,107,109
+packages/player/src/components/translation-step.tsx
+  h_1cda88fc21fe9c 20,25,59,74,92-95
+packages/core/src/player/contracts/prepare-activity-data.ts
+  f00025b6ce7a4c43 3,111-114,156-173,177-178,184-185,187-188,192,197
+packages/player/src/components/feedback-screen.tsx
+  f00025b6ce7a4c43 26,35,37,40-52,59,67
+  h_1cda88fc21fe9c 4,25,27-34,36,38-39,53-58,60-64,102
+apps/api/src/workflows/activity-generation/steps/save-practice-activity-step.ts
+  f00025b6ce7a4c43 7,93
+packages/player/src/components/investigation-action-variant.tsx
+  f00025b6ce7a4c43 70,73,89,105,123,125,130,132,135,148,155,161,163,185-187
+apps/api/src/workflows/activity-generation/steps/generate-investigation-actions-step.test.ts
+  f00025b6ce7a4c43 50-52
+packages/player/src/check-step.test.ts
+  h_1cda88fc21fe9c 423
+  f00025b6ce7a4c43 31-32,43,53,160-161,170,176,199,205,220,391,394,402,416,430,441,454,481,483,486,488-489,497,508,510,513,515-516,524,535,537,540,542-543,551,562,564,567,569-570,578,588,608,619,639,655
+packages/player/src/components/choice-step-layout.tsx
+  f00025b6ce7a4c43 25,28,31,33-43,55-56,58-59,139,143,146,154
+apps/api/src/workflows/activity-generation/kinds/story-workflow.test.ts
+  f00025b6ce7a4c43 69,76,87,98
+packages/core/src/player/contracts/validate-answers.ts
+  f00025b6ce7a4c43 97,138,151,204,217
+packages/db/src/prisma/seed/steps.ts
+  f00025b6ce7a4c43 109,116,123,179,186
+packages/core/src/player/contracts/completion-input-schema.ts
+  f00025b6ce7a4c43 25,35,45,50,60,66,106
+packages/core/src/player/commands/submit-activity-completion.test.ts
+  f00025b6ce7a4c43 28,56-57
+packages/player/src/components/story-outcome-content.tsx
+  f00025b6ce7a4c43 10,43-44,95
+packages/player/src/investigation.ts
+  f00025b6ce7a4c43 17,63,65,68-69
+apps/api/src/workflows/activity-generation/steps/save-grammar-steps-step.ts
+  f00025b6ce7a4c43 8,77
+packages/player/src/_browser-tests/player-explanation.browser.test.tsx
+  f00025b6ce7a4c43 50,56
+apps/api/src/workflows/activity-generation/steps/save-story-activity-step.ts
+  f00025b6ce7a4c43 35,39,104,134-138,167
+packages/player/src/investigation.test.ts
+  f00025b6ce7a4c43 40,42,45,48,51,54,57,64,129-131,146,178-181,186,199,206,221,229-231,239
+packages/player/src/components/investigation-call-variant.tsx
+  f00025b6ce7a4c43 80,82,109-110,116,124,128,162,192,198,208,221,237
+packages/player/src/player-completion.test.ts
+  f00025b6ce7a4c43 45,48,56,64,78-79,82,84-85,97,106,270,272,275,277-278,284,298,303,328,333
+packages/core/src/player/contracts/compute-score.ts
+  f00025b6ce7a4c43 195,197,239-240,269-270
+packages/player/src/player-selectors.test.ts
+  h_1cda88fc21fe9c 453
+  f00025b6ce7a4c43 5,50,53,61,69,118,120-121,126-127,131,133,141,148,154,157,163,301-304,318,328,338,363,367,452,454,478,485,644,647,694-695,697,706
+packages/player/src/player-step-behavior.test.ts
+  f00025b6ce7a4c43 89,118,120,123,126,129
+apps/api/src/workflows/activity-generation/steps/save-story-activity-step.test.ts
+  f00025b6ce7a4c43 15,17,80,87,100,111,218,236,240
+apps/evals/src/tasks/activity-story-choices/test-cases.ts
+  f00025b6ce7a4c43 8,12
+packages/player/src/player-haptics.test.ts
+  f00025b6ce7a4c43 48,51,69,178-180,200-202,214,230,249
+  h_1cda88fc21fe9c 119-120,132
+apps/api/src/workflows/activity-generation/steps/generate-story-choices-step.test.ts
+  f00025b6ce7a4c43 87,94
+packages/player/src/investigation-reducer.ts
+  f00025b6ce7a4c43 15,40,95
+packages/core/src/steps/contract/story.ts
+  f00025b6ce7a4c43 52,55,63,67
+packages/player/src/player-reducer.ts
+  f00025b6ce7a4c43 21-22,26,28,30-31,147
+packages/player/src/player-screen.test.ts
+  f00025b6ce7a4c43 147,173,176
+apps/api/src/workflows/activity-generation/steps/save-quiz-activity-step.ts
+  h_1cda88fc21fe9c 7,10-47,53-59,61,67,96
+packages/core/src/player/commands/submit-player-completion.test.ts
+  f00025b6ce7a4c43 67-68,86,98
+apps/api/src/workflows/activity-generation/steps/generate-investigation-findings-step.test.ts
+  f00025b6ce7a4c43 50-51
+packages/player/src/player-step.ts
+  f00025b6ce7a4c43 213
+packages/player/src/check-step.ts
+  f00025b6ce7a4c43 35,75,88,172,188,199
+packages/core/src/player/queries/get-review-steps.test.ts
+  f00025b6ce7a4c43 394,397,743-744
+packages/player/src/components/story-feedback-content.tsx
+  f00025b6ce7a4c43 17,26,29,31,34,36,40-41,44-45,51,54,56,69,102-103,128,132,148,150,153,157-158,165,171,175-176
+packages/player/src/player-step.test.ts
+  f00025b6ce7a4c43 54,88
+packages/player/src/_browser-tests/player-investigation.browser.test.tsx
+  f00025b6ce7a4c43 23,25,28,31,34,45,115,117,120,123,126,129,132,143
+apps/api/src/workflows/activity-generation/steps/save-investigation-activity-step.test.ts
+  f00025b6ce7a4c43 42-44,130,132-133,136,142,145
+packages/ai/src/tasks/activities/core/activity-story-choices.prompt.md
+  f00025b6ce7a4c43 18,40-43,86,89,94,106,114,118-119,121,133,141,152,157-158,164,171,221,243,250
+apps/api/src/workflows/activity-generation/steps/save-investigation-activity-step.ts
+  f00025b6ce7a4c43 66-67,70,82
+packages/ai/src/tasks/activities/core/activity-investigation-actions.ts
+  f00025b6ce7a4c43 18
+packages/player/src/use-player-actions.test.tsx
+  f00025b6ce7a4c43 82
+packages/player/src/components/_utils/feedback-romanization.test.ts
+  f00025b6ce7a4c43 136,154,172,190,198,208,226,282,295,303
+packages/core/src/player/contracts/compute-score.test.ts
+  f00025b6ce7a4c43 232,321,324,332,358,362,368,370,373,375-376,385,424,427,435
+  h_1cda88fc21fe9c 316
+apps/evals/src/tasks/activity-investigation-findings/test-cases.ts
+  f00025b6ce7a4c43 27,31,35,39,43,47,79,81,84,86,89,93,125,129,133,137,141,145,173,177,179,182,186,190,222,226,230,234,238,242,270,274,278,282,286,290
+apps/api/src/workflows/activity-generation/kinds/practice-workflow.test.ts
+  f00025b6ce7a4c43 148-151
+packages/player/src/_browser-tests/player-completion.browser.test.tsx
+  f00025b6ce7a4c43 29-30
+packages/player/src/_browser-tests/player-practice.browser.test.tsx
+  f00025b6ce7a4c43 45,51
+packages/core/src/player/contracts/validate-answers.test.ts
+  f00025b6ce7a4c43 7-8,24,36,61,79,97,226,229,237,249,257,260,268,288,291,299,312,322,351,353,356,358-359,371,383,395,406,418
+  h_1cda88fc21fe9c 280
+packages/ai/src/tasks/activities/core/activity-investigation-findings.ts
+  f00025b6ce7a4c43 52
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "a2bfcf9893d11c4ff5a12f9ebe5f606487fd91a5",
+  "prompts": {
+    "f00025b6ce7a4c43": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019dc5f4-edd1-7683-8755-f038b9fe7117",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 1071,
+      "total_deletions": 1064,
+      "accepted_lines": 844,
+      "overriden_lines": 8
+    }
+  },
+  "humans": {
+    "h_1cda88fc21fe9c": {
+      "author": "ceolinwill"
+    }
+  }
+}
