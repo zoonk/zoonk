@@ -1,0 +1,41 @@
+apps/api/src/workflows/_shared/workflow-error.test.ts
+  4f130f68962e8af8 55-71
+apps/api/src/workflows/activity-generation/handle-activity-workflow-error.test.ts
+  4f130f68962e8af8 1-44
+apps/api/src/workflows/chapter-generation/chapter-generation-workflow.test.ts
+  4f130f68962e8af8 42-47
+apps/api/src/workflows/course-generation/course-generation-workflow.test.ts
+  4f130f68962e8af8 105-110
+apps/api/vitest.config.mts
+  h_1cda88fc21fe9c 28
+apps/api/src/workflows/activity-generation/handle-activity-workflow-error.ts
+  4f130f68962e8af8 20-30,50
+apps/api/src/workflows/_shared/workflow-error.ts
+  4f130f68962e8af8 39-54,61-68,70,74,76,79-81,85-86,89,91-96,100,102-103
+  h_1cda88fc21fe9c 73,77-78,82-83,87,97-99,101,104
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "21cd751cd02f87903fde07dfba5263905fb45ac7",
+  "prompts": {
+    "4f130f68962e8af8": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019dc1a7-55f8-7c62-836f-4a02c6fe9d7f",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 125,
+      "total_deletions": 105,
+      "accepted_lines": 122,
+      "overriden_lines": 0
+    }
+  },
+  "humans": {
+    "h_1cda88fc21fe9c": {
+      "author": "ceolinwill"
+    }
+  }
+}
