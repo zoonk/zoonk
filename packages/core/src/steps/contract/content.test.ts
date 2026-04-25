@@ -60,6 +60,8 @@ describe("step content contracts", () => {
           {
             effects: [{ dimension: "X", impact: "positive" }],
             feedback: "Something",
+            id: "a",
+            isCorrect: true,
             text: "A",
           },
         ],

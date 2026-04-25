@@ -103,7 +103,7 @@ Start from the real decision boundary:
 - What plausible evidence would solve a nearby but incomplete version of the problem?
 - What plausible evidence would a competent person reach for if they were focused on the wrong constraint?
 
-Then write text that hide those differences.
+Then write text that hides those differences.
 
 Use this pattern:
 
@@ -240,7 +240,7 @@ Choices:
 
 Before finalizing each step, run these tests:
 
-- Text-only test: If the learner saw only the choice text, could they likely pick the best answer by tone, breadth, scope, or professionalism? If yes, rewrite the labels.
+- Text-only test: If the learner saw only the choice text, could they likely pick the best answer by tone, breadth, scope, or professionalism? If yes, rewrite the text.
 - Completeness test: Is the strong choice the only one with multiple evidence sources or a more complete-sounding verb? If yes, make the decoys similarly specific.
 - Weakness test: Does the weak choice announce its limitation through words like "only", "local", "quick", "ignore", "simple", "basic", or equivalent meaning in the target language? If yes, rewrite it as a plausible but wrong professional move.
 - Mirror test: Does the strong choice merely repeat the key words from the problem? If yes, rewrite it as the concrete action that would produce that result.
