@@ -39,6 +39,12 @@ vi.mock("@zoonk/ai/tasks/lessons/kind", () => ({
   }),
 }));
 
+vi.mock("@zoonk/ai/tasks/lessons/applied-activity-kind", () => ({
+  generateAppliedActivityKind: vi.fn().mockResolvedValue({
+    data: { appliedActivityKind: "story" },
+  }),
+}));
+
 vi.mock("@/workflows/activity-generation/activity-generation-workflow", () => ({
   activityGenerationWorkflow: vi.fn().mockResolvedValue({}),
 }));

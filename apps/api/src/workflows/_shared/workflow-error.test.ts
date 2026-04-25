@@ -52,4 +52,21 @@ describe(serializeWorkflowError, () => {
       stack: expect.any(String),
     });
   });
+
+  test("serializes circular nested errors without recursing forever", () => {
+    const error = new AggregateError([], "Course status updates failed");
+    error.errors.push(error);
+
+    expect(serializeWorkflowError(error)).toEqual({
+      errors: [
+        {
+          message: "Circular error reference",
+          name: "Error",
+        },
+      ],
+      message: "Course status updates failed",
+      name: "AggregateError",
+      stack: expect.any(String),
+    });
+  });
 });

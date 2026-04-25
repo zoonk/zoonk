@@ -23,19 +23,6 @@ function getStringProperty(value: unknown, key: string): string | undefined {
 }
 
 /**
- * Reads nested errors from AggregateError-like values. Workflow serialization
- * may preserve an AggregateError as a plain object, so this accepts any object
- * with an array-shaped `errors` field.
- */
-function getErrorsProperty(value: unknown): unknown[] | undefined {
-  if (!isJsonObject(value) || !("errors" in value)) {
-    return undefined;
-  }
-
-  return Array.isArray(value.errors) ? value.errors : undefined;
-}
-
-/**
  * Stringifies unusual thrown values without letting logging serialization become
  * a second workflow failure. This handles circular objects and values like
  * BigInt that `JSON.stringify` cannot encode.
@@ -50,43 +37,70 @@ function stringifyUnknownError(error: unknown): string {
 }
 
 /**
+ * Serializes AggregateError-style nested failures when they exist. Workflow can
+ * deserialize AggregateError as a plain object, so this checks the shape instead
+ * of relying only on `instanceof AggregateError`.
+ */
+function serializeNestedErrors(
+  error: unknown,
+  seen: WeakSet<object>,
+): WorkflowErrorLog[] | undefined {
+  if (!isJsonObject(error) || !Array.isArray(error.errors)) {
+    return undefined;
+  }
+
+  return error.errors.map((nestedError) => serializeWorkflowError(nestedError, seen));
+}
+
+/**
  * Converts an unknown thrown value into a plain object that can cross workflow
  * step boundaries. Workflow steps persist arguments, so passing raw `Error`
  * instances is fragile; this keeps the original AI/provider message visible in
  * final failure logs without changing the thrown error itself.
  */
-export function serializeWorkflowError(error: unknown): WorkflowErrorLog {
-  if (error instanceof Error) {
-    const errors = getErrorsProperty(error);
+export function serializeWorkflowError(
+  error: unknown,
+  seen = new WeakSet<object>(),
+): WorkflowErrorLog {
+  if (typeof error === "object" && error !== null) {
+    if (seen.has(error)) {
+      return { message: "Circular error reference", name: "Error" };
+    }
 
-    return {
-      ...(errors
-        ? { errors: errors.map((nestedError) => serializeWorkflowError(nestedError)) }
-        : {}),
-      message: error.message,
-      name: error.name,
-      stack: error.stack,
-    };
+    seen.add(error);
   }
 
-  if (typeof error === "string") {
-    return { message: error, name: "Error" };
+  try {
+    const errors = serializeNestedErrors(error, seen);
+
+    if (error instanceof Error) {
+      return {
+        ...(errors ? { errors } : {}),
+        message: error.message,
+        name: error.name,
+        stack: error.stack,
+      };
+    }
+
+    if (typeof error === "string") {
+      return { message: error, name: "Error" };
+    }
+
+    const message = getStringProperty(error, "message");
+
+    if (message) {
+      return {
+        ...(errors ? { errors } : {}),
+        message,
+        name: getStringProperty(error, "name") ?? "Error",
+        stack: getStringProperty(error, "stack"),
+      };
+    }
+
+    return { message: stringifyUnknownError(error), name: "Error" };
+  } finally {
+    if (typeof error === "object" && error !== null) {
+      seen.delete(error);
+    }
   }
-
-  const message = getStringProperty(error, "message");
-
-  if (message) {
-    const errors = getErrorsProperty(error);
-
-    return {
-      ...(errors
-        ? { errors: errors.map((nestedError) => serializeWorkflowError(nestedError)) }
-        : {}),
-      message,
-      name: getStringProperty(error, "name") ?? "Error",
-      stack: getStringProperty(error, "stack"),
-    };
-  }
-
-  return { message: stringifyUnknownError(error), name: "Error" };
 }

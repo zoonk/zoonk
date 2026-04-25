@@ -17,11 +17,17 @@ export async function failActivityWorkflow({
   error: unknown;
   reason?: WorkflowErrorReason;
 }): Promise<never> {
-  await handleActivityFailureStep({
-    activityId,
-    error: serializeWorkflowError(error),
-    reason,
-  });
+  try {
+    await handleActivityFailureStep({
+      activityId,
+      error: serializeWorkflowError(error),
+      reason,
+    });
+  } catch {
+    // Preserve the original workflow failure. The failure step logs the original
+    // error before it writes permanent state, so this cleanup path must never
+    // replace the AI/task error that caused the workflow to fail.
+  }
 
   throw error;
 }
@@ -41,7 +47,7 @@ export async function failActivityWorkflows({
   error: unknown;
   reason?: WorkflowErrorReason;
 }): Promise<never> {
-  await Promise.all(
+  await Promise.allSettled(
     activityIds.map((activityId) =>
       handleActivityFailureStep({
         activityId,
