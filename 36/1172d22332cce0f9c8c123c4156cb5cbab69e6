@@ -1,0 +1,131 @@
+apps/evals/eval-results/outputs/course-chapters/openai-gpt-5.4.json
+  f0b232275ec9b654 2,6,8-9,15,17-18,24,26-27,33,35-36,42-60,62-63,69,71-72,78,80-81,87,89-90,96,98-99,105,107-108,114,116-117
+apps/evals/eval-results/results/course-chapters/openai-gpt-5.5.json
+  f0b232275ec9b654 1-356
+  af18adead0009bbb 357
+apps/evals/src/lib/battle-runner.ts
+  h_1cda88fc21fe9c 20
+apps/evals/eval-results/outputs/course-chapters/anthropic-claude-opus-4.7.json
+  af18adead0009bbb 124
+  f0b232275ec9b654 1-123
+apps/evals/eval-results/outputs/chapter-lessons/openai-gpt-5.4.json
+  f0b232275ec9b654 2,6,8-9,15,17-18,24,26-27,33,35-36,42,44-45
+apps/evals/eval-results/outputs/chapter-lessons/openai-gpt-5.5.json
+  f0b232275ec9b654 1-51
+  af18adead0009bbb 52
+apps/evals/src/lib/models.ts
+  h_1cda88fc21fe9c 47-51
+apps/evals/eval-results/battles/course-chapters/en-dragon-ball-1.json
+  f0b232275ec9b654 1-94
+  af18adead0009bbb 95
+apps/evals/eval-results/results/chapter-lessons/openai-gpt-5.4.json
+  f0b232275ec9b654 7,9,12,14,17,19,54,56,59,61,64,66,101,103,106,108,111,113,148,150,153,158,160,195,197,200,202,205,207
+apps/evals/eval-results/results/course-chapters/openai-gpt-5.4.json
+  f0b232275ec9b654 7,12,14,17,19,34,39,41,44,46,61,63,66,68,71,73,88,93,98,100,115-169,174,179,181,196,201,203,206,208,223,225,228,230,233,235,250,252,255,257,260,262,277,282,284,287,289,304,309,314,316,331,336,338,341,343
+apps/evals/eval-results/battles/course-chapters/en-machine-learning-1.json
+  f0b232275ec9b654 1-94
+  af18adead0009bbb 95
+apps/evals/eval-results/battles/course-chapters/en-javascript-1.json
+  af18adead0009bbb 95
+  f0b232275ec9b654 1-94
+apps/evals/eval-results/battles/course-chapters/pt-ciencia-da-computacao-1.json
+  af18adead0009bbb 95
+  f0b232275ec9b654 1-94
+apps/evals/src/tasks/course-chapters/test-cases.ts
+  h_1cda88fc21fe9c 78-94
+apps/evals/eval-results/results/course-chapters/anthropic-claude-opus-4.7.json
+  f0b232275ec9b654 1-356
+  af18adead0009bbb 357
+apps/evals/eval-results/results/course-chapters/google-gemini-3.1-pro-preview.json
+  f0b232275ec9b654 1-356
+  af18adead0009bbb 357
+apps/evals/eval-results/battles/course-chapters/es-musica-1.json
+  f0b232275ec9b654 1-94
+  af18adead0009bbb 95
+apps/evals/eval-results/outputs/course-chapters/openai-gpt-5.5.json
+  f0b232275ec9b654 1-123
+  af18adead0009bbb 124
+apps/evals/src/lib/score.ts
+  h_1cda88fc21fe9c 58
+apps/evals/eval-results/battles/course-chapters/pt-kanban-1.json
+  af18adead0009bbb 95
+  f0b232275ec9b654 1-94
+apps/evals/eval-results/battles/course-chapters/pt-medicina-1.json
+  f0b232275ec9b654 1-94
+  af18adead0009bbb 95
+apps/evals/eval-results/outputs/course-chapters/google-gemini-3.1-pro-preview.json
+  af18adead0009bbb 124
+  f0b232275ec9b654 1-123
+apps/evals/eval-results/results/chapter-lessons/openai-gpt-5.5.json
+  af18adead0009bbb 241
+  f0b232275ec9b654 1-240
+apps/evals/eval-results/battles/course-chapters/pt-biologia-1.json
+  af18adead0009bbb 95
+  f0b232275ec9b654 1-94
+apps/evals/eval-results/battles/course-chapters/en-brazilian-history-1.json
+  af18adead0009bbb 95
+  f0b232275ec9b654 1-94
+apps/evals/eval-results/battles/course-chapters/en-google-cloud-1.json
+  f0b232275ec9b654 1-94
+  af18adead0009bbb 95
+apps/evals/eval-results/battles/course-chapters/pt-direito-1.json
+  f0b232275ec9b654 1-94
+  af18adead0009bbb 95
+apps/evals/eval-results/battles/course-chapters/pt-engenharia-formula-1-1.json
+  f0b232275ec9b654 1-94
+  af18adead0009bbb 95
+apps/evals/eval-results/battles/course-chapters/es-astronomia-1.json
+  af18adead0009bbb 95
+  f0b232275ec9b654 1-94
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "361172d22332cce0f9c8c123c4156cb5cbab69e6",
+  "prompts": {
+    "5b880b62b44dca9e": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019dca82-04f5-72a1-adee-254e200ab267",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 0,
+      "total_deletions": 409,
+      "accepted_lines": 0,
+      "overriden_lines": 0
+    },
+    "af18adead0009bbb": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019dcabf-a6c9-7530-9b9f-f33de5520879",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 25,
+      "total_deletions": 25,
+      "accepted_lines": 25,
+      "overriden_lines": 0
+    },
+    "f0b232275ec9b654": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019dcabf-a6e8-7312-9fd1-90e34a6b0f92",
+        "model": "unknown"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 3499,
+      "total_deletions": 47,
+      "accepted_lines": 3474,
+      "overriden_lines": 0
+    }
+  },
+  "humans": {
+    "h_1cda88fc21fe9c": {
+      "author": "ceolinwill"
+    }
+  }
+}
