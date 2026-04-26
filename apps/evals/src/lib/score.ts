@@ -26,28 +26,26 @@ export function calculateScore(steps: ScoreStep[]): number {
 }
 
 /**
- * This function analyzes the output of a given task and run
- * through our score task/prompt to evaluate the quality of the output.
+ * This function analyzes the output of a given task and run against the
+ * test-case expectations plus the concrete input values. The production
+ * system prompt is intentionally excluded so a bad prompt cannot become part
+ * of the grading rubric.
  *
  * It returns a list of steps with conclusions and scores, as well as
  * an overall score which is the average of all step scores.
  */
 export async function generateScore(params: {
-  system: string;
-  prompt: string;
   expectations: string;
+  prompt: string;
   output: string;
 }) {
-  const { system, prompt, expectations, output } = params;
+  const { expectations, prompt, output } = params;
 
   const evalPrompt = `
-    **Instructions**
-    ${system}
-
     **Expectations**
     ${expectations}
 
-    **User provided variables and values**
+    **User provided values**
     ${prompt}
 
     **Result**

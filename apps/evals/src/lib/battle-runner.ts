@@ -117,10 +117,9 @@ type AnonymizedOutput = { anonymousId: string; output: string }[];
 function collectModelOutputsForTestCase(
   testCaseId: string,
   allOutputs: Map<string, ModelOutputs>,
-): { outputs: ModelOutput[]; userPrompt: string; systemPrompt: string } {
+): { outputs: ModelOutput[]; userPrompt: string } {
   const outputs: ModelOutput[] = [];
   let userPrompt = "";
-  let systemPrompt = "";
 
   for (const [modelId, modelOutputs] of allOutputs) {
     const output = getOutputForTestCase(modelOutputs, testCaseId);
@@ -129,12 +128,11 @@ function collectModelOutputsForTestCase(
 
       if (!userPrompt) {
         userPrompt = output.userPrompt;
-        systemPrompt = output.systemPrompt;
       }
     }
   }
 
-  return { outputs, systemPrompt, userPrompt };
+  return { outputs, userPrompt };
 }
 
 function getAnonymizationForBattle(
@@ -157,12 +155,10 @@ async function runJudges(params: {
   judgesToRun: readonly string[];
   anonymizedOutputs: AnonymizedOutput;
   expectations: string;
-  systemPrompt: string;
   userPrompt: string;
   mapping: Mapping;
 }): Promise<BattleMatchup["judgments"]> {
-  const { judgesToRun, anonymizedOutputs, expectations, systemPrompt, userPrompt, mapping } =
-    params;
+  const { judgesToRun, anonymizedOutputs, expectations, userPrompt, mapping } = params;
 
   return Promise.all(
     judgesToRun.map(async (judgeId) => ({
@@ -172,7 +168,6 @@ async function runJudges(params: {
         expectations,
         judgeId,
         mapping,
-        systemPrompt,
         userPrompt,
       }),
     })),
@@ -189,7 +184,6 @@ async function runBattleForTestCase(
   const {
     outputs: modelOutputs,
     userPrompt,
-    systemPrompt,
   } = collectModelOutputsForTestCase(testCaseId, allOutputs);
 
   if (modelOutputs.length < 2) {
@@ -217,7 +211,6 @@ async function runBattleForTestCase(
     expectations: testCase.expectations,
     judgesToRun,
     mapping,
-    systemPrompt,
     userPrompt,
   });
   const allJudgments = effectiveExisting

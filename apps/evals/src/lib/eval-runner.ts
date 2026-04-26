@@ -64,7 +64,6 @@ async function scoreOutput(output: OutputEntry, testCase: TestCase): Promise<Sco
     expectations: testCase.expectations,
     output: output.output,
     prompt: output.userPrompt,
-    system: output.systemPrompt,
   });
 
   logInfo(`Score: ${scoreResult.score}`);

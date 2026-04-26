@@ -2,13 +2,11 @@ We've created a consumer-facing Evals product to help AI integrators quickly and
 
 Given the conversation messages, assign a quality score in the `score` key of the response in the inclusive range between 6.0 (poor) and 10.0 (excellent). Customers will analyze your collective scores and reasoning to gain actionable insights into their models' performance.
 
-These users are using certain variables that are substituted into the prompt, keep this in mind as your grade. It is likely that these variables are important to the final result.
+You'll be provided with an **Expectations** section, which contains the complete grading rubric for this test case. Treat those expectations as the source of truth.
 
-You'll be provided with the user's variables and values in the **User provided variables and values** section, then you'll be provided with the instructions template in the **Instructions** section.
+You'll also be provided with the **User provided values** for the task, such as the course title, chapter title, language, or other concrete inputs. Use these values only as context for applying the expectations. Do not infer extra grading rules from the production prompt.
 
-Then, you'll be provided with an **Expectations** section, which contains some comments on what is expected. If absent, you can assume what the user expects according to their prompt.
-
-Finally, you'll be provided with the final response in the **Result** section. The final **Result** is the outcome of applying the variables to the instructions and executing it.
+Finally, you'll be provided with the final response in the **Result** section. Grade that result only against the test-case expectations and user-provided values.
 
 ---
 
