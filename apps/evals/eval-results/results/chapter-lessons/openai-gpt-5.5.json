@@ -1,22 +1,22 @@
 {
-  "modelId": "openai/gpt-5.4",
+  "modelId": "openai/gpt-5.5",
   "results": [
     {
       "steps": [
         {
-          "conclusion": "The curriculum is accurate and uses mostly active, learner-friendly lesson titles, but it has important coverage gaps for a modern JavaScript chapter on functions, arrays, and objects. Missing canonical pillars include function expressions, arrow functions, anonymous callback functions, callback parameters for array methods, rest parameters, spread syntax for arrays and objects, array/object destructuring, object property shorthand, reference semantics for arrays and objects, mutation versus copying, shallow copies, and common modern access patterns like optional chaining. Because the prompt asks for exhaustive modern practice, these omissions are significant even though the included material is mostly correct.",
+          "conclusion": "The curriculum has no dry textbook lesson-title failure and no clear factual errors. However, it does miss a few canonical modern JavaScript pillars for this chapter’s scope: object destructuring is absent despite array destructuring and parameter destructuring being included; lexical `this` in arrow functions is absent despite `this`, lost binding, and arrow functions being taught; and common function invocation helpers such as `call` and `apply` are missing from the `this`/function-value area. These omissions do not make the curriculum unusable, but they are important enough for a chapter claiming exhaustive coverage of functions, arrays, and objects.",
           "kind": "majorErrors",
-          "score": 8
-        },
-        {
-          "conclusion": "Minor issues include one concept title with a forbidden conjunction: “Choosing Array or Object.” Some concept titles are a bit broad or vague, such as “Data Shape,” “Methods on Objects,” “Function Naming,” and “Single Responsibility.” “Key” and “Value” are also very generic without object-specific context. The lesson “Changing object data safely” promises safety, but the listed concepts do not include copying, mutation risks, or immutable update patterns. Lesson sizes are within limits and progression is generally logical.",
-          "kind": "minorErrors",
           "score": 8.4
         },
         {
-          "conclusion": "Add lessons or concepts for modern function forms and data-handling idioms: Function Expression, Arrow Function, Anonymous Function, Callback Function, Rest Parameters, Spread Syntax for Arrays, Spread Syntax for Objects, Array Destructuring, Object Destructuring, Property Shorthand, Computed Property Names, Optional Chaining, Array reduce Method, Array sort Method, Array findIndex Method, Reference Values, Object Mutation, Array Mutation, Shallow Copy, and Immutable Updates. These additions would make the chapter feel much closer to real-world JavaScript practice while preserving the strong structure already present.",
+          "conclusion": "Minor issues are limited. Some concept titles are a bit broad or potentially ambiguous, such as “Returning Function Values,” “Consistent Return Shape,” “JSON-safe Value,” and “Property Enumeration Order,” though they are still teachable. The curriculum also leans slightly beyond the immediate chapter scope with ES modules, JSDoc, and class inheritance, but those are defensible under reusable code and modern JavaScript practice. Lesson sizes are mostly at the six-concept maximum, which is acceptable but feels somewhat mechanically packed.",
+          "kind": "minorErrors",
+          "score": 8.7
+        },
+        {
+          "conclusion": "The main improvements would be to add a small object destructuring lesson or merge in concepts like Object Destructuring, Renamed Destructuring Property, Default Destructuring Value, Rest Object Property, and Nested Object Destructuring. The function/object-method section would also benefit from Lexical `this` in Arrow Functions, `call` Method, and `apply` Method. A few lessons could be split or retitled slightly to reduce the feeling that many groups are filled to exactly six concepts, but the active-title standard is generally met very well.",
           "kind": "potentialImprovements",
-          "score": 7.8
+          "score": 8.3
         }
       ],
       "testCase": {
@@ -51,19 +51,19 @@
     {
       "steps": [
         {
-          "conclusion": "The curriculum is generally accurate, well scoped, and not dominated by dry textbook lesson titles. However, it has a significant coverage gap for a chapter about Indigenous Brazil: it relies heavily on language families and archaeological traditions but names very few specific Indigenous peoples or nations. Core named groups such as Tupinambá, Tupiniquim, Guarani, Xavante, Bororo, Karajá, Krenak/Botocudo, Xokleng, or specific Xingu peoples would give learners needed anchors. It also omits some landmark archaeological anchors for Brazilian prehistory, especially Serra da Capivara/Pedra Furada and rock art traditions, which are canonical in this topic. These are important missing named entities rather than small stylistic issues, though the overall curriculum still covers many pillars well.",
+          "conclusion": "None. The curriculum is accurate at a high level, stays focused on Indigenous Brazil before colonization, uses many specific named peoples, sites, traditions, tools, crops, landscapes, and archaeological methods, and includes modern practices such as LiDAR, GIS, satellite imagery, stable isotopes, and landscape archaeology. Lesson titles are mostly active and learner-facing rather than dry textbook categories. No major factual error or major missing pillar stands out.",
           "kind": "majorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "Some concept titles are broader than the requested single-concept granularity, such as “Archaeological Sites in Brazil,” “Fishing Techniques,” “Hunting Techniques,” “Landscape Engineering,” “Demographic Diversity,” and “No Single Indigenous Model.” “Tupi Language Family” is somewhat imprecise because “Tupian” is the broader language family and Tupi-Guarani is a major branch. A few lesson titles are more academic than hands-on, such as “Mapping Brazil's linguistic diversity,” but the set is not dominated by dry titles. The curriculum also uses some generalized ethnographic concepts, such as “Chiefdom,” “Cross-Cousin Marriage,” and “Yanomami Shabono,” without signaling regional specificity, which could flatten diversity if not handled carefully.",
+          "conclusion": "Several minor issues reduce polish. Almost every lesson has exactly 6 concepts, which feels mechanically uniform despite the instruction to let lesson sizes vary naturally. Some concept titles are broader or more abstract than ideal, such as “Archaeological Context,” “Ethnohistory,” “Landscape Archaeology,” “Cultural Continuity,” and “Survivance.” A few labels may slightly oversimplify scholarly categories, such as “Tupi-Guarani Family” rather than treating Tupi-Guarani more carefully within the broader Tupian context, or “Baniwa Ancestors” and similar titles implying direct pre-1500 continuity that may need careful framing. Some lesson titles, while active, are still fairly generic, such as “Recognize inland environments” and “Name the major archaeological traditions.”",
           "kind": "minorErrors",
-          "score": 8.2
+          "score": 8.4
         },
         {
-          "conclusion": "The curriculum would be stronger if it added a dedicated sequence for named peoples and regional societies, including coastal Tupi-speaking peoples, Guarani, Macro-Jê peoples, Xinguano societies, Karajá, Bororo, and other regionally important groups. It should also add concrete archaeological concepts such as Serra da Capivara, Pedra Furada, rock art, burial practices, shell-mound lifeways, radiocarbon dating, and possibly ancient DNA as a modern method. Food and environmental lessons could be made more concrete by naming regionally important resources such as pine nuts, Brazil nuts, tobacco, cotton, fish poisons, and canoe-making materials where relevant. Several broad concepts should be split into more teachable single items.",
+          "conclusion": "The curriculum could be improved by adding a small number of missing or underemphasized pillars, especially rock art and Serra da Capivara-style visual evidence, population-density debates, more explicit coastal peoples such as Tupinambá, Tupiniquim, Potiguara, and Tamoio where relevant, and more careful treatment of uncertainty when connecting archaeological traditions to named peoples. It would also benefit from varying lesson sizes and replacing a few abstract concept titles with more concrete teachable items. Overall, however, it is comprehensive, well organized, modern, and highly usable.",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 8.6
         }
       ],
       "testCase": {
@@ -98,19 +98,19 @@
     {
       "steps": [
         {
-          "conclusion": "Important missing topics: the curriculum is strong on the classic CPC sequence, but it omits several pillars a Brazilian civil-procedure learner would be expected to know in current practice. The biggest gaps are modern electronic procedure tools and conventions such as PJe/eproc/e-SAJ, electronic filing, electronic summons/intimations, digital signatures, remote hearings, and electronic case access. It also omits the CPC/2015 precedent system, including binding precedents, IRDR, IAC, repetitive appeals, repercussão geral, súmulas, and distinguishing/overruling, which are central to contemporary civil litigation. Other important gaps include interesse de agir, pressupostos processuais, Ministério Público participation, judicial conciliation/mediation structure, impugnação ao cumprimento de sentença, embargos à execução, and Juizados Especiais Cíveis. No clear factual errors dominate the curriculum, and lesson titles are mostly active and learner-facing.",
+          "conclusion": "No major factual errors, serious scope failures, or dominance of dry textbook lesson titles were found. The curriculum is in Brazilian Portuguese, stays focused on Brazilian civil procedure, uses mostly active lesson titles, and covers the central pillars: principles, jurisdiction/competence, parties, pleadings, procedural acts, deadlines, evidence, provisional remedies, judgments, enforcement, appeals, precedents, and modern digital practice.",
           "kind": "majorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "Several concept titles are broader than the requested single-concept granularity, such as “Teoria Geral dos Recursos,” “Elementos da Sentença,” “Intervenção de Terceiros,” “Modificação de Competência,” and “Alegações Preliminares.” There is some duplication or near-overlap, especially “Distribuição do Ônus da Prova” and “Ônus da Prova.” A few concepts could be more precise in Brazilian legal terminology, such as “Assistência Processual,” which may be confused with legal aid rather than third-party assistance. Some lesson groupings are slightly awkward, for example placing “Julgamento Antecipado do Mérito” in a lesson framed around audiência and instrução. Overall, these are minor compared with the curriculum’s generally coherent structure.",
+          "conclusion": "Some minor gaps and wording issues remain. A few canonical civil procedure items are not explicit, especially interesse processual/interesse de agir, pressupostos processuais as such, intimação in general beyond the electronic form, providências preliminares/réplica, julgamento antecipado do mérito, julgamento parcial do mérito, and PJe as a named modern system. A few titles or descriptions are slightly imprecise, such as 'Entender decisões do juiz' including acórdão and decisão monocrática, which are more broadly tribunal/judicial pronunciements. There is also some mild duplication between convenção de foro and cláusula de eleição de foro.",
           "kind": "minorErrors",
-          "score": 8.2
+          "score": 8.7
         },
         {
-          "conclusion": "Add a dedicated modern-practice unit for electronic civil procedure, naming PJe, eproc, e-SAJ, electronic filing, electronic summons, electronic intimation, digital signature, remote hearing, and Diário de Justiça eletrônico. Add a unit on the CPC precedent system with IRDR, IAC, recursos repetitivos, repercussão geral, súmula vinculante, distinguishing, and overruling. Add missing foundational concepts such as interesse de agir, pressupostos processuais, poderes do juiz, deveres das partes, litigância de má-fé, Ministério Público, Defensoria Pública, advocacia pública, conciliação, mediação, sentença homologatória, impugnação ao cumprimento de sentença, embargos à execução, remessa necessária, and Juizados Especiais Cíveis. Split broad concepts into smaller teachable items where possible.",
+          "conclusion": "The curriculum could be improved by adding a small lesson or concepts for admissibility of the action, especially interesse de agir and pressupostos processuais; expanding the post-contestation path with réplica, providências preliminares, julgamento antecipado, and julgamento parcial de mérito; and naming PJe alongside other modern digital tools. It could also slightly refine a few lesson titles to avoid small precision issues, but the overall structure is strong and highly usable.",
           "kind": "potentialImprovements",
-          "score": 8
+          "score": 8.8
         }
       ],
       "testCase": {
@@ -145,19 +145,19 @@
     {
       "steps": [
         {
-          "conclusion": "The curriculum is largely accurate, well-structured, and strongly aligned with the exoplanets chapter, but there are a few substantive issues. It omits some canonical exoplanet pillars that would normally be expected in an exhaustive chapter, especially pulsar timing as a detection method and landmark exoplanets/systems such as 51 Pegasi b, PSR B1257+12 planets, TRAPPIST-1, Proxima Centauri b, HR 8799, WASP-39b, or K2-18 b. The chapter description frames the topic as the “revolution” of exoplanets, so missing named discovery anchors weakens coverage. There is also a factual-timing issue: PLATO and ARIEL are treated as if they have already changed the field or are tools “of today,” but they are planned/future missions rather than currently productive observatories in the same sense as Kepler, TESS, JWST, HARPS, or ESPRESSO.",
+          "conclusion": "None. The curriculum is in Latin American Spanish, uses mostly active/hands-on lesson titles, covers the canonical exoplanet pillars thoroughly, includes modern practice and named missions/instruments/planetary systems, and does not contain clear factual errors that would mislead learners.",
           "kind": "majorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "Minor issues include some overlap between concepts such as “Mini-Neptuno” and “Planeta subneptuniano,” a few broad concept labels like “Habitabilidad planetaria,” and slight scope drift into SETI/technosignature material with the Drake Equation, Dyson sphere, and artificial radio signal. These are defensible given the chapter’s life-detection framing, but they could be more tightly framed around what exoplanet observations can actually constrain. Most lesson titles are active and learner-facing, though a few are somewhat generic, such as “Conocer las herramientas clave de hoy.”",
+          "conclusion": "Minor issues: a few concept choices are slightly overlapping or repeated, such as “Período orbital” appearing in more than one lesson and “Mini-Neptuno”/“Sub-Neptuno” being closely related terms. Some concept titles are a bit broad or category-like, such as “Planeta rocoso,” “Gigante gaseoso,” or “Actividad estelar,” though still teachable. Lesson sizes lean heavily toward 5–6 concepts, so the grouping is somewhat uniform, but it stays within the required limits.",
           "kind": "minorErrors",
-          "score": 8.6
+          "score": 8.8
         },
         {
-          "conclusion": "The curriculum could be improved by adding a short lesson on landmark discoveries and named worlds, adding pulsar timing as a detection method, including Gaia more explicitly for astrometry, and refining future-mission wording so PLATO and ARIEL are described as upcoming tools rather than already established field changers. It could also add stellar characterization concepts, such as stellar radius, stellar mass, stellar metallicity, and limb darkening, because exoplanet properties often depend directly on what is known about the host star.",
+          "conclusion": "The curriculum could be improved by tightening duplicate concepts, clarifying near-synonyms, and adding a few extra modern observational details such as ephemeris decay, transit spectroscopy systematics, JWST-specific retrieval caution, or high-dispersion spectroscopy if aiming for even more exhaustive professional coverage. Overall, however, it is broad, well structured, and highly useful for the stated chapter.",
           "kind": "potentialImprovements",
-          "score": 8.2
+          "score": 9
         }
       ],
       "testCase": {
@@ -192,19 +192,19 @@
     {
       "steps": [
         {
-          "conclusion": "No clear factual errors were found, and the curriculum covers many core transformer pillars well: QKV attention, softmax attention, multi-head attention, encoder/decoder layouts, masks, training objectives, named model families, modality adaptation, compute limits, and efficient attention. However, there are important modern-practice omissions for a Transformers chapter: modern positional methods such as Relative Positional Embeddings, RoPE, and ALiBi are missing; practical tokenizer families such as BPE, WordPiece, or SentencePiece are absent; modern block variants such as Pre-Norm Transformers, RMSNorm, GELU/SwiGLU-style feedforward layers, and multi-query/grouped-query attention are not represented. These omissions matter because current transformer practice has moved beyond the original sinusoidal/learned-position textbook version.",
+          "conclusion": "None. The curriculum is accurate at a high level, stays within the Transformers chapter rather than drifting into serving, MLOps, RAG, or LLM product usage, and covers the major pillars: tokenization, embeddings, attention mechanics, masking, positional methods, encoder/decoder/encoder-decoder designs, pretraining objectives, fine-tuning patterns, landmark models, efficiency methods, vision/audio/multimodal transformers, and interpretability. Lesson titles are mostly active and learner-facing rather than dry textbook headings.",
           "kind": "majorErrors",
-          "score": 8
+          "score": 10
         },
         {
-          "conclusion": "Several concept titles are somewhat broad or abstract, such as “Sequence Modeling Limits,” “Training Objective,” “Transfer Learning,” “Scaling Behavior,” “Emergent Features,” and “Multimodal Tokens.” Some could be split into more concrete teachable items. A few lessons also group concept families rather than fully naming concrete variants, especially in tokenization and positional encoding. Lesson sizes mostly follow the 3–6 rule, and the lesson titles are generally active and learner-friendly rather than dry textbook labels.",
+          "conclusion": "Several minor issues reduce polish. Every lesson has exactly 6 concepts, which feels mechanically forced and violates the spirit of natural lesson-size variation. A few concepts are repeated across lessons, especially “Switch Transformer” and “Vision Transformer.” Some concept titles are slightly broad or vague, such as “Original Transformer,” “Parameter Count,” “Memory Footprint,” and “Softmax Probability.” A few modern transformer details are missing or underrepresented, including WordPiece/SentencePiece/Unigram tokenization, QKV projection matrices as distinct teachable items, RMSNorm, SwiGLU, grouped-query attention, and multi-query attention. Some legacy items like Next Sentence Prediction receive space while a few current architectural conventions are absent.",
           "kind": "minorErrors",
-          "score": 8.4
+          "score": 8.3
         },
         {
-          "conclusion": "The curriculum would be stronger by adding lessons or concepts for BPE, WordPiece, SentencePiece, Relative Positional Embeddings, RoPE, ALiBi, Pre-Norm Transformer Blocks, Post-Norm Transformer Blocks, RMSNorm, GELU, SwiGLU, Multi-Query Attention, Grouped-Query Attention, and possibly CLIP as a named multimodal transformer system. It could also separate the “why transformers replaced older architectures” ideas into more concrete single concepts with less abstract wording. Overall, though, it is well organized, mostly granular, scoped appropriately, and strongly aligned with the chapter goals.",
+          "conclusion": "The curriculum could be improved by varying lesson sizes naturally, removing duplicate named models, replacing vague concepts like “Original Transformer” with concrete named anchors such as “Attention Is All You Need,” and adding a small modern architecture lesson for RMSNorm, SwiGLU, grouped-query attention, and multi-query attention. It would also benefit from more explicit concepts for WordPiece, SentencePiece, Unigram tokenization, and the learned Q/K/V projection matrices. Overall, though, it is comprehensive, well organized, and highly useful for the stated chapter.",
           "kind": "potentialImprovements",
-          "score": 8.2
+          "score": 8.5
         }
       ],
       "testCase": {

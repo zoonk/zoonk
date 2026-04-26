@@ -1,0 +1,95 @@
+{
+  "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Must preserve computer science as the subject, with recognizable coverage of programming, algorithms, data structures, systems, databases, networks, software engineering, security, AI, and theory — not generic digital literacy or productivity with computers\n\n      \n  - Mission context: this curriculum is for learners OUTSIDE privileged environments — people who doubt they can become serious practitioners. Chapters should feel welcoming and legible, not gate-kept by academic vocabulary\n  - MAJOR ERROR: the first chapter must hook the learner IN the subject with REAL problems, REAL artifacts, REAL techniques, REAL cases, or REAL tools. After chapter 1 the learner should think \"I want to learn how to do this\", not \"OK, now I know what this field is about\"\n  - MAJOR ERROR: forbidden first-chapter patterns — \"What is X\" / \"Introduction to X\" / \"Overview of X\" / \"Panorama of X\" / \"Why X matters\" / \"When human effort isn't enough\" / any chapter whose lessons would be ABOUT the field (its definition, taxonomy, history from the outside) rather than IN the field\n  - MAJOR ERROR: hands-on does NOT mean advanced. The first chapter must ALSO be beginner-accessible — the simplest concrete entry point a true beginner can follow without prerequisites the course hasn't taught yet. Opening with a dramatic, specialized, or impressive-sounding example that requires skipped prerequisites (e.g., \"acute chest pain in the emergency room\" as chapter 1 of Medicine before anatomy/physiology, or \"detect an exoplanet via light curve\" as chapter 1 of Astronomy before the learner knows what a light curve is) is a major error — even though the example is real and concrete\n  - MAJOR ERROR: ignoring natural starting points. For chronological subjects (history, long narratives), chapter 1 must open in the EARLY period of the course's chronology through a concrete document, figure, or artifact — skipping ahead to a dramatic later event (e.g., opening a \"Brazilian History\" course with the 1964 military coup instead of the colonial period) is a major error. For subjects with a skill progression (music, medicine, crafts), chapter 1 must start at the simplest real task a beginner can actually do, not a specialized scenario\n  - First-chapter sanity test: \"would a true beginner plausibly encounter this first?\" If the answer requires skipping prerequisites or skipping the natural chronology/progression of the field, the hook is wrong\n  - The curriculum must be a serious arc from beginner to real competence, not a shallow tour\n  - Chapter count is a RESULT of coverage, not a target. Do not penalize or reward specific counts. Evaluate whether every canonical pillar of the field has at least one chapter — if any pillar is missing, the curriculum is incomplete regardless of count. Broad fields naturally need many chapters; narrow tools and hobby topics naturally need fewer\n  - MAJOR ERROR: trading breadth for recency. Modern topics must ADD coverage without REPLACING canonical foundations. For example, a machine learning curriculum that covers transformers/LLMs/RAG/diffusion/fine-tuning but drops reinforcement learning, time-series forecasting, recommender systems, or causal inference is incomplete — those are canonical ML pillars. A medicine curriculum that covers telemedicine and modern EMRs but drops anatomy, physiology, pathology, or pharmacology is incomplete. If covering everything needs more chapters, more chapters is the correct answer\n  - Must cover BOTH academic AND practical pillars:\n    - Academic pillars: theory, foundations, history, canonical body of knowledge\n    - Modern toolchain: what working practitioners in this field actually use this year\n    - End-to-end workflow: at least one chapter walking through how real work in the field gets delivered start to finish\n    - Last-decade shifts: what's been added to the field in the past 10 years that a textbook wouldn't have covered 10 years ago (new regulations, new platforms, new techniques, AI changes, etc.)\n  - The \"junior practitioner test\": if a junior would be embarrassed on day 1 of real practice because a topic is missing, that topic must exist as its own chapter\n  - Cover core pillars before specialized or frontier topics\n  - Stay tightly focused on the course title. Generic cross-disciplinary chapters that could be copied unchanged into many unrelated courses are a major error unless the topic IS the subject of the course\n  - MAJOR ERROR: meta-chapters that describe, taxonomize, or survey the field from the outside instead of teaching it\n  - MAJOR ERROR: survey chapters that list many areas as bullet points without teaching any of them — each topic that matters deserves its own chapter with real depth\n  - MAJOR ERROR: catch-all \"recent developments\" chapters. Titles like \"Catch up with the last decade of X\", \"What's new in X\", \"Recent developments in X\", \"The last decade of X\", or \"Modern X\" that bundle multiple distinct modern techniques into a single chapter are a major error. Each modern shift (transformers, LLMs, RAG, diffusion, fine-tuning for ML; LGPD/GDPR, digital filing for Law; telemedicine, EMRs for Medicine; etc.) deserves its own substantive chapter\n  - Avoid overlap. If two chapters would naturally share most of their lessons, they should be merged or their scopes sharpened\n  - Prefer concept names over vendor names in chapter titles/descriptions (e.g., \"Package management\" instead of a specific tool name). Foundational tools that ARE the subject of the course are an allowed exception. Vendor name usage in non-vendor courses is a minor issue, never a major error\n  - For courses covering a field, profession, or serious practice, a \"navigating the field\" closing chapter is expected. It must cover ROLES AND SPECIALTIES (what kinds of practitioners exist and what they do differently), CONTRIBUTION/ENTRY PATHS (how people actually join — jobs, residencies, open source, communities), the ARTIFACT THAT PROVES COMPETENCE in this field (code repos, case records, clinical hours, recordings), and HOW PRACTITIONERS KEEP SKILLS CURRENT. A narrow \"Build a Portfolio\" or \"Build a Project\" closing chapter is a major error — a portfolio is just one small part of navigating a field. The closing chapter must be specific to the subject, not generic career advice\n  - For hobby / pop-culture topics, no closing navigation chapter is expected\n  - Titles: short, specific, concrete. Prefer titles that name a real thing or answer a real question. Avoid \"I / II / Part 1\" — use descriptive subtitles instead. Academic catalog-style titles that read like a university transcript are a minor issue\n  - Descriptions: 1–2 sentences describing what the chapter covers and, when natural, what it enables\n  - MAJOR ERROR in descriptions: using the words \"explore\", \"understand\", \"learn about\", \"introduction to\", or \"basics of\". The prompt forbids them outright because they are warm-sounding filler that doesn't describe anything\n  - Warm, plain language throughout. Avoid academic vocabulary\n  - Language output must follow the language parameter. For `en`: US English. For `pt`: Brazilian Portuguese. For `es`: Latin American Spanish\n  - Titles and descriptions must not leak prompt instructions or make claims about the learner's performance\n  - Don't evaluate output format — focus on chapter content quality only\n\n    ",
+  "judgedAt": "2026-04-26T16:24:09.725Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.7",
+      "rankings": [
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Comprehensive coverage of all canonical CS pillars including RL, time series, recommenders, causal inference, classical ML methods, plus modern shifts as separate chapters (transformers, LLMs, RAG, diffusion, fine-tuning, MLOps). Strong beginner-accessible first chapter, proper closing navigation chapter, and clean descriptions avoiding forbidden words.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Very thorough with separate chapters for each modern shift, good first chapter hook, and proper navigation closing. Slight overlap potential but covers nearly all pillars including ethics, embedded, mobile, FOSS. Description uses 'aprende' which is fine, avoids forbidden filler well.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Good beginner-accessible opening and broad coverage, but heavily vendor-name oriented (FastAPI, React, GitHub Actions, AWS, PyTorch, MongoDB, Redis). Closing chapter is more portfolio/career-generic, missing artifact-of-competence depth. Bundles RAG into LLM chapter rather than separate; missing RL, time series, recommenders, causal inference, diffusion as separate chapters.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Significantly under-covers canonical pillars: no theory of computation, no compilers, no discrete math, no separate chapters for transformers/RAG/diffusion/fine-tuning (all bundled into one AI chapter), no RL, time series, recommenders, causal inference, computer graphics, HCI, ethics. Closing chapter is too portfolio/interview-focused, missing the field-specific navigation depth.",
+          "score": 4.5
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Model A created an outstanding, comprehensive Computer Science curriculum. It perfectly balanced academic pillars (Theory, Compilers, Math) with practical ones, and brilliantly unbundled modern topics (giving Transformers, LLMs, RAG, and Diffusion their own chapters) without dropping canonical foundations. It receives a penalty only for using the forbidden word 'entende' (understand) in a few chapter descriptions.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Model C also followed the structural rules well, successfully unbundling modern AI topics and retaining canonical CS foundations. However, it took the prompt's examples too literally, resulting in a curriculum that is disproportionately skewed toward Machine Learning for a general CS course. Like A, it also lost points for using the forbidden word 'entende'.",
+          "score": 6.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Model B did an excellent job avoiding all forbidden words and keeping descriptions active. However, it committed two major structural errors: it dropped essential academic CS pillars (like Theory of Computation and Compilers) to read more like a web dev bootcamp, and it bundled all modern AI shifts into a single catch-all chapter.",
+          "score": 4.5
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Model D committed multiple major errors. It bundled modern AI topics into a single catch-all chapter, missed theoretical CS foundations, and completely ignored the negative constraints by repeatedly using forbidden words ('Entenda' and 'Aprenda') throughout its descriptions.",
+          "score": 3
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.5",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Excelente currículo em português, com primeiro capítulo concreto, simples e dentro da computação. Cobre muito bem programação, algoritmos, estruturas de dados, sistemas, redes, bancos, segurança, teoria, IA, toolchain moderno, fluxo ponta a ponta e capítulo final específico de navegação na área. Pequenas melhorias seriam detalhar um pouco mais como profissionais mantêm habilidades atuais no capítulo final, mas a cobertura é muito forte.",
+          "score": 9.5
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Também começa com uma tarefa real e acessível, e oferece uma trajetória séria de Ciência da Computação com teoria, sistemas, software, IA moderna e áreas aplicadas. É especialmente forte em ML/IA e fundamentos, mas fica um pouco menos completo que o A em nuvem, privacidade regulatória, práticas modernas de operação e especificidade do capítulo final. Ainda assim, atende muito bem ao pedido.",
+          "score": 8.8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "O início é bom e prático, e o currículo ensina bastante programação e desenvolvimento moderno. Porém fica mais parecido com uma trilha de desenvolvimento web/bootcamp do que Ciência da Computação completa: faltam pilares como matemática discreta, teoria da computação, linguagens/compiladores, HCI, ética e cobertura mais séria de IA moderna separada por tópicos. O capítulo final é mais focado em GitHub/entrevistas do que em navegar a área de forma ampla.",
+          "score": 6.2
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Tem um primeiro capítulo concreto e cobre algumas práticas modernas importantes como Git, redes, bancos, containers, CI/CD e nuvem. Mas é incompleto para Ciência da Computação: quase não há fundamentos de programação, teoria, matemática discreta, compiladores, IA/ML canônica, HCI, ética ou privacidade, e a IA moderna aparece em um capítulo genérico demais. O fechamento também é estreito e voltado a mercado/portfólio, não à navegação completa da área.",
+          "score": 5
+        }
+      ]
+    }
+  ],
+  "taskId": "course-chapters",
+  "testCaseId": "pt-ciencia-da-computacao-1"
+}

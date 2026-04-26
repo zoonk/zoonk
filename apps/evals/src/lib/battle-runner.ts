@@ -17,7 +17,7 @@ const BATTLES_DIR = path.join(EVAL_RESULTS_DIR, "battles");
 const BATTLE_JUDGES_CONFIG: readonly string[] = [
   "anthropic/claude-opus-4.7",
   "google/gemini-3.1-pro-preview",
-  "openai/gpt-5.4",
+  "openai/gpt-5.5",
 ];
 
 async function ensureBattlesDir(taskId: string) {
