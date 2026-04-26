@@ -1,48 +1,76 @@
 const SHARED_EXPECTATIONS = `
-  # How to evaluate
+  # Goal
 
-  You are evaluating a CURRICULUM, not a glossary. Think like a curriculum designer reviewing a colleague's work — use domain expertise and professional judgment, not mechanical rule-checking.
+  Evaluate whether the result is a usable lesson plan for the requested chapter.
 
-  **Only three things should meaningfully drive the score down. Everything else is minor.**
+  A strong lesson plan turns the chapter scope into cohesive learner capabilities. Each lesson should be large enough to support its own explanation activities, practice, quiz, and review without repeating neighboring lessons. Coverage matters, but only when the lesson boundaries would produce a good learning experience in this product.
 
-  # Major penalties
+  # What Good Looks Like
 
-  ## 1. Dry, textbook lesson titles
+  - Lessons are capability-sized: each one teaches a distinct mechanism, decision, artifact, workflow, or real learner move.
+  - Related concepts that are mutually defining stay together in one lesson.
+  - The plan covers the chapter's canonical fundamentals, important modern practice, and required named entities from the domain.
+  - Lessons stay inside this chapter's scope and avoid concepts that primarily belong to neighboring chapters.
+  - Titles are concrete and learner-facing, not dry textbook categories.
+  - Descriptions explain what the learner will do or be able to reason through.
+  - Concepts are specific enough to guide content generation, but they are raw material inside a lesson, not automatic lesson candidates.
 
-  Titles must be **active and hands-on** — a learner action, a question, or a concrete outcome. Noun-phrase categories that read like a table of contents are a major failure even when the content underneath is correct.
+  # Major Failures
 
-  - Dry (major issue): "Types of levers", "Warfare and conflict", "Landmark model families", "Fundamentals of catalysts", "Modalidades de pedido"
-  - Active (good): "Picking a lever for heavy loads", "Why communities went to war", "How BERT, GPT, and T5 differ", "Speeding up a reaction with a catalyst", "Escolhendo o tipo certo de pedido"
+  ## False Granularity
 
-  Ask: would a learner pick this title feeling pulled in, or like they're pushing through a syllabus? A curriculum dominated by dry titles is a major penalty, not a style nit.
+  False granularity is the main failure this eval must catch. It happens when the output looks comprehensive because it split the chapter into many tiny lessons, but those lessons would generate repetitive activities.
 
-  ## 2. Factual errors
+  Use this test: if the explanation or practice for lesson A must teach lesson B's core idea for lesson A to make sense, A and B should probably be one lesson.
 
-  Anything in a lesson title, description, or concept that is factually wrong, historically inaccurate, technically incorrect, or would mislead a learner. Use your domain expertise — if a practitioner would catch it as wrong, it is a major penalty.
+  Penalize as a major failure when the output:
 
-  ## 3. Important missing topics
+  - splits one input -> process -> result chain into separate lessons
+  - splits first-exposure parts that define each other, such as variable/name/value/output, function declaration/call/parameter/return, or loop/condition/body
+  - creates many adjacent lessons that would use the same example with slightly different labels
+  - turns every method, subtopic, phase, or label into its own lesson even though the learner experience would be repetitive
+  - rewards glossary completeness over teachable lesson boundaries
 
-  The curriculum must cover:
+  Do not confuse false granularity with valid domain decomposition. Adjacent lessons can be separate when they teach different evidence types, interpretive tasks, mechanisms, source categories, workflows, or real-world decisions. Examples that can be valid:
 
-  - **Canonical fundamentals** of the chapter's topic — the pillars a serious learner must know, whether or not the description lists them explicitly. If a junior practitioner would be embarrassed on day 1 because a pillar is missing, that is a major penalty.
-  - **Modern practice** — the tools, idioms, and conventions actually in use today. If the topic has evolved meaningfully in the last 15–20 years and the curriculum teaches only the pre-change textbook version, that is a major penalty.
-  - **Specific named entities** that populate the domain — people, missions, tools, models, compounds, works, peoples, landmark systems — must appear as concepts, not only abstract category labels. An exoplanets chapter that names no specific exoplanet or mission, or a catalysts chapter that names no specific catalyst, has this failure.
+  - history lessons that use artifacts, landscapes, languages, trade goods, rituals, warfare, and diplomacy for different kinds of historical reasoning
+  - astronomy lessons that separate detection methods, signal validation, physical inference, atmospheric characterization, habitability, missions, and telescope capabilities
+  - law lessons that separate procedural moves with different legal effects, deadlines, parties, remedies, or courts
+  - technical lessons that separate mechanisms only when each can be practiced without re-teaching the neighboring mechanism
 
-  # Minor notes
+  Named-entity lessons are not automatically false granularity. They are valid when the named people, sites, missions, models, cases, tools, or works anchor a distinct comparison, interpretation, evidence source, or practical decision. Penalize them as false granularity only when the lesson is mostly a memorization list or would repeat the same teaching move as a neighboring lesson.
 
-  Everything else is a minor note and should NOT dominate the score:
+  Score caps:
 
-  - Lesson sizes (ideal is 3–6 concepts with natural variation)
-  - Concept title wording: abstract bare terms, verbosity, thesis-style framing
-  - Conjunctions (AND/OR/VS) inside concept titles — flag them, but minor
-  - Description openers and style — "introduces / covers / explores", "You will..."
-  - Progression polish, summary/review lessons, minor scope bleed into neighboring chapters
+  - Clear false-granularity cluster: \`majorErrors\` score must be 7.5 or lower.
+  - Repeated false granularity across the output, after excluding valid domain decomposition: \`majorErrors\` score must be 6.5 or lower.
+  - Glossary-expanded syllabus where many lessons are too small to support distinct activities: \`majorErrors\` score must be 6.5 or lower.
 
-  Mention these in a single consolidated minor-issues note. A curriculum that nails active titles, accurate facts, and comprehensive coverage of fundamentals and modern practice is strong even with wording nits.
+  ## Coverage, Accuracy, and Scope
 
-  # Scope and neighboring chapters
+  Penalize as major failures when the output:
 
-  Neighboring chapters are guardrails against scope creep, not vetoes. Judge by framing, not by keywords — a lesson belongs here if its primary teaching purpose serves this chapter's goals, even if it mentions words that appear in a neighbor's title.
+  - misses canonical chapter pillars or modern practices a serious learner needs
+  - omits important named entities in domains built around specific people, tools, missions, models, works, groups, cases, or landmark systems
+  - includes factual, historical, legal, scientific, technical, or linguistic errors
+  - drifts into neighboring-chapter material as lesson topics rather than brief context
+  - uses mostly dry textbook headings that feel like a table of contents instead of learner-facing actions or outcomes
+
+  # Minor Issues
+
+  Treat these as minor unless they make the lesson plan hard to use:
+
+  - isolated awkward title wording
+  - concept titles that are slightly broad, abstract, verbose, or compound
+  - lesson sizes that are uneven or mechanically uniform when the boundaries are otherwise sound
+  - small progression or phrasing issues
+  - small scope-adjacent mentions that do not become lesson topics
+
+  # Scoring Order
+
+  First check whether the lesson boundaries would produce distinct, non-repetitive learning arcs. Then check coverage, accuracy, scope, and title quality. Do not reward extra length, exhaustive lists, or high concept count by themselves.
+
+  If the output has no concrete major failures, the \`majorErrors\` conclusion should be "None" and the score should be 10.
 `;
 
 export const TEST_CASES = [
@@ -50,6 +78,8 @@ export const TEST_CASES = [
   {
     expectations: `
       - MUST be in US English
+      - JavaScript-specific false-granularity check: separate adjacent lessons for calling a function, passing data into a function, returning a result, and choosing a function shape are over-split. Those ideas are mutually defining parts of using functions and should mostly be one cohesive lesson, or at most a very small number of lessons. If you see this pattern, the \`majorErrors\` score must be 6.5 or lower.
+      - Do not reward this case for adding many narrow lessons about every array/object method or function subtopic. The lesson list should feel like teachable learner capabilities, not a glossary expanded into a syllabus.
 
       ${SHARED_EXPECTATIONS}
     `,
