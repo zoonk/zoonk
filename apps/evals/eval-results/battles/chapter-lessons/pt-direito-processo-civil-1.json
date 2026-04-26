@@ -1,0 +1,95 @@
+{
+  "expectations": "\n      - MUST be in Brazilian Portuguese\n\n      \n  # Goal\n\n  Evaluate whether the result is a usable lesson plan for the requested chapter.\n\n  A strong lesson plan turns the chapter scope into cohesive learner capabilities. Each lesson should be large enough to support its own explanation activities, practice, quiz, and review without repeating neighboring lessons. Coverage matters, but only when the lesson boundaries would produce a good learning experience in this product.\n\n  # What Good Looks Like\n\n  - Lessons are capability-sized: each one teaches a distinct mechanism, decision, artifact, workflow, or real learner move.\n  - Related concepts that are mutually defining stay together in one lesson.\n  - The plan covers the chapter's canonical fundamentals, important modern practice, and required named entities from the domain.\n  - Lessons stay inside this chapter's scope and avoid concepts that primarily belong to neighboring chapters.\n  - Titles are concrete and learner-facing, not dry textbook categories.\n  - Descriptions explain what the learner will do or be able to reason through.\n  - Concepts are specific enough to guide content generation, but they are raw material inside a lesson, not automatic lesson candidates.\n\n  # Major Failures\n\n  ## False Granularity\n\n  False granularity is the main failure this eval must catch. It happens when the output looks comprehensive because it split the chapter into many tiny lessons, but those lessons would generate repetitive activities.\n\n  Use this test: if the explanation or practice for lesson A must teach lesson B's core idea for lesson A to make sense, A and B should probably be one lesson.\n\n  Penalize as a major failure when the output:\n\n  - splits one input -> process -> result chain into separate lessons\n  - splits first-exposure parts that define each other, such as variable/name/value/output, function declaration/call/parameter/return, or loop/condition/body\n  - creates many adjacent lessons that would use the same example with slightly different labels\n  - turns every method, subtopic, phase, or label into its own lesson even though the learner experience would be repetitive\n  - rewards glossary completeness over teachable lesson boundaries\n\n  Do not confuse false granularity with valid domain decomposition. Adjacent lessons can be separate when they teach different evidence types, interpretive tasks, mechanisms, source categories, workflows, or real-world decisions. Examples that can be valid:\n\n  - history lessons that use artifacts, landscapes, languages, trade goods, rituals, warfare, and diplomacy for different kinds of historical reasoning\n  - astronomy lessons that separate detection methods, signal validation, physical inference, atmospheric characterization, habitability, missions, and telescope capabilities\n  - law lessons that separate procedural moves with different legal effects, deadlines, parties, remedies, or courts\n  - technical lessons that separate mechanisms only when each can be practiced without re-teaching the neighboring mechanism\n\n  Named-entity lessons are not automatically false granularity. They are valid when the named people, sites, missions, models, cases, tools, or works anchor a distinct comparison, interpretation, evidence source, or practical decision. Penalize them as false granularity only when the lesson is mostly a memorization list or would repeat the same teaching move as a neighboring lesson.\n\n  Score caps:\n\n  - Clear false-granularity cluster: `majorErrors` score must be 7.5 or lower.\n  - Repeated false granularity across the output, after excluding valid domain decomposition: `majorErrors` score must be 6.5 or lower.\n  - Glossary-expanded syllabus where many lessons are too small to support distinct activities: `majorErrors` score must be 6.5 or lower.\n\n  ## Coverage, Accuracy, and Scope\n\n  Penalize as major failures when the output:\n\n  - misses canonical chapter pillars or modern practices a serious learner needs\n  - omits important named entities in domains built around specific people, tools, missions, models, works, groups, cases, or landmark systems\n  - includes factual, historical, legal, scientific, technical, or linguistic errors\n  - drifts into neighboring-chapter material as lesson topics rather than brief context\n  - uses mostly dry textbook headings that feel like a table of contents instead of learner-facing actions or outcomes\n\n  # Minor Issues\n\n  Treat these as minor unless they make the lesson plan hard to use:\n\n  - isolated awkward title wording\n  - concept titles that are slightly broad, abstract, verbose, or compound\n  - lesson sizes that are uneven or mechanically uniform when the boundaries are otherwise sound\n  - small progression or phrasing issues\n  - small scope-adjacent mentions that do not become lesson topics\n\n  # Scoring Order\n\n  First check whether the lesson boundaries would produce distinct, non-repetitive learning arcs. Then check coverage, accuracy, scope, and title quality. Do not reward extra length, exhaustive lists, or high concept count by themselves.\n\n  If the output has no concrete major failures, the `majorErrors` conclusion should be \"None\" and the score should be 10.\n\n    ",
+  "judgedAt": "2026-04-26T21:57:36.724Z",
+  "judgments": [
+    {
+      "judgeId": "anthropic/claude-opus-4.7",
+      "rankings": [
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "Comprehensive coverage including cumprimento/execução and procedimentos especiais, with capability-sized lessons that don't overlap. Strong learner-facing titles and clear separation between ordinary and extraordinary recursos. Slight risk of scope drift with tutela coletiva but justified as procedimentos especiais.",
+          "score": 9
+        },
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Well-structured with rich, concrete concepts and learner-facing titles; covers principles through recursos with good granularity. Misses cumprimento/execução as its own arc (only mentioned briefly) and procedimentos especiais, but lessons are cohesive and non-repetitive.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Solid coverage of fundamentals with clean lesson boundaries and good titles. Misses cumprimento/execução as a distinct lesson, recursos extraordinários/precedentes, and procedimentos especiais — notable coverage gaps for a serious Processo Civil learner.",
+          "score": 7
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Compact and coherent but thin on coverage: lacks cumprimento/execução, precedentes, recursos extraordinários treatment is minimal, and concept lists are sparse. Lessons are sound but the plan feels more like an overview than a usable Processo Civil syllabus.",
+          "score": 6
+        }
+      ]
+    },
+    {
+      "judgeId": "google/gemini-3.1-pro-preview",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "Exceptional lesson plan that perfectly aligns with all instructions. The titles are highly concrete, learner-facing actions, and the concept lists explicitly incorporate important modern practices (e.g., 'PJe', 'prova digital', 'precedentes vinculantes'). The boundaries are well-sized, successfully grouping mutually defining concepts without false granularity.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Strong output with solid, action-oriented titles and cohesive lesson boundaries. It covers the chapter scope thoroughly and explains the learner's reasoning path well in the descriptions. The concepts are slightly more traditional and less comprehensive than the top model, but it fully meets expectations.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Acceptable lesson plan with valid, capability-sized boundaries that avoid false granularity. However, it relies heavily on dry, textbook-style phrasing for many of its titles, diluting the learner-facing focus. The concept lists are also somewhat sparse compared to better outputs.",
+          "score": 6
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "This output commits a major failure by exclusively using dry textbook headings (e.g., 'Jurisdição, ação e competência', 'Resposta do réu e reconvenção') that read like a table of contents. While the underlying domain decomposition and coverage are actually quite good, it completely misses the requirement for concrete, action-oriented titles.",
+          "score": 4
+        }
+      ]
+    },
+    {
+      "judgeId": "openai/gpt-5.5",
+      "rankings": [
+        {
+          "anonymousId": "Model A",
+          "modelId": "openai/gpt-5.5",
+          "reasoning": "É o plano mais alinhado ao capítulo: cobre princípios, competência, partes, procedimento comum, atos, provas, tutelas, sentença/coisa julgada e recursos com fronteiras de aula bem aproveitáveis. Inclui práticas modernas importantes, como PJe, prova digital, precedentes, IRDR/IAC, sem cair em granularidade falsa ou desviar para capítulos vizinhos.",
+          "score": 10
+        },
+        {
+          "anonymousId": "Model C",
+          "modelId": "openai/gpt-5.4",
+          "reasoning": "Tem uma estrutura coesa, em português adequado, com aulas de tamanho correto e boa progressão pelos pilares canônicos do processo civil. É menos completo que o Model A em práticas modernas e entidades relevantes, como precedentes, tribunais superiores, recursos excepcionais e processo eletrônico, mas ainda é muito utilizável.",
+          "score": 8.5
+        },
+        {
+          "anonymousId": "Model B",
+          "modelId": "anthropic/claude-opus-4.7",
+          "reasoning": "É abrangente e em geral bem organizado, com decomposições válidas entre defesa, saneamento, provas, recursos ordinários e precedentes. Porém inclui uma aula ampla de procedimentos especiais e tutela coletiva com lista heterogênea de ações, o que começa a sair do escopo descrito e parece menos coeso para este capítulo introdutório.",
+          "score": 8
+        },
+        {
+          "anonymousId": "Model D",
+          "modelId": "google/gemini-3.1-pro-preview",
+          "reasoning": "Cobre os principais tópicos pedidos e evita falsa granularidade, mas é mais superficial e deixa lacunas relevantes em legitimidade, critérios de competência, meios de prova, admissibilidade recursal, precedentes e cumprimento de sentença. Também contém imprecisão ao sugerir recursos contra despachos, o que reduz a confiabilidade jurídica do plano.",
+          "score": 7
+        }
+      ]
+    }
+  ],
+  "taskId": "chapter-lessons",
+  "testCaseId": "pt-direito-processo-civil-1"
+}

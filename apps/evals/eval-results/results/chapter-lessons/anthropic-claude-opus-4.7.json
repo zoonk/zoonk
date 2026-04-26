@@ -1,0 +1,382 @@
+{
+  "modelId": "anthropic/claude-opus-4.7",
+  "results": [
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "A few titles are somewhat dry or textbook-like, especially “Function expressions and arrow functions.” Some lessons are a bit concept-heavy or compound, such as combining spread for data copying with rest parameters, and the array looping lesson slightly overlaps with array transformation methods. These issues do not break the plan because the lesson boundaries mostly represent distinct learner capabilities.",
+          "kind": "minorErrors",
+          "score": 8.5
+        },
+        {
+          "conclusion": "The plan could be improved by making callback functions more explicit as the bridge between functions and array methods, and by clarifying mutating vs non-mutating array/object operations in relevant lessons. A few titles could also be made more learner-facing and action-oriented.",
+          "kind": "potentialImprovements",
+          "score": 8.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n      - JavaScript-specific false-granularity check: separate adjacent lessons for calling a function, passing data into a function, returning a result, and choosing a function shape are over-split. Those ideas are mutually defining parts of using functions and should mostly be one cohesive lesson, or at most a very small number of lessons. If you see this pattern, the `majorErrors` score must be 6.5 or lower.\n      - Do not reward this case for adding many narrow lessons about every array/object method or function subtopic. The lesson list should feel like teachable learner capabilities, not a glossary expanded into a syllabus.\n\n      \n  # Goal\n\n  Evaluate whether the result is a usable lesson plan for the requested chapter.\n\n  A strong lesson plan turns the chapter scope into cohesive learner capabilities. Each lesson should be large enough to support its own explanation activities, practice, quiz, and review without repeating neighboring lessons. Coverage matters, but only when the lesson boundaries would produce a good learning experience in this product.\n\n  # What Good Looks Like\n\n  - Lessons are capability-sized: each one teaches a distinct mechanism, decision, artifact, workflow, or real learner move.\n  - Related concepts that are mutually defining stay together in one lesson.\n  - The plan covers the chapter's canonical fundamentals, important modern practice, and required named entities from the domain.\n  - Lessons stay inside this chapter's scope and avoid concepts that primarily belong to neighboring chapters.\n  - Titles are concrete and learner-facing, not dry textbook categories.\n  - Descriptions explain what the learner will do or be able to reason through.\n  - Concepts are specific enough to guide content generation, but they are raw material inside a lesson, not automatic lesson candidates.\n\n  # Major Failures\n\n  ## False Granularity\n\n  False granularity is the main failure this eval must catch. It happens when the output looks comprehensive because it split the chapter into many tiny lessons, but those lessons would generate repetitive activities.\n\n  Use this test: if the explanation or practice for lesson A must teach lesson B's core idea for lesson A to make sense, A and B should probably be one lesson.\n\n  Penalize as a major failure when the output:\n\n  - splits one input -> process -> result chain into separate lessons\n  - splits first-exposure parts that define each other, such as variable/name/value/output, function declaration/call/parameter/return, or loop/condition/body\n  - creates many adjacent lessons that would use the same example with slightly different labels\n  - turns every method, subtopic, phase, or label into its own lesson even though the learner experience would be repetitive\n  - rewards glossary completeness over teachable lesson boundaries\n\n  Do not confuse false granularity with valid domain decomposition. Adjacent lessons can be separate when they teach different evidence types, interpretive tasks, mechanisms, source categories, workflows, or real-world decisions. Examples that can be valid:\n\n  - history lessons that use artifacts, landscapes, languages, trade goods, rituals, warfare, and diplomacy for different kinds of historical reasoning\n  - astronomy lessons that separate detection methods, signal validation, physical inference, atmospheric characterization, habitability, missions, and telescope capabilities\n  - law lessons that separate procedural moves with different legal effects, deadlines, parties, remedies, or courts\n  - technical lessons that separate mechanisms only when each can be practiced without re-teaching the neighboring mechanism\n\n  Named-entity lessons are not automatically false granularity. They are valid when the named people, sites, missions, models, cases, tools, or works anchor a distinct comparison, interpretation, evidence source, or practical decision. Penalize them as false granularity only when the lesson is mostly a memorization list or would repeat the same teaching move as a neighboring lesson.\n\n  Score caps:\n\n  - Clear false-granularity cluster: `majorErrors` score must be 7.5 or lower.\n  - Repeated false granularity across the output, after excluding valid domain decomposition: `majorErrors` score must be 6.5 or lower.\n  - Glossary-expanded syllabus where many lessons are too small to support distinct activities: `majorErrors` score must be 6.5 or lower.\n\n  ## Coverage, Accuracy, and Scope\n\n  Penalize as major failures when the output:\n\n  - misses canonical chapter pillars or modern practices a serious learner needs\n  - omits important named entities in domains built around specific people, tools, missions, models, works, groups, cases, or landmark systems\n  - includes factual, historical, legal, scientific, technical, or linguistic errors\n  - drifts into neighboring-chapter material as lesson topics rather than brief context\n  - uses mostly dry textbook headings that feel like a table of contents instead of learner-facing actions or outcomes\n\n  # Minor Issues\n\n  Treat these as minor unless they make the lesson plan hard to use:\n\n  - isolated awkward title wording\n  - concept titles that are slightly broad, abstract, verbose, or compound\n  - lesson sizes that are uneven or mechanically uniform when the boundaries are otherwise sound\n  - small progression or phrasing issues\n  - small scope-adjacent mentions that do not become lesson topics\n\n  # Scoring Order\n\n  First check whether the lesson boundaries would produce distinct, non-repetitive learning arcs. Then check coverage, accuracy, scope, and title quality. Do not reward extra length, exhaustive lists, or high concept count by themselves.\n\n  If the output has no concrete major failures, the `majorErrors` conclusion should be \"None\" and the score should be 10.\n\n    ",
+        "id": "en-javascript-functions-arrays-objects-1",
+        "userInput": {
+          "chapterDescription": "Break code into reusable pieces, return results, and manage data with arrays and objects. You begin writing code that stays readable as it grows.",
+          "chapterTitle": "Functions, Arrays, and Objects",
+          "courseTitle": "JavaScript",
+          "language": "en",
+          "neighboringChapters": [
+            {
+              "description": "Start by making a tiny program that reacts to a click, changes text on the page, and keeps score. You touch real JavaScript right away: variables, functions, events, and the browser console.",
+              "title": "Make a Click Counter"
+            },
+            {
+              "description": "Write values, combine them, compare them, and control what happens next. This chapter builds the core habits behind almost every JavaScript program.",
+              "title": "Values, Conditions, and Repetition"
+            },
+            {
+              "description": "Use the DOM to read page content, change styles, create elements, and respond to user actions. This is the bridge from small scripts to real browser behavior.",
+              "title": "Changing a Web Page with JavaScript"
+            },
+            {
+              "description": "Handle forms, validate input, save data in the browser, and build interactions that feel complete to a user. The work here looks much closer to everyday front-end tasks.",
+              "title": "Forms, Validation, and Local Storage"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "One full lesson, “Testando funções na mão,” drifts into testing/debugging as a lesson topic, while the expectations say testing should appear only as brief context because a neighboring chapter owns that material. The rest of the plan stays well focused on functions and does not show the prohibited false-granularity split of declaration/name/call/parameters/return/reuse.",
+          "kind": "majorErrors",
+          "score": 7.5
+        },
+        {
+          "conclusion": "Some items are a bit language-specific without an explicitly named programming language, especially default values and named arguments. There is also a small phrasing issue in “chame ela,” which is understandable Brazilian Portuguese but less polished than “chame-a” or a reworded sentence.",
+          "kind": "minorErrors",
+          "score": 8.5
+        },
+        {
+          "conclusion": "Replace or narrow the testing lesson into a functions-specific organization capability, such as designing clear function contracts, separating calculation from input/output, or refactoring repeated code into small composable helpers. Brief manual checks could remain inside another lesson as context rather than becoming a standalone lesson.",
+          "kind": "potentialImprovements",
+          "score": 8.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Ciência da Computação-specific false-granularity check: separate adjacent lessons for declaring a function, naming it, calling it, passing inputs, returning values, and reusing code are over-split. Those ideas are mutually defining parts of using functions to organize code and should mostly be one cohesive lesson, or at most a very small number of lessons. If you see this pattern, the `majorErrors` score must be 6.5 or lower.\n      - Keep this chapter focused on functions as a programming organization tool. Do not drift into collections, files, Git, testing, or debugging except as brief context because neighboring chapters own those topics.\n\n      \n  # Goal\n\n  Evaluate whether the result is a usable lesson plan for the requested chapter.\n\n  A strong lesson plan turns the chapter scope into cohesive learner capabilities. Each lesson should be large enough to support its own explanation activities, practice, quiz, and review without repeating neighboring lessons. Coverage matters, but only when the lesson boundaries would produce a good learning experience in this product.\n\n  # What Good Looks Like\n\n  - Lessons are capability-sized: each one teaches a distinct mechanism, decision, artifact, workflow, or real learner move.\n  - Related concepts that are mutually defining stay together in one lesson.\n  - The plan covers the chapter's canonical fundamentals, important modern practice, and required named entities from the domain.\n  - Lessons stay inside this chapter's scope and avoid concepts that primarily belong to neighboring chapters.\n  - Titles are concrete and learner-facing, not dry textbook categories.\n  - Descriptions explain what the learner will do or be able to reason through.\n  - Concepts are specific enough to guide content generation, but they are raw material inside a lesson, not automatic lesson candidates.\n\n  # Major Failures\n\n  ## False Granularity\n\n  False granularity is the main failure this eval must catch. It happens when the output looks comprehensive because it split the chapter into many tiny lessons, but those lessons would generate repetitive activities.\n\n  Use this test: if the explanation or practice for lesson A must teach lesson B's core idea for lesson A to make sense, A and B should probably be one lesson.\n\n  Penalize as a major failure when the output:\n\n  - splits one input -> process -> result chain into separate lessons\n  - splits first-exposure parts that define each other, such as variable/name/value/output, function declaration/call/parameter/return, or loop/condition/body\n  - creates many adjacent lessons that would use the same example with slightly different labels\n  - turns every method, subtopic, phase, or label into its own lesson even though the learner experience would be repetitive\n  - rewards glossary completeness over teachable lesson boundaries\n\n  Do not confuse false granularity with valid domain decomposition. Adjacent lessons can be separate when they teach different evidence types, interpretive tasks, mechanisms, source categories, workflows, or real-world decisions. Examples that can be valid:\n\n  - history lessons that use artifacts, landscapes, languages, trade goods, rituals, warfare, and diplomacy for different kinds of historical reasoning\n  - astronomy lessons that separate detection methods, signal validation, physical inference, atmospheric characterization, habitability, missions, and telescope capabilities\n  - law lessons that separate procedural moves with different legal effects, deadlines, parties, remedies, or courts\n  - technical lessons that separate mechanisms only when each can be practiced without re-teaching the neighboring mechanism\n\n  Named-entity lessons are not automatically false granularity. They are valid when the named people, sites, missions, models, cases, tools, or works anchor a distinct comparison, interpretation, evidence source, or practical decision. Penalize them as false granularity only when the lesson is mostly a memorization list or would repeat the same teaching move as a neighboring lesson.\n\n  Score caps:\n\n  - Clear false-granularity cluster: `majorErrors` score must be 7.5 or lower.\n  - Repeated false granularity across the output, after excluding valid domain decomposition: `majorErrors` score must be 6.5 or lower.\n  - Glossary-expanded syllabus where many lessons are too small to support distinct activities: `majorErrors` score must be 6.5 or lower.\n\n  ## Coverage, Accuracy, and Scope\n\n  Penalize as major failures when the output:\n\n  - misses canonical chapter pillars or modern practices a serious learner needs\n  - omits important named entities in domains built around specific people, tools, missions, models, works, groups, cases, or landmark systems\n  - includes factual, historical, legal, scientific, technical, or linguistic errors\n  - drifts into neighboring-chapter material as lesson topics rather than brief context\n  - uses mostly dry textbook headings that feel like a table of contents instead of learner-facing actions or outcomes\n\n  # Minor Issues\n\n  Treat these as minor unless they make the lesson plan hard to use:\n\n  - isolated awkward title wording\n  - concept titles that are slightly broad, abstract, verbose, or compound\n  - lesson sizes that are uneven or mechanically uniform when the boundaries are otherwise sound\n  - small progression or phrasing issues\n  - small scope-adjacent mentions that do not become lesson topics\n\n  # Scoring Order\n\n  First check whether the lesson boundaries would produce distinct, non-repetitive learning arcs. Then check coverage, accuracy, scope, and title quality. Do not reward extra length, exhaustive lists, or high concept count by themselves.\n\n  If the output has no concrete major failures, the `majorErrors` conclusion should be \"None\" and the score should be 10.\n\n    ",
+        "id": "pt-ciencia-da-computacao-funcoes-que-organizam-o-codigo-1",
+        "userInput": {
+          "chapterDescription": "Funções ajudam a dividir um programa em pedaços menores, dar nomes claros às tarefas e reutilizar código. Você pratica transformar código repetido em partes testáveis.",
+          "chapterTitle": "Funções que organizam o código",
+          "courseTitle": "Ciência da Computação",
+          "language": "pt",
+          "neighboringChapters": [
+            {
+              "description": "Variáveis, tipos simples, entrada, saída e expressões aparecem em problemas pequenos: converter temperatura, somar uma conta e formatar uma mensagem. Você passa a guardar dados e usá-los sem mistério.",
+              "title": "Valores, textos e contas"
+            },
+            {
+              "description": "Condições e laços entram em tarefas reais, como validar uma senha, repetir tentativas e percorrer uma lista de itens. Você começa a controlar o caminho que o programa segue.",
+              "title": "Decisões e repetições"
+            },
+            {
+              "description": "Listas, mapas, registros e arquivos aparecem em pequenos cadastros e relatórios. Você passa a guardar coleções de dados, buscar informações e salvar resultados fora do programa.",
+              "title": "Coleções e arquivos"
+            },
+            {
+              "description": "Erros de sintaxe, falhas em tempo de execução e respostas erradas são tratados com leitura de mensagens, depurador e testes manuais. Você ganha um método para consertar código sem depender de adivinhação.",
+              "title": "Caçando bugs sem pânico"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "A few concept groupings are somewhat broad: the first lesson combines peopling, major archaeological cultures, and population estimates, while the village lesson combines kinship, leadership, labor, and trade networks. These are still usable lesson boundaries, but they may feel dense compared with the other lessons. Some religious concepts, such as the “land without evil,” could be more clearly tied to specific peoples rather than implying a pan-Indigenous belief.",
+          "kind": "minorErrors",
+          "score": 8.5
+        },
+        {
+          "conclusion": "The plan could be improved by adding more explicit attention to Amazonian complex societies and landscape engineering beyond terra preta, such as geoglyphs, raised fields, or Upper Xingu settlement patterns. It could also make the evidence-reading skill more visible throughout the earlier lessons, not only in the final source-method lesson.",
+          "kind": "potentialImprovements",
+          "score": 8.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English (proper nouns of Brazilian institutions and places remain in Portuguese)\n\n      \n  # Goal\n\n  Evaluate whether the result is a usable lesson plan for the requested chapter.\n\n  A strong lesson plan turns the chapter scope into cohesive learner capabilities. Each lesson should be large enough to support its own explanation activities, practice, quiz, and review without repeating neighboring lessons. Coverage matters, but only when the lesson boundaries would produce a good learning experience in this product.\n\n  # What Good Looks Like\n\n  - Lessons are capability-sized: each one teaches a distinct mechanism, decision, artifact, workflow, or real learner move.\n  - Related concepts that are mutually defining stay together in one lesson.\n  - The plan covers the chapter's canonical fundamentals, important modern practice, and required named entities from the domain.\n  - Lessons stay inside this chapter's scope and avoid concepts that primarily belong to neighboring chapters.\n  - Titles are concrete and learner-facing, not dry textbook categories.\n  - Descriptions explain what the learner will do or be able to reason through.\n  - Concepts are specific enough to guide content generation, but they are raw material inside a lesson, not automatic lesson candidates.\n\n  # Major Failures\n\n  ## False Granularity\n\n  False granularity is the main failure this eval must catch. It happens when the output looks comprehensive because it split the chapter into many tiny lessons, but those lessons would generate repetitive activities.\n\n  Use this test: if the explanation or practice for lesson A must teach lesson B's core idea for lesson A to make sense, A and B should probably be one lesson.\n\n  Penalize as a major failure when the output:\n\n  - splits one input -> process -> result chain into separate lessons\n  - splits first-exposure parts that define each other, such as variable/name/value/output, function declaration/call/parameter/return, or loop/condition/body\n  - creates many adjacent lessons that would use the same example with slightly different labels\n  - turns every method, subtopic, phase, or label into its own lesson even though the learner experience would be repetitive\n  - rewards glossary completeness over teachable lesson boundaries\n\n  Do not confuse false granularity with valid domain decomposition. Adjacent lessons can be separate when they teach different evidence types, interpretive tasks, mechanisms, source categories, workflows, or real-world decisions. Examples that can be valid:\n\n  - history lessons that use artifacts, landscapes, languages, trade goods, rituals, warfare, and diplomacy for different kinds of historical reasoning\n  - astronomy lessons that separate detection methods, signal validation, physical inference, atmospheric characterization, habitability, missions, and telescope capabilities\n  - law lessons that separate procedural moves with different legal effects, deadlines, parties, remedies, or courts\n  - technical lessons that separate mechanisms only when each can be practiced without re-teaching the neighboring mechanism\n\n  Named-entity lessons are not automatically false granularity. They are valid when the named people, sites, missions, models, cases, tools, or works anchor a distinct comparison, interpretation, evidence source, or practical decision. Penalize them as false granularity only when the lesson is mostly a memorization list or would repeat the same teaching move as a neighboring lesson.\n\n  Score caps:\n\n  - Clear false-granularity cluster: `majorErrors` score must be 7.5 or lower.\n  - Repeated false granularity across the output, after excluding valid domain decomposition: `majorErrors` score must be 6.5 or lower.\n  - Glossary-expanded syllabus where many lessons are too small to support distinct activities: `majorErrors` score must be 6.5 or lower.\n\n  ## Coverage, Accuracy, and Scope\n\n  Penalize as major failures when the output:\n\n  - misses canonical chapter pillars or modern practices a serious learner needs\n  - omits important named entities in domains built around specific people, tools, missions, models, works, groups, cases, or landmark systems\n  - includes factual, historical, legal, scientific, technical, or linguistic errors\n  - drifts into neighboring-chapter material as lesson topics rather than brief context\n  - uses mostly dry textbook headings that feel like a table of contents instead of learner-facing actions or outcomes\n\n  # Minor Issues\n\n  Treat these as minor unless they make the lesson plan hard to use:\n\n  - isolated awkward title wording\n  - concept titles that are slightly broad, abstract, verbose, or compound\n  - lesson sizes that are uneven or mechanically uniform when the boundaries are otherwise sound\n  - small progression or phrasing issues\n  - small scope-adjacent mentions that do not become lesson topics\n\n  # Scoring Order\n\n  First check whether the lesson boundaries would produce distinct, non-repetitive learning arcs. Then check coverage, accuracy, scope, and title quality. Do not reward extra length, exhaustive lists, or high concept count by themselves.\n\n  If the output has no concrete major failures, the `majorErrors` conclusion should be \"None\" and the score should be 10.\n\n    ",
+        "id": "en-brazilian-history-indigenous-before-colonization-1",
+        "userInput": {
+          "chapterDescription": "This chapter follows the many peoples already living in the land before 1500, including language families, trade networks, farming, warfare, and belief systems. It also shows how archaeologists, oral traditions, and colonial records help rebuild histories that were often erased.",
+          "chapterTitle": "Indigenous Brazil Before Colonization",
+          "courseTitle": "Brazilian History",
+          "language": "en",
+          "neighboringChapters": [
+            {
+              "description": "Start with a close look at the letter Pero Vaz de Caminha wrote in 1500 and other early accounts of first contact. The learner works with real words from the period to spot power, curiosity, religion, trade, and misunderstanding at the beginning of Brazil's written history.",
+              "title": "Reading the First Portuguese Accounts"
+            },
+            {
+              "description": "See how Portugal claimed, mapped, and tried to control the territory through captaincies, forts, missions, and coastal settlements. The chapter connects imperial policy with the hard realities of distance, labor, and resistance on the ground.",
+              "title": "Claiming and Settling the Colony"
+            },
+            {
+              "description": "Sugar mills, enslaved labor, Atlantic shipping, and merchant credit turned colonial Brazil into a major plantation zone. This chapter shows how the sugar economy worked day to day and how wealth and violence were built together.",
+              "title": "Sugar, Land, and the Atlantic System"
+            },
+            {
+              "description": "This chapter centers the forced migration of Africans, the slave trade, labor regimes, family formation, religion, revolt, and cultural survival. It treats slavery as a core structure of Brazilian history, not a side topic.",
+              "title": "Slavery and African Diaspora in Brazil"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The plan leans somewhat metric-by-metric for throughput, WIP, and item age, which creates a mild risk of repetitive definition-first activities, though the lessons add distinct uses and are not merely glossary entries. The final lesson on using metrics for better questions may also overlap slightly with earlier non-blaming interpretations.",
+          "kind": "minorErrors",
+          "score": 8.5
+        },
+        {
+          "conclusion": "The plan could be stronger by adding an explicit comparative learner move: choosing which metric answers which operational question, such as waiting time, active work time, capacity, overload, or aging risk. It could also frame the metrics more clearly as a connected flow-health toolkit while still avoiding the neighboring chapters on charts and forecasting.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Kanban-specific false-granularity check: separate adjacent lessons for lead time, cycle time, throughput, WIP, and item age are over-split when they only teach isolated definitions. These metrics form one flow-measurement toolkit and should be grouped by learner use, such as reading flow health, diagnosing bottlenecks, or asking better forecasting questions. If the output creates one glossary lesson per metric, the `majorErrors` score must be 6.5 or lower.\n      - Do not penalize separate lessons for genuinely different learner moves, such as choosing which metric answers a question, spotting a bottleneck, or using measurements without pressuring people.\n\n      \n  # Goal\n\n  Evaluate whether the result is a usable lesson plan for the requested chapter.\n\n  A strong lesson plan turns the chapter scope into cohesive learner capabilities. Each lesson should be large enough to support its own explanation activities, practice, quiz, and review without repeating neighboring lessons. Coverage matters, but only when the lesson boundaries would produce a good learning experience in this product.\n\n  # What Good Looks Like\n\n  - Lessons are capability-sized: each one teaches a distinct mechanism, decision, artifact, workflow, or real learner move.\n  - Related concepts that are mutually defining stay together in one lesson.\n  - The plan covers the chapter's canonical fundamentals, important modern practice, and required named entities from the domain.\n  - Lessons stay inside this chapter's scope and avoid concepts that primarily belong to neighboring chapters.\n  - Titles are concrete and learner-facing, not dry textbook categories.\n  - Descriptions explain what the learner will do or be able to reason through.\n  - Concepts are specific enough to guide content generation, but they are raw material inside a lesson, not automatic lesson candidates.\n\n  # Major Failures\n\n  ## False Granularity\n\n  False granularity is the main failure this eval must catch. It happens when the output looks comprehensive because it split the chapter into many tiny lessons, but those lessons would generate repetitive activities.\n\n  Use this test: if the explanation or practice for lesson A must teach lesson B's core idea for lesson A to make sense, A and B should probably be one lesson.\n\n  Penalize as a major failure when the output:\n\n  - splits one input -> process -> result chain into separate lessons\n  - splits first-exposure parts that define each other, such as variable/name/value/output, function declaration/call/parameter/return, or loop/condition/body\n  - creates many adjacent lessons that would use the same example with slightly different labels\n  - turns every method, subtopic, phase, or label into its own lesson even though the learner experience would be repetitive\n  - rewards glossary completeness over teachable lesson boundaries\n\n  Do not confuse false granularity with valid domain decomposition. Adjacent lessons can be separate when they teach different evidence types, interpretive tasks, mechanisms, source categories, workflows, or real-world decisions. Examples that can be valid:\n\n  - history lessons that use artifacts, landscapes, languages, trade goods, rituals, warfare, and diplomacy for different kinds of historical reasoning\n  - astronomy lessons that separate detection methods, signal validation, physical inference, atmospheric characterization, habitability, missions, and telescope capabilities\n  - law lessons that separate procedural moves with different legal effects, deadlines, parties, remedies, or courts\n  - technical lessons that separate mechanisms only when each can be practiced without re-teaching the neighboring mechanism\n\n  Named-entity lessons are not automatically false granularity. They are valid when the named people, sites, missions, models, cases, tools, or works anchor a distinct comparison, interpretation, evidence source, or practical decision. Penalize them as false granularity only when the lesson is mostly a memorization list or would repeat the same teaching move as a neighboring lesson.\n\n  Score caps:\n\n  - Clear false-granularity cluster: `majorErrors` score must be 7.5 or lower.\n  - Repeated false granularity across the output, after excluding valid domain decomposition: `majorErrors` score must be 6.5 or lower.\n  - Glossary-expanded syllabus where many lessons are too small to support distinct activities: `majorErrors` score must be 6.5 or lower.\n\n  ## Coverage, Accuracy, and Scope\n\n  Penalize as major failures when the output:\n\n  - misses canonical chapter pillars or modern practices a serious learner needs\n  - omits important named entities in domains built around specific people, tools, missions, models, works, groups, cases, or landmark systems\n  - includes factual, historical, legal, scientific, technical, or linguistic errors\n  - drifts into neighboring-chapter material as lesson topics rather than brief context\n  - uses mostly dry textbook headings that feel like a table of contents instead of learner-facing actions or outcomes\n\n  # Minor Issues\n\n  Treat these as minor unless they make the lesson plan hard to use:\n\n  - isolated awkward title wording\n  - concept titles that are slightly broad, abstract, verbose, or compound\n  - lesson sizes that are uneven or mechanically uniform when the boundaries are otherwise sound\n  - small progression or phrasing issues\n  - small scope-adjacent mentions that do not become lesson topics\n\n  # Scoring Order\n\n  First check whether the lesson boundaries would produce distinct, non-repetitive learning arcs. Then check coverage, accuracy, scope, and title quality. Do not reward extra length, exhaustive lists, or high concept count by themselves.\n\n  If the output has no concrete major failures, the `majorErrors` conclusion should be \"None\" and the score should be 10.\n\n    ",
+        "id": "pt-kanban-metricas-de-fluxo-que-ajudam-1",
+        "userInput": {
+          "chapterDescription": "Lead time, cycle time, throughput, WIP e idade do item mostram como o fluxo se comporta. Você usa essas medidas para fazer perguntas melhores, não para pressionar pessoas.",
+          "chapterTitle": "Métricas de fluxo que ajudam",
+          "courseTitle": "Kanban",
+          "language": "pt",
+          "neighboringChapters": [
+            {
+              "description": "Políticas explícitas dizem quando um cartão entra, muda de coluna, bloqueia ou está pronto. Isso reduz discussão escondida e deixa o sistema mais justo para o time.",
+              "title": "Regras claras para mover cartões"
+            },
+            {
+              "description": "Nem todo pedido deve entrar direto no quadro. Você cria uma fila de entrada, separa ideias de compromissos e decide o que puxar com base em capacidade real.",
+              "title": "Reabastecimento e priorização"
+            },
+            {
+              "description": "Diagramas de fluxo cumulativo, dispersão de cycle time e gráficos de envelhecimento mostram padrões que a opinião não revela. Você lê esses gráficos para detectar filas crescendo, variação alta e risco de atraso.",
+              "title": "Gráficos que contam a história do fluxo"
+            },
+            {
+              "description": "Kanban trabalha melhor com probabilidade do que com promessas rígidas. Você usa percentis, SLE e simulações simples de Monte Carlo para responder perguntas como “quando isso provavelmente fica pronto?”.",
+              "title": "Previsão sem chute"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "A few lessons are somewhat broad or survey-like rather than tightly centered on one learner capability, especially the lesson combining petição inicial, atos processuais, prazos, preclusão and nulidades, and the final lesson grouping many different procedimentos especiais and tutela coletiva. Some terminology could be more carefully modernized for CPC/2015, such as treating 'condições da ação' and 'livre convencimento motivado' with nuance.",
+          "kind": "minorErrors",
+          "score": 8.5
+        },
+        {
+          "conclusion": "The plan could be improved by separating or reframing the most overloaded lessons around clearer practical decisions, adding modern procedural tools such as negócios jurídicos processuais/calendarização and incidente de desconsideração da personalidade jurídica, and making a few titles more action-oriented for learners.",
+          "kind": "potentialImprovements",
+          "score": 8.5
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n\n      \n  # Goal\n\n  Evaluate whether the result is a usable lesson plan for the requested chapter.\n\n  A strong lesson plan turns the chapter scope into cohesive learner capabilities. Each lesson should be large enough to support its own explanation activities, practice, quiz, and review without repeating neighboring lessons. Coverage matters, but only when the lesson boundaries would produce a good learning experience in this product.\n\n  # What Good Looks Like\n\n  - Lessons are capability-sized: each one teaches a distinct mechanism, decision, artifact, workflow, or real learner move.\n  - Related concepts that are mutually defining stay together in one lesson.\n  - The plan covers the chapter's canonical fundamentals, important modern practice, and required named entities from the domain.\n  - Lessons stay inside this chapter's scope and avoid concepts that primarily belong to neighboring chapters.\n  - Titles are concrete and learner-facing, not dry textbook categories.\n  - Descriptions explain what the learner will do or be able to reason through.\n  - Concepts are specific enough to guide content generation, but they are raw material inside a lesson, not automatic lesson candidates.\n\n  # Major Failures\n\n  ## False Granularity\n\n  False granularity is the main failure this eval must catch. It happens when the output looks comprehensive because it split the chapter into many tiny lessons, but those lessons would generate repetitive activities.\n\n  Use this test: if the explanation or practice for lesson A must teach lesson B's core idea for lesson A to make sense, A and B should probably be one lesson.\n\n  Penalize as a major failure when the output:\n\n  - splits one input -> process -> result chain into separate lessons\n  - splits first-exposure parts that define each other, such as variable/name/value/output, function declaration/call/parameter/return, or loop/condition/body\n  - creates many adjacent lessons that would use the same example with slightly different labels\n  - turns every method, subtopic, phase, or label into its own lesson even though the learner experience would be repetitive\n  - rewards glossary completeness over teachable lesson boundaries\n\n  Do not confuse false granularity with valid domain decomposition. Adjacent lessons can be separate when they teach different evidence types, interpretive tasks, mechanisms, source categories, workflows, or real-world decisions. Examples that can be valid:\n\n  - history lessons that use artifacts, landscapes, languages, trade goods, rituals, warfare, and diplomacy for different kinds of historical reasoning\n  - astronomy lessons that separate detection methods, signal validation, physical inference, atmospheric characterization, habitability, missions, and telescope capabilities\n  - law lessons that separate procedural moves with different legal effects, deadlines, parties, remedies, or courts\n  - technical lessons that separate mechanisms only when each can be practiced without re-teaching the neighboring mechanism\n\n  Named-entity lessons are not automatically false granularity. They are valid when the named people, sites, missions, models, cases, tools, or works anchor a distinct comparison, interpretation, evidence source, or practical decision. Penalize them as false granularity only when the lesson is mostly a memorization list or would repeat the same teaching move as a neighboring lesson.\n\n  Score caps:\n\n  - Clear false-granularity cluster: `majorErrors` score must be 7.5 or lower.\n  - Repeated false granularity across the output, after excluding valid domain decomposition: `majorErrors` score must be 6.5 or lower.\n  - Glossary-expanded syllabus where many lessons are too small to support distinct activities: `majorErrors` score must be 6.5 or lower.\n\n  ## Coverage, Accuracy, and Scope\n\n  Penalize as major failures when the output:\n\n  - misses canonical chapter pillars or modern practices a serious learner needs\n  - omits important named entities in domains built around specific people, tools, missions, models, works, groups, cases, or landmark systems\n  - includes factual, historical, legal, scientific, technical, or linguistic errors\n  - drifts into neighboring-chapter material as lesson topics rather than brief context\n  - uses mostly dry textbook headings that feel like a table of contents instead of learner-facing actions or outcomes\n\n  # Minor Issues\n\n  Treat these as minor unless they make the lesson plan hard to use:\n\n  - isolated awkward title wording\n  - concept titles that are slightly broad, abstract, verbose, or compound\n  - lesson sizes that are uneven or mechanically uniform when the boundaries are otherwise sound\n  - small progression or phrasing issues\n  - small scope-adjacent mentions that do not become lesson topics\n\n  # Scoring Order\n\n  First check whether the lesson boundaries would produce distinct, non-repetitive learning arcs. Then check coverage, accuracy, scope, and title quality. Do not reward extra length, exhaustive lists, or high concept count by themselves.\n\n  If the output has no concrete major failures, the `majorErrors` conclusion should be \"None\" and the score should be 10.\n\n    ",
+        "id": "pt-direito-processo-civil-1",
+        "userInput": {
+          "chapterDescription": "Cobre princípios processuais, competência, partes, atos processuais, provas, tutelas, sentença e recursos no processo civil. É a espinha dorsal para transformar direitos em pedidos eficazes perante o Judiciário.",
+          "chapterTitle": "Processo Civil",
+          "courseTitle": "Direito",
+          "language": "pt",
+          "neighboringChapters": [
+            {
+              "description": "Apresenta tributos, competências, limitações ao poder de tributar, obrigação tributária, lançamento, crédito e defesa do contribuinte. Conecta a teoria tributária à vida de pessoas, empresas e governo.",
+              "title": "Direito Tributário"
+            },
+            {
+              "description": "Trabalha vínculo de emprego, jornada, salário, férias, FGTS, rescisão, negociação coletiva e rotina das relações de trabalho. Mostra como prevenir passivos e lidar com conflitos trabalhistas.",
+              "title": "Direito do Trabalho"
+            },
+            {
+              "description": "Mostra inquérito, ação penal, crimes, penas, provas, garantias e recursos no processo penal. Dá base para atuar com acusação, defesa e controle da legalidade da persecução penal.",
+              "title": "Direito Penal e Processo Penal"
+            },
+            {
+              "description": "Apresenta proteção ao consumidor, oferta, publicidade, vício, defeito, responsabilidade do fornecedor e tutela coletiva. Mostra um dos campos mais presentes no dia a dia forense e consultivo.",
+              "title": "Direito do Consumidor"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "One lesson, \"Copiando o DNA antes da divisão,\" is mainly about DNA replication before cell division, which is not central to this chapter's DNA-to-RNA-to-protein-to-trait flow and overlaps with the neighboring cell-division chapter. The plan does not show the repeated glossary-style false granularity that would trigger the biology-specific score cap, because transcription, translation, protein function, mutation effects, and gene regulation are distinct teachable mechanisms.",
+          "kind": "majorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "The \"De gene a cromossomo\" lesson is somewhat label/organization-heavy and could become glossary-like if not tied tightly to how information is used. The transcription description says mRNA leaves the nucleus, which is only true for eukaryotic cells and would need wording that avoids overgeneralizing. Some applications in \"Lendo e editando DNA na prática\" are broad and may feel like an add-on unless connected directly to reading or changing sequence information.",
+          "kind": "minorErrors",
+          "score": 8
+        },
+        {
+          "conclusion": "Replace or reduce the DNA replication lesson with a lesson more directly focused on reading genetic information, such as using a DNA sequence to predict mRNA, codons, amino acids, and possible trait effects. Fold gene/chromosome organization into the opening DNA-information lesson or make its learner task clearer. Add explicit practice around tracing one mutation through transcription, translation, protein structure/function, and phenotype.",
+          "kind": "potentialImprovements",
+          "score": 8
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Brazilian Portuguese\n      - Biology-specific false-granularity check: separate adjacent lessons for DNA, RNA, genes, chromosomes, and proteins are over-split when they only define labels in the same information-flow mechanism. This chapter should teach how molecular information becomes a protein and then a trait, not turn each molecule name into a separate mini-lesson. If the output creates a glossary-expanded syllabus around those labels, the `majorErrors` score must be 6.5 or lower.\n      - Do not penalize separate lessons for genuinely different mechanisms inside the flow, such as transcription, translation, genetic code, or how protein structure affects traits, when each lesson can be explained and practiced without re-teaching the others from scratch.\n\n      \n  # Goal\n\n  Evaluate whether the result is a usable lesson plan for the requested chapter.\n\n  A strong lesson plan turns the chapter scope into cohesive learner capabilities. Each lesson should be large enough to support its own explanation activities, practice, quiz, and review without repeating neighboring lessons. Coverage matters, but only when the lesson boundaries would produce a good learning experience in this product.\n\n  # What Good Looks Like\n\n  - Lessons are capability-sized: each one teaches a distinct mechanism, decision, artifact, workflow, or real learner move.\n  - Related concepts that are mutually defining stay together in one lesson.\n  - The plan covers the chapter's canonical fundamentals, important modern practice, and required named entities from the domain.\n  - Lessons stay inside this chapter's scope and avoid concepts that primarily belong to neighboring chapters.\n  - Titles are concrete and learner-facing, not dry textbook categories.\n  - Descriptions explain what the learner will do or be able to reason through.\n  - Concepts are specific enough to guide content generation, but they are raw material inside a lesson, not automatic lesson candidates.\n\n  # Major Failures\n\n  ## False Granularity\n\n  False granularity is the main failure this eval must catch. It happens when the output looks comprehensive because it split the chapter into many tiny lessons, but those lessons would generate repetitive activities.\n\n  Use this test: if the explanation or practice for lesson A must teach lesson B's core idea for lesson A to make sense, A and B should probably be one lesson.\n\n  Penalize as a major failure when the output:\n\n  - splits one input -> process -> result chain into separate lessons\n  - splits first-exposure parts that define each other, such as variable/name/value/output, function declaration/call/parameter/return, or loop/condition/body\n  - creates many adjacent lessons that would use the same example with slightly different labels\n  - turns every method, subtopic, phase, or label into its own lesson even though the learner experience would be repetitive\n  - rewards glossary completeness over teachable lesson boundaries\n\n  Do not confuse false granularity with valid domain decomposition. Adjacent lessons can be separate when they teach different evidence types, interpretive tasks, mechanisms, source categories, workflows, or real-world decisions. Examples that can be valid:\n\n  - history lessons that use artifacts, landscapes, languages, trade goods, rituals, warfare, and diplomacy for different kinds of historical reasoning\n  - astronomy lessons that separate detection methods, signal validation, physical inference, atmospheric characterization, habitability, missions, and telescope capabilities\n  - law lessons that separate procedural moves with different legal effects, deadlines, parties, remedies, or courts\n  - technical lessons that separate mechanisms only when each can be practiced without re-teaching the neighboring mechanism\n\n  Named-entity lessons are not automatically false granularity. They are valid when the named people, sites, missions, models, cases, tools, or works anchor a distinct comparison, interpretation, evidence source, or practical decision. Penalize them as false granularity only when the lesson is mostly a memorization list or would repeat the same teaching move as a neighboring lesson.\n\n  Score caps:\n\n  - Clear false-granularity cluster: `majorErrors` score must be 7.5 or lower.\n  - Repeated false granularity across the output, after excluding valid domain decomposition: `majorErrors` score must be 6.5 or lower.\n  - Glossary-expanded syllabus where many lessons are too small to support distinct activities: `majorErrors` score must be 6.5 or lower.\n\n  ## Coverage, Accuracy, and Scope\n\n  Penalize as major failures when the output:\n\n  - misses canonical chapter pillars or modern practices a serious learner needs\n  - omits important named entities in domains built around specific people, tools, missions, models, works, groups, cases, or landmark systems\n  - includes factual, historical, legal, scientific, technical, or linguistic errors\n  - drifts into neighboring-chapter material as lesson topics rather than brief context\n  - uses mostly dry textbook headings that feel like a table of contents instead of learner-facing actions or outcomes\n\n  # Minor Issues\n\n  Treat these as minor unless they make the lesson plan hard to use:\n\n  - isolated awkward title wording\n  - concept titles that are slightly broad, abstract, verbose, or compound\n  - lesson sizes that are uneven or mechanically uniform when the boundaries are otherwise sound\n  - small progression or phrasing issues\n  - small scope-adjacent mentions that do not become lesson topics\n\n  # Scoring Order\n\n  First check whether the lesson boundaries would produce distinct, non-repetitive learning arcs. Then check coverage, accuracy, scope, and title quality. Do not reward extra length, exhaustive lists, or high concept count by themselves.\n\n  If the output has no concrete major failures, the `majorErrors` conclusion should be \"None\" and the score should be 10.\n\n    ",
+        "id": "pt-biologia-do-dna-a-proteina-1",
+        "userInput": {
+          "chapterDescription": "DNA, RNA, genes, cromossomos e proteínas são conectados pelo fluxo de informação dentro da célula. O capítulo mostra como uma sequência molecular pode virar uma característica observável.",
+          "chapterTitle": "Do DNA à proteína",
+          "courseTitle": "Biologia",
+          "language": "pt",
+          "neighboringChapters": [
+            {
+              "description": "Enzimas, ATP, respiração celular e fermentação são explicadas pelo caminho da energia nos seres vivos. Exemplos incluem músculo em esforço, fermento produzindo gás e células usando alimento.",
+              "title": "Como a célula obtém energia"
+            },
+            {
+              "description": "Cloroplastos, luz, pigmentos, gás carbônico e produção de açúcar entram em uma sequência clara. Você liga fotossíntese a plantas, algas, cadeias alimentares e atmosfera.",
+              "title": "Folhas que capturam luz"
+            },
+            {
+              "description": "Mitose, meiose, fecundação e separação de cromossomos aparecem por meio de desenhos, cariótipos e casos simples. Você vê como células mantêm ou embaralham informação genética.",
+              "title": "Células se dividindo"
+            },
+            {
+              "description": "Cruzamentos simples, alelos dominantes e recessivos, heredogramas e probabilidade genética entram com exemplos de plantas, animais e famílias. O foco é prever padrões sem tratar genética como destino fixo.",
+              "title": "Hereditariedade em famílias e linhagens"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "The plan is broadly usable and well scoped, but it has a few small gaps or overstatements: transit detection could more explicitly cover false positives and validation, since real transit surveys require distinguishing planets from eclipsing binaries or stellar variability; the first lesson slightly overstates what a transit alone can determine by saying the learner can deduce the planet's orbit, when it mainly gives period and radius ratio plus orbital constraints with stellar assumptions; and survey/detection biases are mentioned for radial velocity but not as clearly across the whole exoplanet census.",
+          "kind": "minorErrors",
+          "score": 8.5
+        },
+        {
+          "conclusion": "It could be improved by adding a learner-facing lesson or stronger concepts on candidate validation, catalog statistics, and selection effects across methods; by including phase curves, secondary eclipses, or direct thermal emission as part of atmospheric characterization if space allows; and by making the population lesson emphasize how modern exoplanet demographics changed expectations about planetary systems.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in Latin American Spanish\n\n      \n  # Goal\n\n  Evaluate whether the result is a usable lesson plan for the requested chapter.\n\n  A strong lesson plan turns the chapter scope into cohesive learner capabilities. Each lesson should be large enough to support its own explanation activities, practice, quiz, and review without repeating neighboring lessons. Coverage matters, but only when the lesson boundaries would produce a good learning experience in this product.\n\n  # What Good Looks Like\n\n  - Lessons are capability-sized: each one teaches a distinct mechanism, decision, artifact, workflow, or real learner move.\n  - Related concepts that are mutually defining stay together in one lesson.\n  - The plan covers the chapter's canonical fundamentals, important modern practice, and required named entities from the domain.\n  - Lessons stay inside this chapter's scope and avoid concepts that primarily belong to neighboring chapters.\n  - Titles are concrete and learner-facing, not dry textbook categories.\n  - Descriptions explain what the learner will do or be able to reason through.\n  - Concepts are specific enough to guide content generation, but they are raw material inside a lesson, not automatic lesson candidates.\n\n  # Major Failures\n\n  ## False Granularity\n\n  False granularity is the main failure this eval must catch. It happens when the output looks comprehensive because it split the chapter into many tiny lessons, but those lessons would generate repetitive activities.\n\n  Use this test: if the explanation or practice for lesson A must teach lesson B's core idea for lesson A to make sense, A and B should probably be one lesson.\n\n  Penalize as a major failure when the output:\n\n  - splits one input -> process -> result chain into separate lessons\n  - splits first-exposure parts that define each other, such as variable/name/value/output, function declaration/call/parameter/return, or loop/condition/body\n  - creates many adjacent lessons that would use the same example with slightly different labels\n  - turns every method, subtopic, phase, or label into its own lesson even though the learner experience would be repetitive\n  - rewards glossary completeness over teachable lesson boundaries\n\n  Do not confuse false granularity with valid domain decomposition. Adjacent lessons can be separate when they teach different evidence types, interpretive tasks, mechanisms, source categories, workflows, or real-world decisions. Examples that can be valid:\n\n  - history lessons that use artifacts, landscapes, languages, trade goods, rituals, warfare, and diplomacy for different kinds of historical reasoning\n  - astronomy lessons that separate detection methods, signal validation, physical inference, atmospheric characterization, habitability, missions, and telescope capabilities\n  - law lessons that separate procedural moves with different legal effects, deadlines, parties, remedies, or courts\n  - technical lessons that separate mechanisms only when each can be practiced without re-teaching the neighboring mechanism\n\n  Named-entity lessons are not automatically false granularity. They are valid when the named people, sites, missions, models, cases, tools, or works anchor a distinct comparison, interpretation, evidence source, or practical decision. Penalize them as false granularity only when the lesson is mostly a memorization list or would repeat the same teaching move as a neighboring lesson.\n\n  Score caps:\n\n  - Clear false-granularity cluster: `majorErrors` score must be 7.5 or lower.\n  - Repeated false granularity across the output, after excluding valid domain decomposition: `majorErrors` score must be 6.5 or lower.\n  - Glossary-expanded syllabus where many lessons are too small to support distinct activities: `majorErrors` score must be 6.5 or lower.\n\n  ## Coverage, Accuracy, and Scope\n\n  Penalize as major failures when the output:\n\n  - misses canonical chapter pillars or modern practices a serious learner needs\n  - omits important named entities in domains built around specific people, tools, missions, models, works, groups, cases, or landmark systems\n  - includes factual, historical, legal, scientific, technical, or linguistic errors\n  - drifts into neighboring-chapter material as lesson topics rather than brief context\n  - uses mostly dry textbook headings that feel like a table of contents instead of learner-facing actions or outcomes\n\n  # Minor Issues\n\n  Treat these as minor unless they make the lesson plan hard to use:\n\n  - isolated awkward title wording\n  - concept titles that are slightly broad, abstract, verbose, or compound\n  - lesson sizes that are uneven or mechanically uniform when the boundaries are otherwise sound\n  - small progression or phrasing issues\n  - small scope-adjacent mentions that do not become lesson topics\n\n  # Scoring Order\n\n  First check whether the lesson boundaries would produce distinct, non-repetitive learning arcs. Then check coverage, accuracy, scope, and title quality. Do not reward extra length, exhaustive lists, or high concept count by themselves.\n\n  If the output has no concrete major failures, the `majorErrors` conclusion should be \"None\" and the score should be 10.\n\n    ",
+        "id": "es-astronomia-exoplanetas-1",
+        "userInput": {
+          "chapterDescription": "Seguirás la revolución de los exoplanetas: métodos de detección, tránsito, velocidad radial, atmósferas y búsqueda de mundos habitables. También revisarás qué pueden y qué no pueden decir hoy los datos sobre vida fuera de la Tierra.",
+          "chapterTitle": "Exoplanetas",
+          "courseTitle": "Astronomía",
+          "language": "es",
+          "neighboringChapters": [
+            {
+              "description": "Estudiarás el gran cambio reciente de la disciplina: detección de ondas gravitacionales, qué eventos las producen y cómo se combinan con señales de luz. Verás cómo nació la astronomía multimensajero y qué problemas permitió resolver.",
+              "title": "Ondas gravitacionales"
+            },
+            {
+              "description": "Verás otro pilar nuevo: neutrinos cósmicos, rayos cósmicos y cómo se conectan con explosiones, agujeros negros y objetos extremos. Este capítulo completa la visión moderna del universo observada con mensajeros no tradicionales.",
+              "title": "Neutrinos y partículas del cosmos"
+            },
+            {
+              "description": "Aquí aparecen las grandes encuestas del cielo, la astronomía de datos y el uso actual de IA para clasificar, detectar anomalías y manejar volúmenes masivos de observaciones. Es ya parte normal de la práctica moderna, no un tema opcional.",
+              "title": "Astronomía de datos e inteligencia artificial"
+            },
+            {
+              "description": "Verás cómo se diseña y ejecuta una investigación astronómica completa: pregunta, propuesta de observación, toma de datos, reducción, análisis, interpretación y publicación. Esto une la teoría con la práctica real de la disciplina.",
+              "title": "De una pregunta a un resultado científico"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "steps": [
+        {
+          "conclusion": "None",
+          "kind": "majorErrors",
+          "score": 10
+        },
+        {
+          "conclusion": "A few titles are somewhat textbook-like rather than fully learner-facing, such as “Multi-head attention” and “Positional encodings.” Some lessons are dense, especially the encoder/decoder design lesson and the fine-tuning lesson, but they remain coherent and capability-sized. A small amount of content, such as instruction tuning and LoRA, edges toward the neighboring Large Language Models chapter, though it is still relevant to pretrained transformers.",
+          "kind": "minorErrors",
+          "score": 9
+        },
+        {
+          "conclusion": "The plan could make learner actions more explicit in a few titles, for example by framing positional encodings as “How transformers know token order.” It could also clarify the progression between transformer internals, architectural variants, and training workflows, and briefly distinguish classic transformer fine-tuning from LLM-specific adaptation to avoid scope blur.",
+          "kind": "potentialImprovements",
+          "score": 9
+        }
+      ],
+      "testCase": {
+        "expectations": "\n      - MUST be in US English\n\n      \n  # Goal\n\n  Evaluate whether the result is a usable lesson plan for the requested chapter.\n\n  A strong lesson plan turns the chapter scope into cohesive learner capabilities. Each lesson should be large enough to support its own explanation activities, practice, quiz, and review without repeating neighboring lessons. Coverage matters, but only when the lesson boundaries would produce a good learning experience in this product.\n\n  # What Good Looks Like\n\n  - Lessons are capability-sized: each one teaches a distinct mechanism, decision, artifact, workflow, or real learner move.\n  - Related concepts that are mutually defining stay together in one lesson.\n  - The plan covers the chapter's canonical fundamentals, important modern practice, and required named entities from the domain.\n  - Lessons stay inside this chapter's scope and avoid concepts that primarily belong to neighboring chapters.\n  - Titles are concrete and learner-facing, not dry textbook categories.\n  - Descriptions explain what the learner will do or be able to reason through.\n  - Concepts are specific enough to guide content generation, but they are raw material inside a lesson, not automatic lesson candidates.\n\n  # Major Failures\n\n  ## False Granularity\n\n  False granularity is the main failure this eval must catch. It happens when the output looks comprehensive because it split the chapter into many tiny lessons, but those lessons would generate repetitive activities.\n\n  Use this test: if the explanation or practice for lesson A must teach lesson B's core idea for lesson A to make sense, A and B should probably be one lesson.\n\n  Penalize as a major failure when the output:\n\n  - splits one input -> process -> result chain into separate lessons\n  - splits first-exposure parts that define each other, such as variable/name/value/output, function declaration/call/parameter/return, or loop/condition/body\n  - creates many adjacent lessons that would use the same example with slightly different labels\n  - turns every method, subtopic, phase, or label into its own lesson even though the learner experience would be repetitive\n  - rewards glossary completeness over teachable lesson boundaries\n\n  Do not confuse false granularity with valid domain decomposition. Adjacent lessons can be separate when they teach different evidence types, interpretive tasks, mechanisms, source categories, workflows, or real-world decisions. Examples that can be valid:\n\n  - history lessons that use artifacts, landscapes, languages, trade goods, rituals, warfare, and diplomacy for different kinds of historical reasoning\n  - astronomy lessons that separate detection methods, signal validation, physical inference, atmospheric characterization, habitability, missions, and telescope capabilities\n  - law lessons that separate procedural moves with different legal effects, deadlines, parties, remedies, or courts\n  - technical lessons that separate mechanisms only when each can be practiced without re-teaching the neighboring mechanism\n\n  Named-entity lessons are not automatically false granularity. They are valid when the named people, sites, missions, models, cases, tools, or works anchor a distinct comparison, interpretation, evidence source, or practical decision. Penalize them as false granularity only when the lesson is mostly a memorization list or would repeat the same teaching move as a neighboring lesson.\n\n  Score caps:\n\n  - Clear false-granularity cluster: `majorErrors` score must be 7.5 or lower.\n  - Repeated false granularity across the output, after excluding valid domain decomposition: `majorErrors` score must be 6.5 or lower.\n  - Glossary-expanded syllabus where many lessons are too small to support distinct activities: `majorErrors` score must be 6.5 or lower.\n\n  ## Coverage, Accuracy, and Scope\n\n  Penalize as major failures when the output:\n\n  - misses canonical chapter pillars or modern practices a serious learner needs\n  - omits important named entities in domains built around specific people, tools, missions, models, works, groups, cases, or landmark systems\n  - includes factual, historical, legal, scientific, technical, or linguistic errors\n  - drifts into neighboring-chapter material as lesson topics rather than brief context\n  - uses mostly dry textbook headings that feel like a table of contents instead of learner-facing actions or outcomes\n\n  # Minor Issues\n\n  Treat these as minor unless they make the lesson plan hard to use:\n\n  - isolated awkward title wording\n  - concept titles that are slightly broad, abstract, verbose, or compound\n  - lesson sizes that are uneven or mechanically uniform when the boundaries are otherwise sound\n  - small progression or phrasing issues\n  - small scope-adjacent mentions that do not become lesson topics\n\n  # Scoring Order\n\n  First check whether the lesson boundaries would produce distinct, non-repetitive learning arcs. Then check coverage, accuracy, scope, and title quality. Do not reward extra length, exhaustive lists, or high concept count by themselves.\n\n  If the output has no concrete major failures, the `majorErrors` conclusion should be \"None\" and the score should be 10.\n\n    ",
+        "id": "en-machine-learning-transformers-1",
+        "userInput": {
+          "chapterDescription": "Transformers changed how ML handles language, vision, audio, and multimodal data. This chapter covers attention, encoder-decoder designs, pretraining patterns, and why transformers replaced many older architectures.",
+          "chapterTitle": "Transformers",
+          "courseTitle": "Machine Learning",
+          "language": "en",
+          "neighboringChapters": [
+            {
+              "description": "Models in production need packaging, serving, scaling, rollback plans, observability, and incident handling. This chapter covers deployment patterns for batch, streaming, and real-time inference.",
+              "title": "Serving Models"
+            },
+            {
+              "description": "Once models are live, teams need monitoring, retraining rules, feature stores, lineage, governance, and automation. This chapter covers the operational side of ML systems that people now call MLOps.",
+              "title": "MLOps"
+            },
+            {
+              "description": "Foundation models and large language models created new ways to build products and research systems. This chapter covers prompting, context windows, tool use, evaluation, and the strengths and limits of LLM-based systems.",
+              "title": "Large Language Models"
+            },
+            {
+              "description": "Many modern applications improve LLMs by connecting them to external knowledge. This chapter covers embeddings, chunking, indexing, retrieval, reranking, grounding, and failure modes in retrieval-augmented generation systems.",
+              "title": "RAG Systems"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "taskId": "chapter-lessons"
+}

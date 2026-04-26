@@ -114,6 +114,46 @@ export const TEST_CASES = [
       ],
     },
   },
+  // Early chapter: beginner-level computer science from GPT-5.5 course-chapters output
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese
+      - Ciência da Computação-specific false-granularity check: separate adjacent lessons for declaring a function, naming it, calling it, passing inputs, returning values, and reusing code are over-split. Those ideas are mutually defining parts of using functions to organize code and should mostly be one cohesive lesson, or at most a very small number of lessons. If you see this pattern, the \`majorErrors\` score must be 6.5 or lower.
+      - Keep this chapter focused on functions as a programming organization tool. Do not drift into collections, files, Git, testing, or debugging except as brief context because neighboring chapters own those topics.
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-ciencia-da-computacao-funcoes-que-organizam-o-codigo",
+    userInput: {
+      chapterDescription:
+        "Funções ajudam a dividir um programa em pedaços menores, dar nomes claros às tarefas e reutilizar código. Você pratica transformar código repetido em partes testáveis.",
+      chapterTitle: "Funções que organizam o código",
+      courseTitle: "Ciência da Computação",
+      language: "pt",
+      neighboringChapters: [
+        {
+          description:
+            "Variáveis, tipos simples, entrada, saída e expressões aparecem em problemas pequenos: converter temperatura, somar uma conta e formatar uma mensagem. Você passa a guardar dados e usá-los sem mistério.",
+          title: "Valores, textos e contas",
+        },
+        {
+          description:
+            "Condições e laços entram em tarefas reais, como validar uma senha, repetir tentativas e percorrer uma lista de itens. Você começa a controlar o caminho que o programa segue.",
+          title: "Decisões e repetições",
+        },
+        {
+          description:
+            "Listas, mapas, registros e arquivos aparecem em pequenos cadastros e relatórios. Você passa a guardar coleções de dados, buscar informações e salvar resultados fora do programa.",
+          title: "Coleções e arquivos",
+        },
+        {
+          description:
+            "Erros de sintaxe, falhas em tempo de execução e respostas erradas são tratados com leitura de mensagens, depurador e testes manuais. Você ganha um método para consertar código sem depender de adivinhação.",
+          title: "Caçando bugs sem pânico",
+        },
+      ],
+    },
+  },
   // Initial chapter: beginner-level humanities
   {
     expectations: `
@@ -152,6 +192,46 @@ export const TEST_CASES = [
       ],
     },
   },
+  // Mid-course chapter: focused Kanban method depth from GPT-5.5 course-chapters output
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese
+      - Kanban-specific false-granularity check: separate adjacent lessons for lead time, cycle time, throughput, WIP, and item age are over-split when they only teach isolated definitions. These metrics form one flow-measurement toolkit and should be grouped by learner use, such as reading flow health, diagnosing bottlenecks, or asking better forecasting questions. If the output creates one glossary lesson per metric, the \`majorErrors\` score must be 6.5 or lower.
+      - Do not penalize separate lessons for genuinely different learner moves, such as choosing which metric answers a question, spotting a bottleneck, or using measurements without pressuring people.
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-kanban-metricas-de-fluxo-que-ajudam",
+    userInput: {
+      chapterDescription:
+        "Lead time, cycle time, throughput, WIP e idade do item mostram como o fluxo se comporta. Você usa essas medidas para fazer perguntas melhores, não para pressionar pessoas.",
+      chapterTitle: "Métricas de fluxo que ajudam",
+      courseTitle: "Kanban",
+      language: "pt",
+      neighboringChapters: [
+        {
+          description:
+            "Políticas explícitas dizem quando um cartão entra, muda de coluna, bloqueia ou está pronto. Isso reduz discussão escondida e deixa o sistema mais justo para o time.",
+          title: "Regras claras para mover cartões",
+        },
+        {
+          description:
+            "Nem todo pedido deve entrar direto no quadro. Você cria uma fila de entrada, separa ideias de compromissos e decide o que puxar com base em capacidade real.",
+          title: "Reabastecimento e priorização",
+        },
+        {
+          description:
+            "Diagramas de fluxo cumulativo, dispersão de cycle time e gráficos de envelhecimento mostram padrões que a opinião não revela. Você lê esses gráficos para detectar filas crescendo, variação alta e risco de atraso.",
+          title: "Gráficos que contam a história do fluxo",
+        },
+        {
+          description:
+            "Kanban trabalha melhor com probabilidade do que com promessas rígidas. Você usa percentis, SLE e simulações simples de Monte Carlo para responder perguntas como “quando isso provavelmente fica pronto?”.",
+          title: "Previsão sem chute",
+        },
+      ],
+    },
+  },
   // Mid-course chapter: mid-level domain depth
   {
     expectations: `
@@ -186,6 +266,46 @@ export const TEST_CASES = [
           description:
             "Apresenta proteção ao consumidor, oferta, publicidade, vício, defeito, responsabilidade do fornecedor e tutela coletiva. Mostra um dos campos mais presentes no dia a dia forense e consultivo.",
           title: "Direito do Consumidor",
+        },
+      ],
+    },
+  },
+  // Mid-course chapter: biology mechanism from GPT-5.5 course-chapters output
+  {
+    expectations: `
+      - MUST be in Brazilian Portuguese
+      - Biology-specific false-granularity check: separate adjacent lessons for DNA, RNA, genes, chromosomes, and proteins are over-split when they only define labels in the same information-flow mechanism. This chapter should teach how molecular information becomes a protein and then a trait, not turn each molecule name into a separate mini-lesson. If the output creates a glossary-expanded syllabus around those labels, the \`majorErrors\` score must be 6.5 or lower.
+      - Do not penalize separate lessons for genuinely different mechanisms inside the flow, such as transcription, translation, genetic code, or how protein structure affects traits, when each lesson can be explained and practiced without re-teaching the others from scratch.
+
+      ${SHARED_EXPECTATIONS}
+    `,
+    id: "pt-biologia-do-dna-a-proteina",
+    userInput: {
+      chapterDescription:
+        "DNA, RNA, genes, cromossomos e proteínas são conectados pelo fluxo de informação dentro da célula. O capítulo mostra como uma sequência molecular pode virar uma característica observável.",
+      chapterTitle: "Do DNA à proteína",
+      courseTitle: "Biologia",
+      language: "pt",
+      neighboringChapters: [
+        {
+          description:
+            "Enzimas, ATP, respiração celular e fermentação são explicadas pelo caminho da energia nos seres vivos. Exemplos incluem músculo em esforço, fermento produzindo gás e células usando alimento.",
+          title: "Como a célula obtém energia",
+        },
+        {
+          description:
+            "Cloroplastos, luz, pigmentos, gás carbônico e produção de açúcar entram em uma sequência clara. Você liga fotossíntese a plantas, algas, cadeias alimentares e atmosfera.",
+          title: "Folhas que capturam luz",
+        },
+        {
+          description:
+            "Mitose, meiose, fecundação e separação de cromossomos aparecem por meio de desenhos, cariótipos e casos simples. Você vê como células mantêm ou embaralham informação genética.",
+          title: "Células se dividindo",
+        },
+        {
+          description:
+            "Cruzamentos simples, alelos dominantes e recessivos, heredogramas e probabilidade genética entram com exemplos de plantas, animais e famílias. O foco é prever padrões sem tratar genética como destino fixo.",
+          title: "Hereditariedade em famílias e linhagens",
         },
       ],
     },

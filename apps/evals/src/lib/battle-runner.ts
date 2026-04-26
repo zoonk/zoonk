@@ -181,10 +181,10 @@ async function runBattleForTestCase(
   existingMatchup: BattleMatchup | null,
 ): Promise<BattleMatchup> {
   const testCaseId = `${testCase.id}-1`;
-  const {
-    outputs: modelOutputs,
-    userPrompt,
-  } = collectModelOutputsForTestCase(testCaseId, allOutputs);
+  const { outputs: modelOutputs, userPrompt } = collectModelOutputsForTestCase(
+    testCaseId,
+    allOutputs,
+  );
 
   if (modelOutputs.length < 2) {
     throw new Error(`Need at least 2 models with outputs for test case ${testCaseId}`);
