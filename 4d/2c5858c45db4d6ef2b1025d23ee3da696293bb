@@ -1,0 +1,33 @@
+apps/evals/src/lib/system-prompt.md
+  h_1cda88fc21fe9c 1,3,5,7,9-11,13,15,17,19-23,25,27,29-31,33,35-39,41,43
+apps/evals/src/lib/battle-system-prompt.md
+  h_1cda88fc21fe9c 1,3,5,7,9-11,13,15,17-22,24,26,28-32,34,36
+apps/evals/src/tasks/chapter-lessons/test-cases.ts
+  c9928e79ce00e48e 2,4,6,8,10-16,18,20,22,24,26,28-32,34,36-39,41,43,45-47,49,51,53-57,59,61,63-67,69,71-73,81-82
+  h_1cda88fc21fe9c 58,60,62,68,70
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "4d2c5858c45db4d6ef2b1025d23ee3da696293bb",
+  "prompts": {
+    "c9928e79ce00e48e": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019dcacf-ea45-7270-8f62-6d904fe1512f",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 588,
+      "total_deletions": 930,
+      "accepted_lines": 54,
+      "overriden_lines": 0
+    }
+  },
+  "humans": {
+    "h_1cda88fc21fe9c": {
+      "author": "ceolinwill"
+    }
+  }
+}
