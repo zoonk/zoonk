@@ -1,7 +1,7 @@
 import "server-only";
 import { ErrorCode } from "@/lib/app-error";
 import { getSession } from "@zoonk/core/users/session/get";
-import { type Course, type Organization, getActiveCourseWhere, prisma } from "@zoonk/db";
+import { type Course, type Organization, prisma } from "@zoonk/db";
 import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { cache } from "react";
 
@@ -22,9 +22,9 @@ export const listUserCourses = cache(
         include: { course: { include: { organization: true } } },
         orderBy: { startedAt: "desc" },
         where: {
-          course: getActiveCourseWhere({
+          course: {
             OR: [{ organization: { kind: "brand" } }, { organizationId: null }],
-          }),
+          },
           userId,
         },
       }),

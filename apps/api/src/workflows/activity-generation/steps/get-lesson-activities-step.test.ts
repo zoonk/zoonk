@@ -112,41 +112,6 @@ describe(getLessonActivitiesStep, () => {
     );
   });
 
-  test("excludes archived activities from the lesson activity list", async () => {
-    const lesson = await lessonFixture({
-      chapterId,
-      kind: "language",
-      organizationId,
-      title: `Archived Activities ${randomUUID()}`,
-    });
-
-    await Promise.all([
-      activityFixture({
-        generationStatus: "pending",
-        kind: "vocabulary",
-        lessonId: lesson.id,
-        organizationId,
-        position: 0,
-        title: `Active Activity ${randomUUID()}`,
-      }),
-      activityFixture({
-        archivedAt: new Date(),
-        generationStatus: "pending",
-        kind: "reading",
-        lessonId: lesson.id,
-        organizationId,
-        position: 1,
-        title: `Archived Activity ${randomUUID()}`,
-      }),
-    ]);
-
-    const result = await getLessonActivitiesStep({ lessonId: lesson.id });
-
-    expect(result).toHaveLength(1);
-    expect(result[0]?.archivedAt).toBeNull();
-    expect(result[0]?.kind).toBe("vocabulary");
-  });
-
   test("throws FatalError when the lesson is outside the AI organization", async () => {
     const otherOrg = await organizationFixture();
     const otherCourse = await courseFixture({ organizationId: otherOrg.id });

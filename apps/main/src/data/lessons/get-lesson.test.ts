@@ -209,24 +209,4 @@ describe(getLesson, () => {
 
     expect(result).toBeNull();
   });
-
-  test("returns null for archived lesson", async () => {
-    const archivedLesson = await lessonFixture({
-      archivedAt: new Date(),
-      chapterId: publishedChapter.id,
-      isPublished: true,
-      language: "en",
-      organizationId: brandOrg.id,
-      position: 3,
-    });
-
-    const result = await getLesson({
-      brandSlug: brandOrg.slug,
-      chapterSlug: publishedChapter.slug,
-      courseSlug: publishedCourse.slug,
-      lessonSlug: archivedLesson.slug,
-    });
-
-    expect(result).toBeNull();
-  });
 });

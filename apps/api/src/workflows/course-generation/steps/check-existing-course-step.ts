@@ -3,11 +3,10 @@ import { type CourseWorkflowStepName } from "@zoonk/core/workflows/steps";
 import {
   type CourseGetPayload,
   type CourseSuggestion,
-  getActiveCourseWhere,
+  getAiGenerationCourseWhere,
   prisma,
 } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
-import { AI_ORG_SLUG } from "@zoonk/utils/org";
 import { ensureLocaleSuffix, toSlug } from "@zoonk/utils/string";
 
 const courseInclude = {
@@ -37,8 +36,7 @@ export async function checkExistingCourseStep(
     Promise.all([
       prisma.course.findFirst({
         include: courseInclude,
-        where: getActiveCourseWhere({
-          organization: { slug: AI_ORG_SLUG },
+        where: getAiGenerationCourseWhere({
           slug: ensureLocaleSuffix(normalizedSlug, suggestion.language),
         }),
       }),
@@ -47,9 +45,7 @@ export async function checkExistingCourseStep(
           course: { include: courseInclude },
         },
         where: {
-          course: getActiveCourseWhere({
-            organization: { slug: AI_ORG_SLUG },
-          }),
+          course: getAiGenerationCourseWhere(),
           language: suggestion.language,
           slug: normalizedSlug,
         },

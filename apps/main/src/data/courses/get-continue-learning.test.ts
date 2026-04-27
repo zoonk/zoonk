@@ -98,91 +98,6 @@ describe("authenticated users", () => {
     });
   });
 
-  test("keeps a course in continue learning when the latest completion was archived", async () => {
-    const user = await userFixture();
-    const headers = await signInAs(user.email, user.password);
-    const userId = user.id;
-
-    const course = await courseFixture({
-      isPublished: true,
-      organizationId: organization.id,
-    });
-
-    const chapter = await chapterFixture({
-      courseId: course.id,
-      isPublished: true,
-      organizationId: organization.id,
-      position: 0,
-    });
-
-    const [firstLesson, secondLesson] = await Promise.all([
-      lessonFixture({
-        chapterId: chapter.id,
-        isPublished: true,
-        organizationId: organization.id,
-        position: 0,
-      }),
-      lessonFixture({
-        chapterId: chapter.id,
-        isPublished: true,
-        organizationId: organization.id,
-        position: 1,
-      }),
-    ]);
-
-    const [completedActivity, nextActivity] = await Promise.all([
-      activityFixture({
-        generationStatus: "completed",
-        isPublished: true,
-        lessonId: firstLesson.id,
-        organizationId: organization.id,
-        position: 0,
-      }),
-      activityFixture({
-        generationStatus: "completed",
-        isPublished: true,
-        lessonId: secondLesson.id,
-        organizationId: organization.id,
-        position: 0,
-      }),
-    ]);
-
-    await activityProgressFixture({
-      activityId: completedActivity.id,
-      completedAt: new Date(),
-      durationSeconds: 60,
-      userId,
-    });
-
-    await Promise.all([
-      prisma.activity.update({
-        data: {
-          archivedAt: new Date(),
-          isPublished: false,
-        },
-        where: { id: completedActivity.id },
-      }),
-      activityFixture({
-        generationStatus: "completed",
-        isPublished: true,
-        lessonId: firstLesson.id,
-        organizationId: organization.id,
-        position: 0,
-      }),
-    ]);
-
-    const result = await getContinueLearning(headers);
-
-    expect(result).toHaveLength(1);
-    expect(result[0]).toMatchObject({
-      activity: { id: nextActivity.id },
-      chapter: { id: chapter.id },
-      course: { id: course.id },
-      lesson: { id: secondLesson.id },
-      status: "completed",
-    });
-  });
-
   test("does not reopen a durably completed lesson after new activities are added", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
@@ -215,20 +130,7 @@ describe("authenticated users", () => {
       }),
     ]);
 
-    const [
-      archivedCompletedActivity,
-      replacementFirstActivity,
-      replacementSecondActivity,
-      nextActivity,
-    ] = await Promise.all([
-      activityFixture({
-        archivedAt: new Date(),
-        generationStatus: "completed",
-        isPublished: false,
-        lessonId: completedLesson.id,
-        organizationId: organization.id,
-        position: 0,
-      }),
+    const [completedActivity, replacementSecondActivity, nextActivity] = await Promise.all([
       activityFixture({
         generationStatus: "completed",
         isPublished: true,
@@ -254,7 +156,7 @@ describe("authenticated users", () => {
 
     await Promise.all([
       activityProgressFixture({
-        activityId: archivedCompletedActivity.id,
+        activityId: completedActivity.id,
         completedAt: new Date(),
         durationSeconds: 60,
         userId,
@@ -283,7 +185,7 @@ describe("authenticated users", () => {
       lesson: { id: completedLesson.id },
     });
 
-    expect(replacementFirstActivity.id).not.toBe(nextActivity.id);
+    expect(completedActivity.id).not.toBe(nextActivity.id);
   });
 
   test("orders by most recent completion", async () => {
@@ -783,29 +685,5 @@ describe("authenticated users", () => {
       lesson: null,
       status: "pending",
     });
-  });
-
-  test("excludes archived courses from continue learning", async () => {
-    const user = await userFixture();
-    const headers = await signInAs(user.email, user.password);
-
-    const { activity1, course } = await createCourseWithActivities(organization.id);
-
-    await Promise.all([
-      activityProgressFixture({
-        activityId: activity1.id,
-        completedAt: new Date(),
-        durationSeconds: 60,
-        userId: user.id,
-      }),
-      prisma.course.update({
-        data: { archivedAt: new Date() },
-        where: { id: course.id },
-      }),
-    ]);
-
-    const result = await getContinueLearning(headers);
-
-    expect(result.find((item) => item.course.id === course.id)).toBeUndefined();
   });
 });

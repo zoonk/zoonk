@@ -105,22 +105,6 @@ describe(listChapterLessons, () => {
     expect(result).toEqual([]);
   });
 
-  test("excludes archived lessons", async () => {
-    const archivedLesson = await lessonFixture({
-      archivedAt: new Date(),
-      chapterId: publishedChapter.id,
-      isPublished: true,
-      language: "en",
-      organizationId: brandOrg.id,
-      position: 3,
-      title: "Archived Lesson",
-    });
-
-    const result = await listChapterLessons({ chapterId: publishedChapter.id });
-
-    expect(result.find((lesson) => lesson.id === archivedLesson.id)).toBeUndefined();
-  });
-
   test("returns all lesson fields correctly", async () => {
     const result = await listChapterLessons({ chapterId: publishedChapter.id });
 

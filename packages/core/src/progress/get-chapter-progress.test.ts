@@ -372,55 +372,6 @@ describe(getChapterProgress, () => {
     expect(result).toEqual([{ chapterId: chapter.id, completedLessons: 1, totalLessons: 2 }]);
   });
 
-  test("excludes archived lessons from chapter totals", async () => {
-    const [user, course] = await Promise.all([
-      userFixture(),
-      courseFixture({ isPublished: true, organizationId: organization.id }),
-    ]);
-
-    const chapter = await chapterFixture({
-      courseId: course.id,
-      isPublished: true,
-      organizationId: organization.id,
-      position: 0,
-    });
-
-    const [activeLesson] = await Promise.all([
-      lessonFixture({
-        chapterId: chapter.id,
-        isPublished: true,
-        organizationId: organization.id,
-        position: 0,
-      }),
-      lessonFixture({
-        archivedAt: new Date(),
-        chapterId: chapter.id,
-        isPublished: true,
-        organizationId: organization.id,
-        position: 1,
-      }),
-    ]);
-
-    const activity = await activityFixture({
-      isPublished: true,
-      lessonId: activeLesson.id,
-      organizationId: organization.id,
-      position: 0,
-    });
-
-    await activityProgressFixture({
-      activityId: activity.id,
-      completedAt: new Date(),
-      durationSeconds: 60,
-      userId: user.id,
-    });
-
-    const headers = await signInAs(user.email, user.password);
-    const result = await getChapterProgress({ courseId: course.id, headers });
-
-    expect(result).toEqual([{ chapterId: chapter.id, completedLessons: 1, totalLessons: 1 }]);
-  });
-
   test("keeps a durably completed chapter completed when a new lesson is added later", async () => {
     const [user, course] = await Promise.all([
       userFixture(),

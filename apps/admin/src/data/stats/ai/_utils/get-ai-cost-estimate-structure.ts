@@ -193,9 +193,6 @@ async function getStepImageUsageRows({
       JOIN lessons l ON l.id = a.lesson_id
       WHERE s.kind = 'static'
         AND s.content->'image' IS NOT NULL
-        AND s.archived_at IS NULL
-        AND a.archived_at IS NULL
-        AND l.archived_at IS NULL
         AND l.generation_run_id IS NOT NULL
         AND l.generation_status = 'completed'
         AND l.created_at >= ${dateWindow.startAt}
@@ -231,7 +228,6 @@ async function getLanguageAudioUsage({
         JOIN chapters ch ON ch.id = l.chapter_id
         JOIN courses c ON c.id = ch.course_id
         WHERE l.kind = 'language'
-          AND l.archived_at IS NULL
           AND l.generation_run_id IS NOT NULL
           AND l.generation_status = 'completed'
           AND l.created_at >= ${dateWindow.startAt}
@@ -299,7 +295,6 @@ function countActivities({
 }) {
   return prisma.activity.count({
     where: {
-      archivedAt: null,
       generationRunId: { not: null },
       generationStatus: "completed",
       kind: activityKind,
@@ -319,7 +314,6 @@ function countActivities({
  */
 function buildCompletedLessonWhere({ dateWindow }: { dateWindow: DateWindow }) {
   return {
-    archivedAt: null,
     createdAt: { gte: dateWindow.startAt, lt: dateWindow.endExclusive },
     generationRunId: { not: null },
     generationStatus: "completed" as const,
@@ -334,7 +328,6 @@ function buildCompletedCourseWhere({
   targetLanguage: null | { not: null };
 }) {
   return {
-    archivedAt: null,
     createdAt: { gte: dateWindow.startAt, lt: dateWindow.endExclusive },
     generationRunId: { not: null },
     generationStatus: "completed" as const,
@@ -344,7 +337,6 @@ function buildCompletedCourseWhere({
 
 function buildChapterShellWhere({ dateWindow }: { dateWindow: DateWindow }) {
   return {
-    archivedAt: null,
     createdAt: { gte: dateWindow.startAt, lt: dateWindow.endExclusive },
     generationRunId: { not: null },
   };
