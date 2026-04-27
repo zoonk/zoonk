@@ -1,6 +1,6 @@
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
 import { describe, expect, test } from "vitest";
-import { describePlayerStep, getInvestigationVariant, getPlayerStepImage } from "./player-step";
+import { describePlayerStep, getPlayerStepImage } from "./player-step";
 
 function buildStep(overrides: Partial<SerializedStep> = {}): SerializedStep {
   return {
@@ -22,21 +22,6 @@ function buildStep(overrides: Partial<SerializedStep> = {}): SerializedStep {
 }
 
 describe(describePlayerStep, () => {
-  test("describes story intro as the canonical intro step", () => {
-    const descriptor = describePlayerStep(
-      buildStep({
-        content: {
-          text: "Welcome",
-          title: "Story intro",
-          variant: "intro" as const,
-        },
-      }),
-    );
-
-    expect(descriptor?.kind).toBe("intro");
-    expect(descriptor?.kind === "intro" ? descriptor.intro.text : null).toBe("Welcome");
-  });
-
   test("describes practice scenario as the canonical intro step", () => {
     const descriptor = describePlayerStep(
       buildStep({ content: { text: "Hello", title: "Intro", variant: "intro" as const } }),
@@ -45,28 +30,6 @@ describe(describePlayerStep, () => {
     expect(descriptor?.kind).toBe("intro");
     expect(descriptor?.kind === "intro" ? descriptor.intro.title : null).toBe("Intro");
     expect(descriptor?.kind === "intro" ? descriptor.intro.text : null).toBe("Hello");
-  });
-
-  test("describes investigation call and preserves its investigation variant", () => {
-    const descriptor = describePlayerStep(
-      buildStep({
-        content: {
-          options: [
-            {
-              accuracy: "best" as const,
-              feedback: "Correct",
-              id: "exp-1",
-              text: "It was DNS",
-            },
-          ],
-          variant: "call" as const,
-        },
-        kind: "investigation",
-      }),
-    );
-
-    expect(descriptor?.kind).toBe("investigationCall");
-    expect(getInvestigationVariant(descriptor?.step)).toBe("call");
   });
 
   test("keeps regular static text as the canonical staticText kind", () => {

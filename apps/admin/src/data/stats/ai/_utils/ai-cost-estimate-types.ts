@@ -60,10 +60,8 @@ export type StructureStats = {
   completedRegularChapterCount: number;
   coreLessonCount: number;
   coreLessonExplanationCount: number;
-  coreLessonInvestigationCount: number;
   coreLessonPracticeCount: number;
   coreLessonQuizCount: number;
-  coreLessonStoryCount: number;
   customActivityCount: number;
   customLessonCount: number;
   languageAudioSentenceWordCount: number;

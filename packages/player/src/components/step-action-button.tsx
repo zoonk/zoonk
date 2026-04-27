@@ -7,10 +7,9 @@ import { usePlayerRuntime } from "../player-context";
 
 /**
  * Single source of truth for the step action button
- * (Begin, Check, Continue, Start Investigation).
+ * (Begin, Check, Continue).
  *
- * Handles every non-navigation action: story intro/outcome,
- * investigation problem, and regular interactive steps.
+ * Handles every non-navigation action for intro and checked steps.
  *
  * Rendered in two places with different visibility:
  * - Inside the PlayerBottomBar for mobile (visible below lg)
@@ -41,7 +40,6 @@ export function StepActionButton({
     begin: t("Begin"),
     check: t("Check"),
     continue: t("Continue"),
-    startInvestigation: t("Start Investigation"),
   } as const;
 
   const buttonProps = {

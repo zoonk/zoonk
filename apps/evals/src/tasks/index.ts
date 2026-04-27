@@ -4,21 +4,14 @@ import { activityDistractorsTask } from "./activity-distractors/task";
 import { activityExplanationTask } from "./activity-explanation/task";
 import { activityGrammarContentTask } from "./activity-grammar-content/task";
 import { activityGrammarUserContentTask } from "./activity-grammar-user-content/task";
-import { activityInvestigationAccuracyTask } from "./activity-investigation-accuracy/task";
-import { activityInvestigationActionsTask } from "./activity-investigation-actions/task";
-import { activityInvestigationFindingsTask } from "./activity-investigation-findings/task";
-import { activityInvestigationScenarioTask } from "./activity-investigation-scenario/task";
 import { activityPracticeTask } from "./activity-practice/task";
 import { activityPronunciationTask } from "./activity-pronunciation/task";
 import { activityQuizTask } from "./activity-quiz/task";
 import { activityRomanizationTask } from "./activity-romanization/task";
 import { activitySentencesTask } from "./activity-sentences/task";
-import { activityStoryChoicesTask } from "./activity-story-choices/task";
-import { activityStoryTask } from "./activity-story/task";
 import { activityTranslationTask } from "./activity-translation/task";
 import { activityVocabularyTask } from "./activity-vocabulary/task";
 import { alternativeTitlesTask } from "./alternative-titles/task";
-import { appliedActivityKindTask } from "./applied-activity-kind/task";
 import { chapterLessonsTask } from "./chapter-lessons/task";
 import { courseCategoriesTask } from "./course-categories/task";
 import { courseChaptersTask } from "./course-chapters/task";
@@ -41,15 +34,8 @@ export const TASKS: readonly Task[] = [
   activityTranslationTask,
   activitySentencesTask,
   activityPracticeTask,
-  activityStoryTask,
-  activityStoryChoicesTask,
-  activityInvestigationAccuracyTask,
-  activityInvestigationActionsTask,
-  activityInvestigationFindingsTask,
-  activityInvestigationScenarioTask,
   activityRomanizationTask,
   activityVocabularyTask,
-  appliedActivityKindTask,
   alternativeTitlesTask,
   chapterLessonsTask,
   courseCategoriesTask,

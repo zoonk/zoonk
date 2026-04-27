@@ -17,7 +17,6 @@ import {
 export type PhaseName =
   | "gettingStarted"
   | "figuringOutApproach"
-  | "personalizingLesson"
   | "settingUpActivities"
   | "finishing";
 
@@ -25,7 +24,6 @@ const PHASE_STEPS = {
   figuringOutApproach: ["determineLessonKind", "updateLessonKind", "removeNonLanguageLesson"],
   finishing: ["setLessonAsCompleted"],
   gettingStarted: ["getLesson", "setLessonAsRunning"],
-  personalizingLesson: ["determineAppliedActivity"],
   settingUpActivities: ["generateCoreActivities", "generateCustomActivities", "addActivities"],
 } as const satisfies Record<PhaseName, readonly LessonStepName[]>;
 
@@ -37,7 +35,6 @@ type _ValidateLesson = AssertAllCovered<
 export const PHASE_ORDER: PhaseName[] = [
   "gettingStarted",
   "figuringOutApproach",
-  "personalizingLesson",
   "settingUpActivities",
   "finishing",
 ];
@@ -46,7 +43,6 @@ export const PHASE_ICONS: Record<PhaseName, LucideIcon> = {
   figuringOutApproach: SearchIcon,
   finishing: CheckCircleIcon,
   gettingStarted: BookOpenIcon,
-  personalizingLesson: SparklesIcon,
   settingUpActivities: SparklesIcon,
 };
 
@@ -54,8 +50,7 @@ const PHASE_WEIGHTS: Record<PhaseName, number> = {
   figuringOutApproach: 20,
   finishing: 5,
   gettingStarted: 5,
-  personalizingLesson: 20,
-  settingUpActivities: 50,
+  settingUpActivities: 70,
 };
 
 export function getPhaseStatus(

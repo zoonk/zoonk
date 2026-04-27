@@ -1,6 +1,5 @@
 import {
   type ActivityKind,
-  type InvestigationStepContent,
   type StepContentByKind,
   type SupportedStepKind,
   isSupportedStepKind,
@@ -162,21 +161,10 @@ function shuffleOptions<Content extends OptionsContent>(content: Content): Conte
 }
 
 /**
- * Investigation problem steps are read-only setup content. Only action and call
- * variants have selectable options that should be randomized for the learner.
- */
-function hasShuffleableInvestigationOptions(
-  content: InvestigationStepContent,
-): content is Extract<InvestigationStepContent, OptionsContent> {
-  return content.variant === "action" || content.variant === "call";
-}
-
-/**
  * Parses step content and applies server-side shuffling where needed.
  *
- * Multiple choice, story, investigation action, and investigation call
- * options are shuffled during serialization so the client receives a
- * randomized order.
+ * Multiple choice and select-image options are shuffled during serialization
+ * so the client receives a randomized order.
  * This avoids client-side shuffling which can cause hydration errors.
  */
 function parseAndShuffleContent(kind: SupportedStepKind, content: unknown) {
@@ -186,15 +174,6 @@ function parseAndShuffleContent(kind: SupportedStepKind, content: unknown) {
 
   if (kind === "selectImage") {
     return shuffleOptions(parseStepContent("selectImage", content));
-  }
-
-  if (kind === "story") {
-    return shuffleOptions(parseStepContent("story", content));
-  }
-
-  if (kind === "investigation") {
-    const parsed = parseStepContent("investigation", content);
-    return hasShuffleableInvestigationOptions(parsed) ? shuffleOptions(parsed) : parsed;
   }
 
   return parseStepContent(kind, content);

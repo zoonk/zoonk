@@ -218,64 +218,6 @@ msgctxt "HvLGEN"
 msgid "Answer feedback"
 msgstr "Answer feedback"
 
-#: ../../packages/player/src/components/investigation-action-variant.tsx
-msgctxt "5jvK4n"
-msgid "Evidence complete — time to make your call."
-msgstr "Evidence complete — time to make your call."
-
-#: ../../packages/player/src/components/investigation-action-variant.tsx
-#: ../../packages/player/src/components/investigation-call-variant.tsx
-msgctxt "dLRz0R"
-msgid "Weak signal"
-msgstr "Weak signal"
-
-#: ../../packages/player/src/components/investigation-action-variant.tsx
-msgctxt "LrUFLN"
-msgid "One more lead to follow"
-msgstr "One more lead to follow"
-
-#: ../../packages/player/src/components/investigation-action-variant.tsx
-#: ../../packages/player/src/components/investigation-call-variant.tsx
-msgctxt "P/5Naz"
-msgid "Useful clue"
-msgstr "Useful clue"
-
-#: ../../packages/player/src/components/investigation-action-variant.tsx
-msgctxt "snhsrG"
-msgid "What do you want to investigate first?"
-msgstr "What do you want to investigate first?"
-
-#: ../../packages/player/src/components/investigation-action-variant.tsx
-#: ../../packages/player/src/components/investigation-call-variant.tsx
-msgctxt "U0rj9y"
-msgid "Strong lead"
-msgstr "Strong lead"
-
-#: ../../packages/player/src/components/investigation-call-variant.tsx
-msgctxt "6g7+6N"
-msgid "Evidence"
-msgstr "Evidence"
-
-#: ../../packages/player/src/components/investigation-call-variant.tsx
-msgctxt "IE/I2y"
-msgid "What do you think happened?"
-msgstr "What do you think happened?"
-
-#: ../../packages/player/src/components/investigation-call-variant.tsx
-msgctxt "LmlOva"
-msgid "Review evidence"
-msgstr "Review evidence"
-
-#: ../../packages/player/src/components/investigation-problem-variant.tsx
-msgctxt "4Xsz3M"
-msgid "The Case"
-msgstr "The Case"
-
-#: ../../packages/player/src/components/investigation-problem-variant.tsx
-msgctxt "kW2sOl"
-msgid "Collect 2 leads. Then make your call."
-msgstr "Collect 2 leads. Then make your call."
-
 #: ../../packages/player/src/components/lesson-info-popover.tsx
 msgctxt "RwePAQ"
 msgid "Lesson info"
@@ -323,11 +265,6 @@ msgid "Activity progress"
 msgstr "Activity progress"
 
 #: ../../packages/player/src/components/player-shell.tsx
-msgctxt "EqkwlK"
-msgid "evidence"
-msgstr "evidence"
-
-#: ../../packages/player/src/components/player-shell.tsx
 msgctxt "tJtNzs"
 msgid "Player screen"
 msgstr "Player screen"
@@ -367,11 +304,6 @@ msgid "Correct order:"
 msgstr "Correct order:"
 
 #: ../../packages/player/src/components/step-action-button.tsx
-msgctxt "9p9JgX"
-msgid "Start Investigation"
-msgstr "Start Investigation"
-
-#: ../../packages/player/src/components/step-action-button.tsx
 #: src/app/(catalog)/(home)/continue-learning-card.tsx
 #: src/components/catalog/continue-activity-link.tsx
 msgctxt "acrOoz"
@@ -388,21 +320,6 @@ msgctxt "RDZVQL"
 msgid "Check"
 msgstr "Check"
 
-#: ../../packages/player/src/components/story-feedback-content.tsx
-msgctxt "jSeUY4"
-msgid "Metric changes"
-msgstr "Metric changes"
-
-#: ../../packages/player/src/components/story-feedback-content.tsx
-msgctxt "W2JBdp"
-msgid "Impact"
-msgstr "Impact"
-
-#: ../../packages/player/src/components/story-outcome-content.tsx
-msgctxt "ZJ5JQC"
-msgid "Final status"
-msgstr "Final status"
-
 #: ../../packages/player/src/components/translation-step.tsx
 msgctxt "MxLxkr"
 msgid "Translate this word:"
@@ -412,11 +329,6 @@ msgstr "Translate this word:"
 msgctxt "++l7ni"
 msgid "Not quite"
 msgstr "Not quite"
-
-#: ../../packages/player/src/components/verdict-label.tsx
-msgctxt "MxcfM1"
-msgid "Good, but..."
-msgstr "Good, but..."
 
 #: ../../packages/player/src/components/verdict-label.tsx
 msgctxt "xmF49T"
@@ -441,12 +353,6 @@ msgstr "Translation"
 msgctxt "1TOMnj"
 msgid "Listening"
 msgstr "Listening"
-
-#: ../../packages/player/src/use-activity-kind-label.ts
-#: src/lib/activities.ts
-msgctxt "Bfq+7w"
-msgid "Story"
-msgstr "Story"
 
 #: ../../packages/player/src/use-activity-kind-label.ts
 #: src/lib/activities.ts
@@ -484,12 +390,6 @@ msgstr "Grammar"
 msgctxt "R+J5ox"
 msgid "Review"
 msgstr "Review"
-
-#: ../../packages/player/src/use-activity-kind-label.ts
-#: src/lib/activities.ts
-msgctxt "tNseQe"
-msgid "Investigation"
-msgstr "Investigation"
 
 #: ../../packages/player/src/use-activity-kind-label.ts
 #: src/app/(catalog)/(home)/continue-learning-card.tsx
@@ -1744,19 +1644,9 @@ msgid "Something went wrong. Please try again."
 msgstr "Something went wrong. Please try again."
 
 #: src/app/generate/a/[id]/phase-thinking-generators/content.ts
-msgctxt "+6mDjl"
-msgid "Designing the choices..."
-msgstr "Designing the choices..."
-
-#: src/app/generate/a/[id]/phase-thinking-generators/content.ts
 msgctxt "+QrqeN"
 msgid "Writing the explanation first..."
 msgstr "Writing the explanation first..."
-
-#: src/app/generate/a/[id]/phase-thinking-generators/content.ts
-msgctxt "+r6Z9x"
-msgid "Preparing the wrap-up..."
-msgstr "Preparing the wrap-up..."
 
 #: src/app/generate/a/[id]/phase-thinking-generators/content.ts
 msgctxt "+wV822"
@@ -1782,11 +1672,6 @@ msgstr "Making it clear..."
 msgctxt "2e5abC"
 msgid "Wrapping things up..."
 msgstr "Wrapping things up..."
-
-#: src/app/generate/a/[id]/phase-thinking-generators/content.ts
-msgctxt "2Qq4mP"
-msgid "Connecting choices to concepts..."
-msgstr "Connecting choices to concepts..."
 
 #: src/app/generate/a/[id]/phase-thinking-generators/content.ts
 msgctxt "2Tovpk"
@@ -1853,11 +1738,6 @@ msgid "Building interactive tasks..."
 msgstr "Building interactive tasks..."
 
 #: src/app/generate/a/[id]/phase-thinking-generators/content.ts
-msgctxt "C30MSR"
-msgid "Setting the scene..."
-msgstr "Setting the scene..."
-
-#: src/app/generate/a/[id]/phase-thinking-generators/content.ts
 msgctxt "cVoRCh"
 msgid "Preparing options..."
 msgstr "Preparing options..."
@@ -1866,11 +1746,6 @@ msgstr "Preparing options..."
 msgctxt "EAqAX/"
 msgid "Thinking about what to illustrate..."
 msgstr "Thinking about what to illustrate..."
-
-#: src/app/generate/a/[id]/phase-thinking-generators/content.ts
-msgctxt "eh88d1"
-msgid "Adding consequences..."
-msgstr "Adding consequences..."
 
 #: src/app/generate/a/[id]/phase-thinking-generators/content.ts
 msgctxt "epxxAx"
@@ -1913,11 +1788,6 @@ msgid "Writing the explanation..."
 msgstr "Writing the explanation..."
 
 #: src/app/generate/a/[id]/phase-thinking-generators/content.ts
-msgctxt "k+mDX9"
-msgid "Creating your story..."
-msgstr "Creating your story..."
-
-#: src/app/generate/a/[id]/phase-thinking-generators/content.ts
 msgctxt "KddvJw"
 msgid "Writing fill-in-the-blanks..."
 msgstr "Writing fill-in-the-blanks..."
@@ -1936,11 +1806,6 @@ msgstr "Crafting the content..."
 msgctxt "r8xznK"
 msgid "Researching the topic..."
 msgstr "Researching the topic..."
-
-#: src/app/generate/a/[id]/phase-thinking-generators/content.ts
-msgctxt "rMBa9K"
-msgid "Crafting the outcomes..."
-msgstr "Crafting the outcomes..."
 
 #: src/app/generate/a/[id]/phase-thinking-generators/content.ts
 msgctxt "SHIHyL"
@@ -1981,11 +1846,6 @@ msgid "Setting things up..."
 msgstr "Setting things up..."
 
 #: src/app/generate/a/[id]/phase-thinking-generators/content.ts
-msgctxt "XU3/xf"
-msgid "Writing the debrief..."
-msgstr "Writing the debrief..."
-
-#: src/app/generate/a/[id]/phase-thinking-generators/content.ts
 msgctxt "Yoev2R"
 msgid "Refining the details..."
 msgstr "Refining the details..."
@@ -1994,81 +1854,6 @@ msgstr "Refining the details..."
 msgctxt "z8/EK+"
 msgid "Storing earlier activities..."
 msgstr "Storing earlier activities..."
-
-#: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
-msgctxt "0wxF13"
-msgid "Creating action options..."
-msgstr "Creating action options..."
-
-#: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
-msgctxt "7Lh97x"
-msgid "Setting up the investigation..."
-msgstr "Setting up the investigation..."
-
-#: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
-msgctxt "aseqqC"
-msgid "Designing what you can investigate..."
-msgstr "Designing what you can investigate..."
-
-#: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
-msgctxt "BL1C4H"
-msgid "Generating evidence for each action..."
-msgstr "Generating evidence for each action..."
-
-#: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
-msgctxt "bn5TYw"
-msgid "Writing feedback for each explanation..."
-msgstr "Writing feedback for each explanation..."
-
-#: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
-msgctxt "btzedf"
-msgid "Planning investigation steps..."
-msgstr "Planning investigation steps..."
-
-#: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
-msgctxt "eZgYlp"
-msgid "Making the evidence deliberately ambiguous..."
-msgstr "Making the evidence deliberately ambiguous..."
-
-#: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
-msgctxt "gX67z0"
-msgid "Crafting possible explanations..."
-msgstr "Crafting possible explanations..."
-
-#: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
-msgctxt "ISjUeV"
-msgid "Creating the mystery scenario..."
-msgstr "Creating the mystery scenario..."
-
-#: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
-msgctxt "OWWxLA"
-msgid "Crafting the findings..."
-msgstr "Crafting the findings..."
-
-#: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
-msgctxt "rugo1+"
-msgid "Mapping out the investigation paths..."
-msgstr "Mapping out the investigation paths..."
-
-#: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
-msgctxt "TG/Jbn"
-msgid "Building the clues..."
-msgstr "Building the clues..."
-
-#: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
-msgctxt "v8pqDW"
-msgid "Determining accuracy levels..."
-msgstr "Determining accuracy levels..."
-
-#: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
-msgctxt "Vo2xMx"
-msgid "Designing the case..."
-msgstr "Designing the case..."
-
-#: src/app/generate/a/[id]/phase-thinking-generators/investigation.ts
-msgctxt "ZqfozF"
-msgid "Evaluating each explanation..."
-msgstr "Evaluating each explanation..."
 
 #: src/app/generate/a/[id]/phase-thinking-generators/language.ts
 msgctxt "/Fl7bm"
@@ -2276,16 +2061,6 @@ msgid "Adding grammar romanization"
 msgstr "Adding grammar romanization"
 
 #: src/app/generate/a/[id]/use-phase-labels.ts
-msgctxt "7p4ov/"
-msgid "Setting the scene"
-msgstr "Setting the scene"
-
-#: src/app/generate/a/[id]/use-phase-labels.ts
-msgctxt "8ukgjx"
-msgid "Analyzing explanations"
-msgstr "Analyzing explanations"
-
-#: src/app/generate/a/[id]/use-phase-labels.ts
 msgctxt "aKNA/b"
 msgid "Creating images"
 msgstr "Creating images"
@@ -2307,11 +2082,6 @@ msgid "Getting started"
 msgstr "Getting started"
 
 #: src/app/generate/a/[id]/use-phase-labels.ts
-msgctxt "ErY5I7"
-msgid "Gathering evidence"
-msgstr "Gathering evidence"
-
-#: src/app/generate/a/[id]/use-phase-labels.ts
 msgctxt "HXMA75"
 msgid "Adding vocabulary romanization"
 msgstr "Adding vocabulary romanization"
@@ -2325,16 +2095,6 @@ msgstr "Saving earlier activities"
 msgctxt "j+pO55"
 msgid "Recording word audio"
 msgstr "Recording word audio"
-
-#: src/app/generate/a/[id]/use-phase-labels.ts
-msgctxt "jN8cMX"
-msgid "Creating the story"
-msgstr "Creating the story"
-
-#: src/app/generate/a/[id]/use-phase-labels.ts
-msgctxt "kVV8P0"
-msgid "Preparing the wrap-up"
-msgstr "Preparing the wrap-up"
 
 #: src/app/generate/a/[id]/use-phase-labels.ts
 msgctxt "mIpv67"
@@ -2355,11 +2115,6 @@ msgstr "Recording audio"
 msgctxt "TlrPFF"
 msgid "Adding pronunciation"
 msgstr "Adding pronunciation"
-
-#: src/app/generate/a/[id]/use-phase-labels.ts
-msgctxt "tlS2kF"
-msgid "Designing investigation paths"
-msgstr "Designing investigation paths"
 
 #: src/app/generate/a/[id]/use-phase-labels.ts
 msgctxt "V0mPLK"
@@ -2595,11 +2350,6 @@ msgid "Thinking about how to teach this..."
 msgstr "Thinking about how to teach this..."
 
 #: src/app/generate/l/[id]/use-generation-phases.ts
-msgctxt "HwkHAi"
-msgid "Personalizing the lesson"
-msgstr "Personalizing the lesson"
-
-#: src/app/generate/l/[id]/use-generation-phases.ts
 msgctxt "HYmCaW"
 msgid "Almost done"
 msgstr "Almost done"
@@ -2608,11 +2358,6 @@ msgstr "Almost done"
 msgctxt "igBmpz"
 msgid "Making it interactive..."
 msgstr "Making it interactive..."
-
-#: src/app/generate/l/[id]/use-generation-phases.ts
-msgctxt "jtFSH4"
-msgid "Tailoring the experience..."
-msgstr "Tailoring the experience..."
 
 #: src/app/generate/l/[id]/use-generation-phases.ts
 msgctxt "MNQpiA"
@@ -2633,11 +2378,6 @@ msgstr "Figuring out the best approach"
 msgctxt "Nhva19"
 msgid "Choosing the right approach..."
 msgstr "Choosing the right approach..."
-
-#: src/app/generate/l/[id]/use-generation-phases.ts
-msgctxt "OV0vGb"
-msgid "Personalizing the lesson..."
-msgstr "Personalizing the lesson..."
 
 #: src/app/generate/layout.tsx
 msgctxt "/tq5fR"
@@ -2806,11 +2546,6 @@ msgid "Test your understanding of {topic} with questions designed to check real 
 msgstr "Test your understanding of {topic} with questions designed to check real comprehension, not just memorization."
 
 #: src/lib/activities.ts
-msgctxt "lLtcKR"
-msgid "Investigate {topic} by gathering evidence, evaluating findings, and drawing your own conclusions."
-msgstr "Investigate {topic} by gathering evidence, evaluating findings, and drawing your own conclusions."
-
-#: src/lib/activities.ts
 msgctxt "MfGqY2"
 msgid "{lesson} {activity}"
 msgstr "{lesson} {activity}"
@@ -2824,11 +2559,6 @@ msgstr "Test your {topic} vocabulary by translating words you've learned."
 msgctxt "RtjVBh"
 msgid "Learn about {topic} through an interactive activity."
 msgstr "Learn about {topic} through an interactive activity."
-
-#: src/lib/activities.ts
-msgctxt "SJvUFW"
-msgid "Experience {topic} through an interactive story where your decisions shape the outcome."
-msgstr "Experience {topic} through an interactive story where your decisions shape the outcome."
 
 #: src/lib/activities.ts
 msgctxt "THPcKi"

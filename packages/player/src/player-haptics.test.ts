@@ -33,7 +33,6 @@ function buildResult(overrides: Partial<StepResult> = {}): StepResult {
 
 function buildSnapshot(overrides: Partial<PlayerHapticSnapshot> = {}): PlayerHapticSnapshot {
   return {
-    metrics: [],
     phase: "playing",
     result: undefined,
     step: buildStep(),
@@ -42,45 +41,6 @@ function buildSnapshot(overrides: Partial<PlayerHapticSnapshot> = {}): PlayerHap
 }
 
 describe(getPlayerHapticSequence, () => {
-  test("keeps story consequence haptics for positive feedback", () => {
-    const step = buildStep({
-      content: {
-        options: [
-          {
-            alignment: "strong" as const,
-            feedback: "Things improve.",
-            id: "choice-1",
-            metricEffects: [{ effect: "positive" as const, metric: "Morale" }],
-            stateImage: { prompt: "State after the helpful choice" },
-            text: "Help",
-          },
-        ],
-        problem: "Choose",
-      },
-      id: "story-1",
-      kind: "story",
-    });
-
-    const sequence = getPlayerHapticSequence({
-      current: buildSnapshot({
-        metrics: [{ metric: "Morale", value: 65 }],
-        phase: "feedback",
-        result: buildResult({
-          answer: { kind: "story", selectedOptionId: "choice-1" },
-          stepId: "story-1",
-        }),
-        step,
-      }),
-      milestoneKind: "activity",
-      previous: buildSnapshot({
-        metrics: [{ metric: "Morale", value: 50 }],
-        step,
-      }),
-    });
-
-    expect(sequence).toEqual(["success"]);
-  });
-
   test("adds a generic success haptic when inline feedback appears", () => {
     const step = buildStep({
       content: {
@@ -140,123 +100,6 @@ describe(getPlayerHapticSequence, () => {
     });
 
     expect(sequence).toEqual(["error"]);
-  });
-
-  test("nudges when the story outcome screen appears", () => {
-    const sequence = getPlayerHapticSequence({
-      current: buildSnapshot({
-        phase: "playing",
-        step: buildStep({
-          content: {
-            metrics: [{ label: "Production" }, { label: "Morale" }],
-            outcomes: {
-              bad: { narrative: "Bad.", title: "Bad" },
-              good: { narrative: "Good.", title: "Good" },
-              ok: { narrative: "Ok.", title: "Ok" },
-              perfect: { narrative: "Result.", title: "Outcome" },
-              terrible: { narrative: "Terrible.", title: "Terrible" },
-            },
-            variant: "storyOutcome" as const,
-          },
-        }),
-      }),
-      milestoneKind: "activity",
-      previous: buildSnapshot({ phase: "feedback" }),
-    });
-
-    expect(sequence).toEqual(["nudge"]);
-  });
-
-  test("nudges when investigation begins", () => {
-    const previousStep = buildStep({
-      content: { scenario: "An incident happened.", variant: "problem" as const },
-      id: "inv-problem",
-      kind: "investigation",
-    });
-    const currentStep = buildStep({
-      content: {
-        options: [
-          { feedback: "CPU spiked.", id: "a1", quality: "critical", text: "Check logs" },
-          { feedback: "Nothing useful.", id: "a2", quality: "weak", text: "Refresh cache" },
-        ],
-        variant: "action" as const,
-      },
-      id: "inv-action",
-      kind: "investigation",
-    });
-
-    const sequence = getPlayerHapticSequence({
-      current: buildSnapshot({ step: currentStep }),
-      milestoneKind: "activity",
-      previous: buildSnapshot({ step: previousStep }),
-    });
-
-    expect(sequence).toEqual(["medium"]);
-  });
-
-  test("only celebrates investigation action feedback when the clue is strong", () => {
-    const step = buildStep({
-      content: {
-        options: [
-          { feedback: "CPU spiked.", id: "a1", quality: "critical", text: "Check logs" },
-          { feedback: "Nothing useful.", id: "a2", quality: "weak", text: "Refresh cache" },
-        ],
-        variant: "action" as const,
-      },
-      id: "inv-action",
-      kind: "investigation",
-    });
-
-    const sequence = getPlayerHapticSequence({
-      current: buildSnapshot({
-        phase: "feedback",
-        result: buildResult({
-          answer: { kind: "investigation", selectedOptionId: "a1", variant: "action" },
-          result: { correctAnswer: null, feedback: "CPU spiked.", isCorrect: true },
-          stepId: "inv-action",
-        }),
-        step,
-      }),
-      milestoneKind: "activity",
-      previous: buildSnapshot({ step }),
-    });
-
-    expect(sequence).toEqual(["success"]);
-  });
-
-  test("uses a softer haptic for a partial investigation call", () => {
-    const step = buildStep({
-      content: {
-        options: [
-          {
-            accuracy: "partial" as const,
-            feedback: "Close, but not quite.",
-            id: "exp-1",
-            text: "Cache stampede",
-          },
-          { accuracy: "best" as const, feedback: "Exactly right.", id: "exp-2", text: "Deadlock" },
-        ],
-        variant: "call" as const,
-      },
-      id: "inv-call",
-      kind: "investigation",
-    });
-
-    const sequence = getPlayerHapticSequence({
-      current: buildSnapshot({
-        phase: "feedback",
-        result: buildResult({
-          answer: { kind: "investigation", selectedOptionId: "exp-1", variant: "call" },
-          result: { correctAnswer: null, feedback: "Close, but not quite.", isCorrect: false },
-          stepId: "inv-call",
-        }),
-        step,
-      }),
-      milestoneKind: "activity",
-      previous: buildSnapshot({ step }),
-    });
-
-    expect(sequence).toEqual(["nudge"]);
   });
 
   test("uses a stronger celebration for lesson completion", () => {

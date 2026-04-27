@@ -1,14 +1,8 @@
 import { cn } from "@zoonk/ui/lib/utils";
 import { stripWrappingQuotes } from "./_utils/strip-wrapping-quotes";
-import { SectionLabel } from "./section-label";
 import { PlayerContentFrame } from "./step-layouts";
 
-export type PlayerReadSceneTitleTone =
-  | "destructive"
-  | "foreground"
-  | "muted"
-  | "success"
-  | "warning";
+type PlayerReadSceneTitleTone = "destructive" | "foreground" | "muted" | "success" | "warning";
 
 const PLAYER_READ_SCENE_TITLE_TONE_CLASS: Record<PlayerReadSceneTitleTone, string> = {
   destructive: "text-destructive",
@@ -21,9 +15,9 @@ const PLAYER_READ_SCENE_TITLE_TONE_CLASS: Record<PlayerReadSceneTitleTone, strin
 /**
  * Shared read-only scene shell for centered player content.
  *
- * Static lesson copy, story intro/outcome, investigation setup, and
- * vocabulary all live in the same visual family: read something, then move
- * forward. This component keeps that family on one layout contract.
+ * Static lesson copy and vocabulary steps live in the same visual family:
+ * read something, then move forward. This component keeps that family on one
+ * layout contract.
  */
 export function PlayerReadScene({
   children,
@@ -48,8 +42,8 @@ export function PlayerReadScene({
 /**
  * Groups related read-scene content into a consistent vertical stack.
  *
- * This prevents static and story screens from each inventing their own local
- * spacing rules for the same title/body pattern.
+ * This prevents read screens from each inventing their own local spacing
+ * rules for the same title/body pattern.
  */
 export function PlayerReadSceneStack({
   children,
@@ -69,35 +63,10 @@ export function PlayerReadSceneStack({
 }
 
 /**
- * Reuses the small uppercase label style for read scenes that need an eyebrow
- * before the main body copy.
- */
-export function PlayerReadSceneEyebrow({ children }: { children: React.ReactNode }) {
-  return <SectionLabel>{children}</SectionLabel>;
-}
-
-/**
- * Gives read scenes one shared visual treatment for small section labels.
- *
- * Keeping this copy style here prevents static/read screens from quietly
- * drifting apart when spacing or typography changes later.
- */
-export function PlayerReadSceneMetaLabel({ children }: { children: React.ReactNode }) {
-  return (
-    <p
-      className="text-muted-foreground text-xs font-medium tracking-widest uppercase"
-      data-slot="player-read-scene-meta-label"
-    >
-      {children}
-    </p>
-  );
-}
-
-/**
  * Shared read-scene title styling.
  *
- * Static text, investigation setup, and story outcomes all need a readable
- * headline treatment. Keeping it here makes title changes fan out once.
+ * Static text needs a readable headline treatment. Keeping it here makes
+ * title changes fan out once.
  */
 export function PlayerReadSceneTitle({
   children,
@@ -122,8 +91,8 @@ export function PlayerReadSceneTitle({
 /**
  * Shared body copy styling for read scenes.
  *
- * Story narrative, static explanations, and investigation setup copy should
- * stay visually aligned, so the baseline body typography lives here.
+ * Static explanations should stay visually aligned, so the baseline body
+ * typography lives here.
  */
 export function PlayerReadSceneBody({ children }: { children: React.ReactNode }) {
   const content = typeof children === "string" ? stripWrappingQuotes(children) : children;
@@ -135,15 +104,5 @@ export function PlayerReadSceneBody({ children }: { children: React.ReactNode })
     >
       {content}
     </p>
-  );
-}
-
-/**
- * Standard divider used by read scenes to separate narrative copy from
- * secondary metadata such as metrics.
- */
-export function PlayerReadSceneDivider({ className }: { className?: string }) {
-  return (
-    <div className={cn("bg-border h-px w-full", className)} data-slot="player-read-scene-divider" />
   );
 }

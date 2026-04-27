@@ -1,11 +1,9 @@
 import {
   type FillBlankStepContent,
-  type InvestigationStepContent,
   type MatchColumnsStepContent,
   type MultipleChoiceStepContent,
   type SelectImageStepContent,
   type SortOrderStepContent,
-  type StoryStepContent,
 } from "@zoonk/core/steps/contract/content";
 import { matchesAcceptedArrangeWords } from "./arrange-words-answers";
 
@@ -99,73 +97,10 @@ export function checkTranslationAnswer(
   };
 }
 
-/**
- * Check a story answer by looking up the selected option's alignment.
- *
- * Alignment is hidden from the player during play, but determines correctness
- * for analytics/metrics: strong and partial count as correct, weak as incorrect.
- * The option's feedback text describes what happens as a result of the player's
- * decision and is returned for display on the feedback screen.
- */
-export function checkStoryAnswer(
-  content: StoryStepContent,
-  selectedOptionId: string,
-): AnswerResult {
-  const option = content.options.find((item) => item.id === selectedOptionId);
-  const isCorrect = option ? option.alignment !== "weak" : false;
-
-  return { correctAnswer: null, feedback: option?.feedback ?? null, isCorrect };
-}
-
 export function checkArrangeWordsAnswer(
   correctWords: string[][],
   userWords: string[],
 ): AnswerResult {
   const isCorrect = matchesAcceptedArrangeWords(correctWords, userWords);
   return { correctAnswer: null, feedback: null, isCorrect };
-}
-
-/**
- * Checks an investigation action answer by quality tier.
- *
- * Critical and useful actions are correct (strong evidence choices).
- * Weak actions are incorrect (poor investigation decisions).
- * Returns the option feedback so the evidence can be shown
- * after checking.
- */
-export function checkInvestigationAction(
-  content: Extract<InvestigationStepContent, { variant: "action" }>,
-  selectedOptionId: string,
-): AnswerResult {
-  const action = content.options.find((a) => a.id === selectedOptionId);
-
-  if (!action) {
-    return { correctAnswer: null, feedback: null, isCorrect: false };
-  }
-
-  return { correctAnswer: null, feedback: action.feedback, isCorrect: action.quality !== "weak" };
-}
-
-/**
- * Checks an investigation call (final answer) against the explanation's
- * accuracy tier.
- *
- * "best" is the correct explanation. "partial" gets partial credit in
- * scoring but counts as incorrect for the binary check. Returns the
- * selected explanation's feedback — each explanation has its own
- * message explaining why it's correct, partially right, or wrong.
- */
-export function checkInvestigationCall(
-  content: Extract<InvestigationStepContent, { variant: "call" }>,
-  selectedOptionId: string,
-): AnswerResult {
-  const explanation = content.options.find((exp) => exp.id === selectedOptionId);
-
-  if (!explanation) {
-    return { correctAnswer: null, feedback: null, isCorrect: false };
-  }
-
-  const isCorrect = explanation.accuracy === "best";
-
-  return { correctAnswer: null, feedback: explanation.feedback, isCorrect };
 }

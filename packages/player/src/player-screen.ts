@@ -8,7 +8,7 @@ import {
 } from "./player-step-behavior";
 import { canNavigatePrev as getCanNavigatePrev } from "./step-navigation";
 
-type PlayerPrimaryActionKind = "begin" | "check" | "continue" | "startInvestigation";
+type PlayerPrimaryActionKind = "begin" | "check" | "continue";
 type PlayerPrimaryActionRun = "check" | "continue" | "navigateNext";
 type InPlayScreenScene = "choice" | "feedback" | "read";
 
@@ -128,26 +128,8 @@ function getBottomBarModel({
     };
   }
 
-  if (step.kind === "storyOutcome") {
-    return {
-      button: "continue",
-      disabled: false,
-      kind: "primaryAction",
-      run: "navigateNext",
-    };
-  }
-
   if (behavior.layout === "navigable") {
     return { canNavigatePrev: canMovePrev, kind: "navigation" };
-  }
-
-  if (step.kind === "investigationProblem") {
-    return {
-      button: "startInvestigation",
-      disabled: false,
-      kind: "primaryAction",
-      run: "check",
-    };
   }
 
   return {
@@ -199,8 +181,7 @@ function getKeyboardModel({
  * Reduces the player's screen routing to a small set of UI scenes.
  *
  * This lets the shell think in broad layouts like read, choice, feedback, and
- * completion without erasing the domain-specific step kinds that scoring and
- * validation still need.
+ * completion without making the shell inspect each concrete step kind.
  */
 function getPlayerScreenScene({
   phase,

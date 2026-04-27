@@ -459,60 +459,6 @@ describe(prepareLessonActivityData, () => {
     });
   });
 
-  test("shuffles story choices during serialization", () => {
-    shuffleMock.mockImplementationOnce((items) => items.toReversed());
-
-    const result = prepare({
-      activity: makeActivity([
-        makeStep({
-          content: {
-            options: [
-              {
-                alignment: "strong",
-                feedback: "Best outcome",
-                id: "choice-1",
-                metricEffects: [{ effect: "positive", metric: "Trust" }],
-                stateImage: { prompt: "Best outcome state" },
-                text: "Alpha",
-              },
-              {
-                alignment: "partial",
-                feedback: "Mixed outcome",
-                id: "choice-2",
-                metricEffects: [{ effect: "neutral", metric: "Trust" }],
-                stateImage: { prompt: "Mixed outcome state" },
-                text: "Beta",
-              },
-              {
-                alignment: "weak",
-                feedback: "Worst outcome",
-                id: "choice-3",
-                metricEffects: [{ effect: "negative", metric: "Trust" }],
-                stateImage: { prompt: "Worst outcome state" },
-                text: "Gamma",
-              },
-            ],
-            problem: "What do you do?",
-          },
-          id: "31",
-          kind: "story",
-        }),
-      ]),
-    });
-
-    const storyStep = result.steps[0];
-
-    expect(storyStep?.kind).toBe("story");
-
-    if (storyStep?.kind !== "story") {
-      return;
-    }
-
-    const storyContent = parseStepContent("story", storyStep.content);
-
-    expect(storyContent.options.map(({ id }) => id)).toEqual(["choice-3", "choice-2", "choice-1"]);
-  });
-
   test("shuffles select image options during serialization", () => {
     shuffleMock.mockImplementationOnce((items) => items.toReversed());
 

@@ -7,12 +7,10 @@ import { type StepResult } from "../player-reducer";
 import { useReplaceName } from "../user-name-context";
 import { getFeedbackRomanization } from "./_utils/feedback-romanization";
 import { CorrectAnswerBlock, IncorrectAnswerBlock } from "./feedback-answer-blocks";
-import { InvestigationCallFeedbackContent } from "./investigation-call-feedback";
 import { PlayAudioButton } from "./play-audio-button";
 import { PlayerFeedbackScene, PlayerFeedbackSceneMessage } from "./player-feedback-scene";
 import { PlayerSupportingText } from "./player-supporting-text";
 import { RomanizationText } from "./romanization-text";
-import { StoryFeedbackContent } from "./story-feedback-content";
 
 function getArrangeWordsSelectedText(result: StepResult): string | null {
   if (result.answer?.kind === "reading" || result.answer?.kind === "listening") {
@@ -94,7 +92,18 @@ function getFeedbackAudioUrl(step?: SerializedStep): string | null {
   return null;
 }
 
-function StandardFeedbackContent({ result, step }: { result: StepResult; step?: SerializedStep }) {
+/**
+ * Renders answer feedback for steps that collect a binary correct/incorrect
+ * result. The feedback layout lives here so every checked step uses the same
+ * answer summary, optional pronunciation audio, and written feedback treatment.
+ */
+export function FeedbackScreenContent({
+  result,
+  step,
+}: {
+  result: StepResult;
+  step?: SerializedStep;
+}) {
   const t = useExtracted();
   const replaceName = useReplaceName();
   const { isCorrect, feedback: rawFeedback, correctAnswer } = result.result;
@@ -140,22 +149,4 @@ function StandardFeedbackContent({ result, step }: { result: StepResult; step?: 
       {feedback && <PlayerFeedbackSceneMessage>{feedback}</PlayerFeedbackSceneMessage>}
     </PlayerFeedbackScene>
   );
-}
-
-export function FeedbackScreenContent({
-  result,
-  step,
-}: {
-  result: StepResult;
-  step?: SerializedStep;
-}) {
-  if (result.answer?.kind === "story") {
-    return <StoryFeedbackContent result={result} step={step} />;
-  }
-
-  if (result.answer?.kind === "investigation" && result.answer.variant === "call") {
-    return <InvestigationCallFeedbackContent result={result} step={step} />;
-  }
-
-  return <StandardFeedbackContent result={result} step={step} />;
 }

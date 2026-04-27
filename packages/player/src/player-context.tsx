@@ -80,7 +80,7 @@ function usePlayerConfig(): PlayerConfigContextValue {
 }
 
 /**
- * Intro steps are the generated setup for story and practice-style activities.
+ * Intro steps are the generated setup for practice-style activities.
  * When an activity has no explicit description, the first intro gives the info
  * popover a concrete premise instead of falling back to broad lesson copy.
  */
@@ -95,34 +95,6 @@ function getFirstIntroText(state: PlayerState | null): string | null {
 }
 
 /**
- * Investigation activities store their premise on the problem step instead of
- * `activity.description`. The info popover should expose that case text when
- * no activity description exists, even after the learner moves past the first
- * investigation screen.
- */
-function getInvestigationScenarioText({
-  kind,
-  state,
-}: {
-  kind: ActivityKind;
-  state: PlayerState | null;
-}): string | null {
-  if (kind !== "investigation" || !state) {
-    return null;
-  }
-
-  for (const step of state.steps) {
-    const descriptor = describePlayerStep(step);
-
-    if (descriptor?.kind === "investigationProblem") {
-      return descriptor.content.scenario;
-    }
-  }
-
-  return null;
-}
-
-/**
  * Builds the single description string consumed by the header info popover.
  * The order keeps authored activity goals authoritative, then uses activity
  * setup data, and only falls back to the broader lesson description when the
@@ -130,12 +102,10 @@ function getInvestigationScenarioText({
  */
 function getActivityMetaDescription({
   activityDescription,
-  kind,
   lessonDescription,
   state,
 }: {
   activityDescription: string | null;
-  kind: ActivityKind;
   lessonDescription: string;
   state: PlayerState | null;
 }) {
@@ -147,12 +117,6 @@ function getActivityMetaDescription({
 
   if (introText) {
     return introText;
-  }
-
-  const investigationScenario = getInvestigationScenarioText({ kind, state });
-
-  if (investigationScenario) {
-    return investigationScenario;
   }
 
   return lessonDescription;
@@ -169,7 +133,6 @@ export function usePlayerActivityMeta(): PlayerActivityMeta {
     ...activityMeta,
     description: getActivityMetaDescription({
       activityDescription,
-      kind: activityMeta.kind,
       lessonDescription,
       state,
     }),

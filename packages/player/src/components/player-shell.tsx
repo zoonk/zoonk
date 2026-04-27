@@ -5,9 +5,7 @@ import { usePlayerMilestone, usePlayerRuntime } from "../player-context";
 import {
   getCurrentResult,
   getCurrentStep,
-  getInvestigationProgress,
   getProgressValue,
-  getStoryMetrics,
   getUpcomingImages,
 } from "../player-selectors";
 import { usePlayerHaptics } from "../use-player-haptics";
@@ -15,7 +13,6 @@ import { InPlayStickyHeader } from "./in-play-sticky-header";
 import { PlayerBottomBar } from "./player-bottom-bar";
 import { PlayerStage } from "./player-stage";
 import { StageContent } from "./stage-content";
-import { StatusPill, StatusPillLabel, StatusPillValue } from "./status-pill";
 import { StepActionButton } from "./step-action-button";
 import { StepImagePreloader } from "./step-image-preloader";
 import { PlayerContentFrame } from "./step-layouts";
@@ -56,13 +53,11 @@ export function PlayerShell() {
     screen.showChrome && screen.bottomBar?.kind === "primaryAction" && !screen.stageIsFullBleed;
 
   const progressValue = getProgressValue(state);
-  const storyMetrics = getStoryMetrics(state);
   const upcomingImages = getUpcomingImages(state);
   const stageResetKey = getStageResetKey({ screenKind: screen.kind, stepId: currentStep?.id });
 
   usePlayerHaptics({
     current: {
-      metrics: storyMetrics,
       phase: state.phase,
       result: currentResult,
       step: currentStep,
@@ -70,23 +65,9 @@ export function PlayerShell() {
     milestoneKind: milestone.kind,
   });
 
-  const investigationProgress = getInvestigationProgress(state);
-
-  const evidencePill = investigationProgress ? (
-    <StatusPill animationKey={investigationProgress.collected}>
-      <StatusPillValue className="text-muted-foreground">
-        {investigationProgress.collected} / {investigationProgress.total}
-      </StatusPillValue>
-
-      <StatusPillLabel>{t("evidence")}</StatusPillLabel>
-    </StatusPill>
-  ) : undefined;
-
   return (
     <main className="flex h-dvh flex-col overflow-hidden">
-      {screen.showChrome && (
-        <InPlayStickyHeader centerContent={evidencePill} progressValue={progressValue} />
-      )}
+      {screen.showChrome && <InPlayStickyHeader progressValue={progressValue} />}
 
       <PlayerStage
         aria-label={t("Player screen")}

@@ -13,13 +13,11 @@ export function useActivityKindLabel(kind: ActivityKind): string {
     custom: t("Activity"),
     explanation: t("Explanation"),
     grammar: t("Grammar"),
-    investigation: t("Investigation"),
     listening: t("Listening"),
     practice: t("Practice"),
     quiz: t("Quiz"),
     reading: t("Reading"),
     review: t("Review"),
-    story: t("Story"),
     translation: t("Translation"),
     vocabulary: t("Vocabulary"),
   };

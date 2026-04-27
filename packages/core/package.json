@@ -34,7 +34,6 @@
     "./player/commands/start-activity": "./src/player/commands/start-activity.ts",
     "./player/commands/submit-player-completion": "./src/player/commands/submit-player-completion.ts",
     "./player/contracts/arrange-words-answers": "./src/player/contracts/arrange-words-answers.ts",
-    "./player/contracts/build-investigation-action-results": "./src/player/contracts/build-investigation-action-results.ts",
     "./player/contracts/check-answer": "./src/player/contracts/check-answer.ts",
     "./player/contracts/completion-input-schema": "./src/player/contracts/completion-input-schema.ts",
     "./player/contracts/compute-score": "./src/player/contracts/compute-score.ts",

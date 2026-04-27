@@ -28,7 +28,6 @@ function buildState(overrides: Partial<PlayerState> = {}): PlayerState {
     activityKind: "quiz",
     completion: null,
     currentStepIndex: 0,
-    investigationLoop: null,
     phase: "playing",
     results: {},
     selectedAnswers: {},
@@ -106,7 +105,6 @@ describe(buildCompletionInput, () => {
       answers: {
         "step-1": { kind: "multipleChoice", selectedOptionId: "a" },
       },
-      investigationLoop: undefined,
       localDate: "2026-03-18",
       startedAt: 1000,
       stepTimings: {

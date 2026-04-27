@@ -1,14 +1,13 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
 import { type GeneratedCoreActivity } from "@zoonk/ai/tasks/lessons/core-activities";
 import { type GeneratedCustomActivity } from "@zoonk/ai/tasks/lessons/custom-activities";
-import { type AppliedActivityKind, type LessonStepName } from "@zoonk/core/workflows/steps";
+import { type LessonStepName } from "@zoonk/core/workflows/steps";
 import { type ActivityCreateManyInput, type LessonKind, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { getActivitiesForKind } from "./_utils/get-activities-for-kind";
 import { type LessonContext } from "./get-lesson-step";
 
 export async function addActivitiesStep(input: {
-  appliedActivityKind: AppliedActivityKind;
   coreActivities: GeneratedCoreActivity[];
   context: LessonContext;
   generationRunId: string;
@@ -24,7 +23,6 @@ export async function addActivitiesStep(input: {
   await stream.status({ status: "started", step: "addActivities" });
 
   const activitiesToCreate = getActivitiesForKind({
-    appliedActivityKind: input.appliedActivityKind,
     coreActivities: input.coreActivities,
     customActivities: input.customActivities,
     lessonKind: input.lessonKind,

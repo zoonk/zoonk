@@ -128,31 +128,6 @@ export function buildStepImageLineItem({
 }
 
 /**
- * The workflow guarantees one applied activity slot in core lessons, but
- * historical data can still be sparse or messy. Normalizing the
- * story/investigation mix back to one slot keeps the estimate aligned with the
- * product rule the admin cares about.
- */
-export function getAppliedActivityShares({
-  investigationCount,
-  storyCount,
-}: {
-  investigationCount: number;
-  storyCount: number;
-}): { investigationShare: number; storyShare: number } {
-  const totalAppliedActivities = storyCount + investigationCount;
-
-  if (totalAppliedActivities <= 0) {
-    return { investigationShare: 0.5, storyShare: 0.5 };
-  }
-
-  return {
-    investigationShare: investigationCount / totalAppliedActivities,
-    storyShare: storyCount / totalAppliedActivities,
-  };
-}
-
-/**
  * Some workflows use historical task counts directly instead of persisted
  * content records. This helper centralizes the "requests per entity" math so
  * the builders all normalize task usage the same way.

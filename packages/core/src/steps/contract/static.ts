@@ -1,6 +1,5 @@
 import { z } from "zod";
 import { stepImageSchema } from "./image";
-import { staticStoryOutcomeContentSchema } from "./story";
 
 /**
  * Static steps are the readable teaching surface for explanation and custom
@@ -43,7 +42,6 @@ export const staticContentSchema = z.discriminatedUnion("variant", [
   staticTextContentSchema,
   staticGrammarExampleContentSchema,
   staticGrammarRuleContentSchema,
-  withOptionalImage(staticStoryOutcomeContentSchema.shape),
 ]);
 
 export type StaticStepContent = z.infer<typeof staticContentSchema>;
