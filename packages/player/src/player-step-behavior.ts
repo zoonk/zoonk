@@ -3,9 +3,6 @@ import { type PlayerStepDescriptor, type PlayerStepKind, describePlayerStep } fr
 
 export type PlayerCheckBehavior =
   | "fillBlank"
-  | "investigationAction"
-  | "investigationCall"
-  | "investigationProblem"
   | "listening"
   | "matchColumns"
   | "multipleChoice"
@@ -13,7 +10,6 @@ export type PlayerCheckBehavior =
   | "reading"
   | "selectImage"
   | "sortOrder"
-  | "story"
   | "translation";
 
 type PlayerFeedbackBehavior = "inline" | "none" | "screen";
@@ -22,7 +18,6 @@ type PlayerSceneBehavior = "choice" | "read";
 
 export type PlayerRenderBehavior =
   | "fillBlank"
-  | "investigation"
   | "listening"
   | "matchColumns"
   | "multipleChoice"
@@ -30,13 +25,11 @@ export type PlayerRenderBehavior =
   | "selectImage"
   | "sortOrder"
   | "static"
-  | "story"
   | "translation"
   | "vocabulary";
 
 type PlayerValidationBehavior =
   | "fillBlank"
-  | "investigationCall"
   | "listening"
   | "matchColumns"
   | "multipleChoice"
@@ -44,7 +37,6 @@ type PlayerValidationBehavior =
   | "reading"
   | "selectImage"
   | "sortOrder"
-  | "story"
   | "translation";
 
 type PlayerStepBehavior = {
@@ -70,30 +62,6 @@ const STEP_BEHAVIOR_BY_KIND: Record<PlayerStepKind, PlayerStepBehavior> = {
     feedback: "none",
     layout: "hero",
     render: "static",
-    scene: "read",
-    validation: "none",
-  },
-  investigationAction: {
-    check: "investigationAction",
-    feedback: "inline",
-    layout: "default",
-    render: "investigation",
-    scene: "choice",
-    validation: "none",
-  },
-  investigationCall: {
-    check: "investigationCall",
-    feedback: "screen",
-    layout: "default",
-    render: "investigation",
-    scene: "choice",
-    validation: "investigationCall",
-  },
-  investigationProblem: {
-    check: "investigationProblem",
-    feedback: "none",
-    layout: "default",
-    render: "investigation",
     scene: "read",
     validation: "none",
   },
@@ -169,22 +137,6 @@ const STEP_BEHAVIOR_BY_KIND: Record<PlayerStepKind, PlayerStepBehavior> = {
     scene: "read",
     validation: "none",
   },
-  storyDecision: {
-    check: "story",
-    feedback: "screen",
-    layout: "default",
-    render: "story",
-    scene: "choice",
-    validation: "story",
-  },
-  storyOutcome: {
-    check: "none",
-    feedback: "none",
-    layout: "hero",
-    render: "static",
-    scene: "read",
-    validation: "none",
-  },
   translation: {
     check: "translation",
     feedback: "screen",
@@ -240,9 +192,7 @@ export function hasFeedbackScreen(descriptor?: PlayerStepDescriptor | null): boo
 /**
  * Groups the player's many step kinds into a smaller set of UI scenes.
  *
- * Story and investigation still keep their domain-specific step kinds for
- * scoring and validation, but the shell can now reason about a simpler
- * family of screens: read or choice.
+ * The shell can reason about a small family of screens: read or choice.
  */
 export function getPlayerStepScene(
   descriptor?: PlayerStepDescriptor | null,

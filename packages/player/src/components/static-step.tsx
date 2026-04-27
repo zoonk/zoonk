@@ -13,7 +13,6 @@ import {
 import { RomanizationText } from "./romanization-text";
 import { StaticStepLayout } from "./static-step-layout";
 import { StepIntroHero } from "./step-intro-hero-layout";
-import { StoryOutcomeContent } from "./story-outcome-content";
 
 function TextVariant({ title, text }: { title: string; text: string }) {
   const replaceName = useReplaceName();
@@ -104,10 +103,6 @@ export function StaticStep({ step }: { step: SerializedStep }) {
         title={descriptor.intro.title}
       />
     );
-  }
-
-  if (descriptor?.kind === "storyOutcome") {
-    return <StoryOutcomeContent outcomes={descriptor.content.outcomes} />;
   }
 
   const content = <StaticStepContent step={step} />;

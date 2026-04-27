@@ -6,9 +6,8 @@ import { PlayerContentFrame } from "./step-layouts";
 /**
  * Shared shell for dedicated feedback screens.
  *
- * Standard answer feedback, story consequences, and investigation call
- * verdicts all replace the underlying step with a centered status scene.
- * Keeping that shell here prevents those feedback variants from drifting.
+ * Answer feedback replaces the underlying step with a centered status scene.
+ * Keeping that shell here prevents feedback variants from drifting.
  */
 export function PlayerFeedbackScene({
   children,

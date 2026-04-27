@@ -31,7 +31,6 @@ describe(getActivitiesForKind, () => {
 
   test("creates two practice activities when a core lesson has three explanations", () => {
     const activities = getActivitiesForKind({
-      appliedActivityKind: "story",
       coreActivities: [
         {
           goal: "spot the repeated pattern before turning it into a reusable rule",
@@ -73,7 +72,6 @@ describe(getActivitiesForKind, () => {
       ],
       ["practice", null, null],
       ["quiz", null, null],
-      ["story", null, null],
       ["review", null, null],
     ]);
   });

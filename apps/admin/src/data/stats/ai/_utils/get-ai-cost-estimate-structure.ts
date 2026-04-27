@@ -76,8 +76,6 @@ async function getLessonAndActivityCounts({ dateWindow }: { dateWindow: DateWind
     coreLessonExplanationCount,
     coreLessonPracticeCount,
     coreLessonQuizCount,
-    coreLessonStoryCount,
-    coreLessonInvestigationCount,
     customActivityCount,
   ] = await Promise.all([
     prisma.lesson.count({ where: { ...completedLessonWhere, kind: "core" } }),
@@ -90,22 +88,14 @@ async function getLessonAndActivityCounts({ dateWindow }: { dateWindow: DateWind
     }),
     countActivities({ activityKind: "practice", lessonKind: "core", where: completedLessonWhere }),
     countActivities({ activityKind: "quiz", lessonKind: "core", where: completedLessonWhere }),
-    countActivities({ activityKind: "story", lessonKind: "core", where: completedLessonWhere }),
-    countActivities({
-      activityKind: "investigation",
-      lessonKind: "core",
-      where: completedLessonWhere,
-    }),
     countActivities({ activityKind: "custom", lessonKind: "custom", where: completedLessonWhere }),
   ]);
 
   return {
     coreLessonCount,
     coreLessonExplanationCount,
-    coreLessonInvestigationCount,
     coreLessonPracticeCount,
     coreLessonQuizCount,
-    coreLessonStoryCount,
     customActivityCount,
     customLessonCount,
     languageLessonCount,
@@ -303,7 +293,7 @@ function countActivities({
   lessonKind,
   where,
 }: {
-  activityKind: "custom" | "explanation" | "investigation" | "practice" | "quiz" | "story";
+  activityKind: "custom" | "explanation" | "practice" | "quiz";
   lessonKind: "core" | "custom";
   where: ReturnType<typeof buildCompletedLessonWhere>;
 }) {

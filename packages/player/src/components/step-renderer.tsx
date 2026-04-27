@@ -11,7 +11,6 @@ import {
   hasStaticNavigation,
 } from "../player-step-behavior";
 import { FillBlankStep } from "./fill-blank-step";
-import { InvestigationStep } from "./investigation-step";
 import { ListeningStep } from "./listening-step";
 import { MatchColumnsStep } from "./match-columns-step";
 import { MultipleChoiceStep } from "./multiple-choice-step";
@@ -19,7 +18,6 @@ import { ReadingStep } from "./reading-step";
 import { SelectImageStep } from "./select-image-step";
 import { SortOrderStep } from "./sort-order-step";
 import { StaticStep } from "./static-step";
-import { StoryStep } from "./story-step";
 import {
   type SwipeNavigableStepFrame,
   SwipeNavigableStepLayout,
@@ -50,15 +48,6 @@ function renderStepContent({
     case "fillBlank":
       return (
         <FillBlankStep
-          onSelectAnswer={onSelectAnswer}
-          result={result}
-          selectedAnswer={selectedAnswer}
-          step={step}
-        />
-      );
-    case "investigation":
-      return (
-        <InvestigationStep
           onSelectAnswer={onSelectAnswer}
           result={result}
           selectedAnswer={selectedAnswer}
@@ -119,10 +108,6 @@ function renderStepContent({
       );
     case "static":
       return <StaticStep step={step} />;
-    case "story":
-      return (
-        <StoryStep onSelectAnswer={onSelectAnswer} selectedAnswer={selectedAnswer} step={step} />
-      );
     case "translation":
       return (
         <TranslationStep

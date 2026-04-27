@@ -4,8 +4,6 @@ import {
   BookTextIcon,
   BracesIcon,
   CircleHelpIcon,
-  CompassIcon,
-  DramaIcon,
   HeadphonesIcon,
   LanguagesIcon,
   LayersIcon,
@@ -29,8 +27,6 @@ export async function getActivityKinds(): Promise<{ key: ActivityKind; label: st
     { key: "reading", label: t("Reading") },
     { key: "listening", label: t("Listening") },
     { key: "review", label: t("Review") },
-    { key: "story", label: t("Story") },
-    { key: "investigation", label: t("Investigation") },
   ];
 }
 
@@ -45,10 +41,6 @@ async function getSeoDescription(kind: ActivityKind, topic: string): Promise<str
     ),
     grammar: t(
       "Practice {topic} grammar rules with exercises designed to help you remember and apply them.",
-      { topic },
-    ),
-    investigation: t(
-      "Investigate {topic} by gathering evidence, evaluating findings, and drawing your own conclusions.",
       { topic },
     ),
     listening: t("Sharpen your {topic} listening skills by translating audio sentences.", {
@@ -66,10 +58,6 @@ async function getSeoDescription(kind: ActivityKind, topic: string): Promise<str
       { topic },
     ),
     review: t("Review everything you learned about {topic} with a comprehensive quiz.", { topic }),
-    story: t(
-      "Experience {topic} through an interactive story where your decisions shape the outcome.",
-      { topic },
-    ),
     translation: t("Test your {topic} vocabulary by translating words you've learned.", { topic }),
     vocabulary: t(
       "Learn new {topic} words with flashcards — see each word, its translation, and pronunciation.",
@@ -127,13 +115,11 @@ const ACTIVITY_ICONS: Record<ActivityKind, LucideIcon> = {
   custom: SparklesIcon,
   explanation: BookOpenIcon,
   grammar: BracesIcon,
-  investigation: CompassIcon,
   listening: HeadphonesIcon,
   practice: TargetIcon,
   quiz: CircleHelpIcon,
   reading: BookTextIcon,
   review: RotateCcwIcon,
-  story: DramaIcon,
   translation: LanguagesIcon,
   vocabulary: LayersIcon,
 };

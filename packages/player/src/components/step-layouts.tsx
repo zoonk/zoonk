@@ -4,10 +4,9 @@ import { cn } from "@zoonk/ui/lib/utils";
  * Centers player content inside one shared width contract.
  *
  * The player used to repeat `max-w-*` and padding classes across static
- * screens, feedback screens, and the mobile bottom bar. That made story
- * intro/outcome drift away from the primary action button. This frame is the
- * single source of truth for every centered screen that should align with that
- * button.
+ * screens, feedback screens, and the mobile bottom bar. This frame is the
+ * single source of truth for every centered screen that should align with the
+ * primary action button.
  */
 export function PlayerContentFrame({ className, ...props }: React.ComponentProps<"div">) {
   return (

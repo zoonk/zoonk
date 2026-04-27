@@ -1,9 +1,8 @@
 import "server-only";
 import { getLessonGenerationState } from "@zoonk/core/content/management";
 import { type LessonSentence, prisma } from "@zoonk/db";
-import { buildInvestigationActionResults } from "../contracts/build-investigation-action-results";
 import { type CompletionInput } from "../contracts/completion-input-schema";
-import { buildScoringInput, computeActivityScore } from "../contracts/compute-score";
+import { computeActivityScore } from "../contracts/compute-score";
 import { validateAnswers } from "../contracts/validate-answers";
 import { getNextLesson } from "../queries/get-next-lesson";
 import { getReviewValidationSteps } from "../queries/get-review-steps";
@@ -96,19 +95,7 @@ export async function submitPlayerCompletion(params: {
 
   const stepResults = validateAnswers(stepsForValidation, params.input.answers);
 
-  const score = computeActivityScore(
-    buildScoringInput({
-      activityKind: activity.kind,
-      answers: params.input.answers,
-      investigationLoop: params.input.investigationLoop,
-      stepResults: stepResults.map((step) => ({ isCorrect: step.isCorrect })),
-      steps: activity.steps.map((step) => ({
-        content: step.content,
-        id: step.id,
-        kind: step.kind,
-      })),
-    }),
-  );
+  const score = computeActivityScore({ results: stepResults });
 
   const durationSeconds = clampDuration(params.input.startedAt);
 
@@ -127,21 +114,13 @@ export async function submitPlayerCompletion(params: {
     };
   });
 
-  const investigationActionResults =
-    activity.kind === "investigation"
-      ? buildInvestigationActionResults({
-          investigationLoop: params.input.investigationLoop,
-          steps: activity.steps,
-        })
-      : [];
-
   await submitActivityCompletion({
     activityId: activity.id,
     durationSeconds,
     localDate: params.input.localDate,
     score,
     startedAt: new Date(params.input.startedAt),
-    stepResults: [...mergedStepResults, ...investigationActionResults],
+    stepResults: mergedStepResults,
     userId: params.userId,
   });
 

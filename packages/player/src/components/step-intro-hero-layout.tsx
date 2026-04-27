@@ -12,12 +12,12 @@ import {
 import { StepActionButton } from "./step-action-button";
 
 /**
- * Shared intro copy for story and practice opening screens.
+ * Shared intro copy for practice opening screens.
  *
- * Both activity types should feel like the same player moment: read the setup,
- * then start from the CTA inside the bottom card. Rendering this copy in one
- * place keeps title handling, name replacement, labels, and action placement
- * from drifting between story and practice.
+ * Practice introductions should feel like one clear player moment: read the
+ * setup, then start from the CTA inside the bottom card. Rendering this copy
+ * in one place keeps title handling, name replacement, labels, and action
+ * placement from drifting.
  */
 function StepIntroHeroContent({ text, title }: { text: string; title: string }) {
   const replaceName = useReplaceName();
@@ -83,13 +83,7 @@ function StepHeroCard({ children }: { children: React.ReactNode }) {
  * feedback-style centered image stack. Keeping that structure here prevents
  * intro and outcome screens from accumulating separate layout rules over time.
  */
-export function StepHero({
-  children,
-  image,
-}: {
-  children: React.ReactNode;
-  image?: StepImage | null;
-}) {
+function StepHero({ children, image }: { children: React.ReactNode; image?: StepImage | null }) {
   if (!image) {
     return (
       <div className="flex h-full w-full flex-1 overflow-y-auto">
@@ -110,11 +104,8 @@ export function StepHero({
 }
 
 /**
- * Story and practice introductions share the same copy treatment.
- *
- * Outcome screens reuse the hero frame directly, but intros keep this small
- * wrapper so the scenario title/body structure stays identical across story
- * and practice.
+ * Practice introductions keep this small wrapper so the scenario title/body
+ * structure stays consistent wherever the hero frame is used.
  */
 export function StepIntroHero({
   image,

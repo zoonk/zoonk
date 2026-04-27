@@ -124,7 +124,7 @@ function ChoiceStepMediaLayout({
 }
 
 /**
- * Shared layout for choice-based steps (multiple choice, story decisions).
+ * Shared layout for choice-based steps.
  *
  * Owns all rendering and interaction: text display, option list with dimming,
  * numeric keyboard shortcuts, and toggle-to-unselect. Each step kind provides

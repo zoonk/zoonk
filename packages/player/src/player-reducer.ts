@@ -2,15 +2,9 @@ import { type AnswerResult } from "@zoonk/core/player/contracts/check-answer";
 import { type CompletionResult } from "@zoonk/core/player/contracts/completion-input-schema";
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
 import { type ActivityKind } from "@zoonk/core/steps/contract/content";
-import { type InvestigationLoopState } from "./investigation";
-import {
-  continueFromAction,
-  continueFromProblem,
-  recordActionInLoop,
-} from "./investigation-reducer";
 import { computeLocalCompletion } from "./player-completion";
 import { buildInitialAnswers } from "./player-initial-state";
-import { describePlayerStep, getInvestigationVariant } from "./player-step";
+import { describePlayerStep } from "./player-step";
 import { getPlayerStepBehavior } from "./player-step-behavior";
 import { canNavigatePrev } from "./step-navigation";
 
@@ -18,16 +12,12 @@ export type PlayerPhase = "playing" | "feedback" | "completed";
 
 export type SelectedAnswer =
   | { kind: "fillBlank"; userAnswers: string[] }
-  | { kind: "investigation"; variant: "action"; selectedOptionId: string }
-  | { kind: "investigation"; variant: "call"; selectedOptionId: string }
-  | { kind: "investigation"; variant: "problem" }
   | { kind: "listening"; arrangedWords: string[] }
   | { kind: "matchColumns"; userPairs: { left: string; right: string }[]; mistakes: number }
   | { kind: "multipleChoice"; selectedOptionId: string }
   | { kind: "reading"; arrangedWords: string[] }
   | { kind: "selectImage"; selectedOptionId: string }
   | { kind: "sortOrder"; userOrder: string[] }
-  | { kind: "story"; selectedOptionId: string }
   | { kind: "translation"; selectedOptionId: string };
 
 export type StepResult = {
@@ -48,7 +38,6 @@ export type PlayerState = {
   activityKind: ActivityKind;
   completion: CompletionResult | null;
   currentStepIndex: number;
-  investigationLoop: InvestigationLoopState | null;
   phase: PlayerPhase;
   results: Record<string, StepResult>;
   selectedAnswers: Record<string, SelectedAnswer>;
@@ -131,47 +120,6 @@ function handleCheckAnswer(
     return handleContinue(checked);
   }
 
-  const variant = getInvestigationVariant(currentStep);
-
-  /**
-   * Investigation problem steps skip the feedback phase because
-   * the problem step is read-only. Clicking "Investigate"
-   * immediately advances to the action step.
-   */
-  if (variant === "problem") {
-    return handleContinue(checked);
-  }
-
-  /**
-   * Investigation action steps enter the feedback phase to show
-   * evidence (the feedback for the chosen action). Record the
-   * chosen action and its timing in the loop state before entering
-   * feedback. Per-experiment timings are stored in the loop (not
-   * in stepTimings) because all experiments share the same step ID
-   * and stepTimings would overwrite previous experiments.
-   */
-  if (variant === "action") {
-    const answer = state.selectedAnswers[action.stepId];
-    const loop = state.investigationLoop;
-
-    if (loop && answer) {
-      const now = Date.now();
-      const answeredDate = new Date(now);
-
-      const timing = {
-        answeredAt: now,
-        dayOfWeek: answeredDate.getDay(),
-        durationSeconds: Math.max(0, Math.round((now - state.stepStartedAt) / 1000)),
-        hourOfDay: answeredDate.getHours(),
-      };
-
-      const updatedLoop = recordActionInLoop({ answer, loop, timing });
-      return { ...checked, investigationLoop: updatedLoop };
-    }
-
-    return checked;
-  }
-
   return checked;
 }
 
@@ -180,54 +128,9 @@ function completeWith(state: PlayerState): PlayerState {
   return { ...completed, completion: computeLocalCompletion(completed) };
 }
 
-/**
- * Handles the CONTINUE action for investigation steps.
- *
- * Investigation has a looping step progression:
- * - After problem: init loop, advance to action step
- * - After action feedback: if all experiments done, advance to call;
- *   otherwise clear action answer and stay on action step
- * - After call: complete the activity
- *
- * Returns null if the current step is not an investigation step,
- * signaling the caller to use default continue behavior.
- */
-function handleInvestigationContinue(state: PlayerState): PlayerState | null {
-  const currentStep = state.steps[state.currentStepIndex];
-  const variant = getInvestigationVariant(currentStep);
-
-  if (!variant) {
-    return null;
-  }
-
-  switch (variant) {
-    case "problem":
-      return continueFromProblem(state);
-    case "action":
-      return continueFromAction(state);
-    case "call": {
-      const nextIndex = state.currentStepIndex + 1;
-
-      if (nextIndex >= state.steps.length) {
-        return completeWith(state);
-      }
-
-      return { ...state, currentStepIndex: nextIndex, phase: "playing", stepStartedAt: Date.now() };
-    }
-    default:
-      return null;
-  }
-}
-
 function handleContinue(state: PlayerState): PlayerState {
   if (state.phase !== "feedback") {
     return state;
-  }
-
-  const investigationResult = handleInvestigationContinue(state);
-
-  if (investigationResult) {
-    return investigationResult;
   }
 
   const nextIndex = state.currentStepIndex + 1;
@@ -247,8 +150,8 @@ function handleContinue(state: PlayerState): PlayerState {
 
 /**
  * Moves the player to the next step, or completes the activity if there
- * are no more steps. Shared by both story-static and regular-static
- * forward navigation to avoid duplicating the advance-or-complete logic.
+ * are no more steps. Static forward navigation and hero CTAs share this to
+ * avoid duplicating the advance-or-complete logic.
  */
 function advanceForward(state: PlayerState): PlayerState {
   const nextIndex = state.currentStepIndex + 1;
@@ -304,7 +207,6 @@ function handleRestart(state: PlayerState): PlayerState {
     ...state,
     completion: null,
     currentStepIndex: 0,
-    investigationLoop: null,
     phase: "playing",
     results: {},
     selectedAnswers: buildInitialAnswers(state.steps),

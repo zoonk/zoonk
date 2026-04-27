@@ -8,15 +8,11 @@ const ZERO_WEIGHTS: Record<PhaseName, number> = {
   addingRomanization: 0,
   addingVocabularyRomanization: 0,
   addingWordPronunciation: 0,
-  buildingScenario: 0,
   buildingWordList: 0,
-  classifyingExplanations: 0,
   creatingAnswerOptions: 0,
   creatingExercises: 0,
   creatingImages: 0,
   creatingSentences: 0,
-  designingActions: 0,
-  gatheringEvidence: 0,
   gettingStarted: 0,
   lookingUpWords: 0,
   preparingImages: 0,
@@ -25,9 +21,7 @@ const ZERO_WEIGHTS: Record<PhaseName, number> = {
   recordingWordAudio: 0,
   saving: 0,
   savingPrerequisites: 0,
-  settingTheScene: 0,
   writingContent: 0,
-  writingDebrief: 0,
   writingExplanation: 0,
 };
 
@@ -133,29 +127,6 @@ export function getPhaseWeights(kind: ActivityKind): Record<PhaseName, number> {
       saving: 5,
       writingContent: 35,
       writingExplanation: 30,
-    };
-  }
-
-  if (kind === "story") {
-    return {
-      ...ZERO_WEIGHTS,
-      buildingScenario: 35,
-      creatingAnswerOptions: 25,
-      creatingImages: 25,
-      gettingStarted: 5,
-      saving: 10,
-    };
-  }
-
-  if (kind === "investigation") {
-    return {
-      ...ZERO_WEIGHTS,
-      classifyingExplanations: 25,
-      designingActions: 16,
-      gatheringEvidence: 38,
-      gettingStarted: 1,
-      saving: 1,
-      settingTheScene: 19,
     };
   }
 

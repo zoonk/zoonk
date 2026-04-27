@@ -3,15 +3,10 @@ import { type ActivityKind } from "@zoonk/db";
 import { CUSTOM_PHASE_ORDER, CUSTOM_PHASE_STEPS } from "./phase-kind-steps/custom";
 import { EXPLANATION_PHASE_ORDER, EXPLANATION_PHASE_STEPS } from "./phase-kind-steps/explanation";
 import { GRAMMAR_PHASE_ORDER, GRAMMAR_PHASE_STEPS } from "./phase-kind-steps/grammar";
-import {
-  INVESTIGATION_PHASE_ORDER,
-  INVESTIGATION_PHASE_STEPS,
-} from "./phase-kind-steps/investigation";
 import { LISTENING_PHASE_ORDER, LISTENING_PHASE_STEPS } from "./phase-kind-steps/listening";
 import { PRACTICE_PHASE_ORDER, PRACTICE_PHASE_STEPS } from "./phase-kind-steps/practice";
 import { QUIZ_PHASE_ORDER, QUIZ_PHASE_STEPS } from "./phase-kind-steps/quiz";
 import { READING_PHASE_ORDER, READING_PHASE_STEPS } from "./phase-kind-steps/reading";
-import { STORY_PHASE_ORDER, STORY_PHASE_STEPS } from "./phase-kind-steps/story";
 import { VOCABULARY_PHASE_ORDER, VOCABULARY_PHASE_STEPS } from "./phase-kind-steps/vocabulary";
 
 export { getPhaseWeights } from "./activity-generation-phase-weights";
@@ -45,11 +40,6 @@ export { getPhaseWeights } from "./activity-generation-phase-weights";
 export type PhaseName =
   | "gettingStarted"
   | "buildingWordList"
-  | "buildingScenario"
-  | "settingTheScene"
-  | "classifyingExplanations"
-  | "designingActions"
-  | "gatheringEvidence"
   | "addingPronunciation"
   | "addingRomanization"
   | "addingVocabularyRomanization"
@@ -57,7 +47,6 @@ export type PhaseName =
   | "recordingAudio"
   | "recordingVocabularyAudio"
   | "writingContent"
-  | "writingDebrief"
   | "creatingExercises"
   | "creatingAnswerOptions"
   | "creatingSentences"
@@ -74,13 +63,11 @@ const PHASE_ORDER_MAP: Record<ActivityKind, PhaseName[]> = {
   custom: CUSTOM_PHASE_ORDER,
   explanation: EXPLANATION_PHASE_ORDER,
   grammar: GRAMMAR_PHASE_ORDER,
-  investigation: INVESTIGATION_PHASE_ORDER,
   listening: LISTENING_PHASE_ORDER,
   practice: PRACTICE_PHASE_ORDER,
   quiz: QUIZ_PHASE_ORDER,
   reading: READING_PHASE_ORDER,
   review: EXPLANATION_PHASE_ORDER,
-  story: STORY_PHASE_ORDER,
   translation: VOCABULARY_PHASE_ORDER,
   vocabulary: VOCABULARY_PHASE_ORDER,
 };
@@ -105,15 +92,11 @@ function toFullPhaseSteps(
     addingRomanization: EMPTY,
     addingVocabularyRomanization: EMPTY,
     addingWordPronunciation: EMPTY,
-    buildingScenario: EMPTY,
     buildingWordList: EMPTY,
-    classifyingExplanations: EMPTY,
     creatingAnswerOptions: EMPTY,
     creatingExercises: EMPTY,
     creatingImages: EMPTY,
     creatingSentences: EMPTY,
-    designingActions: EMPTY,
-    gatheringEvidence: EMPTY,
     gettingStarted: EMPTY,
     lookingUpWords: EMPTY,
     preparingImages: EMPTY,
@@ -122,9 +105,7 @@ function toFullPhaseSteps(
     recordingWordAudio: EMPTY,
     saving: EMPTY,
     savingPrerequisites: EMPTY,
-    settingTheScene: EMPTY,
     writingContent: EMPTY,
-    writingDebrief: EMPTY,
     writingExplanation: EMPTY,
     ...partial,
   };
@@ -134,13 +115,11 @@ const PHASE_STEPS_MAP: Record<ActivityKind, Record<PhaseName, readonly ActivityS
   custom: toFullPhaseSteps(CUSTOM_PHASE_STEPS),
   explanation: toFullPhaseSteps(EXPLANATION_PHASE_STEPS),
   grammar: toFullPhaseSteps(GRAMMAR_PHASE_STEPS),
-  investigation: toFullPhaseSteps(INVESTIGATION_PHASE_STEPS),
   listening: toFullPhaseSteps(LISTENING_PHASE_STEPS),
   practice: toFullPhaseSteps(PRACTICE_PHASE_STEPS),
   quiz: toFullPhaseSteps(QUIZ_PHASE_STEPS),
   reading: toFullPhaseSteps(READING_PHASE_STEPS),
   review: toFullPhaseSteps(EXPLANATION_PHASE_STEPS),
-  story: toFullPhaseSteps(STORY_PHASE_STEPS),
   translation: toFullPhaseSteps(VOCABULARY_PHASE_STEPS),
   vocabulary: toFullPhaseSteps(VOCABULARY_PHASE_STEPS),
 };

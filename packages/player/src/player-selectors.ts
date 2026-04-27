@@ -1,9 +1,7 @@
 import { type CompletionResult } from "@zoonk/core/player/contracts/completion-input-schema";
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
-import { INVESTIGATION_EXPERIMENT_COUNT, STORY_OUTCOME_TIERS } from "@zoonk/utils/activities";
 import { type PlayerState } from "./player-reducer";
-import { describePlayerStep, getInvestigationVariant, getPlayerStepImage } from "./player-step";
-import { EFFECT_DELTA_MAP, METRIC_AVERAGE_THRESHOLD } from "./story";
+import { describePlayerStep, getPlayerStepImage } from "./player-step";
 
 /** Converts a 0-based step index to a 1-based percentage (0–100). */
 function computeProgress(currentIndex: number, total: number): number {
@@ -35,33 +33,6 @@ export function getCurrentStep(state: PlayerState) {
   return state.steps[state.currentStepIndex];
 }
 
-type InvestigationProgress = {
-  collected: number;
-  total: number;
-};
-
-/**
- * Returns the evidence collection progress for any investigation step,
- * or null when the current step is not part of an investigation.
- *
- * The step fraction is misleading for investigations because the
- * action step loops at the same index. This pill replaces the
- * fraction throughout the entire investigation — showing "0 / 2"
- * on the problem step, incrementing during the action loop, and
- * displaying "2 / 2" on the call step.
- */
-export function getInvestigationProgress(state: PlayerState): InvestigationProgress | null {
-  const step = getCurrentStep(state);
-  const variant = getInvestigationVariant(step);
-
-  if (!variant) {
-    return null;
-  }
-
-  const collected = state.investigationLoop?.usedOptionIds.length ?? 0;
-  return { collected, total: INVESTIGATION_EXPERIMENT_COUNT };
-}
-
 /** Returns the progress percentage (0–100), snapping to 100 when completed. */
 export function getProgressValue(state: PlayerState): number {
   if (state.phase === "completed") {
@@ -82,111 +53,6 @@ export function getSelectedAnswer(state: PlayerState) {
   return state.selectedAnswers[currentStep.id];
 }
 
-export type StoryMetric = {
-  metric: string;
-  value: number;
-};
-
-/**
- * Story metrics describe the global scoreboard, so they live on the outcome
- * step instead of the intro's visible setup content. The player still has all
- * steps locally, which lets gameplay screens compute current metric values
- * before the learner reaches the final outcome.
- */
-function findStoryMetricDefinitions(steps: SerializedStep[]) {
-  for (const step of steps) {
-    const descriptor = describePlayerStep(step);
-
-    if (descriptor?.kind === "storyOutcome") {
-      return descriptor.content.metrics;
-    }
-  }
-
-  return [];
-}
-
-/**
- * Extracts the selected option from a story step result, if available.
- * Returns null when the step has no result or the option ID doesn't match.
- *
- * Also used by the outcome screen to determine option alignment
- * without duplicating the lookup logic.
- */
-export function findSelectedStoryOption({
-  step,
-  results,
-}: {
-  step: SerializedStep;
-  results: PlayerState["results"];
-}) {
-  const descriptor = describePlayerStep(step);
-  const result = results[step.id];
-  const answer = result?.answer;
-
-  if (
-    descriptor?.kind !== "storyDecision" ||
-    !answer ||
-    answer.kind !== "story" ||
-    !answer.selectedOptionId
-  ) {
-    return null;
-  }
-
-  return descriptor.content.options.find((option) => option.id === answer.selectedOptionId) ?? null;
-}
-
-/**
- * Returns the delta a single step contributes to a specific metric.
- * Returns 0 when the step has no result or the option doesn't affect
- * the given metric.
- */
-function getStepMetricDelta({
-  metric,
-  results,
-  step,
-}: {
-  metric: string;
-  results: PlayerState["results"];
-  step: SerializedStep;
-}): number {
-  const option = findSelectedStoryOption({ results, step });
-
-  if (!option) {
-    return 0;
-  }
-
-  const effect = option.metricEffects.find((entry) => entry.metric === metric);
-  return effect ? EFFECT_DELTA_MAP[effect.effect] : 0;
-}
-
-/**
- * Computes the current value of each story metric by summing deltas
- * from all completed story steps.
- *
- * Reads metric names from the story outcome step, then for each
- * answered story step, looks up the selected option's metricEffects and
- * accumulates deltas (positive = +15, neutral = 0, negative = -15) starting
- * from 50.
- */
-export function getStoryMetrics(state: PlayerState): StoryMetric[] {
-  const metrics = findStoryMetricDefinitions(state.steps);
-
-  if (metrics.length === 0) {
-    return [];
-  }
-
-  const steps = state.steps.filter((step) => step.kind === "story");
-
-  return metrics.map((metric) => ({
-    metric: metric.label,
-    value: steps.reduce(
-      (sum, step) =>
-        sum + getStepMetricDelta({ metric: metric.label, results: state.results, step }),
-      METRIC_AVERAGE_THRESHOLD,
-    ),
-  }));
-}
-
 export type PreloadableImage = {
   kind: "selectImage" | "step";
   url: string;
@@ -202,39 +68,6 @@ function getOptionalStepImage(url?: string): PreloadableImage[] {
 }
 
 /**
- * Story outcome screens reuse branch-specific ending illustrations, so those
- * assets are worth warming up together with the hero image.
- */
-function getStoryOutcomeImages(step: SerializedStep): PreloadableImage[] {
-  const descriptor = describePlayerStep(step);
-
-  if (descriptor?.kind !== "storyOutcome") {
-    return [];
-  }
-
-  return STORY_OUTCOME_TIERS.flatMap((tier) =>
-    getOptionalStepImage(descriptor.content.outcomes[tier].image?.url),
-  );
-}
-
-/**
- * Story decision steps preload the main scene plus the feedback image for
- * every option so feedback transitions stay instant.
- */
-function getStoryDecisionImages(step: SerializedStep): PreloadableImage[] {
-  const descriptor = describePlayerStep(step);
-
-  if (descriptor?.kind !== "storyDecision") {
-    return [];
-  }
-
-  return [
-    ...getOptionalStepImage(getPlayerStepImage(descriptor)?.url),
-    ...descriptor.content.options.flatMap((option) => getOptionalStepImage(option.stateImage?.url)),
-  ];
-}
-
-/**
  * Select-image steps store their visuals on each option rather than a single
  * shared field, so they need a separate preload shape.
  */
@@ -247,23 +80,6 @@ function getSelectImageOptionImages(step: SerializedStep): PreloadableImage[] {
 
   return descriptor.content.options.flatMap((option) =>
     option.url ? [{ kind: "selectImage" as const, url: option.url }] : [],
-  );
-}
-
-/**
- * Story feedback screens are reached from the current decision before the
- * step index advances. They must be part of the preload set even though they
- * do not belong to an upcoming step.
- */
-function getCurrentStoryFeedbackImages(state: PlayerState): PreloadableImage[] {
-  const descriptor = describePlayerStep(getCurrentStep(state));
-
-  if (state.phase !== "playing" || descriptor?.kind !== "storyDecision") {
-    return [];
-  }
-
-  return descriptor.content.options.flatMap((option) =>
-    option.stateImage?.url ? [{ kind: "step" as const, url: option.stateImage.url }] : [],
   );
 }
 
@@ -285,14 +101,6 @@ function dedupeImagesByUrl(images: PreloadableImage[]): PreloadableImage[] {
 function getStepImages(step: SerializedStep): PreloadableImage[] {
   const descriptor = describePlayerStep(step);
 
-  if (descriptor?.kind === "storyOutcome") {
-    return getStoryOutcomeImages(step);
-  }
-
-  if (descriptor?.kind === "storyDecision") {
-    return getStoryDecisionImages(step);
-  }
-
   if (descriptor?.kind === "selectImage") {
     return getSelectImageOptionImages(step);
   }
@@ -302,8 +110,7 @@ function getStepImages(step: SerializedStep): PreloadableImage[] {
 
 /**
  * Collects image URLs that can be needed next so they can be preloaded in the
- * background. This includes upcoming steps and immediate feedback transitions
- * that can happen from the current screen without advancing the step index.
+ * background.
  */
 export function getUpcomingImages(
   state: PlayerState,
@@ -313,5 +120,5 @@ export function getUpcomingImages(
   const upcoming = state.steps.slice(start, start + lookahead);
   const upcomingImages = upcoming.flatMap((step) => getStepImages(step));
 
-  return dedupeImagesByUrl([...getCurrentStoryFeedbackImages(state), ...upcomingImages]);
+  return dedupeImagesByUrl(upcomingImages);
 }

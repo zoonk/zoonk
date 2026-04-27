@@ -1,5 +1,4 @@
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
-import { type InvestigationStepContent } from "@zoonk/core/steps/contract/content";
 import { type StepImage } from "@zoonk/core/steps/contract/image";
 
 type StepDescriptorBase<Kind extends SerializedStep["kind"], Name extends string> = {
@@ -31,33 +30,8 @@ type IntroStepDescriptor = StepDescriptorBase<"static", "intro"> & {
   };
 };
 
-type StoryOutcomeStepDescriptor = StepDescriptorBase<"static", "storyOutcome"> & {
-  content: Extract<SerializedStep<"static">["content"], { variant: "storyOutcome" }>;
-};
-
-type InvestigationProblemStepDescriptor = StepDescriptorBase<
-  "investigation",
-  "investigationProblem"
-> & {
-  content: Extract<SerializedStep<"investigation">["content"], { variant: "problem" }>;
-};
-
-type InvestigationActionStepDescriptor = StepDescriptorBase<
-  "investigation",
-  "investigationAction"
-> & {
-  content: Extract<SerializedStep<"investigation">["content"], { variant: "action" }>;
-};
-
-type InvestigationCallStepDescriptor = StepDescriptorBase<"investigation", "investigationCall"> & {
-  content: Extract<SerializedStep<"investigation">["content"], { variant: "call" }>;
-};
-
 export type PlayerStepDescriptor =
   | StepDescriptorBase<"fillBlank", "fillBlank">
-  | InvestigationActionStepDescriptor
-  | InvestigationCallStepDescriptor
-  | InvestigationProblemStepDescriptor
   | StepDescriptorBase<"listening", "listening">
   | StepDescriptorBase<"matchColumns", "matchColumns">
   | StepDescriptorBase<"multipleChoice", "multipleChoice">
@@ -67,9 +41,7 @@ export type PlayerStepDescriptor =
   | StaticGrammarExampleStepDescriptor
   | StaticGrammarRuleStepDescriptor
   | StaticTextStepDescriptor
-  | StepDescriptorBase<"story", "storyDecision">
   | IntroStepDescriptor
-  | StoryOutcomeStepDescriptor
   | StepDescriptorBase<"translation", "translation">
   | StepDescriptorBase<"vocabulary", "vocabulary">;
 
@@ -122,25 +94,7 @@ function describeStaticStep(step: SerializedStep<"static">): PlayerStepDescripto
     return { content, kind: "staticGrammarRule", step };
   }
 
-  if (content.variant === "storyOutcome") {
-    return { content, kind: "storyOutcome", step };
-  }
-
   return { content, kind: "staticText", step };
-}
-
-function describeInvestigationStep(step: SerializedStep<"investigation">): PlayerStepDescriptor {
-  const content = step.content;
-
-  if (content.variant === "action") {
-    return { content, kind: "investigationAction", step };
-  }
-
-  if (content.variant === "call") {
-    return { content, kind: "investigationCall", step };
-  }
-
-  return { content, kind: "investigationProblem", step };
 }
 
 /**
@@ -157,10 +111,6 @@ export function describePlayerStep(step?: SerializedStep | null): PlayerStepDesc
 
   if (hasStepKind(step, "fillBlank")) {
     return { content: step.content, kind: "fillBlank", step };
-  }
-
-  if (hasStepKind(step, "investigation")) {
-    return describeInvestigationStep(step);
   }
 
   if (hasStepKind(step, "listening")) {
@@ -191,10 +141,6 @@ export function describePlayerStep(step?: SerializedStep | null): PlayerStepDesc
     return describeStaticStep(step);
   }
 
-  if (hasStepKind(step, "story")) {
-    return { content: step.content, kind: "storyDecision", step };
-  }
-
   if (hasStepKind(step, "translation")) {
     return { content: step.content, kind: "translation", step };
   }
@@ -209,9 +155,9 @@ export function describePlayerStep(step?: SerializedStep | null): PlayerStepDesc
 /**
  * Returns the one primary image attached directly to a step descriptor.
  *
- * Some steps have additional image collections, such as select-image options
- * or story option outcomes. Those stay in their domain helpers; this function
- * only answers the shared "does this step have its own main image?" question.
+ * Select-image options store their own image collections. Those stay in their
+ * domain helper; this function only answers the shared "does this step have
+ * its own main image?" question.
  */
 export function getPlayerStepImage(descriptor?: PlayerStepDescriptor | null): StepImage | null {
   if (!descriptor || !hasPlayerStepImageContent(descriptor.content)) {
@@ -219,29 +165,4 @@ export function getPlayerStepImage(descriptor?: PlayerStepDescriptor | null): St
   }
 
   return descriptor.content.image ?? null;
-}
-
-/**
- * Investigation variants drive special reducer transitions and button
- * labeling. This helper exposes the current investigation phase without making
- * each caller know how investigation content is shaped.
- */
-export function getInvestigationVariant(
-  step?: SerializedStep | null,
-): InvestigationStepContent["variant"] | null {
-  const descriptor = describePlayerStep(step);
-
-  if (descriptor?.kind === "investigationAction") {
-    return "action";
-  }
-
-  if (descriptor?.kind === "investigationCall") {
-    return "call";
-  }
-
-  if (descriptor?.kind === "investigationProblem") {
-    return "problem";
-  }
-
-  return null;
 }

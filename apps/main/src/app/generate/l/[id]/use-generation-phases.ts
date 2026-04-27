@@ -24,7 +24,6 @@ export function useGenerationPhases(
     figuringOutApproach: t("Figuring out the best approach"),
     finishing: t("Almost done"),
     gettingStarted: t("Getting started"),
-    personalizingLesson: t("Personalizing the lesson"),
     settingUpActivities: t("Setting up activities"),
   };
 
@@ -58,8 +57,6 @@ export function useGenerationPhases(
     finishing: (index) => cycleMessage([t("Wrapping up..."), t("Almost there...")], index),
     gettingStarted: (index) =>
       cycleMessage([t("Getting everything ready..."), t("Setting things up...")], index),
-    personalizingLesson: (index) =>
-      cycleMessage([t("Personalizing the lesson..."), t("Tailoring the experience...")], index),
     settingUpActivities: (index) =>
       cycleMessage([t("Designing practice exercises..."), t("Making it interactive...")], index),
   };

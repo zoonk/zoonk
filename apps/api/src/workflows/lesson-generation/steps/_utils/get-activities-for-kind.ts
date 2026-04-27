@@ -1,6 +1,5 @@
 import { type GeneratedCoreActivity } from "@zoonk/ai/tasks/lessons/core-activities";
 import { type GeneratedCustomActivity } from "@zoonk/ai/tasks/lessons/custom-activities";
-import { type AppliedActivityKind } from "@zoonk/core/workflows/steps";
 import { type ActivityKind, type LessonKind } from "@zoonk/db";
 import { isTTSSupportedLanguage } from "@zoonk/utils/languages";
 
@@ -41,11 +40,9 @@ function createActivityEntry({
  * context.
  */
 function getCoreActivities({
-  appliedActivityKind,
   coreActivities,
   lessonTitle,
 }: {
-  appliedActivityKind: AppliedActivityKind;
   coreActivities: GeneratedCoreActivity[];
   lessonTitle: string;
 }): ActivityEntry[] {
@@ -62,16 +59,11 @@ function getCoreActivities({
       ? explanations
       : [createActivityEntry({ kind: "explanation", title: lessonTitle })];
 
-  const appliedActivities = appliedActivityKind
-    ? [createActivityEntry({ kind: appliedActivityKind })]
-    : [];
-
   if (allExplanations.length < MIN_EXPLANATIONS_FOR_TWO_PRACTICES) {
     return [
       ...allExplanations,
       createActivityEntry({ kind: "practice" }),
       createActivityEntry({ kind: "quiz" }),
-      ...appliedActivities,
       createActivityEntry({ kind: "review" }),
     ];
   }
@@ -86,7 +78,6 @@ function getCoreActivities({
     ...secondGroup,
     createActivityEntry({ kind: "practice" }),
     createActivityEntry({ kind: "quiz" }),
-    ...appliedActivities,
     createActivityEntry({ kind: "review" }),
   ];
 }
@@ -114,7 +105,6 @@ function getLanguageActivities(targetLanguage: string | null): ActivityKind[] {
  * - "custom" lessons use AI-generated activity definitions.
  */
 export function getActivitiesForKind({
-  appliedActivityKind = null,
   coreActivities,
   customActivities,
   lessonKind,
@@ -126,14 +116,9 @@ export function getActivitiesForKind({
   customActivities: GeneratedCustomActivity[];
   coreActivities: GeneratedCoreActivity[];
   targetLanguage: string | null;
-  appliedActivityKind?: AppliedActivityKind;
 }): ActivityEntry[] {
   if (lessonKind === "core") {
-    return getCoreActivities({
-      appliedActivityKind,
-      coreActivities,
-      lessonTitle,
-    });
+    return getCoreActivities({ coreActivities, lessonTitle });
   }
 
   if (lessonKind === "language") {

@@ -22,9 +22,9 @@ type PlayerChoiceSceneOption = {
 /**
  * Provides the shared shell for all choice-based scenes.
  *
- * Multiple choice, story decisions, translation, and investigation choices all
- * need the same centered layout, spacing, and action placement. Keeping that
- * shell here means future layout changes land once for the whole family.
+ * Multiple choice and translation choices need the same centered layout,
+ * spacing, and action placement. Keeping that shell here means future layout
+ * changes land once for the whole family.
  */
 export function PlayerChoiceScene({ children }: { children: React.ReactNode }) {
   return <InteractiveStepLayout data-slot="player-choice-scene">{children}</InteractiveStepLayout>;
@@ -72,8 +72,8 @@ export function PlayerChoiceSceneContext({ children }: { children?: string | nul
 /**
  * Replaces the player-name placeholder before rendering the main question.
  *
- * This keeps story, multiple-choice, and investigation prompts aligned on the
- * same copy treatment even though they come from different step kinds.
+ * This keeps multiple-choice and translation prompts aligned on the same copy
+ * treatment even though they come from different step kinds.
  */
 export function PlayerChoiceSceneQuestion({ children }: { children?: string | null }) {
   const replaceName = useReplaceName();
@@ -88,10 +88,9 @@ export function PlayerChoiceSceneQuestion({ children }: { children?: string | nu
 /**
  * Keeps the primary option copy consistent across all choice scenes.
  *
- * Multiple choice, story decisions, translation, and investigation choices
- * all present one tappable answer label. Centralizing that text treatment
- * here prevents each adapter from quietly diverging when option typography
- * changes in the future.
+ * Multiple choice and translation choices all present one tappable answer
+ * label. Centralizing that text treatment here prevents each adapter from
+ * quietly diverging when option typography changes in the future.
  */
 export function PlayerChoiceSceneOptionText({ children }: { children: React.ReactNode }) {
   return (
@@ -105,8 +104,7 @@ export function PlayerChoiceSceneOptionText({ children }: { children: React.Reac
  * Renders the shared option list and owns the numeric keyboard shortcuts.
  *
  * This exists so the option-card layout, radiogroup semantics, and keyboard
- * interaction cannot drift between multiple-choice, story, translation, and
- * investigation adapters.
+ * interaction cannot drift between multiple-choice and translation adapters.
  */
 export function PlayerChoiceSceneOptions({
   ariaLabel,

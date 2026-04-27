@@ -3,7 +3,6 @@ import { serializeWorkflowError } from "@/workflows/_shared/workflow-error";
 import { type LessonKind } from "@zoonk/db";
 import { getWorkflowMetadata } from "workflow";
 import { addActivitiesStep } from "./steps/add-activities-step";
-import { determineAppliedActivityStep } from "./steps/determine-applied-activity-step";
 import { determineLessonKindStep } from "./steps/determine-lesson-kind-step";
 import { generateCoreActivitiesStep } from "./steps/generate-core-activities-step";
 import { generateCustomActivitiesStep } from "./steps/generate-custom-activities-step";
@@ -67,23 +66,6 @@ function shouldStreamExistingCompletion(context: LessonGenerationContext): boole
  */
 function shouldRepairExistingActivities(context: LessonGenerationContext): boolean {
   return context._count.activities > 0;
-}
-
-/**
- * Only core lessons need the applied-activity classifier. Every other lesson
- * kind must explicitly skip that step so the stream reflects the real path
- * taken by the workflow.
- */
-async function getAppliedActivityKindForLesson(input: {
-  context: LessonGenerationContext;
-  lessonKind: LessonKind;
-}): Promise<Awaited<ReturnType<typeof determineAppliedActivityStep>> | null> {
-  if (input.lessonKind === "core") {
-    return determineAppliedActivityStep(input.context);
-  }
-
-  await streamSkipStep("determineAppliedActivity");
-  return null;
 }
 
 async function getCustomActivities(
@@ -186,7 +168,6 @@ function handleFilteredRegeneratedLesson(): "filtered" {
  * or hidden replacements.
  */
 async function addGeneratedActivities(input: {
-  appliedActivityKind: Awaited<ReturnType<typeof determineAppliedActivityStep>> | null;
   context: LessonGenerationContext;
   generationRunId: string;
   isPublished: boolean;
@@ -196,7 +177,6 @@ async function addGeneratedActivities(input: {
   const customActivities = await getCustomActivities(input.context, input.lessonKind);
 
   await addActivitiesStep({
-    appliedActivityKind: input.appliedActivityKind,
     context: input.context,
     coreActivities,
     customActivities,
@@ -241,10 +221,6 @@ async function runInitialLessonGeneration(input: {
 
   try {
     const lessonKind = await getLessonKindForInitialGeneration(input.context);
-    const appliedActivityKind = await getAppliedActivityKindForLesson({
-      context: input.context,
-      lessonKind,
-    });
 
     await syncLessonKindForInitialGeneration({
       lessonId: input.lessonId,
@@ -256,7 +232,6 @@ async function runInitialLessonGeneration(input: {
     }
 
     await addGeneratedActivities({
-      appliedActivityKind,
       context: input.context,
       generationRunId: input.workflowRunId,
       isPublished: true,
@@ -291,11 +266,6 @@ async function runLessonRegeneration(input: {
 }): Promise<LessonGenerationResult> {
   const lessonKind = await getLessonKindForRegeneration(input.context);
 
-  const appliedActivityKind = await getAppliedActivityKindForLesson({
-    context: input.context,
-    lessonKind,
-  });
-
   await skipLessonKindSyncForRegeneration();
 
   if (isNonLanguageLesson(input.context.chapter.course.targetLanguage, lessonKind)) {
@@ -303,7 +273,6 @@ async function runLessonRegeneration(input: {
   }
 
   await addGeneratedActivities({
-    appliedActivityKind,
     context: input.context,
     generationRunId: input.generationRunId,
     isPublished: false,

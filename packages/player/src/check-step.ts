@@ -3,13 +3,10 @@ import {
   type AnswerResult,
   checkArrangeWordsAnswer,
   checkFillBlankAnswer,
-  checkInvestigationAction as checkInvestigationActionAnswer,
-  checkInvestigationCall,
   checkMatchColumnsAnswer,
   checkMultipleChoiceAnswer,
   checkSelectImageAnswer,
   checkSortOrderAnswer,
-  checkStoryAnswer,
   checkTranslationAnswer,
 } from "@zoonk/core/player/contracts/check-answer";
 import { type SerializedStep } from "@zoonk/core/player/contracts/prepare-activity-data";
@@ -133,80 +130,11 @@ function checkListeningStep(step: SerializedStep, answer: SelectedAnswer): Check
   };
 }
 
-/**
- * Checks an investigation answer based on the step variant.
- *
- * - Problem: always correct (read-only step, no real answer)
- * - Action: correct unless weak quality (critical/useful = correct, weak = incorrect)
- * - Call: checks if the selected explanation has "best" accuracy
- */
-function checkInvestigationProblem(step: SerializedStep, answer: SelectedAnswer): CheckStepResult {
-  if (answer.kind !== "investigation" || answer.variant !== "problem") {
-    return MISMATCH_RESULT;
-  }
-
-  const content = parseStepContent("investigation", step.content);
-
-  if (content.variant !== "problem") {
-    return MISMATCH_RESULT;
-  }
-
-  return { result: { correctAnswer: null, feedback: null, isCorrect: true } };
-}
-
-function checkInvestigationActionStep(
-  step: SerializedStep,
-  answer: SelectedAnswer,
-): CheckStepResult {
-  if (answer.kind !== "investigation") {
-    return MISMATCH_RESULT;
-  }
-
-  const content = parseStepContent("investigation", step.content);
-
-  if (content.variant !== "action" || answer.variant !== "action") {
-    return MISMATCH_RESULT;
-  }
-
-  return {
-    result: checkInvestigationActionAnswer(content, answer.selectedOptionId),
-  };
-}
-
-function checkInvestigationCallStep(step: SerializedStep, answer: SelectedAnswer): CheckStepResult {
-  if (answer.kind !== "investigation") {
-    return MISMATCH_RESULT;
-  }
-
-  const content = parseStepContent("investigation", step.content);
-
-  if (content.variant !== "call" || answer.variant !== "call") {
-    return MISMATCH_RESULT;
-  }
-
-  return {
-    result: checkInvestigationCall(content, answer.selectedOptionId),
-  };
-}
-
-function checkStory(step: SerializedStep, answer: SelectedAnswer): CheckStepResult {
-  if (answer.kind !== "story") {
-    return MISMATCH_RESULT;
-  }
-
-  const content = parseStepContent("story", step.content);
-
-  return { result: checkStoryAnswer(content, answer.selectedOptionId) };
-}
-
 const CHECKERS: Record<
   PlayerCheckBehavior,
   (step: SerializedStep, answer: SelectedAnswer) => CheckStepResult
 > = {
   fillBlank: checkFillBlank,
-  investigationAction: checkInvestigationActionStep,
-  investigationCall: checkInvestigationCallStep,
-  investigationProblem: checkInvestigationProblem,
   listening: checkListeningStep,
   matchColumns: checkMatchColumns,
   multipleChoice: checkMultipleChoice,
@@ -214,7 +142,6 @@ const CHECKERS: Record<
   reading: checkReadingStep,
   selectImage: checkSelectImage,
   sortOrder: checkSortOrder,
-  story: checkStory,
   translation: checkTranslationStep,
 };
 

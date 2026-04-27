@@ -61,7 +61,7 @@ function hasEmbeddedDesktopAction({
 
   const descriptor = describePlayerStep(step);
 
-  if (descriptor?.kind === "multipleChoice" || descriptor?.kind === "storyDecision") {
+  if (descriptor?.kind === "multipleChoice") {
     return Boolean(descriptor.content.image);
   }
 

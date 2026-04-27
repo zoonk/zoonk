@@ -20,10 +20,6 @@ enum ActivityKind {
   practice
   quiz
 
-  // applied activities
-  investigation
-  story
-
   // language lessons
   grammar
   listening
@@ -35,7 +31,6 @@ enum ActivityKind {
 enum StepKind {
   arrangeWords   @map("arrange_words")
   fillBlank      @map("fill_blank")
-  investigation
   listening
   matchColumns   @map("match_columns")
   multipleChoice @map("multiple_choice")
@@ -43,7 +38,6 @@ enum StepKind {
   selectImage    @map("select_image")
   sortOrder      @map("sort_order")
   static
-  story
   translation
   visual
   vocabulary

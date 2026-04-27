@@ -29,7 +29,6 @@ function buildState(overrides: Partial<PlayerState> = {}): PlayerState {
     activityKind: "quiz",
     completion: null,
     currentStepIndex: 0,
-    investigationLoop: null,
     phase: "playing",
     results: {},
     selectedAnswers: {},
@@ -63,34 +62,6 @@ describe(getPlayerScreenModel, () => {
     expect(screen.stageIsStatic).toBe(true);
   });
 
-  test("uses primary action mode for story intro", () => {
-    const screen = buildScreen({
-      state: buildState({
-        steps: [
-          buildStep({
-            content: {
-              text: "Welcome",
-              title: "Story intro",
-              variant: "intro" as const,
-            },
-          }),
-        ],
-      }),
-    });
-
-    expect(screen.kind).toBe("step");
-
-    expect(screen.bottomBar).toEqual({
-      button: "begin",
-      disabled: false,
-      kind: "primaryAction",
-      run: "navigateNext",
-    });
-
-    expect(screen.keyboard.enterAction).toBe("navigateNext");
-    expect(screen.stageIsFullBleed).toBe(true);
-  });
-
   test("uses primary action mode for the practice scenario intro", () => {
     const screen = buildScreen({
       activityKind: "practice",
@@ -113,28 +84,6 @@ describe(getPlayerScreenModel, () => {
     expect(screen.keyboard.enterAction).toBe("navigateNext");
     expect(screen.keyboard.rightAction).toBeNull();
     expect(screen.stageIsFullBleed).toBe(true);
-  });
-
-  test("supports investigation problem without a synthetic answer", () => {
-    const screen = buildScreen({
-      state: buildState({
-        steps: [
-          buildStep({
-            content: { scenario: "A mystery occurred.", variant: "problem" as const },
-            kind: "investigation",
-          }),
-        ],
-      }),
-    });
-
-    expect(screen.kind).toBe("step");
-    expect(screen.bottomBar).toEqual({
-      button: "startInvestigation",
-      disabled: false,
-      kind: "primaryAction",
-      run: "check",
-    });
-    expect(screen.keyboard.enterAction).toBe("check");
   });
 
   test("keeps unanswered interactive steps disabled", () => {
@@ -161,43 +110,6 @@ describe(getPlayerScreenModel, () => {
       run: "check",
     });
     expect(screen.keyboard.enterAction).toBeNull();
-  });
-
-  test("routes story feedback to the dedicated feedback screen", () => {
-    const screen = buildScreen({
-      state: buildState({
-        phase: "feedback",
-        steps: [
-          buildStep({
-            content: {
-              options: [
-                {
-                  alignment: "strong" as const,
-                  feedback: "Good call",
-                  id: "choice-1",
-                  metricEffects: [],
-                  stateImage: { prompt: "State after option A" },
-                  text: "Option A",
-                },
-              ],
-              problem: "Choose",
-            },
-            kind: "story",
-          }),
-        ],
-      }),
-    });
-
-    expect(screen.kind).toBe("feedbackScreen");
-
-    expect(screen.bottomBar).toEqual({
-      button: "continue",
-      disabled: false,
-      kind: "primaryAction",
-      run: "continue",
-    });
-
-    expect(screen.keyboard.enterAction).toBe("continue");
   });
 
   test("keeps completed state in completion mode", () => {

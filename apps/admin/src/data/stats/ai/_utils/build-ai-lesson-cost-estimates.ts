@@ -13,7 +13,6 @@ import {
   buildGatewayLineItem,
   buildStepImageLineItem,
   buildTtsLineItem,
-  getAppliedActivityShares,
   getAverageTaskRequestsPerRun,
   isEstimateLineItem,
   sumLineItems,
@@ -22,8 +21,8 @@ import { type AiGenerationCostEstimate, type StructureStats } from "./ai-cost-es
 
 /**
  * Core lessons combine lesson classification, a fixed explanation/practice/quiz
- * pipeline, explanation-specific image prompts/images, and exactly one applied
- * activity slot.
+ * pipeline, explanation-specific image prompts/images, and quiz image
+ * generation.
  */
 export function buildCoreLessonEstimate({
   structureStats,
@@ -33,20 +32,11 @@ export function buildCoreLessonEstimate({
   usageByTask: TaskUsageByName;
 }): AiGenerationCostEstimate {
   const coreLessonCount = structureStats.coreLessonCount;
-  const appliedShares = getAppliedActivityShares({
-    investigationCount: structureStats.coreLessonInvestigationCount,
-    storyCount: structureStats.coreLessonStoryCount,
-  });
   const lineItems = [
     buildGatewayLineItem({ averageRequestsPerRun: 1, taskName: "lesson-kind", usageByTask }),
     buildGatewayLineItem({
       averageRequestsPerRun: 1,
       taskName: "lesson-core-activities",
-      usageByTask,
-    }),
-    buildGatewayLineItem({
-      averageRequestsPerRun: 1,
-      taskName: "applied-activity-kind",
       usageByTask,
     }),
     buildGatewayLineItem({
@@ -96,41 +86,11 @@ export function buildCoreLessonEstimate({
       taskName: "step-select-image",
       usageByTask,
     }),
-    buildGatewayLineItem({
-      averageRequestsPerRun: appliedShares.storyShare,
-      taskName: "activity-story",
-      usageByTask,
-    }),
-    buildGatewayLineItem({
-      averageRequestsPerRun: appliedShares.storyShare,
-      taskName: "activity-story-choices",
-      usageByTask,
-    }),
-    buildGatewayLineItem({
-      averageRequestsPerRun: appliedShares.investigationShare,
-      taskName: "activity-investigation-scenario",
-      usageByTask,
-    }),
-    buildGatewayLineItem({
-      averageRequestsPerRun: appliedShares.investigationShare,
-      taskName: "activity-investigation-accuracy",
-      usageByTask,
-    }),
-    buildGatewayLineItem({
-      averageRequestsPerRun: appliedShares.investigationShare,
-      taskName: "activity-investigation-actions",
-      usageByTask,
-    }),
-    buildGatewayLineItem({
-      averageRequestsPerRun: appliedShares.investigationShare,
-      taskName: "activity-investigation-findings",
-      usageByTask,
-    }),
   ].filter((item): item is NonNullable<typeof item> => isEstimateLineItem(item));
 
   return {
     description:
-      "Lesson classification, core activity planning, explanation/practice/quiz generation, explanation step images, quiz image generation, and one weighted applied activity.",
+      "Lesson classification, core activity planning, explanation/practice/quiz generation, explanation step images, and quiz image generation.",
     kind: "coreLesson",
     lineItems,
     notes: [],

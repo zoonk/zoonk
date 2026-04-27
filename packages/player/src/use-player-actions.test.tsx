@@ -30,7 +30,6 @@ function buildState(overrides: Partial<PlayerState> = {}): PlayerState {
     activityKind: "quiz",
     completion: null,
     currentStepIndex: 0,
-    investigationLoop: null,
     phase: "playing",
     results: {},
     selectedAnswers: {},
@@ -44,33 +43,6 @@ function buildState(overrides: Partial<PlayerState> = {}): PlayerState {
 }
 
 describe(usePlayerActions, () => {
-  test("check dispatches the investigation problem transition without a stored answer", () => {
-    const dispatch = vi.fn();
-    const onComplete = vi.fn();
-    const state = buildState({
-      steps: [
-        buildStep({
-          content: { scenario: "A mystery occurred.", variant: "problem" as const },
-          kind: "investigation",
-        }),
-      ],
-    });
-
-    const { result } = renderHook(() => usePlayerActions(state, dispatch, onComplete, false));
-
-    act(() => {
-      result.current.check();
-    });
-
-    expect(dispatch).toHaveBeenCalledWith({
-      result: { correctAnswer: null, feedback: null, isCorrect: true },
-      stepId: "step-1",
-      type: "CHECK_ANSWER",
-    });
-
-    expect(onComplete).not.toHaveBeenCalled();
-  });
-
   test("check still no-ops for unanswered interactive steps", () => {
     const dispatch = vi.fn();
     const onComplete = vi.fn();

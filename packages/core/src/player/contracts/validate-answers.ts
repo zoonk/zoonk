@@ -3,12 +3,10 @@ import { buildAcceptedArrangeWordSequences } from "./arrange-words-answers";
 import {
   checkArrangeWordsAnswer,
   checkFillBlankAnswer,
-  checkInvestigationCall,
   checkMatchColumnsAnswer,
   checkMultipleChoiceAnswer,
   checkSelectImageAnswer,
   checkSortOrderAnswer,
-  checkStoryAnswer,
   checkTranslationAnswer,
 } from "./check-answer";
 import { type SelectedAnswer } from "./completion-input-schema";
@@ -39,7 +37,6 @@ type ValidatedStepResult = {
 
 type ServerValidationBehavior =
   | "fillBlank"
-  | "investigationCall"
   | "listening"
   | "matchColumns"
   | "multipleChoice"
@@ -47,14 +44,12 @@ type ServerValidationBehavior =
   | "reading"
   | "selectImage"
   | "sortOrder"
-  | "story"
   | "translation";
 
 /**
  * Server validation should follow the semantic step contract directly instead
  * of depending on the React player's render behavior table. The raw step kind
- * and, for investigation, the parsed variant are enough to decide whether the
- * submission should emit a StepAttempt.
+ * kind is enough to decide whether the submission should emit a StepAttempt.
  */
 function getValidationBehavior(step: StepData): ServerValidationBehavior {
   switch (step.kind) {
@@ -72,14 +67,8 @@ function getValidationBehavior(step: StepData): ServerValidationBehavior {
       return "selectImage";
     case "sortOrder":
       return "sortOrder";
-    case "story":
-      return "story";
     case "translation":
       return "translation";
-    case "investigation": {
-      const content = parseStepContent("investigation", step.content);
-      return content.variant === "call" ? "investigationCall" : "none";
-    }
     default:
       return "none";
   }
@@ -180,51 +169,11 @@ function validateListening(step: StepData, answer: SelectedAnswer): ValidatedSte
   return { answer, isCorrect: result.isCorrect, stepId: step.id };
 }
 
-/**
- * Validates an investigation answer server-side.
- *
- * Problem steps produce no StepAttempt (read-only, like static steps).
- * Action steps produce no StepAttempt here — the 3 per-experiment
- * StepAttempts are built separately from investigationLoop in the
- * submission pipeline.
- * Call checks the selected explanation's accuracy tier.
- */
-function validateInvestigation(step: StepData, answer: SelectedAnswer): ValidatedStepResult | null {
-  if (answer.kind !== "investigation") {
-    return null;
-  }
-
-  const content = parseStepContent("investigation", step.content);
-
-  if (content.variant === "problem" || content.variant === "action") {
-    return null;
-  }
-
-  if (content.variant === "call" && answer.variant === "call") {
-    const result = checkInvestigationCall(content, answer.selectedOptionId);
-    return { answer, isCorrect: result.isCorrect, stepId: step.id };
-  }
-
-  return null;
-}
-
-function validateStory(step: StepData, answer: SelectedAnswer): ValidatedStepResult | null {
-  if (answer.kind !== "story") {
-    return null;
-  }
-
-  const content = parseStepContent("story", step.content);
-  const result = checkStoryAnswer(content, answer.selectedOptionId);
-
-  return { answer, isCorrect: result.isCorrect, stepId: step.id };
-}
-
 const validators: Record<
   ServerValidationBehavior,
   (step: StepData, answer: SelectedAnswer) => ValidatedStepResult | null
 > = {
   fillBlank: validateFillBlank,
-  investigationCall: validateInvestigation,
   listening: validateListening,
   matchColumns: validateMatchColumns,
   multipleChoice: validateMultipleChoice,
@@ -232,7 +181,6 @@ const validators: Record<
   reading: validateReading,
   selectImage: validateSelectImage,
   sortOrder: validateSortOrder,
-  story: validateStory,
   translation: validateTranslation,
 };
 

@@ -32,22 +32,6 @@ const AI_TASK_METADATA = {
     defaultModel: "openai/gpt-5.4",
     supportsFallbackReporting: true,
   },
-  "activity-investigation-accuracy": {
-    defaultModel: "openai/gpt-5.4-mini",
-    supportsFallbackReporting: true,
-  },
-  "activity-investigation-actions": {
-    defaultModel: "openai/gpt-5.4",
-    supportsFallbackReporting: true,
-  },
-  "activity-investigation-findings": {
-    defaultModel: "openai/gpt-5.4",
-    supportsFallbackReporting: true,
-  },
-  "activity-investigation-scenario": {
-    defaultModel: "openai/gpt-5.4",
-    supportsFallbackReporting: true,
-  },
   "activity-practice": {
     defaultModel: "openai/gpt-5.4",
     supportsFallbackReporting: true,
@@ -68,14 +52,6 @@ const AI_TASK_METADATA = {
     defaultModel: "openai/gpt-5.4",
     supportsFallbackReporting: true,
   },
-  "activity-story": {
-    defaultModel: "openai/gpt-5.4",
-    supportsFallbackReporting: false,
-  },
-  "activity-story-choices": {
-    defaultModel: "openai/gpt-5.4",
-    supportsFallbackReporting: false,
-  },
   "activity-translation": {
     defaultModel: "openai/gpt-5.4-mini",
     supportsFallbackReporting: true,
@@ -86,10 +62,6 @@ const AI_TASK_METADATA = {
   },
   "alternative-titles": {
     defaultModel: "openai/gpt-5.4",
-    supportsFallbackReporting: true,
-  },
-  "applied-activity-kind": {
-    defaultModel: "google/gemini-3.1-flash-lite-preview",
     supportsFallbackReporting: true,
   },
   "chapter-lessons": {
@@ -187,29 +159,12 @@ const AI_TASK_CATALOG_GROUP_DEFINITIONS = [
   {
     description:
       "Lesson scaffolding tasks that shape the structure before activity generation starts.",
-    taskNames: [
-      "lesson-kind",
-      "lesson-core-activities",
-      "lesson-custom-activities",
-      "applied-activity-kind",
-    ],
+    taskNames: ["lesson-kind", "lesson-core-activities", "lesson-custom-activities"],
     title: "Lesson Flow",
   },
   {
-    description:
-      "Core lesson activities, including explanations, practice, quiz, and investigation flows.",
-    taskNames: [
-      "activity-explanation",
-      "activity-practice",
-      "activity-quiz",
-      "activity-story",
-      "activity-story-choices",
-      "activity-investigation-scenario",
-      "activity-investigation-accuracy",
-      "activity-investigation-actions",
-      "activity-investigation-findings",
-      "activity-custom",
-    ],
+    description: "Core lesson activities, including explanations, practice, quiz, and custom work.",
+    taskNames: ["activity-explanation", "activity-practice", "activity-quiz", "activity-custom"],
     title: "Core Activities",
   },
   {
