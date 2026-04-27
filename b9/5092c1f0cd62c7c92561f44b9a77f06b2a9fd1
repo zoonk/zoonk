@@ -1,0 +1,23 @@
+apps/api/e2e/workflows-course-generation.test.ts
+  05b5f5e45edca767 7-25,89-91,126-128,141-149
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "b95092c1f0cd62c7c92561f44b9a77f06b2a9fd1",
+  "prompts": {
+    "05b5f5e45edca767": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019dd113-89d3-7182-8462-9c28ea46c34d",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 102,
+      "total_deletions": 113,
+      "accepted_lines": 35,
+      "overriden_lines": 0
+    }
+  }
+}
