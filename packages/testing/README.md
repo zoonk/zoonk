@@ -22,7 +22,7 @@ Import fixtures in your tests:
 
 ```ts
 import { signInAs } from "@zoonk/testing/fixtures/auth";
-import { courseFixture, courseAttrs } from "@zoonk/testing/fixtures/courses";
-import { memberFixture, organizationFixture } from "@zoonk/testing/fixtures/orgs";
+import { courseFixture } from "@zoonk/testing/fixtures/courses";
+import { organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { userFixture, userAttrs } from "@zoonk/testing/fixtures/users";
 ```
