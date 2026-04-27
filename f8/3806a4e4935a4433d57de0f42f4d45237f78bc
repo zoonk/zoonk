@@ -1,0 +1,71 @@
+packages/db/src/curriculum-filters.ts
+  h_1cda88fc21fe9c 106
+  a8b2b349f69625ee 4-8,15,24-25,29,36,46-49,54-55,85-88,92-93,129-130,135,151,156-157
+packages/db/src/prisma/models/chapters.prisma
+  a8b2b349f69625ee 23-24
+packages/db/src/prisma/models/courses.prisma
+  a8b2b349f69625ee 73-76
+packages/core/src/progress/get-lesson-progress.test.ts
+  a8b2b349f69625ee 291
+apps/main/src/data/courses/find-existing-course.ts
+  a8b2b349f69625ee 2,29,40
+apps/main/src/app/terms/es.mdx
+  a8b2b349f69625ee 85
+apps/main/src/app/privacy/es.mdx
+  a8b2b349f69625ee 46
+apps/main/src/app/privacy/pt.mdx
+  a8b2b349f69625ee 46
+apps/api/src/workflows/course-generation/steps/check-existing-course-step.ts
+  a8b2b349f69625ee 6,39,48
+apps/main/src/data/courses/list-user-courses.ts
+  a8b2b349f69625ee 4,25,27
+apps/api/src/workflows/course-generation/steps/get-course-chapters-step.ts
+  a8b2b349f69625ee 3,16
+apps/api/src/workflows/activity-generation/steps/get-neighboring-concepts-step.ts
+  a8b2b349f69625ee 3,13-18,20
+apps/main/src/app/terms/en.mdx
+  a8b2b349f69625ee 87
+packages/core/src/progress/get-activity-progress.test.ts
+  a8b2b349f69625ee 272,274
+apps/main/src/app/privacy/en.mdx
+  a8b2b349f69625ee 46
+apps/api/src/workflows/activity-generation/steps/_utils/fetch-lesson-activities.ts
+  a8b2b349f69625ee 5-6
+apps/main/src/data/courses/_utils/continue-learning-queries.ts
+  a8b2b349f69625ee 29-32,59
+packages/db/src/prisma/models/lessons.prisma
+  a8b2b349f69625ee 27-28,52-53,74-75
+packages/db/src/prisma/migrations/20260427213722_remove_content_archive/migration.sql
+  a8b2b349f69625ee 1-96
+apps/main/src/app/terms/pt.mdx
+  a8b2b349f69625ee 85
+packages/db/src/index.ts
+  a8b2b349f69625ee 66
+apps/main/src/data/courses/get-continue-learning.test.ts
+  a8b2b349f69625ee 133,159,188
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "f83806a4e4935a4433d57de0f42f4d45237f78bc",
+  "prompts": {
+    "a8b2b349f69625ee": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019dd0cb-55d3-7b52-9bab-d58666af461b",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 185,
+      "total_deletions": 1390,
+      "accepted_lines": 179,
+      "overriden_lines": 0
+    }
+  },
+  "humans": {
+    "h_1cda88fc21fe9c": {
+      "author": "ceolinwill"
+    }
+  }
+}
