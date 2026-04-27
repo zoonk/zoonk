@@ -1,13 +1,14 @@
 import "server-only";
 import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
+import { AI_TASK_MODEL_CONFIG } from "@zoonk/ai/tasks/metadata";
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import { formatConceptLines } from "../config";
 import { getLanguagePromptContext } from "./_utils/language-prompt-context";
 import systemPrompt from "./activity-sentences.prompt.md";
 
-const DEFAULT_MODEL = "openai/gpt-5.4";
-const FALLBACK_MODELS = ["google/gemini-3.1-pro-preview", "anthropic/claude-opus-4.6"];
+const taskName = "activity-sentences";
+const { defaultModel, fallbackModels } = AI_TASK_MODEL_CONFIG[taskName];
 
 const schema = z.object({
   sentences: z.array(
@@ -40,7 +41,7 @@ export async function generateActivitySentences({
   concepts = [],
   lessonDescription,
   lessonTitle,
-  model = DEFAULT_MODEL,
+  model = defaultModel,
   neighboringConcepts = [],
   reasoningEffort,
   targetLanguage,
@@ -50,19 +51,21 @@ export async function generateActivitySentences({
 }: ActivitySentencesParams) {
   const promptContext = getLanguagePromptContext({ targetLanguage, userLanguage });
 
-  const userPrompt = `TARGET_LANGUAGE: ${promptContext.targetLanguageName}
-USER_LANGUAGE: ${promptContext.userLanguage}
-${chapterTitle ? `CHAPTER_TITLE: ${chapterTitle}\n` : ""}LESSON_TITLE: ${lessonTitle}
-${lessonDescription ? `LESSON_DESCRIPTION: ${lessonDescription}\n` : ""}VOCABULARY_WORDS: ${words.join(", ")}
-${formatConceptLines(concepts, neighboringConcepts)}
-
-Generate practice sentences using these vocabulary words in everyday situations.`;
+  const userPrompt = `
+    TARGET_LANGUAGE: ${promptContext.targetLanguageName}
+    USER_LANGUAGE: ${promptContext.userLanguage}
+    CHAPTER_TITLE: ${chapterTitle}
+    LESSON_TITLE: ${lessonTitle}
+    LESSON_DESCRIPTION: ${lessonDescription}
+    VOCABULARY_WORDS: ${words.join(", ")}
+    ${formatConceptLines(concepts, neighboringConcepts)}
+  `;
 
   const providerOptions = buildProviderOptions({
-    fallbackModels: FALLBACK_MODELS,
+    fallbackModels,
     model,
     reasoningEffort,
-    taskName: "activity-sentences",
+    taskName,
     useFallback,
   });
 

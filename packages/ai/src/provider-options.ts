@@ -38,7 +38,7 @@ function buildGatewayProviderOptions({
   taskName,
   useFallback,
 }: {
-  fallbackModels: string[];
+  fallbackModels: readonly string[];
   model: string;
   taskName: string;
   useFallback: boolean;
@@ -49,7 +49,7 @@ function buildGatewayProviderOptions({
     : undefined;
 
   return {
-    models: useFallback ? fallbackModels : [],
+    models: useFallback ? [...fallbackModels] : [],
     ...(order ? { order } : {}),
     ...(tags ? { tags } : {}),
   };
@@ -163,7 +163,7 @@ export function buildProviderOptions({
 }: {
   model: string;
   useFallback: boolean;
-  fallbackModels: string[];
+  fallbackModels: readonly string[];
   reasoningEffort?: ReasoningEffort;
   taskName: string;
 }): ProviderOptionsResult {

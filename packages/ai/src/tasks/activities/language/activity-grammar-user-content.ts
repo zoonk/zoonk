@@ -1,12 +1,13 @@
 import "server-only";
 import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
+import { AI_TASK_MODEL_CONFIG } from "@zoonk/ai/tasks/metadata";
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import { getLanguagePromptContext } from "./_utils/language-prompt-context";
 import systemPrompt from "./activity-grammar-user-content.prompt.md";
 
-const DEFAULT_MODEL = "openai/gpt-5.4";
-const FALLBACK_MODELS = ["anthropic/claude-opus-4.6", "google/gemini-3-flash"];
+const taskName = "activity-grammar-user-content";
+const { defaultModel, fallbackModels } = AI_TASK_MODEL_CONFIG[taskName];
 
 const schema = z.object({
   discovery: z.object({
@@ -58,7 +59,7 @@ export async function generateActivityGrammarUserContent({
   exercises,
   lessonDescription,
   lessonTitle,
-  model = DEFAULT_MODEL,
+  model = defaultModel,
   reasoningEffort,
   targetLanguage,
   useFallback = true,
@@ -66,23 +67,21 @@ export async function generateActivityGrammarUserContent({
 }: ActivityGrammarUserContentParams) {
   const promptContext = getLanguagePromptContext({ targetLanguage, userLanguage });
 
-  const userPrompt = `TARGET_LANGUAGE: ${promptContext.targetLanguageName}
-USER_LANGUAGE: ${promptContext.userLanguage}
-CHAPTER_TITLE: ${chapterTitle}
-LESSON_TITLE: ${lessonTitle}
-LESSON_DESCRIPTION: ${lessonDescription}
-
-EXAMPLES:
-${JSON.stringify(examples, null, 2)}
-
-EXERCISES:
-${JSON.stringify(exercises, null, 2)}`;
+  const userPrompt = `
+    TARGET_LANGUAGE: ${promptContext.targetLanguageName}
+    USER_LANGUAGE: ${promptContext.userLanguage}
+    CHAPTER_TITLE: ${chapterTitle}
+    LESSON_TITLE: ${lessonTitle}
+    LESSON_DESCRIPTION: ${lessonDescription}
+    EXAMPLES: ${JSON.stringify(examples, null, 2)}
+    EXERCISES: ${JSON.stringify(exercises, null, 2)}
+  `;
 
   const providerOptions = buildProviderOptions({
-    fallbackModels: FALLBACK_MODELS,
+    fallbackModels,
     model,
     reasoningEffort,
-    taskName: "activity-grammar-user-content",
+    taskName,
     useFallback,
   });
 

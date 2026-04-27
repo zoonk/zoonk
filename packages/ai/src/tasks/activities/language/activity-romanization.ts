@@ -1,11 +1,12 @@
 import "server-only";
 import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
+import { AI_TASK_MODEL_CONFIG } from "@zoonk/ai/tasks/metadata";
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import systemPrompt from "./activity-romanization.prompt.md";
 
-const DEFAULT_MODEL = "openai/gpt-5.4";
-const FALLBACK_MODELS = ["anthropic/claude-opus-4.6", "google/gemini-3.1-pro-preview"];
+const taskName = "activity-romanization";
+const { defaultModel, fallbackModels } = AI_TASK_MODEL_CONFIG[taskName];
 
 const schema = z.object({
   romanizations: z.array(z.string()),
@@ -27,7 +28,7 @@ export type ActivityRomanizationParams = {
  * This is used to help learners read and pronounce text written in unfamiliar scripts.
  */
 export async function generateActivityRomanization({
-  model = DEFAULT_MODEL,
+  model = defaultModel,
   reasoningEffort,
   targetLanguage,
   texts,
@@ -35,18 +36,16 @@ export async function generateActivityRomanization({
 }: ActivityRomanizationParams) {
   const formattedTexts = texts.map((text, index) => `${index + 1}. ${text}`).join("\n");
 
-  const userPrompt = `TARGET_LANGUAGE: ${targetLanguage}
-
-TEXTS:
-${formattedTexts}
-
-Romanize each text using the standard romanization system for the target language. Return one romanization per text in the same order.`;
+  const userPrompt = `
+    TARGET_LANGUAGE: ${targetLanguage}
+    TEXTS: ${formattedTexts}
+  `;
 
   const providerOptions = buildProviderOptions({
-    fallbackModels: FALLBACK_MODELS,
+    fallbackModels,
     model,
     reasoningEffort,
-    taskName: "activity-romanization",
+    taskName,
     useFallback,
   });
 

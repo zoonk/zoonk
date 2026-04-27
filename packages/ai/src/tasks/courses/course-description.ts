@@ -1,11 +1,12 @@
 import "server-only";
+import { AI_TASK_MODEL_CONFIG } from "@zoonk/ai/tasks/metadata";
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import { type ReasoningEffort, buildProviderOptions } from "../../provider-options";
 import systemPrompt from "./course-description.prompt.md";
 
-const DEFAULT_MODEL = "openai/gpt-5.4-nano";
-const FALLBACK_MODELS = ["google/gemini-3-flash", "anthropic/claude-haiku-4.5"];
+const taskName = "course-description";
+const { defaultModel, fallbackModels } = AI_TASK_MODEL_CONFIG[taskName];
 
 const schema = z.object({
   description: z.string(),
@@ -24,7 +25,7 @@ export type CourseDescriptionParams = {
 export async function generateCourseDescription({
   title,
   language,
-  model = DEFAULT_MODEL,
+  model = defaultModel,
   useFallback = true,
   reasoningEffort,
 }: CourseDescriptionParams) {
@@ -34,10 +35,10 @@ export async function generateCourseDescription({
   `;
 
   const providerOptions = buildProviderOptions({
-    fallbackModels: FALLBACK_MODELS,
+    fallbackModels,
     model,
     reasoningEffort,
-    taskName: "course-description",
+    taskName,
     useFallback,
   });
 

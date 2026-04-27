@@ -1,12 +1,13 @@
 import "server-only";
 import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
+import { AI_TASK_MODEL_CONFIG } from "@zoonk/ai/tasks/metadata";
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import { formatExplanationStepsForPrompt } from "./_utils/format-explanation-steps";
 import systemPrompt from "./activity-practice.prompt.md";
 
-const DEFAULT_MODEL = "openai/gpt-5.4";
-const FALLBACK_MODELS = ["anthropic/claude-opus-4.6", "google/gemini-3.1-pro-preview"];
+const taskName = "activity-practice";
+const { defaultModel, fallbackModels } = AI_TASK_MODEL_CONFIG[taskName];
 
 const practiceOptionSchema = z.object({
   feedback: z.string(),
@@ -52,25 +53,26 @@ export async function generateActivityPractice({
   courseTitle,
   language,
   explanationSteps,
-  model = DEFAULT_MODEL,
+  model = defaultModel,
   useFallback = true,
   reasoningEffort,
 }: ActivityPracticeParams) {
   const formattedExplanationSteps = formatExplanationStepsForPrompt(explanationSteps);
 
-  const userPrompt = `LESSON_TITLE: ${lessonTitle}
-LESSON_DESCRIPTION: ${lessonDescription}
-CHAPTER_TITLE: ${chapterTitle}
-COURSE_TITLE: ${courseTitle}
-LANGUAGE: ${language}
-EXPLANATION_STEPS:
-${formattedExplanationSteps}`;
+  const userPrompt = `
+    LESSON_TITLE: ${lessonTitle}
+    LESSON_DESCRIPTION: ${lessonDescription}
+    CHAPTER_TITLE: ${chapterTitle}
+    COURSE_TITLE: ${courseTitle}
+    LANGUAGE: ${language}
+    EXPLANATION_STEPS: ${formattedExplanationSteps}
+  `;
 
   const providerOptions = buildProviderOptions({
-    fallbackModels: FALLBACK_MODELS,
+    fallbackModels,
     model,
     reasoningEffort,
-    taskName: "activity-practice",
+    taskName,
     useFallback,
   });
 

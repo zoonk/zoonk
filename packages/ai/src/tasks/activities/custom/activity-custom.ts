@@ -1,11 +1,12 @@
 import "server-only";
 import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
+import { AI_TASK_MODEL_CONFIG } from "@zoonk/ai/tasks/metadata";
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import systemPrompt from "./activity-custom.prompt.md";
 
-const DEFAULT_MODEL = "google/gemini-3-flash";
-const FALLBACK_MODELS = ["anthropic/claude-opus-4.6", "openai/gpt-5.4"];
+const taskName = "activity-custom";
+const { defaultModel, fallbackModels } = AI_TASK_MODEL_CONFIG[taskName];
 
 const schema = z.object({
   steps: z.array(
@@ -39,23 +40,25 @@ export async function generateActivityCustom({
   language,
   activityTitle,
   activityDescription,
-  model = DEFAULT_MODEL,
+  model = defaultModel,
   useFallback = true,
   reasoningEffort,
 }: ActivityCustomParams) {
-  const userPrompt = `LESSON_TITLE: ${lessonTitle}
-LESSON_DESCRIPTION: ${lessonDescription}
-CHAPTER_TITLE: ${chapterTitle}
-COURSE_TITLE: ${courseTitle}
-LANGUAGE: ${language}
-ACTIVITY_TITLE: ${activityTitle}
-ACTIVITY_DESCRIPTION: ${activityDescription}`;
+  const userPrompt = `
+    LESSON_TITLE: ${lessonTitle}
+    LESSON_DESCRIPTION: ${lessonDescription}
+    CHAPTER_TITLE: ${chapterTitle}
+    COURSE_TITLE: ${courseTitle}
+    LANGUAGE: ${language}
+    ACTIVITY_TITLE: ${activityTitle}
+    ACTIVITY_DESCRIPTION: ${activityDescription}
+  `;
 
   const providerOptions = buildProviderOptions({
-    fallbackModels: FALLBACK_MODELS,
+    fallbackModels,
     model,
     reasoningEffort,
-    taskName: "activity-custom",
+    taskName,
     useFallback,
   });
 

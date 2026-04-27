@@ -1,12 +1,13 @@
 import "server-only";
 import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
+import { AI_TASK_MODEL_CONFIG } from "@zoonk/ai/tasks/metadata";
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import { getLanguagePromptContext } from "./_utils/language-prompt-context";
 import systemPrompt from "./activity-translation.prompt.md";
 
-const DEFAULT_MODEL = "openai/gpt-5.4-mini";
-const FALLBACK_MODELS = ["google/gemini-3-flash", "anthropic/claude-opus-4.6"];
+const taskName = "activity-translation";
+const { defaultModel, fallbackModels } = AI_TASK_MODEL_CONFIG[taskName];
 
 const schema = z.object({
   translation: z.string(),
@@ -29,7 +30,7 @@ export type TranslationParams = {
  * by `generateActivityRomanization` for non-Roman script languages.
  */
 export async function generateTranslation({
-  model = DEFAULT_MODEL,
+  model = defaultModel,
   reasoningEffort,
   targetLanguage,
   userLanguage,
@@ -38,15 +39,17 @@ export async function generateTranslation({
 }: TranslationParams) {
   const promptContext = getLanguagePromptContext({ targetLanguage, userLanguage });
 
-  const userPrompt = `WORD: ${word}
-TARGET_LANGUAGE: ${promptContext.targetLanguageName}
-USER_LANGUAGE: ${promptContext.userLanguage}`;
+  const userPrompt = `
+    WORD: ${word}
+    TARGET_LANGUAGE: ${promptContext.targetLanguageName}
+    USER_LANGUAGE: ${promptContext.userLanguage}
+  `;
 
   const providerOptions = buildProviderOptions({
-    fallbackModels: FALLBACK_MODELS,
+    fallbackModels,
     model,
     reasoningEffort,
-    taskName: "activity-translation",
+    taskName,
     useFallback,
   });
 

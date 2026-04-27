@@ -1,11 +1,12 @@
 import "server-only";
+import { AI_TASK_MODEL_CONFIG } from "@zoonk/ai/tasks/metadata";
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import { type ReasoningEffort, buildProviderOptions } from "../../provider-options";
 import systemPrompt from "./course-suggestions.prompt.md";
 
-const DEFAULT_MODEL = "openai/gpt-5.4-mini";
-const FALLBACK_MODELS = ["google/gemini-3-flash"];
+const taskName = "course-suggestions";
+const { defaultModel, fallbackModels } = AI_TASK_MODEL_CONFIG[taskName];
 
 const schema = z.object({
   courses: z.array(
@@ -30,7 +31,7 @@ export type CourseSuggestionsParams = {
 export async function generateCourseSuggestions({
   language,
   prompt,
-  model = DEFAULT_MODEL,
+  model = defaultModel,
   useFallback = true,
   reasoningEffort,
 }: CourseSuggestionsParams) {
@@ -40,10 +41,10 @@ export async function generateCourseSuggestions({
   `;
 
   const providerOptions = buildProviderOptions({
-    fallbackModels: FALLBACK_MODELS,
+    fallbackModels,
     model,
     reasoningEffort,
-    taskName: "course-suggestions",
+    taskName,
     useFallback,
   });
 

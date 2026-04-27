@@ -1,13 +1,14 @@
 import "server-only";
 import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
+import { AI_TASK_MODEL_CONFIG } from "@zoonk/ai/tasks/metadata";
 import { getLanguageName } from "@zoonk/utils/languages";
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import { formatConceptLines } from "../config";
 import systemPrompt from "./activity-grammar-content.prompt.md";
 
-const DEFAULT_MODEL = "google/gemini-3.1-pro-preview";
-const FALLBACK_MODELS = ["openai/gpt-5.4", "anthropic/claude-opus-4.6"];
+const taskName = "activity-grammar-content";
+const { defaultModel, fallbackModels } = AI_TASK_MODEL_CONFIG[taskName];
 
 const schema = z.object({
   examples: z.array(
@@ -51,7 +52,7 @@ export async function generateActivityGrammarContent({
   concepts = [],
   lessonDescription,
   lessonTitle,
-  model = DEFAULT_MODEL,
+  model = defaultModel,
   neighboringConcepts = [],
   reasoningEffort,
   targetLanguage,
@@ -59,17 +60,19 @@ export async function generateActivityGrammarContent({
 }: ActivityGrammarContentParams) {
   const targetLanguageName = getLanguageName({ targetLanguage });
 
-  const userPrompt = `TARGET_LANGUAGE: ${targetLanguageName}
-CHAPTER_TITLE: ${chapterTitle}
-LESSON_TITLE: ${lessonTitle}
-LESSON_DESCRIPTION: ${lessonDescription}
-${formatConceptLines(concepts, neighboringConcepts)}`;
+  const userPrompt = `
+    TARGET_LANGUAGE: ${targetLanguageName}
+    CHAPTER_TITLE: ${chapterTitle}
+    LESSON_TITLE: ${lessonTitle}
+    LESSON_DESCRIPTION: ${lessonDescription}
+    ${formatConceptLines(concepts, neighboringConcepts)}
+  `;
 
   const providerOptions = buildProviderOptions({
-    fallbackModels: FALLBACK_MODELS,
+    fallbackModels,
     model,
     reasoningEffort,
-    taskName: "activity-grammar-content",
+    taskName,
     useFallback,
   });
 

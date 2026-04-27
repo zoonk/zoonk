@@ -1,12 +1,13 @@
 import "server-only";
 import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
+import { AI_TASK_MODEL_CONFIG } from "@zoonk/ai/tasks/metadata";
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import { getLanguagePromptContext } from "./_utils/language-prompt-context";
 import systemPrompt from "./activity-pronunciation.prompt.md";
 
-const DEFAULT_MODEL = "google/gemini-3-flash";
-const FALLBACK_MODELS = ["anthropic/claude-sonnet-4.6", "openai/gpt-5.1-instant"];
+const taskName = "activity-pronunciation";
+const { defaultModel, fallbackModels } = AI_TASK_MODEL_CONFIG[taskName];
 
 const schema = z.object({
   pronunciation: z.string(),
@@ -24,7 +25,7 @@ export type ActivityPronunciationParams = {
 };
 
 export async function generateActivityPronunciation({
-  model = DEFAULT_MODEL,
+  model = defaultModel,
   reasoningEffort,
   targetLanguage,
   userLanguage,
@@ -33,17 +34,17 @@ export async function generateActivityPronunciation({
 }: ActivityPronunciationParams) {
   const promptContext = getLanguagePromptContext({ targetLanguage, userLanguage });
 
-  const userPrompt = `WORD: ${word}
-TARGET_LANGUAGE: ${promptContext.targetLanguageName}
-USER_LANGUAGE: ${promptContext.userLanguage}
-
-Generate a pronunciation guide for this word using only sounds from the native language.`;
+  const userPrompt = `
+    WORD: ${word}
+    TARGET_LANGUAGE: ${promptContext.targetLanguageName}
+    USER_LANGUAGE: ${promptContext.userLanguage}
+  `;
 
   const providerOptions = buildProviderOptions({
-    fallbackModels: FALLBACK_MODELS,
+    fallbackModels,
     model,
     reasoningEffort,
-    taskName: "activity-pronunciation",
+    taskName,
     useFallback,
   });
 
