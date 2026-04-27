@@ -4,14 +4,7 @@ import { ErrorCode } from "@/lib/app-error";
 import { type ImportMode } from "@/lib/import-mode";
 import { deduplicateImportSlugs, resolveImportSlug } from "@/lib/import-slug";
 import { parseJsonFile } from "@/lib/parse-json-file";
-import { getDefaultContentManagementMode } from "@zoonk/core/content/management";
-import {
-  type Chapter,
-  type ContentManagementMode,
-  type TransactionClient,
-  getActiveChapterWhere,
-  prisma,
-} from "@zoonk/db";
+import { type Chapter, type TransactionClient, getActiveChapterWhere, prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { isJsonObject } from "@zoonk/utils/json";
 import { normalizeString, toSlug } from "@zoonk/utils/string";
@@ -58,7 +51,6 @@ async function resolveChapter(
     hasExplicitSlug: boolean;
     index: number;
     language: string;
-    managementMode: ContentManagementMode;
     normalizedTitle: string;
     organizationId: string | null;
     position: number;
@@ -95,7 +87,6 @@ async function resolveChapter(
       description: params.description,
       isPublished: !params.courseIsPublished,
       language: params.language,
-      managementMode: params.managementMode,
       normalizedTitle: params.normalizedTitle,
       organizationId: params.organizationId,
       position: params.position,
@@ -193,9 +184,6 @@ export async function importChapters(params: {
           hasExplicitSlug: item.hasExplicitSlug,
           index: item.index,
           language: course.language,
-          managementMode: getDefaultContentManagementMode({
-            organizationSlug: course.organization.slug,
-          }),
           normalizedTitle: item.normalizedTitle,
           organizationId: course.organizationId,
           position: startPosition + i,

@@ -7,12 +7,8 @@ import { logError } from "@zoonk/utils/logger";
 
 /**
  * Marks published activities left in "running" state by initial generation as
- * failed.
- *
- * Regeneration intentionally does not go through this path. Hidden replacement
- * activities belong to the outer lesson-regeneration workflow, which deletes
- * that temporary replacement set on failure instead of keeping failed rows
- * around.
+ * failed. Unpublished activities are not learner-visible generation work, so
+ * this step leaves them alone.
  */
 export async function handleWorkflowFailureStep(input: {
   error?: WorkflowErrorLog;

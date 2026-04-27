@@ -314,7 +314,7 @@ describe(getLessonProgress, () => {
     expect(result).toEqual([{ completedActivities: 1, lessonId: lesson.id, totalActivities: 1 }]);
   });
 
-  test("marks regenerated activities as fully completed when the lesson is durably completed", async () => {
+  test("marks new activities as fully completed when the lesson is durably completed", async () => {
     const [user, course] = await Promise.all([
       userFixture(),
       courseFixture({ isPublished: true, organizationId: organization.id }),

@@ -1,7 +1,6 @@
 import "server-only";
 import { ErrorCode } from "@/lib/app-error";
 import { getLessonKind } from "@/lib/lesson-kind";
-import { getDefaultContentManagementMode } from "@zoonk/core/content/management";
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
 import { type Lesson, getActiveChapterWhere, prisma } from "@zoonk/db";
 import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
@@ -74,9 +73,6 @@ export async function createLesson(params: {
           isPublished: !chapter.isPublished,
           kind,
           language: chapter.language,
-          managementMode: getDefaultContentManagementMode({
-            organizationSlug: chapter.organization?.slug,
-          }),
           normalizedTitle,
           organizationId: chapter.organizationId,
           position: params.position,

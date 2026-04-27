@@ -17,21 +17,6 @@ type LessonGenerationContext = Awaited<ReturnType<typeof getLessonStep>>;
 
 type LessonGenerationResult = "filtered" | "ready";
 
-type LessonGenerationOptions = {
-  generationRunId?: string;
-  regeneration?: boolean;
-};
-
-/**
- * This helper exists so the workflow decides its mode once, at the top.
- * Everything below that point can then follow either the initial-generation
- * pipeline or the regeneration pipeline without repeatedly negating the same
- * flag all over the file.
- */
-function isRegeneration(input: LessonGenerationOptions) {
-  return input.regeneration === true;
-}
-
 /**
  * Language courses can only contain language lessons. If the classifier says a
  * lesson in that course is actually "core" or "custom", we treat that lesson
@@ -53,7 +38,7 @@ function shouldSkipRunningInitialGeneration(context: LessonGenerationContext): b
 /**
  * When a lesson is already completed and already has activities, the workflow
  * should behave like a no-op. We still stream the completed step so callers
- * can react consistently without regenerating content.
+ * can react consistently without creating duplicate content.
  */
 function shouldStreamExistingCompletion(context: LessonGenerationContext): boolean {
   return context.generationStatus === "completed" && context._count.activities > 0;
@@ -62,7 +47,7 @@ function shouldStreamExistingCompletion(context: LessonGenerationContext): boole
 /**
  * Some old lessons can have generated activities but a stale lesson status.
  * This path repairs that mismatch by marking the lesson completed again
- * instead of regenerating a second copy of the same activity set.
+ * instead of creating a second copy of the same activity set.
  */
 function shouldRepairExistingActivities(context: LessonGenerationContext): boolean {
   return context._count.activities > 0;
@@ -98,79 +83,22 @@ async function getCoreActivities(
 }
 
 /**
- * Regeneration should keep the lesson's existing classification. The lesson
- * row is the stable identity, so background refreshes only replace its
- * activities. Initial generation is the only path that reclassifies a lesson.
+ * Lesson generation can discover that a lesson in a language course is not
+ * actually a language lesson. In that case we delete the placeholder instead
+ * of saving an invalid activity set under it.
  */
-async function getLessonKindForInitialGeneration(
-  context: LessonGenerationContext,
-): Promise<LessonKind> {
-  return determineLessonKindStep(context);
-}
-
-/**
- * Regeneration should not reclassify the lesson. The stored lesson row is the
- * durable identity, so we keep its current kind and explicitly skip the AI
- * classifier step.
- */
-async function getLessonKindForRegeneration(context: LessonGenerationContext): Promise<LessonKind> {
-  await streamSkipStep("determineLessonKind");
-  return context.kind;
-}
-
-/**
- * Initial generation is the only time we want the stored lesson kind to follow
- * the AI classification result. This keeps future reads aligned with the
- * generated activity set that was just created.
- */
-async function syncLessonKindForInitialGeneration(input: {
-  lessonId: string;
-  lessonKind: LessonKind;
-}): Promise<void> {
-  await updateLessonKindStep({
-    kind: input.lessonKind,
-    lessonId: input.lessonId,
-  });
-}
-
-/**
- * Regeneration must leave the lesson identity untouched. We still emit a skip
- * event for the sync step so the streamed workflow trace is explicit about why
- * the lesson row was not updated.
- */
-async function skipLessonKindSyncForRegeneration(): Promise<void> {
-  await streamSkipStep("updateLessonKind");
-}
-
-/**
- * Initial generation can discover that a lesson in a language course is not
- * actually a language lesson. In that case we delete the lesson instead of
- * saving an invalid activity set under it.
- */
-async function handleFilteredInitialLesson(input: { lessonId: string }): Promise<"filtered"> {
+async function handleFilteredLesson(input: { lessonId: string }): Promise<"filtered"> {
   await removeNonLanguageLessonStep({ lessonId: input.lessonId });
   return "filtered";
 }
 
 /**
- * Regeneration is more conservative than initial generation. If we ever hit an
- * impossible language mismatch here, we leave cleanup to the outer regeneration
- * workflow and simply report that no replacement set should be used.
- */
-function handleFilteredRegeneratedLesson(): "filtered" {
-  return "filtered";
-}
-
-/**
- * Both initial generation and regeneration eventually create an activity set
- * for the same lesson. This shared helper keeps that write path in one place
- * while letting each pipeline decide whether the created activities are live
- * or hidden replacements.
+ * This helper keeps the activity write path in one place after the workflow
+ * has decided which lesson kind it is generating.
  */
 async function addGeneratedActivities(input: {
   context: LessonGenerationContext;
   generationRunId: string;
-  isPublished: boolean;
   lessonKind: LessonKind;
 }): Promise<void> {
   const coreActivities = await getCoreActivities(input.context, input.lessonKind);
@@ -181,7 +109,7 @@ async function addGeneratedActivities(input: {
     coreActivities,
     customActivities,
     generationRunId: input.generationRunId,
-    isPublished: input.isPublished,
+    isPublished: true,
     lessonKind: input.lessonKind,
     targetLanguage: input.context.chapter.course.targetLanguage,
   });
@@ -192,7 +120,7 @@ async function addGeneratedActivities(input: {
  * lifecycle itself: skip stale reruns, mark the lesson running, generate the
  * correct activity set, then finalize the lesson as completed or failed.
  */
-async function runInitialLessonGeneration(input: {
+async function runLessonGeneration(input: {
   context: LessonGenerationContext;
   lessonId: string;
   workflowRunId: string;
@@ -209,7 +137,6 @@ async function runInitialLessonGeneration(input: {
   if (shouldRepairExistingActivities(input.context)) {
     await setLessonAsCompletedStep({
       context: input.context,
-      lessonKind: input.context.kind,
     });
     return "ready";
   }
@@ -220,28 +147,21 @@ async function runInitialLessonGeneration(input: {
   });
 
   try {
-    const lessonKind = await getLessonKindForInitialGeneration(input.context);
+    const lessonKind = await determineLessonKindStep(input.context);
 
-    await syncLessonKindForInitialGeneration({
-      lessonId: input.lessonId,
-      lessonKind,
-    });
+    await updateLessonKindStep({ kind: lessonKind, lessonId: input.lessonId });
 
     if (isNonLanguageLesson(input.context.chapter.course.targetLanguage, lessonKind)) {
-      return await handleFilteredInitialLesson({ lessonId: input.lessonId });
+      return await handleFilteredLesson({ lessonId: input.lessonId });
     }
 
     await addGeneratedActivities({
       context: input.context,
       generationRunId: input.workflowRunId,
-      isPublished: true,
       lessonKind,
     });
 
-    await setLessonAsCompletedStep({
-      context: input.context,
-      lessonKind,
-    });
+    await setLessonAsCompletedStep({ context: input.context });
 
     return "ready";
   } catch (error) {
@@ -254,54 +174,11 @@ async function runInitialLessonGeneration(input: {
   }
 }
 
-/**
- * Regeneration only prepares a hidden replacement activity set under the live
- * lesson. It must not mutate the lesson lifecycle state here because the outer
- * regeneration workflow is responsible for promotion, cleanup, and versioning.
- */
-async function runLessonRegeneration(input: {
-  context: LessonGenerationContext;
-  generationRunId: string;
-  lessonId: string;
-}): Promise<LessonGenerationResult> {
-  const lessonKind = await getLessonKindForRegeneration(input.context);
-
-  await skipLessonKindSyncForRegeneration();
-
-  if (isNonLanguageLesson(input.context.chapter.course.targetLanguage, lessonKind)) {
-    return handleFilteredRegeneratedLesson();
-  }
-
-  await addGeneratedActivities({
-    context: input.context,
-    generationRunId: input.generationRunId,
-    isPublished: false,
-    lessonKind,
-  });
-
-  return "ready";
-}
-
-export async function lessonGenerationWorkflow(
-  lessonId: string,
-  options: LessonGenerationOptions = {},
-): Promise<LessonGenerationResult> {
+export async function lessonGenerationWorkflow(lessonId: string): Promise<LessonGenerationResult> {
   "use workflow";
 
   const { workflowRunId } = getWorkflowMetadata();
   const context = await getLessonStep(lessonId);
 
-  if (isRegeneration(options)) {
-    return runLessonRegeneration({
-      context,
-      generationRunId: options.generationRunId ?? workflowRunId,
-      lessonId,
-    });
-  }
-
-  return runInitialLessonGeneration({
-    context,
-    lessonId,
-    workflowRunId,
-  });
+  return runLessonGeneration({ context, lessonId, workflowRunId });
 }

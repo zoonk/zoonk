@@ -8,7 +8,7 @@ import { type Activity, type Chapter, type Course, type Lesson, prisma } from "@
  *
  * - Removing content from product surfaces is not the same as removing it from history.
  * - Current progress should reflect the current active curriculum.
- * - Historical learner performance must survive archive/regeneration decisions.
+ * - Historical learner performance must survive archive decisions.
  * - These rules apply to both AI-managed and manually authored curriculum.
  *
  * The practical invariant for the codebase is simpler: only learner-touched
@@ -132,8 +132,8 @@ async function hasLearnerDataInChapter({ chapterId }: { chapterId: string }) {
 }
 
 /**
- * Lessons need the same protection as higher levels because a later archive or
- * regeneration must not erase attempts and completions tied to that lesson.
+ * Lessons need the same protection as higher levels because a later archive
+ * must not erase attempts and completions tied to that lesson.
  */
 async function hasLearnerDataInLesson({ lessonId }: { lessonId: string }) {
   const [activityProgressCount, stepAttemptCount] = await Promise.all([

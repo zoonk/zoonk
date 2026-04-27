@@ -2,7 +2,6 @@ import "server-only";
 import { ErrorCode } from "@/lib/app-error";
 import { type ImportMode } from "@/lib/import-mode";
 import { parseJsonFile } from "@/lib/parse-json-file";
-import { getDefaultContentManagementMode } from "@zoonk/core/content/management";
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
 import {
   type Activity,
@@ -137,9 +136,6 @@ export async function importActivities(params: {
             kind: activityData.kind,
             language: lesson.language,
             lessonId: params.lessonId,
-            managementMode: getDefaultContentManagementMode({
-              organizationSlug: lesson.organization?.slug,
-            }),
             organizationId: lesson.organizationId,
             position: startPosition + i,
             title: activityData.title,

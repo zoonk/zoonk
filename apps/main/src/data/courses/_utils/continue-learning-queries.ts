@@ -27,9 +27,9 @@ const SQL_LIMIT = 10;
 
 /**
  * Historical completions should keep a course eligible for continue-learning
- * even after regeneration archives the old activity rows. This query therefore
- * anchors on the learner's most recent completion per course, then lets later
- * helpers resolve the actual current destination from the live curriculum.
+ * even after old activity rows are archived. This query therefore anchors on
+ * the learner's most recent completion per course, then lets later helpers
+ * resolve the actual current destination from the live curriculum.
  */
 export async function listRecentContinueLearningRows({
   userId,

@@ -4,8 +4,8 @@ import { safeAsync } from "@zoonk/utils/error";
 
 /**
  * Lesson completion is durable once earned, even if the lesson's current
- * activities are regenerated later. Read paths keep this lookup separate so
- * they can merge durable completion with current activity counts as needed.
+ * activities change later. Read paths keep this lookup separate so they can
+ * merge durable completion with current activity counts as needed.
  */
 export async function listDurableLessonCompletionIds({
   lessonIds,

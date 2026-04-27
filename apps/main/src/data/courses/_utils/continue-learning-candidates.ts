@@ -174,8 +174,8 @@ function getUniqueSequentialChapterIds({
 }
 
 /**
- * Lesson-level durable completion is the new guard for regenerated lessons
- * that gained more current activities after the learner already finished them.
+ * Lesson-level durable completion is the guard for completed lessons that
+ * gained more current activities after the learner already finished them.
  */
 function getUniqueSequentialLessonIds({
   sequentialNextActivities,
@@ -225,8 +225,8 @@ async function listBlockedSequentialChapterIds({
 }
 
 /**
- * Lesson completions are loaded alongside chapter completions so regenerated
- * lessons that are already durably completed do not win the sequential branch.
+ * Lesson completions are loaded alongside chapter completions so lessons that
+ * are already durably completed do not win the sequential branch.
  */
 async function listBlockedSequentialLessonIds({
   lessonIds,

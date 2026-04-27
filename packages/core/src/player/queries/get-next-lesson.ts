@@ -1,5 +1,4 @@
 import "server-only";
-import { getLessonGenerationState } from "@zoonk/core/content/management";
 import { getPublishedLessonWhere, prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 
@@ -11,8 +10,7 @@ type NextLesson = { id: string; needsGeneration: boolean };
  * or null if no next lesson exists.
  *
  * `needsGeneration` is true when the next lesson still needs its initial
- * generation work, has descendant activities still generating, or is an
- * outdated AI-managed lesson that can be safely regenerated now.
+ * generation work or has descendant activities still generating.
  */
 export async function getNextLesson(activityId: string): Promise<NextLesson | null> {
   const { data: activity, error } = await safeAsync(() =>
@@ -80,13 +78,11 @@ export async function getNextLesson(activityId: string): Promise<NextLesson | nu
     return null;
   }
 
-  const generationState = getLessonGenerationState({ lesson: nextLesson });
   const hasActivitiesAwaitingGeneration = nextLesson._count.activities > 0;
+  const lessonNeedsGeneration =
+    nextLesson.generationStatus === "pending" || nextLesson.generationStatus === "failed";
 
-  const needsGeneration =
-    generationState.needsInitialGeneration ||
-    generationState.shouldAutoEnqueueRegeneration ||
-    hasActivitiesAwaitingGeneration;
+  const needsGeneration = lessonNeedsGeneration || hasActivitiesAwaitingGeneration;
 
   return { id: nextLesson.id, needsGeneration };
 }

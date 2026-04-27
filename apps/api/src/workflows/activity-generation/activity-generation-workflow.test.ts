@@ -255,68 +255,6 @@ describe(activityGenerationWorkflow, () => {
       expect(generateActivityCustom).not.toHaveBeenCalled();
     });
 
-    test("regenerates only the hidden replacement activities", async () => {
-      const testLesson = await lessonFixture({
-        chapterId: chapter.id,
-        kind: "core",
-        organizationId,
-        title: `Hidden Regen Lesson ${randomUUID()}`,
-      });
-
-      const [publishedActivity, replacementActivity, archivedReplacementActivity] =
-        await Promise.all([
-          activityFixture({
-            generationStatus: "completed",
-            isPublished: true,
-            kind: "explanation",
-            lessonId: testLesson.id,
-            organizationId,
-            position: 0,
-            title: `Published ${randomUUID()}`,
-          }),
-          activityFixture({
-            generationRunId: "regen-run-1",
-            generationStatus: "pending",
-            isPublished: false,
-            kind: "explanation",
-            lessonId: testLesson.id,
-            organizationId,
-            position: 1,
-            title: `Replacement ${randomUUID()}`,
-          }),
-          activityFixture({
-            archivedAt: new Date(),
-            generationRunId: "old-regen-run",
-            generationStatus: "pending",
-            isPublished: false,
-            kind: "explanation",
-            lessonId: testLesson.id,
-            organizationId,
-            position: 2,
-            title: `Archived Replacement ${randomUUID()}`,
-          }),
-        ]);
-
-      await activityGenerationWorkflow(testLesson.id, { regeneration: true });
-
-      const [
-        updatedPublishedActivity,
-        updatedReplacementActivity,
-        updatedArchivedReplacementActivity,
-      ] = await Promise.all([
-        prisma.activity.findUniqueOrThrow({ where: { id: publishedActivity.id } }),
-        prisma.activity.findUniqueOrThrow({ where: { id: replacementActivity.id } }),
-        prisma.activity.findUniqueOrThrow({ where: { id: archivedReplacementActivity.id } }),
-      ]);
-
-      expect(generateActivityExplanation).toHaveBeenCalledOnce();
-      expect(updatedPublishedActivity.generationStatus).toBe("completed");
-      expect(updatedReplacementActivity.generationStatus).toBe("completed");
-      expect(updatedReplacementActivity.isPublished).toBe(false);
-      expect(updatedArchivedReplacementActivity.generationStatus).toBe("pending");
-      expect(updatedArchivedReplacementActivity.archivedAt).not.toBeNull();
-    });
-
     test("streams completion events when all activities are completed", async () => {
       const testLesson = await lessonFixture({
         chapterId: chapter.id,

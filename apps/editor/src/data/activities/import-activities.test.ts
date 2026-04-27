@@ -6,11 +6,7 @@ import { signInAs } from "@zoonk/testing/fixtures/auth";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
 import { lessonFixture } from "@zoonk/testing/fixtures/lessons";
-import {
-  aiOrganizationFixture,
-  memberFixture,
-  organizationFixture,
-} from "@zoonk/testing/fixtures/orgs";
+import { memberFixture, organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { userFixture } from "@zoonk/testing/fixtures/users";
 import { beforeAll, describe, expect, test } from "vitest";
 import { importActivities } from "./import-activities";
@@ -163,43 +159,6 @@ describe("admins", () => {
     expect(activities[0]?.id).toBe(result.data?.[0]?.id);
     expect(activities[0]?.position).toBe(0);
     expect(activities[1]?.position).toBe(1);
-  });
-
-  test("keeps imported activities ai-managed inside the ai org", async () => {
-    const aiOrg = await aiOrganizationFixture();
-    const fixture = await memberFixture({ role: "admin" });
-    const [_, aiHeaders] = await Promise.all([
-      prisma.member.create({
-        data: {
-          id: randomUUID(),
-          organizationId: aiOrg.id,
-          role: "admin",
-          userId: fixture.user.id,
-        },
-      }),
-      signInAs(fixture.user.email, fixture.user.password),
-    ]);
-    const aiCourse = await courseFixture({ organizationId: aiOrg.id });
-    const aiChapter = await chapterFixture({
-      courseId: aiCourse.id,
-      language: aiCourse.language,
-      organizationId: aiOrg.id,
-    });
-    const aiLesson = await lessonFixture({
-      chapterId: aiChapter.id,
-      language: aiCourse.language,
-      organizationId: aiOrg.id,
-    });
-    const file = createImportFile([{ kind: "explanation", title: "Imported" }]);
-
-    const result = await importActivities({
-      file,
-      headers: aiHeaders,
-      lessonId: aiLesson.id,
-    });
-
-    expect(result.error).toBeNull();
-    expect(result.data?.[0]?.managementMode).toBe("ai");
   });
 
   test("returns Lesson not found for non-existent lesson", async () => {

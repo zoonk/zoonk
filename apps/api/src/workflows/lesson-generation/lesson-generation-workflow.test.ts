@@ -134,49 +134,6 @@ describe(lessonGenerationWorkflow, () => {
       expect(dbLesson?.generationRunId).toBeNull();
       expect(generateLessonKind).not.toHaveBeenCalled();
     });
-
-    test("creates hidden replacement activities during regeneration even when live activities exist", async () => {
-      const lesson = await lessonFixture({
-        chapterId: chapter.id,
-        generationStatus: "completed",
-        kind: "core",
-        organizationId,
-        title: `Regeneration Setup Lesson ${randomUUID()}`,
-      });
-
-      await activityFixture({
-        generationStatus: "completed",
-        isPublished: true,
-        kind: "explanation",
-        lessonId: lesson.id,
-        organizationId,
-        title: `Published Activity ${randomUUID()}`,
-      });
-
-      await lessonGenerationWorkflow(lesson.id, {
-        generationRunId: "regen-run-1",
-        regeneration: true,
-      });
-
-      const activities = await prisma.activity.findMany({
-        orderBy: { position: "asc" },
-        where: { lessonId: lesson.id },
-      });
-      const replacementActivities = activities.filter((activity) => !activity.isPublished);
-      const publishedActivities = activities.filter((activity) => activity.isPublished);
-      const updatedLesson = await prisma.lesson.findUniqueOrThrow({
-        where: { id: lesson.id },
-      });
-
-      expect(updatedLesson.generationStatus).toBe("completed");
-      expect(generateLessonKind).not.toHaveBeenCalled();
-      expect(replacementActivities.length).toBeGreaterThan(0);
-      expect(replacementActivities.every((activity) => !activity.isPublished)).toBe(true);
-      expect(
-        replacementActivities.every((activity) => activity.generationRunId === "regen-run-1"),
-      ).toBe(true);
-      expect(publishedActivities).toHaveLength(1);
-    });
   });
 
   describe("error handling", () => {
@@ -326,39 +283,6 @@ describe(lessonGenerationWorkflow, () => {
       expect(updatedLesson.kind).toBe("custom");
       expect(activities).toHaveLength(2);
       expect(activities.every((activity) => activity.kind === "custom")).toBe(true);
-    });
-
-    test("keeps the stored lesson kind during regeneration", async () => {
-      const languageCourse = await courseFixture({
-        organizationId,
-        targetLanguage: "es",
-      });
-
-      const languageChapter = await chapterFixture({
-        courseId: languageCourse.id,
-        organizationId,
-        title: `Regenerated Language Chapter ${randomUUID()}`,
-      });
-
-      const lesson = await lessonFixture({
-        chapterId: languageChapter.id,
-        generationStatus: "completed",
-        kind: "language",
-        organizationId,
-        title: `Stable Kind Lesson ${randomUUID()}`,
-      });
-
-      await lessonGenerationWorkflow(lesson.id, {
-        generationRunId: "regen-run-1",
-        regeneration: true,
-      });
-
-      const updatedLesson = await prisma.lesson.findUniqueOrThrow({
-        where: { id: lesson.id },
-      });
-
-      expect(generateLessonKind).not.toHaveBeenCalled();
-      expect(updatedLesson.kind).toBe("language");
     });
   });
 

@@ -129,17 +129,14 @@ describe(submitPlayerCompletion, () => {
     const { chapter, organization } = await createPublishedChapterContext();
     const currentLesson = await lessonFixture({
       chapterId: chapter.id,
-      generationVersion: 1,
       isPublished: true,
-      managementMode: "manual",
       organizationId: organization.id,
       position: 0,
     });
     const nextLesson = await lessonFixture({
       chapterId: chapter.id,
-      generationVersion: null,
+      generationStatus: "pending",
       isPublished: true,
-      managementMode: "ai",
       organizationId: organization.id,
       position: 1,
     });
@@ -176,40 +173,9 @@ describe(submitPlayerCompletion, () => {
     expect(nextLesson.position).toBeGreaterThan(currentLesson.position);
     expect(result).toEqual({
       preloadLessonId: nextLesson.id,
-      regenerateLessonId: null,
     });
     expect(activityProgress?.completedAt).toBeInstanceOf(Date);
     expect(stepAttempts).toHaveLength(1);
     expect(stepAttempts[0]?.isCorrect).toBe(true);
-  });
-
-  test("returns a regeneration effect when the completed lesson is AI-managed and outdated", async () => {
-    const user = await userFixture();
-    const { chapter, organization } = await createPublishedChapterContext();
-    const lesson = await lessonFixture({
-      chapterId: chapter.id,
-      generationVersion: 0,
-      isPublished: true,
-      managementMode: "ai",
-      organizationId: organization.id,
-      position: 0,
-    });
-    const { activity, step } = await createMultipleChoiceActivity({
-      lessonId: lesson.id,
-      organizationId: organization.id,
-    });
-
-    const result = await submitPlayerCompletion({
-      input: buildCompletionInput({
-        activityId: activity.id,
-        stepId: step.id,
-      }),
-      userId: user.id,
-    });
-
-    expect(result).toEqual({
-      preloadLessonId: null,
-      regenerateLessonId: lesson.id,
-    });
   });
 });

@@ -23,7 +23,6 @@ export async function addChaptersStep(input: {
       generationStatus: "pending" as const,
       isPublished: true,
       language: input.course.language,
-      managementMode: "ai" as const,
       normalizedTitle: normalizeString(chapter.title),
       organizationId: input.course.organizationId,
       position: index,

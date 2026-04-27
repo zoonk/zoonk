@@ -62,7 +62,6 @@ async function createCourseEntity({
         generationStatus: "running",
         isPublished: true,
         language: suggestion.language,
-        managementMode: "ai",
         normalizedTitle,
         organizationId,
         slug,
