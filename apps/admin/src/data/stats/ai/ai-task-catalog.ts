@@ -1,128 +1,11 @@
+import { AI_TASK_MODEL_CONFIG, type AiTaskName } from "@zoonk/core/ai";
 import { formatAiTaskLabel } from "./ai-task-stats";
-
-type AiTaskMetadata = {
-  defaultModel: string;
-  supportsFallbackReporting: boolean;
-};
 
 type AiTaskCatalogGroupDefinition = {
   description: string;
   taskNames: AiTaskName[];
   title: string;
 };
-
-const AI_TASK_METADATA = {
-  "activity-custom": {
-    defaultModel: "google/gemini-3-flash",
-    supportsFallbackReporting: true,
-  },
-  "activity-distractors": {
-    defaultModel: "openai/gpt-5.4",
-    supportsFallbackReporting: true,
-  },
-  "activity-explanation": {
-    defaultModel: "openai/gpt-5.4",
-    supportsFallbackReporting: true,
-  },
-  "activity-grammar-content": {
-    defaultModel: "google/gemini-3.1-pro-preview",
-    supportsFallbackReporting: true,
-  },
-  "activity-grammar-user-content": {
-    defaultModel: "openai/gpt-5.4",
-    supportsFallbackReporting: true,
-  },
-  "activity-practice": {
-    defaultModel: "openai/gpt-5.4",
-    supportsFallbackReporting: true,
-  },
-  "activity-pronunciation": {
-    defaultModel: "google/gemini-3-flash",
-    supportsFallbackReporting: true,
-  },
-  "activity-quiz": {
-    defaultModel: "openai/gpt-5.4",
-    supportsFallbackReporting: true,
-  },
-  "activity-romanization": {
-    defaultModel: "openai/gpt-5.4",
-    supportsFallbackReporting: true,
-  },
-  "activity-sentences": {
-    defaultModel: "openai/gpt-5.4",
-    supportsFallbackReporting: true,
-  },
-  "activity-translation": {
-    defaultModel: "openai/gpt-5.4-mini",
-    supportsFallbackReporting: true,
-  },
-  "activity-vocabulary": {
-    defaultModel: "google/gemini-3-flash",
-    supportsFallbackReporting: true,
-  },
-  "alternative-titles": {
-    defaultModel: "openai/gpt-5.4",
-    supportsFallbackReporting: true,
-  },
-  "chapter-lessons": {
-    defaultModel: "openai/gpt-5.4",
-    supportsFallbackReporting: true,
-  },
-  "course-categories": {
-    defaultModel: "google/gemini-3.1-flash-lite-preview",
-    supportsFallbackReporting: true,
-  },
-  "course-chapters": {
-    defaultModel: "openai/gpt-5.4",
-    supportsFallbackReporting: true,
-  },
-  "course-description": {
-    defaultModel: "openai/gpt-5.4-nano",
-    supportsFallbackReporting: true,
-  },
-  "course-suggestions": {
-    defaultModel: "openai/gpt-5.4-mini",
-    supportsFallbackReporting: true,
-  },
-  "course-thumbnail": {
-    defaultModel: "openai/gpt-image-2",
-    supportsFallbackReporting: false,
-  },
-  "language-chapter-lessons": {
-    defaultModel: "openai/gpt-5.4",
-    supportsFallbackReporting: true,
-  },
-  "language-course-chapters": {
-    defaultModel: "openai/gpt-5.4",
-    supportsFallbackReporting: true,
-  },
-  "lesson-core-activities": {
-    defaultModel: "openai/gpt-5.4",
-    supportsFallbackReporting: true,
-  },
-  "lesson-custom-activities": {
-    defaultModel: "google/gemini-3-flash",
-    supportsFallbackReporting: true,
-  },
-  "lesson-kind": {
-    defaultModel: "openai/gpt-5.4-nano",
-    supportsFallbackReporting: true,
-  },
-  "step-content-image": {
-    defaultModel: "openai/gpt-image-2",
-    supportsFallbackReporting: false,
-  },
-  "step-image-prompts": {
-    defaultModel: "openai/gpt-5.4",
-    supportsFallbackReporting: true,
-  },
-  "step-select-image": {
-    defaultModel: "openai/gpt-image-2",
-    supportsFallbackReporting: false,
-  },
-} satisfies Record<string, AiTaskMetadata>;
-
-export type AiTaskName = keyof typeof AI_TASK_METADATA;
 
 export type AiTaskCatalogTask = {
   defaultModel: string;
@@ -215,11 +98,11 @@ export function listAiTaskCatalogTasks() {
  * wherever the admin UI needs to render or analyze a task.
  */
 function buildAiTaskCatalogTask({ taskName }: { taskName: AiTaskName }): AiTaskCatalogTask {
-  const metadata = AI_TASK_METADATA[taskName];
+  const metadata = AI_TASK_MODEL_CONFIG[taskName];
 
   return {
     defaultModel: metadata.defaultModel,
-    supportsFallbackReporting: metadata.supportsFallbackReporting,
+    supportsFallbackReporting: metadata.fallbackModels.length > 0,
     taskLabel: formatAiTaskLabel(taskName),
     taskName,
   };

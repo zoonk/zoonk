@@ -1,13 +1,14 @@
 import "server-only";
 import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
+import { AI_TASK_MODEL_CONFIG } from "@zoonk/ai/tasks/metadata";
 import { type DistractorShape } from "@zoonk/utils/distractors";
 import { getLanguageName } from "@zoonk/utils/languages";
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import systemPrompt from "./activity-distractors.prompt.md";
 
-const DEFAULT_MODEL = "openai/gpt-5.4";
-const FALLBACK_MODELS = ["google/gemini-3.1-flash-lite-preview", "anthropic/claude-sonnet-4.6"];
+const taskName = "activity-distractors";
+const { defaultModel, fallbackModels } = AI_TASK_MODEL_CONFIG[taskName];
 
 const schema = z.object({
   distractors: z.array(z.string()),
@@ -39,23 +40,25 @@ export async function generateActivityDistractors({
   input,
   language,
   shape,
-  model = DEFAULT_MODEL,
+  model = defaultModel,
   reasoningEffort,
   useFallback = true,
 }: ActivityDistractorsParams) {
   const languageName = getLanguageName({ targetLanguage: language, userLanguage: "en" });
 
   const providerOptions = buildProviderOptions({
-    fallbackModels: FALLBACK_MODELS,
+    fallbackModels,
     model,
     reasoningEffort,
-    taskName: "activity-distractors",
+    taskName,
     useFallback,
   });
 
-  const userPrompt = `INPUT: ${input}
-LANGUAGE: ${languageName} (${language})
-SHAPE: ${shape}`;
+  const userPrompt = `
+    INPUT: ${input}
+    LANGUAGE: ${languageName} (${language})
+    SHAPE: ${shape}
+  `;
 
   const { output, usage } = await generateText({
     model,

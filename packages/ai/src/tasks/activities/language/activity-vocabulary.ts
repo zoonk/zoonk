@@ -1,13 +1,14 @@
 import "server-only";
 import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
+import { AI_TASK_MODEL_CONFIG } from "@zoonk/ai/tasks/metadata";
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import { formatConceptLines } from "../config";
 import { getLanguagePromptContext } from "./_utils/language-prompt-context";
 import systemPrompt from "./activity-vocabulary.prompt.md";
 
-const DEFAULT_MODEL = "google/gemini-3-flash";
-const FALLBACK_MODELS = ["google/gemini-3.1-pro-preview", "openai/gpt-5.4"];
+const taskName = "activity-vocabulary";
+const { defaultModel, fallbackModels } = AI_TASK_MODEL_CONFIG[taskName];
 
 const schema = z.object({
   words: z.array(
@@ -39,7 +40,7 @@ export async function generateActivityVocabulary({
   concepts = [],
   lessonDescription,
   lessonTitle,
-  model = DEFAULT_MODEL,
+  model = defaultModel,
   neighboringConcepts = [],
   reasoningEffort,
   targetLanguage,
@@ -48,20 +49,20 @@ export async function generateActivityVocabulary({
 }: ActivityVocabularyParams) {
   const promptContext = getLanguagePromptContext({ targetLanguage, userLanguage });
 
-  const userPrompt = `TARGET_LANGUAGE: ${promptContext.targetLanguageName}
-USER_LANGUAGE: ${promptContext.userLanguage}
-CHAPTER_TITLE: ${chapterTitle}
-LESSON_TITLE: ${lessonTitle}
-LESSON_DESCRIPTION: ${lessonDescription}
-${formatConceptLines(concepts, neighboringConcepts)}
-
-Generate a focused, representative vocabulary list for this language lesson. Include essential words for this specific topic - quality over quantity.`;
+  const userPrompt = `
+    TARGET_LANGUAGE: ${promptContext.targetLanguageName}
+    USER_LANGUAGE: ${promptContext.userLanguage}
+    CHAPTER_TITLE: ${chapterTitle}
+    LESSON_TITLE: ${lessonTitle}
+    LESSON_DESCRIPTION: ${lessonDescription}
+    ${formatConceptLines(concepts, neighboringConcepts)}
+  `;
 
   const providerOptions = buildProviderOptions({
-    fallbackModels: FALLBACK_MODELS,
+    fallbackModels,
     model,
     reasoningEffort,
-    taskName: "activity-vocabulary",
+    taskName,
     useFallback,
   });
 

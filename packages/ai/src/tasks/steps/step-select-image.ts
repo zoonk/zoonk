@@ -1,10 +1,12 @@
+import { AI_TASK_MODEL_CONFIG } from "@zoonk/ai/tasks/metadata";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { logError } from "@zoonk/utils/logger";
 import { type GeneratedFile, type ImageModel, generateImage } from "ai";
 import { type ImageGenerationQuality, buildImageProviderOptions } from "../../provider-options";
 import promptTemplate from "./step-select-image.prompt.md";
 
-const DEFAULT_MODEL = "openai/gpt-image-2";
+const taskName = "step-select-image";
+const { defaultModel } = AI_TASK_MODEL_CONFIG[taskName];
 const DEFAULT_QUALITY = "low";
 
 function getSelectImageStepPrompt(prompt: string, language: string) {
@@ -21,7 +23,7 @@ export type SelectImageStepParams = {
 export async function generateSelectImageStep({
   prompt,
   language,
-  model = DEFAULT_MODEL,
+  model = defaultModel,
   quality = DEFAULT_QUALITY,
 }: SelectImageStepParams): Promise<SafeReturn<GeneratedFile>> {
   const { data, error } = await safeAsync(() =>
@@ -32,7 +34,7 @@ export async function generateSelectImageStep({
       providerOptions: buildImageProviderOptions({
         model,
         quality,
-        taskName: "step-select-image",
+        taskName,
       }),
       size: "1024x1024",
     }),

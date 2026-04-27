@@ -1,11 +1,12 @@
 import "server-only";
 import { type ReasoningEffort, buildProviderOptions } from "@zoonk/ai/provider-options";
+import { AI_TASK_MODEL_CONFIG } from "@zoonk/ai/tasks/metadata";
 import { Output, generateText } from "ai";
 import { z } from "zod";
 import systemPrompt from "./activity-explanation.prompt.md";
 
-const DEFAULT_MODEL = "openai/gpt-5.4";
-const FALLBACK_MODELS = ["anthropic/claude-opus-4.6", "google/gemini-3.1-pro-preview"];
+const taskName = "activity-explanation";
+const { defaultModel, fallbackModels } = AI_TASK_MODEL_CONFIG[taskName];
 
 const anchorSchema = z
   .object({
@@ -55,25 +56,27 @@ export async function generateActivityExplanation({
   activityTitle,
   lessonConcepts,
   otherActivityTitles,
-  model = DEFAULT_MODEL,
+  model = defaultModel,
   useFallback = true,
   reasoningEffort,
 }: ActivityExplanationParams) {
-  const userPrompt = `LESSON_TITLE: ${lessonTitle}
-LESSON_DESCRIPTION: ${lessonDescription}
-CHAPTER_TITLE: ${chapterTitle}
-COURSE_TITLE: ${courseTitle}
-LANGUAGE: ${language}
-ACTIVITY_TITLE: ${activityTitle}
-ACTIVITY_GOAL: ${activityGoal}
-LESSON_CONCEPTS: ${lessonConcepts.join(", ")}
-OTHER_EXPLANATION_ACTIVITY_TITLES: ${otherActivityTitles.join(", ")}`;
+  const userPrompt = `
+    LESSON_TITLE: ${lessonTitle}
+    LESSON_DESCRIPTION: ${lessonDescription}
+    CHAPTER_TITLE: ${chapterTitle}
+    COURSE_TITLE: ${courseTitle}
+    LANGUAGE: ${language}
+    ACTIVITY_TITLE: ${activityTitle}
+    ACTIVITY_GOAL: ${activityGoal}
+    LESSON_CONCEPTS: ${lessonConcepts.join(", ")}
+    OTHER_EXPLANATION_ACTIVITY_TITLES: ${otherActivityTitles.join(", ")}
+  `;
 
   const providerOptions = buildProviderOptions({
-    fallbackModels: FALLBACK_MODELS,
+    fallbackModels,
     model,
     reasoningEffort,
-    taskName: "activity-explanation",
+    taskName,
     useFallback,
   });
 
