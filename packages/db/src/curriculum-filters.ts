@@ -21,7 +21,7 @@ function getAiCourseWhere(where: CourseWhere = {}): Prisma.CourseWhereInput {
 
 /**
  * A course stops being part of the active curriculum as soon as it is archived.
- * Keeping that rule in one helper prevents editor, catalog, and progress
+ * Keeping that rule in one helper prevents catalog, progress, and generation
  * queries from drifting apart when they need to exclude retired content.
  */
 export function getActiveCourseWhere(where: CourseWhere = {}): Prisma.CourseWhereInput {
@@ -173,7 +173,7 @@ export function getPublishedLessonWhere({
  * Activities are still visible only while their full curriculum branch stays
  * active. That includes the lesson, chapter, and course that contain them.
  */
-export function getActiveActivityWhere({
+function getActiveActivityWhere({
   activityWhere = {},
   chapterWhere = {},
   courseWhere = {},

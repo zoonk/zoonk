@@ -2,11 +2,7 @@
   "$schema": "https://lingo.dev/schema/i18n.json",
   "buckets": {
     "po": {
-      "include": [
-        "apps/api/messages/[locale].po",
-        "apps/editor/messages/[locale].po",
-        "apps/main/messages/[locale].po"
-      ]
+      "include": ["apps/api/messages/[locale].po", "apps/main/messages/[locale].po"]
     }
   },
   "locale": {

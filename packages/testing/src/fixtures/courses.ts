@@ -7,10 +7,7 @@ import {
   prisma,
 } from "@zoonk/db";
 
-export function courseAttrs(attrs?: Partial<Course>): Omit<
-  Course,
-  "id" | "createdAt" | "updatedAt"
-> & {
+function courseAttrs(attrs?: Partial<Course>): Omit<Course, "id" | "createdAt" | "updatedAt"> & {
   description: string;
 } {
   const { description, ...rest } = attrs ?? {};

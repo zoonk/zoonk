@@ -2,9 +2,7 @@ import { randomUUID } from "node:crypto";
 import { type Lesson, prisma } from "@zoonk/db";
 import { normalizeString } from "@zoonk/utils/string";
 
-export function lessonAttrs(
-  attrs?: Partial<Lesson>,
-): Omit<Lesson, "id" | "createdAt" | "updatedAt"> {
+function lessonAttrs(attrs?: Partial<Lesson>): Omit<Lesson, "id" | "createdAt" | "updatedAt"> {
   const title = attrs?.title ?? "Test Lesson";
   const normalizedTitle = attrs?.normalizedTitle ?? normalizeString(title);
 

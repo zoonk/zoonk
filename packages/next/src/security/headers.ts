@@ -49,7 +49,7 @@ const PUBLIC_APP_SECURITY_HEADERS = [
 
 /**
  * Keeps the baseline security headers for our public apps in one place so the
- * policy stays consistent across `main`, `api`, and `editor`. The list is
+ * policy stays consistent across `main` and `api`. The list is
  * intentionally limited to low-risk headers while CSP is handled separately.
  *
  * @public

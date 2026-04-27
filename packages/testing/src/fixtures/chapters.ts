@@ -2,9 +2,7 @@ import { randomUUID } from "node:crypto";
 import { type Chapter, prisma } from "@zoonk/db";
 import { normalizeString } from "@zoonk/utils/string";
 
-export function chapterAttrs(
-  attrs?: Partial<Chapter>,
-): Omit<Chapter, "id" | "createdAt" | "updatedAt"> {
+function chapterAttrs(attrs?: Partial<Chapter>): Omit<Chapter, "id" | "createdAt" | "updatedAt"> {
   const title = attrs?.title ?? "Test Chapter";
   const normalizedTitle = attrs?.normalizedTitle ?? normalizeString(title);
 

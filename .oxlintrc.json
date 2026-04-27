@@ -252,7 +252,7 @@
       }
     },
     {
-      "files": ["apps/main/**/*.tsx", "apps/editor/**/*.tsx", "apps/api/**/*.tsx"],
+      "files": ["apps/main/**/*.tsx", "apps/api/**/*.tsx"],
       "rules": {
         "zoonk/no-hardcoded-aria-label": "error"
       }

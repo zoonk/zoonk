@@ -64,7 +64,6 @@ export {
   getAiGenerationActivityWhere,
   getAiGenerationChapterWhere,
   getAiGenerationLessonWhere,
-  getActiveActivityWhere,
   getActiveChapterWhere,
   getActiveCourseWhere,
   getActiveLessonWhere,

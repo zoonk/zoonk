@@ -17,4 +17,3 @@ function getDefaultApiUrl(): string {
 export const API_URL = getDefaultApiUrl();
 export const BLOG_URL = "https://blog.zoonk.com";
 export const SITE_URL = "https://www.zoonk.com";
-export const SUPPORT_URL = `${SITE_URL}/help`;
