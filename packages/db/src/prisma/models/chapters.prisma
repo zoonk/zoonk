@@ -13,7 +13,6 @@ model Chapter {
   description      String
   generationStatus GenerationStatus      @default(pending) @map("generation_status")
   generationRunId  String?               @map("generation_run_id")
-  managementMode   ContentManagementMode @default(manual) @map("management_mode")
   position         Int
   archivedAt       DateTime?             @map("archived_at")
   createdAt        DateTime              @default(now()) @map("created_at")

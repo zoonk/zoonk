@@ -1,6 +1,5 @@
 import "server-only";
 import { ErrorCode } from "@/lib/app-error";
-import { getDefaultContentManagementMode } from "@zoonk/core/content/management";
 import { hasCoursePermission } from "@zoonk/core/orgs/permissions";
 import { type Activity, type ActivityKind, getActiveLessonWhere, prisma } from "@zoonk/db";
 import { AppError, type SafeReturn, safeAsync } from "@zoonk/utils/error";
@@ -60,9 +59,6 @@ export async function createActivity(params: {
           kind: params.kind,
           language: lesson.language,
           lessonId: params.lessonId,
-          managementMode: getDefaultContentManagementMode({
-            organizationSlug: lesson.organization?.slug,
-          }),
           organizationId: lesson.organizationId,
           position: params.position,
           title: params.title,

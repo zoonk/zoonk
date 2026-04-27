@@ -147,58 +147,6 @@ describe(getLessonActivitiesStep, () => {
     expect(result[0]?.kind).toBe("vocabulary");
   });
 
-  test("loads only hidden replacement activities during regeneration", async () => {
-    const lesson = await lessonFixture({
-      chapterId,
-      kind: "language",
-      organizationId,
-      title: `Replacement Activities ${randomUUID()}`,
-    });
-
-    await Promise.all([
-      activityFixture({
-        generationStatus: "completed",
-        isPublished: true,
-        kind: "vocabulary",
-        lessonId: lesson.id,
-        organizationId,
-        position: 0,
-        title: `Published Activity ${randomUUID()}`,
-      }),
-      activityFixture({
-        generationRunId: "regen-run-1",
-        generationStatus: "pending",
-        isPublished: false,
-        kind: "reading",
-        lessonId: lesson.id,
-        organizationId,
-        position: 1,
-        title: `Replacement Activity ${randomUUID()}`,
-      }),
-      activityFixture({
-        archivedAt: new Date(),
-        generationRunId: "old-regen-run",
-        generationStatus: "pending",
-        isPublished: false,
-        kind: "quiz",
-        lessonId: lesson.id,
-        organizationId,
-        position: 2,
-        title: `Archived Replacement Activity ${randomUUID()}`,
-      }),
-    ]);
-
-    const result = await getLessonActivitiesStep({
-      lessonId: lesson.id,
-      regeneration: true,
-    });
-
-    expect(result).toHaveLength(1);
-    expect(result[0]?.isPublished).toBe(false);
-    expect(result[0]?.kind).toBe("reading");
-    expect(result[0]?.archivedAt).toBeNull();
-  });
-
   test("throws FatalError when the lesson is outside the AI organization", async () => {
     const otherOrg = await organizationFixture();
     const otherCourse = await courseFixture({ organizationId: otherOrg.id });

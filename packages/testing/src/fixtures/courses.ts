@@ -24,7 +24,6 @@ export function courseAttrs(attrs?: Partial<Course>): Omit<
     imageUrl: null,
     isPublished: false,
     language: "en",
-    managementMode: "manual",
     mode: "full" as const,
     normalizedTitle: "test course",
     organizationId: null,

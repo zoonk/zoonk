@@ -1,6 +1,5 @@
 import { randomUUID } from "node:crypto";
 import { getStreamedEvents } from "@/workflows/_test-utils/parse-stream-events";
-import { getTargetLessonGenerationVersion } from "@zoonk/core/content/management";
 import { prisma } from "@zoonk/db";
 import { chapterFixture } from "@zoonk/testing/fixtures/chapters";
 import { courseFixture } from "@zoonk/testing/fixtures/courses";
@@ -63,7 +62,6 @@ describe(setLessonAsCompletedStep, () => {
     await expect(
       setLessonAsCompletedStep({
         context,
-        lessonKind: "core",
       }),
     ).rejects.toThrow();
 
@@ -91,14 +89,12 @@ describe(setLessonAsCompletedStep, () => {
 
     await setLessonAsCompletedStep({
       context,
-      lessonKind: lesson.kind,
     });
 
     const updated = await prisma.lesson.findUniqueOrThrow({ where: { id: lesson.id } });
 
     expect(updated.generationStatus).toBe("completed");
     expect(updated.generationRunId).toBe("old-run-id");
-    expect(updated.generationVersion).toBe(getTargetLessonGenerationVersion(lesson.kind));
 
     const events = getStreamedEvents(writeMock);
 

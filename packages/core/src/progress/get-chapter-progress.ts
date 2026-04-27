@@ -10,9 +10,9 @@ import {
 } from "./_utils/published-lesson-progress-queries";
 
 /**
- * Course pages need one stable chapter-level answer even when lessons are
- * regenerated or new lessons are added later. Durable chapter completion wins
- * once earned, while every other chapter still derives its count from the
+ * Course pages need one stable chapter-level answer even when new lessons are
+ * added later. Durable chapter completion wins once earned, while every other
+ * chapter still derives its count from the
  * current published lessons in that chapter.
  */
 function getChapterProgressRows({

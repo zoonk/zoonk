@@ -1,5 +1,4 @@
 import "server-only";
-import { getLessonGenerationState } from "@zoonk/core/content/management";
 import { type LessonSentence, prisma } from "@zoonk/db";
 import { type CompletionInput } from "../contracts/completion-input-schema";
 import { computeActivityScore } from "../contracts/compute-score";
@@ -25,7 +24,6 @@ type StepWithSentence = {
 
 type PlayerCompletionEffects = {
   preloadLessonId: string | null;
-  regenerateLessonId: string | null;
 };
 
 /**
@@ -64,7 +62,6 @@ export async function submitPlayerCompletion(params: {
   const activityId = params.input.activityId;
   const activity = await prisma.activity.findUnique({
     include: {
-      lesson: { include: { chapter: true } },
       steps: {
         include: { sentence: true, word: true },
         orderBy: { position: "asc" },
@@ -128,9 +125,5 @@ export async function submitPlayerCompletion(params: {
 
   return {
     preloadLessonId: nextLesson?.needsGeneration ? nextLesson.id : null,
-    regenerateLessonId: getLessonGenerationState({ lesson: activity.lesson })
-      .shouldAutoEnqueueRegeneration
-      ? activity.lesson.id
-      : null,
   };
 }

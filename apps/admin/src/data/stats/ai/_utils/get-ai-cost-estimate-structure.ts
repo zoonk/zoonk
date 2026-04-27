@@ -312,8 +312,8 @@ function countActivities({
  * A row counts as "AI-generated" only when it carries a workflow run id. That
  * id is written when the generation workflow marks the entity as running, so
  * it cleanly excludes seed data, fixtures, and manually-added content — all of
- * which can share the same `management_mode` or `generation_status` values but
- * never flow through a workflow. Pairing the run id with `generation_status =
+ * which can share the same `generation_status` values but never flow through
+ * a workflow. Pairing the run id with `generation_status =
  * 'completed'` narrows further to runs that finished successfully, which is
  * the only shape the cost-per-unit math can divide against honestly.
  */

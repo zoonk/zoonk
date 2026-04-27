@@ -59,14 +59,9 @@ export async function submitCompletion(rawInput: CompletionInput): Promise<void>
 
       const cookieHeader = reqHeaders.get("cookie") ?? "";
 
-      await Promise.allSettled([
-        ...(effects.regenerateLessonId
-          ? [triggerLessonPreload({ cookieHeader, lessonId: effects.regenerateLessonId })]
-          : []),
-        ...(effects.preloadLessonId
-          ? [triggerLessonPreload({ cookieHeader, lessonId: effects.preloadLessonId })]
-          : []),
-      ]);
+      if (effects.preloadLessonId) {
+        await triggerLessonPreload({ cookieHeader, lessonId: effects.preloadLessonId });
+      }
     } catch (error) {
       logError("[submitCompletion] Failed to persist activity completion:", error);
     }

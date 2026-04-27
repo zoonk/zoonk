@@ -17,7 +17,6 @@ export function chapterAttrs(
     isLocked: false,
     isPublished: false,
     language: "en",
-    managementMode: "manual",
     normalizedTitle,
     organizationId: null,
     position: 0,

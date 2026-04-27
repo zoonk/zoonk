@@ -1,13 +1,7 @@
-import { randomUUID } from "node:crypto";
 import { ErrorCode } from "@/lib/app-error";
-import { prisma } from "@zoonk/db";
 import { signInAs } from "@zoonk/testing/fixtures/auth";
 import { courseAttrs } from "@zoonk/testing/fixtures/courses";
-import {
-  aiOrganizationFixture,
-  memberFixture,
-  organizationFixture,
-} from "@zoonk/testing/fixtures/orgs";
+import { memberFixture, organizationFixture } from "@zoonk/testing/fixtures/orgs";
 import { beforeAll, describe, expect, test } from "vitest";
 import { createCourse } from "./create-course";
 
@@ -67,32 +61,6 @@ describe("admins", () => {
     expect(result.data?.description).toBe(attrs.description);
     expect(result.data?.language).toBe(attrs.language);
     expect(result.data?.organizationId).toBe(organization.id);
-  });
-
-  test("keeps ai-org courses ai-managed by default", async () => {
-    const aiOrg = await aiOrganizationFixture();
-    const fixture = await memberFixture({ role: "admin" });
-    const [, aiHeaders] = await Promise.all([
-      prisma.member.create({
-        data: {
-          id: randomUUID(),
-          organizationId: aiOrg.id,
-          role: "admin",
-          userId: fixture.user.id,
-        },
-      }),
-      signInAs(fixture.user.email, fixture.user.password),
-    ]);
-
-    const attrs = courseAttrs();
-    const result = await createCourse({
-      ...attrs,
-      headers: aiHeaders,
-      orgSlug: aiOrg.slug,
-    });
-
-    expect(result.error).toBeNull();
-    expect(result.data?.managementMode).toBe("ai");
   });
 
   test("normalizes slug", async () => {

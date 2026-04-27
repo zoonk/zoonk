@@ -47,7 +47,6 @@ function createChapters(ids: string[]): Parameters<typeof isCurrentCourseComplet
     isLocked: false,
     isPublished: true,
     language: "en",
-    managementMode: "manual" as const,
     normalizedTitle: `chapter ${id}`,
     organizationId: createTestUuid(901),
     position: index,

@@ -12,7 +12,6 @@ function activityAttrs(
     kind: "explanation",
     language: "en",
     lessonId: "",
-    managementMode: "manual",
     organizationId: null,
     position: 0,
     title: null,

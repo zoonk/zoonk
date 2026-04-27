@@ -30,7 +30,6 @@ export type {
   CourseAlternativeTitle,
   CourseCategory,
   CourseCompletion,
-  ContentManagementMode,
   CourseSuggestion,
   CourseUser,
   GenerationStatus,

@@ -98,7 +98,7 @@ describe("authenticated users", () => {
     });
   });
 
-  test("keeps a course in continue learning when the latest completion was archived by regeneration", async () => {
+  test("keeps a course in continue learning when the latest completion was archived", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
     const userId = user.id;
@@ -183,7 +183,7 @@ describe("authenticated users", () => {
     });
   });
 
-  test("does not reopen a durably completed lesson after regeneration adds more activities", async () => {
+  test("does not reopen a durably completed lesson after new activities are added", async () => {
     const user = await userFixture();
     const headers = await signInAs(user.email, user.password);
     const userId = user.id;
@@ -217,8 +217,8 @@ describe("authenticated users", () => {
 
     const [
       archivedCompletedActivity,
-      regeneratedFirstActivity,
-      regeneratedSecondActivity,
+      replacementFirstActivity,
+      replacementSecondActivity,
       nextActivity,
     ] = await Promise.all([
       activityFixture({
@@ -279,11 +279,11 @@ describe("authenticated users", () => {
     });
 
     expect(result[0]).not.toMatchObject({
-      activity: { id: regeneratedSecondActivity.id },
+      activity: { id: replacementSecondActivity.id },
       lesson: { id: completedLesson.id },
     });
 
-    expect(regeneratedFirstActivity.id).not.toBe(nextActivity.id);
+    expect(replacementFirstActivity.id).not.toBe(nextActivity.id);
   });
 
   test("orders by most recent completion", async () => {

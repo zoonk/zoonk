@@ -1,14 +1,10 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
-import { getTargetLessonGenerationVersion } from "@zoonk/core/content/management";
 import { type LessonStepName } from "@zoonk/core/workflows/steps";
-import { type LessonKind, prisma } from "@zoonk/db";
+import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { type LessonContext } from "./get-lesson-step";
 
-export async function setLessonAsCompletedStep(input: {
-  context: LessonContext;
-  lessonKind: LessonKind;
-}): Promise<void> {
+export async function setLessonAsCompletedStep(input: { context: LessonContext }): Promise<void> {
   "use step";
 
   await using stream = createStepStream<LessonStepName>();
@@ -19,7 +15,6 @@ export async function setLessonAsCompletedStep(input: {
     prisma.lesson.update({
       data: {
         generationStatus: "completed",
-        generationVersion: getTargetLessonGenerationVersion(input.lessonKind),
       },
       where: { id: input.context.id },
     }),

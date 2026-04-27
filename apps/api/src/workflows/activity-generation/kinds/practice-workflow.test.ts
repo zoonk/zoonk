@@ -736,7 +736,7 @@ describe("practice activity workflow", () => {
       expect(dbPractice2?.generationStatus).toBe("completed");
     });
 
-    test("uses correct explanation slice when only practice 1 (of 2) needs regeneration", async () => {
+    test("uses correct explanation slice when only practice 1 (of 2) needs generation", async () => {
       const testLesson = await lessonFixture({
         chapterId: chapter.id,
         concepts: ["IdxA", "IdxB", "IdxC", "IdxD"],

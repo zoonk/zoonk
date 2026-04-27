@@ -1,6 +1,5 @@
 import "server-only";
 import { getAuthorizedActiveCourse } from "@/data/courses/get-authorized-course";
-import { getDefaultContentManagementMode } from "@zoonk/core/content/management";
 import { type Chapter, prisma } from "@zoonk/db";
 import { type SafeReturn, safeAsync } from "@zoonk/utils/error";
 import { normalizeString, toSlug } from "@zoonk/utils/string";
@@ -45,9 +44,6 @@ export async function createChapter(params: {
           description: params.description,
           isPublished: !course.isPublished,
           language: course.language,
-          managementMode: getDefaultContentManagementMode({
-            organizationSlug: course.organization.slug,
-          }),
           normalizedTitle,
           organizationId: course.organizationId,
           position: params.position,
