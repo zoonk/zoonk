@@ -79,18 +79,15 @@ export async function listPublishedCourseLessonCompletionRows({
     JOIN chapters ch
       ON ch.id = l.chapter_id
       AND ch.is_published = true
-      AND ch.archived_at IS NULL
     LEFT JOIN activities a
       ON a.lesson_id = l.id
       AND a.is_published = true
-      AND a.archived_at IS NULL
     LEFT JOIN activity_progress ap
       ON ap.activity_id = a.id
       AND ap.user_id = ${userId}
       AND ap.completed_at IS NOT NULL
     WHERE ch.course_id = ${courseId}
       AND l.is_published = true
-      AND l.archived_at IS NULL
     GROUP BY l.chapter_id, l.id
   `;
 }
@@ -110,7 +107,6 @@ export async function listPublishedCourseChapters({
   return tx.chapter.findMany({
     orderBy: { position: "asc" },
     where: {
-      archivedAt: null,
       courseId,
       isPublished: true,
     },
@@ -134,9 +130,7 @@ export async function listDurableCourseLessonIds({
   const rows = await tx.lessonCompletion.findMany({
     where: {
       lesson: {
-        archivedAt: null,
         chapter: {
-          archivedAt: null,
           courseId,
           isPublished: true,
         },
@@ -166,7 +160,6 @@ export async function listDurableCourseChapterIds({
   const rows = await tx.chapterCompletion.findMany({
     where: {
       chapter: {
-        archivedAt: null,
         courseId,
         isPublished: true,
       },

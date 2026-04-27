@@ -1,6 +1,6 @@
 import { createStepStream } from "@/workflows/_shared/stream-status";
 import { type ActivityStepName } from "@zoonk/core/workflows/steps";
-import { getActiveLessonWhere, prisma } from "@zoonk/db";
+import { prisma } from "@zoonk/db";
 import { safeAsync } from "@zoonk/utils/error";
 import { type LessonActivity } from "./get-lesson-activities-step";
 
@@ -10,16 +10,14 @@ async function getNeighboringConcepts(chapterId: string, position: number): Prom
   const neighbors = await prisma.lesson.findMany({
     orderBy: { position: "asc" },
     select: { concepts: true },
-    where: getActiveLessonWhere({
-      lessonWhere: {
-        chapterId,
-        position: {
-          gte: position - NEIGHBOR_RANGE,
-          lte: position + NEIGHBOR_RANGE,
-          not: position,
-        },
+    where: {
+      chapterId,
+      position: {
+        gte: position - NEIGHBOR_RANGE,
+        lte: position + NEIGHBOR_RANGE,
+        not: position,
       },
-    }),
+    },
   });
 
   return neighbors.flatMap((lesson) => lesson.concepts);

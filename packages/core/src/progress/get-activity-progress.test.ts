@@ -269,10 +269,9 @@ describe(getActivityProgress, () => {
       slug: "durable-lesson",
     });
 
-    const [archivedActivity, currentActivity1, currentActivity2] = await Promise.all([
+    const [currentActivity1, currentActivity2] = await Promise.all([
       activityFixture({
-        archivedAt: new Date(),
-        isPublished: false,
+        isPublished: true,
         lessonId: currentLesson.id,
         organizationId: organization.id,
         position: 0,
@@ -283,20 +282,7 @@ describe(getActivityProgress, () => {
         organizationId: organization.id,
         position: 1,
       }),
-      activityFixture({
-        isPublished: true,
-        lessonId: currentLesson.id,
-        organizationId: organization.id,
-        position: 2,
-      }),
     ]);
-
-    await activityProgressFixture({
-      activityId: archivedActivity.id,
-      completedAt: new Date(),
-      durationSeconds: 60,
-      userId: user.id,
-    });
 
     await prisma.lessonCompletion.create({
       data: {

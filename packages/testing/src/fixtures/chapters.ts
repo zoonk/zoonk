@@ -7,7 +7,6 @@ function chapterAttrs(attrs?: Partial<Chapter>): Omit<Chapter, "id" | "createdAt
   const normalizedTitle = attrs?.normalizedTitle ?? normalizeString(title);
 
   return {
-    archivedAt: null,
     courseId: "",
     description: "Test chapter description",
     generationRunId: null,

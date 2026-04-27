@@ -77,18 +77,6 @@ describe(getLessonStep, () => {
     expect(events).toContainEqual(expect.objectContaining({ status: "error", step: "getLesson" }));
   });
 
-  test("throws FatalError when lesson is archived", async () => {
-    const lesson = await lessonFixture({
-      archivedAt: new Date(),
-      chapterId,
-      kind: "language",
-      organizationId,
-      title: `Archived Lesson ${randomUUID()}`,
-    });
-
-    await expect(getLessonStep(lesson.id)).rejects.toThrow("Lesson not found");
-  });
-
   test("throws FatalError when lesson is outside the AI organization", async () => {
     const otherOrg = await organizationFixture();
     const otherCourse = await courseFixture({ organizationId: otherOrg.id });

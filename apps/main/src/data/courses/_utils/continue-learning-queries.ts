@@ -26,10 +26,10 @@ export type ContinueLearningRow = {
 const SQL_LIMIT = 10;
 
 /**
- * Historical completions should keep a course eligible for continue-learning
- * even after old activity rows are archived. This query therefore anchors on
- * the learner's most recent completion per course, then lets later helpers
- * resolve the actual current destination from the live curriculum.
+ * Historical completions should keep a course eligible for continue-learning.
+ * This query anchors on the learner's most recent completion per course, then
+ * lets later helpers resolve the actual current destination from the current
+ * published curriculum.
  */
 export async function listRecentContinueLearningRows({
   userId,
@@ -56,7 +56,7 @@ export async function listRecentContinueLearningRows({
           JOIN activities a ON a.id = ap.activity_id
           JOIN lessons l ON l.id = a.lesson_id
           JOIN chapters ch ON ch.id = l.chapter_id
-          JOIN courses c ON c.id = ch.course_id AND c.is_published = true AND c.archived_at IS NULL
+          JOIN courses c ON c.id = ch.course_id AND c.is_published = true
           LEFT JOIN organizations o ON o.id = c.organization_id
           WHERE ap.user_id = ${userId} AND ap.completed_at IS NOT NULL AND (o.kind = 'brand' OR o.id IS NULL)
           ORDER BY ch.course_id, ap.completed_at DESC

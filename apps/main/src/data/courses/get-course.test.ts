@@ -101,22 +101,6 @@ describe(getCourse, () => {
     expect(result).toBeNull();
   });
 
-  test("returns null for archived course", async () => {
-    const archivedCourse = await courseFixture({
-      archivedAt: new Date(),
-      isPublished: true,
-      language: "en",
-      organizationId: brandOrg.id,
-    });
-
-    const result = await getCourse({
-      brandSlug: brandOrg.slug,
-      courseSlug: archivedCourse.slug,
-    });
-
-    expect(result).toBeNull();
-  });
-
   test("finds courses with different language slugs independently", async () => {
     const baseSlug = `lang-test-${crypto.randomUUID()}`;
 

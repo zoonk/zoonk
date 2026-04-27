@@ -16,7 +16,6 @@ model Lesson {
   generationStatus  GenerationStatus      @default(pending) @map("generation_status")
   generationRunId   String?               @map("generation_run_id")
   position          Int
-  archivedAt        DateTime?             @map("archived_at")
   createdAt         DateTime              @default(now()) @map("created_at")
   updatedAt         DateTime              @default(now()) @updatedAt @map("updated_at")
   activities        Activity[]
@@ -25,8 +24,8 @@ model Lesson {
   sentences         LessonSentence[]
 
   @@unique([chapterId, slug], name: "chapterLessonSlug")
-  @@index([organizationId, archivedAt, normalizedTitle])
-  @@index([chapterId, archivedAt, position])
+  @@index([organizationId, normalizedTitle])
+  @@index([chapterId, position])
   @@index([organizationId, kind])
   @@map("lessons")
 }
@@ -45,14 +44,13 @@ model Activity {
   generationStatus GenerationStatus      @default(pending) @map("generation_status")
   generationRunId  String?               @map("generation_run_id")
   position         Int
-  archivedAt       DateTime?             @map("archived_at")
   createdAt        DateTime              @default(now()) @map("created_at")
   updatedAt        DateTime              @default(now()) @updatedAt @map("updated_at")
   steps            Step[]
   progress         ActivityProgress[]
 
-  @@index([lessonId, archivedAt, position])
-  @@index([lessonId, archivedAt, generationStatus])
+  @@index([lessonId, position])
+  @@index([lessonId, generationStatus])
   @@index([organizationId, kind])
   @@map("activities")
 }
@@ -69,13 +67,12 @@ model Step {
   position    Int
   isPublished Boolean       @default(false) @map("is_published")
   content     Json
-  archivedAt  DateTime?     @map("archived_at")
   createdAt   DateTime      @default(now()) @map("created_at")
   updatedAt   DateTime      @default(now()) @updatedAt @map("updated_at")
   attempts    StepAttempt[]
 
-  @@index([activityId, archivedAt, position])
-  @@index([activityId, kind, archivedAt, position])
+  @@index([activityId, position])
+  @@index([activityId, kind, position])
   @@index([wordId])
   @@index([sentenceId])
   @@map("steps")

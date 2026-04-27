@@ -7,7 +7,6 @@ function lessonAttrs(attrs?: Partial<Lesson>): Omit<Lesson, "id" | "createdAt" |
   const normalizedTitle = attrs?.normalizedTitle ?? normalizeString(title);
 
   return {
-    archivedAt: null,
     chapterId: "",
     concepts: [],
     description: "Test lesson description",

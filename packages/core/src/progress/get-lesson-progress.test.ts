@@ -265,55 +265,6 @@ describe(getLessonProgress, () => {
     expect(result.find((row) => row.lessonId === lessonWithoutActivities.id)).toBeUndefined();
   });
 
-  test("excludes archived activities from lesson totals", async () => {
-    const [user, course] = await Promise.all([
-      userFixture(),
-      courseFixture({ isPublished: true, organizationId: organization.id }),
-    ]);
-
-    const chapter = await chapterFixture({
-      courseId: course.id,
-      isPublished: true,
-      organizationId: organization.id,
-      position: 0,
-    });
-
-    const lesson = await lessonFixture({
-      chapterId: chapter.id,
-      isPublished: true,
-      organizationId: organization.id,
-      position: 0,
-    });
-
-    const [activeActivity] = await Promise.all([
-      activityFixture({
-        isPublished: true,
-        lessonId: lesson.id,
-        organizationId: organization.id,
-        position: 0,
-      }),
-      activityFixture({
-        archivedAt: new Date(),
-        isPublished: true,
-        lessonId: lesson.id,
-        organizationId: organization.id,
-        position: 1,
-      }),
-    ]);
-
-    await activityProgressFixture({
-      activityId: activeActivity.id,
-      completedAt: new Date(),
-      durationSeconds: 60,
-      userId: user.id,
-    });
-
-    const headers = await signInAs(user.email, user.password);
-    const result = await getLessonProgress({ chapterId: chapter.id, headers });
-
-    expect(result).toEqual([{ completedActivities: 1, lessonId: lesson.id, totalActivities: 1 }]);
-  });
-
   test("marks new activities as fully completed when the lesson is durably completed", async () => {
     const [user, course] = await Promise.all([
       userFixture(),
@@ -337,8 +288,7 @@ describe(getLessonProgress, () => {
 
     await Promise.all([
       activityFixture({
-        archivedAt: new Date(),
-        isPublished: false,
+        isPublished: true,
         lessonId: currentLesson.id,
         organizationId: organization.id,
         position: 0,
@@ -348,12 +298,6 @@ describe(getLessonProgress, () => {
         lessonId: currentLesson.id,
         organizationId: organization.id,
         position: 1,
-      }),
-      activityFixture({
-        isPublished: true,
-        lessonId: currentLesson.id,
-        organizationId: organization.id,
-        position: 2,
       }),
     ]);
 

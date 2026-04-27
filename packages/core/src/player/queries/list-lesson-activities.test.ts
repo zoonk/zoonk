@@ -132,21 +132,4 @@ describe(listLessonActivities, () => {
 
     expect(result).toEqual([]);
   });
-
-  test("excludes archived activities", async () => {
-    const archivedActivity = await activityFixture({
-      archivedAt: new Date(),
-      isPublished: true,
-      kind: "explanation",
-      language: "en",
-      lessonId: lesson.id,
-      organizationId: org.id,
-      position: 3,
-      title: "Archived Activity",
-    });
-
-    const result = await listLessonActivities({ lessonId: lesson.id });
-
-    expect(result.find((activity) => activity.id === archivedActivity.id)).toBeUndefined();
-  });
 });

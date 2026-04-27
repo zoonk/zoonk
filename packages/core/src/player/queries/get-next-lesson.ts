@@ -21,15 +21,7 @@ export async function getNextLesson(activityId: string): Promise<NextLesson | nu
         },
       },
       where: {
-        archivedAt: null,
         id: activityId,
-        lesson: {
-          archivedAt: null,
-          chapter: {
-            archivedAt: null,
-            course: { archivedAt: null },
-          },
-        },
       },
     }),
   );
@@ -48,7 +40,6 @@ export async function getNextLesson(activityId: string): Promise<NextLesson | nu
           select: {
             activities: {
               where: {
-                archivedAt: null,
                 generationStatus: { in: ["pending", "failed"] },
                 isPublished: true,
               },

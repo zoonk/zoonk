@@ -63,10 +63,8 @@ export type TransactionClient = Parameters<Parameters<typeof prisma.$transaction
 export {
   getAiGenerationActivityWhere,
   getAiGenerationChapterWhere,
+  getAiGenerationCourseWhere,
   getAiGenerationLessonWhere,
-  getActiveChapterWhere,
-  getActiveCourseWhere,
-  getActiveLessonWhere,
   getPublishedActivityWhere,
   getPublishedChapterWhere,
   getPublishedCourseWhere,

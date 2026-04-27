@@ -80,16 +80,6 @@ test.beforeAll(async () => {
       slug: `e2e-unpublished-${uniqueId}`,
       title: `Unpublished Chapter ${uniqueId}`,
     }),
-    chapterFixture({
-      archivedAt: new Date(),
-      courseId: enCourse.id,
-      isPublished: true,
-      normalizedTitle: normalizeString(`Archived Chapter ${uniqueId}`),
-      organizationId: org.id,
-      position: 4,
-      slug: `e2e-archived-${uniqueId}`,
-      title: `Archived Chapter ${uniqueId}`,
-    }),
   ]);
 
   courseUrl = `/b/${AI_ORG_SLUG}/c/${enCourse.slug}`;
@@ -168,16 +158,6 @@ test.describe("Course Chapters List", () => {
       page.getByRole("link", { name: `Unpublished Chapter ${uniqueId}` }),
     ).not.toBeVisible();
     await expect(page.getByText("04", { exact: true })).not.toBeVisible();
-  });
-
-  test("excludes archived chapters from the list", async ({ page }) => {
-    await page.goto(courseUrl);
-
-    await expect(page.getByRole("link", { name: chapterNames.first })).toBeVisible();
-    await expect(
-      page.getByRole("link", { name: `Archived Chapter ${uniqueId}` }),
-    ).not.toBeVisible();
-    await expect(page.getByText("05", { exact: true })).not.toBeVisible();
   });
 });
 

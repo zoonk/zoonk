@@ -196,24 +196,6 @@ describe(searchCourses, () => {
     expect(ids).not.toContain(schoolCourse.id);
   });
 
-  test("excludes archived courses", async () => {
-    const archivedCourse = await courseFixture({
-      archivedAt: new Date(),
-      isPublished: true,
-      language: "en",
-      normalizedTitle: normalizeString("Archived JavaScript Course"),
-      organizationId: brandOrg.id,
-      title: "Archived JavaScript Course",
-    });
-
-    const result = await searchCourses({
-      language: "en",
-      query: "Archived JavaScript",
-    });
-
-    expect(result.find((course) => course.id === archivedCourse.id)).toBeUndefined();
-  });
-
   test("limits results to default of 10", async () => {
     await prisma.course.createMany({
       data: Array.from({ length: 15 }, (_, i) => ({

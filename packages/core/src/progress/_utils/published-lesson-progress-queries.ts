@@ -38,7 +38,6 @@ export async function listPublishedChaptersForCourse({
       orderBy: { position: "asc" },
       select: { id: true },
       where: {
-        archivedAt: null,
         courseId,
         isPublished: true,
       },
@@ -87,22 +86,18 @@ async function queryPublishedLessonProgressRows({
         JOIN chapters ch
           ON ch.id = l.chapter_id
           AND ch.is_published = true
-          AND ch.archived_at IS NULL
         JOIN courses c
           ON c.id = ch.course_id
           AND c.is_published = true
-          AND c.archived_at IS NULL
         LEFT JOIN organizations o ON o.id = c.organization_id
         LEFT JOIN activities a
           ON a.lesson_id = l.id
           AND a.is_published = true
-          AND a.archived_at IS NULL
         LEFT JOIN activity_progress ap
           ON ap.activity_id = a.id
           AND ${progressUserFilter}
           AND ap.completed_at IS NOT NULL
         WHERE l.is_published = true
-          AND l.archived_at IS NULL
           AND ${scopeFilter}
         GROUP BY o.slug, ch.id, c.id, l.id
         ORDER BY ch.position ASC, l.position ASC

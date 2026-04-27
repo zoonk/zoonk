@@ -60,7 +60,6 @@ model Course {
   generationRunId   String?                  @map("generation_run_id")
   imageUrl          String?                  @map("image_url")
   userCount         Int                      @default(0) @map("user_count")
-  archivedAt        DateTime?                @map("archived_at")
   createdAt         DateTime                 @default(now()) @map("created_at")
   updatedAt         DateTime                 @default(now()) @updatedAt @map("updated_at")
   alternativeTitles CourseAlternativeTitle[]
@@ -71,10 +70,10 @@ model Course {
 
   @@unique([organizationId, slug], name: "orgSlug")
   @@unique([userId, slug], name: "userSlug")
-  @@index([organizationId, archivedAt, normalizedTitle])
-  @@index([organizationId, isPublished, archivedAt, createdAt])
-  @@index([isPublished, archivedAt, normalizedTitle])
-  @@index([isPublished, archivedAt, language, userCount, id])
+  @@index([organizationId, normalizedTitle])
+  @@index([organizationId, isPublished, createdAt])
+  @@index([isPublished, normalizedTitle])
+  @@index([isPublished, language, userCount, id])
   @@index([userId, mode])
   @@map("courses")
 }

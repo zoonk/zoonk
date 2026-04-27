@@ -37,7 +37,6 @@ function createRow(
  */
 function createChapters(ids: string[]): Parameters<typeof isCurrentCourseCompleted>[0]["chapters"] {
   return ids.map((id, index) => ({
-    archivedAt: null,
     courseId: createTestUuid(900),
     createdAt: new Date(),
     description: `Description ${id}`,

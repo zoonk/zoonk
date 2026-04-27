@@ -74,47 +74,4 @@ describe(getCourseChaptersStep, () => {
 
     expect(result).toEqual([]);
   });
-
-  test("excludes archived chapters from ordered results", async () => {
-    const course = await courseFixture({ organizationId });
-
-    await Promise.all([
-      chapterFixture({
-        courseId: course.id,
-        organizationId,
-        position: 0,
-        title: `Active Chapter ${randomUUID()}`,
-      }),
-      chapterFixture({
-        archivedAt: new Date(),
-        courseId: course.id,
-        organizationId,
-        position: 1,
-        title: `Archived Chapter ${randomUUID()}`,
-      }),
-    ]);
-
-    const result = await getCourseChaptersStep(course.id);
-
-    expect(result).toHaveLength(1);
-    expect(result[0]?.archivedAt).toBeNull();
-  });
-
-  test("returns empty array for an archived course", async () => {
-    const archivedCourse = await courseFixture({
-      archivedAt: new Date(),
-      organizationId,
-    });
-
-    await chapterFixture({
-      courseId: archivedCourse.id,
-      organizationId,
-      position: 0,
-      title: `Archived Course Chapter ${randomUUID()}`,
-    });
-
-    const result = await getCourseChaptersStep(archivedCourse.id);
-
-    expect(result).toEqual([]);
-  });
 });

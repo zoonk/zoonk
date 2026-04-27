@@ -220,67 +220,6 @@ async function createCourseWithChapterWaitingOnAnotherLesson(userId: string) {
   return { activity, chapter, course, userId };
 }
 
-/**
- * This covers the archive case for the course page progress UI.
- * An archived lesson should no longer count toward the current chapter total,
- * or the learner sees a stale fraction for content that no longer exists.
- */
-async function createCourseWithArchivedLesson(userId: string) {
-  const org = await getAiOrganization();
-  const uniqueId = randomUUID().slice(0, 8);
-
-  const course = await courseFixture({
-    isPublished: true,
-    organizationId: org.id,
-    slug: `e2e-archived-progress-course-${uniqueId}`,
-    title: `E2E Archived Progress Course ${uniqueId}`,
-  });
-
-  const chapter = await chapterFixture({
-    courseId: course.id,
-    description: `Archived progress chapter ${uniqueId}`,
-    isPublished: true,
-    organizationId: org.id,
-    position: 0,
-    slug: `e2e-archived-progress-ch-${uniqueId}`,
-    title: `E2E Archived Progress Chapter ${uniqueId}`,
-  });
-
-  const [activeLesson] = await Promise.all([
-    lessonFixture({
-      chapterId: chapter.id,
-      isPublished: true,
-      organizationId: org.id,
-      position: 0,
-      title: `Active Lesson ${uniqueId}`,
-    }),
-    lessonFixture({
-      archivedAt: new Date(),
-      chapterId: chapter.id,
-      isPublished: true,
-      organizationId: org.id,
-      position: 1,
-      title: `Archived Lesson ${uniqueId}`,
-    }),
-  ]);
-
-  const activity = await activityFixture({
-    isPublished: true,
-    lessonId: activeLesson.id,
-    organizationId: org.id,
-    position: 0,
-  });
-
-  await activityProgressFixture({
-    activityId: activity.id,
-    completedAt: new Date(),
-    durationSeconds: 60,
-    userId,
-  });
-
-  return { chapter, course };
-}
-
 test.describe("Course Progress Indicators", () => {
   test("shows no indicators when user has no progress", async ({
     authenticatedPage,
@@ -468,22 +407,5 @@ test.describe("Course Progress Indicators", () => {
     await expect(chapterLink).toBeVisible();
     await expect(chapterLink.getByLabel("1 of 2 completed")).toBeVisible();
     await expect(chapterLink.getByRole("img", { name: /^completed$/i })).toHaveCount(0);
-  });
-
-  test("excludes archived lessons from current progress totals", async ({
-    authenticatedPage,
-    withProgressUser,
-  }) => {
-    const { chapter, course } = await createCourseWithArchivedLesson(withProgressUser.id);
-
-    await authenticatedPage.goto(`/b/ai/c/${course.slug}`);
-
-    const chapterLink = authenticatedPage.getByRole("link", {
-      name: new RegExp(chapter.title),
-    });
-
-    await expect(chapterLink).toBeVisible();
-    await expect(chapterLink.getByRole("img", { name: /^completed$/i })).toHaveCount(1);
-    await expect(chapterLink.getByLabel(/of .+ completed/)).toHaveCount(0);
   });
 });
