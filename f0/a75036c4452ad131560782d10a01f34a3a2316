@@ -1,0 +1,36 @@
+packages/e2e/src/base.config.ts
+  h_1cda88fc21fe9c 33,37,39,41
+apps/api/src/instrumentation.ts
+  f16299de2d256726 2,5-6
+packages/db/.env.e2e
+  f16299de2d256726 5-8
+packages/ai/src/gateway.ts
+  f16299de2d256726 1-14,17-18
+packages/ai/src/gateway.test.ts
+  f16299de2d256726 1-11
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.3.4",
+  "base_commit_sha": "f0a75036c4452ad131560782d10a01f34a3a2316",
+  "prompts": {
+    "f16299de2d256726": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "019dd060-d223-7200-aa22-da3c6c16c69a",
+        "model": "gpt-5.5"
+      },
+      "human_author": "ceolinwill",
+      "messages": [],
+      "total_additions": 61,
+      "total_deletions": 28,
+      "accepted_lines": 34,
+      "overriden_lines": 0
+    }
+  },
+  "humans": {
+    "h_1cda88fc21fe9c": {
+      "author": "ceolinwill"
+    }
+  }
+}
